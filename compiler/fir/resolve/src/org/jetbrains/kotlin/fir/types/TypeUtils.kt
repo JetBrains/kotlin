@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.types
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.declarations.classId
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
@@ -309,7 +309,8 @@ private fun FirTypeRef.hideLocalTypeIfNeeded(
                 ?.type as? ConeClassLikeType)
                 ?.lookupTag as? ConeClassLookupTagWithFixedSymbol)
                 ?.symbol?.fir
-        if (firClass?.classId?.isLocal != true) {
+        if (firClass !is FirAnonymousObject) {
+            // NB: local classes are acceptable here, but reported by EXPOSED_* checkers as errors
             return this
         }
         if (firClass.superTypeRefs.size > 1) {
@@ -318,7 +319,7 @@ private fun FirTypeRef.hideLocalTypeIfNeeded(
             }
         }
         val superType = firClass.superTypeRefs.single()
-        if (superType is FirResolvedTypeRef && !superType.isAny) {
+        if (superType is FirResolvedTypeRef) {
             return superType
         }
     }

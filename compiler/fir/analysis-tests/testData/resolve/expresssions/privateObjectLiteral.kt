@@ -9,5 +9,5 @@ class C {
         fun foo() = 13
     }
 
-    val w = z.foo() // ERROR!
+    val w = z.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>foo<!>()<!> // ERROR!
 }

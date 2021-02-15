@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
@@ -44,6 +46,17 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) : FirPartialBodyResolveTransformer(transformer) {
     private var containingClass: FirRegularClass? = null
     private val statusResolver: FirStatusResolver = FirStatusResolver(session, scopeSession)
+
+    private fun FirDeclaration.visibilityForApproximation(): Visibility {
+        if (this !is FirMemberDeclaration) return Visibilities.Local
+        val container = context.containers.getOrNull(context.containers.size - 2)
+        val containerVisibility =
+            if (container == null) Visibilities.Public
+            else (container as? FirRegularClass)?.visibility ?: Visibilities.Local
+        if (containerVisibility == Visibilities.Local || visibility == Visibilities.Local) return Visibilities.Local
+        if (containerVisibility == Visibilities.Private) return Visibilities.Private
+        return visibility
+    }
 
     private inline fun <T> withFirArrayOfCallTransformer(block: () -> T): T {
         transformer.expressionsTransformer.enableArrayOfCallTransformation = true
@@ -560,7 +573,9 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                     transformer,
                     withExpectedType(
                         returnExpression.resultType.approximatedIfNeededOrSelf(
-                            inferenceComponents.approximator, simpleFunction?.visibility, simpleFunction?.isInline == true
+                            inferenceComponents.approximator,
+                            simpleFunction?.visibilityForApproximation(),
+                            simpleFunction?.isInline == true
                         )
                     )
                 )
@@ -990,67 +1005,50 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
     private fun storeVariableReturnType(variable: FirVariable<*>) {
         val initializer = variable.initializer
         if (variable.returnTypeRef is FirImplicitTypeRef) {
-            when {
+            val resultType = when {
                 initializer != null -> {
                     val unwrappedInitializer = (initializer as? FirExpressionWithSmartcast)?.originalExpression ?: initializer
-                    val expectedType = when (val resultType = unwrappedInitializer.resultType) {
-                        is FirImplicitTypeRef -> buildErrorTypeRef {
-                            diagnostic = ConeSimpleDiagnostic("No result type for initializer", DiagnosticKind.InferenceError)
-                        }
-                        else -> {
-                            buildResolvedTypeRef {
-                                type = resultType.coneType
-                                annotations.addAll(resultType.annotations)
-                                resultType.source?.fakeElement(FirFakeSourceElementKind.PropertyFromParameter)?.let {
-                                    source = it
-                                }
+                    unwrappedInitializer.resultType
+                }
+                variable.getter != null && variable.getter !is FirDefaultPropertyAccessor -> variable.getter?.returnTypeRef
+                else -> null
+            }
+            if (resultType != null) {
+                val expectedType = when (resultType) {
+                    is FirImplicitTypeRef -> buildErrorTypeRef {
+                        diagnostic = ConeSimpleDiagnostic("No result type for initializer", DiagnosticKind.InferenceError)
+                    }
+                    else -> {
+                        buildResolvedTypeRef {
+                            type = resultType.coneType
+                            annotations.addAll(resultType.annotations)
+                            resultType.source?.fakeElement(FirFakeSourceElementKind.PropertyFromParameter)?.let {
+                                source = it
                             }
                         }
                     }
-                    variable.transformReturnTypeRef(
-                        transformer,
-                        withExpectedType(
-                            expectedType.approximatedIfNeededOrSelf(inferenceComponents.approximator, (variable as? FirProperty)?.visibility)
+                }
+                variable.transformReturnTypeRef(
+                    transformer,
+                    withExpectedType(
+                        expectedType.approximatedIfNeededOrSelf(
+                            inferenceComponents.approximator,
+                            variable.visibilityForApproximation()
                         )
                     )
-                }
-                variable.getter != null && variable.getter !is FirDefaultPropertyAccessor -> {
-                    val expectedType = when (val resultType = variable.getter?.returnTypeRef) {
-                        is FirImplicitTypeRef -> buildErrorTypeRef {
-                            diagnostic = ConeSimpleDiagnostic("No result type for getter", DiagnosticKind.InferenceError)
-                        }
-                        else -> {
-                            resultType?.let {
-                                buildResolvedTypeRef {
-                                    type = resultType.coneType
-                                    annotations.addAll(resultType.annotations)
-                                    resultType.source?.fakeElement(FirFakeSourceElementKind.PropertyFromParameter)?.let {
-                                        source = it
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    variable.transformReturnTypeRef(
-                        transformer,
-                        withExpectedType(
-                            expectedType?.approximatedIfNeededOrSelf(inferenceComponents.approximator, (variable as? FirProperty)?.visibility)
-                        )
+                )
+            } else {
+                variable.transformReturnTypeRef(
+                    transformer,
+                    withExpectedType(
+                        buildErrorTypeRef {
+                            diagnostic = ConeSimpleDiagnostic(
+                                "Cannot infer variable type without initializer / getter / delegate",
+                                DiagnosticKind.InferenceError,
+                            )
+                        },
                     )
-                }
-                else -> {
-                    variable.transformReturnTypeRef(
-                        transformer,
-                        withExpectedType(
-                            buildErrorTypeRef {
-                                diagnostic = ConeSimpleDiagnostic(
-                                    "Cannot infer variable type without initializer / getter / delegate",
-                                    DiagnosticKind.InferenceError,
-                                )
-                            },
-                        )
-                    )
-                }
+                )
             }
             if (variable.getter?.returnTypeRef is FirImplicitTypeRef) {
                 variable.getter?.transformReturnTypeRef(transformer, withExpectedType(variable.returnTypeRef))

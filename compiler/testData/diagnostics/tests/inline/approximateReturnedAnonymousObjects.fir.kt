@@ -20,11 +20,11 @@ private fun foo4(f: () -> Int) = object {
 }
 
 fun test1(b: Boolean) {
-    var x = <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>")!>foo1 { 1 }<!>
+    var x = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>foo1 { 1 }<!>
     if (b) {
-        x = <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>")!>foo1 { 2 }<!>
+        x = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>foo1 { 2 }<!>
     }
-    x.bar()
+    x.<!UNRESOLVED_REFERENCE!>bar<!>()
 }
 
 fun test2(b: Boolean) {

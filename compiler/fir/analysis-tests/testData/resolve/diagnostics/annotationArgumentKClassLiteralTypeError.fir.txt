@@ -8,7 +8,7 @@ FILE: annotationArgumentKClassLiteralTypeError.kt
             public get(): R|kotlin/Array<kotlin/reflect/KClass<*>>|
 
     }
-    public final val <reified T> R|T|.test: R|<anonymous><T>|
+    public final val <reified T> R|T|.test: R|kotlin/Any|
         public get(): R|<anonymous><T>| {
             ^ @R|Ann|(<implicitArrayOf>(<getClass>(R|T|), <getClass>(Q|kotlin/Array|))) object : R|kotlin/Any| {
                 private constructor(): R|<anonymous><T>| {
