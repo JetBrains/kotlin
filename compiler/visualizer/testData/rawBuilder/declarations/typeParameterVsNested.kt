@@ -13,13 +13,13 @@ abstract class My<T : Some> {
     abstract fun foo(arg: T)
 
 //               [ERROR : T]
-//               │  class My<T : Some>
+//               │  [ERROR : T]
 //               │  │
     abstract val y: My.T
 
 //               [ERROR : T]
-//               │       class My<T : Some>
-//               │       │
+//               │  [ERROR : T]
+//               │  │
     abstract val z: test.My.T
 
 //               [ERROR : T]

@@ -107,26 +107,29 @@ class PsiVisualizer(private val file: KtFile, analysisResult: AnalysisResult) : 
         }
 
         override fun visitTypeReference(typeReference: KtTypeReference) {
-            if (typeReference.text.isNotEmpty()) {
-                val hasResolvedCall = with(object : KtVisitorVoid() {
-                    var hasCall: Boolean = false
-                    override fun visitKtElement(element: KtElement) {
-                        if (!hasCall) {
-                            hasCall = element.getResolvedCall(bindingContext) != null
-                            element.acceptChildren(this)
-                        }
-                    }
-                }) {
-                    typeReference.accept(this)
-                    this.hasCall
-                }
-
-                if (!hasResolvedCall) {
-                    val type = typeReference.getAbbreviatedTypeOrType(bindingContext)
-                    addAnnotation(renderType(type), typeReference)
-                }
+            if (typeReference.text.isEmpty()) {
+                return super.visitTypeReference(typeReference)
             }
-            super.visitTypeReference(typeReference)
+
+            val hasResolvedCall = with(object : KtVisitorVoid() {
+                var hasCall: Boolean = false
+                override fun visitKtElement(element: KtElement) {
+                    if (!hasCall) {
+                        element.getResolvedCall(bindingContext)?.let {
+                            hasCall = true
+                            element.accept(this@Renderer)
+                        } ?: element.acceptChildren(this)
+                    }
+                }
+            }) {
+                typeReference.accept(this)
+                this.hasCall
+            }
+
+            if (!hasResolvedCall) {
+                val type = typeReference.getAbbreviatedTypeOrType(bindingContext)
+                addAnnotation(renderType(type), typeReference)
+            }
         }
 
         override fun visitConstantExpression(expression: KtConstantExpression) {

@@ -9,7 +9,7 @@ class C<T, out S> {
 
 interface Test {
 //      C<out CharSequence, *>.D<in collections/List<*>, *>
-//      │      class C<T, S>               collections/List<*>
-//      │      │                           │
+//      │  C<out CharSequence, *>.D<in collections/List<*>, *>
+//      │  │
     val x: a.b.C<out CharSequence, *>.D<in List<*>, *>
 }

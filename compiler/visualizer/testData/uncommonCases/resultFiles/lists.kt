@@ -13,6 +13,8 @@ val listOfInt = listOf(1, 2, 3)
 //  │                    │
 val javaList = java.util.ArrayList<Int>()
 
+//          java/util/ArrayList<Int>
+//          │
 fun move(): java.util.ArrayList<Int> {
 //       Int     val listOfInt: collections/List<Int>
 //       │       │

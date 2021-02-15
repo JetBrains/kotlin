@@ -7,12 +7,10 @@ private fun resolveAccessorCall(
 //           │
     context: TranslationContext
 // [ERROR : ResolvedCall<PropertyDescriptor>]<[ERROR : PropertyDescriptor]>
-// │            [ERROR : PropertyDescriptor]
-// │            │
+// │
 ): ResolvedCall<PropertyDescriptor> {
 //                  [ERROR : ResolvedCall<PropertyDescriptor>]<[ERROR : PropertyDescriptor]>
-//                  │            [ERROR : PropertyDescriptor]
-//                  │            │
+//                  │
     return object : ResolvedCall<PropertyDescriptor> {
 //                               [ERROR : <ERROR PROPERTY TYPE>]
 //                               │ [ERROR: not resolved]
