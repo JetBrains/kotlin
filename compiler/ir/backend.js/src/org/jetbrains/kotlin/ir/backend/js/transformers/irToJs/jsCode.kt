@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStringConcatenation
-import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -21,15 +20,17 @@ import org.jetbrains.kotlin.js.backend.ast.JsRootScope
 import org.jetbrains.kotlin.js.backend.ast.JsStatement
 import org.jetbrains.kotlin.js.parser.parseExpressionOrStatement
 
-fun translateJsCodeIntoStatementList(code: IrExpression): List<JsStatement> {
-    // TODO: check non simple compile time constants (expressions)
+// Returns null if constant expression could not be parsed
+fun translateJsCodeIntoStatementList(code: IrExpression): List<JsStatement>? {
     // TODO: support proper symbol linkage and label clash resolution
 
-    fun foldString(expression: IrExpression): String {
+    fun foldString(expression: IrExpression): String? {
         val builder = StringBuilder()
+        var foldingFailed = false
         expression.acceptVoid(object : IrElementVisitorVoid {
-            override fun visitElement(element: IrElement) =
-                error("Parameter of js function must be compile time String constant, not ${element.render()}")
+            override fun visitElement(element: IrElement) {
+                foldingFailed = true
+            }
 
             override fun <T> visitConst(expression: IrConst<T>) {
                 builder.append(expression.kind.valueOf(expression))
@@ -38,10 +39,12 @@ fun translateJsCodeIntoStatementList(code: IrExpression): List<JsStatement> {
             override fun visitStringConcatenation(expression: IrStringConcatenation) = expression.acceptChildrenVoid(this)
         })
 
+        if (foldingFailed) return null
+
         return builder.toString()
     }
 
-    return parseJsCode(foldString(code)) ?: emptyList()
+    return parseJsCode(foldString(code) ?: return null)
 }
 
 fun parseJsCode(jsCode: String): List<JsStatement>? {
