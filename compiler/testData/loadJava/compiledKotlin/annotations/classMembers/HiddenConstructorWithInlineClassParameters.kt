@@ -1,5 +1,6 @@
 // !LANGUAGE: +InlineClasses
 // NO_CHECK_SOURCE_VS_BINARY
+// IGNORE_FIR
 package test
 
 annotation class Ann

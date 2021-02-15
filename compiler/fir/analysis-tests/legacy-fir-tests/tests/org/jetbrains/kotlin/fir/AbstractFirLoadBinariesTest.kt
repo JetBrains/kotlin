@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
@@ -22,7 +23,8 @@ abstract class AbstractFirLoadBinariesTest : AbstractFirResolveWithSessionTestCa
         session: FirSession,
         packageFqName: FqName,
         moduleDescriptor: ModuleDescriptor,
-        testDataPath: String
+        testDataPath: String,
+        originalTestDataPath: String?
     ) {
         val declarationNames = DescriptorUtils.getAllDescriptors(moduleDescriptor.getPackage(packageFqName).memberScope)
             .mapTo(sortedSetOf()) { it.name }
@@ -45,9 +47,22 @@ abstract class AbstractFirLoadBinariesTest : AbstractFirResolveWithSessionTestCa
             builder.appendLine()
         }
 
-        KotlinTestUtils.assertEqualsToFile(
-            File(testDataPath),
-            builder.toString()
-        )
+        val isIgnored = originalTestDataPath?.let {
+            InTextDirectivesUtils.isDirectiveDefined(File(originalTestDataPath).readText(), "// IGNORE_FIR")
+        } ?: false
+
+        var wasError = false
+        try {
+            KotlinTestUtils.assertEqualsToFile(
+                File(testDataPath),
+                builder.toString()
+            )
+        } catch (e: Throwable) {
+            if (!isIgnored) throw e
+            wasError = true
+        }
+        if (isIgnored && !wasError) {
+            throw AssertionError("Looks like test can be unmuted. Please remove `// IGNORE_FIR` directive")
+        }
     }
 }
