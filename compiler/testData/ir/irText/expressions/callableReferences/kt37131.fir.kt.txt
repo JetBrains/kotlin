@@ -27,5 +27,8 @@ fun testFn(): Any {
 }
 
 fun testCtor(): Any {
-  return use(fn = C::<init>)
+  return use(fn = local fun <init>(): C {
+    return C()
+  }
+)
 }
