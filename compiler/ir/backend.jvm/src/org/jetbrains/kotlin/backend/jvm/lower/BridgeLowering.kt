@@ -428,16 +428,23 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
             copyParametersWithErasure(this@addBridge, bridge.overridden)
             body = context.createIrBuilder(symbol, startOffset, endOffset).run { irExprBody(delegatingCall(this@apply, target)) }
 
-            // The generated bridge method overrides all of the symbols which were overridden by its overrides.
-            // This is technically wrong, but it's necessary to generate a method which maps to the same signature.
-            val inheritedOverrides = bridge.overriddenSymbols.flatMapTo(mutableSetOf()) { function ->
-                function.owner.safeAs<IrSimpleFunction>()?.overriddenSymbols ?: emptyList()
+            if (!bridge.overridden.returnType.isTypeParameterWithPrimitiveUpperBound()) {
+                // The generated bridge method overrides all of the symbols which were overridden by its overrides.
+                // This is technically wrong, but it's necessary to generate a method which maps to the same signature.
+                // In case of 'fun foo(): T', where 'T' is a type parameter with primitive upper bound (e.g., 'T : Char'),
+                // 'foo' is mapped to 'foo()C', regardless of its overrides.
+                val inheritedOverrides = bridge.overriddenSymbols.flatMapTo(mutableSetOf()) { function ->
+                    function.owner.safeAs<IrSimpleFunction>()?.overriddenSymbols ?: emptyList()
+                }
+                val redundantOverrides = inheritedOverrides.flatMapTo(mutableSetOf()) {
+                    it.owner.allOverridden().map { override -> override.symbol }
+                }
+                overriddenSymbols = inheritedOverrides.filter { it !in redundantOverrides }
             }
-            val redundantOverrides = inheritedOverrides.flatMapTo(mutableSetOf()) {
-                it.owner.allOverridden().map { override -> override.symbol }
-            }
-            overriddenSymbols = inheritedOverrides.filter { it !in redundantOverrides }
         }
+
+    private fun IrType.isTypeParameterWithPrimitiveUpperBound(): Boolean =
+        isTypeParameter() && eraseTypeParameters().isPrimitiveType()
 
     private fun IrClass.addSpecialBridge(specialBridge: SpecialBridge, target: IrSimpleFunction): IrSimpleFunction =
         addFunction {
