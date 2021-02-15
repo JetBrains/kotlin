@@ -354,6 +354,7 @@ internal class ObjCExportCodeGenerator(
         if (externalGlobalInitializers.isEmpty()) return
 
         val initializer = generateFunction(codegen, functionType(voidType, false), "initObjCExportGlobals") {
+            forbidRuntime = true
             externalGlobalInitializers.forEach { (global, value) ->
                 store(value.llvm, global)
             }
