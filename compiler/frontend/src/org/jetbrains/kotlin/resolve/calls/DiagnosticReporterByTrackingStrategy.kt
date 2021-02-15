@@ -93,6 +93,15 @@ class DiagnosticReporterByTrackingStrategy(
                     )
                 )
             }
+            NoContextReceiver::class.java -> {
+                val callElement = psiKotlinCall.psiCall.callElement
+                trace.report(
+                    NO_CONTEXT_RECEIVER.on(
+                        callElement,
+                        (diagnostic as NoContextReceiver).receiverDescriptor.value.toString()
+                    )
+                )
+            }
         }
     }
 

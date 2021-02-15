@@ -1086,6 +1086,8 @@ public class DefaultErrorMessages {
         MAP.put(ERROR_IN_CONTRACT_DESCRIPTION, "Error in contract description: {0}", TO_STRING);
         MAP.put(CONTRACT_NOT_ALLOWED, "{0}", TO_STRING);
 
+        MAP.put(NO_CONTEXT_RECEIVER, "No required context receiver found: {0}", TO_STRING);
+
         MAP.setImmutable();
 
         for (Field field : Errors.class.getFields()) {
