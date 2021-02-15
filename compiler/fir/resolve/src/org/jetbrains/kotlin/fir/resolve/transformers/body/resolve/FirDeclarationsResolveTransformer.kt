@@ -989,7 +989,8 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         if (variable.returnTypeRef is FirImplicitTypeRef) {
             when {
                 initializer != null -> {
-                    val expectedType = when (val resultType = initializer.resultType) {
+                    val unwrappedInitializer = (initializer as? FirExpressionWithSmartcast)?.originalExpression ?: initializer
+                    val expectedType = when (val resultType = unwrappedInitializer.resultType) {
                         is FirImplicitTypeRef -> buildErrorTypeRef {
                             diagnostic = ConeSimpleDiagnostic("No result type for initializer", DiagnosticKind.InferenceError)
                         }

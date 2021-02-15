@@ -9,8 +9,8 @@ fun case_1() {
     val b = select(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>a<!>)
     val c = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>a<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>b<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any")!>c<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any")!>c<!>.equals(10)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>c<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>c<!>.equals(10)
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>b<!>.equals(10)
 }
 
@@ -18,8 +18,8 @@ fun case_1() {
 fun case_2(a: Any?) {
     if (a is String) {
         val b = a
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String")!>b<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String")!>b<!>.length
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.Any?")!>b<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.Any?")!>b<!>.length
     }
 }
 
@@ -30,8 +30,8 @@ fun case_3(a: Any?) {
         val c = b
         val d = c
         val e = d
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String")!>e<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String")!>e<!>.length
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.Any?")!>e<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.Any?")!>e<!>.length
     }
 }
 
@@ -46,12 +46,12 @@ fun case_4(a: Any?) {
                 if (d is ClassLevel4) {
                     val e = d
                     if (e is ClassLevel5) {
-                        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5 & ClassLevel4")!>e<!>
-                        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5 & ClassLevel4")!>e<!>.test1()
-                        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5 & ClassLevel4")!>e<!>.test2()
-                        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5 & ClassLevel4")!>e<!>.test3()
-                        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5 & ClassLevel4")!>e<!>.test4()
-                        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5 & ClassLevel4")!>e<!>.test5()
+                        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5 & kotlin.Any?")!>e<!>
+                        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5 & kotlin.Any?")!>e<!>.test1()
+                        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5 & kotlin.Any?")!>e<!>.test2()
+                        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5 & kotlin.Any?")!>e<!>.test3()
+                        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5 & kotlin.Any?")!>e<!>.test4()
+                        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5 & kotlin.Any?")!>e<!>.test5()
                     }
                 }
             }

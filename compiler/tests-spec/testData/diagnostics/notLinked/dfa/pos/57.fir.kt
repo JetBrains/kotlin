@@ -78,7 +78,7 @@ fun case_6(x: Any?, b: Class) {
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Any?")!>x<!>
     val y = if (true) b::fun_1 else b::fun_1
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Any?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int")!>z1<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Any?")!>z1<!>
     val z2: Int = z1
 }
 

@@ -61,16 +61,16 @@ fun case_3(a: Inv<out Int>?) {
     if (a != null) {
         val b = a
         if (a == null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out kotlin.Int> & Inv<out kotlin.Int>")!>b<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out kotlin.Int> & Inv<out kotlin.Int>")!>b<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out kotlin.Int> & Inv<out kotlin.Int>")!>b<!>.propT
-        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out kotlin.Int> & Inv<out kotlin.Int>")!>b<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out kotlin.Int> & Inv<out kotlin.Int>")!>b<!>.propNullableT
-        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out kotlin.Int> & Inv<out kotlin.Int>")!>b<!>.propNullableAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out kotlin.Int> & Inv<out kotlin.Int>")!>b<!>.funT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out kotlin.Int> & Inv<out kotlin.Int>")!>b<!>.funAny()
-        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out kotlin.Int> & Inv<out kotlin.Int>")!>b<!>.funNullableT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out kotlin.Int> & Inv<out kotlin.Int>")!>b<!>.funNullableAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out kotlin.Int> & Inv<out kotlin.Int>?")!>b<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out kotlin.Int> & Inv<out kotlin.Int>?")!>b<!>.equals(null)
+        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out kotlin.Int> & Inv<out kotlin.Int>?")!>b<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out kotlin.Int> & Inv<out kotlin.Int>?")!>b<!>.propAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out kotlin.Int> & Inv<out kotlin.Int>?")!>b<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out kotlin.Int> & Inv<out kotlin.Int>?")!>b<!>.propNullableAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out kotlin.Int> & Inv<out kotlin.Int>?")!>b<!>.funT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out kotlin.Int> & Inv<out kotlin.Int>?")!>b<!>.funAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out kotlin.Int> & Inv<out kotlin.Int>?")!>b<!>.funNullableT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out kotlin.Int> & Inv<out kotlin.Int>?")!>b<!>.funNullableAny()
     }
 }
 

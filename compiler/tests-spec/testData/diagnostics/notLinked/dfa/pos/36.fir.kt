@@ -13,8 +13,8 @@ fun case_1() {
 
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>b<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>b<!>.equals(10)
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any")!>c<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any")!>c<!>.equals(10)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>c<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>c<!>.equals(10)
 }
 
 // TESTCASE NUMBER: 2
@@ -22,8 +22,8 @@ fun case_2(x: Any) {
     if (x is String) {
         val y = x
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.Any")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String")!>y<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String")!>y<!>.length
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.Any")!>y<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.Any")!>y<!>.length
     }
 }
 
@@ -34,10 +34,10 @@ fun case_3(x: Any?) {
         if (y == null) throw Exception()
         var z = y
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Number?")!>y<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Number")!>z<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Number?")!>y<!>.toByte()
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Number")!>z<!>.toByte()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Any?")!>y<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Any?")!>z<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Any?")!>y<!>.toByte()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Any?")!>z<!>.toByte()
     }
 }
 
@@ -48,10 +48,10 @@ fun case_4(x: Any?) {
         while (true && y != null) {
             var z = y
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Any?")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Number?")!>y<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Number")!>z<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Number?")!>y<!>.toByte()
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Number")!>z<!>.toByte()
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Any?")!>y<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Any?")!>z<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Any?")!>y<!>.toByte()
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number & kotlin.Any?")!>z<!>.toByte()
         }
     }
 }
