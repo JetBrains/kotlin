@@ -215,6 +215,16 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
         runTest("compiler/testData/codegen/bytecodeListing/noRemoveAtInReadOnly.kt");
     }
 
+    @TestMetadata("overrideWithPrimitiveUpperBound.kt")
+    public void testOverrideWithPrimitiveUpperBound() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/overrideWithPrimitiveUpperBound.kt");
+    }
+
+    @TestMetadata("overrideWithPrimitiveUpperBound2.kt")
+    public void testOverrideWithPrimitiveUpperBound2() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/overrideWithPrimitiveUpperBound2.kt");
+    }
+
     @TestMetadata("privateCompanionFields.kt")
     public void testPrivateCompanionFields() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/privateCompanionFields.kt");
