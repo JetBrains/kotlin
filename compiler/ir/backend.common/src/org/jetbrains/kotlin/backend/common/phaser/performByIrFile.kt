@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
+import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapperPreservingSignatures
 import org.jetbrains.kotlin.ir.util.copyTypeAndValueArgumentsFrom
 import org.jetbrains.kotlin.ir.util.deepCopySavingMetadata
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -149,7 +149,7 @@ fun IrFile.copySavingMappings(
     return newIrFile
 }
 
-private class DeepCopySymbolRemapperSavingFunctions : DeepCopySymbolRemapper() {
+private class DeepCopySymbolRemapperSavingFunctions : DeepCopySymbolRemapperPreservingSignatures() {
     val declaredFunctions = mutableSetOf<IrSimpleFunctionSymbol>()
     val declaredClasses = mutableSetOf<IrClassSymbol>()
 

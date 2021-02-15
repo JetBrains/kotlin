@@ -58,9 +58,9 @@ fun Collection<IrOverridableMember>.collectAndFilterRealOverrides(
     val realOverrides = mutableMapOf<Any, IrOverridableMember>()
 
     /*
-        Due to IR copying in performByIrFile, overrides should only be distinguished up to their fqNames.
+        Due to IR copying in performByIrFile, overrides should only be distinguished up to their signatures.
      */
-    fun IrOverridableMember.toKey(): Any = fqNameWhenAvailable ?: this
+    fun IrOverridableMember.toKey(): Any = symbol.signature ?: this
 
     fun overriddenSymbols(declaration: IrOverridableMember) = when (declaration) {
         is IrSimpleFunction -> declaration.overriddenSymbols
