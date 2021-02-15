@@ -23869,6 +23869,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("metadataFlag.kt")
+        public void testMetadataFlag() throws Exception {
+            runTest("compiler/testData/codegen/box/multifileClasses/metadataFlag.kt");
+        }
+
+        @Test
         @TestMetadata("multifileClassPartsInitialization.kt")
         public void testMultifileClassPartsInitialization() throws Exception {
             runTest("compiler/testData/codegen/box/multifileClasses/multifileClassPartsInitialization.kt");

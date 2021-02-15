@@ -20244,6 +20244,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/multifileClasses/kt16077.kt");
         }
 
+        @TestMetadata("metadataFlag.kt")
+        public void testMetadataFlag() throws Exception {
+            runTest("compiler/testData/codegen/box/multifileClasses/metadataFlag.kt");
+        }
+
         @TestMetadata("multifileClassPartsInitialization.kt")
         public void testMultifileClassPartsInitialization() throws Exception {
             runTest("compiler/testData/codegen/box/multifileClasses/multifileClassPartsInitialization.kt");
