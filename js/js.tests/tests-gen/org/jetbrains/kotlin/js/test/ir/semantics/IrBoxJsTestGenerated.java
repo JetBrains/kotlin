@@ -5065,6 +5065,11 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
             runTest("js/js.translator/testData/box/jsCode/codeFromVariable.kt");
         }
 
+        @TestMetadata("constantExpression.kt")
+        public void testConstantExpression() throws Exception {
+            runTest("js/js.translator/testData/box/jsCode/constantExpression.kt");
+        }
+
         @TestMetadata("continue.kt")
         public void testContinue() throws Exception {
             runTest("js/js.translator/testData/box/jsCode/continue.kt");
