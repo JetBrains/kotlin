@@ -21,7 +21,7 @@ class BuiltInsDeserializationForFirTestCase : AbstractFirLoadBinariesTest() {
         val session = createSession(environment, GlobalSearchScope.allScope(project))
         for (packageFqName in BuiltinsTestUtils.BUILTIN_PACKAGE_NAMES) {
             val path = "compiler/fir/analysis-tests/testData/builtIns/" + packageFqName.asString().replace('.', '-') + ".txt"
-            checkPackageContent(session, packageFqName, moduleDescriptor, path)
+            checkPackageContent(session, packageFqName, moduleDescriptor, path, null)
         }
     }
 }

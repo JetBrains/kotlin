@@ -47,7 +47,7 @@ abstract class AbstractFirLoadCompiledKotlin : AbstractFirLoadBinariesTest() {
                         .removeSuffix(File(path).name)
         File(testDataDirectoryPath).mkdirs()
 
-        checkPackageContent(sessionWithDependency, packageFqName, moduleDescriptor, "$testDataDirectoryPath${getTestName(false)}.txt")
+        checkPackageContent(sessionWithDependency, packageFqName, moduleDescriptor, "$testDataDirectoryPath${getTestName(false)}.txt", path)
     }
 
     private fun compileKtFileToTmpDir(path: String): ModuleDescriptor {
