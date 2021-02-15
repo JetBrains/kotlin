@@ -1136,12 +1136,6 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         lhsExitNode.mergeIncomingFlow()
         val flow = lhsExitNode.flow
         val lhsVariable = variableStorage.getOrCreateVariable(flow, elvisExpression.lhs)
-        rhsEnterNode.flow = logicSystem.approveStatementsInsideFlow(
-            flow,
-            lhsVariable eq null,
-            shouldForkFlow = true,
-            shouldRemoveSynthetics = false
-        )
         lhsIsNotNullNode.flow = logicSystem.approveStatementsInsideFlow(
             flow,
             lhsVariable notEq null,
@@ -1151,6 +1145,14 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
             if (lhsVariable.isReal()) {
                 it.addTypeStatement(lhsVariable typeEq any)
             }
+        }
+        rhsEnterNode.flow = logicSystem.approveStatementsInsideFlow(
+            flow,
+            lhsVariable eq null,
+            shouldForkFlow = true,
+            shouldRemoveSynthetics = false
+        ).also {
+            logicSystem.updateAllReceivers(it)
         }
     }
 
