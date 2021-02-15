@@ -16,6 +16,7 @@ interface KotlinSourceSet : Named, HasKotlinDependencies {
     val resources: SourceDirectorySet
 
     val languageSettings: LanguageSettingsBuilder
+    fun languageSettings(configure: LanguageSettingsBuilder.() -> Unit): LanguageSettingsBuilder
     fun languageSettings(configureClosure: Closure<Any?>): LanguageSettingsBuilder
 
     fun dependsOn(other: KotlinSourceSet)
