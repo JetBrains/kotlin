@@ -1,0 +1,18 @@
+package
+
+public fun Matrix.plus(/*0*/ other: Matrix): Matrix
+public fun NumberOperations.plusMatrix(/*0*/ m1: Matrix, /*1*/ m2: Matrix): kotlin.Unit
+
+public final class Matrix {
+    public constructor Matrix()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface NumberOperations {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public abstract fun kotlin.Number.plus(/*0*/ other: kotlin.Number): kotlin.Number
+}

@@ -1,0 +1,19 @@
+package
+
+public fun </*0*/ T> T.f(/*0*/ t: B<T>): kotlin.Unit
+public fun kotlin.Int.main(/*0*/ a: A, /*1*/ b: B<kotlin.String>): kotlin.Unit
+
+public final class A {
+    public constructor A()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class B</*0*/ X> {
+    public constructor B</*0*/ X>(/*0*/ x: X)
+    public final val x: X
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

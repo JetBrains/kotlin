@@ -85,6 +85,7 @@ open class MutableResolvedCallAtom(
     open val reflectionCandidateType: UnwrappedType? = null,
     open val candidate: CallableReferenceResolutionCandidate? = null
 ) : ResolvedCallAtom() {
+    override var contextReceiversArguments: List<SimpleKotlinCallArgument> = listOf()
     override lateinit var typeArgumentMappingByOriginal: TypeArgumentsToParametersMapper.TypeArgumentsMapping
     override lateinit var argumentMappingByOriginal: Map<ValueParameterDescriptor, ResolvedCallArgument>
     override lateinit var freshVariablesSubstitutor: FreshVariableNewTypeSubstitutor
