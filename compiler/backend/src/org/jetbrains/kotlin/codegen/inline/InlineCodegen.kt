@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.Position
 import org.jetbrains.kotlin.incremental.components.ScopeKind
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -42,8 +41,6 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.commons.Method
 import org.jetbrains.org.objectweb.asm.tree.*
-import java.util.*
-import kotlin.collections.HashSet
 import kotlin.math.max
 
 abstract class InlineCodegen<out T : BaseExpressionCodegen>(
@@ -639,35 +636,17 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
                     ?: throw IllegalStateException("Couldn't find declaration file for $containerId")
             }
 
-            val methodNode = getMethodNodeInner(containerId, bytes, asmMethod, callableDescriptor) ?: return null
-
-            // KLUDGE: Inline suspend function built with compiler version less than 1.1.4/1.2-M1 did not contain proper
-            // before/after suspension point marks, so we detect those functions here and insert the corresponding marks
-            if (isLegacySuspendInlineFunction(callableDescriptor)) {
-                insertLegacySuspendInlineMarks(methodNode.node)
-            }
-
-            return methodNode
-        }
-
-        private fun getMethodNodeInner(
-            containerId: ClassId,
-            bytes: ByteArray,
-            asmMethod: Method,
-            callableDescriptor: CallableMemberDescriptor
-        ): SMAPAndMethodNode? {
             val classType = AsmUtil.asmTypeByClassId(containerId)
-            var methodNode = getMethodNode(bytes, asmMethod.name, asmMethod.descriptor, classType)
+            val methodNode = getMethodNode(bytes, asmMethod.name, asmMethod.descriptor, classType)
             if (methodNode == null && requiresFunctionNameManglingForReturnType(callableDescriptor)) {
                 val nameWithoutManglingSuffix = asmMethod.name.stripManglingSuffixOrNull()
                 if (nameWithoutManglingSuffix != null) {
-                    methodNode = getMethodNode(bytes, nameWithoutManglingSuffix, asmMethod.descriptor, classType)
+                    val methodWithoutMangling = getMethodNode(bytes, nameWithoutManglingSuffix, asmMethod.descriptor, classType)
+                    if (methodWithoutMangling != null) return methodWithoutMangling
                 }
-                if (methodNode == null) {
-                    val nameWithImplSuffix = "$nameWithoutManglingSuffix-impl"
-                    methodNode = getMethodNode(bytes, nameWithImplSuffix, asmMethod.descriptor, classType)
-                }
+                return getMethodNode(bytes, "$nameWithoutManglingSuffix-impl", asmMethod.descriptor, classType)
             }
+
             return methodNode
         }
 

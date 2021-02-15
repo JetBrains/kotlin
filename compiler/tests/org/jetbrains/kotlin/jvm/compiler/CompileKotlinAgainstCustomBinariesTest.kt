@@ -19,9 +19,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
 import org.jetbrains.kotlin.cli.transformMetadataInClassFile
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.jetbrains.kotlin.codegen.inline.remove
-import org.jetbrains.kotlin.codegen.optimization.common.asSequence
-import org.jetbrains.kotlin.codegen.optimization.common.intConstant
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.TEST_IS_PRE_RELEASE_SYSTEM_PROPERTY
@@ -43,10 +40,7 @@ import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparatorAdaptor.validateAndCompareDescriptorWithFile
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.org.objectweb.asm.*
-import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
-import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode
-import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import java.io.ByteArrayInputStream
 import java.io.DataInputStream
 import java.io.File
@@ -765,46 +759,6 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
     }
 
     companion object {
-        // compiler before 1.1.4 version  did not include suspension marks into bytecode.
-        private fun stripSuspensionMarksToImitateLegacyCompiler(bytes: ByteArray): Pair<ByteArray, Int> {
-            val writer = ClassWriter(0)
-            var removedCounter = 0
-            ClassReader(bytes).accept(object : ClassVisitor(Opcodes.API_VERSION, writer) {
-                override fun visitMethod(
-                    access: Int,
-                    name: String?,
-                    desc: String?,
-                    signature: String?,
-                    exceptions: Array<out String>?
-                ): MethodVisitor {
-                    val superMV = super.visitMethod(access, name, desc, signature, exceptions)
-                    return object : MethodNode(Opcodes.API_VERSION, access, name, desc, signature, exceptions) {
-                        override fun visitEnd() {
-                            val removeList = instructions.asSequence()
-                                .flatMap { suspendMarkerInsns(it).asSequence() }.toList()
-                            remove(removeList)
-                            removedCounter += removeList.size
-                            accept(superMV)
-                        }
-                    }
-                }
-            }, 0)
-            return writer.toByteArray() to removedCounter
-        }
-
-        // KLUDGE: here is a simplified copy of compiler's logic for suspend markers
-
-        private fun suspendMarkerInsns(insn: AbstractInsnNode): List<AbstractInsnNode> =
-            if (insn is MethodInsnNode
-                && insn.opcode == Opcodes.INVOKESTATIC
-                && insn.owner == "kotlin/jvm/internal/InlineMarker"
-                && insn.name == "mark"
-                && insn.previous.intConstant in 0..1
-            ) listOf(insn, insn.previous)
-            else emptyList()
-
-        // -----
-
         private fun copyJarFileWithoutEntry(jarPath: File, vararg entriesToDelete: String): File =
             transformJar(jarPath, { _, bytes -> bytes }, entriesToDelete.toSet())
 
