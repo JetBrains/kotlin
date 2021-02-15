@@ -33,8 +33,9 @@ def jsTestSrcDir = "test"
 def jsCommonTestSrcDir = "${jsCommonDir}/test"
 
 def jsSrcJsDir = "${jsSrcDir}/js"
-def jsOutputFile = "${buildDir}/classes/kotlin.js"
-def jsOutputMetaFile = "${buildDir}/classes/kotlin.meta.js"
+def jsOutputFileName = "${buildDir}/classes/kotlin.js"
+def jsOutputMapFileName = "${jsOutputFileName}.map"
+def jsOutputMetaFileName = "${buildDir}/classes/kotlin.meta.js"
 
 def kotlinTestJsOutputFile = "${project(':kotlin-test:kotlin-test-js').buildDir}/classes/main/kotlin-test.js"
 
@@ -74,8 +75,11 @@ dependencies {
 }
 
 task prepareComparableSource(type: Copy) {
+    def fs = services.get(FileSystemOperations)
     doFirst {
-        delete builtinsSrcDir2
+        fs.delete {
+            delete builtinsSrcDir2
+        }
     }
     from("${builtinsDir}/native/kotlin") {
         include "Comparable.kt"
@@ -84,8 +88,11 @@ task prepareComparableSource(type: Copy) {
 }
 
 task prepareBuiltinsSources(type: Copy) {
+    def fs = services.get(FileSystemOperations)
     doFirst {
-        delete builtinsSrcDir
+        fs.delete {
+            delete builtinsSrcDir
+        }
     }
     from("${builtinsDir}/native/kotlin") {
         include "Iterator.kt"
@@ -167,9 +174,9 @@ task compileJs(type: NoDebugJavaExec) {
     inputs.dir(jsSrcDir).withPathSensitivity(PathSensitivity.RELATIVE)
     inputs.dir(jsCommonSrcDir).withPathSensitivity(PathSensitivity.RELATIVE)
 
-    outputs.file(jsOutputFile)
-    outputs.file("${jsOutputFile}.map")
-    outputs.file(jsOutputMetaFile)
+    outputs.file(jsOutputFileName)
+    outputs.file(jsOutputMapFileName)
+    outputs.file(jsOutputMetaFileName)
     outputs.cacheIf { true }
 
     def inputFiles = fileTree(jsSrcJsDir) {
@@ -177,33 +184,42 @@ task compileJs(type: NoDebugJavaExec) {
     }
 
     main = "org.jetbrains.kotlin.cli.js.internal.JSStdlibLinker"
+
+    // local variables for configuration cache work
+    def rootDir = rootDir
+    def projectDir = projectDir
+
+    def compileBuiltinsKotlin2JsFiles = compileBuiltinsKotlin2Js.outputs.files
+    def compileKotlin2JsFiles = compileKotlin2Js.outputs.files
     doFirst {
-        args = [jsOutputFile, rootDir, "$jsSrcDir/wrapper.js"] + inputFiles.collect { it.path }.sort() +
-               (compileBuiltinsKotlin2Js.outputs.files.collect { it.path }.sort() +
-                compileKotlin2Js.outputs.files.collect { it.path }.sort()).findAll {
-                   it.endsWith(".js") && !it.endsWith(".meta.js")
-               }
+        args = [jsOutputFileName, rootDir, "$jsSrcDir/wrapper.js"] + inputFiles.collect { it.path }.sort() +
+                (compileBuiltinsKotlin2JsFiles.collect { it.path }.sort() +
+                        compileKotlin2JsFiles.collect { it.path }.sort()).findAll {
+                    it.endsWith(".js") && !it.endsWith(".meta.js")
+                }
     }
     classpath = configurations.kotlinCompilerClasspath
 
+    def sourceMapFile = file(jsOutputMapFileName)
+    def jsOutputMetaFile = file(jsOutputMetaFileName)
+    def compileMetaFile = file(compileKotlin2Js.outputFile.path.replaceAll('\\.js$', '.meta.js'))
     doLast {
         ant.replaceregexp(
-                file: jsOutputFile,
+                file: jsOutputFileName,
                 match: "module.exports,\\s*require\\([^)]+\\)",
                 replace: "",
                 byline: "true", encoding: "UTF-8")
         ant.replaceregexp(
-                file: jsOutputFile,
+                file: jsOutputFileName,
                 match: "function\\s*\\(_,\\s*Kotlin\\)",
                 replace: "function()",
                 byline: "true", encoding: "UTF-8")
         ant.replaceregexp(
-                file: jsOutputFile,
+                file: jsOutputFileName,
                 match: "return\\s+_;",
                 replace: "",
                 byline: "true", encoding: "UTF-8")
 
-        def sourceMapFile = file("${jsOutputFile}.map")
         def sourceMap = new groovy.json.JsonSlurper().parseText(sourceMapFile.text)
 
         def sourceMapBasePaths = [
@@ -216,17 +232,17 @@ task compileJs(type: NoDebugJavaExec) {
             if (prefixToRemove != null) sourcePath.substring(prefixToRemove.length()) else sourcePath
         }
 
-        def sourceMapSourcesBaseDirs = [jsSrcDir, jsCommonSrcDir, jsSrcJsDir, builtinsSrcDir, commonSrcDir, commonSrcDir2, projectDir,  unsignedCommonSrcDir]
+        def sourceMapSourcesBaseDirs = ["$projectDir/$jsSrcDir", jsCommonSrcDir, "$projectDir/$jsSrcJsDir", builtinsSrcDir, commonSrcDir, commonSrcDir2, projectDir,  unsignedCommonSrcDir]
 
         sourceMap.sourcesContent = sourceMap.sources.collect { sourceName ->
-            def text = sourceMapSourcesBaseDirs.collect { file("$it/$sourceName") }.find { it.exists() }?.text
+            def text = sourceMapSourcesBaseDirs.collect { new File("$it/$sourceName") }.find { it.exists() }?.text
             if (text == null) logger.warn("Sources missing for file $sourceName")
             text
         }
 
         sourceMapFile.text = groovy.json.JsonOutput.toJson(sourceMap)
 
-        file(jsOutputMetaFile).text = file(compileKotlin2Js.outputFile.path.replaceAll('\\.js$', '.meta.js')).text
+        jsOutputMetaFile.text = compileMetaFile.text
     }
 }
 
@@ -238,7 +254,7 @@ jar {
 }
 
 task libraryJarWithoutIr(type: Jar, dependsOn: compileJs) {
-    classifier = null
+    archiveClassifier = null
     manifestAttributes(manifest, project, 'Main')
     destinationDirectory = file("$buildDir/lib/dist")
 
@@ -251,9 +267,9 @@ task libraryJarWithoutIr(type: Jar, dependsOn: compileJs) {
 
     includeEmptyDirs false
     duplicatesStrategy DuplicatesStrategy.EXCLUDE
-    from jsOutputFile
-    from jsOutputMetaFile
-    from "${jsOutputFile}.map"
+    from jsOutputFileName
+    from jsOutputMetaFileName
+    from "${jsOutputFileName}.map"
     from sourceSets.main.output
     filesMatching("*.*") { it.mode = 0b110100100 } // KTI-401
 }
@@ -357,7 +373,7 @@ task runMocha(type: NodeTask, dependsOn: [testClasses, installMocha, ':kotlin-te
 
     execOverrides {
         it.ignoreExitValue = rootProject.ignoreTestFailures
-        it.environment('NODE_PATH', [file(jsOutputFile).parent, file(kotlinTestJsOutputFile).parent].join(File.pathSeparator))
+        it.environment('NODE_PATH', [file(jsOutputFileName).parent, file(kotlinTestJsOutputFile).parent].join(File.pathSeparator))
         it.workingDir = buildDir
     }
 }
