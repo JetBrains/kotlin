@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.jps.incremental
 
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmBytecodeBinaryVersion
+import org.jetbrains.kotlin.build.JvmBytecodeBinaryVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.junit.Assert.assertEquals
 import org.junit.Test

@@ -20,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.SourceElement;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmBytecodeBinaryVersion;
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
@@ -51,7 +50,6 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
     }
 
     private int[] metadataVersionArray = null;
-    private JvmBytecodeBinaryVersion bytecodeVersion = null;
     private String extraString = null;
     private int extraInt = 0;
     private String packageName = null;
@@ -79,17 +77,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
             return null;
         }
 
-        return new KotlinClassHeader(
-                headerKind,
-                metadataVersion,
-                bytecodeVersion != null ? bytecodeVersion : JvmBytecodeBinaryVersion.INSTANCE,
-                data,
-                incompatibleData,
-                strings,
-                extraString,
-                extraInt,
-                packageName
-        );
+        return new KotlinClassHeader(headerKind, metadataVersion, data, incompatibleData, strings, extraString, extraInt, packageName);
     }
 
     private boolean shouldHaveData() {
@@ -140,11 +128,6 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
             else if (METADATA_VERSION_FIELD_NAME.equals(string)) {
                 if (value instanceof int[]) {
                     metadataVersionArray = (int[]) value;
-                }
-            }
-            else if (BYTECODE_VERSION_FIELD_NAME.equals(string)) {
-                if (value instanceof int[]) {
-                    bytecodeVersion = new JvmBytecodeBinaryVersion((int[]) value);
                 }
             }
             else if (METADATA_EXTRA_STRING_FIELD_NAME.equals(string)) {
@@ -227,11 +210,6 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
             if ("version".equals(string)) {
                 if (value instanceof int[]) {
                     metadataVersionArray = (int[]) value;
-
-                    // If there's no bytecode binary version in the class file, we assume it to be equal to the metadata version
-                    if (bytecodeVersion == null) {
-                        bytecodeVersion = new JvmBytecodeBinaryVersion((int[]) value);
-                    }
                 }
             }
             else if ("multifileClassName".equals(string)) {
