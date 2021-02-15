@@ -7,7 +7,6 @@
 
 package kotlinx.metadata.jvm
 
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmBytecodeBinaryVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 
 /**
@@ -175,6 +174,6 @@ constructor(
             level = DeprecationLevel.ERROR
         )
         @JvmField
-        val COMPATIBLE_BYTECODE_VERSION = JvmBytecodeBinaryVersion.INSTANCE.toArray().copyOf()
+        val COMPATIBLE_BYTECODE_VERSION = intArrayOf(1, 0, 3)
     }
 }

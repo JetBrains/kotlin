@@ -30,7 +30,6 @@ public final class JvmAnnotationNames {
     public static final String METADATA_DESC = "L" + JvmClassName.byFqNameWithoutInnerClasses(METADATA_FQ_NAME).getInternalName() + ";";
 
     public static final String METADATA_VERSION_FIELD_NAME = "mv";
-    public static final String BYTECODE_VERSION_FIELD_NAME = "bv";
     public static final String KIND_FIELD_NAME = "k";
     public static final String METADATA_DATA_FIELD_NAME = "d1";
     public static final String METADATA_STRINGS_FIELD_NAME = "d2";
