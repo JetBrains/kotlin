@@ -19,8 +19,10 @@ import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.annotations.JVM_THROWS_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.resolve.annotations.KOTLIN_NATIVE_THROWS_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.resolve.annotations.KOTLIN_THROWS_ANNOTATION_FQ_NAME
 
 enum class FirImportingScopeFilter {
     ALL, INVISIBLE_CLASSES, MEMBERS_AND_VISIBLE_CLASSES;
@@ -127,7 +129,7 @@ abstract class FirAbstractImportingScope(
 }
 
 private val ClassId.isJvmOrNativeThrows: Boolean
-    get() = asSingleFqName() == FqName("kotlin.jvm.Throws") || asSingleFqName() == FqName("kotlin.native.Throws")
+    get() = asSingleFqName().let { it == JVM_THROWS_ANNOTATION_FQ_NAME || it == KOTLIN_NATIVE_THROWS_ANNOTATION_FQ_NAME }
 
 private val ClassId.isCommonThrows: Boolean
-    get() = asSingleFqName() == FqName("kotlin.Throws")
+    get() = asSingleFqName() == KOTLIN_THROWS_ANNOTATION_FQ_NAME
