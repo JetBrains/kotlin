@@ -439,7 +439,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         }
 
         override fun visitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall, data: StringBuilder) {
-            data.append("equality operator call ${equalityOperatorCall.operation}")
+            data.append("fun (Any).equals(Any?): Boolean")
         }
 
         override fun visitSafeCallExpression(safeCallExpression: FirSafeCallExpression, data: StringBuilder) {

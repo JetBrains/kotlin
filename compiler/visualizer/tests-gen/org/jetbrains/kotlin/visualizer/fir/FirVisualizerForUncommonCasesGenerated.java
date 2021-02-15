@@ -49,6 +49,12 @@ public class FirVisualizerForUncommonCasesGenerated extends AbstractFirVisualize
     }
 
     @Test
+    @TestMetadata("overrideEquals.kt")
+    public void testOverrideEquals() throws Exception {
+        runTest("compiler/visualizer/testData/uncommonCases/testFiles/overrideEquals.kt");
+    }
+
+    @Test
     @TestMetadata("properties.kt")
     public void testProperties() throws Exception {
         runTest("compiler/visualizer/testData/uncommonCases/testFiles/properties.kt");
