@@ -17,5 +17,9 @@ internal open class KotlinJsIrLinkWithWorkers
 constructor(
     private val workerExecutor: WorkerExecutor
 ) : KotlinJsIrLink() {
-    override fun compilerRunner() = GradleCompilerRunnerWithWorkers(GradleCompileTaskProvider(this), workerExecutor)
+    override fun compilerRunner() =
+        GradleCompilerRunnerWithWorkers(
+            GradleCompileTaskProvider(this),
+            workerExecutor
+        )
 }
