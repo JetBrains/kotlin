@@ -166,7 +166,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
         val rendered = type.renderForDebugInfo()
         val originalTypeRendered = originalTypeRef?.coneTypeSafe<ConeKotlinType>()?.renderForDebugInfo() ?: return rendered
 
-        return "$rendered & $originalTypeRendered"
+        return "$originalTypeRendered & $rendered"
     }
 
     private fun createCallDiagnosticIfExpected(

@@ -6,8 +6,8 @@
 fun case_1(x: Any?) {
     if (x is Int) {
         if (x !is Int) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Any?")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Any?")!>x<!>.inv()
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Int")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Int")!>x<!>.inv()
         }
     }
 }
@@ -16,8 +16,8 @@ fun case_1(x: Any?) {
 fun case_2(x: Any) {
     if (x !is Unit) {
         if (x is Unit) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit & kotlin.Any")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Unit & kotlin.Any")!>x<!>.toString()
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Unit")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Unit")!>x<!>.toString()
         }
     }
 }
@@ -26,8 +26,8 @@ fun case_2(x: Any) {
 fun case_3(x: Any?) {
     if (x !is Class) {
         if (x !is Class) else {
-            <!DEBUG_INFO_EXPRESSION_TYPE("Class & kotlin.Any?")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("Class & kotlin.Any?")!>x<!>.prop_1
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Class")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Class")!>x<!>.prop_1
         }
     }
 }
@@ -36,8 +36,8 @@ fun case_3(x: Any?) {
 fun case_4(x: Any) {
     if (x !is EnumClass) else {
         if (x !is EnumClass) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("EnumClass & kotlin.Any")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("EnumClass & kotlin.Any")!>x<!>.fun_1()
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & EnumClass")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & EnumClass")!>x<!>.fun_1()
         }
     }
 }
@@ -46,8 +46,8 @@ fun case_4(x: Any) {
 fun case_5(x: Any?) {
     if (!(x !is Class.NestedClass?)) {
         if (!!(x !is Class.NestedClass?)) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("Class.NestedClass? & kotlin.Any?")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("Class.NestedClass? & kotlin.Any?")!>x<!>?.prop_4
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Class.NestedClass?")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Class.NestedClass?")!>x<!>?.prop_4
         }
     }
 }
@@ -56,8 +56,8 @@ fun case_5(x: Any?) {
 fun case_6(x: Any?) {
     if (!(x is Object)) {
         if (!(x !is Object)) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("Object & kotlin.Any?")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("Object & kotlin.Any?")!>x<!>.prop_1
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Object")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Object")!>x<!>.prop_1
         }
     }
 }
@@ -66,8 +66,8 @@ fun case_6(x: Any?) {
 fun case_7(x: Any) {
     if (!(x is DeepObject.A.B.C.D.E.F.G.J)) {
         if (!(x is DeepObject.A.B.C.D.E.F.G.J)) else {
-            <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J & kotlin.Any")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J & kotlin.Any")!>x<!>.prop_1
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & DeepObject.A.B.C.D.E.F.G.J")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & DeepObject.A.B.C.D.E.F.G.J")!>x<!>.prop_1
         }
     }
 }
@@ -76,8 +76,8 @@ fun case_7(x: Any) {
 fun case_8(x: Any?) {
     if (!!!!(x is Int?)) else {
         if (!(x is Int?)) else {
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Any?")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Any?")!>x<!>?.inv()
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Int?")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Int?")!>x<!>?.inv()
         }
     }
 }
@@ -86,8 +86,8 @@ fun case_8(x: Any?) {
 fun case_9(x: Any?) {
     if (!!!(x !is TypealiasNullableStringIndirect?)) else {
         if (!!(x !is TypealiasNullableStringIndirect?)) else {
-            <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect? & kotlin.Any?")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect? & kotlin.Any?")!>x<!>?.get(0)
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & TypealiasNullableStringIndirect?")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & TypealiasNullableStringIndirect?")!>x<!>?.get(0)
         }
     }
 }
@@ -96,9 +96,9 @@ fun case_9(x: Any?) {
 fun case_10(x: Any?) {
     if (!!(x is Interface3)) else {
         if (!!(x !is Interface3)) else {
-            <!DEBUG_INFO_EXPRESSION_TYPE("Interface3 & kotlin.Any?")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("Interface3 & kotlin.Any?")!>x<!>.itest()
-            <!DEBUG_INFO_EXPRESSION_TYPE("Interface3 & kotlin.Any?")!>x<!>.itest3()
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Interface3")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Interface3")!>x<!>.itest()
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Interface3")!>x<!>.itest3()
         }
     }
 }
@@ -107,9 +107,9 @@ fun case_10(x: Any?) {
 fun case_11(x: Any?) {
     if (x is SealedMixedChildObject1?) {
         if (x is SealedMixedChildObject1?) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("SealedMixedChildObject1? & kotlin.Any?")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("SealedMixedChildObject1? & kotlin.Any?")!>x<!>?.prop_1
-            <!DEBUG_INFO_EXPRESSION_TYPE("SealedMixedChildObject1? & kotlin.Any?")!>x<!>?.prop_2
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & SealedMixedChildObject1?")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & SealedMixedChildObject1?")!>x<!>?.prop_1
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & SealedMixedChildObject1?")!>x<!>?.prop_2
         }
     }
 }
@@ -118,7 +118,7 @@ fun case_11(x: Any?) {
 inline fun <reified T, reified K>case_12(x: Any?) {
     if (x is T) {
         if (x is T is K) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("T!! & kotlin.Any?")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T!!")!>x<!>
         }
     }
 }
@@ -127,7 +127,7 @@ inline fun <reified T, reified K>case_12(x: Any?) {
 inline fun <reified T, reified K>case_13(x: Any?) {
     if (x is T) {
         if (x is K) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("T!! & K!! & kotlin.Any?")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T!! & K!!")!>x<!>
         }
     }
 }
@@ -136,7 +136,7 @@ inline fun <reified T, reified K>case_13(x: Any?) {
 inline fun <reified T, reified K>case_14(x: Any?) {
     if (x is T) {
         if (x !is T) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("T!! & kotlin.Any?")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T!!")!>x<!>
         }
     }
 }
@@ -145,7 +145,7 @@ inline fun <reified T, reified K>case_14(x: Any?) {
 inline fun <reified T, reified K>case_15(x: Any?) {
     if (x !is T) {
         if (x is T) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("T!! & kotlin.Any?")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T!!")!>x<!>
         }
     }
 }

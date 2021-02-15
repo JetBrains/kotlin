@@ -6,30 +6,30 @@
 inline fun <reified T> case_1(x: Any?) {
     when (x) {
         is T -> {
-            <!DEBUG_INFO_EXPRESSION_TYPE("T!! & kotlin.Any?")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("T!! & kotlin.Any?")!>x<!>.equals(10)
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T!!")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T!!")!>x<!>.equals(10)
         }
         else -> return
     }
-    <!DEBUG_INFO_EXPRESSION_TYPE("T!! & kotlin.Any?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("T!! & kotlin.Any?")!>x<!>.equals(10)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T!!")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T!!")!>x<!>.equals(10)
 }
 
 // TESTCASE NUMBER: 2
 inline fun <reified T> case_2(x: Any?) {
     when (x) {
         is Any -> {
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>x<!>.equals(10)
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>.equals(10)
         }
         is T -> {
-            <!DEBUG_INFO_EXPRESSION_TYPE("T!! & kotlin.Any?")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("T!! & kotlin.Any?")!>x<!>.equals(10)
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T!!")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T!!")!>x<!>.equals(10)
         }
         else -> return
     }
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>x<!>.equals(10)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>.equals(10)
 }
 
 // TESTCASE NUMBER: 3
@@ -61,11 +61,11 @@ inline fun <reified T> case_4(x: Any?) {
 // TESTCASE NUMBER: 5
 inline fun <reified T> case_5(x: Any?) {
     if (x is T) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("T!! & kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("T!! & kotlin.Any?")!>x<!>.equals(10)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T!!")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T!!")!>x<!>.equals(10)
     } else return
-    <!DEBUG_INFO_EXPRESSION_TYPE("T!! & kotlin.Any?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("T!! & kotlin.Any?")!>x<!>.equals(10)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T!!")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T!!")!>x<!>.equals(10)
 }
 
 // TESTCASE NUMBER: 6
@@ -78,12 +78,12 @@ inline fun <reified T> case_6(x: Any?) {
 // TESTCASE NUMBER: 7
 inline fun <reified T> case_7(x: Any?) {
     if (x is Any) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>x<!>.equals(10)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>.equals(10)
     } else if (x is T) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("T!! & kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("T!! & kotlin.Any?")!>x<!>.equals(10)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T!!")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T!!")!>x<!>.equals(10)
     } else return
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>x<!>.equals(10)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>.equals(10)
 }

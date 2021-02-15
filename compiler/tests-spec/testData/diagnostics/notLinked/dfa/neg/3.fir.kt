@@ -5,8 +5,8 @@
 // TESTCASE NUMBER: 1
 fun case_1(x: Nothing?) {
     if (x is Int) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing & kotlin.Nothing?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing & kotlin.Nothing?")!>x<!>.inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing? & kotlin.Nothing")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing? & kotlin.Nothing")!>x<!>.inv()
     }
 }
 
@@ -21,8 +21,8 @@ fun case_2(x: Nothing) {
 // TESTCASE NUMBER: 3
 fun case_3(x: Nothing?) {
     if (x !is Class) else {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing & kotlin.Nothing?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing & kotlin.Nothing?")!>x<!>.<!UNRESOLVED_REFERENCE!>prop_1<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing? & kotlin.Nothing")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing? & kotlin.Nothing")!>x<!>.<!UNRESOLVED_REFERENCE!>prop_1<!>
     }
 }
 
@@ -45,8 +45,8 @@ fun case_5(x: Nothing?) {
 // TESTCASE NUMBER: 6
 fun case_6(x: Nothing?) {
     if (!(x !is Object)) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing & kotlin.Nothing?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing & kotlin.Nothing?")!>x<!>.<!UNRESOLVED_REFERENCE!>prop_1<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing? & kotlin.Nothing")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing? & kotlin.Nothing")!>x<!>.<!UNRESOLVED_REFERENCE!>prop_1<!>
     }
 }
 
@@ -77,9 +77,9 @@ fun case_9(x: Nothing?) {
 // TESTCASE NUMBER: 10
 fun case_10(x: Nothing?) {
     if (!!(x !is Interface3)) else {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing & kotlin.Nothing?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing & kotlin.Nothing?")!>x<!>.<!UNRESOLVED_REFERENCE!>itest<!>()
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing & kotlin.Nothing?")!>x<!>.<!UNRESOLVED_REFERENCE!>itest3<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing? & kotlin.Nothing")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing? & kotlin.Nothing")!>x<!>.<!UNRESOLVED_REFERENCE!>itest<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing? & kotlin.Nothing")!>x<!>.<!UNRESOLVED_REFERENCE!>itest3<!>()
     }
 }
 

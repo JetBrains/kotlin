@@ -37,8 +37,8 @@ fun case_2(x: Int?) {
  */
 fun case_3(x: Int?) {
     if (x == funWithoutArgs() == true) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?")!>x<!>.inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.inv()
     }
 }
 
@@ -108,7 +108,7 @@ fun case_7(x: Int?) {
  */
 fun case_8(x: KClass<EmptyObject>?) {
     if (x == EmptyObject::class == true) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KClass<EmptyObject> & kotlin.reflect.KClass<EmptyObject>?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KClass<EmptyObject> & kotlin.reflect.KClass<EmptyObject>?")!>x<!>.java
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KClass<EmptyObject>? & kotlin.reflect.KClass<EmptyObject>")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KClass<EmptyObject>? & kotlin.reflect.KClass<EmptyObject>")!>x<!>.java
     }
 }

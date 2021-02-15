@@ -42,7 +42,7 @@ fun case_4(x: Any?) {
 fun case_5(x: Any?) {
     x!!
     if (x is Int?) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Any?")!>x<!>.inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Int")!>x<!>.inv()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>select(x)<!>.inv()
     }
 }
@@ -53,7 +53,7 @@ fun case_5(x: Any?) {
  */
 fun case_6(x: Any?) {
     if (x is Boolean? && x!!) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean & kotlin.Any?")!>x<!>.not()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Boolean")!>x<!>.not()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean")!>select(x)<!>.not()
     }
 }
@@ -61,7 +61,7 @@ fun case_6(x: Any?) {
 // TESTCASE NUMBER: 7
 fun case_7(x: Boolean?) {
     if (x != null && x!!) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean & kotlin.Boolean?")!>x<!>.not()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean")!>x<!>.not()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean")!>select(x)<!>.not()
     }
 }
@@ -69,7 +69,7 @@ fun case_7(x: Boolean?) {
 // TESTCASE NUMBER: 8
 fun case_8(x: Any?) {
     if (x != null && x is Boolean?) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean & kotlin.Any?")!>x<!>.not()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Boolean")!>x<!>.not()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean")!>select(x)<!>.not()
     }
 }
@@ -77,7 +77,7 @@ fun case_8(x: Any?) {
 // TESTCASE NUMBER: 9
 fun case_9(x: Any?) {
     if (x is Boolean? && x != null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean & kotlin.Any?")!>x<!>.not()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Boolean")!>x<!>.not()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean")!>select(x)<!>.not()
     }
 }
@@ -85,7 +85,7 @@ fun case_9(x: Any?) {
 // TESTCASE NUMBER: 10
 fun case_10(x: Any?) {
     if (x as Boolean) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean & kotlin.Any?")!>x<!>.not()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Boolean")!>x<!>.not()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean")!>select(x)<!>.not()
     }
 }
@@ -97,7 +97,7 @@ fun case_10(x: Any?) {
  */
 fun case_11(x: Any?) {
     if ((x as Boolean?)!!) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Any?")!>x<!><!UNSAFE_CALL!>.<!>not()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Boolean?")!>x<!><!UNSAFE_CALL!>.<!>not()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>select(x)<!><!UNSAFE_CALL!>.<!>not()
     }
 }
@@ -109,7 +109,7 @@ fun case_11(x: Any?) {
  */
 fun case_12(x: Any?) {
     if (x!! as Boolean?) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>x<!>.<!UNRESOLVED_REFERENCE!>not<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>.<!UNRESOLVED_REFERENCE!>not<!>()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>select(x)<!>.<!UNRESOLVED_REFERENCE!>not<!>()
     }
 }
@@ -121,7 +121,7 @@ fun case_12(x: Any?) {
  */
 fun case_13(x: Any?) {
     if (x as Boolean? ?: x!!) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Any?")!>x<!><!UNSAFE_CALL!>.<!>not()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Boolean?")!>x<!><!UNSAFE_CALL!>.<!>not()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>select(x)<!><!UNSAFE_CALL!>.<!>not()
     }
 }
@@ -136,7 +136,7 @@ fun case_14(x: Any?) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>?.equals(10)
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>x!!<!>.equals(10)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>x<!>.equals(10)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>.equals(10)
     }
 }
 
@@ -150,7 +150,7 @@ fun case_15(x: Any?) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>?.equals(10)
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>x!!<!>.equals(10)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>x<!>.equals(10)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>.equals(10)
     }
 }
 
@@ -163,5 +163,5 @@ fun case_16(x: Nothing?) {
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!>?.<!NONE_APPLICABLE!>equals<!>(10)
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>x!!<!>.<!NONE_APPLICABLE!>equals<!>(10)
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing & kotlin.Nothing?")!>x<!>.<!NONE_APPLICABLE!>equals<!>(10)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing? & kotlin.Nothing")!>x<!>.<!NONE_APPLICABLE!>equals<!>(10)
 }

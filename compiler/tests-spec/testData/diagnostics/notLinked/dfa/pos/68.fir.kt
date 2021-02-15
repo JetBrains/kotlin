@@ -5,61 +5,61 @@
 // TESTCASE NUMBER: 1
 fun case_1(x: Any?) {
     if (x!! is Int) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>x<!>.<!UNRESOLVED_REFERENCE!>inv<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>.<!UNRESOLVED_REFERENCE!>inv<!>()
     }
 }
 
 // TESTCASE NUMBER: 2
 fun case_2(x: Any?) {
     (x as Nothing?)!!
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing? & kotlin.Any?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing? & kotlin.Any?")!>x<!><!UNSAFE_CALL!>.<!>inv()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing?")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing?")!>x<!><!UNSAFE_CALL!>.<!>inv()
 }
 
 // TESTCASE NUMBER: 3
 fun case_3(x: Any?) {
     if (x as Number? is Int) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Any?")!>x<!>.<!UNRESOLVED_REFERENCE!>inv<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Number?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Number?")!>x<!>.<!UNRESOLVED_REFERENCE!>inv<!>()
     }
 }
 
 // TESTCASE NUMBER: 4
 fun case_4(x: Any?) {
     if (x as Class? is Class) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & kotlin.Any?")!>x<!><!UNSAFE_CALL!>.<!>prop_1
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Class?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Class?")!>x<!><!UNSAFE_CALL!>.<!>prop_1
     }
 }
 
 // TESTCASE NUMBER: 5
 fun case_5(x: Any?) {
     if (x as Nothing? is Nothing) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing? & kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing? & kotlin.Any?")!>x<!><!UNSAFE_CALL!>.<!>inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing?")!>x<!><!UNSAFE_CALL!>.<!>inv()
     }
 }
 
 // TESTCASE NUMBER: 6
 fun case_6(x: Any?) {
     (x as String?)!!
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.Any?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.Any?")!>x<!><!UNSAFE_CALL!>.<!>length
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.String?")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.String?")!>x<!><!UNSAFE_CALL!>.<!>length
 }
 
 // TESTCASE NUMBER: 7
 fun case_7(x: Any?) {
     if (x as String? != null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.Any?")!>x<!><!UNSAFE_CALL!>.<!>length
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.String?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.String?")!>x<!><!UNSAFE_CALL!>.<!>length
     }
 }
 
 // TESTCASE NUMBER: 8
 fun case_8(x: Any?) {
     if (x as String? == null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.Any?")!>x<!><!UNSAFE_CALL!>.<!>length
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.String?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.String?")!>x<!><!UNSAFE_CALL!>.<!>length
     }
 }
