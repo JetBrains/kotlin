@@ -71,6 +71,9 @@ class DefaultKotlinSourceSet(
         ConfigureUtil.configure(configureClosure, this)
     }
 
+    override fun languageSettings(configure: LanguageSettingsBuilder.() -> Unit): LanguageSettingsBuilder =
+            languageSettings.apply { configure(this) }
+
     override fun getName(): String = displayName
 
     override fun dependencies(configure: KotlinDependencyHandler.() -> Unit): Unit =

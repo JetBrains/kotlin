@@ -253,6 +253,7 @@ class MockKotlinSourceSet(private val name: String) : KotlinSourceSet {
     override val resources: SourceDirectorySet get() = throw UnsupportedOperationException()
     override val languageSettings: LanguageSettingsBuilder get() = throw UnsupportedOperationException()
     override fun languageSettings(configureClosure: Closure<Any?>): LanguageSettingsBuilder = languageSettings
+    override fun languageSettings(configure: LanguageSettingsBuilder.() -> Unit): LanguageSettingsBuilder = languageSettings
     override val apiMetadataConfigurationName: String get() = throw UnsupportedOperationException()
     override val implementationMetadataConfigurationName: String get() = throw UnsupportedOperationException()
     override val compileOnlyMetadataConfigurationName: String get() = throw UnsupportedOperationException()
