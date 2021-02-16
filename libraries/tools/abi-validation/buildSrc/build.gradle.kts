@@ -4,6 +4,7 @@
  */
 
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.util.*
 
 plugins {
@@ -28,4 +29,12 @@ sourceSets["main"].withConvention(KotlinSourceSet::class) { kotlin.srcDirs("src"
 
 kotlinDslPluginOptions {
     experimentalWarning.set(false)
+}
+
+tasks.withType<KotlinCompile>().configureEach {
+    kotlinOptions.apply {
+        allWarningsAsErrors = true
+        apiVersion = "1.3"
+        freeCompilerArgs += "-Xskip-runtime-version-check"
+    }
 }
