@@ -273,7 +273,9 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
                     descriptor.type.toIrType(),
                     descriptor.name.asString(),
                     statementGenerator.generateCallReceiver(
-                        ktLeft, descriptor, resolvedCall.dispatchReceiver, resolvedCall.extensionReceiver,
+                        ktLeft, descriptor, resolvedCall.dispatchReceiver,
+                        resolvedCall.extensionReceiver,
+                        resolvedCall.contextReceivers,
                         isSafe = resolvedCall.call.isSafeCall(),
                         isAssignmentReceiver = isAssignmentStatement
                     )
@@ -285,7 +287,9 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
             }
             else -> {
                 val propertyReceiver = statementGenerator.generateCallReceiver(
-                    ktLeft, descriptor, resolvedCall.dispatchReceiver, resolvedCall.extensionReceiver,
+                    ktLeft, descriptor, resolvedCall.dispatchReceiver,
+                    resolvedCall.extensionReceiver,
+                    resolvedCall.contextReceivers,
                     isSafe = resolvedCall.call.isSafeCall(),
                     isAssignmentReceiver = isAssignmentStatement
                 )

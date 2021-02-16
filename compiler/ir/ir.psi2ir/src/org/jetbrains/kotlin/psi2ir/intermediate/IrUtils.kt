@@ -27,8 +27,8 @@ fun IrVariable.loadAt(startOffset: Int, endOffset: Int): IrExpression =
 
 fun CallReceiver.adjustForCallee(callee: CallableMemberDescriptor): CallReceiver =
     object : CallReceiver {
-        override fun call(withDispatchAndExtensionReceivers: (IntermediateValue?, IntermediateValue?) -> IrExpression): IrExpression =
-            this@adjustForCallee.call { dispatchReceiverValue, extensionReceiverValue ->
+        override fun call(withDispatchAndExtensionAndContextReceivers: (IntermediateValue?, IntermediateValue?, List<IntermediateValue>) -> IrExpression): IrExpression =
+            this@adjustForCallee.call { dispatchReceiverValue, extensionReceiverValue, contextReceiverValues ->
                 val numReceiversPresent = listOfNotNull(dispatchReceiverValue, extensionReceiverValue).size
                 val numReceiversExpected = listOfNotNull(callee.dispatchReceiverParameter, callee.extensionReceiverParameter).size
                 if (numReceiversPresent != numReceiversExpected)
@@ -46,7 +46,8 @@ fun CallReceiver.adjustForCallee(callee: CallableMemberDescriptor): CallReceiver
                         dispatchReceiverValue != null && callee.dispatchReceiverParameter == null -> dispatchReceiverValue
                         else -> extensionReceiverValue
                     }
-                withDispatchAndExtensionReceivers(newDispatchReceiverValue, newExtensionReceiverValue)
+                // TODO: Create new context receiver values
+                withDispatchAndExtensionAndContextReceivers(newDispatchReceiverValue, newExtensionReceiverValue, contextReceiverValues)
             }
     }
 

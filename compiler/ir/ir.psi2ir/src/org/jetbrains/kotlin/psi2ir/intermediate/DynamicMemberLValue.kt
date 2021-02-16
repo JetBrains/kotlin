@@ -24,7 +24,7 @@ class DynamicMemberLValue(
 ) : LValue, AssignmentReceiver {
 
     override fun load(): IrExpression =
-        receiver.call { dispatchReceiverValue, extensionReceiverValue ->
+        receiver.call { dispatchReceiverValue, extensionReceiverValue, _ ->
             val dynamicReceiver = getDynamicReceiver(dispatchReceiverValue, extensionReceiverValue)
 
             IrDynamicMemberExpressionImpl(
@@ -36,7 +36,7 @@ class DynamicMemberLValue(
         }
 
     override fun store(irExpression: IrExpression): IrExpression =
-        receiver.call { dispatchReceiverValue, extensionReceiverValue ->
+        receiver.call { dispatchReceiverValue, extensionReceiverValue, _ ->
             val dynamicReceiver = getDynamicReceiver(dispatchReceiverValue, extensionReceiverValue)
 
             IrDynamicOperatorExpressionImpl(
@@ -55,11 +55,11 @@ class DynamicMemberLValue(
         }
 
     override fun assign(withLValue: (LValue) -> IrExpression): IrExpression =
-        receiver.call { dispatchReceiverValue, extensionReceiverValue ->
+        receiver.call { dispatchReceiverValue, extensionReceiverValue, contextReceiverValues ->
             withLValue(
                 DynamicMemberLValue(
                     context, startOffset, endOffset, type, memberName,
-                    SimpleCallReceiver(dispatchReceiverValue, extensionReceiverValue)
+                    SimpleCallReceiver(dispatchReceiverValue, extensionReceiverValue, contextReceiverValues)
                 )
             )
         }

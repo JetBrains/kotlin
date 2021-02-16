@@ -933,11 +933,12 @@ open class SymbolTable(
         type: IrType,
         varargElementType: IrType? = null,
         name: Name? = null,
+        index: Int? = null,
         isAssignable: Boolean = false,
         valueParameterFactory: (IrValueParameterSymbol) -> IrValueParameter = {
             irFactory.createValueParameter(
                 startOffset, endOffset, origin, it, name ?: nameProvider.nameForDeclaration(descriptor),
-                descriptor.indexOrMinusOne, type, varargElementType, descriptor.isCrossinline, descriptor.isNoinline,
+                index ?: descriptor.indexOrMinusOne, type, varargElementType, descriptor.isCrossinline, descriptor.isNoinline,
                 isHidden = false, isAssignable = isAssignable
             )
         }
