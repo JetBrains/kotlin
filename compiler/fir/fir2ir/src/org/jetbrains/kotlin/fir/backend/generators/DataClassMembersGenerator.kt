@@ -6,6 +6,10 @@
 package org.jetbrains.kotlin.fir.backend.generators
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.fir.COPY_NAME
+import org.jetbrains.kotlin.fir.EQUALS_NAME
+import org.jetbrains.kotlin.fir.HASHCODE_NAME
+import org.jetbrains.kotlin.fir.TOSTRING_NAME
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.fir.backend.declareThisReceiverParameter
@@ -41,8 +45,6 @@ import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.DataClassMembersGenerator
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.typeUtil.representativeUpperBound
 
 /**
  * A generator that generates synthetic members of data class as well as part of inline class.
@@ -168,9 +170,9 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
                     returnTypeRef.toIrType(components.typeConverter) == components.irBuiltIns.stringType
 
         private val FirSimpleFunction.matchesDataClassSyntheticMemberSignatures: Boolean
-            get() = (this.name == equalsName && matchesEqualsSignature) ||
-                    (this.name == hashCodeName && matchesHashCodeSignature) ||
-                    (this.name == toStringName && matchesToStringSignature)
+            get() = (this.name == EQUALS_NAME && matchesEqualsSignature) ||
+                    (this.name == HASHCODE_NAME && matchesHashCodeSignature) ||
+                    (this.name == TOSTRING_NAME && matchesToStringSignature)
 
         fun generate(klass: FirClass<*>): List<FirDeclaration> {
             val propertyParametersCount = irClass.primaryConstructor?.explicitParameters?.size ?: 0
@@ -192,7 +194,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
             val contributedFunctionsInSupertypes =
                 @OptIn(ExperimentalStdlibApi::class)
                 buildMap<Name, FirSimpleFunction> {
-                    for (name in listOf(equalsName, hashCodeName, toStringName)) {
+                    for (name in listOf(EQUALS_NAME, HASHCODE_NAME, TOSTRING_NAME)) {
                         klass.unsubstitutedScope(
                             components.session,
                             components.scopeSession,
@@ -211,12 +213,12 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
                 return declaration.modality != Modality.FINAL
             }
 
-            if (!contributedFunctionsInThisType.contains(equalsName) &&
-                isOverridableDeclaration(equalsName)
+            if (!contributedFunctionsInThisType.contains(EQUALS_NAME) &&
+                isOverridableDeclaration(EQUALS_NAME)
             ) {
-                result.add(contributedFunctionsInSupertypes.getValue(equalsName))
+                result.add(contributedFunctionsInSupertypes.getValue(EQUALS_NAME))
                 val equalsFunction = createSyntheticIrFunction(
-                    equalsName,
+                    EQUALS_NAME,
                     components.irBuiltIns.booleanType,
                     otherParameterNeeded = true
                 )
@@ -224,24 +226,24 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
                 irClass.declarations.add(equalsFunction)
             }
 
-            if (!contributedFunctionsInThisType.contains(hashCodeName) &&
-                isOverridableDeclaration(hashCodeName)
+            if (!contributedFunctionsInThisType.contains(HASHCODE_NAME) &&
+                isOverridableDeclaration(HASHCODE_NAME)
             ) {
-                result.add(contributedFunctionsInSupertypes.getValue(hashCodeName))
+                result.add(contributedFunctionsInSupertypes.getValue(HASHCODE_NAME))
                 val hashCodeFunction = createSyntheticIrFunction(
-                    hashCodeName,
+                    HASHCODE_NAME,
                     components.irBuiltIns.intType,
                 )
                 irDataClassMembersGenerator.generateHashCodeMethod(hashCodeFunction, properties)
                 irClass.declarations.add(hashCodeFunction)
             }
 
-            if (!contributedFunctionsInThisType.contains(toStringName) &&
-                isOverridableDeclaration(toStringName)
+            if (!contributedFunctionsInThisType.contains(TOSTRING_NAME) &&
+                isOverridableDeclaration(TOSTRING_NAME)
             ) {
-                result.add(contributedFunctionsInSupertypes.getValue(toStringName))
+                result.add(contributedFunctionsInSupertypes.getValue(TOSTRING_NAME))
                 val toStringFunction = createSyntheticIrFunction(
-                    toStringName,
+                    TOSTRING_NAME,
                     components.irBuiltIns.stringType,
                 )
                 irDataClassMembersGenerator.generateToStringMethod(toStringFunction, properties)
@@ -335,13 +337,8 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
     }
 
     companion object {
-        private val copyName = Name.identifier("copy")
-        private val equalsName = Name.identifier("equals")
-        private val hashCodeName = Name.identifier("hashCode")
-        private val toStringName = Name.identifier("toString")
-
         fun isCopy(irFunction: IrFunction): Boolean =
-            irFunction.name == copyName
+            irFunction.name == COPY_NAME
 
         fun isComponentN(irFunction: IrFunction): Boolean {
             if (irFunction.name.isSpecial) {

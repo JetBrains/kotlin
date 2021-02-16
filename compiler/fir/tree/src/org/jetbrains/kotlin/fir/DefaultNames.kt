@@ -10,3 +10,9 @@ import org.jetbrains.kotlin.name.Name
 val NAME_FOR_BACKING_FIELD = Name.identifier("field")
 val NAME_FOR_DEFAULT_VALUE_PARAMETER = Name.identifier("value")
 val CONSTRUCTOR_NAME = Name.special("<init>")
+
+// Data class synthetic members
+val COPY_NAME = Name.identifier("copy")
+val EQUALS_NAME = Name.identifier("equals")
+val HASHCODE_NAME = Name.identifier("hashCode")
+val TOSTRING_NAME = Name.identifier("toString")
