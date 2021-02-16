@@ -3,3 +3,4 @@ class A() {
     var a: Int = 0
         set(v: Int) {}
 }
+/* FIR_COMPARISON */
