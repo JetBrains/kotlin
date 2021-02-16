@@ -1,5 +1,6 @@
 package model
 
+import org.jetbrains.dokka.Platform
 import org.jetbrains.dokka.base.transformers.documentables.InheritorsInfo
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.links.JavaClassReference
@@ -16,6 +17,16 @@ import utils.name
 import  org.jetbrains.dokka.links.Callable as DRICallable
 
 class JavaTest : AbstractModelTest("/src/main/kotlin/java/Test.java", "java") {
+    val configuration = dokkaConfiguration {
+        sourceSets {
+            sourceSet {
+                sourceRoots = listOf("src/")
+                analysisPlatform = Platform.jvm.toString()
+                classpath += jvmStdlibPath!!
+                includeNonPublic = true
+            }
+        }
+    }
 
     @Test
     fun function() {
@@ -29,7 +40,7 @@ class JavaTest : AbstractModelTest("/src/main/kotlin/java/Test.java", "java") {
             |     */
             |    public void fn(String name, int value) {}
             |}
-            """
+            """, configuration = configuration
         ) {
             with((this / "java" / "Test").cast<DClass>()) {
                 name equals "Test"
@@ -50,7 +61,7 @@ class JavaTest : AbstractModelTest("/src/main/kotlin/java/Test.java", "java") {
             |interface Lower extends Highest { }
             |class Extendable { }
             |class Tested extends Extendable implements Lower { }
-        """){
+        """, configuration = configuration){
             with((this / "java" / "Tested").cast<DClass>()){
                 extra[ImplementedInterfaces]?.interfaces?.entries?.single()?.value?.map { it.dri.sureClassNames }?.sorted() equals listOf("Highest", "Lower").sorted()
             }
@@ -64,29 +75,9 @@ class JavaTest : AbstractModelTest("/src/main/kotlin/java/Test.java", "java") {
             |interface Lower extends Highest { }
             |class Extendable { }
             |class Tested extends Extendable implements Lower { }
-        """){
+        """, configuration = configuration){
             with((this / "java" / "Tested").cast<DClass>()) {
                 supertypes.entries.single().value.map { it.typeConstructor.dri.sureClassNames to it.kind }.sortedBy { it.first } equals listOf("Extendable" to JavaClassKindTypes.CLASS, "Lower" to JavaClassKindTypes.INTERFACE)
-            }
-        }
-    }
-
-    @Test // todo
-    fun memberWithModifiers() {
-        inlineModelTest(
-            """
-            |class Test {
-            |    /**
-            |     * Summary for Function
-            |     * @param name is String parameter
-            |     * @param value is int parameter
-            |     */
-            |    public void fn(String name, int value) {}
-            |}
-            """
-        ) {
-            with((this / "java" / "Test" / "fn").cast<DFunction>()) {
-                this
             }
         }
     }
@@ -96,7 +87,7 @@ class JavaTest : AbstractModelTest("/src/main/kotlin/java/Test.java", "java") {
         inlineModelTest(
             """
             |public class Foo extends Exception implements Cloneable {}
-            """
+            """, configuration = configuration
         ) {
             with((this / "java" / "Foo").cast<DClass>()) {
                 val sups = listOf("Exception", "Cloneable")
@@ -116,7 +107,7 @@ class JavaTest : AbstractModelTest("/src/main/kotlin/java/Test.java", "java") {
             |      return null;
             |    }
             |}
-            """
+            """, configuration = configuration
         ) {
             with((this / "java" / "Test").cast<DClass>()) {
                 name equals "Test"
@@ -141,7 +132,7 @@ class JavaTest : AbstractModelTest("/src/main/kotlin/java/Test.java", "java") {
             |class Foo<T extends Comparable<T>> {
             |     public <E> E foo();
             |}
-            """
+            """, configuration = configuration
         ) {
             with((this / "java" / "Foo").cast<DClass>()) {
                 generics counts 1
@@ -158,7 +149,7 @@ class JavaTest : AbstractModelTest("/src/main/kotlin/java/Test.java", "java") {
             |
             |  public Test(String s) {}
             |}
-            """
+            """, configuration = configuration
         ) {
             with((this / "java" / "Test").cast<DClass>()) {
                 name equals "Test"
@@ -181,7 +172,7 @@ class JavaTest : AbstractModelTest("/src/main/kotlin/java/Test.java", "java") {
             |class InnerClass {
             |    public class D {}
             |}
-            """
+            """, configuration = configuration
         ) {
             with((this / "java" / "InnerClass").cast<DClass>()) {
                 children counts 1
@@ -200,7 +191,7 @@ class JavaTest : AbstractModelTest("/src/main/kotlin/java/Test.java", "java") {
             |class Foo {
             |     public void bar(String... x);
             |}
-            """
+            """, configuration = configuration
         ) {
             with((this / "java" / "Foo").cast<DClass>()) {
                 name equals "Foo"
@@ -217,7 +208,7 @@ class JavaTest : AbstractModelTest("/src/main/kotlin/java/Test.java", "java") {
         }
     }
 
-    @Test // todo
+    @Test
     fun fields() {
         inlineModelTest(
             """
@@ -225,7 +216,7 @@ class JavaTest : AbstractModelTest("/src/main/kotlin/java/Test.java", "java") {
             |  public int i;
             |  public static final String s;
             |}
-            """
+            """, configuration = configuration
         ) {
             with((this / "java" / "Test").cast<DClass>()) {
                 children counts 2
@@ -250,7 +241,7 @@ class JavaTest : AbstractModelTest("/src/main/kotlin/java/Test.java", "java") {
             |class C {
             |  public static void foo() {}
             |}
-            """
+            """, configuration = configuration
         ) {
             with((this / "java" / "C" / "foo").cast<DFunction>()) {
                 with(extra[AdditionalModifiers]!!.content.entries.single().value.assertNotNull("AdditionalModifiers")) {
@@ -271,7 +262,7 @@ class JavaTest : AbstractModelTest("/src/main/kotlin/java/Test.java", "java") {
             |public @interface Attribute {
             |  String value() default "";
             |}
-            """
+            """, configuration = configuration
         ) {
             with((this / "java" / "Attribute").cast<DAnnotation>()) {
                 with(extra[Annotations]!!.directAnnotations.entries.single().value.assertNotNull("Annotations")) {
@@ -295,7 +286,7 @@ class JavaTest : AbstractModelTest("/src/main/kotlin/java/Test.java", "java") {
             |class Test {
             |  public Object fn() { return null; }
             |}
-            """
+            """, configuration = configuration
         ) {
             with((this / "java" / "Test" / "fn").cast<DFunction>()) {
                 assertTrue(type is JavaObject)
@@ -310,7 +301,7 @@ class JavaTest : AbstractModelTest("/src/main/kotlin/java/Test.java", "java") {
             |enum E {
             |  Foo
             |}
-            """
+            """, configuration = configuration
         ) {
             with((this / "java" / "E").cast<DEnum>()) {
                 name equals "E"
@@ -336,7 +327,7 @@ class JavaTest : AbstractModelTest("/src/main/kotlin/java/Test.java", "java") {
             |
             |  public static class Bar extends Foo {}
             |}
-            """
+            """, configuration = configuration
         ) {
             with((this / "java" / "InheritorLinks").cast<DClass>()) {
                 val dri = (this / "Bar").assertNotNull("Foo dri").dri

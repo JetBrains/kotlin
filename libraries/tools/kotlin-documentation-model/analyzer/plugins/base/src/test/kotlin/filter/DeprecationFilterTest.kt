@@ -29,7 +29,7 @@ class DeprecationFilterTest : BaseAbstractTest() {
         """.trimMargin(),
             configuration
         ) {
-            documentablesFirstTransformationStep = {
+            preMergeDocumentablesTransformationStage = {
                 Assertions.assertTrue(
                     it.first().packages.first().functions.size == 1
                 )
@@ -59,7 +59,7 @@ class DeprecationFilterTest : BaseAbstractTest() {
         """.trimMargin(),
             configuration
         ) {
-            documentablesFirstTransformationStep = {
+            preMergeDocumentablesTransformationStage = {
                 Assertions.assertTrue(
                     it.first().packages.first().functions.size == 1
                 )
@@ -89,7 +89,7 @@ class DeprecationFilterTest : BaseAbstractTest() {
         """.trimMargin(),
             configuration
         ) {
-            documentablesFirstTransformationStep = {
+            preMergeDocumentablesTransformationStage = {
                 Assertions.assertTrue(
                     it.first().packages.first().functions.size == 0
                 )
@@ -128,7 +128,7 @@ class DeprecationFilterTest : BaseAbstractTest() {
         """.trimMargin(),
             configuration
         ) {
-            documentablesFirstTransformationStep = {
+            preMergeDocumentablesTransformationStage = {
                 Assertions.assertTrue(
                     it.first().packages.first().functions.size == 0
                 )
@@ -165,7 +165,7 @@ class DeprecationFilterTest : BaseAbstractTest() {
         """.trimMargin(),
             configuration
         ) {
-            documentablesFirstTransformationStep = {
+            preMergeDocumentablesTransformationStage = {
                 Assertions.assertTrue(
                     it.first().packages.first().functions.size == 1
                 )

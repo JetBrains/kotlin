@@ -8,17 +8,17 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class DefaultPsiToDocumentableTranslatorTest : BaseAbstractTest() {
+    val configuration = dokkaConfiguration {
+        sourceSets {
+            sourceSet {
+                sourceRoots = listOf("src/main/java")
+                includeNonPublic = true
+            }
+        }
+    }
 
     @Test
     fun `method overriding two documented classes picks closest class documentation`() {
-        val configuration = dokkaConfiguration {
-            sourceSets {
-                sourceSet {
-                    sourceRoots = listOf("src/main/java")
-                }
-            }
-        }
-
         testInline(
             """
             |/src/main/java/sample/BaseClass1.java
@@ -56,14 +56,6 @@ class DefaultPsiToDocumentableTranslatorTest : BaseAbstractTest() {
 
     @Test
     fun `method overriding class and interface picks class documentation`() {
-        val configuration = dokkaConfiguration {
-            sourceSets {
-                sourceSet {
-                    sourceRoots = listOf("src/main/java")
-                }
-            }
-        }
-
         testInline(
             """
             |/src/main/java/sample/BaseClass1.java
@@ -101,14 +93,6 @@ class DefaultPsiToDocumentableTranslatorTest : BaseAbstractTest() {
 
     @Test
     fun `method overriding two classes picks closest documented class documentation`() {
-        val configuration = dokkaConfiguration {
-            sourceSets {
-                sourceSet {
-                    sourceRoots = listOf("src/main/java")
-                }
-            }
-        }
-
         testInline(
             """
             |/src/main/java/sample/BaseClass1.java
@@ -144,14 +128,6 @@ class DefaultPsiToDocumentableTranslatorTest : BaseAbstractTest() {
 
     @Test
     fun `java package-info package description`() {
-        val configuration = dokkaConfiguration {
-            sourceSets {
-                sourceSet {
-                    sourceRoots = listOf("src/main/java")
-                }
-            }
-        }
-
         testInline(
             """
             |/src/main/java/sample/BaseClass1.java
