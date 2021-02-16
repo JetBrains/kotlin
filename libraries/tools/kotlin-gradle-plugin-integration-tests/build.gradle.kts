@@ -50,11 +50,12 @@ dependencies {
 }
 
 // Aapt2 from Android Gradle Plugin 3.2 and below does not handle long paths on Windows.
-val shortenTempRootName = System.getProperty("os.name")!!.contains("Windows")
+val shortenTempRootName = project.providers.systemProperty("os.name").forUseAtConfigurationTime().get().contains("Windows")
 
 val isTeamcityBuild = project.kotlinBuildProperties.isTeamcityBuild ||
         try {
-            project.properties["gradle.integration.tests.split.tasks"]?.toString()?.toBoolean() ?: false
+            project.providers.gradleProperty("gradle.integration.tests.split.tasks").forUseAtConfigurationTime().orNull
+                ?.toBoolean() ?: false
         } catch (_: Exception) { false }
 
 fun Test.includeMppAndAndroid(include: Boolean) {
@@ -154,7 +155,8 @@ tasks.withType<KotlinCompile> {
 }
 
 tasks.withType<Test> {
-    onlyIf { !project.hasProperty("noTest") }
+    val noTestProperty = project.providers.gradleProperty("noTest")
+    onlyIf { !noTestProperty.isPresent }
 
     dependsOn(":kotlin-gradle-plugin:validatePlugins")
     dependsOnKotlinGradlePluginInstall()
@@ -167,7 +169,7 @@ tasks.withType<Test> {
     systemProperty("jdk10Home", rootProject.extra["JDK_10"] as String)
     systemProperty("jdk11Home", rootProject.extra["JDK_11"] as String)
 
-    val mavenLocalRepo = System.getProperty("maven.repo.local")
+    val mavenLocalRepo = project.providers.systemProperty("maven.repo.local").forUseAtConfigurationTime().orNull
     if (mavenLocalRepo != null) {
         systemProperty("maven.repo.local", mavenLocalRepo)
     }
