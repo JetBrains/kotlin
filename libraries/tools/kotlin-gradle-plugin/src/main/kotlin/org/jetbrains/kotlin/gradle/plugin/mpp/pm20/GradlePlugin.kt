@@ -80,6 +80,10 @@ open class KotlinPm20ProjectExtension(project: Project) : KotlinTopLevelExtensio
         mutableMapOf()
 
     internal var rootPublication: MavenPublication? = null
+
+    @PublishedApi
+    @JvmName("isAllowCommonizer")
+    internal fun isAllowCommonizerForIde(project: Project): Boolean = false
 }
 
 val KotlinGradleModule.jvm: KotlinJvmVariant
