@@ -198,6 +198,7 @@ internal fun buildProjectStructureMetadata(module: KotlinGradleModule): KotlinPr
         module.fragments.associate { it.name to it.directRefinesDependencies.map { it.name }.toSet() }
 
     // FIXME: support native implementation-as-api-dependencies
+    // FIXME: support dependencies on auxiliary modules
     val fragmentDependencies =
         module.fragments.associate { fragment ->
             fragment.name to fragment.declaredModuleDependencies.map {

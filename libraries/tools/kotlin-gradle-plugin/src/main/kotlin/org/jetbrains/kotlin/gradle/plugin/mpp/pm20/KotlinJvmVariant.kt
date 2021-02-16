@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.project.model.refinesClosure
 
 open class KotlinJvmVariant(containingModule: KotlinGradleModule, fragmentName: String) :
-    KotlinGradleVariantWithRuntimeDependencies(containingModule, fragmentName) {
+    KotlinGradlePublishedVariantWithRuntime(containingModule, fragmentName) {
 
     override val platformType: KotlinPlatformType
         get() = KotlinPlatformType.jvm

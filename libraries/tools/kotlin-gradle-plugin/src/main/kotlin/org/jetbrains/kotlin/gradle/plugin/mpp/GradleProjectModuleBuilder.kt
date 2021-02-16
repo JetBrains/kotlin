@@ -267,8 +267,13 @@ class GradleModuleVariantResolver(val project: Project) : ModuleVariantResolver 
         // TODO maybe improve this behavior? Currently it contradicts dependency resolution in that it may return a chosen variant for an
         //  unrequested dependency. This workaround is needed for synthetic modules which were not produced from module metadata, so maybe
         //  those modules should be marked somehow
-        dependencyModule.variants.singleOrNull()
-            ?.let { return VariantResolution.fromMatchingVariants(requestingVariant, dependencyModule, listOf(it)) }
+        if (dependencyModule is ExternalSyntheticKotlinModule) {
+            return VariantResolution.fromMatchingVariants(
+                requestingVariant,
+                dependencyModule,
+                listOf(dependencyModule.variants.single())
+            )
+        }
 
         val module = requestingVariant.containingModule
 
