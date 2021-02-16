@@ -29,7 +29,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.search.searches.OverridingMethodsSearch
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.asJava.unwrapped
-import org.jetbrains.kotlin.idea.KotlinBundleIndependent
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesSupport.Companion.checkSuperMethods
 import org.jetbrains.kotlin.idea.search.KotlinSearchUsagesSupport.Companion.isOverridable
 import org.jetbrains.kotlin.idea.findUsages.handlers.DelegatingFindMemberUsagesHandler
@@ -85,7 +85,7 @@ class KotlinFindUsagesHandlerFactory(project: Project) : FindUsagesHandlerFactor
                         val declarationsToSearch = checkSuperMethods(
                             element,
                             null,
-                            KotlinBundleIndependent.message("find.usages.action.text.find.usages.of")
+                            KotlinBundle.message("find.usages.action.text.find.usages.of")
                         )
 
                         return handlerForMultiple(element, declarationsToSearch)
@@ -122,7 +122,7 @@ class KotlinFindUsagesHandlerFactory(project: Project) : FindUsagesHandlerFactor
                 val declarationsToSearch = checkSuperMethods(
                     declaration,
                     null,
-                    KotlinBundleIndependent.message("find.usages.action.text.find.usages.of")
+                    KotlinBundle.message("find.usages.action.text.find.usages.of")
                 )
 
                 return handlerForMultiple(declaration, declarationsToSearch)

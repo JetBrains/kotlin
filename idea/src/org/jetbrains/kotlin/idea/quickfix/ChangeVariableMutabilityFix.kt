@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.idea.KotlinBundleIndependent
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable.CreatePropertyDelegateAccessorsActionFactory
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtProperty
@@ -55,6 +55,6 @@ object DelegatedPropertyValFactory : KotlinSingleIntentionActionFactory() {
         val property = element.getStrictParentOfType<KtProperty>() ?: return null
         val info = CreatePropertyDelegateAccessorsActionFactory.extractFixData(property, diagnostic).singleOrNull() ?: return null
         if (info.name != OperatorNameConventions.SET_VALUE.asString()) return null
-        return ChangeVariableMutabilityFix(property, makeVar = false, actionText = KotlinBundleIndependent.message("change.to.val"))
+        return ChangeVariableMutabilityFix(property, makeVar = false, actionText = KotlinBundle.message("change.to.val"))
     }
 }
