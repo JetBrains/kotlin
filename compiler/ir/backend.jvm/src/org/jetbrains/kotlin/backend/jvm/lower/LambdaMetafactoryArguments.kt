@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ir.allOverridden
+import org.jetbrains.kotlin.backend.common.lower.VariableRemapper
 import org.jetbrains.kotlin.backend.common.lower.parents
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
@@ -14,13 +15,19 @@ import org.jetbrains.kotlin.backend.jvm.ir.isCompiledToJvmDefault
 import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
+import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.overrides.buildFakeOverrideMember
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.util.functions
+import org.jetbrains.kotlin.ir.util.getInlineClassUnderlyingType
+import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 
 class LambdaMetafactoryArguments(
@@ -192,10 +199,12 @@ class LambdaMetafactoryArgumentsBuilder(
 
         adaptLambdaSignature(implLambda, fakeInstanceMethod, signatureAdaptationConstraints)
 
+        val newReference = remapExtensionLambda(implLambda, reference)
+
         if (samMethod.isFakeOverride && nonFakeOverriddenFuns.size == 1) {
-            return LambdaMetafactoryArguments(nonFakeOverriddenFuns.single(), fakeInstanceMethod, reference, listOf())
+            return LambdaMetafactoryArguments(nonFakeOverriddenFuns.single(), fakeInstanceMethod, newReference, listOf())
         }
-        return LambdaMetafactoryArguments(samMethod, fakeInstanceMethod, reference, nonFakeOverriddenFuns)
+        return LambdaMetafactoryArguments(samMethod, fakeInstanceMethod, newReference, nonFakeOverriddenFuns)
     }
 
     private fun adaptLambdaSignature(
@@ -223,7 +232,50 @@ class LambdaMetafactoryArgumentsBuilder(
         if (constraints.returnType == TypeAdaptationConstraint.FORCE_BOXING) {
             lambda.returnType = lambda.returnType.makeNullable()
         }
+
     }
+
+    private fun remapExtensionLambda(lambda: IrSimpleFunction, reference: IrFunctionReference): IrFunctionReference {
+        val oldExtensionReceiver = lambda.extensionReceiverParameter
+            ?: return reference
+
+        val newValueParameters = ArrayList<IrValueParameter>()
+        val oldToNew = HashMap<IrValueParameter, IrValueParameter>()
+        var newParameterIndex = 0
+
+        newValueParameters.add(
+            oldExtensionReceiver.copy(lambda, newParameterIndex++, Name.identifier("\$receiver")).also {
+                oldToNew[oldExtensionReceiver] = it
+            }
+        )
+
+        lambda.valueParameters.mapTo(newValueParameters) { oldParameter ->
+            oldParameter.copy(lambda, newParameterIndex++).also {
+                oldToNew[oldParameter] = it
+            }
+        }
+
+        lambda.body?.transformChildrenVoid(VariableRemapper(oldToNew))
+
+        lambda.extensionReceiverParameter = null
+        lambda.valueParameters = newValueParameters
+
+        return IrFunctionReferenceImpl(
+            reference.startOffset, reference.endOffset, reference.type,
+            lambda.symbol,
+            typeArgumentsCount = 0,
+            valueArgumentsCount = newValueParameters.size,
+            reflectionTarget = null,
+            origin = reference.origin
+        )
+    }
+
+    private fun IrValueParameter.copy(parent: IrSimpleFunction, newIndex: Int, newName: Name = this.name): IrValueParameter =
+        buildValueParameter(parent) {
+            updateFrom(this@copy)
+            index = newIndex
+            name = newName
+        }
 
     private fun adaptFakeInstanceMethodSignature(fakeInstanceMethod: IrSimpleFunction, constraints: SignatureAdaptationConstraints) {
         for ((valueParameter, constraint) in constraints.valueParameters) {
@@ -406,13 +458,13 @@ class LambdaMetafactoryArgumentsBuilder(
 
     private fun IrType.isJvmPrimitiveType() =
         isBoolean() || isChar() || isByte() || isShort() || isInt() || isLong() || isFloat() || isDouble()
+}
 
-    private fun collectValueParameters(irFun: IrFunction): List<IrValueParameter> {
-        if (irFun.extensionReceiverParameter == null)
-            return irFun.valueParameters
-        return ArrayList<IrValueParameter>().apply {
-            add(irFun.extensionReceiverParameter!!)
-            addAll(irFun.valueParameters)
-        }
+fun collectValueParameters(irFun: IrFunction): List<IrValueParameter> {
+    if (irFun.extensionReceiverParameter == null)
+        return irFun.valueParameters
+    return ArrayList<IrValueParameter>().apply {
+        add(irFun.extensionReceiverParameter!!)
+        addAll(irFun.valueParameters)
     }
 }

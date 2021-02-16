@@ -134,6 +134,8 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             return super.visitTypeOperator(expression)
         }
 
+        val samSuperType = expression.typeOperand
+
         val invokable = expression.argument
         val reference = if (invokable is IrFunctionReference) {
             invokable
@@ -144,8 +146,6 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             return super.visitTypeOperator(expression)
         }
         reference.transformChildrenVoid()
-
-        val samSuperType = expression.typeOperand
 
         if (shouldGenerateIndySamConversions) {
             val lambdaMetafactoryArguments =
@@ -169,13 +169,21 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 wrapWithIndySamConversion(samType, lambdaMetafactoryArguments)
             }
             is IrBlock -> {
-                val indySamConversion = wrapWithIndySamConversion(samType, lambdaMetafactoryArguments)
-                argument.statements[argument.statements.size - 1] = indySamConversion
-                argument.type = indySamConversion.type
-                return argument
+                wrapFunctionReferenceInsideBlockWithIndySamConversion(samType, lambdaMetafactoryArguments, argument)
             }
             else -> throw AssertionError("Block or function reference expected: ${expression.render()}")
         }
+    }
+
+    private fun wrapFunctionReferenceInsideBlockWithIndySamConversion(
+        samType: IrType,
+        lambdaMetafactoryArguments: LambdaMetafactoryArguments,
+        block: IrBlock
+    ): IrExpression {
+        val indySamConversion = wrapWithIndySamConversion(samType, lambdaMetafactoryArguments)
+        block.statements[block.statements.size - 1] = indySamConversion
+        block.type = indySamConversion.type
+        return block
     }
 
     private val jvmIndyLambdaMetafactoryIntrinsic = context.ir.symbols.indyLambdaMetafactoryIntrinsic
@@ -690,3 +698,5 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             declaration.parent.let { it is IrClass && it.isFileClass }
     }
 }
+
+
