@@ -42,11 +42,14 @@ internal fun configureMetadataResolutionAndBuild(module: KotlinGradleModule) {
 
 internal fun configureMetadataExposure(module: KotlinGradleModule) {
     val project = module.project
-    project.configurations.create(module.disambiguateName("metadataElements")).apply {
-        isCanBeConsumed = true
+    project.configurations.create(metadataElementsConfigurationName(module)).apply {
+        module.ifMadePublic {
+            isCanBeConsumed = true
+        }
         isCanBeResolved = false
         project.artifacts.add(name, project.tasks.named(metadataJarName(module)))
         attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
+        attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.common)
         module.fragments.all { fragment ->
             // FIXME: native api-implementation
             project.addExtendsFromRelation(name, fragment.apiConfigurationName)
@@ -54,6 +57,9 @@ internal fun configureMetadataExposure(module: KotlinGradleModule) {
         setModuleCapability(this, module)
     }
 }
+
+fun metadataElementsConfigurationName(module: KotlinGradleModule) =
+    module.disambiguateName("metadataElements")
 
 private fun generateAndExportProjectStructureMetadata(
     module: KotlinGradleModule
@@ -123,7 +129,7 @@ private fun configureMetadataJarTask(
     }
 }
 
-private fun metadataJarName(module: KotlinGradleModule) =
+internal fun metadataJarName(module: KotlinGradleModule) =
     lowerCamelCaseName(module.moduleClassifier, "metadataJar")
 
 private fun createMetadataCompilation(

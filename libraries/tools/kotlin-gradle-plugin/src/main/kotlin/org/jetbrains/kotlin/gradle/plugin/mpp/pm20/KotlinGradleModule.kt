@@ -42,6 +42,7 @@ open class KotlinGradleModule(
     private var setPublicHandlers: MutableList<() -> Unit> = mutableListOf()
 
     fun ifMadePublic(action: () -> Unit) {
+        // FIXME reentrancy?
         if (isPublic) action() else setPublicHandlers.add(action)
     }
 

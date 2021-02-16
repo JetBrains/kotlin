@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.project.model.utils.variantsContainingFragment
 import java.util.concurrent.Callable
 
 open class KotlinJvmVariantFactory(module: KotlinGradleModule) :
-    AbstractKotlinGradleVariantWithRuntimeDependenciesFactory<KotlinJvmVariant>(module) {
+    AbstractKotlinGradleRuntimePublishedVariantFactory<KotlinJvmVariant>(module) {
     override fun instantiateFragment(name: String) = KotlinJvmVariant(module, name)
 
     // FIXME expose the JAR with the artifacts API

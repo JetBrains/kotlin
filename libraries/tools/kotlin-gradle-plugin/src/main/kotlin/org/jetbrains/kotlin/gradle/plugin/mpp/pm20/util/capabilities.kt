@@ -9,7 +9,7 @@ import org.gradle.api.capabilities.Capability
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule
 
-internal class LazyCapability(
+internal class CalculatedCapability(
     val groupProvider: Provider<String>,
     val nameValue: String,
     val versionProvider: Provider<String>,
@@ -22,14 +22,19 @@ internal class LazyCapability(
     override fun getVersion(): String? = versionProvider.get()
 
     companion object {
-        fun fromModule(module: KotlinGradleModule): LazyCapability {
+        fun fromModule(module: KotlinGradleModule): CalculatedCapability {
             val project = module.project
-            return LazyCapability(
+            return CalculatedCapability(
                 project.provider { project.group.toString() },
                 project.name,
                 project.provider { project.version.toString() },
                 module.moduleClassifier
             )
         }
+
+        fun capabilityStringFromModule(module: KotlinGradleModule): String? =
+            if (module.moduleClassifier != null) fromModule(module).notation() else null
     }
+
+    fun notation(): String = "$group:$name:$version"
 }

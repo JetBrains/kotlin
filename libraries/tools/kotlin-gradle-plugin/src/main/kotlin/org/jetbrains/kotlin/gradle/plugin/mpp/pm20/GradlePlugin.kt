@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
 import org.gradle.api.*
+import org.gradle.api.component.SoftwareComponentFactory
 import org.gradle.api.plugins.JavaBasePlugin
+import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
@@ -14,8 +16,11 @@ import org.jetbrains.kotlin.gradle.dsl.pm20Extension
 import org.jetbrains.kotlin.gradle.internal.customizeKotlinDependencies
 import org.jetbrains.kotlin.gradle.utils.checkGradleCompatibility
 import org.jetbrains.kotlin.project.model.KotlinModuleIdentifier
+import javax.inject.Inject
 
-abstract class KotlinPm20GradlePlugin : Plugin<Project> {
+abstract class KotlinPm20GradlePlugin @Inject constructor(
+    @Inject private val softwareComponentFactory: SoftwareComponentFactory
+) : Plugin<Project> {
     override fun apply(project: Project) {
         checkGradleCompatibility("the Kotlin Multiplatform plugin", GradleVersion.version("6.1"))
 
@@ -25,6 +30,8 @@ abstract class KotlinPm20GradlePlugin : Plugin<Project> {
         createDefaultModules(project)
         customizeKotlinDependencies(project)
         registerDefaultVariantFactories(project)
+        setupFragmentsMetadata(project)
+        setupPublication(project)
     }
 
     private fun registerDefaultVariantFactories(project: Project) {
@@ -42,16 +49,53 @@ abstract class KotlinPm20GradlePlugin : Plugin<Project> {
             modules.create(KotlinGradleModule.TEST_MODULE_NAME)
             main { makePublic() }
         }
-        setupFragmentsMetadata(project)
     }
 
     private fun setupFragmentsMetadata(project: Project) {
         project.pm20Extension.modules.all { module ->
             configureMetadataResolutionAndBuild(module)
-            module.ifMadePublic { configureMetadataExposure(module) }
+            configureMetadataExposure(module)
+        }
+    }
+
+    private fun setupPublication(project: Project) {
+        project.pm20Extension.modules.all { module ->
+            setupPublicationForModule(module)
+        }
+    }
+
+    private fun setupPublicationForModule(module: KotlinGradleModule) {
+        val project = module.project
+
+        val metadataElements = project.configurations.getByName(metadataElementsConfigurationName(module))
+
+        val componentName = rootPublicationComponentName(module)
+        val rootSoftwareComponent = softwareComponentFactory.adhoc(componentName).also {
+            project.components.add(it)
+            it.addVariantsFromConfiguration(metadataElements) { }
+        }
+
+        module.ifMadePublic {
+            val metadataDependencyConfiguration = resolvableMetadataConfiguration(module)
+            project.pluginManager.withPlugin("maven-publish") {
+                project.extensions.getByType(PublishingExtension::class.java).publications.create(
+                    componentName,
+                    MavenPublication::class.java
+                ) { publication ->
+                    publication.from(rootSoftwareComponent)
+                    publication.versionMapping { versionMapping ->
+                        versionMapping.allVariants {
+                            it.fromResolutionOf(metadataDependencyConfiguration)
+                        }
+                    }
+                }
+            }
         }
     }
 }
+
+fun rootPublicationComponentName(module: KotlinGradleModule) =
+    module.disambiguateName("root")
 
 open class KotlinPm20ProjectExtension(project: Project) : KotlinTopLevelExtension(project) {
     val modules: NamedDomainObjectContainer<KotlinGradleModule> by lazy {

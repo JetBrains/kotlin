@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.LazyCapability
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.CalculatedCapability
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.directoryNpmDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.moduleName
@@ -76,7 +76,9 @@ class DefaultKotlinDependencyHandler(
         val dependency = when (dependencyNotation) {
             is KotlinGradleModule -> project.dependencies.create(dependencyNotation.project).apply {
                 (this as ModuleDependency).capabilities {
-                    it.requireCapability(LazyCapability.fromModule(dependencyNotation))
+                    if (dependencyNotation.moduleClassifier != null) {
+                        it.requireCapability(CalculatedCapability.fromModule(dependencyNotation))
+                    }
                 }
             }
             else -> dependencyNotation

@@ -7,13 +7,18 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
+import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationOutput
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultKotlinCompilationOutput
+import org.jetbrains.kotlin.gradle.plugin.mpp.MavenPublicationCoordinatesProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.PublishedModuleCoordinatesProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.CalculatedCapability
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishedConfigurationName
 import org.jetbrains.kotlin.gradle.tasks.withType
+import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 import org.jetbrains.kotlin.project.model.KotlinAttributeKey
 import org.jetbrains.kotlin.project.model.KotlinModuleVariant
 import org.jetbrains.kotlin.project.model.KotlinPlatformTypeAttribute
@@ -49,10 +54,38 @@ abstract class KotlinGradleVariant(
     val apiElementsConfigurationName: String
         get() = disambiguateName("apiElements")
 
-    open val gradleVariantNames: Set<String>
-        get() = listOf(apiElementsConfigurationName, publishedConfigurationName(apiElementsConfigurationName)).toSet()
+    abstract val gradleVariantNames: Set<String>
 
     override fun toString(): String = "variant $fragmentName in $containingModule"
+}
+
+interface SingleMavenPublicationHolder {
+    fun assignMavenPublication(publication: MavenPublication)
+    val defaultPublishedModuleSuffix: String?
+    val publishedMavenModuleCoordinates: PublishedModuleCoordinatesProvider
+}
+
+class DefaultSingleMavenPublicationHolder(
+    private var module: KotlinGradleModule,
+    override val defaultPublishedModuleSuffix: String?
+) : SingleMavenPublicationHolder {
+    private val project get() = module.project
+
+    private var assignedMavenPublication: MavenPublication? = null
+
+    override fun assignMavenPublication(publication: MavenPublication) {
+        if (assignedMavenPublication != null)
+            error("already assigned publication $publication")
+        assignedMavenPublication = publication
+    }
+
+    override val publishedMavenModuleCoordinates: PublishedModuleCoordinatesProvider =
+        MavenPublicationCoordinatesProvider(
+            project,
+            { assignedMavenPublication },
+            defaultPublishedModuleSuffix,
+            capabilities = listOfNotNull(CalculatedCapability.capabilityStringFromModule(module))
+        )
 }
 
 private fun kotlinPlatformTypeAttributeFromPlatform(platformType: KotlinPlatformType) = platformType.name
@@ -61,7 +94,7 @@ private fun kotlinPlatformTypeAttributeFromPlatform(platformType: KotlinPlatform
 internal val KotlinGradleVariant.defaultSourceArtifactTaskName: String
     get() = disambiguateName("sourcesJar")
 
-abstract class KotlinGradleVariantWithRuntimeDependencies(
+abstract class KotlinGradleVariantWithRuntime(
     containingModule: KotlinGradleModule,
     fragmentName: String
 ) : KotlinGradleVariant(containingModule, fragmentName) {
@@ -78,8 +111,21 @@ abstract class KotlinGradleVariantWithRuntimeDependencies(
     // TODO generalize exposing outputs: what if a variant has more than one such configurations or none?
     val runtimeElementsConfigurationName: String
         get() = disambiguateName("runtimeElements")
+}
+
+private fun defaultModuleSuffix(module: KotlinGradleModule, variantName: String): String =
+    dashSeparatedName(variantName, module.moduleClassifier)
+
+abstract class KotlinGradlePublishedVariantWithRuntime(containingModule: KotlinGradleModule, fragmentName: String) :
+    KotlinGradleVariantWithRuntime(containingModule, fragmentName),
+    SingleMavenPublicationHolder by DefaultSingleMavenPublicationHolder(
+        containingModule,
+        defaultModuleSuffix(containingModule, fragmentName)
+    ) {
 
     override val gradleVariantNames: Set<String>
-        get() = super.gradleVariantNames +
-                listOf(runtimeElementsConfigurationName, publishedConfigurationName(runtimeElementsConfigurationName))
+        get() =
+            listOf(apiElementsConfigurationName, runtimeElementsConfigurationName).flatMapTo(mutableSetOf()) {
+                listOf(it, publishedConfigurationName(it))
+            }
 }

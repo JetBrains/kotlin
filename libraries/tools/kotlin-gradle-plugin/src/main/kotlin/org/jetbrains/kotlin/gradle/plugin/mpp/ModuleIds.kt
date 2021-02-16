@@ -15,13 +15,12 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.dsl.topLevelExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.currentBuildId
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.CalculatedCapability
 import org.jetbrains.kotlin.gradle.utils.getValue
 import org.jetbrains.kotlin.project.model.KotlinModuleIdentifier
 import org.jetbrains.kotlin.project.model.LocalModuleIdentifier
 import org.jetbrains.kotlin.project.model.MavenModuleIdentifier
-import java.lang.IllegalArgumentException
 
 internal object ModuleIds {
     fun fromDependency(dependency: Dependency) = when (dependency) {
@@ -77,7 +76,8 @@ internal object ModuleIds {
             is LocalModuleIdentifier -> {
                 check(moduleIdentifier.buildId == thisProject.currentBuildId().name)
                 val dependencyProject = thisProject.project(moduleIdentifier.projectId)
-                val getRootPublication: () -> MavenPublication? = when (val topLevelExtension = dependencyProject.topLevelExtension) {
+                val topLevelExtension = dependencyProject.topLevelExtension
+                val getRootPublication: () -> MavenPublication? = when (topLevelExtension) {
                     is KotlinMultiplatformExtension -> {
                         { topLevelExtension.rootSoftwareComponent.publicationDelegate }
                     }
@@ -86,7 +86,19 @@ internal object ModuleIds {
                     }
                     else -> error("unexpected top-level extension $topLevelExtension")
                 }
-                val coordinatesProvider = MultiplatformRootPublicationCoordinatesProvider(dependencyProject, getRootPublication)
+                val capabilities = when (topLevelExtension) {
+                    is KotlinMultiplatformExtension -> emptyList()
+                    is KotlinPm20ProjectExtension -> listOfNotNull(CalculatedCapability.capabilityStringFromModule(
+                        topLevelExtension.modules.single { it.moduleIdentifier == moduleIdentifier }
+                    ))
+                    else -> error("unexpected top-level extension $topLevelExtension")
+                }
+                val coordinatesProvider = MavenPublicationCoordinatesProvider(
+                    dependencyProject,
+                    getRootPublication,
+                    defaultModuleSuffix = null,
+                    capabilities = capabilities
+                )
                 return ChangingModuleDependencyIdentifier({ coordinatesProvider.group }, { coordinatesProvider.name })
             }
             is MavenModuleIdentifier -> {
@@ -104,9 +116,11 @@ interface PublishedModuleCoordinatesProvider {
     val capabilities: Iterable<String>
 }
 
-class MultiplatformRootPublicationCoordinatesProvider(
+open class MavenPublicationCoordinatesProvider(
     project: Project,
-    val getPublication: () -> MavenPublication?
+    val getPublication: () -> MavenPublication?,
+    defaultModuleSuffix: String?,
+    override val capabilities: Iterable<String> = emptyList()
 ) : PublishedModuleCoordinatesProvider {
 
     override val group: String by project.provider {
@@ -114,13 +128,10 @@ class MultiplatformRootPublicationCoordinatesProvider(
     }
 
     override val name: String by project.provider {
-        getPublication()?.artifactId ?: project.name.toString()
+        getPublication()?.artifactId ?: project.name.plus(defaultModuleSuffix?.let { "-$it" }.orEmpty())
     }
 
     override val version: String by project.provider {
-        getPublication()?.artifactId ?: project.version.toString()
+        getPublication()?.version ?: project.version.toString()
     }
-
-    override val capabilities: Iterable<String>
-        get() = emptyList()
 }
