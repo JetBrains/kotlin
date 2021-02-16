@@ -64,23 +64,17 @@ internal inline fun FunctionCollector(
 }
 
 // collects member scopes for every non-empty package provided by this module
-internal fun ModuleDescriptor.collectNonEmptyPackageMemberScopes(
-    probeRootPackageForEmptiness: Boolean = false, // false is the default as probing might be expensive and is not always necessary
-    collector: (CirPackageName, MemberScope) -> Unit
-) {
+internal fun ModuleDescriptor.collectNonEmptyPackageMemberScopes(collector: (CirPackageName, MemberScope) -> Unit) {
     // we don's need to process fragments from other modules which are the dependencies of this module, so
     // let's use the appropriate package fragment provider
     val packageFragmentProvider = this.packageFragmentProvider
 
     fun recurse(packageFqName: FqName) {
-        val probeForEmptiness = probeRootPackageForEmptiness && packageFqName.isRoot
-
         val ownPackageMemberScopes = packageFragmentProvider.packageFragments(packageFqName)
             .asSequence()
             .filter { it !is ExportedForwardDeclarationsPackageFragmentDescriptor && it !is ClassifierAliasingPackageFragmentDescriptor }
             .map { it.getMemberScope() }
             .filter { it != MemberScope.Empty }
-            .filter { !probeForEmptiness || it.getContributedDescriptors().isNotEmpty() }
             .toList()
 
         if (ownPackageMemberScopes.isNotEmpty()) {
