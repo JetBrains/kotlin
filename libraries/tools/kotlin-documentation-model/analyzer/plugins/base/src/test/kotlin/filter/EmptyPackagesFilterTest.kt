@@ -27,7 +27,7 @@ class EmptyPackagesFilterTest : BaseAbstractTest() {
         """.trimMargin(),
             configuration
         ) {
-            documentablesFirstTransformationStep = {
+            preMergeDocumentablesTransformationStage = {
                 Assertions.assertTrue(
                     it.first().packages.isNotEmpty()
                 )
@@ -56,7 +56,7 @@ class EmptyPackagesFilterTest : BaseAbstractTest() {
         """.trimMargin(),
             configuration
         ) {
-            documentablesFirstTransformationStep = { modules ->
+            preMergeDocumentablesTransformationStage = { modules ->
                 modules.forEach { module ->
                     assertEquals(listOf("example"), module.packages.map { it.name })
                 }
