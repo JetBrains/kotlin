@@ -63,11 +63,11 @@ class CirTreeMerger(
     private fun processRoot(): CirTreeMergeResult {
         val rootNode: CirRootNode = buildRootNode(storageManager, size)
 
-        // remember any exported forward declarations from common fragments of dependee modules
-        parameters.dependeeModulesProvider?.loadModuleInfos()?.forEach(::processCInteropModuleAttributes)
+        // remember any exported forward declarations from common fragments of dependency modules
+        parameters.dependencyModulesProvider?.loadModuleInfos()?.forEach(::processCInteropModuleAttributes)
 
         // load common dependencies
-        val dependeeModules = parameters.dependeeModulesProvider?.loadModules(emptyList())?.values.orEmpty()
+        val dependencyModules = parameters.dependencyModulesProvider?.loadModules(emptyList())?.values.orEmpty()
 
         val allModuleInfos: List<Map<String, ModuleInfo>> = parameters.targetProviders.map { targetProvider ->
             targetProvider.modulesProvider.loadModuleInfos().associateBy { it.name }
@@ -76,7 +76,7 @@ class CirTreeMerger(
 
         parameters.targetProviders.forEachIndexed { targetIndex, targetProvider ->
             val commonModuleInfos = allModuleInfos[targetIndex].filterKeys { it in commonModuleNames }
-            processTarget(rootNode, targetIndex, targetProvider, commonModuleInfos, dependeeModules)
+            processTarget(rootNode, targetIndex, targetProvider, commonModuleInfos, dependencyModules)
             parameters.progressLogger?.invoke("Loaded declarations for ${targetProvider.target.prettyName}")
             System.gc()
         }
@@ -98,14 +98,14 @@ class CirTreeMerger(
         targetIndex: Int,
         targetProvider: TargetProvider,
         commonModuleInfos: Map<String, ModuleInfo>,
-        dependeeModules: Collection<ModuleDescriptor>
+        dependencyModules: Collection<ModuleDescriptor>
     ) {
         rootNode.targetDeclarations[targetIndex] = CirRootFactory.create(targetProvider.target)
 
-        val targetDependeeModules = targetProvider.dependeeModulesProvider?.loadModules(dependeeModules)?.values.orEmpty()
-        val allDependeeModules = targetDependeeModules + dependeeModules
+        val targetDependencyModules = targetProvider.dependencyModulesProvider?.loadModules(dependencyModules)?.values.orEmpty()
+        val allDependencyModules = targetDependencyModules + dependencyModules
 
-        val moduleDescriptors: Map<String, ModuleDescriptor> = targetProvider.modulesProvider.loadModules(allDependeeModules)
+        val moduleDescriptors: Map<String, ModuleDescriptor> = targetProvider.modulesProvider.loadModules(allDependencyModules)
 
         moduleDescriptors.forEach { (name, moduleDescriptor) ->
             val moduleInfo = commonModuleInfos[name] ?: return@forEach

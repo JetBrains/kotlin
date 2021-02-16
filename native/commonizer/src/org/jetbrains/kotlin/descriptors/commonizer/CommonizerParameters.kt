@@ -17,7 +17,7 @@ class CommonizerParameters(
     val sharedTarget: SharedTarget get() = SharedTarget(_targetProviders.keys)
 
     // common module dependencies (ex: Kotlin stdlib)
-    var dependeeModulesProvider: ModulesProvider? = null
+    var dependencyModulesProvider: ModulesProvider? = null
         set(value) {
             check(field == null)
             field = value

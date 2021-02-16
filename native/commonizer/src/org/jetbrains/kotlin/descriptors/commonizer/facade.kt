@@ -41,10 +41,10 @@ private fun mergeAndCommonize(storageManager: StorageManager, parameters: Common
     val classifiers = CirKnownClassifiers(
         commonized = CirCommonizedClassifiers.default(),
         forwardDeclarations = CirForwardDeclarations.default(),
-        dependeeLibraries = mapOf(
-            // for now, supply only common dependee libraries (ex: Kotlin stdlib)
+        dependencies = mapOf(
+            // for now, supply only common dependency libraries (ex: Kotlin stdlib)
             parameters.sharedTarget to CirProvidedClassifiers.fromModules(storageManager) {
-                parameters.dependeeModulesProvider?.loadModules(emptyList())?.values.orEmpty()
+                parameters.dependencyModulesProvider?.loadModules(emptyList())?.values.orEmpty()
             }
         )
     )

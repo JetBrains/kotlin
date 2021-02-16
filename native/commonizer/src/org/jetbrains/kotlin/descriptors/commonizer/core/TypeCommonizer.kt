@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeFactory
 import org.jetbrains.kotlin.descriptors.commonizer.core.CommonizedTypeAliasAnswer.Companion.FAILURE_MISSING_IN_SOME_TARGET
-import org.jetbrains.kotlin.descriptors.commonizer.core.CommonizedTypeAliasAnswer.Companion.SUCCESS_FROM_DEPENDEE_LIBRARY
+import org.jetbrains.kotlin.descriptors.commonizer.core.CommonizedTypeAliasAnswer.Companion.SUCCESS_FROM_DEPENDENCY_LIBRARY
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirKnownClassifiers
 import org.jetbrains.kotlin.descriptors.commonizer.utils.isUnderKotlinNativeSyntheticPackages
 
@@ -192,8 +192,8 @@ private class FlexibleTypeCommonizer(classifiers: CirKnownClassifiers) : Abstrac
 }
 
 private fun commonizeClass(classId: CirEntityId, classifiers: CirKnownClassifiers): Boolean {
-    if (classifiers.commonDependeeLibraries.hasClassifier(classId)) {
-        // The class is from common fragment of dependee library (ex: stdlib). Already commonized.
+    if (classifiers.commonDependencies.hasClassifier(classId)) {
+        // The class is from common fragment of dependency library (ex: stdlib). Already commonized.
         return true
     } else if (classId.packageName.isUnderKotlinNativeSyntheticPackages) {
         // C/Obj-C forward declarations are:
@@ -219,9 +219,9 @@ private fun commonizeClass(classId: CirEntityId, classifiers: CirKnownClassifier
 }
 
 private fun commonizeTypeAlias(typeAliasId: CirEntityId, classifiers: CirKnownClassifiers): CommonizedTypeAliasAnswer {
-    if (classifiers.commonDependeeLibraries.hasClassifier(typeAliasId)) {
-        // The type alias is from common fragment of dependee library (ex: stdlib). Already commonized.
-        return SUCCESS_FROM_DEPENDEE_LIBRARY
+    if (classifiers.commonDependencies.hasClassifier(typeAliasId)) {
+        // The type alias is from common fragment of dependency library (ex: stdlib). Already commonized.
+        return SUCCESS_FROM_DEPENDENCY_LIBRARY
     }
 
     return when (val node = classifiers.commonized.typeAliasNode(typeAliasId)) {
@@ -238,7 +238,7 @@ private fun commonizeTypeAlias(typeAliasId: CirEntityId, classifiers: CirKnownCl
 
 private class CommonizedTypeAliasAnswer(val commonized: Boolean, val commonClassifier: CirClassifier?) {
     companion object {
-        val SUCCESS_FROM_DEPENDEE_LIBRARY = CommonizedTypeAliasAnswer(true, null)
+        val SUCCESS_FROM_DEPENDENCY_LIBRARY = CommonizedTypeAliasAnswer(true, null)
         val FAILURE_MISSING_IN_SOME_TARGET = CommonizedTypeAliasAnswer(false, null)
 
         fun create(commonClassifier: CirClassifier?) =

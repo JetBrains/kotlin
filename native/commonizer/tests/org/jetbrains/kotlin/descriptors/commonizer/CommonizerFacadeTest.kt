@@ -71,7 +71,7 @@ class CommonizerFacadeTest {
                         TargetProvider(
                             target = LeafTarget(targetName),
                             modulesProvider = MockModulesProvider.create(moduleNames),
-                            dependeeModulesProvider = null
+                            dependencyModulesProvider = null
                         )
                     )
                 }

@@ -35,7 +35,7 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
         classifiers = CirKnownClassifiers(
             commonized = CirCommonizedClassifiers.default(),
             forwardDeclarations = CirForwardDeclarations.default(),
-            dependeeLibraries = mapOf(
+            dependencies = mapOf(
                 FAKE_SHARED_TARGET to object : CirProvidedClassifiers {
                     override fun hasClassifier(classifierId: CirEntityId): Boolean = classifierId.packageName.isUnderStandardKotlinPackages
                 }

@@ -135,7 +135,7 @@ class NativeDistributionCommonizer(
                 copyEndorsedLibs = copyEndorsedLibs,
                 logProgress = ::logProgress
             )
-            dependeeModulesProvider = NativeDistributionModulesProvider.forStandardLibrary(storageManager, allLibraries.stdlib)
+            dependencyModulesProvider = NativeDistributionModulesProvider.forStandardLibrary(storageManager, allLibraries.stdlib)
 
             allLibraries.librariesByTargets.forEach { (target, librariesToCommonize) ->
                 if (librariesToCommonize.libraries.isEmpty()) return@forEach
@@ -146,7 +146,7 @@ class NativeDistributionCommonizer(
                     TargetProvider(
                         target = target,
                         modulesProvider = modulesProvider,
-                        dependeeModulesProvider = null // stdlib is already set as common dependency
+                        dependencyModulesProvider = null // stdlib is already set as common dependency
                     )
                 )
             }

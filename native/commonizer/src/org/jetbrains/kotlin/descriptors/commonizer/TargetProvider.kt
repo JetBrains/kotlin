@@ -12,7 +12,7 @@ import java.io.File
 class TargetProvider(
     val target: LeafTarget,
     val modulesProvider: ModulesProvider,
-    val dependeeModulesProvider: ModulesProvider?
+    val dependencyModulesProvider: ModulesProvider?
 )
 
 interface ModulesProvider {

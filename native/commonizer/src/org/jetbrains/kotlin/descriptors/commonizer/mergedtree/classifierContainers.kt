@@ -21,11 +21,11 @@ import org.jetbrains.kotlin.storage.getValue
 class CirKnownClassifiers(
     val commonized: CirCommonizedClassifiers,
     val forwardDeclarations: CirForwardDeclarations,
-    val dependeeLibraries: Map<CommonizerTarget, CirProvidedClassifiers>
+    val dependencies: Map<CommonizerTarget, CirProvidedClassifiers>
 ) {
     // a shortcut for fast access
-    val commonDependeeLibraries: CirProvidedClassifiers =
-        dependeeLibraries.filterKeys { it is SharedTarget }.values.singleOrNull() ?: CirProvidedClassifiers.EMPTY
+    val commonDependencies: CirProvidedClassifiers =
+        dependencies.filterKeys { it is SharedTarget }.values.singleOrNull() ?: CirProvidedClassifiers.EMPTY
 }
 
 interface CirCommonizedClassifiers {
