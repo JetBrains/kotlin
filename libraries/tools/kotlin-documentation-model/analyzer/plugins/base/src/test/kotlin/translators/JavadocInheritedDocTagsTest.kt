@@ -16,6 +16,7 @@ class JavadocInheritedDocTagsTest : BaseAbstractTest() {
         sourceSets {
             sourceSet {
                 sourceRoots = listOf("src/main/java")
+                includeNonPublic = true
             }
         }
     }

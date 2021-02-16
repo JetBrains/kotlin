@@ -81,7 +81,7 @@ class BaseTestBuilder : TestBuilder<BaseTestMethods>() {
     var pluginsSetupStage: (DokkaContext) -> Unit = {}
     var verificationStage: (() -> Unit) -> Unit = {}
     var documentablesCreationStage: (List<DModule>) -> Unit = {}
-    var documentablesFirstTransformationStep: (List<DModule>) -> Unit = {}
+    var preMergeDocumentablesTransformationStage: (List<DModule>) -> Unit = {}
     var documentablesMergingStage: (DModule) -> Unit = {}
     var documentablesTransformationStage: (DModule) -> Unit = {}
     var pagesGenerationStage: (RootPageNode) -> Unit = {}
@@ -92,7 +92,7 @@ class BaseTestBuilder : TestBuilder<BaseTestMethods>() {
         pluginsSetupStage,
         verificationStage,
         documentablesCreationStage,
-        documentablesFirstTransformationStep,
+        preMergeDocumentablesTransformationStage,
         documentablesMergingStage,
         documentablesTransformationStage,
         pagesGenerationStage,

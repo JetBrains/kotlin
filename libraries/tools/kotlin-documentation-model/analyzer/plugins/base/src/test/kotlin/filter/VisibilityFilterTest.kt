@@ -31,7 +31,7 @@ class VisibilityFilterTest : BaseAbstractTest() {
         """.trimMargin(),
             configuration
         ) {
-            documentablesFirstTransformationStep = {
+            preMergeDocumentablesTransformationStage = {
                 Assertions.assertTrue(
                     it.first().packages.first().functions.size == 1
                 )
@@ -62,7 +62,7 @@ class VisibilityFilterTest : BaseAbstractTest() {
         """.trimMargin(),
             configuration
         ) {
-            documentablesFirstTransformationStep = {
+            preMergeDocumentablesTransformationStage = {
                 Assertions.assertTrue(
                     it.first().packages.first().functions.size == 0
                 )
@@ -93,7 +93,7 @@ class VisibilityFilterTest : BaseAbstractTest() {
         """.trimMargin(),
             configuration
         ) {
-            documentablesFirstTransformationStep = {
+            preMergeDocumentablesTransformationStage = {
                 Assertions.assertTrue(
                     it.first().packages.first().functions.size == 1
                 )
@@ -133,7 +133,7 @@ class VisibilityFilterTest : BaseAbstractTest() {
         """.trimMargin(),
             configuration
         ) {
-            documentablesFirstTransformationStep = {
+            preMergeDocumentablesTransformationStage = {
                 Assertions.assertTrue(
                     it.first().packages.first().functions.size == 1
                 )
@@ -173,7 +173,7 @@ class VisibilityFilterTest : BaseAbstractTest() {
         """.trimMargin(),
             configuration
         ) {
-            documentablesFirstTransformationStep = {
+            preMergeDocumentablesTransformationStage = {
                 Assertions.assertTrue(
                     it.first().packages.first().functions.size == 0
                 )
@@ -201,7 +201,7 @@ class VisibilityFilterTest : BaseAbstractTest() {
         """.trimMargin(),
             configuration
         ) {
-            documentablesFirstTransformationStep = {
+            preMergeDocumentablesTransformationStage = {
                 assertEquals(0, it.first().packages.first().typealiases.size)
             }
         }

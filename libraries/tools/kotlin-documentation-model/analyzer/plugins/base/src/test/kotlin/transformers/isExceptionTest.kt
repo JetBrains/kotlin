@@ -105,7 +105,7 @@ class IsExceptionJavaTest: AbstractModelTest("/src/main/kotlin/java/Test.java", 
     fun `isException should work for java exceptions`(){
         inlineModelTest(
             """
-            |class ExampleException extends java.lang.Exception { }"""
+            |public class ExampleException extends java.lang.Exception { }"""
         ) {
             with((this / "java" / "ExampleException").cast<DClass>()) {
                 name equals "ExampleException"
@@ -118,7 +118,7 @@ class IsExceptionJavaTest: AbstractModelTest("/src/main/kotlin/java/Test.java", 
     fun `isException should work for RuntimeException`(){
         inlineModelTest(
             """
-            |class ExampleException extends java.lang.RuntimeException"""
+            |public class ExampleException extends java.lang.RuntimeException"""
         ) {
             with((this / "java" / "ExampleException").cast<DClass>()) {
                 name equals "ExampleException"
@@ -131,7 +131,7 @@ class IsExceptionJavaTest: AbstractModelTest("/src/main/kotlin/java/Test.java", 
     fun `isException should return false for a basic class`(){
         inlineModelTest(
             """
-            |class NotAnException extends Serializable"""
+            |public class NotAnException extends Serializable"""
         ) {
             with((this / "java" / "NotAnException").cast<DClass>()) {
                 name equals "NotAnException"

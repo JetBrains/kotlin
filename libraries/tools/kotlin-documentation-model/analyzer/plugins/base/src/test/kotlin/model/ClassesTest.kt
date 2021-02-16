@@ -10,6 +10,7 @@ import utils.AbstractModelTest
 import utils.assertNotNull
 import utils.name
 import utils.supers
+import org.jetbrains.dokka.links.TypeConstructor
 
 
 class ClassesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "classes") {
@@ -298,25 +299,12 @@ class ClassesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "class
                 |val Klass.Default.x: Int get() = 1
                 """
         ) {
-            with((this / "classes" / "Klass").cast<DClass>()) {
-                name equals "Klass"
-
-                with((this / "Default").cast<DObject>()) {
-                    name equals "Default"
-                    // TODO extensions
-                }
+            with((this / "classes").cast<DPackage>()) {
+                properties.single().name equals "x"
+                (properties.single().receiver?.dri?.callable?.receiver as? TypeConstructor)?.fullyQualifiedName equals "classes.Klass.Default"
             }
         }
     }
-
-//    @Test fun companionObjectExtension() {
-//        checkSourceExistsAndVerifyModel("testdata/classes/companionObjectExtension.kt", defaultModelConfig) { model ->
-//            val pkg = model.members.single()
-//            val cls = pkg.members.single { it.name == "Foo" }
-//            val extensions = cls.extensions.filter { it.kind == NodeKind.CompanionObjectProperty }
-//            assertEquals(1, extensions.size)
-//        }
-//    }
 
     @Test
     fun secondaryConstructor() {
@@ -426,7 +414,10 @@ class ClassesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "class
             """@Suppress("abc") class Foo() {}"""
         ) {
             with((this / "classes" / "Foo").cast<DClass>()) {
-                with(extra[Annotations]?.directAnnotations?.values?.firstOrNull()?.firstOrNull().assertNotNull("annotations")) {
+                with(
+                    extra[Annotations]?.directAnnotations?.values?.firstOrNull()?.firstOrNull()
+                        .assertNotNull("annotations")
+                ) {
                     dri.toString() equals "kotlin/Suppress///PointingToDeclaration/"
                     (params["names"].assertNotNull("param") as ArrayValue).value equals listOf(StringValue("abc"))
                 }
