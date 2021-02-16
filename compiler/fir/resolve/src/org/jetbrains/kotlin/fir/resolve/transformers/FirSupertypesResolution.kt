@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.extensions.supertypeGenerators
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeTypeParameterSupertype
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.LocalClassesNavigationInfo
 import org.jetbrains.kotlin.fir.scopes.FirCompositeScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
@@ -285,12 +286,13 @@ private class FirSupertypeResolverVisitor(
         return resolveSpecificClassLikeSupertypes(classLikeDeclaration) { transformer, scope ->
             supertypeRefs.mapTo(mutableListOf()) {
                 val superTypeRef = transformer.transformTypeRef(it, scope).single
+                val typeParameterType = superTypeRef.coneTypeSafe<ConeTypeParameterType>()
                 when {
-                    superTypeRef.coneTypeSafe<ConeTypeParameterType>() != null ->
-                        createErrorTypeRef(
-                            superTypeRef,
-                            "Type parameter cannot be a super-type: ${superTypeRef.coneTypeUnsafe<ConeTypeParameterType>().render()}"
-                        )
+                    typeParameterType != null ->
+                        buildErrorTypeRef {
+                            source = superTypeRef.source
+                            diagnostic = ConeTypeParameterSupertype(typeParameterType.lookupTag.typeParameterSymbol)
+                        }
                     superTypeRef !is FirResolvedTypeRef ->
                         createErrorTypeRef(superTypeRef, "Unresolved super-type: ${superTypeRef.render()}")
                     else ->

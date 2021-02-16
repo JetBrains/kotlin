@@ -47,6 +47,7 @@ fun ConeDiagnostic.toFirDiagnostic(source: FirSourceElement): FirDiagnostic<FirS
     is ConeStubDiagnostic -> null
     is ConeIntermediateDiagnostic -> null
     is ConeContractDescriptionError -> FirErrors.ERROR_IN_CONTRACT_DESCRIPTION.on(source, this.reason)
+    is ConeTypeParameterSupertype -> FirErrors.SUPERTYPE_NOT_A_CLASS_OR_INTERFACE.on(source, this.reason)
     else -> throw IllegalArgumentException("Unsupported diagnostic type: ${this.javaClass}")
 }
 

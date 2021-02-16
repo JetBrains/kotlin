@@ -24,7 +24,7 @@ FILE: typeParameterVsNested.kt
         public abstract val z: <ERROR TYPE REF: Wrong number of type arguments>
             public get(): <ERROR TYPE REF: Wrong number of type arguments>
 
-        public final class Some : <ERROR TYPE REF: Type parameter cannot be a super-type: T> {
+        public final class Some : <ERROR TYPE REF: Type parameter T cannot be a supertype> {
             public constructor(): R|test/My.Some| {
                 super<R|test/My.T<T>|>()
             }
@@ -32,7 +32,7 @@ FILE: typeParameterVsNested.kt
         }
 
     }
-    public abstract class Your<T : R|test/Some|> : <ERROR TYPE REF: Type parameter cannot be a super-type: T> {
+    public abstract class Your<T : R|test/Some|> : <ERROR TYPE REF: Type parameter T cannot be a supertype> {
         public constructor<T : R|test/Some|>(): R|test/Your<T>| {
             super<R|kotlin/Any|>()
         }

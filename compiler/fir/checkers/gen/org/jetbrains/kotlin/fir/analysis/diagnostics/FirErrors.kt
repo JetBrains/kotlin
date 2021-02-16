@@ -90,6 +90,7 @@ object FirErrors {
     val CLASS_IN_SUPERTYPE_FOR_ENUM by error0<FirSourceElement, PsiElement>()
     val SEALED_SUPERTYPE by error0<FirSourceElement, PsiElement>()
     val SEALED_SUPERTYPE_IN_LOCAL_CLASS by error0<FirSourceElement, PsiElement>()
+    val SUPERTYPE_NOT_A_CLASS_OR_INTERFACE by error1<FirSourceElement, KtElement, String>()
 
     // Constructor problems
     val CONSTRUCTOR_IN_OBJECT by error0<FirSourceElement, KtDeclaration>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)

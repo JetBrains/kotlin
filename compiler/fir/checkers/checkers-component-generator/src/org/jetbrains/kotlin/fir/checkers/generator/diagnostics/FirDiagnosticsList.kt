@@ -82,6 +82,9 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val CLASS_IN_SUPERTYPE_FOR_ENUM by error<FirSourceElement, PsiElement>()
         val SEALED_SUPERTYPE by error<FirSourceElement, PsiElement>()
         val SEALED_SUPERTYPE_IN_LOCAL_CLASS by error<FirSourceElement, PsiElement>()
+        val SUPERTYPE_NOT_A_CLASS_OR_INTERFACE by error<FirSourceElement, KtElement> {
+            parameter<String>("reason")
+        }
     }
 
     val CONSTRUCTOR_PROBLEMS by object : DiagnosticGroup("Constructor problems") {

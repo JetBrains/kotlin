@@ -146,6 +146,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SEALED_SUPERTYPE_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SUPERCLASS_NOT_ACCESSIBLE_FROM_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SUPERTYPE_INITIALIZED_IN_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SUPERTYPE_INITIALIZED_WITHOUT_PRIMARY_CONSTRUCTOR
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SUPERTYPE_NOT_A_CLASS_OR_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SUPER_IS_NOT_AN_EXPRESSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SUPER_NOT_AVAILABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SYNTAX
@@ -242,6 +243,8 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
             map.put(CLASS_IN_SUPERTYPE_FOR_ENUM, "Enum class cannot inherit from classes")
             map.put(SEALED_SUPERTYPE, "This type is sealed, so it can be inherited by only its own nested classes or objects")
             map.put(SEALED_SUPERTYPE_IN_LOCAL_CLASS, "Local class cannot extend a sealed class")
+            map.put(SUPERTYPE_NOT_A_CLASS_OR_INTERFACE, "Supertype is not a class or interface", TO_STRING)
+
 
             // Constructor problems
             map.put(CONSTRUCTOR_IN_OBJECT, "Constructors are not allowed for objects")
