@@ -283,6 +283,19 @@ public class AtomicReference<T> {
     public override fun toString(): String =
             "${debugString(this)} -> ${debugString(value)}"
 
+    // TODO: Consider making this public.
+    internal fun swap(new: T): T {
+        while (true) {
+            val old = value
+            if (old === new) {
+                return old
+            }
+            if (compareAndSet(old, new)) {
+                return old
+            }
+        }
+    }
+
     // Implementation details.
     @SymbolName("Kotlin_AtomicReference_set")
     private external fun setImpl(new: Any?): Unit

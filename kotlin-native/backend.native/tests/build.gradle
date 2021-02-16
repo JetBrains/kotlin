@@ -2531,10 +2531,18 @@ standaloneTest("kt-37572") {
 }
 
 standaloneTest("custom_hook") {
-    enabled = (project.testTarget != 'wasm32') // Uses exceptions.
+    enabled = (project.testTarget != 'wasm32') && // Uses exceptions.
+        !isExperimentalMM  // Experimental MM does not support freezing yet.
     goldValue = "value 42: Error\n"
     expectedExitStatus = 1
     source = "runtime/exceptions/custom_hook.kt"
+}
+
+standaloneTest("exception_in_global_init") {
+    enabled = (project.testTarget != 'wasm32') // Uses exceptions.
+    source = "runtime/exceptions/exception_in_global_init.kt"
+    expectedExitStatusChecker = { it != 0 }
+    outputChecker = { s -> s.contains("Uncaught Kotlin exception: kotlin.IllegalStateException: FAIL") && !s.contains("in kotlin main") }
 }
 
 standaloneTest("runtime_math_exceptions") {

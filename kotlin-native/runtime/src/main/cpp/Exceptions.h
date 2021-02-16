@@ -28,11 +28,10 @@ OBJ_GETTER0(Kotlin_getCurrentStackTrace);
 
 OBJ_GETTER(GetStackTraceStrings, KConstRef stackTrace);
 
-OBJ_GETTER(Kotlin_setUnhandledExceptionHook, KRef hook);
-
 // Throws arbitrary exception.
 void ThrowException(KRef exception);
 
+// RuntimeUtils.kt
 void OnUnhandledException(KRef throwable);
 
 RUNTIME_NORETURN void TerminateWithUnhandledException(KRef exception);
