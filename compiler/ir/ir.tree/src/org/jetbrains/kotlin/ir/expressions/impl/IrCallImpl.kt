@@ -54,7 +54,7 @@ class IrCallImpl(
             type: IrType,
             symbol: IrSimpleFunctionSymbol,
             typeArgumentsCount: Int = symbol.descriptor.typeParametersCount,
-            valueArgumentsCount: Int = symbol.descriptor.valueParameters.size,
+            valueArgumentsCount: Int = symbol.descriptor.valueParameters.size + symbol.descriptor.contextReceiverParameters.size,
             origin: IrStatementOrigin? = null,
             superQualifierSymbol: IrClassSymbol? = null,
         ) =

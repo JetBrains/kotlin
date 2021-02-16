@@ -40,7 +40,7 @@ abstract class PropertyLValueBase(
     val superQualifier: IrClassSymbol?
 ) : LValue, AssignmentReceiver {
     override fun assign(withLValue: (LValue) -> IrExpression) =
-        callReceiver.call { dispatchReceiverValue, extensionReceiverValue ->
+        callReceiver.call { dispatchReceiverValue, extensionReceiverValue, _ ->
             val dispatchReceiverVariable2 = dispatchReceiverValue?.let {
                 scope.createTemporaryVariable(dispatchReceiverValue.load(), "this")
             }
@@ -81,7 +81,8 @@ class FieldPropertyLValue(
     PropertyLValueBase(context, scope, startOffset, endOffset, origin, type, callReceiver, superQualifier) {
 
     override fun load(): IrExpression =
-        callReceiver.call { dispatchReceiverValue, extensionReceiverValue ->
+        // TODO: Use context receiver values
+        callReceiver.call { dispatchReceiverValue, extensionReceiverValue, _ ->
             assert(extensionReceiverValue == null) { "Field can't have an extension receiver: ${field.descriptor}" }
             IrGetFieldImpl(
                 startOffset, endOffset,
@@ -94,7 +95,8 @@ class FieldPropertyLValue(
         }
 
     override fun store(irExpression: IrExpression) =
-        callReceiver.call { dispatchReceiverValue, extensionReceiverValue ->
+        // TODO: Use context receiver values
+        callReceiver.call { dispatchReceiverValue, extensionReceiverValue, _ ->
             assert(extensionReceiverValue == null) { "Field can't have an extension receiver: ${field.descriptor}" }
             IrSetFieldImpl(
                 startOffset, endOffset,
@@ -114,7 +116,7 @@ class FieldPropertyLValue(
             field,
             descriptor,
             type,
-            SimpleCallReceiver(dispatchReceiver, extensionReceiver),
+            SimpleCallReceiver(dispatchReceiver, extensionReceiver, emptyList()),
             superQualifier
         )
 }
@@ -144,7 +146,8 @@ class AccessorPropertyLValue(
     }
 
     override fun load(): IrExpression =
-        callReceiver.adjustForCallee(getterDescriptor!!).call { dispatchReceiverValue, extensionReceiverValue ->
+        // TODO: Use context receiver values
+        callReceiver.adjustForCallee(getterDescriptor!!).call { dispatchReceiverValue, extensionReceiverValue, _ ->
             IrCallImpl(
                 startOffset, endOffset,
                 type,
@@ -161,7 +164,8 @@ class AccessorPropertyLValue(
         }
 
     override fun store(irExpression: IrExpression) =
-        callReceiver.adjustForCallee(setterDescriptor!!).call { dispatchReceiverValue, extensionReceiverValue ->
+        // TODO: Use context receiver values
+        callReceiver.adjustForCallee(setterDescriptor!!).call { dispatchReceiverValue, extensionReceiverValue, _ ->
             IrCallImpl(
                 startOffset, endOffset,
                 context.irBuiltIns.unitType,
@@ -184,7 +188,7 @@ class AccessorPropertyLValue(
             startOffset, endOffset, origin,
             type, getter, getterDescriptor, setter, setterDescriptor,
             typeArguments,
-            SimpleCallReceiver(dispatchReceiver, extensionReceiver),
+            SimpleCallReceiver(dispatchReceiver, extensionReceiver, emptyList()),
             superQualifier
         )
 }

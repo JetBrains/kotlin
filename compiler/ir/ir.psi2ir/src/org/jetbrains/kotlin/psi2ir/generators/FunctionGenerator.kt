@@ -50,6 +50,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         declareSimpleFunction(
             ktFunction,
             ktFunction.receiverTypeReference,
+            ktFunction.contextReceiverTypeReferences,
             origin,
             getOrFail(BindingContext.FUNCTION, ktFunction)
         ) {
@@ -60,6 +61,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         declareSimpleFunction(
             ktFunction,
             null,
+            emptyList(),
             IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA,
             getOrFail(BindingContext.FUNCTION, ktFunction)
         ) {
@@ -71,19 +73,20 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
             ?.let {
                 declareSimpleFunctionInner(it, ktElement, IrDeclarationOrigin.FAKE_OVERRIDE)
                     .buildWithScope { irFunction ->
-                        generateFunctionParameterDeclarationsAndReturnType(irFunction, ktElement, null)
+                        generateFunctionParameterDeclarationsAndReturnType(irFunction, ktElement, null, emptyList())
                     }
             }
 
     private inline fun declareSimpleFunction(
         ktFunction: KtFunction,
         ktReceiver: KtElement?,
+        ktContextReceivers: List<KtElement>,
         origin: IrDeclarationOrigin,
         descriptor: FunctionDescriptor,
         generateBody: BodyGenerator.() -> IrBody?
     ): IrSimpleFunction =
         declareSimpleFunctionInner(descriptor, ktFunction, origin).buildWithScope { irFunction ->
-            generateFunctionParameterDeclarationsAndReturnType(irFunction, ktFunction, ktReceiver)
+            generateFunctionParameterDeclarationsAndReturnType(irFunction, ktFunction, ktReceiver, ktContextReceivers)
             irFunction.body = createBodyGenerator(irFunction.symbol).generateBody()
         }
 
@@ -102,11 +105,12 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
     fun generateFunctionParameterDeclarationsAndReturnType(
         irFunction: IrFunction,
         ktParameterOwner: KtPureElement?,
-        ktReceiverParameterElement: KtElement?
+        ktReceiverParameterElement: KtElement?,
+        ktContextReceiverParametersElements: List<KtElement>
     ) {
         declarationGenerator.generateScopedTypeParameterDeclarations(irFunction, irFunction.descriptor.propertyIfAccessor.typeParameters)
         irFunction.returnType = irFunction.descriptor.returnType!!.toIrType()
-        generateValueParameterDeclarations(irFunction, ktParameterOwner, ktReceiverParameterElement)
+        generateValueParameterDeclarations(irFunction, ktParameterOwner, ktReceiverParameterElement, ktContextReceiverParametersElements)
     }
 
     fun generatePropertyAccessor(
@@ -121,7 +125,10 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         ).buildWithScope { irAccessor ->
             declarationGenerator.generateScopedTypeParameterDeclarations(irAccessor, descriptor.correspondingProperty.typeParameters)
             irAccessor.returnType = irAccessor.descriptor.returnType!!.toIrType()
-            generateValueParameterDeclarations(irAccessor, ktAccessor ?: ktProperty, ktProperty.receiverTypeReference)
+            generateValueParameterDeclarations(
+                irAccessor, ktAccessor ?: ktProperty, ktProperty.receiverTypeReference,
+                ktProperty.contextReceiverTypeReferences
+            )
             val ktBodyExpression = ktAccessor?.bodyExpression
             irAccessor.body =
                 if (ktBodyExpression != null)
@@ -272,7 +279,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
                 metadata = DescriptorMetadataSource.Function(it.descriptor)
             }
         }.buildWithScope { irConstructor ->
-            generateValueParameterDeclarations(irConstructor, ktParametersElement, null)
+            generateValueParameterDeclarations(irConstructor, ktParametersElement, null, emptyList())
             irConstructor.body = createBodyGenerator(irConstructor.symbol).generateBody()
             irConstructor.returnType = constructorDescriptor.returnType.toIrType()
         }
@@ -286,13 +293,14 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
             else
                 descriptor.typeParameters
         declarationGenerator.generateScopedTypeParameterDeclarations(irFunction, typeParameters)
-        generateValueParameterDeclarations(irFunction, null, null, withDefaultValues = false)
+        generateValueParameterDeclarations(irFunction, null, null, emptyList(), withDefaultValues = false)
     }
 
     private fun generateValueParameterDeclarations(
         irFunction: IrFunction,
         ktParameterOwner: KtPureElement?,
         ktReceiverParameterElement: KtPureElement?,
+        ktContextReceiverParameterElements: List<KtPureElement>,
         withDefaultValues: Boolean = true
     ) {
         val functionDescriptor = irFunction.descriptor
@@ -307,10 +315,16 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
 
         val bodyGenerator = createBodyGenerator(irFunction.symbol)
 
+        val contextReceiversNumber = ktContextReceiverParameterElements.size
+        assert(functionDescriptor.contextReceiverParameters.size == contextReceiversNumber)
+        irFunction.valueParameters += functionDescriptor.contextReceiverParameters.mapIndexed { i, additionalReceiver ->
+            declareParameter(additionalReceiver, ktContextReceiverParameterElements[i], irFunction, null, i)
+        }
+
         // Declare all the value parameters up first.
-        irFunction.valueParameters += functionDescriptor.valueParameters.map { valueParameterDescriptor ->
+        irFunction.valueParameters += functionDescriptor.valueParameters.mapIndexed { i, valueParameterDescriptor ->
             val ktParameter = DescriptorToSourceUtils.getSourceFromDescriptor(valueParameterDescriptor) as? KtParameter
-            declareParameter(valueParameterDescriptor, ktParameter, irFunction)
+            declareParameter(valueParameterDescriptor, ktParameter, irFunction, null, i + contextReceiversNumber)
         }
         // Only after value parameters have been declared, generate default values. This ensures
         // that forward references to other parameters works in default value lambdas. For example:
@@ -318,7 +332,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         // fun f(f1: () -> String = { f2() },
         //       f2: () -> String) = f1()
         if (withDefaultValues) {
-            irFunction.valueParameters.forEachIndexed { index, irValueParameter ->
+            irFunction.valueParameters.drop(contextReceiversNumber).forEachIndexed { index, irValueParameter ->
                 val valueParameterDescriptor = functionDescriptor.valueParameters[index]
                 val ktParameter = DescriptorToSourceUtils.getSourceFromDescriptor(valueParameterDescriptor) as? KtParameter
                 irValueParameter.defaultValue = ktParameter?.defaultValue?.let { defaultValue ->
@@ -376,7 +390,8 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         descriptor: ParameterDescriptor,
         ktElement: KtPureElement?,
         irOwnerElement: IrElement,
-        name: Name? = null
+        name: Name? = null,
+        index: Int? = null
     ): IrValueParameter {
         var origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED
         if (ktElement is KtParameter) {
@@ -392,7 +407,8 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
             origin,
             descriptor, descriptor.type.toIrType(),
             (descriptor as? ValueParameterDescriptor)?.varargElementType?.toIrType(),
-            name
+            name,
+            index
         )
     }
 

@@ -13192,6 +13192,19 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         public void testWhenFail() throws Exception {
             runTest("compiler/testData/codegen/box/extensionFunctions/whenFail.kt");
         }
+
+        @TestMetadata("compiler/testData/codegen/box/extensionFunctions/contextReceivers")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ContextReceivers extends AbstractLightAnalysisModeTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInContextReceivers() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/extensionFunctions/contextReceivers"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+            }
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/extensionProperties")
