@@ -6,6 +6,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.Assume
+import org.junit.Ignore
 import org.junit.Test
 import java.io.File
 import kotlin.test.assertEquals
@@ -23,6 +24,7 @@ open class KotlinAndroid36GradleIT : KotlinAndroid33GradleIT() {
     override val defaultGradleVersion: GradleVersionRequired
         get() = GradleVersionRequired.AtLeast("6.0")
 
+    @Ignore
     @Test
     fun testAndroidMppSourceSets(): Unit = with(
         Project("new-mpp-android-source-sets")
