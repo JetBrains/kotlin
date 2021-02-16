@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.descriptors.commonizer.mergedtree
 
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroup
+import org.jetbrains.kotlin.descriptors.commonizer.utils.firstNonNull
 import org.jetbrains.kotlin.storage.NullableLazyValue
 
 interface CirNode<T : CirDeclaration, R : CirDeclaration> {
@@ -26,8 +27,8 @@ interface CirNode<T : CirDeclaration, R : CirDeclaration> {
             if (node is CirPackageNode) {
                 append("packageName=").append(node.packageName).append(", ")
             }
-            if (node is CirNodeWithClassifierId) {
-                append("classifierId=").append(node.classifierId).append(", ")
+            if (node is CirClassifierNode) {
+                append("classifierName=").append(node.classifierName).append(", ")
             }
             append("target=")
             node.targetDeclarations.joinTo(this)
@@ -37,8 +38,9 @@ interface CirNode<T : CirDeclaration, R : CirDeclaration> {
     }
 }
 
-interface CirNodeWithClassifierId<T : CirClassifier, R : CirClassifier> : CirNode<T, R> {
-    val classifierId: CirEntityId
+interface CirClassifierNode<T : CirClassifier, R : CirClassifier> : CirNode<T, R> {
+    val classifierName: CirName
+        get() = targetDeclarations.firstNonNull<CirClassifier>().name
 }
 
 interface CirNodeWithLiftingUp<T : CirDeclaration, R : CirDeclaration> : CirNode<T, R> {

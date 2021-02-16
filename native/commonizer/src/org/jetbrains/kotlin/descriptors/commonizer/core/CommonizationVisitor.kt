@@ -85,9 +85,8 @@ internal class CommonizationVisitor(
             // companion object should have the same name for each target class, then it could be set to common class
             val companionObjectName = node.targetDeclarations.mapTo(HashSet()) { it!!.companion }.singleOrNull()
             if (companionObjectName != null) {
-                val companionObjectClassId = node.classifierId.createNestedEntityId(companionObjectName)
-                val companionObjectNode = classifiers.commonized.classNode(companionObjectClassId)
-                    ?: error("Can't find companion object with class ID $companionObjectClassId")
+                val companionObjectNode = node.classes[companionObjectName]
+                    ?: error("Can't find node for companion object $companionObjectName in node for class ${node.classifierName}")
 
                 if (companionObjectNode.commonDeclaration() != null) {
                     // companion object has been successfully commonized
@@ -132,7 +131,7 @@ internal class CommonizationVisitor(
 
             val expandedClassNode = classifiers.commonized.classNode(expandedClassId) ?: return null
             val expandedClass = expandedClassNode.targetDeclarations[index]
-                ?: error("Can't find expanded class with class ID $expandedClassId and index $index for type alias $classifierId")
+                ?: error("Can't find expanded class with class ID $expandedClassId and index $index for type alias $classifierName")
 
             for (supertype in expandedClass.supertypes) {
                 supertypesMap.getOrPut(supertype) { CommonizedGroup(targetDeclarations.size) }[index] = supertype
