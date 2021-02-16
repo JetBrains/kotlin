@@ -75,7 +75,7 @@ fun makeIncrementally(
             cachesDir,
             buildReporter,
             // Use precise setting in case of non-Gradle build
-            usePreciseJavaTracking = true,
+            usePreciseJavaTracking = !args.useFir, // TODO: add fir-based java classes tracker when available and set this to true
             outputFiles = emptyList(),
             buildHistoryFile = buildHistoryFile,
             modulesApiHistory = EmptyModulesApiHistory,
