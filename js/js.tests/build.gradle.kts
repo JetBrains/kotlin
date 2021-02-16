@@ -10,7 +10,16 @@ plugins {
     id("jps-compatible")
     id("com.github.node-gradle.node") version "3.0.1"
     id("de.undercouch.download")
-    id("com.gradle.enterprise.test-distribution")
+    id("com.gradle.enterprise.test-distribution") apply false
+}
+
+val isTeamcityBuild = project.kotlinBuildProperties.isTeamcityBuild
+val testDistributionEnabled = project.providers.gradleProperty("kotlin.build.test.distribution.enabled")
+    .forUseAtConfigurationTime().orNull?.toBoolean()
+    ?: isTeamcityBuild
+
+if (testDistributionEnabled) {
+    apply<com.gradle.enterprise.gradleplugin.testdistribution.TestDistributionPlugin>()
 }
 
 node {
