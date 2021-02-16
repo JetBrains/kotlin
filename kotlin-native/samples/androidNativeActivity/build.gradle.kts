@@ -64,6 +64,8 @@ kotlin {
         }
     }
 
+    android()
+
     sourceSets {
         val x86Main by getting
         if (!simulatorOnly) {
