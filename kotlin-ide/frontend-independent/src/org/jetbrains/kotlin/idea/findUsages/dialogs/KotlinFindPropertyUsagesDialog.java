@@ -27,7 +27,7 @@ import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.SimpleColoredComponent;
 import com.intellij.ui.StateRestoringCheckBox;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.KotlinBundleIndependent;
+import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.findUsages.KotlinPropertyFindUsagesOptions;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
@@ -85,13 +85,13 @@ public class KotlinFindPropertyUsagesDialog extends JavaFindUsagesDialog<KotlinP
         KotlinPropertyFindUsagesOptions options = getFindUsagesOptions();
 
         readAccesses = addCheckboxToPanel(
-                KotlinBundleIndependent.message("find.declaration.property.readers.checkbox"),
+                KotlinBundle.message("find.declaration.property.readers.checkbox"),
                 options.isReadAccess,
                 findWhatPanel,
                 true
         );
         writeAccesses = addCheckboxToPanel(
-                KotlinBundleIndependent.message("find.declaration.property.writers.checkbox"),
+                KotlinBundle.message("find.declaration.property.writers.checkbox"),
                 options.isWriteAccess,
                 findWhatPanel,
                 true
@@ -116,8 +116,8 @@ public class KotlinFindPropertyUsagesDialog extends JavaFindUsagesDialog<KotlinP
         if (isOpen || isAbstract) {
             overrideUsages = addCheckboxToPanel(
                     isAbstract
-                    ? KotlinBundleIndependent.message("find.declaration.implementing.properties.checkbox")
-                    : KotlinBundleIndependent.message("find.declaration.overriding.properties.checkbox"),
+                    ? KotlinBundle.message("find.declaration.implementing.properties.checkbox")
+                    : KotlinBundle.message("find.declaration.overriding.properties.checkbox"),
                     FindSettings.getInstance().isSearchOverloadedMethods(),
                     optionsPanel,
                     false
@@ -127,7 +127,7 @@ public class KotlinFindPropertyUsagesDialog extends JavaFindUsagesDialog<KotlinP
         KotlinPropertyFindUsagesOptions options = getFindUsagesOptions();
         if (isActual) {
             expectedUsages = addCheckboxToPanel(
-                    KotlinBundleIndependent.message("find.usages.checkbox.name.expected.properties"),
+                    KotlinBundle.message("find.usages.checkbox.name.expected.properties"),
                     options.getSearchExpected(),
                     optionsPanel,
                     false
@@ -136,8 +136,8 @@ public class KotlinFindPropertyUsagesDialog extends JavaFindUsagesDialog<KotlinP
 
         if (isDataClassConstructorProperty(property)) {
             JCheckBox dataClassComponentCheckBox =
-                    new JCheckBox(KotlinBundleIndependent.message("find.usages.checkbox.text.fast.data.class.component.search"));
-            dataClassComponentCheckBox.setToolTipText(KotlinBundleIndependent.message(
+                    new JCheckBox(KotlinBundle.message("find.usages.checkbox.text.fast.data.class.component.search"));
+            dataClassComponentCheckBox.setToolTipText(KotlinBundle.message(
                     "find.usages.tool.tip.text.disable.search.for.data.class.components.and.destruction.declarations.project.wide.setting"));
             Project project = property.getProject();
             dataClassComponentCheckBox.setSelected(getDisableComponentAndDestructionSearch(project));

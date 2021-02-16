@@ -11,7 +11,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.idea.KotlinBundleIndependent
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -28,15 +28,15 @@ class RemoveModifierFix(
         val modifierText = modifier.value
         when {
             isRedundant ->
-                KotlinBundleIndependent.message("remove.redundant.0.modifier", modifierText)
+                KotlinBundle.message("remove.redundant.0.modifier", modifierText)
             modifier === KtTokens.ABSTRACT_KEYWORD || modifier === KtTokens.OPEN_KEYWORD ->
-                KotlinBundleIndependent.message("make.0.not.1", getElementName(element), modifierText)
+                KotlinBundle.message("make.0.not.1", getElementName(element), modifierText)
             else ->
-                KotlinBundleIndependent.message("remove.0.modifier", modifierText, modifier)
+                KotlinBundle.message("remove.0.modifier", modifierText, modifier)
         }
     }
 
-    override fun getFamilyName() = KotlinBundleIndependent.message("remove.modifier")
+    override fun getFamilyName() = KotlinBundle.message("remove.modifier")
 
     override fun getText() = text
 
