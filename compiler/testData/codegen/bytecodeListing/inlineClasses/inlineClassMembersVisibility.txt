@@ -13,16 +13,22 @@ public final class Z {
     public static method equals-impl(p0: int, p1: java.lang.Object): boolean
     public final static method equals-impl0(p0: int, p1: int): boolean
     public final static method getInternalExtensionVal-impl$test_module(p0: int, @org.jetbrains.annotations.NotNull p1: java.lang.String): int
+    public synthetic deprecated static method getInternalExtensionVar$test_module$annotations(p0: java.lang.String): void
     public final static method getInternalExtensionVar-impl$test_module(p0: int, @org.jetbrains.annotations.NotNull p1: java.lang.String): int
     public final static method getInternalVal-impl$test_module(p0: int): int
+    public synthetic deprecated static method getInternalVar$test_module$annotations(): void
     public final static method getInternalVar-impl$test_module(p0: int): int
     private final static method getPrivateExtensionVal-impl(p0: int, p1: java.lang.String): int
+    private synthetic deprecated static method getPrivateExtensionVar$annotations(p0: java.lang.String): void
     private final static method getPrivateExtensionVar-impl(p0: int, p1: java.lang.String): int
     private final static method getPrivateVal-impl(p0: int): int
+    private synthetic deprecated static method getPrivateVar$annotations(): void
     private final static method getPrivateVar-impl(p0: int): int
     public final static method getPublicExtensionVal-impl(p0: int, @org.jetbrains.annotations.NotNull p1: java.lang.String): int
+    public synthetic deprecated static method getPublicExtensionVar$annotations(p0: java.lang.String): void
     public final static method getPublicExtensionVar-impl(p0: int, @org.jetbrains.annotations.NotNull p1: java.lang.String): int
     public final static method getPublicVal-impl(p0: int): int
+    public synthetic deprecated static method getPublicVar$annotations(): void
     public final static method getPublicVar-impl(p0: int): int
     public final method getX(): int
     public method hashCode(): int

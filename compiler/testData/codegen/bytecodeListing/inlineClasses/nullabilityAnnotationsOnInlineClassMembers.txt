@@ -10,8 +10,10 @@ public final class Test {
     public static method equals-impl(p0: java.lang.String, p1: java.lang.Object): boolean
     public final static method equals-impl0(p0: java.lang.String, p1: java.lang.String): boolean
     public final static @org.jetbrains.annotations.NotNull method getMemberExtVal-impl(p0: java.lang.String, @org.jetbrains.annotations.NotNull p1: java.lang.String): java.lang.String
+    public synthetic deprecated static method getMemberExtVar$annotations(p0: java.lang.String): void
     public final static @org.jetbrains.annotations.NotNull method getMemberExtVar-impl(p0: java.lang.String, @org.jetbrains.annotations.NotNull p1: java.lang.String): java.lang.String
     public final static @org.jetbrains.annotations.NotNull method getMemberVal-impl(p0: java.lang.String): java.lang.String
+    public synthetic deprecated static method getMemberVar$annotations(): void
     public final static @org.jetbrains.annotations.NotNull method getMemberVar-impl(p0: java.lang.String): java.lang.String
     public final @org.jetbrains.annotations.NotNull method getS(): java.lang.String
     public method hashCode(): int
