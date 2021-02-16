@@ -511,6 +511,13 @@ OBJ_GETTER(Kotlin_ByteArray_unsafeStringFromUtf8, KConstRef thiz, KInt start, KI
   RETURN_RESULT_OF(utf8ToUtf16, rawString, size);
 }
 
+OBJ_GETTER(StringFromUtf8Buffer, const char* start, size_t size) {
+  if (size == 0) {
+    RETURN_RESULT_OF0(TheEmptyString);
+  }
+  RETURN_RESULT_OF(utf8ToUtf16, start, size);
+}
+
 OBJ_GETTER(Kotlin_String_unsafeStringToUtf8, KString thiz, KInt start, KInt size) {
   RETURN_RESULT_OF(unsafeUtf16ToUtf8Impl<utf8::with_replacement::utf16to8>, thiz, start, size);
 }

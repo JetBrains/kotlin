@@ -21,8 +21,21 @@ import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
 
-internal fun decodeFromUtf8(bytes: ByteArray) = String(bytes)
+private fun decodeFromUtf8(bytes: ByteArray) = String(bytes)
 internal fun encodeToUtf8(str: String) = str.toByteArray()
+
+internal fun CPointer<ByteVar>.toKStringFromUtf8Impl(): String {
+    val nativeBytes = this
+
+    var length = 0
+    while (nativeBytes[length] != 0.toByte()) {
+        ++length
+    }
+
+    val bytes = ByteArray(length)
+    nativeMemUtils.getByteArray(nativeBytes.pointed, bytes, length)
+    return decodeFromUtf8(bytes)
+}
 
 fun bitsToFloat(bits: Int): Float = java.lang.Float.intBitsToFloat(bits)
 fun bitsToDouble(bits: Long): Double = java.lang.Double.longBitsToDouble(bits)
