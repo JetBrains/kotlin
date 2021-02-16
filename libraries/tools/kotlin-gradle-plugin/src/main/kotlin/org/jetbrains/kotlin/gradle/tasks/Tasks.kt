@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.FileCollection
 import org.gradle.api.logging.Logger
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.compile.AbstractCompile
@@ -50,6 +51,7 @@ import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.jetbrains.kotlin.library.impl.isKotlinLibrary
 import org.jetbrains.kotlin.utils.JsLibraryUtils
 import java.io.File
+import java.util.zip.ZipFile
 import javax.inject.Inject
 
 const val KOTLIN_BUILD_DIR_NAME = "kotlin"
@@ -297,6 +299,15 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     @get:Input
     internal val moduleName: String by project.provider {
         taskData.compilation.moduleName
+    }
+
+    init {
+        if (taskData.compilation is AbstractKotlinCompilation<*> &&
+            (taskData.compilation as AbstractKotlinCompilation<*>).friendArtifactsTask != null) {
+            this@AbstractKotlinCompile.dependsOn(
+                (taskData.compilation as AbstractKotlinCompilation<*>).friendArtifactsTask
+            )
+        }
     }
 
     @get:Internal // takes part in the compiler arguments
@@ -627,8 +638,9 @@ internal open class KotlinCompileWithWorkers @Inject constructor(
 
 @CacheableTask
 internal open class Kotlin2JsCompileWithWorkers @Inject constructor(
+    objectFactory: ObjectFactory,
     private val workerExecutor: WorkerExecutor
-) : Kotlin2JsCompile() {
+) : Kotlin2JsCompile(objectFactory) {
 
     override fun compilerRunner() =
         GradleCompilerRunnerWithWorkers(
@@ -649,7 +661,9 @@ internal open class KotlinCompileCommonWithWorkers @Inject constructor(
 }
 
 @CacheableTask
-open class Kotlin2JsCompile : AbstractKotlinCompile<K2JSCompilerArguments>(), KotlinJsCompile {
+open class Kotlin2JsCompile @Inject constructor(
+    objectFactory: ObjectFactory
+) : AbstractKotlinCompile<K2JSCompilerArguments>(), KotlinJsCompile {
 
     init {
         incremental = true
@@ -712,6 +726,19 @@ open class Kotlin2JsCompile : AbstractKotlinCompile<K2JSCompilerArguments>(), Ko
     }
 
     override fun getSourceRoots() = SourceRoots.KotlinOnly.create(getSource(), sourceFilesExtensions)
+
+    @get:InputFiles
+    @get:Optional
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    internal val friendDependencies: FileCollection = objectFactory
+        .fileCollection()
+        .from(friendPaths)
+        .filter {
+            // .jar files are not required for js compilation as friend modules
+            // and, because of `@InputFiles` and different normalization strategy from `@Classpath`,
+            // they produce build cache misses
+            it.exists() && !it.name.endsWith(".jar") && libraryFilter(it)
+        }
 
     @Suppress("unused")
     @get:InputFiles
@@ -776,11 +803,7 @@ open class Kotlin2JsCompile : AbstractKotlinCompile<K2JSCompilerArguments>(), Ko
                 null
         }
 
-        val friendDependencies: List<String> = friendPaths.files.filter {
-            it.exists() && libraryFilter(it)
-        }.map { it.absolutePath }
-
-        args.friendModules = friendDependencies.joinToString(File.pathSeparator)
+        args.friendModules = friendDependencies.files.joinToString(File.pathSeparator) { it.absolutePath }
 
         if (args.sourceMapBaseDirs == null && !args.sourceMapPrefix.isNullOrEmpty()) {
             args.sourceMapBaseDirs = absolutePathProvider

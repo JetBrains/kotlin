@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import groovy.lang.Closure
-import org.gradle.api.GradleException
-import org.gradle.api.Project
-import org.gradle.api.Task
+import org.gradle.api.*
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.execution.TaskExecutionListener
 import org.gradle.api.file.FileCollection
@@ -193,20 +191,37 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
 
     override fun toString(): String = "compilation '$compilationName' ($target)"
 
+    internal val friendArtifactsTask: TaskProvider<AbstractArchiveTask>? by lazy {
+        if (associateWithTransitiveClosure.any { it.isMain() }) {
+            val archiveTasks = target.project.tasks.withType(AbstractArchiveTask::class.java)
+            if (!archiveTasks.isEmpty()) {
+                try {
+                    archiveTasks.named(target.artifactsTaskName)
+                } catch (e: UnknownTaskException) {
+                    // Native tasks does not extend AbstractArchiveTask
+                    null
+                }
+            } else {
+                null
+            }
+        } else {
+            null
+        }
+    }
+
     /**
      * If a compilation is aware of its associate compilations' outputs being added to the classpath in a transformed or packaged way,
      * it should point to those friend artifact files via this property.
      */
     internal open val friendArtifacts: FileCollection
         get() = with(target.project) {
-            if (associateWithTransitiveClosure.any { it.isMain() }) {
+            val friendArtifactsTaskProvider = friendArtifactsTask
+            if (friendArtifactsTaskProvider != null) {
                 // In case the main artifact is transitively added to the test classpath via a test dependency on another module
                 // that depends on this module's production part, include the main artifact in the friend artifacts, lazily:
                 files(
-                    provider {
-                        listOfNotNull(
-                            tasks.withType(AbstractArchiveTask::class.java).findByName(target.artifactsTaskName)?.archivePathCompatible
-                        )
+                    Callable {
+                        friendArtifactsTaskProvider.get().archivePathCompatible
                     }
                 )
             } else files()
