@@ -17,7 +17,9 @@
 package org.jetbrains.kotlin.psi2ir
 
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
@@ -28,6 +30,7 @@ import org.jetbrains.kotlin.ir.util.ConstantValueGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.util.noUnboundLeft
+import org.jetbrains.kotlin.psi.KtBlockCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
@@ -92,6 +95,35 @@ class Psi2IrTranslator(
 //        assert(context.symbolTable.allUnbound.isEmpty()) // TODO: fix IrPluginContext to make it not produce additional external reference
 
         // TODO: remove it once plugin API improved
+        moduleGenerator.generateUnboundSymbolsAsDependencies(irProviders)
+        deserializers.forEach { it.postProcess() }
+
+        return irModule
+    }
+
+    // TODO - De-duplicate this code from generateModuleFragment
+    fun generateEvaluatorModuleFragment(
+        context: GeneratorContext,
+        ktFile: KtBlockCodeFragment,
+        irProviders: List<IrProvider>,
+        linkerExtensions: Collection<IrDeserializer.IrLinkerExtension>,
+        expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>? = null,
+        fragmentClassDescriptor: ClassDescriptor,
+        fragmentMethodDescriptor: FunctionDescriptor
+    ): IrModuleFragment {
+        val moduleGenerator = ModuleGenerator(context, expectDescriptorToSymbol)
+        val irModule = moduleGenerator.generateEvaluatorModuleFragment(ktFile, fragmentClassDescriptor, fragmentMethodDescriptor)
+
+        val deserializers = irProviders.filterIsInstance<IrDeserializer>()
+        deserializers.forEach { it.init(irModule, linkerExtensions) }
+
+        moduleGenerator.generateUnboundSymbolsAsDependencies(irProviders)
+
+        deserializers.forEach { it.postProcess() }
+        context.symbolTable.noUnboundLeft("Unbound symbols not allowed\n")
+
+        postprocessingSteps.forEach { it.invoke(irModule) }
+
         moduleGenerator.generateUnboundSymbolsAsDependencies(irProviders)
         deserializers.forEach { it.postProcess() }
 

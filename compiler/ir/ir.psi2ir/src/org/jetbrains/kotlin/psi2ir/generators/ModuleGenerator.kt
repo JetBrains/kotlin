@@ -17,20 +17,25 @@
 package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.backend.common.CodegenUtil
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.ir.declarations.DescriptorMetadataSource
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
-import org.jetbrains.kotlin.ir.util.StubGeneratorExtensions
-import org.jetbrains.kotlin.ir.util.generateTypicalIrProviderList
-import org.jetbrains.kotlin.ir.util.patchDeclarationParents
+import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorPublicSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.typeWithParameters
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtBlockCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.transformations.insertImplicitCasts
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -109,5 +114,100 @@ class ModuleGenerator(
         }
         context.sourceManager.putFileEntry(irFile, fileEntry)
         return irFile
+    }
+
+    fun <D> buildReceiverParameter(
+        parent: D,
+        origin: IrDeclarationOrigin,
+        type: IrType,
+        startOffset: Int = parent.startOffset,
+        endOffset: Int = parent.endOffset
+    ): IrValueParameter
+            where D : IrDeclaration, D : IrDeclarationParent =
+        parent.factory.createValueParameter(
+            startOffset, endOffset, origin,
+            IrValueParameterSymbolImpl(),
+            Name.special("<this>"), -1, type, null, isCrossinline = false, isNoinline = false,
+            isHidden = false, isAssignable = false
+        ).also {
+            it.parent = parent
+        }
+
+
+    fun generateEvaluatorModuleFragment(
+        ktFile: KtBlockCodeFragment,
+        fragmentClassDescriptor: ClassDescriptor,
+        fragmentMethodDescriptor: FunctionDescriptor
+    ): IrModuleFragment {
+        return IrModuleFragmentImpl(context.moduleDescriptor, context.irBuiltIns).also { irModule ->
+            irModule.files.add(
+                createEmptyIrFile(ktFile).also { irFile ->
+                    val klass = context.symbolTable.declareClass(fragmentClassDescriptor) {
+                        context.irFactory.createIrClassFromDescriptor(
+                            UNDEFINED_OFFSET,
+                            UNDEFINED_OFFSET,
+                            IrDeclarationOrigin.DEFINED,
+                            it,
+                            fragmentClassDescriptor,
+                            context.symbolTable.nameProvider.nameForDeclaration(fragmentClassDescriptor),
+                            fragmentClassDescriptor.visibility,
+                            fragmentClassDescriptor.modality
+                        ).apply {
+                            thisReceiver = buildReceiverParameter(
+                                this,
+                                IrDeclarationOrigin.INSTANCE_RECEIVER,
+                                symbol.typeWithParameters(typeParameters)
+                            )
+                            val constructor = context.irFactory.createConstructor(
+                                startOffset = UNDEFINED_OFFSET,
+                                endOffset = UNDEFINED_OFFSET,
+                                origin = IrDeclarationOrigin.DEFINED,
+                                symbol = IrConstructorPublicSymbolImpl(context.symbolTable.signaturer.composeSignature(fragmentClassDescriptor)!!),
+                                Name.special("<init>"),
+                                fragmentClassDescriptor.visibility,
+                                this.defaultType,
+                                isInline = false,
+                                isExternal = false,
+                                isPrimary = true,
+                                isExpect = false
+                            )
+                            constructor.parent = this
+                            constructor.body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
+                            addMember(constructor)
+                        }
+                    }
+                    context.symbolTable.declareSimpleFunction(fragmentMethodDescriptor) { functionSymbol ->
+                        val function = context.irFactory.createFunction(
+                            UNDEFINED_OFFSET,
+                            UNDEFINED_OFFSET,
+                            IrDeclarationOrigin.DEFINED,
+                            functionSymbol,
+                            context.symbolTable.nameProvider.nameForDeclaration(fragmentMethodDescriptor),
+                            fragmentMethodDescriptor.visibility,
+                            fragmentMethodDescriptor.modality,
+                            fragmentMethodDescriptor.returnType?.let { context.typeTranslator.translateType(it) }
+                                ?: context.irBuiltIns.unitType,
+                            isExpect = false,
+                            isExternal = false,
+                            isInfix = false,
+                            isInline = false,
+                            isOperator = false,
+                            isSuspend = false,
+                            isTailrec = false
+                        ).apply {
+                            parent = klass
+                            body = BodyGenerator(
+                                functionSymbol,
+                                context
+                            ).generateExpressionBody(ktFile.getContentElement())
+                        }
+                        klass.addMember(function)
+                        function
+                    }
+                    irFile.declarations.add(klass)
+                    irFile.patchDeclarationParents()
+                }
+            )
+        }
     }
 }
