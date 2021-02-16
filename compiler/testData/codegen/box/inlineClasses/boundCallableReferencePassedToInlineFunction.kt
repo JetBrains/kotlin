@@ -54,11 +54,11 @@ fun box(): String {
     val a = IcAny(5)
     val o = IcOverIc(IcLong(6))
 
-    if (testUnboxed(i, l, a, o) != "345IcLong(l=6)") return "Fail 1"
+    if (testUnboxed(i, l, a, o) != "345IcLong(l=6)") return "Fail 1 ${testUnboxed(i, l, a, o)}"
     if (testBoxed(i, l, a, o) != "345IcLong(l=6)") return "Fail 2"
     if (testLocalVars() != "012IcLong(l=3)") return "Fail 3"
     if (testGlobalProperties() != "123IcLong(l=4)") return "Fail 4"
-    if (testCapturedVars() != "234IcLong(l=5)") return "Fail 5"
+    if (testCapturedVars() != "234IcLong(l=5)") return "Fail 5 ${testCapturedVars()}"
 
     return "OK"
 }

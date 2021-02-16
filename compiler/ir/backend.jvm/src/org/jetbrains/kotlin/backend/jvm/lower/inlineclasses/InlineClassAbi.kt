@@ -166,3 +166,11 @@ val IrFunction.isInlineClassFieldGetter: Boolean
 
 val IrFunction.isPrimaryInlineClassConstructor: Boolean
     get() = this is IrConstructor && isPrimary && constructedClass.isInline
+
+val IrFunction.isInlineCallableReference: Boolean
+    get() = origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA && name.asString().contains("\$stub_for_inlining")
+
+val IrType.isMappedToPrimitive: Boolean
+    get() = isInlined() &&
+            !(isNullable() && makeNotNull().unboxInlineClass().isNullable()) &&
+            makeNotNull().unboxInlineClass().isPrimitiveType()
