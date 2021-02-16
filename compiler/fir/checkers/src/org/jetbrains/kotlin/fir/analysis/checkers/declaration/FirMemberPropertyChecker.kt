@@ -39,6 +39,10 @@ object FirMemberPropertyChecker : FirRegularClassChecker() {
         // If multiple (potentially conflicting) modality modifiers are specified, not all modifiers are recorded at `status`.
         // So, our source of truth should be the full modifier list retrieved from the source.
         val modifierList = with(FirModifierList) { property.source.getModifierList() }
+
+        checkProperty(containingDeclaration, property, modifierList, reporter, context)
+        checkExpectDeclarationVisibilityAndBody(property, source, modifierList, reporter, context)
+
         val hasAbstractModifier = modifierList?.modifiers?.any { it.token == KtTokens.ABSTRACT_KEYWORD } == true
         val isAbstract = property.isAbstract || hasAbstractModifier
         if (containingDeclaration.isInterface &&
@@ -83,8 +87,6 @@ object FirMemberPropertyChecker : FirRegularClassChecker() {
             }
         }
 
-        checkPropertyInitializer(containingDeclaration, property, reporter, context)
-
         val hasOpenModifier = modifierList?.modifiers?.any { it.token == KtTokens.OPEN_KEYWORD } == true
         if (hasOpenModifier &&
             containingDeclaration.isInterface &&
@@ -104,8 +106,6 @@ object FirMemberPropertyChecker : FirRegularClassChecker() {
                 }
             }
         }
-
-        checkExpectDeclarationVisibilityAndBody(property, source, modifierList, reporter, context)
     }
 
     private fun checkAccessor(

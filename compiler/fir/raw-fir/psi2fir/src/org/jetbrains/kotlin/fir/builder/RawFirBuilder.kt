@@ -334,7 +334,7 @@ class RawFirBuilder(
             property: KtProperty,
             propertyTypeRef: FirTypeRef,
             isGetter: Boolean,
-        ): FirPropertyAccessor {
+        ): FirPropertyAccessor? {
             val accessorVisibility =
                 if (this?.visibility != null && this.visibility != Visibilities.Unknown) this.visibility else property.visibility
             // Downward propagation of `inline` and `external` modifiers (from property to its accessors)
@@ -345,67 +345,78 @@ class RawFirBuilder(
                     isExternal = property.hasModifier(EXTERNAL_KEYWORD) ||
                             this@toFirPropertyAccessor?.hasModifier(EXTERNAL_KEYWORD) == true
                 }
-            if (this == null || !hasBody()) {
-                val propertySource =
-                    this?.toFirSourceElement() ?: property.toFirPsiSourceElement(FirFakeSourceElementKind.DefaultAccessor)
-                return FirDefaultPropertyAccessor
-                    .createGetterOrSetter(
-                        propertySource,
-                        baseSession,
-                        FirDeclarationOrigin.Source,
-                        propertyTypeRef,
-                        accessorVisibility,
-                        isGetter
-                    )
-                    .also {
-                        if (this != null) {
-                            it.extractAnnotationsFrom(this)
+            return when {
+                this != null && hasBody() -> {
+                    // Property has a non-default getter or setter.
+                    // NOTE: We still need the setter even for a val property so we can report errors (e.g., VAL_WITH_SETTER).
+                    val source = this.toFirSourceElement()
+                    val accessorTarget = FirFunctionTarget(labelName = null, isLambda = false)
+                    buildPropertyAccessor {
+                        this.source = source
+                        session = baseSession
+                        origin = FirDeclarationOrigin.Source
+                        returnTypeRef = if (isGetter) {
+                            returnTypeReference?.convertSafe() ?: propertyTypeRef
+                        } else {
+                            returnTypeReference.toFirOrUnitType()
                         }
-                        it.status = status
+                        this.isGetter = isGetter
+                        this.status = status
+                        extractAnnotationsTo(this)
+                        this@RawFirBuilder.context.firFunctionTargets += accessorTarget
+                        extractValueParametersTo(this, propertyTypeRef)
+                        if (!isGetter && valueParameters.isEmpty()) {
+                            valueParameters += buildDefaultSetterValueParameter {
+                                this.source = source.fakeElement(FirFakeSourceElementKind.DefaultAccessor)
+                                session = baseSession
+                                origin = FirDeclarationOrigin.Source
+                                returnTypeRef = propertyTypeRef
+                                symbol = FirVariableSymbol(NAME_FOR_DEFAULT_VALUE_PARAMETER)
+                            }
+                        }
+                        symbol = FirPropertyAccessorSymbol()
+                        val outerContractDescription = this@toFirPropertyAccessor.obtainContractDescription()
+                        val bodyWithContractDescription = this@toFirPropertyAccessor.buildFirBody()
+                        this.body = bodyWithContractDescription.first
+                        val contractDescription = outerContractDescription ?: bodyWithContractDescription.second
+                        contractDescription?.let {
+                            this.contractDescription = it
+                        }
+                    }.also {
                         currentDispatchReceiverType()?.lookupTag?.let { lookupTag ->
                             it.containingClassAttr = lookupTag
                         }
-                    }
-            }
-            val source = this.toFirSourceElement()
-            val accessorTarget = FirFunctionTarget(labelName = null, isLambda = false)
-            return buildPropertyAccessor {
-                this.source = source
-                session = baseSession
-                origin = FirDeclarationOrigin.Source
-                returnTypeRef = if (isGetter) {
-                    returnTypeReference?.convertSafe() ?: propertyTypeRef
-                } else {
-                    returnTypeReference.toFirOrUnitType()
-                }
-                this.isGetter = isGetter
-                this.status = status
-                extractAnnotationsTo(this)
-                this@RawFirBuilder.context.firFunctionTargets += accessorTarget
-                extractValueParametersTo(this, propertyTypeRef)
-                if (!isGetter && valueParameters.isEmpty()) {
-                    valueParameters += buildDefaultSetterValueParameter {
-                        this.source = source.fakeElement(FirFakeSourceElementKind.DefaultAccessor)
-                        session = baseSession
-                        origin = FirDeclarationOrigin.Source
-                        returnTypeRef = propertyTypeRef
-                        symbol = FirVariableSymbol(NAME_FOR_DEFAULT_VALUE_PARAMETER)
+                        accessorTarget.bind(it)
+                        this@RawFirBuilder.context.firFunctionTargets.removeLast()
                     }
                 }
-                symbol = FirPropertyAccessorSymbol()
-                val outerContractDescription = this@toFirPropertyAccessor.obtainContractDescription()
-                val bodyWithContractDescription = this@toFirPropertyAccessor.buildFirBody()
-                this.body = bodyWithContractDescription.first
-                val contractDescription = outerContractDescription ?: bodyWithContractDescription.second
-                contractDescription?.let {
-                    this.contractDescription = it
+                isGetter || property.isVar -> {
+                    // Default getter for val/var properties, and default setter for var properties.
+                    val propertySource =
+                        this?.toFirSourceElement() ?: property.toFirPsiSourceElement(FirFakeSourceElementKind.DefaultAccessor)
+                    FirDefaultPropertyAccessor
+                        .createGetterOrSetter(
+                            propertySource,
+                            baseSession,
+                            FirDeclarationOrigin.Source,
+                            propertyTypeRef,
+                            accessorVisibility,
+                            isGetter
+                        )
+                        .also {
+                            if (this != null) {
+                                it.extractAnnotationsFrom(this)
+                            }
+                            it.status = status
+                            currentDispatchReceiverType()?.lookupTag?.let { lookupTag ->
+                                it.containingClassAttr = lookupTag
+                            }
+                        }
                 }
-            }.also {
-                currentDispatchReceiverType()?.lookupTag?.let { lookupTag ->
-                    it.containingClassAttr = lookupTag
+                else -> {
+                    // No default setter for val properties.
+                    null
                 }
-                accessorTarget.bind(it)
-                this@RawFirBuilder.context.firFunctionTargets.removeLast()
             }
         }
 
@@ -1268,9 +1279,7 @@ class RawFirBuilder(
                         } else null
 
                         getter = this@toFirProperty.getter.toFirPropertyAccessor(this@toFirProperty, propertyType, isGetter = true)
-                        setter = if (isVar) {
-                            this@toFirProperty.setter.toFirPropertyAccessor(this@toFirProperty, propertyType, isGetter = false)
-                        } else null
+                        setter = this@toFirProperty.setter.toFirPropertyAccessor(this@toFirProperty, propertyType, isGetter = false)
 
                         // Upward propagation of `inline` and `external` modifiers (from accessors to property)
                         // Note that, depending on `var` or `val`, checking setter's modifiers should be careful: for `val`, setter doesn't

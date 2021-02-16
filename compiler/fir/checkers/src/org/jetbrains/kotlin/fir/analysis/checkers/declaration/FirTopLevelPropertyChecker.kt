@@ -24,9 +24,11 @@ object FirTopLevelPropertyChecker : FirFileChecker() {
     private fun checkProperty(property: FirProperty, reporter: DiagnosticReporter, context: CheckerContext) {
         val source = property.source ?: return
         if (source.kind is FirFakeSourceElementKind) return
+        // If multiple (potentially conflicting) modality modifiers are specified, not all modifiers are recorded at `status`.
+        // So, our source of truth should be the full modifier list retrieved from the source.
         val modifierList = with(FirModifierList) { source.getModifierList() }
 
-        checkPropertyInitializer(null, property, reporter, context)
+        checkProperty(null, property, modifierList, reporter, context)
         checkExpectDeclarationVisibilityAndBody(property, source, modifierList, reporter, context)
     }
 }
