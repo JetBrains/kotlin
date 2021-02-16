@@ -67,18 +67,6 @@ open class GradleScriptListenerTest : AbstractScriptConfigurationLoadingTest() {
         )
     }
 
-    private inline fun <reified T : Any> copyFromTestdataToProject(file: File): T {
-        createFileAndSyncDependencies(file)
-        return (myFile as? T) ?: error("Couldn't configure project by ${file.path}")
-    }
-
-    private fun createFileInProject(path: String): File {
-        val file = File(project.basePath, path)
-        file.parentFile.mkdirs()
-        file.createNewFile()
-        return file
-    }
-
     fun testSectionChange() {
         assertAndLoadInitialConfiguration(testFiles.buildKts)
 
