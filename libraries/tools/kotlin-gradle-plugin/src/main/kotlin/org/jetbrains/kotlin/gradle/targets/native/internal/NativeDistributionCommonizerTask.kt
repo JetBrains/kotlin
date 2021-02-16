@@ -25,11 +25,10 @@ import java.nio.file.attribute.*
 import java.time.*
 import java.util.*
 
-internal const val COMMONIZER_TASK_NAME = "runCommonizer"
 
 internal typealias KonanTargetGroup = Set<KonanTarget>
 
-internal open class CommonizerTask : DefaultTask() {
+internal open class NativeDistributionCommonizerTask : DefaultTask() {
 
     private val konanHome = project.file(project.konanHome)
 

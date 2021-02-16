@@ -13,7 +13,7 @@ import java.io.Serializable
 // N.B. TargetPlatform/SimplePlatform are non exhaustive enough to address both target platforms such as
 // JVM, JS and concrete Kotlin/Native targets, e.g. macos_x64, ios_x64, linux_x64.
 public sealed class CommonizerTarget : Serializable {
-    final override fun toString(): String = identityString
+    final override fun toString(): String = prettyName
 }
 
 public data class LeafCommonizerTarget public constructor(val name: String) : CommonizerTarget() {

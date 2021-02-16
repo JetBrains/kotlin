@@ -42,6 +42,14 @@ internal fun KotlinCompilation<*>.composeName(prefix: String? = null, suffix: St
 internal fun KotlinCompilation<*>.isMain(): Boolean =
     name == KotlinCompilation.MAIN_COMPILATION_NAME
 
+/**
+ * see https://youtrack.jetbrains.com/issue/KT-45412
+ * Some implementations of [KotlinCompilation] are not including their [KotlinCompilation.defaultSourceSet] into [kotlinSourceSet]s
+ * This helper function might disappear in the future, once the behaviour of those [KotlinCompilation] implementations is streamlined.
+ * @return [KotlinCompilation.kotlinSourceSets] + [KotlinCompilation.defaultSourceSet]
+ */
+internal val KotlinCompilation<*>.kotlinSourceSetsIncludingDefault: Set<KotlinSourceSet> get() = kotlinSourceSets + defaultSourceSet
+
 abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
     target: KotlinTarget,
     override val compilationName: String

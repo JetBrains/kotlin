@@ -206,6 +206,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val commonizerJvmArgs: String?
         get() = property("kotlin.commonizer.jvmArgs")
 
+    val enableCInteropCommonization: Boolean
+        get() = booleanProperty("kotlin.mpp.enableCInteropCommonization") ?: false
+
     /**
      * Dependencies caching strategy for all targets that support caches.
      */

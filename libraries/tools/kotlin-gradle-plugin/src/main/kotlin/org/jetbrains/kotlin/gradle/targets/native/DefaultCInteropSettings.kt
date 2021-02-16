@@ -15,6 +15,7 @@ import org.gradle.api.provider.Property
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.CInteropSettings
 import org.jetbrains.kotlin.gradle.plugin.CInteropSettings.IncludeDirectories
+import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropIdentifier
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.io.File
 import javax.inject.Inject
@@ -41,6 +42,9 @@ open class DefaultCInteropSettings @Inject constructor(
     }
 
     override fun getName(): String = name
+
+    internal val identifier: CInteropIdentifier
+        get() = CInteropIdentifier(compilation.compileKotlinTaskName, name)
 
     val target: KotlinNativeTarget
         get() = compilation.target
