@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClass
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirType
-import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeFactory
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.*
 import org.jetbrains.kotlin.descriptors.commonizer.utils.*
 import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMapNotNull
@@ -98,7 +96,7 @@ internal class CommonizationVisitor(
             }
 
             // find out common (and commonized) supertypes
-            commonClass.commonizeSupertypes(node.classifierId, node.collectCommonSupertypes())
+            commonClass.commonizeSupertypes(node.collectCommonSupertypes())
         }
     }
 
@@ -111,7 +109,7 @@ internal class CommonizationVisitor(
 
         if (commonClassifier is CirClass) {
             // find out common (and commonized) supertypes
-            commonClassifier.commonizeSupertypes(node.classifierId, node.collectCommonSupertypes())
+            commonClassifier.commonizeSupertypes(node.collectCommonSupertypes())
         }
     }
 
@@ -144,18 +142,12 @@ internal class CommonizationVisitor(
     }
 
     private fun CirClass.commonizeSupertypes(
-        classId: CirEntityId,
         supertypesMap: Map<CirType, CommonizedGroup<CirType>>?
     ) {
         val commonSupertypes = supertypesMap?.values?.compactMapNotNull { supertypesGroup ->
             commonize(supertypesGroup, TypeCommonizer(classifiers))
         }.orEmpty()
 
-        setSupertypes(
-            if (commonSupertypes.isEmpty() && classId !in SPECIAL_CLASS_WITHOUT_SUPERTYPES_CLASS_IDS)
-                listOf(CirTypeFactory.StandardTypes.ANY)
-            else
-                commonSupertypes
-        )
+        setSupertypes(commonSupertypes)
     }
 }

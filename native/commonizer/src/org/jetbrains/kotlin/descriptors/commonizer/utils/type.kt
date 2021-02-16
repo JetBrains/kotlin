@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.utils
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirName
@@ -42,6 +43,9 @@ internal val ClassifierDescriptorWithTypeParameters.classifierId: CirEntityId
 
 internal inline val TypeParameterDescriptor.filteredUpperBounds: List<KotlinType>
     get() = upperBounds.takeUnless { it.singleOrNull()?.isNullableAny() == true } ?: emptyList()
+
+internal inline val ClassDescriptor.filteredSupertypes: Collection<KotlinType>
+    get() = typeConstructor.supertypes.takeUnless { it.size == 1 && KotlinBuiltIns.isAny(it.first()) } ?: emptyList()
 
 internal val KotlinType.signature: CirTypeSignature
     get() {

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.utils
 
+import kotlinx.metadata.ClassName
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
@@ -25,6 +26,9 @@ internal val SPECIAL_CLASS_WITHOUT_SUPERTYPES_CLASS_IDS: List<CirEntityId> = lis
     ANY_CLASS_ID,
     NOTHING_CLASS_ID
 )
+
+internal val SPECIAL_CLASS_WITHOUT_SUPERTYPES_CLASS_NAMES: List<ClassName> =
+    SPECIAL_CLASS_WITHOUT_SUPERTYPES_CLASS_IDS.map(CirEntityId::toString)
 
 private val STANDARD_KOTLIN_PACKAGES: List<CirPackageName> = listOf(
     CirPackageName.create(StandardNames.BUILT_INS_PACKAGE_FQ_NAME),
