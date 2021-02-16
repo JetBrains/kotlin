@@ -17,7 +17,7 @@ class Test {
     }
 }
 
-// FILE: test.kt
+// FILE: samFunExpression.kt
 
 import java.lang.reflect.Method
 import kotlin.test.assertEquals

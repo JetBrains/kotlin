@@ -299,13 +299,14 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
                 dynamicCallArguments.add(extensionReceiver)
             }
 
-            val samMethodValueParametersCount = samMethod.valueParameters.size
+            val samMethodValueParametersCount = samMethod.valueParameters.size +
+                    if (samMethod.extensionReceiverParameter != null && irFunRef.extensionReceiver == null) 1 else 0
             val targetFunValueParametersCount = targetFun.valueParameters.size
             for (i in 0 until targetFunValueParametersCount - samMethodValueParametersCount) {
                 val targetFunValueParameter = targetFun.valueParameters[i]
                 addValueParameter("p${syntheticParameterIndex++}", targetFunValueParameter.type)
                 val capturedValueArgument = irFunRef.getValueArgument(i)
-                    ?: fail("Captured value argument #$i (${targetFunValueParameter.name} not provided")
+                    ?: fail("Captured value argument #$i (${targetFunValueParameter.name}) not provided")
                 dynamicCallArguments.add(capturedValueArgument)
             }
         }
