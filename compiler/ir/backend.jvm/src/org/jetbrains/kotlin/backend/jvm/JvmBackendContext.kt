@@ -120,7 +120,7 @@ class JvmBackendContext(
     override val internalPackageFqn = FqName("kotlin.jvm")
 
     val suspendLambdaToOriginalFunctionMap = ConcurrentHashMap<IrFunctionReference, IrFunction>()
-    val suspendFunctionOriginalToView = ConcurrentHashMap<IrFunction, IrFunction>()
+    val suspendFunctionOriginalToView = ConcurrentHashMap<IrSimpleFunction, IrSimpleFunction>()
     val fakeContinuation: IrExpression = createFakeContinuation(this)
 
     val staticDefaultStubs = ConcurrentHashMap<IrSimpleFunctionSymbol, IrSimpleFunction>()
@@ -179,17 +179,15 @@ class JvmBackendContext(
         }
 
         for ((staticReplacement, original) in inlineClassReplacements.originalFunctionForStaticReplacement) {
+            if (staticReplacement !is IrSimpleFunction) continue
             val newOriginal = functionSymbolMap[original.symbol]?.owner ?: continue
             val newStaticReplacement = inlineClassReplacements.getReplacementFunction(newOriginal) ?: continue
-            staticReplacement as IrSimpleFunction
             functionSymbolMap[staticReplacement.symbol] = newStaticReplacement.symbol
         }
 
         for ((original, suspendView) in suspendFunctionOriginalToView) {
             val newOriginal = functionSymbolMap[original.symbol]?.owner ?: continue
             val newSuspendView = suspendFunctionOriginalToView[newOriginal] ?: continue
-            suspendView as? IrSimpleFunction ?: continue
-            newSuspendView as? IrSimpleFunction ?: continue
             functionSymbolMap[suspendView.symbol] = newSuspendView.symbol
         }
 
