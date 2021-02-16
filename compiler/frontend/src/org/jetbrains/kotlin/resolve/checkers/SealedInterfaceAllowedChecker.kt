@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.resolve.checkers
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -22,7 +21,7 @@ object SealedInterfaceAllowedChecker : DeclarationChecker {
                 Errors.UNSUPPORTED.on(keyword, "sealed fun interfaces")
             } else return
         } else {
-            Errors.WRONG_MODIFIER_TARGET.on(keyword, KtTokens.SEALED_KEYWORD, KotlinTarget.INTERFACE.description)
+            Errors.UNSUPPORTED_FEATURE.on(keyword, LanguageFeature.SealedInterfaces to context.languageVersionSettings)
         }
         context.trace.report(diagnostic)
     }
