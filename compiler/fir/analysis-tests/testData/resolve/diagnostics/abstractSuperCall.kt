@@ -16,7 +16,7 @@ abstract class A : C() {
     }
 }
 
-class B : A() {
+<!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>class B<!> : A() {
     override fun f() {
 
     }

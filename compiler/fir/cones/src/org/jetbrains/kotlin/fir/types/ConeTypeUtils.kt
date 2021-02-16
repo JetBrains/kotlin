@@ -63,6 +63,8 @@ val ConeKotlinType.isNothing: Boolean get() = isBuiltinType(StandardClassIds.Not
 val ConeKotlinType.isNullableNothing: Boolean get() = isBuiltinType(StandardClassIds.Nothing, true)
 val ConeKotlinType.isUnit: Boolean get() = isBuiltinType(StandardClassIds.Unit, false)
 val ConeKotlinType.isBoolean: Boolean get() = isBuiltinType(StandardClassIds.Boolean, false)
+val ConeKotlinType.isInt: Boolean get() = isBuiltinType(StandardClassIds.Int, false)
+val ConeKotlinType.isString: Boolean get() = isBuiltinType(StandardClassIds.String, false)
 val ConeKotlinType.isEnum: Boolean get() = isBuiltinType(StandardClassIds.Enum, false)
 val ConeKotlinType.isArrayType: Boolean
     get() {

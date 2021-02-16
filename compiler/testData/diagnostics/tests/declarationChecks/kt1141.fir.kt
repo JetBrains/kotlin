@@ -12,9 +12,9 @@ fun foo() {
     x.foo()
 }
 
-object Rr : SomeTrait {}
+<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>object Rr<!> : SomeTrait {}
 
-class C : SomeTrait {}
+<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class C<!> : SomeTrait {}
 
 fun foo2() {
     val r = object : Runnable {} //no error

@@ -49,6 +49,9 @@ inline val FirRegularClass.isAbstract get() = status.modality == Modality.ABSTRA
 inline val FirRegularClass.canHaveAbstractDeclaration: Boolean
     get() = isAbstract || isSealed || isEnumClass
 
+inline val FirRegularClass.canHaveAbstractFakeOverride: Boolean
+    get() = canHaveAbstractDeclaration || isExpect
+
 inline val FirRegularClass.isInner get() = status.isInner
 inline val FirRegularClass.isCompanion get() = status.isCompanion
 inline val FirRegularClass.isData get() = status.isData

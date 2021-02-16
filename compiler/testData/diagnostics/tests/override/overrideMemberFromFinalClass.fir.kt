@@ -22,7 +22,7 @@ abstract class A2 {
     abstract fun foo()
 }
 
-class B2 : A2()
+<!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>class B2<!> : A2()
 class C2 : B2() {
     override fun foo() {}
 }

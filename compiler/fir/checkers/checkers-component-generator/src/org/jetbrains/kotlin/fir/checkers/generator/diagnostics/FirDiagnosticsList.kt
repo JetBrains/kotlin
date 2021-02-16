@@ -273,6 +273,23 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
             parameter<Name>("containingClassName")
         }
 
+        val ABSTRACT_MEMBER_NOT_IMPLEMENTED by error<FirSourceElement, KtClassOrObject>(PositioningStrategy.DECLARATION_NAME) {
+            parameter<FirClass<*>>("classOrObject")
+            parameter<FirCallableDeclaration<*>>("missingDeclaration")
+        }
+        val ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED by error<FirSourceElement, KtClassOrObject>(PositioningStrategy.DECLARATION_NAME) {
+            parameter<FirClass<*>>("classOrObject")
+            parameter<FirCallableDeclaration<*>>("missingDeclaration")
+        }
+        val MANY_IMPL_MEMBER_NOT_IMPLEMENTED by error<FirSourceElement, KtClassOrObject>(PositioningStrategy.DECLARATION_NAME) {
+            parameter<FirClass<*>>("classOrObject")
+            parameter<FirCallableDeclaration<*>>("missingDeclaration")
+        }
+        val MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED by error<FirSourceElement, KtClassOrObject>(PositioningStrategy.DECLARATION_NAME) {
+            parameter<FirClass<*>>("classOrObject")
+            parameter<FirCallableDeclaration<*>>("missingDeclaration")
+        }
+
         val RETURN_TYPE_MISMATCH_ON_OVERRIDE by error<FirSourceElement, KtNamedDeclaration>(PositioningStrategy.DECLARATION_RETURN_TYPE) {
             parameter<FirMemberDeclaration>("function")
             parameter<FirMemberDeclaration>("superFunction")

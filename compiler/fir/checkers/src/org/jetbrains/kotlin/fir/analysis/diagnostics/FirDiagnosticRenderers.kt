@@ -75,6 +75,12 @@ object FirDiagnosticRenderers {
         name.asString()
     }
 
+    val RENDER_CLASS_OR_OBJECT = Renderer { firClass: FirClass<*> ->
+        val name = firClass.classId.relativeClassName.asString()
+        val classOrObject = if (firClass is FirRegularClass) "Class" else "Object"
+        "$classOrObject $name"
+    }
+
     val RENDER_TYPE = Renderer { t: ConeKotlinType ->
         // TODO: need a way to tune granuality, e.g., without parameter names in functional types.
         t.render()

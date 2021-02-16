@@ -26,7 +26,7 @@ class Case2Outer {
     }
 
     inner
-    class A() : Case2Base() {
+    <!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>class A<!>() : Case2Base() {
 
     }
 }
@@ -36,7 +36,7 @@ fun case3() {
     object : CaseOuter.CaseBase() {}.outerFoo()
 }
 
-class B() : CaseOuter.CaseBase() {}
+<!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>class B<!>() : CaseOuter.CaseBase() {}
 
 sealed class CaseOuter {
     val v = "v"
@@ -46,6 +46,6 @@ sealed class CaseOuter {
         abstract fun foo(): String
     }
 
-    class A() : CaseBase() {
+    <!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>class A<!>() : CaseBase() {
     }
 }

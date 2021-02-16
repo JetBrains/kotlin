@@ -67,7 +67,7 @@ fun case3() {
     ImplBaseCase3()
 }
 
-class ImplBaseCase3() : Base() {
+<!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>class ImplBaseCase3<!>() : Base() {
     override var b: Any
         get() = TODO()
         set(value) {}
@@ -95,7 +95,7 @@ fun case4() {
     ImplBaseCase4()
 }
 
-class ImplBaseCase4() : Base() {
+<!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>class ImplBaseCase4<!>() : Base() {
     override var b: Any
         get() = TODO()
         set(value) {}
