@@ -18,6 +18,6 @@ object SealedInterfaceAllowedChecker : DeclarationChecker {
         if (descriptor !is ClassDescriptor) return
         if (descriptor.kind != ClassKind.INTERFACE) return
         val keyword = declaration.modifierList?.getModifier(KtTokens.SEALED_KEYWORD) ?: return
-        context.trace.report(Errors.WRONG_MODIFIER_TARGET.on(keyword, KtTokens.SEALED_KEYWORD, KotlinTarget.INTERFACE.description))
+        context.trace.report(Errors.UNSUPPORTED_FEATURE.on(keyword, LanguageFeature.SealedInterfaces to context.languageVersionSettings))
     }
 }
