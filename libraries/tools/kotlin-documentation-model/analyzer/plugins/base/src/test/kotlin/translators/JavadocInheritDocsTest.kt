@@ -277,7 +277,7 @@ class JavadocInheritDocsTest : BaseAbstractTest() {
             |}
             |/src/main/java/sample/Subclass.java
             |package sample;
-            |class Subclass extends Superclass {
+            |public class Subclass extends Superclass {
             |    /**
             |     * Sample sub method. {@inheritDoc}
             |     */

@@ -13,7 +13,7 @@ class JavaAnnotationsForParametersTest : AbstractModelTest("/src/main/kotlin/jav
     fun `function with deprecated parameter`() {
         inlineModelTest(
             """
-            |class Test {
+            |public class Test {
             |    public void fn(@Deprecated String name) {}
             |}
         """.trimIndent()
@@ -37,7 +37,7 @@ class JavaAnnotationsForParametersTest : AbstractModelTest("/src/main/kotlin/jav
             |public @interface Hello {
             |    public String bar() default "";
             |}
-            |class Test {
+            |public class Test {
             |   public void foo(@Hello(bar = "baz") String arg){ }
             |}
         """.trimIndent()
@@ -65,7 +65,7 @@ class JavaAnnotationsForParametersTest : AbstractModelTest("/src/main/kotlin/jav
             |@interface Hello {
             |    public String bar() default "";
             |}
-            |class Test {
+            |public class Test {
             |   public <@Hello(bar = "baz") T> List<T> foo() {
             |        return null;
             |   }
@@ -94,7 +94,7 @@ class JavaAnnotationsForParametersTest : AbstractModelTest("/src/main/kotlin/jav
             |@interface Hello {
             |    public String bar() default "";
             |}
-            |class Test {
+            |public class Test {
             |   public <T extends @Hello(bar = "baz") String> List<T> foo() {
             |        return null;
             |    }
