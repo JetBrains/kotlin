@@ -32,7 +32,7 @@ class LexicalChainedScope private constructor(
     parent: LexicalScope,
     override val ownerDescriptor: DeclarationDescriptor,
     override val isOwnerDescriptorAccessibleByLabel: Boolean,
-    override val implicitReceiver: ReceiverParameterDescriptor?,
+    override val implicitReceivers: List<ReceiverParameterDescriptor>,
     override val kind: LexicalScopeKind,
     // NB. Here can be very special subtypes of MemberScope (e.g., DeprecatedMemberScope).
     // Please, do not leak them outside of LexicalChainedScope, because other parts of compiler are not ready to work with them
@@ -74,8 +74,14 @@ class LexicalChainedScope private constructor(
 
     override fun printStructure(p: Printer) {
         p.println(
-            this::class.java.simpleName, ": ", kind, "; for descriptor: ", ownerDescriptor.name,
-            " with implicitReceiver: ", implicitReceiver?.value ?: "NONE", " {"
+            this::class.java.simpleName,
+            ": ",
+            kind,
+            "; for descriptor: ",
+            ownerDescriptor.name,
+            " with implicitReceiver: ",
+            if (implicitReceivers.isEmpty()) "NONE" else implicitReceivers.joinToString { it.value.toString() },
+            " {"
         )
         p.pushIndent()
 
@@ -105,13 +111,13 @@ class LexicalChainedScope private constructor(
             parent: LexicalScope,
             ownerDescriptor: DeclarationDescriptor,
             isOwnerDescriptorAccessibleByLabel: Boolean,
-            implicitReceiver: ReceiverParameterDescriptor?,
+            implicitReceivers: List<ReceiverParameterDescriptor>,
             kind: LexicalScopeKind,
             vararg memberScopes: MemberScope?,
             isStaticScope: Boolean = false
         ): LexicalScope =
             LexicalChainedScope(
-                parent, ownerDescriptor, isOwnerDescriptorAccessibleByLabel, implicitReceiver, kind,
+                parent, ownerDescriptor, isOwnerDescriptorAccessibleByLabel, implicitReceivers, kind,
                 listOfNonEmptyScopes(*memberScopes).toTypedArray(),
                 isStaticScope
             )

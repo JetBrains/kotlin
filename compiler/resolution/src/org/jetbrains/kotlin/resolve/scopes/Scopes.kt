@@ -36,7 +36,7 @@ interface LexicalScope : HierarchicalScope {
     val ownerDescriptor: DeclarationDescriptor
     val isOwnerDescriptorAccessibleByLabel: Boolean
 
-    val implicitReceiver: ReceiverParameterDescriptor?
+    val implicitReceivers: List<ReceiverParameterDescriptor>
 
     val kind: LexicalScopeKind
 
@@ -50,8 +50,8 @@ interface LexicalScope : HierarchicalScope {
         override val isOwnerDescriptorAccessibleByLabel: Boolean
             get() = false
 
-        override val implicitReceiver: ReceiverParameterDescriptor?
-            get() = null
+        override val implicitReceivers: List<ReceiverParameterDescriptor>
+            get() = emptyList()
 
         override val kind: LexicalScopeKind
             get() = LexicalScopeKind.EMPTY

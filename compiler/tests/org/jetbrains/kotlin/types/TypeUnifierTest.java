@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.DummyTraces;
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -197,7 +198,7 @@ public class TypeUnifierTest extends KotlinTestWithEnvironment {
     private TypeProjection makeType(String typeStr) {
         LexicalScope withX = new LexicalScopeImpl(
                 builtinsImportingScope, module,
-                false, null, LexicalScopeKind.SYNTHETIC, LocalRedeclarationChecker.DO_NOTHING.INSTANCE,
+                false, Collections.emptyList(), LexicalScopeKind.SYNTHETIC, LocalRedeclarationChecker.DO_NOTHING.INSTANCE,
                 handler -> {
                     handler.addClassifierDescriptor(x);
                     handler.addClassifierDescriptor(y);

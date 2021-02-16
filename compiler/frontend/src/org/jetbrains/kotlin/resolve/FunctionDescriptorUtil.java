@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.resolve.scopes.*;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FunctionDescriptorUtil {
@@ -65,8 +66,17 @@ public class FunctionDescriptorUtil {
             @NotNull FunctionDescriptor descriptor,
             @NotNull LocalRedeclarationChecker redeclarationChecker
     ) {
+        List<ReceiverParameterDescriptor> implicitReceivers = new ArrayList<>();
+        ReceiverParameterDescriptor extensionReceiverParameter = descriptor.getExtensionReceiverParameter();
+        if (descriptor.getExtensionReceiverParameter() != null) {
+            implicitReceivers.add(extensionReceiverParameter);
+        }
+        List<ReceiverParameterDescriptor> contextReceiverParameters = descriptor.getContextReceiverParameters();
+        if (!contextReceiverParameters.isEmpty()) {
+            implicitReceivers.addAll(contextReceiverParameters);
+        }
         return new LexicalScopeImpl(
-                outerScope, descriptor, true, descriptor.getExtensionReceiverParameter(),
+                outerScope, descriptor, true, implicitReceivers,
                 LexicalScopeKind.FUNCTION_INNER_SCOPE, redeclarationChecker,
                 handler -> {
                     for (TypeParameterDescriptor typeParameter : descriptor.getTypeParameters()) {

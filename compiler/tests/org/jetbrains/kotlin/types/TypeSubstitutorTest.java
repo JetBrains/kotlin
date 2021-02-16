@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.tests.di.InjectionKt;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -90,7 +91,7 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
         LocalRedeclarationChecker redeclarationChecker =
                 new ThrowingLocalRedeclarationChecker(new OverloadChecker(TypeSpecificityComparator.NONE.INSTANCE));
         LexicalScope typeParameters = new LexicalScopeImpl(
-                topLevelScope, module, false, null, LexicalScopeKind.SYNTHETIC,
+                topLevelScope, module, false, Collections.emptyList(), LexicalScopeKind.SYNTHETIC,
                 redeclarationChecker,
                 handler -> {
                     for (TypeParameterDescriptor parameterDescriptor : contextClass.getTypeConstructor().getParameters()) {
@@ -100,7 +101,7 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
                 }
         );
         return LexicalChainedScope.Companion.create(
-                typeParameters, module, false, null, LexicalScopeKind.SYNTHETIC,
+                typeParameters, module, false, Collections.emptyList(), LexicalScopeKind.SYNTHETIC,
                 contextClass.getDefaultType().getMemberScope(),
                 module.getBuiltIns().getBuiltInsPackageScope()
         );

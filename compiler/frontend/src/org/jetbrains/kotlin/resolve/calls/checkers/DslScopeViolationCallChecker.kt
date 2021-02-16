@@ -49,7 +49,8 @@ object DslScopeViolationCallChecker : CallChecker {
     ) {
         val receiversUntilOneFromTheCall =
             context.scope.parentsWithSelf
-                .mapNotNull { (it as? LexicalScope)?.implicitReceiver?.value }
+                .flatMap { (it as? LexicalScope)?.implicitReceivers ?: emptyList() }
+                .map { it.value }
                 .takeWhile { it != callImplicitReceiver }.toList()
 
         if (receiversUntilOneFromTheCall.isEmpty()) return
