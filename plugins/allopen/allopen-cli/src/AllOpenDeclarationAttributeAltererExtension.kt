@@ -43,7 +43,7 @@ abstract class AbstractAllOpenDeclarationAttributeAltererExtension : Declaration
         currentModality: Modality,
         isImplicitModality: Boolean
     ): Modality? {
-        if (currentModality != Modality.FINAL) {
+        if (currentModality != Modality.FINAL || modifierListOwner.isPrivate()) {
             return null
         }
 
