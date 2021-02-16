@@ -1017,16 +1017,16 @@ class DeclarationsConverter(
                                 it.containingClassAttr = lookupTag
                             }
                         }
-                    this.setter =
-                        if (isVar) {
-                            convertedAccessors.find { it.isSetter }
-                                ?: FirDefaultPropertySetter(
-                                    null, session, FirDeclarationOrigin.Source, returnType, propertyVisibility
-                                ).also {
-                                    currentDispatchReceiverType()?.lookupTag?.let { lookupTag ->
-                                        it.containingClassAttr = lookupTag
-                                    }
+                    // NOTE: We still need the setter even for a val property so we can report errors (e.g., VAL_WITH_SETTER).
+                    this.setter = convertedAccessors.find { it.isSetter }
+                        ?: if (isVar) {
+                            FirDefaultPropertySetter(
+                                null, session, FirDeclarationOrigin.Source, returnType, propertyVisibility
+                            ).also {
+                                currentDispatchReceiverType()?.lookupTag?.let { lookupTag ->
+                                    it.containingClassAttr = lookupTag
                                 }
+                            }
                         } else null
 
                     // Upward propagation of `inline` and `external` modifiers (from accessors to property)
