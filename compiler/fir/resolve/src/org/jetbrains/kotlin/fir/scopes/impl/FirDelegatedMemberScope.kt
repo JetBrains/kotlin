@@ -35,12 +35,17 @@ class FirDelegatedMemberScope(
 
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         useSiteScope.processFunctionsByName(name) processor@{ functionSymbol ->
-            if (functionSymbol.fir.isPublicInAny()) {
+            val original = functionSymbol.fir
+            // KT-6014: If the original is abstract, we still need a delegation
+            // For example,
+            //   interface IBase { override fun toString(): String }
+            //   object BaseImpl : IBase { override fun toString(): String = ... }
+            //   class Test : IBase by BaseImpl
+            if (original.isPublicInAny() && original.modality != Modality.ABSTRACT) {
                 processor(functionSymbol)
                 return@processor
             }
 
-            val original = functionSymbol.fir
             if (original.modality == Modality.FINAL || original.visibility == Visibilities.Private) {
                 processor(functionSymbol)
                 return@processor
