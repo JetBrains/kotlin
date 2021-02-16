@@ -1,5 +1,5 @@
 apply plugin: 'kotlin'
-apply plugin: 'maven'
+apply plugin: 'maven-publish'
 apply plugin: 'jps-compatible'
 
 repositories {
@@ -39,3 +39,18 @@ dependencies {
 // (for example, the actual package at runtime is `org.jetbrains.kotlin.com.intellij.*`):
 ArtifactsKt.runtimeJar(project, EmbeddableKt.rewriteDefaultJarDepsToShadedCompiler(project, {}), {})
 // In a standalone build, you can setup the relocation with the Shadow plugin.
+
+publishing {
+    publications {
+        main(MavenPublication) {
+            artifact tasks.named("embeddable")
+        }
+    }
+    repositories {
+        mavenLocal() // to workaround configuration cache issues with 'publishToMavenLocal' task
+    }
+}
+
+tasks.register("install") {
+    dependsOn(tasks.named("publishAllPublicationsToMavenLocalRepository"))
+}
