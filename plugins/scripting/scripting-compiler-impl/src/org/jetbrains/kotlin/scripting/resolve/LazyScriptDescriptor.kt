@@ -361,7 +361,7 @@ class LazyScriptDescriptor(
                 outerScope,
                 receiverClassDescriptor,
                 true,
-                receiverClassDescriptor.thisAsReceiverParameter,
+                listOf(receiverClassDescriptor.thisAsReceiverParameter),
                 LexicalScopeKind.CLASS_MEMBER_SCOPE
             ).addImportingScope(
                 AllUnderImportScope.create(receiverClassDescriptor, emptyList())

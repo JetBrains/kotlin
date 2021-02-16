@@ -20,9 +20,14 @@ import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
+import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors;
 import org.jetbrains.kotlin.utils.Printer;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public final class ScopeUtils {
     private ScopeUtils() {}
@@ -31,7 +36,7 @@ public final class ScopeUtils {
             @NotNull LexicalScope parent,
             @NotNull PropertyDescriptor propertyDescriptor
     ) {
-        return new LexicalScopeImpl(parent, propertyDescriptor, false, null, LexicalScopeKind.PROPERTY_HEADER,
+        return new LexicalScopeImpl(parent, propertyDescriptor, false, Collections.emptyList(), LexicalScopeKind.PROPERTY_HEADER,
                                     // redeclaration on type parameters should be reported early, see: DescriptorResolver.resolvePropertyDescriptor()
                                     LocalRedeclarationChecker.DO_NOTHING.INSTANCE,
                                     handler -> {
@@ -47,7 +52,7 @@ public final class ScopeUtils {
             @NotNull LexicalScope propertyHeader,
             @NotNull PropertyDescriptor propertyDescriptor
     ) {
-        return new LexicalScopeImpl(propertyHeader, propertyDescriptor, false, null, LexicalScopeKind.PROPERTY_INITIALIZER_OR_DELEGATE);
+        return new LexicalScopeImpl(propertyHeader, propertyDescriptor, false, Collections.emptyList(), LexicalScopeKind.PROPERTY_INITIALIZER_OR_DELEGATE);
     }
 
     @NotNull
@@ -55,8 +60,13 @@ public final class ScopeUtils {
             @NotNull LexicalScope parent,
             @NotNull VariableDescriptorWithAccessors variableDescriptor
     ) {
+        List<ReceiverParameterDescriptor> implicitReceivers = new ArrayList<>();
+        ReceiverParameterDescriptor extensionReceiverParameter = variableDescriptor.getExtensionReceiverParameter();
+        if (extensionReceiverParameter != null) {
+            implicitReceivers.add(extensionReceiverParameter);
+        }
         // todo: very strange scope!
-        return new LexicalScopeImpl(parent, variableDescriptor, true, variableDescriptor.getExtensionReceiverParameter(),
+        return new LexicalScopeImpl(parent, variableDescriptor, true, implicitReceivers,
                                     LexicalScopeKind.PROPERTY_DELEGATE_METHOD
         );
     }

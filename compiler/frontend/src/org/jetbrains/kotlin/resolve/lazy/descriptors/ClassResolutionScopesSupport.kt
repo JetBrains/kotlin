@@ -35,7 +35,7 @@ class ClassResolutionScopesSupport(
     private val getOuterScope: () -> LexicalScope
 ) {
     private fun scopeWithGenerics(parent: LexicalScope): LexicalScopeImpl {
-        return LexicalScopeImpl(parent, classDescriptor, false, null, LexicalScopeKind.CLASS_HEADER) {
+        return LexicalScopeImpl(parent, classDescriptor, false, emptyList(), LexicalScopeKind.CLASS_HEADER) {
             classDescriptor.declaredTypeParameters.forEach { addClassifierDescriptor(it) }
         }
     }
@@ -69,7 +69,7 @@ class ClassResolutionScopesSupport(
             scopeWithGenerics,
             classDescriptor,
             true,
-            classDescriptor.thisAsReceiverParameter,
+            listOf(classDescriptor.thisAsReceiverParameter),
             LexicalScopeKind.CLASS_MEMBER_SCOPE
         )
     }
@@ -96,7 +96,7 @@ class ClassResolutionScopesSupport(
         val lexicalChainedScope = LexicalChainedScope.create(
             parentForNewScope, ownerDescriptor,
             isOwnerDescriptorAccessibleByLabel = false,
-            implicitReceiver = companionObjectDescriptor?.thisAsReceiverParameter,
+            implicitReceivers = listOfNotNull(companionObjectDescriptor?.thisAsReceiverParameter),
             kind = LexicalScopeKind.CLASS_INHERITANCE,
             classDescriptor.staticScope,
             classDescriptor.unsubstitutedInnerClassesScope,
@@ -146,7 +146,7 @@ fun scopeForInitializerResolution(
         classDescriptor.scopeForMemberDeclarationResolution,
         parentDescriptor,
         false,
-        null,
+        emptyList(),
         LexicalScopeKind.CLASS_INITIALIZER
     ) {
         if (primaryConstructorParameters.isNotEmpty()) {
