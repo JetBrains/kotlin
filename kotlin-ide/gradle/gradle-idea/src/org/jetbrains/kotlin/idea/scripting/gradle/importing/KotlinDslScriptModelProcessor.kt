@@ -88,7 +88,7 @@ private fun Collection<KotlinDslScriptModel>.collectErrors(): List<KotlinDslScri
 }
 
 private fun KotlinDslScriptsModel.toListOfScriptModels(project: Project): List<KotlinDslScriptModel> =
-    scriptModels.map { (file, model) ->
+    scriptModels.mapNotNull { (file, model) ->
         val messages = mutableListOf<KotlinDslScriptModel.Message>()
 
         model.exceptions.forEach {
@@ -120,13 +120,13 @@ private fun KotlinDslScriptsModel.toListOfScriptModels(project: Project): List<K
             )
         }
 
-        // TODO: NPE
-        val virtualFile = VfsUtil.findFile(file.toPath(), true)!!
+        val virtualFile = VfsUtil.findFile(file.toPath(), true) ?: return@mapNotNull null
 
         // todo(KT-34440): take inputs snapshot before starting import
+        val gradleScriptInputsStamp = getGradleScriptInputsStamp(project, virtualFile) ?: return@mapNotNull null
         KotlinDslScriptModel(
             toSystemIndependentName(file.absolutePath),
-            getGradleScriptInputsStamp(project, virtualFile)!!, // TODO: NPE
+            gradleScriptInputsStamp,
             model.classPath.map { toSystemIndependentName(it.absolutePath) },
             model.sourcePath.map { toSystemIndependentName(it.absolutePath) },
             model.implicitImports,
