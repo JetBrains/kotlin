@@ -165,7 +165,7 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         }
     }
 
-    val AMBIGUIRY by object : DiagnosticGroup("Ambiguity") {
+    val AMBIGUITY by object : DiagnosticGroup("Ambiguity") {
         val AMBIGUITY by error<FirSourceElement, PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<Collection<AbstractFirBasedSymbol<*>>>("candidates")
         }
@@ -294,7 +294,7 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val USELESS_VARARG_ON_PARAMETER by warning<FirSourceElement, KtParameter>()
     }
 
-    val PROPERTIES_ANS_ACCESSORS by object : DiagnosticGroup("Properties & accessors") {
+    val PROPERTIES_AND_ACCESSORS by object : DiagnosticGroup("Properties & accessors") {
         val ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS by error<FirSourceElement, KtModifierListOwner>(PositioningStrategy.MODALITY_MODIFIER) {
             parameter<FirMemberDeclaration>("property")
             parameter<FirMemberDeclaration>("containingClass") // TODO use FirClass instead of FirMemberDeclaration
@@ -381,7 +381,7 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         // TODO: val UNEXPECTED_SAFE_CALL by ...
     }
 
-    val WHNE_EXPRESSIONS by object : DiagnosticGroup("When expressions") {
+    val WHEN_EXPRESSIONS by object : DiagnosticGroup("When expressions") {
         val NO_ELSE_IN_WHEN by error<FirSourceElement, KtWhenExpression>(PositioningStrategy.WHEN_EXPRESSION) {
             parameter<List<WhenMissingCase>>("missingWhenCases")
         }
