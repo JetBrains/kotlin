@@ -42,9 +42,7 @@ tasks.check { dependsOn(tasks["functionalTest"]) }
 
 dependencies {
     implementation(gradleApi())
-    implementation(kotlin("stdlib-jdk8"))
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.1.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.2.0")
     implementation("org.ow2.asm:asm:9.0")
     implementation("org.ow2.asm:asm-tree:9.0")
     implementation("com.googlecode.java-diff-utils:diffutils:1.3.0")
@@ -61,6 +59,9 @@ tasks.withType<KotlinCompile>().configureEach {
         languageVersion = "1.3"
         jvmTarget = "1.8"
         allWarningsAsErrors = true
+        // Suppress the warning about kotlin-reflect 1.3 and kotlin-stdlib 1.4 in the classpath.
+        // It's incorrect in this case because we're limiting API version to 1.3 anyway.
+        freeCompilerArgs += "-Xskip-runtime-version-check"
     }
 }
 
