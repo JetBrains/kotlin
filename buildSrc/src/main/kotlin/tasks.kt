@@ -9,6 +9,7 @@
 
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.internal.tasks.testing.filter.DefaultTestFilter
 import org.gradle.api.tasks.TaskProvider
@@ -243,18 +244,25 @@ private fun Task.useAndroidConfiguration(systemPropertyName: String, configName:
     val configuration = with(project) {
         configurations.getOrCreate(configName)
             .also {
-                dependencies.add(
-                    configName,
-                    dependencies.project(":dependencies:android-sdk", configuration = configName)
-                )
+                if (it.allDependencies.matching { dep ->
+                        dep is ProjectDependency &&
+                                dep.targetConfiguration == configName &&
+                                dep.dependencyProject.path == ":dependencies:android-sdk"
+                    }.count() == 0) {
+                    dependencies.add(
+                        configName,
+                        dependencies.project(":dependencies:android-sdk", configuration = configName)
+                    )
+                }
             }
     }
 
     dependsOn(configuration)
 
     if (this is Test) {
+        val androidFilePath = configuration.singleFile.canonicalPath
         doFirst {
-            systemProperty(systemPropertyName, configuration.singleFile.canonicalPath)
+            systemProperty(systemPropertyName, androidFilePath)
         }
     }
 }
