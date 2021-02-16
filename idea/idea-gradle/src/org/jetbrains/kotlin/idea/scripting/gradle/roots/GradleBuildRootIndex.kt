@@ -16,7 +16,9 @@ class GradleBuildRootIndex(private val project: Project) : StandaloneScriptsUpda
         private val standaloneScripts: MutableSet<String>
             get() = StandaloneScriptsStorage.getInstance(project)?.files ?: hashSetOf()
 
-        private val standaloneScriptRoots = mutableMapOf<String, GradleBuildRoot?>().apply {
+        private val standaloneScriptRoots = mutableMapOf<String, GradleBuildRoot?>()
+
+        init {
             standaloneScripts.forEach(::updateRootsCache)
         }
 
