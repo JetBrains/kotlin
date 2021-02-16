@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.ir.isFromJava
 import org.jetbrains.kotlin.backend.jvm.lower.MultifileFacadeFileEntry
 import org.jetbrains.kotlin.backend.jvm.lower.constantValue
+import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.isInlineCallableReference
+import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.isMappedToPrimitive
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.unboxInlineClass
 import org.jetbrains.kotlin.backend.jvm.lower.isMultifileBridge
 import org.jetbrains.kotlin.backend.jvm.lower.suspendFunctionOriginal
@@ -625,7 +627,19 @@ class ExpressionCodegen(
         val type = frameMap.typeOf(expression.symbol)
         mv.load(findLocalIndex(expression.symbol), type)
         unboxResultIfNeeded(expression)
+        unboxInlineClassArgumentOfInlineCallableReference(expression)
         return MaterialValue(this, type, expression.type)
+    }
+
+    // JVM_IR generates inline callable differently from the old backend:
+    // it generates them as normal functions and not objects.
+    // Thus, we need to unbox inline class argument with reference underlying type.
+    private fun unboxInlineClassArgumentOfInlineCallableReference(arg: IrGetValue) {
+        if (!arg.type.isInlined()) return
+        if (arg.type.isMappedToPrimitive) return
+        if (!irFunction.isInlineCallableReference) return
+        if (irFunction.extensionReceiverParameter?.symbol == arg.symbol) return
+        StackValue.unboxInlineClass(OBJECT_TYPE, arg.type.erasedUpperBound.defaultType.toIrBasedKotlinType(), mv)
     }
 
     // We do not mangle functions if Result is the only parameter of the function,
@@ -633,6 +647,7 @@ class ExpressionCodegen(
     // bridge to unbox it. Instead, we unbox it in the non-mangled function manually.
     private fun unboxResultIfNeeded(arg: IrGetValue) {
         if (arg.type.erasedUpperBound.fqNameWhenAvailable != StandardNames.RESULT_FQ_NAME) return
+        // Do not unbox arguments of lambda, but unbox arguments of callable references
         if (irFunction.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA) return
         if (!onlyResultInlineClassParameters()) return
         if (irFunction !is IrSimpleFunction) return
