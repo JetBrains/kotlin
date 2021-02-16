@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.idea.fir.inspections.diagnosticBased
 
 import com.intellij.codeInspection.ProblemHighlightType
 import org.jetbrains.kotlin.idea.KotlinBundle
-import org.jetbrains.kotlin.idea.KotlinBundleIndependent
 import org.jetbrains.kotlin.idea.fir.api.AbstractHLDiagnosticBasedInspection
 import org.jetbrains.kotlin.idea.fir.api.applicator.*
 import org.jetbrains.kotlin.idea.fir.api.inputByDiagnosticProvider
@@ -41,6 +40,6 @@ class HLRedundantVisibilityModifierInspection :
             KtTokens.VISIBILITY_MODIFIERS,
             KotlinBundle.lazyMessage("redundant.visibility.modifier")
         ).with {
-            actionName { _, (modifier) -> KotlinBundleIndependent.message("remove.redundant.0.modifier", modifier.value) }
+            actionName { _, (modifier) -> KotlinBundle.message("remove.redundant.0.modifier", modifier.value) }
         }
 }
