@@ -10,7 +10,7 @@ inline class A4(var x: Int)
 inline class A5(val x: Int, val y: Int)
 inline class A6(x: Int, val y: Int)
 inline class A7(vararg val x: Int)
-inline class A8(open val x: Int)
+inline class A8(<!NON_FINAL_MEMBER_IN_FINAL_CLASS!>open<!> val x: Int)
 inline class A9(final val x: Int)
 
 class B1 {

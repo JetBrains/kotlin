@@ -515,6 +515,14 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val overriddenDeclaration: KtSymbol
     }
 
+    abstract class NonFinalMemberInFinalClass : KtFirDiagnostic<KtNamedDeclaration>() {
+        override val diagnosticClass get() = NonFinalMemberInFinalClass::class
+    }
+
+    abstract class NonFinalMemberInObject : KtFirDiagnostic<KtNamedDeclaration>() {
+        override val diagnosticClass get() = NonFinalMemberInObject::class
+    }
+
     abstract class ManyCompanionObjects : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = ManyCompanionObjects::class
     }

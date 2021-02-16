@@ -176,6 +176,8 @@ object FirErrors {
     val PROPERTY_TYPE_MISMATCH_ON_OVERRIDE by error2<FirSourceElement, KtNamedDeclaration, FirMemberDeclaration, FirMemberDeclaration>(SourceElementPositioningStrategies.DECLARATION_RETURN_TYPE)
     val VAR_TYPE_MISMATCH_ON_OVERRIDE by error2<FirSourceElement, KtNamedDeclaration, FirMemberDeclaration, FirMemberDeclaration>(SourceElementPositioningStrategies.DECLARATION_RETURN_TYPE)
     val VAR_OVERRIDDEN_BY_VAL by error2<FirSourceElement, KtNamedDeclaration, FirMemberDeclaration, FirMemberDeclaration>(SourceElementPositioningStrategies.VAL_OR_VAR_NODE)
+    val NON_FINAL_MEMBER_IN_FINAL_CLASS by warning0<FirSourceElement, KtNamedDeclaration>(SourceElementPositioningStrategies.OPEN_MODIFIER)
+    val NON_FINAL_MEMBER_IN_OBJECT by warning0<FirSourceElement, KtNamedDeclaration>(SourceElementPositioningStrategies.OPEN_MODIFIER)
 
     // Redeclarations
     val MANY_COMPANION_OBJECTS by error0<FirSourceElement, PsiElement>()

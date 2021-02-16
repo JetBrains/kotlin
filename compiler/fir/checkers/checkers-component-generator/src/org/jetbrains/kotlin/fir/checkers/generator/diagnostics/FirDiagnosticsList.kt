@@ -243,6 +243,8 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
             parameter<FirMemberDeclaration>("overridingDeclaration")
             parameter<FirMemberDeclaration>("overriddenDeclaration")
         }
+        val NON_FINAL_MEMBER_IN_FINAL_CLASS by warning<FirSourceElement, KtNamedDeclaration>(PositioningStrategy.OPEN_MODIFIER)
+        val NON_FINAL_MEMBER_IN_OBJECT by warning<FirSourceElement, KtNamedDeclaration>(PositioningStrategy.OPEN_MODIFIER)
     }
 
     val REDECLARATIONS by object : DiagnosticGroup("Redeclarations") {

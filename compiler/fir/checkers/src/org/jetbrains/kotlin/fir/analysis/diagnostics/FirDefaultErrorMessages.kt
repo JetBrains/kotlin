@@ -99,6 +99,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MANY_COMPANION_OB
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_VAL_ON_ANNOTATION_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NONE_APPLICABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_ABSTRACT_FUNCTION_WITH_NO_BODY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_FINAL_MEMBER_IN_FINAL_CLASS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_FINAL_MEMBER_IN_OBJECT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_MEMBER_FUNCTION_NO_BODY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_PRIVATE_CONSTRUCTOR_IN_ENUM
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_PRIVATE_OR_PROTECTED_CONSTRUCTOR_IN_SEALED
@@ -394,6 +396,8 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
                 FQ_NAMES_IN_TYPES,
                 FQ_NAMES_IN_TYPES
             )
+            map.put(NON_FINAL_MEMBER_IN_FINAL_CLASS, "'open' has no effect in a final class")
+            map.put(NON_FINAL_MEMBER_IN_OBJECT, "'open' has no effect in an object")
             map.put(
                 GENERIC_THROWABLE_SUBCLASS,
                 "Subclass of 'Throwable' may not have type parameters"
