@@ -24557,6 +24557,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 }
 
                 @Test
+                @TestMetadata("sealedFunInterface.kt")
+                public void testSealedFunInterface() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/sealed/interfaces/sealedFunInterface.kt");
+                }
+
+                @Test
                 @TestMetadata("sealedInterfacesDisabled.kt")
                 public void testSealedInterfacesDisabled() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/sealed/interfaces/sealedInterfacesDisabled.kt");
