@@ -32,10 +32,13 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
+import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.Variance
 
 internal class FunctionReferenceLowering(val context: Context): FileLoweringPass {
 
@@ -89,6 +92,21 @@ internal class FunctionReferenceLowering(val context: Context): FileLoweringPass
                 return result
             }
 
+            // TODO: Move to common IR utils.
+            fun IrType.eraseProjections(): IrType {
+                if (this !is IrSimpleType) return this
+                return buildSimpleType {
+                    this.classifier = this@eraseProjections.classifier
+                    this.hasQuestionMark = this@eraseProjections.hasQuestionMark
+                    this.annotations = this@eraseProjections.annotations
+                    this.arguments = this@eraseProjections.arguments.map {
+                        if (it !is IrTypeProjection)
+                            it
+                        else makeTypeProjection(it.type.eraseProjections(), Variance.INVARIANT)
+                    }
+                }
+            }
+
             // Handle SAM conversions which wrap a function reference:
             //     class sam$n(private val receiver: R) : Interface { override fun method(...) = receiver.target(...) }
             //
@@ -111,7 +129,7 @@ internal class FunctionReferenceLowering(val context: Context): FileLoweringPass
                         return super.visitTypeOperator(expression)
                     }
                     reference.transformChildrenVoid()
-                    return transformFunctionReference(reference, expression.typeOperand)
+                    return transformFunctionReference(reference, expression.typeOperand.eraseProjections())
                 }
                 return super.visitTypeOperator(expression)
             }
