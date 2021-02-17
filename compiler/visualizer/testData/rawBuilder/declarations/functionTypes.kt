@@ -1,8 +1,7 @@
 // FIR_IGNORE
-//                                      Unit
-//                                      │ fun ((T) -> Unit).invoke(T): Unit
-//                                      │ │
-fun <T> simpleRun(f: (T) -> Unit): Unit = f()
+//                               T fun (() -> T).invoke(): T
+//                               │ │
+fun <T> simpleRun(f: () -> T): T = f()
 
 //         collections/List<T>
 //         │

@@ -1,9 +1,36 @@
 // FIR_IGNORE
 //constructor annotation/Target(vararg annotation/AnnotationTarget)
-//│     enum class annotation/AnnotationTarget: Enum<annotation/AnnotationTarget>
-//│     │                enum entry annotation/AnnotationTarget.ANNOTATION_CLASS
-//│     │                │
-@Target(AnnotationTarget.ANNOTATION_CLASS) annotation class base
+//│
+@Target(
+//  enum class annotation/AnnotationTarget: Enum<annotation/AnnotationTarget>
+//  │                enum entry annotation/AnnotationTarget.CLASS
+//  │                │
+    AnnotationTarget.CLASS,
+//  enum class annotation/AnnotationTarget: Enum<annotation/AnnotationTarget>
+//  │                enum entry annotation/AnnotationTarget.PROPERTY
+//  │                │
+    AnnotationTarget.PROPERTY,
+//  enum class annotation/AnnotationTarget: Enum<annotation/AnnotationTarget>
+//  │                enum entry annotation/AnnotationTarget.LOCAL_VARIABLE
+//  │                │
+    AnnotationTarget.LOCAL_VARIABLE,
+//  enum class annotation/AnnotationTarget: Enum<annotation/AnnotationTarget>
+//  │                enum entry annotation/AnnotationTarget.VALUE_PARAMETER
+//  │                │
+    AnnotationTarget.VALUE_PARAMETER,
+//  enum class annotation/AnnotationTarget: Enum<annotation/AnnotationTarget>
+//  │                enum entry annotation/AnnotationTarget.CONSTRUCTOR
+//  │                │
+    AnnotationTarget.CONSTRUCTOR,
+//  enum class annotation/AnnotationTarget: Enum<annotation/AnnotationTarget>
+//  │                enum entry annotation/AnnotationTarget.FUNCTION
+//  │                │
+    AnnotationTarget.FUNCTION,
+//  enum class annotation/AnnotationTarget: Enum<annotation/AnnotationTarget>
+//  │                enum entry annotation/AnnotationTarget.TYPE
+//  │                │
+    AnnotationTarget.TYPE
+) annotation class base
 
 //constructor base()
 //│

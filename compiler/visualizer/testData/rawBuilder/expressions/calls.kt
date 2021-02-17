@@ -1,25 +1,23 @@
 // FIR_IGNORE
 // WITH_RUNTIME
-//                                 Int
-//                                 │ distance.x: Int
-//                                 │ │ fun (Int).plus(Int): Int
-//                                 │ │ │ distance.y: Int
-//                                 │ │ │ │
-infix fun distance(x: Int, y: Int) = x + y
+//                                    fun (Int).plus(Int): Int
+//                             Int    │ distance.y: Int
+//                             │      │ │
+infix fun Int.distance(y: Int) = this + y
 
-//              [ERROR: unknown type]
+//              Int
 //              │ Int
-//              │ │ [ERROR: not resolved]
+//              │ │ fun Int.distance(Int): Int
 //              │ │ │        Int
 //              │ │ │        │
 fun test(): Int = 3 distance 4
 
 //                     Int
-//                     │ fun distance(Int, Int): Int
-//                     │ │        Int
-//                     │ │        │  Int
-//                     │ │        │  │
-fun testRegular(): Int = distance(3, 4)
+//                     │ Int
+//                     │ │ fun Int.distance(Int): Int
+//                     │ │ │        Int
+//                     │ │ │        │
+fun testRegular(): Int = 3.distance(4)
 
 class My(var x: Int) {
 //                        Int

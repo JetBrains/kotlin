@@ -2,8 +2,10 @@
 //constructor annotation/Target(vararg annotation/AnnotationTarget)
 //│     enum class annotation/AnnotationTarget: Enum<annotation/AnnotationTarget>
 //│     │                enum entry annotation/AnnotationTarget.EXPRESSION
-//│     │                │
-@Target(AnnotationTarget.EXPRESSION)
+//│     │                │           enum class annotation/AnnotationTarget: Enum<annotation/AnnotationTarget>
+//│     │                │           │                enum entry annotation/AnnotationTarget.LOCAL_VARIABLE
+//│     │                │           │                │
+@Target(AnnotationTarget.EXPRESSION, AnnotationTarget.LOCAL_VARIABLE)
 //constructor annotation/Retention(annotation/AnnotationRetention = ...)
 //│        enum class annotation/AnnotationRetention: Enum<annotation/AnnotationRetention>
 //│        │                   enum entry annotation/AnnotationRetention.SOURCE
@@ -40,14 +42,12 @@ fun foo(arg: Int): Int {
     return 42
 }
 
-data class Two(x: Int, y: Int)
+data class Two(val x: Int, val y: Int)
 
 fun bar(two: Two) {
 //        constructor Ann()
-//        │   [ERROR : component1() return type]
-//        │   │   constructor Ann()
-//        │   │   │   [ERROR : component2() return type]
-//        │   │   │   │    bar.two: Two
+//        │       constructor Ann()
+//        │   Int │   Int  bar.two: Two
 //        │   │   │   │    │
     val (@Ann x, @Ann y) = two
 }

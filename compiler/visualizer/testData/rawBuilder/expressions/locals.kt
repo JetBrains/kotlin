@@ -19,10 +19,9 @@ fun withLocals(p: Int): Int {
 //             │ fun (Int).plus(Int): Int
 //             │ │ fun ((Int, Int) -> Int).invoke(Int, Int): Int
 //             │ │ │ withLocals.sum.y: Int
-//             │ │ │ │ fun (Int).plus(Int): Int
-//             │ │ │ │ │ withLocals.sum.z: Int
-//             │ │ │ │ │ │
-        return x + f(y + z)
+//             │ │ │ │  withLocals.sum.z: Int
+//             │ │ │ │  │
+        return x + f(y, z)
     }
 
 //      Int              constructor Any()
