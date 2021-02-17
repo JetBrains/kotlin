@@ -253,12 +253,13 @@ class CirTreeMerger(
     private fun processCInteropModuleAttributes(moduleInfo: ModuleInfo) {
         val cInteropAttributes = moduleInfo.cInteropAttributes ?: return
         val exportForwardDeclarations = cInteropAttributes.exportForwardDeclarations.takeIf { it.isNotEmpty() } ?: return
-        val mainPackageFqName = CirPackageName.create(cInteropAttributes.mainPackageFqName)
 
         exportForwardDeclarations.forEach { classFqName ->
             // Class has synthetic package FQ name (cnames/objcnames). Need to transfer it to the main package.
+            val packageName = CirPackageName.create(classFqName.substringBeforeLast('.', missingDelimiterValue = ""))
             val className = CirName.create(classFqName.substringAfterLast('.'))
-            classifiers.forwardDeclarations.addExportedForwardDeclaration(CirEntityId.create(mainPackageFqName, className))
+
+            classifiers.forwardDeclarations.addExportedForwardDeclaration(CirEntityId.create(packageName, className))
         }
     }
 }

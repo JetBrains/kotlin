@@ -72,7 +72,7 @@ interface CirForwardDeclarations {
             override fun isExportedForwardDeclaration(classId: CirEntityId) = classId in exportedForwardDeclarations
 
             override fun addExportedForwardDeclaration(classId: CirEntityId) {
-                check(!classId.packageName.isUnderKotlinNativeSyntheticPackages)
+                check(classId.packageName.isUnderKotlinNativeSyntheticPackages)
                 exportedForwardDeclarations += classId
             }
         }

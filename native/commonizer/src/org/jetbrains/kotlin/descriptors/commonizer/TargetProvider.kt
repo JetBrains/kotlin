@@ -23,7 +23,6 @@ interface ModulesProvider {
     )
 
     class CInteropModuleAttributes(
-        val mainPackageFqName: String,
         val exportForwardDeclarations: Collection<String>
     )
 

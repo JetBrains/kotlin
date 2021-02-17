@@ -45,11 +45,7 @@ internal abstract class NativeDistributionModulesProvider(libraries: Collection<
             val dependencies = manifestData.dependencies.toSet()
 
             val cInteropAttributes = if (manifestData.isInterop) {
-                val packageFqName = manifestData.packageFqName
-                    ?: manifestData.shortName?.let { "platform.$it" }
-                    ?: manifestData.uniqueName.substringAfter("platform.").let { "platform.$it" }
-
-                CInteropModuleAttributes(packageFqName, manifestData.exportForwardDeclarations)
+                CInteropModuleAttributes(manifestData.exportForwardDeclarations)
             } else null
 
             libraryMap.put(name, library)?.let { error("Duplicated libraries: $name") }
