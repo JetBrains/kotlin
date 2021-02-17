@@ -53,7 +53,8 @@ fun Task.dependsOnKotlinPluginInstall() {
         ":kotlin-scripting-compiler-embeddable:install",
         ":kotlin-scripting-compiler-impl-embeddable:install",
         ":kotlin-test-js-runner:install",
-        ":native:kotlin-klib-commonizer-embeddable:install"
+        ":native:kotlin-klib-commonizer-embeddable:install",
+        ":native:kotlin-klib-commonizer-api:install"
     )
 }
 

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.tasks.*
-import org.jetbrains.kotlin.compilerRunner.KotlinNativeKlibCommonizerToolRunner
+import org.jetbrains.kotlin.compilerRunner.KotlinNativeCommonizerToolRunner
 import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.targets.native.internal.SuccessMarker.Companion.getSuccessMarker
@@ -24,7 +24,6 @@ import java.nio.file.*
 import java.nio.file.attribute.*
 import java.time.*
 import java.util.*
-import javax.inject.Inject
 
 internal const val COMMONIZER_TASK_NAME = "runCommonizer"
 
@@ -190,7 +189,7 @@ internal fun Project.createTempNativeDistributionCommonizerOutputDirectory(targe
 fun callCommonizerCLI(project: Project, commandLineArguments: List<String>) {
     if (commandLineArguments.isEmpty()) return
 
-    KotlinNativeKlibCommonizerToolRunner(project).run(commandLineArguments)
+    KotlinNativeCommonizerToolRunner(project).run(commandLineArguments)
 }
 
 private fun renameDirectory(source: File, destination: File) {

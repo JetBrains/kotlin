@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
-import org.jetbrains.kotlin.descriptors.commonizer.LeafTarget
-import org.jetbrains.kotlin.descriptors.commonizer.SharedTarget
+import org.jetbrains.kotlin.descriptors.commonizer.LeafCommonizerTarget
+import org.jetbrains.kotlin.descriptors.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirType
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirClassFactory
@@ -537,7 +537,7 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
         fun areEqual(classifiers: CirKnownClassifiers, a: CirType, b: CirType): Boolean =
             TypeCommonizer(classifiers).run { commonizeWith(a) && commonizeWith(b) }
 
-        private val FAKE_SHARED_TARGET = SharedTarget(setOf(LeafTarget("a"), LeafTarget("b")))
+        private val FAKE_SHARED_TARGET = SharedCommonizerTarget(setOf(LeafCommonizerTarget("a"), LeafCommonizerTarget("b")))
 
         private fun CirKnownClassifiers.classNode(classId: CirEntityId, computation: () -> CirClassNode) =
             commonized.classNode(classId) ?: computation()

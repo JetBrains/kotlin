@@ -6,10 +6,8 @@
 package org.jetbrains.kotlin.descriptors.commonizer.mergedtree
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.commonizer.LeafTarget
+import org.jetbrains.kotlin.descriptors.commonizer.*
 import org.jetbrains.kotlin.descriptors.commonizer.ModulesProvider.ModuleInfo
-import org.jetbrains.kotlin.descriptors.commonizer.CommonizerParameters
-import org.jetbrains.kotlin.descriptors.commonizer.TargetProvider
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirName
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirPackageName
@@ -49,7 +47,7 @@ class CirTreeMerger(
 ) {
     class CirTreeMergeResult(
         val root: CirRootNode,
-        val missingModuleInfos: Map<LeafTarget, Collection<ModuleInfo>>
+        val missingModuleInfos: Map<LeafCommonizerTarget, Collection<ModuleInfo>>
     )
 
     private val size = parameters.targetProviders.size

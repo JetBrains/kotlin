@@ -768,6 +768,7 @@ tasks {
     register("toolsTest") {
         dependsOn(":tools:kotlinp:test")
         dependsOn(":native:kotlin-klib-commonizer:test")
+        dependsOn(":native:kotlin-klib-commonizer-api:test")
     }
 
     register("examplesTest") {

@@ -16,9 +16,12 @@ import org.jetbrains.kotlin.descriptors.commonizer.ModulesProvider.ModuleInfo
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirName
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirClassFactory
+import org.jetbrains.kotlin.descriptors.commonizer.konan.NativeSensitiveManifestData
+import org.jetbrains.kotlin.descriptors.commonizer.konan.TargetedNativeManifestDataProvider
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.*
 import org.jetbrains.kotlin.descriptors.impl.AbstractTypeAliasDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
+import org.jetbrains.kotlin.library.KotlinLibraryVersioning
 import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.parentOrNull
@@ -204,8 +207,8 @@ internal class MockResultsConsumer : ResultsConsumer {
     val modulesByTargets: Map<CommonizerTarget, Collection<ModuleResult>>
         get() = _modulesByTargets.mapValues { it.value.values }
 
-    val sharedTarget: SharedTarget by lazy { modulesByTargets.keys.filterIsInstance<SharedTarget>().single() }
-    val leafTargets: Set<LeafTarget> by lazy { modulesByTargets.keys.filterIsInstance<LeafTarget>().toSet() }
+    val sharedTarget: SharedCommonizerTarget by lazy { modulesByTargets.keys.filterIsInstance<SharedCommonizerTarget>().single() }
+    val leafTargets: Set<LeafCommonizerTarget> by lazy { modulesByTargets.keys.filterIsInstance<LeafCommonizerTarget>().toSet() }
 
     private val finishedTargets = mutableSetOf<CommonizerTarget>()
 
@@ -231,4 +234,26 @@ internal class MockResultsConsumer : ResultsConsumer {
         check(finishedTargets.containsAll(_modulesByTargets.keys))
         this.status = status
     }
+}
+
+fun MockNativeManifestDataProvider(
+    uniqueName: String = "mock",
+    versions: KotlinLibraryVersioning = KotlinLibraryVersioning(null, null, null, null, null),
+    dependencies: List<String> = emptyList(),
+    isInterop: Boolean = true,
+    packageFqName: String? = "mock",
+    exportForwardDeclarations: List<String> = emptyList(),
+    nativeTargets: Collection<String> = emptyList(),
+    shortName: String? = "mock"
+): TargetedNativeManifestDataProvider = TargetedNativeManifestDataProvider { target, libraryName ->
+    NativeSensitiveManifestData(
+        uniqueName = uniqueName,
+        versions = versions,
+        dependencies = dependencies,
+        isInterop = isInterop,
+        packageFqName = packageFqName,
+        exportForwardDeclarations = exportForwardDeclarations,
+        nativeTargets = nativeTargets,
+        shortName = shortName
+    )
 }

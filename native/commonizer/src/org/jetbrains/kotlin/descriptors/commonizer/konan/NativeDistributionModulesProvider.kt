@@ -34,8 +34,6 @@ internal abstract class NativeDistributionModulesProvider(libraries: Collection<
     protected val moduleInfoMap: Map<String, NativeModuleInfo>
 
     init {
-        check(libraries.isNotEmpty()) { "No libraries supplied" }
-
         val libraryMap = mutableMapOf<String, NativeLibrary>()
         val moduleInfoMap = mutableMapOf<String, NativeModuleInfo>()
 

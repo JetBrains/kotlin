@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.library.impl.BaseWriterImpl
  * The set of properties in manifest of Kotlin/Native library that should be
  * preserved in commonized libraries (both for "common" and platform-specific library parts).
  */
-internal data class NativeSensitiveManifestData(
+data class NativeSensitiveManifestData(
     val uniqueName: String,
     val versions: KotlinLibraryVersioning,
     val dependencies: List<String>,

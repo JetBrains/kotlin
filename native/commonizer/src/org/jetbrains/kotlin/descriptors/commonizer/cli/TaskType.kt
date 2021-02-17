@@ -40,7 +40,21 @@ internal enum class TaskType(
             NativeDistributionOptionType
         ),
         ::NativeDistributionListTargets
-    );
+    ),
+
+    NATIVE_KLIB_COMMONIZE(
+        "native-klib-commonize",
+        "Commonize any platform-specific libraries",
+        listOf(
+            NativeDistributionOptionType,
+            OutputOptionType,
+            InputLibrariesOptionType,
+            DependencyLibrariesOptionType,
+            OutputCommonizerTargetOptionType,
+        ),
+        ::NativeKlibCommonize
+    )
+    ;
 
     companion object {
         fun getByAlias(alias: String) = values().firstOrNull { it.alias == alias }

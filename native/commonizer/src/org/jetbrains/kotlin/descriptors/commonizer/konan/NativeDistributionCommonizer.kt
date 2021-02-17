@@ -5,160 +5,91 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.konan
 
-import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
-import org.jetbrains.kotlin.backend.common.serialization.metadata.metadataVersion
 import org.jetbrains.kotlin.descriptors.commonizer.*
-import org.jetbrains.kotlin.descriptors.commonizer.konan.NativeDistributionCommonizer.StatsType.*
-import org.jetbrains.kotlin.descriptors.commonizer.stats.*
+import org.jetbrains.kotlin.descriptors.commonizer.LeafCommonizerTarget
+import org.jetbrains.kotlin.descriptors.commonizer.cli.toProgressLogger
+import org.jetbrains.kotlin.descriptors.commonizer.konan.NativeDistributionCommonizer.*
+import org.jetbrains.kotlin.descriptors.commonizer.repository.Repository
+import org.jetbrains.kotlin.descriptors.commonizer.stats.StatsCollector
 import org.jetbrains.kotlin.descriptors.commonizer.utils.ResettableClockMark
 import org.jetbrains.kotlin.konan.library.*
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.ToolingSingleFileKlibResolveStrategy
-import org.jetbrains.kotlin.library.resolveSingleFileKlib
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.util.Logger
-import java.io.File
-import org.jetbrains.kotlin.konan.file.File as KFile
 
-class NativeDistributionCommonizer(
-    private val repository: File,
+internal class NativeDistributionCommonizer internal constructor(
+    private val konanDistribution: KonanDistribution,
+    private val repository: Repository,
+    private val dependencies: Repository,
+    private val libraryLoader: NativeLibraryLoader,
     private val targets: List<KonanTarget>,
-    private val destination: File,
-    private val copyStdlib: Boolean,
-    private val copyEndorsedLibs: Boolean,
-    private val statsType: StatsType,
+    private val resultsConsumer: ResultsConsumer,
+    private val statsCollector: StatsCollector?,
     private val logger: Logger
 ) {
-    enum class StatsType { RAW, AGGREGATED, NONE }
 
     private val clockMark = ResettableClockMark()
 
     fun run() {
         checkPreconditions()
         clockMark.reset()
-
-        // 1. load libraries
         val allLibraries = loadLibraries()
-
-        // 2. run commonization & write new libraries
         commonizeAndSaveResults(allLibraries)
-
         logTotal()
     }
 
-    private fun checkPreconditions() {
-        if (!repository.isDirectory)
-            logger.fatal("Repository does not exist: $repository")
-
-        when (targets.size) {
-            0 -> logger.fatal("No targets specified")
-            1 -> logger.fatal("Too few targets specified: $targets")
-        }
-
-        when {
-            !destination.exists() -> destination.mkdirs()
-            !destination.isDirectory -> logger.fatal("Output already exists: $destination")
-            destination.walkTopDown().any { it != destination } -> logger.fatal("Output is not empty: $destination")
-        }
-    }
-
-    private fun logProgress(message: String) = logger.log("* $message in ${clockMark.elapsedSinceLast()}")
-
-    private fun logTotal() = logger.log("TOTAL: ${clockMark.elapsedSinceStart()}")
-
     private fun loadLibraries(): AllNativeLibraries {
-        val stdlibPath = repository.resolve(konanCommonLibraryPath(KONAN_STDLIB_NAME))
-        val stdlib = NativeLibrary(loadLibrary(stdlibPath))
+        val stdlib = libraryLoader(konanDistribution.stdlib)
 
-        val librariesByTargets = targets.associate { target ->
-            val leafTarget = LeafTarget(target.name, target)
-
-            val platformLibs = leafTarget.platformLibrariesSource
-                .takeIf { it.isDirectory }
-                ?.listFiles()
-                ?.takeIf { it.isNotEmpty() }
-                ?.map { NativeLibrary(loadLibrary(it)) }
-                .orEmpty()
-
-            if (platformLibs.isEmpty())
-                logger.warning("No platform libraries found for target ${leafTarget.prettyName}. This target will be excluded from commonization.")
-
-            leafTarget to NativeLibrariesToCommonize(platformLibs)
+        val librariesByTargets = targets.map(::LeafCommonizerTarget).associateWith { target ->
+            NativeLibrariesToCommonize(repository.getLibraries(target).toList())
         }
 
+        librariesByTargets.forEach { (target, librariesToCommonize) ->
+            if (librariesToCommonize.libraries.isEmpty()) {
+                logger.warning("No platform libraries found for target $target. This target will be excluded from commonization.")
+            }
+        }
         logProgress("Read lazy (uninitialized) libraries")
-
         return AllNativeLibraries(stdlib, librariesByTargets)
     }
 
-    private fun loadLibrary(location: File): KotlinLibrary {
-        if (!location.isDirectory)
-            logger.fatal("Library not found: $location")
-
-        val library = resolveSingleFileKlib(
-            libraryFile = KFile(location.path),
-            logger = logger,
-            strategy = ToolingSingleFileKlibResolveStrategy
-        )
-
-        if (library.versions.metadataVersion == null)
-            logger.fatal("Library does not have metadata version specified in manifest: $location")
-
-        val metadataVersion = library.metadataVersion
-        if (metadataVersion?.isCompatible() != true)
-            logger.fatal(
-                """
-                Library has incompatible metadata version ${metadataVersion ?: "\"unknown\""}: $location
-                Please make sure that all libraries passed to commonizer compatible metadata version ${KlibMetadataVersion.INSTANCE}
-                """.trimIndent()
-            )
-
-        return library
-    }
-
     private fun commonizeAndSaveResults(allLibraries: AllNativeLibraries) {
-        val statsCollector = when (statsType) {
-            RAW -> RawStatsCollector(targets)
-            AGGREGATED -> AggregatedStatsCollector(targets)
-            NONE -> null
-        }
+        val manifestProvider = TargetedNativeManifestDataProvider(allLibraries)
 
-        val parameters = CommonizerParameters(statsCollector, ::logProgress).apply {
+        val parameters = CommonizerParameters(resultsConsumer, manifestProvider, statsCollector, ::logProgress).apply {
             val storageManager = LockBasedStorageManager("Commonized modules")
-
-            resultsConsumer = NativeDistributionResultsConsumer(
-                repository = repository,
-                originalLibraries = allLibraries,
-                destination = destination,
-                copyStdlib = copyStdlib,
-                copyEndorsedLibs = copyEndorsedLibs,
-                logProgress = ::logProgress
-            )
             dependencyModulesProvider = NativeDistributionModulesProvider.forStandardLibrary(storageManager, allLibraries.stdlib)
 
             allLibraries.librariesByTargets.forEach { (target, librariesToCommonize) ->
                 if (librariesToCommonize.libraries.isEmpty()) return@forEach
 
                 val modulesProvider = NativeDistributionModulesProvider.platformLibraries(storageManager, librariesToCommonize)
+                val dependencyModuleProvider = NativeDistributionModulesProvider.platformLibraries(
+                    storageManager, NativeLibrariesToCommonize(dependencies.getLibraries(target).toList()),
+                )
 
                 addTarget(
                     TargetProvider(
                         target = target,
                         modulesProvider = modulesProvider,
-                        dependencyModulesProvider = null // stdlib is already set as common dependency
+                        dependencyModulesProvider = dependencyModuleProvider
                     )
                 )
             }
         }
 
         runCommonization(parameters)
-
-        statsCollector?.writeTo(FileStatsOutput(destination, statsType.name.toLowerCase()))
     }
 
-    private val LeafTarget.platformLibrariesSource: File
-        get() = repository.resolve(KONAN_DISTRIBUTION_KLIB_DIR)
-            .resolve(KONAN_DISTRIBUTION_PLATFORM_LIBS_DIR)
-            .resolve(name)
+    private fun checkPreconditions() {
+        when (targets.size) {
+            0 -> logger.fatal("No targets specified")
+            1 -> logger.fatal("Too few targets specified: $targets")
+        }
+    }
+
+    private fun logProgress(message: String) = logger.toProgressLogger().log("$message in ${clockMark.elapsedSinceLast()}")
+
+    private fun logTotal() = logger.log("TOTAL: ${clockMark.elapsedSinceStart()}")
 }

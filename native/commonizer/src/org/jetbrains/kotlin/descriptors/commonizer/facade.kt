@@ -67,11 +67,11 @@ private fun serializeTarget(mergeResult: CirTreeMergeResult, targetIndex: Int, p
         val serializedMetadata = with(metadataModule.write(KLIB_FRAGMENT_WRITE_STRATEGY)) {
             SerializedMetadata(header, fragments, fragmentNames)
         }
-
-        parameters.resultsConsumer.consume(target, ModuleResult.Commonized(libraryName, serializedMetadata))
+        val manifestData = parameters.manifestDataProvider.getManifest(target, libraryName)
+        parameters.resultsConsumer.consume(target, ModuleResult.Commonized(libraryName, serializedMetadata, manifestData))
     }
 
-    if (target is LeafTarget) {
+    if (target is LeafCommonizerTarget) {
         mergeResult.missingModuleInfos.getValue(target).forEach {
             parameters.resultsConsumer.consume(target, ModuleResult.Missing(it.originalLocation))
         }

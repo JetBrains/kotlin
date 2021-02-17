@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.descriptors.commonizer.utils
 
 import kotlinx.metadata.klib.KlibModuleMetadata
 import org.jetbrains.kotlin.descriptors.commonizer.CommonizerTarget
+import org.jetbrains.kotlin.descriptors.commonizer.identityString
 import org.jetbrains.kotlin.descriptors.commonizer.metadata.utils.MetadataDeclarationsComparator
 import org.jetbrains.kotlin.descriptors.commonizer.metadata.utils.MetadataDeclarationsComparator.Mismatch
 import org.jetbrains.kotlin.descriptors.commonizer.metadata.utils.MetadataDeclarationsComparator.Result
@@ -38,7 +39,7 @@ fun assertModulesAreEqual(reference: SerializedMetadata, generated: SerializedMe
             val digitCount = mismatches.size.toString().length
 
             val failureMessage = buildString {
-                appendLine("${mismatches.size} mismatches found while comparing reference module ${referenceModule.name} (A) and generated module ${generatedModule.name} (B) for target ${target.prettyName}:")
+                appendLine("${mismatches.size} mismatches found while comparing reference module ${referenceModule.name} (A) and generated module ${generatedModule.name} (B) for target ${target.identityString}:")
                 mismatches.forEachIndexed { index, mismatch ->
                     appendLine((index + 1).toString().padStart(digitCount, ' ') + ". " + mismatch)
                 }

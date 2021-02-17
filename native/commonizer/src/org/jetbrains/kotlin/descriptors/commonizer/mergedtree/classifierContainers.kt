@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.descriptors.commonizer.mergedtree
 import gnu.trove.THashMap
 import gnu.trove.THashSet
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.commonizer.SharedTarget
+import org.jetbrains.kotlin.descriptors.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.descriptors.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirPackageName
@@ -25,7 +25,7 @@ class CirKnownClassifiers(
 ) {
     // a shortcut for fast access
     val commonDependencies: CirProvidedClassifiers =
-        dependencies.filterKeys { it is SharedTarget }.values.singleOrNull() ?: CirProvidedClassifiers.EMPTY
+        dependencies.filterKeys { it is SharedCommonizerTarget }.values.singleOrNull() ?: CirProvidedClassifiers.EMPTY
 }
 
 interface CirCommonizedClassifiers {
