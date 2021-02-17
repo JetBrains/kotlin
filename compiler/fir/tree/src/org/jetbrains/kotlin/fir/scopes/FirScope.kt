@@ -61,6 +61,15 @@ fun FirTypeScope.processOverriddenFunctionsAndSelf(
     return processOverriddenFunctions(functionSymbol, processor)
 }
 
+fun FirTypeScope.processOverriddenPropertiesAndSelf(
+    propertySymbol: FirPropertySymbol,
+    processor: (FirPropertySymbol) -> ProcessorAction
+): ProcessorAction {
+    if (!processor(propertySymbol)) return ProcessorAction.STOP
+
+    return processOverriddenProperties(propertySymbol, processor)
+}
+
 enum class ProcessorAction {
     STOP,
     NEXT,

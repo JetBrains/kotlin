@@ -15,11 +15,9 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractOverrideChecker
-import org.jetbrains.kotlin.fir.scopes.jvm.computeJvmDescriptor
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.load.java.SpecialGenericSignatures
 
 class JavaOverrideChecker internal constructor(
     private val session: FirSession,
@@ -30,11 +28,10 @@ class JavaOverrideChecker internal constructor(
     private fun isEqualTypes(
         candidateType: ConeKotlinType,
         baseType: ConeKotlinType,
-        substitutor: ConeSubstitutor,
-        mayBeSpecialBuiltIn: Boolean
+        substitutor: ConeSubstitutor
     ): Boolean {
-        if (candidateType is ConeFlexibleType) return isEqualTypes(candidateType.lowerBound, baseType, substitutor, mayBeSpecialBuiltIn)
-        if (baseType is ConeFlexibleType) return isEqualTypes(candidateType, baseType.lowerBound, substitutor, mayBeSpecialBuiltIn)
+        if (candidateType is ConeFlexibleType) return isEqualTypes(candidateType.lowerBound, baseType, substitutor)
+        if (baseType is ConeFlexibleType) return isEqualTypes(candidateType, baseType.lowerBound, substitutor)
         if (candidateType is ConeClassLikeType && baseType is ConeClassLikeType) {
             val candidateTypeClassId = candidateType.fullyExpandedType(session).lookupTag.classId.let { it.readOnlyToMutable() ?: it }
             val baseTypeClassId = baseType.fullyExpandedType(session).lookupTag.classId.let { it.readOnlyToMutable() ?: it }
@@ -49,20 +46,9 @@ class JavaOverrideChecker internal constructor(
                 return isEqualArrayElementTypeProjections(
                     candidateType.typeArguments.single(),
                     baseType.typeArguments.single(),
-                    substitutor,
-                    mayBeSpecialBuiltIn
+                    substitutor
                 )
             }
-            return true
-        }
-        // TODO: handle the situation in more proper way
-        // Typical case: class EnumMap<K extends Enum, V> implements Map<K, V>
-        // We have containsKey(Object) in Map which is enhanced to containsKey(K) in supertype scope
-        // In EnumMap we have overridden containsKey(Object) which is not yet enhanced
-        // K may be substituted but after that we will get containsKey(Enum) from supertype, which still does not match...
-        if (mayBeSpecialBuiltIn && baseType is ConeTypeParameterType &&
-            candidateType is ConeClassLikeType && candidateType.classId == StandardClassIds.Any
-        ) {
             return true
         }
         return with(context) {
@@ -76,25 +62,22 @@ class JavaOverrideChecker internal constructor(
     private fun isEqualTypes(
         candidateTypeRef: FirTypeRef,
         baseTypeRef: FirTypeRef,
-        substitutor: ConeSubstitutor,
-        mayBeSpecialBuiltIn: Boolean = false
+        substitutor: ConeSubstitutor
     ) = isEqualTypes(
         candidateTypeRef.toConeKotlinTypeProbablyFlexible(session, javaTypeParameterStack),
         baseTypeRef.toConeKotlinTypeProbablyFlexible(session, javaTypeParameterStack),
-        substitutor,
-        mayBeSpecialBuiltIn
+        substitutor
     )
 
     private fun isEqualArrayElementTypeProjections(
         candidateTypeProjection: ConeTypeProjection,
         baseTypeProjection: ConeTypeProjection,
-        substitutor: ConeSubstitutor,
-        mayBeSpecialBuiltIn: Boolean
+        substitutor: ConeSubstitutor
     ): Boolean =
         when {
             candidateTypeProjection is ConeKotlinTypeProjection && baseTypeProjection is ConeKotlinTypeProjection ->
                 candidateTypeProjection.kind == baseTypeProjection.kind &&
-                        isEqualTypes(candidateTypeProjection.type, baseTypeProjection.type, substitutor, mayBeSpecialBuiltIn)
+                        isEqualTypes(candidateTypeProjection.type, baseTypeProjection.type, substitutor)
             candidateTypeProjection is ConeStarProjection && baseTypeProjection is ConeStarProjection -> true
             else -> false
         }
@@ -169,13 +152,8 @@ class JavaOverrideChecker internal constructor(
 
         if (overrideCandidate.valueParameters.size != baseParameterTypes.size) return false
         val substitutor = buildTypeParametersSubstitutorIfCompatible(overrideCandidate, baseDeclaration) ?: return false
-
-        val jvmDescriptor by lazy { baseDeclaration.computeJvmDescriptor() }
-        val mayBeSpecialBuiltIn =
-            baseDeclaration.name in SpecialGenericSignatures.ERASED_VALUE_PARAMETERS_SHORT_NAMES &&
-                    SpecialGenericSignatures.ERASED_VALUE_PARAMETERS_SIGNATURES.any { it.endsWith(jvmDescriptor) }
         return overrideCandidate.valueParameters.zip(baseParameterTypes).all { (paramFromJava, baseType) ->
-            isEqualTypes(paramFromJava.returnTypeRef, baseType, substitutor, mayBeSpecialBuiltIn)
+            isEqualTypes(paramFromJava.returnTypeRef, baseType, substitutor)
         }
     }
 

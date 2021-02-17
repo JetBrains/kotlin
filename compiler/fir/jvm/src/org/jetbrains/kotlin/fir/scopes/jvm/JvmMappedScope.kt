@@ -29,11 +29,11 @@ class JvmMappedScope(
         }
 
         val declaredSignatures by lazy {
-            declared.mapTo(mutableSetOf()) { it.fir.computeJvmDescriptorReplacingKotlinToJava() }
+            declared.mapTo(mutableSetOf()) { it.fir.computeJvmDescriptor() }
         }
 
         javaMappedClassUseSiteScope.processFunctionsByName(name) { symbol ->
-            val jvmSignature = symbol.fir.computeJvmDescriptorReplacingKotlinToJava()
+            val jvmSignature = symbol.fir.computeJvmDescriptor()
             if (jvmSignature in visibleMethods && jvmSignature !in declaredSignatures) {
                 processor(symbol)
             }
@@ -49,7 +49,7 @@ class JvmMappedScope(
         val hiddenConstructors = signatures.hiddenConstructors
         if (hiddenConstructors.isNotEmpty()) {
             javaMappedClassUseSiteScope.processDeclaredConstructors { symbol ->
-                val jvmSignature = symbol.fir.computeJvmDescriptorReplacingKotlinToJava()
+                val jvmSignature = symbol.fir.computeJvmDescriptor()
                 if (jvmSignature !in hiddenConstructors) {
                     processor(symbol)
                 }

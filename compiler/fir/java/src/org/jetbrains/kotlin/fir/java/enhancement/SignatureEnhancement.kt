@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
 import org.jetbrains.kotlin.fir.initialSignatureAttr
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.*
+import org.jetbrains.kotlin.fir.java.toConeKotlinTypeProbablyFlexible
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.scopes.jvm.computeJvmDescriptor
 import org.jetbrains.kotlin.fir.symbols.CallableId
@@ -165,7 +166,10 @@ class FirSignatureEnhancement(
         val memberContext = context.copyWithNewDefaultTypeQualifiers(typeQualifierResolver, jsr305State, firMethod.annotations)
 
         val predefinedEnhancementInfo =
-            SignatureBuildingComponents.signature(owner.symbol.classId, firMethod.computeJvmDescriptor()).let { signature ->
+            SignatureBuildingComponents.signature(
+                owner.symbol.classId,
+                firMethod.computeJvmDescriptor { it.toConeKotlinTypeProbablyFlexible(session, javaTypeParameterStack) }
+            ).let { signature ->
                 PREDEFINED_FUNCTION_ENHANCEMENT_INFO_BY_SIGNATURE[signature]
             }
 
@@ -308,6 +312,9 @@ class FirSignatureEnhancement(
         ownerParameter: FirJavaValueParameter,
         index: Int
     ): FirResolvedTypeRef {
+        if (ownerParameter.returnTypeRef is FirResolvedTypeRef) {
+            return ownerParameter.returnTypeRef as FirResolvedTypeRef
+        }
         val signatureParts = ownerFunction.partsForValueParameter(
             typeQualifierResolver,
             overriddenMembers,

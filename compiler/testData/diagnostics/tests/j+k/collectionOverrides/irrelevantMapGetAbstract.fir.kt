@@ -15,5 +15,5 @@ abstract public class MHashtable<X, Y> extends Dict<X, Y> implements java.util.M
 abstract class C1 : MHashtable<String, Int>()
 
 abstract class C2 : MHashtable<String, Int>() {
-    override fun get(key: String) = 1
+    override fun <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>get<!>(key: String) = 1
 }
