@@ -1,5 +1,5 @@
 FILE: annotation.kt
-    @Target(AnnotationTarget#.ANNOTATION_CLASS#) public? final? annotation class base : R|kotlin/Annotation| {
+    @Target(AnnotationTarget#.CLASS#, AnnotationTarget#.PROPERTY#, AnnotationTarget#.LOCAL_VARIABLE#, AnnotationTarget#.VALUE_PARAMETER#, AnnotationTarget#.CONSTRUCTOR#, AnnotationTarget#.FUNCTION#, AnnotationTarget#.TYPE#) public? final? annotation class base : R|kotlin/Annotation| {
         public? constructor(): R|base| {
             super<R|kotlin/Any|>()
         }

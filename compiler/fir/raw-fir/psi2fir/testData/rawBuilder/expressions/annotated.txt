@@ -1,5 +1,5 @@
 FILE: annotated.kt
-    @Target(AnnotationTarget#.EXPRESSION#) @Retention(AnnotationRetention#.SOURCE#) public? final? annotation class Ann : R|kotlin/Annotation| {
+    @Target(AnnotationTarget#.EXPRESSION#, AnnotationTarget#.LOCAL_VARIABLE#) @Retention(AnnotationRetention#.SOURCE#) public? final? annotation class Ann : R|kotlin/Annotation| {
         public? constructor(): R|Ann| {
             super<R|kotlin/Any|>()
         }
@@ -25,7 +25,17 @@ FILE: annotated.kt
             super<R|kotlin/Any|>()
         }
 
-        public final fun copy(): R|Two|
+        public? final? val x: Int = R|<local>/x|
+            public? get(): Int
+
+        public? final? val y: Int = R|<local>/y|
+            public? get(): Int
+
+        public final operator fun component1(): Int
+
+        public final operator fun component2(): Int
+
+        public final fun copy(x: Int = this@R|/Two|.R|/Two.x|, y: Int = this@R|/Two|.R|/Two.y|): R|Two|
 
     }
     public? final? fun bar(two: Two): R|kotlin/Unit| {

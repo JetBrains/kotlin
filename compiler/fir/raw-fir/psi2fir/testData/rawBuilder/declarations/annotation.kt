@@ -1,4 +1,12 @@
-@Target(AnnotationTarget.ANNOTATION_CLASS) annotation class base
+@Target(
+    AnnotationTarget.CLASS,
+    AnnotationTarget.PROPERTY,
+    AnnotationTarget.LOCAL_VARIABLE,
+    AnnotationTarget.VALUE_PARAMETER,
+    AnnotationTarget.CONSTRUCTOR,
+    AnnotationTarget.FUNCTION,
+    AnnotationTarget.TYPE
+) annotation class base
 
 @base annotation class derived
 

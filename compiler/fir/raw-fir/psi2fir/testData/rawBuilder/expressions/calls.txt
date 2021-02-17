@@ -1,12 +1,12 @@
 FILE: calls.kt
-    public? final? infix fun distance(x: Int, y: Int): <implicit> {
-        ^distance x#.plus#(y#)
+    public? final? infix fun Int.distance(y: Int): <implicit> {
+        ^distance this#.plus#(y#)
     }
     public? final? fun test(): Int {
         ^test IntegerLiteral(3).distance#(IntegerLiteral(4))
     }
     public? final? fun testRegular(): Int {
-        ^testRegular distance#(IntegerLiteral(3), IntegerLiteral(4))
+        ^testRegular IntegerLiteral(3).distance#(IntegerLiteral(4))
     }
     public? final? class My : R|kotlin/Any| {
         public? constructor(x: Int): R|My| {

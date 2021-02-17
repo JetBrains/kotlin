@@ -16,7 +16,7 @@ FILE: locals.kt
 
         lval x: <implicit> = Local#(IntegerLiteral(42)).diff#()
         local final? fun sum(y: Int, z: Int, f: ( (Int, Int) -> Int )): Int {
-            ^sum x#.plus#(f#(y#.plus#(z#)))
+            ^sum x#.plus#(f#(y#, z#))
         }
 
         lval code: <implicit> = object : Any {

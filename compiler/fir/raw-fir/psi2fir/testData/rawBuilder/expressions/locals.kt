@@ -6,7 +6,7 @@ fun withLocals(p: Int): Int {
     val x = Local(42).diff()
 
     fun sum(y: Int, z: Int, f: (Int, Int) -> Int): Int {
-        return x + f(y + z)
+        return x + f(y, z)
     }
 
     val code = (object : Any() {

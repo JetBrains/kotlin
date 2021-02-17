@@ -1,4 +1,4 @@
-fun <T> simpleRun(f: (T) -> Unit): Unit = f()
+fun <T> simpleRun(f: () -> T): T = f()
 
 fun <T, R> List<T>.simpleMap(f: (T) -> R): R {
 
