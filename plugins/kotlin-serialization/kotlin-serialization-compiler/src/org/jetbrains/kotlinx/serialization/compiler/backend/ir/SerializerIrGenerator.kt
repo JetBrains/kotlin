@@ -410,12 +410,12 @@ open class SerializerIrGenerator(
         // var bitMask0 = 0, bitMask1 = 0...
         val bitMasks = (0 until blocksCnt).map { irTemporary(irInt(0), "bitMask$it", isMutable = true) }
         // var local0 = null, local1 = null ...
-        val serialPropertiesMap = serializableProperties.mapIndexed { i, prop -> Pair(i, prop.descriptor) }.associate { (i, descriptor) ->
+        val serialPropertiesMap = serializableProperties.mapIndexed { i, prop -> i to prop.descriptor }.associate { (i, descriptor) ->
             val (expr, type) = defaultValueAndType(descriptor)
             descriptor to irTemporary(expr, "local$i", type, isMutable = true)
         }
         // var transient0 = null, transient0 = null ...
-        val transientsPropertiesMap = transients.mapIndexed { i, prop -> Pair(i, prop.descriptor) }.associate { (i, descriptor) ->
+        val transientsPropertiesMap = transients.mapIndexed { i, prop -> i to prop.descriptor }.associate { (i, descriptor) ->
             val (expr, type) = defaultValueAndType(descriptor)
             descriptor to irTemporary(expr, "transient$i", type, isMutable = true)
         }

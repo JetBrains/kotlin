@@ -619,8 +619,8 @@ interface IrBuilderExtension {
     }
 
     /*
-    Creates an initializer adapter function that can replaces IR expressions of getting constructor parameter value by some other expression.
-    Also adapter may replaces IR expression of getting `this` value by another expression.
+    Creates an initializer adapter function that can replace IR expressions of getting constructor parameter value by some other expression.
+    Also adapter may replace IR expression of getting `this` value by another expression.
      */
     fun createInitializerAdapter(
         irClass: IrClass,
