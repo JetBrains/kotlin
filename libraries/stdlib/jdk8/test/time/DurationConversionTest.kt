@@ -44,9 +44,14 @@ class DurationConversionTest {
 
     @Test
     fun javaToKotlinRounding() {
-        val jtDuration = JTDuration.ofDays(105).plusNanos(1)
-        val duration = jtDuration.toKotlinDuration()
-        assertEquals(Duration.days(105), duration)
+        val jtDuration1 = JTDuration.ofDays(365 * 150)
+        val jtDuration2 = jtDuration1.plusNanos(1)
+        assertNotEquals(jtDuration1, jtDuration2)
+
+        val duration1 = jtDuration1.toKotlinDuration()
+        val duration2 = jtDuration1.toKotlinDuration()
+        assertEquals(duration1, duration2)
+        assertEquals(Duration.days(365 * 150), duration2)
     }
 
     @Test

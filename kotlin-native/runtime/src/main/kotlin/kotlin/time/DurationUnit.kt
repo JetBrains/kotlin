@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -46,6 +46,36 @@ internal actual fun convertDurationUnit(value: Double, sourceUnit: DurationUnit,
     return when {
         sourceCompareTarget > 0 -> value * (sourceUnit.scale / targetUnit.scale)
         sourceCompareTarget < 0 -> value / (targetUnit.scale / sourceUnit.scale)
+        else -> value
+    }
+}
+
+@SinceKotlin("1.5")
+@ExperimentalTime
+internal actual fun convertDurationUnitOverflow(value: Long, sourceUnit: DurationUnit, targetUnit: DurationUnit): Long {
+    val sourceCompareTarget = sourceUnit.scale.compareTo(targetUnit.scale)
+    return when {
+        sourceCompareTarget > 0 -> value * (sourceUnit.scale / targetUnit.scale).toLong()
+        sourceCompareTarget < 0 -> value / (targetUnit.scale / sourceUnit.scale).toLong()
+        else -> value
+    }
+}
+
+@SinceKotlin("1.5")
+@ExperimentalTime
+internal actual fun convertDurationUnit(value: Long, sourceUnit: DurationUnit, targetUnit: DurationUnit): Long {
+    val sourceCompareTarget = sourceUnit.scale.compareTo(targetUnit.scale)
+    return when {
+        sourceCompareTarget > 0 -> {
+            val scale = (sourceUnit.scale / targetUnit.scale).toLong()
+            val result = value * scale
+            when {
+                result / scale == value -> result
+                value > 0 -> Long.MAX_VALUE
+                else -> Long.MIN_VALUE
+            }
+        }
+        sourceCompareTarget < 0 -> value / (targetUnit.scale / sourceUnit.scale).toLong()
         else -> value
     }
 }
