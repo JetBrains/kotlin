@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeUnexpectedTypeArgumentsError
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedQualifierError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeWrongNumberOfTypeArgumentsError
 import org.jetbrains.kotlin.fir.resolve.getSymbolByLookupTag
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -98,7 +99,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         areBareTypesAllowed: Boolean
     ): ConeKotlinType {
         if (symbol == null) {
-            return ConeKotlinErrorType(ConeSimpleDiagnostic("Symbol not found, for `${typeRef.render()}`", DiagnosticKind.SymbolNotFound))
+            return ConeKotlinErrorType(ConeUnresolvedQualifierError(typeRef.render()))
         }
         if (symbol is FirTypeParameterSymbol) {
             for (part in typeRef.qualifier) {

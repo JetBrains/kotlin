@@ -27,6 +27,7 @@ private fun ConeDiagnostic.toFirDiagnostic(source: FirSourceElement): FirDiagnos
     is ConeUnresolvedReferenceError -> FirErrors.UNRESOLVED_REFERENCE.on(source, this.name?.asString() ?: "<No name>")
     is ConeUnresolvedSymbolError -> FirErrors.UNRESOLVED_REFERENCE.on(source, this.classId.asString())
     is ConeUnresolvedNameError -> FirErrors.UNRESOLVED_REFERENCE.on(source, this.name.asString())
+    is ConeUnresolvedQualifierError -> FirErrors.UNRESOLVED_REFERENCE.on(source, this.qualifier)
     is ConeHiddenCandidateError -> FirErrors.HIDDEN.on(source, this.candidateSymbol)
     is ConeAmbiguityError -> if (!this.applicability.isSuccess) {
         FirErrors.NONE_APPLICABLE.on(source, this.candidates)
@@ -42,7 +43,6 @@ private fun ConeDiagnostic.toFirDiagnostic(source: FirSourceElement): FirDiagnos
         FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(source, this.desiredCount, this.type)
     is ConeSimpleDiagnostic -> when {
         source.kind is FirFakeSourceElementKind -> null
-        this.kind == DiagnosticKind.SymbolNotFound -> FirErrors.UNRESOLVED_REFERENCE.on(source, "<No name>")
         else -> this.getFactory().on(source)
     }
     is ConeInstanceAccessBeforeSuperCall -> FirErrors.INSTANCE_ACCESS_BEFORE_SUPER_CALL.on(source, this.target)
