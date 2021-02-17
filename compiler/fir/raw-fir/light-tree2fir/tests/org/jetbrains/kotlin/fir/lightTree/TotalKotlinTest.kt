@@ -80,7 +80,7 @@ class TotalKotlinTest : AbstractRawFirBuilderTestCase() {
         println("BASE PATH: $path")
         for (file in root.walkTopDown()) {
             if (file.isDirectory) continue
-            if (file.path.contains("testData") || file.path.contains("resources")) continue
+            if (file.path.toLowerCase().contains("testdata") || file.path.contains("resources")) continue
             if (file.extension != "kt") continue
 
             val text = FileUtil.loadFile(file, CharsetToolkit.UTF8, true).trim()

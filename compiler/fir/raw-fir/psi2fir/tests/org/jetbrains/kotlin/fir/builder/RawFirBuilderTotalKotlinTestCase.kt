@@ -52,8 +52,8 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
         println("BASE PATH: $testDataPath")
         for (file in root.walkTopDown()) {
             if (file.isDirectory) continue
-            val path = file.path
-            if ("testData" in path || "resources" in path || "api/js" in path.replace('\\', '/')) continue
+            val path = file.path.toLowerCase()
+            if ("testdata" in path || "resources" in path || "api/js" in path.replace('\\', '/')) continue
             if (file.extension != "kt") continue
             try {
                 val ktFile = createKtFile(file.toRelativeString(root))
@@ -157,11 +157,11 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
         println("KT DECLARATIONS: $ktDeclarations")
         println("KT REFERENCES: $ktReferences")
         if (!stubMode) {
-            assertEquals(0, expressionStubs)
+            assertEquals("# of expression stubs", 0, expressionStubs)
         }
-        assertEquals(0, errorExpressions)
-        assertEquals(0, errorDeclarations)
-        assertEquals(0, errorReferences)
+        assertEquals("# of error expressions", 0, errorExpressions)
+        assertEquals("# of error declarations", 0, errorDeclarations)
+        assertEquals("# of error references", 0, errorReferences)
     }
 
     fun testTotalKotlinWithExpressionTrees() {
@@ -176,8 +176,8 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
         val root = File(testDataPath)
         for (file in root.walkTopDown()) {
             if (file.isDirectory) continue
-            val path = file.path
-            if ("testData" in path || "resources" in path || "api/js" in path.replace('\\', '/')) continue
+            val path = file.path.toLowerCase()
+            if ("testdata" in path || "resources" in path || "api/js" in path.replace('\\', '/')) continue
             if (file.extension != "kt") continue
             val ktFile = createKtFile(file.toRelativeString(root))
             val firFile = ktFile.toFirFile()
@@ -203,8 +203,8 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
         var counter = 0
         for (file in root.walkTopDown()) {
             if (file.isDirectory) continue
-            val path = file.path
-            if ("testData" in path || "testdata" in path || "resources" in path || "api/js" in path.replace('\\', '/')) continue
+            val path = file.path.toLowerCase()
+            if ("testdata" in path || "resources" in path || "api/js" in path.replace('\\', '/')) continue
             if (file.extension != "kt") continue
             val ktFile = createKtFile(file.toRelativeString(root))
             val firFile: FirFile = ktFile.toFirFile()
