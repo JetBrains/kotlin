@@ -3805,6 +3805,10 @@ createInterop("cunsupported") {
     it.defFile 'interop/basics/cunsupported.def'
 }
 
+createInterop("ctoKString") {
+    it.defFile 'interop/basics/ctoKString.def'
+}
+
 createInterop("ctypes") {
     it.defFile 'interop/basics/ctypes.def'
 }
@@ -4117,6 +4121,12 @@ interopTest("interop_unsupported") {
     disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
     source = "interop/basics/unsupported.kt"
     interop = 'cunsupported'
+}
+
+interopTest("interop_toKString") {
+    disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
+    source = "interop/basics/toKString.kt"
+    interop = 'ctoKString'
 }
 
 interopTest("interop_types") {
