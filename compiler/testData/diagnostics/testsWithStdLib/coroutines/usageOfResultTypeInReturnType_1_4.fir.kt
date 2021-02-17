@@ -1,5 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_EXPRESSION, -UNUSED_VARIABLE
-// !LANGUAGE: +InlineClasses +AllowResultInReturnType
+// !LANGUAGE: +InlineClasses +AllowResultInReturnType, -JvmInlineValueClasses
 
 typealias ResultAlias<T> = Result<T>
 

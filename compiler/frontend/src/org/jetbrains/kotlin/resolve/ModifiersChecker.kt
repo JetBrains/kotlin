@@ -357,6 +357,13 @@ object ModifierCheckerCore {
                 continue
             }
 
+            if (dependency == LanguageFeature.InlineClasses) {
+                if (languageVersionSettings.supportsFeature(LanguageFeature.JvmInlineValueClasses)) {
+                    trace.report(Errors.INLINE_CLASS_DEPRECATED.on(node.psi))
+                    continue
+                }
+            }
+
             val diagnosticData = dependency to languageVersionSettings
             when (featureSupport) {
                 LanguageFeature.State.ENABLED_WITH_WARNING -> {

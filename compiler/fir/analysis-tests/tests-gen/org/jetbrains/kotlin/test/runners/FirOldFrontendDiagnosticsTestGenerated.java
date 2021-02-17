@@ -15006,6 +15006,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("inlineClassDeprecated.kt")
+            public void testInlineClassDeprecated() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inlineClasses/inlineClassDeprecated.kt");
+            }
+
+            @Test
             @TestMetadata("inlineClassImplementsCollection.kt")
             public void testInlineClassImplementsCollection() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inlineClasses/inlineClassImplementsCollection.kt");
