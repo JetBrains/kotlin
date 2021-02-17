@@ -52,46 +52,25 @@ KtFirJavaFieldSymbol:
   symbolKind: MEMBER
   visibility: PRIVATE
 
-KtFirFunctionSymbol:
+KtFirSyntheticJavaPropertySymbol:
   annotatedType: [] kotlin/Int
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: java.lang.String.length
   dispatchType: java/lang/String
-  isExtension: false
-  isExternal: false
-  isInline: false
-  isOperator: false
-  isOverride: false
-  isSuspend: false
-  modality: OPEN
-  name: length
-  origin: JAVA
-  receiverType: null
-  symbolKind: MEMBER
-  typeParameters: []
-  valueParameters: []
-  visibility: PUBLIC
-
-KtFirKotlinPropertySymbol:
-  annotatedType: [] kotlin/Int
-  annotationClassIds: []
-  annotations: []
-  callableIdIfNonLocal: kotlin.CharSequence.length
-  dispatchType: kotlin/CharSequence
   getter: KtFirPropertyGetterSymbol(<getter>)
-  hasBackingField: false
+  hasBackingField: true
   hasGetter: true
   hasSetter: false
   initializer: null
-  isConst: false
   isExtension: false
-  isLateInit: false
   isOverride: false
   isVal: true
-  modality: ABSTRACT
+  javaGetterName: length
+  javaSetterName: null
+  modality: OPEN
   name: length
-  origin: LIBRARY
+  origin: JAVA_SYNTHETIC_PROPERTY
   receiverType: null
   setter: null
   symbolKind: MEMBER
