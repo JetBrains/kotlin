@@ -7,20 +7,14 @@ package org.jetbrains.kotlin.descriptors.commonizer.mergedtree
 
 import gnu.trove.THashMap
 import gnu.trove.THashSet
-import org.jetbrains.kotlin.descriptors.commonizer.CommonizerTarget
-import org.jetbrains.kotlin.descriptors.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.descriptors.commonizer.utils.isUnderKotlinNativeSyntheticPackages
 
 class CirKnownClassifiers(
     val commonizedNodes: CirCommonizedClassifierNodes,
     val forwardDeclarations: CirForwardDeclarations,
-    val dependencies: Map<CommonizerTarget, CirProvidedClassifiers>
-) {
-    // a shortcut for fast access
-    val commonDependencies: CirProvidedClassifiers =
-        dependencies.filterKeys { it is SharedCommonizerTarget }.values.singleOrNull() ?: CirProvidedClassifiers.EMPTY
-}
+    val commonDependencies: CirProvidedClassifiers
+)
 
 /** A set of all CIR nodes built for commonized classes and type aliases. */
 interface CirCommonizedClassifierNodes {

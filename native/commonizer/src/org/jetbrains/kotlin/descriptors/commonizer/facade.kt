@@ -41,12 +41,9 @@ private fun mergeAndCommonize(storageManager: StorageManager, parameters: Common
     val classifiers = CirKnownClassifiers(
         commonizedNodes = CirCommonizedClassifierNodes.default(),
         forwardDeclarations = CirForwardDeclarations.default(),
-        dependencies = mapOf(
-            // for now, supply only common dependency libraries (ex: Kotlin stdlib)
-            parameters.sharedTarget to CirCompositeClassifiers(
-                CirFictitiousFunctionClassifiers,
-                CirLoadedClassifiers.from(parameters.dependencyModulesProvider)
-            )
+        commonDependencies = CirCompositeClassifiers(
+            CirFictitiousFunctionClassifiers,
+            CirLoadedClassifiers.from(parameters.dependencyModulesProvider)
         )
     )
     val mergeResult = CirTreeMerger(storageManager, classifiers, parameters).merge()
