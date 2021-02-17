@@ -13,6 +13,10 @@ import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.*
+import org.jetbrains.kotlin.backend.jvm.lower.indy.LambdaMetafactoryArguments
+import org.jetbrains.kotlin.backend.jvm.lower.indy.LambdaMetafactoryArgumentsBuilder
+import org.jetbrains.kotlin.backend.jvm.lower.indy.SamDelegatingLambdaBlock
+import org.jetbrains.kotlin.backend.jvm.lower.indy.SamDelegatingLambdaBuilder
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi
 import org.jetbrains.kotlin.config.JvmClosureGenerationScheme
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -142,6 +146,14 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         } else if (invokable is IrBlock && invokable.origin.isLambda && invokable.statements.last() is IrFunctionReference) {
             invokable.statements.dropLast(1).forEach { it.transform(this, null) }
             invokable.statements.last() as IrFunctionReference
+        } else if (shouldGenerateIndySamConversions && canGenerateIndySamConversionOnFunctionalExpression(samSuperType, invokable)) {
+            val lambdaBlock = SamDelegatingLambdaBuilder(context)
+                .build(invokable, samSuperType, currentScope!!.scope.scopeOwnerSymbol)
+            val lambdaMetafactoryArguments = LambdaMetafactoryArgumentsBuilder(context, crossinlineLambdas)
+                .getLambdaMetafactoryArgumentsOrNull(lambdaBlock.ref, samSuperType, false)
+                ?: return super.visitTypeOperator(expression)
+            invokable.transformChildrenVoid()
+            return wrapSamDelegatingLambdaWithIndySamConversion(samSuperType, lambdaBlock, lambdaMetafactoryArguments)
         } else {
             return super.visitTypeOperator(expression)
         }
@@ -159,18 +171,36 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         return FunctionReferenceBuilder(reference, samSuperType).build()
     }
 
+    private fun canGenerateIndySamConversionOnFunctionalExpression(samSuperType: IrType, expression: IrExpression): Boolean {
+        val samClass = samSuperType.classOrNull
+            ?: throw AssertionError("Class type expected: ${samSuperType.render()}")
+        if (!samClass.owner.isFromJava())
+            return false
+        if (expression is IrBlock && expression.origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE)
+            return false
+        return true
+    }
+
+    private fun wrapSamDelegatingLambdaWithIndySamConversion(
+        samSuperType: IrType,
+        lambdaBlock: SamDelegatingLambdaBlock,
+        lambdaMetafactoryArguments: LambdaMetafactoryArguments
+    ): IrExpression {
+        val indySamConversion = wrapWithIndySamConversion(samSuperType, lambdaMetafactoryArguments)
+        lambdaBlock.replaceRefWith(indySamConversion)
+        return lambdaBlock.block
+    }
+
     private fun wrapSamConversionArgumentWithIndySamConversion(
         expression: IrTypeOperatorCall,
         lambdaMetafactoryArguments: LambdaMetafactoryArguments
     ): IrExpression {
         val samType = expression.typeOperand
         return when (val argument = expression.argument) {
-            is IrFunctionReference -> {
+            is IrFunctionReference ->
                 wrapWithIndySamConversion(samType, lambdaMetafactoryArguments)
-            }
-            is IrBlock -> {
+            is IrBlock ->
                 wrapFunctionReferenceInsideBlockWithIndySamConversion(samType, lambdaMetafactoryArguments, argument)
-            }
             else -> throw AssertionError("Block or function reference expected: ${expression.render()}")
         }
     }

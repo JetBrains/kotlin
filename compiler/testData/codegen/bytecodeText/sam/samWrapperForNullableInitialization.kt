@@ -26,7 +26,7 @@ fun test() {
 
 // JVM_IR_TEMPLATES
 // @TestKt.class
-// 1 NEW
+// 0 NEW
 // 1 IFNONNULL
 // 0 IFNULL
 // 2 ACONST_NULL
