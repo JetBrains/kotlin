@@ -71,6 +71,7 @@ object StandardClassIds {
         Byte, Short, Int, Long,
         Float, Double
     )
+    val primitiveTypesAndString = primitiveTypes + String
 
     val primitiveArrayTypeByElementType = primitiveTypes.associate { id -> id to id.shortClassName.primitiveArrayId() }
     val elementTypeByPrimitiveArrayType = primitiveArrayTypeByElementType.inverseMap()

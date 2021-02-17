@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerOperatorCall
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
+import org.jetbrains.kotlin.fir.symbols.StandardClassIds.primitiveTypesAndString
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
@@ -168,7 +169,7 @@ object FirAnnotationArgumentChecker : FirBasicDeclarationChecker() {
 
                             if (calleeReference.name == PLUS
                                 && expClassId != receiverClassId
-                                && (expClassId !in StandardClassIds.primitiveTypes || receiverClassId !in StandardClassIds.primitiveTypes)
+                                && (expClassId !in primitiveTypesAndString || receiverClassId !in primitiveTypesAndString)
                             )
                                 return FirErrors.ANNOTATION_ARGUMENT_MUST_BE_CONST
 
