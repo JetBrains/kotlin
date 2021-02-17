@@ -388,7 +388,7 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
     }
 
     val FUNCTION_CONTRACTS by object : DiagnosticGroup("Function contracts") {
-        val ERROR_IN_CONTRACT_DESCRIPTION by error<FirSourceElement, KtElement> {
+        val ERROR_IN_CONTRACT_DESCRIPTION by error<FirSourceElement, KtElement>(PositioningStrategy.SELECTOR_BY_QUALIFIED) {
             parameter<String>("reason")
         }
     }
@@ -401,7 +401,7 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val REDUNDANT_SINGLE_EXPRESSION_STRING_TEMPLATE by warning<FirSourceElement, PsiElement>()
         val CAN_BE_VAL by warning<FirSourceElement, KtDeclaration>(PositioningStrategy.VAL_OR_VAR_NODE)
         val CAN_BE_REPLACED_WITH_OPERATOR_ASSIGNMENT by warning<FirSourceElement, KtExpression>(PositioningStrategy.OPERATOR)
-        val REDUNDANT_CALL_OF_CONVERSION_METHOD by warning<FirSourceElement, PsiElement>()
+        val REDUNDANT_CALL_OF_CONVERSION_METHOD by warning<FirSourceElement, PsiElement>(PositioningStrategy.SELECTOR_BY_QUALIFIED)
         val ARRAY_EQUALITY_OPERATOR_CAN_BE_REPLACED_WITH_EQUALS by warning<FirSourceElement, KtExpression>(PositioningStrategy.OPERATOR)
         val EMPTY_RANGE by warning<FirSourceElement, PsiElement>()
         val REDUNDANT_SETTER_PARAMETER_TYPE by warning<FirSourceElement, PsiElement>()
@@ -409,7 +409,7 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val ASSIGNED_VALUE_IS_NEVER_READ by warning<FirSourceElement, PsiElement>()
         val VARIABLE_INITIALIZER_IS_REDUNDANT by warning<FirSourceElement, PsiElement>()
         val VARIABLE_NEVER_READ by warning<FirSourceElement, KtNamedDeclaration>(PositioningStrategy.DECLARATION_NAME)
-        val USELESS_CALL_ON_NOT_NULL by warning<FirSourceElement, PsiElement>()
+        val USELESS_CALL_ON_NOT_NULL by warning<FirSourceElement, PsiElement>(PositioningStrategy.SELECTOR_BY_QUALIFIED)
     }
 }
 

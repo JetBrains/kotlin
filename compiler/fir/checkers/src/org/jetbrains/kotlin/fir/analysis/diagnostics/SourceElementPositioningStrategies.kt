@@ -103,6 +103,11 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.DOT_BY_SELECTOR
     )
 
+    val SELECTOR_BY_QUALIFIED = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.SELECTOR_BY_QUALIFIED,
+        PositioningStrategies.SELECTOR_BY_QUALIFIED
+    )
+
     val WHEN_EXPRESSION = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.WHEN_EXPRESSION,
         PositioningStrategies.WHEN_EXPRESSION

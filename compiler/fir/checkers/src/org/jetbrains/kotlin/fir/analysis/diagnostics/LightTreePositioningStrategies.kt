@@ -335,6 +335,24 @@ object LightTreePositioningStrategies {
         }
     }
 
+    val SELECTOR_BY_QUALIFIED: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
+        override fun mark(
+            node: LighterASTNode,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>
+        ): List<TextRange> {
+            if (node.tokenType != KtNodeTypes.DOT_QUALIFIED_EXPRESSION && node.tokenType != KtNodeTypes.SAFE_ACCESS_EXPRESSION) {
+                return super.mark(node, startOffset, endOffset, tree)
+            }
+            val selector = tree.selector(node)
+            if (selector != null) {
+                return markElement(selector, startOffset, endOffset, tree, node)
+            }
+            return super.mark(node, startOffset, endOffset, tree)
+        }
+    }
+
     val WHEN_EXPRESSION = object : LightTreePositioningStrategy() {
         override fun mark(
             node: LighterASTNode,
@@ -446,6 +464,25 @@ private fun FlyweightCapableTreeStructure<LighterASTNode>.defaultValue(node: Lig
         return child
     }
     return null
+}
+
+private fun FlyweightCapableTreeStructure<LighterASTNode>.selector(node: LighterASTNode): LighterASTNode? {
+    val childrenRef = Ref<Array<LighterASTNode?>>()
+    getChildren(node, childrenRef)
+    val children = childrenRef.get() ?: return null
+    var dotFound = false
+    for (child in children) {
+        if (child == null) continue
+        if (child.tokenType == KtTokens.DOT) {
+            dotFound = true
+            continue
+        }
+        if (dotFound && (child.tokenType == KtNodeTypes.CALL_EXPRESSION || child.tokenType == KtNodeTypes.REFERENCE_EXPRESSION)) {
+            return child
+        }
+    }
+    return null
+
 }
 
 fun FlyweightCapableTreeStructure<LighterASTNode>.findChildByType(node: LighterASTNode, type: IElementType): LighterASTNode? {

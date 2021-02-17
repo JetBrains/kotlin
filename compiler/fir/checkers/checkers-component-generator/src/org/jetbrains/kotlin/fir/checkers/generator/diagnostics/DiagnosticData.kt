@@ -42,6 +42,7 @@ enum class PositioningStrategy(private val strategy: String) {
     IF_EXPRESSION("IF_EXPRESSION"),
     VARIANCE_MODIFIER("VARIANCE_MODIFIER"),
     LATEINIT_MODIFIER("LATEINIT_MODIFIER"),
+    SELECTOR_BY_QUALIFIED("SELECTOR_BY_QUALIFIED"),
 
     ;
 

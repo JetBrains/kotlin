@@ -725,4 +725,15 @@ object PositioningStrategies {
             return super.mark(element)
         }
     }
+
+    val SELECTOR_BY_QUALIFIED: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
+        override fun mark(element: PsiElement): List<TextRange> {
+            if (element is KtQualifiedExpression) {
+                when (val selectorExpression = element.selectorExpression) {
+                    is KtCallExpression, is KtReferenceExpression -> return mark(selectorExpression)
+                }
+            }
+            return super.mark(element)
+        }
+    }
 }
