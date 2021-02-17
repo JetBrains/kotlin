@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.compiler.visualizer.Annotator.annotate
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
+import org.jetbrains.kotlin.resolve.calls.util.isSingleUnderscore
 import org.jetbrains.kotlin.resolve.descriptorUtil.declaresOrInheritsDefaultValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
@@ -89,6 +91,7 @@ class PsiVisualizer(private val file: KtFile, analysisResult: AnalysisResult) : 
 
         private fun renderVariableType(variable: KtVariableDeclaration) {
             val descriptor = bindingContext[VARIABLE, variable]
+            if (variable.isSingleUnderscore) return
             addAnnotation(renderType(descriptor), variable.nameIdentifier!!)
             variable.acceptChildren(this)
         }

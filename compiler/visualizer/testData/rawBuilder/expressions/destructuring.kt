@@ -23,9 +23,7 @@ fun foo(some: Some) {
 }
 
 fun bar(some: Some) {
-//       Int
-//       │  Double
-//       │  │  String bar.some: Some
-//       │  │  │      │
+//       Int   String bar.some: Some
+//       │     │      │
     val (a, _, `_`) = some
 }
