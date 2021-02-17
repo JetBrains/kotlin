@@ -99,7 +99,7 @@ testsJar()
 
 projectTest(parallel = false) {
     dependsOn(":dist")
-    dependsOnKotlinPluginInstall()
+    dependsOnKotlinGradlePluginInstall()
     if (!Ide.AS41.orHigher()) {
         systemProperty("android.studio.sdk.manager.disabled", "true")
     }
