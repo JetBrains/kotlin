@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirErrorExpressionImpl(
-    override val source: FirSourceElement?,
+    override var source: FirSourceElement?,
     override val diagnostic: ConeDiagnostic,
 ) : FirErrorExpression() {
     override var typeRef: FirTypeRef = FirErrorTypeRefImpl(source, null, ConeStubDiagnostic(diagnostic))
@@ -37,6 +37,10 @@ internal class FirErrorExpressionImpl(
 
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirErrorExpressionImpl {
         return this
+    }
+
+    override fun replaceSource(newSource: FirSourceElement?) {
+        source = newSource
     }
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {

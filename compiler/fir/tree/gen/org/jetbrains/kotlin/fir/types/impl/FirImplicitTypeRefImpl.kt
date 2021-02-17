@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirImplicitTypeRefImpl(
-    override val source: FirSourceElement?,
+    override var source: FirSourceElement?,
 ) : FirImplicitTypeRef() {
     override val annotations: List<FirAnnotationCall> get() = emptyList()
 
@@ -29,5 +29,9 @@ internal class FirImplicitTypeRefImpl(
 
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirImplicitTypeRefImpl {
         return this
+    }
+
+    override fun replaceSource(newSource: FirSourceElement?) {
+        source = newSource
     }
 }

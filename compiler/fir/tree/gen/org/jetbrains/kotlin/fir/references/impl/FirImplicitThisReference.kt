@@ -27,5 +27,7 @@ internal class FirImplicitThisReference(
         return this
     }
 
+    override fun replaceSource(newSource: FirSourceElement?) {}
+
     override fun replaceBoundSymbol(newBoundSymbol: AbstractFirBasedSymbol<*>?) {}
 }

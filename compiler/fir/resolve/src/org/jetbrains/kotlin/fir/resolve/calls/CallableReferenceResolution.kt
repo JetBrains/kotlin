@@ -377,6 +377,9 @@ class FirFakeArgumentForCallableReference(
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         error("should not be called")
     }
+
+    override fun replaceSource(newSource: FirSourceElement?) {
+    }
 }
 
 fun ConeKotlinType.isKCallableType(): Boolean {

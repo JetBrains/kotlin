@@ -21,5 +21,7 @@ abstract class FirSuperReference : FirReference() {
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitSuperReference(this, data)
 
+    abstract override fun replaceSource(newSource: FirSourceElement?)
+
     abstract fun replaceSuperTypeRef(newSuperTypeRef: FirTypeRef)
 }

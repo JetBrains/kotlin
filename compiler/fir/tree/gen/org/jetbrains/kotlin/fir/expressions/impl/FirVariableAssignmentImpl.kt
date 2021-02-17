@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirVariableAssignmentImpl(
-    override val source: FirSourceElement?,
+    override var source: FirSourceElement?,
     override var calleeReference: FirReference,
     override val annotations: MutableList<FirAnnotationCall>,
     override val typeArguments: MutableList<FirTypeProjection>,
@@ -96,6 +96,10 @@ internal class FirVariableAssignmentImpl(
     override fun <D> transformRValue(transformer: FirTransformer<D>, data: D): FirVariableAssignmentImpl {
         rValue = rValue.transformSingle(transformer, data)
         return this
+    }
+
+    override fun replaceSource(newSource: FirSourceElement?) {
+        source = newSource
     }
 
     override fun replaceCalleeReference(newCalleeReference: FirReference) {

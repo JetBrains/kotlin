@@ -19,4 +19,6 @@ abstract class FirLegacyRawContractDescription : FirContractDescription() {
     abstract val contractCall: FirFunctionCall
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitLegacyRawContractDescription(this, data)
+
+    abstract override fun replaceSource(newSource: FirSourceElement?)
 }

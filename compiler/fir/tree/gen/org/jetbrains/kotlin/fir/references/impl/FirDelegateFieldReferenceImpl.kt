@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirDelegateFieldReferenceImpl(
-    override val source: FirSourceElement?,
+    override var source: FirSourceElement?,
     override val candidateSymbol: AbstractFirBasedSymbol<*>?,
     override val resolvedSymbol: FirDelegateFieldSymbol<*>,
 ) : FirDelegateFieldReference() {
@@ -28,5 +28,9 @@ internal class FirDelegateFieldReferenceImpl(
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirDelegateFieldReferenceImpl {
         return this
+    }
+
+    override fun replaceSource(newSource: FirSourceElement?) {
+        source = newSource
     }
 }

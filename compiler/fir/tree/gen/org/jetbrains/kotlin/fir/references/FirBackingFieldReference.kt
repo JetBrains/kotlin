@@ -23,4 +23,6 @@ abstract class FirBackingFieldReference : FirResolvedNamedReference() {
     abstract override val resolvedSymbol: FirBackingFieldSymbol
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitBackingFieldReference(this, data)
+
+    abstract override fun replaceSource(newSource: FirSourceElement?)
 }

@@ -36,4 +36,6 @@ internal class FirResolvedImportImpl(
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirResolvedImportImpl {
         return this
     }
+
+    override fun replaceSource(newSource: FirSourceElement?) {}
 }

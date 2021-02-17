@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirArgumentListImpl(
-    override val source: FirSourceElement?,
+    override var source: FirSourceElement?,
     override val arguments: MutableList<FirExpression>,
 ) : FirArgumentList() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
@@ -31,5 +31,9 @@ internal class FirArgumentListImpl(
     override fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirArgumentListImpl {
         arguments.transformInplace(transformer, data)
         return this
+    }
+
+    override fun replaceSource(newSource: FirSourceElement?) {
+        source = newSource
     }
 }

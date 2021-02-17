@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirAugmentedArraySetCallImpl(
-    override val source: FirSourceElement?,
+    override var source: FirSourceElement?,
     override val annotations: MutableList<FirAnnotationCall>,
     override var assignCall: FirFunctionCall,
     override var setGetBlock: FirBlock,
@@ -45,6 +45,10 @@ internal class FirAugmentedArraySetCallImpl(
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAugmentedArraySetCallImpl {
         annotations.transformInplace(transformer, data)
         return this
+    }
+
+    override fun replaceSource(newSource: FirSourceElement?) {
+        source = newSource
     }
 
     override fun replaceCalleeReference(newCalleeReference: FirReference) {

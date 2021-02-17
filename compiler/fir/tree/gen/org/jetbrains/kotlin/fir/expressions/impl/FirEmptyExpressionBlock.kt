@@ -47,6 +47,8 @@ class FirEmptyExpressionBlock : FirBlock() {
         return this
     }
 
+    override fun replaceSource(newSource: FirSourceElement?) {}
+
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {
         typeRef = newTypeRef
     }

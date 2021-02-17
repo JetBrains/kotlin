@@ -20,5 +20,7 @@ abstract class FirImplicitTypeRef : FirTypeRef() {
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitImplicitTypeRef(this, data)
 
+    abstract override fun replaceSource(newSource: FirSourceElement?)
+
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirImplicitTypeRef
 }

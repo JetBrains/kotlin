@@ -24,4 +24,6 @@ abstract class FirErrorNamedReference : FirNamedReference(), FirDiagnosticHolder
     abstract override val diagnostic: ConeDiagnostic
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitErrorNamedReference(this, data)
+
+    abstract override fun replaceSource(newSource: FirSourceElement?)
 }

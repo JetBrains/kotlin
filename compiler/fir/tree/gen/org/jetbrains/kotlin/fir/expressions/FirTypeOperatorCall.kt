@@ -24,6 +24,8 @@ abstract class FirTypeOperatorCall : FirExpression(), FirCall {
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitTypeOperatorCall(this, data)
 
+    abstract override fun replaceSource(newSource: FirSourceElement?)
+
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
     abstract override fun replaceArgumentList(newArgumentList: FirArgumentList)

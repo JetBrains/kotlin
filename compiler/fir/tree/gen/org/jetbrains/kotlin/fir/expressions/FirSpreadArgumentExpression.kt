@@ -23,6 +23,8 @@ abstract class FirSpreadArgumentExpression : FirWrappedArgumentExpression() {
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitSpreadArgumentExpression(this, data)
 
+    abstract override fun replaceSource(newSource: FirSourceElement?)
+
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
     abstract override fun replaceExpression(newExpression: FirExpression)

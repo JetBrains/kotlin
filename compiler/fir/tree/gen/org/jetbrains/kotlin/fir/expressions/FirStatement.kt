@@ -20,5 +20,7 @@ interface FirStatement : FirAnnotationContainer {
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitStatement(this, data)
 
+    override fun replaceSource(newSource: FirSourceElement?)
+
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirStatement
 }

@@ -47,6 +47,9 @@ class FirJavaTypeRef(
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirUserTypeRef {
         return this
     }
+
+    override fun replaceSource(newSource: FirSourceElement?) {
+    }
 }
 
 @FirBuilderDsl

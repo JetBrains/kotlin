@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirWhenBranchImpl(
-    override val source: FirSourceElement?,
+    override var source: FirSourceElement?,
     override var condition: FirExpression,
     override var result: FirBlock,
 ) : FirWhenBranch() {
@@ -45,5 +45,9 @@ internal class FirWhenBranchImpl(
 
     override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirWhenBranchImpl {
         return this
+    }
+
+    override fun replaceSource(newSource: FirSourceElement?) {
+        source = newSource
     }
 }

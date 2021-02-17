@@ -40,4 +40,6 @@ interface FirDeclarationStatus : FirElement {
     val isFun: Boolean
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitDeclarationStatus(this, data)
+
+    override fun replaceSource(newSource: FirSourceElement?)
 }

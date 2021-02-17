@@ -17,12 +17,16 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirConstructedClassTypeParameterRef(
-    override val source: FirSourceElement?,
+    override var source: FirSourceElement?,
     override val symbol: FirTypeParameterSymbol,
 ) : FirPureAbstractElement(), FirTypeParameterRef {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirConstructedClassTypeParameterRef {
         return this
+    }
+
+    override fun replaceSource(newSource: FirSourceElement?) {
+        source = newSource
     }
 }

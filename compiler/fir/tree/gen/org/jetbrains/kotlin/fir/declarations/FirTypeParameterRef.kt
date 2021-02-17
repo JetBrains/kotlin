@@ -20,4 +20,6 @@ interface FirTypeParameterRef : FirElement {
     val symbol: FirTypeParameterSymbol
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitTypeParameterRef(this, data)
+
+    override fun replaceSource(newSource: FirSourceElement?)
 }

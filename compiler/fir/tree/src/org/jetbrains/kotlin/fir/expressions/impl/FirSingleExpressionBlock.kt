@@ -59,6 +59,9 @@ class FirSingleExpressionBlock(
         annotations.transformInplace(transformer, data)
         return this
     }
+
+    override fun replaceSource(newSource: FirSourceElement?) {
+    }
 }
 
 @Suppress("NOTHING_TO_INLINE")

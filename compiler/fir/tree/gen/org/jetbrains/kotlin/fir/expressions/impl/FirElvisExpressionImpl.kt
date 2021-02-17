@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirElvisExpressionImpl(
-    override val source: FirSourceElement?,
+    override var source: FirSourceElement?,
     override val annotations: MutableList<FirAnnotationCall>,
     override var calleeReference: FirReference,
     override var lhs: FirExpression,
@@ -63,6 +63,10 @@ internal class FirElvisExpressionImpl(
     override fun <D> transformRhs(transformer: FirTransformer<D>, data: D): FirElvisExpressionImpl {
         rhs = rhs.transformSingle(transformer, data)
         return this
+    }
+
+    override fun replaceSource(newSource: FirSourceElement?) {
+        source = newSource
     }
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {

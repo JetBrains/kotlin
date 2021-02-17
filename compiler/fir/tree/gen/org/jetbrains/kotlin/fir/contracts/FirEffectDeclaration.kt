@@ -21,4 +21,6 @@ abstract class FirEffectDeclaration : FirPureAbstractElement(), FirElement {
     abstract val effect: ConeEffectDeclaration
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitEffectDeclaration(this, data)
+
+    abstract override fun replaceSource(newSource: FirSourceElement?)
 }

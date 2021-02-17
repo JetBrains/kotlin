@@ -17,4 +17,6 @@ abstract class FirLabel : FirPureAbstractElement(), FirElement {
     abstract val name: String
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitLabel(this, data)
+
+    abstract override fun replaceSource(newSource: FirSourceElement?)
 }

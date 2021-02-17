@@ -18,6 +18,8 @@ interface FirElement {
 
     fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitElement(this, data)
 
+    fun replaceSource(newSource: FirSourceElement?)
+
     fun accept(visitor: FirVisitorVoid) = accept(visitor, null)
 
     fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D)

@@ -24,6 +24,8 @@ abstract class FirConstExpression<T> : FirExpression() {
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitConstExpression(this, data)
 
+    abstract override fun replaceSource(newSource: FirSourceElement?)
+
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
     abstract fun replaceKind(newKind: ConstantValueKind<T>)

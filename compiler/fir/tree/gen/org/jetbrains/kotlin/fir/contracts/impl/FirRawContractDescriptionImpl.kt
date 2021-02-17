@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirRawContractDescriptionImpl(
-    override val source: FirSourceElement?,
+    override var source: FirSourceElement?,
     override val rawEffects: MutableList<FirExpression>,
 ) : FirRawContractDescription() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
@@ -26,5 +26,9 @@ internal class FirRawContractDescriptionImpl(
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirRawContractDescriptionImpl {
         rawEffects.transformInplace(transformer, data)
         return this
+    }
+
+    override fun replaceSource(newSource: FirSourceElement?) {
+        source = newSource
     }
 }

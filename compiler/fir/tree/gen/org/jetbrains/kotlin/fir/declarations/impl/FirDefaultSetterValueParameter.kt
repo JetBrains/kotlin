@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirDefaultSetterValueParameter(
-    override val source: FirSourceElement?,
+    override var source: FirSourceElement?,
     override val session: FirSession,
     override var resolvePhase: FirResolvePhase,
     override val origin: FirDeclarationOrigin,
@@ -119,6 +119,10 @@ internal class FirDefaultSetterValueParameter(
         controlFlowGraphReference = controlFlowGraphReference?.transformSingle(transformer, data)
         defaultValue = defaultValue?.transformSingle(transformer, data)
         return this
+    }
+
+    override fun replaceSource(newSource: FirSourceElement?) {
+        source = newSource
     }
 
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
