@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 
 object FirDiagnosticsCollector {
-    fun create(session: FirSession, scopeSession: ScopeSession = ScopeSession()): SimpleDiagnosticsCollector {
+    fun create(session: FirSession, scopeSession: ScopeSession): SimpleDiagnosticsCollector {
         val collector = SimpleDiagnosticsCollector(session, scopeSession)
         collector.registerAllComponents()
         return collector

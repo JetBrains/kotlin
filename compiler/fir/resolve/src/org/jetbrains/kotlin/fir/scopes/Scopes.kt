@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.name.FqName
 private val INVISIBLE_DEFAULT_STAR_IMPORT = scopeSessionKey<DefaultImportPriority, FirDefaultStarImportingScope>()
 private val VISIBLE_DEFAULT_STAR_IMPORT = scopeSessionKey<DefaultImportPriority, FirDefaultStarImportingScope>()
 private val DEFAULT_SIMPLE_IMPORT = scopeSessionKey<DefaultImportPriority, FirDefaultSimpleImportingScope>()
-private val PACKAGE_MEMBER = scopeSessionKey<FqName, FirPackageMemberScope>()
+val PACKAGE_MEMBER = scopeSessionKey<FqName, FirPackageMemberScope>()
 private val ALL_IMPORTS = scopeSessionKey<FirFile, ListStorageFirScope>()
 
 private class ListStorageFirScope(val result: List<FirScope>) : FirScope()

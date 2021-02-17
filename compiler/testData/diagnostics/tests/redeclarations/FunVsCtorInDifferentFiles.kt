@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: test1.kt
 class <!CONFLICTING_OVERLOADS!>A<!>
 class B<!CONFLICTING_OVERLOADS!>(val x: Int)<!> {

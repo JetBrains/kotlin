@@ -18,5 +18,5 @@ private val test1co: C.Companion = C
 private val test2: TA = <!INAPPLICABLE_CANDIDATE!>TA<!>()
 private val test2co = TA
 
-private class C
-private typealias TA = Int
+<!REDECLARATION!>private class C<!>
+<!REDECLARATION!>private typealias TA = Int<!>

@@ -15,4 +15,4 @@ class Outer {
 }
 
 // FILE: file2.kt
-typealias SomeClass = Any
+<!REDECLARATION!>typealias SomeClass = Any<!>
