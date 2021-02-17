@@ -179,6 +179,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             typeParameters += local.typeDeserializer.ownTypeParameters.map { it.fir }
         }.apply {
             versionRequirementsTable = c.versionRequirementTable
+            sourceElement = c.containerSource
         }
     }
 

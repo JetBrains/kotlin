@@ -169,10 +169,13 @@ private object SourceElementKey : FirDeclarationDataKey()
 
 var FirRegularClass.sourceElement: SourceElement? by FirDeclarationDataRegistry.data(SourceElementKey)
 
+var FirTypeAlias.sourceElement: SourceElement? by FirDeclarationDataRegistry.data(SourceElementKey)
+
 val FirMemberDeclaration.containerSource: SourceElement?
     get() = when (this) {
         is FirCallableMemberDeclaration<*> -> containerSource
         is FirRegularClass -> sourceElement
+        is FirTypeAlias -> sourceElement
         else -> null
     }
 
