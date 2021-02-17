@@ -124,7 +124,9 @@ tasks {
         kotlinOptions.jdkHome = rootProject.extra["JDK_18"] as String
         kotlinOptions.languageVersion = "1.3"
         kotlinOptions.apiVersion = "1.3"
-        kotlinOptions.freeCompilerArgs += listOf("-Xskip-prerelease-check")
+        kotlinOptions.freeCompilerArgs += listOf(
+            "-Xskip-prerelease-check", "-Xsuppress-version-warnings"
+        )
     }
 
     named<ProcessResources>("processResources") {

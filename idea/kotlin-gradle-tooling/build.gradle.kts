@@ -19,6 +19,12 @@ sourceSets {
     "test" {}
 }
 
+tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
+    kotlinOptions {
+        freeCompilerArgs += "-Xsuppress-deprecated-jvm-target-warning"
+    }
+}
+
 runtimeJar()
 
 sourcesJar()
