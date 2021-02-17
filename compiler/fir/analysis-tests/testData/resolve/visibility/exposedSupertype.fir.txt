@@ -92,7 +92,7 @@ FILE: exposedSupertype.kt
         }
 
     }
-    public final class Test7 : <ERROR TYPE REF: Symbol not found, for `D.PublicButProtected`> {
+    public final class Test7 : <ERROR TYPE REF: Symbol not found for D.PublicButProtected> {
         public constructor(): R|Test7| {
             super<R|kotlin/Any|>()
         }

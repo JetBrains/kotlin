@@ -28,7 +28,7 @@ FILE: main.kt
             super<R|kotlin/Any|>()
         }
 
-        public abstract fun createTest(): <ERROR TYPE REF: Symbol not found, for `Test`>
+        public abstract fun createTest(): <ERROR TYPE REF: Symbol not found for Test>
 
         public abstract fun createObj(): R|test/Test.O|
 

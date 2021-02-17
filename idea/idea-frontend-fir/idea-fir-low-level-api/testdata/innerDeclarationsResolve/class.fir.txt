@@ -4,13 +4,13 @@ FILE: class.kt
             super<R|kotlin/Any|>()
         }
 
-        public final [BODY_RESOLVE] fun q(): <ERROR TYPE REF: Symbol not found, for `C`> {
+        public final [BODY_RESOLVE] fun q(): <ERROR TYPE REF: Symbol not found for C> {
         }
 
-        private final [BODY_RESOLVE] val y: R|ERROR CLASS: Symbol not found, for `C`| = this@R|/B|.R|/B.q|()
-            [BODY_RESOLVE] private get(): R|ERROR CLASS: Symbol not found, for `C`|
+        private final [BODY_RESOLVE] val y: R|ERROR CLASS: Symbol not found for C| = this@R|/B|.R|/B.q|()
+            [BODY_RESOLVE] private get(): R|ERROR CLASS: Symbol not found for C|
 
-        public final [BODY_RESOLVE] fun foo([BODY_RESOLVE] a: <ERROR TYPE REF: Symbol not found, for `A`>): <ERROR TYPE REF: Unresolved name: with> {
+        public final [BODY_RESOLVE] fun foo([BODY_RESOLVE] a: <ERROR TYPE REF: Symbol not found for A>): <ERROR TYPE REF: Unresolved name: with> {
             ^foo <Unresolved name: with>#(R|<local>/a|, <L> = [BODY_RESOLVE] with@fun <anonymous>(): R|ERROR CLASS: Unresolved name: bar| {
                 ^ <Unresolved name: bar>#(String(a), this@R|/B|.R|/B.y|)
             }

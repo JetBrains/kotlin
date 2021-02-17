@@ -4,9 +4,9 @@ FILE: K1.kt
             super<R|J1|>()
         }
 
-        public final class Q : <ERROR TYPE REF: Symbol not found, for `Nested`> {
+        public final class Q : <ERROR TYPE REF: Symbol not found for Nested> {
             public constructor(): R|K2.Q| {
-                super<<ERROR TYPE REF: Symbol not found, for `Nested`>>()
+                super<<ERROR TYPE REF: Symbol not found for Nested>>()
             }
 
         }

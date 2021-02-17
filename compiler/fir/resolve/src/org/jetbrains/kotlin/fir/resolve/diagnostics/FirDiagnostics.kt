@@ -26,6 +26,10 @@ class ConeUnresolvedSymbolError(val classId: ClassId) : ConeDiagnostic() {
     override val reason: String get() = "Symbol not found for $classId"
 }
 
+class ConeUnresolvedQualifierError(val qualifier: String) : ConeDiagnostic() {
+    override val reason: String get() = "Symbol not found for ${qualifier}"
+}
+
 class ConeUnresolvedNameError(val name: Name) : ConeDiagnostic() {
     override val reason: String get() = "Unresolved name: $name"
 }
