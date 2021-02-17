@@ -17,6 +17,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.annotations.Nls
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.psi.CREATE_BY_PATTERN_MAY_NOT_REFORMAT
 import org.jetbrains.kotlin.psi.KtBlockExpression
