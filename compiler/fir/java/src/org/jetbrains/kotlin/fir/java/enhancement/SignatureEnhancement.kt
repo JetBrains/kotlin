@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
+import org.jetbrains.kotlin.fir.initialSignatureAttr
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.render
@@ -55,7 +56,13 @@ class FirSignatureEnhancement(
         function: FirFunctionSymbol<*>,
         name: Name?
     ): FirFunctionSymbol<*> {
-        return enhancements.getOrPut(function) { enhance(function, name) } as FirFunctionSymbol<*>
+        return enhancements.getOrPut(function) {
+            enhance(function, name).also { enhancedVersion ->
+                (enhancedVersion.fir.initialSignatureAttr as? FirSimpleFunction)?.let {
+                    enhancedVersion.fir.initialSignatureAttr = enhancedFunction(it.symbol, it.name).fir
+                }
+            }
+        } as FirFunctionSymbol<*>
     }
 
     fun enhancedProperty(property: FirVariableSymbol<*>, name: Name): FirVariableSymbol<*> {
