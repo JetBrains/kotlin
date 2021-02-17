@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
-import org.jetbrains.kotlin.test.runners.codegen.commonConfigurationForCodegenTest
 import org.jetbrains.kotlin.test.services.ModuleTransformerForSwitchingBackend
 
 @OptIn(TestInfrastructureInternals::class)
@@ -37,7 +36,7 @@ abstract class AbstractJvmIrAgainstOldBoxTestBase(targetBackend: TargetBackend) 
             ::ClassicJvmBackendFacade
         )
 
-        commonHandlersForCodegenTest()
+        commonHandlersForBoxTest()
 
         useFrontend2BackendConverters(::ClassicFrontend2IrConverter)
         useBackendFacades(::JvmIrBackendFacade)
