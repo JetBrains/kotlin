@@ -15,6 +15,7 @@ import com.intellij.openapi.editor.ScrollType
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.Pair
@@ -51,9 +52,7 @@ import java.awt.FlowLayout
 import java.io.PrintWriter
 import java.io.StringWriter
 import java.util.*
-import javax.swing.JButton
-import javax.swing.JCheckBox
-import javax.swing.JPanel
+import javax.swing.*
 import kotlin.math.min
 
 sealed class BytecodeGenerationResult {
@@ -68,7 +67,7 @@ class KotlinBytecodeToolWindow(private val myProject: Project, private val toolW
     private val enableOptimization: JCheckBox
     private val enableAssertions: JCheckBox
     private val decompile: JButton
-    private val jvm8Target: JCheckBox
+    private val jvmTargets: JComboBox<String>
     private val ir: JCheckBox
 
     private inner class UpdateBytecodeToolWindowTask : LongRunningReadTask<Location, BytecodeGenerationResult>(this) {
@@ -114,9 +113,7 @@ class KotlinBytecodeToolWindow(private val myProject: Project, private val toolW
                 configuration.put(JVMConfigurationKeys.DISABLE_OPTIMIZATION, true)
             }
 
-            if (jvm8Target.isSelected) {
-                configuration.put(JVMConfigurationKeys.JVM_TARGET, JvmTarget.JVM_1_8)
-            }
+            configuration.put(JVMConfigurationKeys.JVM_TARGET, JvmTarget.fromString(jvmTargets.selectedItem as String)!!)
 
             if (ir.isSelected) {
                 configuration.put(JVMConfigurationKeys.IR, true)
@@ -207,13 +204,16 @@ class KotlinBytecodeToolWindow(private val myProject: Project, private val toolW
         enableInline = JCheckBox(KotlinJvmBundle.message("checkbox.text.inline"), true)
         enableOptimization = JCheckBox(KotlinJvmBundle.message("checkbox.text.optimization"), true)
         enableAssertions = JCheckBox(KotlinJvmBundle.message("checkbox.text.assertions"), true)
-        jvm8Target = JCheckBox(KotlinJvmBundle.message("checkbox.text.jvm.8.target"), false)
+        jvmTargets = ComboBox(JvmTarget.values().map { it.description }.toTypedArray())
+        jvmTargets.selectedItem = JvmTarget.DEFAULT.description
         ir = JCheckBox(KotlinJvmBundle.message("checkbox.text.ir"), false)
         optionPanel.add(enableInline)
         optionPanel.add(enableOptimization)
         optionPanel.add(enableAssertions)
         optionPanel.add(ir)
-        optionPanel.add(jvm8Target)
+
+        optionPanel.add(JLabel("Target:"))
+        optionPanel.add(jvmTargets)
 
         InfinitePeriodicalTask(
             UPDATE_DELAY.toLong(),
