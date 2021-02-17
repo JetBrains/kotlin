@@ -118,7 +118,7 @@ class FirSignatureEnhancement(
                 val getterDelegate = firElement.getter.delegate
                 val enhancedGetterSymbol = if (getterDelegate is FirJavaMethod) {
                     enhanceMethod(
-                        getterDelegate, accessorSymbol.accessorId, accessorSymbol.accessorId.callableName
+                        getterDelegate, getterDelegate.symbol.callableId, getterDelegate.name,
                     )
                 } else {
                     getterDelegate.symbol
@@ -126,7 +126,7 @@ class FirSignatureEnhancement(
                 val setterDelegate = firElement.setter?.delegate
                 val enhancedSetterSymbol = if (setterDelegate is FirJavaMethod) {
                     enhanceMethod(
-                        setterDelegate, accessorSymbol.accessorId, accessorSymbol.accessorId.callableName
+                        setterDelegate, setterDelegate.symbol.callableId, setterDelegate.name,
                     )
                 } else {
                     setterDelegate?.symbol
