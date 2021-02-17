@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle
 
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.konan.target.HostManager
-import org.junit.Assume
 import java.io.File
 import java.util.zip.ZipFile
 import kotlin.test.Test
@@ -15,8 +14,6 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class KlibBasedMppIT : BaseGradleIT() {
-    override val defaultGradleVersion = GradleVersionRequired.AtLeast("6.1")
-
     companion object {
         private const val MODULE_GROUP = "com.example"
     }

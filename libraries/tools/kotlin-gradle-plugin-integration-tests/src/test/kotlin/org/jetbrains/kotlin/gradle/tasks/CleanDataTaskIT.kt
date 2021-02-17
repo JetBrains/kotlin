@@ -6,15 +6,11 @@
 package org.jetbrains.kotlin.gradle.tasks
 
 import org.jetbrains.kotlin.gradle.BaseGradleIT
-import org.jetbrains.kotlin.gradle.GradleVersionRequired
 import org.jetbrains.kotlin.gradle.transformProjectWithPluginsDsl
 import org.junit.Test
 
 
 class CleanDataTaskIT : BaseGradleIT() {
-
-    override val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.AtLeast("6.1")
 
     @Test
     fun testDownloadedFolderDeletion() {
@@ -25,5 +21,4 @@ class CleanDataTaskIT : BaseGradleIT() {
         }
 
     }
-
 }

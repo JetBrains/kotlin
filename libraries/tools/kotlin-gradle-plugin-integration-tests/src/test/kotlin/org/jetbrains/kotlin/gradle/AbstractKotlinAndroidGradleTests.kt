@@ -6,23 +6,14 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.Assume
-import org.junit.Ignore
 import org.junit.Test
 import java.io.File
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-open class KotlinAndroid33GradleIT : KotlinAndroid32GradleIT() {
-    override val androidGradlePluginVersion: AGPVersion
-        get() = AGPVersion.v3_3_2
-}
-
-open class KotlinAndroid36GradleIT : KotlinAndroid33GradleIT() {
+open class KotlinAndroid36GradleIT : KotlinAndroid34GradleIT() {
     override val androidGradlePluginVersion: AGPVersion
         get() = AGPVersion.v3_6_0
-
-    override val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.AtLeast("6.1")
 
     @Test
     fun testAndroidMppSourceSets(): Unit = with(
@@ -460,13 +451,9 @@ open class KotlinAndroid70GradleIT : KotlinAndroid36GradleIT() {
     }
 }
 
-open class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT() {
+open class KotlinAndroid34GradleIT : KotlinAndroid3GradleIT() {
     override val androidGradlePluginVersion: AGPVersion
-        get() = AGPVersion.v3_2_0
-
-    //android build tool 28.0.3 use org.gradle.api.file.ProjectLayout#fileProperty(org.gradle.api.provider.Provider) that was deleted in gradle 6.0
-    override val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.Until("5.6.4")
+        get() = AGPVersion.v3_4_1
 
     @Test
     fun testKaptUsingApOptionProvidersAsNestedInputOutput() = with(Project("AndroidProject")) {
