@@ -26,13 +26,8 @@ import org.junit.runners.Parameterized
 import java.io.File
 import kotlin.test.assertEquals
 
-private val DEFAULT_GRADLE_VERSION = GradleVersionRequired.AtLeast("5.6.4")
-
 @RunWith(Parameterized::class)
 class BuildCacheRelocationIT : BaseGradleIT() {
-
-    override val defaultGradleVersion: GradleVersionRequired
-        get() = DEFAULT_GRADLE_VERSION
 
     override fun defaultBuildOptions(): BuildOptions =
         super.defaultBuildOptions().copy(
@@ -53,7 +48,7 @@ class BuildCacheRelocationIT : BaseGradleIT() {
 
         val (firstProject, secondProject) = (0..1).map { id ->
             workingDir = workingDirs[id]
-            Project(projectName, directoryPrefix = projectDirectoryPrefix, gradleVersionRequirement = gradleVersionRequired).apply {
+            Project(projectName, directoryPrefix = projectDirectoryPrefix).apply {
                 setupWorkingDir()
                 initProject()
                 prepareLocalBuildCache(localBuildCacheDirectory)
@@ -101,7 +96,6 @@ class BuildCacheRelocationIT : BaseGradleIT() {
         val initProject: Project.() -> Unit = {},
         val taskToExecute: Array<String>,
         val withAnotherGradleHome: Boolean = false,
-        val gradleVersionRequired: GradleVersionRequired = DEFAULT_GRADLE_VERSION,
         val androidGradlePluginVersion: AGPVersion? = null
     ) {
 
@@ -191,8 +185,7 @@ class BuildCacheRelocationIT : BaseGradleIT() {
                          buildKtsApp.modify(::transformBuildScriptWithPluginsDsl)
                          buildKtsLib.modify(::transformBuildScriptWithPluginsDsl)
                      },
-                     withAnotherGradleHome = true,
-                     gradleVersionRequired = GradleVersionRequired.FOR_MPP_SUPPORT
+                     withAnotherGradleHome = true
             ),
         ).map { arrayOf(it) }
     }

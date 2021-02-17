@@ -140,18 +140,10 @@ public class GradleCompileTaskProvider {
         sessionsDir = GradleCompilerRunner.sessionsDir(task.project)
         projectName = task.project.rootProject.name.normalizeForFlagFile()
         val modulesInfo = GradleCompilerRunner.buildModulesInfo(task.project.gradle)
-        buildModulesInfo = if (!isConfigurationCacheAvailable(task.project.gradle)) {
-            task.project.provider {
-                object : IncrementalModuleInfoProvider {
-                    override val info = modulesInfo
-                }
-            }
-        } else {
-            task.project.gradle.sharedServices.registerIfAbsent(
-                IncrementalModuleInfoBuildService.getServiceName(), IncrementalModuleInfoBuildService::class.java
-            ) {
-                it.parameters.info.set(modulesInfo)
-            }
+        buildModulesInfo = task.project.gradle.sharedServices.registerIfAbsent(
+            IncrementalModuleInfoBuildService.getServiceName(), IncrementalModuleInfoBuildService::class.java
+        ) {
+            it.parameters.info.set(modulesInfo)
         }
         path = task.path
         logger = task.logger
