@@ -225,7 +225,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
         if (isBoundReceiver) return false
         if (function !is IrSimpleFunction) return false
         if (!function.isInlineCallableReference) return false
-        return type.isInlined() && !type.isMappedToPrimitive
+        return type.erasedUpperBound.isInline && !type.isMappedToPrimitive
     }
 
     fun mapSignatureSkipGeneric(function: IrFunction): JvmMethodSignature =
