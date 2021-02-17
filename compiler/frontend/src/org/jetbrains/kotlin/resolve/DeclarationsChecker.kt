@@ -636,6 +636,9 @@ class DeclarationsChecker(
             }
         }
         addAccessibleTypeParametersFromType(descriptor.extensionReceiverParameter?.type)
+        for (contextReceiverParameter in descriptor.contextReceiverParameters) {
+            addAccessibleTypeParametersFromType(contextReceiverParameter.type)
+        }
 
         val typeParametersInaccessibleFromReceiver = allTypeParameters - allAccessibleTypeParameters
         for (typeParameter in typeParametersInaccessibleFromReceiver) {
