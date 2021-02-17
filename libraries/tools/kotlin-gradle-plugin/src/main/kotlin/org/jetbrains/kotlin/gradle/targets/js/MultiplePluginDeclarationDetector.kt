@@ -43,11 +43,7 @@ private constructor() {
             val detector = MultiplePluginDeclarationDetector()
             instance = detector
 
-            if (isConfigurationCacheAvailable(gradle)) {
-                BuildFinishedListenerService.getInstance(gradle).onClose { instance = null }
-            } else {
-                gradle.buildFinished { instance = null }
-            }
+            BuildFinishedListenerService.getInstance(gradle).onClose { instance = null }
 
             return detector
         }

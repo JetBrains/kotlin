@@ -31,7 +31,7 @@ class MppHighlightingTestDataWithGradleIT : BaseGradleIT() {
         }
     }
 
-    private val project by lazy { Project("mpp-source-set-hierarchy-analysis", GradleVersionRequired.AtLeast("6.0")) }
+    private val project by lazy { Project("mpp-source-set-hierarchy-analysis") }
 
     private fun doTest(cliCompiler: CliCompiler) = with(project) {
         val expectedErrorsPerSourceSetName = sourceRoots.associate { sourceRoot ->

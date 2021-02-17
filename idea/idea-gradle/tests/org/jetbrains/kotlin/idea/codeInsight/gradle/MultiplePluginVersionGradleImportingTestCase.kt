@@ -16,8 +16,8 @@ import org.junit.runners.Parameterized
 import java.io.File
 import java.util.*
 
-const val mppImportTestMinVersionForMaster = "6.0+"
-const val legacyMppImportTestMinVersionForMaster = "5.3+"
+const val mppImportTestMinVersionForMaster = "6.1+"
+const val legacyMppImportTestMinVersionForMaster = "6.1+"
 
 abstract class MultiplePluginVersionGradleImportingTestCase : GradleImportingTestCase() {
     @Rule
