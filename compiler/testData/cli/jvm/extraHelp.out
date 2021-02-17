@@ -107,10 +107,11 @@ where advanced options include:
   -Xgenerate-strict-metadata-version
                              Generate metadata with strict version semantics (see kdoc on Metadata.extraInt)
   -Xstring-concat={indy-with-constants|indy|inline}
-                             Switch a way in which string concatenation is performed.
-                             -Xstring-concat=indy-with-constants   Performs string concatenation via `invokedynamic` 'makeConcatWithConstants'. Works only with `-jvm-target 9` or greater
-                             -Xstring-concat=indy                Performs string concatenation via `invokedynamic` 'makeConcat'. Works only with `-jvm-target 9` or greater
-                             -Xstring-concat=inline              Performs string concatenation via `StringBuilder`
+                             Select code generation scheme for string concatenation.
+                             -Xstring-concat=indy-with-constants   Concatenate strings using `invokedynamic` `makeConcatWithConstants`. Requires `-jvm-target 9` or greater.
+                             -Xstring-concat=indy                Concatenate strings using `invokedynamic` `makeConcat`. Requires `-jvm-target 9` or greater.
+                             -Xstring-concat=inline              Concatenate strings using `StringBuilder`
+                             default: `indy-with-constants` for JVM target 9 or greater, `inline` otherwise
   -Xsupport-compatqual-checker-framework-annotations=enable|disable
                              Specify behavior for Checker Framework compatqual annotations (NullableDecl/NonNullDecl).
                              Default value is 'enable'
