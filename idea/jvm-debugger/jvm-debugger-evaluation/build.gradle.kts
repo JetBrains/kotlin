@@ -5,6 +5,7 @@ plugins {
 
 dependencies {
     compile(project(":compiler:backend"))
+    compile(project(":compiler:backend.jvm"))
     compile(project(":idea:jvm-debugger:eval4j"))
     compile(project(":idea:idea-core"))
     compile(project(":idea:idea-j2k"))

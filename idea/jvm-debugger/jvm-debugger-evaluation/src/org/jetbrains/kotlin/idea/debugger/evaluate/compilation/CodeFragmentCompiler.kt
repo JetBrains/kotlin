@@ -6,11 +6,16 @@
 package org.jetbrains.kotlin.idea.debugger.evaluate.compilation
 
 import org.jetbrains.kotlin.backend.common.output.OutputFile
+import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
+import org.jetbrains.kotlin.backend.jvm.EvaluatorFragmentPSI2IRInvoker
+import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
+import org.jetbrains.kotlin.backend.jvm.jvmPhases
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.CodeFragmentCodegen.Companion.getSharedTypeIfApplicable
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -78,19 +83,29 @@ class CodeFragmentCompiler(private val executionContext: ExecutionContext, priva
         val defaultReturnType = moduleDescriptor.builtIns.unitType
         val returnType = getReturnType(codeFragment, bindingContext, defaultReturnType)
 
-        val compilerConfiguration = CompilerConfiguration()
-        compilerConfiguration.languageVersionSettings = codeFragment.languageVersionSettings
-
-        val generationState = GenerationState.Builder(
-            project, ClassBuilderFactories.BINARIES, moduleDescriptorWrapper,
-            bindingContext, filesToCompile, compilerConfiguration
-        ).generateDeclaredClassFilter(GeneratedClassFilterForCodeFragment(codeFragment)).build()
+        val compilerConfiguration = CompilerConfiguration().apply {
+            languageVersionSettings = codeFragment.languageVersionSettings
+            // TODO: Do not understand the implications of this, but enforced by assertions in JvmIrCodegen
+            put(JVMConfigurationKeys.DO_NOT_CLEAR_BINDING_CONTEXT, true)
+        }
 
         val parameterInfo = CodeFragmentParameterAnalyzer(executionContext, codeFragment, bindingContext, status).analyze()
         val (classDescriptor, methodDescriptor) = createDescriptorsForCodeFragment(
             codeFragment, Name.identifier(GENERATED_CLASS_NAME), Name.identifier(GENERATED_FUNCTION_NAME),
             parameterInfo, returnType, moduleDescriptorWrapper.packageFragmentForEvaluator
         )
+
+        val generationState = GenerationState.Builder(
+            project, ClassBuilderFactories.BINARIES, moduleDescriptorWrapper,
+            bindingContext, filesToCompile, compilerConfiguration
+        ).generateDeclaredClassFilter(
+            GeneratedClassFilterForCodeFragment(codeFragment)
+        ).codegenFactory(
+            JvmIrCodegenFactory(
+                PhaseConfig(jvmPhases),
+                EvaluatorFragmentPSI2IRInvoker(classDescriptor, methodDescriptor)
+            )
+        ).build()
 
         val codegenInfo = CodeFragmentCodegenInfo(classDescriptor, methodDescriptor, parameterInfo.parameters)
         CodeFragmentCodegen.setCodeFragmentInfo(codeFragment, codegenInfo)
@@ -253,6 +268,13 @@ private class EvaluatorModuleDescriptor(
     val moduleDescriptor: ModuleDescriptor,
     resolveSession: ResolveSession
 ) : ModuleDescriptor by moduleDescriptor {
+
+    // Without this override, psi2ir complains when introducing new symbol for
+    // when creating an IrFileImpl in `createEmptyIrFile`.
+    override fun getOriginal(): DeclarationDescriptor {
+        return this
+    }
+
     private val declarationProvider = object : PackageMemberDeclarationProvider {
         override fun getPackageFiles() = listOf(codeFragment)
         override fun containsFile(file: KtFile) = file == codeFragment

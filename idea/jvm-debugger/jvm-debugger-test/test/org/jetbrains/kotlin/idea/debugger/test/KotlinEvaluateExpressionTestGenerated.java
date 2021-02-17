@@ -670,6 +670,29 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             }
         }
 
+        @TestMetadata("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/eeir")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Eeir extends AbstractKotlinEvaluateExpressionTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doSingleBreakpointTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInEeir() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/eeir"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            }
+
+            @TestMetadata("simple.kt")
+            public void testSimple() throws Exception {
+                runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/eeir/simple.kt");
+            }
+
+            @TestMetadata("simpleInPackage.kt")
+            public void testSimpleInPackage() throws Exception {
+                runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/eeir/simpleInPackage.kt");
+            }
+        }
+
         @TestMetadata("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/extraVariables")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
