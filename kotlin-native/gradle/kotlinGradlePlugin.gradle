@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.UtilsKt
 
 project.buildscript.repositories {
     maven {
-        url project.bootstrapKotlinRepo
+        url BootstrapKt.getBootstrapKotlinRepo(project)
     }
     if (UtilsKt.getCacheRedirectorEnabled(project))
         maven { url 'https://cache-redirector.jetbrains.com/maven-central' }
@@ -17,6 +17,8 @@ configurations {
     kotlinCompilerClasspath
 }
 
-project.dependencies {
-    kotlinCompilerClasspath(project(path: ":kotlin-compiler-embeddable", configuration: "runtimeJar"))
+if (!(project.findProperty("withoutEmbedabble")?.toString()?.toBoolean() ?: false)) {
+    project.dependencies {
+        kotlinCompilerClasspath(project(path: ":kotlin-compiler-embeddable", configuration: "runtimeJar"))
+    }
 }

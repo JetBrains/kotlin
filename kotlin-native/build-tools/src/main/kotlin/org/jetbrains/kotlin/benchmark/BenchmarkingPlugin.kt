@@ -125,16 +125,11 @@ abstract class BenchmarkingPlugin: Plugin<Project> {
     protected open fun Project.configureSourceSets(kotlinVersion: String) {
         with(kotlin.sourceSets) {
             commonMain.dependencies {
-                implementation(project(":kotlin-stdlib-common"))
+                implementation(files("${project.findProperty("kotlin_dist")}/kotlinc/lib/kotlin-stdlib.jar"))
             }
 
-            project.configurations.getByName(nativeMain.implementationConfigurationName).apply {
-                // Exclude dependencies already included into K/N distribution (aka endorsed libraries).
-                exclude(mapOf("module" to "kotlinx.cli"))
-            }
-
-            repositories.maven {
-                setUrl(kotlinStdlibRepo)
+            repositories.flatDir {
+                dir("${project.findProperty("kotlin_dist")}/kotlinc/lib")
             }
 
             additionalConfigurations(this@configureSourceSets)
@@ -268,7 +263,13 @@ abstract class BenchmarkingPlugin: Plugin<Project> {
         pluginManager.apply("kotlin-multiplatform")
 
         // Use Kotlin compiler version specified by the project property.
-        dependencies.add("kotlinCompilerClasspath", "org.jetbrains.kotlin:kotlin-compiler-embeddable:$kotlinVersion")
+        target.logger.info("BenchmarkingPlugin.kt:apply($kotlinVersion)")
+        dependencies.add(
+            "kotlinCompilerClasspath", files(
+                "${project.findProperty("kotlin_dist")}/kotlinc/lib/kotlin-compiler.jar",
+                "${project.findProperty("kotlin_dist")}/kotlinc/lib/kotlin-daemon.jar"
+            )
+        )
         addTimeListener(this)
 
         extensions.create(benchmarkExtensionName, benchmarkExtensionClass.java, this)

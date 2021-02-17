@@ -7,9 +7,6 @@ buildscript {
     apply from: "$rootProject.projectDir/../gradle/kotlinGradlePlugin.gradle"
 
     repositories {
-        maven {
-            url 'https://cache-redirector.jetbrains.com/jcenter'
-        }
         jcenter()
     }
 }
@@ -17,17 +14,9 @@ buildscript {
 apply plugin: 'kotlin-multiplatform'
 
 repositories {
-    maven {
-        url 'https://cache-redirector.jetbrains.com/jcenter'
-    }
     jcenter()
-    maven {
-        url kotlinCompilerRepo
-    }
-    maven {
-        url buildKotlinCompilerRepo
-    }
 }
+
 
 def toolsPath = '../../tools'
 def frameworkName = 'benchmarksAnalyzer'
@@ -37,9 +26,6 @@ def buildType = NativeBuildType.valueOf(findProperty('nativeBuildType') ?: 'DEBU
 kotlin {
     sourceSets {
         macosMain {
-            dependencies {
-                implementation "org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion"
-            }
             kotlin.srcDir "$toolsPath/benchmarks/shared/src"
             kotlin.srcDir "$toolsPath/benchmarksAnalyzer/src/main/kotlin"
             kotlin.srcDir "$rootProject.projectDir/../endorsedLibraries/kotlinx.cli/src/main/kotlin"
@@ -69,7 +55,10 @@ task konanRun {
     }
 }
 
-task jvmRun(type: RunJvmTask)  {
+/**
+ * TODO: it would be better to make help function generating such nop task in buildSrc.
+ */
+task jvmRun  {
     doLast {
         println("JVM run is unsupported")
     }
