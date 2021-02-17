@@ -56,10 +56,13 @@ class KtQuickFixesListBuilder private constructor() {
     private val quickFixes = mutableMapOf<KClass<out KtDiagnosticWithPsi<*>>, MutableList<HLQuickFixFactory>>()
 
     @OptIn(PrivateForInline::class)
-    inline fun <DIAGNOSTIC_PSI : PsiElement, reified DIAGNOSTIC : KtDiagnosticWithPsi<DIAGNOSTIC_PSI>> registerPsiQuickFix(
-        quickFixFactory: QuickFixesPsiBasedFactory<DIAGNOSTIC_PSI>
+    fun <DIAGNOSTIC_PSI : PsiElement, DIAGNOSTIC : KtDiagnosticWithPsi<DIAGNOSTIC_PSI>> registerPsiQuickFixes(
+        diagnosticClass: KClass<DIAGNOSTIC>,
+        vararg quickFixFactories: QuickFixesPsiBasedFactory<in DIAGNOSTIC_PSI>
     ) {
-        registerPsiQuickFix(DIAGNOSTIC::class, quickFixFactory)
+        for (quickFixFactory in quickFixFactories) {
+            registerPsiQuickFix(diagnosticClass, quickFixFactory)
+        }
     }
 
     @OptIn(PrivateForInline::class)
@@ -72,7 +75,7 @@ class KtQuickFixesListBuilder private constructor() {
     @PrivateForInline
     fun <DIAGNOSTIC_PSI : PsiElement, DIAGNOSTIC : KtDiagnosticWithPsi<DIAGNOSTIC_PSI>> registerPsiQuickFix(
         diagnosticClass: KClass<DIAGNOSTIC>,
-        quickFixFactory: QuickFixesPsiBasedFactory<DIAGNOSTIC_PSI>
+        quickFixFactory: QuickFixesPsiBasedFactory<in DIAGNOSTIC_PSI>
     ) {
         quickFixes.getOrPut(diagnosticClass) { mutableListOf() }.add(HLQuickFixFactory.HLQuickFixesPsiBasedFactory(quickFixFactory))
     }
