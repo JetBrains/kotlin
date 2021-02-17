@@ -1193,7 +1193,9 @@ class Fir2IrDeclarationStorage(
     }
 
     private fun IrMutableAnnotationContainer.convertAnnotationsFromLibrary(firAnnotationContainer: FirAnnotationContainer) {
-        if ((firAnnotationContainer as? FirDeclaration)?.isFromLibrary == true) {
+        if ((firAnnotationContainer as? FirDeclaration)?.isFromLibrary == true ||
+            (firAnnotationContainer is FirCallableMemberDeclaration<*> && firAnnotationContainer.isSubstitutionOrIntersectionOverride)
+        ) {
             annotationGenerator.generate(this, firAnnotationContainer)
         }
     }
