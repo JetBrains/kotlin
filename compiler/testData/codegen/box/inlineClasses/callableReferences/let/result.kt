@@ -1,5 +1,6 @@
 // WITH_RUNTIME
 // KJS_WITH_FULL_RUNTIME
+// IGNORE_BACKEND: WASM
 
 object Foo {
     fun foo(result: Result<String>) {

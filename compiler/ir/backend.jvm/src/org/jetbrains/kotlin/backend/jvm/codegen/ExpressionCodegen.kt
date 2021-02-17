@@ -635,10 +635,11 @@ class ExpressionCodegen(
     // it generates them as normal functions and not objects.
     // Thus, we need to unbox inline class argument with reference underlying type.
     private fun unboxInlineClassArgumentOfInlineCallableReference(arg: IrGetValue) {
-        if (!arg.type.isInlined()) return
+        if (!arg.type.erasedUpperBound.isInline) return
         if (arg.type.isMappedToPrimitive) return
         if (!irFunction.isInlineCallableReference) return
         if (irFunction.extensionReceiverParameter?.symbol == arg.symbol) return
+        if (arg.type.isNullable() && arg.type.makeNotNull().unboxInlineClass().isNullable()) return
         StackValue.unboxInlineClass(OBJECT_TYPE, arg.type.erasedUpperBound.defaultType.toIrBasedKotlinType(), mv)
     }
 
