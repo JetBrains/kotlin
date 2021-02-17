@@ -40,7 +40,7 @@ abstract class AbstractCompileKotlinAgainstInlineKotlinTestBase<I : ResultingArt
             backendFacade
         )
         useInlineHandlers()
-        commonHandlersForCodegenTest()
+        commonHandlersForBoxTest()
         useModuleStructureTransformers(
             ModuleTransformerForTwoFilesBoxTests()
         )

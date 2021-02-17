@@ -1,3 +1,4 @@
+// IGNORE_DEXING
 class `(X)` {
     fun `(Y)`() {}
 }
