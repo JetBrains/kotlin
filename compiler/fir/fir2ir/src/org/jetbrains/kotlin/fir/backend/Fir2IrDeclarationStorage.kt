@@ -1019,7 +1019,7 @@ class Fir2IrDeclarationStorage(
                 getCachedIrFunction(fir)?.let { return it.symbol }
                 val irParent = findIrParent(fir)
                 val parentOrigin = (irParent as? IrDeclaration)?.origin ?: IrDeclarationOrigin.DEFINED
-                val declarationOrigin = computeDeclarationOrigin(firFunctionSymbol, parentOrigin, irParent)
+                val declarationOrigin = computeDeclarationOrigin(firFunctionSymbol, parentOrigin)
                 createIrFunction(fir, irParent, origin = declarationOrigin).symbol
             }
             is FirSimpleFunction -> {
@@ -1106,7 +1106,7 @@ class Fir2IrDeclarationStorage(
             signature
         }?.let { return it.symbol }
         val parentOrigin = (irParent as? IrDeclaration)?.origin ?: IrDeclarationOrigin.DEFINED
-        val declarationOrigin = computeDeclarationOrigin(firSymbol, parentOrigin, irParent)
+        val declarationOrigin = computeDeclarationOrigin(firSymbol, parentOrigin)
         // TODO: package fragment members (?)
         val parent = irParent
         if (parent is Fir2IrLazyClass) {
@@ -1124,16 +1124,13 @@ class Fir2IrDeclarationStorage(
 
     private fun computeDeclarationOrigin(
         symbol: FirCallableSymbol<*>,
-        parentOrigin: IrDeclarationOrigin,
-        irParent: IrDeclarationParent?
+        parentOrigin: IrDeclarationOrigin
     ): IrDeclarationOrigin {
-        return if (irParent.isSourceClass() && (symbol.fir.isIntersectionOverride || symbol.fir.isSubstitutionOverride))
+        return if (symbol.fir.isIntersectionOverride || symbol.fir.isSubstitutionOverride)
             IrDeclarationOrigin.FAKE_OVERRIDE
         else
             parentOrigin
     }
-
-    private fun IrDeclarationParent?.isSourceClass() = this is IrClass && this !is Fir2IrLazyClass && this !is IrLazyClass
 
     fun getIrFieldSymbol(firFieldSymbol: FirFieldSymbol): IrSymbol {
         val fir = firFieldSymbol.fir
