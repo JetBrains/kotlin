@@ -565,8 +565,10 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         }
 
         override fun <T> visitConstExpression(constExpression: FirConstExpression<T>, data: StringBuilder) {
-            if (constExpression.kind != ConstantValueKind.String) {
-                data.append(constExpression.kind)
+            when (constExpression.kind) {
+                ConstantValueKind.String -> return
+                ConstantValueKind.Null -> constExpression.typeRef.accept(this, data)
+                else -> data.append(constExpression.kind)
             }
         }
 
