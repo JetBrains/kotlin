@@ -663,8 +663,9 @@ interface IrBuilderExtension {
     fun findEnumValuesMethod(enumClass: ClassDescriptor): IrFunction {
         assert(enumClass.kind == ClassKind.ENUM_CLASS)
         return compilerContext.referenceClass(enumClass.fqNameSafe)?.let {
-            it.owner.functions.find { it.origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER && it.name == Name.identifier("values") }
-                ?: throw AssertionError("Enum class does not have .values() function")
+            it.owner.functions.singleOrNull { f ->
+                f.name == Name.identifier("values") && f.valueParameters.isEmpty() && f.extensionReceiverParameter == null
+            } ?: throw AssertionError("Enum class does not have single .values() function")
         } ?: error("Couldn't load class $enumClass")
     }
 
