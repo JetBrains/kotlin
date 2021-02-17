@@ -26,6 +26,6 @@ class C {
 
 val C.foo : C.D = <!EXTENSION_PROPERTY_WITH_BACKING_FIELD!><!UNRESOLVED_REFERENCE!>D<!>()<!>
 
-val C.bar : C.D = C().<!EXTENSION_PROPERTY_WITH_BACKING_FIELD!>D()<!>
+val C.bar : C.D = <!EXTENSION_PROPERTY_WITH_BACKING_FIELD!>C().D()<!>
 
 val C.foo1 : C.D get() = D()

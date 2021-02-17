@@ -499,6 +499,7 @@ class ExpressionsConverter(
 
             it.replaceExplicitReceiver(firReceiver)
         }
+        firSelector.replaceSource(dotQualifiedExpression.toFirSourceElement())
         return firSelector
     }
 

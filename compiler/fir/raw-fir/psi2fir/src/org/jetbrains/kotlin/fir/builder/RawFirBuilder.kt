@@ -1985,6 +1985,7 @@ class RawFirBuilder(
 
                 firSelector.replaceExplicitReceiver(receiver)
             }
+            firSelector.replaceSource(expression.toFirSourceElement())
             return firSelector
         }
 
