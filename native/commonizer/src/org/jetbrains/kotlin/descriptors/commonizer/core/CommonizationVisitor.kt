@@ -129,7 +129,7 @@ internal class CommonizationVisitor(
             if (classifiers.commonDependencies.hasClassifier(expandedClassId))
                 return null // this case is not supported yet
 
-            val expandedClassNode = classifiers.commonized.classNode(expandedClassId) ?: return null
+            val expandedClassNode = classifiers.commonizedNodes.classNode(expandedClassId) ?: return null
             val expandedClass = expandedClassNode.targetDeclarations[index]
                 ?: error("Can't find expanded class with class ID $expandedClassId and index $index for type alias $classifierName")
 

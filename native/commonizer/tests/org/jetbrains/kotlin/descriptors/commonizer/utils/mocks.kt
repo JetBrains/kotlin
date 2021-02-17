@@ -123,7 +123,7 @@ private fun createPackageFragmentForClassifier(classifierFqName: FqName): Packag
     }
 
 internal val MOCK_CLASSIFIERS = CirKnownClassifiers(
-    commonized = object : CirCommonizedClassifiers {
+    commonizedNodes = object : CirCommonizedClassifierNodes {
         private val MOCK_CLASS_NODE = CirClassNode(
             CommonizedGroup(0),
             LockBasedStorageManager.NO_LOCKS.createNullableLazyValue {

@@ -84,7 +84,7 @@ internal fun buildClassNode(
     recursionMarker = CirClassRecursionMarker,
     nodeProducer = { targetDeclarations, commonDeclaration ->
         CirClassNode(targetDeclarations, commonDeclaration).also {
-            classifiers.commonized.addClassNode(classId, it)
+            classifiers.commonizedNodes.addClassNode(classId, it)
         }
     }
 )
@@ -114,7 +114,7 @@ internal fun buildTypeAliasNode(
     recursionMarker = CirClassifierRecursionMarker,
     nodeProducer = { targetDeclarations, commonDeclaration ->
         CirTypeAliasNode(targetDeclarations, commonDeclaration).also {
-            classifiers.commonized.addTypeAliasNode(typeAliasId, it)
+            classifiers.commonizedNodes.addTypeAliasNode(typeAliasId, it)
         }
     }
 )

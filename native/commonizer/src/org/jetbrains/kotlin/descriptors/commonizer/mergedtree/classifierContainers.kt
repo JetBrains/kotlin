@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.descriptors.commonizer.utils.isUnderKotlinNativeSyntheticPackages
 
 class CirKnownClassifiers(
-    val commonized: CirCommonizedClassifiers,
+    val commonizedNodes: CirCommonizedClassifierNodes,
     val forwardDeclarations: CirForwardDeclarations,
     val dependencies: Map<CommonizerTarget, CirProvidedClassifiers>
 ) {
@@ -23,7 +23,7 @@ class CirKnownClassifiers(
 }
 
 /** A set of all CIR nodes built for commonized classes and type aliases. */
-interface CirCommonizedClassifiers {
+interface CirCommonizedClassifierNodes {
     /* Accessors */
     fun classNode(classId: CirEntityId): CirClassNode?
     fun typeAliasNode(typeAliasId: CirEntityId): CirTypeAliasNode?
@@ -33,7 +33,7 @@ interface CirCommonizedClassifiers {
     fun addTypeAliasNode(typeAliasId: CirEntityId, node: CirTypeAliasNode)
 
     companion object {
-        fun default() = object : CirCommonizedClassifiers {
+        fun default() = object : CirCommonizedClassifierNodes {
             private val classNodes = THashMap<CirEntityId, CirClassNode>()
             private val typeAliases = THashMap<CirEntityId, CirTypeAliasNode>()
 

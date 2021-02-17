@@ -204,7 +204,7 @@ private fun commonizeClass(classId: CirEntityId, classifiers: CirKnownClassifier
         return true
     }
 
-    return when (val node = classifiers.commonized.classNode(classId)) {
+    return when (val node = classifiers.commonizedNodes.classNode(classId)) {
         null -> {
             // No node means that the class was not subject for commonization.
             // - Either it is missing in certain targets at all => not commonized.
@@ -224,7 +224,7 @@ private fun commonizeTypeAlias(typeAliasId: CirEntityId, classifiers: CirKnownCl
         return SUCCESS_FROM_DEPENDENCY_LIBRARY
     }
 
-    return when (val node = classifiers.commonized.typeAliasNode(typeAliasId)) {
+    return when (val node = classifiers.commonizedNodes.typeAliasNode(typeAliasId)) {
         null -> {
             // No node means that the type alias was not subject for commonization. It is missing in some target(s) => not commonized.
             FAILURE_MISSING_IN_SOME_TARGET

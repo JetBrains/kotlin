@@ -33,7 +33,7 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
     fun initialize() {
         // reset cache
         classifiers = CirKnownClassifiers(
-            commonized = CirCommonizedClassifiers.default(),
+            commonizedNodes = CirCommonizedClassifierNodes.default(),
             forwardDeclarations = CirForwardDeclarations.default(),
             dependencies = mapOf(
                 FAKE_SHARED_TARGET to object : CirProvidedClassifiers {
@@ -540,9 +540,9 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
         private val FAKE_SHARED_TARGET = SharedCommonizerTarget(setOf(LeafCommonizerTarget("a"), LeafCommonizerTarget("b")))
 
         private fun CirKnownClassifiers.classNode(classId: CirEntityId, computation: () -> CirClassNode) =
-            commonized.classNode(classId) ?: computation()
+            commonizedNodes.classNode(classId) ?: computation()
 
         private fun CirKnownClassifiers.typeAliasNode(typeAliasId: CirEntityId, computation: () -> CirTypeAliasNode) =
-            commonized.typeAliasNode(typeAliasId) ?: computation()
+            commonizedNodes.typeAliasNode(typeAliasId) ?: computation()
     }
 }
