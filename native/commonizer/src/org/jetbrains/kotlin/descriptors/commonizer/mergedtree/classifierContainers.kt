@@ -68,17 +68,3 @@ interface CirForwardDeclarations {
         }
     }
 }
-
-/** A set of classes and type aliases provided by libraries (either the libraries to commonize, or their dependency libraries)/ */
-interface CirProvidedClassifiers {
-    fun hasClassifier(classifierId: CirEntityId): Boolean
-
-    // TODO: implement later
-    //fun classifier(classifierId: ClassId): Any?
-
-    companion object {
-        internal val EMPTY = object : CirProvidedClassifiers {
-            override fun hasClassifier(classifierId: CirEntityId) = false
-        }
-    }
-}

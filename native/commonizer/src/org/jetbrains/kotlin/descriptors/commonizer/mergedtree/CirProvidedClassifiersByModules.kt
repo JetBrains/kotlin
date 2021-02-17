@@ -14,15 +14,10 @@ import org.jetbrains.kotlin.library.metadata.parsePackageFragment
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 
-class CirLoadedClassifiers(modulesProvider: ModulesProvider) : CirProvidedClassifiers {
+internal class CirProvidedClassifiersByModules(modulesProvider: ModulesProvider) : CirProvidedClassifiers {
     private val classifiers: Set<CirEntityId> = loadClassifiers(modulesProvider)
 
     override fun hasClassifier(classifierId: CirEntityId): Boolean = classifierId in classifiers
-
-    companion object {
-        fun from(modulesProvider: ModulesProvider?): CirProvidedClassifiers =
-            if (modulesProvider != null) CirLoadedClassifiers(modulesProvider) else CirProvidedClassifiers.EMPTY
-    }
 }
 
 private fun loadClassifiers(modulesProvider: ModulesProvider): Set<CirEntityId> {
