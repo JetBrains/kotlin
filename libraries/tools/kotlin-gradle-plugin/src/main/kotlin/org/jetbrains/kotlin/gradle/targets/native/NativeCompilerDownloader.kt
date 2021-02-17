@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.konan.MetaVersion
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
 import java.io.File
+import java.nio.file.Files
 
 class NativeCompilerDownloader(
     val project: Project,
@@ -127,9 +128,23 @@ class NativeCompilerDownloader(
 
         logger.lifecycle("Unpack Kotlin/Native compiler to $compilerDirectory")
         logger.lifecycleWithDuration("Unpack Kotlin/Native compiler to $compilerDirectory finished,") {
-            project.copy {
-                it.from(archiveFileTree(archive))
-                it.into(DependencyDirectories.localKonanDir)
+            val tmpDir = Files.createTempDirectory("").toFile()
+            try {
+                logger.debug("Unpacking Kotlin/Native compiler to tmp directory $tmpDir")
+                project.copy {
+                    it.from(archiveFileTree(archive))
+                    it.into(tmpDir)
+                }
+                val compilerTmp = tmpDir.resolve(dependencyNameWithVersion)
+                if (!compilerTmp.renameTo(compilerDirectory)) {
+                    project.copy {
+                        it.from(compilerTmp)
+                        it.into(compilerDirectory)
+                    }
+                }
+                logger.debug("Moved Kotlin/Native compiler from $tmpDir to $compilerDirectory")
+            } finally {
+                tmpDir.deleteRecursively()
             }
         }
 
