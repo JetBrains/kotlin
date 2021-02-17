@@ -11,6 +11,7 @@ import com.google.gson.stream.JsonToken
 import com.google.gson.stream.JsonWriter
 import org.gradle.api.logging.Logger
 import java.io.File
+import java.security.MessageDigest
 
 /**
  * Cache for preventing processing some files twice.
@@ -22,16 +23,13 @@ import java.io.File
  *
  * @param version When updating logic in `compute`, `version` should be increased to invalidate cache
  */
-// CHECK
 internal open class ProcessedFilesCache(
     val logger: Logger,
-//    val hasher: FileHasher,
     val projectDir: File,
     val targetDir: File,
     stateFileName: String,
     val version: String
 ) : AutoCloseable {
-
     private fun readFrom(json: JsonReader): State? {
         val result = State()
 
@@ -71,7 +69,7 @@ internal open class ProcessedFilesCache(
             json.name("items")
             json.obj {
                 byHash.forEach {
-                    json.name(it.key.toHex())
+                    json.name(it.key.contents.toHex())
                     json.obj {
                         json.name("src").value(it.value.src)
                         json.name("target")
@@ -95,12 +93,26 @@ internal open class ProcessedFilesCache(
         endObject()
     }
 
-    fun Int.toHex(): String {
-        return toString(16)
+    fun ByteArray.toHex(): String {
+        val result = CharArray(size * 2) { ' ' }
+        var i = 0
+        forEach {
+            val n = it.toInt()
+            result[i++] = Character.forDigit(n shr 4 and 0xF, 16)
+            result[i++] = Character.forDigit(n and 0xF, 16)
+        }
+        return String(result)
     }
 
-    private fun decodeHexString(hexString: String): Int {
-        return Integer.parseInt(hexString, 16)
+    private fun decodeHexString(hexString: String): ByteArray {
+        check(hexString.length % 2 == 0)
+        val bytes = ByteArray(hexString.length / 2)
+        var i = 0
+        var o = 0
+        while (i < hexString.length) {
+            bytes[o++] = hexToByte(hexString[i++], hexString[i++])
+        }
+        return bytes
     }
 
     private fun hexToByte(a: Char, b: Char): Byte = ((a.toDigit() shl 4) + b.toDigit()).toByte()
@@ -125,13 +137,13 @@ internal open class ProcessedFilesCache(
     }
 
     private class State {
-        val byHash = mutableMapOf<Int, Element>()
+        val byHash = mutableMapOf<ByteArrayWrapper, Element>()
         val byTarget = mutableMapOf<String, Element>()
 
-        operator fun get(elementHash: Int) = byHash[elementHash]
+        operator fun get(elementHash: ByteArray) = byHash[ByteArrayWrapper(elementHash)]
 
-        operator fun set(elementHash: Int, element: Element) {
-            byHash[elementHash] = element
+        operator fun set(elementHash: ByteArray, element: Element) {
+            byHash[ByteArrayWrapper(elementHash)] = element
             val target = element.target
             if (target != null) {
                 byTarget[target] = element
@@ -180,7 +192,19 @@ internal open class ProcessedFilesCache(
         file: File,
         compute: () -> File?
     ): String? {
-        val hash = file.hashCode()
+        val md = MessageDigest.getInstance("MD5")
+        val buffer = ByteArray(4048)
+        file.inputStream().use { input ->
+            while (true) {
+                val len = input.read(buffer)
+                if (len < 0) {
+                    break
+                }
+                md.update(buffer, 0, len)
+            }
+        }
+
+        val hash = md.digest()
         val old = state[hash]
 
         if (old != null) {
