@@ -62,7 +62,7 @@ open class RunKotlinNativeTask @Inject constructor(private val linkTask: Task,
                 executable = "cset"
                 args("shield", "--exec", "--", executable)
             } else {
-                this.executable = executable
+                executable = this@RunKotlinNativeTask.executable
             }
 
             args(argumentsList)
@@ -104,7 +104,7 @@ open class RunKotlinNativeTask @Inject constructor(private val linkTask: Task,
     fun run() {
         val output = ByteArrayOutputStream()
         project.exec {
-            executable = executable
+            executable = this@RunKotlinNativeTask.executable
             args("list")
             standardOutput = output
         }
