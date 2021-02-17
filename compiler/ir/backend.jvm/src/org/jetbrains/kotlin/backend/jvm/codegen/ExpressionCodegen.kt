@@ -1276,8 +1276,9 @@ class ExpressionCodegen(
                 generator.putValueOrProcessConstant(StackValue.constant(arg.value, type, null))
             } else {
                 val value = arg.accept(this, data)
-                value.materializeAt(value.type, value.irType)
-                generator.invokeAppend(value.type)
+                val generatingType = if (value.type == Type.VOID_TYPE) AsmTypes.UNIT_TYPE else value.type
+                value.materializeAt(generatingType, value.irType)
+                generator.invokeAppend(generatingType)
             }
         }
         generator.genToString()
