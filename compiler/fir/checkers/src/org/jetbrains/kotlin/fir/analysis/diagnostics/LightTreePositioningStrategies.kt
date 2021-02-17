@@ -466,7 +466,7 @@ private fun FlyweightCapableTreeStructure<LighterASTNode>.defaultValue(node: Lig
     return null
 }
 
-private fun FlyweightCapableTreeStructure<LighterASTNode>.selector(node: LighterASTNode): LighterASTNode? {
+fun FlyweightCapableTreeStructure<LighterASTNode>.selector(node: LighterASTNode): LighterASTNode? {
     val childrenRef = Ref<Array<LighterASTNode?>>()
     getChildren(node, childrenRef)
     val children = childrenRef.get() ?: return null
