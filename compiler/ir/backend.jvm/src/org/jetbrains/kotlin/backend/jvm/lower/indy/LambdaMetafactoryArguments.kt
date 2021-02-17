@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.backend.jvm.lower
+package org.jetbrains.kotlin.backend.jvm.lower.indy
 
 import org.jetbrains.kotlin.backend.common.ir.allOverridden
 import org.jetbrains.kotlin.backend.common.lower.VariableRemapper
@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.ir.getSingleAbstractMethod
 import org.jetbrains.kotlin.backend.jvm.ir.isCompiledToJvmDefault
+import org.jetbrains.kotlin.backend.jvm.lower.findInterfaceImplementation
 import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
@@ -30,14 +31,14 @@ import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 
-class LambdaMetafactoryArguments(
+internal class LambdaMetafactoryArguments(
     val samMethod: IrSimpleFunction,
     val fakeInstanceMethod: IrSimpleFunction,
     val implMethodReference: IrFunctionReference,
     val extraOverriddenMethods: List<IrSimpleFunction>
 )
 
-class LambdaMetafactoryArgumentsBuilder(
+internal class LambdaMetafactoryArgumentsBuilder(
     private val context: JvmBackendContext,
     private val crossinlineLambdas: Set<IrSimpleFunction>
 ) {
