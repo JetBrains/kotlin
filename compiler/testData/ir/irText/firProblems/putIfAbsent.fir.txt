@@ -16,7 +16,7 @@ FILE fqName:<root> fileName:/putIfAbsent.kt
             <K>: T of <root>.Owner.foo
             <V>: T of <root>.Owner.foo
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-          CALL 'public open fun putIfAbsent (p0: K of kotlin.collections.MutableMap, p1: V of kotlin.collections.MutableMap): V of kotlin.collections.MutableMap? declared in kotlin.collections.MutableMap' type=T of <root>.Owner.foo? origin=null
+          CALL 'public open fun putIfAbsent (p0: @[FlexibleNullability] K of java.util.Map, p1: @[FlexibleNullability] V of java.util.Map): @[FlexibleNullability] V of java.util.Map? declared in java.util.Map' type=T of <root>.Owner.foo? origin=null
             $this: GET_VAR 'val map: kotlin.collections.MutableMap<T of <root>.Owner.foo, T of <root>.Owner.foo> [val] declared in <root>.Owner.foo' type=kotlin.collections.MutableMap<T of <root>.Owner.foo, T of <root>.Owner.foo> origin=null
             p0: GET_VAR 'x: T of <root>.Owner.foo declared in <root>.Owner.foo' type=T of <root>.Owner.foo origin=null
             p1: GET_VAR 'y: T of <root>.Owner.foo declared in <root>.Owner.foo' type=T of <root>.Owner.foo origin=null

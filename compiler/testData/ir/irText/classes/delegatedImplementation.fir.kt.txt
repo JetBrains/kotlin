@@ -149,4 +149,3 @@ class Test2 : IBase, IOther {
   local /* final field */ val <$$delegate_1>: IOther = otherImpl(x0 = "", y0 = 42)
 
 }
-

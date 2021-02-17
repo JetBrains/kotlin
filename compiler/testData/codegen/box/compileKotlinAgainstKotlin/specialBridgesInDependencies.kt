@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 // WITH_RUNTIME
 // MODULE: lib
 // FILE: A.kt

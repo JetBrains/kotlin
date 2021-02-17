@@ -93,16 +93,16 @@ FILE fqName:<root> fileName:/kt44814.kt
               receiver: GET_VAR '<this>: <root>.FirPsiSourceElement declared in <root>.FirPsiSourceElement.<get-treeStructure>' type=<root>.FirPsiSourceElement origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.FirSourceElement
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.FirSourceElement
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
+        public open fun toString (): kotlin.String [fake_override] declared in <root>.FirSourceElement
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:FirLightSourceElement modality:FINAL visibility:public superTypes:[<root>.FirSourceElement]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FirLightSourceElement
@@ -140,16 +140,16 @@ FILE fqName:<root> fileName:/kt44814.kt
               receiver: GET_VAR '<this>: <root>.FirLightSourceElement declared in <root>.FirLightSourceElement.<get-treeStructure>' type=<root>.FirLightSourceElement origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.FirSourceElement
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.FirSourceElement
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
+        public open fun toString (): kotlin.String [fake_override] declared in <root>.FirSourceElement
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:PsiElement modality:OPEN visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.PsiElement
@@ -318,16 +318,16 @@ FILE fqName:<root> fileName:/kt44814.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:KtModifierList modality:FINAL visibility:public superTypes:[<root>.PsiElement]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.PsiElement
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.PsiElement
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
+        public open fun toString (): kotlin.String [fake_override] declared in <root>.PsiElement
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:KtModifierListOwner modality:FINAL visibility:public superTypes:[<root>.PsiElement]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.KtModifierListOwner
@@ -348,16 +348,16 @@ FILE fqName:<root> fileName:/kt44814.kt
               receiver: GET_VAR '<this>: <root>.KtModifierListOwner declared in <root>.KtModifierListOwner.<get-modifierList>' type=<root>.KtModifierListOwner origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.PsiElement
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.PsiElement
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
+        public open fun toString (): kotlin.String [fake_override] declared in <root>.PsiElement
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS CLASS name:FirModifier modality:SEALED visibility:internal superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FirModifier<Node of <root>.FirModifier>
@@ -415,16 +415,16 @@ FILE fqName:<root> fileName:/kt44814.kt
           $this: VALUE_PARAMETER name:<this> type:<root>.FirModifier<Node of <root>.FirModifier>
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
         overridden:
-          public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.FirModifier
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any
         VALUE_PARAMETER name:other index:0 type:kotlin.Any?
       FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
         overridden:
-          public open fun hashCode (): kotlin.Int declared in kotlin.Any
+          public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.FirModifier
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
         overridden:
-          public open fun toString (): kotlin.String declared in kotlin.Any
+          public open fun toString (): kotlin.String [fake_override] declared in <root>.FirModifier
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     CLASS CLASS name:FirLightModifier modality:FINAL visibility:public superTypes:[<root>.FirModifier<<root>.LighterASTNode>]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FirModifier.FirLightModifier
@@ -463,16 +463,16 @@ FILE fqName:<root> fileName:/kt44814.kt
           $this: VALUE_PARAMETER name:<this> type:<root>.FirModifier<Node of <root>.FirModifier>
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
         overridden:
-          public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.FirModifier
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any
         VALUE_PARAMETER name:other index:0 type:kotlin.Any?
       FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
         overridden:
-          public open fun hashCode (): kotlin.Int declared in kotlin.Any
+          public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.FirModifier
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
         overridden:
-          public open fun toString (): kotlin.String declared in kotlin.Any
+          public open fun toString (): kotlin.String [fake_override] declared in <root>.FirModifier
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
@@ -531,16 +531,16 @@ FILE fqName:<root> fileName:/kt44814.kt
           $this: VALUE_PARAMETER name:<this> type:<root>.FirModifierList
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
         overridden:
-          public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.FirModifierList
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any
         VALUE_PARAMETER name:other index:0 type:kotlin.Any?
       FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
         overridden:
-          public open fun hashCode (): kotlin.Int declared in kotlin.Any
+          public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.FirModifierList
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
         overridden:
-          public open fun toString (): kotlin.String declared in kotlin.Any
+          public open fun toString (): kotlin.String [fake_override] declared in <root>.FirModifierList
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     CLASS CLASS name:FirLightModifierList modality:FINAL visibility:public superTypes:[<root>.FirModifierList]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FirModifierList.FirLightModifierList
@@ -580,16 +580,16 @@ FILE fqName:<root> fileName:/kt44814.kt
           $this: VALUE_PARAMETER name:<this> type:<root>.FirModifierList
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
         overridden:
-          public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.FirModifierList
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any
         VALUE_PARAMETER name:other index:0 type:kotlin.Any?
       FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
         overridden:
-          public open fun hashCode (): kotlin.Int declared in kotlin.Any
+          public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.FirModifierList
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
         overridden:
-          public open fun toString (): kotlin.String declared in kotlin.Any
+          public open fun toString (): kotlin.String [fake_override] declared in <root>.FirModifierList
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any
     CLASS OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.FirModifierList.Companion

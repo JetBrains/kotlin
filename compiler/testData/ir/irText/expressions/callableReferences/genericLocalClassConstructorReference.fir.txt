@@ -99,16 +99,16 @@ FILE fqName:<root> fileName:/genericLocalClassConstructorReference.kt
               $this: VALUE_PARAMETER name:<this> type:<root>.L<LL of <root>.L>
           FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
             overridden:
-              public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+              public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.L
             $this: VALUE_PARAMETER name:<this> type:kotlin.Any
             VALUE_PARAMETER name:other index:0 type:kotlin.Any?
           FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
             overridden:
-              public open fun hashCode (): kotlin.Int declared in kotlin.Any
+              public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.L
             $this: VALUE_PARAMETER name:<this> type:kotlin.Any
           FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
             overridden:
-              public open fun toString (): kotlin.String declared in kotlin.Any
+              public open fun toString (): kotlin.String [fake_override] declared in <root>.L
             $this: VALUE_PARAMETER name:<this> type:kotlin.Any
         RETURN type=kotlin.Nothing from='public final fun <get-p> <PT> (): <root>.L<PT of <root>.<get-p>> declared in <root>'
           CALL 'public final fun foo2 <T1, T2, R> (t1: T1 of <root>.foo2, t2: T2 of <root>.foo2, bb: kotlin.Function2<T1 of <root>.foo2, T2 of <root>.foo2, R of <root>.foo2>): R of <root>.foo2 declared in <root>' type=<root>.<get-p>.PLocal<PT of <root>.<get-p>> origin=null
@@ -155,16 +155,16 @@ FILE fqName:<root> fileName:/genericLocalClassConstructorReference.kt
             $this: VALUE_PARAMETER name:<this> type:<root>.L<LL of <root>.L>
         FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
           overridden:
-            public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+            public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.L
           $this: VALUE_PARAMETER name:<this> type:kotlin.Any
           VALUE_PARAMETER name:other index:0 type:kotlin.Any?
         FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
           overridden:
-            public open fun hashCode (): kotlin.Int declared in kotlin.Any
+            public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.L
           $this: VALUE_PARAMETER name:<this> type:kotlin.Any
         FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
           overridden:
-            public open fun toString (): kotlin.String declared in kotlin.Any
+            public open fun toString (): kotlin.String [fake_override] declared in <root>.L
           $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       RETURN type=kotlin.Nothing from='public final fun fn <FT> (): <root>.L<FT of <root>.fn> declared in <root>'
         CALL 'public final fun foo2 <T1, T2, R> (t1: T1 of <root>.foo2, t2: T2 of <root>.foo2, bb: kotlin.Function2<T1 of <root>.foo2, T2 of <root>.foo2, R of <root>.foo2>): R of <root>.foo2 declared in <root>' type=<root>.fn.FLocal<FT of <root>.fn> origin=null

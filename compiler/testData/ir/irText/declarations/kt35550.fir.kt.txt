@@ -21,4 +21,3 @@ class A : I {
   local /* final field */ val <$$delegate_0>: I = i
 
 }
-

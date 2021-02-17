@@ -67,4 +67,3 @@ object Final : Modality {
   }
 
 }
-
