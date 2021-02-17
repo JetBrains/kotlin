@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.declarations
 sealed class FirDeclarationOrigin(val fromSupertypes: Boolean = false) {
     object Source : FirDeclarationOrigin()
     object Library : FirDeclarationOrigin()
+    object BuiltIns : FirDeclarationOrigin()
     object Java : FirDeclarationOrigin()
     object Synthetic : FirDeclarationOrigin()
     object SamConstructor : FirDeclarationOrigin()

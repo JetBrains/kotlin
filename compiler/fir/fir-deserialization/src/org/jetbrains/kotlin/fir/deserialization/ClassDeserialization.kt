@@ -52,6 +52,7 @@ fun deserializeClassToSymbol(
     scopeProvider: FirScopeProvider,
     parentContext: FirDeserializationContext? = null,
     containerSource: DeserializedContainerSource? = null,
+    origin: FirDeclarationOrigin = FirDeclarationOrigin.Library,
     deserializeNestedClass: (ClassId, FirDeserializationContext) -> FirRegularClassSymbol?
 ) {
     val flags = classProto.flags
@@ -94,7 +95,7 @@ fun deserializeClassToSymbol(
     }
     buildRegularClass {
         this.session = session
-        origin = FirDeclarationOrigin.Library
+        this.origin = origin
         name = classId.shortClassName
         this.status = status
         classKind = ProtoEnumFlags.classKind(kind)
@@ -151,7 +152,7 @@ fun deserializeClassToSymbol(
                 val enumType = ConeClassLikeTypeImpl(symbol.toLookupTag(), emptyArray(), false)
                 val property = buildEnumEntry {
                     this.session = session
-                    origin = FirDeclarationOrigin.Library
+                    this.origin = FirDeclarationOrigin.Library
                     returnTypeRef = buildResolvedTypeRef { type = enumType }
                     name = enumEntryName
                     this.symbol = FirVariableSymbol(CallableId(classId, enumEntryName))

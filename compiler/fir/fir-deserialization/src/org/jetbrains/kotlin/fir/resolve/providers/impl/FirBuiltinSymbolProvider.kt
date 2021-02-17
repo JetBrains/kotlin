@@ -303,6 +303,7 @@ class FirBuiltinSymbolProvider(session: FirSession, val kotlinScopeProvider: Kot
                     classId, classProto, symbol, nameResolver, session,
                     null, kotlinScopeProvider, parentContext,
                     null,
+                    origin = FirDeclarationOrigin.BuiltIns,
                     this::findAndDeserializeClass,
                 )
             }
