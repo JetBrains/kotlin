@@ -4949,6 +4949,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         }
 
         @Test
+        @TestMetadata("concatDynamicUnit.kt")
+        public void testConcatDynamicUnit() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/stringOperations/concatDynamicUnit.kt");
+        }
+
+        @Test
         @TestMetadata("concatNotDynamic.kt")
         public void testConcatNotDynamic() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/stringOperations/concatNotDynamic.kt");
