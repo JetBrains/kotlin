@@ -23,7 +23,6 @@ internal abstract class AbstractNodeModulesCache(nodeJs: NodeJsRootExtension) : 
     internal val dir = nodeJs.nodeModulesGradleCacheDir
     private val cache = ProcessedFilesCache(
         nodeJs.rootProject.logger,
-//        (nodeJs.rootProject as ProjectInternal).services.get(FileHasher::class.java),
         nodeJs.rootProject.projectDir,
         dir,
         STATE_FILE_NAME,
