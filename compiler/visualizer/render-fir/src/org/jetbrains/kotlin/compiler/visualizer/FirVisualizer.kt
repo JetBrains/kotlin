@@ -334,8 +334,17 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         }
 
         private fun renderVariable(variable: FirVariable<*>, data: StringBuilder) {
-            if (variable !is FirValueParameter) {
-                if (variable.isVar) data.append("var ") else if (variable.isVal) data.append("val ")
+            when (variable) {
+                is FirEnumEntry -> {
+                    data.append("enum entry ")
+                    variable.returnTypeRef.accept(this, data)
+                    data.append(".${variable.name}")
+                    return
+                }
+                !is FirValueParameter -> when {
+                    variable.isVar -> data.append("var ")
+                    variable.isVal -> data.append("val ")
+                }
             }
             data.append(getSymbolId(variable.symbol)).append(": ").append(variable.returnTypeRef.render())
         }
@@ -564,8 +573,8 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         override fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier, data: StringBuilder) {
             resolvedQualifier.symbol?.fir?.let { fir ->
                 if (fir is FirClass) {
-                    data.append(fir.classKind.name.toLowerCaseAsciiOnly()).append(" ")
-                    data.append((fir as? FirRegularClass)?.name ?: Name.special("<anonymous>"))
+                    data.append(fir.classKind.name.toLowerCaseAsciiOnly().replace("_", " ")).append(" ")
+                    data.append(fir.symbol.classId.asString().removeCurrentFilePackage())
                     if (fir.superTypeRefs.any { it.render() != "kotlin/Any" }) {
                         data.append(": ")
                         fir.superTypeRefs.joinTo(data, separator = ", ") { typeRef -> typeRef.render() }
