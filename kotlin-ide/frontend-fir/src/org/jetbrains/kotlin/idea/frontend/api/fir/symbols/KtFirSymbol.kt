@@ -32,7 +32,7 @@ private tailrec fun FirDeclaration.ktSymbolOrigin(): KtSymbolOrigin = when (orig
             KtSymbolOrigin.SOURCE_MEMBER_GENERATED
         } else KtSymbolOrigin.SOURCE
     }
-    FirDeclarationOrigin.Library -> KtSymbolOrigin.LIBRARY
+    FirDeclarationOrigin.Library, FirDeclarationOrigin.BuiltIns -> KtSymbolOrigin.LIBRARY
     FirDeclarationOrigin.Java -> KtSymbolOrigin.JAVA
     FirDeclarationOrigin.SamConstructor -> KtSymbolOrigin.SAM_CONSTRUCTOR
     FirDeclarationOrigin.Enhancement -> KtSymbolOrigin.JAVA
