@@ -20,7 +20,6 @@ import java.util.concurrent.TimeUnit
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.Base64
-import org.jetbrains.report.json.*
 import java.nio.file.Path
 import org.jetbrains.kotlin.konan.file.File as KFile
 import org.gradle.nativeplatform.toolchain.internal.*
@@ -97,7 +96,10 @@ val validPropertiesNames = listOf("kotlin.native.home",
                                   "konan.home")
 
 val Project.kotlinNativeDist
-    get() = rootProject.file(validPropertiesNames.firstOrNull{ hasProperty(it) }?.let{ findProperty(it) } ?: "dist")
+    get() = rootProject.currentKotlinNativeDist
+
+val Project.currentKotlinNativeDist
+    get() = file(validPropertiesNames.firstOrNull{ hasProperty(it) }?.let{ findProperty(it) } ?: "dist")
 
 val kotlinNativeHome
     get() = validPropertiesNames.mapNotNull(System::getProperty).first()
@@ -255,31 +257,6 @@ data class Commit(val revision: String, val developer: String, val webUrlWithDes
 
 val teamCityUrl = "http://buildserver.labs.intellij.net"
 
-// List of commits.
-class CommitsList(data: JsonElement): ConvertedFromJson {
-
-    val commits: List<Commit>
-
-    init {
-        if (data !is JsonObject) {
-            error("Commits description is expected to be a json object!")
-        }
-        val changesElement = data.getOptionalField("change")
-        commits = changesElement?.let {
-            if (changesElement !is JsonArray) {
-                error("Change field is expected to be an array. Please, check source.")
-            }
-            changesElement.jsonArray.map {
-                with(it as JsonObject) {
-                    Commit(elementToString(getRequiredField("version"), "version"),
-                            elementToString(getRequiredField("username"), "username"),
-                            elementToString(getRequiredField("webUrl"), "webUrl")
-                    )
-                }
-            }
-        } ?: listOf<Commit>()
-    }
-}
 
 fun buildsUrl(buildLocator: String) =
         "$teamCityUrl/app/rest/builds/?locator=$buildLocator"
@@ -302,13 +279,6 @@ fun sendGetRequest(url: String, username: String? = null, password: String? = nu
     return connection.inputStream.use { it.reader().use { reader -> reader.readText() } }
 }
 
-fun getBuildProperty(buildJsonDescription: String, property: String) =
-        with(JsonTreeParser.parse(buildJsonDescription) as JsonObject) {
-            if (getPrimitive("count").int == 0) {
-                error("No build information on TeamCity for $buildJsonDescription!")
-            }
-            (getArray("build").getObject(0).getPrimitive(property) as JsonLiteral).unquoted()
-        }
 
 @JvmOverloads
 fun compileSwift(project: Project, target: KonanTarget, sources: List<String>, options: List<String>,

@@ -11,7 +11,6 @@ import org.gradle.api.Task
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 import org.jetbrains.kotlin.konan.target.AppleConfigurables
-import org.jetbrains.kotlin.gradle.plugin.tasks.*
 
 /**
  * Test task for -Xcoverage and -Xlibraries-to-cover flags. Requires a binary to be built by the Konan plugin

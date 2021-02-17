@@ -124,7 +124,9 @@ open class KotlinNativeBenchmarkingPlugin: BenchmarkingPlugin() {
 
     override fun NamedDomainObjectContainer<KotlinSourceSet>.additionalConfigurations(project: Project) {
         jvmMain.dependencies {
-            implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${project.kotlinStdlibVersion}")
+            implementation(project.files("${project.findProperty("kotlin_dist")}/kotlinc/lib/kotlin-stdlib-jdk8.jar"))
+            println("implementation(${project.name}: ${project.projectDir}): ${project.currentKotlinNativeDist}/libs/kotlinx.cli-jvm-${project.kotlinVersion}.jar")
+            implementation(project.files("${project.currentKotlinNativeDist}/libs/kotlinx.cli-jvm-${project.kotlinVersion}.jar"))
         }
     }
 

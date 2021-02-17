@@ -1,17 +1,25 @@
 buildscript {
     ext.rootBuildDirectory = file('../..')
 
+    ext {
+        def properties = new java.util.Properties()
+        properties.load(new java.io.FileReader(project.file("$rootBuildDirectory/../gradle.properties")))
+        properties.each { k, v->
+            project.logger.info("${project.name} $k: $v")
+            set(k as String, v)
+        }
+    }
+    ext["withoutEmbedabble"] = true
+    MiscKt.kotlinInit(project, findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() ?: false)
+    ext["bootstrapKotlinRepo"] = BootstrapKt.getBootstrapKotlinRepo(project)
+    ext["bootstrapKotlinVersion"] = BootstrapKt.getBootstrapKotlinVersion(project)
+    ext["kotlinVersion"] = project.bootstrapKotlinVersion
+
     apply from: "$rootBuildDirectory/gradle/loadRootProperties.gradle"
     apply from: "$rootBuildDirectory/gradle/kotlinGradlePlugin.gradle"
 
     repositories {
-        maven {
-            url 'https://cache-redirector.jetbrains.com/jcenter'
-        }
         jcenter()
-        maven {
-            url kotlinCompilerRepo
-        }
     }
 
     dependencies {
@@ -23,15 +31,9 @@ apply plugin: 'kotlin-multiplatform'
 
 repositories {
     maven {
-        url 'https://cache-redirector.jetbrains.com/jcenter'
+        url project.bootstrapKotlinRepo
     }
     jcenter()
-    maven {
-        url kotlinCompilerRepo
-    }
-    maven {
-        url buildKotlinCompilerRepo
-    }
 }
 
 def getHostName() {

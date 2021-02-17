@@ -119,13 +119,22 @@ sourceSets["main"].withConvention(org.jetbrains.kotlin.gradle.plugin.KotlinSourc
         kotlin.srcDir("../kotlin-native/shared/src/library/kotlin")
         kotlin.srcDir("../kotlin-native/shared/src/main/kotlin")
         kotlin.srcDir("../kotlin-native/build-tools/src/main/kotlin")
-        kotlin.srcDir("../kotlin-native/build-tools/src/tmp/kotlin")
         kotlin.srcDir("../kotlin-native/tools/kotlin-native-gradle-plugin/src/main/kotlin")
         kotlin.srcDir("../compiler/util-klib/src")
         kotlin.srcDir("../native/utils/src")
     }
     kotlin.srcDir(project.kotlinNativeVersionSrc())
-    kotlin.exclude("**/benchmark/SwiftBenchmarkingPlugin.kt")
+    /**
+     * TODO: mentioned bellow and Co it'd be better to move to :kotlin-native:performance:buildSrc,
+     * because all this relates to benchmarking.
+     */
+    kotlin.exclude("**/benchmark/*.kt")
+    kotlin.exclude("**/kotlin/MPPTools.kt")
+    kotlin.exclude("**/kotlin/RegressionsReporter.kt")
+    kotlin.exclude("**/kotlin/RunJvmTask.kt")
+    kotlin.exclude("**/kotlin/RunKotlinNativeTask.kt")
+    kotlin.exclude("**/kotlin/BuildRegister.kt")
+    kotlin.exclude("**/kotlin/benchmarkUtils.kt")
 }
 
 tasks.validatePlugins.configure {
@@ -219,18 +228,6 @@ allprojects {
 
 gradlePlugin {
     plugins {
-        create("benchmarkPlugin") {
-            id = "benchmarking"
-            implementationClass = "org.jetbrains.kotlin.benchmark.KotlinNativeBenchmarkingPlugin"
-        }
-        create("compileBenchmarking") {
-            id = "compile-benchmarking"
-            implementationClass = "org.jetbrains.kotlin.benchmark.CompileBenchmarkingPlugin"
-        }
-        create("swiftBenchmarking") {
-            id = "swift-benchmarking"
-            implementationClass = "org.jetbrains.kotlin.benchmark.SwiftBenchmarkingPlugin"
-        }
         create("compileToBitcode") {
             id = "compile-to-bitcode"
             implementationClass = "org.jetbrains.kotlin.bitcode.CompileToBitcodePlugin"
