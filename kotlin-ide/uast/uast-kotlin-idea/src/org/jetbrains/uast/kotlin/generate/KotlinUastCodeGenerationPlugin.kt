@@ -91,6 +91,7 @@ class KotlinUastElementFactory(project: Project) : UastElementFactory {
         return createQualifiedReference(qualifiedName, context?.sourcePsi)
     }
 
+    @Suppress("UNUSED_PARAMETER")
     /*override*/ fun createQualifiedReference(qualifiedName: String, context: PsiElement?): UQualifiedReferenceExpression? {
         return psiFactory.createExpression(qualifiedName).let {
             when (it) {
@@ -153,6 +154,7 @@ class KotlinUastElementFactory(project: Project) : UastElementFactory {
         return psiFactory.createExpression("null").toUElementOfType<ULiteralExpression>()!!
     }
 
+    @Suppress("UNUSED_PARAMETER")
     /*override*/ fun createIntLiteral(value: Int, context: PsiElement?): ULiteralExpression {
         return psiFactory.createExpression(value.toString()).toUElementOfType<ULiteralExpression>()!!
     }
