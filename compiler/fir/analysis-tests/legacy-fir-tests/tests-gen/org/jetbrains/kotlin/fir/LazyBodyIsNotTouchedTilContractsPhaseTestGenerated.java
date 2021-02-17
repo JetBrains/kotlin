@@ -2944,6 +2944,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             public void testFunctionCallBound() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/boundSmartcasts/functionCallBound.kt");
             }
+
+            @TestMetadata("thisAssignment.kt")
+            public void testThisAssignment() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/boundSmartcasts/thisAssignment.kt");
+            }
         }
 
         @TestMetadata("compiler/fir/analysis-tests/testData/resolve/smartcasts/controlStructures")

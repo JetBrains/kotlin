@@ -3362,6 +3362,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
                 public void testFunctionCallBound() throws Exception {
                     runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/boundSmartcasts/functionCallBound.kt");
                 }
+
+                @Test
+                @TestMetadata("thisAssignment.kt")
+                public void testThisAssignment() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/boundSmartcasts/thisAssignment.kt");
+                }
             }
 
             @Nested
