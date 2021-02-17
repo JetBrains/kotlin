@@ -65,11 +65,15 @@ projectTest {
     dependsOn(":dist")
     workingDir = rootDir
     useAndroidJar()
+
+    val androidPluginPath = File(intellijRootDir(), "plugins/android/lib").canonicalPath
+    systemProperty("ideaSdk.androidPlugin.path", androidPluginPath)
+
+    val parcelizeRuntimeForTestsProvider = project.provider { parcelizeRuntimeForTests.asPath }
+    val robolectricClasspathProvider = project.provider { robolectricClasspath.asPath }
     doFirst {
-        systemProperty("parcelizeRuntime.classpath", parcelizeRuntimeForTests.asPath)
-        val androidPluginPath = File(intellijRootDir(), "plugins/android/lib").canonicalPath
-        systemProperty("ideaSdk.androidPlugin.path", androidPluginPath)
-        systemProperty("robolectric.classpath", robolectricClasspath.asPath)
+        systemProperty("parcelizeRuntime.classpath", parcelizeRuntimeForTestsProvider.get())
+        systemProperty("robolectric.classpath", robolectricClasspathProvider.get())
     }
 }
 

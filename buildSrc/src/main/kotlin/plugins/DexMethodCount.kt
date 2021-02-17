@@ -6,12 +6,15 @@
 import com.jakewharton.dex.*
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.jvm.tasks.Jar
 import java.io.File
 
 @CacheableTask
-open class DexMethodCount : DefaultTask() {
+abstract class DexMethodCount : DefaultTask() {
 
     data class Counts(
         val total: Int,
@@ -24,16 +27,18 @@ open class DexMethodCount : DefaultTask() {
     @Classpath
     lateinit var jarFile: File
 
-    @Optional
-    @Input
-    var ownPackages: List<String>? = null
+    @get:Optional
+    @get:Input
+    abstract val ownPackages: ListProperty<String>
 
     @Internal
     var artifactName: String? = null
 
+    private val projectName = project.name
+
     @get:Input
     val artifactOrArchiveName: String
-        get() = artifactName ?: project.name
+        get() = artifactName ?: projectName
 
     fun from(jar: Jar) {
         jarFile = jar.archiveFile.get().asFile
@@ -45,8 +50,9 @@ open class DexMethodCount : DefaultTask() {
     lateinit var counts: Counts
 
     @get:OutputFile
-    val detailOutputFile: File
-        get() = project.buildDir.resolve("$artifactOrArchiveName-method-count.txt")
+    val detailOutputFile: File by lazy {
+        project.buildDir.resolve("$artifactOrArchiveName-method-count.txt")
+    }
 
     @TaskAction
     fun invoke() {
@@ -59,9 +65,9 @@ open class DexMethodCount : DefaultTask() {
         val byPackage = this.groupingBy { it.`package` }.eachCount()
         val byClass = this.groupingBy { it.declaringType }.eachCount()
 
-        val ownPackages = ownPackages?.map { "$it." }
-        val byOwnPackages = if (ownPackages != null) {
-            this.partition { method -> ownPackages.any { method.declaringType.startsWith(it) } }.let {
+        val ownPackages = ownPackages.map { list -> list.map { "$it." } }
+        val byOwnPackages = if (ownPackages.isPresent) {
+            this.partition { method -> ownPackages.get().any { method.declaringType.startsWith(it) } }.let {
                 it.first.size to it.second.size
             }
         } else (null to null)
@@ -78,7 +84,7 @@ open class DexMethodCount : DefaultTask() {
     private fun outputDetails(counts: Counts) {
         detailOutputFile.printWriter().use { writer ->
             writer.println("${counts.total.padRight()}\tTotal methods")
-            ownPackages?.let { packages ->
+            ownPackages.orNull?.let { packages ->
                 writer.println("${counts.totalOwnPackages?.padRight()}\tTotal methods from packages ${packages.joinToString { "$it.*" }}")
                 writer.println("${counts.totalOtherPackages?.padRight()}\tTotal methods from other packages")
             }
@@ -96,23 +102,24 @@ open class DexMethodCount : DefaultTask() {
     }
 }
 
-open class DexMethodCountStats : DefaultTask() {
-
-    @Internal
-    lateinit var from: TaskProvider<DexMethodCount>
-
+abstract class DexMethodCountStats : DefaultTask() {
     @get:InputFile
-    internal val inputFile
-        get() = from.get().detailOutputFile
+    internal abstract val inputFile: RegularFileProperty
+
+    @get:Input
+    internal abstract val artifactOrArchiveName: Property<String>
+
+    @get:Input
+    @get:Optional
+    internal abstract val ownPackages: ListProperty<String>
 
     @TaskAction
     private fun printStats() {
-        val artifactOrArchiveName = from.get().artifactOrArchiveName
-        inputFile.reader().useLines { lines ->
+        val artifactOrArchiveName = artifactOrArchiveName.get()
+        inputFile.get().asFile.reader().useLines { lines ->
             fun String.getStatValue() = substringBefore("\t").trim()
 
-            val ownPackages = from.get().ownPackages
-            val statsLineCount = if (ownPackages == null) 1 else 3
+            val statsLineCount = if (!ownPackages.isPresent) 1 else 3
             val stats = lines.take(statsLineCount).map { it.getStatValue() }.toList()
 
             val total = stats[0]
@@ -122,7 +129,7 @@ open class DexMethodCountStats : DefaultTask() {
                 println("##teamcity[buildStatisticValue key='DexMethodCount_${artifactOrArchiveName}' value='$total']")
             }
 
-            ownPackages?.let { packages ->
+            ownPackages.map { packages ->
                 val totalOwnPackages = stats[1]
                 val totalOtherPackages = stats[2]
 
@@ -141,7 +148,9 @@ open class DexMethodCountStats : DefaultTask() {
 fun Project.printStats(dexMethodCount: TaskProvider<DexMethodCount>) {
     val dexMethodCountStats = tasks.register("dexMethodCountStats", DexMethodCountStats::class.java) {
         dependsOn(dexMethodCount)
-        from = dexMethodCount
+        inputFile.set(dexMethodCount.flatMap { objects.fileProperty().apply { set(it.detailOutputFile) } })
+        artifactOrArchiveName.set(dexMethodCount.map { it.artifactOrArchiveName })
+        ownPackages.set(dexMethodCount.flatMap { it.ownPackages })
     }
 
     dexMethodCount.configure {

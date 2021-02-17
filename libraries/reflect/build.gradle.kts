@@ -244,7 +244,7 @@ modularJar {
 dexMethodCount {
     dependsOn(result)
     jarFile = result.get().outputs.files.single()
-    ownPackages = listOf("kotlin.reflect")
+    ownPackages.set(listOf("kotlin.reflect"))
 }
 
 artifacts {

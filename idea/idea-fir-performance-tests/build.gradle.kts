@@ -39,9 +39,10 @@ sourceSets {
 
 projectTest(parallel = true) {
     dependsOn(":dist")
-    workingDir = rootDir
+    workingDir = project.rootDir
+    val useFirIdeaPlugin = kotlinBuildProperties.useFirIdeaPlugin
     doFirst {
-        if (!kotlinBuildProperties.useFirIdeaPlugin) {
+        if (!useFirIdeaPlugin) {
             error("Test task in the module should be executed with -Pidea.fir.plugin=true")
         }
     }
@@ -53,12 +54,12 @@ projectTest(taskName = "ideaFirPerformanceTest") {
     val currentOs = org.gradle.internal.os.OperatingSystem.current()
 
     if (!currentOs.isWindows) {
-        System.getenv("ASYNC_PROFILER_HOME")?.let { asyncProfilerHome ->
-            classpath += files("$asyncProfilerHome/build/async-profiler.jar")
+        project.providers.systemProperty("ASYNC_PROFILER_HOME").forUseAtConfigurationTime().orNull?.let { asyncProfilerHome ->
+            classpath += project.files("$asyncProfilerHome/build/async-profiler.jar")
         }
     }
 
-    workingDir = rootDir
+    workingDir = project.rootDir
 
     jvmArgs?.removeAll { it.startsWith("-Xmx") }
 
@@ -72,7 +73,7 @@ projectTest(taskName = "ideaFirPerformanceTest") {
         "-XX:+UseConcMarkSweepGC"
     )
 
-    System.getenv("YOURKIT_PROFILER_HOME")?.let {yourKitHome ->
+    project.providers.systemProperty("YOURKIT_PROFILER_HOME").forUseAtConfigurationTime().orNull?.let {yourKitHome ->
         when {
             currentOs.isLinux -> {
                 jvmArgs("-agentpath:$yourKitHome/bin/linux-x86-64/libyjpagent.so")
@@ -85,10 +86,9 @@ projectTest(taskName = "ideaFirPerformanceTest") {
         }
     }
 
-    doFirst {
-        systemProperty("idea.home.path", intellijRootDir().canonicalPath)
-        project.findProperty("cacheRedirectorEnabled")?.let {
-            systemProperty("kotlin.test.gradle.import.arguments", "-PcacheRedirectorEnabled=$it")
-        }
+    systemProperty("idea.home.path", project.intellijRootDir().canonicalPath)
+
+    project.providers.gradleProperty("cacheRedirectorEnabled").forUseAtConfigurationTime().orNull?.let {
+        systemProperty("kotlin.test.gradle.import.arguments", "-PcacheRedirectorEnabled=$it")
     }
 }

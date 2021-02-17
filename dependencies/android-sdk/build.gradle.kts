@@ -1,6 +1,6 @@
-import org.gradle.configurationcache.extensions.serviceOf
 import org.gradle.internal.os.OperatingSystem
 import java.net.URI
+import javax.inject.Inject
 
 repositories {
     ivy {
@@ -68,6 +68,11 @@ val prepareEmulator by task<DefaultTask> {
     dependsOn(prepareSdk)
 }
 
+interface Injected {
+    @get:Inject val fs: FileSystemOperations
+    @get:Inject val archiveOperations: ArchiveOperations
+}
+
 fun unzipSdkTask(
     sdkName: String, sdkVer: String, destinationSubdir: String, coordinatesSuffix: String,
     additionalConfig: Configuration? = null, dirLevelsToSkipOnUnzip: Int = 0, ext: String = "zip",
@@ -86,8 +91,9 @@ fun unzipSdkTask(
         inputs.files(cfg)
         val targetDir = project.file("$sdkDestDir/$destinationSubdir")
         outputs.dirs(targetDir)
-        val fs = project.serviceOf<FileSystemOperations>()
-        val archiveOperations = project.serviceOf<ArchiveOperations>()
+        val injected = project.objects.newInstance<Injected>()
+        val fs = injected.fs
+        val archiveOperations = injected.archiveOperations
         val file = cfg.singleFile
         doFirst {
             fs.copy {

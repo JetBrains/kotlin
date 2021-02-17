@@ -97,9 +97,12 @@ javadocJar()
 
 projectTest {
     dependsOn(runtimeJar)
+    val testCompilerClasspathProvider = project.provider { testCompilerClasspath.asPath }
+    val testCompilationClasspathProvider = project.provider { testCompilationClasspath.asPath }
+    val runtimeJarPathProvider = project.provider { runtimeJar.get().outputs.files.asPath }
     doFirst {
-        systemProperty("compilerClasspath", "${runtimeJar.get().outputs.files.asPath}${File.pathSeparator}${testCompilerClasspath.asPath}")
-        systemProperty("compilationClasspath", testCompilationClasspath.asPath)
+        systemProperty("compilerClasspath", "${runtimeJarPathProvider.get()}${File.pathSeparator}${testCompilerClasspathProvider.get()}")
+        systemProperty("compilationClasspath", testCompilationClasspathProvider.get())
     }
 }
 

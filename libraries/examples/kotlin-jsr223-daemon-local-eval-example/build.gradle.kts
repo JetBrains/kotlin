@@ -44,7 +44,8 @@ dependencies {
 
 projectTest {
     dependsOn(compilerClasspath)
+    val compilerClasspathProvider = project.provider { compilerClasspath.asPath }
     doFirst {
-        systemProperty("kotlin.compiler.classpath", compilerClasspath.asPath)
+        systemProperty("kotlin.compiler.classpath", compilerClasspathProvider.get())
     }
 }
