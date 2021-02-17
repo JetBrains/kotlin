@@ -369,7 +369,9 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
         description = """Select code generation scheme for string concatenation.
 -Xstring-concat=indy-with-constants   Concatenate strings using `invokedynamic` `makeConcatWithConstants`. Requires `-jvm-target 9` or greater.
 -Xstring-concat=indy                Concatenate strings using `invokedynamic` `makeConcat`. Requires `-jvm-target 9` or greater.
--Xstring-concat=inline              Concatenate strings using `StringBuilder`"""
+-Xstring-concat=inline              Concatenate strings using `StringBuilder`
+default: `indy-with-constants` for JVM target 9 or greater, `inline` otherwise"""
+
     )
     var stringConcat: String? by NullableStringFreezableVar(JvmStringConcat.INLINE.description)
 
