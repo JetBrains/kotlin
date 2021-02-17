@@ -13,12 +13,12 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.symbols.CallableId
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassErrorType
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.name.ClassId
 
 class KotlinScopeProvider(
     val declaredMemberScopeDecorator: (
@@ -72,7 +72,7 @@ class KotlinScopeProvider(
 
 
 data class ConeSubstitutionScopeKey(
-    val classId: ClassId?, val isFromExpectClass: Boolean, val substitutor: ConeSubstitutor
+    val lookupTag: ConeClassLikeLookupTag, val isFromExpectClass: Boolean, val substitutor: ConeSubstitutor
 ) : ScopeSessionKey<FirClass<*>, FirClassSubstitutionScope>()
 
 data class DelegatedMemberScopeKey(val callableId: CallableId) : ScopeSessionKey<FirField, FirDelegatedMemberScope>()
@@ -166,7 +166,7 @@ private fun FirClass<*>.scopeForClassImpl(
     if (substitutor == ConeSubstitutor.Empty) return basicScope
 
     return scopeSession.getOrBuild(
-        this, ConeSubstitutionScopeKey(classFirDispatchReceiver.classId, isFromExpectClass, substitutor)
+        this, ConeSubstitutionScopeKey(classFirDispatchReceiver.symbol.toLookupTag(), isFromExpectClass, substitutor)
     ) {
         FirClassSubstitutionScope(
             useSiteSession, basicScope,  substitutor, classFirDispatchReceiver.defaultType(),
