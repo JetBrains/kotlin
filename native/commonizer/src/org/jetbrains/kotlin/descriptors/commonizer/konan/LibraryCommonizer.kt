@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.descriptors.commonizer.konan
 import org.jetbrains.kotlin.descriptors.commonizer.*
 import org.jetbrains.kotlin.descriptors.commonizer.LeafCommonizerTarget
 import org.jetbrains.kotlin.descriptors.commonizer.cli.toProgressLogger
-import org.jetbrains.kotlin.descriptors.commonizer.konan.NativeDistributionCommonizer.*
+import org.jetbrains.kotlin.descriptors.commonizer.konan.LibraryCommonizer.*
 import org.jetbrains.kotlin.descriptors.commonizer.repository.Repository
 import org.jetbrains.kotlin.descriptors.commonizer.stats.StatsCollector
 import org.jetbrains.kotlin.descriptors.commonizer.utils.ResettableClockMark
@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.util.Logger
 
-internal class NativeDistributionCommonizer internal constructor(
+internal class LibraryCommonizer internal constructor(
     private val konanDistribution: KonanDistribution,
     private val repository: Repository,
     private val dependencies: Repository,

@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.*
 import org.jetbrains.kotlin.descriptors.commonizer.konan.*
 import org.jetbrains.kotlin.descriptors.commonizer.konan.CopyUnconsumedModulesAsIsConsumer
 import org.jetbrains.kotlin.descriptors.commonizer.konan.CopyStdlibResultsConsumer
-import org.jetbrains.kotlin.descriptors.commonizer.konan.NativeDistributionCommonizer
+import org.jetbrains.kotlin.descriptors.commonizer.konan.LibraryCommonizer
 import org.jetbrains.kotlin.descriptors.commonizer.konan.ModuleSerializer
 import org.jetbrains.kotlin.descriptors.commonizer.repository.*
 import org.jetbrains.kotlin.descriptors.commonizer.repository.EmptyRepository
@@ -72,7 +72,7 @@ internal class NativeKlibCommonize(options: Collection<Option<*>>) : Task(option
             this add LoggingResultsConsumer(outputCommonizerTarget, logger.toProgressLogger())
         }
 
-        NativeDistributionCommonizer(
+        LibraryCommonizer(
             konanDistribution = distribution,
             repository = repository,
             dependencies = KonanDistributionRepository(distribution, outputCommonizerTarget.konanTargets, libraryLoader) +
@@ -120,7 +120,7 @@ internal class NativeDistributionCommonize(options: Collection<Option<*>>) : Tas
         val description = "${logPrefix}Preparing commonized Kotlin/Native libraries for targets $targetNames$descriptionSuffix"
         println(description)
 
-        NativeDistributionCommonizer(
+        LibraryCommonizer(
             repository = repository,
             konanDistribution = distribution,
             dependencies = EmptyRepository,
