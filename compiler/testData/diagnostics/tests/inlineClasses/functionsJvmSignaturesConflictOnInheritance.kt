@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +InlineClasses
+// !LANGUAGE: +InlineClasses, -JvmInlineValueClasses
 
 inline class Name(val name: String)
 inline class Password(val password: String)

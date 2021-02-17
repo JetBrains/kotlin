@@ -1,4 +1,4 @@
-// !LANGUAGE: +InlineClasses
+// !LANGUAGE: +InlineClasses, -JvmInlineValueClasses
 
 class Val {
     operator fun getValue(thisRef: Any?, kProp: Any?) = 1

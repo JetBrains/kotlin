@@ -1,4 +1,4 @@
-// !LANGUAGE: +InlineClasses
+// !LANGUAGE: +InlineClasses, -JvmInlineValueClasses
 
 inline class Test1(val x: <!INLINE_CLASS_CANNOT_BE_RECURSIVE!>Test1<!>)
 

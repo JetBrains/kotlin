@@ -1,0 +1,10 @@
+package
+
+public final inline class IC {
+    public constructor IC(/*0*/ i: kotlin.Int)
+    public final val i: kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+

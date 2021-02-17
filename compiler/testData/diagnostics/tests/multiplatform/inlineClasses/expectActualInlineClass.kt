@@ -1,4 +1,4 @@
-// !LANGUAGE: +MultiPlatformProjects, +InlineClasses
+// !LANGUAGE: +MultiPlatformProjects, +InlineClasses, -JvmInlineValueClasses
 // MODULE: m1-common
 // FILE: common.kt
 

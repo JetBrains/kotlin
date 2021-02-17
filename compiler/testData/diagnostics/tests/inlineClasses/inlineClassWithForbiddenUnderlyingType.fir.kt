@@ -1,4 +1,4 @@
-// !LANGUAGE: +InlineClasses
+// !LANGUAGE: +InlineClasses, -JvmInlineValueClasses
 
 inline class Foo<T>(val x: T)
 inline class FooNullable<T>(val x: T?)
