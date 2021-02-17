@@ -7,8 +7,8 @@ interface B : A
 private fun validFun() {}
 private val validVal = 1
 
-private fun invalidFun0() {}
-private val invalidProp0 = 1
+<!CONFLICTING_OVERLOADS!>private fun invalidFun0()<!> {}
+<!REDECLARATION!>private val invalidProp0 = 1<!>
 
 // NB invalidFun0 and invalidProp0 are conflicting overloads, since the following is an ambiguity:
 fun useInvalidFun0() = invalidFun0()
@@ -20,7 +20,7 @@ fun useInvalidProp0() = invalidProp0
 <!CONFLICTING_OVERLOADS!>private fun invalidFun2()<!> {}
 <!CONFLICTING_OVERLOADS!>public fun invalidFun2()<!> {}
 
-public fun invalidFun3() {}
+<!CONFLICTING_OVERLOADS!>public fun invalidFun3()<!> {}
 
 <!CONFLICTING_OVERLOADS!>private fun invalidFun4()<!> {}
 <!CONFLICTING_OVERLOADS!>public fun invalidFun4()<!> {}
@@ -34,12 +34,12 @@ package a
 private fun validFun() {}
 private val validVal = 1
 
-private fun invalidFun0() {}
+<!CONFLICTING_OVERLOADS!>private fun invalidFun0()<!> {}
 
-private val invalidProp0 = 1
+<!REDECLARATION!>private val invalidProp0 = 1<!>
 
-internal fun invalidFun3() {}
-internal fun invalidFun4() {}
+<!CONFLICTING_OVERLOADS!>internal fun invalidFun3()<!> {}
+<!CONFLICTING_OVERLOADS!>internal fun invalidFun4()<!> {}
 
 // FILE: c.kt
 package a

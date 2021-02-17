@@ -10,8 +10,13 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
 import org.jetbrains.kotlin.fir.analysis.diagnostics.impl.BaseDiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.impl.DiagnosticReporterWithSuppress
 import org.jetbrains.kotlin.fir.analysis.diagnostics.impl.SimpleDiagnosticReporter
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 
-class SimpleDiagnosticsCollector(session: FirSession, private val disableSuppress: Boolean = false) : AbstractDiagnosticCollector(session) {
+class SimpleDiagnosticsCollector(
+    session: FirSession,
+    scopeSession: ScopeSession,
+    private val disableSuppress: Boolean = false
+) : AbstractDiagnosticCollector(session, scopeSession) {
     override var reporter = createDiagnosticReporter()
         private set
 

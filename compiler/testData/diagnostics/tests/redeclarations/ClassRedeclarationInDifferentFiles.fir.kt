@@ -1,11 +1,11 @@
 // FILE: f1.kt
 package test
 
-class A
+<!REDECLARATION!>class A<!>
 class F1
 
 // FILE: f2.kt
 package test
 
-class A
+<!REDECLARATION!>class A<!>
 class F2

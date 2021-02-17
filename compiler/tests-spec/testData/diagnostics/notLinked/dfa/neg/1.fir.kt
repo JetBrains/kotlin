@@ -183,8 +183,8 @@ fun case_13(x: <!UNRESOLVED_REFERENCE!>otherpackage.Case13?<!>) =
     <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Can't resolve when expression")!>if ((x == null !is Boolean) !== true) {
         throw Exception()
     } else {
-        <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Symbol not found, for `otherpackage.Case13?`")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Symbol not found, for `otherpackage.Case13?`")!>x<!>.<!AMBIGUITY!>equals<!>(x)
+        <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Symbol not found for otherpackage.Case13?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Symbol not found for otherpackage.Case13?")!>x<!>.<!AMBIGUITY!>equals<!>(x)
     }<!>
 
 // TESTCASE NUMBER: 14

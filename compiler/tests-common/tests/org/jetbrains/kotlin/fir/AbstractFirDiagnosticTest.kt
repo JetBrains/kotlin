@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcast
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.FirControlFlowGraphRenderVisitor
 import org.jetbrains.kotlin.fir.resolve.transformers.createAllCompilerResolveProcessors
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
@@ -273,7 +274,7 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
     }
 
     private fun createCollector(session: FirSession): AbstractDiagnosticCollector {
-        return FirDiagnosticsCollector.create(session)
+        return FirDiagnosticsCollector.create(session, ScopeSession()) // seems this class is obsolete, so do not care about correctness of the scope session here
     }
 
     private fun checkCfgDump(testDataFile: File, firFiles: List<FirFile>) {

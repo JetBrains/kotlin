@@ -6,10 +6,11 @@
 package org.jetbrains.kotlin.fir.analysis.collectors
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 
 object FirDiagnosticsCollector {
-    fun create(session: FirSession): SimpleDiagnosticsCollector {
-        val collector = SimpleDiagnosticsCollector(session)
+    fun create(session: FirSession, scopeSession: ScopeSession): SimpleDiagnosticsCollector {
+        val collector = SimpleDiagnosticsCollector(session, scopeSession)
         collector.registerAllComponents()
         return collector
     }
