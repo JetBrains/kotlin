@@ -544,6 +544,16 @@ class Fir2IrDeclarationStorage(
         return created
     }
 
+    fun getOrCreateIrConstructor(
+        constructor: FirConstructor,
+        irParent: IrClass,
+        origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED,
+        isLocal: Boolean = false
+    ): IrConstructor {
+        getCachedIrConstructor(constructor)?.let { return it }
+        return createIrConstructor(constructor, irParent, origin, isLocal)
+    }
+
     private fun declareIrAccessor(
         signature: IdSignature?,
         containerSource: DeserializedContainerSource?,

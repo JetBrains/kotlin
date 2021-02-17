@@ -123,7 +123,7 @@ class Fir2IrConverter(
         irClass: IrClass = classifierStorage.getCachedIrClass(regularClass)!!
     ): IrClass {
         val irConstructor = regularClass.getPrimaryConstructorIfAny()?.let {
-            declarationStorage.createIrConstructor(it, irClass, isLocal = regularClass.isLocal)
+            declarationStorage.getOrCreateIrConstructor(it, irClass, isLocal = regularClass.isLocal)
         }
         if (irConstructor != null) {
             irClass.declarations += irConstructor
@@ -219,7 +219,7 @@ class Fir2IrConverter(
                 }
             }
             is FirConstructor -> if (!declaration.isPrimary) {
-                declarationStorage.createIrConstructor(
+                declarationStorage.getOrCreateIrConstructor(
                     declaration, parent as IrClass, isLocal = isLocal
                 )
             } else {
