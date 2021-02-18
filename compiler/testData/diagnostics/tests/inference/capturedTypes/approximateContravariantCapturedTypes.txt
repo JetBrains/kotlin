@@ -1,0 +1,27 @@
+package
+
+public fun test1(): kotlin.Unit
+public fun test2(): kotlin.Unit
+public fun test3(): kotlin.Unit
+public fun test4(): kotlin.Unit
+public fun kotlin.Float.bar(): kotlin.Unit
+public fun </*0*/ T> Foo2<T>.setX(/*0*/ y: T): T
+public fun </*0*/ T : kotlin.Number> Foo<T>.setX(/*0*/ y: T): T
+
+public final class Foo</*0*/ T : kotlin.Number> {
+    public constructor Foo</*0*/ T : kotlin.Number>(/*0*/ x: T)
+    public final var x: T
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun setX1(/*0*/ y: T): T
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Foo2</*0*/ T> {
+    public constructor Foo2</*0*/ T>(/*0*/ x: T)
+    public final var x: T
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun setX1(/*0*/ y: T): T
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
