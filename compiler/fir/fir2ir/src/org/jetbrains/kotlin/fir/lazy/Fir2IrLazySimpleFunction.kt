@@ -58,7 +58,7 @@ class Fir2IrLazySimpleFunction(
         declarationStorage.enterScope(this)
         fir.valueParameters.mapIndexed { index, valueParameter ->
             declarationStorage.createIrParameter(
-                valueParameter, index,
+                valueParameter, index, skipDefaultParameter = isFakeOverride
             ).apply {
                 this.parent = this@Fir2IrLazySimpleFunction
             }

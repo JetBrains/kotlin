@@ -318,7 +318,8 @@ class Fir2IrDeclarationStorage(
                 createIrParameter(
                     valueParameter, index,
                     useStubForDefaultValueStub = function !is FirConstructor || containingClass?.name != Name.identifier("Enum"),
-                    typeContext
+                    typeContext,
+                    skipDefaultParameter = isFakeOverride
                 ).apply {
                     this.parent = parent
                 }
@@ -854,10 +855,10 @@ class Fir2IrDeclarationStorage(
 
     internal fun saveFakeOverrideInClass(
         irClass: IrClass,
-        callableDeclaration: FirCallableDeclaration<*>,
+        originalDeclaration: FirCallableDeclaration<*>,
         fakeOverride: FirCallableDeclaration<*>
     ) {
-        fakeOverridesInClass.getOrPut(irClass, ::mutableMapOf)[callableDeclaration] = fakeOverride
+        fakeOverridesInClass.getOrPut(irClass, ::mutableMapOf)[originalDeclaration] = fakeOverride
     }
 
     fun getFakeOverrideInClass(
@@ -904,7 +905,8 @@ class Fir2IrDeclarationStorage(
         valueParameter: FirValueParameter,
         index: Int = UNDEFINED_PARAMETER_INDEX,
         useStubForDefaultValueStub: Boolean = true,
-        typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT
+        typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT,
+        skipDefaultParameter: Boolean = false,
     ): IrValueParameter {
         val origin = IrDeclarationOrigin.DEFINED
         val type = valueParameter.returnTypeRef.toIrType()
@@ -917,7 +919,7 @@ class Fir2IrDeclarationStorage(
                 isCrossinline = valueParameter.isCrossinline, isNoinline = valueParameter.isNoinline,
                 isHidden = false, isAssignable = false
             ).apply {
-                if (valueParameter.defaultValue.let {
+                if (!skipDefaultParameter && valueParameter.defaultValue.let {
                         it != null && (useStubForDefaultValueStub || it !is FirExpressionStub)
                     }
                 ) {
