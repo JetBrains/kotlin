@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.collectors.components
 
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
@@ -73,6 +74,9 @@ class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollect
             }
         }
 
+        if (source.kind == FirFakeSourceElementKind.ImplicitConstructor) {
+            return
+        }
         val coneDiagnostic = diagnostic.toFirDiagnostic(source)
         reporter.report(coneDiagnostic, context)
     }
