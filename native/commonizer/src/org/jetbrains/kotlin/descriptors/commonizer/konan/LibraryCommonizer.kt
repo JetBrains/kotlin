@@ -7,14 +7,12 @@ package org.jetbrains.kotlin.descriptors.commonizer.konan
 
 import org.jetbrains.kotlin.descriptors.commonizer.*
 import org.jetbrains.kotlin.descriptors.commonizer.LeafCommonizerTarget
-import org.jetbrains.kotlin.descriptors.commonizer.cli.toProgressLogger
 import org.jetbrains.kotlin.descriptors.commonizer.konan.LibraryCommonizer.*
 import org.jetbrains.kotlin.descriptors.commonizer.repository.Repository
 import org.jetbrains.kotlin.descriptors.commonizer.stats.StatsCollector
-import org.jetbrains.kotlin.descriptors.commonizer.utils.ResettableClockMark
+import org.jetbrains.kotlin.descriptors.commonizer.utils.ProgressLogger
 import org.jetbrains.kotlin.konan.library.*
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
-import org.jetbrains.kotlin.util.Logger
 
 internal class LibraryCommonizer internal constructor(
     private val konanDistribution: KonanDistribution,
@@ -24,17 +22,15 @@ internal class LibraryCommonizer internal constructor(
     private val targets: List<LeafCommonizerTarget>,
     private val resultsConsumer: ResultsConsumer,
     private val statsCollector: StatsCollector?,
-    private val logger: Logger
+    private val progressLogger: ProgressLogger
 ) {
-
-    private val clockMark = ResettableClockMark()
 
     fun run() {
         checkPreconditions()
-        clockMark.reset()
+        progressLogger.reset()
         val allLibraries = loadLibraries()
         commonizeAndSaveResults(allLibraries)
-        logTotal()
+        progressLogger.logTotal()
     }
 
     private fun loadLibraries(): AllNativeLibraries {
@@ -46,17 +42,17 @@ internal class LibraryCommonizer internal constructor(
 
         librariesByTargets.forEach { (target, librariesToCommonize) ->
             if (librariesToCommonize.libraries.isEmpty()) {
-                logger.warning("No platform libraries found for target $target. This target will be excluded from commonization.")
+                progressLogger.warning("No platform libraries found for target $target. This target will be excluded from commonization.")
             }
         }
-        logProgress("Read lazy (uninitialized) libraries")
+        progressLogger.log("Read lazy (uninitialized) libraries")
         return AllNativeLibraries(stdlib, librariesByTargets)
     }
 
     private fun commonizeAndSaveResults(allLibraries: AllNativeLibraries) {
         val manifestProvider = TargetedNativeManifestDataProvider(allLibraries)
 
-        val parameters = CommonizerParameters(resultsConsumer, manifestProvider, statsCollector, ::logProgress).apply {
+        val parameters = CommonizerParameters(resultsConsumer, manifestProvider, statsCollector, progressLogger::log).apply {
             val storageManager = LockBasedStorageManager("Commonized modules")
             dependencyModulesProvider = NativeDistributionModulesProvider.forStandardLibrary(storageManager, allLibraries.stdlib)
 
@@ -83,12 +79,8 @@ internal class LibraryCommonizer internal constructor(
 
     private fun checkPreconditions() {
         when (targets.size) {
-            0 -> logger.fatal("No targets specified")
-            1 -> logger.fatal("Too few targets specified: $targets")
+            0 -> progressLogger.fatal("No targets specified")
+            1 -> progressLogger.fatal("Too few targets specified: $targets")
         }
     }
-
-    private fun logProgress(message: String) = logger.toProgressLogger().log("$message in ${clockMark.elapsedSinceLast()}")
-
-    private fun logTotal() = logger.log("TOTAL: ${clockMark.elapsedSinceStart()}")
 }

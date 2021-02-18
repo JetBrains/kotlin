@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.repository.Repository
 import org.jetbrains.kotlin.descriptors.commonizer.stats.FileStatsOutput
 import org.jetbrains.kotlin.descriptors.commonizer.stats.StatsCollector
 import org.jetbrains.kotlin.descriptors.commonizer.stats.StatsType
+import org.jetbrains.kotlin.descriptors.commonizer.utils.ProgressLogger
 import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_KLIB_DIR
 import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_PLATFORM_LIBS_DIR
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -61,17 +62,17 @@ internal class NativeKlibCommonize(options: Collection<Option<*>>) : Task(option
         val konanTargets = outputCommonizerTarget.konanTargets
         val commonizerTargets = konanTargets.map(::CommonizerTarget)
 
-        val logger = CliLoggerAdapter(2)
-        val libraryLoader = DefaultNativeLibraryLoader(logger)
+        val progressLogger = ProgressLogger(CliLoggerAdapter(2))
+        val libraryLoader = DefaultNativeLibraryLoader(progressLogger)
         val statsCollector = StatsCollector(statsType, commonizerTargets)
         val repository = FilesRepository(targetLibraries.toSet(), libraryLoader)
 
         val resultsConsumer = buildResultsConsumer {
             this add ModuleSerializer(destination, HierarchicalCommonizerOutputLayout)
             this add CopyUnconsumedModulesAsIsConsumer(
-                repository, destination, commonizerTargets.toSet(), NativeDistributionCommonizerOutputLayout, logger.toProgressLogger()
+                repository, destination, commonizerTargets.toSet(), NativeDistributionCommonizerOutputLayout, progressLogger
             )
-            this add LoggingResultsConsumer(outputCommonizerTarget, logger.toProgressLogger())
+            this add LoggingResultsConsumer(outputCommonizerTarget, progressLogger)
         }
 
         LibraryCommonizer(
@@ -83,7 +84,7 @@ internal class NativeKlibCommonize(options: Collection<Option<*>>) : Task(option
             targets = commonizerTargets,
             resultsConsumer = resultsConsumer,
             statsCollector = statsCollector,
-            logger = logger
+            progressLogger = progressLogger
         ).run()
 
         statsCollector?.writeTo(FileStatsOutput(destination, statsType.name.toLowerCase()))
@@ -103,8 +104,8 @@ internal class NativeDistributionCommonize(options: Collection<Option<*>>) : Tas
         val copyEndorsedLibs = getOptional<Boolean, BooleanOptionType> { it == "copy-endorsed-libs" } ?: false
         val statsType = getOptional<StatsType, StatsTypeOptionType> { it == "log-stats" } ?: StatsType.NONE
 
-        val logger = CliLoggerAdapter(2)
-        val libraryLoader = DefaultNativeLibraryLoader(logger)
+        val progressLogger = ProgressLogger(CliLoggerAdapter(2))
+        val libraryLoader = DefaultNativeLibraryLoader(progressLogger)
         val repository = KonanDistributionRepository(distribution, commonizerTargets.toSet(), libraryLoader)
         val existingTargets = commonizerTargets.filter { repository.getLibraries(it).isNotEmpty() }.toSet()
         val statsCollector = StatsCollector(statsType, commonizerTargets)
@@ -112,11 +113,11 @@ internal class NativeDistributionCommonize(options: Collection<Option<*>>) : Tas
         val resultsConsumer = buildResultsConsumer {
             this add ModuleSerializer(destination, NativeDistributionCommonizerOutputLayout)
             this add CopyUnconsumedModulesAsIsConsumer(
-                repository, destination, commonizerTargets.toSet(), NativeDistributionCommonizerOutputLayout, logger.toProgressLogger()
+                repository, destination, commonizerTargets.toSet(), NativeDistributionCommonizerOutputLayout, progressLogger
             )
-            if (copyStdlib) this add CopyStdlibResultsConsumer(distribution, destination, logger.toProgressLogger())
-            if (copyEndorsedLibs) this add CopyEndorsedLibrairesResultsConsumer(distribution, destination, logger.toProgressLogger())
-            this add LoggingResultsConsumer(SharedCommonizerTarget(existingTargets), logger.toProgressLogger())
+            if (copyStdlib) this add CopyStdlibResultsConsumer(distribution, destination, progressLogger)
+            if (copyEndorsedLibs) this add CopyEndorsedLibrairesResultsConsumer(distribution, destination, progressLogger)
+            this add LoggingResultsConsumer(SharedCommonizerTarget(existingTargets), progressLogger)
         }
 
         val targetNames = commonizerTargets.joinToString { it.prettyName }
@@ -132,7 +133,7 @@ internal class NativeDistributionCommonize(options: Collection<Option<*>>) : Tas
             targets = commonizerTargets,
             resultsConsumer = resultsConsumer,
             statsCollector = statsCollector,
-            logger = logger
+            progressLogger = progressLogger
         ).run()
 
         println("$description: Done")
