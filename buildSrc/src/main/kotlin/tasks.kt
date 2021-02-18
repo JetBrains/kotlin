@@ -53,7 +53,7 @@ val kotlinGradlePluginAndItsRequired = arrayOf(
     ":kotlin-scripting-compiler-impl-embeddable",
     ":kotlin-test-js-runner",
     ":native:kotlin-klib-commonizer-embeddable",
-    ":native:kotlin-klib-commonizer-api:install"
+    ":native:kotlin-klib-commonizer-api"
 )
 
 fun Task.dependsOnKotlinGradlePluginInstall() {
