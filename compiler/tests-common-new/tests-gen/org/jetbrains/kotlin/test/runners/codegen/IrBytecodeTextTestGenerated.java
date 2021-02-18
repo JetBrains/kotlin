@@ -3141,6 +3141,12 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         public void testInterfaceHashCode() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/hashCode/interfaceHashCode.kt");
         }
+
+        @Test
+        @TestMetadata("interfaceHashCodeWithSmartCast.kt")
+        public void testInterfaceHashCodeWithSmartCast() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/hashCode/interfaceHashCodeWithSmartCast.kt");
+        }
     }
 
     @Nested
