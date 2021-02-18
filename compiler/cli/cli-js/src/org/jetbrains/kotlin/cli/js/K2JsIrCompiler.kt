@@ -206,7 +206,8 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 irFactory = PersistentIrFactory(), // TODO IrFactoryImpl?
                 outputKlibPath = outputFile.path,
                 nopack = arguments.irProduceKlibDir,
-            jsOutputName = FileUtil.getNameWithoutExtension(outputFile),)
+                jsOutputName = FileUtil.getNameWithoutExtension(outputFile),
+            )
         }
 
         if (arguments.irProduceJs) {

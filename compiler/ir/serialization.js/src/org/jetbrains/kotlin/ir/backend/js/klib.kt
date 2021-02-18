@@ -547,7 +547,8 @@ fun serializeModuleIntoKlib(
 
     val serializedMetadata =
         metadataSerializer.serializedMetadata(
-            compiledKotlinFiles.groupBy { it.irData.fqName }.map { (fqn, data) -> fqn to data.sortedBy { it.irData.path }.map { it.metadata } }.toMap(),
+            compiledKotlinFiles.groupBy { it.irData.fqName }
+                .map { (fqn, data) -> fqn to data.sortedBy { it.irData.path }.map { it.metadata } }.toMap(),
             header
         )
 
@@ -561,34 +562,29 @@ fun serializeModuleIntoKlib(
         irVersion = KlibIrVersion.INSTANCE.toString()
     )
 
-    val properties = if (containsErrorCode) {
-        Properties().also {
-            it.setProperty(KLIB_PROPERTY_CONTAINS_ERROR_CODE, "true")
-        }
-    } else null
-
     val properties = Properties().also { p ->
         if (jsOutputName != null) {
             p.setProperty(KLIB_PROPERTY_JS_OUTPUT_NAME, jsOutputName)
         }
         if (containsErrorCode) {
-                p.setProperty(KLIB_PROPERTY_CONTAINS_ERROR_CODE, "true")
+            p.setProperty(KLIB_PROPERTY_CONTAINS_ERROR_CODE, "true")
+        }
     }
 
-    buildKotlinLibrary(
-        linkDependencies = dependencies,
-        ir = fullSerializedIr,
-        metadata = serializedMetadata,
-        dataFlowGraph = null,
-        manifestProperties = properties,
-        moduleName = moduleName,
-        nopack = nopack,
-        perFile = perFile,
-        output = klibPath,
-        versions = versions,
-        builtInsPlatform = BuiltInsPlatform.JS
-    )
-}
+        buildKotlinLibrary(
+            linkDependencies = dependencies,
+            ir = fullSerializedIr,
+            metadata = serializedMetadata,
+            dataFlowGraph = null,
+            manifestProperties = properties,
+            moduleName = moduleName,
+            nopack = nopack,
+            perFile = perFile,
+            output = klibPath,
+            versions = versions,
+            builtInsPlatform = BuiltInsPlatform.JS
+        )
+    }
 
 const val KLIB_PROPERTY_JS_OUTPUT_NAME = "jsOutputName"
 

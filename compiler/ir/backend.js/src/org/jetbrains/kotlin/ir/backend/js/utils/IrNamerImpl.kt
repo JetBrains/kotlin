@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.js.backend.ast.JsName
+import org.jetbrains.kotlin.js.backend.ast.JsNameRef
 
 class IrNamerImpl(
     private val newNameTables: NameTables,
@@ -41,8 +42,6 @@ class IrNamerImpl(
         }
     }
 
-    override fun getNameForValueDeclaration(declaration: IrValueDeclaration): JsName =
-        getNameForStaticDeclaration(declaration)
 
     override fun getNameForClass(klass: IrClass): JsName =
         getNameForStaticDeclaration(klass)
