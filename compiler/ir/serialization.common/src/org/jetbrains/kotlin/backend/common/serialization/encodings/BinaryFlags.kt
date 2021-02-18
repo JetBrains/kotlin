@@ -17,7 +17,8 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptorVisibility
 import org.jetbrains.kotlin.serialization.deserialization.memberKind
 import org.jetbrains.kotlin.types.Variance
 
-inline class ClassFlags(val flags: Long) {
+@JvmInline
+value class ClassFlags(val flags: Long) {
 
     val modality: Modality get() = ProtoEnumFlags.modality(IrFlags.MODALITY.get(flags.toInt()))
     val visibility: DescriptorVisibility get() = ProtoEnumFlags.descriptorVisibility(IrFlags.VISIBILITY.get(flags.toInt()))
@@ -50,7 +51,8 @@ inline class ClassFlags(val flags: Long) {
     }
 }
 
-inline class FunctionFlags(val flags: Long) {
+@JvmInline
+value class FunctionFlags(val flags: Long) {
 
     val modality: Modality get() = ProtoEnumFlags.modality(IrFlags.MODALITY.get(flags.toInt()))
     val visibility: DescriptorVisibility get() = ProtoEnumFlags.descriptorVisibility(IrFlags.VISIBILITY.get(flags.toInt()))
@@ -100,7 +102,8 @@ inline class FunctionFlags(val flags: Long) {
     }
 }
 
-inline class PropertyFlags(val flags: Long) {
+@JvmInline
+value class PropertyFlags(val flags: Long) {
 
     val modality: Modality get() = ProtoEnumFlags.modality(IrFlags.MODALITY.get(flags.toInt()))
     val visibility: DescriptorVisibility get() = ProtoEnumFlags.descriptorVisibility(IrFlags.VISIBILITY.get(flags.toInt()))
@@ -138,7 +141,8 @@ inline class PropertyFlags(val flags: Long) {
     }
 }
 
-inline class ValueParameterFlags(val flags: Long) {
+@JvmInline
+value class ValueParameterFlags(val flags: Long) {
 
     val isCrossInline: Boolean get() = IrFlags.IS_CROSSINLINE.get(flags.toInt())
     val isNoInline: Boolean get() = IrFlags.IS_NOINLINE.get(flags.toInt())
@@ -163,7 +167,8 @@ inline class ValueParameterFlags(val flags: Long) {
     }
 }
 
-inline class TypeAliasFlags(val flags: Long) {
+@JvmInline
+value class TypeAliasFlags(val flags: Long) {
 
     val visibility: DescriptorVisibility get() = ProtoEnumFlags.descriptorVisibility(IrFlags.VISIBILITY.get(flags.toInt()))
     val isActual: Boolean get() = IrFlags.IS_ACTUAL.get(flags.toInt())
@@ -180,7 +185,8 @@ inline class TypeAliasFlags(val flags: Long) {
     }
 }
 
-inline class TypeParameterFlags(val flags: Long) {
+@JvmInline
+value class TypeParameterFlags(val flags: Long) {
 
     val variance: Variance get() = ProtoEnumFlags.variance(IrFlags.VARIANCE.get(flags.toInt()))
     val isReified: Boolean get() = IrFlags.IS_REIFIED.get(flags.toInt())
@@ -197,7 +203,8 @@ inline class TypeParameterFlags(val flags: Long) {
     }
 }
 
-inline class FieldFlags(val flags: Long) {
+@JvmInline
+value class FieldFlags(val flags: Long) {
 
     val visibility: DescriptorVisibility get() = ProtoEnumFlags.descriptorVisibility(IrFlags.VISIBILITY.get(flags.toInt()))
     val isFinal: Boolean get() = IrFlags.IS_FINAL.get(flags.toInt())
@@ -216,7 +223,8 @@ inline class FieldFlags(val flags: Long) {
     }
 }
 
-inline class LocalVariableFlags(val flags: Long) {
+@JvmInline
+value class LocalVariableFlags(val flags: Long) {
 
     val isVar: Boolean get() = IrFlags.IS_LOCAL_VAR.get(flags.toInt())
     val isConst: Boolean get() = IrFlags.IS_LOCAL_CONST.get(flags.toInt())

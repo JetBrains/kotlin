@@ -158,6 +158,7 @@ public abstract class AbstractLongTimeSource : kotlin.time.TimeSource {
 
 @kotlin.SinceKotlin(version = "1.3")
 @kotlin.time.ExperimentalTime
+@kotlin.jvm.JvmInline
 public final inline class Duration : kotlin.Comparable<kotlin.time.Duration> {
     public final val absoluteValue: kotlin.time.Duration { get; }
 

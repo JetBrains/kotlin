@@ -7,9 +7,12 @@
 
 package kotlin
 
+import kotlin.jvm.*
+
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
-public inline class UShortArray
+@JvmInline
+public value class UShortArray
 @PublishedApi
 internal constructor(@PublishedApi internal val storage: ShortArray) : Collection<UShort> {
 
