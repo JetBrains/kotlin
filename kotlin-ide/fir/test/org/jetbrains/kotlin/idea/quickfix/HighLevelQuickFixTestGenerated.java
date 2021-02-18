@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.quickfix;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -25,10 +24,6 @@ public class HighLevelQuickFixTestGenerated extends AbstractHighLevelQuickFixTes
     public static class Lateinit extends AbstractHighLevelQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInLateinit() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/lateinit"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("nullable.kt")
@@ -78,10 +73,6 @@ public class HighLevelQuickFixTestGenerated extends AbstractHighLevelQuickFixTes
         @TestMetadata("addLateinit.kt")
         public void testAddLateinit() throws Exception {
             runTest("idea/testData/quickfix/modifiers/addLateinit.kt");
-        }
-
-        public void testAllFilesPresentInModifiers() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/modifiers"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, false);
         }
 
         @TestMetadata("cannotMakeClassAnnotation.kt")
@@ -388,10 +379,6 @@ public class HighLevelQuickFixTestGenerated extends AbstractHighLevelQuickFixTes
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
-        public void testAllFilesPresentInTypeMismatchOnOverride() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/override/typeMismatchOnOverride"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, false);
-        }
-
         @TestMetadata("cantChangeMultipleOverriddenPropertiesTypes.kt")
         public void testCantChangeMultipleOverriddenPropertiesTypes() throws Exception {
             runTest("idea/testData/quickfix/override/typeMismatchOnOverride/cantChangeMultipleOverriddenPropertiesTypes.kt");
@@ -499,10 +486,6 @@ public class HighLevelQuickFixTestGenerated extends AbstractHighLevelQuickFixTes
     public static class ChangeMutability extends AbstractHighLevelQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInChangeMutability() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/variables/changeMutability"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, false);
         }
 
         @TestMetadata("capturedMemberValInitialization.kt")

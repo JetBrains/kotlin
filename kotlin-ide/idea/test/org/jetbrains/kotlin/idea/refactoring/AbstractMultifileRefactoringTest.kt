@@ -53,7 +53,7 @@ abstract class AbstractMultifileRefactoringTest : KotlinLightCodeInsightFixtureT
         doTestCommittingDocuments(testFile) { rootDir ->
             val opts = config.getNullableString("customCompilerOpts")?.prefixIfNot("// ") ?: ""
             withCustomCompilerOptions(opts, project, module) {
-                runRefactoring(path, config, rootDir, project)
+                runRefactoring(testFile.path, config, rootDir, project)
             }
         }
     }

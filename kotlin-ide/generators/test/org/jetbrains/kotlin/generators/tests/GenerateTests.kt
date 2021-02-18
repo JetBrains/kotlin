@@ -732,7 +732,7 @@ private fun assembleWorkspace(): TWorkspace = workspace {
         testClass<AbstractCommonDecompiledTextTest> {
             model("decompiler/decompiledText", pattern = """^([^\.]+)$""".toRegex())
             testClass<AbstractFirKotlinHighlightingPassTest> {
-                model("checker", recursive = false)
+                model("checker", isRecursive = false)
                 model("checker/regression")
                 model("checker/recovery")
                 model("checker/rendering")
@@ -742,25 +742,25 @@ private fun assembleWorkspace(): TWorkspace = workspace {
 
 
             testClass<AbstractHighLevelQuickFixTest> {
-                val pattern = "^([\\w\\-_]+)\\.kt$"
-                model("quickfix/lateinit", pattern = pattern, filenameStartsLowerCase = true)
-                model("quickfix/modifiers", pattern = pattern, filenameStartsLowerCase = true, recursive = false)
-                model("quickfix/override/typeMismatchOnOverride", pattern = pattern, filenameStartsLowerCase = true, recursive = false)
-                model("quickfix/variables/changeMutability", pattern = pattern, filenameStartsLowerCase = true, recursive = false)
+                val pattern = "^([\\w\\-_]+)\\.kt$".toRegex()
+                model("quickfix/lateinit", pattern = pattern)
+                model("quickfix/modifiers", pattern = pattern, isRecursive = false)
+                model("quickfix/override/typeMismatchOnOverride", pattern = pattern, isRecursive = false)
+                model("quickfix/variables/changeMutability", pattern = pattern, isRecursive = false)
             }
 
             testClass<AbstractHLInspectionTest> {
-                val pattern = "^(inspections\\.test)$"
-                model("inspections/redundantUnitReturnType", pattern = pattern, singleClass = true)
+                val pattern = "^(inspections\\.test)$".toRegex()
+                model("inspections/redundantUnitReturnType", pattern = pattern)
             }
 
             testClass<AbstractHLIntentionTest> {
-                val pattern = "^([\\w\\-_]+)\\.(kt|kts)$"
+                val pattern = "^([\\w\\-_]+)\\.(kt|kts)$".toRegex()
                 model("intentions/specifyTypeExplicitly", pattern = pattern)
             }
 
             testClass<AbstractFirShortenRefsTest> {
-                model("shortenRefsFir", pattern = KT_WITHOUT_DOTS_IN_NAME, testMethod = "doTestWithMuting")
+                model("shortenRefsFir", pattern = KT_WITHOUT_DOTS, testMethodName = "doTestWithMuting")
             }
         }
 

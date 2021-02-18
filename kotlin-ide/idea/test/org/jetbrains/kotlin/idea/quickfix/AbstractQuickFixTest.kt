@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.test.KotlinRoot
 import org.junit.Assert
 import org.junit.ComparisonFailure
 import java.io.File
+import java.io.IOException
 
 abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase(), QuickFixTest {
     companion object {
@@ -60,7 +61,7 @@ abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase(), Q
     @Throws(Exception::class)
     protected open fun doTest(beforeFileName: String) {
         val beforeFileText = FileUtil.loadFile(File(beforeFileName))
-        withCustomCompilerOptions(beforeFileText, project, module) {
+        withCustomCompilerOptions<Unit>(beforeFileText, project, module) {
             val inspections = parseInspectionsToEnable(beforeFileName, beforeFileText).toTypedArray()
             try {
                 myFixture.enableInspections(*inspections)
@@ -273,23 +274,9 @@ abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase(), Q
         return null
     }
 
-    private fun checkForUnexpectedErrors() = DirectiveBasedActionUtils.checkForUnexpectedErrors(myFixture.file as KtFile)
-
     protected open fun checkAvailableActionsAreExpected(actions: List<IntentionAction>) {
         DirectiveBasedActionUtils.checkAvailableActionsAreExpected(myFixture.file, actions)
     }
 
     protected open fun checkForUnexpectedErrors() = DirectiveBasedActionUtils.checkForUnexpectedErrors(myFixture.file as KtFile)
-
-    override fun getTestDataPath(): String {
-        // Ensure full path is returned. Otherwise FileComparisonFailureException does not provide link to file diff
-        val testDataPath = super.getTestDataPath()
-        return try {
-            File(testDataPath).canonicalPath
-        } catch (e: IOException) {
-            e.printStackTrace()
-            testDataPath
-        }
-
-    }
 }
