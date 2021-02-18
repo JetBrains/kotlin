@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 // This test emulates 'allopen' compiler plugin.
 
 @Suppress("INCOMPATIBLE_MODIFIERS")
