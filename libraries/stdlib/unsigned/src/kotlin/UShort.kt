@@ -8,10 +8,12 @@
 package kotlin
 
 import kotlin.experimental.*
+import kotlin.jvm.JvmInline
 
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
-public inline class UShort @PublishedApi internal constructor(@PublishedApi internal val data: Short) : Comparable<UShort> {
+@JvmInline
+public value class UShort @PublishedApi internal constructor(@PublishedApi internal val data: Short) : Comparable<UShort> {
 
     companion object {
         /**

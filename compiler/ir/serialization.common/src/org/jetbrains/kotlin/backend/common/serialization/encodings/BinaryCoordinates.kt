@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.backend.common.serialization.encodings
 
-inline class BinaryCoordinates(private val decoded: BinaryLattice) {
+@JvmInline
+value class BinaryCoordinates(private val decoded: BinaryLattice) {
     private fun diff(): Int = decoded.second
 
     val startOffset: Int get() = decoded.first

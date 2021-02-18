@@ -6,6 +6,7 @@
 package kotlin.time
 
 import kotlin.contracts.*
+import kotlin.jvm.JvmInline
 import kotlin.math.abs
 
 @OptIn(ExperimentalTime::class)
@@ -27,7 +28,8 @@ private inline val storageUnit get() = DurationUnit.NANOSECONDS
  */
 @SinceKotlin("1.3")
 @ExperimentalTime
-public inline class Duration internal constructor(internal val value: Double) : Comparable<Duration> {
+@JvmInline
+public value class Duration internal constructor(internal val value: Double) : Comparable<Duration> {
     init {
         require(!value.isNaN()) { "Duration value cannot be NaN." }
     }

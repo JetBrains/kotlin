@@ -8,10 +8,12 @@
 package kotlin
 
 import kotlin.experimental.*
+import kotlin.jvm.JvmInline
 
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
-public inline class UByte @PublishedApi internal constructor(@PublishedApi internal val data: Byte) : Comparable<UByte> {
+@JvmInline
+public value class UByte @PublishedApi internal constructor(@PublishedApi internal val data: Byte) : Comparable<UByte> {
 
     companion object {
         /**

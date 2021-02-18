@@ -11,7 +11,8 @@ import org.jetbrains.kotlin.fir.PrivateForInline
  * [Map] which allows store null values
  */
 @OptIn(PrivateForInline::class)
-internal inline class NullableMap<KEY, VALUE>(private val map: MutableMap<KEY, Any> = HashMap()) {
+@JvmInline
+internal value class NullableMap<KEY, VALUE>(private val map: MutableMap<KEY, Any> = HashMap()) {
 
     /**
      * Get value if it is present in map

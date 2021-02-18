@@ -8,10 +8,12 @@
 package kotlin
 
 import kotlin.experimental.*
+import kotlin.jvm.JvmInline
 
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
-public inline class ULong @PublishedApi internal constructor(@PublishedApi internal val data: Long) : Comparable<ULong> {
+@JvmInline
+public value class ULong @PublishedApi internal constructor(@PublishedApi internal val data: Long) : Comparable<ULong> {
 
     companion object {
         /**
