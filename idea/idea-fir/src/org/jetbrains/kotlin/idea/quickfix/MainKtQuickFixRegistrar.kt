@@ -30,11 +30,19 @@ class MainKtQuickFixRegistrar : KtQuickFixRegistrar() {
             AddModifierFix.addAbstractToContainingClass,
             RemoveModifierFix.removeAbstractModifier
         )
-
         registerPsiQuickFixes(
             KtFirDiagnostic.NonFinalMemberInFinalClass::class,
             AddModifierFix.addOpenToContainingClass,
             RemoveModifierFix.removeOpenModifier
+        )
+        registerPsiQuickFixes(
+            KtFirDiagnostic.PrivateSetterForOpenProperty::class,
+            AddModifierFix.addFinalToProperty,
+            RemoveModifierFix.removePrivateModifier
+        )
+        registerPsiQuickFixes(
+            KtFirDiagnostic.PrivateSetterForAbstractProperty::class,
+            RemoveModifierFix.removePrivateModifier
         )
     }
 
