@@ -536,6 +536,7 @@ class FirCallCompletionResultsWriterTransformer(
         // NB: if we transform simply all children, there would be too many type error reports.
         anonymousFunction.transformReturnTypeRef(implicitTypeTransformer, null)
         anonymousFunction.transformValueParameters(implicitTypeTransformer, null)
+        anonymousFunction.transformBody(implicitTypeTransformer, null)
         return anonymousFunction.compose()
     }
 

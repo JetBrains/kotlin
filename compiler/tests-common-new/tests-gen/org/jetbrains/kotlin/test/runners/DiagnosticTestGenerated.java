@@ -34790,6 +34790,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("lambdaArgumentOfInapplicableCall.kt")
+            public void testLambdaArgumentOfInapplicableCall() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/resolve/lambdaArgumentOfInapplicableCall.kt");
+            }
+
+            @Test
             @TestMetadata("samAgainstFunctionalType.kt")
             public void testSamAgainstFunctionalType() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/resolve/samAgainstFunctionalType.kt");
