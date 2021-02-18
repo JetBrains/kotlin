@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.library.resolver.impl.KotlinLibraryResolverImpl
 import org.jetbrains.kotlin.library.resolver.impl.libraryResolver
 import org.jetbrains.kotlin.library.toUnresolvedLibraries
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
+import org.jetbrains.kotlin.util.suffixIfNot
 import java.io.File
 import java.lang.IllegalArgumentException
 import java.nio.file.*
@@ -376,15 +377,22 @@ private fun processCLib(flavor: KotlinPlatform, cinteropArguments: CInteropArgum
                     noDefaultLibs = true,
                     noEndorsedLibs = true
             ).getFullList()
+
+            val nopack = cinteropArguments.nopack
+            val outputPath = cinteropArguments.output.let {
+                val suffix = CompilerOutputKind.LIBRARY.suffix(tool.target)
+                if (nopack) it.removeSuffixIfPresent(suffix) else it.suffixIfNot(suffix)
+            }
+
             createInteropLibrary(
                     metadata = stubIrOutput.metadata,
                     nativeBitcodeFiles = compiledFiles + nativeOutputPath,
                     target = tool.target,
                     moduleName = moduleName,
-                    outputPath = cinteropArguments.output,
+                    outputPath = outputPath,
                     manifest = def.manifestAddendProperties,
                     dependencies = stdlibDependency + imports.requiredLibraries.toList(),
-                    nopack = cinteropArguments.nopack,
+                    nopack = nopack,
                     shortName = cinteropArguments.shortModuleName,
                     staticLibraries = resolveLibraries(staticLibraries, libraryPaths)
             )
