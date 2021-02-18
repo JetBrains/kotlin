@@ -60,7 +60,8 @@ class RemoveModifierFix(
                 modifier = KtTokens.OPEN_KEYWORD,
                 isRedundant = true
             )
-        val removeOpenModifier = createRemoveModifierFromListOwnerPsiBasedFactory(KtTokens.OPEN_KEYWORD)
+        val removeOpenModifier: QuickFixesPsiBasedFactory<PsiElement> = createRemoveModifierFromListOwnerPsiBasedFactory(KtTokens.OPEN_KEYWORD)
+        val removePrivateModifier: QuickFixesPsiBasedFactory<PsiElement> = createRemoveModifierFromListOwnerPsiBasedFactory(KtTokens.PRIVATE_KEYWORD)
 
         @Deprecated(
             "For binary compatibility",

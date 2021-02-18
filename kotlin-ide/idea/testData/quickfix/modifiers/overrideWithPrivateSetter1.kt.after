@@ -7,3 +7,4 @@ open class FooImpl : Foo {
     final override var bar: String = ""
         <caret>private set
 }
+/* FIR_COMPARISON */
