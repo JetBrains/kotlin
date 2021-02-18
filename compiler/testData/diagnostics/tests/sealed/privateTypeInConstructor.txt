@@ -1,0 +1,26 @@
+package
+
+public abstract class AbstractFoo {
+    public constructor AbstractFoo(/*0*/ x: Bar, /*1*/ y: Bar, /*2*/ z: Bar)
+    public final val x: Bar
+    private final val y: Bar
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+private final class Bar {
+    public constructor Bar()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public sealed class SealedFoo {
+    protected constructor SealedFoo(/*0*/ x: Bar, /*1*/ y: Bar, /*2*/ z: Bar)
+    public final val x: Bar
+    private final val y: Bar
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
