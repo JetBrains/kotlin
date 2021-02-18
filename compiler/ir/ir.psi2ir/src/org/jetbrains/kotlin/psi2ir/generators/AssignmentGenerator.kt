@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.resolve.PropertyImportedFromObject
 import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
+import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.types.KotlinType
 
 class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
@@ -206,6 +207,8 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
                     createVariableValue(ktExpr, descriptor, origin)
             is PropertyDescriptor ->
                 generateAssignmentReceiverForProperty(descriptor, origin, ktExpr, resolvedCall, isAssignmentStatement)
+            is FakeCallableDescriptorForObject ->
+                OnceExpressionValue(ktExpr.genExpr())
             is ValueDescriptor ->
                 createVariableValue(ktExpr, descriptor, origin)
             else ->
