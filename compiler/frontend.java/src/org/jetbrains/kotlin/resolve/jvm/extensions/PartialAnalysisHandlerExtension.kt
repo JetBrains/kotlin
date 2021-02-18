@@ -85,7 +85,8 @@ open class PartialAnalysisHandlerExtension : AnalysisHandlerExtension {
                     if (declaration is KtProperty) {
                         /* TODO Now we analyse body with anonymous object initializers. Check if we can't avoid it
                          * val a: Runnable = object : Runnable { ... } */
-                        bodyResolver.resolveProperty(topDownAnalysisContext, declaration, descriptor)
+                        BodyResolver.computeDeferredType(descriptor.returnType)
+//                        bodyResolver.resolveProperty(topDownAnalysisContext, declaration, descriptor)
                     }
                 }
                 is FunctionDescriptor -> {
