@@ -42,7 +42,7 @@ internal class LibraryCommonizer internal constructor(
 
         librariesByTargets.forEach { (target, librariesToCommonize) ->
             if (librariesToCommonize.libraries.isEmpty()) {
-                progressLogger.warning("No platform libraries found for target $target. This target will be excluded from commonization.")
+                progressLogger.warning("No platform libraries found for target ${target.prettyName}. This target will be excluded from commonization.")
             }
         }
         progressLogger.log("Read lazy (uninitialized) libraries")
