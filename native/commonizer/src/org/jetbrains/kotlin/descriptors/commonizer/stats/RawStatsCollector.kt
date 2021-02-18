@@ -7,10 +7,11 @@ package org.jetbrains.kotlin.descriptors.commonizer.stats
 
 import com.intellij.util.containers.FactoryMap
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.commonizer.CommonizerTarget
+import org.jetbrains.kotlin.descriptors.commonizer.identityString
 import org.jetbrains.kotlin.descriptors.commonizer.stats.StatsCollector.StatsKey
 import org.jetbrains.kotlin.descriptors.commonizer.stats.StatsOutput.StatsHeader
 import org.jetbrains.kotlin.descriptors.commonizer.stats.StatsOutput.StatsRow
-import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -56,9 +57,9 @@ platform/SystemConfiguration/SCDynamicStoreRefVar||||TYPE_ALIAS|-|O|O
 platform/SystemConfiguration/SCVLANInterfaceRef||||TYPE_ALIAS|-|O|O
 
  */
-class RawStatsCollector(private val targets: List<KonanTarget>) : StatsCollector {
+class RawStatsCollector(private val targets: List<CommonizerTarget>) : StatsCollector {
     private inline val dimension get() = targets.size + 1
-    private inline val targetNames get() = targets.map { it.name }
+    private inline val targetNames get() = targets.map { it.identityString }
 
     private inline val indexOfCommon get() = targets.size
     private inline val platformDeclarationsCount get() = targets.size

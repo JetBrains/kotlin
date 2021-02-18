@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.descriptors.commonizer.repository.Repository
 import org.jetbrains.kotlin.descriptors.commonizer.stats.StatsCollector
 import org.jetbrains.kotlin.descriptors.commonizer.utils.ResettableClockMark
 import org.jetbrains.kotlin.konan.library.*
-import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.util.Logger
 
@@ -22,7 +21,7 @@ internal class LibraryCommonizer internal constructor(
     private val repository: Repository,
     private val dependencies: Repository,
     private val libraryLoader: NativeLibraryLoader,
-    private val targets: List<KonanTarget>,
+    private val targets: List<LeafCommonizerTarget>,
     private val resultsConsumer: ResultsConsumer,
     private val statsCollector: StatsCollector?,
     private val logger: Logger
@@ -41,7 +40,7 @@ internal class LibraryCommonizer internal constructor(
     private fun loadLibraries(): AllNativeLibraries {
         val stdlib = libraryLoader(konanDistribution.stdlib)
 
-        val librariesByTargets = targets.map(::LeafCommonizerTarget).associateWith { target ->
+        val librariesByTargets = targets.associateWith { target ->
             NativeLibrariesToCommonize(repository.getLibraries(target).toList())
         }
 

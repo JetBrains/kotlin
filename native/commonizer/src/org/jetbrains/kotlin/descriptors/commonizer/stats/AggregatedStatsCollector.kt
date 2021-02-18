@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.stats
 
+import org.jetbrains.kotlin.descriptors.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.descriptors.commonizer.stats.RawStatsCollector.CommonDeclarationStatus.*
-import org.jetbrains.kotlin.konan.target.KonanTarget
 
 class AggregatedStatsCollector(
-    targets: List<KonanTarget>
+    targets: List<CommonizerTarget>
 ) : StatsCollector {
     private val wrappedCollector = RawStatsCollector(targets)
 

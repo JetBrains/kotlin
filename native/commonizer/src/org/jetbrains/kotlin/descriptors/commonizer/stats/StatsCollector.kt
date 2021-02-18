@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.stats
 
-import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.descriptors.commonizer.CommonizerTarget
 
-fun StatsCollector(type: StatsType, targets: List<KonanTarget>): StatsCollector? {
+fun StatsCollector(type: StatsType, targets: List<CommonizerTarget>): StatsCollector? {
     return when (type) {
         StatsType.RAW -> RawStatsCollector(targets)
         StatsType.AGGREGATED -> AggregatedStatsCollector(targets)

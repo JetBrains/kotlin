@@ -10,16 +10,15 @@ import org.jetbrains.kotlin.descriptors.commonizer.LeafCommonizerTarget
 import org.jetbrains.kotlin.descriptors.commonizer.NativeLibraryLoader
 import org.jetbrains.kotlin.descriptors.commonizer.konan.NativeLibrary
 import org.jetbrains.kotlin.descriptors.commonizer.platformLibsDir
-import org.jetbrains.kotlin.konan.target.KonanTarget
 
 internal class KonanDistributionRepository(
     konanDistribution: KonanDistribution,
-    targets: Set<KonanTarget>,
+    targets: Set<LeafCommonizerTarget>,
     libraryLoader: NativeLibraryLoader,
 ) : Repository {
 
     private val librariesByTarget: Map<LeafCommonizerTarget, Lazy<Set<NativeLibrary>>> =
-        targets.map(::LeafCommonizerTarget).associateWith { target ->
+        targets.associateWith { target ->
             lazy {
                 konanDistribution.platformLibsDir
                     .resolve(target.name)
