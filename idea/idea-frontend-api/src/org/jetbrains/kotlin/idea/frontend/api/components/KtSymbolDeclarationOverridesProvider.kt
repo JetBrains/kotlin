@@ -11,19 +11,19 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 
 abstract class KtSymbolDeclarationOverridesProvider : KtAnalysisSessionComponent() {
     /**
-     * Returns symbols that overridden by requested
+     * Returns symbols that are overridden by requested
      */
-    abstract fun <T : KtSymbol> getOverriddenSymbols(
+    abstract fun <T : KtSymbol> getAllOverriddenSymbols(
         callableSymbol: T,
-        containingDeclaration: KtClassOrObjectSymbol
     ): List<KtCallableSymbol>
 
     /**
-     * Returns symbols that overridden by requested
+     * Returns symbols that are overridden by requested
      */
-    abstract fun <T : KtSymbol> getOverriddenSymbols(
+    abstract fun <T : KtSymbol> getDirectlyOverriddenSymbols(
         callableSymbol: T,
     ): List<KtCallableSymbol>
+
 
     /**
      * If [symbol] origin is [org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbolOrigin.INTERSECTION_OVERRIDE]
