@@ -166,7 +166,7 @@ class GeneralNativeIT : BaseGradleIT() {
 
         val klibPrefix = CompilerOutputKind.LIBRARY.prefix(HostManager.host)
         val klibSuffix = CompilerOutputKind.LIBRARY.suffix(HostManager.host)
-        val klibPath = "${targetClassesDir("host")}${klibPrefix}native-library$klibSuffix"
+        val klibPath = "${targetClassesDir("host")}${klibPrefix}/klib/native-library$klibSuffix"
 
         val linkTasks = listOf(
             ":linkDebugSharedHost",
@@ -772,9 +772,9 @@ class GeneralNativeIT : BaseGradleIT() {
     @Test
     fun testCinterop() = with(transformNativeTestProjectWithPluginDsl("native-cinterop")) {
         fun libraryFiles(projectName: String, cinteropName: String) = listOf(
-            "$projectName/build/classes/kotlin/host/main/${projectName}-cinterop-$cinteropName.klib",
-            "$projectName/build/classes/kotlin/host/main/${projectName}.klib",
-            "$projectName/build/classes/kotlin/host/test/${projectName}_test.klib",
+            "$projectName/build/classes/kotlin/host/main/cinterop/${projectName}-cinterop-$cinteropName.klib",
+            "$projectName/build/classes/kotlin/host/main/klib/${projectName}.klib",
+            "$projectName/build/classes/kotlin/host/test/klib/${projectName}_test.klib",
         )
 
         // Enable info log to see cinterop environment variables.

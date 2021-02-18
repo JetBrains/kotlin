@@ -260,7 +260,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget>(
                     "compilation for target '${compilation.platformType.name}'."
             it.enabled = compilation.konanTarget.enabledOnCurrentHost
 
-            it.destinationDir = klibOutputDirectory(compilation)
+            it.destinationDir = klibOutputDirectory(compilation).resolve("klib")
         }
 
 
@@ -292,7 +292,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget>(
         compilation.cinterops.all { interop ->
             val interopTask = registerTask<CInteropProcess>(interop.interopProcessingTaskName) {
                 it.settings = interop
-                it.destinationDir = provider { klibOutputDirectory(compilation) }
+                it.destinationDir = provider { klibOutputDirectory(compilation).resolve("cinterop") }
                 it.group = INTEROP_GROUP
                 it.description = "Generates Kotlin/Native interop library '${interop.name}' " +
                         "for compilation '${compilation.name}'" +
