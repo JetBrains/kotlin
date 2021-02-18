@@ -315,23 +315,17 @@ object LightTreePositioningStrategies {
         }
     }
 
-    val DOT_BY_SELECTOR: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
+    val DOT_BY_QUALIFIED: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
         override fun mark(
             node: LighterASTNode,
             startOffset: Int,
             endOffset: Int,
             tree: FlyweightCapableTreeStructure<LighterASTNode>
         ): List<TextRange> {
-            if (node.tokenType != KtNodeTypes.REFERENCE_EXPRESSION && node.tokenType != KtNodeTypes.CALL_EXPRESSION) {
-                // TODO: normally CALL_EXPRESSION should not be here. In PSI we have REFERENCE_EXPRESSION even for x.bar() case
-                // Remove CALL_EXPRESSION from here and repeat code below twice (see PSI counterpart) when fixed
+            if (node.tokenType != KtNodeTypes.DOT_QUALIFIED_EXPRESSION) {
                 return super.mark(node, startOffset, endOffset, tree)
             }
-            val parentNode = tree.getParent(node) ?: return super.mark(node, startOffset, endOffset, tree)
-            if (parentNode.tokenType == KtNodeTypes.DOT_QUALIFIED_EXPRESSION) {
-                return markElement(tree.dotOperator(parentNode) ?: node, startOffset, endOffset, tree, node)
-            }
-            return super.mark(node, startOffset, endOffset, tree)
+            return markElement(tree.dotOperator(node) ?: node, startOffset, endOffset, tree, node)
         }
     }
 

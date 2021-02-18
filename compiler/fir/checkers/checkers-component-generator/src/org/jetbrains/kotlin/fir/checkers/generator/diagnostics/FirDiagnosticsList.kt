@@ -361,7 +361,7 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
     }
 
     val NULLABILITY by object : DiagnosticGroup("Nullability") {
-        val UNSAFE_CALL by error<FirSourceElement, PsiElement>(PositioningStrategy.DOT_BY_SELECTOR) {
+        val UNSAFE_CALL by error<FirSourceElement, PsiElement>(PositioningStrategy.DOT_BY_QUALIFIED) {
             parameter<ConeKotlinType>("receiverType")
         }
         val UNSAFE_IMPLICIT_INVOKE_CALL by error<FirSourceElement, PsiElement> {

@@ -711,15 +711,11 @@ object PositioningStrategies {
         }
     }
 
-    val DOT_BY_SELECTOR: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
+    val DOT_BY_QUALIFIED: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
         override fun mark(element: PsiElement): List<TextRange> {
             when (element) {
-                is KtNameReferenceExpression -> {
-                    var parent = element
-                    repeat(2) {
-                        parent = parent.parent
-                        (parent as? KtDotQualifiedExpression)?.operationTokenNode?.psi?.let { return mark(it) }
-                    }
+                is KtDotQualifiedExpression -> {
+                    return mark(element.operationTokenNode.psi)
                 }
             }
             return super.mark(element)
