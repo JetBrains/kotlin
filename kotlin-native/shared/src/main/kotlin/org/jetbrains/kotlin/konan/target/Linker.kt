@@ -265,7 +265,7 @@ class MacOSBasedLinker(targetProperties: AppleConfigurables)
         if (debug) {
             result += dsymUtilCommand(executable, outputDsymBundle)
             if (optimize) {
-                result += Command(strip, "-S", executable)
+                result += Command(strip, *stripFlags.toTypedArray(), executable)
             }
         }
 

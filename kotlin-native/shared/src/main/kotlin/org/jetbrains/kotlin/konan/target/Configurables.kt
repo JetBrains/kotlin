@@ -98,6 +98,7 @@ interface AppleConfigurables : Configurables, ClangFlags {
     val arch get() = targetString("arch")!!
     val osVersionMin get() = targetString("osVersionMin")!!
     val osVersionMinFlagLd get() = targetString("osVersionMinFlagLd")!!
+    val stripFlags get() = targetList("stripFlags")
     val additionalToolsDir get() = hostString("additionalToolsDir")
     val absoluteAdditionalToolsDir get() = absolute(additionalToolsDir)
 }
