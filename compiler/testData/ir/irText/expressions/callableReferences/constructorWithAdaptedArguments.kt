@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +NewInference, +FunctionReferenceWithDefaultValueAsOtherType
 
 fun use(fn: (Int) -> Any) = fn(42)

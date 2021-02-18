@@ -1748,11 +1748,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 runTest("compiler/testData/codegen/box/callableReference/bound/enumEntryMember.kt");
             }
 
-            @TestMetadata("genericBoundPropertyAsCrossinline.kt")
-            public void testGenericBoundPropertyAsCrossinline() throws Exception {
-                runTest("compiler/testData/codegen/box/callableReference/bound/genericBoundPropertyAsCrossinline.kt");
-            }
-
             @TestMetadata("genericValOnLHS.kt")
             public void testGenericValOnLHS() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/bound/genericValOnLHS.kt");
@@ -4324,11 +4319,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/contracts/listAppend.kt");
         }
 
-        @TestMetadata("nestedLambdaInNonInlineCallExactlyOnce.kt")
-        public void testNestedLambdaInNonInlineCallExactlyOnce() throws Exception {
-            runTest("compiler/testData/codegen/box/contracts/nestedLambdaInNonInlineCallExactlyOnce.kt");
-        }
-
         @TestMetadata("valInWhen.kt")
         public void testValInWhen() throws Exception {
             runTest("compiler/testData/codegen/box/contracts/valInWhen.kt");
@@ -5664,11 +5654,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/coroutines/kt21605.kt");
         }
 
-        @TestMetadata("kt24135.kt")
-        public void testKt24135() throws Exception {
-            runTest("compiler/testData/codegen/box/coroutines/kt24135.kt");
-        }
-
         @TestMetadata("kt25912.kt")
         public void testKt25912() throws Exception {
             runTest("compiler/testData/codegen/box/coroutines/kt25912.kt");
@@ -6017,11 +6002,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             @TestMetadata("doWhileStatement.kt")
             public void testDoWhileStatement() throws Exception {
                 runTest("compiler/testData/codegen/box/coroutines/controlFlow/doWhileStatement.kt");
-            }
-
-            @TestMetadata("doWhileWithInline.kt")
-            public void testDoWhileWithInline() throws Exception {
-                runTest("compiler/testData/codegen/box/coroutines/controlFlow/doWhileWithInline.kt");
             }
 
             @TestMetadata("doubleBreak.kt")
@@ -7249,11 +7229,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/localFunctions/named"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
                 }
 
-                @TestMetadata("callTopLevelFromLocal.kt")
-                public void testCallTopLevelFromLocal() throws Exception {
-                    runTest("compiler/testData/codegen/box/coroutines/localFunctions/named/callTopLevelFromLocal.kt");
-                }
-
                 @TestMetadata("capturedParameters.kt")
                 public void testCapturedParameters() throws Exception {
                     runTest("compiler/testData/codegen/box/coroutines/localFunctions/named/capturedParameters.kt");
@@ -7262,11 +7237,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 @TestMetadata("capturedVariables.kt")
                 public void testCapturedVariables() throws Exception {
                     runTest("compiler/testData/codegen/box/coroutines/localFunctions/named/capturedVariables.kt");
-                }
-
-                @TestMetadata("defaultArgument.kt")
-                public void testDefaultArgument() throws Exception {
-                    runTest("compiler/testData/codegen/box/coroutines/localFunctions/named/defaultArgument.kt");
                 }
 
                 @TestMetadata("extension.kt")
@@ -9520,11 +9490,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/elvis/nullNullOk.kt");
         }
 
-        @TestMetadata("ofNonNullableResultType.kt")
-        public void testOfNonNullableResultType() throws Exception {
-            runTest("compiler/testData/codegen/box/elvis/ofNonNullableResultType.kt");
-        }
-
         @TestMetadata("primitive.kt")
         public void testPrimitive() throws Exception {
             runTest("compiler/testData/codegen/box/elvis/primitive.kt");
@@ -10217,11 +10182,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         @TestMetadata("propertySetter.kt")
         public void testPropertySetter() throws Exception {
             runTest("compiler/testData/codegen/box/fakeOverride/propertySetter.kt");
-        }
-
-        @TestMetadata("varianceOverload.kt")
-        public void testVarianceOverload() throws Exception {
-            runTest("compiler/testData/codegen/box/fakeOverride/varianceOverload.kt");
         }
     }
 
@@ -11971,11 +11931,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/inlineClasses/crossinlineWithInlineClassInParameter.kt");
         }
 
-        @TestMetadata("customIterator.kt")
-        public void testCustomIterator() throws Exception {
-            runTest("compiler/testData/codegen/box/inlineClasses/customIterator.kt");
-        }
-
         @TestMetadata("defaultFunctionsFromAnyForInlineClass.kt")
         public void testDefaultFunctionsFromAnyForInlineClass() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/defaultFunctionsFromAnyForInlineClass.kt");
@@ -12319,11 +12274,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         @TestMetadata("kt28585.kt")
         public void testKt28585() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/kt28585.kt");
-        }
-
-        @TestMetadata("kt32793.kt")
-        public void testKt32793() throws Exception {
-            runTest("compiler/testData/codegen/box/inlineClasses/kt32793.kt");
         }
 
         @TestMetadata("kt33119.kt")
@@ -15110,11 +15060,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/localClasses/closureWithSelfInstantiation.kt");
         }
 
-        @TestMetadata("defaultParameterInConstructor.kt")
-        public void testDefaultParameterInConstructor() throws Exception {
-            runTest("compiler/testData/codegen/box/localClasses/defaultParameterInConstructor.kt");
-        }
-
         @TestMetadata("inExtensionFunction.kt")
         public void testInExtensionFunction() throws Exception {
             runTest("compiler/testData/codegen/box/localClasses/inExtensionFunction.kt");
@@ -16285,19 +16230,9 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/objects/kt2822.kt");
         }
 
-        @TestMetadata("kt32351.kt")
-        public void testKt32351() throws Exception {
-            runTest("compiler/testData/codegen/box/objects/kt32351.kt");
-        }
-
         @TestMetadata("kt3238.kt")
         public void testKt3238() throws Exception {
             runTest("compiler/testData/codegen/box/objects/kt3238.kt");
-        }
-
-        @TestMetadata("kt32749.kt")
-        public void testKt32749() throws Exception {
-            runTest("compiler/testData/codegen/box/objects/kt32749.kt");
         }
 
         @TestMetadata("kt3684.kt")
@@ -16795,11 +16730,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         @TestMetadata("kt4152.kt")
         public void testKt4152() throws Exception {
             runTest("compiler/testData/codegen/box/operatorConventions/kt4152.kt");
-        }
-
-        @TestMetadata("kt44647.kt")
-        public void testKt44647() throws Exception {
-            runTest("compiler/testData/codegen/box/operatorConventions/kt44647.kt");
         }
 
         @TestMetadata("kt45022.kt")
@@ -18179,11 +18109,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             @TestMetadata("privateSetterViaSubclass.kt")
             public void testPrivateSetterViaSubclass() throws Exception {
                 runTest("compiler/testData/codegen/box/properties/lateinit/privateSetterViaSubclass.kt");
-            }
-
-            @TestMetadata("privateVarInCompanion.kt")
-            public void testPrivateVarInCompanion() throws Exception {
-                runTest("compiler/testData/codegen/box/properties/lateinit/privateVarInCompanion.kt");
             }
 
             @TestMetadata("simpleVar.kt")
@@ -24480,11 +24405,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/reified/instanceof.kt");
         }
 
-        @TestMetadata("kt16445.kt")
-        public void testKt16445() throws Exception {
-            runTest("compiler/testData/codegen/box/reified/kt16445.kt");
-        }
-
         @TestMetadata("newArrayInt.kt")
         public void testNewArrayInt() throws Exception {
             runTest("compiler/testData/codegen/box/reified/newArrayInt.kt");
@@ -25031,26 +24951,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         @TestMetadata("kt42517.kt")
         public void testKt42517() throws Exception {
             runTest("compiler/testData/codegen/box/smartCasts/kt42517.kt");
-        }
-
-        @TestMetadata("kt44804.kt")
-        public void testKt44804() throws Exception {
-            runTest("compiler/testData/codegen/box/smartCasts/kt44804.kt");
-        }
-
-        @TestMetadata("kt44814.kt")
-        public void testKt44814() throws Exception {
-            runTest("compiler/testData/codegen/box/smartCasts/kt44814.kt");
-        }
-
-        @TestMetadata("kt44932.kt")
-        public void testKt44932() throws Exception {
-            runTest("compiler/testData/codegen/box/smartCasts/kt44932.kt");
-        }
-
-        @TestMetadata("kt44942.kt")
-        public void testKt44942() throws Exception {
-            runTest("compiler/testData/codegen/box/smartCasts/kt44942.kt");
         }
 
         @TestMetadata("lambdaArgumentWithoutType.kt")
@@ -26134,11 +26034,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/typealias/enumEntryQualifier.kt");
         }
 
-        @TestMetadata("extensionFunction.kt")
-        public void testExtensionFunction() throws Exception {
-            runTest("compiler/testData/codegen/box/typealias/extensionFunction.kt");
-        }
-
         @TestMetadata("genericTypeAliasConstructor.kt")
         public void testGenericTypeAliasConstructor() throws Exception {
             runTest("compiler/testData/codegen/box/typealias/genericTypeAliasConstructor.kt");
@@ -26207,11 +26102,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         @TestMetadata("typeAliasConstructorInSuperCall.kt")
         public void testTypeAliasConstructorInSuperCall() throws Exception {
             runTest("compiler/testData/codegen/box/typealias/typeAliasConstructorInSuperCall.kt");
-        }
-
-        @TestMetadata("typeAliasFunction.kt")
-        public void testTypeAliasFunction() throws Exception {
-            runTest("compiler/testData/codegen/box/typealias/typeAliasFunction.kt");
         }
 
         @TestMetadata("typeAliasInAnonymousObjectType.kt")
