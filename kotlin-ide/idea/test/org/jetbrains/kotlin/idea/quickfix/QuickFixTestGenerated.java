@@ -7779,6 +7779,22 @@ public abstract class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/inlineClass")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class InlineClass extends AbstractQuickFixTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        @TestMetadata("inlineClassDeprecated.kt")
+        public void testInlineClassDeprecated() throws Exception {
+            runTest("idea/testData/quickfix/inlineClass/inlineClassDeprecated.kt");
+        }
+    }
+
+    @TestMetadata("idea/testData/quickfix/inlineClassConstructorNotValParameter")
+    @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/inlineClassConstructorNotValParameter")
     public static class InlineClassConstructorNotValParameter extends AbstractQuickFixTest {
