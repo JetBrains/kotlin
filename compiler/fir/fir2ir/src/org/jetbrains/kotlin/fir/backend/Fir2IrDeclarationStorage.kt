@@ -76,6 +76,23 @@ class Fir2IrDeclarationStorage(
 
     private val propertyCache = ConcurrentHashMap<FirProperty, IrProperty>()
 
+    // interface A { /* $1 */ fun foo() }
+    // interface B : A {
+    //      /* $2 */ fake_override fun foo()
+    // }
+    // interface C : B {
+    //    /* $3 */ override fun foo()
+    // }
+    //
+    // We've got FIR declarations only for $1 and $3, but we've got a fake override for $2 in IR
+    // and just to simplify things we create a synthetic FIR for $2, while it can't be referenced from other FIR nodes.
+    //
+    // But when we binding overrides for $3, we want it had $2 ad it's overridden,
+    // so remember that in class B there's a fake override $2 for real $1.
+    //
+    // Thus we may obtain it by fakeOverridesInClass[ir(B)][fir(A::foo)] -> fir(B::foo)
+    private val fakeOverridesInClass = mutableMapOf<IrClass, MutableMap<FirCallableDeclaration<*>, FirCallableDeclaration<*>>>()
+
     // For pure fields (from Java) only
     private val fieldToPropertyCache = ConcurrentHashMap<FirField, IrProperty>()
 
@@ -633,7 +650,7 @@ class Fir2IrDeclarationStorage(
                 }
                 if (correspondingProperty is Fir2IrLazyProperty && !isFakeOverride && thisReceiverOwner != null) {
                     this.overriddenSymbols = correspondingProperty.fir.generateOverriddenAccessorSymbols(
-                        correspondingProperty.containingClass, !isSetter, session, scopeSession, declarationStorage
+                        correspondingProperty.containingClass, !isSetter, session, scopeSession, declarationStorage, fakeOverrideGenerator
                     )
                 }
             }
@@ -833,6 +850,23 @@ class Fir2IrDeclarationStorage(
     internal fun cacheDelegatedProperty(property: FirProperty, irProperty: IrProperty) {
         propertyCache[property] = irProperty
         delegatedReverseCache[irProperty] = property
+    }
+
+    internal fun saveFakeOverrideInClass(
+        irClass: IrClass,
+        callableDeclaration: FirCallableDeclaration<*>,
+        fakeOverride: FirCallableDeclaration<*>
+    ) {
+        fakeOverridesInClass.getOrPut(irClass, ::mutableMapOf)[callableDeclaration] = fakeOverride
+    }
+
+    fun getFakeOverrideInClass(
+        irClass: IrClass,
+        callableDeclaration: FirCallableDeclaration<*>
+    ): FirCallableDeclaration<*>? {
+        // Init lazy class if necessary
+        irClass.declarations
+        return fakeOverridesInClass[irClass]?.get(callableDeclaration)
     }
 
     fun getCachedIrField(field: FirField): IrField? = fieldCache[field]
@@ -1108,13 +1142,27 @@ class Fir2IrDeclarationStorage(
         val parentOrigin = (irParent as? IrDeclaration)?.origin ?: IrDeclarationOrigin.DEFINED
         val declarationOrigin = computeDeclarationOrigin(firSymbol, parentOrigin)
         // TODO: package fragment members (?)
-        val parent = irParent
-        if (parent is Fir2IrLazyClass) {
-            assert(parentOrigin != IrDeclarationOrigin.DEFINED) {
-                "Should not have reference to public API uncached property from source code"
+        when (val parent = irParent) {
+            is Fir2IrLazyClass -> {
+                assert(parentOrigin != IrDeclarationOrigin.DEFINED) {
+                    "Should not have reference to public API uncached property from source code"
+                }
+                signature?.let {
+                    return createIrLazyDeclaration(it, parent, declarationOrigin).symbol
+                }
             }
-            signature?.let {
-                return createIrLazyDeclaration(it, parent, declarationOrigin).symbol
+            is IrLazyClass -> {
+                val unwrapped = fir.unwrapFakeOverrides()
+                if (unwrapped !== fir) {
+                    when (unwrapped) {
+                        is FirSimpleFunction -> {
+                            return getIrFunctionSymbol(unwrapped.symbol)
+                        }
+                        is FirProperty -> {
+                            return getIrPropertySymbol(unwrapped.symbol)
+                        }
+                    }
+                }
             }
         }
         return createIrDeclaration(irParent, declarationOrigin).apply {

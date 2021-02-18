@@ -144,7 +144,7 @@ internal class ClassMemberGenerator(
             }
             if (irFunction is IrSimpleFunction && firFunction is FirSimpleFunction && containingClass != null) {
                 irFunction.overriddenSymbols = firFunction.generateOverriddenFunctionSymbols(
-                    containingClass, session, scopeSession, declarationStorage
+                    containingClass, session, scopeSession, declarationStorage, fakeOverrideGenerator
                 )
             }
         }
@@ -254,7 +254,7 @@ internal class ClassMemberGenerator(
             }
             if (containingClass != null) {
                 this.overriddenSymbols = property.generateOverriddenAccessorSymbols(
-                    containingClass, isGetter, session, scopeSession, declarationStorage
+                    containingClass, isGetter, session, scopeSession, declarationStorage, fakeOverrideGenerator
                 )
             }
 

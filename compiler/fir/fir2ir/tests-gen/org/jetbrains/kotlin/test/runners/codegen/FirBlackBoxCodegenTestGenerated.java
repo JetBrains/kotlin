@@ -37769,6 +37769,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("complexMapImpl.kt")
+        public void testComplexMapImpl() throws Exception {
+            runTest("compiler/testData/codegen/box/specialBuiltins/complexMapImpl.kt");
+        }
+
+        @Test
         @TestMetadata("emptyList.kt")
         public void testEmptyList() throws Exception {
             runTest("compiler/testData/codegen/box/specialBuiltins/emptyList.kt");

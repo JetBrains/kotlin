@@ -30208,6 +30208,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/specialBuiltins/commonBridgesTarget.kt");
         }
 
+        @TestMetadata("complexMapImpl.kt")
+        public void testComplexMapImpl() throws Exception {
+            runTest("compiler/testData/codegen/box/specialBuiltins/complexMapImpl.kt");
+        }
+
         @TestMetadata("emptyList.kt")
         public void testEmptyList() throws Exception {
             runTest("compiler/testData/codegen/box/specialBuiltins/emptyList.kt");
