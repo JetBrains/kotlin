@@ -157,6 +157,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         } else {
             return super.visitTypeOperator(expression)
         }
+
         reference.transformChildrenVoid()
 
         if (shouldGenerateIndySamConversions) {

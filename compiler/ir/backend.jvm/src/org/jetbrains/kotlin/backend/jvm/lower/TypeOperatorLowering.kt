@@ -174,7 +174,10 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
 
     override fun visitCall(expression: IrCall): IrExpression {
         return when (expression.symbol) {
-            jvmIndyLambdaMetafactoryIntrinsic -> rewriteIndyLambdaMetafactoryCall(expression)
+            jvmIndyLambdaMetafactoryIntrinsic -> {
+                expression.transformChildrenVoid()
+                rewriteIndyLambdaMetafactoryCall(expression)
+            }
             else -> super.visitCall(expression)
         }
     }
@@ -267,10 +270,10 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
     private fun wrapClosureInDynamicCall(
         erasedSamType: IrSimpleType,
         samMethod: IrSimpleFunction,
-        irFunRef: IrFunctionReference
+        targetRef: IrFunctionReference
     ): IrCall {
         fun fail(message: String): Nothing =
-            throw AssertionError("$message, irFunRef:\n${irFunRef.dump()}")
+            throw AssertionError("$message, irFunRef:\n${targetRef.dump()}")
 
         val dynamicCallArguments = ArrayList<IrExpression>()
 
@@ -281,32 +284,45 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
         }.apply {
             parent = context.ir.symbols.kotlinJvmInternalInvokeDynamicPackage
 
+            val targetFun = targetRef.symbol.owner
+            val refDispatchReceiver = targetRef.dispatchReceiver
+            val refExtensionReceiver = targetRef.extensionReceiver
+
             var syntheticParameterIndex = 0
-            val targetFun = irFunRef.symbol.owner
-
-            val targetDispatchReceiverParameter = targetFun.dispatchReceiverParameter
-            if (targetDispatchReceiverParameter != null) {
-                addValueParameter("p${syntheticParameterIndex++}", targetDispatchReceiverParameter.type)
-                val dispatchReceiver = irFunRef.dispatchReceiver
-                    ?: fail("Captured dispatch receiver is not provided")
-                dynamicCallArguments.add(dispatchReceiver)
-            }
-
-            val targetExtensionReceiverParameter = targetFun.extensionReceiverParameter
-            if (targetExtensionReceiverParameter != null && irFunRef.extensionReceiver != null) {
-                addValueParameter("p${syntheticParameterIndex++}", targetExtensionReceiverParameter.type)
-                val extensionReceiver = irFunRef.extensionReceiver!!
-                dynamicCallArguments.add(extensionReceiver)
+            var argumentStart = 0
+            when (targetFun) {
+                is IrSimpleFunction -> {
+                    if (refDispatchReceiver != null) {
+                        addValueParameter("p${syntheticParameterIndex++}", targetFun.dispatchReceiverParameter!!.type)
+                        dynamicCallArguments.add(refDispatchReceiver)
+                    }
+                    if (refExtensionReceiver != null) {
+                        addValueParameter("p${syntheticParameterIndex++}", targetFun.extensionReceiverParameter!!.type)
+                        dynamicCallArguments.add(refExtensionReceiver)
+                    }
+                }
+                is IrConstructor -> {
+                    // At this point, outer class instances in inner class constructors are represented as regular value parameters.
+                    // However, in a function reference to such constructors, bound receiver value is stored as a dispatch receiver.
+                    if (refDispatchReceiver != null) {
+                        addValueParameter("p${syntheticParameterIndex++}", targetFun.valueParameters[0].type)
+                        dynamicCallArguments.add(refDispatchReceiver)
+                        argumentStart++
+                    }
+                }
+                else -> {
+                    throw AssertionError("Unexpected function: ${targetFun.render()}")
+                }
             }
 
             val samMethodValueParametersCount = samMethod.valueParameters.size +
-                    if (samMethod.extensionReceiverParameter != null && irFunRef.extensionReceiver == null) 1 else 0
+                    if (samMethod.extensionReceiverParameter != null && refExtensionReceiver == null) 1 else 0
             val targetFunValueParametersCount = targetFun.valueParameters.size
-            for (i in 0 until targetFunValueParametersCount - samMethodValueParametersCount) {
+            for (i in argumentStart until targetFunValueParametersCount - samMethodValueParametersCount) {
                 val targetFunValueParameter = targetFun.valueParameters[i]
                 addValueParameter("p${syntheticParameterIndex++}", targetFunValueParameter.type)
-                val capturedValueArgument = irFunRef.getValueArgument(i)
-                    ?: fail("Captured value argument #$i (${targetFunValueParameter.name}) not provided")
+                val capturedValueArgument = targetRef.getValueArgument(i)
+                    ?: fail("Captured value argument #$i (${targetFunValueParameter.render()}) not provided")
                 dynamicCallArguments.add(capturedValueArgument)
             }
         }
@@ -320,7 +336,7 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
                         "dynamicCallArguments:\n" +
                         dynamicCallArguments
                             .withIndex()
-                            .joinToString(separator = "\n  ", prefix = "[\n  ", postfix = "\n]") { (index, irArg) ->
+                            .joinToString(separator = "\n ", prefix = "[\n ", postfix = "\n]") { (index, irArg) ->
                                 "#$index: ${irArg.dump()}"
                             }
             )

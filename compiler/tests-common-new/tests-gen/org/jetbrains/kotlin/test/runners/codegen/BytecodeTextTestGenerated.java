@@ -3813,6 +3813,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         }
 
         @Test
+        @TestMetadata("functionRefToJavaInterface.kt")
+        public void testFunctionRefToJavaInterface() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/invokedynamic/functionRefToJavaInterface.kt");
+        }
+
+        @Test
         @TestMetadata("lambdas.kt")
         public void testLambdas() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/invokedynamic/lambdas.kt");
