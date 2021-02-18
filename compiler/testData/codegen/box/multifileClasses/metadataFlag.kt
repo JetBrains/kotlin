@@ -1,9 +1,6 @@
 // TARGET_BACKEND: JVM
 // WITH_RUNTIME
 
-// FIR reports unresolved reference on `extraInt`.
-// IGNORE_BACKEND_FIR: JVM_IR
-
 // MODULE: optimized
 // !INHERIT_MULTIFILE_PARTS
 // FILE: optimized.kt
