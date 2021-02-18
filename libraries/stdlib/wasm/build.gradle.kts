@@ -68,6 +68,9 @@ kotlin {
 }
 
 tasks.withType<KotlinCompile<*>>().configureEach {
+    // TODO: fix all warnings, enable explicit API mode and -Werror
+    kotlinOptions.suppressWarnings = true
+
     kotlinOptions.freeCompilerArgs += listOf(
         "-Xallow-kotlin-package",
         "-Xallow-result-return-type",
@@ -77,8 +80,7 @@ tasks.withType<KotlinCompile<*>>().configureEach {
         "-Xinline-classes",
         "-Xopt-in=kotlin.RequiresOptIn",
         "-Xopt-in=kotlin.ExperimentalUnsignedTypes",
-        "-Xopt-in=kotlin.ExperimentalStdlibApi",
-        "-Xexplicit-api=warning"
+        "-Xopt-in=kotlin.ExperimentalStdlibApi"
     )
 }
 
