@@ -4270,6 +4270,7 @@ if (PlatformInfo.isAppleTarget(project)) {
     }
 
     interopTest("interop_objc_global_initializer") {
+        enabled = !isExperimentalMM // Experimental MM doesn't support thread state switching for ObjC interop yet.
         goldValue = "OK\n"
         source = "interop/objc_with_initializer/objc_test.kt"
         interop = 'objcMisc'
@@ -4288,6 +4289,7 @@ if (PlatformInfo.isAppleTarget(project)) {
     }
 
     interopTest("interop_objc_msg_send") {
+        enabled = !isExperimentalMM // Experimental MM doesn't support thread state switching for ObjC interop yet.
         source = "interop/objc/msg_send/main.kt"
         interop = 'objcMessaging'
 
@@ -4874,6 +4876,7 @@ if (isAppleTarget(project)) {
     }
 
     frameworkTest("testGh3343Framework") {
+        enabled = !isExperimentalMM // Experimental MM doesn't support thread state switching for ObjC interop yet.
         framework('Gh3343') {
             sources = ['framework/gh3343']
             library = 'objcGh3343'
