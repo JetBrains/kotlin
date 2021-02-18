@@ -62,7 +62,7 @@ internal class NativeKlibCommonize(options: Collection<Option<*>>) : Task(option
         val konanTargets = outputCommonizerTarget.konanTargets
         val commonizerTargets = konanTargets.map(::CommonizerTarget)
 
-        val progressLogger = ProgressLogger(CliLoggerAdapter(2))
+        val progressLogger = ProgressLogger(CliLoggerAdapter(2), startImmediately = true)
         val libraryLoader = DefaultNativeLibraryLoader(progressLogger)
         val statsCollector = StatsCollector(statsType, commonizerTargets)
         val repository = FilesRepository(targetLibraries.toSet(), libraryLoader)
@@ -104,7 +104,7 @@ internal class NativeDistributionCommonize(options: Collection<Option<*>>) : Tas
         val copyEndorsedLibs = getOptional<Boolean, BooleanOptionType> { it == "copy-endorsed-libs" } ?: false
         val statsType = getOptional<StatsType, StatsTypeOptionType> { it == "log-stats" } ?: StatsType.NONE
 
-        val progressLogger = ProgressLogger(CliLoggerAdapter(2))
+        val progressLogger = ProgressLogger(CliLoggerAdapter(2), startImmediately = true)
         val libraryLoader = DefaultNativeLibraryLoader(progressLogger)
         val repository = KonanDistributionRepository(distribution, commonizerTargets.toSet(), libraryLoader)
         val existingTargets = commonizerTargets.filter { repository.getLibraries(it).isNotEmpty() }.toSet()

@@ -7,9 +7,17 @@ package org.jetbrains.kotlin.descriptors.commonizer.utils
 
 import org.jetbrains.kotlin.util.Logger
 
-class ProgressLogger(private val wrapped: Logger) : Logger by wrapped {
+class ProgressLogger(
+    private val wrapped: Logger,
+    startImmediately: Boolean = false
+) : Logger by wrapped {
     private val clockMark = ResettableClockMark()
     private var finished = true
+
+    init {
+        if (startImmediately)
+            reset()
+    }
 
     fun reset() {
         clockMark.reset()

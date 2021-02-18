@@ -27,7 +27,6 @@ internal class LibraryCommonizer internal constructor(
 
     fun run() {
         checkPreconditions()
-        progressLogger.reset()
         val allLibraries = loadLibraries()
         commonizeAndSaveResults(allLibraries)
         progressLogger.logTotal()
@@ -45,7 +44,7 @@ internal class LibraryCommonizer internal constructor(
                 progressLogger.warning("No platform libraries found for target ${target.prettyName}. This target will be excluded from commonization.")
             }
         }
-        progressLogger.log("Read lazy (uninitialized) libraries")
+        progressLogger.log("Resolved libraries to be commonized")
         return AllNativeLibraries(stdlib, librariesByTargets)
     }
 
