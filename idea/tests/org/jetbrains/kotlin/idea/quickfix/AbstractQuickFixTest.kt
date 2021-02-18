@@ -226,9 +226,7 @@ abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase(), Q
                 }
 
                 for (action in actions) {
-                    if (aClass.isAssignableFrom(action.javaClass) && !validActions.contains(action.text)) {
-                        Assert.fail("Unexpected intention action " + action.javaClass + " found")
-                    }
+                    Assert.fail("Unexpected intention action " + action.javaClass + " found")
                 }
             } else {
                 // Action shouldn't be found. Check that other actions are expected and thus tested action isn't there under another name.
