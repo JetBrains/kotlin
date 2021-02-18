@@ -61,7 +61,7 @@ internal class NativeKlibCommonize(options: Collection<Option<*>>) : Task(option
         val konanTargets = outputCommonizerTarget.konanTargets
         val logger = CliLoggerAdapter(2)
         val libraryLoader = DefaultNativeLibraryLoader(logger)
-        val statsCollector = StatsCollector(statsType, outputCommonizerTarget.konanTargets.toList())
+        val statsCollector = StatsCollector(statsType, konanTargets.toList())
         val repository = FilesRepository(targetLibraries.toSet(), libraryLoader)
 
         val resultsConsumer = buildResultsConsumer {
@@ -75,10 +75,10 @@ internal class NativeKlibCommonize(options: Collection<Option<*>>) : Task(option
         LibraryCommonizer(
             konanDistribution = distribution,
             repository = repository,
-            dependencies = KonanDistributionRepository(distribution, outputCommonizerTarget.konanTargets, libraryLoader) +
+            dependencies = KonanDistributionRepository(distribution, konanTargets, libraryLoader) +
                     FilesRepository(dependencyLibraries.toSet(), libraryLoader),
             libraryLoader = libraryLoader,
-            targets = outputCommonizerTarget.konanTargets.toList(),
+            targets = konanTargets.toList(),
             resultsConsumer = resultsConsumer,
             statsCollector = statsCollector,
             logger = logger
@@ -103,7 +103,7 @@ internal class NativeDistributionCommonize(options: Collection<Option<*>>) : Tas
         val logger = CliLoggerAdapter(2)
         val libraryLoader = DefaultNativeLibraryLoader(logger)
         val repository = KonanDistributionRepository(distribution, targets.toSet(), libraryLoader)
-        val statsCollector = StatsCollector(statsType, targets.toList())
+        val statsCollector = StatsCollector(statsType, targets)
 
         val resultsConsumer = buildResultsConsumer {
             this add ModuleSerializer(destination, NativeDistributionCommonizerOutputLayout)

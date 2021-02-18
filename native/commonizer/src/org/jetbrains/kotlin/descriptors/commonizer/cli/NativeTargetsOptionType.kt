@@ -15,7 +15,7 @@ internal object NativeTargetsOptionType : OptionType<List<KonanTarget>>("targets
 
         val targets = targetNames.mapTo(HashSet()) { targetName ->
             predefinedTargets[targetName] ?: onError("Unknown hardware target: $targetName")
-        }.toList()
+        }.sortedBy { it.name }
 
         return Option(this, targets)
     }
