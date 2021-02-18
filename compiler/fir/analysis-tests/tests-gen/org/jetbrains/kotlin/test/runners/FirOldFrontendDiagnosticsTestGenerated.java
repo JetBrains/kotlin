@@ -24374,6 +24374,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("internalTypeInConstructor.kt")
+            public void testInternalTypeInConstructor() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/sealed/internalTypeInConstructor.kt");
+            }
+
+            @Test
             @TestMetadata("kt44316.kt")
             public void testKt44316() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/sealed/kt44316.kt");
@@ -24491,6 +24497,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             @TestMetadata("OperationWhen.kt")
             public void testOperationWhen() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/sealed/OperationWhen.kt");
+            }
+
+            @Test
+            @TestMetadata("privateTypeInConstructor.kt")
+            public void testPrivateTypeInConstructor() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/sealed/privateTypeInConstructor.kt");
             }
 
             @Test
