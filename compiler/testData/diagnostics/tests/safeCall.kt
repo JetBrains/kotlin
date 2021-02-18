@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !WITH_NEW_INFERENCE
 
 fun f(s: String, action: (String.() -> Unit)?) {

@@ -45,10 +45,10 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
     }
 
     val UNRESOLVED by object : DiagnosticGroup("Unresolved") {
-        val HIDDEN by error<FirSourceElement, PsiElement> {
+        val HIDDEN by error<FirSourceElement, PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<AbstractFirBasedSymbol<*>>("hidden")
         }
-        val UNRESOLVED_REFERENCE by error<FirSourceElement, PsiElement> {
+        val UNRESOLVED_REFERENCE by error<FirSourceElement, PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<String>("reference")
         }
         val UNRESOLVED_LABEL by error<FirSourceElement, PsiElement>()
@@ -62,7 +62,7 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
     val SUPER by object : DiagnosticGroup("Super") {
         val SUPER_IS_NOT_AN_EXPRESSION by error<FirSourceElement, PsiElement>()
         val SUPER_NOT_AVAILABLE by error<FirSourceElement, PsiElement>()
-        val ABSTRACT_SUPER_CALL by error<FirSourceElement, PsiElement>()
+        val ABSTRACT_SUPER_CALL by error<FirSourceElement, PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED)
         val INSTANCE_ACCESS_BEFORE_SUPER_CALL by error<FirSourceElement, PsiElement> {
             parameter<String>("target")
         }
@@ -152,20 +152,21 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
     }
 
     val APPLICABILITY by object : DiagnosticGroup("Applicability") {
-        val NONE_APPLICABLE by error<FirSourceElement, PsiElement> {
+        val NONE_APPLICABLE by error<FirSourceElement, PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<Collection<AbstractFirBasedSymbol<*>>>("candidates")
         }
 
-        val INAPPLICABLE_CANDIDATE by error<FirSourceElement, PsiElement> {
+        val INAPPLICABLE_CANDIDATE by error<FirSourceElement, PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<AbstractFirBasedSymbol<*>>("candidate")
         }
+
         val INAPPLICABLE_LATEINIT_MODIFIER by error<FirSourceElement, KtModifierListOwner>(PositioningStrategy.LATEINIT_MODIFIER) {
             parameter<String>("reason")
         }
     }
 
     val AMBIGUIRY by object : DiagnosticGroup("Ambiguity") {
-        val AMBIGUITY by error<FirSourceElement, PsiElement> {
+        val AMBIGUITY by error<FirSourceElement, PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<Collection<AbstractFirBasedSymbol<*>>>("candidates")
         }
         val ASSIGN_OPERATOR_AMBIGUITY by error<FirSourceElement, PsiElement> {
@@ -364,7 +365,7 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val UNSAFE_CALL by error<FirSourceElement, PsiElement>(PositioningStrategy.DOT_BY_QUALIFIED) {
             parameter<ConeKotlinType>("receiverType")
         }
-        val UNSAFE_IMPLICIT_INVOKE_CALL by error<FirSourceElement, PsiElement> {
+        val UNSAFE_IMPLICIT_INVOKE_CALL by error<FirSourceElement, PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<ConeKotlinType>("receiverType")
         }
         val UNSAFE_INFIX_CALL by error<FirSourceElement, KtExpression> {

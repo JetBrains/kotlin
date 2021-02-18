@@ -9,6 +9,6 @@ fun main1() {
 }
 
 fun main2() {
-    { "" }.<!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>bar<!>()<!>
+    { "" }.<!INAPPLICABLE_CANDIDATE!>bar<!>()
     "".bar()
 }

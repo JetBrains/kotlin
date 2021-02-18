@@ -1,9 +1,9 @@
 // !WITH_NEW_INFERENCE
 val receiver = { Int.(<!SYNTAX!><!>) <!SYNTAX!>-><!> }
-val receiverWithParameter = { Int.(<!UNRESOLVED_REFERENCE!>a<!>) <!SYNTAX!>-><!> }
+val receiverWithParameter = { <!UNRESOLVED_REFERENCE!>Int.(a)<!> <!SYNTAX!>-><!> }
 
 val receiverAndReturnType = { Int.(<!SYNTAX!><!>)<!SYNTAX!>: Int ->  5<!> }
-val receiverAndReturnTypeWithParameter = { Int.(<!UNRESOLVED_REFERENCE!>a<!><!SYNTAX!><!SYNTAX!><!>: Int): Int ->  5<!> }
+val receiverAndReturnTypeWithParameter = { Int.(a<!SYNTAX!><!SYNTAX!><!>: Int): Int ->  5<!> }
 
 val returnType = { (<!SYNTAX!><!>): Int -> 5 }
 val returnTypeWithParameter = { <!COMPONENT_FUNCTION_MISSING!>(b: Int): Int<!> -> 5 }

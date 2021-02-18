@@ -732,4 +732,20 @@ object PositioningStrategies {
             return super.mark(element)
         }
     }
+
+    val REFERENCE_BY_QUALIFIED: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
+        override fun mark(element: PsiElement): List<TextRange> {
+            when (element) {
+                is KtQualifiedExpression -> {
+                    when (val selectorExpression = element.selectorExpression) {
+                        is KtCallExpression -> return mark(selectorExpression.calleeExpression ?: selectorExpression)
+                        is KtReferenceExpression -> return mark(selectorExpression)
+                    }
+                }
+                is KtCallExpression -> return mark(element.calleeExpression ?: element)
+                is KtConstructorDelegationCall -> return mark(element.calleeExpression ?: element)
+            }
+            return super.mark(element)
+        }
+    }
 }

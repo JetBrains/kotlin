@@ -20,7 +20,7 @@ class WrappedPropertyDescriptor : PropertyDescriptor {
 fun test() {
     val descriptor = WrappedPropertyDescriptor()
     val res1 = descriptor.setter
-    val res2 = descriptor.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>getSetter<!>()<!> // Should be error
+    val res2 = descriptor.<!UNRESOLVED_REFERENCE!>getSetter<!>() // Should be error
     val res3 = descriptor.isDelegated
-    val res4 = descriptor.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>isDelegated<!>()<!> // Should be error
+    val res4 = descriptor.<!UNRESOLVED_REFERENCE!>isDelegated<!>() // Should be error
 }

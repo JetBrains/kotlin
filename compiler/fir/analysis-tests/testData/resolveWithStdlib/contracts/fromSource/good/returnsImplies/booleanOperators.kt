@@ -59,8 +59,8 @@ fun test_2(x: Any) {
 fun test_3(x: Any) {
     myRequireOr(x is B, x is C)
     x.foo() // OK
-    x.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>bar<!>()<!> // Error
-    x.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>baz<!>()<!> // Error
+    x.<!UNRESOLVED_REFERENCE!>bar<!>() // Error
+    x.<!UNRESOLVED_REFERENCE!>baz<!>() // Error
 }
 
 fun test_4(x: Any) {

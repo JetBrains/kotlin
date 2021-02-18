@@ -28,7 +28,7 @@ abstract class My(@Field arg: Int, @Field val w: Int) {
     fun foo() {}
 
     @Field
-    val v: Int by <!UNRESOLVED_REFERENCE!><!UNRESOLVED_REFERENCE!>Delegates<!>.<!UNRESOLVED_REFERENCE!>lazy<!> { 42 }<!>
+    val v: Int by <!UNRESOLVED_REFERENCE!>Delegates<!>.<!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>lazy<!> { 42 }
 }
 
 enum class Your {

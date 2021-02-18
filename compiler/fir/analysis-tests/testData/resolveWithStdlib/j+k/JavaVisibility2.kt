@@ -27,8 +27,8 @@ class A {
     val p3 = JavaProtected().<!HIDDEN!>javaPProtectedPackage<!>
 
     fun test() {
-        JavaProtected.<!HIDDEN{LT}!><!HIDDEN{PSI}!>javaMProtectedStatic<!>()<!>
-        JavaPackageLocal.<!HIDDEN{LT}!><!HIDDEN{PSI}!>javaMPackage<!>()<!>
+        JavaProtected.<!HIDDEN!>javaMProtectedStatic<!>()
+        JavaPackageLocal.<!HIDDEN!>javaMPackage<!>()
     }
 }
 
@@ -39,7 +39,7 @@ class B : JavaProtected() {
 
     fun test() {
         JavaProtected.javaMProtectedStatic()
-        JavaPackageLocal.<!HIDDEN{LT}!><!HIDDEN{PSI}!>javaMPackage<!>()<!>
+        JavaPackageLocal.<!HIDDEN!>javaMPackage<!>()
     }
 }
 

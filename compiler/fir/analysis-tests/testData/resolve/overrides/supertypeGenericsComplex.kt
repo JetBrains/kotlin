@@ -10,5 +10,5 @@ class C : Base<CharSequence>()
 
 fun f(list: MutableList<X>, s: MutableList<CharSequence>) {
     C().f(list, s)
-    C().<!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>f<!>(s, list)<!>
+    C().<!INAPPLICABLE_CANDIDATE!>f<!>(s, list)
 }

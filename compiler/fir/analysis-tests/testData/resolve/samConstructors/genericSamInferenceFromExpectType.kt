@@ -18,9 +18,9 @@ fun main() {
         x.toInt().toString()
     })
 
-    <!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>foo2<!>(MyFunction { x: Int ->
+    <!INAPPLICABLE_CANDIDATE!>foo2<!>(MyFunction { x: Int ->
         x.toString()
-    })<!>
+    })
 
     foo3(
        MyFunction { x ->

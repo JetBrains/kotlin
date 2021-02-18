@@ -13,5 +13,5 @@ open class B {
 class A : IWithToString, B() {
     override fun toString(): String = super.toString() // resolve to Any.toString
     override fun foo(): String = super.foo() // resolve to B.foo()
-    override fun bar(): String = super.<!ABSTRACT_SUPER_CALL{LT}!><!ABSTRACT_SUPER_CALL{PSI}!>bar<!>()<!> // should be an error
+    override fun bar(): String = super.<!ABSTRACT_SUPER_CALL!>bar<!>() // should be an error
 }

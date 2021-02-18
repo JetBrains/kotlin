@@ -15,7 +15,7 @@ class C : A, B() {
     override fun foo() {
         super.foo()
 
-        super.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>bar<!>()<!> // should be ambiguity (NB: really we should have overridden bar in C)
+        super.<!UNRESOLVED_REFERENCE!>bar<!>() // should be ambiguity (NB: really we should have overridden bar in C)
 
         super.baz() // Ok
         baz()       // Ok

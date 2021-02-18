@@ -347,6 +347,32 @@ object LightTreePositioningStrategies {
         }
     }
 
+    val REFERENCE_BY_QUALIFIED: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
+        override fun mark(
+            node: LighterASTNode,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>
+        ): List<TextRange> {
+            if (node.tokenType == KtNodeTypes.CALL_EXPRESSION || node.tokenType == KtNodeTypes.CONSTRUCTOR_DELEGATION_CALL) {
+                return markElement(tree.referenceExpression(node) ?: node, startOffset, endOffset, tree, node)
+            }
+            if (node.tokenType != KtNodeTypes.DOT_QUALIFIED_EXPRESSION && node.tokenType != KtNodeTypes.SAFE_ACCESS_EXPRESSION) {
+                return super.mark(node, startOffset, endOffset, tree)
+            }
+            val selector = tree.selector(node)
+            if (selector != null) {
+                when (selector.tokenType) {
+                    KtNodeTypes.REFERENCE_EXPRESSION ->
+                        return markElement(selector, startOffset, endOffset, tree, node)
+                    KtNodeTypes.CALL_EXPRESSION, KtNodeTypes.CONSTRUCTOR_DELEGATION_CALL ->
+                        return markElement(tree.referenceExpression(selector) ?: selector, startOffset, endOffset, tree, node)
+                }
+            }
+            return super.mark(node, startOffset, endOffset, tree)
+        }
+    }
+
     val WHEN_EXPRESSION = object : LightTreePositioningStrategy() {
         override fun mark(
             node: LighterASTNode,
@@ -399,6 +425,14 @@ private fun FlyweightCapableTreeStructure<LighterASTNode>.nameIdentifier(node: L
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.operationReference(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, KtNodeTypes.OPERATION_REFERENCE)
+
+private fun FlyweightCapableTreeStructure<LighterASTNode>.referenceExpression(node: LighterASTNode): LighterASTNode? {
+    val childrenRef = Ref<Array<LighterASTNode?>>()
+    getChildren(node, childrenRef)
+    return childrenRef.get()?.firstOrNull {
+        it?.tokenType == KtNodeTypes.REFERENCE_EXPRESSION || it?.tokenType == KtNodeTypes.CONSTRUCTOR_DELEGATION_REFERENCE
+    }
+}
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.rightParenthesis(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, KtTokens.RPAR)

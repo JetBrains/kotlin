@@ -45,7 +45,7 @@ fun test() {
     x4 checkType { _<Function1<Int, Unit>>() }
 
     { y: Int -> fun named14(): Int {return 1} }
-    val b = <!UNRESOLVED_REFERENCE!>(<!EXPRESSION_REQUIRED!>fun named15(): Boolean { return true }<!>)()<!>
+    val b = <!UNRESOLVED_REFERENCE!>(<!EXPRESSION_REQUIRED!>fun named15(): Boolean { return true }<!>)<!>()
 
     baz(<!EXPRESSION_REQUIRED!>fun named16(){}<!>)
 }

@@ -43,7 +43,7 @@ fun f() {
     val d = ""
     val c = <!UNRESOLVED_REFERENCE!>c<!>
 
-    <!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>abc<!>()<!>
+    <!UNRESOLVED_REFERENCE!>abc<!>()
 
     fun bcd() {}
 
@@ -57,7 +57,7 @@ fun f() {
         dcb()
     }
 
-    <!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>dcb<!>()<!>
+    <!UNRESOLVED_REFERENCE!>dcb<!>()
 
     abc()
 }

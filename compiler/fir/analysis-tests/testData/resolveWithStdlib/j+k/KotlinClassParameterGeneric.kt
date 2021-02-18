@@ -10,6 +10,6 @@ public class JavaClass {
 fun main() {
     JavaClass.baz(KotlinClass())
     JavaClass.baz(KotlinClass<Int>())
-    JavaClass.<!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>baz<!>(KotlinClass<String>())<!>
-    JavaClass.<!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>baz<!>("")<!>
+    JavaClass.<!INAPPLICABLE_CANDIDATE!>baz<!>(KotlinClass<String>())
+    JavaClass.<!INAPPLICABLE_CANDIDATE!>baz<!>("")
 }

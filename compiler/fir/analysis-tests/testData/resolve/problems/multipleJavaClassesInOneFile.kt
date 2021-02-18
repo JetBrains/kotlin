@@ -10,5 +10,5 @@ class Another {}
 
 fun test() {
     val some = Some()
-    val another = <!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>Another<!>()<!>
+    val another = <!UNRESOLVED_REFERENCE!>Another<!>()
 }
