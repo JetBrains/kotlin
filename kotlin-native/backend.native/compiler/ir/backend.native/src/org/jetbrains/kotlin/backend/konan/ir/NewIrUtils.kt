@@ -114,6 +114,11 @@ internal fun IrExpression.isBoxOrUnboxCall() =
 val ModuleDescriptor.konanLibrary get() = (this.klibModuleOrigin as? DeserializedKlibModuleOrigin)?.library
 val IrModuleFragment.konanLibrary get() =
     (this as? KonanIrModuleFragmentImpl)?.konanLibrary ?: descriptor.konanLibrary
+val IrPackageFragment.konanLibrary get() =
+        if (this is IrFile)
+            this.konanLibrary
+        else
+            this.packageFragmentDescriptor.containingDeclaration.konanLibrary
 val IrFile.konanLibrary get() =
     (metadata as? KonanFileMetadataSource)?.module?.konanLibrary ?: packageFragmentDescriptor.containingDeclaration.konanLibrary
 val IrDeclaration.konanLibrary: KotlinLibrary? get() {
