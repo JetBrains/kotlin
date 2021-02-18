@@ -25652,6 +25652,18 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("smartcastToInvisibleType_java.kt")
+            public void testSmartcastToInvisibleType_java() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/smartCasts/smartcastToInvisibleType_java.kt");
+            }
+
+            @Test
+            @TestMetadata("smartcastToInvisibleType_kotlin.kt")
+            public void testSmartcastToInvisibleType_kotlin() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/smartCasts/smartcastToInvisibleType_kotlin.kt");
+            }
+
+            @Test
             @TestMetadata("smartcastToNothingAfterCheckingForNull.kt")
             public void testSmartcastToNothingAfterCheckingForNull() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/smartCasts/smartcastToNothingAfterCheckingForNull.kt");

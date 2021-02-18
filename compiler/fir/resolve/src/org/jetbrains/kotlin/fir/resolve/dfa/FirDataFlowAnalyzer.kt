@@ -18,8 +18,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.resolve.PersistentImplicitReceiverStack
-import org.jetbrains.kotlin.fir.resolve.ResolutionMode
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.resolve.dfa.contracts.buildContractFir
 import org.jetbrains.kotlin.fir.resolve.dfa.contracts.createArgumentsMapping
@@ -31,6 +30,7 @@ import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.visibilityChecker
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -84,6 +84,9 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
                 private val receiverStack: PersistentImplicitReceiverStack
                     get() = components.implicitReceiverStack as PersistentImplicitReceiverStack
 
+                private val symbolProvider = components.session.symbolProvider
+                private val visibilityChecker = components.session.visibilityChecker
+
                 override val logicSystem: PersistentLogicSystem =
                     object : PersistentLogicSystem(components.session.inferenceComponents.ctx) {
                         override fun processUpdatedReceiverVariable(flow: PersistentFlow, variable: RealVariable) {
@@ -107,6 +110,27 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
                                 variableStorage.getRealVariable(it.boundSymbol, it.receiverExpression, flow)?.let { variable ->
                                     processUpdatedReceiverVariable(flow, variable)
                                 }
+                            }
+                        }
+
+                        override fun ConeKotlinType.isAcceptableForSmartcast(): Boolean {
+                            return when (this) {
+                                is ConeClassLikeType -> {
+                                    val symbol = fullyExpandedType(components.session).lookupTag.toSymbol(components.session) ?: return false
+                                    val declaration = symbol.fir as? FirRegularClass ?: return true
+                                    visibilityChecker.isVisible(
+                                        declaration,
+                                        components.session,
+                                        components.context.file,
+                                        components.context.containers,
+                                        dispatchReceiver = null
+                                    )
+                                }
+                                is ConeTypeParameterType -> true
+                                is ConeFlexibleType -> lowerBound.isAcceptableForSmartcast() && upperBound.isAcceptableForSmartcast()
+                                is ConeIntersectionType -> intersectedTypes.all { it.isAcceptableForSmartcast() }
+                                is ConeDefinitelyNotNullType -> original.isAcceptableForSmartcast()
+                                else -> false
                             }
                         }
                     }

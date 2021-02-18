@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.dfa
 
 import org.jetbrains.kotlin.fir.types.ConeInferenceContext
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.canBeNull
 import org.jetbrains.kotlin.fir.types.commonSuperTypeOrNull
 
 abstract class Flow {
@@ -58,6 +59,8 @@ abstract class LogicSystem<FLOW : Flow>(protected val context: ConeInferenceCont
     abstract fun removeLocalVariableAlias(flow: FLOW, alias: RealVariable)
 
     protected abstract fun getImplicationsWithVariable(flow: FLOW, variable: DataFlowVariable): Collection<Implication>
+
+    protected abstract fun ConeKotlinType.isAcceptableForSmartcast(): Boolean
 
     // ------------------------------- Callbacks for updating implicit receiver stack -------------------------------
 
@@ -150,7 +153,14 @@ abstract class LogicSystem<FLOW : Flow>(protected val context: ConeInferenceCont
             }
         }
         val result = mutableSetOf<ConeKotlinType>()
-        context.commonSuperTypeOrNull(intersectedTypes)?.let { result.add(it) }
+        context.commonSuperTypeOrNull(intersectedTypes)?.let {
+            if (it.isAcceptableForSmartcast()) {
+                result.add(it)
+            } else if (!it.canBeNull) {
+                result.add(context.anyType())
+            }
+            Unit
+        }
         return result
     }
 
