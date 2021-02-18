@@ -304,6 +304,7 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun TypeConstructorMarker.isIntersection(): Boolean
     fun TypeConstructorMarker.isClassTypeConstructor(): Boolean
     fun TypeConstructorMarker.isIntegerLiteralTypeConstructor(): Boolean
+    fun TypeConstructorMarker.isLocalType(): Boolean
 
     fun TypeParameterMarker.getVariance(): TypeVariance
     fun TypeParameterMarker.upperBoundCount(): Int

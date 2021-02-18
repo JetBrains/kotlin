@@ -269,6 +269,11 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
     override fun TypeConstructorMarker.isIntegerLiteralTypeConstructor() = false
 
+    override fun TypeConstructorMarker.isLocalType(): Boolean {
+        if (this !is IrClassSymbol) return false
+        return this.owner.classId?.isLocal == true
+    }
+
     override fun createFlexibleType(lowerBound: SimpleTypeMarker, upperBound: SimpleTypeMarker): KotlinTypeMarker {
         require(lowerBound.isNothing())
         require(upperBound is IrType && upperBound.isNullableAny())

@@ -22,6 +22,7 @@ open class TypeApproximatorConfiguration {
     open val definitelyNotNullType: Boolean get() = true
     open val intersection: IntersectionStrategy = IntersectionStrategy.TO_COMMON_SUPERTYPE
     open val intersectionTypesInContravariantPositions = false
+    open val localTypes = false
 
     open val typeVariable: (TypeVariableTypeConstructorMarker) -> Boolean = { false }
     open fun capturedType(ctx: TypeSystemInferenceExtensionContext, type: CapturedTypeMarker): Boolean =

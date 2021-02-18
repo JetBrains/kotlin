@@ -21,9 +21,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.firUnsafe
 import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolved
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
-import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
-import org.jetbrains.kotlin.fir.symbols.StandardClassIds
+import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
@@ -42,6 +40,11 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun TypeConstructorMarker.isIntegerLiteralTypeConstructor(): Boolean {
         return this is ConeIntegerLiteralType
+    }
+
+    override fun TypeConstructorMarker.isLocalType(): Boolean {
+        if (this !is ConeClassLikeLookupTag) return false
+        return classId.isLocal
     }
 
     override fun SimpleTypeMarker.possibleIntegerTypes(): Collection<KotlinTypeMarker> {
