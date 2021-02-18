@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.resolve.calls
 import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
 import org.jetbrains.kotlin.builtins.isFunctionOrSuspendFunctionType
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.contracts.EffectSystem
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -248,7 +249,12 @@ class CallCompleter(
         val system = builder.build()
         setConstraintSystem(system)
 
-        setResultingSubstitutor(system.resultingSubstitutor)
+        val isNewInferenceEnabled = effectSystem.languageVersionSettings.supportsFeature(LanguageFeature.NewInference)
+        val resultingSubstitutor = if (isNewInferenceEnabled) {
+            system.resultingSubstitutor.replaceWithContravariantApproximatingSubstitution()
+        } else system.resultingSubstitutor
+
+        setResultingSubstitutor(resultingSubstitutor)
     }
 
     private fun <D : CallableDescriptor> MutableResolvedCall<D>.updateResolutionStatusFromConstraintSystem(

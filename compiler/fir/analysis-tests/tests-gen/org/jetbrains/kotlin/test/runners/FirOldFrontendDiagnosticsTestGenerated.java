@@ -12371,6 +12371,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 }
 
                 @Test
+                @TestMetadata("approximateContravariantCapturedTypes.kt")
+                public void testApproximateContravariantCapturedTypes() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/approximateContravariantCapturedTypes.kt");
+                }
+
+                @Test
                 @TestMetadata("avoidCreatingUselessCapturedTypes.kt")
                 public void testAvoidCreatingUselessCapturedTypes() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/avoidCreatingUselessCapturedTypes.kt");
