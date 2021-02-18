@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
+import org.gradle.api.InvalidUserDataException
 import org.gradle.api.attributes.Usage
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Zip
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinJsReportAggregatingTestRun
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.testing.testTaskName
+import org.jetbrains.kotlin.gradle.utils.isParentOf
 import org.jetbrains.kotlin.gradle.utils.klibModuleName
 import java.io.File
 
@@ -88,11 +90,25 @@ open class KotlinJsIrTargetConfigurator(kotlinPluginVersion: String) :
                     "${target.project.name}_${compilation.name}"
                 }
 
-                val destinationDir = compilation.compileKotlinTask.destinationDir
-                outputFile = if (produceUnzippedKlib)
-                    destinationDir.absoluteFile.normalize().absolutePath
-                else
-                    File(destinationDir, "$baseName.$KLIB_TYPE").absoluteFile.normalize().absolutePath
+                compilation.compileKotlinTaskProvider.configure { task ->
+                    val outputFilePath = outputFile ?: if (produceUnzippedKlib) {
+                        task.destinationDir.absoluteFile.normalize().absolutePath
+                    } else {
+                        File(task.destinationDir, "$baseName.$KLIB_TYPE").absoluteFile.normalize().absolutePath
+                    }
+                    outputFile = outputFilePath
+
+                    val taskOutputDir = if (produceUnzippedKlib) File(outputFilePath) else File(outputFilePath).parentFile
+                    if (taskOutputDir.isParentOf(task.project.rootDir))
+                        throw InvalidUserDataException(
+                            "The output directory '$taskOutputDir' (defined by outputFile of $task) contains or " +
+                                    "matches the project root directory '${task.project.rootDir}'.\n" +
+                                    "Gradle will not be able to build the project because of the root directory lock.\n" +
+                                    "To fix this, consider using the default outputFile location instead of providing it explicitly."
+                        )
+
+                    task.destinationDir = taskOutputDir
+                }
 
                 val klibModuleName = target.project.klibModuleName(baseName)
                 freeCompilerArgs = freeCompilerArgs + "$MODULE_NAME=$klibModuleName"
