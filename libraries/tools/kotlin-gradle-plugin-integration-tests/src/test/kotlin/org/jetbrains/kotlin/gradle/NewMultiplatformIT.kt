@@ -1617,7 +1617,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                 )
 
                 // Native:
-                assertFileExists("build/classes/kotlin/linux64/integrationTest/new-mpp-associate-compilations_integrationTest.klib")
+                assertFileExists("build/classes/kotlin/linux64/integrationTest/klib/new-mpp-associate-compilations_integrationTest.klib")
             }
 
             gradleBuildScript().appendText(
@@ -1695,10 +1695,10 @@ class NewMultiplatformIT : BaseGradleIT() {
                     }
                 }
 
-            val interopManifest = getManifest("foo/build/classes/kotlin/linux/main/foo-cinterop-bar.klib")
+            val interopManifest = getManifest("foo/build/classes/kotlin/linux/main/cinterop/foo-cinterop-bar.klib")
             assertEquals("org.sample.one:foo-cinterop-bar", interopManifest[KLIB_PROPERTY_UNIQUE_NAME])
 
-            val nativeManifest = getManifest("foo/build/classes/kotlin/linux/main/foo.klib")
+            val nativeManifest = getManifest("foo/build/classes/kotlin/linux/main/klib/foo.klib")
             assertEquals("org.sample.one:foo", nativeManifest[KLIB_PROPERTY_UNIQUE_NAME])
             // Check the short name that is used as a prefix in generated ObjC headers.
             assertEquals("foo", nativeManifest[KLIB_PROPERTY_SHORT_NAME])
