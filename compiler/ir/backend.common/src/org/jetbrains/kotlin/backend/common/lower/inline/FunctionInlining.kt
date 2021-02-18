@@ -83,8 +83,13 @@ class FunctionInlining(
 
     private var containerScope: ScopeWithIr? = null
 
+//    private val inlineGraphTracker: InlineGraphTracker = InlineGraphTracker()
+
+
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         // TODO container: IrSymbolDeclaration
+//        val file = container.file
+//        inlineGraphTracker.enterFile(file)
         containerScope = createScope(container as IrSymbolOwner)
         irBody.accept(this, null)
         containerScope = null

@@ -3180,6 +3180,11 @@ public class IrJsCodegenInlineES6TestGenerated extends AbstractIrJsCodegenInline
             runTest("compiler/testData/codegen/boxInline/simple/destructuringIndexClash.kt");
         }
 
+        @TestMetadata("diamondInline.kt")
+        public void testDiamondInline() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/simple/diamondInline.kt");
+        }
+
         @TestMetadata("extension.kt")
         public void testExtension() throws Exception {
             runTest("compiler/testData/codegen/boxInline/simple/extension.kt");
@@ -3198,6 +3203,11 @@ public class IrJsCodegenInlineES6TestGenerated extends AbstractIrJsCodegenInline
         @TestMetadata("inlineCallInInlineLambda.kt")
         public void testInlineCallInInlineLambda() throws Exception {
             runTest("compiler/testData/codegen/boxInline/simple/inlineCallInInlineLambda.kt");
+        }
+
+        @TestMetadata("inlineChain.kt")
+        public void testInlineChain() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/simple/inlineChain.kt");
         }
 
         @TestMetadata("kt17431.kt")

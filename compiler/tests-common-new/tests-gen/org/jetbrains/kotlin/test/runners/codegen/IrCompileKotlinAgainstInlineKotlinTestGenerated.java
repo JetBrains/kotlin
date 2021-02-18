@@ -3993,6 +3993,12 @@ public class IrCompileKotlinAgainstInlineKotlinTestGenerated extends AbstractIrC
         }
 
         @Test
+        @TestMetadata("diamondInline.kt")
+        public void testDiamondInline() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/simple/diamondInline.kt");
+        }
+
+        @Test
         @TestMetadata("extension.kt")
         public void testExtension() throws Exception {
             runTest("compiler/testData/codegen/boxInline/simple/extension.kt");
@@ -4014,6 +4020,12 @@ public class IrCompileKotlinAgainstInlineKotlinTestGenerated extends AbstractIrC
         @TestMetadata("inlineCallInInlineLambda.kt")
         public void testInlineCallInInlineLambda() throws Exception {
             runTest("compiler/testData/codegen/boxInline/simple/inlineCallInInlineLambda.kt");
+        }
+
+        @Test
+        @TestMetadata("inlineChain.kt")
+        public void testInlineChain() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/simple/inlineChain.kt");
         }
 
         @Test
