@@ -36,7 +36,7 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
     val GENERAL_SYNTAX by object : DiagnosticGroup("General syntax") {
         val ILLEGAL_CONST_EXPRESSION by error<FirSourceElement, PsiElement>()
         val ILLEGAL_UNDERSCORE by error<FirSourceElement, PsiElement>()
-        val EXPRESSION_REQUIRED by error<FirSourceElement, PsiElement>()
+        val EXPRESSION_REQUIRED by error<FirSourceElement, PsiElement>(PositioningStrategy.SELECTOR_BY_QUALIFIED)
         val BREAK_OR_CONTINUE_OUTSIDE_A_LOOP by error<FirSourceElement, PsiElement>()
         val NOT_A_LOOP_LABEL by error<FirSourceElement, PsiElement>()
         val VARIABLE_EXPECTED by error<FirSourceElement, PsiElement>()

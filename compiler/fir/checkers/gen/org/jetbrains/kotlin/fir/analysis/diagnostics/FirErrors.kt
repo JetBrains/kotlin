@@ -55,7 +55,7 @@ object FirErrors {
     // General syntax
     val ILLEGAL_CONST_EXPRESSION by error0<FirSourceElement, PsiElement>()
     val ILLEGAL_UNDERSCORE by error0<FirSourceElement, PsiElement>()
-    val EXPRESSION_REQUIRED by error0<FirSourceElement, PsiElement>()
+    val EXPRESSION_REQUIRED by error0<FirSourceElement, PsiElement>(SourceElementPositioningStrategies.SELECTOR_BY_QUALIFIED)
     val BREAK_OR_CONTINUE_OUTSIDE_A_LOOP by error0<FirSourceElement, PsiElement>()
     val NOT_A_LOOP_LABEL by error0<FirSourceElement, PsiElement>()
     val VARIABLE_EXPECTED by error0<FirSourceElement, PsiElement>()
