@@ -637,10 +637,10 @@ public class KotlinParsing extends AbstractKotlinParsing {
                 }
                 if (at(COMMA)) {
                     advance();
-                }
-                else {
+                } else {
                     if (!at(RPAR)) {
                         error("Expecting comma or ')'");
+                        break;
                     }
                 }
             }
