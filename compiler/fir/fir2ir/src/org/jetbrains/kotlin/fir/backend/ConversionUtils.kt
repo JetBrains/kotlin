@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
+import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
@@ -47,6 +48,7 @@ import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtQualifiedExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.types.ConstantValueKind
@@ -56,9 +58,24 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 internal fun <T : IrElement> FirElement.convertWithOffsets(
     f: (startOffset: Int, endOffset: Int) -> T
 ): T {
-    if (psi is PsiCompiledElement) return f(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
-    val startOffset = psi?.startOffsetSkippingComments ?: UNDEFINED_OFFSET
-    val endOffset = psi?.endOffset ?: UNDEFINED_OFFSET
+    val psi = psi
+    if (psi is PsiCompiledElement || psi == null) return f(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
+    val startOffset = psi.startOffsetSkippingComments
+    val endOffset = psi.endOffset
+    return f(startOffset, endOffset)
+}
+
+internal fun <T : IrElement> FirQualifiedAccess.convertWithOffsets(
+    f: (startOffset: Int, endOffset: Int) -> T
+): T {
+    val psi = psi
+    if (psi is PsiCompiledElement || psi == null) return f(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
+    val startOffset = if (psi is KtQualifiedExpression) {
+        (psi.selectorExpression ?: psi).startOffsetSkippingComments
+    } else {
+        psi.startOffsetSkippingComments
+    }
+    val endOffset = psi.endOffset
     return f(startOffset, endOffset)
 }
 
