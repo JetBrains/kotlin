@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import kotlin.reflect.KClass
 
 /**
  * The entry point into all frontend-related work. Has the following contracts:
@@ -59,12 +58,30 @@ abstract class KtAnalysisSession(final override val token: ValidityToken) : Vali
 
     abstract fun createContextDependentCopy(originalKtFile: KtFile, fakeKtElement: KtElement): KtAnalysisSession
 
-    //TODO get rid of it
-    fun KtCallableSymbol.getOverriddenSymbols(containingDeclaration: KtClassOrObjectSymbol): List<KtCallableSymbol> =
-        symbolDeclarationOverridesProvider.getOverriddenSymbols(this, containingDeclaration)
 
-    fun KtCallableSymbol.getOverriddenSymbols(): List<KtCallableSymbol> =
-        symbolDeclarationOverridesProvider.getOverriddenSymbols(this)
+    /**
+     * Return a list of **all** symbols which are overridden by symbol
+     *
+     * E.g, if we have `A.foo` overrides `B.foo` overrides `C.foo`, all two super declarations `B.foo`, `C.foo` will be returned
+     *
+     * Unwraps substituted overridden symbols (see [org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbolOrigin.INTERSECTION_OVERRIDE])
+     *
+     * @see getDirectlyOverriddenSymbols
+     */
+    fun KtCallableSymbol.getAllOverriddenSymbols(): List<KtCallableSymbol> =
+        symbolDeclarationOverridesProvider.getAllOverriddenSymbols(this)
+
+    /**
+     * Return a list of symbols which are **directly** overridden by symbol
+     **
+     * E.g, if we have `A.foo` overrides `B.foo` overrides `C.foo`, only declarations directly overriden `B.foo` will be returned
+     *
+     * Unwraps substituted overridden symbols (see [org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbolOrigin.INTERSECTION_OVERRIDE])
+     *
+     *  @see getAllOverriddenSymbols
+     */
+    fun KtCallableSymbol.getDirectlyOverriddenSymbols(): List<KtCallableSymbol> =
+        symbolDeclarationOverridesProvider.getDirectlyOverriddenSymbols(this)
 
     fun KtCallableSymbol.getIntersectionOverriddenSymbols(): Collection<KtCallableSymbol> =
         symbolDeclarationOverridesProvider.getIntersectionOverriddenSymbols(this)
