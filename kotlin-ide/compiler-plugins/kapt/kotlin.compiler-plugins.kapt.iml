@@ -31,5 +31,6 @@
     <orderEntry type="module" module-name="kotlin.gradle.gradle-tooling" />
     <orderEntry type="module" module-name="intellij.platform.lang" />
     <orderEntry type="module" module-name="intellij.gradle.common" />
+    <orderEntry type="module" module-name="kotlin.fir.frontend-independent" />
   </component>
 </module>

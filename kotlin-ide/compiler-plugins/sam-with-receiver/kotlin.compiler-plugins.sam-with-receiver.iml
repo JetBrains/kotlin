@@ -35,5 +35,6 @@
     <orderEntry type="module" module-name="kotlin.compiler-plugins.annotation-based-compiler-support" />
     <orderEntry type="module" module-name="intellij.platform.core" />
     <orderEntry type="module" module-name="intellij.gradle.common" />
+    <orderEntry type="module" module-name="kotlin.fir.frontend-independent" />
   </component>
 </module>

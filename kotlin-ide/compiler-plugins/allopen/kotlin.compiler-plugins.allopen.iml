@@ -38,5 +38,6 @@
     <orderEntry type="module" module-name="intellij.java.psi" />
     <orderEntry type="module" module-name="intellij.gradle.toolingExtension" />
     <orderEntry type="module" module-name="intellij.gradle.common" />
+    <orderEntry type="module" module-name="kotlin.fir.frontend-independent" />
   </component>
 </module>
