@@ -10631,6 +10631,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 }
 
                 @Test
+                @TestMetadata("syntaxError.kt")
+                public void testSyntaxError() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/syntaxError.kt");
+                }
+
+                @Test
                 @TestMetadata("thisIdentifierInfo.kt")
                 public void testThisIdentifierInfo() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/thisIdentifierInfo.kt");

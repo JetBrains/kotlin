@@ -10637,6 +10637,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("syntaxError.kt")
+                public void testSyntaxError() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/syntaxError.kt");
+                }
+
+                @Test
                 @TestMetadata("thisIdentifierInfo.kt")
                 public void testThisIdentifierInfo() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/thisIdentifierInfo.kt");
