@@ -106,6 +106,7 @@ internal class NativeDistributionCommonize(options: Collection<Option<*>>) : Tas
         val logger = CliLoggerAdapter(2)
         val libraryLoader = DefaultNativeLibraryLoader(logger)
         val repository = KonanDistributionRepository(distribution, commonizerTargets.toSet(), libraryLoader)
+        val existingTargets = commonizerTargets.filter { repository.getLibraries(it).isNotEmpty() }.toSet()
         val statsCollector = StatsCollector(statsType, commonizerTargets)
 
         val resultsConsumer = buildResultsConsumer {
@@ -115,7 +116,7 @@ internal class NativeDistributionCommonize(options: Collection<Option<*>>) : Tas
             )
             if (copyStdlib) this add CopyStdlibResultsConsumer(distribution, destination, logger.toProgressLogger())
             if (copyEndorsedLibs) this add CopyEndorsedLibrairesResultsConsumer(distribution, destination, logger.toProgressLogger())
-            this add LoggingResultsConsumer(SharedCommonizerTarget(commonizerTargets.toSet()), logger.toProgressLogger())
+            this add LoggingResultsConsumer(SharedCommonizerTarget(existingTargets), logger.toProgressLogger())
         }
 
         val targetNames = commonizerTargets.joinToString { it.prettyName }
