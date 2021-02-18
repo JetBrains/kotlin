@@ -6,8 +6,11 @@
 package org.jetbrains.kotlin.test.services.sourceProviders
 
 import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives
+import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives.CHECK_TYPE
+import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives.INFERENCE_HELPERS
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
+import org.jetbrains.kotlin.test.directives.model.SimpleDirective
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
@@ -17,7 +20,10 @@ import java.io.File
 class AdditionalDiagnosticsSourceFilesProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
     companion object {
         private const val HELPERS_PATH = "./compiler/testData/diagnostics/helpers"
-        private const val CHECK_TYPE_PATH = "$HELPERS_PATH/types/checkType.kt"
+        private val DIRECTIVE_TO_FILE_MAP: Map<SimpleDirective, String> = mapOf(
+            CHECK_TYPE to "$HELPERS_PATH/types/checkType.kt",
+            INFERENCE_HELPERS to "$HELPERS_PATH/inference/inferenceUtils.kt"
+        )
     }
 
     override val directives: List<DirectivesContainer> =
@@ -26,8 +32,10 @@ class AdditionalDiagnosticsSourceFilesProvider(testServices: TestServices) : Add
     @OptIn(ExperimentalStdlibApi::class)
     override fun produceAdditionalFiles(globalDirectives: RegisteredDirectives, module: TestModule): List<TestFile> {
         return buildList {
-            if (containsDirective(globalDirectives, module, AdditionalFilesDirectives.CHECK_TYPE)) {
-                add(File(CHECK_TYPE_PATH).toTestFile())
+            for ((directive, path) in DIRECTIVE_TO_FILE_MAP) {
+                if (directive in module.directives) {
+                    add(File(path).toTestFile())
+                }
             }
         }
     }
