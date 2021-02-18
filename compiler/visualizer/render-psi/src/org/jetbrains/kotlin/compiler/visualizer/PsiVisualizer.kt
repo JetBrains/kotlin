@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.compiler.visualizer.Annotator.annotate
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
@@ -149,13 +148,6 @@ class PsiVisualizer(private val file: KtFile, analysisResult: AnalysisResult) : 
                 return null
             }
 
-            val descriptor = resolvedCall.candidateDescriptor
-            val typeArguments = resolvedCall.typeArguments
-                .takeIf { it.isNotEmpty() }
-                ?.values?.joinToString(", ", "<", ">") { renderType(it) } ?: ""
-            val annotation = descriptorRenderer.render(descriptor).replace(argumentsLabel, typeArguments)
-            addAnnotation(annotation, renderOn, deleteDuplicate = false)
-
             fun addReceiverAnnotation(receiver: ReceiverValue?, receiverKind: ExplicitReceiverKind) {
                 if (receiver != null && resolvedCall.explicitReceiverKind != receiverKind) {
                     val index = implicitReceivers.indexOf(receiver)
@@ -167,6 +159,13 @@ class PsiVisualizer(private val file: KtFile, analysisResult: AnalysisResult) : 
 
             addReceiverAnnotation(resolvedCall.extensionReceiver, ExplicitReceiverKind.EXTENSION_RECEIVER)
             addReceiverAnnotation(resolvedCall.dispatchReceiver, ExplicitReceiverKind.DISPATCH_RECEIVER)
+
+            val descriptor = resolvedCall.candidateDescriptor
+            val typeArguments = resolvedCall.typeArguments
+                .takeIf { it.isNotEmpty() }
+                ?.values?.joinToString(", ", "<", ">") { renderType(it) } ?: ""
+            val annotation = descriptorRenderer.render(descriptor).replace(argumentsLabel, typeArguments)
+            addAnnotation(annotation, renderOn, deleteDuplicate = false)
 
             return resolvedCall
         }

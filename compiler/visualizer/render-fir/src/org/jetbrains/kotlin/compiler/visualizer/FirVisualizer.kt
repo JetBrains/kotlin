@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.compiler.visualizer
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirLabel
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
@@ -24,13 +25,17 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 private typealias Stack = MutableList<Pair<String, MutableList<String>>>
 
 class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
+    private val implicitReceivers = mutableListOf<FirTypeRef>()
+
     private fun FirElement.render(): String = buildString { this@render.accept(FirRenderer(), this) }
 
     override fun addAnnotation(annotationText: String, element: PsiElement?, deleteDuplicate: Boolean) {
@@ -44,7 +49,8 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
     }
 
     inner class PsiVisitor(private val map: Map<PsiElement, MutableList<FirElement>>) : KtVisitorVoid() {
-        //private var innerLambdaCount = 0
+        private var lastCallWithLambda: String? = null
+
         private val stack = mutableListOf("" to mutableListOf<String>())
 
         private fun Stack.push(
@@ -246,17 +252,26 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
 
         override fun visitCallExpression(expression: KtCallExpression) {
             expression.firstOfTypeWithLocalReplace<FirFunctionCall> { this.calleeReference.name.asString() }
-            expression.children.filter { it.node.elementType != KtNodeTypes.REFERENCE_EXPRESSION }.forEach { it.accept(this) }
+            expression.children.filter { it.node.elementType != KtNodeTypes.REFERENCE_EXPRESSION }.forEach { psi ->
+                when (psi) {
+                    is KtLambdaArgument -> {
+                        val firLambda = psi.firstOfType<FirLambdaArgumentExpression>()?.expression as FirAnonymousFunction
+                        firLambda.receiverTypeRef?.let {
+                            lastCallWithLambda = psi.getLambdaExpression()?.firstOfType<FirLabel>()?.name
+                            implicitReceivers += it
+                            psi.accept(this)
+                            implicitReceivers -= it
+                        } ?: psi.accept(this)
+                    }
+                    else -> psi.accept(this)
+                }
+            }
         }
 
         override fun visitLambdaExpression(lambdaExpression: KtLambdaExpression) {
-            //val firLabel = lambdaExpression.firstOfType<FirLabel>()
-
             stack.push("<anonymous>")
-            //firLabel?.let { addAnnotation("${it.name}@$innerLambdaCount", lambdaExpression) }
-            //innerLambdaCount++
+            lastCallWithLambda?.let { addAnnotation("$it@${implicitReceivers.size - 1}", lambdaExpression) }
             super.visitLambdaExpression(lambdaExpression)
-            //innerLambdaCount--
             stack.pop()
         }
 
@@ -327,6 +342,15 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             }
         }
 
+        private fun renderImplicitReceiver(symbol: AbstractFirBasedSymbol<*>, psi: PsiElement?) {
+            val implicitReceiverIndex = (symbol.fir as? FirCallableMemberDeclaration<*>)?.dispatchReceiverType?.let {
+                implicitReceivers.map { (it as? FirResolvedTypeRef)?.coneType }.indexOf(it)
+            } ?: return
+            if (implicitReceiverIndex != -1) {
+                addAnnotation("this@$implicitReceiverIndex", psi)
+            }
+        }
+
         private fun renderConstructorSymbol(symbol: FirConstructorSymbol, data: StringBuilder) {
             data.append("constructor ")
             data.append(getSymbolId(symbol))
@@ -383,22 +407,18 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
                 return
             }
 
-            when (call.explicitReceiver) {
-                null -> data.append(id)
-                else -> {
-                    when {
-                        call.dispatchReceiver !is FirNoReceiverExpression -> {
-                            data.append("(")
-                            call.dispatchReceiver.typeRef.accept(this, data)
-                            data.append(")")
-                        }
-                        call.extensionReceiver !is FirNoReceiverExpression -> {
-                            // render type from symbol because this way it will be consistent with psi render
-                            symbol.fir.receiverTypeRef?.accept(this, data)
-                        }
-                    }
+            when {
+                call.dispatchReceiver !is FirNoReceiverExpression -> {
+                    data.append("(")
+                    call.dispatchReceiver.typeRef.accept(this, data)
+                    data.append(").").append(symbol.callableId.callableName)
+                }
+                call.extensionReceiver !is FirNoReceiverExpression -> {
+                    // render type from symbol because this way it will be consistent with psi render
+                    symbol.fir.receiverTypeRef?.accept(this, data)
                     data.append(".").append(symbol.callableId.callableName)
                 }
+                else -> data.append(id)
             }
 
             renderListInTriangles(call.typeArguments, data)
@@ -477,6 +497,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
 
         override fun visitResolvedNamedReference(resolvedNamedReference: FirResolvedNamedReference, data: StringBuilder) {
             val symbol = resolvedNamedReference.resolvedSymbol
+            renderImplicitReceiver(symbol, resolvedNamedReference.source.psi)
             when {
                 symbol is FirPropertySymbol && !symbol.fir.isLocal -> renderPropertySymbol(symbol, data)
                 symbol is FirNamedFunctionSymbol -> {
@@ -552,6 +573,9 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         override fun visitFunctionCall(functionCall: FirFunctionCall, data: StringBuilder) {
             when (val callee = functionCall.calleeReference) {
                 is FirResolvedNamedReference -> {
+                    if (functionCall.explicitReceiver == null) {
+                        renderImplicitReceiver(callee.resolvedSymbol, functionCall.source.psi)
+                    }
                     when (callee.resolvedSymbol) {
                         is FirConstructorSymbol -> {
                             renderConstructorSymbol(callee.resolvedSymbol as FirConstructorSymbol, data)

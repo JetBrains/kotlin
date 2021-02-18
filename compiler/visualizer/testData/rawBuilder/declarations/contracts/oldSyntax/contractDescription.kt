@@ -18,12 +18,12 @@ fun test_2() {
 //                   │        contract@0
 //                   │        │
     kotlin.contracts.contract {
-//      this@0
 //      fun <R> (contracts/ContractBuilder).callsInPlace<???>(Function<R>, contracts/InvocationKind = ...): contracts/CallsInPlace
+//      this@0
 //      │
         callsInPlace()
-//      this@0
 //      fun <R> (contracts/ContractBuilder).callsInPlace<???>(Function<R>, contracts/InvocationKind = ...): contracts/CallsInPlace
+//      this@0
 //      │
         callsInPlace()
     }
@@ -54,12 +54,12 @@ var test_3: Int = 1
 //                       │        contract@0
 //                       │        │
         kotlin.contracts.contract {
-//          this@0
 //          fun <R> (contracts/ContractBuilder).callsInPlace<???>(Function<R>, contracts/InvocationKind = ...): contracts/CallsInPlace
+//          this@0
 //          │
             callsInPlace()
-//          this@0
 //          fun <R> (contracts/ContractBuilder).callsInPlace<???>(Function<R>, contracts/InvocationKind = ...): contracts/CallsInPlace
+//          this@0
 //          │
             callsInPlace()
         }
