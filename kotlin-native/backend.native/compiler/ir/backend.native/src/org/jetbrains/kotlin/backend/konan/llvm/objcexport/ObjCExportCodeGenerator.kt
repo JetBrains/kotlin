@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.LinkerOutputKind
 import org.jetbrains.kotlin.name.Name
@@ -353,8 +352,7 @@ internal class ObjCExportCodeGenerator(
     private fun emitStaticInitializers() {
         if (externalGlobalInitializers.isEmpty()) return
 
-        val initializer = generateFunction(codegen, functionType(voidType, false), "initObjCExportGlobals") {
-            forbidRuntime = true
+        val initializer = generateFunctionNoRuntime(codegen, functionType(voidType, false), "initObjCExportGlobals") {
             externalGlobalInitializers.forEach { (global, value) ->
                 store(value.llvm, global)
             }
@@ -405,7 +403,7 @@ internal class ObjCExportCodeGenerator(
 
     private fun emitSelectorsHolder() {
         val impType = functionType(voidType, false, int8TypePtr, int8TypePtr)
-        val imp = generateFunction(codegen, impType, "") {
+        val imp = generateFunctionNoRuntime(codegen, impType, "") {
             unreachable()
         }
 

@@ -150,6 +150,41 @@ internal inline fun generateFunction(
     return function
 }
 
+// TODO: Consider using different abstraction than `FunctionGenerationContext` for `generateFunctionNoRuntime`.
+internal inline fun <R> generateFunctionNoRuntime(
+        codegen: CodeGenerator,
+        function: LLVMValueRef,
+        code: FunctionGenerationContext.(FunctionGenerationContext) -> R,
+) {
+    val functionGenerationContext = FunctionGenerationContext(function, codegen, null, null)
+    try {
+        functionGenerationContext.forbidRuntime = true
+        require(!functionGenerationContext.isObjectType(functionGenerationContext.returnType!!)) {
+            "Cannot return object from function without Kotlin runtime"
+        }
+
+        generateFunctionBody(functionGenerationContext, code)
+    } finally {
+        functionGenerationContext.dispose()
+    }
+}
+
+internal inline fun generateFunctionNoRuntime(
+        codegen: CodeGenerator,
+        functionType: LLVMTypeRef,
+        name: String,
+        code: FunctionGenerationContext.(FunctionGenerationContext) -> Unit,
+): LLVMValueRef {
+    val function = addLlvmFunctionWithDefaultAttributes(
+            codegen.context,
+            codegen.context.llvmModule!!,
+            name,
+            functionType
+    )
+    generateFunctionNoRuntime(codegen, function, code)
+    return function
+}
+
 private inline fun <R> generateFunctionBody(
         functionGenerationContext: FunctionGenerationContext,
         code: FunctionGenerationContext.(FunctionGenerationContext) -> R) {
