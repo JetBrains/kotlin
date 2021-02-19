@@ -11,8 +11,8 @@ enum class MyEnum() {
 
     var b: Int                private set
     var b1: Int = 0;                         private set
-    abstract var b2: Int      private set
-    abstract var b3: Int = <!ABSTRACT_PROPERTY_WITH_INITIALIZER!>0<!>; private set
+    abstract var b2: Int      <!PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY!>private<!> set
+    abstract var b3: Int = <!ABSTRACT_PROPERTY_WITH_INITIALIZER!>0<!>; <!PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY!>private<!> set
 
     var c: Int                set(v: Int) { field = v }
     var c1: Int = 0;                         set(v: Int) { field = v }

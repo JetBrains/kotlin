@@ -347,8 +347,7 @@ class RawFirBuilder(
                 }
             if (this == null || !hasBody()) {
                 val propertySource =
-                    if (this != null && hasBody()) property.toFirSourceElement()
-                    else property.toFirPsiSourceElement(FirFakeSourceElementKind.DefaultAccessor)
+                    this?.toFirSourceElement() ?: property.toFirPsiSourceElement(FirFakeSourceElementKind.DefaultAccessor)
                 return FirDefaultPropertyAccessor
                     .createGetterOrSetter(
                         propertySource,

@@ -319,8 +319,8 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
 
         val ABSTRACT_PROPERTY_WITH_GETTER by error<FirSourceElement, KtPropertyAccessor>()
         val ABSTRACT_PROPERTY_WITH_SETTER by error<FirSourceElement, KtPropertyAccessor>()
-        val PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY by error<FirSourceElement, PsiElement>()
-        val PRIVATE_SETTER_FOR_OPEN_PROPERTY by error<FirSourceElement, PsiElement>()
+        val PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY by error<FirSourceElement, KtModifierListOwner>(PositioningStrategy.PRIVATE_MODIFIER)
+        val PRIVATE_SETTER_FOR_OPEN_PROPERTY by error<FirSourceElement, KtModifierListOwner>(PositioningStrategy.PRIVATE_MODIFIER)
         val EXPECTED_PRIVATE_DECLARATION by error<FirSourceElement, KtModifierListOwner>(PositioningStrategy.VISIBILITY_MODIFIER)
     }
 

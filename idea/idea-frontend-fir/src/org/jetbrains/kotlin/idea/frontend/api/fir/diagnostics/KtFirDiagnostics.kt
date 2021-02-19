@@ -653,11 +653,11 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = AbstractPropertyWithSetter::class
     }
 
-    abstract class PrivateSetterForAbstractProperty : KtFirDiagnostic<PsiElement>() {
+    abstract class PrivateSetterForAbstractProperty : KtFirDiagnostic<KtModifierListOwner>() {
         override val diagnosticClass get() = PrivateSetterForAbstractProperty::class
     }
 
-    abstract class PrivateSetterForOpenProperty : KtFirDiagnostic<PsiElement>() {
+    abstract class PrivateSetterForOpenProperty : KtFirDiagnostic<KtModifierListOwner>() {
         override val diagnosticClass get() = PrivateSetterForOpenProperty::class
     }
 

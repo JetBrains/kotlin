@@ -71,14 +71,14 @@ object FirMemberPropertyChecker : FirRegularClassChecker() {
                 reporter.reportOn(it, FirErrors.ABSTRACT_DELEGATED_PROPERTY, context)
             }
 
-            checkAccessor(property.getter, property.delegate) { src, _ ->
-                reporter.reportOn(src, FirErrors.ABSTRACT_PROPERTY_WITH_GETTER, context)
+            checkAccessor(property.getter, property.delegate) { src, _, hasBody ->
+                if (hasBody) reporter.reportOn(src, FirErrors.ABSTRACT_PROPERTY_WITH_GETTER, context)
             }
-            checkAccessor(property.setter, property.delegate) { src, symbol ->
-                if (symbol.fir.visibility == Visibilities.Private && property.visibility != Visibilities.Private) {
-                    reporter.reportOn(src, FirErrors.PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY, context)
-                } else {
-                    reporter.reportOn(src, FirErrors.ABSTRACT_PROPERTY_WITH_SETTER, context)
+            checkAccessor(property.setter, property.delegate) { src, symbol, hasBody ->
+                when {
+                    symbol.fir.visibility == Visibilities.Private && property.visibility != Visibilities.Private ->
+                        reporter.reportOn(src, FirErrors.PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY, context)
+                    hasBody -> reporter.reportOn(src, FirErrors.ABSTRACT_PROPERTY_WITH_SETTER, context)
                 }
             }
         }
@@ -98,7 +98,7 @@ object FirMemberPropertyChecker : FirRegularClassChecker() {
         }
         val isOpen = property.isOpen || hasOpenModifier
         if (isOpen) {
-            checkAccessor(property.setter, property.delegate) { src, symbol ->
+            checkAccessor(property.setter, property.delegate) { src, symbol, _ ->
                 if (symbol.fir.visibility == Visibilities.Private && property.visibility != Visibilities.Private) {
                     reporter.reportOn(src, FirErrors.PRIVATE_SETTER_FOR_OPEN_PROPERTY, context)
                 }
@@ -111,11 +111,11 @@ object FirMemberPropertyChecker : FirRegularClassChecker() {
     private fun checkAccessor(
         accessor: FirPropertyAccessor?,
         delegate: FirExpression?,
-        report: (FirSourceElement, FirPropertyAccessorSymbol) -> Unit,
+        report: (FirSourceElement, FirPropertyAccessorSymbol, hasBody: Boolean) -> Unit,
     ) {
-        if (accessor != null && accessor !is FirDefaultPropertyAccessor && accessor.hasBody && delegate == null) {
+        if (accessor != null && delegate == null) {
             accessor.source?.let {
-                report.invoke(it, accessor.symbol)
+                report.invoke(it, accessor.symbol, accessor.hasBody)
             }
         }
     }
