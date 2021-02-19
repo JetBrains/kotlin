@@ -47,7 +47,13 @@ internal class FileStructure(
             when {
                 structureElement == null -> createStructureElement(declaration)
                 structureElement is ReanalyzableStructureElement<KtDeclaration> && !structureElement.isUpToDate() -> {
-                    structureElement.reanalyze(declaration as KtDeclaration, moduleFileCache, firLazyDeclarationResolver, firIdeProvider)
+                    structureElement.reanalyze(
+                        declaration as KtDeclaration,
+                        moduleFileCache,
+                        firLazyDeclarationResolver,
+                        firIdeProvider,
+                        collector
+                    )
                 }
                 else -> structureElement
             }
