@@ -8,7 +8,7 @@
 package kotlin
 
 import kotlin.experimental.*
-import kotlin.jvm.JvmInline
+import kotlin.jvm.*
 
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
