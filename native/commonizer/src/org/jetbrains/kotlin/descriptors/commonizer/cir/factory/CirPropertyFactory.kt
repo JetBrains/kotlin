@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.descriptors.commonizer.cir.factory
 
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirPropertyImpl
 import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMap
@@ -20,7 +20,7 @@ object CirPropertyFactory {
                 constantValue = constantValue,
                 owner = source,
             )
-        }
+        } ?: CirConstantValue.NullValue
 
         return create(
             annotations = source.annotations.compactMap(CirAnnotationFactory::create),
@@ -65,7 +65,7 @@ object CirPropertyFactory {
         setter: CirPropertySetter?,
         backingFieldAnnotations: List<CirAnnotation>,
         delegateFieldAnnotations: List<CirAnnotation>,
-        compileTimeInitializer: CirConstantValue<*>?
+        compileTimeInitializer: CirConstantValue<*>
     ): CirProperty {
         return CirPropertyImpl(
             annotations = annotations,

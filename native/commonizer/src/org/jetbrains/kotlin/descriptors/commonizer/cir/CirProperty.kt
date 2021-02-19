@@ -15,5 +15,5 @@ interface CirProperty : CirFunctionOrProperty, CirLiftedUpDeclaration {
     val setter: CirPropertySetter?
     val backingFieldAnnotations: List<CirAnnotation>
     val delegateFieldAnnotations: List<CirAnnotation>
-    val compileTimeInitializer: CirConstantValue<*>?
+    val compileTimeInitializer: CirConstantValue<*>
 }
