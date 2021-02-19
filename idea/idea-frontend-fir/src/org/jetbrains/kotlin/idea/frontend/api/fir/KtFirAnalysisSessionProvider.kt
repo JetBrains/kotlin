@@ -38,8 +38,6 @@ class KtFirAnalysisSessionProvider(project: Project) : KtAnalysisSessionProvider
         return analysisSessionByModuleInfoCache.value.getOrPut(contextElement.getModuleInfo()) {
             @Suppress("DEPRECATION")
             KtFirAnalysisSession.createForElement(contextElement)
-        }.apply {
-            assertIsValidAndAccessible()
         }
     }
 

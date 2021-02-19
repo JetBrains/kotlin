@@ -34,9 +34,6 @@ private constructor(
     token: ValidityToken,
     val context: KtFirAnalysisSessionContext,
 ) : KtAnalysisSession(token) {
-    init {
-        assertIsValidAndAccessible()
-    }
 
     override val smartCastProviderImpl = KtFirSmartcastProvider(this, token)
 

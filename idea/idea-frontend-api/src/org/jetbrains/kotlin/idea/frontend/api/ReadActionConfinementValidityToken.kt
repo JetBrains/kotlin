@@ -23,16 +23,17 @@ class ReadActionConfinementValidityToken(project: Project) : ValidityToken() {
         error("Getting invalidation reason for valid validity token")
     }
 
-    @OptIn(HackToForceAllowRunningAnalyzeOnEDT::class, ForbidKtResolveInternals::class)
+    @OptIn(HackToForceAllowRunningAnalyzeOnEDT::class, ForbidKtResolveInternals::class, InvalidWayOfUsingAnalysisSession::class)
     override fun isAccessible(): Boolean {
         val application = ApplicationManager.getApplication()
         if (application.isDispatchThread && !allowOnEdt.get()) return false
         if (ForbidKtResolve.resovleIsForbidenInActionWithName.get() != null) return false
         if (!application.isReadAccessAllowed) return false
+        if (!KtAnalysisSessionProvider.isInsideAnalysisContext()) return false
         return true
     }
 
-    @OptIn(HackToForceAllowRunningAnalyzeOnEDT::class, ForbidKtResolveInternals::class)
+    @OptIn(HackToForceAllowRunningAnalyzeOnEDT::class, ForbidKtResolveInternals::class, InvalidWayOfUsingAnalysisSession::class)
     override fun getInaccessibilityReason(): String {
         val application = ApplicationManager.getApplication()
         if (application.isDispatchThread && !allowOnEdt.get()) return "Called in EDT thread"
@@ -40,6 +41,7 @@ class ReadActionConfinementValidityToken(project: Project) : ValidityToken() {
         ForbidKtResolve.resovleIsForbidenInActionWithName.get()?.let { actionName ->
             return "Resolve is forbidden in $actionName"
         }
+        if (!KtAnalysisSessionProvider.isInsideAnalysisContext()) return "Called outside analyse method"
         error("Getting inaccessibility reason for validity token when it is accessible")
     }
 

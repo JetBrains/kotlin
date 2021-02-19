@@ -60,8 +60,10 @@ abstract class AbstractResolveCallTest : @Suppress("DEPRECATION") LightCodeInsig
             buildString {
                 append(textWithoutLatestComments)
                 append("\n\n")
-                callInfos.joinTo(this, separator = "\n") { info ->
-                    "// CALL: ${info?.stringRepresentation()}"
+                analyse(file as KtFile) {
+                    callInfos.joinTo(this@buildString, separator = "\n") { info ->
+                        "// CALL: ${info?.stringRepresentation()}"
+                    }
                 }
             }
         }

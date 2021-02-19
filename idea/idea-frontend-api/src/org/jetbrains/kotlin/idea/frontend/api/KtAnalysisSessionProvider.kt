@@ -11,9 +11,13 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.Task
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtFile
 
 @RequiresOptIn("To use analysis session, consider using analyze/analyzeWithReadAction/analyseInModalWindow methods")
 annotation class InvalidWayOfUsingAnalysisSession
+
+@RequiresOptIn
+annotation class KtAnalysisSessionProviderInternals
 
 /**
  * Provides [KtAnalysisSession] by [contextElement]
@@ -23,11 +27,38 @@ annotation class InvalidWayOfUsingAnalysisSession
 abstract class KtAnalysisSessionProvider {
     @InvalidWayOfUsingAnalysisSession
     abstract fun getAnalysisSessionFor(contextElement: KtElement): KtAnalysisSession
-}
 
-@InvalidWayOfUsingAnalysisSession
-fun getAnalysisSessionFor(contextElement: KtElement): KtAnalysisSession =
-    contextElement.project.service<KtAnalysisSessionProvider>().getAnalysisSessionFor(contextElement)
+    @InvalidWayOfUsingAnalysisSession
+    inline fun <R> analyseInFakeAnalysisSession(originalFile: KtFile, fakeExpresion: KtElement, action: KtAnalysisSession.() -> R): R {
+        val fakeAnalysisSession = getAnalysisSessionFor(originalFile).createContextDependentCopy(originalFile, fakeExpresion)
+        return analyse(fakeAnalysisSession, action)
+    }
+
+    @InvalidWayOfUsingAnalysisSession
+    inline fun <R> analyse(contextElement: KtElement, action: KtAnalysisSession.() -> R): R =
+        analyse(getAnalysisSessionFor(contextElement), action)
+
+    @OptIn(KtAnalysisSessionProviderInternals::class)
+    @InvalidWayOfUsingAnalysisSession
+    inline fun <R> analyse(analysisSession: KtAnalysisSession, action: KtAnalysisSession.() -> R): R {
+        currentAnalysisContextEnteringCount.set(currentAnalysisContextEnteringCount.get() + 1)
+        return try {
+            analysisSession.action()
+        } finally {
+            currentAnalysisContextEnteringCount.set(currentAnalysisContextEnteringCount.get() - 1)
+        }
+    }
+
+    companion object {
+        @KtAnalysisSessionProviderInternals
+        val currentAnalysisContextEnteringCount = object : ThreadLocal<Int>() {
+            override fun initialValue() = 0
+        }
+
+        @OptIn(KtAnalysisSessionProviderInternals::class)
+        fun isInsideAnalysisContext() = currentAnalysisContextEnteringCount.get() > 0
+    }
+}
 
 /**
  * Execute given [action] in [KtAnalysisSession] context
@@ -43,8 +74,11 @@ fun getAnalysisSessionFor(contextElement: KtElement): KtAnalysisSession =
  */
 @OptIn(InvalidWayOfUsingAnalysisSession::class)
 inline fun <R> analyse(contextElement: KtElement, action: KtAnalysisSession.() -> R): R =
-    getAnalysisSessionFor(contextElement).action()
+    contextElement.project.service<KtAnalysisSessionProvider>().analyse(contextElement, action)
 
+@OptIn(InvalidWayOfUsingAnalysisSession::class)
+inline fun <R> analyseInFakeAnalysisSession(originalFile: KtFile, fakeExpresion: KtElement, action: KtAnalysisSession.() -> R): R =
+    originalFile.project.service<KtAnalysisSessionProvider>().analyseInFakeAnalysisSession(originalFile, fakeExpresion, action)
 
 /**
  * Execute given [action] in [KtAnalysisSession] context like [analyse] does but execute it in read action

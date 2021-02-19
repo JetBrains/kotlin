@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.util.originalKtFile
 import org.jetbrains.kotlin.idea.frontend.api.InvalidWayOfUsingAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.components.KtScopeContext
-import org.jetbrains.kotlin.idea.frontend.api.getAnalysisSessionFor
+import org.jetbrains.kotlin.idea.frontend.api.analyseInFakeAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtCompositeScope
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtScope
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtScopeNameFilter
@@ -133,7 +133,7 @@ private class KotlinCommonCompletionProvider(
 
         val explicitReceiver = nameExpression.getReceiverExpression()
 
-        with(getAnalysisSessionFor(originalFile).createContextDependentCopy(originalFile, nameExpression)) {
+        analyseInFakeAnalysisSession(originalFile, nameExpression) {
             val expectedType = nameExpression.getExpectedType()
 
             val scopesContext = originalFile.getScopeContextForPosition(nameExpression)
