@@ -10,8 +10,10 @@ buildscript {
     java.util.Properties().also {
         it.load(java.io.FileReader(project.file("../../../gradle.properties")))
     }.forEach { k, v->
-        println("${project.name}<<<[$k] = $v>>>")
-        extra[k as String] = v
+        val key = k as String
+        val value = project.findProperty(key) ?: v
+        project.logger.info("${project.name}<<<[$key] = $value>>>")
+        extra[key] = value
     }
     val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() ?: false
 
