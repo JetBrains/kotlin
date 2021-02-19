@@ -53,6 +53,8 @@ open class DeepCopyIrTreeWithSymbols(
     private val symbolRenamer: SymbolRenamer
 ) : IrElementTransformerVoid() {
 
+    private var transformedModule: IrModuleFragment? = null
+
     constructor(symbolRemapper: SymbolRemapper, typeRemapper: TypeRemapper) : this(symbolRemapper, typeRemapper, SymbolRenamer.DEFAULT)
 
     init {
@@ -82,12 +84,16 @@ open class DeepCopyIrTreeWithSymbols(
     override fun visitElement(element: IrElement): IrElement =
         throw IllegalArgumentException("Unsupported element type: $element")
 
-    override fun visitModuleFragment(declaration: IrModuleFragment): IrModuleFragment =
-        IrModuleFragmentImpl(
+    override fun visitModuleFragment(declaration: IrModuleFragment): IrModuleFragment {
+        val result = IrModuleFragmentImpl(
             declaration.descriptor,
             declaration.irBuiltins,
-            declaration.files.transform()
         )
+        transformedModule = result
+        result.files += declaration.files.transform()
+        transformedModule = null
+        return result
+    }
 
     override fun visitExternalPackageFragment(declaration: IrExternalPackageFragment): IrExternalPackageFragment =
         IrExternalPackageFragmentImpl(
@@ -101,7 +107,8 @@ open class DeepCopyIrTreeWithSymbols(
         IrFileImpl(
             declaration.fileEntry,
             symbolRemapper.getDeclaredFile(declaration.symbol),
-            symbolRenamer.getFileName(declaration.symbol)
+            symbolRenamer.getFileName(declaration.symbol),
+            transformedModule ?: declaration.module
         ).apply {
             transformAnnotations(declaration)
             declaration.transformDeclarationsTo(this)

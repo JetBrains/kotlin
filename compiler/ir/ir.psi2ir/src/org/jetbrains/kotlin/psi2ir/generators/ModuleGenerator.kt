@@ -47,7 +47,7 @@ class ModuleGenerator(
         IrModuleFragmentImpl(context.moduleDescriptor, context.irBuiltIns).also { irModule ->
             val irDeclarationGenerator = DeclarationGenerator(context)
             ktFiles.toSet().mapTo(irModule.files) { ktFile ->
-                generateSingleFile(irDeclarationGenerator, ktFile)
+                generateSingleFile(irDeclarationGenerator, ktFile, irModule)
             }
         }
 
@@ -69,8 +69,8 @@ class ModuleGenerator(
             .generateUnboundSymbolsAsDependencies()
     }
 
-    private fun generateSingleFile(irDeclarationGenerator: DeclarationGenerator, ktFile: KtFile): IrFileImpl {
-        val irFile = createEmptyIrFile(ktFile)
+    private fun generateSingleFile(irDeclarationGenerator: DeclarationGenerator, ktFile: KtFile, module: IrModuleFragment): IrFileImpl {
+        val irFile = createEmptyIrFile(ktFile, module)
 
         for (ktAnnotationEntry in ktFile.annotationEntries) {
             val annotationDescriptor = getOrFail(BindingContext.ANNOTATION, ktAnnotationEntry)
@@ -101,10 +101,10 @@ class ModuleGenerator(
         return irFile
     }
 
-    private fun createEmptyIrFile(ktFile: KtFile): IrFileImpl {
+    private fun createEmptyIrFile(ktFile: KtFile, module: IrModuleFragment): IrFileImpl {
         val fileEntry = PsiIrFileEntry(ktFile)
         val packageFragmentDescriptor = context.moduleDescriptor.findPackageFragmentForFile(ktFile)!!
-        return IrFileImpl(fileEntry, packageFragmentDescriptor).apply {
+        return IrFileImpl(fileEntry, packageFragmentDescriptor, module).apply {
             metadata = DescriptorMetadataSource.File(CodegenUtil.getMemberDescriptorsToGenerate(ktFile, context.bindingContext))
         }
     }

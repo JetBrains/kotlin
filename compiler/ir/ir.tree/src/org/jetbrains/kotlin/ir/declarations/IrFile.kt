@@ -42,6 +42,8 @@ abstract class IrExternalPackageFragment : IrPackageFragment() {
 abstract class IrFile : IrPackageFragment(), IrMutableAnnotationContainer, IrMetadataSourceOwner {
     abstract override val symbol: IrFileSymbol
 
+    abstract val module: IrModuleFragment
+
     abstract val fileEntry: IrFileEntry
 
     override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrFile =
