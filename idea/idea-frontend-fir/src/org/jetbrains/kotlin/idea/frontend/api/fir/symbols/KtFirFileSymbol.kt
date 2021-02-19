@@ -9,14 +9,12 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.idea.fir.findPsi
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
-import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
-import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
+import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.annotations.containsAnnotation
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.annotations.getAnnotationClassIds
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.annotations.toAnnotationsList
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
-import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFileSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtAnnotationCall
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithDeclarations

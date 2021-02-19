@@ -6,20 +6,11 @@
 package org.jetbrains.kotlin.idea.frontend.api.fir.symbols.annotations
 
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.expressions.classId
-import org.jetbrains.kotlin.fir.expressions.coneClassLikeType
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.classId
-import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.idea.fir.findPsi
-import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
-import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.expandTypeAliasIfNeeded
-import org.jetbrains.kotlin.idea.frontend.api.fir.utils.*
+import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.FirRefWithValidityCheck
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.convertConstantExpression
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.mapAnnotationParameters

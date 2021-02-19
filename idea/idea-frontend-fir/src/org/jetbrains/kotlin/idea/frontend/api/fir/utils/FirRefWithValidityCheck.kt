@@ -10,9 +10,9 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.withFirDeclaration
-import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
+import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
-import org.jetbrains.kotlin.idea.frontend.api.assertIsValidAndAccessible
+import org.jetbrains.kotlin.idea.frontend.api.tokens.assertIsValidAndAccessible
 import java.lang.ref.WeakReference
 
 internal class FirRefWithValidityCheck<out D : FirDeclaration>(fir: D, resolveState: FirModuleResolveState, val token: ValidityToken) {

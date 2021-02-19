@@ -32,17 +32,14 @@ import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.PsiUtil
 import org.jetbrains.annotations.NonNls
-import org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService
 import org.jetbrains.kotlin.asJava.classes.KotlinClassInnerStuffCache
 import org.jetbrains.kotlin.asJava.classes.KotlinClassInnerStuffCache.Companion.processDeclarationsInEnum
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.idea.frontend.api.HackToForceAllowRunningAnalyzeOnEDT
-import org.jetbrains.kotlin.idea.frontend.api.hackyAllowRunningOnEdt
-import java.util.concurrent.TimeUnit
-import java.util.concurrent.locks.ReentrantLock
+import org.jetbrains.kotlin.idea.frontend.api.tokens.HackToForceAllowRunningAnalyzeOnEDT
+import org.jetbrains.kotlin.idea.frontend.api.tokens.hackyAllowRunningOnEdt
 import org.jetbrains.kotlin.trackers.createProjectWideOutOfBlockModificationTracker
 import javax.swing.Icon
 
@@ -56,7 +53,7 @@ abstract class FirLightClassBase protected constructor(manager: PsiManager) : Li
         @OptIn(HackToForceAllowRunningAnalyzeOnEDT::class)
         override fun <T : Any> get(initializer: () -> T, dependencies: List<Any>): Lazy<T> = lazyPub {
             PsiCachedValueImpl(PsiManager.getInstance(project)) {
-                CachedValueProvider.Result.create(hackyAllowRunningOnEdt(initializer) , dependencies)
+                CachedValueProvider.Result.create(hackyAllowRunningOnEdt(initializer), dependencies)
             }.value ?: error("initializer cannot return null")
         }
     }

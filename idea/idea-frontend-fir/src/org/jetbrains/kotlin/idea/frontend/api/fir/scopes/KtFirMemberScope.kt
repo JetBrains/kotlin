@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.idea.frontend.api.fir.scopes
 
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
-import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
+import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef

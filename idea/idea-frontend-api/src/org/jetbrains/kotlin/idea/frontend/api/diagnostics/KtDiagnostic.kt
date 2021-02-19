@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.idea.frontend.api.diagnostics
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.Severity
-import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
+import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import kotlin.reflect.KClass
 

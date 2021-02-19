@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.fir.types.*
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
+import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil
 import org.jetbrains.kotlin.name.ClassId

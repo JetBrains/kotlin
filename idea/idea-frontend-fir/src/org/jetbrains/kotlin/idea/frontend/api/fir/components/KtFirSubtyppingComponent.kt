@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.fir.components
 
-import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.assertIsValidAndAccessible
+import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.components.KtSubtypingComponent
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.fir.types.KtFirType

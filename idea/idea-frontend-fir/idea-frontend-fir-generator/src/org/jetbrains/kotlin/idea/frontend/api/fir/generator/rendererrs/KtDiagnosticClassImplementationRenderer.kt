@@ -60,6 +60,6 @@ object KtDiagnosticClassImplementationRenderer : AbstractDiagnosticsDataClassRen
     override val defaultImports = listOf(
         "org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef",
         "org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic",
-        "org.jetbrains.kotlin.idea.frontend.api.ValidityToken",
+        "org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken",
     )
 }

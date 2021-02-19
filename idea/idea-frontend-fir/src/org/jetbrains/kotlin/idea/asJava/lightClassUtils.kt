@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.idea.asJava
 
-import org.jetbrains.kotlin.idea.frontend.api.HackToForceAllowRunningAnalyzeOnEDT
-import org.jetbrains.kotlin.idea.frontend.api.hackyAllowRunningOnEdt
+import org.jetbrains.kotlin.idea.frontend.api.tokens.HackToForceAllowRunningAnalyzeOnEDT
+import org.jetbrains.kotlin.idea.frontend.api.tokens.hackyAllowRunningOnEdt
 
 @OptIn(HackToForceAllowRunningAnalyzeOnEDT::class)
 internal inline fun <E> allowLightClassesOnEdt(action: () -> E): E = hackyAllowRunningOnEdt(action)

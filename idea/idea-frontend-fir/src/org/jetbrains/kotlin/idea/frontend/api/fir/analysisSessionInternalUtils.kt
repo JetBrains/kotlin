@@ -13,11 +13,16 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 
 @OptIn(InvalidWayOfUsingAnalysisSession::class)
-internal inline fun <R> analyzeWithSymbolAsContext(contextSymbol: KtSymbol, action: KtAnalysisSession.() -> R): R {
+internal inline fun <R> analyzeWithSymbolAsContext(
+    contextSymbol: KtSymbol,
+    action: KtAnalysisSession.() -> R
+): R {
     require(contextSymbol is KtFirSymbol<*>)
     val resolveState = contextSymbol.firRef.resolveState
+    val token = contextSymbol.token
     val analysisSessionProvider = resolveState.project.service<KtAnalysisSessionProvider>()
     check(analysisSessionProvider is KtFirAnalysisSessionProvider)
-    val analysisSession = analysisSessionProvider.getAnalysisSessionByResolveState(resolveState)
+    val analysisSession = analysisSessionProvider.getCachedAnalysisSession(resolveState, token)
+        ?: error("KtAnalysisSession assotiated with symbol was invalidated")
     return action(analysisSession)
 }

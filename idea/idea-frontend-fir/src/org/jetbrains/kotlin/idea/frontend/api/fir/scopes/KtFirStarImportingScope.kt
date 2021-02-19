@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.scopes.getContainingClassifierNamesIfPresent
 import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractStarImportingScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirDefaultStarImportingScope
 import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
-import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
+import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef

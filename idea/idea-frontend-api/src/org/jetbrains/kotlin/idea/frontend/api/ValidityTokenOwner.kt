@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.idea.frontend.api
 
+import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
+import org.jetbrains.kotlin.idea.frontend.api.tokens.assertIsValidAndAccessible
+
 interface ValidityTokenOwner {
     val token: ValidityToken
 }

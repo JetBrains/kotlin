@@ -17,13 +17,13 @@ import com.intellij.openapi.editor.Document
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.core.asFqNameWithRootPrefixIfNeeded
-import org.jetbrains.kotlin.idea.frontend.api.HackToForceAllowRunningAnalyzeOnEDT
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.analyse
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.addImportToFile
-import org.jetbrains.kotlin.idea.frontend.api.hackyAllowRunningOnEdt
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtNamedSymbol
+import org.jetbrains.kotlin.idea.frontend.api.tokens.HackToForceAllowRunningAnalyzeOnEDT
+import org.jetbrains.kotlin.idea.frontend.api.tokens.hackyAllowRunningOnEdt
 import org.jetbrains.kotlin.idea.frontend.api.types.KtFunctionalType
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.*

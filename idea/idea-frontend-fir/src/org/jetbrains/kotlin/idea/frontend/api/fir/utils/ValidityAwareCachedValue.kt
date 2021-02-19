@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.fir.utils
 
-import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
+import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
-import org.jetbrains.kotlin.idea.frontend.api.assertIsValidAndAccessible
+import org.jetbrains.kotlin.idea.frontend.api.tokens.assertIsValidAndAccessible
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 

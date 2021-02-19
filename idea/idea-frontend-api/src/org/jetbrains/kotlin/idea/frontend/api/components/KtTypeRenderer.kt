@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.frontend.api.components
 
 import org.jetbrains.kotlin.idea.frontend.api.*
+import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.Variance

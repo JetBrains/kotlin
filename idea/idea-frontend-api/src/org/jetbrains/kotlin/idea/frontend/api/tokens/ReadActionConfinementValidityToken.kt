@@ -1,13 +1,15 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.frontend.api
+package org.jetbrains.kotlin.idea.frontend.api.tokens
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.idea.frontend.api.*
 import org.jetbrains.kotlin.trackers.createProjectWideOutOfBlockModificationTracker
+import kotlin.reflect.KClass
 
 class ReadActionConfinementValidityToken(project: Project) : ValidityToken() {
     private val modificationTracker = project.createProjectWideOutOfBlockModificationTracker()
@@ -50,6 +52,12 @@ class ReadActionConfinementValidityToken(project: Project) : ValidityToken() {
         @HackToForceAllowRunningAnalyzeOnEDT
         val allowOnEdt: ThreadLocal<Boolean> = ThreadLocal.withInitial { false }
     }
+}
+
+object ReadActionConfinementValidityTokenFactory : ValidityTokenFactory() {
+    override val identifier: KClass<out ValidityToken> = ReadActionConfinementValidityToken::class
+
+    override fun create(project: Project): ValidityToken = ReadActionConfinementValidityToken(project)
 }
 
 @RequiresOptIn("All frontend related work should not be allowed to be ran from EDT thread. Only use it as a temporary solution")

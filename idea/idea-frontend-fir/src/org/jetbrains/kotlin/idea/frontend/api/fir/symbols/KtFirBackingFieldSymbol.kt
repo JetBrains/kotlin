@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.symbols
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
-import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers.KtFirBackingFieldSymbolPointer
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
@@ -18,6 +17,7 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.KtBackingFieldSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtKotlinPropertySymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtTypeAndAnnotations
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 
 internal class KtFirBackingFieldSymbol(
     propertyFir: FirProperty,

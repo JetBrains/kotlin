@@ -11,9 +11,9 @@ import org.jetbrains.kotlin.idea.api.applicator.HLApplicator
 import org.jetbrains.kotlin.idea.api.applicator.HLApplicatorInput
 import org.jetbrains.kotlin.idea.fir.api.applicator.HLApplicabilityRange
 import org.jetbrains.kotlin.idea.fir.api.applicator.HLApplicatorInputProvider
-import org.jetbrains.kotlin.idea.frontend.api.HackToForceAllowRunningAnalyzeOnEDT
+import org.jetbrains.kotlin.idea.frontend.api.tokens.HackToForceAllowRunningAnalyzeOnEDT
 import org.jetbrains.kotlin.idea.frontend.api.analyseWithReadAction
-import org.jetbrains.kotlin.idea.frontend.api.hackyAllowRunningOnEdt
+import org.jetbrains.kotlin.idea.frontend.api.tokens.hackyAllowRunningOnEdt
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingIntention
 import org.jetbrains.kotlin.psi.KtElement
 import kotlin.reflect.KClass

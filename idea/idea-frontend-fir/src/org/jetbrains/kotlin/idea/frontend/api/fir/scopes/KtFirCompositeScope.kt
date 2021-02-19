@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.idea.frontend.api.fir.scopes
 
 import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
-import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
+import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtCompositeScope
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtScope
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtScopeNameFilter

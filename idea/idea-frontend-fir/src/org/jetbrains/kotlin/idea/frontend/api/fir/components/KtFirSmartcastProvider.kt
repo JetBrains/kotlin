@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.idea.frontend.api.*
 import org.jetbrains.kotlin.idea.frontend.api.components.KtSmartCastProvider
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.psi.KtExpression
 

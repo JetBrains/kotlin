@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.components
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.collectDiagnosticsForFile
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getDiagnostics
-import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
+import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.components.KtDiagnosticCheckerFilter
 import org.jetbrains.kotlin.idea.frontend.api.components.KtDiagnosticProvider
 import org.jetbrains.kotlin.idea.frontend.api.diagnostics.KtDiagnosticWithPsi

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.fir.scopes
 
-import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
+import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtDeclaredMemberScope
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtMemberScope

@@ -10,7 +10,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementResolveResult
 import com.intellij.psi.ResolveResult
 import com.intellij.psi.impl.source.resolve.ResolveCache
-import org.jetbrains.kotlin.idea.frontend.api.HackToForceAllowRunningAnalyzeOnEDT
+import org.jetbrains.kotlin.idea.frontend.api.tokens.HackToForceAllowRunningAnalyzeOnEDT
 import org.jetbrains.kotlin.idea.frontend.api.analyse
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.runInPossiblyEdtThread
 import org.jetbrains.kotlin.idea.util.getElementTextInContext

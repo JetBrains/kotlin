@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.frontend.api
 import org.jetbrains.kotlin.idea.frontend.api.components.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.psi.*
 
 /**

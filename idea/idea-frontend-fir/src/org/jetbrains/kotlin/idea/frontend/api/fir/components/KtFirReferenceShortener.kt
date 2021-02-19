@@ -46,7 +46,7 @@ import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFir
-import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
+import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.components.KtReferenceShortener
 import org.jetbrains.kotlin.idea.frontend.api.components.ShortenCommand
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession

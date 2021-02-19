@@ -9,6 +9,9 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.service
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.Task
+import org.jetbrains.kotlin.idea.frontend.api.tokens.ReadActionConfinementValidityTokenFactory
+import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityToken
+import org.jetbrains.kotlin.idea.frontend.api.tokens.ValidityTokenFactory
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
@@ -26,17 +29,18 @@ annotation class KtAnalysisSessionProviderInternals
 @InvalidWayOfUsingAnalysisSession
 abstract class KtAnalysisSessionProvider {
     @InvalidWayOfUsingAnalysisSession
-    abstract fun getAnalysisSessionFor(contextElement: KtElement): KtAnalysisSession
+    abstract fun getAnalysisSession(contextElement: KtElement, factory: ValidityTokenFactory): KtAnalysisSession
 
     @InvalidWayOfUsingAnalysisSession
     inline fun <R> analyseInFakeAnalysisSession(originalFile: KtFile, fakeExpresion: KtElement, action: KtAnalysisSession.() -> R): R {
-        val fakeAnalysisSession = getAnalysisSessionFor(originalFile).createContextDependentCopy(originalFile, fakeExpresion)
+        val fakeAnalysisSession = getAnalysisSession(originalFile, ReadActionConfinementValidityTokenFactory)
+            .createContextDependentCopy(originalFile, fakeExpresion)
         return analyse(fakeAnalysisSession, action)
     }
 
     @InvalidWayOfUsingAnalysisSession
-    inline fun <R> analyse(contextElement: KtElement, action: KtAnalysisSession.() -> R): R =
-        analyse(getAnalysisSessionFor(contextElement), action)
+    inline fun <R> analyse(contextElement: KtElement, tokenFactory: ValidityTokenFactory, action: KtAnalysisSession.() -> R): R =
+        analyse(getAnalysisSession(contextElement, tokenFactory), action)
 
     @OptIn(KtAnalysisSessionProviderInternals::class)
     @InvalidWayOfUsingAnalysisSession
@@ -74,7 +78,17 @@ abstract class KtAnalysisSessionProvider {
  */
 @OptIn(InvalidWayOfUsingAnalysisSession::class)
 inline fun <R> analyse(contextElement: KtElement, action: KtAnalysisSession.() -> R): R =
-    contextElement.project.service<KtAnalysisSessionProvider>().analyse(contextElement, action)
+    contextElement.project
+        .service<KtAnalysisSessionProvider>()
+        .analyse(contextElement, ReadActionConfinementValidityTokenFactory, action)
+
+@OptIn(InvalidWayOfUsingAnalysisSession::class)
+inline fun <R> analyseWithCustomToken(
+    contextElement: KtElement,
+    tokenFactory: ValidityTokenFactory,
+    action: KtAnalysisSession.() -> R
+): R =
+    contextElement.project.service<KtAnalysisSessionProvider>().analyse(contextElement, tokenFactory, action)
 
 @OptIn(InvalidWayOfUsingAnalysisSession::class)
 inline fun <R> analyseInFakeAnalysisSession(originalFile: KtFile, fakeExpresion: KtElement, action: KtAnalysisSession.() -> R): R =
