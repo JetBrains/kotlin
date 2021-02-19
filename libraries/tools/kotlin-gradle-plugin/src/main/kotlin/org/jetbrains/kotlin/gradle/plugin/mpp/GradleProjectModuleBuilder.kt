@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
@@ -12,7 +12,6 @@ import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.result.ResolvedComponentResult
-import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributeContainer
 import org.jetbrains.kotlin.gradle.dsl.*
@@ -288,11 +287,13 @@ class GradleModuleVariantResolver(val project: Project) : ModuleVariantResolver 
 
         val dependencyModuleId = ModuleIds.fromComponent(project, component)
         // FIXME check composite builds, it's likely that resolvedVariantProvider fails on them?
-        val variantName =
-            resolvedVariantProvider.getResolvedVariantName(dependencyModuleId, compileClasspath)
-                ?.let(::kotlinVariantNameFromPublishedVariantName)
+        val resolvedGradleVariantName = resolvedVariantProvider.getResolvedVariantName(dependencyModuleId, compileClasspath)
+        val kotlinVariantName = when (dependencyModule) {
+            is KotlinGradleModule -> dependencyModule.variants.single { resolvedGradleVariantName in it.gradleVariantNames }.name
+            else -> resolvedGradleVariantName?.let(::kotlinVariantNameFromPublishedVariantName)
+        }
 
-        val resultVariant = dependencyModule.variants.singleOrNull { it.fragmentName == variantName }
+        val resultVariant = dependencyModule.variants.singleOrNull { it.fragmentName == kotlinVariantName }
 
         return if (resultVariant == null)
             VariantResolution.NoVariantMatch(requestingVariant, dependencyModule)
