@@ -43,6 +43,7 @@ internal fun configureMetadataResolutionAndBuild(module: KotlinGradleModule) {
 internal fun configureMetadataExposure(module: KotlinGradleModule) {
     val project = module.project
     project.configurations.create(metadataElementsConfigurationName(module)).apply {
+        isCanBeConsumed = false
         module.ifMadePublic {
             isCanBeConsumed = true
         }
@@ -117,6 +118,9 @@ private fun configureMetadataJarTask(
 ) {
     val project = module.project
     val allMetadataJar = project.registerTask<Jar>(metadataJarName(module)) { task ->
+        if (module.moduleClassifier != null) {
+            task.archiveClassifier.set(module.moduleClassifier)
+        }
         task.archiveAppendix.set("metadata")
         task.from()
     }

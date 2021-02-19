@@ -78,8 +78,8 @@ abstract class AbstractKotlinGradleVariantFactory<T : KotlinGradleVariant>(
             isCanBeConsumed = false
             module.ifMadePublic {
                 isCanBeConsumed = true
-                setModuleCapability(this, fragment.containingModule)
             }
+            setModuleCapability(this, fragment.containingModule)
             attributes.attribute<Usage>(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerApiUsage(project, fragment.platformType))
             extendsFrom(project.configurations.getByName(fragment.transitiveApiConfigurationName))
             // FIXME + compileOnly
