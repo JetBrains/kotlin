@@ -61,6 +61,7 @@ object FirErrors {
     val VARIABLE_EXPECTED by error0<FirSourceElement, PsiElement>()
     val RETURN_NOT_ALLOWED by error0<FirSourceElement, PsiElement>()
     val DELEGATION_IN_INTERFACE by error0<FirSourceElement, PsiElement>()
+    val NESTED_CLASS_NOT_ALLOWED by error1<FirSourceElement, KtNamedDeclaration, String>(SourceElementPositioningStrategies.DECLARATION_NAME)
 
     // Unresolved
     val HIDDEN by error1<FirSourceElement, PsiElement, AbstractFirBasedSymbol<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
