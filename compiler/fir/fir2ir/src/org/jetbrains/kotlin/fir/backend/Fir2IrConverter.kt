@@ -55,10 +55,11 @@ class Fir2IrConverter(
         processClassMembers(regularClass, irClass)
     }
 
-    fun registerFileAndClasses(file: FirFile): IrFile {
+    fun registerFileAndClasses(file: FirFile, moduleFragment: IrModuleFragment) {
         val irFile = IrFileImpl(
             PsiIrFileEntry(file.psi as KtFile),
-            moduleDescriptor.getPackage(file.packageFqName).fragments.first()
+            moduleDescriptor.getPackage(file.packageFqName).fragments.first(),
+            moduleFragment
         )
         declarationStorage.registerFile(file, irFile)
         file.declarations.forEach {
@@ -66,7 +67,7 @@ class Fir2IrConverter(
                 registerClassAndNestedClasses(it, irFile)
             }
         }
-        return irFile
+        moduleFragment.files += irFile
     }
 
     fun processClassHeaders(file: FirFile) {
@@ -279,12 +280,11 @@ class Fir2IrConverter(
             components.visibilityConverter = visibilityConverter
             components.builtIns = builtIns
             components.annotationGenerator = annotationGenerator
-            val irFiles = mutableListOf<IrFile>()
 
+            val irModuleFragment = IrModuleFragmentImpl(moduleDescriptor, irBuiltIns)
             for (firFile in firFiles) {
-                irFiles += converter.registerFileAndClasses(firFile)
+                converter.registerFileAndClasses(firFile, irModuleFragment)
             }
-            val irModuleFragment = IrModuleFragmentImpl(moduleDescriptor, irBuiltIns, irFiles)
             val irProviders =
                 generateTypicalIrProviderList(irModuleFragment.descriptor, irBuiltIns, symbolTable, extensions = generatorExtensions)
             val externalDependenciesGenerator = ExternalDependenciesGenerator(

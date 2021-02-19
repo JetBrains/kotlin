@@ -76,7 +76,7 @@ class WasmBackendContext(
 
             override fun getLineNumber(offset: Int) = UNDEFINED_OFFSET
             override fun getColumnNumber(offset: Int) = UNDEFINED_OFFSET
-        }, internalPackageFragmentDescriptor).also {
+        }, internalPackageFragmentDescriptor, irModuleFragment).also {
             irModuleFragment.files += it
         }
     }

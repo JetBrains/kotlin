@@ -103,7 +103,7 @@ abstract class BasicIrModuleDeserializer(
     private fun deserializeIrFile(fileProto: ProtoFile, fileIndex: Int, moduleDeserializer: IrModuleDeserializer, allowErrorNodes: Boolean): IrFile {
 
         val fileReader = IrLibraryFileFromKlib(moduleDeserializer.klib, fileIndex)
-        val file = fileReader.createFile(moduleDescriptor, fileProto)
+        val file = fileReader.createFile(moduleFragment, fileProto)
 
         val fileDeserializationState = FileDeserializationState(
             linker,
