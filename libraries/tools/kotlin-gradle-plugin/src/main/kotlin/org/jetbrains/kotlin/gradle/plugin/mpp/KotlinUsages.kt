@@ -59,7 +59,7 @@ object KotlinUsages {
         }
     )
 
-    internal fun producerRuntimeUsage(target: KotlinTarget) = producerApiUsage(target.project, target.platformType)
+    internal fun producerRuntimeUsage(target: KotlinTarget) = producerRuntimeUsage(target.project, target.platformType)
 
     private class KotlinJavaRuntimeJarsCompatibility : AttributeCompatibilityRule<Usage> {
         // When Gradle resolves a plain old JAR dependency with no metadata attached, the Usage attribute of that dependency
