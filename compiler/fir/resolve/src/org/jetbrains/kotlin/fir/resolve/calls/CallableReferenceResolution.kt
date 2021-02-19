@@ -97,8 +97,12 @@ private fun buildReflectionType(
         is FirFunction -> {
             val unboundReferenceTarget = if (receiverType != null) 1 else 0
             val callableReferenceAdaptation =
-                context.bodyResolveComponents
-                    .getCallableReferenceAdaptation(context.session, fir, candidate.callInfo.expectedType, unboundReferenceTarget)
+                context.bodyResolveComponents.getCallableReferenceAdaptation(
+                    context.session,
+                    fir,
+                    candidate.callInfo.expectedType?.lowerBoundIfFlexible(),
+                    unboundReferenceTarget
+                )
 
             val parameters = mutableListOf<ConeKotlinType>()
 

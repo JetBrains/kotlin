@@ -4232,6 +4232,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             }
 
             @Test
+            @TestMetadata("referenceToJavaStdlib.kt")
+            public void testReferenceToJavaStdlib() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences/referenceToJavaStdlib.kt");
+            }
+
+            @Test
             @TestMetadata("sam.kt")
             public void testSam() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/callableReferences/sam.kt");
