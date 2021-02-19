@@ -5105,6 +5105,11 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
             runTest("js/js.translator/testData/box/jsCode/if.kt");
         }
 
+        @TestMetadata("init.kt")
+        public void testInit() throws Exception {
+            runTest("js/js.translator/testData/box/jsCode/init.kt");
+        }
+
         @TestMetadata("invocation.kt")
         public void testInvocation() throws Exception {
             runTest("js/js.translator/testData/box/jsCode/invocation.kt");
