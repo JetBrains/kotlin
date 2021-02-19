@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.idea.caches.resolve
 
 import com.intellij.openapi.components.ServiceManager
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.ModificationTracker
 import org.jetbrains.kotlin.analyzer.*
 import org.jetbrains.kotlin.analyzer.common.CommonAnalysisParameters
@@ -14,6 +13,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.caches.resolve.*
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.context.withModule
+import org.jetbrains.kotlin.descriptors.ModuleCapability
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.idea.caches.project.*
@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.RESOLUTION_ANCHOR_PROVIDER_CAPABILITY
 import org.jetbrains.kotlin.resolve.ResolutionAnchorProvider
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
 
@@ -42,19 +43,33 @@ class IdeaResolverForProject(
     private val syntheticFilesByModule: Map<IdeaModuleInfo, Collection<KtFile>>,
     delegateResolver: ResolverForProject<IdeaModuleInfo>,
     fallbackModificationTracker: ModificationTracker? = null,
-    // TODO(dsavvinov): this is needed only for non-composite analysis, extract separate resolver implementation instead
-    private val constantSdkDependencyIfAny: SdkInfo? = null
+    private val settings: PlatformAnalysisSettings
 ) : AbstractResolverForProject<IdeaModuleInfo>(
     debugName,
     projectContext,
     modules,
     fallbackModificationTracker,
     delegateResolver,
-    ServiceManager.getService(projectContext.project, IdePackageOracleFactory::class.java),
-    ServiceManager.getService(projectContext.project, ResolutionAnchorProvider::class.java)
+    ServiceManager.getService(projectContext.project, IdePackageOracleFactory::class.java)
 ) {
+
+    companion object {
+        val PLATFORM_ANALYSIS_SETTINGS = ModuleCapability<PlatformAnalysisSettings>("PlatformAnalysisSettings")
+    }
+
+    private val resolutionAnchorProvider = ServiceManager.getService(projectContext.project, ResolutionAnchorProvider::class.java)
+
+    private val constantSdkDependencyIfAny: SdkInfo? =
+        if (settings is PlatformAnalysisSettingsImpl) settings.sdk?.let { SdkInfo(projectContext.project, it) } else null
+
     private val builtInsCache: BuiltInsCache =
         (delegateResolver as? IdeaResolverForProject)?.builtInsCache ?: BuiltInsCache(projectContext, this)
+
+    override fun getAdditionalCapabilities(): Map<ModuleCapability<*>, Any?> {
+        return super.getAdditionalCapabilities() +
+                (PLATFORM_ANALYSIS_SETTINGS to settings) +
+                (RESOLUTION_ANCHOR_PROVIDER_CAPABILITY to resolutionAnchorProvider)
+    }
 
     override fun sdkDependency(module: IdeaModuleInfo): SdkInfo? {
         if (projectContext.project.useCompositeAnalysis) {
