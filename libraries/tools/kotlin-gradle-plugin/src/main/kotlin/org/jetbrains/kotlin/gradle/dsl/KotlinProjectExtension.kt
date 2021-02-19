@@ -129,6 +129,7 @@ open class KotlinJsProjectExtension(project: Project) :
     }
 
     @Deprecated("Use js() instead", ReplaceWith("js()"))
+    @Suppress("DEPRECATION")
     override var target: KotlinJsTargetDsl
         get() {
             if (_target == null) {
@@ -142,6 +143,7 @@ open class KotlinJsProjectExtension(project: Project) :
 
     override lateinit var defaultJsCompilerType: KotlinJsCompilerType
 
+    @Suppress("DEPRECATION")
     private fun jsInternal(
         compiler: KotlinJsCompilerType? = null,
         body: KotlinJsTargetDsl.() -> Unit
@@ -230,6 +232,7 @@ open class KotlinJsProjectExtension(project: Project) :
         "Needed for IDE import using the MPP import mechanism",
         level = DeprecationLevel.HIDDEN
     )
+    @Suppress("DEPRECATION")
     fun getTargets(): NamedDomainObjectContainer<KotlinTarget>? =
         _target?.let { target ->
             target.project.container(KotlinTarget::class.java)

@@ -246,7 +246,7 @@ internal fun KotlinSourceSet.disambiguateName(simpleName: String): String {
 }
 
 private fun createDefaultSourceDirectorySet(project: Project, name: String?): SourceDirectorySet =
-    project.objects.sourceDirectorySet(name, name)
+    project.objects.sourceDirectorySet(name!!, name)
 
 /**
  * Like [resolveAllDependsOnSourceSets] but will include the receiver source set also!

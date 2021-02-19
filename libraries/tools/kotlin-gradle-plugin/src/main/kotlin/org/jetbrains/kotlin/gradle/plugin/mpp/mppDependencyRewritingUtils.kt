@@ -151,7 +151,7 @@ private fun associateDependenciesWithActualModuleDependencies(
                     val dependencyProjectKotlinExtension = dependencyProject.multiplatformExtensionOrNull
                         ?: return@associate noMapping
 
-                    val resolved = resolvedDependencies[Triple(dependency.group, dependency.name, dependency.version)]
+                    val resolved = resolvedDependencies[Triple(dependency.group!!, dependency.name, dependency.version!!)]
                         ?: return@associate noMapping
 
                     val resolvedToConfiguration = resolved.configuration
@@ -185,7 +185,7 @@ private fun associateDependenciesWithActualModuleDependencies(
                     )
                 }
                 else -> {
-                    val resolvedDependency = resolvedDependencies[Triple(dependency.group, dependency.name, dependency.version)]
+                    val resolvedDependency = resolvedDependencies[Triple(dependency.group!!, dependency.name, dependency.version!!)]
                         ?: return@associate noMapping
 
                     if (resolvedDependency.moduleArtifacts.isEmpty() && resolvedDependency.children.size == 1) {

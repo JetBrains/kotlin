@@ -112,7 +112,7 @@ private fun FileCollection.filterOutPublishableInteropLibs(project: Project): Fi
  *      for it (NO-SOURCE check). So we need to take this case into account
  *      and skip libraries that were not compiled. See also: GH-2617 (K/N repo).
  */
-private fun Collection<File>.filterKlibsPassedToCompiler(project: Project) = filter {
+private fun Collection<File>.filterKlibsPassedToCompiler(): List<File> = filter {
     (it.extension == "klib" || it.isDirectory) && it.exists()
 }
 
@@ -277,6 +277,7 @@ abstract class AbstractKotlinNativeCompile<T : KotlinCommonToolOptions, K : Kotl
     @get:Input
     @get:Optional
     internal val konanTargetsForManifest: String by project.provider {
+        @Suppress("CAST_NEVER_SUCCEEDS") // TODO: this warning looks very suspicious, as if the code never works as intended.
         (compilation as? KotlinSharedNativeCompilation)
             ?.konanTargets
             ?.joinToString(separator = " ") { it.visibleName }
@@ -309,7 +310,7 @@ abstract class AbstractKotlinNativeCompile<T : KotlinCommonToolOptions, K : Kotl
         addArg("-o", outputFile.get().absolutePath)
 
         // Libraries.
-        libraries.files.filterKlibsPassedToCompiler(project).forEach { library ->
+        libraries.files.filterKlibsPassedToCompiler().forEach { library ->
             addArg("-l", library.absolutePath)
         }
     }
@@ -458,15 +459,15 @@ constructor(
         addArg("-module-name", moduleName)
         add("-Xshort-module-name=$shortModuleName")
         val friends = friendModule.files
-        if (friends != null && friends.isNotEmpty()) {
-            addArg("-friend-modules", friends.map { it.absolutePath }.joinToString(File.pathSeparator))
+        if (friends.isNotEmpty()) {
+            addArg("-friend-modules", friends.joinToString(File.pathSeparator) { it.absolutePath })
         }
     }
 
     override fun buildSourceArgs(): List<String> = mutableListOf<String>().apply {
         addAll(getSource().map { it.absolutePath })
         if (!commonSourcesTree.isEmpty) {
-            add("-Xcommon-sources=${commonSourcesTree.map { it.absolutePath }.joinToString(separator = ",")}")
+            add("-Xcommon-sources=${commonSourcesTree.joinToString(separator = ",") { it.absolutePath }}")
         }
     }
     // endregion.
@@ -600,7 +601,7 @@ constructor(
         linkerOpts.forEach {
             addArg("-linker-option", it)
         }
-        exportLibraries.files.filterKlibsPassedToCompiler(project).forEach {
+        exportLibraries.files.filterKlibsPassedToCompiler().forEach {
             add("-Xexport-library=${it.absolutePath}")
         }
         addKey("-Xstatic-framework", isStaticFramework)
@@ -622,7 +623,7 @@ constructor(
 
     @get:Internal
     val apiFilesProvider = project.provider {
-        project.configurations.getByName(compilation.apiConfigurationName).files.filterKlibsPassedToCompiler(project)
+        project.configurations.getByName(compilation.apiConfigurationName).files.filterKlibsPassedToCompiler()
     }
 
     private fun validatedExportedLibraries() {
@@ -631,7 +632,7 @@ constructor(
 
         val failed = mutableSetOf<Dependency>()
         exportConfiguration.allDependencies.forEach {
-            val dependencyFiles = exportConfiguration.files(it).filterKlibsPassedToCompiler(project)
+            val dependencyFiles = exportConfiguration.files(it).filterKlibsPassedToCompiler()
             if (!apiFiles.containsAll(dependencyFiles)) {
                 failed.add(it)
             }
@@ -803,7 +804,7 @@ internal class CacheBuilder(val project: Project, val binary: NativeBinary, val 
             getAllDependencies(dependency)
                 .flatMap { it.moduleArtifacts }
                 .map { it.file }
-                .filterKlibsPassedToCompiler(project)
+                .filterKlibsPassedToCompiler()
                 .forEach {
                     args += "-l"
                     args += it.absolutePath
@@ -1017,7 +1018,7 @@ open class CInteropProcess @Inject constructor(@get:Internal val settings: Defau
                 addArg("-linker-option", it)
             }
 
-            libraries.files.filterKlibsPassedToCompiler(project).forEach { library ->
+            libraries.files.filterKlibsPassedToCompiler().forEach { library ->
                 addArg("-library", library.absolutePath)
             }
 

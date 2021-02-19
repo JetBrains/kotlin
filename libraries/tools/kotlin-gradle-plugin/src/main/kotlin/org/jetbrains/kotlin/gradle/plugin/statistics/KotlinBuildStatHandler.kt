@@ -102,7 +102,7 @@ class KotlinBuildStatHandler {
                     when (configurationName) {
                         "kapt" -> {
                             sessionLogger.report(BooleanMetrics.ENABLED_KAPT, true)
-                            dependencies?.forEach { dependency ->
+                            for (dependency in dependencies) {
                                 when (dependency.group) {
                                     "com.google.dagger" -> sessionLogger.report(BooleanMetrics.ENABLED_DAGGER, true)
                                     "com.android.databinding" -> sessionLogger.report(BooleanMetrics.ENABLED_DATABINDING, true)

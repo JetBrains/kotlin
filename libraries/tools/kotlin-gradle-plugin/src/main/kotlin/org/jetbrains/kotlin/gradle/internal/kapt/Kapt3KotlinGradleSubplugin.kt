@@ -757,7 +757,7 @@ internal fun registerGeneratedJavaSource(kaptTask: TaskProvider<out KaptTask>, j
     }
 }
 
-internal fun Configuration.getNamedDependencies(): List<Dependency> = allDependencies.filter { it.group != null && it.name != null }
+internal fun Configuration.getNamedDependencies(): List<Dependency> = allDependencies.filter { it.group != null }
 
 private val ANNOTATION_PROCESSOR = "annotationProcessor"
 private val ANNOTATION_PROCESSOR_CAP = ANNOTATION_PROCESSOR.capitalize()

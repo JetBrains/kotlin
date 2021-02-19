@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.addNpmDependencyExtension
-import org.jetbrains.kotlin.gradle.tasks.*
+import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KOTLIN_COMPILER_EMBEDDABLE
 import org.jetbrains.kotlin.gradle.tasks.KOTLIN_KLIB_COMMONIZER_EMBEDDABLE
 import org.jetbrains.kotlin.gradle.tasks.KOTLIN_MODULE_GROUP
@@ -63,7 +63,7 @@ abstract class KotlinBasePluginWrapper : Plugin<Project> {
         val kotlinPluginVersion = project.getKotlinPluginVersion()
 
         val listenerRegistryHolder = BuildEventsListenerRegistryHolder.getInstance(project)
-        val statisticsReporter = KotlinBuildStatsService.getOrCreateInstance(project, listenerRegistryHolder)
+        val statisticsReporter = KotlinBuildStatsService.getOrCreateInstance(project)
         statisticsReporter?.report(StringMetrics.KOTLIN_COMPILER_VERSION, kotlinPluginVersion)
 
         checkGradleCompatibility()

@@ -82,12 +82,12 @@ constructor(
     private fun executableLegacyInternal(compilation: KotlinJsCompilation) = createBinaries(
         compilation = compilation,
         jsBinaryType = KotlinJsBinaryType.EXECUTABLE,
-        create = { compilation, name, type ->
+        create = { jsCompilation, name, type ->
             object : JsBinary {
-                override val compilation: KotlinJsCompilation = compilation
+                override val compilation: KotlinJsCompilation = jsCompilation
                 override val name: String = name
                 override val mode: KotlinJsBinaryMode = type
-                override val distribution: Distribution = DefaultDistribution(compilation.target.project)
+                override val distribution: Distribution = DefaultDistribution(jsCompilation.target.project)
             }
         }
     )

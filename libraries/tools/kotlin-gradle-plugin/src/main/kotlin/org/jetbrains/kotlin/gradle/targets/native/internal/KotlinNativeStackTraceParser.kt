@@ -54,12 +54,12 @@ fun parseKotlinNativeStackTrace(stackTrace: String): KotlinNativeStackTrace {
     stackTrace.lines().forEach {
         val srcLine = it.trim()
 
-        var bin: String? = null
-        var address: String? = null
-        var className: String? = null
-        var methodName: String? = null
-        var signature: String? = null
-        var offset: Int = -1
+        val bin: String?
+        val address: String?
+        val className: String?
+        val methodName: String?
+        val signature: String?
+        val offset: Int
         var fileName: String? = null
         var lineNumber: Int = -1
         var columnNumber: Int = -1
@@ -102,13 +102,12 @@ fun parseKotlinNativeStackTrace(stackTrace: String): KotlinNativeStackTrace {
                     classAndMethod = classAndMethod.substringBeforeLast("(")
 
                     if ("." in classAndMethod) {
-                        methodName = classAndMethod.substringAfterLast(".").trim()
+                        methodName = classAndMethod.substringAfterLast(".").trim().takeUnless(String::isBlank)
                         className = classAndMethod.substringBeforeLast(".").trim()
                     } else {
-                        methodName = classAndMethod.trim()
+                        methodName = classAndMethod.trim().takeUnless(String::isBlank)
+                        className = null
                     }
-
-                    if (methodName.isBlank()) methodName = null
 
                     stack.add(
                         KotlinNativeStackTraceElement(

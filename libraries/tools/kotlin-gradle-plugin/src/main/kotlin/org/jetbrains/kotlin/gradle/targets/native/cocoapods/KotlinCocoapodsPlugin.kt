@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.targets.native.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.*
-import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.asValidTaskName
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.Family
@@ -373,15 +372,14 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         }
 
         cocoapodsExtension.pods.all { pod ->
-            val podSource = pod.source
-            val downloadPodTask = when (podSource) {
+            val downloadPodTask = when (val podSource = pod.source) {
                 is Git -> project.tasks.register(pod.toPodDownloadTaskName, PodDownloadGitTask::class.java) {
                     it.podName = project.provider { pod.name.asValidTaskName() }
-                    it.podSource = project.provider { podSource as Git }
+                    it.podSource = project.provider<Git> { podSource }
                 }
                 is Url -> project.tasks.register(pod.toPodDownloadTaskName, PodDownloadUrlTask::class.java) {
                     it.podName = project.provider { pod.name.asValidTaskName() }
-                    it.podSource = project.provider { podSource as Url }
+                    it.podSource = project.provider<Url> { podSource }
                 }
                 else -> return@all
             }

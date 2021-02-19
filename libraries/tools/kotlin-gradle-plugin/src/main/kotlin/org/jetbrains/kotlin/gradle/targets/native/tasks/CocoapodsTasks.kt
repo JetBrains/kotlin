@@ -103,7 +103,7 @@ open class PodspecTask : DefaultTask() {
             """.trimIndent()
         }
 
-        val gradleCommand = "\$REPO_ROOT/${gradleWrapper!!.toRelativeString(project.projectDir)}"
+        val gradleCommand = "\$REPO_ROOT/${gradleWrapper.toRelativeString(project.projectDir)}"
         val syncTask = "${project.path}:$SYNC_TASK_NAME"
 
         val deploymentTargets = run {

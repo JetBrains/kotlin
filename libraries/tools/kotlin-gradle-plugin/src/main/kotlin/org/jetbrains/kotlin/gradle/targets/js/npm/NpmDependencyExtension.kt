@@ -183,7 +183,7 @@ private abstract class NpmDependencyExtensionDelegate(
         val generateExternals = generateExternalsIfPossible(*args)
 
         return when (val arg1 = if (args.size > 1) args[1] else null) {
-            null -> invoke(
+            null -> @Suppress("DEPRECATION") invoke(
                 name = name
             )
             is String -> invoke(
@@ -249,6 +249,7 @@ private class DefaultNpmDependencyExtension(
         defaultGenerateExternals
     )
 
+    @Suppress("DEPRECATION")
     override fun invoke(name: String): NpmDependency =
         delegate.invoke(name)
 
@@ -284,6 +285,7 @@ private class DefaultDevNpmDependencyExtension(
         null
     )
 
+    @Suppress("DEPRECATION")
     override fun invoke(name: String): NpmDependency =
         delegate.invoke(name)
 
@@ -398,6 +400,7 @@ private class DefaultPeerNpmDependencyExtension(
             npmDeclarationException(args)
     }
 
+    @Suppress("DEPRECATION")
     override fun invoke(name: String): NpmDependency =
         delegate.invoke(name)
 

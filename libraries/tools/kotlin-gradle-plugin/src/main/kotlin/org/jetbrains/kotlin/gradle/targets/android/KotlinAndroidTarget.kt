@@ -71,9 +71,7 @@ open class KotlinAndroidTarget(
                 }
             }
 
-        val variantNames =
-            KotlinAndroidPlugin.androidTargetHandler(this)
-                .getLibraryVariantNames()
+        val variantNames = KotlinAndroidPlugin.androidTargetHandler().getLibraryVariantNames()
 
         val missingVariants =
             publishLibraryVariants?.minus(variantNames).orEmpty()
@@ -90,7 +88,7 @@ open class KotlinAndroidTarget(
     override val kotlinComponents by lazy {
         checkPublishLibraryVariantsExist()
 
-        KotlinAndroidPlugin.androidTargetHandler(this).doCreateComponents()
+        KotlinAndroidPlugin.androidTargetHandler().doCreateComponents()
     }
 
     private fun isVariantPublished(variant: BaseVariant): Boolean {

@@ -146,7 +146,7 @@ open class KotlinPm20ProjectExtension(project: Project) : KotlinTopLevelExtensio
 
     @PublishedApi
     @JvmName("isAllowCommonizer")
-    internal fun isAllowCommonizerForIde(project: Project): Boolean = false
+    internal fun isAllowCommonizerForIde(@Suppress("UNUSED_PARAMETER") project: Project): Boolean = false
 }
 
 val KotlinGradleModule.jvm: KotlinJvmVariant

@@ -701,9 +701,7 @@ internal open class KotlinAndroidPlugin(
     }
 
     companion object {
-        fun androidTargetHandler(
-            androidTarget: KotlinAndroidTarget
-        ): AbstractAndroidProjectHandler {
+        fun androidTargetHandler(): AbstractAndroidProjectHandler {
             val tasksProvider = AndroidTasksProvider()
 
             if (androidPluginVersion != null) {
@@ -720,15 +718,14 @@ internal open class KotlinAndroidPlugin(
             return Android25ProjectHandler(kotlinTools)
         }
 
-        fun applyToTarget(
-            kotlinTarget: KotlinAndroidTarget
-        ) {
-            androidTargetHandler(kotlinTarget).configureTarget(kotlinTarget)
+        fun applyToTarget(kotlinTarget: KotlinAndroidTarget) {
+            androidTargetHandler().configureTarget(kotlinTarget)
         }
     }
 }
 
 class KotlinConfigurationTools internal constructor(
+    @Suppress("EXPOSED_PROPERTY_TYPE_IN_CONSTRUCTOR")
     val kotlinTasksProvider: KotlinTasksProvider
 )
 
@@ -841,7 +838,7 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
                 project.addExtendsFromRelation(androidSourceSet.apiConfigurationName, apiConfigurationName)
             } else {
                 // If any dependency is added to this configuration, report an error:
-                project.configurations.getByName(apiConfigurationName).dependencies.all { dependency ->
+                project.configurations.getByName(apiConfigurationName).dependencies.all {
                     throw InvalidUserCodeException(
                         "API dependencies are not allowed for Android source set ${androidSourceSet.name}. " +
                                 "Please use an implementation dependency instead."

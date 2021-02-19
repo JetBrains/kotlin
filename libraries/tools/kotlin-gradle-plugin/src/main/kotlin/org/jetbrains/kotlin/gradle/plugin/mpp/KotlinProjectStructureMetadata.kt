@@ -82,7 +82,7 @@ sealed class SourceSetMetadataLayout(
 
         fun byName(name: String): SourceSetMetadataLayout? = values.firstOrNull { it.name == name }
 
-        fun chooseForProducingProject(project: Project) =
+        fun chooseForProducingProject() =
             /** A producing project will now only generate Granular source sets metadata as a KLIB */
             KLIB
     }
@@ -173,7 +173,7 @@ internal fun buildKotlinProjectStructureMetadata(project: Project): KotlinProjec
             .filter { it in sourceSetsWithMetadataCompilations }.map { it.name }
             .toSet(),
         sourceSetBinaryLayout = sourceSetsWithMetadataCompilations.keys.associate { sourceSet ->
-            sourceSet.name to SourceSetMetadataLayout.chooseForProducingProject(project)
+            sourceSet.name to SourceSetMetadataLayout.chooseForProducingProject()
         },
         isPublishedAsRoot = true
     )
@@ -285,7 +285,6 @@ private val NodeList.elements: Iterable<Element> get() = (0 until length).map { 
 internal fun parseKotlinSourceSetMetadataFromJson(string: String): KotlinProjectStructureMetadata? {
     @Suppress("DEPRECATION") // The replacement doesn't compile against old dependencies such as AS 4.0
     val json = JsonParser().parse(string).asJsonObject
-    val nodeNamed: JsonObject.(String) -> JsonObject? = { name -> get(name)?.asJsonObject }
     val valueNamed: JsonObject.(String) -> String? = { name -> get(name)?.asString }
     val multiObjects: JsonObject.(String?) -> Iterable<JsonObject> = { name -> get(name).asJsonArray.map { it.asJsonObject } }
     val multiValues: JsonObject.(String?) -> Iterable<String> = { name -> get(name).asJsonArray.map { it.asString } }

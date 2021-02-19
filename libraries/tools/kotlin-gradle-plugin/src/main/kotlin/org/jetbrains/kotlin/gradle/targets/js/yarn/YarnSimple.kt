@@ -20,8 +20,8 @@ class YarnSimple : YarnBasics() {
     override fun resolveProject(resolvedNpmProject: KotlinCompilationNpmResolution) {
         setup(resolvedNpmProject.project.rootProject)
 
-        val project = resolvedNpmProject.project
-
+//        val project = resolvedNpmProject.project
+//
 //        PackageJsonUpToDateCheck(resolvedNpmProject.npmProject).updateIfNeeded {
 //            yarnExec(
 //                (project as ProjectInternal).services,

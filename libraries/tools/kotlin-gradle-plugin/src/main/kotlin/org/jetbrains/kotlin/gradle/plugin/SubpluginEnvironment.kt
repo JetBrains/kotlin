@@ -7,8 +7,10 @@ import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
-import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
+import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinNativeCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaCompilation
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
@@ -127,7 +129,7 @@ internal fun addCompilationSourcesToExternalCompileTask(compilation: KotlinCompi
 internal class LegacyKotlinCompilerPluginSupportPlugin(
     @Suppress("deprecation") // support for deprecated API
     val oldPlugin: KotlinGradleSubplugin<AbstractCompile>
-): KotlinCompilerPluginSupportPlugin {
+) : KotlinCompilerPluginSupportPlugin {
     override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean =
         oldPlugin.isApplicable(kotlinCompilation.target.project, kotlinCompilation.compileKotlinTaskProvider.get() as AbstractCompile)
 
@@ -136,10 +138,8 @@ internal class LegacyKotlinCompilerPluginSupportPlugin(
     ): Provider<List<SubpluginOption>> {
         val project = kotlinCompilation.target.project
 
-        val androidProjectHandlerOrNull: AbstractAndroidProjectHandler? = if (kotlinCompilation is KotlinJvmAndroidCompilation)
-            KotlinAndroidPlugin.androidTargetHandler(
-                kotlinCompilation.target as KotlinAndroidTarget
-            ) else null
+        val androidProjectHandlerOrNull: AbstractAndroidProjectHandler? =
+            if (kotlinCompilation is KotlinJvmAndroidCompilation) KotlinAndroidPlugin.androidTargetHandler() else null
 
         val variantData = (kotlinCompilation as? KotlinJvmAndroidCompilation)?.androidVariant
 

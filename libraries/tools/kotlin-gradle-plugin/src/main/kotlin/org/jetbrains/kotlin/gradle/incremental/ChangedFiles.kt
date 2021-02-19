@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.gradle.incremental
 
-import org.gradle.api.tasks.incremental.IncrementalTaskInputs
 import org.jetbrains.kotlin.incremental.ChangedFiles
 import java.io.File
-import java.util.*
 
-internal fun ChangedFiles(taskInputs: IncrementalTaskInputs): ChangedFiles {
+internal fun ChangedFiles(
+    @Suppress("DEPRECATION") taskInputs: org.gradle.api.tasks.incremental.IncrementalTaskInputs
+): ChangedFiles {
     if (!taskInputs.isIncremental) return ChangedFiles.Unknown()
 
     val modified = ArrayList<File>()

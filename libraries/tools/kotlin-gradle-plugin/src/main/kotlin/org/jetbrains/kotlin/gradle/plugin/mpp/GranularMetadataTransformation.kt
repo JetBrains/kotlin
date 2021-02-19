@@ -391,7 +391,6 @@ private class ProjectMppDependencyMetadataExtractor(
             is KotlinMultiplatformExtension -> projectExtension.targets.getByName(KotlinMultiplatformPlugin.METADATA_TARGET_NAME).compilations
                 .filter { it.name in visibleSourceSetNames }.associate { it.defaultSourceSet.name to it.output.classesDirs }
             is KotlinPm20ProjectExtension -> {
-                require(moduleIdentifier != null)
                 val moduleId = moduleIdentifier
                 val module = projectExtension.modules.single { it.moduleIdentifier == moduleId }
                 val metadataCompilationRegistry = projectExtension.metadataCompilationRegistryByModuleId.getValue(moduleId)

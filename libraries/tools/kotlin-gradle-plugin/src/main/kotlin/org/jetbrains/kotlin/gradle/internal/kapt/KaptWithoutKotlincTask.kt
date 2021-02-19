@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.internal
 
 import org.gradle.api.file.ConfigurableFileCollection
-import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
@@ -84,10 +83,10 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
         for (option in options) {
             result[option.key] = option.value
         }
-        annotationProcessorOptionProviders.forEach {
-            (it as List<Any>).forEach {
-                (it as CommandLineArgumentProvider).asArguments().forEach {
-                    result[it.removePrefix("-A")] = ""
+        annotationProcessorOptionProviders.forEach { providers ->
+            (providers as List<*>).forEach { provider ->
+                (provider as CommandLineArgumentProvider).asArguments().forEach { argument ->
+                    result[argument.removePrefix("-A")] = ""
                 }
             }
         }

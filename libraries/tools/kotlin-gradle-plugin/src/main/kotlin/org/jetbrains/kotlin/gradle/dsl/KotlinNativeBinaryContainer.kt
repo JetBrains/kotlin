@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.gradle.dsl
 
-import org.gradle.api.*
+import org.gradle.api.DomainObjectSet
+import org.gradle.api.Named
+import org.gradle.api.NamedDomainObjectSet
+import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.util.WrapUtil
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -51,7 +54,7 @@ open class KotlinNativeBinaryContainer @Inject constructor(
             "Binary $name has incorrect outputKind or build type.\n" +
                     "Expected: ${buildType.getName()} $classifier. Actual: ${binary.buildType.getName()} ${binary.outputKind.taskNameClassifier}."
         }
-        return binary as T
+        return binary
     }
 
     private inline fun <reified T : NativeBinary> findBinary(

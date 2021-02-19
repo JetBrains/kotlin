@@ -65,6 +65,7 @@ open class KaptExtension {
     private var apOptionsClosure: Closure<*>? = null
     private var javacOptionsClosure: Closure<*>? = null
 
+    @Suppress("DEPRECATION")
     open fun annotationProcessor(fqName: String) {
         val oldProcessors = this.processors
         this.processors = if (oldProcessors.isEmpty()) fqName else "$oldProcessors,$fqName"

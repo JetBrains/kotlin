@@ -139,7 +139,7 @@ abstract class AbstractKotlinTarget(
             object : ComponentWithVariants, ComponentWithCoordinates, SoftwareComponentInternal {
                 override fun getCoordinates() = (kotlinVariant as? ComponentWithCoordinates)?.coordinates
 
-                override fun getVariants(): Set<out SoftwareComponent> =
+                override fun getVariants(): Set<SoftwareComponent> =
                     (kotlinVariant as? KotlinVariantWithMetadataVariant)?.variants.orEmpty()
 
                 override fun getName(): String = adhocVariant.name

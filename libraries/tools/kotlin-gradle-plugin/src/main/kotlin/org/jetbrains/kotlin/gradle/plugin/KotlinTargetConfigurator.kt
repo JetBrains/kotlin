@@ -16,7 +16,6 @@ import org.gradle.api.attributes.Usage
 import org.gradle.api.attributes.Usage.USAGE_ATTRIBUTE
 import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.artifacts.ArtifactAttributes
-import org.gradle.api.internal.plugins.DslObject
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.plugins.JavaBasePlugin
@@ -272,7 +271,7 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
             val target = compilation.target
             val configurations = target.project.configurations
 
-            val pluginConfiguration = configurations.maybeCreate(compilation.pluginConfigurationName).apply {
+            configurations.maybeCreate(compilation.pluginConfigurationName).apply {
                 if (target.platformType == KotlinPlatformType.native) {
                     extendsFrom(configurations.getByName(NATIVE_COMPILER_PLUGIN_CLASSPATH_CONFIGURATION_NAME))
                     isTransitive = false
@@ -317,7 +316,7 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
                 description = "Compile only dependencies for $compilation."
             }
 
-            val compileClasspathConfiguration = configurations.maybeCreate(compilation.compileDependencyConfigurationName).apply {
+            configurations.maybeCreate(compilation.compileDependencyConfigurationName).apply {
                 extendsFrom(compileOnlyConfiguration, implementationConfiguration)
                 usesPlatformOf(target)
                 isVisible = false
@@ -344,7 +343,7 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
                     description = "Runtime only dependencies for $compilation."
                 }
 
-                val runtimeClasspathConfiguration = configurations.maybeCreate(compilation.runtimeDependencyConfigurationName).apply {
+                configurations.maybeCreate(compilation.runtimeDependencyConfigurationName).apply {
                     extendsFrom(runtimeOnlyConfiguration, implementationConfiguration)
                     runtimeConfiguration?.let { extendsFrom(it) }
                     usesPlatformOf(target)
