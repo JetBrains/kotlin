@@ -9,6 +9,7 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.stubs.StringStubIndexExtension
 import com.intellij.psi.stubs.StubIndex
 import com.intellij.psi.stubs.StubIndexKey
 import org.jetbrains.kotlin.name.CallableId
@@ -16,10 +17,7 @@ import org.jetbrains.kotlin.idea.stubindex.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtFunction
-import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.*
 
 /*
 * Move to another module
@@ -84,6 +82,20 @@ public class IndexHelper(val project: Project, private val scope: GlobalSearchSc
             .flatMap { fqName -> index[fqName, project, scope] }
             .filter(psiFilter)
             .toList()
+    }
+
+    fun getTopLevelCallables(nameFilter: (Name) -> Boolean): Collection<KtCallableDeclaration> {
+        fun sequenceOfElements(index: StringStubIndexExtension<out KtCallableDeclaration>): Sequence<KtCallableDeclaration> =
+            index.getAllKeys(project).asSequence()
+                .onEach { ProgressManager.checkCanceled() }
+                .filter { fqName -> nameFilter(getShortName(fqName)) }
+                .flatMap { fqName -> index[fqName, project, scope] }
+                .filter { it.receiverTypeReference == null }
+
+        val functions = sequenceOfElements(KotlinTopLevelFunctionFqnNameIndex.getInstance())
+        val properties = sequenceOfElements(KotlinTopLevelPropertyFqnNameIndex.getInstance())
+
+        return (functions + properties).toList()
     }
 
     companion object {

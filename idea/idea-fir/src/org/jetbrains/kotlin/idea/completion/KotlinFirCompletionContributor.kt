@@ -85,13 +85,16 @@ private object KotlinFirCompletionProvider : CompletionProvider<CompletionParame
  * TODO refactor it, try to split into several classes, or decompose it into several classes.
  */
 private class KotlinCommonCompletionProvider(
-    prefixMatcher: PrefixMatcher,
+    private val prefixMatcher: PrefixMatcher,
     private val indexHelper: IndexHelper
 ) {
     private val lookupElementFactory = KotlinFirLookupElementFactory()
 
     private val scopeNameFilter: KtScopeNameFilter =
         { name -> !name.isSpecial && prefixMatcher.prefixMatches(name.identifier) }
+
+    private val shouldCompleteTopLevelCallablesFromIndex: Boolean
+        get() = prefixMatcher.prefix.isNotEmpty()
 
     private fun KtAnalysisSession.addSymbolToCompletion(completionResultSet: CompletionResultSet, expectedType: KtType?, symbol: KtSymbol) {
         if (symbol !is KtNamedSymbol) return
@@ -198,6 +201,14 @@ private class KotlinCommonCompletionProvider(
 
         availableNonExtensions.forEach { addSymbolToCompletion(result, expectedType, it) }
         extensionsWhichCanBeCalled.forEach { addSymbolToCompletion(result, expectedType, it) }
+
+        if (shouldCompleteTopLevelCallablesFromIndex) {
+            val topLevelCallables = indexHelper.getTopLevelCallables(scopeNameFilter)
+            topLevelCallables.asSequence()
+                .map { it.getSymbol() }
+                .forEach { addSymbolToCompletion(result, expectedType, it) }
+        }
+
 
         collectTypesCompletion(result, implicitScopes, expectedType)
     }
