@@ -208,6 +208,14 @@ abstract class AbstractDiagnosticCollector(
             resolvedTypeRef.delegatedTypeRef?.accept(this, data)
         }
 
+        override fun visitFunctionCall(functionCall: FirFunctionCall, data: Nothing?) {
+            visitWithQualifiedAccess(functionCall)
+        }
+
+        override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression, data: Nothing?) {
+            visitWithQualifiedAccess(qualifiedAccessExpression)
+        }
+
         private inline fun visitWithDeclaration(
             declaration: FirDeclaration,
             block: () -> Unit = { declaration.acceptChildren(this, null) }
@@ -235,6 +243,17 @@ abstract class AbstractDiagnosticCollector(
                 ) {
                     declaration.acceptChildren(this, null)
                 }
+            }
+        }
+
+        private fun visitWithQualifiedAccess(qualifiedAccess: FirQualifiedAccess) {
+            val existingContext = context
+            context = context.addQualifiedAccess(qualifiedAccess)
+            try {
+                qualifiedAccess.runComponents()
+                qualifiedAccess.acceptChildren(this, null)
+            } finally {
+                context = existingContext
             }
         }
     }

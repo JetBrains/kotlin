@@ -34,7 +34,8 @@ class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollect
     }
 
     override fun visitErrorNamedReference(errorNamedReference: FirErrorNamedReference, data: CheckerContext) {
-        val source = errorNamedReference.source ?: return
+        val source = data.qualifiedAccesses.lastOrNull()?.source?.takeIf { it.elementType == KtNodeTypes.DOT_QUALIFIED_EXPRESSION }
+            ?: errorNamedReference.source ?: return
         // Don't report duplicated unresolved reference on annotation entry (already reported on its type)
         if (source.elementType == KtNodeTypes.ANNOTATION_ENTRY && errorNamedReference.diagnostic is ConeUnresolvedNameError) return
         reportFirDiagnostic(errorNamedReference.diagnostic, source, reporter, data)
