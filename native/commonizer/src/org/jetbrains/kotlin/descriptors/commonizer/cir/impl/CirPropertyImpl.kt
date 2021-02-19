@@ -27,8 +27,8 @@ data class CirPropertyImpl(
     override val isDelegate: Boolean,
     override val getter: CirPropertyGetter?,
     override val setter: CirPropertySetter?,
-    override val backingFieldAnnotations: List<CirAnnotation>?,
-    override val delegateFieldAnnotations: List<CirAnnotation>?,
+    override val backingFieldAnnotations: List<CirAnnotation>,
+    override val delegateFieldAnnotations: List<CirAnnotation>,
     override val compileTimeInitializer: CirConstantValue<*>?
 ) : CirProperty {
     // const property in "common" fragment is already lifted up

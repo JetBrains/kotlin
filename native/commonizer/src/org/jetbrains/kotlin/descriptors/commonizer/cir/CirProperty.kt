@@ -13,7 +13,7 @@ interface CirProperty : CirFunctionOrProperty, CirLiftedUpDeclaration {
     val isDelegate: Boolean
     val getter: CirPropertyGetter?
     val setter: CirPropertySetter?
-    val backingFieldAnnotations: List<CirAnnotation>? // null assumes no backing field
-    val delegateFieldAnnotations: List<CirAnnotation>? // null assumes no backing field
+    val backingFieldAnnotations: List<CirAnnotation>
+    val delegateFieldAnnotations: List<CirAnnotation>
     val compileTimeInitializer: CirConstantValue<*>?
 }

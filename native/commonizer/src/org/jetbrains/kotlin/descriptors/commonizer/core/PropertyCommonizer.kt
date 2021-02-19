@@ -45,8 +45,8 @@ class PropertyCommonizer(classifiers: CirKnownClassifiers) : AbstractFunctionOrP
             isDelegate = false,
             getter = CirPropertyGetterFactory.DEFAULT_NO_ANNOTATIONS,
             setter = setter,
-            backingFieldAnnotations = null,
-            delegateFieldAnnotations = null,
+            backingFieldAnnotations = emptyList(),
+            delegateFieldAnnotations = emptyList(),
             compileTimeInitializer = constCompileTimeInitializer
         )
     }

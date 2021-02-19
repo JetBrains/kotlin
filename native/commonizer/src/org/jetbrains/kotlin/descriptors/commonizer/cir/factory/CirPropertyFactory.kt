@@ -39,8 +39,8 @@ object CirPropertyFactory {
             isDelegate = source.isDelegated,
             getter = source.getter?.let(CirPropertyGetterFactory::create),
             setter = source.setter?.let(CirPropertySetterFactory::create),
-            backingFieldAnnotations = source.backingField?.annotations?.compactMap(CirAnnotationFactory::create),
-            delegateFieldAnnotations = source.delegateField?.annotations?.compactMap(CirAnnotationFactory::create),
+            backingFieldAnnotations = source.backingField?.annotations?.compactMap(CirAnnotationFactory::create).orEmpty(),
+            delegateFieldAnnotations = source.delegateField?.annotations?.compactMap(CirAnnotationFactory::create).orEmpty(),
             compileTimeInitializer = compileTimeInitializer
         )
     }
@@ -63,8 +63,8 @@ object CirPropertyFactory {
         isDelegate: Boolean,
         getter: CirPropertyGetter?,
         setter: CirPropertySetter?,
-        backingFieldAnnotations: List<CirAnnotation>?,
-        delegateFieldAnnotations: List<CirAnnotation>?,
+        backingFieldAnnotations: List<CirAnnotation>,
+        delegateFieldAnnotations: List<CirAnnotation>,
         compileTimeInitializer: CirConstantValue<*>?
     ): CirProperty {
         return CirPropertyImpl(
