@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.KtPropertyDelegate
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.KtTypeParameter
 import org.jetbrains.kotlin.psi.KtTypeParameterList
 import org.jetbrains.kotlin.psi.KtTypeReference
@@ -708,8 +709,13 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val componentFunctionName: Name
     }
 
-    abstract class UninitializedVariable : KtFirDiagnostic<PsiElement>() {
+    abstract class UninitializedVariable : KtFirDiagnostic<KtSimpleNameExpression>() {
         override val diagnosticClass get() = UninitializedVariable::class
+        abstract val variable: KtVariableSymbol
+    }
+
+    abstract class ValReassignment : KtFirDiagnostic<KtExpression>() {
+        override val diagnosticClass get() = ValReassignment::class
         abstract val variable: KtVariableSymbol
     }
 
