@@ -61,6 +61,16 @@ private class UniqueLookupObject
 
 private data class ClassifierLookupObject(val shortName: Name, val classId: ClassId?)
 
+/**
+ * Simplest lookup object so two lookup elements for the same function will clash.
+ */
+private data class FunctionLookupObject(val name: Name, val callableIdIfNonLocal: FqName?, val renderedFunctionParameters: String)
+
+/**
+ * Simplest lookup object so two lookup elements for the same property will clash.
+ */
+private data class VariableLookupObject(val name: Name, val callableIdIfNonLocal: FqName?)
+
 private class ClassLookupElementFactory {
     fun createLookup(symbol: KtClassLikeSymbol): LookupElementBuilder {
         return LookupElementBuilder.create(ClassifierLookupObject(symbol.name, symbol.classIdIfNonLocal), symbol.name.asString())
@@ -83,7 +93,9 @@ private class TypeParameterLookupElementFactory {
 
 private class VariableLookupElementFactory {
     fun KtAnalysisSession.createLookup(symbol: KtVariableLikeSymbol): LookupElementBuilder {
-        return LookupElementBuilder.create(UniqueLookupObject(), symbol.name.asString())
+        val lookupObject = VariableLookupObject(symbol.name, symbol.callableIdIfExists)
+
+        return LookupElementBuilder.create(lookupObject, symbol.name.asString())
             .withTypeText(symbol.annotatedType.type.render())
             .markIfSyntheticJavaProperty(symbol)
             .withInsertHandler(createInsertHandler(symbol))
@@ -105,12 +117,32 @@ private class VariableLookupElementFactory {
     private fun createInsertHandler(symbol: KtVariableLikeSymbol): InsertHandler<LookupElement> {
         return QuotedNamesAwareInsertionHandler(symbol.name)
     }
+
+    private val KtVariableLikeSymbol.callableIdIfExists: FqName?
+        get() = when (this) {
+            is KtJavaFieldSymbol -> callableIdIfNonLocal
+            is KtKotlinPropertySymbol -> callableIdIfNonLocal
+            is KtSyntheticJavaPropertySymbol -> callableIdIfNonLocal
+
+            // Compiler will complain if there would be a new type in the hierarchy
+            is KtEnumEntrySymbol,
+            is KtLocalVariableSymbol,
+            is KtFunctionParameterSymbol,
+            is KtConstructorParameterSymbol,
+            is KtSetterParameterSymbol -> null
+        }
 }
 
 private class FunctionLookupElementFactory {
     fun KtAnalysisSession.createLookup(symbol: KtFunctionSymbol): LookupElementBuilder? {
+        val lookupObject = FunctionLookupObject(
+            symbol.name,
+            symbol.callableIdIfNonLocal,
+            with(ShortNamesRenderer) { renderFunctionParameters(symbol) }
+        )
+
         return try {
-            LookupElementBuilder.create(UniqueLookupObject(), symbol.name.asString())
+            LookupElementBuilder.create(lookupObject, symbol.name.asString())
                 .withTailText(getTailText(symbol), true)
                 .withTypeText(symbol.annotatedType.type.render())
                 .withInsertHandler(createInsertHandler(symbol))
