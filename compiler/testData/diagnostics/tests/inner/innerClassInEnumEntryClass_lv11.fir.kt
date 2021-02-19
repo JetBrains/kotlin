@@ -4,9 +4,9 @@ enum class Enum {
     ENTRY_WITH_CLASS {
         inner class TestInner
 
-        class TestNested
+        <!NESTED_CLASS_NOT_ALLOWED!>class TestNested<!>
 
-        interface TestInterface
+        <!NESTED_CLASS_NOT_ALLOWED!>interface TestInterface<!>
 
         object TestObject
 

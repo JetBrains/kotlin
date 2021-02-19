@@ -114,6 +114,14 @@ internal class DelegationInInterfaceImpl(
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
 }
 
+internal class NestedClassNotAllowedImpl(
+    override val declaration: String,
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.NestedClassNotAllowed(), KtAbstractFirDiagnostic<KtNamedDeclaration> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
 internal class HiddenImpl(
     override val hidden: KtSymbol,
     firDiagnostic: FirPsiDiagnostic<*>,

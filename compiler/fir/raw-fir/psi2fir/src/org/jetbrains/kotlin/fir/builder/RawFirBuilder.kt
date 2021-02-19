@@ -793,7 +793,11 @@ class RawFirBuilder(
         override fun visitClassOrObject(classOrObject: KtClassOrObject, data: Unit): FirElement {
             return withChildClassName(
                 classOrObject.nameAsSafeName,
-                classOrObject.isLocal || classOrObject.getStrictParentOfType<KtEnumEntry>() != null
+                classOrObject.isLocal
+                        // TODO: currently enum entry initializer is represented in FIR as an FirAnonymousObject. Because of this, all
+                        //  nested declarations are now marked local. This causes the FirNestedClassChecker to ignore some invalid programs.
+                        // See KT-45115
+                        || classOrObject.getStrictParentOfType<KtEnumEntry>() != null
             ) {
                 val classKind = when (classOrObject) {
                     is KtObjectDeclaration -> ClassKind.OBJECT
