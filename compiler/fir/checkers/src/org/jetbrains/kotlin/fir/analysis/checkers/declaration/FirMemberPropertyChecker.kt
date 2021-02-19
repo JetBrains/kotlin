@@ -75,10 +75,10 @@ object FirMemberPropertyChecker : FirRegularClassChecker() {
                 if (hasBody) reporter.reportOn(src, FirErrors.ABSTRACT_PROPERTY_WITH_GETTER, context)
             }
             checkAccessor(property.setter, property.delegate) { src, symbol, hasBody ->
-                if (symbol.fir.visibility == Visibilities.Private && property.visibility != Visibilities.Private) {
-                    reporter.reportOn(src, FirErrors.PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY, context)
-                } else {
-                    if (hasBody) reporter.reportOn(src, FirErrors.ABSTRACT_PROPERTY_WITH_SETTER, context)
+                when {
+                    symbol.fir.visibility == Visibilities.Private && property.visibility != Visibilities.Private ->
+                        reporter.reportOn(src, FirErrors.PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY, context)
+                    hasBody -> reporter.reportOn(src, FirErrors.ABSTRACT_PROPERTY_WITH_SETTER, context)
                 }
             }
         }
