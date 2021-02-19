@@ -446,10 +446,23 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             data.append(errorNamedReference.name)
         }
 
-        private fun visitConstructor(calleeReference: FirReference, data: StringBuilder) {
+        private fun visitConstructor(call: FirResolvable, data: StringBuilder) {
+            val calleeReference = call.calleeReference
             if (calleeReference !is FirResolvedNamedReference) {
                 data.append("[ERROR: Unresolved]")
             } else {
+                when (call) {
+                    is FirDelegatedConstructorCall -> {
+                        val actualReturnType = calleeReference.resolvedSymbol.firUnsafe<FirConstructor>().returnTypeRef
+                        if (call.constructedTypeRef.coneType != actualReturnType.coneType) {
+                            // is typealias
+                            val typealiasType = call.constructedTypeRef.renderWithNativeRenderer()
+                            data.append("fun ").append(typealiasType).append(".<init>(): ").append(typealiasType)
+                                .append(" /* = ").append(actualReturnType.renderWithNativeRenderer()).append(" */")
+                            return
+                        }
+                    }
+                }
                 visitConstructor(calleeReference.resolvedSymbol.fir as FirConstructor, data)
             }
         }
@@ -549,15 +562,13 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         }
 
         override fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: StringBuilder) {
-            val reference = annotationCall.calleeReference
-            visitConstructor(reference, data)
+            visitConstructor(annotationCall, data)
         }
 
         override fun visitDelegatedConstructorCall(delegatedConstructorCall: FirDelegatedConstructorCall, data: StringBuilder) {
             val coneClassType = delegatedConstructorCall.constructedTypeRef.coneTypeSafe<ConeClassLikeType>()
             if (coneClassType != null) {
-                val reference = delegatedConstructorCall.calleeReference
-                visitConstructor(reference, data)
+                visitConstructor(delegatedConstructorCall, data)
             } else {
                 data.append("[ERROR : ${delegatedConstructorCall.constructedTypeRef.render()}]")
             }
