@@ -499,25 +499,41 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         val firClass = type.lookupTag.toSymbol(session)?.fir ?: return this
         if (firClass !is FirTypeParameterRefsOwner || firClass.typeParameters.isEmpty()) return this
 
-        val baseType = argument.typeRef.coneTypeSafe<ConeKotlinType>()?.lowerBoundIfFlexible()?.fullyExpandedType(session) ?: return this
-        if (baseType !is ConeClassLikeType) return this
-        val baseFirClass = baseType.lookupTag.toSymbol(session)?.fir ?: return this
-
-        val newArguments = if (AbstractTypeChecker.isSubtypeOfClass(
-                session.typeContext.newBaseTypeCheckerContext(errorTypesEqualToAnything = false, stubTypesEqualToAnything = true), baseType.lookupTag, type.lookupTag)) {
-            // If actual type of declaration is more specific than bare type then we should just find
-            // corresponding supertype with proper arguments
-            with(session.typeContext) {
-                val superType = baseType.fastCorrespondingSupertypes(type.lookupTag)?.firstOrNull() as? ConeKotlinType?
-                superType?.typeArguments
-            }
-        } else {
-            type.inheritTypeArguments(baseFirClass, baseType.typeArguments)
-        } ?: return buildErrorTypeRef {
+        val originalType = argument.typeRef.coneTypeSafe<ConeKotlinType>() ?: return this
+        val newType = computeRepresentativeTypeForBareType(type, originalType) ?: return buildErrorTypeRef {
             source = this@withTypeArgumentsForBareType.source
             diagnostic = ConeWrongNumberOfTypeArgumentsError(firClass.typeParameters.size, firClass.symbol)
         }
-        return if (newArguments.isEmpty()) this else withReplacedConeType(type.withArguments(newArguments))
+        return if (newType.typeArguments.isEmpty()) this else withReplacedConeType(newType)
+    }
+
+    private fun computeRepresentativeTypeForBareType(type: ConeClassLikeType, originalType: ConeKotlinType): ConeKotlinType? {
+        @Suppress("NAME_SHADOWING")
+        val originalType = originalType.lowerBoundIfFlexible().fullyExpandedType(session)
+        if (originalType is ConeIntersectionType) {
+            val candidatesFromIntersectedTypes = originalType.intersectedTypes.mapNotNull { computeRepresentativeTypeForBareType(type, it) }
+            candidatesFromIntersectedTypes.firstOrNull { it.typeArguments.isNotEmpty() }?.let { return it }
+            return candidatesFromIntersectedTypes.firstOrNull()
+        }
+        if (originalType !is ConeClassLikeType) return type
+        val baseFirClass = originalType.lookupTag.toSymbol(session)?.fir ?: return type
+        val isSubtype = AbstractTypeChecker.isSubtypeOfClass(
+            session.typeContext.newBaseTypeCheckerContext(errorTypesEqualToAnything = false, stubTypesEqualToAnything = true),
+            originalType.lookupTag,
+            type.lookupTag
+        )
+        val newArguments = if (isSubtype) {
+            // If actual type of declaration is more specific than bare type then we should just find
+            // corresponding supertype with proper arguments
+            with(session.typeContext) {
+                val superType = originalType.fastCorrespondingSupertypes(type.lookupTag)?.firstOrNull() as? ConeKotlinType?
+                superType?.typeArguments
+            }
+        } else {
+            type.inheritTypeArguments(baseFirClass, originalType.typeArguments)
+        } ?: return null
+        if (newArguments.isEmpty()) return type
+        return type.withArguments(newArguments)
     }
 
     override fun transformTypeOperatorCall(

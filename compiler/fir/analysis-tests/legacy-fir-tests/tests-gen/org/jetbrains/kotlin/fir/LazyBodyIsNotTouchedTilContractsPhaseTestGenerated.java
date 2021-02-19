@@ -3256,6 +3256,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         public void testCapturedParametersOfInnerClasses() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/types/capturedParametersOfInnerClasses.kt");
         }
+
+        @TestMetadata("castToBareType.kt")
+        public void testCastToBareType() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/types/castToBareType.kt");
+        }
     }
 
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/visibility")
