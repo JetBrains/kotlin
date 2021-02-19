@@ -49,6 +49,7 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <languageVersion>1.4</languageVersion>
                     <args>
                         <arg>-Xinline-classes</arg>
                     </args>

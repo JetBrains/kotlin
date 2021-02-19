@@ -2002,19 +2002,6 @@ public abstract class QuickFixTestGenerated extends AbstractQuickFixTest {
     }
 
     @RunWith(JUnit3RunnerWithInners.class)
-    @TestMetadata("testData/quickfix/changeFeatureSupport")
-    public static class ChangeFeatureSupport extends AbstractQuickFixTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-        }
-
-        @TestMetadata("inlineClass.kt")
-        public void testInlineClass() throws Exception {
-            runTest("testData/quickfix/changeFeatureSupport/inlineClass.kt");
-        }
-    }
-
-    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/changeObjectToClass")
     public static class ChangeObjectToClass extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
