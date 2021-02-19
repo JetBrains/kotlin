@@ -135,7 +135,7 @@ FILE: CanBeValChecker.kt
         }
 
         lval b: R|kotlin/String|
-        R|<local>/bool| = Boolean(false)
+        R|<local>/b| = Boolean(false)
     }
     public final fun cycles(): R|kotlin/Unit| {
         lvar a: R|kotlin/Int| = Int(10)

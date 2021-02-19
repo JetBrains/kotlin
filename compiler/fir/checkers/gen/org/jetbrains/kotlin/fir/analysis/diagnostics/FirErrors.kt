@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.KtPropertyDelegate
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.KtTypeParameter
 import org.jetbrains.kotlin.psi.KtTypeParameterList
 import org.jetbrains.kotlin.psi.KtTypeReference
@@ -231,7 +232,8 @@ object FirErrors {
     val COMPONENT_FUNCTION_ON_NULLABLE by error1<FirSourceElement, KtExpression, Name>()
 
     // Control flow diagnostics
-    val UNINITIALIZED_VARIABLE by error1<FirSourceElement, PsiElement, FirPropertySymbol>()
+    val UNINITIALIZED_VARIABLE by error1<FirSourceElement, KtSimpleNameExpression, FirPropertySymbol>()
+    val VAL_REASSIGNMENT by error1<FirSourceElement, KtExpression, FirPropertySymbol>()
     val WRONG_INVOCATION_KIND by warning3<FirSourceElement, PsiElement, AbstractFirBasedSymbol<*>, EventOccurrencesRange, EventOccurrencesRange>()
     val LEAKED_IN_PLACE_LAMBDA by error1<FirSourceElement, PsiElement, AbstractFirBasedSymbol<*>>()
     val WRONG_IMPLIES_CONDITION by warning0<FirSourceElement, PsiElement>()

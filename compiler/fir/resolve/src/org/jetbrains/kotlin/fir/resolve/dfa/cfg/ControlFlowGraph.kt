@@ -133,6 +133,11 @@ object NormalPath : EdgeLabel(label = null) {
         get() = true
 }
 
+object LoopBackPath : EdgeLabel(label = null) {
+    override val isNormal: Boolean
+        get() = true
+}
+
 object UncaughtExceptionPath : EdgeLabel(label = "onUncaughtException")
 
 // TODO: Label `return`ing edge with this.

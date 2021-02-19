@@ -657,7 +657,7 @@ class ControlFlowGraphBuilder {
         }
         loopExitNodes.push(createLoopExitNode(loop))
         levelCounter++
-        val conditionEnterNode = createLoopConditionEnterNode(loop.condition).also {
+        val conditionEnterNode = createLoopConditionEnterNode(loop.condition, loop).also {
             addNewSimpleNode(it)
             // put conditional node twice so we can refer it after exit from loop block
             lastNodes.push(it)
@@ -686,7 +686,7 @@ class ControlFlowGraphBuilder {
         if (lastNodes.isNotEmpty) {
             val conditionEnterNode = lastNodes.pop()
             require(conditionEnterNode is LoopConditionEnterNode) { loop.render() }
-            addBackEdge(loopBlockExitNode, conditionEnterNode)
+            addBackEdge(loopBlockExitNode, conditionEnterNode, label = LoopBackPath)
         }
         val loopExitNode = loopExitNodes.pop()
         loopExitNode.updateDeadStatus()
@@ -714,7 +714,7 @@ class ControlFlowGraphBuilder {
     fun enterDoWhileLoopCondition(loop: FirLoop): Pair<LoopBlockExitNode, LoopConditionEnterNode> {
         levelCounter--
         val blockExitNode = createLoopBlockExitNode(loop).also { addNewSimpleNode(it) }
-        val conditionEnterNode = createLoopConditionEnterNode(loop.condition).also { addNewSimpleNode(it) }
+        val conditionEnterNode = createLoopConditionEnterNode(loop.condition, loop).also { addNewSimpleNode(it) }
         levelCounter++
         return blockExitNode to conditionEnterNode
     }
@@ -727,7 +727,7 @@ class ControlFlowGraphBuilder {
         popAndAddEdge(conditionExitNode)
         val blockEnterNode = lastNodes.pop()
         require(blockEnterNode is LoopBlockEnterNode)
-        addBackEdge(conditionExitNode, blockEnterNode, isDead = conditionBooleanValue == false)
+        addBackEdge(conditionExitNode, blockEnterNode, isDead = conditionBooleanValue == false, label = LoopBackPath)
         val loopExit = loopExitNodes.pop()
         addEdge(conditionExitNode, loopExit, propagateDeadness = false, isDead = conditionBooleanValue == true)
         loopExit.updateDeadStatus()
@@ -1261,7 +1261,12 @@ class ControlFlowGraphBuilder {
         popAndAddEdge(node, preferredKind)
         if (targetNode != null) {
             if (isBack) {
-                addBackEdge(node, targetNode)
+                if (targetNode is LoopEnterNode) {
+                    // `continue` to the loop header
+                    addBackEdge(node, targetNode, label = LoopBackPath)
+                } else {
+                    addBackEdge(node, targetNode)
+                }
             } else {
                 addEdge(node, targetNode, propagateDeadness = false)
             }

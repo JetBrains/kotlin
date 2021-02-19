@@ -63,7 +63,7 @@ fun t4(a: A) {
 
 fun t1() {
     val a : Int = 1
-    a = 2
+    <!VAL_REASSIGNMENT!>a<!> = 2
 
     var b : Int = 1
     b = 3
@@ -83,8 +83,8 @@ enum class ProtocolState {
 
 fun t3() {
    val x: ProtocolState = ProtocolState.WAITING
-   x = x.signal()
-   x = x.signal() //repeat for x
+   <!VAL_REASSIGNMENT!>x<!> = x.signal()
+   <!VAL_REASSIGNMENT!>x<!> = x.signal() //repeat for x
 }
 
 fun t4() {
@@ -326,7 +326,7 @@ fun func() {
     val a = object {
         val x = b
         init {
-            b = 4
+            <!VAL_REASSIGNMENT!>b<!> = 4
         }
     }
 }

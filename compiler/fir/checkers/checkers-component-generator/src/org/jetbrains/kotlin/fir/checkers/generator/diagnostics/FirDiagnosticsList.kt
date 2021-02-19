@@ -352,7 +352,10 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
     }
 
     val CONTROL_FLOW by object : DiagnosticGroup("Control flow diagnostics") {
-        val UNINITIALIZED_VARIABLE by error<FirSourceElement, PsiElement> {
+        val UNINITIALIZED_VARIABLE by error<FirSourceElement, KtSimpleNameExpression> {
+            parameter<FirPropertySymbol>("variable")
+        }
+        val VAL_REASSIGNMENT by error<FirSourceElement, KtExpression> {
             parameter<FirPropertySymbol>("variable")
         }
         val WRONG_INVOCATION_KIND by warning<FirSourceElement, PsiElement> {

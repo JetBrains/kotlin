@@ -86,7 +86,7 @@ fun testRepeatOnVal(x: Int) {
     val y: Int
     repeat(x) {
         // reassignment instead of captured val initialization
-        y = 42
+        <!VAL_REASSIGNMENT!>y<!> = 42
     }
     println(<!UNINITIALIZED_VARIABLE!>y<!>)
 }

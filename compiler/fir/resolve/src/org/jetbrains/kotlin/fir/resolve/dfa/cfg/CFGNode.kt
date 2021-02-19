@@ -394,7 +394,7 @@ class LoopBlockExitNode(owner: ControlFlowGraph, override val fir: FirLoop, leve
         return visitor.visitLoopBlockExitNode(this, data)
     }
 }
-class LoopConditionEnterNode(owner: ControlFlowGraph, override val fir: FirExpression, level: Int, id: Int) : CFGNode<FirExpression>(owner, level, id), EnterNodeMarker {
+class LoopConditionEnterNode(owner: ControlFlowGraph, override val fir: FirExpression, val loop: FirLoop, level: Int, id: Int) : CFGNode<FirExpression>(owner, level, id), EnterNodeMarker {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitLoopConditionEnterNode(this, data)
     }
