@@ -5,24 +5,9 @@
 
 package org.jetbrains.kotlin.idea.frontend.api
 
-import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.idea.frontend.api.calls.KtCall
 import org.jetbrains.kotlin.idea.frontend.api.components.*
-import org.jetbrains.kotlin.idea.frontend.api.diagnostics.KtDiagnostic
-import org.jetbrains.kotlin.idea.frontend.api.diagnostics.KtDiagnosticWithPsi
-import org.jetbrains.kotlin.idea.frontend.api.scopes.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
-import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithDeclarations
-import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithKind
-import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithMembers
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
-import org.jetbrains.kotlin.idea.frontend.api.types.KtType
-import org.jetbrains.kotlin.idea.references.KtReference
-import org.jetbrains.kotlin.idea.references.KtSimpleReference
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 
 /**
@@ -37,175 +22,69 @@ import org.jetbrains.kotlin.psi.*
  *
  * To create analysis session consider using [analyze]
  */
-abstract class KtAnalysisSession(final override val token: ValidityToken) : ValidityTokenOwner {
-    protected abstract val smartCastProvider: KtSmartCastProvider
-    protected abstract val diagnosticProvider: KtDiagnosticProvider
-    protected abstract val scopeProvider: KtScopeProvider
-    protected abstract val containingDeclarationProvider: KtSymbolContainingDeclarationProvider
-    protected abstract val symbolProvider: KtSymbolProvider
-    protected abstract val callResolver: KtCallResolver
-    protected abstract val completionCandidateChecker: KtCompletionCandidateChecker
-    protected abstract val symbolDeclarationOverridesProvider: KtSymbolDeclarationOverridesProvider
-    protected abstract val referenceShortener: KtReferenceShortener
+abstract class KtAnalysisSession(final override val token: ValidityToken) : ValidityTokenOwner,
+    KtSmartCastProviderMixIn,
+    KtCallResolverMixIn,
+    KtDiagnosticProviderMixIn,
+    KtScopeProviderMixIn,
+    KtCompletionCandidateCheckerMixIn,
+    KtTypeRendererMixIn,
+    KtSymbolDeclarationOverridesProviderMixIn,
+    KtExpressionTypeProviderMixIn,
+    KtTypeProviderMixIn,
+    KtSymbolProviderMixIn,
+    KtSymbolContainingDeclarationProviderMixIn,
+    KtSubtypingComponentMixIn,
+    KtExpressionInfoProviderMixIn,
+    KtSymbolsMixIn,
+    KtReferenceResolveMixIn,
+    KtReferenceShortenerMixIn {
 
-    @Suppress("LeakingThis")
-
-    protected open val typeRenderer: KtTypeRenderer = KtDefaultTypeRenderer(this, token)
-    protected abstract val expressionTypeProvider: KtExpressionTypeProvider
-    protected abstract val typeProvider: KtTypeProvider
-    protected abstract val subtypingComponent: KtSubtypingComponent
-    protected abstract val expressionHandlingComponent: KtExpressionHandlingComponent
+    override val analysisSession: KtAnalysisSession get() = this
 
     abstract fun createContextDependentCopy(originalKtFile: KtFile, fakeKtElement: KtElement): KtAnalysisSession
 
+    internal val smartCastProvider: KtSmartCastProvider get() = smartCastProviderImpl
+    protected abstract val smartCastProviderImpl: KtSmartCastProvider
 
-    /**
-     * Return a list of **all** symbols which are overridden by symbol
-     *
-     * E.g, if we have `A.foo` overrides `B.foo` overrides `C.foo`, all two super declarations `B.foo`, `C.foo` will be returned
-     *
-     * Unwraps substituted overridden symbols (see [org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbolOrigin.INTERSECTION_OVERRIDE])
-     *
-     * @see getDirectlyOverriddenSymbols
-     */
-    fun KtCallableSymbol.getAllOverriddenSymbols(): List<KtCallableSymbol> =
-        symbolDeclarationOverridesProvider.getAllOverriddenSymbols(this)
+    internal val diagnosticProvider: KtDiagnosticProvider get() = diagnosticProviderImpl
+    protected abstract val diagnosticProviderImpl: KtDiagnosticProvider
 
-    /**
-     * Return a list of symbols which are **directly** overridden by symbol
-     **
-     * E.g, if we have `A.foo` overrides `B.foo` overrides `C.foo`, only declarations directly overriden `B.foo` will be returned
-     *
-     * Unwraps substituted overridden symbols (see [org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbolOrigin.INTERSECTION_OVERRIDE])
-     *
-     *  @see getAllOverriddenSymbols
-     */
-    fun KtCallableSymbol.getDirectlyOverriddenSymbols(): List<KtCallableSymbol> =
-        symbolDeclarationOverridesProvider.getDirectlyOverriddenSymbols(this)
+    internal val scopeProvider: KtScopeProvider get() = scopeProviderImpl
+    protected abstract val scopeProviderImpl: KtScopeProvider
 
-    fun KtCallableSymbol.getIntersectionOverriddenSymbols(): Collection<KtCallableSymbol> =
-        symbolDeclarationOverridesProvider.getIntersectionOverriddenSymbols(this)
+    internal val containingDeclarationProvider: KtSymbolContainingDeclarationProvider get() = containingDeclarationProviderImpl
+    protected abstract val containingDeclarationProviderImpl: KtSymbolContainingDeclarationProvider
 
-    fun KtExpression.getSmartCast(): KtType? = smartCastProvider.getSmartCastedToType(this)
+    internal val symbolProvider: KtSymbolProvider get() = symbolProviderImpl
+    protected abstract val symbolProviderImpl: KtSymbolProvider
 
-    fun KtExpression.getImplicitReceiverSmartCast(): Collection<ImplicitReceiverSmartCast> =
-        smartCastProvider.getImplicitReceiverSmartCast(this)
+    internal val callResolver: KtCallResolver get() = callResolverImpl
+    protected abstract val callResolverImpl: KtCallResolver
 
-    fun KtExpression.getKtType(): KtType = expressionTypeProvider.getKtExpressionType(this)
+    internal val completionCandidateChecker: KtCompletionCandidateChecker get() = completionCandidateCheckerImpl
+    protected abstract val completionCandidateCheckerImpl: KtCompletionCandidateChecker
 
-    fun KtDeclaration.getReturnKtType(): KtType = expressionTypeProvider.getReturnTypeForKtDeclaration(this)
+    internal val symbolDeclarationOverridesProvider: KtSymbolDeclarationOverridesProvider get() = symbolDeclarationOverridesProviderImpl
+    protected abstract val symbolDeclarationOverridesProviderImpl: KtSymbolDeclarationOverridesProvider
 
-    infix fun KtType.isEqualTo(other: KtType): Boolean = subtypingComponent.isEqualTo(this, other)
+    internal val referenceShortener: KtReferenceShortener get() = referenceShortenerImpl
+    protected abstract val referenceShortenerImpl: KtReferenceShortener
 
-    infix fun KtType.isSubTypeOf(superType: KtType): Boolean = subtypingComponent.isSubTypeOf(this, superType)
 
-    infix fun KtType.isNotSubTypeOf(superType: KtType): Boolean = !subtypingComponent.isSubTypeOf(this, superType)
+    @Suppress("LeakingThis")
+    protected open val typeRendererImpl: KtTypeRenderer = KtDefaultTypeRenderer(this, token)
+    internal val typeRenderer: KtTypeRenderer get() = typeRendererImpl
 
-    fun PsiElement.getExpectedType(): KtType? = expressionTypeProvider.getExpectedType(this)
+    internal val expressionTypeProvider: KtExpressionTypeProvider get() = expressionTypeProviderImpl
+    protected abstract val expressionTypeProviderImpl: KtExpressionTypeProvider
 
-    val builtinTypes: KtBuiltinTypes get() = typeProvider.builtinTypes
+    internal val typeProvider: KtTypeProvider get() = typeProviderImpl
+    protected abstract val typeProviderImpl: KtTypeProvider
 
-    /**
-     * Approximates [KtType] with the a supertype which can be rendered in a source code
-     *
-     * Return `null` if the type do not need approximation and can be rendered as is
-     * Otherwise, for type `T` return type `S` such `T <: S` and `T` and every it type argument is [org.jetbrains.kotlin.idea.frontend.api.types.KtDenotableType]`
-     */
-    fun KtType.approximateToSuperPublicDenotable(): KtType? = typeProvider.approximateToSuperPublicDenotableType(this)
+    internal val subtypingComponent: KtSubtypingComponent get() = subtypingComponentImpl
+    protected abstract val subtypingComponentImpl: KtSubtypingComponent
 
-    fun KtClassOrObjectSymbol.buildSelfClassType(): KtType = typeProvider.buildSelfClassType(this)
-
-    fun KtElement.getDiagnostics(filter: KtDiagnosticCheckerFilter): Collection<KtDiagnostic> =
-        diagnosticProvider.getDiagnosticsForElement(this, filter)
-
-    fun KtFile.collectDiagnosticsForFile(filter: KtDiagnosticCheckerFilter): Collection<KtDiagnosticWithPsi<*>> =
-        diagnosticProvider.collectDiagnosticsForFile(this, filter)
-
-    fun KtSymbolWithKind.getContainingSymbol(): KtSymbolWithKind? = containingDeclarationProvider.getContainingDeclaration(this)
-
-    fun KtSymbolWithMembers.getMemberScope(): KtMemberScope = scopeProvider.getMemberScope(this)
-
-    fun KtSymbolWithMembers.getDeclaredMemberScope(): KtDeclaredMemberScope = scopeProvider.getDeclaredMemberScope(this)
-
-    fun KtFileSymbol.getFileScope(): KtDeclarationScope<KtSymbolWithDeclarations> = scopeProvider.getFileScope(this)
-
-    fun KtPackageSymbol.getPackageScope(): KtPackageScope = scopeProvider.getPackageScope(this)
-
-    fun List<KtScope>.asCompositeScope(): KtCompositeScope = scopeProvider.getCompositeScope(this)
-
-    fun KtType.getTypeScope(): KtScope? = scopeProvider.getTypeScope(this)
-
-    fun KtFile.getScopeContextForPosition(positionInFakeFile: KtElement): KtScopeContext =
-        scopeProvider.getScopeContextForPosition(this, positionInFakeFile)
-
-    fun KtDeclaration.getSymbol(): KtSymbol = symbolProvider.getSymbol(this)
-
-    fun KtParameter.getParameterSymbol(): KtParameterSymbol = symbolProvider.getParameterSymbol(this)
-
-    fun KtNamedFunction.getFunctionSymbol(): KtFunctionSymbol = symbolProvider.getFunctionSymbol(this)
-
-    fun KtConstructor<*>.getConstructorSymbol(): KtConstructorSymbol = symbolProvider.getConstructorSymbol(this)
-
-    fun KtTypeParameter.getTypeParameterSymbol(): KtTypeParameterSymbol = symbolProvider.getTypeParameterSymbol(this)
-
-    fun KtTypeAlias.getTypeAliasSymbol(): KtTypeAliasSymbol = symbolProvider.getTypeAliasSymbol(this)
-
-    fun KtEnumEntry.getEnumEntrySymbol(): KtEnumEntrySymbol = symbolProvider.getEnumEntrySymbol(this)
-
-    fun KtNamedFunction.getAnonymousFunctionSymbol(): KtAnonymousFunctionSymbol = symbolProvider.getAnonymousFunctionSymbol(this)
-
-    fun KtLambdaExpression.getAnonymousFunctionSymbol(): KtAnonymousFunctionSymbol = symbolProvider.getAnonymousFunctionSymbol(this)
-
-    fun KtProperty.getVariableSymbol(): KtVariableSymbol = symbolProvider.getVariableSymbol(this)
-
-    fun KtObjectLiteralExpression.getAnonymousObjectSymbol(): KtAnonymousObjectSymbol = symbolProvider.getAnonymousObjectSymbol(this)
-
-    fun KtClassOrObject.getClassOrObjectSymbol(): KtClassOrObjectSymbol = symbolProvider.getClassOrObjectSymbol(this)
-
-    fun KtPropertyAccessor.getPropertyAccessorSymbol(): KtPropertyAccessorSymbol = symbolProvider.getPropertyAccessorSymbol(this)
-
-    fun KtFile.getFileSymbol(): KtFileSymbol = symbolProvider.getFileSymbol(this)
-
-    /**
-     * @return symbol with specified [this@getClassOrObjectSymbolByClassId] or `null` in case such symbol is not found
-     */
-    fun ClassId.getCorrespondingToplevelClassOrObjectSymbol(): KtClassOrObjectSymbol? = symbolProvider.getClassOrObjectSymbolByClassId(this)
-
-    fun FqName.getContainingCallableSymbolsWithName(name: Name): Sequence<KtSymbol> = symbolProvider.getTopLevelCallableSymbols(this, name)
-
-    fun <S : KtSymbol> KtSymbolPointer<S>.restoreSymbol(): S? = restoreSymbol(this@KtAnalysisSession)
-
-    fun KtCallExpression.resolveCall(): KtCall? = callResolver.resolveCall(this)
-
-    fun KtBinaryExpression.resolveCall(): KtCall? = callResolver.resolveCall(this)
-
-    fun KtReference.resolveToSymbols(): Collection<KtSymbol> {
-        check(this is KtSymbolBasedReference) { "To get reference symbol the one should be KtSymbolBasedReference" }
-        return this@KtAnalysisSession.resolveToSymbols()
-    }
-
-    fun KtSimpleReference<*>.resolveToSymbol(): KtSymbol? {
-        check(this is KtSymbolBasedReference) { "To get reference symbol the one should be KtSymbolBasedReference but was ${this::class}" }
-        return resolveToSymbols().singleOrNull()
-    }
-
-    fun KtCallableSymbol.checkExtensionIsSuitable(
-        originalPsiFile: KtFile,
-        psiFakeCompletionExpression: KtSimpleNameExpression,
-        psiReceiverExpression: KtExpression?,
-    ): Boolean = completionCandidateChecker.checkExtensionFitsCandidate(
-        this,
-        originalPsiFile,
-        psiFakeCompletionExpression,
-        psiReceiverExpression
-    )
-
-    fun KtType.render(options: KtTypeRendererOptions = KtTypeRendererOptions.DEFAULT): String =
-        typeRenderer.render(this, options)
-
-    fun KtReturnExpression.getReturnTargetSymbol(): KtCallableSymbol? =
-        expressionHandlingComponent.getReturnExpressionTargetSymbol(this)
-
-    fun collectPossibleReferenceShortenings(file: KtFile, selection: TextRange): ShortenCommand =
-        referenceShortener.collectShortenings(file, selection)
+    internal val expressionInfoProvider: KtExpressionInfoProvider get() = expressionInfoProviderImpl
+    protected abstract val expressionInfoProviderImpl: KtExpressionInfoProvider
 }

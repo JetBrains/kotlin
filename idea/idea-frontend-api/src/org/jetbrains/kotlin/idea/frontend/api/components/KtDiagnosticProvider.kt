@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.components
 
+import org.jetbrains.kotlin.idea.frontend.api.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.idea.frontend.api.diagnostics.KtDiagnosticWithPsi
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
@@ -12,6 +13,14 @@ import org.jetbrains.kotlin.psi.KtFile
 abstract class KtDiagnosticProvider : KtAnalysisSessionComponent() {
     abstract fun getDiagnosticsForElement(element: KtElement, filter: KtDiagnosticCheckerFilter): Collection<KtDiagnosticWithPsi<*>>
     abstract fun collectDiagnosticsForFile(ktFile: KtFile, filter: KtDiagnosticCheckerFilter): Collection<KtDiagnosticWithPsi<*>>
+}
+
+interface KtDiagnosticProviderMixIn : KtAnalysisSessionMixIn {
+    fun KtElement.getDiagnostics(filter: KtDiagnosticCheckerFilter): Collection<KtDiagnostic> =
+        analysisSession.diagnosticProvider.getDiagnosticsForElement(this, filter)
+
+    fun KtFile.collectDiagnosticsForFile(filter: KtDiagnosticCheckerFilter): Collection<KtDiagnosticWithPsi<*>> =
+        analysisSession.diagnosticProvider.collectDiagnosticsForFile(this, filter)
 }
 
 enum class KtDiagnosticCheckerFilter {

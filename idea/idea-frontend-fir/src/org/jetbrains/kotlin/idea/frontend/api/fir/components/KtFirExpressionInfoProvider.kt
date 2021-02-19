@@ -8,16 +8,15 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.components
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
-import org.jetbrains.kotlin.idea.frontend.api.components.KtExpressionHandlingComponent
+import org.jetbrains.kotlin.idea.frontend.api.components.KtExpressionInfoProvider
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionLikeSymbol
 import org.jetbrains.kotlin.psi.KtReturnExpression
 
-internal class KtFirExpressionHandlingComponent(
+internal class KtFirExpressionInfoProvider(
     override val analysisSession: KtFirAnalysisSession,
     override val token: ValidityToken,
-) : KtExpressionHandlingComponent(), KtFirAnalysisSessionComponent {
+) : KtExpressionInfoProvider(), KtFirAnalysisSessionComponent {
     override fun getReturnExpressionTargetSymbol(returnExpression: KtReturnExpression): KtCallableSymbol? {
         val fir = returnExpression.getOrBuildFirSafe<FirReturnExpression>(firResolveState) ?: return null
         val firTargetSymbol = fir.target.labeledElement
