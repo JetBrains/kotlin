@@ -16,9 +16,18 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.*
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.component.ModuleComponentSelector
+import org.gradle.api.artifacts.result.ResolvedArtifactResult
 import org.gradle.api.artifacts.result.ResolvedComponentResult
+import org.gradle.api.attributes.AttributeContainer
+import org.gradle.api.attributes.AttributesSchema
+import org.gradle.api.capabilities.Capability
 import org.gradle.api.file.FileSystemLocation
+import org.gradle.api.internal.artifacts.configurations.ConfigurationInternal
+import org.gradle.api.internal.artifacts.dependencies.ProjectDependencyInternal
+import org.gradle.api.internal.attributes.AttributeContainerInternal
+import org.gradle.api.internal.attributes.AttributesSchemaInternal
 import org.gradle.api.provider.Provider
+import org.gradle.internal.component.model.AttributeConfigurationSelector
 import org.jetbrains.kotlin.gradle.plugin.forEachVariant
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.io.File
@@ -95,11 +104,11 @@ object AndroidDependencyResolver {
         return versions[0].toInt() >= 4 || versions[0].toInt() >= 3 && versions[1].toInt() >= 6
     }
 
+    private data class SourceSetConfigs(val implConfig: Configuration, val compileConfigs: MutableList<Configuration> = ArrayList())
+
     fun getAndroidSourceSetDependencies(project: Project): Map<String, List<AndroidDependency>?> {
         val androidPluginVersions = getAndroidPluginVersions() ?: return emptyMap()
         if (!isAndroidPluginCompatible(androidPluginVersions)) return emptyMap()
-
-        data class SourceSetConfigs(val implConfig: Configuration, val compileConfig: Configuration)
 
         val androidSdkJar = getAndroidSdkJar(project, androidPluginVersions) ?: return emptyMap()
         val sourceSet2Impl = HashMap<String, SourceSetConfigs>()
@@ -110,19 +119,24 @@ object AndroidDependencyResolver {
             variant.sourceSets.filterIsInstance(AndroidSourceSet::class.java).map {
                 val implConfig = project.configurations.getByName(it.implementationConfigurationName)
                 allImplConfigs.add(implConfig)
-                sourceSet2Impl[lowerCamelCaseName("android", it.name)] = SourceSetConfigs(implConfig, compileConfig)
+                val sourceSetConfig =
+                    sourceSet2Impl.computeIfAbsent(lowerCamelCaseName("android", it.name)) { SourceSetConfigs(implConfig) }
+                // The same sourceset can be included into multiple variants (e.g. androidMain)
+                sourceSetConfig.compileConfigs.add(compileConfig)
             }
         }
 
+        val attributesSchema = project.dependencies.attributesSchema
+
         return sourceSet2Impl.mapValues { entry ->
-            val dependencies = findDependencies(allImplConfigs, entry.value.implConfig)
+            val dependencies = findDependencies(allImplConfigs, entry.value, attributesSchema)
 
             val selfResolved = dependencies.filterIsInstance<SelfResolvingDependency>().map { dependency ->
                 val collection = dependency.resolve().takeIf(Collection<File?>::isNotEmpty)
                 AndroidDependency(dependency.name, group = dependency.group, collection = collection)
             }
-            val resolvedExternal = dependencies.filterIsInstance<ExternalModuleDependency>()
-                .flatMap { collectDependencies(it.module, entry.value.compileConfig) }
+            val resolvedExternal =
+                collectDependencies(dependencies.filterIsInstance<ExternalModuleDependency>(), entry.value.compileConfigs)
 
             val result = (selfResolved + resolvedExternal + androidSdkJar).toMutableList()
 
@@ -145,9 +159,9 @@ object AndroidDependencyResolver {
 
     @Suppress("UnstableApiUsage")
     private fun collectDependencies(
-        module: ModuleIdentifier,
-        compileClasspathConf: Configuration
-    ): List<AndroidDependency> {
+        dependencies: List<ExternalModuleDependency>,
+        compileClasspathConfigs: List<Configuration>
+    ): Set<AndroidDependency> {
         val processedJarArtifactType = try {
             AndroidArtifacts.ArtifactType.valueOf("PROCESSED_JAR")
         } catch (e: IllegalArgumentException) {
@@ -158,19 +172,34 @@ object AndroidDependencyResolver {
             config.isLenient = true
         }
 
-        val resolvedArtifacts = compileClasspathConf.incoming.artifactView(viewConfig).artifacts.mapNotNull {
+        val allResults = LinkedHashSet<ResolvedArtifactResult>()
+        val allComponents = LinkedHashSet<ResolvedComponentResult>()
+
+        compileClasspathConfigs.forEach { config ->
+            // If the current sourceset's implementation configuration is included into several compile classpath configuration's,
+            // we'll take only the results which are the same across all of them. The dependencies which resolve differently will appear
+            // in the more specific sourcesets.
+            allResults.addOrRetainAll(config.incoming.artifactView(viewConfig).artifacts.artifacts) { it.id }
+            allComponents.addOrRetainAll(config.incoming.resolutionResult.allComponents) { it.id }
+        }
+
+        val resolvedArtifacts = allResults.mapNotNull {
             val componentIdentifier = it.id.componentIdentifier as? ModuleComponentIdentifier ?: return@mapNotNull null
             val id = componentIdentifier.moduleIdentifier ?: return@mapNotNull null
             id to AndroidDependency(id.name, it.file, null, id.group, componentIdentifier.version)
         }.toMap()
 
-        val resolutionResults = compileClasspathConf.incoming.resolutionResult.allComponents.mapNotNull {
+        val resolutionResults = allComponents.mapNotNull {
             val id = it.moduleVersion?.module ?: return@mapNotNull null
             id to it
         }.toMap()
 
-        val deps = HashSet<ModuleIdentifier>().also { doCollectDependencies(listOf(module), resolutionResults, it) }
-        return deps.mapNotNull { resolvedArtifacts[it] }
+        return HashSet<AndroidDependency>().also { result ->
+            dependencies.flatMapTo(result) { dependency ->
+                val deps = HashSet<ModuleIdentifier>().also { doCollectDependencies(listOf(dependency.module), resolutionResults, it) }
+                deps.mapNotNull { resolvedArtifacts[it] }
+            }
+        }
     }
 
     @Suppress("UnstableApiUsage")
@@ -185,16 +214,73 @@ object AndroidDependencyResolver {
         doCollectDependencies(newModules, resolutionResults, result)
     }
 
-    private fun findDependencies(implConfigs: Set<Configuration>, conf: Configuration): Set<Dependency> {
-        return HashSet<Dependency>().also { doFindDependencies(implConfigs, listOf(conf), it) }
+    private fun findDependencies(
+        implConfigs: Set<Configuration>,
+        sourceSetConfigs: SourceSetConfigs,
+        attributesSchema: AttributesSchema
+    ): Set<Dependency> {
+        // Using the attributes of the first configuration. If there are multiple configurations, then differences in resolve would be
+        // discarded later anyway, so they won't make any difference
+        val attributes = sourceSetConfigs.compileConfigs.first().attributes
+
+        return HashSet<Dependency>().also {
+            doFindDependencies(implConfigs, listOf(sourceSetConfigs.implConfig), attributes, attributesSchema, it)
+        }
     }
 
     private tailrec fun doFindDependencies(
-        implConfigs: Set<Configuration>, configs: List<Configuration>, result: MutableSet<Dependency>,
+        implConfigs: Set<Configuration>,
+        configs: List<Configuration>,
+        attributes: AttributeContainer,
+        attributesSchema: AttributesSchema,
+        result: MutableSet<Dependency>,
         visited: MutableSet<Configuration> = HashSet()
     ) {
         if (configs.isEmpty()) return
-        result.addAll(configs.flatMap { it.dependencies })
-        doFindDependencies(implConfigs, configs.flatMap { it.extendsFrom }.filter { it !in implConfigs && visited.add(it) }, result)
+
+        val allDependencies = configs.flatMap { it.dependencies }
+        val allExtendsFrom = configs.flatMap { it.extendsFrom }.toMutableList()
+
+        result.addAll(allDependencies.filter { it !is ProjectDependency })
+
+        val projectDependencies = allDependencies.filterIsInstance<ProjectDependencyInternal>()
+        allExtendsFrom.addAll(selectConfigurations(projectDependencies, attributes, attributesSchema))
+
+        doFindDependencies(
+            implConfigs,
+            allExtendsFrom.filter { it !in implConfigs && visited.add(it) },
+            attributes,
+            attributesSchema,
+            result
+        )
+    }
+
+    private fun selectConfigurations(
+        projectDependencies: List<ProjectDependencyInternal>,
+        attributes: AttributeContainer,
+        attributesSchema: AttributesSchema
+    ): List<Configuration> {
+        return projectDependencies.mapNotNull { projectDependency ->
+            val rootComponentMetaData = (projectDependency.findProjectConfiguration() as? ConfigurationInternal)?.toRootComponentMetaData()
+                ?: return@mapNotNull null
+
+            val matching = AttributeConfigurationSelector.selectConfigurationUsingAttributeMatching(
+                (attributes as? AttributeContainerInternal)?.asImmutable() ?: return@mapNotNull null,
+                emptyList<Capability>(),
+                rootComponentMetaData,
+                (attributesSchema as? AttributesSchemaInternal) ?: return@mapNotNull null,
+                emptyList()
+            )
+            projectDependency.dependencyProject.configurations.findByName(matching.name)
+        }
+    }
+
+    private fun <E, K> MutableSet<E>.addOrRetainAll(c: Collection<E>, selector: (E) -> K) {
+        if (isEmpty()) {
+            addAll(c)
+        } else {
+            val selectedSet = c.map(selector).toSet()
+            retainAll { selectedSet.contains(selector(it)) }
+        }
     }
 }
