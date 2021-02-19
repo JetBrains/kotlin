@@ -77,6 +77,9 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
     override fun SimpleTypeMarker.isMarkedNullable(): Boolean = (this as IrSimpleType).hasQuestionMark
 
+    override fun KotlinTypeMarker.isMarkedNullable(): Boolean =
+        this is IrSimpleType && !isWithFlexibleNullability() && hasQuestionMark
+
     override fun SimpleTypeMarker.withNullability(nullable: Boolean): SimpleTypeMarker {
         val simpleType = this as IrSimpleType
         return if (simpleType.hasQuestionMark == nullable) simpleType
