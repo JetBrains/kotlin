@@ -245,7 +245,7 @@ fun MockNativeManifestDataProvider(
     exportForwardDeclarations: List<String> = emptyList(),
     nativeTargets: Collection<String> = emptyList(),
     shortName: String? = "mock"
-): TargetedNativeManifestDataProvider = TargetedNativeManifestDataProvider { target, libraryName ->
+): TargetedNativeManifestDataProvider = TargetedNativeManifestDataProvider { _, _ ->
     NativeSensitiveManifestData(
         uniqueName = uniqueName,
         versions = versions,
