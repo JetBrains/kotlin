@@ -174,6 +174,7 @@ abstract class AbstractTypeApproximator(val ctx: TypeSystemInferenceExtensionCon
             stubTypesEqualToAnything = false
         )
         return AbstractTypeChecker.findCorrespondingSupertypes(typeCheckerContext, type, superConstructor).first()
+            .withNullability(type.isMarkedNullable())
     }
 
     private fun isIntersectionTypeEffectivelyNothing(constructor: IntersectionTypeConstructorMarker): Boolean {
