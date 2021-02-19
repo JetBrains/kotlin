@@ -23,6 +23,6 @@ fun case_3() {
 // TESTCASE NUMBER: 4
 fun case_4() {
     val value_1: Boolean?
-    funWithAtLeastOnceCallsInPlace { value_1 = true }
+    funWithAtLeastOnceCallsInPlace { <!VAL_REASSIGNMENT!>value_1<!> = true }
     value_1<!UNSAFE_CALL!>.<!>not()
 }

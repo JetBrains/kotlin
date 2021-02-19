@@ -27,13 +27,13 @@ fun outerFinallyInitializes() {
                 log()
             }
             // possible reassignment if innerComputation finished
-            x = 42
+            <!VAL_REASSIGNMENT!>x<!> = 42
             // x is ID here
         }
 
         // Definite reassignment here, cause can get here only if myRun finished
         // Not reported because of repeating diagnostic
-        x = outerComputation()
+        <!VAL_REASSIGNMENT!>x<!> = outerComputation()
     } catch (e: java.lang.Exception) {
         // can catch exception thrown by the inner, so x can be not initialized
         <!UNINITIALIZED_VARIABLE!>x<!>.inc()
@@ -41,7 +41,7 @@ fun outerFinallyInitializes() {
     } finally {
         // Possible reassignment (e.g. if everything finished)
         // Not reported because of repeating diagnostic
-        x = 42
+        <!VAL_REASSIGNMENT!>x<!> = 42
     }
 
     // Properly initialized

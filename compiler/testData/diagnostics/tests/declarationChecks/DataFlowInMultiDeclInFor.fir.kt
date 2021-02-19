@@ -9,7 +9,7 @@ class A {
 
 fun foo(list: List<A>) {
     for (var (c1, c2, c3) in list) {
-        c1 = 1
+        <!VAL_REASSIGNMENT!>c1<!> = 1
         c3 + 1
     }
 }

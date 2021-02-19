@@ -113,8 +113,8 @@ fun ControlFlowGraphBuilder.createWhenBranchResultEnterNode(fir: FirWhenBranch):
 fun ControlFlowGraphBuilder.createLoopConditionExitNode(fir: FirExpression): LoopConditionExitNode =
     LoopConditionExitNode(currentGraph, fir, levelCounter, createId())
 
-fun ControlFlowGraphBuilder.createLoopConditionEnterNode(fir: FirExpression): LoopConditionEnterNode =
-    LoopConditionEnterNode(currentGraph, fir, levelCounter, createId())
+fun ControlFlowGraphBuilder.createLoopConditionEnterNode(fir: FirExpression, loop: FirLoop): LoopConditionEnterNode =
+    LoopConditionEnterNode(currentGraph, fir, loop, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createLoopBlockEnterNode(fir: FirLoop): LoopBlockEnterNode =
     LoopBlockEnterNode(currentGraph, fir, levelCounter, createId())

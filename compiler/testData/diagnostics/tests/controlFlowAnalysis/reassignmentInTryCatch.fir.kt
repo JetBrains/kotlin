@@ -8,7 +8,7 @@ fun f1() {
     }
     catch (e: Exception) {
         // KT-13612: reassignment
-        n = 2
+        <!VAL_REASSIGNMENT!>n<!> = 2
     }
     n.hashCode()
 }
@@ -20,7 +20,7 @@ fun f2() {
         throw Exception()
     }
     finally {
-        n = 2
+        <!VAL_REASSIGNMENT!>n<!> = 2
     }
     n.hashCode()
 }
@@ -33,7 +33,7 @@ fun g1(flag: Boolean) {
     }
     catch (e: Exception) {
         // KT-13612: ? reassignment or definite assignment ?
-        n = 2
+        <!VAL_REASSIGNMENT!>n<!> = 2
     }
     n.hashCode()
 }
@@ -45,7 +45,7 @@ fun g2(flag: Boolean) {
         n = 1
     }
     finally {
-        n = 2
+        <!VAL_REASSIGNMENT!>n<!> = 2
     }
     n.hashCode()
 }
@@ -84,7 +84,7 @@ fun k1(flag: Boolean) {
     }
     catch (e: Exception) {
         // KT-13612: reassignment
-        n = 2
+        <!VAL_REASSIGNMENT!>n<!> = 2
     }
     n.hashCode()
 }
@@ -96,7 +96,7 @@ fun k2(flag: Boolean) {
         j(flag)
     }
     finally {
-        n = 2
+        <!VAL_REASSIGNMENT!>n<!> = 2
     }
     n.hashCode()
 }
