@@ -12,6 +12,11 @@ abstract class KtReferenceShortener : KtAnalysisSessionComponent() {
     abstract fun collectShortenings(file: KtFile, selection: TextRange): ShortenCommand
 }
 
+interface KtReferenceShortenerMixIn : KtAnalysisSessionMixIn {
+    fun collectPossibleReferenceShortenings(file: KtFile, selection: TextRange): ShortenCommand =
+        analysisSession.referenceShortener.collectShortenings(file, selection)
+}
+
 interface ShortenCommand {
     fun invokeShortening()
 }

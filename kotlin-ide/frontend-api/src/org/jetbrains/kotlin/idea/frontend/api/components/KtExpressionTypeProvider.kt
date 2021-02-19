@@ -17,3 +17,14 @@ abstract class KtExpressionTypeProvider : KtAnalysisSessionComponent() {
 
     abstract fun getExpectedType(expression: PsiElement): KtType?
 }
+
+interface KtExpressionTypeProviderMixIn : KtAnalysisSessionMixIn {
+    fun KtExpression.getKtType(): KtType =
+        analysisSession.expressionTypeProvider.getKtExpressionType(this)
+
+    fun KtDeclaration.getReturnKtType(): KtType =
+        analysisSession.expressionTypeProvider.getReturnTypeForKtDeclaration(this)
+
+    fun PsiElement.getExpectedType(): KtType? =
+        analysisSession.expressionTypeProvider.getExpectedType(this)
+}

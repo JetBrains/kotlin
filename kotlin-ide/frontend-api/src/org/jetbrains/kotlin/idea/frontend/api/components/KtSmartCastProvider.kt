@@ -13,3 +13,11 @@ abstract class KtSmartCastProvider : KtAnalysisSessionComponent() {
     abstract fun getSmartCastedToType(expression: KtExpression): KtType?
     abstract fun getImplicitReceiverSmartCast(expression: KtExpression): Collection<ImplicitReceiverSmartCast>
 }
+
+interface KtSmartCastProviderMixIn : KtAnalysisSessionMixIn {
+    fun KtExpression.getSmartCast(): KtType? =
+        analysisSession.smartCastProvider.getSmartCastedToType(this)
+
+    fun KtExpression.getImplicitReceiverSmartCast(): Collection<ImplicitReceiverSmartCast> =
+        analysisSession.smartCastProvider.getImplicitReceiverSmartCast(this)
+}

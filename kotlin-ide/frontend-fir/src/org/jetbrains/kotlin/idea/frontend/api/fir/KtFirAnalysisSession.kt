@@ -16,13 +16,11 @@ import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.ReadActionConfinementValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.assertIsValidAndAccessible
-import org.jetbrains.kotlin.idea.frontend.api.components.*
 import org.jetbrains.kotlin.idea.frontend.api.fir.components.*
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirSymbolProvider
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.EnclosingDeclarationContext
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.recordCompletionContext
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.threadLocal
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbolProvider
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
@@ -38,22 +36,33 @@ private constructor(
         assertIsValidAndAccessible()
     }
 
-    override val smartCastProvider: KtSmartCastProvider = KtFirSmartcastProvider(this, token)
-    override val expressionTypeProvider: KtExpressionTypeProvider = KtFirExpressionTypeProvider(this, token)
-    public override val diagnosticProvider: KtDiagnosticProvider = KtFirDiagnosticProvider(this, token)
-    override val containingDeclarationProvider = KtFirSymbolContainingDeclarationProvider(this, token)
-    override val callResolver: KtCallResolver = KtFirCallResolver(this, token)
-    override val scopeProvider by threadLocal { KtFirScopeProvider(this, firSymbolBuilder, project, firResolveState, token) }
-    override val symbolProvider: KtSymbolProvider =
-        KtFirSymbolProvider(this, firResolveState.rootModuleSession.symbolProvider, firResolveState, firSymbolBuilder, token)
-    override val completionCandidateChecker: KtCompletionCandidateChecker = KtFirCompletionCandidateChecker(this, token)
-    override val symbolDeclarationOverridesProvider: KtSymbolDeclarationOverridesProvider =
-        KtFirSymbolDeclarationOverridesProvider(this, token)
-    override val referenceShortener: KtReferenceShortener = KtFirReferenceShortener(this, token, firResolveState)
+    override val smartCastProviderImpl = KtFirSmartcastProvider(this, token)
 
-    override val expressionHandlingComponent: KtExpressionHandlingComponent = KtFirExpressionHandlingComponent(this, token)
-    override val typeProvider: KtTypeProvider = KtFirTypeProvider(this, token)
-    override val subtypingComponent: KtSubtypingComponent = KtFirSubtypingComponent(this, token)
+    override val expressionTypeProviderImpl = KtFirExpressionTypeProvider(this, token)
+
+    override val diagnosticProviderImpl = KtFirDiagnosticProvider(this, token)
+
+    override val containingDeclarationProviderImpl = KtFirSymbolContainingDeclarationProvider(this, token)
+
+    override val callResolverImpl = KtFirCallResolver(this, token)
+
+    override val scopeProviderImpl by threadLocal { KtFirScopeProvider(this, firSymbolBuilder, project, firResolveState, token) }
+
+    override val symbolProviderImpl =
+        KtFirSymbolProvider(this, firResolveState.rootModuleSession.symbolProvider, firResolveState, firSymbolBuilder, token)
+
+    override val completionCandidateCheckerImpl = KtFirCompletionCandidateChecker(this, token)
+
+    override val symbolDeclarationOverridesProviderImpl =
+        KtFirSymbolDeclarationOverridesProvider(this, token)
+
+    override val referenceShortenerImpl = KtFirReferenceShortener(this, token, firResolveState)
+
+    override val expressionInfoProviderImpl = KtFirExpressionInfoProvider(this, token)
+
+    override val typeProviderImpl = KtFirTypeProvider(this, token)
+
+    override val subtypingComponentImpl = KtFirSubtypingComponent(this, token)
 
     override fun createContextDependentCopy(originalKtFile: KtFile, fakeKtElement: KtElement): KtAnalysisSession {
         check(context == KtFirAnalysisSessionContext.DefaultContext) {
