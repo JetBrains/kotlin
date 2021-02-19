@@ -8,6 +8,8 @@ fun test() {
 //  class A
 //  │
     A::class
+//  class A
+//  │
     test.A::class
 //  constructor A()
 //  │
@@ -16,8 +18,8 @@ fun test() {
 //  class A  val <T> reflect/KClass<T>.java: java/lang/Class<T>
 //  │        │
     A::class.java
-//                val <T> reflect/KClass<T>.java: java/lang/Class<T>
-//                │
+//  class A       val <T> reflect/KClass<T>.java: java/lang/Class<T>
+//  │             │
     test.A::class.java
 //  constructor A()
 //  │          val <T> reflect/KClass<T>.java: java/lang/Class<T>

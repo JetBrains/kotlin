@@ -293,6 +293,10 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             jetWhenEntry.firstOfTypeWithRender<FirWhenBranch>(jetWhenEntry.expression) { this.result.typeRef }
             super.visitWhenEntry(jetWhenEntry)
         }
+
+        override fun visitClassLiteralExpression(expression: KtClassLiteralExpression) {
+            expression.firstOfTypeWithRender<FirGetClassCall>()
+        }
     }
 
     inner class FirRenderer : FirVisitor<Unit, StringBuilder>() {
@@ -623,6 +627,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
                 if (fir is FirClass) {
                     data.append(fir.classKind.name.toLowerCaseAsciiOnly().replace("_", " ")).append(" ")
                     data.append(fir.symbol.classId.asString().removeCurrentFilePackage())
+                    renderListInTriangles(fir.typeParameters, data)
                     if (fir.superTypeRefs.any { it.render() != "kotlin/Any" }) {
                         data.append(": ")
                         fir.superTypeRefs.joinTo(data, separator = ", ") { typeRef -> typeRef.render() }
@@ -662,6 +667,10 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             if (typeRefWithNullability.isMarkedNullable) {
                 data.append("?")
             }
+        }
+
+        override fun visitGetClassCall(getClassCall: FirGetClassCall, data: StringBuilder) {
+            getClassCall.argument.accept(this, data)
         }
 
         private fun AbstractFirBasedSymbol<*>.isLocalDeclaration(): Boolean {

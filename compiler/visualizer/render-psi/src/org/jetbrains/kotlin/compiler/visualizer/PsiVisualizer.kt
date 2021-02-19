@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.declaresOrInheritsDefaultValu
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.expressions.DoubleColonLHS
 import java.util.*
 
 class PsiVisualizer(private val file: KtFile, analysisResult: AnalysisResult) : BaseRenderer() {
@@ -224,6 +225,13 @@ class PsiVisualizer(private val file: KtFile, analysisResult: AnalysisResult) : 
                     child.accept(this)
                 }
             }
+        }
+
+        override fun visitClassLiteralExpression(expression: KtClassLiteralExpression) {
+            val doubleColonLhs = bindingContext[DOUBLE_COLON_LHS, expression.receiverExpression]
+            doubleColonLhs?.takeIf { it is DoubleColonLHS.Type }?.let {
+                addAnnotation(descriptorRenderer.render(it.type.constructor.declarationDescriptor!!), expression)
+            } ?: super.visitClassLiteralExpression(expression)
         }
     }
 
