@@ -281,7 +281,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
 
         override fun visitPropertyAccessor(accessor: KtPropertyAccessor) {
             if (accessor.isSetter) {
-                stack.push("<set-${accessor.property.nameAsSafeName}>", mutableListOf())
+                stack.push("<set-${accessor.property.nameAsSafeName}>", mutableListOf("field"))
                 super.visitPropertyAccessor(accessor)
                 stack.pop()
             } else {
@@ -431,6 +431,10 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             element.acceptChildren(this, data)
         }
 
+        override fun visitErrorNamedReference(errorNamedReference: FirErrorNamedReference, data: StringBuilder) {
+            data.append(errorNamedReference.name)
+        }
+
         private fun visitConstructor(calleeReference: FirReference, data: StringBuilder) {
             if (calleeReference !is FirResolvedNamedReference) {
                 data.append("[ERROR: Unresolved]")
@@ -457,6 +461,14 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
                     buildString { it.accept(this@FirRenderer, this) }
                 }
             }
+        }
+
+        override fun visitBackingFieldReference(backingFieldReference: FirBackingFieldReference, data: StringBuilder) {
+            val firProperty = backingFieldReference.resolvedSymbol.fir
+            data.append(if (firProperty.isVar) "var " else "val ")
+                .append(stack.getPathByName("field"))
+                .append("field: ")
+                .append(firProperty.returnTypeRef.render())
         }
 
         override fun visitProperty(property: FirProperty, data: StringBuilder) {
