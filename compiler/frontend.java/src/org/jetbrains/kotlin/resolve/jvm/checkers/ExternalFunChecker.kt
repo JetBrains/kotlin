@@ -23,8 +23,8 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
+import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
@@ -39,7 +39,9 @@ class ExternalFunChecker : DeclarationChecker {
                 is ClassDescriptor -> "class"
                 else -> "non-function declaration"
             }
-            trace.report(Errors.WRONG_MODIFIER_TARGET.on(declaration, KtTokens.EXTERNAL_KEYWORD, target))
+            declaration.modifierList?.getModifier(KtTokens.EXTERNAL_KEYWORD)?.let {
+                trace.report(Errors.WRONG_MODIFIER_TARGET.on(it, KtTokens.EXTERNAL_KEYWORD, target))
+            }
             return
         }
 
