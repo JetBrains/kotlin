@@ -11,7 +11,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.fir.api.applicator.*
 import org.jetbrains.kotlin.idea.frontend.api.HackToForceAllowRunningAnalyzeOnEDT
-import org.jetbrains.kotlin.idea.frontend.api.analyzeWithReadAction
+import org.jetbrains.kotlin.idea.frontend.api.analyseWithReadAction
 import org.jetbrains.kotlin.idea.frontend.api.hackyAllowRunningOnEdt
 import org.jetbrains.kotlin.idea.inspections.AbstractKotlinInspection
 import org.jetbrains.kotlin.psi.KtElement
@@ -79,7 +79,7 @@ abstract class AbstractHLInspection<PSI : KtElement, INPUT : HLApplicatorInput>(
 
     @OptIn(HackToForceAllowRunningAnalyzeOnEDT::class)
     private fun getInput(element: PSI): INPUT? = hackyAllowRunningOnEdt {
-        analyzeWithReadAction(element) {
+        analyseWithReadAction(element) {
             with(inputProvider) { provideInput(element) }
         }
     }

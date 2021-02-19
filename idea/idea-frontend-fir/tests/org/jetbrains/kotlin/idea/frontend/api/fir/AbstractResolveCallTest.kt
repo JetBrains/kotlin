@@ -12,7 +12,7 @@ import com.intellij.testFramework.LightCodeInsightTestCase
 import org.jetbrains.kotlin.idea.addExternalTestFiles
 import org.jetbrains.kotlin.idea.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
-import org.jetbrains.kotlin.idea.frontend.api.analyze
+import org.jetbrains.kotlin.idea.frontend.api.analyse
 import org.jetbrains.kotlin.idea.frontend.api.calls.KtCall
 import org.jetbrains.kotlin.idea.frontend.api.calls.KtErrorCallTarget
 import org.jetbrains.kotlin.idea.frontend.api.calls.KtSuccessCallTarget
@@ -45,7 +45,7 @@ abstract class AbstractResolveCallTest : @Suppress("DEPRECATION") LightCodeInsig
         }
 
         val actualText = executeOnPooledThreadInReadAction {
-            val callInfos = analyze(file as KtFile) {
+            val callInfos = analyse(file as KtFile) {
                 elements.map { resolveCall(it) }
             }
 

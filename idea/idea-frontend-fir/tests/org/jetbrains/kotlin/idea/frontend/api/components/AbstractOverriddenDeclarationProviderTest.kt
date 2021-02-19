@@ -9,7 +9,7 @@ import com.intellij.psi.util.parentOfType
 import com.intellij.psi.util.parentsOfType
 import org.jetbrains.kotlin.idea.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
-import org.jetbrains.kotlin.idea.frontend.api.analyze
+import org.jetbrains.kotlin.idea.frontend.api.analyse
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSyntheticJavaPropertySymbol
@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 abstract class AbstractOverriddenDeclarationProviderTest : AbstractKtIdeaTest() {
     override fun doTestByFileStructure(fileStructure: TestFileStructure) {
         val signatures = executeOnPooledThreadInReadAction {
-            analyze(fileStructure.mainKtFile) {
+            analyse(fileStructure.mainKtFile) {
                 val symbol = getElementOfTypeAtCaret<KtDeclaration>().getSymbol() as KtCallableSymbol
                 val allOverriddenSymbols = symbol.getAllOverriddenSymbols().map { renderSignature(it) }
                 val directlyOverriddenSymbols = symbol.getDirectlyOverriddenSymbols().map { renderSignature(it) }

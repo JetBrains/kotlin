@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import org.jetbrains.kotlin.idea.findUsages.UsageTypeEnum.*
-import org.jetbrains.kotlin.idea.frontend.api.analyzeWithReadAction
+import org.jetbrains.kotlin.idea.frontend.api.analyseWithReadAction
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.references.KtSimpleReference
 
@@ -52,7 +52,7 @@ class KotlinUsageTypeProviderFirImpl : KotlinUsageTypeProvider() {
             }
         }
 
-        return analyzeWithReadAction(refExpr) {
+        return analyseWithReadAction(refExpr) {
             when (val targetElement = reference.resolveToSymbol()) {
                 is KtClassOrObjectSymbol ->
                     when {

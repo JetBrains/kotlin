@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.idea.frontend.api.components
 
 import org.jetbrains.kotlin.idea.executeOnPooledThreadInReadAction
-import org.jetbrains.kotlin.idea.frontend.api.analyze
+import org.jetbrains.kotlin.idea.frontend.api.analyse
 import org.jetbrains.kotlin.idea.test.framework.AbstractKtIdeaTest
 import org.jetbrains.kotlin.idea.test.framework.TestFileStructure
 import org.jetbrains.kotlin.idea.test.framework.TestStructureExpectedDataBlock
@@ -20,7 +20,7 @@ abstract class AbstractHLExpressionTypeTest : AbstractKtIdeaTest() {
         val expression = fileStructure.mainFile.selectedExpression as KtExpression?
             ?: error("Selected expression was not provided")
         val type = executeOnPooledThreadInReadAction {
-            analyze(expression) { expression.getKtType().render() }
+            analyse(expression) { expression.getKtType().render() }
         }
         val actual = TestStructureRenderer.render(
             fileStructure,

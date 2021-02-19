@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.idea.asJava.*
 import org.jetbrains.kotlin.idea.frontend.api.HackToForceAllowRunningAnalyzeOnEDT
-import org.jetbrains.kotlin.idea.frontend.api.analyze
+import org.jetbrains.kotlin.idea.frontend.api.analyse
 import org.jetbrains.kotlin.idea.frontend.api.fir.analyzeWithSymbolAsContext
 import org.jetbrains.kotlin.idea.frontend.api.hackyAllowRunningOnEdt
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
@@ -57,7 +57,7 @@ fun createFirLightClassNoCache(classOrObject: KtClassOrObject): KtLightClass? = 
 
     val anonymousObject = classOrObject.parent as? KtObjectLiteralExpression
     if (anonymousObject != null) {
-        return analyze(anonymousObject) {
+        return analyse(anonymousObject) {
             FirLightAnonymousClassForSymbol(anonymousObject.getAnonymousObjectSymbol(), anonymousObject.manager)
         }
     }
@@ -67,7 +67,7 @@ fun createFirLightClassNoCache(classOrObject: KtClassOrObject): KtLightClass? = 
         classOrObject.hasModifier(KtTokens.INLINE_KEYWORD) -> return null //TODO
 
         else -> {
-            analyze(classOrObject) {
+            analyse(classOrObject) {
                 when (val symbol = classOrObject.getClassOrObjectSymbol()) {
                     is KtAnonymousObjectSymbol -> FirLightAnonymousClassForSymbol(symbol, classOrObject.manager)
                     is KtNamedClassOrObjectSymbol -> when (symbol.classKind) {
@@ -333,11 +333,11 @@ internal fun KtSymbolWithMembers.createInnerClasses(manager: PsiManager): List<F
 
 @OptIn(HackToForceAllowRunningAnalyzeOnEDT::class)
 internal fun KtClassOrObject.checkIsInheritor(baseClassOrigin: KtClassOrObject, checkDeep: Boolean): Boolean {
-    return analyze(this) {
+    return analyse(this) {
         val thisSymbol = this@checkIsInheritor.getNamedClassOrObjectSymbol()
         val baseSymbol = baseClassOrigin.getNamedClassOrObjectSymbol()
 
-        if (thisSymbol == baseSymbol) return@analyze false
+        if (thisSymbol == baseSymbol) return@analyse false
 
         val baseType = baseSymbol.buildSelfClassType()
 

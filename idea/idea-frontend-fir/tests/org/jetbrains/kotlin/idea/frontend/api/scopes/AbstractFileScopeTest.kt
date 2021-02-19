@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.idea.frontend.api.scopes
 
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.idea.executeOnPooledThreadInReadAction
-import org.jetbrains.kotlin.idea.frontend.api.analyze
+import org.jetbrains.kotlin.idea.frontend.api.analyse
 import org.jetbrains.kotlin.idea.frontend.api.symbols.DebugSymbolRenderer
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.psi.KtFile
@@ -20,7 +20,7 @@ abstract class AbstractFileScopeTest : KotlinLightCodeInsightFixtureTestCase() {
         val ktFile = myFixture.configureByText("file.kt", FileUtil.loadFile(File(path))) as KtFile
 
         val actual = executeOnPooledThreadInReadAction {
-            analyze(ktFile) {
+            analyse(ktFile) {
                 val symbol = ktFile.getFileSymbol()
                 val scope = symbol.getFileScope()
 

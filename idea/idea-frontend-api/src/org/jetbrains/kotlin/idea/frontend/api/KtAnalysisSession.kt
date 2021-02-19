@@ -15,12 +15,12 @@ import org.jetbrains.kotlin.psi.*
  * - Should not be accessed from event dispatch thread
  * - Should not be accessed outside read action
  * - Should not be leaked outside read action it was created in
- * - To be sure that session is not leaked it is forbidden to store it in a variable, consider working with it only in [analyze] context
+ * - To be sure that session is not leaked it is forbidden to store it in a variable, consider working with it only in [analyse] context
  * - All entities retrieved from analysis session should not be leaked outside the read action KtAnalysisSession was created in
  *
  * To pass a symbol from one read action to another use [KtSymbolPointer] which can be created from a symbol by [KtSymbol.createPointer]
  *
- * To create analysis session consider using [analyze]
+ * To create analysis session consider using [analyse]
  */
 abstract class KtAnalysisSession(final override val token: ValidityToken) : ValidityTokenOwner,
     KtSmartCastProviderMixIn,

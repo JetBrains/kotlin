@@ -7,11 +7,9 @@ package org.jetbrains.kotlin.idea.frontend.api.types
 
 import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.idea.executeOnPooledThreadInReadAction
-import org.jetbrains.kotlin.idea.frontend.api.analyze
-import org.jetbrains.kotlin.idea.frontend.api.analyze
+import org.jetbrains.kotlin.idea.frontend.api.analyse
 import org.jetbrains.kotlin.idea.frontend.api.components.KtTypeRendererOptions
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtFunction
@@ -31,7 +29,7 @@ class KtTypeRendererTest : KotlinLightCodeInsightFixtureTestCase() {
         val fakeKtFile = myFixture.configureByText("file.kt", "fun ${typeArgumentsRendered}foo(): $type = 1") as KtFile
         val property = fakeKtFile.declarations.single() as KtFunction
         val renderedType = executeOnPooledThreadInReadAction {
-            analyze(fakeKtFile) {
+            analyse(fakeKtFile) {
                 val ktType = property.getReturnKtType()
                 ktType.render(rendererOptions)
             }
@@ -47,7 +45,7 @@ class KtTypeRendererTest : KotlinLightCodeInsightFixtureTestCase() {
         val fakeKtFile = myFixture.configureByText("file.kt", "val a = $expression") as KtFile
         val property = fakeKtFile.declarations.single() as KtProperty
         val renderedType = executeOnPooledThreadInReadAction {
-            analyze(fakeKtFile) {
+            analyse(fakeKtFile) {
                 val ktType = property.initializer?.getKtType()
                     ?: error("fake property should have initializer")
                 ktType.render(rendererOptions)

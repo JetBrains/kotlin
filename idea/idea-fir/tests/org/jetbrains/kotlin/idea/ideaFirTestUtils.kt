@@ -12,13 +12,10 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.DuplicatedFir
 import org.jetbrains.kotlin.idea.fir.low.level.api.trackers.KotlinFirOutOfBlockModificationTrackerFactory
 import org.jetbrains.kotlin.idea.frontend.api.InvalidWayOfUsingAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSessionProvider
-import org.jetbrains.kotlin.idea.frontend.api.analyze
+import org.jetbrains.kotlin.idea.frontend.api.analyse
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSessionProvider
 import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.trackers.KotlinOutOfBlockModificationTrackerFactory
-import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import java.io.File
 
 fun Throwable.shouldBeRethrown(): Boolean = when (this) {
     is DuplicatedFirSourceElementsException -> true
@@ -31,6 +28,6 @@ internal fun Project.invalidateCaches(context: KtElement?) {
     (service<KotlinOutOfBlockModificationTrackerFactory>() as KotlinFirOutOfBlockModificationTrackerFactory).incrementModificationsCount()
     (service<KtAnalysisSessionProvider>() as KtFirAnalysisSessionProvider).clearCaches()
     if (context != null) {
-        executeOnPooledThreadInReadAction { analyze(context) {} }
+        executeOnPooledThreadInReadAction { analyse(context) {} }
     }
 }

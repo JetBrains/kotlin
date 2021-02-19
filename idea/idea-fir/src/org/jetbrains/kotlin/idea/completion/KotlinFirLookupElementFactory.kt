@@ -19,7 +19,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.core.withRootPrefixIfNeeded
 import org.jetbrains.kotlin.idea.frontend.api.HackToForceAllowRunningAnalyzeOnEDT
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
-import org.jetbrains.kotlin.idea.frontend.api.analyze
+import org.jetbrains.kotlin.idea.frontend.api.analyse
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.addImportToFile
 import org.jetbrains.kotlin.idea.frontend.api.hackyAllowRunningOnEdt
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
@@ -376,7 +376,7 @@ private fun alreadyHasImport(file: KtFile, nameToImport: FqName): Boolean {
     if (file.importDirectives.any { it.importPath?.fqName == nameToImport }) return true
 
     withAllowedResolve {
-        analyze(file) {
+        analyse(file) {
             val scopes = file.getScopeContextForFile().scopes
             if (!scopes.containsName(nameToImport.shortName())) return false
 

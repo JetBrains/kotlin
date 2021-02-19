@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.idea.fir.api.applicator.HLApplicator
 import org.jetbrains.kotlin.idea.fir.api.applicator.HLApplicatorInput
 import org.jetbrains.kotlin.idea.fir.api.applicator.HLApplicatorInputProvider
 import org.jetbrains.kotlin.idea.frontend.api.HackToForceAllowRunningAnalyzeOnEDT
-import org.jetbrains.kotlin.idea.frontend.api.analyzeWithReadAction
+import org.jetbrains.kotlin.idea.frontend.api.analyseWithReadAction
 import org.jetbrains.kotlin.idea.frontend.api.hackyAllowRunningOnEdt
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingIntention
 import org.jetbrains.kotlin.psi.KtElement
@@ -49,7 +49,7 @@ abstract class AbstractHLIntention<PSI : KtElement, INPUT : HLApplicatorInput>(
 
     @OptIn(HackToForceAllowRunningAnalyzeOnEDT::class)
     private fun getInput(element: PSI): INPUT? = hackyAllowRunningOnEdt {
-        analyzeWithReadAction(element) {
+        analyseWithReadAction(element) {
             with(inputProvider) { provideInput(element) }
         }
     }
