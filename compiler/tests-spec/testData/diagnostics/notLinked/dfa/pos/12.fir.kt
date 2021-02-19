@@ -320,17 +320,17 @@ fun <T> T.case_8() {
 // TESTCASE NUMBER: 9
 fun <T : Number> T.case_9() {
     if (this != null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>this<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>this<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>this<!>.propT
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>this<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>this<!>.propNullableT
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>this<!>.propNullableAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>this<!>.funT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>this<!>.funAny()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>this<!>.funNullableT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>this<!>.funNullableAny()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>this<!>.toByte()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>this<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>this<!>.equals(null)
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>this<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>this<!>.propAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>this<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>this<!>.propNullableAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>this<!>.funT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>this<!>.funAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>this<!>.funNullableT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>this<!>.funNullableAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>this<!>.toByte()
 
         equals(null)
 
@@ -567,18 +567,18 @@ fun <T> T.case_12() where T : Number?, T: Interface1? {
  */
 fun <T> T.case_13() where T : Out<*>?, T: Comparable<T?> {
     if (this != null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>this<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>this<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>this<!>.propT
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>this<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>this<!>.propNullableT
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>this<!>.propNullableAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>this<!>.funT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>this<!>.funAny()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>this<!>.funNullableT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>this<!>.funNullableAny()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>this<!>.get()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>this<!>.compareTo(null)
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>this<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>this<!>.equals(null)
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>this<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>this<!>.propAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>this<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>this<!>.propNullableAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>this<!>.funT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>this<!>.funAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>this<!>.funNullableT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>this<!>.funNullableAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>this<!>.get()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>this<!>.compareTo(null)
 
         equals(null)
 
@@ -3494,18 +3494,18 @@ fun <T> T.case_56() where T : Number?, T: Interface1? {
  */
 fun <T> T.case_57() where T : Out<*>?, T: Comparable<T?> {
     if (this != null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>this<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>this<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>this<!>.propT
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>this<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>this<!>.propNullableT
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>this<!>.propNullableAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>this<!>.funT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>this<!>.funAny()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>this<!>.funNullableT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>this<!>.funNullableAny()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>this<!>.get()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>this<!>.compareTo(null)
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>this<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>this<!>.equals(null)
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>this<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>this<!>.propAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>this<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>this<!>.propNullableAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>this<!>.funT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>this<!>.funAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>this<!>.funNullableT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>this<!>.funNullableAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>this<!>.get()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>this<!>.compareTo(null)
 
         equals(null)
 
@@ -3818,8 +3818,8 @@ fun Nothing?.case_62() {
 // TESTCASE NUMBER: 63
 fun Nothing.case_63() {
     if (this != null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing & kotlin.Nothing")!>this<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing & kotlin.Nothing")!>this<!>.hashCode()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>this<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>this<!>.hashCode()
 
         hashCode()
         apply {

@@ -57,6 +57,6 @@ fun case_4(x: Int?) {
 fun case_5(x: Int?) {
     if (x == null) {
         var y = x
-        <!INAPPLICABLE_CANDIDATE!>nullableStringArg<!>(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int?")!>y<!>)
+        <!INAPPLICABLE_CANDIDATE!>nullableStringArg<!>(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>y<!>)
     }
 }

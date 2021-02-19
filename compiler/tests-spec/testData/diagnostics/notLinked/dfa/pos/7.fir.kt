@@ -131,17 +131,17 @@ fun case_7() {
 
 // TESTCASE NUMBER: 8
 fun case_8(x: TypealiasString) {
-    if (x !== null && <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasString & TypealiasString")!>x<!> != null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasString & TypealiasString")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasString & TypealiasString")!>x<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasString & TypealiasString")!>x<!>.propT
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasString & TypealiasString")!>x<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasString & TypealiasString")!>x<!>.propNullableT
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasString & TypealiasString")!>x<!>.propNullableAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasString & TypealiasString")!>x<!>.funT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasString & TypealiasString")!>x<!>.funAny()
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasString & TypealiasString")!>x<!>.funNullableT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasString & TypealiasString")!>x<!>.funNullableAny()
+    if (x !== null && <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasString")!>x<!> != null) {
+        <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasString")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasString")!>x<!>.equals(null)
+        <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasString")!>x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasString")!>x<!>.propAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasString")!>x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasString")!>x<!>.propNullableAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasString")!>x<!>.funT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasString")!>x<!>.funAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasString")!>x<!>.funNullableT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasString")!>x<!>.funNullableAny()
     }
 }
 

@@ -99,11 +99,11 @@ fun case_6(x: Class?) {
  */
 fun case_7(x: Class) {
     if (x!!.prop_8?.prop_8?.prop_8?.prop_8 != null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class")!>x<!>.prop_8
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8
     }
 }
 
@@ -114,11 +114,11 @@ fun case_7(x: Class) {
  */
 fun case_8(x: Class) {
     if (x!!.prop_8?.prop_8?.prop_8?.prop_8 != null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class")!>x<!>.prop_8
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8
     }
 }
 // TESTCASE NUMBER: 9

@@ -42,6 +42,6 @@ fun case_2(): Int {
 
     var c: Int = 0
     c = 0
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int")!>c<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>c<!>
     return c
 }

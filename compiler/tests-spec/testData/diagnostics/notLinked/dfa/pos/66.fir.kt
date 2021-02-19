@@ -79,8 +79,8 @@ fun case_6(x: Any?) {
     when (x) {
         is Nothing? -> return
         is Any? -> {
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any?")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any?")!>x<!><!UNSAFE_CALL!>.<!>equals(10)
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!><!UNSAFE_CALL!>.<!>equals(10)
         }
     }
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>

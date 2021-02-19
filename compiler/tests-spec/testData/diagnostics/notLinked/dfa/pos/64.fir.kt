@@ -16,7 +16,7 @@ class Case1<T> {
         if (x == null) {
             x = getT()
         }
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>
         return x
     }
 }

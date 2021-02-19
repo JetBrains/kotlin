@@ -3,7 +3,7 @@ fun <R : Any?> scopedFlow(@BuilderInference block: @ExtensionFunctionType Suspen
   return flow<R>(block = local suspend fun FlowCollector<R>.<anonymous>() {
     val collector: FlowCollector<ErrorType> = <this>
     flowScope<Unit>(block = local suspend fun CoroutineScope.<anonymous>() {
-      block.invoke(p1 = <this>, p2 = collector /*as FlowCollector<ErrorType> */)
+      block.invoke(p1 = <this>, p2 = collector)
     }
 )
   }
@@ -141,3 +141,4 @@ interface SendChannel<in E : Any?> {
   abstract suspend fun send(e: E)
 
 }
+

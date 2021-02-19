@@ -388,17 +388,17 @@ fun <T> case_8(x: T) {
 // TESTCASE NUMBER: 9
 fun <T : Number> case_9(x: T) {
     if (x != null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>x<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>x<!>.propT
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>x<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>x<!>.propNullableT
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>x<!>.propNullableAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>x<!>.funT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>x<!>.funAny()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>x<!>.funNullableT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>x<!>.funNullableAny()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>x<!>.toByte()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.equals(null)
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.propAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.propNullableAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.funT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.funAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.funNullableT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.funNullableAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.toByte()
 
         x.equals(null)
 
@@ -683,18 +683,18 @@ fun <T> case_12(x: T) where T : Number?, T: Interface1? {
  */
 fun <T> case_13(x: T) where T : Out<*>?, T: Comparable<T?> {
     if (x != null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>x<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>x<!>.propT
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>x<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>x<!>.propNullableT
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>x<!>.propNullableAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>x<!>.funT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>x<!>.funAny()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>x<!>.funNullableT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>x<!>.funNullableAny()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>x<!>.get()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>x<!>.compareTo(null)
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.equals(null)
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.propAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.propNullableAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.funT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.funAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.funNullableT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.funNullableAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.get()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.compareTo(null)
 
         x.equals(null)
 
@@ -3987,18 +3987,18 @@ fun <T> case_56(x: T) where T : Number?, T: Interface1? {
  */
 fun <T> case_57(x: T) where T : Out<*>?, T: Comparable<T?> {
     if (x != null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>x<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>x<!>.propT
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>x<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>x<!>.propNullableT
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>x<!>.propNullableAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>x<!>.funT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>x<!>.funAny()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>x<!>.funNullableT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>x<!>.funNullableAny()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>x<!>.get()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & T")!>x<!>.compareTo(null)
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.equals(null)
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.propAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.propNullableAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.funT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.funAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.funNullableT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.funNullableAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.get()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.compareTo(null)
 
         x.equals(null)
 

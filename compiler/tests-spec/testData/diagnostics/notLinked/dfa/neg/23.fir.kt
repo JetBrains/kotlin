@@ -61,8 +61,8 @@ inline fun <reified T, reified K> case_6() {
     var x: T? = 10 as T
     if (x is K) {
         x = null
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?")!>x<!><!UNSAFE_CALL!>.<!>equals(10)
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!><!UNSAFE_CALL!>.<!>equals(10)
+        <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>
         println(1)
     }
 }
