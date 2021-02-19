@@ -406,23 +406,30 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
                 return
             }
 
+            var withExtensionFunctionType = false
             when {
+                call.extensionReceiver !is FirNoReceiverExpression -> {
+                    // render type from symbol because this way it will be consistent with psi render
+                    symbol.fir.receiverTypeRef?.accept(this, data)
+                    data.append(".").append(symbol.callableId.callableName)
+                }
+                call.dispatchReceiver.typeRef.annotations.any { it.isExtensionFunctionAnnotationCall } -> {
+                    withExtensionFunctionType = true
+                    symbol.fir.valueParameters.first().returnTypeRef.accept(this, data)
+                    data.append(".").append(symbol.callableId.callableName)
+                }
                 call.dispatchReceiver !is FirNoReceiverExpression -> {
                     data.append("(")
                     val dispatch = buildString { call.dispatchReceiver.typeRef.accept(this@FirRenderer, this) }
                     val localPath = if (symbol.isLocalDeclaration()) stack.getPathByName(dispatch) else ""
                     data.append(localPath).append(dispatch).append(").").append(symbol.callableId.callableName)
                 }
-                call.extensionReceiver !is FirNoReceiverExpression -> {
-                    // render type from symbol because this way it will be consistent with psi render
-                    symbol.fir.receiverTypeRef?.accept(this, data)
-                    data.append(".").append(symbol.callableId.callableName)
-                }
                 else -> data.append(id)
             }
 
             renderListInTriangles(call.typeArguments, data)
-            visitValueParameters(symbol.fir.valueParameters, data)
+            val valueParameters = symbol.fir.valueParameters.let { if (withExtensionFunctionType) it.drop(1) else it }
+            visitValueParameters(valueParameters, data)
             data.append(": ")
             symbol.fir.returnTypeRef.accept(this, data)
         }
@@ -514,7 +521,10 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
                 symbol is FirPropertySymbol && !symbol.fir.isLocal -> renderPropertySymbol(symbol, data)
                 symbol is FirNamedFunctionSymbol -> {
                     val fir = symbol.fir
-                    data.append(fir.name).append(": ").append(fir.returnTypeRef.renderWithNativeRenderer())
+                    data.append(stack.getPathByName(resolvedNamedReference.name.asString()))
+                        .append(resolvedNamedReference.name)
+                        .append(": ")
+                        .append(fir.dispatchReceiverType?.render()) // TODO render receiver type with pretty formatting
                 }
                 else -> (symbol.fir as? FirVariable<*>)?.let { renderVariable(it, data) }
             }
