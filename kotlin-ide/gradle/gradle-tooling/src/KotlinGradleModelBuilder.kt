@@ -9,7 +9,6 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ProjectDependency
-import org.jetbrains.kotlin.gradle.KotlinMPPGradleModelBuilder.Companion.getTargets
 import org.jetbrains.plugins.gradle.tooling.ErrorMessageBuilder
 import org.jetbrains.plugins.gradle.tooling.ModelBuilderService
 import java.io.File
@@ -124,7 +123,7 @@ class KotlinGradleModelBuilder : AbstractKotlinGradleModelBuilder() {
     @Suppress("UNCHECKED_CAST")
     private fun Task.getCompilerArguments(methodName: String): List<String>? {
         return try {
-            javaClass.getDeclaredMethod(methodName).invoke(this) as List<String>
+            this[methodName] as? List<String>
         } catch (e: Exception) {
             // No argument accessor method is available
             null
@@ -166,9 +165,9 @@ class KotlinGradleModelBuilder : AbstractKotlinGradleModelBuilder() {
     override fun buildAll(modelName: String?, project: Project): KotlinGradleModelImpl? {
         val kotlinPluginId = kotlinPluginIds.singleOrNull { project.plugins.findPlugin(it) != null }
         val platformPluginId = platformPluginIds.singleOrNull { project.plugins.findPlugin(it) != null }
-        val targets = project.getTargets(includeSinglePlatform = true)
+        val target = project.getTarget()
 
-        if (kotlinPluginId == null && platformPluginId == null && targets == null) {
+        if (kotlinPluginId == null && platformPluginId == null && target == null) {
             return null
         }
 
@@ -176,12 +175,9 @@ class KotlinGradleModelBuilder : AbstractKotlinGradleModelBuilder() {
         val extraProperties = HashMap<String, KotlinTaskProperties>()
 
 
-        val kotlinCompileTasks = if (targets != null) {
-            targets.flatMap { target -> KotlinMPPGradleModelBuilder.getCompilations(target) ?: emptyList() }
-                .mapNotNull { compilation -> KotlinMPPGradleModelBuilder.getCompileKotlinTaskName(project, compilation) }
-        } else {
-            project.getAllTasks(false)[project]?.filter { it.javaClass.name in kotlinCompileTaskClasses } ?: emptyList()
-        }
+        val kotlinCompileTasks = target?.let { it.compilations ?: emptyList() }
+                ?.mapNotNull { compilation -> compilation.getCompileKotlinTaskName(project) }
+                ?: (project.getAllTasks(false)[project]?.filter { it.javaClass.name in kotlinCompileTaskClasses } ?: emptyList())
 
         kotlinCompileTasks.forEach { compileTask ->
             if (compileTask.javaClass.name !in kotlinCompileTaskClasses) return@forEach
