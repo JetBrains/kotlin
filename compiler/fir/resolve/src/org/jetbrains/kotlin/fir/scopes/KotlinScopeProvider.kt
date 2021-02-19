@@ -15,10 +15,8 @@ import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.types.ConeClassErrorType
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.typeContext
+import org.jetbrains.kotlin.fir.types.*
 
 class KotlinScopeProvider(
     val declaredMemberScopeDecorator: (
@@ -110,7 +108,7 @@ fun ConeKotlinType.scopeForSupertype(
     if (this is ConeClassErrorType) return null
     val symbol = lookupTag.toSymbol(useSiteSession)
     return if (symbol is FirRegularClassSymbol) {
-        val delegateField = delegateFields?.find { it.returnTypeRef.coneType == this }
+        val delegateField = delegateFields?.find { useSiteSession.typeContext.equalTypes(it.returnTypeRef.coneType, this) }
         symbol.fir.scopeForSupertype(
             substitutor(symbol, this, useSiteSession),
             useSiteSession, scopeSession, delegateField,
