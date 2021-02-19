@@ -178,6 +178,11 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = SealedSupertypeInLocalClass::class
     }
 
+    abstract class SupertypeNotAClassOrInterface : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = SupertypeNotAClassOrInterface::class
+        abstract val reason: String
+    }
+
     abstract class ConstructorInObject : KtFirDiagnostic<KtDeclaration>() {
         override val diagnosticClass get() = ConstructorInObject::class
     }
