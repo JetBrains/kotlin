@@ -10,13 +10,12 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirLabel
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.dispatchReceiverClassOrNull
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.*
-import org.jetbrains.kotlin.fir.resolve.directExpansionType
-import org.jetbrains.kotlin.fir.resolve.symbolProvider
-import org.jetbrains.kotlin.fir.resolve.getSymbolByLookupTag
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.firUnsafe
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -25,9 +24,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
@@ -37,6 +34,30 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
     private val implicitReceivers = mutableListOf<FirTypeRef>()
 
     private fun FirElement.render(): String = buildString { this@render.accept(FirRenderer(), this) }
+
+    private val stack = mutableListOf("" to mutableListOf<String>())
+
+    private fun Stack.push(
+        levelName: String,
+        defaultValues: MutableList<String> = mutableListOf()
+    ) = this.add(levelName to defaultValues)
+
+    private fun Stack.pop() = this.removeAt(this.size - 1)
+    private fun Stack.addName(name: String) = this.last().second.add(name)
+    private fun Stack.addName(name: Name) = this.addName(name.asString())
+    private fun Stack.getPathByName(name: String): String {
+        for ((reversedIndex, names) in this.asReversed().map { it.second }.withIndex()) {
+            if (names.contains(name)) {
+                return this.filterIndexed { index, _ -> index < this.size - reversedIndex && index > 0 }
+                    .joinToString(separator = ".", postfix = ".") { it.first }
+            }
+        }
+        if (name == "it") {
+            return this.subList(1, this.size)
+                .joinToString(separator = ".", postfix = ".") { it.first }
+        }
+        return "[NOT FOUND]."
+    }
 
     override fun addAnnotation(annotationText: String, element: PsiElement?, deleteDuplicate: Boolean) {
         super.addAnnotation(annotationText, element, false)
@@ -50,30 +71,6 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
 
     inner class PsiVisitor(private val map: Map<PsiElement, MutableList<FirElement>>) : KtVisitorVoid() {
         private var lastCallWithLambda: String? = null
-
-        private val stack = mutableListOf("" to mutableListOf<String>())
-
-        private fun Stack.push(
-            levelName: String,
-            defaultValues: MutableList<String> = mutableListOf()
-        ) = this.add(levelName to defaultValues)
-
-        private fun Stack.pop() = this.removeAt(this.size - 1)
-        private fun Stack.addName(name: String) = this.last().second.add(name)
-        private fun Stack.addName(name: Name) = this.addName(name.asString())
-        private fun Stack.getPathByName(name: String): String {
-            for ((reversedIndex, names) in this.asReversed().map { it.second }.withIndex()) {
-                if (names.contains(name)) {
-                    return this.filterIndexed { index, _ -> index < this.size - reversedIndex && index > 0 }
-                        .joinToString(separator = ".", postfix = ".") { it.first }
-                }
-            }
-            if (name == "it") {
-                return this.subList(1, this.size)
-                    .joinToString(separator = ".", postfix = ".") { it.first }
-            }
-            return "[NOT FOUND]."
-        }
 
         private inline fun <reified T> KtElement.firstOfType(): T? {
             val firList = map[this]
@@ -133,6 +130,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
                     stack.pop()
                 }
                 is KtClassOrObject -> {
+                    if (element.isLocal) stack.addName((element.name ?: "<no name provided>"))
                     stack.push((element.name ?: "<no name provided>"))
                     element.acceptChildren(this)
                     stack.pop()
@@ -154,6 +152,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         }
 
         override fun visitNamedFunction(function: KtNamedFunction) {
+            if (function.isLocal) stack.addName(function.name ?: "<no name provided>")
             stack.push((function.name ?: "<no name provided>"))
             if (function.equalsToken != null) {
                 function.bodyExpression!!.firstOfTypeWithRender<FirReturnExpression>(function.equalsToken) { this.result.typeRef }
@@ -304,7 +303,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
 
         private fun FirTypeRef.renderWithNativeRenderer(): String {
             var result = buildString {
-                val nativeRenderer = org.jetbrains.kotlin.fir.FirRenderer(this)
+                val nativeRenderer = org.jetbrains.kotlin.fir.FirRenderer(this, org.jetbrains.kotlin.fir.FirRenderer.RenderMode.WithFqNamesExceptAnnotation)
                 this@renderWithNativeRenderer.accept(nativeRenderer)
             }
             if (result.startsWith("R|")) result = result.substring(2)
@@ -410,8 +409,9 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             when {
                 call.dispatchReceiver !is FirNoReceiverExpression -> {
                     data.append("(")
-                    call.dispatchReceiver.typeRef.accept(this, data)
-                    data.append(").").append(symbol.callableId.callableName)
+                    val dispatch = buildString { call.dispatchReceiver.typeRef.accept(this@FirRenderer, this) }
+                    val localPath = if (symbol.isLocalDeclaration()) stack.getPathByName(dispatch) else ""
+                    data.append(localPath).append(dispatch).append(").").append(symbol.callableId.callableName)
                 }
                 call.extensionReceiver !is FirNoReceiverExpression -> {
                     // render type from symbol because this way it will be consistent with psi render
@@ -642,13 +642,29 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             }
         }
 
+        private fun AbstractFirBasedSymbol<*>.isLocalDeclaration(): Boolean {
+            return when (val fir = this.fir) {
+                is FirConstructor -> {
+                    val firClass = fir.returnTypeRef.coneTypeUnsafe<ConeClassLikeType>().lookupTag.toFirRegularClass(session)
+                    firClass?.isLocal ?: false
+                }
+                is FirCallableDeclaration<*> -> {
+                    fir.dispatchReceiverClassOrNull()?.toFirRegularClass(session)?.isLocal ?: false
+                }
+                else -> false
+            }
+        }
+
         private fun getSymbolId(symbol: AbstractFirBasedSymbol<*>?): String {
             return when (symbol) {
                 is FirCallableSymbol<*> -> {
                     val callableId = symbol.callableId
-                    callableId.toString()
+                    val isLocal = symbol.isLocalDeclaration()
+                    val trimmedCallableId = callableId.toString()
                         .replaceFirst(".${callableId.callableName}", "")
                         .removeCurrentFilePackage()
+                    val localPath = if (isLocal) stack.getPathByName(trimmedCallableId) else ""
+                    localPath + trimmedCallableId
                 }
                 is FirClassLikeSymbol<*> -> symbol.classId.getWithoutCurrentPackage()
                 else -> ""
