@@ -13,6 +13,7 @@ import org.gradle.api.component.SoftwareComponentFactory
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.publish.maven.internal.publication.DefaultMavenPublication
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.CalculatedCapability
@@ -171,6 +172,7 @@ abstract class AbstractKotlinGradleRuntimePublishedVariantFactory<T : KotlinGrad
             project.pluginManager.withPlugin("maven-publish") {
                 project.extensions.getByType(PublishingExtension::class.java).apply {
                     publications.create(platformComponentName, MavenPublication::class.java).apply {
+                        (this as DefaultMavenPublication).isAlias = true
                         from(platformComponent)
                         variant.assignMavenPublication(this)
                         artifactId = dashSeparatedName(project.name, variant.defaultPublishedModuleSuffix)

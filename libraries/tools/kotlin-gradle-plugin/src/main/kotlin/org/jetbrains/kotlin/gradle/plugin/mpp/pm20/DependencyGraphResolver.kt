@@ -59,7 +59,7 @@ class GradleKotlinDependencyGraphResolver(
                     (module as? ExternalImportedKotlinModule)
                         ?.takeIf { it.hasLegacyMetadataModule }
                         ?.let { (component.dependencies.singleOrNull() as? ResolvedDependencyResult)?.selected }
-                    ?: component
+                        ?: component
 
                 val resolvedComponentDependencies = componentContainingTransitiveDependencies.dependencies
                     .filterIsInstance<ResolvedDependencyResult>()
