@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.load.kotlin
 
 import com.intellij.ide.highlighter.JavaClassFileType
+import com.intellij.openapi.diagnostic.ControlFlowException
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder.Result.KotlinClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
@@ -73,9 +73,10 @@ class VirtualFileKotlinClass private constructor(
                     }
                 } catch (e: FileNotFoundException) {
                     // Valid situation. User can delete jar file.
-                } catch (e: ProcessCanceledException) {
-                    // Valid situation.
                 } catch (e: Throwable) {
+                    if (e is ControlFlowException) {
+                        throw e
+                    }
                     LOG.warn(renderFileReadingErrorMessage(file), e)
                 }
                 null
