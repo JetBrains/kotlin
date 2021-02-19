@@ -1,6 +1,6 @@
 // FIR_IGNORE
 fun test() {
-//      test.<no name provided>
+//      <anonymous>
 //      │
     val x = object {}
 }

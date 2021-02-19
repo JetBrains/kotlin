@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.compiler.visualizer.Annotator.annotate
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
@@ -257,6 +258,7 @@ class PsiVisualizer(private val file: KtFile, analysisResult: AnalysisResult) : 
         }
 
         fun renderType(type: KotlinType): String {
+            if (type.toString() == SpecialNames.NO_NAME_PROVIDED.asString()) return "<anonymous>"
             return typeRenderer.renderType(type)
         }
 

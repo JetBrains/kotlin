@@ -31,7 +31,7 @@ fun withLocals(p: Int): Int {
 //                │ fun (Any).hashCode(): Int
 //                │ │
         fun foo() = hashCode()
-//     fun (withLocals.<no name provided>).foo(): Int
+//     fun (<anonymous>).foo(): Int
 //     │
     }).foo()
 

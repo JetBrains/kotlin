@@ -130,8 +130,8 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
                     stack.pop()
                 }
                 is KtClassOrObject -> {
-                    if (element.isLocal) stack.addName((element.name ?: "<no name provided>"))
-                    stack.push((element.name ?: "<no name provided>"))
+                    if (element.isLocal) stack.addName((element.name ?: "<anonymous>"))
+                    stack.push((element.name ?: "<anonymous>"))
                     element.acceptChildren(this)
                     stack.pop()
                 }
