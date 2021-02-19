@@ -117,7 +117,10 @@ object AndroidDependencyResolver {
         return sourceSet2Impl.mapValues { entry ->
             val dependencies = findDependencies(allImplConfigs, entry.value.implConfig)
 
-            val selfResolved = dependencies.filterIsInstance<SelfResolvingDependency>().map { AndroidDependency(collection = it.resolve()) }
+            val selfResolved = dependencies.filterIsInstance<SelfResolvingDependency>().map { dependency ->
+                val collection = dependency.resolve().takeIf(Collection<File?>::isNotEmpty)
+                AndroidDependency(dependency.name, group = dependency.group, collection = collection)
+            }
             val resolvedExternal = dependencies.filterIsInstance<ExternalModuleDependency>()
                 .flatMap { collectDependencies(it.module, entry.value.compileConfig) }
 
