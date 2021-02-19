@@ -260,7 +260,7 @@ open class Kapt3IT : Kapt3BaseIT() {
     fun testChangeClasspathICRebuild() {
         testICRebuild { project ->
             project.projectFile("build.gradle").modify {
-                "$it\ndependencies { compile 'org.jetbrains.kotlin:kotlin-reflect:' + kotlin_version }"
+                "$it\ndependencies { implementation 'org.jetbrains.kotlin:kotlin-reflect:' + kotlin_version }"
             }
         }
     }
