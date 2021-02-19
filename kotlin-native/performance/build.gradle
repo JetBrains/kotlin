@@ -12,7 +12,8 @@ buildscript {
         def properties = new java.util.Properties()
         properties.load(new java.io.FileReader(project.file("../../gradle.properties")))
         properties.each { k, v->
-            set(k as String, v)
+            def key = k as String
+            set(key, project.findProperty(key) ?: v)
         }
     }
     ext["withoutEmbedabble"] = true
@@ -47,8 +48,10 @@ def kotlinNativeVersionObject = CompilerVersionKt.parseCompilerVersion(versionSt
 
 subprojects { proj ->
     globalProperties.each { k, v->
-        proj.logger.info("${proj.name}<<<[$k] = $v>>>")
-        proj.ext.set(k as String, v)
+        def key = k as String
+        def value = project.findProperty(key) ?: v
+        proj.logger.info("${proj.name}<<<[$key] = $value>>>")
+        proj.ext.set(key, value)
     }
     MiscKt.kotlinInit(proj, findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() ?: false)
     proj.ext["bootstrapKotlinRepo"] = BootstrapKt.getBootstrapKotlinRepo(proj)
