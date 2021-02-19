@@ -105,7 +105,13 @@ abstract class KtAnalysisSession(final override val token: ValidityToken) : Vali
 
     val builtinTypes: KtBuiltinTypes get() = typeProvider.builtinTypes
 
-    fun KtType.approximateToPublicDenotable(): KtType? = typeProvider.approximateToPublicDenotable(this)
+    /**
+     * Approximates [KtType] with the a supertype which can be rendered in a source code
+     *
+     * Return `null` if the type do not need approximation and can be rendered as is
+     * Otherwise, for type `T` return type `S` such `T <: S` and `T` and every it type argument is [org.jetbrains.kotlin.idea.frontend.api.types.KtDenotableType]`
+     */
+    fun KtType.approximateToSuperPublicDenotable(): KtType? = typeProvider.approximateToSuperPublicDenotableType(this)
 
     fun KtClassOrObjectSymbol.buildSelfClassType(): KtType = typeProvider.buildSelfClassType(this)
 

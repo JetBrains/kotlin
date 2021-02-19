@@ -8,12 +8,10 @@ package org.jetbrains.kotlin.idea.fir.intentions.declarations
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.fir.api.*
 import org.jetbrains.kotlin.idea.fir.api.applicator.HLApplicabilityRange
-import org.jetbrains.kotlin.idea.fir.api.applicator.applicabilityTarget
 import org.jetbrains.kotlin.idea.fir.api.applicator.inputProvider
 import org.jetbrains.kotlin.idea.fir.api.applicator.with
 import org.jetbrains.kotlin.idea.fir.applicators.ApplicabilityRanges
 import org.jetbrains.kotlin.idea.fir.applicators.CallableReturnTypeUpdaterApplicator
-import org.jetbrains.kotlin.idea.frontend.api.types.*
 import org.jetbrains.kotlin.psi.*
 
 class HLSpecifyExplicitTypeForCallableDeclarationIntention :
@@ -31,7 +29,7 @@ class HLSpecifyExplicitTypeForCallableDeclarationIntention :
 
     override val inputProvider = inputProvider<KtCallableDeclaration, CallableReturnTypeUpdaterApplicator.Type> { declaration ->
         val returnType = declaration.getReturnKtType()
-        val denotableType = returnType.approximateToPublicDenotable() ?: return@inputProvider null
+        val denotableType = returnType.approximateToSuperPublicDenotable() ?: returnType
         with(CallableReturnTypeUpdaterApplicator.Type) { createByKtType(denotableType) }
     }
 }
