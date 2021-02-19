@@ -12,8 +12,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.RESOLUTION_ANCHOR_PROVIDER_CAPABILITY
-import org.jetbrains.kotlin.resolve.ResolutionAnchorProvider
 import org.jetbrains.kotlin.utils.checkWithAttachment
 
 abstract class AbstractResolverForProject<M : ModuleInfo>(
@@ -22,8 +20,7 @@ abstract class AbstractResolverForProject<M : ModuleInfo>(
     modules: Collection<M>,
     protected val fallbackModificationTracker: ModificationTracker? = null,
     private val delegateResolver: ResolverForProject<M> = EmptyResolverForProject(),
-    private val packageOracleFactory: PackageOracleFactory = PackageOracleFactory.OptimisticFactory,
-    protected val resolutionAnchorProvider: ResolutionAnchorProvider = ResolutionAnchorProvider.Default,
+    private val packageOracleFactory: PackageOracleFactory = PackageOracleFactory.OptimisticFactory
 ) : ResolverForProject<M>() {
 
     protected class ModuleData(
@@ -196,13 +193,15 @@ abstract class AbstractResolverForProject<M : ModuleInfo>(
         return moduleData
     }
 
+    protected open fun getAdditionalCapabilities(): Map<ModuleCapability<*>, Any?> = emptyMap()
+
     private fun createModuleDescriptor(module: M): ModuleData {
         val moduleDescriptor = ModuleDescriptorImpl(
             module.name,
             projectContext.storageManager,
             builtInsForModule(module),
             module.platform,
-            module.capabilities + listOf(RESOLUTION_ANCHOR_PROVIDER_CAPABILITY to resolutionAnchorProvider),
+            module.capabilities + getAdditionalCapabilities(),
             module.stableName,
         )
         moduleInfoByDescriptor[moduleDescriptor] = module

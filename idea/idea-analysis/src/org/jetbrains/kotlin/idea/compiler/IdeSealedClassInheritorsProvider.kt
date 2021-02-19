@@ -5,19 +5,29 @@
 
 package org.jetbrains.kotlin.idea.compiler
 
-import com.intellij.psi.*
-import com.intellij.psi.search.*
+import com.intellij.openapi.project.Project
+import com.intellij.psi.JavaDirectoryService
+import com.intellij.psi.JavaPsiFacade
+import com.intellij.psi.PsiPackage
+import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.search.PackageScope
+import com.intellij.psi.search.SearchScope
 import com.intellij.psi.search.searches.ClassInheritorsSearch
 import com.intellij.psi.search.searches.ClassInheritorsSearch.SearchParameters
 import org.jetbrains.kotlin.asJava.toLightClass
+import org.jetbrains.kotlin.analyzer.ModuleInfo
+import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.containingPackage
-import org.jetbrains.kotlin.idea.caches.resolve.util.javaResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.IdeaResolverForProject.Companion.PLATFORM_ANALYSIS_SETTINGS
 import org.jetbrains.kotlin.idea.caches.resolve.util.resolveToDescriptor
+import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.resolve.SealedClassInheritorsProvider
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 object IdeSealedClassInheritorsProvider : SealedClassInheritorsProvider() {
 
@@ -27,6 +37,9 @@ object IdeSealedClassInheritorsProvider : SealedClassInheritorsProvider() {
     ): Collection<ClassDescriptor> {
 
         val sealedKtClass = sealedClass.findPsi() as? KtClass ?: return emptyList()
+        val project = sealedKtClass.project
+        val moduleDescriptor = sealedClass.module
+
         val searchScope: SearchScope = if (allowSealedInheritorsInDifferentFilesOfSamePackage) {
             val module = sealedKtClass.module ?: return emptyList()
             val moduleSourceScope = GlobalSearchScope.moduleScope(module)
@@ -43,11 +56,10 @@ object IdeSealedClassInheritorsProvider : SealedClassInheritorsProvider() {
         val lightClass = sealedKtClass.toLightClass() ?: return emptyList()
         val searchParameters = SearchParameters(lightClass, searchScope, false, true, false)
 
+        val resolutionFacade = getResolutionFacade(moduleDescriptor, project) ?: return emptyList()
+
         return ClassInheritorsSearch.search(searchParameters)
-            .map mapper@{
-                val resolutionFacade = it.javaResolutionFacade() ?: return@mapper null
-                it.resolveToDescriptor(resolutionFacade)
-            }.filterNotNull()
+            .mapNotNull { it.resolveToDescriptor(resolutionFacade) }
             .sortedBy(ClassDescriptor::getName) // order needs to be stable (at least for tests)
     }
 
@@ -55,4 +67,10 @@ object IdeSealedClassInheritorsProvider : SealedClassInheritorsProvider() {
         val directory = ktClass.containingFile.containingDirectory ?: return null
         return JavaDirectoryService.getInstance().getPackage(directory)
     }
+}
+
+private fun getResolutionFacade(moduleDescriptor: ModuleDescriptor, project: Project): ResolutionFacade? {
+    val analysisSettings = moduleDescriptor.getCapability(PLATFORM_ANALYSIS_SETTINGS) ?: return null
+    val moduleInfo = moduleDescriptor.getCapability(ModuleInfo.Capability) ?: return null
+    return KotlinCacheService.getInstance(project).getResolutionFacadeByModuleInfo(moduleInfo, analysisSettings)
 }
