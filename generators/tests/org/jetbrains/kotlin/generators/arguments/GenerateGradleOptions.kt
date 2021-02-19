@@ -198,15 +198,19 @@ private fun Printer.generateImpl(
 
         for (property in properties) {
             println()
-            val backingField = property.backingField()
-            val backingFieldType = property.gradleReturnType + "?"
-            println("private var $backingField: $backingFieldType = null")
-            generatePropertyDeclaration(property, modifiers = "override")
-            withIndent {
-                println("get() = $backingField ?: ${property.gradleDefaultValue}")
-                println("set(value) {")
-                withIndent { println("$backingField = value") }
-                println("}")
+            val propertyType = property.gradleReturnType
+            if (propertyType.endsWith("?")) {
+                generatePropertyDeclaration(property, modifiers = "override", value = "null")
+            } else {
+                val backingField = property.backingField()
+                println("private var $backingField: $propertyType? = null")
+                generatePropertyDeclaration(property, modifiers = "override")
+                withIndent {
+                    println("get() = $backingField ?: ${property.gradleDefaultValue}")
+                    println("set(value) {")
+                    withIndent { println("$backingField = value") }
+                    println("}")
+                }
             }
         }
 
@@ -214,7 +218,7 @@ private fun Printer.generateImpl(
         println("internal open fun updateArguments(args: $argsType) {")
         withIndent {
             for (property in properties) {
-                val backingField = property.backingField()
+                val backingField = if (property.gradleReturnType.endsWith("?")) property.name else property.backingField()
                 println("$backingField?.let { args.${property.name} = it }")
             }
         }
@@ -252,9 +256,10 @@ private fun Printer.generateDeclaration(
     println("}")
 }
 
-private fun Printer.generatePropertyDeclaration(property: KProperty1<*, *>, modifiers: String = "") {
+private fun Printer.generatePropertyDeclaration(property: KProperty1<*, *>, modifiers: String = "", value: String? = null) {
     val returnType = property.gradleReturnType
-    println("$modifiers var ${property.name}: $returnType")
+    val initialValue = if (value != null) " = $value" else ""
+    println("$modifiers var ${property.name}: $returnType$initialValue")
 }
 
 private fun Printer.generateOptionDeprecation(property: KProperty1<*, *>) {

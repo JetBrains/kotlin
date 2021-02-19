@@ -25,19 +25,9 @@ internal abstract class KotlinJvmOptionsBase : org.jetbrains.kotlin.gradle.dsl.K
             verboseField = value
         }
 
-    private var apiVersionField: kotlin.String?? = null
-    override var apiVersion: kotlin.String?
-        get() = apiVersionField ?: null
-        set(value) {
-            apiVersionField = value
-        }
+    override var apiVersion: kotlin.String? = null
 
-    private var languageVersionField: kotlin.String?? = null
-    override var languageVersion: kotlin.String?
-        get() = languageVersionField ?: null
-        set(value) {
-            languageVersionField = value
-        }
+    override var languageVersion: kotlin.String? = null
 
     private var useFirField: kotlin.Boolean? = null
     override var useFir: kotlin.Boolean
@@ -60,12 +50,7 @@ internal abstract class KotlinJvmOptionsBase : org.jetbrains.kotlin.gradle.dsl.K
             javaParametersField = value
         }
 
-    private var jdkHomeField: kotlin.String?? = null
-    override var jdkHome: kotlin.String?
-        get() = jdkHomeField ?: null
-        set(value) {
-            jdkHomeField = value
-        }
+    override var jdkHome: kotlin.String? = null
 
     private var jvmTargetField: kotlin.String? = null
     override var jvmTarget: kotlin.String
@@ -74,12 +59,7 @@ internal abstract class KotlinJvmOptionsBase : org.jetbrains.kotlin.gradle.dsl.K
             jvmTargetField = value
         }
 
-    private var moduleNameField: kotlin.String?? = null
-    override var moduleName: kotlin.String?
-        get() = moduleNameField ?: null
-        set(value) {
-            moduleNameField = value
-        }
+    override var moduleName: kotlin.String? = null
 
     private var noJdkField: kotlin.Boolean? = null
     override var noJdk: kotlin.Boolean
@@ -120,14 +100,14 @@ internal abstract class KotlinJvmOptionsBase : org.jetbrains.kotlin.gradle.dsl.K
         allWarningsAsErrorsField?.let { args.allWarningsAsErrors = it }
         suppressWarningsField?.let { args.suppressWarnings = it }
         verboseField?.let { args.verbose = it }
-        apiVersionField?.let { args.apiVersion = it }
-        languageVersionField?.let { args.languageVersion = it }
+        apiVersion?.let { args.apiVersion = it }
+        languageVersion?.let { args.languageVersion = it }
         useFirField?.let { args.useFir = it }
         includeRuntimeField?.let { args.includeRuntime = it }
         javaParametersField?.let { args.javaParameters = it }
-        jdkHomeField?.let { args.jdkHome = it }
+        jdkHome?.let { args.jdkHome = it }
         jvmTargetField?.let { args.jvmTarget = it }
-        moduleNameField?.let { args.moduleName = it }
+        moduleName?.let { args.moduleName = it }
         noJdkField?.let { args.noJdk = it }
         noReflectField?.let { args.noReflect = it }
         noStdlibField?.let { args.noStdlib = it }

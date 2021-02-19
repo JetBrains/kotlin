@@ -25,19 +25,9 @@ internal abstract class KotlinJsOptionsBase : org.jetbrains.kotlin.gradle.dsl.Ko
             verboseField = value
         }
 
-    private var apiVersionField: kotlin.String?? = null
-    override var apiVersion: kotlin.String?
-        get() = apiVersionField ?: null
-        set(value) {
-            apiVersionField = value
-        }
+    override var apiVersion: kotlin.String? = null
 
-    private var languageVersionField: kotlin.String?? = null
-    override var languageVersion: kotlin.String?
-        get() = languageVersionField ?: null
-        set(value) {
-            languageVersionField = value
-        }
+    override var languageVersion: kotlin.String? = null
 
     private var useFirField: kotlin.Boolean? = null
     override var useFir: kotlin.Boolean
@@ -81,12 +71,7 @@ internal abstract class KotlinJsOptionsBase : org.jetbrains.kotlin.gradle.dsl.Ko
             noStdlibField = value
         }
 
-    private var outputFileField: kotlin.String?? = null
-    override var outputFile: kotlin.String?
-        get() = outputFileField ?: null
-        set(value) {
-            outputFileField = value
-        }
+    override var outputFile: kotlin.String? = null
 
     private var sourceMapField: kotlin.Boolean? = null
     override var sourceMap: kotlin.Boolean
@@ -95,19 +80,9 @@ internal abstract class KotlinJsOptionsBase : org.jetbrains.kotlin.gradle.dsl.Ko
             sourceMapField = value
         }
 
-    private var sourceMapEmbedSourcesField: kotlin.String?? = null
-    override var sourceMapEmbedSources: kotlin.String?
-        get() = sourceMapEmbedSourcesField ?: null
-        set(value) {
-            sourceMapEmbedSourcesField = value
-        }
+    override var sourceMapEmbedSources: kotlin.String? = null
 
-    private var sourceMapPrefixField: kotlin.String?? = null
-    override var sourceMapPrefix: kotlin.String?
-        get() = sourceMapPrefixField ?: null
-        set(value) {
-            sourceMapPrefixField = value
-        }
+    override var sourceMapPrefix: kotlin.String? = null
 
     private var targetField: kotlin.String? = null
     override var target: kotlin.String
@@ -127,18 +102,18 @@ internal abstract class KotlinJsOptionsBase : org.jetbrains.kotlin.gradle.dsl.Ko
         allWarningsAsErrorsField?.let { args.allWarningsAsErrors = it }
         suppressWarningsField?.let { args.suppressWarnings = it }
         verboseField?.let { args.verbose = it }
-        apiVersionField?.let { args.apiVersion = it }
-        languageVersionField?.let { args.languageVersion = it }
+        apiVersion?.let { args.apiVersion = it }
+        languageVersion?.let { args.languageVersion = it }
         useFirField?.let { args.useFir = it }
         friendModulesDisabledField?.let { args.friendModulesDisabled = it }
         mainField?.let { args.main = it }
         metaInfoField?.let { args.metaInfo = it }
         moduleKindField?.let { args.moduleKind = it }
         noStdlibField?.let { args.noStdlib = it }
-        outputFileField?.let { args.outputFile = it }
+        outputFile?.let { args.outputFile = it }
         sourceMapField?.let { args.sourceMap = it }
-        sourceMapEmbedSourcesField?.let { args.sourceMapEmbedSources = it }
-        sourceMapPrefixField?.let { args.sourceMapPrefix = it }
+        sourceMapEmbedSources?.let { args.sourceMapEmbedSources = it }
+        sourceMapPrefix?.let { args.sourceMapPrefix = it }
         targetField?.let { args.target = it }
         typedArraysField?.let { args.typedArrays = it }
     }

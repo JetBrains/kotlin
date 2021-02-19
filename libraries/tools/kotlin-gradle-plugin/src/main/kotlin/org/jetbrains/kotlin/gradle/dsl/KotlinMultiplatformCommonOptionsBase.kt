@@ -25,19 +25,9 @@ internal abstract class KotlinMultiplatformCommonOptionsBase : org.jetbrains.kot
             verboseField = value
         }
 
-    private var apiVersionField: kotlin.String?? = null
-    override var apiVersion: kotlin.String?
-        get() = apiVersionField ?: null
-        set(value) {
-            apiVersionField = value
-        }
+    override var apiVersion: kotlin.String? = null
 
-    private var languageVersionField: kotlin.String?? = null
-    override var languageVersion: kotlin.String?
-        get() = languageVersionField ?: null
-        set(value) {
-            languageVersionField = value
-        }
+    override var languageVersion: kotlin.String? = null
 
     private var useFirField: kotlin.Boolean? = null
     override var useFir: kotlin.Boolean
@@ -50,8 +40,8 @@ internal abstract class KotlinMultiplatformCommonOptionsBase : org.jetbrains.kot
         allWarningsAsErrorsField?.let { args.allWarningsAsErrors = it }
         suppressWarningsField?.let { args.suppressWarnings = it }
         verboseField?.let { args.verbose = it }
-        apiVersionField?.let { args.apiVersion = it }
-        languageVersionField?.let { args.languageVersion = it }
+        apiVersion?.let { args.apiVersion = it }
+        languageVersion?.let { args.languageVersion = it }
         useFirField?.let { args.useFir = it }
     }
 }
