@@ -30,7 +30,8 @@ class GeneratorContext(
     val extensions: GeneratorExtensions,
     val typeTranslator: TypeTranslator,
     val constantValueGenerator: ConstantValueGenerator,
-    override val irBuiltIns: IrBuiltIns
+    override val irBuiltIns: IrBuiltIns,
+    var symbolTableInterceptor: SymbolTableInterceptor = PassThroughSymbolTableInterceptor()
 ) : IrGeneratorContext {
     internal val callToSubstitutedDescriptorMap = mutableMapOf<IrDeclarationReference, CallableDescriptor>()
 

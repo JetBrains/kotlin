@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.IrDynamicType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.render
@@ -131,14 +132,19 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
                 putTypeArguments(typeArguments) { it.toIrType() }
             }
         } else {
+            val valueSymbol = mapValueDescriptorToValueSymbol(descriptor)
             val getValue =
-                IrGetValueImpl(startOffset, endOffset, descriptor.type.toIrType(), context.symbolTable.referenceValue(descriptor), origin)
+                IrGetValueImpl(startOffset, endOffset, descriptor.type.toIrType(), valueSymbol, origin)
             if (irType != null) {
                 IrTypeOperatorCallImpl(startOffset, endOffset, irType, IrTypeOperator.IMPLICIT_CAST, irType, getValue)
             } else {
                 getValue
             }
         }
+
+    private fun mapValueDescriptorToValueSymbol(descriptor: VariableDescriptor): IrValueSymbol {
+        return context.symbolTableInterceptor.referenceValue(context.symbolTable, descriptor)
+    }
 
     fun generateDelegatingConstructorCall(startOffset: Int, endOffset: Int, call: CallBuilder): IrExpression =
         call.callReceiver.call { dispatchReceiver, extensionReceiver ->

@@ -9,13 +9,18 @@ import com.intellij.openapi.util.Key
 import org.jetbrains.kotlin.codegen.CalculatedCodeFragmentCodegenInfo.CalculatedParameter
 import org.jetbrains.kotlin.codegen.CodeFragmentCodegenInfo.IParameter
 import org.jetbrains.kotlin.codegen.binding.MutableClosure
-import org.jetbrains.kotlin.codegen.context.*
-import org.jetbrains.kotlin.codegen.context.LocalLookup.*
+import org.jetbrains.kotlin.codegen.context.CodegenContext
+import org.jetbrains.kotlin.codegen.context.LocalLookup
+import org.jetbrains.kotlin.codegen.context.LocalLookup.LocalLookupCase
+import org.jetbrains.kotlin.codegen.context.MethodContext
+import org.jetbrains.kotlin.codegen.context.ScriptLikeContext
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtCodeFragment
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression
+import org.jetbrains.kotlin.psi.KtThisExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.Companion.NO_ORIGIN
@@ -24,7 +29,6 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
-import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension.Context as InCo
 
 class CodeFragmentCodegenInfo(
     val classDescriptor: ClassDescriptor,

@@ -95,6 +95,9 @@ class CodeFragmentCompiler(private val executionContext: ExecutionContext, priva
             parameterInfo, returnType, moduleDescriptorWrapper.packageFragmentForEvaluator
         )
 
+        val codegenInfo = CodeFragmentCodegenInfo(classDescriptor, methodDescriptor, parameterInfo.parameters)
+        CodeFragmentCodegen.setCodeFragmentInfo(codeFragment, codegenInfo)
+
         val generationState = GenerationState.Builder(
             project, ClassBuilderFactories.BINARIES, moduleDescriptorWrapper,
             bindingContext, filesToCompile, compilerConfiguration
@@ -103,12 +106,10 @@ class CodeFragmentCompiler(private val executionContext: ExecutionContext, priva
         ).codegenFactory(
             JvmIrCodegenFactory(
                 PhaseConfig(jvmPhases),
-                EvaluatorFragmentPSI2IRInvoker(classDescriptor, methodDescriptor)
+                EvaluatorFragmentPSI2IRInvoker(codegenInfo)
             )
         ).build()
 
-        val codegenInfo = CodeFragmentCodegenInfo(classDescriptor, methodDescriptor, parameterInfo.parameters)
-        CodeFragmentCodegen.setCodeFragmentInfo(codeFragment, codegenInfo)
 
         try {
             KotlinCodegenFacade.compileCorrectFiles(generationState)

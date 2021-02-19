@@ -16,25 +16,24 @@
 
 package org.jetbrains.kotlin.psi2ir
 
+import org.jetbrains.kotlin.codegen.CodeFragmentCodegenInfo
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.util.ConstantValueGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.util.noUnboundLeft
 import org.jetbrains.kotlin.psi.KtBlockCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
-import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
-import org.jetbrains.kotlin.psi2ir.generators.ModuleGenerator
+import org.jetbrains.kotlin.psi2ir.generators.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.utils.SmartList
 
@@ -107,12 +106,21 @@ class Psi2IrTranslator(
         ktFile: KtBlockCodeFragment,
         irProviders: List<IrProvider>,
         linkerExtensions: Collection<IrDeserializer.IrLinkerExtension>,
-        expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>? = null,
-        fragmentClassDescriptor: ClassDescriptor,
-        fragmentMethodDescriptor: FunctionDescriptor
+        codegenInfo: CodeFragmentCodegenInfo
     ): IrModuleFragment {
-        val moduleGenerator = ModuleGenerator(context, expectDescriptorToSymbol)
-        val irModule = moduleGenerator.generateEvaluatorModuleFragment(ktFile, fragmentClassDescriptor, fragmentMethodDescriptor)
+        context.symbolTableInterceptor = object : SymbolTableInterceptor {
+            override fun referenceValue(symbolTable: SymbolTable, descriptor: VariableDescriptor): IrValueSymbol {
+                val parameterPosition = codegenInfo.parameters.map { it.targetDescriptor }.indexOf(descriptor)
+                return if (parameterPosition > -1) {
+                    symbolTable.referenceValueParameter(codegenInfo.methodDescriptor.valueParameters[parameterPosition])
+                } else {
+                    symbolTable.referenceValue(descriptor)
+                }
+            }
+        }
+
+        val moduleGenerator = FragmentModuleGenerator(context)
+        val irModule = moduleGenerator.generateEvaluatorModuleFragment(ktFile, codegenInfo)
 
         val deserializers = irProviders.filterIsInstance<IrDeserializer>()
         deserializers.forEach { it.init(irModule, linkerExtensions) }

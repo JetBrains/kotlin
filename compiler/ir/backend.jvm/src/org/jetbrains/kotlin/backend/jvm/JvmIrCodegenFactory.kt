@@ -14,11 +14,10 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen
 import org.jetbrains.kotlin.backend.jvm.lower.MultifileFacadeFileEntry
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
+import org.jetbrains.kotlin.codegen.CodeFragmentCodegenInfo
 import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.konan.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.KlibModuleOrigin
@@ -272,8 +271,7 @@ interface PSI2IRInvoker {
 }
 
 class EvaluatorFragmentPSI2IRInvoker(
-    private val fragmentClassDescriptor: ClassDescriptor,
-    private val fragmentFunctionDescriptor: FunctionDescriptor
+    private val codegenInfo: CodeFragmentCodegenInfo
 ) : PSI2IRInvoker {
     override fun generateModuleFragment(
         psi2ir: Psi2IrTranslator,
@@ -290,9 +288,7 @@ class EvaluatorFragmentPSI2IRInvoker(
             fragment,
             irProviders,
             pluginExtensions,
-            expectDescriptorToSymbol = null,
-            fragmentClassDescriptor,
-            fragmentFunctionDescriptor
+            codegenInfo
         )
     }
 

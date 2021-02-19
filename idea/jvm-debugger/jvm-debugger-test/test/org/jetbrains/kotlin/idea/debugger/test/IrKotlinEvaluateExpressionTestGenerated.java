@@ -692,6 +692,11 @@ public class IrKotlinEvaluateExpressionTestGenerated extends AbstractIrKotlinEva
             public void testSimpleInPackage() throws Exception {
                 runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/eeir/simpleInPackage.kt");
             }
+
+            @TestMetadata("simpleLocalVariable.kt")
+            public void testSimpleLocalVariable() throws Exception {
+                runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/eeir/simpleLocalVariable.kt");
+            }
         }
 
         @TestMetadata("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/extraVariables")
