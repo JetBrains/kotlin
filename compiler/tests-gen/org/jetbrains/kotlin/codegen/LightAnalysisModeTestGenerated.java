@@ -23747,6 +23747,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Contains extends AbstractLightAnalysisModeTest {
+            @TestMetadata("smartCastOnBothEnds.kt")
+            public void ignoreSmartCastOnBothEnds() throws Exception {
+                runTest("compiler/testData/codegen/box/ranges/contains/smartCastOnBothEnds.kt");
+            }
+
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
             }

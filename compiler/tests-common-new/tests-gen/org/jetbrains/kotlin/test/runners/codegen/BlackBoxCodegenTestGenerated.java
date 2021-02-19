@@ -28098,6 +28098,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
 
             @Test
+            @TestMetadata("smartCastOnBothEnds.kt")
+            public void testSmartCastOnBothEnds() throws Exception {
+                runTest("compiler/testData/codegen/box/ranges/contains/smartCastOnBothEnds.kt");
+            }
+
+            @Test
             @TestMetadata("userDefinedContainsExtension.kt")
             public void testUserDefinedContainsExtension() throws Exception {
                 runTest("compiler/testData/codegen/box/ranges/contains/userDefinedContainsExtension.kt");
