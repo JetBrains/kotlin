@@ -5,12 +5,13 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.isLateInit
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
@@ -71,8 +72,8 @@ object FirInapplicableLateinitChecker : FirPropertyChecker() {
         else -> type.isNullable
     }
 
-    private fun FirProperty.hasGetter() = getter != null && getter?.source != null && getter?.source?.kind !is FirFakeSourceElementKind
-    private fun FirProperty.hasSetter() = setter != null && setter?.source != null && setter?.source?.kind !is FirFakeSourceElementKind
+    private fun FirProperty.hasGetter() = getter != null && getter !is FirDefaultPropertyGetter
+    private fun FirProperty.hasSetter() = setter != null && setter !is FirDefaultPropertySetter
 
     private fun DiagnosticReporter.reportOn(source: FirSourceElement?, target: String, context: CheckerContext) {
         source?.let { report(FirErrors.INAPPLICABLE_LATEINIT_MODIFIER.on(it, target), context) }

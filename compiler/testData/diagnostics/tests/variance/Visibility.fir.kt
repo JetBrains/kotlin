@@ -5,11 +5,11 @@ interface Test<in I, out O> {
     <!PRIVATE_PROPERTY_IN_INTERFACE!>private<!> val private_val: I
 
     var interlan_private_set: O
-        private set
+        <!PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY!>private<!> set
     public var public_private_set: O
-        private set
+        <!PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY!>private<!> set
     protected var protected_private_set: O
-        private set
+        <!PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY!>private<!> set
     <!PRIVATE_PROPERTY_IN_INTERFACE!>private<!> var private_private_set: O
         private set
 

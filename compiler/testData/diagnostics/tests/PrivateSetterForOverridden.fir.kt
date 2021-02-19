@@ -31,40 +31,40 @@ class B : A, AA() {
 open class C : A, AA() {
     override var a: Int = 0
         // Errors here and below
-        private set
+        <!PRIVATE_SETTER_FOR_OPEN_PROPERTY!>private<!> set
 
     override var b: Int = 1
-        private set
+        <!PRIVATE_SETTER_FOR_OPEN_PROPERTY!>private<!> set
 
     override var c: Int = 2
-        private set
+        <!PRIVATE_SETTER_FOR_OPEN_PROPERTY!>private<!> set
 
     override var d: Int = 3
-        private set
+        <!PRIVATE_SETTER_FOR_OPEN_PROPERTY!>private<!> set
 }
 
 abstract class D : A, AA() {
     override var a: Int = 0
         // Errors here and below
-        private set
+        <!PRIVATE_SETTER_FOR_OPEN_PROPERTY!>private<!> set
 
     override var b: Int = 1
-        private set
+        <!PRIVATE_SETTER_FOR_OPEN_PROPERTY!>private<!> set
 
     override var c: Int = 2
-        private set
+        <!PRIVATE_SETTER_FOR_OPEN_PROPERTY!>private<!> set
 
     override var d: Int = 3
-        private set
+        <!PRIVATE_SETTER_FOR_OPEN_PROPERTY!>private<!> set
 }
 
 interface E : A {
     override var a: Int
         get() = 0
         // Errors here and below
-        <!PRIVATE_SETTER_FOR_OPEN_PROPERTY!>private set(arg) {}<!>
+        <!PRIVATE_SETTER_FOR_OPEN_PROPERTY!>private<!> set(arg) {}
 
     override var b: Int
         get() = 0
-        <!PRIVATE_SETTER_FOR_OPEN_PROPERTY!>private set(arg) {}<!>
+        <!PRIVATE_SETTER_FOR_OPEN_PROPERTY!>private<!> set(arg) {}
 }
