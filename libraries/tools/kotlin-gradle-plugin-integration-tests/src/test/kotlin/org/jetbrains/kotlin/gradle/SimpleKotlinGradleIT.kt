@@ -126,9 +126,9 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
     @Test
     fun testGroovyInterop() {
         Project("groovyInterop").build("build") {
+            assertSuccessful()
             assertTasksExecuted(":test")
             assertContains("GroovyInteropTest PASSED")
-            assertSuccessful()
         }
     }
 
@@ -137,9 +137,9 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
     @Test
     fun testInteropWithProguarded() {
         Project("interopWithProguarded").build("build") {
+            assertSuccessful()
             assertTasksExecuted(":test")
             assertContains("InteropWithProguardedTest PASSED")
-            assertSuccessful()
         }
     }
 

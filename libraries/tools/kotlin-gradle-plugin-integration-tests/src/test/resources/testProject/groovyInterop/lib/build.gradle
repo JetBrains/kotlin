@@ -1,9 +1,10 @@
 apply plugin: "groovy"
+apply plugin: "java-library"
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    compile 'org.codehaus.groovy:groovy-all:2.5.3'
+    api 'org.codehaus.groovy:groovy-all:2.5.3'
 }
