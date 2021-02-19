@@ -24,7 +24,7 @@ sealed class GradleVersionRequired(val minVersion: String, val maxVersion: Strin
     companion object {
         const val OLDEST_SUPPORTED = "5.3"
 
-        val FOR_MPP_SUPPORT = AtLeast("6.0")
+        val FOR_MPP_SUPPORT = AtLeast("6.1")
     }
 
     class Exact(version: String) : GradleVersionRequired(version, version)

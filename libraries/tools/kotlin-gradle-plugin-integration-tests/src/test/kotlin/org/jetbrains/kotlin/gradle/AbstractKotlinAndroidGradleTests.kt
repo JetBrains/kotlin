@@ -22,7 +22,7 @@ open class KotlinAndroid36GradleIT : KotlinAndroid33GradleIT() {
         get() = AGPVersion.v3_6_0
 
     override val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.AtLeast("6.0")
+        get() = GradleVersionRequired.AtLeast("6.1")
 
     @Ignore
     @Test
