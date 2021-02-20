@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.org.objectweb.asm.*
@@ -399,7 +400,9 @@ open class IncrementalJvmCache(
             }
 
             for (const in oldMap.keys + newMap.keys) {
-                changesCollector.collectMemberIfValueWasChanged(kotlinClass.scopeFqName(), const, oldMap[const], newMap[const])
+                //Constant can be declared via companion object or via const field declaration
+                changesCollector.collectMemberIfValueWasChanged(kotlinClass.scopeFqName(companion = true), const, oldMap[const], newMap[const])
+                changesCollector.collectMemberIfValueWasChanged(kotlinClass.scopeFqName(companion = false), const, oldMap[const], newMap[const])
             }
         }
 
@@ -599,11 +602,12 @@ sealed class ChangeInfo(val fqName: FqName) {
     }
 }
 
-private fun LocalFileKotlinClass.scopeFqName() =
-    when (classHeader.kind) {
-        KotlinClassHeader.Kind.CLASS -> className.fqNameForClassNameWithoutDollars
-        else -> className.packageFqName
+private fun LocalFileKotlinClass.scopeFqName(companion: Boolean = false) = when (classHeader.kind) {
+    KotlinClassHeader.Kind.CLASS -> {
+        className.fqNameForClassNameWithoutDollars.let { if (companion) it.child(DEFAULT_NAME_FOR_COMPANION_OBJECT) else it }
     }
+    else -> className.packageFqName
+}
 
 fun ByteArray.md5(): Long {
     val d = MessageDigest.getInstance("MD5").digest(this)!!

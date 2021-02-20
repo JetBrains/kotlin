@@ -1,0 +1,11 @@
+================ Step #1 =================
+
+Compiling files:
+  src/A.kt
+  src/B.kt
+  src/C.kt
+  src/companionUsage.kt
+  src/constantUsage.kt
+End of files
+Exit code: OK
+------------------------------------------
