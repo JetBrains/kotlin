@@ -77,7 +77,13 @@ class FirStatusResolveTransformer(
     statusComputationSession: StatusComputationSession,
     designationMapForLocalClasses: Map<FirClass<*>, FirClass<*>?> = mapOf(),
     scopeForLocalClass: FirScope? = null,
-) : AbstractFirStatusResolveTransformer(session, scopeSession, statusComputationSession, designationMapForLocalClasses, scopeForLocalClass) {
+) : AbstractFirStatusResolveTransformer(
+    session,
+    scopeSession,
+    statusComputationSession,
+    designationMapForLocalClasses,
+    scopeForLocalClass
+) {
     override fun FirDeclaration.needResolveMembers(): Boolean {
         if (this is FirRegularClass) {
             return statusComputationSession[this] != StatusComputationSession.StatusComputationStatus.Computed
@@ -115,7 +121,13 @@ private class FirDesignatedStatusResolveTransformer(
     statusComputationSession: StatusComputationSession,
     designationMapForLocalClasses: Map<FirClass<*>, FirClass<*>?>,
     scopeForLocalClass: FirScope?,
-) : AbstractFirStatusResolveTransformer(session, scopeSession, statusComputationSession, designationMapForLocalClasses, scopeForLocalClass) {
+) : AbstractFirStatusResolveTransformer(
+    session,
+    scopeSession,
+    statusComputationSession,
+    designationMapForLocalClasses,
+    scopeForLocalClass
+) {
     private var currentElement: FirDeclaration? = null
     private var classLocated = false
 
