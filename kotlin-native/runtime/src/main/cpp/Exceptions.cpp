@@ -252,9 +252,7 @@ RUNTIME_NORETURN void TerminateWithUnhandledException(KRef throwable) {
   });
 }
 
-// Some libstdc++-based targets has limited support for std::current_exception and other C++11 functions.
-// This restriction can be lifted later when toolchains will be updated.
-#if KONAN_HAS_CXX11_EXCEPTION_FUNCTIONS
+#if !KONAN_NO_EXCEPTIONS
 
 namespace {
 // Copy, move and assign would be safe, but not much useful, so let's delete all (rule of 5)
@@ -308,13 +306,13 @@ void SetKonanTerminateHandler() {
   TerminateHandler::install();
 }
 
-#else // KONAN_OBJC_INTEROP
+#else // !KONAN_NO_EXCEPTIONS
 
 void SetKonanTerminateHandler() {
   // Nothing to do.
 }
 
-#endif // KONAN_OBJC_INTEROP
+#endif // !KONAN_NO_EXCEPTIONS
 
 void DisallowSourceInfo() {
   disallowSourceInfo = true;
