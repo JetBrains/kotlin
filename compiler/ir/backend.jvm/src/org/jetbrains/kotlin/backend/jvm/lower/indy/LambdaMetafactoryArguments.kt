@@ -241,6 +241,8 @@ internal class LambdaMetafactoryArgumentsBuilder(
         }
         if (!checkTypeCompliesWithConstraint(implFun.returnType, constraints.returnType))
             return false
+        if (implFun.returnType.isUnit() && !fakeInstanceMethod.returnType.isUnit())
+            return false
         return true
     }
 
@@ -278,7 +280,9 @@ internal class LambdaMetafactoryArgumentsBuilder(
                 implParameter.type = implParameter.type.makeNullable()
             }
         }
-        if (constraints.returnType.requiresImplLambdaBoxing()) {
+        if (constraints.returnType.requiresImplLambdaBoxing() ||
+            implFun.returnType.isUnit() && !fakeInstanceMethod.returnType.isUnit()
+        ) {
             implFun.returnType = implFun.returnType.makeNullable()
         }
     }
