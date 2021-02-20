@@ -78,7 +78,8 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
             IrGeneratorContextBase(components.irBuiltIns),
             components.symbolTable,
             irClass,
-            origin
+            origin,
+            components.irBuiltIns.languageVersionSettings,
         ) {
             override fun declareSimpleFunction(startOffset: Int, endOffset: Int, functionDescriptor: FunctionDescriptor): IrFunction {
                 throw IllegalStateException("Not expect to see function declaration.")

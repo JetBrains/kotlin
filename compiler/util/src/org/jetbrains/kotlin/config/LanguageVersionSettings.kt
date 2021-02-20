@@ -147,6 +147,8 @@ enum class LanguageFeature(
     JvmIrEnabledByDefault(KOTLIN_1_5),
     // Disabled until the breaking change is approved by the committee, see KT-10884.
     PackagePrivateFileClassesWithAllPrivateMembers(KOTLIN_1_5, defaultState = State.DISABLED),
+    // Disabled because of breaking change, see KT-23184
+    SortedEqualityChecksInDataClassEquals(KOTLIN_1_5, defaultState = State.DISABLED),
 
     /*
      * Improvements include the following:
@@ -203,7 +205,7 @@ enum class LanguageFeature(
     ;
 
     val presentableName: String
-    // E.g. "DestructuringLambdaParameters" -> ["Destructuring", "Lambda", "Parameters"] -> "destructuring lambda parameters"
+        // E.g. "DestructuringLambdaParameters" -> ["Destructuring", "Lambda", "Parameters"] -> "destructuring lambda parameters"
         get() = name.split("(?<!^)(?=[A-Z])".toRegex()).joinToString(separator = " ", transform = String::toLowerCase)
 
     val presentableText get() = if (hintUrl == null) presentableName else "$presentableName (See: $hintUrl)"
@@ -337,7 +339,7 @@ interface LanguageVersionSettings {
     fun supportsFeature(feature: LanguageFeature): Boolean =
         getFeatureSupport(feature).let {
             it == LanguageFeature.State.ENABLED ||
-            it == LanguageFeature.State.ENABLED_WITH_WARNING
+                    it == LanguageFeature.State.ENABLED_WITH_WARNING
         }
 
     fun isPreRelease(): Boolean

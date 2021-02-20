@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.ir.util
 
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -38,7 +40,8 @@ abstract class DataClassMembersGenerator(
     val context: IrGeneratorContext,
     val symbolTable: SymbolTable,
     val irClass: IrClass,
-    val origin: IrDeclarationOrigin
+    val origin: IrDeclarationOrigin,
+    val languageVersionSettings: LanguageVersionSettings? = null,
 ) {
     private val irPropertiesByDescriptor: Map<PropertyDescriptor, IrProperty> =
         irClass.properties.associateBy { it.descriptor }
@@ -134,16 +137,20 @@ abstract class DataClassMembersGenerator(
             +irIfThenReturnFalse(irNotIs(irOther(), irType))
             val otherWithCast = irTemporary(irAs(irOther(), irType), "other_with_cast")
 
-            properties
-                .sortedBy {
-                    if (it.backingField!!.type.isPrimitiveType()) 1
-                    else 0
-                }
-                .forEach { property ->
-                    val arg1 = irGetProperty(irThis(), property)
-                    val arg2 = irGetProperty(irGet(irType, otherWithCast.symbol), property)
-                    +irIfThenReturnFalse(irNotEquals(arg1, arg2))
-                }
+            val propertiesSortedIfNeeded =
+                if (languageVersionSettings?.supportsFeature(LanguageFeature.SortedEqualityChecksInDataClassEquals) == true)
+                    properties.sortedBy {
+                        if (it.backingField!!.type.isPrimitiveType()) 1
+                        else 0
+                    }
+                else
+                    properties
+
+            for (property in propertiesSortedIfNeeded) {
+                val arg1 = irGetProperty(irThis(), property)
+                val arg2 = irGetProperty(irGet(irType, otherWithCast.symbol), property)
+                +irIfThenReturnFalse(irNotEquals(arg1, arg2))
+            }
 
             +irReturnTrue()
         }
