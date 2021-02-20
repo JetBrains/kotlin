@@ -361,7 +361,7 @@ message IrDynamicOperatorExpression {
   repeated IrExpression argument = 3;
 }
 
-// TODO: we need an extension mechanism to accomodate new
+// TODO: we need an extension mechanism to accommodate new
 // IR operators in upcoming releases.
 message IrOperation {
   oneof operation {
@@ -530,7 +530,7 @@ message IrAnonymousInit {
   required int32 body = 2;
 }
 
-// TODO: we need an extension mechanism to accomodate new
+// TODO: we need an extension mechanism to accommodate new
 // IR operators in upcoming releases.
 
 message IrDeclaration {
