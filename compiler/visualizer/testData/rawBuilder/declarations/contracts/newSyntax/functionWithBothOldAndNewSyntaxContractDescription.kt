@@ -6,7 +6,7 @@ fun test1(s: String?) contract [returnsNotNull()] {
 //      [ERROR: not resolved]
 //      │         [ERROR: not resolved]
 //      │         │        test1.s: String?
-//      │         │        │ fun (Any).equals(Any?): Boolean
+//      │         │        │ EQ operator call
 //      │         │        │ │  Nothing?
 //      │         │        │ │  │
         returns() implies (s != null)

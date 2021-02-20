@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.compiler.visualizer.Annotator.annotate
+import org.jetbrains.kotlin.contracts.parsing.isEqualsDescriptor
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.name.FqName
@@ -166,7 +167,10 @@ class PsiVisualizer(private val file: KtFile, analysisResult: AnalysisResult) : 
             val typeArguments = resolvedCall.typeArguments
                 .takeIf { it.isNotEmpty() }
                 ?.values?.joinToString(", ", "<", ">") { renderType(it) } ?: ""
-            val annotation = descriptorRenderer.render(descriptor).replace(argumentsLabel, typeArguments)
+            val annotation = when {
+                descriptor.isEqualsDescriptor() -> "EQ operator call"
+                else -> descriptorRenderer.render(descriptor).replace(argumentsLabel, typeArguments)
+            }
             addAnnotation(annotation, renderOn, deleteDuplicate = false)
 
             return resolvedCall

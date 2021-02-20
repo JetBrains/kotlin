@@ -23,7 +23,7 @@ fun fooLabeled() {
     label@ for (i in 1..10) {
 //      Unit
 //      │   val fooLabeled.i: Int
-//      │   │ fun (Any).equals(Any?): Boolean
+//      │   │ EQ operator call
 //      │   │ │  Int
 //      │   │ │  │
         if (i == 5) continue@label

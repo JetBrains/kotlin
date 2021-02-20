@@ -41,7 +41,7 @@ fun foo(): Int {
 //      Unit
 //      │   foo.<anonymous>.it: Tuple
 //      │   │  val (Tuple).x: Int
-//      │   │  │ fun (Any).equals(Any?): Boolean
+//      │   │  │ EQ operator call
 //      │   │  │ │  Int           Int
 //      │   │  │ │  │             │
         if (it.x == 0) return@foo 0
@@ -59,7 +59,7 @@ fun bar(): Int {
 //      Unit
 //      │   bar.<anonymous>.it: Tuple
 //      │   │  val (Tuple).x: Int
-//      │   │  │ fun (Any).equals(Any?): Boolean
+//      │   │  │ EQ operator call
 //      │   │  │ │  Int           Int
 //      │   │  │ │  │             │
         if (it.x == 0) return@bar 0

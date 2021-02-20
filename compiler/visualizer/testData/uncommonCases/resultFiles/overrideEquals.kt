@@ -6,7 +6,7 @@ class A(val a: Int) {
 //      │   │                   │
         if (other !is A) return false
 //                  val (A).a: Int
-//                  │ fun (Any).equals(Any?): Boolean
+//                  │ EQ operator call
 //                  │ │  A.equals.other: Any?
 //                  │ │  │     val (A).a: Int
 //                  │ │  │     │
@@ -22,7 +22,7 @@ open class B(val b: Int) {
 //      │   │                   │
         if (other !is B) return false
 //                  val (B).b: Int
-//                  │ fun (Any).equals(Any?): Boolean
+//                  │ EQ operator call
 //                  │ │  B.equals.other: Any?
 //                  │ │  │     val (B).b: Int
 //                  │ │  │     │
@@ -36,19 +36,19 @@ open class B(val b: Int) {
 class C(c: Int): B(c) {}
 
 //             constructor A(Int)
-//             │     fun (A).equals(Any?): Boolean
+//             │     EQ operator call
 //             │     │  constructor A(Int)
 //  Boolean    │ Int │  │ Int
 //  │          │ │   │  │ │
 val areEqual = A(10) == A(11)
 //              constructor C(Int)
-//              │     fun (B).equals(Any?): Boolean
+//              │     EQ operator call
 //              │     │  constructor C(Int)
 //  Boolean     │ Int │  │ Int
 //  │           │ │   │  │ │
 val areEqual2 = C(10) == C(11)
 //              constructor A(Int)
-//              │     fun (A).equals(Any?): Boolean
+//              │     EQ operator call
 //              │     │  constructor C(Int)
 //  Boolean     │ Int │  │ Int
 //  │           │ │   │  │ │

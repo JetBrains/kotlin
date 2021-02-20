@@ -118,7 +118,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
 
         override fun visitKtElement(element: KtElement) {
             when (element) {
-                is KtClassInitializer, is KtSecondaryConstructor, is KtPrimaryConstructor, is KtSuperTypeCallEntry -> {
+                is KtClassInitializer, is KtSecondaryConstructor, is KtPrimaryConstructor, is KtSuperTypeCallEntry, is KtDelegatedSuperTypeEntry -> {
                     val valueParameters = element.getChildrenOfType<KtParameterList>()
                     valueParameters.flatMap { it.parameters }.forEach { stack.addName(it.nameAsSafeName) }
 
@@ -593,7 +593,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         }
 
         override fun visitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall, data: StringBuilder) {
-            data.append("fun (Any).equals(Any?): Boolean")
+            data.append("EQ operator call")
         }
 
         override fun visitSafeCallExpression(safeCallExpression: FirSafeCallExpression, data: StringBuilder) {

@@ -21,7 +21,7 @@ enum class SomeEnum(val x: Some) {
     SECOND(O2)  {
 //                                           Boolean
 //                                           │ SomeEnum.SECOND.check.y: Some
-//                                           │ │ fun (Any).equals(Any?): Boolean
+//                                           │ │ EQ operator call
 //                                           │ │ │  object O2: Some
 //                                           │ │ │  │
         override fun check(y: Some): Boolean = y == O2

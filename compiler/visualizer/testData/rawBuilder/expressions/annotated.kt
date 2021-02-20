@@ -16,7 +16,7 @@ annotation class Ann
 fun foo(arg: Int): Int {
 //       constructor Ann()
 //       │   foo.arg: Int
-//       │   │   fun (Any).equals(Any?): Boolean
+//       │   │   EQ operator call
 //  Unit │   │   │  Int
 //  │    │   │   │  │
     if (@Ann arg == 0) {
@@ -28,7 +28,7 @@ fun foo(arg: Int): Int {
 //   constructor Ann()
 //   │   Unit
 //   │   │   foo.arg: Int
-//   │   │   │   fun (Any).equals(Any?): Boolean
+//   │   │   │   EQ operator call
 //   │   │   │   │  Int
 //   │   │   │   │  │
     @Ann if (arg == 1) {
