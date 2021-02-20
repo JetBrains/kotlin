@@ -1,0 +1,82 @@
+syntax = "proto2";
+package org.jetbrains.kotlin.backend.jvm.serialization.proto;
+import "compiler/ir/serialization.common/src/KotlinIr.proto";
+
+option java_outer_classname = "JvmIr";
+option optimize_for = LITE_RUNTIME;
+
+/* Stored in JVM .class annotations */
+
+//message UniqIdInfo {
+//  required fixed64 id = 1;
+//  repeated int32 toplevel_fq_name = 2;
+//}
+
+//message SignatureTable {
+//  repeated common.serialization.proto.IrSignature signature = 1;
+//}
+//
+//message TypeTable {
+//  repeated common.serialization.proto.IrType type = 1;
+//}
+
+//message UniqIdTable {
+//  repeated UniqIdInfo infos = 1;
+//}
+
+//message StringTable {
+//  repeated string string = 1;
+//}
+
+message XStatementOrExpression {
+  oneof kind {
+    common.serialization.proto.IrStatement statement = 1;
+    common.serialization.proto.IrExpression expression = 2;
+  }
+}
+
+//message StatementsAndExpressionsTable {
+//  repeated XStatementOrExpression statement_or_expression = 1;
+//}
+
+//message ExternalReference {
+//  required fixed64 id = 1;
+//  required int32 index = 2; /* index into the table of packages in ExternalRefs */
+//}
+//
+//message JvmExternalPackage {
+//  repeated int32 fq_name = 1;
+//  required common.serialization.proto.IrDeclarationContainer declaration_container = 2;
+//}
+
+//message ExternalRefs {
+//  repeated JvmExternalPackage package = 1;
+//  repeated ExternalReference reference = 2;
+//}
+
+message AuxTables {
+  repeated common.serialization.proto.IrType type = 1;
+  repeated common.serialization.proto.IdSignature signature = 2;
+  repeated string string = 3;
+  repeated XStatementOrExpression body = 4;
+
+//  required TypeTable type_table = 2;
+//  required SignatureTable signature_table = 1;
+//  required StringTable string_table = 3;
+//  required StatementsAndExpressionsTable statements_and_expressions_table = 4;
+
+//  required ExternalRefs external_refs = 5;
+//  required UniqIdTable uniq_id_table = 6;
+}
+
+message JvmIrFile {
+  repeated common.serialization.proto.IrDeclaration declaration = 1;
+  repeated common.serialization.proto.IrConstructorCall annotation = 2;
+  repeated int32 facade_fq_name = 3;
+  required AuxTables aux_tables = 4;
+}
+
+message JvmIrClass {
+  required common.serialization.proto.IrClass ir_class = 1;
+  required AuxTables aux_tables = 2;
+}
