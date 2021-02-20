@@ -1,27 +1,27 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package test.exceptions
 
-import kotlin.test.*
 import test.collections.assertArrayNotSameButEquals
 import test.testOnJvm7AndAbove
-
-import java.io.PrintWriter
 import java.io.*
 import java.nio.charset.Charset
+import kotlin.test.*
 
 class ExceptionJVMTest {
 
-    @Test fun printStackTraceOnRuntimeException() {
+    @Test
+    fun printStackTraceOnRuntimeException() {
         assertPrintStackTrace(RuntimeException("Crikey!"))
         assertPrintStackTraceStream(RuntimeException("Crikey2"))
         assertToStringWithTrace(RuntimeException("ToString"))
     }
 
-    @Test fun printStackTraceOnError() {
+    @Test
+    fun printStackTraceOnError() {
         assertPrintStackTrace(Error("Oh dear"))
         assertPrintStackTraceStream(Error("Oh dear2"))
         assertToStringWithTrace(Error("ToString"))
@@ -66,7 +66,8 @@ class ExceptionJVMTest {
         }
     }
 
-    @Test fun changeStackTrace() {
+    @Test
+    fun changeStackTrace() {
         val exception = RuntimeException("Fail")
         var stackTrace = exception.stackTrace
         stackTrace = stackTrace.dropLast(1).toTypedArray()
@@ -74,19 +75,22 @@ class ExceptionJVMTest {
         assertArrayNotSameButEquals(stackTrace, exception.stackTrace)
     }
 
-    @Test fun addSuppressedDoesNotThrow() {
+    @Test
+    fun addSuppressedDoesNotThrow() {
         val e1 = Throwable()
         val e2 = Exception("Suppressed")
 
         e1.addSuppressed(e2)
     }
 
-    @Test fun addSuppressedSelfDoesNotThrow() {
+    @Test
+    fun addSuppressedSelfDoesNotThrow() {
         val e1 = Throwable()
         e1.addSuppressed(e1) // should not throw
     }
 
-    @Test fun circularCauseStackTrace() {
+    @Test
+    fun circularCauseStackTrace() {
         val e1 = Exception("cause")
         val e2 = Error("induced", e1)
         e1.initCause(e2)
