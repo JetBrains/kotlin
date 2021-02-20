@@ -135,6 +135,32 @@ public value class UInt @PublishedApi internal constructor(@PublishedApi interna
     @kotlin.internal.InlineOnly
     public inline operator fun rem(other: ULong): ULong = this.toULong().rem(other)
 
+    /** TODO */
+    @kotlin.internal.InlineOnly
+    public inline fun floorDiv(other: UByte): UInt = this.floorDiv(other.toUInt())
+    /** TODO */
+    @kotlin.internal.InlineOnly
+    public inline fun floorDiv(other: UShort): UInt = this.floorDiv(other.toUInt())
+    /** TODO */
+    @kotlin.internal.InlineOnly
+    public inline fun floorDiv(other: UInt): UInt = div(other)
+    /** TODO */
+    @kotlin.internal.InlineOnly
+    public inline fun floorDiv(other: ULong): ULong = this.toULong().floorDiv(other)
+
+    /** TODO */
+    @kotlin.internal.InlineOnly
+    public inline fun mod(other: UByte): UByte = this.mod(other.toUInt()).toUByte()
+    /** TODO */
+    @kotlin.internal.InlineOnly
+    public inline fun mod(other: UShort): UShort = this.mod(other.toUInt()).toUShort()
+    /** TODO */
+    @kotlin.internal.InlineOnly
+    public inline fun mod(other: UInt): UInt = rem(other)
+    /** TODO */
+    @kotlin.internal.InlineOnly
+    public inline fun mod(other: ULong): ULong = this.toULong().mod(other)
+
     /** Increments this value. */
     @kotlin.internal.InlineOnly
     public inline operator fun inc(): UInt = UInt(data.inc())
