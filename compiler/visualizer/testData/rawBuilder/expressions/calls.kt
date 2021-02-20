@@ -1,4 +1,3 @@
-// FIR_IGNORE
 // WITH_RUNTIME
 //                                    fun (Int).plus(Int): Int
 //                             Int    │ distance.y: Int

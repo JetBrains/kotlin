@@ -254,8 +254,8 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             expression.children.filter { it.node.elementType != KtNodeTypes.REFERENCE_EXPRESSION }.forEach { psi ->
                 when (psi) {
                     is KtLambdaArgument -> {
-                        val firLambda = psi.firstOfType<FirLambdaArgumentExpression>()?.expression as FirAnonymousFunction
-                        firLambda.receiverTypeRef?.let {
+                        val firLambda = psi.firstOfType<FirLambdaArgumentExpression>()?.expression as? FirAnonymousFunction
+                        firLambda?.receiverTypeRef?.let {
                             lastCallWithLambda = psi.getLambdaExpression()?.firstOfType<FirLabel>()?.name
                             implicitReceivers += it
                             psi.accept(this)

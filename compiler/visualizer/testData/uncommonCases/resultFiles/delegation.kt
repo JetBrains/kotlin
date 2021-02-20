@@ -1,4 +1,3 @@
-// FIR_IGNORE
 interface Base {
     fun printMessage()
     fun printMessageLine()

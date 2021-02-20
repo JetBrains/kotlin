@@ -1,4 +1,3 @@
-// FIR_IGNORE
 class Some {
 //                 Int
 //                 │ Int

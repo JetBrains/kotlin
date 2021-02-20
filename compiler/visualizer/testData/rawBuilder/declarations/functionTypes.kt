@@ -1,4 +1,3 @@
-// FIR_IGNORE
 //                               T fun (() -> T).invoke(): T
 //                               │ │
 fun <T> simpleRun(f: () -> T): T = f()

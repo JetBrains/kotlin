@@ -1,4 +1,3 @@
-// FIR_IGNORE
 data class Some(val first: Int, val second: Double, val third: String)
 
 fun foo(some: Some) {

@@ -1,4 +1,3 @@
-// FIR_IGNORE
 //WITH_RUNTIME
 package test
 

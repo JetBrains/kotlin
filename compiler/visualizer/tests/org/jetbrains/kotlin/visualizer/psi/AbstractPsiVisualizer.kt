@@ -19,7 +19,7 @@ import java.io.File
 
 abstract class AbstractPsiVisualizer : AbstractVisualizer() {
     override val frontendKind: FrontendKind<*> = FrontendKinds.ClassicFrontend
-    override val frontendFacade: Constructor<FrontendFacade<*>> = { ClassicFrontendFacade(it) }
+    override val frontendFacade: Constructor<FrontendFacade<*>> = ::ClassicFrontendFacade
 
     override val handler: Constructor<FrontendOutputHandler<*>> = {
         object : ClassicFrontendAnalysisHandler(it) {

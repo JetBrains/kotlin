@@ -1,4 +1,3 @@
-// FIR_IGNORE
 interface Some
 
 object O1 : Some

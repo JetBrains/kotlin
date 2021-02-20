@@ -20,7 +20,7 @@ import java.io.File
 
 abstract class AbstractFirVisualizer : AbstractVisualizer() {
     override val frontendKind: FrontendKind<*> = FrontendKinds.FIR
-    override val frontendFacade: Constructor<FrontendFacade<*>> = { FirFrontendFacade(it) }
+    override val frontendFacade: Constructor<FrontendFacade<*>> = ::FirFrontendFacade
 
     override val handler: Constructor<FrontendOutputHandler<*>> = {
         object : FirAnalysisHandler(it) {
@@ -35,7 +35,7 @@ abstract class AbstractFirVisualizer : AbstractVisualizer() {
                 if (expectedText[0].startsWith("// FIR_IGNORE")) {
                     Assert.assertFalse(
                         "Files are identical, please delete ignore directive",
-                        expectedText.filterIndexed { index, _ -> index > 0 }.joinToString("\n") == firRenderResult
+                        expectedText.drop(1).joinToString("\n") == firRenderResult.trim()
                     )
                     return
                 }

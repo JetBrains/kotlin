@@ -1,4 +1,3 @@
-// FIR_IGNORE
 //constructor annotation/Target(vararg annotation/AnnotationTarget)
 //│     enum class annotation/AnnotationTarget: Enum<annotation/AnnotationTarget>
 //│     │                enum entry annotation/AnnotationTarget.EXPRESSION

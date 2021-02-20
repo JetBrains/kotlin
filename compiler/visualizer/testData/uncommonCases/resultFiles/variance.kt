@@ -1,4 +1,3 @@
-// FIR_IGNORE
 interface Source<out T> {
     fun nextT(): T
 }

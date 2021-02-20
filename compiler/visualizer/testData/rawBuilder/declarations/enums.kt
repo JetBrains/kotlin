@@ -1,4 +1,3 @@
-// FIR_IGNORE
 import my.println
 
 enum class Order {
