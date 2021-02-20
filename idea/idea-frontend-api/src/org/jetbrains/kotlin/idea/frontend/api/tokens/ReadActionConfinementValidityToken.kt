@@ -31,7 +31,7 @@ class ReadActionConfinementValidityToken(project: Project) : ValidityToken() {
         if (application.isDispatchThread && !allowOnEdt.get()) return false
         if (ForbidKtResolve.resovleIsForbidenInActionWithName.get() != null) return false
         if (!application.isReadAccessAllowed) return false
-        if (!KtAnalysisSessionProvider.isInsideAnalysisContext()) return false
+        if (!ReadActionConfinementValidityTokenFactory.isInsideAnalysisContext()) return false
         return true
     }
 
@@ -43,7 +43,7 @@ class ReadActionConfinementValidityToken(project: Project) : ValidityToken() {
         ForbidKtResolve.resovleIsForbidenInActionWithName.get()?.let { actionName ->
             return "Resolve is forbidden in $actionName"
         }
-        if (!KtAnalysisSessionProvider.isInsideAnalysisContext()) return "Called outside analyse method"
+        if (!ReadActionConfinementValidityTokenFactory.isInsideAnalysisContext()) return "Called outside analyse method"
         error("Getting inaccessibility reason for validity token when it is accessible")
     }
 
@@ -58,6 +58,18 @@ object ReadActionConfinementValidityTokenFactory : ValidityTokenFactory() {
     override val identifier: KClass<out ValidityToken> = ReadActionConfinementValidityToken::class
 
     override fun create(project: Project): ValidityToken = ReadActionConfinementValidityToken(project)
+
+    override fun beforeEnteringAnalysisContext() {
+        currentAnalysisContextEnteringCount.set(currentAnalysisContextEnteringCount.get() + 1)
+    }
+
+    override fun afterLeavingAnalysisContext() {
+        currentAnalysisContextEnteringCount.set(currentAnalysisContextEnteringCount.get() - 1)
+    }
+
+    private val currentAnalysisContextEnteringCount = ThreadLocal.withInitial { 0 }
+
+    internal fun isInsideAnalysisContext() = currentAnalysisContextEnteringCount.get() > 0
 }
 
 @RequiresOptIn("All frontend related work should not be allowed to be ran from EDT thread. Only use it as a temporary solution")

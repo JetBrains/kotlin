@@ -35,33 +35,24 @@ abstract class KtAnalysisSessionProvider {
     inline fun <R> analyseInFakeAnalysisSession(originalFile: KtFile, fakeExpresion: KtElement, action: KtAnalysisSession.() -> R): R {
         val fakeAnalysisSession = getAnalysisSession(originalFile, ReadActionConfinementValidityTokenFactory)
             .createContextDependentCopy(originalFile, fakeExpresion)
-        return analyse(fakeAnalysisSession, action)
+        return analyse(fakeAnalysisSession, ReadActionConfinementValidityTokenFactory, action)
     }
 
     @InvalidWayOfUsingAnalysisSession
     inline fun <R> analyse(contextElement: KtElement, tokenFactory: ValidityTokenFactory, action: KtAnalysisSession.() -> R): R =
-        analyse(getAnalysisSession(contextElement, tokenFactory), action)
+        analyse(getAnalysisSession(contextElement, tokenFactory), tokenFactory, action)
 
     @OptIn(KtAnalysisSessionProviderInternals::class)
     @InvalidWayOfUsingAnalysisSession
-    inline fun <R> analyse(analysisSession: KtAnalysisSession, action: KtAnalysisSession.() -> R): R {
-        currentAnalysisContextEnteringCount.set(currentAnalysisContextEnteringCount.get() + 1)
+    inline fun <R> analyse(analysisSession: KtAnalysisSession, factory: ValidityTokenFactory, action: KtAnalysisSession.() -> R): R {
+        factory.beforeEnteringAnalysisContext()
         return try {
             analysisSession.action()
         } finally {
-            currentAnalysisContextEnteringCount.set(currentAnalysisContextEnteringCount.get() - 1)
+            factory.afterLeavingAnalysisContext()
         }
     }
 
-    companion object {
-        @KtAnalysisSessionProviderInternals
-        val currentAnalysisContextEnteringCount = object : ThreadLocal<Int>() {
-            override fun initialValue() = 0
-        }
-
-        @OptIn(KtAnalysisSessionProviderInternals::class)
-        fun isInsideAnalysisContext() = currentAnalysisContextEnteringCount.get() > 0
-    }
 }
 
 /**

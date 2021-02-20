@@ -19,6 +19,9 @@ abstract class ValidityToken {
 abstract class ValidityTokenFactory {
     abstract val identifier: KClass<out ValidityToken>
     abstract fun create(project: Project): ValidityToken
+
+    open fun beforeEnteringAnalysisContext() {}
+    open fun afterLeavingAnalysisContext() {}
 }
 
 
@@ -32,8 +35,8 @@ inline fun ValidityToken.assertIsValidAndAccessible() {
     }
 }
 
-abstract class BadEntityAccessException(): IllegalStateException()
+abstract class BadEntityAccessException() : IllegalStateException()
 
 class InvalidEntityAccessException(override val message: String) : BadEntityAccessException()
-class InaccessibleEntityAccessException(override val message: String): BadEntityAccessException()
+class InaccessibleEntityAccessException(override val message: String) : BadEntityAccessException()
 
