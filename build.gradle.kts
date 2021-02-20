@@ -756,7 +756,6 @@ tasks {
 
     register("miscCompilerTest") {
         dependsOn("nativeCompilerTest")
-        dependsOn("firCompilerTest")
 
         dependsOn(":kotlin-daemon-tests:test")
         dependsOn("scriptingTest")
