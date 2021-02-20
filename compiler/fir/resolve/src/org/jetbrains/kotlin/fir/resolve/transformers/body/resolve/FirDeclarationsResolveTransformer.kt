@@ -126,8 +126,8 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         if (property.isLocal) {
             prepareSignatureForBodyResolve(property)
             property.transformStatus(this, property.resolveStatus().mode())
-            property.getter?.let { it.transformStatus(this, it.resolveStatus().mode()) }
-            property.setter?.let { it.transformStatus(this, it.resolveStatus().mode()) }
+            property.getter?.let { it.transformStatus(this, it.resolveStatus(containingProperty = property).mode()) }
+            property.setter?.let { it.transformStatus(this, it.resolveStatus(containingProperty = property).mode()) }
             return transformLocalVariable(property)
         }
 
@@ -380,11 +380,15 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         }
     }
 
-    private fun FirDeclaration.resolveStatus(containingClass: FirClass<*>? = null): FirDeclarationStatus {
+    private fun FirDeclaration.resolveStatus(
+        containingClass: FirClass<*>? = null,
+        containingProperty: FirProperty? = null,
+    ): FirDeclarationStatus {
         val containingDeclaration = context.containerIfAny
         return statusResolver.resolveStatus(
             this,
             containingClass as? FirRegularClass,
+            containingProperty,
             isLocal = containingDeclaration != null && containingClass == null
         )
     }

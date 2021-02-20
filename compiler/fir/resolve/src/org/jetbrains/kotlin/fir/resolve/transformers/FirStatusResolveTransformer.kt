@@ -284,19 +284,12 @@ abstract class AbstractFirStatusResolveTransformer(
         return when (declaration) {
             is FirCallableDeclaration<*> -> {
                 when (declaration) {
-                    is FirProperty -> {
-                        declaration.getter?.let { transformPropertyAccessor(it, data) }
-                        declaration.setter?.let { transformPropertyAccessor(it, data) }
-                    }
                     is FirFunction<*> -> {
                         for (valueParameter in declaration.valueParameters) {
                             transformValueParameter(valueParameter, data)
                         }
                     }
                 }
-                declaration.compose()
-            }
-            is FirPropertyAccessor -> {
                 declaration.compose()
             }
             else -> {
@@ -433,13 +426,16 @@ abstract class AbstractFirStatusResolveTransformer(
         statusComputationSession.endComputing(regularClass)
     }
 
-    override fun transformPropertyAccessor(
+    private fun transformPropertyAccessor(
         propertyAccessor: FirPropertyAccessor,
-        data: FirResolvedDeclarationStatus?
-    ): CompositeTransformResult<FirDeclaration> {
-        propertyAccessor.transformStatus(this, statusResolver.resolveStatus(propertyAccessor, containingClass, isLocal = false))
-        @Suppress("UNCHECKED_CAST")
-        return transformDeclaration(propertyAccessor, data)
+        containingProperty: FirProperty,
+    ) {
+        propertyAccessor.transformStatus(
+            this,
+            statusResolver.resolveStatus(propertyAccessor, containingClass, containingProperty, isLocal = false)
+        )
+
+        propertyAccessor.replaceResolvePhase(transformerPhase)
     }
 
     override fun transformConstructor(
@@ -465,7 +461,11 @@ abstract class AbstractFirStatusResolveTransformer(
     ): CompositeTransformResult<FirDeclaration> {
         property.replaceResolvePhase(transformerPhase)
         property.transformStatus(this, statusResolver.resolveStatus(property, containingClass, isLocal = false))
-        return transformDeclaration(property, data)
+
+        property.getter?.let { transformPropertyAccessor(it, property) }
+        property.setter?.let { transformPropertyAccessor(it, property) }
+
+        return property.compose()
     }
 
     override fun transformField(
