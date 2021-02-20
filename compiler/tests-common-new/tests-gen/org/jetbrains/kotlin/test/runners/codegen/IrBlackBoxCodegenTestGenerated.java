@@ -20022,6 +20022,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("intReturnTypeAsNumber.kt")
+            public void testIntReturnTypeAsNumber() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/sam/intReturnTypeAsNumber.kt");
+            }
+
+            @Test
             @TestMetadata("nullabilityAssertions.kt")
             public void testNullabilityAssertions() throws Exception {
                 runTest("compiler/testData/codegen/box/invokedynamic/sam/nullabilityAssertions.kt");
@@ -20221,6 +20227,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 }
 
                 @Test
+                @TestMetadata("intReturnTypeAsNumber.kt")
+                public void testIntReturnTypeAsNumber() throws Exception {
+                    runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/intReturnTypeAsNumber.kt");
+                }
+
+                @Test
                 @TestMetadata("localFunction1.kt")
                 public void testLocalFunction1() throws Exception {
                     runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/localFunction1.kt");
@@ -20245,9 +20257,39 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 }
 
                 @Test
+                @TestMetadata("nothingReturnTypeAsObject.kt")
+                public void testNothingReturnTypeAsObject() throws Exception {
+                    runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/nothingReturnTypeAsObject.kt");
+                }
+
+                @Test
+                @TestMetadata("nothingReturnTypeAsString.kt")
+                public void testNothingReturnTypeAsString() throws Exception {
+                    runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/nothingReturnTypeAsString.kt");
+                }
+
+                @Test
+                @TestMetadata("nullableNothingReturnTypeAsObject.kt")
+                public void testNullableNothingReturnTypeAsObject() throws Exception {
+                    runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/nullableNothingReturnTypeAsObject.kt");
+                }
+
+                @Test
+                @TestMetadata("nullableNothingReturnTypeAsString.kt")
+                public void testNullableNothingReturnTypeAsString() throws Exception {
+                    runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/nullableNothingReturnTypeAsString.kt");
+                }
+
+                @Test
                 @TestMetadata("simple.kt")
                 public void testSimple() throws Exception {
                     runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/simple.kt");
+                }
+
+                @Test
+                @TestMetadata("voidReturnTypeAsObject.kt")
+                public void testVoidReturnTypeAsObject() throws Exception {
+                    runTest("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/voidReturnTypeAsObject.kt");
                 }
             }
 
@@ -20355,6 +20397,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 }
 
                 @Test
+                @TestMetadata("genericWithInProjection.kt")
+                public void testGenericWithInProjection() throws Exception {
+                    runTest("compiler/testData/codegen/box/invokedynamic/sam/specializedGenerics/genericWithInProjection.kt");
+                }
+
+                @Test
+                @TestMetadata("genericWithStarProjection.kt")
+                public void testGenericWithStarProjection() throws Exception {
+                    runTest("compiler/testData/codegen/box/invokedynamic/sam/specializedGenerics/genericWithStarProjection.kt");
+                }
+
+                @Test
                 @TestMetadata("inheritedWithChar.kt")
                 public void testInheritedWithChar() throws Exception {
                     runTest("compiler/testData/codegen/box/invokedynamic/sam/specializedGenerics/inheritedWithChar.kt");
@@ -20412,6 +20466,30 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 @TestMetadata("mixPrimitiveAndBoxed.kt")
                 public void testMixPrimitiveAndBoxed() throws Exception {
                     runTest("compiler/testData/codegen/box/invokedynamic/sam/specializedGenerics/mixPrimitiveAndBoxed.kt");
+                }
+
+                @Test
+                @TestMetadata("nothingReturnTypeAsGeneric.kt")
+                public void testNothingReturnTypeAsGeneric() throws Exception {
+                    runTest("compiler/testData/codegen/box/invokedynamic/sam/specializedGenerics/nothingReturnTypeAsGeneric.kt");
+                }
+
+                @Test
+                @TestMetadata("nothingReturnTypeAsString.kt")
+                public void testNothingReturnTypeAsString() throws Exception {
+                    runTest("compiler/testData/codegen/box/invokedynamic/sam/specializedGenerics/nothingReturnTypeAsString.kt");
+                }
+
+                @Test
+                @TestMetadata("specializedWithChar.kt")
+                public void testSpecializedWithChar() throws Exception {
+                    runTest("compiler/testData/codegen/box/invokedynamic/sam/specializedGenerics/specializedWithChar.kt");
+                }
+
+                @Test
+                @TestMetadata("specializedWithCharClass.kt")
+                public void testSpecializedWithCharClass() throws Exception {
+                    runTest("compiler/testData/codegen/box/invokedynamic/sam/specializedGenerics/specializedWithCharClass.kt");
                 }
 
                 @Test
