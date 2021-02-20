@@ -231,11 +231,11 @@ private fun allRelatedClassLoaders(clsLoader: ClassLoader, visited: MutableSet<C
         return sequenceOf(singleParent).flatMap { allRelatedClassLoaders(it, visited) } + clsLoader
 
     return try {
-        val field = clsLoader.javaClass.getDeclaredField("myParents") // com.intellij.ide.plugins.cl.PluginClassLoader
-        field.isAccessible = true
+        val method = clsLoader.javaClass.getDeclaredMethod("getAllParents") // com.intellij.ide.plugins.cl.PluginClassLoader
+        method.isAccessible = true
 
         @Suppress("UNCHECKED_CAST")
-        val arrayOfClassLoaders = field.get(clsLoader) as Array<ClassLoader>
+        val arrayOfClassLoaders = method.invoke(clsLoader) as Array<ClassLoader>
         // TODO: PluginClassLoader uses filtering (mustBeLoadedByPlatform), consider using the same logic, if possible
         // (untill proper compiling from classloader instead of classpath is implemented)
         arrayOfClassLoaders.asSequence().flatMap { allRelatedClassLoaders(it, visited) } + clsLoader
