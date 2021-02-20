@@ -53,6 +53,7 @@ val PROTO_PATHS: List<ProtoPath> = listOf(
     ProtoPath("compiler/util-klib-metadata/src/KlibMetadataProtoBuf.proto"),
     ProtoPath("compiler/ir/serialization.common/src/KotlinIr.proto", false),
     ProtoPath("compiler/ir/serialization.common/src/KotlinPirCarriers.proto", false),
+    ProtoPath("compiler/ir/serialization.jvm/src/JvmIr.proto", false),
     ProtoPath("plugins/kotlin-serialization/kotlin-serialization-compiler/src/class_extensions.proto", generateDebug = false)
 )
 

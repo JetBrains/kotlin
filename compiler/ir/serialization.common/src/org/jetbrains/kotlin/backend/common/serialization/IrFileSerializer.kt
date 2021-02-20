@@ -139,17 +139,17 @@ open class IrFileSerializer(
     // The same type can be used multiple times in a file
     // so use this index to store type data only once.
     private val protoTypeMap = mutableMapOf<IrTypeKey, Int>()
-    private val protoTypeArray = arrayListOf<ProtoType>()
+    protected val protoTypeArray = arrayListOf<ProtoType>()
 
     private val protoStringMap = mutableMapOf<String, Int>()
-    private val protoStringArray = arrayListOf<String>()
+    protected val protoStringArray = arrayListOf<String>()
 
     // The same signature could be used multiple times in a file
     // so use this index to store signature only once.
     private val protoIdSignatureMap = mutableMapOf<IdSignature, Int>()
-    private val protoIdSignatureArray = arrayListOf<ProtoIdSignature>()
+    protected val protoIdSignatureArray = arrayListOf<ProtoIdSignature>()
 
-    private val protoBodyArray = mutableListOf<XStatementOrExpression>()
+    protected val protoBodyArray = mutableListOf<XStatementOrExpression>()
 
     private val protoDebugInfoArray = arrayListOf<String>()
 
@@ -394,10 +394,10 @@ open class IrFileSerializer(
 
     /* ------- IrTypes ---------------------------------------------------------- */
 
-    private fun serializeAnnotations(annotations: List<IrConstructorCall>) =
+    protected fun serializeAnnotations(annotations: List<IrConstructorCall>) =
         annotations.map { serializeConstructorCall(it) }
 
-    private fun serializeFqName(fqName: String): List<Int> = fqName.split(".").map(::serializeString)
+    protected fun serializeFqName(fqName: String): List<Int> = fqName.split(".").map(::serializeString)
 
     private fun serializeIrStarProjection() = BinaryTypeProjection.STAR_CODE
 
@@ -1307,7 +1307,7 @@ open class IrFileSerializer(
         return proto.build()
     }
 
-    private fun serializeIrClass(clazz: IrClass): ProtoClass {
+    protected fun serializeIrClass(clazz: IrClass): ProtoClass {
         val proto = ProtoClass.newBuilder()
             .setBase(serializeIrDeclarationBase(clazz, ClassFlags.encode(clazz)))
             .setName(serializeName(clazz.name))
