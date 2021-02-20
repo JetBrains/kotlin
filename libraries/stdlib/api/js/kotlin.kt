@@ -281,6 +281,70 @@ public inline fun kotlin.ULong.countTrailingZeroBits(): kotlin.Int
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UShort.countTrailingZeroBits(): kotlin.Int
 
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Byte.floorDiv(other: kotlin.Byte): kotlin.Int
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Byte.floorDiv(other: kotlin.Int): kotlin.Int
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Byte.floorDiv(other: kotlin.Long): kotlin.Long
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Byte.floorDiv(other: kotlin.Short): kotlin.Int
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Int.floorDiv(other: kotlin.Byte): kotlin.Int
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Int.floorDiv(other: kotlin.Int): kotlin.Int
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Int.floorDiv(other: kotlin.Long): kotlin.Long
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Int.floorDiv(other: kotlin.Short): kotlin.Int
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Long.floorDiv(other: kotlin.Byte): kotlin.Long
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Long.floorDiv(other: kotlin.Int): kotlin.Long
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Long.floorDiv(other: kotlin.Long): kotlin.Long
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Long.floorDiv(other: kotlin.Short): kotlin.Long
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Short.floorDiv(other: kotlin.Byte): kotlin.Int
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Short.floorDiv(other: kotlin.Int): kotlin.Int
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Short.floorDiv(other: kotlin.Long): kotlin.Long
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Short.floorDiv(other: kotlin.Short): kotlin.Int
+
 @kotlin.internal.InlineOnly
 @kotlin.SinceKotlin(version = "1.3")
 public inline fun <R, T> kotlin.Result<T>.fold(onSuccess: (value: T) -> R, onFailure: (exception: kotlin.Throwable) -> R): R
@@ -346,6 +410,86 @@ public inline fun <R, T> kotlin.Result<T>.map(transform: (value: T) -> R): kotli
 @kotlin.internal.InlineOnly
 @kotlin.SinceKotlin(version = "1.3")
 public inline fun <R, T> kotlin.Result<T>.mapCatching(transform: (value: T) -> R): kotlin.Result<R>
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Byte.mod(other: kotlin.Byte): kotlin.Byte
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Byte.mod(other: kotlin.Int): kotlin.Int
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Byte.mod(other: kotlin.Long): kotlin.Long
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Byte.mod(other: kotlin.Short): kotlin.Short
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Double.mod(other: kotlin.Double): kotlin.Double
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Double.mod(other: kotlin.Float): kotlin.Double
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Float.mod(other: kotlin.Double): kotlin.Double
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Float.mod(other: kotlin.Float): kotlin.Float
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Int.mod(other: kotlin.Byte): kotlin.Byte
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Int.mod(other: kotlin.Int): kotlin.Int
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Int.mod(other: kotlin.Long): kotlin.Long
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Int.mod(other: kotlin.Short): kotlin.Short
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Long.mod(other: kotlin.Byte): kotlin.Byte
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Long.mod(other: kotlin.Int): kotlin.Int
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Long.mod(other: kotlin.Long): kotlin.Long
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Long.mod(other: kotlin.Short): kotlin.Short
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Short.mod(other: kotlin.Byte): kotlin.Byte
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Short.mod(other: kotlin.Int): kotlin.Int
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Short.mod(other: kotlin.Long): kotlin.Long
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Short.mod(other: kotlin.Short): kotlin.Short
 
 @kotlin.internal.InlineOnly
 @kotlin.SinceKotlin(version = "1.3")
@@ -2280,6 +2424,18 @@ public final inline class UByte : kotlin.Comparable<kotlin.UByte> {
 
     public open override operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
+    @kotlin.internal.InlineOnly
+    public final inline fun floorDiv(other: kotlin.UByte): kotlin.UInt
+
+    @kotlin.internal.InlineOnly
+    public final inline fun floorDiv(other: kotlin.UInt): kotlin.UInt
+
+    @kotlin.internal.InlineOnly
+    public final inline fun floorDiv(other: kotlin.ULong): kotlin.ULong
+
+    @kotlin.internal.InlineOnly
+    public final inline fun floorDiv(other: kotlin.UShort): kotlin.UInt
+
     public open override fun hashCode(): kotlin.Int
 
     @kotlin.internal.InlineOnly
@@ -2299,6 +2455,18 @@ public final inline class UByte : kotlin.Comparable<kotlin.UByte> {
 
     @kotlin.internal.InlineOnly
     public final inline operator fun minus(other: kotlin.UShort): kotlin.UInt
+
+    @kotlin.internal.InlineOnly
+    public final inline fun mod(other: kotlin.UByte): kotlin.UByte
+
+    @kotlin.internal.InlineOnly
+    public final inline fun mod(other: kotlin.UInt): kotlin.UInt
+
+    @kotlin.internal.InlineOnly
+    public final inline fun mod(other: kotlin.ULong): kotlin.ULong
+
+    @kotlin.internal.InlineOnly
+    public final inline fun mod(other: kotlin.UShort): kotlin.UShort
 
     @kotlin.internal.InlineOnly
     public final inline infix fun or(other: kotlin.UByte): kotlin.UByte
@@ -2451,6 +2619,18 @@ public final inline class UInt : kotlin.Comparable<kotlin.UInt> {
 
     public open override operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
+    @kotlin.internal.InlineOnly
+    public final inline fun floorDiv(other: kotlin.UByte): kotlin.UInt
+
+    @kotlin.internal.InlineOnly
+    public final inline fun floorDiv(other: kotlin.UInt): kotlin.UInt
+
+    @kotlin.internal.InlineOnly
+    public final inline fun floorDiv(other: kotlin.ULong): kotlin.ULong
+
+    @kotlin.internal.InlineOnly
+    public final inline fun floorDiv(other: kotlin.UShort): kotlin.UInt
+
     public open override fun hashCode(): kotlin.Int
 
     @kotlin.internal.InlineOnly
@@ -2470,6 +2650,18 @@ public final inline class UInt : kotlin.Comparable<kotlin.UInt> {
 
     @kotlin.internal.InlineOnly
     public final inline operator fun minus(other: kotlin.UShort): kotlin.UInt
+
+    @kotlin.internal.InlineOnly
+    public final inline fun mod(other: kotlin.UByte): kotlin.UByte
+
+    @kotlin.internal.InlineOnly
+    public final inline fun mod(other: kotlin.UInt): kotlin.UInt
+
+    @kotlin.internal.InlineOnly
+    public final inline fun mod(other: kotlin.ULong): kotlin.ULong
+
+    @kotlin.internal.InlineOnly
+    public final inline fun mod(other: kotlin.UShort): kotlin.UShort
 
     @kotlin.internal.InlineOnly
     public final inline infix fun or(other: kotlin.UInt): kotlin.UInt
@@ -2628,6 +2820,18 @@ public final inline class ULong : kotlin.Comparable<kotlin.ULong> {
 
     public open override operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
+    @kotlin.internal.InlineOnly
+    public final inline fun floorDiv(other: kotlin.UByte): kotlin.ULong
+
+    @kotlin.internal.InlineOnly
+    public final inline fun floorDiv(other: kotlin.UInt): kotlin.ULong
+
+    @kotlin.internal.InlineOnly
+    public final inline fun floorDiv(other: kotlin.ULong): kotlin.ULong
+
+    @kotlin.internal.InlineOnly
+    public final inline fun floorDiv(other: kotlin.UShort): kotlin.ULong
+
     public open override fun hashCode(): kotlin.Int
 
     @kotlin.internal.InlineOnly
@@ -2647,6 +2851,18 @@ public final inline class ULong : kotlin.Comparable<kotlin.ULong> {
 
     @kotlin.internal.InlineOnly
     public final inline operator fun minus(other: kotlin.UShort): kotlin.ULong
+
+    @kotlin.internal.InlineOnly
+    public final inline fun mod(other: kotlin.UByte): kotlin.UByte
+
+    @kotlin.internal.InlineOnly
+    public final inline fun mod(other: kotlin.UInt): kotlin.UInt
+
+    @kotlin.internal.InlineOnly
+    public final inline fun mod(other: kotlin.ULong): kotlin.ULong
+
+    @kotlin.internal.InlineOnly
+    public final inline fun mod(other: kotlin.UShort): kotlin.UShort
 
     @kotlin.internal.InlineOnly
     public final inline infix fun or(other: kotlin.ULong): kotlin.ULong
@@ -2805,6 +3021,18 @@ public final inline class UShort : kotlin.Comparable<kotlin.UShort> {
 
     public open override operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
+    @kotlin.internal.InlineOnly
+    public final inline fun floorDiv(other: kotlin.UByte): kotlin.UInt
+
+    @kotlin.internal.InlineOnly
+    public final inline fun floorDiv(other: kotlin.UInt): kotlin.UInt
+
+    @kotlin.internal.InlineOnly
+    public final inline fun floorDiv(other: kotlin.ULong): kotlin.ULong
+
+    @kotlin.internal.InlineOnly
+    public final inline fun floorDiv(other: kotlin.UShort): kotlin.UInt
+
     public open override fun hashCode(): kotlin.Int
 
     @kotlin.internal.InlineOnly
@@ -2824,6 +3052,18 @@ public final inline class UShort : kotlin.Comparable<kotlin.UShort> {
 
     @kotlin.internal.InlineOnly
     public final inline operator fun minus(other: kotlin.UShort): kotlin.UInt
+
+    @kotlin.internal.InlineOnly
+    public final inline fun mod(other: kotlin.UByte): kotlin.UByte
+
+    @kotlin.internal.InlineOnly
+    public final inline fun mod(other: kotlin.UInt): kotlin.UInt
+
+    @kotlin.internal.InlineOnly
+    public final inline fun mod(other: kotlin.ULong): kotlin.ULong
+
+    @kotlin.internal.InlineOnly
+    public final inline fun mod(other: kotlin.UShort): kotlin.UShort
 
     @kotlin.internal.InlineOnly
     public final inline infix fun or(other: kotlin.UShort): kotlin.UShort

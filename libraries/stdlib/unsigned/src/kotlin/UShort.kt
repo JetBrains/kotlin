@@ -135,6 +135,32 @@ public value class UShort @PublishedApi internal constructor(@PublishedApi inter
     @kotlin.internal.InlineOnly
     public inline operator fun rem(other: ULong): ULong = this.toULong().rem(other)
 
+    /** TODO */
+    @kotlin.internal.InlineOnly
+    public inline fun floorDiv(other: UByte): UInt = this.toUInt().floorDiv(other.toUInt())
+    /** TODO */
+    @kotlin.internal.InlineOnly
+    public inline fun floorDiv(other: UShort): UInt = this.toUInt().floorDiv(other.toUInt())
+    /** TODO */
+    @kotlin.internal.InlineOnly
+    public inline fun floorDiv(other: UInt): UInt = this.toUInt().floorDiv(other)
+    /** TODO */
+    @kotlin.internal.InlineOnly
+    public inline fun floorDiv(other: ULong): ULong = this.toULong().floorDiv(other)
+
+    /** TODO */
+    @kotlin.internal.InlineOnly
+    public inline fun mod(other: UByte): UByte = this.toUInt().mod(other.toUInt()).toUByte()
+    /** TODO */
+    @kotlin.internal.InlineOnly
+    public inline fun mod(other: UShort): UShort = this.toUInt().mod(other.toUInt()).toUShort()
+    /** TODO */
+    @kotlin.internal.InlineOnly
+    public inline fun mod(other: UInt): UInt = this.toUInt().mod(other)
+    /** TODO */
+    @kotlin.internal.InlineOnly
+    public inline fun mod(other: ULong): ULong = this.toULong().mod(other)
+
     /** Increments this value. */
     @kotlin.internal.InlineOnly
     public inline operator fun inc(): UShort = UShort(data.inc())
