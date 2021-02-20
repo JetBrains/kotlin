@@ -233,6 +233,14 @@ class PsiVisualizer(private val file: KtFile, analysisResult: AnalysisResult) : 
                 addAnnotation(descriptorRenderer.render(it.type.constructor.declarationDescriptor!!), expression)
             } ?: super.visitClassLiteralExpression(expression)
         }
+
+        override fun visitPrefixExpression(expression: KtPrefixExpression) {
+            val opName = expression.operationReference.getReferencedName()
+            if (expression.baseExpression?.node?.elementType == KtNodeTypes.INTEGER_CONSTANT && opName == "-") {
+                return expression.baseExpression!!.accept(this)
+            }
+            super.visitPrefixExpression(expression)
+        }
     }
 
     inner class PsiDescriptorRenderer(

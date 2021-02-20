@@ -297,6 +297,10 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         override fun visitClassLiteralExpression(expression: KtClassLiteralExpression) {
             expression.firstOfTypeWithRender<FirGetClassCall>()
         }
+
+        override fun visitPrefixExpression(expression: KtPrefixExpression) {
+            expression.firstOfTypeWithRender<FirConstExpression<*>>(expression.baseExpression) ?: super.visitPrefixExpression(expression)
+        }
     }
 
     inner class FirRenderer : FirVisitor<Unit, StringBuilder>() {
