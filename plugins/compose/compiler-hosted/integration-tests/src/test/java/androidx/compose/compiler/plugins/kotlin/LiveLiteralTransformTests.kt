@@ -597,7 +597,7 @@ class LiveLiteralTransformTests : AbstractIrTransformTest() {
     // since the lowering will throw an exception if duplicate keys are found, all we have to do
     // is run the lowering
     private fun assertNoDuplicateKeys(@Language("kotlin") src: String) {
-        generateIrModuleWithJvmResolve(
+        JvmCompilation().compile(
             listOf(
                 sourceFile("Test.kt", src.replace('%', '$'))
             )
@@ -607,7 +607,7 @@ class LiveLiteralTransformTests : AbstractIrTransformTest() {
     // For a given src string, a
     private fun assertKeys(vararg keys: String, makeSrc: () -> String) {
         builtKeys = mutableSetOf()
-        generateIrModuleWithJvmResolve(
+        JvmCompilation().compile(
             listOf(
                 sourceFile("Test.kt", makeSrc().replace('%', '$'))
             )
@@ -624,7 +624,7 @@ class LiveLiteralTransformTests : AbstractIrTransformTest() {
 
     // test: have two src strings (before/after) and assert that the keys of the params didn't change
     private fun assertDurableChange(before: String, after: String) {
-        generateIrModuleWithJvmResolve(
+        JvmCompilation().compile(
             listOf(
                 sourceFile("Test.kt", before.replace('%', '$'))
             )
@@ -633,7 +633,7 @@ class LiveLiteralTransformTests : AbstractIrTransformTest() {
 
         builtKeys = mutableSetOf()
 
-        generateIrModuleWithJvmResolve(
+        JvmCompilation().compile(
             listOf(
                 sourceFile("Test.kt", after.replace('%', '$'))
             )

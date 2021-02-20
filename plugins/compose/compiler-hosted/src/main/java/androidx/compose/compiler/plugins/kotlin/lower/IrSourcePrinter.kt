@@ -1160,7 +1160,37 @@ private class IrSourcePrinterVisitor(
     }
 
     override fun visitFunctionReference(expression: IrFunctionReference) {
-        print("<<FUNCTIONREF>>")
+        val function = expression.symbol.owner
+        val dispatchReceiver = expression.dispatchReceiver
+        val extensionReceiver = expression.extensionReceiver
+        val dispatchIsSpecial = dispatchReceiver.let {
+            it is IrGetValue && it.symbol.owner.name.isSpecial
+        }
+        val extensionIsSpecial = extensionReceiver.let {
+            it is IrGetValue && it.symbol.owner.name.isSpecial
+        }
+
+        if (dispatchReceiver != null && !dispatchIsSpecial) {
+            dispatchReceiver.print()
+            print("::")
+        } else if (extensionReceiver != null && !extensionIsSpecial) {
+            extensionReceiver.print()
+            print("::")
+        }
+
+        val prop = (function as? IrSimpleFunction)?.correspondingPropertySymbol?.owner
+
+        if (prop != null) {
+            val propName = prop.name.asString()
+            print(propName)
+            if (function == prop.setter) {
+                print("::set")
+            } else if (function == prop.getter) {
+                print("::get")
+            }
+        } else {
+            print(function.name.asString())
+        }
     }
 
     override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall) {
