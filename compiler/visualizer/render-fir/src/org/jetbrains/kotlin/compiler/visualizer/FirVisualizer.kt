@@ -215,7 +215,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
                 expression.baseExpression?.accept(this)
                 return
             }
-            expression.firstOfTypeWithLocalReplace<FirFunctionCall>(expression.operationReference) { this.calleeReference.name.asString() }
+            expression.allOfTypeWithLocalReplace<FirFunctionCall>(expression.operationReference) { this.calleeReference.name.asString() }
             super.visitUnaryExpression(expression)
         }
 
