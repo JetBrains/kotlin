@@ -835,6 +835,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             }
 
             @Test
+            @TestMetadata("kt37056.kt")
+            public void testKt37056() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/kt37056.kt");
+            }
+
+            @Test
             @TestMetadata("lambdaAsReceiver.kt")
             public void testLambdaAsReceiver() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/lambdaAsReceiver.kt");

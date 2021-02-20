@@ -715,6 +715,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/invokeWithReceiverAndArgument.kt");
         }
 
+        @TestMetadata("kt37056.kt")
+        public void testKt37056() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/kt37056.kt");
+        }
+
         @TestMetadata("lambdaAsReceiver.kt")
         public void testLambdaAsReceiver() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/lambdaAsReceiver.kt");
