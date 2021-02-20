@@ -309,8 +309,14 @@ fun FirPropertyBuilder.generateAccessorsByDelegate(
      * And for this case we can pass isForDelegateProviderCall to this reference
      *   generator function
      */
-    fun thisRef(isForDelegateProviderCall: Boolean = false): FirExpression =
+    fun thisRef(forDispatchReceiver: Boolean = false): FirExpression =
         when {
+            isExtension && !forDispatchReceiver -> buildThisReceiverExpression {
+                source = fakeSource
+                calleeReference = buildImplicitThisReference {
+                    boundSymbol = this@generateAccessorsByDelegate.symbol
+                }
+            }
             ownerSymbol != null -> buildThisReceiverExpression {
                 source = fakeSource
                 calleeReference = buildImplicitThisReference {
@@ -319,12 +325,6 @@ fun FirPropertyBuilder.generateAccessorsByDelegate(
                 typeRef = buildResolvedTypeRef {
                     val typeParameterNumber = (ownerClassBuilder as? FirRegularClassBuilder)?.typeParameters?.size ?: 0
                     type = ownerSymbol.constructStarProjectedType(typeParameterNumber)
-                }
-            }
-            isExtension && !isForDelegateProviderCall -> buildThisReceiverExpression {
-                source = fakeSource
-                calleeReference = buildImplicitThisReference {
-                    boundSymbol = this@generateAccessorsByDelegate.symbol
                 }
             }
             else -> buildConstExpression(null, ConstantValueKind.Null, null)
@@ -336,7 +336,7 @@ fun FirPropertyBuilder.generateAccessorsByDelegate(
             resolvedSymbol = delegateFieldSymbol
         }
         if (ownerSymbol != null) {
-            dispatchReceiver = thisRef()
+            dispatchReceiver = thisRef(forDispatchReceiver = true)
         }
     }
 
@@ -373,7 +373,7 @@ fun FirPropertyBuilder.generateAccessorsByDelegate(
             source = fakeSource
             name = PROVIDE_DELEGATE
         }
-        argumentList = buildBinaryArgumentList(thisRef(isForDelegateProviderCall = true), propertyRef())
+        argumentList = buildBinaryArgumentList(thisRef(forDispatchReceiver = true), propertyRef())
     }
     delegate = delegateBuilder.build()
     if (stubMode) return
