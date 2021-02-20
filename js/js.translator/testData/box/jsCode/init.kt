@@ -1,4 +1,5 @@
-// EXPECTED_REACHABLE_NODES: 1282
+// TARGET_BACKEND: JS_IR
+
 package foo
 
 class A {
