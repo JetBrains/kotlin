@@ -137,7 +137,6 @@ class FirStatusResolver(
         val visibility = when (status.visibility) {
             Visibilities.Unknown -> when {
                 isLocal -> Visibilities.Local
-                declaration is FirConstructor && containingClass is FirAnonymousObject -> Visibilities.Private
                 else -> resolveVisibility(declaration, containingClass, overriddenStatuses)
             }
             else -> status.visibility
@@ -165,16 +164,17 @@ class FirStatusResolver(
         containingClass: FirClass<*>?,
         overriddenStatuses: List<FirResolvedDeclarationStatusImpl>
     ): Visibility {
-        if (declaration is FirConstructor && containingClass != null) {
-            val classKind = containingClass.classKind
-            if ((classKind == ClassKind.ENUM_CLASS || classKind == ClassKind.ENUM_ENTRY || containingClass.modality == Modality.SEALED)) {
-                return Visibilities.Private
-            }
-        }
+        if (declaration is FirConstructor && containingClass?.hasPrivateConstructor() == true) return Visibilities.Private
+
         return overriddenStatuses.map { it.visibility }
             .maxWithOrNull { v1, v2 -> Visibilities.compare(v1, v2) ?: -1 }
             ?.normalize()
             ?: Visibilities.Public
+    }
+
+    private fun FirClass<*>.hasPrivateConstructor(): Boolean {
+        val classKind = classKind
+        return classKind == ClassKind.ENUM_CLASS || classKind == ClassKind.ENUM_ENTRY || modality == Modality.SEALED || this is FirAnonymousObject
     }
 
     private fun resolveModality(
