@@ -13,7 +13,6 @@ dependencies {
     compileOnly(project(":compiler:frontend"))
     compileOnly(project(":compiler:backend"))
     compileOnly(project(":compiler:ir.backend.common"))
-    compileOnly(project(":compiler:ir.psi2ir"))
     compileOnly(project(":js:js.frontend"))
     compileOnly(project(":js:js.translator"))
     compileOnly(project(":kotlin-util-klib-metadata"))
@@ -49,4 +48,3 @@ projectTest(parallel = true) {
 }
 
 apply(from = "$rootDir/gradle/kotlinPluginPublication.gradle.kts")
-
