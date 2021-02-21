@@ -10,6 +10,7 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analyzer.AbstractAnalyzerWithCompilerReport
 import org.jetbrains.kotlin.analyzer.AnalysisResult
+import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.backend.common.lower.ExpectDeclarationRemover
@@ -414,7 +415,7 @@ private class ModulesStructure(
         var hasErrors = false
         if (analyzer.hasErrors() || analysisResult !is JsAnalysisResult) {
             if (!errorPolicy.allowErrors)
-                throw AnalysisResult.CompilationErrorException()
+                throw CompilationErrorException()
             else hasErrors = true
         }
 

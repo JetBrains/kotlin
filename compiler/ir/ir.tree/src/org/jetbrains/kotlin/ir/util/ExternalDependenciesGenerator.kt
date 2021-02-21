@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.ir.util
 
-import org.jetbrains.kotlin.analyzer.AnalysisResult
+import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
@@ -54,7 +54,7 @@ class ExternalDependenciesGenerator(
                 // We wait for the unbound to stabilize on fake overrides.
             } while (unbound != prevUnbound)
         } catch (ex: KotlinIrLinkerInternalException) {
-            throw AnalysisResult.CompilationErrorException()
+            throw CompilationErrorException()
         }
     }
 }

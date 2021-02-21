@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.cli.common
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
-import org.jetbrains.kotlin.analyzer.AnalysisResult
+import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY
 import org.jetbrains.kotlin.cli.common.ExitCode.COMPILATION_ERROR
 import org.jetbrains.kotlin.cli.common.ExitCode.INTERNAL_ERROR
@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.io.PrintStream
-import java.util.*
 
 abstract class CLICompiler<A : CommonCompilerArguments> : CLITool<A>() {
 
@@ -117,7 +116,7 @@ abstract class CLICompiler<A : CommonCompilerArguments> : CLITool<A>() {
             } finally {
                 Disposer.dispose(rootDisposable)
             }
-        } catch (e: AnalysisResult.CompilationErrorException) {
+        } catch (e: CompilationErrorException) {
             return COMPILATION_ERROR
         } catch (t: Throwable) {
             MessageCollectorUtil.reportException(collector, t)

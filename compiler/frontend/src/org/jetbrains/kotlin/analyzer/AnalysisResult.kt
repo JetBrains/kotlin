@@ -58,8 +58,6 @@ open class AnalysisResult protected constructor(
         }
     }
 
-    class CompilationErrorException : RuntimeException()
-
     private class CompilationError(bindingContext: BindingContext) : AnalysisResult(bindingContext, ErrorUtils.getErrorModule())
 
     private class InternalError(
