@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.common.lower.optimizations
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
@@ -52,18 +53,18 @@ class FoldConstantLowering(
     )
 
     @Suppress("unused")
-    private data class PrimitiveType<T>(val name: String)
+    private data class PrimitiveTypeName<T>(val name: String)
 
     companion object {
-        private val INT = PrimitiveType<Int>("Int")
-        private val LONG = PrimitiveType<Long>("Long")
-        private val DOUBLE = PrimitiveType<Double>("Double")
-        private val FLOAT = PrimitiveType<Float>("Float")
+        private val INT = PrimitiveTypeName<Int>("Int")
+        private val LONG = PrimitiveTypeName<Long>("Long")
+        private val DOUBLE = PrimitiveTypeName<Double>("Double")
+        private val FLOAT = PrimitiveTypeName<Float>("Float")
 
         private val BINARY_OP_TO_EVALUATOR = HashMap<BinaryOp, Function2<Any?, Any?, Any>>()
 
         @Suppress("UNCHECKED_CAST")
-        private fun <T> registerBuiltinBinaryOp(operandType: PrimitiveType<T>, operatorName: String, f: (T, T) -> Any) {
+        private fun <T> registerBuiltinBinaryOp(operandType: PrimitiveTypeName<T>, operatorName: String, f: (T, T) -> Any) {
             BINARY_OP_TO_EVALUATOR[BinaryOp(operandType.name, operandType.name, operatorName)] = f as Function2<Any?, Any?, Any>
         }
 
@@ -105,17 +106,19 @@ class FoldConstantLowering(
 
     private fun buildIrConstant(startOffset: Int, endOffset: Int, type: IrType, v: Any?): IrConst<*> {
         val constType = type.makeNotNull()
-        return when {
-            constType.isInt() -> IrConstImpl.int(startOffset, endOffset, constType, (v as Number).toInt())
-            constType.isChar() -> IrConstImpl.char(startOffset, endOffset, constType, v as Char)
-            constType.isBoolean() -> IrConstImpl.boolean(startOffset, endOffset, constType, v as Boolean)
-            constType.isByte() -> IrConstImpl.byte(startOffset, endOffset, constType, (v as Number).toByte())
-            constType.isShort() -> IrConstImpl.short(startOffset, endOffset, constType, (v as Number).toShort())
-            constType.isLong() -> IrConstImpl.long(startOffset, endOffset, constType, (v as Number).toLong())
-            constType.isDouble() -> IrConstImpl.double(startOffset, endOffset, constType, (v as Number).toDouble())
-            constType.isFloat() -> fromFloatConstSafe(startOffset, endOffset, type, v)
-            constType.isString() -> IrConstImpl.string(startOffset, endOffset, constType, v as String)
-            else -> throw IllegalArgumentException("Unexpected IrCall return type")
+        return when (type.getPrimitiveType()) {
+            PrimitiveType.BOOLEAN -> IrConstImpl.boolean(startOffset, endOffset, constType, v as Boolean)
+            PrimitiveType.CHAR -> IrConstImpl.char(startOffset, endOffset, constType, v as Char)
+            PrimitiveType.BYTE -> IrConstImpl.byte(startOffset, endOffset, constType, (v as Number).toByte())
+            PrimitiveType.SHORT -> IrConstImpl.short(startOffset, endOffset, constType, (v as Number).toShort())
+            PrimitiveType.INT -> IrConstImpl.int(startOffset, endOffset, constType, (v as Number).toInt())
+            PrimitiveType.FLOAT -> fromFloatConstSafe(startOffset, endOffset, type, v)
+            PrimitiveType.LONG -> IrConstImpl.long(startOffset, endOffset, constType, (v as Number).toLong())
+            PrimitiveType.DOUBLE -> IrConstImpl.double(startOffset, endOffset, constType, (v as Number).toDouble())
+            else -> when {
+                constType.isString() -> IrConstImpl.string(startOffset, endOffset, constType, v as String)
+                else -> throw IllegalArgumentException("Unexpected IrCall return type")
+            }
         }
     }
 

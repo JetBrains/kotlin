@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.interpreter
 
+import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -66,23 +67,26 @@ internal fun Any?.toState(irType: IrType): State {
 }
 
 fun Any?.toIrConst(irType: IrType, startOffset: Int = UNDEFINED_OFFSET, endOffset: Int = UNDEFINED_OFFSET): IrConst<*> {
+    if (this == null) return IrConstImpl.constNull(startOffset, endOffset, irType)
+
     val constType = irType.makeNotNull()
-    return when {
-        this == null -> IrConstImpl.constNull(startOffset, endOffset, irType)
-        constType.isBoolean() -> IrConstImpl.boolean(startOffset, endOffset, constType, this as Boolean)
-        constType.isChar() -> IrConstImpl.char(startOffset, endOffset, constType, this as Char)
-        constType.isByte() -> IrConstImpl.byte(startOffset, endOffset, constType, (this as Number).toByte())
-        constType.isShort() -> IrConstImpl.short(startOffset, endOffset, constType, (this as Number).toShort())
-        constType.isInt() -> IrConstImpl.int(startOffset, endOffset, constType, (this as Number).toInt())
-        constType.isLong() -> IrConstImpl.long(startOffset, endOffset, constType, (this as Number).toLong())
-        constType.isString() -> IrConstImpl.string(startOffset, endOffset, constType, this as String)
-        constType.isFloat() -> IrConstImpl.float(startOffset, endOffset, constType, (this as Number).toFloat())
-        constType.isDouble() -> IrConstImpl.double(startOffset, endOffset, constType, (this as Number).toDouble())
-        constType.isUByte() -> IrConstImpl.byte(startOffset, endOffset, constType, (this as Number).toByte())
-        constType.isUShort() -> IrConstImpl.short(startOffset, endOffset, constType, (this as Number).toShort())
-        constType.isUInt() -> IrConstImpl.int(startOffset, endOffset, constType, (this as Number).toInt())
-        constType.isULong() -> IrConstImpl.long(startOffset, endOffset, constType, (this as Number).toLong())
-        else -> throw UnsupportedOperationException("Unsupported const element type ${constType.render()}")
+    return when (irType.getPrimitiveType()) {
+        PrimitiveType.BOOLEAN -> IrConstImpl.boolean(startOffset, endOffset, constType, this as Boolean)
+        PrimitiveType.CHAR -> IrConstImpl.char(startOffset, endOffset, constType, this as Char)
+        PrimitiveType.BYTE -> IrConstImpl.byte(startOffset, endOffset, constType, (this as Number).toByte())
+        PrimitiveType.SHORT -> IrConstImpl.short(startOffset, endOffset, constType, (this as Number).toShort())
+        PrimitiveType.INT -> IrConstImpl.int(startOffset, endOffset, constType, (this as Number).toInt())
+        PrimitiveType.FLOAT -> IrConstImpl.float(startOffset, endOffset, constType, (this as Number).toFloat())
+        PrimitiveType.LONG -> IrConstImpl.long(startOffset, endOffset, constType, (this as Number).toLong())
+        PrimitiveType.DOUBLE -> IrConstImpl.double(startOffset, endOffset, constType, (this as Number).toDouble())
+        else -> when {
+            constType.isString() -> IrConstImpl.string(startOffset, endOffset, constType, this as String)
+            constType.isUByte() -> IrConstImpl.byte(startOffset, endOffset, constType, (this as Number).toByte())
+            constType.isUShort() -> IrConstImpl.short(startOffset, endOffset, constType, (this as Number).toShort())
+            constType.isUInt() -> IrConstImpl.int(startOffset, endOffset, constType, (this as Number).toInt())
+            constType.isULong() -> IrConstImpl.long(startOffset, endOffset, constType, (this as Number).toLong())
+            else -> throw UnsupportedOperationException("Unsupported const element type ${constType.render()}")
+        }
     }
 }
 
@@ -109,20 +113,21 @@ internal fun IrAnnotationContainer.getEvaluateIntrinsicValue(): String? {
     return (this.getAnnotation(evaluateIntrinsicAnnotation).getValueArgument(0) as IrConst<*>).value.toString()
 }
 
-internal fun getPrimitiveClass(irType: IrType, asObject: Boolean = false): Class<*>? {
-    return when {
-        irType.isBoolean() -> if (asObject) Boolean::class.javaObjectType else Boolean::class.java
-        irType.isChar() -> if (asObject) Char::class.javaObjectType else Char::class.java
-        irType.isByte() -> if (asObject) Byte::class.javaObjectType else Byte::class.java
-        irType.isShort() -> if (asObject) Short::class.javaObjectType else Short::class.java
-        irType.isInt() -> if (asObject) Int::class.javaObjectType else Int::class.java
-        irType.isLong() -> if (asObject) Long::class.javaObjectType else Long::class.java
-        irType.isString() -> if (asObject) String::class.javaObjectType else String::class.java
-        irType.isFloat() -> if (asObject) Float::class.javaObjectType else Float::class.java
-        irType.isDouble() -> if (asObject) Double::class.javaObjectType else Double::class.java
-        else -> null
+internal fun getPrimitiveClass(irType: IrType, asObject: Boolean = false): Class<*>? =
+    when (irType.getPrimitiveType()) {
+        PrimitiveType.BOOLEAN -> if (asObject) Boolean::class.javaObjectType else Boolean::class.java
+        PrimitiveType.CHAR -> if (asObject) Char::class.javaObjectType else Char::class.java
+        PrimitiveType.BYTE -> if (asObject) Byte::class.javaObjectType else Byte::class.java
+        PrimitiveType.SHORT -> if (asObject) Short::class.javaObjectType else Short::class.java
+        PrimitiveType.INT -> if (asObject) Int::class.javaObjectType else Int::class.java
+        PrimitiveType.FLOAT -> if (asObject) Float::class.javaObjectType else Float::class.java
+        PrimitiveType.LONG -> if (asObject) Long::class.javaObjectType else Long::class.java
+        PrimitiveType.DOUBLE -> if (asObject) Double::class.javaObjectType else Double::class.java
+        else -> when {
+            irType.isString() -> String::class.java
+            else -> null
+        }
     }
-}
 
 internal fun IrFunction.getArgsForMethodInvocation(args: List<Variable>): List<Any?> {
     val argsValues = args.map {

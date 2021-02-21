@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.deepCopyWithVariables
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.backend.common.lower.irThrow
+import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -357,17 +358,19 @@ open class SerializerIrGenerator(
     private fun IrBuilderWithScope.defaultValueAndType(prop: SerializableProperty): Pair<IrExpression, IrType> {
         val kType = prop.descriptor.returnType!!
         val T = kType.toIrType()
-        val defaultPrimitive: IrExpression? = when {
-            T.isInt() -> IrConstImpl.int(startOffset, endOffset, T, 0)
-            T.isBoolean() -> IrConstImpl.boolean(startOffset, endOffset, T, false)
-            T.isLong() -> IrConstImpl.long(startOffset, endOffset, T, 0)
-            T.isDouble() -> IrConstImpl.double(startOffset, endOffset, T, 0.0)
-            T.isFloat() -> IrConstImpl.float(startOffset, endOffset, T, 0.0f)
-            T.isChar() -> IrConstImpl.char(startOffset, endOffset, T, 0.toChar())
-            T.isByte() -> IrConstImpl.byte(startOffset, endOffset, T, 0)
-            T.isShort() -> IrConstImpl.short(startOffset, endOffset, T, 0)
-            else -> null
-        }
+        val defaultPrimitive: IrExpression? =
+            if (T.isMarkedNullable()) null
+            else when (T.getPrimitiveType()) {
+                PrimitiveType.BOOLEAN -> IrConstImpl.boolean(startOffset, endOffset, T, false)
+                PrimitiveType.CHAR -> IrConstImpl.char(startOffset, endOffset, T, 0.toChar())
+                PrimitiveType.BYTE -> IrConstImpl.byte(startOffset, endOffset, T, 0)
+                PrimitiveType.SHORT -> IrConstImpl.short(startOffset, endOffset, T, 0)
+                PrimitiveType.INT -> IrConstImpl.int(startOffset, endOffset, T, 0)
+                PrimitiveType.FLOAT -> IrConstImpl.float(startOffset, endOffset, T, 0.0f)
+                PrimitiveType.LONG -> IrConstImpl.long(startOffset, endOffset, T, 0)
+                PrimitiveType.DOUBLE -> IrConstImpl.double(startOffset, endOffset, T, 0.0)
+                else -> null
+            }
         return if (defaultPrimitive == null)
             irNull(compilerContext.irBuiltIns.anyNType) to (compilerContext.irBuiltIns.anyNType)
         else
