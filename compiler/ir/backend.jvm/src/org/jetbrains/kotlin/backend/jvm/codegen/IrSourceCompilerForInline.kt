@@ -9,6 +9,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.backend.common.ir.ir2string
+import org.jetbrains.kotlin.backend.jvm.ir.getKtFile
 import org.jetbrains.kotlin.codegen.BaseExpressionCodegen
 import org.jetbrains.kotlin.codegen.OwnerKind
 import org.jetbrains.kotlin.codegen.inline.*
@@ -32,7 +33,8 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.doNotAnalyze
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.SUSPENSION_POINT_INSIDE_MONITOR
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
-import org.jetbrains.org.objectweb.asm.*
+import org.jetbrains.org.objectweb.asm.Label
+import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.commons.Method
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
@@ -49,7 +51,7 @@ class IrSourceCompilerForInline(
         get() = object : LookupLocation {
             override val location: LocationInfo?
                 get() {
-                    val ktFile = codegen.classCodegen.context.psiSourceManager.getKtFile(codegen.irFunction.fileParent)
+                    val ktFile = codegen.irFunction.fileParent.getKtFile()
                         ?.takeUnless { it.doNotAnalyze != null } ?: return null
 
                     return object : LocationInfo {
@@ -68,7 +70,7 @@ class IrSourceCompilerForInline(
         get() = ir2string(callElement)
 
     override val callsiteFile: PsiFile?
-        get() = codegen.context.psiSourceManager.getKtFile(codegen.irFunction.fileParent)
+        get() = codegen.irFunction.fileParent.getKtFile()
 
     override val contextKind: OwnerKind
         get() = when (val parent = callElement.symbol.owner.parent) {

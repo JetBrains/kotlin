@@ -89,13 +89,12 @@ internal val DeclarationDescriptorWithSource.psiElement: PsiElement?
     get() = (source as? PsiSourceElement)?.psi
 
 fun JvmBackendContext.getSourceMapper(declaration: IrClass): SourceMapper {
-    val sourceManager = this.psiSourceManager
-    val fileEntry = sourceManager.getFileEntry(declaration.fileParent)
+    val fileEntry = declaration.fileParent.fileEntry
     // NOTE: apparently inliner requires the source range to cover the
     //       whole file the class is declared in rather than the class only.
     val endLineNumber = when (fileEntry) {
         is MultifileFacadeFileEntry -> 0
-        else -> fileEntry?.getSourceRangeInfo(0, fileEntry.maxOffset)?.endLineNumber ?: 0
+        else -> fileEntry.getSourceRangeInfo(0, fileEntry.maxOffset).endLineNumber
     }
     val sourceFileName = when (fileEntry) {
         is MultifileFacadeFileEntry -> fileEntry.partFiles.singleOrNull()?.name

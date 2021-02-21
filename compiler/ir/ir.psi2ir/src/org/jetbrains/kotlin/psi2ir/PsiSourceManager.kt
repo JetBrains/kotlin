@@ -20,17 +20,15 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.SourceManager
+import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.SourceRangeInfo
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.util.fileOrNull
-import org.jetbrains.kotlin.psi.KtFile
-import java.util.*
 import kotlin.reflect.KClass
 
-class PsiSourceManager : SourceManager {
-    class PsiFileEntry(psiFile: PsiFile) : SourceManager.FileEntry {
+object PsiSourceManager {
+    class PsiFileEntry(val psiFile: PsiFile) : IrFileEntry {
         private val psiFileName = psiFile.virtualFile?.path ?: psiFile.name
 
         override val maxOffset: Int
@@ -87,41 +85,13 @@ class PsiSourceManager : SourceManager {
             }
     }
 
-    private val fileEntriesByKtFile = HashMap<KtFile, PsiFileEntry>()
-    private val fileEntriesByIrFile = HashMap<IrFile, PsiFileEntry>()
-    private val ktFileByFileEntry = HashMap<PsiFileEntry, KtFile>()
-
-    private fun createFileEntry(ktFile: KtFile): PsiFileEntry {
-        if (ktFile in fileEntriesByKtFile) error("PsiFileEntry is already created for $ktFile")
-        val newEntry = PsiFileEntry(ktFile)
-        fileEntriesByKtFile[ktFile] = newEntry
-        ktFileByFileEntry[newEntry] = ktFile
-        return newEntry
-    }
-
-    fun putFileEntry(irFile: IrFile, fileEntry: PsiFileEntry) {
-        fileEntriesByIrFile[irFile] = fileEntry
-    }
-
-    fun getOrCreateFileEntry(ktFile: KtFile): PsiFileEntry =
-        fileEntriesByKtFile.getOrElse(ktFile) { createFileEntry(ktFile) }
-
-    fun getKtFile(fileEntry: PsiFileEntry): KtFile? =
-        ktFileByFileEntry[fileEntry]
-
-    fun getKtFile(irFile: IrFile): KtFile? =
-        (irFile.fileEntry as? PsiFileEntry)?.let { ktFileByFileEntry[it] }
-
-    override fun getFileEntry(irFile: IrFile): SourceManager.FileEntry? =
-        fileEntriesByIrFile[irFile] ?: irFile.fileEntry
-
     fun <E : PsiElement> findPsiElement(irElement: IrElement, irFile: IrFile, psiElementClass: KClass<E>): E? {
-        val psiFileEntry = fileEntriesByIrFile[irFile] ?: return null
+        val psiFileEntry = irFile.fileEntry as? PsiFileEntry ?: return null
         return psiFileEntry.findPsiElement(irElement, psiElementClass)
     }
 
     fun findPsiElement(irElement: IrElement, irFile: IrFile): PsiElement? {
-        val psiFileEntry = fileEntriesByIrFile[irFile] ?: return null
+        val psiFileEntry = irFile.fileEntry as? PsiFileEntry ?: return null
         return psiFileEntry.findPsiElement(irElement)
     }
 

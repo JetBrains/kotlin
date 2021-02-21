@@ -10,7 +10,7 @@ import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.reinterpret
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.ir.SourceManager.FileEntry
+import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.types.IrType
@@ -95,7 +95,7 @@ internal class DebugInfo internal constructor(override val context: Context):Con
  * File entry starts offsets from zero while dwarf number lines/column starting from 1.
  */
 private val NO_SOURCE_FILE = "no source file"
-private fun FileEntry.location(offset: Int, offsetToNumber: (Int) -> Int): Int {
+private fun IrFileEntry.location(offset: Int, offsetToNumber: (Int) -> Int): Int {
     assert(offset != UNDEFINED_OFFSET)
     // Part "name.isEmpty() || name == NO_SOURCE_FILE" is an awful hack, @minamoto, please fix properly.
     if (offset == SYNTHETIC_OFFSET || name.isEmpty() || name == NO_SOURCE_FILE) return 1
@@ -105,9 +105,9 @@ private fun FileEntry.location(offset: Int, offsetToNumber: (Int) -> Int): Int {
     return result
 }
 
-internal fun FileEntry.line(offset: Int) = location(offset, this::getLineNumber)
+internal fun IrFileEntry.line(offset: Int) = location(offset, this::getLineNumber)
 
-internal fun FileEntry.column(offset: Int) = location(offset, this::getColumnNumber)
+internal fun IrFileEntry.column(offset: Int) = location(offset, this::getColumnNumber)
 
 internal data class FileAndFolder(val file: String, val folder: String) {
     companion object {

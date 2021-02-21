@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.backend.common.ir.BuiltinSymbolsBase
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen
+import org.jetbrains.kotlin.backend.jvm.ir.getKtFile
 import org.jetbrains.kotlin.backend.jvm.lower.MultifileFacadeFileEntry
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.codegen.CodegenFactory
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrLinker
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmManglerDesc
 import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
@@ -35,7 +37,6 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
-import org.jetbrains.kotlin.psi2ir.PsiSourceManager
 import org.jetbrains.kotlin.psi2ir.generators.DeclarationStubGeneratorImpl
 import org.jetbrains.kotlin.psi2ir.generators.generateTypicalIrProviderList
 import org.jetbrains.kotlin.resolve.CleanableBindingContext
@@ -45,7 +46,6 @@ class JvmIrCodegenFactory(private val phaseConfig: PhaseConfig) : CodegenFactory
         val state: GenerationState,
         val irModuleFragment: IrModuleFragment,
         val symbolTable: SymbolTable,
-        val sourceManager: PsiSourceManager,
         val phaseConfig: PhaseConfig,
         val irProviders: List<IrProvider>,
         val extensions: JvmGeneratorExtensions,
@@ -152,13 +152,11 @@ class JvmIrCodegenFactory(private val phaseConfig: PhaseConfig) : CodegenFactory
             state,
             irModuleFragment,
             symbolTable,
-            psi2irContext.sourceManager,
             phaseConfig,
             irProviders,
             extensions,
             JvmBackendExtension.Default,
-            {},
-        )
+        ) {}
     }
 
     private fun ModuleDescriptor.collectAllDependencyModulesTransitively(): List<ModuleDescriptor> {
@@ -173,10 +171,9 @@ class JvmIrCodegenFactory(private val phaseConfig: PhaseConfig) : CodegenFactory
     }
 
     fun doGenerateFilesInternal(input: JvmIrBackendInput) {
-        val (state, irModuleFragment, symbolTable, sourceManager, phaseConfig, irProviders, extensions, backendExtension, notifyCodegenStart) = input
+        val (state, irModuleFragment, symbolTable, phaseConfig, irProviders, extensions, backendExtension, notifyCodegenStart) = input
         val context = JvmBackendContext(
-            state, sourceManager, irModuleFragment.irBuiltins, irModuleFragment,
-            symbolTable, phaseConfig, extensions, backendExtension
+            state, irModuleFragment.irBuiltins, irModuleFragment, symbolTable, phaseConfig, extensions, backendExtension
         )
         /* JvmBackendContext creates new unbound symbols, have to resolve them. */
         ExternalDependenciesGenerator(symbolTable, irProviders).generateUnboundSymbolsAsDependencies()
@@ -185,7 +182,7 @@ class JvmIrCodegenFactory(private val phaseConfig: PhaseConfig) : CodegenFactory
             context.typeMapper.mapType(context.referenceClass(descriptor).defaultType)
         }
 
-        context.state.factory.registerSourceFiles(irModuleFragment.files.map(context.psiSourceManager::getKtFile))
+        context.state.factory.registerSourceFiles(irModuleFragment.files.map(IrFile::getKtFile))
 
         JvmLower(context).lower(irModuleFragment)
 
@@ -220,14 +217,15 @@ class JvmIrCodegenFactory(private val phaseConfig: PhaseConfig) : CodegenFactory
         state: GenerationState,
         irModuleFragment: IrModuleFragment,
         symbolTable: SymbolTable,
-        sourceManager: PsiSourceManager,
         extensions: JvmGeneratorExtensions,
         backendExtension: JvmBackendExtension,
         notifyCodegenStart: () -> Unit
     ) {
         val irProviders = configureBuiltInsAndGenerateIrProvidersInFrontendIRMode(irModuleFragment, symbolTable, extensions)
         doGenerateFilesInternal(
-            JvmIrBackendInput(state, irModuleFragment, symbolTable, sourceManager, phaseConfig, irProviders, extensions, backendExtension, notifyCodegenStart)
+            JvmIrBackendInput(
+                state, irModuleFragment, symbolTable, phaseConfig, irProviders, extensions, backendExtension, notifyCodegenStart
+            )
         )
     }
 

@@ -11,7 +11,10 @@ import org.jetbrains.kotlin.backend.common.Mapping
 import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.lower.irThrow
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
-import org.jetbrains.kotlin.backend.jvm.codegen.*
+import org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen
+import org.jetbrains.kotlin.backend.jvm.codegen.IrTypeMapper
+import org.jetbrains.kotlin.backend.jvm.codegen.MethodSignatureMapper
+import org.jetbrains.kotlin.backend.jvm.codegen.createFakeContinuation
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmSharedVariablesManager
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
 import org.jetbrains.kotlin.backend.jvm.lower.BridgeLowering
@@ -36,14 +39,12 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi2ir.PsiErrorBuilder
-import org.jetbrains.kotlin.psi2ir.PsiSourceManager
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.org.objectweb.asm.Type
 import java.util.concurrent.ConcurrentHashMap
 
 class JvmBackendContext(
     val state: GenerationState,
-    val psiSourceManager: PsiSourceManager,
     override val irBuiltIns: IrBuiltIns,
     irModuleFragment: IrModuleFragment,
     private val symbolTable: SymbolTable,
@@ -69,7 +70,7 @@ class JvmBackendContext(
 
     override val mapping: Mapping = DefaultMapping()
 
-    val psiErrorBuilder = PsiErrorBuilder(psiSourceManager, state.diagnostics)
+    val psiErrorBuilder = PsiErrorBuilder(state.diagnostics)
 
     override val ir = JvmIr(irModuleFragment, this.symbolTable)
 
@@ -158,14 +159,6 @@ class JvmBackendContext(
         classSymbolMap: MutableMap<IrClassSymbol, IrClassSymbol>,
         functionSymbolMap: MutableMap<IrSimpleFunctionSymbol, IrSimpleFunctionSymbol>
     ) {
-        for ((oldFileSymbol, newFileSymbol) in fileSymbolMap) {
-            val psiFileEntry = psiSourceManager.getFileEntry(oldFileSymbol.owner) as? PsiSourceManager.PsiFileEntry ?: continue
-            psiSourceManager.putFileEntry(
-                newFileSymbol.owner,
-                psiFileEntry
-            )
-        }
-
         val oldClassesWithNameOverride = classNameOverride.keys.toList()
         for (klass in oldClassesWithNameOverride) {
             classSymbolMap[klass.symbol]?.let { newSymbol ->

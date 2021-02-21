@@ -13,20 +13,16 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.util.render
 import kotlin.reflect.KClass
 
-class PsiErrorBuilder(
-    private val psiSourceManager: PsiSourceManager,
-    private val diagnosticSink: DiagnosticSink
-) {
-
+class PsiErrorBuilder(private val diagnosticSink: DiagnosticSink) {
     fun <E : PsiElement> at(irDeclaration: IrDeclaration, psiElementClass: KClass<E>): Location<E> =
         Location(
-            psiSourceManager.findPsiElement(irDeclaration, psiElementClass)
+            PsiSourceManager.findPsiElement(irDeclaration, psiElementClass)
                 ?: throw AssertionError("No ${psiElementClass.simpleName} found for '${irDeclaration.render()}'")
         )
 
     fun at(irDeclaration: IrDeclaration): Location<PsiElement> =
         Location(
-            psiSourceManager.findPsiElement(irDeclaration)
+            PsiSourceManager.findPsiElement(irDeclaration)
                 ?: throw AssertionError("No PsiElement found for '${irDeclaration.render()}'")
         )
 
@@ -34,30 +30,29 @@ class PsiErrorBuilder(
 
     fun <E : PsiElement> at(irElement: IrElement, irDeclaration: IrDeclaration, psiElementClass: KClass<E>): Location<E> =
         Location(
-            psiSourceManager.findPsiElement(irElement, irDeclaration, psiElementClass)
+            PsiSourceManager.findPsiElement(irElement, irDeclaration, psiElementClass)
                 ?: throw AssertionError("No ${psiElementClass.simpleName} found for '${irElement.render()}'")
         )
 
     fun at(irElement: IrElement, irDeclaration: IrDeclaration): Location<PsiElement> =
         Location(
-            psiSourceManager.findPsiElement(irElement, irDeclaration)
+            PsiSourceManager.findPsiElement(irElement, irDeclaration)
                 ?: throw AssertionError("No PsiElement found for '${irElement.render()}'")
         )
 
     fun <E : PsiElement> at(irElement: IrElement, irFile: IrFile, psiElementClass: KClass<E>): Location<E> =
         Location(
-            psiSourceManager.findPsiElement(irElement, irFile, psiElementClass)
+            PsiSourceManager.findPsiElement(irElement, irFile, psiElementClass)
                 ?: throw AssertionError("No ${psiElementClass.simpleName} found for '${irElement.render()}'")
         )
 
     fun at(irElement: IrElement, irFile: IrFile): Location<PsiElement> =
         Location(
-            psiSourceManager.findPsiElement(irElement, irFile)
+            PsiSourceManager.findPsiElement(irElement, irFile)
                 ?: throw AssertionError("No PsiElement found for '${irElement.render()}'")
         )
 
     inner class Location<E : PsiElement>(private val psiElement: E) {
-
         fun report(diagnosticFactory: DiagnosticFactory0<E>) {
             diagnosticSink.report(diagnosticFactory.on(psiElement))
         }

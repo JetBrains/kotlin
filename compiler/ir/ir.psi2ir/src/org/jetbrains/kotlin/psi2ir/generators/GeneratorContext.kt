@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.ir.util.ConstantValueGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
-import org.jetbrains.kotlin.psi2ir.PsiSourceManager
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
@@ -33,8 +32,6 @@ class GeneratorContext(
     override val irBuiltIns: IrBuiltIns
 ) : IrGeneratorContext {
     internal val callToSubstitutedDescriptorMap = mutableMapOf<IrDeclarationReference, CallableDescriptor>()
-
-    val sourceManager = PsiSourceManager()
 
     // TODO: inject a correct StorageManager instance, or store NotFoundClasses inside ModuleDescriptor
     val reflectionTypes = ReflectionTypes(moduleDescriptor, NotFoundClasses(LockBasedStorageManager.NO_LOCKS, moduleDescriptor))

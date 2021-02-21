@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.psi2ir.generators.generateTypicalIrProviderList
 
 class Fir2IrConverter(
     private val moduleDescriptor: FirModuleDescriptor,
-    private val sourceManager: PsiSourceManager,
     private val components: Fir2IrComponents
 ) : Fir2IrComponents by components {
 
@@ -58,7 +57,7 @@ class Fir2IrConverter(
 
     fun registerFileAndClasses(file: FirFile): IrFile {
         val irFile = IrFileImpl(
-            sourceManager.getOrCreateFileEntry(file.psi as KtFile),
+            PsiSourceManager.PsiFileEntry(file.psi as KtFile),
             moduleDescriptor.getPackage(file.packageFqName).fragments.first()
         )
         declarationStorage.registerFile(file, irFile)
@@ -265,11 +264,10 @@ class Fir2IrConverter(
                 TypeTranslatorImpl(symbolTable, languageVersionSettings, moduleDescriptor, extensions = generatorExtensions)
             val irBuiltIns = IrBuiltIns(moduleDescriptor.builtIns, typeTranslator, symbolTable)
             FirBuiltinSymbols(irBuiltIns, moduleDescriptor.builtIns, symbolTable)
-            val sourceManager = PsiSourceManager()
             val components = Fir2IrComponentsStorage(session, scopeSession, symbolTable, irBuiltIns, irFactory, mangler)
             val conversionScope = Fir2IrConversionScope()
             val classifierStorage = Fir2IrClassifierStorage(components)
-            val converter = Fir2IrConverter(moduleDescriptor, sourceManager, components)
+            val converter = Fir2IrConverter(moduleDescriptor, components)
             val fir2irVisitor = Fir2IrVisitor(converter, components, conversionScope)
             val declarationStorage = Fir2IrDeclarationStorage(components, moduleDescriptor)
             val typeConverter = Fir2IrTypeConverter(components)
@@ -308,9 +306,7 @@ class Fir2IrConverter(
             }
 
             for (firFile in firFiles) {
-                val irFile = firFile.accept(fir2irVisitor, null) as IrFile
-                val fileEntry = sourceManager.getOrCreateFileEntry(firFile.psi as KtFile)
-                sourceManager.putFileEntry(irFile, fileEntry)
+                firFile.accept(fir2irVisitor, null)
             }
 
             externalDependenciesGenerator.generateUnboundSymbolsAsDependencies()
@@ -319,7 +315,7 @@ class Fir2IrConverter(
 
             evaluateConstants(irModuleFragment)
 
-            return Fir2IrResult(irModuleFragment, symbolTable, sourceManager, components)
+            return Fir2IrResult(irModuleFragment, symbolTable, components)
         }
     }
 }

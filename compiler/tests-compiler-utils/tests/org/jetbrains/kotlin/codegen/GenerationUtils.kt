@@ -109,7 +109,7 @@ object GenerationUtils {
         // TODO: add running checkers and check that it's safe to compile
         val firAnalyzerFacade = FirAnalyzerFacade(session, configuration.languageVersionSettings, files)
         val extensions = JvmGeneratorExtensions()
-        val (moduleFragment, symbolTable, sourceManager, components) = firAnalyzerFacade.convertToIr(extensions)
+        val (moduleFragment, symbolTable, components) = firAnalyzerFacade.convertToIr(extensions)
         val dummyBindingContext = NoScopeRecordCliBindingTrace().bindingContext
 
         val codegenFactory = JvmIrCodegenFactory(configuration.get(CLIConfigurationKeys.PHASE_CONFIG) ?: PhaseConfig(jvmPhases))
@@ -131,8 +131,8 @@ object GenerationUtils {
 
         generationState.beforeCompile()
         codegenFactory.generateModuleInFrontendIRMode(
-            generationState, moduleFragment, symbolTable, sourceManager, extensions, FirJvmBackendExtension(session, components), {},
-        )
+            generationState, moduleFragment, symbolTable, extensions, FirJvmBackendExtension(session, components),
+        ) {}
 
         generationState.factory.done()
         return generationState

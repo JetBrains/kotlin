@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.backend.common.serialization
 import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.common.serialization.encodings.*
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.*
@@ -1224,7 +1224,7 @@ open class IrFileSerializer(
 
 // ---------- Top level ------------------------------------------------------
 
-    private fun serializeFileEntry(entry: SourceManager.FileEntry): ProtoFileEntry = ProtoFileEntry.newBuilder()
+    private fun serializeFileEntry(entry: IrFileEntry): ProtoFileEntry = ProtoFileEntry.newBuilder()
         .setName(entry.name)
         .addAllLineStartOffsets(entry.lineStartOffsets.asIterable())
         .build()

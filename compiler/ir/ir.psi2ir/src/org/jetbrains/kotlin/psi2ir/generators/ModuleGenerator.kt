@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi2ir.PsiSourceManager
 import org.jetbrains.kotlin.psi2ir.transformations.insertImplicitCasts
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.descriptors.findPackageFragmentForFile
@@ -101,12 +102,10 @@ class ModuleGenerator(
     }
 
     private fun createEmptyIrFile(ktFile: KtFile): IrFileImpl {
-        val fileEntry = context.sourceManager.getOrCreateFileEntry(ktFile)
+        val fileEntry = PsiSourceManager.PsiFileEntry(ktFile)
         val packageFragmentDescriptor = context.moduleDescriptor.findPackageFragmentForFile(ktFile)!!
-        val irFile = IrFileImpl(fileEntry, packageFragmentDescriptor).apply {
+        return IrFileImpl(fileEntry, packageFragmentDescriptor).apply {
             metadata = DescriptorMetadataSource.File(CodegenUtil.getMemberDescriptorsToGenerate(ktFile, context.bindingContext))
         }
-        context.sourceManager.putFileEntry(irFile, fileEntry)
-        return irFile
     }
 }

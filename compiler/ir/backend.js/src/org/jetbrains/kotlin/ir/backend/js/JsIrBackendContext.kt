@@ -77,7 +77,7 @@ class JsIrBackendContext(
     private val internalPackageFragmentDescriptor = EmptyPackageFragmentDescriptor(builtIns.builtInsModule, FqName("kotlin.js.internal"))
 
     private fun syntheticFile(name: String, module: IrModuleFragment): IrFile {
-        return IrFileImpl(object : SourceManager.FileEntry {
+        return IrFileImpl(object : IrFileEntry {
             override val name = "<$name>"
             override val maxOffset = UNDEFINED_OFFSET
 

@@ -101,7 +101,7 @@ fun List<IrConstructorCall>.hasAnnotation(fqName: FqName): Boolean =
 fun List<IrConstructorCall>.findAnnotation(fqName: FqName): IrConstructorCall? =
     firstOrNull { it.annotationClass.hasEqualFqName(fqName) }
 
-val IrDeclaration.fileEntry: SourceManager.FileEntry
+val IrDeclaration.fileEntry: IrFileEntry
     get() = parent.let {
         when (it) {
             is IrFile -> it.fileEntry
@@ -172,7 +172,7 @@ val File.lineStartOffsets: IntArray
         return buffer.toIntArray()
     }
 
-val SourceManager.FileEntry.lineStartOffsets
+val IrFileEntry.lineStartOffsets
     get() = File(name).let {
         if (it.exists() && it.isFile) it.lineStartOffsets else IntArray(0)
     }
@@ -180,7 +180,7 @@ val SourceManager.FileEntry.lineStartOffsets
 class NaiveSourceBasedFileEntryImpl(
     override val name: String,
     private val lineStartOffsets: IntArray = intArrayOf()
-) : SourceManager.FileEntry {
+) : IrFileEntry {
 
     private val MAX_SAVED_LINE_NUMBERS = 50
 

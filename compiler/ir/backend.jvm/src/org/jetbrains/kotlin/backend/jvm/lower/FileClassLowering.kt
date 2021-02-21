@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.PsiSourceManager
 import org.jetbrains.kotlin.resolve.inline.INLINE_ONLY_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
@@ -79,14 +80,10 @@ private class FileClassLowering(val context: JvmBackendContext) : FileLoweringPa
     private fun createFileClass(irFile: IrFile, fileClassMembers: List<IrDeclaration>): IrClass {
         val fileEntry = irFile.fileEntry
         val fileClassInfo = when (fileEntry) {
-            is PsiSourceManager.PsiFileEntry -> {
-                val ktFile = context.psiSourceManager.getKtFile(fileEntry)
-                    ?: throw AssertionError("Unexpected file entry: $fileEntry")
-                JvmFileClassUtil.getFileClassInfoNoResolve(ktFile)
-            }
-            is NaiveSourceBasedFileEntryImpl -> {
+            is PsiSourceManager.PsiFileEntry ->
+                JvmFileClassUtil.getFileClassInfoNoResolve(fileEntry.psiFile as KtFile)
+            is NaiveSourceBasedFileEntryImpl ->
                 JvmSimpleFileClassInfo(PackagePartClassUtils.getPackagePartFqName(irFile.fqName, fileEntry.name), false)
-            }
             else -> error("unknown kind of file entry: $fileEntry")
         }
         val isMultifilePart = fileClassInfo.withJvmMultifileClass

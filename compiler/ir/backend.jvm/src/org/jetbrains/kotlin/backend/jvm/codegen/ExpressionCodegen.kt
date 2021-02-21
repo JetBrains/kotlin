@@ -128,7 +128,7 @@ class ExpressionCodegen(
 
     val state = context.state
 
-    private val fileEntry = classCodegen.context.psiSourceManager.getFileEntry(irFunction.fileParent)
+    private val fileEntry = irFunction.fileParent.fileEntry
 
     override val visitor: InstructionAdapter
         get() = mv
@@ -163,21 +163,18 @@ class ExpressionCodegen(
 
     private fun markNewLinkedLabel() = linkedLabel().apply { mv.visitLabel(this) }
 
-    private fun getLineNumberForOffset(offset: Int): Int = fileEntry?.getLineNumber(offset)?.plus(1) ?: -1
+    private fun getLineNumberForOffset(offset: Int): Int = fileEntry.getLineNumber(offset) + 1
 
     private fun IrElement.markLineNumber(startOffset: Boolean) {
         if (noLineNumberScope) return
         val offset = if (startOffset) this.startOffset else endOffset
-        if (offset < 0) {
-            return
-        }
-        if (fileEntry != null) {
-            val lineNumber = getLineNumberForOffset(offset)
-            assert(lineNumber > 0)
-            if (lastLineNumber != lineNumber) {
-                lastLineNumber = lineNumber
-                mv.visitLineNumber(lineNumber, markNewLabel())
-            }
+        if (offset < 0) return
+
+        val lineNumber = getLineNumberForOffset(offset)
+        assert(lineNumber > 0)
+        if (lastLineNumber != lineNumber) {
+            lastLineNumber = lineNumber
+            mv.visitLineNumber(lineNumber, markNewLabel())
         }
     }
 

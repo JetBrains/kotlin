@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.ir.util
 
+import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -355,7 +355,7 @@ class DumpIrTreeVisitor(
 }
 
 class DumpTreeFromSourceLineVisitor(
-    val fileEntry: SourceManager.FileEntry,
+    val fileEntry: IrFileEntry,
     private val lineNumber: Int,
     out: Appendable,
     normalizeNames: Boolean = false

@@ -69,7 +69,7 @@ internal val generateMultifileFacadesPhase = makeCustomPhase<JvmBackendContext, 
 class MultifileFacadeFileEntry(
     private val className: JvmClassName,
     val partFiles: List<IrFile>
-) : SourceManager.FileEntry {
+) : IrFileEntry {
     override val name: String
         get() = "<multi-file facade $className>"
 

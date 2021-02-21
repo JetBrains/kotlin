@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.protobuf.MessageLite
+import org.jetbrains.kotlin.psi2ir.PsiSourceManager
 import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_RECORD_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_SYNTHETIC_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.annotations.TRANSIENT_ANNOTATION_FQ_NAME
@@ -250,7 +251,7 @@ class ClassCodegen private constructor(
         if (entry is MultifileFacadeFileEntry) {
             return entry.partFiles.flatMap { it.loadSourceFilesInfo() }
         }
-        return listOfNotNull(context.psiSourceManager.getFileEntry(this)?.let { File(it.name) })
+        return listOf(File(entry.name))
     }
 
     companion object {
@@ -462,7 +463,7 @@ class ClassCodegen private constructor(
 
     private val IrDeclaration.descriptorOrigin: JvmDeclarationOrigin
         get() {
-            val psiElement = context.psiSourceManager.findPsiElement(this)
+            val psiElement = PsiSourceManager.findPsiElement(this)
             // For declarations inside lambdas, produce a descriptor which refers back to the original function.
             // This is needed for plugins which check for lambdas inside of inline functions using the descriptor
             // contained in JvmDeclarationOrigin. This matches the behavior of the JVM backend.

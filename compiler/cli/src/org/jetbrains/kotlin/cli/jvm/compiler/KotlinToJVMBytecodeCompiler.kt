@@ -354,7 +354,7 @@ object KotlinToJVMBytecodeCompiler {
 
             performanceManager?.notifyIRTranslationStarted()
             val extensions = JvmGeneratorExtensions()
-            val (moduleFragment, symbolTable, sourceManager, components) = firAnalyzerFacade.convertToIr(extensions)
+            val (moduleFragment, symbolTable, components) = firAnalyzerFacade.convertToIr(extensions)
 
             performanceManager?.notifyIRTranslationFinished()
 
@@ -390,12 +390,11 @@ object KotlinToJVMBytecodeCompiler {
             performanceManager?.notifyIRLoweringStarted()
             generationState.beforeCompile()
             codegenFactory.generateModuleInFrontendIRMode(
-                generationState, moduleFragment, symbolTable, sourceManager, extensions, FirJvmBackendExtension(session, components),
-                {
-                    performanceManager?.notifyIRLoweringFinished()
-                    performanceManager?.notifyIRGenerationStarted()
-                }
-            )
+                generationState, moduleFragment, symbolTable, extensions, FirJvmBackendExtension(session, components)
+            ) {
+                performanceManager?.notifyIRLoweringFinished()
+                performanceManager?.notifyIRGenerationStarted()
+            }
             CodegenFactory.doCheckCancelled(generationState)
             generationState.factory.done()
 

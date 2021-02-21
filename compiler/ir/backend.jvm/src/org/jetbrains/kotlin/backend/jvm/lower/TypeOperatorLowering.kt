@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.fileParent
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
+import org.jetbrains.kotlin.backend.jvm.ir.getKtFile
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
@@ -447,8 +448,8 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
         return startOffset to endOffset
     }
 
-    private fun sourceViewFor(declaration: IrDeclaration) =
-        context.psiSourceManager.getKtFile(declaration.fileParent)!!.viewProvider.contents
+    private fun sourceViewFor(declaration: IrDeclaration): CharSequence =
+        declaration.fileParent.getKtFile()!!.viewProvider.contents
 
     private val throwTypeCastException: IrSimpleFunctionSymbol =
         if (context.state.unifiedNullChecks)

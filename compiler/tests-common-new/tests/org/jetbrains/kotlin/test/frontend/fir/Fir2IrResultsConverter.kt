@@ -42,7 +42,7 @@ class Fir2IrResultsConverter(
         inputArtifact: FirOutputArtifact
     ): IrBackendInput {
         val extensions = JvmGeneratorExtensions()
-        val (irModuleFragment, symbolTable, sourceManager, components) = inputArtifact.firAnalyzerFacade.convertToIr(extensions)
+        val (irModuleFragment, symbolTable, components) = inputArtifact.firAnalyzerFacade.convertToIr(extensions)
         val dummyBindingContext = NoScopeRecordCliBindingTrace().bindingContext
 
         val compilerConfigurationProvider = testServices.compilerConfigurationProvider
@@ -76,24 +76,18 @@ class Fir2IrResultsConverter(
         ).build()
 
         irModuleFragment.irBuiltins.functionFactory = IrFunctionFactory(irModuleFragment.irBuiltins, symbolTable)
-        val irProviders = codegenFactory.configureBuiltInsAndGenerateIrProvidersInFrontendIRMode(
-            irModuleFragment,
-            symbolTable,
-            extensions
-        )
+        val irProviders = codegenFactory.configureBuiltInsAndGenerateIrProvidersInFrontendIRMode(irModuleFragment, symbolTable, extensions)
 
         return IrBackendInput(
             JvmIrCodegenFactory.JvmIrBackendInput(
                 generationState,
                 irModuleFragment,
                 symbolTable,
-                sourceManager,
                 phaseConfig,
                 irProviders,
                 extensions,
                 FirJvmBackendExtension(inputArtifact.session, components),
-                {},
-            )
+            ) {}
         )
     }
 }
