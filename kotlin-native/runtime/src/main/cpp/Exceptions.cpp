@@ -208,7 +208,7 @@ void ThrowException(KRef exception) {
   PrintThrowable(exception);
   RuntimeCheck(false, "Exceptions unsupported");
 #else
-  throw ExceptionObjHolder(exception);
+  ExceptionObjHolder::Throw(exception);
 #endif
 }
 
@@ -252,6 +252,14 @@ RUNTIME_NORETURN void TerminateWithUnhandledException(KRef throwable) {
   });
 }
 
+ALWAYS_INLINE RUNTIME_NOTHROW OBJ_GETTER(Kotlin_getExceptionObject, void* holder) {
+#if !KONAN_NO_EXCEPTIONS
+    RETURN_OBJ(static_cast<ExceptionObjHolder*>(holder)->GetExceptionObject());
+#else
+    RETURN_OBJ(nullptr);
+#endif
+}
+
 #if !KONAN_NO_EXCEPTIONS
 
 namespace {
@@ -266,7 +274,7 @@ class TerminateHandler : private kotlin::Pinned {
         try {
           std::rethrow_exception(currentException);
         } catch (ExceptionObjHolder& e) {
-          processUnhandledKotlinException(e.obj());
+          processUnhandledKotlinException(e.GetExceptionObject());
           konan::abort();
         } catch (...) {
           // Not a Kotlin exception - call default handler

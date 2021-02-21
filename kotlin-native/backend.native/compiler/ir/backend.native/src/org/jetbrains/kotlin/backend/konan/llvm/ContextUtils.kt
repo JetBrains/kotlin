@@ -516,6 +516,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     val checkLifetimesConstraint = importRtFunction("CheckLifetimesConstraint")
     val freezeSubgraph = importRtFunction("FreezeSubgraph")
     val checkGlobalsAccessible = importRtFunction("CheckGlobalsAccessible")
+    val Kotlin_getExceptionObject = importRtFunction("Kotlin_getExceptionObject")
 
     val kRefSharedHolderInitLocal = importRtFunction("KRefSharedHolder_initLocal")
     val kRefSharedHolderInit = importRtFunction("KRefSharedHolder_init")

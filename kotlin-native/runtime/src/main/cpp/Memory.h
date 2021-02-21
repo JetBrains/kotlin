@@ -22,6 +22,7 @@
 #include "TypeInfo.h"
 #include "Atomic.h"
 #include "PointerBits.h"
+#include "Utils.hpp"
 
 typedef enum {
   // Must match to permTag() in Kotlin.
@@ -356,23 +357,16 @@ class ObjHolder {
    ObjHeader* obj_;
 };
 
-//! TODO Follow the Rule of Zero to prevent dangling on unintented copy ctor
 class ExceptionObjHolder {
- public:
-   explicit ExceptionObjHolder(const ObjHeader* obj) {
-     ::SetHeapRef(&obj_, obj);
-   }
+public:
+#if !KONAN_NO_EXCEPTIONS
+    static void Throw(ObjHeader* exception) RUNTIME_NORETURN;
 
-   ~ExceptionObjHolder() {
-     ZeroHeapRef(&obj_);
-   }
+    ObjHeader* GetExceptionObject() noexcept;
+#endif
 
-   ObjHeader* obj() { return obj_; }
-
-   const ObjHeader* obj() const { return obj_; }
-
- private:
-   ObjHeader* obj_;
+    // Exceptions are not on a hot path, so having virtual dispatch is fine.
+    virtual ~ExceptionObjHolder() = default;
 };
 
 #endif // RUNTIME_MEMORY_H

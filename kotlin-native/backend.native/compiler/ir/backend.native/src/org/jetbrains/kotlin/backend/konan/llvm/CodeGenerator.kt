@@ -862,14 +862,10 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         val beginCatch = context.llvm.cxaBeginCatchFunction
         val exceptionRawPtr = call(beginCatch, listOf(exceptionRecord))
 
-        // Pointer to KotlinException instance:
-        val exceptionPtrPtr = bitcast(codegen.kObjHeaderPtrPtr, exceptionRawPtr, "")
-
         // Pointer to Kotlin exception object:
-        // We do need a slot here, as otherwise exception instance could be freed by _cxa_end_catch.
-        val exceptionPtr = loadSlot(exceptionPtrPtr, true, "exception")
+        val exceptionPtr = call(context.llvm.Kotlin_getExceptionObject, listOf(exceptionRawPtr), Lifetime.GLOBAL)
 
-        // __cxa_end_catch performs some C++ cleanup, including calling `KotlinException` class destructor.
+        // __cxa_end_catch performs some C++ cleanup, including calling `ExceptionObjHolder` class destructor.
         val endCatch = context.llvm.cxaEndCatchFunction
         call(endCatch, listOf())
 

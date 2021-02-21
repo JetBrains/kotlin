@@ -38,6 +38,8 @@ RUNTIME_NORETURN void TerminateWithUnhandledException(KRef exception);
 
 void SetKonanTerminateHandler();
 
+RUNTIME_NOTHROW OBJ_GETTER(Kotlin_getExceptionObject, void* holder);
+
 // The functions below are implemented in Kotlin (at package kotlin.native.internal).
 
 // Throws null pointer exception. Context is evaluated from caller's address.

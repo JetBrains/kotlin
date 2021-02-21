@@ -461,7 +461,7 @@ private class ExportedElement(val kind: ElementKind,
                     "result", cfunction[0], Direction.KOTLIN_TO_C, builder)
             builder.append("  return $result;\n")
         }
-        builder.append("   } catch (ExceptionObjHolder& e) { TerminateWithUnhandledException(e.obj()); } \n")
+        builder.append("   } catch (ExceptionObjHolder& e) { TerminateWithUnhandledException(e.GetExceptionObject()); } \n")
 
         builder.append("}\n")
 
@@ -905,7 +905,6 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
         |#define RUNTIME_NORETURN __attribute__((noreturn))
         |
         |extern "C" {
-        |void UpdateHeapRef(KObjHeader**, const KObjHeader*) RUNTIME_NOTHROW;
         |void UpdateStackRef(KObjHeader**, const KObjHeader*) RUNTIME_NOTHROW;
         |KObjHeader* AllocInstance(const KTypeInfo*, KObjHeader**) RUNTIME_NOTHROW;
         |KObjHeader* DerefStablePointer(void*, KObjHeader**) RUNTIME_NOTHROW;
@@ -951,16 +950,10 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
         |};
         |
         |class ExceptionObjHolder {
-        | public:
-        |  explicit ExceptionObjHolder(const KObjHeader* obj): obj_(nullptr) {
-        |    ::UpdateHeapRef(&obj_, obj);
-        |  }
-        |  ~ExceptionObjHolder() {
-        |    UpdateHeapRef(&obj_, nullptr);
-        |  }
-        |  KObjHeader* obj() { return obj_; }
-        | private:
-        |  KObjHeader* obj_;
+        |public:
+        |    virtual ~ExceptionObjHolder() = default;
+        |
+        |    KObjHeader* GetExceptionObject() noexcept;
         |};
         |
         |static void DisposeStablePointerImpl(${prefix}_KNativePtr ptr) {

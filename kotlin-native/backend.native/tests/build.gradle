@@ -2545,6 +2545,16 @@ standaloneTest("exception_in_global_init") {
     outputChecker = { s -> s.contains("Uncaught Kotlin exception: kotlin.IllegalStateException: FAIL") && !s.contains("in kotlin main") }
 }
 
+task rethrow_exception(type: KonanLocalTest) {
+    enabled = (project.testTarget != 'wasm32') // Uses exceptions.
+    source = "runtime/exceptions/rethrow.kt"
+}
+
+task throw_from_catch(type: KonanLocalTest) {
+    enabled = (project.testTarget != 'wasm32') // Uses exceptions.
+    source = "runtime/exceptions/throw_from_catch.kt"
+}
+
 standaloneTest("runtime_math_exceptions") {
     enabled = (project.testTarget != 'wasm32')
     source = "stdlib_external/numbers/MathExceptionTest.kt"
