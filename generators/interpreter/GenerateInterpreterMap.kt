@@ -193,20 +193,15 @@ private fun getIrMethodSymbolByName(methodName: String): String {
 }
 
 private fun getIrBuiltIns(): IrBuiltIns {
-    val builtIns = DefaultBuiltIns.Instance
     val languageSettings = LanguageVersionSettingsImpl(LanguageVersion.KOTLIN_1_3, ApiVersion.KOTLIN_1_3)
 
-    val moduleDescriptor = ModuleDescriptorImpl(Name.special("<test-module>"), LockBasedStorageManager(""), builtIns)
+    val moduleDescriptor = ModuleDescriptorImpl(Name.special("<test-module>"), LockBasedStorageManager(""), DefaultBuiltIns.Instance)
     val signaturer = object : IdSignatureComposer {
         override fun composeSignature(descriptor: DeclarationDescriptor): IdSignature? = null
 
         override fun composeEnumEntrySignature(descriptor: ClassDescriptor): IdSignature? = null
     }
     val symbolTable = SymbolTable(signaturer, IrFactoryImpl)
-    val constantValueGenerator = ConstantValueGenerator(moduleDescriptor, symbolTable)
-    val typeTranslator = TypeTranslator(symbolTable, languageSettings, builtIns)
-    constantValueGenerator.typeTranslator = typeTranslator
-    typeTranslator.constantValueGenerator = constantValueGenerator
-
-    return IrBuiltIns(builtIns, typeTranslator, symbolTable)
+    val typeTranslator = TypeTranslator(symbolTable, languageSettings, moduleDescriptor)
+    return IrBuiltIns(moduleDescriptor.builtIns, typeTranslator, symbolTable)
 }

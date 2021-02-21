@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.util.ConstantValueGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.util.noUnboundLeft
@@ -53,10 +52,7 @@ class Psi2IrTranslator(
         symbolTable: SymbolTable,
         extensions: GeneratorExtensions = GeneratorExtensions()
     ): GeneratorContext {
-        val typeTranslator = TypeTranslator(symbolTable, languageVersionSettings, moduleDescriptor.builtIns, extensions = extensions)
-        val constantValueGenerator = ConstantValueGenerator(moduleDescriptor, symbolTable)
-        typeTranslator.constantValueGenerator = constantValueGenerator
-        constantValueGenerator.typeTranslator = typeTranslator
+        val typeTranslator = TypeTranslator(symbolTable, languageVersionSettings, moduleDescriptor, extensions = extensions)
         return GeneratorContext(
             configuration,
             moduleDescriptor,
@@ -65,7 +61,7 @@ class Psi2IrTranslator(
             symbolTable,
             extensions,
             typeTranslator,
-            constantValueGenerator,
+            typeTranslator.constantValueGenerator,
             IrBuiltIns(moduleDescriptor.builtIns, typeTranslator, symbolTable),
         )
     }

@@ -513,9 +513,7 @@ class GenerateIrRuntime {
         val mangler = JsManglerDesc
         val signaturer = IdSignatureDescriptor(mangler)
         val symbolTable = SymbolTable(signaturer, PersistentIrFactory())
-        val typeTranslator = TypeTranslator(symbolTable, languageVersionSettings, moduleDescriptor.builtIns).also {
-            it.constantValueGenerator = ConstantValueGenerator(moduleDescriptor, symbolTable)
-        }
+        val typeTranslator = TypeTranslator(symbolTable, languageVersionSettings, moduleDescriptor)
 
         val irBuiltIns = IrBuiltIns(moduleDescriptor.builtIns, typeTranslator, symbolTable)
         val functionFactory = IrFunctionFactory(irBuiltIns, symbolTable)
@@ -542,10 +540,7 @@ class GenerateIrRuntime {
         val mangler = JsManglerDesc
         val signaturer = IdSignatureDescriptor(mangler)
         val symbolTable = SymbolTable(signaturer, PersistentIrFactory())
-        val typeTranslator = TypeTranslator(symbolTable, languageVersionSettings, moduleDescriptor.builtIns).also {
-            it.constantValueGenerator = ConstantValueGenerator(moduleDescriptor, symbolTable)
-        }
-
+        val typeTranslator = TypeTranslator(symbolTable, languageVersionSettings, moduleDescriptor)
         val irBuiltIns = IrBuiltIns(moduleDescriptor.builtIns, typeTranslator, symbolTable)
 
         val functionFactory = IrFunctionFactory(irBuiltIns, symbolTable)

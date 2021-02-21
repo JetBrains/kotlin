@@ -52,23 +52,17 @@ class DeclarationStubGenerator(
             lazyTable.stubGenerator = if (value) this else null
         }
 
-    val typeTranslator =
+    val typeTranslator: TypeTranslator =
         TypeTranslator(
             lazyTable,
             languageVersionSettings,
-            moduleDescriptor.builtIns,
+            moduleDescriptor,
             { LazyScopedTypeParametersResolver(lazyTable) },
             true,
             extensions
         )
-    private val constantValueGenerator = ConstantValueGenerator(moduleDescriptor, lazyTable)
 
     private val facadeClassMap = mutableMapOf<DeserializedContainerSource, IrClass?>()
-
-    init {
-        typeTranslator.constantValueGenerator = constantValueGenerator
-        constantValueGenerator.typeTranslator = typeTranslator
-    }
 
     override fun getDeclaration(symbol: IrSymbol): IrDeclaration? {
         // Special case: generating field for an already generated property.

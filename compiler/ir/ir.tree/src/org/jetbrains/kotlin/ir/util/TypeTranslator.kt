@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir.util
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
@@ -30,18 +29,18 @@ import java.util.*
 class TypeTranslator(
     private val symbolTable: ReferenceSymbolTable,
     val languageVersionSettings: LanguageVersionSettings,
-    builtIns: KotlinBuiltIns,
+    moduleDescriptor: ModuleDescriptor,
     typeParametersResolverBuilder: () -> TypeParametersResolver = { ScopedTypeParametersResolver() },
     private val enterTableScope: Boolean = false,
     private val extensions: StubGeneratorExtensions = StubGeneratorExtensions.EMPTY
 ) {
+    val constantValueGenerator: ConstantValueGenerator = ConstantValueGenerator(moduleDescriptor, symbolTable, this)
 
     private val typeParametersResolver by threadLocal { typeParametersResolverBuilder() }
 
     private val erasureStack = Stack<PropertyDescriptor>()
 
-    private val typeApproximatorForNI = TypeApproximator(builtIns)
-    lateinit var constantValueGenerator: ConstantValueGenerator
+    private val typeApproximatorForNI = TypeApproximator(moduleDescriptor.builtIns)
 
     fun enterScope(irElement: IrTypeParametersContainer) {
         typeParametersResolver.enterTypeParameterScope(irElement)

@@ -260,14 +260,8 @@ fun loadIr(
             val mangler = JsManglerDesc
             val signaturer = IdSignatureDescriptor(mangler)
             val symbolTable = SymbolTable(signaturer, irFactory)
-            val constantValueGenerator = ConstantValueGenerator(moduleDescriptor, symbolTable)
-            val typeTranslator = TypeTranslator(
-                symbolTable,
-                depsDescriptors.compilerConfiguration.languageVersionSettings,
-                builtIns = moduleDescriptor.builtIns
-            )
-            typeTranslator.constantValueGenerator = constantValueGenerator
-            constantValueGenerator.typeTranslator = typeTranslator
+            val typeTranslator =
+                TypeTranslator(symbolTable, depsDescriptors.compilerConfiguration.languageVersionSettings, moduleDescriptor)
             val irBuiltIns = IrBuiltIns(moduleDescriptor.builtIns, typeTranslator, symbolTable)
             val functionFactory = IrFunctionFactory(irBuiltIns, symbolTable)
             val irLinker =

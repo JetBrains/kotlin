@@ -256,15 +256,7 @@ class Fir2IrConverter(
         ): Fir2IrResult {
             val moduleDescriptor = FirModuleDescriptor(session)
             val symbolTable = SymbolTable(signaturer, irFactory)
-            val constantValueGenerator = ConstantValueGenerator(moduleDescriptor, symbolTable)
-            val typeTranslator = TypeTranslator(
-                symbolTable,
-                languageVersionSettings,
-                moduleDescriptor.builtIns,
-                extensions = generatorExtensions
-            )
-            constantValueGenerator.typeTranslator = typeTranslator
-            typeTranslator.constantValueGenerator = constantValueGenerator
+            val typeTranslator = TypeTranslator(symbolTable, languageVersionSettings, moduleDescriptor, extensions = generatorExtensions)
             val irBuiltIns = IrBuiltIns(moduleDescriptor.builtIns, typeTranslator, symbolTable)
             FirBuiltinSymbols(irBuiltIns, moduleDescriptor.builtIns, symbolTable)
             val sourceManager = PsiSourceManager()

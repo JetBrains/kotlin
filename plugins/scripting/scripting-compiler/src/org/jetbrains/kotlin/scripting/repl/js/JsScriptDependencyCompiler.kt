@@ -41,10 +41,7 @@ class JsScriptDependencyCompiler(
             it.initialize(PackageFragmentProvider.Empty)
         }
 
-        val typeTranslator = TypeTranslator(symbolTable, languageVersionSettings, moduleDescriptor.builtIns).also {
-            it.constantValueGenerator = ConstantValueGenerator(moduleDescriptor, symbolTable)
-        }
-
+        val typeTranslator = TypeTranslator(symbolTable, languageVersionSettings, moduleDescriptor)
         val irBuiltIns = IrBuiltIns(builtIns, typeTranslator, symbolTable)
         val functionFactory = IrFunctionFactory(irBuiltIns, symbolTable)
         irBuiltIns.functionFactory = functionFactory

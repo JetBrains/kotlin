@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -27,11 +26,9 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class ConstantValueGenerator(
     private val moduleDescriptor: ModuleDescriptor,
-    private val symbolTable: ReferenceSymbolTable
+    private val symbolTable: ReferenceSymbolTable,
+    private val typeTranslator: TypeTranslator,
 ) {
-
-    lateinit var typeTranslator: TypeTranslator
-
     private fun KotlinType.toIrType() = typeTranslator.translateType(this)
 
     fun generateConstantValueAsExpression(
