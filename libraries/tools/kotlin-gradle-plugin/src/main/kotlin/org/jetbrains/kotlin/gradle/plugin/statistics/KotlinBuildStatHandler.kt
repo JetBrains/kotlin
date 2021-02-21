@@ -69,6 +69,7 @@ class KotlinBuildStatHandler {
     }
 
     internal fun reportGlobalMetrics(gradle: Gradle, sessionLogger: BuildSessionLogger) {
+        sessionLogger.report(StringMetrics.PROJECT_PATH, gradle.rootProject.projectDir.absolutePath)
         System.getProperty("os.name")?.also {
             sessionLogger.report(StringMetrics.OS_TYPE, System.getProperty("os.name"))
         }
