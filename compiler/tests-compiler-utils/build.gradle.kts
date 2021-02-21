@@ -23,6 +23,7 @@ dependencies {
     testCompile(project(":compiler:cli-js"))
     testCompile(project(":compiler:serialization"))
     testCompile(project(":compiler:fir:entrypoint"))
+    testCompile(project(":compiler:backend.jvm:backend.jvm.entrypoint"))
     testCompile(projectTests(":compiler:test-infrastructure-utils"))
     testCompile(project(":kotlin-preloader"))
     testCompile(commonDep("com.android.tools:r8"))

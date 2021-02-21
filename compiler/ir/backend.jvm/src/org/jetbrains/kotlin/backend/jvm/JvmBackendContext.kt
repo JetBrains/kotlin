@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
@@ -129,6 +130,12 @@ class JvmBackendContext(
     val inlineClassReplacements = MemoizedInlineClassReplacements(state.functionsWithInlineClassReturnTypesMangled, irFactory, this)
 
     internal val continuationClassesVarsCountByType: MutableMap<IrAttributeContainer, Map<Type, Int>> = hashMapOf()
+
+    init {
+        state.mapInlineClass = { descriptor ->
+            typeMapper.mapType(referenceClass(descriptor).defaultType)
+        }
+    }
 
     internal fun referenceClass(descriptor: ClassDescriptor): IrClassSymbol =
         symbolTable.lazyWrapper.referenceClass(descriptor)

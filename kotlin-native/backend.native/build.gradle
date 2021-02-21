@@ -177,6 +177,7 @@ dependencies {
     compilerCompile project(":kotlin-util-klib")
     compilerCompile project(":kotlin-util-klib-metadata")
     compilerCompile project(":compiler:ir.serialization.common")
+    compilerCompile project(":compiler:ir.psi2ir")
     use(LocalDependenciesKt) {
         compilerCompile(intellijCoreDep()){
             artifact {

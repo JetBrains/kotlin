@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.descriptors.IrFunctionFactory
 import org.jetbrains.kotlin.ir.linkage.IrProvider
-import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
@@ -177,10 +176,6 @@ class JvmIrCodegenFactory(private val phaseConfig: PhaseConfig) : CodegenFactory
         )
         /* JvmBackendContext creates new unbound symbols, have to resolve them. */
         ExternalDependenciesGenerator(symbolTable, irProviders).generateUnboundSymbolsAsDependencies()
-
-        state.mapInlineClass = { descriptor ->
-            context.typeMapper.mapType(context.referenceClass(descriptor).defaultType)
-        }
 
         context.state.factory.registerSourceFiles(irModuleFragment.files.map(IrFile::getKtFile))
 

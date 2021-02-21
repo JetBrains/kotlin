@@ -19,6 +19,7 @@ val projectsToShadow by extra(listOf(
         ":compiler:backend.common.jvm",
         ":compiler:backend-common",
         ":compiler:backend.jvm",
+        ":compiler:backend.jvm:backend.jvm.entrypoint",
         ":compiler:ir.backend.common",
         ":compiler:ir.serialization.jvm",
         ":compiler:ir.serialization.common",

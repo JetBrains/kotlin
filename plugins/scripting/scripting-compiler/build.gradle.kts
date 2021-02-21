@@ -1,4 +1,3 @@
-
 description = "Kotlin Scripting Compiler Plugin"
 
 plugins {
@@ -15,6 +14,7 @@ dependencies {
     compileOnly(project(":compiler:backend.js"))
     compileOnly(project(":core:descriptors.runtime"))
     compileOnly(project(":compiler:ir.tree.impl"))
+    compileOnly(project(":compiler:backend.jvm:backend.jvm.entrypoint"))
     compileOnly(project(":kotlin-reflect-api"))
     compile(project(":kotlin-scripting-common"))
     compile(project(":kotlin-scripting-js"))

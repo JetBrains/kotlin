@@ -18,11 +18,11 @@ package org.jetbrains.kotlin.parcelize
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.backend.common.serialization.findPackage
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.containingPackage
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.parcelize.diagnostic.ErrorsParcelize
 import org.jetbrains.kotlin.psi.*
@@ -76,8 +76,8 @@ open class ParcelizeAnnotationChecker : CallChecker {
         context: CallCheckerContext,
         isForbidden: Boolean
     ) {
-        val descriptorPackage = resolvedCall.resultingDescriptor.findPackage()
-        if (descriptorPackage.fqName == DEPRECATED_RUNTIME_PACKAGE) {
+        val descriptorPackage = resolvedCall.resultingDescriptor.containingPackage()
+        if (descriptorPackage == DEPRECATED_RUNTIME_PACKAGE) {
             val factory = if (isForbidden) ErrorsParcelize.FORBIDDEN_DEPRECATED_ANNOTATION else ErrorsParcelize.DEPRECATED_ANNOTATION
             context.trace.report(factory.on(annotationEntry))
         }
