@@ -1,0 +1,6 @@
+package
+
+public const val a1: kotlin.Int
+public const val b1: kotlin.Int
+public fun kotlin.Int.floorDiv(/*0*/ other: kotlin.Int): kotlin.Int
+public fun kotlin.Int.mod(/*0*/ other: kotlin.Int): kotlin.Int

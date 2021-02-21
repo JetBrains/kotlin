@@ -8982,6 +8982,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("customExtensionOverKotlinExtensionInConst.kt")
+            public void testCustomExtensionOverKotlinExtensionInConst() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/evaluate/customExtensionOverKotlinExtensionInConst.kt");
+            }
+
+            @Test
             @TestMetadata("divisionByZero.kt")
             public void testDivisionByZero() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/evaluate/divisionByZero.kt");

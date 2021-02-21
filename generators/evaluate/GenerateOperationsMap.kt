@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -26,7 +26,7 @@ fun main() {
 fun generate(): String {
     val sb = StringBuilder()
     val p = Printer(sb)
-    p.println(File("license/COPYRIGHT.txt").readText())
+    p.println(File("license/COPYRIGHT_HEADER.txt").readText())
     p.println("@file:Suppress(\"DEPRECATION\", \"DEPRECATION_ERROR\", \"NON_EXHAUSTIVE_WHEN\")")
 
     p.println()
@@ -47,6 +47,9 @@ fun generate(): String {
     val allPrimitiveTypes = builtIns.builtInsPackageScope.getContributedDescriptors()
         .filter { it is ClassDescriptor && KotlinBuiltIns.isPrimitiveType(it.defaultType) } as List<ClassDescriptor>
 
+    val integerTypes = allPrimitiveTypes.map { it.defaultType }.filter { it.isIntegerType() }
+    val fpTypes = allPrimitiveTypes.map { it.defaultType }.filter { it.isFpType() }
+
     for (descriptor in allPrimitiveTypes + builtIns.string) {
         @Suppress("UNCHECKED_CAST")
         val functions = descriptor.getMemberScope(listOf()).getContributedDescriptors()
@@ -62,6 +65,21 @@ fun generate(): String {
                     "Couldn't add following method from builtins to operations map: ${function.name} in class ${descriptor.name}"
                 )
             }
+        }
+    }
+
+    for (type in integerTypes) {
+        for (otherType in integerTypes) {
+            val parameters = listOf(type, otherType)
+            binaryOperationsMap.add("mod" to parameters)
+            binaryOperationsMap.add("floorDiv" to parameters)
+        }
+    }
+
+    for (type in fpTypes) {
+        for (otherType in fpTypes) {
+            val parameters = listOf(type, otherType)
+            binaryOperationsMap.add("mod" to parameters)
         }
     }
 
@@ -155,13 +173,16 @@ private fun getBinaryCheckerName(name: String, leftType: KotlinType, rightType: 
         "minus" -> "subtract"
         "div" -> "divide"
         "times" -> "multiply"
-        "mod", "rem", "xor", "or", "and" -> name
+        "rem", "xor", "or", "and" -> name
         else -> null
     }
 }
 
 private fun KotlinType.isIntegerType(): Boolean =
     KotlinBuiltIns.isInt(this) || KotlinBuiltIns.isShort(this) || KotlinBuiltIns.isByte(this) || KotlinBuiltIns.isLong(this)
+
+private fun KotlinType.isFpType(): Boolean =
+    KotlinBuiltIns.isDouble(this) || KotlinBuiltIns.isFloat(this)
 
 private fun CallableDescriptor.getParametersTypes(): List<KotlinType> =
     listOf((containingDeclaration as ClassDescriptor).defaultType) +
