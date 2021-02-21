@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.ir.util
 
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -38,13 +37,12 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-class DeclarationStubGenerator(
+abstract class DeclarationStubGenerator(
     val moduleDescriptor: ModuleDescriptor,
     val symbolTable: SymbolTable,
-    languageVersionSettings: LanguageVersionSettings,
     val extensions: StubGeneratorExtensions = StubGeneratorExtensions.EMPTY,
 ) : IrProvider {
-    private val lazyTable = symbolTable.lazyWrapper
+    protected val lazyTable = symbolTable.lazyWrapper
 
     var unboundSymbolGeneration: Boolean
         get() = lazyTable.stubGenerator != null
@@ -52,15 +50,7 @@ class DeclarationStubGenerator(
             lazyTable.stubGenerator = if (value) this else null
         }
 
-    val typeTranslator: TypeTranslator =
-        TypeTranslator(
-            lazyTable,
-            languageVersionSettings,
-            moduleDescriptor,
-            { LazyScopedTypeParametersResolver(lazyTable) },
-            true,
-            extensions
-        )
+    abstract val typeTranslator: TypeTranslator
 
     private val facadeClassMap = mutableMapOf<DeserializedContainerSource, IrClass?>()
 

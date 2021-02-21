@@ -37,6 +37,7 @@ dependencies {
     wasmApi(kotlinStdlib())
     interpreterApi(project(":compiler:ir.tree"))
     interpreterApi(project(":compiler:ir.tree.impl"))
+    interpreterApi(project(":compiler:ir.psi2ir"))
 
     testCompile(builtinsSourceSet.output)
     testCompile(evaluateSourceSet.output)

@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi2ir.generators.DeclarationStubGeneratorImpl
 import org.jetbrains.kotlin.scripting.compiler.plugin.loadScriptConfiguration
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
@@ -54,7 +55,7 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
         val mangler = JsManglerDesc
         val signaturer = IdSignatureDescriptor(mangler)
 
-        val stubGenerator = DeclarationStubGenerator(
+        val stubGenerator = DeclarationStubGeneratorImpl(
             irModule.descriptor,
             SymbolTable(signaturer, IrFactoryImpl), // TODO
             myEnvironment.configuration.languageVersionSettings

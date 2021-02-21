@@ -36,6 +36,8 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
 import org.jetbrains.kotlin.psi2ir.PsiSourceManager
+import org.jetbrains.kotlin.psi2ir.generators.DeclarationStubGeneratorImpl
+import org.jetbrains.kotlin.psi2ir.generators.generateTypicalIrProviderList
 import org.jetbrains.kotlin.resolve.CleanableBindingContext
 
 class JvmIrCodegenFactory(private val phaseConfig: PhaseConfig) : CodegenFactory {
@@ -68,9 +70,8 @@ class JvmIrCodegenFactory(private val phaseConfig: PhaseConfig) : CodegenFactory
         val functionFactory = IrFunctionFactory(psi2irContext.irBuiltIns, symbolTable)
         psi2irContext.irBuiltIns.functionFactory = functionFactory
 
-        val stubGenerator = DeclarationStubGenerator(
-            psi2irContext.moduleDescriptor, symbolTable, psi2irContext.irBuiltIns.languageVersionSettings, extensions
-        )
+        val stubGenerator =
+            DeclarationStubGeneratorImpl(psi2irContext.moduleDescriptor, symbolTable, state.languageVersionSettings, extensions)
         val frontEndContext = object : TranslationPluginContext {
             override val moduleDescriptor: ModuleDescriptor
                 get() = psi2irContext.moduleDescriptor
@@ -224,13 +225,13 @@ class JvmIrCodegenFactory(private val phaseConfig: PhaseConfig) : CodegenFactory
         backendExtension: JvmBackendExtension,
         notifyCodegenStart: () -> Unit
     ) {
-        val irProviders = configureBuiltInsAndgenerateIrProvidersInFrontendIRMode(irModuleFragment, symbolTable, extensions)
+        val irProviders = configureBuiltInsAndGenerateIrProvidersInFrontendIRMode(irModuleFragment, symbolTable, extensions)
         doGenerateFilesInternal(
             JvmIrBackendInput(state, irModuleFragment, symbolTable, sourceManager, phaseConfig, irProviders, extensions, backendExtension, notifyCodegenStart)
         )
     }
 
-    fun configureBuiltInsAndgenerateIrProvidersInFrontendIRMode(
+    fun configureBuiltInsAndGenerateIrProvidersInFrontendIRMode(
         irModuleFragment: IrModuleFragment,
         symbolTable: SymbolTable,
         extensions: JvmGeneratorExtensions

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi2ir.generators.DeclarationStubGeneratorImpl
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_EXTERNAL_CLASS
@@ -86,7 +87,7 @@ class IrTextDumpHandler(testServices: TestServices) : AbstractIrHandler(testServ
         val mangler = JsManglerDesc
         val signaturer = IdSignatureDescriptor(mangler)
         val irModule = info.backendInput.irModuleFragment
-        val stubGenerator = DeclarationStubGenerator(
+        val stubGenerator = DeclarationStubGeneratorImpl(
             irModule.descriptor,
             SymbolTable(signaturer, IrFactoryImpl), // TODO
             module.languageVersionSettings

@@ -17,10 +17,7 @@
 package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
-import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.linkage.KotlinIrLinkerInternalException
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -63,17 +60,3 @@ fun List<IrProvider>.getDeclaration(symbol: IrSymbol): IrDeclaration? =
     firstNotNullResult { provider ->
         provider.getDeclaration(symbol)
     }
-
-// In most cases, IrProviders list consist of an optional deserializer and a DeclarationStubGenerator.
-fun generateTypicalIrProviderList(
-    moduleDescriptor: ModuleDescriptor,
-    irBuiltins: IrBuiltIns,
-    symbolTable: SymbolTable,
-    deserializer: IrDeserializer? = null,
-    extensions: StubGeneratorExtensions = StubGeneratorExtensions.EMPTY
-): List<IrProvider> {
-    val stubGenerator = DeclarationStubGenerator(
-        moduleDescriptor, symbolTable, irBuiltins.languageVersionSettings, extensions
-    )
-    return listOfNotNull(deserializer, stubGenerator)
-}
