@@ -146,7 +146,7 @@ fun generateKLib(
 
     val expectDescriptorToSymbol = mutableMapOf<DeclarationDescriptor, IrSymbol>()
     val feContext = psi2IrContext.run {
-        JsIrLinker.JsFePluginContext(moduleDescriptor, bindingContext, symbolTable, typeTranslator, irBuiltIns)
+        JsIrLinker.JsFePluginContext(moduleDescriptor, symbolTable, typeTranslator, irBuiltIns)
     }
     val irLinker = JsIrLinker(
         psi2IrContext.moduleDescriptor,
@@ -232,7 +232,7 @@ fun loadIr(
             val functionFactory = IrFunctionFactory(irBuiltIns, symbolTable)
             irBuiltIns.functionFactory = functionFactory
             val feContext = psi2IrContext.run {
-                JsIrLinker.JsFePluginContext(moduleDescriptor, bindingContext, symbolTable, typeTranslator, irBuiltIns)
+                JsIrLinker.JsFePluginContext(moduleDescriptor, symbolTable, typeTranslator, irBuiltIns)
             }
             val irLinker = JsIrLinker(psi2IrContext.moduleDescriptor, messageLogger, irBuiltIns, symbolTable, functionFactory, feContext, null)
             val deserializedModuleFragments = sortDependencies(allDependencies.getFullList(), depsDescriptors.descriptors).map {

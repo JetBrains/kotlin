@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.library.IrLibrary
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.containsErrorCode
-import org.jetbrains.kotlin.resolve.BindingContext
 
 class JsIrLinker(
     private val currentModule: ModuleDescriptor?, messageLogger: IrMessageLogger, builtIns: IrBuiltIns, symbolTable: SymbolTable,
@@ -60,7 +59,6 @@ class JsIrLinker(
 
     class JsFePluginContext(
         override val moduleDescriptor: ModuleDescriptor,
-        override val bindingContext: BindingContext,
         override val symbolTable: ReferenceSymbolTable,
         override val typeTranslator: TypeTranslator,
         override val irBuiltIns: IrBuiltIns,

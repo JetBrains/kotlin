@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
 import org.jetbrains.kotlin.psi2ir.PsiSourceManager
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.CleanableBindingContext
 
 class JvmIrCodegenFactory(private val phaseConfig: PhaseConfig) : CodegenFactory {
@@ -75,8 +74,6 @@ class JvmIrCodegenFactory(private val phaseConfig: PhaseConfig) : CodegenFactory
         val frontEndContext = object : TranslationPluginContext {
             override val moduleDescriptor: ModuleDescriptor
                 get() = psi2irContext.moduleDescriptor
-            override val bindingContext: BindingContext
-                get() = psi2irContext.bindingContext
             override val symbolTable: ReferenceSymbolTable
                 get() = symbolTable
             override val typeTranslator: TypeTranslator
