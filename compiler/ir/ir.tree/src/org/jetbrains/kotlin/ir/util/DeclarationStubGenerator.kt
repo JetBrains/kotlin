@@ -22,14 +22,12 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.*
-import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.resolve.isInlineClass
@@ -145,10 +143,7 @@ class DeclarationStubGenerator(
     private fun computeOrigin(descriptor: DeclarationDescriptor): IrDeclarationOrigin =
         extensions.computeExternalDeclarationOrigin(descriptor) ?: IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
 
-    fun generatePropertyStub(
-        descriptor: PropertyDescriptor,
-        bindingContext: BindingContext? = null
-    ): IrProperty {
+    fun generatePropertyStub(descriptor: PropertyDescriptor): IrProperty {
         val referenced = symbolTable.referenceProperty(descriptor)
         if (referenced.isBound) {
             return referenced.owner
@@ -165,7 +160,7 @@ class DeclarationStubGenerator(
                 descriptor.isVar, descriptor.isConst, descriptor.isLateInit,
                 descriptor.isDelegated, descriptor.isEffectivelyExternal(), descriptor.isExpect,
                 isFakeOverride = (origin == IrDeclarationOrigin.FAKE_OVERRIDE),
-                stubGenerator = this, typeTranslator = typeTranslator, bindingContext = bindingContext
+                stubGenerator = this, typeTranslator,
             )
         }
     }
