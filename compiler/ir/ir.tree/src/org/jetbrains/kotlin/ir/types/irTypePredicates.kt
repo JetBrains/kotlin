@@ -11,39 +11,36 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.hasEqualFqName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.newHashMapWithExpectedSize
 
 @Suppress("ObjectPropertyName")
 object IdSignatureValues {
     @JvmField val any = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, "Any")
-    @JvmField val nothing = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME,"Nothing")
-    @JvmField val unit = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME,"Unit")
+    @JvmField val nothing = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, "Nothing")
+    @JvmField val unit = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, "Unit")
     @JvmField val _boolean = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, "Boolean")
     @JvmField val _char = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, "Char")
-    @JvmField val _byte = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME,"Byte")
-    @JvmField val _short = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME,"Short")
-    @JvmField val _int = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME,"Int")
-    @JvmField val _long = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME,"Long")
-    @JvmField val _float = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME,"Float")
-    @JvmField val _double = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME,"Double")
-    @JvmField val number = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME,"Number")
-    @JvmField val uByte = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME,"UByte")
-    @JvmField val uShort = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME,"UShort")
-    @JvmField val uInt = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME,"UInt")
-    @JvmField val uLong = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME,"ULong")
-    @JvmField val string = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME,"String")
-    @JvmField val array = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME,"Array")
+    @JvmField val _byte = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, "Byte")
+    @JvmField val _short = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, "Short")
+    @JvmField val _int = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, "Int")
+    @JvmField val _long = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, "Long")
+    @JvmField val _float = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, "Float")
+    @JvmField val _double = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, "Double")
+    @JvmField val number = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, "Number")
+    @JvmField val uByte = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, "UByte")
+    @JvmField val uShort = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, "UShort")
+    @JvmField val uInt = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, "UInt")
+    @JvmField val uLong = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, "ULong")
+    @JvmField val string = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, "String")
+    @JvmField val array = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, "Array")
     @JvmField val collection = getPublicSignature(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME, "Collection")
     @JvmField val kClass = getPublicSignature(StandardNames.KOTLIN_REFLECT_FQ_NAME, "KClass")
-    @JvmField val comparable = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME,"Comparable")
-    @JvmField val charSequence = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME,"CharSequence")
+    @JvmField val comparable = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, "Comparable")
+    @JvmField val charSequence = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, "CharSequence")
     @JvmField val iterable = getPublicSignature(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME, "Iterable")
-    @JvmField val continuation = getPublicSignature(StandardNames.COROUTINES_PACKAGE_FQ_NAME_RELEASE,"Continuation")
+    @JvmField val continuation = getPublicSignature(StandardNames.COROUTINES_PACKAGE_FQ_NAME_RELEASE, "Continuation")
     @JvmField val result = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, "Result")
     @JvmField val sequence = IdSignature.PublicSignature("kotlin.sequences", "Sequence", null, 0)
 }
@@ -69,18 +66,13 @@ private fun classFqNameEquals(symbol: IrClassSymbol, fqName: FqNameUnsafe): Bool
 }
 
 private val idSignatureToPrimitiveType: Map<IdSignature.PublicSignature, PrimitiveType> =
-    newHashMapWithExpectedSize<IdSignature.PublicSignature, PrimitiveType>(PrimitiveType.values().size).apply {
-        for (primitiveType in PrimitiveType.values()) {
-            this[getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, primitiveType.typeName.asString())] = primitiveType
-        }
+    PrimitiveType.values().associateBy {
+        getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, it.typeName.asString())
     }
 
 val primitiveArrayTypesSignatures: Map<PrimitiveType, IdSignature.PublicSignature> =
-    newHashMapWithExpectedSize<PrimitiveType, IdSignature.PublicSignature>(PrimitiveType.values().size).apply {
-        for (primitiveType in PrimitiveType.values()) {
-            this[primitiveType] =
-                getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, "${primitiveType.typeName.asString()}Array")
-        }
+    PrimitiveType.values().associateWith {
+        getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, "${it.typeName.asString()}Array")
     }
 
 private fun classFqNameEquals(declaration: IrClass, fqName: FqNameUnsafe): Boolean =
@@ -99,35 +91,31 @@ fun IrType.isNothing(): Boolean = isNotNullClassType(IdSignatureValues.nothing)
 fun IrType.isNullableNothing(): Boolean = isNullableClassType(IdSignatureValues.nothing)
 
 fun IrType.isPrimitiveType(hasQuestionMark: Boolean = false): Boolean =
-    (this is IrSimpleType && hasQuestionMark == this.hasQuestionMark) &&
-            classOrNull?.signature in idSignatureToPrimitiveType
+    this is IrSimpleType && hasQuestionMark == this.hasQuestionMark && getPrimitiveType() != null
 
 fun IrType.isNullablePrimitiveType(): Boolean = isPrimitiveType(true)
+
+fun IrType.getPrimitiveType(): PrimitiveType? =
+    if (this is IrSimpleType && classifier is IrClassSymbol)
+        idSignatureToPrimitiveType[classifier.signature]
+    else null
 
 fun IrType.isMarkedNullable() = (this as? IrSimpleType)?.hasQuestionMark ?: false
 
 fun IrType.isUnit() = isNotNullClassType(IdSignatureValues.unit)
 
 fun IrType.isBoolean(): Boolean = isNotNullClassType(IdSignatureValues._boolean)
-fun IrType.isBooleanOrNullable(): Boolean = isClassType(IdSignatureValues._boolean)
 fun IrType.isChar(): Boolean = isNotNullClassType(IdSignatureValues._char)
-fun IrType.isCharOrNullable(): Boolean = isClassType(IdSignatureValues._char)
 fun IrType.isByte(): Boolean = isNotNullClassType(IdSignatureValues._byte)
-fun IrType.isByteOrNullable(): Boolean = isClassType(IdSignatureValues._byte)
 fun IrType.isShort(): Boolean = isNotNullClassType(IdSignatureValues._short)
-fun IrType.isShortOrNullable(): Boolean = isClassType(IdSignatureValues._short)
 fun IrType.isInt(): Boolean = isNotNullClassType(IdSignatureValues._int)
-fun IrType.isIntOrNullable(): Boolean = isClassType(IdSignatureValues._int)
 fun IrType.isLong(): Boolean = isNotNullClassType(IdSignatureValues._long)
-fun IrType.isLongOrNullable(): Boolean = isClassType(IdSignatureValues._long)
 fun IrType.isUByte(): Boolean = isNotNullClassType(IdSignatureValues.uByte)
 fun IrType.isUShort(): Boolean = isNotNullClassType(IdSignatureValues.uShort)
 fun IrType.isUInt(): Boolean = isNotNullClassType(IdSignatureValues.uInt)
 fun IrType.isULong(): Boolean = isNotNullClassType(IdSignatureValues.uLong)
 fun IrType.isFloat(): Boolean = isNotNullClassType(IdSignatureValues._float)
-fun IrType.isFloatOrNullable(): Boolean = isClassType(IdSignatureValues._float)
 fun IrType.isDouble(): Boolean = isNotNullClassType(IdSignatureValues._double)
-fun IrType.isDoubleOrNullable(): Boolean = isClassType(IdSignatureValues._double)
 fun IrType.isNumber(): Boolean = isNotNullClassType(IdSignatureValues.number)
 
 fun IrType.isComparable(): Boolean = isNotNullClassType(IdSignatureValues.comparable)

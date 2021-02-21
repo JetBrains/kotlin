@@ -251,7 +251,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
             null -> true
             TypeAdaptationConstraint.FORCE_BOXING -> irType.isNullable()
             TypeAdaptationConstraint.KEEP_UNBOXED -> !irType.isNullable()
-            TypeAdaptationConstraint.BOX_PRIMITIVE -> irType.isJvmPrimitiveOrNullable()
+            TypeAdaptationConstraint.BOX_PRIMITIVE -> irType.getPrimitiveType() != null
             TypeAdaptationConstraint.CONFLICT -> false
         }
 
@@ -414,9 +414,9 @@ internal class LambdaMetafactoryArgumentsBuilder(
         // ** JVM primitives **
         // All Kotlin types mapped to JVM primitive are final,
         // and their supertypes are trivially mapped reference types.
-        if (adapteeType.isJvmPrimitiveType()) {
+        if (adapteeType.isPrimitiveType()) {
             return if (
-                expectedType.isJvmPrimitiveType() &&
+                expectedType.isPrimitiveType() &&
                 !expectedType.hasAnnotation(context.ir.symbols.enhancedNullabilityAnnotationFqName)
             )
                 TypeAdaptationConstraint.KEEP_UNBOXED
@@ -433,7 +433,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
             // TODO consider adding a special type annotation to force boxing on an inline class type regardless of its underlying type.
             val underlyingAdapteeType = getInlineClassUnderlyingType(erasedAdapteeClass) as? IrSimpleType
                 ?: throw AssertionError("Underlying type for inline class should be a simple type: ${erasedAdapteeClass.render()}")
-            if (!underlyingAdapteeType.hasQuestionMark && !underlyingAdapteeType.isJvmPrimitiveType()) {
+            if (!underlyingAdapteeType.hasQuestionMark && !underlyingAdapteeType.isPrimitiveType()) {
                 return TypeAdaptationConstraint.CONFLICT
             }
 
@@ -521,14 +521,6 @@ internal class LambdaMetafactoryArgumentsBuilder(
 
     private fun IrDeclarationParent.isCrossinlineLambda(): Boolean =
         this is IrSimpleFunction && this in crossinlineLambdas
-
-    private fun IrType.isJvmPrimitiveType() =
-        isBoolean() || isChar() || isByte() || isShort() || isInt() || isLong() || isFloat() || isDouble()
-
-    private fun IrType.isJvmPrimitiveOrNullable() =
-        isBooleanOrNullable() || isCharOrNullable() ||
-                isByteOrNullable() || isShortOrNullable() || isIntOrNullable() || isLongOrNullable() ||
-                isFloatOrNullable() || isDoubleOrNullable()
 
     fun collectValueParameters(
         irFun: IrFunction,
