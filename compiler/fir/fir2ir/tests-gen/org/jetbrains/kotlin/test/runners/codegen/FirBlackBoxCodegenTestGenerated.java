@@ -14327,12 +14327,6 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
-        @TestMetadata("mod.kt")
-        public void testMod() throws Exception {
-            runTest("compiler/testData/codegen/box/evaluate/mod.kt");
-        }
-
-        @Test
         @TestMetadata("multiply.kt")
         public void testMultiply() throws Exception {
             runTest("compiler/testData/codegen/box/evaluate/multiply.kt");
@@ -14348,6 +14342,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         @TestMetadata("plus.kt")
         public void testPlus() throws Exception {
             runTest("compiler/testData/codegen/box/evaluate/plus.kt");
+        }
+
+        @Test
+        @TestMetadata("rem.kt")
+        public void testRem() throws Exception {
+            runTest("compiler/testData/codegen/box/evaluate/rem.kt");
         }
 
         @Test
