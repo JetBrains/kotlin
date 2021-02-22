@@ -2324,6 +2324,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 runTest("compiler/testData/codegen/box/callableReference/property/accessViaSubclass.kt");
             }
 
+            @TestMetadata("accessorForPropertyWithPrivateSetter.kt")
+            public void testAccessorForPropertyWithPrivateSetter() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/property/accessorForPropertyWithPrivateSetter.kt");
+            }
+
             public void testAllFilesPresentInProperty() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/callableReference/property"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
             }
