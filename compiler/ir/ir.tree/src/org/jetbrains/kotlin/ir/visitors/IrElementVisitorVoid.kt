@@ -155,7 +155,7 @@ interface IrElementVisitorVoid : IrElementVisitor<Unit, Nothing?> {
     fun visitSetField(expression: IrSetField) = visitFieldAccess(expression)
     override fun visitSetField(expression: IrSetField, data: Nothing?) = visitSetField(expression)
 
-    fun visitMemberAccess(expression: IrMemberAccessExpression<*>) = visitExpression(expression)
+    fun visitMemberAccess(expression: IrMemberAccessExpression<*>) = visitDeclarationReference(expression)
     override fun visitMemberAccess(expression: IrMemberAccessExpression<*>, data: Nothing?) = visitMemberAccess(expression)
 
     fun visitFunctionAccess(expression: IrFunctionAccessExpression) = visitMemberAccess(expression)
