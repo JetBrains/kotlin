@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleMode
 import org.jetbrains.kotlin.backend.common.serialization.mangle.collectForMangler
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -34,6 +35,11 @@ open class FirJvmMangleComputer(
     private var isRealExpect = false
 
     open fun FirFunction<*>.platformSpecificFunctionName(): String? = null
+
+    open fun FirFunction<*>.platformSpecificSuffix(): String? =
+        if (this is FirSimpleFunction && name.asString() == "main")
+            session.firProvider.getFirCallableContainerFile(symbol)?.name
+        else null
 
     open fun FirFunction<*>.specialValueParamPrefix(param: FirValueParameter): String = ""
 
@@ -120,6 +126,11 @@ open class FirJvmMangleComputer(
 
         val name = (this as? FirSimpleFunction)?.name ?: Name.special("<anonymous>")
         builder.append(name.asString())
+
+        platformSpecificSuffix()?.let {
+            builder.append(MangleConstant.PLATFORM_FUNCTION_MARKER)
+            builder.append(it)
+        }
 
         mangleSignature(isCtor, isStatic)
     }
