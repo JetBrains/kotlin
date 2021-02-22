@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.signaturer.FirMangler
 import org.jetbrains.kotlin.fir.symbols.FirBuiltinSymbols
+import org.jetbrains.kotlin.ir.PsiIrFileEntry
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
@@ -29,7 +30,6 @@ import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi2ir.PsiSourceManager
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
 import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
 import org.jetbrains.kotlin.psi2ir.generators.generateTypicalIrProviderList
@@ -57,7 +57,7 @@ class Fir2IrConverter(
 
     fun registerFileAndClasses(file: FirFile): IrFile {
         val irFile = IrFileImpl(
-            PsiSourceManager.PsiFileEntry(file.psi as KtFile),
+            PsiIrFileEntry(file.psi as KtFile),
             moduleDescriptor.getPackage(file.packageFqName).fragments.first()
         )
         declarationStorage.registerFile(file, irFile)
