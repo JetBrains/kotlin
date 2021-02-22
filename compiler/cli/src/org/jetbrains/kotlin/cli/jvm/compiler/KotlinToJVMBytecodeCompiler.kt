@@ -314,6 +314,11 @@ object KotlinToJVMBytecodeCompiler {
 
             val ktFiles = module.getSourceFiles(environment, localFileSystem, chunk.size > 1, buildFile)
             if (!checkKotlinPackageUsage(environment, ktFiles)) return false
+
+            val syntaxErrors = ktFiles.fold(false) { errorsFound, ktFile ->
+                AnalyzerWithCompilerReport.reportSyntaxErrors(ktFile, environment.messageCollector).isHasErrors or errorsFound
+            }
+
             val moduleConfiguration = projectConfiguration.applyModuleProperties(module, buildFile)
 
             val sourceScope = GlobalSearchScope.filesScope(project, ktFiles.map { it.virtualFile })
@@ -345,7 +350,7 @@ object KotlinToJVMBytecodeCompiler {
             )
             performanceManager?.notifyAnalysisFinished()
 
-            if (firDiagnostics.any { it.severity == Severity.ERROR }) {
+            if (syntaxErrors || firDiagnostics.any { it.severity == Severity.ERROR }) {
                 return false
             }
 
