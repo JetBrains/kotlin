@@ -387,15 +387,34 @@ class KotlinGradleIT : BaseGradleIT() {
         project.setupWorkingDir()
         File(project.projectDir, "build.gradle").modify {
             it.replace("kotlin-stdlib:\$kotlin_version", "kotlin-stdlib").apply { check(!equals(it)) } + "\n" + """
-            apply plugin: 'maven'
-            install.repositories { maven { url "file://${'$'}buildDir/repo" } }
+            apply plugin: 'maven-publish'
+            
+            group = "com.example"
+            version = "1.0"
+
+            publishing {
+                publications {
+                   myLibrary(MavenPublication) {
+                       from components.kotlin
+                   }
+                }
+                repositories {
+                    maven {
+                        url = "${'$'}buildDir/repo" 
+                    }
+                }
+            }
             """.trimIndent()
         }
 
-        project.build("build", "install", options = defaultBuildOptions().copy(warningMode = WarningMode.Summary)) {
+        project.build(
+            "build",
+            "publishAllPublicationsToMavenRepository",
+            options = defaultBuildOptions().copy(warningMode = WarningMode.Summary)
+        ) {
             assertSuccessful()
             assertTasksExecuted(":compileKotlin", ":compileTestKotlin")
-            val pomLines = File(project.projectDir, "build/poms/pom-default.xml").readLines()
+            val pomLines = File(project.projectDir, "build/publications/myLibrary/pom-default.xml").readLines()
             val stdlibVersionLineNumber = pomLines.indexOfFirst { "<artifactId>kotlin-stdlib</artifactId>" in it } + 1
             val versionLine = pomLines[stdlibVersionLineNumber]
             assertTrue { "<version>${defaultBuildOptions().kotlinVersion}</version>" in versionLine }
