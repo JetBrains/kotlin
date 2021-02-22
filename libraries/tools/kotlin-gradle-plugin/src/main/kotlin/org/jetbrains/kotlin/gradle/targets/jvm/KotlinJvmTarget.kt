@@ -15,6 +15,7 @@ import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.testing.Test
 import org.gradle.jvm.tasks.Jar
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
@@ -151,8 +152,12 @@ open class KotlinJvmTarget @Inject constructor(
 
         // Add the Java source set dependencies to the Kotlin compilation compile & runtime configurations:
 
+        val compileConfigurationName = if (areRuntimeOrCompileConfigurationsAvailable()) {
+            javaSourceSet.compileConfigurationName.takeIf { project.configurations.findByName(it) != null }
+        } else null
+
         listOfNotNull(
-            javaSourceSet.compileConfigurationName.takeIf { project.configurations.findByName(it) != null },
+            compileConfigurationName,
             javaSourceSet.compileOnlyConfigurationName,
             javaSourceSet.apiConfigurationName.takeIf { project.configurations.findByName(it) != null },
             javaSourceSet.implementationConfigurationName
@@ -160,8 +165,12 @@ open class KotlinJvmTarget @Inject constructor(
             project.addExtendsFromRelation(compilation.compileDependencyConfigurationName, configurationName)
         }
 
+        val runtimeConfigurationName = if (areRuntimeOrCompileConfigurationsAvailable()) {
+            javaSourceSet.runtimeConfigurationName.takeIf { project.configurations.findByName(it) != null }
+        } else null
+
         listOfNotNull(
-            javaSourceSet.runtimeConfigurationName.takeIf { project.configurations.findByName(it) != null },
+            runtimeConfigurationName,
             javaSourceSet.runtimeOnlyConfigurationName,
             javaSourceSet.apiConfigurationName.takeIf { project.configurations.findByName(it) != null },
             javaSourceSet.implementationConfigurationName
@@ -169,5 +178,11 @@ open class KotlinJvmTarget @Inject constructor(
             project.addExtendsFromRelation(compilation.runtimeDependencyConfigurationName, configurationName)
         }
     }
+
+    /**
+     * Check if "compile" and "runtime" configurations are still available in current Gradle version.
+     */
+    private fun areRuntimeOrCompileConfigurationsAvailable(): Boolean =
+        GradleVersion.version(project.gradle.gradleVersion) <= GradleVersion.version("6.8.3")
 }
 
