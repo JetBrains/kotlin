@@ -8,34 +8,34 @@ annotation class JvmInline
 
 @JvmInline
 value class IC1(val x: Any) {
-    fun box() {}
-    fun box(x: Any) {}
+    fun <!RESERVED_MEMBER_INSIDE_INLINE_CLASS!>box<!>() {}
+    fun <!RESERVED_MEMBER_INSIDE_INLINE_CLASS!>box<!>(x: Any) {}
 
-    fun unbox() {}
-    fun unbox(x: Any) {}
+    fun <!RESERVED_MEMBER_INSIDE_INLINE_CLASS!>unbox<!>() {}
+    fun <!RESERVED_MEMBER_INSIDE_INLINE_CLASS!>unbox<!>(x: Any) {}
 
-    override fun equals(other: Any?): Boolean = true
-    override fun hashCode(): Int = 0
+    override fun <!RESERVED_MEMBER_INSIDE_INLINE_CLASS!>equals<!>(other: Any?): Boolean = true
+    override fun <!RESERVED_MEMBER_INSIDE_INLINE_CLASS!>hashCode<!>(): Int = 0
 }
 
 @JvmInline
 value class IC2(val x: Any) {
-    fun box(x: Any) {}
-    fun box(): Any = TODO()
+    fun <!RESERVED_MEMBER_INSIDE_INLINE_CLASS!>box<!>(x: Any) {}
+    fun <!RESERVED_MEMBER_INSIDE_INLINE_CLASS!>box<!>(): Any = TODO()
 
-    fun unbox(x: Any) {}
-    fun unbox(): Any = TODO()
+    fun <!RESERVED_MEMBER_INSIDE_INLINE_CLASS!>unbox<!>(x: Any) {}
+    fun <!RESERVED_MEMBER_INSIDE_INLINE_CLASS!>unbox<!>(): Any = TODO()
 
-    fun equals(my: Any, other: Any): Boolean = true
-    fun hashCode(a: Any): Int = 0
+    fun <!RESERVED_MEMBER_INSIDE_INLINE_CLASS!>equals<!>(my: Any, other: Any): Boolean = true
+    fun <!RESERVED_MEMBER_INSIDE_INLINE_CLASS!>hashCode<!>(a: Any): Int = 0
 }
 
 @JvmInline
 value class IC3(val x: Any) {
-    fun box(x: Any): Any = TODO()
-    fun unbox(x: Any): Any = TODO()
+    fun <!RESERVED_MEMBER_INSIDE_INLINE_CLASS!>box<!>(x: Any): Any = TODO()
+    fun <!RESERVED_MEMBER_INSIDE_INLINE_CLASS!>unbox<!>(x: Any): Any = TODO()
 
-    fun equals(): Boolean = true
+    fun <!RESERVED_MEMBER_INSIDE_INLINE_CLASS!>equals<!>(): Boolean = true
 }
 
 interface WithBox {
@@ -44,12 +44,12 @@ interface WithBox {
 
 @JvmInline
 value class IC4(val s: String) : WithBox {
-    override fun box(): String = ""
+    override fun <!RESERVED_MEMBER_INSIDE_INLINE_CLASS!>box<!>(): String = ""
 }
 
 @JvmInline
 value class IC5(val a: String) {
-    constructor(i: Int) : this(i.toString()) {
+    constructor(i: Int) : this(i.toString()) <!SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_INLINE_CLASS!>{
         TODO("something")
-    }
+    }<!>
 }

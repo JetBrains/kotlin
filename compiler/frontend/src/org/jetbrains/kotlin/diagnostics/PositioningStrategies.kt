@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.cfg.UnreachableCode
 import org.jetbrains.kotlin.diagnostics.Errors.ACTUAL_WITHOUT_EXPECT
 import org.jetbrains.kotlin.diagnostics.Errors.NO_ACTUAL_FOR_EXPECT
+import org.jetbrains.kotlin.diagnostics.PositioningStrategies.INNER_MODIFIER
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.MODALITY_MODIFIERS
@@ -439,6 +440,14 @@ object PositioningStrategies {
 
     @JvmField
     val MODALITY_MODIFIER: PositioningStrategy<KtModifierListOwner> = ModifierSetBasedPositioningStrategy(MODALITY_MODIFIERS)
+
+    @JvmField
+    val INLINE_OR_VALUE_MODIFIER: PositioningStrategy<KtModifierListOwner> =
+        ModifierSetBasedPositioningStrategy(TokenSet.create(KtTokens.INLINE_KEYWORD, KtTokens.VALUE_KEYWORD))
+
+    @JvmField
+    val INNER_MODIFIER: PositioningStrategy<KtModifierListOwner> =
+        ModifierSetBasedPositioningStrategy(TokenSet.create(KtTokens.INNER_KEYWORD))
 
     @JvmField
     val VARIANCE_IN_PROJECTION: PositioningStrategy<KtTypeProjection> = object : PositioningStrategy<KtTypeProjection>() {

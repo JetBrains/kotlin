@@ -2394,6 +2394,34 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         }
     }
 
+    @TestMetadata("compiler/fir/analysis-tests/testData/resolve/inlineClasses")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class InlineClasses extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInInlineClasses() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/inlineClasses"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("inlineClassConstructor.kt")
+        public void testInlineClassConstructor() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/inlineClasses/inlineClassConstructor.kt");
+        }
+
+        @TestMetadata("inlineClassDeclaration.kt")
+        public void testInlineClassDeclaration() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/inlineClasses/inlineClassDeclaration.kt");
+        }
+
+        @TestMetadata("inlineClassMembers.kt")
+        public void testInlineClassMembers() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/inlineClasses/inlineClassMembers.kt");
+        }
+    }
+
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/innerClasses")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
