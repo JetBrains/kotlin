@@ -1,0 +1,146 @@
+FILE: inlineClassConstructor.kt
+    public final class WithoutConstructor : R|kotlin/Any| {
+        public constructor(): R|WithoutConstructor| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final inline class WithoutParameter : R|kotlin/Any| {
+        public constructor(): R|WithoutParameter| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final inline class WithTwoParameters : R|kotlin/Any| {
+        public constructor(x: R|kotlin/Int|, y: R|kotlin/String|): R|WithTwoParameters| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/Int| = R|<local>/x|
+            public get(): R|kotlin/Int|
+
+        public final val y: R|kotlin/String| = R|<local>/y|
+            public get(): R|kotlin/String|
+
+    }
+    public final inline class Ok : R|kotlin/Any| {
+        public constructor(x: R|kotlin/Int|): R|Ok| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final val x: R|kotlin/Int| = R|<local>/x|
+            private get(): R|kotlin/Int|
+
+    }
+    public final inline class OpenParameter : R|kotlin/Any| {
+        public constructor(x: R|kotlin/Int|): R|OpenParameter| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open val x: R|kotlin/Int| = R|<local>/x|
+            public get(): R|kotlin/Int|
+
+    }
+    public final inline class VarargParameter : R|kotlin/Any| {
+        public constructor(vararg x: R|kotlin/IntArray|): R|VarargParameter| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final inline class VarParameter : R|kotlin/Any| {
+        public constructor(x: R|kotlin/Int|): R|VarParameter| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final var x: R|kotlin/Int| = R|<local>/x|
+            public get(): R|kotlin/Int|
+            public set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+    }
+    public final inline class SimpleParameter : R|kotlin/Any| {
+        public constructor(x: R|kotlin/Int|): R|SimpleParameter| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final inline class UnitParameter : R|kotlin/Any| {
+        public constructor(x: R|kotlin/Unit|): R|UnitParameter| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/Unit| = R|<local>/x|
+            public get(): R|kotlin/Unit|
+
+    }
+    public final inline class NothingParameter : R|kotlin/Any| {
+        public constructor(x: R|kotlin/Nothing|): R|NothingParameter| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/Nothing| = R|<local>/x|
+            public get(): R|kotlin/Nothing|
+
+    }
+    public final inline class TypeParameterType<T> : R|kotlin/Any| {
+        public constructor<T>(x: R|T|): R|TypeParameterType<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|T| = R|<local>/x|
+            public get(): R|T|
+
+    }
+    public final inline class ArrayOfTypeParameters<T> : R|kotlin/Any| {
+        public constructor<T>(x: R|kotlin/Array<T>|): R|ArrayOfTypeParameters<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/Array<T>| = R|<local>/x|
+            public get(): R|kotlin/Array<T>|
+
+    }
+    public final inline class ListOfTypeParameters<T> : R|kotlin/Any| {
+        public constructor<T>(x: R|kotlin/collections/List<T>|): R|ListOfTypeParameters<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/collections/List<T>| = R|<local>/x|
+            public get(): R|kotlin/collections/List<T>|
+
+    }
+    public final inline class StarProjection<T> : R|kotlin/Any| {
+        public constructor<T>(x: R|kotlin/Array<*>|): R|StarProjection<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/Array<*>| = R|<local>/x|
+            public get(): R|kotlin/Array<*>|
+
+    }
+    public final inline class SimpleRecursive : R|kotlin/Any| {
+        public constructor(x: R|SimpleRecursive|): R|SimpleRecursive| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|SimpleRecursive| = R|<local>/x|
+            public get(): R|SimpleRecursive|
+
+    }
+    public final inline class DoubleRecursive1 : R|kotlin/Any| {
+        public constructor(x: R|DoubleRecursive2|): R|DoubleRecursive1| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|DoubleRecursive2| = R|<local>/x|
+            public get(): R|DoubleRecursive2|
+
+    }
+    public final inline class DoubleRecursive2 : R|kotlin/Any| {
+        public constructor(x: R|DoubleRecursive1|): R|DoubleRecursive2| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|DoubleRecursive1| = R|<local>/x|
+            public get(): R|DoubleRecursive1|
+
+    }

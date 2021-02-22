@@ -154,6 +154,28 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val REDUNDANT_OPEN_IN_INTERFACE by warning<FirSourceElement, KtModifierListOwner>(PositioningStrategy.OPEN_MODIFIER)
     }
 
+    val INLINE_CLASSES by object : DiagnosticGroup("Inline classes") {
+        val INLINE_CLASS_NOT_TOP_LEVEL by error<FirSourceElement, KtDeclaration>(PositioningStrategy.INLINE_OR_VALUE_MODIFIER)
+        val INLINE_CLASS_NOT_FINAL by error<FirSourceElement, KtDeclaration>(PositioningStrategy.MODALITY_MODIFIER)
+        val ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_INLINE_CLASS by error<FirSourceElement, KtDeclaration>(PositioningStrategy.INLINE_OR_VALUE_MODIFIER)
+        val INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE by error<FirSourceElement, KtElement>()
+        val INLINE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER by error<FirSourceElement, KtParameter>()
+        val PROPERTY_WITH_BACKING_FIELD_INSIDE_INLINE_CLASS by error<FirSourceElement, KtProperty>(PositioningStrategy.DECLARATION_SIGNATURE)
+        val DELEGATED_PROPERTY_INSIDE_INLINE_CLASS by error<FirSourceElement, PsiElement>()
+        val INLINE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE by error<FirSourceElement, KtTypeReference> {
+            parameter<ConeKotlinType>("type")
+        }
+        val INLINE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION by error<FirSourceElement, PsiElement>()
+        val INLINE_CLASS_CANNOT_EXTEND_CLASSES by error<FirSourceElement, KtTypeReference>()
+        val INLINE_CLASS_CANNOT_BE_RECURSIVE by error<FirSourceElement, KtTypeReference>()
+        val RESERVED_MEMBER_INSIDE_INLINE_CLASS by error<FirSourceElement, KtFunction>(PositioningStrategy.DECLARATION_NAME) {
+            parameter<String>("fun name")
+        }
+        val SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_INLINE_CLASS by error<FirSourceElement, PsiElement>()
+        val INNER_CLASS_INSIDE_INLINE_CLASS by error<FirSourceElement, KtDeclaration>(PositioningStrategy.INNER_MODIFIER)
+        val VALUE_CLASS_CANNOT_BE_CLONEABLE by error<FirSourceElement, KtDeclaration>(PositioningStrategy.INLINE_OR_VALUE_MODIFIER)
+    }
+
     val APPLICABILITY by object : DiagnosticGroup("Applicability") {
         val NONE_APPLICABLE by error<FirSourceElement, PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<Collection<AbstractFirBasedSymbol<*>>>("candidates")

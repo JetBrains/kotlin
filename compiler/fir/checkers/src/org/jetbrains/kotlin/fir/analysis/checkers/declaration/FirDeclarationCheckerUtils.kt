@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.modality
@@ -180,3 +181,21 @@ private val FirProperty.hasAccessorImplementation: Boolean
             (setter !is FirDefaultPropertyAccessor && setter?.hasBody == true)
 
 internal val FirClass<*>.canHaveOpenMembers: Boolean get() = modality() != Modality.FINAL || classKind == ClassKind.ENUM_CLASS
+
+internal fun FirRegularClass.isInlineOrValueClass(): Boolean {
+    if (this.classKind != ClassKind.CLASS) return false
+
+    val modifierList = with(FirModifierList) { source.getModifierList() }
+    return isInline || modifierList?.modifiers?.any { it.token == KtTokens.VALUE_KEYWORD } == true
+}
+
+internal fun FirRegularClass.getRealPrimaryConstructor() =
+    declarations.firstOrNull { it is FirConstructor && it.isPrimary && it.source?.kind !is FirFakeSourceElementKind }
+            as? FirConstructor
+
+internal fun FirRegularClass.getFirstPrimaryConstructorProperty(): FirProperty? {
+    val parameter = getRealPrimaryConstructor()?.valueParameters?.firstOrNull() ?: return null
+
+    return declarations.find { it is FirProperty && it.name == parameter.name && it.source?.kind is FirFakeSourceElementKind }
+            as? FirProperty
+}

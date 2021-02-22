@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMB
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.TO_STRING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.VISIBILITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.WHEN_MISSING_CASES
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_INLINE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_DELEGATED_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_FUNCTION_WITH_BODY
@@ -53,6 +54,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONFLICTING_PROJE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONSTRUCTOR_IN_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONSTRUCTOR_IN_OBJECT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CYCLIC_CONSTRUCTOR_DELEGATION_CALL
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATED_PROPERTY_INSIDE_INLINE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATED_PROPERTY_IN_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATION_IN_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATION_SUPER_CALL_IN_ENUM_CONSTRUCTOR
@@ -89,6 +91,15 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_LATE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCOMPATIBLE_MODIFIERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INFERENCE_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INITIALIZER_REQUIRED_FOR_DESTRUCTURING_DECLARATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INLINE_CLASS_CANNOT_BE_RECURSIVE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INLINE_CLASS_CANNOT_EXTEND_CLASSES
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INLINE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INLINE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INLINE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INLINE_CLASS_NOT_FINAL
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INLINE_CLASS_NOT_TOP_LEVEL
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INNER_CLASS_INSIDE_INLINE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INNER_CLASS_OF_GENERIC_THROWABLE_SUBCLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INSTANCE_ACCESS_BEFORE_SUPER_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INTERFACE_WITH_SUPERCLASS
@@ -132,6 +143,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROJECTION_ON_NON
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_INITIALIZER_IN_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_INITIALIZER_NO_BACKING_FIELD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_TYPE_MISMATCH_ON_OVERRIDE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_WITH_BACKING_FIELD_INSIDE_INLINE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_WITH_NO_TYPE_NO_INITIALIZER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.QUALIFIED_SUPERTYPE_EXTENDED_BY_OTHER_SUPERTYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RECURSION_IN_IMPLICIT_TYPES
@@ -148,11 +160,13 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_SINGLE_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_VISIBILITY_MODIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REIFIED_TYPE_IN_CATCH_CLAUSE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REPEATED_MODIFIER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RESERVED_MEMBER_INSIDE_INLINE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_NOT_ALLOWED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_TYPE_MISMATCH_ON_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SEALED_CLASS_CONSTRUCTOR_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SEALED_SUPERTYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SEALED_SUPERTYPE_IN_LOCAL_CLASS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_INLINE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SUPERCLASS_NOT_ACCESSIBLE_FROM_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SUPERTYPE_INITIALIZED_IN_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SUPERTYPE_INITIALIZED_WITHOUT_PRIMARY_CONSTRUCTOR
@@ -178,6 +192,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UPPER_BOUND_VIOLA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.USELESS_VARARG_ON_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VAL_REASSIGNMENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VAL_WITH_SETTER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VALUE_CLASS_CANNOT_BE_CLONEABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VARARG_OUTSIDE_PARENTHESES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VARIABLE_EXPECTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VARIABLE_INITIALIZER_IS_REDUNDANT
@@ -368,6 +383,23 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
             // Reflection
             map.put(CLASS_LITERAL_LHS_NOT_A_CLASS, "Only classes are allowed on the left hand side of a class literal")
             map.put(NULLABLE_TYPE_IN_CLASS_LITERAL_LHS, "Type in a class literal must not be nullable")
+
+            // Inline and value classes
+            map.put(INLINE_CLASS_NOT_TOP_LEVEL, "Inline classes cannot be local or inner")
+            map.put(INLINE_CLASS_NOT_FINAL, "Inline classes can be only final")
+            map.put(ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_INLINE_CLASS, "Primary constructor is required for inline class")
+            map.put(INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE, "Inline class must have exactly one primary constructor parameter")
+            map.put(INLINE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER, "Value class primary constructor must have only final read-only (val) property parameter")
+            map.put(PROPERTY_WITH_BACKING_FIELD_INSIDE_INLINE_CLASS, "Inline class cannot have properties with backing fields")
+            map.put(DELEGATED_PROPERTY_INSIDE_INLINE_CLASS, "Inline class cannot have delegated properties")
+            map.put(INLINE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE, "Inline class cannot have value parameter of type ''{0}''", TO_STRING)
+            map.put(INLINE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION, "Inline class cannot implement an interface by delegation")
+            map.put(INLINE_CLASS_CANNOT_EXTEND_CLASSES, "Inline class cannot extend classes")
+            map.put(INLINE_CLASS_CANNOT_BE_RECURSIVE, "Inline class cannot be recursive")
+            map.put(RESERVED_MEMBER_INSIDE_INLINE_CLASS, "Member with the name ''{0}'' is reserved for future releases", TO_STRING)
+            map.put(SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_INLINE_CLASS, "Secondary constructors with bodies are reserved for for future releases")
+            map.put(INNER_CLASS_INSIDE_INLINE_CLASS, "Inline class cannot have inner classes")
+            map.put(VALUE_CLASS_CANNOT_BE_CLONEABLE, "Value class cannot be Cloneable")
 
             // Overrides
             map.put(NOTHING_TO_OVERRIDE, "''{0}'' overrides nothing", DECLARATION_NAME)

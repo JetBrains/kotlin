@@ -2725,6 +2725,34 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
         }
 
         @Nested
+        @TestMetadata("compiler/fir/analysis-tests/testData/resolve/inlineClasses")
+        @TestDataPath("$PROJECT_ROOT")
+        public class InlineClasses {
+            @Test
+            public void testAllFilesPresentInInlineClasses() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/inlineClasses"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            }
+
+            @Test
+            @TestMetadata("inlineClassConstructor.kt")
+            public void testInlineClassConstructor() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/inlineClasses/inlineClassConstructor.kt");
+            }
+
+            @Test
+            @TestMetadata("inlineClassDeclaration.kt")
+            public void testInlineClassDeclaration() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/inlineClasses/inlineClassDeclaration.kt");
+            }
+
+            @Test
+            @TestMetadata("inlineClassMembers.kt")
+            public void testInlineClassMembers() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/inlineClasses/inlineClassMembers.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/fir/analysis-tests/testData/resolve/innerClasses")
         @TestDataPath("$PROJECT_ROOT")
         public class InnerClasses {
