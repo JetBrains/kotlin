@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.lower.SamEqualsHashCodeMethodsGenerat
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.JvmSymbols
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.lower.indy.LambdaMetafactoryArguments
 import org.jetbrains.kotlin.backend.jvm.lower.indy.LambdaMetafactoryArgumentsBuilder
@@ -26,11 +27,15 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 
@@ -221,8 +226,8 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
 
     private val specialNullabilityAnnotationsFqNames =
         setOf(
-            context.ir.symbols.flexibleNullabilityAnnotationFqName,
-            context.ir.symbols.enhancedNullabilityAnnotationFqName
+            JvmSymbols.FLEXIBLE_NULLABILITY_ANNOTATION_FQ_NAME,
+            JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION,
         )
 
     private fun wrapWithIndySamConversion(

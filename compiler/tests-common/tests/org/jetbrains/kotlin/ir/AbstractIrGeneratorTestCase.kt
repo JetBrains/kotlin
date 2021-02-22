@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.ir
 
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
-import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensions
+import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -141,7 +141,7 @@ abstract class AbstractIrGeneratorTestCase : CodegenTestCase() {
         ): IrModuleFragment {
             return generateIrModule(
                 JvmResolveUtil.analyze(ktFilesToAnalyze, environment), psi2ir, ktFilesToAnalyze,
-                JvmGeneratorExtensions(generateFacades = false),
+                JvmGeneratorExtensionsImpl(generateFacades = false),
                 createIdSignatureComposer = { bindingContext ->
                     JvmIdSignatureDescriptor(JvmManglerDesc(MainFunctionDetector(bindingContext, languageVersionSettings)))
                 }

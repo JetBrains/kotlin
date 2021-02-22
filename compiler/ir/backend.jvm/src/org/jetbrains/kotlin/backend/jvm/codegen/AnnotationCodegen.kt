@@ -20,8 +20,8 @@ import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
 import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensions
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.JvmSymbols
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.TypeAnnotationCollector
@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
@@ -303,9 +304,9 @@ abstract class AnnotationCodegen(
         )
 
         internal val internalAnnotations = setOf(
-            JvmGeneratorExtensions.FLEXIBLE_NULLABILITY_ANNOTATION_FQ_NAME,
-            JvmGeneratorExtensions.ENHANCED_NULLABILITY_ANNOTATION_FQ_NAME,
-            JvmGeneratorExtensions.RAW_TYPE_ANNOTATION_FQ_NAME
+            JvmSymbols.FLEXIBLE_NULLABILITY_ANNOTATION_FQ_NAME,
+            JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION,
+            JvmSymbols.RAW_TYPE_ANNOTATION_FQ_NAME
         )
 
         private fun getRetentionPolicy(irClass: IrClass): RetentionPolicy {
@@ -393,7 +394,7 @@ private fun IrClass.getAnnotationRetention(): KotlinRetention? {
 }
 
 private fun IrType.isNullabilityFlexible(): Boolean =
-    hasAnnotation(JvmGeneratorExtensions.FLEXIBLE_NULLABILITY_ANNOTATION_FQ_NAME)
+    hasAnnotation(JvmSymbols.FLEXIBLE_NULLABILITY_ANNOTATION_FQ_NAME)
 
 // To be generalized to IrMemberAccessExpression as soon as properties get symbols.
 private fun IrConstructorCall.getValueArgument(name: Name): IrExpression? {

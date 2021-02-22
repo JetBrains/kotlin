@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addIfNotNull
 
@@ -417,7 +418,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
         if (adapteeType.isPrimitiveType()) {
             return if (
                 expectedType.isPrimitiveType() &&
-                !expectedType.hasAnnotation(context.ir.symbols.enhancedNullabilityAnnotationFqName)
+                !expectedType.hasAnnotation(JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION)
             )
                 TypeAdaptationConstraint.KEEP_UNBOXED
             else

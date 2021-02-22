@@ -24,9 +24,11 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.JVM_INLINE_ANNOTATION_FQ_NAME
@@ -665,10 +667,6 @@ class JvmSymbols(
             returnType = irBuiltIns.anyType
         }.symbol
 
-    val flexibleNullabilityAnnotationFqName = JvmGeneratorExtensions.FLEXIBLE_NULLABILITY_ANNOTATION_FQ_NAME
-    val enhancedNullabilityAnnotationFqName = JvmGeneratorExtensions.ENHANCED_NULLABILITY_ANNOTATION_FQ_NAME
-    val rawTypeAnnotationFQN = JvmGeneratorExtensions.RAW_TYPE_ANNOTATION_FQ_NAME
-
     private val collectionToArrayClass: IrClassSymbol = createClass(FqName("kotlin.jvm.internal.CollectionToArray")) { klass ->
         klass.origin = JvmLoweredDeclarationOrigin.TO_ARRAY
 
@@ -866,6 +864,14 @@ class JvmSymbols(
 
     val runSuspendFunction: IrSimpleFunctionSymbol =
         kotlinCoroutinesJvmInternalRunSuspendKt.functionByName("runSuspend")
+
+    companion object {
+        val FLEXIBLE_NULLABILITY_ANNOTATION_FQ_NAME =
+            IrBuiltIns.KOTLIN_INTERNAL_IR_FQN.child(Name.identifier("FlexibleNullability"))
+
+        val RAW_TYPE_ANNOTATION_FQ_NAME =
+            IrBuiltIns.KOTLIN_INTERNAL_IR_FQN.child(Name.identifier("RawType"))
+    }
 }
 
 private fun IrClassSymbol.functionByName(name: String): IrSimpleFunctionSymbol =

@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
 import org.jetbrains.kotlin.backend.common.output.SimpleOutputFileCollection
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
-import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensions
+import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.backend.jvm.jvmPhases
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
@@ -353,7 +353,7 @@ object KotlinToJVMBytecodeCompiler {
             performanceManager?.notifyGenerationStarted()
 
             performanceManager?.notifyIRTranslationStarted()
-            val extensions = JvmGeneratorExtensions()
+            val extensions = JvmGeneratorExtensionsImpl()
             val (moduleFragment, symbolTable, components) = firAnalyzerFacade.convertToIr(extensions)
 
             performanceManager?.notifyIRTranslationFinished()

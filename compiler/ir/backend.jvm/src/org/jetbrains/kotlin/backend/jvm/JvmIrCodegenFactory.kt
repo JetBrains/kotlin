@@ -60,7 +60,7 @@ class JvmIrCodegenFactory(private val phaseConfig: PhaseConfig) : CodegenFactory
 
     @JvmOverloads
     fun convertToIr(state: GenerationState, files: Collection<KtFile>, ignoreErrors: Boolean = false): JvmIrBackendInput {
-        val extensions = JvmGeneratorExtensions()
+        val extensions = JvmGeneratorExtensionsImpl()
         val mangler = JvmManglerDesc(MainFunctionDetector(state.bindingContext, state.languageVersionSettings))
         val psi2ir = Psi2IrTranslator(state.languageVersionSettings, Psi2IrConfiguration(ignoreErrors))
         val symbolTable = SymbolTable(JvmIdSignatureDescriptor(mangler), IrFactoryImpl, JvmNameProvider)
@@ -217,7 +217,7 @@ class JvmIrCodegenFactory(private val phaseConfig: PhaseConfig) : CodegenFactory
         state: GenerationState,
         irModuleFragment: IrModuleFragment,
         symbolTable: SymbolTable,
-        extensions: JvmGeneratorExtensions,
+        extensions: JvmGeneratorExtensionsImpl,
         backendExtension: JvmBackendExtension,
         notifyCodegenStart: () -> Unit
     ) {
@@ -232,7 +232,7 @@ class JvmIrCodegenFactory(private val phaseConfig: PhaseConfig) : CodegenFactory
     fun configureBuiltInsAndGenerateIrProvidersInFrontendIRMode(
         irModuleFragment: IrModuleFragment,
         symbolTable: SymbolTable,
-        extensions: JvmGeneratorExtensions
+        extensions: JvmGeneratorExtensionsImpl,
     ): List<IrProvider> {
         irModuleFragment.irBuiltins.functionFactory = IrFunctionFactory(irModuleFragment.irBuiltins, symbolTable)
         return generateTypicalIrProviderList(

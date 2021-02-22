@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.load.java.sam.JavaSingleAbstractMethodUtils
 import org.jetbrains.kotlin.load.java.typeEnhancement.hasEnhancedNullability
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtPureClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.pureEndOffset
 import org.jetbrains.kotlin.psi.psiUtil.pureStartOffset
@@ -49,8 +48,8 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 
-class JvmGeneratorExtensions(private val generateFacades: Boolean = true) : GeneratorExtensions() {
-    val classNameOverride = mutableMapOf<IrClass, JvmClassName>()
+class JvmGeneratorExtensionsImpl(private val generateFacades: Boolean = true) : GeneratorExtensions(), JvmGeneratorExtensions {
+    override val classNameOverride: MutableMap<IrClass, JvmClassName> = mutableMapOf()
 
     override val samConversion: SamConversion
         get() = JvmSamConversion
@@ -162,32 +161,21 @@ class JvmGeneratorExtensions(private val generateFacades: Boolean = true) : Gene
     }
 
     private val flexibleNullabilityAnnotationClass =
-        createSpecialAnnotationClass(FLEXIBLE_NULLABILITY_ANNOTATION_FQ_NAME, kotlinIrInternalPackage)
+        createSpecialAnnotationClass(JvmSymbols.FLEXIBLE_NULLABILITY_ANNOTATION_FQ_NAME, kotlinIrInternalPackage)
 
     private val rawTypeAnnotationClass =
-        createSpecialAnnotationClass(RAW_TYPE_ANNOTATION_FQ_NAME, kotlinIrInternalPackage)
+        createSpecialAnnotationClass(JvmSymbols.RAW_TYPE_ANNOTATION_FQ_NAME, kotlinIrInternalPackage)
 
     // NB Class 'kotlin.jvm.internal.EnhancedNullability' doesn't exist anywhere in descriptors or in bytecode
     private val enhancedNullabilityAnnotationClass =
-        createSpecialAnnotationClass(ENHANCED_NULLABILITY_ANNOTATION_FQ_NAME, kotlinJvmInternalPackage)
+        createSpecialAnnotationClass(JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION, kotlinJvmInternalPackage)
 
-    override val flexibleNullabilityAnnotationConstructor: IrConstructor? =
+    override val flexibleNullabilityAnnotationConstructor: IrConstructor =
         flexibleNullabilityAnnotationClass.constructors.single()
 
-    override val enhancedNullabilityAnnotationConstructor: IrConstructor? =
+    override val enhancedNullabilityAnnotationConstructor: IrConstructor =
         enhancedNullabilityAnnotationClass.constructors.single()
 
-    override val rawTypeAnnotationConstructor: IrConstructor? =
+    override val rawTypeAnnotationConstructor: IrConstructor =
         rawTypeAnnotationClass.constructors.single()
-
-    companion object {
-        val FLEXIBLE_NULLABILITY_ANNOTATION_FQ_NAME =
-            IrBuiltIns.KOTLIN_INTERNAL_IR_FQN.child(Name.identifier("FlexibleNullability"))
-
-        val ENHANCED_NULLABILITY_ANNOTATION_FQ_NAME: FqName =
-            JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION
-
-        val RAW_TYPE_ANNOTATION_FQ_NAME =
-            IrBuiltIns.KOTLIN_INTERNAL_IR_FQN.child(Name.identifier("RawType"))
-    }
 }
