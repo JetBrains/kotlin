@@ -72,7 +72,7 @@ interface IrElementVisitor<out R, in D> {
     fun visitGetField(expression: IrGetField, data: D) = visitFieldAccess(expression, data)
     fun visitSetField(expression: IrSetField, data: D) = visitFieldAccess(expression, data)
 
-    fun visitMemberAccess(expression: IrMemberAccessExpression<*>, data: D) = visitExpression(expression, data)
+    fun visitMemberAccess(expression: IrMemberAccessExpression<*>, data: D) = visitDeclarationReference(expression, data)
     fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: D) = visitMemberAccess(expression, data)
     fun visitCall(expression: IrCall, data: D) = visitFunctionAccess(expression, data)
     fun visitConstructorCall(expression: IrConstructorCall, data: D) = visitFunctionAccess(expression, data)
