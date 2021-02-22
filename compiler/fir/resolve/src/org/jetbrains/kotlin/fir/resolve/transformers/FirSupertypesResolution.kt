@@ -284,7 +284,13 @@ private class FirSupertypeResolverVisitor(
         supertypeRefs: List<FirTypeRef>
     ): List<FirTypeRef> {
         return resolveSpecificClassLikeSupertypes(classLikeDeclaration) { transformer, scope ->
-            supertypeRefs.mapTo(mutableListOf()) {
+            /*
+              This list is backed by mutable list and during iterating on it we can resolve supertypes of that class via IDE light classes
+              as IJ Java resolve may resolve a lot of stuff by light classes
+              this causes ConcurrentModificationException
+              So we create a copy of supertypeRefs to avoid it
+             */
+            supertypeRefs.createCopy().mapTo(mutableListOf()) {
                 val superTypeRef = transformer.transformTypeRef(it, scope).single
                 val typeParameterType = superTypeRef.coneTypeSafe<ConeTypeParameterType>()
                 when {
@@ -303,6 +309,8 @@ private class FirSupertypeResolverVisitor(
             }
         }
     }
+
+    private fun <T> List<T>.createCopy(): List<T> = ArrayList(this)
 
     private fun addSupertypesFromExtensions(klass: FirClassLikeDeclaration<*>, supertypeRefs: MutableList<FirResolvedTypeRef>) {
         if (supertypeGenerationExtensions.isEmpty()) return
