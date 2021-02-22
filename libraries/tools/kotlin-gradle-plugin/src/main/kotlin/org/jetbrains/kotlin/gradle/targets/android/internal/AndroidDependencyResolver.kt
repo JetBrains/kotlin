@@ -16,6 +16,8 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.*
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.component.ModuleComponentSelector
+import org.gradle.api.artifacts.result.ArtifactResult
+import org.gradle.api.artifacts.result.ComponentResult
 import org.gradle.api.artifacts.result.ResolvedArtifactResult
 import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.attributes.AttributeContainer
@@ -119,28 +121,28 @@ object AndroidDependencyResolver {
             variant.sourceSets.filterIsInstance(AndroidSourceSet::class.java).map {
                 val implConfig = project.configurations.getByName(it.implementationConfigurationName)
                 allImplConfigs.add(implConfig)
-                val sourceSetConfig =
+                val sourceSetConfigs =
                     sourceSet2Impl.computeIfAbsent(lowerCamelCaseName("android", it.name)) { SourceSetConfigs(implConfig) }
                 // The same sourceset can be included into multiple variants (e.g. androidMain)
-                sourceSetConfig.compileConfigs.add(compileConfig)
+                sourceSetConfigs.compileConfigs.add(compileConfig)
             }
         }
 
         val attributesSchema = project.dependencies.attributesSchema
 
-        return sourceSet2Impl.mapValues { entry ->
-            val dependencies = findDependencies(allImplConfigs, entry.value, attributesSchema)
+        return sourceSet2Impl.mapValues { (sourceSetName, sourceSetConfigs) ->
+            val dependencies = findDependencies(allImplConfigs, sourceSetConfigs, attributesSchema)
 
             val selfResolved = dependencies.filterIsInstance<SelfResolvingDependency>().map { dependency ->
                 val collection = dependency.resolve().takeIf(Collection<File?>::isNotEmpty)
                 AndroidDependency(dependency.name, group = dependency.group, collection = collection)
             }
             val resolvedExternal =
-                collectDependencies(dependencies.filterIsInstance<ExternalModuleDependency>(), entry.value.compileConfigs)
+                collectDependencies(dependencies.filterIsInstance<ExternalModuleDependency>(), sourceSetConfigs.compileConfigs)
 
             val result = (selfResolved + resolvedExternal + androidSdkJar).toMutableList()
 
-            if (entry.key == "androidMain") {
+            if (sourceSetName == "androidMain") {
                 // this is a terrible hack, but looks like the only way, other than proper support via light-classes
                 val task = project.tasks.findByName("processDebugResources")
                 if (task != null) {
@@ -179,8 +181,10 @@ object AndroidDependencyResolver {
             // If the current sourceset's implementation configuration is included into several compile classpath configuration's,
             // we'll take only the results which are the same across all of them. The dependencies which resolve differently will appear
             // in the more specific sourcesets.
-            allResults.addOrRetainAll(config.incoming.artifactView(viewConfig).artifacts.artifacts) { it.id }
-            allComponents.addOrRetainAll(config.incoming.resolutionResult.allComponents) { it.id }
+            with(config.incoming) {
+                allResults.addOrRetainAll(artifactView(viewConfig).artifacts.artifacts, ArtifactResult::getId)
+                allComponents.addOrRetainAll(resolutionResult.allComponents, ComponentResult::getId)
+            }
         }
 
         val resolvedArtifacts = allResults.mapNotNull {
@@ -194,11 +198,9 @@ object AndroidDependencyResolver {
             id to it
         }.toMap()
 
-        return HashSet<AndroidDependency>().also { result ->
-            dependencies.flatMapTo(result) { dependency ->
-                val deps = HashSet<ModuleIdentifier>().also { doCollectDependencies(listOf(dependency.module), resolutionResults, it) }
-                deps.mapNotNull { resolvedArtifacts[it] }
-            }
+        return dependencies.flatMapTo(HashSet()) { dependency ->
+            val deps = HashSet<ModuleIdentifier>().also { doCollectDependencies(listOf(dependency.module), resolutionResults, it) }
+            deps.mapNotNull { resolvedArtifacts[it] }
         }
     }
 
@@ -275,7 +277,7 @@ object AndroidDependencyResolver {
         }
     }
 
-    private fun <E, K> MutableSet<E>.addOrRetainAll(c: Collection<E>, selector: (E) -> K) {
+    private inline fun <E, K> MutableSet<E>.addOrRetainAll(c: Collection<E>, crossinline selector: (E) -> K) {
         if (isEmpty()) {
             addAll(c)
         } else {
