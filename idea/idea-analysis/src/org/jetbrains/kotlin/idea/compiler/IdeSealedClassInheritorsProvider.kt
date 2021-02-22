@@ -5,17 +5,18 @@
 
 package org.jetbrains.kotlin.idea.compiler
 
-import com.intellij.openapi.module.ModuleManager
+import com.intellij.openapi.module.Module
 import com.intellij.psi.*
 import com.intellij.psi.search.*
 import com.intellij.psi.search.searches.ClassInheritorsSearch
 import com.intellij.psi.search.searches.ClassInheritorsSearch.SearchParameters
+import org.jetbrains.kotlin.analyzer.moduleInfo
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.toLightClass
-import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.containingPackage
+import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.caches.project.implementedDescriptors
 import org.jetbrains.kotlin.idea.caches.resolve.util.javaResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.util.resolveToDescriptor
@@ -37,11 +38,10 @@ object IdeSealedClassInheritorsProvider : SealedClassInheritorsProvider() {
         val sealedKtClass = sealedClass.findPsi() as? KtClass ?: return emptyList()
         val searchScope: SearchScope = if (allowSealedInheritorsInDifferentFilesOfSamePackage) {
             val module = sealedKtClass.module ?: return emptyList()
-            val moduleManager = ModuleManager.getInstance(sealedKtClass.project)
 
             val modulesScope = sealedClass.module.listCommonModulesIfAny().toMutableList()
-                .apply { add(sealedClass.module) }
-                .mapNotNull { moduleManager.findModuleByName(JvmCodegenUtil.getModuleName(it))?.moduleScope }
+                .apply { add(module) }
+                .map { it.moduleScope }
 
             val mppAwareSearchScope = GlobalSearchScope.union(modulesScope)
 
@@ -69,8 +69,9 @@ object IdeSealedClassInheritorsProvider : SealedClassInheritorsProvider() {
             .sortedBy(ClassDescriptor::getName) // order needs to be stable (at least for tests)
     }
 
-    private fun ModuleDescriptor.listCommonModulesIfAny(): Collection<ModuleDescriptor> {
+    private fun ModuleDescriptor.listCommonModulesIfAny(): Collection<Module> {
         return implementedDescriptors.closure { it.implementedDescriptors }
+            .mapNotNull { (it.moduleInfo as? ModuleSourceInfo)?.module }
     }
 
     private fun getPackageViaDirectoryService(ktClass: KtClass): PsiPackage? {
