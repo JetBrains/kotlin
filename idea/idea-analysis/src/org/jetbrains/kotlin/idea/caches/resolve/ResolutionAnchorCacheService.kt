@@ -50,8 +50,6 @@ class ResolutionAnchorCacheServiceImpl(val project: Project) :
         var moduleNameToAnchorName: Map<String, String> = emptyMap()
     )
 
-    private val logger = logger<ResolutionAnchorCacheServiceImpl>()
-
     @JvmField
     @Volatile
     var myState: State = State()
@@ -65,14 +63,13 @@ class ResolutionAnchorCacheServiceImpl(val project: Project) :
     object ResolutionAnchorMappingCacheKey
     object ResolutionAnchorDependenciesCacheKey
 
-    override val resolutionAnchorsForLibraries: Map<LibraryInfo, ModuleSourceInfo> by lazy {
-        project.cacheByClassInvalidatingOnRootModifications(ResolutionAnchorMappingCacheKey::class.java) {
+    override val resolutionAnchorsForLibraries: Map<LibraryInfo, ModuleSourceInfo>
+        get() = project.cacheByClassInvalidatingOnRootModifications(ResolutionAnchorMappingCacheKey::class.java) {
             mapResolutionAnchorForLibraries()
         }
-    }
 
-    private val resolutionAnchorDependenciesCache: MutableMap<LibraryInfo, Set<ModuleSourceInfo>> =
-        project.cacheByClassInvalidatingOnRootModifications(ResolutionAnchorDependenciesCacheKey::class.java) {
+    private val resolutionAnchorDependenciesCache: MutableMap<LibraryInfo, Set<ModuleSourceInfo>>
+        get() = project.cacheByClassInvalidatingOnRootModifications(ResolutionAnchorDependenciesCacheKey::class.java) {
             ContainerUtil.createConcurrentWeakMap()
         }
 
@@ -117,5 +114,9 @@ class ResolutionAnchorCacheServiceImpl(val project: Project) :
 
             library to anchor
         }.toMap()
+    }
+
+    companion object {
+        private val logger = logger<ResolutionAnchorCacheServiceImpl>()
     }
 }
