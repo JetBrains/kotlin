@@ -10,6 +10,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributeContainer
+import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.internal.FeaturePreviews
 import org.gradle.api.internal.plugins.DslObject
 import org.gradle.api.plugins.JavaBasePlugin
@@ -316,6 +317,10 @@ internal fun sourcesJarTask(
             sourceSets.value.forEach { sourceSet ->
                 it.from(sourceSet.kotlin) { copySpec ->
                     copySpec.into(sourceSet.name)
+                    // Duplicates are coming from `SourceSets` that `sourceSet` depends on.
+                    // Such dependency was added by Kotlin compilation.
+                    // TODO: rethink approach for adding dependent `SourceSets` to Kotlin compilation `SourceSet`
+                    copySpec.duplicatesStrategy = DuplicatesStrategy.WARN
                 }
             }
         }
