@@ -52,6 +52,10 @@ while [ $# -gt 0 ]; do
       ;;
     -J*)
       java_args=("${java_args[@]}" "${1:2}")
+      if [ "x${1:2}" = "x" ]; then
+        echo "error: empty -J argument"
+        exit 1
+      fi
       shift
       ;;
     *)

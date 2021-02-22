@@ -349,4 +349,14 @@ fun f() : Result<Int> = Result.success(42)
             expectedStdout = "[OK]\n", environment = jdk15,
         )
     }
+
+    fun testEmptyJArgument() {
+        runProcess(
+            "kotlinc",
+            "$testDataDirectory/helloWorld.kt",
+            "-d", tmpdir.path,
+            "-J", expectedStdout = "error: empty -J argument\n",
+            expectedExitCode = 1
+        )
+    }
 }
