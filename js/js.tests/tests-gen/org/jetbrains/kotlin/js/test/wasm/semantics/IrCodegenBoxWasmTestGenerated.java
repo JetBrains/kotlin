@@ -11292,6 +11292,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/properties/accessToPrivateProperty.kt");
         }
 
+        @TestMetadata("accessorForPropertyWithPrivateSetter.kt")
+        public void testAccessorForPropertyWithPrivateSetter() throws Exception {
+            runTest("compiler/testData/codegen/box/properties/accessorForPropertyWithPrivateSetter.kt");
+        }
+
         @TestMetadata("accessorForProtectedPropertyWithPrivateSetter.kt")
         public void testAccessorForProtectedPropertyWithPrivateSetter() throws Exception {
             runTest("compiler/testData/codegen/box/properties/accessorForProtectedPropertyWithPrivateSetter.kt");

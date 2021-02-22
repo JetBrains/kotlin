@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.createFunctionType
-import org.jetbrains.kotlin.builtins.isKFunctionType
-import org.jetbrains.kotlin.builtins.isKSuspendFunctionType
+import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.DescriptorMetadataSource
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -382,7 +379,7 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
                 generateFunctionReference(startOffset, endOffset, type, symbol, callableDescriptor, typeArguments, origin)
             }
             is PropertyDescriptor -> {
-                val mutable = get(BindingContext.VARIABLE, ktElement)?.isVar ?: true
+                val mutable = ReflectionTypes.isNumberedKMutablePropertyType(type)
                 generatePropertyReference(startOffset, endOffset, type, callableDescriptor, typeArguments, origin, mutable)
             }
             else ->

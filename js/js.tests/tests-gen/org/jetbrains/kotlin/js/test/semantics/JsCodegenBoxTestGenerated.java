@@ -17745,6 +17745,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/properties/accessToPrivateSetter.kt");
         }
 
+        @TestMetadata("accessorForPropertyWithPrivateSetter.kt")
+        public void testAccessorForPropertyWithPrivateSetter() throws Exception {
+            runTest("compiler/testData/codegen/box/properties/accessorForPropertyWithPrivateSetter.kt");
+        }
+
         @TestMetadata("accessorForProtectedPropertyWithPrivateSetter.kt")
         public void testAccessorForProtectedPropertyWithPrivateSetter() throws Exception {
             runTest("compiler/testData/codegen/box/properties/accessorForProtectedPropertyWithPrivateSetter.kt");
