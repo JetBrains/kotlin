@@ -109,6 +109,8 @@ open class AddModifierFix(
         val addAbstractModifier: QuickFixesPsiBasedFactory<PsiElement> = AddModifierFix.createFactory(KtTokens.ABSTRACT_KEYWORD)
         val addAbstractToContainingClass: QuickFixesPsiBasedFactory<PsiElement> =
             AddModifierFix.createFactory(KtTokens.ABSTRACT_KEYWORD, KtClassOrObject::class.java)
+        val addOpenToContainingClass: QuickFixesPsiBasedFactory<PsiElement> =
+            AddModifierFix.createFactory(KtTokens.OPEN_KEYWORD, KtClassOrObject::class.java)
         private val modalityModifiers: Set<KtModifierKeywordToken> =
             setOf(KtTokens.ABSTRACT_KEYWORD, KtTokens.OPEN_KEYWORD, KtTokens.FINAL_KEYWORD)
 
