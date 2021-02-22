@@ -1521,26 +1521,19 @@ class NewMultiplatformIT : BaseGradleIT() {
             assertFileExists(groupDir + "mpp-lib-myjvm")
         }
 
-        fun doTestPomRewriting(mppProjectDependency: Boolean, legacyPublishing: Boolean, keepPomIntact: Boolean? = null) {
+        fun doTestPomRewriting(mppProjectDependency: Boolean, keepPomIntact: Boolean? = null) {
 
             val params = mutableListOf("clean", ":jvm-app:publish", ":js-app:publish").apply {
                 if (mppProjectDependency)
                     add("-PmppProjectDependency=true")
-                if (legacyPublishing)
-                    add("-PlegacyPublishing=true")
                 if (keepPomIntact == true)
                     add("-Pkotlin.mpp.keepMppDependenciesIntactInPoms=true")
             }.toTypedArray()
 
             build(*params, options = defaultBuildOptions().copy(warningMode = WarningMode.Summary)) {
                 assertSuccessful()
-                if (legacyPublishing) {
-                    assertTasksExecuted(":jvm-app:uploadArchives")
-                    assertTasksExecuted(":js-app:uploadArchives")
-                } else {
-                    assertTasksExecuted(":jvm-app:publishMainPublicationToMavenRepository")
-                    assertTasksExecuted(":js-app:publishMainPublicationToMavenRepository")
-                }
+                assertTasksExecuted(":jvm-app:publishMainPublicationToMavenRepository")
+                assertTasksExecuted(":js-app:publishMainPublicationToMavenRepository")
 
                 val jvmModuleDir = groupDir + "jvm-app/1.0/"
                 val jsModuleDir = groupDir + "js-app/1.0/"
@@ -1573,16 +1566,14 @@ class NewMultiplatformIT : BaseGradleIT() {
             }
         }
 
-        doTestPomRewriting(mppProjectDependency = false, legacyPublishing = false)
-        doTestPomRewriting(mppProjectDependency = false, legacyPublishing = true)
-        doTestPomRewriting(mppProjectDependency = true, legacyPublishing = false)
+        doTestPomRewriting(mppProjectDependency = false)
+        doTestPomRewriting(mppProjectDependency = true)
 
         // This case doesn't work and never did; TODO investigate KT-29975
         // doTestPomRewriting(mppProjectDependency = true, legacyPublishing = true)
 
         // Also check that the flag for keeping POMs intact works:
-        doTestPomRewriting(mppProjectDependency = false, legacyPublishing = false, keepPomIntact = true)
-        doTestPomRewriting(mppProjectDependency = false, legacyPublishing = true, keepPomIntact = true)
+        doTestPomRewriting(mppProjectDependency = false, keepPomIntact = true)
     }
 
     @Test

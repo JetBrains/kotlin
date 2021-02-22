@@ -514,27 +514,43 @@ open class KotlinAndroid34GradleIT : KotlinAndroid3GradleIT() {
         setupWorkingDir()
 
         gradleBuildScript("Lib").modify {
-            it.checkedReplace("kotlin-stdlib:\$kotlin_version", "kotlin-stdlib") + "\n" + """
-            apply plugin: 'maven'
-            group 'com.example'
-            version '1.0'
-            android {
-                defaultPublishConfig 'flavor1Debug'
-            }
-            uploadArchives {
-                repositories {
-                    mavenDeployer {
-                        repository(url: "file://${'$'}buildDir/repo")
+
+            it.checkedReplace(
+                "kotlin-stdlib:\$kotlin_version",
+                "kotlin-stdlib"
+            ) + "\n" +
+                """
+                apply plugin: 'maven-publish'
+
+                android {
+                    defaultPublishConfig 'flavor1Debug'
+                }
+                
+                afterEvaluate {
+                    publishing {
+                        publications {
+                            flavorDebug(MavenPublication) {
+                                from components.flavor1Debug
+                                
+                                group = 'com.example'
+                                artifactId = 'flavor1Debug'
+                                version = '1.0'
+                            }
+                        }
+                        repositories {
+                            maven {
+                                url = "file://${'$'}buildDir/repo"
+                            }
+                        }
                     }
                 }
-            }
-            """.trimIndent()
+                """.trimIndent()
         }
 
-        build(":Lib:assembleFlavor1Debug", ":Lib:uploadArchives") {
+        build(":Lib:assembleFlavor1Debug", ":Lib:publish") {
             assertSuccessful()
-            assertTasksExecuted(":Lib:compileFlavor1DebugKotlin", ":Lib:uploadArchives")
-            val pomLines = File(projectDir, "Lib/build/repo/com/example/Lib/1.0/Lib-1.0.pom").readLines()
+            assertTasksExecuted(":Lib:compileFlavor1DebugKotlin", ":Lib:publishFlavorDebugPublicationToMavenRepository")
+            val pomLines = File(projectDir, "Lib/build/repo/com/example/flavor1Debug/1.0/flavor1Debug-1.0.pom").readLines()
             val stdlibVersionLineNumber = pomLines.indexOfFirst { "<artifactId>kotlin-stdlib</artifactId>" in it } + 1
             val versionLine = pomLines[stdlibVersionLineNumber]
             assertTrue { "<version>${defaultBuildOptions().kotlinVersion}</version>" in versionLine }
