@@ -135,7 +135,7 @@ fun createContainerForBodyResolve(
     analyzerServices: PlatformDependentAnalyzerServices,
     languageVersionSettings: LanguageVersionSettings,
     moduleStructureOracle: ModuleStructureOracle,
-    sealedProvider: SealedClassInheritorsProvider = CliSealedClassInheritorsProvider
+    sealedProvider: SealedClassInheritorsProvider,
 ): StorageComponentContainer = createContainer("BodyResolve", analyzerServices) {
     configureModule(moduleContext, platform, analyzerServices, bindingTrace, languageVersionSettings, sealedProvider)
 
@@ -158,7 +158,7 @@ fun createContainerForLazyBodyResolve(
     languageVersionSettings: LanguageVersionSettings,
     moduleStructureOracle: ModuleStructureOracle,
     mainFunctionDetectorFactory: MainFunctionDetector.Factory,
-    sealedProvider: SealedClassInheritorsProvider = CliSealedClassInheritorsProvider
+    sealedProvider: SealedClassInheritorsProvider,
 ): StorageComponentContainer = createContainer("LazyBodyResolve", analyzerServices) {
     configureModule(moduleContext, platform, analyzerServices, bindingTrace, languageVersionSettings, sealedProvider)
     useInstance(mainFunctionDetectorFactory)
