@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.Mapping
 import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.lower.irThrow
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
+import org.jetbrains.kotlin.backend.common.psi.PsiErrorBuilder
 import org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen
 import org.jetbrains.kotlin.backend.jvm.codegen.IrTypeMapper
 import org.jetbrains.kotlin.backend.jvm.codegen.MethodSignatureMapper
@@ -38,7 +39,6 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi2ir.PsiErrorBuilder
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.org.objectweb.asm.Type
 import java.util.concurrent.ConcurrentHashMap
