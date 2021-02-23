@@ -46,7 +46,6 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 object KonanFakeOverrideClassFilter : FakeOverrideClassFilter {
@@ -227,7 +226,6 @@ internal class KonanIrLinker(
         }
     class KonanPluginContext(
             override val moduleDescriptor: ModuleDescriptor,
-            override val bindingContext: BindingContext,
             override val symbolTable: ReferenceSymbolTable,
             override val typeTranslator: TypeTranslator,
             override val irBuiltIns: IrBuiltIns
