@@ -63,11 +63,11 @@ annotation class InAnn10(val p1: <!NULLABLE_TYPE_OF_ANNOTATION_MEMBER!>String?<!
 annotation class InAnn11(val p1: <!NULLABLE_TYPE_OF_ANNOTATION_MEMBER!>Ann1?<!>)
 annotation class InAnn12(val p1: <!NULLABLE_TYPE_OF_ANNOTATION_MEMBER!>MyEnum?<!>)
 
-annotation class InAnn13(vararg val p1: String,
-                        vararg val p2: <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>Class<*><!>,
-                        vararg val p3: MyEnum,
-                        vararg val p4: Ann1,
-                        vararg val p5: Int)
+annotation class InAnn13(<!MULTIPLE_VARARG_PARAMETERS!>vararg<!> val p1: String,
+                        <!MULTIPLE_VARARG_PARAMETERS!>vararg<!> val p2: <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>Class<*><!>,
+                        <!MULTIPLE_VARARG_PARAMETERS!>vararg<!> val p3: MyEnum,
+                        <!MULTIPLE_VARARG_PARAMETERS!>vararg<!> val p4: Ann1,
+                        <!MULTIPLE_VARARG_PARAMETERS!>vararg<!> val p5: Int)
 
 enum class MyEnum {
     A

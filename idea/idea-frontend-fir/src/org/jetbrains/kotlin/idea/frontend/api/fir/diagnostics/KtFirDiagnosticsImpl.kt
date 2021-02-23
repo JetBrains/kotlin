@@ -952,6 +952,21 @@ internal class UselessVarargOnParameterImpl(
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
 }
 
+internal class MultipleVarargParametersImpl(
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.MultipleVarargParameters(), KtAbstractFirDiagnostic<KtParameter> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
+internal class ForbiddenVarargParameterTypeImpl(
+    override val varargParameterType: KtType,
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.ForbiddenVarargParameterType(), KtAbstractFirDiagnostic<KtParameter> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
 internal class AbstractPropertyInNonAbstractClassImpl(
     override val property: KtSymbol,
     override val containingClass: KtSymbol,

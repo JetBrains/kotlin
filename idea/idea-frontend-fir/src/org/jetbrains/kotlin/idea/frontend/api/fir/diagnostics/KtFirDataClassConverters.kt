@@ -840,6 +840,19 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.MULTIPLE_VARARG_PARAMETERS) { firDiagnostic ->
+        MultipleVarargParametersImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.FORBIDDEN_VARARG_PARAMETER_TYPE) { firDiagnostic ->
+        ForbiddenVarargParameterTypeImpl(
+            firSymbolBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
     add(FirErrors.ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS) { firDiagnostic ->
         AbstractPropertyInNonAbstractClassImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a as FirDeclaration),

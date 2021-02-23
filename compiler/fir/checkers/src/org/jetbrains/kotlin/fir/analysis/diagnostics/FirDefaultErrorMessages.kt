@@ -75,6 +75,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPOSED_SUPER_INT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPOSED_TYPEALIAS_EXPANDED_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPOSED_TYPE_PARAMETER_BOUND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXTENSION_PROPERTY_WITH_BACKING_FIELD
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FORBIDDEN_VARARG_PARAMETER_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUNCTION_DECLARATION_WITH_NO_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.GENERIC_THROWABLE_SUBCLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HIDDEN
@@ -97,6 +98,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LOCAL_INTERFACE_N
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LOCAL_OBJECT_NOT_ALLOWED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MANY_COMPANION_OBJECTS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_VAL_ON_ANNOTATION_PARAMETER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MULTIPLE_VARARG_PARAMETERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NONE_APPLICABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_ABSTRACT_FUNCTION_WITH_NO_BODY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_FINAL_MEMBER_IN_FINAL_CLASS
@@ -444,6 +446,8 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
                 "An anonymous function is not allowed to specify default values for its parameters"
             )
             map.put(USELESS_VARARG_ON_PARAMETER, "Vararg on this parameter is useless")
+            map.put(MULTIPLE_VARARG_PARAMETERS, "Multiple vararg-parameters are prohibited")
+            map.put(FORBIDDEN_VARARG_PARAMETER_TYPE, "Forbidden vararg parameter type: {0}", RENDER_TYPE)
 
             // Properties & accessors
             map.put(

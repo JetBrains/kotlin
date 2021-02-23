@@ -121,8 +121,10 @@ fun ConeClassLikeType.toRegularClass(session: FirSession): FirRegularClass? {
  * or null of something goes wrong.
  */
 fun ConeKotlinType.toRegularClass(session: FirSession): FirRegularClass? {
-    return safeAs<ConeClassLikeType>()?.toRegularClass(session)
+    return safeAs<ConeClassLikeType>()?.fullyExpandedType(session)?.toRegularClass(session)
 }
+
+fun ConeKotlinType.isInline(session: FirSession) : Boolean = toRegularClass(session)?.isInline == true
 
 /**
  * Returns the FirRegularClass associated with this

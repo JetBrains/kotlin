@@ -198,6 +198,8 @@ object FirErrors {
     val FUNCTION_DECLARATION_WITH_NO_NAME by error0<FirSourceElement, KtFunction>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
     val ANONYMOUS_FUNCTION_PARAMETER_WITH_DEFAULT_VALUE by error0<FirSourceElement, KtParameter>(SourceElementPositioningStrategies.PARAMETER_DEFAULT_VALUE)
     val USELESS_VARARG_ON_PARAMETER by warning0<FirSourceElement, KtParameter>()
+    val MULTIPLE_VARARG_PARAMETERS by error0<FirSourceElement, KtParameter>(SourceElementPositioningStrategies.PARAMETER_VARARG_MODIFIER)
+    val FORBIDDEN_VARARG_PARAMETER_TYPE by error1<FirSourceElement, KtParameter, ConeKotlinType>(SourceElementPositioningStrategies.PARAMETER_VARARG_MODIFIER)
 
     // Properties & accessors
     val ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS by error2<FirSourceElement, KtModifierListOwner, FirMemberDeclaration, FirMemberDeclaration>(SourceElementPositioningStrategies.MODALITY_MODIFIER)
