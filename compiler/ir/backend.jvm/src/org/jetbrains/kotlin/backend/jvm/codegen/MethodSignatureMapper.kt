@@ -403,7 +403,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
             callee.dispatchReceiverParameter == null -> Opcodes.INVOKESTATIC
             isSuperCall -> Opcodes.INVOKESPECIAL
             isInterface && !DescriptorVisibilities.isPrivate(callee.visibility) -> Opcodes.INVOKEINTERFACE
-            DescriptorVisibilities.isPrivate(callee.visibility) && !callee.isSuspend -> Opcodes.INVOKESPECIAL
+            DescriptorVisibilities.isPrivate(callee.visibility) -> Opcodes.INVOKESPECIAL
             else -> Opcodes.INVOKEVIRTUAL
         }
 

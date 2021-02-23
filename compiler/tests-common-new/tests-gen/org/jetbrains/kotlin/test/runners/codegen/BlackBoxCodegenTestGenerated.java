@@ -9550,6 +9550,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
 
             @Test
+            @TestMetadata("jvmDefault.kt")
+            public void testJvmDefault() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/featureIntersection/jvmDefault.kt");
+            }
+
+            @Test
             @TestMetadata("overrideInInlineClass.kt")
             public void testOverrideInInlineClass() throws Exception {
                 runTest("compiler/testData/codegen/box/coroutines/featureIntersection/overrideInInlineClass.kt");
