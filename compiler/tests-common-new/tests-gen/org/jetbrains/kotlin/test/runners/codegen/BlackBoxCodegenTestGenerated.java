@@ -6837,6 +6837,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 @TestDataPath("$PROJECT_ROOT")
                 public class Interop {
                     @Test
+                    @TestMetadata("allAgainsAllCompatibility.kt")
+                    public void testAllAgainsAllCompatibility() throws Exception {
+                        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/allAgainsAllCompatibility.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("allCompatibilityAgainsAll.kt")
+                    public void testAllCompatibilityAgainsAll() throws Exception {
+                        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/allCompatibilityAgainsAll.kt");
+                    }
+
+                    @Test
                     public void testAllFilesPresentInInterop() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
                     }
@@ -6881,6 +6893,22 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                     @TestMetadata("newSchemeWithJvmDefault.kt")
                     public void testNewSchemeWithJvmDefault() throws Exception {
                         runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/newSchemeWithJvmDefault.kt");
+                    }
+                }
+
+                @Nested
+                @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/noDefaultImpls")
+                @TestDataPath("$PROJECT_ROOT")
+                public class NoDefaultImpls {
+                    @Test
+                    public void testAllFilesPresentInNoDefaultImpls() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/noDefaultImpls"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+                    }
+
+                    @Test
+                    @TestMetadata("superPropAccessFromInterface.kt")
+                    public void testSuperPropAccessFromInterface() throws Exception {
+                        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/noDefaultImpls/superPropAccessFromInterface.kt");
                     }
                 }
             }
