@@ -195,8 +195,8 @@ val FirProperty.hasBackingField: Boolean
             else -> {
                 val getter = getter ?: return true
                 if (isVar && setter == null) return true
-                if (setter?.hasBody == false) return true
-                if (!getter.hasBody) return true
+                if (setter?.hasBody == false && setter?.isAbstract == false) return true
+                if (!getter.hasBody && !getter.isAbstract) return true
 
                 return isReferredViaField == true
             }

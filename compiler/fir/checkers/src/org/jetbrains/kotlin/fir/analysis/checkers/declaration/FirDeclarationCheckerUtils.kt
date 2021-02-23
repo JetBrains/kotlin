@@ -29,10 +29,10 @@ internal fun isInsideExternalClass(containingClass: FirRegularClass, context: Ch
 private inline fun isInsideSpecificClass(
     containingClass: FirRegularClass,
     context: CheckerContext,
-    specificStatus: (FirRegularClass) -> Boolean
+    predicate: (FirRegularClass) -> Boolean
 ): Boolean =
-    specificStatus.invoke(containingClass) ||
-            context.containingDeclarations.asReversed().any { it is FirRegularClass && specificStatus.invoke(it) }
+    predicate.invoke(containingClass) ||
+            context.containingDeclarations.asReversed().any { it is FirRegularClass && predicate.invoke(it) }
 
 internal fun FirMemberDeclaration.isEffectivelyExpect(
     containingClass: FirRegularClass?,
