@@ -292,6 +292,10 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         // TODO: val ANONYMOUS_FUNCTION_WITH_NAME by error1<FirSourceElement, PsiElement, Name>(SourceElementPositioningStrategies.DECLARATION_NAME)
         val ANONYMOUS_FUNCTION_PARAMETER_WITH_DEFAULT_VALUE by error<FirSourceElement, KtParameter>(PositioningStrategy.PARAMETER_DEFAULT_VALUE)
         val USELESS_VARARG_ON_PARAMETER by warning<FirSourceElement, KtParameter>()
+        val MULTIPLE_VARARG_PARAMETERS by error<FirSourceElement, KtParameter>(PositioningStrategy.PARAMETER_VARARG_MODIFIER)
+        val FORBIDDEN_VARARG_PARAMETER_TYPE by error<FirSourceElement, KtParameter>(PositioningStrategy.PARAMETER_VARARG_MODIFIER) {
+            parameter<ConeKotlinType>("varargParameterType")
+        }
     }
 
     val PROPERTIES_ANS_ACCESSORS by object : DiagnosticGroup("Properties & accessors") {
