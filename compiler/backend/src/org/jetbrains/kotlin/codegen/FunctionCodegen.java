@@ -1685,9 +1685,10 @@ public class FunctionCodegen {
 
         // Fake overrides in interfaces should be expanded to implementation to make proper default check
         if (JvmAnnotationUtilKt.checkIsImplementationCompiledToJvmDefault(memberDescriptor, mode)) {
-            return (kind != OwnerKind.DEFAULT_IMPLS && !isSynthetic) ||
+            boolean isSyntheticInCompatibilityOrJvmDefault = isSynthetic && (mode.isCompatibility() || mode == JvmDefaultMode.ENABLE);
+            return (kind != OwnerKind.DEFAULT_IMPLS && !isSyntheticInCompatibilityOrJvmDefault) ||
                    (kind == OwnerKind.DEFAULT_IMPLS &&
-                    (isSynthetic || //TODO: move synthetic method generation into interface
+                    (isSyntheticInCompatibilityOrJvmDefault ||
                      (mode.isCompatibility() && !JvmAnnotationUtilKt.hasJvmDefaultNoCompatibilityAnnotation(containingDeclaration))));
         } else {
             switch (kind) {
