@@ -15,8 +15,8 @@ expect class OuterClass {
             class Another {
                 fun f(s: String)
                 val p: Int
-                val c: Int = <!EXPECTED_PROPERTY_INITIALIZER, EXPECTED_PROPERTY_INITIALIZER{JVM}!>1<!>
-                val a: Int <!EXPECTED_DELEGATED_PROPERTY, EXPECTED_DELEGATED_PROPERTY{JVM}!>by lazy { 1 }<!>
+                val c: Int = <!EXPECTED_PROPERTY_INITIALIZER!>1<!>
+                val a: Int by <!EXPECTED_DELEGATED_PROPERTY!>lazy { 1 }<!>
             }
         }
     }

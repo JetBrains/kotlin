@@ -159,7 +159,7 @@ class AnonymousInitializers(var a: String, val b: String) {
         }
     }
 
-    val o: String
+    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val o: String<!>
     init {
         if (1 < 3) {
             o = "a"
@@ -196,7 +196,7 @@ open class Open(a: Int, w: Int) {}
 
 class LocalValsVsProperties(val a: Int, w: Int) : Open(a, w) {
     val x : Int
-    val y : Int
+    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val y : Int<!>
     init {
         x = 1
         val b = x
@@ -279,7 +279,7 @@ fun foo() {
 }
 
 class TestObjectExpression() {
-    val a : Int
+    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val a : Int<!>
     fun foo() {
         val a = object {
             val x : Int
@@ -306,7 +306,7 @@ class TestObjectExpression() {
 
 object TestObjectDeclaration {
     val x : Int
-    val y : Int
+    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val y : Int<!>
     init {
         x = 1
     }

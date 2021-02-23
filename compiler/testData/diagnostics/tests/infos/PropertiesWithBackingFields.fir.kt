@@ -3,8 +3,8 @@ abstract class Test() {
     abstract val x1 : Int get
     abstract val x2 : Int <!ABSTRACT_PROPERTY_WITH_GETTER!>get() = 1<!>
 
-    val a : Int
-    val b : Int get
+    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val a : Int<!>
+    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val b : Int<!> get
     val c = 1
 
     val c1 = 1
@@ -15,7 +15,7 @@ abstract class Test() {
         get() { return 1 }
     val c4 : Int
         get() = 1
-    val c5 : Int
+    <!MUST_BE_INITIALIZED!>val c5 : Int<!>
         get() = field + 1
 
     abstract var y : Int
@@ -26,19 +26,19 @@ abstract class Test() {
     abstract var y5 : Int <!ABSTRACT_PROPERTY_WITH_SETTER!>set(x) {}<!> <!ABSTRACT_PROPERTY_WITH_GETTER!>get() = 1<!>
     abstract var y6 : Int <!ABSTRACT_PROPERTY_WITH_SETTER!>set(x) {}<!>
 
-    var v : Int
-    var v1 : Int get
-    var v2 : Int get set
-    var v3 : Int get() = 1; set
+    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>var v : Int<!>
+    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>var v1 : Int<!> get
+    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>var v2 : Int<!> get set
+    <!MUST_BE_INITIALIZED!>var v3 : Int<!> get() = 1; set
     var v4 : Int get() = 1; set(x){}
 
-    var v5 : Int get() = 1; set(x){field = x}
-    var v6 : Int get() = field + 1; set(x){}
+    <!MUST_BE_INITIALIZED!>var v5 : Int<!> get() = 1; set(x){field = x}
+    <!MUST_BE_INITIALIZED!>var v6 : Int<!> get() = field + 1; set(x){}
 
   abstract val v7 : Int get
   abstract var v8 : Int get set
-  var v9 : Int set
-  var v10 : Int  get
+  <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>var v9 : Int<!> set
+  <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>var v10 : Int<!>  get
   abstract val v11 : Int abstract get
   abstract var v12 : Int abstract get abstract set
 

@@ -28,7 +28,7 @@ object FirTopLevelPropertyChecker : FirFileChecker() {
         // So, our source of truth should be the full modifier list retrieved from the source.
         val modifierList = with(FirModifierList) { source.getModifierList() }
 
-        checkProperty(null, property, modifierList, reporter, context)
+        checkProperty(null, property, modifierList, property.initializer != null, reporter, context)
         checkExpectDeclarationVisibilityAndBody(property, source, modifierList, reporter, context)
     }
 }

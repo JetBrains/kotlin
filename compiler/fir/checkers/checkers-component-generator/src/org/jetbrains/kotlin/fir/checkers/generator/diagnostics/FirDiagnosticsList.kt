@@ -314,6 +314,10 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val PROPERTY_INITIALIZER_IN_INTERFACE by error<FirSourceElement, KtExpression>()
         val PROPERTY_WITH_NO_TYPE_NO_INITIALIZER by error<FirSourceElement, KtProperty>(PositioningStrategy.DECLARATION_SIGNATURE)
 
+        val MUST_BE_INITIALIZED by error<FirSourceElement, KtProperty>(PositioningStrategy.DECLARATION_SIGNATURE)
+        val MUST_BE_INITIALIZED_OR_BE_ABSTRACT by error<FirSourceElement, KtProperty>(PositioningStrategy.DECLARATION_SIGNATURE)
+        val EXTENSION_PROPERTY_MUST_HAVE_ACCESSORS_OR_BE_ABSTRACT by error<FirSourceElement, KtProperty>(PositioningStrategy.DECLARATION_SIGNATURE)
+
         val BACKING_FIELD_IN_INTERFACE by error<FirSourceElement, KtProperty>(PositioningStrategy.DECLARATION_SIGNATURE)
         val EXTENSION_PROPERTY_WITH_BACKING_FIELD by error<FirSourceElement, KtExpression>()
         val PROPERTY_INITIALIZER_NO_BACKING_FIELD by error<FirSourceElement, KtExpression>()

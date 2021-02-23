@@ -19,7 +19,7 @@ class Foo() : WithPC0, <!SYNTAX!>this<!>() {
 }
 
 class WithCPI_Dup(x : Int) {
-  var x : Int
+  <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>var x : Int<!>
 }
 
 class WithCPI(x : Int) {

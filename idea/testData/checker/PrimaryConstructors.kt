@@ -12,3 +12,4 @@ class Y1 {
 
 class Z : Y() {
 }
+// FIR_COMPARISON

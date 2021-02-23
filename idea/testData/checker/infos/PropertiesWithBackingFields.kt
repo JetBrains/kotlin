@@ -53,3 +53,4 @@ class TestPCParameters(w : Int, <warning>x</warning> : Int, val y : Int, var z :
   fun foo() = <error>x</error>
 
 }
+// FIR_COMPARISON

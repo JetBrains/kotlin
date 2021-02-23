@@ -60,7 +60,7 @@ fun nestedIndefiniteAssignment() {
 }
 
 class InitializationForbiddenInNonInitSection {
-    val x: Int
+    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val x: Int<!>
 
     fun setup() {
         myRun { x = 42 }

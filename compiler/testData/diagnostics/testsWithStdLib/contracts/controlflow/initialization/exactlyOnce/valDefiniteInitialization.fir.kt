@@ -83,7 +83,7 @@ fun unknownRun(block: () -> Unit) = block()
 
 class DefiniteInitializationInInitSection {
     val x: Int
-    val y: Int
+    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val y: Int<!>
 
     init {
         myRun { x = 42 }

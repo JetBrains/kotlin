@@ -37,7 +37,7 @@ class MyIllegalClass3() : MyTrait, MyAbstractClass() {
 
 class MyIllegalClass4() : MyTrait, MyAbstractClass() {
     fun foo() {}
-    val pr : Unit
+    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val pr : Unit<!>
     override fun other() {}
     override val otherPr : Int = 1
 }

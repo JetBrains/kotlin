@@ -8,7 +8,7 @@ class A(val w: Int) {
     val v = -1
     val useInitialized = useUnitialized + v + w
 
-    val uninitialized: Int
+    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val uninitialized: Int<!>
 
     constructor(): this(1) {
         x + y + v + uninitialized + w

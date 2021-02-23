@@ -5,7 +5,7 @@ var x
         q checkType { _<Int>() }
     }
 
-var noSetter
+<!MUST_BE_INITIALIZED!>var noSetter<!>
     get() = 1
 
 

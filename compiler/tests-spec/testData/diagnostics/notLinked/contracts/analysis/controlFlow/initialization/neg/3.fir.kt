@@ -34,7 +34,7 @@ fun case_2(value_1: Any?) {
 
 // TESTCASE NUMBER: 3
 class case_3(value_1: Any?) {
-    var value_2: Int
+    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>var value_2: Int<!>
 
     init {
         if (value_1 is String) {
