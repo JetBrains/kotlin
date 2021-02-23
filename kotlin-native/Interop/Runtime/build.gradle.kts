@@ -78,7 +78,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
         freeCompilerArgs = listOf("-Xuse-experimental=kotlin.ExperimentalUnsignedTypes",
                                   "-Xuse-experimental=kotlin.Experimental",
                                   "-Xopt-in=kotlin.RequiresOptIn",
-                                  "-XXLanguage:+InlineClasses",
+                                  "-Xinline-classes",
                                   "-Xskip-prerelease-check")
         allWarningsAsErrors = true
     }

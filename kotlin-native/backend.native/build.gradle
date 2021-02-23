@@ -252,7 +252,7 @@ targetList.each { target ->
         def testCommon = project(":kotlin-test:kotlin-test-common").files("src/main/kotlin").files
         args = [*konanArgs,
                 '-output', project(':kotlin-native:runtime').file("build/${target}Stdlib"),
-                '-produce', 'library', '-module-name', 'stdlib', '-XXLanguage:+AllowContractsForCustomFunctions',
+                '-produce', 'library', '-module-name', 'stdlib',
                 '-Xmulti-platform', '-Xopt-in=kotlin.RequiresOptIn', '-Xinline-classes',
                 '-Xopt-in=kotlin.contracts.ExperimentalContracts',
                 '-Xopt-in=kotlin.ExperimentalMultiplatform',

@@ -93,7 +93,7 @@ targetList.each { target ->
         jvmArgs = konanJvmArgs
         args = [*konanArgs,
                 '-output', outputFile,
-                '-produce', 'library', '-module-name', moduleName, '-XXLanguage:+AllowContractsForCustomFunctions',
+                '-produce', 'library', '-module-name', moduleName,
                 '-Xmulti-platform', '-Xopt-in=kotlinx.cli.ExperimentalCli',
                 '-Xopt-in=kotlin.ExperimentalMultiplatform',
                 '-Xallow-result-return-type',  '-Werror', '-Xopt-in=kotlin.RequiresOptIn',

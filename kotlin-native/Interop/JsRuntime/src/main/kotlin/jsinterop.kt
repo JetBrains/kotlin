@@ -139,5 +139,7 @@ fun JsValue.setter(property: String, string: String) {
 
 object ArenaManager {
     val globalArena = allocateArena()
+
+    @Suppress("VARIABLE_IN_SINGLETON_WITHOUT_THREAD_LOCAL")
     var currentArena = globalArena
 }
