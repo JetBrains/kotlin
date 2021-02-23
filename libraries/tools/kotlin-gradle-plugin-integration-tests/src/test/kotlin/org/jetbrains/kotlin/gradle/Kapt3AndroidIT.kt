@@ -18,6 +18,10 @@ open class Kapt3Android34IT : Kapt3AndroidIT() {
     override val androidGradlePluginVersion: AGPVersion
         get() = AGPVersion.v3_4_1
 
+    // AGP 3.4 is not working with Gradle 7+
+    override val defaultGradleVersion: GradleVersionRequired
+        get() = GradleVersionRequired.Until("6.8.4")
+
     @Test
     fun testAndroidxNavigationSafeArgs() = with(Project("androidx-navigation-safe-args", directoryPrefix = "kapt2")) {
         // KT-30735

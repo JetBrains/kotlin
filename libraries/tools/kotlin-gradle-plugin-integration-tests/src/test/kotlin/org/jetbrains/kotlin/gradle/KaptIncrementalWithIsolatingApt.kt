@@ -261,7 +261,7 @@ class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
         val project = Project("kaptIncrementalWithParceler", GradleVersionRequired.None).apply {
             setupWorkingDir()
         }
-        val options = defaultBuildOptions().copy(androidGradlePluginVersion = AGPVersion.v3_4_1)
+        val options = defaultBuildOptions().copy(androidGradlePluginVersion = AGPVersion.v3_6_0)
         project.build("clean", ":mylibrary:assembleDebug", options = options) {
             assertSuccessful()
         }
