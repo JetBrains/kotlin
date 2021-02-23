@@ -594,6 +594,15 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = UselessVarargOnParameter::class
     }
 
+    abstract class MultipleVarargParameters : KtFirDiagnostic<KtParameter>() {
+        override val diagnosticClass get() = MultipleVarargParameters::class
+    }
+
+    abstract class ForbiddenVarargParameterType : KtFirDiagnostic<KtParameter>() {
+        override val diagnosticClass get() = ForbiddenVarargParameterType::class
+        abstract val varargParameterType: KtType
+    }
+
     abstract class AbstractPropertyInNonAbstractClass : KtFirDiagnostic<KtModifierListOwner>() {
         override val diagnosticClass get() = AbstractPropertyInNonAbstractClass::class
         abstract val property: KtSymbol
