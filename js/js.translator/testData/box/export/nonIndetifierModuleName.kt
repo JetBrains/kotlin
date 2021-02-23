@@ -4,6 +4,9 @@
 // INFER_MAIN_MODULE
 // SKIP_NODE_JS
 
+// DONT_TARGET_BACKEND: JS_IR
+// REASON: PLAIN MODE
+
 // MODULE: non-identifier-module-name
 // FILE: lib.kt
 @JsName("foo")

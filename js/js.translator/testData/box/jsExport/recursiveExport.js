@@ -1,8 +1,8 @@
 $kotlin_test_internal$.beginModule();
 
 module.exports = function() {
-    var ping = require("JS_TESTS").api.ping;
-    var Something = require("JS_TESTS").api.Something;
+    var ping = require("JS_TESTS").ping;
+    var Something = require("JS_TESTS").Something;
 
     return {
         "pingCall": function() {

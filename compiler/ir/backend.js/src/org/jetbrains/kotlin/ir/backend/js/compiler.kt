@@ -10,6 +10,9 @@ import org.jetbrains.kotlin.analyzer.AbstractAnalyzerWithCompilerReport
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.ir.backend.js.codegen.JsFileWriter
+import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
+import org.jetbrains.kotlin.ir.backend.js.codegen.generateEsModules
 import org.jetbrains.kotlin.ir.backend.js.lower.generateTests
 import org.jetbrains.kotlin.ir.backend.js.lower.moveBodilessDeclarationsToSeparatePlace
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
@@ -33,6 +36,7 @@ class CompilerResult(
 
 class JsCode(val mainModule: String, val dependencies: Iterable<Pair<String, String>> = emptyList())
 
+@Suppress("unused")
 fun compile(
     project: Project,
     mainModule: MainModule,
@@ -51,7 +55,17 @@ fun compile(
     multiModule: Boolean = false,
     relativeRequirePath: Boolean = false,
     propertyLazyInitialization: Boolean,
-): CompilerResult {
+    fileWriter: JsFileWriter,
+    granularity: JsGenerationGranularity = JsGenerationGranularity.WHOLE_PROGRAM
+) {
+
+    if (generateFullJs ||
+        generateDceJs ||
+        multiModule ||
+        relativeRequirePath
+    )
+        assert(granularity == JsGenerationGranularity.WHOLE_PROGRAM)
+
     val irFactory = if (dceDriven) PersistentIrFactory() else IrFactoryImpl
 
     val (moduleFragment: IrModuleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer) =
@@ -73,8 +87,9 @@ fun compile(
         configuration,
         es6mode = es6mode,
         dceRuntimeDiagnostic = dceRuntimeDiagnostic,
-        propertyLazyInitialization = propertyLazyInitialization,
-        irFactory = irFactory
+        propertyLazyInitialization = true || propertyLazyInitialization,
+        irFactory = irFactory,
+        perFileMode = true // TODO: ???
     )
 
     // Load declarations referenced during `context` initialization
@@ -102,28 +117,11 @@ fun compile(
         eliminateDeadDeclarations(allModules, context)
 
         irFactory.stageController = StageController(controller.currentStage)
-
-        val transformer = IrModuleToJsTransformer(
-            context,
-            mainArguments,
-            fullJs = true,
-            dceJs = false,
-            multiModule = multiModule,
-            relativeRequirePath = relativeRequirePath
-        )
-        return transformer.generateModule(allModules)
     } else {
         jsPhases.invokeToplevel(phaseConfig, context, allModules)
-        val transformer = IrModuleToJsTransformer(
-            context,
-            mainArguments,
-            fullJs = generateFullJs,
-            dceJs = generateDceJs,
-            multiModule = multiModule,
-            relativeRequirePath = relativeRequirePath
-        )
-        return transformer.generateModule(allModules)
     }
+
+    generateEsModules(allModules, fileWriter, context, mainArguments, JsGenerationGranularity.PER_FILE)
 }
 
 fun generateJsCode(

@@ -7,9 +7,10 @@ package org.jetbrains.kotlin.ir.backend.js.utils
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.util.isPropertyAccessor
 import org.jetbrains.kotlin.ir.util.isPropertyField
@@ -77,7 +78,7 @@ class StableNamesCollector : IrElementVisitorVoid {
             declaration.getJsModule() != null && !declaration.isJsNonModule()
 
         val jsName = declaration.getJsName()
-        val jsQualifier = declaration.getJsQualifier()
+        val jsQualifier = declaration.fileOrNull?.getJsQualifier()
 
         return when {
             importedFromModuleOnly ->

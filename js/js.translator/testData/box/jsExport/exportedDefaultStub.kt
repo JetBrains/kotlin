@@ -1,7 +1,6 @@
 // MODULE_KIND: COMMON_JS
 // SKIP_DCE_DRIVEN
 // SKIP_MINIFICATION
-package api
 
 @JsExport
 fun ping(a: String = "A", b: Int = 1): String {

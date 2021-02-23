@@ -1617,34 +1617,9 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/export"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
         }
 
-        @TestMetadata("exportAllFile.kt")
-        public void testExportAllFile() throws Exception {
-            runTest("js/js.translator/testData/box/export/exportAllFile.kt");
-        }
-
-        @TestMetadata("exportNestedClass.kt")
-        public void testExportNestedClass() throws Exception {
-            runTest("js/js.translator/testData/box/export/exportNestedClass.kt");
-        }
-
         @TestMetadata("nonIndetifierModuleName.kt")
         public void testNonIndetifierModuleName() throws Exception {
             runTest("js/js.translator/testData/box/export/nonIndetifierModuleName.kt");
-        }
-
-        @TestMetadata("overriddenChainNonExportIntermediate.kt")
-        public void testOverriddenChainNonExportIntermediate() throws Exception {
-            runTest("js/js.translator/testData/box/export/overriddenChainNonExportIntermediate.kt");
-        }
-
-        @TestMetadata("overriddenExternalMethodWithSameNameMethod.kt")
-        public void testOverriddenExternalMethodWithSameNameMethod() throws Exception {
-            runTest("js/js.translator/testData/box/export/overriddenExternalMethodWithSameNameMethod.kt");
-        }
-
-        @TestMetadata("overriddenExternalMethodWithSameStableNameMethod.kt")
-        public void testOverriddenExternalMethodWithSameStableNameMethod() throws Exception {
-            runTest("js/js.translator/testData/box/export/overriddenExternalMethodWithSameStableNameMethod.kt");
         }
 
         @TestMetadata("overridenMethod.kt")
@@ -1652,9 +1627,52 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
             runTest("js/js.translator/testData/box/export/overridenMethod.kt");
         }
 
-        @TestMetadata("reservedModuleName.kt")
-        public void testReservedModuleName() throws Exception {
-            runTest("js/js.translator/testData/box/export/reservedModuleName.kt");
+        @TestMetadata("js/js.translator/testData/box/export/esModules")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class EsModules extends AbstractIrBoxJsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInEsModules() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/export/esModules"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
+            }
+
+            @TestMetadata("exportAllFile.kt")
+            public void testExportAllFile() throws Exception {
+                runTest("js/js.translator/testData/box/export/esModules/exportAllFile.kt");
+            }
+
+            @TestMetadata("exportNestedClass.kt")
+            public void testExportNestedClass() throws Exception {
+                runTest("js/js.translator/testData/box/export/esModules/exportNestedClass.kt");
+            }
+
+            @TestMetadata("nonIndetifierModuleName.kt")
+            public void testNonIndetifierModuleName() throws Exception {
+                runTest("js/js.translator/testData/box/export/esModules/nonIndetifierModuleName.kt");
+            }
+
+            @TestMetadata("overriddenChainNonExportIntermediate.kt")
+            public void testOverriddenChainNonExportIntermediate() throws Exception {
+                runTest("js/js.translator/testData/box/export/esModules/overriddenChainNonExportIntermediate.kt");
+            }
+
+            @TestMetadata("overriddenExternalMethodWithSameNameMethod.kt")
+            public void testOverriddenExternalMethodWithSameNameMethod() throws Exception {
+                runTest("js/js.translator/testData/box/export/esModules/overriddenExternalMethodWithSameNameMethod.kt");
+            }
+
+            @TestMetadata("overriddenExternalMethodWithSameStableNameMethod.kt")
+            public void testOverriddenExternalMethodWithSameStableNameMethod() throws Exception {
+                runTest("js/js.translator/testData/box/export/esModules/overriddenExternalMethodWithSameStableNameMethod.kt");
+            }
+
+            @TestMetadata("reservedModuleName.kt")
+            public void testReservedModuleName() throws Exception {
+                runTest("js/js.translator/testData/box/export/esModules/reservedModuleName.kt");
+            }
         }
     }
 
@@ -2370,19 +2388,9 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
                 runTest("js/js.translator/testData/box/expression/function/manglingClashFunctionsAndClasses.kt");
             }
 
-            @TestMetadata("manglingClashWithFunctionsWithoutParameters.kt")
-            public void testManglingClashWithFunctionsWithoutParameters() throws Exception {
-                runTest("js/js.translator/testData/box/expression/function/manglingClashWithFunctionsWithoutParameters.kt");
-            }
-
             @TestMetadata("manglingImportedFromObjectWithNI.kt")
             public void testManglingImportedFromObjectWithNI() throws Exception {
                 runTest("js/js.translator/testData/box/expression/function/manglingImportedFromObjectWithNI.kt");
-            }
-
-            @TestMetadata("manglingStability.kt")
-            public void testManglingStability() throws Exception {
-                runTest("js/js.translator/testData/box/expression/function/manglingStability.kt");
             }
 
             @TestMetadata("namedArguments.kt")
@@ -3913,11 +3921,6 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
         @TestMetadata("inlineSimpleAssignment.kt")
         public void testInlineSimpleAssignment() throws Exception {
             runTest("js/js.translator/testData/box/inline/inlineSimpleAssignment.kt");
-        }
-
-        @TestMetadata("inlinedObjectLiteralIsCheck.kt")
-        public void testInlinedObjectLiteralIsCheck() throws Exception {
-            runTest("js/js.translator/testData/box/inline/inlinedObjectLiteralIsCheck.kt");
         }
 
         @TestMetadata("innerOuterThis.kt")

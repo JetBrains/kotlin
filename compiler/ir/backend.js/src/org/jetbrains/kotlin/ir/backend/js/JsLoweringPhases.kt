@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineFunc
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
 import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
 import org.jetbrains.kotlin.backend.common.lower.optimizations.FoldConstantLowering
-import org.jetbrains.kotlin.backend.common.lower.optimizations.PropertyAccessorInlineLowering
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.lower.*
@@ -21,8 +20,8 @@ import org.jetbrains.kotlin.ir.backend.js.lower.calls.CallsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.cleanup.CleanupLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.CopyInlineFunctionBodyLowering
-import org.jetbrains.kotlin.ir.backend.js.lower.inline.jsRecordExtractedLocalClasses
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.RemoveInlineDeclarationsWithReifiedTypeParametersLowering
+import org.jetbrains.kotlin.ir.backend.js.lower.inline.jsRecordExtractedLocalClasses
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 
@@ -372,7 +371,7 @@ private val removeInitializersForLazyProperties = makeDeclarationTransformerPhas
 )
 
 private val propertyAccessorInlinerLoweringPhase = makeBodyLoweringPhase(
-    ::PropertyAccessorInlineLowering,
+    { context -> JsPropertyAccessorInlineLowering(context) },
     name = "PropertyAccessorInlineLowering",
     description = "[Optimization] Inline property accessors"
 )
@@ -714,6 +713,11 @@ private val cleanupLoweringPhase = makeBodyLoweringPhase(
     name = "CleanupLowering",
     description = "Clean up IR before codegen"
 )
+private val moveOpenClassesToSeparatePlaceLowering = makeCustomJsModulePhase(
+    { context, module -> moveOpenClassesToSeparateFiles(context, module) },
+    name = "MoveOpenClassesToSeparateFiles",
+    description = "Move open classes to separate files"
+).toModuleLowering()
 
 private val loweringList = listOf<Lowering>(
     scriptRemoveReceiverLowering,
@@ -803,6 +807,8 @@ private val loweringList = listOf<Lowering>(
     captureStackTraceInThrowablesPhase,
     callsLoweringPhase,
     cleanupLoweringPhase,
+    staticMembersLoweringPhase,
+    moveOpenClassesToSeparatePlaceLowering,
     validateIrAfterLowering
 )
 

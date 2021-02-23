@@ -1,4 +1,8 @@
 // EXPECTED_REACHABLE_NODES: 1334
+
+// DONT_TARGET_EXACT_BACKEND: JS_IR
+// REASON: Tests internal implementation of legacy backend
+
 package foo
 
 

@@ -2,8 +2,12 @@
 // DONT_TARGET_EXACT_BACKEND: WASM
 // PROPERTY_LAZY_INITIALIZATION
 
+
+var result: String? = null
+
 // FILE: A.kt
 val a = "a".let {
+    result = "OK"
     it + "a"
 }
 
@@ -13,5 +17,5 @@ fun foo() =
 // FILE: main.kt
 fun box(): String {
     val foo = foo()
-    return if (js("typeof a") == "string" && js("a") == "aa") "OK" else "fail"
+    return result!!
 }

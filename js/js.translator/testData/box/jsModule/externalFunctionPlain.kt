@@ -1,5 +1,8 @@
 // EXPECTED_REACHABLE_NODES: 1283
+// SKIP_ES_MODULES
+// IGNORE_BACKEND: JS_IR
 package foo
+
 
 @JsModule("lib")
 @JsNonModule

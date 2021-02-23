@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.utils
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.IrClassReference
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
@@ -38,7 +39,7 @@ fun IrAnnotationContainer.getJsModule(): String? =
 fun IrAnnotationContainer.isJsNonModule(): Boolean =
     hasAnnotation(JsAnnotations.jsNonModuleFqn)
 
-fun IrAnnotationContainer.getJsQualifier(): String? =
+fun IrFile.getJsQualifier(): String? =
     getAnnotation(JsAnnotations.jsQualifierFqn)?.getSingleConstStringArgument()
 
 fun IrAnnotationContainer.getJsName(): String? =

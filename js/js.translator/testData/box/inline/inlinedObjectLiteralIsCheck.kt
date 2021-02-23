@@ -1,5 +1,8 @@
 // EXPECTED_REACHABLE_NODES: 1282
 
+// DONT_TARGET_EXACT_BACKEND: JS_IR
+// REASON: js("_"). is not portable
+
 interface I {
     fun ok(): String
 }

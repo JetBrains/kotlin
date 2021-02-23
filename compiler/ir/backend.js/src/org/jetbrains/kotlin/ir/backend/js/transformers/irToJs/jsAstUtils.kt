@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.ir.isElseBranch
 import org.jetbrains.kotlin.backend.common.ir.isSuspend
 import org.jetbrains.kotlin.ir.backend.js.lower.InteropCallableReferenceLowering
 import org.jetbrains.kotlin.ir.backend.js.utils.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
@@ -125,17 +126,22 @@ fun translateCall(
     }
 
     expression.superQualifierSymbol?.let { superQualifier ->
-        val (target, klass) = if (superQualifier.owner.isInterface) {
+        val (target: IrSimpleFunction, klass: IrClass) = if (superQualifier.owner.isInterface) {
             val impl = function.resolveFakeOverride()!!
             Pair(impl, impl.parentAsClass)
         } else {
             Pair(function, superQualifier.owner)
         }
 
-        val qualifierName = context.getNameForClass(klass).makeRef()
-        val targetName = context.getNameForMemberFunction(target)
-        val qPrototype = JsNameRef(targetName, prototypeOf(qualifierName))
-        val callRef = JsNameRef(Namer.CALL_FUNCTION, qPrototype)
+        val callRef = if (klass.isInterface && target.body != null) {
+            JsNameRef(Namer.CALL_FUNCTION, JsNameRef(context.getNameForStaticDeclaration(target)))
+        } else {
+            val qualifierName = context.getNameForClass(klass).makeRef()
+            val targetName = context.getNameForMemberFunction(target)
+            val qPrototype = JsNameRef(targetName, prototypeOf(qualifierName))
+            JsNameRef(Namer.CALL_FUNCTION, qPrototype)
+        }
+
         return JsInvocation(callRef, jsDispatchReceiver?.let { receiver -> listOf(receiver) + arguments } ?: arguments)
     }
 

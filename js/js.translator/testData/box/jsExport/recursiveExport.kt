@@ -2,7 +2,6 @@
 // SKIP_MINIFICATION
 
 // FILE: api.kt
-package api
 @JsExport
 class Something<T: Something<T>> {
     fun ping(): String {

@@ -3,7 +3,6 @@
 // SKIP_MINIFICATION
 
 // FILE: api.kt
-package api
 
 @JsExport
 data class Point(val x: Int, val y: Int) {

@@ -41,6 +41,19 @@ public class LegacyJsTypeScriptExportTestGenerated extends AbstractLegacyJsTypeS
         public void testAllFilesPresentInConstructors() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/constructors"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS, true);
         }
+
+        @TestMetadata("js/js.translator/testData/typescript-export/constructors/JS_TESTS")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class JS_TESTS extends AbstractLegacyJsTypeScriptExportTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInJS_TESTS() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/constructors/JS_TESTS"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS, true);
+            }
+        }
     }
 
     @TestMetadata("js/js.translator/testData/typescript-export/declarations")
@@ -58,6 +71,19 @@ public class LegacyJsTypeScriptExportTestGenerated extends AbstractLegacyJsTypeS
         @TestMetadata("declarations.kt")
         public void testDeclarations() throws Exception {
             runTest("js/js.translator/testData/typescript-export/declarations/declarations.kt");
+        }
+
+        @TestMetadata("js/js.translator/testData/typescript-export/declarations/JS_TESTS")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class JS_TESTS extends AbstractLegacyJsTypeScriptExportTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInJS_TESTS() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/declarations/JS_TESTS"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS, true);
+            }
         }
     }
 
@@ -77,33 +103,18 @@ public class LegacyJsTypeScriptExportTestGenerated extends AbstractLegacyJsTypeS
         public void testInheritance() throws Exception {
             runTest("js/js.translator/testData/typescript-export/inheritance/inheritance.kt");
         }
-    }
 
-    @TestMetadata("js/js.translator/testData/typescript-export/moduleSystems")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class ModuleSystems extends AbstractLegacyJsTypeScriptExportTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
-        }
+        @TestMetadata("js/js.translator/testData/typescript-export/inheritance/JS_TESTS")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class JS_TESTS extends AbstractLegacyJsTypeScriptExportTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+            }
 
-        public void testAllFilesPresentInModuleSystems() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/moduleSystems"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS, true);
-        }
-
-        @TestMetadata("commonjs.kt")
-        public void testCommonjs() throws Exception {
-            runTest("js/js.translator/testData/typescript-export/moduleSystems/commonjs.kt");
-        }
-
-        @TestMetadata("plain.kt")
-        public void testPlain() throws Exception {
-            runTest("js/js.translator/testData/typescript-export/moduleSystems/plain.kt");
-        }
-
-        @TestMetadata("umd.kt")
-        public void testUmd() throws Exception {
-            runTest("js/js.translator/testData/typescript-export/moduleSystems/umd.kt");
+            public void testAllFilesPresentInJS_TESTS() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/inheritance/JS_TESTS"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS, true);
+            }
         }
     }
 
@@ -123,6 +134,19 @@ public class LegacyJsTypeScriptExportTestGenerated extends AbstractLegacyJsTypeS
         public void testNamespaces() throws Exception {
             runTest("js/js.translator/testData/typescript-export/namespaces/namespaces.kt");
         }
+
+        @TestMetadata("js/js.translator/testData/typescript-export/namespaces/JS_TESTS")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class JS_TESTS extends AbstractLegacyJsTypeScriptExportTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInJS_TESTS() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/namespaces/JS_TESTS"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS, true);
+            }
+        }
     }
 
     @TestMetadata("js/js.translator/testData/typescript-export/primitives")
@@ -140,6 +164,19 @@ public class LegacyJsTypeScriptExportTestGenerated extends AbstractLegacyJsTypeS
         @TestMetadata("primitives.kt")
         public void testPrimitives() throws Exception {
             runTest("js/js.translator/testData/typescript-export/primitives/primitives.kt");
+        }
+
+        @TestMetadata("js/js.translator/testData/typescript-export/primitives/JS_TESTS")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class JS_TESTS extends AbstractLegacyJsTypeScriptExportTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInJS_TESTS() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/primitives/JS_TESTS"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS, true);
+            }
         }
     }
 
@@ -159,6 +196,19 @@ public class LegacyJsTypeScriptExportTestGenerated extends AbstractLegacyJsTypeS
         public void testSelectiveExport() throws Exception {
             runTest("js/js.translator/testData/typescript-export/selectiveExport/selectiveExport.kt");
         }
+
+        @TestMetadata("js/js.translator/testData/typescript-export/selectiveExport/JS_TESTS")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class JS_TESTS extends AbstractLegacyJsTypeScriptExportTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInJS_TESTS() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/selectiveExport/JS_TESTS"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS, true);
+            }
+        }
     }
 
     @TestMetadata("js/js.translator/testData/typescript-export/visibility")
@@ -176,6 +226,19 @@ public class LegacyJsTypeScriptExportTestGenerated extends AbstractLegacyJsTypeS
         @TestMetadata("visibility.kt")
         public void testVisibility() throws Exception {
             runTest("js/js.translator/testData/typescript-export/visibility/visibility.kt");
+        }
+
+        @TestMetadata("js/js.translator/testData/typescript-export/visibility/JS_TESTS")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class JS_TESTS extends AbstractLegacyJsTypeScriptExportTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInJS_TESTS() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/visibility/JS_TESTS"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS, true);
+            }
         }
     }
 }

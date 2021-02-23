@@ -11,7 +11,9 @@ import org.jetbrains.kotlin.backend.common.phaser.toPhaseMap
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.js.messageCollectorLogger
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.ir.backend.js.*
+import org.jetbrains.kotlin.ir.backend.js.codegen.JsFileWriter
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
@@ -20,7 +22,6 @@ import org.jetbrains.kotlin.js.facade.TranslationUnit
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.parsing.parseBoolean
 import org.jetbrains.kotlin.test.TargetBackend
-import org.jetbrains.kotlin.utils.fileUtils.withReplacedExtensionOrNull
 import java.io.File
 import java.lang.Boolean.getBoolean
 
@@ -79,6 +80,7 @@ abstract class BasicIrBoxTest(
         outputFile: File,
         dceOutputFile: File,
         pirOutputFile: File,
+        perFileOutputDir: File,
         config: JsConfig,
         outputPrefixFile: File?,
         outputPostfixFile: File?,
@@ -90,8 +92,10 @@ abstract class BasicIrBoxTest(
         needsFullIrRuntime: Boolean,
         isMainModule: Boolean,
         skipDceDriven: Boolean,
+        skipEsModules: Boolean,
         splitPerModule: Boolean,
         propertyLazyInitialization: Boolean,
+        customTestModule: String?
     ) {
         val filesToCompile = units.map { (it as TranslationUnit.SourceFile).file }
 
@@ -130,7 +134,12 @@ abstract class BasicIrBoxTest(
             }
 
             if (!skipRegularMode) {
-                val compiledModule = compile(
+                logger.logFile("Per-file directory", perFileOutputDir)
+                val multiModule = splitPerModule || perModule
+
+                val fileWriter: JsFileWriter = jsFileWriter(perFileOutputDir)
+
+                compile(
                     project = config.project,
                     mainModule = MainModule.SourceFiles(filesToCompile),
                     analyzer = AnalyzerWithCompilerReport(config.configuration),
@@ -143,22 +152,30 @@ abstract class BasicIrBoxTest(
                     generateFullJs = true,
                     generateDceJs = runIrDce,
                     es6mode = runEs6Mode,
-                    multiModule = splitPerModule || perModule,
+                    multiModule = multiModule,
                     propertyLazyInitialization = propertyLazyInitialization,
+                    fileWriter = fileWriter
                 )
 
-                compiledModule.jsCode!!.writeTo(outputFile, config)
+                val moduleName = config.configuration[CommonConfigurationKeys.MODULE_NAME]
+                val esmTestFile = File(perFileOutputDir, "test.mjs")
+                logger.logFile("ES module test file", esmTestFile)
+                val defaultTestModule =
+                    """                     
+                    import { box } from './${moduleName}/index.js';
+                    let res = box();
+                    if (res !== "OK") {
+                        throw "Wrong result: " + String(res);
+                    }
+                    """.trimIndent()
 
-                compiledModule.dceJsCode?.writeTo(dceOutputFile, config)
-
-                if (generateDts) {
-                    val dtsFile = outputFile.withReplacedExtensionOrNull("_v5.js", ".d.ts")!!
-                    logger.logFile("Output d.ts", dtsFile)
-                    dtsFile.write(compiledModule.tsDefinitions ?: error("No ts definitions"))
-                }
+                esmTestFile.writeText(customTestModule ?: defaultTestModule)
             }
 
             if (runIrPir && !skipDceDriven) {
+
+                val fileWriter = jsFileWriter(pirOutputFile)
+
                 compile(
                     project = config.project,
                     mainModule = MainModule.SourceFiles(filesToCompile),
@@ -172,8 +189,9 @@ abstract class BasicIrBoxTest(
                     dceDriven = true,
                     es6mode = runEs6Mode,
                     multiModule = splitPerModule || perModule,
-                    propertyLazyInitialization = propertyLazyInitialization
-                ).jsCode!!.writeTo(pirOutputFile, config)
+                    propertyLazyInitialization = propertyLazyInitialization,
+                    fileWriter = fileWriter
+                )
             }
         } else {
             generateKLib(
@@ -192,6 +210,22 @@ abstract class BasicIrBoxTest(
 
             compilationCache[outputFile.name.replace(".js", ".meta.js")] = actualOutputFile
         }
+    }
+
+    private fun jsFileWriter(perFileOutputDir: File): JsFileWriter {
+        val fileWriter: JsFileWriter = run {
+            perFileOutputDir.deleteRecursively()
+            perFileOutputDir.mkdirs()
+
+            object : JsFileWriter {
+                override fun write(module: String, path: String, content: String) {
+                    val file = File(File(perFileOutputDir, module), path)
+                    file.parentFile.mkdirs()
+                    file.writeText(content)
+                }
+            }
+        }
+        return fileWriter
     }
 
     private fun fromSysPropertyOrAll(key: String, all: Set<AnyNamedPhase>): Set<AnyNamedPhase> {
@@ -230,7 +264,7 @@ abstract class BasicIrBoxTest(
         // TODO: return list of js from translateFiles and provide then to this function with other js files
 
         val allFiles = jsFiles.flatMap { file -> cachedDependencies[File(file).absolutePath]?.let { deps -> deps + file } ?: listOf(file) }
-        testChecker.check(allFiles, testModuleName, testPackage, testFunction, expectedResult, withModuleSystem)
+        testChecker.check(allFiles, testModuleName, /*testPackage*/ null, testFunction, expectedResult, withModuleSystem)
     }
 }
 

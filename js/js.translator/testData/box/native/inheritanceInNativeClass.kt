@@ -1,6 +1,10 @@
 // SKIP_MINIFICATION
 // Contains calls from external JS code
 
+// SKIP_ES_MODULES
+// IGNORE_BACKEND: JS_IR
+// External JS relies on plain moudle system
+
 @JsExport
 open class A {
     @JsName("foo")

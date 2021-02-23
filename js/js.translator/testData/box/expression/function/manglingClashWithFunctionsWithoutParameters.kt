@@ -1,4 +1,8 @@
 // EXPECTED_REACHABLE_NODES: 1303
+
+// DONT_TARGET_EXACT_BACKEND: JS_IR
+// REASON: Tests internal implementation of legacy backend
+
 package foo
 
 fun foo(i: Int): String = "foo" + i

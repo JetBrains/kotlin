@@ -1,4 +1,6 @@
 // EXPECTED_REACHABLE_NODES: 1289
+// SKIP_ES_MODULES
+// IGNORE_BACKEND: JS_IR
 // FILE: a.kt
 @file:JsModule("lib")
 @file:JsNonModule

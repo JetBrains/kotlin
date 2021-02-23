@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.incremental.js.IncrementalNextRoundChecker
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.ir.backend.js.*
+import org.jetbrains.kotlin.ir.backend.js.codegen.JsFileWriter
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
@@ -250,7 +251,13 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 return OK
             }
 
-            val compiledModule = compile(
+            val basicFileWriter = object : JsFileWriter {
+                override fun write(module: String, path: String, content: String) {
+                    outputFile.resolveSibling(path).writeText(content)
+                }
+            }
+
+            compile(
                 projectJs,
                 mainModule,
                 AnalyzerWithCompilerReport(config.configuration),
@@ -261,26 +268,16 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 mainArguments = mainCallArguments,
                 generateFullJs = !arguments.irDce,
                 generateDceJs = arguments.irDce,
+                dceDriven = arguments.irDceDriven,
                 dceRuntimeDiagnostic = DceRuntimeDiagnostic.resolve(
                     arguments.irDceRuntimeDiagnostic,
                     messageCollector
                 ),
-                dceDriven = arguments.irDceDriven,
                 multiModule = arguments.irPerModule,
                 relativeRequirePath = true,
                 propertyLazyInitialization = arguments.irPropertyLazyInitialization,
+                fileWriter = basicFileWriter
             )
-
-
-            val jsCode = if (arguments.irDce && !arguments.irDceDriven) compiledModule.dceJsCode!! else compiledModule.jsCode!!
-            outputFile.writeText(jsCode.mainModule)
-            jsCode.dependencies.forEach { (name, content) ->
-                outputFile.resolveSibling("$name.js").writeText(content)
-            }
-            if (arguments.generateDts) {
-                val dtsFile = outputFile.withReplacedExtensionOrNull(outputFile.extension, "d.ts")!!
-                dtsFile.writeText(compiledModule.tsDefinitions ?: error("No ts definitions"))
-            }
         }
 
         return OK
