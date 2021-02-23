@@ -11,20 +11,17 @@ import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
+import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerDataContextCollector
-import org.jetbrains.kotlin.idea.fir.low.level.api.trasformers.FirDesignatedBodyResolveTransformerForIDE
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.firIdeProvider
+import org.jetbrains.kotlin.idea.fir.low.level.api.trasformers.FirDesignatedBodyResolveTransformerForIDE
 import org.jetbrains.kotlin.idea.fir.low.level.api.trasformers.FirDesignatedContractsResolveTransformerForIDE
 import org.jetbrains.kotlin.idea.fir.low.level.api.trasformers.FirDesignatedImplicitTypesTransformerForIDE
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.*
-import org.jetbrains.kotlin.idea.fir.low.level.api.util.checkCanceled
-import org.jetbrains.kotlin.idea.fir.low.level.api.util.executeWithoutPCE
-import org.jetbrains.kotlin.idea.fir.low.level.api.util.findSourceNonLocalFirDeclaration
 import org.jetbrains.kotlin.psi.*
 
 internal class FirLazyDeclarationResolver(
@@ -56,7 +53,11 @@ internal class FirLazyDeclarationResolver(
         val firFile = declaration.getContainingFile()
             ?: error("FirFile was not found for\n${declaration.render()}")
         val provider = firFile.session.firIdeProvider
-        val fromPhase = if (reresolveFile) declaration.resolvePhase else minOf(firFile.resolvePhase, declaration.resolvePhase)
+        // Lazy since we want to read the resolve phase inside the lock. Otherwise, we may run the same resolve phase multiple times. See
+        // KT-45121
+        val fromPhase: FirResolvePhase by lazy(LazyThreadSafetyMode.NONE) {
+            if (reresolveFile) declaration.resolvePhase else minOf(firFile.resolvePhase, declaration.resolvePhase)
+        }
 
         if (checkPCE) {
             firFileBuilder.runCustomResolveWithPCECheck(firFile, moduleFileCache) {
@@ -232,5 +233,3 @@ internal class FirLazyDeclarationResolver(
         private val LAST_NON_LAZY_PHASE = FirResolvePhase.STATUS
     }
 }
-
-
