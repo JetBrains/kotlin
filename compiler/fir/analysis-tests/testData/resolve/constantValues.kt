@@ -8,8 +8,8 @@ class KotlinType
 class KClassValue(value: Value) : ConstantValue<KClassValue.Value>(value) {
     sealed class Value {
         data class NormalClass(val value: ClassLiteralValue) : Value() {
-            val classId: ClassId
-            val arrayDimensions: Int
+            <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val classId: ClassId<!>
+            <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val arrayDimensions: Int<!>
         }
 
         data class LocalClass(val type: KotlinType) : Value()

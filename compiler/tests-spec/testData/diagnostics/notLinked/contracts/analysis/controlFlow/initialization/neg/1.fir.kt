@@ -34,11 +34,11 @@ fun case_4() {
 
 // TESTCASE NUMBER: 5
 class case_5 {
-    val value_1: Int
-    val value_2: Int
+    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val value_1: Int<!>
+    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val value_2: Int<!>
     val value_3: Int
-    var value_4: Int
-    var value_5: Int
+    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>var value_4: Int<!>
+    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>var value_5: Int<!>
     init {
         funWithAtMostOnceCallsInPlace { value_1 = 1 }
         funWithUnknownCallsInPlace { value_2 = 1 }

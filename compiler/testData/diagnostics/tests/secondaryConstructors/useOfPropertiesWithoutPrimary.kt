@@ -11,6 +11,10 @@ class A {
 
     <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val uninitialized: Int<!>
 
+    constructor(x: String): this() {
+        x + y + v + uninitialized
+    }
+
     constructor() {
         x = 1
         y = 2
@@ -28,10 +32,6 @@ class A {
         y = 5
 
         x + y + v + <!UNINITIALIZED_VARIABLE!>uninitialized<!>
-    }
-
-    constructor(x: String): this() {
-        x + y + v + uninitialized
     }
 
     //anonymous

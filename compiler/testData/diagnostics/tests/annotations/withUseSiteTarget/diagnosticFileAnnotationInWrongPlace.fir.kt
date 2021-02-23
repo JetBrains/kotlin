@@ -1,7 +1,7 @@
 package bar
 
-@file:foo
-val prop
+<!MUST_BE_INITIALIZED!>@file:foo
+val prop<!>
 
 @file:[bar baz]
 fun func() {}

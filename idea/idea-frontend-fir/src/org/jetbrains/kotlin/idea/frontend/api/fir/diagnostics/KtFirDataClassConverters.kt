@@ -911,6 +911,24 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.MUST_BE_INITIALIZED) { firDiagnostic ->
+        MustBeInitializedImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.MUST_BE_INITIALIZED_OR_BE_ABSTRACT) { firDiagnostic ->
+        MustBeInitializedOrBeAbstractImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.EXTENSION_PROPERTY_MUST_HAVE_ACCESSORS_OR_BE_ABSTRACT) { firDiagnostic ->
+        ExtensionPropertyMustHaveAccessorsOrBeAbstractImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
     add(FirErrors.BACKING_FIELD_IN_INTERFACE) { firDiagnostic ->
         BackingFieldInInterfaceImpl(
             firDiagnostic as FirPsiDiagnostic<*>,

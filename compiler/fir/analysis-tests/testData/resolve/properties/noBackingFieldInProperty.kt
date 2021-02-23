@@ -10,6 +10,6 @@ class A {
 class B {
     val field: String = ""
 
-    val x: Int
+    <!MUST_BE_INITIALIZED!>val x: Int<!>
         get() = field.<!UNRESOLVED_REFERENCE!>length<!> // should be an error
 }

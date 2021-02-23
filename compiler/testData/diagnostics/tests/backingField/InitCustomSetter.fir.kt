@@ -6,7 +6,7 @@ class My(val v: Int) {
     var y: Int
         set(arg) { field = arg }
 
-    var z: Int
+    <!MUST_BE_INITIALIZED!>var z: Int<!>
         set(arg) { field = arg }
 
     // Ok: initializer available
