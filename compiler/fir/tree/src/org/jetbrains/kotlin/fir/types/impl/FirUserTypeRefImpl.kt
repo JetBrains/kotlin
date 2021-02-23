@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformInplace
 
 class FirUserTypeRefImpl(
-    override val source: FirSourceElement?,
+    override var source: FirSourceElement?,
     override val isMarkedNullable: Boolean,
     override val qualifier: MutableList<FirQualifierPart>,
     override val annotations: MutableList<FirAnnotationCall>
@@ -43,5 +43,6 @@ class FirUserTypeRefImpl(
     }
 
     override fun replaceSource(newSource: FirSourceElement?) {
+        source = newSource
     }
 }
