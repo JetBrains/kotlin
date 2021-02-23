@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProviderImpl
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumerImpl
 import org.jetbrains.kotlin.incremental.js.TranslationResultValue
+import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.backend.js.ic.ICCache
 import org.jetbrains.kotlin.js.JavaScript
 import org.jetbrains.kotlin.js.backend.JsToStringGenerationVisitor
@@ -46,6 +47,7 @@ import org.jetbrains.kotlin.js.parser.sourcemaps.SourceMapParser
 import org.jetbrains.kotlin.js.parser.sourcemaps.SourceMapSuccess
 import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver
 import org.jetbrains.kotlin.js.sourceMap.SourceMap3Builder
+import org.jetbrains.kotlin.js.test.engines.ExternalTool
 import org.jetbrains.kotlin.js.sourceMap.SourceMapBuilderConsumer
 import org.jetbrains.kotlin.js.test.utils.*
 import org.jetbrains.kotlin.js.util.TextOutputImpl
@@ -153,7 +155,17 @@ abstract class BasicBoxTest(
             if (errorPolicyMatcher.find()) ErrorTolerancePolicy.resolvePolicy(errorPolicyMatcher.group(1)) else ErrorTolerancePolicy.DEFAULT
 
         val skipDceDriven = SKIP_DCE_DRIVEN.matcher(fileContent).find()
+        val esModules = ES_MODULES.matcher(fileContent).find()
+
         val splitPerModule = SPLIT_PER_MODULE.matcher(fileContent).find()
+        val splitPerFile = SPLIT_PER_FILE.matcher(fileContent).find()
+
+        val granularity = when {
+            splitPerModule -> JsGenerationGranularity.PER_MODULE
+            splitPerFile -> JsGenerationGranularity.PER_FILE
+            else -> JsGenerationGranularity.WHOLE_PROGRAM
+        }
+
         val skipMangleVerification = SKIP_MANGLE_VERIFICATION.matcher(fileContent).find()
 
         val safeExternalBoolean = SAFE_EXTERNAL_BOOLEAN.matcher(fileContent).find()
@@ -196,6 +208,12 @@ abstract class BasicBoxTest(
             val mainModule = modules[mainModuleName] ?: error("No module with name \"$mainModuleName\"")
             val icCache = mutableMapOf<String, TestModuleCache>()
 
+            if (esModules) {
+                modules.forEach { _, m -> m.moduleKind = ModuleKind.ES }
+            }
+
+            val customTestModule: String? = inputFiles.find { it.testEntryEsModule }?.let { File(it.fileName).readText() }
+
             val generatedJsFiles = orderedModules.asReversed().mapNotNull { module ->
                 val dependencies = module.dependenciesSymbols.map { modules[it]?.outputFileName(outputDir) + ".meta.js" }
                 val allDependencies = module.allTransitiveDependencies().map { modules[it]?.outputFileName(outputDir) + ".meta.js" }
@@ -229,7 +247,8 @@ abstract class BasicBoxTest(
                     isMainModule,
                     expectActualLinker,
                     skipDceDriven,
-                    splitPerModule,
+                    esModules,
+                    granularity,
                     errorPolicy,
                     propertyLazyInitialization = true,
                     safeExternalBoolean,
@@ -237,7 +256,8 @@ abstract class BasicBoxTest(
                     skipMangleVerification,
                     abiVersion,
                     checkIC,
-                    icCache
+                    icCache,
+                    customTestModule,
                 )
 
                 when {
@@ -279,6 +299,7 @@ abstract class BasicBoxTest(
             }
 
             val additionalFiles = mutableListOf<String>()
+            val moduleEmulationFiles = mutableListOf<String>()
 
             val moduleKindMatcher = MODULE_KIND_PATTERN.matcher(fileContent)
             val moduleKind = if (moduleKindMatcher.find()) ModuleKind.valueOf(moduleKindMatcher.group(1)) else ModuleKind.PLAIN
@@ -286,13 +307,70 @@ abstract class BasicBoxTest(
             val withModuleSystem = moduleKind != ModuleKind.PLAIN && !NO_MODULE_SYSTEM_PATTERN.matcher(fileContent).find()
 
             if (withModuleSystem) {
-                additionalFiles += MODULE_EMULATION_FILE
+                moduleEmulationFiles += MODULE_EMULATION_FILE
             }
 
             val additionalJsFile = filePath.removeSuffix("." + KotlinFileType.EXTENSION) + JavaScript.DOT_EXTENSION
             if (File(additionalJsFile).exists()) {
                 additionalFiles += additionalJsFile
             }
+
+            if (esModules) {
+                val additionalMainJsFile =
+                    (filePath.removeSuffix("." + KotlinFileType.EXTENSION) + "__main.js").takeIf { File(it).exists() }
+
+                val maybeAdditionalMjsFile: String? =
+                    (filePath.removeSuffix("." + KotlinFileType.EXTENSION) + ".mjs")
+                        .takeIf { File(it).exists() }
+
+                val allMjsFiles: List<String> =
+                    inputFiles.filter { it.fileName.endsWith(".mjs") }.map { it.fileName } + listOfNotNull(maybeAdditionalMjsFile)
+
+                val allNonEsModuleFiles: List<String> =
+                    additionalFiles + inputJsFilesBefore + globalCommonFiles + localCommonFiles + additionalCommonFiles
+
+                fun runIrEsmTests(testOutputDir: File) {
+                    val esmOutputDir = testOutputDir.esModulesSubDir
+
+                    // Copy __main file if present
+                    if (additionalMainJsFile != null) {
+                        val newFileName = File(esmOutputDir, "test.mjs")
+                        newFileName.delete()
+                        File(additionalMainJsFile).copyTo(newFileName)
+                    }
+
+                    // Copy all .mjs files into generated directory
+                    allMjsFiles.forEach { mjsFile ->
+                        val outFile = File(esmOutputDir, File(mjsFile).name)
+                        File(mjsFile).copyTo(outFile)
+                    }
+
+                    val perFileEsModuleFile = "$esmOutputDir/test.mjs"
+                    v8tool.run(*allNonEsModuleFiles.toTypedArray(), perFileEsModuleFile, *inputJsFilesAfter.toTypedArray())
+                }
+
+                fun File.getTestDir(): File =
+                    File(generatedJsFiles.single().first.replace(outputDir.absolutePath, this.absolutePath))
+
+                if (!skipRegularMode) {
+                    runIrEsmTests(outputDir.getTestDir())
+
+                    if (runIrDce) {
+                        runIrEsmTests(dceOutputDir.getTestDir())
+                    }
+                }
+
+                if (runIrPir && !skipDceDriven) {
+                    runIrEsmTests(pirOutputDir.getTestDir())
+                }
+            }
+
+            if (esModules)
+                return
+
+            // Old systems tests
+
+            additionalFiles.addAll(0, moduleEmulationFiles)
 
             val additionalMainFiles = mutableListOf<String>()
             val additionalMainJsFile = filePath.removeSuffix("." + KotlinFileType.EXTENSION) + "__main.js"
@@ -317,7 +395,6 @@ abstract class BasicBoxTest(
                 )
             } +
                     globalCommonFiles + localCommonFiles + additionalCommonFiles + additionalMainFiles + inputJsFilesAfter
-
 
             val dontRunGeneratedCode =
                 InTextDirectivesUtils.dontRunGeneratedCode(targetBackend, file)
@@ -501,7 +578,8 @@ abstract class BasicBoxTest(
         isMainModule: Boolean,
         expectActualLinker: Boolean,
         skipDceDriven: Boolean,
-        splitPerModule: Boolean,
+        esModules: Boolean,
+        granularity: JsGenerationGranularity,
         errorIgnorancePolicy: ErrorTolerancePolicy,
         propertyLazyInitialization: Boolean,
         safeExternalBoolean: Boolean,
@@ -509,7 +587,8 @@ abstract class BasicBoxTest(
         skipMangleVerification: Boolean,
         abiVersion: KotlinAbiVersion,
         checkIC: Boolean,
-        icCache: MutableMap<String, TestModuleCache>
+        icCache: MutableMap<String, TestModuleCache>,
+        customTestModule: String?,
     ) {
         val kotlinFiles = module.files.filter { it.fileName.endsWith(".kt") }
         val testFiles = kotlinFiles.map { it.fileName }
@@ -558,7 +637,8 @@ abstract class BasicBoxTest(
             needsFullIrRuntime,
             isMainModule,
             skipDceDriven,
-            splitPerModule,
+            esModules,
+            granularity,
             propertyLazyInitialization,
             safeExternalBoolean,
             safeExternalBooleanDiagnostic,
@@ -566,7 +646,8 @@ abstract class BasicBoxTest(
             abiVersion,
             checkIC,
             recompile = false,
-            icCache
+            icCache,
+            customTestModule,
         )
 
         if (incrementalCompilationChecksEnabled && module.hasFilesToRecompile) {
@@ -661,7 +742,8 @@ abstract class BasicBoxTest(
             needsFullIrRuntime,
             isMainModule = false,
             skipDceDriven = true,
-            splitPerModule = false,
+            esModules = false,
+            granularity = JsGenerationGranularity.WHOLE_PROGRAM,
             propertyLazyInitialization = true,
             safeExternalBoolean = false,
             safeExternalBooleanDiagnostic = null,
@@ -669,7 +751,8 @@ abstract class BasicBoxTest(
             abiVersion = KotlinAbiVersion.CURRENT,
             incrementalCompilation = true,
             recompile = true,
-            mutableMapOf()
+            mutableMapOf(),
+            customTestModule = null,
         )
 
         val originalOutput = FileUtil.loadFile(outputFile)
@@ -747,7 +830,8 @@ abstract class BasicBoxTest(
         needsFullIrRuntime: Boolean,
         isMainModule: Boolean,
         skipDceDriven: Boolean,
-        splitPerModule: Boolean,
+        esModules: Boolean,
+        granularity: JsGenerationGranularity,
         propertyLazyInitialization: Boolean,
         safeExternalBoolean: Boolean,
         safeExternalBooleanDiagnostic: RuntimeDiagnostic?,
@@ -755,7 +839,8 @@ abstract class BasicBoxTest(
         abiVersion: KotlinAbiVersion,
         incrementalCompilation: Boolean,
         recompile: Boolean,
-        icCache: MutableMap<String, TestModuleCache>
+        icCache: MutableMap<String, TestModuleCache>,
+        customTestModule: String?,
     ) {
         val translator = K2JSTranslator(config, false)
         val translationResult = translator.translateUnits(ExceptionThrowingReporter, units, mainCallParameters)
@@ -813,6 +898,8 @@ abstract class BasicBoxTest(
                         "$content\n"
 
             ModuleKind.PLAIN -> content
+
+            ModuleKind.ES -> error("Module emulation markers are not supported for ES modules")
         }
     }
 
@@ -1082,7 +1169,8 @@ abstract class BasicBoxTest(
                 temporaryFile.absolutePath,
                 currentModule,
                 recompile = RECOMPILE_PATTERN.matcher(text).find(),
-                packageName = ktFile.packageFqName.asString()
+                packageName = ktFile.packageFqName.asString(),
+                testEntryEsModule = ENTRY_ES_MODULE.matcher(text).find(),
             )
         }
 
@@ -1099,7 +1187,7 @@ abstract class BasicBoxTest(
         }
     }
 
-    protected class TestFile(val fileName: String, val module: TestModule, val recompile: Boolean, val packageName: String) {
+    protected class TestFile(val fileName: String, val module: TestModule, val recompile: Boolean, val packageName: String, val testEntryEsModule: Boolean) {
         init {
             module.files += this
         }
@@ -1149,6 +1237,8 @@ abstract class BasicBoxTest(
         // Run top level box function
         private val RUN_PLAIN_BOX_FUNCTION = Pattern.compile("^// *RUN_PLAIN_BOX_FUNCTION", Pattern.MULTILINE)
 
+        private val ENTRY_ES_MODULE = Pattern.compile("^// *ENTRY_ES_MODULE", Pattern.MULTILINE)
+
         private val NO_INLINE_PATTERN = Pattern.compile("^// *NO_INLINE *$", Pattern.MULTILINE)
         private val SKIP_NODE_JS = Pattern.compile("^// *SKIP_NODE_JS *$", Pattern.MULTILINE)
         private val SKIP_MINIFICATION = Pattern.compile("^// *SKIP_MINIFICATION *$", Pattern.MULTILINE)
@@ -1163,7 +1253,10 @@ abstract class BasicBoxTest(
         private val WITH_STDLIB = Pattern.compile("^// *WITH_STDLIB *\$", Pattern.MULTILINE)
         private val EXPECT_ACTUAL_LINKER = Pattern.compile("^// EXPECT_ACTUAL_LINKER *$", Pattern.MULTILINE)
         private val SKIP_DCE_DRIVEN = Pattern.compile("^// *SKIP_DCE_DRIVEN *$", Pattern.MULTILINE)
+        private val ES_MODULES = Pattern.compile("^// *ES_MODULES *$", Pattern.MULTILINE)
+
         private val SPLIT_PER_MODULE = Pattern.compile("^// *SPLIT_PER_MODULE *$", Pattern.MULTILINE)
+        private val SPLIT_PER_FILE = Pattern.compile("^// *SPLIT_PER_FILE *$", Pattern.MULTILINE)
         private val SKIP_MANGLE_VERIFICATION = Pattern.compile("^// *SKIP_MANGLE_VERIFICATION *$", Pattern.MULTILINE)
 
         private val ERROR_POLICY_PATTERN = Pattern.compile("^// *ERROR_POLICY: *(.+)$", Pattern.MULTILINE)
@@ -1217,3 +1310,5 @@ fun RuntimeDiagnostic.Companion.resolve(
         null
     }
 }
+
+val v8tool by lazy { ExternalTool(System.getProperty("javascript.engine.path.V8")) }

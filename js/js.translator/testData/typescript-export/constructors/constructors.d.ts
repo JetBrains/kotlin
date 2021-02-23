@@ -19,16 +19,16 @@ declare namespace JS_TESTS {
         static createFromString(y: string): ClassWithMultipleSecondaryCtors;
         static createFromInts(y: number, z: number): ClassWithMultipleSecondaryCtors;
     }
+    class DerivedClassWithSecondaryCtor extends OpenClassWithMixedConstructors {
+        private constructor();
+        static delegateToPrimary(y: string): DerivedClassWithSecondaryCtor;
+        static delegateToCreateFromInts(y: number, z: number): DerivedClassWithSecondaryCtor;
+    }
     class OpenClassWithMixedConstructors {
         constructor(x: string);
         readonly x: string;
         static createFromStrings(y: string, z: string): OpenClassWithMixedConstructors;
         static createFromInts(y: number, z: number): OpenClassWithMixedConstructors;
-    }
-    class DerivedClassWithSecondaryCtor extends OpenClassWithMixedConstructors {
-        private constructor();
-        static delegateToPrimary(y: string): DerivedClassWithSecondaryCtor;
-        static delegateToCreateFromInts(y: number, z: number): DerivedClassWithSecondaryCtor;
     }
     class KotlinGreeter {
         constructor(greeting: string);

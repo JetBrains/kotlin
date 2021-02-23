@@ -257,6 +257,8 @@ projectTest(parallel = true) {
 }
 
 projectTest("jsTest", true) {
+    // PIR temporary disabled
+    systemProperty("kotlin.js.ir.pir", "false")
     setUpJsBoxTests(jsEnabled = true, jsIrEnabled = false)
 }
 

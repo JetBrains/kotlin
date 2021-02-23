@@ -22,5 +22,6 @@ public enum ModuleKind {
     PLAIN,
     AMD,
     COMMON_JS,
-    UMD
+    UMD,
+    ES
 }

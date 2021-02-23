@@ -1592,6 +1592,159 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         }
     }
 
+    @TestMetadata("js/js.translator/testData/box/esModules")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class EsModules extends AbstractBoxJsTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInEsModules() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS, true);
+        }
+
+        @TestMetadata("js/js.translator/testData/box/esModules/crossModuleRef")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class CrossModuleRef extends AbstractBoxJsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInCrossModuleRef() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/crossModuleRef"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS, true);
+            }
+        }
+
+        @TestMetadata("js/js.translator/testData/box/esModules/crossModuleRefPerFile")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class CrossModuleRefPerFile extends AbstractBoxJsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInCrossModuleRefPerFile() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/crossModuleRefPerFile"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS, true);
+            }
+        }
+
+        @TestMetadata("js/js.translator/testData/box/esModules/crossModuleRefPerModule")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class CrossModuleRefPerModule extends AbstractBoxJsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInCrossModuleRefPerModule() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/crossModuleRefPerModule"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS, true);
+            }
+        }
+
+        @TestMetadata("js/js.translator/testData/box/esModules/export")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Export extends AbstractBoxJsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInExport() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/export"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS, true);
+            }
+
+            @TestMetadata("overriddenExternalMethodWithSameStableNameMethod.kt")
+            public void testOverriddenExternalMethodWithSameStableNameMethod() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/export/overriddenExternalMethodWithSameStableNameMethod.kt");
+            }
+
+            @TestMetadata("reservedModuleName.kt")
+            public void testReservedModuleName() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/export/reservedModuleName.kt");
+            }
+        }
+
+        @TestMetadata("js/js.translator/testData/box/esModules/incremental")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Incremental extends AbstractBoxJsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInIncremental() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/incremental"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS, true);
+            }
+        }
+
+        @TestMetadata("js/js.translator/testData/box/esModules/inline")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Inline extends AbstractBoxJsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInInline() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/inline"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS, true);
+            }
+        }
+
+        @TestMetadata("js/js.translator/testData/box/esModules/jsExport")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class JsExport extends AbstractBoxJsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInJsExport() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/jsExport"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS, true);
+            }
+        }
+
+        @TestMetadata("js/js.translator/testData/box/esModules/jsModule")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class JsModule extends AbstractBoxJsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInJsModule() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/jsModule"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS, true);
+            }
+        }
+
+        @TestMetadata("js/js.translator/testData/box/esModules/jsName")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class JsName extends AbstractBoxJsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInJsName() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/jsName"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS, true);
+            }
+        }
+
+        @TestMetadata("js/js.translator/testData/box/esModules/native")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Native extends AbstractBoxJsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInNative() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/native"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS, true);
+            }
+        }
+    }
+
     @TestMetadata("js/js.translator/testData/box/examples")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

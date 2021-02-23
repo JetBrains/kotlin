@@ -20,6 +20,7 @@ where advanced options include:
                              Enable runtime diagnostics when performing DCE instead of removing declarations
   -Xir-module-name=<name>    Specify a compilation module name for IR backend
   -Xir-only                  Disables pre-IR backend
+  -Xir-per-file              Splits generated .js per-file
   -Xir-per-module            Splits generated .js per-module
   -Xir-per-module-output-name Adds a custom output name to the splitted js files
   -Xir-produce-js            Generates JS file using IR backend. Also disables pre-IR backend

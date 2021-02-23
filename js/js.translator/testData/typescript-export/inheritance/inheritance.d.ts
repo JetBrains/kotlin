@@ -13,20 +13,6 @@ declare namespace JS_TESTS {
         }
     }
     namespace foo {
-        abstract class AC implements foo.I2 {
-            constructor();
-            x: string;
-            abstract readonly y: boolean;
-            abstract z(z: number): void;
-            readonly acProp: string;
-            abstract readonly acAbstractProp: string;
-        }
-        class OC extends foo.AC implements foo.I<string, boolean, number> {
-            constructor(y: boolean, acAbstractProp: string);
-            readonly y: boolean;
-            readonly acAbstractProp: string;
-            z(z: number): void;
-        }
         class FC extends foo.OC {
             constructor();
         }
@@ -35,5 +21,23 @@ declare namespace JS_TESTS {
         const O2: {
             foo(): number;
         } & foo.OC;
+    }
+    namespace foo {
+        abstract class AC implements foo.I2 {
+            constructor();
+            x: string;
+            abstract readonly y: boolean;
+            abstract z(z: number): void;
+            readonly acProp: string;
+            abstract readonly acAbstractProp: string;
+        }
+    }
+    namespace foo {
+        class OC extends foo.AC implements foo.I<string, boolean, number> {
+            constructor(y: boolean, acAbstractProp: string);
+            readonly y: boolean;
+            readonly acAbstractProp: string;
+            z(z: number): void;
+        }
     }
 }

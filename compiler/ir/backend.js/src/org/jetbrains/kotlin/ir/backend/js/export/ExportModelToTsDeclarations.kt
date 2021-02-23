@@ -26,7 +26,7 @@ fun ExportedModule.toTypeScript(): String {
 
     return when (moduleKind) {
         ModuleKind.PLAIN -> "declare namespace $namespaceName {\n$declarationsDts\n}\n"
-        ModuleKind.AMD, ModuleKind.COMMON_JS -> declarationsDts
+        ModuleKind.AMD, ModuleKind.COMMON_JS, ModuleKind.ES -> declarationsDts
         ModuleKind.UMD -> "$declarationsDts\nexport as namespace $namespaceName;"
     }
 }

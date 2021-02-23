@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.backend.common.lower.optimizations.FoldConstantLower
 import org.jetbrains.kotlin.backend.common.lower.optimizations.PropertyAccessorInlineLowering
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.ir.backend.js.lower.calls.CallsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.cleanup.CleanupLowering
@@ -397,7 +398,7 @@ private val removeInitializersForLazyProperties = makeDeclarationTransformerPhas
 )
 
 private val propertyAccessorInlinerLoweringPhase = makeBodyLoweringPhase(
-    ::PropertyAccessorInlineLowering,
+    ::JsPropertyAccessorInlineLowering,
     name = "PropertyAccessorInlineLowering",
     description = "[Optimization] Inline property accessors"
 )
@@ -775,6 +776,14 @@ private val cleanupLoweringPhase = makeBodyLoweringPhase(
     name = "CleanupLowering",
     description = "Clean up IR before codegen"
 )
+private val moveOpenClassesToSeparatePlaceLowering = makeCustomJsModulePhase(
+    { context, module ->
+        if (context.granularity == JsGenerationGranularity.PER_FILE)
+            moveOpenClassesToSeparateFiles(module)
+    },
+    name = "MoveOpenClassesToSeparateFiles",
+    description = "Move open classes to separate files"
+).toModuleLowering()
 
 private val jsSuspendArityStorePhase = makeDeclarationTransformerPhase(
     ::JsSuspendArityStoreLowering,
@@ -880,6 +889,9 @@ private val loweringList = listOf<Lowering>(
     captureStackTraceInThrowablesPhase,
     callsLoweringPhase,
     cleanupLoweringPhase,
+    // Currently broken due to static members lowering making single-open-class
+    // files non-recognizable as single-class files
+    // moveOpenClassesToSeparatePlaceLowering,
     validateIrAfterLowering,
 )
 

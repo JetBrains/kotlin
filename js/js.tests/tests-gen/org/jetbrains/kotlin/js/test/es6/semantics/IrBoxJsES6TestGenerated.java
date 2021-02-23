@@ -1587,6 +1587,494 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
         }
     }
 
+    @TestMetadata("js/js.translator/testData/box/esModules")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class EsModules extends AbstractIrBoxJsES6Test {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR_ES6, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInEsModules() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        }
+
+        @TestMetadata("js/js.translator/testData/box/esModules/crossModuleRef")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class CrossModuleRef extends AbstractIrBoxJsES6Test {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR_ES6, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInCrossModuleRef() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/crossModuleRef"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+            }
+
+            @TestMetadata("callableObjectRef.kt")
+            public void testCallableObjectRef() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/crossModuleRef/callableObjectRef.kt");
+            }
+
+            @TestMetadata("constructor.kt")
+            public void testConstructor() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/crossModuleRef/constructor.kt");
+            }
+
+            @TestMetadata("inheritance.kt")
+            public void testInheritance() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/crossModuleRef/inheritance.kt");
+            }
+
+            @TestMetadata("inlineJsModule.kt")
+            public void testInlineJsModule() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/crossModuleRef/inlineJsModule.kt");
+            }
+
+            @TestMetadata("inlineJsModuleNonIdentifier.kt")
+            public void testInlineJsModuleNonIdentifier() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/crossModuleRef/inlineJsModuleNonIdentifier.kt");
+            }
+
+            @TestMetadata("inlineJsModulePackage.kt")
+            public void testInlineJsModulePackage() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/crossModuleRef/inlineJsModulePackage.kt");
+            }
+
+            @TestMetadata("inlineModule.kt")
+            public void testInlineModule() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/crossModuleRef/inlineModule.kt");
+            }
+
+            @TestMetadata("inlineModuleNonIndentifier.kt")
+            public void testInlineModuleNonIndentifier() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/crossModuleRef/inlineModuleNonIndentifier.kt");
+            }
+
+            @TestMetadata("lambda.kt")
+            public void testLambda() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/crossModuleRef/lambda.kt");
+            }
+
+            @TestMetadata("object.kt")
+            public void testObject() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/crossModuleRef/object.kt");
+            }
+
+            @TestMetadata("objectInInlineClosure.kt")
+            public void testObjectInInlineClosure() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/crossModuleRef/objectInInlineClosure.kt");
+            }
+
+            @TestMetadata("objectIsObject.kt")
+            public void testObjectIsObject() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/crossModuleRef/objectIsObject.kt");
+            }
+
+            @TestMetadata("topLevelExtension.kt")
+            public void testTopLevelExtension() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/crossModuleRef/topLevelExtension.kt");
+            }
+
+            @TestMetadata("topLevelFunction.kt")
+            public void testTopLevelFunction() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/crossModuleRef/topLevelFunction.kt");
+            }
+
+            @TestMetadata("topLevelMutableProperty.kt")
+            public void testTopLevelMutableProperty() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/crossModuleRef/topLevelMutableProperty.kt");
+            }
+
+            @TestMetadata("topLevelProperty.kt")
+            public void testTopLevelProperty() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/crossModuleRef/topLevelProperty.kt");
+            }
+        }
+
+        @TestMetadata("js/js.translator/testData/box/esModules/crossModuleRefPerFile")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class CrossModuleRefPerFile extends AbstractIrBoxJsES6Test {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR_ES6, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInCrossModuleRefPerFile() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/crossModuleRefPerFile"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+            }
+
+            @TestMetadata("callableObjectRef.kt")
+            public void testCallableObjectRef() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/crossModuleRefPerFile/callableObjectRef.kt");
+            }
+
+            @TestMetadata("constructor.kt")
+            public void testConstructor() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/crossModuleRefPerFile/constructor.kt");
+            }
+
+            @TestMetadata("inheritance.kt")
+            public void testInheritance() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/crossModuleRefPerFile/inheritance.kt");
+            }
+
+            @TestMetadata("inlineModule.kt")
+            public void testInlineModule() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/crossModuleRefPerFile/inlineModule.kt");
+            }
+
+            @TestMetadata("inlineModuleNonIndentifier.kt")
+            public void testInlineModuleNonIndentifier() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/crossModuleRefPerFile/inlineModuleNonIndentifier.kt");
+            }
+
+            @TestMetadata("lambda.kt")
+            public void testLambda() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/crossModuleRefPerFile/lambda.kt");
+            }
+
+            @TestMetadata("object.kt")
+            public void testObject() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/crossModuleRefPerFile/object.kt");
+            }
+
+            @TestMetadata("objectInInlineClosure.kt")
+            public void testObjectInInlineClosure() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/crossModuleRefPerFile/objectInInlineClosure.kt");
+            }
+
+            @TestMetadata("objectIsObject.kt")
+            public void testObjectIsObject() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/crossModuleRefPerFile/objectIsObject.kt");
+            }
+
+            @TestMetadata("topLevelExtension.kt")
+            public void testTopLevelExtension() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/crossModuleRefPerFile/topLevelExtension.kt");
+            }
+
+            @TestMetadata("topLevelFunction.kt")
+            public void testTopLevelFunction() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/crossModuleRefPerFile/topLevelFunction.kt");
+            }
+
+            @TestMetadata("topLevelMutableProperty.kt")
+            public void testTopLevelMutableProperty() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/crossModuleRefPerFile/topLevelMutableProperty.kt");
+            }
+
+            @TestMetadata("topLevelProperty.kt")
+            public void testTopLevelProperty() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/crossModuleRefPerFile/topLevelProperty.kt");
+            }
+        }
+
+        @TestMetadata("js/js.translator/testData/box/esModules/crossModuleRefPerModule")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class CrossModuleRefPerModule extends AbstractIrBoxJsES6Test {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR_ES6, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInCrossModuleRefPerModule() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/crossModuleRefPerModule"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+            }
+
+            @TestMetadata("callableObjectRef.kt")
+            public void testCallableObjectRef() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/crossModuleRefPerModule/callableObjectRef.kt");
+            }
+
+            @TestMetadata("constructor.kt")
+            public void testConstructor() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/crossModuleRefPerModule/constructor.kt");
+            }
+
+            @TestMetadata("inheritance.kt")
+            public void testInheritance() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/crossModuleRefPerModule/inheritance.kt");
+            }
+
+            @TestMetadata("inlineModule.kt")
+            public void testInlineModule() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/crossModuleRefPerModule/inlineModule.kt");
+            }
+
+            @TestMetadata("inlineModuleNonIndentifier.kt")
+            public void testInlineModuleNonIndentifier() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/crossModuleRefPerModule/inlineModuleNonIndentifier.kt");
+            }
+
+            @TestMetadata("lambda.kt")
+            public void testLambda() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/crossModuleRefPerModule/lambda.kt");
+            }
+
+            @TestMetadata("object.kt")
+            public void testObject() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/crossModuleRefPerModule/object.kt");
+            }
+
+            @TestMetadata("objectInInlineClosure.kt")
+            public void testObjectInInlineClosure() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/crossModuleRefPerModule/objectInInlineClosure.kt");
+            }
+
+            @TestMetadata("objectIsObject.kt")
+            public void testObjectIsObject() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/crossModuleRefPerModule/objectIsObject.kt");
+            }
+
+            @TestMetadata("topLevelExtension.kt")
+            public void testTopLevelExtension() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/crossModuleRefPerModule/topLevelExtension.kt");
+            }
+
+            @TestMetadata("topLevelFunction.kt")
+            public void testTopLevelFunction() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/crossModuleRefPerModule/topLevelFunction.kt");
+            }
+
+            @TestMetadata("topLevelMutableProperty.kt")
+            public void testTopLevelMutableProperty() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/crossModuleRefPerModule/topLevelMutableProperty.kt");
+            }
+
+            @TestMetadata("topLevelProperty.kt")
+            public void testTopLevelProperty() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/crossModuleRefPerModule/topLevelProperty.kt");
+            }
+        }
+
+        @TestMetadata("js/js.translator/testData/box/esModules/export")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Export extends AbstractIrBoxJsES6Test {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR_ES6, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInExport() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/export"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+            }
+
+            @TestMetadata("exportAllFile.kt")
+            public void testExportAllFile() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/export/exportAllFile.kt");
+            }
+
+            @TestMetadata("nonIndetifierModuleName.kt")
+            public void testNonIndetifierModuleName() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/export/nonIndetifierModuleName.kt");
+            }
+
+            @TestMetadata("overriddenChainNonExportIntermediate.kt")
+            public void testOverriddenChainNonExportIntermediate() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/export/overriddenChainNonExportIntermediate.kt");
+            }
+
+            @TestMetadata("overriddenExternalMethodWithSameNameMethod.kt")
+            public void testOverriddenExternalMethodWithSameNameMethod() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/export/overriddenExternalMethodWithSameNameMethod.kt");
+            }
+
+            @TestMetadata("overriddenExternalMethodWithSameStableNameMethod.kt")
+            public void testOverriddenExternalMethodWithSameStableNameMethod() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/export/overriddenExternalMethodWithSameStableNameMethod.kt");
+            }
+
+            @TestMetadata("reservedModuleName.kt")
+            public void testReservedModuleName() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/export/reservedModuleName.kt");
+            }
+        }
+
+        @TestMetadata("js/js.translator/testData/box/esModules/incremental")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Incremental extends AbstractIrBoxJsES6Test {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR_ES6, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInIncremental() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/incremental"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+            }
+
+            @TestMetadata("jsModule.kt")
+            public void testJsModule() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/incremental/jsModule.kt");
+            }
+        }
+
+        @TestMetadata("js/js.translator/testData/box/esModules/inline")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Inline extends AbstractIrBoxJsES6Test {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR_ES6, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInInline() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/inline"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+            }
+
+            @TestMetadata("inlinedObjectLiteralIsCheck.kt")
+            public void testInlinedObjectLiteralIsCheck() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/inline/inlinedObjectLiteralIsCheck.kt");
+            }
+        }
+
+        @TestMetadata("js/js.translator/testData/box/esModules/jsExport")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class JsExport extends AbstractIrBoxJsES6Test {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR_ES6, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInJsExport() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/jsExport"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+            }
+
+            @TestMetadata("dataClass.kt")
+            public void testDataClass() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/jsExport/dataClass.kt");
+            }
+
+            @TestMetadata("exportedDefaultStub.kt")
+            public void testExportedDefaultStub() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/jsExport/exportedDefaultStub.kt");
+            }
+
+            @TestMetadata("jsExportInClass.kt")
+            public void testJsExportInClass() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/jsExport/jsExportInClass.kt");
+            }
+
+            @TestMetadata("recursiveExport.kt")
+            public void testRecursiveExport() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/jsExport/recursiveExport.kt");
+            }
+        }
+
+        @TestMetadata("js/js.translator/testData/box/esModules/jsModule")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class JsModule extends AbstractIrBoxJsES6Test {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR_ES6, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInJsModule() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/jsModule"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+            }
+
+            @TestMetadata("externalClass.kt")
+            public void testExternalClass() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/jsModule/externalClass.kt");
+            }
+
+            @TestMetadata("externalClassNameClash.kt")
+            public void testExternalClassNameClash() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/jsModule/externalClassNameClash.kt");
+            }
+
+            @TestMetadata("externalClassWithDefaults.kt")
+            public void testExternalClassWithDefaults() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/jsModule/externalClassWithDefaults.kt");
+            }
+
+            @TestMetadata("externalConstructor.kt")
+            public void testExternalConstructor() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/jsModule/externalConstructor.kt");
+            }
+
+            @TestMetadata("externalFunction.kt")
+            public void testExternalFunction() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/jsModule/externalFunction.kt");
+            }
+
+            @TestMetadata("externalFunctionNameClash.kt")
+            public void testExternalFunctionNameClash() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/jsModule/externalFunctionNameClash.kt");
+            }
+
+            @TestMetadata("externalObject.kt")
+            public void testExternalObject() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/jsModule/externalObject.kt");
+            }
+
+            @TestMetadata("externalPackage.kt")
+            public void testExternalPackage() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/jsModule/externalPackage.kt");
+            }
+
+            @TestMetadata("externalPackageInDifferentFile.kt")
+            public void testExternalPackageInDifferentFile() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/jsModule/externalPackageInDifferentFile.kt");
+            }
+
+            @TestMetadata("externalProperty.kt")
+            public void testExternalProperty() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/jsModule/externalProperty.kt");
+            }
+
+            @TestMetadata("interfaces.kt")
+            public void testInterfaces() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/jsModule/interfaces.kt");
+            }
+
+            @TestMetadata("topLevelVarargFun.kt")
+            public void testTopLevelVarargFun() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/jsModule/topLevelVarargFun.kt");
+            }
+        }
+
+        @TestMetadata("js/js.translator/testData/box/esModules/jsName")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class JsName extends AbstractIrBoxJsES6Test {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR_ES6, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInJsName() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/jsName"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+            }
+
+            @TestMetadata("defaultJsName.kt")
+            public void testDefaultJsName() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/jsName/defaultJsName.kt");
+            }
+
+            @TestMetadata("jsTopLevelClashes.kt")
+            public void testJsTopLevelClashes() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/jsName/jsTopLevelClashes.kt");
+            }
+        }
+
+        @TestMetadata("js/js.translator/testData/box/esModules/native")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Native extends AbstractIrBoxJsES6Test {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR_ES6, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInNative() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/native"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+            }
+
+            @TestMetadata("inheritanceInNativeClass.kt")
+            public void testInheritanceInNativeClass() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/native/inheritanceInNativeClass.kt");
+            }
+        }
+    }
+
     @TestMetadata("js/js.translator/testData/box/examples")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -2385,19 +2873,9 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
                 runTest("js/js.translator/testData/box/expression/function/manglingClashFunctionsAndClasses.kt");
             }
 
-            @TestMetadata("manglingClashWithFunctionsWithoutParameters.kt")
-            public void testManglingClashWithFunctionsWithoutParameters() throws Exception {
-                runTest("js/js.translator/testData/box/expression/function/manglingClashWithFunctionsWithoutParameters.kt");
-            }
-
             @TestMetadata("manglingImportedFromObjectWithNI.kt")
             public void testManglingImportedFromObjectWithNI() throws Exception {
                 runTest("js/js.translator/testData/box/expression/function/manglingImportedFromObjectWithNI.kt");
-            }
-
-            @TestMetadata("manglingStability.kt")
-            public void testManglingStability() throws Exception {
-                runTest("js/js.translator/testData/box/expression/function/manglingStability.kt");
             }
 
             @TestMetadata("namedArguments.kt")

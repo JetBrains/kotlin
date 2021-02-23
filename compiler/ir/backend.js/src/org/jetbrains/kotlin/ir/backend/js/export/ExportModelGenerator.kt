@@ -26,24 +26,28 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.utils.addIfNotNull
 
-class ExportModelGenerator(val context: JsIrBackendContext) {
+class ExportModelGenerator(
+    val context: JsIrBackendContext,
+    val generateNamespacesForPackages: Boolean
+) {
 
     fun generateExport(file: IrPackageFragment): List<ExportedDeclaration> {
         val namespaceFqName = file.fqName
         val exports = file.declarations.flatMap { declaration -> listOfNotNull(exportDeclaration(declaration)) }
         return when {
             exports.isEmpty() -> emptyList()
-            namespaceFqName.isRoot -> exports
+            !generateNamespacesForPackages || namespaceFqName.isRoot -> exports
             else -> listOf(ExportedNamespace(namespaceFqName.toString(), exports))
         }
     }
 
-    fun generateExport(modules: Iterable<IrModuleFragment>): ExportedModule =
+    fun generateExport(modules: Iterable<IrModuleFragment>, moduleKind: ModuleKind = ModuleKind.PLAIN): ExportedModule =
         ExportedModule(
             context.configuration[CommonConfigurationKeys.MODULE_NAME]!!,
-            context.configuration[JSConfigurationKeys.MODULE_KIND]!!,
+            moduleKind,
             (context.externalPackageFragment.values + modules.flatMap { it.files }).flatMap {
                 generateExport(it)
             }
@@ -296,7 +300,7 @@ class ExportModelGenerator(val context: JsIrBackendContext) {
 
             classifier is IrClassSymbol -> {
                 val klass = classifier.owner
-                val name = klass.fqNameWhenAvailable!!.asString()
+                val name = if (generateNamespacesForPackages) klass.fqNameWhenAvailable!!.asString() else klass.name.asString()
 
                 when (klass.kind) {
                     ClassKind.ANNOTATION_CLASS,

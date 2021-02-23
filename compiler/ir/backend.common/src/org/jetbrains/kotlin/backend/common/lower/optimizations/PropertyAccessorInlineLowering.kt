@@ -25,12 +25,18 @@ import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
-class PropertyAccessorInlineLowering(private val context: CommonBackendContext) : BodyLoweringPass {
+open class PropertyAccessorInlineLowering(
+    private val context: CommonBackendContext,
+) : BodyLoweringPass {
 
-    private val IrProperty.isSafeToInline: Boolean get() = isTopLevel || (modality === Modality.FINAL || visibility == DescriptorVisibilities.PRIVATE) || (parent as IrClass).modality === Modality.FINAL
+    fun IrProperty.isSafeToInlineInClosedWorld() =
+        isTopLevel || (modality === Modality.FINAL || visibility == DescriptorVisibilities.PRIVATE) || (parent as IrClass).modality === Modality.FINAL
+
+    open fun IrProperty.isSafeToInline(accessContainer: IrDeclaration): Boolean =
+        isSafeToInlineInClosedWorld()
 
     // TODO: implement general function inlining optimization and replace it with
-    private inner class AccessorInliner : IrElementTransformerVoid() {
+    private inner class AccessorInliner(val container: IrDeclaration) : IrElementTransformerVoid() {
 
         private val unitType = context.irBuiltIns.unitType
 
@@ -38,7 +44,7 @@ class PropertyAccessorInlineLowering(private val context: CommonBackendContext) 
             val property = callee.correspondingPropertySymbol?.owner ?: return false
 
             // Some devirtualization required here
-            if (!property.isSafeToInline) return false
+            if (!property.isSafeToInline(container)) return false
 
             val parent = property.parent
             if (parent is IrClass) {
@@ -176,6 +182,6 @@ class PropertyAccessorInlineLowering(private val context: CommonBackendContext) 
     }
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
-        irBody.transformChildrenVoid(AccessorInliner())
+        irBody.transformChildrenVoid(AccessorInliner(container))
     }
 }

@@ -8,6 +8,9 @@ package org.jetbrains.kotlin.ir.backend.js
 import org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
+import org.jetbrains.kotlin.ir.backend.js.ic.SerializedIcData
 import org.jetbrains.kotlin.ir.backend.js.ic.ModuleCache
 import org.jetbrains.kotlin.ir.backend.js.ic.icCompile
 import org.jetbrains.kotlin.ir.backend.js.lower.generateTests
@@ -37,39 +40,36 @@ class CompilationOutputs(
     val dependencies: Iterable<Pair<String, CompilationOutputs>> = emptyList()
 )
 
+class LoweredIr(
+    val context: JsIrBackendContext,
+    val mainModule: IrModuleFragment,
+    val allModules: List<IrModuleFragment>
+)
+
 fun compile(
     depsDescriptors: ModulesStructure,
     phaseConfig: PhaseConfig,
     irFactory: IrFactory,
-    mainArguments: List<String>?,
     exportedDeclarations: Set<FqName> = emptySet(),
-    generateFullJs: Boolean = true,
-    generateDceJs: Boolean = false,
     dceDriven: Boolean = false,
     dceRuntimeDiagnostic: RuntimeDiagnostic? = null,
     es6mode: Boolean = false,
-    multiModule: Boolean = false,
-    relativeRequirePath: Boolean = false,
     propertyLazyInitialization: Boolean,
     verifySignatures: Boolean = true,
     baseClassIntoMetadata: Boolean = false,
     lowerPerModule: Boolean = false,
     safeExternalBoolean: Boolean = false,
     safeExternalBooleanDiagnostic: RuntimeDiagnostic? = null,
-    filesToLower: Set<String>? = null
-): CompilerResult {
+    filesToLower: Set<String>? = null,
+    granularity: JsGenerationGranularity = JsGenerationGranularity.WHOLE_PROGRAM,
+): LoweredIr {
 
     if (lowerPerModule) {
         return icCompile(
             depsDescriptors,
-            mainArguments,
             exportedDeclarations,
-            generateFullJs,
-            generateDceJs,
             dceRuntimeDiagnostic,
             es6mode,
-            multiModule,
-            relativeRequirePath,
             propertyLazyInitialization,
             baseClassIntoMetadata,
             safeExternalBoolean,
@@ -77,7 +77,7 @@ fun compile(
         )
     }
 
-    val (moduleFragment: IrModuleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer, moduleToName) =
+    val (moduleFragment: IrModuleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer, _) =
         loadIr(depsDescriptors, irFactory, verifySignatures, filesToLower, loadFunctionInterfacesIntoStdlib = true)
 
     val mainModule = depsDescriptors.mainModule
@@ -102,7 +102,8 @@ fun compile(
         propertyLazyInitialization = propertyLazyInitialization,
         baseClassIntoMetadata = baseClassIntoMetadata,
         safeExternalBoolean = safeExternalBoolean,
-        safeExternalBooleanDiagnostic = safeExternalBooleanDiagnostic
+        safeExternalBooleanDiagnostic = safeExternalBooleanDiagnostic,
+        granularity = granularity
     )
 
     // Load declarations referenced during `context` initialization
@@ -130,17 +131,6 @@ fun compile(
         eliminateDeadDeclarations(allModules, context)
 
         irFactory.stageController = StageController(controller.currentStage)
-
-        val transformer = IrModuleToJsTransformer(
-            context,
-            mainArguments,
-            fullJs = true,
-            dceJs = false,
-            multiModule = multiModule,
-            relativeRequirePath = relativeRequirePath,
-            moduleToName = moduleToName,
-        )
-        return transformer.generateModule(allModules)
     } else {
         // TODO is this reachable when lowerPerModule == true?
         if (lowerPerModule) {
@@ -154,18 +144,9 @@ fun compile(
         } else {
             jsPhases.invokeToplevel(phaseConfig, context, allModules)
         }
-
-        val transformer = IrModuleToJsTransformer(
-            context,
-            mainArguments,
-            fullJs = generateFullJs,
-            dceJs = generateDceJs,
-            multiModule = multiModule,
-            relativeRequirePath = relativeRequirePath,
-            moduleToName = moduleToName,
-        )
-        return transformer.generateModule(allModules)
     }
+
+    return LoweredIr(context, moduleFragment, allModules)
 }
 
 fun lowerPreservingIcData(module: IrModuleFragment, context: JsIrBackendContext, controller: WholeWorldStageController) {

@@ -170,6 +170,9 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xir-per-module-output-name", description = "Adds a custom output name to the splitted js files")
     var irPerModuleOutputName: String? by NullableStringFreezableVar(null)
 
+    @Argument(value = "-Xir-per-file", description = "Splits generated .js per-file")
+    var irPerFile: Boolean by FreezableVar(false)
+
     @Argument(
         value = "-Xinclude",
         valueDescription = "<path>",

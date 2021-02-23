@@ -85,7 +85,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                     }
                 }
                 is IrClass -> {
-                    classBlock.statements += JsClassGenerator(declaration, context).generate()
+//                    classBlock.statements += JsClassGenerator(declaration, context).generate()
                 }
                 is IrField -> {
                 }
@@ -208,8 +208,13 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         val memberRef = JsNameRef(memberName, classPrototypeRef)
 
         if (declaration.isReal && declaration.body != null) {
-            val translatedFunction = declaration.accept(IrFunctionToJsTransformer(), context)
+            val translatedFunction: JsFunction = declaration.accept(IrFunctionToJsTransformer(), context)
             assert(!declaration.isStaticMethodOfClass)
+
+            if (irClass.isInterface) {
+                classModel.preDeclarationBlock.statements += translatedFunction.makeStmt()
+                return Pair(memberRef, null)
+            }
 
             return Pair(memberRef, translatedFunction)
         }
@@ -224,14 +229,19 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                 ?.let {
                     val implClassDeclaration = it.parent as IrClass
 
-                    if (implClassDeclaration.shouldCopyFrom()) {
-                        val implMethodName = context.getNameForMemberFunction(it)
-                        val implClassName = context.getNameForClass(implClassDeclaration)
+                    if (implClassDeclaration.shouldCopyFrom() && it.body != null) {
+                        val reference = context.getNameForStaticDeclaration(it).makeRef()
+                        classModel.postDeclarationBlock.statements += jsAssignment(memberRef, reference).makeStmt()
+                    }
+                }
+            declaration.collectRealOverrides()
+                .find { it.modality != Modality.ABSTRACT }
+                ?.let {
+                    val implClassDeclaration = it.parent as IrClass
 
-                        val implClassPrototype = prototypeOf(implClassName.makeRef())
-                        val implMemberRef = JsNameRef(implMethodName, implClassPrototype)
-
-                        classModel.postDeclarationBlock.statements += jsAssignment(memberRef, implMemberRef).makeStmt()
+                    if (implClassDeclaration.shouldCopyFrom() && it.body != null) {
+                        val reference = context.getNameForStaticDeclaration(it).makeRef()
+                        classModel.postDeclarationBlock.statements += jsAssignment(memberRef, reference).makeStmt()
                     }
                 }
         }

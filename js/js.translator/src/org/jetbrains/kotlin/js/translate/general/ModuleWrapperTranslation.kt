@@ -31,6 +31,7 @@ object ModuleWrapperTranslation {
             ModuleKind.COMMON_JS -> wrapCommonJs(function, importedModules, program)
             ModuleKind.UMD -> wrapUmd(moduleId, function, importedModules, program)
             ModuleKind.PLAIN -> wrapPlain(moduleId, function, importedModules, program)
+            ModuleKind.ES -> error("ES modules are not supported in legacy wrapper")
         }
     }
 

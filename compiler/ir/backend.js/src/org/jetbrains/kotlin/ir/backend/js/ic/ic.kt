@@ -123,25 +123,20 @@ private fun dumpIr(module: IrModuleFragment, fileName: String) {
 
 fun icCompile(
     depsDescriptor: ModulesStructure,
-    mainArguments: List<String>?,
     exportedDeclarations: Set<FqName> = emptySet(),
-    generateFullJs: Boolean = true,
-    generateDceJs: Boolean = false,
     dceRuntimeDiagnostic: RuntimeDiagnostic? = null,
     es6mode: Boolean = false,
-    multiModule: Boolean = false,
-    relativeRequirePath: Boolean = false,
     propertyLazyInitialization: Boolean,
     baseClassIntoMetadata: Boolean = false,
     safeExternalBoolean: Boolean = false,
     safeExternalBooleanDiagnostic: RuntimeDiagnostic? = null,
-): CompilerResult {
+): LoweredIr {
 
     val irFactory = PersistentIrFactory()
     val controller = WholeWorldStageController()
     irFactory.stageController = controller
 
-    val (context, _, allModules, moduleToName, loweredIrLoaded) = prepareIr(
+    val (context, _, allModules, _, loweredIrLoaded) = prepareIr(
         depsDescriptor,
         exportedDeclarations,
         dceRuntimeDiagnostic,
@@ -154,8 +149,6 @@ fun icCompile(
     )
 
     val modulesToLower = allModules.filter { it !in loweredIrLoaded }
-
-
 
     if (!modulesToLower.isEmpty()) {
         // This won't work incrementally
@@ -172,20 +165,7 @@ fun icCompile(
 
 //    dumpIr(allModules.first(), "simple-dump${if (useStdlibCache) "-actual" else ""}")
 
-    val transformer = IrModuleToJsTransformer(
-        context,
-        mainArguments,
-        fullJs = generateFullJs,
-        dceJs = generateDceJs,
-        multiModule = multiModule,
-        relativeRequirePath = relativeRequirePath,
-        moduleToName = moduleToName,
-        removeUnusedAssociatedObjects = false,
-    )
-
-    irFactory.stageController = object : StageController(999) {}
-
-    return transformer.generateModule(allModules)
+    return LoweredIr(context, allModules.last(), allModules)
 }
 
 fun lowerPreservingIcData(module: IrModuleFragment, context: JsIrBackendContext, controller: WholeWorldStageController) {

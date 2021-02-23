@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.*
+import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.lower.JsInnerClassesSupport
 import org.jetbrains.kotlin.ir.backend.js.utils.JsInlineClassesUtils
@@ -58,7 +59,8 @@ class JsIrBackendContext(
     val baseClassIntoMetadata: Boolean = false,
     val safeExternalBoolean: Boolean = false,
     val safeExternalBooleanDiagnostic: RuntimeDiagnostic? = null,
-    override val mapping: JsMapping = JsMapping(symbolTable.irFactory)
+    override val mapping: JsMapping = JsMapping(symbolTable.irFactory),
+    val granularity: JsGenerationGranularity = JsGenerationGranularity.WHOLE_PROGRAM,
 ) : JsCommonBackendContext {
     val fileToInitializationFuns: MutableMap<IrFile, IrSimpleFunction?> = mutableMapOf()
     val fileToInitializerPureness: MutableMap<IrFile, Boolean> = mutableMapOf()

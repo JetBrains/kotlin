@@ -20145,11 +20145,6 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
             runTest("compiler/testData/codegen/box/properties/lazyInitializationOrder.kt");
         }
 
-        @TestMetadata("lazyInitializationPure.kt")
-        public void testLazyInitializationPure() throws Exception {
-            runTest("compiler/testData/codegen/box/properties/lazyInitializationPure.kt");
-        }
-
         @TestMetadata("lazyInitializationSplitPerModule.kt")
         public void testLazyInitializationSplitPerModule() throws Exception {
             runTest("compiler/testData/codegen/box/properties/lazyInitializationSplitPerModule.kt");

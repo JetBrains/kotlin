@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.js.backend.JsToStringGenerationVisitor
 import org.jetbrains.kotlin.js.backend.NoOpSourceLocationConsumer
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.js.config.SourceMapSourceEmbedding
 import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver
 import org.jetbrains.kotlin.js.sourceMap.SourceMap3Builder
@@ -52,15 +53,12 @@ class IrModuleToJsTransformer(
             ) + packageLevelJsModules
         }
 
-        val exportedModule = ExportModelGenerator(backendContext).generateExport(modules)
+        val moduleKind: ModuleKind = backendContext.configuration[JSConfigurationKeys.MODULE_KIND]!!
+        val exportedModule = ExportModelGenerator(backendContext, generateNamespacesForPackages = true).generateExport(modules, moduleKind = moduleKind)
         val dts = exportedModule.toTypeScript()
 
         modules.forEach { module ->
             module.files.forEach { StaticMembersLowering(backendContext).lower(it) }
-        }
-
-        if (multiModule) {
-            breakCrossModuleFieldAccess(backendContext, modules)
         }
 
         modules.forEach { module ->
@@ -103,7 +101,7 @@ class IrModuleToJsTransformer(
             val dependencies = others.mapIndexed { index, module ->
                 val moduleName = module.externalModuleName()
 
-                val exportedDeclarations = ExportModelGenerator(backendContext).let { module.files.flatMap { file -> it.generateExport(file) } }
+                val exportedDeclarations = ExportModelGenerator(backendContext, generateNamespacesForPackages = true).let { module.files.flatMap { file -> it.generateExport(file) } }
 
                 moduleName to generateWrappedModuleBody2(
                     listOf(module),
@@ -149,7 +147,7 @@ class IrModuleToJsTransformer(
             currentFile = null,
             currentFunction = null,
             staticContext = staticContext,
-            localNames = LocalNameGenerator(NameScope.EmptyScope)
+            localNames = LocalNameGenerator(NameTable())
         )
 
         val (importStatements, importedJsModules) =
@@ -162,7 +160,8 @@ class IrModuleToJsTransformer(
 
         val internalModuleName = JsName("_")
         val globalNames = NameTable<String>(namer.globalNames)
-        val exportStatements = ExportModelToJsStatements(internalModuleName, nameGenerator, { globalNames.declareFreshName(it, it)}).generateModuleExport(exportedModule)
+        val exportStatements = ExportModelToJsStatements(nameGenerator) { globalNames.declareFreshName(it, it) }
+            .generateModuleExport(exportedModule, internalModuleName)
 
         val (crossModuleImports, importedKotlinModules) = generateCrossModuleImports(nameGenerator, modules, dependencies, { JsName(sanitizeName(it)) })
         val crossModuleExports = generateCrossModuleExports(modules, refInfo, internalModuleName)
@@ -431,27 +430,6 @@ class IrModuleToJsTransformer(
         return Pair(importStatements, importedJsModules)
     }
 
-    private fun processClassModels(
-        classModelMap: Map<IrClassSymbol, JsIrClassModel>,
-        preDeclarationBlock: JsBlock,
-        postDeclarationBlock: JsBlock
-    ) {
-        val declarationHandler = object : DFS.AbstractNodeHandler<IrClassSymbol, Unit>() {
-            override fun result() {}
-            override fun afterChildren(current: IrClassSymbol) {
-                classModelMap[current]?.let {
-                    preDeclarationBlock.statements += it.preDeclarationBlock.statements
-                    postDeclarationBlock.statements += it.postDeclarationBlock.statements
-                }
-            }
-        }
-
-        DFS.dfs(
-            classModelMap.keys,
-            { klass -> classModelMap[klass]?.superClasses ?: emptyList() },
-            declarationHandler
-        )
-    }
 
     private fun MutableList<JsStatement>.startRegion(description: String = "") {
         if (generateRegionComments) {
@@ -479,3 +457,26 @@ class IrModuleToJsTransformer(
         endRegion()
     }
 }
+
+fun processClassModels(
+    classModelMap: Map<IrClassSymbol, JsIrClassModel>,
+    preDeclarationBlock: JsBlock,
+    postDeclarationBlock: JsBlock
+) {
+    val declarationHandler = object : DFS.AbstractNodeHandler<IrClassSymbol, Unit>() {
+        override fun result() {}
+        override fun afterChildren(current: IrClassSymbol) {
+            classModelMap[current]?.let {
+                preDeclarationBlock.statements += it.preDeclarationBlock.statements
+                postDeclarationBlock.statements += it.postDeclarationBlock.statements
+            }
+        }
+    }
+
+    DFS.dfs(
+        classModelMap.keys,
+        { klass -> classModelMap[klass]?.superClasses ?: emptyList() },
+        declarationHandler
+    )
+}
+

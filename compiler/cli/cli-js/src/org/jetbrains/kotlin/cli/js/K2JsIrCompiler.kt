@@ -44,6 +44,8 @@ import org.jetbrains.kotlin.ir.backend.js.ic.checkCaches
 import org.jetbrains.kotlin.ir.backend.js.utils.sanitizeName
 import org.jetbrains.kotlin.ir.backend.js.ic.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
+import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
 import org.jetbrains.kotlin.js.config.*
@@ -332,20 +334,21 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
             val start = System.currentTimeMillis()
 
-            val compiledModule = compile(
+            val granularity = when {
+                arguments.irPerModule -> JsGenerationGranularity.PER_MODULE
+                arguments.irPerFile -> JsGenerationGranularity.PER_FILE
+                else -> JsGenerationGranularity.WHOLE_PROGRAM
+            }
+
+            val ir = compile(
                 module,
                 phaseConfig,
                 if (arguments.irDceDriven) PersistentIrFactory() else IrFactoryImpl,
-                mainArguments = mainCallArguments,
-                generateFullJs = !arguments.irDce,
-                generateDceJs = arguments.irDce,
                 dceRuntimeDiagnostic = RuntimeDiagnostic.resolve(
                     arguments.irDceRuntimeDiagnostic,
                     messageCollector
                 ),
                 dceDriven = arguments.irDceDriven,
-                multiModule = arguments.irPerModule,
-                relativeRequirePath = true,
                 propertyLazyInitialization = arguments.irPropertyLazyInitialization,
                 baseClassIntoMetadata = arguments.irBaseClassInMetadata,
                 safeExternalBoolean = arguments.irSafeExternalBoolean,
@@ -354,11 +357,28 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                     messageCollector
                 ),
                 lowerPerModule = icCaches.isNotEmpty(),
+                granularity = granularity
             )
+
+            val transformer = IrModuleToJsTransformer(
+                ir.context,
+                mainCallArguments,
+                fullJs = true,
+                dceJs = arguments.irDce,
+                multiModule = arguments.irPerModule,
+                relativeRequirePath = false
+            )
+            val compiledModule: CompilerResult = transformer.generateModule(ir.allModules)
 
             messageCollector.report(INFO, "Executable production duration: ${System.currentTimeMillis() - start}ms")
 
-            val outputs = if (arguments.irDce && !arguments.irDceDriven) compiledModule.outputsAfterDce!! else compiledModule.outputs!!
+
+
+            val outputs = if (arguments.irDce && !arguments.irDceDriven)
+                compiledModule.outputsAfterDce!!
+            else
+                compiledModule.outputs!!
+
             outputFile.write(outputs)
             outputs.dependencies.forEach { (name, content) ->
                 outputFile.resolveSibling("$name.js").write(content)
@@ -495,7 +515,8 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             K2JsArgumentConstants.MODULE_PLAIN to ModuleKind.PLAIN,
             K2JsArgumentConstants.MODULE_COMMONJS to ModuleKind.COMMON_JS,
             K2JsArgumentConstants.MODULE_AMD to ModuleKind.AMD,
-            K2JsArgumentConstants.MODULE_UMD to ModuleKind.UMD
+            K2JsArgumentConstants.MODULE_UMD to ModuleKind.UMD,
+            K2JsArgumentConstants.MODULE_ES to ModuleKind.ES,
         )
         private val sourceMapContentEmbeddingMap = mapOf(
             K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_ALWAYS to SourceMapSourceEmbedding.ALWAYS,
