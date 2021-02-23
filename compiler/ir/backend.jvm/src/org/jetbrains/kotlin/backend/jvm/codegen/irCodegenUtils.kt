@@ -208,10 +208,6 @@ private fun IrDeclarationWithVisibility.specialCaseVisibility(kind: OwnerKind?):
         return null
     }
 
-    if (this is IrSimpleFunction && isSuspend) {
-        return AsmUtil.NO_FLAG_PACKAGE_PRIVATE
-    }
-
     if (this is IrConstructor && parentAsClass.kind === ClassKind.ENUM_ENTRY) {
         return AsmUtil.NO_FLAG_PACKAGE_PRIVATE
     }
