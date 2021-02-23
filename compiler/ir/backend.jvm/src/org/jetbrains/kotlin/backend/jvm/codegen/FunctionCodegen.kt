@@ -165,7 +165,6 @@ class FunctionCodegen(
         }
         val isSynthetic = origin.isSynthetic ||
                 hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME) ||
-                (isSuspend && DescriptorVisibilities.isPrivate(visibility) && !isInline) ||
                 isReifiable() ||
                 isDeprecatedHidden()
 
