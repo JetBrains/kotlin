@@ -32,8 +32,8 @@ interface MyTrait {
     var i: Int                       abstract get  abstract set
     var i1: Int = <!PROPERTY_INITIALIZER_IN_INTERFACE!>0<!>;  abstract get  abstract set
 
-    <!BACKING_FIELD_IN_INTERFACE!>var j: Int<!>                       get() = i;    abstract set
-    <!BACKING_FIELD_IN_INTERFACE!>var j1: Int<!> = <!PROPERTY_INITIALIZER_IN_INTERFACE!>0<!>;  get() = i;    abstract set
+    var j: Int                       get() = i;    abstract set
+    var j1: Int = <!PROPERTY_INITIALIZER_IN_INTERFACE!>0<!>;  get() = i;    abstract set
 
     var k: Int                       abstract set
     var k1: Int = <!PROPERTY_INITIALIZER_IN_INTERFACE!>0<!>;  abstract set
@@ -41,5 +41,5 @@ interface MyTrait {
     var l: Int                       abstract get  abstract set
     var l1: Int = <!PROPERTY_INITIALIZER_IN_INTERFACE!>0<!>;  abstract get  abstract set
 
-    <!BACKING_FIELD_IN_INTERFACE!>var n: Int<!>                       abstract get abstract set(v: Int) {}
+    var n: Int                       abstract get abstract set(v: Int) {}
 }

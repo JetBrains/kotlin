@@ -29,17 +29,17 @@ class MyClass() {
     <!ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS, ABSTRACT_FUNCTION_WITH_BODY!>abstract<!> fun j() {}
 
     //property accessors
-    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>var i: Int<!>                       abstract get  abstract set
-    var i1: Int = 0;  abstract get  abstract set
+    var i: Int                       abstract get  abstract set
+    var i1: Int = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>0<!>;  abstract get  abstract set
 
-    <!MUST_BE_INITIALIZED!>var j: Int<!>                       get() = i;    abstract set
-    var j1: Int = 0;  get() = i;    abstract set
+    var j: Int                       get() = i;    abstract set
+    var j1: Int = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>0<!>;  get() = i;    abstract set
 
     <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>var k: Int<!>        abstract set
     var k1: Int = 0;                 abstract set
 
-    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>var l: Int<!>                       abstract get  abstract set
-    var l1: Int = 0;  abstract get  abstract set
+    var l: Int                       abstract get  abstract set
+    var l1: Int = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>0<!>;  abstract get  abstract set
 
-    <!MUST_BE_INITIALIZED!>var n: Int<!>                       abstract get abstract set(v: Int) {}
+    var n: Int                       abstract get abstract set(v: Int) {}
 }
