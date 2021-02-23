@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
+import org.jetbrains.kotlin.psi2ir.generators.DeclarationStubGeneratorImpl
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.CleanableBindingContext
 import org.jetbrains.kotlin.utils.DFS
@@ -55,7 +56,7 @@ internal fun Context.psiToIr(
     val functionIrClassFactory = BuiltInFictitiousFunctionIrClassFactory(
             symbolTable, generatorContext.irBuiltIns, reflectionTypes)
     generatorContext.irBuiltIns.functionFactory = functionIrClassFactory
-    val stubGenerator = DeclarationStubGenerator(
+    val stubGenerator = DeclarationStubGeneratorImpl(
             moduleDescriptor, symbolTable,
             config.configuration.languageVersionSettings
     )
