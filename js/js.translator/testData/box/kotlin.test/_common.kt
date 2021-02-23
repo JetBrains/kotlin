@@ -15,7 +15,7 @@ fun raise(name: String): Nothing {
 }
 
 @Suppress("INVISIBLE_MEMBER")
-private val underscore = kotlin.test.setAdapter(object : FrameworkAdapter {
+val underscore = kotlin.test.setAdapter(object : FrameworkAdapter {
     override fun suite(name: String, ignored: Boolean, suiteFn: () -> Unit) {
         sortingContext.suite(name, ignored) { suiteFn() }
     }
@@ -182,4 +182,9 @@ fun checkLog(wrapInEmptySuite: Boolean = true, body: SuiteContext.() -> Unit): S
     else {
         return "OK"
     }
+}
+
+// Trigger setting adapter
+fun main() {
+    underscore
 }
