@@ -264,10 +264,6 @@ class DeclaredVariableCollector {
             visitCapturingStatement(simpleFunction, data)
         }
 
-        override fun <F : FirFunction<F>> visitFunction(function: FirFunction<F>, data: FirStatement?) {
-            visitCapturingStatement(function, data)
-        }
-
         override fun visitRegularClass(regularClass: FirRegularClass, data: FirStatement?) {
             visitCapturingStatement(regularClass, data)
         }
