@@ -13,10 +13,10 @@ class Case1<T>() {
 
 // TESTCASE NUMBER: 2
 class Case2<T>() {
-    data class A(t: T)
-    data class B(x: List<T>)
-    data class C(c: () -> T)
-    data class E(n: Nothing, t: T)
+    data class A(<!DATA_CLASS_NOT_PROPERTY_PARAMETER!>t: T<!>)
+    data class B(<!DATA_CLASS_NOT_PROPERTY_PARAMETER!>x: List<T><!>)
+    data class C(<!DATA_CLASS_NOT_PROPERTY_PARAMETER!>c: () -> T<!>)
+    data class E(<!DATA_CLASS_NOT_PROPERTY_PARAMETER!>n: Nothing<!>, <!DATA_CLASS_NOT_PROPERTY_PARAMETER!>t: T<!>)
 }
 
 // TESTCASE NUMBER: 3

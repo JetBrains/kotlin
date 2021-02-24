@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.psi.KtModifierListOwner
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.KtPropertyDelegate
@@ -233,6 +234,18 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class SealedClassConstructorCall : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = SealedClassConstructorCall::class
+    }
+
+    abstract class DataClassWithoutParameters : KtFirDiagnostic<KtPrimaryConstructor>() {
+        override val diagnosticClass get() = DataClassWithoutParameters::class
+    }
+
+    abstract class DataClassVarargParameter : KtFirDiagnostic<KtParameter>() {
+        override val diagnosticClass get() = DataClassVarargParameter::class
+    }
+
+    abstract class DataClassNotPropertyParameter : KtFirDiagnostic<KtParameter>() {
+        override val diagnosticClass get() = DataClassNotPropertyParameter::class
     }
 
     abstract class AnnotationArgumentKclassLiteralOfTypeParameterError : KtFirDiagnostic<KtExpression>() {

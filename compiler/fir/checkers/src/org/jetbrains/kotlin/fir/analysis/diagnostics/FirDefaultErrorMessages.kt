@@ -55,6 +55,9 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONSTRUCTOR_IN_IN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONSTRUCTOR_IN_OBJECT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CYCLIC_CONSTRUCTOR_DELEGATION_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATED_PROPERTY_INSIDE_INLINE_CLASS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_CLASS_NOT_PROPERTY_PARAMETER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_CLASS_VARARG_PARAMETER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_CLASS_WITHOUT_PARAMETERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATED_PROPERTY_IN_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATION_IN_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATION_SUPER_CALL_IN_ENUM_CONSTRUCTOR
@@ -290,6 +293,9 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
                 "Explicit 'this' or 'super' call is required. There is no constructor in superclass that can be called without arguments"
             )
             map.put(SEALED_CLASS_CONSTRUCTOR_CALL, "Sealed types cannot be instantiated")
+            map.put(DATA_CLASS_WITHOUT_PARAMETERS, "Data class must have at least one primary constructor parameter")
+            map.put(DATA_CLASS_VARARG_PARAMETER, "Primary constructor vararg parameters are forbidden for data classes")
+            map.put(DATA_CLASS_NOT_PROPERTY_PARAMETER, "Data class primary constructor must have only property (val / var) parameters")
 
             // Annotations
             map.put(ANNOTATION_CLASS_MEMBER, "Members are not allowed in annotation class")
