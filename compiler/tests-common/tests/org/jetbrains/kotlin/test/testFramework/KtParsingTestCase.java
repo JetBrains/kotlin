@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.test.testFramework;
 
-import com.intellij.core.CoreASTFactory;
 import com.intellij.ide.util.AppPropertiesComponentImpl;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.lang.*;
@@ -26,11 +25,8 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.EditorFactory;
-import com.intellij.openapi.extensions.ExtensionPointName;
-import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.impl.LoadTextUtil;
-import com.intellij.openapi.fileTypes.FileTypeFactory;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.options.SchemeManagerFactory;
@@ -94,7 +90,6 @@ public abstract class KtParsingTestCase extends KtPlatformLiteFixture {
         initApplication();
         ComponentAdapter component = getApplication().getPicoContainer().getComponentAdapter(ProgressManager.class.getName());
 
-        Extensions.registerAreaClass("IDEA_PROJECT", null);
         myProject = new MockProjectEx(getTestRootDisposable());
         myPsiManager = new MockPsiManager(myProject);
         myFileFactory = new PsiFileFactoryImpl(myPsiManager);
@@ -110,7 +105,7 @@ public abstract class KtParsingTestCase extends KtPlatformLiteFixture {
 
         registerApplicationService(PropertiesComponent.class, new AppPropertiesComponentImpl());
         registerApplicationService(PsiBuilderFactory.class, new PsiBuilderFactoryImpl());
-        registerApplicationService(DefaultASTFactory.class, new CoreASTFactory());
+        registerApplicationService(DefaultASTFactory.class, new DefaultASTFactoryImpl());
         registerApplicationService(SchemeManagerFactory.class, new MockSchemeManagerFactory());
         registerApplicationService(FileTypeManager.class, mockFileTypeManager);
         registerApplicationService(FileDocumentManager.class, mockFileDocumentManager);
@@ -123,13 +118,9 @@ public abstract class KtParsingTestCase extends KtPlatformLiteFixture {
         registerComponentInstance(appContainer, FileDocumentManager.class, mockFileDocumentManager);
         registerComponentInstance(appContainer, PsiDocumentManager.class, new MockPsiDocumentManager());
 
-
-        myProject.registerService(CachedValuesManager.class, new CachedValuesManagerImpl(myProject, new PsiCachedValuesFactory(myPsiManager)));
         myProject.registerService(PsiManager.class, myPsiManager);
+        myProject.registerService(CachedValuesManager.class, new CachedValuesManagerImpl(myProject, new PsiCachedValuesFactory(myProject)));
         myProject.registerService(TreeAspect.class, new TreeAspect());
-
-        this.registerExtensionPoint(FileTypeFactory.FILE_TYPE_FACTORY_EP, FileTypeFactory.class);
-        registerExtensionPoint(MetaLanguage.EP_NAME, MetaLanguage.class);
 
         for (ParserDefinition definition : myDefinitions) {
             addExplicitExtension(LanguageParserDefinitions.INSTANCE, definition.getFileNodeType().getLanguage(), definition);
@@ -158,17 +149,6 @@ public abstract class KtParsingTestCase extends KtPlatformLiteFixture {
             @Override
             public void dispose() {
                 instance.removeExplicitExtension(language, object);
-            }
-        });
-    }
-
-    @Override
-    protected <T> void registerExtensionPoint(final ExtensionPointName<T> extensionPointName, Class<T> aClass) {
-        super.registerExtensionPoint(extensionPointName, aClass);
-        Disposer.register(myProject, new Disposable() {
-            @Override
-            public void dispose() {
-                Extensions.getRootArea().unregisterExtensionPoint(extensionPointName.getName());
             }
         });
     }
