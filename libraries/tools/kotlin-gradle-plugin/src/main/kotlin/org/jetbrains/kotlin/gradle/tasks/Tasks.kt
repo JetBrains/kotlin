@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
 import org.gradle.api.logging.Logger
 import org.gradle.api.provider.Provider
@@ -98,28 +99,32 @@ abstract class AbstractKotlinCompileTool<T : CommonToolArguments>
     override val metrics: BuildMetricsReporter =
         BuildMetricsReporterImpl()
 
+    /**
+     * By default should be set by plugin from [COMPILER_CLASSPATH_CONFIGURATION_NAME] configuration.
+     *
+     * Empty classpath will fail the build.
+     */
+    @get:Classpath
+    internal val defaultCompilerClasspath: ConfigurableFileCollection =
+        project.objects.fileCollection()
+
     @get:Classpath
     @get:InputFiles
     internal val computedCompilerClasspath: List<File> by lazy {
-        compilerClasspath?.takeIf { it.isNotEmpty() }
-            ?: compilerJarFile?.let {
-                // a hack to remove compiler jar from the cp, will be dropped when compilerJarFile will be removed
-                listOf(it) + findKotlinCompilerClasspath(project).filter { !it.name.startsWith("kotlin-compiler") }
-            }
-            ?: if (!useFallbackCompilerSearch) {
-                try {
-                    project.configurations.getByName(COMPILER_CLASSPATH_CONFIGURATION_NAME).resolve().toList()
-                } catch (e: Exception) {
-                    logger.error(
-                        "Could not resolve compiler classpath. " +
-                                "Check if Kotlin Gradle plugin repository is configured in $project."
-                    )
-                    throw e
-                }
-            } else {
-                findKotlinCompilerClasspath(project)
-            }
-            ?: throw IllegalStateException("Could not find Kotlin Compiler classpath")
+        require(!defaultCompilerClasspath.isEmpty) {
+            "Default Kotlin compiler classpath is empty! Task: ${this::class.qualifiedName}"
+        }
+
+        when {
+            !compilerClasspath.isNullOrEmpty() -> compilerClasspath!!
+            compilerJarFile != null -> listOf(compilerJarFile!!) +
+                    defaultCompilerClasspath
+                        .filterNot {
+                            it.nameWithoutExtension.startsWith("kotlin-compiler")
+                        }
+            useFallbackCompilerSearch -> findKotlinCompilerClasspath(project)
+            else -> defaultCompilerClasspath.toList()
+        }
     }
 
 

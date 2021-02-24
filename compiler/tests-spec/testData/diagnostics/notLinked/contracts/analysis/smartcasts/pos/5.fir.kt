@@ -85,41 +85,41 @@ import contracts.*
 // TESTCASE NUMBER: 1
 fun case_1(value_1: Any?) {
     value_1.case_1()
-    <!AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+    println(value_1.length)
 }
 
 // TESTCASE NUMBER: 2
 fun case_2(value_1: Number?) {
     value_1.case_2()
-    <!AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>inv<!>())
+    println(value_1.inv())
 }
 
 // TESTCASE NUMBER: 3
 fun case_3(value_1: Any?) {
     value_1.case_3()
-    <!AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>inv<!>())
+    println(value_1.inv())
 }
 
 // TESTCASE NUMBER: 4
 fun case_4(value_1: Any?, value_2: Any?, value_3: Any?) {
-    when { value_1.case_4_1() -> <!AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>) }
-    when { !value_2.case_4_2() -> <!AMBIGUITY!>println<!>(value_2.<!UNRESOLVED_REFERENCE!>length<!>) }
-    when { value_3.case_4_3() != null -> <!AMBIGUITY!>println<!>(value_3.<!UNRESOLVED_REFERENCE!>length<!>) }
-    when { value_3.case_4_4() == null -> <!AMBIGUITY!>println<!>(value_3.<!UNRESOLVED_REFERENCE!>length<!>) }
+    when { value_1.case_4_1() -> println(value_1.length) }
+    when { !value_2.case_4_2() -> println(value_2.length) }
+    when { value_3.case_4_3() != null -> println(value_3.length) }
+    when { value_3.case_4_4() == null -> println(value_3.length) }
 }
 
 // TESTCASE NUMBER: 5
 fun case_5(value_1: Number?, value_2: Number?, value_3: Number?) {
-    if (value_1.case_5_1()) <!AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>inv<!>())
-    if (!value_2.case_5_2()) <!AMBIGUITY!>println<!>(value_2.<!UNRESOLVED_REFERENCE!>inv<!>())
-    if (value_3.case_5_3() != null) <!AMBIGUITY!>println<!>(value_3.<!UNRESOLVED_REFERENCE!>inv<!>())
-    if (value_3.case_5_4() == null) <!AMBIGUITY!>println<!>(value_3.<!UNRESOLVED_REFERENCE!>inv<!>())
+    if (value_1.case_5_1()) println(value_1.inv())
+    if (!value_2.case_5_2()) println(value_2.inv())
+    if (value_3.case_5_3() != null) println(value_3.inv())
+    if (value_3.case_5_4() == null) println(value_3.inv())
 }
 
 // TESTCASE NUMBER: 6
 fun case_6(value_1: Any?, value_2: Any?, value_3: Any?) {
-    if (value_1.case_6_1()) <!AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>inv<!>())
-    if (!value_2.case_6_2()) <!AMBIGUITY!>println<!>(value_2.<!UNRESOLVED_REFERENCE!>inv<!>())
-    if (value_3.case_6_3() != null) <!AMBIGUITY!>println<!>(value_3.<!UNRESOLVED_REFERENCE!>inv<!>())
-    if (value_3.case_6_4() == null) <!AMBIGUITY!>println<!>(value_3.<!UNRESOLVED_REFERENCE!>inv<!>())
+    if (value_1.case_6_1()) println(value_1.inv())
+    if (!value_2.case_6_2()) println(value_2.inv())
+    if (value_3.case_6_3() != null) println(value_3.inv())
+    if (value_3.case_6_4() == null) println(value_3.inv())
 }

@@ -5,7 +5,7 @@ public interface<<T:Ljava/lang/Object;>Ljava/lang/Object;>  Sam {
 }
 
 @kotlin.Metadata
-final class<null>  TKt$sam$Sam$0 {
+synthetic final class<null>  TKt$sam$Sam$0 {
     // source: 't.kt'
     <null> method <init>(p0: kotlin.jvm.functions.Function0): void
     public <null> method equals(p0: java.lang.Object): boolean

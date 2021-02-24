@@ -98,9 +98,19 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.PARAMETER_VARARG_MODIFIER
     )
 
-    val DOT_BY_SELECTOR = SourceElementPositioningStrategy(
-        LightTreePositioningStrategies.DOT_BY_SELECTOR,
-        PositioningStrategies.DOT_BY_SELECTOR
+    val DOT_BY_QUALIFIED = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.DOT_BY_QUALIFIED,
+        PositioningStrategies.DOT_BY_QUALIFIED
+    )
+
+    val SELECTOR_BY_QUALIFIED = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.SELECTOR_BY_QUALIFIED,
+        PositioningStrategies.SELECTOR_BY_QUALIFIED
+    )
+
+    val REFERENCE_BY_QUALIFIED = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.REFERENCE_BY_QUALIFIED,
+        PositioningStrategies.REFERENCE_BY_QUALIFIED
     )
 
     val WHEN_EXPRESSION = SourceElementPositioningStrategy(

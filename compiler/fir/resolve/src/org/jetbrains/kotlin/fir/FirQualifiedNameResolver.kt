@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
+const val ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE = "_root_ide_package_"
+
 class FirQualifiedNameResolver(private val components: BodyResolveComponents) {
     private val session = components.session
     private var qualifierStack = mutableListOf<NameWithTypeArguments>()
@@ -66,6 +68,11 @@ class FirQualifiedNameResolver(private val components: BodyResolveComponents) {
         }
         val symbolProvider = session.symbolProvider
         var qualifierParts = qualifierStack.asReversed().map { it.name.asString() }
+
+        val fakeRootIdePrefixIsPresent = qualifierParts.firstOrNull() == ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE
+        if (fakeRootIdePrefixIsPresent) {
+            qualifierParts = qualifierParts.drop(1)
+        }
         var resolved: PackageOrClass?
         do {
             resolved = resolveToPackageOrClass(
@@ -78,8 +85,13 @@ class FirQualifiedNameResolver(private val components: BodyResolveComponents) {
 
         if (resolved != null) {
             qualifierPartsToDrop = qualifierParts.size - 1
+            // we would need to drop fake package too
+            if (fakeRootIdePrefixIsPresent) {
+                qualifierPartsToDrop += 1
+            }
+
             return buildResolvedQualifier {
-                this.source = source
+                this.source = source?.getWholeQualifierSourceIfPossible(qualifierPartsToDrop)
                 packageFqName = resolved.packageFqName
                 relativeClassFqName = resolved.relativeClassFqName
                 symbol = resolved.classSymbol
@@ -91,5 +103,4 @@ class FirQualifiedNameResolver(private val components: BodyResolveComponents) {
 
         return null
     }
-
 }

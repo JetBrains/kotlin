@@ -35,7 +35,10 @@ object Host {
 }
 
 fun testDefault(): String {
-  return use(fn = ::fnWithDefault)
+  return use(fn = local fun fnWithDefault(p0: Int): String {
+    return fnWithDefault(a = p0)
+  }
+)
 }
 
 fun testVararg(): String {
@@ -63,9 +66,15 @@ fun testImportedObjectMember(): String {
 }
 
 fun testDefault0(): String {
-  return use0(fn = ::fnWithDefaults)
+  return use0(fn = local fun fnWithDefaults(): String {
+    return fnWithDefaults()
+  }
+)
 }
 
 fun testVararg0(): String {
-  return use0(fn = ::fnWithVarargs)
+  return use0(fn = local fun fnWithVarargs(): String {
+    return fnWithVarargs()
+  }
+)
 }

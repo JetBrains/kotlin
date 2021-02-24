@@ -37,4 +37,4 @@ package bar
 
 import foo.Base
 
-class E : <!HIDDEN, SEALED_SUPERTYPE!>Base<!>()
+class E : <!SEALED_SUPERTYPE!>Base<!>()

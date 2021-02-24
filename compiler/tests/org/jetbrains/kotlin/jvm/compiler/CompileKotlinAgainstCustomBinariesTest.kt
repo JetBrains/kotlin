@@ -421,22 +421,38 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
     }
 
     fun testStrictMetadataVersionSemanticsOldVersion() {
+        val nextMetadataVersion = JvmMetadataVersion(JvmMetadataVersion.INSTANCE.major, JvmMetadataVersion.INSTANCE.minor + 1, 0)
         val library = compileLibrary(
-            "library", additionalOptions = listOf("-Xgenerate-strict-metadata-version", "-Xmetadata-version=1.5.0")
+            "library", additionalOptions = listOf("-Xgenerate-strict-metadata-version", "-Xmetadata-version=$nextMetadataVersion")
         )
         compileKotlin("source.kt", tmpdir, listOf(library))
     }
 
     fun testMetadataVersionDerivedFromLanguage() {
-        compileKotlin("source.kt", tmpdir, additionalOptions = listOf("-language-version", "1.3"), expectedFileName = null)
+        for (languageVersion in LanguageVersion.values()) {
+            if (languageVersion.isUnsupported) continue
 
-        val expectedVersion = JvmMetadataVersion(1, 1, 18)
-        val topLevelClass = LocalFileKotlinClass.create(File(tmpdir.absolutePath, "Foo.class"))!!
-        assertEquals(expectedVersion, topLevelClass.classHeader.metadataVersion)
+            compileKotlin(
+                "source.kt", tmpdir, additionalOptions = listOf("-language-version", languageVersion.versionString),
+                expectedFileName = null
+            )
 
-        val moduleFile = File(tmpdir.absolutePath, "META-INF/main.kotlin_module").readBytes()
-        val versionNumber = ModuleMapping.readVersionNumber(DataInputStream(ByteArrayInputStream(moduleFile)))!!
-        assertEquals(expectedVersion, JvmMetadataVersion(*versionNumber))
+            // Starting from Kotlin 1.4, major.minor version of JVM metadata must be equal to the language version.
+            // From Kotlin 1.0 to 1.4, we used JVM metadata version 1.1.*.
+            val expectedMajor = 1
+            val expectedMinor = if (languageVersion < LanguageVersion.KOTLIN_1_4) 1 else languageVersion.minor
+
+            val topLevelClass = LocalFileKotlinClass.create(File(tmpdir.absolutePath, "Foo.class"))!!
+            val classVersion = topLevelClass.classHeader.metadataVersion
+            assertEquals("Actual version: $classVersion", expectedMajor, classVersion.major)
+            assertEquals("Actual version: $classVersion", expectedMinor, classVersion.minor)
+
+            val moduleFile = File(tmpdir.absolutePath, "META-INF/main.kotlin_module").readBytes()
+            val versionNumber = ModuleMapping.readVersionNumber(DataInputStream(ByteArrayInputStream(moduleFile)))!!
+            val moduleVersion = JvmMetadataVersion(*versionNumber)
+            assertEquals("Actual version: $moduleVersion", expectedMajor, moduleVersion.major)
+            assertEquals("Actual version: $moduleVersion", expectedMinor, moduleVersion.minor)
+        }
     }
 
     /*test source mapping generation when source info is absent*/

@@ -46,6 +46,8 @@ abstract class FirPropertyAccessor : FirPureAbstractElement(), FirFunction<FirPr
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitPropertyAccessor(this, data)
 
+    abstract override fun replaceSource(newSource: FirSourceElement?)
+
     abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
 
     abstract override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef)

@@ -39,6 +39,8 @@ abstract class FirAnonymousObject : FirClass<FirAnonymousObject>, FirControlFlow
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitAnonymousObject(this, data)
 
+    abstract override fun replaceSource(newSource: FirSourceElement?)
+
     abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
 
     abstract override fun replaceSuperTypeRefs(newSuperTypeRefs: List<FirTypeRef>)

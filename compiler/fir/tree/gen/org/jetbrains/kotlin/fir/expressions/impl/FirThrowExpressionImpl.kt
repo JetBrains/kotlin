@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirThrowExpressionImpl(
-    override val source: FirSourceElement?,
+    override var source: FirSourceElement?,
     override val annotations: MutableList<FirAnnotationCall>,
     override var exception: FirExpression,
 ) : FirThrowExpression() {
@@ -43,6 +43,10 @@ internal class FirThrowExpressionImpl(
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirThrowExpressionImpl {
         annotations.transformInplace(transformer, data)
         return this
+    }
+
+    override fun replaceSource(newSource: FirSourceElement?) {
+        source = newSource
     }
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {

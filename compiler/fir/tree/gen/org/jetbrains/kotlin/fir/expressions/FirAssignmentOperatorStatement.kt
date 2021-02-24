@@ -23,6 +23,8 @@ abstract class FirAssignmentOperatorStatement : FirPureAbstractElement(), FirSta
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitAssignmentOperatorStatement(this, data)
 
+    abstract override fun replaceSource(newSource: FirSourceElement?)
+
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAssignmentOperatorStatement
 
     abstract fun <D> transformLeftArgument(transformer: FirTransformer<D>, data: D): FirAssignmentOperatorStatement

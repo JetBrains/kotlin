@@ -19,6 +19,227 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @RunWith(JUnit3RunnerWithInners.class)
 public class HighLevelQuickFixTestGenerated extends AbstractHighLevelQuickFixTest {
+    @TestMetadata("idea/testData/quickfix/abstract")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Abstract extends AbstractHighLevelQuickFixTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        @TestMetadata("abstractFunctionInNonAbstractClass.kt")
+        public void testAbstractFunctionInNonAbstractClass() throws Exception {
+            runTest("idea/testData/quickfix/abstract/abstractFunctionInNonAbstractClass.kt");
+        }
+
+        @TestMetadata("abstractFunctionWithBody.kt")
+        public void testAbstractFunctionWithBody() throws Exception {
+            runTest("idea/testData/quickfix/abstract/abstractFunctionWithBody.kt");
+        }
+
+        @TestMetadata("abstractFunctionWithBody2.kt")
+        public void testAbstractFunctionWithBody2() throws Exception {
+            runTest("idea/testData/quickfix/abstract/abstractFunctionWithBody2.kt");
+        }
+
+        @TestMetadata("abstractFunctionWithBody3.kt")
+        public void testAbstractFunctionWithBody3() throws Exception {
+            runTest("idea/testData/quickfix/abstract/abstractFunctionWithBody3.kt");
+        }
+
+        @TestMetadata("abstractFunctionWithBodyWithComments.kt")
+        public void testAbstractFunctionWithBodyWithComments() throws Exception {
+            runTest("idea/testData/quickfix/abstract/abstractFunctionWithBodyWithComments.kt");
+        }
+
+        @TestMetadata("abstractFunctionWithBodyWithComments2.kt")
+        public void testAbstractFunctionWithBodyWithComments2() throws Exception {
+            runTest("idea/testData/quickfix/abstract/abstractFunctionWithBodyWithComments2.kt");
+        }
+
+        @TestMetadata("abstractPropertyInCompanionObject.kt")
+        public void testAbstractPropertyInCompanionObject() throws Exception {
+            runTest("idea/testData/quickfix/abstract/abstractPropertyInCompanionObject.kt");
+        }
+
+        @TestMetadata("abstractPropertyInNonAbstractClass1.kt")
+        public void testAbstractPropertyInNonAbstractClass1() throws Exception {
+            runTest("idea/testData/quickfix/abstract/abstractPropertyInNonAbstractClass1.kt");
+        }
+
+        @TestMetadata("abstractPropertyInNonAbstractClass2.kt")
+        public void testAbstractPropertyInNonAbstractClass2() throws Exception {
+            runTest("idea/testData/quickfix/abstract/abstractPropertyInNonAbstractClass2.kt");
+        }
+
+        @TestMetadata("abstractPropertyInNonAbstractClass3.kt")
+        public void testAbstractPropertyInNonAbstractClass3() throws Exception {
+            runTest("idea/testData/quickfix/abstract/abstractPropertyInNonAbstractClass3.kt");
+        }
+
+        @TestMetadata("abstractPropertyInPrimaryConstructorParameters.kt")
+        public void testAbstractPropertyInPrimaryConstructorParameters() throws Exception {
+            runTest("idea/testData/quickfix/abstract/abstractPropertyInPrimaryConstructorParameters.kt");
+        }
+
+        @TestMetadata("abstractPropertyNotInClass.kt")
+        public void testAbstractPropertyNotInClass() throws Exception {
+            runTest("idea/testData/quickfix/abstract/abstractPropertyNotInClass.kt");
+        }
+
+        @TestMetadata("abstractPropertyWIthInitializer2.kt")
+        public void testAbstractPropertyWIthInitializer2() throws Exception {
+            runTest("idea/testData/quickfix/abstract/abstractPropertyWIthInitializer2.kt");
+        }
+
+        @TestMetadata("abstractPropertyWIthInitializer3.kt")
+        public void testAbstractPropertyWIthInitializer3() throws Exception {
+            runTest("idea/testData/quickfix/abstract/abstractPropertyWIthInitializer3.kt");
+        }
+
+        @TestMetadata("abstractPropertyWithGetter1.kt")
+        public void testAbstractPropertyWithGetter1() throws Exception {
+            runTest("idea/testData/quickfix/abstract/abstractPropertyWithGetter1.kt");
+        }
+
+        @TestMetadata("abstractPropertyWithGetter2.kt")
+        public void testAbstractPropertyWithGetter2() throws Exception {
+            runTest("idea/testData/quickfix/abstract/abstractPropertyWithGetter2.kt");
+        }
+
+        @TestMetadata("abstractPropertyWithInitializer1.kt")
+        public void testAbstractPropertyWithInitializer1() throws Exception {
+            runTest("idea/testData/quickfix/abstract/abstractPropertyWithInitializer1.kt");
+        }
+
+        @TestMetadata("abstractPropertyWithSetter.kt")
+        public void testAbstractPropertyWithSetter() throws Exception {
+            runTest("idea/testData/quickfix/abstract/abstractPropertyWithSetter.kt");
+        }
+
+        public void testAllFilesPresentInAbstract() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/abstract"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("makeEnumEntryAbstract.kt")
+        public void testMakeEnumEntryAbstract() throws Exception {
+            runTest("idea/testData/quickfix/abstract/makeEnumEntryAbstract.kt");
+        }
+
+        @TestMetadata("makeInlineClassAbstract.kt")
+        public void testMakeInlineClassAbstract() throws Exception {
+            runTest("idea/testData/quickfix/abstract/makeInlineClassAbstract.kt");
+        }
+
+        @TestMetadata("makeObjectMemberAbstract.kt")
+        public void testMakeObjectMemberAbstract() throws Exception {
+            runTest("idea/testData/quickfix/abstract/makeObjectMemberAbstract.kt");
+        }
+
+        @TestMetadata("makeTopLevelAbstract.kt")
+        public void testMakeTopLevelAbstract() throws Exception {
+            runTest("idea/testData/quickfix/abstract/makeTopLevelAbstract.kt");
+        }
+
+        @TestMetadata("manyImpl.kt")
+        public void testManyImpl() throws Exception {
+            runTest("idea/testData/quickfix/abstract/manyImpl.kt");
+        }
+
+        @TestMetadata("mustBeInitializedOrBeAbstract.kt")
+        public void testMustBeInitializedOrBeAbstract() throws Exception {
+            runTest("idea/testData/quickfix/abstract/mustBeInitializedOrBeAbstract.kt");
+        }
+
+        @TestMetadata("mustBeInitializedOrBeAbstractInFinalClass.kt")
+        public void testMustBeInitializedOrBeAbstractInFinalClass() throws Exception {
+            runTest("idea/testData/quickfix/abstract/mustBeInitializedOrBeAbstractInFinalClass.kt");
+        }
+
+        @TestMetadata("mustBeInitializedOrBeAbstractInOpenClass.kt")
+        public void testMustBeInitializedOrBeAbstractInOpenClass() throws Exception {
+            runTest("idea/testData/quickfix/abstract/mustBeInitializedOrBeAbstractInOpenClass.kt");
+        }
+
+        @TestMetadata("mustBeInitializedOrBeAbstractInSealedClass.kt")
+        public void testMustBeInitializedOrBeAbstractInSealedClass() throws Exception {
+            runTest("idea/testData/quickfix/abstract/mustBeInitializedOrBeAbstractInSealedClass.kt");
+        }
+
+        @TestMetadata("nonAbstractFunctionWithNoBody.kt")
+        public void testNonAbstractFunctionWithNoBody() throws Exception {
+            runTest("idea/testData/quickfix/abstract/nonAbstractFunctionWithNoBody.kt");
+        }
+
+        @TestMetadata("nonMemberAbstractFunction.kt")
+        public void testNonMemberAbstractFunction() throws Exception {
+            runTest("idea/testData/quickfix/abstract/nonMemberAbstractFunction.kt");
+        }
+
+        @TestMetadata("nonMemberFunctionNoBody.kt")
+        public void testNonMemberFunctionNoBody() throws Exception {
+            runTest("idea/testData/quickfix/abstract/nonMemberFunctionNoBody.kt");
+        }
+
+        @TestMetadata("notImplementedMember.kt")
+        public void testNotImplementedMember() throws Exception {
+            runTest("idea/testData/quickfix/abstract/notImplementedMember.kt");
+        }
+
+        @TestMetadata("notImplementedMemberFromAbstractClass.kt")
+        public void testNotImplementedMemberFromAbstractClass() throws Exception {
+            runTest("idea/testData/quickfix/abstract/notImplementedMemberFromAbstractClass.kt");
+        }
+
+        @TestMetadata("replaceOpen.kt")
+        public void testReplaceOpen() throws Exception {
+            runTest("idea/testData/quickfix/abstract/replaceOpen.kt");
+        }
+    }
+
+    @TestMetadata("idea/testData/quickfix/lateinit")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Lateinit extends AbstractHighLevelQuickFixTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInLateinit() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/lateinit"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("nullable.kt")
+        public void testNullable() throws Exception {
+            runTest("idea/testData/quickfix/lateinit/nullable.kt");
+        }
+
+        @TestMetadata("val.kt")
+        public void testVal() throws Exception {
+            runTest("idea/testData/quickfix/lateinit/val.kt");
+        }
+
+        @TestMetadata("withGetter.kt")
+        public void testWithGetter() throws Exception {
+            runTest("idea/testData/quickfix/lateinit/withGetter.kt");
+        }
+
+        @TestMetadata("withGetterSetter.kt")
+        public void testWithGetterSetter() throws Exception {
+            runTest("idea/testData/quickfix/lateinit/withGetterSetter.kt");
+        }
+
+        @TestMetadata("withInitializer.kt")
+        public void testWithInitializer() throws Exception {
+            runTest("idea/testData/quickfix/lateinit/withInitializer.kt");
+        }
+
+        @TestMetadata("withSetter.kt")
+        public void testWithSetter() throws Exception {
+            runTest("idea/testData/quickfix/lateinit/withSetter.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/modifiers")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -447,6 +668,84 @@ public class HighLevelQuickFixTestGenerated extends AbstractHighLevelQuickFixTes
         @TestMetadata("returnTypeMismatchOnOverrideUnitInt.kt")
         public void testReturnTypeMismatchOnOverrideUnitInt() throws Exception {
             runTest("idea/testData/quickfix/override/typeMismatchOnOverride/returnTypeMismatchOnOverrideUnitInt.kt");
+        }
+    }
+
+    @TestMetadata("idea/testData/quickfix/variables/changeMutability")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ChangeMutability extends AbstractHighLevelQuickFixTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInChangeMutability() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/variables/changeMutability"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, false);
+        }
+
+        @TestMetadata("capturedMemberValInitialization.kt")
+        public void testCapturedMemberValInitialization() throws Exception {
+            runTest("idea/testData/quickfix/variables/changeMutability/capturedMemberValInitialization.kt");
+        }
+
+        @TestMetadata("capturedValInitialization.kt")
+        public void testCapturedValInitialization() throws Exception {
+            runTest("idea/testData/quickfix/variables/changeMutability/capturedValInitialization.kt");
+        }
+
+        @TestMetadata("const.kt")
+        public void testConst() throws Exception {
+            runTest("idea/testData/quickfix/variables/changeMutability/const.kt");
+        }
+
+        @TestMetadata("funParameter.kt")
+        public void testFunParameter() throws Exception {
+            runTest("idea/testData/quickfix/variables/changeMutability/funParameter.kt");
+        }
+
+        @TestMetadata("localInGetter.kt")
+        public void testLocalInGetter() throws Exception {
+            runTest("idea/testData/quickfix/variables/changeMutability/localInGetter.kt");
+        }
+
+        @TestMetadata("valOverrideVar.kt")
+        public void testValOverrideVar() throws Exception {
+            runTest("idea/testData/quickfix/variables/changeMutability/valOverrideVar.kt");
+        }
+
+        @TestMetadata("valOverrideVarConstructorParameter.kt")
+        public void testValOverrideVarConstructorParameter() throws Exception {
+            runTest("idea/testData/quickfix/variables/changeMutability/valOverrideVarConstructorParameter.kt");
+        }
+
+        @TestMetadata("valReassignmentLocal.kt")
+        public void testValReassignmentLocal() throws Exception {
+            runTest("idea/testData/quickfix/variables/changeMutability/valReassignmentLocal.kt");
+        }
+
+        @TestMetadata("valReassignmentOuterDecl.kt")
+        public void testValReassignmentOuterDecl() throws Exception {
+            runTest("idea/testData/quickfix/variables/changeMutability/valReassignmentOuterDecl.kt");
+        }
+
+        @TestMetadata("valReassignmentProperty.kt")
+        public void testValReassignmentProperty() throws Exception {
+            runTest("idea/testData/quickfix/variables/changeMutability/valReassignmentProperty.kt");
+        }
+
+        @TestMetadata("valReassignmentPropertyConstructorParameter.kt")
+        public void testValReassignmentPropertyConstructorParameter() throws Exception {
+            runTest("idea/testData/quickfix/variables/changeMutability/valReassignmentPropertyConstructorParameter.kt");
+        }
+
+        @TestMetadata("valWithSetter.kt")
+        public void testValWithSetter() throws Exception {
+            runTest("idea/testData/quickfix/variables/changeMutability/valWithSetter.kt");
+        }
+
+        @TestMetadata("varAnnotationParameter.kt")
+        public void testVarAnnotationParameter() throws Exception {
+            runTest("idea/testData/quickfix/variables/changeMutability/varAnnotationParameter.kt");
         }
     }
 }

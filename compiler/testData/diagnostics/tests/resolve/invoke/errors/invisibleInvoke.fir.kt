@@ -6,5 +6,5 @@ class My {
 
 fun My.foo(i: Int) {
     <!HIDDEN!>i<!>("")
-    <!HIDDEN!>1("")<!>
+    <!HIDDEN!>1<!>("")
 }

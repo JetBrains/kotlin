@@ -103,6 +103,9 @@ open class GitDownloadTask @Inject constructor(
 
         // Store info about used revision for the manual up-to-date check.
         upToDateChecker.storeRevisionInfo()
+
+        // Delete the .git directory of the cloned repo to avoid adding it to IDEA's VCS roots.
+        outputDirectory.resolve(".git").deleteRecursively()
     }
 
 

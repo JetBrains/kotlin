@@ -29,11 +29,16 @@ import javax.inject.Inject
 open class KotlinJsTest
 @Inject
 constructor(
-    @Internal override var compilation: KotlinJsCompilation
+    @Transient
+    @Internal
+    override var compilation: KotlinJsCompilation
 ) :
     KotlinTest(),
     RequiresNpmDependencies {
-    private val nodeJs get() = NodeJsRootPlugin.apply(project.rootProject)
+    private val nodeJs= NodeJsRootPlugin.apply(project.rootProject)
+    private val npmProject = compilation.npmProject
+
+    private val projectPath = project.path
 
     @get:Internal
     var testFramework: KotlinJsTestFramework? = null
@@ -67,22 +72,30 @@ constructor(
     var debug: Boolean = false
 
     @Suppress("unused")
-    val runtimeClasspath: FileCollection
-        @InputFiles get() = compilation.runtimeDependencyFiles
+    @get:InputFiles
+    val runtimeClasspath: FileCollection by lazy {
+        compilation.runtimeDependencyFiles
+    }
 
     @Suppress("unused")
-    internal val compilationOutputs: FileCollection
-        @InputFiles get() = compilation.output.allOutputs
+    @get:InputFiles
+    internal val compilationOutputs: FileCollection by lazy {
+        compilation.output.allOutputs
+    }
 
     @Suppress("unused")
-    val compilationId: String
-        @Input get() = compilation.let {
+    @get:Input
+    val compilationId: String by lazy {
+        compilation.let {
             val target = it.target
             target.project.path + "@" + target.name + ":" + it.compilationName
         }
+    }
 
-    val nodeModulesToLoad: List<String>
-        @Internal get() = listOf("./" + compilation.npmProject.main)
+    @get:Internal
+    val nodeModulesToLoad: List<String> by lazy {
+        listOf("./" + compilation.npmProject.main)
+    }
 
     override val nodeModulesRequired: Boolean
         @Internal get() = testFramework!!.nodeModulesRequired
@@ -104,7 +117,7 @@ constructor(
     }
 
     fun useMocha() = useMocha {}
-    fun useMocha(body: KotlinMocha.() -> Unit) = use(KotlinMocha(compilation), body)
+    fun useMocha(body: KotlinMocha.() -> Unit) = use(KotlinMocha(compilation, path), body)
     fun useMocha(fn: Closure<*>) {
         useMocha {
             ConfigureUtil.configure(fn, this)
@@ -112,7 +125,10 @@ constructor(
     }
 
     fun useKarma() = useKarma {}
-    fun useKarma(body: KotlinKarma.() -> Unit) = use(KotlinKarma(compilation), body)
+    fun useKarma(body: KotlinKarma.() -> Unit) = use(
+        KotlinKarma(compilation, { services }, path),
+        body
+    )
     fun useKarma(fn: Closure<*>) {
         useKarma {
             ConfigureUtil.configure(fn, this)
@@ -131,13 +147,13 @@ constructor(
     }
 
     override fun executeTests() {
-        nodeJs.npmResolutionManager.checkRequiredDependencies(this)
+        nodeJs.npmResolutionManager.checkRequiredDependencies(task = this, services = services, logger = logger, projectPath = projectPath)
         super.executeTests()
     }
 
     override fun createTestExecutionSpec(): TCServiceMessagesTestExecutionSpec {
         val forkOptions = DefaultProcessForkOptions(fileResolver)
-        forkOptions.workingDir = compilation.npmProject.dir
+        forkOptions.workingDir = npmProject.dir
         forkOptions.executable = nodeJs.requireConfigured().nodeExecutable
 
         val nodeJsArgs = mutableListOf<String>()

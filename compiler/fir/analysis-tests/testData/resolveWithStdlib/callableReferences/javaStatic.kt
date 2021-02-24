@@ -16,5 +16,5 @@ fun foo3(x: (String) -> Int) {}
 fun main() {
     foo1(JavaClass::bar)
     foo2(JavaClass::bar)
-    <!AMBIGUITY{LT}!><!AMBIGUITY{PSI}!>foo3<!>(JavaClass::bar)<!>
+    <!AMBIGUITY!>foo3<!>(JavaClass::bar)
 }

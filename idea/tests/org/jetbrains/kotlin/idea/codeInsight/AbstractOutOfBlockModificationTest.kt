@@ -13,6 +13,7 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.PsiModificationTrackerImpl
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithAllCompilerChecks
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
@@ -52,7 +53,7 @@ abstract class AbstractOutOfBlockModificationTest : KotlinLightCodeInsightFixtur
         // have to analyze file before any change to support incremental analysis
         ktFile.analyzeWithAllCompilerChecks()
 
-        myFixture.type(stringToType)
+        myFixture.type(stringToType(myFixture))
         PsiDocumentManager.getInstance(myFixture.project).commitDocument(myFixture.getDocument(myFixture.file))
         val oobAfterCount = ktFile.outOfBlockModificationCount
         val modificationCountAfterType = tracker.modificationCount
@@ -116,14 +117,6 @@ abstract class AbstractOutOfBlockModificationTest : KotlinLightCodeInsightFixtur
         }
     }
 
-    private val stringToType: String
-        get() {
-            val text = myFixture.getDocument(myFixture.file).text
-            val typeDirectives =
-                InTextDirectivesUtils.findStringWithPrefixes(text, TYPE_DIRECTIVE)
-            return if (typeDirectives != null) StringUtil.unescapeStringCharacters(typeDirectives) else "a"
-        }
-
     private val expectedOutOfBlockResult: Boolean
         get() {
             val text = myFixture.getDocument(myFixture.file).text
@@ -144,5 +137,12 @@ abstract class AbstractOutOfBlockModificationTest : KotlinLightCodeInsightFixtur
         const val OUT_OF_CODE_BLOCK_DIRECTIVE = "OUT_OF_CODE_BLOCK:"
         const val SKIP_ANALYZE_CHECK_DIRECTIVE = "SKIP_ANALYZE_CHECK"
         const val TYPE_DIRECTIVE = "TYPE:"
+
+        fun stringToType(fixture: JavaCodeInsightTestFixture): String {
+            val text = fixture.getDocument(fixture.file).text
+            val typeDirectives =
+                InTextDirectivesUtils.findStringWithPrefixes(text, TYPE_DIRECTIVE)
+            return if (typeDirectives != null) StringUtil.unescapeStringCharacters(typeDirectives) else "a"
+        }
     }
 }

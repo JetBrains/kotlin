@@ -16,24 +16,18 @@
 
 package org.jetbrains.kotlin.types.checker
 
-import org.jetbrains.kotlin.resolve.constants.IntegerLiteralTypeConstructor
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
-import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.refinement.TypeRefinement
 
 open class ClassicTypeCheckerContext(
     val errorTypeEqualsToAnything: Boolean,
     val stubTypeEqualsToAnything: Boolean = true,
     val allowedTypeVariable: Boolean = true,
-    val kotlinTypeRefiner: KotlinTypeRefiner = KotlinTypeRefiner.Default
-) : ClassicTypeSystemContext, AbstractTypeCheckerContext() {
-
-    override fun prepareType(type: KotlinTypeMarker): KotlinTypeMarker {
-        require(type is KotlinType, type::errorMessage)
-        return NewKotlinTypeChecker.Default.transformToNewType(type.unwrap())
-    }
+    val kotlinTypeRefiner: KotlinTypeRefiner = KotlinTypeRefiner.Default,
+    override val typeSystemContext: ClassicTypeSystemContext = SimpleClassicTypeSystemContext
+) : AbstractTypeCheckerContext() {
 
     @OptIn(TypeRefinement::class)
     override fun refineType(type: KotlinTypeMarker): KotlinTypeMarker {
@@ -47,25 +41,8 @@ open class ClassicTypeCheckerContext(
     override val isStubTypeEqualsToAnything: Boolean
         get() = stubTypeEqualsToAnything
 
-    override fun areEqualTypeConstructors(c1: TypeConstructorMarker, c2: TypeConstructorMarker): Boolean {
-        require(c1 is TypeConstructor, c1::errorMessage)
-        require(c2 is TypeConstructor, c2::errorMessage)
-        return areEqualTypeConstructors(c1, c2)
-    }
-
-    open fun areEqualTypeConstructors(a: TypeConstructor, b: TypeConstructor): Boolean = when {
-        /*
-         * For integer literal types we have special rules for constructor's equality,
-         *   so we have to check it manually
-         * For example: Int in ILT.possibleTypes -> ILT == Int
-         */
-        a is IntegerLiteralTypeConstructor -> a.checkConstructor(b)
-        b is IntegerLiteralTypeConstructor -> b.checkConstructor(a)
-        else -> a == b
-    }
-
     override fun substitutionSupertypePolicy(type: SimpleTypeMarker): SupertypesPolicy.DoCustomTransform {
-        return classicSubstitutionSupertypePolicy(type)
+        return typeSystemContext.classicSubstitutionSupertypePolicy(type)
     }
 
     override val KotlinTypeMarker.isAllowedTypeVariable: Boolean get() = this is UnwrappedType && allowedTypeVariable && constructor is NewTypeVariableConstructor

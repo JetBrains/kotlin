@@ -221,8 +221,8 @@ import libCase8.b.*
 import libCase8.c.*
 
 fun case8(){
-    <!DEBUG_INFO_CALL("fqName: fqName is unknown; typeCall: unresolved")!><!AMBIGUITY!>A<!>()<!>
-    <!AMBIGUITY!>A<!>()
+    <!DEBUG_INFO_CALL("fqName: libCase8.a.A; typeCall: function")!>A()<!>
+    A()
 }
 
 // FILE: Lib11.kt
@@ -278,7 +278,7 @@ import libCase10.b.*
 import libCase10.c.*
 
 fun case10(){
-    <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Ambiguity: A, [libCase10/b/A.A, libCase10/a/A]")!><!AMBIGUITY!>A<!>()<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>A()<!>
 }
 
 // FILE: Liba.kt

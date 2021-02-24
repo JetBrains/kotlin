@@ -129,7 +129,7 @@ private val errorsFixingDiagnosticBasedPostProcessingGroup =
             Errors.REDUNDANT_PROJECTION
         ),
         diagnosticBasedProcessing(
-            AddModifierFix.createFactory(KtTokens.OVERRIDE_KEYWORD),
+            AddModifierFixMpp.createFactory(KtTokens.OVERRIDE_KEYWORD),
             Errors.VIRTUAL_MEMBER_HIDDEN
         ),
         diagnosticBasedProcessing(
@@ -141,7 +141,7 @@ private val errorsFixingDiagnosticBasedPostProcessingGroup =
             Errors.INVISIBLE_MEMBER
         ),
         diagnosticBasedProcessing(
-            RemoveModifierFix.createRemoveModifierFactory(),
+            RemoveModifierFix.removeNonRedundantModifier,
             Errors.WRONG_MODIFIER_TARGET
         ),
         diagnosticBasedProcessing(

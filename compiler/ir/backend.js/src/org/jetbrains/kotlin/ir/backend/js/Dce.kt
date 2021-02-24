@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.backend.common.ir.isMemberOfOpenClass
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.export.isExported
+import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -20,7 +22,9 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.js.config.DceRuntimeDiagnostic
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.js.config.removingBody
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
@@ -29,12 +33,16 @@ fun eliminateDeadDeclarations(
     context: JsIrBackendContext
 ) {
 
-    val allRoots = stageController.withInitialIr { buildRoots(modules, context) }
+    val allRoots = context.irFactory.stageController.withInitialIr { buildRoots(modules, context) }
 
     val usefulDeclarations = usefulDeclarations(allRoots, context)
 
-    stageController.unrestrictDeclarationListsAccess {
-        removeUselessDeclarations(modules, usefulDeclarations)
+    context.irFactory.stageController.unrestrictDeclarationListsAccess {
+        processUselessDeclarations(
+            modules,
+            usefulDeclarations,
+            context
+        )
     }
 }
 
@@ -47,7 +55,7 @@ private fun buildRoots(modules: Iterable<IrModuleFragment>, context: JsIrBackend
         (modules.flatMap { it.files } + context.packageLevelJsModules + context.externalPackageFragment.values).flatMapTo(mutableListOf()) { file ->
             file.declarations.flatMap { if (it is IrProperty) listOfNotNull(it.backingField, it.getter, it.setter) else listOf(it) }
                 .filter {
-                    it is IrField && it.initializer != null && it.fqNameWhenAvailable?.asString()?.startsWith("kotlin") != true
+                    it is IrField && it.initializer != null && !it.isKotlinPackage()
                             || it.isExported(context)
                             || it.isEffectivelyExternal()
                             || it is IrField && it.correspondingPropertySymbol?.owner?.isExported(context) == true
@@ -56,6 +64,11 @@ private fun buildRoots(modules: Iterable<IrModuleFragment>, context: JsIrBackend
         }
 
     rootDeclarations += context.testRoots.values
+
+    val dceRuntimeDiagnostic = context.dceRuntimeDiagnostic
+    if (dceRuntimeDiagnostic != null) {
+        rootDeclarations += dceRuntimeDiagnostic.unreachableDeclarationMethod(context).owner
+    }
 
     JsMainFunctionDetector.getMainFunctionOrNull(modules.last())?.let { mainFunction ->
         rootDeclarations += mainFunction
@@ -67,7 +80,17 @@ private fun buildRoots(modules: Iterable<IrModuleFragment>, context: JsIrBackend
     return rootDeclarations
 }
 
-private fun removeUselessDeclarations(modules: Iterable<IrModuleFragment>, usefulDeclarations: Set<IrDeclaration>) {
+private fun DceRuntimeDiagnostic.unreachableDeclarationMethod(context: JsIrBackendContext) =
+    when (this) {
+        DceRuntimeDiagnostic.LOG -> context.intrinsics.jsUnreachableDeclarationLog
+        DceRuntimeDiagnostic.EXCEPTION -> context.intrinsics.jsUnreachableDeclarationException
+    }
+
+private fun processUselessDeclarations(
+    modules: Iterable<IrModuleFragment>,
+    usefulDeclarations: Set<IrDeclaration>,
+    context: JsIrBackendContext
+) {
     modules.forEach { module ->
         module.files.forEach {
             it.acceptVoid(object : IrElementVisitorVoid {
@@ -99,7 +122,7 @@ private fun removeUselessDeclarations(modules: Iterable<IrModuleFragment>, usefu
                 private fun process(container: IrDeclarationContainer) {
                     container.declarations.transformFlat { member ->
                         if (member !in usefulDeclarations) {
-                            emptyList()
+                            member.processUselessDeclaration(context)
                         } else {
                             member.acceptVoid(this)
                             null
@@ -110,6 +133,53 @@ private fun removeUselessDeclarations(modules: Iterable<IrModuleFragment>, usefu
         }
     }
 }
+
+private fun IrDeclaration.processUselessDeclaration(context: JsIrBackendContext): List<IrDeclaration>? {
+    return when {
+        context.dceRuntimeDiagnostic != null -> {
+            processWithDiagnostic(context)
+            return null
+        }
+        else -> emptyList()
+    }
+}
+
+private fun IrDeclaration.processWithDiagnostic(context: JsIrBackendContext) {
+    when (this) {
+        is IrFunction -> processFunctionWithDiagnostic(context)
+        is IrField -> processFieldWithDiagnostic()
+        is IrDeclarationContainer -> declarations.forEach { it.processWithDiagnostic(context) }
+    }
+}
+
+private fun IrFunction.processFunctionWithDiagnostic(context: JsIrBackendContext) {
+    val dceRuntimeDiagnostic = context.dceRuntimeDiagnostic!!
+
+    val isRemovingBody = dceRuntimeDiagnostic.removingBody()
+    val targetMethod = dceRuntimeDiagnostic.unreachableDeclarationMethod(context)
+    val call = JsIrBuilder.buildCall(
+        target = targetMethod,
+        type = targetMethod.owner.returnType
+    )
+
+    if (isRemovingBody) {
+        body = context.irFactory.createBlockBody(
+            UNDEFINED_OFFSET,
+            UNDEFINED_OFFSET
+        )
+    }
+
+    body?.prependFunctionCall(call)
+}
+
+private fun IrField.processFieldWithDiagnostic() {
+    if (initializer != null && isKotlinPackage()) {
+        initializer = null
+    }
+}
+
+private fun IrField.isKotlinPackage() =
+    fqNameWhenAvailable?.asString()?.startsWith("kotlin") == true
 
 // TODO refactor it, the function became too big. Please contact me (Zalim) before doing it.
 fun usefulDeclarations(roots: Iterable<IrDeclaration>, context: JsIrBackendContext): Set<IrDeclaration> {
@@ -169,7 +239,7 @@ fun usefulDeclarations(roots: Iterable<IrDeclaration>, context: JsIrBackendConte
     }
 
     // use withInitialIr to avoid ConcurrentModificationException in dce-driven lowering when adding roots' nested declarations (members)
-    stageController.withInitialIr {
+    context.irFactory.stageController.withInitialIr {
         // Add roots
         roots.forEach {
             it.enqueue(null, null, altFromFqn = "<ROOT>")

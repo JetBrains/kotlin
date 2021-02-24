@@ -732,4 +732,7 @@ object FirStub : FirElement {
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         return this
     }
+
+    override fun replaceSource(newSource: FirSourceElement?) {
+    }
 }

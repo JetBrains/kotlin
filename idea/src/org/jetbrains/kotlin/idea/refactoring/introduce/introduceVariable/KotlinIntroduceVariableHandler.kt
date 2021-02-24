@@ -52,11 +52,14 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoAfter
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.source.getPsi
+import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.checker.ClassicTypeCheckerContext
+import org.jetbrains.kotlin.types.checker.ClassicTypeSystemContext
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.ifEmpty
 import org.jetbrains.kotlin.utils.sure
@@ -73,10 +76,15 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
     private var KtExpression.isOccurrence: Boolean by NotNullablePsiCopyableUserDataProperty(Key.create("OCCURRENCE"), false)
 
     private class TypeCheckerImpl(private val project: Project) : KotlinTypeChecker by KotlinTypeChecker.DEFAULT {
-        private inner class ContextImpl : ClassicTypeCheckerContext(false) {
-            override fun areEqualTypeConstructors(a: TypeConstructor, b: TypeConstructor): Boolean =
-                compareDescriptors(project, a.declarationDescriptor, b.declarationDescriptor)
+        private inner class TypeSystemContextImpl : ClassicTypeSystemContext {
+            override fun areEqualTypeConstructors(c1: TypeConstructorMarker, c2: TypeConstructorMarker): Boolean {
+                require(c1 is TypeConstructor)
+                require(c2 is TypeConstructor)
+                return compareDescriptors(project, c1.declarationDescriptor, c2.declarationDescriptor)
+            }
         }
+
+        private inner class ContextImpl : ClassicTypeCheckerContext(false, typeSystemContext = TypeSystemContextImpl())
 
         override fun equalTypes(a: KotlinType, b: KotlinType): Boolean = with(NewKotlinTypeChecker.Default) {
             ContextImpl().equalTypes(a.unwrap(), b.unwrap())

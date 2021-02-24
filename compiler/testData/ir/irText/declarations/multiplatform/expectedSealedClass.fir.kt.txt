@@ -1,5 +1,5 @@
 expect sealed class Ops {
-  private expect constructor() /* primary */
+  protected expect constructor() /* primary */
 
 }
 
@@ -9,7 +9,7 @@ expect class Add : Ops {
 }
 
 sealed class Ops {
-  private constructor() /* primary */ {
+  protected constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 

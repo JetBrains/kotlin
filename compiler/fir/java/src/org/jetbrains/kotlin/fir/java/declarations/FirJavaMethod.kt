@@ -43,6 +43,9 @@ import org.jetbrains.kotlin.util.OperatorNameConventions.ITERATOR
 import org.jetbrains.kotlin.util.OperatorNameConventions.NEXT
 import org.jetbrains.kotlin.util.OperatorNameConventions.SET
 import org.jetbrains.kotlin.util.OperatorNameConventions.UNARY_OPERATION_NAMES
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 import kotlin.properties.Delegates
 
 @OptIn(FirImplementationDetail::class)
@@ -169,6 +172,9 @@ class FirJavaMethod @FirImplementationDetail constructor(
 
     override fun replaceContractDescription(newContractDescription: FirContractDescription) {
     }
+
+    override fun replaceSource(newSource: FirSourceElement?) {
+    }
 }
 
 val ALL_JAVA_OPERATION_NAMES =
@@ -223,4 +229,30 @@ class FirJavaMethodBuilder : FirFunctionBuilder, FirTypeParametersOwnerBuilder, 
 
 inline fun buildJavaMethod(init: FirJavaMethodBuilder.() -> Unit): FirJavaMethod {
     return FirJavaMethodBuilder().apply(init).build()
+}
+
+@OptIn(ExperimentalContracts::class)
+inline fun buildJavaMethodCopy(original: FirSimpleFunction, init: FirJavaMethodBuilder.() -> Unit): FirJavaMethod {
+    contract {
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
+    }
+    val copyBuilder = FirJavaMethodBuilder()
+    copyBuilder.source = original.source
+    copyBuilder.session = original.session
+    copyBuilder.resolvePhase = original.resolvePhase
+    copyBuilder.attributes = original.attributes.copy()
+    copyBuilder.returnTypeRef = original.returnTypeRef
+    copyBuilder.valueParameters.addAll(original.valueParameters)
+    copyBuilder.body = original.body
+    copyBuilder.status = original.status
+    copyBuilder.dispatchReceiverType = original.dispatchReceiverType
+    copyBuilder.name = original.name
+    copyBuilder.symbol = original.symbol
+    copyBuilder.annotations.addAll(original.annotations)
+    copyBuilder.typeParameters.addAll(original.typeParameters)
+    val annotations = original.annotations
+    copyBuilder.annotationBuilder = { annotations }
+    return copyBuilder
+        .apply(init)
+        .build()
 }

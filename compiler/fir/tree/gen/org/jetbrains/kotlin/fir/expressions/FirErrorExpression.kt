@@ -24,6 +24,8 @@ abstract class FirErrorExpression : FirExpression(), FirDiagnosticHolder {
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitErrorExpression(this, data)
 
+    abstract override fun replaceSource(newSource: FirSourceElement?)
+
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirErrorExpression

@@ -6,5 +6,5 @@ fun bar(): Int = 1
 fun bar(x: String): Int = 1
 
 fun main() {
-    <!AMBIGUITY{LT}!><!AMBIGUITY{PSI}!>foo<!>(<!UNRESOLVED_REFERENCE!>::bar<!>)<!>
+    <!AMBIGUITY!>foo<!>(<!UNRESOLVED_REFERENCE!>::bar<!>)
 }

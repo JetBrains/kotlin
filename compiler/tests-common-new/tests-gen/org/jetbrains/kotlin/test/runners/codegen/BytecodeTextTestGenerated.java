@@ -3009,6 +3009,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         public void testInterfaceHashCode() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/hashCode/interfaceHashCode.kt");
         }
+
+        @Test
+        @TestMetadata("interfaceHashCodeWithSmartCast.kt")
+        public void testInterfaceHashCodeWithSmartCast() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/hashCode/interfaceHashCodeWithSmartCast.kt");
+        }
     }
 
     @Nested
@@ -3813,6 +3819,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         }
 
         @Test
+        @TestMetadata("functionRefToJavaInterface.kt")
+        public void testFunctionRefToJavaInterface() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/invokedynamic/functionRefToJavaInterface.kt");
+        }
+
+        @Test
         @TestMetadata("lambdas.kt")
         public void testLambdas() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/invokedynamic/lambdas.kt");
@@ -4508,96 +4520,6 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
     }
 
     @Nested
-    @TestMetadata("compiler/testData/codegen/bytecodeText/oldLanguageVersions")
-    @TestDataPath("$PROJECT_ROOT")
-    public class OldLanguageVersions {
-        @Test
-        public void testAllFilesPresentInOldLanguageVersions() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/oldLanguageVersions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
-        }
-
-        @Test
-        @TestMetadata("noInlineJavaProtectedConstants.kt")
-        public void testNoInlineJavaProtectedConstants() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/oldLanguageVersions/noInlineJavaProtectedConstants.kt");
-        }
-
-        @Nested
-        @TestMetadata("compiler/testData/codegen/bytecodeText/oldLanguageVersions/constProperty")
-        @TestDataPath("$PROJECT_ROOT")
-        public class ConstProperty {
-            @Test
-            @TestMetadata("accessorsForPrivateConstants.kt")
-            public void testAccessorsForPrivateConstants() throws Exception {
-                runTest("compiler/testData/codegen/bytecodeText/oldLanguageVersions/constProperty/accessorsForPrivateConstants.kt");
-            }
-
-            @Test
-            public void testAllFilesPresentInConstProperty() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/oldLanguageVersions/constProperty"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
-            }
-        }
-
-        @Nested
-        @TestMetadata("compiler/testData/codegen/bytecodeText/oldLanguageVersions/ieee754")
-        @TestDataPath("$PROJECT_ROOT")
-        public class Ieee754 {
-            @Test
-            public void testAllFilesPresentInIeee754() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/oldLanguageVersions/ieee754"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
-            }
-
-            @Test
-            @TestMetadata("nullableDoubleEquals10.kt")
-            public void testNullableDoubleEquals10() throws Exception {
-                runTest("compiler/testData/codegen/bytecodeText/oldLanguageVersions/ieee754/nullableDoubleEquals10.kt");
-            }
-
-            @Test
-            @TestMetadata("nullableDoubleNotEquals10.kt")
-            public void testNullableDoubleNotEquals10() throws Exception {
-                runTest("compiler/testData/codegen/bytecodeText/oldLanguageVersions/ieee754/nullableDoubleNotEquals10.kt");
-            }
-
-            @Test
-            @TestMetadata("nullableFloatEquals10.kt")
-            public void testNullableFloatEquals10() throws Exception {
-                runTest("compiler/testData/codegen/bytecodeText/oldLanguageVersions/ieee754/nullableFloatEquals10.kt");
-            }
-
-            @Test
-            @TestMetadata("nullableFloatNotEquals10.kt")
-            public void testNullableFloatNotEquals10() throws Exception {
-                runTest("compiler/testData/codegen/bytecodeText/oldLanguageVersions/ieee754/nullableFloatNotEquals10.kt");
-            }
-
-            @Test
-            @TestMetadata("smartCastsForDouble10.kt")
-            public void testSmartCastsForDouble10() throws Exception {
-                runTest("compiler/testData/codegen/bytecodeText/oldLanguageVersions/ieee754/smartCastsForDouble10.kt");
-            }
-
-            @Test
-            @TestMetadata("smartCastsForFloat10.kt")
-            public void testSmartCastsForFloat10() throws Exception {
-                runTest("compiler/testData/codegen/bytecodeText/oldLanguageVersions/ieee754/smartCastsForFloat10.kt");
-            }
-
-            @Test
-            @TestMetadata("when10.kt")
-            public void testWhen10() throws Exception {
-                runTest("compiler/testData/codegen/bytecodeText/oldLanguageVersions/ieee754/when10.kt");
-            }
-
-            @Test
-            @TestMetadata("whenNullableSmartCast10.kt")
-            public void testWhenNullableSmartCast10() throws Exception {
-                runTest("compiler/testData/codegen/bytecodeText/oldLanguageVersions/ieee754/whenNullableSmartCast10.kt");
-            }
-        }
-    }
-
-    @Nested
     @TestMetadata("compiler/testData/codegen/bytecodeText/optimizedDelegatedProperties")
     @TestDataPath("$PROJECT_ROOT")
     public class OptimizedDelegatedProperties {
@@ -5036,6 +4958,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("concatDynamicIndyDataClass.kt")
         public void testConcatDynamicIndyDataClass() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/stringOperations/concatDynamicIndyDataClass.kt");
+        }
+
+        @Test
+        @TestMetadata("concatDynamicUnit.kt")
+        public void testConcatDynamicUnit() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/stringOperations/concatDynamicUnit.kt");
         }
 
         @Test
@@ -5530,6 +5458,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("subjectAny.kt")
         public void testSubjectAny() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/whenEnumOptimization/subjectAny.kt");
+        }
+
+        @Test
+        @TestMetadata("whenOr.kt")
+        public void testWhenOr() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/whenEnumOptimization/whenOr.kt");
         }
 
         @Test

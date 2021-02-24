@@ -51,4 +51,3 @@ class DFoo : IFoo {
   local /* final field */ val <$$delegate_0>: IFoo = d
 
 }
-

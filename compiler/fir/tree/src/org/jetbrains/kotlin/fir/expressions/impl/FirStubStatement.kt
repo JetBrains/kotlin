@@ -29,4 +29,7 @@ object FirStubStatement : FirPureAbstractElement(), FirStatement {
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         return this
     }
+
+    override fun replaceSource(newSource: FirSourceElement?) {
+    }
 }

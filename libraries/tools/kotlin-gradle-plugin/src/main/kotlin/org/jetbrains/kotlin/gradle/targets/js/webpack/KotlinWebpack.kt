@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
 import org.jetbrains.kotlin.gradle.testing.internal.reportsDir
-import org.jetbrains.kotlin.gradle.utils.disableTaskOnConfigurationCacheBuild
 import org.jetbrains.kotlin.gradle.utils.injected
 import org.jetbrains.kotlin.gradle.utils.newFileProperty
 import org.jetbrains.kotlin.gradle.utils.property
@@ -42,10 +41,9 @@ constructor(
     private val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
     private val versions = nodeJs.versions
 
-    init {
-        // TODO: temporary workaround for configuration cache enabled builds
-        disableTaskOnConfigurationCacheBuild { nodeJs.npmResolutionManager.toString() }
-    }
+    private val npmProject = compilation.npmProject
+
+    private val projectPath = project.path
 
     @get:Inject
     open val fileResolver: FileResolver
@@ -97,11 +95,14 @@ constructor(
 
     @get:OutputFile
     open val configFile: File by lazy {
-        compilation.npmProject.dir.resolve("webpack.config.js")
+        npmProject.dir.resolve("webpack.config.js")
     }
 
     @Input
     var saveEvaluatedConfigFile: Boolean = true
+
+    @Transient
+    private val baseConventions: BasePluginConvention? = project.convention.plugins["base"] as BasePluginConvention?
 
     @Nested
     val output: KotlinWebpackOutput = KotlinWebpackOutput(
@@ -115,43 +116,57 @@ constructor(
     val outputPath: File
         get() = destinationDirectory
 
-    private val baseConventions: BasePluginConvention?
-        get() = project.convention.plugins["base"] as BasePluginConvention?
-
     @get:Internal
     internal var _destinationDirectory: File? = null
 
+    private val defaultDestinationDirectory by lazy {
+        project.buildDir.resolve(baseConventions!!.distsDirName)
+    }
+
     @get:Internal
     var destinationDirectory: File
-        get() = _destinationDirectory ?: project.buildDir.resolve(baseConventions!!.distsDirName)
+        get() = _destinationDirectory ?: defaultDestinationDirectory
         set(value) {
             _destinationDirectory = value
         }
 
+    private val defaultOutputFileName by lazy {
+        baseConventions?.archivesBaseName + ".js"
+    }
+
     @get:Internal
     var outputFileName: String by property {
-        baseConventions?.archivesBaseName + ".js"
+        defaultOutputFileName
     }
 
     @get:OutputFile
     open val outputFile: File
         get() = destinationDirectory.resolve(outputFileName)
 
-    open val configDirectory: File?
-        @Optional @InputDirectory get() = project.projectDir.resolve("webpack.config.d").takeIf { it.isDirectory }
+    private val projectDir = project.projectDir
+
+    @get:Optional
+    @get:InputDirectory
+    open val configDirectory: File? by lazy {
+        projectDir.resolve("webpack.config.d").takeIf { it.isDirectory }
+    }
 
     @Input
     var report: Boolean = false
 
+    private val projectReportsDir = project.reportsDir
+
     open val reportDir: File
         @Internal get() = reportDirProvider.get()
 
-    @OutputDirectory
-    open val reportDirProvider: Provider<File> = entryProperty
-        .map { it.asFile.nameWithoutExtension }
-        .map {
-            project.reportsDir.resolve("webpack").resolve(it)
-        }
+    @get:OutputDirectory
+    open val reportDirProvider: Provider<File> by lazy {
+        entryProperty
+            .map { it.asFile.nameWithoutExtension }
+            .map {
+                projectReportsDir.resolve("webpack").resolve(it)
+            }
+    }
 
     open val evaluatedConfigFile: File
         @Internal get() = evaluatedConfigFileProvider.get()
@@ -217,7 +232,8 @@ constructor(
             .forEach { it(config) }
 
         return KotlinWebpackRunner(
-            compilation.npmProject,
+            npmProject,
+            logger,
             configFile,
             execHandleFactory,
             bin,
@@ -237,7 +253,7 @@ constructor(
 
     @TaskAction
     fun doExecute() {
-        nodeJs.npmResolutionManager.checkRequiredDependencies(this)
+        nodeJs.npmResolutionManager.checkRequiredDependencies(task = this, services = services, logger = logger, projectPath = projectPath)
 
         val runner = createRunner()
 
@@ -258,7 +274,7 @@ constructor(
                     progressReporter = true,
                     progressReporterPathFilter = nodeJs.rootPackageDir.absolutePath
                 )
-            ).execute()
+            ).execute(services)
         }
     }
 

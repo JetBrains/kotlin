@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api.api
 
-import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
 import org.jetbrains.kotlin.fir.declarations.*
@@ -17,7 +16,6 @@ import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirIdeResolveStateService
 import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.InternalForInline
 import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeSourcesSession
-import org.jetbrains.kotlin.idea.fir.low.level.api.util.ktDeclaration
 import org.jetbrains.kotlin.idea.util.getElementTextInContext
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
@@ -76,13 +74,13 @@ inline fun <reified F : FirDeclaration, R> KtDeclaration.withFirDeclarationOfTyp
 }
 
 /**
-* Creates [FirDeclaration] by [KtLambdaExpression] and executes an [action] on it
-*
-* If resulted [FirDeclaration] is not [F] throws [InvalidFirElementTypeException]
-*
-* [FirDeclaration] passed to [action] should not be leaked outside [action] lambda
-* Otherwise, some threading problems may arise,
-*/
+ * Creates [FirDeclaration] by [KtLambdaExpression] and executes an [action] on it
+ *
+ * If resulted [FirDeclaration] is not [F] throws [InvalidFirElementTypeException]
+ *
+ * [FirDeclaration] passed to [action] should not be leaked outside [action] lambda
+ * Otherwise, some threading problems may arise,
+ */
 @OptIn(InternalForInline::class)
 inline fun <reified F : FirDeclaration, R> KtLambdaExpression.withFirDeclarationOfType(
     resolveState: FirModuleResolveState,
@@ -121,14 +119,17 @@ fun <D : FirDeclaration, R> D.withFirDeclaration(
 /**
  * Returns a list of Diagnostics compiler finds for given [KtElement]
  */
-fun KtElement.getDiagnostics(resolveState: FirModuleResolveState): Collection<FirPsiDiagnostic<*>> =
-    resolveState.getDiagnostics(this)
+fun KtElement.getDiagnostics(resolveState: FirModuleResolveState, filter: DiagnosticCheckerFilter): Collection<FirPsiDiagnostic<*>> =
+    resolveState.getDiagnostics(this, filter)
 
 /**
  * Returns a list of Diagnostics compiler finds for given [KtFile]
  */
-fun KtFile.collectDiagnosticsForFile(resolveState: FirModuleResolveState): Collection<FirPsiDiagnostic<*>> =
-    resolveState.collectDiagnosticsForFile(this)
+fun KtFile.collectDiagnosticsForFile(
+    resolveState: FirModuleResolveState,
+    filter: DiagnosticCheckerFilter
+): Collection<FirPsiDiagnostic<*>> =
+    resolveState.collectDiagnosticsForFile(this, filter)
 
 /**
  * Resolves a given [FirDeclaration] to [phase] and returns resolved declaration

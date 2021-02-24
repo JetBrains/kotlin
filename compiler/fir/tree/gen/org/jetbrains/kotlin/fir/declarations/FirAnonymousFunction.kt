@@ -43,6 +43,8 @@ abstract class FirAnonymousFunction : FirFunction<FirAnonymousFunction>, FirExpr
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitAnonymousFunction(this, data)
 
+    abstract override fun replaceSource(newSource: FirSourceElement?)
+
     abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
 
     abstract override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef)

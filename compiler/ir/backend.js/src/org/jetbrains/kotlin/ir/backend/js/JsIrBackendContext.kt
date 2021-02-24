@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmen
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrDynamicTypeImpl
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.js.config.DceRuntimeDiagnostic
 import org.jetbrains.kotlin.js.config.ErrorTolerancePolicy
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.name.FqName
@@ -44,13 +45,14 @@ class JsIrBackendContext(
     override val configuration: CompilerConfiguration, // TODO: remove configuration from backend context
     override val scriptMode: Boolean = false,
     override val es6mode: Boolean = false,
+    val dceRuntimeDiagnostic: DceRuntimeDiagnostic? = null,
     val propertyLazyInitialization: Boolean = false,
     override val irFactory: IrFactory = IrFactoryImpl
 ) : JsCommonBackendContext {
     val fileToInitializationFuns: MutableMap<IrFile, IrSimpleFunction?> = mutableMapOf()
     val fileToInitializerPureness: MutableMap<IrFile, Boolean> = mutableMapOf()
 
-    override val extractedLocalClasses: MutableSet<IrClass> = hashSetOf()
+    val extractedLocalClasses: MutableSet<IrClass> = hashSetOf()
 
     override val builtIns = module.builtIns
 
@@ -115,7 +117,7 @@ class JsIrBackendContext(
     val testRoots: Map<IrModuleFragment, IrSimpleFunction>
         get() = testContainerFuns
 
-    override val mapping = JsMapping()
+    override val mapping = JsMapping(irFactory)
 
     override val inlineClassesUtils = JsInlineClassesUtils(this)
 
@@ -362,7 +364,7 @@ class JsIrBackendContext(
         /*TODO*/
         print(message)
     }
-}
 
-// TODO: investigate if it could be removed
-fun <T> lazy2(fn: () -> T) = lazy { stageController.withInitialIr(fn) }
+    // TODO: investigate if it could be removed
+    fun <T> lazy2(fn: () -> T) = lazy { irFactory.stageController.withInitialIr(fn) }
+}

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.components
 
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.types.KtFirType
 import org.jetbrains.kotlin.idea.frontend.api.fir.types.PublicTypeApproximator
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
+import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 
 internal class KtFirTypeProvider(
     override val analysisSession: KtFirAnalysisSession,
@@ -26,14 +28,14 @@ internal class KtFirTypeProvider(
     override val builtinTypes: KtBuiltinTypes =
         KtFirBuiltInTypes(analysisSession.firResolveState.rootModuleSession.builtinTypes, analysisSession.firSymbolBuilder, token)
 
-    override fun approximateToPublicDenotable(type: KtType): KtType? {
+    override fun approximateToSuperPublicDenotableType(type: KtType): KtType? {
         require(type is KtFirType)
         val coneType = type.coneType
         val approximatedConeType = PublicTypeApproximator.approximateTypeToPublicDenotable(
             coneType,
-            rootModuleSession.inferenceComponents.ctx,
             rootModuleSession
         )
+
         return approximatedConeType?.asKtType()
     }
 
@@ -50,3 +52,4 @@ internal class KtFirTypeProvider(
         return type.asKtType()
     }
 }
+

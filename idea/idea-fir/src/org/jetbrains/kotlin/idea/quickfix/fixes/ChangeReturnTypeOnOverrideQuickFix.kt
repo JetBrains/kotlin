@@ -118,10 +118,10 @@ object ChangeTypeQuickFix {
         callable: KtCallableSymbol,
         type: KtType
     ): KtCallableSymbol? {
-        val overriddenSymbols = callable.getOverriddenSymbols()
+        val overriddenSymbols = callable.getDirectlyOverriddenSymbols()
         return overriddenSymbols
             .singleOrNull { overridden ->
-                overridden.origin != KtSymbolOrigin.INTERSECTION_OVERRIDE && !type.isSubTypeOf(overridden.annotatedType.type)
+                !type.isSubTypeOf(overridden.annotatedType.type)
             }
     }
 
@@ -131,7 +131,7 @@ object ChangeTypeQuickFix {
 
     private fun KtAnalysisSession.findLowerBoundOfOverriddenCallablesReturnTypes(symbol: KtCallableSymbol): KtType? {
         var lowestType: KtType? = null
-        for (overridden in symbol.getOverriddenSymbols()) {
+        for (overridden in symbol.getDirectlyOverriddenSymbols()) {
             val overriddenType = overridden.annotatedType.type
             when {
                 lowestType == null || overriddenType isSubTypeOf lowestType -> {

@@ -23,6 +23,11 @@ data class TestModule(
     val directives: RegisteredDirectives,
     val languageVersionSettings: LanguageVersionSettings
 ) {
+    override fun equals(other: Any?): Boolean =
+        other is TestModule && name == other.name
+
+    override fun hashCode(): Int = name.hashCode()
+
     override fun toString(): String {
         return buildString {
             appendLine("Module: $name")

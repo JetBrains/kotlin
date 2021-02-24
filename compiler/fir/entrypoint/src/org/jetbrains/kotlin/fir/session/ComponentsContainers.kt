@@ -30,6 +30,9 @@ import org.jetbrains.kotlin.fir.types.FirCorrespondingSupertypesCache
 
 @OptIn(SessionConfiguration::class)
 fun FirSession.registerCommonComponents(languageVersionSettings: LanguageVersionSettings) {
+    register(FirLanguageSettingsComponent::class, FirLanguageSettingsComponent(languageVersionSettings))
+    register(InferenceComponents::class, InferenceComponents(this))
+
     register(FirDeclaredMemberScopeProvider::class, FirDeclaredMemberScopeProvider())
     register(FirCorrespondingSupertypesCache::class, FirCorrespondingSupertypesCache(this))
     register(FirDefaultParametersResolver::class, FirDefaultParametersResolver())
@@ -38,8 +41,6 @@ fun FirSession.registerCommonComponents(languageVersionSettings: LanguageVersion
     register(FirRegisteredPluginAnnotations::class, FirRegisteredPluginAnnotations.create(this))
     register(FirPredicateBasedProvider::class, FirPredicateBasedProvider.create(this))
     register(GeneratedClassIndex::class, GeneratedClassIndex.create())
-    register(FirLanguageSettingsComponent::class, FirLanguageSettingsComponent(languageVersionSettings))
-    register(InferenceComponents::class, InferenceComponents(this))
 }
 
 @OptIn(SessionConfiguration::class)

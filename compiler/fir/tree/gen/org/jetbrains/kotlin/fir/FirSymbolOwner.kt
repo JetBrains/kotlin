@@ -19,4 +19,6 @@ interface FirSymbolOwner<E> : FirElement where E : FirSymbolOwner<E>, E : FirDec
     val symbol: AbstractFirBasedSymbol<E>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitSymbolOwner(this, data)
+
+    override fun replaceSource(newSource: FirSourceElement?)
 }

@@ -474,9 +474,17 @@ public final class OptionalUser$$serializer : java/lang/Object, kotlinx/serializ
           ALOAD (3)
           INVOKEINTERFACE (kotlinx/serialization/encoding/Encoder, beginStructure, (Lkotlinx/serialization/descriptors/SerialDescriptor;)Lkotlinx/serialization/encoding/CompositeEncoder;)
           ASTORE (4)
+          ALOAD (4)
+          ALOAD (3)
+          ICONST_0
+          INVOKEINTERFACE (kotlinx/serialization/encoding/CompositeEncoder, shouldEncodeElementDefault, (Lkotlinx/serialization/descriptors/SerialDescriptor;I)Z)
+          IFEQ (L2)
+          ICONST_1
+          GOTO (L3)
+        LABEL (L2)
           ALOAD (2)
           INVOKEVIRTUAL (OptionalUser, getUser, ()LUser;)
-        LABEL (L2)
+        LABEL (L4)
         LINENUMBER (10)
           NEW
           DUP
@@ -484,18 +492,15 @@ public final class OptionalUser$$serializer : java/lang/Object, kotlinx/serializ
           LDC ()
           INVOKESPECIAL (User, <init>, (Ljava/lang/String;Ljava/lang/String;)V)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, areEqual, (Ljava/lang/Object;Ljava/lang/Object;)Z)
-          IFNE (L3)
-        LABEL (L4)
-        LINENUMBER (9)
+          IFNE (L5)
           ICONST_1
-          GOTO (L5)
-        LABEL (L3)
-          ALOAD (4)
-          ALOAD (3)
-          ICONST_0
-          INVOKEINTERFACE (kotlinx/serialization/encoding/CompositeEncoder, shouldEncodeElementDefault, (Lkotlinx/serialization/descriptors/SerialDescriptor;I)Z)
+          GOTO (L3)
         LABEL (L5)
+          ICONST_0
+        LABEL (L3)
           IFEQ (L6)
+        LABEL (L7)
+        LINENUMBER (9)
           ALOAD (4)
           ALOAD (3)
           ICONST_0
@@ -509,7 +514,7 @@ public final class OptionalUser$$serializer : java/lang/Object, kotlinx/serializ
           ALOAD (3)
           INVOKEINTERFACE (kotlinx/serialization/encoding/CompositeEncoder, endStructure, (Lkotlinx/serialization/descriptors/SerialDescriptor;)V)
           RETURN
-        LABEL (L7)
+        LABEL (L8)
     }
 
     public void serialize(kotlinx.serialization.encoding.Encoder encoder, java.lang.Object value) {

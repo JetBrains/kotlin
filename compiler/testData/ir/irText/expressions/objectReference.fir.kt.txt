@@ -53,7 +53,7 @@ object Z {
 
     get
 
-  val anObject: <no name provided>
+  val anObject: Any
     field = { // BLOCK
       local class <no name provided> {
         private constructor() /* primary */ {

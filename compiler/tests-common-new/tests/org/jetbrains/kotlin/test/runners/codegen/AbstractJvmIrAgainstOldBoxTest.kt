@@ -37,7 +37,7 @@ open class AbstractBackendAgainstBackendBoxTestBase(
         useFrontend2BackendConverters(::ClassicFrontend2IrConverter)
         useBackendFacades(::JvmIrBackendFacade)
 
-        commonHandlersForCodegenTest()
+        commonHandlersForBoxTest()
         useInlineHandlers()
 
         useAfterAnalysisCheckers(::BlackBoxCodegenSuppressor.bind(CodegenTestDirectives.IGNORE_BACKEND_MULTI_MODULE))

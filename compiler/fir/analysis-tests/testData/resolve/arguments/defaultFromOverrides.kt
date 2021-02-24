@@ -15,8 +15,8 @@ fun foo(a: A) {
     a.foo()
     a.foo(1)
 
-    a.<!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>bar<!>()<!>
-    a.<!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>bar<!>("")<!>
+    a.<!INAPPLICABLE_CANDIDATE!>bar<!>()
+    a.<!INAPPLICABLE_CANDIDATE!>bar<!>("")
     a.bar(y = 1)
     a.bar("", 2)
 }

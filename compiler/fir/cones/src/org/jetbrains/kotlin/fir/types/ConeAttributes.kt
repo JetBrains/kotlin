@@ -9,11 +9,12 @@ import org.jetbrains.kotlin.fir.utils.AttributeArrayOwner
 import org.jetbrains.kotlin.fir.utils.Protected
 import org.jetbrains.kotlin.fir.utils.TypeRegistry
 import org.jetbrains.kotlin.fir.utils.isEmpty
+import org.jetbrains.kotlin.types.model.AnnotationMarker
 import org.jetbrains.kotlin.utils.addIfNotNull
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KClass
 
-abstract class ConeAttribute<T : ConeAttribute<T>> {
+abstract class ConeAttribute<T : ConeAttribute<T>> : AnnotationMarker {
     abstract fun union(other: @UnsafeVariance T?): T?
     abstract fun intersect(other: @UnsafeVariance T?): T?
     abstract fun isSubtypeOf(other: @UnsafeVariance T?): Boolean
@@ -67,6 +68,13 @@ class ConeAttributes private constructor(attributes: List<ConeAttribute<*>>) : A
 
     fun intersect(other: ConeAttributes): ConeAttributes {
         return perform(other) { this.intersect(it) }
+    }
+
+    fun remove(attribute: ConeAttribute<*>): ConeAttributes {
+        if (arrayMap.isEmpty()) return this
+        val attributes = arrayMap.filter { it != attribute }
+        if (attributes.size == arrayMap.size) return this
+        return create(attributes)
     }
 
     override fun iterator(): Iterator<ConeAttribute<*>> {

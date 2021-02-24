@@ -5,7 +5,7 @@
 // TESTCASE NUMBER: 1
 fun case_1(vararg x: Int?) {
     if (x != null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Array<out kotlin.Int?> & kotlin.Array<out kotlin.Int?>")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Array<out kotlin.Int?>")!>x<!>
         x[0]
     }
 }
@@ -14,15 +14,15 @@ fun case_1(vararg x: Int?) {
 fun case_2(vararg x: Int?) {
     x[0].apply {
         if (this != null) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?")!>this<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?")!>this<!>.inv()
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>this<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>this<!>.inv()
         }
     }
 
     x[0].also {
         if (it != null) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?")!>it<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?")!>it<!>.inv()
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>it<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>it<!>.inv()
         }
     }
 }
@@ -30,7 +30,7 @@ fun case_2(vararg x: Int?) {
 // TESTCASE NUMBER: 3
 fun <T> case_3(vararg x: T?) {
     if (x != null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Array<out T?> & kotlin.Array<out T?>")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Array<out T?>")!>x<!>
         x[0]
     }
 }
@@ -39,15 +39,15 @@ fun <T> case_3(vararg x: T?) {
 fun <T : Number?> case_4(vararg x: T?) {
     x[0].apply {
         if (this != null) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("T?!! & T?")!>this<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("T?!! & T?")!>this<!>.toByte()
+            <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>this<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>this<!>.toByte()
         }
     }
 
     x[0].also {
         if (it != null) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("T?!! & T?")!>it<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("T?!! & T?")!>it<!>.toByte()
+            <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>it<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>it<!>.toByte()
         }
     }
 }

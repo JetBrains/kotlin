@@ -92,6 +92,7 @@ class FirBuilderInferenceSession(
         return !skipCall(call)
     }
 
+    @Suppress("UNUSED_PARAMETER")
     private fun <T> skipCall(call: T): Boolean where T : FirResolvable, T : FirStatement {
         // TODO: what is FIR analog?
         // if (descriptor is FakeCallableDescriptorForObject) return true

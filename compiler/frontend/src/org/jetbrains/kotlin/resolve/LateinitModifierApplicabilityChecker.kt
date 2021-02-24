@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 
 object LateinitModifierApplicabilityChecker {
     fun checkLateinitModifierApplicability(trace: BindingTrace, ktDeclaration: KtCallableDeclaration, descriptor: VariableDescriptor) {
-        val modifier = ktDeclaration.modifierList?.getModifier(KtTokens.LATEINIT_KEYWORD) ?: return
+        if (!ktDeclaration.hasModifier(KtTokens.LATEINIT_KEYWORD)) return
 
         val variables = when (descriptor) {
             is PropertyDescriptor -> "properties"
@@ -43,37 +43,37 @@ object LateinitModifierApplicabilityChecker {
         val type = descriptor.type
 
         if (!descriptor.isVar) {
-            trace.report(Errors.INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is allowed only on mutable $variables"))
+            trace.report(Errors.INAPPLICABLE_LATEINIT_MODIFIER.on(ktDeclaration, "is allowed only on mutable $variables"))
         }
 
         if (type.isInlineClassType()) {
             if (UnsignedTypes.isUnsignedType(type)) {
-                trace.report(Errors.INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on $variables of unsigned types"))
+                trace.report(Errors.INAPPLICABLE_LATEINIT_MODIFIER.on(ktDeclaration, "is not allowed on $variables of unsigned types"))
             } else {
-                trace.report(Errors.INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on $variables of inline class types"))
+                trace.report(Errors.INAPPLICABLE_LATEINIT_MODIFIER.on(ktDeclaration, "is not allowed on $variables of inline class types"))
             }
         }
 
         if (type.isMarkedNullable) {
-            trace.report(Errors.INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on $variables of nullable types"))
+            trace.report(Errors.INAPPLICABLE_LATEINIT_MODIFIER.on(ktDeclaration, "is not allowed on $variables of nullable types"))
         } else if (TypeUtils.isNullableType(type)) {
             trace.report(
                 Errors.INAPPLICABLE_LATEINIT_MODIFIER.on(
-                    modifier,
+                    ktDeclaration,
                     "is not allowed on $variables of a type with nullable upper bound"
                 )
             )
         }
 
         if (KotlinBuiltIns.isPrimitiveType(type)) {
-            trace.report(Errors.INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on $variables of primitive types"))
+            trace.report(Errors.INAPPLICABLE_LATEINIT_MODIFIER.on(ktDeclaration, "is not allowed on $variables of primitive types"))
         }
 
         if (ktDeclaration is KtProperty) {
             if (ktDeclaration.hasDelegateExpression()) {
-                trace.report(Errors.INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on delegated properties"))
+                trace.report(Errors.INAPPLICABLE_LATEINIT_MODIFIER.on(ktDeclaration, "is not allowed on delegated properties"))
             } else if (ktDeclaration.hasInitializer()) {
-                trace.report(Errors.INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on $variables with initializer"))
+                trace.report(Errors.INAPPLICABLE_LATEINIT_MODIFIER.on(ktDeclaration, "is not allowed on $variables with initializer"))
             }
         }
 
@@ -84,28 +84,28 @@ object LateinitModifierApplicabilityChecker {
             val hasBackingField = trace.bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, descriptor) ?: false
 
             if (ktDeclaration is KtParameter) {
-                trace.report(Errors.INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on primary constructor parameters"))
+                trace.report(Errors.INAPPLICABLE_LATEINIT_MODIFIER.on(ktDeclaration, "is not allowed on primary constructor parameters"))
             }
 
             if (isAbstract) {
-                trace.report(Errors.INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on abstract properties"))
+                trace.report(Errors.INAPPLICABLE_LATEINIT_MODIFIER.on(ktDeclaration, "is not allowed on abstract properties"))
             }
 
             if (!hasDelegateExpressionOrInitializer) {
                 if (hasAccessorImplementation) {
                     trace.report(
                         Errors.INAPPLICABLE_LATEINIT_MODIFIER.on(
-                            modifier,
+                            ktDeclaration,
                             "is not allowed on properties with a custom getter or setter"
                         )
                     )
                 } else if (!isAbstract && !hasBackingField) {
-                    trace.report(Errors.INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on properties without backing field"))
+                    trace.report(Errors.INAPPLICABLE_LATEINIT_MODIFIER.on(ktDeclaration, "is not allowed on properties without backing field"))
                 }
             }
 
             if (descriptor.extensionReceiverParameter != null) {
-                trace.report(Errors.INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on extension properties"))
+                trace.report(Errors.INAPPLICABLE_LATEINIT_MODIFIER.on(ktDeclaration, "is not allowed on extension properties"))
             }
         }
     }

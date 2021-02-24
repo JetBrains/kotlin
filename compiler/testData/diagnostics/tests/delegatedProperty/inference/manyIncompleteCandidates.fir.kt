@@ -5,7 +5,7 @@ package test
 import first.*
 import second.*
 
-val a12 by <!AMBIGUITY!>A()<!>
+val a12 by <!AMBIGUITY!>A<!>()
 
 // FILE: first.kt
 package first

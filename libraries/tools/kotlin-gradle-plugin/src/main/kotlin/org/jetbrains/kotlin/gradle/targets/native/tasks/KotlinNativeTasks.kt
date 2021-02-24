@@ -578,8 +578,8 @@ open class KotlinNativeLink : AbstractKotlinNativeCompile<KotlinCommonToolOption
     }
 
     @get:Input
-    val embedBitcode: Framework.BitcodeEmbeddingMode by project.provider {
-        (binary as? Framework)?.embedBitcode ?: Framework.BitcodeEmbeddingMode.DISABLE
+    val embedBitcode: BitcodeEmbeddingMode by project.provider {
+        (binary as? Framework)?.embedBitcode ?: BitcodeEmbeddingMode.DISABLE
     }
 
     override fun buildCompilerArgs(): List<String> = mutableListOf<String>().apply {

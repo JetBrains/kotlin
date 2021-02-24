@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.ir.isFromJava
 import org.jetbrains.kotlin.backend.jvm.lower.MultifileFacadeFileEntry
 import org.jetbrains.kotlin.backend.jvm.lower.constantValue
+import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.isInlineCallableReference
+import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.isMappedToPrimitive
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.unboxInlineClass
 import org.jetbrains.kotlin.backend.jvm.lower.isMultifileBridge
 import org.jetbrains.kotlin.backend.jvm.lower.suspendFunctionOriginal
@@ -275,7 +277,7 @@ class ExpressionCodegen(
             return
 
         if (inlinedInto != null ||
-            (DescriptorVisibilities.isPrivate(irFunction.visibility) && !(irFunction is IrSimpleFunction && irFunction.isOperator)) ||
+            (DescriptorVisibilities.isPrivate(irFunction.visibility) && !shouldGenerateNonNullAssertionsForPrivateFun(irFunction)) ||
             irFunction.origin.isSynthetic ||
             // TODO: refine this condition to not generate nullability assertions on parameters
             //       corresponding to captured variables and anonymous object super constructor arguments
@@ -309,6 +311,13 @@ class ExpressionCodegen(
             irFunction.valueParameters.forEach(::generateNonNullAssertion)
         }
     }
+
+    // * Operator functions require non-null assertions on parameters even if they are private.
+    // * Local function for lambda survives at this stage if it was used in 'invokedynamic'-based code.
+    //   Such functions require non-null assertions on parameters.
+    private fun shouldGenerateNonNullAssertionsForPrivateFun(irFunction: IrFunction) =
+        irFunction is IrSimpleFunction && irFunction.isOperator ||
+                irFunction.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
 
     private fun generateNonNullAssertion(param: IrValueParameter) {
         val asmType = param.type.asmType
@@ -618,7 +627,20 @@ class ExpressionCodegen(
         val type = frameMap.typeOf(expression.symbol)
         mv.load(findLocalIndex(expression.symbol), type)
         unboxResultIfNeeded(expression)
+        unboxInlineClassArgumentOfInlineCallableReference(expression)
         return MaterialValue(this, type, expression.type)
+    }
+
+    // JVM_IR generates inline callable differently from the old backend:
+    // it generates them as normal functions and not objects.
+    // Thus, we need to unbox inline class argument with reference underlying type.
+    private fun unboxInlineClassArgumentOfInlineCallableReference(arg: IrGetValue) {
+        if (!arg.type.erasedUpperBound.isInline) return
+        if (arg.type.isMappedToPrimitive) return
+        if (!irFunction.isInlineCallableReference) return
+        if (irFunction.extensionReceiverParameter?.symbol == arg.symbol) return
+        if (arg.type.isNullable() && arg.type.makeNotNull().unboxInlineClass().isNullable()) return
+        StackValue.unboxInlineClass(OBJECT_TYPE, arg.type.erasedUpperBound.defaultType.toIrBasedKotlinType(), mv)
     }
 
     // We do not mangle functions if Result is the only parameter of the function,
@@ -626,6 +648,7 @@ class ExpressionCodegen(
     // bridge to unbox it. Instead, we unbox it in the non-mangled function manually.
     private fun unboxResultIfNeeded(arg: IrGetValue) {
         if (arg.type.erasedUpperBound.fqNameWhenAvailable != StandardNames.RESULT_FQ_NAME) return
+        // Do not unbox arguments of lambda, but unbox arguments of callable references
         if (irFunction.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA) return
         if (!onlyResultInlineClassParameters()) return
         if (irFunction !is IrSimpleFunction) return
@@ -1276,8 +1299,9 @@ class ExpressionCodegen(
                 generator.putValueOrProcessConstant(StackValue.constant(arg.value, type, null))
             } else {
                 val value = arg.accept(this, data)
-                value.materializeAt(value.type, value.irType)
-                generator.invokeAppend(value.type)
+                val generatingType = if (value.type == Type.VOID_TYPE) AsmTypes.UNIT_TYPE else value.type
+                value.materializeAt(generatingType, value.irType)
+                generator.invokeAppend(generatingType)
             }
         }
         generator.genToString()
@@ -1367,7 +1391,7 @@ class ExpressionCodegen(
         val reifiedTypeInliner = ReifiedTypeInliner(
             mappings,
             IrInlineIntrinsicsSupport(context, typeMapper),
-            IrTypeCheckerContext(context.irBuiltIns),
+            IrTypeSystemContextImpl(context.irBuiltIns),
             state.languageVersionSettings,
             state.unifiedNullChecks,
         )

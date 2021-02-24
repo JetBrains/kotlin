@@ -70,7 +70,7 @@ class KotlinFindUsagesSupportFirImpl : KotlinFindUsagesSupport {
         val analyzeResult = analyseInModalWindow(declaration, KotlinBundle.message("find.usages.progress.text.declaration.superMethods")) {
             (declaration.getSymbol() as? KtCallableSymbol)?.let { callableSymbol ->
                 ((callableSymbol as? KtSymbolWithKind)?.getContainingSymbol() as? KtClassOrObjectSymbol)?.let { containingClass ->
-                    val overriddenSymbols = callableSymbol.getOverriddenSymbols(containingClass)
+                    val overriddenSymbols = callableSymbol.getAllOverriddenSymbols()
 
                     val renderToPsi = overriddenSymbols.mapNotNull {
                         it.psi?.let { psi ->

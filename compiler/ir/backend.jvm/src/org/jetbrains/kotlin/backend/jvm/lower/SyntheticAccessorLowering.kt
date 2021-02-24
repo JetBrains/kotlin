@@ -217,7 +217,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
 
     private val IrConstructor.isOrShouldBeHidden: Boolean
         get() {
-            if (this in context.hiddenConstructors)
+            if (this in context.hiddenConstructors.keys)
                 return true
 
             if (origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER ||

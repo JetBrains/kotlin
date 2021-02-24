@@ -54,7 +54,7 @@ abstract class AbstractHLInspection<PSI : KtElement, INPUT : HLApplicatorInput>(
         val highlightType = presentation.getHighlightType(element)
         if (!isOnTheFly && highlightType == ProblemHighlightType.INFORMATION) return
 
-        val description = presentation.getMessage(element)
+        val description = applicator.getActionName(element, input)
         val fix = applicator.asLocalQuickFix(input, actionName = applicator.getActionName(element, input))
 
         ranges.forEach { range ->

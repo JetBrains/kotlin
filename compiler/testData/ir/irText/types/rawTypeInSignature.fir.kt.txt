@@ -79,4 +79,3 @@ class KRaw : JRaw {
   local /* final field */ val <$$delegate_0>: JRaw = j
 
 }
-

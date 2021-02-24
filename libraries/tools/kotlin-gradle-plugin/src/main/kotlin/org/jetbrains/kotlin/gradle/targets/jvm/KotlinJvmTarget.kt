@@ -131,20 +131,20 @@ open class KotlinJvmTarget @Inject constructor(
     ) {
         // Make sure Kotlin compilation dependencies appear in the Java source set classpaths:
 
-        listOf(
+        listOfNotNull(
             compilation.apiConfigurationName,
             compilation.implementationConfigurationName,
             compilation.compileOnlyConfigurationName,
-            compilation.deprecatedCompileConfigurationName
+            compilation.deprecatedCompileConfigurationName.takeIf { project.configurations.findByName(it) != null }
         ).forEach { configurationName ->
             project.addExtendsFromRelation(javaSourceSet.compileClasspathConfigurationName, configurationName)
         }
 
-        listOf(
+        listOfNotNull(
             compilation.apiConfigurationName,
             compilation.implementationConfigurationName,
             compilation.runtimeOnlyConfigurationName,
-            compilation.deprecatedRuntimeConfigurationName
+            compilation.deprecatedRuntimeConfigurationName.takeIf { project.configurations.findByName(it) != null }
         ).forEach { configurationName ->
             project.addExtendsFromRelation(javaSourceSet.runtimeClasspathConfigurationName, configurationName)
         }
@@ -152,7 +152,7 @@ open class KotlinJvmTarget @Inject constructor(
         // Add the Java source set dependencies to the Kotlin compilation compile & runtime configurations:
 
         listOfNotNull(
-            javaSourceSet.compileConfigurationName,
+            javaSourceSet.compileConfigurationName.takeIf { project.configurations.findByName(it) != null },
             javaSourceSet.compileOnlyConfigurationName,
             javaSourceSet.apiConfigurationName.takeIf { project.configurations.findByName(it) != null },
             javaSourceSet.implementationConfigurationName
@@ -161,7 +161,7 @@ open class KotlinJvmTarget @Inject constructor(
         }
 
         listOfNotNull(
-            javaSourceSet.runtimeConfigurationName,
+            javaSourceSet.runtimeConfigurationName.takeIf { project.configurations.findByName(it) != null },
             javaSourceSet.runtimeOnlyConfigurationName,
             javaSourceSet.apiConfigurationName.takeIf { project.configurations.findByName(it) != null },
             javaSourceSet.implementationConfigurationName

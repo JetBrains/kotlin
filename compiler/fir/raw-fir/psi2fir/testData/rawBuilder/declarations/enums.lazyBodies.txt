@@ -15,7 +15,7 @@ FILE: enums.kt
 
     }
     public? final? enum class Planet : R|kotlin/Enum<Planet>| {
-        public? constructor(m: Double, r: Double): R|Planet| {
+        private constructor(m: Double, r: Double): R|Planet| {
             super<R|kotlin/Enum<Planet>|>()
         }
 
@@ -75,7 +75,7 @@ FILE: enums.kt
 
     }
     public? final? enum class PseudoInsn : R|kotlin/Enum<PseudoInsn>| {
-        public? constructor(signature: String = String(()V)): R|PseudoInsn| {
+        private constructor(signature: String = String(()V)): R|PseudoInsn| {
             super<R|kotlin/Enum<PseudoInsn>|>()
         }
 

@@ -10,11 +10,13 @@ import kotlinx.metadata.klib.*
 import org.jetbrains.kotlin.backend.common.serialization.metadata.DynamicTypeDeserializer
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
+import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeFactory
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirValueParameterImpl
 import org.jetbrains.kotlin.descriptors.commonizer.core.computeExpandedType
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.*
 import org.jetbrains.kotlin.descriptors.commonizer.metadata.TypeAliasExpansion.*
 import org.jetbrains.kotlin.descriptors.commonizer.utils.DEFAULT_SETTER_VALUE_NAME
+import org.jetbrains.kotlin.descriptors.commonizer.utils.SPECIAL_CLASS_WITHOUT_SUPERTYPES_CLASS_NAMES
 import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMap
 import org.jetbrains.kotlin.types.Variance
 
@@ -99,7 +101,12 @@ internal fun CirClass.buildClass(
     }
 
     clazz.companionObject = companion?.name
-    supertypes.mapTo(clazz.supertypes) { it.buildType(context) }
+
+    val supertypes = supertypes
+    if (supertypes.isEmpty() && className !in SPECIAL_CLASS_WITHOUT_SUPERTYPES_CLASS_NAMES)
+        clazz.supertypes += CirTypeFactory.StandardTypes.ANY.buildType(context)
+    else
+        supertypes.mapTo(clazz.supertypes) { it.buildType(context) }
 }
 
 internal fun linkSealedClassesWithSubclasses(packageName: CirPackageName, classConsumer: ClassConsumer) {

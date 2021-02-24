@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.configuration.WarningMode
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING
 import org.jetbrains.kotlin.gradle.plugin.MULTIPLE_KOTLIN_PLUGINS_SPECIFIC_PROJECTS_WARNING
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
@@ -978,12 +979,26 @@ class KotlinGradleIT : BaseGradleIT() {
             build(":projB:compileKotlin") {
                 assertSuccessful()
             }
+
+            val projectGradleVersion = GradleVersion.version(chooseWrapperVersionOrFinishTest())
             // Break dependency resolution by providing incompatible custom attributes in the target:
             gradleBuildScript("projB").appendText("\nkotlin.target.attributes.attribute(targetAttribute, \"bar\")")
             build(":projB:compileKotlin") {
                 assertFailed()
-                assertContains("Required com.example.target 'bar'")
+                if (projectGradleVersion < GradleVersion.version("6.4")) {
+                    assertContains("Required com.example.target 'bar'")
+                } else {
+                    assertContains(
+                        "No matching variant of project :projA was found. The consumer was configured to find an API of a library " +
+                            "compatible with Java 8, preferably in the form of class files, " +
+                            "and its dependencies declared externally, " +
+                            "as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm', " +
+                            "attribute 'com.example.compilation' with value 'foo', " +
+                            "attribute 'com.example.target' with value 'bar' but:"
+                    )
+                }
             }
+
             // And using the compilation attributes (fix the target attributes first):
             gradleBuildScript("projB").appendText(
                 "\n" + """
@@ -993,7 +1008,18 @@ class KotlinGradleIT : BaseGradleIT() {
             )
             build(":projB:compileKotlin") {
                 assertFailed()
-                assertContains("Required com.example.compilation 'bar'")
+                val projectGradleVersion = project.chooseWrapperVersionOrFinishTest()
+                if (GradleVersion.version(projectGradleVersion) < GradleVersion.version("6.4")) {
+                    assertContains("Required com.example.compilation 'bar'")
+                } else {
+                    assertContains(
+                        "No matching variant of project :projA was found. The consumer was configured to find an API of a library " +
+                            "compatible with Java 8, preferably in the form of class files, and its dependencies declared externally, " +
+                            "as well as attribute 'org.jetbrains.kotlin.platform.type' with value 'jvm', " +
+                            "attribute 'com.example.compilation' with value 'bar', " +
+                            "attribute 'com.example.target' with value 'foo' but:"
+                    )
+                }
             }
         }
 

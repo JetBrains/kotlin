@@ -11,7 +11,6 @@ import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
-import org.jetbrains.kotlin.gradle.utils.disableTaskOnConfigurationCacheBuild
 import java.io.File
 
 open class KotlinNpmInstallTask : DefaultTask() {
@@ -28,11 +27,6 @@ open class KotlinNpmInstallTask : DefaultTask() {
     private val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
     private val resolutionManager get() = nodeJs.npmResolutionManager
 
-    init {
-        // TODO: temporary workaround for configuration cache enabled builds
-        disableTaskOnConfigurationCacheBuild { resolutionManager.toString() }
-    }
-
     @Input
     val args: MutableList<String> = mutableListOf()
 
@@ -44,7 +38,7 @@ open class KotlinNpmInstallTask : DefaultTask() {
 
     @get:InputFiles
     val preparedFiles: Collection<File> by lazy {
-        nodeJs.packageManager.preparedFiles(project)
+        nodeJs.packageManager.preparedFiles(nodeJs)
     }
 
     // avoid using node_modules as output directory, as it is significantly slows down build
@@ -58,7 +52,11 @@ open class KotlinNpmInstallTask : DefaultTask() {
 
     @TaskAction
     fun resolve() {
-        resolutionManager.installIfNeeded(args = args)
+        resolutionManager.installIfNeeded(
+            args = args,
+            services = services,
+            logger = logger
+        )
     }
 
     companion object {

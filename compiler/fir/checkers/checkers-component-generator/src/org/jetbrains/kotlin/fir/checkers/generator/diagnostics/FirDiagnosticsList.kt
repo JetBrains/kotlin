@@ -25,18 +25,18 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 
 
-@Suppress("UNUSED_VARIABLE", "LocalVariableName")
+@Suppress("UNUSED_VARIABLE", "LocalVariableName", "ClassName", "unused")
 @OptIn(PrivateForInline::class)
-val DIAGNOSTICS_LIST = DiagnosticListBuilder.buildDiagnosticList {
-    group("Miscellaneous") {
+object DIAGNOSTICS_LIST : DiagnosticList() {
+    val Miscellaneous by object : DiagnosticGroup("Miscellaneous") {
         val SYNTAX by error<FirSourceElement, PsiElement>()
         val OTHER_ERROR by error<FirSourceElement, PsiElement>()
     }
 
-    group("General syntax") {
+    val GENERAL_SYNTAX by object : DiagnosticGroup("General syntax") {
         val ILLEGAL_CONST_EXPRESSION by error<FirSourceElement, PsiElement>()
         val ILLEGAL_UNDERSCORE by error<FirSourceElement, PsiElement>()
-        val EXPRESSION_REQUIRED by error<FirSourceElement, PsiElement>()
+        val EXPRESSION_REQUIRED by error<FirSourceElement, PsiElement>(PositioningStrategy.SELECTOR_BY_QUALIFIED)
         val BREAK_OR_CONTINUE_OUTSIDE_A_LOOP by error<FirSourceElement, PsiElement>()
         val NOT_A_LOOP_LABEL by error<FirSourceElement, PsiElement>()
         val VARIABLE_EXPECTED by error<FirSourceElement, PsiElement>()
@@ -44,11 +44,11 @@ val DIAGNOSTICS_LIST = DiagnosticListBuilder.buildDiagnosticList {
         val DELEGATION_IN_INTERFACE by error<FirSourceElement, PsiElement>()
     }
 
-    group("Unresolved") {
-        val HIDDEN by error<FirSourceElement, PsiElement> {
+    val UNRESOLVED by object : DiagnosticGroup("Unresolved") {
+        val HIDDEN by error<FirSourceElement, PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<AbstractFirBasedSymbol<*>>("hidden")
         }
-        val UNRESOLVED_REFERENCE by error<FirSourceElement, PsiElement> {
+        val UNRESOLVED_REFERENCE by error<FirSourceElement, PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<String>("reference")
         }
         val UNRESOLVED_LABEL by error<FirSourceElement, PsiElement>()
@@ -59,16 +59,16 @@ val DIAGNOSTICS_LIST = DiagnosticListBuilder.buildDiagnosticList {
         val NO_THIS by error<FirSourceElement, PsiElement>()
     }
 
-    group("Super") {
+    val SUPER by object : DiagnosticGroup("Super") {
         val SUPER_IS_NOT_AN_EXPRESSION by error<FirSourceElement, PsiElement>()
         val SUPER_NOT_AVAILABLE by error<FirSourceElement, PsiElement>()
-        val ABSTRACT_SUPER_CALL by error<FirSourceElement, PsiElement>()
+        val ABSTRACT_SUPER_CALL by error<FirSourceElement, PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED)
         val INSTANCE_ACCESS_BEFORE_SUPER_CALL by error<FirSourceElement, PsiElement> {
             parameter<String>("target")
         }
     }
 
-    group("Supertypes") {
+    val SUPERTYPES by object : DiagnosticGroup("Supertypes") {
         val TYPE_PARAMETER_AS_SUPERTYPE by error<FirSourceElement, PsiElement>()
         val ENUM_AS_SUPERTYPE by error<FirSourceElement, PsiElement>()
         val RECURSION_IN_SUPERTYPES by error<FirSourceElement, PsiElement>()
@@ -82,13 +82,16 @@ val DIAGNOSTICS_LIST = DiagnosticListBuilder.buildDiagnosticList {
         val CLASS_IN_SUPERTYPE_FOR_ENUM by error<FirSourceElement, PsiElement>()
         val SEALED_SUPERTYPE by error<FirSourceElement, PsiElement>()
         val SEALED_SUPERTYPE_IN_LOCAL_CLASS by error<FirSourceElement, PsiElement>()
+        val SUPERTYPE_NOT_A_CLASS_OR_INTERFACE by error<FirSourceElement, KtElement> {
+            parameter<String>("reason")
+        }
     }
 
-    group(" Constructor problems") {
+    val CONSTRUCTOR_PROBLEMS by object : DiagnosticGroup("Constructor problems") {
         val CONSTRUCTOR_IN_OBJECT by error<FirSourceElement, KtDeclaration>(PositioningStrategy.DECLARATION_SIGNATURE)
         val CONSTRUCTOR_IN_INTERFACE by error<FirSourceElement, KtDeclaration>(PositioningStrategy.DECLARATION_SIGNATURE)
         val NON_PRIVATE_CONSTRUCTOR_IN_ENUM by error<FirSourceElement, PsiElement>()
-        val NON_PRIVATE_CONSTRUCTOR_IN_SEALED by error<FirSourceElement, PsiElement>()
+        val NON_PRIVATE_OR_PROTECTED_CONSTRUCTOR_IN_SEALED by error<FirSourceElement, PsiElement>()
         val CYCLIC_CONSTRUCTOR_DELEGATION_CALL by warning<FirSourceElement, PsiElement>()
         val PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED by warning<FirSourceElement, PsiElement>(PositioningStrategy.SECONDARY_CONSTRUCTOR_DELEGATION_CALL)
         val SUPERTYPE_INITIALIZED_WITHOUT_PRIMARY_CONSTRUCTOR by warning<FirSourceElement, PsiElement>()
@@ -98,7 +101,7 @@ val DIAGNOSTICS_LIST = DiagnosticListBuilder.buildDiagnosticList {
         val SEALED_CLASS_CONSTRUCTOR_CALL by error<FirSourceElement, PsiElement>()
     }
 
-    group("Annotations") {
+    val ANNOTATIONS by object : DiagnosticGroup("Annotations") {
         val ANNOTATION_ARGUMENT_KCLASS_LITERAL_OF_TYPE_PARAMETER_ERROR by error<FirSourceElement, KtExpression>()
         val ANNOTATION_ARGUMENT_MUST_BE_CONST by error<FirSourceElement, KtExpression>()
         val ANNOTATION_ARGUMENT_MUST_BE_ENUM_CONST by error<FirSourceElement, KtExpression>()
@@ -116,7 +119,7 @@ val DIAGNOSTICS_LIST = DiagnosticListBuilder.buildDiagnosticList {
         val VAR_ANNOTATION_PARAMETER by error<FirSourceElement, KtParameter>(PositioningStrategy.VAL_OR_VAR_NODE)
     }
 
-    group("Exposed visibility group") {
+    val EXPOSED_VISIBILITY by object : DiagnosticGroup("Exposed visibility") {
         val EXPOSED_TYPEALIAS_EXPANDED_TYPE by exposedVisibilityError<KtNamedDeclaration>(PositioningStrategy.DECLARATION_NAME)
         val EXPOSED_FUNCTION_RETURN_TYPE by exposedVisibilityError<KtNamedDeclaration>(PositioningStrategy.DECLARATION_NAME)
 
@@ -128,7 +131,7 @@ val DIAGNOSTICS_LIST = DiagnosticListBuilder.buildDiagnosticList {
         val EXPOSED_TYPE_PARAMETER_BOUND by exposedVisibilityError<KtTypeReference>()
     }
 
-    group("Modifiers") {
+    val MODIFIERS by object : DiagnosticGroup("Modifiers") {
         val INAPPLICABLE_INFIX_MODIFIER by error<FirSourceElement, PsiElement>()
         val REPEATED_MODIFIER by error<FirSourceElement, PsiElement> {
             parameter<KtModifierKeywordToken>("modifier")
@@ -148,21 +151,22 @@ val DIAGNOSTICS_LIST = DiagnosticListBuilder.buildDiagnosticList {
         val REDUNDANT_OPEN_IN_INTERFACE by warning<FirSourceElement, KtModifierListOwner>(PositioningStrategy.OPEN_MODIFIER)
     }
 
-    group("Applicability") {
-        val NONE_APPLICABLE by error<FirSourceElement, PsiElement> {
+    val APPLICABILITY by object : DiagnosticGroup("Applicability") {
+        val NONE_APPLICABLE by error<FirSourceElement, PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<Collection<AbstractFirBasedSymbol<*>>>("candidates")
         }
 
-        val INAPPLICABLE_CANDIDATE by error<FirSourceElement, PsiElement> {
+        val INAPPLICABLE_CANDIDATE by error<FirSourceElement, PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<AbstractFirBasedSymbol<*>>("candidate")
         }
-        val INAPPLICABLE_LATEINIT_MODIFIER by error<FirSourceElement, PsiElement> {
+
+        val INAPPLICABLE_LATEINIT_MODIFIER by error<FirSourceElement, KtModifierListOwner>(PositioningStrategy.LATEINIT_MODIFIER) {
             parameter<String>("reason")
         }
     }
 
-    group("Ambiguity") {
-        val AMBIGUITY by error<FirSourceElement, PsiElement> {
+    val AMBIGUIRY by object : DiagnosticGroup("Ambiguity") {
+        val AMBIGUITY by error<FirSourceElement, PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<Collection<AbstractFirBasedSymbol<*>>>("candidates")
         }
         val ASSIGN_OPERATOR_AMBIGUITY by error<FirSourceElement, PsiElement> {
@@ -170,7 +174,7 @@ val DIAGNOSTICS_LIST = DiagnosticListBuilder.buildDiagnosticList {
         }
     }
 
-    group("Types & type parameters") {
+    val TYPES_AND_TYPE_PARAMETERS by object : DiagnosticGroup("Types & type parameters") {
         val TYPE_MISMATCH by error<FirSourceElement, PsiElement> {
             parameter<ConeKotlinType>("expectedType")
             parameter<ConeKotlinType>("actualType")
@@ -203,7 +207,7 @@ val DIAGNOSTICS_LIST = DiagnosticListBuilder.buildDiagnosticList {
         val INNER_CLASS_OF_GENERIC_THROWABLE_SUBCLASS by error<FirSourceElement, KtClassOrObject>(PositioningStrategy.DECLARATION_NAME)
     }
 
-    group("overrides") {
+    val OVERRIDES by object : DiagnosticGroup("overrides") {
         val NOTHING_TO_OVERRIDE by error<FirSourceElement, KtModifierListOwner>(PositioningStrategy.OVERRIDE_MODIFIER) {
             parameter<FirMemberDeclaration>("declaration")
         }
@@ -240,20 +244,22 @@ val DIAGNOSTICS_LIST = DiagnosticListBuilder.buildDiagnosticList {
             parameter<FirMemberDeclaration>("overridingDeclaration")
             parameter<FirMemberDeclaration>("overriddenDeclaration")
         }
+        val NON_FINAL_MEMBER_IN_FINAL_CLASS by warning<FirSourceElement, KtNamedDeclaration>(PositioningStrategy.OPEN_MODIFIER)
+        val NON_FINAL_MEMBER_IN_OBJECT by warning<FirSourceElement, KtNamedDeclaration>(PositioningStrategy.OPEN_MODIFIER)
     }
 
-    group("Redeclarations") {
+    val REDECLARATIONS by object : DiagnosticGroup("Redeclarations") {
         val MANY_COMPANION_OBJECTS by error<FirSourceElement, PsiElement>()
         val CONFLICTING_OVERLOADS by error<FirSourceElement, PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
-            parameter<String>("conflictingOverloads") // TODO use Collection<Symbol> instead of String
+            parameter<Collection<AbstractFirBasedSymbol<*>>>("conflictingOverloads")
         }
         val REDECLARATION by error<FirSourceElement, PsiElement>() {
-            parameter<String>("conflictingDeclaration") // TODO use Collection<Symbol> instead of String
+            parameter<Collection<AbstractFirBasedSymbol<*>>>("conflictingDeclarations")
         }
         val ANY_METHOD_IMPLEMENTED_IN_INTERFACE by error<FirSourceElement, PsiElement>()
     }
 
-    group("Invalid local declarations") {
+    val INVALID_LOCAL_DECLARATIONS by object : DiagnosticGroup("Invalid local declarations") {
         val LOCAL_OBJECT_NOT_ALLOWED by error<FirSourceElement, KtNamedDeclaration>(PositioningStrategy.DECLARATION_NAME) {
             parameter<Name>("objectName")
         }
@@ -262,7 +268,7 @@ val DIAGNOSTICS_LIST = DiagnosticListBuilder.buildDiagnosticList {
         }
     }
 
-    group("Functions") {
+    val FUNCTIONS by object : DiagnosticGroup("Functions") {
         val ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS by error<FirSourceElement, KtFunction>(PositioningStrategy.MODALITY_MODIFIER) {
             parameter<FirMemberDeclaration>("function")
             parameter<FirMemberDeclaration>("containingClass") // TODO use FirClass instead of FirMemberDeclaration
@@ -288,7 +294,7 @@ val DIAGNOSTICS_LIST = DiagnosticListBuilder.buildDiagnosticList {
         val USELESS_VARARG_ON_PARAMETER by warning<FirSourceElement, KtParameter>()
     }
 
-    group("Properties & accessors") {
+    val PROPERTIES_ANS_ACCESSORS by object : DiagnosticGroup("Properties & accessors") {
         val ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS by error<FirSourceElement, KtModifierListOwner>(PositioningStrategy.MODALITY_MODIFIER) {
             parameter<FirMemberDeclaration>("property")
             parameter<FirMemberDeclaration>("containingClass") // TODO use FirClass instead of FirMemberDeclaration
@@ -314,14 +320,15 @@ val DIAGNOSTICS_LIST = DiagnosticListBuilder.buildDiagnosticList {
         val EXPECTED_PRIVATE_DECLARATION by error<FirSourceElement, KtModifierListOwner>(PositioningStrategy.VISIBILITY_MODIFIER)
     }
 
-    group("Multi-platform projects") {
+    val MPP_PROJECTS by object : DiagnosticGroup("Multi-platform projects") {
         val EXPECTED_DECLARATION_WITH_BODY by error<FirSourceElement, KtDeclaration>(PositioningStrategy.DECLARATION_SIGNATURE)
         val EXPECTED_PROPERTY_INITIALIZER by error<FirSourceElement, KtExpression>()
+
         // TODO: need to cover `by` as well as delegate expression
         val EXPECTED_DELEGATED_PROPERTY by error<FirSourceElement, KtPropertyDelegate>()
     }
 
-    group("Destructuring declaration") {
+    val DESTRUCTING_DECLARATION by object : DiagnosticGroup("Destructuring declaration") {
         val INITIALIZER_REQUIRED_FOR_DESTRUCTURING_DECLARATION by error<FirSourceElement, KtDestructuringDeclaration>()
         val COMPONENT_FUNCTION_MISSING by error<FirSourceElement, PsiElement> {
             parameter<Name>("missingFunctionName")
@@ -339,7 +346,7 @@ val DIAGNOSTICS_LIST = DiagnosticListBuilder.buildDiagnosticList {
         // TODO: val COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH by ...
     }
 
-    group("Control flow diagnostics") {
+    val CONTROL_FLOW by object : DiagnosticGroup("Control flow diagnostics") {
         val UNINITIALIZED_VARIABLE by error<FirSourceElement, PsiElement> {
             parameter<FirPropertySymbol>("variable")
         }
@@ -354,11 +361,11 @@ val DIAGNOSTICS_LIST = DiagnosticListBuilder.buildDiagnosticList {
         val WRONG_IMPLIES_CONDITION by warning<FirSourceElement, PsiElement>()
     }
 
-    group("Nullability") {
-        val UNSAFE_CALL by error<FirSourceElement, PsiElement>(PositioningStrategy.DOT_BY_SELECTOR) {
+    val NULLABILITY by object : DiagnosticGroup("Nullability") {
+        val UNSAFE_CALL by error<FirSourceElement, PsiElement>(PositioningStrategy.DOT_BY_QUALIFIED) {
             parameter<ConeKotlinType>("receiverType")
         }
-        val UNSAFE_IMPLICIT_INVOKE_CALL by error<FirSourceElement, PsiElement> {
+        val UNSAFE_IMPLICIT_INVOKE_CALL by error<FirSourceElement, PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<ConeKotlinType>("receiverType")
         }
         val UNSAFE_INFIX_CALL by error<FirSourceElement, KtExpression> {
@@ -374,14 +381,20 @@ val DIAGNOSTICS_LIST = DiagnosticListBuilder.buildDiagnosticList {
         // TODO: val UNEXPECTED_SAFE_CALL by ...
     }
 
-    group("When expressions") {
+    val WHNE_EXPRESSIONS by object : DiagnosticGroup("When expressions") {
         val NO_ELSE_IN_WHEN by error<FirSourceElement, KtWhenExpression>(PositioningStrategy.WHEN_EXPRESSION) {
             parameter<List<WhenMissingCase>>("missingWhenCases")
         }
         val INVALID_IF_AS_EXPRESSION by error<FirSourceElement, KtIfExpression>(PositioningStrategy.IF_EXPRESSION)
     }
 
-    group("Extended checkers") {
+    val FUNCTION_CONTRACTS by object : DiagnosticGroup("Function contracts") {
+        val ERROR_IN_CONTRACT_DESCRIPTION by error<FirSourceElement, KtElement>(PositioningStrategy.SELECTOR_BY_QUALIFIED) {
+            parameter<String>("reason")
+        }
+    }
+
+    val EXTENDED_CHECKERS by object : DiagnosticGroup("Extended checkers") {
         val REDUNDANT_VISIBILITY_MODIFIER by warning<FirSourceElement, KtModifierListOwner>(PositioningStrategy.VISIBILITY_MODIFIER)
         val REDUNDANT_MODALITY_MODIFIER by warning<FirSourceElement, KtModifierListOwner>(PositioningStrategy.MODALITY_MODIFIER)
         val REDUNDANT_RETURN_UNIT_TYPE by warning<FirSourceElement, PsiTypeElement>()
@@ -389,7 +402,7 @@ val DIAGNOSTICS_LIST = DiagnosticListBuilder.buildDiagnosticList {
         val REDUNDANT_SINGLE_EXPRESSION_STRING_TEMPLATE by warning<FirSourceElement, PsiElement>()
         val CAN_BE_VAL by warning<FirSourceElement, KtDeclaration>(PositioningStrategy.VAL_OR_VAR_NODE)
         val CAN_BE_REPLACED_WITH_OPERATOR_ASSIGNMENT by warning<FirSourceElement, KtExpression>(PositioningStrategy.OPERATOR)
-        val REDUNDANT_CALL_OF_CONVERSION_METHOD by warning<FirSourceElement, PsiElement>()
+        val REDUNDANT_CALL_OF_CONVERSION_METHOD by warning<FirSourceElement, PsiElement>(PositioningStrategy.SELECTOR_BY_QUALIFIED)
         val ARRAY_EQUALITY_OPERATOR_CAN_BE_REPLACED_WITH_EQUALS by warning<FirSourceElement, KtExpression>(PositioningStrategy.OPERATOR)
         val EMPTY_RANGE by warning<FirSourceElement, PsiElement>()
         val REDUNDANT_SETTER_PARAMETER_TYPE by warning<FirSourceElement, PsiElement>()
@@ -397,11 +410,11 @@ val DIAGNOSTICS_LIST = DiagnosticListBuilder.buildDiagnosticList {
         val ASSIGNED_VALUE_IS_NEVER_READ by warning<FirSourceElement, PsiElement>()
         val VARIABLE_INITIALIZER_IS_REDUNDANT by warning<FirSourceElement, PsiElement>()
         val VARIABLE_NEVER_READ by warning<FirSourceElement, KtNamedDeclaration>(PositioningStrategy.DECLARATION_NAME)
-        val USELESS_CALL_ON_NOT_NULL by warning<FirSourceElement, PsiElement>()
+        val USELESS_CALL_ON_NOT_NULL by warning<FirSourceElement, PsiElement>(PositioningStrategy.SELECTOR_BY_QUALIFIED)
     }
 }
 
-private inline fun <reified P : PsiElement> DiagnosticListBuilder.exposedVisibilityError(
+private inline fun <reified P : PsiElement> DiagnosticGroup.exposedVisibilityError(
     positioningStrategy: PositioningStrategy = PositioningStrategy.DEFAULT
 ) = error<FirSourceElement, P>(positioningStrategy) {
     parameter<FirEffectiveVisibility>("elementVisibility")

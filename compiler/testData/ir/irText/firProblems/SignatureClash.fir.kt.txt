@@ -76,4 +76,3 @@ data class DataClass : Derived, Delegate {
   }
 
 }
-

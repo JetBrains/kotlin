@@ -11,10 +11,12 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.backend.generators.FakeOverrideGenerator
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
+import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
@@ -23,11 +25,8 @@ import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.SyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.calls.originalConstructorIfTypeAlias
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
-import org.jetbrains.kotlin.fir.scopes.ProcessorAction
+import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
-import org.jetbrains.kotlin.fir.scopes.processDirectlyOverriddenFunctions
-import org.jetbrains.kotlin.fir.scopes.processDirectlyOverriddenProperties
-import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.AccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
@@ -47,6 +46,7 @@ import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtQualifiedExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.types.ConstantValueKind
@@ -56,9 +56,24 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 internal fun <T : IrElement> FirElement.convertWithOffsets(
     f: (startOffset: Int, endOffset: Int) -> T
 ): T {
-    if (psi is PsiCompiledElement) return f(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
-    val startOffset = psi?.startOffsetSkippingComments ?: UNDEFINED_OFFSET
-    val endOffset = psi?.endOffset ?: UNDEFINED_OFFSET
+    val psi = psi
+    if (psi is PsiCompiledElement || psi == null) return f(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
+    val startOffset = psi.startOffsetSkippingComments
+    val endOffset = psi.endOffset
+    return f(startOffset, endOffset)
+}
+
+internal fun <T : IrElement> FirQualifiedAccess.convertWithOffsets(
+    f: (startOffset: Int, endOffset: Int) -> T
+): T {
+    val psi = psi
+    if (psi is PsiCompiledElement || psi == null) return f(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
+    val startOffset = if (psi is KtQualifiedExpression) {
+        (psi.selectorExpression ?: psi).startOffsetSkippingComments
+    } else {
+        psi.startOffsetSkippingComments
+    }
+    val endOffset = psi.endOffset
     return f(startOffset, endOffset)
 }
 
@@ -71,16 +86,32 @@ internal enum class ConversionTypeOrigin {
 
 class ConversionTypeContext internal constructor(
     internal val definitelyNotNull: Boolean,
-    internal val origin: ConversionTypeOrigin
+    internal val invariantProjection: Boolean = false,
+    internal val origin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT,
 ) {
-    fun definitelyNotNull() = ConversionTypeContext(true, origin)
+    fun definitelyNotNull() = ConversionTypeContext(
+        definitelyNotNull = true,
+        invariantProjection = invariantProjection,
+        origin = origin
+    )
 
-    fun inSetter() = ConversionTypeContext(definitelyNotNull, ConversionTypeOrigin.SETTER)
+    fun inSetter() = ConversionTypeContext(
+        definitelyNotNull = definitelyNotNull,
+        invariantProjection = invariantProjection,
+        origin = ConversionTypeOrigin.SETTER
+    )
+
+    fun withInvariantProjections() = ConversionTypeContext(
+        definitelyNotNull = definitelyNotNull,
+        invariantProjection = true,
+        origin = origin
+    )
 
     companion object {
         internal val DEFAULT = ConversionTypeContext(
-            definitelyNotNull = false, origin = ConversionTypeOrigin.DEFAULT
+            definitelyNotNull = false, origin = ConversionTypeOrigin.DEFAULT, invariantProjection = false
         )
+        internal val WITH_INVARIANT = DEFAULT.withInvariantProjections()
     }
 }
 
@@ -259,21 +290,64 @@ internal fun FirSimpleFunction.generateOverriddenFunctionSymbols(
     containingClass: FirClass<*>,
     session: FirSession,
     scopeSession: ScopeSession,
-    declarationStorage: Fir2IrDeclarationStorage
+    declarationStorage: Fir2IrDeclarationStorage,
+    fakeOverrideGenerator: FakeOverrideGenerator,
 ): List<IrSimpleFunctionSymbol> {
+    val superClasses = containingClass.getSuperTypesAsIrClasses(declarationStorage) ?: return emptyList()
+
     val scope = containingClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true)
     scope.processFunctionsByName(name) {}
     val overriddenSet = mutableSetOf<IrSimpleFunctionSymbol>()
-    scope.processDirectlyOverriddenFunctions(symbol) {
+    scope.processOverriddenFunctionsFromSuperClasses(symbol, containingClass) {
         if (it.fir.visibility == Visibilities.Private) {
-            return@processDirectlyOverriddenFunctions ProcessorAction.NEXT
+            return@processOverriddenFunctionsFromSuperClasses ProcessorAction.NEXT
         }
 
-        val overridden = declarationStorage.getIrFunctionSymbol(it.unwrapFakeOverrides())
-        overriddenSet += overridden as IrSimpleFunctionSymbol
+        for (overridden in fakeOverrideGenerator.getOverriddenSymbolsInSupertypes(it, superClasses)) {
+            overriddenSet += overridden
+        }
+
         ProcessorAction.NEXT
     }
+
     return overriddenSet.toList()
+}
+
+fun FirTypeScope.processOverriddenFunctionsFromSuperClasses(
+    functionSymbol: FirNamedFunctionSymbol,
+    containingClass: FirClass<*>,
+    processor: (FirNamedFunctionSymbol) -> ProcessorAction
+): ProcessorAction = processDirectOverriddenFunctionsWithBaseScope(functionSymbol) { overridden, baseScope ->
+    val unwrapped =
+        overridden.fir.delegatedWrapperData?.takeIf { it.containingClass == containingClass.symbol.toLookupTag() }?.wrapped?.symbol
+            ?: overridden
+
+    if (unwrapped.containingClass() == containingClass.symbol.toLookupTag()) {
+        baseScope.processOverriddenFunctionsFromSuperClasses(unwrapped, containingClass, processor)
+    } else {
+        processor(overridden)
+    }
+}
+
+fun FirTypeScope.processOverriddenPropertiesFromSuperClasses(
+    propertySymbol: FirPropertySymbol,
+    containingClass: FirClass<*>,
+    processor: (FirPropertySymbol) -> ProcessorAction
+): ProcessorAction = processDirectOverriddenPropertiesWithBaseScope(propertySymbol) { overridden, baseScope ->
+    if (overridden.containingClass() == containingClass.symbol.toLookupTag()) {
+        baseScope.processOverriddenPropertiesFromSuperClasses(overridden, containingClass, processor)
+    } else {
+        processor(overridden)
+    }
+}
+
+private fun FirClass<*>.getSuperTypesAsIrClasses(
+    declarationStorage: Fir2IrDeclarationStorage
+): Set<IrClass>? {
+    val irClass =
+        declarationStorage.classifierStorage.getIrClassSymbol(symbol).owner as? IrClass ?: return null
+
+    return irClass.superTypes.mapNotNull { it.classifierOrNull?.owner as? IrClass }.toSet()
 }
 
 internal fun FirProperty.generateOverriddenAccessorSymbols(
@@ -281,23 +355,24 @@ internal fun FirProperty.generateOverriddenAccessorSymbols(
     isGetter: Boolean,
     session: FirSession,
     scopeSession: ScopeSession,
-    declarationStorage: Fir2IrDeclarationStorage
+    declarationStorage: Fir2IrDeclarationStorage,
+    fakeOverrideGenerator: FakeOverrideGenerator,
 ): List<IrSimpleFunctionSymbol> {
     val scope = containingClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true)
     scope.processPropertiesByName(name) {}
     val overriddenSet = mutableSetOf<IrSimpleFunctionSymbol>()
-    scope.processDirectlyOverriddenProperties(symbol) {
-        if (it is FirAccessorSymbol || it.fir.visibility == Visibilities.Private) {
-            return@processDirectlyOverriddenProperties ProcessorAction.NEXT
+    val superClasses = containingClass.getSuperTypesAsIrClasses(declarationStorage) ?: return emptyList()
+
+    scope.processOverriddenPropertiesFromSuperClasses(symbol, containingClass) {
+        if (it.fir.visibility == Visibilities.Private) {
+            return@processOverriddenPropertiesFromSuperClasses ProcessorAction.NEXT
         }
 
-        val unwrapped =
-            it.fir.delegatedWrapperData?.takeIf { it.containingClass == containingClass.symbol.toLookupTag() }?.wrapped?.symbol ?: it
-
-        val overriddenProperty = declarationStorage.getIrPropertySymbol(unwrapped.unwrapFakeOverrides()) as IrPropertySymbol
-        val overriddenAccessor = if (isGetter) overriddenProperty.owner.getter?.symbol else overriddenProperty.owner.setter?.symbol
-        if (overriddenAccessor != null) {
-            overriddenSet += overriddenAccessor
+        for (overriddenProperty in fakeOverrideGenerator.getOverriddenSymbolsInSupertypes(it, superClasses)) {
+            val overriddenAccessor = if (isGetter) overriddenProperty.owner.getter?.symbol else overriddenProperty.owner.setter?.symbol
+            if (overriddenAccessor != null) {
+                overriddenSet += overriddenAccessor
+            }
         }
         ProcessorAction.NEXT
     }

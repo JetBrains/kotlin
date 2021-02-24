@@ -142,7 +142,7 @@ internal class KotlinObjCClassInfoGenerator(override val context: Context) : Con
         val functionType = functionType(classDataPointer.llvmType, false, int8TypePtr, int8TypePtr)
         val functionName = "kobjcclassdataimp:${irClass.fqNameForIrSerialization}#internal"
 
-        val function = generateFunction(codegen, functionType, functionName) {
+        val function = generateFunctionNoRuntime(codegen, functionType, functionName) {
             ret(classDataPointer.llvm)
         }.also {
             LLVMSetLinkage(it, LLVMLinkage.LLVMPrivateLinkage)

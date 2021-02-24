@@ -57,7 +57,7 @@ import libCase4.b.*
 import kotlin.text.*
 
 fun case4() {
-    <!DEBUG_INFO_CALL("fqName: fqName is unknown; typeCall: unresolved")!><!AMBIGUITY!>Regex<!>("")<!>
+    <!DEBUG_INFO_CALL("fqName: libCase4.a.Regex; typeCall: function")!>Regex("")<!>
 }
 
 // FILE: Lib4.kt

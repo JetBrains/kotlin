@@ -42,7 +42,7 @@ fun test_2(inv: Inv2<A, B>) {
 
 fun test_3(inv: Inv3<A, B, C>) {
     inv.k().foo()
-    inv.t().<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>bar<!>()<!>
+    inv.t().<!UNRESOLVED_REFERENCE!>bar<!>()
     inv.t().baz()
 }
 
@@ -74,21 +74,21 @@ typealias Invariant1<X> = Invariant<X>
 fun test_5(a: A, in1: In1<A>, in2: In1<in A>, in3: In1<out A>) {
     in1.take(a)
     in2.take(a)
-    in3.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>take<!>(a)<!>
+    in3.<!UNRESOLVED_REFERENCE!>take<!>(a)
 }
 
 fun test_6(a: A, out1: Out1<A>, out2: Out1<in A>, out3: Out1<out A>) {
     out1.value().foo()
-    out2.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>value<!>()<!>.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>foo<!>()<!>
+    out2.<!UNRESOLVED_REFERENCE!>value<!>().<!UNRESOLVED_REFERENCE!>foo<!>()
     out3.value().foo()
 }
 
 fun test_7(a: A, inv1: Invariant1<A>, inv2: Invariant1<in A>, inv3: Invariant1<out A>) {
     inv1.value().foo()
-    inv2.value().<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>foo<!>()<!>
+    inv2.value().<!UNRESOLVED_REFERENCE!>foo<!>()
     inv3.value().foo()
 
     inv1.take(a)
     inv2.take(a)
-    inv3.<!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>take<!>(a)<!>
+    inv3.<!INAPPLICABLE_CANDIDATE!>take<!>(a)
 }

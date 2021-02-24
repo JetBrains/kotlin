@@ -9,11 +9,11 @@
  */
 fun case_1(x: Class?) {
     if (x!!.prop_8?.prop_8?.prop_8?.prop_8 != null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>.prop_8
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8
     }
 }
 
@@ -24,11 +24,11 @@ fun case_1(x: Class?) {
  */
 fun case_2(x: Class?) {
     if (x?.prop_8!!.prop_8?.prop_8?.prop_8 !== null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>.prop_8
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>.prop_8.prop_8
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>.prop_8.prop_8<!UNSAFE_CALL!>.<!>prop_8
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>.prop_8.prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8.prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8.prop_8<!UNSAFE_CALL!>.<!>prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8.prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8
     }
 }
 
@@ -39,11 +39,11 @@ fun case_2(x: Class?) {
  */
 fun case_3(x: Class?) {
     if (x?.prop_8?.prop_8?.prop_8!!.prop_8 == null) else {
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>.prop_8
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>.prop_8.prop_8
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>.prop_8.prop_8.prop_8
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>.prop_8.prop_8.prop_8.prop_8<!UNSAFE_CALL!>.<!>prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8.prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8.prop_8.prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8.prop_8.prop_8.prop_8<!UNSAFE_CALL!>.<!>prop_8
     }
 }
 
@@ -54,11 +54,11 @@ fun case_3(x: Class?) {
  */
 fun case_4(x: Class?) {
     if (x!!?.prop_8?.prop_8?.prop_8?.prop_8 == null == true) else {
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>.prop_8
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8
     }
 }
 
@@ -69,11 +69,11 @@ fun case_4(x: Class?) {
  */
 fun case_5(x: Class?) {
     if (x?.prop_8!!?.prop_8?.prop_8?.prop_8 == null == true) else {
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>.prop_8
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>.prop_8.prop_8
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>.prop_8.prop_8<!UNSAFE_CALL!>.<!>prop_8
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>.prop_8.prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8.prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8.prop_8<!UNSAFE_CALL!>.<!>prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8.prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8
     }
 }
 
@@ -84,11 +84,11 @@ fun case_5(x: Class?) {
  */
 fun case_6(x: Class?) {
     if (x?.prop_8?.prop_8?.prop_8!!?.prop_8 == null == true) else {
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>.prop_8
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>.prop_8.prop_8
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>.prop_8.prop_8.prop_8
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>.prop_8.prop_8.prop_8.prop_8<!UNSAFE_CALL!>.<!>prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8.prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8.prop_8.prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8.prop_8.prop_8.prop_8<!UNSAFE_CALL!>.<!>prop_8
     }
 }
 
@@ -99,11 +99,11 @@ fun case_6(x: Class?) {
  */
 fun case_7(x: Class) {
     if (x!!.prop_8?.prop_8?.prop_8?.prop_8 != null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class")!>x<!>.prop_8
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8
     }
 }
 
@@ -114,17 +114,17 @@ fun case_7(x: Class) {
  */
 fun case_8(x: Class) {
     if (x!!.prop_8?.prop_8?.prop_8?.prop_8 != null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class")!>x<!>.prop_8
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8
     }
 }
 // TESTCASE NUMBER: 9
 fun <T> case_9(x: T) {
     if (x!!.propNullableT != null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("T!! & T")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>x<!>
         x.propNullableT
     }
 }

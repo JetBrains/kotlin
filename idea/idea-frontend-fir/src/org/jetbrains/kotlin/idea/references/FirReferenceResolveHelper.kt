@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.references
 
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.expressions.*
@@ -121,6 +122,7 @@ internal object FirReferenceResolveHelper {
             else -> {
                 qualified
                     .collectDescendantsOfType<KtSimpleNameExpression>()
+                    .dropWhile { it.getReferencedName() == ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE }
                     .joinToString(separator = ".") { it.getReferencedName() }
                     .let(::FqName)
             }

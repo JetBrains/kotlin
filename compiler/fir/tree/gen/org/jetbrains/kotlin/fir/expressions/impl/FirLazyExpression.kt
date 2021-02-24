@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 class FirLazyExpression @FirImplementationDetail constructor(
-    override val source: FirSourceElement?,
+    override var source: FirSourceElement?,
 ) : FirExpression() {
     override val typeRef: FirTypeRef get() = error("FirLazyExpression should be calculated before accessing")
     override val annotations: List<FirAnnotationCall> get() = error("FirLazyExpression should be calculated before accessing")
@@ -32,6 +32,10 @@ class FirLazyExpression @FirImplementationDetail constructor(
 
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirLazyExpression {
         return this
+    }
+
+    override fun replaceSource(newSource: FirSourceElement?) {
+        source = newSource
     }
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {}

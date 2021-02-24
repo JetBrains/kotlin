@@ -168,7 +168,7 @@ class FirTypeResolveTransformer(
         return implicitTypeRef.compose()
     }
 
-    override fun transformTypeRef(typeRef: FirTypeRef, data: Nothing?): CompositeTransformResult<FirTypeRef> {
+    override fun transformTypeRef(typeRef: FirTypeRef, data: Nothing?): CompositeTransformResult<FirResolvedTypeRef> {
         return typeRef.transform(typeResolverTransformer, towerScope)
     }
 

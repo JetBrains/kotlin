@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirLegacyRawContractDescriptionImpl(
-    override val source: FirSourceElement?,
+    override var source: FirSourceElement?,
     override var contractCall: FirFunctionCall,
 ) : FirLegacyRawContractDescription() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
@@ -26,5 +26,9 @@ internal class FirLegacyRawContractDescriptionImpl(
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirLegacyRawContractDescriptionImpl {
         contractCall = contractCall.transformSingle(transformer, data)
         return this
+    }
+
+    override fun replaceSource(newSource: FirSourceElement?) {
+        source = newSource
     }
 }

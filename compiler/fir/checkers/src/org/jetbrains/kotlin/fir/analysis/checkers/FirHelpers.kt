@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.typeCheckerContext
+import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -317,4 +317,4 @@ val FirFunctionCall.isIterator
 internal fun throwableClassLikeType(session: FirSession) = session.builtinTypes.throwableType.type
 
 fun ConeKotlinType.isSubtypeOfThrowable(session: FirSession) =
-    throwableClassLikeType(session).isSupertypeOf(session.typeCheckerContext, this.fullyExpandedType(session))
+    throwableClassLikeType(session).isSupertypeOf(session.typeContext, this.fullyExpandedType(session))

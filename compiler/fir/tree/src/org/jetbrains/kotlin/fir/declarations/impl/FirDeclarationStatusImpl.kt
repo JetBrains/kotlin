@@ -170,4 +170,7 @@ open class FirDeclarationStatusImpl(
     fun resolved(visibility: Visibility, modality: Modality): FirResolvedDeclarationStatusImpl {
         return FirResolvedDeclarationStatusImpl(visibility, modality, flags)
     }
+
+    override fun replaceSource(newSource: FirSourceElement?) {
+    }
 }

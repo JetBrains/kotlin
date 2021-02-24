@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
 import org.jetbrains.kotlin.utils.addToStdlib.cast
+import java.util.concurrent.ConcurrentHashMap
 
 internal val collectionStubMethodLowering = makeIrFilePhase(
     ::CollectionStubMethodLowering,
@@ -229,7 +230,13 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
     }
 
     private fun createTypeChecker(overrideFun: IrSimpleFunction, parentFun: IrSimpleFunction): AbstractTypeCheckerContext =
-        IrTypeCheckerContextWithAdditionalAxioms(context.irBuiltIns, overrideFun.typeParameters, parentFun.typeParameters)
+        IrTypeCheckerContext(
+            IrTypeSystemContextWithAdditionalAxioms(
+                context.irBuiltIns,
+                overrideFun.typeParameters,
+                parentFun.typeParameters
+            )
+        )
 
     private fun areTypeParametersEquivalent(
         overrideFun: IrSimpleFunction,
@@ -463,7 +470,7 @@ internal class CollectionStubComputer(val context: JvmBackendContext) {
         }
     }
 
-    private val stubsCache = mutableMapOf<IrClass, List<StubsForCollectionClass>>()
+    private val stubsCache = ConcurrentHashMap<IrClass, List<StubsForCollectionClass>>()
 
     fun stubsForCollectionClasses(irClass: IrClass): List<StubsForCollectionClass> =
         stubsCache.getOrPut(irClass) {

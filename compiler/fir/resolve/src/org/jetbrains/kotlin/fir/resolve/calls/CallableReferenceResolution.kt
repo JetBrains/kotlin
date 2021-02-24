@@ -51,8 +51,7 @@ internal object CheckCallableReferenceExpectedType : CheckerStage() {
         }
 
         candidate.resultingTypeForCallableReference = resultingType
-        candidate.usesSuspendConversion =
-            callableReferenceAdaptation?.suspendConversionStrategy == SuspendConversionStrategy.SUSPEND_CONVERSION
+        candidate.callableReferenceAdaptation = callableReferenceAdaptation
         candidate.outerConstraintBuilderEffect = fun ConstraintSystemOperation.() {
             addOtherSystem(candidate.system.asReadOnlyStorage())
 
@@ -98,8 +97,12 @@ private fun buildReflectionType(
         is FirFunction -> {
             val unboundReferenceTarget = if (receiverType != null) 1 else 0
             val callableReferenceAdaptation =
-                context.bodyResolveComponents
-                    .getCallableReferenceAdaptation(context.session, fir, candidate.callInfo.expectedType, unboundReferenceTarget)
+                context.bodyResolveComponents.getCallableReferenceAdaptation(
+                    context.session,
+                    fir,
+                    candidate.callInfo.expectedType?.lowerBoundIfFlexible(),
+                    unboundReferenceTarget
+                )
 
             val parameters = mutableListOf<ConeKotlinType>()
 
@@ -133,7 +136,7 @@ internal class CallableReferenceAdaptation(
     val argumentTypes: Array<ConeKotlinType>,
     val coercionStrategy: CoercionStrategy,
     val defaults: Int,
-    val mappedArguments: Map<FirValueParameter, ResolvedCallArgument>,
+    val mappedArguments: CallableReferenceMappedArguments,
     val suspendConversionStrategy: SuspendConversionStrategy
 )
 
@@ -351,7 +354,7 @@ private fun createFakeArgumentsForReference(
     }
 }
 
-private class FirFakeArgumentForCallableReference(
+class FirFakeArgumentForCallableReference(
     val index: Int
 ) : FirExpression() {
     override val source: FirSourceElement?
@@ -377,6 +380,9 @@ private class FirFakeArgumentForCallableReference(
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         error("should not be called")
+    }
+
+    override fun replaceSource(newSource: FirSourceElement?) {
     }
 }
 

@@ -30,13 +30,29 @@ class Outer {
 }
 
 fun testConstructor(): Any {
-  return use(fn = C::<init>)
+  return use(fn = local fun <init>(p0: Int): C {
+    return C(xs = [p0])
+  }
+)
 }
 
 fun testInnerClassConstructor(outer: Outer): Any {
-  return use(fn = outer::<init>)
+  return use(fn = { // BLOCK
+    local fun Outer.<init>(p0: Int): Inner {
+      return receiver.Inner(xs = [p0])
+    }
+
+    outer::<init>
+  })
 }
 
 fun testInnerClassConstructorCapturingOuter(): Any {
-  return use(fn = Outer()::<init>)
+  return use(fn = { // BLOCK
+    local fun Outer.<init>(p0: Int): Inner {
+      return receiver.Inner(xs = [p0])
+    }
+
+    Outer()::<init>
+  })
 }
+

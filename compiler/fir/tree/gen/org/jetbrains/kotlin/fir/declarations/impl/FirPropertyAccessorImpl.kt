@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 open class FirPropertyAccessorImpl @FirImplementationDetail constructor(
-    override val source: FirSourceElement?,
+    override var source: FirSourceElement?,
     override val session: FirSession,
     override var resolvePhase: FirResolvePhase,
     override val origin: FirDeclarationOrigin,
@@ -117,6 +117,10 @@ open class FirPropertyAccessorImpl @FirImplementationDetail constructor(
     override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirPropertyAccessorImpl {
         typeParameters.transformInplace(transformer, data)
         return this
+    }
+
+    override fun replaceSource(newSource: FirSourceElement?) {
+        source = newSource
     }
 
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {

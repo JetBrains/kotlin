@@ -12,7 +12,7 @@ public sealed class Sealed : R|kotlin/Any| {
     public final val z: R|test/Z|
         public get(): R|test/Z|
 
-    @R|test/Ann|() internal constructor(@R|test/Ann|() z: R|test/Z|): R|test/Sealed|
+    @R|test/Ann|() protected constructor(@R|test/Ann|() z: R|test/Z|): R|test/Sealed|
 
 }
 

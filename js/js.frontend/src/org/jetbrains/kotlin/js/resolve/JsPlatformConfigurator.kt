@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.js.resolve
 
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.container.useInstance
@@ -34,7 +35,7 @@ object JsPlatformConfigurator : PlatformConfiguratorBase(
         ),
         identifierChecker = JsIdentifierChecker
 ) {
-    override fun configureModuleComponents(container: StorageComponentContainer) {
+    override fun configureModuleComponents(container: StorageComponentContainer, languageVersionSettings: LanguageVersionSettings) {
         container.useInstance(NameSuggestion())
         container.useImpl<JsCallChecker>()
         container.useImpl<JsTypeSpecificityComparator>()

@@ -7,8 +7,8 @@ abstract class A() {
     <!INCOMPATIBLE_MODIFIERS!>final<!> <!INCOMPATIBLE_MODIFIERS!>open<!> fun h() {}
 
     <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>open var r: String<!>
-    get
-    <!WRONG_MODIFIER_TARGET!>abstract<!> protected set
+        get
+        <!WRONG_MODIFIER_TARGET!>abstract<!> protected set
 }
 
 <!WRONG_MODIFIER_TARGET!>final<!> interface T {}
@@ -32,13 +32,13 @@ class LegalModifier(val a: Int, @annotated private var b: String, @annotated var
 
 //Check illegal modifier in constructor parameters
 class IllegalModifiers1(
-        <!WRONG_MODIFIER_TARGET!>in<!>
-        <!INCOMPATIBLE_MODIFIERS!>out<!>
-        <!WRONG_MODIFIER_TARGET!>reified<!>
-        <!WRONG_MODIFIER_TARGET!>enum<!>
-        <!WRONG_MODIFIER_TARGET!>private<!>
-        <!WRONG_MODIFIER_TARGET!>const<!>
-        <!UNUSED_PARAMETER!>a<!>: Int)
+    <!WRONG_MODIFIER_TARGET!>in<!>
+    <!INCOMPATIBLE_MODIFIERS!>out<!>
+    <!WRONG_MODIFIER_TARGET!>reified<!>
+    <!WRONG_MODIFIER_TARGET!>enum<!>
+    <!WRONG_MODIFIER_TARGET!>private<!>
+    <!WRONG_MODIFIER_TARGET!>const<!>
+    <!UNUSED_PARAMETER!>a<!>: Int)
 
 //Check multiple illegal modifiers in constructor
 class IllegalModifiers2(<!WRONG_MODIFIER_TARGET!>private<!> <!INCOMPATIBLE_MODIFIERS!>abstract<!> <!UNUSED_PARAMETER!>a<!>: Int)
@@ -53,26 +53,26 @@ class IllegalModifiers4(val a: Int, @annotated("a text") <!WRONG_MODIFIER_TARGET
 //Check illegal modifiers for functions and catch block
 abstract class IllegalModifiers5() {
 
-  //Check illegal modifier in function parameter
-  abstract fun foo(<!WRONG_MODIFIER_TARGET!>public<!> a: Int, vararg v: String)
+    //Check illegal modifier in function parameter
+    abstract fun foo(<!WRONG_MODIFIER_TARGET!>public<!> a: Int, vararg v: String)
 
-  //Check multiple illegal modifiers in function parameter
-  abstract fun bar(<!WRONG_MODIFIER_TARGET!>public<!> <!WRONG_MODIFIER_TARGET!>abstract<!> a: Int, vararg v: String)
-
-  //Check annotations with illegal modifiers
-  abstract fun baz(@annotated("a text") <!WRONG_MODIFIER_TARGET!>public<!> <!WRONG_MODIFIER_TARGET!>abstract<!> a: Int)
-
-  private fun qux() {
-
-    //Check illegal modifier in catch block
-    try {} catch (<!WRONG_MODIFIER_TARGET!>in<!> <!INCOMPATIBLE_MODIFIERS!>out<!> <!WRONG_MODIFIER_TARGET!>reified<!> <!WRONG_MODIFIER_TARGET!>enum<!> <!WRONG_MODIFIER_TARGET!>public<!> e: Exception) {}
-
-    //Check multiple illegal modifiers in catch block
-    try {} catch (<!WRONG_MODIFIER_TARGET!>in<!> <!INCOMPATIBLE_MODIFIERS!>out<!> <!WRONG_MODIFIER_TARGET!>reified<!> <!WRONG_MODIFIER_TARGET!>enum<!> <!WRONG_MODIFIER_TARGET!>abstract<!> <!WRONG_MODIFIER_TARGET!>public<!> e: Exception) {}
+    //Check multiple illegal modifiers in function parameter
+    abstract fun bar(<!WRONG_MODIFIER_TARGET!>public<!> <!WRONG_MODIFIER_TARGET!>abstract<!> a: Int, vararg v: String)
 
     //Check annotations with illegal modifiers
-    try {} catch (@annotated("a text") <!WRONG_MODIFIER_TARGET!>abstract<!> <!WRONG_MODIFIER_TARGET!>public<!> e: Exception) {}
-  }
+    abstract fun baz(@annotated("a text") <!WRONG_MODIFIER_TARGET!>public<!> <!WRONG_MODIFIER_TARGET!>abstract<!> a: Int)
+
+    private fun qux() {
+
+        //Check illegal modifier in catch block
+        try {} catch (<!WRONG_MODIFIER_TARGET!>in<!> <!INCOMPATIBLE_MODIFIERS!>out<!> <!WRONG_MODIFIER_TARGET!>reified<!> <!WRONG_MODIFIER_TARGET!>enum<!> <!WRONG_MODIFIER_TARGET!>public<!> e: Exception) {}
+
+        //Check multiple illegal modifiers in catch block
+        try {} catch (<!WRONG_MODIFIER_TARGET!>in<!> <!INCOMPATIBLE_MODIFIERS!>out<!> <!WRONG_MODIFIER_TARGET!>reified<!> <!WRONG_MODIFIER_TARGET!>enum<!> <!WRONG_MODIFIER_TARGET!>abstract<!> <!WRONG_MODIFIER_TARGET!>public<!> e: Exception) {}
+
+        //Check annotations with illegal modifiers
+        try {} catch (@annotated("a text") <!WRONG_MODIFIER_TARGET!>abstract<!> <!WRONG_MODIFIER_TARGET!>public<!> e: Exception) {}
+    }
 }
 
 //Check illegal modifiers on anonymous initializers

@@ -30,19 +30,20 @@ import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
+import java.util.concurrent.ConcurrentHashMap
 
 class JvmCachedDeclarations(
     private val context: JvmBackendContext,
     private val languageVersionSettings: LanguageVersionSettings
 ) {
-    private val singletonFieldDeclarations = HashMap<IrSymbolOwner, IrField>()
-    private val interfaceCompanionFieldDeclarations = HashMap<IrSymbolOwner, IrField>()
-    private val staticBackingFields = HashMap<IrProperty, IrField>()
+    private val singletonFieldDeclarations = ConcurrentHashMap<IrSymbolOwner, IrField>()
+    private val interfaceCompanionFieldDeclarations = ConcurrentHashMap<IrSymbolOwner, IrField>()
+    private val staticBackingFields = ConcurrentHashMap<IrProperty, IrField>()
 
-    private val defaultImplsMethods = HashMap<IrSimpleFunction, IrSimpleFunction>()
-    private val defaultImplsClasses = HashMap<IrClass, IrClass>()
-    private val defaultImplsRedirections = HashMap<IrSimpleFunction, IrSimpleFunction>()
-    private val defaultImplsOriginalMethods = HashMap<IrSimpleFunction, IrSimpleFunction>()
+    private val defaultImplsMethods = ConcurrentHashMap<IrSimpleFunction, IrSimpleFunction>()
+    private val defaultImplsClasses = ConcurrentHashMap<IrClass, IrClass>()
+    private val defaultImplsRedirections = ConcurrentHashMap<IrSimpleFunction, IrSimpleFunction>()
+    private val defaultImplsOriginalMethods = ConcurrentHashMap<IrSimpleFunction, IrSimpleFunction>()
 
     fun getFieldForEnumEntry(enumEntry: IrEnumEntry): IrField =
         singletonFieldDeclarations.getOrPut(enumEntry) {

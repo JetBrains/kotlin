@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver;
 import org.jetbrains.kotlin.resolve.scopes.*;
 import org.jetbrains.kotlin.types.*;
+import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
 import org.jetbrains.kotlin.types.expressions.PreliminaryDeclarationVisitor;
 import org.jetbrains.kotlin.types.expressions.ValueParameterResolver;
@@ -134,7 +135,7 @@ public class BodyResolver {
         for (Map.Entry<KtSecondaryConstructor, ClassConstructorDescriptor> entry : c.getSecondaryConstructors().entrySet()) {
             LexicalScope declaringScope = c.getDeclaringScope(entry.getKey());
             assert declaringScope != null : "Declaring scope should be registered before body resolve";
-            resolveSecondaryConstructorBody(c.getOuterDataFlowInfo(), trace, entry.getKey(), entry.getValue(), declaringScope);
+            resolveSecondaryConstructorBody(c.getOuterDataFlowInfo(), trace, entry.getKey(), entry.getValue(), declaringScope, c.getLocalContext());
         }
         if (c.getSecondaryConstructors().isEmpty()) return;
         Set<ConstructorDescriptor> visitedConstructors = new HashSet<>();
@@ -148,18 +149,22 @@ public class BodyResolver {
             @NotNull BindingTrace trace,
             @NotNull KtSecondaryConstructor constructor,
             @NotNull ClassConstructorDescriptor descriptor,
-            @NotNull LexicalScope declaringScope
+            @NotNull LexicalScope declaringScope,
+            @Nullable ExpressionTypingContext localContext
     ) {
         ForceResolveUtil.forceResolveAllContents(descriptor.getAnnotations());
 
-        resolveFunctionBody(outerDataFlowInfo, trace, constructor, descriptor, declaringScope,
-                            headerInnerScope -> resolveSecondaryConstructorDelegationCall(
-                                    outerDataFlowInfo, trace, headerInnerScope, constructor, descriptor
-                            ),
-                            scope -> new LexicalScopeImpl(
-                                    scope, descriptor, scope.isOwnerDescriptorAccessibleByLabel(), scope.getImplicitReceiver(),
-                                    LexicalScopeKind.CONSTRUCTOR_HEADER
-                            ));
+        resolveFunctionBody(
+                outerDataFlowInfo, trace, constructor, descriptor, declaringScope,
+                headerInnerScope -> resolveSecondaryConstructorDelegationCall(
+                        outerDataFlowInfo, trace, headerInnerScope, constructor, descriptor
+                ),
+                scope -> new LexicalScopeImpl(
+                        scope, descriptor, scope.isOwnerDescriptorAccessibleByLabel(), scope.getImplicitReceiver(),
+                        LexicalScopeKind.CONSTRUCTOR_HEADER
+                ),
+                localContext
+        );
     }
 
     @Nullable
@@ -835,7 +840,7 @@ public class BodyResolver {
         if (getterDescriptor != null) {
             if (getter != null) {
                 LexicalScope accessorScope = makeScopeForPropertyAccessor(c, getter, propertyDescriptor);
-                resolveFunctionBody(c.getOuterDataFlowInfo(), fieldAccessTrackingTrace, getter, getterDescriptor, accessorScope);
+                resolveFunctionBody(c.getOuterDataFlowInfo(), fieldAccessTrackingTrace, getter, getterDescriptor, accessorScope, c.getLocalContext());
             }
 
             if (getter != null || forceResolveAnnotations) {
@@ -849,7 +854,7 @@ public class BodyResolver {
         if (setterDescriptor != null) {
             if (setter != null) {
                 LexicalScope accessorScope = makeScopeForPropertyAccessor(c, setter, propertyDescriptor);
-                resolveFunctionBody(c.getOuterDataFlowInfo(), fieldAccessTrackingTrace, setter, setterDescriptor, accessorScope);
+                resolveFunctionBody(c.getOuterDataFlowInfo(), fieldAccessTrackingTrace, setter, setterDescriptor, accessorScope, c.getLocalContext());
             }
 
             if (setter != null || forceResolveAnnotations) {
@@ -921,7 +926,7 @@ public class BodyResolver {
                 bodyResolveCache.resolveFunctionBody(declaration).addOwnDataTo(trace, true);
             }
             else {
-                resolveFunctionBody(c.getOuterDataFlowInfo(), trace, declaration, entry.getValue(), scope);
+                resolveFunctionBody(c.getOuterDataFlowInfo(), trace, declaration, entry.getValue(), scope, c.getLocalContext());
             }
         }
     }
@@ -931,11 +936,12 @@ public class BodyResolver {
             @NotNull BindingTrace trace,
             @NotNull KtDeclarationWithBody function,
             @NotNull FunctionDescriptor functionDescriptor,
-            @NotNull LexicalScope declaringScope
+            @NotNull LexicalScope declaringScope,
+            @Nullable ExpressionTypingContext localContext
     ) {
         computeDeferredType(functionDescriptor.getReturnType());
 
-        resolveFunctionBody(outerDataFlowInfo, trace, function, functionDescriptor, declaringScope, null, null);
+        resolveFunctionBody(outerDataFlowInfo, trace, function, functionDescriptor, declaringScope, null, null, localContext);
 
         assert functionDescriptor.getReturnType() != null;
     }
@@ -948,7 +954,8 @@ public class BodyResolver {
             @NotNull LexicalScope scope,
             @Nullable Function1<LexicalScope, DataFlowInfo> beforeBlockBody,
             // Creates wrapper scope for header resolution if necessary (see resolveSecondaryConstructorBody)
-            @Nullable Function1<LexicalScope, LexicalScope> headerScopeFactory
+            @Nullable Function1<LexicalScope, LexicalScope> headerScopeFactory,
+            @Nullable ExpressionTypingContext localContext
     ) {
         ProgressManager.checkCanceled();
 
@@ -989,7 +996,8 @@ public class BodyResolver {
 
         if (function.hasBody()) {
             expressionTypingServices.checkFunctionReturnType(
-                    innerScope, function, functionDescriptor, dataFlowInfo != null ? dataFlowInfo : outerDataFlowInfo, null, trace);
+                    innerScope, function, functionDescriptor, dataFlowInfo != null ? dataFlowInfo : outerDataFlowInfo, null, trace, localContext
+            );
         }
 
         assert functionDescriptor.getReturnType() != null;

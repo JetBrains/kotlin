@@ -5,6 +5,20 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.stats
 
+import org.jetbrains.kotlin.descriptors.commonizer.CommonizerTarget
+
+fun StatsCollector(type: StatsType, targets: List<CommonizerTarget>): StatsCollector? {
+    return when (type) {
+        StatsType.RAW -> RawStatsCollector(targets)
+        StatsType.AGGREGATED -> AggregatedStatsCollector(targets)
+        StatsType.NONE -> null
+    }
+}
+
+enum class StatsType {
+    RAW, AGGREGATED, NONE;
+}
+
 interface StatsCollector {
     data class StatsKey(
         val id: String,

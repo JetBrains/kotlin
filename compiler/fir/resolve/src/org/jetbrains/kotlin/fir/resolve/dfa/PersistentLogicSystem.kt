@@ -254,6 +254,21 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
         // TODO: should we search variable in all logic statements?
     }
 
+    override fun removeAllAboutVariableIncludingAliasInformation(flow: PersistentFlow, variable: RealVariable) {
+        removeAllAboutVariable(flow, variable)
+        val existedAlias = flow.directAliasMap[variable]?.variable
+        if (existedAlias != null) {
+            flow.directAliasMap = flow.directAliasMap.remove(variable)
+            val updatedBackwardsAliasList = flow.backwardsAliasMap.getValue(existedAlias).remove(variable)
+            flow.backwardsAliasMap = if (updatedBackwardsAliasList.isEmpty()) {
+                flow.backwardsAliasMap.remove(existedAlias)
+            } else {
+                flow.backwardsAliasMap.put(existedAlias, updatedBackwardsAliasList)
+            }
+            flow.updatedAliasDiff = flow.updatedAliasDiff.add(variable)
+        }
+    }
+
     override fun translateVariableFromConditionInStatements(
         flow: PersistentFlow,
         originalVariable: DataFlowVariable,

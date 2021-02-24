@@ -200,7 +200,7 @@ class KotlinDeserializedJvmSymbolsProvider(
             JvmBinaryAnnotationDeserializer(session, kotlinClass.kotlinJvmBinaryClass, kotlinClass.byteContent),
             kotlinScopeProvider,
             parentContext, KotlinJvmBinarySourceElement(kotlinClass.kotlinJvmBinaryClass),
-            this::getClass
+            deserializeNestedClass = this::getClass,
         )
 
         return symbol to kotlinClass

@@ -145,7 +145,8 @@ public class ExpressionTypingServices {
             @NotNull FunctionDescriptor functionDescriptor,
             @NotNull DataFlowInfo dataFlowInfo,
             @Nullable KotlinType expectedReturnType,
-            BindingTrace trace
+            BindingTrace trace,
+            @Nullable ExpressionTypingContext localContext
     ) {
         if (expectedReturnType == null) {
             expectedReturnType = functionDescriptor.getReturnType();
@@ -153,11 +154,15 @@ public class ExpressionTypingServices {
                 expectedReturnType = NO_EXPECTED_TYPE;
             }
         }
-        checkFunctionReturnType(function, ExpressionTypingContext.newContext(
+
+        ExpressionTypingContext context = ExpressionTypingContext.newContext(
                 trace,
-                functionInnerScope, dataFlowInfo, expectedReturnType != null ? expectedReturnType : NO_EXPECTED_TYPE, getLanguageVersionSettings(),
-                expressionTypingComponents.dataFlowValueFactory
-        ));
+                functionInnerScope, dataFlowInfo, expectedReturnType != null ? expectedReturnType : NO_EXPECTED_TYPE,
+                getLanguageVersionSettings(), expressionTypingComponents.dataFlowValueFactory,
+                localContext == null ? InferenceSession.Companion.getDefault() : localContext.inferenceSession
+        );
+
+        checkFunctionReturnType(function, context);
     }
 
     /*package*/ void checkFunctionReturnType(KtDeclarationWithBody function, ExpressionTypingContext context) {

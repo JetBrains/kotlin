@@ -18,15 +18,19 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirErrorNamedReferenceImpl(
-    override val source: FirSourceElement?,
+    override var source: FirSourceElement?,
+    override val candidateSymbol: AbstractFirBasedSymbol<*>?,
     override val diagnostic: ConeDiagnostic,
 ) : FirErrorNamedReference() {
     override val name: Name = Name.special("<${diagnostic.reason}>")
-    override val candidateSymbol: AbstractFirBasedSymbol<*>? get() = null
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirErrorNamedReferenceImpl {
         return this
+    }
+
+    override fun replaceSource(newSource: FirSourceElement?) {
+        source = newSource
     }
 }

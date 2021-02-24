@@ -19,4 +19,6 @@ interface FirDiagnosticHolder : FirElement {
     val diagnostic: ConeDiagnostic
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitDiagnosticHolder(this, data)
+
+    override fun replaceSource(newSource: FirSourceElement?)
 }

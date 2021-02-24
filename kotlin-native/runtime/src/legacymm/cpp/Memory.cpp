@@ -440,6 +440,20 @@ void setContainerFor(ObjHeader* obj, ContainerHeader* container) {
   obj->typeInfoOrMeta_ = setPointerBits(obj->typeInfoOrMeta_, OBJECT_TAG_NONTRIVIAL_CONTAINER);
 }
 
+#if !KONAN_NO_EXCEPTIONS
+class ExceptionObjHolderImpl : public ExceptionObjHolder {
+public:
+    explicit ExceptionObjHolderImpl(ObjHeader* obj) noexcept { ::SetHeapRef(&obj_, obj); }
+
+    ~ExceptionObjHolderImpl() override { ZeroHeapRef(&obj_); }
+
+    ObjHeader* obj() noexcept { return obj_; }
+
+private:
+    ObjHeader* obj_;
+};
+#endif
+
 }  // namespace
 
 ContainerHeader* containerFor(const ObjHeader* obj) {
@@ -3691,3 +3705,14 @@ ALWAYS_INLINE RUNTIME_NOTHROW void Kotlin_mm_safePointExceptionUnwind() {
 }
 
 } // extern "C"
+
+#if !KONAN_NO_EXCEPTIONS
+// static
+ALWAYS_INLINE RUNTIME_NORETURN void ExceptionObjHolder::Throw(ObjHeader* exception) {
+    throw ExceptionObjHolderImpl(exception);
+}
+
+ALWAYS_INLINE ObjHeader* ExceptionObjHolder::GetExceptionObject() noexcept {
+    return static_cast<ExceptionObjHolderImpl*>(this)->obj();
+}
+#endif

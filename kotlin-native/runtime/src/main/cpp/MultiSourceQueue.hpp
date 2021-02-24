@@ -144,6 +144,11 @@ public:
         deletionQueue_ = std::move(remainingDeletions);
     }
 
+    void ClearForTests() noexcept {
+        queue_.clear();
+        deletionQueue_.clear();
+    }
+
 private:
     // Using `KStdList` as it allows to implement `Collect` without memory allocations,
     // which is important for GC mark phase.

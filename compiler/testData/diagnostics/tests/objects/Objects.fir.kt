@@ -6,13 +6,13 @@ package toplevelObjectDeclarations
 
   <!INAPPLICABLE_CANDIDATE!>class T : Foo {}<!>
 
-  <!INAPPLICABLE_CANDIDATE!>object A<!> : Foo {
+  <!INAPPLICABLE_CANDIDATE!>object A : Foo {
     val x : Int = 2
 
     fun test() : Int {
       return x + foo()
     }
-  }
+  }<!>
 
   object B : A {}
 

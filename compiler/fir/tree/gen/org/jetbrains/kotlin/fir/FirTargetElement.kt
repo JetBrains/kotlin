@@ -16,4 +16,6 @@ interface FirTargetElement : FirElement {
     override val source: FirSourceElement?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitTargetElement(this, data)
+
+    override fun replaceSource(newSource: FirSourceElement?)
 }

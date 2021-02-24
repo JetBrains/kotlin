@@ -505,18 +505,11 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     //-------------------------------------------------------------------------//
 
     private fun createInitCtor(initNodePtr: LLVMValueRef): LLVMValueRef {
-        val ctorFunction = addLlvmFunctionWithDefaultAttributes(
-                context,
-                context.llvmModule!!,
-                "",
-                kVoidFuncType
-        )
-        LLVMSetLinkage(ctorFunction, LLVMLinkage.LLVMPrivateLinkage)
-        generateFunction(codegen, ctorFunction) {
-            forbidRuntime = true
+        val ctorFunction = generateFunctionNoRuntime(codegen, kVoidFuncType, "") {
             call(context.llvm.appendToInitalizersTail, listOf(initNodePtr))
             ret(null)
         }
+        LLVMSetLinkage(ctorFunction, LLVMLinkage.LLVMPrivateLinkage)
         return ctorFunction
     }
 
@@ -2413,8 +2406,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             // When some dynamic caches are used, we consider that stdlib is in the dynamic cache as well.
             // Runtime is linked into stdlib module only, so import runtime global from it.
             val global = codegen.importGlobal(name, value.llvmType, context.standardLlvmSymbolsOrigin)
-            val initializer = generateFunction(codegen, functionType(voidType, false), "") {
-                forbidRuntime = true
+            val initializer = generateFunctionNoRuntime(codegen, functionType(voidType, false), "") {
                 store(value.llvm, global)
                 ret(null)
             }
@@ -2520,8 +2512,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     }
 
     private fun appendStaticInitializers(ctorFunction: LLVMValueRef, initializers: List<LLVMValueRef>) {
-        generateFunction(codegen, ctorFunction) {
-            forbidRuntime = true
+        generateFunctionNoRuntime(codegen, ctorFunction) {
             val initGuardName = ctorFunction.name.orEmpty() + "_guard"
             val initGuard = LLVMAddGlobal(context.llvmModule, int32Type, initGuardName)
             LLVMSetInitializer(initGuard, kImmZero)
@@ -2553,21 +2544,14 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     private fun appendGlobalCtors(ctorFunctions: List<LLVMValueRef>) {
         if (context.config.produce.isFinalBinary) {
             // Generate function calling all [ctorFunctions].
-            val globalCtorFunction = addLlvmFunctionWithDefaultAttributes(
-                    context,
-                    context.llvmModule!!,
-                    "_Konan_constructors",
-                    kVoidFuncType
-            )
-            LLVMSetLinkage(globalCtorFunction, LLVMLinkage.LLVMPrivateLinkage)
-            generateFunction(codegen, globalCtorFunction) {
-                forbidRuntime = true
+            val globalCtorFunction = generateFunctionNoRuntime(codegen, kVoidFuncType, "_Konan_constructors") {
                 ctorFunctions.forEach {
                     call(it, emptyList(), Lifetime.IRRELEVANT,
                             exceptionHandler = ExceptionHandler.Caller, verbatim = true)
                 }
                 ret(null)
             }
+            LLVMSetLinkage(globalCtorFunction, LLVMLinkage.LLVMPrivateLinkage)
 
             // Append initializers of global variables in "llvm.global_ctors" array.
             val globalCtors = context.llvm.staticData.placeGlobalArray("llvm.global_ctors", kCtorType,

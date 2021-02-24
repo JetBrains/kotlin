@@ -30,4 +30,7 @@ object FirNoReceiverExpression : FirExpression() {
     }
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {}
+
+    override fun replaceSource(newSource: FirSourceElement?) {
+    }
 }

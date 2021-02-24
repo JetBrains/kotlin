@@ -6,15 +6,23 @@
 package org.jetbrains.kotlin.idea.highlighter
 
 import com.intellij.codeInsight.daemon.impl.Divider
+import com.intellij.codeInsight.daemon.impl.HighlightInfo
 import com.intellij.codeInsight.intention.IntentionAction
+import com.intellij.codeInsight.problems.ProblemImpl
 import com.intellij.lang.annotation.Annotation
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.Annotator
+import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Document
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.TextRange
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.problems.Problem
+import com.intellij.problems.WolfTheProblemSolver
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiManager
 import com.intellij.util.CommonProcessors
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -42,6 +50,12 @@ abstract class AbstractKotlinHighlightingPass(file: KtFile, document: Document) 
             val bindingContext = bindingContext()
             getAfterAnalysisVisitor(holder, bindingContext).forEach { visitor -> element.accept(visitor) }
         }
+    }
+
+    override fun doApplyInformationToEditor() {
+        super.doApplyInformationToEditor()
+
+        reportErrorsToWolf()
     }
 
     override fun buildBindingContext(holder: AnnotationHolder): BindingContext {
@@ -152,6 +166,31 @@ abstract class AbstractKotlinHighlightingPass(file: KtFile, document: Document) 
     }
 
     protected open fun shouldSuppressUnusedParameter(parameter: KtParameter): Boolean = false
+
+    private fun reportErrorsToWolf() {
+        if (!file.viewProvider.isPhysical) return  // e.g. errors in evaluate expression
+        val project: Project = file.project
+        if (!PsiManager.getInstance(project).isInProject(file)) return  // do not report problems in libraries
+        val file: VirtualFile = file.virtualFile ?: return
+
+        val wolf = WolfTheProblemSolver.getInstance(project)
+
+        val hasSyntaxErrors = wolf.hasSyntaxErrors(file)
+        val problemFile = wolf.isProblemFile(file)
+
+        // do nothing if file has already problems
+        if (hasSyntaxErrors || problemFile) return
+
+        val problems = convertToProblems(infos, file)
+        wolf.reportProblems(file, problems)
+    }
+
+    private fun convertToProblems(
+        infos: Collection<HighlightInfo>,
+        file: VirtualFile,
+        hasErrorElement: Boolean = true
+    ): List<Problem> =
+        infos.filter { it.severity == HighlightSeverity.ERROR }.map { ProblemImpl(file, it, hasErrorElement) }
 
     companion object {
         fun createQuickFixes(diagnostic: Diagnostic): Collection<IntentionAction> =

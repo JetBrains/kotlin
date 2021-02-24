@@ -70,3 +70,6 @@ var <D : FirCallableDeclaration<*>>
 private object IntersectionOverrideOriginalKey : FirDeclarationDataKey()
 var <D : FirCallableDeclaration<*>>
         D.originalForIntersectionOverrideAttr: D? by FirDeclarationDataRegistry.data(IntersectionOverrideOriginalKey)
+
+private object InitialSignatureKey : FirDeclarationDataKey()
+var FirCallableDeclaration<*>.initialSignatureAttr: FirCallableDeclaration<*>? by FirDeclarationDataRegistry.data(InitialSignatureKey)

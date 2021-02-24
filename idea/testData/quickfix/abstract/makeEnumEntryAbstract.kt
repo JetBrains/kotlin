@@ -7,3 +7,4 @@ enum class E {
 
     abstract fun foo()
 }
+/* FIR_COMPARISON */

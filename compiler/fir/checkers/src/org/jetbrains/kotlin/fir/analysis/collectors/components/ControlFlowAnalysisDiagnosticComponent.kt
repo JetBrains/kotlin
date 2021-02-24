@@ -7,13 +7,18 @@ package org.jetbrains.kotlin.fir.analysis.collectors.components
 
 import org.jetbrains.kotlin.fir.analysis.cfa.FirControlFlowAnalyzer
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
+import org.jetbrains.kotlin.fir.analysis.checkersComponent
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 
-class ControlFlowAnalysisDiagnosticComponent(collector: AbstractDiagnosticCollector) : AbstractDiagnosticCollectorComponent(collector) {
-    private val controlFlowAnalyzer = FirControlFlowAnalyzer(session)
+class ControlFlowAnalysisDiagnosticComponent(
+    collector: AbstractDiagnosticCollector,
+    declarationCheckers: DeclarationCheckers = collector.session.checkersComponent.declarationCheckers,
+) : AbstractDiagnosticCollectorComponent(collector) {
+    private val controlFlowAnalyzer = FirControlFlowAnalyzer(session, declarationCheckers)
 
     // ------------------------------- Class initializer -------------------------------
 

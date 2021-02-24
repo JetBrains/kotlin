@@ -41,7 +41,7 @@ fun case2() {
 fun case3() {
     val a1 = false
     val a2 = JavaClass.VALUE
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any..kotlin.Any?!")!>a2<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any..kotlin.Any?! & kotlin.Any")!>a2<!>
 
     val x3 = a1 || a2
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean")!>x3<!>

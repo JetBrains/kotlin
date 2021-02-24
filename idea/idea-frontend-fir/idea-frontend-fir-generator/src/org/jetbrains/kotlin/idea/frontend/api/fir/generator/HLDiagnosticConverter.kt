@@ -35,7 +35,7 @@ import kotlin.reflect.full.isSubclassOf
 
 object HLDiagnosticConverter {
     fun convert(diagnosticList: DiagnosticList): HLDiagnosticList =
-        HLDiagnosticList(diagnosticList.diagnostics.map(::convertDiagnostic))
+        HLDiagnosticList(diagnosticList.allDiagnostics.map(::convertDiagnostic))
 
     private fun convertDiagnostic(diagnostic: DiagnosticData): HLDiagnostic =
         HLDiagnostic(

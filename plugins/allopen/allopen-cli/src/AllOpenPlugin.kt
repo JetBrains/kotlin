@@ -26,33 +26,38 @@ import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension
 
 object AllOpenConfigurationKeys {
-    val ANNOTATION: CompilerConfigurationKey<List<String>> =
-            CompilerConfigurationKey.create("annotation qualified name")
-
+    val ANNOTATION: CompilerConfigurationKey<List<String>> = CompilerConfigurationKey.create("annotation qualified name")
     val PRESET: CompilerConfigurationKey<List<String>> = CompilerConfigurationKey.create("annotation preset")
 }
 
 class AllOpenCommandLineProcessor : CommandLineProcessor {
     companion object {
         val SUPPORTED_PRESETS = mapOf(
-                "spring" to listOf(
-                    "org.springframework.stereotype.Component",
-                    "org.springframework.transaction.annotation.Transactional",
-                    "org.springframework.scheduling.annotation.Async",
-                    "org.springframework.cache.annotation.Cacheable",
-                    "org.springframework.boot.test.context.SpringBootTest",
-                    "org.springframework.validation.annotation.Validated"),
-                "quarkus" to listOf(
-                    "javax.enterprise.context.ApplicationScoped",
-                    "javax.enterprise.context.RequestScoped"))
+            "spring" to listOf(
+                "org.springframework.stereotype.Component",
+                "org.springframework.transaction.annotation.Transactional",
+                "org.springframework.scheduling.annotation.Async",
+                "org.springframework.cache.annotation.Cacheable",
+                "org.springframework.boot.test.context.SpringBootTest",
+                "org.springframework.validation.annotation.Validated"
+            ),
+            "quarkus" to listOf(
+                "javax.enterprise.context.ApplicationScoped",
+                "javax.enterprise.context.RequestScoped"
+            )
+        )
 
-        val ANNOTATION_OPTION = CliOption("annotation", "<fqname>", "Annotation qualified names",
-                                          required = false, allowMultipleOccurrences = true)
+        val ANNOTATION_OPTION = CliOption(
+            "annotation", "<fqname>", "Annotation qualified names",
+            required = false, allowMultipleOccurrences = true
+        )
 
-        val PRESET_OPTION = CliOption("preset", "<name>", "Preset name (${SUPPORTED_PRESETS.keys.joinToString()})",
-                                      required = false, allowMultipleOccurrences = true)
+        val PRESET_OPTION = CliOption(
+            "preset", "<name>", "Preset name (${SUPPORTED_PRESETS.keys.joinToString()})",
+            required = false, allowMultipleOccurrences = true
+        )
 
-        val PLUGIN_ID = "org.jetbrains.kotlin.allopen"
+        const val PLUGIN_ID = "org.jetbrains.kotlin.allopen"
     }
 
     override val pluginId = PLUGIN_ID

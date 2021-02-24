@@ -18,15 +18,20 @@ import org.jetbrains.kotlin.fir.expressions.isExhaustive
 object FirExhaustiveWhenChecker : FirWhenExpressionChecker() {
     override fun check(expression: FirWhenExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         if (expression.usedAsExpression && !expression.isExhaustive) {
-            if (expression.source?.isIfExpression == true) {
-                reporter.reportOn(expression.source, FirErrors.INVALID_IF_AS_EXPRESSION, context)
-            } else {
+            val source = expression.source ?: return
+            if (source.isIfExpression) {
+                reporter.reportOn(source, FirErrors.INVALID_IF_AS_EXPRESSION, context)
+                return
+            } else if (source.isWhenExpression) {
                 val missingCases = (expression.exhaustivenessStatus as ExhaustivenessStatus.NotExhaustive).reasons
-                reporter.reportOn(expression.source, FirErrors.NO_ELSE_IN_WHEN, missingCases, context)
+                reporter.reportOn(source, FirErrors.NO_ELSE_IN_WHEN, missingCases, context)
             }
         }
     }
 
     private val FirSourceElement.isIfExpression: Boolean
         get() = elementType == KtNodeTypes.IF
+
+    private val FirSourceElement.isWhenExpression: Boolean
+        get() = elementType == KtNodeTypes.WHEN
 }

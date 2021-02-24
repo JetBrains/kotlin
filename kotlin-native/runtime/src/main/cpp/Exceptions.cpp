@@ -48,14 +48,6 @@
 
 namespace {
 
-// RuntimeUtils.kt
-extern "C" void ReportUnhandledException(KRef throwable);
-extern "C" void ExceptionReporterLaunchpad(KRef reporter, KRef throwable);
-
-KRef currentUnhandledExceptionHook = nullptr;
-int32_t currentUnhandledExceptionHookLock = 0;
-int32_t currentUnhandledExceptionHookCookie = 0;
-
 #if USE_GCC_UNWIND
 struct Backtrace {
   Backtrace(int count, int skip) : index(0), skipCount(skip) {
@@ -216,25 +208,8 @@ void ThrowException(KRef exception) {
   PrintThrowable(exception);
   RuntimeCheck(false, "Exceptions unsupported");
 #else
-  throw ExceptionObjHolder(exception);
+  ExceptionObjHolder::Throw(exception);
 #endif
-}
-
-OBJ_GETTER(Kotlin_setUnhandledExceptionHook, KRef hook) {
-  RETURN_RESULT_OF(SwapHeapRefLocked,
-    &currentUnhandledExceptionHook, currentUnhandledExceptionHook, hook, &currentUnhandledExceptionHookLock,
-    &currentUnhandledExceptionHookCookie);
-}
-
-void OnUnhandledException(KRef throwable) {
-  ObjHolder handlerHolder;
-  auto* handler = SwapHeapRefLocked(&currentUnhandledExceptionHook, currentUnhandledExceptionHook, nullptr,
-     &currentUnhandledExceptionHookLock,  &currentUnhandledExceptionHookCookie, handlerHolder.slot());
-  if (handler == nullptr) {
-    ReportUnhandledException(throwable);
-  } else {
-    ExceptionReporterLaunchpad(handler, throwable);
-  }
 }
 
 namespace {
@@ -277,9 +252,15 @@ RUNTIME_NORETURN void TerminateWithUnhandledException(KRef throwable) {
   });
 }
 
-// Some libstdc++-based targets has limited support for std::current_exception and other C++11 functions.
-// This restriction can be lifted later when toolchains will be updated.
-#if KONAN_HAS_CXX11_EXCEPTION_FUNCTIONS
+ALWAYS_INLINE RUNTIME_NOTHROW OBJ_GETTER(Kotlin_getExceptionObject, void* holder) {
+#if !KONAN_NO_EXCEPTIONS
+    RETURN_OBJ(static_cast<ExceptionObjHolder*>(holder)->GetExceptionObject());
+#else
+    RETURN_OBJ(nullptr);
+#endif
+}
+
+#if !KONAN_NO_EXCEPTIONS
 
 namespace {
 // Copy, move and assign would be safe, but not much useful, so let's delete all (rule of 5)
@@ -293,7 +274,7 @@ class TerminateHandler : private kotlin::Pinned {
         try {
           std::rethrow_exception(currentException);
         } catch (ExceptionObjHolder& e) {
-          processUnhandledKotlinException(e.obj());
+          processUnhandledKotlinException(e.GetExceptionObject());
           konan::abort();
         } catch (...) {
           // Not a Kotlin exception - call default handler
@@ -333,13 +314,13 @@ void SetKonanTerminateHandler() {
   TerminateHandler::install();
 }
 
-#else // KONAN_OBJC_INTEROP
+#else // !KONAN_NO_EXCEPTIONS
 
 void SetKonanTerminateHandler() {
   // Nothing to do.
 }
 
-#endif // KONAN_OBJC_INTEROP
+#endif // !KONAN_NO_EXCEPTIONS
 
 void DisallowSourceInfo() {
   disallowSourceInfo = true;

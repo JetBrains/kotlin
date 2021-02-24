@@ -19,4 +19,7 @@ object FirReferenceForUnresolvedAnnotations : FirReference() {
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirReference {
         return this
     }
+
+    override fun replaceSource(newSource: FirSourceElement?) {
+    }
 }

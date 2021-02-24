@@ -171,7 +171,7 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
 
         val mainCompilation = target.compilations.maybeCreate(KotlinCompilation.MAIN_COMPILATION_NAME)
 
-        val compileConfiguration = configurations.maybeCreate(mainCompilation.deprecatedCompileConfigurationName)
+        val compileConfiguration = configurations.findByName(mainCompilation.deprecatedCompileConfigurationName)
         val implementationConfiguration = configurations.maybeCreate(mainCompilation.implementationConfigurationName)
 
         val runtimeOnlyConfiguration = configurations.maybeCreate(mainCompilation.runtimeOnlyConfigurationName)
@@ -184,8 +184,8 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
             attributes.attribute<Usage>(USAGE_ATTRIBUTE, KotlinUsages.producerApiUsage(target))
             extendsFrom(configurations.maybeCreate(mainCompilation.apiConfigurationName))
             if (mainCompilation is KotlinCompilationToRunnableFiles) {
-                val runtimeConfiguration = configurations.maybeCreate(mainCompilation.deprecatedRuntimeConfigurationName)
-                extendsFrom(runtimeConfiguration)
+                val runtimeConfiguration = configurations.findByName(mainCompilation.deprecatedRuntimeConfigurationName)
+                runtimeConfiguration?.let { extendsFrom(it) }
             }
             usesPlatformOf(target)
             setupAsPublicConfigurationIfSupported(target)
@@ -198,8 +198,9 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
                 isCanBeConsumed = true
                 isCanBeResolved = false
                 attributes.attribute<Usage>(USAGE_ATTRIBUTE, KotlinUsages.producerRuntimeUsage(target))
-                val runtimeConfiguration = configurations.maybeCreate(mainCompilation.deprecatedRuntimeConfigurationName)
-                extendsFrom(implementationConfiguration, runtimeOnlyConfiguration, runtimeConfiguration)
+                val runtimeConfiguration = configurations.findByName(mainCompilation.deprecatedRuntimeConfigurationName)
+                extendsFrom(implementationConfiguration, runtimeOnlyConfiguration)
+                runtimeConfiguration?.let { extendsFrom(it) }
                 usesPlatformOf(target)
                 setupAsPublicConfigurationIfSupported(target)
             }
@@ -210,18 +211,18 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
 
         if (createTestCompilation) {
             val testCompilation = target.compilations.getByName(KotlinCompilation.TEST_COMPILATION_NAME)
-            val compileTestsConfiguration = configurations.maybeCreate(testCompilation.deprecatedCompileConfigurationName)
+            val compileTestsConfiguration = configurations.findByName(testCompilation.deprecatedCompileConfigurationName)
             val testImplementationConfiguration = configurations.maybeCreate(testCompilation.implementationConfigurationName)
             val testRuntimeOnlyConfiguration = configurations.maybeCreate(testCompilation.runtimeOnlyConfigurationName)
 
-            compileTestsConfiguration.extendsFrom(compileConfiguration)
+            compileConfiguration?.let { compileTestsConfiguration?.extendsFrom(it) }
             testImplementationConfiguration.extendsFrom(implementationConfiguration)
             testRuntimeOnlyConfiguration.extendsFrom(runtimeOnlyConfiguration)
 
             if (mainCompilation is KotlinCompilationToRunnableFiles && testCompilation is KotlinCompilationToRunnableFiles) {
-                val runtimeConfiguration = configurations.maybeCreate(mainCompilation.deprecatedRuntimeConfigurationName)
-                val testRuntimeConfiguration = configurations.maybeCreate(testCompilation.deprecatedRuntimeConfigurationName)
-                testRuntimeConfiguration.extendsFrom(runtimeConfiguration)
+                val runtimeConfiguration = configurations.findByName(mainCompilation.deprecatedRuntimeConfigurationName)
+                val testRuntimeConfiguration = configurations.findByName(testCompilation.deprecatedRuntimeConfigurationName)
+                runtimeConfiguration?.let { testRuntimeConfiguration?.extendsFrom(it) }
             }
         }
     }
@@ -248,8 +249,8 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
         if (createTestCompilation) {
             val testCompilation = target.compilations.getByName(KotlinCompilation.TEST_COMPILATION_NAME)
             if (testCompilation is KotlinCompilationToRunnableFiles) {
-                addDependsOnTaskInOtherProjects(project, buildNeeded, true, testCompilation.deprecatedRuntimeConfigurationName)
-                addDependsOnTaskInOtherProjects(project, buildDependent, false, testCompilation.deprecatedRuntimeConfigurationName)
+                addDependsOnTaskInOtherProjects(project, buildNeeded, true, testCompilation.runtimeDependencyConfigurationName)
+                addDependsOnTaskInOtherProjects(project, buildDependent, false, testCompilation.runtimeDependencyConfigurationName)
             }
         }
     }
@@ -271,7 +272,7 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
             val target = compilation.target
             val configurations = target.project.configurations
 
-            val compileConfiguration = configurations.maybeCreate(compilation.deprecatedCompileConfigurationName).apply {
+            val compileConfiguration = configurations.findByName(compilation.deprecatedCompileConfigurationName)?.apply {
                 isCanBeConsumed = false
                 setupAsLocalTargetSpecificConfigurationIfSupported(target)
                 isVisible = false
@@ -280,7 +281,7 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
             }
 
             val apiConfiguration = configurations.maybeCreate(compilation.apiConfigurationName).apply {
-                extendsFrom(compileConfiguration)
+                compileConfiguration?.let { extendsFrom(it) }
                 isVisible = false
                 isCanBeConsumed = false
                 isCanBeResolved = false
@@ -288,7 +289,8 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
             }
 
             val implementationConfiguration = configurations.maybeCreate(compilation.implementationConfigurationName).apply {
-                extendsFrom(compileConfiguration, apiConfiguration)
+                extendsFrom(apiConfiguration)
+                compileConfiguration?.let { extendsFrom(it) }
                 isVisible = false
                 isCanBeConsumed = false
                 isCanBeResolved = false
@@ -313,10 +315,10 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
             }
 
             if (compilation is KotlinCompilationToRunnableFiles) {
-                val runtimeConfiguration = configurations.maybeCreate(compilation.deprecatedRuntimeConfigurationName).apply {
+                val runtimeConfiguration = configurations.findByName(compilation.deprecatedRuntimeConfigurationName)?.apply {
                     isCanBeConsumed = false
                     setupAsLocalTargetSpecificConfigurationIfSupported(target)
-                    extendsFrom(compileConfiguration)
+                    compileConfiguration?.let { extendsFrom(it) }
                     isVisible = false
                     isCanBeResolved = true // Needed for IDE import
                     description =
@@ -331,7 +333,8 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
                 }
 
                 val runtimeClasspathConfiguration = configurations.maybeCreate(compilation.runtimeDependencyConfigurationName).apply {
-                    extendsFrom(runtimeOnlyConfiguration, runtimeConfiguration, implementationConfiguration)
+                    extendsFrom(runtimeOnlyConfiguration, implementationConfiguration)
+                    runtimeConfiguration?.let { extendsFrom(it) }
                     usesPlatformOf(target)
                     isVisible = false
                     isCanBeConsumed = false
@@ -411,9 +414,9 @@ abstract class KotlinOnlyTargetConfigurator<KotlinCompilationType : KotlinCompil
                 addJarIfNoArtifactsPresent(apiElementsConfiguration, jarArtifact)
 
                 if (mainCompilation is KotlinCompilationToRunnableFiles<*>) {
-                    val runtimeConfiguration = project.configurations.getByName(mainCompilation.deprecatedRuntimeConfigurationName)
+                    val runtimeConfiguration = project.configurations.findByName(mainCompilation.deprecatedRuntimeConfigurationName)
                     val runtimeElementsConfiguration = project.configurations.getByName(target.runtimeElementsConfigurationName)
-                    addJarIfNoArtifactsPresent(runtimeConfiguration, jarArtifact)
+                    runtimeConfiguration?.let { addJarIfNoArtifactsPresent(runtimeConfiguration, jarArtifact) }
                     addJarIfNoArtifactsPresent(runtimeElementsConfiguration, jarArtifact)
                 }
             }

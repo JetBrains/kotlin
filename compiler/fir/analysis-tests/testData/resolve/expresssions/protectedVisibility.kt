@@ -31,7 +31,7 @@ class Derived : Protected() {
     fun foo() {
         bar()
         Nested().foo()
-        Nested().<!HIDDEN{LT}!><!HIDDEN{PSI}!>bar<!>()<!> // hidden
+        Nested().<!HIDDEN!>bar<!>() // hidden
 
         fromCompanion()
         protectedFromCompanion()
@@ -48,8 +48,8 @@ fun test() {
     Protected().baz()
     Protected().Inner()
 
-    Protected().<!HIDDEN{LT}!><!HIDDEN{PSI}!>bar<!>()<!> // hidden
-    Protected.<!HIDDEN{LT}!><!HIDDEN{PSI}!>Nested<!>()<!> // hidden
+    Protected().<!HIDDEN!>bar<!>() // hidden
+    Protected.<!HIDDEN!>Nested<!>() // hidden
 }
 
 open class Generic<T>(val x: T) {

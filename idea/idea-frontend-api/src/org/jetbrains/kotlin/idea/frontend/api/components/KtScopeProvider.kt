@@ -29,4 +29,27 @@ abstract class KtScopeProvider : KtAnalysisSessionComponent() {
     ): KtScopeContext
 }
 
+interface KtScopeProviderMixIn : KtAnalysisSessionMixIn {
+    fun KtSymbolWithMembers.getMemberScope(): KtMemberScope =
+        analysisSession.scopeProvider.getMemberScope(this)
+
+    fun KtSymbolWithMembers.getDeclaredMemberScope(): KtDeclaredMemberScope =
+        analysisSession.scopeProvider.getDeclaredMemberScope(this)
+
+    fun KtFileSymbol.getFileScope(): KtDeclarationScope<KtSymbolWithDeclarations> =
+        analysisSession.scopeProvider.getFileScope(this)
+
+    fun KtPackageSymbol.getPackageScope(): KtPackageScope =
+        analysisSession.scopeProvider.getPackageScope(this)
+
+    fun List<KtScope>.asCompositeScope(): KtCompositeScope =
+        analysisSession.scopeProvider.getCompositeScope(this)
+
+    fun KtType.getTypeScope(): KtScope? =
+        analysisSession.scopeProvider.getTypeScope(this)
+
+    fun KtFile.getScopeContextForPosition(positionInFakeFile: KtElement): KtScopeContext =
+        analysisSession.scopeProvider.getScopeContextForPosition(this, positionInFakeFile)
+}
+
 data class KtScopeContext(val scopes: KtCompositeScope, val implicitReceiversTypes: List<KtType>)

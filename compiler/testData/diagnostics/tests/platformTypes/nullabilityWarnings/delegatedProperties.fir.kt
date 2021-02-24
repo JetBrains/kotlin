@@ -19,5 +19,5 @@ public class J {
 // FILE: k.kt
 
 var A by J.staticNN
-var B by <!UNSAFE_CALL!>J.staticN<!>
+var B by J<!UNSAFE_CALL, UNSAFE_CALL!>.<!>staticN
 var C by J.staticJ

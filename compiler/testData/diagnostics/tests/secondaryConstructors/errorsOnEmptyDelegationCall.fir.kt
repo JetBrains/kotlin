@@ -2,7 +2,7 @@
 open class B0(x: Int)
 
 class A0 : B0 {
-    <!INAPPLICABLE_CANDIDATE!>constructor()<!>
+    constructor()
     constructor(x: Int) : <!INAPPLICABLE_CANDIDATE!>super<!>()
 }
 
@@ -26,7 +26,7 @@ open class B2 {
 }
 
 class A2 : B2 {
-    <!EXPLICIT_DELEGATION_CALL_REQUIRED, NONE_APPLICABLE!>constructor()<!>
+    <!EXPLICIT_DELEGATION_CALL_REQUIRED!>constructor()<!>
     constructor(x: Int) : <!NONE_APPLICABLE!>super<!>()
 }
 
@@ -37,6 +37,6 @@ open class B3 {
 }
 
 class A3 : B3 {
-    <!HIDDEN!>constructor()<!>
+    constructor()
     constructor(x: Int) : <!HIDDEN!>super<!>()
 }

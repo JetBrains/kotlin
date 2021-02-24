@@ -120,6 +120,11 @@ public class IrClassFileToSourceStubConverterTestGenerated extends AbstractIrCla
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/defaultParameterValueOn.kt");
     }
 
+    @TestMetadata("delegateCorrectErrorTypes.kt")
+    public void testDelegateCorrectErrorTypes() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/delegateCorrectErrorTypes.kt");
+    }
+
     @TestMetadata("deprecated.kt")
     public void testDeprecated() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/deprecated.kt");
@@ -468,6 +473,11 @@ public class IrClassFileToSourceStubConverterTestGenerated extends AbstractIrCla
     @TestMetadata("stripMetadata.kt")
     public void testStripMetadata() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/stripMetadata.kt");
+    }
+
+    @TestMetadata("suspendArgName.kt")
+    public void testSuspendArgName() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/suspendArgName.kt");
     }
 
     @TestMetadata("suspendErrorTypes.kt")

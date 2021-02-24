@@ -55,7 +55,12 @@ fun Collection<IrOverridableMember>.collectAndFilterRealOverrides(
 ): Set<IrOverridableMember> {
 
     val visited = mutableSetOf<IrOverridableMember>()
-    val realOverrides = mutableSetOf<IrOverridableMember>()
+    val realOverrides = mutableMapOf<Any, IrOverridableMember>()
+
+    /*
+        Due to IR copying in performByIrFile, overrides should only be distinguished up to their signatures.
+     */
+    fun IrOverridableMember.toKey(): Any = symbol.signature ?: this
 
     fun overriddenSymbols(declaration: IrOverridableMember) = when (declaration) {
         is IrSimpleFunction -> declaration.overriddenSymbols
@@ -69,7 +74,7 @@ fun Collection<IrOverridableMember>.collectAndFilterRealOverrides(
         if (!visited.add(member) || filter(member)) return
 
         if (member.isReal && !toSkip(member)) {
-            realOverrides += member
+            realOverrides[member.toKey()] = member
         } else {
             overriddenSymbols(member).forEach { collectRealOverrides(it.owner as IrOverridableMember) }
         }
@@ -81,15 +86,16 @@ fun Collection<IrOverridableMember>.collectAndFilterRealOverrides(
         if (!visited.add(member)) return
 
         overriddenSymbols(member).forEach {
-            realOverrides.remove(it.owner)
-            excludeRepeated(it.owner as IrOverridableMember)
+            val owner = it.owner as IrOverridableMember
+            realOverrides.remove(owner.toKey())
+            excludeRepeated(owner)
         }
     }
 
     visited.clear()
-    realOverrides.toList().forEach { excludeRepeated(it) }
+    realOverrides.toList().forEach { excludeRepeated(it.second) }
 
-    return realOverrides
+    return realOverrides.values.toSet()
 }
 
 // TODO: use this implementation instead of any other

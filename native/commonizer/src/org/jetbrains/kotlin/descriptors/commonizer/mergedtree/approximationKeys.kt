@@ -84,5 +84,5 @@ private fun additionalValueParameterNamesHash(callable: FunctionDescriptor): Int
     if (callable.annotations.none { it.isObjCInteropCallableAnnotation })
         return 0 // do not calculate hash for non-ObjC callables
 
-    return callable.valueParameters.fold(0) { acc, next -> acc.appendHashCode(next.name) }
+    return callable.valueParameters.fold(0) { acc, next -> acc.appendHashCode(next.name.asString()) }
 }

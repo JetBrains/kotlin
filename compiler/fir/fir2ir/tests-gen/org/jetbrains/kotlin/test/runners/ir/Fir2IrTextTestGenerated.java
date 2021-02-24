@@ -1347,6 +1347,12 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         }
 
         @Test
+        @TestMetadata("kt45022.kt")
+        public void testKt45022() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/kt45022.kt");
+        }
+
+        @Test
         @TestMetadata("lambdaInCAO.kt")
         public void testLambdaInCAO() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/lambdaInCAO.kt");
@@ -2150,6 +2156,12 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         @TestMetadata("JCTree.kt")
         public void testJCTree() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/JCTree.kt");
+        }
+
+        @Test
+        @TestMetadata("kt19251.kt")
+        public void testKt19251() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/kt19251.kt");
         }
 
         @Test

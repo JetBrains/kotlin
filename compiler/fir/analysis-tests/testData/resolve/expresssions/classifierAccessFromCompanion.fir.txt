@@ -5,7 +5,7 @@ FILE: classifierAccessFromCompanion.kt
         }
 
         public sealed class Function : R|kotlin/Any| {
-            private constructor(): R|Factory.Function| {
+            protected constructor(): R|Factory.Function| {
                 super<R|kotlin/Any|>()
             }
 

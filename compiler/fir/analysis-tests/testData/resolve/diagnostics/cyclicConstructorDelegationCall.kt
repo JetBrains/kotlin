@@ -63,5 +63,5 @@ class M {
 }
 
 class U : M {
-    <!INAPPLICABLE_CANDIDATE!>constructor()<!>
+    constructor()
 }

@@ -150,6 +150,41 @@ internal inline fun generateFunction(
     return function
 }
 
+// TODO: Consider using different abstraction than `FunctionGenerationContext` for `generateFunctionNoRuntime`.
+internal inline fun <R> generateFunctionNoRuntime(
+        codegen: CodeGenerator,
+        function: LLVMValueRef,
+        code: FunctionGenerationContext.(FunctionGenerationContext) -> R,
+) {
+    val functionGenerationContext = FunctionGenerationContext(function, codegen, null, null)
+    try {
+        functionGenerationContext.forbidRuntime = true
+        require(!functionGenerationContext.isObjectType(functionGenerationContext.returnType!!)) {
+            "Cannot return object from function without Kotlin runtime"
+        }
+
+        generateFunctionBody(functionGenerationContext, code)
+    } finally {
+        functionGenerationContext.dispose()
+    }
+}
+
+internal inline fun generateFunctionNoRuntime(
+        codegen: CodeGenerator,
+        functionType: LLVMTypeRef,
+        name: String,
+        code: FunctionGenerationContext.(FunctionGenerationContext) -> Unit,
+): LLVMValueRef {
+    val function = addLlvmFunctionWithDefaultAttributes(
+            codegen.context,
+            codegen.context.llvmModule!!,
+            name,
+            functionType
+    )
+    generateFunctionNoRuntime(codegen, function, code)
+    return function
+}
+
 private inline fun <R> generateFunctionBody(
         functionGenerationContext: FunctionGenerationContext,
         code: FunctionGenerationContext.(FunctionGenerationContext) -> R) {
@@ -827,14 +862,10 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         val beginCatch = context.llvm.cxaBeginCatchFunction
         val exceptionRawPtr = call(beginCatch, listOf(exceptionRecord))
 
-        // Pointer to KotlinException instance:
-        val exceptionPtrPtr = bitcast(codegen.kObjHeaderPtrPtr, exceptionRawPtr, "")
-
         // Pointer to Kotlin exception object:
-        // We do need a slot here, as otherwise exception instance could be freed by _cxa_end_catch.
-        val exceptionPtr = loadSlot(exceptionPtrPtr, true, "exception")
+        val exceptionPtr = call(context.llvm.Kotlin_getExceptionObject, listOf(exceptionRawPtr), Lifetime.GLOBAL)
 
-        // __cxa_end_catch performs some C++ cleanup, including calling `KotlinException` class destructor.
+        // __cxa_end_catch performs some C++ cleanup, including calling `ExceptionObjHolder` class destructor.
         val endCatch = context.llvm.cxaEndCatchFunction
         call(endCatch, listOf())
 

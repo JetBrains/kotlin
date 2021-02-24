@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 annotation class A1(val x: Int)
 annotation class A2(val a: A1)
 annotation class AA(val xs: Array<A1>)

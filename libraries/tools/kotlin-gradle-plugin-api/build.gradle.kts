@@ -11,7 +11,8 @@ publish()
 standardPublicJars()
 
 dependencies {
-    compile(kotlinStdlib())
+    implementation(kotlinStdlib())
+    implementation(project(":native:kotlin-native-utils"))
 
     compileOnly(gradleApi())
     compileOnly("com.android.tools.build:gradle:0.4.2")
@@ -25,7 +26,9 @@ tasks {
     withType<KotlinCompile> {
         kotlinOptions.languageVersion = "1.3"
         kotlinOptions.apiVersion = "1.3"
-        kotlinOptions.freeCompilerArgs += listOf("-Xskip-prerelease-check")
+        kotlinOptions.freeCompilerArgs += listOf(
+            "-Xskip-prerelease-check", "-Xsuppress-version-warnings"
+        )
     }
 
     named<Jar>("jar") {

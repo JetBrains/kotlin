@@ -65,7 +65,7 @@ public open class OpenClass2 {
 }
 
 public sealed class Sealed {
-    internal constructor Sealed()
+    protected constructor Sealed()
     public final fun check(/*0*/ arg: Sealed.Sealed1): kotlin.Unit
     public open override /*1*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

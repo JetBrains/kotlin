@@ -715,6 +715,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/invokeWithReceiverAndArgument.kt");
         }
 
+        @TestMetadata("kt37056.kt")
+        public void testKt37056() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/kt37056.kt");
+        }
+
         @TestMetadata("lambdaAsReceiver.kt")
         public void testLambdaAsReceiver() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/lambdaAsReceiver.kt");
@@ -2885,6 +2890,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/smartcastToNothing.kt");
         }
 
+        @TestMetadata("smartcastToTypeParameter.kt")
+        public void testSmartcastToTypeParameter() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/smartcastToTypeParameter.kt");
+        }
+
         @TestMetadata("compiler/fir/analysis-tests/testData/resolve/smartcasts/booleans")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -2943,6 +2953,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             @TestMetadata("functionCallBound.kt")
             public void testFunctionCallBound() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/boundSmartcasts/functionCallBound.kt");
+            }
+
+            @TestMetadata("thisAssignment.kt")
+            public void testThisAssignment() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/boundSmartcasts/thisAssignment.kt");
             }
         }
 
@@ -3250,6 +3265,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         @TestMetadata("capturedParametersOfInnerClasses.kt")
         public void testCapturedParametersOfInnerClasses() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/types/capturedParametersOfInnerClasses.kt");
+        }
+
+        @TestMetadata("castToBareType.kt")
+        public void testCastToBareType() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/types/castToBareType.kt");
         }
     }
 

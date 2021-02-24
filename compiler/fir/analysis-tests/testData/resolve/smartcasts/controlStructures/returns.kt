@@ -36,8 +36,8 @@ fun test_2(x: Any) {
         else -> return
     }
     x.foo()
-    x.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>bar<!>()<!>
-    x.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>baz<!>()<!>
+    x.<!UNRESOLVED_REFERENCE!>bar<!>()
+    x.<!UNRESOLVED_REFERENCE!>baz<!>()
 }
 
 fun test_3(x: Any) {
@@ -45,9 +45,9 @@ fun test_3(x: Any) {
         x is B -> x.bar()
         x is C -> x.baz()
     }
-    x.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>foo<!>()<!>
-    x.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>bar<!>()<!>
-    x.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>baz<!>()<!>
+    x.<!UNRESOLVED_REFERENCE!>foo<!>()
+    x.<!UNRESOLVED_REFERENCE!>bar<!>()
+    x.<!UNRESOLVED_REFERENCE!>baz<!>()
 }
 
 fun <T> runHigherOrder(f: () -> T): T = f()

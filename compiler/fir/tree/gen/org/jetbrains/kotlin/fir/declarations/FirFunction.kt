@@ -38,6 +38,8 @@ interface FirFunction<F : FirFunction<F>> : FirCallableDeclaration<F>, FirTarget
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitFunction(this, data)
 
+    override fun replaceSource(newSource: FirSourceElement?)
+
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
 
     override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef)

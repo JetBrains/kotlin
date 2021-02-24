@@ -113,7 +113,8 @@ open class DeepCopyIrTreeWithSymbols(
     override fun visitScript(declaration: IrScript): IrStatement {
         return IrScriptImpl(
             symbolRemapper.getDeclaredScript(declaration.symbol),
-            declaration.name
+            declaration.name,
+            declaration.factory,
         ).also { scriptCopy ->
             scriptCopy.thisReceiver = declaration.thisReceiver.transform()
             declaration.statements.mapTo(scriptCopy.statements) { it.transform() }
@@ -598,6 +599,15 @@ open class DeepCopyIrTreeWithSymbols(
             copyRemappedTypeArgumentsFrom(expression)
             transformValueArguments(expression)
         }.copyAttributes(expression)
+    }
+
+    override fun visitRawFunctionReference(expression: IrRawFunctionReference): IrRawFunctionReference {
+        val symbol = symbolRemapper.getReferencedFunction(expression.symbol)
+        return IrRawFunctionReferenceImpl(
+            expression.startOffset, expression.endOffset,
+            expression.type.remapType(),
+            symbol
+        ).copyAttributes(expression)
     }
 
     override fun visitPropertyReference(expression: IrPropertyReference): IrPropertyReference =

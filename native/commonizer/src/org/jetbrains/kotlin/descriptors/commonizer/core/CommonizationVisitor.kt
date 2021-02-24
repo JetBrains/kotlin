@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClass
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirType
-import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeFactory
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.*
 import org.jetbrains.kotlin.descriptors.commonizer.utils.*
 import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMapNotNull
@@ -87,9 +85,8 @@ internal class CommonizationVisitor(
             // companion object should have the same name for each target class, then it could be set to common class
             val companionObjectName = node.targetDeclarations.mapTo(HashSet()) { it!!.companion }.singleOrNull()
             if (companionObjectName != null) {
-                val companionObjectClassId = node.classifierId.createNestedEntityId(companionObjectName)
-                val companionObjectNode = classifiers.commonized.classNode(companionObjectClassId)
-                    ?: error("Can't find companion object with class ID $companionObjectClassId")
+                val companionObjectNode = node.classes[companionObjectName]
+                    ?: error("Can't find node for companion object $companionObjectName in node for class ${node.classifierName}")
 
                 if (companionObjectNode.commonDeclaration() != null) {
                     // companion object has been successfully commonized
@@ -98,7 +95,7 @@ internal class CommonizationVisitor(
             }
 
             // find out common (and commonized) supertypes
-            commonClass.commonizeSupertypes(node.classifierId, node.collectCommonSupertypes())
+            commonClass.commonizeSupertypes(node.collectCommonSupertypes())
         }
     }
 
@@ -111,7 +108,7 @@ internal class CommonizationVisitor(
 
         if (commonClassifier is CirClass) {
             // find out common (and commonized) supertypes
-            commonClassifier.commonizeSupertypes(node.classifierId, node.collectCommonSupertypes())
+            commonClassifier.commonizeSupertypes(node.collectCommonSupertypes())
         }
     }
 
@@ -129,12 +126,12 @@ internal class CommonizationVisitor(
         val supertypesMap: MutableMap<CirType, CommonizedGroup<CirType>> = linkedMapOf() // preserve supertype order
         for ((index, typeAlias) in targetDeclarations.withIndex()) {
             val expandedClassId = typeAlias!!.expandedType.classifierId
-            if (classifiers.commonDependeeLibraries.hasClassifier(expandedClassId))
+            if (classifiers.commonDependencies.hasClassifier(expandedClassId))
                 return null // this case is not supported yet
 
-            val expandedClassNode = classifiers.commonized.classNode(expandedClassId) ?: return null
+            val expandedClassNode = classifiers.commonizedNodes.classNode(expandedClassId) ?: return null
             val expandedClass = expandedClassNode.targetDeclarations[index]
-                ?: error("Can't find expanded class with class ID $expandedClassId and index $index for type alias $classifierId")
+                ?: error("Can't find expanded class with class ID $expandedClassId and index $index for type alias $classifierName")
 
             for (supertype in expandedClass.supertypes) {
                 supertypesMap.getOrPut(supertype) { CommonizedGroup(targetDeclarations.size) }[index] = supertype
@@ -144,18 +141,12 @@ internal class CommonizationVisitor(
     }
 
     private fun CirClass.commonizeSupertypes(
-        classId: CirEntityId,
         supertypesMap: Map<CirType, CommonizedGroup<CirType>>?
     ) {
         val commonSupertypes = supertypesMap?.values?.compactMapNotNull { supertypesGroup ->
             commonize(supertypesGroup, TypeCommonizer(classifiers))
         }.orEmpty()
 
-        setSupertypes(
-            if (commonSupertypes.isEmpty() && classId !in SPECIAL_CLASS_WITHOUT_SUPERTYPES_CLASS_IDS)
-                listOf(CirTypeFactory.StandardTypes.ANY)
-            else
-                commonSupertypes
-        )
+        setSupertypes(commonSupertypes)
     }
 }

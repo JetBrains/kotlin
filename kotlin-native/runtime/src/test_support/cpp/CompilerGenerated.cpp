@@ -170,7 +170,7 @@ RUNTIME_NORETURN OBJ_GETTER(DescribeObjectForDebugging, KConstNativePtr typeInfo
     throw std::runtime_error("Not implemented for tests");
 }
 
-void ExceptionReporterLaunchpad(KRef reporter, KRef throwable) {
+void OnUnhandledException(KRef throwable) {
     throw std::runtime_error("Not implemented for tests");
 }
 

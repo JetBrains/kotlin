@@ -46,12 +46,8 @@ public class AndroidRunner {
 
         CodegenTestsOnAndroidGenerator.generate(pathManager);
 
-        System.out.println("Run tests on android...");
-        TestSuite suite = CodegenTestsOnAndroidRunner.runTestsInEmulator(pathManager);
-        //AndroidJpsBuildTestCase indirectly depends on UsefulTestCase which compiled against java 8
-        //TODO: Need add separate run configuration for AndroidJpsBuildTestCase
-        //suite.addTest(new AndroidJpsBuildTestCase());
-        return suite;
+        System.out.println("Run tests on Android...");
+        return CodegenTestsOnAndroidRunner.runTestsInEmulator(pathManager);
     }
 
     public void tearDown() throws Exception {

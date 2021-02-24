@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 
-class AddDataModifierFix(element: KtClass, private val fqName: String) : AddModifierFix(element, KtTokens.DATA_KEYWORD) {
+class AddDataModifierFix(element: KtClass, private val fqName: String) : AddModifierFixMpp(element, KtTokens.DATA_KEYWORD) {
 
     override fun getText() = KotlinBundle.message("fix.make.data.class", fqName)
 

@@ -21,6 +21,8 @@ interface FirResolvable : FirElement {
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitResolvable(this, data)
 
+    override fun replaceSource(newSource: FirSourceElement?)
+
     fun replaceCalleeReference(newCalleeReference: FirReference)
 
     fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirResolvable

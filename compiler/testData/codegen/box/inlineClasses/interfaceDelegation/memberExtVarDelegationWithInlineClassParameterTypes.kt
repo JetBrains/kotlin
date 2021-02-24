@@ -6,6 +6,7 @@ import kotlin.test.assertEquals
 inline class S(val xs: Array<String>)
 
 interface IFoo {
+    @Suppress("RESERVED_VAR_PROPERTY_OF_VALUE_CLASS")
     var S.extVar: String
 }
 
@@ -14,12 +15,14 @@ interface GFoo<T> {
 }
 
 object FooImpl : IFoo {
+    @Suppress("RESERVED_VAR_PROPERTY_OF_VALUE_CLASS")
     override var S.extVar: String
         get() = xs[0]
         set(value) { xs[0] = value }
 }
 
 object GFooImpl : GFoo<S> {
+    @Suppress("RESERVED_VAR_PROPERTY_OF_VALUE_CLASS")
     override var S.extVar: String
         get() = xs[0]
         set(value) { xs[0] = value }

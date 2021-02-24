@@ -22,6 +22,8 @@ abstract class FirExpression : FirPureAbstractElement(), FirStatement {
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitExpression(this, data)
 
+    abstract override fun replaceSource(newSource: FirSourceElement?)
+
     abstract fun replaceTypeRef(newTypeRef: FirTypeRef)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirExpression

@@ -25,12 +25,14 @@ import com.intellij.refactoring.util.MoveRenameUsageInfo
 import com.intellij.refactoring.util.NonCodeUsageInfo
 import com.intellij.refactoring.util.RefactoringUIUtil
 import com.intellij.usageView.UsageInfo
+import com.intellij.usageView.UsageViewTypeLocation
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.backend.common.serialization.findPackage
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.MutablePackageFragmentDescriptor
 import org.jetbrains.kotlin.idea.KotlinBundle
@@ -50,6 +52,7 @@ import org.jetbrains.kotlin.idea.core.util.toPsiFile
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.project.forcedTargetPlatform
+import org.jetbrains.kotlin.idea.project.getLanguageVersionSettings
 import org.jetbrains.kotlin.idea.refactoring.getUsageContext
 import org.jetbrains.kotlin.idea.refactoring.move.KotlinMoveUsage
 import org.jetbrains.kotlin.idea.refactoring.pullUp.renderForConflicts
@@ -531,6 +534,57 @@ class MoveConflictChecker(
     }
 
     private fun checkSealedClassMove(conflicts: MultiMap<PsiElement, String>) {
+        val sealedInheritanceRulesRelaxed =
+            project.getLanguageVersionSettings().supportsFeature(LanguageFeature.AllowSealedInheritorsInDifferentFilesOfSamePackage)
+
+        if (sealedInheritanceRulesRelaxed)
+            checkSealedClassMoveWithinPackageAndModule(conflicts)
+        else
+            checkSealedClassMoveWithinFile(conflicts)
+    }
+
+    private fun checkSealedClassMoveWithinFile(conflicts: MultiMap<PsiElement, String>) {
+        val visited = HashSet<PsiElement>()
+        for (elementToMove in elementsToMove) {
+            if (!visited.add(elementToMove)) continue
+            if (elementToMove !is KtClassOrObject) continue
+
+            val rootClass: KtClass
+            val rootClassDescriptor: ClassDescriptor
+            if (elementToMove is KtClass && elementToMove.isSealed()) {
+                rootClass = elementToMove
+                rootClassDescriptor = rootClass.resolveToDescriptorIfAny() ?: return
+            } else {
+                val classDescriptor = elementToMove.resolveToDescriptorIfAny() ?: return
+                val superClassDescriptor = classDescriptor.getSuperClassNotAny() ?: return
+                if (superClassDescriptor.modality != Modality.SEALED) return
+                rootClassDescriptor = superClassDescriptor
+                rootClass = rootClassDescriptor.source.getPsi() as? KtClass ?: return
+            }
+
+            val subclasses = rootClassDescriptor.sealedSubclasses.mapNotNull { it.source.getPsi() }
+            if (subclasses.isEmpty()) continue
+
+            visited.add(rootClass)
+            visited.addAll(subclasses)
+
+            if (isToBeMoved(rootClass) && subclasses.all { isToBeMoved(it) }) continue
+
+            val message = if (elementToMove == rootClass) {
+                KotlinBundle.message("text.sealed.class.0.must.be.moved.with.all.its.subclasses", rootClass.name.toString())
+            } else {
+                val type = ElementDescriptionUtil.getElementDescription(elementToMove, UsageViewTypeLocation.INSTANCE).capitalize()
+                KotlinBundle.message(
+                    "text.0.1.must.be.moved.with.sealed.parent.class.and.all.its.subclasses",
+                    type,
+                    rootClass.name.toString()
+                )
+            }
+            conflicts.putValue(elementToMove, message)
+        }
+    }
+
+    private fun checkSealedClassMoveWithinPackageAndModule(conflicts: MultiMap<PsiElement, String>) {
         val hierarchyChecker = SealedHierarchyChecker()
 
         for (elementToMove in elementsToMove) {

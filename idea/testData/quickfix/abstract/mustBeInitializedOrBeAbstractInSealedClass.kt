@@ -2,3 +2,4 @@
 sealed class A() {
     fun <caret>i() : Int
 }
+/* FIR_COMPARISON */

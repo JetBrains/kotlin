@@ -17,6 +17,11 @@ object FirDiagnosticsDirectives : SimpleDirectivesContainer() {
         applicability = Global
     )
 
+    val RENDERER_CFG_LEVELS by directive(
+        description = "Render leves of nodes in CFG dump",
+        applicability = Global
+    )
+
     val FIR_DUMP by directive(
         description = """
             Dumps resulting fir to `testName.fir` file

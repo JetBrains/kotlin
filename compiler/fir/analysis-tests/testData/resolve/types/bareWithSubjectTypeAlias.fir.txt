@@ -1,6 +1,6 @@
 FILE: bareWithSubjectTypeAlias.kt
     public sealed class A<out T> : R|kotlin/Any| {
-        private constructor<out T>(): R|A<T>| {
+        protected constructor<out T>(): R|A<T>| {
             super<R|kotlin/Any|>()
         }
 

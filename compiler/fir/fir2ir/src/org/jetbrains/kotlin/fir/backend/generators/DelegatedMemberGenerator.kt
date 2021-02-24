@@ -132,7 +132,13 @@ internal class DelegatedMemberGenerator(
                 containingClass = firSubClass.symbol.toLookupTag()
             )
         delegateFunction.overriddenSymbols =
-            delegateOverride.generateOverriddenFunctionSymbols(firSubClass, session, scopeSession, declarationStorage)
+            delegateOverride.generateOverriddenFunctionSymbols(
+                firSubClass,
+                session,
+                scopeSession,
+                declarationStorage,
+                fakeOverrideGenerator
+            )
                 .filter { it.owner != delegateFunction }
         annotationGenerator.generate(delegateFunction, delegateOverride)
 
@@ -201,13 +207,20 @@ internal class DelegatedMemberGenerator(
 
         delegateProperty.getter!!.body = createDelegateBody(irField, delegateProperty.getter!!, superProperty.getter!!)
         delegateProperty.getter!!.overriddenSymbols =
-            firDelegateProperty.generateOverriddenAccessorSymbols(firSubClass, isGetter = true, session, scopeSession, declarationStorage)
+            firDelegateProperty.generateOverriddenAccessorSymbols(
+                firSubClass,
+                isGetter = true,
+                session,
+                scopeSession,
+                declarationStorage,
+                fakeOverrideGenerator
+            )
         annotationGenerator.generate(delegateProperty.getter!!, firDelegateProperty)
         if (delegateProperty.isVar) {
             delegateProperty.setter!!.body = createDelegateBody(irField, delegateProperty.setter!!, superProperty.setter!!)
             delegateProperty.setter!!.overriddenSymbols =
                 firDelegateProperty.generateOverriddenAccessorSymbols(
-                    firSubClass, isGetter = false, session, scopeSession, declarationStorage
+                    firSubClass, isGetter = false, session, scopeSession, declarationStorage, fakeOverrideGenerator
                 )
             annotationGenerator.generate(delegateProperty.setter!!, firDelegateProperty)
         }

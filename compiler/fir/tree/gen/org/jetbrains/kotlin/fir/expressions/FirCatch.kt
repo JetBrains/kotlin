@@ -23,6 +23,8 @@ abstract class FirCatch : FirPureAbstractElement(), FirElement {
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitCatch(this, data)
 
+    abstract override fun replaceSource(newSource: FirSourceElement?)
+
     abstract fun <D> transformParameter(transformer: FirTransformer<D>, data: D): FirCatch
 
     abstract fun <D> transformBlock(transformer: FirTransformer<D>, data: D): FirCatch

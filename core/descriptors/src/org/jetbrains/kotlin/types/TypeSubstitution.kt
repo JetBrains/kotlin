@@ -85,6 +85,15 @@ abstract class TypeConstructorSubstitution : TypeSubstitution() {
     }
 }
 
+class SubstitutionWithCapturedTypeApproximation(substitution: TypeSubstitution) : DelegatedTypeSubstitution(substitution) {
+    override fun approximateCapturedTypes() = true
+}
+
+class SubstitutionWithContravariantCapturedTypeApproximation(substitution: TypeSubstitution) : DelegatedTypeSubstitution(substitution) {
+    override fun approximateCapturedTypes() = true
+    override fun approximateContravariantCapturedTypes() = true
+}
+
 class IndexedParametersSubstitution(
     val parameters: Array<TypeParameterDescriptor>,
     val arguments: Array<TypeProjection>,

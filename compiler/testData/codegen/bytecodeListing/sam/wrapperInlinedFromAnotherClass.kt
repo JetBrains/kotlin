@@ -1,3 +1,4 @@
+// KOTLIN_CONFIGURATION_FLAGS: SAM_CONVERSIONS=CLASS
 class A {
     fun test1a() = B().runnable1()
     fun test1b() = B().runnable1()

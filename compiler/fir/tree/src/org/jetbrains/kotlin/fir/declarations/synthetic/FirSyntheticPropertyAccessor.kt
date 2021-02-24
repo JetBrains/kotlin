@@ -146,4 +146,7 @@ class FirSyntheticPropertyAccessor(
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {
         throw AssertionError("Mutation of synthetic property accessor isn't supported")
     }
+
+    override fun replaceSource(newSource: FirSourceElement?) {
+    }
 }

@@ -711,16 +711,39 @@ object PositioningStrategies {
         }
     }
 
-    val DOT_BY_SELECTOR: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
+    val DOT_BY_QUALIFIED: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
         override fun mark(element: PsiElement): List<TextRange> {
             when (element) {
-                is KtNameReferenceExpression -> {
-                    var parent = element
-                    repeat(2) {
-                        parent = parent.parent
-                        (parent as? KtDotQualifiedExpression)?.operationTokenNode?.psi?.let { return mark(it) }
+                is KtDotQualifiedExpression -> {
+                    return mark(element.operationTokenNode.psi)
+                }
+            }
+            return super.mark(element)
+        }
+    }
+
+    val SELECTOR_BY_QUALIFIED: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
+        override fun mark(element: PsiElement): List<TextRange> {
+            if (element is KtQualifiedExpression) {
+                when (val selectorExpression = element.selectorExpression) {
+                    is KtElement -> return mark(selectorExpression)
+                }
+            }
+            return super.mark(element)
+        }
+    }
+
+    val REFERENCE_BY_QUALIFIED: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
+        override fun mark(element: PsiElement): List<TextRange> {
+            when (element) {
+                is KtQualifiedExpression -> {
+                    when (val selectorExpression = element.selectorExpression) {
+                        is KtCallExpression -> return mark(selectorExpression.calleeExpression ?: selectorExpression)
+                        is KtReferenceExpression -> return mark(selectorExpression)
                     }
                 }
+                is KtCallExpression -> return mark(element.calleeExpression ?: element)
+                is KtConstructorDelegationCall -> return mark(element.calleeExpression ?: element)
             }
             return super.mark(element)
         }

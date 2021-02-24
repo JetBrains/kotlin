@@ -23,6 +23,8 @@ abstract class FirWhileLoop : FirLoop() {
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitWhileLoop(this, data)
 
+    abstract override fun replaceSource(newSource: FirSourceElement?)
+
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirWhileLoop
 
     abstract override fun <D> transformCondition(transformer: FirTransformer<D>, data: D): FirWhileLoop

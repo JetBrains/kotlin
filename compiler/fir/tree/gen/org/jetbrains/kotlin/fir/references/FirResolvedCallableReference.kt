@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.references
 
 import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.fir.resolve.calls.CallableReferenceMappedArguments
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.name.Name
@@ -22,6 +23,9 @@ abstract class FirResolvedCallableReference : FirResolvedNamedReference() {
     abstract override val candidateSymbol: AbstractFirBasedSymbol<*>?
     abstract override val resolvedSymbol: AbstractFirBasedSymbol<*>
     abstract val inferredTypeArguments: List<ConeKotlinType>
+    abstract val mappedArguments: CallableReferenceMappedArguments
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitResolvedCallableReference(this, data)
+
+    abstract override fun replaceSource(newSource: FirSourceElement?)
 }

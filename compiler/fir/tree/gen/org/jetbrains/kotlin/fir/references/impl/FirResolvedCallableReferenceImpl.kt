@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.references.impl
 
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
+import org.jetbrains.kotlin.fir.resolve.calls.CallableReferenceMappedArguments
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.name.Name
@@ -18,10 +19,11 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirResolvedCallableReferenceImpl(
-    override val source: FirSourceElement?,
+    override var source: FirSourceElement?,
     override val name: Name,
     override val resolvedSymbol: AbstractFirBasedSymbol<*>,
     override val inferredTypeArguments: MutableList<ConeKotlinType>,
+    override val mappedArguments: CallableReferenceMappedArguments,
 ) : FirResolvedCallableReference() {
     override val candidateSymbol: AbstractFirBasedSymbol<*>? get() = null
 
@@ -29,5 +31,9 @@ internal class FirResolvedCallableReferenceImpl(
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirResolvedCallableReferenceImpl {
         return this
+    }
+
+    override fun replaceSource(newSource: FirSourceElement?) {
+        source = newSource
     }
 }

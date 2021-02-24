@@ -49,4 +49,3 @@ class C : J, K {
   local /* final field */ val <$$delegate_1>: K = k
 
 }
-

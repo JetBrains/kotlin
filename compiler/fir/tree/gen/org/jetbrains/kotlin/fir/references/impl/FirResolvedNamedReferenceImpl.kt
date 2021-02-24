@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirResolvedNamedReferenceImpl(
-    override val source: FirSourceElement?,
+    override var source: FirSourceElement?,
     override val name: Name,
     override val resolvedSymbol: AbstractFirBasedSymbol<*>,
 ) : FirResolvedNamedReference() {
@@ -27,5 +27,9 @@ internal class FirResolvedNamedReferenceImpl(
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirResolvedNamedReferenceImpl {
         return this
+    }
+
+    override fun replaceSource(newSource: FirSourceElement?) {
+        source = newSource
     }
 }

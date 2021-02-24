@@ -151,10 +151,6 @@ internal class ConstraintSystemImpl(
         )
     }
 
-    private class SubstitutionWithCapturedTypeApproximation(substitution: TypeSubstitution) : DelegatedTypeSubstitution(substitution) {
-        override fun approximateCapturedTypes() = true
-    }
-
     private fun satisfyInitialConstraints(): Boolean {
         val substitutor = getSubstitutor(substituteOriginal = false) { ErrorUtils.createUninferredParameterType(it.originalTypeParameter) }
         fun KotlinType.substitute(): KotlinType? = substitutor.substitute(this, Variance.INVARIANT)

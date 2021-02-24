@@ -1,0 +1,50 @@
+FILE: kt41917.kt
+    public final class DummyDelegate<V> : R|kotlin/Any| {
+        public constructor<V>(s: R|V|): R|DummyDelegate<V>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val s: R|V| = R|<local>/s|
+            public get(): R|V|
+
+        public final operator fun getValue(thisRef: R|kotlin/Any?|, property: R|kotlin/reflect/KProperty<*>|): R|V| {
+            ^getValue this@R|/DummyDelegate|.R|/DummyDelegate.s|
+        }
+
+    }
+    public final fun testImplicit(c: R|C|): R|kotlin/Int| {
+        ^testImplicit R|<local>/c|.R|/A.implicit|.R|kotlin/String.length|
+    }
+    public final fun testExplicit(c: R|C|): R|kotlin/Int| {
+        ^testExplicit R|<local>/c|.R|/A.explicit|.R|kotlin/String.length|
+    }
+    public open class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val implicit: R|kotlin/String|by R|/DummyDelegate.DummyDelegate|<R|kotlin/String|>(String(hello))
+            public get(): R|kotlin/String| {
+                ^ this@R|/A|.D|/A.implicit|.R|SubstitutionOverride</DummyDelegate.getValue: R|kotlin/String|>|(this@R|/A|, ::R|/A.implicit|)
+            }
+
+        public final val explicit: R|kotlin/String|by R|/DummyDelegate.DummyDelegate|<R|kotlin/String|>(String(hello))
+            public get(): R|kotlin/String| {
+                ^ this@R|/A|.D|/A.explicit|.R|SubstitutionOverride</DummyDelegate.getValue: R|kotlin/String|>|(this@R|/A|, ::R|/A.explicit|)
+            }
+
+    }
+    public abstract interface B : R|kotlin/Any| {
+        public abstract val implicit: R|kotlin/String|
+            public get(): R|kotlin/String|
+
+        public abstract val explicit: R|kotlin/String|
+            public get(): R|kotlin/String|
+
+    }
+    public final class C : R|A|, R|B| {
+        public constructor(): R|C| {
+            super<R|A|>()
+        }
+
+    }

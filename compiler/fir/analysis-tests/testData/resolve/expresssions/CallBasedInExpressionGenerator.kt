@@ -14,27 +14,27 @@ class CallBasedInExpressionGenerator(
     val codegen: ExpressionCodegen,
     operatorReference: KtSimpleNameExpression
 ) : InExpressionGenerator {
-    private val resolvedCall = operatorReference.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>getResolvedCallWithAssert<!>(codegen.<!UNRESOLVED_REFERENCE!>bindingContext<!>)<!>
-    private val isInverted = operatorReference.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>getReferencedNameElementType<!>()<!> == <!UNRESOLVED_REFERENCE!>KtTokens<!>.<!UNRESOLVED_REFERENCE!>NOT_IN<!>
+    private val resolvedCall = operatorReference.<!UNRESOLVED_REFERENCE!>getResolvedCallWithAssert<!>(codegen.<!UNRESOLVED_REFERENCE!>bindingContext<!>)
+    private val isInverted = operatorReference.<!UNRESOLVED_REFERENCE!>getReferencedNameElementType<!>() == <!UNRESOLVED_REFERENCE!>KtTokens<!>.<!UNRESOLVED_REFERENCE!>NOT_IN<!>
 
     override fun generate(argument: StackValue): BranchedValue =
-        gen(argument).let { if (isInverted) <!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>Invert<!>(it)<!> else it }
+        gen(argument).let { if (isInverted) <!UNRESOLVED_REFERENCE!>Invert<!>(it) else it }
 
     private fun gen(argument: StackValue): BranchedValue =
         object : <!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>BranchedValue<!>(argument, null, argument.<!UNRESOLVED_REFERENCE!>type<!>, <!UNRESOLVED_REFERENCE!>Opcodes<!>.<!UNRESOLVED_REFERENCE!>IFEQ<!>)<!> {
             override fun putSelector(type: Type, kotlinType: KotlinType?, v: InstructionAdapter) {
                 invokeFunction(v)
-                <!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>coerceTo<!>(type, kotlinType, v)<!>
+                <!UNRESOLVED_REFERENCE!>coerceTo<!>(type, kotlinType, v)
             }
 
             override fun condJump(jumpLabel: Label, v: InstructionAdapter, jumpIfFalse: Boolean) {
                 invokeFunction(v)
-                v.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>visitJumpInsn<!>(if (jumpIfFalse) <!UNRESOLVED_REFERENCE!>Opcodes<!>.<!UNRESOLVED_REFERENCE!>IFEQ<!> else <!UNRESOLVED_REFERENCE!>Opcodes<!>.<!UNRESOLVED_REFERENCE!>IFNE<!>, jumpLabel)<!>
+                v.<!UNRESOLVED_REFERENCE!>visitJumpInsn<!>(if (jumpIfFalse) <!UNRESOLVED_REFERENCE!>Opcodes<!>.<!UNRESOLVED_REFERENCE!>IFEQ<!> else <!UNRESOLVED_REFERENCE!>Opcodes<!>.<!UNRESOLVED_REFERENCE!>IFNE<!>, jumpLabel)
             }
 
             private fun invokeFunction(v: InstructionAdapter) {
-                val result = codegen.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>invokeFunction<!>(resolvedCall.<!UNRESOLVED_REFERENCE!>call<!>, resolvedCall, <!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>none<!>()<!>)<!>
-                result.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>put<!>(result.<!UNRESOLVED_REFERENCE!>type<!>, result.<!UNRESOLVED_REFERENCE!>kotlinType<!>, v)<!>
+                val result = codegen.<!UNRESOLVED_REFERENCE!>invokeFunction<!>(resolvedCall.<!UNRESOLVED_REFERENCE!>call<!>, resolvedCall, <!UNRESOLVED_REFERENCE!>none<!>())
+                result.<!UNRESOLVED_REFERENCE!>put<!>(result.<!UNRESOLVED_REFERENCE!>type<!>, result.<!UNRESOLVED_REFERENCE!>kotlinType<!>, v)
             }
         }
 }

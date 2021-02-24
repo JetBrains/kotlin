@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.config
 
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
+
 enum class JvmClosureGenerationScheme(
     val description: String,
     val minJvmTarget: JvmTarget
@@ -17,7 +19,9 @@ enum class JvmClosureGenerationScheme(
         val DEFAULT = CLASS
 
         @JvmStatic
-        fun fromString(string: String?) =
-            values().find { it.description == string }
+        fun fromString(string: String?): JvmClosureGenerationScheme? {
+            val lowerStr = string?.toLowerCaseAsciiOnly() ?: return null
+            return values().find { it.description == lowerStr }
+        }
     }
 }

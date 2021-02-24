@@ -4,11 +4,14 @@
 // LAMBDAS: INDY
 // WITH_RUNTIME
 
+// desugaring on Android
+// IGNORE_BACKEND: ANDROID
+
 fun lambdaToString(fn: () -> Unit) = fn.toString()
 
 fun box(): String {
     val str = lambdaToString {}
     if (!str.startsWith("LambdaToStingKt"))
-        return "Failed: indy lambda toString is inherited from java.lang.Object"
+        return "Failed: indy lambda toString is inherited from java.lang.Object: $str"
     return "OK"
 }

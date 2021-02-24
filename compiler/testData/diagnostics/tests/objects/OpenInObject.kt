@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 object Obj {
     fun foo() {}
 

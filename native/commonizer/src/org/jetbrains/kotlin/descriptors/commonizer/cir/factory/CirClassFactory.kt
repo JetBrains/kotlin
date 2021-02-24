@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.cir.CirName
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirTypeParameter
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirClassImpl
 import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMap
+import org.jetbrains.kotlin.descriptors.commonizer.utils.filteredSupertypes
 import org.jetbrains.kotlin.resolve.isInlineClass
 
 object CirClassFactory {
@@ -32,7 +33,7 @@ object CirClassFactory {
         isInner = source.isInner,
         isExternal = source.isExternal
     ).apply {
-        setSupertypes(source.typeConstructor.supertypes.compactMap { CirTypeFactory.create(it) })
+        setSupertypes(source.filteredSupertypes.compactMap { CirTypeFactory.create(it) })
     }
 
     @Suppress("NOTHING_TO_INLINE")

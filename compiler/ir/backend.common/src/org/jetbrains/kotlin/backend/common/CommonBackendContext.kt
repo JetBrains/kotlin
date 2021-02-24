@@ -13,7 +13,9 @@ import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irString
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 
 interface LoggingContext {
     var inVerbosePhase: Boolean
@@ -36,4 +38,11 @@ interface CommonBackendContext : BackendContext, LoggingContext {
     }
 
     val mapping: Mapping
+
+    // Adjust internal structures after a deep copy of some declarations.
+    fun handleDeepCopy(
+        fileSymbolMap: MutableMap<IrFileSymbol, IrFileSymbol>,
+        classSymbolMap: MutableMap<IrClassSymbol, IrClassSymbol>,
+        functionSymbolMap: MutableMap<IrSimpleFunctionSymbol, IrSimpleFunctionSymbol>
+    ) {}
 }

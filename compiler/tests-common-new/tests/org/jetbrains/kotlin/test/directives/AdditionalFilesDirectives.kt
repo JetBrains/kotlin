@@ -44,4 +44,11 @@ object AdditionalFilesDirectives : SimpleDirectivesContainer() {
             See directory ./compiler/tests-spec/helpers/
         """.trimIndent()
     )
+
+    val INFERENCE_HELPERS by directive(
+        description = """
+            Adds util functions for type checking
+            See file ./compiler/testData/diagnostics/helpers/inference/inferenceUtils.kt
+        """.trimIndent()
+    )
 }

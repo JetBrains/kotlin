@@ -34,15 +34,15 @@ pill {
 }
 
 dependencies {
-    compile(project(":kotlin-gradle-plugin-api"))
-    compile(project(":kotlin-gradle-plugin-model"))
+    api(project(":kotlin-gradle-plugin-api"))
+    api(project(":kotlin-gradle-plugin-model"))
     compileOnly(project(":compiler"))
     compileOnly(project(":compiler:incremental-compilation-impl"))
     compileOnly(project(":daemon-common"))
 
-    compile(kotlinStdlib())
-    compile(project(":kotlin-util-klib"))
-    compileOnly(project(":native:kotlin-native-utils"))
+    implementation(kotlinStdlib())
+    implementation(project(":kotlin-util-klib"))
+    implementation(project(":native:kotlin-klib-commonizer-api"))
     compileOnly(project(":kotlin-reflect-api"))
     compileOnly(project(":kotlin-android-extensions"))
     compileOnly(project(":kotlin-build-common"))
@@ -55,8 +55,8 @@ dependencies {
     compileOnly(project(":kotlin-gradle-build-metrics"))
     embedded(project(":kotlin-gradle-build-metrics"))
 
-    compile("com.google.code.gson:gson:${rootProject.extra["versions.jar.gson"]}")
-    compile("de.undercouch:gradle-download-task:4.0.2")
+    implementation("com.google.code.gson:gson:${rootProject.extra["versions.jar.gson"]}")
+    implementation("de.undercouch:gradle-download-task:4.0.2")
     implementation("com.github.gundy:semver4j:0.16.4:nodeps") {
         exclude(group = "*")
     }
@@ -90,15 +90,15 @@ dependencies {
         because("Functional tests are using APIs from Android. Latest Version is used to avoid NoClassDefFoundError")
     }
 
-    testCompile(intellijDep()) { includeJars("junit", "serviceMessages", rootProject = rootProject) }
+    testImplementation(intellijDep()) { includeJars("junit", "serviceMessages", rootProject = rootProject) }
 
     testCompileOnly(project(":compiler"))
-    testCompile(projectTests(":kotlin-build-common"))
-    testCompile(project(":kotlin-android-extensions"))
-    testCompile(project(":kotlin-compiler-runner"))
-    testCompile(project(":kotlin-test::kotlin-test-junit"))
-    testCompile("junit:junit:4.12")
-    testCompile(project(":kotlin-gradle-statistics"))
+    testImplementation(projectTests(":kotlin-build-common"))
+    testImplementation(project(":kotlin-android-extensions"))
+    testImplementation(project(":kotlin-compiler-runner"))
+    testImplementation(project(":kotlin-test::kotlin-test-junit"))
+    testImplementation("junit:junit:4.12")
+    testImplementation(project(":kotlin-gradle-statistics"))
     testCompileOnly(project(":kotlin-reflect-api"))
     testCompileOnly(project(":kotlin-annotation-processing"))
     testCompileOnly(project(":kotlin-annotation-processing-gradle"))
@@ -124,7 +124,9 @@ tasks {
         kotlinOptions.jdkHome = rootProject.extra["JDK_18"] as String
         kotlinOptions.languageVersion = "1.3"
         kotlinOptions.apiVersion = "1.3"
-        kotlinOptions.freeCompilerArgs += listOf("-Xskip-prerelease-check")
+        kotlinOptions.freeCompilerArgs += listOf(
+            "-Xskip-prerelease-check", "-Xsuppress-version-warnings"
+        )
     }
 
     named<ProcessResources>("processResources") {

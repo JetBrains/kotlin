@@ -22,7 +22,7 @@ fun test_3(x: Any) {
     (x as? A)?.bar(x)?.foo(x.bool())?.let {
         x.bool()
     }
-    x.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>bool<!>()<!>
+    x.<!UNRESOLVED_REFERENCE!>bool<!>()
 }
 
 fun test_4(x: A?) {

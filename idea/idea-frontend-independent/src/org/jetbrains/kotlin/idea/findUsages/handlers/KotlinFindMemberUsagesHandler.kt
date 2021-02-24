@@ -31,7 +31,7 @@ import com.intellij.usageView.UsageInfo
 import com.intellij.util.*
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.asJava.toLightMethods
-import org.jetbrains.kotlin.idea.KotlinBundleIndependent
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.findUsages.*
 import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesSupport.Companion.getTopMostOverriddenElementsToHighlight
 import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesSupport.Companion.isDataClassComponentFunction
@@ -299,7 +299,7 @@ abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration> protected c
 
         private const val DISABLE_ONCE = "DISABLE_ONCE"
         private const val DISABLE = "DISABLE"
-        private val DISABLE_COMPONENT_AND_DESTRUCTION_SEARCH_TEXT = KotlinBundleIndependent.message(
+        private val DISABLE_COMPONENT_AND_DESTRUCTION_SEARCH_TEXT = KotlinBundle.message(
             "find.usages.text.find.usages.for.data.class.components.and.destruction.declarations",
             DISABLE_ONCE,
             DISABLE

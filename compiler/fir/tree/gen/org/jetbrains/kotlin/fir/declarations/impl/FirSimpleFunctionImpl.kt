@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirSimpleFunctionImpl(
-    override val source: FirSourceElement?,
+    override var source: FirSourceElement?,
     override val session: FirSession,
     override var resolvePhase: FirResolvePhase,
     override val origin: FirDeclarationOrigin,
@@ -118,6 +118,10 @@ internal class FirSimpleFunctionImpl(
     override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirSimpleFunctionImpl {
         typeParameters.transformInplace(transformer, data)
         return this
+    }
+
+    override fun replaceSource(newSource: FirSourceElement?) {
+        source = newSource
     }
 
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {

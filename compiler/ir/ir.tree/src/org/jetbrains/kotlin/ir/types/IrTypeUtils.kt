@@ -32,7 +32,11 @@ fun IrType.isSubtypeOfClass(superClass: IrClassSymbol): Boolean {
 }
 
 fun IrType.isSubtypeOf(superType: IrType, irBuiltIns: IrBuiltIns): Boolean {
-    return AbstractTypeChecker.isSubtypeOf(IrTypeCheckerContext(irBuiltIns) as AbstractTypeCheckerContext, this, superType)
+    return AbstractTypeChecker.isSubtypeOf(
+        IrTypeCheckerContext(IrTypeSystemContextImpl(irBuiltIns)) as AbstractTypeCheckerContext,
+        this,
+        superType
+    )
 }
 
 fun IrType.isNullable(): Boolean =

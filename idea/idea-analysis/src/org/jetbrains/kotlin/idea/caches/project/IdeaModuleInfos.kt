@@ -401,7 +401,11 @@ abstract class LibraryInfo(override val project: Project, val library: Library) 
         return (other is LibraryInfo && library == other.library)
     }
 
-    override fun hashCode(): Int = 43 * library.hashCode()
+    private val lazyHashCode: Int by lazy {
+        43 * library.hashCode()
+    }
+
+    override fun hashCode(): Int = lazyHashCode
 }
 
 data class LibrarySourceInfo(override val project: Project, val library: Library, override val binariesModuleInfo: BinaryModuleInfo) :

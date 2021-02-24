@@ -36,6 +36,8 @@ abstract class FirTypeParameter : FirPureAbstractElement(), FirTypeParameterRef,
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitTypeParameter(this, data)
 
+    abstract override fun replaceSource(newSource: FirSourceElement?)
+
     abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
 
     abstract fun replaceBounds(newBounds: List<FirTypeRef>)

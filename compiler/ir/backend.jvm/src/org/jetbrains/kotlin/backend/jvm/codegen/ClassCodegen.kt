@@ -10,8 +10,12 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.lower.MultifileFacadeFileEntry
 import org.jetbrains.kotlin.backend.jvm.lower.buildAssertionsDisabledField
 import org.jetbrains.kotlin.backend.jvm.lower.hasAssertionsDisabledField
-import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.codegen.DescriptorAsmUtil
+import org.jetbrains.kotlin.codegen.VersionIndependentOpcodes
+import org.jetbrains.kotlin.codegen.addRecordComponent
 import org.jetbrains.kotlin.codegen.inline.*
+import org.jetbrains.kotlin.codegen.writeKotlinMetadata
+import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -81,7 +85,7 @@ class ClassCodegen private constructor(
         defineClass(
             irClass.psiElement,
             state.classFileVersion,
-            irClass.flags,
+            irClass.getFlags(context.state.languageVersionSettings),
             signature.name,
             signature.javaGenericSignature,
             signature.superclassName,
@@ -194,9 +198,6 @@ class ClassCodegen private constructor(
         )
 
     private fun generateKotlinMetadataAnnotation() {
-        // TODO: if `-Xmultifile-parts-inherit` is enabled, write the corresponding flag for parts and facades to [Metadata.extraInt].
-        val extraFlags = context.backendExtension.generateMetadataExtraFlags(state.abiStability)
-
         val facadeClassName = context.multifileFacadeForPart[irClass.attributeOwnerId]
         val metadata = irClass.metadata
         val entry = irClass.fileParent.fileEntry
@@ -208,6 +209,14 @@ class ClassCodegen private constructor(
             entry is MultifileFacadeFileEntry -> KotlinClassHeader.Kind.MULTIFILE_CLASS
             else -> KotlinClassHeader.Kind.SYNTHETIC_CLASS
         }
+
+        val isMultifileClassOrPart = kind == KotlinClassHeader.Kind.MULTIFILE_CLASS || kind == KotlinClassHeader.Kind.MULTIFILE_CLASS_PART
+
+        var extraFlags = context.backendExtension.generateMetadataExtraFlags(state.abiStability)
+        if (isMultifileClassOrPart && state.languageVersionSettings.getFlag(JvmAnalysisFlags.inheritMultifileParts)) {
+            extraFlags = extraFlags or JvmAnnotationNames.METADATA_MULTIFILE_PARTS_INHERIT_FLAG
+        }
+
         writeKotlinMetadata(visitor, state, kind, extraFlags) {
             if (metadata != null) {
                 metadataSerializer.serialize(metadata)?.let { (proto, stringTable) ->
@@ -229,9 +238,7 @@ class ClassCodegen private constructor(
             }
 
             if (irClass in context.classNameOverride) {
-                val isFileClass = kind == KotlinClassHeader.Kind.MULTIFILE_CLASS ||
-                        kind == KotlinClassHeader.Kind.MULTIFILE_CLASS_PART ||
-                        kind == KotlinClassHeader.Kind.FILE_FACADE
+                val isFileClass = isMultifileClassOrPart || kind == KotlinClassHeader.Kind.FILE_FACADE
                 assert(isFileClass) { "JvmPackageName is not supported for classes: ${irClass.render()}" }
                 it.visit(JvmAnnotationNames.METADATA_PACKAGE_NAME_FIELD_NAME, irClass.fqNameWhenAvailable!!.parent().asString())
             }
@@ -473,10 +480,11 @@ class ClassCodegen private constructor(
         }
 }
 
-private val IrClass.flags: Int
-    get() = origin.flags or getVisibilityAccessFlagForClass() or
+private fun IrClass.getFlags(languageVersionSettings: LanguageVersionSettings): Int =
+    origin.flags or
+            getVisibilityAccessFlagForClass() or
             (if (isAnnotatedWithDeprecated) Opcodes.ACC_DEPRECATED else 0) or
-            (if (hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME)) Opcodes.ACC_SYNTHETIC else 0) or
+            getSynthAccessFlag(languageVersionSettings) or
             when {
                 isAnnotationClass -> Opcodes.ACC_ANNOTATION or Opcodes.ACC_INTERFACE or Opcodes.ACC_ABSTRACT
                 isInterface -> Opcodes.ACC_INTERFACE or Opcodes.ACC_ABSTRACT
@@ -484,6 +492,16 @@ private val IrClass.flags: Int
                 hasAnnotation(JVM_RECORD_ANNOTATION_FQ_NAME) -> VersionIndependentOpcodes.ACC_RECORD or Opcodes.ACC_SUPER or modality.flags
                 else -> Opcodes.ACC_SUPER or modality.flags
             }
+
+private fun IrClass.getSynthAccessFlag(languageVersionSettings: LanguageVersionSettings): Int {
+    if (hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME))
+        return Opcodes.ACC_SYNTHETIC
+    if (origin == IrDeclarationOrigin.GENERATED_SAM_IMPLEMENTATION &&
+        languageVersionSettings.supportsFeature(LanguageFeature.SamWrapperClassesAreSynthetic)
+    )
+        return Opcodes.ACC_SYNTHETIC
+    return 0
+}
 
 private fun IrField.computeFieldFlags(context: JvmBackendContext, languageVersionSettings: LanguageVersionSettings): Int =
     origin.flags or visibility.flags or

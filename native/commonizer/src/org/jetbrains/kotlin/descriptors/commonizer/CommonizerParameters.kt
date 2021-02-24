@@ -5,19 +5,22 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer
 
+import org.jetbrains.kotlin.descriptors.commonizer.konan.TargetedNativeManifestDataProvider
 import org.jetbrains.kotlin.descriptors.commonizer.stats.StatsCollector
 
 class CommonizerParameters(
+    val resultsConsumer: ResultsConsumer,
+    val manifestDataProvider: TargetedNativeManifestDataProvider,
     val statsCollector: StatsCollector? = null,
     val progressLogger: ((String) -> Unit)? = null
 ) {
     // use linked hash map to preserve order
-    private val _targetProviders = LinkedHashMap<LeafTarget, TargetProvider>()
+    private val _targetProviders = LinkedHashMap<LeafCommonizerTarget, TargetProvider>()
     val targetProviders: List<TargetProvider> get() = _targetProviders.values.toList()
-    val sharedTarget: SharedTarget get() = SharedTarget(_targetProviders.keys)
+    val sharedTarget: SharedCommonizerTarget get() = SharedCommonizerTarget(_targetProviders.keys)
 
     // common module dependencies (ex: Kotlin stdlib)
-    var dependeeModulesProvider: ModulesProvider? = null
+    var dependencyModulesProvider: ModulesProvider? = null
         set(value) {
             check(field == null)
             field = value
@@ -29,14 +32,6 @@ class CommonizerParameters(
 
         return this
     }
-
-    private var _resultsConsumer: ResultsConsumer? = null
-    var resultsConsumer: ResultsConsumer
-        get() = _resultsConsumer ?: error("Results consumer has not been set")
-        set(value) {
-            check(_resultsConsumer == null)
-            _resultsConsumer = value
-        }
 
     fun getCommonModuleNames(): Set<String> {
         if (_targetProviders.size < 2) return emptySet() // too few targets

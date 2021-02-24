@@ -82,6 +82,9 @@ interface KotlinCompilation<out T : KotlinCommonOptions> : Named, HasAttributes,
         get() = super.relatedConfigurationNames + compileDependencyConfigurationName
 
     val moduleName: String
+
+    val disambiguatedName
+        get() = target.disambiguationClassifier + name
 }
 
 interface KotlinCompilationToRunnableFiles<T : KotlinCommonOptions> : KotlinCompilation<T> {

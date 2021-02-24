@@ -15,7 +15,6 @@ data class DiagnosticData(
     val psiType: KType,
     val parameters: List<DiagnosticParameter>,
     val positioningStrategy: PositioningStrategy,
-    val group: String?,
 )
 
 data class DiagnosticParameter(
@@ -37,11 +36,14 @@ enum class PositioningStrategy(private val strategy: String) {
     PARAMETER_VARARG_MODIFIER("PARAMETER_VARARG_MODIFIER"),
     DECLARATION_RETURN_TYPE("DECLARATION_RETURN_TYPE"),
     OVERRIDE_MODIFIER("OVERRIDE_MODIFIER"),
-    DOT_BY_SELECTOR("DOT_BY_SELECTOR"),
+    DOT_BY_QUALIFIED("DOT_BY_QUALIFIED"),
     OPEN_MODIFIER("OPEN_MODIFIER"),
     WHEN_EXPRESSION("WHEN_EXPRESSION"),
     IF_EXPRESSION("IF_EXPRESSION"),
     VARIANCE_MODIFIER("VARIANCE_MODIFIER"),
+    LATEINIT_MODIFIER("LATEINIT_MODIFIER"),
+    SELECTOR_BY_QUALIFIED("SELECTOR_BY_QUALIFIED"),
+    REFERENCE_BY_QUALIFIED("REFERENCE_BY_QUALIFIED"),
 
     ;
 
@@ -55,7 +57,3 @@ enum class PositioningStrategy(private val strategy: String) {
 
 fun DiagnosticData.hasDefaultPositioningStrategy(): Boolean =
     positioningStrategy == PositioningStrategy.DEFAULT
-
-data class DiagnosticList(
-    val diagnostics: List<DiagnosticData>,
-)

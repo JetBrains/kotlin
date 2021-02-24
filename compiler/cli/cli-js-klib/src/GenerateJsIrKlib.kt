@@ -88,7 +88,7 @@ fun buildKLib(
         configuration = configuration,
         allDependencies = allDependencies,
         friendDependencies = emptyList(),
-        irFactory = PersistentIrFactory,
+        irFactory = PersistentIrFactory(), // TODO: IrFactoryImpl?
         outputKlibPath = outputPath,
         nopack = true
     )

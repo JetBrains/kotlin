@@ -8,8 +8,8 @@
  */
 inline fun <reified T, reified K> case_1(x: T) {
     if (x is K) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("K!! & T!! & T")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("K!! & T!! & T")!>x<!>.equals(x)
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & K!! & T!!")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & K!! & T!!")!>x<!>.equals(x)
     }
 }
 
@@ -19,8 +19,8 @@ inline fun <reified T, reified K> case_1(x: T) {
  */
 inline fun <reified T, reified K> case_2(x: T) {
     x as K
-    <!DEBUG_INFO_EXPRESSION_TYPE("K & T & T")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("K & T & T")!>x<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(x)
+    <!DEBUG_INFO_EXPRESSION_TYPE("T & K & T")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("T & K & T")!>x<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(x)
 }
 
 /*
@@ -31,8 +31,8 @@ inline fun <reified T, reified K> case_3() {
     var x: T? = 10 as T
     x = null
     if (x is K) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("T?!! & K!! & T?")!>x<!>.equals(10)
-        <!DEBUG_INFO_EXPRESSION_TYPE("T?!! & K!! & T?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!! & K!!")!>x<!>.equals(10)
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!! & K!!")!>x<!>
         println(1)
     }
 }
@@ -40,16 +40,16 @@ inline fun <reified T, reified K> case_3() {
 // TESTCASE NUMBER: 4
 inline fun <reified T, reified K> case_4(x: T?) {
     if (x is K) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("K!! & T?!! & T?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("K!! & T?!! & T?")!>x<!>.equals(x)
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & K!! & T?!!")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & K!! & T?!!")!>x<!>.equals(x)
     }
 }
 
 // TESTCASE NUMBER: 5
 inline fun <reified T, reified K> case_5(x: T) {
     if (x is K?) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("K? & T & T")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("K? & T & T")!>x<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(x)
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & K? & T")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & K? & T")!>x<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(x)
     }
 }
 
@@ -61,8 +61,8 @@ inline fun <reified T, reified K> case_6() {
     var x: T? = 10 as T
     if (x is K) {
         x = null
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?")!>x<!><!UNSAFE_CALL!>.<!>equals(10)
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!><!UNSAFE_CALL!>.<!>equals(10)
+        <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>
         println(1)
     }
 }

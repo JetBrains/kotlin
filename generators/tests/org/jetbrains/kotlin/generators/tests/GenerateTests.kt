@@ -89,6 +89,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.AbstractSessionsInva
 import org.jetbrains.kotlin.idea.fir.low.level.api.trackers.AbstractProjectWideOutOfBlockKotlinModificationTrackerTest
 import org.jetbrains.kotlin.idea.folding.AbstractKotlinFoldingTest
 import org.jetbrains.kotlin.idea.frontend.api.components.AbstractExpectedExpressionTypeTest
+import org.jetbrains.kotlin.idea.frontend.api.components.AbstractOverriddenDeclarationProviderTest
 import org.jetbrains.kotlin.idea.frontend.api.components.AbstractReturnExpressionTargetTest
 import org.jetbrains.kotlin.idea.frontend.api.fir.AbstractResolveCallTest
 import org.jetbrains.kotlin.idea.frontend.api.scopes.AbstractFileScopeTest
@@ -101,6 +102,7 @@ import org.jetbrains.kotlin.idea.imports.AbstractJsOptimizeImportsTest
 import org.jetbrains.kotlin.idea.imports.AbstractJvmOptimizeImportsTest
 import org.jetbrains.kotlin.idea.index.AbstractKotlinTypeAliasByExpansionShortNameIndexTest
 import org.jetbrains.kotlin.idea.inspections.AbstractHLInspectionTest
+import org.jetbrains.kotlin.idea.inspections.AbstractHLLocalInspectionTest
 import org.jetbrains.kotlin.idea.inspections.AbstractLocalInspectionTest
 import org.jetbrains.kotlin.idea.inspections.AbstractMultiFileLocalInspectionTest
 import org.jetbrains.kotlin.idea.intentions.*
@@ -180,6 +182,7 @@ import org.jetbrains.kotlin.samWithReceiver.AbstractSamWithReceiverScriptTest
 import org.jetbrains.kotlin.samWithReceiver.AbstractSamWithReceiverTest
 import org.jetbrains.kotlin.search.AbstractAnnotatedMembersSearchTest
 import org.jetbrains.kotlin.search.AbstractInheritorsSearchTest
+import org.jetbrains.kotlin.shortenRefs.AbstractFirShortenRefsTest
 import org.jetbrains.kotlin.shortenRefs.AbstractShortenRefsTest
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.tools.projectWizard.cli.AbstractProjectTemplateBuildFileGenerationTest
@@ -320,6 +323,10 @@ fun main(args: Array<String>) {
                 model("checker/duplicateJvmSignature")
                 model("checker/infos", testMethod = "doTestWithInfos")
                 model("checker/diagnosticsMessage")
+            }
+
+            testClass<AbstractKotlinHighlightWolfPassTest> {
+                model("checker/wolf")
             }
 
             testClass<AbstractJavaAgainstKotlinSourceCheckerTest> {
@@ -1034,6 +1041,10 @@ fun main(args: Array<String>) {
             testClass<AbstractExpectedExpressionTypeTest> {
                 model("components/expectedExpressionType")
             }
+
+            testClass<AbstractOverriddenDeclarationProviderTest> {
+                model("components/overridenDeclarations")
+            }
         }
 
         testGroup("idea/idea-frontend-fir/idea-fir-low-level-api/tests", "idea/testData") {
@@ -1103,8 +1114,11 @@ fun main(args: Array<String>) {
 
             testClass<AbstractHighLevelQuickFixTest> {
                 val pattern = "^([\\w\\-_]+)\\.kt$"
+                model("quickfix/abstract", pattern = pattern, filenameStartsLowerCase = true)
+                model("quickfix/lateinit", pattern = pattern, filenameStartsLowerCase = true)
                 model("quickfix/modifiers", pattern = pattern, filenameStartsLowerCase = true, recursive = false)
                 model("quickfix/override/typeMismatchOnOverride", pattern = pattern, filenameStartsLowerCase = true, recursive = false)
+                model("quickfix/variables/changeMutability", pattern = pattern, filenameStartsLowerCase = true, recursive = false)
             }
 
             testClass<AbstractHLInspectionTest> {
@@ -1112,9 +1126,22 @@ fun main(args: Array<String>) {
                 model("inspections/redundantUnitReturnType", pattern = pattern, singleClass = true)
             }
 
+
             testClass<AbstractHLIntentionTest> {
                 val pattern = "^([\\w\\-_]+)\\.(kt|kts)$"
                 model("intentions/specifyTypeExplicitly", pattern = pattern)
+            }
+
+            testClass<AbstractFirShortenRefsTest> {
+                model("shortenRefsFir", pattern = KT_WITHOUT_DOTS_IN_NAME, testMethod = "doTestWithMuting")
+            }
+        }
+
+        testGroup("idea/idea-fir/tests", "idea") {
+            testClass<AbstractHLLocalInspectionTest> {
+                val pattern = "^([\\w\\-_]+)\\.(kt|kts)$"
+                model("testData/inspectionsLocal/redundantVisibilityModifier", pattern = pattern)
+                model("idea-fir/testData/inspectionsLocal", pattern = pattern)
             }
         }
 

@@ -64,6 +64,7 @@ class KotlinJsDcePlugin : Plugin<Project> {
 
         val dceTask = project.registerTask<KotlinJsDce>(dceTaskName) {
             it.dependsOn(kotlinTask)
+            it.defaultCompilerClasspath.setFrom(project.configurations.named(COMPILER_CLASSPATH_CONFIGURATION_NAME))
         }
         project.tasks.named("build").dependsOn(dceTask)
 

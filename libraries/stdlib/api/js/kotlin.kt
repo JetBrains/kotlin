@@ -1032,6 +1032,8 @@ public final class DeepRecursiveFunction<T, R> {
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalStdlibApi
 public sealed class DeepRecursiveScope<T, R> {
+    protected constructor DeepRecursiveScope<T, R>()
+
     public abstract suspend fun callRecursive(value: T): R
 
     public abstract suspend fun <U, S> kotlin.DeepRecursiveFunction<U, S>.callRecursive(value: U): S

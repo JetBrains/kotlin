@@ -30,12 +30,14 @@ import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addIfNotNull
+import java.lang.IllegalStateException
 
 // Outlines `kotlin.js.js(code: String)` calls where JS code references Kotlin locals.
 // Makes locals usages explicit.
@@ -164,7 +166,10 @@ private class JsCodeOutlineTransformer(
         }
         // We don't need this function's body. Using empty block body stub, because some code might expect all functions to have bodies.
         outlinedFunction.body = backendContext.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
-        outlinedFunction.parent = container as IrDeclarationParent
+        outlinedFunction.parent = when (container) {
+            is IrDeclarationParent -> container
+            else -> container.parent
+        }
         kotlinLocalsUsedInJs.forEach { local ->
             outlinedFunction.addValueParameter {
                 name = local.name

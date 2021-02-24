@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.lazy
 
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
 import org.jetbrains.kotlin.fir.symbols.Fir2IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
@@ -81,7 +82,18 @@ class Fir2IrLazyPropertyAccessor(
     }
 
     override var overriddenSymbols: List<IrSimpleFunctionSymbol> by lazyVar {
-        firParentProperty.generateOverriddenAccessorSymbols(firParentClass, !isSetter, session, scopeSession, declarationStorage)
+        firParentProperty.generateOverriddenAccessorSymbols(
+            firParentClass,
+            !isSetter,
+            session,
+            scopeSession,
+            declarationStorage,
+            fakeOverrideGenerator
+        )
+    }
+
+    override val initialSignatureFunction: IrFunction? by lazy {
+        (fir as? FirSyntheticPropertyAccessor)?.delegate?.let { declarationStorage.getIrFunctionSymbol(it.symbol).owner }
     }
 
     override val containerSource: DeserializedContainerSource?

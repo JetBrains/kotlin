@@ -40,7 +40,7 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
 
     @Test
     public void testAllFilesPresentInBytecodeText() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "oldLanguageVersions");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Test
@@ -3141,6 +3141,12 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         public void testInterfaceHashCode() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/hashCode/interfaceHashCode.kt");
         }
+
+        @Test
+        @TestMetadata("interfaceHashCodeWithSmartCast.kt")
+        public void testInterfaceHashCodeWithSmartCast() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/hashCode/interfaceHashCodeWithSmartCast.kt");
+        }
     }
 
     @Nested
@@ -3942,6 +3948,12 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         @Test
         public void testAllFilesPresentInInvokedynamic() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/invokedynamic"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @Test
+        @TestMetadata("functionRefToJavaInterface.kt")
+        public void testFunctionRefToJavaInterface() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/invokedynamic/functionRefToJavaInterface.kt");
         }
 
         @Test
@@ -5081,6 +5093,12 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         }
 
         @Test
+        @TestMetadata("concatDynamicUnit.kt")
+        public void testConcatDynamicUnit() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/stringOperations/concatDynamicUnit.kt");
+        }
+
+        @Test
         @TestMetadata("concatNotDynamic.kt")
         public void testConcatNotDynamic() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/stringOperations/concatNotDynamic.kt");
@@ -5572,6 +5590,12 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         @TestMetadata("subjectAny.kt")
         public void testSubjectAny() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/whenEnumOptimization/subjectAny.kt");
+        }
+
+        @Test
+        @TestMetadata("whenOr.kt")
+        public void testWhenOr() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/whenEnumOptimization/whenOr.kt");
         }
 
         @Test

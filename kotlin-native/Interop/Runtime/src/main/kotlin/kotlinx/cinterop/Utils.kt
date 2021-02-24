@@ -507,18 +507,7 @@ public val String.utf32: CValues<IntVar>
 /**
  * @return the [kotlin.String] decoded from given zero-terminated UTF-8-encoded C string.
  */
-public fun CPointer<ByteVar>.toKStringFromUtf8(): String {
-    val nativeBytes = this
-
-    var length = 0
-    while (nativeBytes[length] != 0.toByte()) {
-        ++length
-    }
-
-    val bytes = ByteArray(length)
-    nativeMemUtils.getByteArray(nativeBytes.pointed, bytes, length)
-    return decodeFromUtf8(bytes)
-}
+public fun CPointer<ByteVar>.toKStringFromUtf8(): String = this.toKStringFromUtf8Impl()
 
 /**
  * @return the [kotlin.String] decoded from given zero-terminated UTF-8-encoded C string.

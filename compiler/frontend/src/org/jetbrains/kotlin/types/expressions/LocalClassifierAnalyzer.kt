@@ -116,7 +116,8 @@ class LocalClassifierAnalyzer(
         container.get<LazyTopDownAnalyzer>().analyzeDeclarations(
             TopDownAnalysisMode.LocalDeclarations,
             listOf(classOrObject),
-            context.dataFlowInfo
+            context.dataFlowInfo,
+            localContext = context
         )
     }
 }

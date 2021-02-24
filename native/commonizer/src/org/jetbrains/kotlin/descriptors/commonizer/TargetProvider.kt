@@ -10,9 +10,9 @@ import org.jetbrains.kotlin.library.SerializedMetadata
 import java.io.File
 
 class TargetProvider(
-    val target: LeafTarget,
+    val target: LeafCommonizerTarget,
     val modulesProvider: ModulesProvider,
-    val dependeeModulesProvider: ModulesProvider?
+    val dependencyModulesProvider: ModulesProvider?
 )
 
 interface ModulesProvider {
@@ -23,7 +23,6 @@ interface ModulesProvider {
     )
 
     class CInteropModuleAttributes(
-        val mainPackageFqName: String,
         val exportForwardDeclarations: Collection<String>
     )
 

@@ -19,7 +19,15 @@ import java.net.URI
 open class CocoapodsExtension(private val project: Project) {
     @get:Input
     val version: String
-        get() = project.version.toString()
+        get() {
+            require(project.version != Project.DEFAULT_VERSION) { """
+                Cocoapods Integration requires version of this project to be specified.
+                Please, add line 'version = "<version>"' to project's build file.
+                For more details, please, see https://guides.cocoapods.org/syntax/podspec.html#version 
+            """.trimIndent()
+            }
+            return project.version.toString()
+        }
 
     /**
      * Configure authors of the pod built from this project.

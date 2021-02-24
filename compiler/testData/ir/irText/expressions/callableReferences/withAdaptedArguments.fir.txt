@@ -67,7 +67,13 @@ FILE fqName:<root> fileName:/withAdaptedArguments.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testDefault (): kotlin.String declared in <root>'
         CALL 'public final fun use (fn: kotlin.Function1<kotlin.Int, kotlin.String>): kotlin.String declared in <root>' type=kotlin.String origin=null
-          fn: FUNCTION_REFERENCE 'public final fun fnWithDefault (a: kotlin.Int, b: kotlin.Int): kotlin.String declared in <root>' type=kotlin.reflect.KFunction1<kotlin.Int, kotlin.String> origin=null reflectionTarget=<same>
+          fn: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.String> origin=ADAPTED_FUNCTION_REFERENCE
+            FUN ADAPTER_FOR_CALLABLE_REFERENCE name:fnWithDefault visibility:local modality:FINAL <> (p0:kotlin.Int) returnType:kotlin.String
+              VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:p0 index:0 type:kotlin.Int
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun fnWithDefault (p0: kotlin.Int): kotlin.String declared in <root>.testDefault'
+                  CALL 'public final fun fnWithDefault (a: kotlin.Int, b: kotlin.Int): kotlin.String declared in <root>' type=kotlin.String origin=null
+                    a: GET_VAR 'p0: kotlin.Int declared in <root>.testDefault.fnWithDefault' type=kotlin.Int origin=null
   FUN name:testVararg visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testVararg (): kotlin.String declared in <root>'
@@ -109,9 +115,17 @@ FILE fqName:<root> fileName:/withAdaptedArguments.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testDefault0 (): kotlin.String declared in <root>'
         CALL 'public final fun use0 (fn: kotlin.Function0<kotlin.String>): kotlin.String declared in <root>' type=kotlin.String origin=null
-          fn: FUNCTION_REFERENCE 'public final fun fnWithDefaults (a: kotlin.Int, b: kotlin.Int): kotlin.String declared in <root>' type=kotlin.reflect.KFunction0<kotlin.String> origin=null reflectionTarget=<same>
+          fn: FUN_EXPR type=kotlin.Function0<kotlin.String> origin=ADAPTED_FUNCTION_REFERENCE
+            FUN ADAPTER_FOR_CALLABLE_REFERENCE name:fnWithDefaults visibility:local modality:FINAL <> () returnType:kotlin.String
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun fnWithDefaults (): kotlin.String declared in <root>.testDefault0'
+                  CALL 'public final fun fnWithDefaults (a: kotlin.Int, b: kotlin.Int): kotlin.String declared in <root>' type=kotlin.String origin=null
   FUN name:testVararg0 visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testVararg0 (): kotlin.String declared in <root>'
         CALL 'public final fun use0 (fn: kotlin.Function0<kotlin.String>): kotlin.String declared in <root>' type=kotlin.String origin=null
-          fn: FUNCTION_REFERENCE 'public final fun fnWithVarargs (vararg xs: kotlin.Int): kotlin.String declared in <root>' type=kotlin.reflect.KFunction0<kotlin.String> origin=null reflectionTarget=<same>
+          fn: FUN_EXPR type=kotlin.Function0<kotlin.String> origin=ADAPTED_FUNCTION_REFERENCE
+            FUN ADAPTER_FOR_CALLABLE_REFERENCE name:fnWithVarargs visibility:local modality:FINAL <> () returnType:kotlin.String
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun fnWithVarargs (): kotlin.String declared in <root>.testVararg0'
+                  CALL 'public final fun fnWithVarargs (vararg xs: kotlin.Int): kotlin.String declared in <root>' type=kotlin.String origin=null

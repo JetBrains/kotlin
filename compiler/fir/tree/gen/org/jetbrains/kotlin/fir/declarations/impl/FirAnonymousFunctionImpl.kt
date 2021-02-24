@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirAnonymousFunctionImpl(
-    override val source: FirSourceElement?,
+    override var source: FirSourceElement?,
     override val session: FirSession,
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,
@@ -104,6 +104,10 @@ internal class FirAnonymousFunctionImpl(
     override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirAnonymousFunctionImpl {
         typeParameters.transformInplace(transformer, data)
         return this
+    }
+
+    override fun replaceSource(newSource: FirSourceElement?) {
+        source = newSource
     }
 
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {

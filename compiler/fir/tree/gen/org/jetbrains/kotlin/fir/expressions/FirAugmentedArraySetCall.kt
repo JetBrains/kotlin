@@ -25,6 +25,8 @@ abstract class FirAugmentedArraySetCall : FirPureAbstractElement(), FirStatement
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitAugmentedArraySetCall(this, data)
 
+    abstract override fun replaceSource(newSource: FirSourceElement?)
+
     abstract fun replaceCalleeReference(newCalleeReference: FirReference)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAugmentedArraySetCall

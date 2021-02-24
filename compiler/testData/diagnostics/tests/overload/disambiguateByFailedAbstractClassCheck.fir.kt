@@ -29,6 +29,6 @@ fun test() {
     <!AMBIGUITY!>Cls<!>()
     take(<!AMBIGUITY!>Cls<!>())
 
-    Cls2()
-    take(Cls2())
+    <!UNRESOLVED_REFERENCE!>Cls2<!>()
+    take(<!UNRESOLVED_REFERENCE!>Cls2<!>())
 }

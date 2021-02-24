@@ -5,7 +5,7 @@ buildscript {
         jcenter()
     }
     dependencies {        
-        classpath 'com.android.tools.build:gradle:4.1.1'
+        classpath 'com.android.tools.build:gradle:4.1.2'
     }
 }
 apply plugin: 'com.android.application'
@@ -37,14 +37,6 @@ android {
 
     packagingOptions { exclude 'META-INF/build.txt' }
 
-    //TODO run under java 6, cause there is error on implicit 'stream' import in 'asWithMutable' test
-    lintOptions {
-        abortOnError false
-    }
-
-    compileOptions {
-        incremental = false
-    }
 
     dexOptions {
         dexInProcess false
@@ -78,6 +70,22 @@ android {
         }
 
         reflect0 {
+            dimension "box"
+        }
+
+        common_ir0 {
+            dimension "box"
+        }
+
+        common_ir1 {
+            dimension "box"
+        }
+
+        common_ir2 {
+            dimension "box"
+        }
+
+        reflect_ir0 {
             dimension "box"
         }
     }

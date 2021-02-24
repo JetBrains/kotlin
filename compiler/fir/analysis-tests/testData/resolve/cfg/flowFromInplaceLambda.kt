@@ -19,7 +19,7 @@ fun test_2(x: Any, y: Any) {
     val a = select(
         id(
             run {
-                y.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>inc<!>()<!> // Bad
+                y.<!UNRESOLVED_REFERENCE!>inc<!>() // Bad
                 x as Int
             }
         ),
@@ -39,14 +39,14 @@ fun test_3(x: Any, y: Any) {
     val a = select(
         id(
             run {
-                y.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>inc<!>()<!> // Bad
+                y.<!UNRESOLVED_REFERENCE!>inc<!>() // Bad
                 x as Int
                 materialize()
             }
         ),
         run {
             y as Int
-            x.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>inc<!>()<!> // Bad
+            x.<!UNRESOLVED_REFERENCE!>inc<!>() // Bad
             y.inc() // OK
             1
         }
@@ -60,19 +60,19 @@ fun test_4(x: Any, y: Any) {
     val a = select(
         id(
             myRun {
-                y.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>inc<!>()<!> // Bad
+                y.<!UNRESOLVED_REFERENCE!>inc<!>() // Bad
                 x as Int
             }
         ),
         y as Int,
         myRun {
-            x.<!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>inc<!>()<!> // Bad
+            x.<!UNRESOLVED_REFERENCE!>inc<!>() // Bad
             y.inc() // OK
             1
         }
 
     )
-    <!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>takeInt<!>(x)<!> // Bad
+    <!INAPPLICABLE_CANDIDATE!>takeInt<!>(x) // Bad
     takeInt(y) // OK
     takeInt(a) // Bad
 }

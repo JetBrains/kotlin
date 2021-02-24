@@ -138,6 +138,10 @@ class HLApplicatorBuilder<PSI : PsiElement, INPUT : HLApplicatorInput> internal 
         this.getActionName = getActionName
     }
 
+    fun actionName(getActionName: () -> String) {
+        this.getActionName = { _, _ -> getActionName() }
+    }
+
     @OptIn(PrivateForInline::class)
     fun applyTo(doApply: (PSI, INPUT, Project?, Editor?) -> Unit) {
         applyTo = doApply

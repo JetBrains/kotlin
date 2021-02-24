@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.expressions.classId
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
@@ -20,7 +19,6 @@ import org.jetbrains.kotlin.ir.types.IrTypeArgument
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
-import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.Variance
 
@@ -107,9 +105,10 @@ class Fir2IrTypeConverter(
                     if (annotations.any { it.classId == attributeAnnotation.classId }) continue
                     typeAnnotations += callGenerator.convertToIrConstructorCall(attributeAnnotation) as? IrConstructorCall ?: continue
                 }
+                val expandedType = fullyExpandedType(session)
                 IrSimpleTypeImpl(
-                    irSymbol, !typeContext.definitelyNotNull && this.isMarkedNullable,
-                    fullyExpandedType(session).typeArguments.map { it.toIrTypeArgument(typeContext) },
+                    irSymbol, !typeContext.definitelyNotNull && expandedType.isMarkedNullable,
+                    expandedType.typeArguments.map { it.toIrTypeArgument(typeContext) },
                     typeAnnotations
                 )
             }
@@ -122,7 +121,11 @@ class Fir2IrTypeConverter(
                 if (cached == null) {
                     val irType = lowerType?.toIrType(typeContext) ?: run {
                         capturedTypeCache[this] = errorTypeForCapturedTypeStub
-                        constructor.supertypes!!.first().toIrType(typeContext)
+                        val supertypes = constructor.supertypes!!
+                        val approximation = supertypes.find {
+                            it == (constructor.projection as? ConeKotlinTypeProjection)?.type
+                        } ?: supertypes.first()
+                        approximation.toIrType(typeContext)
                     }
                     capturedTypeCache[this] = irType
                     irType
@@ -150,11 +153,11 @@ class Fir2IrTypeConverter(
             ConeStarProjection -> IrStarProjectionImpl
             is ConeKotlinTypeProjectionIn -> {
                 val irType = this.type.toIrType(typeContext)
-                makeTypeProjection(irType, Variance.IN_VARIANCE)
+                makeTypeProjection(irType, if (typeContext.invariantProjection) Variance.INVARIANT else Variance.IN_VARIANCE)
             }
             is ConeKotlinTypeProjectionOut -> {
                 val irType = this.type.toIrType(typeContext)
-                makeTypeProjection(irType, Variance.OUT_VARIANCE)
+                makeTypeProjection(irType, if (typeContext.invariantProjection) Variance.INVARIANT else Variance.OUT_VARIANCE)
             }
             is ConeKotlinType -> {
                 if (this is ConeCapturedType && this in capturedTypeCache && this.isRecursive(mutableSetOf())) {

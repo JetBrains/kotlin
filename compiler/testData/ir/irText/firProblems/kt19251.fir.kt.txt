@@ -1,0 +1,11 @@
+fun box(): String {
+  val map: MutableMap<Fun, String> = mutableMapOf<Fun, String>()
+  val fn: Fun = local fun <anonymous>(it: String?): String? {
+    return TODO()
+  }
+ /*-> Fun */
+  return map.computeIfAbsent(p0 = fn, p1 = local fun <anonymous>(it: Fun?): String? {
+    return "OK"
+  }
+ /*-> @FlexibleNullability Function<Fun?, String?> */)
+}

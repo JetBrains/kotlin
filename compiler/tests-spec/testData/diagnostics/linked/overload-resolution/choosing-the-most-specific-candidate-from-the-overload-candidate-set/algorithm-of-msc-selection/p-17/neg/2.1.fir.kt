@@ -17,7 +17,7 @@ operator fun I2.invoke(): String = TODO()
 fun case1(a: A) {
     a.<!AMBIGUITY!>invoke<!>()
     <!AMBIGUITY!>a<!>()
-    <!AMBIGUITY!>A()()<!>
+    <!AMBIGUITY!>A<!>()()
 }
 
 // FILE: TestCase2.kt
@@ -36,7 +36,7 @@ fun case1(a: I) {
     a.<!AMBIGUITY!>invoke<!>()
     <!AMBIGUITY!>a<!>()
 
-    val x  = <!AMBIGUITY!>object : I {} ()<!>
+    val x  = <!AMBIGUITY!>object : I {}<!> ()
 }
 
 // FILE: TestCase3.kt
@@ -56,5 +56,5 @@ fun case1(a: I) {
     a.<!AMBIGUITY!>invoke<!>{}
     <!AMBIGUITY!>a<!>{}
 
-    val x  = <!AMBIGUITY!>object : I {} {}<!>
+    val x  = <!AMBIGUITY!>object : I {}<!> {}
 }

@@ -5,7 +5,7 @@ import kotlin.contracts.*
 // TESTCASE NUMBER: 1
 fun Any?.case_1(): Boolean {
     contract {
-        returns(true) implies (this != null)
+        <!ERROR_IN_CONTRACT_DESCRIPTION!>returns(true) implies (this != null)<!>
     }
     return this != null
 }
@@ -13,7 +13,7 @@ fun Any?.case_1(): Boolean {
 // TESTCASE NUMBER: 2
 fun Any?.case_2(): Boolean {
     contract {
-        returnsNotNull() implies (this is Number?)
+        <!ERROR_IN_CONTRACT_DESCRIPTION!>returnsNotNull() implies (this is Number?)<!>
     }
     return this is Number?
 }
@@ -21,7 +21,7 @@ fun Any?.case_2(): Boolean {
 // TESTCASE NUMBER: 3
 fun <T> T?.case_3(): Boolean {
     contract {
-        returnsNotNull() implies (this != null)
+        <!ERROR_IN_CONTRACT_DESCRIPTION!>returnsNotNull() implies (this != null)<!>
     }
     return this != null
 }
@@ -29,7 +29,7 @@ fun <T> T?.case_3(): Boolean {
 // TESTCASE NUMBER: 4
 inline fun <reified T : Number> T.case_4(): Boolean {
     contract {
-        returns(null) implies (this is Int)
+        <!ERROR_IN_CONTRACT_DESCRIPTION!>returns(null) implies (this is Int)<!>
     }
     return this is Int
 }

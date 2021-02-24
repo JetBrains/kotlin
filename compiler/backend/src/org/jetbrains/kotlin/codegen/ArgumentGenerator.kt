@@ -20,11 +20,9 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.resolve.calls.components.hasDefaultValue
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.overriddenTreeUniqueAsSequence
-import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.mapToIndex
 
 class ArgumentAndDeclIndex(val arg: ResolvedValueArgument, val declIndex: Int)
@@ -70,12 +68,8 @@ abstract class ArgumentGenerator {
                     generateExpression(declIndex, argument)
                 }
                 is DefaultValueArgument -> {
-                    if (calleeDescriptor?.defaultValueFromJava(declIndex) == true) {
-                        generateDefaultJava(declIndex, argument)
-                    } else {
-                        defaultArgs.mark(declIndex)
-                        generateDefault(declIndex, argument)
-                    }
+                    defaultArgs.mark(declIndex)
+                    generateDefault(declIndex, argument)
                 }
                 is VarargValueArgument -> {
                     generateVararg(declIndex, argument)
@@ -103,10 +97,6 @@ abstract class ArgumentGenerator {
         throw UnsupportedOperationException("Unsupported vararg value argument #$i: $argument")
     }
 
-    protected open fun generateDefaultJava(i: Int, argument: DefaultValueArgument) {
-        throw UnsupportedOperationException("Unsupported default java argument #$i: $argument")
-    }
-
     protected open fun generateOther(i: Int, argument: ResolvedValueArgument) {
         throw UnsupportedOperationException("Unsupported value argument #$i: $argument")
     }
@@ -114,28 +104,6 @@ abstract class ArgumentGenerator {
     protected open fun reorderArgumentsIfNeeded(args: List<ArgumentAndDeclIndex>) {
         throw UnsupportedOperationException("Unsupported operation")
     }
-}
-
-private fun CallableDescriptor.defaultValueFromJava(index: Int): Boolean = DFS.ifAny(
-    listOf(this),
-    { current -> current.original.overriddenDescriptors.map { it.original } },
-    { descriptor ->
-        descriptor.original.overriddenDescriptors.isEmpty() &&
-                descriptor is JavaCallableMemberDescriptor &&
-                descriptor.valueParameters[index].declaresDefaultValue()
-    }
-)
-
-fun shouldInvokeDefaultArgumentsStub(resolvedCall: ResolvedCall<*>): Boolean {
-    val descriptor = resolvedCall.resultingDescriptor
-    val valueArgumentsByIndex = resolvedCall.valueArgumentsByIndex ?: return false
-    for (index in valueArgumentsByIndex.indices) {
-        val resolvedValueArgument = valueArgumentsByIndex[index]
-        if (resolvedValueArgument is DefaultValueArgument && !descriptor.defaultValueFromJava(index)) {
-            return true
-        }
-    }
-    return false
 }
 
 fun getFunctionWithDefaultArguments(functionDescriptor: FunctionDescriptor): FunctionDescriptor {

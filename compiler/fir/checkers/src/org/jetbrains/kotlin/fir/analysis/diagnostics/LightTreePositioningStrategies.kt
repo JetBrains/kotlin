@@ -315,21 +315,59 @@ object LightTreePositioningStrategies {
         }
     }
 
-    val DOT_BY_SELECTOR: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
+    val DOT_BY_QUALIFIED: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
         override fun mark(
             node: LighterASTNode,
             startOffset: Int,
             endOffset: Int,
             tree: FlyweightCapableTreeStructure<LighterASTNode>
         ): List<TextRange> {
-            if (node.tokenType != KtNodeTypes.REFERENCE_EXPRESSION && node.tokenType != KtNodeTypes.CALL_EXPRESSION) {
-                // TODO: normally CALL_EXPRESSION should not be here. In PSI we have REFERENCE_EXPRESSION even for x.bar() case
-                // Remove CALL_EXPRESSION from here and repeat code below twice (see PSI counterpart) when fixed
+            if (node.tokenType != KtNodeTypes.DOT_QUALIFIED_EXPRESSION) {
                 return super.mark(node, startOffset, endOffset, tree)
             }
-            val parentNode = tree.getParent(node) ?: return super.mark(node, startOffset, endOffset, tree)
-            if (parentNode.tokenType == KtNodeTypes.DOT_QUALIFIED_EXPRESSION) {
-                return markElement(tree.dotOperator(parentNode) ?: node, startOffset, endOffset, tree, node)
+            return markElement(tree.dotOperator(node) ?: node, startOffset, endOffset, tree, node)
+        }
+    }
+
+    val SELECTOR_BY_QUALIFIED: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
+        override fun mark(
+            node: LighterASTNode,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>
+        ): List<TextRange> {
+            if (node.tokenType != KtNodeTypes.DOT_QUALIFIED_EXPRESSION && node.tokenType != KtNodeTypes.SAFE_ACCESS_EXPRESSION) {
+                return super.mark(node, startOffset, endOffset, tree)
+            }
+            val selector = tree.selector(node)
+            if (selector != null) {
+                return markElement(selector, startOffset, endOffset, tree, node)
+            }
+            return super.mark(node, startOffset, endOffset, tree)
+        }
+    }
+
+    val REFERENCE_BY_QUALIFIED: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
+        override fun mark(
+            node: LighterASTNode,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>
+        ): List<TextRange> {
+            if (node.tokenType == KtNodeTypes.CALL_EXPRESSION || node.tokenType == KtNodeTypes.CONSTRUCTOR_DELEGATION_CALL) {
+                return markElement(tree.referenceExpression(node) ?: node, startOffset, endOffset, tree, node)
+            }
+            if (node.tokenType != KtNodeTypes.DOT_QUALIFIED_EXPRESSION && node.tokenType != KtNodeTypes.SAFE_ACCESS_EXPRESSION) {
+                return super.mark(node, startOffset, endOffset, tree)
+            }
+            val selector = tree.selector(node)
+            if (selector != null) {
+                when (selector.tokenType) {
+                    KtNodeTypes.REFERENCE_EXPRESSION ->
+                        return markElement(selector, startOffset, endOffset, tree, node)
+                    KtNodeTypes.CALL_EXPRESSION, KtNodeTypes.CONSTRUCTOR_DELEGATION_CALL ->
+                        return markElement(tree.referenceExpression(selector) ?: selector, startOffset, endOffset, tree, node)
+                }
             }
             return super.mark(node, startOffset, endOffset, tree)
         }
@@ -387,6 +425,14 @@ private fun FlyweightCapableTreeStructure<LighterASTNode>.nameIdentifier(node: L
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.operationReference(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, KtNodeTypes.OPERATION_REFERENCE)
+
+private fun FlyweightCapableTreeStructure<LighterASTNode>.referenceExpression(node: LighterASTNode): LighterASTNode? {
+    val childrenRef = Ref<Array<LighterASTNode?>>()
+    getChildren(node, childrenRef)
+    return childrenRef.get()?.firstOrNull {
+        it?.tokenType == KtNodeTypes.REFERENCE_EXPRESSION || it?.tokenType == KtNodeTypes.CONSTRUCTOR_DELEGATION_REFERENCE
+    }
+}
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.rightParenthesis(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, KtTokens.RPAR)
@@ -446,6 +492,25 @@ private fun FlyweightCapableTreeStructure<LighterASTNode>.defaultValue(node: Lig
         return child
     }
     return null
+}
+
+fun FlyweightCapableTreeStructure<LighterASTNode>.selector(node: LighterASTNode): LighterASTNode? {
+    val childrenRef = Ref<Array<LighterASTNode?>>()
+    getChildren(node, childrenRef)
+    val children = childrenRef.get() ?: return null
+    var dotFound = false
+    for (child in children) {
+        if (child == null) continue
+        if (child.tokenType == KtTokens.DOT) {
+            dotFound = true
+            continue
+        }
+        if (dotFound && (child.tokenType == KtNodeTypes.CALL_EXPRESSION || child.tokenType == KtNodeTypes.REFERENCE_EXPRESSION)) {
+            return child
+        }
+    }
+    return null
+
 }
 
 fun FlyweightCapableTreeStructure<LighterASTNode>.findChildByType(node: LighterASTNode, type: IElementType): LighterASTNode? {

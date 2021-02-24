@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.expressions.impl
 
+import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirAbstractArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
@@ -32,5 +33,8 @@ class FirResolvedArgumentList internal constructor(
     override fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirArgumentList {
         mapping = mapping.mapKeys { (k, _) -> k.transformSingle(transformer, data) } as LinkedHashMap<FirExpression, FirValueParameter>
         return this
+    }
+
+    override fun replaceSource(newSource: FirSourceElement?) {
     }
 }

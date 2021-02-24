@@ -8,11 +8,16 @@ package org.jetbrains.kotlin.idea.frontend.api.components
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithKind
 
 abstract class KtSymbolContainingDeclarationProvider : KtAnalysisSessionComponent() {
+    abstract fun getContainingDeclaration(symbol: KtSymbolWithKind): KtSymbolWithKind?
+}
+
+interface KtSymbolContainingDeclarationProviderMixIn : KtAnalysisSessionMixIn {
     /**
      * Returns containing declaration for symbol:
      *   for top-level declarations returns null
      *   for class members returns containing class
      *   for local declaration returns declaration it was declared it
      */
-    abstract fun getContainingDeclaration(symbol: KtSymbolWithKind): KtSymbolWithKind?
+    fun KtSymbolWithKind.getContainingSymbol(): KtSymbolWithKind? =
+        analysisSession.containingDeclarationProvider.getContainingDeclaration(this)
 }

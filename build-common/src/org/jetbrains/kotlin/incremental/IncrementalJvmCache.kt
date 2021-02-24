@@ -94,6 +94,10 @@ open class IncrementalJvmCache(
     fun sourcesByInternalName(internalName: String): Collection<File> =
         internalNameToSource[internalName]
 
+    fun getAllPartsOfMultifileFacade(facade: JvmClassName): Collection<String>? {
+        return multifileFacadeToParts[facade]
+    }
+
     fun isMultifileFacade(className: JvmClassName): Boolean =
         className in multifileFacadeToParts
 
@@ -425,6 +429,8 @@ open class IncrementalJvmCache(
 
     private inner class MultifileClassFacadeMap(storageFile: File) :
         BasicStringMap<Collection<String>>(storageFile, StringCollectionExternalizer) {
+
+        @Synchronized
         operator fun set(className: JvmClassName, partNames: Collection<String>) {
             storage[className.internalName] = partNames
         }
@@ -435,6 +441,7 @@ open class IncrementalJvmCache(
         operator fun contains(className: JvmClassName): Boolean =
             className.internalName in storage
 
+        @Synchronized
         fun remove(className: JvmClassName) {
             storage.remove(className.internalName)
         }
@@ -444,6 +451,8 @@ open class IncrementalJvmCache(
 
     private inner class MultifileClassPartMap(storageFile: File) :
         BasicStringMap<String>(storageFile, EnumeratorStringDescriptor.INSTANCE) {
+
+        @Synchronized
         fun set(partName: String, facadeName: String) {
             storage[partName] = facadeName
         }
@@ -451,6 +460,7 @@ open class IncrementalJvmCache(
         fun get(partName: JvmClassName): String? =
             storage[partName.internalName]
 
+        @Synchronized
         fun remove(className: JvmClassName) {
             storage.remove(className.internalName)
         }

@@ -41,7 +41,7 @@ class JsIrLinker(
         JsModuleDeserializer(moduleDescriptor, klib ?: error("Expecting kotlin library"), strategy, klib.libContainsErrorCode)
 
     private inner class JsModuleDeserializer(moduleDescriptor: ModuleDescriptor, klib: IrLibrary, strategy: DeserializationStrategy, allowErrorCode: Boolean) :
-        KotlinIrLinker.BasicIrModuleDeserializer(moduleDescriptor, klib, strategy, allowErrorCode)
+        BasicIrModuleDeserializer(this, moduleDescriptor, klib, strategy, allowErrorCode)
 
     override fun createCurrentModuleDeserializer(moduleFragment: IrModuleFragment, dependencies: Collection<IrModuleDeserializer>): IrModuleDeserializer {
         val currentModuleDeserializer = super.createCurrentModuleDeserializer(moduleFragment, dependencies)

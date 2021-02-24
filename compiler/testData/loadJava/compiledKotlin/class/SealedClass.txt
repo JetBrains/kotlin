@@ -9,7 +9,7 @@ public final class Inheritor3 : test.SealedClass {
 }
 
 public sealed class SealedClass {
-    /*primary*/ internal constructor SealedClass()
+    /*primary*/ protected constructor SealedClass()
 
     public final class Inheritor1 : test.SealedClass {
         /*primary*/ public constructor Inheritor1()

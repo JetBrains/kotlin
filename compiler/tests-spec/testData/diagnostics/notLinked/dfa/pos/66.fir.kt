@@ -9,8 +9,8 @@
  */
 fun case_1(x: Any?) {
     if (x !is Nothing?) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>x<!>.equals(10)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>.equals(10)
     }
 }
 
@@ -61,13 +61,13 @@ fun case_4(x: Pair<*, *>?) {
 fun case_5(x: Pair<*, *>?) {
     when (x) {
         !is Nothing? -> {
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Pair<*, *> & kotlin.Pair<*, *>?")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Pair<*, *> & kotlin.Pair<*, *>?")!>x<!>.equals(10)
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Pair<*, *>? & kotlin.Pair<*, *>")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Pair<*, *>? & kotlin.Pair<*, *>")!>x<!>.equals(10)
         }
         else -> return
     }
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Pair<*, *> & kotlin.Pair<*, *>?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Pair<*, *> & kotlin.Pair<*, *>?")!>x<!>.equals(10)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Pair<*, *>? & kotlin.Pair<*, *>")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Pair<*, *>? & kotlin.Pair<*, *>")!>x<!>.equals(10)
 }
 
 /*
@@ -79,8 +79,8 @@ fun case_6(x: Any?) {
     when (x) {
         is Nothing? -> return
         is Any? -> {
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any?")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any?")!>x<!><!UNSAFE_CALL!>.<!>equals(10)
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!><!UNSAFE_CALL!>.<!>equals(10)
         }
     }
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>

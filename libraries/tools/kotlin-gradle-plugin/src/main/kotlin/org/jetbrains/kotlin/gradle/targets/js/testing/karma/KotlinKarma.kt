@@ -10,6 +10,7 @@ import jetbrains.buildServer.messages.serviceMessages.BaseTestSuiteMessage
 import org.gradle.api.Project
 import org.gradle.api.internal.tasks.testing.TestResultProcessor
 import org.gradle.internal.logging.progress.ProgressLogger
+import org.gradle.internal.service.ServiceRegistry
 import org.gradle.process.ProcessForkOptions
 import org.gradle.process.internal.ExecHandle
 import org.jetbrains.kotlin.gradle.internal.LogType
@@ -31,13 +32,20 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.*
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 import org.jetbrains.kotlin.gradle.testing.internal.reportsDir
+import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheAvailable
 import org.jetbrains.kotlin.gradle.utils.property
 import org.slf4j.Logger
 import java.io.File
 
-class KotlinKarma(override val compilation: KotlinJsCompilation) :
+class KotlinKarma(
+    @Transient override val compilation: KotlinJsCompilation,
+    private val services: () -> ServiceRegistry,
+    private val basePath: String
+) :
     KotlinJsTestFramework {
+    @Transient
     private val project: Project = compilation.target.project
+    private val npmProject = compilation.npmProject
     private val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
     private val versions = nodeJs.versions
 
@@ -48,12 +56,22 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
     private val envJsCollector = mutableMapOf<String, String>()
     private val confJsWriters = mutableListOf<(Appendable) -> Unit>()
     private var sourceMaps = false
+    private val defaultConfigDirectory = project.projectDir.resolve("karma.config.d")
     private var configDirectory: File by property {
-        project.projectDir.resolve("karma.config.d")
+        defaultConfigDirectory
+    }
+    private val isTeamCity by lazy {
+        if (isConfigurationCacheAvailable(project.gradle)) {
+            project.providers.gradleProperty(TC_PROJECT_PROPERTY).forUseAtConfigurationTime().isPresent
+        } else {
+            project.hasProperty(TC_PROJECT_PROPERTY)
+        }
     }
 
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency>
         get() = requiredDependencies + webpackConfig.getRequiredDependencies(versions)
+
+    override fun getPath() = "$basePath:kotlinKarma"
 
     override val settingsState: String
         get() = "KotlinKarma($config)"
@@ -274,8 +292,6 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
         file: String,
         debug: Boolean
     ): File {
-        val npmProject = compilation.npmProject
-
         val adapterJs = npmProject.dir.resolve("adapter-browser.js")
         adapterJs.printWriter().use { writer ->
             val karmaRunner = npmProject.require("kotlin-test-js-runner/kotlin-test-karma-runner.js")
@@ -298,8 +314,6 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
         nodeJsArgs: MutableList<String>,
         debug: Boolean
     ): TCServiceMessagesTestExecutionSpec {
-        val npmProject = compilation.npmProject
-
         val file = task.nodeModulesToLoad
             .map { npmProject.require(it) }
             .single()
@@ -338,7 +352,7 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
             prependSuiteName = true,
             stackTraceParser = ::parseNodeJsStackTraceAsJvm,
             ignoreOutOfRootNodes = true,
-            escapeTCMessagesInLog = project.hasProperty(TC_PROJECT_PROPERTY)
+            escapeTCMessagesInLog = isTeamCity
         )
 
         config.basePath = npmProject.nodeModulesDir.absolutePath
@@ -404,7 +418,7 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
             lateinit var progressLogger: ProgressLogger
 
             override fun wrapExecute(body: () -> Unit) {
-                project.operation("Running and building tests with karma and webpack") {
+                services().operation("Running and building tests with karma and webpack") {
                     progressLogger = this
                     body()
                 }

@@ -291,6 +291,10 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
     }
 
     arguments.declarationsOutputPath?.let { put(JVMConfigurationKeys.DECLARATIONS_JSON_PATH, it) }
+
+    val nThreadsRaw = arguments.parallelBackendThreads.toIntOrNull() ?: 1
+    val nThreads = if (nThreadsRaw == 0) Runtime.getRuntime().availableProcessors() else nThreadsRaw
+    put(CommonConfigurationKeys.PARALLEL_BACKEND_THREADS, nThreads)
 }
 
 fun CompilerConfiguration.configureKlibPaths(arguments: K2JVMCompilerArguments) {

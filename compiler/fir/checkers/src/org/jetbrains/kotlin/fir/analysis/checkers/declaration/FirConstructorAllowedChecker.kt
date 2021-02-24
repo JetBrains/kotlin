@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
+import org.jetbrains.kotlin.lexer.KtTokens
 
 object FirConstructorAllowedChecker : FirConstructorChecker() {
     override fun check(declaration: FirConstructor, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -30,10 +32,14 @@ object FirConstructorAllowedChecker : FirConstructorChecker() {
             ClassKind.ENUM_CLASS -> if (declaration.visibility != Visibilities.Private) {
                 reporter.reportOn(source, FirErrors.NON_PRIVATE_CONSTRUCTOR_IN_ENUM, context)
             }
-            ClassKind.CLASS -> if (containingClass is FirRegularClass && containingClass.modality == Modality.SEALED &&
-                declaration.visibility != Visibilities.Private
-            ) {
-                reporter.reportOn(source, FirErrors.NON_PRIVATE_CONSTRUCTOR_IN_SEALED, context)
+            ClassKind.CLASS -> if (containingClass is FirRegularClass && containingClass.modality == Modality.SEALED) {
+                val modifierList = with(FirModifierList) { source.getModifierList() } ?: return
+                val hasIllegalModifier = modifierList.modifiers.any {
+                    it.token != KtTokens.PROTECTED_KEYWORD && it.token != KtTokens.PRIVATE_KEYWORD
+                }
+                if (hasIllegalModifier) {
+                    reporter.reportOn(source, FirErrors.NON_PRIVATE_OR_PROTECTED_CONSTRUCTOR_IN_SEALED, context)
+                }
             }
             ClassKind.ANNOTATION_CLASS -> {
                 // DO NOTHING

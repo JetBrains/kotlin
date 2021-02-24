@@ -48,6 +48,8 @@ public:
     // much of a problem is it.
     Iterable Iter() noexcept { return stableRefs_.Iter(); }
 
+    void ClearForTests() noexcept { stableRefs_.ClearForTests(); }
+
 private:
     // Current approach optimizes for creating and disposing of stable refs:
     // * creation just enqueues ref, disposing either queues or deletes the ref immediately (if it still resides in the current queue).

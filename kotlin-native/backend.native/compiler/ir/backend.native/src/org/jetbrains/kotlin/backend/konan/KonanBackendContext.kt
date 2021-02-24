@@ -65,8 +65,6 @@ internal abstract class KonanBackendContext(val config: KonanConfig) : CommonBac
 
     override val mapping: Mapping = DefaultMapping()
 
-    override val extractedLocalClasses: MutableSet<IrClass> = mutableSetOf()
-
     override val irFactory: IrFactory = IrFactoryImpl
 }
 

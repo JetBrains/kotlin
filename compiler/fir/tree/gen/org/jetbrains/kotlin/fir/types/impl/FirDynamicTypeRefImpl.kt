@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirDynamicTypeRefImpl(
-    override val source: FirSourceElement?,
+    override var source: FirSourceElement?,
     override val annotations: MutableList<FirAnnotationCall>,
     override val isMarkedNullable: Boolean,
 ) : FirDynamicTypeRef() {
@@ -32,5 +32,9 @@ internal class FirDynamicTypeRefImpl(
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirDynamicTypeRefImpl {
         annotations.transformInplace(transformer, data)
         return this
+    }
+
+    override fun replaceSource(newSource: FirSourceElement?) {
+        source = newSource
     }
 }

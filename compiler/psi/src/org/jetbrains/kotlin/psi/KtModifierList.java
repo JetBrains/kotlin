@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.psi;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.IStubElementType;
+import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken;
@@ -65,6 +66,12 @@ public abstract class KtModifierList extends KtElementImplStub<KotlinModifierLis
     public PsiElement getModifier(@NotNull KtModifierKeywordToken tokenType) {
         return findChildByType(tokenType);
     }
+
+    @Nullable
+    public PsiElement getModifier(@NotNull TokenSet tokenTypes) {
+        return findChildByType(tokenTypes);
+    }
+
 
     public PsiElement getOwner() {
         return getParentByStub();

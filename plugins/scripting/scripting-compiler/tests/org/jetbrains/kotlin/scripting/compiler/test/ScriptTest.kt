@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
@@ -84,6 +85,23 @@ class ScriptTest : TestCase() {
             Assert.assertNotNull(anObj)
         }
         assertEqualsTrimmed("[(1, a)]", out)
+    }
+
+    fun testMetadataFlag() {
+        // Test that we're writing the flag to [Metadata.extraInt] that distinguishes scripts from other classes.
+
+        fun Class<*>.isFlagSet(): Boolean {
+            val metadata = annotations.single { it.annotationClass.java.name == Metadata::class.java.name }
+            val extraInt = metadata.javaClass.methods.single { it.name == JvmAnnotationNames.METADATA_EXTRA_INT_FIELD_NAME }
+            return (extraInt(metadata) as Int) and JvmAnnotationNames.METADATA_SCRIPT_FLAG != 0
+        }
+
+        val scriptClass = compileScript("metadata_flag.kts", StandardScriptDefinition)!!
+        assertTrue("Script class SHOULD have the metadata flag set", scriptClass.isFlagSet())
+        assertFalse(
+            "Non-script class in a script should NOT have the metadata flag set",
+            scriptClass.classLoader.loadClass("Metadata_flag\$RandomClass").isFlagSet()
+        )
     }
 
     private fun compileScript(

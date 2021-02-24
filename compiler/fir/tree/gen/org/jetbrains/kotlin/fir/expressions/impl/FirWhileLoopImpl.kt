@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirWhileLoopImpl(
-    override val source: FirSourceElement?,
+    override var source: FirSourceElement?,
     override val annotations: MutableList<FirAnnotationCall>,
     override var label: FirLabel?,
     override var condition: FirExpression,
@@ -58,5 +58,9 @@ internal class FirWhileLoopImpl(
         transformAnnotations(transformer, data)
         label = label?.transformSingle(transformer, data)
         return this
+    }
+
+    override fun replaceSource(newSource: FirSourceElement?) {
+        source = newSource
     }
 }

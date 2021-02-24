@@ -17,9 +17,9 @@ fun test_1() {
 }
 
 fun test_2() {
-    <!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>takeInt<!>(10000000000)<!>
+    <!INAPPLICABLE_CANDIDATE!>takeInt<!>(10000000000)
     takeLong(10000000000)
-    <!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>takeByte<!>(1000)<!>
+    <!INAPPLICABLE_CANDIDATE!>takeByte<!>(1000)
 }
 
 fun test_3() {
@@ -35,8 +35,8 @@ fun test_4() {
 }
 
 fun test_5() {
-    <!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>takeString<!>(1)<!>
-    <!INAPPLICABLE_CANDIDATE{LT}!><!INAPPLICABLE_CANDIDATE{PSI}!>takeString<!>(run { 1 })<!>
+    <!INAPPLICABLE_CANDIDATE!>takeString<!>(1)
+    <!INAPPLICABLE_CANDIDATE!>takeString<!>(run { 1 })
 }
 
 annotation class Ann(val x: Byte)

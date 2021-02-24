@@ -233,7 +233,7 @@ private class InterfaceObjectCallsLowering(val context: JvmBackendContext) : IrE
         if (expression.superQualifierSymbol != null && !expression.isSuperToAny())
             return super.visitCall(expression)
         val callee = expression.symbol.owner
-        if (!callee.hasInterfaceParent())
+        if (!callee.hasInterfaceParent() && expression.dispatchReceiver?.run { type.erasedUpperBound.isJvmInterface } != true)
             return super.visitCall(expression)
         val resolved = callee.resolveFakeOverride()
         if (resolved?.isMethodOfAny() != true)

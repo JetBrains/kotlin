@@ -37,9 +37,9 @@ abstract class FirModuleResolveState {
 
     internal abstract fun isFirFileBuilt(ktFile: KtFile): Boolean
 
-    internal abstract fun getDiagnostics(element: KtElement): List<FirPsiDiagnostic<*>>
+    internal abstract fun getDiagnostics(element: KtElement, filter: DiagnosticCheckerFilter): List<FirPsiDiagnostic<*>>
 
-    internal abstract fun collectDiagnosticsForFile(ktFile: KtFile): Collection<FirPsiDiagnostic<*>>
+    internal abstract fun collectDiagnosticsForFile(ktFile: KtFile, filter: DiagnosticCheckerFilter): Collection<FirPsiDiagnostic<*>>
 
     @TestOnly
     internal abstract fun getBuiltFirFileOrNull(ktFile: KtFile): FirFile?

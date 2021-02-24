@@ -14,6 +14,11 @@ abstract class KtTypeRenderer : KtAnalysisSessionComponent() {
     abstract fun render(type: KtType, options: KtTypeRendererOptions): String
 }
 
+interface KtTypeRendererMixIn : KtAnalysisSessionMixIn {
+    fun KtType.render(options: KtTypeRendererOptions = KtTypeRendererOptions.DEFAULT): String =
+        analysisSession.typeRenderer.render(this, options)
+}
+
 data class KtTypeRendererOptions(
     val renderFqNames: Boolean,
     val renderFunctionTypes: Boolean

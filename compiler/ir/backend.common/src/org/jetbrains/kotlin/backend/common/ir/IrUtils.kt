@@ -355,7 +355,7 @@ fun IrType.remapTypeParameters(
 
 /* Copied from K/N */
 fun IrDeclarationContainer.addChild(declaration: IrDeclaration) {
-    stageController.unrestrictDeclarationListsAccess {
+    declaration.factory.stageController.unrestrictDeclarationListsAccess {
         this.declarations += declaration
     }
     declaration.setDeclarationsParent(this)

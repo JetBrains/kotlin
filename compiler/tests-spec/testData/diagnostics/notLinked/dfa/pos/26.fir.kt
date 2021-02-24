@@ -14,13 +14,13 @@ open class Case1<K : Number> {
                 x as L
                 x as K
                 if (x is T) {
-                    <!DEBUG_INFO_EXPRESSION_TYPE("M & L & K & T!! & kotlin.Any?")!>x<!>
-                    <!DEBUG_INFO_EXPRESSION_TYPE("M & L & K & T!! & kotlin.Any?")!>x<!>.toByte()
-                    <!DEBUG_INFO_EXPRESSION_TYPE("M & L & K & T!! & kotlin.Any?")!>x<!>.length
-                    <!DEBUG_INFO_EXPRESSION_TYPE("M & L & K & T!! & kotlin.Any?")!>x<!>.get(0)
-                    <!DEBUG_INFO_EXPRESSION_TYPE("M & L & K & T!! & kotlin.Any?")!>x<!>.size
-                    <!DEBUG_INFO_EXPRESSION_TYPE("M & L & K & T!! & kotlin.Any?")!>x<!>.isEmpty()
-                    <!DEBUG_INFO_EXPRESSION_TYPE("M & L & K & T!! & kotlin.Any?")!>x<!>[null]
+                    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & M & L & K & T!!")!>x<!>
+                    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & M & L & K & T!!")!>x<!>.toByte()
+                    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & M & L & K & T!!")!>x<!>.length
+                    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & M & L & K & T!!")!>x<!>.get(0)
+                    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & M & L & K & T!!")!>x<!>.size
+                    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & M & L & K & T!!")!>x<!>.isEmpty()
+                    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & M & L & K & T!!")!>x<!>[null]
                 }
             }
         }
@@ -31,9 +31,9 @@ open class Case1<K : Number> {
 inline fun <reified T : CharSequence>case_2(x: Any?) {
     x as T
     if (x !is T) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & kotlin.Any?")!>x<!>.length
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & kotlin.Any?")!>x<!>.get(0)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T")!>x<!>.length
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T")!>x<!>.get(0)
     }
 }
 
@@ -41,9 +41,9 @@ inline fun <reified T : CharSequence>case_2(x: Any?) {
 inline fun <reified T : CharSequence>case_3(x: Any?) {
     x as T?
     if (x is T) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & kotlin.Any?")!>x<!>.length
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & kotlin.Any?")!>x<!>.get(0)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T")!>x<!>.length
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T")!>x<!>.get(0)
     }
 }
 
@@ -51,9 +51,9 @@ inline fun <reified T : CharSequence>case_3(x: Any?) {
 inline fun <reified T : CharSequence>case_4(x: Any?) {
     (x as? T)!!
     if (x is T?) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & kotlin.Any?")!>x<!><!UNSAFE_CALL!>.<!>length
-        <!DEBUG_INFO_EXPRESSION_TYPE("T? & kotlin.Any?")!>x<!><!UNSAFE_CALL!>.<!>get(0)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T?")!>x<!><!UNSAFE_CALL!>.<!>length
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T?")!>x<!><!UNSAFE_CALL!>.<!>get(0)
     }
 }
 
@@ -61,9 +61,9 @@ inline fun <reified T : CharSequence>case_4(x: Any?) {
 inline fun <reified T : CharSequence>case_5(x: Any?) {
     if (x as? T != null) {
         if (x is T?) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("T?!! & kotlin.Any?")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("T?!! & kotlin.Any?")!>x<!>.length
-            <!DEBUG_INFO_EXPRESSION_TYPE("T?!! & kotlin.Any?")!>x<!>.get(0)
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T?!!")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T?!!")!>x<!>.length
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T?!!")!>x<!>.get(0)
         }
     }
 }

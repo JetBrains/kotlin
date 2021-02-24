@@ -32,7 +32,7 @@ object FirDiagnosticRenderers {
     }
 
     val SYMBOLS = Renderer { symbols: Collection<AbstractFirBasedSymbol<*>> ->
-        symbols.joinToString(prefix = "[", postfix = "]", separator = ",", limit = 3, truncated = "...") { symbol ->
+        symbols.joinToString(prefix = "[", postfix = "]", separator = ", ", limit = 3, truncated = "...") { symbol ->
             SYMBOL.render(symbol)
         }
     }

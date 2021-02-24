@@ -121,4 +121,3 @@ class TestK4 : IFoo {
   local /* final field */ val <$$delegate_0>: IFoo = K4()
 
 }
-

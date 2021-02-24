@@ -47,13 +47,13 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 class AddReifiedToTypeParameterOfFunctionFix(
     typeParameter: KtTypeParameter,
     function: KtNamedFunction
-) : AddModifierFix(typeParameter, KtTokens.REIFIED_KEYWORD) {
+) : AddModifierFixMpp(typeParameter, KtTokens.REIFIED_KEYWORD) {
 
     private val inlineFix = AddInlineToFunctionWithReifiedFix(function)
-    private val elementName = getElementName(function)
+    private val elementName = RemoveModifierFix.getElementName(function)
 
     override fun getText() =
-        element?.let { KotlinBundle.message("fix.make.type.parameter.reified", getElementName(it), elementName) } ?: ""
+        element?.let { KotlinBundle.message("fix.make.type.parameter.reified", RemoveModifierFix.getElementName(it), elementName) } ?: ""
 
     override fun invokeImpl(project: Project, editor: Editor?, file: PsiFile) {
         super.invokeImpl(project, editor, file)

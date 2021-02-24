@@ -215,7 +215,10 @@ class RunExternalTestGroup extends JavaExec implements CompilerRunner {
         def languageSettings = findLinesWithPrefixesRemoved(text, "// !LANGUAGE: ")
         if (languageSettings.size() != 0) {
             languageSettings.forEach { line ->
-                line.split(" ").toList().forEach { flags.add("-XXLanguage:$it") }
+                line.split(" ").toList().forEach {
+                    if (it != "+NewInference") // It is on already by default, but passing it explicitly turns on a special "compatibility mode" in FE which is not desirable.
+                        flags.add("-XXLanguage:$it")
+                }
             }
         }
 

@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
-import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.CALL
-import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.NO_CALL
+import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.ApiVersion
@@ -125,6 +124,13 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
 
     @Argument(value = "-Xir-dce", description = "Perform experimental dead code elimination")
     var irDce: Boolean by FreezableVar(false)
+
+    @Argument(
+        value = "-Xir-dce-runtime-diagnostic",
+        valueDescription = "{$DCE_RUNTIME_DIAGNOSTIC_LOG|$DCE_RUNTIME_DIAGNOSTIC_EXCEPTION}",
+        description = "Enable runtime diagnostics when performing DCE instead of removing declarations"
+    )
+    var irDceRuntimeDiagnostic: String? by NullableStringFreezableVar(null)
 
     @Argument(value = "-Xir-dce-driven", description = "Perform a more experimental faster dead code elimination")
     var irDceDriven: Boolean by FreezableVar(false)

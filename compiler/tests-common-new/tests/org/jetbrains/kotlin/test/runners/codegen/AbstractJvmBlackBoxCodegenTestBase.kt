@@ -23,7 +23,7 @@ abstract class AbstractJvmBlackBoxCodegenTestBase<R : ResultingArtifact.Frontend
 
     override fun TestConfigurationBuilder.configuration() {
         commonConfigurationForCodegenTest(targetFrontend, frontendFacade, frontendToBackendConverter, backendFacade)
-        commonHandlersForCodegenTest()
+        commonHandlersForBoxTest()
         useArtifactsHandlers(::BytecodeListingHandler)
         useAfterAnalysisCheckers(::BlackBoxCodegenSuppressor)
     }

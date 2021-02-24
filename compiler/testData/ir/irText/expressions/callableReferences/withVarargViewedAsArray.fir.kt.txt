@@ -48,5 +48,8 @@ fun testArrayAsVararg() {
 }
 
 fun testArrayAndDefaults() {
-  useStringArray(fn = ::zap)
+  useStringArray(fn = local fun zap(p0: Array<out String>) {
+    zap(b = [*p0])
+  }
+)
 }

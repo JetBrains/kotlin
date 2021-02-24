@@ -21,22 +21,28 @@ inline class Z(val x: Int) {
     internal val String.internalExtensionVal: Int get() = x
     private val String.privateExtensionVal: Int get() = x
 
+    @Suppress("RESERVED_VAR_PROPERTY_OF_VALUE_CLASS")
     var publicVar: Int
         get() = x
         set(v) {}
+    @Suppress("RESERVED_VAR_PROPERTY_OF_VALUE_CLASS")
     internal var internalVar: Int
         get() = x
         set(v) {}
+    @Suppress("RESERVED_VAR_PROPERTY_OF_VALUE_CLASS")
     private var privateVar: Int
         get() = x
         set(v) {}
 
+    @Suppress("RESERVED_VAR_PROPERTY_OF_VALUE_CLASS")
     var String.publicExtensionVar: Int
         get() = x
         set(v) {}
+    @Suppress("RESERVED_VAR_PROPERTY_OF_VALUE_CLASS")
     internal var String.internalExtensionVar: Int
         get() = x
         set(v) {}
+    @Suppress("RESERVED_VAR_PROPERTY_OF_VALUE_CLASS")
     private var String.privateExtensionVar: Int
         get() = x
         set(v) {}

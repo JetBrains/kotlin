@@ -35,7 +35,7 @@ fun test4() {
 // should be an error on receiver, shouldn't be thrown away
 
 fun test5() {
-    1.<!UNRESOLVED_REFERENCE!>(fun String.()=1)()<!>
+    1.<!UNRESOLVED_REFERENCE!>(fun String.()=1)<!>()
 }
 
 fun <R: Any> R?.sure() : R = this!!

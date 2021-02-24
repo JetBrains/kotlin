@@ -21,5 +21,7 @@ abstract class FirThisReference : FirReference() {
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitThisReference(this, data)
 
+    abstract override fun replaceSource(newSource: FirSourceElement?)
+
     abstract fun replaceBoundSymbol(newBoundSymbol: AbstractFirBasedSymbol<*>?)
 }

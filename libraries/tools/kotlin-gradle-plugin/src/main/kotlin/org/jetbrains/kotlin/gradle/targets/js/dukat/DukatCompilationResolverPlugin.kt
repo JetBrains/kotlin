@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.dukat
 
 import org.gradle.api.artifacts.FileCollectionDependency
+import org.gradle.api.internal.project.ProjectInternal
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
@@ -25,6 +26,16 @@ internal class DukatCompilationResolverPlugin(
     val nodeJs get() = resolver.nodeJs
     val npmProject get() = resolver.npmProject
     val compilation get() = npmProject.compilation
+    val compilationName by lazy {
+        compilation.disambiguatedName
+    }
+    val legacyTargetReuseIrTask by lazy {
+        val target = compilation.target
+        target is KotlinJsTarget && (target.irTarget != null && externalsOutputFormat == ExternalsOutputFormat.SOURCE)
+    }
+    val externalsOutputFormat by lazy {
+        compilation.externalsOutputFormat
+    }
     val integratedTaskName = npmProject.compilation.disambiguateName("generateExternalsIntegrated")
     val separateTaskName = npmProject.compilation.disambiguateName("generateExternals")
 
@@ -74,7 +85,7 @@ internal class DukatCompilationResolverPlugin(
         internalCompositeDependencies: Set<KotlinCompilationNpmResolver.CompositeDependency>,
         externalGradleDependencies: Set<KotlinCompilationNpmResolver.ExternalGradleDependency>,
         externalNpmDependencies: Set<NpmDependency>,
-        fileCollectionDependencies: Set<FileCollectionDependency>
+        fileCollectionDependencies: Set<KotlinCompilationNpmResolver.FileCollectionExternalGradleDependency>
     ) {
         if (nodeJs.experimental.discoverTypes) {
             // todo: discoverTypes
@@ -85,12 +96,10 @@ internal class DukatCompilationResolverPlugin(
         packageJsonIsUpdated: Boolean,
         resolution: KotlinRootNpmResolution
     ) {
-        val externalNpmDependencies = resolution[project][compilation].externalNpmDependencies
+        val externalNpmDependencies = resolution[project.path][compilationName].externalNpmDependencies
 
-        val target = compilation.target
-        val externalsOutputFormat = compilation.externalsOutputFormat
-        val legacyTargetReuseIrTask =
-            target is KotlinJsTarget && (target.irTarget != null && externalsOutputFormat == ExternalsOutputFormat.SOURCE)
+
+
         if (legacyTargetReuseIrTask) {
             return
         }
@@ -103,7 +112,7 @@ internal class DukatCompilationResolverPlugin(
             packageJsonIsUpdated,
             operation = compilation.name + " > " + DukatExecutor.OPERATION,
             compareInputs = true
-        ).execute()
+        ).execute((project as ProjectInternal).services)
     }
 
     companion object {

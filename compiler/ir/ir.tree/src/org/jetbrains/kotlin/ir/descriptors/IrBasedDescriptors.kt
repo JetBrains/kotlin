@@ -266,6 +266,8 @@ open class IrBasedTypeParameterDescriptor(owner: IrTypeParameter) : TypeParamete
             override fun getDeclarationDescriptor() = this@IrBasedTypeParameterDescriptor
 
             override fun getBuiltIns() = module.builtIns
+
+            override fun isSameClassifier(classifier: ClassifierDescriptor): Boolean = declarationDescriptor === classifier
         }
     }
 
@@ -358,7 +360,7 @@ open class IrBasedVariableDescriptorWithAccessor(owner: IrLocalDelegatedProperty
 
     override fun isConst(): Boolean = false
 
-    override fun getContainingDeclaration() = (owner.parent as IrFunction).toIrBasedDescriptor()
+    override fun getContainingDeclaration() = (owner.parent as IrDeclaration).toIrBasedDescriptor()
 
     override fun isLateInit(): Boolean = false
 

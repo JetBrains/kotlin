@@ -103,8 +103,6 @@ fun main(args: Array<String>) {
                         // TODO: Support delegated properties
                         "delegatedProperty",
 
-                        "oldLanguageVersions",
-
                         "compileKotlinAgainstKotlin"
                     )
                 )

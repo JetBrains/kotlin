@@ -5,8 +5,8 @@
 // TESTCASE NUMBER: 1
 fun case_1(x: Any?) {
     if (x is Int == true) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Any?")!>x<!>.inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Int")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Int")!>x<!>.inv()
     }
 }
 
@@ -17,40 +17,40 @@ fun case_1(x: Any?) {
  */
 fun case_2(x: Any) {
     if (x is Int === true) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Any")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Any")!>x<!>.inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Int")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Int")!>x<!>.inv()
     }
 }
 
 // TESTCASE NUMBER: 3
 fun case_3(x: Any?) {
     if (x !is Class == true == true == true == true == true) else {
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & kotlin.Any?")!>x<!>.prop_1
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Class")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Class")!>x<!>.prop_1
     }
 }
 
 // TESTCASE NUMBER: 4
 fun case_4(x: Any) {
     if (x !is EnumClass != false) else {
-        <!DEBUG_INFO_EXPRESSION_TYPE("EnumClass & kotlin.Any")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("EnumClass & kotlin.Any")!>x<!>.fun_1()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & EnumClass")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & EnumClass")!>x<!>.fun_1()
     }
 }
 
 // TESTCASE NUMBER: 5
 fun case_5(x: Any?) {
     if (!(x !is Class.NestedClass?) != false == true) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class.NestedClass? & kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class.NestedClass? & kotlin.Any?")!>x<!>?.prop_4
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Class.NestedClass?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Class.NestedClass?")!>x<!>?.prop_4
     }
 }
 
 // TESTCASE NUMBER: 6
 fun case_6(x: Any?) {
     if (!(x !is Object) != false != false != false) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("Object & kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Object & kotlin.Any?")!>x<!>.prop_1
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Object")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Object")!>x<!>.prop_1
     }
 }
 
@@ -61,8 +61,8 @@ fun case_6(x: Any?) {
  */
 fun case_7(x: Any) {
     if (!(x is DeepObject.A.B.C.D.E.F.G.J) !== false) else {
-        <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J & kotlin.Any")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J & kotlin.Any")!>x<!>.prop_1
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & DeepObject.A.B.C.D.E.F.G.J")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & DeepObject.A.B.C.D.E.F.G.J")!>x<!>.prop_1
     }
 }
 
@@ -73,8 +73,8 @@ fun case_7(x: Any) {
  */
 fun case_8(x: Any?) {
     if (!(x is Int?) !== false !== false !== false) else {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Any?")!>x<!>?.inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Int?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Int?")!>x<!>?.inv()
     }
 }
 
@@ -85,8 +85,8 @@ fun case_8(x: Any?) {
  */
 fun case_9(x: Any?) {
     if (!!(x !is TypealiasNullableStringIndirect?) !== false === true) else {
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect? & kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableStringIndirect? & kotlin.Any?")!>x<!>?.get(0)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & TypealiasNullableStringIndirect?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & TypealiasNullableStringIndirect?")!>x<!>?.get(0)
     }
 }
 

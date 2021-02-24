@@ -22,7 +22,7 @@ FILE: RedundantVisibilityModifierChecker.kt
             super<R|kotlin/Any|>()
         }
 
-        internal final val z: R|<anonymous>| = object : R|kotlin/Any| {
+        internal final val z: R|kotlin/Any| = object : R|kotlin/Any| {
             private constructor(): R|<anonymous>| {
                 super<R|kotlin/Any|>()
             }
@@ -33,7 +33,7 @@ FILE: RedundantVisibilityModifierChecker.kt
 
         }
 
-            internal get(): R|<anonymous>|
+            internal get(): R|kotlin/Any|
 
     }
     public final class Foo2<T1, T2 : R|T1|> : R|kotlin/Any| {
@@ -111,7 +111,7 @@ FILE: RedundantVisibilityModifierChecker.kt
 
     }
     public sealed class G : R|kotlin/Any| {
-        private constructor(y: R|kotlin/Int|): R|G| {
+        protected constructor(y: R|kotlin/Int|): R|G| {
             super<R|kotlin/Any|>()
         }
 

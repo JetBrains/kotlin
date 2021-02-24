@@ -24,7 +24,7 @@ value class A6(x: Int, val y: Int)
 @JvmInline
 value class A7(vararg val x: Int)
 @JvmInline
-value class A8(open val x: Int)
+value class A8(<!NON_FINAL_MEMBER_IN_FINAL_CLASS!>open<!> val x: Int)
 @JvmInline
 value class A9(final val x: Int)
 

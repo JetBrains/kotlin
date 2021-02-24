@@ -53,6 +53,10 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
 
             override fun updateAllReceivers(flow: PersistentFlow) =
                 throw IllegalStateException("Update of all receivers is not possible for this logic system")
+
+            override fun ConeKotlinType.isAcceptableForSmartcast(): Boolean {
+                return true
+            }
         }
 
         effects.forEach { effect ->

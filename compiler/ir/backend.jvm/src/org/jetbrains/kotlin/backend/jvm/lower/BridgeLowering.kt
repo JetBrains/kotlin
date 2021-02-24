@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
+import java.util.concurrent.ConcurrentHashMap
 
 /*
  * Generate bridge methods to fix virtual dispatch after type erasure and to adapt Kotlin collections to
@@ -428,16 +429,23 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
             copyParametersWithErasure(this@addBridge, bridge.overridden)
             body = context.createIrBuilder(symbol, startOffset, endOffset).run { irExprBody(delegatingCall(this@apply, target)) }
 
-            // The generated bridge method overrides all of the symbols which were overridden by its overrides.
-            // This is technically wrong, but it's necessary to generate a method which maps to the same signature.
-            val inheritedOverrides = bridge.overriddenSymbols.flatMapTo(mutableSetOf()) { function ->
-                function.owner.safeAs<IrSimpleFunction>()?.overriddenSymbols ?: emptyList()
+            if (!bridge.overridden.returnType.isTypeParameterWithPrimitiveUpperBound()) {
+                // The generated bridge method overrides all of the symbols which were overridden by its overrides.
+                // This is technically wrong, but it's necessary to generate a method which maps to the same signature.
+                // In case of 'fun foo(): T', where 'T' is a type parameter with primitive upper bound (e.g., 'T : Char'),
+                // 'foo' is mapped to 'foo()C', regardless of its overrides.
+                val inheritedOverrides = bridge.overriddenSymbols.flatMapTo(mutableSetOf()) { function ->
+                    function.owner.safeAs<IrSimpleFunction>()?.overriddenSymbols ?: emptyList()
+                }
+                val redundantOverrides = inheritedOverrides.flatMapTo(mutableSetOf()) {
+                    it.owner.allOverridden().map { override -> override.symbol }
+                }
+                overriddenSymbols = inheritedOverrides.filter { it !in redundantOverrides }
             }
-            val redundantOverrides = inheritedOverrides.flatMapTo(mutableSetOf()) {
-                it.owner.allOverridden().map { override -> override.symbol }
-            }
-            overriddenSymbols = inheritedOverrides.filter { it !in redundantOverrides }
         }
+
+    private fun IrType.isTypeParameterWithPrimitiveUpperBound(): Boolean =
+        isTypeParameter() && eraseTypeParameters().isPrimitiveType()
 
     private fun IrClass.addSpecialBridge(specialBridge: SpecialBridge, target: IrSimpleFunction): IrSimpleFunction =
         addFunction {
@@ -588,7 +596,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
         // It might benefit performance, but can lead to confusing behavior if some declarations are changed along the way.
         // For example, adding an override for a declaration whose signature is already cached can result in incorrect signature
         // if its return type is a primitive type, and the new override's return type is an object type.
-        private val signatureCache = hashMapOf<IrFunctionSymbol, Method>()
+        private val signatureCache = ConcurrentHashMap<IrFunctionSymbol, Method>()
 
         fun computeJvmMethod(function: IrFunction): Method =
             signatureCache.getOrPut(function.symbol) { context.methodSignatureMapper.mapAsmMethod(function) }

@@ -447,7 +447,7 @@ class GenerateIrRuntime {
 
     private fun doPsi2Ir(files: List<KtFile>, analysisResult: AnalysisResult): IrModuleFragment {
         val psi2Ir = Psi2IrTranslator(languageVersionSettings, Psi2IrConfiguration())
-        val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc), PersistentIrFactory)
+        val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc), PersistentIrFactory())
         val psi2IrContext = psi2Ir.createGeneratorContext(analysisResult.moduleDescriptor, analysisResult.bindingContext, symbolTable)
 
         val irBuiltIns = psi2IrContext.irBuiltIns
@@ -510,7 +510,7 @@ class GenerateIrRuntime {
     private fun doDeserializeIrModule(moduleDescriptor: ModuleDescriptorImpl): DeserializedModuleInfo {
         val mangler = JsManglerDesc
         val signaturer = IdSignatureDescriptor(mangler)
-        val symbolTable = SymbolTable(signaturer, PersistentIrFactory)
+        val symbolTable = SymbolTable(signaturer, PersistentIrFactory())
         val typeTranslator = TypeTranslator(symbolTable, languageVersionSettings, moduleDescriptor.builtIns).also {
             it.constantValueGenerator = ConstantValueGenerator(moduleDescriptor, symbolTable)
         }
@@ -539,7 +539,7 @@ class GenerateIrRuntime {
         val moduleDescriptor = doDeserializeModuleMetadata(moduleRef)
         val mangler = JsManglerDesc
         val signaturer = IdSignatureDescriptor(mangler)
-        val symbolTable = SymbolTable(signaturer, PersistentIrFactory)
+        val symbolTable = SymbolTable(signaturer, PersistentIrFactory())
         val typeTranslator = TypeTranslator(symbolTable, languageVersionSettings, moduleDescriptor.builtIns).also {
             it.constantValueGenerator = ConstantValueGenerator(moduleDescriptor, symbolTable)
         }
@@ -567,7 +567,7 @@ class GenerateIrRuntime {
 
 
     private fun doBackEnd(module: IrModuleFragment, symbolTable: SymbolTable, irBuiltIns: IrBuiltIns, jsLinker: JsIrLinker): CompilerResult {
-        val context = JsIrBackendContext(module.descriptor, irBuiltIns, symbolTable, module, emptySet(), configuration)
+        val context = JsIrBackendContext(module.descriptor, irBuiltIns, symbolTable, module, emptySet(), configuration, irFactory = PersistentIrFactory())
 
         ExternalDependenciesGenerator(symbolTable, listOf(jsLinker)).generateUnboundSymbolsAsDependencies()
 

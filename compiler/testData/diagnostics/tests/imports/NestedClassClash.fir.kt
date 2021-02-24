@@ -17,8 +17,8 @@ class D {
 import a.A.B
 import a.D.B
 
-fun test(b: B) {
-    B()
+fun test(b: <!UNRESOLVED_REFERENCE!>B<!>) {
+    <!UNRESOLVED_REFERENCE!>B<!>()
 }
 
 // FILE: d.kt
@@ -26,6 +26,6 @@ import a.A.*
 import a.D.*
 
 // todo ambiguvity here
-fun test2(b: B) {
-    B()
+fun test2(b: <!UNRESOLVED_REFERENCE!>B<!>) {
+    <!UNRESOLVED_REFERENCE!>B<!>()
 }

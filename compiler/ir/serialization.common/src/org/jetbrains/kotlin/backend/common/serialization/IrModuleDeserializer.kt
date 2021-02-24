@@ -55,8 +55,6 @@ abstract class IrModuleDeserializer(val moduleDescriptor: ModuleDescriptor) {
 
     open fun addModuleReachableTopLevel(idSig: IdSignature) { error("Unsupported Operation (sig: $idSig") }
 
-    open fun deserializeReachableDeclarations() { error("Unsupported Operation") }
-
     abstract val moduleFragment: IrModuleFragment
 
     abstract val moduleDependencies: Collection<IrModuleDeserializer>
@@ -102,10 +100,6 @@ class IrModuleDeserializerWithBuiltIns(
 
     override fun referencePropertyByLocalSignature(file: IrFile, idSignature: IdSignature): IrPropertySymbol =
         delegate.referencePropertyByLocalSignature(file, idSignature)
-
-    override fun deserializeReachableDeclarations() {
-        delegate.deserializeReachableDeclarations()
-    }
 
     private fun computeFunctionDescriptor(className: String): FunctionClassDescriptor {
         val isK = className[0] == 'K'

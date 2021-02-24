@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 class FirResolvedTypeRefImpl @FirImplementationDetail constructor(
-    override val source: FirSourceElement?,
+    override var source: FirSourceElement?,
     override val annotations: MutableList<FirAnnotationCall>,
     override val type: ConeKotlinType,
     override var delegatedTypeRef: FirTypeRef?,
@@ -36,5 +36,9 @@ class FirResolvedTypeRefImpl @FirImplementationDetail constructor(
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirResolvedTypeRefImpl {
         annotations.transformInplace(transformer, data)
         return this
+    }
+
+    override fun replaceSource(newSource: FirSourceElement?) {
+        source = newSource
     }
 }

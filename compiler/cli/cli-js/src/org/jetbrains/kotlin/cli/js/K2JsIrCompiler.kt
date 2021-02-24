@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.cli.common.ExitCode.COMPILATION_ERROR
 import org.jetbrains.kotlin.cli.common.ExitCode.OK
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants
+import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.*
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.extensions.ScriptEvaluationExtension
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
@@ -199,7 +200,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 configuration = config.configuration,
                 allDependencies = resolvedLibraries,
                 friendDependencies = friendDependencies,
-                irFactory = PersistentIrFactory,
+                irFactory = PersistentIrFactory(), // TODO IrFactoryImpl?
                 outputKlibPath = outputFile.path,
                 nopack = arguments.irProduceKlibDir
             )
@@ -259,11 +260,16 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 mainArguments = mainCallArguments,
                 generateFullJs = !arguments.irDce,
                 generateDceJs = arguments.irDce,
+                dceRuntimeDiagnostic = DceRuntimeDiagnostic.resolve(
+                    arguments.irDceRuntimeDiagnostic,
+                    messageCollector
+                ),
                 dceDriven = arguments.irDceDriven,
                 multiModule = arguments.irPerModule,
                 relativeRequirePath = true,
                 propertyLazyInitialization = arguments.irPropertyLazyInitialization,
             )
+
 
             val jsCode = if (arguments.irDce && !arguments.irDceDriven) compiledModule.dceJsCode!! else compiledModule.jsCode!!
             outputFile.writeText(jsCode.mainModule)
@@ -419,6 +425,19 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 .toTypedArray()
                 .filterNot { it.isEmpty() }
         }
+    }
+}
+
+fun DceRuntimeDiagnostic.Companion.resolve(
+    value: String?,
+    messageCollector: MessageCollector
+): DceRuntimeDiagnostic? = when (value?.toLowerCase()) {
+    DCE_RUNTIME_DIAGNOSTIC_LOG -> DceRuntimeDiagnostic.LOG
+    DCE_RUNTIME_DIAGNOSTIC_EXCEPTION -> DceRuntimeDiagnostic.EXCEPTION
+    null -> null
+    else -> {
+        messageCollector.report(STRONG_WARNING, "Unknown DCE runtime diagnostic '$value'")
+        null
     }
 }
 

@@ -113,7 +113,7 @@ internal class KonanIrLinker(
             moduleDescriptor: ModuleDescriptor,
             klib: IrLibrary,
             strategy: DeserializationStrategy
-    ): KotlinIrLinker.BasicIrModuleDeserializer(moduleDescriptor, klib, strategy) {
+    ): BasicIrModuleDeserializer(this@KonanIrLinker, moduleDescriptor, klib, strategy){
         override val moduleFragment: IrModuleFragment = KonanIrModuleFragmentImpl(moduleDescriptor, builtIns, emptyList())
     }
 

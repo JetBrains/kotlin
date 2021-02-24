@@ -36,6 +36,8 @@ interface FirClass<F : FirClass<F>> : FirClassLikeDeclaration<F>, FirStatement, 
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitClass(this, data)
 
+    override fun replaceSource(newSource: FirSourceElement?)
+
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
 
     fun replaceSuperTypeRefs(newSuperTypeRefs: List<FirTypeRef>)

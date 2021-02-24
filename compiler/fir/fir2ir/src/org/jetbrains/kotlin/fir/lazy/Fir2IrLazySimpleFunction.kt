@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.lazy
 
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.initialSignatureAttr
 import org.jetbrains.kotlin.fir.symbols.Fir2IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
@@ -57,7 +58,7 @@ class Fir2IrLazySimpleFunction(
         declarationStorage.enterScope(this)
         fir.valueParameters.mapIndexed { index, valueParameter ->
             declarationStorage.createIrParameter(
-                valueParameter, index,
+                valueParameter, index, skipDefaultParameter = isFakeOverride
             ).apply {
                 this.parent = this@Fir2IrLazySimpleFunction
             }
@@ -70,9 +71,13 @@ class Fir2IrLazySimpleFunction(
         val parent = parent
         if (isFakeOverride && parent is Fir2IrLazyClass) {
             parent.declarations
-            fakeOverrideGenerator.getOverriddenSymbols(this)?.let { return@lazyVar it }
+            fakeOverrideGenerator.getOverriddenSymbolsForFakeOverride(this)?.let { return@lazyVar it }
         }
-        fir.generateOverriddenFunctionSymbols(firParent, session, scopeSession, declarationStorage)
+        fir.generateOverriddenFunctionSymbols(firParent, session, scopeSession, declarationStorage, fakeOverrideGenerator)
+    }
+
+    override val initialSignatureFunction: IrFunction? by lazy {
+        (fir.initialSignatureAttr as? FirFunction<*>)?.symbol?.let { declarationStorage.getIrFunctionSymbol(it).owner }
     }
 
     override val containerSource: DeserializedContainerSource?

@@ -8,13 +8,12 @@ package org.jetbrains.kotlin.gradle.targets.js.npm
 import org.gradle.api.Project
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.internal.hash.FileHasher
+import org.gradle.internal.service.ServiceRegistry
 import org.jetbrains.kotlin.daemon.common.toHexString
 import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
 import java.io.File
 
-class PackageJsonUpToDateCheck(val npmProject: NpmProject) {
-    val project: Project
-        get() = npmProject.project
+class PackageJsonUpToDateCheck(val services: ServiceRegistry, val npmProject: NpmProject) {
 
     private val NpmProject.packageJsonHashFile: File
         get() = dir.resolve("package.json.hash")
@@ -24,10 +23,10 @@ class PackageJsonUpToDateCheck(val npmProject: NpmProject) {
         if (packageJsonHashFile.exists()) packageJsonHashFile.readText() else null
     }
 
-    private val packageJsonFile = npmProject.prePackageJsonFile
+    private val packageJsonFile = npmProject.packageJsonFile
 
     private val hash by lazy {
-        val hasher = (project as ProjectInternal).services.get(FileHasher::class.java)
+        val hasher = services.get(FileHasher::class.java)
         hasher.hash(packageJsonFile).toByteArray().toHexString()
     }
 

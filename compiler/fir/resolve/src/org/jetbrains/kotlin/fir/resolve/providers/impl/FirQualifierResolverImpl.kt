@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.providers.impl
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.NoMutableState
+import org.jetbrains.kotlin.fir.ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE
 import org.jetbrains.kotlin.fir.resolve.FirQualifierResolver
 import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
@@ -29,6 +30,10 @@ class FirQualifierResolverImpl(val session: FirSession) : FirQualifierResolver()
     }
 
     override fun resolveSymbol(parts: List<FirQualifierPart>): FirClassifierSymbol<*>? {
+        if (parts.firstOrNull()?.name?.asString() == ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE) {
+            return resolveSymbol(parts.drop(1))
+        }
+
         val firProvider = session.symbolProvider
 
         if (parts.isNotEmpty()) {

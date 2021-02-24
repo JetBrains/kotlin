@@ -7,8 +7,11 @@ package org.jetbrains.kotlin.descriptors.commonizer
 
 import org.jetbrains.kotlin.descriptors.commonizer.ResultsConsumer.ModuleResult
 import org.jetbrains.kotlin.descriptors.commonizer.ResultsConsumer.Status
+import org.jetbrains.kotlin.descriptors.commonizer.konan.CommonNativeManifestDataProvider
+import org.jetbrains.kotlin.descriptors.commonizer.konan.TargetedNativeManifestDataProvider
 import org.jetbrains.kotlin.descriptors.commonizer.utils.MockResultsConsumer
 import org.jetbrains.kotlin.descriptors.commonizer.utils.MockModulesProvider
+import org.jetbrains.kotlin.descriptors.commonizer.utils.MockNativeManifestDataProvider
 import org.junit.Test
 import kotlin.contracts.ExperimentalContracts
 import kotlin.test.assertEquals
@@ -62,20 +65,19 @@ class CommonizerFacadeTest {
     )
 
     companion object {
-        private fun Map<String, List<String>>.toCommonizerParameters(resultsConsumer: ResultsConsumer) =
-            CommonizerParameters().also { parameters ->
-                parameters.resultsConsumer = resultsConsumer
-
-                forEach { (targetName, moduleNames) ->
-                    parameters.addTarget(
-                        TargetProvider(
-                            target = LeafTarget(targetName),
-                            modulesProvider = MockModulesProvider.create(moduleNames),
-                            dependeeModulesProvider = null
-                        )
+        private fun Map<String, List<String>>.toCommonizerParameters(
+            resultsConsumer: ResultsConsumer, manifestDataProvider: TargetedNativeManifestDataProvider = MockNativeManifestDataProvider()
+        ) = CommonizerParameters(resultsConsumer, manifestDataProvider).also { parameters ->
+            forEach { (targetName, moduleNames) ->
+                parameters.addTarget(
+                    TargetProvider(
+                        target = LeafCommonizerTarget(targetName),
+                        modulesProvider = MockModulesProvider.create(moduleNames),
+                        dependencyModulesProvider = null
                     )
-                }
+                )
             }
+        }
 
         private fun doTestNothingToCommonize(originalModules: Map<String, List<String>>) {
             val results = MockResultsConsumer()

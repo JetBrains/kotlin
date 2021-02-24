@@ -71,9 +71,6 @@ object BuiltinMethodsWithSpecialGenericSignature : SpecialGenericSignatures() {
 }
 
 object BuiltinMethodsWithDifferentJvmName : SpecialGenericSignatures() {
-    val Name.sameAsRenamedInJvmBuiltin: Boolean
-        get() = this in ORIGINAL_SHORT_NAMES
-
     fun getJvmName(functionDescriptor: SimpleFunctionDescriptor): Name? {
         return SIGNATURE_TO_JVM_REPRESENTATION_NAME[functionDescriptor.computeJvmSignature() ?: return null]
     }
@@ -83,10 +80,6 @@ object BuiltinMethodsWithDifferentJvmName : SpecialGenericSignatures() {
             SIGNATURE_TO_JVM_REPRESENTATION_NAME.containsKey(functionDescriptor.computeJvmSignature())
         } != null
     }
-
-    fun getBuiltinFunctionNamesByJvmName(name: Name): List<Name> =
-        JVM_SHORT_NAME_TO_BUILTIN_SHORT_NAMES_MAP[name] ?: emptyList()
-
 
     val SimpleFunctionDescriptor.isRemoveAtByIndex: Boolean
         get() = name.asString() == "removeAt" && computeJvmSignature() == REMOVE_AT_NAME_AND_SIGNATURE.signature

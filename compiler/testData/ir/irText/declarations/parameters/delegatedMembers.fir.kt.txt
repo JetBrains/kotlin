@@ -30,4 +30,3 @@ class Test<TT : Any?> : IBase<TT> {
   local /* final field */ val <$$delegate_0>: IBase<TT> = impl
 
 }
-

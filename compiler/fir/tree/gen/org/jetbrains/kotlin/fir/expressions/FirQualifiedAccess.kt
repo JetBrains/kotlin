@@ -26,6 +26,8 @@ interface FirQualifiedAccess : FirResolvable, FirStatement {
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitQualifiedAccess(this, data)
 
+    override fun replaceSource(newSource: FirSourceElement?)
+
     override fun replaceCalleeReference(newCalleeReference: FirReference)
 
     fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>)

@@ -57,4 +57,3 @@ class Impl : A, B {
 fun box(): String {
   return "OK"
 }
-

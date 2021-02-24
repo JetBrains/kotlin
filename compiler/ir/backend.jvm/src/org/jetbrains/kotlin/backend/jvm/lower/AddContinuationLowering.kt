@@ -334,19 +334,22 @@ private class AddContinuationLowering(context: JvmBackendContext) : SuspendLower
 
 // Transform `suspend fun foo(params): RetType` into `fun foo(params, $completion: Continuation<RetType>): Any?`
 // the result is called 'view', just to be consistent with old backend.
-private fun IrFunction.suspendFunctionViewOrStub(context: JvmBackendContext): IrFunction {
+private fun IrSimpleFunction.suspendFunctionViewOrStub(context: JvmBackendContext): IrFunction {
     if (!isSuspend) return this
     return context.suspendFunctionOriginalToView.getOrPut(suspendFunctionOriginal()) { createSuspendFunctionStub(context) }
 }
 
-internal fun IrFunction.suspendFunctionOriginal(): IrFunction =
-    if (this is IrSimpleFunction && isSuspend &&
+internal fun IrSimpleFunction.suspendFunctionOriginal(): IrSimpleFunction =
+    if (isSuspend &&
         !isStaticInlineClassReplacement &&
         !isOrOverridesDefaultParameterStub() &&
         parentAsClass.origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS
     )
-        attributeOwnerId as IrFunction
+        attributeOwnerId as IrSimpleFunction
     else this
+
+internal fun IrFunction.suspendFunctionOriginal(): IrFunction =
+    (this as? IrSimpleFunction)?.suspendFunctionOriginal() ?: this
 
 private fun IrSimpleFunction.isOrOverridesDefaultParameterStub(): Boolean =
     // Cannot use resolveFakeOverride here because of KT-36188.
@@ -356,8 +359,8 @@ private fun IrSimpleFunction.isOrOverridesDefaultParameterStub(): Boolean =
         { it.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER }
     )
 
-private fun IrFunction.createSuspendFunctionStub(context: JvmBackendContext): IrFunction {
-    require(this.isSuspend && this is IrSimpleFunction)
+private fun IrSimpleFunction.createSuspendFunctionStub(context: JvmBackendContext): IrSimpleFunction {
+    require(this.isSuspend)
     return factory.buildFun {
         updateFrom(this@createSuspendFunctionStub)
         name = this@createSuspendFunctionStub.name
@@ -414,12 +417,13 @@ private fun <T : IrMemberAccessExpression<IrFunctionSymbol>> T.retargetToSuspend
     copyWithTargetSymbol: T.(IrSimpleFunctionSymbol) -> T
 ): T {
     // Calls inside continuation are already generated with continuation parameter as well as calls to suspendImpls
-    if (!symbol.owner.isSuspend || caller?.isInvokeSuspendOfContinuation() == true
-        || symbol.owner.origin == JvmLoweredDeclarationOrigin.SUSPEND_IMPL_STATIC_FUNCTION
-        || symbol.owner.continuationParameter() != null
+    val owner = symbol.owner
+    if (owner !is IrSimpleFunction || !owner.isSuspend || caller?.isInvokeSuspendOfContinuation() == true
+        || owner.origin == JvmLoweredDeclarationOrigin.SUSPEND_IMPL_STATIC_FUNCTION
+        || owner.continuationParameter() != null
     ) return this
-    val view = symbol.owner.suspendFunctionViewOrStub(context)
-    if (view == symbol.owner) return this
+    val view = owner.suspendFunctionViewOrStub(context)
+    if (view == owner) return this
 
     // While the new callee technically returns `<original type> | COROUTINE_SUSPENDED`, the latter case is handled
     // by a method visitor so at an IR overview we don't need to consider it.
@@ -439,7 +443,7 @@ private fun <T : IrMemberAccessExpression<IrFunctionSymbol>> T.retargetToSuspend
             else
                 IrGetValueImpl(
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET, caller.continuationParameter()?.symbol
-                        ?: throw AssertionError("${caller.render()} has no continuation; can't call ${symbol.owner.render()}")
+                        ?: throw AssertionError("${caller.render()} has no continuation; can't call ${owner.render()}")
                 )
             it.putValueArgument(continuationIndex, continuation)
         }

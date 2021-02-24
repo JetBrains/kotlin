@@ -1,6 +1,7 @@
 // DONT_TARGET_EXACT_BACKEND: WASM
 // IGNORE_BACKEND: JS
 // IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: NATIVE
 // FILE: Processor.java
 
 public interface Processor<T> {

@@ -40,14 +40,14 @@ fun foo(
     1 <!INAPPLICABLE_CANDIDATE!>in<!> a
 
     b.contains("")
-    b.contains(1)
+    b.<!INAPPLICABLE_CANDIDATE!>contains<!>(1)
     "" in b
-    1 in b
+    1 <!INAPPLICABLE_CANDIDATE!>in<!> b
 
     ic.contains("")
-    ic.contains(1)
+    ic.<!INAPPLICABLE_CANDIDATE!>contains<!>(1)
     "" in ic
-    1 in ic
+    1 <!INAPPLICABLE_CANDIDATE!>in<!> ic
 
     ka.contains("")
     ka.<!INAPPLICABLE_CANDIDATE!>contains<!>(1)
@@ -55,9 +55,9 @@ fun foo(
     1 <!INAPPLICABLE_CANDIDATE!>in<!> ka
 
     kb.contains("")
-    kb.contains(1)
+    kb.<!INAPPLICABLE_CANDIDATE!>contains<!>(1)
     "" in kb
-    1 in kb
+    1 <!INAPPLICABLE_CANDIDATE!>in<!> kb
 
     al.contains("")
     al.<!INAPPLICABLE_CANDIDATE!>contains<!>(1)

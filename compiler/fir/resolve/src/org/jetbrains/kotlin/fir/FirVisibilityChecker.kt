@@ -34,7 +34,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
             symbol: AbstractFirBasedSymbol<*>,
             useSiteFile: FirFile,
             containingDeclarations: List<FirDeclaration>,
-            candidate: Candidate,
+            dispatchReceiver: ReceiverValue?,
             session: FirSession
         ): Boolean {
             return true
@@ -45,8 +45,6 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         declaration: T,
         candidate: Candidate
     ): Boolean where T : FirMemberDeclaration, T : FirSymbolOwner<*> {
-        val symbol = declaration.symbol
-
         if (declaration is FirCallableDeclaration<*> && (declaration.isIntersectionOverride || declaration.isSubstitutionOverride)) {
             @Suppress("UNCHECKED_CAST")
             return isVisible(declaration.originalIfFakeOverride() as T, candidate)
@@ -56,8 +54,19 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         val useSiteFile = callInfo.containingFile
         val containingDeclarations = callInfo.containingDeclarations
         val session = callInfo.session
-        val provider = session.firProvider
 
+        return isVisible(declaration, session, useSiteFile, containingDeclarations, candidate.dispatchReceiverValue)
+    }
+
+    fun <T> isVisible(
+        declaration: T,
+        session: FirSession,
+        useSiteFile: FirFile,
+        containingDeclarations: List<FirDeclaration>,
+        dispatchReceiver: ReceiverValue?
+    ): Boolean where T : FirMemberDeclaration, T : FirSymbolOwner<*> {
+        val provider = session.firProvider
+        val symbol = declaration.symbol
         return when (declaration.visibility) {
             Visibilities.Internal -> {
                 declaration.session == session || session.moduleVisibilityChecker?.isInFriendModule(declaration) == true
@@ -91,7 +100,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
 
             Visibilities.Protected -> {
                 val ownerId = symbol.getOwnerId()
-                ownerId != null && canSeeProtectedMemberOf(containingDeclarations, candidate.dispatchReceiverValue, ownerId, session)
+                ownerId != null && canSeeProtectedMemberOf(containingDeclarations, dispatchReceiver, ownerId, session)
             }
 
             else -> platformVisibilityCheck(
@@ -99,7 +108,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
                 symbol,
                 useSiteFile,
                 containingDeclarations,
-                candidate,
+                dispatchReceiver,
                 session
             )
         }
@@ -110,7 +119,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         symbol: AbstractFirBasedSymbol<*>,
         useSiteFile: FirFile,
         containingDeclarations: List<FirDeclaration>,
-        candidate: Candidate,
+        dispatchReceiver: ReceiverValue?,
         session: FirSession
     ): Boolean
 

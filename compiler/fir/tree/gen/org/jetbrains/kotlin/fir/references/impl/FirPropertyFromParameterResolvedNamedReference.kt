@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 class FirPropertyFromParameterResolvedNamedReference @FirImplementationDetail constructor(
-    override val source: FirSourceElement?,
+    override var source: FirSourceElement?,
     override val name: Name,
     override val resolvedSymbol: AbstractFirBasedSymbol<*>,
 ) : FirResolvedNamedReference() {
@@ -28,5 +28,9 @@ class FirPropertyFromParameterResolvedNamedReference @FirImplementationDetail co
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirPropertyFromParameterResolvedNamedReference {
         return this
+    }
+
+    override fun replaceSource(newSource: FirSourceElement?) {
+        source = newSource
     }
 }

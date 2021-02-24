@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirLambdaArgumentExpressionImpl(
-    override val source: FirSourceElement?,
+    override var source: FirSourceElement?,
     override val annotations: MutableList<FirAnnotationCall>,
     override var expression: FirExpression,
 ) : FirLambdaArgumentExpression() {
@@ -39,6 +39,10 @@ internal class FirLambdaArgumentExpressionImpl(
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirLambdaArgumentExpressionImpl {
         annotations.transformInplace(transformer, data)
         return this
+    }
+
+    override fun replaceSource(newSource: FirSourceElement?) {
+        source = newSource
     }
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {}

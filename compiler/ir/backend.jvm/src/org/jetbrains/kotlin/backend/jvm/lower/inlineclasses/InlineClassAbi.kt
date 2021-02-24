@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.lower.inlineclasses
 
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
+import org.jetbrains.kotlin.backend.jvm.lower.STUB_FOR_INLINING
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.state.InfoForMangling
 import org.jetbrains.kotlin.codegen.state.collectFunctionSignatureForManglingSuffix
@@ -166,3 +167,11 @@ val IrFunction.isInlineClassFieldGetter: Boolean
 
 val IrFunction.isPrimaryInlineClassConstructor: Boolean
     get() = this is IrConstructor && isPrimary && constructedClass.isInline
+
+val IrFunction.isInlineCallableReference: Boolean
+    get() = origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA && name.asString().contains("\$$STUB_FOR_INLINING")
+
+val IrType.isMappedToPrimitive: Boolean
+    get() = erasedUpperBound.isInline &&
+            !(isNullable() && makeNotNull().unboxInlineClass().isNullable()) &&
+            makeNotNull().unboxInlineClass().isPrimitiveType()

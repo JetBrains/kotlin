@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirExplicitThisReference(
-    override val source: FirSourceElement?,
+    override var source: FirSourceElement?,
     override val labelName: String?,
 ) : FirThisReference() {
     override var boundSymbol: AbstractFirBasedSymbol<*>? = null
@@ -25,6 +25,10 @@ internal class FirExplicitThisReference(
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirExplicitThisReference {
         return this
+    }
+
+    override fun replaceSource(newSource: FirSourceElement?) {
+        source = newSource
     }
 
     override fun replaceBoundSymbol(newBoundSymbol: AbstractFirBasedSymbol<*>?) {

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -109,6 +110,8 @@ class FirStandardOverrideChecker(session: FirSession) : FirAbstractOverrideCheck
     }
 
     override fun isOverriddenFunction(overrideCandidate: FirSimpleFunction, baseDeclaration: FirSimpleFunction): Boolean {
+        if (Visibilities.isPrivate(baseDeclaration.visibility)) return false
+
         if (overrideCandidate.valueParameters.size != baseDeclaration.valueParameters.size) return false
 
         val substitutor = buildTypeParametersSubstitutorIfCompatible(overrideCandidate, baseDeclaration) ?: return false
@@ -124,6 +127,8 @@ class FirStandardOverrideChecker(session: FirSession) : FirAbstractOverrideCheck
         overrideCandidate: FirCallableMemberDeclaration<*>,
         baseDeclaration: FirProperty
     ): Boolean {
+        if (Visibilities.isPrivate(baseDeclaration.visibility)) return false
+
         if (overrideCandidate !is FirProperty) return false
         val substitutor = buildTypeParametersSubstitutorIfCompatible(overrideCandidate, baseDeclaration) ?: return false
         return isEqualReceiverTypes(overrideCandidate.receiverTypeRef, baseDeclaration.receiverTypeRef, substitutor)

@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirFileImpl(
-    override val source: FirSourceElement?,
+    override var source: FirSourceElement?,
     override val session: FirSession,
     override var resolvePhase: FirResolvePhase,
     override val origin: FirDeclarationOrigin,
@@ -60,6 +60,10 @@ internal class FirFileImpl(
     override fun <D> transformDeclarations(transformer: FirTransformer<D>, data: D): FirFileImpl {
         declarations.transformInplace(transformer, data)
         return this
+    }
+
+    override fun replaceSource(newSource: FirSourceElement?) {
+        source = newSource
     }
 
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {

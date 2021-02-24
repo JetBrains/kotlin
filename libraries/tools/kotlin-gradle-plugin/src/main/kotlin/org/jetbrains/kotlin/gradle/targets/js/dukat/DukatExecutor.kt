@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.dukat
 
+import org.gradle.internal.service.ServiceRegistry
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 
@@ -30,7 +31,7 @@ class DukatExecutor(
     val shouldSkip: Boolean
         get() = inputsFile.isFile && prevVersion == version && !packageJsonIsUpdated
 
-    fun execute() {
+    fun execute(services: ServiceRegistry) {
         if (typeDefinitions.isEmpty()) {
             npmProject.externalsDirRoot.deleteRecursively()
             return
@@ -53,7 +54,7 @@ class DukatExecutor(
                 externalsOutputFormat,
                 npmProject.externalsDir,
                 operation = operation
-            ).execute()
+            ).execute(services)
 
             inputsFile.writeText(inputs)
         }

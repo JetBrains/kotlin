@@ -2,11 +2,11 @@
 class K2: J1() {
     class Q : <!UNRESOLVED_REFERENCE!>Nested<!>()
     fun bar() {
-        <!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>foo<!>()<!>
-        <!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>baz<!>()<!>
+        <!UNRESOLVED_REFERENCE!>foo<!>()
+        <!UNRESOLVED_REFERENCE!>baz<!>()
 
-        <!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>superClass<!>()<!>
-        <!UNRESOLVED_REFERENCE{LT}!><!UNRESOLVED_REFERENCE{PSI}!>superI<!>()<!>
+        <!UNRESOLVED_REFERENCE!>superClass<!>()
+        <!UNRESOLVED_REFERENCE!>superI<!>()
     }
 }
 

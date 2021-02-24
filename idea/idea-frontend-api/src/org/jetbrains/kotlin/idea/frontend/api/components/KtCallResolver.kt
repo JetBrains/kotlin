@@ -13,3 +13,12 @@ abstract class KtCallResolver : KtAnalysisSessionComponent() {
     abstract fun resolveCall(call: KtCallExpression): KtCall?
     abstract fun resolveCall(call: KtBinaryExpression): KtCall?
 }
+
+interface KtCallResolverMixIn : KtAnalysisSessionMixIn {
+    fun KtCallExpression.resolveCall(): KtCall? =
+        analysisSession.callResolver.resolveCall(this)
+
+    fun KtBinaryExpression.resolveCall(): KtCall? =
+        analysisSession.callResolver.resolveCall(this)
+
+}

@@ -5,18 +5,7 @@
 
 package org.jetbrains.kotlin.codegen
 
-import org.jetbrains.kotlin.codegen.AsmUtil.unboxPrimitiveTypeOrNull
-import org.jetbrains.kotlin.codegen.StackValue.*
-import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.load.java.Constant
-import org.jetbrains.kotlin.load.java.EnumEntry
-import org.jetbrains.kotlin.load.java.descriptors.NullDefaultValue
-import org.jetbrains.kotlin.load.java.descriptors.StringDefaultValue
-import org.jetbrains.kotlin.load.java.descriptors.getDefaultValueFromAnnotation
-import org.jetbrains.kotlin.load.java.lexicalCastFrom
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
@@ -86,40 +75,3 @@ class FunctionCallStackValue(
     resultKotlinType: KotlinType?,
     lambda: (v: InstructionAdapter) -> Unit
 ) : OperationStackValue(resultType, resultKotlinType, lambda)
-
-fun ValueParameterDescriptor.findJavaDefaultArgumentValue(targetType: Type, typeMapper: KotlinTypeMapper): StackValue {
-    val descriptorWithDefaultValue = DFS.dfs(
-        listOf(this.original),
-        { it.original.overriddenDescriptors.map(ValueParameterDescriptor::getOriginal) },
-        object : DFS.AbstractNodeHandler<ValueParameterDescriptor, ValueParameterDescriptor?>() {
-            var result: ValueParameterDescriptor? = null
-
-            override fun beforeChildren(current: ValueParameterDescriptor?): Boolean {
-                if (current?.declaresDefaultValue() == true && current.getDefaultValueFromAnnotation() != null) {
-                    result = current
-                    return false
-                }
-
-                return true
-            }
-
-            override fun result(): ValueParameterDescriptor? = result
-        }
-    ) ?: error("Should be at least one descriptor with default value: $this")
-
-    val defaultValue = descriptorWithDefaultValue.getDefaultValueFromAnnotation()
-    if (defaultValue is NullDefaultValue) {
-        return constant(null, targetType)
-    }
-
-    val value = (defaultValue as StringDefaultValue).value
-    val castResult = type.lexicalCastFrom(value) ?: error("Should be checked in frontend")
-
-    return when (castResult) {
-        is EnumEntry -> enumEntry(castResult.descriptor, typeMapper)
-        is Constant -> {
-            val unboxedType = unboxPrimitiveTypeOrNull(targetType) ?: targetType
-            return coercion(constant(castResult.value, unboxedType), targetType, null)
-        }
-    }
-}

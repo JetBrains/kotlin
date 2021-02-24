@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtIfExpression
@@ -177,6 +178,11 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = SealedSupertypeInLocalClass::class
     }
 
+    abstract class SupertypeNotAClassOrInterface : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = SupertypeNotAClassOrInterface::class
+        abstract val reason: String
+    }
+
     abstract class ConstructorInObject : KtFirDiagnostic<KtDeclaration>() {
         override val diagnosticClass get() = ConstructorInObject::class
     }
@@ -189,8 +195,8 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = NonPrivateConstructorInEnum::class
     }
 
-    abstract class NonPrivateConstructorInSealed : KtFirDiagnostic<PsiElement>() {
-        override val diagnosticClass get() = NonPrivateConstructorInSealed::class
+    abstract class NonPrivateOrProtectedConstructorInSealed : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = NonPrivateOrProtectedConstructorInSealed::class
     }
 
     abstract class CyclicConstructorDelegationCall : KtFirDiagnostic<PsiElement>() {
@@ -371,7 +377,7 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val candidate: KtSymbol
     }
 
-    abstract class InapplicableLateinitModifier : KtFirDiagnostic<PsiElement>() {
+    abstract class InapplicableLateinitModifier : KtFirDiagnostic<KtModifierListOwner>() {
         override val diagnosticClass get() = InapplicableLateinitModifier::class
         abstract val reason: String
     }
@@ -514,18 +520,26 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val overriddenDeclaration: KtSymbol
     }
 
+    abstract class NonFinalMemberInFinalClass : KtFirDiagnostic<KtNamedDeclaration>() {
+        override val diagnosticClass get() = NonFinalMemberInFinalClass::class
+    }
+
+    abstract class NonFinalMemberInObject : KtFirDiagnostic<KtNamedDeclaration>() {
+        override val diagnosticClass get() = NonFinalMemberInObject::class
+    }
+
     abstract class ManyCompanionObjects : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = ManyCompanionObjects::class
     }
 
     abstract class ConflictingOverloads : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = ConflictingOverloads::class
-        abstract val conflictingOverloads: String
+        abstract val conflictingOverloads: List<KtSymbol>
     }
 
     abstract class Redeclaration : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = Redeclaration::class
-        abstract val conflictingDeclaration: String
+        abstract val conflictingDeclarations: List<KtSymbol>
     }
 
     abstract class AnyMethodImplementedInInterface : KtFirDiagnostic<PsiElement>() {
@@ -600,6 +614,18 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class PropertyWithNoTypeNoInitializer : KtFirDiagnostic<KtProperty>() {
         override val diagnosticClass get() = PropertyWithNoTypeNoInitializer::class
+    }
+
+    abstract class BackingFieldInInterface : KtFirDiagnostic<KtProperty>() {
+        override val diagnosticClass get() = BackingFieldInInterface::class
+    }
+
+    abstract class ExtensionPropertyWithBackingField : KtFirDiagnostic<KtExpression>() {
+        override val diagnosticClass get() = ExtensionPropertyWithBackingField::class
+    }
+
+    abstract class PropertyInitializerNoBackingField : KtFirDiagnostic<KtExpression>() {
+        override val diagnosticClass get() = PropertyInitializerNoBackingField::class
     }
 
     abstract class AbstractDelegatedProperty : KtFirDiagnostic<KtPropertyDelegate>() {
@@ -715,6 +741,11 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class InvalidIfAsExpression : KtFirDiagnostic<KtIfExpression>() {
         override val diagnosticClass get() = InvalidIfAsExpression::class
+    }
+
+    abstract class ErrorInContractDescription : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = ErrorInContractDescription::class
+        abstract val reason: String
     }
 
     abstract class RedundantVisibilityModifier : KtFirDiagnostic<KtModifierListOwner>() {

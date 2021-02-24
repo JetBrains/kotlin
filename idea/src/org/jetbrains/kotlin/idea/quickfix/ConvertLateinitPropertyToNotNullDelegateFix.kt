@@ -40,8 +40,7 @@ class ConvertLateinitPropertyToNotNullDelegateFix(
 
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtProperty>? {
-            val modifierList = diagnostic.psiElement.parent as? KtDeclarationModifierList ?: return null
-            val property = modifierList.parent as? KtProperty ?: return null
+            val property = diagnostic.psiElement as? KtProperty ?: return null
             if (!property.hasModifier(KtTokens.LATEINIT_KEYWORD) || !property.isVar || property.hasInitializer()) return null
             val typeReference = property.typeReference ?: return null
             val type = property.analyze(BodyResolveMode.PARTIAL)[BindingContext.TYPE, typeReference] ?: return null

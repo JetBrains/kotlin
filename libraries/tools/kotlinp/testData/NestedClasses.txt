@@ -55,7 +55,7 @@ public final enum class A.D.E : kotlin/Enum<A.D.E> {
 public sealed class A.D.F : kotlin/Any {
 
   // signature: <init>()V
-  internal constructor()
+  protected constructor()
 
   // nested class: G
 

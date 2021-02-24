@@ -120,7 +120,7 @@ private final class Outer {
 }
 
 public sealed class SealedSpecialized : Foo<kotlin.String> {
-    internal constructor SealedSpecialized()
+    protected constructor SealedSpecialized()
     public open override /*1*/ /*fake_override*/ val kotlin.String.prop: kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

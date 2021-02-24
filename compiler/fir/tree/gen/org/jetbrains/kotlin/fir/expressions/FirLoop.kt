@@ -25,6 +25,8 @@ abstract class FirLoop : FirPureAbstractElement(), FirStatement, FirTargetElemen
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitLoop(this, data)
 
+    abstract override fun replaceSource(newSource: FirSourceElement?)
+
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirLoop
 
     abstract fun <D> transformBlock(transformer: FirTransformer<D>, data: D): FirLoop

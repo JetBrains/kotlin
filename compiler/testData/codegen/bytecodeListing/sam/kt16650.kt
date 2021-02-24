@@ -1,3 +1,4 @@
+// KOTLIN_CONFIGURATION_FLAGS: SAM_CONVERSIONS=CLASS
 // WITH_SIGNATURES
 // FILE: t.kt
 fun main(x: DataStream<Int>) {

@@ -20,6 +20,9 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.Name
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 @OptIn(FirImplementationDetail::class)
 class FirJavaValueParameter @FirImplementationDetail constructor(
@@ -138,6 +141,9 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
 
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {
     }
+
+    override fun replaceSource(newSource: FirSourceElement?) {
+    }
 }
 
 @FirBuilderDsl
@@ -170,4 +176,22 @@ class FirJavaValueParameterBuilder {
 
 inline fun buildJavaValueParameter(init: FirJavaValueParameterBuilder.() -> Unit): FirJavaValueParameter {
     return FirJavaValueParameterBuilder().apply(init).build()
+}
+
+@OptIn(ExperimentalContracts::class)
+inline fun buildJavaValueParameterCopy(original: FirValueParameter, init: FirJavaValueParameterBuilder.() -> Unit): FirValueParameter {
+    contract {
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
+    }
+    val copyBuilder = FirJavaValueParameterBuilder()
+    copyBuilder.source = original.source
+    copyBuilder.session = original.session
+    copyBuilder.attributes = original.attributes.copy()
+    copyBuilder.returnTypeRef = original.returnTypeRef
+    copyBuilder.name = original.name
+    val annotations = original.annotations
+    copyBuilder.annotationBuilder = { annotations }
+    copyBuilder.defaultValue = original.defaultValue
+    copyBuilder.isVararg = original.isVararg
+    return copyBuilder.apply(init).build()
 }

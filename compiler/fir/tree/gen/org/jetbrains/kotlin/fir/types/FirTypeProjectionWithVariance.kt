@@ -20,4 +20,6 @@ abstract class FirTypeProjectionWithVariance : FirTypeProjection() {
     abstract val variance: Variance
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitTypeProjectionWithVariance(this, data)
+
+    abstract override fun replaceSource(newSource: FirSourceElement?)
 }

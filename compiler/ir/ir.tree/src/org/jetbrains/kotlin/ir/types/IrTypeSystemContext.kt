@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.*
@@ -268,6 +269,11 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
     override fun TypeConstructorMarker.isIntegerLiteralTypeConstructor() = false
 
+    override fun TypeConstructorMarker.isLocalType(): Boolean {
+        if (this !is IrClassSymbol) return false
+        return this.owner.classId?.isLocal == true
+    }
+
     override fun createFlexibleType(lowerBound: SimpleTypeMarker, upperBound: SimpleTypeMarker): KotlinTypeMarker {
         require(lowerBound.isNothing())
         require(upperBound is IrType && upperBound.isNullableAny())
@@ -454,6 +460,39 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
         val irClass = (this as IrType).classOrNull?.owner
         return irClass != null && (irClass.isInterface || irClass.isAnnotationClass)
     }
+
+
+    override fun newBaseTypeCheckerContext(
+        errorTypesEqualToAnything: Boolean,
+        stubTypesEqualToAnything: Boolean
+    ): AbstractTypeCheckerContext = IrTypeCheckerContext(this)
+
+    override fun KotlinTypeMarker.isUninferredParameter(): Boolean = false
+    override fun KotlinTypeMarker.withNullability(nullable: Boolean): KotlinTypeMarker {
+        if (this.isSimpleType()) {
+            return this.asSimpleType()!!.withNullability(nullable)
+        } else {
+            error("withNullability for non-simple types is not supported in IR")
+        }
+    }
+
+    override fun captureFromExpression(type: KotlinTypeMarker): KotlinTypeMarker? =
+        error("Captured type is unsupported in IR")
+
+    override fun DefinitelyNotNullTypeMarker.original(): SimpleTypeMarker =
+        error("DefinitelyNotNull type is unsupported in IR")
+
+    override fun KotlinTypeMarker.makeDefinitelyNotNullOrNotNull(): KotlinTypeMarker {
+        error("makeDefinitelyNotNullOrNotNull is not supported in IR")
+    }
+
+    override fun SimpleTypeMarker.makeSimpleTypeDefinitelyNotNullOrNotNull(): SimpleTypeMarker {
+        error("makeSimpleTypeDefinitelyNotNullOrNotNull is not yet supported in IR")
+    }
+
+    override fun prepareType(type: KotlinTypeMarker): KotlinTypeMarker {
+        return type
+    }
 }
 
 fun extractTypeParameters(parent: IrDeclarationParent): List<IrTypeParameter> {
@@ -480,3 +519,6 @@ fun extractTypeParameters(parent: IrDeclarationParent): List<IrTypeParameter> {
     }
     return result
 }
+
+
+class IrTypeSystemContextImpl(override val irBuiltIns: IrBuiltIns) : IrTypeSystemContext

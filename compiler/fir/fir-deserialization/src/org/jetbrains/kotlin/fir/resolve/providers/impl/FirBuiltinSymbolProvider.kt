@@ -220,7 +220,7 @@ class FirBuiltinSymbolProvider(session: FirSession, val kotlinScopeProvider: Kot
                                         isVararg = false
                                     }
                                 }
-                                dispatchReceiverType = classId.defaultType(typeParameters.map { it.symbol })
+                                dispatchReceiverType = classId.defaultType(this@klass.typeParameters.map { it.symbol })
                             }
                         )
                     }
@@ -303,6 +303,7 @@ class FirBuiltinSymbolProvider(session: FirSession, val kotlinScopeProvider: Kot
                     classId, classProto, symbol, nameResolver, session,
                     null, kotlinScopeProvider, parentContext,
                     null,
+                    origin = FirDeclarationOrigin.BuiltIns,
                     this::findAndDeserializeClass,
                 )
             }

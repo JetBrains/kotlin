@@ -16,12 +16,16 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirEffectDeclarationImpl(
-    override val source: FirSourceElement?,
+    override var source: FirSourceElement?,
     override val effect: ConeEffectDeclaration,
 ) : FirEffectDeclaration() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirEffectDeclarationImpl {
         return this
+    }
+
+    override fun replaceSource(newSource: FirSourceElement?) {
+        source = newSource
     }
 }

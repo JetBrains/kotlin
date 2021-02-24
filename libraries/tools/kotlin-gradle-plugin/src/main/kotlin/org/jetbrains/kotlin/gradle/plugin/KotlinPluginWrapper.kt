@@ -21,10 +21,8 @@ import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.internal.FeaturePreviews
-import org.gradle.api.internal.file.FileResolver
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
-import org.gradle.build.event.BuildEventsListenerRegistry
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
@@ -36,10 +34,10 @@ import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.addNpmDependencyExtension
+import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.KOTLIN_COMPILER_EMBEDDABLE
 import org.jetbrains.kotlin.gradle.tasks.KOTLIN_KLIB_COMMONIZER_EMBEDDABLE
 import org.jetbrains.kotlin.gradle.tasks.KOTLIN_MODULE_GROUP
-import org.jetbrains.kotlin.gradle.tasks.throwGradleExceptionIfError
 import org.jetbrains.kotlin.gradle.testing.internal.KotlinTestsRegistry
 import org.jetbrains.kotlin.gradle.utils.checkGradleCompatibility
 import org.jetbrains.kotlin.gradle.utils.loadPropertyFromResources
@@ -68,9 +66,8 @@ abstract class KotlinBasePluginWrapper : Plugin<Project> {
             whenBuildEvaluated(project)
         }
 
-        project.configurations.maybeCreate(COMPILER_CLASSPATH_CONFIGURATION_NAME).defaultDependencies {
-            it.add(project.dependencies.create("$KOTLIN_MODULE_GROUP:$KOTLIN_COMPILER_EMBEDDABLE:$kotlinPluginVersion"))
-        }
+        addKotlinCompilerConfiguration(project)
+
         project.configurations.maybeCreate(PLUGIN_CLASSPATH_CONFIGURATION_NAME)
         project.configurations.maybeCreate(NATIVE_COMPILER_PLUGIN_CLASSPATH_CONFIGURATION_NAME).apply {
             isTransitive = false
@@ -104,6 +101,25 @@ abstract class KotlinBasePluginWrapper : Plugin<Project> {
         plugin.apply(project)
 
         project.addNpmDependencyExtension()
+    }
+
+    private fun addKotlinCompilerConfiguration(project: Project) {
+        project
+            .configurations
+            .maybeCreate(COMPILER_CLASSPATH_CONFIGURATION_NAME)
+            .defaultDependencies {
+                it.add(
+                    project.dependencies.create("$KOTLIN_MODULE_GROUP:$KOTLIN_COMPILER_EMBEDDABLE:$kotlinPluginVersion")
+                )
+            }
+        project
+            .tasks
+            .withType(AbstractKotlinCompile::class.java)
+            .configureEach { task ->
+                task.defaultCompilerClasspath.setFrom(
+                    project.configurations.named(COMPILER_CLASSPATH_CONFIGURATION_NAME)
+                )
+            }
     }
 
     open fun whenBuildEvaluated(project: Project) {

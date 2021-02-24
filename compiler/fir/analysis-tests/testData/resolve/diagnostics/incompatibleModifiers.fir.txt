@@ -30,13 +30,13 @@ FILE: incompatibleModifiers.kt
 
     }
     public final class F : R|kotlin/Any| {
-        private constructor(): R|F| {
+        protected constructor(): R|F| {
             super<R|kotlin/Any|>()
         }
 
     }
     public sealed class G : R|kotlin/Any| {
-        private constructor(): R|G| {
+        protected constructor(): R|G| {
             super<R|kotlin/Any|>()
         }
 
@@ -57,7 +57,7 @@ FILE: incompatibleModifiers.kt
 
     }
     public sealed data class I : R|kotlin/Any| {
-        private constructor(i: R|kotlin/Int|): R|I| {
+        protected constructor(i: R|kotlin/Int|): R|I| {
             super<R|kotlin/Any|>()
         }
 
@@ -126,7 +126,7 @@ FILE: incompatibleModifiers.kt
         }
 
         public sealed inner class Z : R|kotlin/Any| {
-            private constructor(): R|X.Z| {
+            protected constructor(): R|X.Z| {
                 super<R|kotlin/Any|>()
             }
 

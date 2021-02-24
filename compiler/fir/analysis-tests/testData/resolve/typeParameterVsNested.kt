@@ -13,7 +13,7 @@ abstract class My<T : Some> {
 
     abstract val z: <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>test.My.T<!>
 
-    class Some : <!UNRESOLVED_REFERENCE{LT}!><!OTHER_ERROR, UNRESOLVED_REFERENCE{PSI}!>T<!>()<!>
+    class Some : <!UNRESOLVED_REFERENCE{LT}!><!SUPERTYPE_NOT_A_CLASS_OR_INTERFACE, UNRESOLVED_REFERENCE{PSI}!>T<!>()<!>
 }
 
-abstract class Your<T : Some> : <!OTHER_ERROR!>T<!>
+abstract class Your<T : Some> : <!SUPERTYPE_NOT_A_CLASS_OR_INTERFACE!>T<!>

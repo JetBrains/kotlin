@@ -26,7 +26,7 @@ inline fun case_1(block: () -> Unit) {
 
 // TESTCASE NUMBER: 2
 inline fun case_2(block: () -> Unit) {
-    contract { callsInPlaceEffectBuilder(block) }
+    contract { <!ERROR_IN_CONTRACT_DESCRIPTION!>callsInPlaceEffectBuilder(block)<!> }
     return block()
 }
 

@@ -1,3 +1,4 @@
+// KOTLIN_CONFIGURATION_FLAGS: SAM_CONVERSIONS=CLASS
 // FILE: samAdapterForJavaInterfaceWithNullability.kt
 fun testNullable(s: String) = JNullable { s }
 fun testNotNull(s: String) = JNotNull { s }

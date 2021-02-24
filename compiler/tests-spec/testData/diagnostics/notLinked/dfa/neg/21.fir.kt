@@ -13,7 +13,7 @@ class Case1 {
         val y = this
         if (y.x != null) {
             x = null
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int?")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>
             this.x
             y.x
             y.x<!UNSAFE_CALL!>.<!>inv()
@@ -34,7 +34,7 @@ class Case2 {
         val y = this
         if (y.x == null) {
             x = 11
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>x<!>
             this.x
             y.x
             y.x.inv()

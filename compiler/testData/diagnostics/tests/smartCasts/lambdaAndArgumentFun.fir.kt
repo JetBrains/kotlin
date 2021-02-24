@@ -10,5 +10,5 @@ fun use() {
     // Write to x is AFTER
     x.hashCode()
     // No smart cast should be here!
-    foo(bar { x = null }, x.hashCode())
+    foo(bar { x = null }, x<!UNSAFE_CALL!>.<!>hashCode())
 }

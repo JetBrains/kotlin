@@ -21,5 +21,7 @@ abstract class FirArgumentList : FirPureAbstractElement(), FirElement {
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitArgumentList(this, data)
 
+    abstract override fun replaceSource(newSource: FirSourceElement?)
+
     abstract fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirArgumentList
 }

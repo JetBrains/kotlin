@@ -39,13 +39,11 @@ fun runCommonization(parameters: CommonizerParameters) {
 private fun mergeAndCommonize(storageManager: StorageManager, parameters: CommonizerParameters): CirTreeMergeResult {
     // build merged tree:
     val classifiers = CirKnownClassifiers(
-        commonized = CirCommonizedClassifiers.default(),
+        commonizedNodes = CirCommonizedClassifierNodes.default(),
         forwardDeclarations = CirForwardDeclarations.default(),
-        dependeeLibraries = mapOf(
-            // for now, supply only common dependee libraries (ex: Kotlin stdlib)
-            parameters.sharedTarget to CirProvidedClassifiers.fromModules(storageManager) {
-                parameters.dependeeModulesProvider?.loadModules(emptyList())?.values.orEmpty()
-            }
+        commonDependencies = CirProvidedClassifiers.of(
+            CirFictitiousFunctionClassifiers,
+            CirProvidedClassifiers.by(parameters.dependencyModulesProvider)
         )
     )
     val mergeResult = CirTreeMerger(storageManager, classifiers, parameters).merge()
@@ -67,11 +65,11 @@ private fun serializeTarget(mergeResult: CirTreeMergeResult, targetIndex: Int, p
         val serializedMetadata = with(metadataModule.write(KLIB_FRAGMENT_WRITE_STRATEGY)) {
             SerializedMetadata(header, fragments, fragmentNames)
         }
-
-        parameters.resultsConsumer.consume(target, ModuleResult.Commonized(libraryName, serializedMetadata))
+        val manifestData = parameters.manifestDataProvider.getManifest(target, libraryName)
+        parameters.resultsConsumer.consume(target, ModuleResult.Commonized(libraryName, serializedMetadata, manifestData))
     }
 
-    if (target is LeafTarget) {
+    if (target is LeafCommonizerTarget) {
         mergeResult.missingModuleInfos.getValue(target).forEach {
             parameters.resultsConsumer.consume(target, ModuleResult.Missing(it.originalLocation))
         }

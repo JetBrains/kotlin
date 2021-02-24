@@ -22,7 +22,7 @@ class B : A() {
     }
 
     fun g() {
-        super.<!ABSTRACT_SUPER_CALL{LT}!><!ABSTRACT_SUPER_CALL{PSI}!>f<!>()<!>
+        super.<!ABSTRACT_SUPER_CALL!>f<!>()
         super.t()
 
         super.x
@@ -32,7 +32,7 @@ class B : A() {
 
 abstract class J : A() {
     fun r() {
-        super.<!ABSTRACT_SUPER_CALL{LT}!><!ABSTRACT_SUPER_CALL{PSI}!>f<!>()<!>
+        super.<!ABSTRACT_SUPER_CALL!>f<!>()
         super.t()
 
         super.x

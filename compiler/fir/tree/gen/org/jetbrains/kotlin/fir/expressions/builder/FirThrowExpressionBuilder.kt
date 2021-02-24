@@ -43,7 +43,7 @@ class FirThrowExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBu
     @Deprecated("Modification of 'typeRef' has no impact for FirThrowExpressionBuilder", level = DeprecationLevel.HIDDEN)
     override var typeRef: FirTypeRef
         get() = throw IllegalStateException()
-        set(value) {
+        set(_) {
             throw IllegalStateException()
         }
 }

@@ -19,4 +19,6 @@ abstract class FirRawContractDescription : FirContractDescription() {
     abstract val rawEffects: List<FirExpression>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitRawContractDescription(this, data)
+
+    abstract override fun replaceSource(newSource: FirSourceElement?)
 }

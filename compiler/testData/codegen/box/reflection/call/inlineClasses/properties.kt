@@ -13,6 +13,7 @@ class C {
     var member: S = S("")
 
     private var suffix = S("")
+    @Suppress("RESERVED_VAR_PROPERTY_OF_VALUE_CLASS")
     var S.memExt: S
         get() = this + suffix
         set(value) { suffix = this + value }
@@ -21,6 +22,7 @@ class C {
 var topLevel: S = S("")
 
 private var suffix = S("")
+@Suppress("RESERVED_VAR_PROPERTY_OF_VALUE_CLASS")
 var S.ext: S
     get() = this + suffix
     set(value) { suffix = this + value }
