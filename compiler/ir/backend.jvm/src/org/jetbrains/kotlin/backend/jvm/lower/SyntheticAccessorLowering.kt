@@ -632,17 +632,15 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
 
         val symbolOwner = owner
         val declarationRaw = symbolOwner as IrDeclarationWithVisibility
-        val declaration =
-            (declarationRaw as? IrSimpleFunction)?.resolveFakeOverride(allowAbstract = true) ?: declarationRaw
 
         // There is never a problem with visibility of inline functions, as those don't end up as Java entities
-        if (declaration is IrFunction && declaration.isInline) return true
+        if (declarationRaw is IrFunction && declarationRaw.isInline) return true
 
         // Enum entry constructors are generated as package-private and are accessed only from corresponding enum class
-        if (declaration is IrConstructor && declaration.constructedClass.isEnumEntry) return true
+        if (declarationRaw is IrConstructor && declarationRaw.constructedClass.isEnumEntry) return true
 
         // `internal` maps to public and requires no accessor.
-        if (!withSuper && !declaration.visibility.isPrivate && !declaration.visibility.isProtected) return true
+        if (!withSuper && !declarationRaw.visibility.isPrivate && !declarationRaw.visibility.isProtected) return true
 
         // `toArray` is always accessible cause mapped to public functions
         if (symbolOwner is IrSimpleFunction && (symbolOwner.isNonGenericToArray() || symbolOwner.isGenericToArray(context))) {
@@ -654,6 +652,9 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
         // EnumEntry constructors are always accessible (they are only called from the enclosing Enum class)
         if (symbolOwner is IrConstructor && symbolOwner.parentClassOrNull?.isEnumEntry == true)
             return true
+
+        val declaration =
+            (declarationRaw as? IrSimpleFunction)?.resolveFakeOverride(allowAbstract = true) ?: declarationRaw
 
         // If local variables are accessible by Kotlin rules, they also are by Java rules.
         val ownerClass = declaration.parent as? IrClass ?: return true
