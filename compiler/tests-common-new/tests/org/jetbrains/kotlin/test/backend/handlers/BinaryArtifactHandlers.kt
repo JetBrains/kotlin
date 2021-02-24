@@ -13,12 +13,11 @@ import org.jetbrains.kotlin.test.services.TestServices
 abstract class JvmBinaryArtifactHandler(
     testServices: TestServices,
     failureDisablesNextSteps: Boolean = false,
-    doNotRunIfThereWerePreviousFailures: Boolean = false
 ) : BinaryArtifactHandler<BinaryArtifacts.Jvm>(
     testServices,
     ArtifactKinds.Jvm,
     failureDisablesNextSteps,
-    doNotRunIfThereWerePreviousFailures
+    doNotRunIfThereWerePreviousFailures = true,
 )
 
 abstract class JsBinaryArtifactHandler(
