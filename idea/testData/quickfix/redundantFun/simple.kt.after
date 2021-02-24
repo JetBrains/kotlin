@@ -1,0 +1,2 @@
+// "Remove 'fun' modifier" "true"
+interface WrongFunFace

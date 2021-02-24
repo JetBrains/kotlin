@@ -1,0 +1,20 @@
+public final class InlineIterator {
+    // source: 'iterator.kt'
+    private final field it: java.util.Iterator
+    private synthetic method <init>(p0: java.util.Iterator): void
+    public synthetic final static method box-impl(p0: java.util.Iterator): InlineIterator
+    public static method constructor-impl(p0: java.util.Iterator): java.util.Iterator
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: java.util.Iterator, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: java.util.Iterator, p1: java.util.Iterator): boolean
+    public method hasNext(): boolean
+    public static method hasNext-impl(p0: java.util.Iterator): boolean
+    public method hashCode(): int
+    public static method hashCode-impl(p0: java.util.Iterator): int
+    public method next(): java.lang.Object
+    public static method next-impl(p0: java.util.Iterator): java.lang.Object
+    public method remove(): void
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: java.util.Iterator): java.lang.String
+    public synthetic final method unbox-impl(): java.util.Iterator
+}

@@ -51,21 +51,23 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
             call.startOffset,
             call.endOffset,
             comparator.owner.returnType,
-            comparator
+            comparator,
+            typeArgumentsCount = 0,
+            valueArgumentsCount = 2
         ).apply {
             putValueArgument(0, irCall(call, intrinsics.longCompareToLong, argumentsAsReceivers = true))
             putValueArgument(1, JsIrBuilder.buildInt(irBuiltIns.intType, 0))
         }
     }
 
-    override fun transformFunctionAccess(call: IrFunctionAccessExpression): IrExpression {
+    override fun transformFunctionAccess(call: IrFunctionAccessExpression, doNotIntrinsify: Boolean): IrExpression {
         val symbol = call.symbol
         symbolToTransformer[symbol]?.let {
             return it(call)
         }
 
         return when (symbol.owner.name) {
-            Name.identifier("compareTo") -> transformCompareToMethodCall(call)
+            Name.identifier("compareTo") -> if (doNotIntrinsify) call else transformCompareToMethodCall(call)
             Name.identifier("equals") -> transformEqualsMethodCall(call as IrCall)
             else -> call
         }
@@ -117,7 +119,7 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
         if (function.parent !is IrClass) return call
 
         fun IrSimpleFunction.isFakeOverriddenFromComparable(): Boolean = when {
-            origin != IrDeclarationOrigin.FAKE_OVERRIDE ->
+            !isFakeOverride ->
                 !isStaticMethodOfClass && parentAsClass.thisReceiver!!.type.isComparable()
 
             else -> overriddenSymbols.all { it.owner.isFakeOverriddenFromComparable() }

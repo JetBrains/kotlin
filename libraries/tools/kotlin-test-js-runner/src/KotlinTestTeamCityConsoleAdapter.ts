@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 import {KotlinTestRunner} from "./KotlinTestRunner";
 import {TeamCityMessageData, TeamCityMessagesFlow} from "./TeamCityMessagesFlow";
 import {format} from "util";
@@ -18,6 +23,10 @@ function withName(name: string, data?: TeamCityMessageData): TeamCityMessageData
     return data
 }
 
+const logTypes = ['log', 'info', 'warn', 'error', 'debug'] as const
+
+type LogType = typeof logTypes[number]
+
 export function runWithTeamCityConsoleAdapter(
     runner: KotlinTestRunner,
     teamCity: TeamCityMessagesFlow
@@ -30,9 +39,16 @@ export function runWithTeamCityConsoleAdapter(
             let revertLogMethods: CallableFunction[] = [];
 
             runner.test(name, isIgnored, () => {
-                const log = (type: string) => function (message?: any, ...optionalParams: any[]) {
+                const log = (type: LogType) => function (message?: any, ...optionalParams: any[]) {
+                    let messageType: 'testStdOut' | 'testStdErr'
+                    if (type == 'warn' || type == 'error') {
+                        messageType = 'testStdErr'
+                    } else {
+                        messageType = 'testStdOut'
+                    }
+
                     teamCity.sendMessage(
-                        "testStdOut",
+                        messageType,
                         withName(
                             name,
                             {
@@ -42,13 +58,11 @@ export function runWithTeamCityConsoleAdapter(
                     )
                 };
 
-                const logMethods = ['log', 'info', 'warn', 'error', 'debug'];
-
                 const globalConsole = console as unknown as {
                     [method: string]: (message?: any, ...optionalParams: any[]) => void
                 };
 
-                revertLogMethods = logMethods
+                revertLogMethods = logTypes
                     .map(method => {
                         const realMethod = globalConsole[method];
                         globalConsole[method] = log(method);

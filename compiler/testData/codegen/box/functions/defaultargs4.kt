@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_FIR: JVM_IR
+// IGNORE_FIR_DIAGNOSTICS
 interface A {
     fun bar2(arg: Int = 239) : Int
 

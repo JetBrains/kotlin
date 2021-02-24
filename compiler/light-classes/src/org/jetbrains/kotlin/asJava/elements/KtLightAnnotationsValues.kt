@@ -13,6 +13,7 @@ import com.intellij.psi.impl.light.LightTypeElement
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
+import org.jetbrains.kotlin.asJava.computeExpression
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.psi.*
@@ -39,8 +40,7 @@ open class KtLightPsiLiteral(
     private val lightParent: PsiElement
 ) : KtLightElementBase(lightParent), PsiLiteralExpression {
 
-    override fun getValue(): Any? =
-        LanguageConstantExpressionEvaluator.INSTANCE.forLanguage(kotlinOrigin.language)?.computeConstantExpression(this, false)
+    override fun getValue(): Any? = computeExpression(this)
 
     override fun getType(): PsiType? {
         val bindingContext = LightClassGenerationSupport.getInstance(this.project).analyze(kotlinOrigin)

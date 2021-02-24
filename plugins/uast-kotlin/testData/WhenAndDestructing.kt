@@ -7,6 +7,8 @@ fun getElementsAdditionalResolve(string: String): String {
             return "bindingContext"
         }
 
+        "empty-switch" -> {}
+
         else -> {
             val (bindingContext, statementFilter) = arr
             return bindingContext

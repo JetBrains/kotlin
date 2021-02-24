@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlock
@@ -26,24 +27,26 @@ import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 open class DeepCopySymbolRemapper(
-    private val descriptorsRemapper: DescriptorsRemapper = DescriptorsRemapper.Default
+    private val descriptorsRemapper: DescriptorsRemapper = NullDescriptorsRemapper
 ) : IrElementVisitorVoid, SymbolRemapper {
 
-    private val classes = hashMapOf<IrClassSymbol, IrClassSymbol>()
-    private val constructors = hashMapOf<IrConstructorSymbol, IrConstructorSymbol>()
-    private val enumEntries = hashMapOf<IrEnumEntrySymbol, IrEnumEntrySymbol>()
-    private val externalPackageFragments = hashMapOf<IrExternalPackageFragmentSymbol, IrExternalPackageFragmentSymbol>()
-    private val fields = hashMapOf<IrFieldSymbol, IrFieldSymbol>()
-    private val files = hashMapOf<IrFileSymbol, IrFileSymbol>()
-    private val functions = hashMapOf<IrSimpleFunctionSymbol, IrSimpleFunctionSymbol>()
-    private val properties = hashMapOf<IrPropertySymbol, IrPropertySymbol>()
-    private val returnableBlocks = hashMapOf<IrReturnableBlockSymbol, IrReturnableBlockSymbol>()
-    private val typeParameters = hashMapOf<IrTypeParameterSymbol, IrTypeParameterSymbol>()
-    private val valueParameters = hashMapOf<IrValueParameterSymbol, IrValueParameterSymbol>()
-    private val variables = hashMapOf<IrVariableSymbol, IrVariableSymbol>()
-    private val localDelegatedProperties = hashMapOf<IrLocalDelegatedPropertySymbol, IrLocalDelegatedPropertySymbol>()
-    private val typeAliases = hashMapOf<IrTypeAliasSymbol, IrTypeAliasSymbol>()
+    protected val classes = hashMapOf<IrClassSymbol, IrClassSymbol>()
+    protected val scripts = hashMapOf<IrScriptSymbol, IrScriptSymbol>()
+    protected val constructors = hashMapOf<IrConstructorSymbol, IrConstructorSymbol>()
+    protected val enumEntries = hashMapOf<IrEnumEntrySymbol, IrEnumEntrySymbol>()
+    protected val externalPackageFragments = hashMapOf<IrExternalPackageFragmentSymbol, IrExternalPackageFragmentSymbol>()
+    protected val fields = hashMapOf<IrFieldSymbol, IrFieldSymbol>()
+    protected val files = hashMapOf<IrFileSymbol, IrFileSymbol>()
+    protected val functions = hashMapOf<IrSimpleFunctionSymbol, IrSimpleFunctionSymbol>()
+    protected val properties = hashMapOf<IrPropertySymbol, IrPropertySymbol>()
+    protected val returnableBlocks = hashMapOf<IrReturnableBlockSymbol, IrReturnableBlockSymbol>()
+    protected val typeParameters = hashMapOf<IrTypeParameterSymbol, IrTypeParameterSymbol>()
+    protected val valueParameters = hashMapOf<IrValueParameterSymbol, IrValueParameterSymbol>()
+    protected val variables = hashMapOf<IrVariableSymbol, IrVariableSymbol>()
+    protected val localDelegatedProperties = hashMapOf<IrLocalDelegatedPropertySymbol, IrLocalDelegatedPropertySymbol>()
+    protected val typeAliases = hashMapOf<IrTypeAliasSymbol, IrTypeAliasSymbol>()
 
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
@@ -58,6 +61,13 @@ open class DeepCopySymbolRemapper(
     override fun visitClass(declaration: IrClass) {
         remapSymbol(classes, declaration) {
             IrClassSymbolImpl(descriptorsRemapper.remapDeclaredClass(it.descriptor))
+        }
+        declaration.acceptChildrenVoid(this)
+    }
+
+    override fun visitScript(declaration: IrScript) {
+        remapSymbol(scripts, declaration) {
+            IrScriptSymbolImpl(descriptorsRemapper.remapDeclaredScript(it.descriptor))
         }
         declaration.acceptChildrenVoid(this)
     }
@@ -149,7 +159,7 @@ open class DeepCopySymbolRemapper(
     override fun visitBlock(expression: IrBlock) {
         if (expression is IrReturnableBlock) {
             remapSymbol(returnableBlocks, expression) {
-                IrReturnableBlockSymbolImpl(expression.descriptor)
+                IrReturnableBlockSymbolImpl()
             }
         }
         expression.acceptChildrenVoid(this)
@@ -157,13 +167,14 @@ open class DeepCopySymbolRemapper(
 
     private fun <T : IrSymbol> Map<T, T>.getDeclared(symbol: T) =
         getOrElse(symbol) {
-            throw IllegalArgumentException("Non-remapped symbol $symbol ${symbol.descriptor}")
+            throw IllegalArgumentException("Non-remapped symbol $symbol")
         }
 
     private fun <T : IrSymbol> Map<T, T>.getReferenced(symbol: T) =
         getOrElse(symbol) { symbol }
 
     override fun getDeclaredClass(symbol: IrClassSymbol): IrClassSymbol = classes.getDeclared(symbol)
+    override fun getDeclaredScript(symbol: IrScriptSymbol): IrScriptSymbol = scripts.getDeclared(symbol)
     override fun getDeclaredFunction(symbol: IrSimpleFunctionSymbol): IrSimpleFunctionSymbol = functions.getDeclared(symbol)
     override fun getDeclaredProperty(symbol: IrPropertySymbol): IrPropertySymbol = properties.getDeclared(symbol)
     override fun getDeclaredField(symbol: IrFieldSymbol): IrFieldSymbol = fields.getDeclared(symbol)
@@ -182,6 +193,7 @@ open class DeepCopySymbolRemapper(
     override fun getDeclaredTypeAlias(symbol: IrTypeAliasSymbol): IrTypeAliasSymbol = typeAliases.getDeclared(symbol)
 
     override fun getReferencedClass(symbol: IrClassSymbol): IrClassSymbol = classes.getReferenced(symbol)
+    override fun getReferencedScript(symbol: IrScriptSymbol): IrScriptSymbol = scripts.getReferenced(symbol)
     override fun getReferencedClassOrNull(symbol: IrClassSymbol?): IrClassSymbol? = symbol?.let { classes.getReferenced(it) }
     override fun getReferencedEnumEntry(symbol: IrEnumEntrySymbol): IrEnumEntrySymbol = enumEntries.getReferenced(symbol)
     override fun getReferencedVariable(symbol: IrVariableSymbol): IrVariableSymbol = variables.getReferenced(symbol)
@@ -196,14 +208,14 @@ open class DeepCopySymbolRemapper(
         when (symbol) {
             is IrValueParameterSymbol -> valueParameters.getReferenced(symbol)
             is IrVariableSymbol -> variables.getReferenced(symbol)
-            else -> throw IllegalArgumentException("Unexpected symbol $symbol ${symbol.descriptor}")
+            else -> throw IllegalArgumentException("Unexpected symbol $symbol")
         }
 
     override fun getReferencedFunction(symbol: IrFunctionSymbol): IrFunctionSymbol =
         when (symbol) {
             is IrSimpleFunctionSymbol -> functions.getReferenced(symbol)
             is IrConstructorSymbol -> constructors.getReferenced(symbol)
-            else -> throw IllegalArgumentException("Unexpected symbol $symbol ${symbol.descriptor}")
+            else -> throw IllegalArgumentException("Unexpected symbol $symbol")
         }
 
     override fun getReferencedReturnableBlock(symbol: IrReturnableBlockSymbol): IrReturnableBlockSymbol =
@@ -212,8 +224,9 @@ open class DeepCopySymbolRemapper(
     override fun getReferencedClassifier(symbol: IrClassifierSymbol): IrClassifierSymbol =
         when (symbol) {
             is IrClassSymbol -> classes.getReferenced(symbol)
+            is IrScriptSymbol -> scripts.getReferenced(symbol)
             is IrTypeParameterSymbol -> typeParameters.getReferenced(symbol)
-            else -> throw IllegalArgumentException("Unexpected symbol $symbol ${symbol.descriptor}")
+            else -> throw IllegalArgumentException("Unexpected symbol $symbol")
         }
 
     override fun getReferencedTypeAlias(symbol: IrTypeAliasSymbol): IrTypeAliasSymbol = typeAliases.getReferenced(symbol)

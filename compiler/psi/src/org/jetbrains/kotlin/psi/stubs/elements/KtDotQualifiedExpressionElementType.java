@@ -20,11 +20,32 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression;
 
 public class KtDotQualifiedExpressionElementType extends KtPlaceHolderStubElementType<KtDotQualifiedExpression> {
     public KtDotQualifiedExpressionElementType(@NotNull @NonNls String debugName) {
         super(debugName, KtDotQualifiedExpression.class);
+    }
+
+    private static boolean checkNodeTypesTraversal(ASTNode node) {
+
+        IElementType type = node.getElementType();
+        if (type != KtStubElementTypes.DOT_QUALIFIED_EXPRESSION &&
+            type != KtStubElementTypes.REFERENCE_EXPRESSION &&
+            type != KtTokens.IDENTIFIER &&
+            type != KtTokens.DOT
+        ) {
+            return false;
+        }
+
+        for (ASTNode child = node.getFirstChildNode(); child != null; child = child.getTreeNext()) {
+            if (!checkNodeTypesTraversal(child)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     @Override
@@ -38,7 +59,7 @@ public class KtDotQualifiedExpressionElementType extends KtPlaceHolderStubElemen
             parentElementType == KtStubElementTypes.VALUE_ARGUMENT ||
             parentElementType == KtStubElementTypes.DOT_QUALIFIED_EXPRESSION
         ) {
-            return super.shouldCreateStub(node);
+            return checkNodeTypesTraversal(node) && super.shouldCreateStub(node);
         }
 
         return false;

@@ -1,19 +1,19 @@
 // !WITH_NEW_INFERENCE
 // NI_EXPECTED_FILE
 
-// FILE: f.kt
+// FILE: a.kt
 package a
     val foo = bar()
 
-    fun bar() = <!NI;DEBUG_INFO_MISSING_UNRESOLVED, TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>foo<!>
+    fun bar() = <!DEBUG_INFO_MISSING_UNRESOLVED{NI}, TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>foo<!>
 
-// FILE: f.kt
+// FILE: b.kt
 package b
     fun foo() = bar()
 
     fun bar() = <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!><!DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>()<!>
 
-// FILE: f.kt
+// FILE: c.kt
 package c
     fun bazz() = bar()
 
@@ -21,14 +21,14 @@ package c
 
     fun bar() = foo()
 
-// FILE: f.kt
+// FILE: d.kt
 
     package ok.a
         val foo = bar()
 
         fun bar() : Int = foo
 
-// FILE: f.kt
+// FILE: e.kt
     package ok.b
         fun foo() : Int = bar()
 

@@ -23,17 +23,11 @@ import com.sun.tools.javac.util.Options
 import com.sun.tools.javac.util.List as JavacList
 import org.jetbrains.kotlin.kapt3.base.plus
 
-fun isJava9OrLater(): Boolean = !System.getProperty("java.version").startsWith("1.")
-fun isJava11OrLater(): Boolean {
-    val majorVersion = System.getProperty("java.version").substringBefore(".")
-    if (majorVersion.isEmpty()) return false
+private fun getJavaVersion(): Int =
+    System.getProperty("java.specification.version")?.substringAfter('.')?.toIntOrNull() ?: 6
 
-    return try {
-        majorVersion.toInt() >= 11
-    } catch (ignored: Throwable) {
-        false
-    }
-}
+fun isJava9OrLater() = getJavaVersion() >= 9
+fun isJava11OrLater() = getJavaVersion() >= 11
 
 fun Options.putJavacOption(jdk8Name: String, jdk9Name: String, value: String) {
     val option = if (isJava9OrLater()) {

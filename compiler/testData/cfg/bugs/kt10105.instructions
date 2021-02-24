@@ -10,14 +10,13 @@ L0:
     mark(= ())
     magic[UNRESOLVED_CALL](= ()) -> <v1>
     mark(= ()())
-    call(= ()(), <ERROR FUNCTION>|<v1>) -> <v2>
-    magic[VALUE_CONSUMER](= ()()|<v2>) -> <v3>
+    magic[UNRESOLVED_CALL](= ()()|<v1>) -> <v2>
     mark(int x = ()())
-    call(int x = ()(), <ERROR FUNCTION>|<v0>) -> <v4>
+    magic[UNRESOLVED_CALL](int x = ()()|<v0>, <v2>) -> <v3>
 L1:
-  1 <END>                                                NEXT:[<SINK>]
+  1 <END>                                                      NEXT:[<SINK>]
 error:
-    <ERROR>                                              PREV:[]
+    <ERROR>                                                    PREV:[]
 sink:
-    <SINK>                                               PREV:[<ERROR>, <END>]
+    <SINK>                                                     PREV:[<ERROR>, <END>]
 =====================

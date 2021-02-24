@@ -15,9 +15,9 @@ class A<T> {
         val y: B<String>.C<String>? = null
         val z: B<String>.D? = null
 
-        val c: C<Int>? = null
-        val d: D? = null
+        val c: <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>C<Int>?<!> = null
+        val d: <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>D?<!> = null
 
-        val innerMost: Innermost<String>? = null
+        val innerMost: <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Innermost<String>?<!> = null
     }
 }

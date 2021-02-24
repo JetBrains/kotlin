@@ -22,6 +22,7 @@ import com.intellij.openapi.util.Key
 import com.intellij.util.text.VersionComparatorUtil
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import org.jetbrains.kotlin.idea.actions.ConfigurePluginUpdatesAction
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
@@ -45,17 +46,20 @@ fun notifyOutdatedBundledCompilerIfNecessary(project: Project) {
 
     Notifications.Bus.notify(
         Notification(
-            OUTDATED_BUNDLED_COMPILER_GROUP_DISPLAY_ID, OUTDATED_BUNDLED_COMPILER_GROUP_DISPLAY_ID, message,
-            NotificationType.WARNING, NotificationListener { notification, event ->
+            OUTDATED_BUNDLED_COMPILER_GROUP_DISPLAY_ID,
+            KotlinBundle.message("configuration.title.outdated.bundled.kotlin.compiler"),
+            message,
+            NotificationType.WARNING,
+            NotificationListener { notification, event ->
                 if (event.eventType == HyperlinkEvent.EventType.ACTIVATED) {
-                    when {
-                        "update" == event.description -> {
+                    when (event.description) {
+                        "update" -> {
                             val action = ActionManager.getInstance().getAction(ConfigurePluginUpdatesAction.ACTION_ID)
                             val dataContext = DataManager.getInstance().dataContextFromFocus.result
                             val actionEvent = AnActionEvent.createFromAnAction(action, null, ActionPlaces.ACTION_SEARCH, dataContext)
                             action.actionPerformed(actionEvent)
                         }
-                        "ignore" == event.description -> {
+                        "ignore" -> {
                             if (!project.isDisposed) {
                                 PropertiesComponent.getInstance(project).setValue(SUPPRESSED_OUTDATED_COMPILER_PROPERTY_NAME, pluginVersion)
                             }
@@ -127,10 +131,10 @@ fun createOutdatedBundledCompilerMessage(project: Project, bundledCompilerVersio
     modulesStr = modulesStr.removeSuffix("<br/>")
 
     return """
-        <p>The compiler bundled to Kotlin plugin ($bundledCompilerVersion) is older than external compiler used for building modules:</p>
+        <p>${KotlinBundle.message("configuration.text.the.compiler.bundled.to.kotlin.plugin", bundledCompilerVersion)}</p>
         <ul>$modulesStr</ul>
-        <p>This may cause different set of errors and warnings reported in IDE.</p>
-        <p><a href="update">Update</a>  <a href="ignore">Ignore</a></p>"""
+        <p>${KotlinBundle.message("configuration.text.this.may.cause.different.set.of.errors.and.warnings.reported.in.ide.p")}</p>
+        <p><a href="update">${KotlinBundle.message("configuration.action.text.update")}</a>  <a href="ignore">${KotlinBundle.message("configuration.action.text.ignore")}</a></p>"""
         .trimIndent().lines().joinToString(separator = "").replace("<br/>", "\n")
 }
 

@@ -39,3 +39,5 @@ var Any.v: (A) -> Unit
 fun f() {
     "".v = { val (x, y ) = it }
 }
+
+// FIR_IGNORE

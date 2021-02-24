@@ -1,7 +1,7 @@
 // !WITH_NEW_INFERENCE
 
 fun box() : String {
-    <!NI;NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>test<!> {
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER{NI}!>test<!> {
         <!RETURN_NOT_ALLOWED!>return@box<!> "123"
     }
 

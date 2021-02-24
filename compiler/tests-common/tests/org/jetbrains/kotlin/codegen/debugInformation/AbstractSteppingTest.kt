@@ -8,7 +8,8 @@ package org.jetbrains.kotlin.codegen.debugInformation
 import com.sun.jdi.VirtualMachine
 import com.sun.jdi.event.Event
 import com.sun.jdi.event.LocatableEvent
-import junit.framework.TestCase
+import org.jetbrains.kotlin.test.KotlinTestUtils.assertEqualsToFile
+import org.jetbrains.kotlin.test.TargetBackend
 import org.junit.AfterClass
 import org.junit.BeforeClass
 import java.io.File
@@ -19,7 +20,10 @@ abstract class AbstractSteppingTest : AbstractDebugTest() {
     override val proxyPort: Int = Companion.proxyPort
 
     companion object {
-        const val LINENUMBER_PREFIX = "// LINENUMBERS"
+        const val LINENUMBERS_MARKER = "// LINENUMBERS"
+        const val FORCE_STEP_INTO_MARKER = "// FORCE_STEP_INTO"
+        const val JVM_LINENUMBER_MARKER = "$LINENUMBERS_MARKER JVM"
+        const val JVM_IR_LINENUMBER_MARKER = "$LINENUMBERS_MARKER JVM_IR"
         var proxyPort = 0
         lateinit var process: Process
         lateinit var virtualMachine: VirtualMachine
@@ -48,17 +52,52 @@ abstract class AbstractSteppingTest : AbstractDebugTest() {
     }
 
     override fun checkResult(wholeFile: File, loggedItems: List<Any>) {
-        val expectedLineNumbers = wholeFile
-            .readLines()
-            .dropWhile { !it.startsWith(LINENUMBER_PREFIX) }
-            .drop(1)
-            .map { it.drop(3).trim() }
-            .joinToString("\n")
-        val actualLineNumbers = loggedItems
-            .map { event ->
-                "${(event as LocatableEvent).location().method()}:${event.location().lineNumber()}"
+        val actual = mutableListOf<String>()
+        val lines = wholeFile.readLines()
+        val forceStepInto = lines.any { it.startsWith(FORCE_STEP_INTO_MARKER) }
+
+        @Suppress("UNCHECKED_CAST")
+        val actualLineNumbers = compressRunsWithoutLinenumber(loggedItems as List<LocatableEvent>, LocatableEvent::location)
+            .filter {
+                val location = it.location()
+                // Ignore:
+                //   - synthetic code with no line number information
+                //     unless force step into behavior is requested.
+                //   - helper code from the test infrastructure
+                (forceStepInto || !location.method().isSynthetic) && !location.isInDebugTestInfrastructure
             }
-        TestCase.assertEquals(expectedLineNumbers, actualLineNumbers.joinToString("\n"))
+            .map { "// ${it.location().formatAsExpectation()}" }
+        val actualLineNumbersIterator = actualLineNumbers.iterator()
+
+        val lineIterator = lines.iterator()
+        for (line in lineIterator) {
+            actual.add(line)
+            if (line.startsWith(LINENUMBERS_MARKER) || line.startsWith(FORCE_STEP_INTO_MARKER)) break
+        }
+
+        var currentBackend = TargetBackend.ANY
+        for (line in lineIterator) {
+            if (line.startsWith(LINENUMBERS_MARKER)) {
+                actual.add(line)
+                currentBackend = when (line) {
+                    LINENUMBERS_MARKER -> TargetBackend.ANY
+                    JVM_LINENUMBER_MARKER -> TargetBackend.JVM
+                    JVM_IR_LINENUMBER_MARKER -> TargetBackend.JVM_IR
+                    else -> error("Expected JVM backend: $line")
+                }
+                continue
+            }
+            if (currentBackend == TargetBackend.ANY || currentBackend == backend) {
+                if (actualLineNumbersIterator.hasNext()) {
+                    actual.add(actualLineNumbersIterator.next())
+                }
+            } else {
+                actual.add(line)
+            }
+        }
+
+        actualLineNumbersIterator.forEach { actual.add(it) }
+
+        assertEqualsToFile(wholeFile, actual.joinToString("\n"))
     }
 }
-

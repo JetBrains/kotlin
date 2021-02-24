@@ -10,6 +10,7 @@ import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiNamedElement
+import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.classMembers.MemberInfoChange
 import com.intellij.refactoring.classMembers.MemberInfoModel
 import com.intellij.refactoring.memberPullUp.PullUpProcessor
@@ -136,7 +137,7 @@ class KotlinPullUpDialog(
     override fun getPreselection() = mySuperClasses.firstOrNull { !it.isInterfaceClass() } ?: mySuperClasses.firstOrNull()
 
     override fun createMemberSelectionTable(infos: MutableList<KotlinMemberInfo>) =
-        KotlinMemberSelectionTable(infos, null, "Make abstract")
+        KotlinMemberSelectionTable(infos, null, RefactoringBundle.message("make.abstract"))
 
     override fun isOKActionEnabled() = selectedMemberInfos.size > 0
 

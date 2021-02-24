@@ -22,6 +22,7 @@ import org.jetbrains.idea.maven.indices.MavenArtifactSearchDialog
 import org.jetbrains.idea.maven.project.MavenProjectsManager
 import org.jetbrains.idea.maven.utils.MavenArtifactScope
 import org.jetbrains.kotlin.idea.core.isInTestSourceContentKotlinAware
+import org.jetbrains.kotlin.idea.maven.KotlinMavenBundle
 import org.jetbrains.kotlin.idea.maven.PomFile
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
@@ -71,7 +72,7 @@ class AddMavenDependencyQuickFix(
     private val smartPsiElementPointer: SmartPsiElementPointer<KtSimpleNameExpression>
 ) :
     IntentionAction, LowPriorityAction {
-    override fun getText() = "Add Maven dependency..."
+    override fun getText() = KotlinMavenBundle.message("fix.add.maven.dependency.name")
     override fun getFamilyName() = text
     override fun startInWriteAction() = false
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile?) =

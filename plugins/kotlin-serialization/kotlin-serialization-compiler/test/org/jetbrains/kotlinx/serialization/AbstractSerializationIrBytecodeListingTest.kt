@@ -19,7 +19,7 @@ abstract class AbstractSerializationIrBytecodeListingTest : AbstractAsmLikeInstr
         return wholeFile.nameWithoutExtension + ".ir.txt"
     }
 
-    override fun getBackend(): TargetBackend = TargetBackend.JVM_IR
+    override val backend = TargetBackend.JVM_IR
 
     override fun setupEnvironment(environment: KotlinCoreEnvironment) {
         SerializationComponentRegistrar.registerExtensions(environment.project)

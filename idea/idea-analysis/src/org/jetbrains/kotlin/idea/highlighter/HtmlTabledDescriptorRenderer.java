@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer;
 import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.TableRenderer.DescriptorRow;
 import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.TableRenderer.FunctionArgumentsRow;
 import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.TableRenderer.TableRow;
+import org.jetbrains.kotlin.idea.KotlinIdeaAnalysisBundle;
 import org.jetbrains.kotlin.idea.highlighter.renderersUtil.RenderersUtilKt;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.renderer.DescriptorRendererModifier;
@@ -139,10 +140,10 @@ public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
             if (isErrorPosition.test(RECEIVER_POSITION.position())) {
                 error = true;
             }
-            receiver = "receiver: " + RenderersUtilKt.renderStrong(getTypeRenderer().render(receiverType, context), error);
+            receiver = KotlinIdeaAnalysisBundle.message("function.receiver.0", RenderersUtilKt.renderStrong(getTypeRenderer().render(receiverType, context), error));
         }
         td(result, receiver);
-        td(result, hasReceiver ? "arguments: " : "");
+        td(result, hasReceiver ? KotlinIdeaAnalysisBundle.message("function.arguments") : "");
         if (argumentTypes.isEmpty()) {
             tdBold(result, "( )");
             return;

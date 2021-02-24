@@ -1,6 +1,5 @@
-// IGNORE_BACKEND: JVM
-// See KT-15971
-
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: BRIDGE_ISSUES
 interface Foo {
     fun foo(a: Double = 1.0): Double
 }

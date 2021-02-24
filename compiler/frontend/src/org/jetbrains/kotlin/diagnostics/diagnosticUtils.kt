@@ -51,25 +51,23 @@ fun ResolutionContext<*>.reportTypeMismatchDueToTypeProjection(
 ): Boolean {
     if (!TypeUtils.contains(expectedType) { it.isAnyOrNullableAny() || it.isNothing() || it.isNullableNothing() }) return false
 
-    val callPosition = this.callPosition
     val (resolvedCall, correspondingNotApproximatedTypeByDescriptor: (CallableDescriptor) -> KotlinType?) = when (callPosition) {
-        is CallPosition.ValueArgumentPosition -> Pair(
-            callPosition.resolvedCall, { f: CallableDescriptor ->
+        is CallPosition.ValueArgumentPosition ->
+            callPosition.resolvedCall to { f: CallableDescriptor ->
                 getEffectiveExpectedType(f.valueParameters[callPosition.valueParameter.index], callPosition.valueArgument, this)
-            })
-        is CallPosition.ExtensionReceiverPosition -> Pair<ResolvedCall<*>, (CallableDescriptor) -> KotlinType?>(
-            callPosition.resolvedCall, { f: CallableDescriptor ->
-                f.extensionReceiverParameter?.type
-            })
-        is CallPosition.PropertyAssignment -> Pair<ResolvedCall<out CallableDescriptor>, (CallableDescriptor) -> KotlinType?>(
-            callPosition.leftPart.getResolvedCall(trace.bindingContext) ?: return false, { f: CallableDescriptor ->
-                (f as? PropertyDescriptor)?.setter?.valueParameters?.get(0)?.type
-            })
+            }
+        is CallPosition.ExtensionReceiverPosition ->
+            callPosition.resolvedCall to { f: CallableDescriptor -> f.extensionReceiverParameter?.type }
+        is CallPosition.PropertyAssignment -> {
+            if (callPosition.isLeft) return false
+            val resolvedCall = callPosition.leftPart.getResolvedCall(trace.bindingContext) ?: return false
+            resolvedCall to { f: CallableDescriptor -> (f as? PropertyDescriptor)?.setter?.valueParameters?.get(0)?.type }
+        }
         is CallPosition.Unknown -> return false
     }
 
     val receiverType = resolvedCall.smartCastDispatchReceiverType
-            ?: (resolvedCall.dispatchReceiver ?: return false).type
+        ?: (resolvedCall.dispatchReceiver ?: return false).type
 
     val callableDescriptor = resolvedCall.resultingDescriptor.original
 
@@ -115,6 +113,18 @@ fun BindingTrace.reportDiagnosticOnce(diagnostic: Diagnostic) {
     if (bindingContext.diagnostics.forElement(diagnostic.psiElement).any { it.factory == diagnostic.factory }) return
 
     report(diagnostic)
+}
+
+fun BindingTrace.reportDiagnosticOnceWrtDiagnosticFactoryList(
+    diagnosticToReport: Diagnostic,
+    vararg diagnosticFactories: DiagnosticFactory<*>,
+) {
+    val hasAlreadyReportedDiagnosticFromListOrSameType = bindingContext.diagnostics.forElement(diagnosticToReport.psiElement)
+        .any { diagnostic -> diagnostic.factory == diagnosticToReport.factory || diagnosticFactories.any { it == diagnostic.factory } }
+
+    if (hasAlreadyReportedDiagnosticFromListOrSameType) return
+
+    report(diagnosticToReport)
 }
 
 class TypeMismatchDueToTypeProjectionsData(
@@ -167,10 +177,17 @@ inline fun <reified T : KtDeclaration> reportOnDeclarationAs(
     } ?: throw AssertionError("No declaration for $descriptor")
 }
 
+// this method should not be used in the project, but it is leaved for some time for compatibility with old compiler plugins
+@Deprecated(
+    "Please register DefaultErrorMessages.Extension in moment of DiagnosticFactory initialization by calling " +
+            "initializeFactoryNamesAndDefaultErrorMessages method instead of initializeFactoryNames",
+    ReplaceWith("report(diagnostic)"),
+    level = DeprecationLevel.ERROR
+)
 fun <D : Diagnostic> DiagnosticSink.reportFromPlugin(diagnostic: D, ext: DefaultErrorMessages.Extension) {
     @Suppress("UNCHECKED_CAST")
     val renderer = ext.map[diagnostic.factory] as? DiagnosticRenderer<D>
-            ?: error("Renderer not found for diagnostic ${diagnostic.factory.name}")
+        ?: error("Renderer not found for diagnostic ${diagnostic.factory.name}")
 
     val renderedDiagnostic = RenderedDiagnostic(diagnostic, renderer)
 

@@ -1,8 +1,8 @@
-[LibraryClassUsages.0.kt] Local variable declaration 16 val a: A = A()
-[LibraryClassUsages.0.kt] New instance creation 16 val a: A = A()
-[LibraryClassUsages.0.kt] New instance creation 17 val aa = A(1)
-[LibraryClassUsages.0.kt] Supertype 13 class Y(): A(1)
-[LibraryClassUsages.0.kt] Supertype 9 class X: A {
+[LibraryClassUsages.0.kt] Local variable declaration 17 val a: A = A()
+[LibraryClassUsages.0.kt] New instance creation 17 val a: A = A()
+[LibraryClassUsages.0.kt] New instance creation 18 val aa = A(1)
+[LibraryClassUsages.0.kt] Supertype 10 class X: A {
+[LibraryClassUsages.0.kt] Supertype 14 class Y(): A(1)
 [LibraryClassUsages.1.java] Local variable declaration 11 A a = new A();
 [LibraryClassUsages.1.java] Local variable declaration 12 A aa = new A(1);
 [LibraryClassUsages.1.java] New instance creation 11 A a = new A();

@@ -9,10 +9,10 @@ val a: Int
         fun bar(): Int {
             val d: Int
             42
-            return d
+            return <!UNINITIALIZED_VARIABLE!>d<!>
         }
 
-        return b
+        return <!UNINITIALIZED_VARIABLE!>b<!>
     }
 
 class A {
@@ -21,7 +21,7 @@ class A {
             val b: Int
             val c: Int
             42
-            return b
+            return <!UNINITIALIZED_VARIABLE!>b<!>
         }
 
     fun foo() {
@@ -31,7 +31,7 @@ class A {
                     val b: Int
                     val c: Int
                     42
-                    return b
+                    return <!UNINITIALIZED_VARIABLE!>b<!>
                 }
         }
     }

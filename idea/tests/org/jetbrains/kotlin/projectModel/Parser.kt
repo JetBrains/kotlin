@@ -9,6 +9,7 @@ import com.intellij.util.text.nullize
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import java.io.File
 import java.io.InputStreamReader
 import java.io.Reader
@@ -20,8 +21,11 @@ open class ProjectStructureParser(private val projectRoot: File) {
         "STDLIB_JVM" to ResolveLibrary.Builder(Stdlib.JvmStdlib),
         "STDLIB_COMMON" to ResolveLibrary.Builder(Stdlib.CommonStdlib),
         "FULL_JDK" to ResolveLibrary.Builder(FullJdk),
+        "MOCK_JDK" to ResolveLibrary.Builder(MockJdk),
         "KOTLIN_TEST_JS" to ResolveLibrary.Builder(KotlinTest.JsKotlinTest),
-        "KOTLIN_TEST_JVM" to ResolveLibrary.Builder(KotlinTest.JvmKotlinTest)
+        "KOTLIN_TEST_JVM" to ResolveLibrary.Builder(KotlinTest.JvmKotlinTest),
+        "KOTLIN_TEST" to ResolveLibrary.Builder(KotlinTest.JustKotlinTest),
+        "JUNIT" to ResolveLibrary.Builder(KotlinTest.Junit)
     )
 
     fun parse(text: String): ProjectResolveModel {
@@ -69,6 +73,8 @@ open class ProjectStructureParser(private val projectRoot: File) {
         val root = attributes["root"] ?: builder.name!!
         builder.root = File(projectRoot, root)
 
+        builder.additionalCompilerArgs = attributes["additionalCompilerArgs"]
+
         val testRoot = attributes["testRoot"]
         if (testRoot != null) builder.testRoot = File(projectRoot, testRoot)
     }
@@ -115,7 +121,7 @@ open class ProjectStructureParser(private val projectRoot: File) {
 
         return attributesString
             .split(ATTRIBUTES_SEPARATOR)
-            .map { it.splitIntoExactlyTwoParts(ATTRIBUTE_VALUE_SEPARATOR) }
+            .map { it.splitIntoTwoParts(ATTRIBUTE_VALUE_SEPARATOR) }
             .toMap()
     }
 
@@ -125,12 +131,13 @@ open class ProjectStructureParser(private val projectRoot: File) {
             .toMap()
 
         val platforms = parseRepeatableAttribute(platformString).map {
-            if (it == "JVM")
-                JvmPlatforms.defaultJvmPlatform.single()
-            else
-                platformsByPlatformName[it] ?: error(
+            when (it) {
+                "JVM" -> JvmPlatforms.defaultJvmPlatform.single()
+                "Native" -> NativePlatforms.unspecifiedNativePlatform.single()
+                else -> platformsByPlatformName[it] ?: error(
                     "Unknown platform $it. Available platforms: ${platformsByPlatformName.keys.joinToString()}"
                 )
+            }
         }.toSet()
 
         return TargetPlatform(platforms)
@@ -200,8 +207,10 @@ private fun Reader.nextWord(): String? {
 
 private fun Char.isSeparator() = isWhitespace() || this == '\n'
 
-private fun String.splitIntoExactlyTwoParts(separator: String): Pair<String, String> {
+private fun String.splitIntoTwoParts(separator: String): Pair<String, String> {
     val result = split(separator)
-    require(result.size == 2) { "$this can not be split into exactly two parts with separator $separator" }
-    return result[0].trim() to result[1].trim()
+    val name = substringBefore(separator, "")
+    val value = substringAfter(separator, "")
+    require(name.isNotEmpty()) { "$this can not be split into two parts with separator $separator" }
+    return name.trim() to value.trim()
 }

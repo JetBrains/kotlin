@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.org.objectweb.asm.Type
 
 val StackValue.unsignedType: UnsignedType?
@@ -22,8 +23,12 @@ fun coerceUnsignedToUInt(
     valueKotlinType: KotlinType?,
     uIntKotlinType: KotlinType
 ): StackValue {
+    stackValue.kotlinType?.let {
+        if (it.isNothing()) return stackValue
+    }
+
     val valueUnsignedType = stackValue.unsignedType
-        ?: throw AssertionError("Unsigned type expected: $valueKotlinType")
+        ?: throw AssertionError("Unsigned type expected: ${stackValue.kotlinType}")
 
     if (valueUnsignedType == UnsignedType.UINT) return stackValue
 

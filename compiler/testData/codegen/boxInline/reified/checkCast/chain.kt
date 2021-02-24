@@ -1,5 +1,6 @@
-// FILE: 1.kt
 // WITH_RUNTIME
+// IGNORE_BACKEND: JS
+// FILE: 1.kt
 package test
 
 class A
@@ -41,9 +42,6 @@ fun box(): String {
 inline fun failClassCast(s: () -> Unit) {
     try {
         s()
-    }
-    catch (e: TypeCastException) {
-        throw e
     }
     catch (e: ClassCastException) {
 

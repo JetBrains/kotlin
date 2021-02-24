@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 data class A(val i: Int, val j: <!UNRESOLVED_REFERENCE!>G<!>)
 data class B(val i: <!UNRESOLVED_REFERENCE!>G<!>, val j: <!UNRESOLVED_REFERENCE!>G<!>)

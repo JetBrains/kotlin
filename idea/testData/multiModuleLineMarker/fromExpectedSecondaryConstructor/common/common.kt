@@ -1,3 +1,3 @@
-expect class <lineMarker>SecondaryConstructor</lineMarker>{
-    <lineMarker>constructor</lineMarker>(name: String, surname: String)
+expect class <!LINE_MARKER("descr='Has actuals in JVM'")!>SecondaryConstructor<!>{
+    <!LINE_MARKER("descr='Has actuals in JVM'")!>constructor<!>(name: String, surname: String)
 }

@@ -1,0 +1,28 @@
+{
+  "5": {
+    "neg": {
+      "1": [
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 1,
+          "description": "smart case for property `plus` available through the operator invoke",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts/smart-cast-sink-stability/p-5/neg/1.1.kt",
+          "unexpectedBehaviour": true,
+          "linkType": "main"
+        }
+      ]
+    },
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 1,
+          "description": "smart cast for the property available through the operator invoke",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts/smart-cast-sink-stability/p-5/pos/1.1.kt",
+          "unexpectedBehaviour": true,
+          "linkType": "main"
+        }
+      ]
+    }
+  }
+}

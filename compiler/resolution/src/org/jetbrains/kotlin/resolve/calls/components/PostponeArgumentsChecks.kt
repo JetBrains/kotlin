@@ -20,13 +20,14 @@ import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
-import org.jetbrains.kotlin.resolve.calls.inference.model.ArgumentConstraintPosition
-import org.jetbrains.kotlin.resolve.calls.inference.model.LHSArgumentConstraintPosition
-import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableForLambdaReturnType
+import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.model.*
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.UnwrappedType
-import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.model.TypeVariance
+import org.jetbrains.kotlin.types.model.convertVariance
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -35,10 +36,12 @@ fun resolveKtPrimitive(
     argument: KotlinCallArgument,
     expectedType: UnwrappedType?,
     diagnosticsHolder: KotlinDiagnosticsHolder,
-    isReceiver: Boolean
+    receiverInfo: ReceiverInfo,
+    convertedType: UnwrappedType?,
+    inferenceSession: InferenceSession?
 ): ResolvedAtom = when (argument) {
     is SimpleKotlinCallArgument ->
-        checkSimpleArgument(csBuilder, argument, expectedType, diagnosticsHolder, isReceiver)
+        checkSimpleArgument(csBuilder, argument, expectedType, diagnosticsHolder, receiverInfo, convertedType, inferenceSession)
 
     is LambdaKotlinCallArgument ->
         preprocessLambdaArgument(csBuilder, argument, expectedType, diagnosticsHolder)
@@ -62,8 +65,20 @@ private fun preprocessLambdaArgument(
     forceResolution: Boolean = false,
     returnTypeVariable: TypeVariableForLambdaReturnType? = null
 ): ResolvedAtom {
-    if (expectedType != null && !forceResolution && csBuilder.isTypeVariable(expectedType)) {
-        return LambdaWithTypeVariableAsExpectedTypeAtom(argument, expectedType)
+
+    if (expectedType != null && !forceResolution) {
+        // postpone lambda processing if expected type is a type variable that could be fixed into something non-trivial
+        val expectedTypeVariableWithConstraints = csBuilder.currentStorage().notFixedTypeVariables[expectedType.constructor]
+
+        if (expectedTypeVariableWithConstraints != null) {
+            val explicitTypeArgument = expectedTypeVariableWithConstraints.constraints.find {
+                it.kind == ConstraintKind.EQUALITY && it.position.from is ExplicitTypeParameterConstraintPosition<*>
+            }?.type as? KotlinType
+
+            if (explicitTypeArgument == null || explicitTypeArgument.arguments.isNotEmpty()) {
+                return LambdaWithTypeVariableAsExpectedTypeAtom(argument, expectedType)
+            }
+        }
     }
 
     val resolvedArgument = extractLambdaInfoFromFunctionalType(expectedType, argument, returnTypeVariable)
@@ -74,7 +89,7 @@ private fun preprocessLambdaArgument(
             csBuilder.builtIns, Annotations.EMPTY, resolvedArgument.receiver,
             resolvedArgument.parameters, null, resolvedArgument.returnType, resolvedArgument.isSuspend
         )
-        csBuilder.addSubtypeConstraint(lambdaType, expectedType, ArgumentConstraintPosition(argument))
+        csBuilder.addSubtypeConstraint(lambdaType, expectedType, ArgumentConstraintPositionImpl(argument))
     }
 
     return resolvedArgument
@@ -92,7 +107,7 @@ private fun extraLambdaInfo(
     val isFunctionSupertype = expectedType != null && KotlinBuiltIns.isNotNullOrNullableFunctionSupertype(expectedType)
     val argumentAsFunctionExpression = argument.safeAs<FunctionExpression>()
 
-    val typeVariable = TypeVariableForLambdaReturnType(argument, builtIns, "_L")
+    val typeVariable = TypeVariableForLambdaReturnType(builtIns, "_L")
 
     val receiverType = argumentAsFunctionExpression?.receiverType
     val returnType =
@@ -207,6 +222,24 @@ fun LambdaWithTypeVariableAsExpectedTypeAtom.transformToResolvedLambda(
     return resolvedLambdaAtom
 }
 
+fun ResolvedLambdaAtom.transformToResolvedLambda(
+    csBuilder: ConstraintSystemBuilder,
+    diagnosticsHolder: KotlinDiagnosticsHolder,
+    expectedType: UnwrappedType,
+    returnTypeVariable: TypeVariableForLambdaReturnType? = null
+): ResolvedLambdaAtom {
+    return preprocessLambdaArgument(
+        csBuilder,
+        atom,
+        expectedType,
+        diagnosticsHolder,
+        forceResolution = true,
+        returnTypeVariable = returnTypeVariable
+    ).also {
+        this.setAnalyzedResults(null, listOf(it))
+    } as ResolvedLambdaAtom
+}
+
 private fun preprocessCallableReference(
     csBuilder: ConstraintSystemBuilder,
     argument: CallableReferenceKotlinCallArgument,
@@ -248,12 +281,17 @@ private fun ConstraintSystemBuilder.addConstraintFromLHS(
     val lhsType = lhsResult.unboundDetailedReceiver.stableType
     val expectedTypeProjectionForLHS = expectedType.arguments.first()
     val expectedTypeForLHS = expectedTypeProjectionForLHS.type
-    val constraintPosition = LHSArgumentConstraintPosition(argument, lhsResult.qualifier ?: lhsResult.unboundDetailedReceiver)
+    val constraintPosition = LHSArgumentConstraintPositionImpl(argument, lhsResult.qualifier ?: lhsResult.unboundDetailedReceiver)
+    val expectedTypeVariance = expectedTypeProjectionForLHS.projectionKind.convertVariance()
+    val effectiveVariance = AbstractTypeChecker.effectiveVariance(
+        expectedType.constructor.parameters.first().variance.convertVariance(),
+        expectedTypeVariance
+    ) ?: expectedTypeVariance
 
-    when (expectedTypeProjectionForLHS.projectionKind) {
-        Variance.INVARIANT -> addEqualityConstraint(lhsType, expectedTypeForLHS, constraintPosition)
-        Variance.IN_VARIANCE -> addSubtypeConstraint(expectedTypeForLHS, lhsType, constraintPosition)
-        Variance.OUT_VARIANCE -> addSubtypeConstraint(lhsType, expectedTypeForLHS, constraintPosition)
+    when (effectiveVariance) {
+        TypeVariance.INV -> addEqualityConstraint(lhsType, expectedTypeForLHS, constraintPosition)
+        TypeVariance.IN -> addSubtypeConstraint(expectedTypeForLHS, lhsType, constraintPosition)
+        TypeVariance.OUT -> addSubtypeConstraint(lhsType, expectedTypeForLHS, constraintPosition)
     }
 }
 

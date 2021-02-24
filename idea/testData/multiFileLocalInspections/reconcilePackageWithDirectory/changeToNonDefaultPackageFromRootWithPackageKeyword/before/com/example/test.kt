@@ -1,0 +1,3 @@
+<caret>package
+
+class Foo

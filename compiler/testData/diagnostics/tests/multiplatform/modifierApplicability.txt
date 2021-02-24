@@ -19,7 +19,6 @@ public final class Outer {
 }
 public typealias Foo = kotlin.String
 
-
 // -- Module: <m2-jvm> --
 package
 
@@ -38,3 +37,4 @@ public final class Outer {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 }
+

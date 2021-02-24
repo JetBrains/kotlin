@@ -28,7 +28,7 @@ val test4: Collection<Int> =
         }
 
 val test5: Collection<Int> =
-        listOf(1, 2, 3).<!OI;TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>flatMapTo(<!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>LinkedHashSet<!>()) { // TODO
+        listOf(1, 2, 3).<!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH{OI}!>flatMapTo(<!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER{OI}!>LinkedHashSet<!>()) { // TODO
             if (true) listOf(it) else listOf(it)
         }<!>
 

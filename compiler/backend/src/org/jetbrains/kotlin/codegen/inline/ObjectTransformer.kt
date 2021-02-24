@@ -46,9 +46,8 @@ abstract class ObjectTransformer<out T : TransformationInfo>(@JvmField val trans
         )
     }
 
-    fun createClassReader(): ClassReader {
-        return buildClassReaderByInternalName(state, transformationInfo.oldClassName)
-    }
+    fun createClassReader(): ClassReader =
+        ClassReader(loadClassBytesByInternalName(state, transformationInfo.oldClassName))
 }
 
 class WhenMappingTransformer(

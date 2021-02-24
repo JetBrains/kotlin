@@ -6,19 +6,25 @@
           "specVersion": "0.1-100",
           "casesNumber": 0,
           "description": "Hexadecimal integer literals with long literal mark.",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-100",
           "casesNumber": 0,
           "description": "Binary integer literals with long literal mark.",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/1.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-100",
           "casesNumber": 0,
           "description": "Decimal integer literals with long literal mark.",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/the-types-for-integer-literals/p-1/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ]
     }

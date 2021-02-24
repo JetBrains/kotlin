@@ -1,6 +1,7 @@
-public final class Derived implements Base {
-    public Derived(@org.jetbrains.annotations.NotNull Base x) { /* compiled code */ }
+public final class Derived /* Derived*/ implements Base {
+  @org.jetbrains.annotations.NotNull()
+  public java.lang.String getBoo();//  getBoo()
 
-    @org.jetbrains.annotations.NotNull
-    public java.lang.String getBoo() { /* compiled code */ }
+  public  Derived(@org.jetbrains.annotations.NotNull() Base);//  .ctor(Base)
+
 }

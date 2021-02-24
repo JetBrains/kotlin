@@ -20,6 +20,7 @@ dependencies {
     compileOnly(intellijDep())
     excludeInAndroidStudio(rootProject) { compileOnly(intellijPluginDep("maven")) }
     compileOnly(intellijPluginDep("gradle"))
+    compileOnly(project(":idea:kotlin-gradle-tooling"))
 
     testRuntime(project(":kotlin-reflect"))
 
@@ -33,7 +34,6 @@ dependencies {
     testCompileOnly(project(":kotlin-allopen-compiler-plugin"))
     testCompileOnly(project(":allopen-ide-plugin"))
     testCompileOnly(project(":kotlin-imports-dumper-compiler-plugin"))
-    testCompileOnly(project(":kotlin-source-sections-compiler-plugin"))
     testCompileOnly(project(":kotlinx-serialization-compiler-plugin"))
     testCompileOnly(project(":kotlinx-serialization-ide-plugin"))
     testCompileOnly(project(":kotlin-sam-with-receiver-compiler-plugin"))
@@ -44,12 +44,10 @@ dependencies {
     testCompileOnly(intellijDep())
     testRuntimeOnly(intellijDep())
 
-    Platform[192].orHigher {
-        compileOnly(intellijPluginDep("java"))
+    compileOnly(intellijPluginDep("java"))
 
-        testCompileOnly(intellijPluginDep("java"))
-        testRuntimeOnly(intellijPluginDep("java"))
-    }
+    testCompileOnly(intellijPluginDep("java"))
+    testRuntimeOnly(intellijPluginDep("java"))
 }
 
 sourceSets {

@@ -7,15 +7,15 @@ class Foo(var x: Any) {
         if (x is Bar) {
             val y = x
             // Error: x is not stable, Type(y) = Any
-            x.bar()
-            y.bar()
+            x.<!UNRESOLVED_REFERENCE!>bar<!>()
+            y.<!UNRESOLVED_REFERENCE!>bar<!>()
             if (y == x) {
                 // Still error
-                y.bar()
+                y.<!UNRESOLVED_REFERENCE!>bar<!>()
             }
             if (x !is Bar && y != x) {
                 // Still error
-                y.bar()
+                y.<!UNRESOLVED_REFERENCE!>bar<!>()
             }
         }
     }

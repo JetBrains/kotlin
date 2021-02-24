@@ -1,0 +1,11 @@
+package
+
+public fun all(/*0*/ s: kotlin.String = ...): kotlin.Int
+public fun bar(/*0*/ i: kotlin.Int, /*1*/ l: kotlin.Long = ...): kotlin.String
+public fun baz(/*0*/ vararg ints: kotlin.Int /*kotlin.IntArray*/): kotlin.String
+public fun defaults(/*0*/ f: suspend (kotlin.Int) -> kotlin.String): kotlin.Unit
+public fun foo(): kotlin.Int
+public fun test(): kotlin.Unit
+public fun unitCoercion(/*0*/ f: suspend () -> kotlin.Unit): kotlin.Unit
+public fun unitCoercionAndDefaults(/*0*/ f: suspend () -> kotlin.Unit): kotlin.Unit
+public fun varargs(/*0*/ f: suspend (kotlin.Int, kotlin.Int, kotlin.Int) -> kotlin.String): kotlin.Unit

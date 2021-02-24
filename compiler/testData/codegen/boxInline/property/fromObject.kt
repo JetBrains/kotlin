@@ -1,6 +1,5 @@
-// IGNORE_BACKEND_FIR: JVM_IR
-// FILE: 1.kt
 // WITH_RUNTIME
+// FILE: 1.kt
 package test
 
 open class A(var result: String) {

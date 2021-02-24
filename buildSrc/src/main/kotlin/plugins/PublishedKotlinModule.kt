@@ -1,3 +1,4 @@
+@file:Suppress("DEPRECATION")
 package plugins
 
 import org.codehaus.groovy.runtime.InvokerHelper
@@ -16,10 +17,8 @@ import org.gradle.plugins.signing.Sign
 import org.gradle.plugins.signing.SigningExtension
 import kotlin.properties.Delegates
 
-
 /**
  * Configures a Kotlin module for publication.
- *
  */
 open class PublishedKotlinModule : Plugin<Project> {
 
@@ -31,10 +30,16 @@ open class PublishedKotlinModule : Plugin<Project> {
 
             plugins.apply("maven")
 
-            val publishedRuntime by configurations.creating {
+            configurations.maybeCreate("publishedRuntime").apply {
                 the<MavenPluginConvention>()
                     .conf2ScopeMappings
                     .addMapping(0, this, Conf2ScopeMappingContainer.RUNTIME)
+            }
+
+            configurations.maybeCreate("publishedCompile").apply {
+                the<MavenPluginConvention>()
+                    .conf2ScopeMappings
+                    .addMapping(0, this, Conf2ScopeMappingContainer.COMPILE)
             }
 
             if (!project.hasProperty("prebuiltJar")) {
@@ -46,6 +51,7 @@ open class PublishedKotlinModule : Plugin<Project> {
                 configure<SigningExtension> {
                     isRequired = signingRequired
                     sign(configurations["archives"])
+                    useGpgCmd()
                 }
 
                 tasks.named<Sign>("signArchives").configure {

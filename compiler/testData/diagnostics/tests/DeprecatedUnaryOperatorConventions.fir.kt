@@ -16,7 +16,7 @@ operator fun String.unaryPlus(): Int = 0
 fun test() {
     requireInt(+ "")
     requireInt(+ Example())
-    requireString(<!INAPPLICABLE_CANDIDATE!>+<!> ExampleDeprecated())
+    <!INAPPLICABLE_CANDIDATE!>requireString<!>(<!INAPPLICABLE_CANDIDATE!>+<!> ExampleDeprecated())
 }
 
 fun requireInt(n: Int) {}

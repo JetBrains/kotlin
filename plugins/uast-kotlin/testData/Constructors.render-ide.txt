@@ -79,3 +79,13 @@ public final class AWithSecondaryInit {
         local.toString()
     }
 }
+
+public final class AWithFieldInit {
+    @org.jetbrains.annotations.NotNull private final var a: java.lang.String
+    public final fun getA() : java.lang.String = UastEmptyExpression
+    public fun AWithFieldInit(@org.jetbrains.annotations.NotNull i: int) {
+        {
+            a = i.toString()
+        }
+    }
+}

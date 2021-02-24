@@ -1,4 +1,3 @@
-
 description = "Kotlin SamWithReceiver Compiler Plugin"
 
 plugins {
@@ -17,12 +16,11 @@ dependencies {
     testCompile(project(":compiler:cli"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(commonDep("junit:junit"))
-
+    testCompileOnly(project(":kotlin-compiler"))
+    testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    testCompile(project(":kotlin-scripting-jvm-host-unshaded"))
     testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
-
-    Platform[192].orHigher {
-        testRuntimeOnly(intellijDep()) { includeJars("platform-concurrency") }
-    }
+    testRuntimeOnly(intellijDep()) { includeJars("platform-concurrency") }
 }
 
 sourceSets {

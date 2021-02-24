@@ -1,23 +1,36 @@
+/*
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.ir.symbols
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.util.UniqId
+import org.jetbrains.kotlin.ir.util.IdSignature
 
-abstract class IrDelegatingSymbol<S: IrBindableSymbol<D, B>, B: IrSymbolOwner, D: DeclarationDescriptor>(var delegate: S)
-    : IrBindableSymbol<D, B> {
+abstract class IrDelegatingSymbol<S : IrBindableSymbol<D, B>, B : IrSymbolOwner, D : DeclarationDescriptor>(var delegate: S) :
+    IrBindableSymbol<D, B> {
     override val owner: B get() = delegate.owner
+
+    @ObsoleteDescriptorBasedAPI
     override val descriptor: D get() = delegate.descriptor
+
+    @ObsoleteDescriptorBasedAPI
+    override val hasDescriptor: Boolean
+        get() = delegate.hasDescriptor
+
     override val isBound: Boolean get() = delegate.isBound
-    override var uniqId: UniqId
-        get() = delegate.uniqId
-        set(value: UniqId) { delegate.uniqId = value }
+
+    override val signature: IdSignature?
+        get() = delegate.signature
 
     override fun bind(owner: B) = delegate.bind(owner)
     override fun hashCode() = delegate.hashCode()
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (this === delegate) return true
+        if (delegate === other) return true
         return false
     }
 }

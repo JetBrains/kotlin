@@ -25,6 +25,6 @@ fun f(a: Long): Int {
 
 // JVM_IR_TEMPLATES
 // 2 LCMP
-// 1 IFGT
-// 1 IFLE
+// 1 IFGE
+// 1 IFLT
 // 2 IF

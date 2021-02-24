@@ -3,7 +3,7 @@
 
 fun foo() {
     100_1
-    3_.1
+    <!ILLEGAL_UNDERSCORE!>3_.1<!>
     2___4
-    123_
+    <!ILLEGAL_UNDERSCORE!>123_<!>
 }

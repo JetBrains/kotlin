@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.load.kotlin.FileBasedKotlinClass
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
@@ -34,7 +35,7 @@ private class State<T>(val path: MutableList<String>) {
         path.add(step)
     }
 
-    fun removeStep(step: String) {
+    fun removeStep() {
         path.removeAt(path.lastIndex)
     }
 
@@ -92,15 +93,17 @@ abstract class TypeAnnotationCollector<T>(val context: TypeSystemCommonBackendCo
     fun KotlinTypeMarker.process(step: String) {
         state.addStep(step)
         this.gatherTypeAnnotations()
-        state.removeStep(step)
+        state.removeStep()
     }
 
 
     abstract fun KotlinTypeMarker.extractAnnotations(): List<T>
 
     fun isCompiledToJvm8OrHigher(descriptor: ClassDescriptor?): Boolean =
-        (descriptor as? DeserializedClassDescriptor)?.let { classDescriptor ->
-            ((classDescriptor.source as? KotlinJvmBinarySourceElement)?.binaryClass as? FileBasedKotlinClass)?.classVersion ?: 0 >= Opcodes.V1_8
-        } ?: true
+        (descriptor as? DeserializedClassDescriptor)?.let { classDescriptor -> isCompiledToJvm8OrHigher(classDescriptor.source) }
+            ?: true
 
+    fun isCompiledToJvm8OrHigher(source: SourceElement): Boolean =
+        (source !is KotlinJvmBinarySourceElement ||
+                (source.binaryClass as? FileBasedKotlinClass)?.classVersion ?: 0 >= Opcodes.V1_8)
 }

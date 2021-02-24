@@ -13,6 +13,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.config.LanguageFeature.ArrayLiteralsInAnnotations
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.intentions.isArrayOfMethod
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.psi.*
@@ -44,14 +45,14 @@ class ReplaceArrayOfWithLiteralInspection : AbstractKotlinInspection() {
         val calleeName = calleeExpression.getReferencedName()
         holder.registerProblem(
             calleeExpression,
-            "'$calleeName' call should be replaced with array literal [...]",
+            KotlinBundle.message("0.call.should.be.replaced.with.array.literal", calleeName),
             ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
             ReplaceWithArrayLiteralFix()
         )
     })
 
     private class ReplaceWithArrayLiteralFix : LocalQuickFix {
-        override fun getFamilyName() = "Replace with [...]"
+        override fun getFamilyName() = KotlinBundle.message("replace.with.array.literal.fix.family.name")
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             val calleeExpression = descriptor.psiElement as KtExpression

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.test
 import org.jetbrains.kotlin.cli.common.CLITool
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
@@ -53,7 +54,7 @@ object CompilerTestUtil {
             extraOptions: List<String> = emptyList(),
             extraClasspath: List<File> = emptyList()
     ): File {
-        val destination = File(KotlinTestUtils.tmpDir("testLibrary"), "$libraryName.jar")
+        val destination = File(KtTestUtil.tmpDir("testLibrary"), "$libraryName.jar")
         val args = mutableListOf<String>().apply {
             add(src.path)
             add("-d")

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun takeCovArray(a: Array<out Number>) {}

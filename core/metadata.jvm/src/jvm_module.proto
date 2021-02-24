@@ -38,6 +38,12 @@ message Module {
 
   // Annotations on the whole module
   repeated Annotation annotation = 6;
+
+  // @OptionalExpectation-annotated annotation classes in this module. This list is only used in the compiler frontend when compiling
+  // a second-tier multiplatform module against a multiplatform module which uses optional annotations, not actualized on the JVM.
+  // This is not needed in the IDE because optional annotations can only be used in common modules, where the IDE plugin resolves
+  // it to the corresponding class with the resolution capabilities of common modules.
+  repeated Class optional_annotation_class = 16;
 }
 
 message PackageParts {

@@ -6,12 +6,13 @@
 package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
-import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
@@ -23,11 +24,8 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
 
 // `doRemove` means should expect-declaration be removed from IR
-class ExpectDeclarationRemover(
-    val symbolTable: ReferenceSymbolTable,
-    private val doRemove: Boolean,
-    private val keepOptionalAnnotations: Boolean
-) : IrElementVisitorVoid {
+@OptIn(ObsoleteDescriptorBasedAPI::class)
+class ExpectDeclarationRemover(val symbolTable: ReferenceSymbolTable, private val doRemove: Boolean) : IrElementVisitorVoid {
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
     }
@@ -58,10 +56,18 @@ class ExpectDeclarationRemover(
     }
 
     private fun shouldRemoveTopLevelDeclaration(declaration: IrDeclaration): Boolean {
-        // TODO: rewrite findCompatibleActualForExpected using IR structures instead of descriptors
-        val descriptor = declaration.descriptor
-        return doRemove && descriptor is MemberDescriptor && descriptor.isExpect &&
-                !(keepOptionalAnnotations && descriptor is ClassDescriptor && ExpectedActualDeclarationChecker.shouldGenerateExpectClass(descriptor))
+        return doRemove && when (declaration) {
+            is IrClass -> declaration.isExpect
+            is IrProperty -> declaration.isExpect
+            is IrFunction -> declaration.isExpect
+            else -> false
+        }
+    }
+
+    private fun isOptionalAnnotationClass(klass: IrClass): Boolean {
+        return klass.kind == ClassKind.ANNOTATION_CLASS &&
+                klass.isExpect &&
+                klass.annotations.hasAnnotation(ExpectedActualDeclarationChecker.OPTIONAL_EXPECTATION_FQ_NAME)
     }
 
     private fun tryCopyDefaultArguments(declaration: IrValueParameter) {
@@ -73,10 +79,10 @@ class ExpectDeclarationRemover(
 
         val function = declaration.parent as? IrFunction ?: return
 
-        if (function is IrConstructor &&
-            ExpectedActualDeclarationChecker.isOptionalAnnotationClass(function.descriptor.constructedClass)
-        ) {
-            return
+        if (function is IrConstructor) {
+            if (isOptionalAnnotationClass(function.constructedClass)) {
+                return
+            }
         }
 
         if (!function.descriptor.isActual) return
@@ -96,7 +102,7 @@ class ExpectDeclarationRemover(
         val defaultValue = expectParameter.defaultValue ?: return
 
         defaultValue.let { originalDefault ->
-            declaration.defaultValue = IrExpressionBodyImpl(originalDefault.startOffset, originalDefault.endOffset) {
+            declaration.defaultValue = declaration.factory.createExpressionBody(originalDefault.startOffset, originalDefault.endOffset) {
                 expression = originalDefault.expression.deepCopyWithSymbols(function).remapExpectValueSymbols()
             }
         }

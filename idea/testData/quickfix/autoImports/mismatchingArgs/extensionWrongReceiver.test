@@ -6,6 +6,7 @@
 // ACTION: Create member function 'X.foo'
 // ACTION: Convert to run
 // ACTION: Convert to with
+// ACTION: Remove argument
 
 package main
 

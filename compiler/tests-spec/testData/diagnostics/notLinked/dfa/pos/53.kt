@@ -37,6 +37,7 @@ fun case_2() {
 // TESTCASE NUMBER: 3
 val case_3_prop: Int?
     get() = 10
+
 fun case_3(x: Int) = ""
 fun case_3(x: Int?) = 10
 fun case_3() {
@@ -50,6 +51,7 @@ fun case_3() {
 class Case4 {
     var x: Int? = 10
 }
+
 fun case_4(x: Int) = ""
 fun case_4(x: Int?) = 10
 fun case_4(y: Case4) {
@@ -63,6 +65,7 @@ fun case_4(y: Case4) {
 open class Case5 {
     open val x: Int? = 10
 }
+
 fun case_5(x: Int) = ""
 fun case_5(x: Int?) = 10
 fun case_5(y: Case4) {
@@ -76,6 +79,7 @@ fun case_5(y: Case4) {
 class Case6 {
     val x: Int? by lazy { 10 }
 }
+
 fun case_6(x: Int) = ""
 fun case_6(x: Int?) = 10
 fun case_6(y: Case4) {
@@ -89,6 +93,7 @@ fun case_6(y: Case4) {
 var case_7_prop: Int?
     get() = 10
     set(value) {}
+
 fun case_7(x: Int) = ""
 fun case_7(x: Int?) = 10
 fun case_7() {

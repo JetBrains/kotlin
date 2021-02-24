@@ -1,7 +1,7 @@
 package
 
 public sealed data class My {
-    private constructor My(/*0*/ x: kotlin.Int)
+    protected constructor My(/*0*/ x: kotlin.Int)
     public final val x: kotlin.Int
     public final operator /*synthesized*/ fun component1(): kotlin.Int
     public final /*synthesized*/ fun copy(/*0*/ x: kotlin.Int = ...): My
@@ -29,3 +29,4 @@ public sealed data class My {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 }
+

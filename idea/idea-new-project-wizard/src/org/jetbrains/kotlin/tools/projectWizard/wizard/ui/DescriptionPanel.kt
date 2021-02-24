@@ -3,7 +3,6 @@ package org.jetbrains.kotlin.tools.projectWizard.wizard.ui
 import com.intellij.util.ui.HtmlPanel
 import com.intellij.util.ui.UIUtil
 import java.awt.Font
-import javax.swing.event.HyperlinkEvent
 
 class DescriptionPanel(initialText: String? = null) : HtmlPanel() {
     private var bodyText: String? = initialText

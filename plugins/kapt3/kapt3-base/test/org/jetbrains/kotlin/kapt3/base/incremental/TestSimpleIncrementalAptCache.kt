@@ -36,7 +36,7 @@ class TestSimpleIncrementalAptCache {
     fun testAggregatingAnnotations() {
         runProcessor(SimpleProcessor().toAggregating())
 
-        val dirtyFiles = cache.invalidateAndGetDirtyFiles(listOf(TEST_DATA_DIR.resolve("User.java")), emptyList()) as SourcesToReprocess.Incremental
+        val dirtyFiles = cache.invalidateAndGetDirtyFiles(listOf(TEST_DATA_DIR.resolve("User.java").absoluteFile), emptyList()) as SourcesToReprocess.Incremental
         assertEquals(
             listOf(TEST_DATA_DIR.resolve("User.java").absoluteFile, TEST_DATA_DIR.resolve("Address.java").absoluteFile),
             dirtyFiles.toReprocess
@@ -49,7 +49,7 @@ class TestSimpleIncrementalAptCache {
     fun testIsolatingAnnotations() {
         runProcessor(SimpleProcessor().toIsolating())
 
-        val dirtyFiles = cache.invalidateAndGetDirtyFiles(listOf(TEST_DATA_DIR.resolve("User.java")), emptyList()) as SourcesToReprocess.Incremental
+        val dirtyFiles = cache.invalidateAndGetDirtyFiles(listOf(TEST_DATA_DIR.resolve("User.java").absoluteFile), emptyList()) as SourcesToReprocess.Incremental
         assertFalse(generatedSources.resolve("test/UserGenerated.java").exists())
         assertEquals(
             listOf(TEST_DATA_DIR.resolve("User.java").absoluteFile),
@@ -61,7 +61,7 @@ class TestSimpleIncrementalAptCache {
     fun testNonIncremental() {
         runProcessor(SimpleProcessor().toNonIncremental())
 
-        val dirtyFiles = cache.invalidateAndGetDirtyFiles(listOf(TEST_DATA_DIR.resolve("User.java")), emptyList())
+        val dirtyFiles = cache.invalidateAndGetDirtyFiles(listOf(TEST_DATA_DIR.resolve("User.java").absoluteFile), emptyList())
         assertTrue(dirtyFiles is SourcesToReprocess.FullRebuild)
     }
 
@@ -72,6 +72,6 @@ class TestSimpleIncrementalAptCache {
             listOf(processor),
             generatedSources
         ) { elementUtils, trees -> MentionedTypesTaskListener(cache.javaCache, elementUtils, trees) }
-        cache.updateCache(listOf(processor))
+        cache.updateCache(listOf(processor), false)
     }
 }

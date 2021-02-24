@@ -33,6 +33,15 @@ public interface KtDeclarationWithBody extends KtDeclaration {
     @Nullable
     String getName();
 
+    @Nullable
+    default KtContractEffectList getContractDescription() {
+        return null;
+    }
+
+    default boolean hasContractEffectList() {
+        return getContractDescription() != null;
+    }
+
     boolean hasBlockBody();
 
     boolean hasBody();

@@ -63,6 +63,8 @@ external fun oneMoreParamCount(before: IntArray, vararg middle: Int, after: IntA
 @JsName("paramCount")
 external fun <T> oneMoreGenericParamCount(before: Array<T>, vararg middle: T, after: Array<T>): Int
 
+fun runCallable(fn: (Int, Int, Int, Int, Int) -> Int, a1: Int, a2: Int, a3: Int, a4: Int, a5: Int): Int = fn(a1, a2, a3, a4, a5)
+
 fun box(): String {
     if (paramCount() != 0)
         return "failed when call native function without args"
@@ -133,9 +135,13 @@ fun box(): String {
 
     assertEquals(45, sumOfParameters(1, 2, 3, 4, 5, 6, 7, 8, 9))
     assertEquals(45, sumOfParameters(1, 2, *intArrayOf(3, 4, 5, 6, 7, 8, 9)))
+    assertEquals(45, sumOfParameters(1, 2, a = *intArrayOf(3, 4, 5, 6, 7, 8, 9)))
+    assertEquals(45, sumOfParameters(1, 2, a = intArrayOf(3, 4, 5, 6, 7, 8, 9)))
     assertEquals(45, sumOfParameters(1, 2, 3, 4, *intArrayOf(5, 6, 7, 8, 9)))
     assertEquals(90, sumFunValuesOnParameters(1, 2, 3, 4, 5, 6, 7, 8, 9) { 2*it })
     assertEquals(90, sumFunValuesOnParameters(1, 2, *intArrayOf(3, 4, 5, 6, 7, 8, 9)) { 2*it })
+    assertEquals(90, sumFunValuesOnParameters(1, 2, a = *intArrayOf(3, 4, 5, 6, 7, 8, 9)) { 2*it })
+    assertEquals(90, sumFunValuesOnParameters(1, 2, a = intArrayOf(3, 4, 5, 6, 7, 8, 9)) { 2*it })
     assertEquals(90, sumFunValuesOnParameters(1, 2, 3, 4, *intArrayOf(5, 6, 7, 8, 9)) { 2*it })
     assertEquals(90, sumFunValuesOnParameters(1, 2, *intArrayOf(3, 4, 5, 6, 7), 8, 9) { 2*it })
     assertEquals(90, sumFunValuesOnParameters(1, 2, *intArrayOf(3, 4, 5), *intArrayOf(6, 7, 8, 9)) { 2*it })
@@ -147,5 +153,11 @@ fun box(): String {
 
     assertEquals(6, oneMoreParamCount(intArrayOf(1, 2), 3, *intArrayOf(4, 5), 6, after = intArrayOf(7, 8)))
     assertEquals(6, oneMoreGenericParamCount(arrayOf("1", "2"), "3", *arrayOf("4", "5"), "6", after = arrayOf("7", "8")))
+
+    assertEquals(5, runCallable(::paramCount, 1, 2, 3, 4, 5))
+    assertEquals(5, runCallable(::anotherParamCount, 1, 2, 3, 4, 5))
+    assertEquals(5, runCallable(::anotherCount, 1, 2, 3, 4, 5))
+    assertEquals(11111, runCallable(::sumOfParameters, 1, 10, 100, 1000, 10000))
+
     return "OK"
 }

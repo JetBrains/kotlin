@@ -1,0 +1,60 @@
+open enum class A : Enum<A> {
+  X = A(arg = "asd")
+
+  Y = Y()
+  private enum entry class Y : A {
+    private constructor() /* primary */ {
+      super/*A*/()
+      /* <init>() */
+
+    }
+
+    override fun f(): String {
+      return super.f().plus(other = "#Y")
+    }
+
+  }
+
+  Z = A(x = 5)
+
+  val prop1: String
+    get
+
+  val prop2: String
+    field = "const2"
+    get
+
+  var prop3: String
+    field = ""
+    get
+    set
+
+  private constructor(arg: String) {
+    super/*Enum*/<A>()
+    /* <init>() */
+
+    <this>.#prop1 = arg
+  }
+
+  private constructor() {
+    super/*Enum*/<A>()
+    /* <init>() */
+
+    <this>.#prop1 = "default"
+    <this>.<set-prop3>(<set-?> = "empty")
+  }
+
+  private constructor(x: Int) {
+    this/*A*/(arg = x.toString())
+    <this>.<set-prop3>(<set-?> = "int")
+  }
+
+  open fun f(): String {
+    return <this>.<get-prop1>().toString() + "#" + <this>.<get-prop2>().toString() + "#" + <this>.<get-prop3>().toString()
+  }
+
+  fun values(): Array<A> /* Synthetic body for ENUM_VALUES */
+
+  fun valueOf(value: String): A /* Synthetic body for ENUM_VALUEOF */
+
+}

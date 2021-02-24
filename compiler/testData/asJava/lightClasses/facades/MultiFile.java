@@ -1,3 +1,4 @@
-public final class MultiFile {
-    public static final int getFoo() { /* compiled code */ }
+public final class MultiFile /* test.MultiFile*/ {
+  public static final int getFoo();//  getFoo()
+
 }

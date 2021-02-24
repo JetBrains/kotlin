@@ -2,15 +2,15 @@
 
 package aliases
 
-actual interface A {
-    actual fun commonFun()
+actual interface <!LINE_MARKER("descr='Has declaration in common module'")!>A<!> {
+    actual fun <!LINE_MARKER("descr='Has declaration in common module'")!>commonFun<!>()
     fun platformFun()
 }
 
 typealias A2 = A1
 typealias A3 = A
 
-actual typealias B = A
+actual typealias <!LINE_MARKER("descr='Has declaration in common module'")!>B<!> = A
 
 typealias B2 = B
 typealias B3 = B1

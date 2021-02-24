@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 class BBB
 
 fun foo(p: (Int, String) -> Unit) { }

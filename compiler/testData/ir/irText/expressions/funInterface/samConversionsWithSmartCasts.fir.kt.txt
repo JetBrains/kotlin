@@ -1,0 +1,69 @@
+fun interface KRunnable {
+  abstract fun run()
+
+}
+
+fun <T : Any?> id(x: T): T {
+  return x
+}
+
+fun run1(r: KRunnable) {
+}
+
+fun run2(r1: KRunnable, r2: KRunnable) {
+}
+
+fun <T> test0(a: T) where T : KRunnable, T : Function0<Unit> {
+  run1(r = a)
+}
+
+fun test1(a: Function0<Unit>) {
+  when {
+    a is KRunnable -> run1(r = a /*as KRunnable */)
+  }
+}
+
+fun test2(a: KRunnable) {
+  a as Function0<Unit> /*~> Unit */
+  run1(r = a /*as Function0<Unit> */)
+}
+
+fun test3(a: Function0<Unit>) {
+  when {
+    a is KRunnable -> run2(r1 = a /*as KRunnable */, r2 = a /*as KRunnable */)
+  }
+}
+
+fun test4(a: Function0<Unit>, b: Function0<Unit>) {
+  when {
+    a is KRunnable -> run2(r1 = a /*as KRunnable */, r2 = b /*-> KRunnable */)
+  }
+}
+
+fun test5(a: Any) {
+  when {
+    a is KRunnable -> run1(r = a /*as KRunnable */)
+  }
+}
+
+fun test5x(a: Any) {
+  when {
+    a is KRunnable -> { // BLOCK
+      a /*as KRunnable */ as Function0<Unit> /*~> Unit */
+      run1(r = a /*as KRunnable */)
+    }
+  }
+}
+
+fun test6(a: Any) {
+  a as Function0<Unit> /*~> Unit */
+  run1(r = a /*as Function0<Unit> */ /*-> KRunnable */)
+}
+
+fun test8(a: Function0<Unit>) {
+  run1(r = id<Function0<Unit>>(x = a) /*-> KRunnable */)
+}
+
+fun test9() {
+  run1(r = ::test9 /*-> KRunnable */)
+}

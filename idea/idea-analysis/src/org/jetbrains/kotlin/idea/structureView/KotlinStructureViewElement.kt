@@ -26,7 +26,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
@@ -44,9 +44,16 @@ class KotlinStructureViewElement(
                 KotlinStructureElementPresentation(isInherited, element, countDescriptor())
             }
 
+    @Deprecated("Use 'visibility' instead.", level = DeprecationLevel.ERROR)
     var isPublic
             by AssignableLazyProperty {
                 isPublic(countDescriptor())
+            }
+        private set
+
+    var visibility
+            by AssignableLazyProperty {
+                Visibility(countDescriptor())
             }
         private set
 
@@ -54,7 +61,7 @@ class KotlinStructureViewElement(
         if (element !is KtElement) {
             // Avoid storing descriptor in fields
             kotlinPresentation = KotlinStructureElementPresentation(isInherited, element, descriptor)
-            isPublic = isPublic(descriptor)
+            visibility = Visibility(descriptor)
         }
     }
 
@@ -104,7 +111,7 @@ class KotlinStructureViewElement(
     }
 
     private fun isPublic(descriptor: DeclarationDescriptor?) =
-        (descriptor as? DeclarationDescriptorWithVisibility)?.visibility == Visibilities.PUBLIC
+        (descriptor as? DeclarationDescriptorWithVisibility)?.visibility == DescriptorVisibilities.PUBLIC
 
     private fun countDescriptor(): DeclarationDescriptor? {
         val element = element
@@ -119,6 +126,22 @@ class KotlinStructureViewElement(
                 } else null
             }
         }
+    }
+
+    class Visibility(descriptor: DeclarationDescriptor?) {
+        private val visibility = (descriptor as? DeclarationDescriptorWithVisibility)?.visibility
+
+        val isPublic: Boolean
+            get() = visibility == DescriptorVisibilities.PUBLIC
+
+        val accessLevel: Int?
+            get() = when {
+                visibility == DescriptorVisibilities.PUBLIC -> 1
+                visibility == DescriptorVisibilities.INTERNAL -> 2
+                visibility == DescriptorVisibilities.PROTECTED -> 3
+                visibility?.let { DescriptorVisibilities.isPrivate(it) } == true -> 4
+                else -> null
+            }
     }
 }
 

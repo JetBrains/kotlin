@@ -1,0 +1,9 @@
+fun f(x: Any): String {
+  when {
+    x is A<*> -> return x /*as A<*> */.call(block = local fun <anonymous>(y: Any?): String? {
+      return "OK"
+    }
+ /*-> I<Any?>? */) /*!! String */
+  }
+  return "Fail"
+}

@@ -10,6 +10,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.FrontendInternals
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyIntention
@@ -35,10 +37,12 @@ open class RemovePartsFromPropertyFix(
         element.setter?.bodyExpression != null
     )
 
-    override fun getText(): String =
-        "Remove ${partsToRemove(removeGetter, removeSetter, removeInitializer)} from property"
+    override fun getText(): String = KotlinBundle.message(
+        "remove.0.from.property",
+        partsToRemove(removeGetter, removeSetter, removeInitializer)
+    )
 
-    override fun getFamilyName(): String = "Remove parts from property"
+    override fun getFamilyName(): String = KotlinBundle.message("remove.parts.from.property")
 
     override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {
         val type = QuickFixUtil.getDeclarationReturnType(element) ?: return false
@@ -81,7 +85,8 @@ open class RemovePartsFromPropertyFix(
             // The ideal fix would be using a String that needs to be rendered instead of actual type
             //
             // But calling another type refinement also helps because it makes KotlinType instance using new module descriptor
-            @UseExperimental(TypeRefinement::class)
+            @OptIn(TypeRefinement::class)
+            @OptIn(FrontendInternals::class)
             typeToAdd = replaceElement.getResolutionFacade().frontendService<KotlinTypeRefiner>().refineType(typeToAdd)
 
             SpecifyTypeExplicitlyIntention.addTypeAnnotation(editor, replaceElement, typeToAdd)
@@ -90,17 +95,17 @@ open class RemovePartsFromPropertyFix(
 
     private fun partsToRemove(getter: Boolean, setter: Boolean, initializer: Boolean): String = buildString {
         if (getter) {
-            append("getter")
+            append(KotlinBundle.message("text.getter"))
             if (setter && initializer)
                 append(", ")
             else if (setter || initializer)
-                append(" and ")
+                append(" ${KotlinBundle.message("configuration.text.and")} ")
         }
         if (setter) {
-            append("setter")
-            if (initializer) append(" and ")
+            append(KotlinBundle.message("text.setter"))
+            if (initializer) append(" ${KotlinBundle.message("configuration.text.and")} ")
         }
-        if (initializer) append("initializer")
+        if (initializer) append(KotlinBundle.message("text.initializer"))
     }
 
     companion object : KotlinSingleIntentionActionFactory() {
@@ -113,8 +118,7 @@ open class RemovePartsFromPropertyFix(
 
     object LateInitFactory : KotlinSingleIntentionActionFactory() {
         public override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtProperty>? {
-            val element = Errors.INAPPLICABLE_LATEINIT_MODIFIER.cast(diagnostic).psiElement
-            val property = PsiTreeUtil.getParentOfType(element, KtProperty::class.java) ?: return null
+            val property = Errors.INAPPLICABLE_LATEINIT_MODIFIER.cast(diagnostic).psiElement as? KtProperty ?: return null
             val hasInitializer = property.hasInitializer()
             val hasGetter = property.getter?.bodyExpression != null
             val hasSetter = property.setter?.bodyExpression != null

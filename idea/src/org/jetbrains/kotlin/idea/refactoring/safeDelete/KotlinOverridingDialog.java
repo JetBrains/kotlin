@@ -86,7 +86,7 @@ class KotlinOverridingDialog extends DialogWrapper {
             myMethodText[i] = formatElement(((KotlinSafeDeleteOverridingUsageInfo) myOverridingMethods.get(i)).getOverridingElement());
         }
         myUsagePreviewPanel = new UsagePreviewPanel(project, new UsageViewPresentation());
-        setTitle(KotlinBundle.message("unused.overriding.methods.title"));
+        setTitle(KotlinBundle.message("override.declaration.unused.overriding.methods.title"));
         init();
     }
 
@@ -100,7 +100,7 @@ class KotlinOverridingDialog extends DialogWrapper {
                 DeclarationDescriptor containingDescriptor = declarationDescriptor.getContainingDeclaration();
                 if (containingDescriptor instanceof ClassDescriptor) {
                     return KotlinBundle.message(
-                            "x.in.y",
+                            "override.declaration.x.in.y",
                             DescriptorRenderer.COMPACT.render(declarationDescriptor),
                             IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.render(containingDescriptor)
                     );
@@ -144,8 +144,8 @@ class KotlinOverridingDialog extends DialogWrapper {
     protected JComponent createNorthPanel() {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.add(new JLabel(KotlinBundle.message("there.are.unused.methods.that.override.methods.you.delete")));
-        panel.add(new JLabel(KotlinBundle.message("choose.the.ones.you.want.to.be.deleted")));
+        panel.add(new JLabel(KotlinBundle.message("override.declaration.unused.overriding.methods.description")));
+        panel.add(new JLabel(KotlinBundle.message("override.declaration.choose.to.delete")));
         return panel;
     }
 
@@ -251,7 +251,7 @@ class KotlinOverridingDialog extends DialogWrapper {
                 case CHECK_COLUMN:
                     return " ";
                 default:
-                    return KotlinBundle.message("method.column");
+                    return KotlinBundle.message("override.declaration.member");
             }
         }
 

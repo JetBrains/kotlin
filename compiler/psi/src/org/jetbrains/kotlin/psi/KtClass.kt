@@ -23,8 +23,6 @@ open class KtClass : KtClassOrObject {
     private val _stub: KotlinClassStub?
         get() = stub as? KotlinClassStub
 
-    fun getColon(): PsiElement? = findChildByType(KtTokens.COLON)
-
     fun getProperties(): List<KtProperty> = body?.properties.orEmpty()
 
     fun isInterface(): Boolean =
@@ -34,12 +32,16 @@ open class KtClass : KtClassOrObject {
     fun isData(): Boolean = hasModifier(KtTokens.DATA_KEYWORD)
     fun isSealed(): Boolean = hasModifier(KtTokens.SEALED_KEYWORD)
     fun isInner(): Boolean = hasModifier(KtTokens.INNER_KEYWORD)
+    fun isInline(): Boolean = hasModifier(KtTokens.INLINE_KEYWORD)
+    fun isValue(): Boolean = hasModifier(KtTokens.VALUE_KEYWORD)
 
     override fun getCompanionObjects(): List<KtObjectDeclaration> = body?.allCompanionObjects.orEmpty()
 
     fun getClassOrInterfaceKeyword(): PsiElement? = findChildByType(TokenSet.create(KtTokens.CLASS_KEYWORD, KtTokens.INTERFACE_KEYWORD))
 
     fun getClassKeyword(): PsiElement? = findChildByType(KtTokens.CLASS_KEYWORD)
+
+    fun getFunKeyword(): PsiElement? = modifierList?.getModifier(KtTokens.FUN_KEYWORD)
 }
 
 fun KtClass.createPrimaryConstructorIfAbsent(): KtPrimaryConstructor {

@@ -6,17 +6,17 @@
 package org.jetbrains.kotlin.fir.tree.generator.printer
 
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
-import org.jetbrains.kotlin.fir.tree.generator.model.Element
-import org.jetbrains.kotlin.fir.tree.generator.model.Implementation
+import org.jetbrains.kotlin.fir.tree.generator.model.*
 import org.jetbrains.kotlin.fir.tree.generator.pureAbstractElementType
+import org.jetbrains.kotlin.fir.tree.generator.util.get
 
 import java.io.File
 
-fun Element.generateCode(generationPath: File) {
+fun Element.generateCode(generationPath: File): GeneratedFile {
     val dir = generationPath.resolve(packageName.replace(".", "/"))
-    dir.mkdirs()
     val file = File(dir, "$type.kt")
-    file.useSmartPrinter {
+    val stringBuilder = StringBuilder()
+    SmartPrinter(stringBuilder).apply {
         printCopyright()
         println("package $packageName")
         println()
@@ -28,6 +28,7 @@ fun Element.generateCode(generationPath: File) {
         printGeneratedMessage()
         printElement(this@generateCode)
     }
+    return GeneratedFile(file, stringBuilder.toString())
 }
 
 fun SmartPrinter.printElement(element: Element) {
@@ -84,11 +85,18 @@ fun SmartPrinter.printElement(element: Element) {
             override()
             println("fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visit$name(this, data)")
 
-            fields.filter { it.withReplace }.forEach {
+            fun Field.replaceDeclaration(override: Boolean, overridenType: Importable? = null, forceNullable: Boolean = false) {
                 println()
                 abstract()
-                if (it.fromParent) print("override ")
-                println(it.replaceFunctionDeclaration())
+                if (override) print("override ")
+                println(replaceFunctionDeclaration(overridenType, forceNullable))
+            }
+
+            allFields.filter { it.withReplace }.forEach {
+                it.replaceDeclaration(overridenFields[it, it], forceNullable = it.useNullableForReplace)
+                for (overridenType in it.overridenTypes) {
+                    it.replaceDeclaration(true, overridenType)
+                }
             }
 
             for (field in allFields) {

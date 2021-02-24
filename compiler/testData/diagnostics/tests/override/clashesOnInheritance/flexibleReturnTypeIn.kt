@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: InOut.kt
 interface In<in T>
 

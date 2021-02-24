@@ -9,6 +9,7 @@ import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.util.findLabelAndCall
 import org.jetbrains.kotlin.name.Name
@@ -22,8 +23,8 @@ class ChangeToLabeledReturnFix(
     element: KtReturnExpression, val labeledReturn: String
 ) : KotlinQuickFixAction<KtReturnExpression>(element) {
 
-    override fun getFamilyName() = "Change to return with label"
-    override fun getText() = "Change to '$labeledReturn'"
+    override fun getFamilyName() = KotlinBundle.message("fix.change.to.labeled.return.family")
+    override fun getText() = KotlinBundle.message("fix.change.to.labeled.return.text", labeledReturn)
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val returnExpression = element ?: return

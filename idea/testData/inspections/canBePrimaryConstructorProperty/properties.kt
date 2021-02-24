@@ -45,3 +45,48 @@ class Bar(x : String) {
         }
     }
 }
+
+// KT-32561
+open class X(property: String) {
+    init {
+        print(property)
+    }
+
+    open val property: String = property
+}
+
+abstract class X2(property: String) {
+    init {
+        print(property)
+    }
+
+    open val property: String = property
+}
+
+sealed class X3(property: String) {
+    init {
+        print(property)
+    }
+
+    open val property: String = property
+}
+
+open class X4(property: String) {
+    init {
+        print(property)
+    }
+
+    val property: String = property
+}
+
+class X5(property: String) {
+    init {
+        print(property)
+    }
+
+    open val property: String = property
+}
+
+open class X6(property: String) {
+    open val property: String = property
+}

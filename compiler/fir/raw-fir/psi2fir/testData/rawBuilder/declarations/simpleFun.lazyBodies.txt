@@ -1,0 +1,3 @@
+FILE: simpleFun.kt
+    public? final? fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? suspend fun bar(): R|kotlin/Unit| { LAZY_BLOCK }

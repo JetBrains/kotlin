@@ -1,3 +1,4 @@
+// !LANGUAGE: -NewInference
 // WITH_RUNTIME
 // FILE: genericSamProjectedOut.kt
 import example.SomeJavaClass

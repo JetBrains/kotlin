@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.types
 import com.google.common.collect.Maps
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.PlatformToKotlinClassMap
+import org.jetbrains.kotlin.builtins.PlatformToKotlinClassMapper
 import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -41,7 +41,7 @@ object CastDiagnosticsUtil {
     fun isCastPossible(
         lhsType: KotlinType,
         rhsType: KotlinType,
-        platformToKotlinClassMap: PlatformToKotlinClassMap
+        platformToKotlinClassMapper: PlatformToKotlinClassMapper
     ): Boolean {
         val rhsNullable = TypeUtils.isNullableType(rhsType)
         val lhsNullable = TypeUtils.isNullableType(lhsType)
@@ -51,7 +51,7 @@ object CastDiagnosticsUtil {
         if (KotlinBuiltIns.isNullableNothing(rhsType)) return lhsNullable
         if (lhsNullable && rhsNullable) return true
         if (lhsType.isError) return true
-        if (isRelated(lhsType, rhsType, platformToKotlinClassMap)) return true
+        if (isRelated(lhsType, rhsType, platformToKotlinClassMapper)) return true
         // This is an oversimplification (which does not render the method incomplete):
         // we consider any type parameter capable of taking any value, which may be made more precise if we considered bounds
         if (TypeUtils.isTypeParameter(lhsType) || TypeUtils.isTypeParameter(rhsType)) return true
@@ -70,20 +70,20 @@ object CastDiagnosticsUtil {
      * Due to limitations in PlatformToKotlinClassMap, we only consider mapping of platform classes to Kotlin classed
      * (i.e. java.lang.String -> kotlin.String) and ignore mappings that go the other way.
      */
-    private fun isRelated(a: KotlinType, b: KotlinType, platformToKotlinClassMap: PlatformToKotlinClassMap): Boolean {
-        val aClasses = mapToPlatformIndependentClasses(a, platformToKotlinClassMap)
-        val bClasses = mapToPlatformIndependentClasses(b, platformToKotlinClassMap)
+    private fun isRelated(a: KotlinType, b: KotlinType, platformToKotlinClassMapper: PlatformToKotlinClassMapper): Boolean {
+        val aClasses = mapToPlatformIndependentClasses(a, platformToKotlinClassMapper)
+        val bClasses = mapToPlatformIndependentClasses(b, platformToKotlinClassMapper)
 
         return aClasses.any { DescriptorUtils.isSubtypeOfClass(b, it) } || bClasses.any { DescriptorUtils.isSubtypeOfClass(a, it) }
     }
 
     private fun mapToPlatformIndependentClasses(
         type: KotlinType,
-        platformToKotlinClassMap: PlatformToKotlinClassMap
+        platformToKotlinClassMapper: PlatformToKotlinClassMapper
     ): List<ClassDescriptor> {
         val descriptor = type.constructor.declarationDescriptor as? ClassDescriptor ?: return listOf()
 
-        return platformToKotlinClassMap.mapPlatformClass(descriptor) + descriptor
+        return platformToKotlinClassMapper.mapPlatformClass(descriptor) + descriptor
     }
 
     private fun isFinal(type: KotlinType) = !TypeUtils.canHaveSubtypes(KotlinTypeChecker.DEFAULT, type)

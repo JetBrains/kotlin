@@ -1,9 +1,11 @@
-// IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND_FIR: JVM_IR
 fun Byte.inByte(left: Byte, right: Byte) = this in left..right
 
 fun Short.inInt(left: Int, right: Int) = this in left .. right
 
 fun Short.inByte(left: Byte, right: Byte) = this in left..right
+
+fun inChar(x: Char, left: Char, right: Char) = x in left..right
 
 fun inInt(x: Int, left: Int, right: Int) = x in left..right
 
@@ -22,3 +24,4 @@ fun inCharWithNullableParameter(x: Char?, left: Char, right: Char) = x!! in left
 // 0 CHECKCAST
 // 0 INVOKEINTERFACE
 // 0 <init>
+// 0 contains

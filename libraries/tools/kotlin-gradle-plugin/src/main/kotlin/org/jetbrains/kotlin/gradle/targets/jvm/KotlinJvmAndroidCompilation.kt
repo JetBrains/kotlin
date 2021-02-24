@@ -9,8 +9,12 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import com.android.build.gradle.api.BaseVariant
 import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Property
+import org.gradle.api.tasks.TaskProvider
+import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.getJavaTaskProvider
 import org.jetbrains.kotlin.gradle.plugin.getTestedVariantData
 
  class KotlinJvmAndroidCompilation(
@@ -18,10 +22,18 @@ import org.jetbrains.kotlin.gradle.plugin.getTestedVariantData
      name: String
  ) : AbstractKotlinCompilationToRunnableFiles<KotlinJvmOptions>(target, name) {
 
-     lateinit internal var androidVariant: BaseVariant
+    override val kotlinOptions: KotlinJvmOptions = KotlinJvmOptionsImpl()
+
+    lateinit var androidVariant: BaseVariant
+        internal set
 
      override val compileKotlinTask: org.jetbrains.kotlin.gradle.tasks.KotlinCompile
          get() = super.compileKotlinTask as org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+     @Suppress("UNCHECKED_CAST")
+     override val compileKotlinTaskProvider: TaskProvider<out org.jetbrains.kotlin.gradle.tasks.KotlinCompile>
+         get() = super.compileKotlinTaskProvider as TaskProvider<out org.jetbrains.kotlin.gradle.tasks.KotlinCompile>
+
 
      @Suppress("UnstableApiUsage")
      internal val testedVariantArtifacts: Property<FileCollection> = target.project.objects.property(FileCollection::class.java)
@@ -41,4 +53,7 @@ import org.jetbrains.kotlin.gradle.plugin.getTestedVariantData
              androidVariant.compileConfiguration.name,
              androidVariant.runtimeConfiguration.name
          )
+
+     val compileJavaTaskProvider: TaskProvider<out JavaCompile>?
+         get() = androidVariant.getJavaTaskProvider()
  }

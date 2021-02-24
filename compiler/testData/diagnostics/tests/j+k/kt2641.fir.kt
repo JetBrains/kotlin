@@ -5,6 +5,8 @@ package a
 import java.util.Iterator
 import java.lang.Comparable as Comp
 
+import checkSubtype
+
 fun bar(any: Any): java.lang.Iterable<Int>? {
     val a: java.lang.Comparable<String>? = null
     val b: Iterable<Integer>

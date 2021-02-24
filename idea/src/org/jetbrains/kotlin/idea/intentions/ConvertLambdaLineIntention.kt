@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiComment
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.inspections.RedundantSemicolonInspection
 import org.jetbrains.kotlin.idea.refactoring.getLineNumber
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -17,7 +18,8 @@ import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespace
 import org.jetbrains.kotlin.psi.psiUtil.getPrevSiblingIgnoringWhitespace
 
 sealed class ConvertLambdaLineIntention(private val toMultiLine: Boolean) : SelfTargetingIntention<KtLambdaExpression>(
-    KtLambdaExpression::class.java, "Convert to ${if (toMultiLine) "multi" else "single"}-line lambda"
+    KtLambdaExpression::class.java,
+    KotlinBundle.lazyMessage("intention.convert.lambda.line", 1.takeIf { toMultiLine } ?: 0),
 ) {
     override fun isApplicableTo(element: KtLambdaExpression, caretOffset: Int): Boolean {
         val functionLiteral = element.functionLiteral

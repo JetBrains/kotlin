@@ -69,7 +69,6 @@ fun <T> tt(t : T) : T {
   (x`java::java.util.ArrayList.set()`[1]) = null
   x`java::java.util.ArrayList.set()`[null] = null
   (x`java::java.util.ArrayList.set()`[null, 2]) = null
-  (`not`!foo)[1]`:kotlin::Char`
   val y = Bar()
   y`inc`++
   `inc`++y

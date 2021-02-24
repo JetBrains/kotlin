@@ -1,6 +1,6 @@
 // "Remove unused unary operator" "true"
 fun test(foo: Int?): Int {
     val a = 1 + 2
-    <caret>- 3
+    - 3<caret>
     return a
 }

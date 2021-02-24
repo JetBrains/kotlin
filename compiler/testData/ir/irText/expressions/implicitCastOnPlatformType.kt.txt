@@ -1,0 +1,4 @@
+fun test(): String {
+  return getProperty(p0 = "test") /*!! String */
+}
+

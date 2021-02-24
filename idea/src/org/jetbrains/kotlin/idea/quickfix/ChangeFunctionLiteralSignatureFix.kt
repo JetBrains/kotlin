@@ -23,6 +23,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.CollectingNameValidator
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
@@ -37,7 +38,7 @@ class ChangeFunctionLiteralSignatureFix private constructor(
     private val parameterTypes: List<KotlinType>
 ) : ChangeFunctionSignatureFix(functionLiteral, functionDescriptor) {
 
-    override fun getText() = "Change the signature of lambda expression"
+    override fun getText() = KotlinBundle.message("fix.change.signature.lambda")
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return

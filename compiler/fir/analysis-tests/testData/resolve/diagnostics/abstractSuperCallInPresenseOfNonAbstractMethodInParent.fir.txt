@@ -1,0 +1,37 @@
+FILE: abstractSuperCallInPresenseOfNonAbstractMethodInParent.kt
+    public abstract interface IWithToString : R|kotlin/Any| {
+        public abstract override fun toString(): R|kotlin/String|
+
+        public abstract fun foo(): R|kotlin/String|
+
+        public abstract fun bar(): R|kotlin/String|
+
+    }
+    public open class B : R|kotlin/Any| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open fun foo(): R|kotlin/String| {
+            ^foo String()
+        }
+
+    }
+    public final class A : R|IWithToString|, R|B| {
+        public constructor(): R|A| {
+            super<R|B|>()
+        }
+
+        public final override fun toString(): R|kotlin/String| {
+            ^toString this@R|/A|.super<R|B|>.R|kotlin/Any.toString|()
+        }
+
+        public final override fun foo(): R|kotlin/String| {
+            ^foo this@R|/A|.super<R|B|>.R|/B.foo|()
+        }
+
+        public final override fun bar(): R|kotlin/String| {
+            ^bar this@R|/A|.super<R|IWithToString|>.R|/IWithToString.bar|()
+        }
+
+    }

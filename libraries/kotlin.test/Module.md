@@ -2,7 +2,7 @@
 
 ## kotlin.test
 
-`kotlin.test` library provides [annotations](kotlin.test/index.html#annotations) to mark test functions and a set of [utility functions](kotlin.test/index.html#functions) for performing assertions in tests, 
+The `kotlin.test` library provides [annotations](kotlin.test/index.html#annotations) to mark test functions and a set of [utility functions](kotlin.test/index.html#functions) for performing assertions in tests, 
 independently of the test framework being used. 
 
 The test framework is abstracted through the [Asserter][kotlin.test.Asserter] class. 

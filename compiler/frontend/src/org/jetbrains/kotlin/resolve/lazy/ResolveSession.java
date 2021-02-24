@@ -85,6 +85,9 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     private WrappedTypeFactory wrappedTypeFactory;
     private PlatformDiagnosticSuppressor platformDiagnosticSuppressor;
     private SamConversionResolver samConversionResolver;
+    private SealedClassInheritorsProvider sealedClassInheritorsProvider;
+
+    private AdditionalClassPartsProvider additionalClassPartsProvider;
 
     private final SyntheticResolveExtension syntheticResolveExtension;
 
@@ -157,6 +160,16 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
         this.samConversionResolver = samConversionResolver;
     }
 
+    @Inject
+    public void setAdditionalClassPartsProvider(@NotNull AdditionalClassPartsProvider additionalClassPartsProvider) {
+        this.additionalClassPartsProvider = additionalClassPartsProvider;
+    }
+
+    @Inject
+    public void setSealedClassInheritorsProvider(@NotNull SealedClassInheritorsProvider sealedClassInheritorsProvider) {
+        this.sealedClassInheritorsProvider = sealedClassInheritorsProvider;
+    }
+
     // Only calls from injectors expected
     @Deprecated
     public ResolveSession(
@@ -179,7 +192,17 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
 
         this.declarationProviderFactory = declarationProviderFactory;
 
-        this.packageFragmentProvider = new PackageFragmentProvider() {
+        this.packageFragmentProvider = new PackageFragmentProviderOptimized() {
+            @Override
+            public void collectPackageFragments(
+                    @NotNull FqName fqName, @NotNull Collection<PackageFragmentDescriptor> packageFragments
+            ) {
+                LazyPackageDescriptor fragment = getPackageFragment(fqName);
+                if (fragment != null) {
+                    packageFragments.add(fragment);
+                }
+            }
+
             @NotNull
             @Override
             public List<PackageFragmentDescriptor> getPackageFragments(@NotNull FqName fqName) {
@@ -489,5 +512,17 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     @Override
     public SamConversionResolver getSamConversionResolver() {
         return samConversionResolver;
+    }
+
+    @NotNull
+    @Override
+    public AdditionalClassPartsProvider getAdditionalClassPartsProvider() {
+        return additionalClassPartsProvider;
+    }
+
+    @NotNull
+    @Override
+    public SealedClassInheritorsProvider getSealedClassInheritorsProvider() {
+        return sealedClassInheritorsProvider;
     }
 }

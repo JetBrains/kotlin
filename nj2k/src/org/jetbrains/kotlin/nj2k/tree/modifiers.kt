@@ -34,6 +34,7 @@ enum class OtherModifier(override val text: String) : Modifier {
     SUSPEND("suspend"),
     TAILREC("tailrec"),
     VARARG("vararg"),
+    FUN("fun"),
 
     NATIVE("native"),
     STATIC("static"),
@@ -136,8 +137,8 @@ val JKModifierElement.modifier: Modifier
 
 inline fun JKModifiersListOwner.forEachModifier(action: (JKModifierElement) -> Unit) {
     safeAs<JKVisibilityOwner>()?.visibilityElement?.let(action)
-    safeAs<JKOtherModifiersOwner>()?.otherModifierElements?.forEach(action)
     safeAs<JKModalityOwner>()?.modalityElement?.let(action)
+    safeAs<JKOtherModifiersOwner>()?.otherModifierElements?.forEach(action)
     safeAs<JKMutabilityOwner>()?.mutabilityElement?.let(action)
 }
 

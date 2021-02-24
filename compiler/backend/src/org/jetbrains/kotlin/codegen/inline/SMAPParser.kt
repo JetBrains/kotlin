@@ -21,57 +21,64 @@ object SMAPParser {
     @JvmStatic
     fun parseOrCreateDefault(mappingInfo: String?, source: String?, path: String, methodStartLine: Int, methodEndLine: Int): SMAP {
         if (mappingInfo != null && mappingInfo.isNotEmpty()) {
-            return parse(mappingInfo)
+            parseOrNull(mappingInfo)?.let { return it }
         }
-
-        val mapping =
-            if (source == null || source.isEmpty() || methodStartLine > methodEndLine)
-                FileMapping.SKIP
-            else
-                FileMapping(source, path).apply {
-                    if (methodStartLine <= methodEndLine) {
-                        //one to one
-                        addRangeMapping(RangeMapping(methodStartLine, methodStartLine, methodEndLine - methodStartLine + 1))
-                    }
-                }
-
+        if (source == null || source.isEmpty() || methodStartLine > methodEndLine) {
+            return SMAP(listOf())
+        }
+        val mapping = FileMapping(source, path).apply {
+            mapNewInterval(methodStartLine, methodStartLine, methodEndLine - methodStartLine + 1)
+        }
         return SMAP(listOf(mapping))
     }
 
-    @JvmStatic
-    fun parse(mappingInfo: String): SMAP {
+    fun parseOrNull(mappingInfo: String): SMAP? =
+        parseStratum(mappingInfo, KOTLIN_STRATA_NAME, parseStratum(mappingInfo, KOTLIN_DEBUG_STRATA_NAME, null))
+
+    private fun parseStratum(mappingInfo: String, stratum: String, callSites: SMAP?): SMAP? {
         val fileMappings = linkedMapOf<Int, FileMapping>()
+        val iterator = mappingInfo.lineSequence().dropWhile { it != "${SMAP.STRATA_SECTION} $stratum" }.drop(1).iterator()
+        // JSR-045 allows the line section to come before the file section, but we don't generate SMAPs like this.
+        if (!iterator.hasNext() || iterator.next() != SMAP.FILE_SECTION) return null
 
-        val iterator = mappingInfo.lineSequence().dropWhile { it.trim() != SMAP.FILE_SECTION }.drop(1).iterator()
-        while (iterator.hasNext()) {
-            val fileDeclaration = iterator.next().trim()
-            if (fileDeclaration == SMAP.LINE_SECTION) break
-
-            if (!fileDeclaration.startsWith('+')) {
-                throw AssertionError("File declaration should be in extended form, but: $fileDeclaration in $mappingInfo")
+        for (line in iterator) {
+            when {
+                line == SMAP.LINE_SECTION -> break
+                line == SMAP.FILE_SECTION || line == SMAP.END || line.startsWith(SMAP.STRATA_SECTION) -> return null
             }
 
-            val indexAndFileInternalName = fileDeclaration.substringAfter("+ ").trim()
+            val indexAndFileInternalName = if (line.startsWith("+ ")) line.substring(2) else line
             val fileIndex = indexAndFileInternalName.substringBefore(' ').toInt()
             val fileName = indexAndFileInternalName.substringAfter(' ')
-            val path = iterator.next().trim()
+            val path = if (line.startsWith("+ ")) iterator.next() else fileName
             fileMappings[fileIndex] = FileMapping(fileName, path)
         }
 
-        for (lineMapping in iterator) {
-            if (lineMapping.trim() == SMAP.END) break
-            /*only simple mapping now*/
-            val targetSplit = lineMapping.indexOf(':')
-            val originalPart = lineMapping.substring(0, targetSplit)
-            val rangeSeparator = originalPart.indexOf(',').let { if (it < 0) targetSplit else it }
+        for (line in iterator) {
+            when {
+                line == SMAP.LINE_SECTION || line == SMAP.FILE_SECTION -> return null
+                line == SMAP.END || line.startsWith(SMAP.STRATA_SECTION) -> break
+            }
 
-            val fileSeparator = lineMapping.indexOf('#')
-            val originalIndex = originalPart.substring(0, fileSeparator).toInt()
-            val range = if (rangeSeparator == targetSplit) 1 else originalPart.substring(rangeSeparator + 1, targetSplit).toInt()
+            // <source>#<file>,<sourceRange>:<dest>,<destMultiplier>
+            val fileSeparator = line.indexOf('#')
+            if (fileSeparator < 0) return null
+            val destSeparator = line.indexOf(':', fileSeparator)
+            if (destSeparator < 0) return null
+            val sourceRangeSeparator = line.indexOf(',').let { if (it !in fileSeparator..destSeparator) destSeparator else it }
+            val destMultiplierSeparator = line.indexOf(',', destSeparator).let { if (it < 0) line.length else it }
 
-            val fileIndex = lineMapping.substring(fileSeparator + 1, rangeSeparator).toInt()
-            val targetIndex = lineMapping.substring(targetSplit + 1).toInt()
-            fileMappings[fileIndex]!!.addRangeMapping(RangeMapping(originalIndex, targetIndex, range))
+            val file = fileMappings[line.substring(fileSeparator + 1, sourceRangeSeparator).toInt()] ?: return null
+            val source = line.substring(0, fileSeparator).toInt()
+            val dest = line.substring(destSeparator + 1, destMultiplierSeparator).toInt()
+            val range = when {
+                // These two fields have a different meaning, but for compatibility we treat them the same. See `SMAPBuilder`.
+                destMultiplierSeparator != line.length -> line.substring(destMultiplierSeparator + 1).toInt()
+                sourceRangeSeparator != destSeparator -> line.substring(sourceRangeSeparator + 1, destSeparator).toInt()
+                else -> 1
+            }
+            // Here we assume that each range in `Kotlin` is entirely within at most one range in `KotlinDebug`.
+            file.mapNewInterval(source, dest, range, callSites?.findRange(dest)?.let { it.mapDestToSource(it.dest) })
         }
 
         return SMAP(fileMappings.values.toList())

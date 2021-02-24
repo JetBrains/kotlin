@@ -17,6 +17,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiReference
 import com.intellij.ui.NonFocusableCheckBox
 import org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyIntention
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.refactoring.introduce.AbstractKotlinInplaceIntroducer
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
@@ -61,9 +62,8 @@ class KotlinVariableInplaceIntroducer(
     init {
         initFormComponents {
             if (!doNotChangeVar) {
-                val varCheckBox = NonFocusableCheckBox("Declare with var")
+                val varCheckBox = NonFocusableCheckBox(KotlinBundle.message("checkbox.text.declare.with.var"))
                 varCheckBox.isSelected = isVar
-                varCheckBox.setMnemonic('v')
                 varCheckBox.addActionListener {
                     myProject.executeWriteCommand(commandName, commandName) {
                         PsiDocumentManager.getInstance(myProject).commitDocument(myEditor.document)
@@ -78,22 +78,22 @@ class KotlinVariableInplaceIntroducer(
 
             if (expressionType != null && !noTypeInference) {
                 val renderedType = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(expressionType)
-                expressionTypeCheckBox = NonFocusableCheckBox("Specify type explicitly").apply {
-                    isSelected = false
-                    setMnemonic('t')
-                    addActionListener {
-                        runWriteCommandAndRestart {
-                            updateVariableName()
-                            if (isSelected) {
-                                addedVariable.typeReference = KtPsiFactory(myProject).createType(renderedType)
-                            } else {
-                                addedVariable.typeReference = null
+                expressionTypeCheckBox =
+                    NonFocusableCheckBox(KotlinBundle.message("checkbox.text.specify.type.explicitly")).apply {
+                        isSelected = false
+                        addActionListener {
+                            runWriteCommandAndRestart {
+                                updateVariableName()
+                                if (isSelected) {
+                                    addedVariable.typeReference = KtPsiFactory(myProject).createType(renderedType)
+                                } else {
+                                    addedVariable.typeReference = null
+                                }
                             }
                         }
-                    }
 
-                    addComponent(this)
-                }
+                        addComponent(this)
+                    }
             }
         }
     }

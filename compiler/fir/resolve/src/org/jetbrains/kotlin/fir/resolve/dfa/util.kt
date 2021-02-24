@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa
 
+import kotlinx.collections.immutable.PersistentMap
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.contracts.description.ConeBooleanConstantReference
@@ -18,43 +19,13 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-@UseExperimental(ExperimentalContracts::class)
-fun DataFlowVariable.isSynthetic(): Boolean {
-    contract {
-        returns(true) implies (this@isSynthetic is SyntheticVariable)
-        returns(false) implies (this@isSynthetic is RealVariable)
-    }
-    return this is SyntheticVariable
-}
-
-@UseExperimental(ExperimentalContracts::class)
-fun DataFlowVariable.isReal(): Boolean {
-    contract {
-        returns(true) implies (this@isReal is RealVariable)
-        returns(false) implies (this@isReal is SyntheticVariable)
-    }
-    return this is RealVariable
-}
-
-operator fun TypeStatement.plus(other: TypeStatement?): TypeStatement = other?.let { this + other } ?: this
-
-fun MutableTypeStatements.addStatement(variable: RealVariable, statement: TypeStatement) {
-    put(variable, statement.asMutableStatement()) { it.apply { this += statement } }
-}
-
-fun MutableTypeStatements.mergeTypeStatements(other: TypeStatements) {
-    other.forEach { (variable, info) ->
-        addStatement(variable, info)
-    }
-}
-
-@UseExperimental(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class)
 internal inline fun <K, V> MutableMap<K, V>.put(key: K, value: V, remappingFunction: (existing: V) -> V) {
     contract {
         callsInPlace(remappingFunction, InvocationKind.AT_MOST_ONCE)
@@ -62,6 +33,24 @@ internal inline fun <K, V> MutableMap<K, V>.put(key: K, value: V, remappingFunct
     val existing = this[key]
     if (existing == null) {
         put(key, value)
+    } else {
+        put(key, remappingFunction(existing))
+    }
+}
+
+@OptIn(ExperimentalContracts::class)
+internal inline fun <K, V> PersistentMap<K, V>.put(
+    key: K,
+    valueProducer: () -> V,
+    remappingFunction: (existing: V) -> V
+): PersistentMap<K, V> {
+    contract {
+        callsInPlace(remappingFunction, InvocationKind.AT_MOST_ONCE)
+        callsInPlace(valueProducer, InvocationKind.AT_MOST_ONCE)
+    }
+    val existing = this[key]
+    return if (existing == null) {
+        put(key, valueProducer())
     } else {
         put(key, remappingFunction(existing))
     }
@@ -90,7 +79,7 @@ internal fun FirFunctionCall.isBooleanNot(): Boolean {
     return symbol.callableId == FirDataFlowAnalyzer.KOTLIN_BOOLEAN_NOT
 }
 
-internal fun ConeConstantReference.toOperation(): Operation = when (this) {
+fun ConeConstantReference.toOperation(): Operation = when (this) {
     ConeConstantReference.NULL -> Operation.EqNull
     ConeConstantReference.NOT_NULL -> Operation.NotEqNull
     ConeBooleanConstantReference.TRUE -> Operation.EqTrue
@@ -99,17 +88,18 @@ internal fun ConeConstantReference.toOperation(): Operation = when (this) {
 }
 
 @DfaInternals
-internal val FirExpression.coneType: ConeKotlinType?
-    get() = typeRef.coneTypeSafe()
+internal val FirExpression.coneType: ConeKotlinType
+    get() = typeRef.coneType
 
 @DfaInternals
 internal val FirElement.symbol: AbstractFirBasedSymbol<*>?
     get() = when (this) {
         is FirResolvable -> symbol
         is FirSymbolOwner<*> -> symbol
-        is FirWhenSubjectExpression -> whenSubject.whenExpression.subject?.symbol
+        is FirWhenSubjectExpression -> whenRef.value.subject?.symbol
+        is FirSafeCallExpression -> regularQualifiedAccess.symbol
         else -> null
-    }?.takeIf { this is FirThisReceiverExpression || (it !is FirFunctionSymbol<*> && it !is FirAccessorSymbol) }
+    }?.takeIf { this.unwrapSmartcastExpression() is FirThisReceiverExpression || (it !is FirFunctionSymbol<*> && it !is FirAccessorSymbol) }
 
 @DfaInternals
 internal val FirResolvable.symbol: AbstractFirBasedSymbol<*>?
@@ -119,3 +109,5 @@ internal val FirResolvable.symbol: AbstractFirBasedSymbol<*>?
         is FirNamedReferenceWithCandidate -> reference.candidateSymbol
         else -> null
     }
+
+private fun FirElement.unwrapSmartcastExpression(): FirElement = if (this is FirExpressionWithSmartcast) originalExpression else this

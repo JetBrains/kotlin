@@ -4,6 +4,7 @@
 package n
 
 import java.util.ArrayList
+import checkSubtype
 
 fun test() {
     val list = arrayList("foo", "bar") + arrayList("cheese", "wine")

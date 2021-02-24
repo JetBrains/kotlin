@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +AllowContractsForNonOverridableMembers +AllowReifiedGenericsInContracts
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 

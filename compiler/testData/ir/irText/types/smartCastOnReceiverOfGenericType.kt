@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 fun testFunction(a: Any, b: Any) {
     a as MutableList<String>
     b as String

@@ -3,8 +3,6 @@ plugins {
     id("jps-compatible")
 }
 
-jvmTarget = "1.8"
-
 dependencies {
     compile(project(":compiler:util"))
     compile(project(":compiler:cli-common"))
@@ -17,20 +15,26 @@ dependencies {
     compile(project(":compiler:light-classes"))
     compile(project(":compiler:serialization"))
     compile(project(":compiler:plugin-api"))
+    compile(project(":compiler:javac-wrapper"))
     compile(project(":js:js.translator"))
     compile(project(":native:frontend.native"))
     compile(commonDep("org.fusesource.jansi", "jansi"))
     compile(commonDep("org.jline", "jline"))
-    compile(project(":compiler:fir:psi2fir"))
+    compile(project(":compiler:fir:raw-fir:psi2fir"))
     compile(project(":compiler:fir:resolve"))
     compile(project(":compiler:fir:jvm"))
     compile(project(":compiler:fir:java"))
+    implementation(project(":compiler:fir:entrypoint"))
     compile(project(":compiler:fir:fir2ir"))
+    compile(project(":compiler:fir:fir2ir:jvm-backend"))
+    compile(project(":compiler:fir:checkers"))
     compile(project(":kotlin-util-klib"))
     compile(project(":kotlin-util-io"))
-    compile(project(":compiler:ir.serialization.common"))
 
-    compile(toolsJar())
+    // TODO: as soon as cli-jvm is extracted out of this module, move this dependency there
+    compileOnly(project(":compiler:ir.tree.impl"))
+
+    compileOnly(toolsJarApi())
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     compileOnly(intellijDep()) { includeIntellijCoreJarDependencies(project) }
 
@@ -43,17 +47,18 @@ dependencies {
 sourceSets {
     "main" {
         projectDefault()
-        java.srcDirs("../builtins-serializer/src",
-                     "../javac-wrapper/src")
+        java.srcDirs("../builtins-serializer/src")
     }
     "test" { }
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
     kotlinOptions {
-        languageVersion = "1.2"
-        apiVersion = "1.2"
-        freeCompilerArgs += "-Xskip-metadata-version-check"
+        languageVersion = "1.3"
+        apiVersion = "1.3"
+        freeCompilerArgs = freeCompilerArgs - "-progressive" + listOf(
+            "-Xskip-prerelease-check", "-Xsuppress-version-warnings"
+        )
     }
 }
 

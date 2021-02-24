@@ -9,11 +9,11 @@ import com.intellij.ide.util.TreeClassChooser;
 import com.intellij.ide.util.TreeJavaClassChooserDialog;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.event.DocumentListener;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.JavaPsiFacade;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiElement;
+import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.refactoring.RefactoringBundle;
 import com.intellij.refactoring.classMembers.AbstractMemberInfoModel;
@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringUtilKt;
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo;
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberSelectionPanel;
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberSelectionTable;
-import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.*;
+import org.jetbrains.kotlin.idea.refactoring.move.MoveUtilsKt;
 import org.jetbrains.kotlin.idea.refactoring.ui.KotlinTypeReferenceEditorComboWithBrowseButton;
 import org.jetbrains.kotlin.psi.*;
 import javax.swing.*;
@@ -58,11 +58,16 @@ public class MoveKotlinNestedClassesDialog extends RefactoringDialog {
     private KotlinMemberSelectionTable memberTable;
     private PsiElement targetClass;
 
+    @Nullable
+    private PsiDirectory targetDirectory;
+    private GlobalSearchScope searchScope;
+
     public MoveKotlinNestedClassesDialog(
             @NotNull Project project,
             @NotNull List<KtClassOrObject> elementsToMove,
             @NotNull KtClassOrObject originalClass,
             @NotNull KtClassOrObject targetClass,
+            @Nullable PsiDirectory targetDirectory,
             @Nullable MoveCallback moveCallback
     ) {
         super(project, true);
@@ -70,6 +75,13 @@ public class MoveKotlinNestedClassesDialog extends RefactoringDialog {
         this.originalClass = originalClass;
         this.targetClass = targetClass;
         this.moveCallback = moveCallback;
+        this.targetDirectory = targetDirectory;
+        this.searchScope = GlobalSearchScope.projectScope(project);
+        if (targetDirectory != null) {
+            Module module = ModuleUtilCore.findModuleForPsiElement(targetDirectory);
+            if (module != null)
+                this.searchScope = module.getModuleScope();
+        }
 
         init();
 
@@ -82,6 +94,13 @@ public class MoveKotlinNestedClassesDialog extends RefactoringDialog {
         validateButtons();
 
         myHelpAction.setEnabled(false);
+
+        initializedCheckBoxesState = getCheckboxesState();
+    }
+
+    private final int initializedCheckBoxesState;
+    private int getCheckboxesState() {
+        return openInEditorCheckBox.isSelected() ? 1 : 0;
     }
 
     private void initClassChooser(@NotNull KtClassOrObject initialTargetClass) {
@@ -96,22 +115,8 @@ public class MoveKotlinNestedClassesDialog extends RefactoringDialog {
                         TreeClassChooser chooser = new TreeJavaClassChooserDialog(
                                 RefactoringBundle.message("choose.destination.class"),
                                 myProject,
-                                GlobalSearchScope.projectScope(myProject),
-                                aClass -> {
-                                    if (!(aClass instanceof KtLightClassForSourceDeclaration)) return false;
-                                    KtClassOrObject classOrObject = ((KtLightClassForSourceDeclaration) aClass).getKotlinOrigin();
-
-                                    if (classOrObject instanceof KtObjectDeclaration) {
-                                        return !((KtObjectDeclaration) classOrObject).isObjectLiteral();
-                                    }
-
-                                    if (classOrObject instanceof KtClass) {
-                                        KtClass ktClass = (KtClass) classOrObject;
-                                        return !(ktClass.isInner() || ktClass.isAnnotation());
-                                    }
-
-                                    return false;
-                                },
+                                searchScope,
+                                MoveKotlinNestedClassesDialog.this::classMatchesFilter,
                                 null,
                                 null,
                                 true
@@ -163,7 +168,7 @@ public class MoveKotlinNestedClassesDialog extends RefactoringDialog {
                     public void documentChanged(@NotNull DocumentEvent e) {
                         PsiClass aClass = JavaPsiFacade
                                 .getInstance(myProject)
-                                .findClass(targetClassChooser.getText(), GlobalSearchScope.projectScope(myProject));
+                                .findClass(targetClassChooser.getText(), searchScope);
                         targetClass = aClass instanceof KtLightClassForSourceDeclaration
                                       ? ((KtLightClassForSourceDeclaration) aClass).getKotlinOrigin()
                                       : aClass;
@@ -172,6 +177,38 @@ public class MoveKotlinNestedClassesDialog extends RefactoringDialog {
                 }
         );
         targetClassChooserPanel.add(targetClassChooser);
+    }
+
+    private boolean classMatchesFilter(PsiClass aClass) {
+        if (!searchScope.accept(aClass.getContainingFile().getVirtualFile()))
+            return false;
+
+        if (targetDirectory != null) {
+            PsiPackage targetPackage = JavaDirectoryService.getInstance().getPackage(targetDirectory);
+            if (targetPackage != null) {
+                PsiDirectory directory = aClass.getContainingFile().getContainingDirectory();
+                PsiPackage classPackage = JavaDirectoryService.getInstance().getPackage(directory);
+                if (classPackage != null
+                    && !targetPackage.getQualifiedName().equals(classPackage.getQualifiedName()))
+                {
+                    return false;
+                }
+            }
+        }
+
+        if (!(aClass instanceof KtLightClassForSourceDeclaration)) return false;
+        KtClassOrObject classOrObject = ((KtLightClassForSourceDeclaration) aClass).getKotlinOrigin();
+
+        if (classOrObject instanceof KtObjectDeclaration) {
+            return !((KtObjectDeclaration) classOrObject).isObjectLiteral();
+        }
+
+        if (classOrObject instanceof KtClass) {
+            KtClass ktClass = (KtClass) classOrObject;
+            return !(ktClass.isInner() || ktClass.isAnnotation());
+        }
+
+        return false;
     }
 
     private void initMemberInfo(@NotNull List<KtClassOrObject> elementsToMove) {
@@ -217,7 +254,7 @@ public class MoveKotlinNestedClassesDialog extends RefactoringDialog {
         return "#" + getClass().getName();
     }
 
-    private Model<MoveKotlinDeclarationsProcessor> getModel() {
+    private Model getModel() {
         return new MoveKotlinNestedClassesModel(
                 myProject,
                 openInEditorCheckBox.isSelected(),
@@ -230,16 +267,22 @@ public class MoveKotlinNestedClassesDialog extends RefactoringDialog {
     @Override
     protected void doAction() {
 
-        MoveKotlinDeclarationsProcessor processor;
+        ModelResultWithFUSData modelResult;
         try {
-            processor = getModel().computeModelResult();
+             modelResult = getModel().computeModelResult();
         }
         catch (ConfigurationException e) {
             setErrorText(e.getMessage());
             return;
         }
 
-        invokeRefactoring(processor);
+        MoveUtilsKt.logFusForMoveRefactoring(
+                modelResult.getElementsCount(),
+                modelResult.getEntityToMove(),
+                modelResult.getDestination(),
+                getCheckboxesState() == initializedCheckBoxesState,
+                () -> invokeRefactoring(modelResult.getProcessor())
+        );
     }
 
     @Override

@@ -3,7 +3,7 @@
 // INTENTION_TEXT_2: "Replace with 'asSequence().filter{}.map{}.firstOrNull()'"
 fun foo(list: List<String>): String? {
     return list
-            .filter { !it.isEmpty() && it.length < 10 && it != "abc" && it != "def" }
-            .map { it + "x" }
-            .firstOrNull()
+        .filter { !it.isEmpty() && it.length < 10 && it != "abc" && it != "def" }
+        .map { it + "x" }
+        .firstOrNull()
 }

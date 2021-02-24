@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -45,7 +45,7 @@ class MemberBuilder(
 
     var doc: String? = null; private set
 
-    val samples = mutableListOf<String>()
+    var samples = listOf<String>()
 
     val sequenceClassification = mutableListOf<SequenceClass>()
     var deprecate: Deprecation? = null; private set
@@ -66,7 +66,7 @@ class MemberBuilder(
     var returns: String? = null; private set
     val throwsExceptions = mutableListOf<ThrowsException>()
     var body: String? = null; private set
-    val annotations: MutableList<String> = mutableListOf()
+    val annotations: MutableSet<String> = mutableSetOf()
     val suppressions: MutableList<String> = mutableListOf()
 
     fun sourceFile(file: SourceFile) { sourceFile = file }
@@ -134,8 +134,8 @@ class MemberBuilder(
     @Deprecated("Use specialFor", ReplaceWith("specialFor(*fs) { doc(valueBuilder) }"))
     fun doc(vararg fs: Family, valueBuilder: DocExtensions.() -> String) = specialFor(*fs) { doc(valueBuilder) }
 
-    fun sample(sampleRef: String) {
-        samples += sampleRef
+    fun sample(vararg sampleRef: String) {
+        samples = sampleRef.asList()
     }
 
     fun body(valueBuilder: () -> String) {
@@ -159,7 +159,7 @@ class MemberBuilder(
     }
 
     fun on(backend: Backend, action: () -> Unit) {
-        require(target.platform == Platform.JS)
+        require(target.platform == Platform.JS || target.platform == Platform.Native)
         if (target.backend == backend) action()
     }
 
@@ -327,7 +327,15 @@ class MemberBuilder(
                     deprecated.replaceWith?.let { "ReplaceWith(\"$it\")" },
                     deprecated.level.let { if (it != DeprecationLevel.WARNING) "level = DeprecationLevel.$it" else null }
             )
-            builder.append("@Deprecated(${args.joinToString(", ")})\n")
+            builder.appendLine("@Deprecated(${args.joinToString(", ")})")
+            val versionArgs = listOfNotNull(
+                deprecated.warningSince?.let { "warningSince = \"$it\"" },
+                deprecated.errorSince?.let { "errorSince = \"$it\"" },
+                deprecated.hiddenSince?.let { "hiddenSince = \"$it\"" }
+            )
+            if (versionArgs.any()) {
+                builder.appendLine("@DeprecatedSinceKotlin(${versionArgs.joinToString(", ")})")
+            }
         }
 
         if (!f.isPrimitiveSpecialization && primitive != null) {

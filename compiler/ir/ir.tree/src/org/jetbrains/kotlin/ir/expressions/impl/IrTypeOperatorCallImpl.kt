@@ -26,43 +26,15 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 class IrTypeOperatorCallImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
+    override val startOffset: Int,
+    override val endOffset: Int,
+    override var type: IrType,
     override val operator: IrTypeOperator,
-    override val typeOperand: IrType
-) :
-    IrExpressionBase(startOffset, endOffset, type),
-    IrTypeOperatorCall {
-
-    override lateinit var argument: IrExpression
-
+    override var typeOperand: IrType,
+    override var argument: IrExpression,
+) : IrTypeOperatorCall() {
     override val typeOperandClassifier: IrClassifierSymbol
         get() = typeOperand.classifierOrFail
-
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        type: IrType,
-        operator: IrTypeOperator,
-        typeOperand: IrType,
-        argument: IrExpression
-    ) : this(startOffset, endOffset, type, operator, typeOperand) {
-        this.argument = argument
-    }
-
-    @Deprecated("Doesn't require typeOperandClassifier")
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        type: IrType,
-        operator: IrTypeOperator,
-        typeOperand: IrType,
-        typeOperandClassifier: IrClassifierSymbol,
-        argument: IrExpression
-    ) : this(startOffset, endOffset, type, operator, typeOperand) {
-        this.argument = argument
-    }
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitTypeOperator(this, data)

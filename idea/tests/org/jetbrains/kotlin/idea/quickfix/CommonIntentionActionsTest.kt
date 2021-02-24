@@ -70,7 +70,7 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         myFixture.launchAction(
             createModifierActions(
                 myFixture.atCaret(), TestModifierRequest(JvmModifier.FINAL, false)
-            ).findWithText("Make 'bar' open")
+            ).findWithText("Make 'bar' 'open'")
         )
         myFixture.checkResult(
             """
@@ -93,7 +93,7 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         myFixture.launchAction(
             createModifierActions(
                 myFixture.atCaret(), TestModifierRequest(JvmModifier.PRIVATE, true)
-            ).findWithText("Make 'Foo' private")
+            ).findWithText("Make 'Foo' 'private'")
         )
         myFixture.checkResult(
             """
@@ -497,7 +497,7 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
             createConstructorActions(
                 myFixture.atCaret(),
                 constructorRequest(project, listOf(pair("param0", PsiType.INT as PsiType)))
-            ).findWithText("Add 'int' as 1st parameter to method 'Foo'")
+            ).findWithText("Add 'int' as 1st parameter to constructor 'Foo'")
         )
         myFixture.checkResult(
             """
@@ -519,7 +519,7 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
             createConstructorActions(
                 myFixture.atCaret(),
                 constructorRequest(project, emptyList())
-            ).findWithText("Remove 1st parameter from method 'Foo'")
+            ).findWithText("Remove 1st parameter from constructor 'Foo'")
         )
         myFixture.checkResult(
             """

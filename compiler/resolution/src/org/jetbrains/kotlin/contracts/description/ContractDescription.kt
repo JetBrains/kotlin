@@ -43,6 +43,7 @@ open class ContractDescription(
         ContractInterpretationDispatcher().convertContractDescriptorToFunctor(this)
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun getFunctor(usageModule: ModuleDescriptor): Functor? = computeFunctor.invoke()
 }
 

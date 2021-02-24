@@ -55,12 +55,12 @@ public final class FieldAccessCommon extends
           }
           case 8: {
             bitField0_ |= 0x00000001;
-            symbol_ = input.readInt32();
+            symbol_ = input.readInt64();
             break;
           }
           case 16: {
             bitField0_ |= 0x00000002;
-            super_ = input.readInt32();
+            super_ = input.readInt64();
             break;
           }
           case 26: {
@@ -111,32 +111,32 @@ public final class FieldAccessCommon extends
 
   private int bitField0_;
   public static final int SYMBOL_FIELD_NUMBER = 1;
-  private int symbol_;
+  private long symbol_;
   /**
-   * <code>required int32 symbol = 1;</code>
+   * <code>required int64 symbol = 1;</code>
    */
   public boolean hasSymbol() {
     return ((bitField0_ & 0x00000001) == 0x00000001);
   }
   /**
-   * <code>required int32 symbol = 1;</code>
+   * <code>required int64 symbol = 1;</code>
    */
-  public int getSymbol() {
+  public long getSymbol() {
     return symbol_;
   }
 
   public static final int SUPER_FIELD_NUMBER = 2;
-  private int super_;
+  private long super_;
   /**
-   * <code>optional int32 super = 2;</code>
+   * <code>optional int64 super = 2;</code>
    */
   public boolean hasSuper() {
     return ((bitField0_ & 0x00000002) == 0x00000002);
   }
   /**
-   * <code>optional int32 super = 2;</code>
+   * <code>optional int64 super = 2;</code>
    */
-  public int getSuper() {
+  public long getSuper() {
     return super_;
   }
 
@@ -156,8 +156,8 @@ public final class FieldAccessCommon extends
   }
 
   private void initFields() {
-    symbol_ = 0;
-    super_ = 0;
+    symbol_ = 0L;
+    super_ = 0L;
     receiver_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.getDefaultInstance();
   }
   private byte memoizedIsInitialized = -1;
@@ -184,10 +184,10 @@ public final class FieldAccessCommon extends
                       throws java.io.IOException {
     getSerializedSize();
     if (((bitField0_ & 0x00000001) == 0x00000001)) {
-      output.writeInt32(1, symbol_);
+      output.writeInt64(1, symbol_);
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
-      output.writeInt32(2, super_);
+      output.writeInt64(2, super_);
     }
     if (((bitField0_ & 0x00000004) == 0x00000004)) {
       output.writeMessage(3, receiver_);
@@ -203,11 +203,11 @@ public final class FieldAccessCommon extends
     size = 0;
     if (((bitField0_ & 0x00000001) == 0x00000001)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeInt32Size(1, symbol_);
+        .computeInt64Size(1, symbol_);
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeInt32Size(2, super_);
+        .computeInt64Size(2, super_);
     }
     if (((bitField0_ & 0x00000004) == 0x00000004)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
@@ -307,9 +307,9 @@ public final class FieldAccessCommon extends
 
     public Builder clear() {
       super.clear();
-      symbol_ = 0;
+      symbol_ = 0L;
       bitField0_ = (bitField0_ & ~0x00000001);
-      super_ = 0;
+      super_ = 0L;
       bitField0_ = (bitField0_ & ~0x00000002);
       receiver_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000004);
@@ -401,66 +401,66 @@ public final class FieldAccessCommon extends
     }
     private int bitField0_;
 
-    private int symbol_ ;
+    private long symbol_ ;
     /**
-     * <code>required int32 symbol = 1;</code>
+     * <code>required int64 symbol = 1;</code>
      */
     public boolean hasSymbol() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>required int32 symbol = 1;</code>
+     * <code>required int64 symbol = 1;</code>
      */
-    public int getSymbol() {
+    public long getSymbol() {
       return symbol_;
     }
     /**
-     * <code>required int32 symbol = 1;</code>
+     * <code>required int64 symbol = 1;</code>
      */
-    public Builder setSymbol(int value) {
+    public Builder setSymbol(long value) {
       bitField0_ |= 0x00000001;
       symbol_ = value;
       
       return this;
     }
     /**
-     * <code>required int32 symbol = 1;</code>
+     * <code>required int64 symbol = 1;</code>
      */
     public Builder clearSymbol() {
       bitField0_ = (bitField0_ & ~0x00000001);
-      symbol_ = 0;
+      symbol_ = 0L;
       
       return this;
     }
 
-    private int super_ ;
+    private long super_ ;
     /**
-     * <code>optional int32 super = 2;</code>
+     * <code>optional int64 super = 2;</code>
      */
     public boolean hasSuper() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>optional int32 super = 2;</code>
+     * <code>optional int64 super = 2;</code>
      */
-    public int getSuper() {
+    public long getSuper() {
       return super_;
     }
     /**
-     * <code>optional int32 super = 2;</code>
+     * <code>optional int64 super = 2;</code>
      */
-    public Builder setSuper(int value) {
+    public Builder setSuper(long value) {
       bitField0_ |= 0x00000002;
       super_ = value;
       
       return this;
     }
     /**
-     * <code>optional int32 super = 2;</code>
+     * <code>optional int64 super = 2;</code>
      */
     public Builder clearSuper() {
       bitField0_ = (bitField0_ & ~0x00000002);
-      super_ = 0;
+      super_ = 0L;
       
       return this;
     }

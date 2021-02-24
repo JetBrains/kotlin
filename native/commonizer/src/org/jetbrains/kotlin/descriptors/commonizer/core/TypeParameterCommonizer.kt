@@ -5,29 +5,21 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirClassifiersCache
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirCommonTypeParameter
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirType
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirTypeParameter
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirName
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirType
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirTypeParameter
+import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeParameterFactory
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirKnownClassifiers
 import org.jetbrains.kotlin.types.Variance
 
-interface TypeParameterCommonizer : Commonizer<CirTypeParameter, CirTypeParameter> {
-    companion object {
-        fun default(cache: CirClassifiersCache): TypeParameterCommonizer = DefaultTypeParameterCommonizer(cache)
-    }
-}
-
-private class DefaultTypeParameterCommonizer(cache: CirClassifiersCache) :
-    TypeParameterCommonizer,
-    AbstractStandardCommonizer<CirTypeParameter, CirTypeParameter>() {
-
-    private lateinit var name: Name
+class TypeParameterCommonizer(classifiers: CirKnownClassifiers) : AbstractStandardCommonizer<CirTypeParameter, CirTypeParameter>() {
+    private lateinit var name: CirName
     private var isReified = false
     private lateinit var variance: Variance
-    private val upperBounds = TypeParameterUpperBoundsCommonizer(cache)
+    private val upperBounds = TypeParameterUpperBoundsCommonizer(classifiers)
 
-    override fun commonizationResult() = CirCommonTypeParameter(
+    override fun commonizationResult() = CirTypeParameterFactory.create(
+        annotations = emptyList(),
         name = name,
         isReified = isReified,
         variance = variance,
@@ -47,18 +39,6 @@ private class DefaultTypeParameterCommonizer(cache: CirClassifiersCache) :
                 && upperBounds.commonizeWith(next.upperBounds)
 }
 
-private class TypeParameterUpperBoundsCommonizer(cache: CirClassifiersCache) : AbstractListCommonizer<CirType, CirType>(
-    singleElementCommonizerFactory = { TypeCommonizer.default(cache) }
+private class TypeParameterUpperBoundsCommonizer(classifiers: CirKnownClassifiers) : AbstractListCommonizer<CirType, CirType>(
+    singleElementCommonizerFactory = { TypeCommonizer(classifiers) }
 )
-
-interface TypeParameterListCommonizer : Commonizer<List<CirTypeParameter>, List<CirTypeParameter>> {
-    companion object {
-        fun default(cache: CirClassifiersCache): TypeParameterListCommonizer = DefaultTypeParameterListCommonizer(cache)
-    }
-}
-
-private class DefaultTypeParameterListCommonizer(cache: CirClassifiersCache) :
-    TypeParameterListCommonizer,
-    AbstractListCommonizer<CirTypeParameter, CirTypeParameter>(
-        singleElementCommonizerFactory = { TypeParameterCommonizer.default(cache) }
-    )

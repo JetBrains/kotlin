@@ -1,0 +1,30 @@
+FILE: annotationArgumentMustBeEnumConst.kt
+    public final enum class TestEnum : R|kotlin/Enum<TestEnum>| {
+        private constructor(): R|TestEnum| {
+            super<R|kotlin/Enum<TestEnum>|>()
+        }
+
+        public final static enum entry Foo: R|TestEnum|
+        public final static fun values(): R|kotlin/Array<TestEnum>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|TestEnum| {
+        }
+
+    }
+    public final annotation class Ann : R|kotlin/Annotation| {
+        public constructor(vararg a: R|kotlin/Array<out TestEnum>|): R|Ann| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val a: R|kotlin/Array<out TestEnum>| = R|<local>/a|
+            public get(): R|kotlin/Array<out TestEnum>|
+
+    }
+    public final val foo: R|TestEnum| = Q|TestEnum|.R|/TestEnum.Foo|
+        public get(): R|TestEnum|
+    public final var bar: R|TestEnum| = Q|TestEnum|.R|/TestEnum.Foo|
+        public get(): R|TestEnum|
+        public set(value: R|TestEnum|): R|kotlin/Unit|
+    @R|Ann|(vararg(R|/foo|, R|/bar|)) public final fun test(): R|kotlin/Unit| {
+    }

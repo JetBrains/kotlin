@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // See KT-10061
 
 class My {

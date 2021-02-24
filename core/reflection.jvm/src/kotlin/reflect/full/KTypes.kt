@@ -17,10 +17,8 @@
 @file:JvmName("KTypes")
 package kotlin.reflect.full
 
-import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.isFlexible
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
-import kotlin.reflect.*
+import kotlin.reflect.KType
 import kotlin.reflect.jvm.internal.KTypeImpl
 
 /**
@@ -28,15 +26,7 @@ import kotlin.reflect.jvm.internal.KTypeImpl
  */
 @SinceKotlin("1.1")
 fun KType.withNullability(nullable: Boolean): KType {
-    if (isMarkedNullable) {
-        return if (nullable) this else KTypeImpl(TypeUtils.makeNotNullable((this as KTypeImpl).type)) { javaType }
-    }
-
-    // If the type is not marked nullable, it's either a non-null type or a platform type.
-    val kotlinType = (this as KTypeImpl).type
-    if (kotlinType.isFlexible()) return KTypeImpl(TypeUtils.makeNullableAsSpecified(kotlinType, nullable)) { javaType }
-
-    return if (!nullable) this else KTypeImpl(TypeUtils.makeNullable(kotlinType)) { javaType }
+    return (this as KTypeImpl).makeNullableAsSpecified(nullable)
 }
 
 

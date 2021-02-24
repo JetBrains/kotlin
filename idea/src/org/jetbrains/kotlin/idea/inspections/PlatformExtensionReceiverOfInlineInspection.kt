@@ -16,18 +16,20 @@ import com.intellij.ui.EditorTextField
 import org.intellij.lang.regexp.RegExpFileType
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.quickfix.AddExclExclCallFix
+import org.jetbrains.kotlin.idea.resolve.getDataFlowValueFactory
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtVisitorVoid
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.isNullabilityFlexible
+import org.jetbrains.kotlin.types.isNullable
 import java.awt.BorderLayout
 import java.util.regex.PatternSyntaxException
 import javax.swing.JPanel
@@ -62,22 +64,23 @@ class PlatformExtensionReceiverOfInlineInspection : AbstractKotlinInspection() {
                     return
                 }
 
-                val context = expression.analyze(BodyResolveMode.PARTIAL)
+                val resolutionFacade = expression.getResolutionFacade()
+                val context = expression.analyze(resolutionFacade, BodyResolveMode.PARTIAL)
                 val resolvedCall = expression.getResolvedCall(context) ?: return
                 val extensionReceiverType = resolvedCall.extensionReceiver?.type ?: return
                 if (!extensionReceiverType.isNullabilityFlexible()) return
                 val descriptor = resolvedCall.resultingDescriptor as? FunctionDescriptor ?: return
-                if (!descriptor.isInline) return
+                if (!descriptor.isInline || descriptor.extensionReceiverParameter?.type?.isNullable() == true) return
 
                 val receiverExpression = expression.receiverExpression
-                val dataFlowValueFactory = receiverExpression.getResolutionFacade().getFrontendService(DataFlowValueFactory::class.java)
+                val dataFlowValueFactory = resolutionFacade.getDataFlowValueFactory()
                 val dataFlow = dataFlowValueFactory.createDataFlowValue(receiverExpression, extensionReceiverType, context, descriptor)
                 val stableNullability = context.getDataFlowInfoBefore(receiverExpression).getStableNullability(dataFlow)
                 if (!stableNullability.canBeNull()) return
 
                 holder.registerProblem(
                     receiverExpression,
-                    "Call of inline function with nullable extension receiver can provoke NPE in Kotlin 1.2+",
+                    KotlinBundle.message("call.of.inline.function.with.nullable.extension.receiver.can.provoke.npe.in.kotlin.1.2"),
                     ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                     IntentionWrapper(AddExclExclCallFix(receiverExpression), receiverExpression.containingKtFile)
                 )
@@ -98,7 +101,7 @@ class PlatformExtensionReceiverOfInlineInspection : AbstractKotlinInspection() {
                     owner.namePattern = regexField.text
                 }
             })
-            val labeledComponent = LabeledComponent.create(regexField, "Pattern:", BorderLayout.WEST)
+            val labeledComponent = LabeledComponent.create(regexField, KotlinBundle.message("text.pattern"), BorderLayout.WEST)
             add(labeledComponent, BorderLayout.NORTH)
         }
     }

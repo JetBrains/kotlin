@@ -1,23 +1,11 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.cli.common.arguments
 
-import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.CALL
-import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.NO_CALL
+import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.ApiVersion
@@ -43,6 +31,13 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
             description = "Paths to Kotlin libraries with .meta.js and .kjsm files, separated by system path separator"
     )
     var libraries: String? by NullableStringFreezableVar(null)
+
+    @Argument(
+        value = "-Xrepositories",
+        valueDescription = "<path>",
+        description = "Paths to additional places where libraries could be found"
+    )
+    var repositries: String? by NullableStringFreezableVar(null)
 
     @GradleOption(DefaultValues.BooleanFalseDefault::class)
     @Argument(value = "-source-map", description = "Generate source map")
@@ -130,11 +125,34 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xir-dce", description = "Perform experimental dead code elimination")
     var irDce: Boolean by FreezableVar(false)
 
+    @Argument(
+        value = "-Xir-dce-runtime-diagnostic",
+        valueDescription = "{$DCE_RUNTIME_DIAGNOSTIC_LOG|$DCE_RUNTIME_DIAGNOSTIC_EXCEPTION}",
+        description = "Enable runtime diagnostics when performing DCE instead of removing declarations"
+    )
+    var irDceRuntimeDiagnostic: String? by NullableStringFreezableVar(null)
+
     @Argument(value = "-Xir-dce-driven", description = "Perform a more experimental faster dead code elimination")
     var irDceDriven: Boolean by FreezableVar(false)
 
+    @Argument(value = "-Xir-dce-print-reachability-info", description = "Print declarations' reachability info to stdout during performing DCE")
+    var irDcePrintReachabilityInfo: Boolean by FreezableVar(false)
+
+    @Argument(value = "-Xir-property-lazy-initialization", description = "Perform lazy initialization for properties")
+    var irPropertyLazyInitialization: Boolean by FreezableVar(false)
+
     @Argument(value = "-Xir-only", description = "Disables pre-IR backend")
     var irOnly: Boolean by FreezableVar(false)
+
+    @Argument(
+        value = "-Xir-module-name",
+        valueDescription = "<name>",
+        description = "Specify a compilation module name for IR backend"
+    )
+    var irModuleName: String? by NullableStringFreezableVar(null)
+
+    @Argument(value = "-Xir-per-module", description = "Splits generated .js per-module")
+    var irPerModule: Boolean by FreezableVar(false)
 
     @Argument(
         value = "-Xinclude",
@@ -170,6 +188,15 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xenable-js-scripting", description = "Enable experimental support of .kts files using K/JS (with -Xir only)")
     var enableJsScripting: Boolean by FreezableVar(false)
 
+    @Argument(value = "-Xfake-override-validator", description = "Enable IR fake override validator")
+    var fakeOverrideValidator: Boolean by FreezableVar(false)
+
+    @Argument(value = "-Xerror-tolerance-policy", description = "Set up error tolerance policy (NONE, SEMANTIC, SYNTAX, ALL)")
+    var errorTolerancePolicy: String? by NullableStringFreezableVar(null)
+
+    @Argument(value = "-Xwasm", description = "Use experimental WebAssembly compiler backend")
+    var wasm: Boolean by FreezableVar(false)
+
     override fun checkIrSupport(languageVersionSettings: LanguageVersionSettings, collector: MessageCollector) {
         if (!isIrBackendEnabled()) return
 
@@ -188,4 +215,4 @@ fun K2JSCompilerArguments.isPreIrBackendDisabled(): Boolean =
     irOnly || irProduceJs || irProduceKlibFile
 
 fun K2JSCompilerArguments.isIrBackendEnabled(): Boolean =
-    irProduceKlibDir || irProduceJs || irProduceKlibFile
+    irProduceKlibDir || irProduceJs || irProduceKlibFile || wasm

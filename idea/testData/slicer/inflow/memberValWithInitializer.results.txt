@@ -1,2 +1,2 @@
-4 val <bold>x: Int = 1</bold>
-4 	val x: Int = <bold>1</bold>
+4 <bold>val x: Int</bold> = 1 (in A)
+4 	val x: Int = <bold>1</bold> (in A.x)

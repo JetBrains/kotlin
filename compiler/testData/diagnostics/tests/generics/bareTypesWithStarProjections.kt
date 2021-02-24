@@ -1,9 +1,8 @@
+// FIR_IDENTICAL
 // SKIP_TXT
-// IGNORE_FIR
 // !CHECK_TYPE
 // !LANGUAGE: +NewInference
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-// !FIR_IGNORE
 
 interface FirMemberDeclaration : FirDeclaration
 interface TypeConstructorMarker
@@ -36,5 +35,5 @@ fun foo(coneSymbol: AbstractFirBasedSymbol<*>) {
     coneSymbol.phasedFir() checkType { _<FirVariable<*>>() }
 
     if (coneSymbol !is FirPropertySymbol) return
-    coneSymbol.phasedFir() checkType { _<FirVariable<*>>() }
+    coneSymbol.phasedFir() checkType { _<FirProperty>() }
 }

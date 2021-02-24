@@ -1,4 +1,4 @@
-//FILE: test.kt
+// FILE: test.kt
 fun box() {
     val k = if (getA()
         && getB()
@@ -19,15 +19,15 @@ fun getC() = false
 fun getD() = true
 
 // LINENUMBERS
-// TestKt.box():3
-// TestKt.getA():13
-// TestKt.box():3
-// TestKt.box():4
-// TestKt.getB():15
-// TestKt.box():4
-// TestKt.box():5
-// TestKt.getC():17
-// TestKt.box():5
-// TestKt.box():9
-// TestKt.box():3
-// TestKt.box():11
+// test.kt:3 box
+// test.kt:13 getA
+// test.kt:3 box
+// test.kt:4 box
+// test.kt:15 getB
+// test.kt:4 box
+// test.kt:5 box
+// test.kt:17 getC
+// test.kt:5 box
+// test.kt:9 box
+// test.kt:3 box
+// test.kt:11 box

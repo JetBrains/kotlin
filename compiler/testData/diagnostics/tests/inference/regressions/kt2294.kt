@@ -1,7 +1,9 @@
+// FIR_IDENTICAL
 // !CHECK_TYPE
 
 //KT-2294 Type inference infers DONT_CARE instead of correct type
 package a
+import checkSubtype
 
 public fun <E> foo(array: Array<E>): Array<E> = array
 

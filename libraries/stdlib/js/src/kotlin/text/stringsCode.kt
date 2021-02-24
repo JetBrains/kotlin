@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -54,6 +54,7 @@ public fun String.matches(regex: String): Boolean {
 
 public actual fun CharSequence.isBlank(): Boolean = length == 0 || (if (this is String) this else this.toString()).matches("^[\\s\\xA0]+$")
 
+@OptIn(ExperimentalStdlibApi::class)
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String?.equals(other: String?, ignoreCase: Boolean = false): Boolean =
     if (this == null)
@@ -61,7 +62,7 @@ public actual fun String?.equals(other: String?, ignoreCase: Boolean = false): B
     else if (!ignoreCase)
         this == other
     else
-        other != null && this.toLowerCase() == other.toLowerCase()
+        other != null && this.lowercase() == other.lowercase()
 
 
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
@@ -70,8 +71,11 @@ public actual fun CharSequence.regionMatches(thisOffset: Int, other: CharSequenc
 
 
 /**
- * Returns a copy of this string having its first letter uppercased, or the original string,
- * if it's empty or already starts with an upper case letter.
+ * Returns a copy of this string having its first letter titlecased using the rules of the default locale,
+ * or the original string if it's empty or already starts with a title case letter.
+ *
+ * The title case of a character is usually the same as its upper case with several exceptions.
+ * The particular list of characters with the special title case form depends on the underlying platform.
  *
  * @sample samples.text.Strings.capitalize
  */
@@ -80,8 +84,8 @@ public actual fun String.capitalize(): String {
 }
 
 /**
- * Returns a copy of this string having its first letter lowercased, or the original string,
- * if it's empty or already starts with a lower case letter.
+ * Returns a copy of this string having its first letter lowercased using the rules of the default locale,
+ * or the original string if it's empty or already starts with a lower case letter.
  *
  * @sample samples.text.Strings.decapitalize
  */

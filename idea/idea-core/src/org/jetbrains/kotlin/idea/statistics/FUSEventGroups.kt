@@ -15,15 +15,16 @@ package org.jetbrains.kotlin.idea.statistics
 enum class FUSEventGroups(groupIdSuffix: String, val events: Set<String> = setOf()) {
 
     GradleTarget("gradle.target", gradleTargetEvents),
-    Refactoring("ide.action.refactoring", refactoringEvents),
+    Refactoring("ide.refactoring", refactoringEvents),
     NewFileTemplate("ide.newFileTempl", newFileTemplateEvents),
-    NPWizards("ide.npwizards", NPWizardsEvents),
+    NPWizards("ide.npwizards"),
     Debug("ide.debugger"),
     J2K("ide.j2k"),
     Editor("ide.editor"),
     Settings("ide.settings"),
     GradlePerformance("gradle.performance"),
-    NewWizard("ide.new.wizard");
+    NewWizard("ide.new.wizard"),
+    MigrationTool("ide.migrationTool");
 
     val GROUP_ID: String = "kotlin.$groupIdSuffix"
 }
@@ -34,6 +35,7 @@ enum class GradleStatisticsEvents {
     Kapt,
     CompilerPlugins,
     MPP,
+    JS,
     Libraries,
     GradleConfiguration,
     ComponentVersions,
@@ -94,28 +96,4 @@ val newFileTemplateEvents = setOf(
     "Kotlin Enum",
     "Kotlin Scratch",
     "Kotlin Script"
-)
-val NPWizardsEvents = setOf(
-    "KotlinModuleBuilder: JVM (JVM_1_6)",
-    "KotlinModuleBuilder: JVM (JVM_1_8)",
-    "KotlinModuleBuilder: JVM (JVM_9)",
-    "KotlinModuleBuilder: JVM (JVM_10)",
-    "KotlinModuleBuilder: JVM (JVM_11)",
-    "KotlinModuleBuilder: JVM (JVM_12)",
-    "KotlinModuleBuilder: JS",
-    "KotlinGradleNativeMultiplatformModuleBuilder",
-    "KotlinGradleSharedMultiplatformModuleBuilder",
-    "KotlinGradleWebMultiplatformModuleBuilder",
-    "KotlinGradleMobileMultiplatformModuleBuilder",
-    "KotlinGradleMobileSharedMultiplatformModuleBuilder",
-    "KotlinJavaFrameworkSupportProvider",
-    "GradleKotlinJavaFrameworkSupportProvider",
-    "GradleKotlinJSFrameworkSupportProvider",
-    "GradleKotlinJSBrowserFrameworkSupportProvider",
-    "GradleKotlinJSNodeFrameworkSupportProvider",
-    "GradleKotlinMPPFrameworkSupportProvider",
-    "KotlinDslGradleKotlinJavaFrameworkSupportProvider",
-    "KotlinDslGradleKotlinJSFrameworkSupportProvider",
-    "KotlinDslGradleKotlinJSBrowserFrameworkSupportProvider",
-    "KotlinDslGradleKotlinJSNodeFrameworkSupportProvider"
 )

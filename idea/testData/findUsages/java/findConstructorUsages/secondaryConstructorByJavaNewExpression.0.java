@@ -10,3 +10,5 @@ public class JJ extends B {
         new <caret>B("");
     }
 }
+
+// FIR_IGNORE

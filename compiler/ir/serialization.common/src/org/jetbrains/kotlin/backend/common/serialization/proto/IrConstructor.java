@@ -66,11 +66,6 @@ public final class IrConstructor extends
             bitField0_ |= 0x00000001;
             break;
           }
-          case 16: {
-            bitField0_ |= 0x00000002;
-            isPrimary_ = input.readBool();
-            break;
-          }
         }
       }
     } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -120,24 +115,8 @@ public final class IrConstructor extends
     return base_;
   }
 
-  public static final int IS_PRIMARY_FIELD_NUMBER = 2;
-  private boolean isPrimary_;
-  /**
-   * <code>required bool is_primary = 2;</code>
-   */
-  public boolean hasIsPrimary() {
-    return ((bitField0_ & 0x00000002) == 0x00000002);
-  }
-  /**
-   * <code>required bool is_primary = 2;</code>
-   */
-  public boolean getIsPrimary() {
-    return isPrimary_;
-  }
-
   private void initFields() {
     base_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionBase.getDefaultInstance();
-    isPrimary_ = false;
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -146,10 +125,6 @@ public final class IrConstructor extends
     if (isInitialized == 0) return false;
 
     if (!hasBase()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
-    if (!hasIsPrimary()) {
       memoizedIsInitialized = 0;
       return false;
     }
@@ -167,9 +142,6 @@ public final class IrConstructor extends
     if (((bitField0_ & 0x00000001) == 0x00000001)) {
       output.writeMessage(1, base_);
     }
-    if (((bitField0_ & 0x00000002) == 0x00000002)) {
-      output.writeBool(2, isPrimary_);
-    }
     output.writeRawBytes(unknownFields);
   }
 
@@ -182,10 +154,6 @@ public final class IrConstructor extends
     if (((bitField0_ & 0x00000001) == 0x00000001)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeMessageSize(1, base_);
-    }
-    if (((bitField0_ & 0x00000002) == 0x00000002)) {
-      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeBoolSize(2, isPrimary_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -283,8 +251,6 @@ public final class IrConstructor extends
       super.clear();
       base_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionBase.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000001);
-      isPrimary_ = false;
-      bitField0_ = (bitField0_ & ~0x00000002);
       return this;
     }
 
@@ -312,10 +278,6 @@ public final class IrConstructor extends
         to_bitField0_ |= 0x00000001;
       }
       result.base_ = base_;
-      if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
-        to_bitField0_ |= 0x00000002;
-      }
-      result.isPrimary_ = isPrimary_;
       result.bitField0_ = to_bitField0_;
       return result;
     }
@@ -325,9 +287,6 @@ public final class IrConstructor extends
       if (other.hasBase()) {
         mergeBase(other.getBase());
       }
-      if (other.hasIsPrimary()) {
-        setIsPrimary(other.getIsPrimary());
-      }
       setUnknownFields(
           getUnknownFields().concat(other.unknownFields));
       return this;
@@ -335,10 +294,6 @@ public final class IrConstructor extends
 
     public final boolean isInitialized() {
       if (!hasBase()) {
-        
-        return false;
-      }
-      if (!hasIsPrimary()) {
         
         return false;
       }
@@ -425,38 +380,6 @@ public final class IrConstructor extends
       base_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionBase.getDefaultInstance();
 
       bitField0_ = (bitField0_ & ~0x00000001);
-      return this;
-    }
-
-    private boolean isPrimary_ ;
-    /**
-     * <code>required bool is_primary = 2;</code>
-     */
-    public boolean hasIsPrimary() {
-      return ((bitField0_ & 0x00000002) == 0x00000002);
-    }
-    /**
-     * <code>required bool is_primary = 2;</code>
-     */
-    public boolean getIsPrimary() {
-      return isPrimary_;
-    }
-    /**
-     * <code>required bool is_primary = 2;</code>
-     */
-    public Builder setIsPrimary(boolean value) {
-      bitField0_ |= 0x00000002;
-      isPrimary_ = value;
-      
-      return this;
-    }
-    /**
-     * <code>required bool is_primary = 2;</code>
-     */
-    public Builder clearIsPrimary() {
-      bitField0_ = (bitField0_ & ~0x00000002);
-      isPrimary_ = false;
-      
       return this;
     }
 

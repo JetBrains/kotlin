@@ -1,5 +1,5 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 // IGNORE_BACKEND: JS_IR, JS, NATIVE
+// IGNORE_BACKEND: JS_IR_ES6
 // WITH_REFLECT
 import kotlin.test.assertEquals
 
@@ -12,6 +12,7 @@ class Outer(val z1: Z) {
 }
 
 inline class InlineOuter(val z1: Z) {
+    @Suppress("INNER_CLASS_INSIDE_INLINE_CLASS")
     inner class Inner(val z2: Z) {
         val test = "$z1 $z2"
     }

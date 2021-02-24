@@ -7,13 +7,13 @@ public final class MutableEntry<K extends java.lang.Object, V extends java.lang.
     private final java.util.Map<K, V> internal = null;
     private final K key = null;
 
-    @java.lang.Override()
-    public K getKey() {
-        return null;
-    }
-
     public MutableEntry(@org.jetbrains.annotations.NotNull()
     java.util.Map<K, V> internal, K key, V value) {
         super();
+    }
+
+    @java.lang.Override()
+    public K getKey() {
+        return null;
     }
 }

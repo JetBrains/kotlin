@@ -1,3 +1,5 @@
+// FIR_COMPARISON
+
 interface A {
     fun foo(): Int
 }

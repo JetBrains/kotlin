@@ -12,7 +12,6 @@ package a {
     }
 }
 
-
 // -- Module: <m2> --
 package
 
@@ -31,7 +30,6 @@ public final class a {
     }
 }
 
-
 // -- Module: <m3> --
 package
 
@@ -44,3 +42,4 @@ package a {
 package some {
     public fun test(/*0*/ a_b: a.b): kotlin.Unit
 }
+

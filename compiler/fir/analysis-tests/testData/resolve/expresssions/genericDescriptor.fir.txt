@@ -1,0 +1,29 @@
+FILE: test.kt
+    public final val R|Descriptor|.name: R|kotlin/String| = String(123)
+        public get(): R|kotlin/String|
+    public final fun R|Descriptor|.correct(): R|kotlin/Boolean| {
+        ^correct Boolean(true)
+    }
+    public final fun R|Descriptor|.foo(): R|kotlin/Unit| {
+    }
+    public abstract interface Call<D : R|Descriptor|> : R|kotlin/Any| {
+        public abstract val resultingDescriptor: R|D|
+            public get(): R|D|
+
+    }
+    public final fun <D : R|Descriptor|> test(call: R|Call<D>|, resolvedCall: R|ResolvedCall<D>|): R|kotlin/Unit| {
+        R|<local>/call|.R|SubstitutionOverride</Call.resultingDescriptor: R|D|>|.R|/name|
+        R|<local>/resolvedCall|.R|/ResolvedCall.resultingDescriptor|.R|/name|
+        lval resolvedDescriptor: R|D?| = R|<local>/resolvedCall|.R|/ResolvedCall.candidateDescriptor|
+        when () {
+            !=(R|<local>/resolvedDescriptor|?.{ $subj$.R|/correct|() }, Boolean(true)) ->  {
+                ^test Unit
+            }
+        }
+
+        R|<local>/resolvedDescriptor|.R|/foo|()
+    }
+    public final fun otherTest(call: R|Call<*>|, resolvedCall: R|ResolvedCall<*>|): R|kotlin/Unit| {
+        R|<local>/call|.R|SubstitutionOverride</Call.resultingDescriptor: R|CapturedType(*)|>|.R|/name|
+        R|<local>/resolvedCall|.R|/ResolvedCall.resultingDescriptor|.R|/name|
+    }

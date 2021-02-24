@@ -6,27 +6,27 @@
 package org.jetbrains.kotlin.idea.navigation
 
 import com.intellij.openapi.projectRoots.Sdk
-import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightTestCase
+import com.intellij.testFramework.LightCodeInsightTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.invalidateLibraryCache
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 
 @Suppress("DEPRECATION")
-abstract class AbstractKotlinGotoImplementationTest : KotlinLightCodeInsightTestCase() {
+abstract class AbstractKotlinGotoImplementationTest : LightCodeInsightTestCase() {
 
     override fun setUp() {
         super.setUp()
-        invalidateLibraryCache(project_)
+        invalidateLibraryCache(project)
     }
 
-    override fun getTestDataPath(): String = KotlinTestUtils.getHomeDirectory() + File.separator
+    override fun getTestDataPath(): String = KtTestUtil.getHomeDirectory() + File.separator
 
     override fun getProjectJDK(): Sdk = PluginTestCaseBase.mockJdk()
 
     protected fun doTest(path: String) {
         configureByFile(path)
-        val gotoData = NavigationTestUtils.invokeGotoImplementations(editor_, file_)
-        NavigationTestUtils.assertGotoDataMatching(editor_, gotoData)
+        val gotoData = NavigationTestUtils.invokeGotoImplementations(editor, file)
+        NavigationTestUtils.assertGotoDataMatching(editor, gotoData)
     }
 }

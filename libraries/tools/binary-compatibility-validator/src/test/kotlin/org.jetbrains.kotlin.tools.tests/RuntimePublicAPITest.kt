@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.tools.tests
 
-import org.jetbrains.kotlin.tools.*
+import kotlinx.validation.api.*
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestName
@@ -33,11 +33,6 @@ class RuntimePublicAPITest {
         snapshotAPIAndCompare("../../reflect/api/build/libs", "kotlin-reflect-api(?!-[-a-z]+)", nonPublicPackages = listOf("kotlin.reflect.jvm.internal"))
     }
 
-    @Test fun kotlinCoroutinesExperimentalCompat() {
-        snapshotAPIAndCompare("../../stdlib/coroutines-experimental/build/libs", "kotlin-coroutines-experimental-compat")
-    }
-
-
     private fun snapshotAPIAndCompare(
         basePath: String,
         jarPattern: String,
@@ -51,7 +46,7 @@ class RuntimePublicAPITest {
         val publicPackageFilter = { className: String -> publicPackagePrefixes.none { className.startsWith(it) } }
 
         println("Reading binary API from $jarFile")
-        val api = getBinaryAPI(JarFile(jarFile), publicPackageFilter).filterOutNonPublic(nonPublicPackages)
+        val api = JarFile(jarFile).loadApiFromJvmClasses(publicPackageFilter).filterOutNonPublic(nonPublicPackages)
 
         val target = File("reference-public-api")
             .resolve(testName.methodName.replaceCamelCaseWithDashedLowerCase() + ".txt")

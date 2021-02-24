@@ -8,13 +8,14 @@ package org.jetbrains.kotlin.idea.actions
 import com.intellij.ide.fileTemplates.FileTemplate
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.idea.KotlinBundle
 
 const val KOTLIN_WORKSHEET_EXTENSION: String = "ws.kts"
 
 class NewKotlinWorksheetAction : NewKotlinScriptAction(
-    actionName = "Kotlin Worksheet",
-    description = "Creates new Kotlin Worksheet",
-    dialogTitle = "New Kotlin Worksheet",
+    actionName = KotlinBundle.message("action.new.worksheet.name"),
+    description = KotlinBundle.message("action.new.worksheet.description"),
+    dialogTitle = KotlinBundle.message("action.new.worksheet.dialog.title"),
     templateName = "Kotlin Worksheet"
 ) {
 

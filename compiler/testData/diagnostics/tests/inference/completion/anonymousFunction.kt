@@ -3,6 +3,7 @@
 
 fun take(fn: () -> List<String>) {}
 fun <L> inferFromLambda(fn: () -> L): L = TODO()
+fun <L> inferFromLambda2(fn: (Int) -> L): L = TODO()
 
 fun <T> materialize(): T = TODO()
 fun <I> id(arg: I) = arg
@@ -19,4 +20,5 @@ fun testFunctions() {
 fun testNestedCalls() {
     id<String>(inferFromLambda { materialize() })
     id<String>(inferFromLambda(fun() = materialize()))
+    id<String>(inferFromLambda2(<!TYPE_MISMATCH, TYPE_MISMATCH!>fun<!EXPECTED_PARAMETERS_NUMBER_MISMATCH!>()<!> = materialize()<!>))
 }

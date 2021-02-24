@@ -13,6 +13,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.util.isLineBreak
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
@@ -30,7 +31,7 @@ class RedundantSemicolonInspection : AbstractKotlinInspection(), CleanupLocalIns
                 if (element.node.elementType == KtTokens.SEMICOLON && isRedundantSemicolon(element)) {
                     holder.registerProblem(
                         element,
-                        "Redundant semicolon",
+                        KotlinBundle.message("redundant.semicolon"),
                         ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                         Fix
                     )
@@ -46,6 +47,9 @@ class RedundantSemicolonInspection : AbstractKotlinInspection(), CleanupLocalIns
             if (!isAtEndOfLine) {
                 //when there is no imports parser generates empty import list with no spaces
                 if (semicolon.parent is KtPackageDirective && (nextLeaf as? KtImportList)?.imports?.isEmpty() == true) {
+                    return true
+                }
+                if (semicolon.prevLeaf { it !is PsiWhiteSpace && it !is PsiComment || it.isLineBreak() } is PsiWhiteSpace) {
                     return true
                 }
                 return false
@@ -85,16 +89,30 @@ class RedundantSemicolonInspection : AbstractKotlinInspection(), CleanupLocalIns
                 return false // case with statement starting with '{' and call on the previous line
             }
 
+            return !isSemicolonRequired(semicolon)
+        }
+
+        private fun isSemicolonRequired(semicolon: PsiElement): Boolean {
             if (isRequiredForCompanion(semicolon)) {
-                return false
+                return true
             }
 
-            val prevNameReference = semicolon.getPrevSiblingIgnoringWhitespaceAndComments() as? KtNameReferenceExpression
-            if (prevNameReference != null && prevNameReference.text in softModifierKeywords
-                && semicolon.getNextSiblingIgnoringWhitespaceAndComments() is KtDeclaration
-            ) return false
+            val prevSibling = semicolon.getPrevSiblingIgnoringWhitespaceAndComments()
+            val nextSibling = semicolon.getNextSiblingIgnoringWhitespaceAndComments()
 
-            return true
+            if (prevSibling.safeAs<KtNameReferenceExpression>()?.text in softModifierKeywords && nextSibling is KtDeclaration) {
+                // enum; class Foo
+                return true
+            }
+
+            if (nextSibling is KtPrefixExpression && nextSibling.operationToken == KtTokens.EXCL) {
+                val typeElement = semicolon.prevLeaf()?.getStrictParentOfType<KtTypeReference>()?.typeElement
+                if (typeElement != null) {
+                    return typeElement !is KtNullableType // trailing '?' fixes parsing
+                }
+            }
+
+            return false
         }
 
         private fun isRequiredForCompanion(semicolon: PsiElement): Boolean {
@@ -110,7 +128,7 @@ class RedundantSemicolonInspection : AbstractKotlinInspection(), CleanupLocalIns
         }
 
         private object Fix : LocalQuickFix {
-            override fun getName() = "Remove redundant semicolon"
+            override fun getName() = KotlinBundle.message("fix.text")
             override fun getFamilyName() = name
 
             override fun applyFix(project: Project, descriptor: ProblemDescriptor) {

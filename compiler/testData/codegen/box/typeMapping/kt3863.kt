@@ -1,4 +1,5 @@
-// IGNORE_BACKEND_FIR: JVM_IR
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: PROPERTY_REFERENCES
 import kotlin.reflect.KProperty
 
 // java.lang.VerifyError: (class: NotImplemented, method: get signature: (Ljava/lang/Object;Lkotlin/reflect/KProperty;)Ljava/lang/Object;) Unable to pop operand off an empty stack

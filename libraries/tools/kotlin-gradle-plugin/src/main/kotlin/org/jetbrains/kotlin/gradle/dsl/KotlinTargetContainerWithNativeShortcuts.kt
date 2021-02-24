@@ -94,7 +94,7 @@ interface KotlinTargetContainerWithNativeShortcuts : KotlinTargetContainerWithPr
     ) {
         val device32 = watchosArm32("${namePrefix}Arm32")
         val device64 = watchosArm64("${namePrefix}Arm64")
-        val simulator = watchosX86("${namePrefix}X86")
+        val simulator = watchosX64("${namePrefix}X64")
         val deviceTargets = listOf(device32, device64)
 
         val deviceSourceSets = createIntermediateSourceSets(

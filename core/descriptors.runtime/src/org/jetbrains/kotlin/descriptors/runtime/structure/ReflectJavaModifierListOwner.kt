@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.descriptors.runtime.structure
 
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.load.java.JavaVisibilities
+import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.load.java.structure.JavaModifierListOwner
 import java.lang.reflect.Modifier
 
@@ -37,12 +37,12 @@ interface ReflectJavaModifierListOwner : JavaModifierListOwner {
     override val visibility: Visibility
         get() = modifiers.let { modifiers ->
             when {
-                Modifier.isPublic(modifiers) -> Visibilities.PUBLIC
-                Modifier.isPrivate(modifiers) -> Visibilities.PRIVATE
+                Modifier.isPublic(modifiers) -> Visibilities.Public
+                Modifier.isPrivate(modifiers) -> Visibilities.Private
                 Modifier.isProtected(modifiers) ->
-                    if (Modifier.isStatic(modifiers)) JavaVisibilities.PROTECTED_STATIC_VISIBILITY
-                    else JavaVisibilities.PROTECTED_AND_PACKAGE
-                else -> JavaVisibilities.PACKAGE_VISIBILITY
+                    if (Modifier.isStatic(modifiers)) JavaVisibilities.ProtectedStaticVisibility
+                    else JavaVisibilities.ProtectedAndPackage
+                else -> JavaVisibilities.PackageVisibility
             }
         }
 }

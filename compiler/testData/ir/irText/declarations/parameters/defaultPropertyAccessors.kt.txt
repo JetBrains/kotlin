@@ -1,0 +1,45 @@
+val test1: Int
+  field = 42
+  get
+
+var test2: Int
+  field = 42
+  get
+  set
+
+class Host {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val testMember1: Int
+    field = 42
+    get
+
+  var testMember2: Int
+    field = 42
+    get
+    set
+
+}
+
+class InPrimaryCtor<T : Any?> {
+  constructor(testInPrimaryCtor1: T, testInPrimaryCtor2: Int = 42) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val testInPrimaryCtor1: T
+    field = testInPrimaryCtor1
+    get
+
+  var testInPrimaryCtor2: Int
+    field = testInPrimaryCtor2
+    get
+    set
+
+}
+

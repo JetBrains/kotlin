@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.cli.common;
 
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.util.containers.ContainerUtil;
 import kotlin.jvm.JvmClassMappingKt;
 import kotlin.reflect.KCallable;
@@ -29,6 +30,9 @@ import org.jetbrains.kotlin.cli.common.arguments.ParseCommandLineArgumentsKt;
 import org.jetbrains.kotlin.cli.common.arguments.PreprocessCommandLineArgumentsKt;
 
 public class Usage {
+    public static final String BAT_DELIMITER_CHARACTERS_NOTE =
+            "Note: on Windows, arguments that contain delimiter characters (whitespace, =, ;, ,) need to be surrounded with double quotes (\").";
+
     // The magic number 29 corresponds to the similar padding width in javac and scalac command line compilers
     private static final int OPTION_NAME_PADDING_WIDTH = 29;
 
@@ -41,7 +45,7 @@ public class Usage {
         KClass<? extends CommonToolArguments> kClass = JvmClassMappingKt.getKotlinClass(arguments.getClass());
         for (KCallable<?> callable : kClass.getMembers()) {
             if (!(callable instanceof KProperty1)) continue;
-            propertyUsage(sb, (KProperty1) callable, extraHelp);
+            propertyUsage(sb, (KProperty1<?, ?>) callable, extraHelp);
         }
 
         if (extraHelp) {
@@ -52,10 +56,20 @@ public class Usage {
             renderArgfileUsage(sb);
         }
 
+        if (SystemInfo.isWindows) {
+            appendln(sb, "");
+            appendln(sb, BAT_DELIMITER_CHARACTERS_NOTE);
+        }
+
+        if (!extraHelp && tool instanceof CLICompiler<?>) {
+            appendln(sb, "");
+            appendln(sb, "For details, see https://kotl.in/cli");
+        }
+
         return sb.toString();
     }
 
-    private static void propertyUsage(@NotNull StringBuilder sb, @NotNull KProperty1 property, boolean extraHelp) {
+    private static void propertyUsage(@NotNull StringBuilder sb, @NotNull KProperty1<?, ?> property, boolean extraHelp) {
         Argument argument = ContainerUtil.findInstance(property.getAnnotations(), Argument.class);
         if (argument == null) return;
 
@@ -102,6 +116,6 @@ public class Usage {
 
     private static void appendln(@NotNull StringBuilder sb, @NotNull String string) {
         sb.append(string);
-        StringsKt.appendln(sb);
+        sb.append('\n');
     }
 }

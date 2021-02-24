@@ -1,0 +1,54 @@
+class Test1 {
+  constructor(x: Int, y: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val x: Int
+    field = x
+    get
+
+  val y: Int
+    field = y
+    get
+
+}
+
+class Test2 {
+  constructor(x: Int, y: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val y: Int
+    field = y
+    get
+
+  val x: Int
+    field = x
+    get
+
+}
+
+class Test3 {
+  constructor(x: Int, y: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val y: Int
+    field = y
+    get
+
+  val x: Int
+    get
+
+  init {
+    <this>.#x = x
+  }
+
+}
+

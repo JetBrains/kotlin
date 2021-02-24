@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // KT-12751 Type inference failed with forEach and bound reference
 

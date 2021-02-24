@@ -1,4 +1,4 @@
-public open class InnerClassReferencesOuterTP<P> : R|kotlin/Any| {
-    public constructor<P>(): R|test/InnerClassReferencesOuterTP<P>|
+public open class InnerClassReferencesOuterTP<P : R|ft<kotlin/Any, kotlin/Any?>!|> : R|kotlin/Any| {
+    public constructor<P : R|ft<kotlin/Any, kotlin/Any?>!|>(): R|test/InnerClassReferencesOuterTP<P>|
 
 }

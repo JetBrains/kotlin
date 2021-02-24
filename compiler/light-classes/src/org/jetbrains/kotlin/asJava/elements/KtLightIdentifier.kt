@@ -21,14 +21,12 @@ import com.intellij.psi.PsiCompiledElement
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.psi.impl.light.LightIdentifier
-import org.jetbrains.kotlin.psi.KtNamedDeclaration
-import org.jetbrains.kotlin.psi.KtPrimaryConstructor
-import org.jetbrains.kotlin.psi.KtSecondaryConstructor
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 
 open class KtLightIdentifier(
     private val lightOwner: PsiElement,
-    private val ktDeclaration: KtNamedDeclaration?
+    private val ktDeclaration: KtDeclaration?
 ) : LightIdentifier(lightOwner.manager, ktDeclaration?.name ?: ""), PsiCompiledElement,
     PsiElementWithOrigin<PsiElement> {
     override val origin: PsiElement?
@@ -37,7 +35,9 @@ open class KtLightIdentifier(
             is KtPrimaryConstructor -> ktDeclaration.getConstructorKeyword()
                 ?: ktDeclaration.valueParameterList
                 ?: ktDeclaration.containingClassOrObject?.nameIdentifier
-            else -> ktDeclaration?.nameIdentifier
+            is KtPropertyAccessor -> ktDeclaration.namePlaceholder
+            is KtNamedDeclaration -> ktDeclaration.nameIdentifier
+            else -> null
         }
 
     override fun getMirror() = ((lightOwner as? KtLightElement<*, *>)?.clsDelegate as? PsiNameIdentifierOwner)?.nameIdentifier

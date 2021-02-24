@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls.jvm
 
+import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.AbstractConeCallConflictResolver
-import org.jetbrains.kotlin.fir.resolve.calls.InferenceComponents
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
+import org.jetbrains.kotlin.fir.resolve.calls.Candidate
+import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.resolve.calls.results.FlatSignature
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 
@@ -32,10 +32,10 @@ class ConeEquivalentCallConflictResolver(
         val result = mutableSetOf<Candidate>()
         outerLoop@ for (myCandidate in candidates) {
             val me = myCandidate.symbol.fir
-            if (me is FirCallableMemberDeclaration<*> && me.symbol.callableId.className == null) {
+            if (me is FirCallableMemberDeclaration<*> && me.symbol.containingClass() == null) {
                 for (otherCandidate in result) {
                     val other = otherCandidate.symbol.fir
-                    if (other is FirCallableMemberDeclaration<*> && other.symbol.callableId.className == null) {
+                    if (other is FirCallableMemberDeclaration<*> && other.symbol.containingClass() == null) {
                         if (areEquivalentTopLevelCallables(me, myCandidate, other, otherCandidate)) {
                             continue@outerLoop
                         }
@@ -55,7 +55,7 @@ class ConeEquivalentCallConflictResolver(
     ): Boolean {
         if (first.symbol.callableId != second.symbol.callableId) return false
         if (first.isExpect != second.isExpect) return false
-        if (first.receiverTypeRef?.coneTypeUnsafe<ConeKotlinType>() != second.receiverTypeRef?.coneTypeUnsafe()) {
+        if (first.receiverTypeRef?.coneType != second.receiverTypeRef?.coneType) {
             return false
         }
         val firstSignature = createFlatSignature(firstCandidate, first)

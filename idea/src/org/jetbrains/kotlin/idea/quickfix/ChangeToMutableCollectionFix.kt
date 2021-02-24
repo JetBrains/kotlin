@@ -10,6 +10,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.replaced
@@ -23,8 +24,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 
 class ChangeToMutableCollectionFix(property: KtProperty, private val type: String) : KotlinQuickFixAction<KtProperty>(property) {
-
-    override fun getText() = "Change type to Mutable$type"
+    override fun getText() = KotlinBundle.message("fix.change.to.mutable.type", "Mutable$type")
 
     override fun getFamilyName() = text
 

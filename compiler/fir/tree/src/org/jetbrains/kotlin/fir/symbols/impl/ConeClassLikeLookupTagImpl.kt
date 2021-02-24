@@ -5,11 +5,21 @@
 
 package org.jetbrains.kotlin.fir.symbols.impl
 
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.name.ClassId
 
+@RequiresOptIn
+annotation class LookupTagInternals
+
 class ConeClassLikeLookupTagImpl(override val classId: ClassId) : ConeClassLikeLookupTag() {
-    var boundSymbol: Pair<*, FirClassLikeSymbol<*>?>? = null
+
+    init {
+        assert(!classId.isLocal) { "You should use ConeClassLookupTagWithFixedSymbol for local $classId!" }
+    }
+
+    @LookupTagInternals
+    var boundSymbol: OneElementWeakMap<FirSession, FirClassLikeSymbol<*>?>? = null
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

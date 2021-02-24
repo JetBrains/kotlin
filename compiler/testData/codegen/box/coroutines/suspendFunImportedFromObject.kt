@@ -1,14 +1,11 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 // WITH_RUNTIME
 // WITH_COROUTINES
-// COMMON_COROUTINES_TEST
-
 // FILE: stuff.kt
 package stuff
 import helpers.*
 
-import COROUTINES_PACKAGE.*
-import COROUTINES_PACKAGE.intrinsics.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 object Host {
     suspend fun suspendHere(): String = suspendCoroutineUninterceptedOrReturn { x ->
@@ -20,8 +17,8 @@ object Host {
 
 // FILE: test.kt
 import helpers.*
-import COROUTINES_PACKAGE.*
-import COROUTINES_PACKAGE.intrinsics.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 import stuff.Host.suspendHere
 
 fun builder(c: suspend () -> Unit) {

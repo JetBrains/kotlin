@@ -27,9 +27,9 @@ fun <T> listOf(): List<T> = TODO()
 fun <T> setOf(): Set<T> = TODO()
 
 fun <T> test2(x: T) {
-    bar(x, x, ::foo).checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Pair<T, T>>() }
+    bar(x, x, ::foo).checkType { _<Pair<T, T>>() }
     bar(x, 1, ::foo).checkType { _<Pair<T, Int>>() }
-    bar(1, x, ::foo).checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Pair<Int, T>>() }
+    bar(1, x, ::foo).checkType { _<Pair<Int, T>>() }
 
     bar(listOf<T>(), setOf<T>(), ::foo).checkType { _<Pair<List<T>, Set<T>>> () }
     bar(listOf<T>(), 1, ::foo).checkType { _<Pair<List<T>, Int>>() }

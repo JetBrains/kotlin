@@ -15,3 +15,4 @@ fun foo(n: Int) {
 }
 
 val foo: Int
+// DISABLE-ERRORS

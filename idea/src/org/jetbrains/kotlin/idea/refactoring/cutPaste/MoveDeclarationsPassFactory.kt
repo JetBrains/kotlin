@@ -5,15 +5,11 @@
 
 package org.jetbrains.kotlin.idea.refactoring.cutPaste
 
-import com.intellij.codeHighlighting.Pass
-import com.intellij.codeHighlighting.TextEditorHighlightingPass
-import com.intellij.codeHighlighting.TextEditorHighlightingPassFactory
-import com.intellij.codeHighlighting.TextEditorHighlightingPassRegistrar
+import com.intellij.codeHighlighting.*
 import com.intellij.codeInsight.daemon.impl.HighlightInfo
 import com.intellij.codeInsight.daemon.impl.HighlightInfoType
 import com.intellij.codeInsight.daemon.impl.UpdateHighlightersUtil
 import com.intellij.codeInsight.daemon.impl.quickfix.QuickFixAction
-import com.intellij.openapi.components.ProjectComponent
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
@@ -21,17 +17,18 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.idea.core.util.range
 
-class MoveDeclarationsPassFactory(highlightingPassRegistrar: TextEditorHighlightingPassRegistrar) : ProjectComponent,
-    TextEditorHighlightingPassFactory {
+class MoveDeclarationsPassFactory : TextEditorHighlightingPassFactory {
 
-    init {
-        highlightingPassRegistrar.registerTextEditorHighlightingPass(
-            this,
-            TextEditorHighlightingPassRegistrar.Anchor.BEFORE,
-            Pass.POPUP_HINTS,
-            true,
-            true
-        )
+    class Registrar : TextEditorHighlightingPassFactoryRegistrar {
+        override fun registerHighlightingPassFactory(registrar: TextEditorHighlightingPassRegistrar, project: Project) {
+            registrar.registerTextEditorHighlightingPass(
+                MoveDeclarationsPassFactory(),
+                TextEditorHighlightingPassRegistrar.Anchor.BEFORE,
+                Pass.POPUP_HINTS,
+                true,
+                true
+            )
+        }
     }
 
     override fun createHighlightingPass(file: PsiFile, editor: Editor): TextEditorHighlightingPass? {

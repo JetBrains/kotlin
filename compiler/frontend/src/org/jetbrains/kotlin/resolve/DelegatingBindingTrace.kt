@@ -19,8 +19,11 @@ package org.jetbrains.kotlin.resolve
 import com.google.common.collect.ImmutableMap
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.resolve.diagnostics.BindingContextSuppressCache
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
+import org.jetbrains.kotlin.resolve.diagnostics.KotlinSuppressCache
 import org.jetbrains.kotlin.resolve.diagnostics.MutableDiagnosticsWithSuppression
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
@@ -31,15 +34,14 @@ open class DelegatingBindingTrace(
     private val name: String,
     withParentDiagnostics: Boolean = true,
     private val filter: BindingTraceFilter = BindingTraceFilter.ACCEPT_ALL,
-    allowSliceRewrite: Boolean = false
+    allowSliceRewrite: Boolean = false,
+    customSuppressCache: KotlinSuppressCache? = null,
 ) : BindingTrace {
 
     protected val map = if (BindingTraceContext.TRACK_REWRITES && !allowSliceRewrite)
         TrackingSlicedMap(BindingTraceContext.TRACK_WITH_STACK_TRACES)
     else
         SlicedMapImpl(allowSliceRewrite)
-
-    protected val mutableDiagnostics: MutableDiagnosticsWithSuppression?
 
     private inner class MyBindingContext : BindingContext {
         override fun getDiagnostics(): Diagnostics = mutableDiagnostics ?: Diagnostics.EMPTY
@@ -68,13 +70,12 @@ open class DelegatingBindingTrace(
 
     private val bindingContext = MyBindingContext()
 
-    init {
-        this.mutableDiagnostics = when {
-            filter.ignoreDiagnostics -> null
-            withParentDiagnostics -> MutableDiagnosticsWithSuppression(bindingContext, parentContext.diagnostics)
-            else -> MutableDiagnosticsWithSuppression(bindingContext)
-        }
-    }
+    protected val mutableDiagnostics: MutableDiagnosticsWithSuppression? =
+        if (filter.ignoreDiagnostics) null
+        else MutableDiagnosticsWithSuppression(
+            customSuppressCache ?: BindingContextSuppressCache(bindingContext),
+            if (withParentDiagnostics) parentContext.diagnostics else Diagnostics.EMPTY
+        )
 
     constructor(
         parentContext: BindingContext,
@@ -154,6 +155,18 @@ open class DelegatingBindingTrace(
             return
         }
         mutableDiagnostics.report(diagnostic)
+    }
+
+    protected var diagnosticsCallback: DiagnosticSink.DiagnosticsCallback? = null
+
+    override fun setCallback(callback: DiagnosticSink.DiagnosticsCallback) {
+        diagnosticsCallback = callback
+        mutableDiagnostics?.setCallback(callback)
+    }
+
+    override fun resetCallback() {
+        diagnosticsCallback = null
+        mutableDiagnostics?.resetCallback()
     }
 
     override fun wantsDiagnostics(): Boolean = mutableDiagnostics != null

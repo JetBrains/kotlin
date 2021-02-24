@@ -1,0 +1,15 @@
+FILE: callableReferencesAndDefaultParameters.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun foo(s: R|kotlin/String|, flag: R|kotlin/Boolean| = Boolean(true)): R|kotlin/Unit| {
+        }
+
+    }
+    public final inline fun <T> R|T|.myLet(block: R|(T) -> kotlin/Unit|): R|kotlin/Unit| {
+    }
+    public final fun test(a: R|A|, s: R|kotlin/String|): R|kotlin/Unit| {
+        R|<local>/s|.R|/myLet|<R|kotlin/String|>(R|<local>/a|::R|/A.foo|)
+    }

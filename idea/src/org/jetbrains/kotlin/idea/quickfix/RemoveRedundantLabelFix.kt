@@ -8,13 +8,14 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtLabelReferenceExpression
 import org.jetbrains.kotlin.psi.KtLabeledExpression
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 class RemoveRedundantLabelFix(element: KtLabeledExpression) : KotlinQuickFixAction<KtLabeledExpression>(element) {
-    override fun getText(): String = "Remove redundant label"
+    override fun getText(): String = KotlinBundle.message("remove.redundant.label")
 
     override fun getFamilyName(): String = text
 

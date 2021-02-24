@@ -12,7 +12,6 @@ package a {
     }
 }
 
-
 // -- Module: <m2> --
 package
 
@@ -33,7 +32,6 @@ package some {
         }
     }
 }
-
 
 // -- Module: <m3> --
 package
@@ -71,3 +69,4 @@ package other2 {
 package some {
     public fun test(/*0*/ _ab: some.a.b): kotlin.Unit
 }
+

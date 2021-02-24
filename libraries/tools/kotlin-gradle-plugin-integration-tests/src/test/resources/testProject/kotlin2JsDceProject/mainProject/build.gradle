@@ -17,9 +17,9 @@ repositories {
 }
 
 dependencies {
-    compile project(":libraryProject")
-    compile "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
-    compile "org.mozilla:rhino:1.7.7.1"
+    implementation project(":libraryProject")
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
+    implementation "org.mozilla:rhino:1.7.7.1"
 }
 
 compileKotlin2Js.kotlinOptions.sourceMap = true

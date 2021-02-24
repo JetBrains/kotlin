@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: fileDependencyRecursion.kt
 package test
 

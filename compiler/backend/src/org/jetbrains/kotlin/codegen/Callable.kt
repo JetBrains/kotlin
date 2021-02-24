@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.codegen
 
+import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Type
@@ -37,12 +38,12 @@ interface Callable {
 
     fun invokeMethodWithArguments(resolvedCall: ResolvedCall<*>, receiver: StackValue, codegen: ExpressionCodegen): StackValue {
         // it's important to use unsubstituted return type here to unbox value if it comes from type variable
-        return StackValue.functionCall(returnType, resolvedCall.resultingDescriptor.original.returnType) {
+        return StackValue.functionCall(returnType, returnKotlinType ?: resolvedCall.resultingDescriptor.original.returnType) {
             codegen.invokeMethodWithArguments(this, resolvedCall, receiver)
         }
     }
 
-    fun afterReceiverGeneration(v: InstructionAdapter, frameMap: FrameMap) {
+    fun afterReceiverGeneration(v: InstructionAdapter, frameMap: FrameMap, state: GenerationState) {
     }
 
 }

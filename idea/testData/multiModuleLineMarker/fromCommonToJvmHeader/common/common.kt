@@ -1,11 +1,11 @@
-expect class <lineMarker>Header</lineMarker> {
-    fun <lineMarker>foo</lineMarker>(): Int
+expect class <!LINE_MARKER("descr='Has actuals in JVM'")!>Header<!> {
+    fun <!LINE_MARKER("descr='Has actuals in JVM'")!>foo<!>(): Int
 }
 
-expect class <lineMarker>Incomplete</lineMarker> {
+expect class <!LINE_MARKER("descr='Has actuals in JVM'")!>Incomplete<!> {
     fun foo(): Int
 }
 
-expect fun <lineMarker>foo</lineMarker>(arg: Int): String
+expect fun <!LINE_MARKER("descr='Has actuals in JVM'")!>foo<!>(arg: Int): String
 
-expect val <lineMarker>flag</lineMarker>: Boolean
+expect val <!LINE_MARKER("descr='Has actuals in JVM'")!>flag<!>: Boolean

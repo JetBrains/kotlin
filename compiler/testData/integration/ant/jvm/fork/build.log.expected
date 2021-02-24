@@ -1,0 +1,16 @@
+OUT:
+Buildfile: [TestData]/build.xml
+
+premain:
+    [javac] Compiling 1 source file to [Temp]
+      [jar] Building jar: [Temp]/premain.jar
+
+build:
+  [kotlinc] Compiling [[TestData]] => [[Temp]/fork.jar]
+  [kotlinc] -Xms64m
+  [kotlinc] -Xmx128m
+
+BUILD SUCCESSFUL
+Total time: [time]
+
+Return code: 0

@@ -21,8 +21,6 @@ val jvmLibrariesProvidedByDefault = setOf("stdlib", "kotlin")
 class JvmLibraryResolver(
     repositories: List<String>,
     directLibs: List<String>,
-    knownAbiVersions: List<KotlinAbiVersion>?,
-    knownCompilerVersions: List<CompilerVersion>?,
     distributionKlib: String?,
     localKotlinDir: String?,
     skipCurrentDir: Boolean,
@@ -30,8 +28,6 @@ class JvmLibraryResolver(
 ) : KotlinLibraryProperResolverWithAttributes<KotlinLibrary>(
     repositories,
     directLibs,
-    knownAbiVersions,
-    knownCompilerVersions,
     distributionKlib,
     localKotlinDir,
     skipCurrentDir,
@@ -54,8 +50,6 @@ fun jvmResolveLibraries(libraries: List<String>, logger: Logger): KotlinLibraryR
     val libraryResolver = JvmLibraryResolver(
         repositories = emptyList(),
         directLibs = libraryAbsolutePaths,
-        knownAbiVersions = listOf(KotlinAbiVersion.CURRENT),
-        knownCompilerVersions = emptyList<CompilerVersion>(),
         distributionKlib = null,
         localKotlinDir = null,
         skipCurrentDir = false,

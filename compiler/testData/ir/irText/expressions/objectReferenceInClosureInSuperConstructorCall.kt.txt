@@ -1,0 +1,25 @@
+abstract class Base {
+  constructor(lambda: Function0<Any>) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val lambda: Function0<Any>
+    field = lambda
+    get
+
+}
+
+object Test : Base {
+  private constructor() /* primary */ {
+    super/*Base*/(lambda = local fun <anonymous>(): Any {
+      return Test
+    }
+)
+    /* <init>() */
+
+  }
+
+}
+

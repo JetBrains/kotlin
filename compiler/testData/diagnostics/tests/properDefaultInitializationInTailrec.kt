@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 //!LANGUAGE: +ProperComputationOrderOfTailrecDefaultParameters
 import kotlin.reflect.KClass
 

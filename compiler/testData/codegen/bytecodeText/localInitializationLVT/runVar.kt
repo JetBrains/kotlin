@@ -6,5 +6,5 @@ fun test(): Char {
     return c
 }
 
-// 1 ASTORE 0
-// 1 LOCALVARIABLE c Lkotlin/jvm/internal/Ref\$CharRef; L1 L.* 0
+// 2 ISTORE 0
+// 1 LOCALVARIABLE c C

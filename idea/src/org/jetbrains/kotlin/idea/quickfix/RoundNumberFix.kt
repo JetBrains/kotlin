@@ -9,6 +9,7 @@ import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.core.replaced
@@ -40,7 +41,7 @@ class RoundNumberFix(
     override fun isAvailable(project: Project, editor: Editor?, file: KtFile) =
         disableIfAvailable?.isAvailable(project, editor, file) != true && isTarget
 
-    override fun getText() = "Round using $roundFunction()"
+    override fun getText() = KotlinBundle.message("round.using.0", roundFunction)
 
     override fun getFamilyName() = text
 

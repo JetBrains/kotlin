@@ -18,6 +18,12 @@ private const val KOTLIN_JSR223_RESOLVE_FROM_CLASSLOADER_PROPERTY = "kotlin.jsr2
 @Suppress("unused") // accessed from the tests below
 val shouldBeVisibleFromRepl = 7
 
+@Suppress("unused") // accessed from the tests below
+fun callLambda(x: Int, aFunction: (Int) -> Int): Int = aFunction.invoke(x)
+
+@Suppress("unused") // accessed from the tests below
+inline fun inlineCallLambda(x: Int, aFunction: (Int) -> Int): Int = aFunction.invoke(x)
+
 class KotlinJsr223ScriptEngineIT {
 
     init {
@@ -63,6 +69,17 @@ class KotlinJsr223ScriptEngineIT {
         Assert.assertNull(res1)
         val res2 = engine.eval("x + 2")
         Assert.assertEquals(5, res2)
+    }
+
+    @Test
+    fun testIncomplete() {
+        val engine = ScriptEngineManager().getEngineByExtension("kts")!!
+        val res0 = try {
+            engine.eval("val x =")
+        } catch (e: ScriptException) {
+            e
+        }
+        Assert.assertTrue("Unexpected check results: $res0", (res0 as? ScriptException)?.message?.contains("Expecting an expression") ?: false)
     }
 
     @Test
@@ -144,7 +161,7 @@ obj
 //        assertThrows(NoSuchMethodException::class.java) {
 //            invocator!!.invokeMethod(res1, "fn", 3)
 //        }
-        val res3 = invocator!!.invokeMethod(res1, "fn1", 3)
+        val res3 = invocator.invokeMethod(res1, "fn1", 3)
         Assert.assertEquals(6, res3)
     }
 
@@ -284,6 +301,30 @@ obj
         val scriptEngine = ScriptEngineManager().getEngineByExtension("kts")!!
         val result = scriptEngine.eval("kotlin.script.experimental.jsr223.test.shouldBeVisibleFromRepl * 6")
         Assert.assertEquals(42, result)
+    }
+
+    @Test
+    fun testResolveFromContextLambda() {
+        val scriptEngine = ScriptEngineManager().getEngineByExtension("kts")!!
+
+        val script1 = """
+            kotlin.script.experimental.jsr223.test.callLambda(4) { x -> 
+                x % aValue
+            }
+        """
+
+        val script2 = """
+            kotlin.script.experimental.jsr223.test.inlineCallLambda(5) { x ->
+                x % aValue
+            }
+        """
+
+        scriptEngine.put("aValue", 3)
+
+//        val res1 = scriptEngine.eval(script1)
+//        Assert.assertEquals(1, res1)
+//        val res2 = scriptEngine.eval(script2)
+//        Assert.assertEquals(2, res2)
     }
 
     @Test

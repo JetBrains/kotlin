@@ -1,6 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
-// In JVM_IR $i$f variables occupy different slots
-
 interface ApplicationCall
 
 interface AuthenticationService {
@@ -20,7 +17,8 @@ suspend fun ApplicationCall.test(authenticationService: AuthenticationService) {
     respond(authenticationService.execute(receiveJSON()))
 }
 
-// 2 ISTORE 5
+// $i$f$respond x1, $i$f$receiveJSON x2: before and after suspension point
+// 3 ISTORE 5
 // 0 ILOAD 5
 // 1 \$i\$f\$receiveJSON I .* 5
 // 1 \$i\$f\$respond I .* 5

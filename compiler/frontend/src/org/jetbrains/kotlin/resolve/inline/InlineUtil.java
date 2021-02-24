@@ -45,7 +45,7 @@ public class InlineUtil {
     }
 
     public static boolean isInline(@Nullable DeclarationDescriptor descriptor) {
-        return descriptor instanceof FunctionDescriptor && getInlineStrategy((FunctionDescriptor) descriptor).isInline();
+        return descriptor instanceof FunctionDescriptor && ((FunctionDescriptor) descriptor).isInline();
     }
 
     public static boolean hasInlineAccessors(@NotNull PropertyDescriptor propertyDescriptor) {
@@ -74,15 +74,6 @@ public class InlineUtil {
         return isInlineOrContainingInline(descriptor.getContainingDeclaration());
     }
 
-    @NotNull
-    private static InlineStrategy getInlineStrategy(@NotNull FunctionDescriptor descriptor) {
-        if (descriptor.isInline()) {
-            return InlineStrategy.AS_FUNCTION;
-        }
-
-        return InlineStrategy.NOT_INLINE;
-    }
-
     public static boolean checkNonLocalReturnUsage(
             @NotNull DeclarationDescriptor fromFunction,
             @NotNull KtExpression startExpression,
@@ -108,6 +99,11 @@ public class InlineUtil {
         if (containingFunctionDescriptor == null) return false;
 
         while (canBeInlineArgument(containingFunction) && fromFunction != containingFunctionDescriptor) {
+            Boolean isLambdaDefinitelyInline = bindingContext.get(BindingContext.NEW_INFERENCE_IS_LAMBDA_FOR_OVERLOAD_RESOLUTION_INLINE, containingFunction);
+            if (isLambdaDefinitelyInline != null) {
+                return isLambdaDefinitelyInline;
+            }
+
             if (!isInlinedArgument((KtFunction) containingFunction, bindingContext, true)) {
                 return false;
             }

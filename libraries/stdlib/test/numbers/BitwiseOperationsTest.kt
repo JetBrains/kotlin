@@ -23,14 +23,58 @@ class BitwiseOperationsTest {
 
     @Test fun shlForInt() {
         assertEquals(4, 1 shl 2)
+        assertEquals(4, 1 shl 34)
     }
 
     @Test fun shrForInt() {
         assertEquals(1, 2 shr 1)
+        assertEquals(1, 2 shr 33)
     }
 
     @Test fun ushrForInt() {
         assertEquals(2147483647, -1 ushr 1)
+        assertEquals(2147483647, -1 ushr 33)
+    }
+
+    @Test fun shlForUInt() {
+        assertEquals(4u, 1u shl 2)
+        assertEquals(4u, 1u shl 34)
+    }
+
+    @Test fun shrForUInt() {
+        assertEquals(1u, 2u shr 1)
+        assertEquals(1u, 2u shr 33)
+
+        assertEquals(Int.MAX_VALUE.toUInt(), UInt.MAX_VALUE shr 1)
+        assertEquals(Int.MAX_VALUE.toUInt(), UInt.MAX_VALUE shr 33)
+    }
+
+    @Test fun shlForLong() {
+        assertEquals(4L, 1L shl 2)
+        assertEquals(4L, 1L shl 66)
+    }
+
+    @Test fun shrForLong() {
+        assertEquals(1L, 2L shr 1)
+        assertEquals(1L, 2L shr 65)
+    }
+
+    @Test fun ushrForLong() {
+        assertEquals(Long.MAX_VALUE, -1L ushr 1)
+        assertEquals(Long.MAX_VALUE, -1L ushr 65)
+    }
+
+    @Test fun shlForULong() {
+        assertEquals(4UL, 1UL shl 2)
+        assertEquals(4UL, 1UL shl 66)
+    }
+
+    @Test fun shrForULong() {
+        assertEquals(1UL, 2UL shr 1)
+        assertEquals(1UL, 2UL shr 65)
+
+        assertEquals(Long.MAX_VALUE.toULong(), ULong.MAX_VALUE shr 1)
+        assertEquals(Long.MAX_VALUE.toULong(), ULong.MAX_VALUE shr 65)
     }
 
     @Test fun invForInt() {

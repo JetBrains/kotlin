@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@
 
 package kotlin.collections
 
+import kotlin.collections.builders.ListBuilder
 import kotlin.internal.InlineOnly
 import kotlin.internal.apiVersionIsAtLeast
 
@@ -18,6 +19,42 @@ import kotlin.internal.apiVersionIsAtLeast
  */
 public fun <T> listOf(element: T): List<T> = java.util.Collections.singletonList(element)
 
+@PublishedApi
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+internal actual inline fun <E> buildListInternal(builderAction: MutableList<E>.() -> Unit): List<E> {
+    return build(createListBuilder<E>().apply(builderAction))
+}
+
+@PublishedApi
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+internal actual inline fun <E> buildListInternal(capacity: Int, builderAction: MutableList<E>.() -> Unit): List<E> {
+    return build(createListBuilder<E>(capacity).apply(builderAction))
+}
+
+@PublishedApi
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+internal fun <E> createListBuilder(): MutableList<E> {
+    return ListBuilder<E>()
+}
+
+@PublishedApi
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+internal fun <E> createListBuilder(capacity: Int): MutableList<E> {
+    return ListBuilder<E>(capacity)
+}
+
+@PublishedApi
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+internal fun <E> build(builder: MutableList<E>): List<E> {
+    return (builder as ListBuilder<E>).build()
+}
 
 /**
  * Returns a list containing the elements returned by this enumeration
@@ -26,6 +63,20 @@ public fun <T> listOf(element: T): List<T> = java.util.Collections.singletonList
  */
 @kotlin.internal.InlineOnly
 public inline fun <T> java.util.Enumeration<T>.toList(): List<T> = java.util.Collections.list(this)
+
+
+/**
+ * Returns a new list with the elements of this list randomly shuffled.
+ */
+@SinceKotlin("1.2")
+public actual fun <T> Iterable<T>.shuffled(): List<T> = toMutableList().apply { shuffle() }
+
+/**
+ * Returns a new list with the elements of this list randomly shuffled
+ * using the specified [random] instance as the source of randomness.
+ */
+@SinceKotlin("1.2")
+public fun <T> Iterable<T>.shuffled(random: java.util.Random): List<T> = toMutableList().apply { shuffle(random) }
 
 
 @kotlin.internal.InlineOnly

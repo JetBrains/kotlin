@@ -39,7 +39,6 @@ public final expect enum class Foo : kotlin.Enum<Foo> {
     public final /*synthesized*/ fun values(): kotlin.Array<Foo>
 }
 
-
 // -- Module: <m2-jvm> --
 package
 
@@ -96,3 +95,4 @@ public final actual enum class Foo : kotlin.Enum<Foo> {
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): Foo
     public final /*synthesized*/ fun values(): kotlin.Array<Foo>
 }
+

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -25,6 +25,8 @@ public abstract class Random {
      * Generates an `Int` whose lower [bitCount] bits are filled with random values and the remaining upper bits are zero.
      *
      * @param bitCount number of bits to generate, must be in range 0..32, otherwise the behavior is unspecified.
+     *
+     * @sample samples.random.Randoms.nextBits
      */
     public abstract fun nextBits(bitCount: Int): Int
 
@@ -32,6 +34,8 @@ public abstract class Random {
      * Gets the next random `Int` from the random number generator.
      *
      * Generates an `Int` random value uniformly distributed between `Int.MIN_VALUE` and `Int.MAX_VALUE` (inclusive).
+     *
+     * @sample samples.random.Randoms.nextInt
      */
     public open fun nextInt(): Int = nextBits(32)
 
@@ -43,6 +47,8 @@ public abstract class Random {
      * @param until must be positive.
      *
      * @throws IllegalArgumentException if [until] is negative or zero.
+     *
+     * @sample samples.random.Randoms.nextIntFromUntil
      */
     public open fun nextInt(until: Int): Int = nextInt(0, until)
 
@@ -52,6 +58,8 @@ public abstract class Random {
      * Generates an `Int` random value uniformly distributed between the specified [from] (inclusive) and [until] (exclusive) bounds.
      *
      * @throws IllegalArgumentException if [from] is greater than or equal to [until].
+     *
+     * @sample samples.random.Randoms.nextIntFromUntil
      */
     public open fun nextInt(from: Int, until: Int): Int {
         checkRangeBounds(from, until)
@@ -81,6 +89,8 @@ public abstract class Random {
      * Gets the next random `Long` from the random number generator.
      *
      * Generates a `Long` random value uniformly distributed between `Long.MIN_VALUE` and `Long.MAX_VALUE` (inclusive).
+     *
+     * @sample samples.random.Randoms.nextLong
      */
     public open fun nextLong(): Long = nextInt().toLong().shl(32) + nextInt()
 
@@ -92,6 +102,8 @@ public abstract class Random {
      * @param until must be positive.
      *
      * @throws IllegalArgumentException if [until] is negative or zero.
+     *
+     * @sample samples.random.Randoms.nextLongFromUntil
      */
     public open fun nextLong(until: Long): Long = nextLong(0, until)
 
@@ -101,6 +113,8 @@ public abstract class Random {
      * Generates a `Long` random value uniformly distributed between the specified [from] (inclusive) and [until] (exclusive) bounds.
      *
      * @throws IllegalArgumentException if [from] is greater than or equal to [until].
+     *
+     * @sample samples.random.Randoms.nextLongFromUntil
      */
     public open fun nextLong(from: Long, until: Long): Long {
         checkRangeBounds(from, until)
@@ -143,11 +157,15 @@ public abstract class Random {
 
     /**
      * Gets the next random [Boolean] value.
+     *
+     * @sample samples.random.Randoms.nextBoolean
      */
     public open fun nextBoolean(): Boolean = nextBits(1) != 0
 
     /**
      * Gets the next random [Double] value uniformly distributed between 0 (inclusive) and 1 (exclusive).
+     *
+     * @sample samples.random.Randoms.nextDouble
      */
     public open fun nextDouble(): Double = doubleFromParts(nextBits(26), nextBits(27))
 
@@ -157,6 +175,8 @@ public abstract class Random {
      * Generates a `Double` random value uniformly distributed between 0 (inclusive) and [until] (exclusive).
      *
      * @throws IllegalArgumentException if [until] is negative or zero.
+     *
+     * @sample samples.random.Randoms.nextDoubleFromUntil
      */
     public open fun nextDouble(until: Double): Double = nextDouble(0.0, until)
 
@@ -168,6 +188,8 @@ public abstract class Random {
      * [from] and [until] must be finite otherwise the behavior is unspecified.
      *
      * @throws IllegalArgumentException if [from] is greater than or equal to [until].
+     *
+     * @sample samples.random.Randoms.nextDoubleFromUntil
      */
     public open fun nextDouble(from: Double, until: Double): Double {
         checkRangeBounds(from, until)
@@ -183,6 +205,8 @@ public abstract class Random {
 
     /**
      * Gets the next random [Float] value uniformly distributed between 0 (inclusive) and 1 (exclusive).
+     *
+     * @sample samples.random.Randoms.nextFloat
      */
     public open fun nextFloat(): Float = nextBits(24) / (1 shl 24).toFloat()
 
@@ -191,6 +215,8 @@ public abstract class Random {
      * with random bytes.
      *
      * @return [array] with the subrange filled with random bytes.
+     *
+     * @sample samples.random.Randoms.nextBytes
      */
     public open fun nextBytes(array: ByteArray, fromIndex: Int = 0, toIndex: Int = array.size): ByteArray {
         require(fromIndex in 0..array.size && toIndex in 0..array.size) { "fromIndex ($fromIndex) or toIndex ($toIndex) are out of range: 0..${array.size}." }
@@ -221,11 +247,15 @@ public abstract class Random {
      * Fills the specified byte [array] with random bytes and returns it.
      *
      * @return [array] filled with random bytes.
+     *
+     * @sample samples.random.Randoms.nextBytes
      */
     public open fun nextBytes(array: ByteArray): ByteArray = nextBytes(array, 0, array.size)
 
     /**
      * Creates a byte array of the specified [size], filled with random bytes.
+     *
+     * @sample samples.random.Randoms.nextBytes
      */
     public open fun nextBytes(size: Int): ByteArray = nextBytes(ByteArray(size))
 
@@ -237,9 +267,16 @@ public abstract class Random {
      *
      * @sample samples.random.Randoms.defaultRandom
      */
-    companion object Default : Random() {
-
+    companion object Default : Random(), Serializable {
         private val defaultRandom: Random = defaultPlatformRandom()
+
+        private object Serialized : Serializable {
+            private const val serialVersionUID = 0L
+
+            private fun readResolve(): Any = Random
+        }
+
+        private fun writeReplace(): Any = Serialized
 
         override fun nextBits(bitCount: Int): Int = defaultRandom.nextBits(bitCount)
         override fun nextInt(): Int = defaultRandom.nextInt()
@@ -260,17 +297,8 @@ public abstract class Random {
 
         override fun nextBytes(array: ByteArray): ByteArray = defaultRandom.nextBytes(array)
         override fun nextBytes(size: Int): ByteArray = defaultRandom.nextBytes(size)
-        override fun nextBytes(array: ByteArray, fromIndex: Int, toIndex: Int): ByteArray = defaultRandom.nextBytes(array, fromIndex, toIndex)
-
-        @Deprecated("Use Default companion object instead", level = DeprecationLevel.HIDDEN)
-        @Suppress("DEPRECATION_ERROR")
-        @kotlin.jvm.JvmField
-        public val Companion: Random.Companion = Random.Companion
-    }
-
-    @Deprecated("Use Default companion object instead", level = DeprecationLevel.HIDDEN)
-    public object Companion : Random() {
-        override fun nextBits(bitCount: Int): Int = Default.nextBits(bitCount)
+        override fun nextBytes(array: ByteArray, fromIndex: Int, toIndex: Int): ByteArray =
+            defaultRandom.nextBytes(array, fromIndex, toIndex)
     }
 }
 
@@ -281,6 +309,8 @@ public abstract class Random {
  *
  * *Note:* Future versions of Kotlin may change the algorithm of this seeded number generator so that it will return
  * a sequence of values different from the current one for a given seed.
+ *
+ * On JVM the returned generator is NOT thread-safe. Do not invoke it from multiple threads without proper synchronization.
  *
  * @sample samples.random.Randoms.seededRandom
  */
@@ -295,11 +325,12 @@ public fun Random(seed: Int): Random = XorWowRandom(seed, seed.shr(31))
  * *Note:* Future versions of Kotlin may change the algorithm of this seeded number generator so that it will return
  * a sequence of values different from the current one for a given seed.
  *
+ * On JVM the returned generator is NOT thread-safe. Do not invoke it from multiple threads without proper synchronization.
+ *
  * @sample samples.random.Randoms.seededRandom
  */
 @SinceKotlin("1.3")
 public fun Random(seed: Long): Random = XorWowRandom(seed.toInt(), seed.shr(32).toInt())
-
 
 
 /**
@@ -338,7 +369,7 @@ public fun Random.nextLong(range: LongRange): Long = when {
 internal expect fun defaultPlatformRandom(): Random
 internal expect fun doubleFromParts(hi26: Int, low27: Int): Double
 
-@UseExperimental(ExperimentalStdlibApi::class)
+@OptIn(ExperimentalStdlibApi::class)
 internal fun fastLog2(value: Int): Int = 31 - value.countLeadingZeroBits()
 
 /** Takes upper [bitCount] bits (0..32) from this number. */

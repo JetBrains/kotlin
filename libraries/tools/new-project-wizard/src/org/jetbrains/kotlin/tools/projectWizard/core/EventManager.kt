@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.tools.projectWizard.core
 
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.SettingReference
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingReference
+
 
 class EventManager {
     private val listeners = mutableListOf<(SettingReference<*, *>?) -> Unit>()

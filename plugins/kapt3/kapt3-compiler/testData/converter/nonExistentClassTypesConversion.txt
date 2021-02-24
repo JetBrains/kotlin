@@ -48,7 +48,6 @@ import kotlin.reflect.KClass;
 @kotlin.Metadata()
 @Anno(a = Blah.class, b = {NoFoo1.class, NoBar1.class}, c = {NoFoo2.class, kotlin.String.class}, d = {kotlin.Boolean.class, NoBar3.class})
 public final class Test<G extends java.lang.Object> {
-    @org.jetbrains.annotations.NotNull()
     public ABC a;
     @org.jetbrains.annotations.Nullable()
     private final ABC b = null;
@@ -56,44 +55,31 @@ public final class Test<G extends java.lang.Object> {
     private final java.util.List<ABC> c = null;
     @org.jetbrains.annotations.Nullable()
     private final java.util.List<java.util.Map<BCD, ABC<java.util.List<BCD>>>> d = null;
-    @org.jetbrains.annotations.NotNull()
     public java.util.List<java.util.Map<? extends ABC, BCD>> e;
-    @org.jetbrains.annotations.NotNull()
     public ABC<?> f;
-    @org.jetbrains.annotations.NotNull()
     public java.util.List<?> g;
-    @org.jetbrains.annotations.NotNull()
     public ABC<java.lang.Integer, java.lang.String> h;
-    @org.jetbrains.annotations.NotNull()
     public Function2<ABC, java.util.List<BCD>, CDE> i;
-    @org.jetbrains.annotations.NotNull()
     public Function0<CDE> j;
-    @org.jetbrains.annotations.NotNull()
     public Function2<ABC, java.util.List<BCD>, CDE> k;
-    @org.jetbrains.annotations.NotNull()
     public ABC.BCD.EFG l;
-    @org.jetbrains.annotations.NotNull()
     public ABC coocoo;
-    @org.jetbrains.annotations.NotNull()
     public ABC<java.lang.String> coocoo2;
-    @org.jetbrains.annotations.NotNull()
     public ABC<ABC> coocoo21;
-    @org.jetbrains.annotations.NotNull()
     public ABC<java.lang.String, java.lang.String> coocoo3;
-    @org.jetbrains.annotations.NotNull()
     public ABC<java.lang.String, ABC<ABC>> coocoo31;
-    @org.jetbrains.annotations.NotNull()
     public ABC nested;
     @org.jetbrains.annotations.NotNull()
     private final java.lang.Object m = null;
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String n = "";
-    @org.jetbrains.annotations.NotNull()
     public java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends error.NonExistentClass>>>>>>>>>> o11;
-    @org.jetbrains.annotations.NotNull()
     public java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<ABC>>>>>>>>> o10;
-    @org.jetbrains.annotations.NotNull()
     public java.util.Calendar.Builder p;
+
+    public Test() {
+        super();
+    }
 
     @org.jetbrains.annotations.NotNull()
     public final ABC getA() {
@@ -306,10 +292,6 @@ public final class Test<G extends java.lang.Object> {
     public final <T extends java.lang.Object>java.lang.Class<java.lang.Enum<?>> f5(@org.jetbrains.annotations.NotNull()
     MyType<T> $this$f5) {
         return null;
-    }
-
-    public Test() {
-        super();
     }
 }
 

@@ -1,6 +1,8 @@
-// TARGET_BACKEND: JS_IR
+// IGNORE_BACKEND: JS_IR_ES6
 // CHECK_TYPESCRIPT_DECLARATIONS
 // RUN_PLAIN_BOX_FUNCTION
+// SKIP_MINIFICATION
+// SKIP_NODE_JS
 
 @file:JsExport
 
@@ -39,3 +41,10 @@ open class OC(
 }
 
 final class FC : OC(true, "FC")
+
+object O1 : OC(true, "O1")
+
+object O2 : OC(true, "O2") {
+    @JsName("foo")  // TODO: Should work without JsName
+    fun foo(): Int = 10
+}

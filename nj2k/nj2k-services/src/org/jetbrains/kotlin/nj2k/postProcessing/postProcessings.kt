@@ -16,7 +16,18 @@ import org.jetbrains.kotlin.psi.KtFile
 
 
 interface GeneralPostProcessing {
+    val options: PostProcessingOptions
+        get() = PostProcessingOptions.DEFAULT
+
     fun runProcessing(target: JKPostProcessingTarget, converterContext: NewJ2kConverterContext)
+}
+
+data class PostProcessingOptions(
+    val disablePostprocessingFormatting: Boolean = true
+) {
+    companion object {
+        val DEFAULT = PostProcessingOptions()
+    }
 }
 
 
@@ -40,8 +51,6 @@ abstract class ElementsBasedPostProcessing : GeneralPostProcessing {
 
     abstract fun runProcessing(elements: List<PsiElement>, converterContext: NewJ2kConverterContext)
 }
-
-interface ProcessingGroup : GeneralPostProcessing
 
 data class NamedPostProcessingGroup(
     val description: String,

@@ -22,21 +22,25 @@ import com.intellij.xdebugger.breakpoints.XBreakpoint
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint
 import com.intellij.xdebugger.breakpoints.XLineBreakpointType
 import com.intellij.xdebugger.breakpoints.ui.XBreakpointCustomPropertiesPanel
+import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
-import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.debugger.KotlinDebuggerCoreBundle
 import org.jetbrains.kotlin.idea.debugger.breakpoints.dialog.AddFieldBreakpointDialog
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtDeclarationContainer
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtProperty
+import javax.swing.Icon
 import javax.swing.JComponent
 
 class KotlinFieldBreakpointType :
     JavaBreakpointType<KotlinPropertyBreakpointProperties>,
-    XLineBreakpointType<KotlinPropertyBreakpointProperties>("kotlin-field", KotlinBundle.message("debugger.field.watchpoints.tab.title")),
+    XLineBreakpointType<KotlinPropertyBreakpointProperties>(
+        "kotlin-field", KotlinDebuggerCoreBundle.message("field.watchpoint.tab.title")
+    ),
     KotlinBreakpointType {
     override fun createJavaBreakpoint(
         project: Project,
@@ -74,7 +78,7 @@ class KotlinFieldBreakpointType :
 
                 val psiClass = JavaPsiFacade.getInstance(project).findClass(className, GlobalSearchScope.allScope(project))
                 if (psiClass !is KtLightClass) {
-                    reportError(project, "Couldn't find '$className' class")
+                    reportError(project, KotlinDebuggerCoreBundle.message("couldn.t.find.0.class", className))
                     return false
                 }
 
@@ -135,13 +139,13 @@ class KotlinFieldBreakpointType :
 
     override fun isAddBreakpointButtonVisible() = true
 
-    override fun getMutedEnabledIcon() = AllIcons.Debugger.Db_muted_field_breakpoint
+    override fun getMutedEnabledIcon(): Icon = AllIcons.Debugger.Db_muted_field_breakpoint
 
-    override fun getDisabledIcon() = AllIcons.Debugger.Db_disabled_field_breakpoint
+    override fun getDisabledIcon(): Icon = AllIcons.Debugger.Db_disabled_field_breakpoint
 
-    override fun getEnabledIcon() = AllIcons.Debugger.Db_field_breakpoint
+    override fun getEnabledIcon(): Icon = AllIcons.Debugger.Db_field_breakpoint
 
-    override fun getMutedDisabledIcon() = AllIcons.Debugger.Db_muted_disabled_field_breakpoint
+    override fun getMutedDisabledIcon(): Icon = AllIcons.Debugger.Db_muted_disabled_field_breakpoint
 
     override fun canBeHitInOtherPlaces() = true
 
@@ -164,7 +168,7 @@ class KotlinFieldBreakpointType :
         return kotlinBreakpoint?.description ?: super.getDisplayText(breakpoint)
     }
 
-    override fun getEditorsProvider() = null
+    override fun getEditorsProvider(): XDebuggerEditorsProvider? = null
 
     override fun createCustomRightPropertiesPanel(project: Project): XBreakpointCustomPropertiesPanel<XLineBreakpoint<KotlinPropertyBreakpointProperties>>? {
         return KotlinBreakpointFiltersPanel(project)

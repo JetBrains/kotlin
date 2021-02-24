@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Assertions
 import kotlin.test.*
 
 /**
- * Provides [JUnitAsserter] if `org.junit.Assert` is found in the classpath.
+ * Provides [JUnit5Asserter] if `org.junit.jupiter.api.Assertions` class is found in the classpath.
  */
 class JUnit5Contributor : AsserterContributor {
     override fun contribute(): Asserter? {
@@ -53,8 +53,15 @@ object JUnit5Asserter : Asserter {
     }
 
     override fun fail(message: String?): Nothing {
-        Assertions.fail<Any>(message)
+        Assertions.fail<Any?>(message)
         // should not get here
         throw AssertionError(message)
+    }
+
+    @SinceKotlin("1.4")
+    override fun fail(message: String?, cause: Throwable?): Nothing {
+        Assertions.fail<Any?>(message, cause)
+        // should not get here
+        throw AssertionError(message, cause)
     }
 }

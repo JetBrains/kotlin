@@ -5,9 +5,9 @@
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
  *
- * SPEC VERSION: 0.1-218
- * PLACE: expressions, logical-disjunction-expression -> paragraph 2 -> sentence 1
- * RELEVANT PLACES: expressions, logical-disjunction-expression -> paragraph 2 -> sentence 2
+ * SPEC VERSION: 0.1-313
+ * MAIN LINK: expressions, logical-disjunction-expression -> paragraph 2 -> sentence 1
+ * PRIMARY LINKS: expressions, logical-disjunction-expression -> paragraph 2 -> sentence 2
  * NUMBER: 1
  * DESCRIPTION: Both operands of a logical disjunction expression must have a type which is a subtype of kotlin.Boolean, otherwise it is a type error.
  * HELPERS: checkType

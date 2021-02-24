@@ -1,13 +1,14 @@
-public final class Inheritor implements p.I, p.I2 {
-    public final void f() { /* compiled code */ }
+public final class Inheritor /* p.Inheritor*/ implements p.I, p.I2 {
+  @org.jetbrains.annotations.NotNull()
+  public java.lang.String bar();//  bar()
 
-    public void g() { /* compiled code */ }
+  @org.jetbrains.annotations.NotNull()
+  public java.lang.String foo();//  foo()
 
-    public Inheritor() { /* compiled code */ }
+  public  Inheritor();//  .ctor()
 
-    @org.jetbrains.annotations.NotNull
-    public java.lang.String foo() { /* compiled code */ }
+  public final void f();//  f()
 
-    @org.jetbrains.annotations.NotNull
-    public java.lang.String bar() { /* compiled code */ }
+  public void g();//  g()
+
 }

@@ -16,19 +16,25 @@
 
 package org.jetbrains.kotlin.compiler.client
 
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.daemon.client.DaemonReportMessage
+import org.jetbrains.kotlin.daemon.client.DaemonReportingTargets
+import org.jetbrains.kotlin.daemon.client.KotlinCompilerClient
+import org.jetbrains.kotlin.daemon.common.CompileService
+import org.jetbrains.kotlin.daemon.common.CompilerId
+import org.jetbrains.kotlin.daemon.common.DaemonOptions
+import org.jetbrains.kotlin.daemon.common.ReportSeverity
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileNotFoundException
-import kotlin.test.assertEquals
-import org.jetbrains.kotlin.daemon.client.*
-import org.jetbrains.kotlin.daemon.common.*
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import java.io.ByteArrayOutputStream
 import java.io.PrintStream
+import java.nio.file.Files
+import kotlin.test.assertEquals
 
 
 class CompilerClientIT {
@@ -46,7 +52,7 @@ class CompilerClientIT {
     }
 
     private val clientAliveFile by lazy {
-        createTempFile("client", ".alive").apply {
+        Files.createTempFile("client", ".alive").toFile().apply {
             deleteOnExit()
         }
     }
@@ -110,7 +116,7 @@ internal fun captureOutAndErr(body: () -> Unit): String {
 
 class TestMessageCollector : MessageCollector {
 
-    data class Message(val severity: CompilerMessageSeverity, val message: String, val location: CompilerMessageLocation?)
+    data class Message(val severity: CompilerMessageSeverity, val message: String, val location: CompilerMessageSourceLocation?)
 
     val messages = arrayListOf<Message>()
 
@@ -118,7 +124,7 @@ class TestMessageCollector : MessageCollector {
         messages.clear()
     }
 
-    override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation?) {
+    override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
         messages.add(Message(severity, message, location))
     }
 

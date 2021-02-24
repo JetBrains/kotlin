@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.idea.decompiler.common.INCOMPATIBLE_ABI_VERSION_GENE
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.findClassFileByName
 import org.jetbrains.kotlin.idea.test.KotlinJdkAndLibraryProjectDescriptor
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.Assert
 import org.junit.runner.RunWith
 import java.io.File
@@ -23,7 +23,7 @@ import java.io.File
 class DecompiledTextForWrongAbiVersionTest : AbstractInternalCompiledClassesTest() {
 
     override fun getProjectDescriptor(): LightProjectDescriptor {
-        return KotlinJdkAndLibraryProjectDescriptor(File(KotlinTestUtils.getTestDataPathBase() + "/cli/jvm/wrongAbiVersionLib/bin"))
+        return KotlinJdkAndLibraryProjectDescriptor(File(KtTestUtil.getTestDataPathBase() + "/cli/jvm/wrongAbiVersionLib/bin"))
     }
 
     fun testSyntheticClassIsInvisibleWrongAbiVersion() = doTestNoPsiFilesAreBuiltForSyntheticClasses()

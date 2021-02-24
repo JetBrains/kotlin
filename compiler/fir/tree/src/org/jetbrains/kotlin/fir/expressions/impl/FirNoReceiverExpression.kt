@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
-object FirNoReceiverExpression : FirPureAbstractElement(), FirExpression {
+object FirNoReceiverExpression : FirExpression() {
     override val source: FirSourceElement? = null
     override val typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
     override val annotations: List<FirAnnotationCall> get() = emptyList()
@@ -25,5 +25,12 @@ object FirNoReceiverExpression : FirPureAbstractElement(), FirExpression {
         return this
     }
 
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirExpression {
+        return this
+    }
+
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {}
+
+    override fun replaceSource(newSource: FirSourceElement?) {
+    }
 }

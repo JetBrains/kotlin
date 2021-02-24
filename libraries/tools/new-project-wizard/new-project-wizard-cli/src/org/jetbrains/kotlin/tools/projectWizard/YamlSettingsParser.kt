@@ -1,8 +1,10 @@
 package org.jetbrains.kotlin.tools.projectWizard
 
-import YamlParsingError
 import org.jetbrains.kotlin.tools.projectWizard.core.*
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.PluginSetting
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.PluginSettingReference
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingReference
+import org.jetbrains.kotlin.tools.projectWizard.wizard.core.YamlParsingError
 import org.yaml.snakeyaml.Yaml
 import org.yaml.snakeyaml.parser.ParserException
 import java.nio.file.Path

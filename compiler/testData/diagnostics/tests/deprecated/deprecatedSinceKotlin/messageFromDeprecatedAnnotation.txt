@@ -1,0 +1,6 @@
+package
+
+package kotlin {
+    @kotlin.Deprecated(message = "foo test") @kotlin.DeprecatedSinceKotlin(warningSince = "1.0") public fun foo(): kotlin.Unit
+    public fun test(): kotlin.Unit
+}

@@ -11,7 +11,7 @@ fun foo() {
         x = 42
     }
     // Error!
-    x.hashCode()
+    <!UNINITIALIZED_VARIABLE!>x<!>.hashCode()
 }
 
 fun bar() {
@@ -70,7 +70,7 @@ class Your {
 val z = if (true) {
     val xx: Int
     exec {
-        <!UNRESOLVED_REFERENCE!>xx<!> = 24
+        xx = 24
     }
     42
 }

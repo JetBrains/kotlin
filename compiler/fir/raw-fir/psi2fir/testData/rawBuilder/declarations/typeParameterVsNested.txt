@@ -1,0 +1,34 @@
+FILE: typeParameterVsNested.kt
+    public? final? interface Some : R|kotlin/Any| {
+    }
+    public? abstract class My<T : Some> : R|kotlin/Any| {
+        public? constructor<T : Some>(): R|test/My<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? inner class T<T : Some> : R|kotlin/Any| {
+            public? constructor(): R|test/My.T<T>| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public? abstract val x: T
+            public? get(): T
+
+        public? abstract fun foo(arg: T): R|kotlin/Unit|
+
+        public? abstract val y: My.T
+            public? get(): My.T
+
+        public? abstract val z: test.My.T
+            public? get(): test.My.T
+
+        public? final? class Some : T {
+            public? constructor(): R|test/My.Some| {
+                super<T>()
+            }
+
+        }
+
+    }

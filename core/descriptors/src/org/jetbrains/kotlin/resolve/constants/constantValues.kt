@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.constants
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
@@ -55,11 +56,13 @@ class AnnotationValue(value: AnnotationDescriptor) : ConstantValue<AnnotationDes
 }
 
 class ArrayValue(
-        value: List<ConstantValue<*>>,
-        private val computeType: (ModuleDescriptor) -> KotlinType
+    value: List<ConstantValue<*>>,
+    private val computeType: (ModuleDescriptor) -> KotlinType
 ) : ConstantValue<List<ConstantValue<*>>>(value) {
     override fun getType(module: ModuleDescriptor): KotlinType = computeType(module).also { type ->
-        assert(KotlinBuiltIns.isArray(type) || KotlinBuiltIns.isPrimitiveArray(type)) { "Type should be an array, but was $type: $value" }
+        assert(KotlinBuiltIns.isArray(type) || KotlinBuiltIns.isPrimitiveArray(type) || KotlinBuiltIns.isUnsignedArrayType(type)) {
+            "Type should be an array, but was $type: $value"
+        }
     }
 
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitArrayValue(this, data)
@@ -218,7 +221,7 @@ class KClassValue(value: Value) : ConstantValue<KClassValue.Value>(value) {
                     // In JVM class file, we can't represent such literal properly, so we're writing java.lang.Object instead.
                     // This has no effect on the compiler front-end or other back-ends, so we use kotlin.Any for simplicity here.
                     // See LanguageFeature.ProhibitTypeParametersInClassLiteralsInAnnotationArguments
-                    KClassValue(ClassId.topLevel(KotlinBuiltIns.FQ_NAMES.any.toSafe()), 0)
+                    KClassValue(ClassId.topLevel(StandardNames.FqNames.any.toSafe()), 0)
                 }
                 else -> null
             }
@@ -258,7 +261,7 @@ class StringValue(value: String) : ConstantValue<String>(value) {
 
 class UByteValue(byteValue: Byte) : UnsignedValueConstant<Byte>(byteValue) {
     override fun getType(module: ModuleDescriptor): KotlinType {
-        return module.findClassAcrossModuleDependencies(KotlinBuiltIns.FQ_NAMES.uByte)?.defaultType
+        return module.findClassAcrossModuleDependencies(StandardNames.FqNames.uByte)?.defaultType
                 ?: ErrorUtils.createErrorType("Unsigned type UByte not found")
     }
 
@@ -271,7 +274,7 @@ class UByteValue(byteValue: Byte) : UnsignedValueConstant<Byte>(byteValue) {
 
 class UShortValue(shortValue: Short) : UnsignedValueConstant<Short>(shortValue) {
     override fun getType(module: ModuleDescriptor): KotlinType {
-        return module.findClassAcrossModuleDependencies(KotlinBuiltIns.FQ_NAMES.uShort)?.defaultType
+        return module.findClassAcrossModuleDependencies(StandardNames.FqNames.uShort)?.defaultType
                 ?: ErrorUtils.createErrorType("Unsigned type UShort not found")
     }
 
@@ -284,7 +287,7 @@ class UShortValue(shortValue: Short) : UnsignedValueConstant<Short>(shortValue) 
 
 class UIntValue(intValue: Int) : UnsignedValueConstant<Int>(intValue) {
     override fun getType(module: ModuleDescriptor): KotlinType {
-        return module.findClassAcrossModuleDependencies(KotlinBuiltIns.FQ_NAMES.uInt)?.defaultType
+        return module.findClassAcrossModuleDependencies(StandardNames.FqNames.uInt)?.defaultType
                 ?: ErrorUtils.createErrorType("Unsigned type UInt not found")
     }
 
@@ -297,7 +300,7 @@ class UIntValue(intValue: Int) : UnsignedValueConstant<Int>(intValue) {
 
 class ULongValue(longValue: Long) : UnsignedValueConstant<Long>(longValue) {
     override fun getType(module: ModuleDescriptor): KotlinType {
-        return module.findClassAcrossModuleDependencies(KotlinBuiltIns.FQ_NAMES.uLong)?.defaultType
+        return module.findClassAcrossModuleDependencies(StandardNames.FqNames.uLong)?.defaultType
                 ?: ErrorUtils.createErrorType("Unsigned type ULong not found")
     }
 

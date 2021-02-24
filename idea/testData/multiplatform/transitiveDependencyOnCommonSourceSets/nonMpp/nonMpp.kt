@@ -1,6 +1,6 @@
 package test
 
-fun main() {
+fun <!LINE_MARKER!>main<!>() {
     val e = Expect()
 
     e.platformFun()

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isPropertyParameter
 
@@ -23,13 +24,16 @@ import org.jetbrains.kotlin.psi.psiUtil.isPropertyParameter
  * @return string description of declaration, like `Function "describe"`
  */
 fun KtNamedDeclaration.describe(): String? = when (this) {
-    is KtClass -> "${if (isInterface()) "Interface" else "Class"} \"$name\""
-    is KtObjectDeclaration -> "Object \"$name\""
-    is KtNamedFunction -> "Function \"$name\""
-    is KtSecondaryConstructor -> "Constructor"
-    is KtProperty -> "Property \"$name\""
-    is KtParameter -> if (this.isPropertyParameter()) "Property \"$name\"" else "Parameter \"$name\""
-    is KtTypeParameter -> "Type parameter \"$name\""
-    is KtTypeAlias -> "Type alias \"$name\""
+    is KtClass -> "${if (isInterface()) KotlinBundle.message("interface") else KotlinBundle.message("class")} \"$name\""
+    is KtObjectDeclaration -> KotlinBundle.message("object.0", name.toString())
+    is KtNamedFunction -> KotlinBundle.message("function.01", name.toString())
+    is KtSecondaryConstructor -> KotlinBundle.message("constructor")
+    is KtProperty -> KotlinBundle.message("property.0", name.toString())
+    is KtParameter -> if (this.isPropertyParameter())
+        KotlinBundle.message("property.0", name.toString())
+    else
+        KotlinBundle.message("parameter.0", name.toString())
+    is KtTypeParameter -> KotlinBundle.message("type.parameter.0", name.toString())
+    is KtTypeAlias -> KotlinBundle.message("type.alias.0", name.toString())
     else -> null
 }

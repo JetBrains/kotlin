@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 fun box(): String {
     val aByte: Array<Byte> = arrayOf<Byte>(1)
     val bByte: ByteArray = byteArrayOf(1)

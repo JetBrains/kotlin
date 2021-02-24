@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.intentions.declarations
@@ -32,6 +21,7 @@ import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
@@ -50,18 +40,20 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 
 private val LOG = Logger.getInstance(ConvertMemberToExtensionIntention::class.java)
 
-class ConvertMemberToExtensionIntention :
-    SelfTargetingRangeIntention<KtCallableDeclaration>(KtCallableDeclaration::class.java, "Convert member to extension"),
-    LowPriorityAction {
+class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallableDeclaration>(
+    KtCallableDeclaration::class.java,
+    KotlinBundle.lazyMessage("convert.member.to.extension")
+), LowPriorityAction {
     private fun isApplicable(element: KtCallableDeclaration): Boolean {
         val classBody = element.parent as? KtClassBody ?: return false
         if (classBody.parent !is KtClass) return false
         if (element.receiverTypeReference != null) return false
         if (element.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return false
         when (element) {
-            is KtProperty -> if (element.hasInitializer()) return false
+            is KtProperty -> if (element.hasInitializer() || element.hasDelegate()) return false
             is KtSecondaryConstructor -> return false
         }
+
         return true
     }
 
@@ -286,7 +278,7 @@ class ConvertMemberToExtensionIntention :
         }
 
         return Messages.showYesNoDialog(
-            "Do you want to make new extension an expected declaration?",
+            KotlinBundle.message("do.you.want.to.make.new.extension.an.expected.declaration"),
             text,
             Messages.getQuestionIcon()
         ) == Messages.YES
@@ -310,6 +302,7 @@ class ConvertMemberToExtensionIntention :
         if (classVisibility != null && extension.visibilityModifier() == null) {
             extension.addModifier(classVisibility)
         }
+
         return extension to bodyTypeToSelect
     }
 
@@ -323,8 +316,7 @@ class ConvertMemberToExtensionIntention :
     }
 
     companion object {
-        fun convert(element: KtCallableDeclaration): KtCallableDeclaration {
-            return ConvertMemberToExtensionIntention().createExtensionCallableAndPrepareBodyToSelect(element).first
-        }
+        fun convert(element: KtCallableDeclaration): KtCallableDeclaration =
+            ConvertMemberToExtensionIntention().createExtensionCallableAndPrepareBodyToSelect(element).first
     }
 }

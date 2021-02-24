@@ -1,0 +1,19 @@
+FILE: innerClassInAnonymousObject.kt
+    public final val x: R|kotlin/Any| = object : R|kotlin/Any| {
+        private constructor(): R|<anonymous>| {
+            super<R|kotlin/Any|>()
+        }
+
+        local final class Nested : R|kotlin/Any| {
+            public constructor(): R|<anonymous>.Nested| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun foo(): R|kotlin/Unit| {
+            }
+
+        }
+
+    }
+
+        public get(): R|kotlin/Any|

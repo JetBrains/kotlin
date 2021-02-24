@@ -6,7 +6,9 @@
           "specVersion": "0.1-100",
           "casesNumber": 0,
           "description": "Hexadecimal integer literals with underscore breaking the prefix (in it).",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/neg/2.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ],
       "1": [
@@ -14,13 +16,17 @@
           "specVersion": "0.1-100",
           "casesNumber": 0,
           "description": "Hexadecimal integer literals with not allowed symbols.",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/neg/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-100",
           "casesNumber": 0,
           "description": "Hexadecimal integer literals with invalid or double prefixes.",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/neg/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ]
     },
@@ -30,25 +36,33 @@
           "specVersion": "0.1-100",
           "casesNumber": 0,
           "description": "Hexadecimal integer literals with underscore symbols in valid places.",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/pos/2.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-100",
           "casesNumber": 0,
           "description": "Hexadecimal integer literals with underscore symbol before the first digit (it\u0027s considered as identifiers).",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/pos/2.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-100",
           "casesNumber": 0,
           "description": "Hexadecimal integer literals with underscore symbol after the last digit.",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/pos/2.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-100",
           "casesNumber": 0,
           "description": "Hexadecimal integer literals with underscore symbols after hexadecimal prefix.",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/pos/2.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ],
       "1": [
@@ -56,13 +70,17 @@
           "specVersion": "0.1-100",
           "casesNumber": 0,
           "description": "Hexadecimal integer literals with prefix only (without digit symbols).",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/pos/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-100",
           "casesNumber": 0,
           "description": "Hexadecimal integer literals with valid symbols.",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/psi/linked/expressions/constant-literals/integer-literals/hexadecimal-integer-literals/p-1/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ]
     }

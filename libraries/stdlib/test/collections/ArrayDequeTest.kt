@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -89,7 +89,7 @@ class ArrayDequeTest {
     }
 
     @Test
-    fun clear() = testArrayDeque { bufferSize: Int, dequeSize: Int, head: Int, tail: Int ->
+    fun clear() = testArrayDeque { bufferSize: Int, _: Int, head: Int, tail: Int ->
         val deque = generateArrayDeque(head, tail, bufferSize).apply { clear() }
         assertTrue(deque.isEmpty())
     }
@@ -543,7 +543,7 @@ class ArrayDequeTest {
     }
 
     @Test
-    fun removeAll() = testArrayDeque { bufferSize: Int, dequeSize: Int, head: Int, tail: Int ->
+    fun removeAll() = testArrayDeque { bufferSize: Int, _: Int, head: Int, tail: Int ->
         generateArrayDeque(head, tail, bufferSize).let { deque ->
             deque.removeAll(emptyList())
             assertEquals((head until tail).toList(), deque)
@@ -565,7 +565,7 @@ class ArrayDequeTest {
     }
 
     @Test
-    fun retainAll() = testArrayDeque { bufferSize: Int, dequeSize: Int, head: Int, tail: Int ->
+    fun retainAll() = testArrayDeque { bufferSize: Int, _: Int, head: Int, tail: Int ->
         val listToRetain = (head..tail).filter { Random.nextBoolean() }
 
         val elements = (head until tail).toMutableList().apply { retainAll(listToRetain) }
@@ -612,15 +612,13 @@ class ArrayDequeTest {
     @Suppress("INVISIBLE_MEMBER")
     @Test
     fun newCapacity() {
-        val deque = ArrayDeque<String>()
-
         // oldCapacity < minCapacity < newCapacity
         repeat(100) {
             val oldCapacity = Random.nextInt(1 shl 30)
             val newCapacity = oldCapacity + (oldCapacity shr 1)
             val minCapacity = Random.nextInt(oldCapacity + 1 until newCapacity)
 
-            assertEquals(newCapacity, deque.newCapacity(oldCapacity, minCapacity))
+            assertEquals(newCapacity, ArrayDeque.newCapacity(oldCapacity, minCapacity))
         }
 
         // oldCapacity < newCapacity < minCapacity
@@ -629,7 +627,7 @@ class ArrayDequeTest {
             val newCapacity = oldCapacity + (oldCapacity shr 1)
             val minCapacity = Random.nextInt(newCapacity..Int.MAX_VALUE)
 
-            assertEquals(minCapacity, deque.newCapacity(oldCapacity, minCapacity))
+            assertEquals(minCapacity, ArrayDeque.newCapacity(oldCapacity, minCapacity))
         }
 
         // newCapacity overflow, oldCapacity < minCapacity <= maxArraySize
@@ -638,7 +636,7 @@ class ArrayDequeTest {
             val oldCapacity = Random.nextInt((1 shl 30) + (1 shl 29) until maxArraySize)
             val minCapacity = Random.nextInt(oldCapacity..maxArraySize)
 
-            assertEquals(maxArraySize, deque.newCapacity(oldCapacity, minCapacity))
+            assertEquals(maxArraySize, ArrayDeque.newCapacity(oldCapacity, minCapacity))
         }
 
         // newCapacity overflow, minCapacity > maxArraySize
@@ -646,7 +644,7 @@ class ArrayDequeTest {
             val oldCapacity = Random.nextInt((1 shl 30) + (1 shl 29)..maxArraySize)
             val minCapacity = Random.nextInt(maxArraySize + 1..Int.MAX_VALUE)
 
-            assertEquals(Int.MAX_VALUE, deque.newCapacity(oldCapacity, minCapacity))
+            assertEquals(Int.MAX_VALUE, ArrayDeque.newCapacity(oldCapacity, minCapacity))
         }
     }
 }

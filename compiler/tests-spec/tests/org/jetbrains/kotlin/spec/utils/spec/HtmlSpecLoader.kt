@@ -18,7 +18,7 @@ object HtmlSpecLoader {
     private const val SPEC_DOCS_TC_CONFIGURATION_ID = "Kotlin_Spec_DocsMaster"
     private const val TC_URL = "https://teamcity.jetbrains.com"
     private const val TC_PATH_PREFIX = "guestAuth/app/rest/builds"
-    private const val HTML_SPEC_PATH = "/web/kotlin-spec.html"
+    private const val HTML_SPEC_PATH = "/html/kotlin-spec.html"
     private const val STABLE_BRANCH = "master"
 
     private fun loadRawHtmlSpec(specVersion: String, buildNumber: String): String {

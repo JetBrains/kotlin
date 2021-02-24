@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.spec.utils.spec.SpecSentencesStorage
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.File
-import kotlin.io.walkTopDown
 
 @TestDataPath("\$PROJECT_ROOT/compiler/tests-spec/testData/")
 @RunWith(com.intellij.testFramework.Parameterized::class)
@@ -32,16 +31,16 @@ class SpecTestsConsistencyTest : TestCase() {
 
         @com.intellij.testFramework.Parameterized.Parameters(name = "{0}")
         @JvmStatic
-        fun getTestFiles(klass: Class<*>): List<Array<String>> {
+        fun getTestFiles(@Suppress("UNUSED_PARAMETER") klass: Class<*>): List<Array<String>> {
             val testFiles = mutableListOf<Array<String>>()
 
             TestArea.values().forEach { testArea ->
                 val testDataPath =
-                    "${GeneralConfiguration.TESTDATA_PATH}/${testArea.testDataPath}/${SpecTestLinkedType.LINKED.testDataPath}"
+                    "${GeneralConfiguration.SPEC_TESTDATA_PATH}/${testArea.testDataPath}/${SpecTestLinkedType.LINKED.testDataPath}"
 
                 testFiles += File(testDataPath).let { testsDir ->
                     testsDir.walkTopDown().filter { it.extension == "kt" }.map {
-                        arrayOf(it.relativeTo(File(GeneralConfiguration.TESTDATA_PATH)).path.replace("/", "$"))
+                        arrayOf(it.relativeTo(File(GeneralConfiguration.SPEC_TESTDATA_PATH)).path.replace("/", "$"))
                     }.toList()
                 }
             }
@@ -52,11 +51,12 @@ class SpecTestsConsistencyTest : TestCase() {
 
     @Test
     fun doTest() {
-        val file = File("${GeneralConfiguration.TESTDATA_PATH}/${testFilePath.replace("$", "/")}")
+        val file = File("${GeneralConfiguration.SPEC_TESTDATA_PATH}/${testFilePath.replace("$", "/")}")
         val specSentences = specSentencesStorage.getLatest() ?: return
         val test = parseLinkedSpecTest(file.canonicalPath, mapOf("main" to file.readText()))
-        val sectionsPath = setOf(*test.place.sections.toTypedArray(), test.place.paragraphNumber).joinToString()
-        val sentenceNumber = test.place.sentenceNumber
+        if (test.mainLink == null) return  //todo add check for relevant links also
+        val sectionsPath = setOf(*test.mainLink.sections.toTypedArray(), test.mainLink.paragraphNumber).joinToString()
+        val sentenceNumber = test.mainLink.sentenceNumber
         val paragraphSentences = specSentences[sectionsPath]
 
         if (paragraphSentences != null && paragraphSentences.size >= sentenceNumber) {
@@ -65,7 +65,7 @@ class SpecTestsConsistencyTest : TestCase() {
             val paragraphForTestSentences =
                 specSentencesForCurrentTest[sectionsPath] ?: throw Exception("$sectionsPath not found")
             if (paragraphForTestSentences.size < sentenceNumber) {
-                throw Exception("$sentenceNumber not found")
+                fail("Sentence #$sentenceNumber not found (${file.path})")
             }
             val expectedSentence = paragraphForTestSentences[sentenceNumber - 1]
             val actualSentence = paragraphSentences[sentenceNumber - 1]
@@ -76,5 +76,6 @@ class SpecTestsConsistencyTest : TestCase() {
 
             assertEquals(expectedSentence, actualSentence)
         }
+
     }
 }

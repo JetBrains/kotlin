@@ -1,13 +1,13 @@
-// FILE: inline.kt
-// COMMON_COROUTINES_TEST
-// WITH_RUNTIME
-// WITH_COROUTINES
-// FULL_JDK
-// NO_CHECK_LAMBDA_INLINING
 // CHECK_STATE_MACHINE
+// WITH_COROUTINES
+// WITH_COROUTINES
+// NO_CHECK_LAMBDA_INLINING
+// FULL_JDK
+// WITH_RUNTIME
+// FILE: inline.kt
 
 import helpers.*
-import COROUTINES_PACKAGE.intrinsics.*
+import kotlin.coroutines.intrinsics.*
 
 fun check() = true
 
@@ -18,9 +18,8 @@ inline suspend fun inlineMe(): Unit {
 }
 
 // FILE: box.kt
-// WITH_COROUTINES
 
-import COROUTINES_PACKAGE.*
+import kotlin.coroutines.*
 import helpers.*
 
 fun builder(c: suspend () -> Unit) {

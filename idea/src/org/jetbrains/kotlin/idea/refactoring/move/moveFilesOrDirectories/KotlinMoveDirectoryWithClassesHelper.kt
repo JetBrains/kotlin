@@ -16,6 +16,7 @@ import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectori
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.Function
 import com.intellij.util.containers.MultiMap
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.getFqNameWithImplicitPrefix
 import org.jetbrains.kotlin.idea.core.getPackage
 import org.jetbrains.kotlin.idea.core.quoteIfNeeded
@@ -76,7 +77,7 @@ class KotlinMoveDirectoryWithClassesHelper : MoveDirectoryWithClassesHelper() {
         for ((index, usageInfo) in infos.withIndex()) {
             if (usageInfo !is FileUsagesWrapper) continue
 
-            ProgressManager.getInstance().progressIndicator?.text2 = "Processing ${usageInfo.psiFile.name}"
+            ProgressManager.getInstance().progressIndicator?.text2 = KotlinBundle.message("text.processing.file.0", usageInfo.psiFile.name)
 
             runReadAction {
                 analyzeConflictsInFile(usageInfo.psiFile, usageInfo.usages, moveTarget, files, conflicts) {

@@ -34,6 +34,7 @@ class ScriptCompilationConfigurationFromDefinition(
         providedProperties.putIfAny(scriptDefinition.providedProperties.map { it.first to KotlinType(it.second) })
         annotationsForSamWithReceivers.put(scriptDefinition.annotationsForSamWithReceivers.map(::KotlinType))
         platform(scriptDefinition.platform)
+        @Suppress("DEPRECATION")
         compilerOptions.putIfAny(scriptDefinition.additionalCompilerArguments)
         ide {
             acceptedLocations.put(scriptDefinition.scriptExpectedLocations.mapLegacyExpectedLocations())
@@ -49,7 +50,9 @@ class ScriptCompilationConfigurationFromDefinition(
                         }.orEmpty()
                     )
 
-                    val reports = resolveResult.reports.map { ScriptDiagnostic(it.message, mapLegacyDiagnosticSeverity(it.severity)) }
+                    val reports = resolveResult.reports.map {
+                        ScriptDiagnostic(ScriptDiagnostic.unspecifiedError, it.message, mapLegacyDiagnosticSeverity(it.severity))
+                    }
                     val resolvedDeps = (resolveResult as? DependenciesResolver.ResolveResult.Success)?.dependencies
 
                     if (resolvedDeps == null) ResultWithDiagnostics.Failure(reports)

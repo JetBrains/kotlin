@@ -9,26 +9,25 @@ import com.intellij.openapi.roots.DependencyScope
 import org.jetbrains.jps.model.java.JavaResourceRootType
 import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.kotlin.idea.codeInsight.gradle.MultiplePluginVersionGradleImportingTestCase
+import org.jetbrains.kotlin.idea.codeInsight.gradle.legacyMppImportTestMinVersionForMaster
+import org.jetbrains.plugins.gradle.tooling.annotation.PluginTargetVersions
 import org.junit.Test
 
 class KaptImportingTest : MultiplePluginVersionGradleImportingTestCase() {
-
-    override fun isApplicableTest(): Boolean {
-        return !gradleVersion.startsWith("3")
-    }
 
     fun importProject(modulePerSourceSet: Boolean) {
         currentExternalProjectSettings.isResolveModulePerSourceSet = modulePerSourceSet
         val isCreateEmptyContentRootDirectories = currentExternalProjectSettings.isCreateEmptyContentRootDirectories
         currentExternalProjectSettings.isCreateEmptyContentRootDirectories = true
         try {
-            super.importProject()
+            super.importProject(true)
         } finally {
             currentExternalProjectSettings.isCreateEmptyContentRootDirectories = isCreateEmptyContentRootDirectories
         }
     }
 
     @Test
+    @PluginTargetVersions(gradleVersionForLatestPlugin = legacyMppImportTestMinVersionForMaster)
     fun testModulePerSourceSet() {
         // Disable testing import module per source set test in Android Studio as this mode is not supported in Android Studio
         if (isAndroidStudio()) {
@@ -61,6 +60,7 @@ class KaptImportingTest : MultiplePluginVersionGradleImportingTestCase() {
     }
 
     @Test
+    @PluginTargetVersions(gradleVersionForLatestPlugin = legacyMppImportTestMinVersionForMaster)
     fun testModulePerSourceSetDisabled() {
         configureByFiles()
         importProject(false)

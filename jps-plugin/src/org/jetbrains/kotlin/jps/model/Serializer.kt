@@ -10,17 +10,16 @@ import org.jdom.Element
 import org.jetbrains.jps.model.JpsElement
 import org.jetbrains.jps.model.JpsProject
 import org.jetbrains.jps.model.module.JpsModule
-import org.jetbrains.jps.model.serialization.JpsModelSerializerExtension
 import org.jetbrains.jps.model.serialization.JpsProjectExtensionSerializer
 import org.jetbrains.jps.model.serialization.facet.JpsFacetConfigurationSerializer
-import org.jetbrains.kotlin.cli.common.arguments.*
-import org.jetbrains.kotlin.config.CompilerSettings
-import org.jetbrains.kotlin.config.SettingConstants
-import org.jetbrains.kotlin.config.deserializeFacetSettings
-import org.jetbrains.kotlin.config.serializeFacetSettings
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.setApiVersionToLanguageVersionIfNeeded
+import org.jetbrains.kotlin.config.*
 import java.util.*
 
-class KotlinModelSerializerService : JpsModelSerializerExtension() {
+class KotlinModelSerializerService : KotlinCommonJpsModelSerializerExtension() {
     override fun getProjectExtensionSerializers() = listOf(
         KotlinCommonCompilerArgumentsSerializer(),
         Kotlin2JvmCompilerArgumentsSerializer(),

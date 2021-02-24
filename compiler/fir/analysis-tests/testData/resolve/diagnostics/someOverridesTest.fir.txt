@@ -1,0 +1,31 @@
+FILE: someOverridesTest.kt
+    public open class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public open class B : R|A| {
+        public constructor(): R|B| {
+            super<R|A|>()
+        }
+
+    }
+    public open class First<T> : R|kotlin/Any| {
+        public constructor<T>(): R|First<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open fun test(item: R|T|): R|kotlin/Unit| {
+        }
+
+    }
+    public open class Second : R|First<A>| {
+        public constructor(): R|Second| {
+            super<R|First<A>|>()
+        }
+
+        public open override fun test(item: R|A|): R|kotlin/Unit| {
+        }
+
+    }

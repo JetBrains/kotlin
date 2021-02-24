@@ -9,8 +9,7 @@ fun foo(arg: Boolean) {
         if (arg) {
             x = 1
         }
-    }
-    catch (e: Exception) {
+    } catch (e: Exception) {
         <caret>x = 2
     }
 }

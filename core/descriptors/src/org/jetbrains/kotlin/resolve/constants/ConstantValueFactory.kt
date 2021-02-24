@@ -48,7 +48,7 @@ object ConstantValueFactory {
         }
     }
 
-    fun createUnsignedValue(constantValue: ConstantValue<*>, type: KotlinType): UnsignedValueConstant<*>? {
+    fun createUnsignedValue(constantValue: ConstantValue<*>): UnsignedValueConstant<*>? {
         return when (constantValue) {
             is ByteValue -> UByteValue(constantValue.value)
             is ShortValue -> UShortValue(constantValue.value)

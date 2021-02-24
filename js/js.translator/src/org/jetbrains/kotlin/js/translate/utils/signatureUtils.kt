@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 // it's hard to do it unintentionally.
 fun generateSignature(descriptor: DeclarationDescriptor): String? {
     if (DescriptorUtils.isDescriptorWithLocalVisibility(descriptor)) return null
-    if (descriptor is DeclarationDescriptorWithVisibility && descriptor.visibility == Visibilities.PRIVATE &&
+    if (descriptor is DeclarationDescriptorWithVisibility && descriptor.visibility == DescriptorVisibilities.PRIVATE &&
         !AnnotationsUtils.isNativeObject(descriptor) && !AnnotationsUtils.isLibraryObject(descriptor)
     ) {
         return null

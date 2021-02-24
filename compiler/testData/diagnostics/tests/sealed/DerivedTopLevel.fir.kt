@@ -5,6 +5,6 @@ class Derived: Base() {
 }
 
 fun test() {
-    class Local: Base()
+    class Local: <!SEALED_SUPERTYPE_IN_LOCAL_CLASS!>Base<!>()
 }
 

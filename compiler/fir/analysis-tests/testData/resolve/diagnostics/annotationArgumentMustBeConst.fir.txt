@@ -1,0 +1,54 @@
+FILE: annotationArgumentMustBeConst.kt
+    public final annotation class Ann1 : R|kotlin/Annotation| {
+        public constructor(vararg a: R|kotlin/Array<out kotlin/String>|): R|Ann1| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val a: R|kotlin/Array<out kotlin/String>| = R|<local>/a|
+            public get(): R|kotlin/Array<out kotlin/String>|
+
+    }
+    public final annotation class Ann2 : R|kotlin/Annotation| {
+        public constructor(a: R|kotlin/IntArray|): R|Ann2| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val a: R|kotlin/IntArray| = R|<local>/a|
+            public get(): R|kotlin/IntArray|
+
+    }
+    public final annotation class Ann3 : R|kotlin/Annotation| {
+        public constructor(a: R|kotlin/Array<kotlin/String>|): R|Ann3| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val a: R|kotlin/Array<kotlin/String>| = R|<local>/a|
+            public get(): R|kotlin/Array<kotlin/String>|
+
+    }
+    public final var foo: R|kotlin/String| = String(a)
+        public get(): R|kotlin/String|
+        public set(value: R|kotlin/String|): R|kotlin/Unit|
+    public final var bar: R|kotlin/Int| = Int(1)
+        public get(): R|kotlin/Int|
+        public set(value: R|kotlin/Int|): R|kotlin/Unit|
+    public final fun baz(): R|kotlin/Int| {
+        ^baz Int(2)
+    }
+    public final val arr: R|kotlin/Array<kotlin/String>| = R|kotlin/arrayOf|<R|kotlin/String|>(vararg(String(a), String(b)))
+        public get(): R|kotlin/Array<kotlin/String>|
+    public final val two: R|kotlin/Int| = Int(2)
+        public get(): R|kotlin/Int|
+    public final const val cnst: R|kotlin/Int| = Int(3)
+        public get(): R|kotlin/Int|
+    public final class Class : R|kotlin/Any| {
+        public constructor(): R|Class| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val a: R|kotlin/Int| = Int(1)
+            public get(): R|kotlin/Int|
+
+    }
+    @R|Ann1|(vararg(R|/foo|, R|/foo|.R|kotlin/String.plus|(R|/bar|), <strcat>(R|/foo|.R|kotlin/Any.toString|(), String( ), R|/bar|.R|kotlin/Any.toString|()), <strcat>(R|/baz|().R|kotlin/Any.toString|(), String( )))) @R|Ann2|(<implicitArrayOf>(R|/bar|, R|/baz|(), R|/bar|.R|kotlin/Int.plus|(R|/cnst|))) @R|Ann3|(R|/arr|) public final fun test(): R|kotlin/Unit| {
+    }

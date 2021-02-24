@@ -21,8 +21,8 @@ import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.compiler.CompilerMessage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation;
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity;
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 
 import java.util.ArrayList;
@@ -34,7 +34,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class MavenPluginLogMessageCollector implements MessageCollector {
     private final Log log;
-    private final ArrayList<Pair<CompilerMessageLocation, String>> collectedErrors = new ArrayList<>();
+    private final ArrayList<Pair<CompilerMessageSourceLocation, String>> collectedErrors = new ArrayList<>();
 
     public MavenPluginLogMessageCollector(Log log) {
         this.log = checkNotNull(log, "log shouldn't be null");
@@ -46,7 +46,7 @@ public class MavenPluginLogMessageCollector implements MessageCollector {
     }
 
     @NotNull
-    public List<Pair<CompilerMessageLocation, String>> getCollectedErrors() {
+    public List<Pair<CompilerMessageSourceLocation, String>> getCollectedErrors() {
         return Collections.unmodifiableList(collectedErrors);
     }
 
@@ -56,7 +56,7 @@ public class MavenPluginLogMessageCollector implements MessageCollector {
     }
 
     @Override
-    public void report(@NotNull CompilerMessageSeverity severity, @NotNull String message, @Nullable CompilerMessageLocation location) {
+    public void report(@NotNull CompilerMessageSeverity severity, @NotNull String message, @Nullable CompilerMessageSourceLocation location) {
         String position = location == null ? "" : location.getPath() + ": (" + (location.getLine() + ", " + location.getColumn()) + ") ";
 
         String text = position + message;
@@ -90,7 +90,7 @@ public class MavenPluginLogMessageCollector implements MessageCollector {
 
     public void throwKotlinCompilerException() throws KotlinCompilationFailureException {
         throw new KotlinCompilationFailureException(getCollectedErrors().stream().map(pair -> {
-            CompilerMessageLocation location = pair.getFirst();
+            CompilerMessageSourceLocation location = pair.getFirst();
             String message = pair.getSecond();
             if (location == null) {
                 return new CompilerMessage(null, CompilerMessage.Kind.ERROR, 0, 0, 0, 0, message);

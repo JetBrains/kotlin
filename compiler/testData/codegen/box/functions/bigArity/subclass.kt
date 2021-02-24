@@ -1,7 +1,10 @@
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: IGNORED_IN_JS
 // !LANGUAGE: +FunctionTypesWithBigArity
 
 // Implementing function interface is prohibited in JavaScript
 // IGNORE_BACKEND: JS_IR, JS
+// IGNORE_BACKEND: JS_IR_ES6
 
 class A(val value: String)
 

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
@@ -35,7 +36,7 @@ import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getSuperCallExpressio
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmDefaultAnnotation
+import org.jetbrains.kotlin.resolve.jvm.annotations.isCompiledToJvmDefault
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.*
 
 class InterfaceDefaultMethodCallChecker(val jvmTarget: JvmTarget) : CallChecker {
@@ -61,13 +62,14 @@ class InterfaceDefaultMethodCallChecker(val jvmTarget: JvmTarget) : CallChecker 
         val realDescriptor = unwrapFakeOverride(descriptor)
         val realDescriptorOwner = realDescriptor.containingDeclaration as? ClassDescriptor ?: return
 
-        if (isInterface(realDescriptorOwner) && (realDescriptor is JavaCallableMemberDescriptor || realDescriptor.hasJvmDefaultAnnotation())) {
+        val jvmDefaultMode = context.languageVersionSettings.getFlag(JvmAnalysisFlags.jvmDefaultMode)
+        if (isInterface(realDescriptorOwner) && (realDescriptor is JavaCallableMemberDescriptor || realDescriptor.isCompiledToJvmDefault(jvmDefaultMode))) {
             val bindingContext = context.trace.bindingContext
             val thisForSuperCall = getSuperCallLabelTarget(bindingContext, superCallExpression)
 
             if (thisForSuperCall != null && DescriptorUtils.isInterface(thisForSuperCall)) {
                 val declarationWithCall = findInterfaceMember(thisForSuperCall, superCallExpression, bindingContext)
-                if (declarationWithCall?.hasJvmDefaultAnnotation() == false) {
+                if (declarationWithCall?.isCompiledToJvmDefault(jvmDefaultMode) == false) {
                     context.trace.report(INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER.on(reportOn))
                     return
                 }

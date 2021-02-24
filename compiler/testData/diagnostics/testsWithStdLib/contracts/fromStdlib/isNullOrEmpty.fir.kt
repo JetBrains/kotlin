@@ -3,18 +3,18 @@
 
 fun testIsNullOrEmpty(x: String?) {
     if (x.isNullOrEmpty()) {
-        x.<!INAPPLICABLE_CANDIDATE!>length<!>
+        x<!UNSAFE_CALL!>.<!>length
     }
     else {
-        x.<!INAPPLICABLE_CANDIDATE!>length<!>
+        x.length
     }
 }
 
 fun testIsNotNullOrEmpty(x: String?) {
     if (!x.isNullOrEmpty()) {
-        x.<!INAPPLICABLE_CANDIDATE!>length<!>
+        x.length
     }
 
-    x.<!INAPPLICABLE_CANDIDATE!>length<!>
+    x<!UNSAFE_CALL!>.<!>length
 }
 

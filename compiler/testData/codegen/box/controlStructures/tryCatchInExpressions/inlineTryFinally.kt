@@ -1,3 +1,5 @@
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: EXCEPTIONS_NOT_IMPLEMENTED
 inline fun <T> tryAndThen(f1: () -> Unit, f2: () -> Unit, f3: () -> T): T {
     try {
         f1()

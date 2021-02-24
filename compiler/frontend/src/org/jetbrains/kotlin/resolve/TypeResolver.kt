@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.resolve
 
 import com.intellij.util.SmartList
-import org.jetbrains.kotlin.builtins.PlatformToKotlinClassMap
+import org.jetbrains.kotlin.builtins.PlatformToKotlinClassMapper
 import org.jetbrains.kotlin.builtins.createFunctionType
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -53,7 +53,6 @@ import org.jetbrains.kotlin.resolve.scopes.utils.findFirstFromMeAndParent
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.resolve.source.toSourceElement
-import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.Variance.*
 import org.jetbrains.kotlin.types.typeUtil.containsTypeAliasParameters
@@ -70,8 +69,9 @@ class TypeResolver(
     private val dynamicTypesSettings: DynamicTypesSettings,
     private val dynamicCallableDescriptors: DynamicCallableDescriptors,
     private val identifierChecker: IdentifierChecker,
-    private val platformToKotlinClassMap: PlatformToKotlinClassMap,
-    private val languageVersionSettings: LanguageVersionSettings
+    private val platformToKotlinClassMapper: PlatformToKotlinClassMapper,
+    private val languageVersionSettings: LanguageVersionSettings,
+    private val upperBoundChecker: UpperBoundChecker
 ) {
     private val isNonParenthesizedAnnotationsOnFunctionalTypesEnabled =
         languageVersionSettings.getFeatureSupport(LanguageFeature.NonParenthesizedAnnotationsOnFunctionalTypes) == LanguageFeature.State.ENABLED
@@ -325,7 +325,7 @@ class TypeResolver(
                     type: KotlinType,
                     source: SourceElement
                 ) : VariableDescriptorImpl(containingDeclaration, annotations, name, type, source) {
-                    override fun getVisibility() = Visibilities.LOCAL
+                    override fun getVisibility() = DescriptorVisibilities.LOCAL
 
                     override fun substitute(substitutor: TypeSubstitutor): VariableDescriptor? {
                         throw UnsupportedOperationException("Should not be called for descriptor of type ${this::class.java}")
@@ -396,7 +396,7 @@ class TypeResolver(
                 }
 
                 param.valOrVarKeyword?.let {
-                    c.trace.report(Errors.UNSUPPORTED.on(it, "val or val on parameter in function type"))
+                    c.trace.report(Errors.UNSUPPORTED.on(it, "val or var on parameter in function type"))
                 }
             }
         })
@@ -440,9 +440,9 @@ class TypeResolver(
     private fun getScopeForTypeParameter(c: TypeResolutionContext, typeParameterDescriptor: TypeParameterDescriptor): MemberScope {
         return when {
             c.checkBounds -> TypeIntersector.getUpperBoundsAsType(typeParameterDescriptor).memberScope
-            else -> LazyScopeAdapter(LockBasedStorageManager.NO_LOCKS.createLazyValue {
+            else -> LazyScopeAdapter {
                 TypeIntersector.getUpperBoundsAsType(typeParameterDescriptor).memberScope
-            })
+            }
         }
     }
 
@@ -525,7 +525,7 @@ class TypeResolver(
                 val typeReference = collectedArgumentAsTypeProjections.getOrNull(i)?.typeReference
 
                 if (typeReference != null) {
-                    DescriptorResolver.checkBounds(typeReference, argument, parameter, substitutor, c.trace)
+                    upperBoundChecker.checkBounds(typeReference, argument, parameter, substitutor, c.trace)
                 }
             }
         }
@@ -597,7 +597,8 @@ class TypeResolver(
             c.trace,
             type, typeAliasQualifierPart.typeArguments ?: typeAliasQualifierPart.expression,
             descriptor, descriptor.declaredTypeParameters,
-            argumentElementsFromUserType // TODO arguments from inner scope
+            argumentElementsFromUserType, // TODO arguments from inner scope
+            upperBoundChecker
         )
 
         if (parameters.size != arguments.size) {
@@ -659,7 +660,8 @@ class TypeResolver(
         val typeArgumentsOrTypeName: KtElement?,
         val typeAliasDescriptor: TypeAliasDescriptor,
         typeParameters: List<TypeParameterDescriptor>,
-        typeArguments: List<KtTypeProjection>
+        typeArguments: List<KtTypeProjection>,
+        val upperBoundChecker: UpperBoundChecker
     ) : TypeAliasExpansionReportStrategy {
 
         private val mappedArguments = typeParameters.zip(typeArguments).toMap()
@@ -690,7 +692,7 @@ class TypeResolver(
         }
 
         override fun boundsViolationInSubstitution(
-            bound: KotlinType,
+            substitutor: TypeSubstitutor,
             unsubstitutedArgument: KotlinType,
             argument: KotlinType,
             typeParameter: TypeParameterDescriptor
@@ -698,11 +700,7 @@ class TypeResolver(
             val descriptorForUnsubstitutedArgument = unsubstitutedArgument.constructor.declarationDescriptor
             val argumentElement = mappedArguments[descriptorForUnsubstitutedArgument]
             val argumentTypeReferenceElement = argumentElement?.typeReference
-            if (argumentTypeReferenceElement != null) {
-                trace.report(UPPER_BOUND_VIOLATED.on(argumentTypeReferenceElement, bound, argument))
-            } else if (type != null) {
-                trace.report(UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION.on(type, bound, argument, typeParameter))
-            }
+            upperBoundChecker.checkBounds(argumentTypeReferenceElement, argument, typeParameter, substitutor, trace, type)
         }
 
         override fun repeatedAnnotation(annotation: AnnotationDescriptor) {
@@ -932,7 +930,7 @@ class TypeResolver(
         return qualifiedExpressionResolver.resolveDescriptorForType(userType, scope, trace, isDebuggerContext).apply {
             if (classifierDescriptor != null) {
                 PlatformClassesMappedToKotlinChecker.reportPlatformClassMappedToKotlin(
-                    platformToKotlinClassMap, trace, userType, classifierDescriptor
+                    platformToKotlinClassMapper, trace, userType, classifierDescriptor
                 )
             }
         }

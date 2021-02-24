@@ -6,27 +6,23 @@
 package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.declarations.impl.FirSimpleFunctionImpl
-import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.scopes.FirOverrideChecker
-import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
 
 abstract class AbstractFirUseSiteMemberScope(
     session: FirSession,
     overrideChecker: FirOverrideChecker,
-    protected val superTypesScope: FirScope,
+    protected val superTypesScope: FirTypeScope,
     protected val declaredMemberScope: FirScope
 ) : AbstractFirOverrideScope(session, overrideChecker) {
 
-    private val functions = hashMapOf<Name, Collection<FirFunctionSymbol<*>>>()
+    private val functions = hashMapOf<Name, Collection<FirNamedFunctionSymbol>>()
+    protected val directOverriddenFunctions = hashMapOf<FirNamedFunctionSymbol, Collection<FirNamedFunctionSymbol>>()
+    protected val directOverriddenProperties = hashMapOf<FirPropertySymbol, MutableList<FirPropertySymbol>>()
 
-    override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
+    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         functions.getOrPut(name) {
             doProcessFunctions(name)
         }.forEach {
@@ -36,92 +32,68 @@ abstract class AbstractFirUseSiteMemberScope(
 
     private fun doProcessFunctions(
         name: Name
-    ): Collection<FirFunctionSymbol<*>> = mutableListOf<FirFunctionSymbol<*>>().apply {
+    ): Collection<FirNamedFunctionSymbol> = mutableListOf<FirNamedFunctionSymbol>().apply {
         val overrideCandidates = mutableSetOf<FirFunctionSymbol<*>>()
-        declaredMemberScope.processFunctionsByName(name) {
-            val symbol = processInheritedDefaultParameters(it)
+        declaredMemberScope.processFunctionsByName(name) { symbol ->
+            if (symbol.isStatic) return@processFunctionsByName
+            val directOverridden = computeDirectOverridden(symbol)
+            this@AbstractFirUseSiteMemberScope.directOverriddenFunctions[symbol] = directOverridden
             overrideCandidates += symbol
             add(symbol)
         }
 
         superTypesScope.processFunctionsByName(name) {
-            if (it !is FirConstructorSymbol) {
-                val overriddenBy = it.getOverridden(overrideCandidates)
-                if (overriddenBy == null) {
-                    add(it)
-                }
+            val overriddenBy = it.getOverridden(overrideCandidates)
+            if (overriddenBy == null) {
+                add(it)
             }
         }
     }
 
-    private fun processInheritedDefaultParameters(symbol: FirFunctionSymbol<*>): FirFunctionSymbol<*> {
-        val firSimpleFunction = symbol.fir as? FirSimpleFunction ?: return symbol
-        if (firSimpleFunction.valueParameters.isEmpty() || firSimpleFunction.valueParameters.any { it.defaultValue != null }) return symbol
-
-        var foundFir: FirFunction<*>? = null
+    private fun computeDirectOverridden(symbol: FirNamedFunctionSymbol): Collection<FirNamedFunctionSymbol> {
+        val result = mutableListOf<FirNamedFunctionSymbol>()
+        val firSimpleFunction = symbol.fir
         superTypesScope.processFunctionsByName(symbol.callableId.callableName) { superSymbol ->
-            val superFunctionFir = superSymbol.fir
-            if (foundFir == null &&
-                superFunctionFir is FirSimpleFunction &&
-                overrideChecker.isOverriddenFunction(firSimpleFunction, superFunctionFir) &&
-                superFunctionFir.valueParameters.any { parameter -> parameter.defaultValue != null }
-            ) {
-                foundFir = superFunctionFir
+            if (overrideChecker.isOverriddenFunction(firSimpleFunction, superSymbol.fir)) {
+                result.add(superSymbol)
             }
         }
 
-        if (foundFir == null) return symbol
-
-        val newSymbol = FirNamedFunctionSymbol(symbol.callableId, false, null)
-
-        createFunctionCopy(firSimpleFunction, newSymbol).apply {
-            resolvePhase = firSimpleFunction.resolvePhase
-            typeParameters += firSimpleFunction.typeParameters
-            valueParameters += firSimpleFunction.valueParameters.zip(foundFir.valueParameters)
-                .map { (overrideParameter, overriddenParameter) ->
-                    if (overriddenParameter.defaultValue != null)
-                        createValueParameterCopy(overrideParameter, overriddenParameter.defaultValue).apply {
-                            annotations += overrideParameter.annotations
-                        }
-                    else
-                        overrideParameter
-                }
-        }
-
-        return newSymbol
+        return result
     }
 
-    protected open fun createFunctionCopy(firSimpleFunction: FirSimpleFunction, newSymbol: FirNamedFunctionSymbol): FirSimpleFunctionImpl =
-        FirSimpleFunctionImpl(
-            firSimpleFunction.source,
-            firSimpleFunction.session,
-            firSimpleFunction.returnTypeRef,
-            firSimpleFunction.receiverTypeRef,
-            firSimpleFunction.status,
-            firSimpleFunction.name,
-            newSymbol
+    override fun processDirectOverriddenFunctionsWithBaseScope(
+        functionSymbol: FirNamedFunctionSymbol,
+        processor: (FirNamedFunctionSymbol, FirTypeScope) -> ProcessorAction
+    ): ProcessorAction =
+        doProcessDirectOverriddenCallables(
+            functionSymbol, processor, directOverriddenFunctions, superTypesScope,
+            FirTypeScope::processDirectOverriddenFunctionsWithBaseScope
         )
 
-    protected open fun createValueParameterCopy(parameter: FirValueParameter, newDefaultValue: FirExpression?): FirValueParameterImpl =
-        with(parameter) {
-            FirValueParameterImpl(
-                source,
-                session,
-                returnTypeRef,
-                name,
-                FirVariableSymbol(parameter.symbol.callableId),
-                newDefaultValue,
-                isCrossinline,
-                isNoinline,
-                isVararg
-            )
-        }
+    override fun processDirectOverriddenPropertiesWithBaseScope(
+        propertySymbol: FirPropertySymbol,
+        processor: (FirPropertySymbol, FirTypeScope) -> ProcessorAction
+    ): ProcessorAction =
+        doProcessDirectOverriddenCallables(
+            propertySymbol, processor, directOverriddenProperties, superTypesScope,
+            FirTypeScope::processDirectOverriddenPropertiesWithBaseScope
+        )
 
-    override fun processClassifiersByName(
-        name: Name,
-        processor: (FirClassifierSymbol<*>) -> Unit
-    ) {
-        declaredMemberScope.processClassifiersByName(name, processor)
-        superTypesScope.processClassifiersByName(name, processor)
+    override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
+        declaredMemberScope.processClassifiersByNameWithSubstitution(name, processor)
+        superTypesScope.processClassifiersByNameWithSubstitution(name, processor)
+    }
+
+    override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {
+        declaredMemberScope.processDeclaredConstructors(processor)
+    }
+
+    override fun getCallableNames(): Set<Name> {
+        return declaredMemberScope.getContainingCallableNamesIfPresent() + superTypesScope.getCallableNames()
+    }
+
+    override fun getClassifierNames(): Set<Name> {
+        return declaredMemberScope.getContainingClassifierNamesIfPresent() + superTypesScope.getClassifierNames()
     }
 }

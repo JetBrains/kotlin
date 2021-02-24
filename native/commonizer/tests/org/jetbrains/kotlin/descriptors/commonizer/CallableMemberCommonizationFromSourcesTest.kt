@@ -15,4 +15,6 @@ class CallableMemberCommonizationFromSourcesTest : AbstractCommonizationFromSour
     fun testReturnTypes() = doTestSuccessfulCommonization()
 
     fun testExtensionReceivers() = doTestSuccessfulCommonization()
+
+    fun testOpenCallableMemberInInterface() = doTestSuccessfulCommonization()
 }

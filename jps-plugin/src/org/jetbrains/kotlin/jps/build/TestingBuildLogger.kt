@@ -26,11 +26,12 @@ import java.io.File
  * Used for assertions in tests.
  */
 interface TestingBuildLogger {
-    fun invalidOrUnusedCache(chunk: KotlinChunk?, target: KotlinModuleBuildTarget<*>?, attributesDiff: CacheAttributesDiff<*>)
-    fun chunkBuildStarted(context: CompileContext, chunk: org.jetbrains.jps.ModuleChunk)
-    fun afterChunkBuildStarted(context: CompileContext, chunk: org.jetbrains.jps.ModuleChunk)
-    fun addCustomMessage(message: String)
-    fun buildFinished(exitCode: ModuleLevelBuilder.ExitCode)
-    fun markedAsDirtyBeforeRound(files: Iterable<File>)
-    fun markedAsDirtyAfterRound(files: Iterable<File>)
+    fun invalidOrUnusedCache(chunk: KotlinChunk?, target: KotlinModuleBuildTarget<*>?, attributesDiff: CacheAttributesDiff<*>) = Unit
+    fun chunkBuildStarted(context: CompileContext, chunk: org.jetbrains.jps.ModuleChunk) = Unit
+    fun afterChunkBuildStarted(context: CompileContext, chunk: org.jetbrains.jps.ModuleChunk) = Unit
+    fun compilingFiles(files: Collection<File>, allRemovedFilesFiles: Collection<File>) = Unit
+    fun addCustomMessage(message: String) = Unit
+    fun buildFinished(exitCode: ModuleLevelBuilder.ExitCode) = Unit
+    fun markedAsDirtyBeforeRound(files: Iterable<File>) = Unit
+    fun markedAsDirtyAfterRound(files: Iterable<File>) = Unit
 }

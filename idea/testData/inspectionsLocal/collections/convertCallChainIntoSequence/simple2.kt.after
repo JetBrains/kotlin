@@ -3,10 +3,10 @@
 
 fun test(list: List<Int>): List<Int> {
     return list
-            .asSequence()
-            .filter { it > 1 }
-            .map { it * 2 }
-            .map { it * 3 }
-            .map { it * 4 }
-            .toList()
+        .asSequence()
+        .filter { it > 1 }
+        .map { it * 2 }
+        .map { it * 3 }
+        .map { it * 4 }
+        .toList()
 }

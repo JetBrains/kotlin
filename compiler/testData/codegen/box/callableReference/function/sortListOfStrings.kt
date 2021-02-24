@@ -1,6 +1,8 @@
-// IGNORE_BACKEND_FIR: JVM_IR
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: STDLIB_COLLECTIONS
 // WITH_RUNTIME
 // KJS_WITH_FULL_RUNTIME
+// SKIP_DCE_DRIVEN
 
 fun sort(list: MutableList<String>, comparator: (String, String) -> Int) {
     list.sortWith(Comparator(comparator))

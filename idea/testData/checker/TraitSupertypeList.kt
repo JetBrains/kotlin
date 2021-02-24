@@ -1,3 +1,5 @@
+// IGNORE_FIR
+
 open class bar()
 
 interface Foo<error>()</error> : <error>bar</error><error>()</error>, <error><error>bar</error></error>, <error><error>bar</error></error> {

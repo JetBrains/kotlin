@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.daemon.report
 
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
@@ -34,7 +34,7 @@ internal class CompileServicesFacadeMessageCollector(
         hasErrors = false
     }
 
-    override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation?) {
+    override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
         log.info("Message: " + MessageRenderer.WITHOUT_PATHS.render(severity, message, location))
         when (severity) {
             CompilerMessageSeverity.OUTPUT -> {

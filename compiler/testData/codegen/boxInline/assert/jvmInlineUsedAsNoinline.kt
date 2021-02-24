@@ -1,9 +1,10 @@
-// Not a multi-module test.
-// IGNORE_BACKEND_MULTI_MODULE: JVM, JVM_IR
-// FILE: A.kt
-// KOTLIN_CONFIGURATION_FLAGS: ASSERTIONS_MODE=jvm
-// WITH_RUNTIME
 // FULL_JDK
+// WITH_RUNTIME
+// Not a multi-module test.
+// TARGET_BACKEND: JVM
+// IGNORE_BACKEND_MULTI_MODULE: JVM, JVM_IR, JVM_MULTI_MODULE_OLD_AGAINST_IR, JVM_MULTI_MODULE_IR_AGAINST_OLD
+// ASSERTIONS_MODE: jvm
+// FILE: A.kt
 
 class A {
     inline fun inlineMe(crossinline c : () -> String) = {

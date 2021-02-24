@@ -10,6 +10,7 @@ import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.getArguments
 import org.jetbrains.kotlin.psi.KtExpression
@@ -30,14 +31,14 @@ class EmptyRangeInspection : AbstractPrimitiveRangeToInspection() {
 
         holder.registerProblem(
             expression,
-            "This range is empty. Did you mean to use 'downTo'?",
+            KotlinBundle.message("this.range.is.empty.did.you.mean.to.use.downto"),
             ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
             ReplaceWithDownToFix()
         )
     }
 
     class ReplaceWithDownToFix : LocalQuickFix {
-        override fun getName() = "Replace with 'downTo'"
+        override fun getName() = KotlinBundle.message("replace.with.down.to.fix.text")
 
         override fun getFamilyName() = name
 

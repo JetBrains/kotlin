@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.inspections
 
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElementVisitor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.psi.dotQualifiedExpressionVisitor
 
@@ -16,7 +17,7 @@ class JavaCollectionsStaticMethodOnImmutableListInspection : AbstractKotlinInspe
             val (methodName, firstArg) = JavaCollectionsStaticMethodInspection.getTargetMethodOnImmutableList(expression) ?: return
             holder.registerProblem(
                 expression.callExpression?.calleeExpression ?: expression,
-                "Call of Java mutator '$methodName' on immutable Kotlin collection '${firstArg.text}'"
+                KotlinBundle.message("call.of.java.mutator.0.on.immutable.kotlin.collection.1", methodName, firstArg.text)
             )
         })
     }

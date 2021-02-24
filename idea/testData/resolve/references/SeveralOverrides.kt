@@ -1,5 +1,3 @@
-// IGNORE_FIR
-
 interface A {
     fun foo()
 }

@@ -10,6 +10,7 @@ import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.project.platform
@@ -44,7 +45,7 @@ class ReplaceWithEnumMapInspection : AbstractKotlinInspection() {
             val firstArgType = expectedType.arguments.firstOrNull()?.type ?: return
             if (!firstArgType.isEnum()) return
             val enumClassName = firstArgType.constructor.declarationDescriptor?.fqNameUnsafe?.asString() ?: return
-            holder.registerProblem(element, "Replaceable with EnumMap", ReplaceWithEnumMapFix(enumClassName))
+            holder.registerProblem(element, KotlinBundle.message("replaceable.with.enummap"), ReplaceWithEnumMapFix(enumClassName))
         })
     }
 
@@ -53,7 +54,7 @@ class ReplaceWithEnumMapInspection : AbstractKotlinInspection() {
     ) : LocalQuickFix {
         override fun getFamilyName() = name
 
-        override fun getName() = "Replace with EnumMap"
+        override fun getName() = KotlinBundle.message("replace.with.enum.map.fix.text")
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             val call = descriptor.psiElement as? KtCallExpression ?: return

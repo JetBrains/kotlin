@@ -14,7 +14,8 @@ public abstract interface InterfaceWithDefaults<T extends java.lang.Object> {
             super();
         }
 
-        public static <T extends java.lang.Object>void foo(foo.InterfaceWithDefaults<T> $this) {
+        public static <T extends java.lang.Object>void foo(@org.jetbrains.annotations.NotNull()
+        foo.InterfaceWithDefaults<T> $this) {
         }
     }
 }
@@ -36,7 +37,8 @@ public abstract interface SubInterface<T extends java.lang.Object> extends foo.I
         }
 
         @java.lang.Override()
-        public static <T extends java.lang.Object>void foo(foo.SubInterface<T> $this) {
+        public static <T extends java.lang.Object>void foo(@org.jetbrains.annotations.NotNull()
+        foo.SubInterface<T> $this) {
         }
     }
 }

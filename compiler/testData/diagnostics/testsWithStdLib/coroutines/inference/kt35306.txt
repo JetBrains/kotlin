@@ -1,0 +1,33 @@
+package
+
+public val build: Build<kotlin.Int>
+public val buildWithFn: Build<kotlin.Int>
+public val buildWithFnWrapped: Build<kotlin.Int>
+public val buildWithWrappedValue: Build<kotlin.Int>
+@kotlin.OptIn(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ T> build(/*0*/ @kotlin.BuilderInference fn: Builder<T>.() -> kotlin.Unit): Build<T>
+
+public interface Build</*0*/ T> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Builder</*0*/ T> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public abstract fun value(/*0*/ value: T): kotlin.Unit
+    public abstract fun valueFn(/*0*/ fn: () -> T): kotlin.Unit
+    public abstract fun wrappedValue(/*0*/ value: Wrapped<T>): kotlin.Unit
+    public abstract fun wrappedValueFn(/*0*/ fn: () -> Wrapped<T>): kotlin.Unit
+}
+
+public final data class Wrapped</*0*/ T> {
+    public constructor Wrapped</*0*/ T>(/*0*/ value: T)
+    public final val value: T
+    public final operator /*synthesized*/ fun component1(): T
+    public final /*synthesized*/ fun copy(/*0*/ value: T = ...): Wrapped<T>
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}

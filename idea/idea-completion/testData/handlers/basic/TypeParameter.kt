@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 package xxx
 
 class A<T> {

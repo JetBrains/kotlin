@@ -3,6 +3,8 @@
 
 package test
 
+import checkSubtype
+
 class C {
     companion object {
         fun foo(): String = "companion"

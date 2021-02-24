@@ -1,10 +1,11 @@
-
 description = "Kotlin Gradle Tooling support"
 
 plugins {
     kotlin("jvm")
     id("jps-compatible")
 }
+
+jvmTarget = "1.6"
 
 dependencies {
     compile(kotlinStdlib())
@@ -16,6 +17,12 @@ dependencies {
 sourceSets {
     "main" { projectDefault() }
     "test" {}
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
+    kotlinOptions {
+        freeCompilerArgs += "-Xsuppress-deprecated-jvm-target-warning"
+    }
 }
 
 runtimeJar()

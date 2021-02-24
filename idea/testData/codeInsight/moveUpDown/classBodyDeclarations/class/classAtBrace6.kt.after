@@ -5,6 +5,7 @@ fun foo() {
     <caret>class B {
 
     }
+
     // class A
     class A {
     }

@@ -221,7 +221,7 @@ class OldJavaToKotlinConverter(
                 if (progress == null) error("Progress should not be null for old J2K")
                 val refs = ArrayList<ReferenceInfo>()
 
-                progress.text = "Searching usages to update..."
+                progress.text = KotlinJ2KBundle.message("text.searching.usages.to.update")
 
                 for ((i, entry) in map.entries.withIndex()) {
                     val psiElement = entry.key
@@ -298,6 +298,7 @@ interface WithProgressProcessor {
     ): List<TOutputItem>
 
     fun updateState(fileIndex: Int?, phase: Int, description: String)
+    fun updateState(phase: Int, subPhase: Int, subPhaseCount: Int, fileIndex: Int?, description: String)
     fun <T> process(action: () -> T): T
 }
 
@@ -307,7 +308,7 @@ class OldWithProgressProcessor(private val progress: ProgressIndicator?, private
         val DEFAULT = OldWithProgressProcessor(null, null)
     }
 
-    private val progressText = "Converting Java to Kotlin"
+    private val progressText = KotlinJ2KBundle.message("text.converting.java.to.kotlin")
     private val fileCount = files?.size ?: 0
     private val fileCountText = fileCount.toString() + " " + if (fileCount > 1) "files" else "file"
     private var fraction = 0.0
@@ -322,7 +323,7 @@ class OldWithProgressProcessor(private val progress: ProgressIndicator?, private
         // we use special process with EmptyProgressIndicator to avoid changing text in our progress by inheritors search inside etc
         ProgressManager.getInstance().runProcess(
             {
-                progress?.text = "$progressText ($fileCountText) - pass $pass of 3"
+                progress?.text = "$progressText ($fileCountText) - ${KotlinJ2KBundle.message("text.pass.of.3", pass)}"
 
                 for ((i, item) in inputItems.withIndex()) {
                     progress?.checkCanceled()
@@ -347,6 +348,16 @@ class OldWithProgressProcessor(private val progress: ProgressIndicator?, private
 
     override fun updateState(fileIndex: Int?, phase: Int, description: String) {
         throw AbstractMethodError("Should not be called for old J2K")
+    }
+
+    override fun updateState(
+        phase: Int,
+        subPhase: Int,
+        subPhaseCount: Int,
+        fileIndex: Int?,
+        description: String
+    ) {
+        error("Should not be called for old J2K")
     }
 }
 

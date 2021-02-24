@@ -17,7 +17,7 @@ class Foo<F : Bar<F>>(val f: F)
 fun <T> id(t1: T, t2: T) = t2
 
 fun test(foo: Foo<*>, g: Bar<*>) {
-    <!OI;TYPE_MISMATCH!><!OI;TYPE_MISMATCH!>id(foo.f, g)<!>.t<!>.<!NI;UNRESOLVED_REFERENCE!>t<!>
+    <!TYPE_MISMATCH{OI}!><!TYPE_MISMATCH{OI}!>id(foo.f, g)<!>.t<!>.<!UNRESOLVED_REFERENCE{NI}!>t<!>
 }
 
 fun main() {

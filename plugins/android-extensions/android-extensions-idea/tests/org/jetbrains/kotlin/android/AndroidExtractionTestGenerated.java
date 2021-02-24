@@ -26,7 +26,7 @@ public class AndroidExtractionTestGenerated extends AbstractAndroidExtractionTes
     }
 
     public void testAllFilesPresentInExtraction() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/android-extensions/android-extensions-idea/testData/android/extraction"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
+        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/android-extensions/android-extensions-idea/testData/android/extraction"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
     }
 
     @TestMetadata("toTopLevelFun")

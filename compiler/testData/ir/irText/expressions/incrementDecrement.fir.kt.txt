@@ -1,0 +1,91 @@
+var p: Int
+  field = 0
+  get
+  set
+
+val arr: IntArray
+  field = intArrayOf(elements = [1, 2, 3])
+  get
+
+fun testVarPrefix() {
+  var x: Int = 0
+  val x1: Int = { // BLOCK
+    x = x.inc()
+    x
+  }
+  val x2: Int = { // BLOCK
+    x = x.dec()
+    x
+  }
+}
+
+fun testVarPostfix() {
+  var x: Int = 0
+  val x1: Int = { // BLOCK
+    val <unary>: Int = x
+    x = <unary>.inc()
+    <unary>
+  }
+  val x2: Int = { // BLOCK
+    val <unary>: Int = x
+    x = <unary>.dec()
+    <unary>
+  }
+}
+
+fun testPropPrefix() {
+  val p1: Int = { // BLOCK
+    <set-p>(<set-?> = <get-p>().inc())
+    <get-p>()
+  }
+  val p2: Int = { // BLOCK
+    <set-p>(<set-?> = <get-p>().dec())
+    <get-p>()
+  }
+}
+
+fun testPropPostfix() {
+  val p1: Int = { // BLOCK
+    val <unary>: Int = <get-p>()
+    <set-p>(<set-?> = <unary>.inc())
+    <unary>
+  }
+  val p2: Int = { // BLOCK
+    <set-p>(<set-?> = <get-p>().dec())
+    <get-p>()
+  }
+}
+
+fun testArrayPrefix() {
+  val a1: Int = { // BLOCK
+    val <array>: IntArray = <get-arr>()
+    val <index0>: Int = 0
+    val <unary-result>: Int = <array>.get(index = <index0>).inc()
+    <array>.set(index = <index0>, value = <unary-result>)
+    <unary-result>
+  }
+  val a2: Int = { // BLOCK
+    val <array>: IntArray = <get-arr>()
+    val <index0>: Int = 0
+    val <unary-result>: Int = <array>.get(index = <index0>).dec()
+    <array>.set(index = <index0>, value = <unary-result>)
+    <unary-result>
+  }
+}
+
+fun testArrayPostfix() {
+  val a1: Int = { // BLOCK
+    val <array>: IntArray = <get-arr>()
+    val <index0>: Int = 0
+    val <unary>: Int = <array>.get(index = <index0>)
+    <array>.set(index = <index0>, value = <unary>.inc())
+    <unary>
+  }
+  val a2: Int = { // BLOCK
+    val <array>: IntArray = <get-arr>()
+    val <index0>: Int = 0
+    val <unary>: Int = <array>.get(index = <index0>)
+    <array>.set(index = <index0>, value = <unary>.dec())
+    <unary>
+  }
+}

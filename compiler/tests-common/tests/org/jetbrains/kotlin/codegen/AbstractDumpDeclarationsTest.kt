@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
@@ -20,16 +19,11 @@ abstract class AbstractDumpDeclarationsTest : CodegenTestCase() {
         dumpToFile = KotlinTestUtils.tmpDirForTest(this).resolve("$name.json")
         compile(files)
         classFileFactory.generationState.destroy()
-        KotlinTestUtils.assertEqualsToFile(expectedResult, dumpToFile.readText()) {
-            it.replace("COROUTINES_PACKAGE", coroutinesPackage)
-        }
+        KotlinTestUtils.assertEqualsToFile(expectedResult, dumpToFile.readText())
     }
 
     override fun updateConfiguration(configuration: CompilerConfiguration) {
+        super.updateConfiguration(configuration)
         configuration.put(JVMConfigurationKeys.DECLARATIONS_JSON_PATH, dumpToFile.path)
-    }
-
-    override fun extractConfigurationKind(files: MutableList<TestFile>): ConfigurationKind {
-        return ConfigurationKind.NO_KOTLIN_REFLECT
     }
 }

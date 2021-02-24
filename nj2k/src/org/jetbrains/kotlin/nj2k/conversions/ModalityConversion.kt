@@ -41,6 +41,9 @@ class ModalityConversion(context: NewJ2kConverterContext) : RecursiveApplicableC
         val psi = method.psi<PsiMethod>() ?: return
         val containingClass = method.parentOfType<JKClass>() ?: return
         when {
+            method.visibility == Visibility.PRIVATE -> {
+                method.modality = Modality.FINAL
+            }
             method.modality != Modality.ABSTRACT
                     && psi.findSuperMethods().isNotEmpty() -> {
                 method.modality = Modality.FINAL

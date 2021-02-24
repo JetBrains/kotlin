@@ -23,15 +23,6 @@ import com.intellij.util.SmartFMap
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtPackageDirective
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
-import java.io.File
-
-fun String.trimTrailingWhitespaces(): String =
-    this.split('\n').joinToString(separator = "\n") { it.trimEnd() }
-
-fun String.trimTrailingWhitespacesAndAddNewlineAtEOF(): String =
-        this.trimTrailingWhitespaces().let {
-            result -> if (result.endsWith("\n")) result else result + "\n"
-        }
 
 fun PsiFile.findElementByCommentPrefix(commentText: String): PsiElement? =
         findElementsByCommentPrefix(commentText).keys.singleOrNull()
@@ -59,10 +50,6 @@ fun PsiFile.findElementsByCommentPrefix(prefix: String): Map<PsiElement, String>
             }
     )
     return result
-}
-
-fun findLastModifiedFile(dir: File, skipFile: (File) -> Boolean): File {
-    return dir.walk().filterNot(skipFile).maxBy { it.lastModified() }!!
 }
 
 val CodeInsightTestFixture.elementByOffset: PsiElement

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 open class Var() {
   open var v : Int = 1
 }

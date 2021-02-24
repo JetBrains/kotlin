@@ -1,8 +1,7 @@
-4 var x: Int = <bold>1</bold>
-4 	var <bold>x: Int = 1</bold>
-4 		var x: Int = <bold>1</bold>
+4 var x: Int = <bold>1</bold> (in A.x)
+4 	<bold>var x: Int</bold> = 1 (in A)
+4 		var x: Int = <bold>1</bold> (in A.x)
 
-9 x = <bold>2</bold>
-4 	var <bold>x: Int = 1</bold>
-9 		x = <bold>2</bold>
-
+9 x = <bold>2</bold> (in A.test())
+4 	<bold>var x: Int</bold> = 1 (in A)
+9 		x = <bold>2</bold> (in A.test())

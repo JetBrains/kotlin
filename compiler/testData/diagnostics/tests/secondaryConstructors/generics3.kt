@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 open class B<X, Y : X> {
     constructor(x: X, y: Y)

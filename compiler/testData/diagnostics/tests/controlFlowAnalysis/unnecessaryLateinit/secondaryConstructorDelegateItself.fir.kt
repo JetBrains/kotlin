@@ -7,7 +7,7 @@ class Foo {
         bar = ""
     }
 
-    constructor(a: Int) : this(a) {
+    constructor(a: Int) : <!CYCLIC_CONSTRUCTOR_DELEGATION_CALL!>this<!>(a) {
         bar = "a"
     }
 }

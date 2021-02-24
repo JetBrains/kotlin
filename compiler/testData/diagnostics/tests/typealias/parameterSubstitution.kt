@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class C<T>
 
 typealias CA<T> = C<T>

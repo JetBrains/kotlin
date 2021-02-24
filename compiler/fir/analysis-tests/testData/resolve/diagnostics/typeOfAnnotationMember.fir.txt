@@ -1,0 +1,68 @@
+FILE: typeOfAnnotationMember.kt
+    public final class Foo : R|kotlin/Any| {
+        public constructor(): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final enum class Enum : R|kotlin/Enum<Enum>| {
+        private constructor(): R|Enum| {
+            super<R|kotlin/Enum<Enum>|>()
+        }
+
+        public final static enum entry Bar: R|Enum|
+        public final static fun values(): R|kotlin/Array<Enum>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|Enum| {
+        }
+
+    }
+    public final annotation class Ann1 : R|kotlin/Annotation| {
+        public constructor(p1: R|kotlin/Array<kotlin/Int>|, p2: R|kotlin/Array<kotlin/Int?>|, p3: R|kotlin/Array<kotlin/IntArray>|, p4: R|kotlin/Array<Foo>|, p5: R|Foo|, vararg p6: R|kotlin/Array<out java/lang/Class<*>>|): R|Ann1| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val p1: R|kotlin/Array<kotlin/Int>| = R|<local>/p1|
+            public get(): R|kotlin/Array<kotlin/Int>|
+
+        public final val p2: R|kotlin/Array<kotlin/Int?>| = R|<local>/p2|
+            public get(): R|kotlin/Array<kotlin/Int?>|
+
+        public final val p3: R|kotlin/Array<kotlin/IntArray>| = R|<local>/p3|
+            public get(): R|kotlin/Array<kotlin/IntArray>|
+
+        public final val p4: R|kotlin/Array<Foo>| = R|<local>/p4|
+            public get(): R|kotlin/Array<Foo>|
+
+        public final val p5: R|Foo| = R|<local>/p5|
+            public get(): R|Foo|
+
+        public final val p6: R|kotlin/Array<out java/lang/Class<*>>| = R|<local>/p6|
+            public get(): R|kotlin/Array<out java/lang/Class<*>>|
+
+    }
+    public final annotation class Ann2 : R|kotlin/Annotation| {
+        public constructor(p1: R|kotlin/Int?|, p2: R|kotlin/String?|, p3: R|kotlin/IntArray?|, p4: R|kotlin/Array<kotlin/Int>?|, p5: R|Ann1?|, p6: R|Enum?|): R|Ann2| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val p1: R|kotlin/Int?| = R|<local>/p1|
+            public get(): R|kotlin/Int?|
+
+        public final val p2: R|kotlin/String?| = R|<local>/p2|
+            public get(): R|kotlin/String?|
+
+        public final val p3: R|kotlin/IntArray?| = R|<local>/p3|
+            public get(): R|kotlin/IntArray?|
+
+        public final val p4: R|kotlin/Array<kotlin/Int>?| = R|<local>/p4|
+            public get(): R|kotlin/Array<kotlin/Int>?|
+
+        public final val p5: R|Ann1?| = R|<local>/p5|
+            public get(): R|Ann1?|
+
+        public final val p6: R|Enum?| = R|<local>/p6|
+            public get(): R|Enum?|
+
+    }

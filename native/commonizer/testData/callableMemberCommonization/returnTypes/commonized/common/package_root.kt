@@ -9,7 +9,7 @@ expect val propertyWithInferredType3: String
 expect val propertyWithInferredType4: Nothing?
 expect val propertyWithInferredType5: Planet
 
-expect class C
+typealias C = Planet
 
 expect val property1: Int
 expect val property2: String
@@ -40,3 +40,19 @@ expect fun functionWithTypeParametersInReturnType12(): Box<Fox>
 expect fun <T> functionWithUnsubstitutedTypeParametersInReturnType1(): T
 expect fun <T> functionWithUnsubstitutedTypeParametersInReturnType2(): T
 expect fun <T> functionWithUnsubstitutedTypeParametersInReturnType8(): Box<T>
+
+expect class Outer<A>() {
+    class Nested<B>() {
+        class Nested<C>()
+        inner class Inner<D>()
+    }
+    inner class Inner<E>() {
+        inner class Inner<F>()
+    }
+}
+
+expect fun <T> returnOuter(): Outer<T>
+expect fun <T> returnOuterNested(): Outer.Nested<T>
+expect fun <T> returnOuterNestedNested(): Outer.Nested.Nested<T>
+expect fun <T, R> returnOuterInner(): Outer<T>.Inner<R>
+expect fun <T, R, S> returnOuterInnerInner(): Outer<T>.Inner<R>.Inner<S>

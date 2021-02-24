@@ -36,7 +36,7 @@ if (isIrBackend) {
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
     integrationTestCompile files(file(compileKotlin2Js.kotlinOptions.outputFile).parent)
     integrationTestCompile "org.jetbrains.kotlin:kotlin-test-js:$kotlin_version"
 }
@@ -53,5 +53,5 @@ task jarSources(type: Jar) {
     classifier = 'source'
 }
 artifacts {
-    compile jarSources
+    implementation jarSources
 }

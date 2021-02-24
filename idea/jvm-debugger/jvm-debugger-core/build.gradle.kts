@@ -10,13 +10,11 @@ dependencies {
     compile(project(":idea:idea-core"))
     compile(project(":idea:ide-common"))
     compile(project(":idea:jvm-debugger:jvm-debugger-util"))
-    compile(toolsJar())
 
+    compileOnly(toolsJarApi())
     compileOnly(intellijDep())
     
-    Platform[192].orHigher {
-        compileOnly(intellijPluginDep("java"))
-    }
+    compileOnly(intellijPluginDep("java"))
 
     compileOnly(intellijPluginDep("stream-debugger"))
 

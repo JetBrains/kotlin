@@ -1,0 +1,15 @@
+fun <TT : Any?> outer() {
+  local fun <T : Any?> test1(i: Int, j: T) {
+  }
+
+  local fun test2(i: Int = 0, j: String = "") {
+  }
+
+  local fun test3(vararg args: String) {
+  }
+
+  local fun String.textExt1(i: Int, j: TT) {
+  }
+
+}
+

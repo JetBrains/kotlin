@@ -9,9 +9,9 @@ interface T {
     final val c : Int
        get() = 42
 
-    final val d = 1
+    final val d = <!PROPERTY_INITIALIZER_IN_INTERFACE!>1<!>
 }
 
 class A {
-    final fun foo()
+    <!NON_ABSTRACT_FUNCTION_WITH_NO_BODY!>final fun foo()<!>
 }

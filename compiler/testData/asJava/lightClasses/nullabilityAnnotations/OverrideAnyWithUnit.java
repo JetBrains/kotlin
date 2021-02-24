@@ -1,5 +1,6 @@
-public final class C implements Base {
-    public void foo() { /* compiled code */ }
+public final class C /* C*/ implements Base {
+  public  C();//  .ctor()
 
-    public C() { /* compiled code */ }
+  public void foo();//  foo()
+
 }

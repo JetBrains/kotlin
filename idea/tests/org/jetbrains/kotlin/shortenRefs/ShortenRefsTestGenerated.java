@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.shortenRefs;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -25,7 +26,7 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
     }
 
     public void testAllFilesPresentInShortenRefs() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/shortenRefs"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/shortenRefs"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
     }
 
     @TestMetadata("annotation.kt")
@@ -162,7 +163,7 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
         }
 
         public void testAllFilesPresentInConstructor() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/shortenRefs/constructor"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/shortenRefs/constructor"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("Ambiguous.kt")
@@ -255,7 +256,7 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
         }
 
         public void testAllFilesPresentInImports() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/shortenRefs/imports"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/shortenRefs/imports"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("importGlobalCallables.kt")
@@ -283,7 +284,7 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
         }
 
         public void testAllFilesPresentInJava() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/shortenRefs/java"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/shortenRefs/java"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("innerClassImport.kt")
@@ -299,6 +300,16 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
         @TestMetadata("innerClassOnDemandImport.kt")
         public void testInnerClassOnDemandImport() throws Exception {
             runTest("idea/testData/shortenRefs/java/innerClassOnDemandImport.kt");
+        }
+
+        @TestMetadata("redundantGrandParentClassQualifier.kt")
+        public void testRedundantGrandParentClassQualifier() throws Exception {
+            runTest("idea/testData/shortenRefs/java/redundantGrandParentClassQualifier.kt");
+        }
+
+        @TestMetadata("redundantGrandParentClassQualifierAmbiguous.kt")
+        public void testRedundantGrandParentClassQualifierAmbiguous() throws Exception {
+            runTest("idea/testData/shortenRefs/java/redundantGrandParentClassQualifierAmbiguous.kt");
         }
 
         @TestMetadata("staticClassNoImports.kt")
@@ -341,7 +352,7 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
         }
 
         public void testAllFilesPresentInKt21515() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/shortenRefs/kt21515"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/shortenRefs/kt21515"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("callableReferenceOnClass.kt")
@@ -384,7 +395,7 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
         }
 
         public void testAllFilesPresentInThis() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/shortenRefs/this"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/shortenRefs/this"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("cantShortenThis.kt")
@@ -437,7 +448,7 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
         }
 
         public void testAllFilesPresentInType() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/shortenRefs/type"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/shortenRefs/type"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("ClassNameInsideArguments.kt")
@@ -540,7 +551,7 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
         }
 
         public void testAllFilesPresentInTypealias() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/shortenRefs/typealias"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/shortenRefs/typealias"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("TypeAliasAsCtor.kt")

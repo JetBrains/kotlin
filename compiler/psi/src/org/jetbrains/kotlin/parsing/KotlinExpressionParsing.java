@@ -459,17 +459,13 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
                 if (!firstExpressionParsed) {
                     expression.drop();
                     expression = mark();
+                    firstExpressionParsed = parseAtomicExpression();
+                    continue;
                 }
 
                 parseSelectorCallExpression();
 
-                if (firstExpressionParsed) {
-                    expression.done(expressionType);
-                }
-                else {
-                    firstExpressionParsed = true;
-                    continue;
-                }
+                expression.done(expressionType);
             }
             else if (atSet(Precedence.POSTFIX.getOperations())) {
                 parseOperationReference();
@@ -1041,6 +1037,43 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
                 break;
             }
             parseExpression();
+
+            if (!at(COMMA)) break;
+            advance(); // COMMA
+        }
+    }
+
+    public void parseContractDescriptionBlock() {
+        assert _at(CONTRACT_KEYWORD);
+
+        advance(); // CONTRACT_KEYWORD
+
+        parseContractEffectList();
+    }
+
+    private void parseContractEffectList() {
+        PsiBuilder.Marker block = mark();
+
+        expect(LBRACKET, "Expecting '['");
+        myBuilder.enableNewlines();
+
+        parseContractEffects();
+
+        expect(RBRACKET, "Expecting ']'");
+        myBuilder.restoreNewlinesState();
+
+        block.done(CONTRACT_EFFECT_LIST);
+    }
+
+    private void parseContractEffects() {
+        while (true) {
+            if (at(COMMA)) errorAndAdvance("Expecting a contract effect");
+            if (at(RBRACKET)) {
+                break;
+            }
+            PsiBuilder.Marker effect = mark();
+            parseExpression();
+            effect.done(CONTRACT_EFFECT);
 
             if (!at(COMMA)) break;
             advance(); // COMMA

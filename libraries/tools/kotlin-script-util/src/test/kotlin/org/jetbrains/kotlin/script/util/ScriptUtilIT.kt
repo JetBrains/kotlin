@@ -17,12 +17,12 @@
 package org.jetbrains.kotlin.script.util
 
 import com.intellij.openapi.util.Disposer
+import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
@@ -35,9 +35,12 @@ import org.jetbrains.kotlin.script.util.templates.BindingsScriptTemplateWithLoca
 import org.jetbrains.kotlin.script.util.templates.StandardArgsScriptTemplateWithLocalResolving
 import org.jetbrains.kotlin.script.util.templates.StandardArgsScriptTemplateWithMavenResolving
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCompilerConfigurationComponentRegistrar
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmCompilerFromEnvironment
+import org.jetbrains.kotlin.scripting.compiler.plugin.toCompilerMessageSeverity
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
 import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.KotlinScriptDefinitionFromAnnotatedTemplate
 import org.jetbrains.kotlin.utils.PathUtil.getResourcePathForClass
@@ -45,10 +48,15 @@ import org.junit.Assert
 import org.junit.Ignore
 import org.junit.Test
 import java.io.ByteArrayOutputStream
+import java.io.File
 import java.io.OutputStream
 import java.io.PrintStream
 import kotlin.reflect.KClass
+import kotlin.script.experimental.api.onSuccess
+import kotlin.script.experimental.api.valueOr
+import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
+import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContext
 
 const val KOTLIN_JAVA_RUNTIME_JAR = "kotlin-stdlib.jar"
 
@@ -56,12 +64,12 @@ class ScriptUtilIT {
 
     companion object {
         private val argsHelloWorldOutput =
-"""Hello, world!
+            """Hello, world!
 a1
 done
 """
         private val bindingsHelloWorldOutput =
-"""Hello, world!
+            """Hello, world!
 a1 = 42
 done
 """
@@ -100,8 +108,7 @@ done
         try {
             System.setErr(PrintStream(NullOutputStream()))
             Assert.assertNull(compileScript("args-junit-hello-world.kts", StandardArgsScriptTemplateWithLocalResolving::class))
-        }
-        finally {
+        } finally {
             System.setErr(savedErr)
         }
 
@@ -120,23 +127,28 @@ done
         val (out, err) = captureOutAndErr {
             Assert.assertNull(compileScript("args-junit-dynver-error.kts", StandardArgsScriptTemplateWithMavenResolving::class))
         }
-        Assert.assertTrue("Expecting error: unresolved reference: assertThrows, got:\nOUT:\n$out\nERR:\n$err", err.contains("error: unresolved reference: assertThrows"))
+        Assert.assertTrue(
+            "Expecting error: unresolved reference: assertThrows, got:\nOUT:\n$out\nERR:\n$err",
+            err.contains("error: unresolved reference: assertThrows")
+        )
 
         val scriptClass = compileScript("args-junit-dynver.kts", StandardArgsScriptTemplateWithMavenResolving::class)
         Assert.assertNotNull(scriptClass)
     }
 
     private fun compileScript(
-            scriptFileName: String,
-            scriptTemplate: KClass<out Any>,
-            environment: Map<String, Any?>? = null,
-            suppressOutput: Boolean = false
+        scriptFileName: String,
+        scriptTemplate: KClass<out Any>,
+        environment: Map<String, Any?>? = null,
+        suppressOutput: Boolean = false
     ): Class<*>? =
-            compileScriptImpl("libraries/tools/kotlin-script-util/src/test/resources/scripts/" + scriptFileName,
-                              KotlinScriptDefinitionFromAnnotatedTemplate(
-                                  scriptTemplate,
-                                  environment
-                              ), suppressOutput)
+        compileScriptImpl(
+            "libraries/tools/kotlin-script-util/src/test/resources/scripts/$scriptFileName",
+            KotlinScriptDefinitionFromAnnotatedTemplate(
+                scriptTemplate,
+                environment
+            ), suppressOutput
+        )
 
     private fun compileScriptImpl(
         scriptPath: String,
@@ -150,9 +162,7 @@ done
         val rootDisposable = Disposer.newDisposable()
         try {
             val configuration = CompilerConfiguration().apply {
-                scriptCompilationClasspathFromContextOrNull(KOTLIN_JAVA_RUNTIME_JAR)?.let {
-                    addJvmClasspathRoots(it)
-                }
+                addJvmClasspathRoots(scriptCompilationClasspathFromContext(KOTLIN_JAVA_RUNTIME_JAR))
 
                 put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
                 addKotlinSourceRoot(scriptPath)
@@ -178,10 +188,27 @@ done
             environment.getSourceFiles().forEach {
                 messageCollector.report(CompilerMessageSeverity.LOGGING, "file: $it -> script def: ${it.findScriptDefinition()?.name}")
             }
-            messageCollector.report(CompilerMessageSeverity.LOGGING, "compilation classpath:\n  ${environment.configuration.jvmClasspathRoots.joinToString("\n  ")}")
+            messageCollector.report(
+                CompilerMessageSeverity.LOGGING,
+                "compilation classpath:\n  ${environment.configuration.jvmClasspathRoots.joinToString("\n  ")}"
+            )
+
+            val scriptCompiler = ScriptJvmCompilerFromEnvironment(environment)
 
             return try {
-                KotlinToJVMBytecodeCompiler.compileScript(environment)
+                val script = File(scriptPath).toScriptSource()
+                val newScriptDefinition = ScriptDefinitionProvider.getInstance(environment.project)!!.findDefinition(script)!!
+                val compiledScript = scriptCompiler.compile(script, newScriptDefinition.compilationConfiguration).onSuccess {
+                    runBlocking {
+                        it.getClass(newScriptDefinition.evaluationConfiguration)
+                    }
+                }.valueOr {
+                    for (report in it.reports) {
+                        messageCollector.report(report.severity.toCompilerMessageSeverity(), report.render(withSeverity = false))
+                    }
+                    return null
+                }
+                compiledScript.java
             } catch (e: CompilationException) {
                 messageCollector.report(
                     CompilerMessageSeverity.EXCEPTION, OutputMessageUtil.renderException(e),
@@ -202,7 +229,7 @@ done
     }
 
     private fun String.linesSplitTrim() =
-            split('\n','\r').map(String::trim).filter(String::isNotBlank)
+        split('\n', '\r').map(String::trim).filter(String::isNotBlank)
 
     private fun captureOut(body: () -> Unit): String = captureOutAndErr(body).first
 
@@ -226,8 +253,8 @@ done
 }
 
 private class NullOutputStream : OutputStream() {
-    override fun write(b: Int) { }
-    override fun write(b: ByteArray) { }
-    override fun write(b: ByteArray, off: Int, len: Int) { }
+    override fun write(b: Int) {}
+    override fun write(b: ByteArray) {}
+    override fun write(b: ByteArray, off: Int, len: Int) {}
 }
 

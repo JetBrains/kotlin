@@ -17,9 +17,11 @@
 package org.jetbrains.kotlin.incremental.storage
 
 import com.intellij.util.io.DataExternalizer
+import com.intellij.util.io.IOUtil
 import com.intellij.util.io.KeyDescriptor
-import com.intellij.util.io.JpsPersistentHashMap
+import com.intellij.util.io.PersistentHashMap
 import java.io.File
+import java.io.IOException
 
 
 class NonCachingLazyStorage<K, V>(
@@ -27,11 +29,10 @@ class NonCachingLazyStorage<K, V>(
     private val keyDescriptor: KeyDescriptor<K>,
     private val valueExternalizer: DataExternalizer<V>
 ) : LazyStorage<K, V> {
-    @Volatile
-    private var storage: JpsPersistentHashMap<K, V>? = null
+    private var storage: PersistentHashMap<K, V>? = null
 
     @Synchronized
-    private fun getStorageIfExists(): JpsPersistentHashMap<K, V>? {
+    private fun getStorageIfExists(): PersistentHashMap<K, V>? {
         if (storage != null) return storage
 
         if (storageFile.exists()) {
@@ -43,7 +44,7 @@ class NonCachingLazyStorage<K, V>(
     }
 
     @Synchronized
-    private fun getStorageOrCreateNew(): JpsPersistentHashMap<K, V> {
+    private fun getStorageOrCreateNew(): PersistentHashMap<K, V> {
         if (storage == null) {
             storage = createMap()
         }
@@ -69,18 +70,19 @@ class NonCachingLazyStorage<K, V>(
     }
 
     override fun append(key: K, value: V) {
-        getStorageOrCreateNew().appendDataWithoutCache(key, value)
+        getStorageOrCreateNew().appendData(key) { dataOutput -> valueExternalizer.save(dataOutput, value) }
     }
 
     @Synchronized
     override fun clean() {
         try {
             storage?.close()
-        } catch (ignored: Throwable) {
+        } finally {
+            storage = null
+            if (!IOUtil.deleteAllFilesStartingWith(storageFile)) {
+                throw IOException("Could not delete internal storage: ${storageFile.absolutePath}")
+            }
         }
-
-        JpsPersistentHashMap.deleteFilesStartingWith(storageFile)
-        storage = null
     }
 
     @Synchronized
@@ -101,6 +103,6 @@ class NonCachingLazyStorage<K, V>(
         storage?.close()
     }
 
-    private fun createMap(): JpsPersistentHashMap<K, V> =
-        JpsPersistentHashMap(storageFile, keyDescriptor, valueExternalizer)
+    private fun createMap(): PersistentHashMap<K, V> =
+        PersistentHashMap(storageFile, keyDescriptor, valueExternalizer)
 }

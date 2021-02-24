@@ -1,35 +1,47 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.gradle.targets.js.npm.resolver
 
 import org.gradle.api.Project
+import org.gradle.api.Task
+import org.gradle.api.tasks.TaskCollection
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinSingleTargetExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
-import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
+import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
+import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinProjectNpmResolution
+import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
+import kotlin.reflect.KClass
 
 /**
  * See [KotlinNpmResolutionManager] for details about resolution process.
  */
 internal class KotlinProjectNpmResolver(
+    @Transient
     val project: Project,
     val resolver: KotlinRootNpmResolver
 ) {
     override fun toString(): String = "ProjectNpmResolver($project)"
 
-    private val byCompilation = mutableMapOf<KotlinJsCompilation, KotlinCompilationNpmResolver>()
+    private val projectPath by lazy { project.path }
+
+    private val byCompilation = mutableMapOf<String, KotlinCompilationNpmResolver>()
 
     operator fun get(compilation: KotlinJsCompilation): KotlinCompilationNpmResolver {
         check(compilation.target.project == project)
-        return byCompilation[compilation] ?: error("$compilation was not registered in $this")
+        return byCompilation[compilation.disambiguatedName] ?: error("$compilation was not registered in $this")
+    }
+
+    operator fun get(compilationName: String): KotlinCompilationNpmResolver {
+        return byCompilation[compilationName] ?: error("$compilationName was not registered in $this")
     }
 
     private var closed = false
@@ -37,10 +49,26 @@ internal class KotlinProjectNpmResolver(
     val compilationResolvers: Collection<KotlinCompilationNpmResolver>
         get() = byCompilation.values
 
-    val taskRequirements by lazy { TasksRequirements(this) }
-
     init {
         addContainerListeners()
+
+        project.whenEvaluated {
+            val nodeJs = resolver.nodeJs
+            project.tasks.implementing(RequiresNpmDependencies::class)
+                .configureEach { task ->
+                    if (task.enabled) {
+                        task as RequiresNpmDependencies
+                        // KotlinJsTest delegates npm dependencies to testFramework,
+                        // which can be defined after this configure action
+                        val packageJsonTaskHolder = get(task.compilation).packageJsonTaskHolder
+                        if (task !is KotlinJsTest) {
+                            nodeJs.taskRequirements.addTaskRequirements(task)
+                        }
+                        task.dependsOn(packageJsonTaskHolder)
+                        task.dependsOn(nodeJs.npmInstallTaskProvider)
+                    }
+                }
+        }
     }
 
     private fun addContainerListeners() {
@@ -66,6 +94,15 @@ internal class KotlinProjectNpmResolver(
                     addCompilation(compilation)
                 }
             }
+
+            // Hack for mixed mode, when target is JS and contain JS-IR
+            if (target is KotlinJsTarget) {
+                target.irTarget?.compilations?.all { compilation ->
+                    if (compilation is KotlinJsCompilation) {
+                        addCompilation(compilation)
+                    }
+                }
+            }
         }
     }
 
@@ -73,7 +110,7 @@ internal class KotlinProjectNpmResolver(
     private fun addCompilation(compilation: KotlinJsCompilation) {
         check(!closed) { resolver.alreadyResolvedMessage("add compilation $compilation") }
 
-        byCompilation[compilation] = KotlinCompilationNpmResolver(this, compilation)
+        byCompilation[compilation.disambiguatedName] = KotlinCompilationNpmResolver(this, compilation)
     }
 
     fun close(): KotlinProjectNpmResolution {
@@ -81,48 +118,19 @@ internal class KotlinProjectNpmResolver(
         closed = true
 
         return KotlinProjectNpmResolution(
-            project,
+            projectPath,
             byCompilation.values.mapNotNull { it.close() },
-            taskRequirements.byTask
+            resolver.nodeJs.taskRequirements.byTask
         )
     }
-
-    class TasksRequirements(val projectNpmResolver: KotlinProjectNpmResolver) {
-        val byTask = mutableMapOf<RequiresNpmDependencies, Collection<RequiredKotlinJsDependency>>()
-        val byCompilation = mutableMapOf<KotlinJsCompilation, MutableList<RequiresNpmDependencies>>()
-
-        fun getTaskRequirements(compilation: KotlinJsCompilation): Collection<RequiresNpmDependencies> =
-            byCompilation[compilation] ?: listOf()
-
-        val hasNodeModulesDependentTasks: Boolean
-            get() = _hasNodeModulesDependentTasks
-
-        @Volatile
-        var _hasNodeModulesDependentTasks = false
-            private set
-
-        init {
-            projectNpmResolver.project.tasks.forEach { task ->
-                if (task.enabled && task is RequiresNpmDependencies) {
-                    addTaskRequirements(task)
-                    task.dependsOn(projectNpmResolver[task.compilation].packageJsonTaskHolder)
-                    task.dependsOn(projectNpmResolver.resolver.nodeJs.npmInstallTask)
-                }
-            }
-        }
-
-        private fun addTaskRequirements(task: RequiresNpmDependencies) {
-            if (!_hasNodeModulesDependentTasks && task.nodeModulesRequired) {
-                _hasNodeModulesDependentTasks = true
-            }
-
-            val requirements = task.requiredNpmDependencies.toList()
-
-            byTask[task] = requirements
-
-            byCompilation
-                .getOrPut(task.compilation) { mutableListOf() }
-                .add(task)
-        }
-    }
 }
+
+
+/**
+ * Filters a [TaskCollection] by type that is not a subtype of [Task] (for use with interfaces)
+ *
+ * TODO properly express within the type system? The result should be a TaskCollection<T & R>
+ */
+internal fun <T : Task, R : Any> TaskCollection<T>.implementing(kclass: KClass<R>): TaskCollection<T> =
+    @Suppress("UNCHECKED_CAST")
+    withType(kclass.java as Class<T>)

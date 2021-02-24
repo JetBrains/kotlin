@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: MyFuture.java
 
 public interface MyFuture<V> {

@@ -1,7 +1,7 @@
 abstract class Test() {
     abstract val x : Int
     abstract val x1 : Int get
-    abstract val x2 : Int get() = 1
+    abstract val x2 : Int <!ABSTRACT_PROPERTY_WITH_GETTER!>get() = 1<!>
 
     val a : Int
     val b : Int get
@@ -22,9 +22,9 @@ abstract class Test() {
     abstract var y1 : Int get
     abstract var y2 : Int set
     abstract var y3 : Int set get
-    abstract var y4 : Int set get() = 1
-    abstract var y5 : Int set(x) {} get() = 1
-    abstract var y6 : Int set(x) {}
+    abstract var y4 : Int set <!ABSTRACT_PROPERTY_WITH_GETTER!>get() = 1<!>
+    abstract var y5 : Int <!ABSTRACT_PROPERTY_WITH_SETTER!>set(x) {}<!> <!ABSTRACT_PROPERTY_WITH_GETTER!>get() = 1<!>
+    abstract var y6 : Int <!ABSTRACT_PROPERTY_WITH_SETTER!>set(x) {}<!>
 
     var v : Int
     var v1 : Int get

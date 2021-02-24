@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.classId
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.constructType
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.wrapSubstitutionScopeIfNeed
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.jvm.JvmMappedScope
@@ -28,14 +28,15 @@ fun wrapScopeWithJvmMapped(
     scopeSession: ScopeSession
 ): FirScope {
     val classId = klass.classId
-    val javaClassId = JavaToKotlinClassMap.mapKotlinToJava(classId.asSingleFqName().toUnsafe())
+    val kotlinUnsafeFqName = classId.asSingleFqName().toUnsafe()
+    val javaClassId = JavaToKotlinClassMap.mapKotlinToJava(kotlinUnsafeFqName)
         ?: return declaredMemberScope
-    val symbolProvider = useSiteSession.firSymbolProvider
+    val symbolProvider = useSiteSession.symbolProvider
     val javaClass = symbolProvider.getClassLikeSymbolByFqName(javaClassId)?.fir as? FirRegularClass
         ?: return declaredMemberScope
-    val preparedSignatures = JvmMappedScope.prepareSignatures(javaClass)
+    val preparedSignatures = JvmMappedScope.prepareSignatures(javaClass, JavaToKotlinClassMap.isMutable(kotlinUnsafeFqName))
     return if (preparedSignatures.isNotEmpty()) {
-        javaClass.unsubstitutedScope(useSiteSession, scopeSession).let { javaClassUseSiteScope ->
+        javaClass.unsubstitutedScope(useSiteSession, scopeSession, withForcedTypeCalculator = false).let { javaClassUseSiteScope ->
             val jvmMappedScope = JvmMappedScope(declaredMemberScope, javaClassUseSiteScope, preparedSignatures)
             if (klass !is FirRegularClass) {
                 jvmMappedScope
@@ -45,7 +46,10 @@ fun wrapScopeWithJvmMapped(
                 (klass.symbol.constructType(
                     klass.typeParameters.map { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false) }.toTypedArray(),
                     false
-                ) as ConeClassLikeType).wrapSubstitutionScopeIfNeed(useSiteSession, jvmMappedScope, klass, scopeSession)
+                ) as ConeClassLikeType).wrapSubstitutionScopeIfNeed(
+                    useSiteSession, jvmMappedScope, klass, scopeSession,
+                    derivedClass = klass,
+                )
             }
         }
     } else {

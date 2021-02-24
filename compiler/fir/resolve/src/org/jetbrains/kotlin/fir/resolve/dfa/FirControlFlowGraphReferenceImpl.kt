@@ -7,11 +7,15 @@ package org.jetbrains.kotlin.fir.resolve.dfa
 
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
-class FirControlFlowGraphReferenceImpl(val controlFlowGraph: ControlFlowGraph) : FirControlFlowGraphReference() {
+class FirControlFlowGraphReferenceImpl(
+    val controlFlowGraph: ControlFlowGraph,
+    val dataFlowInfo: DataFlowInfo? = null
+) : FirControlFlowGraphReference() {
     override val source: FirSourceElement? get() = null
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
@@ -19,7 +23,15 @@ class FirControlFlowGraphReferenceImpl(val controlFlowGraph: ControlFlowGraph) :
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirControlFlowGraphReference {
         return this
     }
+
+    override fun replaceSource(newSource: FirSourceElement?) {
+    }
 }
+
+class DataFlowInfo(val variableStorage: VariableStorage, val flowOnNodes: Map<CFGNode<*>, Flow>)
 
 val FirControlFlowGraphReference.controlFlowGraph: ControlFlowGraph?
     get() = (this as? FirControlFlowGraphReferenceImpl)?.controlFlowGraph
+
+val FirControlFlowGraphReference.dataFlowInfo: DataFlowInfo?
+    get() = (this as? FirControlFlowGraphReferenceImpl)?.dataFlowInfo

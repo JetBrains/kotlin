@@ -17,7 +17,7 @@ class KotlinMppTestLogger {
         xml.event(type: testEventType) {
             test(id: testDescriptor.id, parentId: testDescriptor.parent?.id ?: '') {
                 if (testDescriptor) {
-                    descriptor(name: testDescriptor.displayName ?: '', className: testDescriptor.classDisplayName ?: '')
+                    descriptor(name: testDescriptor.displayName ?: '', className: testDescriptor.className ?: '')
                 }
                 if (testEvent) {
                     def message = escapeCdata(testEvent.message)
@@ -83,24 +83,5 @@ class KotlinMppTestLogger {
         StringWriter sw = new StringWriter()
         t.printStackTrace(new PrintWriter(sw))
         sw.toString()
-    }
-}
-
-gradle.taskGraph.beforeTask { task ->
-    def taskSuperClass = task.class
-    while (taskSuperClass != Object.class) {
-        if (taskSuperClass.canonicalName == "org.jetbrains.kotlin.gradle.tasks.KotlinTest") {
-            try {
-                KotlinMppTestLogger.logTestReportLocation(task.reports?.html?.entryPoint?.path)
-                KotlinMppTestLogger.configureTestEventLogging(task)
-                task.testLogging.showStandardStreams = false
-            }
-            catch (all) {
-                logger.error("", all)
-            }
-            return
-        } else {
-            taskSuperClass = taskSuperClass.superclass
-        }
     }
 }

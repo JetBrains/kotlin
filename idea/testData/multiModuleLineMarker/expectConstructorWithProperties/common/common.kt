@@ -1,5 +1,5 @@
-expect class <lineMarker>WithConstructor</lineMarker>(x: Int, s: String) {
-    val <lineMarker>x</lineMarker>: Int
+expect class <!LINE_MARKER("descr='Has actuals in JVM'")!>WithConstructor<!>(x: Int, s: String) {
+    val <!LINE_MARKER("descr='Has actuals in JVM'")!>x<!>: Int
 
-    val <lineMarker>s</lineMarker>: String
+    val <!LINE_MARKER("descr='Has actuals in JVM'")!>s<!>: String
 }

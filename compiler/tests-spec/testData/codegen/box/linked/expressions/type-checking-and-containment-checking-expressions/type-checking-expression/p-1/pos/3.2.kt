@@ -4,7 +4,7 @@
  * KOTLIN CODEGEN BOX SPEC TEST (POSITIVE)
  *
  * SPEC VERSION: 0.1-213
- * PLACE: expressions, type-checking-and-containment-checking-expressions, type-checking-expression -> paragraph 1 -> sentence 3
+ * MAIN LINK: expressions, type-checking-and-containment-checking-expressions, type-checking-expression -> paragraph 1 -> sentence 3
  * NUMBER: 2
  * DESCRIPTION:checks whether the runtime type of EE is a subtype of TT for is operator
  */

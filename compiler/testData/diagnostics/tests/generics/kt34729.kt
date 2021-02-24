@@ -14,6 +14,6 @@ fun <T : ILength> bar(a: (Int) -> T) {
 }
 
 fun test() {
-    foo<String> <!NI;TYPE_MISMATCH!>{ <!OI;TYPE_MISMATCH!><!>}<!>
-    bar<Impl> <!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH!>{ <!OI;TYPE_MISMATCH!><!>}<!>
+    foo<String> <!TYPE_MISMATCH{NI}!>{ <!TYPE_MISMATCH{OI}!><!>}<!>
+    bar<Impl> <!TYPE_MISMATCH{NI}, TYPE_MISMATCH{NI}!>{ <!TYPE_MISMATCH{OI}!><!>}<!>
 }

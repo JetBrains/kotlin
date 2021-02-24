@@ -11,7 +11,7 @@ class Foo {
     }
 
     fun foo() {
-        <!NI;NONE_APPLICABLE, OI;OVERLOAD_RESOLUTION_AMBIGUITY!>installRoute<!><Any>(::route)
+        <!NONE_APPLICABLE{NI}, OVERLOAD_RESOLUTION_AMBIGUITY{OI}!>installRoute<!><Any>(::route)
     }
 
 }

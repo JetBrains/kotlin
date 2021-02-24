@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.inspections.coroutines
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.codeInspection.ui.MultipleCheckboxOptionsPanel
 import com.intellij.psi.PsiElementVisitor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.inspections.AbstractResultUnusedChecker
 import org.jetbrains.kotlin.name.FqName
@@ -34,12 +35,12 @@ class DeferredResultUnusedInspection(@JvmField var standardOnly: Boolean = false
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor =
         callExpressionVisitor(fun(expression) {
             if (!check(expression)) return
-            holder.registerProblem(expression.calleeExpression ?: expression, "Deferred result is never used")
+            holder.registerProblem(expression.calleeExpression ?: expression, KotlinBundle.message("deferred.result.is.never.used"))
         })
 
     override fun createOptionsPanel(): JComponent? {
         val panel = MultipleCheckboxOptionsPanel(this)
-        panel.addCheckbox("Reports only function calls from kotlinx.coroutines", "standardOnly")
+        panel.addCheckbox(KotlinBundle.message("reports.only.function.calls.from.kotlinx.coroutines"), "standardOnly")
         return panel
     }
 

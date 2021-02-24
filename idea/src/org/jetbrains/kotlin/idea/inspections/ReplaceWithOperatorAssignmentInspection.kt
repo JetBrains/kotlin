@@ -22,6 +22,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.analysis.analyzeAsReplacement
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.project.builtIns
@@ -49,18 +50,21 @@ class ReplaceWithOperatorAssignmentInspection : AbstractApplicabilityBasedInspec
         if (!checkExpressionRepeat(left, right, bindingContext)) return false
 
         // now check that the resulting operator assignment will be resolved
-        val opAssign = buildOperatorAssignment(element)
+        val opAssign = buildOperatorAssignment(element) ?: return false
         opAssign.containingKtFile.doNotAnalyze = null //TODO: strange hack
         val newBindingContext = opAssign.analyzeAsReplacement(element, bindingContext)
         return newBindingContext.diagnostics.forElement(opAssign.operationReference).isEmpty()
     }
 
-    override fun inspectionText(element: KtBinaryExpression) = "Replaceable with operator-assignment"
+    override fun inspectionText(element: KtBinaryExpression) = KotlinBundle.message("replaceable.with.operator.assignment")
 
-    override val defaultFixText = "Replace with operator-assignment"
+    override val defaultFixText get() = KotlinBundle.message("replace.with.operator.assignment")
 
     override fun fixText(element: KtBinaryExpression) =
-        "Replace with '${(element.right as? KtBinaryExpression)?.operationReference?.operationSignTokenType?.value}='"
+        KotlinBundle.message(
+            "replace.with.0",
+            (element.right as? KtBinaryExpression)?.operationReference?.operationSignTokenType?.value.toString() + '='
+        )
 
     override fun inspectionHighlightType(element: KtBinaryExpression): ProblemHighlightType {
         val left = element.left as? KtNameReferenceExpression
@@ -115,15 +119,15 @@ class ReplaceWithOperatorAssignmentInspection : AbstractApplicabilityBasedInspec
             operationToken == KtTokens.PERC
 
     override fun applyTo(element: KtBinaryExpression, project: Project, editor: Editor?) {
-        element.replace(buildOperatorAssignment(element))
+        val operatorAssignment = buildOperatorAssignment(element) ?: return
+        element.replace(operatorAssignment)
     }
 
-    private fun buildOperatorAssignment(element: KtBinaryExpression): KtBinaryExpression {
-        val replacement = buildOperatorAssignmentText(
-            element.left as KtNameReferenceExpression,
-            element.right as KtBinaryExpression,
-            ""
-        )
+    private fun buildOperatorAssignment(element: KtBinaryExpression): KtBinaryExpression? {
+        val variableExpression = element.left as? KtNameReferenceExpression ?: return null
+        val assignedExpression = element.right as? KtBinaryExpression ?: return null
+
+        val replacement = buildOperatorAssignmentText(variableExpression, assignedExpression, "")
         return KtPsiFactory(element).createExpression(replacement) as KtBinaryExpression
     }
 

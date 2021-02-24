@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMemberChooserObject
@@ -27,9 +28,9 @@ class SpecifyOverrideExplicitlyFix(
     element: KtClassOrObject, private val signature: String
 ) : KotlinQuickFixAction<KtClassOrObject>(element) {
 
-    override fun getText() = "Specify override for '$signature' explicitly"
+    override fun getText() = KotlinBundle.message("specify.override.for.0.explicitly", signature)
 
-    override fun getFamilyName() = "Specify override explicitly"
+    override fun getFamilyName() = KotlinBundle.message("specify.override.explicitly")
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return

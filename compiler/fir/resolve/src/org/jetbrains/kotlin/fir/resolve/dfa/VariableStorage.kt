@@ -5,59 +5,77 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa
 
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSymbolOwner
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
+import org.jetbrains.kotlin.fir.declarations.modality
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
-import org.jetbrains.kotlin.fir.references.impl.FirExplicitThisReference
-import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
-@UseExperimental(DfaInternals::class)
-class VariableStorage {
+@OptIn(DfaInternals::class)
+class VariableStorage(private val session: FirSession) {
     private var counter = 1
-    private val realVariables: MutableMap<Identifier, RealVariable> = HashMap()
-    private val syntheticVariables: MutableMap<FirElement, SyntheticVariable> = HashMap()
-    private val localVariableAliases: MutableMap<AbstractFirBasedSymbol<*>, Identifier> = HashMap()
+    private val _realVariables: MutableMap<Identifier, RealVariable> = HashMap()
+    val realVariables: Map<Identifier, RealVariable>
+        get() = _realVariables
 
-    fun getOrCreateRealVariable(symbol: AbstractFirBasedSymbol<*>, fir: FirElement): RealVariable {
+    private val syntheticVariables: MutableMap<FirElement, SyntheticVariable> = HashMap()
+
+    fun clear(): VariableStorage = VariableStorage(session)
+
+    fun getOrCreateRealVariableWithoutUnwrappingAlias(flow: Flow, symbol: AbstractFirBasedSymbol<*>, fir: FirElement): RealVariable {
         val realFir = fir.unwrapElement()
-        val identifier = getIdentifierBySymbol(symbol, realFir)
-        return realVariables.getOrPut(identifier) { createRealVariableInternal(identifier, realFir) }
+        val identifier = getIdentifierBySymbol(flow, symbol, realFir)
+        return _realVariables.getOrPut(identifier) { createRealVariableInternal(flow, identifier, realFir) }
+    }
+
+    private fun getOrCreateRealVariable(flow: Flow, symbol: AbstractFirBasedSymbol<*>, fir: FirElement): RealVariable {
+        val variable = getOrCreateRealVariableWithoutUnwrappingAlias(flow, symbol, fir)
+        return flow.directAliasMap[variable]?.variable ?: variable
     }
 
     private fun FirElement.unwrapElement(): FirElement = when (this) {
-        is FirWhenSubjectExpression -> whenSubject.whenExpression.let { it.subjectVariable ?: it.subject } ?: this
+        is FirWhenSubjectExpression -> whenRef.value.let { it.subjectVariable ?: it.subject }?.unwrapElement() ?: this
         is FirExpressionWithSmartcast -> originalExpression.unwrapElement()
+        is FirSafeCallExpression -> regularQualifiedAccess.unwrapElement()
+        is FirCheckedSafeCallSubject -> originalReceiverRef.value.unwrapElement()
         else -> this
     }
 
     private fun getIdentifierBySymbol(
+        flow: Flow,
         symbol: AbstractFirBasedSymbol<*>,
         fir: FirElement,
     ): Identifier {
-        return localVariableAliases[symbol] ?: run {
-            val expression = fir as? FirQualifiedAccessExpression
-            Identifier(
-                symbol,
-                expression?.dispatchReceiver?.takeIf { it != FirNoReceiverExpression }?.let(this::getOrCreateVariable),
-                expression?.extensionReceiver?.takeIf { it != FirNoReceiverExpression }?.let(this::getOrCreateVariable)
-            )
-        }
+        val expression = fir as? FirQualifiedAccess
+        return Identifier(
+            symbol,
+            expression?.dispatchReceiver?.takeIf { it != FirNoReceiverExpression }?.let { getOrCreateVariable(flow, it) },
+            expression?.extensionReceiver?.takeIf { it != FirNoReceiverExpression }?.let { getOrCreateVariable(flow, it) }
+        )
     }
 
     /**
      * [originalFir] used for extracting expression under <when_subject> and extracting receiver
      */
-    private fun createRealVariableInternal(identifier: Identifier, originalFir: FirElement): RealVariable {
+    private fun createRealVariableInternal(flow: Flow, identifier: Identifier, originalFir: FirElement): RealVariable {
         val receiver: FirExpression?
         val isThisReference: Boolean
-        val expression = when (originalFir) {
+        val expression: FirQualifiedAccess? = when (originalFir) {
             is FirQualifiedAccessExpression -> originalFir
-            is FirWhenSubjectExpression -> originalFir.whenSubject.whenExpression.subject as? FirQualifiedAccessExpression
+            is FirWhenSubjectExpression -> originalFir.whenRef.value.subject as? FirQualifiedAccessExpression
+            is FirVariableAssignment -> originalFir
             else -> null
         }
 
@@ -69,55 +87,54 @@ class VariableStorage {
             isThisReference = false
         }
 
-        val receiverVariable = receiver?.let { getOrCreateVariable(it) }
+        val receiverVariable = receiver?.let { getOrCreateVariable(flow, it) }
         return RealVariable(identifier, isThisReference, receiverVariable, counter++)
     }
 
     @JvmName("getOrCreateRealVariableOrNull")
-    fun getOrCreateRealVariable(symbol: AbstractFirBasedSymbol<*>?, fir: FirElement): RealVariable? =
-        symbol?.let { getOrCreateRealVariable(it, fir) }
+    fun getOrCreateRealVariable(flow: Flow, symbol: AbstractFirBasedSymbol<*>?, fir: FirElement): RealVariable? =
+        symbol.takeIf { it.isStable(fir) }?.let { getOrCreateRealVariable(flow, it, fir) }
 
     fun createSyntheticVariable(fir: FirElement): SyntheticVariable =
         SyntheticVariable(fir, counter++).also { syntheticVariables[fir] = it }
 
-    fun getOrCreateVariable(fir: FirElement): DataFlowVariable {
+    fun getOrCreateVariable(flow: Flow, fir: FirElement): DataFlowVariable {
         val realFir = fir.unwrapElement()
-        return when (val symbol = realFir.symbol) {
-            null -> syntheticVariables[realFir] ?: createSyntheticVariable(realFir)
-            else -> getOrCreateRealVariable(symbol, realFir)
+        val symbol = realFir.symbol
+        return if (symbol.isStable(realFir)) {
+            getOrCreateRealVariable(flow, symbol!!, realFir)
+        } else {
+            syntheticVariables[realFir] ?: createSyntheticVariable(realFir)
         }
     }
 
-    /**
-     * Also removes existing real variable for [varSymbol] if it exists
-     */
-    fun attachSymbolToVariable(varSymbol: AbstractFirBasedSymbol<*>, targetVariable: RealVariable) {
-        localVariableAliases[varSymbol] = targetVariable.identifier
-        realVariables.remove(Identifier(varSymbol, null, null))
+    fun getRealVariableWithoutUnwrappingAlias(symbol: AbstractFirBasedSymbol<*>?, fir: FirElement, flow: Flow): RealVariable? {
+        val realFir = fir.unwrapElement()
+        return symbol.takeIf { it.isStable(realFir) }?.let {
+            _realVariables[getIdentifierBySymbol(flow, it, realFir.unwrapElement())]
+        }
     }
 
-    operator fun get(symbol: AbstractFirBasedSymbol<*>?, fir: FirElement): RealVariable? {
-        return symbol?.let { realVariables[getIdentifierBySymbol(it, fir.unwrapElement())] }
+    fun getRealVariable(symbol: AbstractFirBasedSymbol<*>?, fir: FirElement, flow: Flow): RealVariable? {
+        return getRealVariableWithoutUnwrappingAlias(symbol, fir, flow)?.let { flow.unwrapVariable(it) }
     }
 
-    operator fun get(fir: FirElement): DataFlowVariable? {
+    fun getSyntheticVariable(fir: FirElement): SyntheticVariable? {
+        return syntheticVariables[fir.unwrapElement()]
+    }
+
+    fun getVariable(fir: FirElement, flow: Flow): DataFlowVariable? {
         val realFir = fir.unwrapElement()
         val symbol = realFir.symbol
-        return if (symbol != null) {
-            get(symbol, realFir)
+        return if (symbol.isStable(fir)) {
+            getRealVariable(symbol, realFir, flow)
         } else {
-            syntheticVariables[realFir]
+            getSyntheticVariable(fir)
         }
     }
 
     fun removeRealVariable(symbol: AbstractFirBasedSymbol<*>) {
-        // TODO: this shit fails
-//        assert(!localVariableAliases.containsValue(symbol))
-        realVariables.remove(Identifier(symbol, null, null))
-    }
-
-    fun unboundPossiblyAliasedVariable(symbol: AbstractFirBasedSymbol<*>) {
-        localVariableAliases.remove(symbol)
+        _realVariables.remove(Identifier(symbol, null, null))
     }
 
     fun removeSyntheticVariable(variable: DataFlowVariable) {
@@ -125,10 +142,40 @@ class VariableStorage {
         syntheticVariables.remove(variable.fir)
     }
 
-    fun reset() {
-        counter = 0
-        realVariables.clear()
-        syntheticVariables.clear()
-        localVariableAliases.clear()
+    @OptIn(ExperimentalContracts::class)
+    fun AbstractFirBasedSymbol<*>?.isStable(originalFir: FirElement): Boolean {
+        contract {
+            returns(true) implies(this@isStable != null)
+        }
+        when (this) {
+            is FirAnonymousObjectSymbol -> return false
+            is FirFunctionSymbol<*>,
+            is FirClassSymbol<*>,
+            is FirBackingFieldSymbol -> return true
+            null -> return false
+        }
+        if (originalFir is FirThisReceiverExpression) return true
+        if (this !is FirVariableSymbol<*>) return false
+
+        val property = this.fir as? FirProperty ?: return true
+
+        return when {
+            property.isLocal -> true
+            property.isVar -> false
+            property.receiverTypeRef != null -> false
+            property.getter.let { it != null && it !is FirDefaultPropertyAccessor } -> false
+            property.modality != Modality.FINAL -> {
+                val dispatchReceiver = (originalFir.unwrapElement() as? FirQualifiedAccess)?.dispatchReceiver ?: return false
+                val receiverType = dispatchReceiver.typeRef.coneTypeSafe<ConeClassLikeType>()?.fullyExpandedType(session) ?: return false
+                val receiverSymbol = receiverType.lookupTag.toSymbol(session) ?: return false
+                when (val receiverFir = receiverSymbol.fir) {
+                    is org.jetbrains.kotlin.fir.declarations.FirAnonymousObject -> true
+                    is org.jetbrains.kotlin.fir.declarations.FirRegularClass -> receiverFir.modality == Modality.FINAL
+                    else -> throw IllegalStateException("Should not be here: $receiverFir")
+                }
+
+            }
+            else -> true
+        }
     }
 }

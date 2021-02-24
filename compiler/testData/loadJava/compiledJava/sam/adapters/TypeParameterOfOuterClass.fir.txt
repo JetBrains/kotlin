@@ -1,4 +1,4 @@
-public open class TypeParameterOfOuterClass<T> : R|kotlin/Any| {
-    public constructor<T>(): R|test/TypeParameterOfOuterClass<T>|
+public open class TypeParameterOfOuterClass<T : R|ft<kotlin/Any, kotlin/Any?>!|> : R|kotlin/Any| {
+    public constructor<T : R|ft<kotlin/Any, kotlin/Any?>!|>(): R|test/TypeParameterOfOuterClass<T>|
 
 }

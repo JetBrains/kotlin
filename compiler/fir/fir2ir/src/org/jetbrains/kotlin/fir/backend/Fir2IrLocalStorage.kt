@@ -5,21 +5,18 @@
 
 package org.jetbrains.kotlin.fir.backend
 
-import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.declarations.FirVariable
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
-import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.name.ClassId
 
 class Fir2IrLocalStorage {
 
-    private val cacheStack = mutableListOf<Fir2IrCallableCache>()
+    private val cacheStack = mutableListOf<Fir2IrScopeCache>()
+
+    private val localClassCache = mutableMapOf<FirClass<*>, IrClass>()
 
     fun enterCallable() {
-        cacheStack += Fir2IrCallableCache()
+        cacheStack += Fir2IrScopeCache()
     }
 
     fun leaveCallable() {
@@ -35,26 +32,22 @@ class Fir2IrLocalStorage {
         return null
     }
 
-    fun getVariable(variable: FirVariable<*>): IrVariable? {
-        for (cache in cacheStack.asReversed()) {
-            val local = cache.getVariable(variable)
-            if (local != null) return local
-        }
-        return null
-    }
+    fun getVariable(variable: FirVariable<*>): IrVariable? =
+        last { getVariable(variable) }
 
     fun getLocalClass(localClass: FirClass<*>): IrClass? {
-        for (cache in cacheStack.asReversed()) {
-            val local = cache.getLocalClass(localClass)
-            if (local != null) return local
-        }
-        return null
+        return localClassCache[localClass]
     }
 
-    fun getLocalFunction(localFunction: FirFunction<*>): IrSimpleFunction? {
+    fun getLocalFunction(localFunction: FirFunction<*>): IrSimpleFunction? =
+        last { getLocalFunction(localFunction) }
+
+    fun getDelegatedProperty(property: FirProperty): IrLocalDelegatedProperty? =
+        last { getDelegatedProperty(property) }
+
+    private inline fun <T> last(getter: Fir2IrScopeCache.() -> T?): T? {
         for (cache in cacheStack.asReversed()) {
-            val local = cache.getLocalFunction(localFunction)
-            if (local != null) return local
+            cache.getter()?.let { return it }
         }
         return null
     }
@@ -68,10 +61,14 @@ class Fir2IrLocalStorage {
     }
 
     fun putLocalClass(firClass: FirClass<*>, irClass: IrClass) {
-        cacheStack.last().putLocalClass(firClass, irClass)
+        localClassCache[firClass] = irClass
     }
 
     fun putLocalFunction(firFunction: FirFunction<*>, irFunction: IrSimpleFunction) {
         cacheStack.last().putLocalFunction(firFunction, irFunction)
+    }
+
+    fun putDelegatedProperty(firProperty: FirProperty, irProperty: IrLocalDelegatedProperty) {
+        cacheStack.last().putDelegatedProperty(firProperty, irProperty)
     }
 }

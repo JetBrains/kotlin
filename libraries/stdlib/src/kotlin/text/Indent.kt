@@ -71,7 +71,7 @@ public fun String.replaceIndent(newIndent: String = ""): String {
     val minCommonIndent = lines
         .filter(String::isNotBlank)
         .map(String::indentWidth)
-        .min() ?: 0
+        .minOrNull() ?: 0
 
     return lines.reindent(length + newIndent.length * lines.size, getIndentFunction(newIndent), { line -> line.drop(minCommonIndent) })
 }

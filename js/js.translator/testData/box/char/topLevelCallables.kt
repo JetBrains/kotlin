@@ -1,16 +1,16 @@
 // SKIP_MINIFICATION
+
+// Exported declaration uses non-exportable return type: Char
 // IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JS_IR_ES6
+
 @JsName("foo")
-@JsExport
 fun foo(): Char = '1'
 
-@JsExport
 val p1: Char = '2'
 
-@JsExport
 var p2: Char = '3'
 
-@JsExport
 var p3: Char = '4'
     get() = field + 1
     set(value) {

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: Super.java
 public class Super {
     public boolean foo;

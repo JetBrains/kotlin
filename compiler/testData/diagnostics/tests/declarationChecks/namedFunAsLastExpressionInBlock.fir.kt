@@ -4,8 +4,8 @@
 fun foo(block: () -> (() -> Int)) {}
 
 fun test() {
-    val x = <!INFERENCE_ERROR, INFERENCE_ERROR, INFERENCE_ERROR!>fun named1(x: Int): Int { return 1 }<!>
-    x <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!UNRESOLVED_REFERENCE!>_<!><Function1<Int, Int>>() }
+    val x = <!EXPRESSION_REQUIRED!>fun named1(x: Int): Int { return 1 }<!>
+    x <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><Function1<Int, Int>>() }
 
     foo { fun named2(): Int {return 1} }
     foo({ fun named3() = 1 })
@@ -42,15 +42,15 @@ fun test() {
         y: Int -> fun named12(): Int {return 1}
     }
 
-    x4 checkType { <!UNRESOLVED_REFERENCE!>_<!><Function1<Int, Unit>>() }
+    x4 checkType { _<Function1<Int, Unit>>() }
 
     { y: Int -> fun named14(): Int {return 1} }
-    val b = <!UNRESOLVED_REFERENCE!>(<!INFERENCE_ERROR!>fun named15(): Boolean { return true }<!>)()<!>
+    val b = <!UNRESOLVED_REFERENCE!>(<!EXPRESSION_REQUIRED!>fun named15(): Boolean { return true }<!>)<!>()
 
-    baz(<!INFERENCE_ERROR!>fun named16(){}<!>)
+    baz(<!EXPRESSION_REQUIRED!>fun named16(){}<!>)
 }
 
-fun bar() = <!INFERENCE_ERROR, INFERENCE_ERROR, INFERENCE_ERROR!>fun named() {}<!>
+fun bar() = <!EXPRESSION_REQUIRED!>fun named() {}<!>
 
 fun <T> run(block: () -> T): T = null!!
 fun run2(block: () -> Unit): Unit = null!!
@@ -61,7 +61,7 @@ fun success() {
     run2 { fun named2() = 1 }
 
     val x = run { fun named3() = 1 }
-    x checkType { <!UNRESOLVED_REFERENCE!>_<!><Unit>() }
+    x checkType { _<Unit>() }
 
     val y = when (1) {
         0 -> {
@@ -71,5 +71,5 @@ fun success() {
             fun named5(): Int {return 1}
         }
     }
-    y checkType { <!UNRESOLVED_REFERENCE!>_<!><Unit>() }
+    y checkType { _<Unit>() }
 }

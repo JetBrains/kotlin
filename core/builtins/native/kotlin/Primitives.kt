@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -589,12 +589,30 @@ public class Int private constructor() : Number(), Comparable<Int> {
      /** Creates a range from this value to the specified [other] value. */
     public operator fun rangeTo(other: Long): LongRange
 
-    /** Shifts this value left by the [bitCount] number of bits. */
+    /**
+     * Shifts this value left by the [bitCount] number of bits.
+     *
+     * Note that only the five lowest-order bits of the [bitCount] are used as the shift distance.
+     * The shift distance actually used is therefore always in the range `0..31`.
+     */
     public infix fun shl(bitCount: Int): Int
-    /** Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with copies of the sign bit. */
+
+    /**
+     * Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with copies of the sign bit.
+     *
+     * Note that only the five lowest-order bits of the [bitCount] are used as the shift distance.
+     * The shift distance actually used is therefore always in the range `0..31`.
+     */
     public infix fun shr(bitCount: Int): Int
-    /** Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with zeros. */
+
+    /**
+     * Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with zeros.
+     *
+     * Note that only the five lowest-order bits of the [bitCount] are used as the shift distance.
+     * The shift distance actually used is therefore always in the range `0..31`.
+     */
     public infix fun ushr(bitCount: Int): Int
+
     /** Performs a bitwise AND operation between the two values. */
     public infix fun and(other: Int): Int
     /** Performs a bitwise OR operation between the two values. */
@@ -818,12 +836,30 @@ public class Long private constructor() : Number(), Comparable<Long> {
      /** Creates a range from this value to the specified [other] value. */
     public operator fun rangeTo(other: Long): LongRange
 
-    /** Shifts this value left by the [bitCount] number of bits. */
+    /**
+     * Shifts this value left by the [bitCount] number of bits.
+     *
+     * Note that only the six lowest-order bits of the [bitCount] are used as the shift distance.
+     * The shift distance actually used is therefore always in the range `0..63`.
+     */
     public infix fun shl(bitCount: Int): Long
-    /** Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with copies of the sign bit. */
+
+    /**
+     * Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with copies of the sign bit.
+     *
+     * Note that only the six lowest-order bits of the [bitCount] are used as the shift distance.
+     * The shift distance actually used is therefore always in the range `0..63`.
+     */
     public infix fun shr(bitCount: Int): Long
-    /** Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with zeros. */
+
+    /**
+     * Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with zeros.
+     *
+     * Note that only the six lowest-order bits of the [bitCount] are used as the shift distance.
+     * The shift distance actually used is therefore always in the range `0..63`.
+     */
     public infix fun ushr(bitCount: Int): Long
+
     /** Performs a bitwise AND operation between the two values. */
     public infix fun and(other: Long): Long
     /** Performs a bitwise OR operation between the two values. */
@@ -898,27 +934,39 @@ public class Float private constructor() : Number(), Comparable<Float> {
         /**
          * A constant holding the smallest *positive* nonzero value of Float.
          */
-        public val MIN_VALUE: Float
+        public const val MIN_VALUE: Float = 1.4E-45F
 
         /**
          * A constant holding the largest positive finite value of Float.
          */
-        public val MAX_VALUE: Float
+        public const val MAX_VALUE: Float = 3.4028235E38F
 
         /**
          * A constant holding the positive infinity value of Float.
          */
-        public val POSITIVE_INFINITY: Float
+        public const val POSITIVE_INFINITY: Float = 1.0F/0.0F
 
         /**
          * A constant holding the negative infinity value of Float.
          */
-        public val NEGATIVE_INFINITY: Float
+        public const val NEGATIVE_INFINITY: Float = -1.0F/0.0F
 
         /**
          * A constant holding the "not a number" value of Float.
          */
-        public val NaN: Float
+        public const val NaN: Float = -(0.0F/0.0F)
+
+        /**
+         * The number of bytes used to represent an instance of Float in a binary form.
+         */
+        @SinceKotlin("1.4")
+        public const val SIZE_BYTES: Int = 4
+
+        /**
+         * The number of bits used to represent an instance of Float in a binary form.
+         */
+        @SinceKotlin("1.4")
+        public const val SIZE_BITS: Int = 32
     }
 
     /**
@@ -1099,27 +1147,39 @@ public class Double private constructor() : Number(), Comparable<Double> {
         /**
          * A constant holding the smallest *positive* nonzero value of Double.
          */
-        public val MIN_VALUE: Double
+        public const val MIN_VALUE: Double = 4.9E-324
 
         /**
          * A constant holding the largest positive finite value of Double.
          */
-        public val MAX_VALUE: Double
+        public const val MAX_VALUE: Double = 1.7976931348623157E308
 
         /**
          * A constant holding the positive infinity value of Double.
          */
-        public val POSITIVE_INFINITY: Double
+        public const val POSITIVE_INFINITY: Double = 1.0/0.0
 
         /**
          * A constant holding the negative infinity value of Double.
          */
-        public val NEGATIVE_INFINITY: Double
+        public const val NEGATIVE_INFINITY: Double = -1.0/0.0
 
         /**
          * A constant holding the "not a number" value of Double.
          */
-        public val NaN: Double
+        public const val NaN: Double = -(0.0/0.0)
+
+        /**
+         * The number of bytes used to represent an instance of Double in a binary form.
+         */
+        @SinceKotlin("1.4")
+        public const val SIZE_BYTES: Int = 8
+
+        /**
+         * The number of bits used to represent an instance of Double in a binary form.
+         */
+        @SinceKotlin("1.4")
+        public const val SIZE_BITS: Int = 64
     }
 
     /**

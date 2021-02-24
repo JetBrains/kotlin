@@ -91,7 +91,7 @@ class RawTypeImpl private constructor(lowerBound: SimpleType, upperBound: Simple
     }
 
     @TypeRefinement
-    @UseExperimental(TypeRefinement::class)
+    @OptIn(TypeRefinement::class)
     override fun refine(kotlinTypeRefiner: KotlinTypeRefiner): FlexibleType {
         return RawTypeImpl(
             kotlinTypeRefiner.refineType(lowerBound) as SimpleType,
@@ -160,7 +160,7 @@ internal object RawSubstitution : TypeSubstitution() {
             type.isMarkedNullable, memberScope
         ) factory@{ kotlinTypeRefiner ->
             val classId = (declaration as? ClassDescriptor)?.classId ?: return@factory null
-            @UseExperimental(TypeRefinement::class)
+            @OptIn(TypeRefinement::class)
             val refinedClassDescriptor = kotlinTypeRefiner.findClassAcrossModuleDependencies(classId) ?: return@factory null
             if (refinedClassDescriptor == declaration) return@factory null
 

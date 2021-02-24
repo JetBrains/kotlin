@@ -1,0 +1,6 @@
+import pack1.Class4
+import pack1.Example
+
+fun method(a: Class4) {
+    Example()
+}

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.resolve
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -238,7 +238,7 @@ class AnnotationChecker(
         }
 
         fun applicableTargetSet(classDescriptor: ClassDescriptor): Set<KotlinTarget>? {
-            val targetEntryDescriptor = classDescriptor.annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.target) ?: return null
+            val targetEntryDescriptor = classDescriptor.annotations.findAnnotation(StandardNames.FqNames.target) ?: return null
             return loadAnnotationTargets(targetEntryDescriptor)
         }
 

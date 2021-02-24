@@ -54,24 +54,16 @@ public final class IrBlock extends
             break;
           }
           case 10: {
-            org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin.Builder subBuilder = null;
-            if (((bitField0_ & 0x00000001) == 0x00000001)) {
-              subBuilder = origin_.toBuilder();
-            }
-            origin_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin.PARSER, extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(origin_);
-              origin_ = subBuilder.buildPartial();
-            }
-            bitField0_ |= 0x00000001;
-            break;
-          }
-          case 18: {
-            if (!((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+            if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
               statement_ = new java.util.ArrayList<org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement>();
-              mutable_bitField0_ |= 0x00000002;
+              mutable_bitField0_ |= 0x00000001;
             }
             statement_.add(input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement.PARSER, extensionRegistry));
+            break;
+          }
+          case 16: {
+            bitField0_ |= 0x00000001;
+            originName_ = input.readInt32();
             break;
           }
         }
@@ -82,7 +74,7 @@ public final class IrBlock extends
       throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
           e.getMessage()).setUnfinishedMessage(this);
     } finally {
-      if (((mutable_bitField0_ & 0x00000002) == 0x00000002)) {
+      if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
         statement_ = java.util.Collections.unmodifiableList(statement_);
       }
       try {
@@ -111,59 +103,59 @@ public final class IrBlock extends
   }
 
   private int bitField0_;
-  public static final int ORIGIN_FIELD_NUMBER = 1;
-  private org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin origin_;
-  /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin origin = 1;</code>
-   */
-  public boolean hasOrigin() {
-    return ((bitField0_ & 0x00000001) == 0x00000001);
-  }
-  /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin origin = 1;</code>
-   */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin getOrigin() {
-    return origin_;
-  }
-
-  public static final int STATEMENT_FIELD_NUMBER = 2;
+  public static final int STATEMENT_FIELD_NUMBER = 1;
   private java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement> statement_;
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement statement = 2;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement statement = 1;</code>
    */
   public java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement> getStatementList() {
     return statement_;
   }
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement statement = 2;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement statement = 1;</code>
    */
   public java.util.List<? extends org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrBuilder> 
       getStatementOrBuilderList() {
     return statement_;
   }
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement statement = 2;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement statement = 1;</code>
    */
   public int getStatementCount() {
     return statement_.size();
   }
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement statement = 2;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement statement = 1;</code>
    */
   public org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement getStatement(int index) {
     return statement_.get(index);
   }
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement statement = 2;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement statement = 1;</code>
    */
   public org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrBuilder getStatementOrBuilder(
       int index) {
     return statement_.get(index);
   }
 
+  public static final int ORIGIN_NAME_FIELD_NUMBER = 2;
+  private int originName_;
+  /**
+   * <code>optional int32 origin_name = 2;</code>
+   */
+  public boolean hasOriginName() {
+    return ((bitField0_ & 0x00000001) == 0x00000001);
+  }
+  /**
+   * <code>optional int32 origin_name = 2;</code>
+   */
+  public int getOriginName() {
+    return originName_;
+  }
+
   private void initFields() {
-    origin_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin.getDefaultInstance();
     statement_ = java.util.Collections.emptyList();
+    originName_ = 0;
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -171,12 +163,6 @@ public final class IrBlock extends
     if (isInitialized == 1) return true;
     if (isInitialized == 0) return false;
 
-    if (hasOrigin()) {
-      if (!getOrigin().isInitialized()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-    }
     for (int i = 0; i < getStatementCount(); i++) {
       if (!getStatement(i).isInitialized()) {
         memoizedIsInitialized = 0;
@@ -190,11 +176,11 @@ public final class IrBlock extends
   public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
                       throws java.io.IOException {
     getSerializedSize();
-    if (((bitField0_ & 0x00000001) == 0x00000001)) {
-      output.writeMessage(1, origin_);
-    }
     for (int i = 0; i < statement_.size(); i++) {
-      output.writeMessage(2, statement_.get(i));
+      output.writeMessage(1, statement_.get(i));
+    }
+    if (((bitField0_ & 0x00000001) == 0x00000001)) {
+      output.writeInt32(2, originName_);
     }
     output.writeRawBytes(unknownFields);
   }
@@ -205,13 +191,13 @@ public final class IrBlock extends
     if (size != -1) return size;
 
     size = 0;
-    if (((bitField0_ & 0x00000001) == 0x00000001)) {
-      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeMessageSize(1, origin_);
-    }
     for (int i = 0; i < statement_.size(); i++) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeMessageSize(2, statement_.get(i));
+        .computeMessageSize(1, statement_.get(i));
+    }
+    if (((bitField0_ & 0x00000001) == 0x00000001)) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeInt32Size(2, originName_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -307,9 +293,9 @@ public final class IrBlock extends
 
     public Builder clear() {
       super.clear();
-      origin_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin.getDefaultInstance();
-      bitField0_ = (bitField0_ & ~0x00000001);
       statement_ = java.util.Collections.emptyList();
+      bitField0_ = (bitField0_ & ~0x00000001);
+      originName_ = 0;
       bitField0_ = (bitField0_ & ~0x00000002);
       return this;
     }
@@ -334,33 +320,33 @@ public final class IrBlock extends
       org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock result = new org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock(this);
       int from_bitField0_ = bitField0_;
       int to_bitField0_ = 0;
-      if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
-        to_bitField0_ |= 0x00000001;
-      }
-      result.origin_ = origin_;
-      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
         statement_ = java.util.Collections.unmodifiableList(statement_);
-        bitField0_ = (bitField0_ & ~0x00000002);
+        bitField0_ = (bitField0_ & ~0x00000001);
       }
       result.statement_ = statement_;
+      if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
+        to_bitField0_ |= 0x00000001;
+      }
+      result.originName_ = originName_;
       result.bitField0_ = to_bitField0_;
       return result;
     }
 
     public Builder mergeFrom(org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock other) {
       if (other == org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock.getDefaultInstance()) return this;
-      if (other.hasOrigin()) {
-        mergeOrigin(other.getOrigin());
-      }
       if (!other.statement_.isEmpty()) {
         if (statement_.isEmpty()) {
           statement_ = other.statement_;
-          bitField0_ = (bitField0_ & ~0x00000002);
+          bitField0_ = (bitField0_ & ~0x00000001);
         } else {
           ensureStatementIsMutable();
           statement_.addAll(other.statement_);
         }
         
+      }
+      if (other.hasOriginName()) {
+        setOriginName(other.getOriginName());
       }
       setUnknownFields(
           getUnknownFields().concat(other.unknownFields));
@@ -368,12 +354,6 @@ public final class IrBlock extends
     }
 
     public final boolean isInitialized() {
-      if (hasOrigin()) {
-        if (!getOrigin().isInitialized()) {
-          
-          return false;
-        }
-      }
       for (int i = 0; i < getStatementCount(); i++) {
         if (!getStatement(i).isInitialized()) {
           
@@ -402,95 +382,35 @@ public final class IrBlock extends
     }
     private int bitField0_;
 
-    private org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin origin_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin.getDefaultInstance();
-    /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin origin = 1;</code>
-     */
-    public boolean hasOrigin() {
-      return ((bitField0_ & 0x00000001) == 0x00000001);
-    }
-    /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin origin = 1;</code>
-     */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin getOrigin() {
-      return origin_;
-    }
-    /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin origin = 1;</code>
-     */
-    public Builder setOrigin(org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
-      origin_ = value;
-
-      bitField0_ |= 0x00000001;
-      return this;
-    }
-    /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin origin = 1;</code>
-     */
-    public Builder setOrigin(
-        org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin.Builder builderForValue) {
-      origin_ = builderForValue.build();
-
-      bitField0_ |= 0x00000001;
-      return this;
-    }
-    /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin origin = 1;</code>
-     */
-    public Builder mergeOrigin(org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin value) {
-      if (((bitField0_ & 0x00000001) == 0x00000001) &&
-          origin_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin.getDefaultInstance()) {
-        origin_ =
-          org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin.newBuilder(origin_).mergeFrom(value).buildPartial();
-      } else {
-        origin_ = value;
-      }
-
-      bitField0_ |= 0x00000001;
-      return this;
-    }
-    /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin origin = 1;</code>
-     */
-    public Builder clearOrigin() {
-      origin_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin.getDefaultInstance();
-
-      bitField0_ = (bitField0_ & ~0x00000001);
-      return this;
-    }
-
     private java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement> statement_ =
       java.util.Collections.emptyList();
     private void ensureStatementIsMutable() {
-      if (!((bitField0_ & 0x00000002) == 0x00000002)) {
+      if (!((bitField0_ & 0x00000001) == 0x00000001)) {
         statement_ = new java.util.ArrayList<org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement>(statement_);
-        bitField0_ |= 0x00000002;
+        bitField0_ |= 0x00000001;
        }
     }
 
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement statement = 2;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement statement = 1;</code>
      */
     public java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement> getStatementList() {
       return java.util.Collections.unmodifiableList(statement_);
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement statement = 2;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement statement = 1;</code>
      */
     public int getStatementCount() {
       return statement_.size();
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement statement = 2;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement statement = 1;</code>
      */
     public org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement getStatement(int index) {
       return statement_.get(index);
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement statement = 2;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement statement = 1;</code>
      */
     public Builder setStatement(
         int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement value) {
@@ -503,7 +423,7 @@ public final class IrBlock extends
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement statement = 2;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement statement = 1;</code>
      */
     public Builder setStatement(
         int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement.Builder builderForValue) {
@@ -513,7 +433,7 @@ public final class IrBlock extends
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement statement = 2;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement statement = 1;</code>
      */
     public Builder addStatement(org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement value) {
       if (value == null) {
@@ -525,7 +445,7 @@ public final class IrBlock extends
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement statement = 2;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement statement = 1;</code>
      */
     public Builder addStatement(
         int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement value) {
@@ -538,7 +458,7 @@ public final class IrBlock extends
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement statement = 2;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement statement = 1;</code>
      */
     public Builder addStatement(
         org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement.Builder builderForValue) {
@@ -548,7 +468,7 @@ public final class IrBlock extends
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement statement = 2;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement statement = 1;</code>
      */
     public Builder addStatement(
         int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement.Builder builderForValue) {
@@ -558,7 +478,7 @@ public final class IrBlock extends
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement statement = 2;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement statement = 1;</code>
      */
     public Builder addAllStatement(
         java.lang.Iterable<? extends org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement> values) {
@@ -569,21 +489,53 @@ public final class IrBlock extends
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement statement = 2;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement statement = 1;</code>
      */
     public Builder clearStatement() {
       statement_ = java.util.Collections.emptyList();
-      bitField0_ = (bitField0_ & ~0x00000002);
+      bitField0_ = (bitField0_ & ~0x00000001);
 
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement statement = 2;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement statement = 1;</code>
      */
     public Builder removeStatement(int index) {
       ensureStatementIsMutable();
       statement_.remove(index);
 
+      return this;
+    }
+
+    private int originName_ ;
+    /**
+     * <code>optional int32 origin_name = 2;</code>
+     */
+    public boolean hasOriginName() {
+      return ((bitField0_ & 0x00000002) == 0x00000002);
+    }
+    /**
+     * <code>optional int32 origin_name = 2;</code>
+     */
+    public int getOriginName() {
+      return originName_;
+    }
+    /**
+     * <code>optional int32 origin_name = 2;</code>
+     */
+    public Builder setOriginName(int value) {
+      bitField0_ |= 0x00000002;
+      originName_ = value;
+      
+      return this;
+    }
+    /**
+     * <code>optional int32 origin_name = 2;</code>
+     */
+    public Builder clearOriginName() {
+      bitField0_ = (bitField0_ & ~0x00000002);
+      originName_ = 0;
+      
       return this;
     }
 

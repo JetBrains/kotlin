@@ -10,14 +10,14 @@ fun foo(
 ) {}
 
 fun main() {
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(p1 = 1, "2", 3.0)
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(1, p2 = "2", 3.0)
+    foo(p1 = 1, "2", 3.0)
+    foo(1, p2 = "2", 3.0)
     foo(1, "2", p3 = 3.0)
 
     foo(p1 = 1)
     foo(1, p2 = "2")
 
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(p1 = 1, p2 = "2", 3.0)
+    foo(p1 = 1, p2 = "2", 3.0)
 
     foo()
     foo(1, p2 = "")

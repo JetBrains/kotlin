@@ -5,16 +5,15 @@
 
 package org.jetbrains.kotlin.builtins.functions
 
-import org.jetbrains.kotlin.builtins.KOTLIN_REFLECT_FQ_NAME
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME
+import org.jetbrains.kotlin.builtins.StandardNames.BUILT_INS_PACKAGE_FQ_NAME
+import org.jetbrains.kotlin.builtins.StandardNames.COROUTINES_PACKAGE_FQ_NAME_RELEASE
+import org.jetbrains.kotlin.builtins.StandardNames.KOTLIN_REFLECT_FQ_NAME
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.AbstractClassDescriptor
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME_RELEASE
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
@@ -32,23 +31,9 @@ import java.util.*
 class FunctionClassDescriptor(
         private val storageManager: StorageManager,
         private val containingDeclaration: PackageFragmentDescriptor,
-        val functionKind: Kind,
+        val functionKind: FunctionClassKind,
         val arity: Int
 ) : AbstractClassDescriptor(storageManager, functionKind.numberedClassName(arity)) {
-
-    enum class Kind(val packageFqName: FqName, val classNamePrefix: String) {
-        Function(BUILT_INS_PACKAGE_FQ_NAME, "Function"),
-        SuspendFunction(COROUTINES_PACKAGE_FQ_NAME_RELEASE, "SuspendFunction"),
-        KFunction(KOTLIN_REFLECT_FQ_NAME, "KFunction"),
-        KSuspendFunction(KOTLIN_REFLECT_FQ_NAME, "KSuspendFunction");
-
-        fun numberedClassName(arity: Int) = Name.identifier("$classNamePrefix$arity")
-
-        companion object {
-            fun byClassNamePrefix(packageFqName: FqName, className: String) =
-                    Kind.values().firstOrNull { it.packageFqName == packageFqName && className.startsWith(it.classNamePrefix) }
-        }
-    }
 
     private val typeConstructor = FunctionTypeConstructor()
     private val memberScope = FunctionClassScope(storageManager, this)
@@ -75,7 +60,7 @@ class FunctionClassDescriptor(
 
     @get:JvmName("hasBigArity")
     val hasBigArity: Boolean
-        get() = arity >= FunctionInvokeDescriptor.BIG_ARITY
+        get() = arity >= BuiltInFunctionArity.BIG_ARITY
 
     override fun getContainingDeclaration() = containingDeclaration
 
@@ -90,12 +75,13 @@ class FunctionClassDescriptor(
     override fun getKind() = ClassKind.INTERFACE
     override fun getModality() = Modality.ABSTRACT
     override fun getUnsubstitutedPrimaryConstructor() = null
-    override fun getVisibility() = Visibilities.PUBLIC
+    override fun getVisibility() = DescriptorVisibilities.PUBLIC
     override fun isCompanionObject() = false
     override fun isInner() = false
     override fun isData() = false
     override fun isInline() = false
     override fun isFun() = false
+    override fun isValue() = false
     override fun isExpect() = false
     override fun isActual() = false
     override fun isExternal() = false
@@ -109,14 +95,14 @@ class FunctionClassDescriptor(
         override fun computeSupertypes(): Collection<KotlinType> {
             // For K{Suspend}Function{n}, add corresponding numbered {Suspend}Function{n} class, e.g. {Suspend}Function2 for K{Suspend}Function2
             val supertypes = when (functionKind) {
-                Kind.Function -> // Function$N <: Function
+                FunctionClassKind.Function -> // Function$N <: Function
                     listOf(functionClassId)
-                Kind.KFunction -> // KFunction$N <: KFunction
-                    listOf(kFunctionClassId, ClassId(BUILT_INS_PACKAGE_FQ_NAME, Kind.Function.numberedClassName(arity)))
-                Kind.SuspendFunction -> // SuspendFunction$N<...> <: Function
+                FunctionClassKind.KFunction -> // KFunction$N <: KFunction
+                    listOf(kFunctionClassId, ClassId(BUILT_INS_PACKAGE_FQ_NAME, FunctionClassKind.Function.numberedClassName(arity)))
+                FunctionClassKind.SuspendFunction -> // SuspendFunction$N<...> <: Function
                     listOf(functionClassId)
-                Kind.KSuspendFunction -> // KSuspendFunction$N<...> <: KFunction
-                    listOf(kFunctionClassId, ClassId(COROUTINES_PACKAGE_FQ_NAME_RELEASE, Kind.SuspendFunction.numberedClassName(arity)))
+                FunctionClassKind.KSuspendFunction -> // KSuspendFunction$N<...> <: KFunction
+                    listOf(kFunctionClassId, ClassId(COROUTINES_PACKAGE_FQ_NAME_RELEASE, FunctionClassKind.SuspendFunction.numberedClassName(arity)))
             }
 
             val moduleDescriptor = containingDeclaration.containingDeclaration

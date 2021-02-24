@@ -1,0 +1,38 @@
+class A {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+operator fun A.get(i: Int, a: Int = 1, b: Int = 2, c: Int = 3, d: Int = 4): Int {
+  return 0
+}
+
+operator fun A.set(i: Int, j: Int = 42, v: Int) {
+}
+
+fun testSimpleAssignment(a: A) {
+  a.set(i = 1, v = 0)
+}
+
+fun testPostfixIncrement(a: A): Int {
+  return { // BLOCK
+    val tmp0_array: A = a
+    val tmp1_index0: Int = 1
+    val tmp2: Int = tmp0_array.get(i = tmp1_index0)
+    tmp0_array.set(i = tmp1_index0, v = tmp2.inc())
+    tmp2
+  }
+}
+
+fun testCompoundAssignment(a: A) {
+  { // BLOCK
+    val tmp0_array: A = a
+    val tmp1_index0: Int = 1
+    tmp0_array.set(i = tmp1_index0, v = tmp0_array.get(i = tmp1_index0).plus(other = 10))
+  }
+}
+

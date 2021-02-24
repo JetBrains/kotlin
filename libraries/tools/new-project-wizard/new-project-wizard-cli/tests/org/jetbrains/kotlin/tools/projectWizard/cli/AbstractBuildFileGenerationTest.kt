@@ -5,93 +5,77 @@
 
 package org.jetbrains.kotlin.tools.projectWizard.cli
 
-import org.jetbrains.kotlin.tools.projectWizard.core.ExceptionError
+import com.intellij.testFramework.UsefulTestCase
+import org.jetbrains.kotlin.tools.projectWizard.Versions
 import org.jetbrains.kotlin.tools.projectWizard.core.div
-import org.jetbrains.kotlin.tools.projectWizard.core.onFailure
 import org.jetbrains.kotlin.tools.projectWizard.core.service.Services
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
-import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.MavenPlugin
-import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.gradle.GroovyDslPlugin
-import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.gradle.KotlinDslPlugin
-import org.jetbrains.kotlin.tools.projectWizard.wizard.YamlWizard
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Repositories
+import org.jetbrains.kotlin.tools.projectWizard.wizard.Wizard
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 
-abstract class AbstractBuildFileGenerationTest : AbstractPluginBasedTest() {
+abstract class AbstractBuildFileGenerationTest : UsefulTestCase() {
+    abstract fun createWizard(directory: Path, buildSystem: BuildSystem, projectDirectory: Path): Wizard
+
     fun doTest(directoryPath: String) {
         val directory = Paths.get(directoryPath)
-        val testData = init(directory)
-        if (KotlinDslPlugin::class in testData.pluginClasses) {
-            doTest(directory, testData, BuildSystem.GRADLE_KOTLIN_DSL)
-        }
-        if (GroovyDslPlugin::class in testData.pluginClasses) {
-            doTest(directory, testData, BuildSystem.GRADLE_GROOVY_DSL)
-        }
-        if (MavenPlugin::class in testData.pluginClasses) {
-            doTest(directory, testData, BuildSystem.MAVEN)
-        }
-    }
 
-    private fun doTest(directory: Path, testData: WizardTestData, buildSystem: BuildSystem) {
-        val yaml = directory.resolve("settings.yaml").toFile().readText() + "\n" +
-                defaultStructure + "\n" +
-                buildSystem.yaml
-        val tempDir = Files.createTempDirectory(null)
-        val wizard = YamlWizard(yaml, tempDir.toString(), testData.createPlugins, isUnitTestMode = true)
-        val result = wizard.apply(Services.IDEA_INDEPENDENT_SERVICES, GenerationPhase.ALL)
-        result.onFailure { errors ->
-            errors.forEach { error ->
-                if (error is ExceptionError) {
-                    throw error.exception
-                }
-            }
-            fail(errors.joinToString("\n"))
-        }
+        val testParameters = DefaultTestParameters.fromTestDataOrDefault(directory)
 
-        val expectedDirectory = (directory / EXPECTED_DIRECTORY_NAME).takeIf { Files.exists(it) } ?: directory
-
-        compareFiles(
-            expectedDirectory.allBuildFiles(buildSystem), expectedDirectory,
-            tempDir.allBuildFiles(buildSystem), tempDir
+        val buildSystemsToRunFor = listOfNotNull(
+            BuildSystem.GRADLE_KOTLIN_DSL,
+            if (testParameters.runForGradleGroovy) BuildSystem.GRADLE_GROOVY_DSL else null,
+            if (testParameters.runForMaven) BuildSystem.MAVEN else null
         )
+
+        for (buildSystem in buildSystemsToRunFor) {
+            doTest(directory, buildSystem)
+        }
     }
+
+    private fun doTest(directory: Path, buildSystem: BuildSystem) {
+        val tempDirectory = Files.createTempDirectory(null)
+        val wizard = createWizard(directory, buildSystem, tempDirectory)
+        val result = wizard.apply(Services.IDEA_INDEPENDENT_SERVICES, GenerationPhase.ALL)
+        result.assertSuccess()
+
+        val expectedDirectory = expectedDirectory(directory)
+
+        compareFilesAndGenerateMissing(
+            expectedDirectory.allBuildFiles(buildSystem), expectedDirectory,
+            tempDirectory.allBuildFiles(buildSystem), tempDirectory
+        ) { path ->
+            val fileContent = path.readFile()
+            fileContent.replace(
+                KotlinVersionProviderTestWizardService.TEST_KOTLIN_VERSION.toString(),
+                KOTLIN_VERSION_PLACEHOLDER
+            ).replaceAllTo(
+                listOf(
+                    Repositories.JETBRAINS_KOTLIN_DEV.url,
+                    KotlinVersionProviderTestWizardService.KOTLIN_DEV_BINTRAY_WITH_CACHE_REDIRECTOR.url,
+                ),
+                KOTLIN_REPO_PLACEHOLDER
+            )
+        }
+    }
+
 
     private fun Path.allBuildFiles(buildSystem: BuildSystem) =
-        listFiles { it.fileName.toString() == buildSystem.buildFileName }
+        listFiles { it.fileName.toString() in buildSystem.allBuildFileNames }
 
-    private enum class BuildSystem(val buildFileName: String, val yaml: String) {
-        GRADLE_KOTLIN_DSL(
-            buildFileName = "build.gradle.kts",
-            yaml = """buildSystem:
-                            type: GradleKotlinDsl
-                            gradle:
-                              createGradleWrapper: false
-                              version: 5.4.1""".trimIndent()
-        ),
-        GRADLE_GROOVY_DSL(
-            buildFileName = "build.gradle",
-            yaml = """buildSystem:
-                            type: GradleGroovyDsl
-                            gradle:
-                              createGradleWrapper: false
-                              version: 5.4.1""".trimIndent()
-        ),
-        MAVEN(
-            buildFileName = "pom.xml",
-            yaml = """buildSystem:
-                            type: Maven""".trimIndent()
-        )
-    }
+    private fun expectedDirectory(directory: Path): Path =
+        (directory / EXPECTED_DIRECTORY_NAME).takeIf { Files.exists(it) } ?: directory
 
     companion object {
         private const val EXPECTED_DIRECTORY_NAME = "expected"
-
-        private val defaultStructure =
-            """structure:
-              name: generatedProject
-              groupId: testGroupId
-              artifactId: testArtifactId
-            """.trimIndent()
+        private const val KOTLIN_VERSION_PLACEHOLDER = "KOTLIN_VERSION"
+        private const val KOTLIN_REPO_PLACEHOLDER = "KOTLIN_REPO"
     }
 }
+
+private fun String.replaceAllTo(oldValues: Collection<String>, newValue: String) =
+    oldValues.fold(this) { state, oldValue ->
+        state.replace(oldValue, newValue)
+    }

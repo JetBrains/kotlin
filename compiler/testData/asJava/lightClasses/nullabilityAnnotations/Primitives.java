@@ -1,43 +1,44 @@
-public interface Primitives {
-    int $$int /* Real name is 'int' */(int i);
+public abstract interface Primitives /* Primitives*/ {
+  @org.jetbrains.annotations.Nullable()
+  public abstract java.lang.Boolean getNullableBool();//  getNullableBool()
 
-    @org.jetbrains.annotations.Nullable
-    java.lang.Boolean getNullableBool();
+  @org.jetbrains.annotations.Nullable()
+  public abstract java.lang.Byte getNullableByte();//  getNullableByte()
 
-    @org.jetbrains.annotations.Nullable
-    java.lang.Byte getNullableByte();
+  @org.jetbrains.annotations.Nullable()
+  public abstract java.lang.Character getNullableChar();//  getNullableChar()
 
-    @org.jetbrains.annotations.Nullable
-    java.lang.Short getNullableShort();
+  @org.jetbrains.annotations.Nullable()
+  public abstract java.lang.Double getNullableDouble();//  getNullableDouble()
 
-    @org.jetbrains.annotations.Nullable
-    java.lang.Character getNullableChar();
+  @org.jetbrains.annotations.Nullable()
+  public abstract java.lang.Float getNullableFloat();//  getNullableFloat()
 
-    @org.jetbrains.annotations.Nullable
-    java.lang.Integer getNullableInt();
+  @org.jetbrains.annotations.Nullable()
+  public abstract java.lang.Integer getNullableInt();//  getNullableInt()
 
-    @org.jetbrains.annotations.Nullable
-    java.lang.Long getNullableLong();
+  @org.jetbrains.annotations.Nullable()
+  public abstract java.lang.Long getNullableLong();//  getNullableLong()
 
-    @org.jetbrains.annotations.Nullable
-    java.lang.Float getNullableFloat();
+  @org.jetbrains.annotations.Nullable()
+  public abstract java.lang.Short getNullableShort();//  getNullableShort()
 
-    @org.jetbrains.annotations.Nullable
-    java.lang.Double getNullableDouble();
+  public abstract boolean getBool();//  getBool()
 
-    boolean getBool();
+  public abstract byte getByte();//  getByte()
 
-    byte getByte();
+  public abstract char getChar();//  getChar()
 
-    short getShort();
+  public abstract double getDouble();//  getDouble()
 
-    char getChar();
+  public abstract float getFloat();//  getFloat()
 
-    int getInt();
+  public abstract int getInt();//  getInt()
 
-    long getLong();
+  public abstract int int(int);//  int(int)
 
-    float getFloat();
+  public abstract long getLong();//  getLong()
 
-    double getDouble();
+  public abstract short getShort();//  getShort()
+
 }

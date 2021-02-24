@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 fun box(): String {
     infix fun Int.foo(a: Int): Int = a + 2
 

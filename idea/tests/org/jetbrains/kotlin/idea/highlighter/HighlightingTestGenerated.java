@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.highlighter;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -25,7 +26,7 @@ public class HighlightingTestGenerated extends AbstractHighlightingTest {
     }
 
     public void testAllFilesPresentInHighlighter() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/highlighter"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/highlighter"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("Annotations.kt")
@@ -36,6 +37,11 @@ public class HighlightingTestGenerated extends AbstractHighlightingTest {
     @TestMetadata("AutoCreatedItParameter.kt")
     public void testAutoCreatedItParameter() throws Exception {
         runTest("idea/testData/highlighter/AutoCreatedItParameter.kt");
+    }
+
+    @TestMetadata("DelegatingCtor.kt")
+    public void testDelegatingCtor() throws Exception {
+        runTest("idea/testData/highlighter/DelegatingCtor.kt");
     }
 
     @TestMetadata("Destructuring.kt")
@@ -108,6 +114,11 @@ public class HighlightingTestGenerated extends AbstractHighlightingTest {
         runTest("idea/testData/highlighter/PropertiesWithPropertyDeclarations.kt");
     }
 
+    @TestMetadata("RecursiveTypes.kt")
+    public void testRecursiveTypes() throws Exception {
+        runTest("idea/testData/highlighter/RecursiveTypes.kt");
+    }
+
     @TestMetadata("SmartCast.kt")
     public void testSmartCast() throws Exception {
         runTest("idea/testData/highlighter/SmartCast.kt");
@@ -167,7 +178,7 @@ public class HighlightingTestGenerated extends AbstractHighlightingTest {
         }
 
         public void testAllFilesPresentInDeprecated() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/highlighter/deprecated"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/highlighter/deprecated"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("Class.kt")

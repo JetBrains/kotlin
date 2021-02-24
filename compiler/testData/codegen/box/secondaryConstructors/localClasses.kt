@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 open class C(val grandParentProp: String)
 fun box(): String {
     var sideEffects: String = ""

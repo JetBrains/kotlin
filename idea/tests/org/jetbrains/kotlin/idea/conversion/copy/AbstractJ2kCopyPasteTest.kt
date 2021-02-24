@@ -5,15 +5,14 @@
 
 package org.jetbrains.kotlin.idea.conversion.copy
 
-import com.intellij.openapi.util.registry.Registry
 import org.jetbrains.kotlin.idea.AbstractCopyPasteTest
-import org.jetbrains.kotlin.j2k.J2kConverterExtension
+import org.jetbrains.kotlin.idea.configuration.ExperimentalFeatures
 
 abstract class AbstractJ2kCopyPasteTest : AbstractCopyPasteTest() {
     protected open fun isNewJ2K(): Boolean = false
 
     override fun setUp() {
         super.setUp()
-        J2kConverterExtension.isNewJ2k = isNewJ2K()
+        ExperimentalFeatures.NewJ2k.isEnabled = isNewJ2K()
     }
 }

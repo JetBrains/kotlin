@@ -1,0 +1,35 @@
+FILE: implicitInAnonymous.kt
+    private final val x: R|<anonymous>| = object : R|kotlin/Any| {
+        private constructor(): R|<anonymous>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun foo(x: R|kotlin/Int|): R|kotlin/Boolean| {
+            ^foo this@R|/<anonymous>|.R|/<anonymous>.bar|(R|<local>/x|)
+        }
+
+        public final fun bar(y: R|kotlin/Int|): R|kotlin/Boolean| {
+            ^bar CMP(>, this@R|/<anonymous>|.R|kotlin/Any.hashCode|().R|kotlin/Int.plus|(R|<local>/y|).R|kotlin/Int.compareTo|(Int(0)))
+        }
+
+        public final val w: R|kotlin/Boolean|
+            public get(): R|kotlin/Boolean| {
+                ^ this@R|/<anonymous>|.R|/<anonymous>.z|
+            }
+
+        public final val z: R|kotlin/Boolean|
+            public get(): R|kotlin/Boolean| {
+                ^ ==(this@R|/<anonymous>|.R|kotlin/Any.hashCode|(), Int(0))
+            }
+
+    }
+
+        private get(): R|<anonymous>|
+    public final fun useBoolean(b: R|kotlin/Boolean|): R|kotlin/Unit| {
+    }
+    public final fun main(): R|kotlin/Unit| {
+        R|/useBoolean|(R|/x|.R|/<anonymous>.foo|(Int(1)))
+        R|/useBoolean|(R|/x|.R|/<anonymous>.bar|(Int(2)))
+        R|/useBoolean|(R|/x|.R|/<anonymous>.w|)
+        R|/useBoolean|(R|/x|.R|/<anonymous>.z|)
+    }

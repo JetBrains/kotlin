@@ -1,9 +1,8 @@
-8 val x = foo { <bold>it</bold> }
-8 	val x = foo <bold>{ it }</bold>
-8 		[LAMBDA] val x = foo <bold>{ it }</bold>
-3 			[LAMBDA] fun foo(<bold>f: (Int) -> Int</bold>): Int {
-4 				[LAMBDA] return <bold>f</bold>(1)
-4 					return <bold>f(1)</bold>
-3 						fun <bold>foo(f: (Int) -> Int): Int {</bold>
-8 							val x = <bold>foo { it }</bold>
-8 								val <bold>x = foo { it }</bold>
+8 val x = foo { <bold>it</bold> } (in test())
+8 	val x = foo <bold>{ it }</bold> (in test())
+8 		[LAMBDA CALLS] val x = foo <bold>{ it }</bold> (in test())
+3 			[LAMBDA CALLS] fun foo(<bold>f: (Int) -> Int</bold>): Int { (in foo((Int) -> Int))
+4 				return <bold>f(1)</bold> (in foo((Int) -> Int))
+3 					<bold>fun foo(f: (Int) -> Int): Int</bold> {
+8 						val x = <bold>foo { it }</bold> (in test())
+8 							<bold>val x</bold> = foo { it } (in test())

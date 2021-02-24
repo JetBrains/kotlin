@@ -1,0 +1,37 @@
+open class Base {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  open fun foo() {
+  }
+
+  open val bar: String
+    field = ""
+    open get
+
+  override fun hashCode(): Int {
+    return super.hashCode()
+  }
+
+}
+
+class Derived : Base {
+  constructor() /* primary */ {
+    super/*Base*/()
+    /* <init>() */
+
+  }
+
+  override fun foo() {
+    super.foo()
+  }
+
+  override val bar: String
+    override get(): String {
+      return super.<get-bar>()
+    }
+
+}

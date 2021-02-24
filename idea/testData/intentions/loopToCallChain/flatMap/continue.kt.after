@@ -3,6 +3,6 @@
 // INTENTION_TEXT_2: "Replace with 'asSequence().flatMap{}.firstOrNull{}'"
 fun foo(list: List<String>): String? {
     <caret>return list
-            .flatMap { it.lines() }
-            .firstOrNull { !it.isBlank() }
+        .flatMap { it.lines() }
+        .firstOrNull { !it.isBlank() }
 }

@@ -1,0 +1,3 @@
+public final val R|kotlin/Int|.ggg: R|java/lang/CharSequence|
+    public get(): R|java/lang/CharSequence|
+

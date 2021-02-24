@@ -17,7 +17,6 @@ class Identifier {
         myHasDollar = hasDollar
         myNullable = isNullable
     }
-
 }
 
 object User {

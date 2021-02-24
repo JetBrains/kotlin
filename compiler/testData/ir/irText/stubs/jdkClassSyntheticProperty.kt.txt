@@ -1,0 +1,5 @@
+val Class<*>.test: @FlexibleNullability Array<out @FlexibleNullability Field?>?
+  get(): @FlexibleNullability Array<out @FlexibleNullability Field?>? {
+    return <this>.getDeclaredFields<@FlexibleNullability Any?>()
+  }
+

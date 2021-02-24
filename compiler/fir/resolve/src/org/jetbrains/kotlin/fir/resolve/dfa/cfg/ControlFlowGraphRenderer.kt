@@ -3,18 +3,13 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("SpellCheckingInspection")
+
 package org.jetbrains.kotlin.fir.resolve.dfa.cfg
 
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirRenderer
-import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.expressions.FirDoWhileLoop
-import org.jetbrains.kotlin.fir.expressions.FirLoop
-import org.jetbrains.kotlin.fir.expressions.FirWhileLoop
-import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
-import org.jetbrains.kotlin.fir.psi
+import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
-import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.dfa.FirControlFlowGraphReferenceImpl
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.utils.DFS
@@ -23,6 +18,7 @@ import java.util.*
 
 class FirControlFlowGraphRenderVisitor(
     builder: StringBuilder,
+    private val renderLevels: Boolean = false
 ) : FirVisitorVoid() {
     companion object {
         private const val EDGE = " -> "
@@ -31,31 +27,145 @@ class FirControlFlowGraphRenderVisitor(
 
         private val EDGE_STYLE = EnumMap(
             mapOf(
-                EdgeKind.Simple to "",
-                EdgeKind.Dead to "[style=dotted]",
-                EdgeKind.Cfg to "[color=green]",
-                EdgeKind.Dfg to "[color=red]",
+                EdgeKind.Forward to "",
+                EdgeKind.DeadForward to "[style=dotted]",
+                EdgeKind.CfgForward to "[color=green]",
+                EdgeKind.DfgForward to "[color=red]",
+                EdgeKind.CfgBackward to "[color=green style=dashed]",
+                EdgeKind.DeadBackward to "[color=green style=dotted]"
             )
         )
     }
 
     private val printer = Printer(builder)
 
-    private var indexOffset = 0
+    private var nodeCounter = 0
     private var clusterCounter = 0
+    private val indices = mutableMapOf<CFGNode<*>, Int>()
+
+    private val topLevelGraphs = mutableSetOf<ControlFlowGraph>()
+    private val allGraphs = mutableSetOf<ControlFlowGraph>()
 
     override fun visitFile(file: FirFile) {
         printer
             .println("digraph ${file.name.replace(".", "_")} {")
             .pushIndent()
-            .println("graph [splines=ortho nodesep=3]")
+            .println("graph [nodesep=3]")
             .println("node [shape=box penwidth=2]")
             .println("edge [penwidth=2]")
             .println()
         visitElement(file)
+
+        for (topLevelGraph in topLevelGraphs) {
+            printer.renderNodes(topLevelGraph)
+            printer.renderEdges(topLevelGraph)
+            printer.println()
+        }
+
         printer
             .popIndent()
             .println("}")
+    }
+
+    private fun ControlFlowGraph.collectNodes() {
+        for (node in nodes) {
+            indices[node] = nodeCounter++
+        }
+    }
+
+    private fun Printer.renderNodes(graph: ControlFlowGraph) {
+        var color = RED
+        val sortedNodes = graph.sortedNodes()
+        for (node in sortedNodes) {
+            if (node is EnterNodeMarker) {
+                enterCluster(color)
+                color = BLUE
+            }
+            val attributes = mutableListOf<String>()
+            val label = buildString {
+                append(node.render().replace("\"", ""))
+                if (renderLevels) {
+                    append(" [${node.level}]")
+                }
+            }
+            attributes += "label=\"$label\""
+
+            fun fillColor(color: String) {
+                attributes += "style=\"filled\""
+                attributes += "fillcolor=$color"
+            }
+
+            if (node == node.owner.enterNode || node == node.owner.exitNode) {
+                fillColor("red")
+            }
+            if (node.isDead) {
+                fillColor("gray")
+            } else if (node is UnionFunctionCallArgumentsNode) {
+                fillColor("yellow")
+            }
+            println(indices.getValue(node), attributes.joinToString(separator = " ", prefix = " [", postfix = "];"))
+            if (node is ExitNodeMarker) {
+                exitCluster()
+            }
+        }
+    }
+
+    private fun Printer.renderEdges(graph: ControlFlowGraph) {
+        for (node in graph.nodes) {
+            if (node.followingNodes.isEmpty()) continue
+
+            fun renderEdges(kind: EdgeKind) {
+                val edges = node.followingNodes.filter { node.outgoingEdges.getValue(it).kind == kind }
+                if (edges.isEmpty()) return
+
+                fun renderEdgesWithoutLabel(edges: List<CFGNode<*>>) {
+                    print(
+                        indices.getValue(node),
+                        EDGE,
+                        edges.joinToString(prefix = "{", postfix = "}", separator = " ") { indices.getValue(it).toString() }
+                    )
+                    EDGE_STYLE.getValue(kind).takeIf { it.isNotBlank() }?.let { printWithNoIndent(" $it") }
+                    printlnWithNoIndent(";")
+                }
+
+                if (edges.any { node.outgoingEdges[it]?.label?.label != null }) {
+                    val edgeGroups = edges.groupBy { node.outgoingEdges[it]?.label?.label != null }
+                    edgeGroups[false]?.let { renderEdgesWithoutLabel(it) }
+                    for (edge in edgeGroups[true]!!) {
+                        print(
+                            indices.getValue(node),
+                            EDGE,
+                            "{", indices.getValue(edge), "}"
+                        )
+                        EDGE_STYLE.getValue(kind).takeIf { it.isNotBlank() }?.let { printWithNoIndent(" $it") }
+                        print("[label=${node.outgoingEdges[edge]!!.label}]")
+                        printlnWithNoIndent(";")
+                    }
+                } else {
+                    renderEdgesWithoutLabel(edges)
+                }
+            }
+
+            for (kind in EdgeKind.values()) {
+                renderEdges(kind)
+            }
+
+            if (node is CFGNodeWithCfgOwner<*>) {
+                val subNodes = node.subGraphs
+                if (subNodes.isNotEmpty()) {
+                    print(
+                        indices.getValue(node),
+                        EDGE,
+                        subNodes.mapNotNull { indices[it.enterNode] }.joinToString(prefix = "{", postfix = "}", separator = " ")
+                    )
+                    printWithNoIndent(" [style=dashed]")
+                    printlnWithNoIndent(";")
+                }
+            }
+        }
+        for (subGraph in graph.subGraphs) {
+            renderEdges(subGraph)
+        }
     }
 
     override fun visitElement(element: FirElement) {
@@ -64,8 +174,19 @@ class FirControlFlowGraphRenderVisitor(
 
     override fun visitControlFlowGraphReference(controlFlowGraphReference: FirControlFlowGraphReference) {
         val controlFlowGraph = (controlFlowGraphReference as? FirControlFlowGraphReferenceImpl)?.controlFlowGraph ?: return
-        indexOffset = controlFlowGraph.dotRenderToStringBuilder(printer)
-        printer.println()
+        initializeNodes(controlFlowGraph)
+    }
+
+    private fun initializeNodes(graph: ControlFlowGraph) {
+        if (graph in allGraphs) return
+        graph.collectNodes()
+        if (graph.owner == null) {
+            topLevelGraphs += graph
+        }
+        allGraphs += graph
+        for (subGraph in graph.subGraphs) {
+            initializeNodes(subGraph)
+        }
     }
 
     private fun Printer.enterCluster(color: String) {
@@ -78,166 +199,30 @@ class FirControlFlowGraphRenderVisitor(
         popIndent()
         println("}")
     }
-
-    private fun ControlFlowGraph.dotRenderToStringBuilder(printer: Printer): Int {
-        with(printer) {
-            val graph = this@dotRenderToStringBuilder
-            val sortedNodes = graph.sortNodes()
-            val indices = sortedNodes.indicesMap().mapValues { (_, index) -> index + indexOffset }
-
-            var color = RED
-            sortedNodes.forEach {
-                if (it is EnterNodeMarker) {
-                    enterCluster(color)
-                    color = BLUE
-                }
-                val attributes = mutableListOf<String>()
-                attributes += "label=\"${it.render().replace("\"", "")}\""
-                if (it == enterNode || it == exitNode) {
-                    attributes += "style=\"filled\""
-                    attributes += "fillcolor=red"
-                }
-                if (it.isDead) {
-                    attributes += "style=\"filled\""
-                    attributes += "fillcolor=gray"
-                }
-                println(indices.getValue(it), attributes.joinToString(separator = " ", prefix = " [", postfix = "];"))
-                if (it is ExitNodeMarker) {
-                    exitCluster()
-                }
-            }
-            println()
-
-            sortedNodes.forEachIndexed { i, node ->
-                if (node.followingNodes.isEmpty()) return@forEachIndexed
-
-                fun renderEdges(kind: EdgeKind) {
-                    val edges = node.followingNodes.filter { node.outgoingEdges.getValue(it) == kind }
-                    if (edges.isEmpty()) return
-                    print(
-                        i + indexOffset,
-                        EDGE,
-                        edges.joinToString(prefix = "{", postfix = "}", separator = " ") { indices.getValue(it).toString() }
-                    )
-                    EDGE_STYLE.getValue(kind).takeIf { it.isNotBlank() }?.let { printWithNoIndent(" $it") }
-                    printlnWithNoIndent(";")
-                }
-
-                for (kind in EdgeKind.values()) {
-                    renderEdges(kind)
-                }
-            }
-
-            return indexOffset + sortedNodes.size
-        }
-    }
 }
 
-private fun CFGNode<*>.render(): String =
-    buildString {
-        append(
-            when (this@render) {
-                is FunctionEnterNode -> "Enter function \"${fir.name()}\""
-                is FunctionExitNode -> "Exit function \"${fir.name()}\""
-
-                is BlockEnterNode -> "Enter block"
-                is BlockExitNode -> "Exit block"
-
-                is WhenEnterNode -> "Enter when"
-                is WhenBranchConditionEnterNode -> "Enter when branch condition ${if (fir.condition is FirElseIfTrueCondition) "\"else\"" else ""}"
-                is WhenBranchConditionExitNode -> "Exit when branch condition"
-                is WhenBranchResultEnterNode -> "Enter when branch result"
-                is WhenBranchResultExitNode -> "Exit when branch result"
-                is WhenSyntheticElseBranchNode -> "Synthetic else branch"
-                is WhenExitNode -> "Exit when"
-
-                is LoopEnterNode -> "Enter ${fir.type()} loop"
-                is LoopBlockEnterNode -> "Enter loop block"
-                is LoopBlockExitNode -> "Exit loop block"
-                is LoopConditionEnterNode -> "Enter loop condition"
-                is LoopConditionExitNode -> "Exit loop condition"
-                is LoopExitNode -> "Exit ${fir.type()}loop"
-
-                is QualifiedAccessNode -> "Access variable ${fir.calleeReference.render()}"
-                is OperatorCallNode -> "Operator ${fir.operation.operator}"
-                is TypeOperatorCallNode -> "Type operator: \"${fir.psi?.text?.toString() ?: fir.render()}\""
-                is JumpNode -> "Jump: ${fir.render()}"
-                is StubNode -> "Stub"
-                is CheckNotNullCallNode -> "Check not null: ${fir.render()}"
-
-                is ConstExpressionNode -> "Const: ${fir.render()}"
-                is VariableDeclarationNode ->
-                    "Variable declaration: ${buildString { FirRenderer(this).visitCallableDeclaration(fir) }}"
-
-                is VariableAssignmentNode -> "Assignmenet: ${fir.lValue.render()}"
-                is FunctionCallNode -> "Function call: ${fir.render()}"
-                is ThrowExceptionNode -> "Throw: ${fir.render()}"
-
-                is TryExpressionEnterNode -> "Try expression enter"
-                is TryMainBlockEnterNode -> "Try main block enter"
-                is TryMainBlockExitNode -> "Try main block exit"
-                is CatchClauseEnterNode -> "Catch enter"
-                is CatchClauseExitNode -> "Catch exit"
-                is FinallyBlockEnterNode -> "Enter finally"
-                is FinallyBlockExitNode -> "Exit finally"
-                is FinallyProxyEnterNode -> TODO()
-                is FinallyProxyExitNode -> TODO()
-                is TryExpressionExitNode -> "Try expression exit"
-
-                is BinaryAndEnterNode -> "Enter &&"
-                is BinaryAndExitLeftOperandNode -> "Exit left part of &&"
-                is BinaryAndEnterRightOperandNode -> "Enter right part of &&"
-                is BinaryAndExitNode -> "Exit &&"
-                is BinaryOrEnterNode -> "Enter ||"
-                is BinaryOrExitLeftOperandNode -> "Exit left part of ||"
-                is BinaryOrEnterRightOperandNode -> "Enter right part of ||"
-                is BinaryOrExitNode -> "Exit ||"
-
-                is PropertyInitializerEnterNode -> "Enter property"
-                is PropertyInitializerExitNode -> "Exit property"
-                is InitBlockEnterNode -> "Enter init block"
-                is InitBlockExitNode -> "Exit init block"
-                is AnnotationEnterNode -> "Enter annotation"
-                is AnnotationExitNode -> "Exit annotation"
-
-                is EnterContractNode -> "Enter contract"
-                is ExitContractNode -> "Exit contract"
-
-                is EnterSafeCallNode -> "Enter safe call"
-                is ExitSafeCallNode -> "Exit safe call"
-
-                is PostponedLambdaEnterNode -> "Postponed enter to lambda"
-                is PostponedLambdaExitNode -> "Postponed exit from lambda"
-
-                else -> TODO(this@render.toString())
-            },
-        )
+private fun ControlFlowGraph.sortedNodes(): List<CFGNode<*>> {
+    val nodesToSort = nodes.filterTo(mutableListOf()) { it != enterNode }
+    val graphs = mutableSetOf(this)
+    forEachSubGraph {
+        nodesToSort += it.nodes
+        graphs += it
     }
 
-private fun FirFunction<*>.name(): String = when (this) {
-    is FirSimpleFunction -> name.asString()
-    is FirAnonymousFunction -> "anonymousFunction"
-    is FirConstructor -> "<init>"
-    is FirPropertyAccessor -> if (isGetter) "getter" else "setter"
-    is FirErrorFunction -> "errorFunction"
-    else -> TODO(toString())
-}
-
-private fun FirLoop.type(): String = when (this) {
-    is FirWhileLoop -> "while"
-    is FirDoWhileLoop -> "do-while"
-    else -> throw IllegalArgumentException()
-}
-
-private fun ControlFlowGraph.sortNodes(): List<CFGNode<*>> {
-    return DFS.topologicalOrder(nodes) {
+    val topologicalOrder = DFS.topologicalOrder(nodesToSort) {
         val result = if (it !is WhenBranchConditionExitNode || it.followingNodes.size < 2) {
             it.followingNodes
         } else {
             it.followingNodes.sortedBy { node -> if (node is BlockEnterNode) 1 else 0 }
-        }
+        }.filter { node -> node.owner in graphs }
         result
     }
+    return listOf(enterNode) + topologicalOrder
 }
 
-private fun List<CFGNode<*>>.indicesMap(): Map<CFGNode<*>, Int> = mapIndexed { i, node -> node to i }.toMap()
+private fun ControlFlowGraph.forEachSubGraph(block: (ControlFlowGraph) -> Unit) {
+    for (subGraph in subGraphs) {
+        block(subGraph)
+        subGraph.forEachSubGraph(block)
+    }
+}

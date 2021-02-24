@@ -1,10 +1,11 @@
+// FIR_IDENTICAL
 // SKIP_TXT
 
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
- * SPEC VERSION: 0.1-100
- * PLACE: expressions, when-expression -> paragraph 6 -> sentence 3
+ * SPEC VERSION: 0.1-296
+ * MAIN LINK: expressions, when-expression -> paragraph 6 -> sentence 3
  * NUMBER: 2
  * DESCRIPTION: 'When' with bound value and enumeration of the containment operators.
  * HELPERS: typesProvider, classes

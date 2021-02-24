@@ -1,6 +1,5 @@
-// COMMON_COROUTINES_TEST
+// TODO: KT-36987 KT-37093
 // WITH_RUNTIME
-// WITH_COROUTINES
 
 // There should be no $foo$$inlined$map$1$1 class
 

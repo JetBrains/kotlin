@@ -8,9 +8,9 @@ open class Cls(vararg p: Long)
 
 fun test(i: IntArray) {
     foo(s = 1)
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(s = i)
+    foo(s = i)
     foo(s = *i)
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(s = intArrayOf(1))
+    foo(s = intArrayOf(1))
     foo(s = *intArrayOf(1))
     foo(1)
 
@@ -52,9 +52,9 @@ fun testMany(a: Any) {
     manyFoo(v = 1)
     manyFoo(s = "")
 
-    <!INAPPLICABLE_CANDIDATE!>manyFoo<!>(a)
-    <!INAPPLICABLE_CANDIDATE!>manyFoo<!>(v = a)
-    <!INAPPLICABLE_CANDIDATE!>manyFoo<!>(s = a)
-    manyFoo(v = a as Int)
-    manyFoo(s = a as String)
+    <!NONE_APPLICABLE!>manyFoo<!>(a)
+    <!NONE_APPLICABLE!>manyFoo<!>(v = a)
+    <!NONE_APPLICABLE!>manyFoo<!>(s = a)
+    <!NONE_APPLICABLE!>manyFoo<!>(v = a as Int)
+    <!NONE_APPLICABLE!>manyFoo<!>(s = a as String)
 }

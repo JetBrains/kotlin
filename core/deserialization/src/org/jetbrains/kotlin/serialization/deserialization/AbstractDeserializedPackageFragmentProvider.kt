@@ -18,16 +18,17 @@ package org.jetbrains.kotlin.serialization.deserialization
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
+import org.jetbrains.kotlin.descriptors.PackageFragmentProviderOptimized
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 abstract class AbstractDeserializedPackageFragmentProvider(
     protected val storageManager: StorageManager,
     protected val finder: KotlinMetadataFinder,
     protected val moduleDescriptor: ModuleDescriptor
-) : PackageFragmentProvider {
+) : PackageFragmentProviderOptimized {
     protected lateinit var components: DeserializationComponents
 
     private val fragments = storageManager.createMemoizedFunctionWithNullableValues<FqName, PackageFragmentDescriptor> { fqName ->
@@ -37,6 +38,10 @@ abstract class AbstractDeserializedPackageFragmentProvider(
     }
 
     protected abstract fun findPackage(fqName: FqName): DeserializedPackageFragment?
+
+    override fun collectPackageFragments(fqName: FqName, packageFragments: MutableCollection<PackageFragmentDescriptor>) {
+        packageFragments.addIfNotNull(fragments(fqName))
+    }
 
     override fun getPackageFragments(fqName: FqName): List<PackageFragmentDescriptor> = listOfNotNull(fragments(fqName))
 

@@ -6,3 +6,5 @@ class A {
 
 interface P
 interface RS
+
+// FIR_COMPARISON

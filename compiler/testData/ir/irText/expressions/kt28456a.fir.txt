@@ -26,8 +26,10 @@ FILE fqName:<root> fileName:/kt28456a.kt
   FUN name:testSimpleAssignment visibility:public modality:FINAL <> (a:<root>.A) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:<root>.A
     BLOCK_BODY
-      ERROR_CALL 'Unresolved reference: <Inapplicable(PARAMETER_MAPPING_ERROR): [/set]>#' type=IrErrorType
-        CONST Int type=kotlin.Int value=1
-        CONST Int type=kotlin.Int value=2
-        CONST Int type=kotlin.Int value=3
-        CONST Int type=kotlin.Int value=0
+      CALL 'public final fun set (vararg i: kotlin.Int, v: kotlin.Int): kotlin.Unit [operator] declared in <root>' type=kotlin.Unit origin=null
+        $receiver: GET_VAR 'a: <root>.A declared in <root>.testSimpleAssignment' type=<root>.A origin=null
+        i: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
+          CONST Int type=kotlin.Int value=1
+          CONST Int type=kotlin.Int value=2
+          CONST Int type=kotlin.Int value=3
+        v: CONST Int type=kotlin.Int value=0

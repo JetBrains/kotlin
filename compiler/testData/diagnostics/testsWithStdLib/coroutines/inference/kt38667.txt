@@ -1,0 +1,69 @@
+package
+
+public fun main(): kotlin.Unit
+@kotlin.OptIn(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ T> transitionDefinition(/*0*/ @kotlin.BuilderInference init: TransitionDefinition<T>.() -> kotlin.Unit): TransitionDefinition<T>
+
+public abstract class AnimationBuilder</*0*/ T> {
+    public constructor AnimationBuilder</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public abstract class AnimationVector {
+    public constructor AnimationVector()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class AnimationVector1D : AnimationVector {
+    public constructor AnimationVector1D()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public abstract class DurationBasedAnimationBuilder</*0*/ T> : AnimationBuilder<T> {
+    public constructor DurationBasedAnimationBuilder</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class IntPropKey : PropKey<kotlin.Int, AnimationVector1D> {
+    public constructor IntPropKey()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface PropKey</*0*/ T, /*1*/ V : AnimationVector> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class TransitionDefinition</*0*/ T> {
+    public constructor TransitionDefinition</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public final fun transition(/*0*/ fromState: T? = ..., /*1*/ toState: T? = ..., /*2*/ init: TransitionSpec<T>.() -> kotlin.Unit): kotlin.Unit
+}
+
+public final class TransitionSpec</*0*/ S> {
+    public constructor TransitionSpec</*0*/ S>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public final fun </*0*/ T> tween(/*0*/ init: TweenBuilder<T>.() -> kotlin.Unit): DurationBasedAnimationBuilder<T>
+    public final infix fun </*0*/ T, /*1*/ V : AnimationVector> PropKey<T, V>.using(/*0*/ builder: AnimationBuilder<T>): kotlin.Unit
+}
+
+public final class TweenBuilder</*0*/ T> : DurationBasedAnimationBuilder<T> {
+    public constructor TweenBuilder</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

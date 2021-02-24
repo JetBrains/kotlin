@@ -1,6 +1,6 @@
-// INTENTION_TEXT: "Import members from 'javax.swing.SwingUtilities'"
+// INTENTION_TEXT: "Import members from 'java.util.Objects'"
 // WITH_RUNTIME
 
 fun foo() {
-    <caret>javax.swing.SwingUtilities.invokeLater { }
+    <caret>java.util.Objects.equals(null, null)
 }

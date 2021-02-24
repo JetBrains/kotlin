@@ -16,10 +16,9 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
+import org.jetbrains.kotlin.ir.declarations.IrAnonymousInitializer
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.psi.KtAnonymousInitializer
 import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -32,7 +31,7 @@ class AnonymousInitializerGenerator(
     fun generateAnonymousInitializerDeclaration(
         ktAnonymousInitializer: KtAnonymousInitializer,
         irClass: IrClass
-    ): IrDeclaration =
+    ): IrAnonymousInitializer =
         context.symbolTable.declareAnonymousInitializer(
             ktAnonymousInitializer.startOffsetSkippingComments, ktAnonymousInitializer.endOffset,
             IrDeclarationOrigin.DEFINED, irClass.descriptor
@@ -41,7 +40,7 @@ class AnonymousInitializerGenerator(
             val bodyGenerator = createBodyGenerator(irAnonymousInitializer.symbol)
             val statementGenerator = bodyGenerator.createStatementGenerator()
             val ktBody = ktAnonymousInitializer.body!!
-            val irBlockBody = IrBlockBodyImpl(ktBody.startOffsetSkippingComments, ktBody.endOffset)
+            val irBlockBody = context.irFactory.createBlockBody(ktBody.startOffsetSkippingComments, ktBody.endOffset)
             if (ktBody is KtBlockExpression) {
                 statementGenerator.generateStatements(ktBody.statements, irBlockBody)
             } else {

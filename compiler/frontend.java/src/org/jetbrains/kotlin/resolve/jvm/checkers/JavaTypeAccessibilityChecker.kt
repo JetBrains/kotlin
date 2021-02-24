@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.resolve.jvm.checkers
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.psi.KtExpression
@@ -70,7 +70,7 @@ class JavaTypeAccessibilityChecker : AdditionalTypeChecker {
         val declarationDescriptor = type.constructor.declarationDescriptor
 
         if (declarationDescriptor is JavaClassDescriptor) {
-            if (!Visibilities.isVisibleIgnoringReceiver(declarationDescriptor, scopeOwner)) {
+            if (!DescriptorVisibilities.isVisibleIgnoringReceiver(declarationDescriptor, scopeOwner)) {
                 inaccessibleClasses.add(declarationDescriptor)
             }
         }

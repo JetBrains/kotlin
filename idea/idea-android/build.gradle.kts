@@ -17,8 +17,6 @@ dependencies {
     compile(project(":idea:ide-common"))
     compile(project(":idea:idea-gradle"))
 
-    compile(androidDxJar())
-
     compileOnly(project(":kotlin-android-extensions-runtime"))
     compileOnly(intellijDep())
     compileOnly(intellijPluginDep("android"))
@@ -35,8 +33,7 @@ dependencies {
 
     testCompile(project(":idea:idea-native")) { isTransitive = false }
     testCompile(project(":idea:idea-gradle-native")) { isTransitive = false }
-    testRuntime(project(":native:frontend.native")) { isTransitive = false }
-    testRuntime(project(":native:kotlin-native-utils")) { isTransitive = false }
+    testRuntime(project(":native:frontend.native"))
 
     testCompile(intellijDep())
     testCompile(intellijPluginDep("properties"))
@@ -50,6 +47,7 @@ dependencies {
     testRuntime(project(":allopen-ide-plugin"))
     testRuntime(project(":kotlin-scripting-idea"))
     testRuntime(project(":kotlinx-serialization-ide-plugin"))
+    testRuntime(project(":plugins:parcelize:parcelize-ide"))
 
     testRuntime(intellijPluginDep("android"))
 
@@ -66,12 +64,20 @@ dependencies {
 
     Ide.IJ {
         testRuntime(intellijPluginDep("maven"))
+
+        if (Ide.IJ201.orHigher()) {
+            testRuntime(intellijPluginDep("repository-search"))
+        }
     }
 
     testRuntime(intellijPluginDep("testng"))
 
     if (Ide.AS36.orHigher()) {
         testRuntime(intellijPluginDep("android-layoutlib"))
+    }
+
+    if (Ide.AS41.orHigher()) {
+        testRuntime(intellijPluginDep("platform-images"))
     }
 }
 

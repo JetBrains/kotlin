@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.resolve.lazy.descriptors.PackageDescriptorUtilKt;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -340,7 +341,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends KotlinTest
 
     @NotNull
     protected KtFile getFile(@NotNull String content) {
-        KtFile ktFile = KotlinTestUtils.createFile("dummy.kt", content, getProject());
+        KtFile ktFile = KtTestUtil.createFile("dummy.kt", content, getProject());
         analysisResult = KotlinTestUtils.analyzeFile(ktFile, getEnvironment());
 
         return ktFile;
@@ -361,7 +362,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends KotlinTest
 
     protected static String getContent(@NotNull String annotationText) throws IOException {
         File file = new File(PATH);
-        return KotlinTestUtils.doLoadFile(file).replaceAll("ANNOTATION", annotationText);
+        return KtTestUtil.doLoadFile(file).replaceAll("ANNOTATION", annotationText);
     }
 
     public static String renderAnnotations(Annotations annotations) {

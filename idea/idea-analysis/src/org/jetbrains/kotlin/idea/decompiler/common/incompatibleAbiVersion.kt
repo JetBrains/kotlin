@@ -12,10 +12,10 @@ import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 private const val FILE_ABI_VERSION_MARKER: String = "FILE_ABI"
 private const val CURRENT_ABI_VERSION_MARKER: String = "CURRENT_ABI"
 
-val INCOMPATIBLE_ABI_VERSION_GENERAL_COMMENT: String =
+const val INCOMPATIBLE_ABI_VERSION_GENERAL_COMMENT: String =
     "// This class file was compiled with different version of Kotlin compiler and can't be decompiled."
 
-private val INCOMPATIBLE_ABI_VERSION_COMMENT: String = "$INCOMPATIBLE_ABI_VERSION_GENERAL_COMMENT\n" +
+private const val INCOMPATIBLE_ABI_VERSION_COMMENT: String = "$INCOMPATIBLE_ABI_VERSION_GENERAL_COMMENT\n" +
         "//\n" +
         "// Current compiler ABI version is $CURRENT_ABI_VERSION_MARKER\n" +
         "// File ABI version is $FILE_ABI_VERSION_MARKER"

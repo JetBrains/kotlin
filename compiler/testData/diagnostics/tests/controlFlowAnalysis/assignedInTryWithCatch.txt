@@ -1,0 +1,8 @@
+package
+
+public fun assignedAtAll(): kotlin.Unit
+public fun assignedInTry(): kotlin.Unit
+public fun assignedInTryAndCatch(): kotlin.Unit
+public fun sideEffectBeforeAssignedInTryAndCatch(/*0*/ s: kotlin.Any): kotlin.Unit
+public fun sideEffectBeforeAssignedInTryCatchButNotFinally(/*0*/ s: kotlin.Any): kotlin.Unit
+public fun sideEffectBeforeAssignmentInTry(/*0*/ s: kotlin.Any): kotlin.Unit

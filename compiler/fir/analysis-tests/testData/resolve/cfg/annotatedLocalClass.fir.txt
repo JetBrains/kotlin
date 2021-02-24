@@ -1,0 +1,25 @@
+FILE: annotatedLocalClass.kt
+    public final annotation class Ann : R|kotlin/Annotation| {
+        public constructor(): R|Ann| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun foo(b: R|kotlin/Boolean|): R|kotlin/Unit| {
+        when () {
+            R|<local>/b| ->  {
+                ^foo Unit
+            }
+        }
+
+        @R|Ann|() local final class Local : R|kotlin/Any| {
+            public constructor(): R|Local| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        R|/bar|()
+    }
+    public final fun bar(): R|kotlin/Unit| {
+    }

@@ -1,4 +1,5 @@
-// IGNORE_BACKEND_FIR: JVM_IR
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: BRIDGE_ISSUES
 public open class A<T> {
     fun foo(x: T) = "O"
     fun foo(x: A<T>) = "K"

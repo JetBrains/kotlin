@@ -11,11 +11,11 @@ fun <E> id(x: E) = x
 fun <E> l(x: E): List<E> = null!!
 
 fun foo() {
-    x checkType { <!UNRESOLVED_REFERENCE!>_<!><Int>() }
-    y checkType { <!UNRESOLVED_REFERENCE!>_<!><Int>() }
-    y2 checkType { <!UNRESOLVED_REFERENCE!>_<!><Int>() }
-    z checkType { <!UNRESOLVED_REFERENCE!>_<!><List<String>>() }
-    z2 checkType { <!UNRESOLVED_REFERENCE!>_<!><List<List<String>>>() }
+    x checkType { _<Int>() }
+    y checkType { _<Int>() }
+    y2 checkType { _<Int>() }
+    z checkType { _<List<String>>() }
+    z2 checkType { _<List<List<String>>>() }
 
-    1.u checkType { <!UNRESOLVED_REFERENCE!>_<!><Int>() }
+    1.u checkType { _<Int>() }
 }

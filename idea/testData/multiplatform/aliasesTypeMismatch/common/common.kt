@@ -1,9 +1,9 @@
 @file:Suppress("UNUSED_PARAMETER")
 
-expect open class MyCancelException : MyIllegalStateException
+expect open class <!LINE_MARKER("descr='Has actuals in JVM'")!>MyCancelException<!> : MyIllegalStateException
 
 fun cancel(cause: MyCancelException) {}
 
-expect open class OtherException : MyIllegalStateException
+expect open class <!LINE_MARKER("descr='Has actuals in JVM'")!>OtherException<!> : MyIllegalStateException
 
 fun other(cause: OtherException) {}

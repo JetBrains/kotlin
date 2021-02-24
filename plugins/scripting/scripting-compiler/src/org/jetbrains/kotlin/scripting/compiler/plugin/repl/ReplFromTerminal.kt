@@ -111,6 +111,7 @@ class ReplFromTerminal(
             is ReplEvalResult.Error.Runtime -> writer.outputRuntimeError(evalResult.message)
             is ReplEvalResult.Error.CompileTime -> writer.outputRuntimeError(evalResult.message)
             is ReplEvalResult.Incomplete -> writer.notifyIncomplete()
+            is ReplEvalResult.HistoryMismatch -> {} // assuming handled elsewhere
         }
         return evalResult
     }

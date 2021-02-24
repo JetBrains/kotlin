@@ -1,12 +1,12 @@
 FILE: main.kt
-    public final fun main(): R|kotlin/Unit| {
-        local final fun foo(): R|kotlin/Int| {
+    public final [BODY_RESOLVE] fun main(): R|kotlin/Unit| {
+        local final [BODY_RESOLVE] fun foo(): R|kotlin/Int| {
             ^foo R|main/bar|()
         }
 
         R|<local>/foo|()
     }
-    public final fun bar(): R|kotlin/Int| {
-        lval x: <implicit> = IntegerLiteral(4)
+    public final [STATUS] fun bar(): R|kotlin/Int| {
+        [RAW_FIR] lval x: <implicit> = IntegerLiteral(4)
         ^bar IntegerLiteral(9).times#(x#)
     }

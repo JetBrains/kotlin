@@ -6,7 +6,9 @@
           "specVersion": "0.1-100",
           "casesNumber": 0,
           "description": "Sequences with binary digit symbols separated by underscores.",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/pos/2.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ],
       "1": [
@@ -14,7 +16,9 @@
           "specVersion": "0.1-100",
           "casesNumber": 0,
           "description": "Sequences with binary digit symbols.",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/integer-literals/binary-integer-literals/p-1/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ]
     }

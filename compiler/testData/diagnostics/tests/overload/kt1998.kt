@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // KT-1998 Strange "Overload resolution ambiguity"
 
 object A {

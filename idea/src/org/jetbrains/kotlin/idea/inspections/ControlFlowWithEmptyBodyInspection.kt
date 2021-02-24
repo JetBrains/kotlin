@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.inspections
 
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.inspections.collections.isCalling
 import org.jetbrains.kotlin.idea.util.hasComments
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -76,7 +77,7 @@ class ControlFlowWithEmptyBodyInspection : AbstractKotlinInspection() {
         registerProblem(
             expression,
             keyword.textRange.shiftLeft(expression.startOffset),
-            "'$keywordText' has empty body"
+            KotlinBundle.message("0.has.empty.body", keywordText)
         )
     }
 

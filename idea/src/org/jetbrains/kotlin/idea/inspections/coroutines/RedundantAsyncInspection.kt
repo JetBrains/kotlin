@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.inspections.coroutines
 
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.inspections.collections.AbstractCallChainChecker
@@ -95,7 +96,7 @@ class RedundantAsyncInspection : AbstractCallChainChecker() {
             val descriptor = holder.manager.createProblemDescriptor(
                 expression,
                 expression.firstCalleeExpression()!!.textRange.shiftRight(-expression.startOffset),
-                "Redundant 'async' call may be reduced to '${conversion.replacement}'",
+                "${KotlinBundle.message("redundant.async.call.may.be.reduced.to.0", conversion.replacement)}",
                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                 isOnTheFly,
                 generateFix(conversion)

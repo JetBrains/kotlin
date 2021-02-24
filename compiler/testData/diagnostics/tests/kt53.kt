@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 val <T> T.foo : T?
     get() = null
 

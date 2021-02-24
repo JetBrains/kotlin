@@ -1,0 +1,10 @@
+FILE: lambda.kt
+    public final fun f(t: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit| {
+        Int(1).R|kotlin/run|<R|kotlin/Int|, R|kotlin/Unit|>(R|<local>/t|)
+    }
+    public final fun main(): R|kotlin/Unit| {
+        R|/f|(<L> = f@fun <anonymous>(i: R|kotlin/Int|): R|kotlin/Unit| {
+            ^@f Unit
+        }
+        )
+    }

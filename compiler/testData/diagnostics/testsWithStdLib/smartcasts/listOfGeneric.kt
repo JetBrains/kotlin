@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // See KT-9529 Smart cast causes code to be incompilable
 
 fun <T : Any> foo(o: T): Collection<T> {

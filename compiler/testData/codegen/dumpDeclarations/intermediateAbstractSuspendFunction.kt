@@ -1,3 +1,4 @@
+// WITH_RUNTIME
 interface A<T> {
     suspend fun foo(): T
 }

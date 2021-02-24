@@ -26,110 +26,29 @@ public interface IrPropertyOrBuilder extends
   int getName();
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Visibility visibility = 3;</code>
-   */
-  boolean hasVisibility();
-  /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Visibility visibility = 3;</code>
-   */
-  org.jetbrains.kotlin.backend.common.serialization.proto.Visibility getVisibility();
-
-  /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.ModalityKind modality = 4;</code>
-   */
-  boolean hasModality();
-  /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.ModalityKind modality = 4;</code>
-   */
-  org.jetbrains.kotlin.backend.common.serialization.proto.ModalityKind getModality();
-
-  /**
-   * <code>required bool is_var = 5;</code>
-   */
-  boolean hasIsVar();
-  /**
-   * <code>required bool is_var = 5;</code>
-   */
-  boolean getIsVar();
-
-  /**
-   * <code>required bool is_const = 6;</code>
-   */
-  boolean hasIsConst();
-  /**
-   * <code>required bool is_const = 6;</code>
-   */
-  boolean getIsConst();
-
-  /**
-   * <code>required bool is_lateinit = 7;</code>
-   */
-  boolean hasIsLateinit();
-  /**
-   * <code>required bool is_lateinit = 7;</code>
-   */
-  boolean getIsLateinit();
-
-  /**
-   * <code>required bool is_delegated = 8;</code>
-   */
-  boolean hasIsDelegated();
-  /**
-   * <code>required bool is_delegated = 8;</code>
-   */
-  boolean getIsDelegated();
-
-  /**
-   * <code>required bool is_external = 9;</code>
-   */
-  boolean hasIsExternal();
-  /**
-   * <code>required bool is_external = 9;</code>
-   */
-  boolean getIsExternal();
-
-  /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrField backing_field = 10;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrField backing_field = 3;</code>
    */
   boolean hasBackingField();
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrField backing_field = 10;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrField backing_field = 3;</code>
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrField getBackingField();
 
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction getter = 11;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction getter = 4;</code>
    */
   boolean hasGetter();
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction getter = 11;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction getter = 4;</code>
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction getGetter();
 
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction setter = 12;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction setter = 5;</code>
    */
   boolean hasSetter();
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction setter = 12;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction setter = 5;</code>
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction getSetter();
-
-  /**
-   * <code>required bool is_expect = 13;</code>
-   */
-  boolean hasIsExpect();
-  /**
-   * <code>required bool is_expect = 13;</code>
-   */
-  boolean getIsExpect();
-
-  /**
-   * <code>required bool is_fake_override = 14;</code>
-   */
-  boolean hasIsFakeOverride();
-  /**
-   * <code>required bool is_fake_override = 14;</code>
-   */
-  boolean getIsFakeOverride();
 }

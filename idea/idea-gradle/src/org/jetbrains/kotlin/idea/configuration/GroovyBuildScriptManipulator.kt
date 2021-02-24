@@ -139,18 +139,6 @@ class GroovyBuildScriptManipulator(
         return oldText != scriptFile.text
     }
 
-    override fun changeCoroutineConfiguration(coroutineOption: String): PsiElement? {
-        val snippet = "coroutines \"$coroutineOption\""
-        val kotlinBlock = scriptFile.getKotlinBlock()
-        kotlinBlock.getBlockOrCreate("experimental").apply {
-            addOrReplaceExpression(snippet) { stmt ->
-                (stmt as? GrMethodCall)?.invokedExpression?.text == "coroutines"
-            }
-        }
-
-        return kotlinBlock.parent
-    }
-
     override fun changeLanguageFeatureConfiguration(
         feature: LanguageFeature,
         state: LanguageFeature.State,

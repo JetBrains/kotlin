@@ -9,8 +9,7 @@ import org.jetbrains.kotlin.backend.common.DefaultMapping
 import org.jetbrains.kotlin.backend.common.Mapping
 import org.jetbrains.kotlin.ir.declarations.*
 
-class JsMapping : DefaultMapping() {
-    val singletonFieldDescriptors = newMapping<IrClass, IrField>()
+class JsMapping(private val irFactory: IrFactory) : DefaultMapping() {
     val outerThisFieldSymbols = newMapping<IrClass, IrField>()
     val innerClassConstructors = newMapping<IrConstructor, IrConstructor>()
     val originalInnerClassPrimaryConstructorByClass = newMapping<IrClass, IrConstructor>()
@@ -20,6 +19,8 @@ class JsMapping : DefaultMapping() {
     val objectToInstanceField = newMapping<IrClass, IrField>()
     val classToSyntheticPrimaryConstructor = newMapping<IrClass, IrConstructor>()
     val privateMemberToCorrespondingStatic = newMapping<IrFunction, IrSimpleFunction>()
+
+    val constructorToInitFunction = newMapping<IrConstructor, IrSimpleFunction>()
 
     val enumEntryToGetInstanceFun = newMapping<IrEnumEntry, IrSimpleFunction>()
     val enumEntryToInstanceField = newMapping<IrEnumEntry, IrField>()
@@ -34,17 +35,23 @@ class JsMapping : DefaultMapping() {
         private val map: MutableMap<K, V> = mutableMapOf()
 
         override operator fun get(key: K): V? {
-            stageController.lazyLower(key)
+            irFactory.stageController.lazyLower(key)
             return map[key]
         }
 
         override operator fun set(key: K, value: V?) {
-            stageController.lazyLower(key)
+            irFactory.stageController.lazyLower(key)
             if (value == null) {
                 map.remove(key)
             } else {
                 map[key] = value
             }
         }
+
+        override val keys: Set<K>
+            get() = map.keys
+
+        override val values: Collection<V>
+            get() = map.values
     }
 }

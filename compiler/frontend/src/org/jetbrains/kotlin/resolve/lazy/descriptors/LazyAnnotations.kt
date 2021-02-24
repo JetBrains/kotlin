@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.resolve.lazy.descriptors
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.annotations.FilteredByPredicateAnnotations
+import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.resolve.AnnotationResolver
@@ -32,6 +34,8 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
+import org.jetbrains.kotlin.types.AbbreviatedType
+import org.jetbrains.kotlin.types.ErrorUtils
 
 abstract class LazyAnnotationsContext(
     val annotationResolver: AnnotationResolver,
@@ -77,17 +81,30 @@ class LazyAnnotationDescriptor(
         c.trace.record(BindingContext.ANNOTATION, annotationEntry, this)
     }
 
-    override val type by c.storageManager.createLazyValue {
-        c.annotationResolver.resolveAnnotationType(scope, annotationEntry, c.trace)
-    }
+    override val type by c.storageManager.createLazyValue(
+        computable = lazy@{
+            val annotationType = c.annotationResolver.resolveAnnotationType(scope, annotationEntry, c.trace)
+            if (annotationType is AbbreviatedType) {
+                // This is needed to prevent recursion in cases like this: typealias S = @S Ann
+                if (annotationType.annotations.any { it == this }) {
+                    annotationType.abbreviation.constructor.declarationDescriptor?.let { typeAliasDescriptor ->
+                        c.trace.report(Errors.RECURSIVE_TYPEALIAS_EXPANSION.on(annotationEntry, typeAliasDescriptor))
+                    }
+                    return@lazy annotationType.replaceAnnotations(FilteredByPredicateAnnotations(annotationType.annotations) { it != this })
+                }
+            }
+            annotationType
+        },
+        onRecursiveCall = {
+            ErrorUtils.createErrorType("Recursion in type of annotation detected")
+        }
+    )
 
     override val source = annotationEntry.toSourceElement()
 
-    private val scope = if (c.scope.ownerDescriptor is PackageFragmentDescriptor) {
-        LexicalScope.Base(c.scope, FileDescriptorForVisibilityChecks(source, c.scope.ownerDescriptor))
-    } else {
-        c.scope
-    }
+    private val scope = (c.scope.ownerDescriptor as? PackageFragmentDescriptor)?.let {
+        LexicalScope.Base(c.scope, FileDescriptorForVisibilityChecks(source, it))
+    } ?: c.scope
 
     override val allValueArguments by c.storageManager.createLazyValue {
         val resolutionResults = c.annotationResolver.resolveAnnotationCall(annotationEntry, scope, c.trace)
@@ -110,10 +127,9 @@ class LazyAnnotationDescriptor(
 
     private class FileDescriptorForVisibilityChecks(
         private val source: SourceElement,
-        private val containingDeclaration: DeclarationDescriptor
-    ) : DeclarationDescriptorWithSource {
+        private val containingDeclaration: PackageFragmentDescriptor
+    ) : DeclarationDescriptorWithSource, PackageFragmentDescriptor by containingDeclaration {
         override val annotations: Annotations get() = Annotations.EMPTY
-        override fun getContainingDeclaration() = containingDeclaration
         override fun getSource() = source
         override fun getOriginal() = this
         override fun getName() = Name.special("< file descriptor for annotation resolution >")

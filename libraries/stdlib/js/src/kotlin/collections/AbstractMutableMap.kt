@@ -1,7 +1,8 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+
 /*
  * Based on GWT AbstractMap
  * Copyright 2007 Google Inc.
@@ -14,8 +15,8 @@ package kotlin.collections
  *
  * The implementor is required to implement [entries] property, which should return mutable set of map entries, and [put] function.
  *
- * @param K the type of map keys. The map is invariant on its key type.
- * @param V the type of map values. The map is invariant on its value type.
+ * @param K the type of map keys. The map is invariant in its key type.
+ * @param V the type of map values. The map is invariant in its value type.
  */
 public actual abstract class AbstractMutableMap<K, V> protected actual constructor() : AbstractMap<K, V>(), MutableMap<K, V> {
 
@@ -30,6 +31,10 @@ public actual abstract class AbstractMutableMap<K, V> protected actual construct
         override val value: V get() = _value
 
         override fun setValue(newValue: V): V {
+            // Should check if the map containing this entry is mutable.
+            // However, to not increase entry memory footprint it might be worthwhile not to check it here and
+            // force subclasses that implement `build()` (freezing) operation to implement their own `MutableEntry`.
+//            this@AbstractMutableMap.checkIsMutable()
             val oldValue = this._value
             this._value = newValue
             return oldValue
@@ -39,6 +44,12 @@ public actual abstract class AbstractMutableMap<K, V> protected actual construct
         override fun toString(): String = entryToString(this)
         override fun equals(other: Any?): Boolean = entryEquals(this, other)
 
+    }
+
+    // intermediate abstract class to workaround KT-43321
+    internal abstract class AbstractEntrySet<E : Map.Entry<K, V>, K, V> : AbstractMutableSet<E>() {
+        final override fun contains(element: E): Boolean = containsEntry(element)
+        abstract fun containsEntry(element: Map.Entry<K, V>): Boolean
     }
 
     actual override fun clear() {
@@ -67,6 +78,7 @@ public actual abstract class AbstractMutableMap<K, V> protected actual construct
                     }
 
                     override fun remove(element: K): Boolean {
+                        checkIsMutable()
                         if (containsKey(element)) {
                             this@AbstractMutableMap.remove(element)
                             return true
@@ -75,6 +87,8 @@ public actual abstract class AbstractMutableMap<K, V> protected actual construct
                     }
 
                     override val size: Int get() = this@AbstractMutableMap.size
+
+                    override fun checkIsMutable(): Unit = this@AbstractMutableMap.checkIsMutable()
                 }
             }
             return _keys!!
@@ -83,6 +97,7 @@ public actual abstract class AbstractMutableMap<K, V> protected actual construct
     actual abstract override fun put(key: K, value: V): V?
 
     actual override fun putAll(from: Map<out K, V>) {
+        checkIsMutable()
         for ((key, value) in from) {
             put(key, value)
         }
@@ -117,12 +132,15 @@ public actual abstract class AbstractMutableMap<K, V> protected actual construct
                     }
 
                     override fun hashCode(): Int = AbstractList.orderedHashCode(this)
+
+                    override fun checkIsMutable(): Unit = this@AbstractMutableMap.checkIsMutable()
                 }
             }
             return _values!!
         }
 
     actual override fun remove(key: K): V? {
+        checkIsMutable()
         val iter = entries.iterator()
         while (iter.hasNext()) {
             val entry = iter.next()
@@ -136,4 +154,10 @@ public actual abstract class AbstractMutableMap<K, V> protected actual construct
         return null
     }
 
+
+    /**
+     * This method is called every time when a mutating method is called on this mutable map.
+     * Mutable maps that are built (frozen) must throw `UnsupportedOperationException`.
+     */
+    internal open fun checkIsMutable(): Unit {}
 }

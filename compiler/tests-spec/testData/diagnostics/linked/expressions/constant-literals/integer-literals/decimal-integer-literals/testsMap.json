@@ -6,19 +6,25 @@
           "specVersion": "0.1-100",
           "casesNumber": 8,
           "description": "Integer literals with an underscore in the first position (it\u0027s considered as identifiers).",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1/neg/2.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-100",
           "casesNumber": 8,
           "description": "Integer literals with an underscore in the first position (it\u0027s considered as identifiers).",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1/neg/2.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-100",
           "casesNumber": 8,
           "description": "Integer literals with an underscore in the first position (it\u0027s considered as identifiers).",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/integer-literals/decimal-integer-literals/p-1/neg/2.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ]
     }

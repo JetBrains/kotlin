@@ -83,11 +83,11 @@ fun test() {
             this@a.<!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>yield2<!>(1)
 
             with(this) {
-                <!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>yield<!>("")
-                this@with.<!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>yield<!>("")
+                yield("")
+                this@with.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE!>yield<!>("")
 
-                <!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>yield2<!>("")
-                this@with.<!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>yield2<!>("")
+                yield2("")
+                this@with.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>yield2<!>("")
             }
         }
     }

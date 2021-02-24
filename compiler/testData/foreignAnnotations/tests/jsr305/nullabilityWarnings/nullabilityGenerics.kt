@@ -1,5 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
-// JSR305_GLOBAL_REPORT warn
+// JSR305_GLOBAL_REPORT: warn
 
 // FILE: A.java
 public class A<T> {
@@ -29,7 +29,7 @@ class X<T>(t: T?) {
         a.foo(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>t<!>)
 
         val x: T = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.bam()<!>
-        val y: T = <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.baz<T>()<!>
+        val y: T = a.baz<T>()
     }
 }
 

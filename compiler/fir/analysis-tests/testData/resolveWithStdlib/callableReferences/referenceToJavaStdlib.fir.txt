@@ -1,0 +1,13 @@
+FILE: referenceToJavaStdlib.kt
+    public final fun detectDirsWithTestsMapFileOnly(file: R|java/io/File|): R|kotlin/collections/List<kotlin/String>| {
+        Q|java/nio/file/Files|.R|java/nio/file/Files.walk|(R|<local>/file|.R|java/io/File.toPath|()).R|SubstitutionOverride<java/util/stream/Stream.filter: R|ft<@FlexibleNullability java/util/stream/Stream<ft<@FlexibleNullability java/nio/file/Path, @FlexibleNullability java/nio/file/Path?>!>, java/util/stream/Stream<ft<@FlexibleNullability java/nio/file/Path, @FlexibleNullability java/nio/file/Path?>!>?>!|>|(Q|java/nio/file/Files|::R|java/nio/file/Files.isRegularFile|)
+    }
+    public abstract interface A : R|kotlin/Any| {
+    }
+    public final fun foo(x: R|A|, vararg strings: R|kotlin/Array<out kotlin/String>|): R|kotlin/Unit| {
+    }
+    public final fun takeFunWithA(func: R|(A) -> kotlin/Unit|): R|kotlin/Unit| {
+    }
+    public final fun test(): R|kotlin/Unit| {
+        R|/takeFunWithA|(::R|/foo|)
+    }

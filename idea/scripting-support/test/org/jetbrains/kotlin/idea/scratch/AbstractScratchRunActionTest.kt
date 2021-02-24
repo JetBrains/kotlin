@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.parsing.KotlinParserDefinition.Companion.STD_SCRIPT_
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.PathUtil
 import org.junit.Assert
 import java.io.File
@@ -99,7 +100,7 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
             )
         }
 
-        val outputDir = createTempDir(dirName)
+        val outputDir = FileUtil.createTempDirectory(dirName, "")
 
         if (javaFiles.isNotEmpty()) {
             val options = listOf("-d", outputDir.path)
@@ -216,7 +217,7 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
 
         myFixture.openFileInEditor(scratchVirtualFile)
 
-        ScriptConfigurationManager.updateScriptDependenciesSynchronously(myFixture.file, project)
+        ScriptConfigurationManager.updateScriptDependenciesSynchronously(myFixture.file)
 
         val scratchFileEditor = getScratchEditorForSelectedFile(myManager, myFixture.file.virtualFile)
             ?: error("Couldn't find scratch file")
@@ -229,7 +230,7 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
     protected fun configureWorksheetByText(name: String, text: String): ScratchFile {
         val worksheetFile = myFixture.configureByText(name, text).virtualFile
 
-        ScriptConfigurationManager.updateScriptDependenciesSynchronously(myFixture.file, project)
+        ScriptConfigurationManager.updateScriptDependenciesSynchronously(myFixture.file)
 
         val scratchFileEditor = getScratchEditorForSelectedFile(myManager, myFixture.file.virtualFile)
             ?: error("Couldn't find scratch panel")
@@ -259,7 +260,11 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
 
         val start = System.currentTimeMillis()
         // wait until output is displayed in editor or for 1 minute
-        while (ScratchCompilationSupport.isAnyInProgress() && (System.currentTimeMillis() - start) < 60000) {
+        while (ScratchCompilationSupport.isAnyInProgress()) {
+            if ((System.currentTimeMillis() - start) > TIME_OUT) {
+                LOG.warn("Waiting timeout $TIME_OUT ms is exceed")
+                break
+            }
             Thread.sleep(100)
         }
 
@@ -290,7 +295,7 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
         return File(testDataPath, "idea/scripting-support/testData/scratch/custom/test_scratch.kts").readText()
     }
 
-    override fun getTestDataPath() = KotlinTestUtils.getHomeDirectory()
+    override fun getTestDataPath() = KtTestUtil.getHomeDirectory()
 
 
     override fun getProjectDescriptor(): com.intellij.testFramework.LightProjectDescriptor {
@@ -307,22 +312,27 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
     override fun setUp() {
         super.setUp()
 
-        VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory())
+        VfsRootAccess.allowRootAccess(KtTestUtil.getHomeDirectory())
 
         PluginTestCaseBase.addJdk(myFixture.projectDisposable) { PluginTestCaseBase.fullJdk() }
     }
 
     override fun tearDown() {
+//        myFixture?.file?.virtualFile?.let {
+//            runWriteAction {
+//                if (it.isValid) {
+//                    it.delete(this)
+//                }
+//            }
+//        }
         super.tearDown()
 
-        VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory())
-
-        ScratchFileService.getInstance().scratchesMapping.mappings.forEach { file, _ ->
-            runWriteAction { file.delete(this) }
-        }
+        VfsRootAccess.disallowRootAccess(KtTestUtil.getHomeDirectory())
     }
 
     companion object {
+        private const val TIME_OUT = 60000 // 1 min
+
         private val INSTANCE_WITH_KOTLIN_TEST = object : KotlinWithJdkAndRuntimeLightProjectDescriptor(
             arrayListOf(
                 ForTestCompileRuntime.runtimeJarForTests(),

@@ -63,6 +63,10 @@ abstract class AbstractOverrideImplementTest : KotlinLightCodeInsightFixtureTest
         doDirectoryTest(OverrideMembersHandler(), memberToImplement)
     }
 
+    protected fun doMultiImplementDirectoryTest() {
+        doMultiDirectoryTest(ImplementMembersHandler())
+    }
+
     protected fun doMultiOverrideDirectoryTest() {
         doMultiDirectoryTest(OverrideMembersHandler())
     }

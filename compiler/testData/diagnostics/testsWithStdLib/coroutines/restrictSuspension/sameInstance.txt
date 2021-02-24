@@ -5,7 +5,7 @@ public fun test(): kotlin.Unit
 public suspend fun RestrictedController.extension(): kotlin.Unit
 public suspend fun RestrictedController.l(): kotlin.Unit
 
-@COROUTINES_PACKAGE.RestrictsSuspension public final class RestrictedController {
+@kotlin.coroutines.RestrictsSuspension public final class RestrictedController {
     public constructor RestrictedController()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

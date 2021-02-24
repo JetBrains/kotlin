@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 open class M() {
     open var b: Int = 0
 }

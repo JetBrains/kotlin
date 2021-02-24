@@ -16,32 +16,28 @@
 
 package org.jetbrains.kotlin.idea;
 
+import com.intellij.ProjectTopics;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.PathMacros;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.editor.EditorFactory;
-import com.intellij.openapi.editor.event.DocumentEvent;
-import com.intellij.openapi.editor.event.DocumentListener;
-import com.intellij.openapi.editor.event.EditorEventMulticaster;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ModuleRootEvent;
+import com.intellij.openapi.roots.ModuleRootListener;
 import com.intellij.openapi.startup.StartupActivity;
 import com.intellij.openapi.updateSettings.impl.UpdateChecker;
-import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.search.searches.IndexPatternSearch;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory;
+import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.idea.reporter.KotlinReportSubmitter;
-import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinTodoSearcher;
-import org.jetbrains.kotlin.utils.PathUtil;
+import org.jetbrains.kotlin.js.resolve.diagnostics.ErrorsJs;
+import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade;
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm;
+import org.jetbrains.kotlin.resolve.konan.diagnostics.ErrorsNative;
 
 import static org.jetbrains.kotlin.idea.TestResourceBundleKt.registerAdditionalResourceBundleInTests;
 
-public class PluginStartupActivity implements StartupActivity.DumbAware {
+public class PluginStartupActivity implements StartupActivity {
     private static final Logger LOG = Logger.getInstance(PluginStartupActivity.class);
-
-    private static final String KOTLIN_BUNDLED = "KOTLIN_BUNDLED";
 
     @Override
     public void runActivity(@NotNull Project project) {
@@ -49,7 +45,17 @@ public class PluginStartupActivity implements StartupActivity.DumbAware {
             registerAdditionalResourceBundleInTests();
         }
 
-        registerPathVariable();
+        StartupCompatKt.runActivity(project);
+        PluginStartupService.Companion.getInstance(project).register(project);
+
+        project.getMessageBus().connect().subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootListener() {
+            @Override
+            public void rootsChanged(@NotNull ModuleRootEvent event) {
+                KotlinJavaPsiFacade.getInstance(project).clearPackageCaches();
+            }
+        });
+
+        initializeDiagnostics();
 
         try {
             // API added in 15.0.2
@@ -57,23 +63,9 @@ public class PluginStartupActivity implements StartupActivity.DumbAware {
         }
         catch (Throwable throwable) {
             LOG.debug("Excluding Kotlin plugin updates using old API", throwable);
+            //UpdateChecker.getDisabledToUpdate().add(PluginId.getId("org.jetbrains.kotlin"));
             UpdateChecker.getDisabledToUpdatePlugins().add("org.jetbrains.kotlin");
         }
-        EditorEventMulticaster eventMulticaster = EditorFactory.getInstance().getEventMulticaster();
-        DocumentListener documentListener = new DocumentListener() {
-            @Override
-            public void documentChanged(@NotNull DocumentEvent e) {
-                VirtualFile virtualFile = FileDocumentManager.getInstance().getFile(e.getDocument());
-                if (virtualFile != null && virtualFile.getFileType() == KotlinFileType.INSTANCE) {
-                    KotlinPluginUpdater.Companion.getInstance().kotlinFileEdited(virtualFile);
-                }
-            }
-        };
-        eventMulticaster.addDocumentListener(documentListener, project);
-
-        IndexPatternSearch indexPatternSearch = ServiceManager.getService(IndexPatternSearch.class);
-        KotlinTodoSearcher kotlinTodoSearcher = new KotlinTodoSearcher();
-        indexPatternSearch.registerExecutor(kotlinTodoSearcher);
 
         KotlinPluginCompatibilityVerifier.checkCompatibility();
 
@@ -81,16 +73,23 @@ public class PluginStartupActivity implements StartupActivity.DumbAware {
 
         //todo[Sedunov]: wait for fix in platform to avoid misunderstood from Java newbies (also ConfigureKotlinInTempDirTest)
         //KotlinSdkType.Companion.setUpIfNeeded();
-
-        Disposer.register(project, () -> {
-            eventMulticaster.removeDocumentListener(documentListener);
-            indexPatternSearch.unregisterExecutor(kotlinTodoSearcher);
-        });
     }
 
-    private static void registerPathVariable() {
-        PathMacros macros = PathMacros.getInstance();
-        macros.setMacro(KOTLIN_BUNDLED, PathUtil.getKotlinPathsForIdeaPlugin().getHomePath().getPath());
+    /*
+        Concurrent access to Errors may lead to the class loading dead lock because of non-trivial initialization in Errors.
+        As a work-around, all Error classes are initialized beforehand.
+        It doesn't matter what exact diagnostic factories are used here.
+     */
+    private static void initializeDiagnostics() {
+        consumeFactory(Errors.DEPRECATION);
+        consumeFactory(ErrorsJvm.ACCIDENTAL_OVERRIDE);
+        consumeFactory(ErrorsJs.CALL_FROM_UMD_MUST_BE_JS_MODULE_AND_JS_NON_MODULE);
+        consumeFactory(ErrorsNative.INCOMPATIBLE_THROWS_INHERITED);
+    }
+
+    private static void consumeFactory(DiagnosticFactory<?> factory) {
+        //noinspection ResultOfMethodCallIgnored
+        factory.getClass();
     }
 
 }

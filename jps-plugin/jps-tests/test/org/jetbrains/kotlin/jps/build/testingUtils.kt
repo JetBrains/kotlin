@@ -16,6 +16,11 @@
 
 package org.jetbrains.kotlin.jps.build
 
+import com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
+import org.jetbrains.kotlin.daemon.common.COMPILE_DAEMON_CUSTOM_RUN_FILES_PATH_FOR_TESTS
+import org.jetbrains.kotlin.daemon.common.COMPILE_DAEMON_ENABLED_PROPERTY
+
 inline fun withSystemProperty(property: String, newValue: String?, fn: ()->Unit) {
     val backup = System.getProperty(property)
     setOrClearSysProperty(property, newValue)
@@ -36,5 +41,34 @@ inline fun setOrClearSysProperty(property: String, newValue: String?) {
     }
     else {
         System.clearProperty(property)
+    }
+}
+
+fun withDaemon(fn: () -> Unit) {
+    val daemonHome = FileUtil.createTempDirectory("daemon-home", "testJpsDaemonIC")
+
+    withSystemProperty(COMPILE_DAEMON_CUSTOM_RUN_FILES_PATH_FOR_TESTS, daemonHome.absolutePath) {
+        withSystemProperty(COMPILE_DAEMON_ENABLED_PROPERTY, "true") {
+            try {
+                fn()
+            } finally {
+                JpsKotlinCompilerRunner.shutdownDaemon()
+
+                // Try to force directory deletion to prevent test failure later in tearDown().
+                // Working Daemon can prevent folder deletion on Windows, because Daemon shutdown
+                // is asynchronous.
+                var attempts = 0
+                daemonHome.deleteRecursively()
+                while (daemonHome.exists() && attempts < 100) {
+                    daemonHome.deleteRecursively()
+                    attempts++
+                    Thread.sleep(50)
+                }
+
+                if (daemonHome.exists()) {
+                    error("Couldn't delete Daemon home directory")
+                }
+            }
+        }
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,6 +10,7 @@ import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ExternalModuleDependency
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.util.ConfigureUtil
+import java.io.File
 
 interface KotlinDependencyHandler {
     fun api(dependencyNotation: Any): Dependency?
@@ -21,20 +22,29 @@ interface KotlinDependencyHandler {
     fun implementation(dependencyNotation: Any): Dependency?
     fun implementation(dependencyNotation: String, configure: ExternalModuleDependency.() -> Unit): ExternalModuleDependency
     fun <T : Dependency> implementation(dependency: T, configure: T.() -> Unit): T
-    fun implementation(dependencyNotation: String, configure: Closure<*>) = implementation(dependencyNotation) { ConfigureUtil.configure(configure, this) }
-    fun <T : Dependency> implementation(dependency: T, configure: Closure<*>) = implementation(dependency) { ConfigureUtil.configure(configure, this) }
+    fun implementation(dependencyNotation: String, configure: Closure<*>) =
+        implementation(dependencyNotation) { ConfigureUtil.configure(configure, this) }
+
+    fun <T : Dependency> implementation(dependency: T, configure: Closure<*>) =
+        implementation(dependency) { ConfigureUtil.configure(configure, this) }
 
     fun compileOnly(dependencyNotation: Any): Dependency?
     fun compileOnly(dependencyNotation: String, configure: ExternalModuleDependency.() -> Unit): ExternalModuleDependency
     fun <T : Dependency> compileOnly(dependency: T, configure: T.() -> Unit): T
-    fun compileOnly(dependencyNotation: String, configure: Closure<*>) = compileOnly(dependencyNotation) { ConfigureUtil.configure(configure, this) }
-    fun <T : Dependency> compileOnly(dependency: T, configure: Closure<*>) = compileOnly(dependency) { ConfigureUtil.configure(configure, this) }
+    fun compileOnly(dependencyNotation: String, configure: Closure<*>) =
+        compileOnly(dependencyNotation) { ConfigureUtil.configure(configure, this) }
+
+    fun <T : Dependency> compileOnly(dependency: T, configure: Closure<*>) =
+        compileOnly(dependency) { ConfigureUtil.configure(configure, this) }
 
     fun runtimeOnly(dependencyNotation: Any): Dependency?
     fun runtimeOnly(dependencyNotation: String, configure: ExternalModuleDependency.() -> Unit): ExternalModuleDependency
     fun <T : Dependency> runtimeOnly(dependency: T, configure: T.() -> Unit): T
-    fun runtimeOnly(dependencyNotation: String, configure: Closure<*>) = runtimeOnly(dependencyNotation) { ConfigureUtil.configure(configure, this) }
-    fun <T : Dependency> runtimeOnly(dependency: T, configure: Closure<*>) = runtimeOnly(dependency) { ConfigureUtil.configure(configure, this) }
+    fun runtimeOnly(dependencyNotation: String, configure: Closure<*>) =
+        runtimeOnly(dependencyNotation) { ConfigureUtil.configure(configure, this) }
+
+    fun <T : Dependency> runtimeOnly(dependency: T, configure: Closure<*>) =
+        runtimeOnly(dependency) { ConfigureUtil.configure(configure, this) }
 
     fun kotlin(simpleModuleName: String): ExternalModuleDependency = kotlin(simpleModuleName, null)
     fun kotlin(simpleModuleName: String, version: String?): ExternalModuleDependency
@@ -44,12 +54,111 @@ interface KotlinDependencyHandler {
 
     fun project(notation: Map<String, Any?>): ProjectDependency
 
-    fun npm(name: String, version: String = "*"): Dependency
+    @Deprecated("Declaring NPM dependency without version is forbidden")
+    fun npm(name: String): Dependency
 
-    @Deprecated(
-        message = "Use npm(name, version) instead. Name like in package.json"
+    fun npm(
+        name: String,
+        version: String,
+        generateExternals: Boolean
+    ): Dependency
+
+    fun npm(
+        name: String,
+        version: String
+    ): Dependency = npm(
+        name = name,
+        version = version,
+        generateExternals = DEFAULT_GENERATE_EXTERNALS
     )
-    fun npm(org: String? = null, packageName: String, version: String = "*"): Dependency
+
+    fun npm(
+        name: String,
+        directory: File,
+        generateExternals: Boolean
+    ): Dependency
+
+    fun npm(
+        name: String,
+        directory: File
+    ): Dependency = npm(
+        name = name,
+        directory = directory,
+        generateExternals = DEFAULT_GENERATE_EXTERNALS
+    )
+
+    fun npm(
+        directory: File,
+        generateExternals: Boolean
+    ): Dependency
+
+    fun npm(
+        directory: File
+    ): Dependency = npm(
+        directory = directory,
+        generateExternals = DEFAULT_GENERATE_EXTERNALS
+    )
+
+    fun devNpm(
+        name: String,
+        version: String
+    ): Dependency
+
+    fun devNpm(
+        name: String,
+        directory: File
+    ): Dependency
+
+    fun devNpm(
+        directory: File
+    ): Dependency
+
+    fun optionalNpm(
+        name: String,
+        version: String,
+        generateExternals: Boolean
+    ): Dependency
+
+    fun optionalNpm(
+        name: String,
+        version: String
+    ): Dependency = optionalNpm(
+        name = name,
+        version = version,
+        generateExternals = DEFAULT_GENERATE_EXTERNALS
+    )
+
+    fun optionalNpm(
+        name: String,
+        directory: File,
+        generateExternals: Boolean
+    ): Dependency
+
+    fun optionalNpm(
+        name: String,
+        directory: File
+    ): Dependency = optionalNpm(
+        name = name,
+        directory = directory,
+        generateExternals = DEFAULT_GENERATE_EXTERNALS
+    )
+
+    fun optionalNpm(
+        directory: File,
+        generateExternals: Boolean
+    ): Dependency
+
+    fun optionalNpm(
+        directory: File
+    ): Dependency = optionalNpm(
+        directory = directory,
+        generateExternals = DEFAULT_GENERATE_EXTERNALS
+    )
+
+    fun peerNpm(
+        name: String,
+        version: String
+    ): Dependency
 }
 
 interface HasKotlinDependencies {

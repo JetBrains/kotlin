@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 object Foo {
     operator fun <T> invoke() {}
 }

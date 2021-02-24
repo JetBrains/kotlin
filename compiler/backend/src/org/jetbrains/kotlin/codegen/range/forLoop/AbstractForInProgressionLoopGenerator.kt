@@ -34,16 +34,13 @@ abstract class AbstractForInProgressionLoopGenerator(
 ) : AbstractForInProgressionOrRangeLoopGenerator(codegen, forExpression) {
 
     protected var incrementVar: Int = -1
-    protected val asmLoopRangeType: Type
-    protected val rangeKotlinType = bindingContext.getType(forExpression.loopRange!!)!!
+    protected val asmLoopRangeType: Type = codegen.asmType(rangeKotlinType)
     private val rangeElementKotlinType = getRangeOrProgressionElementType(rangeKotlinType)
         ?: throw AssertionError("Unexpected loop range type: $rangeKotlinType")
     private val incrementKotlinType: KotlinType
     protected val incrementType: Type
 
     init {
-        asmLoopRangeType = codegen.asmType(rangeKotlinType)
-
         val incrementProp = rangeKotlinType.memberScope.getContributedVariables(Name.identifier("step"), NoLookupLocation.FROM_BACKEND)
         assert(incrementProp.size == 1) { rangeKotlinType.toString() + " " + incrementProp.size }
         incrementKotlinType = incrementProp.single().type

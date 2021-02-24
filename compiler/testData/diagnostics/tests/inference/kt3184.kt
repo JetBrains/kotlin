@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 //KT-3184 Type inference seems partially broken
 package a
 

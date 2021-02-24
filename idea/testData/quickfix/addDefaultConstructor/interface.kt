@@ -1,4 +1,4 @@
-// "Add default constructor to expect class" "false"
+// "Add default constructor to 'expect' class" "false"
 // ACTION: Create subclass
 // ACTION: Introduce import alias
 // ACTION: Remove constructor call

@@ -1,0 +1,4 @@
+FILE: main.kt
+    public final fun <V> R|SLRUMap<V>|.getOrPut(value: R|V|): R|kotlin/Unit| {
+        this@R|/getOrPut|.<Inapplicable(INAPPLICABLE): /SLRUMap.takeV>#(R|<local>/value|)
+    }

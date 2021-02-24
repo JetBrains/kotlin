@@ -1,17 +1,12 @@
 description = 'Kotlin Test Annotations Common'
 
 apply plugin: 'kotlin-platform-common'
-apply plugin: 'pill-configurable'
 
-configurePublishing(project)
+jvmTarget = "1.6"
 
 dependencies {
     compile kotlinStdlib("common")
     testCompile project(":kotlin-test:kotlin-test-common")
-}
-
-pill {
-    importAsLibrary = true
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.dsl.KotlinCompile) {
@@ -22,13 +17,5 @@ jar {
     manifestAttributes(manifest, project, 'Test')
 }
 
-task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
-    from sourceSets.main.kotlin
-}
-
-artifacts {
-    archives sourcesJar
-}
-
-javadocJar()
+configureSourcesJar()
+configureJavadocJar()

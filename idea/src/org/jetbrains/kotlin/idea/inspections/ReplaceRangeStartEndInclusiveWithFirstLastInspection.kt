@@ -11,6 +11,7 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -30,13 +31,13 @@ class ReplaceRangeStartEndInclusiveWithFirstLastInspection : AbstractKotlinInspe
             if (selectorExpression.text == "start") {
                 holder.registerProblem(
                     expression,
-                    "Could be replaced with unboxed `first`",
+                    KotlinBundle.message("could.be.replaced.with.unboxed.first"),
                     ReplaceIntRangeStartWithFirstQuickFix()
                 )
             } else if (selectorExpression.text == "endInclusive") {
                 holder.registerProblem(
                     expression,
-                    "Could be replaced with unboxed `last`",
+                    KotlinBundle.message("could.be.replaced.with.unboxed.last"),
                     ReplaceIntRangeEndInclusiveWithLastQuickFix()
                 )
             }
@@ -57,7 +58,7 @@ private fun ClassDescriptor.isRange(): Boolean {
 }
 
 class ReplaceIntRangeStartWithFirstQuickFix : LocalQuickFix {
-    override fun getName() = "Replace 'start' with 'first'"
+    override fun getName() = KotlinBundle.message("replace.int.range.start.with.first.quick.fix.text")
 
     override fun getFamilyName() = name
 
@@ -69,7 +70,7 @@ class ReplaceIntRangeStartWithFirstQuickFix : LocalQuickFix {
 }
 
 class ReplaceIntRangeEndInclusiveWithLastQuickFix : LocalQuickFix {
-    override fun getName() = "Replace 'endInclusive' with 'last'"
+    override fun getName() = KotlinBundle.message("replace.int.range.end.inclusive.with.last.quick.fix.text")
 
     override fun getFamilyName() = name
 

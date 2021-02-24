@@ -1,0 +1,25 @@
+FILE: annotationClassMember.kt
+    public final annotation class A : R|kotlin/Annotation| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public constructor(s: R|kotlin/Nothing?|): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        init {
+        }
+
+        public final fun foo(): R|kotlin/Unit| {
+        }
+
+        public final val bar: R|kotlin/Nothing?|
+            public get(): R|kotlin/Nothing?|
+
+        public final val baz: R|kotlin/Unit|
+            public get(): R|kotlin/Unit| {
+                ^ Q|kotlin/Unit|
+            }
+
+    }

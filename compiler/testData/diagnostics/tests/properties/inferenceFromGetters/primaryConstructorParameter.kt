@@ -19,5 +19,5 @@ class C(p: Any, val v: Any) {
 
     <!PROPERTY_WITH_NO_TYPE_NO_INITIALIZER!>var test5<!>
         get() { return <!UNRESOLVED_REFERENCE!>p<!> }
-        set(nv) { <!UNRESOLVED_REFERENCE!>p<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>let<!> {} }
+        set(nv) { <!UNRESOLVED_REFERENCE!>p<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>let<!> {} }
 }

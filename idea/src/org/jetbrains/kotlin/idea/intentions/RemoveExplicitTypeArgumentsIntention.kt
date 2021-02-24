@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,6 +10,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.Key
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.copied
@@ -33,17 +34,18 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 
 @Suppress("DEPRECATION")
 class RemoveExplicitTypeArgumentsInspection : IntentionBasedInspection<KtTypeArgumentList>(RemoveExplicitTypeArgumentsIntention::class) {
-    override fun problemHighlightType(element: KtTypeArgumentList): ProblemHighlightType =
-        ProblemHighlightType.LIKE_UNUSED_SYMBOL
+    override fun problemHighlightType(element: KtTypeArgumentList): ProblemHighlightType = ProblemHighlightType.LIKE_UNUSED_SYMBOL
 }
 
-class RemoveExplicitTypeArgumentsIntention :
-    SelfTargetingOffsetIndependentIntention<KtTypeArgumentList>(KtTypeArgumentList::class.java, "Remove explicit type arguments") {
+class RemoveExplicitTypeArgumentsIntention : SelfTargetingOffsetIndependentIntention<KtTypeArgumentList>(
+    KtTypeArgumentList::class.java,
+    KotlinBundle.lazyMessage("remove.explicit.type.arguments")
+) {
     companion object {
-
         fun isApplicableTo(element: KtTypeArgumentList, approximateFlexible: Boolean): Boolean {
             val callExpression = element.parent as? KtCallExpression ?: return false
-            if (callExpression.typeArguments.isEmpty()) return false
+            val typeArguments = callExpression.typeArguments
+            if (typeArguments.isEmpty() || typeArguments.any { it.typeReference?.annotationEntries?.isNotEmpty() == true }) return false
 
             val resolutionFacade = callExpression.getResolutionFacade()
             val bindingContext = resolutionFacade.analyze(callExpression, BodyResolveMode.PARTIAL_WITH_CFA)
@@ -137,11 +139,7 @@ class RemoveExplicitTypeArgumentsIntention :
         }
     }
 
-    override fun isApplicableTo(element: KtTypeArgumentList): Boolean {
-        return isApplicableTo(element, approximateFlexible = false)
-    }
+    override fun isApplicableTo(element: KtTypeArgumentList): Boolean = isApplicableTo(element, approximateFlexible = false)
 
-    override fun applyTo(element: KtTypeArgumentList, editor: Editor?) {
-        element.delete()
-    }
+    override fun applyTo(element: KtTypeArgumentList, editor: Editor?) = element.delete()
 }

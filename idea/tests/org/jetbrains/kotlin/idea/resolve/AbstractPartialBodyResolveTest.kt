@@ -11,11 +11,9 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.util.getDataFlowAwareTypes
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
-import org.jetbrains.kotlin.idea.test.configureCompilerOptions
-import org.jetbrains.kotlin.idea.test.rollbackCompilerOptions
+import org.jetbrains.kotlin.idea.test.withCustomCompilerOptions
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
@@ -51,9 +49,7 @@ abstract class AbstractPartialBodyResolveTest : KotlinLightCodeInsightFixtureTes
 
     private fun dump(testPath: String, resolveMode: BodyResolveMode): String {
         myFixture.configureByText(KotlinFileType.INSTANCE, File(testPath).readText())
-        val configured = configureCompilerOptions(myFixture.file.text, project, module)
-
-        try {
+        return withCustomCompilerOptions(myFixture.file.text, project, module) {
             val file = myFixture.file as KtFile
             val editor = myFixture.editor
             val selectionModel = editor.selectionModel
@@ -121,11 +117,7 @@ abstract class AbstractPartialBodyResolveTest : KotlinLightCodeInsightFixtureTes
             Assert.assertEquals(target2.presentation(null), target1.presentation(null))
             Assert.assertEquals(type2.presentation(), type1.presentation())
 
-            return builder.toString()
-        } finally {
-            if (configured) {
-                rollbackCompilerOptions(project, module)
-            }
+            builder.toString()
         }
     }
 

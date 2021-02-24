@@ -27,3 +27,5 @@ class Test {
         new B().setP(1);
     }
 }
+
+// FIR_IGNORE

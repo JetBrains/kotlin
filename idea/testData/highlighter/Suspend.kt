@@ -1,3 +1,4 @@
+// IGNORE_FIR
 // EXPECTED_DUPLICATED_HIGHLIGHTING
 
 val <info textAttributesKey="KOTLIN_PACKAGE_PROPERTY">fnType</info> : <info textAttributesKey="KOTLIN_BUILTIN_ANNOTATION">suspend</info> () -> <info textAttributesKey="KOTLIN_OBJECT">Unit</info> = {}

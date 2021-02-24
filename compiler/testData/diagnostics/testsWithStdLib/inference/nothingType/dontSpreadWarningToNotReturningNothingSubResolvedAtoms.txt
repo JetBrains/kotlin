@@ -1,0 +1,3 @@
+package
+
+public fun get(/*0*/ map: kotlin.collections.Map<kotlin.String, kotlin.Int>, /*1*/ key: kotlin.String?): kotlin.Int?

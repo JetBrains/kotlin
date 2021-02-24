@@ -9,7 +9,7 @@ class Test {
         })
 
         // Applicable
-        bar(Runnable { println(this@Test) })
+        bar { println(this@Test) }
 
         // Applicable
         bar(object : Runnable {

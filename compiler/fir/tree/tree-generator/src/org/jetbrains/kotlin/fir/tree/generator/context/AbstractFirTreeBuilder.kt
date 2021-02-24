@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.tree.generator.context
 
 import org.jetbrains.kotlin.fir.tree.generator.model.Element
+import org.jetbrains.kotlin.fir.tree.generator.model.IntermediateBuilder
 import org.jetbrains.kotlin.fir.tree.generator.model.Type
 import org.jetbrains.kotlin.fir.tree.generator.printer.BASE_PACKAGE
 import kotlin.reflect.KClass
@@ -23,6 +24,7 @@ abstract class AbstractFirTreeBuilder {
     }
 
     val elements = mutableListOf(baseFirElement)
+    val intermediateBuilders = mutableListOf<IntermediateBuilder>()
 
     protected fun element(name: String, kind: Element.Kind, vararg dependencies: Element, init: Element.() -> Unit = {}): Element =
         Element(name, kind).apply(init).also {

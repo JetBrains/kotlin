@@ -5,7 +5,6 @@ subprojects {
         }
         dependencies {
             classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:{{kotlin_plugin_version}}"
-            {{extraPluginDependencies}}
         }
     }
  

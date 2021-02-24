@@ -1,20 +1,25 @@
 plugins {
-    kotlin("multiplatform") version "1.3.61"
+    kotlin("multiplatform") version "KOTLIN_VERSION"
 }
+
 group = "testGroupId"
 version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
 }
+
 kotlin {
-    jvm()
-    sourceSets {
-        val jvmMain by getting {
-            dependencies {
-                implementation(kotlin("stdlib-jdk8"))
-            }
+    jvm {
+        compilations.all {
+            kotlinOptions.jvmTarget = "1.8"
         }
+        testRuns["test"].executionTask.configure {
+            useJUnit()
+        }
+    }
+    sourceSets {
+        val jvmMain by getting
         val jvmTest by getting {
             dependencies {
                 implementation(kotlin("test-junit"))

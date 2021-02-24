@@ -6,43 +6,57 @@
 package org.jetbrains.kotlin.descriptors.commonizer.utils
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.commonizer.utils.NativeFactories.DefaultDeserializedDescriptorFactory
-import org.jetbrains.kotlin.descriptors.commonizer.utils.NativeFactories.createDefaultKonanResolvedModuleDescriptorsFactory
+import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirName
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.kotlin.incremental.components.LookupLocation
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.konan.util.KlibMetadataFactories
+import org.jetbrains.kotlin.library.metadata.NativeTypeTransformer
+import org.jetbrains.kotlin.library.metadata.NullFlexibleTypeDeserializer
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.konan.impl.KlibResolvedModuleDescriptorsFactoryImpl
 import org.jetbrains.kotlin.storage.StorageManager
 
-internal val ModuleDescriptor.packageFragmentProvider
+internal val ModuleDescriptor.packageFragmentProvider: PackageFragmentProvider
     get() = (this as ModuleDescriptorImpl).packageFragmentProviderForModuleContentWithoutDependencies
 
 internal fun createKotlinNativeForwardDeclarationsModule(
     storageManager: StorageManager,
     builtIns: KotlinBuiltIns
 ): ModuleDescriptorImpl =
-    (createDefaultKonanResolvedModuleDescriptorsFactory(DefaultDeserializedDescriptorFactory) as KlibResolvedModuleDescriptorsFactoryImpl)
+    (NativeFactories.createDefaultKonanResolvedModuleDescriptorsFactory(NativeFactories.DefaultDeserializedDescriptorFactory) as KlibResolvedModuleDescriptorsFactoryImpl)
         .createForwardDeclarationsModule(
             builtIns = builtIns,
             storageManager = storageManager
         )
 
-// similar to org.jetbrains.kotlin.descriptors.DescriptorUtilKt#resolveClassByFqName, but resolves also type aliases
-internal fun ModuleDescriptor.resolveClassOrTypeAliasByFqName(
-    fqName: FqName,
-    lookupLocation: LookupLocation
-): ClassifierDescriptorWithTypeParameters? {
-    if (fqName.isRoot) return null
+internal fun MemberScope.resolveClassOrTypeAlias(relativeNameSegments: Array<CirName>): ClassifierDescriptorWithTypeParameters? {
+    var memberScope: MemberScope = this
+    if (memberScope is MemberScope.Empty)
+        return null
 
-    (getPackage(fqName.parent()).memberScope.getContributedClassifier(
-        fqName.shortName(),
-        lookupLocation
-    ) as? ClassifierDescriptorWithTypeParameters)?.let { return it }
+    val classifierName = when (relativeNameSegments.size) {
+        0 -> return null
+        1 -> relativeNameSegments[0]
+        else -> {
+            // resolve member scope of the nested class
+            relativeNameSegments.reduce { first, second ->
+                memberScope = (memberScope.getContributedClassifier(
+                    Name.identifier(first.name),
+                    NoLookupLocation.FOR_ALREADY_TRACKED
+                ) as? ClassDescriptor)?.unsubstitutedMemberScope ?: return null
 
-    return (resolveClassOrTypeAliasByFqName(fqName.parent(), lookupLocation) as? ClassDescriptor)
-        ?.unsubstitutedInnerClassesScope
-        ?.getContributedClassifier(fqName.shortName(), lookupLocation) as? ClassifierDescriptorWithTypeParameters
+                second
+            }
+        }
+    }
+
+    return memberScope.getContributedClassifier(
+        Name.identifier(classifierName.name),
+        NoLookupLocation.FOR_ALREADY_TRACKED
+    ) as? ClassifierDescriptorWithTypeParameters
 }
+
+internal val NativeFactories = KlibMetadataFactories(::KonanBuiltIns, NullFlexibleTypeDeserializer, NativeTypeTransformer())

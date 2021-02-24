@@ -1,0 +1,5 @@
+FILE: variable.kt
+    public final val foo: R|kotlin/String| = String()
+        public get(): R|kotlin/String|
+    public final val bar: R|kotlin/String| = R|/foo|.R|kotlin/Any.toString|()
+        public get(): R|kotlin/String|

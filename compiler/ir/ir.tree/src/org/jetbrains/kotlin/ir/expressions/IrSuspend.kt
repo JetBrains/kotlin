@@ -7,14 +7,13 @@ package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 
-
-interface IrSuspensionPoint : IrExpression {
-    var suspensionPointIdParameter: IrVariable
-    var result: IrExpression
-    var resumeResult: IrExpression
+abstract class IrSuspensionPoint : IrExpression() {
+    abstract var suspensionPointIdParameter: IrVariable
+    abstract var result: IrExpression
+    abstract var resumeResult: IrExpression
 }
 
-interface IrSuspendableExpression : IrExpression {
-    var suspensionPointId: IrExpression
-    var result: IrExpression
+abstract class IrSuspendableExpression : IrExpression() {
+    abstract var suspensionPointId: IrExpression
+    abstract var result: IrExpression
 }

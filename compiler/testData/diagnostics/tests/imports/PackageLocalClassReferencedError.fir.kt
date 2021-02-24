@@ -8,4 +8,4 @@ package a
 
 import pack1.*
 
-private class X : <!INAPPLICABLE_CANDIDATE!>SomeClass<!>()
+private class X : <!HIDDEN!>SomeClass<!>()

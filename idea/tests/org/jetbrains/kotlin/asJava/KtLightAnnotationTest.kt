@@ -18,7 +18,6 @@ import junit.framework.TestCase
 import org.jetbrains.kotlin.asJava.elements.KtLightAnnotationForSourceEntry
 import org.jetbrains.kotlin.asJava.elements.KtLightPsiArrayInitializerMemberValue
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.idea.completion.test.assertInstanceOf
 import org.jetbrains.kotlin.idea.facet.configureFacet
 import org.jetbrains.kotlin.idea.facet.getOrCreateFacet
@@ -32,6 +31,70 @@ class KtLightAnnotationTest : KotlinLightCodeInsightFixtureTestCase() {
 
     override fun getProjectDescriptor(): LightProjectDescriptor =
         KotlinJdkAndLibraryProjectDescriptor(ForTestCompileRuntime.runtimeJarForTests())
+
+    fun testIsHiddenByDeprecated() {
+        myFixture.configureByText(
+            "test.kt", """
+            import kotlin.DeprecationLevel.WARNING
+            import kotlin.DeprecationLevel.HIDDEN
+            import java.lang.annotation.ElementType
+            import kotlin.DeprecationLevel
+            import kotlin.annotation.AnnotationTarget
+
+            @kotlin.annotation.Target(kotlin.annotation.AnnotationTarget.FUNCTION)
+            annotation class Dep(
+                val message: String = "",
+                val message1: String = "",
+                val level: DeprecationLevel = DeprecationLevel.WARNING
+            )
+
+            typealias LOL = Deprecated
+            typealias DL = DeprecationLevel
+
+            class A {
+                @Deprecated("", ReplaceWith("a"), HIDDEN)
+                fun a() {}
+
+                @Deprecated(message = "", level = HIDDEN)
+                fun b() {}
+
+                @Deprecated(message = "", replaceWith = ReplaceWith(""), level = DeprecationLevel.HIDDEN)
+                fun c() {}
+
+                @Deprecated(message = "", replaceWith = ReplaceWith(""), level = DeprecationLevel.WARNING)
+                fun d() {}
+
+                @Deprecated(message = "", replaceWith = ReplaceWith(""), level = WARNING)
+                fun e() {}
+
+                @Deprecated(message = "", replaceWith = ReplaceWith(""))
+                fun f() {}
+
+                @Deprecated("")
+                fun g() {}
+
+                @Deprecated(message = "", level = WARNING)
+                fun h() {}
+
+                @Dep(level = DeprecationLevel.HIDDEN)
+                fun i() {}
+
+                @Dep("", "", DeprecationLevel.HIDDEN)
+                fun j() {}
+
+                @LOL(level = HIDDEN, message="")
+                fun k() {}
+
+                @Deprecated(level = DL.HIDDEN, message="")
+                fun l() {}
+            }
+        """.trimIndent()
+        )
+        myFixture.testHighlighting("test.kt")
+
+        val methods = myFixture.findClass("A").methods.map { it.name }.sorted()
+        TestCase.assertEquals(listOf("A","d","e","f","g","h","i","j"), methods)
+    }
 
     fun testBooleanAnnotationDefaultValue() {
         myFixture.addClass(
@@ -57,7 +120,7 @@ class KtLightAnnotationTest : KotlinLightCodeInsightFixtureTestCase() {
         myFixture.testHighlighting("Autowired.java", "AnnotatedClass.kt")
 
         val annotations = myFixture.findClass("AnnotatedClass").fields.single()
-            .expectAnnotations(2).single { it.qualifiedName == "Autowired" }
+            .expectAnnotations(1).single { it.qualifiedName == "Autowired" }
         val annotationAttributeVal = annotations.findAttributeValue("required") as PsiElement
         assertTextRangeAndValue("true", true, annotationAttributeVal)
     }
@@ -862,7 +925,7 @@ class KtLightAnnotationTest : KotlinLightCodeInsightFixtureTestCase() {
         WriteAction.run<Throwable> {
             val modelsProvider = IdeModifiableModelsProviderImpl(project)
             val facet = module.getOrCreateFacet(modelsProvider, useProjectSettings = false)
-            facet.configureFacet(version, LanguageFeature.State.DISABLED, null, modelsProvider)
+            facet.configureFacet(version, null, modelsProvider)
             modelsProvider.commit()
         }
     }

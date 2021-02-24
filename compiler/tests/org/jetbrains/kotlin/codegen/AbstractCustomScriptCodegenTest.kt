@@ -37,6 +37,7 @@ abstract class AbstractCustomScriptCodegenTest : CodegenTestCase() {
     }
 
     override fun updateConfiguration(configuration: CompilerConfiguration) {
+        super.updateConfiguration(configuration)
         if (scriptDefinitions.isNotEmpty()) {
             configureScriptDefinitions(
                 scriptDefinitions, configuration, this::class.java.classLoader, MessageCollector.NONE, defaultJvmScriptingHostConfiguration
@@ -48,7 +49,7 @@ abstract class AbstractCustomScriptCodegenTest : CodegenTestCase() {
         loadScriptingPlugin(configuration)
     }
 
-    override fun doMultiFileTest(wholeFile: File, files: MutableList<TestFile>) {
+    override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
         if (files.size > 1) {
             throw UnsupportedOperationException("Multiple files are not yet supported in this test")
         }

@@ -7,6 +7,6 @@ expect fun foo()
 // MODULE: m2-jvm(m1-common)
 // FILE: jvm.kt
 
-actual fun foo()
+<!NON_MEMBER_FUNCTION_NO_BODY!>actual fun foo()<!>
 
-actual fun bar()
+<!NON_MEMBER_FUNCTION_NO_BODY!>actual fun bar()<!>

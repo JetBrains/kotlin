@@ -1,0 +1,12 @@
+fun test1() {
+  throw Throwable()
+}
+
+fun testImplicitCast(a: Any) {
+  when {
+    a is Throwable -> { // BLOCK
+      throw a /*as Throwable */
+    }
+  }
+}
+

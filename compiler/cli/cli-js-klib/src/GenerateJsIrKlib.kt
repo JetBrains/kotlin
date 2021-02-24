@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.psi.KtFile
@@ -41,9 +42,9 @@ fun buildConfiguration(environment: KotlinCoreEnvironment, moduleName: String): 
         ),
         analysisFlags = mapOf(
             AnalysisFlags.useExperimental to listOf(
+                "kotlin.RequiresOptIn",
                 "kotlin.contracts.ExperimentalContracts",
-                "kotlin.Experimental",
-                "kotlin.ExperimentalMultiplatform"
+                "kotlin.ExperimentalMultiplatform",
             ),
             AnalysisFlags.allowResultReturnType to true
         )
@@ -52,7 +53,9 @@ fun buildConfiguration(environment: KotlinCoreEnvironment, moduleName: String): 
     return runtimeConfiguration
 }
 
-val environment = KotlinCoreEnvironment.createForTests(Disposable { }, CompilerConfiguration(), EnvironmentConfigFiles.JS_CONFIG_FILES)
+@Suppress("RedundantSamConstructor")
+private val environment =
+    KotlinCoreEnvironment.createForProduction(Disposable { }, CompilerConfiguration(), EnvironmentConfigFiles.JS_CONFIG_FILES)
 
 fun createPsiFile(fileName: String): KtFile {
     val psiManager = PsiManager.getInstance(environment.project)
@@ -85,6 +88,7 @@ fun buildKLib(
         configuration = configuration,
         allDependencies = allDependencies,
         friendDependencies = emptyList(),
+        irFactory = PersistentIrFactory(), // TODO: IrFactoryImpl?
         outputKlibPath = outputPath,
         nopack = true
     )
@@ -130,7 +134,7 @@ fun main(args: Array<String>) {
     }
 
     val resolvedLibraries = jsResolveLibraries(
-        dependencies, messageCollectorLogger(MessageCollector.NONE)
+        dependencies, emptyList(), messageCollectorLogger(MessageCollector.NONE)
     )
 
     buildKLib(moduleName, listOfKtFilesFrom(inputFiles), outputPath, resolvedLibraries, listOfKtFilesFrom(commonSources))

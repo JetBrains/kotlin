@@ -1,4 +1,5 @@
 // C
+// WITH_RUNTIME
 class C {
     @JvmName("myFun")
     fun g(c: C) {
@@ -10,3 +11,5 @@ class C {
 
     }
 }
+
+// FIR_COMPARISON

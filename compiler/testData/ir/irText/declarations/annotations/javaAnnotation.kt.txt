@@ -1,0 +1,12 @@
+@JavaAnn
+fun test1() {
+}
+
+@JavaAnn(value = "abc", i = 123)
+fun test2() {
+}
+
+@JavaAnn(value = "abc", i = 123)
+fun test3() {
+}
+

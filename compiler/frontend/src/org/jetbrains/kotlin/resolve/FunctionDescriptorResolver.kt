@@ -19,10 +19,7 @@ package org.jetbrains.kotlin.resolve
 import com.intellij.openapi.util.ThrowableComputable
 import com.intellij.psi.PsiElement
 import com.intellij.util.AstLoadingFilter
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
-import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
-import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
+import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.description.ContractProviderKey
@@ -309,7 +306,7 @@ class FunctionDescriptorResolver(
 
     private fun KotlinType.removeParameterNameAnnotation(): KotlinType {
         if (this is TypeUtils.SpecialType) return this
-        val parameterNameAnnotation = annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.parameterName) ?: return this
+        val parameterNameAnnotation = annotations.findAnnotation(StandardNames.FqNames.parameterName) ?: return this
         return replaceAnnotations(Annotations.create(annotations.filter { it != parameterNameAnnotation }))
     }
 
@@ -326,7 +323,8 @@ class FunctionDescriptorResolver(
         scope: LexicalScope,
         classDescriptor: ClassDescriptor,
         classElement: KtPureClassOrObject,
-        trace: BindingTrace
+        trace: BindingTrace,
+        languageVersionSettings: LanguageVersionSettings
     ): ClassConstructorDescriptorImpl? {
         if (classDescriptor.kind == ClassKind.ENUM_ENTRY || !classElement.hasPrimaryConstructor()) return null
         return createConstructorDescriptor(
@@ -336,7 +334,8 @@ class FunctionDescriptorResolver(
             classElement.primaryConstructorModifierList,
             classElement.primaryConstructor ?: classElement,
             classElement.primaryConstructorParameters,
-            trace
+            trace,
+            languageVersionSettings
         )
     }
 
@@ -344,7 +343,8 @@ class FunctionDescriptorResolver(
         scope: LexicalScope,
         classDescriptor: ClassDescriptor,
         constructor: KtSecondaryConstructor,
-        trace: BindingTrace
+        trace: BindingTrace,
+        languageVersionSettings: LanguageVersionSettings
     ): ClassConstructorDescriptorImpl {
         return createConstructorDescriptor(
             scope,
@@ -353,7 +353,8 @@ class FunctionDescriptorResolver(
             constructor.modifierList,
             constructor,
             constructor.valueParameters,
-            trace
+            trace,
+            languageVersionSettings
         )
     }
 
@@ -364,7 +365,8 @@ class FunctionDescriptorResolver(
         modifierList: KtModifierList?,
         declarationToTrace: KtPureElement,
         valueParameters: List<KtParameter>,
-        trace: BindingTrace
+        trace: BindingTrace,
+        languageVersionSettings: LanguageVersionSettings
     ): ClassConstructorDescriptorImpl {
         val constructorDescriptor = ClassConstructorDescriptorImpl.create(
             classDescriptor,
@@ -390,7 +392,7 @@ class FunctionDescriptorResolver(
             resolveValueParameters(constructorDescriptor, parameterScope, valueParameters, trace, null),
             resolveVisibilityFromModifiers(
                 modifierList,
-                DescriptorUtils.getDefaultConstructorVisibility(classDescriptor)
+                DescriptorUtils.getDefaultConstructorVisibility(classDescriptor, languageVersionSettings.supportsFeature(LanguageFeature.AllowSealedInheritorsInDifferentFilesOfSamePackage))
             )
         )
         constructor.returnType = classDescriptor.defaultType

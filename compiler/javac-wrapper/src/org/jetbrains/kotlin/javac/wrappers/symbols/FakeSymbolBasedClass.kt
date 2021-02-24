@@ -37,7 +37,7 @@ class FakeSymbolBasedClass(
 
     override val isFinal: Boolean get() = false
 
-    override val visibility: Visibility get() = Visibilities.PUBLIC
+    override val visibility: Visibility get() = Visibilities.Public
 
     override val typeParameters: List<JavaTypeParameter> get() = emptyList()
 
@@ -65,6 +65,14 @@ class FakeSymbolBasedClass(
 
     override val isEnum: Boolean get() = false
 
+    override val isRecord: Boolean get() = false
+
+    override val recordComponents: Collection<JavaRecordComponent> get() = emptyList()
+
+    override val isSealed: Boolean get() = false
+
+    override val permittedTypes: Collection<JavaClassifierType> get() = emptyList()
+
     override val lightClassOriginKind: LightClassOriginKind? get() = null
 
     override val methods: Collection<JavaMethod> get() = emptyList()
@@ -72,6 +80,8 @@ class FakeSymbolBasedClass(
     override val fields: Collection<JavaField> get() = emptyList()
 
     override val constructors: Collection<JavaConstructor> get() = emptyList()
+
+    override fun hasDefaultConstructor() = false
 
     override val innerClassNames: Collection<Name> get() = emptyList()
 

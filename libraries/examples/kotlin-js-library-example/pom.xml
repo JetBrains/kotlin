@@ -8,7 +8,7 @@
     <parent>
         <groupId>org.jetbrains.kotlin</groupId>
         <artifactId>kotlin-project</artifactId>
-        <version>1.4-SNAPSHOT</version>
+        <version>1.5.255-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -30,7 +30,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>properties-maven-plugin</artifactId>
-                <version>1.0-alpha-2</version>
+                <version>1.0.0</version>
                 <executions>
                     <execution>
                         <phase>initialize</phase>

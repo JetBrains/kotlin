@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.test.*;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -76,8 +77,8 @@ public abstract class AbstractDiagnosticMessageTest extends KotlinTestWithEnviro
         File file = new File(filePath);
         String fileName = file.getName();
 
-        String fileData = KotlinTestUtils.doLoadFile(file);
-        Map<String,String> directives = KotlinTestUtils.parseDirectives(fileData);
+        String fileData = KtTestUtil.doLoadFile(file);
+        Directives directives = KotlinTestUtils.parseDirectives(fileData);
         int diagnosticNumber = getDiagnosticNumber(directives);
         final Set<DiagnosticFactory<?>> diagnosticFactories = getDiagnosticFactories(directives);
         MessageType messageType = getMessageTypeDirective(directives);
@@ -86,7 +87,7 @@ public abstract class AbstractDiagnosticMessageTest extends KotlinTestWithEnviro
         LanguageVersion version = explicitLanguageVersion == null ? null : LanguageVersion.fromVersionString(explicitLanguageVersion);
         Map<LanguageFeature, LanguageFeature.State> specificFeatures = parseLanguageFeatures(fileData);
 
-        KtFile psiFile = KotlinTestUtils.createFile(fileName, KotlinTestUtils.doLoadFile(getTestDataPath(), fileName), getProject());
+        KtFile psiFile = KtTestUtil.createFile(fileName, KtTestUtil.doLoadFile(getTestDataPath(), fileName), getProject());
         AnalysisResult analysisResult = analyze(psiFile, version, specificFeatures);
         BindingContext bindingContext = analysisResult.getBindingContext();
 
@@ -149,7 +150,7 @@ public abstract class AbstractDiagnosticMessageTest extends KotlinTestWithEnviro
         return result;
     }
 
-    private static int getDiagnosticNumber(Map<String, String> directives) {
+    private static int getDiagnosticNumber(Directives directives) {
         String diagnosticsNumber = directives.get(DIAGNOSTICS_NUMBER_DIRECTIVE);
         assert diagnosticsNumber != null : DIAGNOSTICS_NUMBER_DIRECTIVE + " should be present.";
         try {
@@ -161,7 +162,7 @@ public abstract class AbstractDiagnosticMessageTest extends KotlinTestWithEnviro
     }
 
     @NotNull
-    private Set<DiagnosticFactory<?>> getDiagnosticFactories(Map<String, String> directives) {
+    private Set<DiagnosticFactory<?>> getDiagnosticFactories(Directives directives) {
         String diagnosticsData = directives.get(DIAGNOSTICS_DIRECTIVE);
         assert diagnosticsData != null : DIAGNOSTICS_DIRECTIVE + " should be present.";
         Set<DiagnosticFactory<?>> diagnosticFactories = new HashSet<>();
@@ -206,7 +207,7 @@ public abstract class AbstractDiagnosticMessageTest extends KotlinTestWithEnviro
     }
 
     @Nullable
-    private static MessageType getMessageTypeDirective(Map<String, String> directives) {
+    private static MessageType getMessageTypeDirective(Directives directives) {
         String messageType = directives.get(MESSAGE_TYPE_DIRECTIVE);
         if (messageType == null) return null;
         try {

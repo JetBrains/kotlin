@@ -56,7 +56,9 @@ interface MetadataExtensions {
 
     fun writeTypeAliasExtensions(type: KmExtensionType, proto: ProtoBuf.TypeAlias.Builder, c: WriteContext): KmTypeAliasExtensionVisitor?
 
-    fun writeValueParameterExtensions(type: KmExtensionType, proto: ProtoBuf.ValueParameter.Builder, c: WriteContext): KmValueParameterExtensionVisitor?
+    fun writeValueParameterExtensions(
+        type: KmExtensionType, proto: ProtoBuf.ValueParameter.Builder, c: WriteContext
+    ): KmValueParameterExtensionVisitor?
 
     fun createClassExtension(): KmClassExtension
 

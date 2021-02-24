@@ -1,6 +1,6 @@
 // !WITH_NEW_INFERENCE
 // !CHECK_TYPE
-// !DIAGNOSTICS: -UNUSED_PARAMETER,-UNUSED_VARIABLE
+// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 class A<F> {
     fun <E : F> foo1(x: E) = x
@@ -18,7 +18,7 @@ class A<F> {
         x2.checkType { _<F>() }
 
         foo1<<!UPPER_BOUND_VIOLATED!>F?<!>>(y)
-        <!OI;TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>foo1<!>(<!NI;TYPE_MISMATCH!>y<!>)
+        <!TYPE_INFERENCE_UPPER_BOUND_VIOLATED{OI}!>foo1<!>(<!TYPE_MISMATCH{NI}!>y<!>)
         foo2<F?>(y)
 
         val x3 = foo2(y)
@@ -38,7 +38,7 @@ class A<F> {
         x4.checkType { _<Z>() }
 
         foo1<<!UPPER_BOUND_VIOLATED!>W<!>>(w)
-        <!OI;TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>foo1<!>(<!NI;TYPE_MISMATCH!>w<!>)
+        <!TYPE_INFERENCE_UPPER_BOUND_VIOLATED{OI}!>foo1<!>(<!TYPE_MISMATCH{NI}!>w<!>)
         foo2<W>(w)
 
         val x6 = foo2(w)

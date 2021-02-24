@@ -4,5 +4,4 @@ class C {
             println("getter invoked")
             return field
         }
-
 }

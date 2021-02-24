@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !CHECK_TYPE
 
 data class A(val x: Int, val y: String)

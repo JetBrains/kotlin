@@ -7,5 +7,5 @@ class Foo {
         x = "Foo"
     }
 
-    constructor(x: String, y: String): <!INAPPLICABLE_CANDIDATE!>this<!>(y.hashCode())
+    constructor(x: String, y: String): <!NONE_APPLICABLE!>this<!>(y.hashCode())
 }

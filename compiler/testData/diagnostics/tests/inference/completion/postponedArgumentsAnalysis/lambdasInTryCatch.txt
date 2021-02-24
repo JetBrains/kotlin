@@ -1,0 +1,5 @@
+package
+
+public fun case1(/*0*/ x: kotlin.Any): kotlin.Unit
+public fun case2(/*0*/ x: kotlin.Any): kotlin.Unit
+public fun case3(/*0*/ x: kotlin.Any): kotlin.Unit

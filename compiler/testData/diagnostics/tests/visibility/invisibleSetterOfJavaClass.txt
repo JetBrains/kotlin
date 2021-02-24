@@ -1,0 +1,35 @@
+package
+
+public final class B : abc.Foo {
+    public constructor B()
+    public final fun baz(/*0*/ a: abc.Foo, /*1*/ t: abc.Foo, /*2*/ d: Data): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun getBar(): kotlin.String!
+    public open override /*1*/ /*fake_override*/ fun getFoo(): kotlin.String!
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    protected/*protected and package*/ open override /*1*/ /*fake_override*/ fun setBar(/*0*/ x: kotlin.String!): kotlin.Unit
+    invisible_fake open override /*1*/ /*fake_override*/ fun setFoo(/*0*/ x: kotlin.String!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Data {
+    public constructor Data(/*0*/ x: abc.Foo)
+    public final var x: abc.Foo
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+package abc {
+
+    public open class Foo {
+        public constructor Foo()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open fun getBar(): kotlin.String!
+        public open fun getFoo(): kotlin.String!
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        protected/*protected and package*/ open fun setBar(/*0*/ x: kotlin.String!): kotlin.Unit
+        private open fun setFoo(/*0*/ x: kotlin.String!): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

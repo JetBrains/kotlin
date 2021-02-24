@@ -26,7 +26,7 @@
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Kotlin compiler and runtime version:"/>
+              <text resource-bundle="messages/KotlinJvmBundle" key="kotlin.compiler.and.runtime.version"/>
             </properties>
           </component>
           <component id="1034b" class="javax.swing.JComboBox" binding="kotlinVersionComboBox">

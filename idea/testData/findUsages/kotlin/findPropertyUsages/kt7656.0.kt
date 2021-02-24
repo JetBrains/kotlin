@@ -9,3 +9,4 @@ fun main(args: Array<String>) {
 
     println(a.field)
 }
+// DISABLE-ERRORS

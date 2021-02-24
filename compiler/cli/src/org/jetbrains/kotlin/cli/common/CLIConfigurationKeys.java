@@ -48,6 +48,9 @@ public class CLIConfigurationKeys {
     public static final CompilerConfigurationKey<PhaseConfig> PHASE_CONFIG =
             CompilerConfigurationKey.create("phase configuration");
 
+    public static final CompilerConfigurationKey<Integer> REPEAT_COMPILE_MODULES =
+            CompilerConfigurationKey.create("debug key for profiling, repeats compileModules");
+
     private CLIConfigurationKeys() {
     }
 }

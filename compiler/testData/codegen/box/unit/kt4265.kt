@@ -1,4 +1,5 @@
-// IGNORE_BACKEND_FIR: JVM_IR
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: UNIT_ISSUES
 fun <T : Any, R> T.let(f: (T) -> R): R = f(this)
 
 fun box(): String {

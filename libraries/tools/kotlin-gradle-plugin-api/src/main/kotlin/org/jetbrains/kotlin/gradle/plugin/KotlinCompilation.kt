@@ -11,6 +11,7 @@ import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.attributes.HasAttributes
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
@@ -52,6 +53,8 @@ interface KotlinCompilation<out T : KotlinCommonOptions> : Named, HasAttributes,
 
     val compileKotlinTask: KotlinCompile<T>
 
+    val compileKotlinTaskProvider: TaskProvider<out KotlinCompile<T>>
+
     val kotlinOptions: T
 
     fun kotlinOptions(configure: T.() -> Unit)
@@ -79,6 +82,9 @@ interface KotlinCompilation<out T : KotlinCommonOptions> : Named, HasAttributes,
         get() = super.relatedConfigurationNames + compileDependencyConfigurationName
 
     val moduleName: String
+
+    val disambiguatedName
+        get() = target.disambiguationClassifier + name
 }
 
 interface KotlinCompilationToRunnableFiles<T : KotlinCommonOptions> : KotlinCompilation<T> {

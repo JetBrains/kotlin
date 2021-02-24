@@ -76,8 +76,8 @@ class C : O.B() {
     val b = <!UNRESOLVED_REFERENCE!>B<!>()
 
     // DEPRECATED: Classifiers from companions of direct superclasses
-    val e = FromCompanionA()
-    val f = FromCompanionB()
+    val e = <!UNRESOLVED_REFERENCE!>FromCompanionA<!>()
+    val f = <!UNRESOLVED_REFERENCE!>FromCompanionB<!>()
 
     // INVISIBLE: "cousin" supertypes themselves
     val g = <!UNRESOLVED_REFERENCE!>Alpha<!>()
@@ -85,9 +85,9 @@ class C : O.B() {
     val i = <!UNRESOLVED_REFERENCE!>Gamma<!>()
 
     // DEPRECATED: classifiers from "cousin" superclasses
-    val k = FromAlpha()
-    val l = FromBeta()
-    val m = FromGamma()
+    val k = <!UNRESOLVED_REFERENCE!>FromAlpha<!>()
+    val l = <!UNRESOLVED_REFERENCE!>FromBeta<!>()
+    val m = <!UNRESOLVED_REFERENCE!>FromGamma<!>()
 
     // INVISIBLE: We don't see classifiers from companions of "cousin" superclasses
     val o = <!UNRESOLVED_REFERENCE!>FromCompanionAlpha<!>()
@@ -95,5 +95,5 @@ class C : O.B() {
     val q = <!UNRESOLVED_REFERENCE!>FromCompanionGamma<!>()
 
     // DEPRECATED: Classifiers from supertypes of our own companion
-    val r = FromDelta()
+    val r = <!UNRESOLVED_REFERENCE!>FromDelta<!>()
 }

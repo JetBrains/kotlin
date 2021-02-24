@@ -19,12 +19,13 @@ package org.jetbrains.kotlin.idea.inspections.collections
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 
 class RenameUselessCallFix(val newName: String) : LocalQuickFix {
-    override fun getName() = "Change call to '$newName'"
+    override fun getName() = KotlinBundle.message("rename.useless.call.fix.text", newName)
 
     override fun getFamilyName() = name
 

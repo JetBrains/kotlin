@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.core.util.CodeInsightUtils
 import org.jetbrains.kotlin.idea.core.util.runSynchronouslyWithProgress
 import org.jetbrains.kotlin.idea.refactoring.CompositeRefactoringRunner
-import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
 import org.jetbrains.kotlin.idea.refactoring.introduce.*
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
@@ -177,7 +177,7 @@ fun selectNewParameterContext(
         operationName = INTRODUCE_PARAMETER,
         editor = editor,
         file = file,
-        title = "Introduce parameter to declaration",
+        title = KotlinBundle.message("title.introduce.parameter.to.declaration"),
         elementKinds = listOf(CodeInsightUtils.ElementKind.EXPRESSION),
         elementValidator = ::validateExpressionElements,
         getContainers = { _, parent ->
@@ -222,13 +222,12 @@ open class KotlinIntroduceParameterHandler(
         }
 
         if (expressionType == null) {
-            showErrorHint(project, editor, "Expression has no type", INTRODUCE_PARAMETER)
+            showErrorHint(project, editor, KotlinBundle.message("error.text.expression.has.no.type"), INTRODUCE_PARAMETER)
             return
         }
 
         if (expressionType.isUnit() || expressionType.isNothing()) {
-            val message = KotlinRefactoringBundle.message(
-                "cannot.introduce.parameter.of.0.type",
+            val message = KotlinBundle.message("cannot.introduce.parameter.of.0.type",
                 IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(expressionType)
             )
             showErrorHint(project, editor, message, INTRODUCE_PARAMETER)
@@ -378,11 +377,21 @@ open class KotlinIntroduceParameterHandler(
 
         val elementAtCaret = file.findElementAt(editor.caretModel.offset) ?: return
         if (elementAtCaret.getNonStrictParentOfType<KtAnnotationEntry>() != null) {
-            showErrorHint(project, editor, "Introduce Parameter is not available inside of annotation entries", INTRODUCE_PARAMETER)
+            showErrorHint(
+                project,
+                editor,
+                KotlinBundle.message("error.text.introduce.parameter.is.not.available.inside.of.annotation.entries"),
+                INTRODUCE_PARAMETER
+            )
             return
         }
         if (elementAtCaret.getNonStrictParentOfType<KtParameter>() != null) {
-            showErrorHint(project, editor, "Introduce Parameter is not available for default value", INTRODUCE_PARAMETER)
+            showErrorHint(
+                project,
+                editor,
+                KotlinBundle.message("error.text.introduce.parameter.is.not.available.for.default.value"),
+                INTRODUCE_PARAMETER
+            )
             return
         }
 
@@ -416,7 +425,10 @@ private fun findInternalUsagesOfParametersAndReceiver(
     targetDescriptor: FunctionDescriptor
 ): MultiMap<KtElement, KtElement>? {
     val usages = MultiMap<KtElement, KtElement>()
-    val searchComplete = targetParent.project.runSynchronouslyWithProgress("Searching usages of '${targetParent.name}' parameter", true) {
+    val searchComplete = targetParent.project.runSynchronouslyWithProgress(
+        KotlinBundle.message("searching.usages.of.0.parameter", targetParent.name.toString()),
+        true
+    ) {
         runReadAction {
             targetParent.getValueParameters()
                 .filter { !it.hasValOrVar() }
@@ -502,7 +514,12 @@ open class KotlinIntroduceLambdaParameterHandler(
         ) {
             val lambdaExtractionDescriptor = helper.configureExtractLambda(descriptorWithConflicts.descriptor)
             if (!ExtractionTarget.FAKE_LAMBDALIKE_FUNCTION.isAvailable(lambdaExtractionDescriptor)) {
-                showErrorHint(project, editor, "Can't introduce lambda parameter for this expression", INTRODUCE_LAMBDA_PARAMETER)
+                showErrorHint(
+                    project,
+                    editor,
+                    KotlinBundle.message("error.text.can.t.introduce.lambda.parameter.for.this.expression"),
+                    INTRODUCE_LAMBDA_PARAMETER
+                )
                 return
             }
 
@@ -533,7 +550,5 @@ open class KotlinIntroduceLambdaParameterHandler(
     }
 }
 
-const val INTRODUCE_PARAMETER_REFACTORING_ID: String = "kotlin.refactoring.introduceParameter"
-
-const val INTRODUCE_PARAMETER: String = "Introduce Parameter"
-const val INTRODUCE_LAMBDA_PARAMETER: String = "Introduce Lambda Parameter"
+val INTRODUCE_PARAMETER: String = KotlinBundle.message("name.introduce.parameter1")
+val INTRODUCE_LAMBDA_PARAMETER: String = KotlinBundle.message("name.introduce.lambda.parameter")

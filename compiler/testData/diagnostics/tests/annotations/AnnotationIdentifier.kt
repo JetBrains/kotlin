@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: a.kt
 
 annotation class annotation

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 interface IBase {
     override fun toString(): String
 }

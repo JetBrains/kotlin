@@ -266,4 +266,11 @@ public class Intrinsics {
         throwable.setStackTrace(newStackTrace);
         return throwable;
     }
+
+    // Stub class which is used as an owner of callable references for built-ins declared in package "kotlin".
+    @SinceKotlin(version = "1.4")
+    public static class Kotlin {
+        private Kotlin() {
+        }
+    }
 }

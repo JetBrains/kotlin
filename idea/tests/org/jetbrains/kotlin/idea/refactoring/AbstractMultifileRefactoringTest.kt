@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.refactoring
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.intellij.codeInsight.TargetElementUtil
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
@@ -23,29 +22,16 @@ import com.intellij.refactoring.BaseRefactoringProcessor
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.UsefulTestCase
-import org.jetbrains.kotlin.idea.core.script.isScriptChangesNotifierDisabled
 import org.jetbrains.kotlin.idea.jsonUtils.getNullableString
 import org.jetbrains.kotlin.idea.refactoring.rename.loadTestConfiguration
-import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
-import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
-import org.jetbrains.kotlin.idea.test.extractMultipleMarkerOffsets
+import org.jetbrains.kotlin.idea.test.*
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.util.prefixIfNot
 import java.io.File
 
 abstract class AbstractMultifileRefactoringTest : KotlinLightCodeInsightFixtureTestCase() {
     interface RefactoringAction {
         fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementsAtCaret: List<PsiElement>, config: JsonObject)
-    }
-
-    override fun setUp() {
-        super.setUp()
-        ApplicationManager.getApplication().isScriptChangesNotifierDisabled = true
-    }
-
-    override fun tearDown() {
-        ApplicationManager.getApplication().isScriptChangesNotifierDisabled = false
-        super.tearDown()
     }
 
     override fun getProjectDescriptor(): LightProjectDescriptor {
@@ -67,7 +53,10 @@ abstract class AbstractMultifileRefactoringTest : KotlinLightCodeInsightFixtureT
         val config = JsonParser().parse(FileUtil.loadFile(testFile, true)) as JsonObject
 
         doTestCommittingDocuments(testFile) { rootDir ->
-            runRefactoring(path, config, rootDir, project)
+            val opts = config.getNullableString("customCompilerOpts")?.prefixIfNot("// ") ?: ""
+            withCustomCompilerOptions(opts, project, module) {
+                runRefactoring(path, config, rootDir, project)
+            }
         }
     }
 

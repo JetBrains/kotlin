@@ -11,6 +11,7 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.inspections.MayBeConstantInspection.Status.*
 import org.jetbrains.kotlin.idea.quickfix.AddConstModifierFix
@@ -47,7 +48,10 @@ class MayBeConstantInspection : AbstractKotlinInspection() {
                 MIGHT_BE_CONST, JVM_FIELD_MIGHT_BE_CONST -> {
                     holder.registerProblem(
                         property.nameIdentifier ?: property,
-                        if (status == JVM_FIELD_MIGHT_BE_CONST) "'const' might be used instead of '@JvmField'" else "Might be 'const'",
+                        if (status == JVM_FIELD_MIGHT_BE_CONST)
+                            KotlinBundle.message("const.might.be.used.instead.of.jvmfield")
+                        else
+                            KotlinBundle.message("might.be.const"),
                         ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                         IntentionWrapper(AddConstModifierFix(property), property.containingFile)
                     )

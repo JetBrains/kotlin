@@ -9,6 +9,7 @@ import com.intellij.codeInspection.IntentionWrapper
 import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.quickfix.RemoveUnusedFunctionParameterFix
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -26,7 +27,7 @@ class UnusedMainParameterInspection : AbstractKotlinInspection() {
             if (context[UNUSED_MAIN_PARAMETER, parameter] == true) {
                 holder.registerProblem(
                     parameter,
-                    "Since Kotlin 1.3 main parameter is not necessary",
+                    KotlinBundle.message("since.kotlin.1.3.main.parameter.is.not.necessary"),
                     ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                     IntentionWrapper(RemoveUnusedFunctionParameterFix(parameter), parameter.containingFile)
                 )

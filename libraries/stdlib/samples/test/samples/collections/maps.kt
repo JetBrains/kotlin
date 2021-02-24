@@ -44,6 +44,13 @@ class Maps {
         }
 
         @Sample
+        fun sortedMapWithComparatorFromPairs() {
+            val map = sortedMapOf(compareBy<String> { it.length }.thenBy { it }, Pair("abc", 1), Pair("c", 3), Pair("bd", 4), Pair("bc", 2))
+            assertPrints(map.keys, "[c, bc, bd, abc]")
+            assertPrints(map.values, "[3, 2, 4, 1]")
+        }
+
+        @Sample
         fun emptyReadOnlyMap() {
             val map = emptyMap<String, Int>()
             assertTrue(map.isEmpty())
@@ -169,6 +176,36 @@ class Maps {
 
             // map.containsValue("string") // cannot call extension when the argument type and the map value type are unrelated at all
         }
+
+        @Sample
+        fun containsKey() {
+            val map: Map<String, Int> = mapOf("x" to 1)
+
+            assertTrue(map.contains("x"))
+            assertTrue("x" in map)
+
+            assertFalse(map.contains("y"))
+            assertFalse("y" in map)
+        }
+
+        @Sample
+        fun mapIsNotEmpty() {
+            fun totalValue(statisticsMap: Map<String, Int>): String =
+                when {
+                    statisticsMap.isNotEmpty() -> {
+                        val total = statisticsMap.values.sum()
+                        "Total: [$total]"
+                    }
+                    else -> "<No values>"
+                }
+
+            val emptyStats: Map<String, Int> = mapOf()
+            assertPrints(totalValue(emptyStats), "<No values>")
+
+            val stats: Map<String, Int> = mapOf("Store #1" to 1247, "Store #2" to 540)
+            assertPrints(totalValue(stats), "Total: [1787]")
+        }
+
     }
 
     class Filtering {
@@ -289,6 +326,14 @@ class Maps {
         }
 
         @Sample
+        fun mapNotNull() {
+            val map = mapOf("Alice" to 20, "Tom" to 13, "Bob" to 18)
+            val adults = map.mapNotNull { (name, age) -> name.takeIf { age >= 18 } }
+
+            assertPrints(adults, "[Alice, Bob]")
+        }
+
+        @Sample
         fun mapToSortedMap() {
             val map = mapOf(Pair("c", 3), Pair("b", 2), Pair("d", 1))
             val sorted = map.toSortedMap()
@@ -323,7 +368,11 @@ class Maps {
             assertPrints(peopleToAge.map { it.value }, "[20, 21]")
         }
 
+        @Sample
+        fun flatMap() {
+            val map = mapOf("122" to 2, "3455" to 3)
+            assertPrints(map.flatMap { (key, value) -> key.take(value).toList() }, "[1, 2, 3, 4, 5]")
+        }
     }
-
 }
 

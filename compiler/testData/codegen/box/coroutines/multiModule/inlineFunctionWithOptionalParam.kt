@@ -1,4 +1,5 @@
-// IGNORE_BACKEND_FIR: JVM_IR
+// WITH_COROUTINES
+// WITH_RUNTIME
 // MODULE: lib
 // FILE: lib.kt
 inline fun foo(x: String = "OK"): String {
@@ -6,13 +7,12 @@ inline fun foo(x: String = "OK"): String {
 }
 
 // MODULE: main(lib, support)
-// FILE: main.kt
 // WITH_RUNTIME
 // WITH_COROUTINES
-// COMMON_COROUTINES_TEST
+// FILE: main.kt
 import helpers.*
-import COROUTINES_PACKAGE.*
-import COROUTINES_PACKAGE.intrinsics.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 var result = ""
 

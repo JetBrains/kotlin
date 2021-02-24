@@ -17,7 +17,7 @@ package org.jetbrains.kotlin.types.refinement
  * either finding some other API or removing @TypeRefinement (and thus "publishing"
  * API for broader use)
  */
-@Experimental(level = Experimental.Level.ERROR)
+@RequiresOptIn(level = RequiresOptIn.Level.ERROR)
 @Retention(AnnotationRetention.BINARY)
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
 annotation class TypeRefinement

@@ -8,13 +8,14 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.util.createIntentionForFirstParentOfType
 import org.jetbrains.kotlin.psi.KtAnnotatedExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
 
 class AddNewLineAfterAnnotationsFix(element: KtAnnotatedExpression) : KotlinQuickFixAction<KtAnnotatedExpression>(element) {
-    override fun getText() = "Add new line after annotations"
+    override fun getText() = KotlinBundle.message("fix.add.new.line.after.annotations")
     override fun getFamilyName() = text
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {

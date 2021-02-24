@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.fir.declarations.impl
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirField
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
@@ -14,9 +16,9 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
@@ -27,26 +29,29 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-class FirFieldImpl(
-    override val source: FirSourceElement?,
+internal class FirFieldImpl(
+    override var source: FirSourceElement?,
     override val session: FirSession,
+    override var resolvePhase: FirResolvePhase,
+    override val origin: FirDeclarationOrigin,
+    override val attributes: FirDeclarationAttributes,
     override var returnTypeRef: FirTypeRef,
     override val name: Name,
     override val symbol: FirVariableSymbol<FirField>,
+    override var initializer: FirExpression?,
     override val isVar: Boolean,
-    override var status: FirDeclarationStatus
-) : FirField(), FirAbstractAnnotatedElement {
-    override var resolvePhase: FirResolvePhase = FirResolvePhase.DECLARATIONS
+    override val annotations: MutableList<FirAnnotationCall>,
+    override val typeParameters: MutableList<FirTypeParameter>,
+    override var status: FirDeclarationStatus,
+    override val containerSource: DeserializedContainerSource?,
+    override val dispatchReceiverType: ConeKotlinType?,
+) : FirField() {
     override val receiverTypeRef: FirTypeRef? get() = null
-    override val initializer: FirExpression? get() = null
     override val delegate: FirExpression? get() = null
     override val delegateFieldSymbol: FirDelegateFieldSymbol<FirField>? get() = null
     override val isVal: Boolean get() = !isVar
     override val getter: FirPropertyAccessor? get() = null
     override val setter: FirPropertyAccessor? get() = null
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
-    override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
-    override var containerSource: DeserializedContainerSource? = null
 
     init {
         symbol.bind(this)
@@ -55,6 +60,7 @@ class FirFieldImpl(
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         returnTypeRef.accept(visitor, data)
+        initializer?.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
         typeParameters.forEach { it.accept(visitor, data) }
         status.accept(visitor, data)
@@ -62,6 +68,8 @@ class FirFieldImpl(
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirFieldImpl {
         transformReturnTypeRef(transformer, data)
+        transformInitializer(transformer, data)
+        transformTypeParameters(transformer, data)
         transformStatus(transformer, data)
         transformOtherChildren(transformer, data)
         return this
@@ -77,6 +85,11 @@ class FirFieldImpl(
     }
 
     override fun <D> transformInitializer(transformer: FirTransformer<D>, data: D): FirFieldImpl {
+        initializer = initializer?.transformSingle(transformer, data)
+        return this
+    }
+
+    override fun <D> transformDelegate(transformer: FirTransformer<D>, data: D): FirFieldImpl {
         return this
     }
 
@@ -88,15 +101,28 @@ class FirFieldImpl(
         return this
     }
 
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirFieldImpl {
+        annotations.transformInplace(transformer, data)
+        return this
+    }
+
+    override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirFieldImpl {
+        typeParameters.transformInplace(transformer, data)
+        return this
+    }
+
     override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirFieldImpl {
         status = status.transformSingle(transformer, data)
         return this
     }
 
     override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirFieldImpl {
-        annotations.transformInplace(transformer, data)
-        typeParameters.transformInplace(transformer, data)
+        transformAnnotations(transformer, data)
         return this
+    }
+
+    override fun replaceSource(newSource: FirSourceElement?) {
+        source = newSource
     }
 
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
@@ -108,4 +134,8 @@ class FirFieldImpl(
     }
 
     override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?) {}
+
+    override fun replaceInitializer(newInitializer: FirExpression?) {
+        initializer = newInitializer
+    }
 }

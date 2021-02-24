@@ -23,24 +23,11 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 class IrThrowImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType
-) :
-    IrExpressionBase(startOffset, endOffset, type),
-    IrThrow {
-
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        type: IrType,
-        value: IrExpression
-    ) : this(startOffset, endOffset, type) {
-        this.value = value
-    }
-
-    override lateinit var value: IrExpression
-
+    override val startOffset: Int,
+    override val endOffset: Int,
+    override var type: IrType,
+    override var value: IrExpression,
+) : IrThrow() {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitThrow(this, data)
 

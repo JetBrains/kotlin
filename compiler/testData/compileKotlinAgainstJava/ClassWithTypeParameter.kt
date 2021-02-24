@@ -1,3 +1,5 @@
+// IGNORE_BACKEND: JVM, JVM_IR
+
 package test
 
 interface KotlinInterface

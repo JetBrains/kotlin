@@ -1,0 +1,9 @@
+class Test : Base {
+  constructor() /* primary */ {
+    super/*Base*/()
+    /* <init>() */
+
+  }
+
+}
+

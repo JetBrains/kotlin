@@ -1,0 +1,21 @@
+interface Foo<in T : Any?> {
+  abstract val x: Int
+    abstract get
+
+  abstract fun foo(x: T) 
+
+}
+
+fun Foo<*>.testReceiver(): Int {
+  return <this>.<get-x>()
+}
+
+fun Foo<*>.testSmartCastOnExtensionReceiver() {
+  <this> as Foo<String> /*~> Unit */
+  <this> /*as Foo<String> */.foo(x = "string")
+}
+
+fun testValueParameter(vp: Foo<*>): Int {
+  return vp.<get-x>()
+}
+

@@ -21,7 +21,7 @@ fun <T> runOnce(block: () -> T): T {
 
 fun valueReassignment() {
     val x: Int
-    x.inc()
+    <!UNINITIALIZED_VARIABLE!>x<!>.inc()
     runTwice { x = 42 }
     x.inc()
 }
@@ -29,12 +29,12 @@ fun valueReassignment() {
 fun shadowing() {
     val x: Int
     runTwice { val x: Int; x = 42; x.inc() }
-    x.inc()
+    <!UNINITIALIZED_VARIABLE!>x<!>.inc()
 }
 
 fun branchingFlow(a: Any?) {
     val x: Int
-    x.inc()
+    <!UNINITIALIZED_VARIABLE!>x<!>.inc()
     if (a is String) {
         runTwice { x = 42 }
     }
@@ -50,18 +50,18 @@ fun branchingFlowWithMissingBranches(a: Any?) {
         runTwice { x = 42 }
     }
 
-    x.inc()
+    <!UNINITIALIZED_VARIABLE!>x<!>.inc()
 }
 
 fun repeatingFlow(n: Int) {
     val x: Int
-    x.inc()
+    <!UNINITIALIZED_VARIABLE!>x<!>.inc()
 
     for (i in 1..n) {
         runTwice { x = 42 }
     }
 
-    x.inc()
+    <!UNINITIALIZED_VARIABLE!>x<!>.inc()
 }
 
 fun repeatingFlow2(n: Int) {
@@ -71,5 +71,5 @@ fun repeatingFlow2(n: Int) {
         runTwice { x = 42 }
     }
 
-    x.inc()
+    <!UNINITIALIZED_VARIABLE!>x<!>.inc()
 }

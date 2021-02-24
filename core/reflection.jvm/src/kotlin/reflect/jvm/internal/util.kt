@@ -20,6 +20,14 @@ import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies
+import org.jetbrains.kotlin.descriptors.runtime.components.ReflectAnnotationSource
+import org.jetbrains.kotlin.descriptors.runtime.components.ReflectKotlinClass
+import org.jetbrains.kotlin.descriptors.runtime.components.RuntimeSourceElementFactory
+import org.jetbrains.kotlin.descriptors.runtime.components.tryLoadClass
+import org.jetbrains.kotlin.descriptors.runtime.structure.ReflectJavaAnnotation
+import org.jetbrains.kotlin.descriptors.runtime.structure.ReflectJavaClass
+import org.jetbrains.kotlin.descriptors.runtime.structure.safeClassLoader
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
@@ -32,20 +40,16 @@ import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
+import org.jetbrains.kotlin.resolve.isInlineClassType
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext
 import org.jetbrains.kotlin.serialization.deserialization.MemberDeserializer
+import java.lang.reflect.Type
 import kotlin.jvm.internal.FunctionReference
 import kotlin.jvm.internal.PropertyReference
+import kotlin.reflect.KType
 import kotlin.reflect.KVisibility
 import kotlin.reflect.full.IllegalCallableAccessException
 import kotlin.reflect.jvm.internal.calls.createAnnotationInstance
-import org.jetbrains.kotlin.descriptors.runtime.components.ReflectAnnotationSource
-import org.jetbrains.kotlin.descriptors.runtime.components.ReflectKotlinClass
-import org.jetbrains.kotlin.descriptors.runtime.components.RuntimeSourceElementFactory
-import org.jetbrains.kotlin.descriptors.runtime.components.tryLoadClass
-import org.jetbrains.kotlin.descriptors.runtime.structure.ReflectJavaAnnotation
-import org.jetbrains.kotlin.descriptors.runtime.structure.ReflectJavaClass
-import org.jetbrains.kotlin.descriptors.runtime.structure.safeClassLoader
 
 internal val JVM_STATIC = FqName("kotlin.jvm.JvmStatic")
 
@@ -97,12 +101,15 @@ private fun loadClass(classLoader: ClassLoader, packageName: String, className: 
     return classLoader.tryLoadClass(fqName)
 }
 
-internal fun Visibility.toKVisibility(): KVisibility? =
+internal fun Class<*>.createArrayType(): Class<*> =
+    java.lang.reflect.Array.newInstance(this, 0)::class.java
+
+internal fun DescriptorVisibility.toKVisibility(): KVisibility? =
     when (this) {
-        Visibilities.PUBLIC -> KVisibility.PUBLIC
-        Visibilities.PROTECTED -> KVisibility.PROTECTED
-        Visibilities.INTERNAL -> KVisibility.INTERNAL
-        Visibilities.PRIVATE, Visibilities.PRIVATE_TO_THIS -> KVisibility.PRIVATE
+        DescriptorVisibilities.PUBLIC -> KVisibility.PUBLIC
+        DescriptorVisibilities.PROTECTED -> KVisibility.PROTECTED
+        DescriptorVisibilities.INTERNAL -> KVisibility.INTERNAL
+        DescriptorVisibilities.PRIVATE, DescriptorVisibilities.PRIVATE_TO_THIS -> KVisibility.PRIVATE
         else -> null
     }
 
@@ -194,4 +201,49 @@ internal fun <M : MessageLite, D : CallableDescriptor> deserializeToDescriptor(
         containerSource = null, parentTypeDeserializer = null, typeParameters = typeParameters
     )
     return MemberDeserializer(context).createDescriptor(proto)
+}
+
+internal val KType.isInlineClassType: Boolean
+    get() = (this as? KTypeImpl)?.type?.isInlineClassType() == true
+
+internal fun defaultPrimitiveValue(type: Type): Any? =
+    if (type is Class<*> && type.isPrimitive) {
+        when (type) {
+            Boolean::class.java -> false
+            Char::class.java -> 0.toChar()
+            Byte::class.java -> 0.toByte()
+            Short::class.java -> 0.toShort()
+            Int::class.java -> 0
+            Float::class.java -> 0f
+            Long::class.java -> 0L
+            Double::class.java -> 0.0
+            Void.TYPE -> throw IllegalStateException("Parameter with void type is illegal")
+            else -> throw UnsupportedOperationException("Unknown primitive: $type")
+        }
+    } else null
+
+internal open class CreateKCallableVisitor(private val container: KDeclarationContainerImpl) :
+    DeclarationDescriptorVisitorEmptyBodies<KCallableImpl<*>, Unit>() {
+    override fun visitPropertyDescriptor(descriptor: PropertyDescriptor, data: Unit): KCallableImpl<*> {
+        val receiverCount = (descriptor.dispatchReceiverParameter?.let { 1 } ?: 0) +
+                (descriptor.extensionReceiverParameter?.let { 1 } ?: 0)
+
+        when {
+            descriptor.isVar -> when (receiverCount) {
+                0 -> return KMutableProperty0Impl<Any?>(container, descriptor)
+                1 -> return KMutableProperty1Impl<Any?, Any?>(container, descriptor)
+                2 -> return KMutableProperty2Impl<Any?, Any?, Any?>(container, descriptor)
+            }
+            else -> when (receiverCount) {
+                0 -> return KProperty0Impl<Any?>(container, descriptor)
+                1 -> return KProperty1Impl<Any?, Any?>(container, descriptor)
+                2 -> return KProperty2Impl<Any?, Any?, Any?>(container, descriptor)
+            }
+        }
+
+        throw KotlinReflectionInternalError("Unsupported property: $descriptor")
+    }
+
+    override fun visitFunctionDescriptor(descriptor: FunctionDescriptor, data: Unit): KCallableImpl<*> =
+        KFunctionImpl(container, descriptor)
 }

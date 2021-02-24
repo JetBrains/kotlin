@@ -11,5 +11,5 @@ fun main() {
     val c : ListOfLists<*> = b
     val d : ArrayList<ArrayList<*>> = c.x
 
-    c.x checkType { <!UNRESOLVED_REFERENCE!>_<!><ArrayList<out ArrayList<*>>>() }
+    c.x checkType { <!INAPPLICABLE_CANDIDATE!>_<!><ArrayList<out ArrayList<*>>>() }
 }

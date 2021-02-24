@@ -17,19 +17,18 @@
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
+import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrVariable
-import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.SmartList
 
 class IrVariableImpl(
     override val startOffset: Int,
@@ -37,12 +36,11 @@ class IrVariableImpl(
     override var origin: IrDeclarationOrigin,
     override val symbol: IrVariableSymbol,
     override val name: Name,
-    override val type: IrType,
+    override var type: IrType,
     override val isVar: Boolean,
     override val isConst: Boolean,
     override val isLateinit: Boolean
-) : IrVariable {
-
+) : IrVariable() {
     private var _parent: IrDeclarationParent? = null
     override var parent: IrDeclarationParent
         get() = _parent
@@ -52,48 +50,25 @@ class IrVariableImpl(
         }
 
     override var annotations: List<IrConstructorCall> = emptyList()
-    override val metadata: MetadataSource? get() = null
-
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        symbol: IrVariableSymbol,
-        type: IrType
-    ) : this(
-        startOffset, endOffset, origin, symbol,
-        symbol.descriptor.name, type,
-        isVar = symbol.descriptor.isVar,
-        isConst = symbol.descriptor.isConst,
-        isLateinit = symbol.descriptor.isLateInit
-    )
-
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        descriptor: VariableDescriptor,
-        type: IrType
-    ) : this(startOffset, endOffset, origin, IrVariableSymbolImpl(descriptor), type)
-
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        descriptor: VariableDescriptor,
-        type: IrType,
-        initializer: IrExpression?
-    ) : this(startOffset, endOffset, origin, descriptor, type) {
-        this.initializer = initializer
-    }
 
     init {
         symbol.bind(this)
     }
 
-    override val descriptor: VariableDescriptor get() = symbol.descriptor
+    @ObsoleteDescriptorBasedAPI
+    override val descriptor: VariableDescriptor
+        get() = symbol.descriptor
 
     override var initializer: IrExpression? = null
+
+    // Variables are assignable by default. This means that they can be used in IrSetValue.
+    // Variables are assigned in the IR even though they are not 'var' in the input. Hence
+    // the separate assignability flag.
+    override val isAssignable: Boolean
+        get() = true
+
+    override val factory: IrFactory
+        get() = error("Create IrVariableImpl directly")
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitVariable(this, data)

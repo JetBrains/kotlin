@@ -20,18 +20,18 @@ import org.jetbrains.kotlin.incremental.dumpCollection
 import org.jetbrains.kotlin.name.FqName
 import java.io.File
 
-internal open class ClassOneToManyMap(
-        storageFile: File
-) : BasicStringMap<Collection<String>>(storageFile, StringCollectionExternalizer) {
+internal open class ClassOneToManyMap(storageFile: File) : BasicStringMap<Collection<String>>(storageFile, StringCollectionExternalizer) {
     override fun dumpValue(value: Collection<String>): String = value.dumpCollection()
 
+    @Synchronized
     fun add(key: FqName, value: FqName) {
         storage.append(key.asString(), listOf(value.asString()))
     }
 
     operator fun get(key: FqName): Collection<FqName> =
-            storage[key.asString()]?.map(::FqName) ?: setOf()
+        storage[key.asString()]?.map(::FqName) ?: setOf()
 
+    @Synchronized
     operator fun set(key: FqName, values: Collection<FqName>) {
         if (values.isEmpty()) {
             remove(key)
@@ -41,10 +41,14 @@ internal open class ClassOneToManyMap(
         storage[key.asString()] = values.map(FqName::asString)
     }
 
+    @Synchronized
     fun remove(key: FqName) {
         storage.remove(key.asString())
     }
 
+    // Access to caches could be done from multiple threads (e.g. JPS worker and RMI). The underlying collection is already synchronized,
+    // thus we need synchronization of this method and all modification methods.
+    @Synchronized
     fun removeValues(key: FqName, removed: Set<FqName>) {
         val notRemoved = this[key].filter { it !in removed }
         this[key] = notRemoved

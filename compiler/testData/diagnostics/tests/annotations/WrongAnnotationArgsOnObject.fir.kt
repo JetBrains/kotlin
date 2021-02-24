@@ -1,6 +1,6 @@
 package test
 
-@BadAnnotation(1)
+<!INAPPLICABLE_CANDIDATE!>@BadAnnotation(1)<!>
 object SomeObject
 
 val some = SomeObject

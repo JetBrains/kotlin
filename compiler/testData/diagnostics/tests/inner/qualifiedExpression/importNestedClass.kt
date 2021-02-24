@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: a.kt
 class A {
     class B {

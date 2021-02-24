@@ -1,0 +1,16 @@
+{
+  "2": {
+    "pos": {
+      "2": [
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 0,
+          "description": "infix calls for properties",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/pos/2.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        }
+      ]
+    }
+  }
+}

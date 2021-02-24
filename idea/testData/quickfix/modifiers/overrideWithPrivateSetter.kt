@@ -1,4 +1,4 @@
-// "Make 'bar' final" "true"
+// "Make 'bar' 'final'" "true"
 interface Foo {
     val bar: String
 }

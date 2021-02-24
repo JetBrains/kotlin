@@ -11,6 +11,9 @@ import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.idea.FrontendInternals
+import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
@@ -92,6 +95,10 @@ fun KtFile.resolveImportReference(fqName: FqName): Collection<DeclarationDescrip
     return facade.resolveImportReference(facade.moduleDescriptor, fqName)
 }
 
+fun KtAnnotationEntry.resolveToDescriptorIfAny(
+    bodyResolveMode: BodyResolveMode = BodyResolveMode.PARTIAL_NO_ADDITIONAL
+): AnnotationDescriptor? =
+    resolveToDescriptorIfAny(getResolutionFacade(), bodyResolveMode)
 
 // This and next functions are used for 'normal' element analysis
 // This analysis *should* provide all information extractable from this KtElement except:
@@ -127,6 +134,12 @@ fun KtElement.analyzeAndGetResult(): AnalysisResult {
     return analyzeAndGetResult(getResolutionFacade())
 }
 
+/**
+ * **Please, use overload with providing resolutionFacade for stable results of subsequent calls**
+ */
+fun KtElement.analyzeWithContentAndGetResult(): AnalysisResult =
+    analyzeWithContentAndGetResult(getResolutionFacade())
+
 fun KtElement.findModuleDescriptor(): ModuleDescriptor = getResolutionFacade().moduleDescriptor
 
 // This function is used on declarations to make analysis not only declaration itself but also it content:
@@ -155,8 +168,11 @@ inline fun <reified T> T.analyzeWithContent(): BindingContext where T : KtDeclar
  * @ref [org.jetbrains.kotlin.idea.caches.resolve.PerFileAnalysisCache]
  */
 fun KtFile.analyzeWithAllCompilerChecks(vararg extraFiles: KtFile): AnalysisResult =
+    this.analyzeWithAllCompilerChecks(null, *extraFiles)
+
+fun KtFile.analyzeWithAllCompilerChecks(callback: ((Diagnostic) -> Unit)?, vararg extraFiles: KtFile): AnalysisResult =
     KotlinCacheService.getInstance(project).getResolutionFacade(listOf(this) + extraFiles.toList())
-        .analyzeWithAllCompilerChecks(listOf(this))
+        .analyzeWithAllCompilerChecks(listOf(this), callback)
 
 /**
  * This function is expected to produce the same result as compiler for the given element and its children (including diagnostics,
@@ -177,6 +193,7 @@ fun KtFile.analyzeWithAllCompilerChecks(vararg extraFiles: KtFile): AnalysisResu
 fun KtElement.analyzeWithAllCompilerChecks(): AnalysisResult = getResolutionFacade().analyzeWithAllCompilerChecks(listOf(this))
 
 // this method don't check visibility and collect all descriptors with given fqName
+@OptIn(FrontendInternals::class)
 fun ResolutionFacade.resolveImportReference(
     moduleDescriptor: ModuleDescriptor,
     fqName: FqName

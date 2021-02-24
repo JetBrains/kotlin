@@ -119,8 +119,8 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
 
     @NotNull
     @Override
-    public Visibility getVisibility() {
-        return Visibilities.PUBLIC;
+    public DescriptorVisibility getVisibility() {
+        return DescriptorVisibilities.PUBLIC;
     }
 
     @Override
@@ -135,6 +135,11 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
 
     @Override
     public boolean isInline() {
+        return false;
+    }
+
+    @Override
+    public boolean isValue() {
         return false;
     }
 

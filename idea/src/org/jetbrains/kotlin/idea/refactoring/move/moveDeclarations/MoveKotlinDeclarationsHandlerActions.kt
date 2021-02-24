@@ -30,10 +30,8 @@ internal interface MoveKotlinDeclarationsHandlerActions {
         targetPackageName: String,
         targetDirectory: PsiDirectory?,
         targetFile: KtFile?,
+        freezeTargets: Boolean,
         moveToPackage: Boolean,
-        searchInComments: Boolean,
-        searchForTextOccurrences: Boolean,
-        deleteEmptySourceFiles: Boolean,
         moveCallback: MoveCallback?
     )
 

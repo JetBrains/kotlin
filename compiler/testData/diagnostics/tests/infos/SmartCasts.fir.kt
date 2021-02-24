@@ -142,7 +142,7 @@ fun getStringLength(obj : Any) : Char? {
 }
 
 fun toInt(i: Int?): Int = if (i != null) i else 0
-fun illegalWhenBody(a: Any): Int = when(a) {
+fun illegalWhenBody(a: Any): Int = <!NO_ELSE_IN_WHEN!>when<!>(a) {
     is Int -> a
     is String -> a
 }
@@ -196,7 +196,7 @@ fun mergeSmartCasts(a: Any?) {
     a.<!INAPPLICABLE_CANDIDATE!>compareTo<!>("")
   }
   when (a) {
-    is String, is Any -> a.compareTo("")
+    is String, is Any -> a.<!UNRESOLVED_REFERENCE!>compareTo<!>("")
   }
   if (a is String && a is Any) {
     val i: Int = a.compareTo("")

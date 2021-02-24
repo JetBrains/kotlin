@@ -1,0 +1,34 @@
+FILE: nonConstValInAnnotationArgument.kt
+    public final annotation class Ann : R|kotlin/Annotation| {
+        public constructor(a: R|kotlin/Array<kotlin/String>|): R|Ann| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val a: R|kotlin/Array<kotlin/String>| = R|<local>/a|
+            public get(): R|kotlin/Array<kotlin/String>|
+
+    }
+    public final val foo: R|kotlin/String| = String()
+        public get(): R|kotlin/String|
+    public final var bar: R|kotlin/Int| = Int(1)
+        public get(): R|kotlin/Int|
+        public set(value: R|kotlin/Int|): R|kotlin/Unit|
+    public final const val cnst: R|kotlin/Int| = Int(2)
+        public get(): R|kotlin/Int|
+    @R|Ann|(<implicitArrayOf>(R|/foo|, R|/foo|.R|kotlin/String.plus|(R|/cnst|.R|kotlin/Any.toString|()))) public final fun test(): R|kotlin/Unit| {
+    }
+    public final const val A: R|kotlin/String| = String(foo)
+        public get(): R|kotlin/String|
+    public final const val B: R|kotlin/Int| = Int(100)
+        public get(): R|kotlin/Int|
+    public final annotation class S : R|kotlin/Annotation| {
+        public constructor(s: R|kotlin/String|): R|S| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val s: R|kotlin/String| = R|<local>/s|
+            public get(): R|kotlin/String|
+
+    }
+    @R|S|(R|/A|.R|kotlin/String.plus|(R|/B|)) public final fun foo(): R|kotlin/Unit| {
+    }

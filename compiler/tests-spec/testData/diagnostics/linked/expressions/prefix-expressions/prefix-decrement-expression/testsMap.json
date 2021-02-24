@@ -6,7 +6,9 @@
           "specVersion": "0.1-213",
           "casesNumber": 2,
           "description": "check unsafe prefix decrement expression call for an assignable expression",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-decrement-expression/p-4/neg/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ]
     }
@@ -18,7 +20,9 @@
           "specVersion": "0.1-213",
           "casesNumber": 2,
           "description": "check as the result of dec is assigned to A, the return type of inc must be a subtype of A.",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/prefix-expressions/prefix-decrement-expression/p-5/neg/2.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ]
     }

@@ -3,8 +3,8 @@
 /*
  * KOTLIN CODEGEN BOX SPEC TEST (POSITIVE)
  *
- * SPEC VERSION: 0.1-213
- * PLACE: expressions, equality-expressions, reference-equality-expressions -> paragraph 1 -> sentence 3
+ * SPEC VERSION: 0.1-435
+ * MAIN LINK: expressions, equality-expressions, reference-equality-expressions -> paragraph 1 -> sentence 3
  * NUMBER: 1
  * DESCRIPTION: check equallity by refference via constructor
  */

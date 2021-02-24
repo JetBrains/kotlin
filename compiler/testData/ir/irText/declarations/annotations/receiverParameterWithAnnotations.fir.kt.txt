@@ -1,0 +1,31 @@
+annotation class Ann : Annotation {
+  constructor() /* primary */
+
+}
+
+class A {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun @Ann String.f(): String {
+    return ""
+  }
+
+  val @Ann String?.p: String
+    get(): String {
+      return ""
+    }
+
+}
+
+fun @Ann String?.topLevelF(): String {
+  return ""
+}
+
+val @Ann String.topLevelP: String
+  get(): String {
+    return ""
+  }

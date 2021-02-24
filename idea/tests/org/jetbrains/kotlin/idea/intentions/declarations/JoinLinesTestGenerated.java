@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.intentions.declarations;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -25,7 +26,7 @@ public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
     }
 
     public void testAllFilesPresentInJoinLines() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/joinLines"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/joinLines"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("idea/testData/joinLines/addSemicolon")
@@ -37,7 +38,7 @@ public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
         }
 
         public void testAllFilesPresentInAddSemicolon() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/joinLines/addSemicolon"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/joinLines/addSemicolon"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("ClassDeclarations.kt")
@@ -135,7 +136,7 @@ public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
         }
 
         public void testAllFilesPresentInDeclarationAndAssignment() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/joinLines/declarationAndAssignment"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/joinLines/declarationAndAssignment"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("blankLineBetween.kt")
@@ -233,7 +234,7 @@ public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
         }
 
         public void testAllFilesPresentInInitializerAndIfToElvis() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/joinLines/initializerAndIfToElvis"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/joinLines/initializerAndIfToElvis"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("simple.kt")
@@ -251,7 +252,7 @@ public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
         }
 
         public void testAllFilesPresentInNestedIfs() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/joinLines/nestedIfs"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/joinLines/nestedIfs"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("BlockBody.kt")
@@ -294,7 +295,7 @@ public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
         }
 
         public void testAllFilesPresentInRemoveBraces() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/joinLines/removeBraces"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/joinLines/removeBraces"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("CommentAfterStatement.kt")
@@ -402,17 +403,27 @@ public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
         }
 
         public void testAllFilesPresentInRemoveTrailingComma() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/joinLines/removeTrailingComma"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/joinLines/removeTrailingComma"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
-        @TestMetadata("destructionDeclaration.kt")
-        public void testDestructionDeclaration() throws Exception {
-            runTest("idea/testData/joinLines/removeTrailingComma/destructionDeclaration.kt");
+        @TestMetadata("destructuringDeclarations.kt")
+        public void testDestructuringDeclarations() throws Exception {
+            runTest("idea/testData/joinLines/removeTrailingComma/destructuringDeclarations.kt");
         }
 
-        @TestMetadata("destructionDeclarationInLambda.kt")
-        public void testDestructionDeclarationInLambda() throws Exception {
-            runTest("idea/testData/joinLines/removeTrailingComma/destructionDeclarationInLambda.kt");
+        @TestMetadata("destructuringDeclarationsInLambda.kt")
+        public void testDestructuringDeclarationsInLambda() throws Exception {
+            runTest("idea/testData/joinLines/removeTrailingComma/destructuringDeclarationsInLambda.kt");
+        }
+
+        @TestMetadata("functionArguments.kt")
+        public void testFunctionArguments() throws Exception {
+            runTest("idea/testData/joinLines/removeTrailingComma/functionArguments.kt");
+        }
+
+        @TestMetadata("indices.kt")
+        public void testIndices() throws Exception {
+            runTest("idea/testData/joinLines/removeTrailingComma/indices.kt");
         }
 
         @TestMetadata("inner.kt")
@@ -425,9 +436,19 @@ public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
             runTest("idea/testData/joinLines/removeTrailingComma/lambda.kt");
         }
 
+        @TestMetadata("literal.kt")
+        public void testLiteral() throws Exception {
+            runTest("idea/testData/joinLines/removeTrailingComma/literal.kt");
+        }
+
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             runTest("idea/testData/joinLines/removeTrailingComma/simple.kt");
+        }
+
+        @TestMetadata("typeArguments.kt")
+        public void testTypeArguments() throws Exception {
+            runTest("idea/testData/joinLines/removeTrailingComma/typeArguments.kt");
         }
 
         @TestMetadata("typeParameters.kt")
@@ -455,7 +476,7 @@ public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
         }
 
         public void testAllFilesPresentInStringTemplate() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/joinLines/stringTemplate"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/joinLines/stringTemplate"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
         @TestMetadata("firstLineVariable.kt")

@@ -5,7 +5,12 @@
 
 package org.jetbrains.kotlin.gradle.internal.kapt.incremental
 
-import org.gradle.api.artifacts.transform.ArtifactTransform
+import org.gradle.api.artifacts.transform.InputArtifact
+import org.gradle.api.artifacts.transform.TransformAction
+import org.gradle.api.artifacts.transform.TransformOutputs
+import org.gradle.api.artifacts.transform.TransformParameters
+import org.gradle.api.file.FileSystemLocation
+import org.gradle.api.provider.Provider
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassWriter
 import java.io.*
@@ -15,23 +20,47 @@ import java.util.zip.ZipFile
 const val CLASS_STRUCTURE_ARTIFACT_TYPE = "class-structure"
 private const val MODULE_INFO = "module-info.class"
 
-class StructureArtifactTransform : ArtifactTransform() {
-    override fun transform(input: File): MutableList<File> {
+abstract class StructureTransformAction : TransformAction<TransformParameters.None> {
+    @get:InputArtifact
+    abstract val inputArtifact: Provider<FileSystemLocation>
+
+    override fun transform(outputs: TransformOutputs) {
         try {
-            val data = if (input.isDirectory) {
-                visitDirectory(input)
-            } else {
-                visitJar(input)
-            }
-
-            val dataFile = outputDirectory.resolve("output.bin")
-            data.saveTo(dataFile)
-
-            return mutableListOf(dataFile)
+            transform(inputArtifact.get().asFile, outputs)
         } catch (e: Throwable) {
             throw e
         }
     }
+}
+
+/**
+ * [StructureTransformLegacyAction] is a legacy version of [StructureTransformAction] and should only be used when gradle version is 5.3
+ * or less. The reason of having this legacy artifact transform is that declaring inputArtifact as type Provider<FileSystemLocation> is not
+ * supported until gradle version 5.4. Once our minimal supported gradle version is 5.4 or above, this legacy artifact transform can be
+ * removed.
+ */
+abstract class StructureTransformLegacyAction : TransformAction<TransformParameters.None> {
+    @get:InputArtifact
+    abstract val inputArtifact: File
+
+    override fun transform(outputs: TransformOutputs) {
+        try {
+            transform(inputArtifact, outputs)
+        } catch (e: Throwable) {
+            throw e
+        }
+    }
+}
+
+private fun transform(input: File, outputs: TransformOutputs) {
+    val data = if (input.isDirectory) {
+        visitDirectory(input)
+    } else {
+        visitJar(input)
+    }
+
+    val dataFile = outputs.file("output.bin")
+    data.saveTo(dataFile)
 }
 
 private fun visitDirectory(directory: File): ClasspathEntryData {
@@ -101,36 +130,45 @@ class ClasspathEntryData : Serializable {
 
     @Transient
     var classAbiHash = mutableMapOf<String, ByteArray>()
+
     @Transient
     var classDependencies = mutableMapOf<String, ClassDependencies>()
 
     private fun writeObject(output: ObjectOutputStream) {
-        val names = mutableMapOf<String, Int>()
-        classAbiHash.keys.forEach { names[it] = names.size }
-        classDependencies.values.forEach {
-            it.abiTypes.forEach {
-                if (!names.containsKey(it)) names[it] = names.size
+        // Sort only classDependencies, as all keys in this map are keys of classAbiHash map.
+        val sortedClassDependencies =
+            classDependencies.toSortedMap().mapValues { ClassDependencies(it.value.abiTypes.sorted(), it.value.privateTypes.sorted()) }
+
+        val names = LinkedHashMap<String, Int>()
+        sortedClassDependencies.forEach {
+            if (it.key !in names) {
+                names[it.key] = names.size
             }
-            it.privateTypes.forEach {
-                if (!names.containsKey(it)) names[it] = names.size
+            it.value.abiTypes.forEach { type ->
+                if (type !in names) names[type] = names.size
+            }
+            it.value.privateTypes.forEach { type ->
+                if (type !in names) names[type] = names.size
             }
         }
 
         output.writeInt(names.size)
-        names.forEach { key, value ->
+        names.forEach { (key, value) ->
             output.writeInt(value)
             output.writeUTF(key)
         }
 
         output.writeInt(classAbiHash.size)
-        classAbiHash.forEach {
-            output.writeInt(names[it.key]!!)
-            output.writeInt(it.value.size)
-            output.write(it.value)
+        sortedClassDependencies.forEach { (key, _) ->
+            output.writeInt(names[key]!!)
+            classAbiHash[key]!!.let {
+                output.writeInt(it.size)
+                output.write(it)
+            }
         }
 
-        output.writeInt(classDependencies.size)
-        classDependencies.forEach {
+        output.writeInt(sortedClassDependencies.size)
+        sortedClassDependencies.forEach {
             output.writeInt(names[it.key]!!)
 
             output.writeInt(it.value.abiTypes.size)

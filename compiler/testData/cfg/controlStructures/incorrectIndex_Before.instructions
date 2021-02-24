@@ -114,22 +114,20 @@ L5:
     jf(L7|<v0>)                                                                NEXT:[mark({ s.remove(it) }), mark({ s.add(it) })]
   6 mark({ s.add(it) })
     mark(s.add(it))
-    r(s) -> <v1>
-    r(it) -> <v2>
-    magic[VALUE_CONSUMER](it|<v2>) -> <v3>
+    r(it) -> <v1>
+    r(s) -> <v2>
     mark(add(it))
-    call(add(it), <ERROR FUNCTION>|<v1>) -> <v4>
+    magic[UNRESOLVED_CALL](add(it)|<v1>, !<v3>, <v2>) -> <v4>
   5 jmp(L8)                                                                    NEXT:[merge(if (flag) { s.add(it) } else { s.remove(it) }|<v4>, <v8>) -> <v9>]
 L7 [else branch]:
   6 mark({ s.remove(it) })                                                     PREV:[jf(L7|<v0>)]
     mark(s.remove(it))
-    r(s) -> <v5>
-    r(it) -> <v6>
-    magic[VALUE_CONSUMER](it|<v6>) -> <v7>
+    r(it) -> <v5>
+    r(s) -> <v6>
     mark(remove(it))
-    call(remove(it), <ERROR FUNCTION>|<v5>) -> <v8>
+    magic[UNRESOLVED_CALL](remove(it)|<v5>, !<v7>, <v6>) -> <v8>
 L8 ['if' expression result]:
-  5 merge(if (flag) { s.add(it) } else { s.remove(it) }|<v4>, <v8>) -> <v9>    PREV:[jmp(L8), call(remove(it), <ERROR FUNCTION>|<v5>) -> <v8>]
+  5 merge(if (flag) { s.add(it) } else { s.remove(it) }|<v4>, <v8>) -> <v9>    PREV:[jmp(L8), magic[UNRESOLVED_CALL](remove(it)|<v5>, !<v7>, <v6>) -> <v8>]
     r(true) -> <v10>
 L9 [start finally]:
   6 mark({ name?.hashCode() })

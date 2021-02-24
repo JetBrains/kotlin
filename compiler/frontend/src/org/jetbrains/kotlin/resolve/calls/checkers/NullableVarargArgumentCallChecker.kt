@@ -8,12 +8,13 @@ package org.jetbrains.kotlin.resolve.calls.checkers
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.resolve.BindingContext.EXPRESSION_TYPE_INFO
 import org.jetbrains.kotlin.resolve.calls.components.stableType
+import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableTypeConstructor
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
-import org.jetbrains.kotlin.resolve.calls.tower.ExpressionKotlinCallArgumentImpl
 import org.jetbrains.kotlin.resolve.calls.tower.NewResolvedCallImpl
-import org.jetbrains.kotlin.resolve.calls.tower.NewVariableAsFunctionResolvedCallImpl
+import org.jetbrains.kotlin.resolve.calls.tower.SimplePSIKotlinCallArgument
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 import org.jetbrains.kotlin.types.FlexibleType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -29,11 +30,18 @@ object NullableVarargArgumentCallChecker : CallChecker {
         if (resolvedCall !is NewResolvedCallImpl<*>) return
         for (argument in resolvedCall.argumentMappingByOriginal.values) {
             for (arg in argument.arguments) {
-                if (!arg.isSpread || arg !is ExpressionKotlinCallArgumentImpl) continue
-                val spreadElement = arg.valueArgument.getSpreadElement() ?: continue
+                if (!arg.isSpread || arg !is SimplePSIKotlinCallArgument) continue
 
+                val spreadElement = arg.valueArgument.getSpreadElement() ?: continue
                 val receiver = arg.receiver.safeAs<ReceiverValueWithSmartCastInfo>() ?: continue
-                val type = receiver.stableType
+
+                val type = if (receiver.stableType.constructor is TypeVariableTypeConstructor) {
+                    context.trace.bindingContext[EXPRESSION_TYPE_INFO, arg.valueArgument.getArgumentExpression()]?.type
+                        ?: receiver.stableType
+                } else {
+                    receiver.stableType
+                }
+
                 if (type !is FlexibleType && TypeUtils.isNullableType(type)) {
                     context.trace.report(Errors.SPREAD_OF_NULLABLE.on(spreadElement))
                 }

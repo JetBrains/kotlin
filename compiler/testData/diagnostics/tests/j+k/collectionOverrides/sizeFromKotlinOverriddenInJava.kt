@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: A.java
 
 abstract public class A<F> extends MyList<F> {

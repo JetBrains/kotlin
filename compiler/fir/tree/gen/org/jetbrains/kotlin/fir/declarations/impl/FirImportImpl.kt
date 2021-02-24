@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,15 +16,19 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-class FirImportImpl(
-    override val source: FirSourceElement?,
+internal class FirImportImpl(
+    override var source: FirSourceElement?,
     override val importedFqName: FqName?,
     override val isAllUnder: Boolean,
-    override val aliasName: Name?
+    override val aliasName: Name?,
 ) : FirImport() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirImportImpl {
         return this
+    }
+
+    override fun replaceSource(newSource: FirSourceElement?) {
+        source = newSource
     }
 }

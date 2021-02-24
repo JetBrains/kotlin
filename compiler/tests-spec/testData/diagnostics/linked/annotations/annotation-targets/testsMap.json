@@ -1,0 +1,16 @@
+{
+  "1": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 0,
+          "description": "Annotated when statement",
+          "path": "compiler/testData/diagnostics/tests/when/AnnotatedWhenStatement.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ]
+    }
+  }
+}

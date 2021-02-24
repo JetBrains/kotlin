@@ -1,0 +1,27 @@
+package
+
+public fun Scope.bar(/*0*/ e: Foo): kotlin.Unit
+public fun Foo.test(): kotlin.Unit
+
+public final class Bar {
+    public constructor Bar()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Foo {
+    public constructor Foo()
+    @kotlin.Suppress(names = {"INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"}) @kotlin.internal.LowPriorityInOverloadResolution public final val test: Bar
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Scope {
+    public constructor Scope()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public final operator fun Bar.invoke(/*0*/ f: () -> kotlin.Unit): kotlin.Unit
+}

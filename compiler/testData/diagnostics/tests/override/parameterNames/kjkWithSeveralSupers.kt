@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: KSuper.kt
 
 interface KSuper {

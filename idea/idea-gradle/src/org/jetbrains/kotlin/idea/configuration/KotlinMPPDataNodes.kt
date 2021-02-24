@@ -13,22 +13,25 @@ import com.intellij.openapi.externalSystem.model.project.ExternalSystemSourceTyp
 import com.intellij.openapi.externalSystem.model.project.ModuleData
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.util.Key
+import com.intellij.serialization.PropertyMapping
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.config.ExternalSystemTestTask
+import org.jetbrains.kotlin.config.ExternalSystemRunTask
 import org.jetbrains.kotlin.gradle.*
 import org.jetbrains.kotlin.idea.util.CopyableDataNodeUserDataProperty
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import java.io.File
 import java.io.Serializable
 import com.intellij.openapi.externalSystem.model.Key as ExternalKey
-import com.intellij.serialization.PropertyMapping
 
 var DataNode<out ModuleData>.kotlinSourceSet: KotlinSourceSetInfo?
         by CopyableDataNodeUserDataProperty(Key.create("KOTLIN_SOURCE_SET"))
 
+var DataNode<out ModuleData>.kotlinImportingDiagnosticsContainer: KotlinImportingDiagnosticsContainer?
+        by CopyableDataNodeUserDataProperty(Key.create("KOTLIN_IMPORTING_DIAGNOSTICS_CONTAINER"))
+
 val DataNode<ModuleData>.kotlinAndroidSourceSets: List<KotlinSourceSetInfo>?
-        get() = ExternalSystemApiUtil.getChildren(this, KotlinAndroidSourceSetData.KEY).firstOrNull()?.data?.sourceSetInfos
+    get() = ExternalSystemApiUtil.getChildren(this, KotlinAndroidSourceSetData.KEY).firstOrNull()?.data?.sourceSetInfos
 
 class KotlinSourceSetInfo @PropertyMapping("kotlinModule") constructor(val kotlinModule: KotlinModule) : Serializable {
     var moduleId: String? = null
@@ -49,7 +52,7 @@ class KotlinSourceSetInfo @PropertyMapping("kotlinModule") constructor(val kotli
     var isTestModule: Boolean = false
     var sourceSetIdsByName: MutableMap<String, String> = LinkedHashMap()
     var dependsOn: List<String> = emptyList()
-    var externalSystemTestTasks: Collection<ExternalSystemTestTask> = emptyList()
+    var externalSystemRunTasks: Collection<ExternalSystemRunTask> = emptyList()
 }
 
 class KotlinAndroidSourceSetData @PropertyMapping("sourceSetInfos") constructor(val sourceSetInfos: List<KotlinSourceSetInfo>
@@ -70,7 +73,8 @@ class KotlinTargetData @PropertyMapping("externalName") constructor(externalName
     }
 }
 
-class KotlinOutputPathsData(val paths: MultiMap<ExternalSystemSourceType, String>) : AbstractExternalEntityData(GradleConstants.SYSTEM_ID) {
+class KotlinOutputPathsData @PropertyMapping("paths") constructor(val paths: MultiMap<ExternalSystemSourceType, String>) :
+    AbstractExternalEntityData(GradleConstants.SYSTEM_ID) {
     companion object {
         val KEY = ExternalKey.create(KotlinOutputPathsData::class.java, ProjectKeys.CONTENT_ROOT.processingWeight + 1)
     }

@@ -19,6 +19,6 @@ fun <K, V> B<K>.star(p: KProperty1<*, V>): B<V> = TODO()
 fun <R : A> B<R>.test(){
     foo(A::bla)
     bar(A::bla)
-    <!INAPPLICABLE_CANDIDATE!>baz<!>(A::bla)
+    <!INAPPLICABLE_CANDIDATE!>baz<!>(<!UNRESOLVED_REFERENCE!>A::bla<!>)
     star(A::bla)
 }

@@ -13,6 +13,7 @@ import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.formatter.FormatterUtil
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.quickfix.TypeAccessibilityChecker
@@ -28,7 +29,7 @@ abstract class AbstractCreateDeclarationFix<D : KtNamedDeclaration>(
     protected val generateIt: KtPsiFactory.(Project, TypeAccessibilityChecker, D) -> D?
 ) : KotlinQuickFixAction<D>(declaration) {
 
-    override fun getFamilyName(): String = "Create expect / actual declaration"
+    override fun getFamilyName(): String = KotlinBundle.message("fix.create.expect.actual")
 
     protected val elementType: String = element.getTypeDescription()
 
@@ -60,12 +61,16 @@ abstract class AbstractCreateDeclarationFix<D : KtNamedDeclaration>(
                 factory.generateIt(project, TypeAccessibilityChecker.create(project, module), element) ?: return@runWhenSmart
             } catch (e: KotlinTypeInaccessibleException) {
                 if (editor != null) {
-                    showErrorHint(project, editor, escapeXml("Cannot generate $elementType: " + e.message), "Inaccessible type")
+                    showErrorHint(
+                        project, editor,
+                        escapeXml(KotlinBundle.message("fix.create.declaration.error", elementType, e.message)),
+                        KotlinBundle.message("fix.create.declaration.error.inaccessible.type")
+                    )
                 }
                 return@runWhenSmart
             }
 
-            project.executeWriteCommand("Create expect / actual declaration") {
+            project.executeWriteCommand(KotlinBundle.message("fix.create.expect.actual")) {
                 if (targetFile.packageDirective?.fqName != originalFile.packageDirective?.fqName &&
                     targetFile.declarations.isEmpty()
                 ) {

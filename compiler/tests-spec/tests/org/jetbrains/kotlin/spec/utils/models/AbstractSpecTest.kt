@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.TestsExceptionType
 import org.jetbrains.kotlin.spec.utils.*
 import org.jetbrains.kotlin.spec.utils.parsers.CommonPatterns
 import org.jetbrains.kotlin.spec.utils.parsers.CommonPatterns.issuesPattern
-import org.jetbrains.kotlin.spec.utils.parsers.LinkedSpecTestPatterns.relevantPlacesPattern
+import org.jetbrains.kotlin.spec.utils.parsers.LinkedSpecTestPatterns.relevantLinksPattern
 import org.jetbrains.kotlin.spec.utils.parsers.TestCasePatterns.testCaseNumberPattern
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -41,7 +41,7 @@ enum class SpecTestCaseInfoElementType(
     override val required: Boolean = false
 ) : SpecTestInfoElementType {
     TESTCASE_NUMBER(valuePattern = testCaseNumberPattern, required = true),
-    RELEVANT_PLACES(valuePattern = relevantPlacesPattern),
+    RELEVANT_PLACES(valuePattern = relevantLinksPattern),
     UNSPECIFIED_BEHAVIOR
 }
 

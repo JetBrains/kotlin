@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
@@ -17,8 +18,14 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 
 class AddToStringFix(element: KtExpression, private val nullable: Boolean) : KotlinQuickFixAction<KtExpression>(element),
     LowPriorityAction {
-    override fun getFamilyName() = "Add 'toString()' call"
-    override fun getText() = if (nullable) "Add safe '?.toString()' call" else "Add 'toString()' call"
+    override fun getFamilyName() = KotlinBundle.message("fix.add.tostring.call.family")
+
+    override fun getText(): String {
+        return when (nullable) {
+            true -> KotlinBundle.message("fix.add.tostring.call.text.safe")
+            false -> KotlinBundle.message("fix.add.tostring.call.text")
+        }
+    }
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return

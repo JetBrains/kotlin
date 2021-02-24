@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 class C(x: Int, val y: Int) {
     fun initChild(x0: Int): Any {
         var x = x0

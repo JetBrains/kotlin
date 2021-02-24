@@ -19,18 +19,28 @@ class KotlinBuildProperties(
     private val propertiesProvider: PropertiesProvider
 ) {
     private val localProperties: Properties = Properties()
+    private val rootProperties: Properties = Properties()
 
     init {
-        val localPropertiesFile = propertiesProvider.rootProjectDir.resolve("local.properties")
-        if (localPropertiesFile.isFile) {
-            localPropertiesFile.reader().use(localProperties::load)
+        loadPropertyFile("local.properties", localProperties)
+        loadPropertyFile("gradle.properties", rootProperties)
+    }
+
+    private fun loadPropertyFile(fileName: String, propertiesDestination: Properties) {
+        val propertiesFile = propertiesProvider.rootProjectDir.resolve(fileName)
+        if (propertiesFile.isFile) {
+            propertiesFile.reader().use(propertiesDestination::load)
         }
     }
 
-    private operator fun get(key: String): Any? = localProperties.getProperty(key) ?: propertiesProvider.getProperty(key)
+    fun getOrNull(key: String): Any? =
+        localProperties.getProperty(key) ?: propertiesProvider.getProperty(key) ?: rootProperties.getProperty(key)
 
-    private fun getBoolean(key: String, default: Boolean = false): Boolean =
-        this[key]?.toString()?.trim()?.toBoolean() ?: default
+    fun getBoolean(key: String, default: Boolean = false): Boolean {
+        val value = this.getOrNull(key)?.toString() ?: return default
+        if (value.isEmpty()) return true // has property without value means 'true'
+        return value.trim().toBoolean()
+    }
 
     val isJpsBuildEnabled: Boolean = getBoolean("jpsBuild")
 
@@ -52,48 +62,64 @@ class KotlinBuildProperties(
     val isInJpsBuildIdeaSync: Boolean
         get() = isJpsBuildEnabled && isInIdeaSync
 
-    val includeJava9: Boolean
-        get() = !isInJpsBuildIdeaSync && getBoolean("kotlin.build.java9", true)
-
-    val useBootstrapStdlib: Boolean
-        get() = isInJpsBuildIdeaSync || getBoolean("kotlin.build.useBootstrapStdlib", false)
-
     private val kotlinUltimateExists: Boolean = propertiesProvider.rootProjectDir.resolve("kotlin-ultimate").exists()
 
     val isTeamcityBuild: Boolean = getBoolean("teamcity") || System.getenv("TEAMCITY_VERSION") != null
 
-    val intellijUltimateEnabled: Boolean
-        get() {
-            val explicitlyEnabled = getBoolean("intellijUltimateEnabled")
-            if (!kotlinUltimateExists && explicitlyEnabled) {
-                error("intellijUltimateEnabled property is set, while kotlin-ultimate repository is not provided")
-            }
-            return kotlinUltimateExists && (explicitlyEnabled || isTeamcityBuild)
-        }
+    val intellijUltimateEnabled: Boolean = getBoolean("intellijUltimateEnabled", isTeamcityBuild) ||
+            getBoolean("kotlin.build.dependencies.iu.enabled", isTeamcityBuild)
 
     val includeCidrPlugins: Boolean = kotlinUltimateExists && getBoolean("cidrPluginsEnabled")
 
     val includeUltimate: Boolean = kotlinUltimateExists && (isTeamcityBuild || intellijUltimateEnabled)
 
-    val postProcessing: Boolean get() = isTeamcityBuild || getBoolean("kotlin.build.postprocessing", true)
-
-    val relocation: Boolean get() = postProcessing
-
-    val proguard: Boolean get() = postProcessing && getBoolean("kotlin.build.proguard", isTeamcityBuild)
-
-    val jarCompression: Boolean get() = getBoolean("kotlin.build.jar.compression", isTeamcityBuild)
-
-    val buildCacheUrl: String? = get("kotlin.build.cache.url") as String?
+    val buildCacheUrl: String? = getOrNull("kotlin.build.cache.url") as String?
 
     val pushToBuildCache: Boolean = getBoolean("kotlin.build.cache.push", isTeamcityBuild)
 
     val localBuildCacheEnabled: Boolean = getBoolean("kotlin.build.cache.local.enabled", !isTeamcityBuild)
 
-    val buildScanServer: String? = get("kotlin.build.scan.url") as String?
+    val localBuildCacheDirectory: String? = getOrNull("kotlin.build.cache.local.directory") as String?
 
-    val buildCacheUser: String? = get("kotlin.build.cache.user") as String?
+    val buildScanServer: String? = getOrNull("kotlin.build.scan.url") as String?
 
-    val buildCachePassword: String? = get("kotlin.build.cache.password") as String?
+    val buildCacheUser: String? = getOrNull("kotlin.build.cache.user") as String?
+
+    val buildCachePassword: String? = getOrNull("kotlin.build.cache.password") as String?
+
+    val kotlinBootstrapVersion: String? = getOrNull("bootstrap.kotlin.default.version") as String?
+
+    val defaultSnapshotVersion: String? = getOrNull("defaultSnapshotVersion") as String?
+
+    val customBootstrapVersion: String? = getOrNull("bootstrap.kotlin.version") as String?
+
+    val customBootstrapRepo: String? = getOrNull("bootstrap.kotlin.repo") as String?
+
+    val localBootstrap: Boolean = getBoolean("bootstrap.local")
+
+    val localBootstrapVersion: String? = getOrNull("bootstrap.local.version") as String?
+
+    val localBootstrapPath: String? = getOrNull("bootstrap.local.path") as String?
+
+    val useIR: Boolean = getBoolean("kotlin.build.useIR")
+
+    val useIRForLibraries: Boolean = getBoolean("kotlin.build.useIRForLibraries")
+
+    val useFir: Boolean = getBoolean("kotlin.build.useFir")
+
+    val useFirForLibraries: Boolean = getBoolean("kotlin.build.useFirForLibraries")
+
+    val useFirIdeaPlugin: Boolean = getBoolean("idea.fir.plugin")
+
+    val teamCityBootstrapVersion: String? = getOrNull("bootstrap.teamcity.kotlin.version") as String?
+
+    val teamCityBootstrapBuildNumber: String? = getOrNull("bootstrap.teamcity.build.number") as String?
+
+    val teamCityBootstrapProject: String? = getOrNull("bootstrap.teamcity.project") as String?
+
+    val teamCityBootstrapUrl: String? = getOrNull("bootstrap.teamcity.url") as String?
+
+    val rootProjectDir: File = propertiesProvider.rootProjectDir
 }
 
 private const val extensionName = "kotlinBuildProperties"

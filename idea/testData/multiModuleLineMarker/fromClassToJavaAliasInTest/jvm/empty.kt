@@ -1,1 +1,1 @@
-actual typealias <lineMarker>Expected</lineMarker> = ExpectedImpl
+actual typealias <!LINE_MARKER("descr='Has declaration in common module'")!>Expected<!> = ExpectedImpl

@@ -3,39 +3,39 @@
 // JAVAC_EXPECTED_FILE
 
 class OuterGeneric<T> {
-    inner class ErrorInnerExn : Exception()
+    inner <!INNER_CLASS_OF_GENERIC_THROWABLE_SUBCLASS!>class ErrorInnerExn<!> : Exception()
 
     inner class InnerA {
-        inner class ErrorInnerExn2 : Exception()
+        inner <!INNER_CLASS_OF_GENERIC_THROWABLE_SUBCLASS!>class ErrorInnerExn2<!> : Exception()
     }
 
     class OkNestedExn : Exception()
 
-    val errorAnonymousObjectExn = object : Exception() {}
+    val errorAnonymousObjectExn = <!INNER_CLASS_OF_GENERIC_THROWABLE_SUBCLASS!>object<!> : Exception() {}
 
     fun foo() {
-        class OkLocalExn : Exception()
+        <!INNER_CLASS_OF_GENERIC_THROWABLE_SUBCLASS!>class OkLocalExn<!> : Exception()
 
-        val errorAnonymousObjectExn = object : Exception() {}
+        val errorAnonymousObjectExn = <!INNER_CLASS_OF_GENERIC_THROWABLE_SUBCLASS!>object<!> : Exception() {}
     }
 
     fun <X> genericFoo() {
-        class OkLocalExn : Exception()
+        <!INNER_CLASS_OF_GENERIC_THROWABLE_SUBCLASS!>class OkLocalExn<!> : Exception()
 
         class LocalGeneric<Y> {
-            inner class ErrorInnerExnOfLocalGeneric : Exception()
+            inner <!INNER_CLASS_OF_GENERIC_THROWABLE_SUBCLASS!>class ErrorInnerExnOfLocalGeneric<!> : Exception()
         }
     }
 }
 
 class Outer {
     inner class InnerGeneric<T> {
-        inner class ErrorInnerExn : Exception()
+        inner <!INNER_CLASS_OF_GENERIC_THROWABLE_SUBCLASS!>class ErrorInnerExn<!> : Exception()
     }
 }
 
 fun <T> genericFoo() {
-    class ErrorLocalExnInGenericFun : Exception()
+    <!INNER_CLASS_OF_GENERIC_THROWABLE_SUBCLASS!>class ErrorLocalExnInGenericFun<!> : Exception()
 
-    val errorkAnonymousObjectExnInGenericFun = object : Exception() {}
+    val errorkAnonymousObjectExnInGenericFun = <!INNER_CLASS_OF_GENERIC_THROWABLE_SUBCLASS!>object<!> : Exception() {}
 }

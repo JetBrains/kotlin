@@ -1,0 +1,18 @@
+FILE: these.kt
+    public? final? class Some : R|kotlin/Any| {
+        public? constructor(): R|Some| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? fun foo(): Int { LAZY_BLOCK }
+
+        public? final? fun bar(): Int { LAZY_BLOCK }
+
+        public? final? val instance: Some
+            public? get(): Some { LAZY_BLOCK }
+
+        public? final? fun String.extension(): Int { LAZY_BLOCK }
+
+    }
+    public? final? fun Some.extension(): <implicit> { LAZY_BLOCK }
+    public? final? fun test(some: Some): Int { LAZY_BLOCK }

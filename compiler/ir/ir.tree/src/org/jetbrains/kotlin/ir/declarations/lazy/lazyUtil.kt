@@ -5,33 +5,43 @@
 
 package org.jetbrains.kotlin.ir.declarations.lazy
 
-import org.jetbrains.kotlin.ir.declarations.withInitialIr
+import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-internal fun <T> lazyVar(initializer: () -> T): UnsafeLazyVar<T> = UnsafeLazyVar(initializer)
+fun <T> lazyVar(initializer: () -> T): ReadWriteProperty<Any?, T> = SynchronizedLazyVar(initializer)
 
-internal class UnsafeLazyVar<T>(initializer: () -> T) {
-    private var isInitialized = false;
+private class SynchronizedLazyVar<T>(initializer: () -> T) : ReadWriteProperty<Any?, T> {
+    @Volatile
+    private var isInitialized = false
+
     private var initializer: (() -> T)? = initializer
+
+    @Volatile
     private var _value: Any? = null
 
     private val value: T
         get() {
-            if (!isInitialized) {
-                withInitialIr { _value = initializer!!() }
-                isInitialized = true
-                initializer = null
-            }
             @Suppress("UNCHECKED_CAST")
-            return _value as T
+            if (isInitialized) return _value as T
+            synchronized(this) {
+                if (!isInitialized) {
+                    _value = initializer!!()
+                    isInitialized = true
+                    initializer = null
+                }
+                @Suppress("UNCHECKED_CAST")
+                return _value as T
+            }
         }
 
     override fun toString(): String = if (isInitialized) value.toString() else "Lazy value not initialized yet."
 
-    operator fun getValue(thisRef: Any?, property: KProperty<*>): T = value
+    override fun getValue(thisRef: Any?, property: KProperty<*>): T = value
 
-    operator fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
-        this._value = value
-        isInitialized = true
+    override fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
+        synchronized(this) {
+            this._value = value
+            isInitialized = true
+        }
     }
 }

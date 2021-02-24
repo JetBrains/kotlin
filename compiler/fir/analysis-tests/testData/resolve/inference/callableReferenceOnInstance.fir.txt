@@ -1,0 +1,21 @@
+FILE: callableReferenceOnInstance.kt
+    public abstract interface KaptLogger : R|kotlin/Any| {
+        public abstract val isVerbose: R|kotlin/Boolean|
+            public get(): R|kotlin/Boolean|
+
+        public abstract fun warn(message: R|kotlin/String|): R|kotlin/Unit|
+
+        public abstract fun error(message: R|kotlin/String|): R|kotlin/Unit|
+
+    }
+    public final fun test(logger: R|KaptLogger|): R|kotlin/Unit| {
+        lval func: R|kotlin/reflect/KFunction1<kotlin/String, kotlin/Unit>| = when () {
+            R|<local>/logger|.R|/KaptLogger.isVerbose| ->  {
+                R|<local>/logger|::R|/KaptLogger.warn|
+            }
+            else ->  {
+                R|<local>/logger|::R|/KaptLogger.error|
+            }
+        }
+
+    }

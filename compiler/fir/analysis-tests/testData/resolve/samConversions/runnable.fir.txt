@@ -1,0 +1,11 @@
+FILE: main.kt
+    public final fun main(): R|kotlin/Unit| {
+        Q|JavaClass|.R|/JavaClass.foo|(<L> = foo@fun <anonymous>(): R|kotlin/Unit| {
+            String()
+        }
+        )
+        R|/JavaClass.JavaClass|().R|/JavaClass.bar|(<L> = bar@fun <anonymous>(): R|kotlin/Unit| {
+            String()
+        }
+        )
+    }

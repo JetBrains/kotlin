@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 fun <T: Any> test(f: (T) -> T?) {
     doFun(f.ext())
 }

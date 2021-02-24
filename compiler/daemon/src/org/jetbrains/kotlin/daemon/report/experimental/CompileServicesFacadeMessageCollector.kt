@@ -5,17 +5,14 @@
 
 package org.jetbrains.kotlin.daemon.report.experimental
 
-import kotlinx.coroutines.*
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.daemon.KotlinCompileDaemon.log
-import org.jetbrains.kotlin.daemon.common.CompilationOptions
-import org.jetbrains.kotlin.daemon.common.ReportCategory
-import org.jetbrains.kotlin.daemon.common.ReportSeverity
-import org.jetbrains.kotlin.daemon.common.CompilerServicesFacadeBaseAsync
-import org.jetbrains.kotlin.daemon.common.report
+import org.jetbrains.kotlin.daemon.common.*
 
 internal class CompileServicesFacadeMessageCollector(
     private val servicesFacade: CompilerServicesFacadeBaseAsync,
@@ -28,7 +25,7 @@ internal class CompileServicesFacadeMessageCollector(
         hasErrors = false
     }
 
-    override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation?) {
+    override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
         GlobalScope.async {
             log.info("Message: " + MessageRenderer.WITHOUT_PATHS.render(severity, message, location))
             when (severity) {

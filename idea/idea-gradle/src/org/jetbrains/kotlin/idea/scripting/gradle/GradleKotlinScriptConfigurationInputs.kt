@@ -5,30 +5,39 @@
 
 package org.jetbrains.kotlin.idea.scripting.gradle
 
-import com.intellij.openapi.components.service
+import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.core.script.configuration.cache.CachedConfigurationInputs
+import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager
+import org.jetbrains.kotlin.idea.scripting.gradle.roots.*
 import org.jetbrains.kotlin.psi.KtFile
 
 /**
  * Up to date of gradle script depends on following factors:
- * 1. It is out of date when essential [sections] are changed
- * @see getGradleScriptInputsStamp
+ * 1. It is out of date when essential [sections] are changed. See [getGradleScriptInputsStamp].
  * 2. When some related file is changed (other gradle script, gradle.properties file)
- * @see GradleScriptInputsWatcher.areRelatedFilesUpToDate
+ * See [GradleBuildRoot.areRelatedFilesChangedBefore].
  *
- * [inputsTS] is needed to check if some related file was changed since last update
+ * [lastModifiedTs] is needed to check if some related file was changed since last update
  */
 data class GradleKotlinScriptConfigurationInputs(
     val sections: String,
-    val inputsTS: Long
+    val lastModifiedTs: Long,
+    val buildRoot: String? = null
 ) : CachedConfigurationInputs {
     override fun isUpToDate(project: Project, file: VirtualFile, ktFile: KtFile?): Boolean {
-        val actualStamp = getGradleScriptInputsStamp(project, file, ktFile) ?: return false
+        try {
+            val actualStamp = getGradleScriptInputsStamp(project, file, ktFile) ?: return false
 
-        if (actualStamp.sections != this.sections) return false
+            if (actualStamp.sections != this.sections) return false
 
-        return project.service<GradleScriptInputsWatcher>().areRelatedFilesUpToDate(file, inputsTS)
+            return buildRoot == null ||
+                    GradleBuildRootsManager.getInstance(project)
+                        .getBuildRootByWorkingDir(buildRoot)
+                        ?.areRelatedFilesChangedBefore(file, lastModifiedTs) ?: false
+        } catch (cancel: ProcessCanceledException) {
+            return false
+        }
     }
 }

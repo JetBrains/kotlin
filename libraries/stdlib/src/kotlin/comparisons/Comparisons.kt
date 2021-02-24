@@ -291,6 +291,7 @@ public fun <T : Comparable<T>> reverseOrder(): Comparator<T> = @Suppress("UNCHEC
  *
  *  @sample samples.comparisons.Comparisons.reversed
  */
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 public fun <T> Comparator<T>.reversed(): Comparator<T> = when (this) {
     is ReversedComparator -> this.comparator
     NaturalOrderComparator -> @Suppress("UNCHECKED_CAST") (ReverseOrderComparator as Comparator<T>)

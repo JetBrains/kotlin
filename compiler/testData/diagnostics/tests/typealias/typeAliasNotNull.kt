@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 typealias Processor = (number: Int) -> Unit
 typealias Handler = (String) -> Processor?
 

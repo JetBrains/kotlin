@@ -1,0 +1,15 @@
+LineBreakpoint created at frameInnerLambda.kt:9
+Run Java
+Connected to the target VM
+frameInnerLambda.kt:9
+Compile bytecode for val1
+Compile bytecode for val2
+Compile bytecode for val1 + val2
+ frame    = invoke:9, FrameInnerLambdaKt$main$1$1 {frameInnerLambda}
+   this     = this = {frameInnerLambda.FrameInnerLambdaKt$main$1$1@uniqueID}Function0<kotlin.Unit>
+     field    = $val1: int = 1 (sp = null)
+     field    = $val2: int = 1 (sp = null)
+     field    = arity: int = 0 (sp = Lambda.!EXT!)
+Disconnected from the target VM
+
+Process finished with exit code 0

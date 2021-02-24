@@ -9,3 +9,4 @@ class C : Base {
 }
 
 // LAZINESS:NoLaziness
+// FIR_COMPARISON

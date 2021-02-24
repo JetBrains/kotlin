@@ -9,7 +9,7 @@ public interface Child : Parent {
 }
 
 public sealed class Page : Parent {
-    private constructor Page()
+    protected constructor Page()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -34,3 +34,4 @@ public interface Parent {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+

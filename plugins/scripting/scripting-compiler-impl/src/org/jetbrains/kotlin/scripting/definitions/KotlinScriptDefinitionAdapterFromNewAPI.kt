@@ -19,7 +19,6 @@ import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.getScriptingClass
 import kotlin.script.experimental.jvm.compat.mapToLegacyExpectedLocations
 import kotlin.script.experimental.jvm.impl.BridgeDependenciesResolver
-import kotlin.script.experimental.location.ScriptExpectedLocation
 import kotlin.script.experimental.util.getOrError
 
 // temporary trick with passing Any as a template and overwriting it below, TODO: fix after introducing new script definitions hierarchy
@@ -36,7 +35,7 @@ abstract class KotlinScriptDefinitionAdapterFromNewAPIBase : KotlinScriptDefinit
     override val template: KClass<*> get() = baseClass
 
     override val name: String
-        get() = scriptCompilationConfiguration[ScriptCompilationConfiguration.displayName] ?: "Kotlin Script"
+        get() = scriptCompilationConfiguration[ScriptCompilationConfiguration.displayName] ?: KOTLIN_SCRIPT
 
     override val fileType: LanguageFileType = KotlinFileType.INSTANCE
 
@@ -82,9 +81,12 @@ abstract class KotlinScriptDefinitionAdapterFromNewAPIBase : KotlinScriptDefinit
             .orEmpty()
 
     @Suppress("DEPRECATION")
-    override val scriptExpectedLocations: List<ScriptExpectedLocation>
+    override val scriptExpectedLocations: List<kotlin.script.experimental.location.ScriptExpectedLocation>
         get() = scriptCompilationConfiguration[ScriptCompilationConfiguration.ide.acceptedLocations]?.mapToLegacyExpectedLocations()
-            ?: listOf(ScriptExpectedLocation.SourcesOnly, ScriptExpectedLocation.TestsOnly)
+            ?: listOf(
+                kotlin.script.experimental.location.ScriptExpectedLocation.SourcesOnly,
+                kotlin.script.experimental.location.ScriptExpectedLocation.TestsOnly
+            )
 
     private val scriptingClassGetter by lazy(LazyThreadSafetyMode.PUBLICATION) {
         hostConfiguration[ScriptingHostConfiguration.getScriptingClass]

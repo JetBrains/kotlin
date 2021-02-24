@@ -12,8 +12,9 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.ApiVersion
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.intentions.callExpression
@@ -32,7 +33,7 @@ class JavaCollectionsStaticMethodInspection : AbstractKotlinInspection() {
             val (methodName, firstArg) = getTargetMethodOnMutableList(expression) ?: return
             holder.registerProblem(
                 expression,
-                "Java Collections static method call should be replaced with Kotlin stdlib",
+                KotlinBundle.message("java.collections.static.method.call.should.be.replaced.with.kotlin.stdlib"),
                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                 ReplaceWithStdLibFix(methodName, firstArg.text)
             )
@@ -87,21 +88,21 @@ class JavaCollectionsStaticMethodInspection : AbstractKotlinInspection() {
 }
 
 private fun KotlinType.isMutableList() =
-    constructor.declarationDescriptor?.fqNameSafe == KotlinBuiltIns.FQ_NAMES.mutableList
+    constructor.declarationDescriptor?.fqNameSafe == StandardNames.FqNames.mutableList
 
 private fun KotlinType.isMutableListOrSubtype(): Boolean {
     return isMutableList() || constructor.supertypes.reversed().any { it.isMutableList() }
 }
 
 private fun KotlinType.isList() =
-    constructor.declarationDescriptor?.fqNameSafe == KotlinBuiltIns.FQ_NAMES.list
+    constructor.declarationDescriptor?.fqNameSafe == StandardNames.FqNames.list
 
 private fun KotlinType.isListOrSubtype(): Boolean {
     return isList() || constructor.supertypes.reversed().any { it.isList() }
 }
 
 private class ReplaceWithStdLibFix(private val methodName: String, private val receiver: String) : LocalQuickFix {
-    override fun getName() = "Replace with $receiver.$methodName"
+    override fun getName() = KotlinBundle.message("replace.with.std.lib.fix.text", receiver, methodName)
 
     override fun getFamilyName() = name
 

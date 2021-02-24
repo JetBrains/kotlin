@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.idea.debugger.test.util
 
-import org.jetbrains.kotlin.codegen.CodegenTestCase
+import org.jetbrains.kotlin.test.KotlinBaseTest.TestFile
 
 enum class SteppingInstructionKind(val directiveName: String) {
     StepInto("STEP_INTO"),
@@ -19,11 +19,11 @@ enum class SteppingInstructionKind(val directiveName: String) {
 
 class SteppingInstruction(val kind: SteppingInstructionKind, val arg: Int) {
     companion object {
-        fun parse(file: CodegenTestCase.TestFile): List<SteppingInstruction> {
+        fun parse(file: TestFile): List<SteppingInstruction> {
             return parse(file, Companion::parseLine)
         }
 
-        fun parseSingle(file: CodegenTestCase.TestFile, kind: SteppingInstructionKind): SteppingInstruction? {
+        fun parseSingle(file: TestFile, kind: SteppingInstructionKind): SteppingInstruction? {
             val instructions = parse(file) { line -> parseKind(line, kind) }
             if (instructions.size > 1) {
                 error("Several instructions found for kind $kind")
@@ -32,7 +32,7 @@ class SteppingInstruction(val kind: SteppingInstructionKind, val arg: Int) {
             return instructions.singleOrNull()
         }
 
-        private fun parse(file: CodegenTestCase.TestFile, processor: (String) -> SteppingInstruction?): List<SteppingInstruction> {
+        private fun parse(file: TestFile, processor: (String) -> SteppingInstruction?): List<SteppingInstruction> {
             return file.content.lineSequence()
                 .map { it.trimStart() }
                 .filter { it.startsWith("// ") }

@@ -46,7 +46,7 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
             """
             <p>The compiler bundled to Kotlin plugin (1.0.0) is older than external compiler used for building modules:</p>
             <ul>
-            <li>app (1.1.0)</li>
+            <li>app (${LATEST_STABLE_GRADLE_PLUGIN_VERSION})</li>
             </ul>
             <p>This may cause different set of errors and warnings reported in IDE.</p>
             <p><a href="update">Update</a>  <a href="ignore">Ignore</a></p>
@@ -399,59 +399,6 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
     }
 
     @Test
-    fun testAddCoroutinesSupport() {
-        val files = importProjectFromTestData()
-
-        runInEdtAndWait {
-            myTestFixture.project.executeWriteCommand("") {
-                KotlinWithGradleConfigurator.changeCoroutineConfiguration(myTestFixture.module, "enable")
-            }
-
-            checkFiles(files)
-        }
-    }
-
-    @Test
-    fun testAddCoroutinesSupportGSK() {
-        val files = importProjectFromTestData()
-
-        runInEdtAndWait {
-            myTestFixture.project.executeWriteCommand("") {
-                KotlinWithGradleConfigurator.changeCoroutineConfiguration(myTestFixture.module, "enable")
-            }
-
-            checkFiles(files)
-        }
-    }
-
-    @Test
-    fun testChangeCoroutinesSupport() {
-        val files = importProjectFromTestData()
-
-        runInEdtAndWait {
-            myTestFixture.project.executeWriteCommand("") {
-                KotlinWithGradleConfigurator.changeCoroutineConfiguration(myTestFixture.module, "enable")
-            }
-
-            checkFiles(files)
-        }
-    }
-
-    @TargetVersions("4.4+")
-    @Test
-    fun testChangeCoroutinesSupportGSK49() {
-        val files = importProjectFromTestData()
-
-        runInEdtAndWait {
-            myTestFixture.project.executeWriteCommand("") {
-                KotlinWithGradleConfigurator.changeCoroutineConfiguration(myTestFixture.module, "enable")
-            }
-
-            checkFiles(files)
-        }
-    }
-
-    @Test
     fun testAddLanguageVersion() {
         val files = importProjectFromTestData()
 
@@ -581,6 +528,21 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
 
     @Test
     fun testEnableFeatureSupportToExistentArguments() {
+        val files = importProjectFromTestData()
+
+        runInEdtAndWait {
+            myTestFixture.project.executeWriteCommand("") {
+                KotlinWithGradleConfigurator.changeFeatureConfiguration(
+                    myTestFixture.module, LanguageFeature.InlineClasses, LanguageFeature.State.ENABLED, false
+                )
+            }
+
+            checkFiles(files)
+        }
+    }
+
+    @Test
+    fun testEnableFeatureSupportGSKWithoutFoundKotlinVersion() {
         val files = importProjectFromTestData()
 
         runInEdtAndWait {

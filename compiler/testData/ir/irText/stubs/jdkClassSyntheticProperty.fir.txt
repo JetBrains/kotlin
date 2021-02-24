@@ -1,8 +1,9 @@
 FILE fqName:<root> fileName:/jdkClassSyntheticProperty.kt
   PROPERTY name:test visibility:public modality:FINAL [val]
-    FUN name:<get-test> visibility:public modality:FINAL <> () returnType:kotlin.Array<out java.lang.reflect.Field?>?
+    FUN name:<get-test> visibility:public modality:FINAL <> ($receiver:java.lang.Class<*>) returnType:kotlin.Array<out java.lang.reflect.Field?>?
       correspondingProperty: PROPERTY name:test visibility:public modality:FINAL [val]
+      $receiver: VALUE_PARAMETER name:<this> type:java.lang.Class<*>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test> (): kotlin.Array<out java.lang.reflect.Field?>? declared in <root>'
-          CALL 'public open fun getDeclaredFields (): kotlin.Array<out java.lang.reflect.Field?>? [operator] declared in java.lang.Class' type=kotlin.Array<out java.lang.reflect.Field?>? origin=GET_PROPERTY
-            $this: ERROR_CALL 'Unresolved reference: this@R|/test|' type=java.lang.Class<*>
+          CALL 'public open fun getDeclaredFields (): kotlin.Array<out java.lang.reflect.Field?>? declared in java.lang.Class' type=kotlin.Array<out java.lang.reflect.Field?>? origin=GET_PROPERTY
+            $this: GET_VAR '<this>: java.lang.Class<*> declared in <root>.<get-test>' type=java.lang.Class<*> origin=null

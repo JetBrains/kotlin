@@ -6,11 +6,21 @@
 package org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui
 
 import com.intellij.openapi.options.ConfigurationException
+import com.intellij.refactoring.BaseRefactoringProcessor
+import org.jetbrains.kotlin.idea.statistics.MoveRefactoringFUSCollector.MovedEntity
+import org.jetbrains.kotlin.idea.statistics.MoveRefactoringFUSCollector.MoveRefactoringDestination
 
-internal interface Model<out T> {
+internal class ModelResultWithFUSData(
+    val processor: BaseRefactoringProcessor,
+    val elementsCount: Int,
+    val entityToMove: MovedEntity,
+    val destination: MoveRefactoringDestination
+)
+
+internal interface Model {
     @Throws(ConfigurationException::class)
-    fun computeModelResult(throwOnConflicts: Boolean = false): T
+    fun computeModelResult(throwOnConflicts: Boolean = false): ModelResultWithFUSData
 
     @Throws(ConfigurationException::class)
-    fun computeModelResult(): T
+    fun computeModelResult(): ModelResultWithFUSData
 }

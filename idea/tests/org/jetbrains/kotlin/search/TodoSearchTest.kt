@@ -9,9 +9,11 @@ import com.intellij.psi.search.PsiTodoSearchHelper
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.junit.Assert
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.junit.runner.RunWith
 import java.io.File
 
+@RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class TodoSearchTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor(): KotlinLightProjectDescriptor = KotlinLightProjectDescriptor.INSTANCE
 
@@ -22,10 +24,9 @@ class TodoSearchTest : KotlinLightCodeInsightFixtureTestCase() {
     fun testTodoCall() {
         val file = myFixture.configureByFile("todoCall.kt")
         val todoItems = PsiTodoSearchHelper.SERVICE.getInstance(myFixture.project).findTodoItems(file)
-        assertEquals(3, todoItems.size)
 
         val actualItems = todoItems.map { it.textRange.substring(it.file.text) }
-        Assert.assertEquals(
+        assertOrderedEquals(
             listOf(
                 "TODO(\"Fix me\")",
                 "TODO()",

@@ -1,0 +1,70 @@
+fun testForBreak1(ss: List<String>) {
+  { // BLOCK
+    val tmp0_iterator: Iterator<String> = ss.iterator()
+    while (tmp0_iterator.hasNext()) { // BLOCK
+      val s: String = tmp0_iterator.next()
+      { // BLOCK
+        break
+      }
+    }
+  }
+}
+
+fun testForBreak2(ss: List<String>) {
+  { // BLOCK
+    val tmp0_iterator: Iterator<String> = ss.iterator()
+    OUTER@ while (tmp0_iterator.hasNext()) { // BLOCK
+      val s1: String = tmp0_iterator.next()
+      { // BLOCK
+        { // BLOCK
+          val tmp1_iterator: Iterator<String> = ss.iterator()
+          INNER@ while (tmp1_iterator.hasNext()) { // BLOCK
+            val s2: String = tmp1_iterator.next()
+            { // BLOCK
+              break@OUTER
+              break@INNER
+              break
+            }
+          }
+        }
+        break@OUTER
+      }
+    }
+  }
+}
+
+fun testForContinue1(ss: List<String>) {
+  { // BLOCK
+    val tmp0_iterator: Iterator<String> = ss.iterator()
+    while (tmp0_iterator.hasNext()) { // BLOCK
+      val s: String = tmp0_iterator.next()
+      { // BLOCK
+        continue
+      }
+    }
+  }
+}
+
+fun testForContinue2(ss: List<String>) {
+  { // BLOCK
+    val tmp0_iterator: Iterator<String> = ss.iterator()
+    OUTER@ while (tmp0_iterator.hasNext()) { // BLOCK
+      val s1: String = tmp0_iterator.next()
+      { // BLOCK
+        { // BLOCK
+          val tmp1_iterator: Iterator<String> = ss.iterator()
+          INNER@ while (tmp1_iterator.hasNext()) { // BLOCK
+            val s2: String = tmp1_iterator.next()
+            { // BLOCK
+              continue@OUTER
+              continue@INNER
+              continue
+            }
+          }
+        }
+        continue@OUTER
+      }
+    }
+  }
+}
+

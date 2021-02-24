@@ -16,11 +16,13 @@
 
 package org.jetbrains.kotlin.load.java.components
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames.*
 import org.jetbrains.kotlin.load.java.descriptors.PossiblyExternalAnnotationDescriptor
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaAnnotationDescriptor
@@ -35,32 +37,26 @@ import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.SimpleType
-import java.lang.annotation.Documented
-import java.lang.annotation.Retention
-import java.lang.annotation.Target
 import java.util.*
 
 object JavaAnnotationMapper {
-
-    private val JAVA_TARGET_FQ_NAME = FqName(Target::class.java.canonicalName)
-    private val JAVA_RETENTION_FQ_NAME = FqName(Retention::class.java.canonicalName)
-    private val JAVA_DEPRECATED_FQ_NAME = FqName(java.lang.Deprecated::class.java.canonicalName)
-    private val JAVA_DOCUMENTED_FQ_NAME = FqName(Documented::class.java.canonicalName)
     // Java8-specific thing
-    private val JAVA_REPEATABLE_FQ_NAME = FqName("java.lang.annotation.Repeatable")
-
     internal val DEPRECATED_ANNOTATION_MESSAGE = Name.identifier("message")
     internal val TARGET_ANNOTATION_ALLOWED_TARGETS = Name.identifier("allowedTargets")
     internal val RETENTION_ANNOTATION_VALUE = Name.identifier("value")
 
-    fun mapOrResolveJavaAnnotation(annotation: JavaAnnotation, c: LazyJavaResolverContext): AnnotationDescriptor? =
+    fun mapOrResolveJavaAnnotation(
+        annotation: JavaAnnotation,
+        c: LazyJavaResolverContext,
+        isFreshlySupportedAnnotation: Boolean = false
+    ): AnnotationDescriptor? =
         when (annotation.classId) {
-            ClassId.topLevel(JAVA_TARGET_FQ_NAME) -> JavaTargetAnnotationDescriptor(annotation, c)
-            ClassId.topLevel(JAVA_RETENTION_FQ_NAME) -> JavaRetentionAnnotationDescriptor(annotation, c)
-            ClassId.topLevel(JAVA_REPEATABLE_FQ_NAME) -> JavaAnnotationDescriptor(c, annotation, KotlinBuiltIns.FQ_NAMES.repeatable)
-            ClassId.topLevel(JAVA_DOCUMENTED_FQ_NAME) -> JavaAnnotationDescriptor(c, annotation, KotlinBuiltIns.FQ_NAMES.mustBeDocumented)
-            ClassId.topLevel(JAVA_DEPRECATED_FQ_NAME) -> null
-            else -> LazyJavaAnnotationDescriptor(c, annotation)
+            ClassId.topLevel(TARGET_ANNOTATION) -> JavaTargetAnnotationDescriptor(annotation, c)
+            ClassId.topLevel(RETENTION_ANNOTATION) -> JavaRetentionAnnotationDescriptor(annotation, c)
+            ClassId.topLevel(REPEATABLE_ANNOTATION) -> JavaAnnotationDescriptor(c, annotation, StandardNames.FqNames.repeatable)
+            ClassId.topLevel(DOCUMENTED_ANNOTATION) -> JavaAnnotationDescriptor(c, annotation, StandardNames.FqNames.mustBeDocumented)
+            ClassId.topLevel(DEPRECATED_ANNOTATION) -> null
+            else -> LazyJavaAnnotationDescriptor(c, annotation, isFreshlySupportedAnnotation)
         }
 
     fun findMappedJavaAnnotation(
@@ -68,8 +64,8 @@ object JavaAnnotationMapper {
         annotationOwner: JavaAnnotationOwner,
         c: LazyJavaResolverContext
     ): AnnotationDescriptor? {
-        if (kotlinName == KotlinBuiltIns.FQ_NAMES.deprecated) {
-            val javaAnnotation = annotationOwner.findAnnotation(JAVA_DEPRECATED_FQ_NAME)
+        if (kotlinName == StandardNames.FqNames.deprecated) {
+            val javaAnnotation = annotationOwner.findAnnotation(DEPRECATED_ANNOTATION)
             if (javaAnnotation != null || annotationOwner.isDeprecatedInJavaDoc) {
                 return JavaDeprecatedAnnotationDescriptor(javaAnnotation, c)
             }
@@ -84,19 +80,19 @@ object JavaAnnotationMapper {
     // kotlin.annotation.annotation is treated separately
     private val kotlinToJavaNameMap: Map<FqName, FqName> =
         mapOf(
-            KotlinBuiltIns.FQ_NAMES.target to JAVA_TARGET_FQ_NAME,
-            KotlinBuiltIns.FQ_NAMES.retention to JAVA_RETENTION_FQ_NAME,
-            KotlinBuiltIns.FQ_NAMES.repeatable to JAVA_REPEATABLE_FQ_NAME,
-            KotlinBuiltIns.FQ_NAMES.mustBeDocumented to JAVA_DOCUMENTED_FQ_NAME
+            StandardNames.FqNames.target to TARGET_ANNOTATION,
+            StandardNames.FqNames.retention to RETENTION_ANNOTATION,
+            StandardNames.FqNames.repeatable to REPEATABLE_ANNOTATION,
+            StandardNames.FqNames.mustBeDocumented to DOCUMENTED_ANNOTATION
         )
 
     val javaToKotlinNameMap: Map<FqName, FqName> =
         mapOf(
-            JAVA_TARGET_FQ_NAME to KotlinBuiltIns.FQ_NAMES.target,
-            JAVA_RETENTION_FQ_NAME to KotlinBuiltIns.FQ_NAMES.retention,
-            JAVA_DEPRECATED_FQ_NAME to KotlinBuiltIns.FQ_NAMES.deprecated,
-            JAVA_REPEATABLE_FQ_NAME to KotlinBuiltIns.FQ_NAMES.repeatable,
-            JAVA_DOCUMENTED_FQ_NAME to KotlinBuiltIns.FQ_NAMES.mustBeDocumented
+            TARGET_ANNOTATION to StandardNames.FqNames.target,
+            RETENTION_ANNOTATION to StandardNames.FqNames.retention,
+            DEPRECATED_ANNOTATION to StandardNames.FqNames.deprecated,
+            REPEATABLE_ANNOTATION to StandardNames.FqNames.repeatable,
+            DOCUMENTED_ANNOTATION to StandardNames.FqNames.mustBeDocumented
         )
 }
 
@@ -119,7 +115,7 @@ open class JavaAnnotationDescriptor(
 class JavaDeprecatedAnnotationDescriptor(
     annotation: JavaAnnotation?,
     c: LazyJavaResolverContext
-) : JavaAnnotationDescriptor(c, annotation, KotlinBuiltIns.FQ_NAMES.deprecated) {
+) : JavaAnnotationDescriptor(c, annotation, StandardNames.FqNames.deprecated) {
     override val allValueArguments: Map<Name, ConstantValue<*>> by c.storageManager.createLazyValue {
         mapOf(JavaAnnotationMapper.DEPRECATED_ANNOTATION_MESSAGE to StringValue("Deprecated in Java"))
     }
@@ -128,7 +124,7 @@ class JavaDeprecatedAnnotationDescriptor(
 class JavaTargetAnnotationDescriptor(
     annotation: JavaAnnotation,
     c: LazyJavaResolverContext
-) : JavaAnnotationDescriptor(c, annotation, KotlinBuiltIns.FQ_NAMES.target) {
+) : JavaAnnotationDescriptor(c, annotation, StandardNames.FqNames.target) {
     override val allValueArguments by c.storageManager.createLazyValue {
         val targetArgument = when (firstArgument) {
             is JavaArrayAnnotationArgument -> JavaAnnotationTargetMapper.mapJavaTargetArguments(firstArgument.getElements())
@@ -142,7 +138,7 @@ class JavaTargetAnnotationDescriptor(
 class JavaRetentionAnnotationDescriptor(
     annotation: JavaAnnotation,
     c: LazyJavaResolverContext
-) : JavaAnnotationDescriptor(c, annotation, KotlinBuiltIns.FQ_NAMES.retention) {
+) : JavaAnnotationDescriptor(c, annotation, StandardNames.FqNames.retention) {
     override val allValueArguments by c.storageManager.createLazyValue {
         val retentionArgument = JavaAnnotationTargetMapper.mapJavaRetentionArgument(firstArgument)
         retentionArgument?.let { mapOf(JavaAnnotationMapper.RETENTION_ANNOTATION_VALUE to it) }.orEmpty()
@@ -170,12 +166,12 @@ object JavaAnnotationTargetMapper {
         val kotlinTargets = arguments.filterIsInstance<JavaEnumValueAnnotationArgument>()
             .flatMap { mapJavaTargetArgumentByName(it.entryName?.asString()) }
             .map { kotlinTarget ->
-                EnumValue(ClassId.topLevel(KotlinBuiltIns.FQ_NAMES.annotationTarget), Name.identifier(kotlinTarget.name))
+                EnumValue(ClassId.topLevel(StandardNames.FqNames.annotationTarget), Name.identifier(kotlinTarget.name))
             }
         return ArrayValue(kotlinTargets) { module ->
             val parameterDescriptor = DescriptorResolverUtils.getAnnotationParameterByName(
                 JavaAnnotationMapper.TARGET_ANNOTATION_ALLOWED_TARGETS,
-                module.builtIns.getBuiltInClassByFqName(KotlinBuiltIns.FQ_NAMES.target)
+                module.builtIns.getBuiltInClassByFqName(StandardNames.FqNames.target)
             )
             parameterDescriptor?.type ?: ErrorUtils.createErrorType("Error: AnnotationTarget[]")
         }
@@ -191,7 +187,7 @@ object JavaAnnotationTargetMapper {
         // Map argument: java.lang.annotation.Retention -> kotlin.annotation.Retention
         return (element as? JavaEnumValueAnnotationArgument)?.let {
             retentionNameList[it.entryName?.asString()]?.let { retention ->
-                EnumValue(ClassId.topLevel(KotlinBuiltIns.FQ_NAMES.annotationRetention), Name.identifier(retention.name))
+                EnumValue(ClassId.topLevel(StandardNames.FqNames.annotationRetention), Name.identifier(retention.name))
             }
         }
     }

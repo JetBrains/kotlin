@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,10 +15,18 @@ object DefaultAsserter : Asserter {
         else
             throw AssertionError(message)
     }
+
+    @SinceKotlin("1.4")
+    override fun fail(message: String?, cause: Throwable?): Nothing {
+        throw AssertionErrorWithCause(message, cause)
+    }
 }
 
-@Deprecated("DefaultAsserter is an object now, constructor call is not required anymore",
-        ReplaceWith("DefaultAsserter", "kotlin.test.DefaultAsserter"))
+@Deprecated(
+    "DefaultAsserter is an object now, constructor call is not required anymore",
+    ReplaceWith("DefaultAsserter", "kotlin.test.DefaultAsserter"),
+    DeprecationLevel.ERROR
+)
 @kotlin.js.JsName("DefaultAsserterConstructor")
 @Suppress("FunctionName")
 fun DefaultAsserter(): DefaultAsserter = DefaultAsserter

@@ -62,7 +62,7 @@ class KotlinAlternativeSourceNotificationProvider(private val myProject: Project
         val alternativeKtFiles = findFilesWithExactPackage(
             packageFqName,
             GlobalSearchScope.allScope(myProject),
-            myProject
+            myProject,
         ).filterTo(HashSet()) { it.name == fileName }
 
         FILE_PROCESSED_KEY.set(file, true)
@@ -88,7 +88,7 @@ class KotlinAlternativeSourceNotificationProvider(private val myProject: Project
         alternatives: Collection<KtFile>,
         project: Project,
         file: VirtualFile,
-        locationDeclName: String?
+        locationDeclName: String?,
     ) : EditorNotificationPanel() {
         private class ComboBoxFileElement(val ktFile: KtFile) {
             private val label: String by lazy(LazyThreadSafetyMode.NONE) {
@@ -106,11 +106,11 @@ class KotlinAlternativeSourceNotificationProvider(private val myProject: Project
         }
 
         init {
-            setText("Alternative source available for file ${file.name}")
+            setText(KotlinDebuggerCoreBundle.message("alternative.sources.notification.title", file.name))
 
             val items = alternatives.map { ComboBoxFileElement(it) }
             myLinksPanel.add(
-                ComboBox<ComboBoxFileElement>(items.toTypedArray()).apply {
+                ComboBox(items.toTypedArray()).apply {
                     addActionListener {
                         val context = DebuggerManagerEx.getInstanceEx(project).context
                         val session = context.debuggerSession
@@ -119,27 +119,30 @@ class KotlinAlternativeSourceNotificationProvider(private val myProject: Project
 
                         when {
                             session != null && vFile != null ->
-                                session.process.managerThread.schedule(object : DebuggerCommandImpl() {
-                                    override fun action() {
-                                        if (!StringUtil.isEmpty(locationDeclName)) {
-                                            DebuggerUtilsEx.setAlternativeSourceUrl(locationDeclName, vFile.url, project)
-                                        }
+                                session.process.managerThread.schedule(
+                                    object : DebuggerCommandImpl() {
+                                        override fun action() {
+                                            if (!StringUtil.isEmpty(locationDeclName)) {
+                                                DebuggerUtilsEx.setAlternativeSourceUrl(locationDeclName, vFile.url, project)
+                                            }
 
-                                        DebuggerUIUtil.invokeLater {
-                                            FileEditorManager.getInstance(project).closeFile(file)
-                                            session.refresh(true)
+                                            DebuggerUIUtil.invokeLater {
+                                                FileEditorManager.getInstance(project).closeFile(file)
+                                                session.refresh(true)
+                                            }
                                         }
-                                    }
-                                })
+                                    },
+                                )
                             else -> {
                                 FileEditorManager.getInstance(project).closeFile(file)
                                 ktFile.navigate(true)
                             }
                         }
                     }
-                })
+                },
+            )
 
-            createActionLabel("Disable") {
+            createActionLabel(KotlinDebuggerCoreBundle.message("alternative.sources.notification.disable")) {
                 DebuggerSettings.getInstance().SHOW_ALTERNATIVE_SOURCE = false
                 FILE_PROCESSED_KEY.set(file, null)
                 val fileEditorManager = FileEditorManager.getInstance(project)

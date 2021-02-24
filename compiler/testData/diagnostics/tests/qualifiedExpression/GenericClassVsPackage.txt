@@ -15,7 +15,6 @@ package a {
     }
 }
 
-
 // -- Module: <m2> --
 package
 
@@ -37,13 +36,11 @@ package a {
     }
 }
 
-
 // -- Module: <m3> --
 package
 
 public fun test(/*0*/ ab_c: a.b.c): kotlin.Unit
 public fun test2(/*0*/ ab_c: a.b.c): kotlin.Unit
-
 
 // -- Module: <top_m1> --
 package
@@ -58,7 +55,6 @@ package a {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 }
-
 
 // -- Module: <top_m2> --
 package
@@ -79,9 +75,9 @@ public final class a</*0*/ T> {
     }
 }
 
-
 // -- Module: <top_m3> --
 package
 
 public fun test(/*0*/ a_b: a.b): kotlin.Unit
 public fun test2(/*0*/ _ab: a.b): kotlin.Unit
+

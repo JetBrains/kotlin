@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: A.kt
 
 import org.jetbrains.annotations.NotNull;

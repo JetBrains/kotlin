@@ -3,13 +3,13 @@
     @4:0..26:1 VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Boolean
     @8:20..38 FUN name:not visibility:public modality:ABSTRACT <> ($this:<root>.Boolean) returnType:<root>.Boolean [operator]
       @8:4..38 VALUE_PARAMETER name:<this> type:<root>.Boolean
-    @13:10..42 FUN name:and visibility:public modality:ABSTRACT <> ($this:<root>.Boolean, other:<root>.Boolean) returnType:<root>.Boolean
+    @13:10..42 FUN name:and visibility:public modality:ABSTRACT <> ($this:<root>.Boolean, other:<root>.Boolean) returnType:<root>.Boolean [infix]
       @13:4..42 VALUE_PARAMETER name:<this> type:<root>.Boolean
       @13:18..32 VALUE_PARAMETER name:other index:0 type:<root>.Boolean
-    @18:10..41 FUN name:or visibility:public modality:ABSTRACT <> ($this:<root>.Boolean, other:<root>.Boolean) returnType:<root>.Boolean
+    @18:10..41 FUN name:or visibility:public modality:ABSTRACT <> ($this:<root>.Boolean, other:<root>.Boolean) returnType:<root>.Boolean [infix]
       @18:4..41 VALUE_PARAMETER name:<this> type:<root>.Boolean
       @18:17..31 VALUE_PARAMETER name:other index:0 type:<root>.Boolean
-    @23:10..42 FUN name:xor visibility:public modality:ABSTRACT <> ($this:<root>.Boolean, other:<root>.Boolean) returnType:<root>.Boolean
+    @23:10..42 FUN name:xor visibility:public modality:ABSTRACT <> ($this:<root>.Boolean, other:<root>.Boolean) returnType:<root>.Boolean [infix]
       @23:4..42 VALUE_PARAMETER name:<this> type:<root>.Boolean
       @23:18..32 VALUE_PARAMETER name:other index:0 type:<root>.Boolean
     @25:4..38 FUN name:compareTo visibility:public modality:ABSTRACT <> ($this:<root>.Boolean, other:<root>.Boolean) returnType:kotlin.Int

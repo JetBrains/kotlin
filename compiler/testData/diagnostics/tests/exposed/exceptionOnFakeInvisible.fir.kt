@@ -7,6 +7,6 @@ fun bar(arg: String) = arg
 class Derived : Base("123") {
 
     private inline fun foo() {
-        bar(<!INAPPLICABLE_CANDIDATE!>v<!>)
+        bar(<!HIDDEN!>v<!>)
     }
 }

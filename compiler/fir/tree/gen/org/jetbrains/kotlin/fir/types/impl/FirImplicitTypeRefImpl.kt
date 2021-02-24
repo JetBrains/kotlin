@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,8 +15,8 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-class FirImplicitTypeRefImpl(
-    override val source: FirSourceElement?
+internal class FirImplicitTypeRefImpl(
+    override var source: FirSourceElement?,
 ) : FirImplicitTypeRef() {
     override val annotations: List<FirAnnotationCall> get() = emptyList()
 
@@ -25,5 +25,13 @@ class FirImplicitTypeRefImpl(
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirImplicitTypeRefImpl {
         return this
+    }
+
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirImplicitTypeRefImpl {
+        return this
+    }
+
+    override fun replaceSource(newSource: FirSourceElement?) {
+        source = newSource
     }
 }

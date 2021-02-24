@@ -29,7 +29,10 @@ val asserter: Asserter
 internal var _asserter: Asserter? = null
 
 /** Asserts that the given [block] returns `true`. */
-fun assertTrue(message: String? = null, block: () -> Boolean): Unit = assertTrue(block(), message)
+fun assertTrue(message: String? = null, block: () -> Boolean) {
+    contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
+    assertTrue(block(), message)
+}
 
 /** Asserts that the expression is `true` with an optional [message]. */
 fun assertTrue(actual: Boolean, message: String? = null) {
@@ -38,7 +41,10 @@ fun assertTrue(actual: Boolean, message: String? = null) {
 }
 
 /** Asserts that the given [block] returns `false`. */
-fun assertFalse(message: String? = null, block: () -> Boolean): Unit = assertFalse(block(), message)
+fun assertFalse(message: String? = null, block: () -> Boolean) {
+    contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
+    assertFalse(block(), message)
+}
 
 /** Asserts that the expression is `false` with an optional [message]. */
 fun assertFalse(actual: Boolean, message: String? = null) {
@@ -92,13 +98,26 @@ fun fail(message: String? = null): Nothing {
     asserter.fail(message)
 }
 
+/**
+ * Marks a test as having failed if this point in the execution path is reached, with an optional [message]
+ * and [cause] exception.
+ *
+ * The [cause] exception is set as the root cause of the test failure.
+ */
+@SinceKotlin("1.4")
+fun fail(message: String? = null, cause: Throwable? = null): Nothing {
+    asserter.fail(message, cause)
+}
+
 /** Asserts that given function [block] returns the given [expected] value. */
 fun <@OnlyInputTypes T> expect(expected: T, block: () -> T) {
+    contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
     assertEquals(expected, block())
 }
 
 /** Asserts that given function [block] returns the given [expected] value and use the given [message] if it fails. */
 fun <@OnlyInputTypes T> expect(expected: T, message: String?, block: () -> T) {
+    contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
     assertEquals(expected, block(), message)
 }
 
@@ -173,6 +192,8 @@ inline fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, block: () 
 inline fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, message: String?, block: () -> Unit): T =
     checkResultIsFailure(exceptionClass, message, runCatching(block))
 
+/** Platform-specific construction of AssertionError with cause */
+internal expect fun AssertionErrorWithCause(message: String?, cause: Throwable?): AssertionError
 
 /**
  * Abstracts the logic for performing assertions. Specific implementations of [Asserter] can use JUnit
@@ -185,6 +206,15 @@ interface Asserter {
      * @param message the message to report.
      */
     fun fail(message: String?): Nothing
+
+    /**
+     * Fails the current test with the specified message and cause exception.
+     *
+     * @param message the message to report.
+     * @param cause the exception to set as the root cause of the reported failure.
+     */
+    @SinceKotlin("1.4")
+    fun fail(message: String?, cause: Throwable?): Nothing
 
     /**
      * Asserts that the specified value is `true`.

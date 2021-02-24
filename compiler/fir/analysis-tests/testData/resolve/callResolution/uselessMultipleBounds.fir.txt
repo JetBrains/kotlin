@@ -1,0 +1,12 @@
+FILE: uselessMultipleBounds.kt
+    public abstract interface A : R|kotlin/Any| {
+        public abstract fun foo(): R|kotlin/Unit|
+
+    }
+    public abstract interface B : R|A| {
+        public abstract override fun foo(): R|kotlin/Unit|
+
+    }
+    public final fun <E : R|A|, R|B|> bar(e: R|E|): R|kotlin/Unit| {
+        R|<local>/e|.R|/B.foo|()
+    }

@@ -1,12 +1,14 @@
 plugins {
-    kotlin("multiplatform") version "1.3.61"
+    kotlin("multiplatform") version "KOTLIN_VERSION"
 }
+
 group = "testGroupId"
 version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
 }
+
 kotlin {
     linuxX64()
     sourceSets {

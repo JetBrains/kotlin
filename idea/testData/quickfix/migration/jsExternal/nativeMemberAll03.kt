@@ -1,6 +1,6 @@
 // "Fix with 'asDynamic'" "true"
 // JS
-// ERROR: Declaration of such kind (extension function) cant be external
+// ERROR: Declaration of such kind (extension function) can't be external
 
 external class B {
     @nativeGetter

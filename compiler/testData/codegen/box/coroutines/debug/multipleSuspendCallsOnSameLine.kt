@@ -1,12 +1,12 @@
-// IGNORE_BACKEND_FIR: JVM_IR
+// This test depends on line numbers.
 // TARGET_BACKEND: JVM
 // WITH_RUNTIME
 // WITH_COROUTINES
 // FULL_JDK
+package test
 import helpers.*
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
-
 fun builder(c: suspend () -> Unit) {
     c.startCoroutine(EmptyContinuation)
 }

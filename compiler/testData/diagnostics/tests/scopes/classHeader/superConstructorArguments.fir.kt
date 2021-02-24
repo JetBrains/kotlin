@@ -20,8 +20,8 @@ class A : S (
     Companion.CONST,
     Nested.CONST,
     Interface.CONST,
-    a,
-    b()
+    <!UNRESOLVED_REFERENCE!>a<!>,
+    <!UNRESOLVED_REFERENCE!>b<!>()
 ) {
 
     class Nested {

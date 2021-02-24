@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,9 +10,13 @@ package kotlin
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `char`.
  */
 // TODO: KT-35100
-//@Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
 //public inline class Char internal constructor (val value: Int) : Comparable<Char> {
-public data class Char internal constructor(val value: Int) : Comparable<Char> {
+public class Char
+@OptIn(ExperimentalUnsignedTypes::class)
+@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+constructor(code: UShort) : Comparable<Char> {
+    private val value: Int = code.toInt()
 
     /**
      * Compares this value with the specified value for order.
@@ -52,7 +56,20 @@ public data class Char internal constructor(val value: Int) : Comparable<Char> {
     /** Returns the value of this character as a `Double`. */
     public fun toDouble(): Double = value.toDouble()
 
-    override fun toString(): String {
+    override fun equals(other: Any?): Boolean {
+        @Suppress("IMPLICIT_BOXING_IN_IDENTITY_EQUALS")
+        if (other === this) return true
+        if (other !is Char) return false
+
+        return this.value == other.value
+    }
+
+    override fun hashCode(): Int = value
+
+    // TODO implicit usages of toString and valueOf must be covered in DCE
+    @Suppress("JS_NAME_PROHIBITED_FOR_OVERRIDE")
+    @JsName("toString")
+    public override fun toString(): String {
         return js("String").fromCharCode(value).unsafeCast<String>()
     }
 

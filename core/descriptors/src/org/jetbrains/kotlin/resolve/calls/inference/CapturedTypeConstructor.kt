@@ -122,7 +122,7 @@ fun TypeSubstitution.wrapWithCapturingSubstitution(needApproximation: Boolean = 
             this.arguments.zip(this.parameters).map {
                 it.first.createCapturedIfNeeded(it.second)
             }.toTypedArray(),
-            approximateCapturedTypes = needApproximation
+            approximateContravariantCapturedTypes = needApproximation
         )
     else
         object : DelegatedTypeSubstitution(this@wrapWithCapturingSubstitution) {

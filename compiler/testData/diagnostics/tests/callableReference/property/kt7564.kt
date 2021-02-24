@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 import kotlin.reflect.*
 
 fun <T> checkSubtype(t: T) = t

@@ -3,6 +3,6 @@
 // INTENTION_TEXT_2: "Replace with 'asSequence().filterIsInstance<>().sum()'"
 fun foo(list: List<Any>){
     val <caret>result = list
-            .filterIsInstance<Int>()
-            .sum()
+        .filterIsInstance<Int>()
+        .sum()
 }

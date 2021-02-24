@@ -1,4 +1,5 @@
 // !WITH_NEW_INFERENCE
+
 fun create(): Map<String, String> = null!!
 
 operator fun <K, V> Map<K, V>.iterator(): Iterator<Map.Entry<K, V>> = null!!
@@ -13,8 +14,8 @@ class MyClass {
         var res = 0
         m = create()
         // See KT-7428
-        <!INAPPLICABLE_CANDIDATE, UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>for ((k, v) in m)
-            <!UNRESOLVED_REFERENCE!>res += (k.<!UNRESOLVED_REFERENCE!>length<!> + v.<!UNRESOLVED_REFERENCE!>length<!>)<!><!>
+        <!UNSAFE_CALL!>for ((k, v) in m)
+            res += (k.length + v.length)<!>
         return res
     }
 }

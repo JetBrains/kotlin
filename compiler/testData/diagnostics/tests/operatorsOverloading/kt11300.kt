@@ -7,7 +7,7 @@ class A {
 
 fun main() {
     val a = A()
-    <!OPERATOR_MODIFIER_REQUIRED!>a<!NI;NO_SET_METHOD!>[1]<!><!>++
-    <!OPERATOR_MODIFIER_REQUIRED!>a<!NI;NO_SET_METHOD!>[1]<!><!> += 3
+    <!OPERATOR_MODIFIER_REQUIRED!>a<!NO_SET_METHOD{NI}!>[1]<!><!>++
+    <!OPERATOR_MODIFIER_REQUIRED!>a<!NO_SET_METHOD{NI}!>[1]<!><!> += 3
     <!OPERATOR_MODIFIER_REQUIRED!>a[1]<!> = a[1] + 3
 }

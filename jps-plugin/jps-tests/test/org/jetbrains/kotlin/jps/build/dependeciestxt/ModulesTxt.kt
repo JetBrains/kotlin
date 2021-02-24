@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.jvm.isJvm
-import org.jetbrains.kotlin.platform.konan.KonanPlatforms
+import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import java.io.File
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.full.findAnnotation
@@ -264,7 +264,7 @@ class ModulesTxtBuilder {
                 "js" -> settings.compilerArguments =
                     K2JSCompilerArguments().also { settings.targetPlatform = JsPlatforms.defaultJsPlatform }
                 "native" -> settings.compilerArguments =
-                    FakeK2NativeCompilerArguments().also { settings.targetPlatform = KonanPlatforms.defaultKonanPlatform }
+                    FakeK2NativeCompilerArguments().also { settings.targetPlatform = NativePlatforms.unspecifiedNativePlatform }
                 else -> {
                     val flagProperty = ModulesTxt.Module.flags[flag]
                     if (flagProperty != null) flagProperty.set(module, true)

@@ -16,9 +16,10 @@
 
 package org.jetbrains.kotlin.load.java.lazy.types
 
-import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
+import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMapper
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.load.java.components.TypeUsage
 import org.jetbrains.kotlin.load.java.components.TypeUsage.COMMON
 import org.jetbrains.kotlin.load.java.components.TypeUsage.SUPERTYPE
@@ -61,8 +62,13 @@ class JavaTypeResolver(
     fun transformArrayType(arrayType: JavaArrayType, attr: JavaTypeAttributes, isVararg: Boolean = false): KotlinType {
         val javaComponentType = arrayType.componentType
         val primitiveType = (javaComponentType as? JavaPrimitiveType)?.type
+        val annotations = LazyJavaAnnotations(c, arrayType, areAnnotationsFreshlySupported = true)
+
         if (primitiveType != null) {
             val jetType = c.module.builtIns.getPrimitiveArrayKotlinType(primitiveType)
+
+            jetType.replaceAnnotations(Annotations.create(annotations + jetType.annotations))
+
             return if (attr.isForAnnotationParameter)
                 jetType
             else KotlinTypeFactory.flexibleType(jetType, jetType.makeNullableAsSpecified(true))
@@ -75,12 +81,12 @@ class JavaTypeResolver(
 
         if (attr.isForAnnotationParameter) {
             val projectionKind = if (isVararg) OUT_VARIANCE else INVARIANT
-            return c.module.builtIns.getArrayType(projectionKind, componentType)
+            return c.module.builtIns.getArrayType(projectionKind, componentType, annotations)
         }
 
         return KotlinTypeFactory.flexibleType(
-            c.module.builtIns.getArrayType(INVARIANT, componentType),
-            c.module.builtIns.getArrayType(OUT_VARIANCE, componentType).makeNullableAsSpecified(true)
+            c.module.builtIns.getArrayType(INVARIANT, componentType, annotations),
+            c.module.builtIns.getArrayType(OUT_VARIANCE, componentType, annotations).makeNullableAsSpecified(true)
         )
     }
 
@@ -156,7 +162,7 @@ class JavaTypeResolver(
             return c.components.reflectionTypes.kClass
         }
 
-        val javaToKotlin = JavaToKotlinClassMap
+        val javaToKotlin = JavaToKotlinClassMapper
 
         val kotlinDescriptor = javaToKotlin.mapJavaToKotlin(fqName, c.module.builtIns) ?: return null
 
@@ -182,7 +188,7 @@ class JavaTypeResolver(
         fun JavaType?.isSuperWildcard(): Boolean = (this as? JavaWildcardType)?.let { it.bound != null && !it.isExtends } ?: false
 
         if (!typeArguments.lastOrNull().isSuperWildcard()) return false
-        val mutableLastParameterVariance = JavaToKotlinClassMap.convertReadOnlyToMutable(readOnlyContainer)
+        val mutableLastParameterVariance = JavaToKotlinClassMapper.convertReadOnlyToMutable(readOnlyContainer)
             .typeConstructor.parameters.lastOrNull()?.variance ?: return false
 
         return mutableLastParameterVariance != OUT_VARIANCE

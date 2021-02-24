@@ -1,0 +1,23 @@
+package
+
+public lateinit var `$$delegatedProperties`: kotlin.Array<kotlin.reflect.KProperty<*>>
+public val x: kotlin.Any
+public operator fun kotlin.Any.getValue(/*0*/ x: kotlin.Any?, /*1*/ y: kotlin.Any): kotlin.Any
+
+public final class C {
+    public constructor C()
+    public final val `$$delegatedProperties`: kotlin.Array<kotlin.reflect.KProperty<*>>
+    public final val x: kotlin.Any
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class C2 {
+    public constructor C2()
+    public final lateinit var `$$delegatedProperties`: kotlin.Array<kotlin.reflect.KProperty<*>>
+    public final val x: kotlin.Any
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

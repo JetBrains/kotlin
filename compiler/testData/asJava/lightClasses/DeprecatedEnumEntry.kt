@@ -10,3 +10,5 @@ enum class E {
     @Deprecated("b")
     Entry3
 }
+
+// FIR_COMPARISON

@@ -13,6 +13,8 @@ package org.jetbrains.kotlin.metadata.jvm.deserialization
 // WARNING: improving the behavior of this class MAY BREAK BINARY COMPATIBILITY of code compiled by Kotlin, because it may make
 // the new compiler skip writing the signatures it now thinks are trivial, and the old compiler would recreate them incorrectly.
 object ClassMapperLite {
+    // Simply "kotlin", but to avoid being renamed by namespace relocation (e.g., Shadow.relocate gradle plugin)
+    private val kotlin = listOf('k', 'o', 't', 'l', 'i', 'n').joinToString(separator = "")
     // Kotlin ClassId -> JVM desc
     // e.g. "kotlin.IntArray" -> "[I"
     //      "kotlin.String.Companion" -> "Lkotlin/jvm/internal/StringCompanionObject"
@@ -30,14 +32,14 @@ object ClassMapperLite {
         )
 
         for (i in primitives.indices step 2) {
-            put("kotlin/${primitives[i]}", primitives[i + 1])
-            put("kotlin/${primitives[i]}Array", "[${primitives[i + 1]}")
+            put("$kotlin/${primitives[i]}", primitives[i + 1])
+            put("$kotlin/${primitives[i]}Array", "[${primitives[i + 1]}")
         }
 
-        put("kotlin/Unit", "V")
+        put("$kotlin/Unit", "V")
 
         fun add(kotlinSimpleName: String, javaInternalName: String) {
-            put("kotlin/$kotlinSimpleName", "L$javaInternalName;")
+            put("$kotlin/$kotlinSimpleName", "L$javaInternalName;")
         }
 
         add("Any", "java/lang/Object")
@@ -59,14 +61,14 @@ object ClassMapperLite {
         add("collections/MutableMap.MutableEntry", "java/util/Map\$Entry")
 
         for (i in 0..22) {
-            add("Function$i", "kotlin/jvm/functions/Function$i")
-            add("reflect/KFunction$i", "kotlin/reflect/KFunction")
+            add("Function$i", "$kotlin/jvm/functions/Function$i")
+            add("reflect/KFunction$i", "$kotlin/reflect/KFunction")
         }
 
         //Boolean is purposefully omitted from this list, even though it has a Companion Object.
         //This assures that an older compiler won't get confused by the new signature, preventing a bug in compatibility.
         for (klass in listOf("Char", "Byte", "Short", "Int", "Float", "Long", "Double", "String", "Enum")) {
-            add("$klass.Companion", "kotlin/jvm/internal/${klass}CompanionObject")
+            add("$klass.Companion", "$kotlin/jvm/internal/${klass}CompanionObject")
         }
     }
 

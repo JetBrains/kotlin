@@ -33,9 +33,6 @@ class JvmQuickFixRegistrar : QuickFixContributor {
 
         UNSUPPORTED_FEATURE.registerFactory(EnableUnsupportedFeatureFix)
 
-        EXPERIMENTAL_FEATURE_ERROR.registerFactory(ChangeCoroutineSupportFix)
-        EXPERIMENTAL_FEATURE_WARNING.registerFactory(ChangeCoroutineSupportFix)
-
         EXPERIMENTAL_FEATURE_ERROR.registerFactory(ChangeGeneralLanguageFeatureSupportFix)
         EXPERIMENTAL_FEATURE_WARNING.registerFactory(ChangeGeneralLanguageFeatureSupportFix)
 

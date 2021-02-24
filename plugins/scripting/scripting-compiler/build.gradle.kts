@@ -14,6 +14,8 @@ dependencies {
     compileOnly(project(":compiler:cli"))
     compileOnly(project(":compiler:backend.js"))
     compileOnly(project(":core:descriptors.runtime"))
+    compileOnly(project(":compiler:ir.tree.impl"))
+    compileOnly(project(":kotlin-reflect-api"))
     compile(project(":kotlin-scripting-common"))
     compile(project(":kotlin-scripting-js"))
     compile(project(":kotlin-util-klib"))
@@ -32,7 +34,7 @@ dependencies {
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(commonDep("junit:junit"))
 
-    testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    testImplementation(intellijCoreDep()) { includeJars("intellij-core") }
     testRuntimeOnly(intellijDep()) { includeJars("jps-model") }
 }
 
@@ -43,9 +45,7 @@ sourceSets {
 
 tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
     kotlinOptions {
-        languageVersion = "1.3"
-        apiVersion = "1.3"
-        freeCompilerArgs += "-Xskip-metadata-version-check"
+        freeCompilerArgs = freeCompilerArgs - "-progressive" + "-Xskip-metadata-version-check"
     }
 }
 
@@ -57,7 +57,8 @@ javadocJar()
 
 testsJar()
 
-projectTest {
+projectTest(parallel = true) {
     dependsOn(":dist")
     workingDir = rootDir
+    systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
 }

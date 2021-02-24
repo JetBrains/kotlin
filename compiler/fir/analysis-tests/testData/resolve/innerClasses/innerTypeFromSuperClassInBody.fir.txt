@@ -1,0 +1,34 @@
+FILE: innerTypeFromSuperClassInBody.kt
+    public abstract class A<X : R|kotlin/CharSequence|> : R|kotlin/Any| {
+        public constructor<X : R|kotlin/CharSequence|>(): R|A<X>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final inner class Inner<X : R|kotlin/CharSequence|> : R|kotlin/Any| {
+            public constructor(): R|A.Inner<X>| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final fun foo(x: R|A.Inner<X>.() -> kotlin/Unit|): R|kotlin/Unit| {
+        }
+
+    }
+    public final object B : R|A<kotlin/String>| {
+        private constructor(): R|B| {
+            super<R|A<kotlin/String>|>()
+        }
+
+        public final fun bar(): R|kotlin/Unit| {
+            lval y: R|A.Inner<kotlin/String>.() -> kotlin/Unit| = fun R|A.Inner<kotlin/String>|.<anonymous>(): R|kotlin/Unit| {
+                ^ Unit
+            }
+
+            this@R|/B|.R|SubstitutionOverride</B.foo: R|kotlin/Unit|>|(R|<local>/y|)
+            R|/baz|(R|<local>/y|)
+        }
+
+    }
+    public final fun baz(x: R|(A.Inner<kotlin/String>) -> kotlin/Unit|): R|kotlin/Unit| {
+    }

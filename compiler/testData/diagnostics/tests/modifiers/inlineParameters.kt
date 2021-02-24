@@ -15,6 +15,6 @@ class FunctionSubtype : () -> Unit {
 }
 
 <!NOTHING_TO_INLINE!>inline<!> fun functionSubtype(
-        <!ILLEGAL_INLINE_PARAMETER_MODIFIER!>noinline<!> f: FunctionSubtype,
-        <!ILLEGAL_INLINE_PARAMETER_MODIFIER!>crossinline<!> g: FunctionSubtype
+    <!ILLEGAL_INLINE_PARAMETER_MODIFIER!>noinline<!> f: FunctionSubtype,
+    <!ILLEGAL_INLINE_PARAMETER_MODIFIER!>crossinline<!> g: FunctionSubtype
 ) { }

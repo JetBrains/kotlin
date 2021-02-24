@@ -1,5 +1,6 @@
 @kotlin.Metadata
 public abstract class A {
+    // source: 'noSpecialBridgeIfPresentInSuperClass.kt'
     public method <init>(): void
     public method add(p0: int, p1: java.lang.Object): void
     public method add(p0: java.lang.Object): boolean
@@ -17,7 +18,7 @@ public abstract class A {
     public method removeAll(p0: java.util.Collection): boolean
     public method retainAll(p0: java.util.Collection): boolean
     public method set(p0: int, p1: java.lang.Object): java.lang.Object
-    public final method size(): int
+    public bridge final method size(): int
     public method subList(p0: int, p1: int): java.util.List
     public method toArray(): java.lang.Object[]
     public method toArray(p0: java.lang.Object[]): java.lang.Object[]
@@ -25,5 +26,6 @@ public abstract class A {
 
 @kotlin.Metadata
 public abstract class B {
+    // source: 'noSpecialBridgeIfPresentInSuperClass.kt'
     public method <init>(): void
 }

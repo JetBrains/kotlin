@@ -1,6 +1,4 @@
-
 plugins {
-    java
     kotlin("jvm")
     id("jps-compatible")
 }
@@ -22,5 +20,8 @@ tasks.withType<JavaCompile> {
     targetCompatibility = "1.6"
 }
 
-if (project.hasProperty("teamcity"))
-tasks["compileJava"].dependsOn(":prepare:build.version:writeCompilerVersion")
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    kotlinOptions {
+        freeCompilerArgs += "-Xsuppress-deprecated-jvm-target-warning"
+    }
+}

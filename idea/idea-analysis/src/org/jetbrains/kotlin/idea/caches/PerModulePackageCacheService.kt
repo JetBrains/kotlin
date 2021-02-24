@@ -16,6 +16,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.rootManager
 import com.intellij.openapi.roots.ModuleRootEvent
 import com.intellij.openapi.roots.ModuleRootListener
+import com.intellij.openapi.startup.StartupActivity
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
@@ -47,14 +48,14 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
 
-class KotlinPackageContentModificationListener(private val project: Project) : Disposable {
-    val connection = project.messageBus.connect()
+class KotlinPackageContentModificationListener : StartupActivity {
 
     companion object {
         val LOG = Logger.getInstance(this::class.java)
     }
 
-    init {
+    override fun runActivity(project: Project) {
+        val connection = project.messageBus.connect(project)
         connection.subscribe(VirtualFileManager.VFS_CHANGES, object : BulkFileListener {
             override fun before(events: MutableList<out VFileEvent>) = onEvents(events, false)
             override fun after(events: List<VFileEvent>) = onEvents(events, true)
@@ -116,9 +117,6 @@ class KotlinPackageContentModificationListener(private val project: Project) : D
         })
     }
 
-    override fun dispose() {
-        connection.disconnect()
-    }
 }
 
 class KotlinPackageStatementPsiTreeChangePreprocessor(private val project: Project) : PsiTreeChangePreprocessor {

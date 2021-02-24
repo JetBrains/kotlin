@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.isCaptured
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.*
+import org.jetbrains.kotlin.types.model.TypeVariableTypeConstructorMarker
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
 
@@ -227,11 +228,6 @@ fun KotlinType.containsTypeProjectionsInTopLevelArguments(): Boolean {
     return possiblyInnerType.arguments.any { it.isStarProjection || it.projectionKind != Variance.INVARIANT }
 }
 
-fun UnwrappedType.canHaveUndefinedNullability(): Boolean =
-    constructor is NewTypeVariableConstructor ||
-            constructor.declarationDescriptor is TypeParameterDescriptor ||
-            this is NewCapturedType
-
 val TypeParameterDescriptor.representativeUpperBound: KotlinType
     get() {
         assert(upperBounds.isNotEmpty()) { "Upper bounds should not be empty: $this" }
@@ -309,3 +305,5 @@ private fun NewCapturedType.unCaptureTopLevelType(): UnwrappedType {
 
     return constructor.projection.type.unwrap()
 }
+
+fun KotlinType.shouldBeSubstituted() = contains { it is StubType || it.constructor is TypeVariableTypeConstructorMarker }

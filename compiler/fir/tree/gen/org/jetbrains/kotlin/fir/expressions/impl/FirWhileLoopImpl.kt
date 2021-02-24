@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhileLoop
-import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -19,14 +18,13 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-class FirWhileLoopImpl(
-    override val source: FirSourceElement?,
-    override var condition: FirExpression
-) : FirWhileLoop(), FirAbstractLoop, FirAbstractAnnotatedElement {
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
-    override var label: FirLabel? = null
-    override lateinit var block: FirBlock
-
+internal class FirWhileLoopImpl(
+    override var source: FirSourceElement?,
+    override val annotations: MutableList<FirAnnotationCall>,
+    override var label: FirLabel?,
+    override var condition: FirExpression,
+    override var block: FirBlock,
+) : FirWhileLoop() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
         label?.accept(visitor, data)
@@ -41,6 +39,11 @@ class FirWhileLoopImpl(
         return this
     }
 
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirWhileLoopImpl {
+        annotations.transformInplace(transformer, data)
+        return this
+    }
+
     override fun <D> transformCondition(transformer: FirTransformer<D>, data: D): FirWhileLoopImpl {
         condition = condition.transformSingle(transformer, data)
         return this
@@ -52,8 +55,12 @@ class FirWhileLoopImpl(
     }
 
     override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirWhileLoopImpl {
-        annotations.transformInplace(transformer, data)
+        transformAnnotations(transformer, data)
         label = label?.transformSingle(transformer, data)
         return this
+    }
+
+    override fun replaceSource(newSource: FirSourceElement?) {
+        source = newSource
     }
 }

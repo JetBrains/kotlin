@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // KT-389 Wrong type inference for varargs etc.
 
 import java.util.*

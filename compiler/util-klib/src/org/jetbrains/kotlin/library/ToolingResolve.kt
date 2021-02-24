@@ -59,19 +59,13 @@ object ToolingSingleFileKlibResolveStrategy : SingleFileKlibResolveStrategy {
         val extension = libraryFile.extension
 
         val wrappedAction: () -> T? = when {
-            extension == KLIB_FILE_EXTENSION -> {
-                if (!libraryFile.isFile) return null
-
-                { libraryFile.withZipFileSystem { fs -> action(fs.file("/")) } }
-            }
-
-            extension.isNotEmpty() -> return null
-
-            else -> {
-                if (!libraryFile.isDirectory) return null
-
+            libraryFile.isDirectory -> {
                 { action(libraryFile) }
             }
+            libraryFile.isFile && extension == KLIB_FILE_EXTENSION -> {
+                { libraryFile.withZipFileSystem { fs -> action(fs.file("/")) } }
+            }
+            else -> return null
         }
 
         return try {

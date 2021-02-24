@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.load.java.sam;
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.synthetic.FunctionInterfaceAdapterDescriptor;
-import org.jetbrains.kotlin.descriptors.synthetic.SyntheticMemberDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
 
 public interface SamAdapterDescriptor<D extends FunctionDescriptor>

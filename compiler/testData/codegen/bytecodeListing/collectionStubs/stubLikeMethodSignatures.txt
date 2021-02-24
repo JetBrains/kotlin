@@ -1,0 +1,34 @@
+@kotlin.Metadata
+public final class<<T:Ljava/lang/Object;>Ljava/lang/Object;Ljava/util/List<TT;>;Lkotlin/jvm/internal/markers/KMappedMarker;>  MyList {
+    // source: 'stubLikeMethodSignatures.kt'
+    public @org.jetbrains.annotations.NotNull <()Ljava/util/Iterator<TT;>;> method iterator(): java.util.Iterator
+    public @org.jetbrains.annotations.NotNull <()Ljava/util/ListIterator<TT;>;> method listIterator(): java.util.ListIterator
+    public final <()TT;> method getV(): java.lang.Object
+    public @org.jetbrains.annotations.NotNull <(I)Ljava/util/ListIterator<TT;>;> method listIterator(p0: int): java.util.ListIterator
+    public <(I)TT;> method get(p0: int): java.lang.Object
+    public bridge final <(I)TT;> method remove(p0: int): java.lang.Object
+    public final <(I)TT;> method removeAt(p0: int): java.lang.Object
+    public @org.jetbrains.annotations.NotNull <(II)Ljava/util/List<TT;>;> method subList(p0: int, p1: int): java.util.List
+    public final <(ILjava/util/Collection<+TT;>;)Z> method addAll(p0: int, @org.jetbrains.annotations.NotNull p1: java.util.Collection): boolean
+    public final <(ITT;)TT;> method set(p0: int, p1: java.lang.Object): java.lang.Object
+    public final <(ITT;)V> method add(p0: int, p1: java.lang.Object): void
+    public <(Ljava/util/Collection<+Ljava/lang/Object;>;)Z> method containsAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): boolean
+    public final <(Ljava/util/Collection<+TT;>;)Z> method addAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): boolean
+    public final <(Ljava/util/Collection<+TT;>;)Z> method removeAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): boolean
+    public final <(Ljava/util/Collection<+TT;>;)Z> method retainAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): boolean
+    public <(TT;)V> method <init>(p0: java.lang.Object): void
+    public final <(TT;)Z> method add(p0: java.lang.Object): boolean
+    public final <(TT;)Z> method remove(p0: java.lang.Object): boolean
+    public <<T:Ljava/lang/Object;>([TT;)[TT;> method toArray(p0: java.lang.Object[]): java.lang.Object[]
+    public final <null> method clear(): void
+    public <null> method contains(p0: java.lang.Object): boolean
+    public <null> method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public <null> method getSize(): int
+    public <null> method hashCode(): int
+    public <null> method indexOf(p0: java.lang.Object): int
+    public <null> method isEmpty(): boolean
+    public <null> method lastIndexOf(p0: java.lang.Object): int
+    public bridge final <null> method size(): int
+    public <null> method toArray(): java.lang.Object[]
+    private final field <TT;> v: java.lang.Object
+}

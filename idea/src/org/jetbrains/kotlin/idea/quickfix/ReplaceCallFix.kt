@@ -22,6 +22,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
@@ -74,7 +75,7 @@ class ReplaceImplicitReceiverCallFix(
 ) : KotlinQuickFixAction<KtExpression>(expression) {
     override fun getFamilyName() = text
 
-    override fun getText() = "Replace with safe (this?.) call"
+    override fun getText() = KotlinBundle.message("replace.with.safe.this.call")
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return
@@ -92,7 +93,7 @@ class ReplaceWithSafeCallFix(
     notNullNeeded: Boolean
 ) : ReplaceCallFix(expression, "?.", notNullNeeded) {
 
-    override fun getText() = "Replace with safe (?.) call"
+    override fun getText() = KotlinBundle.message("replace.with.safe.call")
 
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
@@ -117,7 +118,7 @@ class ReplaceWithSafeCallForScopeFunctionFix(
     notNullNeeded: Boolean
 ) : ReplaceCallFix(expression, "?.", notNullNeeded) {
 
-    override fun getText() = "Replace scope function with safe (?.) call"
+    override fun getText() = KotlinBundle.message("replace.scope.function.with.safe.call")
 
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtExpression>? {
@@ -168,7 +169,7 @@ class ReplaceWithSafeCallForScopeFunctionFix(
 }
 
 class ReplaceWithDotCallFix(expression: KtSafeQualifiedExpression) : ReplaceCallFix(expression, "."), CleanupFix {
-    override fun getText() = "Replace with dot call"
+    override fun getText() = KotlinBundle.message("replace.with.dot.call")
 
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {

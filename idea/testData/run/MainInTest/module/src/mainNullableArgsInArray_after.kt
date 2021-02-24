@@ -1,4 +1,3 @@
-// !LANGUAGE: +AllowNullableArrayArgsInMain
 
-fun main(args: Array<String?>) { // yes
+fun main(args: Array<String?>) { // no
 }

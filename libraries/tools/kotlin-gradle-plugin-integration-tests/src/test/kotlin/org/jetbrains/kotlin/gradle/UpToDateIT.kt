@@ -12,7 +12,7 @@ class UpToDateIT : BaseGradleIT() {
         testMutations(
             *propertyMutationChain(
                 "compileKotlin.kotlinOptions.languageVersion",
-                "null", "'1.3'", "'1.2'", "null"
+                "null", "'1.5'", "'1.4'", "null"
             )
         )
     }
@@ -22,7 +22,7 @@ class UpToDateIT : BaseGradleIT() {
         testMutations(
             *propertyMutationChain(
                 "compileKotlin.kotlinOptions.apiVersion",
-                "null", "'1.3'", "'1.2'", "null"
+                "null", "'1.5'", "'1.4'", "null"
             )
         )
     }
@@ -78,7 +78,9 @@ class UpToDateIT : BaseGradleIT() {
         val originalPaths get() = originalCompilerCp.map { it.replace("\\", "/") }.joinToString(", ") { "'$it'" }
 
         override fun initProject(project: Project) = with(project) {
-            buildGradle.appendText("\nprintln 'compiler_cp=' + compileKotlin.getComputedCompilerClasspath\$kotlin_gradle_plugin()")
+            buildGradle.appendText(
+                "\nafterEvaluate { println 'compiler_cp=' + compileKotlin.getComputedCompilerClasspath\$kotlin_gradle_plugin() }"
+            )
             build("clean") { originalCompilerCp = "compiler_cp=\\[(.*)]".toRegex().find(output)!!.groupValues[1].split(", ") }
             buildGradle.appendText("""${'\n'}
                 // Add Kapt to the project to test its input checks as well:

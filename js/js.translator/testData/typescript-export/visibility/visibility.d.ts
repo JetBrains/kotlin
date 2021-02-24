@@ -3,18 +3,18 @@ declare namespace JS_TESTS {
     interface publicInterface {
     }
     const publicVal: number;
-    function publicFun(): number
+    function publicFun(): number;
     class publicClass {
-        constructor()
+        constructor();
     }
     class Class {
-        constructor()
+        constructor();
         readonly publicVal: number;
-        publicFun(): number
+        publicFun(): number;
     }
     namespace Class {
         class publicClass {
-            constructor()
+            constructor();
         }
     }
 }

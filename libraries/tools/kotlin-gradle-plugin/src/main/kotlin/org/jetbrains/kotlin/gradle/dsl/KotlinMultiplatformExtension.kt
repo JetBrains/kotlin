@@ -8,32 +8,32 @@ package org.jetbrains.kotlin.gradle.dsl
 import groovy.lang.Closure
 import org.gradle.api.InvalidUserCodeException
 import org.gradle.api.NamedDomainObjectCollection
+import org.gradle.api.Project
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 
-open class KotlinMultiplatformExtension :
-    KotlinProjectExtension(),
+open class KotlinMultiplatformExtension(project: Project) :
+    KotlinProjectExtension(project),
     KotlinTargetContainerWithPresetFunctions,
-    KotlinTargetContainerWithNativeShortcuts
-{
+    KotlinTargetContainerWithJsPresetFunctions,
+    KotlinTargetContainerWithNativeShortcuts {
     override lateinit var presets: NamedDomainObjectCollection<KotlinTargetPreset<*>>
         internal set
 
     override lateinit var targets: NamedDomainObjectCollection<KotlinTarget>
         internal set
 
+    override lateinit var defaultJsCompilerType: KotlinJsCompilerType
+        internal set
+
     @Suppress("unused") // DSL
     val testableTargets: NamedDomainObjectCollection<KotlinTargetWithTests<*, *>>
         get() = targets.withType(KotlinTargetWithTests::class.java)
 
-    internal var isGradleMetadataAvailable: Boolean = false
-    internal var isGradleMetadataExperimental: Boolean = false
-
-    fun metadata(configure: KotlinOnlyTarget<KotlinCommonCompilation>.() -> Unit = { }): KotlinOnlyTarget<KotlinCommonCompilation> =
+    fun metadata(configure: KotlinOnlyTarget<AbstractKotlinCompilation<*>>.() -> Unit = { }): KotlinOnlyTarget<AbstractKotlinCompilation<*>> =
         @Suppress("UNCHECKED_CAST")
-        (targets.getByName(KotlinMultiplatformPlugin.METADATA_TARGET_NAME) as KotlinOnlyTarget<KotlinCommonCompilation>).also(configure)
+        (targets.getByName(KotlinMultiplatformPlugin.METADATA_TARGET_NAME) as KotlinOnlyTarget<AbstractKotlinCompilation<*>>).also(configure)
 
     fun metadata(configure: Closure<*>) = metadata { ConfigureUtil.configure(configure, this) }
 
@@ -51,7 +51,7 @@ open class KotlinMultiplatformExtension :
     fun targetFromPreset(preset: KotlinTargetPreset<*>, configure: Closure<*>) = targetFromPreset(preset, preset.name, configure)
 
     internal val rootSoftwareComponent: KotlinSoftwareComponent by lazy {
-        KotlinSoftwareComponentWithCoordinatesAndPublication("kotlin", targets)
+        KotlinSoftwareComponentWithCoordinatesAndPublication(project, "kotlin", targets)
     }
 }
 
@@ -79,9 +79,9 @@ internal fun <T : KotlinTarget> KotlinTargetsContainerWithPresets.configureOrCre
         else -> {
             throw InvalidUserCodeException(
                 "The target '$targetName' already exists, but it was not created with the '${targetPreset.name}' preset. " +
-                        "To configure it, access it by name in `kotlin.targets`" +
-                        " or use the preset function '${existingTarget.preset?.name}'."
-                            .takeIf { existingTarget.preset != null } ?: "."
+                "To configure it, access it by name in `kotlin.targets`" +
+                " or use the preset function '${existingTarget.preset?.name}'."
+                    .takeIf { existingTarget.preset != null } ?: "."
             )
         }
     }

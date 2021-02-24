@@ -1,13 +1,14 @@
 fun valuesNotNull(map: MutableMap<Int, String>) {
     map.forEach { k, v -> }
         // SUCCESS
-        // ORIGINAL:    fun forEach((K, V) -> Unit): Unit defined in kotlin.collections.MutableMap
-        // SUBSTITUTED: fun forEach((Int, String) -> Unit): Unit defined in kotlin.collections.MutableMap
+        // ORIGINAL:    fun forEach(BiConsumer<in K, in V>): Unit defined in kotlin.collections.MutableMap
+        // SUBSTITUTED: fun forEach(BiConsumer<in Int, in String>): Unit defined in kotlin.collections.MutableMap
 }
 
 fun <T> valuesT(map: MutableMap<Int, T>, newValue: T) {
     map.forEach { k, v -> }
         // SUCCESS
-        // ORIGINAL:    fun forEach((K, V) -> Unit): Unit defined in kotlin.collections.MutableMap
-        // SUBSTITUTED: fun forEach((Int, T) -> Unit): Unit defined in kotlin.collections.MutableMap
+        // ORIGINAL:    fun forEach(BiConsumer<in K, in V>): Unit defined in kotlin.collections.MutableMap
+        // SUBSTITUTED: fun forEach(BiConsumer<in Int, in T>): Unit defined in kotlin.collections.MutableMap
 }
+

@@ -11,7 +11,7 @@ sourceSets {
 
 android {
     compileSdkVersion 26
-    buildToolsVersion "23.0.1"
+    buildToolsVersion "28.0.3"
     defaultConfig {
         applicationId "org.jetbrains.kotlin"
         minSdkVersion 18

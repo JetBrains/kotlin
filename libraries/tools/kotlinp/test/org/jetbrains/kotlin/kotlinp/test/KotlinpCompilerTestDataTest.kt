@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.kotlinp.test
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -21,7 +21,7 @@ class KotlinpCompilerTestDataTest(private val file: File) {
 
     @Test
     fun doTest() {
-        val tmpdir = KotlinTestUtils.tmpDirForTest(this::class.java.simpleName, file.nameWithoutExtension)
+        val tmpdir = KtTestUtil.tmpDirForTest(this::class.java.simpleName, file.nameWithoutExtension)
 
         val disposable = TestDisposable()
         try {

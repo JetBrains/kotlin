@@ -4,7 +4,6 @@ internal class CtorComment
  */
 {
     var myA = "str"
-
 }
 
 internal class CtorComment2

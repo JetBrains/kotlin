@@ -9,26 +9,45 @@ import com.intellij.ProjectTopics
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.application.*
+import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.ReadAction.nonBlocking
-import com.intellij.openapi.components.ProjectComponent
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.roots.ModuleRootEvent
 import com.intellij.openapi.roots.ModuleRootListener
+import com.intellij.openapi.startup.StartupActivity
+import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.text.StringUtilRt
 import com.intellij.util.PathUtilRt
 import com.intellij.util.concurrency.AppExecutorUtil
 import org.jetbrains.concurrency.CancellablePromise
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfosFromIdeaModel
-import org.jetbrains.kotlin.idea.configuration.klib.KotlinNativeLibraryNameUtil
+import org.jetbrains.kotlin.idea.configuration.klib.KotlinNativeLibraryNameUtil.isGradleLibraryName
+import org.jetbrains.kotlin.idea.configuration.klib.KotlinNativeLibraryNameUtil.parseIDELibraryName
+import org.jetbrains.kotlin.idea.klib.KlibCompatibilityInfo.IncompatibleMetadata
+import org.jetbrains.kotlin.idea.util.application.getServiceSafe
+import org.jetbrains.kotlin.idea.util.application.isUnitTestMode
 import org.jetbrains.kotlin.idea.versions.UnsupportedAbiVersionNotificationPanelProvider
 import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
 import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
-import org.jetbrains.kotlin.idea.klib.KlibCompatibilityInfo.IncompatibleMetadata
 
 /** TODO: merge [KotlinNativeABICompatibilityChecker] in the future with [UnsupportedAbiVersionNotificationPanelProvider], KT-34525 */
-class KotlinNativeABICompatibilityChecker(private val project: Project) : ProjectComponent, Disposable {
+class KotlinNativeABICompatibilityChecker : StartupActivity {
+    override fun runActivity(project: Project) {
+        val service = KotlinNativeABICompatibilityCheckerService.getInstance(project)
+        project.messageBus.connect().subscribe(ProjectTopics.PROJECT_ROOTS, object : ModuleRootListener {
+            override fun rootsChanged(event: ModuleRootEvent) {
+                // run when project roots are changes, e.g. on project import
+                service.validateKotlinNativeLibraries()
+            }
+        })
+
+        service.validateKotlinNativeLibraries()
+    }
+}
+
+class KotlinNativeABICompatibilityCheckerService(private val project: Project) {
 
     private sealed class LibraryGroup(private val ordinal: Int) : Comparable<LibraryGroup> {
 
@@ -43,50 +62,40 @@ class KotlinNativeABICompatibilityChecker(private val project: Project) : Projec
         object User : LibraryGroup(2)
     }
 
-    private val cachedIncompatibleLibraries = HashSet<String>()
+    private val cachedIncompatibleLibraries = mutableSetOf<String>()
 
-    @Volatile
-    private var backgroundJob: CancellablePromise<*>? = null
+    internal fun validateKotlinNativeLibraries() {
+        if (isUnitTestMode() || project.isDisposed) return
 
-    init {
-        project.messageBus.connect().subscribe(ProjectTopics.PROJECT_ROOTS, object : ModuleRootListener {
-            override fun rootsChanged(event: ModuleRootEvent) {
-                // run when project roots are changes, e.g. on project import
-                validateKotlinNativeLibraries()
-            }
-        })
-    }
-
-    override fun projectOpened() {
-        // run when project is opened
-        validateKotlinNativeLibraries()
-    }
-
-    private fun validateKotlinNativeLibraries() {
-        if (ApplicationManager.getApplication().isUnitTestMode || project.isDisposed)
-            return
-
-        backgroundJob = nonBlocking<List<Notification>> {
-            val librariesToNotify = getLibrariesToNotifyAbout()
-            prepareNotifications(librariesToNotify)
+        val backgroundJob: Ref<CancellablePromise<*>> = Ref()
+        val disposable = Disposable {
+            backgroundJob.get()?.let(CancellablePromise<*>::cancel)
         }
-            .finishOnUiThread(ModalityState.defaultModalityState()) { notifications ->
-                notifications.forEach {
-                    it.notify(project)
+        Disposer.register(project, disposable)
+
+        backgroundJob.set(
+            nonBlocking<List<Notification>> {
+                val librariesToNotify = getLibrariesToNotifyAbout()
+                prepareNotifications(librariesToNotify)
+            }
+                .finishOnUiThread(ModalityState.defaultModalityState()) { notifications ->
+                    notifications.forEach {
+                        it.notify(project)
+                    }
                 }
-            }
-            .expireWith(project) // cancel job when project is disposed
-            .coalesceBy(this@KotlinNativeABICompatibilityChecker) // cancel previous job when new one is submitted
-            .withDocumentsCommitted(project)
-            .submit(AppExecutorUtil.getAppExecutorService())
-            .onProcessed {
-                backgroundJob = null
-            }
+                .expireWith(project) // cancel job when project is disposed
+                .coalesceBy(this@KotlinNativeABICompatibilityCheckerService) // cancel previous job when new one is submitted
+                .withDocumentsCommitted(project)
+                .submit(AppExecutorUtil.getAppExecutorService())
+                .onProcessed {
+                    backgroundJob.set(null)
+                    Disposer.dispose(disposable)
+                })
     }
 
-    private fun getLibrariesToNotifyAbout(): Map<String, NativeLibraryInfo> {
-        val incompatibleLibraries = getModuleInfosFromIdeaModel(project).asSequence()
-            .filterIsInstance<NativeLibraryInfo>()
+    private fun getLibrariesToNotifyAbout(): Map<String, NativeKlibLibraryInfo> {
+        val incompatibleLibraries = getModuleInfosFromIdeaModel(project)
+            .filterIsInstance<NativeKlibLibraryInfo>()
             .filter { !it.compatibilityInfo.isCompatible }
             .associateBy { it.libraryRoot }
 
@@ -101,7 +110,7 @@ class KotlinNativeABICompatibilityChecker(private val project: Project) : Projec
         return newEntries
     }
 
-    private fun prepareNotifications(librariesToNotify: Map<String, NativeLibraryInfo>): List<Notification> {
+    private fun prepareNotifications(librariesToNotify: Map<String, NativeKlibLibraryInfo>): List<Notification> {
         if (librariesToNotify.isEmpty())
             return emptyList()
 
@@ -123,37 +132,30 @@ class KotlinNativeABICompatibilityChecker(private val project: Project) : Projec
             val libraries =
                 librariesByGroups.getValue(key).sortedWith(compareBy(LIBRARY_NAME_COMPARATOR) { (libraryName, _) -> libraryName })
 
-            val compilerVersionText = if (isOldMetadata) "an older" else "a newer"
 
             val message = when (libraryGroup) {
                 is LibraryGroup.FromDistribution -> {
-                    val libraryNamesInOneLine =
-                        libraries.joinToString(limit = MAX_LIBRARY_NAMES_IN_ONE_LINE) { (libraryName, _) -> libraryName }
-
-                    """
-                    |There are ${libraries.size} libraries from the Kotlin/Native ${libraryGroup.kotlinVersion} distribution attached to the project: $libraryNamesInOneLine
-                    |
-                    |These libraries were compiled with $compilerVersionText Kotlin/Native compiler and can't be read in IDE. Please edit Gradle buildfile(s) to use Kotlin Gradle plugin version ${bundledRuntimeVersion()}. Then re-import the project in IDE.
-                    """.trimMargin()
+                    val libraryNamesInOneLine = libraries
+                        .joinToString(limit = MAX_LIBRARY_NAMES_IN_ONE_LINE) { (libraryName, _) -> libraryName }
+                    val text = KotlinGradleNativeBundle.message(
+                        "error.incompatible.libraries",
+                        libraries.size, libraryGroup.kotlinVersion, libraryNamesInOneLine
+                    )
+                    val explanation = when (isOldMetadata) {
+                        true -> KotlinGradleNativeBundle.message("error.incompatible.libraries.older")
+                        false -> KotlinGradleNativeBundle.message("error.incompatible.libraries.newer")
+                    }
+                    val recipe = KotlinGradleNativeBundle.message("error.incompatible.libraries.recipe", bundledRuntimeVersion())
+                    "$text\n\n$explanation\n$recipe"
                 }
                 is LibraryGroup.ThirdParty -> {
-                    if (libraries.size == 1) {
-                        """
-                        |There is a third-party library attached to the project that was compiled with $compilerVersionText Kotlin/Native compiler and can't be read in IDE: ${libraries.single()
-                            .first}
-                        |
-                        |Please edit Gradle buildfile(s) and specify library version compatible with Kotlin/Native ${bundledRuntimeVersion()}. Then re-import the project in IDE.
-                        """.trimMargin()
-                    } else {
-                        val librariesLineByLine = libraries.joinToString(separator = "\n") { (libraryName, _) -> libraryName }
-
-                        """
-                        |There are ${libraries.size} third-party libraries attached to the project that were compiled with $compilerVersionText Kotlin/Native compiler and can't be read in IDE:
-                        |$librariesLineByLine
-                        |
-                        |Please edit Gradle buildfile(s) and specify library versions compatible with Kotlin/Native ${bundledRuntimeVersion()}. Then re-import the project in IDE.
-                        """.trimMargin()
+                    val text = when (isOldMetadata) {
+                        true -> KotlinGradleNativeBundle.message("error.incompatible.3p.libraries.older", libraries.size)
+                        false -> KotlinGradleNativeBundle.message("error.incompatible.3p.libraries.newer", libraries.size)
                     }
+                    val librariesLineByLine = libraries.joinToString(separator = "\n") { (libraryName, _) -> libraryName }
+                    val recipe = KotlinGradleNativeBundle.message("error.incompatible.3p.libraries.recipe", bundledRuntimeVersion())
+                    "$text\n$librariesLineByLine\n\n$recipe"
                 }
                 is LibraryGroup.User -> {
                     val projectRoot = project.guessProjectDir()?.canonicalPath
@@ -168,26 +170,16 @@ class KotlinNativeABICompatibilityChecker(private val project: Project) : Projec
                                 ?.let { "${'$'}project/$it" }
                         } ?: libraryRoot
 
-                        return "\"$libraryName\" at $relativeRoot"
+                        return KotlinGradleNativeBundle.message("library.name.0.at.1.relative.root", libraryName, relativeRoot)
                     }
 
-                    if (libraries.size == 1) {
-                        """
-                        |There is a library attached to the project that was compiled with $compilerVersionText Kotlin/Native compiler and can't be read in IDE:
-                        |${getLibraryTextToPrint(libraries.single())}
-                        |
-                        |Please edit Gradle buildfile(s) to use Kotlin Gradle plugin version ${bundledRuntimeVersion()}. Then rebuild the project and re-import it in IDE.
-                        """.trimMargin()
-                    } else {
-                        val librariesLineByLine = libraries.joinToString(separator = "\n", transform = ::getLibraryTextToPrint)
-
-                        """
-                        |There are ${libraries.size} libraries attached to the project that were compiled with $compilerVersionText Kotlin/Native compiler and can't be read in IDE:
-                        |$librariesLineByLine
-                        |
-                        |Please edit Gradle buildfile(s) to use Kotlin Gradle plugin version ${bundledRuntimeVersion()}. Then rebuild the project and re-import it in IDE.
-                        """.trimMargin()
+                    val text = when (isOldMetadata) {
+                        true -> KotlinGradleNativeBundle.message("error.incompatible.user.libraries.older", libraries.size)
+                        false -> KotlinGradleNativeBundle.message("error.incompatible.user.libraries.newer", libraries.size)
                     }
+                    val librariesLineByLine = libraries.joinToString(separator = "\n", transform = ::getLibraryTextToPrint)
+                    val recipe = KotlinGradleNativeBundle.message("error.incompatible.user.libraries.recipe", bundledRuntimeVersion())
+                    "$text\n$librariesLineByLine\n\n$recipe"
                 }
             }
 
@@ -202,25 +194,18 @@ class KotlinNativeABICompatibilityChecker(private val project: Project) : Projec
     }
 
     // returns pair of library name and library group
-    private fun parseIDELibraryName(libraryInfo: NativeLibraryInfo): Pair<String, LibraryGroup> {
+    private fun parseIDELibraryName(libraryInfo: NativeKlibLibraryInfo): Pair<String, LibraryGroup> {
         val ideLibraryName = libraryInfo.library.name?.takeIf(String::isNotEmpty)
         if (ideLibraryName != null) {
-            KotlinNativeLibraryNameUtil.parseIDELibraryName(ideLibraryName)?.let { (kotlinVersion, libraryName) ->
+            parseIDELibraryName(ideLibraryName)?.let { (kotlinVersion, libraryName) ->
                 return libraryName to LibraryGroup.FromDistribution(kotlinVersion)
             }
 
-            if (KotlinNativeLibraryNameUtil.isGradleLibraryName(ideLibraryName))
+            if (isGradleLibraryName(ideLibraryName))
                 return ideLibraryName to LibraryGroup.ThirdParty
         }
 
         return (ideLibraryName ?: PathUtilRt.getFileName(libraryInfo.libraryRoot)) to LibraryGroup.User
-    }
-
-    override fun dispose() {
-        backgroundJob?.let(CancellablePromise<*>::cancel)
-        backgroundJob = null
-
-        cachedIncompatibleLibraries.clear()
     }
 
     companion object {
@@ -235,7 +220,9 @@ class KotlinNativeABICompatibilityChecker(private val project: Project) : Projec
 
         private const val MAX_LIBRARY_NAMES_IN_ONE_LINE = 5
 
-        private const val NOTIFICATION_TITLE = "Incompatible Kotlin/Native libraries"
-        private const val NOTIFICATION_GROUP_ID = NOTIFICATION_TITLE
+        private val NOTIFICATION_TITLE get() = KotlinGradleNativeBundle.message("error.incompatible.libraries.title")
+        private const val NOTIFICATION_GROUP_ID = "Incompatible Kotlin/Native libraries"
+
+        fun getInstance(project: Project): KotlinNativeABICompatibilityCheckerService = project.getServiceSafe()
     }
 }

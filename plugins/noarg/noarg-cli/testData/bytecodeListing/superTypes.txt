@@ -1,31 +1,39 @@
 @NoArg
 @kotlin.Metadata
 public abstract class BaseClass {
+    // source: 'superTypes.kt'
     public method <init>(): void
 }
 
 @NoArg
 @kotlin.Metadata
-public interface BaseIntf
+public interface BaseIntf {
+    // source: 'superTypes.kt'
+}
 
 @kotlin.Metadata
 public final class MyClass {
+    // source: 'superTypes.kt'
     public method <init>(): void
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
 }
 
 @java.lang.annotation.Retention
 @kotlin.Metadata
-public annotation class NoArg
+public annotation class NoArg {
+    // source: 'superTypes.kt'
+}
 
 @kotlin.Metadata
 public class Test1 {
+    // source: 'superTypes.kt'
     public method <init>(): void
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
 }
 
 @kotlin.Metadata
 public final class Test12 {
+    // source: 'superTypes.kt'
     public method <init>(): void
     public method <init>(p0: int): void
 }

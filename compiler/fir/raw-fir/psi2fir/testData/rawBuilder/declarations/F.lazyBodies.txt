@@ -1,0 +1,13 @@
+FILE: F.kt
+    public? open class A : R|kotlin/Any| {
+        public? constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public? final? class B : A {
+        public? constructor(): R|B| {
+            super<<implicit>>()
+        }
+
+    }

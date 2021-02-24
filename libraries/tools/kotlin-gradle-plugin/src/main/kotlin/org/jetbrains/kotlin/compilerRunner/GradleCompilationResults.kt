@@ -1,5 +1,7 @@
 package org.jetbrains.kotlin.compilerRunner
 
+import org.jetbrains.kotlin.build.report.metrics.BuildMetrics
+import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporterImpl
 import org.jetbrains.kotlin.daemon.common.CompilationResultCategory
 import org.jetbrains.kotlin.daemon.common.CompilationResults
 import org.jetbrains.kotlin.daemon.common.LoopbackNetworkInterface
@@ -22,7 +24,10 @@ internal class GradleCompilationResults(
         LoopbackNetworkInterface.serverLoopbackSocketFactory
     ) {
 
-    var icLogLines: List<String>? = null
+    var icLogLines: List<String> = emptyList()
+    private val buildMetricsReporter = BuildMetricsReporterImpl()
+    val buildMetrics: BuildMetrics
+        get() = buildMetricsReporter.getMetrics()
 
     @Throws(RemoteException::class)
     override fun add(compilationResultCategory: Int, value: Serializable) {
@@ -42,7 +47,10 @@ internal class GradleCompilationResults(
             CompilationResultCategory.BUILD_REPORT_LINES.code,
             CompilationResultCategory.VERBOSE_BUILD_REPORT_LINES.code -> {
                 @Suppress("UNCHECKED_CAST")
-                icLogLines = value as? List<String>
+                (value as? List<String>)?.let { icLogLines = it }
+            }
+            CompilationResultCategory.BUILD_METRICS.code -> {
+                buildMetricsReporter.addMetrics(value as? BuildMetrics)
             }
         }
     }

@@ -4,7 +4,9 @@
 class A {
     operator fun get(i: Int) = this
     operator fun set(i: Int, a: A) = this
-    operator fun plusAssign(a: A) = this
+    operator fun plusAssign(a: A) {
+        val v = a
+    }
     operator fun times(a: A) = this
     operator fun inc() = this
 }

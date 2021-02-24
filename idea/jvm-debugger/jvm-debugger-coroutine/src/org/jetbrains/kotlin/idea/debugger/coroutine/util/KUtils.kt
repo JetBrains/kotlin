@@ -5,38 +5,34 @@
 
 package org.jetbrains.kotlin.idea.debugger.coroutine.util
 
+import com.intellij.debugger.engine.JavaStackFrame
 import com.intellij.debugger.jdi.StackFrameProxyImpl
-import com.intellij.debugger.ui.impl.watch.MethodsTracker
-import com.intellij.debugger.ui.impl.watch.StackFrameDescriptorImpl
-import com.intellij.openapi.project.Project
-import com.intellij.openapi.ui.MessageType
-import com.intellij.psi.JavaPsiFacade
-import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.xdebugger.XDebuggerUtil
-import com.intellij.xdebugger.XSourcePosition
-import com.intellij.xdebugger.impl.XDebuggerManagerImpl
-import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.ApplicationThreadExecutor
+import com.intellij.debugger.memory.utils.StackFrameItem
+import com.intellij.openapi.application.ApplicationManager
+import com.sun.jdi.Location
+import org.jetbrains.kotlin.idea.debugger.safeLineNumber
+import org.jetbrains.kotlin.idea.debugger.safeLocation
+import org.jetbrains.kotlin.idea.debugger.safeMethod
 
-fun getPosition(stackTraceElement: StackTraceElement, project: Project): XSourcePosition? {
-    val psiFacade = JavaPsiFacade.getInstance(project)
-
-    val psiClass = ApplicationThreadExecutor().readAction {
-        @Suppress("DEPRECATION")
-        psiFacade.findClass(
-            stackTraceElement.className.substringBefore("$"), // find outer class, for which psi exists TODO
-            GlobalSearchScope.everythingScope(project))
-    }
-
-    val classFile = psiClass?.containingFile?.virtualFile
-    // to convert to 0-based line number or '-1' to do not move
-    val lineNumber = if (stackTraceElement.lineNumber > 0) stackTraceElement.lineNumber - 1 else return null
-    return XDebuggerUtil.getInstance().createPosition(classFile, lineNumber)
+fun Location.format(): String {
+    val method = safeMethod()
+    return "${method?.name() ?: "noname"}:${safeLineNumber()}, ${method?.declaringType()?.name() ?: "empty"}"
 }
 
-class EmptyStackFrameDescriptor(val frame: StackTraceElement, proxy: StackFrameProxyImpl) :
-    StackFrameDescriptorImpl(proxy, MethodsTracker())
-
-class ProjectNotification(val project: Project) {
-    fun error(message: String) =
-        XDebuggerManagerImpl.NOTIFICATION_GROUP.createNotification(message, MessageType.ERROR).notify(project)
+fun JavaStackFrame.format(): String {
+    val location = descriptor.location
+    return location?.format() ?: "emptyLocation"
 }
+
+fun StackFrameItem.format(): String {
+    val method = this.method()
+    val type = this.path()
+    val lineNumber = this.line()
+    return "$method:$lineNumber, $type"
+}
+
+fun StackFrameProxyImpl.format(): String {
+    return safeLocation()?.format() ?: "emptyLocation"
+}
+
+fun isInUnitTest() = ApplicationManager.getApplication().isUnitTestMode

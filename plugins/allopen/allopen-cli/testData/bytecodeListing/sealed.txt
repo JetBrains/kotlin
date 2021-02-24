@@ -1,45 +1,53 @@
 @java.lang.annotation.Retention
 @kotlin.Metadata
-public annotation class AllOpen
+public annotation class AllOpen {
+    // source: 'sealed.kt'
+}
 
 @kotlin.Metadata
 public class Sealed$C1 {
-    inner class Sealed$C1
+    // source: 'sealed.kt'
     public method <init>(): void
+    public inner class Sealed$C1
 }
 
 @kotlin.Metadata
 public class Sealed$C2 {
-    inner class Sealed$C2
+    // source: 'sealed.kt'
     public method <init>(): void
+    public inner class Sealed$C2
 }
 
 @AllOpen
 @kotlin.Metadata
 public abstract class Sealed {
-    inner class Sealed$C1
-    inner class Sealed$C2
+    // source: 'sealed.kt'
     private method <init>(): void
     public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public inner class Sealed$C1
+    public inner class Sealed$C2
 }
 
 @AllOpen
 @kotlin.Metadata
 public class Sealed2$C1 {
-    inner class Sealed2$C1
+    // source: 'sealed.kt'
     public method <init>(): void
+    public inner class Sealed2$C1
 }
 
 @kotlin.Metadata
 public final class Sealed2$C2 {
-    inner class Sealed2$C2
+    // source: 'sealed.kt'
     public method <init>(): void
+    public final inner class Sealed2$C2
 }
 
 @kotlin.Metadata
 public abstract class Sealed2 {
-    inner class Sealed2$C1
-    inner class Sealed2$C2
+    // source: 'sealed.kt'
     private method <init>(): void
     public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final inner class Sealed2$C2
+    public inner class Sealed2$C1
 }

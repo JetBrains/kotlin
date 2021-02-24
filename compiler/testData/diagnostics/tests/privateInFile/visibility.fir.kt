@@ -20,7 +20,7 @@ private fun bar() {
     xx = 30
 }
 
-fun makeA() = A()
+fun <!EXPOSED_FUNCTION_RETURN_TYPE!>makeA<!>() = A()
 
 private object PO {}
 
@@ -30,20 +30,20 @@ package a
 fun test() {
     val y = makeA()
     y.bar()
-    <!INAPPLICABLE_CANDIDATE!>foo<!>()
+    <!HIDDEN!>foo<!>()
 
-    val u : A = <!INAPPLICABLE_CANDIDATE!>A<!>()
+    val u : A = <!HIDDEN!>A<!>()
 
-    val z = <!INAPPLICABLE_CANDIDATE!>x<!>
-    <!INAPPLICABLE_CANDIDATE!>x<!> = 30
+    val z = <!HIDDEN!>x<!>
+    <!HIDDEN!>x<!> = 30
 
-    val po = <!INAPPLICABLE_CANDIDATE!>PO<!>
+    val po = <!HIDDEN!>PO<!>
 
     val v = xx
     xx = 40
 }
 
-class B : <!INAPPLICABLE_CANDIDATE!>A<!>() {}
+class B : <!EXPOSED_SUPER_CLASS, HIDDEN!>A<!>() {}
 
 class Q {
     class W {

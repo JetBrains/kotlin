@@ -1,0 +1,20 @@
+fun testD(x: Comparable<Double>, y: Comparable<Double>): Boolean {
+  return when {
+    when {
+      x is Double -> y is Double
+      else -> false
+    } -> less(arg0 = x /*as Double */, arg1 = y /*as Double */)
+    else -> false
+  }
+}
+
+fun testF(x: Comparable<Float>, y: Comparable<Float>): Boolean {
+  return when {
+    when {
+      x is Float -> y is Float
+      else -> false
+    } -> less(arg0 = x /*as Float */, arg1 = y /*as Float */)
+    else -> false
+  }
+}
+

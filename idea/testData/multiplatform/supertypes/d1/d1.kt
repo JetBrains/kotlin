@@ -2,7 +2,7 @@
 
 package foo
 
-expect interface Supertype
+expect interface <!LINE_MARKER("descr='Is subclassed by A'")!>Supertype<!>
 
 class A : Supertype
 

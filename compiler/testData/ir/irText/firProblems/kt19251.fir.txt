@@ -1,0 +1,26 @@
+FILE fqName:<root> fileName:/test.kt
+  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
+    BLOCK_BODY
+      VAR name:map type:kotlin.collections.MutableMap<<root>.Fun, kotlin.String> [val]
+        CALL 'public final fun mutableMapOf <K, V> (): kotlin.collections.MutableMap<K of kotlin.collections.MapsKt.mutableMapOf, V of kotlin.collections.MapsKt.mutableMapOf> [inline] declared in kotlin.collections.MapsKt' type=kotlin.collections.MutableMap<<root>.Fun, kotlin.String> origin=null
+          <K>: <root>.Fun
+          <V>: kotlin.String
+      VAR name:fn type:<root>.Fun [val]
+        TYPE_OP type=<root>.Fun origin=SAM_CONVERSION typeOperand=<root>.Fun
+          FUN_EXPR type=kotlin.Function1<kotlin.String?, kotlin.String?> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.String?) returnType:kotlin.String?
+              VALUE_PARAMETER name:it index:0 type:kotlin.String?
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.String?): kotlin.String? declared in <root>.box'
+                  CALL 'public final fun TODO (): kotlin.Nothing [inline] declared in kotlin.StandardKt' type=kotlin.Nothing origin=null
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        CALL 'public open fun computeIfAbsent (p0: @[FlexibleNullability] K of java.util.Map, p1: @[FlexibleNullability] java.util.function.Function<in K of java.util.Map?, out V of java.util.Map?>): @[FlexibleNullability] V of java.util.Map declared in java.util.Map' type=kotlin.String origin=null
+          $this: GET_VAR 'val map: kotlin.collections.MutableMap<<root>.Fun, kotlin.String> [val] declared in <root>.box' type=kotlin.collections.MutableMap<<root>.Fun, kotlin.String> origin=null
+          p0: GET_VAR 'val fn: <root>.Fun [val] declared in <root>.box' type=<root>.Fun origin=null
+          p1: TYPE_OP type=@[FlexibleNullability] java.util.function.Function<<root>.Fun?, kotlin.String?> origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] java.util.function.Function<<root>.Fun?, kotlin.String?>
+            FUN_EXPR type=kotlin.Function1<<root>.Fun?, kotlin.String?> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<root>.Fun?) returnType:kotlin.String?
+                VALUE_PARAMETER name:it index:0 type:<root>.Fun?
+                BLOCK_BODY
+                  RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: <root>.Fun?): kotlin.String? declared in <root>.box'
+                    CONST String type=kotlin.String value="OK"

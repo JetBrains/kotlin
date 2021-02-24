@@ -11,7 +11,7 @@ public class Foo {
 //FILE:Bar.kt
 
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
-fun <@kotlin.internal.OnlyInputTypes T> assertEquals1(t1: T, t2: T) {}
+fun <<!HIDDEN!>@kotlin.internal.OnlyInputTypes<!> T> assertEquals1(t1: T, t2: T) {}
 
 fun test() {
     assertEquals1(null, Foo.foo())

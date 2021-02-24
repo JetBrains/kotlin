@@ -1,6 +1,7 @@
 // EXPECTED_REACHABLE_NODES: 1697
 // !LANGUAGE: +MultiPlatformProjects
 // KJS_WITH_FULL_RUNTIME
+// SKIP_DCE_DRIVEN
 
 // FILE: lib.kt
 import kotlin.test.Test

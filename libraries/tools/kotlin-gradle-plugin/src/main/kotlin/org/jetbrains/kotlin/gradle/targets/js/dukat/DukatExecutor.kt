@@ -1,45 +1,66 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.gradle.targets.js.dukat
 
-import org.jetbrains.kotlin.gradle.internal.execWithProgress
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
-import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
-import java.io.File
+import org.gradle.internal.service.ServiceRegistry
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 
 class DukatExecutor(
-    val compilation: KotlinJsCompilation,
-    val dTsFiles: Collection<File>,
-    val destDir: File,
-    val qualifiedPackageName: String? = null,
-    val jsInteropJvmEngine: String? = null,
-    val operation: String = "Generating Kotlin/JS external declarations"
+    val nodeJs: NodeJsRootExtension,
+    val typeDefinitions: List<DtsResolver.Dts>,
+    val externalsOutputFormat: ExternalsOutputFormat,
+    val npmProject: NpmProject,
+    val packageJsonIsUpdated: Boolean,
+    val operation: String = OPERATION,
+    val compareInputs: Boolean = true
 ) {
-    fun execute() {
-        compilation.target.project.execWithProgress(operation) { exec ->
-            val args = mutableListOf<String>()
+    companion object {
+        const val OPERATION = "Generating Kotlin/JS external declarations"
+    }
 
-            val qualifiedPackageName = qualifiedPackageName
-            if (qualifiedPackageName != null) {
-                args.add("-p")
-                args.add(qualifiedPackageName)
-            }
+    val versionFile = npmProject.externalsDirRoot.resolve("version.txt")
+    val version = DukatCompilationResolverPlugin.VERSION + ", " + nodeJs.versions.dukat.version
+    val prevVersion = if (versionFile.exists()) versionFile.readText() else null
 
-            args.add("-d")
-            args.add(destDir.absolutePath)
+    val inputsFile = npmProject.externalsDirRoot.resolve("inputs.txt")
 
-            val jsInteropJvmEngine = jsInteropJvmEngine
-            if (jsInteropJvmEngine != null) {
-                args.add("-js")
-                args.add(jsInteropJvmEngine)
-            }
+    val shouldSkip: Boolean
+        get() = inputsFile.isFile && prevVersion == version && !packageJsonIsUpdated
 
-            args.addAll(dTsFiles.map { it.absolutePath })
-
-            compilation.npmProject.useTool(exec, "dukat/bin/dukat-cli.js", *args.toTypedArray())
+    fun execute(services: ServiceRegistry) {
+        if (typeDefinitions.isEmpty()) {
+            npmProject.externalsDirRoot.deleteRecursively()
+            return
         }
+
+        // delete file to run visit on error even without package.json updates
+        versionFile.delete()
+
+        npmProject.externalsDirRoot.mkdirs()
+        val inputs = "$externalsOutputFormat: " + typeDefinitions.joinToString("\n") { it.inputKey }
+
+        if (!compareInputs || !inputsFile.isFile || inputsFile.readText() != inputs) {
+            // delete file to run visit on error even without package.json updates
+            inputsFile.delete()
+
+            npmProject.externalsDir.deleteRecursively()
+            DukatRunner(
+                npmProject.compilation,
+                typeDefinitions.map { it.file },
+                externalsOutputFormat,
+                npmProject.externalsDir,
+                operation = operation
+            ).execute(services)
+
+            inputsFile.writeText(inputs)
+        }
+
+        versionFile.writeText(version)
+
+        gradleModelPostProcess(externalsOutputFormat, npmProject)
     }
 }

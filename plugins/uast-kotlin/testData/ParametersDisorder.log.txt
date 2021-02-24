@@ -128,7 +128,7 @@ UFile (package = )
                     USimpleNameReferenceExpression (identifier = with, resolvesTo = null)
                     UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0))
                         UIdentifier (Identifier (A))
-                        USimpleNameReferenceExpression (identifier = <init>, resolvesTo = A)
+                        USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: A)
                     ULambdaExpression
                         UBlockExpression
                             UQualifiedReferenceExpression
@@ -144,7 +144,7 @@ UFile (package = )
                     ULiteralExpression (value = 1)
                     ULiteralExpression (value = "foo")
                     UClass (name = null)
-                        UMethod (name = ParametersDisorderKt$objectLiteral$1)
+                        UMethod (name = )
     UClass (name = A)
         UMethod (name = with2Receivers)
             UParameter (name = $this$with2Receivers)

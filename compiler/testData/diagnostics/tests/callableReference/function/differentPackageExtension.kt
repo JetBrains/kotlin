@@ -4,6 +4,8 @@
 
 package first
 
+import checkSubtype
+
 class A
 
 fun A.foo() {}
@@ -18,6 +20,7 @@ import kotlin.reflect.KFunction1
 
 import first.A
 import first.foo
+import checkSubtype
 
 fun main() {
     val x = first.A::foo

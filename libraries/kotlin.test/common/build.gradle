@@ -1,33 +1,20 @@
 description = 'Kotlin Test Common'
 
 apply plugin: 'kotlin-platform-common'
-apply plugin: 'pill-configurable'
 
-configurePublishing(project)
+jvmTarget = "1.6"
 
 dependencies {
     compile kotlinStdlib("common")
     testCompile project(":kotlin-test:kotlin-test-annotations-common")
 }
 
-pill {
-    importAsLibrary = true
-}
-
 jar {
     manifestAttributes(manifest, project, 'Test')
 }
 
-task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
-    from sourceSets.main.kotlin
-}
-
-artifacts {
-    archives sourcesJar
-}
-
-javadocJar()
+configureSourcesJar()
+configureJavadocJar()
 
 tasks.withType(org.jetbrains.kotlin.gradle.dsl.KotlinCompile) {
     kotlinOptions.freeCompilerArgs += "-Xallow-kotlin-package"
@@ -37,7 +24,7 @@ compileKotlinCommon {
     kotlinOptions {
         freeCompilerArgs += [
                 "-module-name", project.name,
-                "-Xuse-experimental=kotlin.contracts.ExperimentalContracts"
+                "-Xopt-in=kotlin.contracts.ExperimentalContracts",
         ]
     }
 }

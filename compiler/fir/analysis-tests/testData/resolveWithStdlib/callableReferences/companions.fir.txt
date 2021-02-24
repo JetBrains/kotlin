@@ -1,0 +1,62 @@
+FILE: main.kt
+    public final class KotlinClass : R|JavaClass| {
+        public constructor(): R|KotlinClass| {
+            super<R|JavaClass|>()
+        }
+
+        public final fun baz(x: R|kotlin/CharSequence|): R|kotlin/Int| {
+            ^baz Int(1)
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|KotlinClass.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun baz(x: R|kotlin/String|): R|kotlin/Int| {
+                ^baz Int(1)
+            }
+
+        }
+
+    }
+    public final class KotlinClass2 : R|JavaClass| {
+        public constructor(): R|KotlinClass2| {
+            super<R|JavaClass|>()
+        }
+
+        public final override fun bar(x: R|kotlin/CharSequence|): R|kotlin/Int| {
+            ^bar Int(1)
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|KotlinClass2.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun bar(x: R|kotlin/String|): R|kotlin/Int| {
+                ^bar Int(1)
+            }
+
+        }
+
+    }
+    public final fun foo1(x: R|(kotlin/String) -> kotlin/Int|): R|kotlin/Unit| {
+    }
+    public final fun foo2(x: R|(KotlinClass, kotlin/CharSequence) -> kotlin/Int|): R|kotlin/Unit| {
+    }
+    public final fun foo3(x: R|(KotlinClass, kotlin/CharSequence) -> kotlin/Int|): R|kotlin/Unit| {
+    }
+    public final fun foo3(x: R|(kotlin/String) -> kotlin/Int|): R|kotlin/Unit| {
+    }
+    public final fun main(): R|kotlin/Unit| {
+        R|/foo1|(Q|KotlinClass|::R|/KotlinClass.Companion.baz|)
+        R|/foo2|(Q|KotlinClass|::R|/KotlinClass.baz|)
+        <Ambiguity: foo3, [/foo3, /foo3]>#(Q|KotlinClass|::R|/KotlinClass.baz|)
+        <Inapplicable(INAPPLICABLE): /foo1>#(Q|KotlinClass|::<Unresolved reference: bar>#)
+        R|/foo2|(Q|KotlinClass|::R|/JavaClass.bar|)
+        R|/foo3|(Q|KotlinClass|::R|/JavaClass.bar|)
+        R|/foo1|(Q|KotlinClass2|::R|/KotlinClass2.Companion.bar|)
+        <Inapplicable(INAPPLICABLE): /foo2>#(Q|KotlinClass2|::<Unresolved reference: bar>#)
+        R|/foo3|(Q|KotlinClass2|::R|/KotlinClass2.Companion.bar|)
+    }

@@ -30,6 +30,7 @@ val SourceSet.projectDefault: Project.() -> Unit
             }
             "test" -> {
                 java.srcDirs("test", "tests")
+                this@projectDefault.resources.srcDir("testResources")
             }
         }
     }

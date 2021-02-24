@@ -25,6 +25,7 @@ import org.jetbrains.idea.maven.model.MavenId
 import org.jetbrains.idea.maven.model.MavenPlugin
 import org.jetbrains.idea.maven.project.MavenProjectsManager
 import org.jetbrains.idea.maven.utils.MavenArtifactScope
+import org.jetbrains.kotlin.idea.maven.KotlinMavenBundle
 import org.jetbrains.kotlin.idea.maven.PomFile
 import org.jetbrains.kotlin.idea.maven.configuration.KotlinMavenConfigurator
 import org.jetbrains.kotlin.idea.platform.tooling
@@ -42,7 +43,7 @@ class KotlinMavenPluginPhaseInspection : DomElementsInspection<MavenDomProjectMo
         private val JS_STDLIB_MAVEN_ID = MavenId(KotlinMavenConfigurator.GROUP_ID, MAVEN_JS_STDLIB_ID, null)
     }
 
-    override fun getStaticDescription() = "Reports kotlin-maven-plugin configuration issues"
+    override fun getStaticDescription() = KotlinMavenBundle.message("inspection.description")
 
     override fun checkFileElement(domFileElement: DomFileElement<MavenDomProjectModel>?, holder: DomElementAnnotationHolder?) {
         if (domFileElement == null || holder == null) {
@@ -80,7 +81,7 @@ class KotlinMavenPluginPhaseInspection : DomElementsInspection<MavenDomProjectMo
                 holder.createProblem(
                     kotlinPlugin.artifactId.createStableCopy(),
                     HighlightSeverity.WARNING,
-                    "Kotlin plugin has no compile executions",
+                    KotlinMavenBundle.message("inspection.no.executions"),
                     *fixes
                 )
             } else {
@@ -104,7 +105,7 @@ class KotlinMavenPluginPhaseInspection : DomElementsInspection<MavenDomProjectMo
                                 holder.createProblem(
                                     badExecution.phase.createStableCopy(),
                                     HighlightSeverity.WARNING,
-                                    "Kotlin plugin should run before javac so kotlin classes could be visible from Java",
+                                    KotlinMavenBundle.message("inspection.should.run.before.javac"),
                                     FixExecutionPhaseLocalFix(badExecution, PomFile.DefaultPhases.ProcessSources),
                                     AddJavaExecutionsLocalFix(module, domFileElement.file, kotlinPlugin)
                                 )
@@ -115,7 +116,7 @@ class KotlinMavenPluginPhaseInspection : DomElementsInspection<MavenDomProjectMo
                         holder.createProblem(
                             badExecution.goals.goals.first { it.isJsGoal() }.createStableCopy(),
                             HighlightSeverity.WARNING,
-                            "JavaScript goal configured for module with Java files"
+                            KotlinMavenBundle.message("inspection.javascript.in.java.module")
                         )
                     }
                 }
@@ -126,7 +127,7 @@ class KotlinMavenPluginPhaseInspection : DomElementsInspection<MavenDomProjectMo
                         holder.createProblem(
                             kotlinPlugin.artifactId.createStableCopy(),
                             HighlightSeverity.WARNING,
-                            "Kotlin JVM compiler configured but no $MAVEN_STDLIB_ID dependency",
+                            KotlinMavenBundle.message("inspection.jvm.no.stdlib.dependency", MAVEN_STDLIB_ID),
                             FixAddStdlibLocalFix(domFileElement.file, MAVEN_STDLIB_ID, kotlinPlugin.version.rawText)
                         )
                     }
@@ -138,7 +139,7 @@ class KotlinMavenPluginPhaseInspection : DomElementsInspection<MavenDomProjectMo
                         holder.createProblem(
                             kotlinPlugin.artifactId.createStableCopy(),
                             HighlightSeverity.WARNING,
-                            "Kotlin JavaScript compiler configured but no $MAVEN_JS_STDLIB_ID dependency",
+                            KotlinMavenBundle.message("inspection.javascript.no.stdlib.dependency", MAVEN_JS_STDLIB_ID),
                             FixAddStdlibLocalFix(domFileElement.file, MAVEN_JS_STDLIB_ID, kotlinPlugin.version.rawText)
                         )
                     }
@@ -152,7 +153,7 @@ class KotlinMavenPluginPhaseInspection : DomElementsInspection<MavenDomProjectMo
                 holder.createProblem(
                     dep.artifactId.createStableCopy(),
                     HighlightSeverity.WARNING,
-                    "You have ${dep.artifactId} configured but no corresponding plugin execution",
+                    KotlinMavenBundle.message("inspection.configured.no.execution", dep.artifactId),
                     ConfigurePluginExecutionLocalFix(module, domFileElement.file, PomFile.KotlinGoals.Compile, dep.version.rawText)
                 )
             }
@@ -164,7 +165,7 @@ class KotlinMavenPluginPhaseInspection : DomElementsInspection<MavenDomProjectMo
                 holder.createProblem(
                     dep.artifactId.createStableCopy(),
                     HighlightSeverity.WARNING,
-                    "You have ${dep.artifactId} configured but no corresponding plugin execution",
+                    KotlinMavenBundle.message("inspection.configured.no.execution", dep.artifactId),
                     ConfigurePluginExecutionLocalFix(module, domFileElement.file, PomFile.KotlinGoals.Js, dep.version.rawText)
                 )
             }
@@ -180,7 +181,7 @@ class KotlinMavenPluginPhaseInspection : DomElementsInspection<MavenDomProjectMo
             holder.createProblem(
                 badExecution.goals.createStableCopy(),
                 HighlightSeverity.WEAK_WARNING,
-                "It is not recommended to have both test and compile goals in the same execution"
+                KotlinMavenBundle.message("inspection.same.execution.compile.test")
             )
         }
     }
@@ -193,9 +194,9 @@ class KotlinMavenPluginPhaseInspection : DomElementsInspection<MavenDomProjectMo
     ) : LocalQuickFix {
         private val pointer = file.createSmartPointer()
 
-        override fun getName() = "Create $goal execution"
+        override fun getName() = KotlinMavenBundle.message("fix.add.execution.name", goal)
 
-        override fun getFamilyName() = "Create kotlin execution"
+        override fun getFamilyName() = KotlinMavenBundle.message("fix.add.execution.family")
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             val file = pointer.element ?: return
@@ -205,9 +206,9 @@ class KotlinMavenPluginPhaseInspection : DomElementsInspection<MavenDomProjectMo
     }
 
     private class FixExecutionPhaseLocalFix(val execution: MavenDomPluginExecution, val newPhase: String) : LocalQuickFix {
-        override fun getName() = "Change phase to $newPhase"
+        override fun getName() = KotlinMavenBundle.message("fix.execution.phase.name", newPhase)
 
-        override fun getFamilyName() = "Change phase"
+        override fun getFamilyName() = KotlinMavenBundle.message("fix.execution.phase.family")
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             execution.phase.value = newPhase
@@ -217,7 +218,7 @@ class KotlinMavenPluginPhaseInspection : DomElementsInspection<MavenDomProjectMo
     private class AddJavaExecutionsLocalFix(val module: Module, file: XmlFile, val kotlinPlugin: MavenDomPlugin) : LocalQuickFix {
         private val pointer = file.createSmartPointer()
 
-        override fun getName() = "Configure maven-compiler-plugin executions in the right order"
+        override fun getName() = KotlinMavenBundle.message("fix.add.java.executions.name")
         override fun getFamilyName() = name
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
@@ -229,8 +230,8 @@ class KotlinMavenPluginPhaseInspection : DomElementsInspection<MavenDomProjectMo
     private class FixAddStdlibLocalFix(pomFile: XmlFile, val id: String, val version: String?) : LocalQuickFix {
         private val pointer = pomFile.createSmartPointer()
 
-        override fun getName() = "Add $id dependency"
-        override fun getFamilyName() = "Add dependency"
+        override fun getName() = KotlinMavenBundle.message("fix.add.stdlib.name", id)
+        override fun getFamilyName() = KotlinMavenBundle.message("fix.add.stdlib.family")
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             val file = pointer.element ?: return
@@ -246,8 +247,8 @@ class KotlinMavenPluginPhaseInspection : DomElementsInspection<MavenDomProjectMo
     ) : LocalQuickFix {
         private val pointer = xmlFile.createSmartPointer()
 
-        override fun getName() = "Create $goal execution of kotlin-maven-compiler"
-        override fun getFamilyName() = "Create kotlin execution"
+        override fun getName() = KotlinMavenBundle.message("fix.configure.plugin.execution.name", goal)
+        override fun getFamilyName() = KotlinMavenBundle.message("fix.configure.plugin.execution.family")
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             val file = pointer.element ?: return

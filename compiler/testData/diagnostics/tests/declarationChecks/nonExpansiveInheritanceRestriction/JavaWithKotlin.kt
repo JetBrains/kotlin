@@ -1,6 +1,6 @@
 // !DIAGNOSTICS: -UPPER_BOUND_VIOLATED
 
-//// FILE: D.java
+// FILE: D.java
 public interface D<W> {}
 
 // FILE: Q.java

@@ -18,26 +18,30 @@ package org.jetbrains.kotlin.android.synthetic.codegen
 
 import com.intellij.psi.PsiElement
 import kotlinx.android.extensions.CacheImplementation
+import org.jetbrains.kotlin.android.synthetic.codegen.AbstractAndroidExtensionsExpressionCodegenExtension.Companion.CLEAR_CACHE_METHOD_NAME
 import org.jetbrains.kotlin.android.synthetic.codegen.AbstractAndroidExtensionsExpressionCodegenExtension.Companion.ON_DESTROY_METHOD_NAME
 import org.jetbrains.kotlin.android.synthetic.descriptors.ContainerOptionsProxy
+import org.jetbrains.kotlin.codegen.AbstractClassBuilder
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.ClassBuilderFactory
 import org.jetbrains.kotlin.codegen.DelegatingClassBuilder
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
-import org.jetbrains.org.objectweb.asm.*
+import org.jetbrains.org.objectweb.asm.MethodVisitor
+import org.jetbrains.org.objectweb.asm.Opcodes
+import org.jetbrains.org.objectweb.asm.RecordComponentVisitor
+import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
-import org.jetbrains.kotlin.android.synthetic.codegen.AbstractAndroidExtensionsExpressionCodegenExtension.Companion.CLEAR_CACHE_METHOD_NAME
-import org.jetbrains.kotlin.psi.KtElement
 
 abstract class AbstractAndroidOnDestroyClassBuilderInterceptorExtension : ClassBuilderInterceptorExtension {
     override fun interceptClassBuilderFactory(
-            interceptedFactory: ClassBuilderFactory,
-            bindingContext: BindingContext,
-            diagnostics: DiagnosticSink
+        interceptedFactory: ClassBuilderFactory,
+        bindingContext: BindingContext,
+        diagnostics: DiagnosticSink
     ): ClassBuilderFactory {
         return AndroidOnDestroyClassBuilderFactory(interceptedFactory, bindingContext)
     }
@@ -45,8 +49,8 @@ abstract class AbstractAndroidOnDestroyClassBuilderInterceptorExtension : ClassB
     abstract fun getGlobalCacheImpl(element: KtElement): CacheImplementation
 
     private inner class AndroidOnDestroyClassBuilderFactory(
-            private val delegateFactory: ClassBuilderFactory,
-            val bindingContext: BindingContext
+        private val delegateFactory: ClassBuilderFactory,
+        val bindingContext: BindingContext
     ) : ClassBuilderFactory {
 
         override fun newClassBuilder(origin: JvmDeclarationOrigin): ClassBuilder {
@@ -69,8 +73,8 @@ abstract class AbstractAndroidOnDestroyClassBuilderInterceptorExtension : ClassB
     }
 
     private inner class AndroidOnDestroyCollectorClassBuilder(
-            internal val delegateClassBuilder: ClassBuilder,
-            val bindingContext: BindingContext
+        internal val delegateClassBuilder: ClassBuilder,
+        val bindingContext: BindingContext
     ) : DelegatingClassBuilder() {
         private var currentClass: KtClass? = null
         private var currentClassName: String? = null
@@ -78,13 +82,13 @@ abstract class AbstractAndroidOnDestroyClassBuilderInterceptorExtension : ClassB
         override fun getDelegate() = delegateClassBuilder
 
         override fun defineClass(
-                origin: PsiElement?,
-                version: Int,
-                access: Int,
-                name: String,
-                signature: String?,
-                superName: String,
-                interfaces: Array<out String>
+            origin: PsiElement?,
+            version: Int,
+            access: Int,
+            name: String,
+            signature: String?,
+            superName: String,
+            interfaces: Array<out String>
         ) {
             if (origin is KtClass) {
                 currentClass = origin
@@ -94,12 +98,12 @@ abstract class AbstractAndroidOnDestroyClassBuilderInterceptorExtension : ClassB
         }
 
         override fun newMethod(
-                origin: JvmDeclarationOrigin,
-                access: Int,
-                name: String,
-                desc: String,
-                signature: String?,
-                exceptions: Array<out String>?
+            origin: JvmDeclarationOrigin,
+            access: Int,
+            name: String,
+            desc: String,
+            signature: String?,
+            exceptions: Array<out String>?
         ): MethodVisitor {
             return object : MethodVisitor(Opcodes.API_VERSION, super.newMethod(origin, access, name, desc, signature, exceptions)) {
                 override fun visitInsn(opcode: Int) {
@@ -127,6 +131,10 @@ abstract class AbstractAndroidOnDestroyClassBuilderInterceptorExtension : ClassB
                     iv.invokevirtual(currentClassName, CLEAR_CACHE_METHOD_NAME, "()V", false)
                 }
             }
+        }
+
+        override fun newRecordComponent(name: String, desc: String, signature: String?): RecordComponentVisitor {
+            return AbstractClassBuilder.EMPTY_RECORD_VISITOR
         }
     }
 

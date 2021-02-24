@@ -9,10 +9,15 @@ val testJvm6ServerRuntime by configurations.creating
 
 dependencies {
     testCompile(projectTests(":compiler"))
-    testCompile(projectTests(":compiler:tests-common"))
+    testApi(projectTests(":compiler:test-infrastructure"))
+    testApi(projectTests(":compiler:test-infrastructure-utils"))
+    testApi(projectTests(":compiler:tests-compiler-utils"))
+    testCompile(projectTests(":compiler:tests-common-new"))
+
+    testApiJUnit5(vintageEngine = true, runner = true, suiteApi = true)
+
     testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     testRuntime(project(":kotlin-reflect"))
-    testRuntime(intellijDep())
     testRuntime(intellijDep())
     testJvm6ServerRuntime(projectTests(":compiler:tests-common-jvm6"))
 }
@@ -34,11 +39,12 @@ fun Project.codegenTest(
     target: Int, jvm: String, jdk: String,
     targetInTestClass: String = "$target",
     body: Test.() -> Unit
-): TaskProvider<Test> = projectTest("codegenTarget${targetInTestClass}Jvm${jvm}Test") {
+): TaskProvider<Test> = projectTest("codegenTarget${targetInTestClass}Jvm${jvm}Test", jUnit5Enabled = true) {
     dependsOn(":dist")
     workingDir = rootDir
 
-    filter.includeTestsMatching("org.jetbrains.kotlin.codegen.jdk.JvmTarget${targetInTestClass}OnJvm${jvm}")
+    val testName = "JvmTarget${targetInTestClass}OnJvm${jvm}"
+    filter.includeTestsMatching("org.jetbrains.kotlin.codegen.jdk.$testName")
 
     systemProperty("kotlin.test.default.jvm.target", "${if (target <= 8) "1." else ""}$target")
     body()
@@ -63,29 +69,48 @@ codegenTest(target = 6, jvm = 6, jdk = "JDK_18") {
     }
 }
 
-codegenTest(target = 6, jvm = 9) {}
+//JDK 8
+codegenTest(target = 6, jvm = 8) {}
 
+// This is default one and is executed in default build configuration
 codegenTest(target = 8, jvm = 8) {}
 
-codegenTest(target = 8, jvm = 9) {}
+//JDK 11
+codegenTest(target = 6, jvm = 11) {}
 
-codegenTest(target = 9, jvm = 9) {}
+codegenTest(target = 8, jvm = 11) {}
 
+codegenTest(target = 11, jvm = 11) {}
+
+//JDK 15
+codegenTest(target = 6, jvm = 15) {
+    jvmArgs( "-XX:-FailOverToOldVerifier")
+}
+
+codegenTest(target = 8, jvm = 15) {
+    jvmArgs( "-XX:-FailOverToOldVerifier")
+}
+
+codegenTest(target = 15, jvm = 15) {
+    jvmArgs( "-XX:-FailOverToOldVerifier")
+    systemProperty("kotlin.test.box.d8.disable", true)
+}
+
+//..also add this two tasks to build after adding fresh jdks to build agents
 val mostRecentJdk = JdkMajorVersion.values().last().name
 
-codegenTest(target = 6, jvm = "Last", jdk = mostRecentJdk) {
-    jvmArgs!!.add( "-XX:-FailOverToOldVerifier")
-}
+//LAST JDK from JdkMajorVersion available on machine
+codegenTest(target = 6, jvm = "Last", jdk = mostRecentJdk) {}
 
-codegenTest(target = 8, jvm = "Last", jdk = mostRecentJdk) {
-    jvmArgs!!.add( "-XX:-FailOverToOldVerifier")
-}
+codegenTest(target = 8, jvm = "Last", jdk = mostRecentJdk) {}
 
 codegenTest(
     mostRecentJdk.substringAfter('_').toInt(),
     targetInTestClass = "Last",
     jvm = "Last",
     jdk = mostRecentJdk
-) {}
+) {
+    systemProperty("kotlin.test.box.d8.disable", true)
+}
 
 testsJar()

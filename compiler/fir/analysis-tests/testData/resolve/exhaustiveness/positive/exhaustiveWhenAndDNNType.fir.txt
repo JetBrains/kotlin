@@ -1,0 +1,62 @@
+FILE: exhaustiveWhenAndDNNType.kt
+    public final enum class SomeEnum : R|kotlin/Enum<SomeEnum>| {
+        private constructor(): R|SomeEnum| {
+            super<R|kotlin/Enum<SomeEnum>|>()
+        }
+
+        public final static enum entry A1: R|SomeEnum|
+        public final static enum entry A2: R|SomeEnum|
+        public final static fun values(): R|kotlin/Array<SomeEnum>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|SomeEnum| {
+        }
+
+    }
+    public final class B : R|kotlin/Any| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun takeB(b: R|B|): R|kotlin/Unit| {
+    }
+    public final fun test_1(): R|kotlin/Unit| {
+        lval flag: R|SomeEnum| = Q|SomeEnum|.R|/SomeEnum.A1|
+        lval b: R|B| = when (R|<local>/flag|!!) {
+            ==($subj$, Q|SomeEnum|.R|/SomeEnum.A1|) ->  {
+                R|/B.B|()
+            }
+            ==($subj$, Q|SomeEnum|.R|/SomeEnum.A2|) ->  {
+                R|/B.B|()
+            }
+        }
+
+        R|/takeB|(R|<local>/b|)
+    }
+    public final fun test_2(): R|kotlin/Unit| {
+        lval flag: R|SomeEnum| = Q|SomeEnum|.R|/SomeEnum.A1|
+        lval b: R|B| = when (R|<local>/flag|!!) {
+            ==($subj$, Q|SomeEnum|.R|/SomeEnum.A1|) ->  {
+                R|/B.B|()
+            }
+            ==($subj$, Q|SomeEnum|.R|/SomeEnum.A2|) ->  {
+                R|/B.B|()
+            }
+        }
+
+        R|/takeB|(R|<local>/b|)
+    }
+    public final fun test_3(): R|kotlin/Unit| {
+        lval flag: R|SomeEnum| = Q|SomeEnum|.R|/SomeEnum.A1|
+        lval b: R|B| = when (R|<local>/flag|) {
+            ==($subj$, Q|SomeEnum|.R|/SomeEnum.A1|) ->  {
+                R|/B.B|()
+            }
+            ==($subj$, Q|SomeEnum|.R|/SomeEnum.A2|) ->  {
+                R|/B.B|()
+            }
+        }
+
+        R|/takeB|(R|<local>/b|)
+    }

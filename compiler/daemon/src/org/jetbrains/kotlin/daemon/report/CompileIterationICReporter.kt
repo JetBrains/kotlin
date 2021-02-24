@@ -9,7 +9,8 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.daemon.common.CompilationResultCategory
 import org.jetbrains.kotlin.daemon.common.CompilationResults
 import org.jetbrains.kotlin.daemon.common.CompileIterationResult
-import org.jetbrains.kotlin.incremental.ICReporterBase
+import org.jetbrains.kotlin.build.report.ICReporterBase
+import org.jetbrains.kotlin.build.report.RemoteICReporter
 import java.io.File
 
 internal class CompileIterationICReporter(

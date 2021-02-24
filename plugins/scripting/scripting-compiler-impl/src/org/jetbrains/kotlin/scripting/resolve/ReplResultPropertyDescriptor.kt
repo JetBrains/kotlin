@@ -22,7 +22,7 @@ class ReplResultPropertyDescriptor(
     null,
     Annotations.EMPTY,
     Modality.FINAL,
-    Visibilities.PUBLIC,
+    DescriptorVisibilities.PUBLIC,
     false,
     name,
     CallableMemberDescriptor.Kind.SYNTHESIZED,

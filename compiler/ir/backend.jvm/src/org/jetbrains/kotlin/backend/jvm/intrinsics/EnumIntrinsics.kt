@@ -18,7 +18,7 @@ import org.jetbrains.org.objectweb.asm.Type
 object EnumValueOf : IntrinsicMethod() {
     override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo) = with(codegen) {
         val type = expression.getTypeArgument(0)!!
-        val result = expression.getValueArgument(0)!!.accept(this, data).materialized
+        val result = expression.getValueArgument(0)!!.accept(this, data).materialized()
         if (type.isReifiedTypeParameter) {
             // Note that the inliner expects exactly the following sequence of instructions.
             // <REIFIED-OPERATIONS-MARKER>

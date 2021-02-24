@@ -26,7 +26,7 @@ public class AndroidResourceIntentionTestGenerated extends AbstractAndroidResour
     }
 
     public void testAllFilesPresentInResourceIntention() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/android/resourceIntention"), Pattern.compile("^(.+)\\.test$"), TargetBackend.ANY);
+        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/android/resourceIntention"), Pattern.compile("^(.+)\\.test$"), TargetBackend.ANY);
     }
 
     @TestMetadata("createColorValueResource/alreadyExists/alreadyExists.test")

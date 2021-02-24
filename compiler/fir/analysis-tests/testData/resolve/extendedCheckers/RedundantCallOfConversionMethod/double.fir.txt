@@ -1,0 +1,3 @@
+FILE: double.kt
+    public final val foo: R|kotlin/Double| = Double(1.1).R|kotlin/Double.toDouble|()
+        public get(): R|kotlin/Double|

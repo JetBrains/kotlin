@@ -146,10 +146,23 @@ internal abstract class WhenOnClassExhaustivenessChecker : WhenExhaustivenessChe
             else -> null
         }
 
-    protected val ClassDescriptor.deepSealedSubclasses: List<ClassDescriptor>
-        get() = this.sealedSubclasses.flatMap {
-            if (it.modality == Modality.SEALED) it.deepSealedSubclasses
-            else setOf(it)
+    protected val ClassDescriptor.enumEntries: Set<ClassDescriptor>
+        get() = DescriptorUtils.getAllDescriptors(this.unsubstitutedInnerClassesScope)
+            .filter(::isEnumEntry)
+            .filterIsInstance<ClassDescriptor>()
+            .toSet()
+
+
+    protected val ClassDescriptor.deepSealedSubclasses: Set<ClassDescriptor>
+        get() = this.sealedSubclasses.flatMapTo(mutableSetOf()) {
+            it.subclasses
+        }
+
+    private val ClassDescriptor.subclasses: Set<ClassDescriptor>
+        get() = when {
+            this.modality == Modality.SEALED -> this.deepSealedSubclasses
+            this.kind == ClassKind.ENUM_CLASS -> this.enumEntries
+            else -> setOf(this)
         }
 
     private val KtWhenCondition.negated
@@ -189,9 +202,7 @@ internal abstract class WhenOnClassExhaustivenessChecker : WhenExhaustivenessChe
             for (condition in whenEntry.conditions) {
                 val negated = condition.negated
                 val checkedDescriptor = condition.getCheckedDescriptor(context) ?: continue
-                val checkedDescriptorSubclasses =
-                    if (checkedDescriptor.modality == Modality.SEALED) checkedDescriptor.deepSealedSubclasses
-                    else listOf(checkedDescriptor)
+                val checkedDescriptorSubclasses = checkedDescriptor.subclasses
 
                 // Checks are important only for nested subclasses of the sealed class
                 // In additional, check without "is" is important only for objects
@@ -220,12 +231,7 @@ private object WhenOnEnumExhaustivenessChecker : WhenOnClassExhaustivenessChecke
         nullable: Boolean
     ): List<WhenMissingCase> {
         assert(isEnumClass(subjectDescriptor)) { "isWhenOnEnumExhaustive should be called with an enum class descriptor" }
-        val entryDescriptors =
-            DescriptorUtils.getAllDescriptors(subjectDescriptor!!.unsubstitutedInnerClassesScope)
-                .filter(::isEnumEntry)
-                .filterIsInstance<ClassDescriptor>()
-                .toSet()
-        return getMissingClassCases(expression, entryDescriptors, context) +
+        return getMissingClassCases(expression, subjectDescriptor!!.enumEntries, context) +
                 WhenOnNullableExhaustivenessChecker.getMissingCases(expression, context, nullable)
     }
 

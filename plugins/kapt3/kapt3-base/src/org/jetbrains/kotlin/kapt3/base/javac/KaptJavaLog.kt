@@ -152,7 +152,7 @@ class KaptJavaLog(
 
         val formattedMessage = diagnosticFormatter.format(diagnostic, javacMessages.currentLocale)
             .lines()
-            .joinToString(LINE_SEPARATOR) { original ->
+            .joinToString(LINE_SEPARATOR, postfix = LINE_SEPARATOR) { original ->
                 // Kotlin location is put as a sub-diagnostic, so the formatter indents it with four additional spaces (6 in total).
                 // It looks weird, especially in the build log inside IntelliJ, so let's make things a bit better.
                 val trimmed = original.trimStart()
@@ -210,6 +210,7 @@ class KaptJavaLog(
             "compiler.err.already.defined",
             "compiler.err.annotation.type.not.applicable",
             "compiler.err.doesnt.exist",
+            "compiler.err.cant.resolve.location",
             "compiler.err.duplicate.annotation.missing.container",
             "compiler.err.not.def.access.package.cant.access",
             "compiler.err.package.not.visible",

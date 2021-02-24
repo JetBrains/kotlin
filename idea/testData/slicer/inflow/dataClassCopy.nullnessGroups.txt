@@ -1,0 +1,3 @@
+[NotNull Values]
+6 	<bold>val v</bold> = dataClass.value1 (in foo(DataClass))
+6 		<bold>val v</bold> = dataClass.value1 (in foo(DataClass))

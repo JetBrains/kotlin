@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.spec.utils.generators.templates
 
-import org.jetbrains.kotlin.spec.utils.GeneralConfiguration.TESTDATA_PATH
+import org.jetbrains.kotlin.spec.utils.GeneralConfiguration.SPEC_TESTDATA_PATH
 import java.io.File
 import java.util.regex.Pattern
 
@@ -78,8 +78,8 @@ class FeatureInteractionTestDataGenerator(private val configuration: GenerationS
 
     fun generate() {
         var testNumber = 1
-        val testsPartPath = "$TESTDATA_PATH/${configuration.getTestsPartPath()}"
-        val layoutTemplate = File("$TESTDATA_PATH/${configuration.getLayoutPath()}").readText()
+        val testsPartPath = "$SPEC_TESTDATA_PATH/${configuration.getTestsPartPath()}"
+        val layoutTemplate = File("$SPEC_TESTDATA_PATH/${configuration.getLayoutPath()}").readText()
 
         File(testsPartPath).parentFile.mkdirs()
 

@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestJdkKind;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.org.objectweb.asm.ClassReader;
 import org.jetbrains.org.objectweb.asm.ClassVisitor;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
@@ -49,7 +50,7 @@ abstract public class AbstractGenerateNotNullAssertionsTest extends CodegenTestC
     }
 
     private void loadSource(@NotNull String fileName) {
-        loadFileByFullPath(KotlinTestUtils.getTestDataPathBase() + "/codegen/" + getPrefix() + "/" + fileName);
+        loadFileByFullPath(KtTestUtil.getTestDataPathBase() + "/codegen/" + getPrefix() + "/" + fileName);
     }
 
     protected void doTestNoAssertionsForKotlinFromBinary(String binaryDependencyFilename, String testFilename) {

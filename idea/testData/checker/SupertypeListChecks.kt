@@ -1,3 +1,4 @@
+// IGNORE_FIR
 // KT-286 Check supertype lists
 
 /*

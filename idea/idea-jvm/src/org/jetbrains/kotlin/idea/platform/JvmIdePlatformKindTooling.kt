@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,6 +9,8 @@ import com.intellij.codeInsight.TestFrameworks
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.roots.libraries.PersistentLibraryKind
+import com.intellij.psi.PsiMethod
+import com.intellij.testIntegration.TestFramework
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.asJava.toLightMethods
@@ -19,6 +21,7 @@ import org.jetbrains.kotlin.idea.framework.JavaRuntimeDetectionUtil
 import org.jetbrains.kotlin.idea.framework.JavaRuntimeLibraryDescription
 import org.jetbrains.kotlin.idea.highlighter.KotlinTestRunLineMarkerContributor.Companion.getTestStateIcon
 import org.jetbrains.kotlin.idea.platform.IdePlatformKindTooling
+import org.jetbrains.kotlin.idea.platform.isKotlinTestDeclaration
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFunction
@@ -51,28 +54,41 @@ class JvmIdePlatformKindTooling : IdePlatformKindTooling() {
     }
 
     override fun getTestIcon(declaration: KtNamedDeclaration, descriptor: DeclarationDescriptor): Icon? {
-        val (url, framework) = when (declaration) {
+        val (urls, framework) = when (declaration) {
             is KtClassOrObject -> {
                 val lightClass = declaration.toLightClass() ?: return null
-                val framework = TestFrameworks.detectFramework(lightClass) ?: return null
-                if (!framework.isTestClass(lightClass)) return null
-                val qualifiedName = lightClass.qualifiedName ?: return null
-
-                "java:suite://$qualifiedName" to framework
+                val framework = TestFrameworks.detectFramework(lightClass)
+                if (framework?.isTestClass(lightClass) == false) {
+                    return null
+                }
+                listOf("java:suite://${lightClass.qualifiedName}") to framework
             }
 
             is KtNamedFunction -> {
                 val lightMethod = declaration.toLightMethods().firstOrNull() ?: return null
                 val lightClass = lightMethod.containingClass as? KtLightClass ?: return null
-                val framework = TestFrameworks.detectFramework(lightClass) ?: return null
-                if (!framework.isTestMethod(lightMethod, /*checkAbstract = */ false)) return null
-
-                "java:test://${lightClass.qualifiedName}/${lightMethod.name}" to framework
+                val framework = TestFrameworks.detectFramework(lightClass)
+                if (framework?.isTestMethod(lightMethod, false) == false) {
+                    return null
+                }
+                listOf(
+                    "java:test://${lightClass.qualifiedName}/${lightMethod.name}",
+                    "java:test://${lightClass.qualifiedName}.${lightMethod.name}"
+                ) to framework
             }
 
             else -> return null
         }
-        return getTestStateIcon(url, declaration.project, strict = false) ?: framework.icon
+
+        if (framework != null) {
+            return getTestStateIcon(urls, declaration.project, strict = false, framework.icon)
+        }
+
+        if (!descriptor.isKotlinTestDeclaration()) {
+            return null
+        }
+
+        return getTestStateIcon(urls, declaration.project, strict = false)
     }
 
     override fun acceptsAsEntryPoint(function: KtFunction) = true

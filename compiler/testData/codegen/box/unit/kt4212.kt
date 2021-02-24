@@ -1,3 +1,5 @@
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: UNIT_ISSUES
 fun foo(): Any? = bar()
 
 fun bar() {}

@@ -7,12 +7,17 @@ package org.jetbrains.kotlin.idea.actions.internal
 
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.ToggleAction
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.project.KotlinMultiplatformAnalysisModeComponent
 import org.jetbrains.kotlin.idea.project.KotlinMultiplatformAnalysisModeComponent.Mode
 import org.jetbrains.kotlin.idea.project.useCompositeAnalysis
 
 class MultiplatformCompositeAnalysisToggleAction :
-    ToggleAction("Toggle composite analysis mode for multiplatform", "Analyse modules with different platforms together", null) {
+    ToggleAction(
+        KotlinBundle.message("toggle.composite.analysis.mode.for.multiplatform"),
+        KotlinBundle.message("analyse.modules.with.different.platforms.together"),
+        null
+    ) {
 
     override fun isSelected(e: AnActionEvent): Boolean = e.project?.useCompositeAnalysis == true
 

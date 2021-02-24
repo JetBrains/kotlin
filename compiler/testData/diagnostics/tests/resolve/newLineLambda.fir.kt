@@ -96,7 +96,7 @@ fun testTwoLambdas() {
     )
 
     fun bar(): () -> Unit {
-        <!INAPPLICABLE_CANDIDATE!>twoLambdaArgs<!>()
+        twoLambdaArgs()
         {}
         {}
 

@@ -50,10 +50,16 @@ object RangeTo : IntrinsicMethod() {
                 v.invokespecial(signature.returnType.internalName, "<init>", Type.getMethodDescriptor(Type.VOID_TYPE, argType, argType), false)
             }
 
-            override fun invoke(v: InstructionAdapter, codegen: ExpressionCodegen, data: BlockInfo): StackValue {
+            override fun invoke(
+                v: InstructionAdapter,
+                codegen: ExpressionCodegen,
+                data: BlockInfo,
+                expression: IrFunctionAccessExpression
+            ): StackValue {
+                codegen.markLineNumber(expression)
                 v.anew(returnType)
                 v.dup()
-                return super.invoke(v, codegen, data)
+                return super.invoke(v, codegen, data, expression)
             }
         }
     }

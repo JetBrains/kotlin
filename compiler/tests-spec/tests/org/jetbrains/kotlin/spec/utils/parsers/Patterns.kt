@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.spec.utils.SpecTestLinkedType
 import org.jetbrains.kotlin.spec.utils.TestArea
 import org.jetbrains.kotlin.spec.utils.TestType
 import org.jetbrains.kotlin.spec.utils.models.SpecTestCaseInfoElementType
+import org.jetbrains.kotlin.spec.utils.parsers.CommonParser.withSpaces
 import org.jetbrains.kotlin.spec.utils.parsers.CommonPatterns.ASTERISK_REGEX
 import org.jetbrains.kotlin.spec.utils.parsers.CommonPatterns.INTEGER_REGEX
 import org.jetbrains.kotlin.spec.utils.parsers.CommonPatterns.MULTILINE_COMMENT_REGEX
@@ -18,7 +19,6 @@ import org.jetbrains.kotlin.spec.utils.parsers.CommonPatterns.directiveRegex
 import org.jetbrains.kotlin.spec.utils.parsers.CommonPatterns.ps
 import org.jetbrains.kotlin.spec.utils.parsers.CommonPatterns.sectionsInPathRegex
 import org.jetbrains.kotlin.spec.utils.parsers.CommonPatterns.testAreaRegex
-import org.jetbrains.kotlin.spec.utils.parsers.CommonParser.withSpaces
 import org.jetbrains.kotlin.spec.utils.parsers.CommonPatterns.testPathRegexTemplate
 import org.jetbrains.kotlin.spec.utils.parsers.CommonPatterns.testTypeRegex
 import java.io.File
@@ -55,7 +55,7 @@ interface BasePatterns {
 }
 
 object NotLinkedSpecTestPatterns : BasePatterns {
-    private const val FILENAME_REGEX = """(?<testNumber>$INTEGER_REGEX)\.kt"""
+    private const val FILENAME_REGEX = """(?<testNumber>$INTEGER_REGEX)(?:\.fir)?\.kt"""
 
     override val pathPartRegex = SpecTestLinkedType.NOT_LINKED.testDataPath + ps + sectionsInPathRegex
     override val testPathPattern: Pattern =
@@ -65,7 +65,10 @@ object NotLinkedSpecTestPatterns : BasePatterns {
 }
 
 object LinkedSpecTestPatterns : BasePatterns {
-    const val FILENAME_REGEX = """(?<sentenceNumber>$INTEGER_REGEX)\.(?<testNumber>$INTEGER_REGEX)\.kt"""
+    private const val FILENAME_REGEX = """(?<sentenceNumber>$INTEGER_REGEX)\.(?<testNumber>$INTEGER_REGEX)(?:\.fir)?\.kt"""
+
+    const val PRIMARY_LINKS = "PRIMARY LINKS"
+    const val SECONDARY_LINKS = "SECONDARY LINKS"
 
     override val pathPartRegex =
         """${SpecTestLinkedType.LINKED.testDataPath}$ps$sectionsInPathRegex${ps}p-(?<paragraphNumber>$INTEGER_REGEX)"""
@@ -74,11 +77,17 @@ object LinkedSpecTestPatterns : BasePatterns {
     override val testInfoPattern: Pattern =
         Pattern.compile(MULTILINE_COMMENT_REGEX.format(""" $ASTERISK_REGEX KOTLIN $testAreaRegex SPEC TEST \($testTypeRegex\)\n(?<infoElements>[\s\S]*?\n)"""))
 
-    val placePattern: Pattern =
+    val mainLinkPattern: Pattern =
         Pattern.compile("""(?<sections>$SECTIONS_IN_FILE_REGEX) -> paragraph (?<paragraphNumber>$INTEGER_REGEX) -> sentence (?<sentenceNumber>$INTEGER_REGEX)""")
 
-    val relevantPlacesPattern: Pattern =
+    val relevantLinksPattern: Pattern =
         Pattern.compile("""(( $ASTERISK_REGEX )?\s*((?<sections>$SECTIONS_IN_FILE_REGEX) -> )?(paragraph (?<paragraphNumber>$INTEGER_REGEX) -> )?sentence (?<sentenceNumber>$INTEGER_REGEX))+""")
+
+    private val linkRegex =
+        Regex("""(( $ASTERISK_REGEX )?\s*($SECTIONS_IN_FILE_REGEX -> )?(paragraph $INTEGER_REGEX -> )?sentence $INTEGER_REGEX)""")
+
+    val primaryLinks: Pattern = Pattern.compile("""$PRIMARY_LINKS\s*:\s*(?<places>(${linkRegex}(\s)*\n)+)""")
+    val secondaryLinks: Pattern = Pattern.compile("""$SECONDARY_LINKS\s*:\s*(?<places>(${linkRegex}(\s)*\n)+)""")
 }
 
 object TestCasePatterns {

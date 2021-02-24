@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.idea.decompiler.navigation.NavigationChecker.Compani
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.util.projectStructure.getModuleDir
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
-import org.jetbrains.kotlin.test.MockLibraryUtil
+import org.jetbrains.kotlin.test.MockLibraryUtilExt
 import org.jetbrains.kotlin.test.testFramework.runWriteAction
 import org.jetbrains.kotlin.test.util.addDependency
 import org.jetbrains.kotlin.test.util.jarRoot
@@ -48,7 +48,7 @@ class NavigationWithMultipleCustomLibrariesTest : AbstractNavigationToSourceOrDe
     override fun createProjectLib(libraryName: String, withSources: Boolean): Library {
         val librarySrc = testDataPath + "libSrc"
 
-        val libraryJar = MockLibraryUtil.compileJvmLibraryToJar(librarySrc, libraryName, addSources = withSources)
+        val libraryJar = MockLibraryUtilExt.compileJvmLibraryToJar(librarySrc, libraryName, addSources = withSources)
         val jarRoot = libraryJar.jarRoot
         return projectLibrary(libraryName, jarRoot, jarRoot.findChild("src").takeIf { withSources })
     }
@@ -113,7 +113,7 @@ class NavigationToSingleJarInMultipleLibrariesTest : AbstractNavigationWithMulti
         val moduleB = module("m2", srcPath)
         val moduleC = module("m3", srcPath)
 
-        val sharedJar = MockLibraryUtil.compileJvmLibraryToJar(testDataPath + "libSrc", "sharedJar", addSources = true)
+        val sharedJar = MockLibraryUtilExt.compileJvmLibraryToJar(testDataPath + "libSrc", "sharedJar", addSources = true)
         val jarRoot = sharedJar.jarRoot
 
         moduleA.addDependency(projectLibrary("libA", jarRoot))

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,6 +17,7 @@ import kotlin.random.*
 
 /**
  * Returns the greater of two values.
+ * 
  * If values are equal, returns the first one.
  */
 @SinceKotlin("1.1")
@@ -52,6 +53,8 @@ public expect inline fun maxOf(a: Long, b: Long): Long
 
 /**
  * Returns the greater of two values.
+ * 
+ * If either value is `NaN`, returns `NaN`.
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
@@ -59,6 +62,8 @@ public expect inline fun maxOf(a: Float, b: Float): Float
 
 /**
  * Returns the greater of two values.
+ * 
+ * If either value is `NaN`, returns `NaN`.
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
@@ -66,6 +71,8 @@ public expect inline fun maxOf(a: Double, b: Double): Double
 
 /**
  * Returns the greater of three values.
+ * 
+ * If there are multiple equal maximal values, returns the first of them.
  */
 @SinceKotlin("1.1")
 public expect fun <T : Comparable<T>> maxOf(a: T, b: T, c: T): T
@@ -100,6 +107,8 @@ public expect inline fun maxOf(a: Long, b: Long, c: Long): Long
 
 /**
  * Returns the greater of three values.
+ * 
+ * If any value is `NaN`, returns `NaN`.
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
@@ -107,6 +116,8 @@ public expect inline fun maxOf(a: Float, b: Float, c: Float): Float
 
 /**
  * Returns the greater of three values.
+ * 
+ * If any value is `NaN`, returns `NaN`.
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
@@ -114,6 +125,8 @@ public expect inline fun maxOf(a: Double, b: Double, c: Double): Double
 
 /**
  * Returns the greater of three values according to the order specified by the given [comparator].
+ * 
+ * If there are multiple equal maximal values, returns the first of them.
  */
 @SinceKotlin("1.1")
 public fun <T> maxOf(a: T, b: T, c: T, comparator: Comparator<in T>): T {
@@ -122,6 +135,7 @@ public fun <T> maxOf(a: T, b: T, c: T, comparator: Comparator<in T>): T {
 
 /**
  * Returns the greater of two values according to the order specified by the given [comparator].
+ * 
  * If values are equal, returns the first one.
  */
 @SinceKotlin("1.1")
@@ -130,7 +144,68 @@ public fun <T> maxOf(a: T, b: T, comparator: Comparator<in T>): T {
 }
 
 /**
+ * Returns the greater of the given values.
+ * 
+ * If there are multiple equal maximal values, returns the first of them.
+ */
+@SinceKotlin("1.4")
+public expect fun <T : Comparable<T>> maxOf(a: T, vararg other: T): T
+
+/**
+ * Returns the greater of the given values.
+ */
+@SinceKotlin("1.4")
+public expect fun maxOf(a: Byte, vararg other: Byte): Byte
+
+/**
+ * Returns the greater of the given values.
+ */
+@SinceKotlin("1.4")
+public expect fun maxOf(a: Short, vararg other: Short): Short
+
+/**
+ * Returns the greater of the given values.
+ */
+@SinceKotlin("1.4")
+public expect fun maxOf(a: Int, vararg other: Int): Int
+
+/**
+ * Returns the greater of the given values.
+ */
+@SinceKotlin("1.4")
+public expect fun maxOf(a: Long, vararg other: Long): Long
+
+/**
+ * Returns the greater of the given values.
+ * 
+ * If any value is `NaN`, returns `NaN`.
+ */
+@SinceKotlin("1.4")
+public expect fun maxOf(a: Float, vararg other: Float): Float
+
+/**
+ * Returns the greater of the given values.
+ * 
+ * If any value is `NaN`, returns `NaN`.
+ */
+@SinceKotlin("1.4")
+public expect fun maxOf(a: Double, vararg other: Double): Double
+
+/**
+ * Returns the greater of the given values according to the order specified by the given [comparator].
+ * 
+ * If there are multiple equal maximal values, returns the first of them.
+ */
+@SinceKotlin("1.4")
+public fun <T> maxOf(a: T, vararg other: T, comparator: Comparator<in T>): T {
+    var max = a
+    for (e in other) if (comparator.compare(max, e) < 0) max = e
+    return max
+}
+
+/**
  * Returns the smaller of two values.
+ * 
  * If values are equal, returns the first one.
  */
 @SinceKotlin("1.1")
@@ -166,6 +241,8 @@ public expect inline fun minOf(a: Long, b: Long): Long
 
 /**
  * Returns the smaller of two values.
+ * 
+ * If either value is `NaN`, returns `NaN`.
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
@@ -173,6 +250,8 @@ public expect inline fun minOf(a: Float, b: Float): Float
 
 /**
  * Returns the smaller of two values.
+ * 
+ * If either value is `NaN`, returns `NaN`.
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
@@ -180,6 +259,8 @@ public expect inline fun minOf(a: Double, b: Double): Double
 
 /**
  * Returns the smaller of three values.
+ * 
+ * If there are multiple equal minimal values, returns the first of them.
  */
 @SinceKotlin("1.1")
 public expect fun <T : Comparable<T>> minOf(a: T, b: T, c: T): T
@@ -214,6 +295,8 @@ public expect inline fun minOf(a: Long, b: Long, c: Long): Long
 
 /**
  * Returns the smaller of three values.
+ * 
+ * If any value is `NaN`, returns `NaN`.
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
@@ -221,6 +304,8 @@ public expect inline fun minOf(a: Float, b: Float, c: Float): Float
 
 /**
  * Returns the smaller of three values.
+ * 
+ * If any value is `NaN`, returns `NaN`.
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
@@ -228,6 +313,8 @@ public expect inline fun minOf(a: Double, b: Double, c: Double): Double
 
 /**
  * Returns the smaller of three values according to the order specified by the given [comparator].
+ * 
+ * If there are multiple equal minimal values, returns the first of them.
  */
 @SinceKotlin("1.1")
 public fun <T> minOf(a: T, b: T, c: T, comparator: Comparator<in T>): T {
@@ -236,10 +323,71 @@ public fun <T> minOf(a: T, b: T, c: T, comparator: Comparator<in T>): T {
 
 /**
  * Returns the smaller of two values according to the order specified by the given [comparator].
+ * 
  * If values are equal, returns the first one.
  */
 @SinceKotlin("1.1")
 public fun <T> minOf(a: T, b: T, comparator: Comparator<in T>): T {
     return if (comparator.compare(a, b) <= 0) a else b
+}
+
+/**
+ * Returns the smaller of the given values.
+ * 
+ * If there are multiple equal minimal values, returns the first of them.
+ */
+@SinceKotlin("1.4")
+public expect fun <T : Comparable<T>> minOf(a: T, vararg other: T): T
+
+/**
+ * Returns the smaller of the given values.
+ */
+@SinceKotlin("1.4")
+public expect fun minOf(a: Byte, vararg other: Byte): Byte
+
+/**
+ * Returns the smaller of the given values.
+ */
+@SinceKotlin("1.4")
+public expect fun minOf(a: Short, vararg other: Short): Short
+
+/**
+ * Returns the smaller of the given values.
+ */
+@SinceKotlin("1.4")
+public expect fun minOf(a: Int, vararg other: Int): Int
+
+/**
+ * Returns the smaller of the given values.
+ */
+@SinceKotlin("1.4")
+public expect fun minOf(a: Long, vararg other: Long): Long
+
+/**
+ * Returns the smaller of the given values.
+ * 
+ * If any value is `NaN`, returns `NaN`.
+ */
+@SinceKotlin("1.4")
+public expect fun minOf(a: Float, vararg other: Float): Float
+
+/**
+ * Returns the smaller of the given values.
+ * 
+ * If any value is `NaN`, returns `NaN`.
+ */
+@SinceKotlin("1.4")
+public expect fun minOf(a: Double, vararg other: Double): Double
+
+/**
+ * Returns the smaller of the given values according to the order specified by the given [comparator].
+ * 
+ * If there are multiple equal minimal values, returns the first of them.
+ */
+@SinceKotlin("1.4")
+public fun <T> minOf(a: T, vararg other: T, comparator: Comparator<in T>): T {
+    var min = a
+    for (e in other) if (comparator.compare(min, e) > 0) min = e
+    return min
 }
 

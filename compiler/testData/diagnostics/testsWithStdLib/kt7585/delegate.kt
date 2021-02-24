@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !WITH_NEW_INFERENCE
 // NI_EXPECTED_FILE
 // JAVAC_EXPECTED_FILE
@@ -28,7 +29,17 @@ public final class Exotic implements Base, Other {
 
 import kotlin.jvm.functions.Function0;
 
-class Val<T> {
+public class Properties {
+    static <T> Val<T> calcVal(Function0<T> initializer) {
+        return new Val<T>(initializer);
+    }
+}
+
+// FILE: Val.java
+
+import kotlin.jvm.functions.Function0;
+
+public class Val<T> {
 
     Function0<T> initializer;
 
@@ -38,12 +49,6 @@ class Val<T> {
 
     T getValue(Object instance, Object metadata) {
         return initializer.invoke();
-    }
-}
-
-class Properties {
-    static <T> Val<T> calcVal(Function0<T> initializer) {
-        return new Val<T>(initializer);
     }
 }
 

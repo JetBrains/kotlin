@@ -110,13 +110,14 @@ extra["IntellijCoreDependencies"] =
 extra["compilerModules"] = arrayOf(
     ":compiler:util",
     ":compiler:container",
+    ":compiler:resolution.common",
     ":compiler:resolution",
     ":compiler:serialization",
     ":compiler:psi",
     ":compiler:fir:cones",
     ":compiler:fir:resolve",
     ":compiler:fir:tree",
-    ":compiler:fir:psi2fir",
+    ":compiler:fir:raw-fir:psi2fir",
     ":compiler:fir:fir2ir",
     ":compiler:fir:java",
     ":compiler:fir:jvm",
@@ -148,6 +149,8 @@ extra["compilerModules"] = arrayOf(
     ":kotlin-build-common",
     ":core:metadata",
     ":core:metadata.jvm",
+    ":core:deserialization.common",
+    ":core:deserialization.common.jvm",
     ":core:descriptors",
     ":core:descriptors.jvm",
     ":core:deserialization",
@@ -314,7 +317,7 @@ tasks {
         dependsOn(":compiler:test",
                   ":compiler:container:test",
                   ":compiler:tests-java8:test",
-                  ":compiler:tests-spec:remoteRunTests")
+                  ":compiler:tests-spec:test")
         dependsOn(":plugins:jvm-abi-gen:test")
     }
 
@@ -401,7 +404,6 @@ tasks {
     create("plugins-tests") {
         dependsOn("dist")
         dependsOn(":kotlin-annotation-processing:test",
-                  ":kotlin-source-sections-compiler-plugin:test",
                   ":kotlin-allopen-compiler-plugin:test",
                   ":kotlin-noarg-compiler-plugin:test",
                   ":kotlin-sam-with-receiver-compiler-plugin:test",
@@ -428,8 +430,7 @@ tasks {
         }
     }
 
-    create("mainC" +
-                   "eck") {
+    create("mainCeck") {
         dependsOn("test")
     }
 }

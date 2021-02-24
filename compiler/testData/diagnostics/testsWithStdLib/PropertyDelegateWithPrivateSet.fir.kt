@@ -8,5 +8,5 @@ class My {
     val another: String = delegate
 
     var delegateWithBackingField: String by kotlin.properties.Delegates.notNull()
-        private set(arg) { field = arg }
+        private set(arg) { <!UNRESOLVED_REFERENCE!>field<!> = arg }
 }

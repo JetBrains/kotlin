@@ -6,7 +6,9 @@
           "specVersion": "0.1-218",
           "casesNumber": 0,
           "description": "character literal codepoint is equal to the unicode symbol codes",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/character-literals/p-4/pos/2.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ]
     }

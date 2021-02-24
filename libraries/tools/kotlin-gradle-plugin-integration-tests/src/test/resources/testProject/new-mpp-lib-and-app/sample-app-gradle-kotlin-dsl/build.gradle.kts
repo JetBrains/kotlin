@@ -9,22 +9,21 @@ version = "1.0"
 repositories {
     mavenLocal()
     jcenter()
-    maven { setUrl("https://dl.bintray.com/kotlin/kotlinx.html/") }
 }
 
 kotlin {
-	val jvm6 = jvm("jvm6")
+	val jvm6 = jvm("jvm6") {
+        attributes.attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, 6)
+    }
 	val jvm8 = jvm("jvm8") {
+        attributes.attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, 8)
 		compilations["main"].kotlinOptions.jvmTarget = "1.8"
 	}
 	val nodeJs = js("nodeJs")
-	val wasm32 = wasm32()
 	val linux64 = linuxX64("linux64")
-	val mingw64 = mingwX64("mingw64")
-	val macos64 = macosX64("macos64")
 
-    configure(listOf(wasm32, linux64, mingw64, macos64)) {
-        binaries.executable("main") {
+    configure(listOf(linux64)) {
+        binaries.executable("main", listOf(DEBUG)) {
             entryPoint = "com.example.app.native.main"
         }
 

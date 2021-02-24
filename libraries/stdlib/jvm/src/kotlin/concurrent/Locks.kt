@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,7 +8,7 @@ package kotlin.concurrent
 
 import java.util.concurrent.locks.Lock
 import java.util.concurrent.locks.ReentrantReadWriteLock
-import java.util.concurrent.CountDownLatch
+import kotlin.contracts.*
 
 /**
  * Executes the given [action] under this lock.
@@ -16,6 +16,7 @@ import java.util.concurrent.CountDownLatch
  */
 @kotlin.internal.InlineOnly
 public inline fun <T> Lock.withLock(action: () -> T): T {
+    contract { callsInPlace(action, InvocationKind.EXACTLY_ONCE) }
     lock()
     try {
         return action()
@@ -30,6 +31,7 @@ public inline fun <T> Lock.withLock(action: () -> T): T {
  */
 @kotlin.internal.InlineOnly
 public inline fun <T> ReentrantReadWriteLock.read(action: () -> T): T {
+    contract { callsInPlace(action, InvocationKind.EXACTLY_ONCE) }
     val rl = readLock()
     rl.lock()
     try {
@@ -54,6 +56,7 @@ public inline fun <T> ReentrantReadWriteLock.read(action: () -> T): T {
  */
 @kotlin.internal.InlineOnly
 public inline fun <T> ReentrantReadWriteLock.write(action: () -> T): T {
+    contract { callsInPlace(action, InvocationKind.EXACTLY_ONCE) }
     val rl = readLock()
 
     val readCount = if (writeHoldCount == 0) readHoldCount else 0

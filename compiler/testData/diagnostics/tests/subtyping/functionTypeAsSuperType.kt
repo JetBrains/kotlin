@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class A : () -> Unit {
     override fun invoke() {}
 }

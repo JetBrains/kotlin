@@ -228,6 +228,46 @@ class Sequences {
             val result = sequenceA.zip(sequenceB) { a, b -> "$a/$b" }
             assertPrints(result.take(4).toList(), "[a/1, b/3, c/7, d/15]")
         }
+
+        @Sample
+        fun partition() {
+            fun fibonacci(): Sequence<Int> {
+                // fibonacci terms
+                // 0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987, 1597, 2584, 4181, 6765, 10946, ...
+                return generateSequence(Pair(0, 1), { Pair(it.second, it.first + it.second) }).map { it.first }
+            }
+
+            val (even, odd) = fibonacci().take(10).partition { it % 2 == 0 }
+
+            assertPrints(even, "[0, 2, 8, 34]")
+            assertPrints(odd, "[1, 1, 3, 5, 13, 21]")
+        }
+
+        @Sample
+        fun flattenSequenceOfSequences() {
+            val sequence: Sequence<Int> = generateSequence(1) { it + 1 }
+            val sequenceOfSequences: Sequence<Sequence<Int>> = sequence.map { number ->
+                generateSequence { number }.take(number)
+            }
+
+            assertPrints(sequenceOfSequences.flatten().take(10).toList(), "[1, 2, 2, 3, 3, 3, 4, 4, 4, 4]")
+        }
+
+        @Sample
+        fun flattenSequenceOfLists() {
+            val sequence: Sequence<String> = sequenceOf("123", "45")
+            val sequenceOfLists: Sequence<List<Char>> = sequence.map { it.toList() }
+
+            assertPrints(sequenceOfLists.flatten().toList(), "[1, 2, 3, 4, 5]")
+        }
+
+        @Sample
+        fun unzip() {
+            val result = generateSequence(0 to 1) { it.first + 1 to it.second * 2 }.take(8).unzip()
+
+            assertPrints(result.first.toList(), "[0, 1, 2, 3, 4, 5, 6, 7]")
+            assertPrints(result.second.toList(), "[1, 2, 4, 8, 16, 32, 64, 128]")
+        }
     }
 
 }

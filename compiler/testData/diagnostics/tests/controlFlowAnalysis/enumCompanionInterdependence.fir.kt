@@ -31,7 +31,7 @@ enum class Fruit(personal: Int) {
 
 // Another example from KT-11769
 enum class EnumCompanion1(val x: Int) {
-    INSTANCE(<!AMBIGUITY!>Companion<!>.<!UNRESOLVED_REFERENCE!>foo<!>()),
+    INSTANCE(Companion.foo()),
     ANOTHER(foo());
 
     companion object {

@@ -41,7 +41,10 @@ class LazyJavaTypeParameterResolver(
 
     private val resolve = c.storageManager.createMemoizedFunctionWithNullableValues { typeParameter: JavaTypeParameter ->
         typeParameters[typeParameter]?.let { index ->
-            LazyJavaTypeParameterDescriptor(c.child(this), typeParameter, typeParametersIndexOffset + index, containingDeclaration)
+            LazyJavaTypeParameterDescriptor(
+                c.child(this).copyWithNewDefaultTypeQualifiers(containingDeclaration.annotations),
+                typeParameter, typeParametersIndexOffset + index, containingDeclaration
+            )
         }
     }
 

@@ -14,6 +14,7 @@ import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl.WithDestructuringDeclaration
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.moveFunctionLiteralOutsideParentheses
@@ -59,7 +60,7 @@ class ForEachParameterNotUsedInspection : AbstractKotlinInspection() {
                         fixes += IntroduceAnonymousParameterFix()
                         holder.registerProblem(
                             calleeExpression,
-                            "Loop parameter '${iterableParameter.getThisLabelName()}' is unused",
+                            KotlinBundle.message("loop.parameter.0.is.unused", iterableParameter.getThisLabelName()),
                             ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                             *fixes.toTypedArray()
                         )
@@ -70,7 +71,7 @@ class ForEachParameterNotUsedInspection : AbstractKotlinInspection() {
     }
 
     private class IntroduceAnonymousParameterFix : LocalQuickFix {
-        override fun getFamilyName() = "Introduce anonymous parameter"
+        override fun getFamilyName() = KotlinBundle.message("introduce.anonymous.parameter.fix.family.name")
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             val callExpression = descriptor.psiElement.parent as? KtCallExpression ?: return
@@ -84,7 +85,7 @@ class ForEachParameterNotUsedInspection : AbstractKotlinInspection() {
     }
 
     private class ReplaceWithRepeatFix : LocalQuickFix {
-        override fun getFamilyName() = "Replace with 'repeat()'"
+        override fun getFamilyName() = KotlinBundle.message("replace.with.repeat.fix.family.name")
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             val callExpression = descriptor.psiElement.parent as? KtCallExpression ?: return

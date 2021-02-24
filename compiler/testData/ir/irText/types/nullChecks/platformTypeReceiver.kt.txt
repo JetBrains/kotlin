@@ -1,0 +1,8 @@
+fun test1(): Boolean {
+  return super.#BOOL_NULL /*!! Boolean */.equals(other = null)
+}
+
+fun test2(): Boolean {
+  return boolNull() /*!! Boolean */.equals(other = null)
+}
+

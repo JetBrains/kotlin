@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -23,9 +23,25 @@ class Implementation(val element: Element, val name: String?) : FieldContainer, 
         FieldWithDefault(it)
     }
     override var kind: Kind? = null
+        set(value) {
+            field = value
+            if (kind != Kind.FinalClass) {
+                isPublic = true
+            }
+            if (value?.hasLeafBuilder == true) {
+                builder = builder ?: LeafBuilder(this)
+            } else {
+                builder = null
+            }
+        }
 
     override val packageName = element.packageName + ".impl"
     val usedTypes = mutableListOf<Importable>()
+    val arbitraryImportables = mutableListOf<ArbitraryImportable>()
+
+    var isPublic = false
+    var requiresOptIn = false
+    var builder: LeafBuilder? = null
 
     init {
         if (isDefault) {
@@ -55,11 +71,14 @@ class Implementation(val element: Element, val name: String?) : FieldContainer, 
         }
     }
 
-    enum class Kind(val title: String) {
-        Interface("interface"),
-        FinalClass("class"),
-        OpenClass("open class"),
-        AbstractClass("abstract class"),
-        Object("object")
+    val fieldsWithoutDefault by lazy { allFields.filter { it.defaultValueInImplementation == null } }
+    val fieldsWithDefault by lazy { allFields.filter { it.defaultValueInImplementation != null } }
+
+    enum class Kind(val title: String, val hasLeafBuilder: Boolean) {
+        Interface("interface", false),
+        FinalClass("class", true),
+        OpenClass("open class", true),
+        AbstractClass("abstract class", false),
+        Object("object", false)
     }
 }

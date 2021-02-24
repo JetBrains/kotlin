@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.ir.ir2string
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -32,15 +32,12 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 data class Closure(val capturedValues: List<IrValueSymbol>, val capturedTypeParameters: List<IrTypeParameter>)
 
-class ClosureAnnotator(body: IrBody, declaration: IrDeclaration) {
+class ClosureAnnotator(irElement: IrElement, declaration: IrDeclaration) {
     private val closureBuilders = mutableMapOf<IrDeclaration, ClosureBuilder>()
 
     init {
         // Collect all closures for classes and functions. Collect call graph
-        if (declaration is IrSimpleFunction && declaration.name.asString() == "arrayIterator") {
-            1
-        }
-        body.accept(ClosureCollectorVisitor(), declaration.closureBuilderOrNull ?: declaration.parentClosureBuilder)
+        irElement.accept(ClosureCollectorVisitor(), declaration.closureBuilderOrNull ?: declaration.parentClosureBuilder)
     }
 
     fun getFunctionClosure(declaration: IrFunction) = getClosure(declaration)
@@ -226,6 +223,12 @@ class ClosureAnnotator(body: IrBody, declaration: IrDeclaration) {
             includeInParent(closureBuilder)
         }
 
+        override fun visitTypeParameter(declaration: IrTypeParameter, data: ClosureBuilder?) {
+            for (superType in declaration.superTypes) {
+                data?.seeType(superType)
+            }
+        }
+
         override fun visitValueAccess(expression: IrValueAccessExpression, data: ClosureBuilder?) {
             data?.seeVariable(expression.symbol)
             super.visitValueAccess(expression, data)
@@ -246,6 +249,11 @@ class ClosureAnnotator(body: IrBody, declaration: IrDeclaration) {
             processMemberAccess(expression.symbol.owner, data)
         }
 
+        override fun visitFunctionExpression(expression: IrFunctionExpression, data: ClosureBuilder?) {
+            super.visitFunctionExpression(expression, data)
+            processMemberAccess(expression.function, data)
+        }
+
         override fun visitPropertyReference(expression: IrPropertyReference, data: ClosureBuilder?) {
             super.visitPropertyReference(expression, data)
             expression.getter?.let { processMemberAccess(it.owner, data) }
@@ -262,7 +270,7 @@ class ClosureAnnotator(body: IrBody, declaration: IrDeclaration) {
 
         private fun processMemberAccess(declaration: IrDeclaration, parentClosure: ClosureBuilder?) {
             if (declaration.isLocal) {
-                if (declaration is IrSimpleFunction && declaration.visibility != Visibilities.LOCAL) {
+                if (declaration is IrSimpleFunction && declaration.visibility != DescriptorVisibilities.LOCAL) {
                     return
                 }
 

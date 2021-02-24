@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
 // !LANGUAGE: +NewInference
 // SKIP_TXT
@@ -6,7 +7,7 @@
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
  * SPEC VERSION: 0.1-213
- * PLACE: expressions, built-in-types-and-their-semantics, kotlin.unit -> paragraph 1 -> sentence 1
+ * MAIN LINK: expressions, built-in-types-and-their-semantics, kotlin.unit -> paragraph 1 -> sentence 1
  * NUMBER: 1
  * DESCRIPTION: Check of Unit type
  * HELPERS: checkType
@@ -41,11 +42,11 @@ fun case2() {
 }
 
 // TESTCASE NUMBER: 3
-interface Processable<T> {
+interface ProcessableCase3<T> {
     fun process(): T
 }
 
-class Processor : Processable<Unit> {
+class Processor : ProcessableCase3<Unit> {
     override fun process() {
         val proc = "case 3"
     }
@@ -57,6 +58,10 @@ fun case3() {
 }
 
 // TESTCASE NUMBER: 4
+interface Processable<T> {
+    fun process(): T
+}
+
 fun case4() {
     val p2 = object : Processable<Unit> {
         override fun process() {

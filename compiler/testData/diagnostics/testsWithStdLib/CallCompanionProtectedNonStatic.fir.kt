@@ -46,27 +46,27 @@ open class Base {
 class Derived : Base() {
     fun test() {
         foo() // Ok
-        <!INAPPLICABLE_CANDIDATE!>gav<!>() // Ok
-        <!INAPPLICABLE_CANDIDATE!>bar<!>()
-        <!INAPPLICABLE_CANDIDATE!>baz<!>()
+        gav() // Ok
+        bar()
+        baz()
         prop = 0
     }
 
     inner class DerivedInner {
         fun fromDerivedInner() {
             foo() // Ok
-            <!INAPPLICABLE_CANDIDATE!>gav<!>() // Ok
-            <!INAPPLICABLE_CANDIDATE!>bar<!>()
-            <!INAPPLICABLE_CANDIDATE!>baz<!>()
+            gav() // Ok
+            bar()
+            baz()
             prop = 0
         }
     }
 
     companion object {
         fun test2() {
-            <!INAPPLICABLE_CANDIDATE!>gav<!>() // Ok
-            <!INAPPLICABLE_CANDIDATE!>bar<!>()
-            <!INAPPLICABLE_CANDIDATE!>baz<!>()
+            gav() // Ok
+            bar()
+            baz()
             prop = 0
         }
     }
@@ -74,20 +74,20 @@ class Derived : Base() {
 
 class Other {
     fun test(base: Base, derived: Derived) {
-        base.<!INAPPLICABLE_CANDIDATE!>foo<!>()
+        base.<!HIDDEN!>foo<!>()
         base.<!UNRESOLVED_REFERENCE!>gav<!>()
         base.<!UNRESOLVED_REFERENCE!>bar<!>()
-        derived.<!INAPPLICABLE_CANDIDATE!>foo<!>()
+        derived.<!HIDDEN!>foo<!>()
         derived.<!UNRESOLVED_REFERENCE!>gav<!>()
         derived.<!UNRESOLVED_REFERENCE!>bar<!>()
     }
 }
 
 fun top(base: Base, derived: Derived) {
-    base.<!INAPPLICABLE_CANDIDATE!>foo<!>()
+    base.<!HIDDEN!>foo<!>()
     base.<!UNRESOLVED_REFERENCE!>bar<!>()
     base.<!UNRESOLVED_REFERENCE!>gav<!>()
-    derived.<!INAPPLICABLE_CANDIDATE!>foo<!>()
+    derived.<!HIDDEN!>foo<!>()
     derived.<!UNRESOLVED_REFERENCE!>bar<!>()
     derived.<!UNRESOLVED_REFERENCE!>gav<!>()
 }

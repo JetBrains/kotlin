@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -23,13 +23,22 @@ import org.jetbrains.kotlin.js.translate.general.Translation;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.factories.ArrayFIF;
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.factories.TopLevelFIF;
 import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator;
-import org.jetbrains.kotlin.js.translate.utils.*;
+import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils;
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
+import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
+import org.jetbrains.kotlin.js.translate.utils.UtilsKt;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.KtBinaryExpressionWithTypeRHS;
+import org.jetbrains.kotlin.psi.KtExpression;
+import org.jetbrains.kotlin.psi.KtIsExpression;
+import org.jetbrains.kotlin.psi.KtTypeReference;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.checkers.PrimitiveNumericComparisonInfo;
+import org.jetbrains.kotlin.types.IntersectionTypeConstructor;
 import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.types.TypeConstructor;
 
+import java.util.Collection;
 import java.util.Collections;
 
 import static org.jetbrains.kotlin.builtins.FunctionTypesKt.isFunctionTypeOrSubtype;
@@ -165,19 +174,29 @@ public final class PatternTranslator extends AbstractTranslator {
                 return getIsTypeCheckCallableForReifiedType(typeParameterDescriptor);
             }
 
-            JsExpression result = null;
-            for (KotlinType upperBound : typeParameterDescriptor.getUpperBounds()) {
-                JsExpression next = doGetIsTypeCheckCallable(upperBound);
-                if (next != null) {
-                    result = result != null ? namer().andPredicate(result, next) : next;
-                }
-            }
-            return result;
+            return getIsTypeCheckForAll(typeParameterDescriptor.getUpperBounds());
+        }
+
+        TypeConstructor typeConstructor = type.getConstructor();
+        if (typeConstructor instanceof IntersectionTypeConstructor) {
+            return getIsTypeCheckForAll(typeConstructor.getSupertypes());
         }
 
         ClassDescriptor referencedClass = DescriptorUtils.getClassDescriptorForType(type);
         JsExpression typeName = ReferenceTranslator.translateAsTypeReference(referencedClass, context());
         return namer().isInstanceOf(typeName);
+    }
+
+    @Nullable
+    private JsExpression getIsTypeCheckForAll(Collection<KotlinType> typesToCheck) {
+        JsExpression result = null;
+        for (KotlinType type : typesToCheck) {
+            JsExpression next = doGetIsTypeCheckCallable(type);
+            if (next != null) {
+                result = result != null ? namer().andPredicate(result, next) : next;
+            }
+        }
+        return result;
     }
 
     @Nullable

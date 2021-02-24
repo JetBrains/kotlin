@@ -1,0 +1,5 @@
+FILE: ComplexExpression.kt
+    public final fun foo(): R|kotlin/Unit| {
+        lvar a: R|kotlin/Int| = Int(0)
+        R|<local>/a| = R|<local>/a|.R|kotlin/Int.plus|(Int(1)).R|kotlin/Int.div|(Int(2))
+    }

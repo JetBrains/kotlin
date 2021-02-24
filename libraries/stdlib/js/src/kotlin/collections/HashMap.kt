@@ -1,7 +1,8 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+
 /*
  * Based on GWT AbstractHashMap
  * Copyright 2008 Google Inc.
@@ -16,16 +17,18 @@ import kotlin.collections.MutableMap.MutableEntry
  *
  * This implementation makes no guarantees regarding the order of enumeration of [keys], [values] and [entries] collections.
  */
+// Classes that extend HashMap and implement `build()` (freezing) operation
+// have to make sure mutating methods check `checkIsMutable`.
 public actual open class HashMap<K, V> : AbstractMutableMap<K, V>, MutableMap<K, V> {
 
-    private inner class EntrySet : AbstractMutableSet<MutableEntry<K, V>>() {
+    private inner class EntrySet : AbstractEntrySet<MutableEntry<K, V>, K, V>() {
 
         override fun add(element: MutableEntry<K, V>): Boolean = throw UnsupportedOperationException("Add is not supported on entries")
         override fun clear() {
             this@HashMap.clear()
         }
 
-        override operator fun contains(element: MutableEntry<K, V>): Boolean = containsEntry(element)
+        override fun containsEntry(element: Map.Entry<K, V>): Boolean = this@HashMap.containsEntry(element)
 
         override operator fun iterator(): MutableIterator<MutableEntry<K, V>> = internalMap.iterator()
 

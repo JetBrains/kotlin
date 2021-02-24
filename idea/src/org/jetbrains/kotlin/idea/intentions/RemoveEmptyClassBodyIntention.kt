@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,6 +9,7 @@ import com.intellij.codeInspection.CleanupLocalInspectionTool
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -17,15 +18,15 @@ import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespaceAndComme
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 @Suppress("DEPRECATION")
-class RemoveEmptyClassBodyInspection :
-    IntentionBasedInspection<KtClassBody>(RemoveEmptyClassBodyIntention::class), CleanupLocalInspectionTool {
-    override fun problemHighlightType(element: KtClassBody): ProblemHighlightType =
-        ProblemHighlightType.LIKE_UNUSED_SYMBOL
+class RemoveEmptyClassBodyInspection : IntentionBasedInspection<KtClassBody>(RemoveEmptyClassBodyIntention::class),
+    CleanupLocalInspectionTool {
+    override fun problemHighlightType(element: KtClassBody): ProblemHighlightType = ProblemHighlightType.LIKE_UNUSED_SYMBOL
 }
 
-class RemoveEmptyClassBodyIntention :
-    SelfTargetingOffsetIndependentIntention<KtClassBody>(KtClassBody::class.java, "Redundant empty class body") {
-
+class RemoveEmptyClassBodyIntention : SelfTargetingOffsetIndependentIntention<KtClassBody>(
+    KtClassBody::class.java,
+    KotlinBundle.lazyMessage("redundant.empty.class.body")
+) {
     override fun applyTo(element: KtClassBody, editor: Editor?) {
         val parent = element.parent
         element.delete()

@@ -1,0 +1,18 @@
+fun foo(): Any {
+  return 1
+}
+
+fun test(): Int {
+  return { // BLOCK
+    val y: Any = foo()
+    when {
+      EQEQ(arg0 = y, arg1 = 42) -> 1
+      y is String -> y /*as String */.<get-length>()
+      y !is Int -> 2
+      error("") /* ErrorCallExpression */y;  -> 3
+      error("") /* ErrorCallExpression */y; .not() -> 4
+      else -> -1
+    }
+  }
+}
+

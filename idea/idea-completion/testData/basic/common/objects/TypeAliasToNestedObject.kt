@@ -1,3 +1,5 @@
+// FIR_COMPARISON
+
 class Cls {
     object Obj {
         val inObject = 1

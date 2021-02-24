@@ -29,7 +29,7 @@ val test1 = generate {
     baseExtension()
 }
 
-val test2 = <!NI;NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
+val test2 = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER{NI}, TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER{OI}!>generate<!> {
     baseExtension()
 }
 
@@ -38,22 +38,22 @@ val test3 = generate {
     outNullableAnyExtension()
 }
 
-val test4 = <!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
+val test4 = <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER{OI}!>generate<!> {
     outNullableAnyExtension()
 }
 
-val test5 = <!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
+val test5 = <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER{OI}!>generate<!> {
     yield(42)
     outAnyExtension()
 }
 
-val test6 = <!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
+val test6 = <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER{OI}!>generate<!> {
     yield("bar")
     invNullableAnyExtension()
 }
 
-val test7 = <!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
-    yield(<!NI;TYPE_MISMATCH!>"baz"<!>)
+val test7 = <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER{OI}!>generate<!> {
+    yield(<!TYPE_MISMATCH{NI}!>"baz"<!>)
     genericExtension<Int>()
 }
 

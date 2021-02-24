@@ -12,6 +12,7 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.intentions.calleeName
@@ -25,7 +26,8 @@ class ReplaceToWithInfixFormInspection : AbstractKotlinInspection() {
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return dotQualifiedExpressionVisitor(fun(expression) {
-            if (expression.callExpression?.valueArguments?.size != 1) return
+            val callExpression = expression.callExpression ?: return
+            if (callExpression.valueArguments.size != 1 || callExpression.typeArgumentList != null) return
             if (expression.calleeName !in compatibleNames) return
 
             val resolvedCall = expression.resolveToCall() ?: return
@@ -35,7 +37,7 @@ class ReplaceToWithInfixFormInspection : AbstractKotlinInspection() {
 
             holder.registerProblem(
                 expression,
-                "Replace 'to' with infix form",
+                KotlinBundle.message("replace.to.with.infix.form.quickfix.text"),
                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                 ReplaceToWithInfixFormQuickfix()
             )
@@ -44,7 +46,7 @@ class ReplaceToWithInfixFormInspection : AbstractKotlinInspection() {
 }
 
 class ReplaceToWithInfixFormQuickfix : LocalQuickFix {
-    override fun getName() = "Replace 'to' with infix form"
+    override fun getName() = KotlinBundle.message("replace.to.with.infix.form.quickfix.text")
 
     override fun getFamilyName() = name
 

@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 package pack
 
 fun String.extFoo(){}

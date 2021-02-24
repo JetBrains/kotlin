@@ -22,6 +22,7 @@ import com.intellij.psi.PsiWhiteSpace
 import com.intellij.ui.components.JBPanel
 import com.intellij.ui.components.JBTextField
 import com.intellij.uiDesigner.core.GridLayoutManager
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.actions.internal.benchmark.AbstractCompletionBenchmarkAction.Companion.randomElement
 import org.jetbrains.kotlin.idea.completion.CompletionBenchmarkSink
 import org.jetbrains.kotlin.idea.core.util.getLineCount
@@ -51,7 +52,7 @@ class TopLevelCompletionBenchmarkAction : AbstractCompletionBenchmarkAction() {
             }
 
             if (ktFiles.size < settings.files) {
-                showPopup(project, "Number of attempts > then files in project, ${ktFiles.size}")
+                showPopup(project, KotlinBundle.message("number.of.attempts.then.files.in.project.0", ktFiles.size))
                 return null
             }
 
@@ -78,9 +79,9 @@ class TopLevelCompletionBenchmarkAction : AbstractCompletionBenchmarkAction() {
 
         val jPanel = JBPanel<JBPanel<*>>(GridLayoutManager(3, 2)).apply {
             var i = 0
-            cSeed = addBoxWithLabel("Random seed", default = "0", i = i++)
-            cFiles = addBoxWithLabel("Files to visit", default = "20", i = i++)
-            cLines = addBoxWithLabel("File lines", default = "100", i = i)
+            cSeed = addBoxWithLabel(KotlinBundle.message("random.seed"), default = "0", i = i++)
+            cFiles = addBoxWithLabel(KotlinBundle.message("files.to.visit"), default = "20", i = i++)
+            cLines = addBoxWithLabel(KotlinBundle.message("file.lines"), default = "100", i = i)
         }
         dialogBuilder.centerPanel(jPanel)
         if (!dialogBuilder.showAndGet()) return null

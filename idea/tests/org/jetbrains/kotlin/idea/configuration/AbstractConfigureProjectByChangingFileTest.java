@@ -16,12 +16,11 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiJavaModule;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.testFramework.LightCodeInsightTestCase;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.core.script.ScriptUtilsKt;
-import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightTestCase;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.plugins.groovy.GroovyFileType;
@@ -32,7 +31,7 @@ import java.util.Objects;
 
 @SuppressWarnings("deprecation")
 public abstract class AbstractConfigureProjectByChangingFileTest<C extends KotlinProjectConfigurator>
-        extends KotlinLightCodeInsightTestCase {
+        extends LightCodeInsightTestCase {
     private static final String DEFAULT_VERSION = "default_version";
 
     private PsiFile moduleInfoFile;
@@ -43,12 +42,10 @@ public abstract class AbstractConfigureProjectByChangingFileTest<C extends Kotli
         ApplicationManager.getApplication().runWriteAction(
                 () -> FileTypeManager.getInstance().associateExtension(GroovyFileType.GROOVY_FILE_TYPE, "gradle")
         );
-        ScriptUtilsKt.setScriptChangesNotifierDisabled(ApplicationManager.getApplication(), true);
     }
 
     @Override
     protected void tearDown() throws Exception {
-        ScriptUtilsKt.setScriptChangesNotifierDisabled(ApplicationManager.getApplication(), false);
         moduleInfoFile = null;
         super.tearDown();
     }

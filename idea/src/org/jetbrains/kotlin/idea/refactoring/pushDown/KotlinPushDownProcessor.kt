@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaClassDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
@@ -98,8 +99,7 @@ class KotlinPushDownProcessor(
     override fun preprocessUsages(refUsages: Ref<Array<UsageInfo>>): Boolean {
         val usages = refUsages.get() ?: UsageInfo.EMPTY_ARRAY
         if (usages.isEmpty()) {
-            val message = "${context.sourceClassDescriptor
-                .renderForConflicts()} doesn't have inheritors\nPushing members down will result in them being deleted. Would you like to proceed?"
+            val message = KotlinBundle.message("text.0.have.no.inheritors.warning", context.sourceClassDescriptor.renderForConflicts())
             val answer = Messages.showYesNoDialog(message.capitalize(), PUSH_MEMBERS_DOWN, Messages.getWarningIcon())
             if (answer == Messages.NO) return false
         }

@@ -83,7 +83,9 @@ fun collectUsedNames(scope: JsNode): Set<JsName> {
     return references
 }
 
-fun collectDefinedNames(scope: JsNode): Set<JsName> {
+fun collectDefinedNames(scope: JsNode) = collectDefinedNames(scope, false)
+
+fun collectDefinedNames(scope: JsNode, skipLabelsAndCatches: Boolean): Set<JsName> {
     val names = mutableSetOf<JsName>()
 
     object : RecursiveJsVisitor() {
@@ -107,12 +109,16 @@ fun collectDefinedNames(scope: JsNode): Set<JsName> {
         }
 
         override fun visitLabel(x: JsLabel) {
-            x.name?.let { names += it }
+            if (!skipLabelsAndCatches) {
+                x.name?.let { names += it }
+            }
             super.visitLabel(x)
         }
 
         override fun visitCatch(x: JsCatch) {
-            names += x.parameter.name
+            if (!skipLabelsAndCatches) {
+                names += x.parameter.name
+            }
             super.visitCatch(x)
         }
 
@@ -158,7 +164,7 @@ fun collectDefinedNamesInAllScopes(scope: JsNode): Set<JsName> {
 
 fun JsFunction.collectFreeVariables() = collectUsedNames(body) - collectDefinedNames(body) - parameters.map { it.name }
 
-fun JsFunction.collectLocalVariables() = collectDefinedNames(body) + parameters.map { it.name }
+fun JsFunction.collectLocalVariables(skipLabelsAndCatches: Boolean = false) = collectDefinedNames(body, skipLabelsAndCatches) + parameters.map { it.name }
 
 fun collectNamedFunctions(scope: JsNode) = collectNamedFunctionsAndMetadata(scope).mapValues { it.value.first.function }
 

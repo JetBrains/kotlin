@@ -17,12 +17,12 @@ package MyPackage
     abstract var c3: Int = 0; set(v: Int) { field = v }
 
     val e: Int                               get() = a
-    val e1: Int = 0;          get() = a
+    val e1: Int = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>0<!>;          get() = a
     abstract val e2: Int      get() = a
     abstract val e3: Int = 0; get() = a
 
     //methods
-    fun f()
+    <!NON_MEMBER_FUNCTION_NO_BODY!>fun f()<!>
     fun g() {}
     abstract fun h()
     abstract fun j() {}

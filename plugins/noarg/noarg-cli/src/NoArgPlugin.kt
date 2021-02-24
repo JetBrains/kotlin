@@ -17,10 +17,13 @@
 package org.jetbrains.kotlin.noarg
 
 import com.intellij.mock.MockProject
+import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.compiler.plugin.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -66,7 +69,7 @@ class NoArgCommandLineProcessor : CommandLineProcessor {
             required = false, allowMultipleOccurrences = false
         )
 
-        val PLUGIN_ID = "org.jetbrains.kotlin.noarg"
+        const val PLUGIN_ID = "org.jetbrains.kotlin.noarg"
     }
 
     override val pluginId = PLUGIN_ID
@@ -82,25 +85,35 @@ class NoArgCommandLineProcessor : CommandLineProcessor {
 
 class NoArgComponentRegistrar : ComponentRegistrar {
     override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
-        val annotations = configuration.get(ANNOTATION)?.toMutableList() ?: mutableListOf()
+        val annotations = configuration.get(ANNOTATION).orEmpty().toMutableList()
         configuration.get(PRESET)?.forEach { preset ->
             SUPPORTED_PRESETS[preset]?.let { annotations += it }
         }
-        if (annotations.isEmpty()) return
+        if (annotations.isNotEmpty()) {
+            registerNoArgComponents(
+                project, annotations, configuration.getBoolean(JVMConfigurationKeys.IR), configuration.getBoolean(INVOKE_INITIALIZERS),
+            )
+        }
+    }
 
-        StorageComponentContainerContributor.registerExtension(project, CliNoArgComponentContainerContributor(annotations))
-
-        val invokeInitializers = configuration[INVOKE_INITIALIZERS] ?: false
-        ExpressionCodegenExtension.registerExtension(project, CliNoArgExpressionCodegenExtension(annotations, invokeInitializers))
+    internal companion object {
+        fun registerNoArgComponents(project: Project, annotations: List<String>, useIr: Boolean, invokeInitializers: Boolean) {
+            StorageComponentContainerContributor.registerExtension(project, CliNoArgComponentContainerContributor(annotations, useIr))
+            ExpressionCodegenExtension.registerExtension(project, CliNoArgExpressionCodegenExtension(annotations, invokeInitializers))
+            IrGenerationExtension.registerExtension(project, NoArgIrGenerationExtension(annotations, invokeInitializers))
+        }
     }
 }
 
-class CliNoArgComponentContainerContributor(val annotations: List<String>) : StorageComponentContainerContributor {
+private class CliNoArgComponentContainerContributor(
+    private val annotations: List<String>,
+    private val useIr: Boolean,
+) : StorageComponentContainerContributor {
     override fun registerModuleComponents(
         container: StorageComponentContainer, platform: TargetPlatform, moduleDescriptor: ModuleDescriptor
     ) {
         if (!platform.isJvm()) return
 
-        container.useInstance(CliNoArgDeclarationChecker(annotations))
+        container.useInstance(CliNoArgDeclarationChecker(annotations, useIr))
     }
 }

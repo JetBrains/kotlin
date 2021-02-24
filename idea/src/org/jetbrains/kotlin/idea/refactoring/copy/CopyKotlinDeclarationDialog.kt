@@ -26,6 +26,7 @@ import com.intellij.util.ui.FormBuilder
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.idea.core.getPackage
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.refactoring.Pass
 import org.jetbrains.kotlin.idea.refactoring.hasIdentifiersOnly
 import org.jetbrains.kotlin.idea.refactoring.ui.KotlinDestinationFolderComboBox
@@ -142,7 +143,7 @@ class CopyKotlinDeclarationDialog(
         targetDirectory?.getTargetIfExists(defaultTargetDirectory)?.let {
             val targetFileName = newName + "." + originalFile.virtualFile.extension
             if (it.findFile(targetFileName) == originalFile) {
-                return "Can't copy class to the containing file"
+                return KotlinBundle.message("error.text.can.t.copy.class.to.the.containing.file")
             }
         }
 

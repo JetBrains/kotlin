@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun <T> withS(x: T, sfn: suspend (T) -> Unit) = x

@@ -34,6 +34,6 @@ class B : A(), I {
     }
 
     override fun qux() {
-        <!AMBIGUOUS_SUPER!>super<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>qux<!>()
+        <!AMBIGUOUS_SUPER!>super<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>qux<!>()
     }
 }

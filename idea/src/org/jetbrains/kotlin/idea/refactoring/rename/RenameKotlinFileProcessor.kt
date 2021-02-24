@@ -9,18 +9,18 @@ import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiReference
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.SearchScope
+import com.intellij.refactoring.listeners.RefactoringElementListener
 import com.intellij.refactoring.rename.RenamePsiFileProcessor
+import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.idea.statistics.FUSEventGroups
-import org.jetbrains.kotlin.idea.statistics.KotlinFUSLogger
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.psi.KtFile
+import java.util.ArrayList
 
 class RenameKotlinFileProcessor : RenamePsiFileProcessor() {
     class FileRenamingPsiClassWrapper(
@@ -58,9 +58,13 @@ class RenameKotlinFileProcessor : RenamePsiFileProcessor() {
         }
     }
 
-    override fun findReferences(element: PsiElement): MutableCollection<PsiReference> {
-        return super.findReferences(element).also {
-            KotlinFUSLogger.log(FUSEventGroups.Refactoring, this::class.java.name)
-        }
+    override fun renameElement(element: PsiElement, newName: String, usages: Array<UsageInfo>, listener: RefactoringElementListener?) {
+        val kotlinUsages = ArrayList<UsageInfo>(usages.size)
+
+        ForeignUsagesRenameProcessor.processAll(element, newName, usages, fallbackHandler = {
+            kotlinUsages += it
+        })
+
+        super.renameElement(element, newName, kotlinUsages.toTypedArray(), listener)
     }
 }

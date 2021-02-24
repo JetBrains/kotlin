@@ -9,7 +9,7 @@ annotation class Foo(
 
 annotation class Bar(
         val a: Array<String> = [' '],
-        val b: Array<String> = ["", <!INFERENCE_ERROR!>''<!>],
+        val b: Array<String> = ["", <!ILLEGAL_CONST_EXPRESSION!>''<!>],
         val c: Array<String> = [1]
 )
 

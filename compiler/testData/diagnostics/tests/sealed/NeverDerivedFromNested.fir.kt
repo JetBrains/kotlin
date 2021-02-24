@@ -5,5 +5,5 @@ class A {
 class Derived : A.Base()
 
 fun test() {
-    class DerivedLocal : A.Base()
+    class DerivedLocal : <!SEALED_SUPERTYPE_IN_LOCAL_CLASS!>A.Base<!>()
 }

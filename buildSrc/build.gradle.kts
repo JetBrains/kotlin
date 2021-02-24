@@ -1,42 +1,46 @@
-extra["versions.shadow"] = "5.2.0"
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 extra["versions.native-platform"] = "0.14"
 
 buildscript {
+
     val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
 
-    val buildSrcKotlinVersion: String by extra(findProperty("buildSrc.kotlin.version")?.toString() ?: embeddedKotlinVersion)
-    val buildSrcKotlinRepo: String? by extra(findProperty("buildSrc.kotlin.repo") as String?)
+    extra["defaultSnapshotVersion"] = kotlinBuildProperties.defaultSnapshotVersion
+    kotlinBootstrapFrom(BootstrapOption.SpaceBootstrap(kotlinBuildProperties.kotlinBootstrapVersion!!, cacheRedirectorEnabled))
 
     repositories {
         if (cacheRedirectorEnabled) {
             maven("https://cache-redirector.jetbrains.com/jcenter.bintray.com")
-            maven("https://cache-redirector.jetbrains.com/kotlin.bintray.com/kotlin-dependencies")
+            maven("https://cache-redirector.jetbrains.com/maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
         } else {
             jcenter()
-            maven("https://kotlin.bintray.com/kotlin-dependencies")
+            maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
         }
 
-        buildSrcKotlinRepo?.let {
+        project.bootstrapKotlinRepo?.let {
             maven(url = it)
         }
     }
 
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.8")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$buildSrcKotlinVersion")
-        classpath("org.jetbrains.kotlin:kotlin-sam-with-receiver:$buildSrcKotlinVersion")
+        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.21")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}")
+        classpath("org.jetbrains.kotlin:kotlin-sam-with-receiver:${project.bootstrapKotlinVersion}")
     }
 }
 
 val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
 
-logger.info("buildSrcKotlinVersion: " + extra["buildSrcKotlinVersion"])
+logger.info("buildSrcKotlinVersion: " + extra["bootstrapKotlinVersion"])
 logger.info("buildSrc kotlin compiler version: " + org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION)
 logger.info("buildSrc stdlib version: " + KotlinVersion.CURRENT)
 
 apply {
     plugin("kotlin")
     plugin("kotlin-sam-with-receiver")
+
+    from("../gradle/checkCacheability.gradle.kts")
 }
 
 plugins {
@@ -46,15 +50,15 @@ plugins {
 
 gradlePlugin {
     plugins {
-        register("pill-configurable") {
-            id = "pill-configurable"
-            implementationClass = "org.jetbrains.kotlin.pill.PillConfigurablePlugin"
-        }
         register("jps-compatible") {
             id = "jps-compatible"
             implementationClass = "org.jetbrains.kotlin.pill.JpsCompatiblePlugin"
         }
     }
+}
+
+kotlinDslPluginOptions {
+    experimentalWarning.set(false)
 }
 
 fun Project.getBooleanProperty(name: String): Boolean? = this.findProperty(name)?.let {
@@ -70,41 +74,45 @@ rootProject.apply {
 val isTeamcityBuild = kotlinBuildProperties.isTeamcityBuild
 val intellijUltimateEnabled by extra(kotlinBuildProperties.intellijUltimateEnabled)
 val intellijSeparateSdks by extra(project.getBooleanProperty("intellijSeparateSdks") ?: false)
-val verifyDependencyOutput by extra( getBooleanProperty("kotlin.build.dependency.output.verification") ?: isTeamcityBuild)
 
-extra["intellijReleaseType"] = if (extra["versions.intellijSdk"]?.toString()?.endsWith("SNAPSHOT") == true)
-    "snapshots"
-else
-    "releases"
-
-extra["versions.androidDxSources"] = "5.0.0_r2"
+extra["intellijReleaseType"] = when {
+    extra["versions.intellijSdk"]?.toString()?.contains("-EAP-") == true -> "snapshots"
+    extra["versions.intellijSdk"]?.toString()?.endsWith("SNAPSHOT") == true -> "nightly"
+    else -> "releases"
+}
 
 extra["customDepsOrg"] = "kotlin.build"
 
 repositories {
     jcenter()
     maven("https://jetbrains.bintray.com/intellij-third-party-dependencies/")
-    maven("https://kotlin.bintray.com/kotlin-dependencies")
+    maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
     gradlePluginPortal()
 
-    extra["buildSrcKotlinRepo"]?.let {
+    extra["bootstrapKotlinRepo"]?.let {
         maven(url = it)
     }
 }
 
 dependencies {
     implementation(kotlin("stdlib", embeddedKotlinVersion))
-    implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.8")
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}")
+    implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.21")
+    implementation("com.gradle.publish:plugin-publish-plugin:0.12.0")
 
     implementation("net.rubygrapefruit:native-platform:${property("versions.native-platform")}")
     implementation("net.rubygrapefruit:native-platform-windows-amd64:${property("versions.native-platform")}")
     implementation("net.rubygrapefruit:native-platform-windows-i386:${property("versions.native-platform")}")
     implementation("com.jakewharton.dex:dex-method-list:3.0.0")
 
-    implementation("com.github.jengelman.gradle.plugins:shadow:${property("versions.shadow")}")
-    implementation("org.jetbrains.intellij.deps:asm-all:7.0.1")
+    implementation("com.github.jengelman.gradle.plugins:shadow:${rootProject.extra["versions.shadow"]}")
+    implementation("net.sf.proguard:proguard-gradle:6.2.2")
+    implementation("org.jetbrains.intellij.deps:asm-all:8.0.1")
 
     implementation("gradle.plugin.org.jetbrains.gradle.plugin.idea-ext:gradle-idea-ext:0.5")
+
+    implementation("org.gradle:test-retry-gradle-plugin:1.1.9")
+    implementation("com.gradle.enterprise:test-distribution-gradle-plugin:1.2.1")
 }
 
 samWithReceiver {
@@ -117,6 +125,12 @@ fun Project.`samWithReceiver`(configure: org.jetbrains.kotlin.samWithReceiver.gr
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+tasks.withType<KotlinCompile>().configureEach {
+    kotlinOptions.freeCompilerArgs += listOf(
+        "-Xopt-in=kotlin.RequiresOptIn", "-Xskip-runtime-version-check", "-Xsuppress-version-warnings"
+    )
 }
 
 tasks["build"].dependsOn(":prepare-deps:build")

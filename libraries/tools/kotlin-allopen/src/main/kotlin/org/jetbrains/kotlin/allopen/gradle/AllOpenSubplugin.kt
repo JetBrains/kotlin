@@ -16,65 +16,80 @@
 
 package org.jetbrains.kotlin.allopen.gradle
 
-import org.gradle.api.Plugin
+import org.gradle.api.GradleException
 import org.gradle.api.Project
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.compile.AbstractCompile
+import org.gradle.tooling.provider.model.ToolingModelBuilder
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.allopen.gradle.model.builder.AllOpenModelBuilder
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.plugin.*
 import javax.inject.Inject
 
-class AllOpenGradleSubplugin @Inject internal constructor(private val registry: ToolingModelBuilderRegistry) : Plugin<Project> {
-    companion object {
-        fun isEnabled(project: Project) = project.plugins.findPlugin(AllOpenGradleSubplugin::class.java) != null
+class AllOpenGradleSubplugin @Inject internal constructor(private val registry: ToolingModelBuilderRegistry) :
+    KotlinCompilerPluginSupportPlugin,
+    @Suppress("DEPRECATION") // implementing to fix KT-39809
+    KotlinGradleSubplugin<AbstractCompile> {
 
+    companion object {
         fun getAllOpenExtension(project: Project): AllOpenExtension {
             return project.extensions.getByType(AllOpenExtension::class.java)
         }
+
+        private const val ALLOPEN_ARTIFACT_NAME = "kotlin-allopen"
+
+        private const val ANNOTATION_ARG_NAME = "annotation"
+        private const val PRESET_ARG_NAME = "preset"
     }
 
-    override fun apply(project: Project) {
-        project.extensions.create("allOpen", AllOpenExtension::class.java)
+    override fun apply(target: Project) {
+        target.extensions.create("allOpen", AllOpenExtension::class.java)
         registry.register(AllOpenModelBuilder())
     }
-}
 
-class AllOpenKotlinGradleSubplugin : KotlinGradleSubplugin<AbstractCompile> {
-    companion object {
-        const val ALLOPEN_ARTIFACT_NAME = "kotlin-allopen"
+    override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean = true
 
-        private val ANNOTATION_ARG_NAME = "annotation"
-        private val PRESET_ARG_NAME = "preset"
-    }
+    override fun applyToCompilation(
+        kotlinCompilation: KotlinCompilation<*>
+    ): Provider<List<SubpluginOption>> {
+        val project = kotlinCompilation.target.project
 
-    override fun isApplicable(project: Project, task: AbstractCompile) = AllOpenGradleSubplugin.isEnabled(project)
+        val allOpenExtension = project.extensions.getByType(AllOpenExtension::class.java)
 
-    override fun apply(
-        project: Project,
-        kotlinCompile: AbstractCompile,
-        javaCompile: AbstractCompile?,
-        variantData: Any?,
-        androidProjectHandler: Any?,
-        kotlinCompilation: KotlinCompilation<*>?
-    ): List<SubpluginOption> {
-        if (!AllOpenGradleSubplugin.isEnabled(project)) return emptyList()
+        return project.provider {
+            val options = mutableListOf<SubpluginOption>()
 
-        val allOpenExtension = project.extensions.findByType(AllOpenExtension::class.java) ?: return emptyList()
+            for (anno in allOpenExtension.myAnnotations) {
+                options += SubpluginOption(ANNOTATION_ARG_NAME, anno)
+            }
 
-        val options = mutableListOf<SubpluginOption>()
+            for (preset in allOpenExtension.myPresets) {
+                options += SubpluginOption(PRESET_ARG_NAME, preset)
+            }
 
-        for (anno in allOpenExtension.myAnnotations) {
-            options += SubpluginOption(ANNOTATION_ARG_NAME, anno)
+            options
         }
-
-        for (preset in allOpenExtension.myPresets) {
-            options += SubpluginOption(PRESET_ARG_NAME, preset)
-        }
-
-        return options
     }
 
     override fun getCompilerPluginId() = "org.jetbrains.kotlin.allopen"
     override fun getPluginArtifact(): SubpluginArtifact =
         JetBrainsSubpluginArtifact(artifactId = ALLOPEN_ARTIFACT_NAME)
+
+    //region Stub implementation for legacy API, KT-39809
+    internal constructor(): this(object : ToolingModelBuilderRegistry {
+        override fun register(p0: ToolingModelBuilder) = Unit
+        override fun getBuilder(p0: String): ToolingModelBuilder? = null
+    })
+
+    override fun isApplicable(project: Project, task: AbstractCompile): Boolean = true
+
+    override fun apply(
+        project: Project, kotlinCompile: AbstractCompile, javaCompile: AbstractCompile?, variantData: Any?, androidProjectHandler: Any?,
+        kotlinCompilation: KotlinCompilation<KotlinCommonOptions>?
+    ): List<SubpluginOption> = throw GradleException(
+        "This version of the kotlin-allopen Gradle plugin is built for a newer Kotlin version. " +
+                "Please use an older version of kotlin-allopen or upgrade the Kotlin Gradle plugin version to make them match."
+    )
+    //endregion
 }

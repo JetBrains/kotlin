@@ -36,43 +36,43 @@ fun falseWhenInt(x: Any?): Boolean {
 fun truetrue(x: Any?) {
     if (trueWhenString(x) || trueWhenInt(x)) {
         x.<!UNRESOLVED_REFERENCE!>length<!>
-        x.<!AMBIGUITY!>inc<!>()
+        x.<!NONE_APPLICABLE!>inc<!>()
     }
     else {
         x.<!UNRESOLVED_REFERENCE!>length<!>
-        x.<!AMBIGUITY!>inc<!>()
+        x.<!UNRESOLVED_REFERENCE!>inc<!>()
     }
 }
 
 fun truefalse(x: Any?) {
     if (trueWhenString(x) || falseWhenInt(x)) {
         x.<!UNRESOLVED_REFERENCE!>length<!>
-        x.<!AMBIGUITY!>inc<!>()
+        x.<!UNRESOLVED_REFERENCE!>inc<!>()
     }
     else {
         x.<!UNRESOLVED_REFERENCE!>length<!>
-        x.<!AMBIGUITY!>inc<!>()
+        x.inc()
     }
 }
 
 fun falsetrue(x: Any?) {
     if (falseWhenString(x) || trueWhenInt(x)) {
         x.<!UNRESOLVED_REFERENCE!>length<!>
-        x.<!AMBIGUITY!>inc<!>()
+        x.<!UNRESOLVED_REFERENCE!>inc<!>()
     }
     else {
-        x.<!UNRESOLVED_REFERENCE!>length<!>
-        x.<!AMBIGUITY!>inc<!>()
+        x.length
+        x.<!UNRESOLVED_REFERENCE!>inc<!>()
     }
 }
 
 fun falsefalse(x: Any?) {
     if (falseWhenString(x) || falseWhenInt(x)) {
         x.<!UNRESOLVED_REFERENCE!>length<!>
-        x.<!AMBIGUITY!>inc<!>()
+        x.<!UNRESOLVED_REFERENCE!>inc<!>()
     }
     else {
-        x.<!UNRESOLVED_REFERENCE!>length<!>
-        x.<!AMBIGUITY!>inc<!>()
+        x.length
+        x.inc()
     }
 }

@@ -1,0 +1,8 @@
+FILE: BasicTest.kt
+    public final fun goo(): R|kotlin/Unit| {
+        lvar a: R|kotlin/Int| = Int(2)
+        lval b: R|kotlin/Int| = Int(4)
+        R|<local>/a| = R|<local>/a|.R|kotlin/Int.plus|(Int(1)).R|kotlin/Int.plus|(R|<local>/b|)
+        R|<local>/a| = R|<local>/a|.R|kotlin/Int.plus|(Int(1))
+        R|<local>/a| = R|<local>/a|.R|kotlin/Int.times|(R|<local>/b|).R|kotlin/Int.plus|(Int(1))
+    }

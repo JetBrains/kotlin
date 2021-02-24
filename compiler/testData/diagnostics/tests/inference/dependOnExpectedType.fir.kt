@@ -3,6 +3,7 @@
 package h
 //+JDK
 import java.util.*
+import checkSubtype
 
 fun <T> id(t: T) : T = t
 

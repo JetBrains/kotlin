@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.spec.utils
 
-import org.jetbrains.kotlin.spec.utils.GeneralConfiguration.TESTDATA_PATH
+import org.jetbrains.kotlin.spec.utils.GeneralConfiguration.SPEC_TESTDATA_PATH
 import org.jetbrains.kotlin.spec.utils.models.AbstractSpecTest
 import org.jetbrains.kotlin.spec.utils.parsers.CommonParser
 import java.io.File
@@ -43,7 +43,7 @@ object TestsStatisticCollector {
         val statistic = mutableMapOf<TestArea, SpecTestsStatElement>()
 
         for (specTestArea in TestArea.values()) {
-            val specTestsPath = "$TESTDATA_PATH/${specTestArea.name.toLowerCase().replace("_", "/")}/${testLinkedType.testDataPath}"
+            val specTestsPath = "$SPEC_TESTDATA_PATH/${specTestArea.name.toLowerCase().replace("_", "/")}/${testLinkedType.testDataPath}"
 
             statistic[specTestArea] =
                 SpecTestsStatElement(SpecTestsStatElementType.AREA)

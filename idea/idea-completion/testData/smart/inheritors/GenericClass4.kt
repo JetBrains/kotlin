@@ -14,7 +14,9 @@ fun bar() {
 // all these items shouldn't be proposed, see KT-15479
 // EXIST: { itemText: "enumValueOf" }
 // EXIST: { itemText: "maxOf", tailText: "(a: T, b: T) (kotlin.comparisons)" }
+// EXIST: { itemText: "maxOf", tailText: "(a: T, vararg other: T) (kotlin.comparisons)" }
 // EXIST: { itemText: "maxOf", tailText: "(a: T, b: T, c: T) (kotlin.comparisons)" }
 // EXIST: { itemText: "minOf", tailText: "(a: T, b: T) (kotlin.comparisons)" }
+// EXIST: { itemText: "minOf", tailText: "(a: T, vararg other: T) (kotlin.comparisons)" }
 // EXIST: { itemText: "minOf", tailText: "(a: T, b: T, c: T) (kotlin.comparisons)" }
 // NOTHING_ELSE

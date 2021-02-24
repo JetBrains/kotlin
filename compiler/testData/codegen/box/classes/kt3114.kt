@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 class KeySpan(val left: String) {
 
     public fun matches(value : String) : Boolean {

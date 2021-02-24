@@ -11,7 +11,7 @@ fun main(args: Array<String>) {
     }
 }
 
-// ADDITIONAL_BREAKPOINT: inlineFunctionWithBreakpoint.kt:inline fun myFun
+// ADDITIONAL_BREAKPOINT: inlineFunctionWithBreakpoint.kt / inline fun myFun
 
 // FILE: inlineFunctionWithBreakpoint.kt
 package inlineFunctionWithBreakpoint

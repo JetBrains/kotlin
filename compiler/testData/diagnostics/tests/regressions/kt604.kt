@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // KT-604 Internal frontend error
 
 interface ChannelPipeline {

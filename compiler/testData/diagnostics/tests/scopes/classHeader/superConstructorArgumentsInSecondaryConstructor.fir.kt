@@ -14,7 +14,7 @@ open class S(
 
 class A : S {
 
-    constructor() : <!INAPPLICABLE_CANDIDATE!>super<!>(
+    constructor() : super(
             foo(),
             Nested(),
             Inner(),
@@ -22,8 +22,8 @@ class A : S {
             Companion.CONST,
             Nested.CONST,
             Interface.CONST,
-            a,
-            b()
+            <!UNRESOLVED_REFERENCE!>a<!>,
+            <!UNRESOLVED_REFERENCE!>b<!>()
     )
 
     class Nested {

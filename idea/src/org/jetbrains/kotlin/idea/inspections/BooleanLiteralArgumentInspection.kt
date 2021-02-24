@@ -12,6 +12,7 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.codeInspection.ui.MultipleCheckboxOptionsPanel
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.diagnostics.Severity
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.intentions.AddNameToArgumentIntention
@@ -69,14 +70,14 @@ class BooleanLiteralArgumentInspection(
                 IntentionWrapper(AddNameToArgumentIntention(), argument.containingKtFile)
             }
             holder.registerProblemWithoutOfflineInformation(
-                argument, "Boolean literal argument without parameter name",
+                argument, KotlinBundle.message("boolean.literal.argument.without.parameter.name"),
                 isOnTheFly, highlightType, fix
             )
         })
 
     override fun createOptionsPanel(): JComponent? {
         val panel = MultipleCheckboxOptionsPanel(this)
-        panel.addCheckbox("Report also on call with single boolean literal argument", "reportSingle")
+        panel.addCheckbox(KotlinBundle.message("report.also.on.call.with.single.boolean.literal.argument"), "reportSingle")
         return panel
     }
 }

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +ProhibitTypeParametersInClassLiteralsInAnnotationArguments
 
 import kotlin.reflect.KClass

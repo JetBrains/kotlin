@@ -1,0 +1,5 @@
+package
+
+public fun consumeAny(/*0*/ x: kotlin.Any): kotlin.Any
+public fun </*0*/ T> consumeLongAndMaterialize(/*0*/ x: kotlin.Long): T
+public fun main(): kotlin.Unit

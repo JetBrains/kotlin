@@ -2,3 +2,4 @@
 class Foo {
     private fun bar() { }
 }
+/* FIR_COMPARISON */

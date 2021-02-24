@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 
 val label_fun = label@ fun () {

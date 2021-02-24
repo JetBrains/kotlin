@@ -32,5 +32,5 @@
     </build>
 </project>
 
-<!-- problem: on kotlin-maven-plugin, title Kotlin JVM compiler configured but no kotlin-stdlib dependency -->
-<!-- problem: on kotlin-maven-plugin, title Kotlin JavaScript compiler configured but no kotlin-stdlib-js dependency -->
+<!-- problem: on kotlin-maven-plugin, title Kotlin/JVM compiler configured but no 'kotlin-stdlib' dependency -->
+<!-- problem: on kotlin-maven-plugin, title Kotlin/JavaScript compiler configured but no 'kotlin-stdlib-js' dependency -->

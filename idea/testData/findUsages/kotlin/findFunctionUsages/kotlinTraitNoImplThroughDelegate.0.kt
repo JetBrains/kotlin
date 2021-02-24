@@ -9,3 +9,5 @@ interface TraitNoImpl {
 public class TraitWithDelegatedNoImpl(f: TraitNoImpl): TraitNoImpl by f
 
 fun test(twdni: TraitWithDelegatedNoImpl) = twdni.foo()
+
+// FIR_COMPARISON

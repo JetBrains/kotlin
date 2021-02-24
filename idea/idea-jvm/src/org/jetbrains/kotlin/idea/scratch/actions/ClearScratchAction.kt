@@ -20,11 +20,11 @@ import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.impl.text.TextEditorProvider
-import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.KotlinJvmBundle
 import org.jetbrains.kotlin.idea.scratch.ui.findScratchFileEditorWithPreview
 
 class ClearScratchAction : ScratchAction(
-    KotlinBundle.message("scratch.clear.button"),
+    KotlinJvmBundle.message("scratch.clear.button"),
     AllIcons.Actions.GC
 ) {
     override fun actionPerformed(e: AnActionEvent) {

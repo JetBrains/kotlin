@@ -1,6 +1,7 @@
+// WITH_RUNTIME
+// NO_CHECK_LAMBDA_INLINING
 // TARGET_BACKEND: JVM
 // FILE: 1.kt
-// WITH_RUNTIME
 package builders
 
 import java.util.ArrayList
@@ -112,7 +113,6 @@ fun htmlNoInline(init: HTML.() -> Unit): HTML {
 
 // FILE: 2.kt
 
-//NO_CHECK_LAMBDA_INLINING
 import builders.*
 
 inline fun testAllInline(f: () -> String) : String {

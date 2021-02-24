@@ -9,6 +9,7 @@ fun test() = A<caret>(1)
 
 Resolved call:
 
+Candidate descriptor: fun invoke(i: Int): Int defined in A.Companion
 Resulting descriptor: fun invoke(i: Int): Int defined in A.Companion
 
 Explicit receiver kind = DISPATCH_RECEIVER

@@ -252,3 +252,12 @@ class JKKtTryCatchSection(
     var block: JKBlock by child(block)
     override fun accept(visitor: JKVisitor) = visitor.visitKtTryCatchSection(this)
 }
+
+sealed class JKJavaResourceElement : JKTreeElement(), PsiOwner by PsiOwnerImpl()
+
+class JKJavaResourceExpression(expression: JKExpression) : JKJavaResourceElement() {
+    var expression by child(expression)
+}
+class JKJavaResourceDeclaration(declaration: JKLocalVariable) : JKJavaResourceElement() {
+    var declaration by child(declaration)
+}

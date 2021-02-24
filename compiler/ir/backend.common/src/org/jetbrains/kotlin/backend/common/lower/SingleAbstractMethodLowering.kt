@@ -8,28 +8,31 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.backend.common.ScopeWithIr
+import org.jetbrains.kotlin.backend.common.ir.addFakeOverrides
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classifierOrFail
-import org.jetbrains.kotlin.ir.types.isNullable
-import org.jetbrains.kotlin.ir.types.makeNullable
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.ir.util.functions
 
 abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContext() {
     // SAM wrappers are cached, either in the file class (if it exists), or in a top-level enclosing class.
@@ -55,17 +58,29 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
     // Coming from the frontend, every SAM interface is associated with exactly one function type
     // (see SamType.getKotlinFunctionType). This is why we can cache implementations just based on
     // the superType.
-    private val cachedImplementations = mutableMapOf<IrType, IrClass>()
-    private val inlineCachedImplementations = mutableMapOf<IrType, IrClass>()
-    private var enclosingContainer: IrDeclarationContainer? = null
+    protected val cachedImplementations = mutableMapOf<IrType, IrClass>()
+    protected val inlineCachedImplementations = mutableMapOf<IrType, IrClass>()
+    protected var enclosingContainer: IrDeclarationContainer? = null
 
-    open val privateGeneratedWrapperVisibility: Visibility
-        get() = Visibilities.PRIVATE
+    abstract fun getWrapperVisibility(expression: IrTypeOperatorCall, scopes: List<ScopeWithIr>): DescriptorVisibility
 
     abstract fun getSuperTypeForWrapper(typeOperand: IrType): IrType
 
+    protected open fun getWrappedFunctionType(klass: IrClass): IrType =
+        klass.defaultType
+
+    protected open fun IrFunctionBuilder.setConstructorSourceRange(createFor: IrElement) {
+        setSourceRange(createFor)
+    }
+
+    abstract val IrType.needEqualsHashCodeMethods: Boolean
+
+    open val inInlineFunctionScope get() = allScopes.any { scope -> (scope.irElement as? IrFunction)?.isInline ?: false }
+
     override fun lower(irFile: IrFile) {
-        enclosingContainer = irFile.declarations.filterIsInstance<IrClass>().find { it.origin == IrDeclarationOrigin.FILE_CLASS }
+        cachedImplementations.clear()
+        inlineCachedImplementations.clear()
+        enclosingContainer = irFile.declarations.filterIsInstance<IrClass>().find { it.isFileClass }
             ?: irFile
         irFile.transformChildrenVoid()
 
@@ -73,6 +88,10 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
             val parentClass = wrapper.parent as IrDeclarationContainer
             parentClass.declarations += wrapper
         }
+    }
+
+    protected open fun currentScopeSymbol(): IrSymbol? {
+        return currentScope?.scope?.scopeOwnerSymbol
     }
 
     override fun visitClassNew(declaration: IrClass): IrStatement {
@@ -93,20 +112,19 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
         val erasedSuperType = getSuperTypeForWrapper(expression.typeOperand)
         val superType = if (expression.typeOperand.isNullable()) erasedSuperType.makeNullable() else erasedSuperType
         val invokable = expression.argument.transform(this, null)
-        context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol).apply {
+        context.createIrBuilder(currentScopeSymbol()!!).apply {
             // Do not generate a wrapper class for null, it has no invoke() anyway.
             if (invokable.isNullConst())
                 return invokable
 
-            val inInlineFunctionScope = allScopes.any { scope -> (scope.irElement as? IrFunction)?.isInline ?: false }
             val cache = if (inInlineFunctionScope) inlineCachedImplementations else cachedImplementations
-            val implementation = cache.getOrPut(superType) {
-                createObjectProxy(superType, inInlineFunctionScope)
+            val implementation = cache.getOrPut(erasedSuperType) {
+                createObjectProxy(erasedSuperType, getWrapperVisibility(expression, allScopes), expression)
             }
 
             return if (superType.isNullable() && invokable.type.isNullable()) {
                 irBlock(invokable, null, superType) {
-                    val invokableVariable = irTemporary(invokable)
+                    val invokableVariable = createTmpVariable(invokable)
                     val instance = irCall(implementation.constructors.single()).apply {
                         putValueArgument(0, irGet(invokableVariable))
                     }
@@ -118,7 +136,7 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
                 // otherwise, e.g. if the argument constructs an anonymous object, resulting in new-new-<init>-<init>.
                 // (See KT-21781 for a similar problem with anonymous object constructor arguments.)
                 irBlock(invokable, null, superType) {
-                    val invokableVariable = irTemporary(invokable)
+                    val invokableVariable = createTmpVariable(invokable)
                     +irCall(implementation.constructors.single()).apply { putValueArgument(0, irGet(invokableVariable)) }
                 }
             } else {
@@ -132,47 +150,51 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
 
     // Construct a class that wraps an invokable object into an implementation of an interface:
     //     class sam$n(private val invokable: F) : Interface { override fun method(...) = invokable(...) }
-    private fun createObjectProxy(superType: IrType, generatePublicWrapper: Boolean): IrClass {
+    private fun createObjectProxy(superType: IrType, wrapperVisibility: DescriptorVisibility, createFor: IrElement): IrClass {
         val superClass = superType.classifierOrFail.owner as IrClass
         // The language documentation prohibits casting lambdas to classes, but if it was allowed,
         // the `irDelegatingConstructorCall` in the constructor below would need to be modified.
         assert(superClass.kind == ClassKind.INTERFACE) { "SAM conversion to an abstract class not allowed" }
 
         val superFqName = superClass.fqNameWhenAvailable!!.asString().replace('.', '_')
-        val inlinePrefix = if (generatePublicWrapper) "\$i" else ""
+        val inlinePrefix = if (wrapperVisibility == DescriptorVisibilities.PUBLIC) "\$i" else ""
         val wrapperName = Name.identifier("sam$inlinePrefix\$$superFqName$SAM_WRAPPER_SUFFIX")
         val superMethod = superClass.functions.single { it.modality == Modality.ABSTRACT }
+        val extensionReceiversCount = if (superMethod.extensionReceiverParameter == null) 0 else 1
         // TODO: have psi2ir cast the argument to the correct function type. Also see the TODO
         //       about type parameters in `visitTypeOperator`.
         val wrappedFunctionClass =
             if (superMethod.isSuspend)
-                context.ir.symbols.suspendFunctionN(superMethod.valueParameters.size).owner
+                context.ir.symbols.suspendFunctionN(superMethod.valueParameters.size + extensionReceiversCount).owner
             else
-                context.ir.symbols.functionN(superMethod.valueParameters.size).owner
-        val wrappedFunctionType = wrappedFunctionClass.defaultType
+                context.ir.symbols.functionN(superMethod.valueParameters.size + extensionReceiversCount).owner
+        val wrappedFunctionType = getWrappedFunctionType(wrappedFunctionClass)
 
-        val wrapperVisibility = if (generatePublicWrapper) Visibilities.PUBLIC else privateGeneratedWrapperVisibility
-        val subclass = buildClass {
+        val subclass = context.irFactory.buildClass {
             name = wrapperName
             origin = IrDeclarationOrigin.GENERATED_SAM_IMPLEMENTATION
             visibility = wrapperVisibility
+            setSourceRange(createFor)
         }.apply {
             createImplicitParameterDeclarationWithWrappedDescriptor()
-            superTypes += superType
+            superTypes = listOf(superType) + getAdditionalSupertypes(superType)
             parent = enclosingContainer!!
         }
 
         val field = subclass.addField {
             name = Name.identifier(FUNCTION_FIELD_NAME)
             type = wrappedFunctionType
-            origin = subclass.origin
-            visibility = Visibilities.PRIVATE
+            origin = IrDeclarationOrigin.SYNTHETIC_GENERATED_SAM_IMPLEMENTATION
+            visibility = DescriptorVisibilities.PRIVATE
+            isFinal = true
+            setSourceRange(createFor)
         }
 
         subclass.addConstructor {
-            origin = subclass.origin
+            origin = IrDeclarationOrigin.GENERATED_SAM_IMPLEMENTATION
             isPrimary = true
             visibility = wrapperVisibility
+            setConstructorSourceRange(createFor)
         }.apply {
             val parameter = addValueParameter {
                 name = field.name
@@ -191,20 +213,135 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
             name = superMethod.name
             returnType = superMethod.returnType
             visibility = superMethod.visibility
-            origin = subclass.origin
+            modality = Modality.FINAL
+            origin = IrDeclarationOrigin.SYNTHETIC_GENERATED_SAM_IMPLEMENTATION
             isSuspend = superMethod.isSuspend
+            setSourceRange(createFor)
         }.apply {
-            overriddenSymbols += superMethod.symbol
+            overriddenSymbols = listOf(superMethod.symbol)
             dispatchReceiverParameter = subclass.thisReceiver!!.copyTo(this)
+            extensionReceiverParameter = superMethod.extensionReceiverParameter?.copyTo(this)
             valueParameters = superMethod.valueParameters.map { it.copyTo(this) }
             body = context.createIrBuilder(symbol).irBlockBody {
                 +irReturn(irCall(wrappedFunctionClass.functions.single { it.name == OperatorNameConventions.INVOKE }).apply {
                     dispatchReceiver = irGetField(irGet(dispatchReceiverParameter!!), field)
-                    valueParameters.forEachIndexed { i, parameter -> putValueArgument(i, irGet(parameter)) }
+                    extensionReceiverParameter?.let { putValueArgument(0, irGet(it)) }
+                    valueParameters.forEachIndexed { i, parameter -> putValueArgument(extensionReceiversCount + i, irGet(parameter)) }
                 })
             }
         }
 
+        if (superType.needEqualsHashCodeMethods)
+            generateEqualsHashCode(subclass, superType, field)
+
+        subclass.addFakeOverrides(context.irBuiltIns)
+
         return subclass
+    }
+
+    private fun generateEqualsHashCode(klass: IrClass, superType: IrType, functionDelegateField: IrField) =
+        SamEqualsHashCodeMethodsGenerator(context, klass, superType) { receiver ->
+            irGetField(receiver, functionDelegateField)
+        }.generate()
+
+    private fun getAdditionalSupertypes(supertype: IrType) =
+        if (supertype.needEqualsHashCodeMethods)
+            listOf(context.ir.symbols.functionAdapter.typeWith())
+        else emptyList()
+}
+
+/**
+ * Generates equals and hashCode for SAM and fun interface wrappers, as well as an implementation of getFunctionDelegate
+ * (inherited from kotlin.jvm.internal.FunctionAdapter), needed to properly implement them.
+ * This class is used in two places:
+ * - FunctionReferenceLowering, which is the case of SAM conversion of a (maybe adapted) function reference, e.g. `FunInterface(foo::bar)`.
+ *   Note that we don't generate equals/hashCode for SAM conversion of lambdas, e.g. `FunInterface {}`, even though lambdas are represented
+ *   as a local function + reference to it. The reason for this is that all lambdas are unique, so after SAM conversion they are still
+ *   never equal to each other. See [FunctionReferenceLowering.FunctionReferenceBuilder.needToGenerateSamEqualsHashCodeMethods].
+ * - SingleAbstractMethodLowering, which is the case of SAM conversion of any value of a functional type,
+ *   e.g. `val f = {}; FunInterface(f)`.
+ */
+class SamEqualsHashCodeMethodsGenerator(
+    private val context: CommonBackendContext,
+    private val klass: IrClass,
+    private val samSuperType: IrType,
+    private val obtainFunctionDelegate: IrBuilderWithScope.(receiver: IrExpression) -> IrExpression,
+) {
+    private val functionAdapterClass = context.ir.symbols.functionAdapter.owner
+
+    private val builtIns: IrBuiltIns get() = context.irBuiltIns
+    private val getFunctionDelegate = functionAdapterClass.functions.single { it.name.asString() == "getFunctionDelegate" }
+
+    fun generate() {
+        generateGetFunctionDelegate()
+        generateEquals()
+        generateHashCode()
+    }
+
+    private fun generateGetFunctionDelegate() {
+        klass.addFunction(getFunctionDelegate.name.asString(), getFunctionDelegate.returnType).apply {
+            overriddenSymbols = listOf(getFunctionDelegate.symbol)
+            body = context.createIrBuilder(symbol).run {
+                irExprBody(obtainFunctionDelegate(irGet(dispatchReceiverParameter!!)))
+            }
+        }
+    }
+
+    private fun generateEquals() {
+        klass.addFunction("equals", builtIns.booleanType).apply {
+            overriddenSymbols = klass.superTypes.mapNotNull {
+                it.getClass()?.functions?.singleOrNull {
+                    it.name.asString() == "equals" &&
+                            it.extensionReceiverParameter == null &&
+                            it.valueParameters.singleOrNull()?.type == builtIns.anyNType
+                }?.symbol
+            }
+
+            val other = addValueParameter("other", builtIns.anyNType)
+            body = context.createIrBuilder(symbol).run {
+                irExprBody(
+                    irIfThenElse(
+                        builtIns.booleanType,
+                        irIs(irGet(other), samSuperType),
+                        irIfThenElse(
+                            builtIns.booleanType,
+                            irIs(irGet(other), functionAdapterClass.typeWith()),
+                            irEquals(
+                                irCall(getFunctionDelegate).also {
+                                    it.dispatchReceiver = irGet(dispatchReceiverParameter!!)
+                                },
+                                irCall(getFunctionDelegate).also {
+                                    it.dispatchReceiver = irImplicitCast(irGet(other), functionAdapterClass.typeWith())
+                                }
+                            ),
+                            irFalse()
+                        ),
+                        irFalse()
+                    )
+                )
+            }
+        }
+    }
+
+    private fun generateHashCode() {
+        klass.addFunction("hashCode", builtIns.intType).apply {
+
+            fun isHashCode(function: IrSimpleFunction) =
+                function.name.asString() == "hashCode" && function.extensionReceiverParameter == null && function.valueParameters.isEmpty()
+
+            overriddenSymbols = klass.superTypes.mapNotNull {
+                it.getClass()?.functions?.singleOrNull(::isHashCode)?.symbol
+            }
+            val hashCode = context.irBuiltIns.functionClass.owner.functions.single(::isHashCode).symbol
+            body = context.createIrBuilder(symbol).run {
+                irExprBody(
+                    irCall(hashCode).also {
+                        it.dispatchReceiver = irCall(getFunctionDelegate).also {
+                            it.dispatchReceiver = irGet(dispatchReceiverParameter!!)
+                        }
+                    }
+                )
+            }
+        }
     }
 }

@@ -12,9 +12,9 @@ fun evaluateArg(expr: CharSequence, numbers: ArrayList<Int>): Int {
   if (expr.length == 0) throw Exception("Syntax error: Character expected");
   val c = <!INAPPLICABLE_CANDIDATE!>takeFirst<!>(expr)
   if (c >= '0' && c <= '9') {
-    val n = c <!UNRESOLVED_REFERENCE!>-<!> '0'
+    val n = c - '0'
     if (!numbers.contains(n)) throw Exception("You used incorrect number: " + n)
-    numbers.<!AMBIGUITY!>remove<!>(n)
+    numbers.remove(n)
     return n
   }
   throw Exception("Syntax error: Unrecognized character " + c)

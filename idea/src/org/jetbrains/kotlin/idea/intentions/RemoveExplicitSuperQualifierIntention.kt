@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,6 +9,7 @@ import com.intellij.codeInspection.CleanupLocalInspectionTool
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.analysis.analyzeAsReplacement
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
@@ -27,12 +28,13 @@ import org.jetbrains.kotlin.types.ErrorUtils
 class RemoveExplicitSuperQualifierInspection : IntentionBasedInspection<KtSuperExpression>(
     RemoveExplicitSuperQualifierIntention::class
 ), CleanupLocalInspectionTool {
-    override fun problemHighlightType(element: KtSuperExpression): ProblemHighlightType =
-        ProblemHighlightType.LIKE_UNUSED_SYMBOL
+    override fun problemHighlightType(element: KtSuperExpression): ProblemHighlightType = ProblemHighlightType.LIKE_UNUSED_SYMBOL
 }
 
-class RemoveExplicitSuperQualifierIntention :
-    SelfTargetingRangeIntention<KtSuperExpression>(KtSuperExpression::class.java, "Remove explicit supertype qualification") {
+class RemoveExplicitSuperQualifierIntention : SelfTargetingRangeIntention<KtSuperExpression>(
+    KtSuperExpression::class.java,
+    KotlinBundle.lazyMessage("remove.explicit.supertype.qualification")
+) {
     override fun applicabilityRange(element: KtSuperExpression): TextRange? {
         if (element.superTypeQualifier == null) return null
 
@@ -46,6 +48,7 @@ class RemoveExplicitSuperQualifierIntention :
             "$0.$1", toNonQualified(element, reformat = false), selector,
             reformat = false
         ) as KtQualifiedExpression
+
         val newBindingContext = newQualifiedExpression.analyzeAsReplacement(qualifiedExpression, bindingContext)
         val newResolvedCall = newQualifiedExpression.selectorExpression.getResolvedCall(newBindingContext) ?: return null
         if (ErrorUtils.isError(newResolvedCall.resultingDescriptor)) return null

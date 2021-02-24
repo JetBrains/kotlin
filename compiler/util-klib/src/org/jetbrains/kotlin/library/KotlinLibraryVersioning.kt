@@ -19,7 +19,7 @@ fun Properties.writeKonanLibraryVersioning(versions: KotlinLibraryVersioning) {
 }
 
 fun Properties.readKonanLibraryVersioning(): KotlinLibraryVersioning {
-    val abiVersion = this.getProperty(KLIB_PROPERTY_ABI_VERSION)?.parseKonanAbiVersion()
+    val abiVersion = this.getProperty(KLIB_PROPERTY_ABI_VERSION)?.parseKotlinAbiVersion()
     val libraryVersion = this.getProperty(KLIB_PROPERTY_LIBRARY_VERSION)
     val compilerVersion = this.getProperty(KLIB_PROPERTY_COMPILER_VERSION)
     val metadataVersion = this.getProperty(KLIB_PROPERTY_METADATA_VERSION)

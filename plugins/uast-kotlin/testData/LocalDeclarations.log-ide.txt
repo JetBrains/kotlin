@@ -12,14 +12,14 @@ UFile (package = )
                                 UReturnExpression
                                     UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0))
                                         UIdentifier (Identifier (Local))
-                                        USimpleNameReferenceExpression (identifier = <init>, resolvesTo = Local)
+                                        USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: Local)
                 UDeclarationsExpression
                     ULocalVariable (name = baz)
                         ULambdaExpression
                             UBlockExpression
                                 UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0))
                                     UIdentifier (Identifier (Local))
-                                    USimpleNameReferenceExpression (identifier = <init>, resolvesTo = Local)
+                                    USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: Local)
                 UDeclarationsExpression
                     UVariable (name = someLocalFun)
                         ULambdaExpression
@@ -35,4 +35,4 @@ UFile (package = )
                             USimpleNameReferenceExpression (identifier = bar, resolvesTo = null)
                         UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0))
                             UIdentifier (Identifier (Local))
-                            USimpleNameReferenceExpression (identifier = <init>, resolvesTo = Local)
+                            USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: Local)

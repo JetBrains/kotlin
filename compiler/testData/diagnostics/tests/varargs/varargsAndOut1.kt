@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !CHECK_TYPE
 
 fun test(vararg a: String) {

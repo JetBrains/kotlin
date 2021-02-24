@@ -215,8 +215,8 @@ fun writeProperty(
             t.flags = flags
         }
         // TODO: do not write getterFlags/setterFlags if not needed
-        t.getterFlags = getterFlags
-        t.setterFlags = setterFlags
+        if (Flag.Property.HAS_GETTER(flags)) t.getterFlags = getterFlags
+        if (Flag.Property.HAS_SETTER(flags)) t.setterFlags = setterFlags
         output(t)
     }
 }
@@ -499,7 +499,7 @@ open class PackageWriter(stringTable: StringTable, contextExtensions: List<Write
 
 open class ModuleFragmentWriter(stringTable: StringTable, contextExtensions: List<WriteContextExtension> = emptyList()) :
     KmModuleFragmentVisitor() {
-    protected val t = ProtoBuf.PackageFragment.newBuilder()
+    protected val t = ProtoBuf.PackageFragment.newBuilder()!!
     protected val c: WriteContext = WriteContext(stringTable, contextExtensions)
 
     override fun visitPackage(): KmPackageVisitor? = object : PackageWriter(c.strings, c.contextExtensions) {

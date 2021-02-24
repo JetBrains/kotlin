@@ -1,0 +1,51 @@
+fun test1() {
+  while (true) { // BLOCK
+    break
+  }
+  { // BLOCK
+    do// COMPOSITE {
+    break
+    // }    while (true)
+  }
+  while (true) { // BLOCK
+    continue
+  }
+  { // BLOCK
+    do// COMPOSITE {
+    continue
+    // }    while (true)
+  }
+}
+
+fun test2() {
+  OUTER@ while (true) { // BLOCK
+    INNER@ while (true) { // BLOCK
+      break@INNER
+      break@OUTER
+    }
+    break@OUTER
+  }
+  OUTER@ while (true) { // BLOCK
+    INNER@ while (true) { // BLOCK
+      continue@INNER
+      continue@OUTER
+    }
+    continue@OUTER
+  }
+}
+
+fun test3() {
+  L@ while (true) { // BLOCK
+    L@ while (true) { // BLOCK
+      break@L
+    }
+    break@L
+  }
+  L@ while (true) { // BLOCK
+    L@ while (true) { // BLOCK
+      continue@L
+    }
+    continue@L
+  }
+}
+

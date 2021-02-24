@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: main.kt
 //KT-2376 java.lang.Number should be visible in Kotlin as kotlin.Number
 fun main() {

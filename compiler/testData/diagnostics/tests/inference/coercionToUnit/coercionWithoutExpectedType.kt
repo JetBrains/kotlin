@@ -14,6 +14,6 @@ fun implicitCoercion() {
 
     val <!UNUSED_VARIABLE!>c<!> = l@{
         // Error: block doesn't have an expected type, so call can't be inferred!
-        return@l <!NI;NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>materialize<!>()
+        return@l <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER{NI}, TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER{OI}!>materialize<!>()
     }
 }

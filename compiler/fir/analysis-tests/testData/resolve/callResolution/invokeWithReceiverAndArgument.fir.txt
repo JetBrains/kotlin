@@ -1,0 +1,62 @@
+FILE: invokeWithReceiverAndArgument.kt
+    public abstract interface AbstractFirTreeBuilder : R|kotlin/Any| {
+    }
+    public final class FirTreeBuilder : R|AbstractFirTreeBuilder| {
+        public constructor(): R|FirTreeBuilder| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public abstract class AbstractBuilderConfigurator<T : R|AbstractFirTreeBuilder|> : R|kotlin/Any| {
+        public constructor<T : R|AbstractFirTreeBuilder|>(): R|AbstractBuilderConfigurator<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract class BuilderConfigurationContext : R|kotlin/Any| {
+            public constructor(): R|AbstractBuilderConfigurator.BuilderConfigurationContext| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final inner class LeafBuilderConfigurationContext<T : R|AbstractFirTreeBuilder|> : R|AbstractBuilderConfigurator.BuilderConfigurationContext| {
+            public constructor(): R|AbstractBuilderConfigurator.LeafBuilderConfigurationContext<T>| {
+                super<R|AbstractBuilderConfigurator.BuilderConfigurationContext|>()
+            }
+
+        }
+
+    }
+    public final class BuilderConfigurator : R|AbstractBuilderConfigurator<FirTreeBuilder>| {
+        public constructor(): R|BuilderConfigurator| {
+            super<R|AbstractBuilderConfigurator<FirTreeBuilder>|>()
+        }
+
+        public final fun test(func: R|(AbstractBuilderConfigurator.LeafBuilderConfigurationContext<FirTreeBuilder>) -> kotlin/Unit|): R|kotlin/Unit| {
+            lval context: R|AbstractBuilderConfigurator.LeafBuilderConfigurationContext<FirTreeBuilder>| = this@R|/BuilderConfigurator|.R|SubstitutionOverride</AbstractBuilderConfigurator.LeafBuilderConfigurationContext.LeafBuilderConfigurationContext>|()
+            R|<local>/func|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(R|<local>/context|)
+        }
+
+    }
+    public final class Outer<E> : R|kotlin/Any| {
+        public constructor<E>(): R|Outer<E>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final inner class Inner<E> : R|kotlin/Any| {
+            public constructor(): R|Outer.Inner<E>| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final fun foo(x: R|(Outer.Inner<E>) -> kotlin/Unit|, y: R|Outer.Inner<E>.() -> kotlin/Unit|): R|kotlin/Unit| {
+            this@R|/Outer|.R|/Outer.bar|(this@R|/Outer|.R|SubstitutionOverride</Outer.Inner.Inner>|())
+            R|<local>/x|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(this@R|/Outer|.R|SubstitutionOverride</Outer.Inner.Inner>|())
+            R|<local>/y|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(this@R|/Outer|.R|SubstitutionOverride</Outer.Inner.Inner>|())
+        }
+
+        public final fun bar(i: R|Outer.Inner<E>|): R|kotlin/Unit| {
+        }
+
+    }

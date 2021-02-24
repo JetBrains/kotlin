@@ -6,7 +6,9 @@
           "specVersion": "0.1-220",
           "casesNumber": 1,
           "description": "\u003c, \u003e, \u003c\u003d and \u003e\u003d  operators are overloadable",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/comparison-expressions/p-1/neg/2.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ]
     }
@@ -18,7 +20,9 @@
           "specVersion": "0.1-218",
           "casesNumber": 4,
           "description": "The compareTo operator function must have return type kotlin.Int",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/comparison-expressions/p-4/neg/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ]
     }
@@ -30,7 +34,10 @@
           "specVersion": "0.1-218",
           "casesNumber": 4,
           "description": "All comparison expressions always have type kotlin.Boolean.",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/comparison-expressions/p-5/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main",
+          "helpers": "checkType"
         }
       ]
     }

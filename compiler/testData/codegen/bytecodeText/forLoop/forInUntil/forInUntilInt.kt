@@ -7,7 +7,7 @@ fun test(a: Int, b: Int): Int {
 }
 
 // JVM non-IR uses while.
-// JVM IR uses if + do-while. In addition, for "until" progressions, there is a check that the range is not empty: upper bound != MIN_VALUE.
+// JVM IR uses if + do-while.
 
 // 0 iterator
 // 0 getStart
@@ -21,8 +21,6 @@ fun test(a: Int, b: Int): Int {
 // 1 IF
 
 // JVM_IR_TEMPLATES
-// 1 LDC -2147483648
-// 1 IF_ICMPEQ
-// 1 IF_ICMPGT
-// 1 IF_ICMPLE
-// 3 IF
+// 1 IF_ICMPGE
+// 1 IF_ICMPLT
+// 2 IF

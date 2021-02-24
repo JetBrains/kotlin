@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.ideaExt.idea
+
 plugins {
     kotlin("jvm")
     id("jps-compatible")
@@ -6,20 +8,32 @@ plugins {
 dependencies {
     testRuntime(intellijDep())
     testCompile(intellijCoreDep()) { includeJars("intellij-core") }
-    
-    testCompile(project(":compiler:visualizer:render-psi"))
-    testCompile(project(":compiler:visualizer:render-fir"))
-    testCompile(project(":compiler:visualizer:common"))
-    
+
+    testCompileOnly(project(":compiler:fir:raw-fir:psi2fir"))
+
+    testCompileOnly(project(":compiler:visualizer:render-psi"))
+    testCompileOnly(project(":compiler:visualizer:render-fir"))
+
     testCompile(commonDep("junit:junit"))
     testCompile(projectTests(":compiler:tests-common"))
-    testCompile(projectTests(":compiler:fir:resolve"))
-
+    testCompile(projectTests(":compiler:fir:analysis-tests:legacy-fir-tests"))
 }
 
+val generationRoot = projectDir.resolve("tests-gen")
+
 sourceSets {
-    "main" {}
-    "test" { projectDefault() }
+    "main" { projectDefault() }
+    "test" {
+        projectDefault()
+        this.java.srcDir(generationRoot.name)
+    }
+}
+
+if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
+    apply(plugin = "idea")
+    idea {
+        this.module.generatedSourceDirs.add(generationRoot)
+    }
 }
 
 projectTest {

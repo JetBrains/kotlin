@@ -7,7 +7,8 @@ package org.jetbrains.kotlin.daemon.report
 
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.daemon.common.*
-import org.jetbrains.kotlin.incremental.ICReporterBase
+import org.jetbrains.kotlin.build.report.ICReporterBase
+import org.jetbrains.kotlin.build.report.RemoteICReporter
 import java.io.File
 
 internal class DebugMessagesICReporter(

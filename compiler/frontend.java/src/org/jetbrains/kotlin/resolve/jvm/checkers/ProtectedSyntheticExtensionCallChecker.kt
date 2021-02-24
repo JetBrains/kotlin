@@ -17,44 +17,65 @@
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory3
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
+import org.jetbrains.kotlin.resolve.calls.context.CallPosition
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.smartcasts.getReceiverValueWithSmartCast
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.synthetic.SamAdapterExtensionFunctionDescriptor
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 
 object ProtectedSyntheticExtensionCallChecker : CallChecker {
+    fun computeSuitableDescriptorAndError(
+        descriptor: SyntheticJavaPropertyDescriptor,
+        reportOn: PsiElement,
+        context: CallCheckerContext
+    ): Pair<FunctionDescriptor, DiagnosticFactory3<PsiElement, DeclarationDescriptor, DescriptorVisibility, DeclarationDescriptor>> {
+        val callPosition = context.resolutionContext.callPosition
+        val isLeftSide = callPosition is CallPosition.PropertyAssignment
+                && (callPosition.leftPart as? KtDotQualifiedExpression)?.selectorExpression == reportOn
+        val getMethod = descriptor.getMethod
+        val setMethod = descriptor.setMethod
+        val isImprovingDiagnosticsEnabled =
+            context.languageVersionSettings.supportsFeature(LanguageFeature.ImproveReportingDiagnosticsOnProtectedMembersOfBaseClass)
+        val needToTakeSetter = isImprovingDiagnosticsEnabled && isLeftSide
+        val suitableDescriptor = if (needToTakeSetter && setMethod != null) setMethod else getMethod
+
+        return suitableDescriptor to if (needToTakeSetter && setMethod != null) Errors.INVISIBLE_SETTER else Errors.INVISIBLE_MEMBER
+    }
+
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         val descriptor = resolvedCall.resultingDescriptor
 
-        val sourceFunction = when (descriptor) {
-            is SyntheticJavaPropertyDescriptor -> descriptor.getMethod
-            // TODO: this branch becomes unnecessary, because common checks are applied to SAM adapters being resolved as common members
-            // But this part may be still useful when we enable backward compatibility mode and SAM adapters become extensions again
-            is SamAdapterExtensionFunctionDescriptor -> descriptor.baseDescriptorForSynthetic
-            else -> return
-        }
+        if (descriptor !is SyntheticJavaPropertyDescriptor) return
+
+        val (sourceFunction, error) = computeSuitableDescriptorAndError(descriptor, reportOn, context)
 
         val from = context.scope.ownerDescriptor
 
         // Already reported
-        if (!Visibilities.isVisibleIgnoringReceiver(descriptor, from)) return
+        if (!DescriptorVisibilities.isVisibleIgnoringReceiver(descriptor, from)) return
 
         if (resolvedCall.dispatchReceiver != null && resolvedCall.extensionReceiver !is ReceiverValue) return
 
         val receiverValue = resolvedCall.extensionReceiver as ReceiverValue
         val receiverTypes = listOf(receiverValue.type) + context.dataFlowInfo.getStableTypes(
-                context.dataFlowValueFactory.createDataFlowValue(receiverValue, context.trace.bindingContext, context.scope.ownerDescriptor),
-                context.languageVersionSettings
+            context.dataFlowValueFactory.createDataFlowValue(
+                receiverValue, context.trace.bindingContext, context.scope.ownerDescriptor
+            ),
+            context.languageVersionSettings
         )
 
-        if (receiverTypes.none { Visibilities.isVisible(getReceiverValueWithSmartCast(null, it), sourceFunction, from) }) {
-            context.trace.report(Errors.INVISIBLE_MEMBER.on(reportOn, descriptor, descriptor.visibility, from))
+        if (receiverTypes.none { DescriptorVisibilities.isVisible(getReceiverValueWithSmartCast(null, it), sourceFunction, from) }) {
+            context.trace.report(error.on(reportOn, descriptor, descriptor.visibility, from))
         }
     }
 }

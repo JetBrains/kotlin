@@ -55,7 +55,7 @@ fun checkCallableTypeParametersWithUpperBounds(callableRef: KCallable<*>, typePa
 fun checkSuperTypeAnnotation(classRef: KClass<*>, superClassName: String, annotationName: String): Boolean {
     val superType = classRef.supertypes.find { it.classifier.toString() == superClassName }
 
-    return superType?.annotations?.find { it.annotationClass.qualifiedName == annotationName } != null ?: false
+    return superType?.annotations?.find { it.annotationClass.qualifiedName == annotationName } != null
 }
 
 fun checkClassName(ref: KClass<*>, expectedQualifiedName: String) = ref.qualifiedName == expectedQualifiedName
@@ -64,7 +64,7 @@ fun checkPackageName(fileClass: String, expectedName: String) =
     Class.forName(fileClass).`package`.name == expectedName
 
 fun checkFileAnnotation(fileClass: String, expectedName: String) =
-    Class.forName(fileClass)?.annotations?.find { it.annotationClass.qualifiedName == expectedName } != null ?: false
+    Class.forName(fileClass)?.annotations?.find { it.annotationClass.qualifiedName == expectedName } != null
 
 fun checkFileAnnotations(fileClass: String, expectedNames: List<String>) =
     expectedNames.all { checkFileAnnotation(fileClass, it) }

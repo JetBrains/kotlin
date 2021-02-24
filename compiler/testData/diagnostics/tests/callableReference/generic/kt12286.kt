@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 // KT-12286 Strange type is required for generic callable reference
 

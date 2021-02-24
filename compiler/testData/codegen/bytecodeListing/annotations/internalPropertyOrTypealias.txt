@@ -1,0 +1,23 @@
+@kotlin.annotation.Target
+@java.lang.annotation.Retention
+@java.lang.annotation.Target
+@kotlin.Metadata
+public annotation class Anno {
+    // source: 'internalPropertyOrTypealias.kt'
+}
+
+@kotlin.Metadata
+public final class C {
+    // source: 'internalPropertyOrTypealias.kt'
+    public method <init>(): void
+    public synthetic deprecated static @Anno method getProperty$test_module$annotations(): void
+    public final method getProperty$test_module(): int
+}
+
+@kotlin.Metadata
+public final class InternalPropertyOrTypealiasKt {
+    // source: 'internalPropertyOrTypealias.kt'
+    public synthetic deprecated static @Anno method Typealias$annotations(): void
+    public synthetic deprecated static @Anno method getProperty$annotations(): void
+    public final static method getProperty(): int
+}

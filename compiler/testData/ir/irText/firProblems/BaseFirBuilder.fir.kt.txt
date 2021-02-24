@@ -1,0 +1,12 @@
+abstract class BaseFirBuilder<T : Any?> {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  inline fun <T : Any?> withCapturedTypeParameters(block: Function0<T>): T {
+    return block.invoke()
+  }
+
+}

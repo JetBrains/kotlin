@@ -6,7 +6,7 @@
 // ACTION: Introduce local variable
 // ACTION: Put arguments on separate lines
 // ERROR: Type mismatch: inferred type is Array<???> but String! was expected
-// COMPILER_ARGUMENTS: -XXLanguage:+NewInference -XXLanguage:+SamConversionForKotlinFunctions -XXLanguage:+SamConversionPerArgument -XXLanguage:+ProhibitVarargAsArrayAfterSamArgument
+// COMPILER_ARGUMENTS: -XXLanguage:+ProhibitVarargAsArrayAfterSamArgument
 // WITH_RUNTIME
 
 fun main() {

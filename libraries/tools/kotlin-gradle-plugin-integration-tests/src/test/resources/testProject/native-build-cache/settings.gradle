@@ -1,0 +1,9 @@
+pluginManagement {
+    repositories {
+        mavenLocal()
+        jcenter()
+        gradlePluginPortal()
+    }
+}
+
+include ':build-cache-app:lib-module', ':build-cache-app', ':build-cache-lib'

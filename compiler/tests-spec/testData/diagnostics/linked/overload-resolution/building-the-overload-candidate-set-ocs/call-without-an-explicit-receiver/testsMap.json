@@ -1,0 +1,590 @@
+{
+  "5": {
+    "neg": {
+      "2": [
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 1,
+          "description": "The overload candidate sets for each pair of implicit receivers: Implicitly imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/neg/2.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 2,
+          "description": "The overload candidate sets for each pair of implicit receivers: declared in the package scope extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/neg/2.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 1,
+          "description": "The overload candidate sets for each pair of implicit receivers: Explicitly imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/neg/2.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        }
+      ],
+      "4": [
+        {
+          "specVersion": "0.1-464",
+          "casesNumber": 1,
+          "description": "Top-level non-extension functions named f: callables implicitly imported into the current file;",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/neg/4.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-464",
+          "casesNumber": 1,
+          "description": "Top-level non-extension functions named f: callables implicitly imported into the current file;",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/neg/4.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        }
+      ],
+      "6": [
+        {
+          "specVersion": "0.1-464",
+          "casesNumber": 1,
+          "description": "Top-level non-extension functions named f: callables implicitly imported into the current file;",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/neg/4.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-401",
+          "casesNumber": 5,
+          "description": "",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/neg/6.1.kt",
+          "unexpectedBehaviour": true,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-401",
+          "casesNumber": 10,
+          "description": "",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/neg/6.4.kt",
+          "unexpectedBehaviour": true,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-464",
+          "casesNumber": 1,
+          "description": "Top-level non-extension functions named f: callables implicitly imported into the current file;",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/neg/4.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ]
+    },
+    "pos": {
+      "2": [
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 3,
+          "description": "The overload candidate sets for each pair of implicit receivers: Local extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/2.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 3,
+          "description": "The overload candidate sets for each pair of implicit receivers: Implicitly imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/2.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 3,
+          "description": "The overload candidate sets for each pair of implicit receivers: declared in the package scope extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/2.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 3,
+          "description": "The overload candidate sets for each pair of implicit receivers: Explicitly imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/2.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 3,
+          "description": "The overload candidate sets for each pair of implicit receivers: Local extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/2.2.kt",
+          "unexpectedBehaviour": true,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 2,
+          "description": "The implicit this receiver has higher priority than phantom static implicit this",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/receivers/p-5/pos/2.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 4,
+          "description": "The phantom static implicit this receiver has higher priority than the current class companion object receiver",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/receivers/p-5/pos/3.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 4,
+          "description": "Superclass companion object receivers are prioritized according to the inheritance order",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/receivers/p-5/pos/5.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ],
+      "6": [
+        {
+          "specVersion": "0.1-401",
+          "casesNumber": 4,
+          "description": "",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/6.3.kt",
+          "unexpectedBehaviour": true,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-401",
+          "casesNumber": 9,
+          "description": "",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/6.2.kt",
+          "unexpectedBehaviour": true,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-464",
+          "casesNumber": 3,
+          "description": "Top-level non-extension functions named f: callables implicitly imported into the current file;",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/4.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-464",
+          "casesNumber": 3,
+          "description": "Top-level non-extension functions named f: callables implicitly imported into the current file;",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/4.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 3,
+          "description": "Top-level non-extension functions: Callables star-imported into the current file;",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/6.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        }
+      ],
+      "4": [
+        {
+          "specVersion": "0.1-464",
+          "casesNumber": 3,
+          "description": "Top-level non-extension functions named f: callables explicitly imported into the current file;",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/4.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 3,
+          "description": "Top-level non-extension functions: Callables explicitly imported into the current file",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/4.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-464",
+          "casesNumber": 3,
+          "description": "Top-level non-extension functions named f: callables implicitly imported into the current file;",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/4.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-464",
+          "casesNumber": 3,
+          "description": "Top-level non-extension functions named f: callables implicitly imported into the current file;",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/4.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-464",
+          "casesNumber": 3,
+          "description": "Top-level non-extension functions named f: callables explicitly imported into the current file;",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/4.6.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-464",
+          "casesNumber": 3,
+          "description": "Top-level non-extension functions named f: callables explicitly imported into the current file;",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/4.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        }
+      ],
+      "5": [
+        {
+          "specVersion": "0.1-464",
+          "casesNumber": 3,
+          "description": "Top-level non-extension functions named f: callables explicitly imported into the current file;",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/4.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 3,
+          "description": "Top-level non-extension functions: Callables declared in the same package",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/5.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-464",
+          "casesNumber": 3,
+          "description": "Top-level non-extension functions named f: callables explicitly imported into the current file;",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/4.6.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-464",
+          "casesNumber": 3,
+          "description": "Top-level non-extension functions named f: callables explicitly imported into the current file;",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/4.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ],
+      "7": [
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 2,
+          "description": "Top-level non-extension functions: Implicitly imported callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/7.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        }
+      ]
+    }
+  },
+  "4": {
+    "neg": {
+      "1": [
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 1,
+          "description": "The overload candidate sets for each pair of implicit receivers: Implicitly imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/neg/2.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 2,
+          "description": "The overload candidate sets for each pair of implicit receivers: declared in the package scope extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/neg/2.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 1,
+          "description": "The overload candidate sets for each pair of implicit receivers: Explicitly imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/neg/2.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ]
+    },
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 3,
+          "description": "The overload candidate sets for each pair of implicit receivers: Local extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/2.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 3,
+          "description": "The overload candidate sets for each pair of implicit receivers: Implicitly imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/2.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 3,
+          "description": "The overload candidate sets for each pair of implicit receivers: declared in the package scope extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/2.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 3,
+          "description": "Top-level non-extension functions: Callables explicitly imported into the current file",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/4.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 3,
+          "description": "Top-level non-extension functions: Callables declared in the same package",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/5.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 3,
+          "description": "Top-level non-extension functions: Callables star-imported into the current file;",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/6.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 2,
+          "description": "Top-level non-extension functions: Implicitly imported callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/7.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 3,
+          "description": "The overload candidate sets for each pair of implicit receivers: Explicitly imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/2.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 3,
+          "description": "The overload candidate sets for each pair of implicit receivers: Local extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/2.2.kt",
+          "unexpectedBehaviour": true,
+          "linkType": "primary"
+        }
+      ]
+    }
+  },
+  "8": {
+    "neg": {
+      "1": [
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 1,
+          "description": "The overload candidate sets for each pair of implicit receivers: Implicitly imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/neg/2.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 2,
+          "description": "The overload candidate sets for each pair of implicit receivers: declared in the package scope extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/neg/2.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 1,
+          "description": "The overload candidate sets for each pair of implicit receivers: Explicitly imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/neg/2.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ]
+    },
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 3,
+          "description": "The overload candidate sets for each pair of implicit receivers: Local extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/2.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 3,
+          "description": "The overload candidate sets for each pair of implicit receivers: Implicitly imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/2.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 3,
+          "description": "The overload candidate sets for each pair of implicit receivers: declared in the package scope extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/2.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 3,
+          "description": "Top-level non-extension functions: Callables explicitly imported into the current file",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/4.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 3,
+          "description": "Top-level non-extension functions: Callables declared in the same package",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/5.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 3,
+          "description": "Top-level non-extension functions: Callables star-imported into the current file;",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/6.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 2,
+          "description": "Top-level non-extension functions: Implicitly imported callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/7.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 3,
+          "description": "The overload candidate sets for each pair of implicit receivers: Explicitly imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/2.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 3,
+          "description": "The overload candidate sets for each pair of implicit receivers: Local extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/2.2.kt",
+          "unexpectedBehaviour": true,
+          "linkType": "primary"
+        }
+      ]
+    }
+  },
+  "6": {
+    "neg": {
+      "1": [
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 2,
+          "description": "The overload candidate sets for each pair of implicit receivers: declared in the package scope extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/neg/2.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ]
+    },
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 3,
+          "description": "The overload candidate sets for each pair of implicit receivers: Local extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/2.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 3,
+          "description": "The overload candidate sets for each pair of implicit receivers: Implicitly imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/2.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 3,
+          "description": "The overload candidate sets for each pair of implicit receivers: declared in the package scope extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/2.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 3,
+          "description": "Top-level non-extension functions: Callables explicitly imported into the current file",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/4.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 3,
+          "description": "Top-level non-extension functions: Callables declared in the same package",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/5.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 3,
+          "description": "Top-level non-extension functions: Callables star-imported into the current file;",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/6.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 2,
+          "description": "Top-level non-extension functions: Implicitly imported callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/7.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 3,
+          "description": "The overload candidate sets for each pair of implicit receivers: Explicitly imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/2.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 3,
+          "description": "The overload candidate sets for each pair of implicit receivers: Local extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/2.2.kt",
+          "unexpectedBehaviour": true,
+          "linkType": "primary"
+        }
+      ]
+    }
+  }
+}

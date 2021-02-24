@@ -1,60 +1,55 @@
 package org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem
 
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.tools.projectWizard.GeneratedIdentificator
 import org.jetbrains.kotlin.tools.projectWizard.Identificator
 import org.jetbrains.kotlin.tools.projectWizard.IdentificatorOwner
+import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.core.*
+
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.ModuleConfiguratorSetting
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.PluginSetting
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingType
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.reference
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.*
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.templates.Template
 
 @Suppress("EnumEntryName")
-enum class ModuleKind {
-    multiplatform,
-    target,
-    singleplatformJvm,
-    singleplatformJs,
+enum class ModuleKind(val isSingleplatform: Boolean) : DisplayableSettingItem {
+    multiplatform(isSingleplatform = false),
+    target(isSingleplatform = false),
+    singleplatformJvm(isSingleplatform = true),
+    singleplatformAndroid(isSingleplatform = true),
+    singleplatformJsBrowser(isSingleplatform = true),
+    singleplatformJsNode(isSingleplatform = true),
+    ;
+
+    override val text: String
+        get() = name
 }
+
 
 // TODO separate to classes
 class Module(
-    var name: String,
-    val kind: ModuleKind,
-    var configurator: ModuleConfigurator,
+    @NonNls var name: String,
+    val configurator: ModuleConfigurator,
     var template: Template?,
     val sourcesets: List<Sourceset>,
     subModules: List<Module>,
+    val dependencies: MutableList<ModuleReference> = mutableListOf(),
     var parent: Module? = null,
     override val identificator: Identificator = GeneratedIdentificator(name)
 ) : DisplayableSettingItem, Validatable<Module>, IdentificatorOwner {
 
-    override val validator: SettingValidator<Module> = settingValidator<Module> { module ->
-        StringValidators.shouldNotBeBlank("Module name").validate(this, module.name)
-    } and settingValidator { module ->
-        StringValidators.shouldBeValidIdentifier("Module name `$name`", ALLOWED_SPECIAL_CHARS_IN_MODULE_NAMES).validate(this, module.name)
-    } and settingValidator { module ->
-        withSettingsOf(module) {
-            configurator.settings.map { setting ->
-                val value = setting.reference.notRequiredSettingValue
-                    ?: setting.defaultValue
-                    ?: return@map ValidationResult.ValidationError("${setting.title.capitalize()} should not be blank")
-                setting.validator.validate(this@settingValidator, value)
-            }.fold()
-        }
-    } and settingValidator { module ->
-        val template = module.template ?: return@settingValidator ValidationResult.OK
-        org.jetbrains.kotlin.tools.projectWizard.templates.withSettingsOf(module) {
-            template.settings.map { setting ->
-                val value = setting.reference.notRequiredSettingValue
-                    ?: setting.defaultValue
-                    ?: return@map ValidationResult.ValidationError("${setting.title.capitalize()} should not be blank")
-                setting.validator.validate(this@settingValidator, value)
-            }.fold()
-        }
-    } and inValidatorContext { module ->
-        validateList(module.subModules)
-    }
+    val kind: ModuleKind
+        get() = configurator.moduleKind
+
+    override val validator = (moduleNameValidator and
+            moduleConfiguratorValidator and
+            moduleTemplateValidator).withTarget(this) and
+            subModulesValidator
 
     var subModules = subModules
         set(value) {
@@ -71,16 +66,19 @@ class Module(
     override val text: String get() = name
     override val greyText: String?
         get() = when {
-            kind == ModuleKind.target -> "${configurator.text} Target"
-            configurator == MppModuleConfigurator -> "MPP Module"
-            configurator == AndroidSinglePlatformModuleConfigurator -> "Android Module"
-            configurator == IOSSinglePlatformModuleConfigurator -> "IOS Module"
-            else -> "Module"
+            kind == ModuleKind.target -> configurator.text + " " + KotlinNewProjectWizardBundle.message("module.kind.target")
+            configurator == MppModuleConfigurator -> KotlinNewProjectWizardBundle.message("module.kind.mpp.module")
+            configurator == AndroidSinglePlatformModuleConfigurator -> KotlinNewProjectWizardBundle.message("module.kind.android.module")
+            configurator == IOSSinglePlatformModuleConfigurator -> KotlinNewProjectWizardBundle.message("module.kind.ios.module")
+            configurator == BrowserJsSinglePlatformModuleConfigurator -> KotlinNewProjectWizardBundle.message("module.kind.js.browser.module")
+            configurator == NodeJsSinglePlatformModuleConfigurator -> KotlinNewProjectWizardBundle.message("module.kind.js.node.module")
+            else -> KotlinNewProjectWizardBundle.message("module.kind.module")
         }
 
-    fun initDefaultValuesForSettings(context: Context) {
-        configurator.safeAs<ModuleConfiguratorWithSettings>()?.initDefaultValuesFor(this, context)
-        template?.initDefaultValuesFor(this, context)
+    fun SettingsWriter.initDefaultValuesForSettings() {
+        configurator.safeAs<ModuleConfiguratorWithSettings>()?.apply { initDefaultValuesFor(this@Module) }
+        configurator.safeAs<ModuleConfiguratorWithProperties>()?.apply { initDefaultValuesForProperties(this@Module) }
+        template?.apply { initDefaultValuesFor(this@Module) }
     }
 
     companion object {
@@ -89,30 +87,78 @@ class Module(
         val parser: Parser<Module> = mapParser { map, path ->
             val (name) = map.parseValue<String>(path, "name")
             val identificator = GeneratedIdentificator(name)
-            val (kind) = map.parseValue<ModuleKind>(this, path, "kind", enumParser())
             val (configurator) = map.parseValue(this, path, "type", ModuleConfigurator.getParser(identificator))
+
             val template = map["template"]?.let {
                 Template.parser(identificator).parse(this, it, "$path.template")
             }.nullableValue()
-            val (sourcesets) = map.parseValue(
-                this,
-                path,
-                "sourcesets",
-                listParser(Sourceset.parser(configurator.moduleType))
-            ) { emptyList() }
+            val sourcesets = listOf(Sourceset(SourcesetType.main), Sourceset(SourcesetType.test))
             val (submodules) = map.parseValue(this, path, "subModules", listParser(Module.parser)) { emptyList() }
-            Module(name, kind, configurator, template, sourcesets, submodules, identificator = identificator)
+            val (dependencies) = map.parseValue(this, path, "dependencies", listParser(ModuleReference.ByPath.parser)) { emptyList() }
+            Module(
+                name,
+                configurator,
+                template,
+                sourcesets,
+                submodules,
+                dependencies = dependencies.toMutableList(),
+                identificator = identificator
+            )
+        }
+
+        private val moduleNameValidator = settingValidator<Module> { module ->
+            StringValidators.shouldNotBeBlank(KotlinNewProjectWizardBundle.message("module.name")).validate(this, module.name)
+        } and settingValidator { module ->
+            StringValidators.shouldBeValidIdentifier(
+                KotlinNewProjectWizardBundle.message("module.name", module.name),
+                ALLOWED_SPECIAL_CHARS_IN_MODULE_NAMES
+            ).validate(this, module.name)
+        }
+
+        val moduleConfiguratorValidator = settingValidator<Module> { module ->
+            inContextOfModuleConfigurator(module) {
+                allSettingsOfModuleConfigurator(module.configurator).map { setting ->
+                    val reference = when (setting) {
+                        is PluginSetting<Any, SettingType<Any>> -> setting.reference
+                        is ModuleConfiguratorSetting<Any, SettingType<Any>> -> setting.reference
+                        else -> null
+                    }
+                    val value = reference?.notRequiredSettingValue
+                        ?: reference?.savedOrDefaultValue
+                        ?: return@map ValidationResult.ValidationError(
+                            KotlinNewProjectWizardBundle.message(
+                                "validation.should.not.be.blank",
+                                setting.title.capitalize()
+                            )
+                        )
+                    (setting.validator as SettingValidator<Any>).validate(this@settingValidator, value)
+                }.fold()
+            }
+        }
+
+        val moduleTemplateValidator = settingValidator<Module> { module ->
+            val template = module.template ?: return@settingValidator ValidationResult.OK
+            org.jetbrains.kotlin.tools.projectWizard.templates.withSettingsOf(module) {
+                template.settings.map { setting ->
+                    val value = setting.reference.notRequiredSettingValue
+                        ?: setting.reference.savedOrDefaultValue
+                        ?: return@map ValidationResult.ValidationError(
+                            KotlinNewProjectWizardBundle.message(
+                                "validation.should.not.be.blank",
+                                setting.title.capitalize()
+                            )
+                        )
+                    (setting.validator as SettingValidator<Any>).validate(this@settingValidator, value)
+                }.fold()
+            }
+        }
+
+        val subModulesValidator = inValidatorContext<Module> { module ->
+            validateList(module.subModules)
         }
     }
 
 }
-
-val Module.mainSourceset: Sourceset?
-    get() = sourcesets.firstOrNull { it.sourcesetType == SourcesetType.main }
-
-val Module.testSourceset: Sourceset?
-    get() = sourcesets.firstOrNull { it.sourcesetType == SourcesetType.test }
-
 
 val Module.path
     get() = generateSequence(this, Module::parent)
@@ -121,6 +167,7 @@ val Module.path
         .asReversed()
         .let(::ModulePath)
 
+
 val Sourceset.path
     get() = ModulePath(parent?.path?.parts.orEmpty() + sourcesetType.name)
 
@@ -128,10 +175,9 @@ val Module.isRootModule
     get() = parent == null
 
 @Suppress("FunctionName")
-fun MultiplatformTargetModule(name: String, configurator: ModuleConfigurator, sourcesets: List<Sourceset>) =
+fun MultiplatformTargetModule(@NonNls name: String, configurator: ModuleConfigurator, sourcesets: List<Sourceset>) =
     Module(
         name,
-        ModuleKind.target,
         configurator,
         null,
         sourcesets,
@@ -139,21 +185,19 @@ fun MultiplatformTargetModule(name: String, configurator: ModuleConfigurator, so
     )
 
 @Suppress("FunctionName")
-fun MultiplatformModule(name: String, targets: List<Module> = emptyList()) =
+fun MultiplatformModule(@NonNls name: String, template: Template? = null, targets: List<Module> = emptyList()) =
     Module(
         name,
-        ModuleKind.multiplatform,
         MppModuleConfigurator,
-        null,
+        template,
         emptyList(),
         targets
     )
 
 @Suppress("FunctionName")
-fun SingleplatformModule(name: String, sourcesets: List<Sourceset>) =
+fun SingleplatformModule(@NonNls name: String, sourcesets: List<Sourceset>) =
     Module(
         name,
-        ModuleKind.singleplatformJvm,
         JvmSinglePlatformModuleConfigurator,
         null,
         sourcesets,

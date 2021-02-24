@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.inspections.substring
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.psi.KtConstantExpression
@@ -15,8 +16,10 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 
 class ReplaceSubstringWithIndexingOperationInspection : ReplaceSubstringInspection() {
-    override fun inspectionText(element: KtDotQualifiedExpression): String = "Replace 'substring' call with indexing operation call"
-    override val defaultFixText: String = "Replace 'substring' call with indexing operation call"
+    override fun inspectionText(element: KtDotQualifiedExpression): String =
+        KotlinBundle.message("replace.substring.call.with.indexing.operation.call")
+
+    override val defaultFixText: String get() = KotlinBundle.message("replace.substring.call.with.indexing.operation.call")
     override val isAlwaysStable: Boolean = true
 
     override fun applyTo(element: KtDotQualifiedExpression, project: Project, editor: Editor?) {

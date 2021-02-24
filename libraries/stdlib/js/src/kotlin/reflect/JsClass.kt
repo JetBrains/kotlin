@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -18,18 +18,6 @@ external interface JsClass<T : Any> {
      */
     val name: String
 }
-
-@Deprecated("Use class literal and extension property `js` instead.", replaceWith = ReplaceWith("T::class.js"), level = DeprecationLevel.ERROR)
-external fun <T : Any> jsClass(): JsClass<T>
-
-@Deprecated("Use class literal and extension property `js` instead.", replaceWith = ReplaceWith("this::class.js"), level = DeprecationLevel.ERROR)
-val <T : Any> T.jsClass: JsClass<T>
-    get() = when (jsTypeOf(this)) {
-        "string" -> js("String")
-        "number" -> js("Number")
-        "boolean" -> js("Boolean")
-        else -> js("Object").getPrototypeOf(this).constructor
-    }
 
 /**
  * Obtains a constructor reference for the given `KClass`.

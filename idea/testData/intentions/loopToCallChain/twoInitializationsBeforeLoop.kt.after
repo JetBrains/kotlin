@@ -5,7 +5,7 @@ import java.util.*
 
 fun foo(list: List<String>): List<Int> {
     val <caret>result = list
-            .filterIndexed { i, s -> s.length > i }
-            .map { it.length }
+        .filterIndexed { i, s -> s.length > i }
+        .map { it.length }
     return result
 }

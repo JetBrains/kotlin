@@ -23,6 +23,7 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.util.Computable
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiJavaModule
+import java.util.concurrent.CopyOnWriteArrayList
 
 class KotlinBinaryClassCache : Disposable {
     private class RequestCache {
@@ -43,8 +44,18 @@ class KotlinBinaryClassCache : Disposable {
     }
 
     private val cache = object : ThreadLocal<RequestCache>() {
+        private val requestCaches = CopyOnWriteArrayList<RequestCache>()
+
         override fun initialValue(): RequestCache {
-            return RequestCache()
+            return RequestCache().also { requestCaches.add(it) }
+        }
+
+        override fun remove() {
+            for (cache in requestCaches) {
+                cache.result = null
+                cache.virtualFile = null
+            }
+            super.remove()
         }
     }
 

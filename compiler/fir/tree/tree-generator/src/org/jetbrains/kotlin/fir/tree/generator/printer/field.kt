@@ -22,23 +22,14 @@ fun SmartPrinter.printField(field: Field, isImplementation: Boolean, override: B
 }
 
 fun SmartPrinter.printFieldWithDefaultInImplementation(field: Field) {
-    val defaultValue = field.defaultValue
+    val defaultValue = field.defaultValueInImplementation
     print("override ")
-    if (field.isLateinit) {
-        print("lateinit ")
-    }
     if (field.isVal) {
         print("val")
     } else {
         print("var")
     }
-    print(" ${field.name}: ${field.mutableType}")
-    if (field.isLateinit) {
-        println()
-        return
-    } else {
-        print(" ")
-    }
+    print(" ${field.name}: ${field.mutableType} ")
     if (field.withGetter) {
         if (field.customSetter != null) {
             println()

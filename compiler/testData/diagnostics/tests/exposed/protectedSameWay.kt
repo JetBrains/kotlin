@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 abstract class Outer {
     protected open class My
     // Both valid: same way protected

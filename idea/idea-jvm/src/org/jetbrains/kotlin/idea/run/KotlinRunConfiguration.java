@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.run;
 import com.intellij.codeInsight.daemon.impl.analysis.JavaModuleGraphUtil;
 import com.intellij.diagnostic.logging.LogConfigurationPanel;
 import com.intellij.execution.*;
+import com.intellij.execution.application.ApplicationConfigurationType;
 import com.intellij.execution.application.BaseJavaApplicationCommandLineState;
 import com.intellij.execution.configuration.EnvironmentVariablesComponent;
 import com.intellij.execution.configurations.*;
@@ -53,6 +54,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration;
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod;
+import org.jetbrains.kotlin.idea.KotlinJvmBundle;
 import org.jetbrains.kotlin.idea.MainFunctionDetector;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.core.FileIndexUtilsKt;
@@ -67,12 +69,38 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import java.util.*;
 
 @SuppressWarnings("deprecation")
-public class KotlinRunConfiguration extends JetRunConfiguration {
+public class KotlinRunConfiguration extends JetRunConfiguration implements InputRedirectAware {
     public String VM_PARAMETERS;
     public String PROGRAM_PARAMETERS;
     public boolean ALTERNATIVE_JRE_PATH_ENABLED;
     public String ALTERNATIVE_JRE_PATH;
     public boolean PASS_PARENT_ENVS = true;
+    public ConfigurationType APPLICATION_CONFIGURATION_TYPE = new ApplicationConfigurationType();
+    public InputRedirectOptions INPUT_REDIRECT_OPTIONS = new InputRedirectOptions() {
+        private boolean redirectInput = false;
+        private String redirectInputPath = null;
+
+        @Override
+        public boolean isRedirectInput() {
+            return redirectInput;
+        }
+
+        @Override
+        public void setRedirectInput(boolean redirectInput) {
+            this.redirectInput = redirectInput;
+        }
+
+        @Nullable
+        @Override
+        public String getRedirectInputPath() {
+            return redirectInputPath;
+        }
+
+        @Override
+        public void setRedirectInputPath(String redirectInputPath) {
+            this.redirectInputPath = redirectInputPath;
+        }
+    };
 
     private Map<String, String> myEnvs = new LinkedHashMap<String, String>();
 
@@ -208,17 +236,20 @@ public class KotlinRunConfiguration extends JetRunConfiguration {
 
         Module module = getConfigurationModule().getModule();
         if (module == null) {
-            throw new RuntimeConfigurationError("Module not specified");
+            throw new RuntimeConfigurationError(KotlinJvmBundle.message("run.configuration.error.no.module"));
         }
         if (StringUtil.isEmpty(MAIN_CLASS_NAME)) {
-            throw new RuntimeConfigurationError("No main class specified");
+            throw new RuntimeConfigurationError(KotlinJvmBundle.message("run.configuration.error.no.main.class"));
         }
         PsiClass psiClass = JavaExecutionUtil.findMainClass(module, MAIN_CLASS_NAME);
         if (psiClass == null) {
-            throw new RuntimeConfigurationWarning("Class '" + MAIN_CLASS_NAME + "' not found in module " + getConfigurationModule().getModuleName());
+            String moduleName = getConfigurationModule().getModuleName();
+            throw new RuntimeConfigurationWarning(
+                    KotlinJvmBundle.message("run.configuration.error.class.not.found", MAIN_CLASS_NAME, moduleName)
+            );
         }
         if (findMainFun(psiClass) == null) {
-            throw new RuntimeConfigurationWarning("The class " + MAIN_CLASS_NAME + " has no main method");
+            throw new RuntimeConfigurationWarning(KotlinJvmBundle.message("run.configuration.error.class.no.main.method", MAIN_CLASS_NAME));
         }
     }
 
@@ -332,6 +363,18 @@ public class KotlinRunConfiguration extends JetRunConfiguration {
         return null;
     }
 
+    @NotNull
+    @Override
+    public ConfigurationType getType() {
+        return APPLICATION_CONFIGURATION_TYPE;
+    }
+
+    @NotNull
+    @Override
+    public InputRedirectOptions getInputRedirectOptions() {
+        return INPUT_REDIRECT_OPTIONS;
+    }
+
     private static class MyJavaCommandLineState extends BaseJavaApplicationCommandLineState<KotlinRunConfiguration> {
         public MyJavaCommandLineState(@NotNull KotlinRunConfiguration configuration, ExecutionEnvironment environment) {
             super(environment, configuration);
@@ -398,9 +441,9 @@ public class KotlinRunConfiguration extends JetRunConfiguration {
             //noinspection ConstantConditions
             FqName classFqName = new FqName(psiClass.getQualifiedName());
             if (psiClass instanceof KtLightClassForSourceDeclaration) {
-                return String.format("Function 'main' not found in class '%s'", classFqName);
+                return KotlinJvmBundle.message("run.configuration.error.main.not.found", classFqName);
             }
-            return String.format("Top-level function 'main' not found in package '%s'", classFqName.parent());
+            return KotlinJvmBundle.message("run.configuration.error.main.not.found.top.level", classFqName.parent());
         }
 
         private static void setupModulePath(JavaParameters params, JavaRunConfigurationModule module) {

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.psi2ir.intermediate
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
@@ -24,7 +25,7 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 
@@ -72,6 +73,7 @@ class FieldPropertyLValue(
     endOffset: Int,
     origin: IrStatementOrigin?,
     val field: IrFieldSymbol,
+    val descriptor: PropertyDescriptor,
     type: IrType,
     callReceiver: CallReceiver,
     superQualifier: IrClassSymbol?
@@ -88,7 +90,7 @@ class FieldPropertyLValue(
                 dispatchReceiverValue?.load(),
                 origin,
                 superQualifier
-            )
+            ).also { context.callToSubstitutedDescriptorMap[it] = descriptor }
         }
 
     override fun store(irExpression: IrExpression) =
@@ -102,7 +104,7 @@ class FieldPropertyLValue(
                 context.irBuiltIns.unitType,
                 origin,
                 superQualifier
-            )
+            ).also { context.callToSubstitutedDescriptorMap[it] = descriptor }
         }
 
     override fun withReceiver(dispatchReceiver: VariableLValue?, extensionReceiver: VariableLValue?): PropertyLValueBase =
@@ -110,6 +112,7 @@ class FieldPropertyLValue(
             context,
             scope, startOffset, endOffset, origin,
             field,
+            descriptor,
             type,
             SimpleCallReceiver(dispatchReceiver, extensionReceiver),
             superQualifier
@@ -123,9 +126,9 @@ class AccessorPropertyLValue(
     endOffset: Int,
     origin: IrStatementOrigin?,
     type: IrType,
-    val getter: IrFunctionSymbol?,
+    val getter: IrSimpleFunctionSymbol?,
     val getterDescriptor: FunctionDescriptor?,
-    val setter: IrFunctionSymbol?,
+    val setter: IrSimpleFunctionSymbol?,
     val setterDescriptor: FunctionDescriptor?,
     val typeArguments: List<IrType>?,
     callReceiver: CallReceiver,
@@ -134,7 +137,7 @@ class AccessorPropertyLValue(
 
     private val typeArgumentsCount = typeArguments?.size ?: 0
 
-    private fun IrMemberAccessExpression.putTypeArguments() {
+    private fun IrMemberAccessExpression<*>.putTypeArguments() {
         typeArguments?.forEachIndexed { index, irType ->
             putTypeArgument(index, irType)
         }

@@ -5,4 +5,5 @@
 // ERROR: Conflicting declarations: value-parameter p4: Any, value-parameter p4: String
 open class Base<T>(p1: Int, private val p2: Int, p3: Any, p4: String, p5: T, p6: Int)
 
-class C(p: Int, p2: Int, p3: String, p4: Any, p5: String, val p6: Int, p1: Int, p4: String) : Base<String>(p1, p2, p3, p4, p5, p6)
+class C(p: Int, p2: Int, p3: String, p4: Any, p5: String, val p6: Int, p1: Int, p4: String) :
+    Base<String>(p1, p2, p3, p4, p5, p6)

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -16,10 +16,7 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStringConcatenation
 import org.jetbrains.kotlin.ir.expressions.impl.IrStringConcatenationImpl
-import org.jetbrains.kotlin.ir.types.isAny
-import org.jetbrains.kotlin.ir.types.isNullableAny
-import org.jetbrains.kotlin.ir.types.isString
-import org.jetbrains.kotlin.ir.types.isStringClassType
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -75,8 +72,8 @@ class FlattenStringConcatenationLowering(val context: CommonBackendContext) : Fi
         // The version for nullable strings has FqName kotlin.plus, the version for non-nullable strings
         // is a member function of kotlin.String (with FqName kotlin.String.plus)
         private val PARENT_NAMES = setOf(
-            KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME,
-            KotlinBuiltIns.FQ_NAMES.string.toSafe()
+            StandardNames.BUILT_INS_PACKAGE_FQ_NAME,
+            StandardNames.FqNames.string.toSafe()
         )
 
         /** @return true if the given expression is a call to [String.plus] */
@@ -111,7 +108,7 @@ class FlattenStringConcatenationLowering(val context: CommonBackendContext) : Fi
 
                 return dispatchReceiverParameter == null
                         && extensionReceiverParameter?.type?.isNullableAny() == true
-                        && fqNameWhenAvailable?.parent() == KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME
+                        && fqNameWhenAvailable?.parent() == StandardNames.BUILT_INS_PACKAGE_FQ_NAME
             }
 
         /** @return true if the given expression is a call to [toString] */
@@ -126,9 +123,13 @@ class FlattenStringConcatenationLowering(val context: CommonBackendContext) : Fi
                 return function.isToString || function.isNullableToString
             }
 
-        /** @return true if the given expression is a [IrStringConcatenation], or an [IrCall] to [toString] or [String.plus]. */
+        /** @return true if the given expression is a call to [Any?.toString] or a call of [toString] on a primitive type. */
+        private val IrCall.isSpecialToStringCall: Boolean
+            get() = isToStringCall && dispatchReceiver?.type?.isPrimitiveType() != false
+
+        /** @return true if the given expression is a [IrStringConcatenation], or an [IrCall] to [String.plus]. */
         private fun isStringConcatenationExpression(expression: IrExpression): Boolean =
-            (expression is IrStringConcatenation) || (expression is IrCall) && (expression.isStringPlusCall || expression.isToStringCall)
+            (expression is IrStringConcatenation) || (expression is IrCall) && expression.isStringPlusCall
 
         /** Recursively collects string concatenation arguments from the given expression. */
         private fun collectStringConcatenationArguments(expression: IrExpression): List<IrExpression> {
@@ -141,7 +142,7 @@ class FlattenStringConcatenationLowering(val context: CommonBackendContext) : Fi
                 }
 
                 override fun visitCall(expression: IrCall) {
-                    if (isStringConcatenationExpression(expression)) {
+                    if (isStringConcatenationExpression(expression) || expression.isToStringCall) {
                         // Recursively collect from call arguments.
                         expression.acceptChildrenVoid(this)
                     } else {
@@ -172,7 +173,7 @@ class FlattenStringConcatenationLowering(val context: CommonBackendContext) : Fi
     override fun visitExpression(expression: IrExpression): IrExpression {
         // Only modify/flatten string concatenation expressions.
         val transformedExpression =
-            if (isStringConcatenationExpression(expression))
+            if (isStringConcatenationExpression(expression) || expression is IrCall && expression.isSpecialToStringCall)
                 expression.run {
                     IrStringConcatenationImpl(
                         startOffset,

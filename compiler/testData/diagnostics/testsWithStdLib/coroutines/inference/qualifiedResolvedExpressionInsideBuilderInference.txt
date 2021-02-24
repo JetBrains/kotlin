@@ -1,0 +1,17 @@
+package
+
+@kotlin.OptIn(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ T> flow(/*0*/ @kotlin.BuilderInference block: suspend FlowCollector<T>.() -> kotlin.Unit): Flow<T>
+public fun test(): kotlin.Unit
+
+public interface Flow</*0*/ out T> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface FlowCollector</*0*/ in T> {
+    public abstract suspend fun emit(/*0*/ value: T): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

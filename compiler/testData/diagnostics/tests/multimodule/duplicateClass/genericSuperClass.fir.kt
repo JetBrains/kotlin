@@ -37,6 +37,6 @@ import p.*
 
 fun test() {
     <!INAPPLICABLE_CANDIDATE!>a<!>(M1().b) // Type arguments do not match
-    c(M1().b) // Type arguments do not match
+    <!INAPPLICABLE_CANDIDATE!>c<!>(M1().b) // Type arguments do not match
     d(M1().b) // Type arguments do match
 }

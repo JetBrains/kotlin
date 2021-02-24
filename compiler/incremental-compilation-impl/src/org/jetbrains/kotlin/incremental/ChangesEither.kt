@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.incremental
 
+import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
 import org.jetbrains.kotlin.name.FqName
 
 internal sealed class ChangesEither {
@@ -24,5 +25,5 @@ internal sealed class ChangesEither {
         val fqNames: Collection<FqName> = emptyList()
     ) : ChangesEither()
 
-    internal class Unknown(val reason: String? = null) : ChangesEither()
+    internal class Unknown(val reason: BuildAttribute) : ChangesEither()
 }

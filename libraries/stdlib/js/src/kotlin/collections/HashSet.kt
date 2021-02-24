@@ -12,9 +12,11 @@ package kotlin.collections
 /**
  * The implementation of the [MutableSet] interface, backed by a [HashMap] instance.
  */
+// Classes that extend HashSet and implement `build()` (freezing) operation
+// have to make sure mutating methods check `checkIsMutable`.
 public actual open class HashSet<E> : AbstractMutableSet<E>, MutableSet<E> {
 
-    private val map: HashMap<E, Any>
+    internal val map: HashMap<E, Any>
 
     /**
      * Constructs a new empty [HashSet].

@@ -15,12 +15,22 @@ class KotlinNativeLibraryNameUtilTest : TestCase() {
     fun testBuildIDELibraryName() {
         assertEquals(
             "Kotlin/Native 1.3.60 - stdlib",
-            buildIDELibraryName("1.3.60", "stdlib", null)
+            buildIDELibraryName("1.3.60", "stdlib", emptyList())
         )
 
         assertEquals(
             "Kotlin/Native 1.3.60-eap-23 - Accelerate [macos_x64]",
-            buildIDELibraryName("1.3.60-eap-23", "Accelerate", "macos_x64")
+            buildIDELibraryName("1.3.60-eap-23", "Accelerate", listOf("macos_x64"))
+        )
+
+        assertEquals(
+            "Kotlin/Native 1.3.60-eap-23 - Accelerate [ios_arm32, ios_arm64, ios_x64]",
+            buildIDELibraryName("1.3.60-eap-23", "Accelerate", listOf("ios_x64", "ios_arm32", "ios_arm64"))
+        )
+
+        assertEquals(
+            "Kotlin/Native 1.3.60-eap-23 - Accelerate [ios_arm32, ios_arm64(*), ios_x64]",
+            buildIDELibraryName("1.3.60-eap-23", "Accelerate", listOf("ios_x64", "ios_arm32", "ios_arm64"), "ios_arm64")
         )
     }
 
@@ -33,6 +43,16 @@ class KotlinNativeLibraryNameUtilTest : TestCase() {
         assertEquals(
             Triple("1.3.60-eap-23", "Accelerate", "macos_x64"),
             parseIDELibraryName("Kotlin/Native 1.3.60-eap-23 - Accelerate [macos_x64]")
+        )
+
+        assertEquals(
+            Triple("1.3.60-eap-23", "Accelerate", "ios_arm32, ios_arm64, ios_x64"),
+            parseIDELibraryName("Kotlin/Native 1.3.60-eap-23 - Accelerate [ios_arm32, ios_arm64, ios_x64]")
+        )
+
+        assertEquals(
+            Triple("1.3.60-eap-23", "Accelerate", "ios_arm32, ios_arm64(*), ios_x64"),
+            parseIDELibraryName("Kotlin/Native 1.3.60-eap-23 - Accelerate [ios_arm32, ios_arm64(*), ios_x64]")
         )
 
         assertNull(parseIDELibraryName("Kotlin/Native - something unexpected"))

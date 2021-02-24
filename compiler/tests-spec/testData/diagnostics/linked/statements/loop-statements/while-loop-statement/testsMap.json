@@ -1,0 +1,56 @@
+{
+  "1": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-253",
+          "casesNumber": 3,
+          "description": "while-loop statement body contains zero statements",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/while-loop-statement/p-1/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        }
+      ]
+    },
+    "neg": {
+      "1": [
+        {
+          "specVersion": "0.1-253",
+          "casesNumber": 2,
+          "description": "condition expression is not a subtype of kotlin.Boolean.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/while-loop-statement/p-3/neg/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary",
+          "helpers": "checkType"
+        }
+      ]
+    }
+  },
+  "3": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-253",
+          "casesNumber": 3,
+          "description": "while-loop statement body contains zero statements",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/while-loop-statement/p-1/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ]
+    },
+    "neg": {
+      "1": [
+        {
+          "specVersion": "0.1-253",
+          "casesNumber": 2,
+          "description": "condition expression is not a subtype of kotlin.Boolean.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/statements/loop-statements/while-loop-statement/p-3/neg/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main",
+          "helpers": "checkType"
+        }
+      ]
+    }
+  }
+}

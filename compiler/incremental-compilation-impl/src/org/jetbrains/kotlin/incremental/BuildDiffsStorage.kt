@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.build.report.ICReporter
 import org.jetbrains.kotlin.name.FqName
 import java.io.File
 import java.io.IOException

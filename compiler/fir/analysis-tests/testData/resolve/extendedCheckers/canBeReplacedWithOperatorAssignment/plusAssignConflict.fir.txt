@@ -1,0 +1,17 @@
+FILE: plusAssignConflict.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final operator fun R|A|.plus(a: R|A|): R|A| {
+        ^plus R|/A.A|()
+    }
+    public final operator fun R|A|.plusAssign(a: R|A|): R|kotlin/Unit| {
+    }
+    public final fun foo(): R|kotlin/Unit| {
+        lvar a1: R|A| = R|/A.A|()
+        lval a2: R|A| = R|/A.A|()
+        R|<local>/a1| = R|<local>/a1|.R|/plus|(R|<local>/a2|)
+    }

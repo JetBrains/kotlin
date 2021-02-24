@@ -21,14 +21,14 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.BlockScope
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionImpl
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitor
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitorWithResult
-import org.jetbrains.kotlin.contracts.description.InvocationKind
+import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.psi.KtElement
 
 class InlinedLocalFunctionDeclarationInstruction(
     element: KtElement,
     body: Pseudocode,
     blockScope: BlockScope,
-    val kind: InvocationKind
+    val kind: EventOccurrencesRange
 ) : LocalFunctionDeclarationInstruction(element, body, blockScope) {
     override fun createCopy(): InstructionImpl = InlinedLocalFunctionDeclarationInstruction(element, body, blockScope, kind)
 

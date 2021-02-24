@@ -1,0 +1,169 @@
+FILE fqName:<root> fileName:/Modality.kt
+  CLASS INTERFACE name:Substitutable modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Substitutable<T of <root>.Substitutable>
+    TYPE_PARAMETER name:T index:0 variance:out superTypes:[<root>.DeclarationDescriptorNonRoot]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS CLASS name:ResolutionPart modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.ResolutionPart
+    CONSTRUCTOR visibility:public <> () returnType:<root>.ResolutionPart [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:ResolutionPart modality:ABSTRACT visibility:public superTypes:[kotlin.Any]'
+    FUN name:process visibility:public modality:ABSTRACT <> ($this:<root>.ResolutionPart, $receiver:<root>.KotlinResolutionCandidate) returnType:kotlin.String
+      $this: VALUE_PARAMETER name:<this> type:<root>.ResolutionPart
+      $receiver: VALUE_PARAMETER name:<this> type:<root>.KotlinResolutionCandidate
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS CLASS name:KotlinResolutionCandidate modality:FINAL visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.KotlinResolutionCandidate
+    CONSTRUCTOR visibility:public <> (resolvedCall:<root>.Atom) returnType:<root>.KotlinResolutionCandidate [primary]
+      VALUE_PARAMETER name:resolvedCall index:0 type:<root>.Atom
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:KotlinResolutionCandidate modality:FINAL visibility:public superTypes:[kotlin.Any]'
+    PROPERTY name:resolvedCall visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:resolvedCall type:<root>.Atom visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'resolvedCall: <root>.Atom declared in <root>.KotlinResolutionCandidate.<init>' type=<root>.Atom origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-resolvedCall> visibility:public modality:FINAL <> ($this:<root>.KotlinResolutionCandidate) returnType:<root>.Atom
+        correspondingProperty: PROPERTY name:resolvedCall visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.KotlinResolutionCandidate
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-resolvedCall> (): <root>.Atom declared in <root>.KotlinResolutionCandidate'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:resolvedCall type:<root>.Atom visibility:private [final]' type=<root>.Atom origin=null
+              receiver: GET_VAR '<this>: <root>.KotlinResolutionCandidate declared in <root>.KotlinResolutionCandidate.<get-resolvedCall>' type=<root>.KotlinResolutionCandidate origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS CLASS name:Atom modality:FINAL visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Atom
+    CONSTRUCTOR visibility:public <> (candidateDescriptor:<root>.CallableDescriptor) returnType:<root>.Atom [primary]
+      VALUE_PARAMETER name:candidateDescriptor index:0 type:<root>.CallableDescriptor
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Atom modality:FINAL visibility:public superTypes:[kotlin.Any]'
+    PROPERTY name:candidateDescriptor visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:candidateDescriptor type:<root>.CallableDescriptor visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'candidateDescriptor: <root>.CallableDescriptor declared in <root>.Atom.<init>' type=<root>.CallableDescriptor origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-candidateDescriptor> visibility:public modality:FINAL <> ($this:<root>.Atom) returnType:<root>.CallableDescriptor
+        correspondingProperty: PROPERTY name:candidateDescriptor visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Atom
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-candidateDescriptor> (): <root>.CallableDescriptor declared in <root>.Atom'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:candidateDescriptor type:<root>.CallableDescriptor visibility:private [final]' type=<root>.CallableDescriptor origin=null
+              receiver: GET_VAR '<this>: <root>.Atom declared in <root>.Atom.<get-candidateDescriptor>' type=<root>.Atom origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS OBJECT name:Owner modality:FINAL visibility:public superTypes:[<root>.ResolutionPart]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Owner
+    CONSTRUCTOR visibility:private <> () returnType:<root>.Owner [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.ResolutionPart'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Owner modality:FINAL visibility:public superTypes:[<root>.ResolutionPart]'
+    FUN name:process visibility:public modality:OPEN <> ($this:<root>.Owner, $receiver:<root>.KotlinResolutionCandidate) returnType:kotlin.String
+      overridden:
+        public abstract fun process (): kotlin.String declared in <root>.ResolutionPart
+      $this: VALUE_PARAMETER name:<this> type:<root>.Owner
+      $receiver: VALUE_PARAMETER name:<this> type:<root>.KotlinResolutionCandidate
+      BLOCK_BODY
+        VAR name:candidateDescriptor type:<root>.CallableDescriptor [val]
+          CALL 'public final fun <get-candidateDescriptor> (): <root>.CallableDescriptor declared in <root>.Atom' type=<root>.CallableDescriptor origin=GET_PROPERTY
+            $this: CALL 'public final fun <get-resolvedCall> (): <root>.Atom declared in <root>.KotlinResolutionCandidate' type=<root>.Atom origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.KotlinResolutionCandidate declared in <root>.Owner.process' type=<root>.KotlinResolutionCandidate origin=null
+        WHEN type=kotlin.Unit origin=IF
+          BRANCH
+            if: WHEN type=kotlin.Boolean origin=ANDAND
+              BRANCH
+                if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=<root>.MemberDescriptor
+                  GET_VAR 'val candidateDescriptor: <root>.CallableDescriptor [val] declared in <root>.Owner.process' type=<root>.CallableDescriptor origin=null
+                then: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+                  $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+                    arg0: CALL 'public abstract fun getModality (): @[FlexibleNullability] <root>.Modality? declared in <root>.MemberDescriptor' type=@[FlexibleNullability] <root>.Modality? origin=GET_PROPERTY
+                      $this: TYPE_OP type=<root>.MemberDescriptor origin=IMPLICIT_CAST typeOperand=<root>.MemberDescriptor
+                        GET_VAR 'val candidateDescriptor: <root>.CallableDescriptor [val] declared in <root>.Owner.process' type=<root>.CallableDescriptor origin=null
+                    arg1: CONST Null type=kotlin.Nothing? value=null
+              BRANCH
+                if: CONST Boolean type=kotlin.Boolean value=true
+                then: CONST Boolean type=kotlin.Boolean value=false
+            then: BLOCK type=kotlin.Unit origin=null
+              RETURN type=kotlin.Nothing from='public open fun process (): kotlin.String declared in <root>.Owner'
+                CONST String type=kotlin.String value="OK"
+        RETURN type=kotlin.Nothing from='public open fun process (): kotlin.String declared in <root>.Owner'
+          CONST String type=kotlin.String value="FAIL"
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.ResolutionPart
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.ResolutionPart
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String [fake_override] declared in <root>.ResolutionPart
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS OBJECT name:Final modality:FINAL visibility:public superTypes:[<root>.Modality]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Final
+    CONSTRUCTOR visibility:private <> () returnType:<root>.Final [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Final modality:FINAL visibility:public superTypes:[<root>.Modality]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.Modality
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.Modality
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String [fake_override] declared in <root>.Modality
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any

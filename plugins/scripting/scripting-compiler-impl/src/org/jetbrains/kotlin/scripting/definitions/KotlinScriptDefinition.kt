@@ -21,7 +21,7 @@ import kotlin.script.templates.standard.ScriptTemplateWithArgs
 // TODO: make deprecated and drop usages where possible
 open class KotlinScriptDefinition(open val template: KClass<out Any>) : UserDataHolderBase() {
 
-    open val name: String = "Kotlin Script"
+    open val name: String = KOTLIN_SCRIPT
 
     // TODO: consider creating separate type (subtype? for kotlin scripts)
     open val fileType: LanguageFileType = KotlinFileType.INSTANCE
@@ -63,6 +63,10 @@ open class KotlinScriptDefinition(open val template: KClass<out Any>) : UserData
     open val targetClassAnnotations: List<Annotation> get() = emptyList()
 
     open val targetMethodAnnotations: List<Annotation> get() = emptyList()
+
+    companion object {
+        val KOTLIN_SCRIPT: String get() = "Kotlin Script"
+    }
 }
 
 object StandardScriptDefinition : KotlinScriptDefinition(ScriptTemplateWithArgs::class)

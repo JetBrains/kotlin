@@ -4,9 +4,10 @@
 
 sealed class Base {
     abstract fun foo(): Int
-    class BaseImpl : Base() {
-        override fun foo(): Int {
-            TODO("Not yet implemented")
-        }
+}
+
+class BaseImpl : Base() {
+    override fun foo(): Int {
+        TODO("Not yet implemented")
     }
 }

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.IrInlineReferenceLocator
+import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.ir.builders.createTmpVariable
 import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.builders.irInt
@@ -18,8 +19,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.load.java.JvmAbi
 
 internal val fakeInliningLocalVariablesLowering = makeIrFilePhase(
@@ -30,11 +30,11 @@ internal val fakeInliningLocalVariablesLowering = makeIrFilePhase(
 
 internal class FakeInliningLocalVariablesLowering(val context: JvmBackendContext) : IrInlineReferenceLocator(context), FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        irFile.acceptVoid(this)
+        irFile.accept(this, null)
     }
 
-    override fun visitFunctionNew(declaration: IrFunction) {
-        declaration.acceptChildrenVoid(this)
+    override fun visitFunction(declaration: IrFunction, data: IrDeclaration?) {
+        super.visitFunction(declaration, data)
         if (declaration.isInline && !declaration.origin.isSynthetic && declaration.body != null) {
             declaration.addFakeInliningLocalVariables()
         }
@@ -57,15 +57,22 @@ internal class FakeInliningLocalVariablesLowering(val context: JvmBackendContext
     }
 
     private fun IrFunction.addFakeLocalVariable(name: String) {
+        val oldBody = body
         context.createIrBuilder(symbol).run {
             body = irBlockBody {
                 // Create temporary variable, but make sure it's origin is `DEFINED` so that
                 // it will materialize in the code.
-                createTmpVariable(irInt(0), name, origin = IrDeclarationOrigin.DEFINED)
-                if (body is IrExpressionBody) {
-                    +irReturn((body as IrExpressionBody).expression)
-                } else {
-                    (body as IrBlockBody).statements.forEach { +it }
+                // Also, do not forget to remove $$forInline suffix, otherwise, IDE will not be able to navigate to inline function.
+                createTmpVariable(irInt(0), name.removeSuffix(FOR_INLINE_SUFFIX), origin = IrDeclarationOrigin.DEFINED)
+                when (oldBody) {
+                    is IrExpressionBody -> {
+                        +irReturn(oldBody.expression)
+                    }
+                    is IrBlockBody ->
+                        oldBody.statements.forEach { +it }
+                    else -> {
+                        throw AssertionError("Unexpected body:\n${this@addFakeLocalVariable.dump()}")
+                    }
                 }
             }
         }

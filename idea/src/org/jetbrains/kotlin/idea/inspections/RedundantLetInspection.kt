@@ -9,12 +9,14 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.replaced
+import org.jetbrains.kotlin.idea.core.util.getLineCount
+import org.jetbrains.kotlin.idea.core.util.isMultiLine
 import org.jetbrains.kotlin.idea.intentions.*
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.lineCount
 import org.jetbrains.kotlin.idea.util.textRangeIn
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
@@ -23,15 +25,16 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.getReferenceTargets
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.types.isNullable
 
 abstract class RedundantLetInspection : AbstractApplicabilityBasedInspection<KtCallExpression>(
     KtCallExpression::class.java
 ) {
-    override fun inspectionText(element: KtCallExpression) = "Redundant `let` call could be removed"
+    override fun inspectionText(element: KtCallExpression) = KotlinBundle.message("redundant.let.call.could.be.removed")
 
     final override fun inspectionHighlightRangeInElement(element: KtCallExpression) = element.calleeExpression?.textRangeIn(element)
 
-    final override val defaultFixText = "Remove `let` call"
+    final override val defaultFixText get() = KotlinBundle.message("remove.let.call")
 
     final override fun isApplicable(element: KtCallExpression): Boolean {
         if (!element.isLetMethodCall()) return false
@@ -144,7 +147,7 @@ private fun KtDotQualifiedExpression.applyTo(element: KtCallExpression) {
 }
 
 private fun deleteCall(element: KtCallExpression) {
-    val parent = element.parent as? KtDotQualifiedExpression
+    val parent = element.parent as? KtQualifiedExpression
     if (parent != null) {
         val replacement = parent.selectorExpression?.takeIf { it != element } ?: parent.receiverExpression
         parent.replace(replacement)
@@ -196,12 +199,20 @@ private fun KtCallExpression.isApplicable(parameterName: String): Boolean = valu
     argumentExpression.isApplicable(parameterName)
 }
 
-private fun KtDotQualifiedExpression.isApplicable(parameterName: String) =
-    !hasLambdaExpression() && getLeftMostReceiverExpression().let { receiver ->
+private fun KtDotQualifiedExpression.isApplicable(parameterName: String): Boolean {
+    val context by lazy { analyze(BodyResolveMode.PARTIAL) }
+    return !hasLambdaExpression() && getLeftMostReceiverExpression().let { receiver ->
         receiver is KtNameReferenceExpression &&
                 receiver.getReferencedName() == parameterName &&
                 !nameUsed(parameterName, except = receiver)
-    } && callExpression?.resolveToCall() !is VariableAsFunctionResolvedCall
+    } && callExpression?.getResolvedCall(context) !is VariableAsFunctionResolvedCall && !hasNullableReceiverExtensionCall(context)
+}
+
+private fun KtDotQualifiedExpression.hasNullableReceiverExtensionCall(context: BindingContext): Boolean {
+    val descriptor = selectorExpression?.getResolvedCall(context)?.resultingDescriptor as? CallableMemberDescriptor ?: return false
+    if (descriptor.extensionReceiverParameter?.type?.isNullable() == true) return true
+    return (KtPsiUtil.deparenthesize(receiverExpression) as? KtDotQualifiedExpression)?.hasNullableReceiverExtensionCall(context) == true
+}
 
 private fun KtDotQualifiedExpression.hasLambdaExpression() = selectorExpression?.anyDescendantOfType<KtLambdaExpression>() ?: false
 
@@ -239,7 +250,7 @@ private fun KtFunctionLiteral.valueParameterReferences(callExpression: KtCallExp
 private fun isSingleLine(element: KtCallExpression): Boolean {
     val qualifiedExpression = element.getQualifiedExpressionForSelector() ?: return true
     var receiver = qualifiedExpression.receiverExpression
-    if (receiver.lineCount() > 1) return false
+    if (receiver.isMultiLine()) return false
     var count = 1
     while (true) {
         if (count > 2) return false

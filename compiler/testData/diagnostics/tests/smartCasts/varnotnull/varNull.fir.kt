@@ -2,5 +2,5 @@
 fun foo(): Int {
     var s: String? = "abc"
     s = null
-    return s.<!UNRESOLVED_REFERENCE!>length<!>
+    return s<!UNSAFE_CALL!>.<!>length
 }

@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.inspections.branchedTransformations
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.inspections.AbstractApplicabilityBasedInspection
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.getSubjectToIntroduce
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.introduceSubject
@@ -30,13 +31,13 @@ class IntroduceWhenSubjectInspection : AbstractApplicabilityBasedInspection<KtWh
 
     override fun inspectionHighlightRangeInElement(element: KtWhenExpression) = element.whenKeyword.textRangeIn(element)
 
-    override fun inspectionText(element: KtWhenExpression) = "'when' with subject should be used"
+    override fun inspectionText(element: KtWhenExpression) = KotlinBundle.message("when.with.subject.should.be.used")
 
-    override val defaultFixText = "Introduce 'when' subject"
+    override val defaultFixText get() = KotlinBundle.message("introduce.when.subject")
 
     override fun fixText(element: KtWhenExpression): String {
         val subject = element.getSubjectToIntroduce() ?: return ""
-        return "Introduce '${subject.text}' as subject of 'when'"
+        return KotlinBundle.message("introduce.0.as.subject.0.when", subject.text)
     }
 
     override fun applyTo(element: KtWhenExpression, project: Project, editor: Editor?) {

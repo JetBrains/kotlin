@@ -32,6 +32,7 @@ import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.actions.NewKotlinFileAction
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
@@ -133,7 +134,15 @@ class ExtractSuperRefactoring(
                 targetSibling.getResolutionScope()
                     .findClassifier(Name.identifier(newClassName), NoLookupLocation.FROM_IDE)
                     ?.let { DescriptorToSourceUtilsIde.getAnyDeclaration(project, it) }
-                    ?.let { conflicts.putValue(it, "Class $newClassName already exists in the target scope") }
+                    ?.let {
+                        conflicts.putValue(
+                            it,
+                            KotlinBundle.message(
+                                "text.class.0.already.exists.in.the.target.scope",
+                                newClassName
+                            )
+                        )
+                    }
             }
 
             val elementsToMove = getElementsToMove(memberInfos, originalClass, isExtractInterface).keys
@@ -239,7 +248,7 @@ class ExtractSuperRefactoring(
             newClass.addAfter(psiFactory.createTypeParameterList(typeParameterListText), newClass.nameIdentifier)
         }
 
-        val targetPackageFqName = (targetParent as? PsiDirectory)?.getFqNameWithImplicitPrefix()?.asString()
+        val targetPackageFqName = (targetParent as? PsiDirectory)?.getFqNameWithImplicitPrefix()?.quoteSegmentsIfNeeded()
 
         val superTypeText = buildString {
             if (!targetPackageFqName.isNullOrEmpty()) {

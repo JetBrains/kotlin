@@ -1,0 +1,20 @@
+package
+
+public fun </*0*/ T> test1(/*0*/ r: java.lang.Runnable, /*1*/ l: LiveData<T>): Observer<T>
+public fun </*0*/ T> test2(/*0*/ r: java.lang.Runnable, /*1*/ o: Observer<T>, /*2*/ l: LiveData<T>): kotlin.Unit
+public fun </*0*/ T> LiveData<T>.observe(/*0*/ a: kotlin.Any, /*1*/ observer: (T) -> kotlin.Unit): Observer<T>
+
+public open class LiveData</*0*/ T : kotlin.Any!> {
+    public constructor LiveData</*0*/ T : kotlin.Any!>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open fun observe(/*0*/ r: java.lang.Runnable!, /*1*/ o: Observer<in T!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Observer</*0*/ K : kotlin.Any!> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract fun onChanged(/*0*/ k: K!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

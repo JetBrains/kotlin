@@ -18,7 +18,7 @@ import java.io.InputStream
 
 class IDEVirtualFileFinder(private val scope: GlobalSearchScope) : VirtualFileFinder() {
     override fun findMetadata(classId: ClassId): InputStream? {
-        val file = findVirtualFileWithHeader(classId, KotlinMetadataFileIndex.KEY) ?: return null
+        val file = findVirtualFileWithHeader(classId.asSingleFqName(), KotlinMetadataFileIndex.KEY) ?: return null
 
         return try {
             file.inputStream
@@ -29,8 +29,8 @@ class IDEVirtualFileFinder(private val scope: GlobalSearchScope) : VirtualFileFi
 
     override fun hasMetadataPackage(fqName: FqName): Boolean = KotlinMetadataFilePackageIndex.hasSomethingInPackage(fqName, scope)
 
-    // TODO: load built-ins metadata from scope
-    override fun findBuiltInsData(packageFqName: FqName): InputStream? = null
+    override fun findBuiltInsData(packageFqName: FqName): InputStream? =
+        findVirtualFileWithHeader(packageFqName, KotlinBuiltInsMetadataIndex.KEY)?.inputStream
 
     init {
         if (scope != GlobalSearchScope.EMPTY_SCOPE && scope.project == null) {
@@ -38,10 +38,11 @@ class IDEVirtualFileFinder(private val scope: GlobalSearchScope) : VirtualFileFi
         }
     }
 
-    override fun findVirtualFileWithHeader(classId: ClassId): VirtualFile? = findVirtualFileWithHeader(classId, KotlinClassFileIndex.KEY)
+    override fun findVirtualFileWithHeader(classId: ClassId): VirtualFile? =
+        findVirtualFileWithHeader(classId.asSingleFqName(), KotlinClassFileIndex.KEY)
 
-    private fun findVirtualFileWithHeader(classId: ClassId, key: ID<FqName, Void>): VirtualFile? =
-        FileBasedIndex.getInstance().getContainingFiles(key, classId.asSingleFqName(), scope).firstOrNull()
+    private fun findVirtualFileWithHeader(fqName: FqName, key: ID<FqName, Void>): VirtualFile? =
+        FileBasedIndex.getInstance().getContainingFiles(key, fqName, scope).firstOrNull()
 
     companion object {
         private val LOG = Logger.getInstance(IDEVirtualFileFinder::class.java)

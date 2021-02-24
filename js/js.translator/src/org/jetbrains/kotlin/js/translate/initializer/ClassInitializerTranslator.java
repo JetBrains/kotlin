@@ -49,10 +49,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.*;
 import static org.jetbrains.kotlin.js.translate.utils.FunctionBodyTranslator.setDefaultValueForArguments;
@@ -232,13 +229,13 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
                 }
                 else {
                     for (ValueParameterDescriptor parameter : superDescriptor.getValueParameters()) {
-                        JsName parameterName = context.getNameForDescriptor(parameter);
+                        JsName parameterName = JsScope.declareTemporaryName(parameter.getName().asString());
                         arguments.add(parameterName.makeRef());
                         initializer.getParameters().add(new JsParameter(parameterName));
                     }
                 }
 
-                if (superDescriptor.isPrimary()) {
+                if (superDescriptor.isPrimary() || superDescriptor.getConstructedClass().isExternal()) {
                     addCallToSuperMethod(arguments, initializer, superCall.getCall().getCallElement());
                 }
                 else {

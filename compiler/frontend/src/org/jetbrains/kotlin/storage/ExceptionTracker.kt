@@ -40,7 +40,7 @@ open class ExceptionTracker : ModificationTracker, LockBasedStorageManager.Excep
 
 object CacheResetOnProcessCanceled {
     private const val PROPERTY = "kotlin.internal.cacheResetOnProcessCanceled"
-    private const val DEFAULT_VALUE = true
+    private const val DEFAULT_VALUE = false
 
     var enabled: Boolean
         get() = PropertiesComponent.getInstance()?.getBoolean(PROPERTY, DEFAULT_VALUE) ?: DEFAULT_VALUE

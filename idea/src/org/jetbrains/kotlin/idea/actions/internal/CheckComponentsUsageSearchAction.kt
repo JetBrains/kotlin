@@ -18,6 +18,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileVisitor
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.searches.ReferencesSearch
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.search.usagesSearch.ExpressionsOfTypeProcessor
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtClass
@@ -34,7 +35,7 @@ class CheckComponentsUsageSearchAction : AnAction() {
             {
                 runReadAction { process(selectedKotlinFiles, project) }
             },
-            "Checking Data Classes",
+            KotlinBundle.message("checking.data.classes"),
             true,
             project
         )
@@ -49,7 +50,7 @@ class CheckComponentsUsageSearchAction : AnAction() {
 
         val progressIndicator = ProgressManager.getInstance().progressIndicator
         for ((i, dataClass) in dataClasses.withIndex()) {
-            progressIndicator?.text = "Checking data class ${i + 1} of ${dataClasses.size}..."
+            progressIndicator?.text = KotlinBundle.message("checking.data.class.0.of.1", i + 1, dataClasses.size)
             progressIndicator?.text2 = dataClass.fqName?.asString() ?: ""
 
             val parameter = dataClass.primaryConstructor?.valueParameters?.firstOrNull()
@@ -75,9 +76,13 @@ class CheckComponentsUsageSearchAction : AnAction() {
                         SwingUtilities.invokeLater {
                             Messages.showInfoMessage(
                                 project,
-                                "Difference found for data class ${dataClass.fqName
-                                    ?.asString()}. Found $smartRefsCount usage(s) but $goldRefsCount expected",
-                                "Error"
+                                KotlinBundle.message(
+                                    "difference.found.for.data.class.0.found.1.2",
+                                    dataClass.fqName?.asString().toString(),
+                                    smartRefsCount,
+                                    goldRefsCount
+                                ),
+                                KotlinBundle.message("title.error")
                             )
                         }
                         return
@@ -91,7 +96,11 @@ class CheckComponentsUsageSearchAction : AnAction() {
         }
 
         SwingUtilities.invokeLater {
-            Messages.showInfoMessage(project, "Analyzed ${dataClasses.size} classes. No difference found.", "Success")
+            Messages.showInfoMessage(
+                project,
+                KotlinBundle.message("analyzed.0.classes.no.difference.found", dataClasses.size),
+                KotlinBundle.message("title.success")
+            )
         }
     }
 

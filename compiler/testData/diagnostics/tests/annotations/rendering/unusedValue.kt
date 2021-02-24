@@ -8,5 +8,5 @@ annotation class A
 fun test() {
     @A
     var b: @A Int = 0
-    <!UNUSED_VALUE("15", "var b: Int defined in test")!>b =<!> 15
+    <!UNUSED_VALUE("15; var b: Int defined in test")!>b =<!> 15
 }

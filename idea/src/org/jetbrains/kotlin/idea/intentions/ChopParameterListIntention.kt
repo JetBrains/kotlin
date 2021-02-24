@@ -1,37 +1,34 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.intentions
 
+import com.intellij.application.options.CodeStyle
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.codeStyle.CodeStyleManager
-import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.codeStyle.CommonCodeStyleSettings
+import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.formatter.kotlinCommonSettings
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
+import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 abstract class AbstractChopListIntention<TList : KtElement, TElement : KtElement>(
-    private val listClass: Class<TList>,
+    listClass: Class<TList>,
     private val elementClass: Class<TElement>,
-    text: String
-) : SelfTargetingOffsetIndependentIntention<TList>(listClass, text) {
+    textGetter: () -> String
+) : SelfTargetingOffsetIndependentIntention<TList>(listClass, textGetter) {
+
+    open fun leftParOnNewLine(commonCodeStyleSettings: CommonCodeStyleSettings): Boolean = false
+
+    open fun rightParOnNewLine(commonCodeStyleSettings: CommonCodeStyleSettings): Boolean = false
 
     override fun isApplicableTo(element: TList): Boolean {
         val elements = element.elements()
@@ -42,15 +39,21 @@ abstract class AbstractChopListIntention<TList : KtElement, TElement : KtElement
 
     override fun applyTo(element: TList, editor: Editor?) {
         val project = element.project
-        val document = editor!!.document
-        val startOffset = element.startOffset
+        val document = editor?.document ?: return
+        val pointer = element.createSmartPointer()
+
+        val commonCodeStyleSettings = CodeStyle.getSettings(project).kotlinCommonSettings
+        val leftParOnNewLine = leftParOnNewLine(commonCodeStyleSettings)
+        val rightParOnNewLine = rightParOnNewLine(commonCodeStyleSettings)
 
         val elements = element.elements()
-        if (!hasLineBreakAfter(elements.last())) {
+        if (rightParOnNewLine && !hasLineBreakAfter(elements.last())) {
             element.allChildren.lastOrNull { it.node.elementType == KtTokens.RPAR }?.startOffset?.let { document.insertString(it, "\n") }
         }
 
-        for (e in elements.asReversed()) {
+        val maxIndex = elements.size - 1
+        for ((index, e) in elements.asReversed().withIndex()) {
+            if (index == maxIndex && !leftParOnNewLine) break
             if (!hasLineBreakBefore(e)) {
                 document.insertString(e.startOffset, "\n")
             }
@@ -58,57 +61,58 @@ abstract class AbstractChopListIntention<TList : KtElement, TElement : KtElement
 
         val documentManager = PsiDocumentManager.getInstance(project)
         documentManager.commitDocument(document)
-        val psiFile = documentManager.getPsiFile(document) ?: return
-        val newList = PsiTreeUtil.getParentOfType(psiFile.findElementAt(startOffset) ?: return, listClass) ?: return
-        CodeStyleManager.getInstance(project).adjustLineIndent(psiFile, newList.textRange)
+        pointer.element?.let { CodeStyleManager.getInstance(project).reformat(it) }
     }
 
-    protected fun hasLineBreakAfter(element: TElement): Boolean {
-        return nextBreak(element) != null
-    }
+    protected fun hasLineBreakAfter(element: TElement): Boolean = nextBreak(element) != null
 
-    protected fun nextBreak(element: TElement): PsiWhiteSpace? {
-        return element
-            .siblings(withItself = false)
-            .takeWhile { !elementClass.isInstance(it) }
-            .firstOrNull { it is PsiWhiteSpace && it.textContains('\n') } as? PsiWhiteSpace
-    }
+    protected fun nextBreak(element: TElement): PsiWhiteSpace? = element.siblings(withItself = false)
+        .takeWhile { !elementClass.isInstance(it) }
+        .firstOrNull { it is PsiWhiteSpace && it.textContains('\n') } as? PsiWhiteSpace
 
-    protected fun hasLineBreakBefore(element: TElement): Boolean {
-        return prevBreak(element) != null
-    }
+    protected fun hasLineBreakBefore(element: TElement): Boolean = prevBreak(element) != null
 
-    protected fun prevBreak(element: TElement): PsiWhiteSpace? {
-        return element
-            .siblings(withItself = false, forward = false)
-            .takeWhile { !elementClass.isInstance(it) }
-            .firstOrNull { it is PsiWhiteSpace && it.textContains('\n') } as? PsiWhiteSpace
-    }
+    protected fun prevBreak(element: TElement): PsiWhiteSpace? = element.siblings(withItself = false, forward = false)
+        .takeWhile { !elementClass.isInstance(it) }
+        .firstOrNull { it is PsiWhiteSpace && it.textContains('\n') } as? PsiWhiteSpace
 
-    protected fun TList.elements(): List<TElement> {
-        return allChildren
-            .filter { elementClass.isInstance(it) }
-            .map {
-                @Suppress("UNCHECKED_CAST")
-                it as TElement
-            }
-            .toList()
-    }
+    protected fun TList.elements(): List<TElement> = allChildren.filter { elementClass.isInstance(it) }
+        .map {
+            @Suppress("UNCHECKED_CAST")
+            it as TElement
+        }
+        .toList()
 }
 
 class ChopParameterListIntention : AbstractChopListIntention<KtParameterList, KtParameter>(
     KtParameterList::class.java,
     KtParameter::class.java,
-    "Put parameters on separate lines"
+    KotlinBundle.lazyMessage("put.parameters.on.separate.lines")
 ) {
     override fun isApplicableTo(element: KtParameterList): Boolean {
         if (element.parent is KtFunctionLiteral) return false
         return super.isApplicableTo(element)
+    }
+
+    override fun leftParOnNewLine(commonCodeStyleSettings: CommonCodeStyleSettings): Boolean {
+        return commonCodeStyleSettings.METHOD_PARAMETERS_LPAREN_ON_NEXT_LINE
+    }
+
+    override fun rightParOnNewLine(commonCodeStyleSettings: CommonCodeStyleSettings): Boolean {
+        return commonCodeStyleSettings.METHOD_PARAMETERS_RPAREN_ON_NEXT_LINE
     }
 }
 
 class ChopArgumentListIntention : AbstractChopListIntention<KtValueArgumentList, KtValueArgument>(
     KtValueArgumentList::class.java,
     KtValueArgument::class.java,
-    "Put arguments on separate lines"
-)
+    KotlinBundle.lazyMessage("put.arguments.on.separate.lines")
+) {
+    override fun leftParOnNewLine(commonCodeStyleSettings: CommonCodeStyleSettings): Boolean {
+        return commonCodeStyleSettings.CALL_PARAMETERS_LPAREN_ON_NEXT_LINE
+    }
+
+    override fun rightParOnNewLine(commonCodeStyleSettings: CommonCodeStyleSettings): Boolean {
+        return commonCodeStyleSettings.CALL_PARAMETERS_RPAREN_ON_NEXT_LINE
+    }
+}

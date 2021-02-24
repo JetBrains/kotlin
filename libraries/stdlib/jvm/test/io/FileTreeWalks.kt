@@ -16,7 +16,7 @@ class FileTreeWalkTest {
         val referenceFilenames =
                 listOf("1", "1/2", "1/3", "1/3/4.txt", "1/3/5.txt", "6", "7.txt", "8", "8/9.txt")
         fun createTestFiles(): File {
-            val basedir = createTempDir()
+            val basedir = @Suppress("DEPRECATION") createTempDir()
             for (name in referenceFilenames) {
                 val file = basedir.resolve(name)
                 if (file.extension.isEmpty())
@@ -52,7 +52,7 @@ class FileTreeWalkTest {
     }
 
     @Test fun singleFile() {
-        val testFile = createTempFile()
+        val testFile = @Suppress("DEPRECATION") createTempFile()
         val nonExistantFile = testFile.resolve("foo")
         try {
             for (walk in listOf(File::walkTopDown, File::walkBottomUp)) {
@@ -437,6 +437,7 @@ class FileTreeWalkTest {
         }
     }
 
+    @Suppress("DEPRECATION")
     @Test fun streamFileTree() {
         val dir = createTempDir()
         try {

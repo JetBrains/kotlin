@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 object A {
     val iii = 42
 }

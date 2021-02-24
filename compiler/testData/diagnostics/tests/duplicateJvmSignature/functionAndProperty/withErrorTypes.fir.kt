@@ -1,4 +1,4 @@
 interface T {
-    val x: ErrorType
-    fun getX(): ErrorType1
+    val x: <!UNRESOLVED_REFERENCE!>ErrorType<!>
+    fun getX(): <!UNRESOLVED_REFERENCE!>ErrorType1<!>
 }

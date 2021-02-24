@@ -1,3 +1,4 @@
+
 open class A {
     class B : A() {
         val a = "FAIL"

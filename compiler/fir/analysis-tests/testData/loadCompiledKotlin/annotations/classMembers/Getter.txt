@@ -1,0 +1,12 @@
+public final annotation class Anno : R|kotlin/Annotation| {
+    public constructor(): R|test/Anno|
+
+}
+
+public final class Class : R|kotlin/Any| {
+    public final val property: R|kotlin/Int|
+        @R|test/Anno|() public get(): R|kotlin/Int|
+
+    public constructor(): R|test/Class|
+
+}

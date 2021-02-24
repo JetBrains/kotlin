@@ -10,12 +10,12 @@ import org.jetbrains.kotlin.spec.utils.SpecTestCasesSet
 import org.jetbrains.kotlin.spec.utils.SpecTestInfoElementType
 import org.jetbrains.kotlin.spec.utils.TestArea
 import org.jetbrains.kotlin.spec.utils.TestType
-import org.jetbrains.kotlin.spec.utils.parsers.LinkedSpecTestPatterns.placePattern
-import org.jetbrains.kotlin.spec.utils.parsers.LinkedSpecTestPatterns.relevantPlacesPattern
+import org.jetbrains.kotlin.spec.utils.parsers.CommonParser.splitByPathSeparator
 import org.jetbrains.kotlin.spec.utils.parsers.CommonParser.withSpaces
 import org.jetbrains.kotlin.spec.utils.parsers.CommonParser.withUnderscores
-import org.jetbrains.kotlin.spec.utils.parsers.CommonParser.splitByPathSeparator
 import org.jetbrains.kotlin.spec.utils.parsers.CommonPatterns.ls
+import org.jetbrains.kotlin.spec.utils.parsers.LinkedSpecTestPatterns.mainLinkPattern
+import org.jetbrains.kotlin.spec.utils.parsers.LinkedSpecTestPatterns.relevantLinksPattern
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -24,9 +24,10 @@ enum class LinkedSpecTestFileInfoElementType(
     override val required: Boolean = false
 ) : SpecTestInfoElementType {
     SPEC_VERSION(required = true),
-    PLACE(valuePattern = placePattern, required = true),
-    RELEVANT_PLACES(valuePattern = relevantPlacesPattern),
-    UNSPECIFIED_BEHAVIOR
+    MAIN_LINK(valuePattern = mainLinkPattern),
+    PRIMARY_LINKS(valuePattern = relevantLinksPattern),
+    SECONDARY_LINKS(valuePattern = relevantLinksPattern),
+    UNSPECIFIED_BEHAVIOR;
 }
 
 data class SpecPlace(
@@ -39,8 +40,9 @@ class LinkedSpecTest(
     val specVersion: String,
     testArea: TestArea,
     testType: TestType,
-    val place: SpecPlace,
-    val relevantPlaces: List<SpecPlace>?,
+    val mainLink: SpecPlace?,
+    val primaryLinks: Set<SpecPlace>?,
+    val secondaryLinks: Set<SpecPlace>?,
     testNumber: Int,
     description: String,
     cases: SpecTestCasesSet,
@@ -49,13 +51,25 @@ class LinkedSpecTest(
     issues: Set<String>,
     helpers: Set<String>?,
     exception: TestsExceptionType?
-) : AbstractSpecTest(testArea, testType, place.sections, testNumber, description, cases, unexpectedBehavior, issues, helpers, exception) {
+) : AbstractSpecTest(
+    testArea,
+    testType,
+    mainLink?.sections ?: listOf(),
+    testNumber,
+    description,
+    cases,
+    unexpectedBehavior,
+    issues,
+    helpers,
+    exception
+) {
+
     override fun checkPathConsistency(pathMatcher: Matcher) =
         testArea == TestArea.valueOf(pathMatcher.group("testArea").withUnderscores())
                 && testType == TestType.fromValue(pathMatcher.group("testType"))!!
                 && sections == pathMatcher.group("sections").splitByPathSeparator()
-                && place.paragraphNumber == pathMatcher.group("paragraphNumber").toInt()
-                && place.sentenceNumber == pathMatcher.group("sentenceNumber").toInt()
+                && mainLink?.paragraphNumber == pathMatcher.group("paragraphNumber").toInt()
+                && mainLink.sentenceNumber == pathMatcher.group("sentenceNumber").toInt()
                 && testNumber == pathMatcher.group("testNumber").toInt()
 
     private fun getUnspecifiedBehaviourText(): String? {
@@ -77,11 +91,19 @@ class LinkedSpecTest(
         super.getUnexpectedBehaviourText()?.let { append(it + ls) }
         append("${testArea.name.withSpaces()} $testType SPEC TEST (${testType.toString().withSpaces()})$ls")
         append("SPEC VERSION: $specVersion$ls")
-        append("SPEC PLACE: ${sections.joinToString()} -> paragraph: ${place.paragraphNumber} -> sentence: ${place.sentenceNumber}$ls")
-        relevantPlaces?.let { append("OTHER RELEVANT SPEC PLACES:${it.joinToString { "$ls\t${sections.joinToString()} -> paragraph: ${place.paragraphNumber} -> sentence: ${place.sentenceNumber}" }}$ls") }
+        mainLink?.let { append("MAIN LINK: ${sections.joinToString()} -> paragraph: ${mainLink.paragraphNumber} -> sentence: ${mainLink.sentenceNumber}$ls") }
+        primaryLinks?.let { append("PRIMARY LINKS: ${primaryLinks.buildToString()}$ls") }
+        secondaryLinks?.let { append("SECONDARY LINKS: ${secondaryLinks.buildToString()}$ls") }
         append("NUMBER: $testNumber$ls")
         append("TEST CASES: ${cases.byNumbers.size.coerceAtLeast(1)}$ls")
         append("DESCRIPTION: $description$ls")
         super.getIssuesText()?.let { append(it + ls) }
     }
+
+    private fun Set<SpecPlace>.buildToString(): String = buildString {
+        this@buildToString.forEach {
+            append("${sections.joinToString()} -> paragraph: ${it.paragraphNumber} -> sentence: ${it.sentenceNumber}$ls")
+        }
+    }
+
 }

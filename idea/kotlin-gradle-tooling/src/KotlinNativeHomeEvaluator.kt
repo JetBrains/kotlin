@@ -9,6 +9,7 @@ import org.gradle.api.Project
 
 // KT-29613, KT-29783
 object KotlinNativeHomeEvaluator {
+    // this property is defined in org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinNativeTargetPreset
     private const val KOTLIN_NATIVE_HOME_PRIVATE_PROPERTY = "konanHome"
 
     private const val FALLBACK_ACCESSOR_CLASS = "org.jetbrains.kotlin.compilerRunner.KotlinNativeToolRunnerKt"

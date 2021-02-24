@@ -11,6 +11,7 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -27,7 +28,7 @@ class ConvertNaNEqualityInspection : AbstractKotlinInspection() {
                 }
                 holder.registerProblem(
                     expression,
-                    "Equality check with NaN should be replaced with 'isNaN()'",
+                    KotlinBundle.message("equality.check.with.nan.should.be.replaced.with.isnan"),
                     ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                     ConvertNaNEqualityQuickFix(inverted)
                 )
@@ -37,7 +38,7 @@ class ConvertNaNEqualityInspection : AbstractKotlinInspection() {
 }
 
 private class ConvertNaNEqualityQuickFix(val inverted: Boolean) : LocalQuickFix {
-    override fun getName() = "Replace with 'isNaN()'"
+    override fun getName() = KotlinBundle.message("convert.na.n.equality.quick.fix.text")
 
     override fun getFamilyName() = name
 

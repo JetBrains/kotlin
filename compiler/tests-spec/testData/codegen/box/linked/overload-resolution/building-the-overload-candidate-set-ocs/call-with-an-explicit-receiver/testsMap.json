@@ -1,0 +1,96 @@
+{
+  "6": {
+    "pos": {
+      "4": [
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 0,
+          "description": "Extension callables, declared in the package scope, for for-loop operator iterator call",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 0,
+          "description": "Star-imported extension callables for for-loop operator iterator call",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 0,
+          "description": "Extension callables, declared in the package scope, for delegated properties call",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.9.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ],
+      "1": [
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 0,
+          "description": "Non-extension member callables for for-loop operator iterator call",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 0,
+          "description": "Non-extension member callables for delegated properties call",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.6.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ],
+      "5": [
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 0,
+          "description": "Star-imported extension callables for delegated properties call",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.10.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ],
+      "3": [
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 0,
+          "description": "Explicitly imported extension callables for delegated properties call",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.8.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 0,
+          "description": "Explicitly imported extension callables for for-loop operator iterator call",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ],
+      "2": [
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 0,
+          "description": "Local extension callables for for-loop operator iterator call",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 0,
+          "description": "local extension callables for delegated properties call",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.7.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ]
+    }
+  }
+}

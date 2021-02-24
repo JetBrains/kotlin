@@ -1,5 +1,6 @@
 @kotlin.Metadata
 public class A {
+    // source: 'stubsFromSuperclass.kt'
     public method <init>(): void
     public method add(p0: java.lang.Object): boolean
     public method addAll(p0: java.util.Collection): boolean
@@ -12,18 +13,20 @@ public class A {
     public method remove(p0: java.lang.Object): boolean
     public method removeAll(p0: java.util.Collection): boolean
     public method retainAll(p0: java.util.Collection): boolean
-    public final method size(): int
+    public bridge final method size(): int
     public method toArray(): java.lang.Object[]
     public method toArray(p0: java.lang.Object[]): java.lang.Object[]
 }
 
 @kotlin.Metadata
 public class B {
+    // source: 'stubsFromSuperclass.kt'
     public method <init>(): void
 }
 
 @kotlin.Metadata
 public final class C {
+    // source: 'stubsFromSuperclass.kt'
     public method <init>(): void
     public method add(p0: int, p1: java.lang.Object): void
     public method addAll(p0: int, p1: java.util.Collection): boolean

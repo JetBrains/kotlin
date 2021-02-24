@@ -1,7 +1,5 @@
 package soInlineOperatorIterator
 
-// TODO: Test with current bad behaviour of KT-14296
-
 fun main(args: Array<String>) {
     //Breakpoint!
     val list = listOf("a", "b", "c")

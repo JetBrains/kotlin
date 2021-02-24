@@ -347,7 +347,13 @@ class GenericCandidateResolver(
         }
         val resultingSystem = constraintSystem.build()
         resolvedCall.setConstraintSystem(resultingSystem)
-        resolvedCall.setResultingSubstitutor(resultingSystem.resultingSubstitutor)
+
+        val isNewInferenceEnabled = languageVersionSettings.supportsFeature(LanguageFeature.NewInference)
+        val resultingSubstitutor = if (isNewInferenceEnabled) {
+            resultingSystem.resultingSubstitutor.replaceWithContravariantApproximatingSubstitution()
+        } else resultingSystem.resultingSubstitutor
+
+        resolvedCall.setResultingSubstitutor(resultingSubstitutor)
     }
 
     // See KT-5385

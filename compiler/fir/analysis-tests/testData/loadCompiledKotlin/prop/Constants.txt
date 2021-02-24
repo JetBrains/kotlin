@@ -1,0 +1,45 @@
+public final const val MAX_HIGH_SURROGATE: R|kotlin/Char| = Char(56319)
+    public get(): R|kotlin/Char|
+
+public final const val b: R|kotlin/Byte| = Byte(100)
+    public get(): R|kotlin/Byte|
+
+public final const val b1: R|kotlin/Byte| = Byte(1)
+    public get(): R|kotlin/Byte|
+
+public final const val bb: R|kotlin/Boolean| = Boolean(true)
+    public get(): R|kotlin/Boolean|
+
+public final const val c: R|kotlin/Char| = Char(960)
+    public get(): R|kotlin/Char|
+
+public final const val d: R|kotlin/Double| = Double(3.14)
+    public get(): R|kotlin/Double|
+
+public final const val f: R|kotlin/Float| = Float(3.14)
+    public get(): R|kotlin/Float|
+
+public final const val i: R|kotlin/Int| = Int(2000000)
+    public get(): R|kotlin/Int|
+
+public final const val i1: R|kotlin/Short| = Short(1)
+    public get(): R|kotlin/Short|
+
+public final const val l: R|kotlin/Long| = Long(2000000000000)
+    public get(): R|kotlin/Long|
+
+public final const val l1: R|kotlin/Long| = Long(1)
+    public get(): R|kotlin/Long|
+
+public final const val nl: R|kotlin/Char| = Char(10)
+    public get(): R|kotlin/Char|
+
+public final const val s: R|kotlin/Short| = Short(20000)
+    public get(): R|kotlin/Short|
+
+public final const val s1: R|kotlin/Short| = Short(1)
+    public get(): R|kotlin/Short|
+
+public final const val str: R|kotlin/String| = String(:))
+    public get(): R|kotlin/String|
+

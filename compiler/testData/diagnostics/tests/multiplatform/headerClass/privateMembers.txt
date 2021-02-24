@@ -16,7 +16,6 @@ public final expect class A {
     }
 }
 
-
 // -- Module: <m1-jvm> --
 package
 
@@ -36,3 +35,4 @@ public final actual class A {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 }
+

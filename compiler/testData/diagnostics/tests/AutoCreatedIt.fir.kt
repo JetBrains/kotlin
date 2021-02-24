@@ -10,7 +10,7 @@ fun text() {
     bar1 {1}
     bar1 {it + 1}
 
-    bar2 {}
+    <!INAPPLICABLE_CANDIDATE!>bar2<!> {}
     bar2 {1}
     bar2 {<!UNRESOLVED_REFERENCE!>it<!>}
     <!INAPPLICABLE_CANDIDATE!>bar2<!> {it -> it}
@@ -29,5 +29,5 @@ infix fun String.on(predicate :  (s : URI) -> Boolean) : URI {
 }
 
 class URI(val body : Any) {
-    <!INAPPLICABLE_INFIX_MODIFIER!>infix fun to(dest : String) {}<!>
+    infix fun to(dest : String) {}
 }

@@ -88,7 +88,7 @@ fun testRepeatOnVal(x: Int) {
         // reassignment instead of captured val initialization
         y = 42
     }
-    println(y)
+    println(<!UNINITIALIZED_VARIABLE!>y<!>)
 }
 
 fun testRepeatOnVar(x: Int) {
@@ -98,7 +98,7 @@ fun testRepeatOnVar(x: Int) {
         y = 42
     }
     // but here we still unsure if 'y' was initialized
-    println(y)
+    println(<!UNINITIALIZED_VARIABLE!>y<!>)
 }
 
 fun testRepeatOnInitializedVar(x: Int) {

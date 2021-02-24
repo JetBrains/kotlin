@@ -1,33 +1,36 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import java.util.*
 
-class ConvertBinaryExpressionWithDemorgansLawIntention :
-    SelfTargetingOffsetIndependentIntention<KtBinaryExpression>(KtBinaryExpression::class.java, "DeMorgan Law") {
+class ConvertBinaryExpressionWithDemorgansLawIntention : SelfTargetingOffsetIndependentIntention<KtBinaryExpression>(
+    KtBinaryExpression::class.java,
+    KotlinBundle.lazyMessage("demorgan.law")
+) {
     override fun isApplicableTo(element: KtBinaryExpression): Boolean {
         val expr = element.parentsWithSelf.takeWhile { it is KtBinaryExpression }.last() as KtBinaryExpression
 
-        text = when (expr.operationToken) {
-            KtTokens.ANDAND -> "Replace '&&' with '||'"
-            KtTokens.OROR -> "Replace '||' with '&&'"
-            else -> return false
-        }
+        setTextGetter(
+            when (expr.operationToken) {
+                KtTokens.ANDAND -> KotlinBundle.lazyMessage("replace.with2")
+                KtTokens.OROR -> KotlinBundle.lazyMessage("replace.with")
+                else -> return false
+            }
+        )
 
         return splitBooleanSequence(expr) != null
     }
 
-    override fun applyTo(element: KtBinaryExpression, editor: Editor?) {
-        applyTo(element)
-    }
+    override fun applyTo(element: KtBinaryExpression, editor: Editor?) = applyTo(element)
 
     fun applyTo(element: KtBinaryExpression) {
         val expr = element.parentsWithSelf.takeWhile { it is KtBinaryExpression }.last() as KtBinaryExpression
@@ -38,7 +41,7 @@ class ConvertBinaryExpressionWithDemorgansLawIntention :
             else -> throw IllegalArgumentException()
         }
 
-        val operands = splitBooleanSequence(expr)!!.asReversed()
+        val operands = splitBooleanSequence(expr)?.asReversed() ?: return
 
         val newExpression = KtPsiFactory(expr).buildExpression {
             appendExpressions(operands.map { it.negate() }, separator = operatorText)

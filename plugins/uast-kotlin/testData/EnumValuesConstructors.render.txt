@@ -1,9 +1,9 @@
 public enum Style {
+    @org.jetbrains.annotations.Nullable private final var value: java.lang.String
     @null SYSTEM("system")
     @null USER("user")
     @null INTERNAL("internal")
     @null UNKNOWN(null)
-    @org.jetbrains.annotations.Nullable private final var value: java.lang.String
     public final fun getValue() : java.lang.String = UastEmptyExpression
     private fun Style(@org.jetbrains.annotations.Nullable value: java.lang.String) = UastEmptyExpression
 }

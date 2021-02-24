@@ -7,7 +7,7 @@ class Outer {
 
 typealias OI = Outer.Inner
 
-fun test1(x: Outer) = x.<!UNRESOLVED_REFERENCE!>OI<!>()
+fun test1(x: Outer) = x.OI()
 
 
 class Generic<T> {
@@ -17,8 +17,8 @@ class Generic<T> {
 typealias GI<T> = Generic<T>.Inner
 typealias GIntI = Generic<Int>.Inner
 
-fun test2(x: Generic<Int>) = x.<!UNRESOLVED_REFERENCE!>GI<!>()
-fun <T> test3(x: Generic<T>) = x.<!UNRESOLVED_REFERENCE!>GI<!>()
-fun <T> test4(x: Generic<List<T>>) = x.<!UNRESOLVED_REFERENCE!>GI<!>()
-fun <T> test5(x: Generic<T>) = x.<!UNRESOLVED_REFERENCE!>GIntI<!>()
+fun test2(x: Generic<Int>) = x.GI()
+fun <T> test3(x: Generic<T>) = x.GI()
+fun <T> test4(x: Generic<List<T>>) = x.GI()
+fun <T> test5(x: Generic<T>) = x.<!INAPPLICABLE_CANDIDATE!>GIntI<!>()
 fun Generic<Int>.test6() = GIntI()

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 fun Any?.foo() {}
 
 fun test(a: Any?) {

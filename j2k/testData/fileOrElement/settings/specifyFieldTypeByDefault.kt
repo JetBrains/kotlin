@@ -1,4 +1,4 @@
-// !specifyFieldTypeByDefault: true
+// !SPECIFY_FIELD_TYPE_BY_DEFAULT: true
 import java.util.*
 
 internal class A {

@@ -6,5 +6,5 @@ enum class A(val c: Int) {
 
 fun createA(): A {
     // Error should be here!
-    return <!INAPPLICABLE_CANDIDATE!>A<!>(10)
+    return <!HIDDEN!>A<!>(10)
 }

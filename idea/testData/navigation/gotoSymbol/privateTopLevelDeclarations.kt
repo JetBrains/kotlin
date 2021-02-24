@@ -15,5 +15,4 @@ private val test = 4
 // REF: (for Int in privateTopLevelDeclarations.kt in foo.bar).test
 // REF: (for Int in privateTopLevelDeclarations.kt in foo.bar).test()
 // REF: (privateTopLevelDeclarations.kt in foo.bar).test
-// REF: (privateTopLevelDeclarations.kt in foo.bar).test
 // REF: (privateTopLevelDeclarations.kt in foo.bar).test()

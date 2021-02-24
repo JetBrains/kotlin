@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -89,17 +89,16 @@ abstract class AbstractFirTreeImplementationConfigurator {
 
         fun Implementation.withArg(argument: Importable): ImplementationWithArg = ImplementationWithArg(this, argument)
 
-        fun useTypes(vararg types: Importable) {
-            types.forEach { implementation.usedTypes += it }
+        fun optInToInternals() {
+            implementation.requiresOptIn = true
         }
 
-        fun lateinit(vararg fields: String) {
-            for (fieldName in fields) {
-                val field = getField(fieldName)
-                require(field.origin !is FieldList)
-                field.isLateinit = true
-                field.isMutable = true
-            }
+        fun publicImplementation() {
+            implementation.isPublic = true
+        }
+
+        fun useTypes(vararg types: Importable) {
+            types.forEach { implementation.usedTypes += it }
         }
 
         fun isMutable(vararg fields: String) {
@@ -120,6 +119,12 @@ abstract class AbstractFirTreeImplementationConfigurator {
             default(field) {
                 this.value = value
             }
+        }
+
+        fun defaultTypeRefWithSource(typeRefClass: String) {
+            default("typeRef", "$typeRefClass(source?.fakeElement(FirFakeSourceElementKind.ImplicitTypeRef))")
+            implementation.arbitraryImportables += ArbitraryImportable("org.jetbrains.kotlin.fir", "FirFakeSourceElementKind")
+            implementation.arbitraryImportables += ArbitraryImportable("org.jetbrains.kotlin.fir", "fakeElement")
         }
 
         fun defaultTrue(field: String, withGetter: Boolean = false) {
@@ -151,7 +156,7 @@ abstract class AbstractFirTreeImplementationConfigurator {
         }
 
         fun noSource() {
-            defaultNull("source")
+            defaultNull("source", withGetter = true)
         }
 
         fun defaultEmptyList(field: String) {
@@ -218,11 +223,11 @@ abstract class AbstractFirTreeImplementationConfigurator {
                 isMutable?.let { field.isMutable = it }
                 field.needAcceptAndTransform = needAcceptAndTransform
                 when {
-                    value != null -> field.defaultValue = value
+                    value != null -> field.defaultValueInImplementation = value
                     delegate != null -> {
                         val actualDelegateField = getField(delegate!!)
                         val name = delegateCall ?: field.name
-                        field.defaultValue = "${actualDelegateField.name}${actualDelegateField.call()}$name"
+                        field.defaultValueInImplementation = "${actualDelegateField.name}${actualDelegateField.call()}$name"
                     }
                 }
             }

@@ -1,0 +1,17 @@
+class Test1<T : U, U : Any?> {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+fun <T : U, U : Any?> test2() {
+}
+
+var <T : U, U : Any?> Test1<T, U>.test3: Unit
+  get() {
+  }
+  set(value: Unit) {
+  }

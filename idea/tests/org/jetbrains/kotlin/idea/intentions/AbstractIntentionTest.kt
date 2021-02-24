@@ -22,6 +22,8 @@ import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.testFramework.PlatformTestUtil
 import junit.framework.ComparisonFailure
 import junit.framework.TestCase
+import org.jetbrains.annotations.NotNull
+import org.jetbrains.kotlin.formatter.FormatSettingsUtil
 import org.jetbrains.kotlin.idea.test.*
 import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
@@ -30,6 +32,7 @@ import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Assert
 import java.io.File
+import java.nio.file.Path
 import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
@@ -37,7 +40,7 @@ import java.util.concurrent.TimeUnit
 abstract class AbstractIntentionTest : KotlinLightCodeInsightFixtureTestCase() {
     protected open fun intentionFileName(): String = ".intention"
 
-    protected open fun afterFileNameSuffix(): String = ".after"
+    protected open fun afterFileNameSuffix(ktFilePath: File): String = ".after"
 
     protected open fun isApplicableDirectiveName(): String = "IS_APPLICABLE"
 
@@ -98,30 +101,38 @@ abstract class AbstractIntentionTest : KotlinLightCodeInsightFixtureTestCase() {
         val pathToFiles = mapOf(*(sourceFilePaths zip psiFiles).toTypedArray())
 
         val fileText = FileUtil.loadFile(mainFile, true)
-        val configured = configureCompilerOptions(fileText, project, module)
+        withCustomCompilerOptions(fileText, project, module) {
+            ConfigLibraryUtil.configureLibrariesByDirective(module, PlatformTestUtil.getCommunityPath(), fileText)
+            configureCodeStyleAndRun(project, { FormatSettingsUtil.createConfigurator(fileText, it).configureSettings() }) {
+                configureRegistryAndRun(fileText) {
+                    try {
+                        TestCase.assertTrue("\"<caret>\" is missing in file \"$mainFile\"", fileText.contains("<caret>"))
 
-        ConfigLibraryUtil.configureLibrariesByDirective(module, PlatformTestUtil.getCommunityPath(), fileText)
+                        val minJavaVersion = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// MIN_JAVA_VERSION: ")
+                        if (minJavaVersion != null && !SystemInfo.isJavaVersionAtLeast(minJavaVersion)) return@configureRegistryAndRun
 
-        try {
-            TestCase.assertTrue("\"<caret>\" is missing in file \"$mainFile\"", fileText.contains("<caret>"))
+                        checkForErrorsBefore(fileText)
 
-            val minJavaVersion = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// MIN_JAVA_VERSION: ")
-            if (minJavaVersion != null && !SystemInfo.isJavaVersionAtLeast(minJavaVersion)) return
+                        doTestFor(mainFile, pathToFiles, intentionAction, fileText)
 
-            if (file is KtFile && !InTextDirectivesUtils.isDirectiveDefined(fileText, "// SKIP_ERRORS_BEFORE")) {
-                DirectiveBasedActionUtils.checkForUnexpectedErrors(file as KtFile)
+                        checkForErrorsAfter(fileText)
+                    } finally {
+                        ConfigLibraryUtil.unconfigureLibrariesByDirective(module, fileText)
+                    }
+                }
             }
+        }
+    }
 
-            doTestFor(mainFile.name, pathToFiles, intentionAction, fileText)
+    protected open fun checkForErrorsAfter(fileText: String) {
+        if (file is KtFile && !InTextDirectivesUtils.isDirectiveDefined(fileText, "// SKIP_ERRORS_AFTER")) {
+            DirectiveBasedActionUtils.checkForUnexpectedErrors(file as KtFile)
+        }
+    }
 
-            if (file is KtFile && !InTextDirectivesUtils.isDirectiveDefined(fileText, "// SKIP_ERRORS_AFTER")) {
-                DirectiveBasedActionUtils.checkForUnexpectedErrors(file as KtFile)
-            }
-        } finally {
-            ConfigLibraryUtil.unconfigureLibrariesByDirective(module, fileText)
-            if (configured) {
-                rollbackCompilerOptions(project, module)
-            }
+    protected open fun checkForErrorsBefore(fileText: String) {
+        if (file is KtFile && !InTextDirectivesUtils.isDirectiveDefined(fileText, "// SKIP_ERRORS_BEFORE")) {
+            DirectiveBasedActionUtils.checkForUnexpectedErrors(file as KtFile)
         }
     }
 
@@ -142,7 +153,8 @@ abstract class AbstractIntentionTest : KotlinLightCodeInsightFixtureTestCase() {
     }
 
     @Throws(Exception::class)
-    private fun doTestFor(mainFilePath: String, pathToFiles: Map<String, PsiFile>, intentionAction: IntentionAction, fileText: String) {
+    protected open fun doTestFor(mainFile: File, pathToFiles: Map<String, PsiFile>, intentionAction: IntentionAction, fileText: String) {
+        val mainFilePath = mainFile.name
         val isApplicableString = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// ${isApplicableDirectiveName()}: ")
         val isApplicableExpected = isApplicableString == null || isApplicableString == "true"
 
@@ -182,7 +194,7 @@ abstract class AbstractIntentionTest : KotlinLightCodeInsightFixtureTestCase() {
                 // Don't bother checking if it should have failed.
                 if (shouldFailString.isEmpty()) {
                     for ((filePath, value) in pathToFiles) {
-                        val canonicalPathToExpectedFile = filePath + afterFileNameSuffix()
+                        val canonicalPathToExpectedFile = filePath + afterFileNameSuffix(mainFile)
                         if (filePath == mainFilePath) {
                             try {
                                 myFixture.checkResultByFile(canonicalPathToExpectedFile)

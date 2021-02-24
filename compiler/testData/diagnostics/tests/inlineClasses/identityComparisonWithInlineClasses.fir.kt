@@ -12,4 +12,11 @@ fun test(f1: Foo, f2: Foo, b1: Bar, fn1: Foo?, fn2: Foo?) {
     val c1 = fn1 === fn2 || fn1 !== fn2
     val c2 = f1 === fn1 || f1 !== fn1
     val c3 = b1 === fn1 || b1 !== fn1
+
+    val any = Any()
+
+    val d1 = any === f1 || any !== f1
+    val d2 = f1 === any || f1 !== any
+    val d3 = any === fn1 || any !== fn1
+    val d4 = fn1 === any || fn1 !== any
 }

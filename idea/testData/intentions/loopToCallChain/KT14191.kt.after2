@@ -3,8 +3,8 @@
 // INTENTION_TEXT_2: "Replace with 'asSequence().filterNotNull().sum()'"
 fun f(list: List<Int?>): Int{
     val r = list
-            .asSequence()
-            .filterNotNull()
-            .sum()
+        .asSequence()
+        .filterNotNull()
+        .sum()
     return r
 }

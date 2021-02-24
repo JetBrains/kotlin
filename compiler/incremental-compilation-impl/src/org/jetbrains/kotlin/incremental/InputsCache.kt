@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.incremental
 
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.build.GeneratedFile
+import org.jetbrains.kotlin.build.report.ICReporter
 import org.jetbrains.kotlin.incremental.snapshots.FileSnapshotMap
 import org.jetbrains.kotlin.incremental.storage.BasicMapsOwner
 import org.jetbrains.kotlin.incremental.storage.SourceToOutputFilesMap

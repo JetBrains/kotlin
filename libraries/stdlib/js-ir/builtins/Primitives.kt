@@ -4,7 +4,7 @@
  */
 
 // Auto-generated file. DO NOT EDIT!
-@file:Suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY")
+@file:Suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY", "UNUSED_PARAMETER")
 
 package kotlin
 
@@ -218,6 +218,10 @@ public class Byte private constructor() : Number(), Comparable<Byte> {
      * The resulting `Double` value represents the same numerical value as this `Byte`.
      */
     public override fun toDouble(): Double
+
+    public override fun equals(other: Any?): Boolean
+    public override fun hashCode(): Int
+    public override fun toString(): String
 }
 
 /**
@@ -428,6 +432,10 @@ public class Short private constructor() : Number(), Comparable<Short> {
      * The resulting `Double` value represents the same numerical value as this `Short`.
      */
     public override fun toDouble(): Double
+
+    public override fun equals(other: Any?): Boolean
+    public override fun hashCode(): Int
+    public override fun toString(): String
 }
 
 /**
@@ -590,12 +598,30 @@ public class Int private constructor() : Number(), Comparable<Int> {
      /** Creates a range from this value to the specified [other] value. */
     public operator fun rangeTo(other: Long): LongRange
 
-    /** Shifts this value left by the [bitCount] number of bits. */
+    /**
+     * Shifts this value left by the [bitCount] number of bits.
+     *
+     * Note that only the five lowest-order bits of the [bitCount] are used as the shift distance.
+     * The shift distance actually used is therefore always in the range `0..31`.
+     */
     public infix fun shl(bitCount: Int): Int
-    /** Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with copies of the sign bit. */
+
+    /**
+     * Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with copies of the sign bit.
+     *
+     * Note that only the five lowest-order bits of the [bitCount] are used as the shift distance.
+     * The shift distance actually used is therefore always in the range `0..31`.
+     */
     public infix fun shr(bitCount: Int): Int
-    /** Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with zeros. */
+
+    /**
+     * Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with zeros.
+     *
+     * Note that only the five lowest-order bits of the [bitCount] are used as the shift distance.
+     * The shift distance actually used is therefore always in the range `0..31`.
+     */
     public infix fun ushr(bitCount: Int): Int
+
     /** Performs a bitwise AND operation between the two values. */
     public infix fun and(other: Int): Int
     /** Performs a bitwise OR operation between the two values. */
@@ -657,6 +683,10 @@ public class Int private constructor() : Number(), Comparable<Int> {
      * The resulting `Double` value represents the same numerical value as this `Int`.
      */
     public override fun toDouble(): Double
+
+    public override fun equals(other: Any?): Boolean
+    public override fun hashCode(): Int
+    public override fun toString(): String
 }
 
 /**
@@ -664,36 +694,44 @@ public class Int private constructor() : Number(), Comparable<Int> {
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `float`.
  */
 public class Float private constructor() : Number(), Comparable<Float> {
+    @Suppress("DIVISION_BY_ZERO")
     companion object {
         /**
          * A constant holding the smallest *positive* nonzero value of Float.
          */
-        @Suppress("MUST_BE_INITIALIZED_OR_BE_ABSTRACT")
-        public val MIN_VALUE: Float
+        public const val MIN_VALUE: Float = 1.4E-45F
 
         /**
          * A constant holding the largest positive finite value of Float.
          */
-        @Suppress("MUST_BE_INITIALIZED_OR_BE_ABSTRACT")
-        public val MAX_VALUE: Float
+        public const val MAX_VALUE: Float = 3.4028235E38F
 
         /**
          * A constant holding the positive infinity value of Float.
          */
-        @Suppress("MUST_BE_INITIALIZED_OR_BE_ABSTRACT")
-        public val POSITIVE_INFINITY: Float
+        public const val POSITIVE_INFINITY: Float = 1.0F/0.0F
 
         /**
          * A constant holding the negative infinity value of Float.
          */
-        @Suppress("MUST_BE_INITIALIZED_OR_BE_ABSTRACT")
-        public val NEGATIVE_INFINITY: Float
+        public const val NEGATIVE_INFINITY: Float = -1.0F/0.0F
 
         /**
          * A constant holding the "not a number" value of Float.
          */
-        @Suppress("MUST_BE_INITIALIZED_OR_BE_ABSTRACT")
-        public val NaN: Float
+        public const val NaN: Float = -(0.0F/0.0F)
+
+        /**
+         * The number of bytes used to represent an instance of Float in a binary form.
+         */
+        @SinceKotlin("1.4")
+        public const val SIZE_BYTES: Int = 4
+
+        /**
+         * The number of bits used to represent an instance of Float in a binary form.
+         */
+        @SinceKotlin("1.4")
+        public const val SIZE_BITS: Int = 32
     }
 
     /**
@@ -863,6 +901,10 @@ public class Float private constructor() : Number(), Comparable<Float> {
      * The resulting `Double` value represents the same numerical value as this `Float`.
      */
     public override fun toDouble(): Double
+
+    public override fun equals(other: Any?): Boolean
+    public override fun hashCode(): Int
+    public override fun toString(): String
 }
 
 /**
@@ -870,36 +912,44 @@ public class Float private constructor() : Number(), Comparable<Float> {
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `double`.
  */
 public class Double private constructor() : Number(), Comparable<Double> {
+    @Suppress("DIVISION_BY_ZERO")
     companion object {
         /**
          * A constant holding the smallest *positive* nonzero value of Double.
          */
-        @Suppress("MUST_BE_INITIALIZED_OR_BE_ABSTRACT")
-        public val MIN_VALUE: Double
+        public const val MIN_VALUE: Double = 4.9E-324
 
         /**
          * A constant holding the largest positive finite value of Double.
          */
-        @Suppress("MUST_BE_INITIALIZED_OR_BE_ABSTRACT")
-        public val MAX_VALUE: Double
+        public const val MAX_VALUE: Double = 1.7976931348623157E308
 
         /**
          * A constant holding the positive infinity value of Double.
          */
-        @Suppress("MUST_BE_INITIALIZED_OR_BE_ABSTRACT")
-        public val POSITIVE_INFINITY: Double
+        public const val POSITIVE_INFINITY: Double = 1.0/0.0
 
         /**
          * A constant holding the negative infinity value of Double.
          */
-        @Suppress("MUST_BE_INITIALIZED_OR_BE_ABSTRACT")
-        public val NEGATIVE_INFINITY: Double
+        public const val NEGATIVE_INFINITY: Double = -1.0/0.0
 
         /**
          * A constant holding the "not a number" value of Double.
          */
-        @Suppress("MUST_BE_INITIALIZED_OR_BE_ABSTRACT")
-        public val NaN: Double
+        public const val NaN: Double = -(0.0/0.0)
+
+        /**
+         * The number of bytes used to represent an instance of Double in a binary form.
+         */
+        @SinceKotlin("1.4")
+        public const val SIZE_BYTES: Int = 8
+
+        /**
+         * The number of bits used to represent an instance of Double in a binary form.
+         */
+        @SinceKotlin("1.4")
+        public const val SIZE_BITS: Int = 64
     }
 
     /**
@@ -1071,5 +1121,9 @@ public class Double private constructor() : Number(), Comparable<Double> {
     public override fun toFloat(): Float
     /** Returns this value. */
     public override fun toDouble(): Double
+
+    public override fun equals(other: Any?): Boolean
+    public override fun hashCode(): Int
+    public override fun toString(): String
 }
 

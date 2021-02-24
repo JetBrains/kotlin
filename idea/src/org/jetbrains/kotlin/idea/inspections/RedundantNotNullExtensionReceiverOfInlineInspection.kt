@@ -10,6 +10,7 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -106,7 +107,7 @@ class RedundantNotNullExtensionReceiverOfInlineInspection : AbstractKotlinInspec
 
             holder.registerProblem(
                 receiverTypeReference,
-                "This type probably can be changed to nullable",
+                KotlinBundle.message("this.type.probably.can.be.changed.to.nullable"),
                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING
             )
         })

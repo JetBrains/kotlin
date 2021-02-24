@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 LineBreakpoint created at localFunCustomLib.kt:7
 Run Java
 Connected to the target VM

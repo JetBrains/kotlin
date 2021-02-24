@@ -1,11 +1,12 @@
-public final class PrivateInClass {
-    private final java.lang.String getNn() { /* compiled code */ }
+public final class PrivateInClass /* PrivateInClass*/ {
+  private  PrivateInClass(java.lang.String);//  .ctor(java.lang.String)
 
-    private final void setNn(java.lang.String value) { /* compiled code */ }
+  private final java.lang.String bar(java.lang.String, java.lang.String);//  bar(java.lang.String, java.lang.String)
 
-    private final java.lang.String getN() { /* compiled code */ }
+  private final java.lang.String getN();//  getN()
 
-    private final java.lang.String bar(java.lang.String a, java.lang.String b) { /* compiled code */ }
+  private final java.lang.String getNn();//  getNn()
 
-    private PrivateInClass(java.lang.String g) { /* compiled code */ }
+  private final void setNn(java.lang.String);//  setNn(java.lang.String)
+
 }

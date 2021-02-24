@@ -47,7 +47,7 @@ interface TypesTestBase {
                 val value = node.getExpressionType()
                 value?.let { builder.append(" : ").append(it) }
             }
-            builder.appendln()
+            builder.appendLine()
             level++
             return false
         }

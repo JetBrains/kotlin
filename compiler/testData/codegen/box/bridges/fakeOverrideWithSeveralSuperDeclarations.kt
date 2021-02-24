@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 interface D1 {
     fun foo(): Any
 }

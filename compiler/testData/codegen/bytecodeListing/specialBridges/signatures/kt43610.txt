@@ -1,0 +1,13 @@
+@kotlin.Metadata
+public final class<<T:Ljava/lang/Object;>Ljava/lang/Object;>  B {
+    // source: 'kt43610.kt'
+    public final <()TT;> method getA(): java.lang.Object
+    public <(TT;)V> method <init>(p0: java.lang.Object): void
+    private final field <TT;> a: java.lang.Object
+}
+
+@kotlin.Metadata
+public interface<Ljava/lang/Object;Ljava/util/Collection<LB<Ljava/lang/Integer;>;>;Lkotlin/jvm/internal/markers/KMappedMarker;>  IColl {
+    // source: 'kt43610.kt'
+    public abstract <(LB<Ljava/lang/Integer;>;)Z> method contains(@org.jetbrains.annotations.NotNull p0: B): boolean
+}

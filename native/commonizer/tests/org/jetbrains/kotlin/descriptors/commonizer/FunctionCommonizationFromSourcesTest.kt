@@ -12,5 +12,11 @@ class FunctionCommonizationFromSourcesTest : AbstractCommonizationFromSourcesTes
 
     fun testValueParameters() = doTestSuccessfulCommonization()
 
+    fun testAnnotations() = doTestSuccessfulCommonization()
+
     fun testSpecifics() = doTestSuccessfulCommonization()
+
+    fun testSignaturesWithNullableTypealiases() = doTestSuccessfulCommonization()
+
+    fun testOverloadingByUpperBounds() = doTestSuccessfulCommonization()
 }

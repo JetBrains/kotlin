@@ -14,7 +14,7 @@ interface ScriptConfigurationLoadingContext {
 
     /**
      * Show notification about new configuration with suggestion to apply it.
-     * User may disable this notifications, in this case configuration will be saved immediately.
+     * User may disable this notifications, in this case [saveNewConfiguration] should be called
      *
      * If configuration is null, then the result will be treated as failed, and
      * reports will be displayed immediately.

@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.resolve.DescriptorFactory.createEnumValuesMethod
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.utils.Printer
-import java.util.*
+import org.jetbrains.kotlin.utils.SmartList
 
 // We don't need to track lookups here since this scope used only for introduce special Enum class members
 class StaticScopeForKotlinEnum(
@@ -46,7 +46,7 @@ class StaticScopeForKotlinEnum(
     override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean) = functions
 
     override fun getContributedFunctions(name: Name, location: LookupLocation) =
-            functions.filterTo(ArrayList<SimpleFunctionDescriptor>(1)) { it.name == name }
+        functions.filterTo(SmartList()) { it.name == name }
 
     override fun printScopeStructure(p: Printer) {
         p.println("Static scope for $containingClass")

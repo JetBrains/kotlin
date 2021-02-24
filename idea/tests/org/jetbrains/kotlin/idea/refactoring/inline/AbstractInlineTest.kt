@@ -18,8 +18,7 @@ import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
-import org.jetbrains.kotlin.idea.test.configureCompilerOptions
-import org.jetbrains.kotlin.idea.test.rollbackCompilerOptions
+import org.jetbrains.kotlin.idea.test.withCustomCompilerOptions
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -41,13 +40,11 @@ abstract class AbstractInlineTest : KotlinLightCodeInsightFixtureTestCase() {
         val extraFilesToPsi = extraFiles.associateBy { fixture.configureByFile(it.name) }
         val file = myFixture.configureByFile(fileName())
 
-        val configured = configureCompilerOptions(file.text, project, module)
-
-        try {
+        withCustomCompilerOptions(file.text, project, module) {
             val afterFileExists = afterFile.exists()
 
             val targetElement =
-                TargetElementUtil.findTargetElement(myFixture.editor, ELEMENT_NAME_ACCEPTED or REFERENCED_ELEMENT_ACCEPTED)!!
+                TargetElementUtil.findTargetElement(myFixture.editor, ELEMENT_NAME_ACCEPTED or REFERENCED_ELEMENT_ACCEPTED) ?: return@withCustomCompilerOptions
 
             @Suppress("DEPRECATION")
             val handler = Extensions.getExtensions(InlineActionHandler.EP_NAME).firstOrNull { it.canInlineElement(targetElement) }
@@ -73,10 +70,6 @@ abstract class AbstractInlineTest : KotlinLightCodeInsightFixtureTestCase() {
                 }
             } else {
                 TestCase.assertFalse("No refactoring handler available", afterFileExists)
-            }
-        } finally {
-            if (configured) {
-                rollbackCompilerOptions(project, module)
             }
         }
     }

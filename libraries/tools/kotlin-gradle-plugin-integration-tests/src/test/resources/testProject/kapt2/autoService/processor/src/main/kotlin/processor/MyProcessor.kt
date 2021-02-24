@@ -20,8 +20,8 @@ class MyProcessor() : AbstractProcessor() {
         fileCreated = true
         val file = processingEnv.filer.createSourceFile("Check")
         file.openWriter().use {
-            it.appendln("// $annotations")
-            it.appendln("public class Check {}")
+            it.appendLine("// $annotations")
+            it.appendLine("public class Check {}")
         }
         return true
     }

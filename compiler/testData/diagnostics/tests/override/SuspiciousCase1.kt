@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // NamedFunctionDescriptor.substitute substitutes "overrides"
 // this test checks it does it properly
 

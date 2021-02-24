@@ -14,7 +14,7 @@ val y: T = Y
 fun f() {
     bar()
     R.bar()
-    <!UNRESOLVED_REFERENCE!>B<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>foo<!>()
+    <!UNRESOLVED_REFERENCE!>B<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>()
 }
 
 object M {

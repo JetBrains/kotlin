@@ -1,6 +1,5 @@
 // !LANGUAGE: +UseGetterNameForPropertyAnnotationsMethodOnJvm
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND_FIR: JVM_IR
 // WITH_RUNTIME
 // FULL_JDK
 
@@ -33,7 +32,7 @@ fun check(clazz: Class<*>, expected: Boolean = true) {
             assertTrue(Modifier.isStatic(method.modifiers))
             assertTrue(Modifier.isPublic(method.modifiers))
             val str = method.declaredAnnotations.single().toString()
-            assertTrue("@test.Anno\\(value=\"?OK\"?\\)".toRegex().matches(str), str)
+            assertTrue("@test.Anno\\((value=)?\"?OK\"?\\)".toRegex().matches(str), str)
             return
         }
     }

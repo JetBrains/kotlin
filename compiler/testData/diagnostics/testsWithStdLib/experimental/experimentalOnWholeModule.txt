@@ -12,10 +12,10 @@ package api {
     }
 }
 
-
 // -- Module: <usage> --
 package
 
 package usage {
     public fun use(): kotlin.Unit
 }
+

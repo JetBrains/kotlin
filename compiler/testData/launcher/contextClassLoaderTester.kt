@@ -4,7 +4,7 @@ import java.io.File
 object ContextClassLoaderTester {
 
     @JvmStatic
-    fun main(args: Array<String>) {
+    fun main(@Suppress("UNUSED_PARAMETER") args: Array<String>) {
         kotlin.test.DefaultAsserter.assertTrue("", true) // this tests that kotlin-test is in the compilation and runtime classpaths
 
         val contextClassLoader = Thread.currentThread().getContextClassLoader()

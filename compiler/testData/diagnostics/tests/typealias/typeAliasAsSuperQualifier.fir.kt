@@ -23,7 +23,7 @@ class TestSuperForBase : B() {
         super<Base>.foo()
         super<B>.foo()
         super<MyBase>.<!UNRESOLVED_REFERENCE!>foo<!>()
-        super<U>.foo()
+        <!NOT_A_SUPERTYPE!>super<U><!>.foo()
     }
 }
 
@@ -36,6 +36,6 @@ class TestSuperForGenericBase<T> : GB<T>() {
         super<GB>.foo()
         super<MyBase>.<!UNRESOLVED_REFERENCE!>foo<!>()
         super<MyBaseInt>.<!UNRESOLVED_REFERENCE!>foo<!>() // Type arguments don't matter here
-        super<U>.foo()
+        <!NOT_A_SUPERTYPE!>super<U><!>.foo()
     }
 }

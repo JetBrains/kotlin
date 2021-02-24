@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.logging.configuration.WarningMode
 import org.jetbrains.kotlin.gradle.tasks.USING_JVM_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.Assert
@@ -30,7 +31,7 @@ abstract class Kapt3BaseIT : BaseGradleIT() {
     }
 
     override fun defaultBuildOptions(): BuildOptions =
-        super.defaultBuildOptions().copy(kaptOptions = kaptOptions())
+        super.defaultBuildOptions().copy(kaptOptions = kaptOptions(), warningMode = WarningMode.Summary)
 
     protected open fun kaptOptions(): KaptOptions =
         KaptOptions(verbose = true, useWorkers = false)
@@ -69,7 +70,7 @@ class Kapt3WorkersIT : Kapt3IT() {
         Assume.assumeTrue("JDK 10 isn't available", javaHome.isDirectory)
         val options = defaultBuildOptions().copy(javaHome = javaHome)
 
-        val project = Project("simple", directoryPrefix = "kapt2", gradleVersionRequirement = GradleVersionRequired.AtLeast("4.7"))
+        val project = Project("simple", directoryPrefix = "kapt2")
         project.build("build", options = options) {
             assertSuccessful()
             assertKaptSuccessful()
@@ -84,7 +85,7 @@ class Kapt3WorkersIT : Kapt3IT() {
         Assume.assumeTrue("JDK 11 isn't available", javaHome.isDirectory)
         val options = defaultBuildOptions().copy(javaHome = javaHome)
 
-        val project = Project("simple", directoryPrefix = "kapt2", gradleVersionRequirement = GradleVersionRequired.AtLeast("5.0"))
+        val project = Project("simple", directoryPrefix = "kapt2")
         project.build("build", options = options) {
             assertSuccessful()
             assertKaptSuccessful()
@@ -398,9 +399,9 @@ open class Kapt3IT : Kapt3BaseIT() {
             val actual = getErrorMessages()
             // try as 0 starting lines first, then as 1 starting line
             try {
-                Assert.assertEquals(genJavaErrorString(9, 17), actual)
+                Assert.assertEquals(genJavaErrorString(8, 20), actual)
             } catch (e: AssertionError) {
-                Assert.assertEquals(genJavaErrorString(10, 18), actual)
+                Assert.assertEquals(genJavaErrorString(9, 21), actual)
             }
         }
 
@@ -541,7 +542,7 @@ open class Kapt3IT : Kapt3BaseIT() {
     }
 
     @Test
-    fun testKt19179() {
+    fun testKt19179andKt37241() {
         val project = Project("kt19179", directoryPrefix = "kapt2")
 
         project.build("build") {
@@ -565,6 +566,9 @@ open class Kapt3IT : Kapt3BaseIT() {
                 ":app:kaptGenerateStubsKotlin",
                 ":app:kaptKotlin"
             )
+
+            // Test for KT-37241, check the that non-existent classpath entry is filtered out:
+            assertNotContains("Classpath entry points to a non-existent location")
         }
 
         project.projectDir.getFileByName("Test.kt").modify { text ->
@@ -646,7 +650,7 @@ open class Kapt3IT : Kapt3BaseIT() {
         Assume.assumeTrue("JDK 11 isn't available", javaHome.isDirectory)
         val options = defaultBuildOptions().copy(javaHome = javaHome)
 
-        val project = Project("simple", directoryPrefix = "kapt2", gradleVersionRequirement = GradleVersionRequired.AtLeast("5.0")).also {
+        val project = Project("simple", directoryPrefix = "kapt2").also {
             it.setupWorkingDir()
             it.gradleBuildScript().appendText("\nsourceCompatibility = '8'")
         }

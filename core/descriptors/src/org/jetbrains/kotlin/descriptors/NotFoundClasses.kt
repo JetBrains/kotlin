@@ -51,25 +51,27 @@ class NotFoundClasses(private val storageManager: StorageManager, private val mo
             private val isInner: Boolean,
             numberOfDeclaredTypeParameters: Int
     ) : ClassDescriptorBase(storageManager, container, name, SourceElement.NO_SOURCE, /* isExternal = */ false) {
-        private val typeParameters = (0 until numberOfDeclaredTypeParameters).map { index ->
+        private val declaredTypeParameters = (0 until numberOfDeclaredTypeParameters).map { index ->
             TypeParameterDescriptorImpl.createWithDefaultBound(
                     this, Annotations.EMPTY, false, Variance.INVARIANT, Name.identifier("T$index"), index, storageManager
             )
         }
 
-        private val typeConstructor = ClassTypeConstructorImpl(this, typeParameters, setOf(module.builtIns.anyType), storageManager)
+        private val typeConstructor =
+            ClassTypeConstructorImpl(this, computeConstructorTypeParameters(), setOf(module.builtIns.anyType), storageManager)
 
         override fun getKind() = ClassKind.CLASS
         override fun getModality() = Modality.FINAL
-        override fun getVisibility() = Visibilities.PUBLIC
+        override fun getVisibility() = DescriptorVisibilities.PUBLIC
         override fun getTypeConstructor() = typeConstructor
-        override fun getDeclaredTypeParameters() = typeParameters
+        override fun getDeclaredTypeParameters() = declaredTypeParameters
         override fun isInner() = isInner
 
         override fun isCompanionObject() = false
         override fun isData() = false
         override fun isInline() = false
         override fun isFun() = false
+        override fun isValue() = false
         override fun isExpect() = false
         override fun isActual() = false
         override fun isExternal() = false

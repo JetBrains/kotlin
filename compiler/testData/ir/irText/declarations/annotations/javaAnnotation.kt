@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: JavaAnn.java
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

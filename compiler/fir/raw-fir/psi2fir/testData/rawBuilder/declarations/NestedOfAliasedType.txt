@@ -1,0 +1,28 @@
+FILE: NestedOfAliasedType.kt
+    public? abstract class A : R|kotlin/Any| {
+        public? constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? abstract class Nested : R|kotlin/Any| {
+            public? constructor(): R|A.Nested| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public? final typealias TA = A
+    public? final? class B : TA {
+        public? constructor(): R|B| {
+            super<TA>()
+        }
+
+        public? final? class NestedInB : Nested {
+            public? constructor(): R|B.NestedInB| {
+                super<Nested>()
+            }
+
+        }
+
+    }

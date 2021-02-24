@@ -1,0 +1,27 @@
+@kotlin.Metadata
+public final class TestClassCompanion$Companion {
+    // source: 'jvmStaticExternal.kt'
+    private method <init>(): void
+    public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final @kotlin.jvm.JvmStatic method foo(): void
+    public final inner class TestClassCompanion$Companion
+}
+
+@kotlin.Metadata
+public final class TestClassCompanion {
+    // source: 'jvmStaticExternal.kt'
+    public final static @org.jetbrains.annotations.NotNull field Companion: TestClassCompanion$Companion
+    static method <clinit>(): void
+    public method <init>(): void
+    public native final static @kotlin.jvm.JvmStatic method foo(): void
+    public final inner class TestClassCompanion$Companion
+}
+
+@kotlin.Metadata
+public final class TestObject {
+    // source: 'jvmStaticExternal.kt'
+    public final static @org.jetbrains.annotations.NotNull field INSTANCE: TestObject
+    static method <clinit>(): void
+    private method <init>(): void
+    public native final static @kotlin.jvm.JvmStatic method foo(): void
+}

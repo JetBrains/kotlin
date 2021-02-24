@@ -16,28 +16,41 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-interface IrProperty :
-    IrDeclarationWithName,
-    IrDeclarationWithVisibility,
-    IrSymbolOwner {
+abstract class IrProperty :
+    IrDeclarationBase(), IrPossiblyExternalDeclaration, IrOverridableMember, IrMetadataSourceOwner, IrAttributeContainer, IrMemberWithContainerSource {
+    @ObsoleteDescriptorBasedAPI
+    abstract override val descriptor: PropertyDescriptor
+    abstract override val symbol: IrPropertySymbol
 
-    override val descriptor: PropertyDescriptor
-    override val symbol: IrPropertySymbol
+    abstract val isVar: Boolean
+    abstract val isConst: Boolean
+    abstract val isLateinit: Boolean
+    abstract val isDelegated: Boolean
+    abstract val isExpect: Boolean
+    abstract val isFakeOverride: Boolean
 
-    val modality: Modality
-    val isVar: Boolean
-    val isConst: Boolean
-    val isLateinit: Boolean
-    val isDelegated: Boolean
-    val isExternal: Boolean
-    val isExpect: Boolean
-    val isFakeOverride: Boolean
+    abstract var backingField: IrField?
+    abstract var getter: IrSimpleFunction?
+    abstract var setter: IrSimpleFunction?
 
-    var backingField: IrField?
-    var getter: IrSimpleFunction?
-    var setter: IrSimpleFunction?
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+        visitor.visitProperty(this, data)
+
+    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+        backingField?.accept(visitor, data)
+        getter?.accept(visitor, data)
+        setter?.accept(visitor, data)
+    }
+
+    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        backingField = backingField?.transform(transformer, data) as? IrField
+        getter = getter?.run { transform(transformer, data) as IrSimpleFunction }
+        setter = setter?.run { transform(transformer, data) as IrSimpleFunction }
+    }
 }

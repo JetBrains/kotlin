@@ -10,6 +10,7 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.plugins.JavaPlugin
+import org.gradle.api.provider.Provider
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
@@ -19,7 +20,8 @@ import java.io.File
 open class KotlinWithJavaTarget<KotlinOptionsType : KotlinCommonOptions>(
     project: Project,
     override val platformType: KotlinPlatformType,
-    override val targetName: String
+    override val targetName: String,
+    kotlinOptionsFactory: () -> KotlinOptionsType
 ) : AbstractKotlinTarget(project) {
     override var disambiguationClassifier: String? = null
         internal set
@@ -40,13 +42,15 @@ open class KotlinWithJavaTarget<KotlinOptionsType : KotlinCommonOptions>(
         @Suppress("UNCHECKED_CAST")
         project.container(
             KotlinWithJavaCompilation::class.java as Class<KotlinWithJavaCompilation<KotlinOptionsType>>,
-            KotlinWithJavaCompilationFactory(project, this)
+            KotlinWithJavaCompilationFactory(project, this, kotlinOptionsFactory)
         )
 
-    internal val defaultArtifactClassesListFile: File
-        get() {
+    private val layout = project.layout
+
+    internal val defaultArtifactClassesListFile: Provider<File> =
+        layout.buildDirectory.dir(KOTLIN_BUILD_DIR_NAME).map {
             val jarTask = project.tasks.getByName(artifactsTaskName) as Jar
-            return File(File(project.buildDir, KOTLIN_BUILD_DIR_NAME), "${sanitizeFileName(jarTask.archiveName)}-classes.txt")
+            it.file("${sanitizeFileName(jarTask.archiveFileName.get())}-classes.txt").asFile
         }
 }
 

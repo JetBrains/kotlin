@@ -12,12 +12,12 @@ FILE fqName:<root> fileName:/implicitNotNullInDestructuringAssignment.kt
   FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       COMPOSITE type=kotlin.Unit origin=DESTRUCTURING_DECLARATION
-        VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.J? [val]
-          CALL 'public open fun j (): <root>.J? declared in <root>.J' type=<root>.J? origin=null
+        VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:@[FlexibleNullability] <root>.J? [val]
+          CALL 'public open fun j (): @[FlexibleNullability] <root>.J? declared in <root>.J' type=@[FlexibleNullability] <root>.J? origin=null
         VAR name:a type:kotlin.Int [val]
           CALL 'public final fun component1 (): kotlin.Int [operator] declared in <root>' type=kotlin.Int origin=COMPONENT_N(index=1)
-            $receiver: GET_VAR 'val tmp_0: <root>.J? [val] declared in <root>.test' type=<root>.J? origin=null
+            $receiver: GET_VAR 'val tmp_0: @[FlexibleNullability] <root>.J? [val] declared in <root>.test' type=@[FlexibleNullability] <root>.J? origin=null
         VAR name:b type:kotlin.Int [val]
           CALL 'private final fun component2 (): kotlin.Int [operator] declared in <root>' type=kotlin.Int origin=COMPONENT_N(index=2)
             $receiver: TYPE_OP type=<root>.J origin=IMPLICIT_NOTNULL typeOperand=<root>.J
-              GET_VAR 'val tmp_0: <root>.J? [val] declared in <root>.test' type=<root>.J? origin=null
+              GET_VAR 'val tmp_0: @[FlexibleNullability] <root>.J? [val] declared in <root>.test' type=@[FlexibleNullability] <root>.J? origin=null

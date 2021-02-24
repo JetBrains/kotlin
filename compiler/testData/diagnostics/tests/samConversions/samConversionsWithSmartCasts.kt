@@ -25,7 +25,7 @@ fun test3(a: () -> Unit) {
 
 fun test4(a: () -> Unit, b: () -> Unit) {
     if (a is Runnable) {
-        J().run2(a, b)
+        J().run2(<!DEBUG_INFO_SMARTCAST!>a<!>, b)
     }
 }
 

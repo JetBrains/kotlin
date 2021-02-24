@@ -40,7 +40,7 @@ protected constructor(
 
     private fun update(): R {
         val newVal = ApplicationManager.getApplication().let { app ->
-            Pair(app, map(app.getExtensions(epName).toList()))
+            Pair(app, map(app.extensionArea.getExtensionPoint(epName).extensionList))
         }
         cached = WeakReference(newVal)
         return newVal.second

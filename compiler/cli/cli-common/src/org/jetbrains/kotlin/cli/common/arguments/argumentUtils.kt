@@ -55,9 +55,11 @@ private fun <From : Any, To : Any> copyProperties(
 ): To {
     if (from == to) return to
 
+    val toMemberProperties = to::class.memberProperties.associateBy { it.name }
+
     for (fromProperty in propertiesToCopy) {
         @Suppress("UNCHECKED_CAST")
-        val toProperty = to::class.memberProperties.firstOrNull { it.name == fromProperty.name } as? KMutableProperty1<To, Any?>
+        val toProperty = toMemberProperties[fromProperty.name] as? KMutableProperty1<To, Any?>
             ?: continue
         val fromValue = fromProperty.get(from)
         if (filter != null && !filter(fromProperty, fromValue)) continue

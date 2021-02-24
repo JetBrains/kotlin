@@ -23,7 +23,7 @@ interface Test<in I, out O, P> {
     var neOk7: Pair<In<I>, O>
     var neOk8: Inv<in O>
     var neOk9: Inv<in I>
-    var neOk10: In<out I>
+    var neOk10: <!CONFLICTING_PROJECTION!>In<out I><!>
 
     var neOk11: I
     var neOk12: In<O>
@@ -38,10 +38,10 @@ interface Test<in I, out O, P> {
     var neOk22: Inv<out O>
     var neOk23: Inv<out I>
 
-    var neOk30: Pair<I, >
-    var neOk31: Pair<I, Inv>
-    var neOk32: Inv
+    var neOk30: <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Pair<I, ><!>
+    var neOk31: Pair<I, <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Inv<!>>
+    var neOk32: <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Inv<!>
     var neOk33: Inv<<!SYNTAX!><!>>
-    var neOk34: Inv<C>
-    var neOk35: Inv<P, P>
+    var neOk34: Inv<<!UNRESOLVED_REFERENCE!>C<!>>
+    var neOk35: <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Inv<P, P><!>
 }

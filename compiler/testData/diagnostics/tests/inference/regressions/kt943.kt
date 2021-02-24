@@ -6,6 +6,7 @@ package maze
 //+JDK
 import java.util.Collections.*
 import java.util.*
+import checkSubtype
 
 fun foo(lines: List<String>) {
     val w = max(lines, comparator {o1, o2 ->

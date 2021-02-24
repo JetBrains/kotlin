@@ -13,7 +13,7 @@ import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsPr
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.*
 import com.intellij.openapi.roots.impl.libraries.LibraryEx
-import com.intellij.openapi.roots.libraries.Library
+import com.intellij.openapi.util.Disposer
 import com.intellij.util.PathUtil
 import org.jdom.Element
 import org.jdom.Text
@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.idea.framework.KotlinSdkType
 import org.jetbrains.kotlin.idea.framework.detectLibraryKind
 import org.jetbrains.kotlin.idea.maven.configuration.KotlinMavenConfigurator
 import org.jetbrains.kotlin.idea.platform.tooling
+import org.jetbrains.kotlin.idea.util.application.getServiceSafe
 import org.jetbrains.kotlin.platform.IdePlatformKind
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.impl.CommonIdePlatformKind
@@ -119,14 +120,18 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
         val artifacts = mavenProject.dependencyArtifactIndex.data[KOTLIN_PLUGIN_GROUP_ID]?.values?.flatMap { it.filter { it.isResolved } }
             ?: emptyList()
 
-        val librariesWithNoSources = ArrayList<Library>()
+        val libraryNames = mutableSetOf<String?>()
         OrderEnumerator.orderEntries(module).forEachLibrary { library ->
-            if (library.modifiableModel.getFiles(OrderRootType.SOURCES).isEmpty()) {
-                librariesWithNoSources.add(library)
+            val model = library.modifiableModel
+            try {
+                if (model.getFiles(OrderRootType.SOURCES).isEmpty()) {
+                    libraryNames.add(library.name)
+                }
+            } finally {
+                Disposer.dispose(model)
             }
             true
         }
-        val libraryNames = librariesWithNoSources.mapTo(HashSet()) { it.name }
         val toBeDownloaded = artifacts.filter { it.libraryName in libraryNames }
 
         if (toBeDownloaded.isNotEmpty()) {
@@ -184,10 +189,6 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
             configuration?.getChild("languageVersion")?.text ?: mavenProject.properties["kotlin.compiler.languageVersion"]?.toString()
         arguments.multiPlatform = configuration?.getChild("multiPlatform")?.text?.trim()?.toBoolean() ?: false
         arguments.suppressWarnings = configuration?.getChild("nowarn")?.text?.trim()?.toBoolean() ?: false
-
-        configuration?.getChild("experimentalCoroutines")?.text?.trim()?.let {
-            arguments.coroutinesState = it
-        }
 
         when (arguments) {
             is K2JVMCompilerArguments -> {
@@ -251,7 +252,6 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
 
         kotlinFacet.configureFacet(
             compilerVersion,
-            LanguageFeature.Coroutines.defaultState,
             platform,
             modifiableModelsProvider
         )
@@ -419,5 +419,5 @@ class KotlinImporterComponent : PersistentStateComponent<KotlinImporterComponent
     }
 }
 
-private val Module.kotlinImporterComponent: KotlinImporterComponent
-    get() = getComponent(KotlinImporterComponent::class.java) ?: throw IllegalStateException("No maven importer state configured")
+internal val Module.kotlinImporterComponent: KotlinImporterComponent
+    get() = this.getServiceSafe()

@@ -15,6 +15,7 @@ import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.SmartPsiElementPointer
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.ShortenReferences
@@ -55,7 +56,7 @@ class ScopeFunctionConversionInspection : AbstractKotlinInspection() {
             if (counterpartName != null) {
                 holder.registerProblem(
                     expression.calleeExpression!!,
-                    "Call is replaceable with another scope function",
+                    KotlinBundle.message("call.is.replaceable.with.another.scope.function"),
                     ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                     if (counterpartName == "also" || counterpartName == "let")
                         ConvertScopeFunctionToParameter(counterpartName)
@@ -79,9 +80,9 @@ private fun getCounterpart(expression: KtCallExpression): String? {
         }
         val bindingContext = callee.analyze(BodyResolveMode.PARTIAL)
         val resolvedCall = callee.getResolvedCall(bindingContext) ?: return null
-        if (resolvedCall.resultingDescriptor.fqNameSafe.asString() == "kotlin.$calleeName" &&
-            nameResolvesToStdlib(expression, bindingContext, counterpartName)
-        ) {
+        val descriptor = resolvedCall.resultingDescriptor
+        if (descriptor.dispatchReceiverParameter == null && descriptor.extensionReceiverParameter == null) return null
+        if (descriptor.fqNameSafe.asString() == "kotlin.$calleeName" && nameResolvesToStdlib(expression, bindingContext, counterpartName)) {
             return counterpartName
         }
     }
@@ -139,7 +140,7 @@ class ReplacementCollection(private val project: Project) {
 }
 
 abstract class ConvertScopeFunctionFix(private val counterpartName: String) : LocalQuickFix {
-    override fun getFamilyName() = "Convert to '$counterpartName'"
+    override fun getFamilyName() = KotlinBundle.message("convert.scope.function.fix.family.name", counterpartName)
 
     override fun applyFix(project: Project, problemDescriptor: ProblemDescriptor) {
         val callee = problemDescriptor.psiElement as KtNameReferenceExpression
@@ -237,12 +238,14 @@ class ConvertScopeFunctionToParameter(counterpartName: String) : ConvertScopeFun
     }
 
     override fun postprocessLambda(lambda: KtLambdaArgument) {
-        ShortenReferences { ShortenReferences.Options(removeThisLabels = true) }.process(lambda) { element ->
+        val filter = { element: PsiElement ->
             if (element is KtThisExpression && element.getLabelName() != null)
                 ShortenReferences.FilterResult.PROCESS
             else
                 ShortenReferences.FilterResult.GO_INSIDE
         }
+
+        ShortenReferences{ ShortenReferences.Options(removeThisLabels = true) }.process(lambda, filter)
     }
 
     private fun needUniqueNameForParameter(
@@ -341,7 +344,7 @@ class ConvertScopeFunctionToReceiver(counterpartName: String) : ConvertScopeFunc
     }
 
     override fun postprocessLambda(lambda: KtLambdaArgument) {
-        ShortenReferences { ShortenReferences.Options(removeThis = true, removeThisLabels = true) }.process(lambda) { element ->
+        val filter = { element: PsiElement ->
             if (element is KtThisExpression && element.getLabelName() != null)
                 ShortenReferences.FilterResult.PROCESS
             else if (element is KtQualifiedExpression && element.receiverExpression is KtThisExpression)
@@ -349,6 +352,7 @@ class ConvertScopeFunctionToReceiver(counterpartName: String) : ConvertScopeFunc
             else
                 ShortenReferences.FilterResult.GO_INSIDE
         }
+        ShortenReferences { ShortenReferences.Options(removeThis = true, removeThisLabels = true) }.process(lambda, filter)
     }
 }
 

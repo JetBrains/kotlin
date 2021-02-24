@@ -1,0 +1,22 @@
+FILE: calls.kt
+    public? final? infix fun distance(x: Int, y: Int): <implicit> { LAZY_BLOCK }
+    public? final? fun test(): Int { LAZY_BLOCK }
+    public? final? fun testRegular(): Int { LAZY_BLOCK }
+    public? final? class My : R|kotlin/Any| {
+        public? constructor(x: Int): R|My| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? var x: Int = R|<local>/x|
+            public? get(): Int
+            public? set(value: Int): R|kotlin/Unit|
+
+        public? final? operator fun invoke(): <implicit> { LAZY_BLOCK }
+
+        public? final? fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? fun copy(): <implicit> { LAZY_BLOCK }
+
+    }
+    public? final? fun testInvoke(): Int { LAZY_BLOCK }
+    public? final? fun testQualified(first: My, second: My?): R|kotlin/Unit| { LAZY_BLOCK }

@@ -2,7 +2,7 @@
 
 annotation class AnnE(val i: MyEnum)
 
-@AnnE(e)
+@AnnE(<!ANNOTATION_ARGUMENT_MUST_BE_ENUM_CONST!>e<!>)
 class Test
 
 val e: MyEnum = MyEnum.A
@@ -11,5 +11,5 @@ enum class MyEnum {
     A
 }
 
-@AnnE(Test())
+<!INAPPLICABLE_CANDIDATE!>@AnnE(Test())<!>
 class Test2

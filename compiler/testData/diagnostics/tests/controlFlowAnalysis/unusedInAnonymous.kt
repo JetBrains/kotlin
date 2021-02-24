@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: -SingleUnderscoreForParameterName
 // See KT-8813, KT-9631
 

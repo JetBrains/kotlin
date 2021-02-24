@@ -14,7 +14,14 @@ import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 class ConeIntegerLiteralTypeImpl : ConeIntegerLiteralType {
     override val possibleTypes: Collection<ConeClassLikeType>
 
-    constructor(value: Long) : super(value) {
+    override val attributes: ConeAttributes
+        get() = ConeAttributes.Empty
+
+    constructor(
+        value: Long,
+        isUnsigned: Boolean,
+        nullability: ConeNullability = ConeNullability.NOT_NULL
+    ) : super(value, isUnsigned, nullability) {
         possibleTypes = mutableListOf()
 
         fun checkBoundsAndAddPossibleType(classId: ClassId, range: LongRange) {
@@ -30,38 +37,59 @@ class ConeIntegerLiteralTypeImpl : ConeIntegerLiteralType {
             checkBoundsAndAddPossibleType(StandardClassIds.Short, SHORT_RANGE)
         }
 
-        addSignedPossibleTypes()
-        // TODO: add support of unsigned types
+        fun addUnsignedPossibleType() {
+            checkBoundsAndAddPossibleType(StandardClassIds.UInt, UINT_RANGE)
+            possibleTypes += createType(StandardClassIds.ULong)
+            checkBoundsAndAddPossibleType(StandardClassIds.UByte, UBYTE_RANGE)
+            checkBoundsAndAddPossibleType(StandardClassIds.UShort, USHORT_RANGE)
+        }
+
+        if (isUnsigned) {
+            addUnsignedPossibleType()
+        } else {
+            addSignedPossibleTypes()
+        }
     }
 
-    private constructor(value: Long, possibleTypes: Collection<ConeClassLikeType>) : super(value) {
+    private constructor(
+        value: Long,
+        possibleTypes: Collection<ConeClassLikeType>,
+        isUnsigned: Boolean,
+        nullability: ConeNullability = ConeNullability.NOT_NULL
+    ) : super(value, isUnsigned, nullability) {
         this.possibleTypes = possibleTypes
     }
 
     override val supertypes: List<ConeClassLikeType> by lazy {
         listOf(
-            NUMBER_TYPE,
-            ConeClassLikeTypeImpl(COMPARABLE_TAG, arrayOf(ConeKotlinTypeProjectionOut(this)), false)
+            createType(StandardClassIds.Number),
+            ConeClassLikeTypeImpl(COMPARABLE_TAG, arrayOf(ConeKotlinTypeProjectionIn(this)), false)
         )
     }
 
     override fun getApproximatedType(expectedType: ConeKotlinType?): ConeClassLikeType {
-        return when (expectedType) {
+        val expectedTypeForApproximation = (expectedType?.lowerBoundIfFlexible() as? ConeClassLikeType)
+            ?.withNullability(ConeNullability.NOT_NULL)
+        val approximatedType = when (expectedTypeForApproximation) {
             null, !in possibleTypes -> possibleTypes.first()
-            else -> expectedType as ConeClassLikeType
+            else -> expectedTypeForApproximation
         }
+        return approximatedType.withNullability(nullability)
     }
 
+    @OptIn(ExperimentalUnsignedTypes::class)
     companion object {
-        fun createType(classId: ClassId): ConeClassLikeType {
+        private fun createType(classId: ClassId): ConeClassLikeType {
             return ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(classId), emptyArray(), false)
         }
-
-        private val NUMBER_TYPE = createType(StandardClassIds.Number)
 
         private val INT_RANGE = Int.MIN_VALUE.toLong()..Int.MAX_VALUE.toLong()
         private val BYTE_RANGE = Byte.MIN_VALUE.toLong()..Byte.MAX_VALUE.toLong()
         private val SHORT_RANGE = Short.MIN_VALUE.toLong()..Short.MAX_VALUE.toLong()
+
+        private val UBYTE_RANGE = UByte.MIN_VALUE.toLong()..UByte.MAX_VALUE.toLong()
+        private val USHORT_RANGE = UShort.MIN_VALUE.toLong()..UShort.MAX_VALUE.toLong()
+        private val UINT_RANGE = UInt.MIN_VALUE.toLong()..UInt.MAX_VALUE.toLong()
 
         private val COMPARABLE_TAG = ConeClassLikeLookupTagImpl(StandardClassIds.Comparable)
 
@@ -104,12 +132,12 @@ class ConeIntegerLiteralTypeImpl : ConeIntegerLiteralType {
             }
         }
 
-        private fun fold(left: ConeIntegerLiteralType, right: ConeIntegerLiteralType, mode: Mode): ConeIntegerLiteralType? {
+        private fun fold(left: ConeIntegerLiteralType, right: ConeIntegerLiteralType, mode: Mode): ConeIntegerLiteralType {
             val possibleTypes = when (mode) {
                 Mode.COMMON_SUPER_TYPE -> left.possibleTypes intersect right.possibleTypes
                 Mode.INTERSECTION_TYPE -> left.possibleTypes union right.possibleTypes
             }
-            return ConeIntegerLiteralTypeImpl(left.value, possibleTypes)
+            return ConeIntegerLiteralTypeImpl(left.value, possibleTypes, left.isUnsigned)
         }
 
         private fun fold(left: ConeIntegerLiteralType, right: SimpleTypeMarker): SimpleTypeMarker? =
@@ -122,3 +150,13 @@ fun ConeKotlinType.approximateIntegerLiteralType(expectedType: ConeKotlinType? =
 
 fun ConeKotlinType.approximateIntegerLiteralTypeOrNull(expectedType: ConeKotlinType? = null): ConeKotlinType? =
     (this as? ConeIntegerLiteralType)?.getApproximatedType(expectedType)
+
+private fun ConeClassLikeType.withNullability(nullability: ConeNullability): ConeClassLikeType {
+    if (nullability == this.nullability) return this
+
+    return when (this) {
+        is ConeClassErrorType -> this
+        is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(lookupTag, typeArguments, nullability.isNullable)
+        else -> error("sealed")
+    }
+}

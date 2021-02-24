@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 interface Printer {
     fun print()
 }

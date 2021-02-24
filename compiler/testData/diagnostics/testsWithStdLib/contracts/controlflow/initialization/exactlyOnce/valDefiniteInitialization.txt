@@ -11,6 +11,15 @@ public fun returningValue(): kotlin.Unit
 public fun shadowing(): kotlin.Unit
 public fun unknownRun(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
 
+public final class DefiniteInitializationAfterThrow {
+    public constructor DefiniteInitializationAfterThrow()
+    public final fun bar(): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun test(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
 public final class DefiniteInitializationInInitSection {
     public constructor DefiniteInitializationInInitSection()
     public final val x: kotlin.Int

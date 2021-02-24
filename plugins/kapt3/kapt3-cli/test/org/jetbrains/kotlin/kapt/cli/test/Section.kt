@@ -33,7 +33,7 @@ class Section(val name: String, val content: String) {
                     saveCurrent()
                     currentName = line.drop(2)
                 } else {
-                    currentContent.appendln(line)
+                    currentContent.appendLine(line)
                 }
             }
 
@@ -45,8 +45,8 @@ class Section(val name: String, val content: String) {
 
 fun List<Section>.render(): String = buildString {
     for (section in this@render) {
-        append(SECTION_INDICATOR).appendln(section.name)
-        appendln(section.content).appendln()
+        append(SECTION_INDICATOR).appendLine(section.name)
+        appendLine(section.content).appendLine()
     }
 }.trim()
 

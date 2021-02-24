@@ -1,0 +1,67 @@
+@Deprecated(message = "")
+val testVal: Int
+  field = 1
+  get
+
+@Deprecated(message = "")
+var testVar: Int
+  field = 1
+  get
+  set
+
+@Deprecated(message = "")
+val testValWithExplicitDefaultGet: Int
+  field = 1
+  get
+
+@Deprecated(message = "")
+val testValWithExplicitGet: Int
+  get(): Int {
+    return 1
+  }
+
+@Deprecated(message = "")
+var testVarWithExplicitDefaultGet: Int
+  field = 1
+  get
+  set
+
+@Deprecated(message = "")
+var testVarWithExplicitDefaultSet: Int
+  field = 1
+  get
+  set
+
+@Deprecated(message = "")
+var testVarWithExplicitDefaultGetSet: Int
+  field = 1
+  get
+  set
+
+@Deprecated(message = "")
+var testVarWithExplicitGetSet: Int
+  get(): Int {
+    return 1
+  }
+  set(v: Int) {
+  }
+
+@Deprecated(message = "")
+lateinit var testLateinitVar: Any
+  get
+  set
+
+@Deprecated(message = "")
+val Any.testExtVal: Int
+  get(): Int {
+    return 1
+  }
+
+@Deprecated(message = "")
+var Any.textExtVar: Int
+  get(): Int {
+    return 1
+  }
+  set(v: Int) {
+  }
+

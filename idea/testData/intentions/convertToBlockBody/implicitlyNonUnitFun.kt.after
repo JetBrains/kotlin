@@ -1,7 +1,5 @@
-import java.net.URI
-
 // WITH_RUNTIME
 
-fun foo(): URI? {
-    return java.io.File("x").toURI()
+fun foo(): String? {
+    return java.io.File("x").getAbsolutePath()
 }

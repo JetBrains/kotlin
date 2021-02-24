@@ -1,153 +1,196 @@
 package org.jetbrains.kotlin.tools.projectWizard.plugins.templates
 
+
 import org.jetbrains.kotlin.tools.projectWizard.core.*
-import org.jetbrains.kotlin.tools.projectWizard.core.Defaults.KOTLIN_DIR
-import org.jetbrains.kotlin.tools.projectWizard.core.Defaults.RESOURCES_DIR
 import org.jetbrains.kotlin.tools.projectWizard.core.Defaults.SRC_DIR
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.PipelineTask
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.properties.Property
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.PluginSetting
+import org.jetbrains.kotlin.tools.projectWizard.core.service.TemplateEngineService
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.ModuleConfiguratorWithTests
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.isPresent
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.settingValue
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.projectName
-import org.jetbrains.kotlin.tools.projectWizard.plugins.projectPath
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.SourcesetType
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.updateBuildFiles
 import org.jetbrains.kotlin.tools.projectWizard.templates.*
 import org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors.InterceptionPoint
 import org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors.TemplateInterceptionApplicationState
 import org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors.applyAll
+import java.nio.file.Path
+import java.util.*
 
 class TemplatesPlugin(context: Context) : Plugin(context) {
-    val templates by property<Map<String, Template>>(
-        emptyMap()
-    )
+    override val path = pluginPath
 
-    val addTemplate by task1<Template, Unit> {
-        withAction { template ->
-            TemplatesPlugin::templates.update { success(it + (template.id to template)) }
-        }
-    }
+    companion object : PluginSettingsOwner() {
+        override val pluginPath = "templates"
 
-    val fileTemplatesToRender by property<List<FileTemplate>>(emptyList())
+        val templates by property<Map<String, Template>>(emptyMap())
 
-    val addFileTemplate by task1<FileTemplate, Unit> {
-        withAction { template ->
-            TemplatesPlugin::fileTemplatesToRender.update { success(it + template) }
-        }
-    }
-
-    val addFileTemplates by task1<List<FileTemplate>, Unit> {
-        withAction { templates ->
-            TemplatesPlugin::fileTemplatesToRender.addValues(templates)
-        }
-    }
-
-    val renderFileTemplates by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
-        runAfter(KotlinPlugin::createModules)
-        withAction {
-            val templateEngine = VelocityTemplateEngine()
-            TemplatesPlugin::fileTemplatesToRender.propertyValue.mapSequenceIgnore { template ->
-                with(templateEngine) { writeTemplate(template) }
+        val addTemplate by task1<Template, Unit> {
+            withAction { template ->
+                templates.update { success(it + (template.id to template)) }
             }
         }
-    }
 
-    val addTemplatesToModules by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
-        runBefore(BuildSystemPlugin::createModules)
-        runAfter(KotlinPlugin::createModules)
+        val fileTemplatesToRender by property<List<FileTemplate>>(emptyList())
 
-        withAction {
-            val templateEngine = VelocityTemplateEngine()
-            updateBuildFiles { buildFile ->
-                buildFile.modules.modules.mapSequence { module ->
-                    applyTemplateToModule(
-                        module.template,
-                        module
-                    ).map { result -> module.withIrs(result.librariesToAdd) to result }
-                }.map {
-                    val (moduleIrs, results) = it.unzip()
-                    val foldedResults = results.fold()
-                    buildFile.copy(
-                        modules = buildFile.modules.withModules(moduleIrs)
-                    ).withIrs(foldedResults.irsToAddToBuildFile).let { buildFile ->
-                        when (val structure = buildFile.modules) {
-                            is MultiplatformModulesStructureIR ->
-                                buildFile.copy(modules = structure.updateTargets(foldedResults.updateTarget))
-                            else -> buildFile
+        val addFileTemplate by task1<FileTemplate, Unit> {
+            withAction { template ->
+                fileTemplatesToRender.update { success(it + template) }
+            }
+        }
+
+        val addFileTemplates by task1<List<FileTemplate>, Unit> {
+            withAction { templates ->
+                fileTemplatesToRender.addValues(templates)
+            }
+        }
+
+        val renderFileTemplates by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
+            runAfter(KotlinPlugin.createModules)
+            withAction {
+                val templateEngine = service<TemplateEngineService>()
+                fileTemplatesToRender.propertyValue.mapSequenceIgnore { template ->
+                    with(templateEngine) { writeTemplate(template) }
+                }
+            }
+        }
+
+        val addTemplatesToModules by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
+            runBefore(BuildSystemPlugin.createModules)
+            runAfter(KotlinPlugin.createModules)
+
+            withAction {
+                updateBuildFiles { buildFile ->
+                    val moduleStructure = buildFile.modules
+                    val moduleIRs = buildList<ModuleIR> {
+                        if (moduleStructure is MultiplatformModulesStructureIR) {
+                            +moduleStructure.multiplatformModule
+                        }
+                        +moduleStructure.modules
+                    }
+                    moduleIRs.mapSequence { module ->
+                        applyTemplateToModule(
+                            module.template,
+                            module
+                        ).map { result -> result.updateModuleIR(module.withIrs(result.librariesToAdd)) to result }
+                    }.map {
+                        val (moduleIrs, results) = it.unzip()
+                        val foldedResults = results.fold()
+                        buildFile.copy(
+                            modules = buildFile.modules.withModules(moduleIrs.filterNot { it is FakeMultiplatformModuleIR })
+                        ).withIrs(foldedResults.irsToAddToBuildFile).let { buildFile ->
+                            when (val structure = buildFile.modules) {
+                                is MultiplatformModulesStructureIR ->
+                                    buildFile.copy(
+                                        modules = structure
+                                            .updateTargets(foldedResults.updateTarget)
+                                            .updateSourceSets(foldedResults.updateModuleIR)
+                                    )
+                                else -> buildFile
+                            }
                         }
                     }
                 }
             }
         }
-    }
 
-    val postApplyTemplatesToModules by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
-        runBefore(BuildSystemPlugin::createModules)
-        runAfter(KotlinPlugin::createModules)
-        runAfter(TemplatesPlugin::addTemplatesToModules)
+        val postApplyTemplatesToModules by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
+            runBefore(BuildSystemPlugin.createModules)
+            runAfter(KotlinPlugin.createModules)
+            runAfter(TemplatesPlugin.addTemplatesToModules)
 
-        withAction {
-            updateBuildFiles { buildFile ->
-                val modules = buildFile.modules.modules
+            withAction {
+                updateBuildFiles { buildFile ->
+                    val modules = buildFile.modules.modules
 
-                val applicationState = modules.mapNotNull { module ->
-                    module.template?.createInterceptors(module)
-                }.flatten()
-                    .applyAll(TemplateInterceptionApplicationState(buildFile, emptyMap()))
+                    val applicationState = modules.mapNotNull { module ->
+                        module.template?.createInterceptors(module)
+                    }.flatten()
+                        .applyAll(TemplateInterceptionApplicationState(buildFile, emptyMap()))
 
-                val templateEngine = VelocityTemplateEngine()
+                    val templateEngine = service<TemplateEngineService>()
 
-                val templatesApplicationResult = modules.map { module ->
-                    val settings = applicationState.moduleToSettings[module.originalModule.identificator].orEmpty()
-                    applyFileTemplatesFromSourceset(module, templateEngine, settings)
-                }.sequenceIgnore()
+                    val templatesApplicationResult = modules.map { module ->
+                        val settings = applicationState.moduleToSettings[module.originalModule.identificator].orEmpty()
+                        applyFileTemplatesFromSourceset(module, templateEngine, settings)
+                    }.sequenceIgnore()
 
-                templatesApplicationResult andThen applicationState.buildFileIR.asSuccess()
+                    templatesApplicationResult andThen applicationState.buildFileIR.asSuccess()
+                }
+            }
+        }
+
+        private fun Writer.applyFileTemplatesFromSourceset(
+            module: ModuleIR,
+            templateEngine: TemplateEngineService,
+            interceptionPointSettings: Map<InterceptionPoint<Any>, Any>
+        ): TaskResult<Unit> {
+            val template = module.template ?: return UNIT_SUCCESS
+            val settings = with(template) { settingsAsMap(module.originalModule) }
+            val allSettings: Map<String, Any> = mutableMapOf<String, Any>().apply {
+                putAll(settings)
+                putAll(interceptionPointSettings.mapKeys { it.key.name })
+                putAll(defaultSettings(module))
+            }
+            return with(template) { getFileTemplates(module) }.mapNotNull { (fileTemplateDescriptor, filePath, settings) ->
+                val path = generatePathForFileTemplate(module, filePath) ?: return@mapNotNull null
+                val fileTemplate = FileTemplate(
+                    fileTemplateDescriptor,
+                    module.path / path,
+                    allSettings + settings
+                )
+                with(templateEngine) { writeTemplate(fileTemplate) }
+            }.sequenceIgnore()
+        }
+
+        private fun Reader.defaultSettings(moduleIR: ModuleIR) = mapOf(
+            "projectName" to projectName,
+            "moduleName" to moduleIR.name
+        )
+
+        private fun Reader.generatePathForFileTemplate(module: ModuleIR, filePath: FilePath): Path? {
+            if (filePath is SrcFilePath
+                && filePath.sourcesetType == SourcesetType.test
+                && settingValue(module.originalModule, ModuleConfiguratorWithTests.testFramework)?.isPresent != true
+            ) return null
+            val moduleConfigurator = module.originalModule.configurator
+            return when (module) {
+                is SingleplatformModuleIR -> {
+                    when (filePath) {
+                        is SrcFilePath -> SRC_DIR / filePath.sourcesetType.toString() / moduleConfigurator.kotlinDirectoryName
+                        is ResourcesFilePath -> SRC_DIR / filePath.sourcesetType.toString() / moduleConfigurator.resourcesDirectoryName
+                    }
+                }
+
+                is MultiplatformModuleIR -> {
+                    val directory = when (filePath) {
+                        is SrcFilePath -> moduleConfigurator.kotlinDirectoryName
+                        is ResourcesFilePath -> moduleConfigurator.resourcesDirectoryName
+                    }
+                    SRC_DIR / "${module.name}${filePath.sourcesetType.name.capitalize(Locale.US)}" / directory
+                }
+                is FakeMultiplatformModuleIR -> error("Not supported for FakeMultiplatformModuleIR")
             }
         }
     }
 
-    private fun TaskRunningContext.applyFileTemplatesFromSourceset(
-        module: ModuleIR,
-        templateEngine: TemplateEngine,
-        interceptionPointSettings: Map<InterceptionPoint<Any>, Any>
-    ): TaskResult<Unit> {
-        val template = module.template ?: return UNIT_SUCCESS
-        val settings = with(template) { settingsAsMap(module.originalModule) }
-        val allSettings: Map<String, Any> = mutableMapOf<String, Any>().apply {
-            putAll(settings)
-            putAll(interceptionPointSettings.mapKeys { it.key.name })
-            putAll(defaultSettings(module))
-        }
-        return with(template) { getFileTemplates(module) }.map { (fileTemplateDescriptor, filePath) ->
-            val path = generatePathForFileTemplate(module, filePath)
-            val fileTemplate = FileTemplate(
-                fileTemplateDescriptor,
-                module.path / path,
-                allSettings
-            )
-            with(templateEngine) { writeTemplate(fileTemplate) }
-        }.sequenceIgnore()
-    }
-
-    private fun TaskRunningContext.defaultSettings(moduleIR: ModuleIR) = mapOf(
-        "projectName" to projectName,
-        "moduleName" to moduleIR.name
-    )
-
-    private fun generatePathForFileTemplate(module: ModuleIR, filePath: FilePath) = when (module) {
-        is SingleplatformModuleIR -> {
-            when (filePath) {
-                is SrcFilePath -> SRC_DIR / filePath.sourcesetType.toString() / KOTLIN_DIR
-                is ResourcesFilePath -> SRC_DIR / filePath.sourcesetType.toString() / RESOURCES_DIR
-            }
-        }
-
-        is MultiplatformModuleIR -> {
-            val directory = when (filePath) {
-                is SrcFilePath -> KOTLIN_DIR
-                is ResourcesFilePath -> RESOURCES_DIR
-            }
-            SRC_DIR / "${module.name}${filePath.sourcesetType.name.capitalize()}" / directory
-        }
-    }
+    override val settings: List<PluginSetting<*, *>> = listOf()
+    override val pipelineTasks: List<PipelineTask> =
+        listOf(
+            renderFileTemplates,
+            addTemplatesToModules,
+            postApplyTemplatesToModules
+        )
+    override val properties: List<Property<*>> =
+        listOf(
+            templates,
+            fileTemplatesToRender
+        )
 }

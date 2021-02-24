@@ -20,7 +20,8 @@ import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.codegen.*
 import org.jetbrains.kotlin.backend.jvm.ir.isSmartcastFromHigherThanNullable
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.AsmUtil.comparisonOperandType
 import org.jetbrains.kotlin.codegen.BranchedValue
 import org.jetbrains.kotlin.codegen.NumberCompare
@@ -30,8 +31,8 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Label
+import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
@@ -67,6 +68,20 @@ object CompareTo : IntrinsicMethod() {
     }
 }
 
+class IntegerZeroComparison(val op: IElementType, val a: MaterialValue) : BooleanValue(a.codegen) {
+    override fun jumpIfFalse(target: Label) {
+        mv.visitJumpInsn(Opcodes.IFNE, target)
+    }
+
+    override fun jumpIfTrue(target: Label) {
+        mv.visitJumpInsn(Opcodes.IFEQ, target)
+    }
+
+    override fun discard() {
+        a.discard()
+    }
+}
+
 class BooleanComparison(val op: IElementType, val a: MaterialValue, val b: MaterialValue) : BooleanValue(a.codegen) {
     override fun jumpIfFalse(target: Label) {
         // TODO 1. get rid of the dependency; 2. take `b.type` into account.
@@ -83,6 +98,11 @@ class BooleanComparison(val op: IElementType, val a: MaterialValue, val b: Mater
         else
             NumberCompare.patchOpcode(BranchedValue.negatedOperations[NumberCompare.getNumberCompareOpcode(op)]!!, mv, op, a.type)
         mv.visitJumpInsn(opcode, target)
+    }
+
+    override fun discard() {
+        b.discard()
+        a.discard()
     }
 }
 
@@ -107,17 +127,73 @@ class NonIEEE754FloatComparison(val op: IElementType, val a: MaterialValue, val 
         invokeStaticComparison(a.type)
         mv.visitJumpInsn(BranchedValue.negatedOperations[numberCompareOpcode]!!, target)
     }
+
+    override fun discard() {
+        b.discard()
+        a.discard()
+    }
+}
+
+class PrimitiveToObjectComparison(
+    private val op: IElementType,
+    private val leftIsPrimitive: Boolean,
+    private val left: MaterialValue,
+    private val right: MaterialValue
+) : BooleanValue(left.codegen) {
+    private fun checkTypeAndCompare(onWrongType: Label): BooleanValue {
+        val compareLabel = Label()
+        // If it's the left value that needs unboxing, it should be moved to the top of the stack. `AsmUtil.swap`
+        // is theoretically OK, but in practice breaks peephole optimization passes that unbox longs/doubles,
+        // so just storing in a variable is safer.
+        val tmp = if (leftIsPrimitive) -1 else codegen.frameMap.enterTemp(right.type).also { mv.store(it, right.type) }
+        mv.dup()
+        if (AsmUtil.isBoxedPrimitiveType(if (leftIsPrimitive) right.type else left.type)) {
+            mv.ifnonnull(compareLabel)
+        } else {
+            mv.instanceOf(AsmUtil.boxType(if (leftIsPrimitive) left.type else right.type))
+            mv.ifne(compareLabel)
+        }
+        // Type checking of the object failed, values are irrelevant now:
+        if (leftIsPrimitive) right.discard() // else it's already popped by `mv.store`
+        left.discard()
+        mv.goTo(onWrongType)
+        mv.mark(compareLabel)
+        // Type checking OK, can unbox and compare:
+        return if (leftIsPrimitive) {
+            BooleanComparison(op, left, right.materializedAt(left.type, right.irType))
+        } else {
+            val leftUnboxed = left.materializedAt(right.type, left.irType)
+            mv.load(tmp, right.type)
+            codegen.frameMap.leaveTemp(right.type)
+            BooleanComparison(op, leftUnboxed, right)
+        }
+    }
+
+    override fun jumpIfFalse(target: Label) {
+        checkTypeAndCompare(target).jumpIfFalse(target)
+    }
+
+    override fun jumpIfTrue(target: Label) {
+        val wrongType = Label()
+        checkTypeAndCompare(wrongType).jumpIfTrue(target)
+        mv.mark(wrongType)
+    }
+
+    override fun discard() {
+        right.discard()
+        left.discard()
+    }
 }
 
 class PrimitiveComparison(
-    private val primitiveNumberType: KotlinType,
+    private val primitiveNumberType: PrimitiveType,
     private val operatorToken: KtSingleValueToken
 ) : IntrinsicMethod() {
     override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? {
-        val parameterType = Type.getType(JvmPrimitiveType.get(KotlinBuiltIns.getPrimitiveType(primitiveNumberType)!!).desc)
+        val parameterType = Type.getType(JvmPrimitiveType.get(primitiveNumberType).desc)
         val (left, right) = expression.receiverAndArgs()
-        val a = left.accept(codegen, data).coerce(parameterType, left.type).materialized
-        val b = right.accept(codegen, data).coerce(parameterType, right.type).materialized
+        val a = left.accept(codegen, data).materializedAt(parameterType, left.type)
+        val b = right.accept(codegen, data).materializedAt(parameterType, right.type)
 
         val useNonIEEE754Comparison =
             !codegen.context.state.languageVersionSettings.supportsFeature(LanguageFeature.ProperIeee754Comparisons)

@@ -1,0 +1,43 @@
+FILE: simple.kt
+    public open class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open fun foo(): R|A| {
+            ^foo this@R|/A|
+        }
+
+        public open fun bar(): R|A| {
+            ^bar this@R|/A|
+        }
+
+        public open fun buz(p: R|A|): R|A| {
+            ^buz this@R|/A|
+        }
+
+    }
+    public final class B : R|A| {
+        public constructor(): R|B| {
+            super<R|A|>()
+        }
+
+        public final override fun foo(): R|B| {
+            ^foo this@R|/B|
+        }
+
+        public final fun bar(): R|B| {
+            ^bar this@R|/B|
+        }
+
+        public final override fun buz(p: R|B|): R|B| {
+            ^buz this@R|/B|
+        }
+
+        public final fun test(): R|kotlin/Unit| {
+            this@R|/B|.R|/B.foo|()
+            this@R|/B|.R|/B.bar|()
+            <Ambiguity: buz, [/B.buz, /A.buz]>#()
+        }
+
+    }

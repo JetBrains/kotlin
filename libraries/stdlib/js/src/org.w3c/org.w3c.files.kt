@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,26 +10,14 @@ package org.w3c.files
 
 import kotlin.js.*
 import org.khronos.webgl.*
-import org.w3c.css.masking.*
 import org.w3c.dom.*
-import org.w3c.dom.clipboard.*
-import org.w3c.dom.css.*
 import org.w3c.dom.events.*
-import org.w3c.dom.mediacapture.*
-import org.w3c.dom.parsing.*
-import org.w3c.dom.pointerevents.*
-import org.w3c.dom.svg.*
-import org.w3c.dom.url.*
-import org.w3c.fetch.*
-import org.w3c.notifications.*
-import org.w3c.performance.*
-import org.w3c.workers.*
 import org.w3c.xhr.*
 
 /**
  * Exposes the JavaScript [Blob](https://developer.mozilla.org/en/docs/Web/API/Blob) to Kotlin
  */
-public external open class Blob(blobParts: Array<dynamic> = definedExternally, options: BlobPropertyBag = definedExternally) : ImageBitmapSource {
+public external open class Blob(blobParts: Array<dynamic> = definedExternally, options: BlobPropertyBag = definedExternally) : MediaProvider, ImageBitmapSource {
     open val size: Number
     open val type: String
     open val isClosed: Boolean
@@ -43,6 +31,7 @@ public external interface BlobPropertyBag {
         set(value) = definedExternally
 }
 
+@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun BlobPropertyBag(type: String? = ""): BlobPropertyBag {
     val o = js("({})")
@@ -64,6 +53,7 @@ public external interface FilePropertyBag : BlobPropertyBag {
         set(value) = definedExternally
 }
 
+@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun FilePropertyBag(lastModified: Int? = undefined, type: String? = ""): FilePropertyBag {
     val o = js("({})")
@@ -79,6 +69,7 @@ public external abstract class FileList : ItemArrayLike<File> {
     override fun item(index: Int): File?
 }
 
+@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline operator fun FileList.get(index: Int): File? = asDynamic()[index]
 

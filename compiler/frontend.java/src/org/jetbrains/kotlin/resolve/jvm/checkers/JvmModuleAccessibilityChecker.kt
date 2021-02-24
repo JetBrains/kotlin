@@ -96,9 +96,15 @@ class JvmModuleAccessibilityChecker(project: Project) : CallChecker {
             }
         }
 
-        source.getPsi()?.containingFile?.virtualFile?.let { return it }
+        fun getContainingVirtualFile(source: SourceElement): VirtualFile? {
+            return source.getPsi()?.takeIf { it.isValid }?.containingFile
+                ?.virtualFile?.takeIf { it.isValid }
+        }
 
-        return originalDescriptor?.source?.getPsi()?.containingFile?.virtualFile
+        getContainingVirtualFile(source)?.let { return it }
+
+        val originalSource = originalDescriptor?.source ?: return null
+        return getContainingVirtualFile(originalSource)
     }
 
     inner class ClassifierUsage : ClassifierUsageChecker {

@@ -1,0 +1,5 @@
+package
+
+public fun foo(/*0*/ x: kotlin.Int = ...): kotlin.Unit
+public fun take(/*0*/ k: kotlin.reflect.KCallable<*>): kotlin.Unit
+public fun test(): kotlin.Unit

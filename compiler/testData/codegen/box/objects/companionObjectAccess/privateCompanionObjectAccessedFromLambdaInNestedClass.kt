@@ -1,5 +1,4 @@
 // !LANGUAGE: +ProperVisibilityForCompanionObjectInstanceField
-// IGNORE_BACKEND_FIR: JVM_IR
 
 class Outer {
     private companion object {

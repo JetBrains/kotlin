@@ -1,0 +1,19 @@
+package
+
+@kotlin.OptIn(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ T> myCallbackFlow(/*0*/ @kotlin.BuilderInference block: MyProducerScope<T>.() -> kotlin.Unit): MyFlow<T>
+public fun </*0*/ T> myEmptyFlow(): MyFlow<T>
+public fun </*0*/ K> select(/*0*/ x: K, /*1*/ y: K): K
+public fun test(): MyFlow<kotlin.Int>
+public fun MyProducerScope<*>.myAwaitClose(/*0*/ block: () -> kotlin.Unit = ...): kotlin.Unit
+
+public interface MyFlow</*0*/ out T> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface MyProducerScope</*0*/ in E> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

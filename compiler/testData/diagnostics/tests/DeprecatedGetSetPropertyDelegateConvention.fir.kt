@@ -33,15 +33,15 @@ operator fun CustomDelegate3.setValue(thisRef: Any?, prop: KProperty<*>, value: 
 
 class Example {
 
-    var a by CustomDelegate()
-    val aval by CustomDelegate()
+    var a by <!INAPPLICABLE_CANDIDATE!>CustomDelegate<!>()
+    val aval by <!INAPPLICABLE_CANDIDATE!>CustomDelegate<!>()
     var b by OkDelegate()
     var c by CustomDelegate2()
     var d by CustomDelegate3()
 
     fun test() {
-        requireString(a)
-        requireString(aval)
+        <!INAPPLICABLE_CANDIDATE!>requireString<!>(a)
+        <!INAPPLICABLE_CANDIDATE!>requireString<!>(aval)
         requireString(b)
         requireInt(c)
         requireInt(d)

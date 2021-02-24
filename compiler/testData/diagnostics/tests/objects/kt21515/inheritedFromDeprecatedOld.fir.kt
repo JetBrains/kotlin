@@ -73,28 +73,28 @@ open class C : O.B() {
     open class n : FromCompanionC()
 
     // INVISIBLE: direct superclasses themselves.
-    open class a : A()
-    open class b : B()
+    open class a : <!UNRESOLVED_REFERENCE!>A<!>()
+    open class b : <!UNRESOLVED_REFERENCE!>B<!>()
 
     // DEPRECATED: Classifiers from companions of direct superclasses
-    open class e : FromCompanionA()
-    open class f : FromCompanionB()
+    open class e : <!UNRESOLVED_REFERENCE!>FromCompanionA<!>()
+    open class f : <!UNRESOLVED_REFERENCE!>FromCompanionB<!>()
 
     // INVISIBLE: "cousin" supertypes themselves
-    open class g : Alpha()
-    open class h : Beta()
-    open class i : Gamma()
+    open class g : <!UNRESOLVED_REFERENCE!>Alpha<!>()
+    open class h : <!UNRESOLVED_REFERENCE!>Beta<!>()
+    open class i : <!UNRESOLVED_REFERENCE!>Gamma<!>()
 
     // DEPRECATED: classifiers from "cousin" superclasses
-    open class k : FromAlpha()
-    open class l : FromBeta()
-    open class m : FromGamma()
+    open class k : <!UNRESOLVED_REFERENCE!>FromAlpha<!>()
+    open class l : <!UNRESOLVED_REFERENCE!>FromBeta<!>()
+    open class m : <!UNRESOLVED_REFERENCE!>FromGamma<!>()
 
     // INVISIBLE: We don't see classifiers from companions of "cousin" superclasses
-    open class o : FromCompanionAlpha()
-    open class p : FromCompanionBeta()
-    open class q : FromCompanionGamma()
+    open class o : <!UNRESOLVED_REFERENCE!>FromCompanionAlpha<!>()
+    open class p : <!UNRESOLVED_REFERENCE!>FromCompanionBeta<!>()
+    open class q : <!UNRESOLVED_REFERENCE!>FromCompanionGamma<!>()
 
     // DEPRECATED: Classifiers from supertypes of our own companion
-    open class r : FromDelta()
+    open class r : <!UNRESOLVED_REFERENCE!>FromDelta<!>()
 }

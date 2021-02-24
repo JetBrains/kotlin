@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: p/Super.java
 package p;
 

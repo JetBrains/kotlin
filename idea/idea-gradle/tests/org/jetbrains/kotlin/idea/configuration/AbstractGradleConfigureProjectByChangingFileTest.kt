@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils.isAllFilesPresentTest
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.plugins.groovy.lang.psi.GroovyFile
 import java.io.File
 
@@ -34,7 +35,7 @@ abstract class AbstractGradleConfigureProjectByChangingFileTest :
     }
 
     private fun beforeAfterFiles(): Pair<String, String> {
-        val root = KotlinTestUtils.getTestsRoot(this::class.java)
+        val root = KtTestUtil.getTestsRoot(this::class.java)
         val test = KotlinTestUtils.getTestDataFileName(this::class.java, name)
         val path = "$root/$test"
         val testFile = File(path)

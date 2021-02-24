@@ -1,0 +1,16 @@
+FILE: namedArrayInAnnotation.kt
+    public final annotation class Ann : R|kotlin/Annotation| {
+        public constructor(vararg strings: R|kotlin/Array<out kotlin/String>|): R|Ann| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val strings: R|kotlin/Array<out kotlin/String>| = R|<local>/strings|
+            public get(): R|kotlin/Array<out kotlin/String>|
+
+    }
+    @R|Ann|(vararg(strings = <implicitArrayOf>(String(hello)))) public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }

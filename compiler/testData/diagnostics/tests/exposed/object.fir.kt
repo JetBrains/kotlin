@@ -1,7 +1,7 @@
 // From KT-10753
-object My : Inter() {
-    fun foo(arg: Inter): Inter = arg
-    val x: Inter? = null
+object My : <!EXPOSED_SUPER_CLASS!>Inter<!>() {
+    fun <!EXPOSED_FUNCTION_RETURN_TYPE!>foo<!>(<!EXPOSED_PARAMETER_TYPE!>arg: Inter<!>): Inter = arg
+    val <!EXPOSED_PROPERTY_TYPE!>x<!>: Inter? = null
 }
 
 internal open class Inter
@@ -10,21 +10,21 @@ internal open class Inter
 open class Test {
     protected class Protected
 
-    fun foo(x: Protected) = x
+    fun <!EXPOSED_FUNCTION_RETURN_TYPE!>foo<!>(<!EXPOSED_PARAMETER_TYPE!>x: Protected<!>) = x
 
     interface NestedInterface {
-        fun create(x: Protected)
+        fun create(<!EXPOSED_PARAMETER_TYPE!>x: Protected<!>)
     }
 
     class NestedClass {
-        fun create(x: Protected) = x
+        fun <!EXPOSED_FUNCTION_RETURN_TYPE!>create<!>(<!EXPOSED_PARAMETER_TYPE!>x: Protected<!>) = x
     }
 
     object NestedObject {
-        fun create(x: Protected) = x
+        fun <!EXPOSED_FUNCTION_RETURN_TYPE!>create<!>(<!EXPOSED_PARAMETER_TYPE!>x: Protected<!>) = x
     }
 
     companion object {
-        fun create(x: Protected) = x
+        fun <!EXPOSED_FUNCTION_RETURN_TYPE!>create<!>(<!EXPOSED_PARAMETER_TYPE!>x: Protected<!>) = x
     }
 }

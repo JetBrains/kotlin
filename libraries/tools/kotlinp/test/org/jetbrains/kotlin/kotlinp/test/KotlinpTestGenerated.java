@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.kotlinp.test;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -25,7 +26,7 @@ public class KotlinpTestGenerated extends AbstractKotlinpTest {
     }
 
     public void testAllFilesPresentInTestData() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("libraries/tools/kotlinp/testData"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("libraries/tools/kotlinp/testData"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
     @TestMetadata("Annotations.kt")
@@ -36,6 +37,16 @@ public class KotlinpTestGenerated extends AbstractKotlinpTest {
     @TestMetadata("Contracts.kt")
     public void testContracts() throws Exception {
         runTest("libraries/tools/kotlinp/testData/Contracts.kt");
+    }
+
+    @TestMetadata("FunInterface.kt")
+    public void testFunInterface() throws Exception {
+        runTest("libraries/tools/kotlinp/testData/FunInterface.kt");
+    }
+
+    @TestMetadata("IntersectionTypeInLambdaLiteralAndDelegatedProperty.kt")
+    public void testIntersectionTypeInLambdaLiteralAndDelegatedProperty() throws Exception {
+        runTest("libraries/tools/kotlinp/testData/IntersectionTypeInLambdaLiteralAndDelegatedProperty.kt");
     }
 
     @TestMetadata("Lambda.kt")
@@ -61,6 +72,11 @@ public class KotlinpTestGenerated extends AbstractKotlinpTest {
     @TestMetadata("NestedClasses.kt")
     public void testNestedClasses() throws Exception {
         runTest("libraries/tools/kotlinp/testData/NestedClasses.kt");
+    }
+
+    @TestMetadata("OptionalAnnotation.kt")
+    public void testOptionalAnnotation() throws Exception {
+        runTest("libraries/tools/kotlinp/testData/OptionalAnnotation.kt");
     }
 
     @TestMetadata("PlatformType.kt")

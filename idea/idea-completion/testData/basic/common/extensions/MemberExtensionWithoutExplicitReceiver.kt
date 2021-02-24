@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 class B {
     fun A.extFunInBForA() {}
     fun B.extFunInBForB() {}

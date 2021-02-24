@@ -8,6 +8,6 @@ fun <T> takeIt(x: T, f: SubFunction) {}
 fun cr() {}
 
 fun test() {
-    <!OI;TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR!>takeIt<!>(42, <!TYPE_MISMATCH!>::cr<!>)
-    <!OI;TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR!>takeIt<!>(42, <!TYPE_MISMATCH!>{ }<!>)
+    <!TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR{OI}!>takeIt<!>(42, <!TYPE_MISMATCH!>::cr<!>)
+    <!TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR{OI}!>takeIt<!>(42, <!TYPE_MISMATCH!>{ }<!>)
 }

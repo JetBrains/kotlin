@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +InnerClassInEnumEntryClass
 
 enum class A {

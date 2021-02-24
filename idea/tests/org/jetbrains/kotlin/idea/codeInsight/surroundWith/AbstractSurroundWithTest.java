@@ -13,11 +13,11 @@ import com.intellij.openapi.editor.SelectionModel;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.rt.execution.junit.FileComparisonFailure;
+import com.intellij.testFramework.LightCodeInsightTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.codeInsight.surroundWith.expression.*;
 import org.jetbrains.kotlin.idea.codeInsight.surroundWith.statement.*;
-import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightTestCase;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 
@@ -25,7 +25,7 @@ import java.io.File;
 import java.util.List;
 
 @SuppressWarnings("deprecation")
-public abstract class AbstractSurroundWithTest extends KotlinLightCodeInsightTestCase {
+public abstract class AbstractSurroundWithTest extends LightCodeInsightTestCase {
 
     public void doTestWithIfSurrounder(String path) throws Exception {
         doTest(path, new KotlinIfSurrounder());

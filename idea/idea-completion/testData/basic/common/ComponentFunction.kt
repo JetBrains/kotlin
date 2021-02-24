@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 data class X {
     operator fun component1(): Int = 0
 }

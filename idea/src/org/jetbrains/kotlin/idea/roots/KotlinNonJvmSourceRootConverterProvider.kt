@@ -14,7 +14,6 @@ import com.intellij.openapi.roots.impl.ContentEntryImpl
 import com.intellij.openapi.roots.impl.SourceFolderImpl
 import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable
 import com.intellij.openapi.roots.impl.libraries.LibraryEx
-import com.intellij.openapi.roots.impl.libraries.LibraryImpl
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.roots.libraries.LibraryKind
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar
@@ -31,6 +30,7 @@ import org.jetbrains.jps.model.module.JpsTypedModuleSourceRoot
 import org.jetbrains.jps.model.serialization.facet.JpsFacetSerializer
 import org.jetbrains.jps.model.serialization.module.JpsModuleRootModelSerializer.*
 import org.jetbrains.kotlin.config.getFacetPlatformByConfigurationElement
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.util.toVirtualFile
 import org.jetbrains.kotlin.idea.facet.KotlinFacetType
 import org.jetbrains.kotlin.idea.framework.JavaRuntimeDetectionUtil
@@ -106,7 +106,7 @@ class KotlinNonJvmSourceRootConverterProvider : ConverterProvider("kotlin-non-jv
 
     class ConverterImpl(private val context: ConversionContext) : ProjectConverter() {
         private val projectLibrariesByName by lazy {
-            context.projectLibrariesSettings.projectLibraries.groupBy { it.getAttributeValue(LibraryImpl.LIBRARY_NAME_ATTR) }
+            context.projectLibrariesSettings.projectLibraries.groupBy { it.getAttributeValue(NAME_ATTRIBUTE) }
         }
 
         private fun findGlobalLibrary(name: String) = ApplicationLibraryTable.getApplicationTable().getLibraryByName(name)
@@ -218,7 +218,8 @@ class KotlinNonJvmSourceRootConverterProvider : ConverterProvider("kotlin-non-jv
         }
     }
 
-    override fun getConversionDescription() = "Update source roots for non-JVM modules in Kotlin project"
+    override fun getConversionDescription() =
+        KotlinBundle.message("roots.description.text.update.source.roots.for.non.jvm.modules.in.kotlin.project")
 
     override fun createConverter(context: ConversionContext) = ConverterImpl(context)
 }

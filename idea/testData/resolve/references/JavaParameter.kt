@@ -1,5 +1,3 @@
-// IGNORE_FIR
-
 lateinit var x: java.lang.Readable
 lateinit var y: java.nio.CharBuffer
 

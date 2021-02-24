@@ -91,7 +91,7 @@ class ParametersBuilder private constructor() {
     }
 
     fun buildParameters(): Parameters {
-        var nextDeclarationIndex = (params.maxBy { it.declarationIndex }?.declarationIndex ?: -1) + 1
+        var nextDeclarationIndex = (params.maxOfOrNull { it.declarationIndex } ?: -1) + 1
 
         return Parameters(params.map { param ->
             if (param is CapturedParamInfo) {

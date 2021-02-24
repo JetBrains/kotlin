@@ -4,5 +4,4 @@ class TestNumberConversionInSetter {
     fun init() {
         d = 1.0
     }
-
 }

@@ -1,0 +1,17 @@
+@kotlin.Metadata
+public abstract class<Ljava/lang/Object;Ljava/util/Iterator<Ljava/lang/Double;>;Lkotlin/jvm/internal/markers/KMutableIterator;>  DoubleMutableIterator {
+    // source: 'mutableIterator.kt'
+    public <null> method <init>(): void
+}
+
+@kotlin.Metadata
+public abstract class<<T:Ljava/lang/Object;>Ljava/lang/Object;Ljava/util/Iterator<TT;>;Lkotlin/jvm/internal/markers/KMutableIterator;>  GenericMutableIterator {
+    // source: 'mutableIterator.kt'
+    public <null> method <init>(): void
+}
+
+@kotlin.Metadata
+public abstract class<Ljava/lang/Object;Ljava/util/Iterator<Ljava/lang/String;>;Lkotlin/jvm/internal/markers/KMutableIterator;>  StringMutableIterator {
+    // source: 'mutableIterator.kt'
+    public <null> method <init>(): void
+}

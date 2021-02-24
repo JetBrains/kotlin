@@ -1,0 +1,5 @@
+package
+
+public fun castAtAll(/*0*/ s: kotlin.Any): kotlin.Unit
+public fun castInTry(/*0*/ s: kotlin.Any): kotlin.Unit
+public fun castInTryAndCatch(/*0*/ s: kotlin.Any): kotlin.Unit

@@ -4,10 +4,10 @@
 fun foo(list: List<String>, o: Any): Int? {
     if (o is Int) {
         return list
-                .map { it.length + o }
-                .filter { it > 0 }
-                .map { it * o.hashCode() }
-                .firstOrNull()
+            .map { it.length + o }
+            .filter { it > 0 }
+            .map { it * o.hashCode() }
+            .firstOrNull()
     }
     return 0
 }

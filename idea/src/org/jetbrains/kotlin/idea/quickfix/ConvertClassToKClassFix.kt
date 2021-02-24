@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
@@ -45,8 +46,8 @@ class ConvertClassToKClassFix(element: KtDotQualifiedExpression, type: KotlinTyp
         return@run firstChildType.isSubtypeOf(type)
     }
 
-    override fun getText() = element?.let { "Remove '.${it.children.lastOrNull()?.text}'" } ?: ""
-    override fun getFamilyName() = "Remove conversion from 'KClass' to 'Class'"
+    override fun getText() = element?.let { KotlinBundle.message("remove.0", it.children.lastOrNull()?.text.toString()) } ?: ""
+    override fun getFamilyName() = KotlinBundle.message("remove.conversion.from.kclass.to.class")
 
     override fun isAvailable(project: Project, editor: Editor?, file: KtFile) = isApplicable
 

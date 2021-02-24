@@ -1,5 +1,5 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 // TARGET_BACKEND: JVM
+// JVM_TARGET: 1.8
 // FILE: Base.java
 
 public interface Base {
@@ -9,7 +9,6 @@ public interface Base {
 }
 
 // FILE: derived.kt
-// JVM_TARGET: 1.8
 interface K1 : Base
 
 interface K2 : K1

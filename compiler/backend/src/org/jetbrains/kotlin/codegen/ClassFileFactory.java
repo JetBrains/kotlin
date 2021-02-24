@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf;
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping;
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMappingKt;
 import org.jetbrains.kotlin.metadata.jvm.deserialization.PackageParts;
+import org.jetbrains.kotlin.metadata.serialization.StringTable;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtFile;
@@ -129,14 +130,17 @@ public class ClassFileFactory implements OutputFileCollection {
         JvmModuleProtoBuf.Module.Builder builder = JvmModuleProtoBuf.Module.newBuilder();
         String outputFilePath = getMappingFileName(state.getModuleName());
 
-        for (PackageParts part : ClassFileUtilsKt.addCompiledPartsAndSort(packagePartRegistry.getParts().values(), state)) {
-            part.addTo(builder);
-        }
+        StringTableImpl stringTable = new StringTableImpl();
+        ClassFileUtilsKt.addDataFromCompiledModule(builder, packagePartRegistry, stringTable, state);
 
         List<String> experimental = state.getLanguageVersionSettings().getFlag(AnalysisFlags.getExperimental());
         if (!experimental.isEmpty()) {
-            writeExperimentalMarkers(state.getModule(), builder, experimental);
+            writeExperimentalMarkers(state.getModule(), builder, experimental, stringTable);
         }
+
+        Pair<ProtoBuf.StringTable, ProtoBuf.QualifiedNameTable> tables = stringTable.buildProto();
+        builder.setStringTable(tables.getFirst());
+        builder.setQualifiedNameTable(tables.getSecond());
 
         JvmModuleProtoBuf.Module moduleProto = builder.build();
 
@@ -160,9 +164,9 @@ public class ClassFileFactory implements OutputFileCollection {
     private static void writeExperimentalMarkers(
             @NotNull ModuleDescriptor module,
             @NotNull JvmModuleProtoBuf.Module.Builder builder,
-            @NotNull List<String> experimental
+            @NotNull List<String> experimental,
+            @NotNull StringTable stringTable
     ) {
-        StringTableImpl stringTable = new StringTableImpl();
         for (String fqName : experimental) {
             ClassDescriptor descriptor =
                     DescriptorUtilKt.resolveClassByFqName(module, new FqName(fqName), NoLookupLocation.FOR_ALREADY_TRACKED);
@@ -175,9 +179,6 @@ public class ClassFileFactory implements OutputFileCollection {
                 }
             }
         }
-        Pair<ProtoBuf.StringTable, ProtoBuf.QualifiedNameTable> tables = stringTable.buildProto();
-        builder.setStringTable(tables.getFirst());
-        builder.setQualifiedNameTable(tables.getSecond());
     }
 
     @NotNull
@@ -253,17 +254,17 @@ public class ClassFileFactory implements OutputFileCollection {
     public PackageCodegen forPackage(@NotNull FqName fqName, @NotNull Collection<KtFile> files) {
         assert !isDone : "Already done!";
         registerSourceFiles(files);
-        return state.getCodegenFactory().createPackageCodegen(state, files, fqName);
+        return new PackageCodegenImpl(state, files, fqName);
     }
 
     @NotNull
     public MultifileClassCodegen forMultifileClass(@NotNull FqName facadeFqName, @NotNull Collection<KtFile> files) {
         assert !isDone : "Already done!";
         registerSourceFiles(files);
-        return state.getCodegenFactory().createMultifileClassCodegen(state, files, facadeFqName);
+        return new MultifileClassCodegenImpl(state, files, facadeFqName);
     }
 
-    private void registerSourceFiles(Collection<KtFile> files) {
+    public void registerSourceFiles(@NotNull Collection<KtFile> files) {
         sourceFiles.addAll(toIoFilesIgnoringNonPhysical(files));
     }
 
@@ -271,6 +272,7 @@ public class ClassFileFactory implements OutputFileCollection {
     private static List<File> toIoFilesIgnoringNonPhysical(@NotNull Collection<? extends PsiFile> psiFiles) {
         List<File> result = new ArrayList<>(psiFiles.size());
         for (PsiFile psiFile : psiFiles) {
+            if (psiFile == null) continue;
             VirtualFile virtualFile = psiFile.getVirtualFile();
             // We ignore non-physical files here, because this code is needed to tell the make what inputs affect which outputs
             // a non-physical file cannot be processed by make

@@ -1,7 +1,7 @@
 // !WITH_NEW_INFERENCE
 enum class E : Cloneable {
     A;
-    override fun clone(): Any {
-        return super.<!AMBIGUITY!>clone<!>()
+    <!OVERRIDING_FINAL_MEMBER!>override<!> fun clone(): Any {
+        return super.<!UNRESOLVED_REFERENCE!>clone<!>()
     }
 }

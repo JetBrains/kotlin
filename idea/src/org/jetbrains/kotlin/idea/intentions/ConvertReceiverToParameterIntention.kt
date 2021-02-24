@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,6 +15,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.getOrCreateValueParameterList
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
 import org.jetbrains.kotlin.idea.refactoring.resolveToExpectedDescriptorIfPossible
@@ -26,27 +27,23 @@ import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi.typeRefHelpers.setReceiverTypeReference
 
-class ConvertReceiverToParameterIntention :
-    SelfTargetingOffsetIndependentIntention<KtTypeReference>(KtTypeReference::class.java, "Convert receiver to parameter"),
-    LowPriorityAction {
-    override fun isApplicableTo(element: KtTypeReference): Boolean {
-        return (element.parent as? KtNamedFunction)?.receiverTypeReference == element
-    }
+class ConvertReceiverToParameterIntention : SelfTargetingOffsetIndependentIntention<KtTypeReference>(
+    KtTypeReference::class.java,
+    KotlinBundle.lazyMessage("convert.receiver.to.parameter")
+), LowPriorityAction {
+    override fun isApplicableTo(element: KtTypeReference): Boolean = (element.parent as? KtNamedFunction)?.receiverTypeReference == element
 
-    private fun configureChangeSignature(newName: String? = null): KotlinChangeSignatureConfiguration {
-        return object : KotlinChangeSignatureConfiguration {
-            override fun configure(originalDescriptor: KotlinMethodDescriptor): KotlinMethodDescriptor {
-                return originalDescriptor.modify {
-                    it.receiver = null
-                    if (newName != null) {
-                        it.parameters.first().name = newName
-                    }
+    private fun configureChangeSignature(newName: String? = null): KotlinChangeSignatureConfiguration =
+        object : KotlinChangeSignatureConfiguration {
+            override fun configure(originalDescriptor: KotlinMethodDescriptor): KotlinMethodDescriptor = originalDescriptor.modify {
+                it.receiver = null
+                if (newName != null) {
+                    it.parameters.first().name = newName
                 }
             }
 
             override fun performSilently(affectedFunctions: Collection<PsiElement>) = true
         }
-    }
 
     override fun startInWriteAction() = false
 

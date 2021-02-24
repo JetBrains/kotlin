@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
@@ -53,16 +54,16 @@ class DestructureInspection : IntentionBasedInspection<KtDeclaration>(
 
 class DestructureIntention : SelfTargetingRangeIntention<KtDeclaration>(
     KtDeclaration::class.java,
-    "Use destructuring declaration"
+    KotlinBundle.lazyMessage("use.destructuring.declaration")
 ) {
     override fun applyTo(element: KtDeclaration, editor: Editor?) {
-        val (usagesToRemove, removeSelectorInLoopRange) = collectUsagesToRemove(element)!!
-
+        val (usagesToRemove, removeSelectorInLoopRange) = collectUsagesToRemove(element) ?: return
         val factory = KtPsiFactory(element)
         val validator = NewDeclarationNameValidator(
             container = element.parent, anchor = element, target = NewDeclarationNameValidator.Target.VARIABLES,
             excludedDeclarations = usagesToRemove.map { listOfNotNull(it.declarationToDrop) }.flatten()
         )
+
         val names = ArrayList<String>()
         val underscoreSupported = element.languageVersionSettings.supportsFeature(LanguageFeature.SingleUnderscoreForParameterName)
         // For all unused we generate normal names, not underscores
@@ -372,6 +373,7 @@ class DestructureIntention : SelfTargetingRangeIntention<KtDeclaration>(
                     name = name ?: newData.declarationToDrop?.name
                     declarationToDrop = declarationToDrop ?: newData.declarationToDrop
                 }
+
                 newData.usageToReplace?.let { usagesToReplace.add(it) }
                 return true
             }

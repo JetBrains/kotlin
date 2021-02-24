@@ -54,7 +54,7 @@ interface ValuesTestBase {
                 val value = evaluationContext.valueOf(node)
                 builder.append(" = ").append(value)
             }
-            builder.appendln()
+            builder.appendLine()
             level++
             return false
         }

@@ -26,7 +26,7 @@ public class AndroidLintQuickfixTestGenerated extends AbstractAndroidLintQuickfi
     }
 
     public void testAllFilesPresentInLintQuickfix() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/lintQuickfix"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/lintQuickfix"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("idea/testData/android/lintQuickfix/findViewById")
@@ -38,7 +38,7 @@ public class AndroidLintQuickfixTestGenerated extends AbstractAndroidLintQuickfi
         }
 
         public void testAllFilesPresentInFindViewById() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/lintQuickfix/findViewById"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/lintQuickfix/findViewById"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("nullableType.kt")
@@ -61,7 +61,7 @@ public class AndroidLintQuickfixTestGenerated extends AbstractAndroidLintQuickfi
         }
 
         public void testAllFilesPresentInParcelable() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/lintQuickfix/parcelable"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/lintQuickfix/parcelable"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("missingCreator.kt")
@@ -84,7 +84,7 @@ public class AndroidLintQuickfixTestGenerated extends AbstractAndroidLintQuickfi
         }
 
         public void testAllFilesPresentInRequiresApi() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/lintQuickfix/requiresApi"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/lintQuickfix/requiresApi"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("companion.kt")
@@ -152,7 +152,7 @@ public class AndroidLintQuickfixTestGenerated extends AbstractAndroidLintQuickfi
         }
 
         public void testAllFilesPresentInSuppressLint() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/lintQuickfix/suppressLint"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/lintQuickfix/suppressLint"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("constructorParameter.kt")
@@ -200,7 +200,7 @@ public class AndroidLintQuickfixTestGenerated extends AbstractAndroidLintQuickfi
         }
 
         public void testAllFilesPresentInTargetApi() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/lintQuickfix/targetApi"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/lintQuickfix/targetApi"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("companion.kt")
@@ -258,7 +258,7 @@ public class AndroidLintQuickfixTestGenerated extends AbstractAndroidLintQuickfi
         }
 
         public void testAllFilesPresentInTargetVersionCheck() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/lintQuickfix/targetVersionCheck"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/lintQuickfix/targetVersionCheck"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("annotation.kt")

@@ -12,4 +12,4 @@ fun main(args: Array<String>) {
 
 // STEP_OVER: 4
 
-// Tests that last line will be "9", no "11". See KT-13534.
+// See KT-13534.

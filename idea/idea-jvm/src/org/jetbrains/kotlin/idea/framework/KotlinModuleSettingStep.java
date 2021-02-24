@@ -44,6 +44,7 @@ import kotlin.collections.ArraysKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.idea.KotlinJvmBundle;
 import org.jetbrains.kotlin.idea.formatter.KotlinStyleGuideCodeStyle;
 import org.jetbrains.kotlin.idea.formatter.ProjectCodeStyleImporter;
 import org.jetbrains.kotlin.platform.TargetPlatform;
@@ -140,8 +141,8 @@ public class KotlinModuleSettingStep extends ModuleWizardStep {
 
     @NotNull
     protected String getLibraryLabelText() {
-        if (JvmPlatformKt.isJvm(targetPlatform)) return "Kotlin runtime";
-        if (JsPlatformKt.isJs(targetPlatform)) return "Kotlin JS library";
+        if (JvmPlatformKt.isJvm(targetPlatform)) return KotlinJvmBundle.message("library.label.jvm");
+        if (JsPlatformKt.isJs(targetPlatform)) return KotlinJvmBundle.message("library.label.javascript");
         throw new IllegalStateException("Only JS and JVM target are supported");
     }
 
@@ -167,8 +168,8 @@ public class KotlinModuleSettingStep extends ModuleWizardStep {
         Boolean selected = isLibrarySelected();
         if (selected != null && !selected) {
             if (Messages.showDialog(
-                    "Do you want to continue with no Kotlin Runtime library?",
-                    "No Kotlin Runtime Specified",
+                    KotlinJvmBundle.message("library.no.kotlin.library.question"),
+                    KotlinJvmBundle.message("library.no.kotlin.library.title"),
                     new String[] {CommonBundle.getYesButtonText(), CommonBundle.getNoButtonText()}, 1,
                     Messages.getWarningIcon()) != Messages.YES) {
                 return false;

@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.AccessTarget
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.WriteValueInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.LocalFunctionDeclarationInstruction
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.quickfix.ChangeVariableMutabilityFix
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
@@ -56,7 +57,7 @@ class CanBeValInspection : AbstractKotlinInspection() {
                 val problemDescriptor = holder.manager.createProblemDescriptor(
                     keyword,
                     keyword,
-                    "Variable is never modified and can be declared immutable using 'val'",
+                    KotlinBundle.message("variable.is.never.modified.and.can.be.declared.immutable.using.val"),
                     ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                     isOnTheFly,
                     IntentionWrapper(ChangeVariableMutabilityFix(declaration, false), declaration.containingFile)

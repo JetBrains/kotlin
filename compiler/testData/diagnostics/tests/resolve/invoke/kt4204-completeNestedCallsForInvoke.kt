@@ -19,6 +19,6 @@ public abstract class TestBug1() {
 
 //from library
 public class Pair<out A, out B> (
-        public val first: A,
-        public val second: B
+    public val first: A,
+    public val second: B
 )

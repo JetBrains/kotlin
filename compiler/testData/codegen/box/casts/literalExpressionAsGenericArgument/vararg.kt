@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 class Box<T>(val value: T)
 
 fun <T> run(vararg z: T): Box<T> {

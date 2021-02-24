@@ -25,8 +25,7 @@ L0:
     r(a) -> <v1>
     r(0) -> <v2>
     magic[UNRESOLVED_CALL](a[0]|<v1>, <v2>) -> <v3>
-    mark(a[0]++)
-    call(a[0]++, <ERROR FUNCTION>|<v3>) -> <v4>
+    magic[UNRESOLVED_CALL](a[0]++|<v3>) -> <v4>
     magic[UNRESOLVED_CALL](a[0]++|<v3>, <v4>) -> <v5>
 L1:
   1 <END>                                                NEXT:[<SINK>]

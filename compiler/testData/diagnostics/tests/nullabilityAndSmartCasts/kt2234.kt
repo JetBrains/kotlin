@@ -2,6 +2,8 @@
 
 package a
 
+import checkSubtype
+
 //KT-2234 'period!!' has type Int?
 
 class Pair<A, B>(val a: A, val b: B)

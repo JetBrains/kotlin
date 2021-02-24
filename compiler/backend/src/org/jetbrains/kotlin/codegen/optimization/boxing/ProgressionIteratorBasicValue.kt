@@ -51,10 +51,11 @@ private constructor(
         private val INT_PROGRESSION_ITERATOR_VALUE = ProgressionIteratorBasicValue("Int", Type.INT_TYPE)
         private val LONG_PROGRESSION_ITERATOR_VALUE = ProgressionIteratorBasicValue("Long", Type.LONG_TYPE)
 
-        private val UINT_PROGRESSION_ITERATOR_VALUE =
-            ProgressionIteratorBasicValue("UInt", Type.INT_TYPE, Type.getObjectType("kotlin/UInt"))
-        private val ULONG_PROGRESSION_ITERATOR_VALUE =
-            ProgressionIteratorBasicValue("ULong", Type.LONG_TYPE, Type.getObjectType("kotlin/ULong"))
+        // TODO functions returning inline classes are mangled now, should figure out how to work with UInt/ULong iterators here
+        // private val UINT_PROGRESSION_ITERATOR_VALUE =
+        //     ProgressionIteratorBasicValue("UInt", Type.INT_TYPE, Type.getObjectType("kotlin/UInt"))
+        // private val ULONG_PROGRESSION_ITERATOR_VALUE =
+        //     ProgressionIteratorBasicValue("ULong", Type.LONG_TYPE, Type.getObjectType("kotlin/ULong"))
 
         private val PROGRESSION_CLASS_NAME_TO_ITERATOR_VALUE: Map<String, ProgressionIteratorBasicValue> =
             hashMapOf(
@@ -64,10 +65,10 @@ private constructor(
                 INT_PROGRESSION_FQN to INT_PROGRESSION_ITERATOR_VALUE,
                 LONG_RANGE_FQN to LONG_PROGRESSION_ITERATOR_VALUE,
                 LONG_PROGRESSION_FQN to LONG_PROGRESSION_ITERATOR_VALUE,
-                UINT_RANGE_FQN to UINT_PROGRESSION_ITERATOR_VALUE,
-                UINT_PROGRESSION_FQN to UINT_PROGRESSION_ITERATOR_VALUE,
-                ULONG_RANGE_FQN to ULONG_PROGRESSION_ITERATOR_VALUE,
-                ULONG_PROGRESSION_FQN to ULONG_PROGRESSION_ITERATOR_VALUE
+                // UINT_RANGE_FQN to UINT_PROGRESSION_ITERATOR_VALUE,
+                // UINT_PROGRESSION_FQN to UINT_PROGRESSION_ITERATOR_VALUE,
+                // ULONG_RANGE_FQN to ULONG_PROGRESSION_ITERATOR_VALUE,
+                // ULONG_PROGRESSION_FQN to ULONG_PROGRESSION_ITERATOR_VALUE
             )
 
         fun byProgressionClassType(progressionClassType: Type): ProgressionIteratorBasicValue? =

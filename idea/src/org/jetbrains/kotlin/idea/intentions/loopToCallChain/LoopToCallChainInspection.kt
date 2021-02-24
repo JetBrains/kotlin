@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,6 +9,7 @@ import com.intellij.codeInspection.*
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.moveCaret
 import org.jetbrains.kotlin.idea.inspections.AbstractKotlinInspection
 import org.jetbrains.kotlin.idea.inspections.findExistingEditor
@@ -44,7 +45,7 @@ class LoopToCallChainInspection : AbstractKotlinInspection() {
 
                 holder.registerProblem(
                     expression.forKeyword,
-                    "Loop can be replaced with stdlib operations",
+                    KotlinBundle.message("loop.can.be.replaced.with.stdlib.operations"),
                     ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                     *fixes.toTypedArray()
                 )
@@ -54,9 +55,9 @@ class LoopToCallChainInspection : AbstractKotlinInspection() {
     class Fix(val lazy: Boolean, val text: String = "") : LocalQuickFix {
         override fun getFamilyName(): String {
             return if (lazy) {
-                "Replace with stdlib operations with use of 'asSequence()'"
+                KotlinBundle.message("loop.to.call.fix.family.name2")
             } else {
-                "Replace with stdlib operations"
+                KotlinBundle.message("loop.to.call.fix.family.name")
             }
         }
 
@@ -82,30 +83,35 @@ class LoopToCallChainInspection : AbstractKotlinInspection() {
 
 class LoopToCallChainIntention : AbstractLoopToCallChainIntention(
     lazy = false,
-    text = "Replace with stdlib operations"
+    textGetter = KotlinBundle.lazyMessage("replace.with.stdlib.operations")
 )
 
 class LoopToLazyCallChainIntention : AbstractLoopToCallChainIntention(
     lazy = true,
-    text = "Replace with stdlib operations with use of 'asSequence()'"
+    textGetter = KotlinBundle.lazyMessage("replace.with.stdlib.operations.with.use.of.assequence")
 )
 
 abstract class AbstractLoopToCallChainIntention(
     private val lazy: Boolean,
-    text: String
+    textGetter: () -> String
 ) : SelfTargetingRangeIntention<KtForExpression>(
     KtForExpression::class.java,
-    text
+    textGetter
 ) {
     override fun applicabilityRange(element: KtForExpression): TextRange? {
         val match = match(element, lazy, false)
-        text = if (match != null) "Replace with '${match.transformationMatch.buildPresentation()}'" else defaultText
+        setTextGetter(
+            if (match != null)
+                KotlinBundle.lazyMessage("replace.with.0", match.transformationMatch.buildPresentation())
+            else
+                defaultTextGetter
+        )
+
         return if (match != null) element.forKeyword.textRange else null
     }
 
-    private fun TransformationMatch.Result.buildPresentation(): String {
-        return buildPresentation(sequenceTransformations + resultTransformation, null)
-    }
+    private fun TransformationMatch.Result.buildPresentation(): String =
+        buildPresentation(sequenceTransformations + resultTransformation, null)
 
     private fun buildPresentation(transformations: List<Transformation>, prevPresentation: String?): String {
         if (transformations.size > MAX) {
@@ -120,12 +126,11 @@ abstract class AbstractLoopToCallChainIntention(
         for (transformation in transformations) {
             result = transformation.buildPresentation(result)
         }
+
         return result!!
     }
 
-    override fun applyTo(element: KtForExpression, editor: Editor?) {
-        LoopToCallChainInspection.Fix(lazy).applyFix(element, editor)
-    }
+    override fun applyTo(element: KtForExpression, editor: Editor?) = LoopToCallChainInspection.Fix(lazy).applyFix(element, editor)
 
     companion object {
         const val MAX = 3

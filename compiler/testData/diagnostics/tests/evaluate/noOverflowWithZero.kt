@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 val zero = 0
 
 fun test() {

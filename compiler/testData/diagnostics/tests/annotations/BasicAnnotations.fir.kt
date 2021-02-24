@@ -3,7 +3,7 @@ annotation class my1(val i : Int)
 annotation class my2(val i : Int = 0)
 
 @my fun foo() {}
-@my1 fun foo2() {}
+<!INAPPLICABLE_CANDIDATE!>@my1<!> fun foo2() {}
 @my1(2) fun foo3() {}
 @my2() fun foo4() {}
 @my2 fun foo41() {}

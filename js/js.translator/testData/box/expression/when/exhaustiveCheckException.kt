@@ -1,4 +1,5 @@
 // IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JS_IR_ES6
 // EXPECTED_REACHABLE_NODES: 1323
 fun <T> checkThrown(x: T, block: (T) -> Any?): Unit? {
     return try {

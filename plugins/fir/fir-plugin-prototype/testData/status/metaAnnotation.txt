@@ -1,0 +1,25 @@
+FILE: metaAnnotation.kt
+    @R|Open|() public open class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open fun foo(): R|kotlin/Unit| {
+        }
+
+    }
+    @R|Open|() public open class B : R|A| {
+        public constructor(): R|B| {
+            super<R|A|>()
+        }
+
+        public open override fun foo(): R|kotlin/Unit| {
+        }
+
+    }
+    @R|org/jetbrains/kotlin/fir/plugin/AllOpen|() public open annotation class Open : R|kotlin/Annotation| {
+        public constructor(): R|Open| {
+            super<R|kotlin/Any|>()
+        }
+
+    }

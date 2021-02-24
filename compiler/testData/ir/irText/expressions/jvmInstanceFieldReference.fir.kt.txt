@@ -1,0 +1,20 @@
+class Derived : Base {
+  constructor() /* primary */ {
+    super/*Base*/()
+    /* <init>() */
+
+  }
+
+  init {
+    <this>.#value = 0
+  }
+
+  fun getValue(): Int {
+    return <this>.#value
+  }
+
+  fun setValue(value: Int) {
+    <this>.#value = value
+  }
+
+}

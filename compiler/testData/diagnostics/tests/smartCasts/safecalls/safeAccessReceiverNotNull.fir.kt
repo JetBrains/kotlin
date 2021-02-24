@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !LANGUAGE: -SafeCastCheckBoundSmartCasts -BooleanElvisBoundSmartCasts
 // A set of examples for
 // "If the result of a safe call is not null, understand that its receiver is not null"
@@ -19,7 +18,7 @@ fun kt6840_2(s: String?) {
 
 fun kt1635(s: String?) {
     s?.hashCode()!!
-    s.<!INAPPLICABLE_CANDIDATE!>hashCode<!>()
+    s<!UNSAFE_CALL!>.<!>hashCode()
 }
 
 fun kt2127() {
@@ -64,7 +63,7 @@ fun kt4565_2(a: SomeClass?) {
     }
     val extra = (a as? SubClass)?.extra
     if (extra != null) {
-        a.<!UNRESOLVED_REFERENCE!>extra<!>.<!UNRESOLVED_REFERENCE!>hashCode<!>()
+        a.extra.hashCode()
     }
 }
 
@@ -81,7 +80,7 @@ fun useA(a: A): Int = a.hashCode()
 
 fun kt7491_2() {
     val a = getA()
-    (a?.let { useA(a) } ?: a.<!INAPPLICABLE_CANDIDATE!>y<!> ).toString()
+    (a?.let { useA(a) } ?: a<!UNSAFE_CALL!>.<!>y ).toString()
 }
 
 fun String.correct() = true
@@ -89,7 +88,7 @@ fun String.correct() = true
 fun kt8492(s: String?) {
     if (s?.correct() ?: false) {
         // To be supported
-        s.<!INAPPLICABLE_CANDIDATE!>length<!>
+        s<!UNSAFE_CALL!>.<!>length
     }
 }
 
@@ -119,7 +118,7 @@ class Wrapper {
 fun falsePositive(w: Wrapper) {
     if (w.unwrap() != null) {
         // Here we should NOT have smart cast
-        w.unwrap().<!INAPPLICABLE_CANDIDATE!>length<!>
+        w.unwrap()<!UNSAFE_CALL!>.<!>length
     }
 }
 
@@ -131,6 +130,6 @@ class InvokableProperty(val i: Invokable)
 
 fun checkInvokable(ip: InvokableProperty?) {
     if (ip?.i() == "Hello") {
-        ip.<!INAPPLICABLE_CANDIDATE!>hashCode<!>()
+        ip.hashCode()
     }
 }

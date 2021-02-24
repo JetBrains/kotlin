@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +NewInference
 // !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION
 // SKIP_TXT
@@ -5,12 +6,14 @@
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
- * SPEC VERSION: 0.1-218
- * PLACE: expressions, constant-literals, boolean-literals -> paragraph 1 -> sentence 2
+ * SPEC VERSION: 0.1-300
+ * MAIN LINK: expressions, constant-literals, boolean-literals -> paragraph 1 -> sentence 2
  * NUMBER: 1
  * DESCRIPTION: checking of type for Boolean values: possible to use as identifiers if surround with backticks
  * HELPERS: checkType
  */
+
+// FILE: TestCases.kt
 
 // TESTCASE NUMBER: 1
 
@@ -58,7 +61,12 @@ interface `true`{}
 interface `false`{}
 
 
+// FILE: TestCase7.kt
 // TESTCASE NUMBER: 7
+package testPackCase7c
+
+interface `true`{}
+interface `false`{}
 
 fun case7() {
     class `true` : `false`{}

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.idea.navigation
 
 import com.intellij.ide.util.gotoByName.FilteringGotoByModel
-import com.intellij.lang.Language
+import com.intellij.ide.util.gotoByName.LanguageRef
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import com.intellij.testFramework.UsefulTestCase
@@ -14,12 +14,13 @@ import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.util.renderAsGotoImplementation
 import org.junit.Assert
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 object GotoCheck {
     @JvmStatic
     @JvmOverloads
     fun checkGotoDirectives(
-        model: FilteringGotoByModel<Language>,
+        model: FilteringGotoByModel<LanguageRef>,
         editor: Editor,
         nonProjectSymbols: Boolean = false,
         checkNavigation: Boolean = false
@@ -42,7 +43,7 @@ object GotoCheck {
         }
 
         val inexactMatching = InTextDirectivesUtils.isDirectiveDefined(documentText, "// ALLOW_MORE_RESULTS")
-        val renderedSymbols = foundSymbols.map { (it as PsiElement).renderAsGotoImplementation() }
+        val renderedSymbols = foundSymbols.map { (it as PsiElement).renderAsGotoImplementation() }.toSet()
 
         if (checkNavigation && (expectedReferences.size != 1 || inexactMatching)) {
             error("Cannot check navigation targets when multiple references are expected")
@@ -55,7 +56,10 @@ object GotoCheck {
         }
         if (!checkNavigation) return
 
-        assertNavigationElementMatches(foundSymbols.single() as PsiElement, documentText)
+        assertTrue(foundSymbols.isNotEmpty())
+        foundSymbols.forEach {
+            assertNavigationElementMatches(it as PsiElement, documentText)
+        }
     }
 
     @JvmStatic

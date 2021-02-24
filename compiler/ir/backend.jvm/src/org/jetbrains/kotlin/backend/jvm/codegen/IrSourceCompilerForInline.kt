@@ -5,37 +5,33 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
-import com.intellij.psi.PsiElement
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.backend.common.ir.ir2string
-import org.jetbrains.kotlin.backend.jvm.lower.getOrCreateSuspendFunctionViewIfNeeded
 import org.jetbrains.kotlin.codegen.BaseExpressionCodegen
-import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.OwnerKind
-import org.jetbrains.kotlin.codegen.coroutines.INVOKE_SUSPEND_METHOD_NAME
 import org.jetbrains.kotlin.codegen.inline.*
-import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
-import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
+import org.jetbrains.kotlin.incremental.components.LocationInfo
 import org.jetbrains.kotlin.incremental.components.LookupLocation
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.incremental.components.Position
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.descriptors.IrBasedSimpleFunctionDescriptor
+import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
+import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
+import org.jetbrains.kotlin.ir.expressions.IrLoop
+import org.jetbrains.kotlin.ir.util.isSuspend
+import org.jetbrains.kotlin.ir.util.module
+import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.psi.doNotAnalyze
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.SUSPENSION_POINT_INSIDE_MONITOR
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
-import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
-import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.commons.Method
@@ -43,15 +39,30 @@ import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
 class IrSourceCompilerForInline(
     override val state: GenerationState,
-    override val callElement: IrMemberAccessExpression,
+    override val callElement: IrFunctionAccessExpression,
     private val callee: IrFunction,
     internal val codegen: ExpressionCodegen,
     private val data: BlockInfo
 ) : SourceCompilerForInline {
 
-    //TODO: KotlinLookupLocation(callElement)
     override val lookupLocation: LookupLocation
-        get() = NoLookupLocation.FROM_BACKEND
+        get() = object : LookupLocation {
+            override val location: LocationInfo?
+                get() {
+                    val ktFile = codegen.classCodegen.context.psiSourceManager.getKtFile(codegen.irFunction.fileParent)
+                        ?.takeUnless { it.doNotAnalyze != null } ?: return null
+
+                    return object : LocationInfo {
+                        override val filePath = ktFile.virtualFilePath
+
+                        override val position: Position
+                            get() = DiagnosticUtils.getLineAndColumnInPsiFile(
+                                ktFile,
+                                TextRange(callElement.startOffset, callElement.endOffset)
+                            ).let { Position(it.line, it.column) }
+                    }
+                }
+        }
 
     override val callElementText: String
         get() = ir2string(callElement)
@@ -60,7 +71,11 @@ class IrSourceCompilerForInline(
         get() = codegen.context.psiSourceManager.getKtFile(codegen.irFunction.fileParent)
 
     override val contextKind: OwnerKind
-        get() = OwnerKind.getMemberOwnerKind(callElement.symbol.descriptor.containingDeclaration!!)
+        get() = when (val parent = callElement.symbol.owner.parent) {
+            is IrPackageFragment -> OwnerKind.PACKAGE
+            is IrClass -> OwnerKind.IMPLEMENTATION
+            else -> throw AssertionError("Unexpected declaration container: $parent")
+        }
 
     override val inlineCallSiteInfo: InlineCallSiteInfo
         get() {
@@ -69,75 +84,48 @@ class IrSourceCompilerForInline(
                 root.classCodegen.type.internalName,
                 root.signature.asmMethod.name,
                 root.signature.asmMethod.descriptor,
-                compilationContextFunctionDescriptor.isInlineOrInsideInline(),
-                compilationContextFunctionDescriptor.isSuspend,
+                root.irFunction.isInlineOrInsideInline(),
+                root.irFunction.isSuspend,
                 findElement()?.let { CodegenUtil.getLineNumberForElement(it, false) } ?: 0
             )
         }
 
-    override val lazySourceMapper: DefaultSourceMapper
-        get() = codegen.classCodegen.getOrCreateSourceMapper()
-
-    private fun makeInlineNode(function: IrFunction, classCodegen: ClassCodegen, isLambda: Boolean): SMAPAndMethodNode {
-        var node: MethodNode? = null
-        // Do not inline the generated state-machine, which was generated to support java interop of inline suspend functions.
-        // Instead, find its $$forInline companion (they share the same attributeOwnerId), which is generated for the inliner to use.
-        val forInlineFunction =
-            if (function.isSuspend)
-                function.parentAsClass.functions.find {
-                    it.name.asString() == function.name.asString() + FOR_INLINE_SUFFIX &&
-                            it.attributeOwnerId == (function as? IrAttributeContainer)?.attributeOwnerId
-                } ?: function.getOrCreateSuspendFunctionViewIfNeeded(classCodegen.context)
-            else function
-        val functionCodegen = object : FunctionCodegen(forInlineFunction, classCodegen, codegen.takeIf { isLambda }) {
-            override fun createMethod(flags: Int, signature: JvmMethodGenericSignature): MethodVisitor {
-                val asmMethod = signature.asmMethod
-                node = MethodNode(
-                    Opcodes.API_VERSION,
-                    flags,
-                    asmMethod.name.removeSuffix(FOR_INLINE_SUFFIX),
-                    asmMethod.descriptor,
-                    signature.genericsSignature,
-                    null
-                )
-                return wrapWithMaxLocalCalc(node!!)
-            }
-        }
-        functionCodegen.generate()
-        return SMAPAndMethodNode(node!!, SMAP(classCodegen.getOrCreateSourceMapper().resultMappings))
-    }
+    override val lazySourceMapper: SourceMapper
+        get() = codegen.smap
 
     override fun generateLambdaBody(lambdaInfo: ExpressionLambda): SMAPAndMethodNode =
-        makeInlineNode((lambdaInfo as IrExpressionLambdaImpl).function, codegen.classCodegen, true)
+        FunctionCodegen((lambdaInfo as IrExpressionLambdaImpl).function, codegen.classCodegen, codegen).generate()
 
     override fun doCreateMethodNodeFromSource(
         callableDescriptor: FunctionDescriptor,
         jvmSignature: JvmMethodSignature,
         callDefault: Boolean,
         asmMethod: Method
-    ): SMAPAndMethodNode {
-        assert(callableDescriptor == callee.symbol.descriptor.original) { "Expected $callableDescriptor got ${callee.descriptor.original}" }
-        return makeInlineNode(callee, FakeClassCodegen(callee, codegen.classCodegen), false)
-    }
+    ): SMAPAndMethodNode =
+        ClassCodegen.getOrCreate(callee.parentAsClass, codegen.context).generateMethodNode(callee)
 
     override fun hasFinallyBlocks() = data.hasFinallyBlocks()
 
-    override fun generateFinallyBlocksIfNeeded(finallyCodegen: BaseExpressionCodegen, returnType: Type, afterReturnLabel: Label) {
-        require(finallyCodegen is ExpressionCodegen)
-        finallyCodegen.generateFinallyBlocksIfNeeded(returnType, afterReturnLabel, data)
+    override fun generateFinallyBlocksIfNeeded(codegen: BaseExpressionCodegen, returnType: Type, afterReturnLabel: Label, target: Label?) {
+        require(codegen is ExpressionCodegen)
+        codegen.generateFinallyBlocksIfNeeded(returnType, afterReturnLabel, data, target)
     }
 
     override fun createCodegenForExternalFinallyBlockGenerationOnNonLocalReturn(finallyNode: MethodNode, curFinallyDepth: Int) =
         ExpressionCodegen(
             codegen.irFunction, codegen.signature, codegen.frameMap, InstructionAdapter(finallyNode), codegen.classCodegen,
-            codegen.inlinedInto
+            codegen.inlinedInto, codegen.smap
         ).also {
             it.finallyDepth = curFinallyDepth
         }
 
+    @ObsoleteDescriptorBasedAPI
     override fun isCallInsideSameModuleAsDeclared(functionDescriptor: FunctionDescriptor): Boolean {
-        // TODO port to IR structures
-        return DescriptorUtils.areInSameModule(DescriptorUtils.getDirectMember(functionDescriptor), codegen.irFunction.descriptor)
+        require(functionDescriptor is IrBasedSimpleFunctionDescriptor) {
+            "expected an IrBasedSimpleFunctionDescriptor, got $functionDescriptor"
+        }
+        val function = functionDescriptor.owner
+        return function.module == codegen.irFunction.module
     }
 
     override fun isFinallyMarkerRequired(): Boolean {
@@ -145,14 +133,20 @@ class IrSourceCompilerForInline(
     }
 
     override val compilationContextDescriptor: DeclarationDescriptor
-        get() = callElement.symbol.descriptor
+        get() = compilationContextFunctionDescriptor
 
     override val compilationContextFunctionDescriptor: FunctionDescriptor
-        get() = callElement.symbol.descriptor as FunctionDescriptor
+        get() = generateSequence(codegen) { it.inlinedInto }.last().irFunction.toIrBasedDescriptor()
 
-    override fun getContextLabels(): Set<String> {
-        val name = codegen.irFunction.name.asString()
-        return setOf(name)
+    override fun getContextLabels(): Map<String, Label?> {
+        val result = mutableMapOf<String, Label?>(codegen.irFunction.name.asString() to null)
+        for (info in data.infos) {
+            if (info !is LoopInfo)
+                continue
+            result[info.loop.nonLocalReturnLabel(false)] = info.continueLabel
+            result[info.loop.nonLocalReturnLabel(true)] = info.breakLabel
+        }
+        return result
     }
 
     // TODO: Find a way to avoid using PSI here
@@ -162,90 +156,15 @@ class IrSourceCompilerForInline(
             .report(SUSPENSION_POINT_INSIDE_MONITOR, stackTraceElement)
     }
 
-    private fun findElement() = (callElement.symbol.descriptor.original as? DeclarationDescriptorWithSource)?.source?.getPsi() as? KtElement
-
-    internal val isPrimaryCopy: Boolean
-        get() = codegen.classCodegen !is FakeClassCodegen
-
-    private class FakeClassCodegen(irFunction: IrFunction, codegen: ClassCodegen) :
-        ClassCodegen(irFunction.parent as IrClass, codegen.context) {
-
-        override fun createClassBuilder(): ClassBuilder {
-            return FakeBuilder
-        }
-
-        companion object {
-            val FakeBuilder = object : ClassBuilder {
-                override fun newField(
-                    origin: JvmDeclarationOrigin,
-                    access: Int,
-                    name: String,
-                    desc: String,
-                    signature: String?,
-                    value: Any?
-                ): FieldVisitor {
-                    TODO("not implemented")
-                }
-
-                override fun newMethod(
-                    origin: JvmDeclarationOrigin,
-                    access: Int,
-                    name: String,
-                    desc: String,
-                    signature: String?,
-                    exceptions: Array<out String>?
-                ): MethodVisitor {
-                    TODO("not implemented")
-                }
-
-                override fun getSerializationBindings(): JvmSerializationBindings {
-                    return JvmSerializationBindings()
-                }
-
-                override fun newAnnotation(desc: String, visible: Boolean): AnnotationVisitor {
-                    TODO("not implemented")
-                }
-
-                override fun done() {
-                    TODO("not implemented")
-                }
-
-                override fun getVisitor(): ClassVisitor {
-                    TODO("not implemented")
-                }
-
-                override fun defineClass(
-                    origin: PsiElement?,
-                    version: Int,
-                    access: Int,
-                    name: String,
-                    signature: String?,
-                    superName: String,
-                    interfaces: Array<out String>
-                ) {
-                    TODO("not implemented")
-                }
-
-                override fun visitSource(name: String, debug: String?) {
-                    TODO("not implemented")
-                }
-
-                override fun visitOuterClass(owner: String, name: String?, desc: String?) {
-                    TODO("not implemented")
-                }
-
-                override fun visitInnerClass(name: String, outerName: String?, innerName: String?, access: Int) {
-                    TODO("not implemented")
-                }
-
-                override fun getThisName(): String {
-                    TODO("not implemented")
-                }
-
-                override fun addSMAP(mapping: FileMapping?) {
-                    TODO("not implemented")
-                }
-            }
-        }
-    }
+    private fun findElement() = callElement.psiElement as? KtElement
 }
+
+private tailrec fun IrDeclaration.isInlineOrInsideInline(): Boolean {
+    val original = (this as? IrAttributeContainer)?.attributeOwnerId as? IrDeclaration ?: this
+    if (original is IrSimpleFunction && original.isInline) return true
+    val parent = original.parent
+    if (parent !is IrDeclaration) return false
+    return parent.isInlineOrInsideInline()
+}
+
+internal fun IrLoop.nonLocalReturnLabel(forBreak: Boolean): String = "${label!!}\$${if (forBreak) "break" else "continue"}"

@@ -9,17 +9,18 @@ import com.intellij.psi.PsiElement
 import com.intellij.slicer.SliceUsage
 import com.intellij.usages.UsagePresentation
 import com.intellij.util.Processor
+import org.jetbrains.kotlin.idea.KotlinBundle
 
 class KotlinSliceDereferenceUsage(
     element: PsiElement,
     parent: KotlinSliceUsage,
-    lambdaLevel: Int
-) : KotlinSliceUsage(element, parent, lambdaLevel, false) {
+    mode: KotlinSliceAnalysisMode
+) : KotlinSliceUsage(element, parent, mode, false) {
     override fun processChildren(processor: Processor<in SliceUsage>) {
         // no children
     }
 
     override fun getPresentation() = object : UsagePresentation by super.getPresentation() {
-        override fun getTooltipText() = "Variable dereferenced"
+        override fun getTooltipText() = KotlinBundle.message("slicer.tool.tip.text.variable.dereferenced")
     }
 }

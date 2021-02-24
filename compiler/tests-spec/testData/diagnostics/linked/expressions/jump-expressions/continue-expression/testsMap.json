@@ -1,0 +1,16 @@
+{
+  "1": {
+    "neg": {
+      "1": [
+        {
+          "specVersion": "0.1-222",
+          "casesNumber": 3,
+          "description": "A continue expression is a jump expression allowed only within loop bodies.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/jump-expressions/continue-expression/p-1/neg/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        }
+      ]
+    }
+  }
+}

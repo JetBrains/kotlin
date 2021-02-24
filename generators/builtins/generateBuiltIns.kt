@@ -81,7 +81,7 @@ fun generateBuiltIns(generate: (File, (PrintWriter) -> BuiltInsSourceGenerator) 
     generateUnsignedTypes(UNSIGNED_TYPES_DIR, generate)
 }
 
-fun main(args: Array<String>) {
+fun main() {
     generateBuiltIns { file, generator ->
         println("generating $file")
         file.parentFile?.mkdirs()

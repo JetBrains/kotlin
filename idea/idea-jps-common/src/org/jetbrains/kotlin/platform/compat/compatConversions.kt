@@ -19,8 +19,8 @@ import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JdkPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.platform.konan.KonanPlatform
-import org.jetbrains.kotlin.platform.konan.KonanPlatforms
+import org.jetbrains.kotlin.platform.konan.NativePlatforms
+import org.jetbrains.kotlin.platform.konan.NativePlatform
 
 typealias OldPlatform = org.jetbrains.kotlin.resolve.TargetPlatform
 typealias NewPlatform = org.jetbrains.kotlin.platform.TargetPlatform
@@ -29,7 +29,7 @@ fun NewPlatform.toOldPlatform(): OldPlatform = when (val single = singleOrNull()
     null -> CommonPlatforms.CompatCommonPlatform
     is JvmPlatform -> JvmPlatforms.CompatJvmPlatform
     is JsPlatform -> JsPlatforms.CompatJsPlatform
-    is KonanPlatform -> KonanPlatforms.CompatKonanPlatform
+    is NativePlatform -> NativePlatforms.CompatNativePlatform
     else -> error("Unknown platform $single")
 }
 
@@ -37,7 +37,7 @@ fun OldPlatform.toNewPlatform(): NewPlatform = when (this) {
     is CommonPlatforms.CompatCommonPlatform -> this
     is JvmPlatforms.CompatJvmPlatform -> this
     is JsPlatforms.CompatJsPlatform -> this
-    is KonanPlatforms.CompatKonanPlatform -> this
+    is NativePlatforms.CompatNativePlatform -> this
     else -> error(
         "Can't convert org.jetbrains.kotlin.resolve.TargetPlatform to org.jetbrains.kotlin.platform.TargetPlatform: " +
                 "non-Compat instance passed\n" +
@@ -51,7 +51,7 @@ fun IdePlatform<*, *>.toNewPlatform(): NewPlatform = when (this) {
     is CommonIdePlatformKind.Platform -> CommonPlatforms.defaultCommonPlatform
     is JvmIdePlatformKind.Platform -> JvmPlatforms.jvmPlatformByTargetVersion(this.version)
     is JsIdePlatformKind.Platform -> JsPlatforms.defaultJsPlatform
-    is NativeIdePlatformKind.Platform -> KonanPlatforms.defaultKonanPlatform
+    is NativeIdePlatformKind.Platform -> NativePlatforms.unspecifiedNativePlatform
     else -> error("Unknown platform $this")
 }
 
@@ -60,6 +60,6 @@ fun NewPlatform.toIdePlatform(): IdePlatform<*, *> = when (val single = singleOr
     is JdkPlatform -> JvmIdePlatformKind.Platform(single.targetVersion)
     is JvmPlatform -> JvmIdePlatformKind.Platform(JvmTarget.DEFAULT)
     is JsPlatform -> JsIdePlatformKind.Platform
-    is KonanPlatform -> NativeIdePlatformKind.Platform
+    is NativePlatform -> NativeIdePlatformKind.Platform
     else -> error("Unknown platform $single")
 }

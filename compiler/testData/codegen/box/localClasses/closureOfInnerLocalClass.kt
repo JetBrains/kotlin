@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 // Enable for JVM backend when KT-8120 gets fixed
 // IGNORE_BACKEND: JVM
 

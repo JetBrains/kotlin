@@ -6,27 +6,62 @@
 package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableRegularClass
-import org.jetbrains.kotlin.fir.declarations.impl.FirTypeParameterImpl
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fir.declarations.builder.FirRegularClassBuilder
+import org.jetbrains.kotlin.fir.declarations.builder.FirTypeParameterBuilder
+import org.jetbrains.kotlin.fir.declarations.impl.FirFileImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirRegularClassImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.ConeFlexibleType
+import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 
-fun FirTypeParameterImpl.addDefaultBoundIfNecessary() {
+fun FirTypeParameterBuilder.addDefaultBoundIfNecessary(isFlexible: Boolean = false) {
     if (bounds.isEmpty()) {
-        bounds += session.builtinTypes.nullableAnyType
+        val type = if (isFlexible) {
+            val session = this.session
+            buildResolvedTypeRef {
+                type = ConeFlexibleType(session.builtinTypes.anyType.type, session.builtinTypes.nullableAnyType.type)
+            }
+        } else {
+            session.builtinTypes.nullableAnyType
+        }
+        bounds += type
     }
 }
+
+inline val FirRegularClass.isInterface: Boolean
+    get() = classKind == ClassKind.INTERFACE
+
+inline val FirRegularClass.isEnumClass: Boolean
+    get() = classKind == ClassKind.ENUM_CLASS
+
+inline val FirRegularClass.modality get() = status.modality
+inline val FirRegularClass.isSealed get() = status.modality == Modality.SEALED
+inline val FirRegularClass.isAbstract get() = status.modality == Modality.ABSTRACT
+
+inline val FirRegularClass.canHaveAbstractDeclaration: Boolean
+    get() = isAbstract || isSealed || isEnumClass
 
 inline val FirRegularClass.isInner get() = status.isInner
 inline val FirRegularClass.isCompanion get() = status.isCompanion
 inline val FirRegularClass.isData get() = status.isData
 inline val FirRegularClass.isInline get() = status.isInline
+inline val FirRegularClass.isFun get() = status.isFun
+
 inline val FirMemberDeclaration.modality get() = status.modality
+inline val FirMemberDeclaration.isAbstract get() = status.modality == Modality.ABSTRACT
+inline val FirMemberDeclaration.isOpen get() = status.modality == Modality.OPEN
+
 inline val FirMemberDeclaration.visibility get() = status.visibility
+inline val FirMemberDeclaration.allowsToHaveFakeOverride: Boolean
+    get() = !Visibilities.isPrivate(visibility) && visibility != Visibilities.InvisibleFake
+
 inline val FirMemberDeclaration.isActual get() = status.isActual
 inline val FirMemberDeclaration.isExpect get() = status.isExpect
 inline val FirMemberDeclaration.isInner get() = status.isInner
@@ -40,21 +75,35 @@ inline val FirMemberDeclaration.isExternal: Boolean get() = status.isExternal
 inline val FirMemberDeclaration.isSuspend: Boolean get() = status.isSuspend
 inline val FirMemberDeclaration.isConst: Boolean get() = status.isConst
 inline val FirMemberDeclaration.isLateInit: Boolean get() = status.isLateInit
+inline val FirMemberDeclaration.isFromSealedClass: Boolean get() = status.isFromSealedClass
+inline val FirMemberDeclaration.isFromEnumClass: Boolean get() = status.isFromEnumClass
+
+inline val FirFunction<*>.hasBody get() = body != null
 
 inline val FirPropertyAccessor.modality get() = status.modality
 inline val FirPropertyAccessor.visibility get() = status.visibility
+inline val FirPropertyAccessor.isInline get() = status.isInline
+inline val FirPropertyAccessor.isExternal get() = status.isExternal
+inline val FirPropertyAccessor.hasBody get() = body != null
 
-fun FirModifiableRegularClass.addDeclaration(declaration: FirDeclaration) {
+inline val FirProperty.allowsToHaveFakeOverride: Boolean
+    get() = !Visibilities.isPrivate(visibility) && visibility != Visibilities.InvisibleFake
+inline val FirPropertyAccessor.allowsToHaveFakeOverride: Boolean
+    get() = !Visibilities.isPrivate(visibility) && visibility != Visibilities.InvisibleFake
+
+inline val FirRegularClass.isLocal get() = symbol.classId.isLocal
+inline val FirSimpleFunction.isLocal get() = status.visibility == Visibilities.Local
+
+fun FirRegularClassBuilder.addDeclaration(declaration: FirDeclaration) {
     declarations += declaration
     if (companionObject == null && declaration is FirRegularClass && declaration.isCompanion) {
         companionObject = declaration
     }
 }
 
-fun FirModifiableRegularClass.addDeclarations(declarations: Collection<FirDeclaration>) {
+fun FirRegularClassBuilder.addDeclarations(declarations: Collection<FirDeclaration>) {
     declarations.forEach(this::addDeclaration)
 }
-
 
 val FirTypeAlias.expandedConeType: ConeClassLikeType? get() = expandedTypeRef.coneTypeSafe()
 
@@ -68,7 +117,66 @@ val FirClassSymbol<*>.superConeTypes
 
 val FirClass<*>.superConeTypes get() = superTypeRefs.mapNotNull { it.coneTypeSafe<ConeClassLikeType>() }
 
+fun FirClass<*>.getPrimaryConstructorIfAny(): FirConstructor? =
+    declarations.filterIsInstance<FirConstructor>().firstOrNull()?.takeIf { it.isPrimary }
+
 fun FirRegularClass.collectEnumEntries(): Collection<FirEnumEntry> {
     assert(classKind == ClassKind.ENUM_CLASS)
     return declarations.filterIsInstance<FirEnumEntry>()
 }
+
+fun FirFile.addDeclaration(declaration: FirDeclaration) {
+    require(this is FirFileImpl)
+    declarations += declaration
+}
+
+fun FirRegularClass.addDeclaration(declaration: FirDeclaration) {
+    @Suppress("LiftReturnOrAssignment")
+    when (this) {
+        is FirRegularClassImpl -> declarations += declaration
+        else -> throw IllegalStateException()
+    }
+}
+
+private object SourceElementKey : FirDeclarationDataKey()
+
+var FirRegularClass.sourceElement: SourceElement? by FirDeclarationDataRegistry.data(SourceElementKey)
+
+val FirMemberDeclaration.containerSource: SourceElement?
+    get() = when (this) {
+        is FirCallableMemberDeclaration<*> -> containerSource
+        is FirRegularClass -> sourceElement
+        else -> null
+    }
+
+private object IsFromVarargKey : FirDeclarationDataKey()
+
+private object IsReferredViaField : FirDeclarationDataKey()
+
+var FirProperty.isFromVararg: Boolean? by FirDeclarationDataRegistry.data(IsFromVarargKey)
+var FirProperty.isReferredViaField: Boolean? by FirDeclarationDataRegistry.data(IsReferredViaField)
+
+// See [BindingContext.BACKING_FIELD_REQUIRED]
+val FirProperty.hasBackingField: Boolean
+    get() {
+        if (isAbstract) return false
+        if (delegate != null) return false
+        when (origin) {
+            FirDeclarationOrigin.SubstitutionOverride -> return false
+            FirDeclarationOrigin.IntersectionOverride -> return false
+            FirDeclarationOrigin.Delegated -> return false
+            else -> {
+                val getter = getter ?: return true
+                if (isVar && setter == null) return true
+                if (setter?.hasBody == false) return true
+                if (!getter.hasBody) return true
+
+                return isReferredViaField == true
+            }
+        }
+    }
+
+inline val FirDeclaration.isFromLibrary: Boolean
+    get() = origin == FirDeclarationOrigin.Library
+inline val FirDeclaration.isSynthetic: Boolean
+    get() = origin == FirDeclarationOrigin.Synthetic

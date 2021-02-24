@@ -14,3 +14,4 @@ fun foo() {
     }
 }
 
+// DISABLE-ERRORS

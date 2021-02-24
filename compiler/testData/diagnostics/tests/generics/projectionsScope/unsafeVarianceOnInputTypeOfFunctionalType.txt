@@ -1,0 +1,12 @@
+package
+
+public fun caller(/*0*/ holder1: FunctionHolder<out kotlin.Any>, /*1*/ holder2: FunctionHolder<*>, /*2*/ holder3: FunctionHolder<kotlin.Any>, /*3*/ a: kotlin.Any): kotlin.Unit
+
+public final class FunctionHolder</*0*/ out T : kotlin.Any> {
+    public constructor FunctionHolder</*0*/ out T : kotlin.Any>(/*0*/ f: (@kotlin.UnsafeVariance T) -> kotlin.Unit)
+    public final val f: (@kotlin.UnsafeVariance T) -> kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun f2(/*0*/ v: @kotlin.UnsafeVariance T): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

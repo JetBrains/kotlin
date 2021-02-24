@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.codegen.optimization.common.intConstant
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.isReleaseCoroutines
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
@@ -52,7 +53,8 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
     private val parametersMapping: TypeParameterMappings<KT>?,
     private val intrinsicsSupport: IntrinsicsSupport<KT>,
     private val typeSystem: TypeSystemCommonBackendContext,
-    private val languageVersionSettings: LanguageVersionSettings
+    private val languageVersionSettings: LanguageVersionSettings,
+    private val unifiedNullChecks: Boolean,
 ) {
     enum class OperationKind {
         NEW_ARRAY, AS, SAFE_AS, IS, JAVA_CLASS, ENUM_REIFIED, TYPE_OF;
@@ -62,6 +64,8 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
 
     interface IntrinsicsSupport<KT : KotlinTypeMarker> {
         fun putClassInstance(v: InstructionAdapter, type: KT)
+
+        fun generateTypeParameterContainer(v: InstructionAdapter, typeParameter: TypeParameterMarker)
 
         fun toKotlinType(type: KT): KotlinType
     }
@@ -219,7 +223,7 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
         if (stubCheckcast !is TypeInsnNode) return false
 
         val newMethodNode = MethodNode(Opcodes.API_VERSION)
-        generateAsCast(InstructionAdapter(newMethodNode), kotlinType, asmType, safe, languageVersionSettings)
+        generateAsCast(InstructionAdapter(newMethodNode), kotlinType, asmType, safe, languageVersionSettings, unifiedNullChecks)
 
         instructions.insert(insn, newMethodNode.instructions)
         // Keep stubCheckcast to avoid VerifyErrors on 1.8+ bytecode,
@@ -258,13 +262,18 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
         instructions: InsnList,
         type: KT
     ) = rewriteNextTypeInsn(insn, Opcodes.ACONST_NULL) { stubConstNull: AbstractInsnNode ->
-        val newMethodNode = MethodNode(Opcodes.API_VERSION)
-        val stackSize = typeSystem.generateTypeOf(InstructionAdapter(newMethodNode), type, intrinsicsSupport)
+        val newMethodNode = MethodNode(Opcodes.API_VERSION, "fake", "()V", null, null)
+        val mv = wrapWithMaxLocalCalc(newMethodNode)
+        typeSystem.generateTypeOf(InstructionAdapter(mv), type, intrinsicsSupport)
 
-        instructions.insert(insn, newMethodNode.instructions)
+        // Adding a fake return (and removing it below) to trigger maxStack calculation
+        mv.visitInsn(Opcodes.RETURN)
+        mv.visitMaxs(-1, -1)
+
+        instructions.insert(insn, newMethodNode.instructions.apply { remove(last) })
         instructions.remove(stubConstNull)
 
-        maxStackSize = max(maxStackSize, stackSize)
+        maxStackSize = max(maxStackSize, newMethodNode.maxStack)
         return true
     }
 

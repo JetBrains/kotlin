@@ -13,24 +13,24 @@ fun isString(x: Any?): Boolean {
 
 fun exhaustive(x: Any?) {
     when (isString(x)) {
-        true -> x.<!UNRESOLVED_REFERENCE!>length<!>
+        true -> x.length
         false -> x.<!UNRESOLVED_REFERENCE!>length<!>
     }
 
     when(!isString(x)) {
         true -> x.<!UNRESOLVED_REFERENCE!>length<!>
-        false -> x.<!UNRESOLVED_REFERENCE!>length<!>
+        false -> x.length
     }
 }
 
 fun smartcastInElse(x: Any?) {
     when (isString(x)) {
         false -> x.<!UNRESOLVED_REFERENCE!>length<!>
-        else -> x.<!UNRESOLVED_REFERENCE!>length<!>
+        else -> x.length
     }
 
     when (!isString(x)) {
         true -> x.<!UNRESOLVED_REFERENCE!>length<!>
-        else -> x.<!UNRESOLVED_REFERENCE!>length<!>
+        else -> x.length
     }
 }

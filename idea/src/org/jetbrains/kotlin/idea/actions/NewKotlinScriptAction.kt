@@ -13,14 +13,17 @@ import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiFile
+import org.jetbrains.annotations.Nls
+import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.psi.KtFile
 
 open class NewKotlinScriptAction(
-    val actionName: String,
-    val description: String,
-    val dialogTitle: String,
-    val templateName: String
+    @Nls val actionName: String,
+    @Nls val description: String,
+    @Nls val dialogTitle: String,
+    @NonNls val templateName: String
 ) : CreateFileFromTemplateAction(
     actionName,
     description,
@@ -28,9 +31,9 @@ open class NewKotlinScriptAction(
 ), DumbAware {
 
     constructor() : this(
-        actionName = "Kotlin Script",
-        description = "Creates new Kotlin script",
-        dialogTitle = "New Kotlin Script",
+        actionName = KotlinBundle.message("action.new.script.name"),
+        description = KotlinBundle.message("action.new.script.description"),
+        dialogTitle = KotlinBundle.message("action.new.script.dialog.title"),
         templateName = "Kotlin Script"
     )
 

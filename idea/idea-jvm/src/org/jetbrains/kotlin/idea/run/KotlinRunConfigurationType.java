@@ -16,31 +16,31 @@
 
 package org.jetbrains.kotlin.idea.run;
 
-import com.intellij.execution.configurations.*;
+import com.intellij.execution.configurations.ConfigurationTypeUtil;
+import com.intellij.execution.configurations.JavaRunConfigurationModule;
+import com.intellij.execution.configurations.RunConfiguration;
+import com.intellij.execution.configurations.SimpleConfigurationType;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.NotNullLazyValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.KotlinIcons;
-import org.jetbrains.kotlin.idea.KotlinLanguage;
+import org.jetbrains.kotlin.idea.KotlinJvmBundle;
 
-public class KotlinRunConfigurationType extends ConfigurationTypeBase {
+public class KotlinRunConfigurationType extends SimpleConfigurationType {
     public static KotlinRunConfigurationType getInstance() {
         return ConfigurationTypeUtil.findConfigurationType(KotlinRunConfigurationType.class);
     }
 
     public KotlinRunConfigurationType() {
-        super("JetRunConfigurationType", KotlinLanguage.NAME, KotlinLanguage.NAME, KotlinIcons.SMALL_LOGO);
-        addFactory(new KotlinRunConfigurationFactory(this));
+        super("JetRunConfigurationType",
+              KotlinJvmBundle.message("language.name.kotlin"),
+              KotlinJvmBundle.message("language.name.kotlin"),
+              NotNullLazyValue.createValue(() -> KotlinIcons.SMALL_LOGO));
     }
 
-    private static class KotlinRunConfigurationFactory extends ConfigurationFactory {
-        protected KotlinRunConfigurationFactory(@NotNull ConfigurationType type) {
-            super(type);
-        }
-
-        @NotNull
-        @Override
-        public RunConfiguration createTemplateConfiguration(@NotNull Project project) {
-            return new KotlinRunConfiguration("", new JavaRunConfigurationModule(project, true), this);
-        }
+    @NotNull
+    @Override
+    public RunConfiguration createTemplateConfiguration(@NotNull Project project) {
+        return new KotlinRunConfiguration("", new JavaRunConfigurationModule(project, true), this);
     }
 }

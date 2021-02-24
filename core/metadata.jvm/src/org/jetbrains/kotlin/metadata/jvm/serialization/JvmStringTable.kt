@@ -21,7 +21,7 @@ open class JvmStringTable(nameResolver: JvmNameResolver? = null) : StringTable {
     init {
         if (nameResolver != null) {
             strings.addAll(nameResolver.strings)
-            nameResolver.records.mapTo(records, JvmProtoBuf.StringTableTypes.Record::toBuilder)
+            nameResolver.types.recordList.mapTo(records, JvmProtoBuf.StringTableTypes.Record::toBuilder)
             for (index in strings.indices) {
                 map[nameResolver.getString(index)] = index
             }

@@ -1,7 +1,8 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+
 /*
  * Based on GWT AbstractList
  * Copyright 2007 Google Inc.
@@ -13,7 +14,7 @@ package kotlin.collections
 /**
  * Provides a skeletal implementation of the [MutableList] interface.
  *
- * @param E the type of elements contained in the list. The list is invariant on its element type.
+ * @param E the type of elements contained in the list. The list is invariant in its element type.
  */
 public actual abstract class AbstractMutableList<E> protected actual constructor() : AbstractMutableCollection<E>(), MutableList<E> {
     protected var modCount: Int = 0
@@ -28,11 +29,13 @@ public actual abstract class AbstractMutableList<E> protected actual constructor
      * @return `true` because the list is always modified as the result of this operation.
      */
     actual override fun add(element: E): Boolean {
+        checkIsMutable()
         add(size, element)
         return true
     }
 
     actual override fun addAll(index: Int, elements: Collection<E>): Boolean {
+        checkIsMutable()
         var _index = index
         var changed = false
         for (e in elements) {
@@ -43,11 +46,19 @@ public actual abstract class AbstractMutableList<E> protected actual constructor
     }
 
     actual override fun clear() {
+        checkIsMutable()
         removeRange(0, size)
     }
 
-    actual override fun removeAll(elements: Collection<E>): Boolean = removeAll { it in elements }
-    actual override fun retainAll(elements: Collection<E>): Boolean = removeAll { it !in elements }
+    actual override fun removeAll(elements: Collection<E>): Boolean {
+        checkIsMutable()
+        return removeAll { it in elements }
+    }
+
+    actual override fun retainAll(elements: Collection<E>): Boolean {
+        checkIsMutable()
+        return removeAll { it !in elements }
+    }
 
 
     actual override fun iterator(): MutableIterator<E> = IteratorImpl()
@@ -164,7 +175,7 @@ public actual abstract class AbstractMutableList<E> protected actual constructor
 
         override fun set(element: E) {
             check(last != -1) { "Call next() or previous() before updating element value with the iterator." }
-            this@AbstractMutableList[last] = element
+            set(last, element)
         }
     }
 
@@ -204,6 +215,8 @@ public actual abstract class AbstractMutableList<E> protected actual constructor
         }
 
         override val size: Int get() = _size
+
+        internal override fun checkIsMutable(): Unit = list.checkIsMutable()
     }
 
 }

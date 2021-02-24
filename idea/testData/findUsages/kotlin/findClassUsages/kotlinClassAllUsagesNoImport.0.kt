@@ -1,5 +1,6 @@
 // PSI_ELEMENT: org.jetbrains.kotlin.psi.KtClass
 // OPTIONS: usages, constructorUsages, skipImports
+
 package server
 
 open class <caret>Server {
@@ -7,3 +8,5 @@ open class <caret>Server {
         println("Server")
     }
 }
+
+// FIR_COMPARISON

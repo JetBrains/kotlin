@@ -173,9 +173,8 @@ open class JDIEval(
     }
 
     private fun findField(fieldDesc: FieldDescription, receiver: ReferenceType? = null): Field {
-        for (owner in listOfNotNull(receiver, fieldDesc.ownerType.asReferenceType())) {
-            owner.fieldByName(fieldDesc.name)?.let { return it }
-        }
+        receiver?.fieldByName(fieldDesc.name)?.let { return it }
+        fieldDesc.ownerType.asReferenceType().fieldByName(fieldDesc.name)?.let { return it }
 
         throwBrokenCodeException(NoSuchFieldError("Field not found: $fieldDesc"))
     }

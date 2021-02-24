@@ -9,20 +9,21 @@ import com.intellij.codeInsight.daemon.LineMarkerInfo
 import com.intellij.execution.PsiLocation
 import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.execution.actions.ConfigurationFromContext
+import com.intellij.openapi.externalSystem.model.execution.ExternalSystemTaskExecutionSettings
+import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.gradle.GradleDaemonAnalyzerTestCase
 import org.jetbrains.kotlin.gradle.checkFiles
-import org.jetbrains.kotlin.idea.run.KotlinGradleRunConfiguration
 import org.jetbrains.kotlin.test.TagsTestDataUtil
+import org.jetbrains.plugins.gradle.service.execution.GradleRunConfiguration
 import org.junit.Test
+import java.io.File
 
 class GradleTestRunConfigurationAndHighlightingTest : GradleImportingTestCase() {
     @Test
     fun testExpectClassWithTests() {
-        doTest()
-    }
-
-    @Test
-    fun testKotlinJUnitSettings() {
         doTest()
     }
 
@@ -36,6 +37,11 @@ class GradleTestRunConfigurationAndHighlightingTest : GradleImportingTestCase() 
         doTest()
     }
 
+    @Test
+    fun testMultiprojectBuild() {
+        doTest()
+    }
+
     private fun doTest() {
         val files = importProjectFromTestData()
         val project = myTestFixture.project
@@ -43,7 +49,12 @@ class GradleTestRunConfigurationAndHighlightingTest : GradleImportingTestCase() 
         checkFiles(
             files.filter { it.extension == "kt" },
             project,
-            object : GradleDaemonAnalyzerTestCase(testLineMarkers = true, checkWarnings = true, checkInfos = false) {
+            object : GradleDaemonAnalyzerTestCase(
+                testLineMarkers = true,
+                checkWarnings = true,
+                checkInfos = false,
+                rootDisposable = testRootDisposable
+            ) {
                 override fun renderAdditionalAttributeForTag(tag: TagsTestDataUtil.TagInfo<*>): String? {
                     val lineMarkerInfo = tag.data as? LineMarkerInfo<*> ?: return null
 
@@ -53,33 +64,73 @@ class GradleTestRunConfigurationAndHighlightingTest : GradleImportingTestCase() 
                     if ("Run Test" !in lineMarkerInfo.lineMarkerTooltip.orEmpty()) return null
 
                     val kotlinConfigsFromContext = lineMarkerInfo.extractConfigurationsFromContext()
-                        .filter { it.configuration is KotlinGradleRunConfiguration }
+                        .filter { it.configuration is GradleRunConfiguration }
 
                     if (kotlinConfigsFromContext.isEmpty()) return "settings=\"Nothing here\""
 
                     val configFromContext = kotlinConfigsFromContext.single() // can we have more than one?
 
-                    return "settings=\"${configFromContext.renderDescription().replace("\"", "\\\"")}\""
+                    val tagsToRender = RunConfigurationsTags.getTagsToRender(lineMarkerInfo.element!!.containingFile)
+
+                    return configFromContext.renderDescription(tagsToRender)
                 }
             }
         )
     }
 
-    private fun ConfigurationFromContext.renderDescription(): String {
-        val configuration = configuration as KotlinGradleRunConfiguration
+    private enum class RunConfigurationsTags {
+        PROJECT, SETTINGS;
+
+        companion object {
+            const val TAG_DIRECTIVE: String = "// !RENDER_TAGS: "
+
+            val DEFAULT_TAGS = listOf(SETTINGS)
+
+            fun getTagsToRender(file: PsiFile): List<RunConfigurationsTags> {
+                val tagDirectives = file.text.lines().filter { it.startsWith(RunConfigurationsTags.TAG_DIRECTIVE) }
+
+                return if (tagDirectives.isEmpty()) DEFAULT_TAGS else tagDirectives.single().parseTags()
+            }
+
+            // Expected format:
+            // !RENDER_TAGS: ENUM_VALUE_1, ENUM_VALUE_2, ...
+            private fun String.parseTags(): List<RunConfigurationsTags> =
+                removePrefix(TAG_DIRECTIVE).split(", ").map { valueOf(it) }
+        }
+    }
+
+    private fun ConfigurationFromContext.renderDescription(tagsToRender: List<RunConfigurationsTags>): String {
+        val configuration = configuration as GradleRunConfiguration
 
         val location = PsiLocation(sourceElement)
         val context = ConfigurationContext.createEmptyContextForLocation(location)
 
-        var result: String? = null
+        var settings: ExternalSystemTaskExecutionSettings? = null
 
         // We can not use settings straight away, because exact settings are determined only after 'onFirstRun'
         // (see MultiplatformTestTasksChooser)
         onFirstRun(context) {
-            result = configuration.settings.toString()
+            settings = configuration.settings
         }
 
-        return result!!
+        val result = mutableListOf<Pair<String, String>>()
+
+        for (tag in tagsToRender) {
+            val renderedTagValue = when (tag) {
+                RunConfigurationsTags.PROJECT -> {
+                    val currentProjectFile = File(settings!!.externalProjectPath)
+                    val projectRoot = File(ExternalSystemApiUtil.getExternalRootProjectPath(context.module)!!)
+
+                    val pathToCurrentProjectRelativeToRoot = currentProjectFile.relativeTo(projectRoot)
+                    pathToCurrentProjectRelativeToRoot.toString()
+                }
+                RunConfigurationsTags.SETTINGS -> settings.toString()
+            }
+
+            result += tag.name.toLowerCase() to renderedTagValue
+        }
+
+        return result.joinToString { (tagName, tagValue) -> tagName + "=\"" + tagValue.replace("\"", "\\\"") + "\"" }
     }
 
     private fun LineMarkerInfo<*>.extractConfigurationsFromContext(): List<ConfigurationFromContext> {
@@ -92,4 +143,8 @@ class GradleTestRunConfigurationAndHighlightingTest : GradleImportingTestCase() 
     }
 
     override fun testDataDirName(): String = "testRunConfigurations"
+
+    companion object {
+
+    }
 }

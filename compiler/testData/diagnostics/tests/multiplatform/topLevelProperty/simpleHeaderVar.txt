@@ -3,14 +3,13 @@ package
 
 public expect var foo: kotlin.String
 
-
 // -- Module: <m2-jvm> --
 package
 
 public actual var foo: kotlin.String
 
-
 // -- Module: <m3-js> --
 package
 
 public actual var foo: kotlin.String
+

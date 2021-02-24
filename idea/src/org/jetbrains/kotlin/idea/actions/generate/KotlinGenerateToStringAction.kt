@@ -28,7 +28,9 @@ import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
@@ -66,7 +68,7 @@ class KotlinGenerateToStringAction : KotlinGenerateMemberActionBase<KotlinGenera
     )
 
     enum class Generator(val text: String) {
-        SINGLE_TEMPLATE("Single template") {
+        SINGLE_TEMPLATE(KotlinBundle.message("action.generate.tostring.template.single")) {
             override fun generate(info: Info): String {
                 val className = info.classDescriptor.name.asString()
 
@@ -86,7 +88,7 @@ class KotlinGenerateToStringAction : KotlinGenerateMemberActionBase<KotlinGenera
             }
         },
 
-        MULTIPLE_TEMPLATES("Multiple templates with concatenation") {
+        MULTIPLE_TEMPLATES(KotlinBundle.message("action.generate.tostring.template.multiple")) {
             override fun generate(info: Info): String {
                 val className = info.classDescriptor.name.asString()
 
@@ -167,11 +169,12 @@ class KotlinGenerateToStringAction : KotlinGenerateMemberActionBase<KotlinGenera
         val superToString = classDescriptor.getSuperClassOrAny().findDeclaredToString(true)!!
 
         val memberChooserObjects = properties.map { DescriptorMemberChooserObject(it, it.unsafeResolveToDescriptor()) }.toTypedArray()
+        val selectedElements = memberChooserObjects.filter { (it.descriptor as? PropertyDescriptor)?.getter?.isDefault ?: true }.toTypedArray()
         val headerPanel = ToStringMemberChooserHeaderPanel(!superToString.builtIns.isMemberOfAny(superToString))
         val chooser = MemberChooser<DescriptorMemberChooserObject>(memberChooserObjects, true, true, project, false, headerPanel).apply {
-            title = "Generate toString()"
+            title = KotlinBundle.message("action.generate.tostring.name")
             setCopyJavadocVisible(false)
-            selectElements(memberChooserObjects)
+            selectElements(selectedElements)
         }
 
         if (!klass.hasExpectModifier()) {

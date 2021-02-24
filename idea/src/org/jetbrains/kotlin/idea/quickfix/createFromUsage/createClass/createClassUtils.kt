@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.Qualifier
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.substitutions.getTypeSubstitution
+import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import java.util.*
 import org.jetbrains.kotlin.descriptors.ClassKind as ClassDescriptorKind
@@ -98,6 +99,10 @@ internal fun KotlinType.toClassTypeInfo(): TypeInfo {
 }
 
 internal fun getClassKindFilter(expectedType: KotlinType, containingDeclaration: PsiElement): (ClassKind) -> Boolean {
+    if (expectedType.isAnyOrNullableAny()) {
+        return { _ -> true }
+    }
+
     val descriptor = expectedType.constructor.declarationDescriptor ?: return { _ -> false }
 
     val canHaveSubtypes = !(expectedType.constructor.isFinal || expectedType.containsStarProjections()) || expectedType.isUnit()
@@ -135,9 +140,9 @@ internal fun KtSimpleNameExpression.getCreatePackageFixIfApplicable(targetParent
     val javaFix = CreateClassOrPackageFix.createFix(fullName, resolveScope, this, basePackage, null, null, null) ?: return null
 
     return object : DelegatingIntentionAction(javaFix) {
-        override fun getFamilyName(): String = KotlinBundle.message("create.from.usage.family")
+        override fun getFamilyName(): String = KotlinBundle.message("fix.create.from.usage.family")
 
-        override fun getText(): String = "Create package '$fullName'"
+        override fun getText(): String = KotlinBundle.message("create.package.0", fullName)
     }
 }
 

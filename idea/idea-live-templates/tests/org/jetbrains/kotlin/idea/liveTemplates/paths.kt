@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.idea.liveTemplates
 
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.util.KtTestUtil
 
 internal val RELATIVE_TEST_DATA_BASE_PATH = "idea/idea-live-templates/testData"
 
-internal val TEST_DATA_BASE_PATH = KotlinTestUtils.getHomeDirectory() + "/" + RELATIVE_TEST_DATA_BASE_PATH
+internal val TEST_DATA_BASE_PATH = KtTestUtil.getHomeDirectory() + "/" + RELATIVE_TEST_DATA_BASE_PATH

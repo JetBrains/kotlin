@@ -1,5 +1,5 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 // TARGET_BACKEND: JVM
+// JVM_TARGET: 1.8
 // FILE: Simple.java
 
 interface Simple {
@@ -13,7 +13,6 @@ interface Simple {
 }
 
 // FILE: main.kt
-// JVM_TARGET: 1.8
 class Test : Simple {}
 
 fun box(): String {

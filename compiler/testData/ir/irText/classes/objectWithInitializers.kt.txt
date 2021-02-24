@@ -1,0 +1,29 @@
+abstract class Base {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+object Test : Base {
+  private constructor() /* primary */ {
+    super/*Base*/()
+    /* <init>() */
+
+  }
+
+  val x: Int
+    field = 1
+    get
+
+  val y: Int
+    get
+
+  init {
+    <this>.#y = <this>.<get-x>()
+  }
+
+}
+

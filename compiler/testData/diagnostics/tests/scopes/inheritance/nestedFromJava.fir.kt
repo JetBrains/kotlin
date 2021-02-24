@@ -23,19 +23,19 @@ public class C extends B implements A {
 // FILE: 1.kt
 
 class X: A {
-    val a_s: A_S = null!!
+    val a_s: <!UNRESOLVED_REFERENCE!>A_S<!> = null!!
 
     init {
-        A_S()
+        <!UNRESOLVED_REFERENCE!>A_S<!>()
         A.A_S()
         X.<!UNRESOLVED_REFERENCE!>A_S<!>()
     }
 
     object xD {
-        val a_: A_S = null!!
+        val a_: <!UNRESOLVED_REFERENCE!>A_S<!> = null!!
 
         init {
-            A_S()
+            <!UNRESOLVED_REFERENCE!>A_S<!>()
         }
     }
 }
@@ -66,23 +66,23 @@ class Y: B() {
 }
 
 class Z: C() {
-    val a_s: A_S = null!!
+    val a_s: <!UNRESOLVED_REFERENCE!>A_S<!> = null!!
     val b_: B_ = null!!
     val b_s: B_S = null!!
 
     init {
-        A_S()
+        <!UNRESOLVED_REFERENCE!>A_S<!>()
         B_()
         B_S()
     }
 
     object X {
-        val a_s: A_S = null!!
+        val a_s: <!UNRESOLVED_REFERENCE!>A_S<!> = null!!
         val b_: B_ = null!!
         val b_s: B_S = null!!
 
         init {
-            A_S()
+            <!UNRESOLVED_REFERENCE!>A_S<!>()
             B_()
             B_S()
         }

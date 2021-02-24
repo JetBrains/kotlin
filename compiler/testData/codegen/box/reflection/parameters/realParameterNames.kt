@@ -1,8 +1,7 @@
-// IGNORE_BACKEND_FIR: JVM_IR
-// SKIP_JDK6
 // TARGET_BACKEND: JVM
 // WITH_REFLECT
 // JAVAC_OPTIONS: -parameters
+// JVM_TARGET: 1.8
 // FILE: J.java
 
 public class J {

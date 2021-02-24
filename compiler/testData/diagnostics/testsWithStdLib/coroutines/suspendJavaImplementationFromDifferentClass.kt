@@ -1,4 +1,3 @@
-// COMMON_COROUTINES_TEST
 // FILE: I.kt
 
 interface I {
@@ -7,7 +6,7 @@ interface I {
 
 // FILE: BaseJavaClass.java
 public class BaseJavaClass {
-    public Object foo(int x, COROUTINES_PACKAGE.Continuation<String> continuation) {
+    public Object foo(int x, kotlin.coroutines.Continuation<String> continuation) {
         return null;
     }
 }
@@ -18,7 +17,7 @@ public class JavaClass extends BaseJavaClass implements I {
 
 // FILE: main.kt
 
-import COROUTINES_PACKAGE.Continuation
+import kotlin.coroutines.Continuation
 class K1 : JavaClass()
 
 class K2 : JavaClass() {

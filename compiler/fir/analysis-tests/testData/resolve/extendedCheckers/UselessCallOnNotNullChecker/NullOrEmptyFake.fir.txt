@@ -1,0 +1,5 @@
+FILE: NullOrEmptyFake.kt
+    public final val s: R|kotlin/String?| = Null(null)
+        public get(): R|kotlin/String?|
+    public final val empty: R|kotlin/Boolean| = R|/s|.R|kotlin/text/isNullOrEmpty|()
+        public get(): R|kotlin/Boolean|

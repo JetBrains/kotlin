@@ -4,6 +4,7 @@
 // ACTION: Introduce import alias
 // ACTION: Introduce local variable
 // ACTION: Put arguments on separate lines
+// LANGUAGE_VERSION: 1.3
 // WITH_RUNTIME
 
 fun main() {

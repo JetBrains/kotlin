@@ -8,7 +8,7 @@ class B
 val A.foo: B.() -> Unit get() = {}
 
 fun test(a: A, b: B) {
-    b.<!UNRESOLVED_REFERENCE!>(a.foo)()<!>
+    b.<!UNRESOLVED_REFERENCE!>(a.foo)<!>()
     (a.foo)(b)
     a.foo(b)
 
@@ -17,7 +17,7 @@ fun test(a: A, b: B) {
 
         b.(foo)()
 
-        <!UNRESOLVED_REFERENCE!>(b.<!INAPPLICABLE_CANDIDATE!>foo<!>)()<!>
+        <!INAPPLICABLE_CANDIDATE!>(b.<!INAPPLICABLE_CANDIDATE!>foo<!>)<!>()
 
         foo(b)
         (foo)(b)
@@ -25,9 +25,9 @@ fun test(a: A, b: B) {
 
     with(b) {
         a.<!INAPPLICABLE_CANDIDATE!>foo<!>()
-        a.(<!INAPPLICABLE_CANDIDATE!>foo<!>)()
+        a.<!INAPPLICABLE_CANDIDATE!>(foo)<!>()
 
-        <!INAPPLICABLE_CANDIDATE!>(a.foo)()<!>
+        (a.foo)()
 
         (a.foo)(this)
         a.foo(this)
@@ -41,7 +41,7 @@ fun test(a: A, b: B) {
     }
 }
 
-// FILE: 1.kt
+// FILE: 2.kt
 package fooIsMember
 
 class A {
@@ -50,7 +50,7 @@ class A {
 class B
 
 fun test(a: A, b: B) {
-    b.<!UNRESOLVED_REFERENCE!>(a.foo)()<!>
+    b.<!UNRESOLVED_REFERENCE!>(a.foo)<!>()
     (a.foo)(b)
     a.foo(b)
 
@@ -59,7 +59,7 @@ fun test(a: A, b: B) {
 
         b.(foo)()
 
-        <!UNRESOLVED_REFERENCE!>(b.<!UNRESOLVED_REFERENCE!>foo<!>)()<!>
+        <!UNRESOLVED_REFERENCE!>(b.<!UNRESOLVED_REFERENCE!>foo<!>)<!>()
 
         foo(b)
         (foo)(b)
@@ -67,9 +67,9 @@ fun test(a: A, b: B) {
 
     with(b) {
         a.<!INAPPLICABLE_CANDIDATE!>foo<!>()
-        a.(<!INAPPLICABLE_CANDIDATE!>foo<!>)()
+        a.<!INAPPLICABLE_CANDIDATE!>(foo)<!>()
 
-        <!INAPPLICABLE_CANDIDATE!>(a.foo)()<!>
+        (a.foo)()
 
         (a.foo)(this)
         a.foo(this)

@@ -1,0 +1,40 @@
+package
+
+public fun JavaAnnotationOwner.buildLazyValueForMap(): kotlin.Lazy<kotlin.collections.Map<kotlin.Int?, JavaAnnotation>>
+
+public abstract class BinaryJavaMethodBase : MapBasedJavaAnnotationOwner {
+    public constructor BinaryJavaMethodBase()
+    public abstract override /*1*/ /*fake_override*/ val annotations: kotlin.collections.Collection<JavaAnnotation>
+    public open override /*1*/ val annotationsByFqNameHash: kotlin.collections.Map<kotlin.Int?, JavaAnnotation>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface ClassId {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface JavaAnnotation {
+    public abstract val classId: ClassId?
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface JavaAnnotationOwner {
+    public abstract val annotations: kotlin.collections.Collection<JavaAnnotation>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface MapBasedJavaAnnotationOwner : JavaAnnotationOwner {
+    public abstract override /*1*/ /*fake_override*/ val annotations: kotlin.collections.Collection<JavaAnnotation>
+    public abstract val annotationsByFqNameHash: kotlin.collections.Map<kotlin.Int?, JavaAnnotation>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

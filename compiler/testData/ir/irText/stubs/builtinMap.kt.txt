@@ -1,0 +1,10 @@
+fun <K1 : Any?, V1 : Any?> Map<out K1, V1>.plus(pair: Pair<K1, V1>): Map<K1, V1> {
+  return when {
+    <this>.isEmpty() -> mapOf<K1, V1>(pair = pair)
+    else -> LinkedHashMap<@FlexibleNullability K1?, @FlexibleNullability V1?>(p0 = <this>).apply<LinkedHashMap<@FlexibleNullability K1?, @FlexibleNullability V1?>>(block = local fun LinkedHashMap<@FlexibleNullability K1?, @FlexibleNullability V1?>.<anonymous>() {
+      $this$apply.put(key = pair.<get-first>(), value = pair.<get-second>()) /*~> Unit */
+    }
+)
+  }
+}
+

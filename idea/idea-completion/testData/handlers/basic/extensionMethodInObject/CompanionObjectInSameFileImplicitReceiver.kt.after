@@ -10,5 +10,4 @@ fun T.usage() {
     foo()<caret>
 }
 
-// INVOCATION_COUNT: 2
 // ELEMENT: foo

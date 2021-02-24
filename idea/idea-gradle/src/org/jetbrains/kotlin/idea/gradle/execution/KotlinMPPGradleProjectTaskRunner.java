@@ -37,15 +37,17 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.concurrency.AsyncPromise;
 import org.jetbrains.concurrency.Promise;
 import org.jetbrains.kotlin.config.KotlinFacetSettings;
+import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle;
 import org.jetbrains.kotlin.idea.facet.KotlinFacet;
 import org.jetbrains.kotlin.platform.TargetPlatformKt;
 import org.jetbrains.kotlin.platform.TargetPlatform;
-import org.jetbrains.kotlin.platform.konan.KonanPlatformKt;
+import org.jetbrains.kotlin.platform.konan.NativePlatformKt;
 import org.jetbrains.plugins.gradle.execution.build.CachedModuleDataFinder;
 import org.jetbrains.plugins.gradle.execution.build.GradleProjectTaskRunner;
 import org.jetbrains.plugins.gradle.service.project.GradleBuildSrcProjectsResolver;
 import org.jetbrains.plugins.gradle.service.project.GradleProjectResolverUtil;
 import org.jetbrains.plugins.gradle.service.task.GradleTaskManager;
+import org.jetbrains.plugins.gradle.settings.GradleProjectSettings;
 import org.jetbrains.plugins.gradle.settings.GradleSettings;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
 
@@ -57,7 +59,6 @@ import java.util.stream.Collectors;
 import static com.intellij.openapi.externalSystem.service.execution.ExternalSystemRunConfiguration.PROGRESS_LISTENER_KEY;
 import static com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil.*;
 import static com.intellij.openapi.util.text.StringUtil.*;
-import static org.jetbrains.kotlin.idea.gradle.execution.KotlinMPPGradleProjectTaskRunnerUtilKt.isDelegatedBuild;
 import static org.jetbrains.plugins.gradle.execution.GradleRunnerUtil.resolveProjectPath;
 
 /**
@@ -151,7 +152,7 @@ class KotlinMPPGradleProjectTaskRunner extends ProjectTaskRunner
             else {
                 projectName = projectFile.getName();
             }
-            String executionName = "Build " + projectName;
+            String executionName = KotlinIdeaGradleBundle.message("build.0.project", projectName);
             settings.setExecutionName(executionName);
             settings.setExternalProjectPath(rootProjectPath);
             settings.setTaskNames(ContainerUtil.collect(ContainerUtil.concat(cleanTasks, buildTasks).iterator()));
@@ -179,7 +180,7 @@ class KotlinMPPGradleProjectTaskRunner extends ProjectTaskRunner
             final ModuleBuildTask moduleBuildTask = (ModuleBuildTask) projectTask;
             final Module module = moduleBuildTask.getModule();
 
-            if (! isDelegatedBuild(module)) {
+            if (module.getProject().getPresentableUrl() == null || !GradleProjectSettings.isDelegatedBuildEnabled(module)) {
                 return false;
             }
 
@@ -301,7 +302,7 @@ class KotlinMPPGradleProjectTaskRunner extends ProjectTaskRunner
         final TargetPlatform platform = kotlinFacet.getConfiguration().getSettings().getTargetPlatform();
         if (platform == null) return false;
 
-        return KonanPlatformKt.isNative(platform);
+        return NativePlatformKt.isNative(platform);
     }
 
     private static boolean isCommonProductionSourceModule(Module module) {

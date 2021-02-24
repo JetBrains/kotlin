@@ -1,0 +1,7 @@
+package
+
+public val x1: kotlin.Int.() -> kotlin.Int
+public val x2: kotlin.Int.(kotlin.Int) -> kotlin.Int
+public val x3: kotlin.String.(kotlin.Int) -> kotlin.Int
+public fun </*0*/ T> id(/*0*/ x: T): T
+public fun </*0*/ T> select(/*0*/ vararg x: T /*kotlin.Array<out T>*/): T

@@ -8,10 +8,8 @@ fun foo(a: Int): Int {
     return i(a, b)
 }
 
-private fun i(a: Int, b: Int): Int {
-    return when (a + b) {
-        0 -> b
-        1 -> -b
-        else -> a - b
-    }
+private fun i(a: Int, b: Int) = when (a + b) {
+    0 -> b
+    1 -> -b
+    else -> a - b
 }

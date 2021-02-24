@@ -1,17 +1,15 @@
-// INTENTION_TEXT: "Import members from 'javax.swing.SwingUtilities'"
+// INTENTION_TEXT: "Import members from 'java.util.regex.Pattern'"
 // WITH_RUNTIME
 
-import javax.swing.SwingUtilities
-import javax.swing.SwingUtilities.*
+import java.util.regex.Pattern
+import java.util.regex.Pattern.*
 
 fun foo() {
-    <caret>SwingUtilities.invokeLater { }
+    <caret>Pattern.matches("", "")
 
-    val bottom = SwingUtilities.BOTTOM
+    val field = Pattern.CASE_INSENSITIVE
 
-    SwingUtilities.invokeAndWait {
-        SwingUtilities.invokeLater { }
-    }
+    Pattern.compile("")
 
-    val horizontal = javax.swing.SwingUtilities.HORIZONTAL
+    val fieldFqn = java.util.regex.Pattern.CASE_INSENSITIVE
 }

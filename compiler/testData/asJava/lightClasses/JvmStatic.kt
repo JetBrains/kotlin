@@ -1,4 +1,5 @@
 // A
+// WITH_RUNTIME
 
 class A {
     companion object {
@@ -14,3 +15,5 @@ class A {
         }
     }
 }
+
+// FIR_COMPARISON

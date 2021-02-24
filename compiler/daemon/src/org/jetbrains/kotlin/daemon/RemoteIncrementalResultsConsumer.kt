@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.daemon
 
-import org.jetbrains.kotlin.daemon.common.CompilerCallbackServicesFacade
 import org.jetbrains.kotlin.daemon.common.Profiler
 import org.jetbrains.kotlin.daemon.common.withMeasure
 import org.jetbrains.kotlin.incremental.js.FunctionWithSourceInfo
@@ -13,13 +12,16 @@ import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.incremental.js.JsInlineFunctionHash
 import java.io.File
 
-class RemoteIncrementalResultsConsumer(val facade: CompilerCallbackServicesFacade, eventManager: EventManager, val rpcProfiler: Profiler) :
-    IncrementalResultsConsumer {
+class RemoteIncrementalResultsConsumer(
+    @Suppress("DEPRECATION") val facade: org.jetbrains.kotlin.daemon.common.CompilerCallbackServicesFacade,
+    eventManager: EventManager,
+    val rpcProfiler: Profiler
+) : IncrementalResultsConsumer {
     override fun processIrFile(
         sourceFile: File,
         fileData: ByteArray,
-        symbols: ByteArray,
         types: ByteArray,
+        signatures: ByteArray,
         strings: ByteArray,
         declarations: ByteArray,
         bodies: ByteArray,
@@ -29,8 +31,7 @@ class RemoteIncrementalResultsConsumer(val facade: CompilerCallbackServicesFacad
     }
 
     init {
-        eventManager.
-            onCompilationFinished(this::flush)
+        eventManager.onCompilationFinished(this::flush)
     }
 
     override fun processHeader(headerMetadata: ByteArray) {

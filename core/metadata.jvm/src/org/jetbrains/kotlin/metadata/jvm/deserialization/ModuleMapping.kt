@@ -5,13 +5,17 @@
 
 package org.jetbrains.kotlin.metadata.jvm.deserialization
 
+import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.builtins.BuiltInsProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.metadata.deserialization.isKotlin1Dot4OrLater
 import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf
+import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import java.io.*
 
 class ModuleMapping private constructor(
+    val version: JvmMetadataVersion,
     val packageFqName2Parts: Map<String, PackageParts>,
     val moduleData: BinaryModuleData,
     private val debugName: String
@@ -26,10 +30,10 @@ class ModuleMapping private constructor(
         const val MAPPING_FILE_EXT: String = "kotlin_module"
 
         @JvmField
-        val EMPTY: ModuleMapping = ModuleMapping(emptyMap(), BinaryModuleData(emptyList()), "EMPTY")
+        val EMPTY: ModuleMapping = ModuleMapping(JvmMetadataVersion.INSTANCE, emptyMap(), emptyBinaryData(), "EMPTY")
 
         @JvmField
-        val CORRUPTED: ModuleMapping = ModuleMapping(emptyMap(), BinaryModuleData(emptyList()), "CORRUPTED")
+        val CORRUPTED: ModuleMapping = ModuleMapping(JvmMetadataVersion.INSTANCE, emptyMap(), emptyBinaryData(), "CORRUPTED")
 
         const val STRICT_METADATA_VERSION_SEMANTICS_FLAG = 1 shl 0
 
@@ -69,7 +73,9 @@ class ModuleMapping private constructor(
                 return EMPTY
             }
 
-            val moduleProto = JvmModuleProtoBuf.Module.parseFrom(stream) ?: return EMPTY
+            // "Builtin" extension registry is needed in order to deserialize annotations on optional annotation classes and their members.
+            val extensions = ExtensionRegistryLite.newInstance().apply(BuiltInsProtoBuf::registerAllExtensions)
+            val moduleProto = JvmModuleProtoBuf.Module.parseFrom(stream, extensions) ?: return EMPTY
             val result = linkedMapOf<String, PackageParts>()
 
             for (proto in moduleProto.packagePartsList) {
@@ -114,7 +120,12 @@ class ModuleMapping private constructor(
             val nameResolver = NameResolverImpl(moduleProto.stringTable, moduleProto.qualifiedNameTable)
             val annotations = moduleProto.annotationList.map { proto -> nameResolver.getQualifiedClassName(proto.id) }
 
-            return ModuleMapping(result, BinaryModuleData(annotations), debugName)
+            return ModuleMapping(
+                version,
+                result,
+                BinaryModuleData(annotations, moduleProto.optionalAnnotationClassList, nameResolver),
+                debugName
+            )
         }
 
         private fun loadMultiFileFacadeInternalName(
@@ -127,6 +138,13 @@ class ModuleMapping private constructor(
             val facadeShortName = multifileFacadeId?.let(multifileFacadeShortNames::getOrNull)
             return facadeShortName?.let { internalNameOf(packageFqName, it) }
         }
+
+        private fun emptyBinaryData(): BinaryModuleData =
+            BinaryModuleData(
+                emptyList(),
+                emptyList(),
+                NameResolverImpl(ProtoBuf.StringTable.getDefaultInstance(), ProtoBuf.QualifiedNameTable.getDefaultInstance())
+            )
     }
 }
 

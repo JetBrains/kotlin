@@ -21,7 +21,7 @@ interface Interface {
         get() = 222
 }
 
-class ClassDerivedFromUnresolved : Base(), Interface, Unresolved {
+class ClassDerivedFromUnresolved : Base(), Interface, <!UNRESOLVED_REFERENCE!>Unresolved<!> {
     override fun foo() {}
     override fun bar() {}
 
@@ -41,13 +41,13 @@ class ClassDerivedFromUnresolved : Base(), Interface, Unresolved {
             super.prop
 
     fun getAmbiguousSuperProp(): Int =
-    super.<!AMBIGUITY!>ambiguousProp<!>
+    super.<!UNRESOLVED_REFERENCE!>ambiguousProp<!>
 
     fun callsFunFromSuperInterface() {
         super.bar()
     }
 
     fun callsAmbiguousSuperFun() {
-        super.<!AMBIGUITY!>ambiguous<!>()
+        super.<!UNRESOLVED_REFERENCE!>ambiguous<!>()
     }
 }

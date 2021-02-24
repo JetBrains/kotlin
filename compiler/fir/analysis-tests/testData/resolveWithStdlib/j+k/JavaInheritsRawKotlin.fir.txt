@@ -1,0 +1,12 @@
+FILE: Derived.kt
+    public final class Derived : R|Some| {
+        public constructor(): R|Derived| {
+            super<R|Some|>()
+        }
+
+    }
+FILE: Strange.kt
+    public abstract interface Strange<out T> : R|kotlin/Any| {
+        public abstract fun foo(): R|T|
+
+    }

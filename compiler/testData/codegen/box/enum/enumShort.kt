@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 enum class Color(val rgb: Int) {
     RED(0xff0000),
     GREEN(0x00ff00),

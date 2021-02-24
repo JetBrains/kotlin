@@ -1,4 +1,5 @@
 FILE fqName:<root> fileName:/typeAlias.kt
+  TYPEALIAS name:Test1 visibility:public expandedType:kotlin.String
   FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       BLOCK type=kotlin.Unit origin=null

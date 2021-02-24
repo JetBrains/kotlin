@@ -2,8 +2,7 @@ declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
     namespace foo {
         const _any: any;
-        const _unit: void;
-        function _nothing(): never
+        function _nothing(): never;
         const _throwable: Error;
         const _string: string;
         const _boolean: boolean;

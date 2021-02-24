@@ -21,6 +21,7 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.psi.*
 import com.intellij.psi.stubs.StubElement
+import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.ArrayFactory
 import com.intellij.util.FileContentUtilCore
@@ -138,12 +139,12 @@ open class KtFile(viewProvider: FileViewProvider, val isCompiled: Boolean) :
 
     override fun getFileType(): FileType = KotlinFileType.INSTANCE
 
-    override fun toString(): String = "KtFile: " + name
+    override fun toString(): String = "KtFile: $name"
 
     override fun getDeclarations(): List<KtDeclaration> {
         val stub = stub
-        return stub?.getChildrenByType(KtStubElementTypes.DECLARATION_TYPES, KtDeclaration.ARRAY_FACTORY)?.toList()
-                ?: PsiTreeUtil.getChildrenOfTypeAsList(this, KtDeclaration::class.java)
+        return stub?.getChildrenByType(FILE_DECLARATION_TYPES, KtDeclaration.ARRAY_FACTORY)?.toList()
+            ?: PsiTreeUtil.getChildrenOfTypeAsList(this, KtDeclaration::class.java)
     }
 
     fun <T : KtElementImplStub<out StubElement<*>>> findChildByTypeOrClass(
@@ -263,5 +264,9 @@ open class KtFile(viewProvider: FileViewProvider, val isCompiled: Boolean) :
     override fun shouldChangeModificationCount(place: PsiElement): Boolean {
         // Modification count for Kotlin files is tracked entirely by KotlinCodeBlockModificationListener
         return false
+    }
+
+    companion object {
+        val FILE_DECLARATION_TYPES = TokenSet.orSet(KtStubElementTypes.DECLARATION_TYPES, TokenSet.create(KtStubElementTypes.SCRIPT))
     }
 }

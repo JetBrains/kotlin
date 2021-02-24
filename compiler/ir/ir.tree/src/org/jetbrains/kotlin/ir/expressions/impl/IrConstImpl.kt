@@ -18,24 +18,23 @@ package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
-import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 class IrConstImpl<T>(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
+    override val startOffset: Int,
+    override val endOffset: Int,
+    override var type: IrType,
     override val kind: IrConstKind<T>,
     override val value: T
-) :
-    IrTerminalExpressionBase(startOffset, endOffset, type),
-    IrConst<T> {
-
+) : IrConst<T>() {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitConst(this, data)
 
     override fun copy(): IrConst<T> =
+        IrConstImpl(startOffset, endOffset, type, kind, value)
+
+    override fun copyWithOffsets(startOffset: Int, endOffset: Int) =
         IrConstImpl(startOffset, endOffset, type, kind, value)
 
     companion object {
@@ -57,22 +56,22 @@ class IrConstImpl<T>(
         fun constFalse(startOffset: Int, endOffset: Int, type: IrType): IrConstImpl<Boolean> =
             boolean(startOffset, endOffset, type, false)
 
-        fun long(startOffset: Int, endOffset: Int, type: IrType, value: Long): IrExpression =
+        fun long(startOffset: Int, endOffset: Int, type: IrType, value: Long): IrConstImpl<Long> =
             IrConstImpl(startOffset, endOffset, type, IrConstKind.Long, value)
 
-        fun float(startOffset: Int, endOffset: Int, type: IrType, value: Float): IrExpression =
+        fun float(startOffset: Int, endOffset: Int, type: IrType, value: Float): IrConstImpl<Float> =
             IrConstImpl(startOffset, endOffset, type, IrConstKind.Float, value)
 
-        fun double(startOffset: Int, endOffset: Int, type: IrType, value: Double): IrExpression =
+        fun double(startOffset: Int, endOffset: Int, type: IrType, value: Double): IrConstImpl<Double> =
             IrConstImpl(startOffset, endOffset, type, IrConstKind.Double, value)
 
-        fun char(startOffset: Int, endOffset: Int, type: IrType, value: Char): IrExpression =
+        fun char(startOffset: Int, endOffset: Int, type: IrType, value: Char): IrConstImpl<Char> =
             IrConstImpl(startOffset, endOffset, type, IrConstKind.Char, value)
 
-        fun byte(startOffset: Int, endOffset: Int, type: IrType, value: Byte): IrExpression =
+        fun byte(startOffset: Int, endOffset: Int, type: IrType, value: Byte): IrConstImpl<Byte> =
             IrConstImpl(startOffset, endOffset, type, IrConstKind.Byte, value)
 
-        fun short(startOffset: Int, endOffset: Int, type: IrType, value: Short): IrExpression =
+        fun short(startOffset: Int, endOffset: Int, type: IrType, value: Short): IrConstImpl<Short> =
             IrConstImpl(startOffset, endOffset, type, IrConstKind.Short, value)
 
         fun defaultValueForType(startOffset: Int, endOffset: Int, type: IrType) = when {

@@ -39,10 +39,11 @@ class RuntimeAssertionInfo(val needNotNullAssertion: Boolean, val message: Strin
     }
 
     companion object {
-        @JvmStatic fun create(
-                expectedType: KotlinType,
-                expressionType: KotlinType,
-                dataFlowExtras: DataFlowExtras
+        @JvmStatic
+        fun create(
+            expectedType: KotlinType,
+            expressionType: KotlinType,
+            dataFlowExtras: DataFlowExtras
         ): RuntimeAssertionInfo? {
             fun assertNotNull(): Boolean {
                 if (expectedType.isError || expressionType.isError) return false
@@ -81,9 +82,9 @@ private val KtExpression.textForRuntimeAssertionInfo
     get() = StringUtil.trimMiddle(text, 50)
 
 class RuntimeAssertionsDataFlowExtras(
-        private val c: ResolutionContext<*>,
-        private val expressionType: KotlinType,
-        private val expression: KtExpression
+    private val c: ResolutionContext<*>,
+    private val expressionType: KotlinType,
+    private val expression: KtExpression
 ) : RuntimeAssertionInfo.DataFlowExtras {
     private val dataFlowValue by lazy(LazyThreadSafetyMode.PUBLICATION) {
         c.dataFlowValueFactory.createDataFlowValue(expression, expressionType, c)
@@ -96,13 +97,18 @@ class RuntimeAssertionsDataFlowExtras(
 }
 
 object RuntimeAssertionsTypeChecker : AdditionalTypeChecker {
-    override fun checkType(expression: KtExpression, expressionType: KotlinType, expressionTypeWithSmartCast: KotlinType, c: ResolutionContext<*>) {
-        if (TypeUtils.noExpectedType(c.expectedType)) return
+    override fun checkType(
+        expression: KtExpression,
+        expressionType: KotlinType,
+        expressionTypeWithSmartCast: KotlinType,
+        c: ResolutionContext<*>
+    ) {
+        if (TypeUtils.noExpectedType(c.expectedType) || c.expectedType is StubType) return
 
         val assertionInfo = RuntimeAssertionInfo.create(
-                c.expectedType,
-                expressionType,
-                RuntimeAssertionsDataFlowExtras(c, expressionType, expression)
+            c.expectedType,
+            expressionType,
+            RuntimeAssertionsDataFlowExtras(c, expressionType, expression)
         )
 
         if (assertionInfo != null) {
@@ -127,9 +133,9 @@ object RuntimeAssertionsOnExtensionReceiverCallChecker : CallChecker {
         val c = context.resolutionContext
 
         val assertionInfo = RuntimeAssertionInfo.create(
-                receiverParameter.type,
-                receiverValue.type,
-                RuntimeAssertionsDataFlowExtras(c, receiverValue.type, receiverExpression)
+            receiverParameter.type,
+            receiverValue.type,
+            RuntimeAssertionsDataFlowExtras(c, receiverValue.type, receiverExpression)
         )
 
         if (assertionInfo != null) {
@@ -141,10 +147,10 @@ object RuntimeAssertionsOnExtensionReceiverCallChecker : CallChecker {
 object RuntimeAssertionsOnDeclarationBodyChecker {
     @JvmStatic
     fun check(
-            declaration: KtDeclaration,
-            descriptor: DeclarationDescriptor,
-            bindingTrace: BindingTrace,
-            languageVersionSettings: LanguageVersionSettings
+        declaration: KtDeclaration,
+        descriptor: DeclarationDescriptor,
+        bindingTrace: BindingTrace,
+        languageVersionSettings: LanguageVersionSettings
     ) {
         if (!languageVersionSettings.supportsFeature(LanguageFeature.StrictJavaNullabilityAssertions)) return
 
@@ -161,9 +167,9 @@ object RuntimeAssertionsOnDeclarationBodyChecker {
     }
 
     private fun checkLocalVariable(
-            declaration: KtProperty,
-            descriptor: VariableDescriptor,
-            bindingTrace: BindingTrace
+        declaration: KtProperty,
+        descriptor: VariableDescriptor,
+        bindingTrace: BindingTrace
     ) {
         if (declaration.typeReference != null) return
 
@@ -171,20 +177,23 @@ object RuntimeAssertionsOnDeclarationBodyChecker {
     }
 
     private fun checkFunction(
-            declaration: KtFunction,
-            descriptor: FunctionDescriptor,
-            bindingTrace: BindingTrace
+        declaration: KtFunction,
+        descriptor: FunctionDescriptor,
+        bindingTrace: BindingTrace
     ) {
         if (declaration.typeReference != null || declaration.hasBlockBody()) return
 
-        checkNullabilityAssertion(declaration.bodyExpression ?: return, descriptor.returnType ?: return,
-                                  bindingTrace)
+        checkNullabilityAssertion(
+            declaration.bodyExpression ?: return,
+            descriptor.returnType ?: return,
+            bindingTrace
+        )
     }
 
     private fun checkProperty(
-            declaration: KtProperty,
-            descriptor: PropertyDescriptor,
-            bindingTrace: BindingTrace
+        declaration: KtProperty,
+        descriptor: PropertyDescriptor,
+        bindingTrace: BindingTrace
     ) {
         if (declaration.typeReference != null) return
 
@@ -195,21 +204,24 @@ object RuntimeAssertionsOnDeclarationBodyChecker {
     }
 
     private fun checkPropertyAccessor(
-            declaration: KtPropertyAccessor,
-            descriptor: PropertyAccessorDescriptor,
-            bindingTrace: BindingTrace
+        declaration: KtPropertyAccessor,
+        descriptor: PropertyAccessorDescriptor,
+        bindingTrace: BindingTrace
     ) {
         if (declaration.property.typeReference != null || declaration.hasBlockBody()) return
 
-        checkNullabilityAssertion(declaration.bodyExpression ?: return, descriptor.correspondingProperty.type,
-                                  bindingTrace)
+        checkNullabilityAssertion(
+            declaration.bodyExpression ?: return,
+            descriptor.correspondingProperty.type,
+            bindingTrace
+        )
     }
 
 
     private fun checkNullabilityAssertion(
-            expression: KtExpression,
-            declarationType: KotlinType,
-            bindingTrace: BindingTrace
+        expression: KtExpression,
+        declarationType: KotlinType,
+        bindingTrace: BindingTrace
     ) {
         if (declarationType.unwrap().canContainNull()) return
 
@@ -219,9 +231,9 @@ object RuntimeAssertionsOnDeclarationBodyChecker {
         if (!expressionType.hasEnhancedNullability()) return
 
         bindingTrace.record(
-                JvmBindingContextSlices.BODY_RUNTIME_ASSERTION_INFO,
-                expression,
-                RuntimeAssertionInfo(true, expression.textForRuntimeAssertionInfo)
+            JvmBindingContextSlices.BODY_RUNTIME_ASSERTION_INFO,
+            expression,
+            RuntimeAssertionInfo(true, expression.textForRuntimeAssertionInfo)
         )
     }
 

@@ -28,7 +28,9 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
 
-internal fun MemberDescriptor.expectedDescriptors() = module.implementedDescriptors.mapNotNull { it.declarationOf(this) }
+internal fun MemberDescriptor.expectedDescriptors() =
+    (module.implementedDescriptors + module)
+        .mapNotNull { it.declarationOf(this) }
 
 // TODO: Sort out the cases with multiple expected descriptors
 fun MemberDescriptor.expectedDescriptor() = expectedDescriptors().firstOrNull()
@@ -101,7 +103,7 @@ fun DeclarationDescriptor.actualsForExpected(): Collection<DeclarationDescriptor
     if (this is MemberDescriptor) {
         if (!this.isExpect) return emptyList()
 
-        return module.implementingDescriptors.flatMap { it.actualsFor(this) }
+        return (module.implementingDescriptors + module).flatMap { it.actualsFor(this) }
     }
 
     if (this is ValueParameterDescriptor) {
@@ -110,6 +112,8 @@ fun DeclarationDescriptor.actualsForExpected(): Collection<DeclarationDescriptor
 
     return emptyList()
 }
+
+fun KtDeclaration.hasAtLeastOneActual() = actualsForExpected().isNotEmpty()
 
 // null means "any platform" here
 fun KtDeclaration.actualsForExpected(module: Module? = null): Set<KtDeclaration> =

@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.integration;
 
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.utils.StringsKt;
 
 import java.io.File;
@@ -30,7 +30,7 @@ import java.util.Collections;
 public abstract class CompilerSmokeTestBase extends KotlinIntegrationTestBase {
     @NotNull
     protected String getTestDataDir() {
-        return KotlinTestUtils.getTestDataPathBase() + "/integration/smoke/" + getTestName(true);
+        return KtTestUtil.getTestDataPathBase() + "/integration/smoke/" + getTestName(true);
     }
 
     protected int run(String logName, String... args) throws Exception {

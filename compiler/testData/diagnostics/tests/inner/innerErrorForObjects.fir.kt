@@ -5,8 +5,8 @@ class TestSome<P> {
 }
 
 class Test {
-    object Some : InnerClass() {
-        val a = object: InnerClass() {
+    object Some : <!UNRESOLVED_REFERENCE!>InnerClass<!>() {
+        val a = object: <!UNRESOLVED_REFERENCE!>InnerClass<!>() {
         }
 
         fun more(): InnerClass {

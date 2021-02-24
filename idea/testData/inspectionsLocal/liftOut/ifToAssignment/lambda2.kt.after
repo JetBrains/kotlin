@@ -3,9 +3,11 @@ fun test(i: Int) {
 
     <caret>fn = if (i == 1) {
         { "foo" }
-    } else if (i == 2) {
+    }
+    else if (i == 2) {
         { "bar" }
-    } else {
+    }
+    else {
         { "baz" }
     }
 }

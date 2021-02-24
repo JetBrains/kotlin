@@ -1,0 +1,9 @@
+fun func2(a: Int, b: Int) {
+}
+
+fun Int.foo(block: Int.(Int) -> Unit) {
+}
+
+fun main() {
+    42.foo { b -> func2(this, b) }
+}

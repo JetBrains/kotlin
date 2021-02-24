@@ -1,11 +1,12 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -15,7 +16,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isBooleanOrNullableBoolean
 
 class NullableBooleanEqualityCheckToElvisIntention : SelfTargetingIntention<KtBinaryExpression>(
-    KtBinaryExpression::class.java, "Convert Boolean? == const to elvis"
+    KtBinaryExpression::class.java, KotlinBundle.lazyMessage("convert.boolean.const.to.elvis")
 ) {
     override fun isApplicableTo(element: KtBinaryExpression, caretOffset: Int): Boolean {
         if (element.operationToken != KtTokens.EQEQ && element.operationToken != KtTokens.EXCLEQ) return false

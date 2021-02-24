@@ -3,7 +3,7 @@
 // INTENTION_TEXT_2: "Replace with 'asSequence().filter{}.forEach{}'"
 fun foo(list: List<String>) {
     list
-            .asSequence()
-            .filter { it.isNotBlank() }
-            .forEach { println(it) }
+        .asSequence()
+        .filter { it.isNotBlank() }
+        .forEach { println(it) }
 }

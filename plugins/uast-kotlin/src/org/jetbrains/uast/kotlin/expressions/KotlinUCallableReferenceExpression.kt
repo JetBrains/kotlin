@@ -16,6 +16,7 @@
 
 package org.jetbrains.uast.kotlin
 
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.ResolveResult
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
@@ -45,7 +46,7 @@ class KotlinUCallableReferenceExpression(
     override val resolvedName: String?
         get() = (resolve() as? PsiNamedElement)?.name
 
-    override fun resolve() = sourcePsi.callableReference.resolveCallToDeclaration()
+    override fun resolve(): PsiElement? = resolveToDeclaration(sourcePsi.callableReference)
 
     override fun multiResolve(): Iterable<ResolveResult> = getResolveResultVariants(sourcePsi.callableReference)
 

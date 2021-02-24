@@ -11,6 +11,7 @@ import com.intellij.debugger.streams.resolve.AppendResolver
 import com.intellij.debugger.streams.resolve.PairMapResolver
 import com.intellij.debugger.streams.trace.impl.handler.unified.DistinctTraceHandler
 import com.intellij.debugger.streams.trace.impl.interpret.SimplePeekCallTraceInterpreter
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.idea.debugger.sequence.resolve.ChunkedResolver
 import org.jetbrains.kotlin.idea.debugger.sequence.resolve.FilteredMapResolver
 import org.jetbrains.kotlin.idea.debugger.sequence.resolve.WindowedResolver
@@ -52,16 +53,16 @@ class KotlinSequencesSupport : LibrarySupportBase() {
         addIntermediateOperationsSupport(OrderBasedOperation("windowed", WindowedResolver()))
     }
 
-    private fun filterOperations(vararg names: String): Array<IntermediateOperation> =
+    private fun filterOperations(@NonNls vararg names: String): Array<IntermediateOperation> =
         names.map { FilterOperation(it) }.toTypedArray()
 
-    private fun mapOperations(vararg names: String): Array<IntermediateOperation> =
+    private fun mapOperations(@NonNls vararg names: String): Array<IntermediateOperation> =
         names.map { MappingOperation(it) }.toTypedArray()
 
-    private fun flatMapOperations(vararg names: String): Array<IntermediateOperation> =
+    private fun flatMapOperations(@NonNls vararg names: String): Array<IntermediateOperation> =
         names.map { FlatMappingOperation(it) }.toTypedArray()
 
-    private fun sortedOperations(vararg names: String): Array<IntermediateOperation> =
+    private fun sortedOperations(@NonNls vararg names: String): Array<IntermediateOperation> =
         names.map { SortedOperation(it) }.toTypedArray()
 
     private class FilterIsInstanceOperationHandler : IntermediateOperationBase(

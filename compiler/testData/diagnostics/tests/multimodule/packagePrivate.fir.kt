@@ -9,11 +9,11 @@ private val a = 1
 
 package p
 
-val b = <!INAPPLICABLE_CANDIDATE!>a<!> // same package, same module
+val b = <!HIDDEN!>a<!> // same package, same module
 
 // MODULE: m2(m1)
 // FILE: c.kt
 
 package p
 
-val c = <!INAPPLICABLE_CANDIDATE!>a<!> // same package, another module
+val c = <!HIDDEN!>a<!> // same package, another module

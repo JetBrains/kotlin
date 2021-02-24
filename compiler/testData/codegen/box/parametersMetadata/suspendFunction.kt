@@ -1,12 +1,10 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 // SKIP_JDK6
 // TARGET_BACKEND: JVM
 // WITH_RUNTIME
 // FULL_JDK
-// KOTLIN_CONFIGURATION_FLAGS: +JVM.PARAMETERS_METADATA
-// COMMON_COROUTINES_TEST
-import COROUTINES_PACKAGE.*
-import COROUTINES_PACKAGE.intrinsics.*
+// PARAMETERS_METADATA
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 class A() {
     suspend fun test(OK: String) {

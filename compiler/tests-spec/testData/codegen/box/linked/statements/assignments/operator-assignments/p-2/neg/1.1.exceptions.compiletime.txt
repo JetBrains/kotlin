@@ -1,0 +1,3 @@
+java.lang.IllegalStateException: ASSIGN_OPERATOR_AMBIGUITY: Assignment operators ambiguity:
+public final operator fun plus(value: Int): B defined in B
+public final operator fun plusAssign(value: Int): Unit defined in B (31,7) in /1.1.kt

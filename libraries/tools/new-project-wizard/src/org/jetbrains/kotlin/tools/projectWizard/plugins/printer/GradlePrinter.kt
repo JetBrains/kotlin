@@ -1,9 +1,7 @@
 package org.jetbrains.kotlin.tools.projectWizard.plugins.printer
 
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.BodyIR
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.isEmpty
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.render
 
 class GradlePrinter(val dsl: GradleDsl, override val indent: Int = 4) : BuildFilePrinter() {
     fun inBrackets(inner: () -> Unit) {
@@ -29,7 +27,7 @@ class GradlePrinter(val dsl: GradleDsl, override val indent: Int = 4) : BuildFil
             GradleDsl.GROOVY -> "'$this'"
         }
 
-    fun call(name: String, forceBrackets: Boolean = false, body: () -> Unit) {
+    fun call(@NonNls name: String, forceBrackets: Boolean = false, body: () -> Unit) {
         +name
         when {
             dsl == GradleDsl.KOTLIN || forceBrackets -> {
@@ -42,7 +40,7 @@ class GradlePrinter(val dsl: GradleDsl, override val indent: Int = 4) : BuildFil
         }
     }
 
-    fun sectionCall(name: String, needIndent: Boolean = false, body: () -> Unit) {
+    fun sectionCall(@NonNls name: String, needIndent: Boolean = false, body: () -> Unit) {
         +name
         +" "
         inBrackets {
@@ -52,7 +50,7 @@ class GradlePrinter(val dsl: GradleDsl, override val indent: Int = 4) : BuildFil
     }
 
     fun <I : BuildSystemIR> sectionCall(
-        name: String,
+        @NonNls name: String,
         irs: List<I>,
         renderEmpty: Boolean = false
     ) {
@@ -64,7 +62,7 @@ class GradlePrinter(val dsl: GradleDsl, override val indent: Int = 4) : BuildFil
         }
     }
 
-    fun assignmentOrCall(target: String, assignee: () -> Unit) = when (dsl) {
+    fun assignmentOrCall(@NonNls target: String, assignee: () -> Unit) = when (dsl) {
         GradleDsl.KOTLIN -> {
             +"$target = "
             assignee()
@@ -72,13 +70,13 @@ class GradlePrinter(val dsl: GradleDsl, override val indent: Int = 4) : BuildFil
         GradleDsl.GROOVY -> call(target, forceBrackets = false, body = assignee)
     }
 
-    fun assignment(target: String, assignee: () -> Unit) {
+    fun assignment(@NonNls target: String, assignee: () -> Unit) {
         +"$target = "
         assignee()
     }
 
 
-    inline fun getting(name: String, prefix: String?, body: () -> Unit = {}) {
+    inline fun getting(@NonNls name: String, @NonNls prefix: String?, body: () -> Unit = {}) {
         when (dsl) {
             GradleDsl.GROOVY -> {
                 prefix?.let { +it; +"." }

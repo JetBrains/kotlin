@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 @DslMarker
 annotation class AnnMarker
 

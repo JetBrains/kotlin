@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@file:Suppress("unused") // an API
+@file:Suppress("unused", "DEPRECATION")
 
 package org.jetbrains.kotlin.script.util.templates
 

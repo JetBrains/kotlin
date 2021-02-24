@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.types.expressions;
 
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.calls.components.InferenceSession;
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
+import org.jetbrains.kotlin.resolve.calls.inference.CoroutineInferenceSession;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue;
 import org.jetbrains.kotlin.resolve.calls.tower.KotlinResolutionCallbacksImpl;
@@ -143,7 +145,8 @@ public class ExpressionTypingServices {
             @NotNull FunctionDescriptor functionDescriptor,
             @NotNull DataFlowInfo dataFlowInfo,
             @Nullable KotlinType expectedReturnType,
-            BindingTrace trace
+            BindingTrace trace,
+            @Nullable ExpressionTypingContext localContext
     ) {
         if (expectedReturnType == null) {
             expectedReturnType = functionDescriptor.getReturnType();
@@ -151,11 +154,15 @@ public class ExpressionTypingServices {
                 expectedReturnType = NO_EXPECTED_TYPE;
             }
         }
-        checkFunctionReturnType(function, ExpressionTypingContext.newContext(
+
+        ExpressionTypingContext context = ExpressionTypingContext.newContext(
                 trace,
-                functionInnerScope, dataFlowInfo, expectedReturnType != null ? expectedReturnType : NO_EXPECTED_TYPE, getLanguageVersionSettings(),
-                expressionTypingComponents.dataFlowValueFactory
-        ));
+                functionInnerScope, dataFlowInfo, expectedReturnType != null ? expectedReturnType : NO_EXPECTED_TYPE,
+                getLanguageVersionSettings(), expressionTypingComponents.dataFlowValueFactory,
+                localContext == null ? InferenceSession.Companion.getDefault() : localContext.inferenceSession
+        );
+
+        checkFunctionReturnType(function, context);
     }
 
     /*package*/ void checkFunctionReturnType(KtDeclarationWithBody function, ExpressionTypingContext context) {
@@ -303,6 +310,7 @@ public class ExpressionTypingServices {
 
         boolean isFirstStatement = true;
         for (Iterator<? extends KtElement> iterator = block.iterator(); iterator.hasNext(); ) {
+            ProgressManager.checkCanceled();
             // Use filtering trace to keep effect system cache only for one statement
             AbstractFilteringTrace traceForSingleStatement = new EffectsFilteringTrace(context.trace);
 
@@ -421,7 +429,8 @@ public class ExpressionTypingServices {
             @NotNull KtExpression statementExpression,
             @NotNull ExpressionTypingContext context
     ) {
-        if (!context.languageVersionSettings.supportsFeature(LanguageFeature.NewInference)) return null;
+        if (!context.languageVersionSettings.supportsFeature(LanguageFeature.NewInference) || context.inferenceSession instanceof CoroutineInferenceSession)
+            return null;
         KtFunctionLiteral functionLiteral = PsiUtilsKt.getNonStrictParentOfType(statementExpression, KtFunctionLiteral.class);
         if (functionLiteral != null) {
             KotlinResolutionCallbacksImpl.LambdaInfo info =

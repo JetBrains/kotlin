@@ -13,6 +13,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.formatter.adjustLineIndent
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isElseIf
@@ -34,7 +35,7 @@ class RedundantElseInIfInspection : AbstractKotlinInspection() {
                 holder.manager.createProblemDescriptor(
                     ifExpression,
                     rangeInElement,
-                    "Redundant 'else'",
+                    KotlinBundle.message("redundant.else"),
                     ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                     isOnTheFly,
                     RemoveRedundantElseFix()
@@ -44,7 +45,7 @@ class RedundantElseInIfInspection : AbstractKotlinInspection() {
 }
 
 private class RemoveRedundantElseFix : LocalQuickFix {
-    override fun getName() = "Remove redundant 'else'"
+    override fun getName() = KotlinBundle.message("remove.redundant.else.fix.text")
 
     override fun getFamilyName() = name
 

@@ -23,8 +23,8 @@ fun test1() {
 fun <T> test2() {
     bar<Wrapper, Int, String>(Wrapper::fooReturnString).checkType { _<Tripple<Wrapper, Int, String>>() }
     bar<Wrapper, T, String>(Wrapper::fooReturnString).checkType { _<Tripple<Wrapper, T, String>>() }
-    <!INAPPLICABLE_CANDIDATE!>bar<!><Wrapper, T, T>(Wrapper::fooReturnString)
-    <!INAPPLICABLE_CANDIDATE!>bar<!><Wrapper, Int, Int>(Wrapper::fooReturnString)
+    <!INAPPLICABLE_CANDIDATE!>bar<!><Wrapper, T, T>(<!UNRESOLVED_REFERENCE!>Wrapper::fooReturnString<!>)
+    <!INAPPLICABLE_CANDIDATE!>bar<!><Wrapper, Int, Int>(<!UNRESOLVED_REFERENCE!>Wrapper::fooReturnString<!>)
 
     bar<Wrapper, Int, T>(Wrapper::fooTakeInt).checkType { _<Tripple<Wrapper, Int, T>>() }
     bar<Wrapper, Int, String>(Wrapper::fooTakeInt).checkType { _<Tripple<Wrapper, Int, String>>() }

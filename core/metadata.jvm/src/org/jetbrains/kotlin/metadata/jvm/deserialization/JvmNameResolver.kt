@@ -17,7 +17,9 @@ class JvmNameResolver(
     private val localNameIndices = types.localNameList.run { if (isEmpty()) emptySet() else toSet() }
 
     // Here we expand the 'range' field of the Record message for simplicity to a list of records
-    val records: List<Record> = ArrayList<Record>().apply {
+    // Note that as an optimization, range of each expanded record is equal to the original range, not 1. If correct ranges are needed,
+    // please use the original record representation in [types.recordList].
+    private val records: List<Record> = ArrayList<Record>().apply {
         val records = types.recordList
         this.ensureCapacity(records.size)
         for (record in records) {
@@ -75,37 +77,40 @@ class JvmNameResolver(
         index in localNameIndices
 
     companion object {
+        // Simply "kotlin", but to avoid being renamed by namespace relocation (e.g., Shadow.relocate gradle plugin)
+        private val kotlin = listOf('k', 'o', 't', 'l', 'i', 'n').joinToString(separator = "")
+
         val PREDEFINED_STRINGS = listOf(
-            "kotlin/Any",
-            "kotlin/Nothing",
-            "kotlin/Unit",
-            "kotlin/Throwable",
-            "kotlin/Number",
+            "$kotlin/Any",
+            "$kotlin/Nothing",
+            "$kotlin/Unit",
+            "$kotlin/Throwable",
+            "$kotlin/Number",
 
-            "kotlin/Byte", "kotlin/Double", "kotlin/Float", "kotlin/Int",
-            "kotlin/Long", "kotlin/Short", "kotlin/Boolean", "kotlin/Char",
+            "$kotlin/Byte", "$kotlin/Double", "$kotlin/Float", "$kotlin/Int",
+            "$kotlin/Long", "$kotlin/Short", "$kotlin/Boolean", "$kotlin/Char",
 
-            "kotlin/CharSequence",
-            "kotlin/String",
-            "kotlin/Comparable",
-            "kotlin/Enum",
+            "$kotlin/CharSequence",
+            "$kotlin/String",
+            "$kotlin/Comparable",
+            "$kotlin/Enum",
 
-            "kotlin/Array",
-            "kotlin/ByteArray", "kotlin/DoubleArray", "kotlin/FloatArray", "kotlin/IntArray",
-            "kotlin/LongArray", "kotlin/ShortArray", "kotlin/BooleanArray", "kotlin/CharArray",
+            "$kotlin/Array",
+            "$kotlin/ByteArray", "$kotlin/DoubleArray", "$kotlin/FloatArray", "$kotlin/IntArray",
+            "$kotlin/LongArray", "$kotlin/ShortArray", "$kotlin/BooleanArray", "$kotlin/CharArray",
 
-            "kotlin/Cloneable",
-            "kotlin/Annotation",
+            "$kotlin/Cloneable",
+            "$kotlin/Annotation",
 
-            "kotlin/collections/Iterable", "kotlin/collections/MutableIterable",
-            "kotlin/collections/Collection", "kotlin/collections/MutableCollection",
-            "kotlin/collections/List", "kotlin/collections/MutableList",
-            "kotlin/collections/Set", "kotlin/collections/MutableSet",
-            "kotlin/collections/Map", "kotlin/collections/MutableMap",
-            "kotlin/collections/Map.Entry", "kotlin/collections/MutableMap.MutableEntry",
+            "$kotlin/collections/Iterable", "$kotlin/collections/MutableIterable",
+            "$kotlin/collections/Collection", "$kotlin/collections/MutableCollection",
+            "$kotlin/collections/List", "$kotlin/collections/MutableList",
+            "$kotlin/collections/Set", "$kotlin/collections/MutableSet",
+            "$kotlin/collections/Map", "$kotlin/collections/MutableMap",
+            "$kotlin/collections/Map.Entry", "$kotlin/collections/MutableMap.MutableEntry",
 
-            "kotlin/collections/Iterator", "kotlin/collections/MutableIterator",
-            "kotlin/collections/ListIterator", "kotlin/collections/MutableListIterator"
+            "$kotlin/collections/Iterator", "$kotlin/collections/MutableIterator",
+            "$kotlin/collections/ListIterator", "$kotlin/collections/MutableListIterator"
         )
 
         private val PREDEFINED_STRINGS_MAP = PREDEFINED_STRINGS.withIndex().associateBy({ it.value }, { it.index })

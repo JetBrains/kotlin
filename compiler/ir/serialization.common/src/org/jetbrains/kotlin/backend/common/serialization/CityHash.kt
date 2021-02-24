@@ -3,7 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:UseExperimental(ExperimentalUnsignedTypes::class)
+@file:OptIn(ExperimentalUnsignedTypes::class)
+@file:Suppress("NAME_SHADOWING")
 
 package org.jetbrains.kotlin.backend.common.serialization
 
@@ -210,5 +211,6 @@ public fun cityHash64(s: ByteArray, pos: Int = 0, len: Int = s.size): ULong {
     )
 }
 
-fun String.cityHash64() = cityHash64(this.toByteArray()).toLong()
-
+@OptIn(ExperimentalUnsignedTypes::class)
+fun String.cityHash64(): Long =
+    cityHash64(this.toByteArray()).toLong()

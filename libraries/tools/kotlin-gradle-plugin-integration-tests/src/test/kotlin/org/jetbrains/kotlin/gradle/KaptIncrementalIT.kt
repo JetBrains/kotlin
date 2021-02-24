@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.logging.configuration.WarningMode
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.Test
 import kotlin.test.assertEquals
@@ -18,8 +19,9 @@ open class KaptIncrementalIT : BaseGradleIT() {
     private val annotatedElements =
         arrayOf("A", "funA", "valA", "funUtil", "valUtil", "B", "funB", "valB", "useB")
 
-    override fun defaultBuildOptions(): BuildOptions =
-        super.defaultBuildOptions().copy(incremental = true)
+    override fun defaultBuildOptions(): BuildOptions {
+        return super.defaultBuildOptions().copy(incremental = true, warningMode = WarningMode.Fail)
+    }
 
     @Test
     fun testAddNewLine() {

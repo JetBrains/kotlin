@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.refactoring.rename
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
+import com.intellij.psi.search.SearchScope
 import com.intellij.refactoring.listeners.RefactoringElementListener
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
@@ -22,9 +23,10 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.SmartList
-import java.util.*
+import java.util.ArrayList
 
 class RenameKotlinClassifierProcessor : RenameKotlinPsiProcessor() {
+
     override fun canProcessElement(element: PsiElement): Boolean {
         return element is KtClassOrObject || element is KtLightClass || element is KtConstructor<*> || element is KtTypeAlias
     }
@@ -62,11 +64,14 @@ class RenameKotlinClassifierProcessor : RenameKotlinPsiProcessor() {
         }
     }
 
-    override fun findReferences(element: PsiElement): Collection<PsiReference> {
+    protected fun processFoundReferences(
+        element: PsiElement,
+        references: Collection<PsiReference>
+    ): Collection<PsiReference> {
         if (element is KtObjectDeclaration && element.isCompanion()) {
-            return super.findReferences(element).filter { !it.isCompanionObjectClassReference() }
+            return references.filter { !it.isCompanionObjectClassReference() }
         }
-        return super.findReferences(element)
+        return references
     }
 
     private fun PsiReference.isCompanionObjectClassReference(): Boolean {
@@ -124,4 +129,14 @@ class RenameKotlinClassifierProcessor : RenameKotlinPsiProcessor() {
 
         usages.forEach { (it as? KtResolvableCollisionUsageInfo)?.apply() }
     }
+
+    override fun findReferences(
+        element: PsiElement,
+        searchScope: SearchScope,
+        searchInCommentsAndStrings: Boolean
+    ): Collection<PsiReference> {
+        val references = super.findReferences(element, searchScope, searchInCommentsAndStrings)
+        return processFoundReferences(element, references)
+    }
+
 }

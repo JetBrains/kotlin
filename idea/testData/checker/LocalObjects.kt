@@ -1,3 +1,4 @@
+// FIR_COMPARISON
   object A {
     val x : Int = 0
   }

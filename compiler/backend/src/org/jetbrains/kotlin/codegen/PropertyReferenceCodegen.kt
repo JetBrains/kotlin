@@ -23,18 +23,17 @@ import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.context.ClassContext
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.PropertyImportedFromObject
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
+import org.jetbrains.kotlin.resolve.isUnderlyingPropertyOfInlineClass
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.*
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
-import org.jetbrains.kotlin.resolve.jvm.shouldHideConstructorDueToInlineClassTypeValueParameters
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -93,8 +92,8 @@ class PropertyReferenceCodegen(
             element,
             state.classFileVersion,
             ACC_FINAL or ACC_SUPER or
-                    AsmUtil.getVisibilityAccessFlagForClass(classDescriptor) or
-                    AsmUtil.getSyntheticAccessFlagForLambdaClass(classDescriptor),
+                    DescriptorAsmUtil.getVisibilityAccessFlagForClass(classDescriptor) or
+                    DescriptorAsmUtil.getSyntheticAccessFlagForLambdaClass(classDescriptor),
             asmType.internalName,
             null,
             superAsmType.internalName,
@@ -109,21 +108,21 @@ class PropertyReferenceCodegen(
         if (JvmCodegenUtil.isConst(closure)) {
             generateConstInstance(asmType, wrapperMethod.returnType)
         } else {
-            AsmUtil.genClosureFields(closure, v, typeMapper, state.languageVersionSettings)
+            DescriptorAsmUtil.genClosureFields(closure, v, typeMapper, state.languageVersionSettings)
         }
 
         generateConstructor()
 
-        generateMethod("property reference getName", ACC_PUBLIC, method("getName", JAVA_STRING_TYPE)) {
-            aconst(target.name.asString())
-        }
-
-        generateMethod("property reference getSignature", ACC_PUBLIC, method("getSignature", JAVA_STRING_TYPE)) {
-            generateCallableReferenceSignature(this, target, state)
-        }
-
-        generateMethod("property reference getOwner", ACC_PUBLIC, method("getOwner", K_DECLARATION_CONTAINER_TYPE)) {
-            ClosureCodegen.generateCallableReferenceDeclarationContainer(this, target, state)
+        if (!isOptimizedPropertyReferenceSupertype(superAsmType)) {
+            generateMethod("property reference getName", ACC_PUBLIC, method("getName", JAVA_STRING_TYPE)) {
+                aconst(target.name.asString())
+            }
+            generateMethod("property reference getSignature", ACC_PUBLIC, method("getSignature", JAVA_STRING_TYPE)) {
+                generatePropertyReferenceSignature(this, target, state)
+            }
+            generateMethod("property reference getOwner", ACC_PUBLIC, method("getOwner", K_DECLARATION_CONTAINER_TYPE)) {
+                generateCallableReferenceDeclarationContainer(this, target, state)
+            }
         }
 
         if (!isLocalDelegatedProperty) {
@@ -136,16 +135,31 @@ class PropertyReferenceCodegen(
             val shouldHaveBoundReferenceReceiver = closure.isForBoundCallableReference()
             val receiverIndexAndFieldInfo = generateClosureFieldsInitializationFromParameters(closure, constructorArgs)
 
-            if (receiverIndexAndFieldInfo == null) {
-                assert(!shouldHaveBoundReferenceReceiver) { "No bound reference receiver in constructor parameters: $constructorArgs" }
-                load(0, OBJECT_TYPE)
-                invokespecial(superAsmType.internalName, "<init>", "()V", false)
-            } else {
+            load(0, OBJECT_TYPE)
+            val superCtorArgTypes = mutableListOf<Type>()
+            if (receiverIndexAndFieldInfo != null) {
                 val (receiverIndex, receiverFieldInfo) = receiverIndexAndFieldInfo
-                load(0, OBJECT_TYPE)
                 loadBoundReferenceReceiverParameter(receiverIndex, receiverFieldInfo.fieldType, receiverFieldInfo.fieldKotlinType)
-                invokespecial(superAsmType.internalName, "<init>", "(Ljava/lang/Object;)V", false)
+                superCtorArgTypes.add(OBJECT_TYPE)
+            } else {
+                assert(!shouldHaveBoundReferenceReceiver) { "No bound reference receiver in constructor parameters: $constructorArgs" }
             }
+
+            if (isOptimizedPropertyReferenceSupertype(superAsmType)) {
+                generateCallableReferenceDeclarationContainerClass(this, target, state)
+                aconst(target.name.asString())
+                generatePropertyReferenceSignature(this, target, state)
+                aconst(getCallableReferenceTopLevelFlag(target))
+                superCtorArgTypes.add(JAVA_CLASS_TYPE)
+                superCtorArgTypes.add(JAVA_STRING_TYPE)
+                superCtorArgTypes.add(JAVA_STRING_TYPE)
+                superCtorArgTypes.add(Type.INT_TYPE)
+            }
+
+            invokespecial(
+                superAsmType.internalName, "<init>",
+                Type.getMethodDescriptor(Type.VOID_TYPE, *superCtorArgTypes.toTypedArray()), false
+            )
         }
     }
 
@@ -214,7 +228,6 @@ class PropertyReferenceCodegen(
     }
 
     companion object {
-
         @JvmField
         val ANY_SUBSTITUTOR = TypeSubstitutor.create(object : TypeSubstitution() {
             override fun get(key: KotlinType): TypeProjection? {
@@ -224,46 +237,6 @@ class PropertyReferenceCodegen(
                 return TypeProjectionImpl(key.builtIns.nullableAnyType)
             }
         })
-
-        @JvmStatic
-        fun generateCallableReferenceSignature(iv: InstructionAdapter, callable: CallableDescriptor, state: GenerationState) {
-            iv.aconst(getSignatureString(callable, state))
-        }
-
-        @JvmStatic
-        fun getSignatureString(callable: CallableDescriptor, state: GenerationState): String {
-            if (callable is LocalVariableDescriptor) {
-                val asmType = state.bindingContext.get(CodegenBinding.DELEGATED_PROPERTY_METADATA_OWNER, callable)
-                    ?: throw AssertionError("No delegated property metadata owner for $callable")
-                val localDelegatedProperties = CodegenBinding.getLocalDelegatedProperties(state.bindingContext, asmType)
-                val index = localDelegatedProperties?.indexOf(callable) ?: -1
-                if (index < 0) {
-                    throw AssertionError("Local delegated property is not found in $asmType: $callable")
-                }
-                return "<v#$index>"
-            }
-
-            val accessor = when (callable) {
-                is ClassConstructorDescriptor ->
-                    if (shouldHideConstructorDueToInlineClassTypeValueParameters(callable))
-                        AccessorForConstructorDescriptor(callable, callable.containingDeclaration, null, AccessorKind.NORMAL)
-                    else
-                        callable
-                is FunctionDescriptor -> callable
-                is VariableDescriptorWithAccessors ->
-                    callable.getter ?: DescriptorFactory.createDefaultGetter(callable as PropertyDescriptor, Annotations.EMPTY).apply {
-                        initialize(callable.type)
-                    }
-                else -> error("Unsupported callable reference: $callable")
-            }
-            val declaration = DescriptorUtils.unwrapFakeOverride(accessor).original
-            val method =
-                if (callable.containingDeclaration.isInlineClass() && !declaration.isGetterOfUnderlyingPropertyOfInlineClass())
-                    state.typeMapper.mapSignatureForInlineErasedClassSkipGeneric(declaration).asmMethod
-                else
-                    state.typeMapper.mapAsmMethod(declaration)
-            return method.name + method.descriptor
-        }
 
         @JvmStatic
         fun getWrapperMethodForPropertyReference(property: VariableDescriptor, receiverCount: Int): Method {

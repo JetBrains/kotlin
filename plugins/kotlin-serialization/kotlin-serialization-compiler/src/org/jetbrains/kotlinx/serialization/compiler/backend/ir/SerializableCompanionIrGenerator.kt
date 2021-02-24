@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
 import org.jetbrains.kotlin.descriptors.*
@@ -7,20 +12,17 @@ import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irInt
 import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
-import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
-import org.jetbrains.kotlin.ir.types.impl.IrTypeProjectionImpl
-import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
-import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.components.isVararg
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializableCompanionCodegen
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.findTypeSerializer
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
@@ -58,12 +60,15 @@ class SerializableCompanionIrGenerator(
                 Name.identifier(SerialEntityNames.ANNOTATION_MARKER_CLASS)
             )
         ) ?: return
-        val annotationCtor = requireNotNull(annotationMarkerClass.unsubstitutedPrimaryConstructor?.let {
-            compilerContext.symbolTable.referenceConstructor(it)
-        })
 
+        val irSerializableClass = compilerContext.referenceClass(serializableDescriptor.fqNameSafe)?.owner ?: return
+        val serializableWithAlreadyPresent = irSerializableClass.annotations.any {
+            it.symbol.descriptor.constructedClass.fqNameSafe == annotationMarkerClass.fqNameSafe
+        }
+        if (serializableWithAlreadyPresent) return
+
+        val annotationCtor = compilerContext.referenceConstructors(annotationMarkerClass.fqNameSafe).single { it.owner.isPrimary }
         val annotationType = annotationMarkerClass.defaultType.toIrType()
-        val irSerializableClass = compilerContext.symbolTable.referenceClass(serializableDescriptor).owner
         val annotationCtorCall = IrConstructorCallImpl.fromSymbolDescriptor(startOffset, endOffset, annotationType, annotationCtor).apply {
             val serializerType = serializer.toSimpleType(false)
             putValueArgument(
@@ -100,7 +105,7 @@ class SerializableCompanionIrGenerator(
     }
 
     private fun generateSerializerFactoryIfNeeded(getterDescriptor: FunctionDescriptor) {
-        if (serializableDescriptor.declaredTypeParameters.isEmpty()) return
+        if (!companionDescriptor.needSerializerFactory()) return
         val serialFactoryDescriptor = companionDescriptor.unsubstitutedMemberScope.getContributedFunctions(
             SerialEntityNames.SERIALIZER_PROVIDER_NAME,
             NoLookupLocation.FROM_BACKEND
@@ -111,21 +116,22 @@ class SerializableCompanionIrGenerator(
                     && it.returnType != null && isKSerializer(it.returnType)
         } ?: return
         irClass.contributeFunction(serialFactoryDescriptor) { factory ->
+            val kSerializerStarType = factory.returnType
             val array = factory.valueParameters.first()
             val argsSize = serializableDescriptor.declaredTypeParameters.size
-            val arrayGet =
-                compilerContext.builtIns.array.getFuncDesc("get").single()
-            val arrayGetSymbol = compilerContext.symbolTable.referenceFunction(arrayGet)
+            val arrayGet = compilerContext.irBuiltIns.arrayClass.owner.declarations.filterIsInstance<IrSimpleFunction>()
+                .single { it.name.asString() == "get" }
 
-            val outAnyNullable = makeTypeProjection(compilerContext.irBuiltIns.anyNType, Variance.OUT_VARIANCE).type
-
-            val serializers: List<IrExpression> = (0 until argsSize).map { irInvoke(irGet(array), arrayGetSymbol, irInt(it)) }
+            val serializers: List<IrExpression> = (0 until argsSize).map {
+                irInvoke(irGet(array), arrayGet.symbol, irInt(it), typeHint = kSerializerStarType)
+            }
             val serializerCall = compilerContext.symbolTable.referenceSimpleFunction(getterDescriptor)
             val call = irInvoke(
                 IrGetValueImpl(startOffset, endOffset, factory.dispatchReceiverParameter!!.symbol),
                 serializerCall,
-                List(argsSize) { outAnyNullable },
-                serializers
+                List(argsSize) { compilerContext.irBuiltIns.anyNType },
+                serializers,
+                returnTypeHint = kSerializerStarType
             )
             +irReturn(call)
             patchSerializableClassWithMarkerAnnotation(companionDescriptor)

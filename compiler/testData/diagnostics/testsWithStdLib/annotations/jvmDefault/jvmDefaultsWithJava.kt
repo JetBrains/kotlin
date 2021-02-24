@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !JVM_DEFAULT_MODE: enable
 // !JVM_TARGET: 1.8
 // FILE: JavaInterface.java

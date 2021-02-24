@@ -9,6 +9,7 @@ import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.isFalseConstant
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.isTrueConstant
@@ -26,7 +27,7 @@ class SimplifyWhenWithBooleanConstantConditionInspection : AbstractKotlinInspect
 
             holder.registerProblem(
                 expression.whenKeyword,
-                "This 'when' is simplifiable",
+                KotlinBundle.message("this.when.is.simplifiable"),
                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                 SimplifyWhenFix()
             )
@@ -35,7 +36,7 @@ class SimplifyWhenWithBooleanConstantConditionInspection : AbstractKotlinInspect
 }
 
 private class SimplifyWhenFix : LocalQuickFix {
-    override fun getName() = "Simplify 'when'"
+    override fun getName() = KotlinBundle.message("simplify.when.fix.text")
 
     override fun getFamilyName() = name
 

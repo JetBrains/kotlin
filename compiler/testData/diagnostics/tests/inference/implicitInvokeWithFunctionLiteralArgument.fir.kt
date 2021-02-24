@@ -8,7 +8,7 @@ class TestClass {
 
 fun <T> test(value: T, test: TestClass): T {
     val x = test { return value }
-    x checkType { <!UNRESOLVED_REFERENCE!>_<!><Nothing>() }
+    x checkType { _<Nothing>() }
 
     return value
 }
@@ -23,13 +23,13 @@ interface FutureCallback<E> {
 
 fun test(cb: FutureCallback<String>) {
     val a = cb { it[0] }
-    a checkType { <!UNRESOLVED_REFERENCE!>_<!><Future<Char>>() }
+    a checkType { _<Future<Char>>() }
 
     val b = cb { it }
-    b checkType { <!UNRESOLVED_REFERENCE!>_<!><Future<String>>() }
+    b checkType { _<Future<String>>() }
 
     val c = cb {}
-    c checkType { <!UNRESOLVED_REFERENCE!>_<!><Future<Unit>>() }
+    c checkType { _<Future<Unit>>() }
 
     cb.let { callback ->
         val d = callback { it.length }

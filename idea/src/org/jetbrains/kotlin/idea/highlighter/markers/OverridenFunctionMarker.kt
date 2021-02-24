@@ -38,6 +38,7 @@ import gnu.trove.THashSet
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.elements.isTraitFakeOverride
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.presentation.DeclarationByModuleRenderer
 import org.jetbrains.kotlin.idea.search.declarationsSearch.forEachDeclaredMemberOverride
 import org.jetbrains.kotlin.idea.search.declarationsSearch.forEachOverridingMethod
@@ -87,15 +88,24 @@ fun getSubclassedClassTooltip(klass: PsiClass): String? {
     if (subclasses.isEmpty()) {
         val functionalImplementations = PsiElementProcessor.CollectElementsWithLimit(2, THashSet<PsiFunctionalExpression>())
         FunctionalExpressionSearch.search(klass).forEach(PsiElementProcessorAdapter(functionalImplementations))
-        return if (functionalImplementations.collection.isNotEmpty()) "Has functional implementations" else null
+        return if (functionalImplementations.collection.isNotEmpty())
+            KotlinBundle.message("highlighter.text.has.functional.implementations")
+        else
+            null
     }
 
     val start = DaemonBundle.message(if (klass.isInterface) "interface.is.implemented.by.header" else "class.is.subclassed.by.header")
     val shortcuts = ActionManager.getInstance().getAction(IdeActions.ACTION_GOTO_IMPLEMENTATION).shortcutSet.shortcuts
     val shortcut = shortcuts.firstOrNull()
-    var postfix = "<br><div style='margin-top: 5px'><font size='2'>Click"
-    if (shortcut != null) postfix += " or press " + KeymapUtil.getShortcutText(shortcut)
-    postfix += " to navigate</font></div>"
+    val shortCutText = if (shortcut != null)
+        KotlinBundle.message("highlighter.text.or.press", KeymapUtil.getShortcutText(shortcut))
+    else
+        ""
+
+    val postfix = "<br><div style=''margin-top: 5px''><font size=''2''>" + KotlinBundle.message(
+        "highlighter.text.click.for.navigate",
+        shortCutText
+    ) + "</font></div>"
 
     val renderer = DeclarationByModuleRenderer()
     val comparator = renderer.comparator
@@ -138,7 +148,7 @@ fun buildNavigateToOverriddenMethodPopup(e: MouseEvent?, element: PsiElement?): 
 
     if (DumbService.isDumb(method.project)) {
         DumbService.getInstance(method.project)
-            ?.showDumbModeNotification("Navigation to overriding classes is not possible during index update")
+            ?.showDumbModeNotification(KotlinBundle.message("highlighter.notification.text.navigation.to.overriding.classes.is.not.possible.during.index.update"))
         return null
     }
 
@@ -151,7 +161,7 @@ fun buildNavigateToOverriddenMethodPopup(e: MouseEvent?, element: PsiElement?): 
                     }
                 }
             },
-            "Searching for overriding declarations", true, method.project, e?.component as JComponent?
+            KotlinBundle.message("highlighter.title.searching.for.overriding.declarations"), true, method.project, e?.component as JComponent?
         )
     ) {
         return null
@@ -167,7 +177,7 @@ fun buildNavigateToOverriddenMethodPopup(e: MouseEvent?, element: PsiElement?): 
     return NavigationPopupDescriptor(
         overridingJavaMethods,
         methodsUpdater.getCaption(overridingJavaMethods.size),
-        "Overriding declarations of " + method.name,
+        KotlinBundle.message("highlighter.title.overriding.declarations.of", method.name),
         renderer,
         methodsUpdater
     )
@@ -177,7 +187,7 @@ private class OverridingMethodsUpdater(
     private val myMethod: PsiMethod,
     private val myRenderer: PsiElementListCellRenderer<out PsiElement>
 ) :
-    ListBackgroundUpdaterTask(myMethod.project, "Searching for overriding methods") {
+    ListBackgroundUpdaterTask(myMethod.project, KotlinBundle.message("highlighter.title.searching.for.overriding.methods")) {
     override fun getCaption(size: Int): String {
         return if (myMethod.hasModifierProperty(PsiModifier.ABSTRACT))
             DaemonBundle.message("navigation.title.implementation.method", myMethod.name, size)!!

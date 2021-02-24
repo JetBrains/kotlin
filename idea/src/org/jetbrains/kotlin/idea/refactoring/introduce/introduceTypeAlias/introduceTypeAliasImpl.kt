@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.idea.core.CollectingNameValidator
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.compareDescriptors
 import org.jetbrains.kotlin.idea.core.replaced
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.refactoring.introduce.insertDeclaration
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.KotlinPsiRange
@@ -110,7 +111,7 @@ fun IntroduceTypeAliasData.analyze(): IntroduceTypeAliasAnalysisResult {
     val typeParameters = (typeParameterNames zip brokenReferences).map { TypeParameter(it.first, groupedReferencesToExtract[it.second]) }
 
     if (typeParameters.any { it.typeReferenceInfos.any { info -> info.reference.typeElement == originalTypeElement } }) {
-        return IntroduceTypeAliasAnalysisResult.Error("Type alias cannot refer to types which aren't accessible in the scope where it's defined")
+        return IntroduceTypeAliasAnalysisResult.Error(KotlinBundle.message("text.type.alias.cannot.refer.to.types.which.aren.t.accessible.in.the.scope.where.it.s.defined"))
     }
 
     val descriptor = IntroduceTypeAliasDescriptor(this, "Dummy", null, typeParameters)
@@ -134,19 +135,19 @@ fun IntroduceTypeAliasDescriptor.validate(): IntroduceTypeAliasDescriptorWithCon
     val originalType = originalData.originalTypeElement
     when {
         name.isEmpty() ->
-            conflicts.putValue(originalType, "No name provided for type alias")
+            conflicts.putValue(originalType, KotlinBundle.message("text.no.name.provided.for.type.alias"))
         !name.isIdentifier() ->
-            conflicts.putValue(originalType, "Type alias name must be a valid identifier: $name")
+            conflicts.putValue(originalType, KotlinBundle.message("text.type.alias.name.must.be.a.valid.identifier.0", name))
         originalData.getTargetScope().findClassifier(Name.identifier(name), NoLookupLocation.FROM_IDE) != null ->
-            conflicts.putValue(originalType, "Type $name already exists in the target scope")
+            conflicts.putValue(originalType, KotlinBundle.message("text.type.already.exists.in.the.target.scope", name))
     }
 
     if (typeParameters.distinctBy { it.name }.size != typeParameters.size) {
-        conflicts.putValue(originalType, "Type parameter names must be distinct")
+        conflicts.putValue(originalType, KotlinBundle.message("text.type.parameter.names.must.be.distinct"))
     }
 
     if (visibility != null && visibility !in originalData.getApplicableVisibilities()) {
-        conflicts.putValue(originalType, "'$visibility' is not allowed in the target context")
+        conflicts.putValue(originalType, KotlinBundle.message("text.0.is.not.allowed.in.the.target.context", visibility))
     }
 
     return IntroduceTypeAliasDescriptorWithConflicts(this, conflicts)

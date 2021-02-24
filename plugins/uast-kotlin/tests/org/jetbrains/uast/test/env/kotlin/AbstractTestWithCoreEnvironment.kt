@@ -14,12 +14,15 @@ import com.intellij.psi.PsiManager
 import com.intellij.rt.execution.junit.FileComparisonFailure
 import junit.framework.TestCase
 import org.jetbrains.kotlin.test.IdeaSystemPropertiesForParallelRunConfigurator
+import org.jetbrains.kotlin.test.WithMutedInDatabaseRunTest
+import org.jetbrains.kotlin.test.runTest
 import org.jetbrains.uast.UastContext
 import org.jetbrains.uast.UastLanguagePlugin
 import org.jetbrains.uast.evaluation.UEvaluatorExtension
 import org.jetbrains.uast.java.JavaUastLanguagePlugin
 import java.io.File
 
+@WithMutedInDatabaseRunTest
 abstract class AbstractTestWithCoreEnvironment : TestCase() {
 
     companion object {
@@ -46,6 +49,10 @@ abstract class AbstractTestWithCoreEnvironment : TestCase() {
 
     override fun tearDown() {
         disposeEnvironment()
+    }
+
+    override fun runTest() {
+        runTest { super.runTest() }
     }
 
     protected abstract fun createEnvironment(source: File): AbstractCoreEnvironment

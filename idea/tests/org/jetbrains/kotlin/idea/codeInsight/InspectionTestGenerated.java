@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.codeInsight;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -27,7 +28,7 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
         }
 
         public void testAllFilesPresentInIntentions() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClassWithExcluded(this.getClass(), new File("idea/testData/intentions"), Pattern.compile("^(inspections\\.test)$"), null);
+            KtTestUtil.assertAllTestsPresentInSingleGeneratedClassWithExcluded(this.getClass(), new File("idea/testData/intentions"), Pattern.compile("^(inspections\\.test)$"), null);
         }
 
         @TestMetadata("convertToStringTemplate/inspectionData/inspections.test")
@@ -75,7 +76,7 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
         }
 
         public void testAllFilesPresentInInspections() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClassWithExcluded(this.getClass(), new File("idea/testData/inspections"), Pattern.compile("^(inspections\\.test)$"), null);
+            KtTestUtil.assertAllTestsPresentInSingleGeneratedClassWithExcluded(this.getClass(), new File("idea/testData/inspections"), Pattern.compile("^(inspections\\.test)$"), null);
         }
 
         @TestMetadata("allOpenSimple/inspectionData/inspections.test")
@@ -373,29 +374,14 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             runTest("idea/testData/inspections/suspiciousEqualsCombination/inspectionData/inspections.test");
         }
 
-        @TestMetadata("trailingCommaOffWithCodeStyle/inspectionData/inspections.test")
-        public void testTrailingCommaOffWithCodeStyle_inspectionData_Inspections_test() throws Exception {
-            runTest("idea/testData/inspections/trailingCommaOffWithCodeStyle/inspectionData/inspections.test");
+        @TestMetadata("trailingCommaOff/inspectionData/inspections.test")
+        public void testTrailingCommaOff_inspectionData_Inspections_test() throws Exception {
+            runTest("idea/testData/inspections/trailingCommaOff/inspectionData/inspections.test");
         }
 
-        @TestMetadata("trailingCommaOffWithoutCodeStyle/inspectionData/inspections.test")
-        public void testTrailingCommaOffWithoutCodeStyle_inspectionData_Inspections_test() throws Exception {
-            runTest("idea/testData/inspections/trailingCommaOffWithoutCodeStyle/inspectionData/inspections.test");
-        }
-
-        @TestMetadata("trailingCommaOnWithCodeStyle/inspectionData/inspections.test")
-        public void testTrailingCommaOnWithCodeStyle_inspectionData_Inspections_test() throws Exception {
-            runTest("idea/testData/inspections/trailingCommaOnWithCodeStyle/inspectionData/inspections.test");
-        }
-
-        @TestMetadata("trailingCommaOnWithCodeStyleAndCallSite/inspectionData/inspections.test")
-        public void testTrailingCommaOnWithCodeStyleAndCallSite_inspectionData_Inspections_test() throws Exception {
-            runTest("idea/testData/inspections/trailingCommaOnWithCodeStyleAndCallSite/inspectionData/inspections.test");
-        }
-
-        @TestMetadata("trailingCommaOnWithoutCodeStyle/inspectionData/inspections.test")
-        public void testTrailingCommaOnWithoutCodeStyle_inspectionData_Inspections_test() throws Exception {
-            runTest("idea/testData/inspections/trailingCommaOnWithoutCodeStyle/inspectionData/inspections.test");
+        @TestMetadata("trailingCommaOn/inspectionData/inspections.test")
+        public void testTrailingCommaOn_inspectionData_Inspections_test() throws Exception {
+            runTest("idea/testData/inspections/trailingCommaOn/inspectionData/inspections.test");
         }
 
         @TestMetadata("twoSetOfTypeparameters/inspectionData/inspections.test")
@@ -488,7 +474,7 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
         }
 
         public void testAllFilesPresentInInspectionsLocal() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClassWithExcluded(this.getClass(), new File("idea/testData/inspectionsLocal"), Pattern.compile("^(inspections\\.test)$"), null);
+            KtTestUtil.assertAllTestsPresentInSingleGeneratedClassWithExcluded(this.getClass(), new File("idea/testData/inspectionsLocal"), Pattern.compile("^(inspections\\.test)$"), null);
         }
 
         @TestMetadata("branched/ifThenToElvis/inspectionData/inspections.test")

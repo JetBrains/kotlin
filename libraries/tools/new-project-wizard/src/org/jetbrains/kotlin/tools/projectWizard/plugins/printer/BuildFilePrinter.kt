@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.tools.projectWizard.plugins.printer
 
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.render
 
@@ -12,9 +13,9 @@ abstract class BuildFilePrinter {
         +"\n".repeat(lineBreaks)
     }
 
-    fun nlIndented() {
-        nl();
-        indent();
+    fun nlIndented(lineBreaks: Int = 1) {
+        nl(lineBreaks)
+        indent()
     }
 
     fun indent() {
@@ -25,7 +26,7 @@ abstract class BuildFilePrinter {
         builder.append(this)
     }
 
-    operator fun String.unaryPlus() {
+    operator fun @receiver:NonNls String.unaryPlus() {
         builder.append(this)
     }
 
@@ -52,9 +53,9 @@ abstract class BuildFilePrinter {
         suffix()
     }
 
-    open fun <T : BuildSystemIR> List<T>.listNl(needFirstIndent: Boolean = true) {
+    open fun <T : BuildSystemIR> List<T>.listNl(needFirstIndent: Boolean = true, lineBreaks: Int = 1) {
         if (needFirstIndent) indent()
-        list(separator = { nl(); indent() }) { it.render(this) }
+        list(separator = { nl(lineBreaks); indent() }) { it.render(this) }
     }
 
     fun result(): String = builder.toString()

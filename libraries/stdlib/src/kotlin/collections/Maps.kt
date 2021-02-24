@@ -5,7 +5,7 @@
 
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("MapsKt")
-@file:UseExperimental(kotlin.experimental.ExperimentalTypeInference::class)
+@file:OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 
 package kotlin.collections
 
@@ -139,8 +139,14 @@ public fun <K, V> linkedMapOf(vararg pairs: Pair<K, V>): LinkedHashMap<K, V> = p
 @kotlin.internal.InlineOnly
 public inline fun <K, V> buildMap(@BuilderInference builderAction: MutableMap<K, V>.() -> Unit): Map<K, V> {
     contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
-    return LinkedHashMap<K, V>().apply(builderAction)
+    return buildMapInternal(builderAction)
 }
+
+@PublishedApi
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+internal expect inline fun <K, V> buildMapInternal(builderAction: MutableMap<K, V>.() -> Unit): Map<K, V>
 
 /**
  * Builds a new read-only [Map] by populating a [MutableMap] using the given [builderAction]
@@ -162,9 +168,14 @@ public inline fun <K, V> buildMap(@BuilderInference builderAction: MutableMap<K,
 @kotlin.internal.InlineOnly
 public inline fun <K, V> buildMap(capacity: Int, @BuilderInference builderAction: MutableMap<K, V>.() -> Unit): Map<K, V> {
     contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
-    checkBuilderCapacity(capacity)
-    return LinkedHashMap<K, V>(mapCapacity(capacity)).apply(builderAction)
+    return buildMapInternal(capacity, builderAction)
 }
+
+@PublishedApi
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+internal expect inline fun <K, V> buildMapInternal(capacity: Int, builderAction: MutableMap<K, V>.() -> Unit): Map<K, V>
 
 /**
  * Calculate the initial capacity of a map.
@@ -173,14 +184,9 @@ public inline fun <K, V> buildMap(capacity: Int, @BuilderInference builderAction
 internal expect fun mapCapacity(expectedSize: Int): Int
 
 /**
- * Checks a collection builder function capacity argument.
+ * Returns `true` if this map is not empty.
+ * @sample samples.collections.Maps.Usage.mapIsNotEmpty
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
-@PublishedApi
-internal expect fun checkBuilderCapacity(capacity: Int)
-
-/** Returns `true` if this map is not empty. */
 @kotlin.internal.InlineOnly
 public inline fun <K, V> Map<out K, V>.isNotEmpty(): Boolean = !isEmpty()
 
@@ -221,6 +227,8 @@ public inline fun <M, R> M.ifEmpty(defaultValue: () -> R): R where M : Map<*, *>
  * Checks if the map contains the given key.
  *
  * This method allows to use the `x in map` syntax for checking whether an object is contained in the map.
+ *
+ * @sample samples.collections.Maps.Usage.containsKey
  */
 @kotlin.internal.InlineOnly
 public inline operator fun <@kotlin.internal.OnlyInputTypes K, V> Map<out K, V>.contains(key: K): Boolean = containsKey(key)

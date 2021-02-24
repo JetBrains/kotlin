@@ -4,13 +4,13 @@ plugins {
 }
 
 dependencies {
-    compile(project(":idea:jvm-debugger:jvm-debugger-core"))
+    implementation(project(":idea:jvm-debugger:jvm-debugger-core"))
+    implementation("org.apache.maven:maven-artifact:3.6.3")
 
+    compileOnly(toolsJarApi())
     compileOnly(intellijDep())
 
-    Platform[192].orHigher {
-        compileOnly(intellijPluginDep("java"))
-    }
+    compileOnly(intellijPluginDep("java"))
 
     testCompile(project(":kotlin-test:kotlin-test-junit"))
     testCompile(commonDep("junit:junit"))

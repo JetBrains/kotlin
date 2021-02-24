@@ -1,0 +1,11 @@
+enum class Type {
+    HYDRO,
+    PYRO
+}
+
+fun select(t: Type) {
+    when {
+        t == Type.HYDRO -> 1
+        t == Type.PYRO -> 42
+    }
+}

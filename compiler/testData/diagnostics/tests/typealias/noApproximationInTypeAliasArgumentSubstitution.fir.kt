@@ -14,4 +14,4 @@ typealias TMap<T> = Map<T, T>
 fun <T> foo2(m: TMap<T>) = m
 
 fun bar2(m: TMap<*>) =
-        foo2(m)
+        <!INAPPLICABLE_CANDIDATE!>foo2<!>(m)

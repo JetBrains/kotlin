@@ -2,12 +2,12 @@
 
 package sample
 
-expect interface C {
-    fun common_2_C()
+expect interface <!LINE_MARKER("descr='Is subclassed by A [common-2] B [jvm]'"), LINE_MARKER("descr='Has actuals in JVM'")!>C<!> {
+    fun <!LINE_MARKER("descr='Has actuals in JVM'")!>common_2_C<!>()
 }
 
-actual interface A : C {
-    actual fun common_1_A()
+actual interface <!LINE_MARKER("descr='Is implemented by B [jvm]'"), LINE_MARKER("descr='Has declaration in common module'")!>A<!> : C {
+    actual fun <!LINE_MARKER("descr='Has declaration in common module'")!>common_1_A<!>()
     fun common_2_A()
 }
 

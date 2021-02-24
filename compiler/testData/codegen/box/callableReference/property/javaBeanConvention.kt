@@ -1,4 +1,5 @@
-// IGNORE_BACKEND_FIR: JVM_IR
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: PROPERTY_REFERENCES
 // Name of the getter should be 'getaBcde' according to JavaBean conventions
 var aBcde: Int = 239
 

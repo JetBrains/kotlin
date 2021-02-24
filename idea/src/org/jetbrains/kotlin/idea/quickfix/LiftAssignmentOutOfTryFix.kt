@@ -9,6 +9,7 @@ import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedFoldingUtils
 import org.jetbrains.kotlin.psi.KtCatchClause
 import org.jetbrains.kotlin.psi.KtExpression
@@ -18,11 +19,11 @@ import org.jetbrains.kotlin.psi.KtTryExpression
 class LiftAssignmentOutOfTryFix(element: KtTryExpression) : KotlinQuickFixAction<KtTryExpression>(element) {
     override fun getFamilyName() = text
 
-    override fun getText() = "Lift assignment out of 'try' expression"
+    override fun getText() = KotlinBundle.message("lift.assignment.out.of.try.expression")
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return
-        BranchedFoldingUtils.foldToAssignment(element)
+        BranchedFoldingUtils.tryFoldToAssignment(element)
     }
 
     companion object : KotlinSingleIntentionActionFactory() {

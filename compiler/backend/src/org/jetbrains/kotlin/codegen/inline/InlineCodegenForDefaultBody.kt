@@ -27,7 +27,7 @@ class InlineCodegenForDefaultBody(
 ) : CallGenerator {
     private val sourceMapper: SourceMapper = codegen.parentCodegen.orCreateSourceMapper
 
-    private val methodStartLabel = Label()
+    private val methodStartLabel = linkedLabel()
 
     init {
         assert(InlineUtil.isInline(function)) {
@@ -39,10 +39,12 @@ class InlineCodegenForDefaultBody(
     }
 
     override fun genCallInner(callableMethod: Callable, resolvedCall: ResolvedCall<*>?, callDefault: Boolean, codegen: ExpressionCodegen) {
-        val nodeAndSmap = InlineCodegen.createInlineMethodNode(
-            function, methodOwner, jvmSignature, callDefault, null, codegen.typeSystem, state, sourceCompilerForInline
+        val nodeAndSmap = PsiInlineCodegen(
+            codegen, state, function, methodOwner, jvmSignature, TypeParameterMappings(), sourceCompilerForInline
+        ).createInlineMethodNode(
+            callDefault, null, codegen.typeSystem
         )
-        val childSourceMapper = InlineCodegen.createNestedSourceMapper(nodeAndSmap, sourceMapper)
+        val childSourceMapper = SourceMapCopier(sourceMapper, nodeAndSmap.classSMAP)
 
         val node = nodeAndSmap.node
         val transformedMethod = MethodNode(

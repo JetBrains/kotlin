@@ -1,17 +1,18 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolvedForCalls
+import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.scopes.getContainingClassifierNamesIfPresent
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
 
 class FirClassDeclaredMemberScope(
@@ -19,8 +20,8 @@ class FirClassDeclaredMemberScope(
     useLazyNestedClassifierScope: Boolean = false,
     existingNames: List<Name>? = null,
     symbolProvider: FirSymbolProvider? = null
-) : FirScope() {
-    private val nestedClassifierScope = if (useLazyNestedClassifierScope) {
+) : FirScope(), FirContainingNamesAwareScope {
+    private val nestedClassifierScope: FirScope? = if (useLazyNestedClassifierScope) {
         lazyNestedClassifierScope(klass.symbol.classId, existingNames!!, symbolProvider!!)
     } else {
         nestedClassifierScope(klass)
@@ -32,8 +33,8 @@ class FirClassDeclaredMemberScope(
             when (declaration) {
                 is FirCallableMemberDeclaration<*> -> {
                     val name = when (declaration) {
-                        is FirConstructor -> if (klass is FirRegularClass) klass.name else continue@loop
-                        is FirVariable<*> -> declaration.name
+                        is FirConstructor -> CONSTRUCTOR_NAME
+                        is FirVariable<*> -> if (declaration.isSynthetic) continue@loop else declaration.name
                         is FirSimpleFunction -> declaration.name
                         else -> continue@loop
                     }
@@ -44,26 +45,47 @@ class FirClassDeclaredMemberScope(
         result
     }
 
-    override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
-        val symbols = callablesIndex[name] ?: emptyList()
-        for (symbol in symbols) {
-            if (symbol is FirFunctionSymbol<*>) {
-                processor(symbol)
-            }
-        }
+    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
+        if (name == CONSTRUCTOR_NAME) return
+        processCallables(name, processor)
     }
 
-    override fun processPropertiesByName(name: Name, processor: (FirCallableSymbol<*>) -> Unit) {
-        val symbols = callablesIndex[name] ?: emptyList()
-        for (symbol in symbols) {
-            if (symbol is FirVariableSymbol) {
-                processor(symbol)
-            }
-        }
+    override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {
+        processCallables(CONSTRUCTOR_NAME, processor)
     }
 
-    override fun processClassifiersByName(
+    override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
+        processCallables(name, processor)
+    }
+
+    private inline fun <reified D : FirCallableSymbol<*>> processCallables(
         name: Name,
-        processor: (FirClassifierSymbol<*>) -> Unit
-    ) = nestedClassifierScope.processClassifiersByName(name, processor)
+        processor: (D) -> Unit
+    ) {
+        val symbols = callablesIndex[name] ?: emptyList()
+        for (symbol in symbols) {
+            if (symbol is D) {
+                symbol.ensureResolvedForCalls(symbol.fir.session)
+                processor(symbol)
+            }
+        }
+    }
+
+    override fun processClassifiersByNameWithSubstitution(
+        name: Name,
+        processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit
+    ) {
+        nestedClassifierScope?.processClassifiersByNameWithSubstitution(name, processor)
+    }
+
+    override fun getCallableNames(): Set<Name> {
+        return callablesIndex.keys
+    }
+
+    override fun getClassifierNames(): Set<Name> {
+        return nestedClassifierScope?.getContainingClassifierNamesIfPresent().orEmpty()
+    }
 }
+
+
+private val CONSTRUCTOR_NAME = Name.special("<init>")

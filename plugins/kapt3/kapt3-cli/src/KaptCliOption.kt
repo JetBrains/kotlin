@@ -153,6 +153,13 @@ enum class KaptCliOption(
         cliToolOption = CliToolOption("-Kapt-correct-error-types", FLAG)
     ),
 
+    DUMP_DEFAULT_PARAMETER_VALUES(
+        "dumpDefaultParameterValues",
+        "true | false",
+        "Put initializers on fields when corresponding primary constructor parameters have a default value specified",
+        cliToolOption = CliToolOption("-Kapt-dump-default-parameter-values", FLAG)
+    ),
+
     MAP_DIAGNOSTIC_LOCATIONS_OPTION(
         "mapDiagnosticLocations",
         "true | false",
@@ -179,6 +186,19 @@ enum class KaptCliOption(
         "true | false",
         "Show errors on incompatibilities during stub generation",
         cliToolOption = CliToolOption("-Kapt-strict", FLAG)
+    ),
+
+    STRIP_METADATA_OPTION(
+        "stripMetadata",
+        "true | false",
+        "Strip @Metadata annotations from stubs",
+        cliToolOption = CliToolOption("-Kapt-strip-metadata", FLAG)
+    ),
+
+    KEEP_KDOC_COMMENTS_IN_STUBS(
+        "keepKdocCommentsInStubs",
+        "true | false",
+        "Keep KDoc comments in stubs"
     ),
 
     DETECT_MEMORY_LEAKS_OPTION("detectMemoryLeaks", "true | false", "Detect memory leaks in annotation processors"),

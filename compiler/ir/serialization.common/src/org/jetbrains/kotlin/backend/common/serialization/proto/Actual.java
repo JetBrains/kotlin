@@ -55,12 +55,12 @@ public final class Actual extends
           }
           case 8: {
             bitField0_ |= 0x00000001;
-            actualSymbol_ = input.readInt32();
+            actualSymbol_ = input.readInt64();
             break;
           }
           case 16: {
             bitField0_ |= 0x00000002;
-            expectSymbol_ = input.readInt32();
+            expectSymbol_ = input.readInt64();
             break;
           }
         }
@@ -98,38 +98,38 @@ public final class Actual extends
 
   private int bitField0_;
   public static final int ACTUAL_SYMBOL_FIELD_NUMBER = 1;
-  private int actualSymbol_;
+  private long actualSymbol_;
   /**
-   * <code>required int32 actual_symbol = 1;</code>
+   * <code>required int64 actual_symbol = 1;</code>
    */
   public boolean hasActualSymbol() {
     return ((bitField0_ & 0x00000001) == 0x00000001);
   }
   /**
-   * <code>required int32 actual_symbol = 1;</code>
+   * <code>required int64 actual_symbol = 1;</code>
    */
-  public int getActualSymbol() {
+  public long getActualSymbol() {
     return actualSymbol_;
   }
 
   public static final int EXPECT_SYMBOL_FIELD_NUMBER = 2;
-  private int expectSymbol_;
+  private long expectSymbol_;
   /**
-   * <code>required int32 expect_symbol = 2;</code>
+   * <code>required int64 expect_symbol = 2;</code>
    */
   public boolean hasExpectSymbol() {
     return ((bitField0_ & 0x00000002) == 0x00000002);
   }
   /**
-   * <code>required int32 expect_symbol = 2;</code>
+   * <code>required int64 expect_symbol = 2;</code>
    */
-  public int getExpectSymbol() {
+  public long getExpectSymbol() {
     return expectSymbol_;
   }
 
   private void initFields() {
-    actualSymbol_ = 0;
-    expectSymbol_ = 0;
+    actualSymbol_ = 0L;
+    expectSymbol_ = 0L;
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -153,10 +153,10 @@ public final class Actual extends
                       throws java.io.IOException {
     getSerializedSize();
     if (((bitField0_ & 0x00000001) == 0x00000001)) {
-      output.writeInt32(1, actualSymbol_);
+      output.writeInt64(1, actualSymbol_);
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
-      output.writeInt32(2, expectSymbol_);
+      output.writeInt64(2, expectSymbol_);
     }
     output.writeRawBytes(unknownFields);
   }
@@ -169,11 +169,11 @@ public final class Actual extends
     size = 0;
     if (((bitField0_ & 0x00000001) == 0x00000001)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeInt32Size(1, actualSymbol_);
+        .computeInt64Size(1, actualSymbol_);
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeInt32Size(2, expectSymbol_);
+        .computeInt64Size(2, expectSymbol_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -269,9 +269,9 @@ public final class Actual extends
 
     public Builder clear() {
       super.clear();
-      actualSymbol_ = 0;
+      actualSymbol_ = 0L;
       bitField0_ = (bitField0_ & ~0x00000001);
-      expectSymbol_ = 0;
+      expectSymbol_ = 0L;
       bitField0_ = (bitField0_ & ~0x00000002);
       return this;
     }
@@ -352,66 +352,66 @@ public final class Actual extends
     }
     private int bitField0_;
 
-    private int actualSymbol_ ;
+    private long actualSymbol_ ;
     /**
-     * <code>required int32 actual_symbol = 1;</code>
+     * <code>required int64 actual_symbol = 1;</code>
      */
     public boolean hasActualSymbol() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>required int32 actual_symbol = 1;</code>
+     * <code>required int64 actual_symbol = 1;</code>
      */
-    public int getActualSymbol() {
+    public long getActualSymbol() {
       return actualSymbol_;
     }
     /**
-     * <code>required int32 actual_symbol = 1;</code>
+     * <code>required int64 actual_symbol = 1;</code>
      */
-    public Builder setActualSymbol(int value) {
+    public Builder setActualSymbol(long value) {
       bitField0_ |= 0x00000001;
       actualSymbol_ = value;
       
       return this;
     }
     /**
-     * <code>required int32 actual_symbol = 1;</code>
+     * <code>required int64 actual_symbol = 1;</code>
      */
     public Builder clearActualSymbol() {
       bitField0_ = (bitField0_ & ~0x00000001);
-      actualSymbol_ = 0;
+      actualSymbol_ = 0L;
       
       return this;
     }
 
-    private int expectSymbol_ ;
+    private long expectSymbol_ ;
     /**
-     * <code>required int32 expect_symbol = 2;</code>
+     * <code>required int64 expect_symbol = 2;</code>
      */
     public boolean hasExpectSymbol() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>required int32 expect_symbol = 2;</code>
+     * <code>required int64 expect_symbol = 2;</code>
      */
-    public int getExpectSymbol() {
+    public long getExpectSymbol() {
       return expectSymbol_;
     }
     /**
-     * <code>required int32 expect_symbol = 2;</code>
+     * <code>required int64 expect_symbol = 2;</code>
      */
-    public Builder setExpectSymbol(int value) {
+    public Builder setExpectSymbol(long value) {
       bitField0_ |= 0x00000002;
       expectSymbol_ = value;
       
       return this;
     }
     /**
-     * <code>required int32 expect_symbol = 2;</code>
+     * <code>required int64 expect_symbol = 2;</code>
      */
     public Builder clearExpectSymbol() {
       bitField0_ = (bitField0_ & ~0x00000002);
-      expectSymbol_ = 0;
+      expectSymbol_ = 0L;
       
       return this;
     }

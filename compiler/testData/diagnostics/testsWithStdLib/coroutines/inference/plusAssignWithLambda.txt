@@ -1,0 +1,28 @@
+package
+
+public fun call(/*0*/ x: kotlin.String): kotlin.Unit
+public fun foo(/*0*/ x: kotlin.Float, /*1*/ y: kotlin.Float): () -> kotlin.Unit
+public fun foo(/*0*/ total: kotlin.Float, /*1*/ next: kotlin.Int): kotlin.Int
+public fun foo(/*0*/ total: kotlin.Int, /*1*/ next: kotlin.Float): kotlin.Int
+public fun foo(/*0*/ total: kotlin.Int, /*1*/ next: kotlin.Int): kotlin.Int
+public fun foo2(): () -> kotlin.Unit
+public fun foo3(/*0*/ x: B): () -> kotlin.Unit
+public fun </*0*/ T> id(/*0*/ x: T): T
+
+public final class A {
+    public constructor A()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final operator fun plus(/*0*/ x: kotlin.Int): A
+    public final operator fun plusAssign(/*0*/ x: kotlin.Float): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class B {
+    public constructor B()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final operator fun plus(/*0*/ x: () -> kotlin.String): A
+    public final operator fun plusAssign(/*0*/ x: () -> kotlin.Int): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

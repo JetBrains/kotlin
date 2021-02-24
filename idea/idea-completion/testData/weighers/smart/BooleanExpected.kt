@@ -20,6 +20,8 @@ fun foo(pFoo: Boolean, s: String) {
 // ORDER: nonNullable
 // ORDER: maxOf
 // ORDER: maxOf
+// ORDER: maxOf
+// ORDER: minOf
 // ORDER: minOf
 // ORDER: minOf
 // ORDER: nullableX

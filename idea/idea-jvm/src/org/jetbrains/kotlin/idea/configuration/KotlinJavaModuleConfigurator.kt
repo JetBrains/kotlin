@@ -28,6 +28,7 @@ import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import com.intellij.openapi.roots.libraries.Library
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.idea.KotlinJvmBundle
 import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JvmCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.facet.getOrCreateFacet
 import org.jetbrains.kotlin.idea.facet.initializeIfNeeded
@@ -63,7 +64,7 @@ open class KotlinJavaModuleConfigurator protected constructor() : KotlinWithLibr
         get() = JavaRuntimeLibraryDescription.JAVA_RUNTIME_LIBRARY_CREATION
 
     override val presentableText: String
-        get() = "Java"
+        get() = KotlinJvmBundle.message("language.name.java")
 
     override val name: String
         get() = NAME

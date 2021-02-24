@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.InstructionWithValu
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.MagicKind
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.contracts.description.InvocationKind
+import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.contracts.description.canBeRevisited
 import org.jetbrains.kotlin.contracts.description.isDefinitelyVisited
 import org.jetbrains.kotlin.descriptors.*
@@ -79,8 +79,8 @@ class ControlFlowProcessor(
         return pseudocode
     }
 
-    private fun generate(subroutine: KtElement, invocationKind: InvocationKind? = null): Pseudocode {
-        builder.enterSubroutine(subroutine, invocationKind)
+    private fun generate(subroutine: KtElement, eventOccurrencesRange: EventOccurrencesRange? = null): Pseudocode {
+        builder.enterSubroutine(subroutine, eventOccurrencesRange)
         val cfpVisitor = CFPVisitor(builder)
         if (subroutine is KtDeclarationWithBody && subroutine !is KtSecondaryConstructor) {
             val valueParameters = subroutine.valueParameters
@@ -97,7 +97,7 @@ class ControlFlowProcessor(
         } else {
             cfpVisitor.generateInstructions(subroutine)
         }
-        return builder.exitSubroutine(subroutine, invocationKind)
+        return builder.exitSubroutine(subroutine, eventOccurrencesRange)
     }
 
     private fun generateImplicitReturnValue(bodyExpression: KtExpression, subroutine: KtElement) {
@@ -1035,11 +1035,11 @@ class ControlFlowProcessor(
             return parent.parent is KtDoWhileExpression
         }
 
-        private fun visitFunction(function: KtFunction, invocationKind: InvocationKind? = null) {
-            if (invocationKind == null) {
+        private fun visitFunction(function: KtFunction, eventOccurrencesRange: EventOccurrencesRange? = null) {
+            if (eventOccurrencesRange == null) {
                 processLocalDeclaration(function)
             } else {
-                visitInlinedFunction(function, invocationKind)
+                visitInlinedFunction(function, eventOccurrencesRange)
             }
 
             val isAnonymousFunction = function is KtFunctionLiteral || function.name == null
@@ -1048,7 +1048,7 @@ class ControlFlowProcessor(
             }
         }
 
-        private fun visitInlinedFunction(lambdaFunctionLiteral: KtFunction, invocationKind: InvocationKind) {
+        private fun visitInlinedFunction(lambdaFunctionLiteral: KtFunction, eventOccurrencesRange: EventOccurrencesRange) {
             // Defer emitting of inlined declaration
             deferredGeneratorsStack.peek().add({ builder ->
                                                    val beforeDeclaration = builder.createUnboundLabel("before inlined declaration")
@@ -1056,13 +1056,13 @@ class ControlFlowProcessor(
 
                                                    builder.bindLabel(beforeDeclaration)
 
-                                                   if (!invocationKind.isDefinitelyVisited()) {
+                                                   if (!eventOccurrencesRange.isDefinitelyVisited()) {
                                                        builder.nondeterministicJump(afterDeclaration, lambdaFunctionLiteral, null)
                                                    }
 
-                                                   generate(lambdaFunctionLiteral, invocationKind)
+                                                   generate(lambdaFunctionLiteral, eventOccurrencesRange)
 
-                                                   if (invocationKind.canBeRevisited()) {
+                                                   if (eventOccurrencesRange.canBeRevisited()) {
                                                        builder.nondeterministicJump(beforeDeclaration, lambdaFunctionLiteral, null)
                                                    }
 

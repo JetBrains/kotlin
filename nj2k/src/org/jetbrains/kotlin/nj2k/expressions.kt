@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.nj2k.types.JKNoType
 import org.jetbrains.kotlin.nj2k.types.JKType
 import org.jetbrains.kotlin.nj2k.types.JKTypeFactory
 import org.jetbrains.kotlin.nj2k.types.replaceJavaClassWithKotlinClassType
+import org.jetbrains.kotlin.resolve.annotations.KOTLIN_THROWS_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -89,17 +90,16 @@ fun blockStatement(statements: List<JKStatement>) =
 
 fun useExpression(
     receiver: JKExpression,
-    variableIdentifier: JKNameIdentifier,
+    variableIdentifier: JKNameIdentifier?,
     body: JKStatement,
     symbolProvider: JKSymbolProvider
 ): JKExpression {
     val useSymbol = symbolProvider.provideMethodSymbol("kotlin.io.use")
-    val lambdaParameter =
-        JKParameter(JKTypeElement(JKNoType), variableIdentifier)
+    val lambdaParameter = if (variableIdentifier != null) JKParameter(JKTypeElement(JKNoType), variableIdentifier) else null
 
     val lambda = JKLambdaExpression(
         body,
-        listOf(lambdaParameter)
+        listOfNotNull(lambdaParameter)
     )
     val methodCall =
         JKCallExpressionImpl(
@@ -126,7 +126,7 @@ fun jvmAnnotation(name: String, symbolProvider: JKSymbolProvider) =
 
 fun throwAnnotation(throws: List<JKType>, symbolProvider: JKSymbolProvider) =
     JKAnnotation(
-        symbolProvider.provideClassSymbol("kotlin.jvm.Throws"),
+        symbolProvider.provideClassSymbol(KOTLIN_THROWS_ANNOTATION_FQ_NAME.asString()),
         throws.map {
             JKAnnotationParameterImpl(
                 JKClassLiteralExpression(JKTypeElement(it), JKClassLiteralExpression.ClassLiteralType.KOTLIN_CLASS)

@@ -29,7 +29,7 @@ class Test()
     fun test()
     {
         val control = Control()
-        control.MouseMoved += { <!UNRESOLVED_REFERENCE!>it<!>.<!UNRESOLVED_REFERENCE!>X<!> } // here
+        control.MouseMoved += { it.X } // here
         control.MouseMoved.plusAssign( { it.X } ) // ok
     }
 }

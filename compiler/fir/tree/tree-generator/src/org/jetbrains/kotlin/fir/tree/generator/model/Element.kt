@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.tree.generator.model
 
 import org.jetbrains.kotlin.fir.tree.generator.printer.BASE_PACKAGE
 import org.jetbrains.kotlin.fir.tree.generator.printer.typeWithArguments
+import org.jetbrains.kotlin.fir.tree.generator.util.set
 
 interface KindOwner : Importable {
     var kind: Implementation.Kind?
@@ -31,6 +32,8 @@ interface AbstractElement : FieldContainer, KindOwner {
     val allFirFields: List<Field>
     val defaultImplementation: Implementation?
     val customImplementations: List<Implementation>
+    val overridenFields: Map<Field, Map<Importable, Boolean>>
+    val useNullableForReplace: Set<Field>
 
     override val allParents: List<KindOwner> get() = parents
 }
@@ -60,10 +63,11 @@ class Element(val name: String, kind: Kind) : AbstractElement {
     override var doesNotNeedImplementation: Boolean = false
 
     override val needTransformOtherChildren: Boolean get() = _needTransformOtherChildren || parents.any { it.needTransformOtherChildren }
-
+    override val overridenFields: MutableMap<Field, MutableMap<Importable, Boolean>> = mutableMapOf()
+    override val useNullableForReplace: MutableSet<Field> = mutableSetOf()
     override val allImplementations: List<Implementation> by lazy {
         if (doesNotNeedImplementation) {
-            emptyList<Implementation>()
+            emptyList()
         } else {
             val implementations = customImplementations.toMutableList()
             defaultImplementation?.let { implementations += it }
@@ -74,13 +78,26 @@ class Element(val name: String, kind: Kind) : AbstractElement {
     override val allFields: List<Field> by lazy {
         val result = LinkedHashSet<Field>()
         result.addAll(fields.toList().asReversed())
-        for (field in parentFields.asReversed()) {
-            val overrides = !result.add(field)
+        result.forEach { overridenFields[it, it] = false }
+        for (parentField in parentFields.asReversed()) {
+            val overrides = !result.add(parentField)
             if (overrides) {
-                val existingField = result.first { it == field }
-                if (field.name != "symbol" && field.type == existingField.type) println("Duplicate [element: $this, field: $field]")
+                val existingField = result.first { it == parentField }
                 existingField.fromParent = true
-                existingField.needsSeparateTransform = existingField.needsSeparateTransform || field.needsSeparateTransform
+                existingField.needsSeparateTransform = existingField.needsSeparateTransform || parentField.needsSeparateTransform
+                existingField.needTransformInOtherChildren = existingField.needTransformInOtherChildren || parentField.needTransformInOtherChildren
+                existingField.withReplace = parentField.withReplace || existingField.withReplace
+                if (parentField.type != existingField.type && parentField.withReplace) {
+                    existingField.overridenTypes += parentField
+                    overridenFields[existingField, parentField] = false
+                } else {
+                    overridenFields[existingField, parentField] = true
+                    if (parentField.nullable != existingField.nullable) {
+                        existingField.useNullableForReplace = true
+                    }
+                }
+            } else {
+                overridenFields[parentField, parentField] = true
             }
         }
         result.toList().asReversed()
@@ -161,3 +178,5 @@ class TypeArgumentWithMultipleUpperBounds(name: String, override val upperBounds
         return name
     }
 }
+
+data class ArbitraryImportable(override val packageName: String, override val type: String) : Importable

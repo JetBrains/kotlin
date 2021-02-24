@@ -27,6 +27,8 @@ import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackages
 import com.intellij.refactoring.move.moveClassesOrPackages.MultipleRootsMoveDestination;
 import com.intellij.ui.*;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.idea.KotlinBundle;
+import org.jetbrains.kotlin.idea.roots.ProjectRootUtilsKt;
 
 import javax.swing.*;
 import java.awt.*;
@@ -39,7 +41,7 @@ import static org.jetbrains.kotlin.idea.roots.ProjectRootUtilsKt.getKotlinAwareD
 
 // Based on com.intellij.refactoring.move.moveClassesOrPackages.DestinationFolderComboBox
 public abstract class KotlinDestinationFolderComboBox extends ComboboxWithBrowseButton {
-    private static final String LEAVE_IN_SAME_SOURCE_ROOT = "Leave in same source root";
+    private static final String LEAVE_IN_SAME_SOURCE_ROOT = KotlinBundle.message("leave.in.same.source.root");
     private static final DirectoryChooser.ItemWrapper NULL_WRAPPER = new DirectoryChooser.ItemWrapper(null, null);
     private PsiDirectory myInitialTargetDirectory;
     private List<VirtualFile> mySourceRoots;
@@ -71,12 +73,25 @@ public abstract class KotlinDestinationFolderComboBox extends ComboboxWithBrowse
     }
 
     public void setData(
-            Project project,
-            PsiDirectory initialTargetDirectory,
-            Pass<String> errorMessageUpdater, EditorComboBox editorComboBox
+        Project project,
+        PsiDirectory initialTargetDirectory,
+        Pass<String> errorMessageUpdater, EditorComboBox editorComboBox
+    ) {
+        setData(project, initialTargetDirectory, errorMessageUpdater, editorComboBox, false);
+    }
+
+    public void setData(Project project, PsiDirectory initialTargetDirectory, Pass<String> errorMessageUpdater,
+            EditorComboBox editorComboBox, boolean sourceRootsInTargetDirOnly
     ) {
         myInitialTargetDirectory = initialTargetDirectory;
-        mySourceRoots = getKotlinAwareDestinationSourceRoots(project);
+
+        if (sourceRootsInTargetDirOnly) {
+            Module module = ModuleUtilCore.findModuleForFile(myInitialTargetDirectory.getVirtualFile(), project);
+            mySourceRoots = ProjectRootUtilsKt.collectKotlinAwareDestinationSourceRoots(module);
+        } else {
+            mySourceRoots = getKotlinAwareDestinationSourceRoots(project);
+        }
+
         new ComboboxSpeedSearch(getComboBox()) {
             @Override
             protected String getElementText(Object element) {
@@ -129,7 +144,8 @@ public abstract class KotlinDestinationFolderComboBox extends ComboboxWithBrowse
                     return;
                 }
             }
-            setComboboxModel(getComboBox(), root, root, fileIndex, mySourceRoots, project, true, errorMessageUpdater);
+            setComboboxModel(getComboBox(), root, root, fileIndex, mySourceRoots, project, true, errorMessageUpdater,
+                             sourceRootsInTargetDirOnly);
         });
 
         editorComboBox.addDocumentListener(new DocumentListener() {
@@ -139,10 +155,11 @@ public abstract class KotlinDestinationFolderComboBox extends ComboboxWithBrowse
                 DirectoryChooser.ItemWrapper selectedItem = (DirectoryChooser.ItemWrapper) comboBox.getSelectedItem();
                 setComboboxModel(comboBox, selectedItem != null && selectedItem != NULL_WRAPPER ? fileIndex
                                          .getSourceRootForFile(selectedItem.getDirectory().getVirtualFile()) : initialSourceRoot, selection[0], fileIndex,
-                                 mySourceRoots, project, false, errorMessageUpdater);
+                                 mySourceRoots, project, false, errorMessageUpdater, sourceRootsInTargetDirOnly);
             }
         });
-        setComboboxModel(getComboBox(), initialSourceRoot, selection[0], fileIndex, mySourceRoots, project, false, errorMessageUpdater);
+        setComboboxModel(getComboBox(), initialSourceRoot, selection[0], fileIndex, mySourceRoots, project, false, errorMessageUpdater,
+                         sourceRootsInTargetDirOnly);
         getComboBox().addActionListener(e -> {
             Object selectedItem = getComboBox().getSelectedItem();
             updateErrorMessage(errorMessageUpdater, fileIndex, selectedItem);
@@ -180,11 +197,11 @@ public abstract class KotlinDestinationFolderComboBox extends ComboboxWithBrowse
             boolean inTestSourceContent = fileIndex.isInTestSourceContent(myInitialTargetDirectory.getVirtualFile());
             if (isSelectionInTestSourceContent != inTestSourceContent) {
                 if (inTestSourceContent && reportBaseInTestSelectionInSource()) {
-                    updateErrorMessage.pass("Source root is selected while the test root is expected");
+                    updateErrorMessage.pass(KotlinBundle.message("source.root.is.selected.while.the.test.root.is.expected"));
                 }
 
                 if (isSelectionInTestSourceContent && reportBaseInSourceSelectionInTest()) {
-                    updateErrorMessage.pass("Test root is selected while the source root is expected");
+                    updateErrorMessage.pass(KotlinBundle.message("test.root.is.selected.while.the.source.root.is.expected"));
                 }
             }
         }
@@ -198,7 +215,8 @@ public abstract class KotlinDestinationFolderComboBox extends ComboboxWithBrowse
             List<VirtualFile> sourceRoots,
             Project project,
             boolean forceIncludeAll,
-            Pass<String> updateErrorMessage
+            Pass<String> updateErrorMessage,
+            boolean sourceRootsInTargetDirOnly
     ) {
         LinkedHashSet<PsiDirectory> targetDirectories = new LinkedHashSet<>();
         HashMap<PsiDirectory, String> pathsToCreate = new HashMap<>();
@@ -223,7 +241,7 @@ public abstract class KotlinDestinationFolderComboBox extends ComboboxWithBrowse
                 oldOne = itemWrapper;
             }
         }
-        if (oldSelection == null || !fileIndex.isInLibrarySource(oldSelection)) {
+        if (!sourceRootsInTargetDirOnly && (oldSelection == null || !fileIndex.isInLibrarySource(oldSelection))) {
             items.add(NULL_WRAPPER);
         }
         DirectoryChooser.ItemWrapper selection = chooseSelection(initialTargetDirectorySourceRoot, fileIndex, items, initial, oldOne);

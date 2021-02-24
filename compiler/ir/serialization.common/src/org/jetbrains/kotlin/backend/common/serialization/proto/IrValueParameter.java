@@ -68,36 +68,16 @@ public final class IrValueParameter extends
           }
           case 16: {
             bitField0_ |= 0x00000002;
-            name_ = input.readInt32();
+            nameType_ = input.readInt64();
             break;
           }
           case 24: {
             bitField0_ |= 0x00000004;
-            index_ = input.readInt32();
+            varargElementType_ = input.readInt32();
             break;
           }
           case 32: {
             bitField0_ |= 0x00000008;
-            type_ = input.readInt32();
-            break;
-          }
-          case 40: {
-            bitField0_ |= 0x00000010;
-            varargElementType_ = input.readInt32();
-            break;
-          }
-          case 48: {
-            bitField0_ |= 0x00000020;
-            isCrossinline_ = input.readBool();
-            break;
-          }
-          case 56: {
-            bitField0_ |= 0x00000040;
-            isNoinline_ = input.readBool();
-            break;
-          }
-          case 64: {
-            bitField0_ |= 0x00000080;
             defaultValue_ = input.readInt32();
             break;
           }
@@ -150,106 +130,46 @@ public final class IrValueParameter extends
     return base_;
   }
 
-  public static final int NAME_FIELD_NUMBER = 2;
-  private int name_;
+  public static final int NAME_TYPE_FIELD_NUMBER = 2;
+  private long nameType_;
   /**
-   * <code>required int32 name = 2;</code>
+   * <code>required int64 name_type = 2;</code>
    */
-  public boolean hasName() {
+  public boolean hasNameType() {
     return ((bitField0_ & 0x00000002) == 0x00000002);
   }
   /**
-   * <code>required int32 name = 2;</code>
+   * <code>required int64 name_type = 2;</code>
    */
-  public int getName() {
-    return name_;
+  public long getNameType() {
+    return nameType_;
   }
 
-  public static final int INDEX_FIELD_NUMBER = 3;
-  private int index_;
+  public static final int VARARG_ELEMENT_TYPE_FIELD_NUMBER = 3;
+  private int varargElementType_;
   /**
-   * <code>required int32 index = 3;</code>
+   * <code>optional int32 vararg_element_type = 3;</code>
    */
-  public boolean hasIndex() {
+  public boolean hasVarargElementType() {
     return ((bitField0_ & 0x00000004) == 0x00000004);
   }
   /**
-   * <code>required int32 index = 3;</code>
-   */
-  public int getIndex() {
-    return index_;
-  }
-
-  public static final int TYPE_FIELD_NUMBER = 4;
-  private int type_;
-  /**
-   * <code>required int32 type = 4;</code>
-   */
-  public boolean hasType() {
-    return ((bitField0_ & 0x00000008) == 0x00000008);
-  }
-  /**
-   * <code>required int32 type = 4;</code>
-   */
-  public int getType() {
-    return type_;
-  }
-
-  public static final int VARARG_ELEMENT_TYPE_FIELD_NUMBER = 5;
-  private int varargElementType_;
-  /**
-   * <code>optional int32 vararg_element_type = 5;</code>
-   */
-  public boolean hasVarargElementType() {
-    return ((bitField0_ & 0x00000010) == 0x00000010);
-  }
-  /**
-   * <code>optional int32 vararg_element_type = 5;</code>
+   * <code>optional int32 vararg_element_type = 3;</code>
    */
   public int getVarargElementType() {
     return varargElementType_;
   }
 
-  public static final int IS_CROSSINLINE_FIELD_NUMBER = 6;
-  private boolean isCrossinline_;
-  /**
-   * <code>required bool is_crossinline = 6;</code>
-   */
-  public boolean hasIsCrossinline() {
-    return ((bitField0_ & 0x00000020) == 0x00000020);
-  }
-  /**
-   * <code>required bool is_crossinline = 6;</code>
-   */
-  public boolean getIsCrossinline() {
-    return isCrossinline_;
-  }
-
-  public static final int IS_NOINLINE_FIELD_NUMBER = 7;
-  private boolean isNoinline_;
-  /**
-   * <code>required bool is_noinline = 7;</code>
-   */
-  public boolean hasIsNoinline() {
-    return ((bitField0_ & 0x00000040) == 0x00000040);
-  }
-  /**
-   * <code>required bool is_noinline = 7;</code>
-   */
-  public boolean getIsNoinline() {
-    return isNoinline_;
-  }
-
-  public static final int DEFAULT_VALUE_FIELD_NUMBER = 8;
+  public static final int DEFAULT_VALUE_FIELD_NUMBER = 4;
   private int defaultValue_;
   /**
-   * <code>optional int32 default_value = 8;</code>
+   * <code>optional int32 default_value = 4;</code>
    */
   public boolean hasDefaultValue() {
-    return ((bitField0_ & 0x00000080) == 0x00000080);
+    return ((bitField0_ & 0x00000008) == 0x00000008);
   }
   /**
-   * <code>optional int32 default_value = 8;</code>
+   * <code>optional int32 default_value = 4;</code>
    */
   public int getDefaultValue() {
     return defaultValue_;
@@ -257,12 +177,8 @@ public final class IrValueParameter extends
 
   private void initFields() {
     base_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase.getDefaultInstance();
-    name_ = 0;
-    index_ = 0;
-    type_ = 0;
+    nameType_ = 0L;
     varargElementType_ = 0;
-    isCrossinline_ = false;
-    isNoinline_ = false;
     defaultValue_ = 0;
   }
   private byte memoizedIsInitialized = -1;
@@ -275,23 +191,7 @@ public final class IrValueParameter extends
       memoizedIsInitialized = 0;
       return false;
     }
-    if (!hasName()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
-    if (!hasIndex()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
-    if (!hasType()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
-    if (!hasIsCrossinline()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
-    if (!hasIsNoinline()) {
+    if (!hasNameType()) {
       memoizedIsInitialized = 0;
       return false;
     }
@@ -310,25 +210,13 @@ public final class IrValueParameter extends
       output.writeMessage(1, base_);
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
-      output.writeInt32(2, name_);
+      output.writeInt64(2, nameType_);
     }
     if (((bitField0_ & 0x00000004) == 0x00000004)) {
-      output.writeInt32(3, index_);
+      output.writeInt32(3, varargElementType_);
     }
     if (((bitField0_ & 0x00000008) == 0x00000008)) {
-      output.writeInt32(4, type_);
-    }
-    if (((bitField0_ & 0x00000010) == 0x00000010)) {
-      output.writeInt32(5, varargElementType_);
-    }
-    if (((bitField0_ & 0x00000020) == 0x00000020)) {
-      output.writeBool(6, isCrossinline_);
-    }
-    if (((bitField0_ & 0x00000040) == 0x00000040)) {
-      output.writeBool(7, isNoinline_);
-    }
-    if (((bitField0_ & 0x00000080) == 0x00000080)) {
-      output.writeInt32(8, defaultValue_);
+      output.writeInt32(4, defaultValue_);
     }
     output.writeRawBytes(unknownFields);
   }
@@ -345,31 +233,15 @@ public final class IrValueParameter extends
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeInt32Size(2, name_);
+        .computeInt64Size(2, nameType_);
     }
     if (((bitField0_ & 0x00000004) == 0x00000004)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeInt32Size(3, index_);
+        .computeInt32Size(3, varargElementType_);
     }
     if (((bitField0_ & 0x00000008) == 0x00000008)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeInt32Size(4, type_);
-    }
-    if (((bitField0_ & 0x00000010) == 0x00000010)) {
-      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeInt32Size(5, varargElementType_);
-    }
-    if (((bitField0_ & 0x00000020) == 0x00000020)) {
-      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeBoolSize(6, isCrossinline_);
-    }
-    if (((bitField0_ & 0x00000040) == 0x00000040)) {
-      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeBoolSize(7, isNoinline_);
-    }
-    if (((bitField0_ & 0x00000080) == 0x00000080)) {
-      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeInt32Size(8, defaultValue_);
+        .computeInt32Size(4, defaultValue_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -467,20 +339,12 @@ public final class IrValueParameter extends
       super.clear();
       base_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000001);
-      name_ = 0;
+      nameType_ = 0L;
       bitField0_ = (bitField0_ & ~0x00000002);
-      index_ = 0;
-      bitField0_ = (bitField0_ & ~0x00000004);
-      type_ = 0;
-      bitField0_ = (bitField0_ & ~0x00000008);
       varargElementType_ = 0;
-      bitField0_ = (bitField0_ & ~0x00000010);
-      isCrossinline_ = false;
-      bitField0_ = (bitField0_ & ~0x00000020);
-      isNoinline_ = false;
-      bitField0_ = (bitField0_ & ~0x00000040);
+      bitField0_ = (bitField0_ & ~0x00000004);
       defaultValue_ = 0;
-      bitField0_ = (bitField0_ & ~0x00000080);
+      bitField0_ = (bitField0_ & ~0x00000008);
       return this;
     }
 
@@ -511,29 +375,13 @@ public final class IrValueParameter extends
       if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
         to_bitField0_ |= 0x00000002;
       }
-      result.name_ = name_;
+      result.nameType_ = nameType_;
       if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
         to_bitField0_ |= 0x00000004;
       }
-      result.index_ = index_;
+      result.varargElementType_ = varargElementType_;
       if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
         to_bitField0_ |= 0x00000008;
-      }
-      result.type_ = type_;
-      if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
-        to_bitField0_ |= 0x00000010;
-      }
-      result.varargElementType_ = varargElementType_;
-      if (((from_bitField0_ & 0x00000020) == 0x00000020)) {
-        to_bitField0_ |= 0x00000020;
-      }
-      result.isCrossinline_ = isCrossinline_;
-      if (((from_bitField0_ & 0x00000040) == 0x00000040)) {
-        to_bitField0_ |= 0x00000040;
-      }
-      result.isNoinline_ = isNoinline_;
-      if (((from_bitField0_ & 0x00000080) == 0x00000080)) {
-        to_bitField0_ |= 0x00000080;
       }
       result.defaultValue_ = defaultValue_;
       result.bitField0_ = to_bitField0_;
@@ -545,23 +393,11 @@ public final class IrValueParameter extends
       if (other.hasBase()) {
         mergeBase(other.getBase());
       }
-      if (other.hasName()) {
-        setName(other.getName());
-      }
-      if (other.hasIndex()) {
-        setIndex(other.getIndex());
-      }
-      if (other.hasType()) {
-        setType(other.getType());
+      if (other.hasNameType()) {
+        setNameType(other.getNameType());
       }
       if (other.hasVarargElementType()) {
         setVarargElementType(other.getVarargElementType());
-      }
-      if (other.hasIsCrossinline()) {
-        setIsCrossinline(other.getIsCrossinline());
-      }
-      if (other.hasIsNoinline()) {
-        setIsNoinline(other.getIsNoinline());
       }
       if (other.hasDefaultValue()) {
         setDefaultValue(other.getDefaultValue());
@@ -576,23 +412,7 @@ public final class IrValueParameter extends
         
         return false;
       }
-      if (!hasName()) {
-        
-        return false;
-      }
-      if (!hasIndex()) {
-        
-        return false;
-      }
-      if (!hasType()) {
-        
-        return false;
-      }
-      if (!hasIsCrossinline()) {
-        
-        return false;
-      }
-      if (!hasIsNoinline()) {
+      if (!hasNameType()) {
         
         return false;
       }
@@ -682,225 +502,97 @@ public final class IrValueParameter extends
       return this;
     }
 
-    private int name_ ;
+    private long nameType_ ;
     /**
-     * <code>required int32 name = 2;</code>
+     * <code>required int64 name_type = 2;</code>
      */
-    public boolean hasName() {
+    public boolean hasNameType() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>required int32 name = 2;</code>
+     * <code>required int64 name_type = 2;</code>
      */
-    public int getName() {
-      return name_;
+    public long getNameType() {
+      return nameType_;
     }
     /**
-     * <code>required int32 name = 2;</code>
+     * <code>required int64 name_type = 2;</code>
      */
-    public Builder setName(int value) {
+    public Builder setNameType(long value) {
       bitField0_ |= 0x00000002;
-      name_ = value;
+      nameType_ = value;
       
       return this;
     }
     /**
-     * <code>required int32 name = 2;</code>
+     * <code>required int64 name_type = 2;</code>
      */
-    public Builder clearName() {
+    public Builder clearNameType() {
       bitField0_ = (bitField0_ & ~0x00000002);
-      name_ = 0;
-      
-      return this;
-    }
-
-    private int index_ ;
-    /**
-     * <code>required int32 index = 3;</code>
-     */
-    public boolean hasIndex() {
-      return ((bitField0_ & 0x00000004) == 0x00000004);
-    }
-    /**
-     * <code>required int32 index = 3;</code>
-     */
-    public int getIndex() {
-      return index_;
-    }
-    /**
-     * <code>required int32 index = 3;</code>
-     */
-    public Builder setIndex(int value) {
-      bitField0_ |= 0x00000004;
-      index_ = value;
-      
-      return this;
-    }
-    /**
-     * <code>required int32 index = 3;</code>
-     */
-    public Builder clearIndex() {
-      bitField0_ = (bitField0_ & ~0x00000004);
-      index_ = 0;
-      
-      return this;
-    }
-
-    private int type_ ;
-    /**
-     * <code>required int32 type = 4;</code>
-     */
-    public boolean hasType() {
-      return ((bitField0_ & 0x00000008) == 0x00000008);
-    }
-    /**
-     * <code>required int32 type = 4;</code>
-     */
-    public int getType() {
-      return type_;
-    }
-    /**
-     * <code>required int32 type = 4;</code>
-     */
-    public Builder setType(int value) {
-      bitField0_ |= 0x00000008;
-      type_ = value;
-      
-      return this;
-    }
-    /**
-     * <code>required int32 type = 4;</code>
-     */
-    public Builder clearType() {
-      bitField0_ = (bitField0_ & ~0x00000008);
-      type_ = 0;
+      nameType_ = 0L;
       
       return this;
     }
 
     private int varargElementType_ ;
     /**
-     * <code>optional int32 vararg_element_type = 5;</code>
+     * <code>optional int32 vararg_element_type = 3;</code>
      */
     public boolean hasVarargElementType() {
-      return ((bitField0_ & 0x00000010) == 0x00000010);
+      return ((bitField0_ & 0x00000004) == 0x00000004);
     }
     /**
-     * <code>optional int32 vararg_element_type = 5;</code>
+     * <code>optional int32 vararg_element_type = 3;</code>
      */
     public int getVarargElementType() {
       return varargElementType_;
     }
     /**
-     * <code>optional int32 vararg_element_type = 5;</code>
+     * <code>optional int32 vararg_element_type = 3;</code>
      */
     public Builder setVarargElementType(int value) {
-      bitField0_ |= 0x00000010;
+      bitField0_ |= 0x00000004;
       varargElementType_ = value;
       
       return this;
     }
     /**
-     * <code>optional int32 vararg_element_type = 5;</code>
+     * <code>optional int32 vararg_element_type = 3;</code>
      */
     public Builder clearVarargElementType() {
-      bitField0_ = (bitField0_ & ~0x00000010);
+      bitField0_ = (bitField0_ & ~0x00000004);
       varargElementType_ = 0;
-      
-      return this;
-    }
-
-    private boolean isCrossinline_ ;
-    /**
-     * <code>required bool is_crossinline = 6;</code>
-     */
-    public boolean hasIsCrossinline() {
-      return ((bitField0_ & 0x00000020) == 0x00000020);
-    }
-    /**
-     * <code>required bool is_crossinline = 6;</code>
-     */
-    public boolean getIsCrossinline() {
-      return isCrossinline_;
-    }
-    /**
-     * <code>required bool is_crossinline = 6;</code>
-     */
-    public Builder setIsCrossinline(boolean value) {
-      bitField0_ |= 0x00000020;
-      isCrossinline_ = value;
-      
-      return this;
-    }
-    /**
-     * <code>required bool is_crossinline = 6;</code>
-     */
-    public Builder clearIsCrossinline() {
-      bitField0_ = (bitField0_ & ~0x00000020);
-      isCrossinline_ = false;
-      
-      return this;
-    }
-
-    private boolean isNoinline_ ;
-    /**
-     * <code>required bool is_noinline = 7;</code>
-     */
-    public boolean hasIsNoinline() {
-      return ((bitField0_ & 0x00000040) == 0x00000040);
-    }
-    /**
-     * <code>required bool is_noinline = 7;</code>
-     */
-    public boolean getIsNoinline() {
-      return isNoinline_;
-    }
-    /**
-     * <code>required bool is_noinline = 7;</code>
-     */
-    public Builder setIsNoinline(boolean value) {
-      bitField0_ |= 0x00000040;
-      isNoinline_ = value;
-      
-      return this;
-    }
-    /**
-     * <code>required bool is_noinline = 7;</code>
-     */
-    public Builder clearIsNoinline() {
-      bitField0_ = (bitField0_ & ~0x00000040);
-      isNoinline_ = false;
       
       return this;
     }
 
     private int defaultValue_ ;
     /**
-     * <code>optional int32 default_value = 8;</code>
+     * <code>optional int32 default_value = 4;</code>
      */
     public boolean hasDefaultValue() {
-      return ((bitField0_ & 0x00000080) == 0x00000080);
+      return ((bitField0_ & 0x00000008) == 0x00000008);
     }
     /**
-     * <code>optional int32 default_value = 8;</code>
+     * <code>optional int32 default_value = 4;</code>
      */
     public int getDefaultValue() {
       return defaultValue_;
     }
     /**
-     * <code>optional int32 default_value = 8;</code>
+     * <code>optional int32 default_value = 4;</code>
      */
     public Builder setDefaultValue(int value) {
-      bitField0_ |= 0x00000080;
+      bitField0_ |= 0x00000008;
       defaultValue_ = value;
       
       return this;
     }
     /**
-     * <code>optional int32 default_value = 8;</code>
+     * <code>optional int32 default_value = 4;</code>
      */
     public Builder clearDefaultValue() {
-      bitField0_ = (bitField0_ & ~0x00000080);
+      bitField0_ = (bitField0_ & ~0x00000008);
       defaultValue_ = 0;
       
       return this;

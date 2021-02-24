@@ -22,8 +22,6 @@ class BuiltinCompanionJsTest {
     }
 
     @Test fun floatMinMaxValues() {
-        assertEquals(js("Number.MIN_VALUE"), Float.MIN_VALUE)
-        assertEquals(js("Number.MAX_VALUE"), Float.MAX_VALUE)
         assertEquals(js("Number.POSITIVE_INFINITY"), Float.POSITIVE_INFINITY)
         assertEquals(js("Number.NEGATIVE_INFINITY"), Float.NEGATIVE_INFINITY)
     }

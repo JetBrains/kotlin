@@ -27,3 +27,5 @@ class C : B() {
 fun test() {
     B()
 }
+
+// FIR_IGNORE

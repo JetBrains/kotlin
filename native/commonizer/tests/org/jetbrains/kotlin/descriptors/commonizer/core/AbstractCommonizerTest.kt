@@ -6,9 +6,13 @@
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.junit.Test
-import kotlin.test.*
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
+import kotlin.test.fail
 
 abstract class AbstractCommonizerTest<T, R> {
+
+    class ObjectsNotEqual(message: String) : Throwable(message)
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun failOnNoVariantsSubmitted() {
@@ -30,17 +34,21 @@ abstract class AbstractCommonizerTest<T, R> {
         }
 
         val actual = commonized.result
-        if (!isEqual(expected, actual)) fail("Expected: $expected\nActual: $actual")
+        if (!isEqual(expected, actual)) throw ObjectsNotEqual("Expected: $expected\nActual: $actual")
     }
 
-    // should fail on the last variant
-    protected fun doTestFailure(vararg variants: T) {
+    protected fun doTestFailure(
+        vararg variants: T,
+        shouldFailOnFirstVariant: Boolean = false // by default should fail on the last variant
+    ) {
         check(variants.isNotEmpty())
+
+        val failureIndex = if (shouldFailOnFirstVariant) 0 else variants.size - 1
 
         val commonized = createCommonizer().apply {
             variants.forEachIndexed { index, variant ->
                 val result = commonizeWith(variant)
-                if (index == variants.size - 1) assertFalse(result) else assertTrue(result)
+                if (index >= failureIndex) assertFalse(result) else assertTrue(result)
             }
         }
 

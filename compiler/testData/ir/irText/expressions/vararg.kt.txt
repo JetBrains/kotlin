@@ -1,0 +1,12 @@
+val test1: Array<String>
+  field = arrayOf<String>()
+  get
+
+val test2: Array<String>
+  field = arrayOf<String>(elements = ["1", "2", "3"])
+  get
+
+val test3: Array<String>
+  field = arrayOf<String>(elements = ["0", *<get-test2>(), *<get-test1>(), "4"])
+  get
+

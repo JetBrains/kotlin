@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 fun testBoolean1(a: Boolean?, b: Boolean) = a == b
 fun testBoolean2(a: Boolean?, b: Boolean) = a != b
 

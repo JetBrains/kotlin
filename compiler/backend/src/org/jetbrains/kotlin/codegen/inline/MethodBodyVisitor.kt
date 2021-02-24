@@ -37,7 +37,7 @@ open class MethodBodyVisitor(mv: MethodVisitor) : MethodVisitor(Opcodes.API_VERS
 
     override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? = null
 
-    override fun visitTypeAnnotation(typeRef: Int, typePath: TypePath, desc: String, visible: Boolean): AnnotationVisitor? = null
+    override fun visitTypeAnnotation(typeRef: Int, typePath: TypePath?, desc: String, visible: Boolean): AnnotationVisitor? = null
 
     override fun visitParameterAnnotation(parameter: Int, desc: String, visible: Boolean): AnnotationVisitor? = null
 

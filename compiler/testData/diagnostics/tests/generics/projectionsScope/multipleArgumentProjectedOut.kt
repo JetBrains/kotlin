@@ -6,5 +6,5 @@ class A<T> {
 }
 
 fun test(a: A<out CharSequence>) {
-    a.<!OI;MEMBER_PROJECTED_OUT!>foo<!>(<!NI;TYPE_MISMATCH!>""<!>, <!NI;TYPE_MISMATCH!>""<!>)
+    a.<!MEMBER_PROJECTED_OUT{OI}!>foo<!>(<!TYPE_MISMATCH{NI}!>""<!>, <!TYPE_MISMATCH{NI}!>""<!>)
 }

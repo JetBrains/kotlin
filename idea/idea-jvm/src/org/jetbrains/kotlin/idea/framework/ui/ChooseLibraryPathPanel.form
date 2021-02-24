@@ -21,7 +21,7 @@
           <borderPainted value="false"/>
           <contentAreaFilled value="true"/>
           <hideActionText value="false"/>
-          <text value="&amp;Copy to:"/>
+          <text resource-bundle="messages/KotlinJvmBundle" key="choose.library.copy.to"/>
         </properties>
       </component>
       <grid id="258c2" binding="copyPanelPlace" layout-manager="BorderLayout" hgap="0" vgap="0">
@@ -37,7 +37,7 @@
           <grid row="1" column="0" row-span="1" col-span="5" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="&amp;Use library from plugin"/>
+          <text resource-bundle="messages/KotlinJvmBundle" key="use.library.from.plugin"/>
         </properties>
       </component>
     </children>

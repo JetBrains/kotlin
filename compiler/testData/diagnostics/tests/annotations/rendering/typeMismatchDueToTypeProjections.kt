@@ -14,5 +14,5 @@ class C<T> {
 class Out<out F>
 
 fun test(a: C<out CharSequence>, y: Out<CharSequence>) {
-    a + <!NI;TYPE_MISMATCH("Out<Nothing>", "Out<CharSequence>"), OI;TYPE_MISMATCH_DUE_TO_TYPE_PROJECTIONS("Out<Nothing>", "Out<CharSequence>", "C<out CharSequence>", "public final operator fun plus(x: Out<T>): C<T> defined in C")!>y<!>
+    a + <!"C<out{OI}, "Out<CharSequence>"{OI}, "Out<Nothing>"{OI}, "public{OI}, :{OI}, C"{OI}, C<T>{OI}, CharSequence>"{OI}, NI{OI}, Out<T>{OI}, TYPE_MISMATCH("Out<Nothing>; Out<CharSequence>"), TYPE_MISMATCH_DUE_TO_TYPE_PROJECTIONS{OI}, defined{OI}, final{OI}, fun{OI}, in{OI}, operator{OI}, plus{OI}, x:{OI}!>y<!>
 }

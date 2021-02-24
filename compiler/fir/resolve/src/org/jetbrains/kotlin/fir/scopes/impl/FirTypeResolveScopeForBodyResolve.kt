@@ -5,18 +5,8 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
-import org.jetbrains.kotlin.fir.resolve.ImplicitReceiverStack
-import org.jetbrains.kotlin.fir.resolve.calls.ImplicitDispatchReceiverValue
-import org.jetbrains.kotlin.fir.scopes.FirIterableScope
+import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.scopes.FirScope
 
-class FirTypeResolveScopeForBodyResolve(
-    private val topLevelScopes: List<FirScope>,
-    private val implicitReceiverStack: ImplicitReceiverStack,
-    private val localScopes: List<FirScope>
-) : FirIterableScope() {
-    override val scopes: Iterable<FirScope>
-        get() = localScopes.asReversed() + implicitReceiverStack.receiversAsReversed().mapNotNull {
-            (it as? ImplicitDispatchReceiverValue)?.implicitScope
-        } + topLevelScopes.asReversed()
-}
+fun BodyResolveComponents.createCurrentScopeList(): List<FirScope> =
+    towerDataElements.asReversed().mapNotNull { it.scope }

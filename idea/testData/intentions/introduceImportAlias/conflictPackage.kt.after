@@ -17,6 +17,6 @@ class Test() {
     }
 
     fun test2() {
-        val i = Middle1.Inner.SIZE
+        val i = Middle2.Inner.SIZE
     }
 }

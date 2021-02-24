@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 abstract class A {
     private val<!SYNTAX!><!>
     // private is parsed as val's identifier

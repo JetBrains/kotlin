@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,11 +15,17 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-interface FirLoopJump : FirJump<FirLoop> {
-    override val source: FirSourceElement?
-    override val typeRef: FirTypeRef
-    override val annotations: List<FirAnnotationCall>
-    override val target: FirTarget<FirLoop>
+abstract class FirLoopJump : FirJump<FirLoop>() {
+    abstract override val source: FirSourceElement?
+    abstract override val typeRef: FirTypeRef
+    abstract override val annotations: List<FirAnnotationCall>
+    abstract override val target: FirTarget<FirLoop>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitLoopJump(this, data)
+
+    abstract override fun replaceSource(newSource: FirSourceElement?)
+
+    abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
+
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirLoopJump
 }

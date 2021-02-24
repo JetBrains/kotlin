@@ -18,4 +18,7 @@ class KotlinUastValuesTest : AbstractKotlinValuesTest() {
 
     @Test
     fun testSimple() = doTest("Simple")
+
+    @Test
+    fun testStringTemplateComplex() = doTest("StringTemplateComplex")
 }

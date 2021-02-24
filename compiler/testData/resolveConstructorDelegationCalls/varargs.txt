@@ -10,6 +10,7 @@ class A : B {
 
 Resolved call:
 
+Candidate descriptor: constructor B(vararg x: Int) defined in B
 Resulting descriptor: constructor B(vararg x: Int) defined in B
 
 Explicit receiver kind = NO_EXPLICIT_RECEIVER

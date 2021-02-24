@@ -1,6 +1,4 @@
-// ADDITIONAL_COMPILER_ARGUMENTS: -XXLanguage:+NewInference
-// ADDITIONAL_COMPILER_ARGUMENTS: -XXLanguage:+SamConversionForKotlinFunctions
-// ADDITIONAL_COMPILER_ARGUMENTS: -XXLanguage:+SamConversionPerArgument
+// ADDITIONAL_COMPILER_ARGUMENTS: -Xnew-inference
 
 package jvm
 
@@ -12,4 +10,5 @@ fun foo(k: KRunnable) = k.invoke()
 
 fun test() {
     foo { "OK" }
+    foo(KRunnable { "OK " })
 }

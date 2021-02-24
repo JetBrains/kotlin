@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: JavaClass.java
 
 public class JavaClass {

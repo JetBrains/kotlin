@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 data class My(val x: Unit)
 
 fun foo(my: My?): Int? {

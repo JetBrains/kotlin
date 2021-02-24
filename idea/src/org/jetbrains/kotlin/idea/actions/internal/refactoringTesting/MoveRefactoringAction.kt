@@ -19,6 +19,7 @@ import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.actions.internal.refactoringTesting.cases.MoveRefactoringCase
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import java.io.File
@@ -30,7 +31,7 @@ import java.time.format.DateTimeFormatter
 class MoveRefactoringAction : AnAction() {
 
     companion object {
-        const val WINDOW_TITLE: String = "Move refactoring testing"
+        val WINDOW_TITLE: String get() = KotlinBundle.message("move.refactoring.testing")
         const val RECENT_SELECTED_PATH = "org.jetbrains.kotlin.idea.actions.internal.refactoringTesting.RECENT_SELECTED_PATH"
     }
 
@@ -52,18 +53,18 @@ class MoveRefactoringAction : AnAction() {
     ) {
 
         try {
-            setIndicator("Update indices...", 0.0)
+            setIndicator(KotlinBundle.message("update.indices"), 0.0)
 
             DumbService.getInstance(project).waitForSmartMode()
 
-            setIndicator("Perform refactoring ...", 0.1)
+            setIndicator(KotlinBundle.message("perform.refactoring"), 0.1)
 
             fileTracker.reset()
 
             var refactoringResult: RandomMoveRefactoringResult = RandomMoveRefactoringResult.Failed
             edtExecute {
                 refactoringResult = refactoring.tryCreateAndRun(project, refactoringCountBeforeCheck)
-                setIndicator("Saving files...", 0.3)
+                setIndicator(KotlinBundle.message("saving.files"), 0.3)
                 FileDocumentManager.getInstance().saveAllDocuments()
                 VfsUtil.markDirtyAndRefresh(false, true, true, projectRoot)
             }
@@ -72,7 +73,7 @@ class MoveRefactoringAction : AnAction() {
                 is RandomMoveRefactoringResult.Success -> {
                     verifications++
 
-                    setIndicator("Compiling project...", 0.7)
+                    setIndicator(KotlinBundle.message("compiling.project"), 0.7)
                     if (!actionRunner.checkByBuild(cancelledChecker)) {
                         fails++
                         resultsFile.appendText("${localRefactoringResult.caseData}\n\n")
@@ -87,7 +88,7 @@ class MoveRefactoringAction : AnAction() {
             }
 
         } finally {
-            setIndicator("Reset files...", 0.9)
+            setIndicator(KotlinBundle.message("reset.files"), 0.9)
 
             fileTracker.createdFiles.toList().map {
                 try {
@@ -104,7 +105,7 @@ class MoveRefactoringAction : AnAction() {
             gitReset(project, projectRoot)
         }
 
-        setIndicator("Done", 1.0)
+        setIndicator(KotlinBundle.message("text.done"), 1.0)
     }
 
     private fun createFileIfNotExist(targetPath: String): File? {
@@ -128,7 +129,7 @@ class MoveRefactoringAction : AnAction() {
         val projectRoot = project?.guessProjectDir()
 
         if (projectRoot === null) {
-            Messages.showErrorDialog(project, "Cannot get project root directory", WINDOW_TITLE)
+            Messages.showErrorDialog(project, KotlinBundle.message("cannot.get.project.root.directory"), WINDOW_TITLE)
             return
         }
 
@@ -141,7 +142,7 @@ class MoveRefactoringAction : AnAction() {
 
         val resultsFile = createFileIfNotExist(targetPath)
         if (resultsFile === null) {
-            Messages.showErrorDialog(project, "Cannot get or create results file", WINDOW_TITLE)
+            Messages.showErrorDialog(project, KotlinBundle.message("cannot.get.or.create.results.file"), WINDOW_TITLE)
             return
         }
 
@@ -188,7 +189,13 @@ class MoveRefactoringAction : AnAction() {
         try {
             while (!cancelledChecker()) {
                 iteration++
-                indicator.text = "$WINDOW_TITLE [Try $iteration with $fails fails and $verifications verifications]"
+                indicator.text = KotlinBundle.message(
+                    "0.try.1.with.2.fails.and.3.verifications",
+                    WINDOW_TITLE,
+                    iteration,
+                    fails,
+                    verifications
+                )
 
                 randomRefactoringAndCheck(
                     project = project,

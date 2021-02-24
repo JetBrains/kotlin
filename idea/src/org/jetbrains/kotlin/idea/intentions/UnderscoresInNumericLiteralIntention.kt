@@ -1,18 +1,19 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.psi.KtConstantExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.stubs.ConstantValueKind
 import org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType
 
 class AddUnderscoresToNumericLiteralIntention : SelfTargetingIntention<KtConstantExpression>(
-    KtConstantExpression::class.java, "Add underscores"
+    KtConstantExpression::class.java, KotlinBundle.lazyMessage("add.underscores")
 ) {
     override fun isApplicableTo(element: KtConstantExpression, caretOffset: Int): Boolean {
         val text = element.text
@@ -31,11 +32,10 @@ class AddUnderscoresToNumericLiteralIntention : SelfTargetingIntention<KtConstan
 }
 
 class RemoveUnderscoresFromNumericLiteralIntention : SelfTargetingIntention<KtConstantExpression>(
-    KtConstantExpression::class.java, "Remove underscores"
+    KtConstantExpression::class.java, KotlinBundle.lazyMessage("remove.underscores")
 ) {
-    override fun isApplicableTo(element: KtConstantExpression, caretOffset: Int): Boolean {
-        return element.isNumeric() && element.text.hasUnderscore()
-    }
+    override fun isApplicableTo(element: KtConstantExpression, caretOffset: Int): Boolean =
+        element.isNumeric() && element.text.hasUnderscore()
 
     override fun applyTo(element: KtConstantExpression, editor: Editor?) {
         element.replace(KtPsiFactory(element).createExpression(element.text.replace("_", "")))

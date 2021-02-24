@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: CharBuffer.java
 
 public class CharBuffer implements CharSequence {

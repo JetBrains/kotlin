@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !WITH_NEW_INFERENCE
 // !LANGUAGE: +ExpectedTypeFromCast
 // !CHECK_TYPE

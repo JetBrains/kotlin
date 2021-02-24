@@ -19,11 +19,13 @@ import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.idea.util.resolveToKotlinType
 import org.jetbrains.kotlin.load.java.NOT_NULL_ANNOTATIONS
 import org.jetbrains.kotlin.load.java.NULLABLE_ANNOTATIONS
 import org.jetbrains.kotlin.name.FqName
@@ -39,17 +41,17 @@ internal class ChangeMethodParameters(
 
 
     override fun getText(): String {
-
-        val target = element ?: return "<not available>"
+        val target = element ?: return KotlinBundle.message("fix.change.signature.unavailable")
 
         val helper = JvmPsiConversionHelper.getInstance(target.project)
 
         val parametersString = request.expectedParameters.joinToString(", ", "(", ")") { ep ->
             val kotlinType =
                 ep.expectedTypes.firstOrNull()?.theType?.let { helper.convertType(it).resolveToKotlinType(target.getResolutionFacade()) }
-            "${ep.semanticNames.firstOrNull() ?: "parameter"}: ${kotlinType?.let {
+            val parameterName = ep.semanticNames.firstOrNull() ?: KotlinBundle.message("fix.change.signature.unnamed.parameter")
+            "$parameterName: ${kotlinType?.let {
                 IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(it)
-            } ?: "<error>"}"
+            } ?: KotlinBundle.message("fix.change.signature.error")}"
         }
 
         val shortenParameterString = StringUtil.shortenTextWithEllipsis(parametersString, 30, 5)

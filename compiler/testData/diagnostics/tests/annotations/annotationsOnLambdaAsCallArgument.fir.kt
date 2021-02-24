@@ -13,7 +13,7 @@ fun foo() {
         return@l1 103
     }
 
-    bar @Ann("") {
+    bar <!INAPPLICABLE_CANDIDATE!>@Ann("")<!> {
         104
     }
 }

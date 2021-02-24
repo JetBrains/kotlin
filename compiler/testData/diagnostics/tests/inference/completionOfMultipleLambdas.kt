@@ -18,7 +18,7 @@ fun test() {
 // ISSUE: KT-27999
 // ISSUE: KT-30244
 fun test_1() {
-    <!DEBUG_INFO_EXPRESSION_TYPE("() -> {Comparable<{Int & String}> & java.io.Serializable}")!>select(
+    <!DEBUG_INFO_EXPRESSION_TYPE("() -> {Comparable<*> & java.io.Serializable}")!>select(
         { 1 },
         { "" }
     )<!>

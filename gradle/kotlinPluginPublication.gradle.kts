@@ -6,8 +6,6 @@ configure<PublishingExtension> {
             val artifactName = if (project.name == "idea-plugin") "kotlin-plugin" else project.name
             artifactId = "$artifactName-${IdeVersionConfigurator.currentIde.name.toLowerCase()}"
             from(components["java"])
-            artifact(tasks["sourcesJar"])
-            artifact(tasks["javadocJar"])
 
             pom {
                 name.set("${project.group}:$artifactId")
@@ -51,6 +49,10 @@ configure<PublishingExtension> {
             }
         }
     }
+}
+
+tasks.withType<GenerateModuleMetadata> {
+    enabled = false
 }
 
 // Disable default `publish` task so publishing will not be done during maven artifact publish

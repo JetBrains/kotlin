@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.facet
 
+import com.intellij.facet.FacetManager
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProvider
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.projectRoots.JavaSdk
@@ -133,19 +134,33 @@ fun Module.getOrCreateFacet(
     return facet
 }
 
+fun Module.hasKotlinFacet() = FacetManager.getInstance(this).getFacetByType(KotlinFacetType.TYPE_ID) != null
+
+fun Module.removeKotlinFacet(
+    modelsProvider: IdeModifiableModelsProvider,
+    commitModel: Boolean = false
+) {
+    val facetModel = modelsProvider.getModifiableFacetModel(this)
+    val facet = facetModel.findFacet(KotlinFacetType.TYPE_ID, KotlinFacetType.INSTANCE.defaultFacetName) ?: return
+    facetModel.removeFacet(facet)
+    if (commitModel) {
+        runWriteAction {
+            facetModel.commit()
+        }
+    }
+}
+
 //method used for non-mpp modules
 fun KotlinFacet.configureFacet(
     compilerVersion: String?,
-    coroutineSupport: LanguageFeature.State,
     platform: TargetPlatform?,
     modelsProvider: IdeModifiableModelsProvider
 ) {
-    configureFacet(compilerVersion, coroutineSupport, platform, modelsProvider, false, emptyList(), emptyList())
+    configureFacet(compilerVersion, platform, modelsProvider, false, emptyList(), emptyList())
 }
 
 fun KotlinFacet.configureFacet(
     compilerVersion: String?,
-    coroutineSupport: LanguageFeature.State,
     platform: TargetPlatform?, // if null, detect by module dependencies
     modelsProvider: IdeModifiableModelsProvider,
     hmppEnabled: Boolean,
@@ -170,32 +185,19 @@ fun KotlinFacet.configureFacet(
         if (languageLevel != null && apiLevel != null && apiLevel > languageLevel) {
             this.apiLevel = languageLevel
         }
-        this.coroutineSupport = if (languageLevel != null && languageLevel < LanguageVersion.KOTLIN_1_3) coroutineSupport else null
         this.pureKotlinSourceFolders = pureKotlinSourceFolders
     }
 
     module.externalCompilerVersion = compilerVersion
 }
 
-fun Module.externalSystemTestTasks(): List<ExternalSystemTestTask> {
+private fun Module.externalSystemRunTasks(): List<ExternalSystemRunTask> {
     val settingsProvider = KotlinFacetSettingsProvider.getInstance(project) ?: return emptyList()
-    return settingsProvider.getInitializedSettings(this).externalSystemTestTasks
+    return settingsProvider.getInitializedSettings(this).externalSystemRunTasks
 }
 
-@Suppress("DEPRECATION_ERROR", "DeprecatedCallableAddReplaceWith")
-@Deprecated(
-    message = "IdePlatform is deprecated and will be removed soon, please, migrate to org.jetbrains.kotlin.platform.TargetPlatform",
-    level = DeprecationLevel.ERROR
-)
-fun KotlinFacet.configureFacet(
-    compilerVersion: String?,
-    coroutineSupport: LanguageFeature.State,
-    platform: IdePlatform<*, *>,
-    modelsProvider: IdeModifiableModelsProvider
-) {
-    configureFacet(compilerVersion, coroutineSupport, platform.toNewPlatform(), modelsProvider)
-}
-
+fun Module.externalSystemTestRunTasks() = externalSystemRunTasks().filterIsInstance<ExternalSystemTestRunTask>()
+fun Module.externalSystemNativeMainRunTasks() = externalSystemRunTasks().filterIsInstance<ExternalSystemNativeMainRunTask>()
 
 fun KotlinFacet.noVersionAutoAdvance() {
     configuration.settings.compilerArguments?.let {
@@ -209,8 +211,7 @@ fun KotlinFacet.noVersionAutoAdvance() {
 val commonUIExposedFields = listOf(
     CommonCompilerArguments::languageVersion.name,
     CommonCompilerArguments::apiVersion.name,
-    CommonCompilerArguments::suppressWarnings.name,
-    CommonCompilerArguments::coroutinesState.name
+    CommonCompilerArguments::suppressWarnings.name
 )
 private val commonUIHiddenFields = listOf(
     CommonCompilerArguments::pluginClasspaths.name,

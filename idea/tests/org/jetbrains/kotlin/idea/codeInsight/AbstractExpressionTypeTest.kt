@@ -16,7 +16,7 @@ abstract class AbstractExpressionTypeTest : KotlinLightCodeInsightFixtureTestCas
 
     protected fun doTest(path: String) {
         myFixture.configureByFile(fileName())
-        val expressionTypeProvider = KotlinExpressionTypeProvider()
+        val expressionTypeProvider = KotlinExpressionTypeProviderDescriptorsImpl()
         val elementAtCaret = myFixture.file.findElementAt(myFixture.editor.caretModel.offset)!!
         val expressions = expressionTypeProvider.getExpressionsAt(elementAtCaret)
         val types = expressions.map { "${it.text.replace('\n', ' ')} -> ${expressionTypeProvider.getInformationHint(it)}" }

@@ -13,14 +13,34 @@ import org.jetbrains.kotlin.types.refinement.TypeRefinement
 
 // This type is used as a stub for postponed type variables, which are important for coroutine inference
 class StubType(
-    private val originalTypeVariable: TypeConstructor,
-    override val isMarkedNullable: Boolean,
-    override val constructor: TypeConstructor =
-        ErrorUtils.createErrorTypeConstructor("Constructor for non fixed type: $originalTypeVariable"),
-    override val memberScope: MemberScope =
-        ErrorUtils.createErrorScope("Scope for non fixed type: $originalTypeVariable")
-) : SimpleType(), StubTypeMarker {
+    originalTypeVariable: TypeConstructor,
+    isMarkedNullable: Boolean,
+    constructor: TypeConstructor = ErrorUtils.createErrorTypeConstructor("Constructor for non fixed type: $originalTypeVariable"),
+    memberScope: MemberScope = ErrorUtils.createErrorScope("Scope for non fixed type: $originalTypeVariable")
+) : AbstractStubType(originalTypeVariable, isMarkedNullable, constructor, memberScope), StubTypeMarker {
+    override fun materialize(newNullability: Boolean): AbstractStubType {
+        return StubType(originalTypeVariable, newNullability, constructor, memberScope)
+    }
+}
 
+// This type is used as a replacement of type variables for provideDelegate resolve
+class StubTypeForProvideDelegateReceiver(
+    originalTypeVariable: TypeConstructor,
+    isMarkedNullable: Boolean,
+    constructor: TypeConstructor = ErrorUtils.createErrorTypeConstructor("Constructor for non fixed type: $originalTypeVariable"),
+    memberScope: MemberScope = ErrorUtils.createErrorScope("Scope for non fixed type: $originalTypeVariable")
+) : AbstractStubType(originalTypeVariable, isMarkedNullable, constructor, memberScope) {
+    override fun materialize(newNullability: Boolean): StubTypeForProvideDelegateReceiver {
+        return StubTypeForProvideDelegateReceiver(originalTypeVariable, newNullability, constructor, memberScope)
+    }
+}
+
+abstract class AbstractStubType(
+    protected val originalTypeVariable: TypeConstructor,
+    override val isMarkedNullable: Boolean,
+    override val constructor: TypeConstructor,
+    override val memberScope: MemberScope
+) : SimpleType() {
     override val arguments: List<TypeProjection>
         get() = emptyList()
 
@@ -30,10 +50,7 @@ class StubType(
     override fun replaceAnnotations(newAnnotations: Annotations): SimpleType = this
 
     override fun makeNullableAsSpecified(newNullability: Boolean): SimpleType {
-        return if (newNullability == isMarkedNullable)
-            this
-        else
-            StubType(originalTypeVariable, newNullability, constructor, memberScope)
+        return if (newNullability == isMarkedNullable) this else materialize(newNullability)
     }
 
     override fun toString(): String {
@@ -42,4 +59,6 @@ class StubType(
 
     @TypeRefinement
     override fun refine(kotlinTypeRefiner: KotlinTypeRefiner) = this
+
+    abstract fun materialize(newNullability: Boolean): AbstractStubType
 }

@@ -9,17 +9,24 @@ import com.intellij.openapi.roots.DependencyScope
 import com.intellij.util.text.VersionComparatorUtil
 import org.jetbrains.jps.model.java.JavaResourceRootType
 import org.jetbrains.jps.model.java.JavaSourceRootType
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.ResourceKotlinRootType
+import org.jetbrains.kotlin.config.SourceKotlinRootType
+import org.jetbrains.kotlin.config.TestResourceKotlinRootType
+import org.jetbrains.kotlin.config.TestSourceKotlinRootType
 import org.jetbrains.kotlin.idea.codeInsight.gradle.MultiplePluginVersionGradleImportingTestCase
+import org.jetbrains.kotlin.idea.codeInsight.gradle.mppImportTestMinVersionForMaster
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.plugins.gradle.tooling.annotation.PluginTargetVersions
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import org.junit.Ignore
 
+//ToDo: Need to remove RUNTIME dependencies when KT-40551 is resolved
 class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportingTestCase() {
 
     @Before
@@ -38,7 +45,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
     }
 
     @Test
-    @PluginTargetVersions(gradleVersion = "4.0+", pluginVersion = "1.3.10+")
+    @PluginTargetVersions(pluginVersion = "1.3.10+", gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
     fun testProjectDependency() {
         configureByFiles()
         importProject()
@@ -99,6 +106,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
                 moduleDependency("app_commonMain", DependencyScope.TEST)
                 moduleDependency("app_commonTest", DependencyScope.TEST)
                 moduleDependency("app_jsMain", DependencyScope.TEST)
+                moduleDependency("app_jsMain", DependencyScope.RUNTIME)  // Temporary dependency, need to remove after KT-40551 is solved
                 sourceFolder("app/src/jsTest/kotlin", TestSourceKotlinRootType)
                 sourceFolder("app/src/jsTest/resources", TestResourceKotlinRootType)
                 outputPath("app/build/classes/kotlin/js/test", false)
@@ -186,6 +194,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
                 moduleDependency("lib_commonMain", DependencyScope.TEST)
                 moduleDependency("lib_commonTest", DependencyScope.TEST)
                 moduleDependency("lib_jsMain", DependencyScope.TEST)
+                moduleDependency("lib_jsMain", DependencyScope.RUNTIME)  // Temporary dependency, need to remove after KT-40551 is solved
                 sourceFolder("lib/src/jsTest/kotlin", TestSourceKotlinRootType)
                 sourceFolder("lib/src/jsTest/resources", TestResourceKotlinRootType)
                 outputPath("lib/build/classes/kotlin/js/test", false)
@@ -208,6 +217,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
                 moduleDependency("lib_commonTest", DependencyScope.TEST)
                 moduleDependency("lib_commonMain", DependencyScope.TEST)
                 moduleDependency("lib_jvmMain", DependencyScope.TEST)
+                moduleDependency("lib_jvmMain", DependencyScope.RUNTIME)  // Temporary dependency, need to remove after KT-40551 is solved
                 sourceFolder("lib/src/jvmTest/kotlin", JavaSourceRootType.TEST_SOURCE)
                 sourceFolder("lib/src/jvmTest/resources", JavaResourceRootType.TEST_RESOURCE)
                 outputPath("lib/build/classes/kotlin/jvm/test", false)
@@ -216,6 +226,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
     }
 
     @Test
+    @PluginTargetVersions(gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
     fun testFileCollectionDependency() {
         configureByFiles()
         importProject()
@@ -234,7 +245,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
     }
 
     @Test
-    @PluginTargetVersions(gradleVersion = "4.0+", pluginVersion = "1.3.30+")
+    @PluginTargetVersions(pluginVersion = "1.3.30+", gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
     fun testUnresolvedDependency() {
         configureByFiles()
         importProject()
@@ -254,19 +265,18 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
     }
 
     @Test
-    @PluginTargetVersions(gradleVersion = "4.0+", pluginVersion = "1.3.30+")
+    @PluginTargetVersions(gradleVersion = "5.0+", pluginVersion = "1.3.30+", gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
     fun testAndroidDependencyOnMPP() {
         configureByFiles()
         createProjectSubFile(
             "local.properties",
-            "sdk.dir=/${KotlinTestUtils.getAndroidSdkSystemIndependentPath()}"
+            "sdk.dir=/${KtTestUtil.getAndroidSdkSystemIndependentPath()}"
         )
         importProject()
 
         checkProjectStructure {
             module("project")
             module("app") {
-                libraryDependency("Gradle: android-android-26", DependencyScope.COMPILE)
                 libraryDependency("Gradle: android.arch.core:common:1.1.0@jar", DependencyScope.COMPILE)
                 libraryDependency("Gradle: android.arch.core:runtime:1.1.0@aar", DependencyScope.COMPILE)
                 libraryDependency("Gradle: android.arch.lifecycle:common:1.1.0@jar", DependencyScope.COMPILE)
@@ -359,9 +369,10 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
     }
 
     @Test
+    @PluginTargetVersions(gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
     fun testTestTasks() {
         val files = configureByFiles()
-        importProject()
+        importProject(skipIndexing = true)
 
         checkProjectStructure(exhaustiveSourceSourceRootList = false) {
             module("project")
@@ -382,6 +393,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
                 moduleDependency("project_commonMain", DependencyScope.TEST)
                 moduleDependency("project_commonTest", DependencyScope.TEST)
                 moduleDependency("project_jvmMain", DependencyScope.TEST)
+                moduleDependency("project_jvmMain", DependencyScope.RUNTIME)  // Temporary dependency, need to remove after KT-40551 is solved
             }
         }
 
@@ -400,7 +412,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
 
 
     @Test
-    @PluginTargetVersions(gradleVersion = "4.0+", pluginVersion = "1.3.50+")
+    @PluginTargetVersions(pluginVersion = "1.3.50+", gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
     fun testImportTestsAndTargets() {
         configureByFiles()
         importProject()
@@ -427,7 +439,8 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
 
 
     @Test
-    @PluginTargetVersions(gradleVersion = "4.0+", pluginVersion = "1.3.50+")
+    @Ignore
+    @PluginTargetVersions(gradleVersion = "5.0+", pluginVersion = "1.3.50+", gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
     fun testSingleAndroidTarget() {
         configureByFiles()
         importProject()
@@ -484,7 +497,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
     }
 
     @Test
-    @PluginTargetVersions(gradleVersion = "4.0+", pluginVersion = "1.3.10+")
+    @PluginTargetVersions(pluginVersion = "1.3.10+", gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
     fun testDependencyOnRoot() {
         configureByFiles()
         importProject()
@@ -502,6 +515,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
                 moduleDependency("project_commonMain", DependencyScope.TEST)
                 moduleDependency("project_commonTest", DependencyScope.TEST)
                 moduleDependency("project_jvmMain", DependencyScope.TEST)
+                moduleDependency("project_jvmMain", DependencyScope.RUNTIME)  // Temporary dependency, need to remove after KT-40551 is solved
             }
 
             module("subproject")
@@ -519,17 +533,20 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
             }
             module("subproject_jvmTest") {
                 moduleDependency("project_commonMain", DependencyScope.TEST)
+                moduleDependency("project_commonMain", DependencyScope.RUNTIME)  // Temporary dependency, need to remove after KT-40551 is solved
                 moduleDependency("subproject_commonMain", DependencyScope.TEST)
                 moduleDependency("subproject_commonTest", DependencyScope.TEST)
                 moduleDependency("project_jvmMain", DependencyScope.TEST)
+                moduleDependency("project_jvmMain", DependencyScope.RUNTIME)  // Temporary dependency, need to remove after KT-40551 is solved
                 moduleDependency("subproject_jvmMain", DependencyScope.TEST)
+                moduleDependency("subproject_jvmMain", DependencyScope.RUNTIME)  // Temporary dependency, need to remove after KT-40551 is solved
             }
         }
 
     }
 
     @Test
-    @PluginTargetVersions(gradleVersion = "4.0+", pluginVersion = "1.3.10+")
+    @PluginTargetVersions(pluginVersion = "1.3.10+", gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
     fun testNestedDependencies() {
         configureByFiles()
         importProject()
@@ -612,12 +629,12 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
     }
 
     @Test
-    @PluginTargetVersions(gradleVersion = "4.0+", pluginVersion = "1.3.20+")
+    @PluginTargetVersions(gradleVersion = "5.0+", pluginVersion = "1.3.20+", gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
     fun testDetectAndroidSources() {
         configureByFiles()
         createProjectSubFile(
             "local.properties",
-            "sdk.dir=/${KotlinTestUtils.getAndroidSdkSystemIndependentPath()}"
+            "sdk.dir=/${KtTestUtil.getAndroidSdkSystemIndependentPath()}"
         )
         importProject(true)
         checkProjectStructure(exhaustiveModuleList = false, exhaustiveDependencyList = false, exhaustiveSourceSourceRootList = false) {
@@ -634,7 +651,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
      * dependencies in multiplatform project included in composite build
      */
     @Test
-    @PluginTargetVersions(gradleVersion = "4.0+", pluginVersion = "1.3.20+")
+    @PluginTargetVersions(pluginVersion = "1.3.20+", gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
     fun testPlatformToCommonExpByInComposite() {
         configureByFiles()
         importProject(true)
@@ -645,6 +662,16 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
             module("project.commonTest") {
                 moduleDependency("project.commonMain", DependencyScope.TEST)
             }
+            module("project.jvmMain") {
+                moduleDependency("project.commonMain", DependencyScope.COMPILE)
+            }
+            module("project.jvmTest"){
+                moduleDependency("project.commonMain", DependencyScope.TEST)
+                moduleDependency("project.commonTest", DependencyScope.TEST)
+                moduleDependency("project.jvmMain", DependencyScope.TEST)
+                moduleDependency("project.jvmMain", DependencyScope.RUNTIME)
+            }
+
             module("toInclude")
             module("toInclude.commonMain")
             module("toInclude.commonTest") {
@@ -658,6 +685,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
                 moduleDependency("toInclude.commonMain", DependencyScope.TEST)
                 moduleDependency("toInclude.commonTest", DependencyScope.TEST)
                 moduleDependency("toInclude.jsMain", DependencyScope.TEST)
+                moduleDependency("toInclude.jsMain", DependencyScope.RUNTIME)
             }
             module("toInclude.jvmMain") {
                 moduleDependency("toInclude.commonMain", DependencyScope.COMPILE)
@@ -666,6 +694,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
                 moduleDependency("toInclude.commonMain", DependencyScope.TEST)
                 moduleDependency("toInclude.commonTest", DependencyScope.TEST)
                 moduleDependency("toInclude.jvmMain", DependencyScope.TEST)
+                moduleDependency("toInclude.jvmMain", DependencyScope.RUNTIME)
             }
         }
     }
@@ -674,7 +703,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
      * Test case for issue https://youtrack.jetbrains.com/issue/KT-29757
      */
     @Test
-    @PluginTargetVersions(gradleVersion = "4.0+", pluginVersion = "1.3.40+")
+    @PluginTargetVersions(pluginVersion = "1.3.40+", gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
     fun testJavaTransitiveOnMPP() {
         configureByFiles()
         importProject(true)
@@ -712,8 +741,11 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
                 moduleDependency("project.mpp.commonMain", DependencyScope.TEST)
                 moduleDependency("project.mpp.commonTest", DependencyScope.TEST, true)
                 moduleDependency("project.mpp-base.commonMain", DependencyScope.TEST)
+                moduleDependency("project.mpp-base.commonMain", DependencyScope.RUNTIME)  // Temporary dependency, need to remove after KT-40551 is solved
                 moduleDependency("project.mpp-base.jvmMain", DependencyScope.TEST)
+                moduleDependency("project.mpp-base.jvmMain", DependencyScope.RUNTIME)  // Temporary dependency, need to remove after KT-40551 is solved
                 moduleDependency("project.mpp.jvmMain", DependencyScope.TEST)
+                moduleDependency("project.mpp.jvmMain", DependencyScope.RUNTIME)  // Temporary dependency, need to remove after KT-40551 is solved
             }
 
             module("project.mpp-base") {}
@@ -727,6 +759,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
             module("project.mpp-base.jvmTest") {
                 moduleDependency("project.mpp-base.commonMain", DependencyScope.TEST)
                 moduleDependency("project.mpp-base.jvmMain", DependencyScope.TEST)
+                moduleDependency("project.mpp-base.jvmMain", DependencyScope.RUNTIME)  // Temporary dependency, need to remove after KT-40551 is solved
                 moduleDependency("project.mpp-base.commonTest", DependencyScope.TEST, true)
             }
         }
@@ -736,7 +769,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
      * Test case for issue https://youtrack.jetbrains.com/issue/KT-28822
      */
     @Test
-    @PluginTargetVersions(gradleVersion = "4.0+", pluginVersion = "1.3.41+")
+    @PluginTargetVersions(pluginVersion = "1.3.41+", gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
     fun testImportBeforeBuild() {
         configureByFiles()
         importProject(true)
@@ -773,6 +806,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
                 moduleDependency("mpp-jardep.library1.commonMain", DependencyScope.TEST)
                 moduleDependency("mpp-jardep.library1.commonTest", DependencyScope.TEST, true)
                 moduleDependency("mpp-jardep.library1.jvmMain", DependencyScope.TEST)
+                moduleDependency("mpp-jardep.library1.jvmMain", DependencyScope.RUNTIME)  // Temporary dependency, need to remove after KT-40551 is solved
             }
 
             module("mpp-jardep.library2") {}
@@ -789,17 +823,20 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
             }
             module("mpp-jardep.library2.jvmTest") {
                 moduleDependency("mpp-jardep.library1.commonMain", DependencyScope.TEST)
+                moduleDependency("mpp-jardep.library1.commonMain", DependencyScope.RUNTIME)  // Temporary dependency, need to remove after KT-40551 is solved
                 moduleDependency("mpp-jardep.library1.jvmMain", DependencyScope.TEST)
+                moduleDependency("mpp-jardep.library1.jvmMain", DependencyScope.RUNTIME)  // Temporary dependency, need to remove after KT-40551 is solved
                 moduleDependency("mpp-jardep.library2.commonMain", DependencyScope.TEST)
                 moduleDependency("mpp-jardep.library2.commonTest", DependencyScope.TEST, true)
                 moduleDependency("mpp-jardep.library2.jvmMain", DependencyScope.TEST)
+                moduleDependency("mpp-jardep.library2.jvmMain", DependencyScope.RUNTIME)  // Temporary dependency, need to remove after KT-40551 is solved
             }
         }
     }
 
 
     @Test
-    @PluginTargetVersions(gradleVersion = "4.0+", pluginVersion = "1.3.20+")
+    @PluginTargetVersions(pluginVersion = "1.3.20+", gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
     fun testProductionOnTestFlag() {
         configureByFiles()
         importProject(true)
@@ -812,7 +849,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
     }
 
     @Test
-    @PluginTargetVersions(gradleVersion = "4.0+", pluginVersion = "1.3.30+")
+    @PluginTargetVersions(pluginVersion = "1.3.30+", gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
     fun testJvmWithJava() {
         configureByFiles()
         importProject(true)
@@ -844,6 +881,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
             }
             module("jvm-on-mpp.mpp-mod-a.jsTest") {
                 moduleDependency("jvm-on-mpp.mpp-mod-a.jsMain", DependencyScope.TEST, false)
+                moduleDependency("jvm-on-mpp.mpp-mod-a.jsMain", DependencyScope.RUNTIME, false)  // Temporary dependency, need to remove after KT-40551 is solved
                 moduleDependency("jvm-on-mpp.mpp-mod-a.commonMain", DependencyScope.TEST, false)
                 moduleDependency("jvm-on-mpp.mpp-mod-a.commonTest", DependencyScope.TEST, true)
             }
@@ -854,6 +892,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
                 moduleDependency("jvm-on-mpp.mpp-mod-a.commonMain", DependencyScope.TEST, false)
                 moduleDependency("jvm-on-mpp.mpp-mod-a.commonTest", DependencyScope.TEST, true)
                 moduleDependency("jvm-on-mpp.mpp-mod-a.jvmMain", DependencyScope.TEST, false)
+                moduleDependency("jvm-on-mpp.mpp-mod-a.jvmMain", DependencyScope.RUNTIME, false)  // Temporary dependency, need to remove after KT-40551 is solved
             }
 
             //At the moment this is 'fake' source roots and they have no explicit dependencies.
@@ -865,24 +904,103 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
     }
 
     @Test
-    @PluginTargetVersions(gradleVersion = "4.0+", pluginVersion = "1.3.30+")
+    @PluginTargetVersions(pluginVersion = "1.3.30+", gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
     fun testCommonTestTargetPlatform() {
         configureByFiles()
         importProject(true)
         checkProjectStructure(true, false, false) {
             module("KotlinMPPL") {}
-            module("com.example.KotlinMPPL.commonMain") {
+            module("KotlinMPPL.commonMain") {
                 platform(CommonPlatforms.defaultCommonPlatform)
             }
-            module("com.example.KotlinMPPL.commonTest") {
+            module("KotlinMPPL.commonTest") {
                 platform(CommonPlatforms.defaultCommonPlatform)
             }
-            module("com.example.KotlinMPPL.jsMain") {
+            module("KotlinMPPL.jsMain") {
                 platform(JsPlatforms.defaultJsPlatform)
             }
-            module("com.example.KotlinMPPL.jsTest") {
+            module("KotlinMPPL.jsTest") {
                 platform(JsPlatforms.defaultJsPlatform)
             }
+        }
+    }
+
+    @Test
+    @PluginTargetVersions(pluginVersion = "1.3.60+", gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
+    fun testIgnoreIncompatibleNativeTestTasks() {
+        configureByFiles()
+        importProject()
+
+        checkProjectStructure(exhaustiveSourceSourceRootList = false, exhaustiveDependencyList = false, exhaustiveTestsList = true) {
+            module("project")
+            module("project_commonMain") {
+
+            }
+            module("project_commonTest") {
+                externalSystemTestTask("jsBrowserTest", "project:jsTest", "js")
+                externalSystemTestTask("jsNodeTest", "project:jsTest", "js")
+                externalSystemTestTask("jvmTest", "project:jvmTest", "jvm")
+
+                when {
+                    HostManager.hostIsMac -> externalSystemTestTask("macosTest", "project:macosTest", "macos")
+                    HostManager.hostIsMingw -> externalSystemTestTask("winTest", "project:winTest", "win")
+                    HostManager.hostIsLinux -> externalSystemTestTask("linuxTest", "project:linuxTest", "linux")
+                }
+            }
+
+            module("project_jsMain")
+            module("project_jsTest") {
+                externalSystemTestTask("jsBrowserTest", "project:jsTest", "js")
+                externalSystemTestTask("jsNodeTest", "project:jsTest", "js")
+            }
+
+            module("project_jvmMain")
+            module("project_jvmTest") {
+                externalSystemTestTask("jvmTest", "project:jvmTest", "jvm")
+            }
+
+            module("project_macosMain") {
+            }
+            module("project_macosTest") {
+                if (HostManager.hostIsMac) externalSystemTestTask("macosTest", "project:macosTest", "macos")
+            }
+
+            module("project_winMain") {
+            }
+            module("project_winTest") {
+                if (HostManager.hostIsMingw) externalSystemTestTask("winTest", "project:winTest", "win")
+            }
+
+            module("project_linuxMain") {
+            }
+            module("project_linuxTest") {
+                if (HostManager.hostIsLinux) externalSystemTestTask("linuxTest", "project:linuxTest", "linux")
+            }
+        }
+    }
+
+
+    @Test
+    @PluginTargetVersions(pluginVersion = "1.3.30+", gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
+    fun testMutableArtifactLists() {
+        configureByFiles()
+        importProject(true)
+        checkProjectStructure(true, false, false) {
+            module("KT38037") {}
+            module("KT38037.mpp-bottom-actual") {}
+            module("KT38037.mpp-bottom-actual.commonMain") {}
+            module("KT38037.mpp-bottom-actual.commonTest") {}
+            module("KT38037.mpp-bottom-actual.jvm18Main") {}
+            module("KT38037.mpp-bottom-actual.jvm18Test") {}
+            module("KT38037.mpp-bottom-actual.main") {}
+            module("KT38037.mpp-bottom-actual.test") {}
+            module("KT38037.mpp-mid-actual") {}
+            module("KT38037.mpp-mid-actual.commonMain") {}
+            module("KT38037.mpp-mid-actual.commonTest") {}
+            module("KT38037.mpp-mid-actual.jvmWithJavaMain") {}
+            module("KT38037.mpp-mid-actual.jvmWithJavaTest") {}
+            module("KT38037.mpp-mid-actual.main") {}
+            module("KT38037.mpp-mid-actual.test") {}
         }
     }
 

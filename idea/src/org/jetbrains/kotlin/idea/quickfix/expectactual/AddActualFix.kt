@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
@@ -45,7 +46,7 @@ class AddActualFix(
 
     override fun getFamilyName() = text
 
-    override fun getText() = "Add missing actual members"
+    override fun getText() = KotlinBundle.message("fix.create.missing.actual.members")
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return
@@ -85,7 +86,7 @@ class AddActualFix(
         if (errors.isNotEmpty()) {
             val message = errors.entries.joinToString(
                 separator = "\n",
-                prefix = "Some types are not accessible:\n"
+                prefix = KotlinBundle.message("fix.create.declaration.error.some.types.inaccessible") + "\n"
             ) { (declaration, error) ->
                 getExpressionShortText(declaration) + " -> " + error.message
             }

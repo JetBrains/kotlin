@@ -19,7 +19,7 @@ fun main() {
     java.lang.System = null
     java.lang.System!!
     System is Int
-    <!INAPPLICABLE_CANDIDATE!>System<!>()
+    <!HIDDEN!>System<!>()
     (System)
     foo@ System
     null <!UNRESOLVED_REFERENCE!>in<!> System

@@ -28,7 +28,7 @@ class CallableUsageReplacementStrategy(
     private val replacement: CodeToInline,
     private val inlineSetter: Boolean = false
 ) : UsageReplacementStrategy {
-    override fun createReplacer(usage: KtSimpleNameExpression): (() -> KtElement?)? {
+    override fun createReplacer(usage: KtReferenceExpression): (() -> KtElement?)? {
         val bindingContext = usage.analyze(BodyResolveMode.PARTIAL_WITH_CFA)
         val resolvedCall = usage.getResolvedCall(bindingContext) ?: return null
         if (!resolvedCall.status.isSuccess) return null
@@ -36,22 +36,31 @@ class CallableUsageReplacementStrategy(
         val callElement = when (resolvedCall) {
             is VariableAsFunctionResolvedCall -> resolvedCall.variableCall.call.callElement
             else -> resolvedCall.call.callElement
-
         }
 
-        if (callElement !is KtExpression && callElement !is KtAnnotationEntry) {
-            return null
-        }
+        if (!CodeInliner.canBeReplaced(callElement)) return null
 
         //TODO: precheck pattern correctness for annotation entry
 
-        return {
-            if (usage is KtOperationReferenceExpression && usage.getReferencedNameElementType() != KtTokens.IDENTIFIER) {
-                val nameExpression = OperatorToFunctionIntention.convert(usage.parent as KtExpression).second
-                createReplacer(nameExpression)?.invoke()
-            } else {
-                CodeInliner(usage, bindingContext, resolvedCall, callElement, inlineSetter, replacement).doInline()
+        return when {
+            usage is KtArrayAccessExpression -> {
+                {
+                    val nameExpression = OperatorToFunctionIntention.convert(usage).second
+                    createReplacer(nameExpression)?.invoke()
+                }
             }
+            usage is KtOperationReferenceExpression && usage.getReferencedNameElementType() != KtTokens.IDENTIFIER -> {
+                {
+                    val nameExpression = OperatorToFunctionIntention.convert(usage.parent as KtExpression).second
+                    createReplacer(nameExpression)?.invoke()
+                }
+            }
+            usage is KtSimpleNameExpression -> {
+                {
+                    CodeInliner(usage, bindingContext, resolvedCall, callElement, inlineSetter, replacement).doInline()
+                }
+            }
+            else -> null
         }
     }
 }

@@ -14,6 +14,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.SimpleColoredComponent
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.components.JBList
+import org.jetbrains.kotlin.idea.KotlinBundle
 import java.awt.Component
 import javax.swing.JList
 import javax.swing.ListCellRenderer
@@ -32,7 +33,7 @@ class InlineFunctionHyperLinkInfo(
             val list = JBList(inlineInfo)
             list.cellRenderer = InlineInfoCellRenderer()
             val popup = JBPopupFactory.getInstance().createListPopupBuilder(list)
-                .setTitle("Navigate to")
+                .setTitle(KotlinBundle.message("filters.title.navigate.to"))
                 .setItemChoosenCallback {
                     val fileInfo = list.selectedValue as InlineInfo
                     OpenFileHyperlinkInfo(project, fileInfo.file, fileInfo.line).navigate(project)
@@ -52,9 +53,18 @@ class InlineFunctionHyperLinkInfo(
         return file?.let { OpenFileDescriptor(project, file.file, file.line, 0) }
     }
 
+    val callSiteDescriptor: OpenFileDescriptor?
+        get() {
+            val file = inlineInfo.firstOrNull { it is InlineInfo.CallSiteInfo }
+            return file?.let { OpenFileDescriptor(project, file.file, file.line, 0) }
+        }
+
     sealed class InlineInfo(val prefix: String, val file: VirtualFile, val line: Int) {
-        class CallSiteInfo(file: VirtualFile, line: Int) : InlineInfo("inline function call site", file, line)
-        class InlineFunctionBodyInfo(file: VirtualFile, line: Int) : InlineInfo("inline function body", file, line)
+        class CallSiteInfo(file: VirtualFile, line: Int) :
+            InlineInfo(KotlinBundle.message("filters.text.inline.function.call.site"), file, line)
+
+        class InlineFunctionBodyInfo(file: VirtualFile, line: Int) :
+            InlineInfo(KotlinBundle.message("filters.text.inline.function.body"), file, line)
     }
 
     private class InlineInfoCellRenderer : SimpleColoredComponent(), ListCellRenderer<InlineInfo> {

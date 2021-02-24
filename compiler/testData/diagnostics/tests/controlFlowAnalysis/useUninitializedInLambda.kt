@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 fun bar(f: () -> Unit) = f()
 
 fun foo() {

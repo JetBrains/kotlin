@@ -5,3 +5,5 @@ package test
 class <caret>Foo {
 
 }
+
+// FIR_COMPARISON

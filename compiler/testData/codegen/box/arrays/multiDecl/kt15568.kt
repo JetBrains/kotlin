@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 fun box(): String {
     val a = Array(2) { DoubleArray(3) }
 

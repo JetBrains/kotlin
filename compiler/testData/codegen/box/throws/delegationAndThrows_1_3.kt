@@ -1,6 +1,5 @@
 // !LANGUAGE: -DoNotGenerateThrowsForDelegatedKotlinMembers
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND_FIR: JVM_IR
 // WITH_RUNTIME
 // FILE: A.kt
 

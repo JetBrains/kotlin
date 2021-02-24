@@ -1,0 +1,28 @@
+FILE: Base.kt
+    public open class Base : R|kotlin/Any| {
+        public constructor(): R|Base| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open val some: R|kotlin/String|
+            public get(): R|kotlin/String| {
+                ^ String(Base)
+            }
+
+    }
+    public open class Derived : R|Base| {
+        public constructor(): R|Derived| {
+            super<R|Base|>()
+        }
+
+        public open override val some: R|kotlin/String|
+            public get(): R|kotlin/String| {
+                ^ String(Derived)
+            }
+
+    }
+FILE: Test.kt
+    public final fun test(): R|kotlin/Unit| {
+        lval jc: R|JavaClass| = R|/JavaClass.JavaClass|()
+        lval result: R|kotlin/String| = R|<local>/jc|.R|/Derived.some|
+    }

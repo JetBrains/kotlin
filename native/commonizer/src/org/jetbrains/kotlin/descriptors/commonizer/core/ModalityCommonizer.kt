@@ -7,18 +7,12 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.Modality
 
-interface ModalityCommonizer : Commonizer<Modality, Modality> {
-    companion object {
-        fun default(): ModalityCommonizer = DefaultModalityCommonizer()
-    }
-}
-
-private class DefaultModalityCommonizer : ModalityCommonizer {
+class ModalityCommonizer : Commonizer<Modality, Modality> {
     private var temp: Modality? = null
     private var error = false
 
     override val result: Modality
-        get() = temp?.takeIf { !error } ?: throw IllegalCommonizerStateException()
+        get() = checkState(temp, error)
 
     override fun commonizeWith(next: Modality): Boolean {
         if (error)

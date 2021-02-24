@@ -12,6 +12,8 @@ UFile (package = test.pkg)
                             UClassLiteralExpression
                             USimpleNameReferenceExpression (identifier = java)
         UMethod (name = systemService1)
+            UParameter (name = $this$systemService1)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
             UBlockExpression
                 UReturnExpression
                     UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,15 +17,15 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.generateJsCode
-import org.jetbrains.kotlin.ir.backend.js.generateModuleFragment
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsMangler
 import org.jetbrains.kotlin.ir.backend.js.utils.NameTables
+import org.jetbrains.kotlin.ir.descriptors.IrFunctionFactory
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.generateTypicalIrProviderList
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
-import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplCodeAnalyzer
+import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplCodeAnalyzerBase
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import kotlin.script.experimental.api.valueOr
 import kotlin.script.experimental.host.StringScriptSource
@@ -35,7 +35,7 @@ class JsCoreScriptingCompiler(
     private val nameTables: NameTables,
     private val symbolTable: SymbolTable,
     private val dependencyDescriptors: List<ModuleDescriptor>,
-    private val replState: ReplCodeAnalyzer.ResettableAnalyzerState = ReplCodeAnalyzer.ResettableAnalyzerState()
+    private val replState: ReplCodeAnalyzerBase.ResettableAnalyzerState = ReplCodeAnalyzerBase.ResettableAnalyzerState()
 ) {
     fun compile(codeLine: ReplCodeLine): ReplCompileResult {
         val snippet = codeLine.code
@@ -57,13 +57,16 @@ class JsCoreScriptingCompiler(
             if (messageCollector.hasErrors()) return ReplCompileResult.Error("Error while analysis")
         }
 
-        val module = analysisResult.moduleDescriptor
-        val bindingContext = analysisResult.bindingContext
-
-        val psi2ir = Psi2IrTranslator(environment.configuration.languageVersionSettings, mangler = JsMangler)
+        val files = listOf(snippetKtFile)
+        val (bindingContext, module) = analysisResult
+        val psi2ir = Psi2IrTranslator(environment.configuration.languageVersionSettings, Psi2IrConfiguration())
         val psi2irContext = psi2ir.createGeneratorContext(module, bindingContext, symbolTable)
+        val providers = generateTypicalIrProviderList(module, psi2irContext.irBuiltIns, psi2irContext.symbolTable)
+        val irModuleFragment = psi2ir.generateModuleFragment(psi2irContext, files, providers, emptyList(), null) // TODO: deserializer
 
-        val irModuleFragment = psi2irContext.generateModuleFragment(listOf(snippetKtFile))
+        psi2irContext.irBuiltIns.let { irBuiltIns ->
+            irBuiltIns.functionFactory = IrFunctionFactory(irBuiltIns, symbolTable)
+        }
 
         val context = JsIrBackendContext(
             irModuleFragment.descriptor,
@@ -88,6 +91,6 @@ class JsCoreScriptingCompiler(
 
         val code = generateJsCode(context, irModuleFragment, nameTables)
 
-        return createCompileResult(LineId(codeLine), code)
+        return createCompileResult(LineId(codeLine.no, 0, codeLine.hashCode()), code)
     }
 }

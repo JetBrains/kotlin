@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 val prop: Int = 0
 
 class C {

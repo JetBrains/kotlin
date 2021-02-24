@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.testFramework
 import com.intellij.mock.MockComponentManager
 import com.intellij.openapi.application.Application
 import com.intellij.util.containers.ContainerUtil
-import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import org.jetbrains.kotlin.test.testFramework.resetApplicationToNull
 
 object MockComponentManagerCreationTracer {
 
@@ -41,7 +41,7 @@ object MockComponentManagerCreationTracer {
     @JvmStatic
     fun diagnoseDisposedButNotClearedApplication(app: Application) {
         if (app is MockComponentManager) {
-            KtUsefulTestCase.resetApplicationToNull()
+            resetApplicationToNull()
             throw IllegalStateException("Some test disposed, but forgot to clear MockApplication", creationTraceMap[app])
         }
     }

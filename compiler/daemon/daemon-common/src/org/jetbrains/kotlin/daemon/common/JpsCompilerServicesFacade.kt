@@ -16,4 +16,5 @@
 
 package org.jetbrains.kotlin.daemon.common
 
+@Suppress("DEPRECATION")
 interface JpsCompilerServicesFacade : CompilerServicesFacadeBase, CompilerCallbackServicesFacade

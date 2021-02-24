@@ -1,0 +1,28 @@
+{
+  "2": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-464",
+          "casesNumber": 4,
+          "description": "type T is subtype of Any and Noting is subtype of T",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-rules/p-2/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary",
+          "helpers": "checkType"
+        }
+      ],
+      "2": [
+        {
+          "specVersion": "0.1-464",
+          "casesNumber": 4,
+          "description": "type T is subtype of Any and Noting is subtype of T",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-rules/p-2/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary",
+          "helpers": "checkType"
+        }
+      ]
+    }
+  }
+}

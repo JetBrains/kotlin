@@ -17,9 +17,11 @@
 package org.jetbrains.kotlin.incremental.storage
 
 import com.intellij.util.io.DataExternalizer
+import com.intellij.util.io.IOUtil
 import com.intellij.util.io.KeyDescriptor
 import com.intellij.util.io.PersistentHashMap
 import java.io.File
+import java.io.IOException
 
 
 /**
@@ -30,7 +32,6 @@ class CachingLazyStorage<K, V>(
     private val keyDescriptor: KeyDescriptor<K>,
     private val valueExternalizer: DataExternalizer<V>
 ) : LazyStorage<K, V> {
-    @Volatile
     private var storage: PersistentHashMap<K, V>? = null
 
     @Synchronized
@@ -80,8 +81,10 @@ class CachingLazyStorage<K, V>(
         try {
             storage?.close()
         } finally {
-            PersistentHashMap.deleteFilesStartingWith(storageFile)
             storage = null
+            if (!IOUtil.deleteAllFilesStartingWith(storageFile)) {
+                throw IOException("Could not delete internal storage: ${storageFile.absolutePath}")
+            }
         }
     }
 

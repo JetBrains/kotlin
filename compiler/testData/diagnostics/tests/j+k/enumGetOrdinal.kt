@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: MyEnum.java
 
 public enum MyEnum {

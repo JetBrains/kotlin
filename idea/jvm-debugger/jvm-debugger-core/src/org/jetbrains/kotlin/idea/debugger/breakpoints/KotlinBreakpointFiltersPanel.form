@@ -17,7 +17,7 @@
         <clientProperties>
           <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactory$PlainSmallWithoutIndent"/>
         </clientProperties>
-        <border type="etched" title-resource-bundle="messages/DebuggerBundle" title-key="label.breakpoint.properties.panel.group.conditions"/>
+        <border type="etched" title-resource-bundle="messages/KotlinDebuggerCoreBundle" title-key="label.breakpoint.properties.panel.group.conditions"/>
         <children>
           <grid id="8e867" binding="myInstanceFiltersPanel" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="0">
             <margin top="0" left="0" bottom="0" right="0"/>
@@ -33,7 +33,7 @@
                 </constraints>
                 <properties>
                   <margin top="2" left="2" bottom="0" right="2"/>
-                  <text resource-bundle="messages/DebuggerBundle" key="breakpoint.properties.panel.option.instance.filters"/>
+                  <text resource-bundle="messages/KotlinDebuggerCoreBundle" key="breakpoint.properties.panel.option.instance.filters"/>
                 </properties>
               </component>
               <grid id="5231f" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
@@ -78,7 +78,7 @@
                 </constraints>
                 <properties>
                   <margin top="2" left="2" bottom="0" right="2"/>
-                  <text resource-bundle="messages/DebuggerBundle" key="breakpoint.properties.panel.option.class.filters"/>
+                  <text resource-bundle="messages/KotlinDebuggerCoreBundle" key="breakpoint.properties.panel.option.class.filters"/>
                 </properties>
               </component>
               <grid id="9bef6" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
@@ -123,7 +123,7 @@
                 </constraints>
                 <properties>
                   <margin top="2" left="2" bottom="0" right="2"/>
-                  <text resource-bundle="messages/DebuggerBundle" key="breakpoint.properties.panel.option.pass.count"/>
+                  <text resource-bundle="messages/KotlinDebuggerCoreBundle" key="breakpoint.properties.panel.option.pass.count"/>
                 </properties>
               </component>
               <grid id="71095" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">

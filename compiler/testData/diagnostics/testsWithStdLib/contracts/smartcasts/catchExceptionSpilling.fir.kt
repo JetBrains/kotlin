@@ -14,7 +14,7 @@ fun myAssert(condition: Boolean) {
 fun testWithCatch(x: Any?) {
     try {
         myAssert(x is String)
-        x.<!UNRESOLVED_REFERENCE!>length<!>
+        x.length
     } catch (e: java.lang.IllegalArgumentException) { }
 
     x.<!UNRESOLVED_REFERENCE!>length<!>

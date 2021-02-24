@@ -4,7 +4,7 @@ fun <T : CharSequence> foo(x: Array<Any>, block: (T, Int) -> Int) {
     @Suppress("UNCHECKED_CAST") r = block(x[0] as T, "" as Int)
 
     // to prevent unused assignment diagnostic for the above statement
-    r.<!INAPPLICABLE_CANDIDATE!>hashCode<!>()
+    r.hashCode()
 
     var i = 1
 

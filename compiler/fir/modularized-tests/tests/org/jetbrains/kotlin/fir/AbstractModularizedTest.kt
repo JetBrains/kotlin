@@ -36,6 +36,10 @@ data class ModuleData(
     val classpath = rawClasspath.map { File(ROOT_PATH_PREFIX, it.removePrefix("/")) }
     val sources = rawSources.map { File(ROOT_PATH_PREFIX, it.removePrefix("/")) }
     val javaSourceRoots = rawJavaSourceRoots.map { File(ROOT_PATH_PREFIX, it.removePrefix("/")) }
+    lateinit var targetInfo: String
+    var compilationError: String? = null
+    var jvmInternalError: String? = null
+    var exceptionMessage: String = "NO MESSAGE"
 }
 
 private fun NodeList.toList(): List<Node> {
@@ -53,22 +57,27 @@ private val ROOT_PATH_PREFIX = System.getProperty("fir.bench.prefix", "/")
 
 abstract class AbstractModularizedTest : KtUsefulTestCase() {
     private val folderDateFormat = SimpleDateFormat("yyyy-MM-dd")
-    private lateinit var startDate: Date
+    private lateinit var reportDate: Date
 
-    protected fun reportDir() = File(FIR_LOGS_PATH, folderDateFormat.format(startDate))
+    protected fun reportDir() = File(FIR_LOGS_PATH, folderDateFormat.format(reportDate))
         .also {
             it.mkdirs()
         }
 
-    protected val reportDateStr by lazy {
+    protected val reportDateStr: String by lazy {
         val reportDateFormat = SimpleDateFormat("yyyy-MM-dd__HH-mm")
-        reportDateFormat.format(startDate)
+        reportDateFormat.format(reportDate)
+    }
+
+    private fun detectReportDate(): Date {
+        val provided = System.getProperty("fir.bench.report.timestamp") ?: return Date()
+        return Date(provided.toLong())
     }
 
     override fun setUp() {
         super.setUp()
         AbstractTypeChecker.RUN_SLOW_ASSERTIONS = false
-        startDate = Date()
+        reportDate = detectReportDate()
     }
 
     override fun tearDown() {
@@ -83,7 +92,7 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
 
         configuration.addAll(
             CLIConfigurationKeys.CONTENT_ROOTS,
-            moduleData.sources.filter { it.extension == "kt" }.map { KotlinSourceRoot(it.absolutePath, false) })
+            moduleData.sources.filter { it.extension == "kt" || it.isDirectory }.map { KotlinSourceRoot(it.absolutePath, false) })
         return configuration
     }
 
@@ -127,13 +136,13 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
     }
 
 
-    protected abstract fun beforePass()
+    protected abstract fun beforePass(pass: Int)
     protected abstract fun afterPass(pass: Int)
     protected open fun afterAllPasses() {}
     protected abstract fun processModule(moduleData: ModuleData): ProcessorAction
 
     protected fun runTestOnce(pass: Int) {
-        beforePass()
+        beforePass(pass)
         val testDataPath = System.getProperty("fir.bench.jps.dir")?.toString() ?: "/Users/jetbrains/jps"
         val root = File(testDataPath)
 

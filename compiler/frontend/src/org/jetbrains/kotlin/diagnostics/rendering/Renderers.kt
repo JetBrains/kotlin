@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.newTable
 import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.newText
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.psi.*
@@ -98,7 +99,7 @@ object Renderers {
     }
     
     @JvmField
-    val VISIBILITY = Renderer<Visibility> {
+    val VISIBILITY = Renderer<DescriptorVisibility> {
         it.externalDisplayName
     }
 
@@ -133,7 +134,7 @@ object Renderers {
 
     @JvmField
     val NAME_OF_CONTAINING_DECLARATION_OR_FILE = Renderer<DeclarationDescriptor> {
-        if (DescriptorUtils.isTopLevelDeclaration(it) && it is DeclarationDescriptorWithVisibility && it.visibility == Visibilities.PRIVATE) {
+        if (DescriptorUtils.isTopLevelDeclaration(it) && it is DeclarationDescriptorWithVisibility && it.visibility == DescriptorVisibilities.PRIVATE) {
             "file"
         } else {
             val containingDeclaration = it.containingDeclaration
@@ -194,6 +195,11 @@ object Renderers {
     val AMBIGUOUS_CALLS = Renderer { calls: Collection<ResolvedCall<*>> ->
         val descriptors = calls.map { it.resultingDescriptor }
         renderAmbiguousDescriptors(descriptors)
+    }
+
+    @JvmField
+    val COMPATIBILITY_CANDIDATE = Renderer { call: CallableDescriptor ->
+        renderAmbiguousDescriptors(listOf(call))
     }
 
     @JvmField
@@ -738,6 +744,12 @@ object Renderers {
 
         return typesAsString.sorted().joinToString(separator = " & ")
     }
+
+    fun renderCallInfo(fqName: FqNameUnsafe?, typeCall: String) =
+        buildString {
+            append("fqName: ${fqName?.asString() ?: "fqName is unknown"}; ")
+            append("typeCall: $typeCall")
+        }
 }
 
 fun DescriptorRenderer.asRenderer() = SmartDescriptorRenderer(this)

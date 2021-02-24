@@ -30,14 +30,14 @@ import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtilsKt.GENERATE_
 import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtilsKt.getLoadStoreArgSize;
 
 public class InlineAdapter extends InstructionAdapter {
-    private final SourceMapper sourceMapper;
+    private final SourceMapCopier sourceMapper;
     private final List<CatchBlock> blocks = new ArrayList<>();
 
     private boolean isLambdaInlining = false;
     private int nextLocalIndex = 0;
     private int nextLocalIndexBeforeInline = -1;
 
-    public InlineAdapter(@NotNull MethodVisitor mv, int localsSize, @NotNull SourceMapper sourceMapper) {
+    public InlineAdapter(@NotNull MethodVisitor mv, int localsSize, @NotNull SourceMapCopier sourceMapper) {
         super(Opcodes.API_VERSION, mv);
         this.nextLocalIndex = localsSize;
         this.sourceMapper = sourceMapper;

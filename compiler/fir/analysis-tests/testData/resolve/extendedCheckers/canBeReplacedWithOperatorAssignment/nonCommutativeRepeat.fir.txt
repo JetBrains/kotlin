@@ -1,0 +1,8 @@
+FILE: nonCommutativeRepeat.kt
+    public final fun foo(): R|kotlin/Unit| {
+        lvar x: R|kotlin/Int| = Int(0)
+        R|<local>/x| = R|<local>/x|.R|kotlin/Int.minus|(Int(1)).R|kotlin/Int.minus|(Int(1))
+        R|<local>/x| = R|<local>/x|.R|kotlin/Int.div|(Int(1))
+        R|<local>/x| = Int(1).R|kotlin/Int.div|(R|<local>/x|)
+        R|<local>/x| = Int(-1).R|kotlin/Int.plus|(R|<local>/x|)
+    }

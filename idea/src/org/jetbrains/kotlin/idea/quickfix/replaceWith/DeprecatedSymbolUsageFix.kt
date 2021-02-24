@@ -21,23 +21,24 @@ import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.codeInliner.UsageReplacementStrategy
 import org.jetbrains.kotlin.idea.core.moveCaret
 import org.jetbrains.kotlin.idea.core.targetDescriptors
 import org.jetbrains.kotlin.idea.quickfix.CleanupFix
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
 import org.jetbrains.kotlin.psi.KtImportDirective
-import org.jetbrains.kotlin.psi.KtSimpleNameExpression
+import org.jetbrains.kotlin.psi.KtReferenceExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 
 class DeprecatedSymbolUsageFix(
-    element: KtSimpleNameExpression,
+    element: KtReferenceExpression,
     replaceWith: ReplaceWith
 ) : DeprecatedSymbolUsageFixBase(element, replaceWith), CleanupFix, HighPriorityAction {
 
-    override fun getFamilyName() = "Replace deprecated symbol usage"
+    override fun getFamilyName() = KotlinBundle.message("replace.deprecated.symbol.usage")
 
-    override fun getText() = "Replace with '${replaceWith.pattern}'"
+    override fun getText() = KotlinBundle.message("replace.with.0", replaceWith.pattern)
 
     override fun invoke(replacementStrategy: UsageReplacementStrategy, project: Project, editor: Editor?) {
         val element = element ?: return
@@ -50,8 +51,8 @@ class DeprecatedSymbolUsageFix(
 
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-            val (nameExpression, replacement) = extractDataFromDiagnostic(diagnostic, false) ?: return null
-            return DeprecatedSymbolUsageFix(nameExpression, replacement)
+            val (referenceExpression, replacement) = extractDataFromDiagnostic(diagnostic, false) ?: return null
+            return DeprecatedSymbolUsageFix(referenceExpression, replacement)
         }
 
         fun isImportToBeRemoved(import: KtImportDirective): Boolean {

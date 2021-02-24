@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // KT-4021 Java's Package visibilty does not work for static methods
 
 // FILE: foo/Bar.java

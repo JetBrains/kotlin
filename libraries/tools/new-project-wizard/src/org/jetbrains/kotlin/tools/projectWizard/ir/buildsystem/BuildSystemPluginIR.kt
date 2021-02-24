@@ -1,13 +1,15 @@
 package org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem
 
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.tools.projectWizard.core.ignore
+import org.jetbrains.kotlin.tools.projectWizard.core.service.WizardKotlinVersion
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.GradleIR
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.BuildFilePrinter
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.GradlePrinter
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.MavenPrinter
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 
-interface BuildSystemPluginIR : BuildSystemIR
+interface BuildSystemPluginIR : BuildSystemIR, BuildSystemIRWithPriority
 
 interface DefaultBuildSystemPluginIR : BuildSystemPluginIR
 
@@ -30,25 +32,33 @@ data class ApplicationPluginIR(val mainClass: String) : DefaultBuildSystemPlugin
     }
 }
 
-data class GradleOnlyPluginByNameIR(val pluginId: String) : BuildSystemPluginIR, GradleIR {
+data class GradleOnlyPluginByNameIR(
+    @NonNls val pluginId: String,
+    val version: Version? = null,
+    override val priority: Int? = null,
+) : BuildSystemPluginIR, GradleIR {
     override fun GradlePrinter.renderGradle() {
         call("id") { +pluginId.quotified }
+        version?.let { version ->
+            +" version "
+            +version.text.quotified
+        }
     }
 }
 
 data class KotlinBuildSystemPluginIR(
     val type: Type,
-    val version: Version?
+    val version: WizardKotlinVersion?,
+    override val priority: Int? = null
 ) : BuildSystemPluginIR {
 
     override fun BuildFilePrinter.render() = when (this) {
         is GradlePrinter -> {
-            when {
-                type == Type.android -> call("id") { +"kotlin-android".quotified }
-                dsl == GradlePrinter.GradleDsl.KOTLIN -> call("kotlin") { +type.toString().quotified }
-                else -> call("id") { +"org.jetbrains.kotlin.$type".quotified }
+            when (dsl) {
+                GradlePrinter.GradleDsl.KOTLIN -> call("kotlin") { +type.toString().quotified }
+                GradlePrinter.GradleDsl.GROOVY -> call("id") { +"org.jetbrains.kotlin.$type".quotified }
             }
-            version?.let {
+            version?.version?.let {
                 +" version "
                 +it.toString().quotified
             }.ignore()
@@ -56,7 +66,7 @@ data class KotlinBuildSystemPluginIR(
         is MavenPrinter -> node("plugin") {
             singleLineNode("groupId") { +"org.jetbrains.kotlin" }
             singleLineNode("artifactId") { +"kotlin-maven-plugin" }
-            singleLineNode("version") { +version.toString() }
+            singleLineNode("version") { +version?.version.toString() }
 
             node("executions") {
                 node("execution") {

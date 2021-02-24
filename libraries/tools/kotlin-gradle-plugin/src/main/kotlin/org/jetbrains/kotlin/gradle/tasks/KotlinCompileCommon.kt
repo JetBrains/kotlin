@@ -18,6 +18,9 @@ package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.Project
 import org.gradle.api.tasks.CacheableTask
+import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
@@ -27,17 +30,18 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformCommonOptionsImpl
 import org.jetbrains.kotlin.gradle.dsl.fillDefaultValues
 import org.jetbrains.kotlin.gradle.internal.tasks.allOutputFiles
 import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCommonCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataCompilation
+import org.jetbrains.kotlin.gradle.utils.getValue
+import org.jetbrains.kotlin.gradle.plugin.sources.getSourceSetHierarchy
 import org.jetbrains.kotlin.incremental.ChangedFiles
 import java.io.File
 
 @CacheableTask
 open class KotlinCompileCommon : AbstractKotlinCompile<K2MetadataCompilerArguments>(), KotlinCommonCompile {
 
-    private val kotlinOptionsImpl = KotlinMultiplatformCommonOptionsImpl()
-    override val kotlinOptions: KotlinMultiplatformCommonOptions
-        get() = kotlinOptionsImpl
+    override val kotlinOptions: KotlinMultiplatformCommonOptions =
+        taskData.compilation.kotlinOptions as KotlinMultiplatformCommonOptionsImpl
 
     override fun createCompilerArgs(): K2MetadataCompilerArguments =
         K2MetadataCompilerArguments()
@@ -55,28 +59,47 @@ open class KotlinCompileCommon : AbstractKotlinCompile<K2MetadataCompilerArgumen
         args.moduleName = this@KotlinCompileCommon.moduleName
 
         if ((taskData.compilation as? KotlinCommonCompilation)?.isKlibCompilation == true) {
-            args.klibBasedMpp = true
+            args.expectActualLinker = true
         }
 
         if (defaultsOnly) return
 
-        val classpathList = classpath.files.toMutableList()
+        val classpathList = classpath.files.filter { it.exists() }.toMutableList()
 
         with(args) {
             classpath = classpathList.joinToString(File.pathSeparator)
             destination = destinationDir.canonicalPath
+
+            friendPaths = this@KotlinCompileCommon.friendPaths.files.map { it.absolutePath }.toTypedArray()
+            refinesPaths = refinesMetadataPaths.map { it.absolutePath }.toTypedArray()
         }
 
-        kotlinOptionsImpl.updateArguments(args)
+        (kotlinOptions as KotlinMultiplatformCommonOptionsImpl).updateArguments(args)
+    }
+
+    private fun outputPathsFromMetadataCompilationsOf(sourceSets: Iterable<KotlinSourceSet>): List<File> {
+        val target = taskData.compilation.target
+        return sourceSets
+            .mapNotNull { sourceSet -> target.compilations.findByName(sourceSet.name)?.output?.classesDirs }
+            .flatten()
+    }
+
+    private val defaultKotlinSourceSet: KotlinSourceSet
+        get() = taskData.compilation.defaultSourceSet
+
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    @get:InputFiles
+    internal val refinesMetadataPaths by project.provider {
+        outputPathsFromMetadataCompilationsOf(defaultKotlinSourceSet.getSourceSetHierarchy().minus(defaultKotlinSourceSet))
     }
 
     override fun callCompilerAsync(args: K2MetadataCompilerArguments, sourceRoots: SourceRoots, changedFiles: ChangedFiles) {
-        val messageCollector = GradlePrintingMessageCollector(logger)
+        val messageCollector = GradlePrintingMessageCollector(logger, args.allWarningsAsErrors)
         val outputItemCollector = OutputItemsCollectorImpl()
-        val compilerRunner = compilerRunner()
+        val compilerRunner = compilerRunner
         val environment = GradleCompilerEnvironment(
             computedCompilerClasspath, messageCollector, outputItemCollector,
-            buildReportMode = buildReportMode,
+            reportingSettings = reportingSettings,
             outputFiles = allOutputFiles()
         )
         compilerRunner.runMetadataCompilerAsync(sourceRoots.kotlinSourceFiles, args, environment)

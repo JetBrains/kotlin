@@ -5,9 +5,9 @@ fun test() {
     val a1: Array<Double.(Double) -> Double> = arrayOf(Double::plus, Double::minus)
     val a2: Array<Double.(Int) -> Double> = arrayOf(Double::plus, Double::minus)
 
-    val a3: Array<Int.(Int) -> Double> = arrayOf(Double::<!NI;CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY, OI;NONE_APPLICABLE!>plus<!>, Double::<!NI;CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY, OI;NONE_APPLICABLE!>minus<!>)
-    val a4: Array<Int.(Double) -> Double> = arrayOf(Int::plus, Double::<!NI;CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY, OI;NONE_APPLICABLE!>minus<!>)
-    val a5: Array<Double.(Double) -> Double> = arrayOf(Double::plus, Int::<!NI;CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY, OI;NONE_APPLICABLE!>minus<!>)
+    val a3: Array<Int.(Int) -> Double> = arrayOf(Double::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY{NI}, NONE_APPLICABLE{OI}!>plus<!>, Double::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY{NI}, NONE_APPLICABLE{OI}!>minus<!>)
+    val a4: Array<Int.(Double) -> Double> = arrayOf(Int::plus, Double::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY{NI}, NONE_APPLICABLE{OI}!>minus<!>)
+    val a5: Array<Double.(Double) -> Double> = arrayOf(Double::plus, Int::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY{NI}, NONE_APPLICABLE{OI}!>minus<!>)
 }
 
 fun foo(x: Int) {}
@@ -18,5 +18,5 @@ fun <T> bar(x: T, f: (T) -> Unit) {}
 fun test2() {
     bar(1, ::foo)
     bar("", ::foo)
-    bar(1.0, ::<!NI;CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY, OI;NONE_APPLICABLE!>foo<!>)
+    bar(1.0, ::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY{NI}, NONE_APPLICABLE{OI}!>foo<!>)
 }

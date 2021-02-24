@@ -11,7 +11,9 @@ object Services {
         BuildSystemAvailabilityWizardServiceImpl(),
         DummyFileFormattingService(),
         KotlinVersionProviderServiceImpl(),
-        RunConfigurationsServiceImpl()
+        RunConfigurationsServiceImpl(),
+        SettingSavingWizardServiceImpl(),
+        VelocityTemplateEngineServiceImpl()
     )
 }
 

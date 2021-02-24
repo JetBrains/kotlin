@@ -1,0 +1,38 @@
+fun expectsString(s: String) {
+}
+
+fun expectsInt(i: Int) {
+}
+
+fun overloaded(s: String): String {
+  return s
+}
+
+fun overloaded(x: Any): Any {
+  return x
+}
+
+fun test1(x: Any) {
+  when {
+    x !is String -> return Unit
+  }
+  println(message = x /*as String */.<get-length>())
+  expectsString(s = x /*as String */)
+  expectsInt(i = x /*as String */.<get-length>())
+  expectsString(s = overloaded(s = x /*as String */))
+}
+
+fun test2(x: Any): String {
+  when {
+    x !is String -> return ""
+  }
+  return overloaded(s = x /*as String */)
+}
+
+fun test3(x: Any): String {
+  when {
+    x !is String -> return ""
+  }
+  return x /*as String */
+}
+

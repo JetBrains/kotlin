@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,11 +15,13 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiFile
+import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.move.MoveCallback
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeoutOrNull
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.moveCaret
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
@@ -37,10 +39,10 @@ import org.jetbrains.kotlin.resolve.source.getPsi
 
 private const val TIMEOUT_FOR_IMPORT_OPTIMIZING_MS: Long = 700L
 
-class ExtractDeclarationFromCurrentFileIntention :
-    SelfTargetingRangeIntention<KtClassOrObject>(KtClassOrObject::class.java, "Extract declaration from current file"),
-    LowPriorityAction {
-
+class ExtractDeclarationFromCurrentFileIntention : SelfTargetingRangeIntention<KtClassOrObject>(
+    KtClassOrObject::class.java,
+    KotlinBundle.lazyMessage("intention.extract.declarations.from.file.text")
+), LowPriorityAction {
     private fun KtClassOrObject.tryGetExtraClassesToMove(): List<KtNamedDeclaration>? {
 
         val descriptor = resolveToDescriptorIfAny() ?: return null
@@ -66,8 +68,13 @@ class ExtractDeclarationFromCurrentFileIntention :
 
         val endOffset = element.nameIdentifier?.endOffset ?: return null
 
-        text = if (extraClassesToMove.isNotEmpty()) "Extract '${element.name}' and subclasses from current file"
-        else "Extract '${element.name}' from current file"
+        setTextGetter(
+            KotlinBundle.lazyMessage(
+                "intention.extract.declarations.from.file.text.details",
+                element.name.toString(),
+                extraClassesToMove.size
+            )
+        )
 
         return TextRange(startOffset, endOffset)
     }
@@ -86,7 +93,7 @@ class ExtractDeclarationFromCurrentFileIntention :
 
         if (targetFile !== null) {
             if (ApplicationManager.getApplication().isUnitTestMode) {
-                throw CommonRefactoringUtil.RefactoringErrorHintException("File $targetFileName already exists")
+                throw CommonRefactoringUtil.RefactoringErrorHintException(RefactoringBundle.message("file.already.exist", targetFileName))
             }
             // If automatic move is not possible, fall back to full-fledged Move Declarations refactoring
             runFullFledgedMoveRefactoring(project, element, packageName, directory, targetFile, file)
@@ -148,10 +155,12 @@ class ExtractDeclarationFromCurrentFileIntention :
                 packageName.asString(),
                 directory,
                 targetFile as? KtFile,
+                /* freezeTargets */ false,
                 /* moveToPackage = */ true,
                 /* searchInComments = */ true,
                 /* searchForTextOccurrences = */ true,
                 /* deleteEmptySourceFiles = */ true,
+                /* moveMppDeclarations = */ false,
                 callBack
             ).showWithTransaction()
         }

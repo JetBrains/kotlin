@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.isInlineFunctionCall
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -40,10 +39,19 @@ class ResolveInlineCalls(val context: JvmBackendContext) : IrElementTransformerV
         val maybeFakeOverrideOfMultiFileBridge = expression.symbol.owner as? IrSimpleFunction
             ?: return super.visitCall(expression)
         val resolved =
-            maybeFakeOverrideOfMultiFileBridge.resolveMultiFileFacades() ?: maybeFakeOverrideOfMultiFileBridge.resolveFakeOverride()
+            maybeFakeOverrideOfMultiFileBridge.resolveMultiFileFacadeMember() ?: maybeFakeOverrideOfMultiFileBridge.resolveFakeOverride()
             ?: return super.visitCall(expression)
         return super.visitCall(with(expression) {
-            IrCallImpl(startOffset, endOffset, type, resolved.symbol, expression.typeArgumentsCount, null, superQualifierSymbol).apply {
+            IrCallImpl(
+                startOffset,
+                endOffset,
+                type,
+                resolved.symbol,
+                expression.typeArgumentsCount,
+                expression.valueArgumentsCount,
+                expression.origin,
+                superQualifierSymbol
+            ).apply {
                 copyTypeAndValueArgumentsFrom(expression)
                 dispatchReceiver?.let { receiver ->
                     val receiverType = resolved.parentAsClass.defaultType
@@ -60,8 +68,6 @@ class ResolveInlineCalls(val context: JvmBackendContext) : IrElementTransformerV
         })
     }
 
-    private fun IrFunction.resolveMultiFileFacades(): IrFunction? =
-        if (origin == JvmLoweredDeclarationOrigin.MULTIFILE_BRIDGE) {
-            context.multifileFacadeMemberToPartMember[this]
-        } else null
+    private fun IrFunction.resolveMultiFileFacadeMember(): IrSimpleFunction? =
+        if (isMultifileBridge()) context.multifileFacadeMemberToPartMember[this] else null
 }

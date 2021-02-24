@@ -3,18 +3,18 @@ annotation class a
 interface A
 interface B
 
-fun () {}
-fun A.() {}
+<!FUNCTION_DECLARATION_WITH_NO_NAME!>fun ()<!> {}
+<!FUNCTION_DECLARATION_WITH_NO_NAME!>fun A.()<!> {}
 
-@a fun () {}
-fun @a A.() {}
+<!FUNCTION_DECLARATION_WITH_NO_NAME!>@a fun ()<!> {}
+<!FUNCTION_DECLARATION_WITH_NO_NAME!>fun @a A.()<!> {}
 
 class Outer {
-    fun () {}
-    fun B.() {}
+    <!FUNCTION_DECLARATION_WITH_NO_NAME!>fun ()<!> {}
+    <!FUNCTION_DECLARATION_WITH_NO_NAME!>fun B.()<!> {}
 
-    @a fun () {}
-    fun @a A.() {}
+    <!FUNCTION_DECLARATION_WITH_NO_NAME!>@a fun ()<!> {}
+    <!FUNCTION_DECLARATION_WITH_NO_NAME!>fun @a A.()<!> {}
 }
 
 fun outerFun() {

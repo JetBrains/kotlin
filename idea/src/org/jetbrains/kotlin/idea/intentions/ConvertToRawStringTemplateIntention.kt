@@ -6,12 +6,13 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 
 class ConvertToRawStringTemplateIntention : ConvertToStringTemplateIntention() {
     init {
-        text = "Convert concatenation to raw string"
+        text = KotlinBundle.message("convert.concatenation.to.raw.string")
     }
 
     override fun applyTo(element: KtBinaryExpression, editor: Editor?) {

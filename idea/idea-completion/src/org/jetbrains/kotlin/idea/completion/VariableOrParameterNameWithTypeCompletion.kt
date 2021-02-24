@@ -24,7 +24,6 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
-import com.intellij.psi.codeStyle.CodeStyleSettingsManager
 import com.intellij.psi.codeStyle.NameUtil
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -69,7 +68,7 @@ class VariableOrParameterNameWithTypeCompletion(
             prefixWords.indices.map { index -> if (index == 0) prefix else prefixWords.drop(index).joinToString("") }
 
         userPrefixes = nameSuggestionPrefixes.indices.map { prefixWords.take(it).joinToString("") }
-        classNamePrefixMatchers = nameSuggestionPrefixes.map { CamelHumpMatcher(it.capitalize(), false) }
+        classNamePrefixMatchers = nameSuggestionPrefixes.map { CamelHumpMatcher(it.capitalize(Locale.US), false) }
     }
 
     private val suggestionsByTypesAdded = HashSet<Type>()

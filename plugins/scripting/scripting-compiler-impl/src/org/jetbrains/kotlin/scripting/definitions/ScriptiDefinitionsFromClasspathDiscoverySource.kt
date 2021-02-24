@@ -72,7 +72,7 @@ private fun scriptTemplatesDiscoverySequence(
     hostConfiguration: ScriptingHostConfiguration,
     messageReporter: MessageReporter
 ): Sequence<ScriptDefinition> {
-    return sequence {
+    return sequence<ScriptDefinition> {
         // for jar files the definition class is expected in the same jar as the discovery file
         // in case of directories, the class output may come separate from the resources, so some candidates should be deffered and processed later
         val defferedDirDependencies = ArrayList<File>()
@@ -112,8 +112,11 @@ private fun scriptTemplatesDiscoverySequence(
                         defferedDirDependencies.add(dep) // there is no way to know that the dependency is fully "used" so we add it to the list anyway
                         val discoveryMarkers = File(dep, SCRIPT_DEFINITION_MARKERS_PATH).listFiles()
                         if (discoveryMarkers?.isEmpty() == false) {
-                            val (foundDefinitionClasses, notFoundDefinitions) = discoveryMarkers.map { it.name }
-                                .partitionLoadDirDefinitions(dep, classpathWithLoader, hostConfiguration, messageReporter)
+                            val (foundDefinitionClasses, notFoundDefinitions) = discoveryMarkers.map {
+                                it.name.removeSuffix(
+                                    SCRIPT_DEFINITION_MARKERS_EXTENSION_WITH_DOT
+                                )
+                            }.partitionLoadDirDefinitions(dep, classpathWithLoader, hostConfiguration, messageReporter)
                             foundDefinitionClasses.forEach {
                                 yield(it)
                             }
@@ -165,7 +168,7 @@ fun loadScriptTemplatesFromClasspath(
     messageReporter: MessageReporter
 ): Sequence<ScriptDefinition> =
     if (scriptTemplates.isEmpty()) emptySequence()
-    else sequence {
+    else sequence<ScriptDefinition> {
         // trying the direct classloading from baseClassloader first, since this is the most performant variant
         val (initialLoadedDefinitions, initialNotFoundTemplates) = scriptTemplates.partitionMapNotNull {
             loadScriptDefinition(
@@ -338,7 +341,7 @@ private fun loadScriptDefinition(
                 ScriptDefinition.FromLegacyTemplate(hostConfiguration, cls.kotlin)
             }
         messageReporter(
-            ScriptDiagnostic.Severity.INFO,
+            ScriptDiagnostic.Severity.DEBUG,
             "Added script definition $template to configuration: name = ${def.name}"
         )
         return def

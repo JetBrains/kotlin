@@ -1,0 +1,19 @@
+package
+
+public fun take(/*0*/ f: ((kotlin.String) -> kotlin.String) -> Inv<kotlin.String>): kotlin.Unit
+public fun test(/*0*/ inv: Inv<kotlin.String>): kotlin.Unit
+
+public open class Inv</*0*/ T : kotlin.Any!> {
+    public constructor Inv</*0*/ T : kotlin.Any!>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun </*0*/ R : kotlin.Any!> map(/*0*/ mapper: JSam<in T!, out R!>!): Inv<R!>!
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface JSam</*0*/ T : kotlin.Any!, /*1*/ R : kotlin.Any!> {
+    public abstract fun apply(/*0*/ t: T!): R!
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

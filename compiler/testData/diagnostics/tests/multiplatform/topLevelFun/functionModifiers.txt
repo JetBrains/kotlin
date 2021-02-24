@@ -7,7 +7,6 @@ public expect fun tailrec(): kotlin.Unit
 public expect fun kotlin.String.and(/*0*/ other: kotlin.String): kotlin.String
 public expect fun kotlin.String.unaryMinus(): kotlin.String
 
-
 // -- Module: <m2-jvm> --
 package
 
@@ -16,3 +15,4 @@ public actual inline fun inline(): kotlin.Unit
 public actual tailrec fun tailrec(): kotlin.Unit
 public actual infix fun kotlin.String.and(/*0*/ other: kotlin.String): kotlin.String
 public actual operator fun kotlin.String.unaryMinus(): kotlin.String
+

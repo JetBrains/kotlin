@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.javac.wrappers.symbols
 
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.javac.JavacWrapper
-import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.load.java.structure.JavaValueParameter
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -40,16 +40,16 @@ internal fun Element.getVisibility(): Visibility = modifiers.getVisibility()
 
 internal fun Set<Modifier>.getVisibility(): Visibility =
     when {
-        Modifier.PUBLIC in this -> Visibilities.PUBLIC
-        Modifier.PRIVATE in this -> Visibilities.PRIVATE
+        Modifier.PUBLIC in this -> Visibilities.Public
+        Modifier.PRIVATE in this -> Visibilities.Private
         Modifier.PROTECTED in this -> {
             if (Modifier.STATIC in this) {
-                JavaVisibilities.PROTECTED_STATIC_VISIBILITY
+                JavaVisibilities.ProtectedStaticVisibility
             } else {
-                JavaVisibilities.PROTECTED_AND_PACKAGE
+                JavaVisibilities.ProtectedAndPackage
             }
         }
-        else -> JavaVisibilities.PACKAGE_VISIBILITY
+        else -> JavaVisibilities.PackageVisibility
     }
 
 

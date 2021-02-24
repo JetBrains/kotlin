@@ -1,0 +1,36 @@
+annotation class A1 : Annotation {
+  constructor(vararg xs: Int) /* primary */ 
+  val xs: IntArray
+    field = xs
+    get
+
+}
+
+annotation class A2 : Annotation {
+  constructor(vararg xs: String) /* primary */ 
+  val xs: Array<out String>
+    field = xs
+    get
+
+}
+
+annotation class AA : Annotation {
+  constructor(vararg xs: A1) /* primary */ 
+  val xs: Array<out A1>
+    field = xs
+    get
+
+}
+
+@A1(xs = [1, 2, 3])
+@A2(xs = ["a", "b", "c"])
+@AA(xs = [A1(xs = [4]), A1(xs = [5]), A1(xs = [6])])
+fun test1() {
+}
+
+@A1(xs = [])
+@A2(xs = [])
+@AA(xs = [])
+fun test2() {
+}
+

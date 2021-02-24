@@ -8,8 +8,7 @@ fun main() {
 
 data class Foo(val a: String)
 
-// STEP_INTO: 1
-// STEP_OUT: 1
+// STEP_INTO: 2
 
 // EXPRESSION: Foo("baz")
 // RESULT: instance of dataClassCopy.Foo(id=ID): LdataClassCopy/Foo;

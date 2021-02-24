@@ -153,7 +153,7 @@ class KotlinChunk internal constructor(val context: KotlinCompileContext, val ta
             if (containsTests) append("tests of ")
             append(targets.first().module.name)
             if (targets.size > 1) {
-                val andXMore = "and ${targets.size - 1} more"
+                val andXMore = " and ${targets.size - 1} more"
                 val other = ", " + targets.asSequence().drop(1).joinToString()
                 append(if (other.length < andXMore.length) other else andXMore)
             }

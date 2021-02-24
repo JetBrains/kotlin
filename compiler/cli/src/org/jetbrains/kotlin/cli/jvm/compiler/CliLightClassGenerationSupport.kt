@@ -16,20 +16,33 @@
 
 package org.jetbrains.kotlin.cli.jvm.compiler
 
-import com.intellij.psi.PsiManager
-import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.util.CachedValue
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.asJava.LightClassBuilder
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.builder.InvalidLightClassDataHolder
 import org.jetbrains.kotlin.asJava.builder.LightClassConstructionContext
 import org.jetbrains.kotlin.asJava.builder.LightClassDataHolder
 import org.jetbrains.kotlin.asJava.builder.LightClassDataHolderImpl
-import org.jetbrains.kotlin.asJava.classes.KtUltraLightClassForFacade
+import org.jetbrains.kotlin.asJava.classes.KtUltraLightSupport
+import org.jetbrains.kotlin.asJava.classes.cleanFromAnonymousTypes
+import org.jetbrains.kotlin.asJava.classes.lazyPub
+import org.jetbrains.kotlin.asJava.classes.tryGetPredefinedName
+import org.jetbrains.kotlin.codegen.ClassBuilderMode
+import org.jetbrains.kotlin.codegen.JvmCodegenUtil
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
+import org.jetbrains.kotlin.config.JvmAnalysisFlags
+import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.load.java.components.JavaDeprecationSettings
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.deprecation.CoroutineCompatibilitySupport
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.types.KotlinType
 
 /**
  * This class solves the problem of interdependency between analyzing Kotlin code and generating JetLightClasses
@@ -43,16 +56,63 @@ import org.jetbrains.kotlin.resolve.BindingContext
 
  * To mitigate this, CliLightClassGenerationSupport hold a trace that is shared between the analyzer and JetLightClasses
  */
-class CliLightClassGenerationSupport(private val traceHolder: CliTraceHolder) : LightClassGenerationSupport() {
+class CliLightClassGenerationSupport(
+    val traceHolder: CliTraceHolder,
+    private val project: Project
+) : LightClassGenerationSupport() {
 
-    override fun createUltraLightClassForFacade(
-        manager: PsiManager,
-        facadeClassFqName: FqName,
-        lightClassDataCache: CachedValue<LightClassDataHolder.ForFacade>,
-        files: Collection<KtFile>
-    ): KtUltraLightClassForFacade? = null
+    private class CliLightClassSupport(
+        private val project: Project,
+        override val languageVersionSettings: LanguageVersionSettings,
+        private val jvmTarget: JvmTarget
+    ) : KtUltraLightSupport {
 
-    override fun createUltraLightClass(element: KtClassOrObject) = null
+        // This is the way to untie CliLightClassSupport and CliLightClassGenerationSupport to prevent descriptors leak
+        private val traceHolder: CliTraceHolder
+            get() = (getInstance(project) as CliLightClassGenerationSupport).traceHolder
+
+        override val isReleasedCoroutine
+            get() = languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
+
+        override fun possiblyHasAlias(file: KtFile, shortName: Name): Boolean = true
+
+        override val moduleDescriptor get() = traceHolder.module
+
+        override val moduleName: String get() = JvmCodegenUtil.getModuleName(moduleDescriptor)
+
+        override val deprecationResolver: DeprecationResolver
+            get() = DeprecationResolver(
+                LockBasedStorageManager.NO_LOCKS,
+                languageVersionSettings,
+                CoroutineCompatibilitySupport.ENABLED,
+                JavaDeprecationSettings
+            )
+
+        override val typeMapper: KotlinTypeMapper by lazyPub {
+            KotlinTypeMapper(
+                BindingContext.EMPTY,
+                ClassBuilderMode.LIGHT_CLASSES,
+                moduleName,
+                languageVersionSettings,
+                useOldInlineClassesManglingScheme = false,
+                jvmTarget = jvmTarget,
+                typePreprocessor = KotlinType::cleanFromAnonymousTypes,
+                namePreprocessor = ::tryGetPredefinedName
+            )
+        }
+    }
+
+    private val ultraLightSupport: KtUltraLightSupport by lazyPub {
+        CliLightClassSupport(project, traceHolder.languageVersionSettings, traceHolder.jvmTarget)
+    }
+
+    override fun getUltraLightClassSupport(element: KtElement): KtUltraLightSupport {
+        require(element.project == project) { "ULC support created from another project from requested" }
+        return ultraLightSupport
+    }
+
+    override val useUltraLightClasses: Boolean
+        get() = !KtUltraLightSupport.forceUsingOldLightClasses && !traceHolder.languageVersionSettings.getFlag(JvmAnalysisFlags.disableUltraLightClasses)
 
     override fun createDataHolderForClass(classOrObject: KtClassOrObject, builder: LightClassBuilder): LightClassDataHolder.ForClass {
         //force resolve companion for light class generation
@@ -75,13 +135,18 @@ class CliLightClassGenerationSupport(private val traceHolder: CliTraceHolder) : 
         return LightClassDataHolderImpl(stub, diagnostics)
     }
 
-    private fun getContext(): LightClassConstructionContext = LightClassConstructionContext(traceHolder.bindingContext, traceHolder.module)
+    private fun getContext(): LightClassConstructionContext =
+        LightClassConstructionContext(
+            traceHolder.bindingContext, traceHolder.module, null /* TODO: traceHolder.languageVersionSettings? */, traceHolder.jvmTarget
+        )
 
     override fun resolveToDescriptor(declaration: KtDeclaration): DeclarationDescriptor? {
         return traceHolder.bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration)
     }
 
     override fun analyze(element: KtElement) = traceHolder.bindingContext
+
+    override fun analyzeAnnotation(element: KtAnnotationEntry) = traceHolder.bindingContext.get(BindingContext.ANNOTATION, element)
 
     override fun analyzeWithContent(element: KtClassOrObject) = traceHolder.bindingContext
 }

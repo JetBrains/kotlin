@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 class C() {
     fun box(): Int {
         fun local(i: Int = 1): Int {

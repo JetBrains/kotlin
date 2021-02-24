@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,12 +16,12 @@ import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.util.concurrency.NonUrgentExecutor
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import org.jetbrains.kotlin.codegen.filterClassFiles
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.idea.KotlinJvmBundle
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.debugger.DebuggerUtils
@@ -46,43 +46,52 @@ class KtScratchExecutionSession(
     private var backgroundProcessIndicator: ProgressIndicator? = null
 
     fun execute(callback: () -> Unit) {
-        val psiFile = file.getPsiFile() as? KtFile ?: return executor.errorOccurs("Couldn't find KtFile for current editor", isFatal = true)
+        val psiFile = file.getPsiFile() as? KtFile ?: return executor.errorOccurs(
+            KotlinJvmBundle.message("couldn.t.find.ktfile.for.current.editor"),
+            isFatal = true
+        )
 
         val expressions = file.getExpressions()
         if (!executor.checkForErrors(psiFile, expressions)) return
 
         val project = file.project
-        ReadAction.nonBlocking {
-                when (val result = KtScratchSourceFileProcessor().process(expressions)) {
-                    is KtScratchSourceFileProcessor.Result.Error -> return@nonBlocking executor.errorOccurs(result.message, isFatal = true)
-                    is KtScratchSourceFileProcessor.Result.OK -> {
-                        LOG.printDebugMessage("After processing by KtScratchSourceFileProcessor:\n ${result.code}")
+        when (val result = runReadAction { KtScratchSourceFileProcessor().process(expressions) }) {
+            is KtScratchSourceFileProcessor.Result.Error -> return executor.errorOccurs(result.message, isFatal = true)
+            is KtScratchSourceFileProcessor.Result.OK -> {
+                LOG.printDebugMessage("After processing by KtScratchSourceFileProcessor:\n ${result.code}")
 
-                        object : Task.Backgroundable(psiFile.project, "Running Kotlin Scratch...", true) {
-                            override fun run(indicator: ProgressIndicator) {
-                                backgroundProcessIndicator = indicator
+                object : Task.Backgroundable(psiFile.project, KotlinJvmBundle.message("running.kotlin.scratch"), true) {
+                    override fun run(indicator: ProgressIndicator) {
+                        backgroundProcessIndicator = indicator
 
-                                val modifiedScratchSourceFile = runReadAction {
-                                    KtPsiFactory(psiFile.project).createFileWithLightClassSupport("tmp.kt", result.code, psiFile)
-                                }
-
-                                try {
-                                    runCommandLine(project, modifiedScratchSourceFile, expressions, psiFile, result, indicator, callback)
-                                } catch (e: Throwable) {
-                                    if (e is ControlFlowException) throw e
-
-                                    LOG.printDebugMessage(result.code)
-                                    executor.errorOccurs(e.message ?: "Couldn't compile ${psiFile.name}", e, isFatal = true)
-                                }
+                        ReadAction.nonBlocking {
+                            val modifiedScratchSourceFile = runReadAction {
+                                KtPsiFactory(psiFile.project).createFileWithLightClassSupport("tmp.kt", result.code, psiFile)
                             }
-                        }.queue()
+
+                            try {
+                                runCommandLine(project, modifiedScratchSourceFile, expressions, psiFile, result, indicator, callback)
+                            } catch (e: Throwable) {
+                                if (e is ControlFlowException) throw e
+
+                                LOG.printDebugMessage(result.code)
+                                executor.errorOccurs(
+                                    e.message ?: KotlinJvmBundle.message("couldn.t.compile.0", psiFile.name),
+                                    e,
+                                    isFatal = true
+                                )
+                            }
+                        }
+                            .inSmartMode(project)
+                            .wrapProgress(indicator)
+                            .withDocumentsCommitted(project)
+                            .executeSynchronously()
                     }
-                }
+                }.queue()
             }
-            .inSmartMode(project)
-            .expireWith(project)
-            .withDocumentsCommitted(project)
-            .submit(NonUrgentExecutor.getInstance())
+        }
+
+
     }
 
     private fun runCommandLine(
@@ -107,7 +116,12 @@ class KtScratchExecutionSession(
             val executionResult = processHandler.runProcessWithProgressIndicator(indicator, TIMEOUT_MS)
             when {
                 executionResult.isTimeout -> {
-                    executor.errorOccurs("Couldn't get scratch execution result - stopped by timeout ($TIMEOUT_MS ms)")
+                    executor.errorOccurs(
+                        KotlinJvmBundle.message(
+                            "couldn.t.get.scratch.execution.result.stopped.by.timeout.0.ms",
+                            TIMEOUT_MS
+                        )
+                    )
                 }
                 executionResult.isCancelled -> {
                     // ignore

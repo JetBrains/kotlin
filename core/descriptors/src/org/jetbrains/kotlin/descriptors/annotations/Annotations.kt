@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.descriptors.annotations
 
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.types.model.AnnotationMarker
 
 interface Annotated {
     val annotations: Annotations
@@ -77,6 +78,23 @@ class FilteredAnnotations(
         annotation.fqName.let { fqName ->
             fqName != null && fqNameFilter(fqName)
         }
+}
+
+class FilteredByPredicateAnnotations(
+    private val delegate: Annotations,
+    private val filter: (AnnotationDescriptor) -> Boolean
+) : Annotations {
+    override fun isEmpty(): Boolean {
+        return !iterator().hasNext()
+    }
+
+    override fun iterator(): Iterator<AnnotationDescriptor> {
+        return delegate.filter(filter).iterator()
+    }
+
+    override fun findAnnotation(fqName: FqName): AnnotationDescriptor? {
+        return super.findAnnotation(fqName)?.takeIf(filter)
+    }
 }
 
 class CompositeAnnotations(

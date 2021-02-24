@@ -4,7 +4,7 @@ apply plugin: 'com.android.test'
 apply plugin: 'kotlin-android'
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
 
 android {

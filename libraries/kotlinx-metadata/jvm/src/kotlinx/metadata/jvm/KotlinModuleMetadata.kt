@@ -3,10 +3,15 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("MemberVisibilityCanBePrivate")
+
 package kotlinx.metadata.jvm
 
 import kotlinx.metadata.InconsistentKotlinMetadataException
 import kotlinx.metadata.KmAnnotation
+import kotlinx.metadata.KmClass
+import kotlinx.metadata.KmClassVisitor
+import kotlinx.metadata.impl.accept
 import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
@@ -62,6 +67,17 @@ class KotlinModuleMetadata(@Suppress("CanBeParameter", "MemberVisibilityCanBePri
             */
         }
 
+        override fun visitOptionalAnnotationClass(): KmClassVisitor? {
+            /*
+            return object : ClassWriter(TODO() /* use StringTableImpl here */) {
+                override fun visitEnd() {
+                    b.addOptionalAnnotationClass(t)
+                }
+            }
+            */
+            return null
+        }
+
         /**
          * Returns the metadata of the module file that was written with this writer.
          *
@@ -80,11 +96,17 @@ class KotlinModuleMetadata(@Suppress("CanBeParameter", "MemberVisibilityCanBePri
     fun accept(v: KmModuleVisitor) {
         for ((fqName, parts) in data.packageFqName2Parts) {
             val (fileFacades, multiFileClassParts) = parts.parts.partition { parts.getMultifileFacadeName(it) == null }
-            v.visitPackageParts(fqName, fileFacades, multiFileClassParts.associate { it to parts.getMultifileFacadeName(it)!! })
+            v.visitPackageParts(fqName, fileFacades, multiFileClassParts.associateWith { parts.getMultifileFacadeName(it)!! })
         }
 
         for (annotation in data.moduleData.annotations) {
             v.visitAnnotation(KmAnnotation(annotation, emptyMap()))
+        }
+
+        for (classProto in data.moduleData.optionalAnnotations) {
+            v.visitOptionalAnnotationClass()?.let {
+                classProto.accept(it, data.moduleData.nameResolver)
+            }
         }
 
         v.visitEnd()
@@ -148,6 +170,17 @@ abstract class KmModuleVisitor(private val delegate: KmModuleVisitor? = null) {
     }
 
     /**
+     * Visits an `@OptionalExpectation`-annotated annotation class declared in this module.
+     * Such classes are not materialized to bytecode on JVM, but the Kotlin compiler stores their metadata in the module file on JVM,
+     * and loads it during compilation of dependent modules, in order to avoid reporting "unresolved reference" errors on usages.
+     *
+     * Multiplatform projects are an experimental feature of Kotlin, and their behavior and/or binary format
+     * may change in a subsequent release.
+     */
+    open fun visitOptionalAnnotationClass(): KmClassVisitor? =
+        delegate?.visitOptionalAnnotationClass()
+
+    /**
      * Visits the end of the module.
      */
     open fun visitEnd() {
@@ -171,6 +204,16 @@ class KmModule : KmModuleVisitor() {
      */
     val annotations: MutableList<KmAnnotation> = ArrayList(0)
 
+    /**
+     * `@OptionalExpectation`-annotated annotation classes declared in this module.
+     * Such classes are not materialized to bytecode on JVM, but the Kotlin compiler stores their metadata in the module file on JVM,
+     * and loads it during compilation of dependent modules, in order to avoid reporting "unresolved reference" errors on usages.
+     *
+     * Multiplatform projects are an experimental feature of Kotlin, and their behavior and/or binary format
+     * may change in a subsequent release.
+     */
+    val optionalAnnotationClasses: MutableList<KmClass> = ArrayList(0)
+
     override fun visitPackageParts(fqName: String, fileFacades: List<String>, multiFileClassParts: Map<String, String>) {
         packageParts[fqName] = KmPackageParts(fileFacades.toMutableList(), multiFileClassParts.toMutableMap())
     }
@@ -178,6 +221,9 @@ class KmModule : KmModuleVisitor() {
     override fun visitAnnotation(annotation: KmAnnotation) {
         annotations.add(annotation)
     }
+
+    override fun visitOptionalAnnotationClass(): KmClass =
+        KmClass().also(optionalAnnotationClasses::add)
 
     /**
      * Populates the given visitor with data in this module.
@@ -189,6 +235,7 @@ class KmModule : KmModuleVisitor() {
             visitor.visitPackageParts(fqName, parts.fileFacades, parts.multiFileClassParts)
         }
         annotations.forEach(visitor::visitAnnotation)
+        optionalAnnotationClasses.forEach { visitor.visitOptionalAnnotationClass()?.let(it::accept) }
     }
 }
 

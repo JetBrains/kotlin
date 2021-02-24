@@ -1,9 +1,9 @@
 // !DIAGNOSTICS: -DUPLICATE_CLASS_NAMES
 // KT-3525
 object B {
-    class C
-    class C
+    <!REDECLARATION!>class C<!>
+    <!REDECLARATION!>class C<!>
 
-    val a : Int = 1
-    val a : Int = 1
+    <!REDECLARATION!>val a : Int = 1<!>
+    <!REDECLARATION!>val a : Int = 1<!>
 }

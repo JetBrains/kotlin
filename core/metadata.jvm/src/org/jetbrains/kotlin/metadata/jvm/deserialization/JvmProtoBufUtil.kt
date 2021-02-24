@@ -129,4 +129,8 @@ object JvmProtoBufUtil {
     @JvmStatic
     fun isMovedFromInterfaceCompanion(proto: ProtoBuf.Property): Boolean =
         JvmFlags.IS_MOVED_FROM_INTERFACE_COMPANION.get(proto.getExtension(JvmProtoBuf.flags))
+
+    @JvmStatic
+    fun isNewPlaceForBodyGeneration(proto: ProtoBuf.Class): Boolean =
+        JvmFlags.ARE_INTERFACE_METHOD_BODIES_INSIDE.get(proto.getExtension(JvmProtoBuf.jvmClassFlags))
 }

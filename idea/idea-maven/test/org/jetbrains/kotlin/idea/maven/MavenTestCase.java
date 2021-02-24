@@ -41,7 +41,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.maven.indices.MavenIndicesManager;
 import org.jetbrains.idea.maven.project.*;
 import org.jetbrains.idea.maven.server.MavenServerManager;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 
 import java.awt.*;
 import java.io.File;
@@ -50,8 +50,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public abstract class MavenTestCase extends UsefulTestCase {
@@ -91,7 +91,7 @@ public abstract class MavenTestCase extends UsefulTestCase {
     protected void setUp() throws Exception {
         super.setUp();
 
-        myDir = KotlinTestUtils.tmpDir(getTestName(false));
+        myDir = KtTestUtil.tmpDir(getTestName(false));
         
         setUpFixtures();
 

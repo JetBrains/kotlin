@@ -1,10 +1,9 @@
-// COMMON_COROUTINES_TEST
 // WITH_COROUTINES
 // TREAT_AS_ONE_FILE
 
 import helpers.*
-import COROUTINES_PACKAGE.*
-import COROUTINES_PACKAGE.intrinsics.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 class Controller {
     suspend fun suspendHere(): Unit = suspendCoroutineUninterceptedOrReturn { x ->
@@ -85,8 +84,4 @@ fun box(): String {
     return "OK"
 }
 
-// 1 PUTFIELD .*\.B\$0 : B
-// 1 PUTFIELD .*\.C\$0 : C
-// 1 PUTFIELD .*\.S\$0 : S
-// 1 PUTFIELD .*\.Z\$0 : Z
-// 1 PUTFIELD .*\.I\$0 : I
+// 5 PUTFIELD .*\.I\$0 : I

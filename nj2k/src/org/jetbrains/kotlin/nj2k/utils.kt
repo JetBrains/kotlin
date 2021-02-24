@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.nj2k
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeAsciiOnly
 
 fun <T> List<T>.replace(element: T, replacer: T): List<T> {
     val mutableList = toMutableList()
@@ -22,14 +23,14 @@ fun String.asGetterName() =
         ?.takeIf {
             it.isNotEmpty() && it.first().isUpperCase()
                     || it.startsWith("is") && it.length > 2 && it[2].isUpperCase()
-        }?.decapitalize()
+        }?.decapitalizeAsciiOnly()
         ?.escaped()
 
 fun String.asSetterName() =
     takeIf { JvmAbi.isSetterName(it) }
         ?.removePrefix("set")
         ?.takeIf { it.isNotEmpty() && it.first().isUpperCase() }
-        ?.decapitalize()
+        ?.decapitalizeAsciiOnly()
         ?.escaped()
 
 fun String.isPossiblyGetterOrSetterName() =

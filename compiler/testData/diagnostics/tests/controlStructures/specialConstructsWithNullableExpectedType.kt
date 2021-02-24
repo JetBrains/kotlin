@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 val ns: String? = null
 
 val testElvis1: String? = ns ?: ""

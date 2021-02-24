@@ -1,6 +1,7 @@
-// TARGET_BACKEND: JS_IR
 // CHECK_TYPESCRIPT_DECLARATIONS
 // RUN_PLAIN_BOX_FUNCTION
+// SKIP_MINIFICATION
+// SKIP_NODE_JS
 
 @file:JsExport
 
@@ -81,4 +82,24 @@ class A4 {
     var _varCustomWithField: Int = 1
         get() = field * 10
         set(value) { field = value * 10 }
+}
+
+
+object O0
+
+object O {
+    val x = 10
+    @JsName("foo")  // TODO: Should work without JsName
+    fun foo() = 20
+}
+
+fun takesO(o: O): Int =
+    O.x + O.foo()
+
+// Test that JsExport with companion object compiles without error.
+// Usage is not supported yet.
+class KT_37829 {
+    companion object {
+        val x = 10
+    }
 }

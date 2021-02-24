@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
@@ -36,9 +37,7 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeSignatu
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinMethodDescriptor
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.modify
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.runChangeSignature
-import org.jetbrains.kotlin.psi.KtCallElement
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.ValueArgument
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
@@ -59,14 +58,16 @@ abstract class ChangeFunctionSignatureFix(
     }
 
     protected fun getNewArgumentName(argument: ValueArgument, validator: Function1<String, Boolean>): String {
-        val argumentName = argument.getArgumentName()
-        val expression = argument.getArgumentExpression()
+        val expression = KtPsiUtil.deparenthesize(argument.getArgumentExpression())
+        val argumentName = argument.getArgumentName()?.asName?.asString()
+            ?: (expression as? KtNameReferenceExpression)?.getReferencedName()?.takeIf { !isSpecialName(it) }
 
         return when {
-            argumentName != null -> KotlinNameSuggester.suggestNameByName(argumentName.asName.asString(), validator)
+            argumentName != null -> KotlinNameSuggester.suggestNameByName(argumentName, validator)
             expression != null -> {
                 val bindingContext = expression.analyze(BodyResolveMode.PARTIAL)
-                if (expression.text == "it") {
+                val expressionText = expression.text
+                if (isSpecialName(expressionText)) {
                     val type = expression.getType(bindingContext)
                     if (type != null) {
                         return KotlinNameSuggester.suggestNamesByType(type, validator, "param").first()
@@ -76,6 +77,10 @@ abstract class ChangeFunctionSignatureFix(
             }
             else -> KotlinNameSuggester.suggestNameByName("param", validator)
         }
+    }
+
+    private fun isSpecialName(name: String): Boolean {
+        return name == "it" || name == "field"
     }
 
     companion object : KotlinSingleIntentionActionFactoryWithDelegate<KtCallElement, CallableDescriptor>() {
@@ -113,7 +118,11 @@ abstract class ChangeFunctionSignatureFix(
                             KotlinTypeChecker.DEFAULT.isSubtypeOf(dataFlowAwareType, parameter.type)
                         } ?: true
                     }
-                    return AddFunctionParametersFix(originalElement, functionDescriptor, hasTypeMismatches)
+                    val kind = when {
+                        hasTypeMismatches -> AddFunctionParametersFix.Kind.ChangeSignature
+                        else -> AddFunctionParametersFix.Kind.AddParameterGeneric
+                    }
+                    return AddFunctionParametersFix(originalElement, functionDescriptor, kind)
                 }
             }
 
@@ -125,15 +134,14 @@ abstract class ChangeFunctionSignatureFix(
             functionDescriptor: FunctionDescriptor,
             private val parameterToRemove: ValueParameterDescriptor
         ) : ChangeFunctionSignatureFix(element, functionDescriptor) {
-
-            override fun getText() = "Remove parameter '${parameterToRemove.name.asString()}'"
+            override fun getText() = KotlinBundle.message("fix.change.signature.remove.parameter", parameterToRemove.name.asString())
 
             override fun invoke(project: Project, editor: Editor?, file: KtFile) {
                 runRemoveParameter(parameterToRemove, element ?: return)
             }
         }
 
-        const val FAMILY_NAME = "Change signature of function/constructor"
+        val FAMILY_NAME = KotlinBundle.message("fix.change.signature.family")
 
         fun runRemoveParameter(parameterDescriptor: ValueParameterDescriptor, context: PsiElement) {
             val functionDescriptor = parameterDescriptor.containingDeclaration as FunctionDescriptor
@@ -152,7 +160,7 @@ abstract class ChangeFunctionSignatureFix(
                     override fun forcePerformForSelectedFunctionOnly() = false
                 },
                 context,
-                "Remove parameter '${parameterDescriptor.name.asString()}'"
+                KotlinBundle.message("fix.change.signature.remove.parameter", parameterDescriptor.name.asString())
             )
         }
 

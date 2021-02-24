@@ -5,7 +5,7 @@
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
  * SPEC VERSION: 0.1-100
- * PLACE: expressions, when-expression -> paragraph 2 -> sentence 1
+ * MAIN LINK: expressions, when-expression -> paragraph 2 -> sentence 1
  * NUMBER: 1
  * DESCRIPTION: When without bound value, various expressions in the control structure body.
  * HELPERS: typesProvider, classes, functions
@@ -116,7 +116,10 @@ fun case_8(value_1: Int, value_2: Int) = when {
         else "4"
 }
 
-// TESTCASE NUMBER: 9
+/*
+ * TESTCASE NUMBER: 9
+ * ISSUES: KT-37249
+ */
 fun case_9(value_1: Int, value_2: String, value_3: String) = when {
     value_1 == 1 -> <!IMPLICIT_CAST_TO_ANY!>try { 4 } catch (e: Exception) { 5 }<!>
     value_1 == 2 -> <!IMPLICIT_CAST_TO_ANY!>try { throw Exception() } catch (e: Exception) { value_2 }<!>

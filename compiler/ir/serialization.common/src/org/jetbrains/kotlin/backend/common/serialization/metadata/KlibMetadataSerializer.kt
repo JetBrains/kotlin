@@ -1,14 +1,13 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.common.serialization.metadata
 
-import org.jetbrains.kotlin.backend.common.serialization.DescriptorTable
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.serialization.isExpectMember
 import org.jetbrains.kotlin.backend.common.serialization.isSerializableExpectClass
-import org.jetbrains.kotlin.backend.common.serialization.newDescriptorUniqId
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
@@ -21,6 +20,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.serialization.ApproximatingStringTable
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.serialization.StringTableImpl
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
@@ -33,9 +33,10 @@ internal fun <T, R> Iterable<T>.maybeChunked(size: Int?, transform: (List<T>) ->
 abstract class KlibMetadataSerializer(
     val languageVersionSettings: LanguageVersionSettings,
     val metadataVersion: BinaryVersion,
-    val descriptorTable: DescriptorTable,
+    val project: Project?,
     val skipExpects: Boolean = false,
-    val includeOnlyModuleContent: Boolean = false
+    val includeOnlyModuleContent: Boolean = false,
+    private val allowErrorTypes: Boolean
 ) {
 
     lateinit var serializerContext: SerializerContext
@@ -46,18 +47,13 @@ abstract class KlibMetadataSerializer(
         var classSerializer: DescriptorSerializer = topSerializer
     )
 
-    private fun declarationTableHandler(declarationDescriptor: DeclarationDescriptor): KlibMetadataProtoBuf.DescriptorUniqId? {
-        val index = descriptorTable.get(declarationDescriptor) ?: return null
-        return newDescriptorUniqId(index)
-    }
-
     protected fun createNewContext(): SerializerContext {
 
         val extension = KlibMetadataSerializerExtension(
             languageVersionSettings,
             metadataVersion,
-            ::declarationTableHandler,
-            KlibMetadataStringTable()
+            ApproximatingStringTable(),
+            allowErrorTypes
         )
         return SerializerContext(
             extension,
@@ -100,16 +96,18 @@ abstract class KlibMetadataSerializer(
         with(serializerContext) {
             val previousSerializer = classSerializer
 
-            classSerializer = DescriptorSerializer.create(classDescriptor, serializerExtension, classSerializer)
+            classSerializer = DescriptorSerializer.create(classDescriptor, serializerExtension, classSerializer, project)
             val classProto = classSerializer.classProto(classDescriptor).build() ?: error("Class not serialized: $classDescriptor")
             //builder.addClass(classProto)
 
             val index = classSerializer.stringTable.getFqNameIndex(classDescriptor)
             //builder.addExtension(KlibMetadataProtoBuf.className, index)
 
-            val classes = serializeClasses(packageName/*, builder*/,
+            val classes = serializeClasses(
+                packageName/*, builder*/,
                 classDescriptor.unsubstitutedInnerClassesScope
-                    .getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS))
+                    .getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS)
+            )
 
             classSerializer = previousSerializer
             return classes + Pair(classProto, index)
@@ -152,12 +150,12 @@ abstract class KlibMetadataSerializer(
 
     protected fun serializeDescriptors(
         fqName: FqName,
-        classifierDescriptors: List<DeclarationDescriptor>,
-        topLevelDescriptors: List<DeclarationDescriptor>
+        allClassifierDescriptors: List<DeclarationDescriptor>,
+        allTopLevelDescriptors: List<DeclarationDescriptor>
     ): List<ProtoBuf.PackageFragment> {
 
-        val classifierDescriptors = classifierDescriptors.filterOutExpects()
-        val topLevelDescriptors = topLevelDescriptors.filterOutExpects()
+        val classifierDescriptors = allClassifierDescriptors.filterOutExpects()
+        val topLevelDescriptors = allTopLevelDescriptors.filterOutExpects()
 
         if (TOP_LEVEL_CLASS_DECLARATION_COUNT_PER_FILE == null &&
             TOP_LEVEL_DECLARATION_COUNT_PER_FILE == null) {

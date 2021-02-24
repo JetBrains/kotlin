@@ -1,0 +1,25 @@
+FILE: boundSafeCallAndIsCheck.kt
+    public abstract interface A : R|kotlin/Any| {
+        public abstract val b: R|B|
+            public get(): R|B|
+
+    }
+    public abstract interface B : R|kotlin/Any| {
+    }
+    public abstract interface C : R|B| {
+        public abstract fun q(): R|kotlin/Boolean|
+
+    }
+    public final fun R|A|.foo(): R|kotlin/String| {
+        ^foo String()
+    }
+    public final fun main(a: R|A?|): R|kotlin/Unit| {
+        lval lb: R|B?| = R|<local>/a|?.{ $subj$.R|/A.b| }
+        when () {
+            (R|<local>/lb| !is R|C|) ->  {
+                ^main Unit
+            }
+        }
+
+        R|<local>/a|.R|/foo|().R|kotlin/String.length|
+    }

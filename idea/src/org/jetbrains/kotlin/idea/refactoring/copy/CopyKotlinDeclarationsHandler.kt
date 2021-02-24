@@ -24,9 +24,11 @@ import com.intellij.usageView.UsageInfo
 import com.intellij.util.IncorrectOperationException
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.codeInsight.shorten.performDelayedRefactoringRequests
 import org.jetbrains.kotlin.idea.core.getFqNameWithImplicitPrefix
 import org.jetbrains.kotlin.idea.core.packageMatchesDirectoryOrImplicit
+import org.jetbrains.kotlin.idea.core.quoteIfNeeded
 import org.jetbrains.kotlin.idea.core.util.toPsiDirectory
 import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively
 import org.jetbrains.kotlin.idea.refactoring.createKotlinFile
@@ -125,14 +127,20 @@ class CopyKotlinDeclarationsHandler : CopyHandlerDelegateBase() {
         targetFileName: String,
         targetDirectory: PsiDirectory
     ): ExistingFilePolicy {
+        val message = KotlinBundle.message(
+            "text.file.0.already.exists.in.1",
+            targetFileName,
+            targetDirectory.virtualFile.path
+        )
+
         return if (existingFile !is KtFile) {
             if (isUnitTestMode) return ExistingFilePolicy.OVERWRITE
 
             val answer = Messages.showOkCancelDialog(
-                "File $targetFileName already exists in ${targetDirectory.virtualFile.path}",
+                message,
                 commandName,
-                "Overwrite",
-                "Cancel",
+                KotlinBundle.message("action.text.overwrite"),
+                KotlinBundle.message("action.text.cancel"),
                 Messages.getQuestionIcon()
             )
             if (answer == Messages.OK) ExistingFilePolicy.OVERWRITE else ExistingFilePolicy.SKIP
@@ -140,11 +148,11 @@ class CopyKotlinDeclarationsHandler : CopyHandlerDelegateBase() {
             if (isUnitTestMode) return ExistingFilePolicy.APPEND
 
             val answer = Messages.showYesNoCancelDialog(
-                "File $targetFileName already exists in ${targetDirectory.virtualFile.path}",
+                message,
                 commandName,
-                "Append",
-                "Overwrite",
-                "Cancel",
+                KotlinBundle.message("action.text.append"),
+                KotlinBundle.message("action.text.overwrite"),
+                KotlinBundle.message("action.text.cancel"),
                 Messages.getQuestionIcon()
             )
             when (answer) {
@@ -285,7 +293,7 @@ class CopyKotlinDeclarationsHandler : CopyHandlerDelegateBase() {
                 if (targetKtFile !== null) {
                     runWriteAction {
                         if (!targetKtFile.packageMatchesDirectoryOrImplicit()) {
-                            targetKtFile.containingDirectory?.getFqNameWithImplicitPrefix()?.let { targetDirectoryFqName ->
+                            targetKtFile.containingDirectory?.getFqNameWithImplicitPrefix()?.quoteIfNeeded()?.let { targetDirectoryFqName ->
                                 targetKtFile.packageFqName = targetDirectoryFqName
                             }
                         }
@@ -381,7 +389,7 @@ class CopyKotlinDeclarationsHandler : CopyHandlerDelegateBase() {
                 doRefactoringOnElement(sourceData, targetFile)
             }
 
-            refactoringResult.copiedDeclaration?.let { newDeclaration ->
+            refactoringResult.copiedDeclaration?.let<KtNamedDeclaration, Unit> { newDeclaration ->
                 if (targetData.newName == newDeclaration.name) return@let
                 val selfReferences = ReferencesSearch.search(newDeclaration, LocalSearchScope(newDeclaration)).findAll()
                 runWriteAction {
@@ -413,8 +421,9 @@ class CopyKotlinDeclarationsHandler : CopyHandlerDelegateBase() {
             val targetDirectoryFqName = targetDirectory.getFqNameWithImplicitPrefix()
             val copiedFile = targetDirectory.copyFileFrom(targetFileName, fileToCopy)
             if (copiedFile is KtFile && fileToCopy.packageMatchesDirectoryOrImplicit()) {
-                targetDirectoryFqName?.let { copiedFile.packageFqName = it }
+                targetDirectoryFqName?.quoteIfNeeded()?.let { copiedFile.packageFqName = it }
             }
+
             performDelayedRefactoringRequests(sourceData.project)
             copiedFile
         }

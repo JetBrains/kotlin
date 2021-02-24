@@ -6,7 +6,7 @@ class Test {
         get
 
     override fun toString(): String {
-        return "Test()"
+        return "Test(serial='$serial', name='$name')"
     }
 
 }

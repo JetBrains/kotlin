@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: Assert.java
 
 public class Assert {

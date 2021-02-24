@@ -10,6 +10,7 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.Presentation
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.refactoring.util.CommonRefactoringUtil
+import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.TestActionEvent
 import junit.framework.ComparisonFailure
@@ -113,5 +114,5 @@ abstract class AbstractCodeInsightActionTest : KotlinLightCodeInsightFixtureTest
         }
     }
 
-    override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
+    override fun getProjectDescriptor(): LightProjectDescriptor = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 }

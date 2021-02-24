@@ -14,18 +14,24 @@ import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
 interface CreateContentParamsProvider {
-    fun createContentParams() : CreateContentParams
+    fun createContentParams(): CreateContentParams
 }
 
-data class CreateContentParams(val id: String, val component: JComponent, val displayName: String, val icon: Icon?, val parentComponent: JComponent)
+data class CreateContentParams(
+    val id: String,
+    val component: JComponent,
+    val displayName: String,
+    val icon: Icon?,
+    val parentComponent: JComponent
+)
 
 
 interface XDebugSessionListenerProvider {
-    fun debugSessionListener(session: XDebugSession) : XDebugSessionListener
+    fun debugSessionListener(session: XDebugSession): XDebugSessionListener
 }
 
 /**
- * Logger instantiation sample: 'val log by logger'
+ * Logger instantiation: 'val log by logger'
  */
 val logger: ReadOnlyProperty<Any, Logger> get() = LoggerDelegate()
 
@@ -33,8 +39,9 @@ class LoggerDelegate : ReadOnlyProperty<Any, Logger> {
     lateinit var logger: Logger
 
     override fun getValue(thisRef: Any, property: KProperty<*>): Logger {
-        if (!::logger.isInitialized)
+        if (!::logger.isInitialized) {
             logger = Logger.getInstance(thisRef.javaClass)
+        }
         return logger
     }
 }

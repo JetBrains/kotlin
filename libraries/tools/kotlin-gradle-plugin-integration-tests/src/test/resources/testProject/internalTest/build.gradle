@@ -17,8 +17,8 @@ repositories {
 }
 
 dependencies {
-    testCompile 'org.testng:testng:6.8'
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    testImplementation 'org.testng:testng:6.8'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
 
 test {

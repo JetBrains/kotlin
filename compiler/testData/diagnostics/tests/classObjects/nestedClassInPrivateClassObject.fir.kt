@@ -10,6 +10,6 @@ class A {
     }
 }
 
-fun f1() = A.<!INAPPLICABLE_CANDIDATE!>Companion<!>.<!UNRESOLVED_REFERENCE!>B<!>.<!UNRESOLVED_REFERENCE!>C<!>
+fun <!EXPOSED_FUNCTION_RETURN_TYPE!>f1<!>() = A.Companion.B.C
 
-fun f2() = A.<!INAPPLICABLE_CANDIDATE!>Companion<!>.<!UNRESOLVED_REFERENCE!>B<!>.<!UNRESOLVED_REFERENCE!>C<!>.<!UNRESOLVED_REFERENCE!>foo<!>()
+fun f2() = A.Companion.B.C.foo()

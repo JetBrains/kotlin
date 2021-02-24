@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class Bar
 
 fun Bar.foo() = 42

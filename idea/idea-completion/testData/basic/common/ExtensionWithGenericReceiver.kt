@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 open class Base
 open class SubBase:Base()
 open class SubSubBase:SubBase()

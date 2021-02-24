@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.utils.addToStdlib
@@ -49,6 +38,17 @@ inline fun <reified T> Array<*>.firstIsInstance(): T {
     for (element in this) if (element is T) return element
     throw NoSuchElementException("No element of given type found")
 }
+
+inline fun <reified T> Iterable<*>.filterIsInstanceWithChecker(additionalChecker: (T) -> Boolean): List<T> {
+    val result = arrayListOf<T>()
+    for (element in this) {
+        if (element is T && additionalChecker(element)) {
+            result += element
+        }
+    }
+    return result
+}
+
 
 inline fun <reified T : Any> Iterable<*>.lastIsInstanceOrNull(): T? {
     when (this) {
@@ -95,7 +95,7 @@ private val constantMap = ConcurrentHashMap<Function0<*>, Any>()
 fun String.indexOfOrNull(char: Char, startIndex: Int = 0, ignoreCase: Boolean = false): Int? =
         indexOf(char, startIndex, ignoreCase).takeIf { it >= 0 }
 
-fun String.lastIndexOfOrNull(char: Char, startIndex: Int = 0, ignoreCase: Boolean = false): Int? =
+fun String.lastIndexOfOrNull(char: Char, startIndex: Int = lastIndex, ignoreCase: Boolean = false): Int? =
         lastIndexOf(char, startIndex, ignoreCase).takeIf { it >= 0 }
 
 inline fun <T, R : Any> Iterable<T>.firstNotNullResult(transform: (T) -> R?): R? {
@@ -145,4 +145,47 @@ inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapToNullable(des
         destination.addAll(list)
     }
     return destination
+}
+
+fun <E : Enum<E>> min(a: E, b: E): E = if (a < b) a else b
+fun <E : Comparable<E>> min(a: E, b: E): E = if (a < b) a else b
+
+inline fun <T, R> Iterable<T>.same(extractor: (T) -> R): Boolean {
+    val iterator = iterator()
+    val firstValue = extractor(iterator.next())
+    while (iterator.hasNext()) {
+        val item = iterator.next()
+        val value = extractor(item)
+        if (value != firstValue) {
+            return false
+        }
+    }
+    return true
+}
+
+inline fun <R> runIf(condition: Boolean, block: () -> R): R? = if (condition) block() else null
+
+inline fun <T, R> Collection<T>.foldMap(transform: (T) -> R, operation: (R, R) -> R): R {
+    val iterator = iterator()
+    var result = transform(iterator.next())
+    while (iterator.hasNext()) {
+        result = operation(result, transform(iterator.next()))
+    }
+    return result
+}
+
+fun <E> MutableList<E>.trimToSize(newSize: Int) {
+    subList(newSize, size).clear()
+}
+
+inline fun <K, V, VA : V> MutableMap<K, V>.getOrPut(key: K, defaultValue: (K) -> VA, postCompute: (VA) -> Unit): V {
+    val value = get(key)
+    return if (value == null) {
+        val answer = defaultValue(key)
+        put(key, answer)
+        postCompute(answer)
+        answer
+    } else {
+        value
+    }
 }

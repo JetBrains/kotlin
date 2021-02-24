@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM_IR
 fun box(): String {
-    val intProgression = 1..7
+    val intProgression = 1..7 step 3  // `step` ensures type is IntProgression, NOT IntRange
     for (i in intProgression step 2) {
     }
 
@@ -14,22 +14,20 @@ fun box(): String {
 //
 // Expected lowered form of loop:
 //
-//   // Additional variables:
-//   val progression = intProgression
-//   val nestedFirst = progression.first
-//   val nestedLast = progression.last
-//   val nestedStep = progression.step
-//   val newStep = if (nestedStep > 0) 2 else -2
+//   // Additional statements:
+//   val nestedFirst = intProgression.first
+//   val nestedLast = intProgression.last
+//   val nestedStep = intProgression.step
+//   val maybeNegatedStep = if (nestedStep <= 0) -2 else 2
 //
 //   // Standard form of loop over progression
 //   var inductionVar = nestedFirst
-//   val last = getProgressionLastElement(nestedFirst, nestedLast, newStep)
-//   val step = newStep
-//   if ((step > 0 && inductionVar <= last) || (step < 0 && last <= inductionVar)) {
+//   val last = getProgressionLastElement(nestedFirst, nestedLast, maybeNegatedStep)
+//   if ((maybeNegatedStep > 0 && inductionVar <= last) || (maybeNegatedStep < 0 && last <= inductionVar)) {
 //     // Loop is not empty
 //     do {
 //       val i = inductionVar
-//       inductionVar += step
+//       inductionVar += maybeNegatedStep
 //       // Loop body
 //     } while (i != last)
 //   }
@@ -46,7 +44,8 @@ fun box(): String {
 // 1 IF_ICMPGT
 // 1 IF_ICMPLE
 // 1 IF_ICMPNE
-// 2 IFLE
+// 1 IFLE
+// 1 IFGT
 // 1 IFGE
 // 6 IF
 // 0 INEG

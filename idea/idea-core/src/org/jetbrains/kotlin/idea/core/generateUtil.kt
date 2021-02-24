@@ -248,6 +248,8 @@ fun <T : KtDeclaration> insertMembersAfter(
                     }
                 }
 
+                it.removeModifier(KtTokens.EXTERNAL_KEYWORD)
+
                 @Suppress("UNCHECKED_CAST")
                 SmartPointerManager.createPointer((body.addAfter(it, afterAnchor) as T).apply { afterAnchor = this })
             }

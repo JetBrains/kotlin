@@ -1,6 +1,6 @@
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: SAM_CONVERSIONS
 // !LANGUAGE: +NewInference +FunctionalInterfaceConversion +SamConversionPerArgument +SamConversionForKotlinFunctions
-// IGNORE_BACKEND_FIR: JVM_IR
-// IGNORE_BACKEND: JS, JS_IR
 // WITH_RUNTIME
 
 fun interface KRunnable {

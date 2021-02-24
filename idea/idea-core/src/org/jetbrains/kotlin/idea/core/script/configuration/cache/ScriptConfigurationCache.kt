@@ -30,16 +30,17 @@ interface ScriptConfigurationCache {
 
     fun setApplied(file: VirtualFile, configurationSnapshot: ScriptConfigurationSnapshot)
     fun setLoaded(file: VirtualFile, configurationSnapshot: ScriptConfigurationSnapshot)
-    fun markOutOfDate(scope: ScriptConfigurationCacheScope)
+    fun remove(file: VirtualFile): Boolean
 
-    fun allApplied(): Map<VirtualFile, ScriptCompilationConfigurationWrapper>
+    fun allApplied(): List<Pair<VirtualFile, ScriptCompilationConfigurationWrapper>>
     fun clear()
+
+    fun getAnyLoadedScript(): ScriptCompilationConfigurationWrapper?
 }
 
 sealed class ScriptConfigurationCacheScope {
     object All : ScriptConfigurationCacheScope()
     class File(val file: KtFile) : ScriptConfigurationCacheScope()
-    class Except(val file: KtFile) : ScriptConfigurationCacheScope()
 }
 
 data class ScriptConfigurationState(
@@ -61,6 +62,10 @@ interface CachedConfigurationInputs: Serializable {
 
     object OutOfDate : CachedConfigurationInputs {
         override fun isUpToDate(project: Project, file: VirtualFile, ktFile: KtFile?): Boolean = false
+    }
+
+    object UpToDate: CachedConfigurationInputs {
+        override fun isUpToDate(project: Project, file: VirtualFile, ktFile: KtFile?): Boolean = true
     }
 
     data class PsiModificationStamp(

@@ -5,12 +5,12 @@ class AClass(name1: String){
     fun uses(){
         name = "uses: bye"
         this.name = "uses: after this"
-        println("And now my name is '$<caret>name'")
+        val v = "And now my name is '$<caret>name'"
     }
 }
 
 fun main(args: Array<String>) {
     val a = AClass("main: hello")
     a.name = "main: bye"
-    println("Now my name is '${a.name}'")
+    val v = "Now my name is '${a.name}'"
 }

@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.refactoring.move.changePackage
@@ -23,6 +12,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.quoteSegmentsIfNeeded
 import org.jetbrains.kotlin.idea.core.util.CodeInsightUtils
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingOffsetIndependentIntention
@@ -32,8 +22,10 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.psi.KtPackageDirective
 
-class ChangePackageIntention :
-    SelfTargetingOffsetIndependentIntention<KtPackageDirective>(KtPackageDirective::class.java, "Change package") {
+class ChangePackageIntention : SelfTargetingOffsetIndependentIntention<KtPackageDirective>(
+    KtPackageDirective::class.java,
+    KotlinBundle.lazyMessage("intention.change.package.text")
+) {
     companion object {
         private const val PACKAGE_NAME_VAR = "PACKAGE_NAME"
     }
@@ -79,27 +71,35 @@ class ChangePackageIntention :
                 }
 
                 override fun templateFinished(template: Template, brokenOff: Boolean) {
-                    if (brokenOff || enteredName == null || affectedRange == null) return
+                    if (brokenOff) return
+                    val name = enteredName ?: return
+                    val range = affectedRange ?: return
 
                     // Restore original name and run refactoring
 
                     val document = editor.document
                     project.executeWriteCommand(text) {
                         document.replaceString(
-                            affectedRange!!.startOffset,
-                            affectedRange!!.endOffset,
+                            range.startOffset,
+                            range.endOffset,
                             FqName(currentName).quoteSegmentsIfNeeded()
                         )
                     }
                     PsiDocumentManager.getInstance(project).commitDocument(document)
                     PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(document)
 
-                    if (!FqNameUnsafe(enteredName!!).hasIdentifiersOnly()) {
-                        CodeInsightUtils.showErrorHint(project, editor, "$enteredName is not a valid package name", "Change package", null)
+                    if (!FqNameUnsafe(name).hasIdentifiersOnly()) {
+                        CodeInsightUtils.showErrorHint(
+                            project,
+                            editor,
+                            KotlinBundle.message("text.0.is.not.valid.package.name", name),
+                            KotlinBundle.message("intention.change.package.text"),
+                            null
+                        )
                         return
                     }
 
-                    KotlinChangePackageRefactoring(file).run(FqName(enteredName!!))
+                    KotlinChangePackageRefactoring(file).run(FqName(name))
                 }
             }
         )

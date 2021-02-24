@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.inspections
 
 import com.intellij.codeInspection.*
 import com.intellij.psi.PsiElementVisitor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.implicitModality
 import org.jetbrains.kotlin.idea.quickfix.RemoveModifierFix
 import org.jetbrains.kotlin.psi.declarationVisitor
@@ -23,7 +24,7 @@ class RedundantModalityModifierInspection : AbstractKotlinInspection(), CleanupL
 
             holder.registerProblem(
                 modalityModifier,
-                "Redundant modality modifier",
+                KotlinBundle.message("redundant.modality.modifier"),
                 ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                 IntentionWrapper(
                     RemoveModifierFix(declaration, implicitModality, isRedundant = true),

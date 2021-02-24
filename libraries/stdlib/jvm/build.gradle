@@ -1,19 +1,16 @@
 description = 'Kotlin Standard Library for JVM'
 
 apply plugin: 'kotlin-platform-jvm'
-apply plugin: 'pill-configurable'
 
 archivesBaseName = 'kotlin-stdlib'
 
 configureJvm6Project(project)
 configurePublishing(project)
+configureJavadocJar()
+configureSourcesJar()
 
 configurations {
     distSources
-}
-
-pill {
-    importAsLibrary = true
 }
 
 sourceSets {
@@ -44,7 +41,11 @@ sourceSets {
 configurations {
     commonSources
     longRunningTestCompile.extendsFrom(testCompile)
-    builtins
+    builtins {
+        attributes {
+            attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements, LibraryElements.JAR))
+        }
+    }
     compileOnly.extendsFrom(builtins)
 }
 
@@ -56,19 +57,17 @@ dependencies {
     compile group: 'org.jetbrains', name: 'annotations', version:'13.0'
 
     testCompile project(':kotlin-test:kotlin-test-junit')
-    testCompile project(':kotlin-coroutines-experimental-compat')
 
     builtins project(':core:builtins')
 }
 
 jar {
     dependsOn(configurations.builtins)
-    manifestAttributes(manifest, project, 'Main' /*true*/)
+    manifestAttributes(manifest, project, 'Main', true)
     from {
         zipTree(configurations.builtins.singleFile)
     }
-    // TODO: enable as soon as this doesn't cause D8/DX to crash
-    // from sourceSets.java9.output
+    from sourceSets.java9.output
 }
 
 sourcesJar {
@@ -90,16 +89,11 @@ task distSourcesJar(type: Jar) {
     }
 }
 
-task modularJar(type: Jar) {
+configureModularJar {
     dependsOn(jar)
     manifestAttributes(manifest, project, 'Main', true)
-    classifier = 'modular'
 
-    from zipTree(jar.outputs.files.singleFile).matching {
-        // Beware of Gradle problem: changing exclude spec doesn't affect Jar task up-to-dateness
-        exclude('kotlin/native/**')
-    }
-    from sourceSets.java9.output
+    from zipTree(jar.outputs.files.singleFile)
 }
 
 artifacts {
@@ -109,13 +103,10 @@ artifacts {
     archives modularJar
 }
 
-javadocJar()
-
-task dexMethodCount(type: DexMethodCount) {
-    from jar
-    ownPackages = ['kotlin']
+DexMethodCountKt.dexMethodCount(project) { task ->
+    task.from(jar)
+    task.ownPackages = ['kotlin']
 }
-check.dependsOn(dexMethodCount)
 
 compileKotlin {
     kotlinOptions {
@@ -125,12 +116,14 @@ compileKotlin {
                 "-Xallow-result-return-type",
                 "-Xmultifile-parts-inherit",
                 "-Xnormalize-constructor-calls=enable",
-                "-module-name", "kotlin-stdlib",
-                "-Xuse-experimental=kotlin.Experimental",
-                "-Xuse-experimental=kotlin.ExperimentalMultiplatform",
-                "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
-                "-Xinline-classes"
+                "-Xopt-in=kotlin.RequiresOptIn",
+                "-Xopt-in=kotlin.ExperimentalMultiplatform",
+                "-Xopt-in=kotlin.contracts.ExperimentalContracts",
+                "-Xinline-classes",
+                "-Xuse-14-inline-classes-mangling-scheme",
+                "-Xsuppress-deprecated-jvm-target-warning",
         ]
+        moduleName = "kotlin-stdlib"
     }
 }
 
@@ -140,12 +133,21 @@ compileJava9Sources(project, 'kotlin.stdlib', [sourceSets.main.output])
 compileTestKotlin {
     kotlinOptions {
         freeCompilerArgs += [
-                "-Xuse-experimental=kotlin.Experimental",
-                "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes",
-                "-Xuse-experimental=kotlin.ExperimentalStdlibApi"
+                "-Xopt-in=kotlin.RequiresOptIn",
+                "-Xopt-in=kotlin.ExperimentalUnsignedTypes",
+                "-Xopt-in=kotlin.ExperimentalStdlibApi",
+                "-Xsuppress-deprecated-jvm-target-warning",
         ]
+        // This is needed for JavaTypeTest; typeOf for non-reified type parameters doesn't work otherwise, for implementation reasons.
+        freeCompilerArgs.remove("-Xno-optimized-callable-references")
     }
 }
+
+compileLongRunningTestKotlin {
+    kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.ExperimentalStdlibApi"
+}
+
+configureJvmIrBackend(project)
 
 task longRunningTest(type: Test, dependsOn: longRunningTestClasses) {
     group = "verification"

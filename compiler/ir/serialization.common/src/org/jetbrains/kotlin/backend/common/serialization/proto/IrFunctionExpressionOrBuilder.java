@@ -17,11 +17,11 @@ public interface IrFunctionExpressionOrBuilder extends
   org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction getFunction();
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin origin = 2;</code>
+   * <code>required int32 origin_name = 2;</code>
    */
-  boolean hasOrigin();
+  boolean hasOriginName();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin origin = 2;</code>
+   * <code>required int32 origin_name = 2;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin getOrigin();
+  int getOriginName();
 }

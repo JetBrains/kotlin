@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 suspend fun unit1() {
     unit1()
 }

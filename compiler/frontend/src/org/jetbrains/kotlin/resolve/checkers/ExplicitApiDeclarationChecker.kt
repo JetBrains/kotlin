@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.resolve.checkers
 
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.ExplicitApiMode
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.reportDiagnosticOnce
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyPublicApi
+import org.jetbrains.kotlin.resolve.descriptorUtil.isPublishedApi
 
 class ExplicitApiDeclarationChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
@@ -21,7 +23,8 @@ class ExplicitApiDeclarationChecker : DeclarationChecker {
         if (state == ExplicitApiMode.DISABLED) return
 
         if (descriptor !is DeclarationDescriptorWithVisibility) return
-        if (!descriptor.isEffectivelyPublicApi) return
+        if (descriptor is ClassDescriptor && descriptor.kind == ClassKind.ENUM_ENTRY) return // Enum entries does not have visibilities
+        if (!descriptor.isEffectivelyPublicApi && !descriptor.isPublishedApi()) return
 
         checkVisibilityModifier(state, declaration, descriptor, context)
         checkExplicitReturnType(state, declaration, descriptor, context)
@@ -76,6 +79,7 @@ class ExplicitApiDeclarationChecker : DeclarationChecker {
      * 2. Properties of data classes in public API
      * 3. Overrides of public API. Effectively, this means 'no report on overrides at all'
      * 4. Getters and setters (because getters can't change visibility and setter-only explicit visibility looks ugly)
+     * 5. Properties of annotations in public API
      *
      * Do we need something like @PublicApiFile to disable (or invert) this inspection per-file?
      */
@@ -84,6 +88,7 @@ class ExplicitApiDeclarationChecker : DeclarationChecker {
         /* 2. */ if (descriptor is PropertyDescriptor && (descriptor.containingDeclaration as? ClassDescriptor)?.isData == true) return true
         /* 3. */ if ((descriptor as? CallableDescriptor)?.overriddenDescriptors?.isNotEmpty() == true) return true
         /* 4. */ if (descriptor is PropertyAccessorDescriptor) return true
+        /* 5. */ if (descriptor is PropertyDescriptor && (descriptor.containingDeclaration as? ClassDescriptor)?.kind == ClassKind.ANNOTATION_CLASS) return true
         return false
     }
 
@@ -102,8 +107,10 @@ class ExplicitApiDeclarationChecker : DeclarationChecker {
             val callableMemberDescriptor = descriptor as? CallableMemberDescriptor
 
             val visibility = callableMemberDescriptor?.effectiveVisibility()?.toVisibility()
-            return (checkForPublicApi && visibility?.isPublicAPI == true) || (checkForInternal && visibility == Visibilities.INTERNAL) ||
-                    (checkForPrivate && visibility == Visibilities.PRIVATE)
+            val isPublicApi =
+                visibility?.isPublicAPI == true || (visibility == Visibilities.Internal && callableMemberDescriptor.isPublishedApi())
+            return (checkForPublicApi && isPublicApi) || (checkForInternal && visibility == Visibilities.Internal) ||
+                    (checkForPrivate && visibility == Visibilities.Internal)
         }
 
         fun returnTypeCheckIsApplicable(element: KtCallableDeclaration): Boolean {
@@ -115,6 +122,21 @@ class ExplicitApiDeclarationChecker : DeclarationChecker {
             if (element is KtNamedFunction && element.hasBlockBody()) return false
 
             return true
+        }
+
+        fun publicReturnTypeShouldBePresentInApiMode(
+            element: KtCallableDeclaration,
+            languageVersionSettings: LanguageVersionSettings,
+            descriptor: DeclarationDescriptor?
+        ): Boolean {
+            val isInApiMode = languageVersionSettings.getFlag(AnalysisFlags.explicitApiMode) != ExplicitApiMode.DISABLED
+            return isInApiMode && returnTypeRequired(
+                element,
+                descriptor,
+                checkForPublicApi = true,
+                checkForInternal = false,
+                checkForPrivate = false
+            )
         }
     }
 }

@@ -17,12 +17,7 @@ open class KotlinFUSLogger {
         private val logger = FUCounterUsageLogger.getInstance()
 
         fun log(group: FUSEventGroups, event: String) {
-            if (group.events.contains(event) || group.events.isEmpty()) {
-                logger.logEvent(group.GROUP_ID, event, context)
-            } else {
-                logger.logEvent(group.GROUP_ID, "unknown", context)
-            }
-
+            logger.logEvent(group.GROUP_ID, event, context)
         }
 
         fun log(group: FUSEventGroups, event: String, eventData: Map<String, String>) {

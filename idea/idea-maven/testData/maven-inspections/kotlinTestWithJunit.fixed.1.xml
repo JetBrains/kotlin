@@ -54,4 +54,4 @@
 </project>
 
 <!-- inspection: org.jetbrains.kotlin.idea.maven.inspections.KotlinTestJUnitInspection -->
-<!-- problem: on kotlin-test, title kotlin-test-junit is better with junit -->
+<!-- problem: on kotlin-test, title 'kotlin-test-junit' is recommended -->

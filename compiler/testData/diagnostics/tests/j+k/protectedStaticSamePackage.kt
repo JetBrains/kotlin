@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: test/JavaClass.java
 
 package test;

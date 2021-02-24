@@ -1,3 +1,0 @@
-public final class SimpleKt : java/lang/Object {
-    public final static void foo(java.lang.String $this$foo, int a)
-}

@@ -10,6 +10,6 @@ class C {
 
 fun foo() {
     val a : Int
-    a + 1
-    a + 1
+    <!UNINITIALIZED_VARIABLE!>a<!> + 1
+    <!UNINITIALIZED_VARIABLE!>a<!> + 1
 }

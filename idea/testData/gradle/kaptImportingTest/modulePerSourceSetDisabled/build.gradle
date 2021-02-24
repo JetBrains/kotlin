@@ -1,9 +1,7 @@
 buildscript {
     ext.kotlin_version = '{{kotlin_plugin_version}}'
     repositories {
-        google()
-        jcenter()
-
+        {{kotlin_plugin_repositories}}
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.2.0'

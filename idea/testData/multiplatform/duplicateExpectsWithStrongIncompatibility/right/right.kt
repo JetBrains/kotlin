@@ -1,0 +1,1 @@
+expect fun <!LINE_MARKER("descr='Has actuals in JVM'")!>foo<!><!NO_ACTUAL_FOR_EXPECT!>(x: Int)<!>: Int

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,6 +7,7 @@ package test.exceptions
 
 import kotlin.test.*
 import test.collections.assertArrayNotSameButEquals
+import test.testOnJvm7AndAbove
 
 import java.io.PrintWriter
 import java.io.*
@@ -17,11 +18,13 @@ class ExceptionJVMTest {
     @Test fun printStackTraceOnRuntimeException() {
         assertPrintStackTrace(RuntimeException("Crikey!"))
         assertPrintStackTraceStream(RuntimeException("Crikey2"))
+        assertToStringWithTrace(RuntimeException("ToString"))
     }
 
     @Test fun printStackTraceOnError() {
         assertPrintStackTrace(Error("Oh dear"))
         assertPrintStackTraceStream(Error("Oh dear2"))
+        assertToStringWithTrace(Error("ToString"))
     }
 
 
@@ -49,6 +52,11 @@ class ExceptionJVMTest {
         comparePrintedThrowableResult(t, content)
     }
 
+    fun assertToStringWithTrace(t: Throwable) {
+        val content = t.stackTraceToString()
+        comparePrintedThrowableResult(t, content)
+    }
+
     private fun comparePrintedThrowableResult(throwable: Throwable, printedThrowable: CharSequence) {
         val stackTrace = throwable.stackTrace
         val lines = printedThrowable.lines()
@@ -71,5 +79,22 @@ class ExceptionJVMTest {
         val e2 = Exception("Suppressed")
 
         e1.addSuppressed(e2)
+    }
+
+    @Test fun addSuppressedSelfDoesNotThrow() {
+        val e1 = Throwable()
+        e1.addSuppressed(e1) // should not throw
+    }
+
+    @Test fun circularCauseStackTrace() {
+        val e1 = Exception("cause")
+        val e2 = Error("induced", e1)
+        e1.initCause(e2)
+        assertSame(e1, e2.cause)
+        assertSame(e2, e1.cause)
+        testOnJvm7AndAbove {
+            val trace = e2.stackTraceToString()
+            assertTrue("CIRCULAR REFERENCE" in trace, trace)
+        }
     }
 }

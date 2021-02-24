@@ -17,7 +17,8 @@
 package org.jetbrains.kotlin.js.translate.intrinsic.objects
 
 import org.jetbrains.kotlin.builtins.CompanionObjectMapping
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.builtins.isMappedIntrinsicCompanionObject
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.js.backend.ast.JsExpression
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
@@ -41,7 +42,7 @@ class ObjectIntrinsics {
     }
 
     private fun createIntrinsic(classDescriptor: ClassDescriptor): ObjectIntrinsic? {
-        if (classDescriptor.fqNameUnsafe == KotlinBuiltIns.FQ_NAMES._enum ||
+        if (classDescriptor.fqNameUnsafe == StandardNames.FqNames._enum ||
             !CompanionObjectMapping.isMappedIntrinsicCompanionObject(classDescriptor)
         ) {
             return null

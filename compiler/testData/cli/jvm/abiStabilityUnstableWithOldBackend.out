@@ -1,0 +1,2 @@
+error: -Xabi-stability=unstable is not supported in the old JVM backend
+COMPILATION_ERROR

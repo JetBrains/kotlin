@@ -18,13 +18,14 @@ package org.jetbrains.kotlin.idea.decompiler.js
 
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.idea.KotlinIdeaAnalysisBundle
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 
 object KotlinJavaScriptMetaFileType : FileType {
 
     override fun getName() = "KJSM"
 
-    override fun getDescription() = "Kotlin JavaScript meta file"
+    override fun getDescription() = KotlinIdeaAnalysisBundle.message("kotlin.javascript.meta.file")
 
     override fun getDefaultExtension() = KotlinJavascriptSerializationUtil.CLASS_METADATA_FILE_EXTENSION
 

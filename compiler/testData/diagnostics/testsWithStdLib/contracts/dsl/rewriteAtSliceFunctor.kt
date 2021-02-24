@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // See KT-28847
 
 class Foo(val str: String?) {

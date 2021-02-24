@@ -1,0 +1,13 @@
+package
+
+public fun bar(): kotlin.Int
+
+public object Scope {
+    private constructor Scope()
+    public final fun bar(/*0*/ x: kotlin.Int = ...): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun </*0*/ T> foo(/*0*/ f: () -> T): T
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun test(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

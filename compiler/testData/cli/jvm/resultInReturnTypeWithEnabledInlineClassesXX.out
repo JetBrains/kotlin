@@ -1,0 +1,13 @@
+warning: ATTENTION!
+This build uses unsafe internal compiler arguments:
+
+-XXLanguage:+InlineClasses
+
+This mode is not recommended for production use,
+as no stability/compatibility guarantees are given on
+compiler or generated code. Use it at your own risk!
+
+compiler/testData/cli/jvm/resultInReturnType.kt:1:5: error: 'kotlin.Result' cannot be used as a return type
+fun foo() = Result.success(42)
+    ^
+COMPILATION_ERROR

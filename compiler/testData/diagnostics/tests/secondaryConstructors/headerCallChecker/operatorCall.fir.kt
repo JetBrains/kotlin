@@ -1,11 +1,11 @@
 open class C(val x: Int)
 
 class D : C {
-    constructor() : <!INAPPLICABLE_CANDIDATE!>super<!>(
+    constructor() : super(
             {
                 val s = ""
-                s()
-                ""()
+                <!UNRESOLVED_REFERENCE!>s<!>()
+                <!UNRESOLVED_REFERENCE!>""<!>()
                 42
             }())
 

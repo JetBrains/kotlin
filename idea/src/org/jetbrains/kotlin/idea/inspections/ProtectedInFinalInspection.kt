@@ -9,6 +9,7 @@ import com.intellij.codeInsight.FileModificationService
 import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.implicitVisibility
 import org.jetbrains.kotlin.idea.core.isInheritable
 import org.jetbrains.kotlin.idea.intentions.isFinalizeMethod
@@ -33,7 +34,7 @@ class ProtectedInFinalInspection : AbstractKotlinInspection() {
                 ) {
                     holder.registerProblem(
                         visibilityModifier,
-                        "'protected' visibility is effectively 'private' in a final class",
+                        KotlinBundle.message("protected.visibility.is.effectively.private.in.a.final.class"),
                         ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                         MakePrivateFix(),
                         MakeOpenFix()
@@ -44,7 +45,7 @@ class ProtectedInFinalInspection : AbstractKotlinInspection() {
     }
 
     class MakePrivateFix : LocalQuickFix {
-        override fun getName(): String = "Make private"
+        override fun getName(): String = KotlinBundle.message("make.private.fix.text")
 
         override fun getFamilyName(): String = name
 
@@ -57,7 +58,7 @@ class ProtectedInFinalInspection : AbstractKotlinInspection() {
     }
 
     class MakeOpenFix : LocalQuickFix {
-        override fun getName(): String = "Make class open"
+        override fun getName(): String = KotlinBundle.message("make.open.fix.text")
 
         override fun getFamilyName(): String = name
 

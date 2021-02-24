@@ -1,0 +1,4 @@
+package
+
+public val x: kotlin.String?
+public fun </*0*/ K> materialize(): K?

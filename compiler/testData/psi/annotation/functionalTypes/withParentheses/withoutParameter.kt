@@ -12,7 +12,7 @@ val x: Any = {} as @Foo() () -> Unit
 
 fun foo(x: (@Foo() () -> Unit)) = x
 
-        fun foo(x: @Foo(10) @Bar() () -> Unit = { x: Int -> x }) {}
+fun foo(x: @Foo(10) @Bar() () -> Unit = { x: Int -> x }) {}
 
 fun foo() {
     val x: @Foo() @Bar() () -> Unit = {}

@@ -25,13 +25,13 @@ import com.intellij.testFramework.LightVirtualFile;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 
 
 public class TestCheckerUtil {
     @NotNull
     public static KtFile createCheckAndReturnPsiFile(@NotNull String fileName, @NotNull String text, @NotNull Project project) {
-        KtFile myFile = KotlinTestUtils.createFile(fileName, text, project);
+        KtFile myFile = KtTestUtil.createFile(fileName, text, project);
         ensureParsed(myFile);
         TestCase.assertEquals("light virtual file text mismatch", text, ((LightVirtualFile) myFile.getVirtualFile()).getContent().toString());
         TestCase.assertEquals("virtual file text mismatch", text, LoadTextUtil.loadText(myFile.getVirtualFile()));

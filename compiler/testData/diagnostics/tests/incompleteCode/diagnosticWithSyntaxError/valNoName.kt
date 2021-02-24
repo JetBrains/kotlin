@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // VAL
 class A(
         val<!SYNTAX!><!>

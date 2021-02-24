@@ -5,77 +5,77 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirDeclarationWithVisibility
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirFunctionOrProperty
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.isVirtual
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirFunctionOrProperty
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirHasVisibility
 
-abstract class VisibilityCommonizer(private val allowPrivate: Boolean) : Commonizer<CirDeclarationWithVisibility, Visibility> {
+abstract class VisibilityCommonizer : Commonizer<CirHasVisibility, DescriptorVisibility> {
 
     companion object {
-        fun lowering(allowPrivate: Boolean = false): VisibilityCommonizer = LoweringVisibilityCommonizer(allowPrivate)
+        fun lowering(): VisibilityCommonizer = LoweringVisibilityCommonizer()
         fun equalizing(): VisibilityCommonizer = EqualizingVisibilityCommonizer()
     }
 
-    private var temp: Visibility? = null
+    private var temp: DescriptorVisibility? = null
 
-    override val result: Visibility
-        get() = temp?.takeIf { it != Visibilities.UNKNOWN } ?: throw IllegalCommonizerStateException()
+    override val result: DescriptorVisibility
+        get() = checkState(temp, temp == DescriptorVisibilities.UNKNOWN)
 
-    override fun commonizeWith(next: CirDeclarationWithVisibility): Boolean {
-        if (temp == Visibilities.UNKNOWN)
+    override fun commonizeWith(next: CirHasVisibility): Boolean {
+        if (temp == DescriptorVisibilities.UNKNOWN)
             return false
 
         val nextVisibility = next.visibility
-        if (!allowPrivate && Visibilities.isPrivate(nextVisibility) || !canBeCommonized(next)) {
-            temp = Visibilities.UNKNOWN
+        if (DescriptorVisibilities.isPrivate(nextVisibility) || !canBeCommonized(next)) {
+            temp = DescriptorVisibilities.UNKNOWN
             return false
         }
 
         temp = temp?.let { temp -> getNext(temp, nextVisibility) } ?: nextVisibility
 
-        return temp != Visibilities.UNKNOWN
+        return temp != DescriptorVisibilities.UNKNOWN
     }
 
-    protected abstract fun canBeCommonized(next: CirDeclarationWithVisibility): Boolean
-    protected abstract fun getNext(current: Visibility, next: Visibility): Visibility
+    protected abstract fun canBeCommonized(next: CirHasVisibility): Boolean
+    protected abstract fun getNext(current: DescriptorVisibility, next: DescriptorVisibility): DescriptorVisibility
 }
 
 /**
- * Choose the lowest possible visibility ignoring private for all given member descriptors, if possible.
+ * Choose the lowest possible visibility ignoring private for all given member descriptors.
  * If at least one member descriptor is virtual, then the commonizer succeeds only if all visibilities are equal.
  */
-private class LoweringVisibilityCommonizer(allowPrivate: Boolean) : VisibilityCommonizer(allowPrivate) {
+private class LoweringVisibilityCommonizer : VisibilityCommonizer() {
     private var atLeastOneVirtualCallableMet = false
     private var atLeastTwoVisibilitiesMet = false
 
-    override fun canBeCommonized(next: CirDeclarationWithVisibility): Boolean {
+    override fun canBeCommonized(next: CirHasVisibility): Boolean {
         if (!atLeastOneVirtualCallableMet)
             atLeastOneVirtualCallableMet = (next as? CirFunctionOrProperty)?.isVirtual() == true
 
         return !atLeastOneVirtualCallableMet || !atLeastTwoVisibilitiesMet
     }
 
-    override fun getNext(current: Visibility, next: Visibility): Visibility {
-        val comparisonResult: Int = Visibilities.compare(current, next)
-            ?: return Visibilities.UNKNOWN // two visibilities that can't be compared against each one, ex: protected vs internal
+    override fun getNext(current: DescriptorVisibility, next: DescriptorVisibility): DescriptorVisibility {
+        val comparisonResult: Int = DescriptorVisibilities.compare(current, next)
+            ?: return DescriptorVisibilities.UNKNOWN // two visibilities that can't be compared against each one, ex: protected vs internal
 
         if (!atLeastTwoVisibilitiesMet)
             atLeastTwoVisibilitiesMet = comparisonResult != 0
 
         if (atLeastOneVirtualCallableMet && atLeastTwoVisibilitiesMet)
-            return Visibilities.UNKNOWN
+            return DescriptorVisibilities.UNKNOWN
 
         return if (comparisonResult <= 0) current else next
     }
 }
 
 /**
- * Make sure that visibilities of all member descriptors are equal are not private according to [Visibilities.isPrivate].
+ * Make sure that visibilities of all member descriptors are equal and are not private according to [DescriptorVisibilities.isPrivate].
  */
-private class EqualizingVisibilityCommonizer : VisibilityCommonizer(false) {
-    override fun canBeCommonized(next: CirDeclarationWithVisibility) = true
+private class EqualizingVisibilityCommonizer : VisibilityCommonizer() {
+    override fun canBeCommonized(next: CirHasVisibility) = true
 
-    override fun getNext(current: Visibility, next: Visibility) =
-        if (Visibilities.compare(current, next) == 0) current else Visibilities.UNKNOWN
+    override fun getNext(current: DescriptorVisibility, next: DescriptorVisibility) =
+        if (DescriptorVisibilities.compare(current, next) == 0) current else DescriptorVisibilities.UNKNOWN
 }

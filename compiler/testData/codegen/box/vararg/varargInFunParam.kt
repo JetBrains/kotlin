@@ -1,4 +1,5 @@
-// IGNORE_BACKEND_FIR: JVM_IR
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: SPREAD_OPERATOR
 fun box(): String {
     if (test1() != "") return "fail 1"
     if (test1(1) != "1") return "fail 2"

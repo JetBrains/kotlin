@@ -1,0 +1,14 @@
+package
+
+public fun </*0*/ K> test(/*0*/ x: kotlin.collections.List<ObservableSet<K>>): kotlin.Unit
+
+public interface ObservableSet</*0*/ out T> : kotlin.collections.Set<T> {
+    public abstract override /*1*/ /*fake_override*/ val size: kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ fun contains(/*0*/ element: T): kotlin.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun containsAll(/*0*/ elements: kotlin.collections.Collection<T>): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun iterator(): kotlin.collections.Iterator<T>
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

@@ -1,5 +1,5 @@
 // !CHECK_TYPE
-// JSR305_GLOBAL_REPORT warn
+// JSR305_GLOBAL_REPORT: warn
 
 // FILE: J.java
 

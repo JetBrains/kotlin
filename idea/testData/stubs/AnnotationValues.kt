@@ -129,3 +129,9 @@ annotation class ArraysSpread(
     *[1, 2, 3]
 )
 class WithSpreadOperatorArrays
+
+@SomeAnno1(x = (1 + 2).toLong())
+@SomeAnno2(x = 1.toLong())
+@SomeAnno3(x = 1.toLong() + 2)
+@SomeAnno4(x = 1 + some.value + 2)
+class WithComplexDotQualifiedAnnotation

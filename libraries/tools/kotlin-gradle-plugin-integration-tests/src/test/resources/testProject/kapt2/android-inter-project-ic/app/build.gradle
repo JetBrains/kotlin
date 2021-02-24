@@ -17,12 +17,12 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    compile 'com.android.support:appcompat-v7:23.3.0'
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compile project(':lib-android')
-    compile project(':lib-jvm')
-    compile "org.jetbrains.kotlin:annotation-processor-example:$kotlin_version"
+    implementation 'com.android.support:appcompat-v7:23.3.0'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation project(':lib-android')
+    implementation project(':lib-jvm')
+    implementation "org.jetbrains.kotlin:annotation-processor-example:$kotlin_version"
     kapt "org.jetbrains.kotlin:annotation-processor-example:$kotlin_version"
 }

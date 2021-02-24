@@ -15,5 +15,5 @@ fun <K, V> B<K>.foo(p: KProperty1<K, V>) {}
 class C : A
 
 fun <R : A> B<R>.test(){
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(C::bla)
+    <!INAPPLICABLE_CANDIDATE!>foo<!>(<!UNRESOLVED_REFERENCE!>C::bla<!>)
 }

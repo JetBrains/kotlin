@@ -1,0 +1,3 @@
+FILE: nullability.kt
+    public? final? fun orFourtyTwo(arg: Int?): <implicit> { LAZY_BLOCK }
+    public? final? fun bang(arg: Int?): <implicit> { LAZY_BLOCK }

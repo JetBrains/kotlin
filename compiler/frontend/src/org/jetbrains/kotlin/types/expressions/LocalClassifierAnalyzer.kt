@@ -69,7 +69,9 @@ class LocalClassifierAnalyzer(
     private val delegationFilter: DelegationFilter,
     private val wrappedTypeFactory: WrappedTypeFactory,
     private val kotlinTypeChecker: NewKotlinTypeChecker,
-    private val samConversionResolver: SamConversionResolver
+    private val samConversionResolver: SamConversionResolver,
+    private val additionalClassPartsProvider: AdditionalClassPartsProvider,
+    private val sealedClassInheritorsProvider: SealedClassInheritorsProvider
 ) {
     fun processClassOrObject(
         scope: LexicalWritableScope?,
@@ -104,7 +106,9 @@ class LocalClassifierAnalyzer(
                 delegationFilter,
                 wrappedTypeFactory,
                 kotlinTypeChecker,
-                samConversionResolver
+                samConversionResolver,
+                additionalClassPartsProvider,
+                sealedClassInheritorsProvider
             ),
             analyzerServices
         )
@@ -112,7 +116,8 @@ class LocalClassifierAnalyzer(
         container.get<LazyTopDownAnalyzer>().analyzeDeclarations(
             TopDownAnalysisMode.LocalDeclarations,
             listOf(classOrObject),
-            context.dataFlowInfo
+            context.dataFlowInfo,
+            localContext = context
         )
     }
 }
@@ -134,7 +139,9 @@ class LocalClassDescriptorHolder(
     val delegationFilter: DelegationFilter,
     val wrappedTypeFactory: WrappedTypeFactory,
     val kotlinTypeChecker: NewKotlinTypeChecker,
-    val samConversionResolver: SamConversionResolver
+    val samConversionResolver: SamConversionResolver,
+    val additionalClassPartsProvider: AdditionalClassPartsProvider,
+    val sealedClassInheritorsProvider: SealedClassInheritorsProvider
 ) {
     // We do not need to synchronize here, because this code is used strictly from one thread
     private var classDescriptor: ClassDescriptor? = null
@@ -176,6 +183,9 @@ class LocalClassDescriptorHolder(
                     override val wrappedTypeFactory: WrappedTypeFactory = this@LocalClassDescriptorHolder.wrappedTypeFactory
                     override val kotlinTypeChecker: NewKotlinTypeChecker = this@LocalClassDescriptorHolder.kotlinTypeChecker
                     override val samConversionResolver: SamConversionResolver = this@LocalClassDescriptorHolder.samConversionResolver
+                    override val additionalClassPartsProvider: AdditionalClassPartsProvider =
+                        this@LocalClassDescriptorHolder.additionalClassPartsProvider
+                    override val sealedClassInheritorsProvider: SealedClassInheritorsProvider = this@LocalClassDescriptorHolder.sealedClassInheritorsProvider
                 },
                 containingDeclaration,
                 classOrObject.nameAsSafeName,

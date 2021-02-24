@@ -3,16 +3,20 @@
     "pos": {
       "1": [
         {
-          "specVersion": "0.1-213",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "check postfix decrement expression has the same type as its operand expression",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-decrement-expression/p-6/pos/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
-          "specVersion": "0.1-213",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "check postfix decrement expression has the same type as its operand expression",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-decrement-expression/p-6/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ]
     }
@@ -21,31 +25,36 @@
     "pos": {
       "1": [
         {
-          "specVersion": "0.1-213",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "check postfix decrement expression has the same type as its operand expression",
           "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-decrement-expression/p-6/pos/1.1.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-213",
           "casesNumber": 0,
           "description": "check postfix decrement expression",
           "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-decrement-expression/p-1/pos/1.2.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-213",
           "casesNumber": 0,
           "description": "check postfix decrement expression",
           "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-decrement-expression/p-1/pos/1.1.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-213",
           "casesNumber": 0,
           "description": "check the result of dec() is assigned to A, the return type of dec must be a subtype of A.",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-decrement-expression/p-5/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ]
     }
@@ -57,13 +66,17 @@
           "specVersion": "0.1-213",
           "casesNumber": 0,
           "description": "check postfix decrement expression",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-decrement-expression/p-1/pos/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-213",
           "casesNumber": 0,
           "description": "check postfix decrement expression",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-decrement-expression/p-1/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ]
     }
@@ -75,13 +88,17 @@
           "specVersion": "0.1-213",
           "casesNumber": 0,
           "description": "check for A-- expression A must be an assignable expression (a navigation expression referring to a mutable property)",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-decrement-expression/p-4/pos/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-213",
           "casesNumber": 0,
           "description": "check for a  decrement expression A-- expression A must be an assignable expression (an indexing expression)",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-decrement-expression/p-4/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ]
     }

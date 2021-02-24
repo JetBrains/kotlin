@@ -21,5 +21,5 @@ data class FooImplAll(val num: Int) : Foo {
 
 data class WrongSignatures(val num: Int) : Foo {
     override fun equals(other: WrongSignatures) = false
-    override fun hashCode(): Boolean = true
+    override fun hashCode(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>Boolean<!> = true
 }

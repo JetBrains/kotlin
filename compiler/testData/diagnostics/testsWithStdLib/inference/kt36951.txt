@@ -1,0 +1,26 @@
+package
+
+public final class Base</*0*/ T : [ERROR : Cyclic upper bounds]> : kotlin.collections.HashSet<T> /* = java.util.HashSet<T> */ {
+    public constructor Base</*0*/ T : [ERROR : Cyclic upper bounds]>()
+    invisible_fake final override /*1*/ /*fake_override*/ var map: java.util.HashMap<T!, kotlin.Any!>!
+    public open override /*1*/ /*fake_override*/ val size: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun add(/*0*/ element: T): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun addAll(/*0*/ elements: kotlin.collections.Collection<T>): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun clear(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+    public open override /*1*/ /*fake_override*/ fun contains(/*0*/ element: T): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun containsAll(/*0*/ elements: kotlin.collections.Collection<T>): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun foo(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun iterator(): kotlin.collections.MutableIterator<T>
+    invisible_fake open override /*1*/ /*fake_override*/ fun readObject(/*0*/ s: java.io.ObjectInputStream!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun remove(/*0*/ element: T): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun removeAll(/*0*/ elements: kotlin.collections.Collection<T>): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun retainAll(/*0*/ elements: kotlin.collections.Collection<T>): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun toArray(): kotlin.Array<(out) kotlin.Any!>!
+    public open override /*1*/ /*fake_override*/ fun </*0*/ T : kotlin.Any!> toArray(/*0*/ a: kotlin.Array<(out) T!>!): kotlin.Array<(out) T!>!
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    invisible_fake open override /*1*/ /*fake_override*/ fun writeObject(/*0*/ s: java.io.ObjectOutputStream!): kotlin.Unit
+}

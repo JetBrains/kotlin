@@ -1,5 +1,5 @@
 //file
-// !specifyFieldTypeByDefault: true
+// !SPECIFY_FIELD_TYPE_BY_DEFAULT: true
 import org.jetbrains.annotations.Nullable;
 import java.util.*;
 

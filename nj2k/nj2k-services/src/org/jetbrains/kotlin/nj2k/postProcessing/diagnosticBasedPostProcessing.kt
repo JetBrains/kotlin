@@ -11,11 +11,10 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
-import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.util.range
 import org.jetbrains.kotlin.idea.quickfix.AddExclExclCallFix
-import org.jetbrains.kotlin.idea.quickfix.KotlinIntentionActionsFactory
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
+import org.jetbrains.kotlin.idea.quickfix.QuickFixFactory
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
@@ -36,17 +35,20 @@ class DiagnosticBasedPostProcessingGroup(diagnosticBasedProcessings: List<Diagno
         }
 
     override fun runProcessing(file: KtFile, allFiles: List<KtFile>, rangeMarker: RangeMarker?, converterContext: NewJ2kConverterContext) {
-        val resolutionFacade = runReadAction { KotlinCacheService.getInstance(converterContext.project).getResolutionFacade(allFiles) }
-        val diagnostics = runReadAction { analyzeFileRange(file, rangeMarker, resolutionFacade).all() }
-        runUndoTransparentActionInEdt(inWriteAction = true) {
-            for (diagnostic in diagnostics) {
+        val diagnostics = runReadAction {
+            val resolutionFacade = KotlinCacheService.getInstance(converterContext.project).getResolutionFacade(allFiles)
+            analyzeFileRange(file, rangeMarker, resolutionFacade).all()
+        }
+        for (diagnostic in diagnostics) {
+            val elementIsInRange = runReadAction {
                 val range = rangeMarker?.range ?: file.textRange
-                if (diagnostic.psiElement.isInRange(range)) {
-                    diagnosticToFix[diagnostic.factory]?.forEach { fix ->
-                        if (diagnostic.psiElement.isValid) {
-                            fix(diagnostic)
-                        }
-                    }
+                diagnostic.psiElement.isInRange(range)
+            }
+            if (!elementIsInRange) continue
+            diagnosticToFix[diagnostic.factory]?.forEach { fix ->
+                val elementIsValid = runReadAction { diagnostic.psiElement.isValid }
+                if (elementIsValid) {
+                    fix(diagnostic)
                 }
             }
         }
@@ -78,18 +80,21 @@ inline fun <reified T : PsiElement> diagnosticBasedProcessing(
         override val diagnosticFactories = diagnosticFactory.toList()
         override fun fix(diagnostic: Diagnostic) {
             val element = diagnostic.psiElement as? T
-            if (element != null) {
+            if (element != null) runUndoTransparentActionInEdt(inWriteAction = true) {
                 fix(element, diagnostic)
             }
         }
     }
 
-fun diagnosticBasedProcessing(fixFactory: KotlinIntentionActionsFactory, vararg diagnosticFactory: DiagnosticFactory<*>) =
+fun diagnosticBasedProcessing(fixFactory: QuickFixFactory, vararg diagnosticFactory: DiagnosticFactory<*>) =
     object : DiagnosticBasedProcessing {
         override val diagnosticFactories = diagnosticFactory.toList()
         override fun fix(diagnostic: Diagnostic) {
-            val fix = fixFactory.createActions(diagnostic).singleOrNull()
-            fix?.invoke(diagnostic.psiElement.project, null, diagnostic.psiFile)
+            val actionFactory = fixFactory.asKotlinIntentionActionsFactory()
+            val fix = runReadAction { actionFactory.createActions(diagnostic).singleOrNull() } ?: return
+            runUndoTransparentActionInEdt(inWriteAction = true) {
+                fix.invoke(diagnostic.psiElement.project, null, diagnostic.psiFile)
+            }
         }
     }
 

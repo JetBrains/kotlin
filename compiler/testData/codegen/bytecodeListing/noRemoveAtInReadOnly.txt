@@ -1,5 +1,6 @@
 @kotlin.Metadata
 public abstract class A {
+    // source: 'noRemoveAtInReadOnly.kt'
     public method <init>(): void
     public method add(p0: int, p1: java.lang.Object): void
     public method add(p0: java.lang.Object): boolean
@@ -17,7 +18,7 @@ public abstract class A {
     public method removeAll(p0: java.util.Collection): boolean
     public method retainAll(p0: java.util.Collection): boolean
     public method set(p0: int, p1: java.lang.Object): java.lang.Object
-    public final method size(): int
+    public bridge final method size(): int
     public method subList(p0: int, p1: int): java.util.List
     public method toArray(): java.lang.Object[]
     public method toArray(p0: java.lang.Object[]): java.lang.Object[]
@@ -25,6 +26,7 @@ public abstract class A {
 
 @kotlin.Metadata
 public abstract class B {
+    // source: 'noRemoveAtInReadOnly.kt'
     public method <init>(): void
     public method add(p0: int): boolean
     public method add(p0: int, p1: int): void
@@ -34,12 +36,12 @@ public abstract class B {
     public method addAll(p0: java.util.Collection): boolean
     public method clear(): void
     public abstract method contains(p0: int): boolean
-    public final method contains(p0: java.lang.Object): boolean
+    public bridge final method contains(p0: java.lang.Object): boolean
     public abstract method getSize(): int
     public abstract method indexOf(p0: int): int
-    public final method indexOf(p0: java.lang.Object): int
+    public bridge final method indexOf(p0: java.lang.Object): int
     public abstract method lastIndexOf(p0: int): int
-    public final method lastIndexOf(p0: java.lang.Object): int
+    public bridge final method lastIndexOf(p0: java.lang.Object): int
     public method listIterator(): java.util.ListIterator
     public method listIterator(p0: int): java.util.ListIterator
     public method remove(p0: int): int
@@ -49,7 +51,7 @@ public abstract class B {
     public method retainAll(p0: java.util.Collection): boolean
     public method set(p0: int, p1: int): java.lang.Integer
     public synthetic method set(p0: int, p1: java.lang.Object): java.lang.Object
-    public final method size(): int
+    public bridge final method size(): int
     public method subList(p0: int, p1: int): java.util.List
     public method toArray(): java.lang.Object[]
     public method toArray(p0: java.lang.Object[]): java.lang.Object[]

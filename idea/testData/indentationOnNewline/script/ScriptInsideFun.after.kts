@@ -5,3 +5,5 @@ fun fn() {
     x = x + 1
     <caret>
 }
+
+// WITHOUT_CUSTOM_LINE_INDENT_PROVIDER

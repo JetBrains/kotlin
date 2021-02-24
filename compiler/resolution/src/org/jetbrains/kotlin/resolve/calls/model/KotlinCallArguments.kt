@@ -44,13 +44,21 @@ interface SimpleKotlinCallArgument : KotlinCallArgument, ReceiverKotlinCallArgum
 
 interface ExpressionKotlinCallArgument : SimpleKotlinCallArgument, ResolutionAtom
 
-interface SubKotlinCallArgument : SimpleKotlinCallArgument {
+interface SubKotlinCallArgument : SimpleKotlinCallArgument, ResolutionAtom {
     val callResult: PartialCallResolutionResult
 }
 
 interface LambdaKotlinCallArgument : PostponableKotlinCallArgument {
     override val isSpread: Boolean
         get() = false
+
+    /*
+     * Builder inference is supported only for lambdas (so it's implemented only in `LambdaKotlinCallArgumentImpl`),
+     * anonymous functions aren't supported
+     */
+    var hasBuilderInferenceAnnotation: Boolean
+        get() = false
+        set(@Suppress("UNUSED_PARAMETER") value) {}
 
     /**
      * parametersTypes == null means, that there is no declared arguments

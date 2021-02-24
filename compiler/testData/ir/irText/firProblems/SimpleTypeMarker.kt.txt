@@ -1,0 +1,39 @@
+interface SimpleTypeMarker {
+
+}
+
+class SimpleType : SimpleTypeMarker {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun foo(): String {
+    return "OK"
+  }
+
+}
+
+interface User {
+  fun SimpleTypeMarker.bar(): String {
+    require(value = <this> is SimpleType)
+    return <this> /*as SimpleType */.foo()
+  }
+
+}
+
+class UserImpl {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun SimpleTypeMarker.bar(): String {
+    require(value = <this> is SimpleType)
+    return <this> /*as SimpleType */.foo()
+  }
+
+}
+

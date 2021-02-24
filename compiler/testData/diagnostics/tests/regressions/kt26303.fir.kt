@@ -14,5 +14,5 @@ import foo.foo as invoke
 import foo.invoke
 
 fun main(args: Array<String>) {
-    <!AMBIGUITY!>42()<!>
+    <!AMBIGUITY!>42<!>()
 }

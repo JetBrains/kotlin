@@ -1,0 +1,43 @@
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class A {
+    // source: 'kt42879.kt'
+    private final field value: int
+    private synthetic method <init>(p0: int): void
+    public synthetic final static method box-impl(p0: int): A
+    public static method constructor-impl(p0: int): int
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: int, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: int, p1: int): boolean
+    public final method getValue(): int
+    public method hashCode(): int
+    public static method hashCode-impl(p0: int): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: int): java.lang.String
+    public synthetic final method unbox-impl(): int
+}
+
+@kotlin.Metadata
+public interface I {
+    // source: 'kt42879.kt'
+    public abstract method compute-p71pxCs(p0: int): int
+}
+
+@kotlin.Metadata
+final class Kt42879Kt$g$1 {
+    // source: 'kt42879.kt'
+    enclosing method Kt42879Kt.g()V
+    public final static field INSTANCE: Kt42879Kt$g$1
+    inner (anonymous) class Kt42879Kt$g$1
+    static method <clinit>(): void
+    method <init>(): void
+    public final method compute-p71pxCs(p0: int): int
+}
+
+@kotlin.Metadata
+public final class Kt42879Kt {
+    // source: 'kt42879.kt'
+    inner (anonymous) class Kt42879Kt$g$1
+    public final static method f(@org.jetbrains.annotations.NotNull p0: I): void
+    public final static method g(): void
+}

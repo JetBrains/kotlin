@@ -7,13 +7,10 @@ package org.jetbrains.kotlin.fir.descriptors
 
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptorVisitor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -30,7 +27,7 @@ class FirModuleDescriptor(val session: FirSession) : ModuleDescriptor {
         get() = null
 
     override fun getPackage(fqName: FqName): PackageViewDescriptor {
-        val symbolProvider = FirSymbolProvider.getInstance(session)
+        val symbolProvider = session.symbolProvider
         if (symbolProvider.getPackage(fqName) != null) {
             return FirPackageViewDescriptor(fqName, this)
         }
@@ -45,8 +42,10 @@ class FirModuleDescriptor(val session: FirSession) : ModuleDescriptor {
         get() = TODO("not implemented")
     override val expectedByModules: List<ModuleDescriptor>
         get() = TODO("not implemented")
+    override val allExpectedByModules: Set<ModuleDescriptor>
+        get() = TODO("not implemented")
 
-    override fun <T> getCapability(capability: ModuleDescriptor.Capability<T>): T? {
+    override fun <T> getCapability(capability: ModuleCapability<T>): T? {
         return null
     }
 

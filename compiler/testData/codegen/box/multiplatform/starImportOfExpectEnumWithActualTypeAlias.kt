@@ -1,16 +1,17 @@
 // !LANGUAGE: +MultiPlatformProjects
-// IGNORE_BACKEND_FIR: JVM_IR
 // IGNORE_BACKEND: JS
 // IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JS_IR_ES6
+// IGNORE_BACKEND: NATIVE
 
-// MODULE: common
+// MODULE: lib-common
 // FILE: common.kt
 
 package test
 
 expect enum class E
 
-// MODULE: jvm1(common)
+// MODULE: lib-jvm(lib-common)
 // FILE: jvm.kt
 
 package test
@@ -21,7 +22,7 @@ enum class F {
     OK;
 }
 
-// MODULE: main(jvm1)
+// MODULE: main(lib-jvm)
 // FILE: jvm2.kt
 
 import test.E.*

@@ -1,0 +1,2 @@
+
+println(""::class.isOpen)

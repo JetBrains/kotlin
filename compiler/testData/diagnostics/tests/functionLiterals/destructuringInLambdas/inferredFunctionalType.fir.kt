@@ -27,7 +27,7 @@ fun bar(aList: List<A>) {
         b checkType { _<String>() }
     }
 
-    aList.foo { (a, b): B ->
+    aList.<!INAPPLICABLE_CANDIDATE!>foo<!> { (a, b): B ->
         b checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Int>() }
         a checkType { <!INAPPLICABLE_CANDIDATE!>_<!><String>() }
     }

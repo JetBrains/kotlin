@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.serialization.deserialization.builtins
 
 import org.jetbrains.kotlin.builtins.BuiltInsLoader
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.NotFoundClasses
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
@@ -35,7 +35,7 @@ class BuiltInsLoaderImpl : BuiltInsLoader {
         return createBuiltInPackageFragmentProvider(
             storageManager,
             builtInsModule,
-            KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAMES,
+            StandardNames.BUILT_INS_PACKAGE_FQ_NAMES,
             classDescriptorFactories,
             platformDependentDeclarationFilter,
             additionalClassPartsProvider,

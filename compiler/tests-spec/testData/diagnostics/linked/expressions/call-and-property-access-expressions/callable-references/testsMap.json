@@ -1,0 +1,30 @@
+{
+  "11": {
+    "pos": {
+      "3": [
+        {
+          "specVersion": "0.1-220",
+          "casesNumber": 0,
+          "description": "Callable reference as last expression in block",
+          "path": "compiler/testData/diagnostics/tests/callableReference/callableReferenceAsLastExpressionInBlock.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ]
+    }
+  },
+  "3": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-220",
+          "casesNumber": 0,
+          "description": "Bare type",
+          "path": "compiler/testData/diagnostics/tests/callableReference/bareType.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ]
+    }
+  }
+}

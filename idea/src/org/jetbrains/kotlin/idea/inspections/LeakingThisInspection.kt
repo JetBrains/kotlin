@@ -14,8 +14,9 @@ import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.search.searches.DefinitionsScopedSearch
 import org.jetbrains.kotlin.cfg.LeakingThisDescriptor.*
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
-import org.jetbrains.kotlin.idea.quickfix.AddModifierFix
+import org.jetbrains.kotlin.idea.quickfix.AddModifierFixMpp
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
@@ -40,21 +41,21 @@ class LeakingThisInspection : AbstractKotlinInspection() {
                         if (expression is KtThisExpression && expression.getStrictParentOfType<KtClassLiteralExpression>() == null) {
                             val name = leakingThisDescriptor.klass.name
                             klass.createDescription(
-                                "Leaking 'this' in constructor of non-final class $name",
-                                "Leaking 'this' in constructor of enum class $name (with overridable members)"
+                                KotlinBundle.message("leaking.this.in.constructor.of.non.final.class.0", name),
+                                KotlinBundle.message("leaking.this.in.constructor.of.enum.class.0.with.overridable.members", name)
                             ) { it.hasOverriddenMember() } ?: continue@these
                         } else {
                             continue@these // Not supported yet
                         }
                     is NonFinalProperty -> {
                         val name = leakingThisDescriptor.property.name.asString()
-                        klass.createDescription("Accessing non-final property $name in constructor") {
+                        klass.createDescription(KotlinBundle.message("accessing.non.final.property.0.in.constructor", name)) {
                             it.hasOverriddenMember { owner -> owner.name == name }
                         } ?: continue@these
                     }
                     is NonFinalFunction -> {
                         val function = leakingThisDescriptor.function
-                        klass.createDescription("Calling non-final function ${function.name} in constructor") {
+                        klass.createDescription(KotlinBundle.message("calling.non.final.function.0.in.constructor", function.name)) {
                             it.hasOverriddenMember { owner ->
                                 owner is KtNamedFunction &&
                                         owner.name == function.name.asString() &&
@@ -99,7 +100,7 @@ class LeakingThisInspection : AbstractKotlinInspection() {
             val useScope = declaration.useScope
             if (DefinitionsScopedSearch.search(declaration, useScope).findFirst() != null) return null
             if ((declaration.containingClassOrObject as? KtClass)?.isInterface() == true) return null
-            return IntentionWrapper(AddModifierFix(declaration, KtTokens.FINAL_KEYWORD), declaration.containingFile)
+            return IntentionWrapper(AddModifierFixMpp(declaration, KtTokens.FINAL_KEYWORD), declaration.containingFile)
         }
     }
 }

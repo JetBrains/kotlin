@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.inspections.substring
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.evaluatesTo
 import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -16,8 +17,10 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 
 class ReplaceSubstringWithDropLastInspection : ReplaceSubstringInspection() {
-    override fun inspectionText(element: KtDotQualifiedExpression): String = "Replace 'substring' call with 'dropLast' call"
-    override val defaultFixText: String = "Replace 'substring' call with 'dropLast' call"
+    override fun inspectionText(element: KtDotQualifiedExpression): String =
+        KotlinBundle.message("replace.substring.call.with.droplast.call")
+
+    override val defaultFixText: String get() = KotlinBundle.message("replace.substring.call.with.droplast.call")
 
     override fun applyTo(element: KtDotQualifiedExpression, project: Project, editor: Editor?) {
         val argument = element.callExpression?.valueArguments?.elementAtOrNull(1)?.getArgumentExpression() ?: return

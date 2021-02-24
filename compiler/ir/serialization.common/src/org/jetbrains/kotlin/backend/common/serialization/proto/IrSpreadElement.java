@@ -66,17 +66,9 @@ public final class IrSpreadElement extends
             bitField0_ |= 0x00000001;
             break;
           }
-          case 18: {
-            org.jetbrains.kotlin.backend.common.serialization.proto.Coordinates.Builder subBuilder = null;
-            if (((bitField0_ & 0x00000002) == 0x00000002)) {
-              subBuilder = coordinates_.toBuilder();
-            }
-            coordinates_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.Coordinates.PARSER, extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(coordinates_);
-              coordinates_ = subBuilder.buildPartial();
-            }
+          case 16: {
             bitField0_ |= 0x00000002;
+            coordinates_ = input.readInt64();
             break;
           }
         }
@@ -129,23 +121,23 @@ public final class IrSpreadElement extends
   }
 
   public static final int COORDINATES_FIELD_NUMBER = 2;
-  private org.jetbrains.kotlin.backend.common.serialization.proto.Coordinates coordinates_;
+  private long coordinates_;
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Coordinates coordinates = 2;</code>
+   * <code>required int64 coordinates = 2;</code>
    */
   public boolean hasCoordinates() {
     return ((bitField0_ & 0x00000002) == 0x00000002);
   }
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Coordinates coordinates = 2;</code>
+   * <code>required int64 coordinates = 2;</code>
    */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.Coordinates getCoordinates() {
+  public long getCoordinates() {
     return coordinates_;
   }
 
   private void initFields() {
     expression_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.getDefaultInstance();
-    coordinates_ = org.jetbrains.kotlin.backend.common.serialization.proto.Coordinates.getDefaultInstance();
+    coordinates_ = 0L;
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -165,10 +157,6 @@ public final class IrSpreadElement extends
       memoizedIsInitialized = 0;
       return false;
     }
-    if (!getCoordinates().isInitialized()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
     memoizedIsInitialized = 1;
     return true;
   }
@@ -180,7 +168,7 @@ public final class IrSpreadElement extends
       output.writeMessage(1, expression_);
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
-      output.writeMessage(2, coordinates_);
+      output.writeInt64(2, coordinates_);
     }
     output.writeRawBytes(unknownFields);
   }
@@ -197,7 +185,7 @@ public final class IrSpreadElement extends
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeMessageSize(2, coordinates_);
+        .computeInt64Size(2, coordinates_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -295,7 +283,7 @@ public final class IrSpreadElement extends
       super.clear();
       expression_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000001);
-      coordinates_ = org.jetbrains.kotlin.backend.common.serialization.proto.Coordinates.getDefaultInstance();
+      coordinates_ = 0L;
       bitField0_ = (bitField0_ & ~0x00000002);
       return this;
     }
@@ -338,7 +326,7 @@ public final class IrSpreadElement extends
         mergeExpression(other.getExpression());
       }
       if (other.hasCoordinates()) {
-        mergeCoordinates(other.getCoordinates());
+        setCoordinates(other.getCoordinates());
       }
       setUnknownFields(
           getUnknownFields().concat(other.unknownFields));
@@ -355,10 +343,6 @@ public final class IrSpreadElement extends
         return false;
       }
       if (!getExpression().isInitialized()) {
-        
-        return false;
-      }
-      if (!getCoordinates().isInitialized()) {
         
         return false;
       }
@@ -444,63 +428,35 @@ public final class IrSpreadElement extends
       return this;
     }
 
-    private org.jetbrains.kotlin.backend.common.serialization.proto.Coordinates coordinates_ = org.jetbrains.kotlin.backend.common.serialization.proto.Coordinates.getDefaultInstance();
+    private long coordinates_ ;
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Coordinates coordinates = 2;</code>
+     * <code>required int64 coordinates = 2;</code>
      */
     public boolean hasCoordinates() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Coordinates coordinates = 2;</code>
+     * <code>required int64 coordinates = 2;</code>
      */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.Coordinates getCoordinates() {
+    public long getCoordinates() {
       return coordinates_;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Coordinates coordinates = 2;</code>
+     * <code>required int64 coordinates = 2;</code>
      */
-    public Builder setCoordinates(org.jetbrains.kotlin.backend.common.serialization.proto.Coordinates value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
+    public Builder setCoordinates(long value) {
+      bitField0_ |= 0x00000002;
       coordinates_ = value;
-
-      bitField0_ |= 0x00000002;
+      
       return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Coordinates coordinates = 2;</code>
-     */
-    public Builder setCoordinates(
-        org.jetbrains.kotlin.backend.common.serialization.proto.Coordinates.Builder builderForValue) {
-      coordinates_ = builderForValue.build();
-
-      bitField0_ |= 0x00000002;
-      return this;
-    }
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Coordinates coordinates = 2;</code>
-     */
-    public Builder mergeCoordinates(org.jetbrains.kotlin.backend.common.serialization.proto.Coordinates value) {
-      if (((bitField0_ & 0x00000002) == 0x00000002) &&
-          coordinates_ != org.jetbrains.kotlin.backend.common.serialization.proto.Coordinates.getDefaultInstance()) {
-        coordinates_ =
-          org.jetbrains.kotlin.backend.common.serialization.proto.Coordinates.newBuilder(coordinates_).mergeFrom(value).buildPartial();
-      } else {
-        coordinates_ = value;
-      }
-
-      bitField0_ |= 0x00000002;
-      return this;
-    }
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Coordinates coordinates = 2;</code>
+     * <code>required int64 coordinates = 2;</code>
      */
     public Builder clearCoordinates() {
-      coordinates_ = org.jetbrains.kotlin.backend.common.serialization.proto.Coordinates.getDefaultInstance();
-
       bitField0_ = (bitField0_ & ~0x00000002);
+      coordinates_ = 0L;
+      
       return this;
     }
 

@@ -5,26 +5,27 @@
 
 package org.jetbrains.kotlin.backend.common.lower
 
-import org.jetbrains.kotlin.backend.common.*
+import org.jetbrains.kotlin.backend.common.BodyLoweringPass
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.DeclarationTransformer
+import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrBody
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrInstanceInitializerCall
-import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
-import org.jetbrains.kotlin.ir.visitors.*
+import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 object SYNTHESIZED_INIT_BLOCK : IrStatementOriginImpl("SYNTHESIZED_INIT_BLOCK")
 
-open class InitializersLowering(context: CommonBackendContext) : InitializersLoweringBase(context), BodyLoweringPass {
-
+class InitializersLowering(context: CommonBackendContext) : InitializersLoweringBase(context), BodyLoweringPass {
     override fun lower(irFile: IrFile) {
         runOnFilePostfix(irFile, true)
     }
@@ -33,31 +34,22 @@ open class InitializersLowering(context: CommonBackendContext) : InitializersLow
         if (container !is IrConstructor) return
 
         val irClass = container.constructedClass
-
         val instanceInitializerStatements = extractInitializers(irClass) {
             (it is IrField && !it.isStatic) || (it is IrAnonymousInitializer && !it.isStatic)
         }
+        val block = IrBlockImpl(irClass.startOffset, irClass.endOffset, context.irBuiltIns.unitType, null, instanceInitializerStatements)
+        // Check that the initializers contain no local classes. Deep-copying them is a disaster for code size, and liable to break randomly.
+        block.accept(object : IrElementVisitorVoid {
+            override fun visitElement(element: IrElement) =
+                element.acceptChildren(this, null)
+
+            override fun visitClass(declaration: IrClass) =
+                throw AssertionError("class in initializer should have been moved out by LocalClassPopupLowering: ${declaration.render()}")
+        }, null)
 
         container.body?.transformChildrenVoid(object : IrElementTransformerVoid() {
-            override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall): IrExpression {
-                return IrBlockImpl(irClass.startOffset, irClass.endOffset, context.irBuiltIns.unitType, null, instanceInitializerStatements)
-                    .deepCopyWithSymbols(container).also {
-                        // Handle declarations, copied from initializers
-                        // Otherwise local classes inside them won't get processed.
-                        // Yes, there are such cases - see testData/codegen/box/properties/complexPropertyInitializer.kt
-                        it.acceptVoid(object : IrElementVisitorVoid {
-                            override fun visitElement(element: IrElement) {
-                                element.acceptChildrenVoid(this)
-                            }
-
-                            override fun visitConstructor(declaration: IrConstructor) {
-                                super.visitConstructor(declaration)
-
-                                declaration.body?.let { lower(it, declaration) }
-                            }
-                        })
-                    }
-            }
+            override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall): IrExpression =
+                block.deepCopyWithSymbols(container)
         })
     }
 }
@@ -65,7 +57,7 @@ open class InitializersLowering(context: CommonBackendContext) : InitializersLow
 abstract class InitializersLoweringBase(open val context: CommonBackendContext) {
     protected fun extractInitializers(irClass: IrClass, filter: (IrDeclaration) -> Boolean) =
         // TODO What about fields that were added by lowerings? e.g. captured outer class or locals?
-        ArrayList(irClass.declarations).mapNotNull { if (it is IrProperty) it.backingField else it }.filter(filter).mapNotNull {
+        irClass.declarations.mapNotNull { if (it is IrProperty) it.backingField else it }.filter(filter).mapNotNull {
             when (it) {
                 is IrField -> handleField(irClass, it)
                 is IrAnonymousInitializer -> handleAnonymousInitializer(it)
@@ -79,7 +71,15 @@ abstract class InitializersLoweringBase(open val context: CommonBackendContext) 
                 IrGetValueImpl(startOffset, endOffset, irClass.thisReceiver!!.type, irClass.thisReceiver!!.symbol)
             else
                 null
-            IrSetFieldImpl(startOffset, endOffset, declaration.symbol, receiver, expression, context.irBuiltIns.unitType)
+            IrSetFieldImpl(
+                startOffset,
+                endOffset,
+                declaration.symbol,
+                receiver,
+                expression,
+                context.irBuiltIns.unitType,
+                IrStatementOrigin.INITIALIZE_FIELD
+            )
         }
 
     private fun handleAnonymousInitializer(declaration: IrAnonymousInitializer): IrStatement =
@@ -93,10 +93,7 @@ class InitializersCleanupLowering(
     val context: CommonBackendContext,
     private val shouldEraseFieldInitializer: (IrField) -> Boolean = { it.correspondingPropertySymbol?.owner?.isConst != true }
 ) : DeclarationTransformer {
-
-    override fun lower(irFile: IrFile) {
-        runPostfix(withLocalDeclarations = true).toFileLoweringPass().lower(irFile)
-    }
+    override val withLocalDeclarations: Boolean get() = true
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration is IrAnonymousInitializer) return emptyList()
@@ -107,7 +104,9 @@ class InitializersCleanupLowering(
             } else {
                 declaration.initializer?.let {
                     declaration.initializer =
-                        IrExpressionBodyImpl(it.startOffset, it.endOffset) { expression = it.expression.deepCopyWithSymbols() }
+                        context.irFactory.createExpressionBody(it.startOffset, it.endOffset) {
+                            expression = it.expression.deepCopyWithSymbols()
+                        }
                 }
             }
         }

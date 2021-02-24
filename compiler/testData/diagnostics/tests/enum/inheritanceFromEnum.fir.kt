@@ -8,6 +8,6 @@ open enum class MyEnum() {
 
 enum class MyEnum2() {}
 
-class MyClass(): <!INAPPLICABLE_CANDIDATE!>MyEnum2<!>() {}
+class MyClass(): <!HIDDEN!>MyEnum2<!>() {}
 
 class MyClass2(): <!UNRESOLVED_REFERENCE!>MyJavaEnum<!>() {}

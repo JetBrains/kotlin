@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 class A {
     fun foo() = o_plus_f_plus_k {""}
 

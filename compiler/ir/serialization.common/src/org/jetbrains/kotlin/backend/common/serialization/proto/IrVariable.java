@@ -68,32 +68,12 @@ public final class IrVariable extends
           }
           case 16: {
             bitField0_ |= 0x00000002;
-            name_ = input.readInt32();
+            nameType_ = input.readInt64();
             break;
           }
-          case 24: {
-            bitField0_ |= 0x00000004;
-            type_ = input.readInt32();
-            break;
-          }
-          case 32: {
-            bitField0_ |= 0x00000008;
-            isVar_ = input.readBool();
-            break;
-          }
-          case 40: {
-            bitField0_ |= 0x00000010;
-            isConst_ = input.readBool();
-            break;
-          }
-          case 48: {
-            bitField0_ |= 0x00000020;
-            isLateinit_ = input.readBool();
-            break;
-          }
-          case 58: {
+          case 26: {
             org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.Builder subBuilder = null;
-            if (((bitField0_ & 0x00000040) == 0x00000040)) {
+            if (((bitField0_ & 0x00000004) == 0x00000004)) {
               subBuilder = initializer_.toBuilder();
             }
             initializer_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.PARSER, extensionRegistry);
@@ -101,7 +81,7 @@ public final class IrVariable extends
               subBuilder.mergeFrom(initializer_);
               initializer_ = subBuilder.buildPartial();
             }
-            bitField0_ |= 0x00000040;
+            bitField0_ |= 0x00000004;
             break;
           }
         }
@@ -153,91 +133,31 @@ public final class IrVariable extends
     return base_;
   }
 
-  public static final int NAME_FIELD_NUMBER = 2;
-  private int name_;
+  public static final int NAME_TYPE_FIELD_NUMBER = 2;
+  private long nameType_;
   /**
-   * <code>required int32 name = 2;</code>
+   * <code>required int64 name_type = 2;</code>
    */
-  public boolean hasName() {
+  public boolean hasNameType() {
     return ((bitField0_ & 0x00000002) == 0x00000002);
   }
   /**
-   * <code>required int32 name = 2;</code>
+   * <code>required int64 name_type = 2;</code>
    */
-  public int getName() {
-    return name_;
+  public long getNameType() {
+    return nameType_;
   }
 
-  public static final int TYPE_FIELD_NUMBER = 3;
-  private int type_;
+  public static final int INITIALIZER_FIELD_NUMBER = 3;
+  private org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression initializer_;
   /**
-   * <code>required int32 type = 3;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression initializer = 3;</code>
    */
-  public boolean hasType() {
+  public boolean hasInitializer() {
     return ((bitField0_ & 0x00000004) == 0x00000004);
   }
   /**
-   * <code>required int32 type = 3;</code>
-   */
-  public int getType() {
-    return type_;
-  }
-
-  public static final int IS_VAR_FIELD_NUMBER = 4;
-  private boolean isVar_;
-  /**
-   * <code>required bool is_var = 4;</code>
-   */
-  public boolean hasIsVar() {
-    return ((bitField0_ & 0x00000008) == 0x00000008);
-  }
-  /**
-   * <code>required bool is_var = 4;</code>
-   */
-  public boolean getIsVar() {
-    return isVar_;
-  }
-
-  public static final int IS_CONST_FIELD_NUMBER = 5;
-  private boolean isConst_;
-  /**
-   * <code>required bool is_const = 5;</code>
-   */
-  public boolean hasIsConst() {
-    return ((bitField0_ & 0x00000010) == 0x00000010);
-  }
-  /**
-   * <code>required bool is_const = 5;</code>
-   */
-  public boolean getIsConst() {
-    return isConst_;
-  }
-
-  public static final int IS_LATEINIT_FIELD_NUMBER = 6;
-  private boolean isLateinit_;
-  /**
-   * <code>required bool is_lateinit = 6;</code>
-   */
-  public boolean hasIsLateinit() {
-    return ((bitField0_ & 0x00000020) == 0x00000020);
-  }
-  /**
-   * <code>required bool is_lateinit = 6;</code>
-   */
-  public boolean getIsLateinit() {
-    return isLateinit_;
-  }
-
-  public static final int INITIALIZER_FIELD_NUMBER = 7;
-  private org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression initializer_;
-  /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression initializer = 7;</code>
-   */
-  public boolean hasInitializer() {
-    return ((bitField0_ & 0x00000040) == 0x00000040);
-  }
-  /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression initializer = 7;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression initializer = 3;</code>
    */
   public org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression getInitializer() {
     return initializer_;
@@ -245,11 +165,7 @@ public final class IrVariable extends
 
   private void initFields() {
     base_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase.getDefaultInstance();
-    name_ = 0;
-    type_ = 0;
-    isVar_ = false;
-    isConst_ = false;
-    isLateinit_ = false;
+    nameType_ = 0L;
     initializer_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.getDefaultInstance();
   }
   private byte memoizedIsInitialized = -1;
@@ -262,23 +178,7 @@ public final class IrVariable extends
       memoizedIsInitialized = 0;
       return false;
     }
-    if (!hasName()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
-    if (!hasType()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
-    if (!hasIsVar()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
-    if (!hasIsConst()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
-    if (!hasIsLateinit()) {
+    if (!hasNameType()) {
       memoizedIsInitialized = 0;
       return false;
     }
@@ -303,22 +203,10 @@ public final class IrVariable extends
       output.writeMessage(1, base_);
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
-      output.writeInt32(2, name_);
+      output.writeInt64(2, nameType_);
     }
     if (((bitField0_ & 0x00000004) == 0x00000004)) {
-      output.writeInt32(3, type_);
-    }
-    if (((bitField0_ & 0x00000008) == 0x00000008)) {
-      output.writeBool(4, isVar_);
-    }
-    if (((bitField0_ & 0x00000010) == 0x00000010)) {
-      output.writeBool(5, isConst_);
-    }
-    if (((bitField0_ & 0x00000020) == 0x00000020)) {
-      output.writeBool(6, isLateinit_);
-    }
-    if (((bitField0_ & 0x00000040) == 0x00000040)) {
-      output.writeMessage(7, initializer_);
+      output.writeMessage(3, initializer_);
     }
     output.writeRawBytes(unknownFields);
   }
@@ -335,27 +223,11 @@ public final class IrVariable extends
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeInt32Size(2, name_);
+        .computeInt64Size(2, nameType_);
     }
     if (((bitField0_ & 0x00000004) == 0x00000004)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeInt32Size(3, type_);
-    }
-    if (((bitField0_ & 0x00000008) == 0x00000008)) {
-      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeBoolSize(4, isVar_);
-    }
-    if (((bitField0_ & 0x00000010) == 0x00000010)) {
-      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeBoolSize(5, isConst_);
-    }
-    if (((bitField0_ & 0x00000020) == 0x00000020)) {
-      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeBoolSize(6, isLateinit_);
-    }
-    if (((bitField0_ & 0x00000040) == 0x00000040)) {
-      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeMessageSize(7, initializer_);
+        .computeMessageSize(3, initializer_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -453,18 +325,10 @@ public final class IrVariable extends
       super.clear();
       base_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000001);
-      name_ = 0;
+      nameType_ = 0L;
       bitField0_ = (bitField0_ & ~0x00000002);
-      type_ = 0;
-      bitField0_ = (bitField0_ & ~0x00000004);
-      isVar_ = false;
-      bitField0_ = (bitField0_ & ~0x00000008);
-      isConst_ = false;
-      bitField0_ = (bitField0_ & ~0x00000010);
-      isLateinit_ = false;
-      bitField0_ = (bitField0_ & ~0x00000020);
       initializer_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.getDefaultInstance();
-      bitField0_ = (bitField0_ & ~0x00000040);
+      bitField0_ = (bitField0_ & ~0x00000004);
       return this;
     }
 
@@ -495,25 +359,9 @@ public final class IrVariable extends
       if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
         to_bitField0_ |= 0x00000002;
       }
-      result.name_ = name_;
+      result.nameType_ = nameType_;
       if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
         to_bitField0_ |= 0x00000004;
-      }
-      result.type_ = type_;
-      if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
-        to_bitField0_ |= 0x00000008;
-      }
-      result.isVar_ = isVar_;
-      if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
-        to_bitField0_ |= 0x00000010;
-      }
-      result.isConst_ = isConst_;
-      if (((from_bitField0_ & 0x00000020) == 0x00000020)) {
-        to_bitField0_ |= 0x00000020;
-      }
-      result.isLateinit_ = isLateinit_;
-      if (((from_bitField0_ & 0x00000040) == 0x00000040)) {
-        to_bitField0_ |= 0x00000040;
       }
       result.initializer_ = initializer_;
       result.bitField0_ = to_bitField0_;
@@ -525,20 +373,8 @@ public final class IrVariable extends
       if (other.hasBase()) {
         mergeBase(other.getBase());
       }
-      if (other.hasName()) {
-        setName(other.getName());
-      }
-      if (other.hasType()) {
-        setType(other.getType());
-      }
-      if (other.hasIsVar()) {
-        setIsVar(other.getIsVar());
-      }
-      if (other.hasIsConst()) {
-        setIsConst(other.getIsConst());
-      }
-      if (other.hasIsLateinit()) {
-        setIsLateinit(other.getIsLateinit());
+      if (other.hasNameType()) {
+        setNameType(other.getNameType());
       }
       if (other.hasInitializer()) {
         mergeInitializer(other.getInitializer());
@@ -553,23 +389,7 @@ public final class IrVariable extends
         
         return false;
       }
-      if (!hasName()) {
-        
-        return false;
-      }
-      if (!hasType()) {
-        
-        return false;
-      }
-      if (!hasIsVar()) {
-        
-        return false;
-      }
-      if (!hasIsConst()) {
-        
-        return false;
-      }
-      if (!hasIsLateinit()) {
+      if (!hasNameType()) {
         
         return false;
       }
@@ -665,181 +485,53 @@ public final class IrVariable extends
       return this;
     }
 
-    private int name_ ;
+    private long nameType_ ;
     /**
-     * <code>required int32 name = 2;</code>
+     * <code>required int64 name_type = 2;</code>
      */
-    public boolean hasName() {
+    public boolean hasNameType() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>required int32 name = 2;</code>
+     * <code>required int64 name_type = 2;</code>
      */
-    public int getName() {
-      return name_;
+    public long getNameType() {
+      return nameType_;
     }
     /**
-     * <code>required int32 name = 2;</code>
+     * <code>required int64 name_type = 2;</code>
      */
-    public Builder setName(int value) {
+    public Builder setNameType(long value) {
       bitField0_ |= 0x00000002;
-      name_ = value;
+      nameType_ = value;
       
       return this;
     }
     /**
-     * <code>required int32 name = 2;</code>
+     * <code>required int64 name_type = 2;</code>
      */
-    public Builder clearName() {
+    public Builder clearNameType() {
       bitField0_ = (bitField0_ & ~0x00000002);
-      name_ = 0;
-      
-      return this;
-    }
-
-    private int type_ ;
-    /**
-     * <code>required int32 type = 3;</code>
-     */
-    public boolean hasType() {
-      return ((bitField0_ & 0x00000004) == 0x00000004);
-    }
-    /**
-     * <code>required int32 type = 3;</code>
-     */
-    public int getType() {
-      return type_;
-    }
-    /**
-     * <code>required int32 type = 3;</code>
-     */
-    public Builder setType(int value) {
-      bitField0_ |= 0x00000004;
-      type_ = value;
-      
-      return this;
-    }
-    /**
-     * <code>required int32 type = 3;</code>
-     */
-    public Builder clearType() {
-      bitField0_ = (bitField0_ & ~0x00000004);
-      type_ = 0;
-      
-      return this;
-    }
-
-    private boolean isVar_ ;
-    /**
-     * <code>required bool is_var = 4;</code>
-     */
-    public boolean hasIsVar() {
-      return ((bitField0_ & 0x00000008) == 0x00000008);
-    }
-    /**
-     * <code>required bool is_var = 4;</code>
-     */
-    public boolean getIsVar() {
-      return isVar_;
-    }
-    /**
-     * <code>required bool is_var = 4;</code>
-     */
-    public Builder setIsVar(boolean value) {
-      bitField0_ |= 0x00000008;
-      isVar_ = value;
-      
-      return this;
-    }
-    /**
-     * <code>required bool is_var = 4;</code>
-     */
-    public Builder clearIsVar() {
-      bitField0_ = (bitField0_ & ~0x00000008);
-      isVar_ = false;
-      
-      return this;
-    }
-
-    private boolean isConst_ ;
-    /**
-     * <code>required bool is_const = 5;</code>
-     */
-    public boolean hasIsConst() {
-      return ((bitField0_ & 0x00000010) == 0x00000010);
-    }
-    /**
-     * <code>required bool is_const = 5;</code>
-     */
-    public boolean getIsConst() {
-      return isConst_;
-    }
-    /**
-     * <code>required bool is_const = 5;</code>
-     */
-    public Builder setIsConst(boolean value) {
-      bitField0_ |= 0x00000010;
-      isConst_ = value;
-      
-      return this;
-    }
-    /**
-     * <code>required bool is_const = 5;</code>
-     */
-    public Builder clearIsConst() {
-      bitField0_ = (bitField0_ & ~0x00000010);
-      isConst_ = false;
-      
-      return this;
-    }
-
-    private boolean isLateinit_ ;
-    /**
-     * <code>required bool is_lateinit = 6;</code>
-     */
-    public boolean hasIsLateinit() {
-      return ((bitField0_ & 0x00000020) == 0x00000020);
-    }
-    /**
-     * <code>required bool is_lateinit = 6;</code>
-     */
-    public boolean getIsLateinit() {
-      return isLateinit_;
-    }
-    /**
-     * <code>required bool is_lateinit = 6;</code>
-     */
-    public Builder setIsLateinit(boolean value) {
-      bitField0_ |= 0x00000020;
-      isLateinit_ = value;
-      
-      return this;
-    }
-    /**
-     * <code>required bool is_lateinit = 6;</code>
-     */
-    public Builder clearIsLateinit() {
-      bitField0_ = (bitField0_ & ~0x00000020);
-      isLateinit_ = false;
+      nameType_ = 0L;
       
       return this;
     }
 
     private org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression initializer_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.getDefaultInstance();
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression initializer = 7;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression initializer = 3;</code>
      */
     public boolean hasInitializer() {
-      return ((bitField0_ & 0x00000040) == 0x00000040);
+      return ((bitField0_ & 0x00000004) == 0x00000004);
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression initializer = 7;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression initializer = 3;</code>
      */
     public org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression getInitializer() {
       return initializer_;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression initializer = 7;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression initializer = 3;</code>
      */
     public Builder setInitializer(org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression value) {
       if (value == null) {
@@ -847,24 +539,24 @@ public final class IrVariable extends
       }
       initializer_ = value;
 
-      bitField0_ |= 0x00000040;
+      bitField0_ |= 0x00000004;
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression initializer = 7;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression initializer = 3;</code>
      */
     public Builder setInitializer(
         org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.Builder builderForValue) {
       initializer_ = builderForValue.build();
 
-      bitField0_ |= 0x00000040;
+      bitField0_ |= 0x00000004;
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression initializer = 7;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression initializer = 3;</code>
      */
     public Builder mergeInitializer(org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression value) {
-      if (((bitField0_ & 0x00000040) == 0x00000040) &&
+      if (((bitField0_ & 0x00000004) == 0x00000004) &&
           initializer_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.getDefaultInstance()) {
         initializer_ =
           org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.newBuilder(initializer_).mergeFrom(value).buildPartial();
@@ -872,16 +564,16 @@ public final class IrVariable extends
         initializer_ = value;
       }
 
-      bitField0_ |= 0x00000040;
+      bitField0_ |= 0x00000004;
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression initializer = 7;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression initializer = 3;</code>
      */
     public Builder clearInitializer() {
       initializer_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.getDefaultInstance();
 
-      bitField0_ = (bitField0_ & ~0x00000040);
+      bitField0_ = (bitField0_ & ~0x00000004);
       return this;
     }
 

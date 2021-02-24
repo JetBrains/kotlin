@@ -1,0 +1,19 @@
+interface Base {
+  fun foo() {
+  }
+
+}
+
+object Derived : Base {
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+fun test() {
+  Derived.foo()
+  Derived.foo()
+}

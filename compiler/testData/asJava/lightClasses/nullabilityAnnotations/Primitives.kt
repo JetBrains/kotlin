@@ -21,3 +21,5 @@ interface Primitives {
     val float: Float
     val double: Double
 }
+
+// FIR_COMPARISON

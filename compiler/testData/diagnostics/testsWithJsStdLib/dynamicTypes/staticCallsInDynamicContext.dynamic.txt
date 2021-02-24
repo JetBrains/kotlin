@@ -10,7 +10,7 @@ public final var extVal: dynamic
     public final fun <get-extVal>(): dynamic
     public final fun <set-extVal>(/*0*/ <set-?>: dynamic): kotlin.Unit
 public final fun extExtVal(): dynamic
-public final fun invoke(): dynamic
-public final fun plus(/*0*/ p0: dynamic): dynamic
-public final fun invoke(): dynamic
+public final operator fun invoke(): dynamic
+public final operator fun plus(/*0*/ p0: dynamic): dynamic
+public final operator fun invoke(): dynamic
 public final fun foo(): dynamic

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: p/I.java
 
 package p;

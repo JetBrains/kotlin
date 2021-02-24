@@ -1,3 +1,5 @@
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: EXCEPTIONS_NOT_IMPLEMENTED
 inline fun <T> tryOrElse(f1: () -> T, f2: () -> T): T {
     try {
         return f1()

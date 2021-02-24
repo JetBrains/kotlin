@@ -1,0 +1,14 @@
+FILE: thisAssignment.kt
+    public abstract interface A : R|kotlin/Any| {
+        public abstract fun foo(): R|kotlin/Unit|
+
+    }
+    public final fun R|kotlin/Any|.test(): R|kotlin/Unit| {
+        when () {
+            (this@R|/test| is R|A|) ->  {
+                lval a: R|kotlin/Any| = this@R|/test|
+                R|<local>/a|.R|/A.foo|()
+            }
+        }
+
+    }

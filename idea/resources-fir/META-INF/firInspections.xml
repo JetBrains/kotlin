@@ -1,0 +1,21 @@
+<idea-plugin>
+  <extensions defaultExtensionNs="com.intellij">
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.fir.inspections.declarations.HLRedundantUnitReturnTypeInspection"
+                     groupPath="Kotlin"
+                     groupName="Redundant constructs"
+                     enabledByDefault="true"
+                     cleanupTool="true"
+                     level="WARNING"
+                     language="kotlin"
+                     key="inspection.redundant.unit.return.type.display.name" bundle="messages.KotlinBundle"/>
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.fir.inspections.diagnosticBased.HLRedundantVisibilityModifierInspection"
+                     groupPath="Kotlin"
+                     groupName="Redundant constructs"
+                     enabledByDefault="true"
+                     cleanupTool="true"
+                     level="WARNING"
+                     language="kotlin"
+                     key="inspection.redundant.visibility.modifier.display.name" bundle="messages.KotlinBundle"/>
+  </extensions>
+</idea-plugin>

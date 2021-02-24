@@ -1,0 +1,27 @@
+FILE: simpleFakeOverride.kt
+    public open class A<T> : R|kotlin/Any| {
+        public constructor<T>(): R|A<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun foo(t: R|T|): R|T| {
+            ^foo R|<local>/t|
+        }
+
+    }
+    public final class Some : R|kotlin/Any| {
+        public constructor(): R|Some| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class B : R|A<Some>| {
+        public constructor(): R|B| {
+            super<R|A<Some>|>()
+        }
+
+        public final fun test(): R|kotlin/Unit| {
+            this@R|/B|.R|SubstitutionOverride</B.foo: R|Some|>|(R|/Some.Some|())
+        }
+
+    }

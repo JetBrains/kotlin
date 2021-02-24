@@ -1,5 +1,6 @@
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: BIG_ARITY
 // !LANGUAGE: +FunctionTypesWithBigArity
-// IGNORE_BACKEND_FIR: JVM_IR
 
 class A {
     fun foo(

@@ -1,14 +1,15 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 
-import kotlin.browser.window
-import <!UNRESOLVED_REFERENCE("kotlinx")!>kotlinx<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>cinterop<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>CPointed<!>
+import kotlinx.browser.window
+import kotlinx.<!UNRESOLVED_REFERENCE!>cinterop<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>CPointed<!>
 
-fun jvmSpecific() {
-    val x: <!UNRESOLVED_REFERENCE("Cloneable")!>Cloneable<!>? = null
+fun jvmSpecific(args: Array<String>) {
+    val x: <!UNRESOLVED_REFERENCE!>Cloneable<!>? = null
+    args.<!UNRESOLVED_REFERENCE!>clone<!>()
 }
 
 fun nativeSpecific() {
-    val x: <!UNRESOLVED_REFERENCE("CPointed")!>CPointed<!>? = null
+    val x: <!UNRESOLVED_REFERENCE!>CPointed<!>? = null
 }
 
 fun jsSpecific() {

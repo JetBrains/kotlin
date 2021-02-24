@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.resolve
 
-import org.jetbrains.kotlin.builtins.PlatformToKotlinClassMap
+import org.jetbrains.kotlin.builtins.PlatformToKotlinClassMapper
 import org.jetbrains.kotlin.container.*
 import org.jetbrains.kotlin.resolve.calls.checkers.*
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
@@ -27,7 +27,8 @@ private val DEFAULT_DECLARATION_CHECKERS = listOf(
     KClassWithIncorrectTypeArgumentChecker,
     SuspendLimitationsChecker,
     InlineClassDeclarationChecker,
-    PropertiesWithBackingFieldsInsideInlineClass(),
+    InnerClassInsideInlineClass(),
+    PropertiesWithInlineClassAsReceiver(),
     AnnotationClassTargetAndRetentionChecker(),
     ReservedMembersAndConstructsForInlineClass(),
     ResultClassInReturnTypeChecker(),
@@ -35,7 +36,14 @@ private val DEFAULT_DECLARATION_CHECKERS = listOf(
     ExplicitApiDeclarationChecker(),
     TailrecFunctionChecker,
     TrailingCommaDeclarationChecker,
-    MissingDependencySupertypeChecker.ForDeclarations
+    MissingDependencySupertypeChecker.ForDeclarations,
+    FunInterfaceDeclarationChecker(),
+    DeprecatedSinceKotlinAnnotationChecker,
+    ContractDescriptionBlockChecker,
+    PrivateInlineFunctionsReturningAnonymousObjectsChecker,
+    SealedInheritorInSamePackageChecker,
+    SealedInheritorInSameModuleChecker,
+    SealedInterfaceAllowedChecker,
 )
 
 private val DEFAULT_CALL_CHECKERS = listOf(
@@ -47,8 +55,10 @@ private val DEFAULT_CALL_CHECKERS = listOf(
     UnderscoreUsageChecker, AssigningNamedArgumentToVarargChecker(), ImplicitNothingAsTypeParameterCallChecker,
     PrimitiveNumericComparisonCallChecker, LambdaWithSuspendModifierCallChecker,
     UselessElvisCallChecker(), ResultTypeWithNullableOperatorsChecker(), NullableVarargArgumentCallChecker,
-    NamedFunAsExpressionChecker, ContractNotAllowedCallChecker, ReifiedTypeParameterSubstitutionChecker(), TypeOfChecker,
-    MissingDependencySupertypeChecker.ForCalls
+    NamedFunAsExpressionChecker, ContractNotAllowedCallChecker, ReifiedTypeParameterSubstitutionChecker(),
+    MissingDependencySupertypeChecker.ForCalls, AbstractClassInstantiationChecker, SuspendConversionCallChecker,
+    UnitConversionCallChecker, FunInterfaceConstructorReferenceChecker, NullableExtensionOperatorWithSafeCallChecker,
+    ReferencingToUnderscoreNamedParameterOfCatchBlockChecker, VarargWrongExecutionOrderChecker
 )
 private val DEFAULT_TYPE_CHECKERS = emptyList<AdditionalTypeChecker>()
 private val DEFAULT_CLASSIFIER_USAGE_CHECKERS = listOf(
@@ -91,7 +101,7 @@ abstract class PlatformConfiguratorBase(
     private val additionalClashResolvers: List<PlatformExtensionsClashResolver<*>> = emptyList(),
     private val identifierChecker: IdentifierChecker? = null,
     private val overloadFilter: OverloadFilter? = null,
-    private val platformToKotlinClassMap: PlatformToKotlinClassMap? = null,
+    private val platformToKotlinClassMapper: PlatformToKotlinClassMapper? = null,
     private val delegationFilter: DelegationFilter? = null,
     private val overridesBackwardCompatibilityHelper: OverridesBackwardCompatibilityHelper? = null,
     private val declarationReturnTypeSanitizer: DeclarationReturnTypeSanitizer? = null
@@ -116,7 +126,7 @@ abstract class PlatformConfiguratorBase(
             additionalClashResolvers.forEach { useClashResolver(it) }
             useInstanceIfNotNull(identifierChecker)
             useInstanceIfNotNull(overloadFilter)
-            useInstanceIfNotNull(platformToKotlinClassMap)
+            useInstanceIfNotNull(platformToKotlinClassMapper)
             useInstanceIfNotNull(delegationFilter)
             useInstanceIfNotNull(overridesBackwardCompatibilityHelper)
             useInstanceIfNotNull(declarationReturnTypeSanitizer)

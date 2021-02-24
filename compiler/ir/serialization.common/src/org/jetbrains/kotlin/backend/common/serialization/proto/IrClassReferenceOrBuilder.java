@@ -8,13 +8,13 @@ public interface IrClassReferenceOrBuilder extends
     org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
   /**
-   * <code>required int32 class_symbol = 1;</code>
+   * <code>required int64 class_symbol = 1;</code>
    */
   boolean hasClassSymbol();
   /**
-   * <code>required int32 class_symbol = 1;</code>
+   * <code>required int64 class_symbol = 1;</code>
    */
-  int getClassSymbol();
+  long getClassSymbol();
 
   /**
    * <code>required int32 class_type = 2;</code>

@@ -1,0 +1,17 @@
+FILE: derivedClass.kt
+    public? open class Base<T> : R|kotlin/Any| {
+        public? constructor<T>(x: T): R|Base<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? val x: T = R|<local>/x|
+            public? get(): T
+
+    }
+    public? final? class Derived<T : Any> : Base<T> {
+        public? constructor<T : Any>(x: T): R|Derived<T>| {
+            super<Base<T>>(x#)
+        }
+
+    }
+    public? final? fun <T : Any> create(x: T): Derived<T> { LAZY_BLOCK }

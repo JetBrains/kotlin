@@ -1,6 +1,6 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 // TARGET_BACKEND: JVM
 // WITH_RUNTIME
+// SAM_CONVERSIONS: CLASS
 // FILE: MyRunnable.java
 public interface MyRunnable {
     public void run();

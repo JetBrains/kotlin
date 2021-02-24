@@ -2,7 +2,7 @@
   <extensions defaultExtensionNs="com.intellij">
     <registryKey key="kotlin.gradle.testing.enabled"
                  description="Import Kotlin Gradle test tasks and process test output"
-                 defaultValue="false"
+                 defaultValue="true"
                  restartRequired="false"/>
     <registryKey key="kotlin.mpp.tests.force.gradle"
                  description="Run multi-platform tests with Gradle runner even if the platform runner is used by default.

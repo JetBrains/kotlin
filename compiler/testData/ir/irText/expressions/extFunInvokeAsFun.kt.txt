@@ -1,0 +1,8 @@
+fun with1(receiver: Any?, block: @ExtensionFunctionType Function1<Any?, Unit>) {
+  return block.invoke(p1 = receiver)
+}
+
+fun with2(receiver: Any?, block: @ExtensionFunctionType Function1<Any?, Unit>) {
+  return block.invoke(p1 = receiver)
+}
+

@@ -1,5 +1,6 @@
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: BINDING_RECEIVERS
 // !LANGUAGE: +NewInference
-// IGNORE_BACKEND_FIR: JVM_IR
 
 interface JsonParser
 interface JsonCodingParser : JsonParser

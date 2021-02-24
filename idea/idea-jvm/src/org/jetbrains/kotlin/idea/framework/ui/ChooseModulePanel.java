@@ -21,11 +21,12 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.HyperlinkLabel;
 import com.intellij.util.Function;
-import com.intellij.xml.util.XmlUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.idea.KotlinJvmBundle;
 import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtilsKt;
 import org.jetbrains.kotlin.idea.configuration.KotlinProjectConfigurator;
 
@@ -37,6 +38,8 @@ import java.awt.event.ActionListener;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+
+import static org.jetbrains.kotlin.idea.util.ProgressIndicatorUtils.underModalProgress;
 
 public class ChooseModulePanel {
     private JPanel contentPane;
@@ -52,8 +55,20 @@ public class ChooseModulePanel {
 
     public ChooseModulePanel(@NotNull Project project, @NotNull KotlinProjectConfigurator configurator, Collection<Module> excludeModules) {
         this.project = project;
-        this.modules = ConfigureKotlinInProjectUtilsKt.getCanBeConfiguredModules(project, configurator);
-        this.modulesWithKtFiles = ConfigureKotlinInProjectUtilsKt.getCanBeConfiguredModulesWithKotlinFiles(project, configurator);
+        Pair<List<Module>, List<Module>> modulesPair =
+                underModalProgress(project,
+                                   KotlinJvmBundle
+                                           .message("lookup.kotlin.modules.configurations.progress.text"),
+                                   () -> {
+                                       List<Module> modules = ConfigureKotlinInProjectUtilsKt
+                                               .getCanBeConfiguredModules(project, configurator);
+                                       List<Module> modulesWithKtFiles =
+                                               ConfigureKotlinInProjectUtilsKt
+                                                       .getCanBeConfiguredModulesWithKotlinFiles(project, configurator);
+                                       return Pair.create(modules, modulesWithKtFiles);
+                                   });
+        this.modules = modulesPair.first;
+        this.modulesWithKtFiles = modulesPair.second;
 
         DefaultComboBoxModel comboBoxModel = new DefaultComboBoxModel();
 
@@ -78,13 +93,15 @@ public class ChooseModulePanel {
         allModulesRadioButton.addActionListener(listener);
 
         if (modulesWithKtFiles.size() > 2) {
-            allModulesWithKtNames.setHtmlText("<html>" + XmlUtil.escape(modulesWithKtFiles.get(0).getName()) + ", " +
-                                              XmlUtil.escape(modulesWithKtFiles.get(1).getName()) +
-                                              " and <a href=\"#\">" + (modulesWithKtFiles.size() - 2) + " other modules</a>");
+            String firstName = modulesWithKtFiles.get(0).getName();
+            String secondName = modulesWithKtFiles.get(1).getName();
+            String message = KotlinJvmBundle.message("choose.module.modules", firstName, secondName, modulesWithKtFiles.size() - 2);
+            allModulesWithKtNames.setHtmlText("<html>" + message);
             allModulesWithKtNames.addHyperlinkListener(new HyperlinkListener() {
                 @Override
                 public void hyperlinkUpdate(HyperlinkEvent event) {
-                    JBPopupFactory.getInstance().createListPopup(new BaseListPopupStep<Module>("Modules with Kotlin Files", modulesWithKtFiles) {
+                    String title = KotlinJvmBundle.message("choose.module.modules.with.kotlin");
+                    JBPopupFactory.getInstance().createListPopup(new BaseListPopupStep<Module>(title, modulesWithKtFiles) {
                         @NotNull
                         @Override
                         public String getTextFor(Module value) {

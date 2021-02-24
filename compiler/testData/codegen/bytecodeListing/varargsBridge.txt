@@ -1,0 +1,15 @@
+@kotlin.Metadata
+public abstract class A {
+    // source: 'varargsBridge.kt'
+    public method <init>(): void
+    protected varargs abstract @org.jetbrains.annotations.NotNull method doIt(@org.jetbrains.annotations.NotNull p0: java.lang.Object[]): java.lang.String
+    public final @org.jetbrains.annotations.NotNull method test(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class B {
+    // source: 'varargsBridge.kt'
+    public method <init>(): void
+    protected varargs @org.jetbrains.annotations.NotNull method doIt(@org.jetbrains.annotations.NotNull p0: java.lang.Void[]): java.lang.String
+    public synthetic bridge method doIt(p0: java.lang.Object[]): java.lang.String
+}

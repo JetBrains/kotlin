@@ -1,19 +1,17 @@
-// INTENTION_TEXT: "Import members from 'javax.swing.SwingUtilities'"
+// INTENTION_TEXT: "Import members from 'java.util.regex.Pattern'"
 // WITH_RUNTIME
 // ERROR: Unresolved reference: unresolved
 
-import javax.swing.SwingUtilities
+import java.util.regex.Pattern
 
 fun foo() {
-    SwingUtilities.invokeLater { }
+    Pattern.matches("", "")
 
-    val bottom = <caret>SwingUtilities.BOTTOM
+    val field = <caret>Pattern.CASE_INSENSITIVE
 
-    SwingUtilities.invokeAndWait {
-        SwingUtilities.invokeLater { }
-    }
+    Pattern.compile("")
 
-    val horizontal = javax.swing.SwingUtilities.HORIZONTAL
+    val fieldFqn = java.util.regex.Pattern.CASE_INSENSITIVE
 
-    SwingUtilities.unresolved
+    Pattern.unresolved
 }

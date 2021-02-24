@@ -33,3 +33,5 @@ fun y2(a: A): Boolean = condition(a)
 fun y3(a: A) {
     condition(a)
 }
+
+// FIR_IGNORE

@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.inspections
@@ -28,6 +17,7 @@ import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.isOverridable
+import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.isMainFunction
 import org.jetbrains.kotlin.idea.quickfix.RemoveUnusedFunctionParameterFix
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeSignatureConfiguration
@@ -42,6 +32,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.psi.typeRefHelpers.setReceiverTypeReference
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -52,8 +43,6 @@ import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
-    override val suppressionKey: String get() = "unused"
-
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
         return object : KtVisitorVoid() {
             private fun check(callableDeclaration: KtCallableDeclaration) {
@@ -61,7 +50,13 @@ class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
                 if (receiverTypeReference == null || receiverTypeReference.textRange.isEmpty) return
 
                 if (callableDeclaration is KtProperty && callableDeclaration.accessors.isEmpty()) return
-                if (callableDeclaration is KtNamedFunction && !callableDeclaration.hasBody()) return
+                if (callableDeclaration is KtNamedFunction) {
+                    if (!callableDeclaration.hasBody()) return
+                    if (callableDeclaration.name == null) {
+                        val parentQualified = callableDeclaration.getStrictParentOfType<KtQualifiedExpression>()
+                        if (KtPsiUtil.deparenthesize(parentQualified?.callExpression?.calleeExpression) == callableDeclaration) return
+                    }
+                }
 
                 if (callableDeclaration.hasModifier(KtTokens.OVERRIDE_KEYWORD) ||
                     callableDeclaration.hasModifier(KtTokens.OPERATOR_KEYWORD) ||
@@ -116,7 +111,7 @@ class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
             private fun registerProblem(receiverTypeReference: KtTypeReference, inSameClass: Boolean = false) {
                 holder.registerProblem(
                     receiverTypeReference,
-                    KotlinBundle.message("unused.receiver.parameter"),
+                    KotlinBundle.message("inspection.unused.receiver.parameter"),
                     ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                     RemoveReceiverFix(inSameClass)
                 )
@@ -139,7 +134,7 @@ class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
         override fun startInWriteAction() = false
 
         companion object {
-            private val actionName = KotlinBundle.message("unused.receiver.parameter.remove")
+            private val actionName = KotlinBundle.message("fix.unused.receiver.parameter.remove")
 
             private fun configureChangeSignature() = object : KotlinChangeSignatureConfiguration {
                 override fun performSilently(affectedFunctions: Collection<PsiElement>) = true

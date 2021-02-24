@@ -1,0 +1,135 @@
+/*
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.fir.analysis.checkers.declaration
+
+import org.jetbrains.kotlin.KtNodeTypes.FUN
+import org.jetbrains.kotlin.KtNodeTypes.VALUE_PARAMETER
+import org.jetbrains.kotlin.descriptors.ClassKind.ANNOTATION_CLASS
+import org.jetbrains.kotlin.descriptors.ClassKind.ENUM_CLASS
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.diagnostics.*
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.symbols.StandardClassIds
+import org.jetbrains.kotlin.fir.symbols.StandardClassIds.primitiveArrayTypeByElementType
+import org.jetbrains.kotlin.fir.symbols.StandardClassIds.primitiveTypes
+import org.jetbrains.kotlin.fir.symbols.StandardClassIds.unsignedTypes
+import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.ClassId
+
+object FirAnnotationClassDeclarationChecker : FirRegularClassChecker() {
+    override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
+        if (declaration.classKind != ANNOTATION_CLASS) return
+        if (declaration.isLocal) reporter.reportOn(declaration.source, FirErrors.LOCAL_ANNOTATION_CLASS_ERROR, context)
+
+        for (it in declaration.declarations) {
+            when {
+                it is FirConstructor && it.isPrimary -> {
+                    for (parameter in it.valueParameters) {
+                        val source = parameter.source ?: continue
+                        if (!source.hasValOrVar()) {
+                            reporter.reportOn(source, FirErrors.MISSING_VAL_ON_ANNOTATION_PARAMETER, context)
+                        } else if (source.hasVar()) {
+                            reporter.reportOn(source, FirErrors.VAR_ANNOTATION_PARAMETER, context)
+                        }
+
+                        val typeRef = parameter.returnTypeRef
+                        val coneType = typeRef.coneTypeSafe<ConeLookupTagBasedType>()
+                        val classId = coneType?.classId
+
+                        if (coneType != null) when {
+                            classId == ClassId.fromString("<error>") -> {
+                                // TODO: replace with UNRESOLVED_REFERENCE check
+                            }
+                            coneType.isNullable -> {
+                                reporter.reportOn(typeRef.source, FirErrors.NULLABLE_TYPE_OF_ANNOTATION_MEMBER, context)
+                            }
+                            classId in primitiveTypes -> {
+                                // DO NOTHING: primitives are allowed as annotation class parameter
+                            }
+                            classId in unsignedTypes -> {
+                                // TODO: replace with EXPERIMENTAL_UNSIGNED_LITERALS check
+                            }
+                            classId == StandardClassIds.KClass -> {
+                                // DO NOTHING: KClass is allowed
+                            }
+                            classId == StandardClassIds.String -> {
+                                // DO NOTHING: String is allowed
+                            }
+                            classId in primitiveArrayTypeByElementType.values -> {
+                                // DO NOTHING: primitive arrays are allowed
+                            }
+                            classId == StandardClassIds.Array -> {
+                                if (!isAllowedArray(typeRef, context.session))
+                                    reporter.reportOn(typeRef.source, FirErrors.INVALID_TYPE_OF_ANNOTATION_MEMBER, context)
+                            }
+                            isAllowedClassKind(coneType, context.session) -> {
+                                // DO NOTHING: annotation or enum classes are allowed
+                            }
+                            else -> {
+                                reporter.reportOn(typeRef.source, FirErrors.INVALID_TYPE_OF_ANNOTATION_MEMBER, context)
+                            }
+                        }
+                    }
+                }
+                it is FirRegularClass -> {
+                    // DO NOTHING: nested annotation classes are allowed in 1.3+
+                }
+                it is FirProperty && it.source?.elementType == VALUE_PARAMETER -> {
+                    // DO NOTHING to avoid reporting constructor properties
+                }
+                it is FirSimpleFunction && it.source?.elementType != FUN -> {
+                    // DO NOTHING to avoid reporting synthetic functions
+                    // TODO: replace with origin check
+                }
+                else -> {
+                    reporter.reportOn(it.source, FirErrors.ANNOTATION_CLASS_MEMBER, context)
+                }
+            }
+        }
+    }
+
+    private fun isAllowedClassKind(cone: ConeLookupTagBasedType, session: FirSession): Boolean {
+        val typeRefClassKind = (cone.lookupTag.toSymbol(session)
+            ?.fir as? FirRegularClass)
+            ?.classKind
+            ?: return false
+
+        return typeRefClassKind == ANNOTATION_CLASS || typeRefClassKind == ENUM_CLASS
+    }
+
+    private fun isAllowedArray(typeRef: FirTypeRef, session: FirSession): Boolean {
+        val typeArguments = typeRef.coneType.typeArguments
+
+        if (typeArguments.size != 1) return false
+
+        val arrayType = (typeArguments[0] as? ConeKotlinTypeProjection)
+            ?.type
+            ?: return false
+
+        if (arrayType.isNullable) return false
+
+        val arrayTypeClassId = arrayType.classId
+
+        when {
+            arrayTypeClassId == StandardClassIds.KClass -> {
+                // KClass is allowed
+                return true
+            }
+            arrayTypeClassId == StandardClassIds.String -> {
+                // String is allowed
+                return true
+            }
+            isAllowedClassKind(arrayType as ConeLookupTagBasedType, session) -> {
+                // annotation or enum classes are allowed
+                return true
+            }
+        }
+
+        return false
+    }
+}

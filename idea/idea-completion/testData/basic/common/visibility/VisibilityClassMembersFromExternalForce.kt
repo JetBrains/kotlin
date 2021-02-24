@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 class Some() {
     public val testPublic : Int = 12
     protected val testProtected : Int = 12

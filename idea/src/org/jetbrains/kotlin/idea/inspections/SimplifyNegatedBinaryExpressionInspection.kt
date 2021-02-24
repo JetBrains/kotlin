@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.inspections
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.tree.IElementType
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.util.textRangeIn
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -28,15 +29,15 @@ class SimplifyNegatedBinaryExpressionInspection : AbstractApplicabilityBasedInsp
 
     override fun inspectionHighlightRangeInElement(element: KtPrefixExpression) = element.operationReference.textRangeIn(element)
 
-    override fun inspectionText(element: KtPrefixExpression) = "Negated operation should be simplified"
+    override fun inspectionText(element: KtPrefixExpression) = KotlinBundle.message("negated.operation.should.be.simplified")
 
-    override val defaultFixText = "Simplify negated operation"
+    override val defaultFixText get() = KotlinBundle.message("simplify.negated.operation")
 
     override fun fixText(element: KtPrefixExpression): String {
         val expression = KtPsiUtil.deparenthesize(element.baseExpression) as? KtOperationExpression ?: return defaultFixText
         val operation = expression.operationReference.getReferencedNameElementType() as? KtSingleValueToken ?: return defaultFixText
         val negatedOperation = operation.negate() ?: return defaultFixText
-        return "Replace negated '${operation.value}' operation with '${negatedOperation.value}'"
+        return KotlinBundle.message("replace.negated.0.operation.with.1", operation.value, negatedOperation.value)
     }
 
     override fun isApplicable(element: KtPrefixExpression): Boolean {

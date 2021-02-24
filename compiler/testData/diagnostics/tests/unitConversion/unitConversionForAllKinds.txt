@@ -1,0 +1,7 @@
+package
+
+public fun bar(): kotlin.String
+public fun createCall(): () -> kotlin.Int
+public fun foo(/*0*/ f: () -> kotlin.Unit): kotlin.Unit
+public fun </*0*/ T> fooGeneric(/*0*/ f: (T) -> kotlin.Unit): T
+public fun test(/*0*/ g: () -> kotlin.String, /*1*/ h: (kotlin.Float) -> kotlin.String): kotlin.Unit

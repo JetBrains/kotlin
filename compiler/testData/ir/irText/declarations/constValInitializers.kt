@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 const val I0 = 0
 const val I1 = 1
 const val I2 = I0 + I1 + I1

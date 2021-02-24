@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem
 
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.GradleIR
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.BuildFilePrinter
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.GradlePrinter
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.MavenPrinter
@@ -7,7 +8,18 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.CustomMaven
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.DefaultRepository
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Repository
 
-data class RepositoryIR(val repository: Repository) : BuildSystemIR {
+interface RepositoryWrapper {
+    val repository: Repository
+}
+
+fun <W : RepositoryWrapper> List<W>.distinctAndSorted() =
+    distinctBy(RepositoryWrapper::repository)
+        .sortedBy { it.repository.url }
+        .sortedBy { wrapper ->
+            if (wrapper.repository is DefaultRepository) 0 else 1
+        }
+
+data class RepositoryIR(override val repository: Repository) : BuildSystemIR, RepositoryWrapper {
     override fun BuildFilePrinter.render() = when (this) {
         is GradlePrinter -> when (repository) {
             is DefaultRepository -> {
@@ -15,15 +27,16 @@ data class RepositoryIR(val repository: Repository) : BuildSystemIR {
                 +"()"
             }
             is CustomMavenRepository -> {
-                sectionCall("maven", needIndent = true) {
-                    assignmentOrCall("url") {
-                        val url = repository.url.quotified
-                        when (dsl) {
-                            GradlePrinter.GradleDsl.KOTLIN -> call("uri") { +url }
-                            GradlePrinter.GradleDsl.GROOVY -> +url
-                        }
+                +"maven { url "
+                val url = repository.url.quotified
+                when (dsl) {
+                    GradlePrinter.GradleDsl.KOTLIN -> {
+                        +"= "
+                        call("uri") { +url }
                     }
+                    GradlePrinter.GradleDsl.GROOVY -> +url
                 }
+                +" }"
             }
             else -> Unit
         }
@@ -34,5 +47,16 @@ data class RepositoryIR(val repository: Repository) : BuildSystemIR {
             }
         }
         else -> Unit
+    }
+}
+
+
+data class AllProjectsRepositoriesIR(val repositoriesIR: List<RepositoryIR>) : BuildSystemIR, GradleIR, FreeIR {
+    override fun GradlePrinter.renderGradle() {
+        sectionCall("allprojects", needIndent = true) {
+            sectionCall("repositories") {
+                repositoriesIR.listNl()
+            }
+        }
     }
 }

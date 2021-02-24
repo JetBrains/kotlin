@@ -24,7 +24,7 @@ fun foo(): String? {
 
         run {
             if (true) {
-                <!IMPLICIT_CAST_TO_ANY!>Obj()<!>
+                Obj()
             } else
             <!INVALID_IF_AS_EXPRESSION!>if<!> (true) return null // Error, coercion to Unit doesn't propagate inside nested lambdas
         }

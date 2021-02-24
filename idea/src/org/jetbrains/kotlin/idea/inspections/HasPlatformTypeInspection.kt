@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.inspections
 import com.intellij.codeInspection.IntentionWrapper
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ui.MultipleCheckboxOptionsPanel
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyIntention
 import org.jetbrains.kotlin.idea.intentions.isFlexibleRecursive
 import org.jetbrains.kotlin.idea.quickfix.AddExclExclCallFix
@@ -43,8 +44,9 @@ class HasPlatformTypeInspection(
     }
 ) {
 
-    override val problemText = "Declaration has type inferred from a platform call, which can lead to unchecked nullability issues. " +
-            "Specify type explicitly as nullable or non-nullable."
+    override val problemText = KotlinBundle.message(
+        "declaration.has.type.inferred.from.a.platform.call.which.can.lead.to.unchecked.nullability.issues"
+    )
 
     override fun additionalFixes(element: KtCallableDeclaration): List<LocalQuickFix>? {
         val type = SpecifyTypeExplicitlyIntention.dangerousFlexibleTypeOrNull(
@@ -65,8 +67,8 @@ class HasPlatformTypeInspection(
 
     override fun createOptionsPanel(): JComponent? {
         val panel = MultipleCheckboxOptionsPanel(this)
-        panel.addCheckbox("Apply only to public or protected members", "publicAPIOnly")
-        panel.addCheckbox("Report for types with platform arguments", "reportPlatformArguments")
+        panel.addCheckbox(KotlinBundle.message("apply.only.to.public.or.protected.members"), "publicAPIOnly")
+        panel.addCheckbox(KotlinBundle.message("report.for.types.with.platform.arguments"), "reportPlatformArguments")
         return panel
     }
 }

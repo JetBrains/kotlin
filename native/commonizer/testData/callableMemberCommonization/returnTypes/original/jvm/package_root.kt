@@ -64,3 +64,19 @@ fun <T, Q> functionWithUnsubstitutedTypeParametersInReturnType6(): Q = TODO()
 fun functionWithUnsubstitutedTypeParametersInReturnType7(): String = TODO()
 fun <T> functionWithUnsubstitutedTypeParametersInReturnType8(): Box<T> = TODO()
 fun functionWithUnsubstitutedTypeParametersInReturnType9(): Box<String> = TODO()
+
+class Outer<A> {
+    class Nested<B> {
+        class Nested<C>
+        inner class Inner<D>
+    }
+    inner class Inner<E> {
+        inner class Inner<F>
+    }
+}
+
+fun <T> returnOuter(): Outer<T> = TODO()
+fun <T> returnOuterNested(): Outer.Nested<T> = TODO()
+fun <T> returnOuterNestedNested(): Outer.Nested.Nested<T> = TODO()
+fun <T, R> returnOuterInner(): Outer<T>.Inner<R> = TODO()
+fun <T, R, S> returnOuterInnerInner(): Outer<T>.Inner<R>.Inner<S> = TODO()

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +ArrayLiteralsInAnnotations
 // !DIAGNOSTICS: -UNUSED_VARIABLE, -UNSUPPORTED
 

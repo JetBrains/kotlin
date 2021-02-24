@@ -1,6 +1,7 @@
 // IGNORE_BACKEND_FIR: JVM_IR
 // TARGET_BACKEND: JVM
 // WITH_REFLECT
+package test
 
 import kotlin.reflect.KClass
 import kotlin.test.assertEquals
@@ -66,11 +67,11 @@ fun f(): @Anno(
 
 fun box(): String {
     assertEquals(
-        "[@Anno(b=1, c=x, d=3.14, f=-2.72, i=42424242, j=239239239239239, s=42, z=true, " +
+        "[@test.Anno(b=1, c=x, d=3.14, f=-2.72, i=42424242, j=239239239239239, s=42, z=true, " +
                 "ba=[-1], ca=[y], da=[-3.14159], fa=[2.7218], ia=[424242], ja=[239239239239], sa=[-43], za=[false, true], " +
-                "str=lol, k=class java.lang.Number, k2=class [I, e=EXPRESSION, a=@Nested(value=1), stra=[lmao], " +
+                "str=lol, k=class java.lang.Number, k2=class [I, e=EXPRESSION, a=@test.Nested(value=1), stra=[lmao], " +
                 "ka=[class java.lang.Double, class kotlin.Unit, class [J, class [Ljava.lang.String;], " +
-                "ea=[TYPEALIAS, FIELD], aa=[@Nested(value=2), @Nested(value=3)])]",
+                "ea=[TYPEALIAS, FIELD], aa=[@test.Nested(value=2), @test.Nested(value=3)])]",
         ::f.returnType.annotations.toString()
     )
 

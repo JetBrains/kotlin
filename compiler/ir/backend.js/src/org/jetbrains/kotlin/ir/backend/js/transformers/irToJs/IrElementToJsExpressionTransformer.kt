@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,9 +7,14 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.backend.common.ir.isElseBranch
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.ir.backend.js.utils.*
+import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
+import org.jetbrains.kotlin.ir.backend.js.utils.Namer
+import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
+import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.*
@@ -17,6 +22,18 @@ import org.jetbrains.kotlin.js.backend.ast.*
 
 @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
 class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsExpression, JsGenerationContext> {
+
+    override fun visitComposite(expression: IrComposite, data: JsGenerationContext): JsExpression {
+        val size = expression.statements.size
+        if (size == 0) TODO("Empty IrComposite is not supported")
+
+        val first = expression.statements[0].accept(this, data)
+        if (size == 1) return first
+
+        return expression.statements.fold(first) { left, right ->
+            JsBinaryOperation(JsBinaryOperator.COMMA, left, right.accept(this, data))
+        }
+    }
 
     override fun visitVararg(expression: IrVararg, context: JsGenerationContext): JsExpression {
         assert(expression.elements.none { it is IrSpreadElement })
@@ -26,8 +43,8 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
     override fun visitExpressionBody(body: IrExpressionBody, context: JsGenerationContext): JsExpression =
         body.expression.accept(this, context)
 
-    override fun visitFunctionReference(expression: IrFunctionReference, context: JsGenerationContext): JsExpression {
-        val irFunction = expression.symbol.owner
+    override fun visitFunctionExpression(expression: IrFunctionExpression, context: JsGenerationContext): JsExpression {
+        val irFunction = expression.function
         return irFunction.accept(IrFunctionToJsTransformer(), context).apply { name = null }
     }
 
@@ -84,13 +101,16 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         return JsNameRef(fieldName, expression.receiver?.accept(this, context))
     }
 
-    override fun visitGetValue(expression: IrGetValue, context: JsGenerationContext): JsExpression =
-        context.getNameForValueDeclaration(expression.symbol.owner).makeRef()
+    override fun visitGetValue(expression: IrGetValue, context: JsGenerationContext): JsExpression {
+        if (expression.symbol.owner.isThisReceiver()) return JsThisRef()
+        return context.getNameForValueDeclaration(expression.symbol.owner).makeRef()
+    }
 
     override fun visitGetObjectValue(expression: IrGetObjectValue, context: JsGenerationContext): JsExpression {
         val obj = expression.symbol.owner
         assert(obj.kind == ClassKind.OBJECT)
         assert(obj.isEffectivelyExternal()) { "Non external IrGetObjectValue must be lowered" }
+
         return context.getRefForExternalClass(obj)
     }
 
@@ -101,7 +121,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         return jsAssignment(dest, source)
     }
 
-    override fun visitSetVariable(expression: IrSetVariable, context: JsGenerationContext): JsExpression {
+    override fun visitSetValue(expression: IrSetValue, context: JsGenerationContext): JsExpression {
         val ref = JsNameRef(context.getNameForValueDeclaration(expression.symbol.owner))
         val value = expression.value.accept(this, context)
         return JsBinaryOperation(JsBinaryOperator.ASG, ref, value)
@@ -123,28 +143,48 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
             return JsBinaryOperation(JsBinaryOperator.ASG, thisRef, arguments.single())
         }
 
-        return JsInvocation(callFuncRef, listOf(thisRef) + arguments)
+        return if (context.staticContext.backendContext.es6mode) {
+            JsInvocation(JsNameRef("super"), arguments)
+        } else {
+            JsInvocation(callFuncRef, listOf(thisRef) + arguments)
+        }
     }
 
     override fun visitConstructorCall(expression: IrConstructorCall, context: JsGenerationContext): JsExpression {
         val function = expression.symbol.owner
         val arguments = translateCallArguments(expression, context, this)
         val klass = function.parentAsClass
-        return if (klass.isInline) {
-            assert(function.isPrimary) {
-                "Inline class secondary constructors must be lowered into static methods"
-            }
-            // Argument value constructs unboxed inline class instance
-            arguments.single()
-        } else {
-            val ref = when {
-                klass.isEffectivelyExternal() ->
-                    context.getRefForExternalClass(klass)
 
-                else ->
-                    context.getNameForClass(klass).makeRef()
+        require(!klass.isInline) {
+            "All inline class constructor calls must be lowered to static function calls"
+        }
+
+        return when {
+            klass.isEffectivelyExternal() -> {
+                val refForExternalClass = context.getRefForExternalClass(klass)
+                val varargParameterIndex = expression.symbol.owner.varargParameterIndex()
+                if (varargParameterIndex == -1) {
+                    JsNew(refForExternalClass, arguments)
+                } else {
+                    val argumentsAsSingleArray = argumentsWithVarargAsSingleArray(
+                        JsNullLiteral(),
+                        arguments,
+                        varargParameterIndex
+                    )
+                    JsNew(
+                        JsInvocation(
+                            JsNameRef("apply", JsNameRef("bind", JsNameRef("Function"))),
+                            refForExternalClass,
+                            argumentsAsSingleArray
+                        ),
+                        emptyList()
+                    )
+                }
             }
-            JsNew(ref, arguments)
+            else -> {
+                val ref = context.getNameForClass(klass).makeRef()
+                JsNew(ref, arguments)
+            }
         }
     }
 
@@ -251,6 +291,15 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
             else -> error("Unexpected operator ${expression.operator}: ${expression.render()}")
         }
 
+    override fun visitRawFunctionReference(expression: IrRawFunctionReference, data: JsGenerationContext): JsExpression {
+        val name = when (val function = expression.symbol.owner) {
+            is IrConstructor -> data.getNameForConstructor(function)
+            is IrSimpleFunction -> data.getNameForStaticFunction(function)
+            else -> error("Unexpected function kind")
+        }
+        return JsNameRef(name)
+    }
+
     private fun prefixOperation(operator: JsUnaryOperator, expression: IrDynamicOperatorExpression, data: JsGenerationContext) =
         JsPrefixOperation(
             operator,
@@ -269,4 +318,10 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
             expression.left.accept(this, data),
             expression.right.accept(this, data)
         )
+
+    private fun IrValueDeclaration.isThisReceiver(): Boolean = when (val p = parent) {
+        is IrSimpleFunction -> this === p.dispatchReceiverParameter
+        is IrClass -> this === p.thisReceiver
+        else -> false
+    }
 }

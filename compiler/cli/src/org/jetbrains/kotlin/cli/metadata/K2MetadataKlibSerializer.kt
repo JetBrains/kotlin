@@ -1,14 +1,14 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.cli.metadata
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.common.CommonDependenciesContainer
 import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
-import org.jetbrains.kotlin.backend.common.serialization.DescriptorTable
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMonolithicSerializer
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmContentRoot
+import org.jetbrains.kotlin.cli.jvm.config.K2MetadataConfigurationKeys
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
@@ -24,10 +25,13 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.konan.DeserializedKlibModuleOrigin
+import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.konan.util.KlibMetadataFactories
 import org.jetbrains.kotlin.library.*
-import org.jetbrains.kotlin.library.impl.buildKoltinLibrary
-import org.jetbrains.kotlin.library.impl.createKotlinLibraryComponents
+import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
+import org.jetbrains.kotlin.library.impl.buildKotlinLibrary
+import org.jetbrains.kotlin.library.metadata.NativeTypeTransformer
+import org.jetbrains.kotlin.library.metadata.NullFlexibleTypeDeserializer
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
 import org.jetbrains.kotlin.name.Name
@@ -57,18 +61,19 @@ internal class K2MetadataKlibSerializer(private val metadataVersion: BuiltInsBin
         val (_, moduleDescriptor) = analyzer.analysisResult
 
         val destDir = checkNotNull(environment.destDir)
-        performSerialization(configuration, moduleDescriptor, destDir)
+        performSerialization(configuration, moduleDescriptor, destDir, environment.project)
     }
 
     private fun performSerialization(
         configuration: CompilerConfiguration,
         module: ModuleDescriptor,
-        destDir: File
+        destDir: File,
+        project: Project
     ) {
         val serializedMetadata: SerializedMetadata = KlibMetadataMonolithicSerializer(
             configuration.languageVersionSettings,
             metadataVersion,
-            DescriptorTable.createDefault(),
+            project,
             skipExpects = false,
             includeOnlyModuleContent = true
         ).serializeModule(module)
@@ -81,7 +86,7 @@ internal class K2MetadataKlibSerializer(private val metadataVersion: BuiltInsBin
             irVersion = null
         )
 
-        buildKoltinLibrary(
+        buildKotlinLibrary(
             emptyList(),
             serializedMetadata,
             null,
@@ -89,8 +94,10 @@ internal class K2MetadataKlibSerializer(private val metadataVersion: BuiltInsBin
             destDir.absolutePath,
             configuration[CommonConfigurationKeys.MODULE_NAME]!!,
             nopack = true,
+            perFile = false,
             manifestProperties = null,
-            dataFlowGraph = null
+            dataFlowGraph = null,
+            builtInsPlatform = BuiltInsPlatform.COMMON
         )
     }
 }
@@ -111,15 +118,18 @@ private class KlibMetadataDependencyContainer(
         klibFiles.map { resolveSingleFileKlib(org.jetbrains.kotlin.konan.file.File(it.absolutePath)) }
     }
 
+    private val friendPaths = configuration.get(K2MetadataConfigurationKeys.FRIEND_PATHS).orEmpty().toSet()
+    private val refinesPaths = configuration.get(K2MetadataConfigurationKeys.REFINES_PATHS).orEmpty().toSet()
+
     private val builtIns
         get() = DefaultBuiltIns.Instance
 
     private class KlibModuleInfo(
         override val name: Name,
         val kotlinLibrary: KotlinLibrary,
-        private val dependOnKlibModules: List<ModuleInfo>
+        private val dependOnModules: List<ModuleInfo>
     ) : ModuleInfo {
-        override fun dependencies(): List<ModuleInfo> = dependOnKlibModules
+        override fun dependencies(): List<ModuleInfo> = dependOnModules
 
         override fun dependencyOnBuiltIns(): ModuleInfo.DependencyOnBuiltIns = ModuleInfo.DependencyOnBuiltIns.LAST
 
@@ -130,6 +140,12 @@ private class KlibMetadataDependencyContainer(
             get() = CommonPlatformAnalyzerServices
     }
 
+    private val mutableDependenciesForAllModuleDescriptors = mutableListOf<ModuleDescriptorImpl>().apply {
+        add(builtIns.builtInsModule)
+    }
+
+    private val mutableDependenciesForAllModules = mutableListOf<ModuleInfo>()
+
     private val moduleDescriptorsForKotlinLibraries: Map<KotlinLibrary, ModuleDescriptorImpl> =
         kotlinLibraries.keysToMap { library ->
             val moduleHeader = parseModuleHeader(library.moduleHeaderData)
@@ -139,19 +155,50 @@ private class KlibMetadataDependencyContainer(
                 moduleName, storageManager, builtIns, moduleOrigin
             )
         }.also { result ->
-            val resultValues = result.values.toList()
-            val dependenciesForModuleDescriptors = resultValues + builtIns.builtInsModule
+            val resultValues = result.values
             resultValues.forEach { module ->
-                module.setDependencies(dependenciesForModuleDescriptors)
+                module.setDependencies(mutableDependenciesForAllModuleDescriptors)
             }
+            mutableDependenciesForAllModuleDescriptors.addAll(resultValues)
         }
 
-    override val moduleInfos: List<ModuleInfo> = mutableListOf<KlibModuleInfo>().apply {
+    private val moduleInfosImpl: List<KlibModuleInfo> = mutableListOf<KlibModuleInfo>().apply {
         addAll(
             moduleDescriptorsForKotlinLibraries.map { (kotlinLibrary, moduleDescriptor) ->
-                KlibModuleInfo(moduleDescriptor.name, kotlinLibrary, this@apply)
+                KlibModuleInfo(moduleDescriptor.name, kotlinLibrary, mutableDependenciesForAllModules)
             }
         )
+        mutableDependenciesForAllModules.addAll(this@apply)
+    }
+
+    override val moduleInfos: List<ModuleInfo> get() = moduleInfosImpl
+
+    override val friendModuleInfos: List<ModuleInfo> = moduleInfosImpl.filter {
+        it.kotlinLibrary.libraryFile.absolutePath in friendPaths
+    }
+
+    override val refinesModuleInfos: List<ModuleInfo> = moduleInfosImpl.filter {
+        it.kotlinLibrary.libraryFile.absolutePath in refinesPaths
+    }
+
+    override fun moduleDescriptorForModuleInfo(moduleInfo: ModuleInfo): ModuleDescriptor {
+        if (moduleInfo !in moduleInfos)
+            error("Unknown module info $moduleInfo")
+        moduleInfo as KlibModuleInfo
+
+        // Ensure that the package fragment provider has been created and the module descriptor has been
+        // initialized with the package fragment provider:
+        packageFragmentProviderForModuleInfo(moduleInfo)
+
+        return moduleDescriptorsForKotlinLibraries.getValue(moduleInfo.kotlinLibrary)
+    }
+
+    override fun registerDependencyForAllModules(
+        moduleInfo: ModuleInfo,
+        descriptorForModule: ModuleDescriptorImpl
+    ) {
+        mutableDependenciesForAllModules.add(moduleInfo)
+        mutableDependenciesForAllModuleDescriptors.add(descriptorForModule)
     }
 
     override fun packageFragmentProviderForModuleInfo(
@@ -167,7 +214,8 @@ private class KlibMetadataDependencyContainer(
         KlibMetadataModuleDescriptorFactoryImpl(
             MetadataFactories.DefaultDescriptorFactory,
             MetadataFactories.DefaultPackageFragmentsFactory,
-            MetadataFactories.flexibleTypeDeserializer
+            MetadataFactories.flexibleTypeDeserializer,
+            MetadataFactories.platformDependentTypeTransformer
         )
     }
 
@@ -186,7 +234,8 @@ private class KlibMetadataDependencyContainer(
             storageManager = LockBasedStorageManager("KlibMetadataPackageFragmentProvider"),
             moduleDescriptor = libraryModuleDescriptor,
             configuration = CompilerDeserializationConfiguration(languageVersionSettings),
-            compositePackageFragmentAddend = null
+            compositePackageFragmentAddend = null,
+            lookupTracker = LookupTracker.DO_NOTHING
         ).also {
             libraryModuleDescriptor.initialize(it)
         }
@@ -197,5 +246,6 @@ private class KlibMetadataDependencyContainer(
 private val MetadataFactories =
     KlibMetadataFactories(
         { DefaultBuiltIns.Instance },
-        org.jetbrains.kotlin.serialization.konan.NullFlexibleTypeDeserializer
+        NullFlexibleTypeDeserializer,
+        NativeTypeTransformer()
     )

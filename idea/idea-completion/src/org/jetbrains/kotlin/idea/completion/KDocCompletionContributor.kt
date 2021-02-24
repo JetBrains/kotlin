@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.utils.collectDescriptorsFiltered
+import java.util.*
 
 class KDocCompletionContributor : CompletionContributor() {
     init {
@@ -157,7 +158,7 @@ object KDocTagCompletionProvider : CompletionProvider<CompletionParameters>() {
         val resultWithPrefix = result.withPrefixMatcher(prefix)
         KDocKnownTag.values().forEach {
             if (kdocOwner == null || it.isApplicable(kdocOwner)) {
-                resultWithPrefix.addElement(LookupElementBuilder.create("@" + it.name.toLowerCase()))
+                resultWithPrefix.addElement(LookupElementBuilder.create("@" + it.name.toLowerCase(Locale.US)))
             }
         }
     }

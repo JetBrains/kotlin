@@ -62,9 +62,16 @@ internal abstract class KotlinJvmOptionsBase : org.jetbrains.kotlin.gradle.dsl.K
 
     private var jvmTargetField: kotlin.String? = null
     override var jvmTarget: kotlin.String
-        get() = jvmTargetField ?: "1.6"
+        get() = jvmTargetField ?: "1.8"
         set(value) {
             jvmTargetField = value
+        }
+
+    private var moduleNameField: kotlin.String?? = null
+    override var moduleName: kotlin.String?
+        get() = moduleNameField ?: null
+        set(value) {
+            moduleNameField = value
         }
 
     private var noJdkField: kotlin.Boolean? = null
@@ -95,6 +102,13 @@ internal abstract class KotlinJvmOptionsBase : org.jetbrains.kotlin.gradle.dsl.K
             useIRField = value
         }
 
+    private var useOldBackendField: kotlin.Boolean? = null
+    override var useOldBackend: kotlin.Boolean
+        get() = useOldBackendField ?: false
+        set(value) {
+            useOldBackendField = value
+        }
+
     internal open fun updateArguments(args: org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments) {
         allWarningsAsErrorsField?.let { args.allWarningsAsErrors = it }
         suppressWarningsField?.let { args.suppressWarnings = it }
@@ -105,10 +119,12 @@ internal abstract class KotlinJvmOptionsBase : org.jetbrains.kotlin.gradle.dsl.K
         javaParametersField?.let { args.javaParameters = it }
         jdkHomeField?.let { args.jdkHome = it }
         jvmTargetField?.let { args.jvmTarget = it }
+        moduleNameField?.let { args.moduleName = it }
         noJdkField?.let { args.noJdk = it }
         noReflectField?.let { args.noReflect = it }
         noStdlibField?.let { args.noStdlib = it }
         useIRField?.let { args.useIR = it }
+        useOldBackendField?.let { args.useOldBackend = it }
     }
 }
 
@@ -121,9 +137,11 @@ internal fun org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments.fi
     includeRuntime = false
     javaParameters = false
     jdkHome = null
-    jvmTarget = "1.6"
+    jvmTarget = "1.8"
+    moduleName = null
     noJdk = false
     noReflect = true
     noStdlib = true
     useIR = false
+    useOldBackend = false
 }

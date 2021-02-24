@@ -1,4 +1,8 @@
 // TARGET_BACKEND: JVM
+
+// Wrong function resolution after package renaming
+// IGNORE_BACKEND: ANDROID
+
 // FILE: 1.kt
 package kotlin.internal
 

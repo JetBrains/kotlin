@@ -13,12 +13,12 @@ UFile (package = )
                                     USimpleNameReferenceExpression (identifier = it)
                                     UTypeReferenceExpression (name = java.lang.String)
                                 UExpressionList (when_entry)
-                                    USimpleNameReferenceExpression (identifier = bar)
-                                    UBreakExpression (label = null)
+                                    UYieldExpression
+                                        USimpleNameReferenceExpression (identifier = bar)
                             USwitchClauseExpressionWithBody
                                 UBinaryExpressionWithType
                                     USimpleNameReferenceExpression (identifier = it)
                                     UTypeReferenceExpression (name = java.lang.String)
                                 UExpressionList (when_entry)
-                                    ULiteralExpression (value = "<error>")
-                                    UBreakExpression (label = null)
+                                    UYieldExpression
+                                        ULiteralExpression (value = "<error>")

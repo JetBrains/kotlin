@@ -18,7 +18,7 @@
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Using compiler bundled into plugin"/>
+          <text resource-bundle="messages/KotlinJvmBundle" key="using.compiler.bundled.into.plugin"/>
         </properties>
       </component>
       <grid id="f8666" binding="chooseModulesPanelPlace" layout-manager="BorderLayout" hgap="0" vgap="0">

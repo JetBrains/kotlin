@@ -7,14 +7,17 @@ package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.backend.common.bridges.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaForKotlinOverridePropertyDescriptor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmDefaultAnnotation
+import org.jetbrains.kotlin.resolve.jvm.annotations.isCompiledToJvmDefault
 import org.jetbrains.kotlin.resolve.jvm.annotations.hasPlatformDependentAnnotation
+import org.jetbrains.kotlin.util.findImplementationFromInterface
+import org.jetbrains.kotlin.util.findInterfaceImplementation
 
 class DescriptorBasedFunctionHandleForJvm(
     descriptor: FunctionDescriptor,
@@ -29,17 +32,17 @@ class DescriptorBasedFunctionHandleForJvm(
         For non-@JvmDefault interfaces function, its body is generated in a separate place (DefaultImpls) and
         the method in the interface is abstract so we must not generate bridges for such cases.
     */
-    override val isAbstract: Boolean = super.isAbstract || isAbstractOnJvmIgnoringActualModality(descriptor)
+    override val isAbstract: Boolean = super.isAbstract || isAbstractOnJvmIgnoringActualModality(descriptor, state.jvmDefaultMode)
 
     override val mayBeUsedAsSuperImplementation: Boolean =
-        super.mayBeUsedAsSuperImplementation || descriptor.isJvmDefaultOrPlatformDependent()
+        super.mayBeUsedAsSuperImplementation || descriptor.isJvmDefaultOrPlatformDependent(state.jvmDefaultMode)
 
     private val asmMethod by lazy(LazyThreadSafetyMode.NONE) {
         state.typeMapper.mapAsmMethod(descriptor)
     }
 
     override val isDeclaration: Boolean =
-        descriptor.kind.isReal || needToGenerateDelegationToDefaultImpls(descriptor)
+        descriptor.kind.isReal || needToGenerateDelegationToDefaultImpls(descriptor, state.jvmDefaultMode)
 
     override val mightBeIncorrectCode: Boolean
         get() = state.classBuilderMode.mightBeIncorrectCode
@@ -65,29 +68,29 @@ private fun FunctionDescriptor.containerEntityForEqualityAndHashCode(): Any =
 private val FunctionDescriptor.isJavaForKotlinOverrideProperty: Boolean
     get() = this is PropertyAccessorDescriptor && correspondingProperty is JavaForKotlinOverridePropertyDescriptor
 
-private fun CallableMemberDescriptor.isJvmDefaultOrPlatformDependent() =
-    hasJvmDefaultAnnotation() || hasPlatformDependentAnnotation()
+private fun CallableMemberDescriptor.isJvmDefaultOrPlatformDependent(jvmDefaultMode: JvmDefaultMode) =
+    isCompiledToJvmDefault(jvmDefaultMode) || hasPlatformDependentAnnotation()
 
-private fun needToGenerateDelegationToDefaultImpls(descriptor: FunctionDescriptor): Boolean {
+private fun needToGenerateDelegationToDefaultImpls(descriptor: FunctionDescriptor, jvmDefaultMode: JvmDefaultMode): Boolean {
     if (findInterfaceImplementation(descriptor) == null) return false
     val overriddenFromInterface = findImplementationFromInterface(descriptor) ?: return false
 
-    return !overriddenFromInterface.isJvmDefaultOrPlatformDependent()
+    return !overriddenFromInterface.isJvmDefaultOrPlatformDependent(jvmDefaultMode)
 }
 
 /**
  * @return return true for interface method not annotated with @JvmDefault or @PlatformDependent
  */
-fun isAbstractOnJvmIgnoringActualModality(descriptor: FunctionDescriptor): Boolean {
+fun isAbstractOnJvmIgnoringActualModality(descriptor: FunctionDescriptor, jvmDefaultMode: JvmDefaultMode): Boolean {
     if (!DescriptorUtils.isInterface(descriptor.containingDeclaration)) return false
 
-    return !descriptor.isJvmDefaultOrPlatformDependent()
+    return !descriptor.isJvmDefaultOrPlatformDependent(jvmDefaultMode)
 }
 
 fun <Signature> generateBridgesForFunctionDescriptorForJvm(
     descriptor: FunctionDescriptor,
     signature: (FunctionDescriptor) -> Signature,
     state: GenerationState
-): Set<Bridge<Signature>> {
+): Set<Bridge<Signature, DescriptorBasedFunctionHandleForJvm>> {
     return generateBridges(DescriptorBasedFunctionHandleForJvm(descriptor, state)) { signature(it.descriptor) }
 }

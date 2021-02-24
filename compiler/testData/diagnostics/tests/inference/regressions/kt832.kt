@@ -7,5 +7,5 @@ fun <T> fooT2() : (t : T) -> T {
 }
 
 fun test() {
-    <!NI;NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>fooT2<!>()(1) // here 1 should not be marked with an error
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER{NI}, TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER{OI}!>fooT2<!>()(1) // here 1 should not be marked with an error
 }

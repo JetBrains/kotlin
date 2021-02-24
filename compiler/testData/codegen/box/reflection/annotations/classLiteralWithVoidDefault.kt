@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 // WITH_REFLECT
 // TARGET_BACKEND: JVM
 // FILE: Anno.java
@@ -24,7 +23,7 @@ class C {
 }
 
 fun box(): String {
-    assertTrue("\\[@Anno\\(value=void(\\.class)?\\)\\]".toRegex().matches(C::f1.annotations.toString()))
-    assertTrue("\\[@Anno\\(value=(class )?java.lang.Void(\\.class)?\\)\\]".toRegex().matches(C::f2.annotations.toString()))
+    assertTrue("\\[@Anno\\((value=)?void(\\.class)?\\)\\]".toRegex().matches(C::f1.annotations.toString()))
+    assertTrue("\\[@Anno\\((value=)?(class )?java.lang.Void(\\.class)?\\)\\]".toRegex().matches(C::f2.annotations.toString()))
     return "OK"
 }

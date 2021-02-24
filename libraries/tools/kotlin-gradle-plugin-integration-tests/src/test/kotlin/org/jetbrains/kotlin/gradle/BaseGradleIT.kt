@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.gradle
 
 import com.intellij.testFramework.TestDataFile
 import org.gradle.api.logging.LogLevel
+import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.tooling.GradleConnector
 import org.gradle.util.GradleVersion
 import org.intellij.lang.annotations.Language
@@ -11,26 +12,32 @@ import org.jdom.output.Format
 import org.jdom.output.XMLOutputter
 import org.jetbrains.kotlin.gradle.model.ModelContainer
 import org.jetbrains.kotlin.gradle.model.ModelFetcherBuildAction
+import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.test.RunnerWithMuteInDatabase
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespaces
 import org.junit.After
 import org.junit.AfterClass
 import org.junit.Assert
 import org.junit.Before
+import org.junit.runner.RunWith
 import java.io.File
 import java.util.regex.Pattern
 import kotlin.test.*
 
 val SYSTEM_LINE_SEPARATOR: String = System.getProperty("line.separator")
 
+@RunWith(value = RunnerWithMuteInDatabase::class)
 abstract class BaseGradleIT {
 
     protected var workingDir = File(".")
 
-    protected open fun defaultBuildOptions(): BuildOptions = BuildOptions(withDaemon = true)
+    internal open fun defaultBuildOptions(): BuildOptions = BuildOptions(withDaemon = true)
 
     open val defaultGradleVersion: GradleVersionRequired
         get() = GradleVersionRequired.None
+
+    val isTeamCityRun = System.getenv("TEAMCITY_VERSION") != null
 
     @Before
     fun setUp() {
@@ -146,6 +153,22 @@ abstract class BaseGradleIT {
             return wrapper
         }
 
+        fun maybeUpdateSettingsScript(wrapperVersion: String, settingsScript: File) {
+            // enableFeaturePreview("GRADLE_METADATA") is no longer needed when building with Gradle 5.4 or above
+            if (GradleVersion.version(wrapperVersion) >= GradleVersion.version("5.4")) {
+                settingsScript.apply {
+                    if(exists()) {
+                        modify {
+                            it.replace("enableFeaturePreview('GRADLE_METADATA')", "//")
+                        }
+                        modify {
+                            it.replace("enableFeaturePreview(\"GRADLE_METADATA\")", "//")
+                        }
+                    }
+                }
+            }
+        }
+
         private fun createNewWrapperDir(version: String): File =
             createTempDir("GradleWrapper-$version-")
                 .apply {
@@ -167,17 +190,9 @@ abstract class BaseGradleIT {
             assert(version != runnerGradleVersion) { "Not stopping Gradle daemon v$version as it matches the runner version" }
             println("Stopping gradle daemon v$version")
 
-            val envVariables = if (GradleVersion.version(version) < GradleVersion.version("5.0")) {
-                // Gradle versions below 5.0 do not support running on JDK11, and some of the tests
-                // set JAVA_HOME to JDK11. This makes sure we are using JDK8 when stopping those daemons.
-                environmentVariables + mapOf("JAVA_HOME" to System.getenv()["JDK_18"]!!)
-            } else {
-                environmentVariables
-            }
-
             val wrapperDir = gradleWrappers[version] ?: error("Was asked to stop unknown daemon $version")
             val cmd = createGradleCommand(wrapperDir, arrayListOf("-stop"))
-            val result = runProcess(cmd, wrapperDir, envVariables)
+            val result = runProcess(cmd, wrapperDir, environmentVariables)
             assert(result.isSuccessful) { "Could not stop daemon: $result" }
             DaemonRegistry.unregister(version)
         }
@@ -198,9 +213,11 @@ abstract class BaseGradleIT {
         val daemonOptionSupported: Boolean = true,
         val incremental: Boolean? = null,
         val incrementalJs: Boolean? = null,
+        val incrementalJsKlib: Boolean? = null,
         val jsIrBackend: Boolean? = null,
         val androidHome: File? = null,
         val javaHome: File? = null,
+        val gradleUserHome: File? = null,
         val androidGradlePluginVersion: AGPVersion? = null,
         val forceOutputToStdout: Boolean = false,
         val debug: Boolean = false,
@@ -210,10 +227,23 @@ abstract class BaseGradleIT {
         val usePreciseJavaTracking: Boolean? = null,
         val withBuildCache: Boolean = false,
         val kaptOptions: KaptOptions? = null,
-        val parallelTasksInProject: Boolean? = null
+        val parallelTasksInProject: Boolean? = null,
+        val jsCompilerType: KotlinJsCompilerType? = null,
+        val configurationCache: Boolean = false,
+        val configurationCacheProblems: ConfigurationCacheProblems = ConfigurationCacheProblems.FAIL,
+        val warningMode: WarningMode = WarningMode.Fail
     )
 
-    data class KaptOptions(val verbose: Boolean, val useWorkers: Boolean, val incrementalKapt: Boolean = false, val includeCompileClasspath: Boolean = true)
+    enum class ConfigurationCacheProblems {
+        FAIL, WARN
+    }
+
+    data class KaptOptions(
+        val verbose: Boolean,
+        val useWorkers: Boolean,
+        val incrementalKapt: Boolean = false,
+        val includeCompileClasspath: Boolean = true
+    )
 
     open inner class Project(
         val projectName: String,
@@ -307,6 +337,7 @@ abstract class BaseGradleIT {
 
         val env = createEnvironmentVariablesMap(options)
         val wrapperDir = prepareWrapper(wrapperVersion, env)
+
         val cmd = createBuildCommand(wrapperDir, params, options)
 
         println("<=== Test build: ${this.projectName} $cmd ===>")
@@ -314,6 +345,8 @@ abstract class BaseGradleIT {
         if (!projectDir.exists()) {
             setupWorkingDir()
         }
+
+        maybeUpdateSettingsScript(wrapperVersion, gradleSettingsScript())
 
         val result = runProcess(cmd, projectDir, env, options)
         try {
@@ -426,6 +459,18 @@ abstract class BaseGradleIT {
         return this
     }
 
+    fun CompiledProject.assertSingleFileExists(
+        directory: String = "",
+        filePath: String = ""
+    ): CompiledProject {
+        val directoryFile = fileInWorkingDir(directory)
+        assertTrue(
+            directoryFile.listFiles()?.size == 1,
+            "[$directory] should contain only single file"
+        )
+        return assertFileExists("$directory/$filePath")
+    }
+
     fun CompiledProject.assertFileExists(path: String = ""): CompiledProject {
         assertTrue(fileInWorkingDir(path).exists(), "The file [$path] does not exist.")
         return this
@@ -479,8 +524,24 @@ abstract class BaseGradleIT {
         }
     }
 
+    fun CompiledProject.assertTasksExecutedByPrefix(taskPrefixes: Iterable<String>) {
+        for (prefix in taskPrefixes) {
+            assertContainsRegex("(Executing actions for task|Executing task) '$prefix\\w*'".toRegex())
+        }
+    }
+
     fun CompiledProject.assertTasksExecuted(vararg tasks: String) {
         assertTasksExecuted(tasks.toList())
+    }
+
+    fun CompiledProject.assertTasksRetrievedFromCache(tasks: Iterable<String>) {
+        for (task in tasks) {
+            assertContains("$task FROM-CACHE")
+        }
+    }
+
+    fun CompiledProject.assertTasksRetrievedFromCache(vararg tasks: String) {
+        assertTasksRetrievedFromCache(tasks.toList())
     }
 
     fun CompiledProject.assertTasksUpToDate(tasks: Iterable<String>) {
@@ -521,6 +582,18 @@ abstract class BaseGradleIT {
         }
     }
 
+    fun CompiledProject.assertTasksRegisteredByPrefix(taskPrefixes: Iterable<String>) {
+        for (prefix in taskPrefixes) {
+            assertContainsRegex("'Register task $prefix\\w*'".toRegex())
+        }
+    }
+
+    fun CompiledProject.assertTasksNotRegisteredByPrefix(taskPrefixes: Iterable<String>) {
+        for (prefix in taskPrefixes) {
+            assertNotContains("'Register task $prefix\\w*'".toRegex())
+        }
+    }
+
     fun CompiledProject.assertTasksNotRealized(vararg tasks: String) {
         for (task in tasks) {
             assertNotContains("'Realize task $task'")
@@ -535,6 +608,12 @@ abstract class BaseGradleIT {
     fun CompiledProject.assertTasksSkipped(vararg tasks: String) {
         for (task in tasks) {
             assertContains("Skipping task '$task'")
+        }
+    }
+
+    fun CompiledProject.assertTasksSkippedByPrefix(taskPrefixes: Iterable<String>) {
+        for (prefix in taskPrefixes) {
+            assertContainsRegex("Skipping task '$prefix\\w*'".toRegex())
         }
     }
 
@@ -627,6 +706,13 @@ Finished executing task ':$taskName'|
             singleOrNull { it.exists() } ?: first()
         }
 
+    fun Project.gradleProperties(): File =
+        File(projectDir, "gradle.properties").also { file ->
+            if (!file.exists()) {
+                file.createNewFile()
+            }
+        }
+
     /**
      * @param assertionFileName path to xml with expected test results, relative to test resources root
      */
@@ -664,9 +750,9 @@ Finished executing task ':$taskName'|
         val xmlString = buildString {
             appendln("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
             appendln("<results>")
-            files.forEach {
+            files.forEach { file ->
                 appendln(
-                    it.readText()
+                    file.readText()
                         .trimTrailingWhitespaces()
                         .replace(projectDir.absolutePath, "/\$PROJECT_DIR$")
                         .replace(projectDir.name, "\$PROJECT_NAME$")
@@ -698,7 +784,7 @@ Finished executing task ':$taskName'|
     }
 
     private fun prettyPrintXml(uglyXml: String): String =
-            XMLOutputter(Format.getPrettyFormat()).outputString(SAXBuilder().build(uglyXml.reader()))
+        XMLOutputter(Format.getPrettyFormat()).outputString(SAXBuilder().build(uglyXml.reader()))
 
     private fun Project.createGradleTailParameters(options: BuildOptions, params: Array<out String> = arrayOf()): List<String> =
         params.toMutableList().apply {
@@ -722,6 +808,7 @@ Finished executing task ':$taskName'|
                 add("-Pkotlin.incremental=$it")
             }
             options.incrementalJs?.let { add("-Pkotlin.incremental.js=$it") }
+            options.incrementalJsKlib?.let { add("-Pkotlin.incremental.js.klib=$it") }
             options.jsIrBackend?.let { add("-Pkotlin.js.useIrBackend=$it") }
             options.usePreciseJavaTracking?.let { add("-Pkotlin.incremental.usePreciseJavaTracking=$it") }
             options.androidGradlePluginVersion?.let { add("-Pandroid_tools_version=$it") }
@@ -753,8 +840,25 @@ Finished executing task ':$taskName'|
                 add("-Pkotlin.parallel.tasks.in.project=$it")
             }
 
+            options.jsCompilerType?.let {
+                add("-Pkotlin.js.compiler=$it")
+            }
+
+            add("-Dorg.gradle.unsafe.configuration-cache=${options.configurationCache}")
+            add("-Dorg.gradle.unsafe.configuration-cache-problems=${options.configurationCacheProblems.name.toLowerCase()}")
+
             // Workaround: override a console type set in the user machine gradle.properties (since Gradle 4.3):
             add("--console=plain")
+            //The feature of failing the build on deprecation warnings is introduced in gradle 5.6
+            val supportFailingBuildOnWarning =
+                GradleVersion.version(chooseWrapperVersionOrFinishTest()) >= GradleVersion.version("5.6")
+            // Agp uses Gradle internal API constructor DefaultDomainObjectSet(Class<T>) until Agp 3.6.0 which is deprecated by Gradle,
+            // so we don't run with --warning-mode=fail when Agp 3.6 or less is used.
+            val notUsingAgpWithWarnings =
+                options.androidGradlePluginVersion == null || options.androidGradlePluginVersion > AGPVersion.v3_6_0
+            if (supportFailingBuildOnWarning && notUsingAgpWithWarnings && options.warningMode == WarningMode.Fail) {
+                add("--warning-mode=${WarningMode.Fail.name.toLowerCase()}")
+            }
             addAll(options.freeCommandLineArgs)
         }
 
@@ -767,6 +871,10 @@ Finished executing task ':$taskName'|
 
             options.javaHome?.let {
                 put("JAVA_HOME", it.canonicalPath)
+            }
+
+            options.gradleUserHome?.let {
+                put("GRADLE_USER_HOME", it.canonicalPath)
             }
         }
 

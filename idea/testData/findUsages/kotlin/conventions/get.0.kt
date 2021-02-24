@@ -12,3 +12,5 @@ fun test() {
     val b = B(2)
     b[3] = "a"
 }
+
+// DISABLE-ERRORS

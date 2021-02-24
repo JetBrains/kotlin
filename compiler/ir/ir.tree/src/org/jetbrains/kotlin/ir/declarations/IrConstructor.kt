@@ -17,15 +17,17 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
+abstract class IrConstructor : IrFunction() {
+    @ObsoleteDescriptorBasedAPI
+    abstract override val descriptor: ClassConstructorDescriptor
+    abstract override val symbol: IrConstructorSymbol
 
-interface IrConstructor : IrFunction, IrSymbolDeclaration<IrConstructorSymbol> {
-    override val descriptor: ClassConstructorDescriptor
+    abstract val isPrimary: Boolean
 
-    override var visibility: Visibility
-
-    val isPrimary: Boolean
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+        visitor.visitConstructor(this, data)
 }
-

@@ -1,0 +1,70 @@
+fun testBreakFor() {
+  val xs: IntArray = IntArray(size = 10, init = local fun <anonymous>(i: Int): Int {
+    return i
+  }
+)
+  var k: Int = 0
+  { // BLOCK
+    val <iterator>: IntIterator = xs.iterator()
+    while (<iterator>.hasNext()) { // BLOCK
+      val x: Int = <iterator>.next()
+      when {
+        greater(arg0 = k, arg1 = 2) -> break
+      }
+    }
+  }
+}
+
+fun testBreakWhile() {
+  var k: Int = 0
+  while (less(arg0 = k, arg1 = 10)) when {
+    greater(arg0 = k, arg1 = 2) -> break
+  }
+}
+
+fun testBreakDoWhile() {
+  var k: Int = 0
+  dowhen {
+    greater(arg0 = k, arg1 = 2) -> break
+  }  while (less(arg0 = k, arg1 = 10))
+}
+
+fun testContinueFor() {
+  val xs: IntArray = IntArray(size = 10, init = local fun <anonymous>(i: Int): Int {
+    return i
+  }
+)
+  var k: Int = 0
+  { // BLOCK
+    val <iterator>: IntIterator = xs.iterator()
+    while (<iterator>.hasNext()) { // BLOCK
+      val x: Int = <iterator>.next()
+      when {
+        greater(arg0 = k, arg1 = 2) -> continue
+      }
+    }
+  }
+}
+
+fun testContinueWhile() {
+  var k: Int = 0
+  while (less(arg0 = k, arg1 = 10)) when {
+    greater(arg0 = k, arg1 = 2) -> continue
+  }
+}
+
+fun testContinueDoWhile() {
+  var k: Int = 0
+  var s: String = ""
+  do// COMPOSITE {
+  k = k.inc()
+  k /*~> Unit */
+  when {
+    greater(arg0 = k, arg1 = 2) -> continue
+  }
+  s = s.plus(other = k.toString() + ";")
+  // }  while (less(arg0 = k, arg1 = 10))
+  when {
+    EQEQ(arg0 = s, arg1 = "1;2;").not() -> throw AssertionError(p0 = s)
+  }
+}

@@ -1,7 +1,7 @@
-// FILE: f.kt
+// FILE: a.kt
 package a
 class b {}
-// FILE: f.kt
+// FILE: b.kt
 package a.b
-// FILE: f.kt
+// FILE: c.kt
 package a.b

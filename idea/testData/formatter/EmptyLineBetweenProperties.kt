@@ -35,3 +35,12 @@ class TwoLines {
 
     val p5: Int
 }
+
+class Foo {
+    @Inject
+    lateinit var logger: Logger
+    @Inject
+    lateinit var userService: UserService
+    @Inject
+    override lateinit var configBridge: ConfigBridge
+}

@@ -1,0 +1,6 @@
+fun <T : Any?> problematic(lss: List<List<T>>): List<T> {
+  return lss.flatMap<List<T>, T?>(transform = local fun <anonymous>(it: List<T>): Iterable<T?> {
+    return id<T?>(v = it) /*!! List<T?> */
+  }
+)
+}

@@ -24,6 +24,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import junit.framework.ComparisonFailure;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.asJava.classes.KtLightClass;
+import org.jetbrains.kotlin.asJava.classes.KtUltraLightSupport;
 import org.jetbrains.kotlin.name.SpecialNames;
 
 import java.io.File;
@@ -50,7 +51,15 @@ public class KotlinLightClassCoherenceTest extends KotlinAsJavaTestBase {
 
     @NotNull
     protected PsiClass doTest(String qualifiedName) {
-        KtLightClass psiClass = (KtLightClass) finder.findClass(qualifiedName, GlobalSearchScope.allScope(getProject()));
+        boolean forceFlag = KtUltraLightSupport.Companion.getForceUsingOldLightClasses();
+        KtLightClass psiClass;
+        try {
+            KtUltraLightSupport.Companion.setForceUsingOldLightClasses(true);
+            psiClass = (KtLightClass) finder.findClass(qualifiedName, GlobalSearchScope.allScope(getProject()));
+        } finally {
+            KtUltraLightSupport.Companion.setForceUsingOldLightClasses(forceFlag);
+        }
+
         assertNotNull("Class not found: " + qualifiedName, psiClass);
 
         Asserter asserter = new Asserter();

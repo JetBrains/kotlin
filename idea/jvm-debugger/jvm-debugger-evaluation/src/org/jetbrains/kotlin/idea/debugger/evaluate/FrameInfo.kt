@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.idea.debugger.evaluate
 
+import com.intellij.debugger.jdi.LocalVariableProxyImpl
+import com.intellij.debugger.jdi.StackFrameProxyImpl
 import com.intellij.openapi.project.Project
 import com.intellij.psi.CommonClassNames
 import com.intellij.psi.PsiElementFactory
@@ -12,10 +14,11 @@ import com.intellij.psi.PsiNameHelper
 import com.intellij.psi.PsiType
 import com.intellij.psi.search.GlobalSearchScope
 import com.sun.jdi.*
+import org.jetbrains.kotlin.idea.debugger.safeVisibleVariables
 import org.jetbrains.kotlin.idea.j2k.j2k
 import org.jetbrains.kotlin.psi.KtProperty
 
-class FrameInfo private constructor(val project: Project, thisObject: Value?, variables: Map<LocalVariable, Value?>) {
+class FrameInfo private constructor(val project: Project, thisObject: Value?, variables: Map<LocalVariableProxyImpl, Value>) {
     val thisObject = run {
         if (thisObject == null) {
             return@run null
@@ -29,12 +32,23 @@ class FrameInfo private constructor(val project: Project, thisObject: Value?, va
     companion object {
         private const val FAKE_JAVA_THIS_NAME = "\$this\$_java_locals_debug_fun_"
 
-        fun from(project: Project, frame: StackFrame?): FrameInfo {
-            if (frame == null) {
+        fun from(project: Project, frameProxy: StackFrameProxyImpl?): FrameInfo {
+            if (frameProxy == null) {
                 return FrameInfo(project, null, emptyMap())
             }
 
-            return FrameInfo(project, frame.thisObject(), frame.getValues(frame.visibleVariables()))
+            val variableValues = collectVariableValues(frameProxy)
+            return FrameInfo(project, frameProxy.thisObject(), variableValues)
+        }
+
+        private fun collectVariableValues(frameProxy: StackFrameProxyImpl): Map<LocalVariableProxyImpl, Value> {
+            val variables = frameProxy.safeVisibleVariables()
+            val values = HashMap<LocalVariableProxyImpl, Value>(variables.size)
+            for (variable in variables) {
+                val value = frameProxy.getValue(variable) ?: continue
+                values[variable] = value
+            }
+            return values
         }
 
         private fun createKotlinProperty(project: Project, name: String, typeName: String, value: Value?): KtProperty? {

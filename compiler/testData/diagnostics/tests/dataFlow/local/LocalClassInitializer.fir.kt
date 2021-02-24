@@ -4,7 +4,7 @@ fun f(a: Any?) {
   if (a is B) {
     class C : X(a) {
       init {
-        a.<!UNRESOLVED_REFERENCE!>foo<!>()
+        a.foo()
       }
     }
   }

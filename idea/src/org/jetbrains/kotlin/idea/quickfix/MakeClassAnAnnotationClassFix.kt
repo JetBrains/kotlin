@@ -20,6 +20,7 @@ import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtClass
@@ -27,9 +28,9 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
 class MakeClassAnAnnotationClassFix(annotationClass: KtClass) : KotlinQuickFixAction<KtClass>(annotationClass) {
-    override fun getFamilyName() = "Make class an annotation class"
+    override fun getFamilyName() = KotlinBundle.message("make.class.an.annotation.class")
 
-    override fun getText() = element?.let { "Make '${it.name}' an annotation class" } ?: ""
+    override fun getText() = element?.let { KotlinBundle.message("make.0.an.annotation.class", it.name.toString()) } ?: ""
 
     public override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return

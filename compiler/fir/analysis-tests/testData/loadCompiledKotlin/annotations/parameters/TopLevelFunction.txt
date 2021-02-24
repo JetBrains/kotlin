@@ -1,0 +1,6 @@
+public final fun foo(@R|test/Anno|() x: R|kotlin/Int|): R|kotlin/Unit|
+
+public final annotation class Anno : R|kotlin/Annotation| {
+    public constructor(): R|test/Anno|
+
+}

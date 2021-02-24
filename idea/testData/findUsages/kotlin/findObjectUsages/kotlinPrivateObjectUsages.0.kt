@@ -1,5 +1,7 @@
 // PSI_ELEMENT: org.jetbrains.kotlin.psi.KtObjectDeclaration
 // OPTIONS: usages
+// FIR_COMPARISON
+
 package server
 
 public open class Server() {
@@ -14,3 +16,4 @@ public class ServerEx(): Server() {
     override fun processRequest() = Server.Foo
 }
 
+// DISABLE-ERRORS

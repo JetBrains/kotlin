@@ -35,9 +35,11 @@ class BasicAssertionsTest {
         assertTrue(true) // at least one assertion required for qunit
 
         withDefaultAsserter run@{
+            val rootCause = IllegalArgumentException()
             try {
-                assertFailsWith<IllegalStateException> { throw IllegalArgumentException() }
+                assertFailsWith<IllegalStateException> { throw rootCause }
             } catch (e: AssertionError) {
+                if (e.cause !== rootCause) throw AssertionError("Expected to fail with correct cause")
                 return@run
             }
             throw AssertionError("Expected to fail")
@@ -62,9 +64,11 @@ class BasicAssertionsTest {
 
     @Test
     fun testAssertFailsWithClassFails() {
-        checkFailedAssertion {
-            assertFailsWith(IllegalArgumentException::class) { throw IllegalStateException() }
+        val rootCause = IllegalStateException()
+        val actual = checkFailedAssertion {
+            assertFailsWith(IllegalArgumentException::class) { throw rootCause }
         }
+        assertSame(rootCause, actual.cause, "Expected to fail with correct cause")
 
         checkFailedAssertion {
             assertFailsWith(Exception::class) { }
@@ -148,7 +152,7 @@ class BasicAssertionsTest {
 
     @Test()
     fun testAssertNotNullFails() {
-        checkFailedAssertion { assertNotNull(null) }
+        checkFailedAssertion { assertNotNull<Any>(null) }
     }
 
     @Test
@@ -178,7 +182,18 @@ class BasicAssertionsTest {
 
     @Test()
     fun testFail() {
-        checkFailedAssertion { fail("should fail") }
+        val message = "should fail"
+        val actual = checkFailedAssertion { fail(message) }
+        assertEquals(message, actual.message)
+    }
+
+    @Test
+    fun testFailWithCause() {
+        val message = "should fail due to"
+        val cause = IllegalStateException()
+        val actual = checkFailedAssertion { fail(message, cause) }
+        assertEquals(message, actual.message)
+        assertSame(cause, actual.cause)
     }
 
     @Test
@@ -193,8 +208,8 @@ class BasicAssertionsTest {
 }
 
 
-private fun checkFailedAssertion(assertion: () -> Unit) {
-    assertFailsWith<AssertionError> { withDefaultAsserter(assertion) }
+private fun checkFailedAssertion(assertion: () -> Unit): AssertionError {
+    return assertFailsWith<AssertionError> { withDefaultAsserter(assertion) }
 }
 
 private fun withDefaultAsserter(block: () -> Unit) {

@@ -1,0 +1,21 @@
+@kotlin.coroutines.jvm.internal.DebugMetadata
+@kotlin.Metadata
+final class UnreachableKt$test$1 {
+    // source: 'unreachable.kt'
+    enclosing method UnreachableKt.test()V
+    private synthetic field L$0: java.lang.Object
+    field label: int
+    inner (anonymous) class UnreachableKt$test$1
+    method <init>(p0: kotlin.coroutines.Continuation): void
+    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
+    public final method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
+    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+}
+
+@kotlin.Metadata
+public final class UnreachableKt {
+    // source: 'unreachable.kt'
+    inner (anonymous) class UnreachableKt$test$1
+    public final static method test(): void
+    public final static method use(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function2): void
+}

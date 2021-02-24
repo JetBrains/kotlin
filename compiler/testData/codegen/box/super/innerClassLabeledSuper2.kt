@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_FIR: JVM_IR
+// IGNORE_FIR_DIAGNOSTICS
 //inspired by kt3492
 interface BK {
     fun foo(): String

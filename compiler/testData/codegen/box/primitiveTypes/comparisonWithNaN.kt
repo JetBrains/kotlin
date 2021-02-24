@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 // TARGET_BACKEND: JVM
 
 // This test checks that our bytecode is consistent with javac bytecode

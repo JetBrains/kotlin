@@ -5,13 +5,17 @@ class A {
     operator fun plus(n: Int) = this
     operator fun unaryPlus() = this
     operator fun inc() = this
-    operator fun timesAssign(n: Int) = this
+    operator fun timesAssign(n: Int) {
+        val v = this
+    }
 }
 
 operator fun A.minus(n: Int) = this
 operator fun A.unaryMinus() = this
 operator fun A.dec() = this
-operator fun A.divAssign(n: Int) = this
+operator fun A.divAssign(n: Int) {
+    val v = this
+}
 
 fun test() {
     var <caret>x = A()

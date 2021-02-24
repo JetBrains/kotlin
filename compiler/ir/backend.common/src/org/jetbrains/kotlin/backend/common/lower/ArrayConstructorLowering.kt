@@ -73,23 +73,24 @@ private class ArrayConstructorTransformer(
         val invokable = expression.getValueArgument(1)!!.transform(this, null)
         val scope = (currentScope ?: createScope(container)).scope
         return context.createIrBuilder(scope.scopeOwnerSymbol).irBlock(expression.startOffset, expression.endOffset) {
-            val index = irTemporaryVar(irInt(0))
-            val sizeVar = irTemporary(size)
-            val result = irTemporary(irCall(sizeConstructor, expression.type).apply {
-                copyTypeArgumentsFrom(expression)
+            val index = createTmpVariable(irInt(0), isMutable = true)
+            val sizeVar = createTmpVariable(size)
+            val result = createTmpVariable(irCall(sizeConstructor, expression.type).apply {
+
+            copyTypeArgumentsFrom(expression)
                 putValueArgument(0, irGet(sizeVar))
             })
 
             val lambda = invokable.asSingleArgumentLambda()
             val invoke = invokable.type.getClass()!!.functions.single { it.name == OperatorNameConventions.INVOKE }
-            val invokableVar = if (lambda == null) irTemporary(invokable) else null
+            val invokableVar = if (lambda == null) createTmpVariable(invokable) else null
             +irWhile().apply {
                 condition = irCall(context.irBuiltIns.lessFunByOperandType[index.type.classifierOrFail]!!).apply {
                     putValueArgument(0, irGet(index))
                     putValueArgument(1, irGet(sizeVar))
                 }
                 body = irBlock {
-                    val tempIndex = irTemporary(irGet(index))
+                    val tempIndex = createTmpVariable(irGet(index))
                     val value = lambda?.inline(parent, listOf(tempIndex))?.patchDeclarationParents(scope.getLocalDeclarationParent()) ?: irCallOp(
                         invoke.symbol,
                         invoke.returnType,
@@ -102,7 +103,7 @@ private class ArrayConstructorTransformer(
                         putValueArgument(1, value)
                     }
                     val inc = index.type.getClass()!!.functions.single { it.name == OperatorNameConventions.INC }
-                    +irSetVar(index.symbol, irCallOp(inc.symbol, index.type, irGet(index)))
+                    +irSet(index.symbol, irCallOp(inc.symbol, index.type, irGet(index)))
                 }
             }
             +irGet(result)

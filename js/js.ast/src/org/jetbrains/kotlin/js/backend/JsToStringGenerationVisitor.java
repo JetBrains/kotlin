@@ -21,11 +21,14 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     private static final char[] CHARS_BREAK = "break".toCharArray();
     private static final char[] CHARS_CASE = "case".toCharArray();
     private static final char[] CHARS_CATCH = "catch".toCharArray();
+    private static final char[] CHARS_CLASS = "class".toCharArray();
+    private static final char[] CHARS_CONSTRUCTOR = "constructor".toCharArray();
     private static final char[] CHARS_CONTINUE = "continue".toCharArray();
     private static final char[] CHARS_DEBUGGER = "debugger".toCharArray();
     private static final char[] CHARS_DEFAULT = "default".toCharArray();
     private static final char[] CHARS_DO = "do".toCharArray();
     private static final char[] CHARS_ELSE = "else".toCharArray();
+    private static final char[] CHARS_EXTENDS = "extends".toCharArray();
     private static final char[] CHARS_FALSE = "false".toCharArray();
     private static final char[] CHARS_FINALLY = "finally".toCharArray();
     private static final char[] CHARS_FOR = "for".toCharArray();
@@ -609,6 +612,14 @@ public class JsToStringGenerationVisitor extends JsVisitor {
 
         p.print(CHARS_FUNCTION);
         space();
+
+        printFunction(x);
+
+        popSourceInfo();
+    }
+
+    // name(<params>) { <body> }
+    private void printFunction(@NotNull JsFunction x) {
         if (x.getName() != null) {
             nameOf(x);
         }
@@ -630,6 +641,50 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         sourceLocationConsumer.popSourceInfo();
 
         needSemi = true;
+    }
+
+    @Override
+    public void visitClass(@NotNull JsClass x) {
+        pushSourceInfo(x.getSource());
+
+        p.print(CHARS_CLASS);
+        space();
+        if (x.getName() != null) {
+            nameOf(x);
+        }
+
+        if (x.getBaseClass() != null) {
+            space();
+            p.print(CHARS_EXTENDS);
+            space();
+            accept(x.getBaseClass());
+        }
+
+        space();
+
+        if (x.getConstructor() == null && x.getMembers().isEmpty()) {
+            p.print("{}");
+            newline();
+        } else {
+            blockOpen();
+
+            if (x.getConstructor() != null) {
+                p.print(CHARS_CONSTRUCTOR);
+                x.getConstructor().setName(null);
+                printFunction(x.getConstructor());
+                // TODO newLineOpt ?
+                newline();
+            }
+
+            for (JsFunction m : x.getMembers()) {
+                printFunction(m);
+                newline();
+            }
+
+            blockClose();
+        }
+
+        needSemi = false;
 
         popSourceInfo();
     }

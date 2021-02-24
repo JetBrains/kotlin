@@ -1,0 +1,15 @@
+<html>
+<body>
+This inspection reports redundant '<b>?: return null</b>':
+<br /><br />
+<pre>
+fun foo(): Int? {
+  ...
+}
+
+fun test() : Int? {
+  return foo() ?: return null
+}
+</pre>
+</body>
+</html>

@@ -10,8 +10,7 @@ fun bar() {
             val name = file.name
             if (name.startsWith("a")) {
                 return false
-            }
-            else {
+            } else {
                 if (name.endsWith("b"))
                     return true
                 else {

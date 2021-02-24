@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 enum class MyEnum {
     O;
     companion object {

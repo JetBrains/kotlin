@@ -20,6 +20,7 @@ import com.intellij.codeInsight.CodeInsightUtilCore
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.moveCaret
@@ -61,16 +62,14 @@ class SimplifyAssertNotNullInspection : AbstractApplicabilityBasedInspection<KtC
         return true
     }
 
-    override fun inspectionText(element: KtCallExpression) = "assert should be replaced with operator"
+    override fun inspectionText(element: KtCallExpression) = KotlinBundle.message("assert.should.be.replaced.with.operator")
 
-    override val defaultFixText: String = "Replace assert with operator"
+    override val defaultFixText: String get() = KotlinBundle.message("replace.assert.with.operator")
 
-    override fun fixText(element: KtCallExpression): String {
-        return if (element.valueArguments.size == 1) {
-            "Replace with '!!' operator"
-        } else {
-            "Replace with '?: error(...)'"
-        }
+    override fun fixText(element: KtCallExpression): String = if (element.valueArguments.size == 1) {
+        KotlinBundle.message("replace.with.0.operator", "!!")
+    } else {
+        KotlinBundle.message("replace.with.error")
     }
 
     override fun applyTo(element: KtCallExpression, project: Project, editor: Editor?) {

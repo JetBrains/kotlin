@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.service
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.codeStyle.CodeStyleManager
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -14,7 +15,7 @@ import java.io.File
 
 class IdeaFileFormattingService(private val project: Project) : FileFormattingService, IdeaWizardService {
     override fun formatFile(text: String, filename: String): String = runReadAction {
-        val psiFile = createPsiFile(text, filename) ?: return@runReadAction text
+        val psiFile = createPsiFile(StringUtil.convertLineSeparators(text), filename) ?: return@runReadAction text
         CodeStyleManager.getInstance(project).reformat(psiFile).text
     }
 

@@ -15,10 +15,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtPsiUtil
-import org.jetbrains.kotlin.psi.KtReturnExpression
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getBinaryWithTypeParent
 import org.jetbrains.kotlin.psi.psiUtil.lastBlockStatementOrThis
 import org.jetbrains.kotlin.resolve.*
@@ -33,9 +30,12 @@ import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
+import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
+import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstant
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.expressions.DoubleColonExpressionResolver
@@ -44,7 +44,6 @@ import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
 import org.jetbrains.kotlin.types.refinement.TypeRefinement
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
-import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 data class LambdaContextInfo(
@@ -91,7 +90,7 @@ class KotlinResolutionCallbacksImpl(
         parameters: List<UnwrappedType>,
         expectedReturnType: UnwrappedType?,
         annotations: Annotations,
-        stubsForPostponedVariables: Map<NewTypeVariable, StubType>
+        stubsForPostponedVariables: Map<NewTypeVariable, StubType>,
     ): ReturnArgumentsAnalysisResult {
         val psiCallArgument = lambdaArgument.psiCallArgument as PSIFunctionKotlinCallArgument
         val outerCallContext = psiCallArgument.outerCallContext
@@ -127,7 +126,7 @@ class KotlinResolutionCallbacksImpl(
             return createSimplePSICallArgument(
                 trace.bindingContext, outerCallContext.statementFilter, outerCallContext.scope.ownerDescriptor,
                 CallMaker.makeExternalValueArgument(ktExpression), DataFlowInfo.EMPTY, typeInfo, languageVersionSettings,
-                dataFlowValueFactory
+                dataFlowValueFactory, outerCallContext.call
             )
         }
 
@@ -135,8 +134,6 @@ class KotlinResolutionCallbacksImpl(
             expectedReturnType ?: TypeUtils.NO_EXPECTED_TYPE,
             if (expectedReturnType == null) ContextDependency.DEPENDENT else ContextDependency.INDEPENDENT
         )
-
-        trace.record(BindingContext.NEW_INFERENCE_LAMBDA_INFO, psiCallArgument.ktFunction, lambdaInfo)
 
         val builtIns = outerCallContext.scope.ownerDescriptor.builtIns
 
@@ -150,7 +147,7 @@ class KotlinResolutionCallbacksImpl(
         // Also note that refining the whole type might be undesired because sometimes it contains NO_EXPECTED_TYPE
         // which throws exceptions on attempt to call equals
         val refinedReceiverType = receiverType?.let {
-            @UseExperimental(TypeRefinement::class) callComponents.kotlinTypeChecker.kotlinTypeRefiner.refineType(it)
+            @OptIn(TypeRefinement::class) callComponents.kotlinTypeChecker.kotlinTypeRefiner.refineType(it)
         }
 
         val expectedType = createFunctionType(
@@ -176,8 +173,16 @@ class KotlinResolutionCallbacksImpl(
                 null
             }
 
+
+        val temporaryTrace = if (coroutineSession != null)
+            TemporaryBindingTrace.create(trace, "Trace to resolve coroutine $lambdaArgument")
+        else
+            null
+
+        (temporaryTrace ?: trace).record(BindingContext.NEW_INFERENCE_LAMBDA_INFO, psiCallArgument.ktFunction, lambdaInfo)
+
         val actualContext = outerCallContext
-            .replaceBindingTrace(trace)
+            .replaceBindingTrace(temporaryTrace ?: trace)
             .replaceContextDependency(lambdaInfo.contextDependency)
             .replaceExpectedType(approximatesExpectedType)
             .replaceDataFlowInfo(psiCallArgument.dataFlowInfoBeforeThisArgument).let {
@@ -185,7 +190,13 @@ class KotlinResolutionCallbacksImpl(
             }
 
         val functionTypeInfo = expressionTypingServices.getTypeInfo(psiCallArgument.expression, actualContext)
-        trace.record(BindingContext.NEW_INFERENCE_LAMBDA_INFO, psiCallArgument.ktFunction, LambdaInfo.STUB_EMPTY)
+        (temporaryTrace ?: trace).record(BindingContext.NEW_INFERENCE_LAMBDA_INFO, psiCallArgument.ktFunction, LambdaInfo.STUB_EMPTY)
+
+        if (coroutineSession?.hasInapplicableCall() == true) {
+            return ReturnArgumentsAnalysisResult(ReturnArgumentsInfo.empty, coroutineSession, hasInapplicableCallForBuilderInference = true)
+        } else {
+            temporaryTrace?.commit()
+        }
 
         var hasReturnWithoutExpression = false
         var returnArgumentFound = false
@@ -206,23 +217,31 @@ class KotlinResolutionCallbacksImpl(
         }
 
         val lastExpressionArgument = getLastDeparentesizedExpression(psiCallArgument)?.let { lastExpression ->
-            if (expectedReturnType?.isUnit() == true || hasReturnWithoutExpression) return@let null // coercion to Unit
-
             if (lambdaInfo.returnStatements.any { (expression, _) -> expression == lastExpression }) {
                 return@let null
             }
 
-            // todo lastExpression can be if without else
-            returnArgumentFound = true
             val lastExpressionType = trace.getType(lastExpression)
             val contextInfo = lambdaInfo.lastExpressionInfo
             val lastExpressionTypeInfo = KotlinTypeInfo(lastExpressionType, contextInfo.dataFlowInfoAfter ?: functionTypeInfo.dataFlowInfo)
             createCallArgument(lastExpression, lastExpressionTypeInfo, contextInfo.lexicalScope, contextInfo.trace)
         }
 
-        returnArguments.addIfNotNull(lastExpressionArgument)
+        val lastExpressionCoercedToUnit = expectedReturnType?.isUnit() == true || hasReturnWithoutExpression
+        if (!lastExpressionCoercedToUnit && lastExpressionArgument != null) {
+            returnArgumentFound = true
+            returnArguments += lastExpressionArgument
+        }
 
-        return ReturnArgumentsAnalysisResult(ReturnArgumentsInfo(returnArguments, returnArgumentFound), coroutineSession)
+        return ReturnArgumentsAnalysisResult(
+            ReturnArgumentsInfo(
+                returnArguments,
+                lastExpressionArgument,
+                lastExpressionCoercedToUnit,
+                returnArgumentFound
+            ),
+            coroutineSession,
+        )
     }
 
     private fun getLastDeparentesizedExpression(psiCallArgument: PSIKotlinCallArgument): KtExpression? {
@@ -286,5 +305,34 @@ class KotlinResolutionCallbacksImpl(
         val atom = resolvedAtom.atom as? PSIKotlinCall ?: return
         val context = topLevelCallContext ?: return
         disableContractsInsideContractsBlock(atom.psiCall, resolvedAtom.candidateDescriptor, context.scope, trace)
+    }
+
+    override fun convertSignedConstantToUnsigned(argument: KotlinCallArgument): IntegerValueTypeConstant? {
+        val argumentExpression = argument.psiExpression ?: return null
+        return convertSignedConstantToUnsigned(argumentExpression)
+    }
+
+    override fun recordInlinabilityOfLambda(atom: Set<Map.Entry<KotlinResolutionCandidate, ResolvedLambdaAtom>>) {
+        val call = atom.first().value.atom.psiCallArgument.valueArgument as? KtLambdaArgument ?: return
+        val literal = call.getLambdaExpression()?.functionLiteral ?: return
+        val isLambdaInline = atom.all { (candidate, atom) ->
+            if (!InlineUtil.isInline(candidate.resolvedCall.candidateDescriptor)) return
+            val valueParameterDescriptor = candidate.resolvedCall.argumentToCandidateParameter[atom.atom] ?: return
+            InlineUtil.isInlineParameter(valueParameterDescriptor)
+        }.takeIf { it }
+        trace.record(BindingContext.NEW_INFERENCE_IS_LAMBDA_FOR_OVERLOAD_RESOLUTION_INLINE, literal, isLambdaInline)
+    }
+
+    private fun convertSignedConstantToUnsigned(expression: KtExpression): IntegerValueTypeConstant? {
+        val constant = trace[BindingContext.COMPILE_TIME_VALUE, expression]
+        if (constant !is IntegerValueTypeConstant || !constantCanBeConvertedToUnsigned(constant)) return null
+
+        return with(IntegerValueTypeConstant) {
+            constant.convertToUnsignedConstant(moduleDescriptor)
+        }
+    }
+
+    private fun constantCanBeConvertedToUnsigned(constant: CompileTimeConstant<*>): Boolean {
+        return !constant.isError && constant.parameters.isPure
     }
 }

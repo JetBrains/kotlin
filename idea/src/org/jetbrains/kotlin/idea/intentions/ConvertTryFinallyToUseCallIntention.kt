@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.psi.*
@@ -27,10 +28,10 @@ class ConvertTryFinallyToUseCallInspection : IntentionBasedInspection<KtTryExpre
 }
 
 class ConvertTryFinallyToUseCallIntention : SelfTargetingRangeIntention<KtTryExpression>(
-    KtTryExpression::class.java, "Convert try-finally to .use()"
+    KtTryExpression::class.java, KotlinBundle.lazyMessage("convert.try.finally.to.use")
 ) {
     override fun applyTo(element: KtTryExpression, editor: Editor?) {
-        val finallySection = element.finallyBlock!!
+        val finallySection = element.finallyBlock ?: return
         val finallyExpression = finallySection.finalExpression.statements.single()
         val finallyExpressionReceiver = (finallyExpression as? KtQualifiedExpression)?.receiverExpression
         val resourceReference = finallyExpressionReceiver as? KtNameReferenceExpression
@@ -63,6 +64,7 @@ class ConvertTryFinallyToUseCallIntention : SelfTargetingRangeIntention<KtTryExp
             is KtCallExpression -> result
             else -> return
         }
+
         val lambda = call.lambdaArguments.firstOrNull() ?: return
         val lambdaParameter = lambda.getLambdaExpression()?.valueParameters?.firstOrNull() ?: return
         editor?.selectionModel?.setSelection(lambdaParameter.startOffset, lambdaParameter.endOffset)

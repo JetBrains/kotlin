@@ -1,3 +1,3 @@
-expect fun <lineMarker descr="Has actuals in JVM">foo</lineMarker>(): Int
+expect fun <!LINE_MARKER("descr='Has actuals in JVM'")!>foo<!>(): Int
 
-expect fun <lineMarker descr="Has actuals in JVM">foo</lineMarker>(arg: Int): Int
+expect fun <!LINE_MARKER("descr='Has actuals in JVM'")!>foo<!>(arg: Int): Int

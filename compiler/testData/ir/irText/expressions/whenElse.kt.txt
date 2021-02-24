@@ -1,0 +1,6 @@
+fun test(): Int {
+  return when {
+    else -> 42
+  }
+}
+

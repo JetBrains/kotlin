@@ -44,5 +44,5 @@ fun catchThrowIfNotCalled() {
     } catch (ignored: java.lang.IllegalArgumentException) { }
 
     // x *isn't* initialized here!
-    println(x)
+    println(<!UNINITIALIZED_VARIABLE!>x<!>)
 }

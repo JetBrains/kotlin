@@ -1,6 +1,6 @@
 // "Add 'lateinit' modifier" "false"
 // ACTION: Add initializer
-// ACTION: Make 'a' abstract
+// ACTION: Make 'a' 'abstract'
 // ACTION: Move to constructor parameters
 // ACTION: Move to constructor
 // ACTION: Add getter
@@ -11,3 +11,4 @@
 class A {
     private var a: String?<caret>
 }
+/* FIR_COMPARISON */

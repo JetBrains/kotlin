@@ -6,8 +6,9 @@
 package org.jetbrains.kotlin.codegen.range
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.UnsignedTypes
-import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitiveNumberClassDescriptor
+import org.jetbrains.kotlin.codegen.DescriptorAsmUtil.isPrimitiveNumberClassDescriptor
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
 import org.jetbrains.kotlin.name.ClassId
@@ -83,10 +84,10 @@ fun getRangeOrProgressionElementType(rangeType: KotlinType): KotlinType? {
         COMPARABLE_RANGE_FQN -> rangeType.arguments.singleOrNull()?.type
 
         UINT_RANGE_FQN, UINT_PROGRESSION_FQN ->
-            rangeClassDescriptor.findTypeInModuleByTopLevelClassFqName(KotlinBuiltIns.FQ_NAMES.uIntFqName)
+            rangeClassDescriptor.findTypeInModuleByTopLevelClassFqName(StandardNames.FqNames.uIntFqName)
 
         ULONG_RANGE_FQN, ULONG_PROGRESSION_FQN ->
-            rangeClassDescriptor.findTypeInModuleByTopLevelClassFqName(KotlinBuiltIns.FQ_NAMES.uLongFqName)
+            rangeClassDescriptor.findTypeInModuleByTopLevelClassFqName(StandardNames.FqNames.uLongFqName)
 
         else -> null
     }
@@ -208,17 +209,25 @@ fun isPrimitiveRangeContains(descriptor: CallableDescriptor): Boolean {
 }
 
 fun isUnsignedIntegerRangeContains(descriptor: CallableDescriptor): Boolean {
-    if (descriptor.name.asString() != "contains") return false
-
     val dispatchReceiverType = descriptor.dispatchReceiverParameter?.type
     val extensionReceiverType = descriptor.extensionReceiverParameter?.type
 
-    return (dispatchReceiverType != null && isUnsignedRange(dispatchReceiverType)) ||
-            (extensionReceiverType != null && isUnsignedRange(extensionReceiverType))
+    when {
+        dispatchReceiverType != null && extensionReceiverType == null -> {
+            if (descriptor.name.asString() != "contains") return false
+            return isUnsignedRange(dispatchReceiverType)
+        }
+        extensionReceiverType != null && dispatchReceiverType == null -> {
+            if (!descriptor.isTopLevelInPackage("contains", "kotlin.ranges")) return false
+            return isUnsignedRange(extensionReceiverType)
+        }
+        else ->
+            return false
+    }
 }
 
 fun isPrimitiveNumberRangeExtensionContainsPrimitiveNumber(descriptor: CallableDescriptor): Boolean {
-    if (descriptor.name.asString() != "contains") return false
+    if (!descriptor.isTopLevelInPackage("contains", "kotlin.ranges")) return false
 
     val extensionReceiverType = descriptor.extensionReceiverParameter?.type ?: return false
 

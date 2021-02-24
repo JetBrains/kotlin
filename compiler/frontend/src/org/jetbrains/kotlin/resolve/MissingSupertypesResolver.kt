@@ -32,7 +32,7 @@ class MissingSupertypesResolver(
             * Type parameters are skipped here in favor to explicit checks for bounds, local declarations are ignored for optimization
             */
             if (supertypeDeclaration !is ClassDescriptor || supertypeDeclaration.isExpect) continue
-            if (supertypeDeclaration.visibility == Visibilities.LOCAL) continue
+            if (supertypeDeclaration.visibility == DescriptorVisibilities.LOCAL) continue
 
             val superTypeClassId = supertypeDeclaration.classId ?: continue
             val dependency = moduleDescriptor.findClassAcrossModuleDependencies(superTypeClassId)

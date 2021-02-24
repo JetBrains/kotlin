@@ -1,0 +1,26 @@
+FILE: protectedInCompanion.kt
+    public abstract class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|A.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            protected final val PROTECTED_CONST: R|kotlin/String| = String()
+                protected get(): R|kotlin/String|
+
+        }
+
+    }
+    public final class B : R|A| {
+        public constructor(): R|B| {
+            super<R|A|>()
+        }
+
+        public final val y: R|kotlin/String| = this@R|/A.Companion|.R|/A.Companion.PROTECTED_CONST|
+            public get(): R|kotlin/String|
+
+    }

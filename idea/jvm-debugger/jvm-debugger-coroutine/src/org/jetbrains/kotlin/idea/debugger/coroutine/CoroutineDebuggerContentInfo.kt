@@ -5,18 +5,9 @@
 
 package org.jetbrains.kotlin.idea.debugger.coroutine
 
-import org.jetbrains.annotations.NonNls
-
 class CoroutineDebuggerContentInfo {
     companion object {
-        val XCOROUTINE_THREADS_CONTENT = "XCoroutineThreadsContent"
-        val XCOROUTINE_POPUP_ACTION_GROUP = "Kotlin.XDebugger.Actions"
-    }
-}
-
-class CoroutineDebuggerActions {
-    companion object {
-        @NonNls
-        val COROUTINE_PANEL_POPUP: String = "Debugger.CoroutinesPanelPopup"
+        const val XCOROUTINE_THREADS_CONTENT = "XCoroutineThreadsContent"
+        const val XCOROUTINE_POPUP_ACTION_GROUP = "Kotlin.XDebugger.Actions"
     }
 }

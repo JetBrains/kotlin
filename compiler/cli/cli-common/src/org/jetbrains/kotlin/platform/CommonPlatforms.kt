@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.platform
 
-import org.jetbrains.kotlin.platform.js.JsPlatforms
+import org.jetbrains.kotlin.platform.js.JsPlatforms.allJsPlatforms
 import org.jetbrains.kotlin.platform.js.JsPlatforms.defaultJsPlatform
-import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms.allJvmPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms.unspecifiedJvmPlatform
-import org.jetbrains.kotlin.platform.konan.KonanPlatforms
-import org.jetbrains.kotlin.platform.konan.KonanPlatforms.defaultKonanPlatform
+import org.jetbrains.kotlin.platform.konan.NativePlatforms.allNativePlatforms
+import org.jetbrains.kotlin.platform.konan.NativePlatforms.unspecifiedNativePlatform
 
 @Suppress("DEPRECATION_ERROR")
 object CommonPlatforms {
@@ -23,7 +23,7 @@ object CommonPlatforms {
         setOf(
             unspecifiedJvmPlatform.single(),
             defaultJsPlatform.single(),
-            defaultKonanPlatform.single()
+            unspecifiedNativePlatform.single()
         )
     ), org.jetbrains.kotlin.analyzer.common.CommonPlatform {
         override val platformName: String
@@ -36,9 +36,9 @@ object CommonPlatforms {
     val allSimplePlatforms: List<TargetPlatform>
         // TODO(auskov): migrate to SimplePlatform?
         get() = sequence {
-            yieldAll(JvmPlatforms.allJvmPlatforms)
-            yieldAll(KonanPlatforms.allKonanPlatforms)
-            yieldAll(JsPlatforms.allJsPlatforms)
+            yieldAll(allJvmPlatforms)
+            yieldAll(allNativePlatforms)
+            yieldAll(allJsPlatforms)
 
             // TODO(dsavvinov): extensions points?
         }.toList()

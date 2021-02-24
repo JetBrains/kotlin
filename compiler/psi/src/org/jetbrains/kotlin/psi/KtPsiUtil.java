@@ -29,7 +29,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.builtins.StandardNames;
 import org.jetbrains.kotlin.kdoc.psi.api.KDocElement;
 import org.jetbrains.kotlin.lexer.KtToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
@@ -178,7 +178,7 @@ public class KtPsiUtil {
             List<KtAnnotationEntry> annotationEntries = modifierList.getAnnotationEntries();
             for (KtAnnotationEntry annotation : annotationEntries) {
                 Name shortName = annotation.getShortName();
-                if (KotlinBuiltIns.FQ_NAMES.deprecated.shortName().equals(shortName)) {
+                if (StandardNames.FqNames.deprecated.shortName().equals(shortName)) {
                     return true;
                 }
             }
@@ -450,20 +450,26 @@ public class KtPsiUtil {
 
         if (innerExpression instanceof KtLambdaExpression) {
             PsiElement prevSibling = PsiTreeUtil.skipWhitespacesAndCommentsBackward(currentInner);
-            if (prevSibling != null && prevSibling.getText().endsWith(KtTokens.RPAR.getValue())) return true;
+            if (endWithParenthesisOrCallExpression(prevSibling)) return true;
         }
 
         if (parentElement instanceof KtCallExpression && currentInner == ((KtCallExpression) parentElement).getCalleeExpression()) {
             KtCallExpression parentCall = (KtCallExpression) parentElement;
-            if (innerExpression instanceof KtSimpleNameExpression) return false;
+            KtExpression targetInnerExpression = innerExpression;
+            if (targetInnerExpression instanceof KtDotQualifiedExpression) {
+                KtExpression selector = ((KtDotQualifiedExpression) targetInnerExpression).getSelectorExpression();
+                if (selector != null) {
+                    targetInnerExpression = selector;
+                }
+            }
+            if (targetInnerExpression instanceof KtSimpleNameExpression) return false;
             if (KtPsiUtilKt.getQualifiedExpressionForSelector(parentElement) != null) return true;
-            if (innerExpression instanceof KtCallExpression
-                && parentCall.getValueArgumentList() == null) return true;
-            return !(innerExpression instanceof KtThisExpression
-                     || innerExpression instanceof KtArrayAccessExpression
-                     || innerExpression instanceof KtConstantExpression
-                     || innerExpression instanceof KtStringTemplateExpression
-                     || innerExpression instanceof KtCallExpression);
+            if (targetInnerExpression instanceof KtCallExpression && parentCall.getValueArgumentList() == null) return true;
+            return !(targetInnerExpression instanceof KtThisExpression
+                     || targetInnerExpression instanceof KtArrayAccessExpression
+                     || targetInnerExpression instanceof KtConstantExpression
+                     || targetInnerExpression instanceof KtStringTemplateExpression
+                     || targetInnerExpression instanceof KtCallExpression);
         }
 
         if (parentElement instanceof KtValueArgument) {
@@ -549,6 +555,15 @@ public class KtPsiUtil {
         }
 
         return innerPriority < parentPriority;
+    }
+
+    private static boolean endWithParenthesisOrCallExpression(PsiElement element) {
+        if (element == null) return false;
+        if (element.getText().endsWith(KtTokens.RPAR.getValue()) || element instanceof KtCallExpression) return true;
+        PsiElement[] children = element.getChildren();
+        int length = children.length;
+        if (length == 0) return false;
+        return endWithParenthesisOrCallExpression(children[length - 1]);
     }
 
     private static boolean isKeepBinaryExpressionParenthesized(KtBinaryExpression expression) {

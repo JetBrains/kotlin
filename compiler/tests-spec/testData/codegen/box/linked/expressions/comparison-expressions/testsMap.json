@@ -6,25 +6,33 @@
           "specVersion": "0.1-218",
           "casesNumber": 0,
           "description": "These operators are overloadable (A \u003c B)",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/comparison-expressions/p-1/pos/2.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-218",
           "casesNumber": 0,
           "description": "These operators are overloadable (A \u003e\u003d B)",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/comparison-expressions/p-1/pos/2.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-218",
           "casesNumber": 0,
           "description": "These operators are overloadable (A \u003c\u003d B)",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/comparison-expressions/p-1/pos/2.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-218",
           "casesNumber": 0,
           "description": "These operators are overloadable (A \u003e B)",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/comparison-expressions/p-1/pos/2.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ],
       "1": [
@@ -33,28 +41,150 @@
           "casesNumber": 0,
           "description": "These operators are overloadable (A \u003c B)",
           "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/comparison-expressions/p-1/pos/2.1.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-218",
           "casesNumber": 0,
           "description": "These operators are overloadable (A \u003e\u003d B)",
           "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/comparison-expressions/p-1/pos/2.4.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-218",
           "casesNumber": 0,
           "description": "These operators are overloadable (A \u003c\u003d B)",
           "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/comparison-expressions/p-1/pos/2.3.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-218",
           "casesNumber": 0,
           "description": "These operators are overloadable (A \u003e B)",
           "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/comparison-expressions/p-1/pos/2.2.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ]
+    }
+  },
+  "2": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "These operators are overloadable (A \u003c B)",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/comparison-expressions/p-1/pos/2.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ],
+      "3": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "These operators are overloadable (A \u003e\u003d B)",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/comparison-expressions/p-1/pos/2.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "These operators are overloadable (A \u003c\u003d B)",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/comparison-expressions/p-1/pos/2.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ],
+      "2": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "These operators are overloadable (A \u003e B)",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/comparison-expressions/p-1/pos/2.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ]
+    }
+  },
+  "3": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "These operators are overloadable (A \u003c B)",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/comparison-expressions/p-1/pos/2.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "These operators are overloadable (A \u003e\u003d B)",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/comparison-expressions/p-1/pos/2.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "These operators are overloadable (A \u003c\u003d B)",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/comparison-expressions/p-1/pos/2.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "These operators are overloadable (A \u003e B)",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/comparison-expressions/p-1/pos/2.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ]
+    }
+  },
+  "4": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "These operators are overloadable (A \u003c B)",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/comparison-expressions/p-1/pos/2.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "These operators are overloadable (A \u003e\u003d B)",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/comparison-expressions/p-1/pos/2.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "These operators are overloadable (A \u003c\u003d B)",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/comparison-expressions/p-1/pos/2.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "These operators are overloadable (A \u003e B)",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/comparison-expressions/p-1/pos/2.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         }
       ]
     }

@@ -8,7 +8,7 @@ expect open class A {
 }
 
 expect class B : A {
-    constructor(i: Int)
+    <!EXPLICIT_DELEGATION_CALL_REQUIRED!>constructor(i: Int)<!>
 
-    constructor() : <!INAPPLICABLE_CANDIDATE!>super<!>("B")
+    constructor() : super("B")
 }

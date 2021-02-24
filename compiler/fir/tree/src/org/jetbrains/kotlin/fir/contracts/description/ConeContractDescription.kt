@@ -9,7 +9,7 @@ interface ConeContractDescriptionElement {
     fun <R, D> accept(contractDescriptionVisitor: ConeContractDescriptionVisitor<R, D>, data: D): R
 }
 
-interface ConeEffectDeclaration : ConeContractDescriptionElement {
+abstract class ConeEffectDeclaration : ConeContractDescriptionElement {
     override fun <R, D> accept(contractDescriptionVisitor: ConeContractDescriptionVisitor<R, D>, data: D): R =
         contractDescriptionVisitor.visitEffectDeclaration(this, data)
 }

@@ -1,4 +1,5 @@
 // FLOW: IN
+// WITH_RUNTIME
 
 @JvmOverloads
 fun foo(<caret>n: Int, s: String = "???") {

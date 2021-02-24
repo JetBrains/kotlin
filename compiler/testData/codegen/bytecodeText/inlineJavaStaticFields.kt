@@ -1,6 +1,7 @@
 // FILE: JClass.java
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class JClass {
     public final static int PrimitiveInt = 9000;
@@ -8,7 +9,7 @@ public class JClass {
     public final static long PrimitiveLong = 100000;
     public final static short PrimitiveShort = 901;
     public final static boolean PrimitiveBool = false;
-    public final static float PrimitiveFloat = 36.6;
+    public final static float PrimitiveFloat = 36.6f;
     public final static double PrimitiveDouble = 42.4242;
     public final static byte PrimitiveByte = -8;
     public final static char PrimitiveChar = 'K';

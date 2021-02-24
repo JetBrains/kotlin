@@ -1,9 +1,9 @@
 fun a(
-        l0: /*T1@*/MutableSet</*T0@*/Int>,
-        l1: /*T3@*/MutableSet</*T2@*/Int>,
-        l2: /*T5@*/MutableSet</*T4@*/Int>,
-        l3: /*T7@*/MutableSet</*T6@*/Int>,
-        l4: /*T9@*/MutableSet</*T8@*/Int>
+    l0: /*T1@*/MutableSet</*T0@*/Int>,
+    l1: /*T3@*/MutableSet</*T2@*/Int>,
+    l2: /*T5@*/MutableSet</*T4@*/Int>,
+    l3: /*T7@*/MutableSet</*T6@*/Int>,
+    l4: /*T9@*/MutableSet</*T8@*/Int>
 ) {
     l0/*T1@MutableSet<T0@Int>*/.add(1/*LIT*/)
     l1/*T3@MutableSet<T2@Int>*/.addAll(l1/*T3@MutableSet<T2@Int>*/)

@@ -1,3 +1,4 @@
+// WITH_RUNTIME
 public class ClassWithProperties {
 
     public val publicVal: Int = 1

@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.lazy
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.load.java.components.JavaAnnotationMapper
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
@@ -25,10 +25,11 @@ import org.jetbrains.kotlin.name.FqName
 
 class LazyJavaAnnotations(
     private val c: LazyJavaResolverContext,
-    private val annotationOwner: JavaAnnotationOwner
+    private val annotationOwner: JavaAnnotationOwner,
+    private val areAnnotationsFreshlySupported: Boolean = false
 ) : Annotations {
     private val annotationDescriptors = c.components.storageManager.createMemoizedFunctionWithNullableValues { annotation: JavaAnnotation ->
-        JavaAnnotationMapper.mapOrResolveJavaAnnotation(annotation, c)
+        JavaAnnotationMapper.mapOrResolveJavaAnnotation(annotation, c, areAnnotationsFreshlySupported)
     }
 
     override fun findAnnotation(fqName: FqName) =
@@ -38,7 +39,7 @@ class LazyJavaAnnotations(
     override fun iterator() =
         (annotationOwner.annotations.asSequence().map(annotationDescriptors) +
                 JavaAnnotationMapper.findMappedJavaAnnotation(
-                    KotlinBuiltIns.FQ_NAMES.deprecated,
+                    StandardNames.FqNames.deprecated,
                     annotationOwner,
                     c
                 )).filterNotNull().iterator()

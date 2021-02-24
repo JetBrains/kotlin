@@ -6,10 +6,13 @@
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
+import org.jetbrains.kotlin.backend.common.deepCopyWithVariables
+import org.jetbrains.kotlin.backend.common.ir.copyAnnotationsWhen
 import org.jetbrains.kotlin.backend.common.ir.isOverridableOrOverrides
 import org.jetbrains.kotlin.backend.common.lower.DefaultArgumentStubGenerator
 import org.jetbrains.kotlin.backend.common.lower.DEFAULT_DISPATCH_CALL
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.utils.JsAnnotations
 import org.jetbrains.kotlin.ir.builders.IrBlockBodyBuilder
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irGet
@@ -19,6 +22,8 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
+import org.jetbrains.kotlin.ir.util.isAnnotation
+import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
@@ -26,6 +31,10 @@ import org.jetbrains.kotlin.name.Name
 class JsDefaultArgumentStubGenerator(override val context: JsIrBackendContext) : DefaultArgumentStubGenerator(context, true, true, false) {
 
     override fun needSpecialDispatch(irFunction: IrSimpleFunction) = irFunction.isOverridableOrOverrides
+
+    override fun IrFunction.resolveAnnotations(): List<IrConstructorCall> = copyAnnotationsWhen {
+        !(isAnnotation(JsAnnotations.jsExportFqn) || isAnnotation(JsAnnotations.jsNameFqn))
+    }
 
     override fun IrBlockBodyBuilder.generateHandleCall(
         handlerDeclaration: IrValueParameter,
@@ -35,12 +44,19 @@ class JsDefaultArgumentStubGenerator(override val context: JsIrBackendContext) :
     ): IrExpression {
         val paramCount = oldIrFunction.valueParameters.size
         val invokeFunctionN = resolveInvoke(paramCount)
-        // NOTE: currently we do not have a syntax to perform super extension call
-        // but in case we have such functionality in the future the logic bellow should be fixed
+
         return irCall(invokeFunctionN, IrStatementOrigin.INVOKE).apply {
             dispatchReceiver = irImplicitCast(irGet(handlerDeclaration), invokeFunctionN.dispatchReceiverParameter!!.type)
-            assert(newIrFunction.extensionReceiverParameter == null)
+            // NOTE: currently we do not have a syntax to perform super extension call
+            // that's why we've used to just fail with an exception in case we have extension function in for JS IR compilation
+            // TODO: that was overkill, however, we still need to revisit this issue later on
             params.forEachIndexed { i, variable -> putValueArgument(i, irGet(variable)) }
+        }
+    }
+
+    override fun IrExpression.prepareToBeUsedIn(function: IrFunction): IrExpression {
+        return deepCopyWithVariables().also {
+            it.patchDeclarationParents(function)
         }
     }
 
@@ -80,6 +96,7 @@ class JsDefaultCallbackGenerator(val context: JsIrBackendContext): BodyLoweringP
                 context.irBuiltIns.anyType,
                 originalFunction.symbol,
                 typeArgumentsCount = 0,
+                valueArgumentsCount = originalFunction.valueParameters.size,
                 reflectionTarget = originalFunction.symbol,
                 origin = BIND_CALL
             )
@@ -91,8 +108,10 @@ class JsDefaultCallbackGenerator(val context: JsIrBackendContext): BodyLoweringP
                 endOffset,
                 context.irBuiltIns.anyType,
                 context.intrinsics.jsBind.symbol,
-                BIND_CALL,
-                superQualifierSymbol
+                valueArgumentsCount = 2,
+                typeArgumentsCount = 0,
+                origin = BIND_CALL,
+                superQualifierSymbol = superQualifierSymbol
             )
         }.apply {
             putValueArgument(0, irCall.dispatchReceiver?.deepCopyWithSymbols())

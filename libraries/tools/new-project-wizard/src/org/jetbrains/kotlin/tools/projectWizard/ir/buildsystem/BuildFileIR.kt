@@ -1,46 +1,43 @@
 package org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem
 
+import kotlinx.collections.immutable.PersistentList
 import org.jetbrains.kotlin.tools.projectWizard.core.*
-import org.jetbrains.kotlin.tools.projectWizard.core.safeAs
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.*
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.DefaultTargetConfigurationIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.TargetConfigurationIR
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.maven.MavenPropertyIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.maven.PluginRepositoryMavenIR
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleSubType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.BuildFilePrinter
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.GradlePrinter
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.MavenPrinter
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.DefaultRepository
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import java.nio.file.Path
 
 interface FileIR : BuildSystemIR, IrsOwner
 
-data class BuildFileIR(
+data class BuildFileIR constructor(
     val name: String,
     val directoryPath: Path,
     val modules: ModulesStructureIR,
+    val fromModules: List<Module>,
     val pom: PomIR,
-    override val irs: List<BuildSystemIR>
+    val isRoot: Boolean,
+    val renderPomIr: Boolean,
+    override val irs: PersistentList<BuildSystemIR>,
 ) : FileIR {
-    override fun withReplacedIrs(irs: List<BuildSystemIR>): BuildFileIR = copy(irs = irs)
+    override fun withReplacedIrs(irs: PersistentList<BuildSystemIR>): BuildFileIR = copy(irs = irs)
 
     @Suppress("UNCHECKED_CAST")
     fun withModulesUpdated(updater: (ModuleIR) -> TaskResult<ModuleIR>): TaskResult<BuildFileIR> =
         modules.withModulesUpdated(updater).map { newModules -> copy(modules = newModules) }
 
     private fun distinctRepositories(): List<RepositoryIR> =
-        irsOfType<RepositoryIR>()
-            .distinctBy(RepositoryIR::repository)
-            .sortedBy { repositoryIR ->
-                if (repositoryIR.repository is DefaultRepository) 0 else 1
-            }
+        irsOfType<RepositoryIR>().distinctAndSorted()
 
     private fun distinctPluginRepositories(): List<PluginRepositoryMavenIR> =
-        irsOfType<PluginRepositoryMavenIR>()
-            .distinctBy(PluginRepositoryMavenIR::repository)
-            .sortedBy { repositoryIR ->
-                if (repositoryIR.repository is DefaultRepository) 0 else 1
-            }
+        irsOfType<PluginRepositoryMavenIR>().distinctAndSorted()
 
     private fun distinctImportsOrNull(): List<GradleImportIR>? =
         irsOfTypeOrNull<GradleImportIR>()
@@ -51,8 +48,7 @@ data class BuildFileIR(
         is GradlePrinter -> {
             distinctImportsOrNull()?.let { imports ->
                 imports.listNl()
-                nl()
-                nl()
+                nl(lineBreaks = 2)
             }
             irsOfTypeOrNull<BuildScriptIR>()?.let { buildScriptIrs ->
                 sectionCall("buildscript", needIndent = true) {
@@ -61,15 +57,20 @@ data class BuildFileIR(
                     sectionCall("dependencies", buildScriptIrs.filterIsInstance<BuildScriptDependencyIR>())
                 }
             }
-            sectionCall("plugins", irsOfType<BuildSystemPluginIR>()); nlIndented()
-            pom.render(this); nl()
-
-            sectionCall("repositories", distinctRepositories())
-            nl()
+            sectionCall("plugins", irsOfType<BuildSystemPluginIR>()); nl(lineBreaks = 1)
+            if (renderPomIr) {
+                nl()
+                pom.render(this)
+            }
+            distinctRepositories().takeIf { it.isNotEmpty() }?.let { repositories ->
+                nl()
+                sectionCall("repositories", repositories)
+                nl()
+            }
             modules.render(this)
             irsOfTypeOrNull<FreeIR>()?.let { freeIrs ->
                 nl()
-                freeIrs.listNl()
+                freeIrs.listNl(lineBreaks = 2)
             }.ignore()
         }
         is MavenPrinter -> pom {
@@ -83,6 +84,7 @@ data class BuildFileIR(
             node("properties") {
                 singleLineNode("project.build.sourceEncoding") { +"UTF-8" }
                 singleLineNode("kotlin.code.style") { +"official" }
+                irsOfType<MavenPropertyIR>().listNl()
             }
 
             distinctRepositories().takeIf { it.isNotEmpty() }?.let { repositories ->
@@ -121,14 +123,6 @@ data class BuildFileIR(
 val BuildFileIR.targets
     get() = modules.safeAs<MultiplatformModulesStructureIR>()?.targets.orEmpty()
 
-val BuildFileIR.sourcesets
-    get() = modules.modules.flatMap { module ->
-        when (module) {
-            is SingleplatformModuleIR -> module.sourcesets
-            is MultiplatformModuleIR -> listOf(module as SourcesetIR)
-        }
-    }
-
 sealed class ModulesStructureIR : BuildSystemIR, IrsOwner {
     abstract val modules: List<ModuleIR>
 
@@ -144,15 +138,17 @@ sealed class ModulesStructureIR : BuildSystemIR, IrsOwner {
 
 data class MultiplatformModulesStructureIR(
     val targets: List<BuildSystemIR>,
+    val multiplatformModule: FakeMultiplatformModuleIR,
     override val modules: List<MultiplatformModuleIR>,
-    override val irs: List<BuildSystemIR>
+    override val irs: PersistentList<BuildSystemIR>
 ) : GradleIR, ModulesStructureIR() {
     @Suppress("UNCHECKED_CAST")
     override fun withModules(modules: List<ModuleIR>) = copy(modules = modules as List<MultiplatformModuleIR>)
 
-    override fun withReplacedIrs(irs: List<BuildSystemIR>): MultiplatformModulesStructureIR = copy(irs = irs)
+    override fun withReplacedIrs(irs: PersistentList<BuildSystemIR>): MultiplatformModulesStructureIR = copy(irs = irs)
 
     override fun GradlePrinter.renderGradle() {
+        nl()
         sectionCall("kotlin") {
             targets.filterNot {
                 it.safeAs<DefaultTargetConfigurationIR>()?.targetAccess?.type == ModuleSubType.common
@@ -162,6 +158,7 @@ data class MultiplatformModulesStructureIR(
                 modules.listNl()
             }
         }
+        nl()
     }
 }
 
@@ -177,12 +174,19 @@ fun MultiplatformModulesStructureIR.updateTargets(
     return copy(targets = newTargets)
 }
 
+fun MultiplatformModulesStructureIR.updateSourceSets(
+    updater: (ModuleIR) -> ModuleIR
+): MultiplatformModulesStructureIR {
+    val newModules = modules.map { updater(it) as MultiplatformModuleIR }
+    return copy(modules = newModules)
+}
+
 data class SingleplatformModulesStructureWithSingleModuleIR(
     val module: SingleplatformModuleIR,
-    override val irs: List<BuildSystemIR>
+    override val irs: PersistentList<BuildSystemIR>
 ) : ModulesStructureIR() {
     override val modules: List<SingleplatformModuleIR> = listOf(module)
-    override fun withReplacedIrs(irs: List<BuildSystemIR>): SingleplatformModulesStructureWithSingleModuleIR =
+    override fun withReplacedIrs(irs: PersistentList<BuildSystemIR>): SingleplatformModulesStructureWithSingleModuleIR =
         copy(irs = irs)
 
     @Suppress("UNCHECKED_CAST")
@@ -190,14 +194,16 @@ data class SingleplatformModulesStructureWithSingleModuleIR(
         copy(module = modules.single() as SingleplatformModuleIR)
 
     override fun BuildFilePrinter.render() {
+        nl()
         module.render(this)
+        nl()
     }
 }
 
-data class RootFileModuleStructureIR(override val irs: List<BuildSystemIR>) : ModulesStructureIR() {
+data class RootFileModuleStructureIR(override val irs: PersistentList<BuildSystemIR>) : ModulesStructureIR() {
     override val modules = emptyList<ModuleIR>()
 
-    override fun withReplacedIrs(irs: List<BuildSystemIR>): RootFileModuleStructureIR = copy(irs = irs)
+    override fun withReplacedIrs(irs: PersistentList<BuildSystemIR>): RootFileModuleStructureIR = copy(irs = irs)
 
     override fun BuildFilePrinter.render() = when (this) {
         is MavenPrinter -> {

@@ -38,7 +38,7 @@ class LazyTypeAliasDescriptor(
     annotations: Annotations,
     name: Name,
     sourceElement: SourceElement,
-    visibility: Visibility
+    visibility: DescriptorVisibility
 ) : AbstractTypeAliasDescriptor(containingDeclaration, annotations, name, sourceElement, visibility),
     TypeAliasDescriptor {
     override val constructors: Collection<TypeAliasConstructorDescriptor> by storageManager.createLazyValue {
@@ -122,7 +122,7 @@ class LazyTypeAliasDescriptor(
             annotations: Annotations,
             name: Name,
             sourceElement: SourceElement,
-            visibility: Visibility
+            visibility: DescriptorVisibility
         ): LazyTypeAliasDescriptor =
             LazyTypeAliasDescriptor(
                 storageManager, trace,

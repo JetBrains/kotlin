@@ -22,7 +22,6 @@ public open expect class Foo3 {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-
 // -- Module: <m2-jvm> --
 package
 
@@ -54,3 +53,4 @@ public final class Foo3 {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+

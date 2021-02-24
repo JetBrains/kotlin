@@ -79,6 +79,7 @@ internal class ComponentRegistry {
         By mimicking the usual descriptors we get lazy evaluation and consistency checks for free.
          */
         for (resolver in clashResolvers) {
+            @Suppress("UNCHECKED_CAST")
             val clashedComponents = registrationMap[resolver.applicableTo] as? Collection<ComponentDescriptor> ?: continue
             if (clashedComponents.size <= 1) continue
 

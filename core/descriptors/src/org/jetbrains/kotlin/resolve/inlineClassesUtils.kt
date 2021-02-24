@@ -6,17 +6,23 @@
 package org.jetbrains.kotlin.resolve
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
+val JVM_INLINE_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmInline")
+
 fun ClassDescriptor.underlyingRepresentation(): ValueParameterDescriptor? {
-    if (!isInline) return null
+    if (!isInlineClass()) return null
     return unsubstitutedPrimaryConstructor?.valueParameters?.singleOrNull()
 }
 
-fun DeclarationDescriptor.isInlineClass() = this is ClassDescriptor && this.isInline
+// FIXME: DeserializedClassDescriptor in reflection do not have @JvmInline annotation, that we
+// FIXME: would like to check as well.
+fun DeclarationDescriptor.isInlineClass() = this is ClassDescriptor && (isInline || isValue)
 
 fun KotlinType.unsubstitutedUnderlyingParameter(): ValueParameterDescriptor? {
     return constructor.declarationDescriptor.safeAs<ClassDescriptor>()?.underlyingRepresentation()
@@ -28,7 +34,7 @@ fun KotlinType.isInlineClassType(): Boolean = constructor.declarationDescriptor?
 
 fun KotlinType.substitutedUnderlyingType(): KotlinType? {
     val parameter = unsubstitutedUnderlyingParameter() ?: return null
-    return memberScope.getContributedVariables(parameter.name, NoLookupLocation.FOR_ALREADY_TRACKED).singleOrNull()?.type
+    return TypeSubstitutor.create(this).substitute(parameter.type, Variance.INVARIANT)
 }
 
 fun KotlinType.isRecursiveInlineClassType() =
@@ -62,6 +68,7 @@ fun CallableDescriptor.isGetterOfUnderlyingPropertyOfInlineClass() =
     this is PropertyGetterDescriptor && correspondingProperty.isUnderlyingPropertyOfInlineClass()
 
 fun VariableDescriptor.isUnderlyingPropertyOfInlineClass(): Boolean {
+    if (extensionReceiverParameter != null) return false
     val containingDeclaration = this.containingDeclaration
     if (!containingDeclaration.isInlineClass()) return false
 

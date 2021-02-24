@@ -16,3 +16,5 @@ inline fun foo(f: () -> Boolean): Boolean = f()
 fun test(i: Int): Boolean = true
 
 fun bar() {}
+
+// STEP_OVER: 5

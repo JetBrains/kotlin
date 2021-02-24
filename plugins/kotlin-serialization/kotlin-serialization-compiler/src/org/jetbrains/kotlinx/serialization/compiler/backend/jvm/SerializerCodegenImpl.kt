@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlinx.serialization.compiler.backend.jvm
@@ -23,6 +12,7 @@ import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializerCodegen
+import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationDescriptorSerializerPlugin
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.typeArgPrefix
 import org.jetbrains.org.objectweb.asm.Label
@@ -32,8 +22,9 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 open class SerializerCodegenImpl(
     protected val codegen: ImplementationBodyCodegen,
-    serializableClass: ClassDescriptor
-) : SerializerCodegen(codegen.descriptor, codegen.bindingContext) {
+    serializableClass: ClassDescriptor,
+    metadataPlugin: SerializationDescriptorSerializerPlugin?
+) : SerializerCodegen(codegen.descriptor, codegen.bindingContext, metadataPlugin) {
 
 
     private val serialDescField = "\$\$serialDesc"
@@ -45,12 +36,12 @@ open class SerializerCodegenImpl(
     private val staticDescriptor = serializableDescriptor.declaredTypeParameters.isEmpty()
 
     companion object {
-        fun generateSerializerExtensions(codegen: ImplementationBodyCodegen) {
+        fun generateSerializerExtensions(codegen: ImplementationBodyCodegen, metadataPlugin: SerializationDescriptorSerializerPlugin?) {
             val serializableClass = getSerializableClassDescriptorBySerializer(codegen.descriptor) ?: return
             val serializerCodegen = if (serializableClass.isSerializableEnum()) {
                 SerializerForEnumsCodegen(codegen, serializableClass)
             } else {
-                SerializerCodegenImpl(codegen, serializableClass)
+                SerializerCodegenImpl(codegen, serializableClass, metadataPlugin)
             }
             serializerCodegen.generate()
         }
@@ -196,6 +187,11 @@ open class SerializerCodegenImpl(
         }
     }
 
+    override fun generateTypeParamsSerializersGetter(function: FunctionDescriptor) = codegen.generateMethod(function) { _, _ ->
+        genArrayOfTypeParametersSerializers()
+        areturn(kSerializerArrayType)
+    }
+
     override fun generateChildSerializersGetter(function: FunctionDescriptor) {
         codegen.generateMethod(function) { _, _ ->
             val size = serializableProperties.size
@@ -231,10 +227,9 @@ open class SerializerCodegenImpl(
             // output = output.writeBegin(classDesc, new KSerializer[0])
             load(outputVar, encoderType)
             load(descVar, descType)
-            genArrayOfTypeParametersSerializers()
             invokeinterface(
                 encoderType.internalName, CallingConventions.begin,
-                "(" + descType.descriptor + kSerializerArrayType.descriptor +
+                "(" + descType.descriptor +
                         ")" + kOutputType.descriptor
             )
             store(outputVar, kOutputType)
@@ -322,10 +317,9 @@ open class SerializerCodegenImpl(
             // input = input.readBegin(classDesc, new KSerializer[0])
             load(inputVar, decoderType)
             load(descVar, descType)
-            genArrayOfTypeParametersSerializers()
             invokeinterface(
                 decoderType.internalName, CallingConventions.begin,
-                "(" + descType.descriptor + kSerializerArrayType.descriptor +
+                "(" + descType.descriptor +
                         ")" + kInputType.descriptor
             )
             store(inputVar, kInputType)
@@ -342,7 +336,7 @@ open class SerializerCodegenImpl(
             propVar = propsStartVar
             for ((index, property) in serializableProperties.withIndex()) {
                 val propertyType = codegen.typeMapper.mapType(property.type)
-                callReadProperty(property, propertyType, index, inputVar, descVar, -1, propVar)
+                callReadProperty(property, propertyType, index, inputVar, descVar, propVar)
                 propVar += propertyType.size
             }
             // set all bit masks to true
@@ -378,10 +372,9 @@ open class SerializerCodegenImpl(
             for ((index, property) in serializableProperties.withIndex()) {
                 val propertyType = codegen.typeMapper.mapType(property.type)
                 if (!property.transient) {
-                    val propertyAddressInBitMask = bitMaskOff(index)
                     // labelI:
                     visitLabel(labels[labelNum + 1])
-                    callReadProperty(property, propertyType, index, inputVar, descVar, propertyAddressInBitMask, propVar)
+                    callReadProperty(property, propertyType, index, inputVar, descVar, propVar)
 
                     // mark read bit in mask
                     // bitMask = bitMask | 1 << index
@@ -462,7 +455,6 @@ open class SerializerCodegenImpl(
         index: Int,
         inputVar: Int,
         descriptorVar: Int,
-        propertyAddressInBitMask: Int,
         propertyVar: Int
     ) {
         // propX := input.readXxxValue(value)
@@ -478,41 +470,26 @@ open class SerializerCodegenImpl(
             AsmUtil.wrapJavaClassIntoKClass(this)
         }
 
-        fun produceCall(update: Boolean) {
+        fun produceCall(isUpdatable: Boolean) {
             invokeinterface(
                 kInputType.internalName,
-                (if (update) CallingConventions.update else CallingConventions.decode) + sti.elementMethodPrefix + (if (useSerializer) "Serializable" else "") + CallingConventions.elementPostfix,
+                (CallingConventions.decode) + sti.elementMethodPrefix + (if (useSerializer) "Serializable" else "") + CallingConventions.elementPostfix,
                 "(" + descType.descriptor + "I" +
                         (if (useSerializer) kSerialLoaderType.descriptor else "")
                         + (if (unknownSer) AsmTypes.K_CLASS_TYPE.descriptor else "")
-                        + (if (update) sti.type.descriptor else "")
-                        + ")" + (if (sti.unit) "V" else sti.type.descriptor)
+                        + (if (isUpdatable) sti.type.descriptor else "")
+                        + ")" + (sti.type.descriptor)
             )
         }
 
-        if (useSerializer && propertyAddressInBitMask != -1) {
-            // we can choose either it is read or update
-            val readLabel = Label()
-            val endL = Label()
-            genValidateProperty(index, propertyAddressInBitMask)
-            ificmpeq(readLabel)
+        if (useSerializer) {
+            // then it is not a primitive and can be updated via `oldValue` parameter in decodeSerializableElement
             load(propertyVar, propertyType)
             StackValue.coerce(propertyType, sti.type, this)
-            produceCall(true)
-            goTo(endL)
-            visitLabel(readLabel)
-            produceCall(false)
-            visitLabel(endL)
-        } else {
-            // update not supported for primitive types or decodeSequentially
-            produceCall(false)
         }
+        produceCall(useSerializer)
 
-        if (sti.unit) {
-            StackValue.putUnitInstance(this)
-        } else {
-            StackValue.coerce(sti.type, propertyType, this)
-        }
+        StackValue.coerce(sti.type, propertyType, this)
         store(propertyVar, propertyType)
     }
 

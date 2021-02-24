@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
+// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION -UNUSED_VARIABLE
 
 class Inv<T>(val x: T?)
 
@@ -20,5 +20,5 @@ fun <S> test(i: Int, s: S) {
 
     c
 
-    takeInvInt(create(i))
+    <!INAPPLICABLE_CANDIDATE!>takeInvInt<!>(create(i))
 }

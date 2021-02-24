@@ -19,10 +19,7 @@ package org.jetbrains.kotlin.gradle.tasks
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileTree
-import org.gradle.api.tasks.CacheableTask
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JSDceArguments
 import org.jetbrains.kotlin.cli.js.dce.K2JSDce
 import org.jetbrains.kotlin.compilerRunner.runToolInSeparateProcess
@@ -39,6 +36,9 @@ open class KotlinJsDce : AbstractKotlinCompileTool<K2JSDceArguments>(), KotlinJs
     init {
         cacheOnlyIfEnabledForKotlin()
     }
+
+    @get:Internal
+    internal val objects = project.objects
 
     override fun localStateDirectories(): FileCollection = project.files()
 
@@ -68,11 +68,18 @@ open class KotlinJsDce : AbstractKotlinCompileTool<K2JSDceArguments>(), KotlinJs
         keep += fqn
     }
 
+    @Input
+    var jvmArgs = mutableListOf<String>()
+
+    private val buildDir by lazy {
+        project.buildDir
+    }
+
     @TaskAction
     fun performDce() {
         val inputFiles = (listOf(source) + classpath
             .filter { !kotlinFilesOnly || isDceCandidate(it) }
-            .map { project.fileTree(it) })
+            .map { objects.fileCollection().from(it).asFileTree })
             .reduce(FileTree::plus)
             .files.map { it.path }
 
@@ -82,11 +89,17 @@ open class KotlinJsDce : AbstractKotlinCompileTool<K2JSDceArguments>(), KotlinJs
 
         val log = GradleKotlinLogger(logger)
         val allArgs = argsArray + outputDirArgs + inputFiles
+
         val exitCode = runToolInSeparateProcess(
-            allArgs, K2JSDce::class.java.name, computedCompilerClasspath,
-            log
+            allArgs,
+            K2JSDce::class.java.name,
+            computedCompilerClasspath,
+            log,
+            buildDir,
+            jvmArgs
         )
         throwGradleExceptionIfError(exitCode)
+
     }
 
     private fun isDceCandidate(file: File): Boolean {

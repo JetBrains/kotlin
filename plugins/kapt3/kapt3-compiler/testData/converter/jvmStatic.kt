@@ -11,3 +11,10 @@ class JvmStaticTest {
     const val three: Byte = 3.toByte()
     const val d: Char = 'D'
 }
+
+interface FooComponent {
+    companion object {
+        @JvmStatic
+        fun create(context: String): String = "foo"
+    }
+}

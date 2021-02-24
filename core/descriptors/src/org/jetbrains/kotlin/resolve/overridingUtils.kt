@@ -23,16 +23,16 @@ import java.util.*
 
 fun <D : CallableDescriptor> D.findTopMostOverriddenDescriptors(): List<D> {
     return DFS.dfs(
-            listOf(this),
-            { current -> current.overriddenDescriptors },
-            object : DFS.CollectingNodeHandler<CallableDescriptor, CallableDescriptor, ArrayList<D>>(ArrayList<D>()) {
-                override fun afterChildren(current: CallableDescriptor) {
-                    if (current.overriddenDescriptors.isEmpty()) {
-                        @Suppress("UNCHECKED_CAST")
-                        result.add(current as D)
-                    }
+        listOf(this),
+        { current -> current.overriddenDescriptors },
+        object : DFS.CollectingNodeHandler<CallableDescriptor, CallableDescriptor, ArrayList<D>>(ArrayList<D>()) {
+            override fun afterChildren(current: CallableDescriptor) {
+                if (current.overriddenDescriptors.isEmpty()) {
+                    @Suppress("UNCHECKED_CAST")
+                    result.add(current as D)
                 }
-            })
+            }
+        })
 }
 
 
@@ -47,7 +47,7 @@ fun <D : CallableDescriptor> D.findOriginalTopMostOverriddenDescriptors(): Set<D
  * @param <H> is something that handles CallableDescriptor inside
  */
 fun <H : Any> Collection<H>.selectMostSpecificInEachOverridableGroup(
-        descriptorByHandle: H.() -> CallableDescriptor
+    descriptorByHandle: H.() -> CallableDescriptor
 ): Collection<H> {
     if (size <= 1) return this
     val queue = LinkedList<H>(this)
@@ -59,7 +59,7 @@ fun <H : Any> Collection<H>.selectMostSpecificInEachOverridableGroup(
         val conflictedHandles = SmartSet.create<H>()
 
         val overridableGroup =
-                OverridingUtil.extractMembersOverridableInBothWays(nextHandle, queue, descriptorByHandle) { conflictedHandles.add(it) }
+            OverridingUtil.extractMembersOverridableInBothWays(nextHandle, queue, descriptorByHandle) { conflictedHandles.add(it) }
 
         if (overridableGroup.size == 1 && conflictedHandles.isEmpty()) {
             result.add(overridableGroup.single())
@@ -80,10 +80,4 @@ fun <H : Any> Collection<H>.selectMostSpecificInEachOverridableGroup(
         result.add(mostSpecific)
     }
     return result
-}
-
-fun <D : CallableDescriptor> MutableCollection<D>.retainMostSpecificInEachOverridableGroup() {
-    val newResult = selectMostSpecificInEachOverridableGroup { this }
-    if (size == newResult.size) return
-    retainAll(newResult)
 }

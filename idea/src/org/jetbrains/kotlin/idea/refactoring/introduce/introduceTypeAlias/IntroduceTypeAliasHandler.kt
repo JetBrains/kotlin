@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.idea.core.util.CodeInsightUtils.ElementKind.TYPE_CONSTRUCTOR
 import org.jetbrains.kotlin.idea.core.util.CodeInsightUtils.ElementKind.TYPE_ELEMENT
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSupportProvider
 import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively
 import org.jetbrains.kotlin.idea.refactoring.introduce.AbstractIntroduceAction
@@ -32,7 +33,7 @@ import org.jetbrains.kotlin.psi.psiUtil.*
 open class KotlinIntroduceTypeAliasHandler : RefactoringActionHandler {
     companion object {
         @JvmField
-        val REFACTORING_NAME = "Introduce Type Alias"
+        val REFACTORING_NAME = KotlinBundle.message("name.introduce.type.alias")
 
         val INSTANCE = KotlinIntroduceTypeAliasHandler()
     }
@@ -46,7 +47,7 @@ open class KotlinIntroduceTypeAliasHandler : RefactoringActionHandler {
             REFACTORING_NAME,
             editor,
             file,
-            "Select target code block",
+            KotlinBundle.message("title.select.target.code.block"),
             listOf(TYPE_ELEMENT, TYPE_CONSTRUCTOR),
             { null },
             { _, parent -> listOf(parent.containingFile) },
@@ -74,9 +75,10 @@ open class KotlinIntroduceTypeAliasHandler : RefactoringActionHandler {
 
         val errorMessage = when (elementToExtract) {
             is KtSimpleNameExpression -> {
-                if (!(isTypeConstructorReference(elementToExtract) || isDoubleColonReceiver(elementToExtract))) "Type reference is expected" else null
+                if (!(isTypeConstructorReference(elementToExtract) || isDoubleColonReceiver(elementToExtract))) KotlinBundle.message("error.text.type.reference.is.expected"
+                ) else null
             }
-            !is KtTypeElement -> "No type to refactor"
+            !is KtTypeElement -> KotlinBundle.message("error.text.no.type.to.refactor")
             else -> null
         }
         if (errorMessage != null) return showErrorHint(project, editor, errorMessage, REFACTORING_NAME)

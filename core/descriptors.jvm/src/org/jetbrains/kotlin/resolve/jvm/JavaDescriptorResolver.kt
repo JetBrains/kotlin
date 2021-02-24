@@ -40,6 +40,7 @@ class JavaDescriptorResolver(
 
         if (fqName == null) return null
 
+        @Suppress("DEPRECATION")
         return packageFragmentProvider.getPackageFragments(fqName.parent()).firstOrNull()?.findClassifierByJavaClass(javaClass)
     }
 }

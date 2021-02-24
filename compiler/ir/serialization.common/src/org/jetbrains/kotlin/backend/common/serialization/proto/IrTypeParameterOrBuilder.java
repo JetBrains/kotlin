@@ -26,42 +26,15 @@ public interface IrTypeParameterOrBuilder extends
   int getName();
 
   /**
-   * <code>required int32 index = 3;</code>
-   */
-  boolean hasIndex();
-  /**
-   * <code>required int32 index = 3;</code>
-   */
-  int getIndex();
-
-  /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeVariance variance = 4;</code>
-   */
-  boolean hasVariance();
-  /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeVariance variance = 4;</code>
-   */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeVariance getVariance();
-
-  /**
-   * <code>repeated int32 super_type = 5;</code>
+   * <code>repeated int32 super_type = 3 [packed = true];</code>
    */
   java.util.List<java.lang.Integer> getSuperTypeList();
   /**
-   * <code>repeated int32 super_type = 5;</code>
+   * <code>repeated int32 super_type = 3 [packed = true];</code>
    */
   int getSuperTypeCount();
   /**
-   * <code>repeated int32 super_type = 5;</code>
+   * <code>repeated int32 super_type = 3 [packed = true];</code>
    */
   int getSuperType(int index);
-
-  /**
-   * <code>required bool is_reified = 6;</code>
-   */
-  boolean hasIsReified();
-  /**
-   * <code>required bool is_reified = 6;</code>
-   */
-  boolean getIsReified();
 }

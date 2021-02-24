@@ -1,5 +1,3 @@
-// FLOW: OUT
-
 interface A {
     public int foo();
 }

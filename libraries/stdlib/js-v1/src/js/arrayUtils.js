@@ -44,6 +44,7 @@ Kotlin.isArrayish = function (a) {
 };
 
 Kotlin.arrayToString = function (a) {
+    if (a === null) return "null"
     var toString = Kotlin.isCharArray(a) ? String.fromCharCode : Kotlin.toString;
     return "[" + Array.prototype.map.call(a, function(e) { return toString(e); }).join(", ") + "]";
 };
@@ -56,7 +57,7 @@ Kotlin.arrayEquals = function (a, b) {
     if (a === b) {
         return true;
     }
-    if (!Kotlin.isArrayish(b) || a.length !== b.length) {
+    if (a === null || b === null || !Kotlin.isArrayish(b) || a.length !== b.length) {
         return false;
     }
 
@@ -73,6 +74,7 @@ Kotlin.arrayDeepEquals = function (a, b) {
 };
 
 Kotlin.arrayHashCode = function (arr) {
+    if (arr === null) return 0
     var result = 1;
     for (var i = 0, n = arr.length; i < n; i++) {
         result = ((31 * result | 0) + Kotlin.hashCode(arr[i])) | 0;

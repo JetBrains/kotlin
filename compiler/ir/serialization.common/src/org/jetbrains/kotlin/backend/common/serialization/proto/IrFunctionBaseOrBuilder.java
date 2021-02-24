@@ -17,106 +17,66 @@ public interface IrFunctionBaseOrBuilder extends
   org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase getBase();
 
   /**
-   * <code>required int32 name = 2;</code>
+   * <code>required int64 name_type = 2;</code>
    */
-  boolean hasName();
+  boolean hasNameType();
   /**
-   * <code>required int32 name = 2;</code>
+   * <code>required int64 name_type = 2;</code>
    */
-  int getName();
+  long getNameType();
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Visibility visibility = 3;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter type_parameter = 3;</code>
    */
-  boolean hasVisibility();
+  java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter> 
+      getTypeParameterList();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Visibility visibility = 3;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter type_parameter = 3;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.Visibility getVisibility();
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter getTypeParameter(int index);
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter type_parameter = 3;</code>
+   */
+  int getTypeParameterCount();
 
   /**
-   * <code>required bool is_inline = 4;</code>
-   */
-  boolean hasIsInline();
-  /**
-   * <code>required bool is_inline = 4;</code>
-   */
-  boolean getIsInline();
-
-  /**
-   * <code>required bool is_external = 5;</code>
-   */
-  boolean hasIsExternal();
-  /**
-   * <code>required bool is_external = 5;</code>
-   */
-  boolean getIsExternal();
-
-  /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameterContainer type_parameters = 6;</code>
-   */
-  boolean hasTypeParameters();
-  /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameterContainer type_parameters = 6;</code>
-   */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameterContainer getTypeParameters();
-
-  /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter dispatch_receiver = 7;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter dispatch_receiver = 4;</code>
    */
   boolean hasDispatchReceiver();
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter dispatch_receiver = 7;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter dispatch_receiver = 4;</code>
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter getDispatchReceiver();
 
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter extension_receiver = 8;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter extension_receiver = 5;</code>
    */
   boolean hasExtensionReceiver();
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter extension_receiver = 8;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter extension_receiver = 5;</code>
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter getExtensionReceiver();
 
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter value_parameter = 9;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter value_parameter = 6;</code>
    */
   java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter> 
       getValueParameterList();
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter value_parameter = 9;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter value_parameter = 6;</code>
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter getValueParameter(int index);
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter value_parameter = 9;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter value_parameter = 6;</code>
    */
   int getValueParameterCount();
 
   /**
-   * <code>optional int32 body = 10;</code>
+   * <code>optional int32 body = 7;</code>
    */
   boolean hasBody();
   /**
-   * <code>optional int32 body = 10;</code>
+   * <code>optional int32 body = 7;</code>
    */
   int getBody();
-
-  /**
-   * <code>required int32 return_type = 11;</code>
-   */
-  boolean hasReturnType();
-  /**
-   * <code>required int32 return_type = 11;</code>
-   */
-  int getReturnType();
-
-  /**
-   * <code>required bool is_expect = 12;</code>
-   */
-  boolean hasIsExpect();
-  /**
-   * <code>required bool is_expect = 12;</code>
-   */
-  boolean getIsExpect();
 }

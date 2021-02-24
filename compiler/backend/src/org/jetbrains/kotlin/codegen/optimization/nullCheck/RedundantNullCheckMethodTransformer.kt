@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.codegen.optimization.nullCheck
 import org.jetbrains.kotlin.codegen.coroutines.withInstructionAdapter
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
+import org.jetbrains.kotlin.codegen.linkWithLabel
 import org.jetbrains.kotlin.codegen.optimization.common.StrictBasicValue
 import org.jetbrains.kotlin.codegen.optimization.common.debugText
 import org.jetbrains.kotlin.codegen.optimization.common.isInsn
@@ -269,7 +270,7 @@ class RedundantNullCheckMethodTransformer(private val generationState: Generatio
                 //  <...>   -- v is null here
 
                 val jumpsIfNull = insn.opcode == Opcodes.IFNULL
-                val originalLabel = insn.label
+                val originalLabel = insn.label.linkWithLabel()
                 originalLabels[insn] = originalLabel
                 insn.label = synthetic(LabelNode(Label()))
 
@@ -342,7 +343,7 @@ class RedundantNullCheckMethodTransformer(private val generationState: Generatio
                 val originalLabel: LabelNode?
                 val insertAfterNotNull: AbstractInsnNode
                 if (jumpsIfInstance) {
-                    originalLabel = next.label
+                    originalLabel = next.label.linkWithLabel()
                     originalLabels[next] = next.label
                     val newLabel = synthetic(LabelNode(Label()))
                     methodNode.instructions.add(newLabel)

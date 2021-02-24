@@ -32,10 +32,12 @@ import com.intellij.openapi.util.ThrowableComputable
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.*
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.actions.JavaToKotlinAction
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.codeInsight.KotlinCopyPasteReferenceProcessor
 import org.jetbrains.kotlin.idea.codeInsight.KotlinReferenceData
+import org.jetbrains.kotlin.idea.configuration.ExperimentalFeatures
 import org.jetbrains.kotlin.idea.core.util.range
 import org.jetbrains.kotlin.idea.core.util.start
 import org.jetbrains.kotlin.idea.editor.KotlinEditorOptions
@@ -190,7 +192,7 @@ class ConvertJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransferab
             }
             logJ2kConversionStatistics(
                 ConversionType.PSI_EXPRESSION,
-                J2kConverterExtension.isNewJ2k,
+                ExperimentalFeatures.NewJ2k.isEnabled,
                 conversionTime,
                 dataForConversion.elementsAndTexts.linesCount(),
                 filesCount = 1
@@ -347,7 +349,7 @@ fun ElementAndTextList.linesCount() =
 
 fun checkUseNewJ2k(targetFile: KtFile): Boolean {
     if (targetFile is KtCodeFragment) return false
-    return J2kConverterExtension.isNewJ2k
+    return ExperimentalFeatures.NewJ2k.isEnabled
 }
 
 fun runPostProcessing(
@@ -376,7 +378,7 @@ fun runPostProcessing(
                         processor.updateState(0, phase, description)
                     }
             },
-            "Convert Java to Kotlin",
+            KotlinBundle.message("copy.text.convert.java.to.kotlin"),
             true,
             project
         )

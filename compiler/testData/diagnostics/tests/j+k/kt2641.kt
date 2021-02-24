@@ -5,6 +5,8 @@ package a
 import <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.util.Iterator<!>
 import <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.lang.Comparable<!> as Comp
 
+import checkSubtype
+
 fun bar(any: Any): <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.lang.Iterable<Int><!>? {
     val <!UNUSED_VARIABLE!>a<!>: <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.lang.Comparable<String><!>? = null
     val <!UNUSED_VARIABLE!>b<!>: Iterable<<!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>Integer<!>>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -24,6 +24,7 @@ import com.intellij.testIntegration.createTest.TestGenerators
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.findFacadeClass
 import org.jetbrains.kotlin.asJava.toLightClass
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.actions.JavaToKotlinAction
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.getPackage
@@ -40,7 +41,10 @@ import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import java.util.*
 
-class KotlinCreateTestIntention : SelfTargetingRangeIntention<KtNamedDeclaration>(KtNamedDeclaration::class.java, "Create test") {
+class KotlinCreateTestIntention : SelfTargetingRangeIntention<KtNamedDeclaration>(
+    KtNamedDeclaration::class.java,
+    KotlinBundle.lazyMessage("create.test")
+) {
     override fun applicabilityRange(element: KtNamedDeclaration): TextRange? {
         if (element.hasExpectModifier() || element.nameIdentifier == null) return null
         if (ModuleUtilCore.findModuleForPsiElement(element) == null) return null
@@ -108,8 +112,8 @@ class KotlinCreateTestIntention : SelfTargetingRangeIntention<KtNamedDeclaration
                 if (testFolders.isEmpty() && !propertiesComponent.getBoolean("create.test.in.the.same.root")) {
                     if (Messages.showOkCancelDialog(
                             project,
-                            "Create test in the same source root?",
-                            "No Test Roots Found",
+                            KotlinBundle.message("test.integration.message.text.create.test.in.the.same.source.root"),
+                            KotlinBundle.message("test.integration.title.no.test.roots.found"),
                             Messages.getQuestionIcon()
                         ) != Messages.OK
                     ) return
@@ -130,10 +134,10 @@ class KotlinCreateTestIntention : SelfTargetingRangeIntention<KtNamedDeclaration
                     // TODO: Override dialog method when it becomes protected
                     val answer = Messages.showYesNoDialog(
                         project,
-                        "Kotlin class '${existingClass.name}' already exists. Do you want to update it?",
+                        KotlinBundle.message("test.integration.message.text.kotlin.class", existingClass.name.toString()),
                         CommonBundle.getErrorTitle(),
-                        "Rewrite",
-                        "Cancel",
+                        KotlinBundle.message("test.integration.button.text.rewrite"),
+                        KotlinBundle.message("test.integration.button.text.cancel"),
                         Messages.getErrorIcon()
                     )
                     if (answer == Messages.NO) return
@@ -153,7 +157,10 @@ class KotlinCreateTestIntention : SelfTargetingRangeIntention<KtNamedDeclaration
                     val generatedFile = generatedClass.containingFile as? PsiJavaFile ?: return@runWhenSmart
 
                     if (generatedClass.language == JavaLanguage.INSTANCE) {
-                        project.executeCommand<Unit>("Convert class '${generatedClass.name}' to Kotlin", this) {
+                        project.executeCommand<Unit>(
+                            KotlinBundle.message("convert.class.0.to.kotlin", generatedClass.name.toString()),
+                            this
+                        ) {
                             runWriteAction {
                                 generatedClass.methods.forEach {
                                     it.throwsList.referenceElements.forEach { referenceElement -> referenceElement.delete() }

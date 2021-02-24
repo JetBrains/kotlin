@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.slicer;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -24,13 +25,23 @@ public class SlicerLeafGroupingTestGenerated extends AbstractSlicerLeafGroupingT
         KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
+    @TestMetadata("abstractFun.kt")
+    public void testAbstractFun() throws Exception {
+        runTest("idea/testData/slicer/inflow/abstractFun.kt");
+    }
+
     public void testAllFilesPresentInInflow() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClassWithExcluded(this.getClass(), new File("idea/testData/slicer/inflow"), Pattern.compile("^(.+)\\.kt$"), null);
+        KtTestUtil.assertAllTestsPresentInSingleGeneratedClassWithExcluded(this.getClass(), new File("idea/testData/slicer/inflow"), Pattern.compile("^(.+)\\.kt$"), null);
     }
 
     @TestMetadata("anonymousFunBodyExpression.kt")
     public void testAnonymousFunBodyExpression() throws Exception {
         runTest("idea/testData/slicer/inflow/anonymousFunBodyExpression.kt");
+    }
+
+    @TestMetadata("anonymousFunctionParameter.kt")
+    public void testAnonymousFunctionParameter() throws Exception {
+        runTest("idea/testData/slicer/inflow/anonymousFunctionParameter.kt");
     }
 
     @TestMetadata("anonymousFunReturnExpression.kt")
@@ -46,6 +57,11 @@ public class SlicerLeafGroupingTestGenerated extends AbstractSlicerLeafGroupingT
     @TestMetadata("compositeAssignments.kt")
     public void testCompositeAssignments() throws Exception {
         runTest("idea/testData/slicer/inflow/compositeAssignments.kt");
+    }
+
+    @TestMetadata("dataClassCopy.kt")
+    public void testDataClassCopy() throws Exception {
+        runTest("idea/testData/slicer/inflow/dataClassCopy.kt");
     }
 
     @TestMetadata("defaultGetterFieldInSetter.kt")
@@ -96,6 +112,21 @@ public class SlicerLeafGroupingTestGenerated extends AbstractSlicerLeafGroupingT
     @TestMetadata("doubleLambdaResult.kt")
     public void testDoubleLambdaResult() throws Exception {
         runTest("idea/testData/slicer/inflow/doubleLambdaResult.kt");
+    }
+
+    @TestMetadata("extensionLambdaImplicitParameter.kt")
+    public void testExtensionLambdaImplicitParameter() throws Exception {
+        runTest("idea/testData/slicer/inflow/extensionLambdaImplicitParameter.kt");
+    }
+
+    @TestMetadata("extensionLambdaParameter.kt")
+    public void testExtensionLambdaParameter() throws Exception {
+        runTest("idea/testData/slicer/inflow/extensionLambdaParameter.kt");
+    }
+
+    @TestMetadata("extensionLambdaReceiver.kt")
+    public void testExtensionLambdaReceiver() throws Exception {
+        runTest("idea/testData/slicer/inflow/extensionLambdaReceiver.kt");
     }
 
     @TestMetadata("funParamerer.kt")
@@ -151,6 +182,26 @@ public class SlicerLeafGroupingTestGenerated extends AbstractSlicerLeafGroupingT
     @TestMetadata("ifExpression.kt")
     public void testIfExpression() throws Exception {
         runTest("idea/testData/slicer/inflow/ifExpression.kt");
+    }
+
+    @TestMetadata("inlineExtensionImplicitReceiver.kt")
+    public void testInlineExtensionImplicitReceiver() throws Exception {
+        runTest("idea/testData/slicer/inflow/inlineExtensionImplicitReceiver.kt");
+    }
+
+    @TestMetadata("inlineFunctionManyCalls.kt")
+    public void testInlineFunctionManyCalls() throws Exception {
+        runTest("idea/testData/slicer/inflow/inlineFunctionManyCalls.kt");
+    }
+
+    @TestMetadata("lambdaImplicitParameter.kt")
+    public void testLambdaImplicitParameter() throws Exception {
+        runTest("idea/testData/slicer/inflow/lambdaImplicitParameter.kt");
+    }
+
+    @TestMetadata("lambdaParameter.kt")
+    public void testLambdaParameter() throws Exception {
+        runTest("idea/testData/slicer/inflow/lambdaParameter.kt");
     }
 
     @TestMetadata("lambdaResult.kt")
@@ -223,6 +274,46 @@ public class SlicerLeafGroupingTestGenerated extends AbstractSlicerLeafGroupingT
         runTest("idea/testData/slicer/inflow/nullsAndNotNulls.kt");
     }
 
+    @TestMetadata("onFunctionReceiverType.kt")
+    public void testOnFunctionReceiverType() throws Exception {
+        runTest("idea/testData/slicer/inflow/onFunctionReceiverType.kt");
+    }
+
+    @TestMetadata("onPropertyReceiverType.kt")
+    public void testOnPropertyReceiverType() throws Exception {
+        runTest("idea/testData/slicer/inflow/onPropertyReceiverType.kt");
+    }
+
+    @TestMetadata("openFun.kt")
+    public void testOpenFun() throws Exception {
+        runTest("idea/testData/slicer/inflow/openFun.kt");
+    }
+
+    @TestMetadata("openFunInvokeOnParameter.kt")
+    public void testOpenFunInvokeOnParameter() throws Exception {
+        runTest("idea/testData/slicer/inflow/openFunInvokeOnParameter.kt");
+    }
+
+    @TestMetadata("overrideExtension1.kt")
+    public void testOverrideExtension1() throws Exception {
+        runTest("idea/testData/slicer/inflow/overrideExtension1.kt");
+    }
+
+    @TestMetadata("overrideExtension2.kt")
+    public void testOverrideExtension2() throws Exception {
+        runTest("idea/testData/slicer/inflow/overrideExtension2.kt");
+    }
+
+    @TestMetadata("overrideFun.kt")
+    public void testOverrideFun() throws Exception {
+        runTest("idea/testData/slicer/inflow/overrideFun.kt");
+    }
+
+    @TestMetadata("overrideProperty.kt")
+    public void testOverrideProperty() throws Exception {
+        runTest("idea/testData/slicer/inflow/overrideProperty.kt");
+    }
+
     @TestMetadata("overridingFunctionResult.kt")
     public void testOverridingFunctionResult() throws Exception {
         runTest("idea/testData/slicer/inflow/overridingFunctionResult.kt");
@@ -251,6 +342,11 @@ public class SlicerLeafGroupingTestGenerated extends AbstractSlicerLeafGroupingT
     @TestMetadata("primaryConstructorParameterWithDefault.kt")
     public void testPrimaryConstructorParameterWithDefault() throws Exception {
         runTest("idea/testData/slicer/inflow/primaryConstructorParameterWithDefault.kt");
+    }
+
+    @TestMetadata("propertyInInterface.kt")
+    public void testPropertyInInterface() throws Exception {
+        runTest("idea/testData/slicer/inflow/propertyInInterface.kt");
     }
 
     @TestMetadata("qualifiedAssignmentsForQualifiedRef.kt")
@@ -291,6 +387,16 @@ public class SlicerLeafGroupingTestGenerated extends AbstractSlicerLeafGroupingT
     @TestMetadata("settersViaJavaDelegate.kt")
     public void testSettersViaJavaDelegate() throws Exception {
         runTest("idea/testData/slicer/inflow/settersViaJavaDelegate.kt");
+    }
+
+    @TestMetadata("thisInExtensionFunction.kt")
+    public void testThisInExtensionFunction() throws Exception {
+        runTest("idea/testData/slicer/inflow/thisInExtensionFunction.kt");
+    }
+
+    @TestMetadata("thisInExtensionProperty.kt")
+    public void testThisInExtensionProperty() throws Exception {
+        runTest("idea/testData/slicer/inflow/thisInExtensionProperty.kt");
     }
 
     @TestMetadata("topLevelVal.kt")

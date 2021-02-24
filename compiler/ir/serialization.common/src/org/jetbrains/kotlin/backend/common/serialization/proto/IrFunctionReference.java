@@ -55,20 +55,12 @@ public final class IrFunctionReference extends
           }
           case 8: {
             bitField0_ |= 0x00000001;
-            symbol_ = input.readInt32();
+            symbol_ = input.readInt64();
             break;
           }
-          case 18: {
-            org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin.Builder subBuilder = null;
-            if (((bitField0_ & 0x00000002) == 0x00000002)) {
-              subBuilder = origin_.toBuilder();
-            }
-            origin_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin.PARSER, extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(origin_);
-              origin_ = subBuilder.buildPartial();
-            }
+          case 16: {
             bitField0_ |= 0x00000002;
+            originName_ = input.readInt32();
             break;
           }
           case 26: {
@@ -86,7 +78,7 @@ public final class IrFunctionReference extends
           }
           case 32: {
             bitField0_ |= 0x00000008;
-            reflectionTarget_ = input.readInt32();
+            reflectionTargetSymbol_ = input.readInt64();
             break;
           }
         }
@@ -124,33 +116,33 @@ public final class IrFunctionReference extends
 
   private int bitField0_;
   public static final int SYMBOL_FIELD_NUMBER = 1;
-  private int symbol_;
+  private long symbol_;
   /**
-   * <code>required int32 symbol = 1;</code>
+   * <code>required int64 symbol = 1;</code>
    */
   public boolean hasSymbol() {
     return ((bitField0_ & 0x00000001) == 0x00000001);
   }
   /**
-   * <code>required int32 symbol = 1;</code>
+   * <code>required int64 symbol = 1;</code>
    */
-  public int getSymbol() {
+  public long getSymbol() {
     return symbol_;
   }
 
-  public static final int ORIGIN_FIELD_NUMBER = 2;
-  private org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin origin_;
+  public static final int ORIGIN_NAME_FIELD_NUMBER = 2;
+  private int originName_;
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin origin = 2;</code>
+   * <code>optional int32 origin_name = 2;</code>
    */
-  public boolean hasOrigin() {
+  public boolean hasOriginName() {
     return ((bitField0_ & 0x00000002) == 0x00000002);
   }
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin origin = 2;</code>
+   * <code>optional int32 origin_name = 2;</code>
    */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin getOrigin() {
-    return origin_;
+  public int getOriginName() {
+    return originName_;
   }
 
   public static final int MEMBER_ACCESS_FIELD_NUMBER = 3;
@@ -168,26 +160,26 @@ public final class IrFunctionReference extends
     return memberAccess_;
   }
 
-  public static final int REFLECTIONTARGET_FIELD_NUMBER = 4;
-  private int reflectionTarget_;
+  public static final int REFLECTIONTARGETSYMBOL_FIELD_NUMBER = 4;
+  private long reflectionTargetSymbol_;
   /**
-   * <code>optional int32 reflectionTarget = 4;</code>
+   * <code>optional int64 reflectionTargetSymbol = 4;</code>
    */
-  public boolean hasReflectionTarget() {
+  public boolean hasReflectionTargetSymbol() {
     return ((bitField0_ & 0x00000008) == 0x00000008);
   }
   /**
-   * <code>optional int32 reflectionTarget = 4;</code>
+   * <code>optional int64 reflectionTargetSymbol = 4;</code>
    */
-  public int getReflectionTarget() {
-    return reflectionTarget_;
+  public long getReflectionTargetSymbol() {
+    return reflectionTargetSymbol_;
   }
 
   private void initFields() {
-    symbol_ = 0;
-    origin_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin.getDefaultInstance();
+    symbol_ = 0L;
+    originName_ = 0;
     memberAccess_ = org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon.getDefaultInstance();
-    reflectionTarget_ = 0;
+    reflectionTargetSymbol_ = 0L;
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -203,12 +195,6 @@ public final class IrFunctionReference extends
       memoizedIsInitialized = 0;
       return false;
     }
-    if (hasOrigin()) {
-      if (!getOrigin().isInitialized()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-    }
     if (!getMemberAccess().isInitialized()) {
       memoizedIsInitialized = 0;
       return false;
@@ -221,16 +207,16 @@ public final class IrFunctionReference extends
                       throws java.io.IOException {
     getSerializedSize();
     if (((bitField0_ & 0x00000001) == 0x00000001)) {
-      output.writeInt32(1, symbol_);
+      output.writeInt64(1, symbol_);
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
-      output.writeMessage(2, origin_);
+      output.writeInt32(2, originName_);
     }
     if (((bitField0_ & 0x00000004) == 0x00000004)) {
       output.writeMessage(3, memberAccess_);
     }
     if (((bitField0_ & 0x00000008) == 0x00000008)) {
-      output.writeInt32(4, reflectionTarget_);
+      output.writeInt64(4, reflectionTargetSymbol_);
     }
     output.writeRawBytes(unknownFields);
   }
@@ -243,11 +229,11 @@ public final class IrFunctionReference extends
     size = 0;
     if (((bitField0_ & 0x00000001) == 0x00000001)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeInt32Size(1, symbol_);
+        .computeInt64Size(1, symbol_);
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeMessageSize(2, origin_);
+        .computeInt32Size(2, originName_);
     }
     if (((bitField0_ & 0x00000004) == 0x00000004)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
@@ -255,7 +241,7 @@ public final class IrFunctionReference extends
     }
     if (((bitField0_ & 0x00000008) == 0x00000008)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeInt32Size(4, reflectionTarget_);
+        .computeInt64Size(4, reflectionTargetSymbol_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -351,13 +337,13 @@ public final class IrFunctionReference extends
 
     public Builder clear() {
       super.clear();
-      symbol_ = 0;
+      symbol_ = 0L;
       bitField0_ = (bitField0_ & ~0x00000001);
-      origin_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin.getDefaultInstance();
+      originName_ = 0;
       bitField0_ = (bitField0_ & ~0x00000002);
       memberAccess_ = org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000004);
-      reflectionTarget_ = 0;
+      reflectionTargetSymbol_ = 0L;
       bitField0_ = (bitField0_ & ~0x00000008);
       return this;
     }
@@ -389,7 +375,7 @@ public final class IrFunctionReference extends
       if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
         to_bitField0_ |= 0x00000002;
       }
-      result.origin_ = origin_;
+      result.originName_ = originName_;
       if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
         to_bitField0_ |= 0x00000004;
       }
@@ -397,7 +383,7 @@ public final class IrFunctionReference extends
       if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
         to_bitField0_ |= 0x00000008;
       }
-      result.reflectionTarget_ = reflectionTarget_;
+      result.reflectionTargetSymbol_ = reflectionTargetSymbol_;
       result.bitField0_ = to_bitField0_;
       return result;
     }
@@ -407,14 +393,14 @@ public final class IrFunctionReference extends
       if (other.hasSymbol()) {
         setSymbol(other.getSymbol());
       }
-      if (other.hasOrigin()) {
-        mergeOrigin(other.getOrigin());
+      if (other.hasOriginName()) {
+        setOriginName(other.getOriginName());
       }
       if (other.hasMemberAccess()) {
         mergeMemberAccess(other.getMemberAccess());
       }
-      if (other.hasReflectionTarget()) {
-        setReflectionTarget(other.getReflectionTarget());
+      if (other.hasReflectionTargetSymbol()) {
+        setReflectionTargetSymbol(other.getReflectionTargetSymbol());
       }
       setUnknownFields(
           getUnknownFields().concat(other.unknownFields));
@@ -429,12 +415,6 @@ public final class IrFunctionReference extends
       if (!hasMemberAccess()) {
         
         return false;
-      }
-      if (hasOrigin()) {
-        if (!getOrigin().isInitialized()) {
-          
-          return false;
-        }
       }
       if (!getMemberAccess().isInitialized()) {
         
@@ -462,95 +442,67 @@ public final class IrFunctionReference extends
     }
     private int bitField0_;
 
-    private int symbol_ ;
+    private long symbol_ ;
     /**
-     * <code>required int32 symbol = 1;</code>
+     * <code>required int64 symbol = 1;</code>
      */
     public boolean hasSymbol() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>required int32 symbol = 1;</code>
+     * <code>required int64 symbol = 1;</code>
      */
-    public int getSymbol() {
+    public long getSymbol() {
       return symbol_;
     }
     /**
-     * <code>required int32 symbol = 1;</code>
+     * <code>required int64 symbol = 1;</code>
      */
-    public Builder setSymbol(int value) {
+    public Builder setSymbol(long value) {
       bitField0_ |= 0x00000001;
       symbol_ = value;
       
       return this;
     }
     /**
-     * <code>required int32 symbol = 1;</code>
+     * <code>required int64 symbol = 1;</code>
      */
     public Builder clearSymbol() {
       bitField0_ = (bitField0_ & ~0x00000001);
-      symbol_ = 0;
+      symbol_ = 0L;
       
       return this;
     }
 
-    private org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin origin_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin.getDefaultInstance();
+    private int originName_ ;
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin origin = 2;</code>
+     * <code>optional int32 origin_name = 2;</code>
      */
-    public boolean hasOrigin() {
+    public boolean hasOriginName() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin origin = 2;</code>
+     * <code>optional int32 origin_name = 2;</code>
      */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin getOrigin() {
-      return origin_;
+    public int getOriginName() {
+      return originName_;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin origin = 2;</code>
+     * <code>optional int32 origin_name = 2;</code>
      */
-    public Builder setOrigin(org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
-      origin_ = value;
-
+    public Builder setOriginName(int value) {
       bitField0_ |= 0x00000002;
+      originName_ = value;
+      
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin origin = 2;</code>
+     * <code>optional int32 origin_name = 2;</code>
      */
-    public Builder setOrigin(
-        org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin.Builder builderForValue) {
-      origin_ = builderForValue.build();
-
-      bitField0_ |= 0x00000002;
-      return this;
-    }
-    /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin origin = 2;</code>
-     */
-    public Builder mergeOrigin(org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin value) {
-      if (((bitField0_ & 0x00000002) == 0x00000002) &&
-          origin_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin.getDefaultInstance()) {
-        origin_ =
-          org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin.newBuilder(origin_).mergeFrom(value).buildPartial();
-      } else {
-        origin_ = value;
-      }
-
-      bitField0_ |= 0x00000002;
-      return this;
-    }
-    /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin origin = 2;</code>
-     */
-    public Builder clearOrigin() {
-      origin_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin.getDefaultInstance();
-
+    public Builder clearOriginName() {
       bitField0_ = (bitField0_ & ~0x00000002);
+      originName_ = 0;
+      
       return this;
     }
 
@@ -614,34 +566,34 @@ public final class IrFunctionReference extends
       return this;
     }
 
-    private int reflectionTarget_ ;
+    private long reflectionTargetSymbol_ ;
     /**
-     * <code>optional int32 reflectionTarget = 4;</code>
+     * <code>optional int64 reflectionTargetSymbol = 4;</code>
      */
-    public boolean hasReflectionTarget() {
+    public boolean hasReflectionTargetSymbol() {
       return ((bitField0_ & 0x00000008) == 0x00000008);
     }
     /**
-     * <code>optional int32 reflectionTarget = 4;</code>
+     * <code>optional int64 reflectionTargetSymbol = 4;</code>
      */
-    public int getReflectionTarget() {
-      return reflectionTarget_;
+    public long getReflectionTargetSymbol() {
+      return reflectionTargetSymbol_;
     }
     /**
-     * <code>optional int32 reflectionTarget = 4;</code>
+     * <code>optional int64 reflectionTargetSymbol = 4;</code>
      */
-    public Builder setReflectionTarget(int value) {
+    public Builder setReflectionTargetSymbol(long value) {
       bitField0_ |= 0x00000008;
-      reflectionTarget_ = value;
+      reflectionTargetSymbol_ = value;
       
       return this;
     }
     /**
-     * <code>optional int32 reflectionTarget = 4;</code>
+     * <code>optional int64 reflectionTargetSymbol = 4;</code>
      */
-    public Builder clearReflectionTarget() {
+    public Builder clearReflectionTargetSymbol() {
       bitField0_ = (bitField0_ & ~0x00000008);
-      reflectionTarget_ = 0;
+      reflectionTargetSymbol_ = 0L;
       
       return this;
     }

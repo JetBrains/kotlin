@@ -28,7 +28,7 @@ open class A {
 class Simple: A() {
     init {
         Y().A_Y()
-        Z().A_C_Z()
+        <!UNRESOLVED_REFERENCE!>Z<!>().<!UNRESOLVED_REFERENCE!>A_C_Z<!>()
     }
 }
 
@@ -86,8 +86,8 @@ class C: A() {
     }
 
     init {
-        Y().<!UNRESOLVED_REFERENCE!>C_C_Y<!>()
-        Y().A_Y()
+        Y().C_C_Y()
+        Y().<!UNRESOLVED_REFERENCE!>A_Y<!>()
 
         Z().C_C_Z()
         Z().<!UNRESOLVED_REFERENCE!>A_C_Z<!>()

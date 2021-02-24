@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.IrValidatorConfig
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -56,11 +57,14 @@ fun <Data, Context> makeVerifyAction(verifier: (Context, Data) -> Unit): Action<
             verifier(context, data)
     }
 
-fun dumpIrElement(actionState: ActionState, data: IrElement, context: Any?): String {
+fun dumpIrElement(actionState: ActionState, data: IrElement, @Suppress("UNUSED_PARAMETER") context: Any?): String {
     val beforeOrAfterStr = actionState.beforeOrAfter.name.toLowerCaseAsciiOnly()
 
     var dumpText: String = ""
     val elementName: String
+
+    val dumpStrategy = System.getProperty("org.jetbrains.kotlin.compiler.ir.dump.strategy")
+    val dump: IrElement.() -> String = if (dumpStrategy == "KotlinLike") IrElement::dumpKotlinLike else IrElement::dump
 
     val dumpOnlyFqName = actionState.config.dumpOnlyFqName
     if (dumpOnlyFqName != null) {
@@ -70,7 +74,7 @@ fun dumpIrElement(actionState: ActionState, data: IrElement, context: Any?): Str
                 element.acceptChildrenVoid(this)
             }
 
-            override fun visitDeclaration(declaration: IrDeclaration) {
+            override fun visitDeclaration(declaration: IrDeclarationBase) {
                 if (declaration is IrDeclarationWithName && FqName(dumpOnlyFqName) == declaration.fqNameWhenAvailable) {
                     dumpText += declaration.dump()
                 } else {
@@ -123,12 +127,13 @@ fun <Data, Context> dumpToStdout(
 
 val defaultDumper = makeDumpAction(dumpToStdout(::dumpIrElement) + dumpToFile("ir", ::dumpIrElement))
 
-fun <Fragment : IrElement> validationCallback(context: CommonBackendContext, fragment: Fragment) {
+fun <Fragment : IrElement> validationCallback(context: CommonBackendContext, fragment: Fragment, checkProperties: Boolean = false) {
     val validatorConfig = IrValidatorConfig(
         abortOnError = true,
         ensureAllNodesAreDifferent = true,
         checkTypes = false,
-        checkDescriptors = false
+        checkDescriptors = false,
+        checkProperties = checkProperties,
     )
     fragment.accept(IrValidator(context, validatorConfig), null)
     fragment.accept(CheckDeclarationParentsVisitor, null)

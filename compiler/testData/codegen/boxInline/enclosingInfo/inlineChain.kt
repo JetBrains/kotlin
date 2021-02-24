@@ -1,6 +1,6 @@
+// WITH_REFLECT
 // TARGET_BACKEND: JVM
 // FILE: 1.kt
-// WITH_REFLECT
 package test
 
 inline fun <R> call(s: () -> R) = s()

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.checkers
 
 import com.intellij.openapi.util.text.StringUtil
+import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.JvmTarget
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.util.*
 
+@ObsoleteTestInfrastructure("org.jetbrains.kotlin.test.runners.AbstractDiagnosticsTestWithJsStdLib")
 abstract class AbstractDiagnosticsTestWithJsStdLib : AbstractDiagnosticsTest() {
     private var lazyConfig: Lazy<JsConfig>? = lazy(LazyThreadSafetyMode.NONE) {
         JsConfig(project, environment.configuration.copy().apply {

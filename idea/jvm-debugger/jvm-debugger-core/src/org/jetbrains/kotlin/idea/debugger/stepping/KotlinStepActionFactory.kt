@@ -28,17 +28,14 @@ import com.intellij.openapi.project.Project
 import com.intellij.util.EventDispatcher
 import com.sun.jdi.request.EventRequest
 import com.sun.jdi.request.StepRequest
+import org.jetbrains.kotlin.idea.debugger.KotlinDebuggerCoreBundle
 import java.lang.reflect.Field
 
 // Mass-copy-paste code for commands behaviour from com.intellij.debugger.engine.DebugProcessImpl
 @SuppressWarnings("UnnecessaryFinalOnLocalVariableOrParameter")
 class KotlinStepActionFactory(private val debuggerProcess: DebugProcessImpl) {
-    abstract class KotlinStepAction {
-        abstract fun contextAction(suspendContext: SuspendContextImpl)
-    }
-
-    fun createKotlinStepOverInlineAction(smartStepFilter: KotlinMethodFilter): KotlinStepAction {
-        return StepOverInlineCommand(smartStepFilter, StepRequest.STEP_LINE)
+    fun createKotlinStepOverAction(smartStepFilter: KotlinMethodFilter): KotlinStepOverCommand {
+        return KotlinStepOverCommand(smartStepFilter, StepRequest.STEP_LINE)
     }
 
     private val debuggerContext: DebuggerContextImpl get() = debuggerProcess.debuggerContext
@@ -86,15 +83,14 @@ class KotlinStepActionFactory(private val debuggerProcess: DebugProcessImpl) {
         return getFromField(DebugProcessImpl::class.java.getDeclaredField(fieldName))
     }
 
-    private fun <T> getFromField(field: Field?): T {
-        field!!.isAccessible = true
+    private fun <T> getFromField(field: Field): T {
+        field.isAccessible = true
 
         @Suppress("UNCHECKED_CAST")
         return field.get(debuggerProcess) as T
     }
 
-    private inner class StepOverInlineCommand(private val mySmartStepFilter: KotlinMethodFilter, private val myStepSize: Int) :
-        KotlinStepAction() {
+    inner class KotlinStepOverCommand(private val mySmartStepFilter: KotlinMethodFilter, private val myStepSize: Int) {
         private fun getContextThread(suspendContext: SuspendContextImpl): ThreadReferenceProxyImpl? {
             val contextThread = debuggerContext.threadProxy
             return contextThread ?: suspendContext.thread
@@ -125,8 +121,8 @@ class KotlinStepActionFactory(private val debuggerProcess: DebugProcessImpl) {
         }
 
         // See: StepIntoCommand.contextAction()
-        override fun contextAction(suspendContext: SuspendContextImpl) {
-            showStatusText("Stepping over inline")
+        fun contextAction(suspendContext: SuspendContextImpl) {
+            showStatusText(KotlinDebuggerCoreBundle.message("stepping.over.inline"))
             val stepThread = getContextThread(suspendContext)
 
             if (stepThread == null) {
@@ -135,7 +131,7 @@ class KotlinStepActionFactory(private val debuggerProcess: DebugProcessImpl) {
                 return
             }
 
-            val hint = KotlinStepOverInlinedLinesHint(stepThread, suspendContext, mySmartStepFilter)
+            val hint = KotlinStepOverRequestHint(stepThread, suspendContext, mySmartStepFilter)
             hint.isResetIgnoreFilters = !session.shouldIgnoreSteppingFilters()
 
             try {
@@ -148,7 +144,7 @@ class KotlinStepActionFactory(private val debuggerProcess: DebugProcessImpl) {
 
             doStep(suspendContext, stepThread, myStepSize, StepRequest.STEP_OVER, hint)
 
-            showStatusText("Process resumed")
+            showStatusText(KotlinDebuggerCoreBundle.message("process.resumed"))
             resumeAction(suspendContext, stepThread)
             debugProcessDispatcher.multicaster.resumed(suspendContext)
         }

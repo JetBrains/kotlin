@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 sealed class Sealed(val x: Int) {
     data class Tuple(val x: Int, val y: Int)
     object First: Sealed(12)

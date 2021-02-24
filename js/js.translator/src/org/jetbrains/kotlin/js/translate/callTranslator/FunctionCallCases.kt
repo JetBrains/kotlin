@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.sam.SamConstructorDescriptor
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.util.*
 
@@ -184,7 +185,7 @@ object InvokeIntrinsic : FunctionCallCase() {
 
 object ConstructorCallCase : FunctionCallCase() {
     fun canApply(callInfo: FunctionCallInfo): Boolean {
-        return callInfo.callableDescriptor is ConstructorDescriptor
+        return callInfo.callableDescriptor is ConstructorDescriptor || callInfo.callableDescriptor is SamConstructorDescriptor
     }
 
     override fun FunctionCallInfo.noReceivers() = doTranslate { translateArguments }
@@ -196,7 +197,14 @@ object ConstructorCallCase : FunctionCallCase() {
     private inline fun FunctionCallInfo.doTranslate(
             getArguments: CallArgumentTranslator.ArgumentsInfo.() -> List<JsExpression>
     ): JsExpression {
+
+        (callableDescriptor as? SamConstructorDescriptor)?.baseDescriptorForSynthetic?.let { funInterface ->
+            val functionRef = ReferenceTranslator.translateAsTypeReference(funInterface, context)
+            return JsNew(functionRef, argumentsInfo.getArguments())
+        }
+
         val functionRef = ReferenceTranslator.translateAsValueReference(callableDescriptor, context)
+
         val invocationArguments = mutableListOf<JsExpression>()
 
         val constructorDescriptor = callableDescriptor as ClassConstructorDescriptor
@@ -257,8 +265,14 @@ object SuperCallCase : FunctionCallCase() {
 }
 
 object DynamicInvokeAndBracketAccessCallCase : FunctionCallCase() {
-    fun canApply(callInfo: FunctionCallInfo): Boolean =
-            callInfo.resolvedCall.call.callType != Call.CallType.DEFAULT && callInfo.callableDescriptor.isDynamic()
+    fun canApply(callInfo: FunctionCallInfo): Boolean {
+        if (!callInfo.callableDescriptor.isDynamic())
+            return false
+        val callType = callInfo.resolvedCall.call.callType
+        return callType == Call.CallType.ARRAY_GET_METHOD
+                || callType == Call.CallType.ARRAY_SET_METHOD
+                || callType == Call.CallType.INVOKE
+    }
 
     override fun FunctionCallInfo.dispatchReceiver(): JsExpression {
         val arguments = argumentsInfo.translateArguments

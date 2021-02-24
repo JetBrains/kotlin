@@ -1,0 +1,27 @@
+package
+
+public fun </*0*/ T> coEvery1(/*0*/ stubBlock: suspend MockKMatcherScope.() -> T): kotlin.Unit
+public fun test(/*0*/ b: TestRepo): kotlin.Unit
+
+public interface CrudRepository</*0*/ T, /*1*/ K> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open fun </*0*/ S : T?> save(/*0*/ entity: S): S
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class MockKMatcherScope {
+    public constructor MockKMatcherScope()
+    public final inline fun </*0*/ reified T : kotlin.Any> any(): T
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class TestRepo : CrudRepository<kotlin.Int, kotlin.String> {
+    public constructor TestRepo()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun </*0*/ S : kotlin.Int?> save(/*0*/ entity: S): S
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

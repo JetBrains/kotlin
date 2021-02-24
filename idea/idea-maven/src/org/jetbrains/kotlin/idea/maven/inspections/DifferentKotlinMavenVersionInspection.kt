@@ -14,6 +14,7 @@ import org.jetbrains.idea.maven.dom.model.MavenDomPlugin
 import org.jetbrains.idea.maven.dom.model.MavenDomProjectModel
 import org.jetbrains.idea.maven.project.MavenProjectsManager
 import org.jetbrains.kotlin.idea.inspections.PluginVersionDependentInspection
+import org.jetbrains.kotlin.idea.maven.KotlinMavenBundle
 import org.jetbrains.kotlin.idea.maven.PomFile
 import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
 
@@ -43,12 +44,13 @@ class DifferentKotlinMavenVersionInspection : DomElementsInspection<MavenDomProj
     }
 
     private fun createProblem(holder: DomElementAnnotationHolder, plugin: MavenDomPlugin) {
+        val versionFromMaven = plugin.version.stringValue
+        val versionFromIde = testVersionMessage ?: idePluginVersion
+
         holder.createProblem(
             plugin.version,
             HighlightSeverity.WARNING,
-            "Kotlin version that is used for building with Maven (${plugin.version
-                .stringValue}) differs from the one bundled into the IDE plugin (${testVersionMessage
-                ?: idePluginVersion})"
+            KotlinMavenBundle.message("version.different.maven.ide", versionFromMaven.toString(), versionFromIde)
         )
     }
 }

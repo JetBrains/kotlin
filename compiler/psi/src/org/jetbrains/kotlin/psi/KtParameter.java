@@ -129,7 +129,7 @@ public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> imp
         return findChildByType(KtNodeTypes.DESTRUCTURING_DECLARATION);
     }
 
-    private static final TokenSet VAL_VAR_TOKEN_SET = TokenSet.create(KtTokens.VAL_KEYWORD, KtTokens.VAR_KEYWORD);
+    public static final TokenSet VAL_VAR_TOKEN_SET = TokenSet.create(KtTokens.VAL_KEYWORD, KtTokens.VAR_KEYWORD);
 
     @Override
     public ItemPresentation getPresentation() {
@@ -138,6 +138,10 @@ public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> imp
 
     public boolean isLoopParameter() {
         return getParent() instanceof KtForExpression;
+    }
+
+    public boolean isCatchParameter() {
+        return getParent().getParent() instanceof KtCatchClause;
     }
 
     @Nullable

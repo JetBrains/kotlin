@@ -3,5 +3,5 @@
 
 fun foo() {
     val f : Function1<*, *> = { x -> x.toString() }
-    f(1)
+    <!INAPPLICABLE_CANDIDATE!>f<!>(1)
 }

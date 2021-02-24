@@ -1,0 +1,32 @@
+FILE: main.kt
+    public final class BJava : R|AJava|, R|C| {
+        public constructor(s: R|kotlin/String|): R|BJava| {
+            super<R|AJava|>(R|<local>/s|)
+        }
+
+    }
+    public open class AKt : R|kotlin/Any| {
+        public constructor(s: R|kotlin/String|): R|AKt| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val s: R|kotlin/String| = R|<local>/s|
+            public get(): R|kotlin/String|
+
+    }
+    public final class BKt : R|AKt|, R|C| {
+        public constructor(s: R|kotlin/String|): R|BKt| {
+            super<R|AKt|>(R|<local>/s|)
+        }
+
+    }
+    public abstract interface C : R|kotlin/Any| {
+    }
+    public final typealias QQQ = R|AKt|
+    public final typealias DDD = R|C|
+    public final class CKt : R|QQQ|, R|DDD| {
+        public constructor(s: R|kotlin/String|): R|CKt| {
+            super<R|QQQ|>(R|<local>/s|)
+        }
+
+    }

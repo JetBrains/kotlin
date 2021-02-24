@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.*
-import org.jetbrains.kotlin.platform.isCommon
+import org.jetbrains.kotlin.platform.isMultiPlatform
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -151,7 +151,7 @@ abstract class CompletionSession(
             { CompletionBenchmarkSink.instance.onFlush(this) },
             prefixMatcher, parameters, resultSet,
             createSorter(), (file as? KtCodeFragment)?.extraCompletionFilter,
-            moduleDescriptor.platform.isCommon()
+            moduleDescriptor.platform.isMultiPlatform()
         )
     }
 
@@ -283,6 +283,8 @@ abstract class CompletionSession(
         sorter = sorter.weighAfter("lift.shorter", RealPrefixMatchingWeigher())
 
         sorter = sorter.weighAfter("kotlin.proximity", ByNameAlphabeticalWeigher, PreferLessParametersWeigher)
+
+        sorter = sorter.weighBefore("prefix", KotlinUnwantedLookupElementWeigher)
 
         sorter = if (expectedInfos.all { it.fuzzyType?.type?.isUnit() == true }) {
             sorter.weighBefore("prefix", PreferDslMembers)

@@ -473,7 +473,7 @@ fun <T : Number> T?.case_11() {
             <!DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>equals<!>(this)
             <!DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>itest1<!>()
             <!DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>apply<!> {
-                <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>this<!>
+                <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T}")!>this<!>
                 equals(null)
                 propT
                 propAny
@@ -484,29 +484,29 @@ fun <T : Number> T?.case_11() {
                 funNullableT()
                 funNullableAny()
                 itest1()
-                <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>this<!>.equals(null)
-                <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>this<!>.propT
-                <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>this<!>.propAny
-                <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>this<!>.propNullableT
-                <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>this<!>.propNullableAny
-                <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>this<!>.funT()
-                <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>this<!>.funAny()
-                <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>this<!>.funNullableT()
-                <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>this<!>.funNullableAny()
-                <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>this<!>.itest1()
+                <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T}")!>this<!>.equals(null)
+                <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T}")!>this<!>.propT
+                <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T}")!>this<!>.propAny
+                <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T}")!>this<!>.propNullableT
+                <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T}")!>this<!>.propNullableAny
+                <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T}")!>this<!>.funT()
+                <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T}")!>this<!>.funAny()
+                <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T}")!>this<!>.funNullableT()
+                <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T}")!>this<!>.funNullableAny()
+                <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T}"), DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T}")!>this<!>.itest1()
             }
             <!DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>also<!> {
-                <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>it<!>
-                <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>it<!>.itest1()
-                <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>it<!>.equals(null)
-                <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>it<!>.propT
-                <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>it<!>.propAny
-                <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>it<!>.propNullableT
-                <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>it<!>.propNullableAny
-                <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>it<!>.funT()
-                <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>it<!>.funAny()
-                <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>it<!>.funNullableT()
-                <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T?!!}")!>it<!>.funNullableAny()
+                <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T}")!>it<!>
+                <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T}")!>it<!>.itest1()
+                <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T}")!>it<!>.equals(null)
+                <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T}")!>it<!>.propT
+                <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T}")!>it<!>.propAny
+                <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T}")!>it<!>.propNullableT
+                <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T}")!>it<!>.propNullableAny
+                <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T}")!>it<!>.funT()
+                <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T}")!>it<!>.funAny()
+                <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T}")!>it<!>.funNullableT()
+                <!DEBUG_INFO_EXPRESSION_TYPE("{Interface1 & T}")!>it<!>.funNullableAny()
             }
         }
     }
@@ -3831,12 +3831,12 @@ fun Nothing.case_63() {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing"), DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>this<!>.hashCode()
 
         hashCode()
-        <!IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>apply<!> {
+        <!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>apply<!> {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing"), DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>this<!>
             <!UNREACHABLE_CODE!>hashCode()<!>
             <!UNREACHABLE_CODE!><!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing"), DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>this<!>.hashCode()<!>
         }
-        <!IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>also<!> {
+        <!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>also<!> {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>it<!>
             <!UNREACHABLE_CODE!><!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>it<!>.hashCode()<!>
         }

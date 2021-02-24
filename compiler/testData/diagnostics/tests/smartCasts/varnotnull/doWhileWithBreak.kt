@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 data class SomeObject(val n: SomeObject?) {
     fun doSomething(): Boolean = true
     fun next(): SomeObject? = n    

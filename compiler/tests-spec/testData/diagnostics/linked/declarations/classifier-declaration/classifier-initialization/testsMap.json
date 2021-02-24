@@ -1,0 +1,16 @@
+{
+  "6": {
+    "neg": {
+      "4": [
+        {
+          "specVersion": "0.1-152",
+          "casesNumber": 0,
+          "description": "Property not initialized",
+          "path": "compiler/testData/diagnostics/tests/when/PropertyNotInitialized.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ]
+    }
+  }
+}

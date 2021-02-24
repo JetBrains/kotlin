@@ -1,7 +1,10 @@
 @file:Suppress("UnstableApiUsage")
 
 import org.gradle.jvm.tasks.Jar
-import org.jetbrains.gradle.ext.*
+import org.jetbrains.gradle.ext.ActionDelegationConfig
+import org.jetbrains.gradle.ext.JUnit
+import org.jetbrains.gradle.ext.RecursiveArtifact
+import org.jetbrains.gradle.ext.TopLevelArtifact
 import org.jetbrains.kotlin.ideaExt.*
 
 
@@ -14,21 +17,24 @@ val intellijUltimateEnabled: Boolean by rootProject.extra
 val ideaUltimatePluginDir: File by rootProject.extra
 val ideaUltimateSandboxDir: File by rootProject.extra
 
-fun JUnit.configureForKotlin() {
+fun JUnit.configureForKotlin(xmx: String = "1600m") {
     vmParameters = listOf(
         "-ea",
         "-XX:+HeapDumpOnOutOfMemoryError",
-        "-Xmx1600m",
+        "-Xmx$xmx",
         "-XX:+UseCodeCacheFlushing",
         "-XX:ReservedCodeCacheSize=128m",
         "-Djna.nosys=true",
+        if (Platform[201].orHigher()) "-Didea.platform.prefix=Idea" else null,
         "-Didea.is.unit.test=true",
+        if (Platform[202].orHigher()) "-Didea.ignore.disabled.plugins=true" else null,
         "-Didea.home.path=$ideaSdkPath",
         "-Djps.kotlin.home=${ideaPluginDir.absolutePath}",
         "-Dkotlin.ni=" + if (rootProject.hasProperty("newInferenceTests")) "true" else "false",
         "-Duse.jps=true",
         "-Djava.awt.headless=true"
-    ).joinToString(" ")
+    ).filterNotNull().joinToString(" ")
+
     envs = mapOf(
         "NO_FS_ROOTS_ACCESS_CHECK" to "true",
         "PROJECT_CLASSES_DIRS" to "out/test/org.jetbrains.kotlin.compiler.test"
@@ -36,25 +42,95 @@ fun JUnit.configureForKotlin() {
     workingDirectory = rootDir.toString()
 }
 
+// Needed because of idea.ext plugin can't pass \n symbol
+fun setupGenerateAllTestsRunConfiguration() {
+    rootDir.resolve(".idea/runConfigurations/JPS__Generate_All_Tests.xml").writeText(
+        """
+        |<component name="ProjectRunConfigurationManager">
+        | <configuration default="false" name="[JPS] Generate All Tests" type="Application" factoryName="Application">
+        |    <option name="MAIN_CLASS_NAME" value="org.jetbrains.kotlin.pill.generateAllTests.Main" />
+        |    <module name="kotlin.pill.generate-all-tests.test" />
+        |    <option name="VM_PARAMETERS" value="&quot;-Dline.separator=&#xA;&quot;" />
+        |    <shortenClasspath name="CLASSPATH_FILE" />
+        |    <method v="2">
+        |      <option name="Make" enabled="true" />
+        |    </method>
+        |  </configuration>
+        |</component>
+    """.trimMargin())
+}
+
+// Needed because of idea.ext plugin doesn't allow to set TEST_SEARCH_SCOPE = moduleWithDependencies
+fun setupFirRunConfiguration() {
+
+    val junit = JUnit("_stub").apply { configureForKotlin("2048m") }
+    junit.moduleName = "kotlin.compiler.fir.fir2ir.test"
+    junit.pattern = """^.*\.Fir\w+Test\w*Generated$"""
+    junit.vmParameters = junit.vmParameters.replace(rootDir.absolutePath, "\$PROJECT_DIR\$")
+    junit.workingDirectory = junit.workingDirectory.replace(rootDir.absolutePath, "\$PROJECT_DIR\$")
+
+    rootDir.resolve(".idea/runConfigurations/JPS__Fast_FIR_tests.xml").writeText(
+        """
+            |<component name="ProjectRunConfigurationManager">
+            |  <configuration default="false" name="[JPS] Fast FIR tests" type="JUnit" factoryName="JUnit">
+            |    <module name="${junit.moduleName}" />
+            |    <option name="MAIN_CLASS_NAME" value="" />
+            |    <option name="METHOD_NAME" value="" />
+            |    <option name="TEST_OBJECT" value="pattern" />
+            |    <option name="VM_PARAMETERS" value="${junit.vmParameters}" />
+            |    <option name="PARAMETERS" value="" />
+            |    <option name="WORKING_DIRECTORY" value="${junit.workingDirectory}" />
+            |    <option name="TEST_SEARCH_SCOPE">
+            |      <value defaultName="moduleWithDependencies" />
+            |    </option>
+            |    <envs>
+                   ${junit.envs.entries.joinToString("\n") { (name, value) -> "|      <env name=\"$name\" value=\"$value\" />" }}
+            |    </envs>
+            |    <dir value="${'$'}PROJECT_DIR${'$'}/compiler/fir/analysis-tests/tests-gen" />
+            |    <patterns>
+            |      <pattern testClass="${junit.pattern}" />
+            |    </patterns>
+            |    <method v="2">
+            |      <option name="Make" enabled="true" />
+            |    </method>
+            |  </configuration>
+            |</component>
+        """.trimMargin()
+    )
+}
+
 if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
     allprojects {
         apply(mapOf("plugin" to "idea"))
         // Make Idea import embedded configuration as transitive dependency for some configurations
         afterEvaluate {
+            val jpsBuildTestDependencies = configurations.maybeCreate("jpsBuildTestDependencies").apply {
+                isCanBeConsumed = false
+                isCanBeResolved = true
+                attributes {
+                    attribute(Usage.USAGE_ATTRIBUTE, objects.named("embedded-java-runtime"))
+                }
+            }
+
             listOf(
                 "testCompile",
                 "testCompileOnly",
                 "testRuntime",
                 "testRuntimeOnly"
             ).forEach { configurationName ->
-                val dependencyProjects = configurations
-                    .findByName(configurationName)
+                val configuration = configurations.findByName(configurationName)
+
+                configuration?.apply {
+                    extendsFrom(jpsBuildTestDependencies)
+                }
+
+                val dependencyProjects = configuration
                     ?.dependencies
                     ?.mapNotNull { (it as? ProjectDependency)?.dependencyProject }
 
                 dependencies {
                     dependencyProjects?.forEach {dependencyProject ->
-                        add(configurationName, project(dependencyProject.path, configuration = "embedded"))
+                        add(jpsBuildTestDependencies.name, project(dependencyProject.path))
                     }
                 }
             }
@@ -62,6 +138,10 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
     }
 
     rootProject.afterEvaluate {
+
+        setupFirRunConfiguration()
+        setupGenerateAllTestsRunConfiguration()
+
         rootProject.allprojects {
             idea {
                 module {
@@ -119,6 +199,7 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
                             pluginDir: File,
                             disableProcessCanceledException: Boolean = false
                         ) {
+                            val useAndroidStudio = rootProject.extra.has("versions.androidStudioRelease")
                             application(title) {
                                 moduleName = "kotlin.idea-runner.main"
                                 workingDirectory = File(intellijRootDir(), "bin").toString()
@@ -128,15 +209,19 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
                                     "-XX:ReservedCodeCacheSize=240m",
                                     "-XX:+HeapDumpOnOutOfMemoryError",
                                     "-ea",
+                                    "-Didea.platform.prefix=Idea",
                                     "-Didea.is.internal=true",
                                     "-Didea.debug.mode=true",
                                     "-Didea.system.path=${sandboxDir.absolutePath}",
                                     "-Didea.config.path=${sandboxDir.absolutePath}/config",
+                                    "-Didea.tooling.debug=true",
+                                    "-Dfus.internal.test.mode=true",
                                     "-Dapple.laf.useScreenMenuBar=true",
                                     "-Dapple.awt.graphics.UseQuartz=true",
                                     "-Dsun.io.useCanonCaches=false",
                                     "-Dplugin.path=${pluginDir.absolutePath}",
-                                    "-Didea.ProcessCanceledException=${if (disableProcessCanceledException) "disabled" else "enabled"}"
+                                    "-Didea.ProcessCanceledException=${if (disableProcessCanceledException) "disabled" else "enabled"}",
+                                    if (useAndroidStudio) "-Didea.platform.prefix=AndroidStudio" else ""
                                 ).joinToString(" ")
                             }
                         }
@@ -147,12 +232,6 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
 
                         if (intellijUltimateEnabled) {
                             idea("[JPS] IDEA Ultimate", ideaUltimateSandboxDir, ideaPluginDir)
-                        }
-
-                        application("[JPS] Generate All Tests") {
-                            moduleName = "kotlin.pill.generate-all-tests.test"
-                            workingDirectory = rootDir.toString()
-                            mainClass = "org.jetbrains.kotlin.pill.generateAllTests.Main"
                         }
 
                         defaults<JUnit> {
@@ -357,13 +436,25 @@ fun NamedDomainObjectContainer<TopLevelArtifact>.jarFromProject(project: Project
 fun RecursiveArtifact.archiveFromProject(project: Project, name: String? = null, configureAction: RecursiveArtifact.() -> Unit = {}) {
     val jarName = name ?: project.name + ".jar"
     archive(jarName) {
-        (project.tasks["jar"] as? Jar)?.let { jar ->
-            val manifestPath = jar.temporaryDir.resolve("MANIFEST.MF")
-            jar.manifest.writeTo(manifestPath)
-            directory("META-INF") {
-                file(manifestPath)
+
+        var foundManifest = false
+        fun extractManifest(jar: Jar) {
+            if (jar.enabled && !foundManifest) {
+                val manifestPath = jar.temporaryDir.resolve("MANIFEST.MF")
+                jar.manifest.writeTo(manifestPath)
+                directory("META-INF") {
+                    file(manifestPath)
+                }
+                foundManifest = true
             }
         }
+
+
+        (project.tasks.findByName("modularJar") as? Jar)?.let(::extractManifest)
+        (project.tasks.findByName("resultJar") as? Jar)?.let(::extractManifest)
+        (project.tasks["jar"] as? Jar)?.let(::extractManifest)
+
+        if (!foundManifest) error("No manifest found for jar: $jarName in ${project.name}")
 
         if (project.sourceSets.names.contains("main")) {
             moduleOutput(moduleName(project.path))

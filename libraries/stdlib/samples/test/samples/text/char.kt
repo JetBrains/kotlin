@@ -1,8 +1,8 @@
 package samples.text
 
 import samples.*
-import kotlin.test.*
 import java.util.*
+import kotlin.test.*
 
 class Chars {
 
@@ -83,17 +83,41 @@ class Chars {
     }
 
     @Sample
-    fun toUpperCase() {
-        val chars = listOf('a', 'ω', '1', 'A', '+')
-        val upperCases = chars.map { it.toUpperCase() }
-        assertPrints(upperCases, "[A, Ω, 1, A, +]")
+    fun uppercase() {
+        val chars = listOf('a', 'ω', '1', 'ŉ', 'A', '+', 'ß')
+        val uppercaseChar = chars.map { it.uppercaseChar() }
+        val uppercase = chars.map { it.uppercase() }
+        assertPrints(uppercaseChar, "[A, Ω, 1, ŉ, A, +, ß]")
+        assertPrints(uppercase, "[A, Ω, 1, ʼN, A, +, SS]")
     }
 
     @Sample
-    fun toLowerCase() {
-        val chars = listOf('A', 'Ω', '1', 'a', '+')
-        val lowerCases = chars.map { it.toLowerCase() }
-        assertPrints(lowerCases, "[a, ω, 1, a, +]")
+    fun uppercaseLocale() {
+        val chars = listOf('a', '1', 'ŉ', 'A', '+', 'i')
+        val uppercase = chars.map { it.uppercase() }
+        val turkishLocale = Locale.forLanguageTag("tr")
+        val uppercaseTurkish = chars.map { it.uppercase(turkishLocale) }
+        assertPrints(uppercase, "[A, 1, ʼN, A, +, I]")
+        assertPrints(uppercaseTurkish, "[A, 1, ʼN, A, +, İ]")
+    }
+
+    @Sample
+    fun lowercase() {
+        val chars = listOf('A', 'Ω', '1', 'a', '+', 'İ')
+        val lowercaseChar = chars.map { it.lowercaseChar() }
+        val lowercase = chars.map { it.lowercase() }
+        assertPrints(lowercaseChar, "[a, ω, 1, a, +, i]")
+        assertPrints(lowercase, "[a, ω, 1, a, +, \u0069\u0307]")
+    }
+
+    @Sample
+    fun lowercaseLocale() {
+        val chars = listOf('A', 'Ω', '1', 'a', '+', 'İ')
+        val lowercase = chars.map { it.lowercase() }
+        val turkishLocale = Locale.forLanguageTag("tr")
+        val lowercaseTurkish = chars.map { it.lowercase(turkishLocale) }
+        assertPrints(lowercase, "[a, ω, 1, a, +, \u0069\u0307]")
+        assertPrints(lowercaseTurkish, "[a, ω, 1, a, +, i]")
     }
 
     @Sample
@@ -105,10 +129,22 @@ class Chars {
     }
 
     @Sample
-    fun toTitleCase() {
-        val chars = listOf('a', 'ǅ', '1', '+')
-        val titleCases = chars.map { it.toTitleCase() }
-        assertPrints(titleCases, "[A, ǅ, 1, +]")
+    fun titlecase() {
+        val chars = listOf('a', 'ǅ', 'ŉ', '+', 'ß')
+        val titlecaseChar = chars.map { it.titlecaseChar() }
+        val titlecase = chars.map { it.titlecase() }
+        assertPrints(titlecaseChar, "[A, ǅ, ŉ, +, ß]")
+        assertPrints(titlecase, "[A, ǅ, ʼN, +, Ss]")
+    }
+
+    @Sample
+    fun titlecaseLocale() {
+        val chars = listOf('a', 'ǅ', 'ŉ', '+', 'ß', 'i')
+        val titlecase = chars.map { it.titlecase() }
+        val turkishLocale = Locale.forLanguageTag("tr")
+        val titlecaseTurkish = chars.map { it.titlecase(turkishLocale) }
+        assertPrints(titlecase, "[A, ǅ, ʼN, +, Ss, I]")
+        assertPrints(titlecaseTurkish, "[A, ǅ, ʼN, +, Ss, İ]")
     }
 
     @Sample
@@ -124,4 +160,79 @@ class Chars {
         assertTrue('a'.equals('A', true))
     }
 
+    @Sample
+    fun charFromCode() {
+        val codes = listOf(48, 65, 122, 946)
+        assertPrints(codes.map { Char(it) }, "[0, A, z, β]")
+        assertPrints(codes.map { Char(it.toUShort()) }, "[0, A, z, β]")
+
+        assertFails { Char(-1) }
+        assertPrints(Char(UShort.MIN_VALUE), "\u0000")
+        assertFails { Char(1_000_000) }
+        assertPrints(Char(UShort.MAX_VALUE), "\uFFFF")
+    }
+
+    @Sample
+    fun code() {
+        val string = "0Azβ"
+        assertPrints(string.map { it.code }, "[48, 65, 122, 946]")
+    }
+
+    @Sample
+    fun digitToInt() {
+        assertPrints('5'.digitToInt(), "5")
+        assertPrints('3'.digitToInt(radix = 8), "3")
+        assertPrints('A'.digitToInt(radix = 16), "10")
+        assertPrints('k'.digitToInt(radix = 36), "20")
+
+        // radix argument should be in 2..36
+        assertFails { '0'.digitToInt(radix = 1) }
+        assertFails { '1'.digitToInt(radix = 100) }
+        // only 0 and 1 digits are valid for binary numbers
+        assertFails { '5'.digitToInt(radix = 2) }
+        // radix = 10 is used by default
+        assertFails { 'A'.digitToInt() }
+        // symbol '+' is not a digit in any radix
+        assertFails { '+'.digitToInt() }
+        // Only Latin letters are valid for digits greater than 9.
+        assertFails { 'β'.digitToInt(radix = 36) }
+    }
+
+    @Sample
+    fun digitToIntOrNull() {
+        assertPrints('5'.digitToIntOrNull(), "5")
+        assertPrints('3'.digitToIntOrNull(radix = 8), "3")
+        assertPrints('A'.digitToIntOrNull(radix = 16), "10")
+        assertPrints('K'.digitToIntOrNull(radix = 36), "20")
+
+        // radix argument should be in 2..36
+        assertFails { '0'.digitToIntOrNull(radix = 1) }
+        assertFails { '1'.digitToIntOrNull(radix = 100) }
+        // only 0 and 1 digits are valid for binary numbers
+        assertPrints('5'.digitToIntOrNull(radix = 2), "null")
+        // radix = 10 is used by default
+        assertPrints('A'.digitToIntOrNull(), "null")
+        // symbol '+' is not a digit in any radix
+        assertPrints('+'.digitToIntOrNull(), "null")
+        // Only Latin letters are valid for digits greater than 9.
+        assertPrints('β'.digitToIntOrNull(radix = 36), "null")
+    }
+
+    @Sample
+    fun digitToChar() {
+        assertPrints(5.digitToChar(), "5")
+        assertPrints(3.digitToChar(radix = 8), "3")
+        assertPrints(10.digitToChar(radix = 16), "A")
+        assertPrints(20.digitToChar(radix = 36), "K")
+
+        // radix argument should be in 2..36
+        assertFails { 0.digitToChar(radix = 1) }
+        assertFails { 1.digitToChar(radix = 100) }
+        // only 0 and 1 digits are valid for binary numbers
+        assertFails { 5.digitToChar(radix = 2) }
+        // radix = 10 is used by default
+        assertFails { 10.digitToChar() }
+        // a negative integer is not a digit in any radix
+        assertFails { (-1).digitToChar() }
+    }
 }

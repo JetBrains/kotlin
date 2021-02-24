@@ -11,11 +11,12 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.psi.*
 
 class RenameToUnderscoreFix(element: KtCallableDeclaration) : KotlinQuickFixAction<KtCallableDeclaration>(element) {
-    override fun getText() = "Rename to _"
+    override fun getText() = KotlinBundle.message("rename.to.underscore")
     override fun getFamilyName() = text
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {

@@ -1,4 +1,3 @@
-// COMMON_COROUTINES_TEST
 // WITH_RUNTIME
 
 open class AbstractStuff() {

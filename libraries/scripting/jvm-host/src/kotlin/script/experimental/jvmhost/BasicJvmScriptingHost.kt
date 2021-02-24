@@ -3,19 +3,18 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("unused")
+
 package kotlin.script.experimental.jvmhost
 
 import kotlin.script.experimental.api.*
-import kotlin.script.experimental.host.ScriptingHostConfiguration
-import kotlin.script.experimental.host.createCompilationConfigurationFromTemplate
-import kotlin.script.experimental.host.BasicScriptingHost
-import kotlin.script.experimental.host.createEvaluationConfigurationFromTemplate
+import kotlin.script.experimental.host.*
 import kotlin.script.experimental.jvm.BasicJvmScriptEvaluator
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 
 open class BasicJvmScriptingHost(
-    val hostConfiguration: ScriptingHostConfiguration = defaultJvmScriptingHostConfiguration,
-    compiler: JvmScriptCompiler = JvmScriptCompiler(hostConfiguration),
+    val baseHostConfiguration: ScriptingHostConfiguration? = null,
+    compiler: JvmScriptCompiler = JvmScriptCompiler(baseHostConfiguration.withDefaultsFrom(defaultJvmScriptingHostConfiguration)),
     evaluator: ScriptEvaluator = BasicJvmScriptEvaluator()
 ) : BasicScriptingHost(compiler, evaluator) {
 
@@ -23,31 +22,43 @@ open class BasicJvmScriptingHost(
         script: SourceCode,
         noinline compilation: ScriptCompilationConfiguration.Builder.() -> Unit = {},
         noinline evaluation: ScriptEvaluationConfiguration.Builder.() -> Unit = {}
-    ): ResultWithDiagnostics<EvaluationResult> =
-        eval(
-            script,
-            createJvmCompilationConfigurationFromTemplate<T>(hostConfiguration, compilation),
-            createJvmEvaluationConfigurationFromTemplate<T>(hostConfiguration, evaluation)
-        )
+    ): ResultWithDiagnostics<EvaluationResult> {
+        val definition =
+            createJvmScriptDefinitionFromTemplate<T>(baseHostConfiguration, compilation, evaluation)
+        return eval(script, definition.compilationConfiguration, definition.evaluationConfiguration)
+    }
 }
 
 
 inline fun <reified T : Any> createJvmCompilationConfigurationFromTemplate(
-    hostConfiguration: ScriptingHostConfiguration = defaultJvmScriptingHostConfiguration,
+    baseHostConfiguration: ScriptingHostConfiguration? = null,
     noinline body: ScriptCompilationConfiguration.Builder.() -> Unit = {}
 ): ScriptCompilationConfiguration = createCompilationConfigurationFromTemplate(
     KotlinType(T::class),
-    hostConfiguration,
+    baseHostConfiguration.withDefaultsFrom(defaultJvmScriptingHostConfiguration),
     ScriptCompilationConfiguration::class,
     body
 )
 
 inline fun <reified T : Any> createJvmEvaluationConfigurationFromTemplate(
-    hostConfiguration: ScriptingHostConfiguration = defaultJvmScriptingHostConfiguration,
+    baseHostConfiguration: ScriptingHostConfiguration? = null,
     noinline body: ScriptEvaluationConfiguration.Builder.() -> Unit = {}
 ): ScriptEvaluationConfiguration = createEvaluationConfigurationFromTemplate(
     KotlinType(T::class),
-    hostConfiguration,
+    baseHostConfiguration.withDefaultsFrom(defaultJvmScriptingHostConfiguration),
     ScriptEvaluationConfiguration::class,
     body
 )
+
+inline fun <reified T : Any> createJvmScriptDefinitionFromTemplate(
+    baseHostConfiguration: ScriptingHostConfiguration? = null,
+    noinline compilation: ScriptCompilationConfiguration.Builder.() -> Unit = {},
+    noinline evaluation: ScriptEvaluationConfiguration.Builder.() -> Unit = {}
+): ScriptDefinition = createScriptDefinitionFromTemplate(
+    KotlinType(T::class),
+    baseHostConfiguration.withDefaultsFrom(defaultJvmScriptingHostConfiguration),
+    ScriptCompilationConfiguration::class,
+    compilation,
+    evaluation
+)
+

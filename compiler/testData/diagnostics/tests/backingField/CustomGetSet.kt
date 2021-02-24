@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class Flower() {
 
     var minusOne: Int = 1

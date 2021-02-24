@@ -8,20 +8,20 @@ public interface IrGetValueOrBuilder extends
     org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
   /**
-   * <code>required int32 symbol = 1;</code>
+   * <code>required int64 symbol = 1;</code>
    */
   boolean hasSymbol();
   /**
-   * <code>required int32 symbol = 1;</code>
+   * <code>required int64 symbol = 1;</code>
    */
-  int getSymbol();
+  long getSymbol();
 
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin origin = 2;</code>
+   * <code>optional int32 origin_name = 2;</code>
    */
-  boolean hasOrigin();
+  boolean hasOriginName();
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin origin = 2;</code>
+   * <code>optional int32 origin_name = 2;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin getOrigin();
+  int getOriginName();
 }

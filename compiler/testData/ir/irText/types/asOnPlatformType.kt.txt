@@ -1,0 +1,17 @@
+fun test() {
+  val nullStr: @FlexibleNullability String? = nullString()
+  val nonnullStr: @FlexibleNullability String? = nonnullString()
+  nullStr.foo<@FlexibleNullability String?>() /*~> Unit */
+  nonnullStr.foo<@FlexibleNullability String?>() /*~> Unit */
+  nullStr.fooN<@FlexibleNullability String?>() /*~> Unit */
+  nonnullStr.fooN<@FlexibleNullability String?>() /*~> Unit */
+}
+
+inline fun <reified T : Any?> T.foo(): T {
+  return <this> as T
+}
+
+inline fun <reified T : Any?> T.fooN(): T? {
+  return <this> as T?
+}
+

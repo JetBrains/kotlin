@@ -5,7 +5,6 @@ ExpressionOfTypeProcessor is already started for A. Exit for operator A.plus(a: 
 ExpressionOfTypeProcessor is already started for A. Exit for operator A.plus(m: Int).
 Resolved A(0) + A(1)
 Resolved A(0) + A(1) + 2
-Resolved A(0) + A(1) + 2
 Resolved a += 1
 Resolved a += A(1)
 Resolved a1 + 1

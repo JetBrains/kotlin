@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.build.GeneratedJvmClass
 import org.jetbrains.kotlin.build.JvmSourceRoot
 import org.jetbrains.kotlin.build.isModuleMappingFile
+import org.jetbrains.kotlin.build.report.ICReporter
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
@@ -28,45 +29,46 @@ import org.jetbrains.kotlin.modules.KotlinModuleXmlBuilder
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
-import org.jetbrains.kotlin.synthetic.SAM_LOOKUP_NAME
+import org.jetbrains.kotlin.resolve.sam.SAM_LOOKUP_NAME
 import org.jetbrains.kotlin.utils.addToStdlib.flattenTo
-import org.jetbrains.kotlin.utils.keysToMap
 import java.io.File
+import java.nio.file.Files
 import java.util.*
 import kotlin.collections.HashSet
+import kotlin.collections.LinkedHashSet
 
 const val DELETE_MODULE_FILE_PROPERTY = "kotlin.delete.module.file.after.build"
 
 fun makeModuleFile(
-        name: String,
-        isTest: Boolean,
-        outputDir: File,
-        sourcesToCompile: Iterable<File>,
-        commonSources: Iterable<File>,
-        javaSourceRoots: Iterable<JvmSourceRoot>,
-        classpath: Iterable<File>,
-        friendDirs: Iterable<File>
+    name: String,
+    isTest: Boolean,
+    outputDir: File,
+    sourcesToCompile: Iterable<File>,
+    commonSources: Iterable<File>,
+    javaSourceRoots: Iterable<JvmSourceRoot>,
+    classpath: Iterable<File>,
+    friendDirs: Iterable<File>
 ): File {
     val builder = KotlinModuleXmlBuilder()
     builder.addModule(
-            name,
-            outputDir.absolutePath,
-            // important to transform file to absolute paths,
-            // otherwise compiler will use module file's parent as base path (a temporary file; see below)
-            // (see org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler.getAbsolutePaths)
-            sourcesToCompile.map { it.absoluteFile },
-            javaSourceRoots,
-            classpath,
-            commonSources.map { it.absoluteFile },
-            null,
-            "java-production",
-            isTest,
-            // this excludes the output directories from the class path, to be removed for true incremental compilation
-            setOf(outputDir),
-            friendDirs
+        name,
+        outputDir.absolutePath,
+        // important to transform file to absolute paths,
+        // otherwise compiler will use module file's parent as base path (a temporary file; see below)
+        // (see org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler.getAbsolutePaths)
+        sourcesToCompile.map { it.absoluteFile },
+        javaSourceRoots,
+        classpath,
+        commonSources.map { it.absoluteFile },
+        null,
+        "java-production",
+        isTest,
+        // this excludes the output directories from the class path, to be removed for true incremental compilation
+        setOf(outputDir),
+        friendDirs
     )
 
-    val scriptFile = File.createTempFile("kjps", sanitizeJavaIdentifier(name) + ".script.xml")
+    val scriptFile = Files.createTempFile("kjps", sanitizeJavaIdentifier(name) + ".script.xml").toFile()
     scriptFile.writeText(builder.asText().toString())
     return scriptFile
 }
@@ -84,9 +86,9 @@ private fun sanitizeJavaIdentifier(string: String) =
     }
 
 fun makeCompileServices(
-        incrementalCaches: Map<TargetId, IncrementalCache>,
-        lookupTracker: LookupTracker,
-        compilationCanceledStatus: CompilationCanceledStatus?
+    incrementalCaches: Map<TargetId, IncrementalCache>,
+    lookupTracker: LookupTracker,
+    compilationCanceledStatus: CompilationCanceledStatus?
 ): Services =
     with(Services.Builder()) {
         register(LookupTracker::class.java, lookupTracker)
@@ -106,12 +108,14 @@ fun updateIncrementalCache(
     for (generatedFile in generatedFiles) {
         when {
             generatedFile is GeneratedJvmClass -> cache.saveFileToCache(generatedFile, changesCollector)
-            generatedFile.outputFile.isModuleMappingFile() -> cache.saveModuleMappingToCache(generatedFile.sourceFiles, generatedFile.outputFile)
+            generatedFile.outputFile.isModuleMappingFile() -> cache.saveModuleMappingToCache(
+                generatedFile.sourceFiles,
+                generatedFile.outputFile
+            )
         }
     }
 
-    javaChangesTracker?.javaClassesUpdates?.forEach {
-        (source, serializedJavaClass) ->
+    javaChangesTracker?.javaClassesUpdates?.forEach { (source, serializedJavaClass) ->
         cache.saveJavaClassProto(source, serializedJavaClass, changesCollector)
     }
 
@@ -119,9 +123,9 @@ fun updateIncrementalCache(
 }
 
 fun LookupStorage.update(
-        lookupTracker: LookupTracker,
-        filesToCompile: Iterable<File>,
-        removedFiles: Iterable<File>
+    lookupTracker: LookupTracker,
+    filesToCompile: Iterable<File>,
+    removedFiles: Iterable<File>
 ) {
     if (lookupTracker !is LookupTrackerImpl) throw AssertionError("Lookup tracker is expected to be LookupTrackerImpl, got ${lookupTracker::class.java}")
 
@@ -131,8 +135,9 @@ fun LookupStorage.update(
 }
 
 data class DirtyData(
-        val dirtyLookupSymbols: Collection<LookupSymbol> = emptyList(),
-        val dirtyClassesFqNames: Collection<FqName> = emptyList()
+    val dirtyLookupSymbols: Collection<LookupSymbol> = emptyList(),
+    val dirtyClassesFqNames: Collection<FqName> = emptyList(),
+    val dirtyClassesFqNamesForceRecompile: Collection<FqName> = emptyList()
 )
 
 fun ChangesCollector.getDirtyData(
@@ -141,6 +146,9 @@ fun ChangesCollector.getDirtyData(
 ): DirtyData {
     val dirtyLookupSymbols = HashSet<LookupSymbol>()
     val dirtyClassesFqNames = HashSet<FqName>()
+
+    val sealedParents = HashMap<FqName, MutableSet<FqName>>()
+    val notSealedParents = HashSet<FqName>()
 
     for (change in changes()) {
         reporter.reportVerbose { "Process $change" }
@@ -166,10 +174,35 @@ fun ChangesCollector.getDirtyData(
             }
 
             fqNames.mapTo(dirtyLookupSymbols) { LookupSymbol(SAM_LOOKUP_NAME.asString(), it.asString()) }
+        } else if (change is ChangeInfo.ParentsChanged) {
+            fun FqName.isSealed(): Boolean {
+                if (notSealedParents.contains(this)) return false
+                if (sealedParents.containsKey(this)) return true
+                return isSealed(this, caches).also { sealed ->
+                    if (sealed) {
+                        sealedParents[this] = HashSet()
+                    } else {
+                        notSealedParents.add(this)
+                    }
+                }
+            }
+            change.parentsChanged.forEach { parent ->
+                if (parent.isSealed()) {
+                    sealedParents.getOrPut(parent) { HashSet() }.add(change.fqName)
+                }
+            }
         }
     }
 
-    return DirtyData(dirtyLookupSymbols, dirtyClassesFqNames)
+    val forceRecompile = HashSet<FqName>().apply {
+        addAll(sealedParents.keys)
+        //we should recompile all inheritors with parent sealed class: add known subtypes
+        addAll(sealedParents.keys.flatMap { withSubtypes(it, caches) })
+        //we should recompile all inheritors with parent sealed class: add new subtypes
+        addAll(sealedParents.values.flatten())
+    }
+
+    return DirtyData(dirtyLookupSymbols, dirtyClassesFqNames, forceRecompile)
 }
 
 fun mapLookupSymbolsToFiles(
@@ -213,20 +246,27 @@ fun mapClassesFqNamesToFiles(
     return fqNameToAffectedFiles.values.flattenTo(HashSet())
 }
 
+fun isSealed(
+    fqName: FqName,
+    caches: Iterable<IncrementalCacheCommon>
+): Boolean = caches.any { it.isSealed(fqName) ?: false }
+
 fun withSubtypes(
-        typeFqName: FqName,
-        caches: Iterable<IncrementalCacheCommon>
+    typeFqName: FqName,
+    caches: Iterable<IncrementalCacheCommon>
 ): Set<FqName> {
-    val types = LinkedList(listOf(typeFqName))
+    val types = LinkedHashSet(listOf(typeFqName))
     val subtypes = hashSetOf<FqName>()
 
     while (types.isNotEmpty()) {
-        val unprocessedType = types.pollFirst()
+        val iterator = types.iterator()
+        val unprocessedType = iterator.next()
+        iterator.remove()
 
         caches.asSequence()
-              .flatMap { it.getSubtypesOf(unprocessedType) }
-              .filter { it !in subtypes }
-              .forEach { types.addLast(it) }
+            .flatMap { it.getSubtypesOf(unprocessedType) }
+            .filter { it !in subtypes }
+            .forEach { types.add(it) }
 
         subtypes.add(unprocessedType)
     }

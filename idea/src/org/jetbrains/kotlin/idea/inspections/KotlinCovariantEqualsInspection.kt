@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.inspections
 import com.intellij.codeInspection.ProblemsHolder
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -36,7 +37,7 @@ class KotlinCovariantEqualsInspection : AbstractKotlinInspection() {
 
         if (classOrObject.body?.children?.any { (it as? KtNamedFunction)?.isEquals() == true } == true) return
 
-        holder.registerProblem(nameIdentifier, "'equals' should take 'Any?' as its argument")
+        holder.registerProblem(nameIdentifier, KotlinBundle.message("equals.should.take.any.as.its.argument"))
     })
 
     private fun KtNamedFunction.isEquals(): Boolean {

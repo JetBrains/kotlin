@@ -6,7 +6,7 @@ val x: @Foo ((x: @Foo (@Foo () -> Int) -> Int) -> Unit) get() = {}
 
 val x: suspend @Foo (x: @Foo (@Foo (x: kotlin.Any) -> Int) -> Int) -> Unit get() = {}
 
-val x: Comparable<@Foo @Bar(10) @Foo (x: kotlin.Any = {}) -> Unit> get() = {}
+val x: Comparable<@Foo @Bar(10) @Foo (x: kotlin.Any) -> Unit> get() = {}
 
 val x: Any = {} as @Foo suspend (x: @Foo Foo) -> (y: @Foo Bar) -> Unit
 

@@ -1,4 +1,4 @@
-// "Make 'foo' final" "true"
+// "Make 'foo' 'final'" "true"
 open class My {
     open var foo = 42
         <caret>private set

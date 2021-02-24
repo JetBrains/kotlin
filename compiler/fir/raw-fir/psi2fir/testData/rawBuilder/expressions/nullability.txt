@@ -1,0 +1,7 @@
+FILE: nullability.kt
+    public? final? fun orFourtyTwo(arg: Int?): <implicit> {
+        ^orFourtyTwo arg# ?: IntegerLiteral(42)
+    }
+    public? final? fun bang(arg: Int?): <implicit> {
+        ^bang arg#!!
+    }

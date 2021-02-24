@@ -1,0 +1,4 @@
+FILE: lambdaAndAnonymousFunction.kt
+    public? final? fun <T> run(block: ( () -> T )): T { LAZY_BLOCK }
+    public? final? fun test_1(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? fun test_2(): R|kotlin/Unit| { LAZY_BLOCK }

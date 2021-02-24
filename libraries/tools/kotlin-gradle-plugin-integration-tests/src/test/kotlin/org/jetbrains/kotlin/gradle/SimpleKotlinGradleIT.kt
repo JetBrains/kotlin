@@ -1,11 +1,16 @@
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.logging.configuration.WarningMode
 import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Test
 import java.io.File
 import kotlin.test.assertTrue
 
 class SimpleKotlinGradleIT : BaseGradleIT() {
+
+    override fun defaultBuildOptions(): BuildOptions {
+        return super.defaultBuildOptions().copy(warningMode = WarningMode.Summary)
+    }
 
     @Test
     fun testSimpleCompile() {
@@ -70,6 +75,16 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
         Project("jvmTarget").build("build") {
             assertFailed()
             assertContains("Unknown JVM target version: 1.7")
+        }
+    }
+
+    @Test
+    fun testModuleName() {
+        Project("moduleName").build("build") {
+            assertSuccessful()
+            assertFileExists("build/classes/kotlin/main/META-INF/FLAG.kotlin_module")
+            assertNoSuchFile("build/classes/kotlin/main/META-INF/moduleName.kotlin_module")
+            assertNotContains("Argument -module-name is passed multiple times")
         }
     }
 

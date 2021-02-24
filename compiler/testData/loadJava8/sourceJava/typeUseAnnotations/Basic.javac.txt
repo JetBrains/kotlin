@@ -1,0 +1,16 @@
+package test
+
+public open class Basic {
+    public constructor Basic()
+
+    public/*package*/ interface G</*0*/ T : kotlin.Any!> {
+    }
+
+    public/*package*/ interface G2</*0*/ A : kotlin.Any!, /*1*/ B : kotlin.Any!> {
+    }
+
+    public interface MyClass</*0*/ TT : kotlin.Any!> {
+        public abstract fun f(/*0*/ p: test.Basic.G2<@org.jetbrains.annotations.Nullable kotlin.String?, @org.jetbrains.annotations.NotNull kotlin.Int>!): kotlin.Unit
+        public abstract fun f(/*0*/ p: test.Basic.G<@org.jetbrains.annotations.NotNull kotlin.String>!): kotlin.Unit
+    }
+}

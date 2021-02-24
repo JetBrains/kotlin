@@ -1,3 +1,5 @@
+// IGNORE_BACKEND: JVM_IR
+
 data class Pair(val first: Int, val second: Int)
 
 inline fun <T> run(fn: () -> T) = fn()

@@ -6,26 +6,25 @@
 package org.jetbrains.kotlin.resolve.calls.components
 
 import org.jetbrains.kotlin.builtins.*
+import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.calls.components.CreateFreshVariablesSubstitutor.createToFreshVariableSubstitutorAndAddInitialConstraints
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.components.FreshVariableNewTypeSubstitutor
-import org.jetbrains.kotlin.resolve.calls.inference.model.ArgumentConstraintPosition
+import org.jetbrains.kotlin.resolve.calls.inference.model.ArgumentConstraintPositionImpl
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.DISPATCH_RECEIVER
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.EXTENSION_RECEIVER
 import org.jetbrains.kotlin.resolve.calls.tower.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.descriptorUtil.isCompanionObject
 import org.jetbrains.kotlin.resolve.scopes.receivers.DetailedReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
-import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.UnwrappedType
-import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.captureFromExpression
 import org.jetbrains.kotlin.types.expressions.CoercionStrategy
 import org.jetbrains.kotlin.types.typeUtil.immediateSupertypes
@@ -60,9 +59,19 @@ class CallableReferenceCandidate(
     val explicitReceiverKind: ExplicitReceiverKind,
     val reflectionCandidateType: UnwrappedType,
     val callableReferenceAdaptation: CallableReferenceAdaptation?,
-    val diagnostics: List<KotlinCallDiagnostic>
+    initialDiagnostics: List<KotlinCallDiagnostic>
 ) : Candidate {
+    private val mutableDiagnostics = initialDiagnostics.toMutableList()
+    val diagnostics: List<KotlinCallDiagnostic> = mutableDiagnostics
+
     override val resultingApplicability = getResultApplicability(diagnostics)
+
+    override fun addCompatibilityWarning(other: Candidate) {
+        if (this !== other && other is CallableReferenceCandidate) {
+            mutableDiagnostics.add(CompatibilityWarning(other.candidate))
+        }
+    }
+
     override val isSuccessful get() = resultingApplicability.isSuccess
 
     var freshSubstitutor: FreshVariableNewTypeSubstitutor? = null
@@ -75,7 +84,8 @@ class CallableReferenceAdaptation(
     val argumentTypes: Array<KotlinType>,
     val coercionStrategy: CoercionStrategy,
     val defaults: Int,
-    val mappedArguments: Map<ValueParameterDescriptor, ResolvedCallArgument>
+    val mappedArguments: Map<ValueParameterDescriptor, ResolvedCallArgument>,
+    val suspendConversionStrategy: SuspendConversionStrategy
 )
 
 /**
@@ -126,20 +136,20 @@ fun ConstraintSystemOperation.checkCallableReference(
     expectedType: UnwrappedType?,
     ownerDescriptor: DeclarationDescriptor
 ): Pair<FreshVariableNewTypeSubstitutor, KotlinCallDiagnostic?> {
-    val position = ArgumentConstraintPosition(argument)
+    val position = ArgumentConstraintPositionImpl(argument)
 
     val toFreshSubstitutor = createToFreshVariableSubstitutorAndAddInitialConstraints(candidateDescriptor, this)
-
-    if (expectedType != null) {
-        addSubtypeConstraint(toFreshSubstitutor.safeSubstitute(reflectionCandidateType), expectedType, position)
-    }
 
     if (!ErrorUtils.isError(candidateDescriptor)) {
         addReceiverConstraint(toFreshSubstitutor, dispatchReceiver, candidateDescriptor.dispatchReceiverParameter, position)
         addReceiverConstraint(toFreshSubstitutor, extensionReceiver, candidateDescriptor.extensionReceiverParameter, position)
     }
 
-    val invisibleMember = Visibilities.findInvisibleMember(
+    if (expectedType != null && !hasContradiction) {
+        addSubtypeConstraint(toFreshSubstitutor.safeSubstitute(reflectionCandidateType), expectedType, position)
+    }
+
+    val invisibleMember = DescriptorVisibilities.findInvisibleMember(
         dispatchReceiver?.asReceiverValueForVisibilityChecks,
         candidateDescriptor, ownerDescriptor
     )
@@ -151,7 +161,7 @@ private fun ConstraintSystemOperation.addReceiverConstraint(
     toFreshSubstitutor: FreshVariableNewTypeSubstitutor,
     receiverArgument: CallableReceiver?,
     receiverParameter: ReceiverParameterDescriptor?,
-    position: ArgumentConstraintPosition
+    position: ArgumentConstraintPositionImpl
 ) {
     if (receiverArgument == null || receiverParameter == null) {
         assert(receiverArgument == null) { "Receiver argument should be null if parameter is: $receiverArgument" }
@@ -171,7 +181,8 @@ class CallableReferencesCandidateFactory(
     val scopeTower: ImplicitScopeTower,
     val compatibilityChecker: ((ConstraintSystemOperation) -> Unit) -> Unit,
     val expectedType: UnwrappedType?,
-    private val csBuilder: ConstraintSystemOperation
+    private val csBuilder: ConstraintSystemOperation,
+    private val resolutionCallbacks: KotlinResolutionCallbacks
 ) : CandidateFactory<CallableReferenceCandidate> {
 
     fun createCallableProcessor(explicitReceiver: DetailedReceiver?) =
@@ -196,6 +207,27 @@ class CallableReferencesCandidateFactory(
             expectedType,
             callComponents.builtIns
         )
+
+        fun createReferenceCandidate(): CallableReferenceCandidate =
+            CallableReferenceCandidate(
+                candidateDescriptor, dispatchCallableReceiver, extensionCallableReceiver,
+                explicitReceiverKind, reflectionCandidateType, callableReferenceAdaptation, diagnostics
+            )
+
+        if (callComponents.statelessCallbacks.isHiddenInResolution(candidateDescriptor, argument, resolutionCallbacks)) {
+            diagnostics.add(HiddenDescriptor)
+            return createReferenceCandidate()
+        }
+
+        if (needCompatibilityResolveForCallableReference(callableReferenceAdaptation, candidateDescriptor)) {
+            markCandidateForCompatibilityResolve(diagnostics)
+        }
+
+        if (callableReferenceAdaptation != null && expectedType != null && hasNonTrivialAdaptation(callableReferenceAdaptation)) {
+            if (!expectedType.isFunctionType && !expectedType.isSuspendFunctionType) { // expectedType has some reflection type
+                diagnostics.add(AdaptedCallableReferenceIsUsedWithReflection(argument))
+            }
+        }
 
         if (callableReferenceAdaptation != null &&
             callableReferenceAdaptation.defaults != 0 &&
@@ -235,11 +267,26 @@ class CallableReferencesCandidateFactory(
             )
         }
 
-        return CallableReferenceCandidate(
-            candidateDescriptor, dispatchCallableReceiver, extensionCallableReceiver,
-            explicitReceiverKind, reflectionCandidateType, callableReferenceAdaptation, diagnostics
-        )
+        return createReferenceCandidate()
     }
+
+    private fun needCompatibilityResolveForCallableReference(
+        callableReferenceAdaptation: CallableReferenceAdaptation?,
+        candidate: CallableDescriptor
+    ): Boolean {
+        // KT-13934: reference to companion object member via class name
+        if (candidate.containingDeclaration.isCompanionObject() && argument.lhsResult is LHSResult.Type) return true
+
+        if (callableReferenceAdaptation == null) return false
+
+        return hasNonTrivialAdaptation(callableReferenceAdaptation)
+    }
+
+    private fun hasNonTrivialAdaptation(callableReferenceAdaptation: CallableReferenceAdaptation) =
+        callableReferenceAdaptation.defaults != 0 ||
+                callableReferenceAdaptation.suspendConversionStrategy != SuspendConversionStrategy.NO_CONVERSION ||
+                callableReferenceAdaptation.coercionStrategy != CoercionStrategy.NO_COERCION ||
+                callableReferenceAdaptation.mappedArguments.values.any { it is ResolvedCallArgument.VarargArgument }
 
     private enum class VarargMappingState {
         UNMAPPED, MAPPED_WITH_PLAIN_ARGS, MAPPED_WITH_ARRAY
@@ -251,12 +298,19 @@ class CallableReferencesCandidateFactory(
         unboundReceiverCount: Int,
         builtins: KotlinBuiltIns
     ): CallableReferenceAdaptation? {
+        if (callComponents.languageVersionSettings.apiVersion < ApiVersion.KOTLIN_1_4) return null
+
+        if (expectedType == null) return null
+
+        // Do not adapt references against KCallable type as it's impossible to map defaults/vararg to absent parameters of KCallable
+        if (ReflectionTypes.hasKCallableTypeFqName(expectedType)) return null
+
         val inputOutputTypes = extractInputOutputTypesFromCallableReferenceExpectedType(expectedType) ?: return null
 
         val expectedArgumentCount = inputOutputTypes.inputTypes.size - unboundReceiverCount
         if (expectedArgumentCount < 0) return null
 
-        val fakeArguments = (0 until expectedArgumentCount).map { FakeKotlinCallArgumentForCallableReference(it) }
+        val fakeArguments = createFakeArgumentsForReference(descriptor, expectedArgumentCount, inputOutputTypes, unboundReceiverCount)
         val argumentMapping =
             callComponents.argumentsToParametersMapper.mapArguments(fakeArguments, externalArgument = null, descriptor = descriptor)
         if (argumentMapping.diagnostics.any { !it.candidateApplicability.isSuccess }) return null
@@ -292,9 +346,10 @@ class CallableReferencesCandidateFactory(
                             // If we've already mapped an argument to this value parameter, it'll always be a type mismatch.
                             mappedArguments[valueParameter] = ResolvedCallArgument.SimpleArgument(fakeArgument)
                         }
-
                         VarargMappingState.MAPPED_WITH_PLAIN_ARGS -> {
                             mappedVarargElements.getOrPut(valueParameter) { ArrayList() }.add(fakeArgument)
+                        }
+                        VarargMappingState.UNMAPPED -> {
                         }
                     }
                 } else {
@@ -304,7 +359,10 @@ class CallableReferencesCandidateFactory(
 
                 mappedArgumentTypes[index] = mappedArgument
             }
-            if (resolvedArgument == ResolvedCallArgument.DefaultArgument) defaults++
+            if (resolvedArgument == ResolvedCallArgument.DefaultArgument) {
+                defaults++
+                mappedArguments[valueParameter] = resolvedArgument
+            }
         }
         if (mappedArgumentTypes.any { it == null }) return null
 
@@ -312,15 +370,70 @@ class CallableReferencesCandidateFactory(
             mappedArguments[valueParameter] = ResolvedCallArgument.VarargArgument(varargElements)
         }
 
+        for (valueParameter in descriptor.valueParameters) {
+            if (valueParameter.isVararg && valueParameter !in mappedArguments) {
+                mappedArguments[valueParameter] = ResolvedCallArgument.VarargArgument(emptyList())
+            }
+        }
+
         // lower(Unit!) = Unit
         val returnExpectedType = inputOutputTypes.outputType
 
-        val coercion = if (returnExpectedType.isUnit()) CoercionStrategy.COERCION_TO_UNIT else CoercionStrategy.NO_COERCION
+        val coercion =
+            if (returnExpectedType.isUnit() && descriptor.returnType?.isUnit() == false)
+                CoercionStrategy.COERCION_TO_UNIT
+            else
+                CoercionStrategy.NO_COERCION
+
+        val adaptedArguments =
+            if (ReflectionTypes.isBaseTypeForNumberedReferenceTypes(expectedType))
+                emptyMap()
+            else
+                mappedArguments
+
+        val suspendConversionStrategy =
+            if (!descriptor.isSuspend && expectedType.isSuspendFunctionType) {
+                SuspendConversionStrategy.SUSPEND_CONVERSION
+            } else {
+                SuspendConversionStrategy.NO_CONVERSION
+            }
 
         return CallableReferenceAdaptation(
             @Suppress("UNCHECKED_CAST") (mappedArgumentTypes as Array<KotlinType>),
-            coercion, defaults, mappedArguments
+            coercion, defaults,
+            adaptedArguments,
+            suspendConversionStrategy
         )
+    }
+
+    private fun createFakeArgumentsForReference(
+        descriptor: FunctionDescriptor,
+        expectedArgumentCount: Int,
+        inputOutputTypes: InputOutputTypes,
+        unboundReceiverCount: Int
+    ): List<FakeKotlinCallArgumentForCallableReference> {
+        var afterVararg = false
+        var varargComponentType: UnwrappedType? = null
+        var vararg = false
+        return (0 until expectedArgumentCount).map { index ->
+            val inputType = inputOutputTypes.inputTypes.getOrNull(index + unboundReceiverCount)
+            if (vararg && varargComponentType != inputType) {
+                afterVararg = true
+            }
+
+            val valueParameter = descriptor.valueParameters.getOrNull(index)
+            val name =
+                if (afterVararg && valueParameter?.declaresDefaultValue() == true)
+                    valueParameter.name
+                else
+                    null
+
+            if (valueParameter?.isVararg == true) {
+                varargComponentType = inputType
+                vararg = true
+            }
+            FakeKotlinCallArgumentForCallableReference(index, name)
+        }
     }
 
     private fun varargParameterTypeByExpectedParameter(
@@ -374,17 +487,17 @@ class CallableReferencesCandidateFactory(
         val descriptorReturnType = descriptor.returnType
             ?: ErrorUtils.createErrorType("Error return type for descriptor: $descriptor")
 
-        when (descriptor) {
+        return when (descriptor) {
             is PropertyDescriptor -> {
                 val mutable = descriptor.isVar && run {
                     val setter = descriptor.setter
-                    setter == null || Visibilities.isVisible(
+                    setter == null || DescriptorVisibilities.isVisible(
                         dispatchReceiver?.asReceiverValueForVisibilityChecks, setter,
                         scopeTower.lexicalScope.ownerDescriptor
                     )
                 }
 
-                return callComponents.reflectionTypes.getKPropertyType(
+                callComponents.reflectionTypes.getKPropertyType(
                     Annotations.EMPTY,
                     argumentsAndReceivers,
                     descriptorReturnType,
@@ -412,12 +525,18 @@ class CallableReferencesCandidateFactory(
                         descriptorReturnType
                 }
 
-                return callComponents.reflectionTypes.getKFunctionType(
+                val suspendConversionStrategy = callableReferenceAdaptation?.suspendConversionStrategy
+                val isSuspend = descriptor.isSuspend || suspendConversionStrategy == SuspendConversionStrategy.SUSPEND_CONVERSION
+
+                callComponents.reflectionTypes.getKFunctionType(
                     Annotations.EMPTY, null, argumentsAndReceivers, null,
-                    returnType, descriptor.builtIns, descriptor.isSuspend
+                    returnType, descriptor.builtIns, isSuspend
                 ) to callableReferenceAdaptation
             }
-            else -> return ErrorUtils.createErrorType("Unsupported descriptor type: $descriptor") to null
+            else -> {
+                assert(!descriptor.isSupportedForCallableReference()) { "${descriptor::class} isn't supported to use in callable references actually, but it's listed in `isSupportedForCallableReference` method" }
+                ErrorUtils.createErrorType("Unsupported descriptor type: $descriptor") to null
+            }
         }
     }
 

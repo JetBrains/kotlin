@@ -1,8 +1,8 @@
-// TARGET_BACKEND: JVM
-// FILE: inline.kt
-// KOTLIN_CONFIGURATION_FLAGS: ASSERTIONS_MODE=jvm
-// WITH_RUNTIME
 // NO_CHECK_LAMBDA_INLINING
+// WITH_RUNTIME
+// TARGET_BACKEND: JVM
+// ASSERTIONS_MODE: jvm
+// FILE: inline.kt
 
 package test
 
@@ -13,7 +13,6 @@ object CrossinlineLambdaContainer {
 }
 
 // FILE: inlineSite.kt
-// KOTLIN_CONFIGURATION_FLAGS: ASSERTIONS_MODE=jvm
 
 import test.CrossinlineLambdaContainer.call
 

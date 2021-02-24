@@ -1,0 +1,9 @@
+@kotlin.Metadata
+public final class NullabilityAnnotationsForReturnTypeKt {
+    // source: 'nullabilityAnnotationsForReturnType.kt'
+    public final static method testJavaFlexible(): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method testJavaNotNull(): java.lang.String
+    public final static @org.jetbrains.annotations.Nullable method testJavaNullable(): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method testNotNull(): java.lang.String
+    public final static @org.jetbrains.annotations.Nullable method testNullable(): java.lang.String
+}

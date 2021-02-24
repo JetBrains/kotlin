@@ -14,7 +14,7 @@ import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.KotlinJvmBundle
 import org.jetbrains.kotlin.idea.configuration.findApplicableConfigurator
 import org.jetbrains.kotlin.idea.facet.getCleanRuntimeLibraryVersion
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
@@ -33,7 +33,7 @@ class AddReflectionQuickFix(element: KtElement) : AddKotlinLibQuickFix(
         LibraryJarDescriptor.REFLECT_SRC_JAR
     )
 ) {
-    override fun getText() = KotlinBundle.message("add.reflection.to.classpath")
+    override fun getText() = KotlinJvmBundle.message("classpath.add.reflection")
     override fun getFamilyName() = text
 
     override fun getLibraryDescriptor(module: Module) = MavenExternalLibraryDescriptor(
@@ -47,7 +47,7 @@ class AddReflectionQuickFix(element: KtElement) : AddKotlinLibQuickFix(
 }
 
 class AddScriptRuntimeQuickFix(element: KtElement) : AddKotlinLibQuickFix(element, listOf(LibraryJarDescriptor.SCRIPT_RUNTIME_JAR)) {
-    override fun getText() = KotlinBundle.message("add.script.runtime.to.classpath")
+    override fun getText() = KotlinJvmBundle.message("classpath.add.script.runtime")
     override fun getFamilyName() = text
 
     override fun getLibraryDescriptor(module: Module) = MavenExternalLibraryDescriptor(
@@ -68,7 +68,7 @@ class AddTestLibQuickFix(element: KtElement) : AddKotlinLibQuickFix(
         LibraryJarDescriptor.TEST_SRC_JAR
     )
 ) {
-    override fun getText() = KotlinBundle.message("add.test.to.classpath")
+    override fun getText() = KotlinJvmBundle.message("classpath.add.kotlin.test")
     override fun getFamilyName() = text
 
     override fun getLibraryDescriptor(module: Module) = MavenExternalLibraryDescriptor(

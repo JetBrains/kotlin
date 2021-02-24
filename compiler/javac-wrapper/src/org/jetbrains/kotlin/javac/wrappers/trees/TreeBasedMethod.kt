@@ -44,7 +44,7 @@ class TreeBasedMethod(
         get() = tree.modifiers.isFinal
 
     override val visibility: Visibility
-        get() = if (containingClass.isInterface) Visibilities.PUBLIC else tree.modifiers.visibility
+        get() = if (containingClass.isInterface) Visibilities.Public else tree.modifiers.visibility
 
     override val typeParameters: List<JavaTypeParameter>
         get() = tree.typeParameters.map { TreeBasedTypeParameter(it, compilationUnit, javac, this) }

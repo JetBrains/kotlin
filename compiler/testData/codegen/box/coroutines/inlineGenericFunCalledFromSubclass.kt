@@ -1,11 +1,9 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 // WITH_RUNTIME
 // WITH_COROUTINES
 // WITH_REFLECT
-// COMMON_COROUTINES_TEST
 import helpers.*
-import COROUTINES_PACKAGE.*
-import COROUTINES_PACKAGE.intrinsics.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 suspend fun suspendThere(v: String): String = suspendCoroutineUninterceptedOrReturn { x ->
     x.resume(v)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.inspections;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -25,7 +26,7 @@ public class MultiFileLocalInspectionTestGenerated extends AbstractMultiFileLoca
     }
 
     public void testAllFilesPresentInMultiFileLocalInspections() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClassWithExcluded(this.getClass(), new File("idea/testData/multiFileLocalInspections"), Pattern.compile("^(.+)\\.test$"), null);
+        KtTestUtil.assertAllTestsPresentInSingleGeneratedClassWithExcluded(this.getClass(), new File("idea/testData/multiFileLocalInspections"), Pattern.compile("^(.+)\\.test$"), null);
     }
 
     @TestMetadata("convertSealedSubClassToObject/convertCallableReferenceUsages/convertCallableReferenceUsages.test")
@@ -78,6 +79,11 @@ public class MultiFileLocalInspectionTestGenerated extends AbstractMultiFileLoca
         runTest("idea/testData/multiFileLocalInspections/reconcilePackageWithDirectory/changeToNonDefaultPackageFromRoot/changeToNonDefaultPackageFromRoot.test");
     }
 
+    @TestMetadata("reconcilePackageWithDirectory/changeToNonDefaultPackageFromRootWithPackageKeyword/changeToNonDefaultPackageFromRootWithPackageKeyword.test")
+    public void testReconcilePackageWithDirectory_changeToNonDefaultPackageFromRootWithPackageKeyword_ChangeToNonDefaultPackageFromRootWithPackageKeyword() throws Exception {
+        runTest("idea/testData/multiFileLocalInspections/reconcilePackageWithDirectory/changeToNonDefaultPackageFromRootWithPackageKeyword/changeToNonDefaultPackageFromRootWithPackageKeyword.test");
+    }
+
     @TestMetadata("reconcilePackageWithDirectory/innerClass/innerClass.test")
     public void testReconcilePackageWithDirectory_innerClass_InnerClass() throws Exception {
         runTest("idea/testData/multiFileLocalInspections/reconcilePackageWithDirectory/innerClass/innerClass.test");
@@ -96,6 +102,21 @@ public class MultiFileLocalInspectionTestGenerated extends AbstractMultiFileLoca
     @TestMetadata("redundantQualifierName/javaStatic/fromKotlinTest.test")
     public void testRedundantQualifierName_javaStatic_FromKotlinTest() throws Exception {
         runTest("idea/testData/multiFileLocalInspections/redundantQualifierName/javaStatic/fromKotlinTest.test");
+    }
+
+    @TestMetadata("redundantQualifierName/unnecessaryNonDirectParentClassQualifier/fromKotlinTest.test")
+    public void testRedundantQualifierName_unnecessaryNonDirectParentClassQualifier_FromKotlinTest() throws Exception {
+        runTest("idea/testData/multiFileLocalInspections/redundantQualifierName/unnecessaryNonDirectParentClassQualifier/fromKotlinTest.test");
+    }
+
+    @TestMetadata("redundantQualifierName/unnecessaryNonDirectParentClassQualifierAmbiguous/fromKotlinTest.test")
+    public void testRedundantQualifierName_unnecessaryNonDirectParentClassQualifierAmbiguous_FromKotlinTest() throws Exception {
+        runTest("idea/testData/multiFileLocalInspections/redundantQualifierName/unnecessaryNonDirectParentClassQualifierAmbiguous/fromKotlinTest.test");
+    }
+
+    @TestMetadata("redundantQualifierName/unnecessaryNonDirectParentClassQualifierDisabled/fromKotlinTest.test")
+    public void testRedundantQualifierName_unnecessaryNonDirectParentClassQualifierDisabled_FromKotlinTest() throws Exception {
+        runTest("idea/testData/multiFileLocalInspections/redundantQualifierName/unnecessaryNonDirectParentClassQualifierDisabled/fromKotlinTest.test");
     }
 
     @TestMetadata("unusedSymbol/fromKotlinTest/fromKotlinTest.test")

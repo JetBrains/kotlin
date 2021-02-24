@@ -33,11 +33,11 @@ interface KotlinInterface : KInterface {
 
         object  {
             fun run () {
-                super@KotlinInterface.<!UNRESOLVED_REFERENCE!>test<!>()
-                super@KotlinInterface.<!UNRESOLVED_REFERENCE!>property<!>
+                super@KotlinInterface.test()
+                super@KotlinInterface.property
 
-                super@KotlinInterface.<!UNRESOLVED_REFERENCE!>testNonDefault<!>()
-                super@KotlinInterface.<!UNRESOLVED_REFERENCE!>propertyNonDefault<!>
+                super@KotlinInterface.testNonDefault()
+                super@KotlinInterface.propertyNonDefault
             }
         }
     }
@@ -53,11 +53,11 @@ interface KotlinInterface : KInterface {
 
             object  {
                 fun run () {
-                    super@KotlinInterface.<!UNRESOLVED_REFERENCE!>test<!>()
-                    super@KotlinInterface.<!UNRESOLVED_REFERENCE!>property<!>
+                    super@KotlinInterface.test()
+                    super@KotlinInterface.property
 
-                    super@KotlinInterface.<!UNRESOLVED_REFERENCE!>testNonDefault<!>()
-                    super@KotlinInterface.<!UNRESOLVED_REFERENCE!>propertyNonDefault<!>
+                    super@KotlinInterface.testNonDefault()
+                    super@KotlinInterface.propertyNonDefault
                 }
             }
             return ""
@@ -72,11 +72,11 @@ interface KotlinInterface : KInterface {
 
         object  {
             fun run () {
-                super@KotlinInterface.<!UNRESOLVED_REFERENCE!>test<!>()
-                super@KotlinInterface.<!UNRESOLVED_REFERENCE!>property<!>
+                super@KotlinInterface.test()
+                super@KotlinInterface.property
 
-                super@KotlinInterface.<!UNRESOLVED_REFERENCE!>testNonDefault<!>()
-                super@KotlinInterface.<!UNRESOLVED_REFERENCE!>propertyNonDefault<!>
+                super@KotlinInterface.testNonDefault()
+                super@KotlinInterface.propertyNonDefault
             }
         }
     }
@@ -91,11 +91,11 @@ interface KotlinInterface : KInterface {
 
             object  {
                 fun run () {
-                    super@KotlinInterface.<!UNRESOLVED_REFERENCE!>test<!>()
-                    super@KotlinInterface.<!UNRESOLVED_REFERENCE!>property<!>
+                    super@KotlinInterface.test()
+                    super@KotlinInterface.property
 
-                    super@KotlinInterface.<!UNRESOLVED_REFERENCE!>testNonDefault<!>()
-                    super@KotlinInterface.<!UNRESOLVED_REFERENCE!>propertyNonDefault<!>
+                    super@KotlinInterface.testNonDefault()
+                    super@KotlinInterface.propertyNonDefault
                 }
             }
             return ""
@@ -115,11 +115,11 @@ interface KotlinInterfaceIndirectInheritance : KotlinInterface {
 
         object  {
             fun run () {
-                super@KotlinInterfaceIndirectInheritance.<!UNRESOLVED_REFERENCE!>test<!>()
-                super@KotlinInterfaceIndirectInheritance.<!UNRESOLVED_REFERENCE!>property<!>
+                super@KotlinInterfaceIndirectInheritance.test()
+                super@KotlinInterfaceIndirectInheritance.property
 
-                super@KotlinInterfaceIndirectInheritance.<!UNRESOLVED_REFERENCE!>testNonDefault<!>()
-                super@KotlinInterfaceIndirectInheritance.<!UNRESOLVED_REFERENCE!>propertyNonDefault<!>
+                super@KotlinInterfaceIndirectInheritance.testNonDefault()
+                super@KotlinInterfaceIndirectInheritance.propertyNonDefault
             }
         }
     }
@@ -135,11 +135,11 @@ interface KotlinInterfaceIndirectInheritance : KotlinInterface {
 
             object  {
                 fun run () {
-                    super@KotlinInterfaceIndirectInheritance.<!UNRESOLVED_REFERENCE!>test<!>()
-                    super@KotlinInterfaceIndirectInheritance.<!UNRESOLVED_REFERENCE!>property<!>
+                    super@KotlinInterfaceIndirectInheritance.test()
+                    super@KotlinInterfaceIndirectInheritance.property
 
-                    super@KotlinInterfaceIndirectInheritance.<!UNRESOLVED_REFERENCE!>testNonDefault<!>()
-                    super@KotlinInterfaceIndirectInheritance.<!UNRESOLVED_REFERENCE!>propertyNonDefault<!>
+                    super@KotlinInterfaceIndirectInheritance.testNonDefault()
+                    super@KotlinInterfaceIndirectInheritance.propertyNonDefault
                 }
             }
             return ""
@@ -154,11 +154,11 @@ interface KotlinInterfaceIndirectInheritance : KotlinInterface {
 
         object  {
             fun run () {
-                super@KotlinInterfaceIndirectInheritance.<!UNRESOLVED_REFERENCE!>test<!>()
-                super@KotlinInterfaceIndirectInheritance.<!UNRESOLVED_REFERENCE!>property<!>
+                super@KotlinInterfaceIndirectInheritance.test()
+                super@KotlinInterfaceIndirectInheritance.property
 
-                super@KotlinInterfaceIndirectInheritance.<!UNRESOLVED_REFERENCE!>testNonDefault<!>()
-                super@KotlinInterfaceIndirectInheritance.<!UNRESOLVED_REFERENCE!>propertyNonDefault<!>
+                super@KotlinInterfaceIndirectInheritance.testNonDefault()
+                super@KotlinInterfaceIndirectInheritance.propertyNonDefault
             }
         }
     }
@@ -173,11 +173,11 @@ interface KotlinInterfaceIndirectInheritance : KotlinInterface {
 
             object  {
                 fun run () {
-                    super@KotlinInterfaceIndirectInheritance.<!UNRESOLVED_REFERENCE!>test<!>()
-                    super@KotlinInterfaceIndirectInheritance.<!UNRESOLVED_REFERENCE!>property<!>
+                    super@KotlinInterfaceIndirectInheritance.test()
+                    super@KotlinInterfaceIndirectInheritance.property
 
-                    super@KotlinInterfaceIndirectInheritance.<!UNRESOLVED_REFERENCE!>testNonDefault<!>()
-                    super@KotlinInterfaceIndirectInheritance.<!UNRESOLVED_REFERENCE!>propertyNonDefault<!>
+                    super@KotlinInterfaceIndirectInheritance.testNonDefault()
+                    super@KotlinInterfaceIndirectInheritance.propertyNonDefault
                 }
             }
             return ""
@@ -194,11 +194,11 @@ open class KotlinClass : KInterface {
 
         object  {
             fun run () {
-                super@KotlinClass.<!UNRESOLVED_REFERENCE!>test<!>()
-                super@KotlinClass.<!UNRESOLVED_REFERENCE!>property<!>
+                super@KotlinClass.test()
+                super@KotlinClass.property
 
-                super@KotlinClass.<!UNRESOLVED_REFERENCE!>testNonDefault<!>()
-                super@KotlinClass.<!UNRESOLVED_REFERENCE!>propertyNonDefault<!>
+                super@KotlinClass.testNonDefault()
+                super@KotlinClass.propertyNonDefault
             }
         }
     }
@@ -213,11 +213,11 @@ open class KotlinClass : KInterface {
 
             object  {
                 fun run () {
-                    super@KotlinClass.<!UNRESOLVED_REFERENCE!>test<!>()
-                    super@KotlinClass.<!UNRESOLVED_REFERENCE!>property<!>
+                    super@KotlinClass.test()
+                    super@KotlinClass.property
 
-                    super@KotlinClass.<!UNRESOLVED_REFERENCE!>testNonDefault<!>()
-                    super@KotlinClass.<!UNRESOLVED_REFERENCE!>propertyNonDefault<!>
+                    super@KotlinClass.testNonDefault()
+                    super@KotlinClass.propertyNonDefault
                 }
             }
 
@@ -235,11 +235,11 @@ class KotlinClassIndirectInheritance : KotlinClass() {
 
         object  {
             fun run () {
-                super@KotlinClassIndirectInheritance.<!UNRESOLVED_REFERENCE!>test<!>()
-                super@KotlinClassIndirectInheritance.<!UNRESOLVED_REFERENCE!>property<!>
+                super@KotlinClassIndirectInheritance.test()
+                super@KotlinClassIndirectInheritance.property
 
-                super@KotlinClassIndirectInheritance.<!UNRESOLVED_REFERENCE!>testNonDefault<!>()
-                super@KotlinClassIndirectInheritance.<!UNRESOLVED_REFERENCE!>propertyNonDefault<!>
+                super@KotlinClassIndirectInheritance.testNonDefault()
+                super@KotlinClassIndirectInheritance.propertyNonDefault
             }
         }
 
@@ -255,11 +255,11 @@ class KotlinClassIndirectInheritance : KotlinClass() {
 
             object  {
                 fun run () {
-                    super@KotlinClassIndirectInheritance.<!UNRESOLVED_REFERENCE!>test<!>()
-                    super@KotlinClassIndirectInheritance.<!UNRESOLVED_REFERENCE!>property<!>
+                    super@KotlinClassIndirectInheritance.test()
+                    super@KotlinClassIndirectInheritance.property
 
-                    super@KotlinClassIndirectInheritance.<!UNRESOLVED_REFERENCE!>testNonDefault<!>()
-                    super@KotlinClassIndirectInheritance.<!UNRESOLVED_REFERENCE!>propertyNonDefault<!>
+                    super@KotlinClassIndirectInheritance.testNonDefault()
+                    super@KotlinClassIndirectInheritance.propertyNonDefault
                 }
             }
             return ""
@@ -276,11 +276,11 @@ class KotlinClassIndirectInheritance2 : KotlinInterfaceIndirectInheritance {
 
         object  {
             fun run () {
-                super@KotlinClassIndirectInheritance2.<!UNRESOLVED_REFERENCE!>test<!>()
-                super@KotlinClassIndirectInheritance2.<!UNRESOLVED_REFERENCE!>property<!>
+                super@KotlinClassIndirectInheritance2.test()
+                super@KotlinClassIndirectInheritance2.property
 
-                super@KotlinClassIndirectInheritance2.<!UNRESOLVED_REFERENCE!>testNonDefault<!>()
-                super@KotlinClassIndirectInheritance2.<!UNRESOLVED_REFERENCE!>propertyNonDefault<!>
+                super@KotlinClassIndirectInheritance2.testNonDefault()
+                super@KotlinClassIndirectInheritance2.propertyNonDefault
             }
         }
     }
@@ -295,11 +295,11 @@ class KotlinClassIndirectInheritance2 : KotlinInterfaceIndirectInheritance {
 
             object  {
                 fun run () {
-                    super@KotlinClassIndirectInheritance2.<!UNRESOLVED_REFERENCE!>test<!>()
-                    super@KotlinClassIndirectInheritance2.<!UNRESOLVED_REFERENCE!>property<!>
+                    super@KotlinClassIndirectInheritance2.test()
+                    super@KotlinClassIndirectInheritance2.property
 
-                    super@KotlinClassIndirectInheritance2.<!UNRESOLVED_REFERENCE!>testNonDefault<!>()
-                    super@KotlinClassIndirectInheritance2.<!UNRESOLVED_REFERENCE!>propertyNonDefault<!>
+                    super@KotlinClassIndirectInheritance2.testNonDefault()
+                    super@KotlinClassIndirectInheritance2.propertyNonDefault
                 }
             }
             return ""

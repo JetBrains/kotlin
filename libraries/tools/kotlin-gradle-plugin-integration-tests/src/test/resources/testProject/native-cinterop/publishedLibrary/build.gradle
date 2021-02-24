@@ -1,0 +1,32 @@
+plugins {
+    id("org.jetbrains.kotlin.multiplatform")
+    id("maven-publish")
+}
+
+group = 'org.example'
+version = '1.0'
+
+repositories {
+    mavenLocal()
+    jcenter()
+}
+
+kotlin {
+    <SingleNativeTarget>("host") {
+        compilations.main.cinterops {
+            number {
+                packageName 'library.cinterop.project'
+                extraOpts '-nodefaultlibs'
+                compilerOpts '-DEVEN_NUMBER'
+            }
+        }
+    }
+}
+
+publishing {
+    repositories {
+        maven {
+            url = '../repo'
+        }
+    }
+}

@@ -36,8 +36,8 @@ class DynamicIncrementalProcessorTest {
 
         assertEquals(
             mapOf(
-                generatedSources.resolve("test/UserGenerated.java") to File("plugins/kapt3/kapt3-base/testData/runner/incremental/User.java").absoluteFile,
-                generatedSources.resolve("test/AddressGenerated.java") to File("plugins/kapt3/kapt3-base/testData/runner/incremental/Address.java").absoluteFile
+                generatedSources.resolve("test/UserGenerated.java") to "test.User",
+                generatedSources.resolve("test/AddressGenerated.java") to "test.Address"
             ),
             dynamic.getGeneratedToSources()
         )

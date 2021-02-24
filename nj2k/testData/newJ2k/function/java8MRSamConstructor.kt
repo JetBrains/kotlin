@@ -106,7 +106,7 @@ internal class Java8Class {
     fun testLibraryFunctions() {
         val memberFunFromClass = JFunction2 { obj: String -> obj.length }
         memberFunFromClass.foo("str")
-        Thread(Runnable { println() }).start()
+        Thread { println() }.start()
         Runnable { println() }.run()
     }
 

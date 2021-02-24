@@ -27,6 +27,8 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.logging.kotlinWarn
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
+import org.jetbrains.kotlin.gradle.utils.androidPluginIds
+import java.util.concurrent.atomic.AtomicBoolean
 
 abstract class KotlinPlatformPluginBase(protected val platformName: String) : Plugin<Project> {
     companion object {
@@ -53,8 +55,8 @@ const val IMPLEMENT_DEPRECATION_WARNING = "The '$IMPLEMENT_CONFIG_NAME' configur
 open class KotlinPlatformImplementationPluginBase(platformName: String) : KotlinPlatformPluginBase(platformName) {
     private val commonProjects = arrayListOf<Project>()
 
-    protected open fun configurationsForCommonModuleDependency(project: Project): List<Configuration> =
-        listOf(project.configurations.getByName("compile"))
+    private fun configurationsForCommonModuleDependency(project: Project): List<Configuration> =
+        listOf(project.configurations.getByName("api"))
 
     override fun apply(project: Project) {
         warnAboutKotlin12xMppDeprecation(project)
@@ -181,6 +183,7 @@ open class KotlinPlatformImplementationPluginBase(platformName: String) : Kotlin
     private fun getKotlinSourceSetsSafe(project: Project): NamedDomainObjectCollection<out Named> {
         // Access through reflection, because another project's KotlinProjectExtension might be loaded by a different class loader:
         val kotlinExt = project.extensions.getByName("kotlin")
+
         @Suppress("UNCHECKED_CAST")
         val sourceSets = kotlinExt.javaClass.getMethod("getSourceSets").invoke(kotlinExt) as NamedDomainObjectCollection<out Named>
         return sourceSets
@@ -209,8 +212,24 @@ open class KotlinPlatformImplementationPluginBase(platformName: String) : Kotlin
 internal fun <T> Project.whenEvaluated(fn: Project.() -> T) {
     if (state.executed) {
         fn()
-    } else {
-        afterEvaluate { it.fn() }
+        return
+    }
+
+    /* Make sure that all afterEvaluate blocks from the AndroidPlugin get scheduled first */
+    val isDispatched = AtomicBoolean(false)
+    androidPluginIds.forEach { androidPluginId ->
+        pluginManager.withPlugin(androidPluginId) {
+            if (!isDispatched.getAndSet(true)) {
+                afterEvaluate { fn() }
+            }
+        }
+    }
+
+    afterEvaluate {
+        /* If no Android plugin was loaded, then the action was not dispatched and we can freely execute it now */
+        if (!isDispatched.getAndSet(true)) {
+            fn()
+        }
     }
 }
 
@@ -219,10 +238,6 @@ open class KotlinPlatformAndroidPlugin : KotlinPlatformImplementationPluginBase(
         project.applyPlugin<KotlinAndroidPluginWrapper>()
         super.apply(project)
     }
-
-    override fun configurationsForCommonModuleDependency(project: Project): List<Configuration> =
-        (project.configurations.findByName("api"))?.let(::listOf)
-            ?: super.configurationsForCommonModuleDependency(project) // older Android plugins don't have api/implementation configs
 
     override fun namedSourceSetsContainer(project: Project): NamedDomainObjectContainer<*> =
         (project.extensions.getByName("android") as BaseExtension).sourceSets

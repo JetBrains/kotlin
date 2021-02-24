@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
-import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.FirOverrideChecker
@@ -15,21 +14,10 @@ import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 
 abstract class FirAbstractOverrideChecker : FirOverrideChecker {
 
-    protected abstract fun isEqualTypes(candidateTypeRef: FirTypeRef, baseTypeRef: FirTypeRef, substitutor: ConeSubstitutor): Boolean
-
-    protected fun getSubstitutorIfTypeParametersAreCompatible(
-        overrideCandidate: FirSimpleFunction,
-        baseDeclaration: FirSimpleFunction
-    ): ConeSubstitutor? {
-        val substitutor = buildSubstitutorForOverridesCheck(overrideCandidate, baseDeclaration) ?: return null
-        if (!overrideCandidate.typeParameters.zip(baseDeclaration.typeParameters).all { (a, b) ->
-                a.bounds.size == b.bounds.size && a.bounds.zip(b.bounds).all { (aBound, bBound) ->
-                    isEqualTypes(aBound, bBound, substitutor)
-                }
-            }
-        ) return null
-        return substitutor
-    }
+    protected abstract fun buildTypeParametersSubstitutorIfCompatible(
+        overrideCandidate: FirCallableMemberDeclaration<*>,
+        baseDeclaration: FirCallableMemberDeclaration<*>
+    ): ConeSubstitutor?
 }
 
 fun buildSubstitutorForOverridesCheck(
@@ -38,6 +26,7 @@ fun buildSubstitutorForOverridesCheck(
 ): ConeSubstitutor? {
     if (overrideCandidate.typeParameters.size != baseDeclaration.typeParameters.size) return null
 
+    if (baseDeclaration.typeParameters.isEmpty()) return ConeSubstitutor.Empty
     val types = baseDeclaration.typeParameters.map {
         ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false)
     }

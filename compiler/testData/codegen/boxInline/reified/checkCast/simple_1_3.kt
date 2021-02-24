@@ -1,6 +1,7 @@
-// !API_VERSION: 1.3
-// FILE: 1.kt
 // WITH_RUNTIME
+// NO_UNIFIED_NULL_CHECKS
+// TARGET_BACKEND: JVM
+// FILE: 1.kt
 package test
 
 class A

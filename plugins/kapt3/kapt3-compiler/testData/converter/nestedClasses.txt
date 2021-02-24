@@ -5,6 +5,10 @@ public final class A {
     @org.jetbrains.annotations.Nullable()
     private final A x = null;
 
+    public A() {
+        super();
+    }
+
     @org.jetbrains.annotations.Nullable()
     public final A getX() {
         return null;
@@ -15,10 +19,6 @@ public final class A {
     A a, @org.jetbrains.annotations.NotNull()
     A.B b) {
         return null;
-    }
-
-    public A() {
-        super();
     }
 
     @kotlin.Metadata()
@@ -38,6 +38,7 @@ public final class A {
 
     @kotlin.Metadata()
     public static final class C {
+        @org.jetbrains.annotations.NotNull()
         public static final A.C INSTANCE = null;
 
         private C() {
@@ -150,6 +151,7 @@ public final class Test {
 
     @kotlin.Metadata()
     public static final class NestedObject {
+        @org.jetbrains.annotations.NotNull()
         public static final Test.NestedObject INSTANCE = null;
 
         private NestedObject() {

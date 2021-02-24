@@ -9,7 +9,7 @@ fun <T> f(<!UNUSED_PARAMETER!>expression<!> : T) : G<out T> = G<T>()
 
 fun foo() : G<Point> {
   val p = Point()
-  return <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>f<Point>(p)<!>
+  return <!TYPE_MISMATCH{NI}, TYPE_MISMATCH!>f<Point>(p)<!>
 }
 
 class Out<out T>() {}

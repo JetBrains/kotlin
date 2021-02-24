@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.intentions.conventionNameCalls
@@ -19,6 +8,7 @@ package org.jetbrains.kotlin.idea.intentions.conventionNameCalls
 import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.intentions.calleeName
@@ -30,21 +20,22 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.createExpressionByPattern
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
-class ReplaceCallWithUnaryOperatorIntention :
-    SelfTargetingRangeIntention<KtDotQualifiedExpression>(KtDotQualifiedExpression::class.java, "Replace call with unary operator"),
-    HighPriorityAction {
+class ReplaceCallWithUnaryOperatorIntention : SelfTargetingRangeIntention<KtDotQualifiedExpression>(
+    KtDotQualifiedExpression::class.java,
+    KotlinBundle.lazyMessage("replace.call.with.unary.operator")
+), HighPriorityAction {
     override fun applicabilityRange(element: KtDotQualifiedExpression): TextRange? {
         val operation = operation(element.calleeName) ?: return null
         if (!isApplicableOperation(operation)) return null
 
         val call = element.callExpression ?: return null
         if (call.typeArgumentList != null) return null
-        if (!call.valueArguments.isEmpty()) return null
+        if (call.valueArguments.isNotEmpty()) return null
 
         if (!element.isReceiverExpressionWithValue()) return null
 
-        text = "Replace with '${operation.value}' operator"
-        return call.calleeExpression!!.textRange
+        setTextGetter(KotlinBundle.lazyMessage("replace.with.0.operator", operation.value))
+        return call.calleeExpression?.textRange
     }
 
     override fun applyTo(element: KtDotQualifiedExpression, editor: Editor?) {
@@ -55,6 +46,7 @@ class ReplaceCallWithUnaryOperatorIntention :
 
     private fun isApplicableOperation(operation: KtSingleValueToken): Boolean = operation !in OperatorConventions.INCREMENT_OPERATIONS
 
-    private fun operation(functionName: String?): KtSingleValueToken? =
-        functionName?.let { OperatorConventions.UNARY_OPERATION_NAMES.inverse()[Name.identifier(it)] }
+    private fun operation(functionName: String?): KtSingleValueToken? = functionName?.let {
+        OperatorConventions.UNARY_OPERATION_NAMES.inverse()[Name.identifier(it)]
+    }
 }

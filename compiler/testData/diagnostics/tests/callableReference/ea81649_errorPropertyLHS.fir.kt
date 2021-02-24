@@ -5,7 +5,7 @@
 // MODULE: m1
 // FILE: bar.kt
 
-fun <T> bar(ff: Err.() -> Unit) {
+fun <T> bar(ff: <!UNRESOLVED_REFERENCE!>Err<!>.() -> Unit) {
 }
 
 // MODULE: m2(m1)

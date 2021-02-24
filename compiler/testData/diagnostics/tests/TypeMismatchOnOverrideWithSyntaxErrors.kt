@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 abstract class A {
     abstract var x: Int;
     abstract fun foo() : Int;

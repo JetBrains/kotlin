@@ -201,10 +201,7 @@ val KClass<*>.allSupertypes: Collection<KType>
                     supertypes.map { supertype ->
                         val substituted = substitutor.substitute((supertype as KTypeImpl).type, Variance.INVARIANT)
                                           ?: throw KotlinReflectionInternalError("Type substitution failed: $supertype ($current)")
-                        KTypeImpl(substituted) {
-                            // TODO
-                            TODO("Java type for supertype")
-                        }
+                        KTypeImpl(substituted)
                     }
                 }
             },

@@ -4,6 +4,8 @@
 //KT-731 Missing error from type inference
 package a
 
+import checkSubtype
+
 class A<T>(x: T) {
     val p = x
 }

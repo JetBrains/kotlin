@@ -23,7 +23,6 @@ val mirroredUrls = listOf(
     "https://dl.bintray.com/kodein-framework/Kodein-DI",
     "https://dl.bintray.com/konsoletyper/teavm",
     "https://dl.bintray.com/kotlin/kotlin-dev",
-    "https://dl.bintray.com/kotlin/kotlin-eap",
     "https://dl.bintray.com/kotlin/kotlinx.html",
     "https://dl.bintray.com/kotlin/kotlinx",
     "https://dl.bintray.com/kotlin/ktor",
@@ -51,6 +50,11 @@ val mirroredUrls = listOf(
     "https://jetbrains.bintray.com/test-discovery",
     "https://jetbrains.bintray.com/wormhole",
     "https://jitpack.io",
+    "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev",
+    "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap",
+    "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/eap",
+    "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies",
+    "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-ide",
     "https://kotlin.bintray.com/dukat",
     "https://kotlin.bintray.com/kotlin-dependencies",
     "https://oss.sonatype.org/content/repositories/releases",
@@ -108,8 +112,10 @@ fun RepositoryHandler.redirect() {
     }
 }
 
-// teamcity.jetbrains.com is located in the same local network with build agents
-fun URI.isCachedOrLocal() = host == "cache-redirector.jetbrains.com" || scheme == "file" || host == "teamcity.jetbrains.com"
+fun URI.isCachedOrLocal() = scheme == "file" ||
+            host == "cache-redirector.jetbrains.com" ||
+            host == "teamcity.jetbrains.com" ||
+            host == "buildserver.labs.intellij.net"
 
 fun RepositoryHandler.findNonCachedRepositories(): List<String> {
     val mavenNonCachedRepos = filterIsInstance<MavenArtifactRepository>()

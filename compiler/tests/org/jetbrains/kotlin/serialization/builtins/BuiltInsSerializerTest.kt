@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator
+import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparatorAdaptor
 import java.io.File
 import java.io.FileInputStream
 
@@ -56,10 +57,10 @@ class BuiltInsSerializerTest : TestCaseWithTmpdir() {
         module.initialize(packageFragmentProvider)
         module.setDependencies(module, module.builtIns.builtInsModule)
 
-        RecursiveDescriptorComparator.validateAndCompareDescriptorWithFile(
-                module.getPackage(TEST_PACKAGE_FQNAME),
-                RecursiveDescriptorComparator.DONT_INCLUDE_METHODS_OF_OBJECT,
-                File(source.replace(".kt", ".txt"))
+        RecursiveDescriptorComparatorAdaptor.validateAndCompareDescriptorWithFile(
+            module.getPackage(TEST_PACKAGE_FQNAME),
+            RecursiveDescriptorComparator.DONT_INCLUDE_METHODS_OF_OBJECT,
+            File(source.replace(".kt", ".txt"))
         )
     }
 

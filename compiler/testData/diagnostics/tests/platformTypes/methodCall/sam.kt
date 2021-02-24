@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: p/SAM.java
 
 package p;

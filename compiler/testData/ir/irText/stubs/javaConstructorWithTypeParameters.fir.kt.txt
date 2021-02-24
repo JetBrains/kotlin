@@ -1,0 +1,15 @@
+fun test1(): J1<Int?> {
+  return J1<Int?>()
+}
+
+fun test2(): J1<Int?> {
+  return J1<Int?, Int?>(x1 = 1)
+}
+
+fun test3(j1: J1<Any>): J2<Int?, Any> {
+  return j1.J2<Int?>()
+}
+
+fun test4(j1: J1<Any>): J2<Int?, Any> {
+  return j1.J2<Int?, Int?>(x2 = 1)
+}

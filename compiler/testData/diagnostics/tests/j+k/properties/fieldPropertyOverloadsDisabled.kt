@@ -20,9 +20,9 @@ public abstract class CollectionWithSize implements java.util.Collection<String>
 // FILE: main.kt
 
 fun main(c: CollectionWithSize) {
-    CompressionType.ZIP.<!OVERLOAD_RESOLUTION_AMBIGUITY!>name<!> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>checkType<!> { <!UNRESOLVED_REFERENCE!>_<!><Double>() }
-    c.<!OVERLOAD_RESOLUTION_AMBIGUITY!>size<!> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>checkType<!> { <!UNRESOLVED_REFERENCE!>_<!><String>() }
+    CompressionType.ZIP.<!OVERLOAD_RESOLUTION_AMBIGUITY!>name<!> <!DEBUG_INFO_MISSING_UNRESOLVED!>checkType<!> { <!UNRESOLVED_REFERENCE!>_<!><Double>() }
+    c.<!OVERLOAD_RESOLUTION_AMBIGUITY!>size<!> <!DEBUG_INFO_MISSING_UNRESOLVED!>checkType<!> { <!UNRESOLVED_REFERENCE!>_<!><String>() }
 
-    CompressionType.ZIP::<!OVERLOAD_RESOLUTION_AMBIGUITY!>name<!> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>checkType<!> { <!UNRESOLVED_REFERENCE!>_<!><kotlin.reflect.KProperty0<Double>>() }
-    c::<!OVERLOAD_RESOLUTION_AMBIGUITY!>size<!> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>checkType<!> { <!UNRESOLVED_REFERENCE!>_<!><kotlin.reflect.KProperty0<String>>() }
+    CompressionType.ZIP::<!OVERLOAD_RESOLUTION_AMBIGUITY!>name<!> <!DEBUG_INFO_MISSING_UNRESOLVED!>checkType<!> { <!UNRESOLVED_REFERENCE!>_<!><kotlin.reflect.KProperty0<Double>>() }
+    c::<!OVERLOAD_RESOLUTION_AMBIGUITY!>size<!> <!DEBUG_INFO_MISSING_UNRESOLVED!>checkType<!> { <!UNRESOLVED_REFERENCE!>_<!><kotlin.reflect.KProperty0<String>>() }
 }

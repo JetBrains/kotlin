@@ -1,11 +1,9 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 // FULL_JDK
-// COMMON_COROUTINES_TEST
 // WITH_RUNTIME
 // WITH_COROUTINES
 
 import helpers.*
-import COROUTINES_PACKAGE.*
+import kotlin.coroutines.*
 
 class MyDeferred<T>(val t: suspend () -> T) {
     suspend fun await() = t()

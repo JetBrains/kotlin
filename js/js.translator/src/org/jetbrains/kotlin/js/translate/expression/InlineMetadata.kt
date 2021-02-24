@@ -30,7 +30,7 @@ class InlineMetadata(val tag: JsStringLiteral, val function: FunctionWithWrapper
     companion object {
         @JvmStatic
         fun compose(function: JsFunction, descriptor: CallableDescriptor, context: TranslationContext): InlineMetadata {
-            val tag = JsStringLiteral(Namer.getFunctionTag(descriptor, context.config))
+            val tag = JsStringLiteral(Namer.getFunctionTag(descriptor, context.config, context.bindingContext()))
             val inliningContext = context.inlineFunctionContext!!
             val block = JsBlock(inliningContext.importBlock.statements + inliningContext.prototypeBlock.statements +
                                 inliningContext.declarationsBlock.statements + JsReturn(function))

@@ -1,12 +1,12 @@
 // IGNORE_BACKEND_FIR: JVM_IR
-// IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND: JVM_IR, JS_IR
+// IGNORE_BACKEND: JS_IR_ES6
 // IGNORE_BACKEND: JVM, JS, NATIVE
 // WITH_RUNTIME
 // WITH_COROUTINES
-
 import helpers.*
-import kotlin.coroutines.experimental.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 suspend fun callLocal(): String {
     val local = suspend fun() = "OK"

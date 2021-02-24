@@ -65,8 +65,14 @@ open class IrIntrinsicFunction(
         return returnType
     }
 
-    open fun invoke(v: InstructionAdapter, codegen: ExpressionCodegen, data: BlockInfo): StackValue {
+    open fun invoke(
+        v: InstructionAdapter,
+        codegen: ExpressionCodegen,
+        data: BlockInfo,
+        expression: IrFunctionAccessExpression
+    ): StackValue {
         loadArguments(codegen, data)
+        codegen.markLineNumber(expression)
         return StackValue.onStack(genInvokeInstructionWithResult(v))
     }
 

@@ -1,0 +1,10 @@
+// WITH_RUNTIME
+fun foo(i: Int) {}
+
+fun test(s: String) {
+    <caret>if (s.isBlank()) {
+        foo(2)
+    } else {
+        foo(1)
+    }
+}

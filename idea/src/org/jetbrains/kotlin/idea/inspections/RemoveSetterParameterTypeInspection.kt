@@ -9,6 +9,7 @@ import com.intellij.codeInspection.IntentionWrapper
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElementVisitor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeIntention
 import org.jetbrains.kotlin.idea.intentions.isSetterParameter
 import org.jetbrains.kotlin.psi.parameterVisitor
@@ -23,7 +24,7 @@ class RemoveSetterParameterTypeInspection : AbstractKotlinInspection() {
                 ?.takeIf { it.endOffset > it.startOffset } ?: return@parameterVisitor
             holder.registerProblem(
                 typeReference,
-                "Redundant setter parameter type",
+                KotlinBundle.message("redundant.setter.parameter.type"),
                 ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                 IntentionWrapper(RemoveExplicitTypeIntention(), parameter.containingKtFile)
             )

@@ -17,16 +17,18 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 
-interface IrVariable : IrValueDeclaration, IrSymbolDeclaration<IrVariableSymbol> {
-    override val descriptor: VariableDescriptor
+abstract class IrVariable : IrValueDeclaration() {
+    @ObsoleteDescriptorBasedAPI
+    abstract override val descriptor: VariableDescriptor
+    abstract override val symbol: IrVariableSymbol
 
-    val isVar: Boolean
-    val isConst: Boolean
-    val isLateinit: Boolean
+    abstract val isVar: Boolean
+    abstract val isConst: Boolean
+    abstract val isLateinit: Boolean
 
-    var initializer: IrExpression?
+    abstract var initializer: IrExpression?
 }
-

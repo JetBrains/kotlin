@@ -7,6 +7,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
 
 class KotlinNativeCompilationFactory(
     val target: KotlinNativeTarget
@@ -24,11 +25,12 @@ class KotlinNativeCompilationFactory(
 }
 
 class KotlinSharedNativeCompilationFactory(
-    val target: KotlinMetadataTarget
+    val target: KotlinMetadataTarget,
+    val konanTargets: List<KonanTarget>
 ): KotlinCompilationFactory<KotlinSharedNativeCompilation> {
     override val itemClass: Class<KotlinSharedNativeCompilation>
         get() = KotlinSharedNativeCompilation::class.java
 
     override fun create(name: String): KotlinSharedNativeCompilation =
-        KotlinSharedNativeCompilation(target, name)
+        KotlinSharedNativeCompilation(target, konanTargets, name)
 }

@@ -11,6 +11,6 @@ public fun <T> Iterable<T>.contains1(element: @kotlin.internal.NoInfer T): Boole
 
 
 fun test() {
-    val a: Boolean = listOf(1).<!OI;TYPE_INFERENCE_INCORPORATION_ERROR!>contains1<!>(<!TYPE_MISMATCH!>""<!>)
+    val a: Boolean = listOf(1).<!TYPE_INFERENCE_INCORPORATION_ERROR{OI}!>contains1<!>(<!TYPE_MISMATCH!>""<!>)
     val b: Boolean = listOf(1).contains1(1)
 }

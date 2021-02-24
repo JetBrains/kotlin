@@ -26,16 +26,25 @@ class ResolverForSingleModuleProject<M : ModuleInfo>(
     private val languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
     private val syntheticFiles: Collection<KtFile> = emptyList(),
     private val sdkDependency: M? = null,
-    dependencyModules: Iterable<M> = emptyList()
+    knownDependencyModuleDescriptors: Map<M, ModuleDescriptor> = emptyMap()
 ) : AbstractResolverForProject<M>(
     debugName,
     projectContext,
-    listOf(module) + dependencyModules,
+    listOf(module) + knownDependencyModuleDescriptors.keys,
     null,
     EmptyResolverForProject(),
     PackageOracleFactory.OptimisticFactory
 ) {
     override fun sdkDependency(module: M): M? = sdkDependency
+
+    init {
+        knownDependencyModuleDescriptors.forEach { (module, descriptor) ->
+            descriptorByModule[module] = ModuleData(
+                descriptor as ModuleDescriptorImpl,
+                (module as? TrackableModuleInfo)?.createModificationTracker() ?: fallbackModificationTracker
+            )
+        }
+    }
 
     override fun modulesContent(module: M): ModuleContent<M> = when (module) {
         this.module -> ModuleContent(module, syntheticFiles, searchScope)

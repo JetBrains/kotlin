@@ -1,6 +1,6 @@
 package foobar
 import bar.baz
 
-fun main() {
+fun <!LINE_MARKER!>main<!>() {
     baz().foo()
 }

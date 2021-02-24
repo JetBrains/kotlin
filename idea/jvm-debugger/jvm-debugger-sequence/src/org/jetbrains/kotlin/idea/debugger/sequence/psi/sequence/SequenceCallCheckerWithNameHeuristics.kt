@@ -5,12 +5,13 @@
 
 package org.jetbrains.kotlin.idea.debugger.sequence.psi.sequence
 
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.idea.debugger.sequence.psi.CallCheckerWithNameHeuristics
 import org.jetbrains.kotlin.idea.debugger.sequence.psi.StreamCallChecker
 
 class SequenceCallCheckerWithNameHeuristics(nestedChecker: StreamCallChecker) : CallCheckerWithNameHeuristics(nestedChecker) {
     private companion object {
-
+        @NonNls
         val TERMINATION_CALLS: Set<String> = setOf(
             "all", "any", "associate", "associateBy", "associateByTo", "associateTo", "average", "chunked", "contains", "count", "distinct",
             "distinctBy", "elementAt", "elementAtOrElse", "elementAtOrNull", "find", "findLast", "first", "firstOrNull", "fold",

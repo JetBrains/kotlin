@@ -11,6 +11,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ClassDescriptorWithResolutionScopes
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.frontendService
@@ -85,6 +86,7 @@ fun KtElement.getResolutionScope(): LexicalScope {
     return getResolutionScope(context, resolutionFacade)
 }
 
+@OptIn(FrontendInternals::class)
 fun ResolutionFacade.getFileResolutionScope(file: KtFile): LexicalScope {
     return frontendService<FileScopeProvider>().getFileResolutionScope(file)
 }

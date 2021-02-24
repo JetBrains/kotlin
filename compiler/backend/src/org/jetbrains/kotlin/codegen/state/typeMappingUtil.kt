@@ -18,6 +18,7 @@
 
 package org.jetbrains.kotlin.codegen.state
 
+import org.jetbrains.kotlin.builtins.StandardNames.FqNames
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -37,7 +38,6 @@ import org.jetbrains.kotlin.types.checker.convertVariance
 import org.jetbrains.kotlin.types.getEffectiveVariance
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES as BUILTIN_NAMES
 
 // TODO: probably class upper bound should be used
 @Suppress("UNUSED_PARAMETER")
@@ -81,9 +81,9 @@ val FqName?.isMethodWithDeclarationSiteWildcardsFqName: Boolean
 
 private fun FqName.child(name: String): FqName = child(Name.identifier(name))
 private val METHODS_WITH_DECLARATION_SITE_WILDCARDS = setOf(
-    BUILTIN_NAMES.mutableCollection.child("addAll"),
-    BUILTIN_NAMES.mutableList.child("addAll"),
-    BUILTIN_NAMES.mutableMap.child("putAll")
+    FqNames.mutableCollection.child("addAll"),
+    FqNames.mutableList.child("addAll"),
+    FqNames.mutableMap.child("putAll")
 )
 
 fun TypeMappingMode.updateArgumentModeFromAnnotations(
@@ -93,7 +93,8 @@ fun TypeMappingMode.updateArgumentModeFromAnnotations(
         return TypeMappingMode.createWithConstantDeclarationSiteWildcardsMode(
                 skipDeclarationSiteWildcards = it,
                 isForAnnotationParameter = isForAnnotationParameter,
-                needInlineClassWrapping = needInlineClassWrapping
+                needInlineClassWrapping = needInlineClassWrapping,
+                mapTypeAliases = mapTypeAliases
         )
     }
 
@@ -102,7 +103,8 @@ fun TypeMappingMode.updateArgumentModeFromAnnotations(
             skipDeclarationSiteWildcards = false,
             isForAnnotationParameter = isForAnnotationParameter,
             fallbackMode = this,
-            needInlineClassWrapping = needInlineClassWrapping
+            needInlineClassWrapping = needInlineClassWrapping,
+            mapTypeAliases = mapTypeAliases
         )
     }
 
@@ -112,16 +114,18 @@ fun TypeMappingMode.updateArgumentModeFromAnnotations(
 internal fun extractTypeMappingModeFromAnnotation(
     callableDescriptor: CallableDescriptor?,
     outerType: KotlinType,
-    isForAnnotationParameter: Boolean
+    isForAnnotationParameter: Boolean,
+    mapTypeAliases: Boolean
 ): TypeMappingMode? =
     SimpleClassicTypeSystemContext.extractTypeMappingModeFromAnnotation(
-        callableDescriptor?.suppressWildcardsMode(), outerType, isForAnnotationParameter
+        callableDescriptor?.suppressWildcardsMode(), outerType, isForAnnotationParameter, mapTypeAliases
     )
 
 fun TypeSystemCommonBackendContext.extractTypeMappingModeFromAnnotation(
     callableSuppressWildcardsMode: Boolean?,
     outerType: KotlinTypeMarker,
-    isForAnnotationParameter: Boolean
+    isForAnnotationParameter: Boolean,
+    mapTypeAliases: Boolean
 ): TypeMappingMode? {
     val suppressWildcards =
         outerType.suppressWildcardsMode(this) ?: callableSuppressWildcardsMode ?: return null
@@ -131,7 +135,8 @@ fun TypeSystemCommonBackendContext.extractTypeMappingModeFromAnnotation(
     return TypeMappingMode.createWithConstantDeclarationSiteWildcardsMode(
         skipDeclarationSiteWildcards = suppressWildcards,
         isForAnnotationParameter = isForAnnotationParameter,
-        needInlineClassWrapping = !outerType.typeConstructor().isInlineClass()
+        needInlineClassWrapping = !outerType.typeConstructor().isInlineClass(),
+        mapTypeAliases = mapTypeAliases
     )
 }
 

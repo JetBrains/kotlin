@@ -7,3 +7,9 @@ class A<T, U: CharSequence, V> {
 class AA<T, U> {
     inner class Inner<V>
 }
+
+class AAA<T> {
+    inner class Inner<K> {
+        inner class InnerInner<S>
+    }
+}

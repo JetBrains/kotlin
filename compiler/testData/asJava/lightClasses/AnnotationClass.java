@@ -1,14 +1,15 @@
-@java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.RUNTIME)
-public @interface Anno {
-    int i();
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+public abstract @interface Anno /* Anno*/ {
+  public abstract double d() default 0.0;//  d()
 
-    int j() default 5;
+  public abstract int i();//  i()
 
-    java.lang.String value() default "a";
+  public abstract int j() default 5;//  j()
 
-    double d() default 0.0;
+  public abstract int[] ia();//  ia()
 
-    int[] ia();
+  public abstract int[] ia2() default {1, 2, 3};//  ia2()
 
-    int[] ia2() default {1, 2, 3};
+  public abstract java.lang.String value() default "a";//  value()
+
 }

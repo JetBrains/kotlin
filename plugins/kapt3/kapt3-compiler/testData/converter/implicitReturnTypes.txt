@@ -22,6 +22,11 @@ public final class Cl {
     @org.jetbrains.annotations.NotNull()
     private java.lang.String name;
 
+    public Cl(@org.jetbrains.annotations.NotNull()
+    java.lang.String name) {
+        super();
+    }
+
     @org.jetbrains.annotations.NotNull()
     public final java.lang.String getName() {
         return null;
@@ -29,11 +34,6 @@ public final class Cl {
 
     public final void setName(@org.jetbrains.annotations.NotNull()
     java.lang.String p0) {
-    }
-
-    public Cl(@org.jetbrains.annotations.NotNull()
-    java.lang.String name) {
-        super();
     }
 }
 

@@ -119,6 +119,8 @@ abstract class InspectionLikeProcessing {
     // Running it in outer write action may lead to UI freezes
     // So we let that post-processings to handle write actions by themselves
     open val writeActionNeeded = true
+
+    val processingOptions: PostProcessingOptions = PostProcessingOptions.DEFAULT
 }
 
 abstract class InspectionLikeProcessingForElement<E : PsiElement>(private val classTag: Class<E>) : InspectionLikeProcessing() {

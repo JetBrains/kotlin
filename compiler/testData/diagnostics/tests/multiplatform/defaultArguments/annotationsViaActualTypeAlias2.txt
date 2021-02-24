@@ -63,7 +63,6 @@ public final enum class E : kotlin.Enum<E> {
     public final /*synthesized*/ fun values(): kotlin.Array<E>
 }
 
-
 // -- Module: <m2-jvm> --
 package
 
@@ -131,3 +130,4 @@ public final annotation class Jnno : kotlin.Annotation {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 public actual typealias Anno = Jnno
+

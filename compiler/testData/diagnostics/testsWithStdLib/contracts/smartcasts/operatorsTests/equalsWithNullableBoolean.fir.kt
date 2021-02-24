@@ -5,9 +5,9 @@
 import kotlin.contracts.*
 
 fun safeIsString(x: Any?): Boolean? {
-    contract {
+    <!WRONG_IMPLIES_CONDITION!>contract {
         returns(true) implies (x is String)
-    }
+    }<!>
     return x?.let { it is String }
 }
 
@@ -16,7 +16,7 @@ fun safeIsString(x: Any?): Boolean? {
 
 fun equalsTrue(x: Any?) {
     if (safeIsString(x) == true) {
-        x.<!UNRESOLVED_REFERENCE!>length<!>
+        x.length
     }
     else {
         x.<!UNRESOLVED_REFERENCE!>length<!>
@@ -28,7 +28,7 @@ fun equalsFalse(x: Any?) {
         x.<!UNRESOLVED_REFERENCE!>length<!>
     }
     else {
-        x.<!UNRESOLVED_REFERENCE!>length<!>
+        x.length
     }
 }
 
@@ -46,13 +46,13 @@ fun notEqualsTrue(x: Any?) {
         x.<!UNRESOLVED_REFERENCE!>length<!>
     }
     else {
-        x.<!UNRESOLVED_REFERENCE!>length<!>
+        x.length
     }
 }
 
 fun notEqualsFalse(x: Any?) {
     if (safeIsString(x) != false) {
-        x.<!UNRESOLVED_REFERENCE!>length<!>
+        x.length
     }
     else {
         x.<!UNRESOLVED_REFERENCE!>length<!>

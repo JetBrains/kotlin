@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // WITH_RUNTIME
 
 class MyClass(val value: String)

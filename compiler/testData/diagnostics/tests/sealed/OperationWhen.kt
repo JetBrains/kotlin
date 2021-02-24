@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 sealed class Operation(val left: Int, val right: Int) {
     abstract fun exec(): Int
     class Plus(left: Int, right: Int): Operation(left, right) {

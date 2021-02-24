@@ -1,6 +1,5 @@
 // !LANGUAGE: +PolymorphicSignature
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND: JVM_IR
 // FULL_JDK
 // SKIP_JDK6
 // WITH_RUNTIME
@@ -31,8 +30,4 @@ fun box(): String {
     }
 
     return if (handle.getVolatile(array, index) == newValue) "OK" else "Fail"
-}
-
-fun main() {
-    box().let { if (it != "OK") throw AssertionError(it) }
 }

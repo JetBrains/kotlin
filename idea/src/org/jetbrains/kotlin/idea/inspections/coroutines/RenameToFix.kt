@@ -9,11 +9,12 @@ import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.openapi.project.Project
 import com.intellij.refactoring.rename.RenameProcessor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
 class RenameToFix(val newName: String) : LocalQuickFix {
-    override fun getName(): String = "Rename to '$newName'"
+    override fun getName(): String = KotlinBundle.message("rename.to.fix.text", newName)
 
     override fun getFamilyName(): String = name
 

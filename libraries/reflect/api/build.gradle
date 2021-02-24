@@ -4,7 +4,7 @@ apply plugin: 'kotlin'
 
 configureJvm6Project(project)
 
-def includeJava9 = BuildPropertiesKt.getKotlinBuildProperties(project).includeJava9
+def includeJava9 = BuildPropertiesExtKt.getIncludeJava9(project.kotlinBuildProperties)
 
 sourceSets {
     main {
@@ -45,9 +45,15 @@ compileKotlin {
         freeCompilerArgs = ["-version",
                             "-Xallow-kotlin-package",
                             "-Xnormalize-constructor-calls=enable",
-                            "-module-name", "kotlin-reflection"]
+                            "-Xno-optimized-callable-references",
+                            "-Xno-kotlin-nothing-value-exception",
+                            "-Xsuppress-deprecated-jvm-target-warning",
+                            "-Xopt-in=kotlin.RequiresOptIn"]
+        moduleName = "kotlin-reflection"
     }
 }
+
+configureJvmIrBackend(project)
 
 jar {
     manifestAttributes(manifest, project, "internal")

@@ -114,7 +114,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
                         node.text.subSequence(0, elementStart.startOffset - node.startOffset).trimStart()
                     )
                 )
-                    createSpacing(0, minLineFeeds = 2)
+                    createSpacing(0, minLineFeeds = 1 + kotlinCustomSettings.BLANK_LINES_BEFORE_DECLARATION_WITH_COMMENT_OR_ANNOTATION_ON_SEPARATE_LINE)
                 else
                     null
             })
@@ -131,7 +131,6 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
 
             // Case left for alternative constructors
             inPosition(left = FUN, right = CLASS).emptyLinesIfLineBreakInLeft(1)
-
             inPosition(left = ENUM_ENTRY, right = ENUM_ENTRY).emptyLinesIfLineBreakInLeft(
                 emptyLines = 0, numberOfLineFeedsOtherwise = 0, numSpacesOtherwise = 1
             )
@@ -139,7 +138,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
             inPosition(parent = CLASS_BODY, left = SEMICOLON).customRule { parent, _, right ->
                 val klass = parent.requireNode().treeParent.psi as? KtClass ?: return@customRule null
                 if (klass.isEnum() && right.requireNode().elementType in DECLARATIONS) {
-                    createSpacing(0, minLineFeeds = 2, keepBlankLines = settings.KEEP_BLANK_LINES_IN_DECLARATIONS)
+                    createSpacing(0, minLineFeeds = 2, keepBlankLines = kotlinCommonSettings.KEEP_BLANK_LINES_IN_DECLARATIONS)
                 } else null
             }
 
@@ -153,13 +152,16 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
                     null
                 } else {
                     val minLineFeeds = if (right.requireNode().elementType == FUN || right.requireNode().elementType == PROPERTY)
-                        1
+                        kotlinCommonSettings.BLANK_LINES_AFTER_CLASS_HEADER + 1
                     else
                         0
 
                     builderUtil.createLineFeedDependentSpacing(
-                        1, 1, minLineFeeds,
-                        settings.KEEP_LINE_BREAKS, settings.KEEP_BLANK_LINES_IN_DECLARATIONS,
+                        1,
+                        1,
+                        minLineFeeds,
+                        commonCodeStyleSettings.KEEP_LINE_BREAKS,
+                        commonCodeStyleSettings.KEEP_BLANK_LINES_IN_DECLARATIONS,
                         TextRange(parentPsi.textRange.startOffset, left.requireNode().psi.textRange.startOffset),
                         DependentSpacingRule(DependentSpacingRule.Trigger.HAS_LINE_FEEDS)
                             .registerData(
@@ -240,6 +242,9 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
                 else
                     null
             }
+
+            inPosition(parent = LONG_STRING_TEMPLATE_ENTRY, right = LONG_TEMPLATE_ENTRY_END).lineBreakIfLineBreakInParent(0)
+            inPosition(parent = LONG_STRING_TEMPLATE_ENTRY, left = LONG_TEMPLATE_ENTRY_START).lineBreakIfLineBreakInParent(0)
         }
 
         simple {
@@ -395,9 +400,6 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
             betweenInside(LPAR, VALUE_PARAMETER, FOR).spaces(0)
             betweenInside(LPAR, DESTRUCTURING_DECLARATION, FOR).spaces(0)
             betweenInside(LOOP_RANGE, RPAR, FOR).spaces(0)
-
-            after(LONG_TEMPLATE_ENTRY_START).spaces(0)
-            before(LONG_TEMPLATE_ENTRY_END).spaces(0)
 
             afterInside(ANNOTATION_ENTRY, ANNOTATED_EXPRESSION).spaces(1)
 

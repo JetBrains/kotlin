@@ -11,25 +11,29 @@ import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.JBPopupFactory
+import org.jetbrains.kotlin.KotlinIdeaReplBundle
 import org.jetbrains.kotlin.console.KotlinConsoleKeeper
 
 class ConsoleModuleDialog(private val project: Project) {
-    private val TITLE = "Choose context module..."
-
     fun showIfNeeded(dataContext: DataContext) {
         val module = getModule(dataContext)
         if (module != null) return runConsole(module)
 
         val modules = ModuleManager.getInstance(project).modules
 
-        if (modules.isEmpty()) return errorNotification(project, "No modules were found")
+        if (modules.isEmpty()) return errorNotification(project, KotlinIdeaReplBundle.message("no.modules.were.found"))
         if (modules.size == 1) return runConsole(modules.first())
 
         val moduleActions = modules.sortedBy { it.name }.map { createRunAction(it) }
         val moduleGroup = DefaultActionGroup(moduleActions)
 
         val modulePopup = JBPopupFactory.getInstance().createActionGroupPopup(
-            TITLE, moduleGroup, dataContext, JBPopupFactory.ActionSelectionAid.SPEEDSEARCH, true, ActionPlaces.UNKNOWN
+            TITLE,
+            moduleGroup,
+            dataContext,
+            JBPopupFactory.ActionSelectionAid.SPEEDSEARCH,
+            true,
+            ActionPlaces.UNKNOWN
         )
 
         modulePopup.showCenteredInCurrentWindow(project)
@@ -50,5 +54,9 @@ class ConsoleModuleDialog(private val project: Project) {
 
     private fun createRunAction(module: Module) = object : AnAction(module.name) {
         override fun actionPerformed(e: AnActionEvent) = runConsole(module)
+    }
+
+    companion object {
+        private val TITLE get() = KotlinIdeaReplBundle.message("choose.context.module")
     }
 }

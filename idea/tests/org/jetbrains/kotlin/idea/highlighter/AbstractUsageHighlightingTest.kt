@@ -24,7 +24,7 @@ abstract class AbstractUsageHighlightingTest : KotlinLightCodeInsightFixtureTest
     protected fun doTest(unused: String) {
         myFixture.configureByFile(fileName())
         val document = myFixture.editor.document
-        val data = ExpectedHighlightingData(document, false, false, true, false, myFixture.file)
+        val data = ExpectedHighlightingData(document, false, false, true, false)
         data.init()
 
         val caret = document.extractMarkerOffset(project, CARET_TAG)
@@ -48,7 +48,7 @@ abstract class AbstractUsageHighlightingTest : KotlinLightCodeInsightFixtureTest
                     .create()
             }
 
-        data.checkResult(infos, StringBuilder(document.text).insert(caret, CARET_TAG).toString())
+        data.checkResult(myFixture.file, infos, StringBuilder(document.text).insert(caret, CARET_TAG).toString())
     }
 
     private fun isUsageHighlighting(info: RangeHighlighter): Boolean {

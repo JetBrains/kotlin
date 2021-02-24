@@ -1,5 +1,6 @@
 @kotlin.Metadata
 public class A0 {
+    // source: 'removeAtTwoSpecialBridges.kt'
     public method <init>(): void
     public method add(p0: int, p1: java.lang.Object): void
     public method add(p0: java.lang.Object): boolean
@@ -16,13 +17,13 @@ public class A0 {
     public method lastIndexOf(p0: java.lang.Object): int
     public @org.jetbrains.annotations.NotNull method listIterator(): java.util.ListIterator
     public @org.jetbrains.annotations.NotNull method listIterator(p0: int): java.util.ListIterator
-    public final method remove(p0: int): java.lang.Object
+    public bridge final method remove(p0: int): java.lang.Object
     public method remove(p0: java.lang.Object): boolean
     public method removeAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): boolean
     public method removeAt(p0: int): java.lang.Object
     public method retainAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): boolean
     public method set(p0: int, p1: java.lang.Object): java.lang.Object
-    public final method size(): int
+    public bridge final method size(): int
     public @org.jetbrains.annotations.NotNull method subList(p0: int, p1: int): java.util.List
     public method toArray(): java.lang.Object[]
     public method toArray(p0: java.lang.Object[]): java.lang.Object[]
@@ -30,31 +31,33 @@ public class A0 {
 
 @kotlin.Metadata
 public final class A1 {
+    // source: 'removeAtTwoSpecialBridges.kt'
     public method <init>(): void
-    public final method contains(p0: java.lang.Object): boolean
-    public method contains(p0: java.lang.String): boolean
-    public final method indexOf(p0: java.lang.Object): int
-    public method indexOf(p0: java.lang.String): int
-    public final method lastIndexOf(p0: java.lang.Object): int
-    public method lastIndexOf(p0: java.lang.String): int
-    public final method remove(p0: int): java.lang.String
-    public final method remove(p0: java.lang.Object): boolean
-    public method remove(p0: java.lang.String): boolean
-    public synthetic method removeAt(p0: int): java.lang.Object
+    public bridge final method contains(p0: java.lang.Object): boolean
+    public bridge method contains(p0: java.lang.String): boolean
+    public bridge final method indexOf(p0: java.lang.Object): int
+    public bridge method indexOf(p0: java.lang.String): int
+    public bridge final method lastIndexOf(p0: java.lang.Object): int
+    public bridge method lastIndexOf(p0: java.lang.String): int
+    public bridge final method remove(p0: int): java.lang.String
+    public bridge final method remove(p0: java.lang.Object): boolean
+    public bridge method remove(p0: java.lang.String): boolean
+    public synthetic bridge method removeAt(p0: int): java.lang.Object
     public @org.jetbrains.annotations.NotNull method removeAt(p0: int): java.lang.String
 }
 
 @kotlin.Metadata
 public final class A2 {
+    // source: 'removeAtTwoSpecialBridges.kt'
     public method <init>(): void
-    public final method contains(p0: java.lang.Object): boolean
-    public method contains(p0: java.lang.String): boolean
-    public final method indexOf(p0: java.lang.Object): int
-    public method indexOf(p0: java.lang.String): int
-    public final method lastIndexOf(p0: java.lang.Object): int
-    public method lastIndexOf(p0: java.lang.String): int
-    public final method remove(p0: int): java.lang.String
-    public final method remove(p0: java.lang.Object): boolean
-    public method remove(p0: java.lang.String): boolean
-    public method removeAt(p0: int): java.lang.String
+    public bridge final method contains(p0: java.lang.Object): boolean
+    public bridge method contains(p0: java.lang.String): boolean
+    public bridge final method indexOf(p0: java.lang.Object): int
+    public bridge method indexOf(p0: java.lang.String): int
+    public bridge final method lastIndexOf(p0: java.lang.Object): int
+    public bridge method lastIndexOf(p0: java.lang.String): int
+    public bridge final method remove(p0: int): java.lang.String
+    public bridge final method remove(p0: java.lang.Object): boolean
+    public bridge method remove(p0: java.lang.String): boolean
+    public bridge method removeAt(p0: int): java.lang.String
 }

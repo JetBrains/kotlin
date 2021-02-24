@@ -1,4 +1,0 @@
-fun testParam(
-        <caret>
-) {
-}

@@ -31,6 +31,19 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             "and" to "Performs a bitwise AND operation between the two values.",
             "or" to "Performs a bitwise OR operation between the two values.",
             "xor" to "Performs a bitwise XOR operation between the two values.")
+
+
+        internal fun shiftOperatorsDocDetail(kind: PrimitiveType): String {
+            val bitsUsed = when (kind) {
+                PrimitiveType.INT -> "five"
+                PrimitiveType.LONG -> "six"
+                else -> throw IllegalArgumentException("Bit shift operation is not implemented for $kind")
+            }
+            return """ 
+                * Note that only the $bitsUsed lowest-order bits of the [bitCount] are used as the shift distance.
+                * The shift distance actually used is therefore always in the range `0..${kind.bitSize - 1}`.
+                """
+        }
     }
     private val typeDescriptions: Map<PrimitiveType, String> = mapOf(
             PrimitiveType.DOUBLE to "double-precision 64-bit IEEE 754 floating point number",
@@ -47,8 +60,8 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
         PrimitiveType.BYTE -> listOf(java.lang.Byte.MIN_VALUE, java.lang.Byte.MAX_VALUE)
         PrimitiveType.SHORT -> listOf(java.lang.Short.MIN_VALUE, java.lang.Short.MAX_VALUE)
         PrimitiveType.LONG -> listOf((java.lang.Long.MIN_VALUE + 1).toString() + "L - 1L", java.lang.Long.MAX_VALUE.toString() + "L")
-//        PrimitiveType.DOUBLE -> listOf(java.lang.Double.MIN_VALUE, java.lang.Double.MAX_VALUE, "1.0/0.0", "-1.0/0.0", "0.0/0.0")
-//        PrimitiveType.FLOAT -> listOf(java.lang.Float.MIN_VALUE, java.lang.Float.MAX_VALUE, "1.0F/0.0F", "-1.0F/0.0F", "0.0F/0.0F").map { it as? String ?: "${it}F" }
+        PrimitiveType.DOUBLE -> listOf(java.lang.Double.MIN_VALUE, java.lang.Double.MAX_VALUE, "1.0/0.0", "-1.0/0.0", "-(0.0/0.0)")
+        PrimitiveType.FLOAT -> listOf(java.lang.Float.MIN_VALUE, java.lang.Float.MAX_VALUE, "1.0F/0.0F", "-1.0F/0.0F", "-(0.0F/0.0F)").map { it as? String ?: "${it}F" }
         else -> throw IllegalArgumentException("type: $type")
     }
 
@@ -60,32 +73,32 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
 
             out.print("    companion object {")
             if (kind == PrimitiveType.FLOAT || kind == PrimitiveType.DOUBLE) {
-                //val (minValue, maxValue, posInf, negInf, nan) = primitiveConstants(kind)
+                val (minValue, maxValue, posInf, negInf, nan) = primitiveConstants(kind)
                 out.println("""
         /**
          * A constant holding the smallest *positive* nonzero value of $className.
          */
-        public val MIN_VALUE: $className
+        public const val MIN_VALUE: $className = $minValue
 
         /**
          * A constant holding the largest positive finite value of $className.
          */
-        public val MAX_VALUE: $className
+        public const val MAX_VALUE: $className = $maxValue
 
         /**
          * A constant holding the positive infinity value of $className.
          */
-        public val POSITIVE_INFINITY: $className
+        public const val POSITIVE_INFINITY: $className = $posInf
 
         /**
          * A constant holding the negative infinity value of $className.
          */
-        public val NEGATIVE_INFINITY: $className
+        public const val NEGATIVE_INFINITY: $className = $negInf
 
         /**
          * A constant holding the "not a number" value of $className.
          */
-        public val NaN: $className""")
+        public const val NaN: $className = $nan""")
             }
             if (kind == PrimitiveType.INT || kind == PrimitiveType.LONG || kind == PrimitiveType.SHORT || kind == PrimitiveType.BYTE) {
                 val (minValue, maxValue) = primitiveConstants(kind)
@@ -100,18 +113,19 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
          */
         public const val MAX_VALUE: $className = $maxValue""")
             }
-            if (kind.isIntegral) {
+            if (kind.isIntegral || kind.isFloatingPoint) {
+                val sizeSince = if (kind.isFloatingPoint) "1.4" else "1.3"
                 out.println("""
         /**
          * The number of bytes used to represent an instance of $className in a binary form.
          */
-        @SinceKotlin("1.3")
+        @SinceKotlin("$sizeSince")
         public const val SIZE_BYTES: Int = ${kind.byteSize}
 
         /**
          * The number of bits used to represent an instance of $className in a binary form.
          */
-        @SinceKotlin("1.3")
+        @SinceKotlin("$sizeSince")
         public const val SIZE_BITS: Int = ${kind.bitSize}""")
             }
             out.println("""    }""")
@@ -123,7 +137,7 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             generateRangeTo(kind)
 
             if (kind == PrimitiveType.INT || kind == PrimitiveType.LONG) {
-                generateBitShiftOperators(className)
+                generateBitShiftOperators(kind)
             }
             if (kind == PrimitiveType.INT || kind == PrimitiveType.LONG /* || kind == PrimitiveType.BYTE || kind == PrimitiveType.SHORT */) {
                 generateBitwiseOperators(className, since = if (kind == PrimitiveType.BYTE || kind == PrimitiveType.SHORT) "1.1" else null)
@@ -201,10 +215,17 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
         out.println()
     }
 
-    private fun generateBitShiftOperators(className: String) {
+    private fun generateBitShiftOperators(kind: PrimitiveType) {
+        val className = kind.capitalized
+        val detail = shiftOperatorsDocDetail(kind)
         for ((name, doc) in shiftOperators) {
-            out.println("    /** $doc */")
+            out.println("    /**")
+            out.println("     * $doc")
+            out.println("     *")
+            out.println(detail.replaceIndent("     "))
+            out.println("     */")
             out.println("    public infix fun $name(bitCount: Int): $className")
+            out.println()
         }
     }
     private fun generateBitwiseOperators(className: String, since: String?) {

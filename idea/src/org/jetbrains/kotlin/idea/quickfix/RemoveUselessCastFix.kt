@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.dropEnclosingParenthesesIfPossible
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.psi.KtBinaryExpressionWithTypeRHS
@@ -16,7 +17,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
 class RemoveUselessCastFix(element: KtBinaryExpressionWithTypeRHS) : KotlinQuickFixAction<KtBinaryExpressionWithTypeRHS>(element),
     CleanupFix {
-    override fun getFamilyName() = "Remove useless cast"
+    override fun getFamilyName() = KotlinBundle.message("remove.useless.cast")
 
     override fun getText(): String = familyName
 

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.inspections
 
 import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.quickfix.ChangeVariableMutabilityFix
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -20,7 +21,7 @@ class DelegationToVarPropertyInspection : AbstractKotlinInspection() {
             if (parameter.valOrVarKeyword?.node?.elementType != KtTokens.VAR_KEYWORD) return
             holder.registerProblem(
                 parameter,
-                "Delegating to 'var' property does not take its changes into account",
+                KotlinBundle.message("delegating.to.var.property.does.not.take.its.changes.into.account"),
                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                 IntentionWrapper(ChangeVariableMutabilityFix(parameter, false), parameter.containingFile),
                 RemoveVarKeyword()
@@ -29,7 +30,7 @@ class DelegationToVarPropertyInspection : AbstractKotlinInspection() {
 }
 
 private class RemoveVarKeyword : LocalQuickFix {
-    override fun getName() = "Remove var"
+    override fun getName() = KotlinBundle.message("remove.var.keyword.text")
 
     override fun getFamilyName() = name
 

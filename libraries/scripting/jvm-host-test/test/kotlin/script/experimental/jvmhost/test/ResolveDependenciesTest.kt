@@ -13,6 +13,7 @@ import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.*
 import kotlin.script.experimental.jvm.util.classpathFromClass
 import kotlin.script.experimental.jvmhost.BasicJvmScriptingHost
+import kotlin.script.experimental.jvmhost.test.ReplTest.Companion.checkEvaluateInRepl
 
 class ResolveDependenciesTest : TestCase() {
 

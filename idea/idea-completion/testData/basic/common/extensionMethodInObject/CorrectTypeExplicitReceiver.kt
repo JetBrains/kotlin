@@ -21,7 +21,6 @@ fun usage(b: B) {
     b.foo<caret>
 }
 
-// INVOCATION_COUNT: 2
 // EXIST: { lookupString: "fooForAny", itemText: "fooForAny" }
 
 // EXIST: { lookupString: "fooForT", itemText: "fooForT" }

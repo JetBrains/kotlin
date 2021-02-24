@@ -1,3 +1,5 @@
+// FIR_COMPARISON
+
 object Obj {
     class NestedInObject {
         companion object {

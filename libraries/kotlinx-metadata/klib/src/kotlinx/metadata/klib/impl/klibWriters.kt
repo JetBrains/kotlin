@@ -7,9 +7,9 @@ package kotlinx.metadata.klib.impl
 
 import kotlinx.metadata.impl.*
 import kotlinx.metadata.klib.KlibSourceFile
-import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataStringTable
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.serialization.ApproximatingStringTable
 
 class ReverseSourceFileIndexWriteExtension : WriteContextExtension {
     private val filesReverseIndex = mutableMapOf<KlibSourceFile, Int>()
@@ -26,7 +26,7 @@ class ReverseSourceFileIndexWriteExtension : WriteContextExtension {
 }
 
 class KlibModuleFragmentWriter(
-    stringTable: KlibMetadataStringTable,
+    stringTable: ApproximatingStringTable,
     contextExtensions: List<WriteContextExtension> = emptyList()
 ) : ModuleFragmentWriter(stringTable, contextExtensions) {
 
@@ -36,7 +36,7 @@ class KlibModuleFragmentWriter(
     override fun visitEnd() {
 
         // TODO: This should be moved to ModuleFragmentWriter.
-        val (strings, qualifiedNames) = (c.strings as KlibMetadataStringTable).buildProto()
+        val (strings, qualifiedNames) = (c.strings as ApproximatingStringTable).buildProto()
         t.strings = strings
         t.qualifiedNames = qualifiedNames
 

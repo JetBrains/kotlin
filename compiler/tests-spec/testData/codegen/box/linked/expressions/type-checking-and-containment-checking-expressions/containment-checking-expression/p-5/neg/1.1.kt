@@ -4,7 +4,7 @@
  * KOTLIN CODEGEN BOX SPEC TEST (NEGATIVE)
  *
  * SPEC VERSION: 0.1-218
- * PLACE: expressions, type-checking-and-containment-checking-expressions, containment-checking-expression -> paragraph 5 -> sentence 1
+ * MAIN LINK: expressions, type-checking-and-containment-checking-expressions, containment-checking-expression -> paragraph 5 -> sentence 1
  * NUMBER: 1
  * DESCRIPTION: The contains function must have a return type kotlin.Boolean, otherwise it is a compile-time error.
  * EXCEPTION: compiletime

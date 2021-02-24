@@ -1,6 +1,6 @@
 # Kotlin Test
 
-Module `kotlin-test` is used by the [Kotlin/JS](https://kotlinlang.org/docs/tutorials/javascript/kotlin-to-javascript/kotlin-to-javascript.html)
+The `kotlin-test` module is used by the [Kotlin/JS](https://kotlinlang.org/docs/tutorials/javascript/kotlin-to-javascript/kotlin-to-javascript.html)
 compiler output for performing assertions in tests, independently of the test framework being used. 
 
 The library includes out-of-the-box support for [Jasmine](https://jasmine.github.io/), 

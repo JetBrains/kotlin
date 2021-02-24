@@ -1585,6 +1585,8 @@ public class KotlinParsing extends AbstractKotlinParsing {
             parseTypeRef();
         }
 
+        parseFunctionContract();
+
         parseFunctionBody();
 
         closeDeclarationWithCommentBinders(getterOrSetter, PROPERTY_ACCESSOR, true);
@@ -1671,7 +1673,13 @@ public class KotlinParsing extends AbstractKotlinParsing {
             parseTypeRef();
         }
 
+        boolean functionContractOccurred = parseFunctionContract();
+
         parseTypeConstraintsGuarded(typeParameterListOccurred);
+
+        if (!functionContractOccurred) {
+            parseFunctionContract();
+        }
 
         if (at(SEMICOLON)) {
             advance(); // SEMICOLON
@@ -1804,20 +1812,23 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
         myBuilder.enableNewlines();
 
-        expect(LBRACE, "Expecting '{' to open a block");
+        boolean hasOpeningBrace = expect(LBRACE, "Expecting '{' to open a block");
+        boolean canCollapse = collapse && hasOpeningBrace;
 
-        if(collapse){
+        if (canCollapse) {
             advanceBalancedBlock();
-        }else{
+        }
+        else {
             myExpressionParsing.parseStatements();
             expect(RBRACE, "Expecting '}'");
         }
 
         myBuilder.restoreNewlinesState();
 
-        if(collapse){
+        if (canCollapse) {
             lazyBlock.collapse(BLOCK);
-        }else{
+        }
+        else {
             lazyBlock.done(BLOCK);
         }
     }
@@ -1988,6 +1999,14 @@ public class KotlinParsing extends AbstractKotlinParsing {
         parseTypeRef();
 
         constraint.done(TYPE_CONSTRAINT);
+    }
+
+    private boolean parseFunctionContract() {
+        if (at(CONTRACT_KEYWORD)) {
+            myExpressionParsing.parseContractDescriptionBlock();
+            return true;
+        }
+        return false;
     }
 
     /*

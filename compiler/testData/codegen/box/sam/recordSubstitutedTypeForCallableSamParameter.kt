@@ -1,8 +1,9 @@
 // !LANGUAGE: +NewInference +SamConversionPerArgument +SamConversionForKotlinFunctions +FunctionalInterfaceConversion
 // WITH_REFLECT
 // FULL_JDK
-// IGNORE_BACKEND_FIR: JVM_IR
 // TARGET_BACKEND: JVM
+// SAM_CONVERSIONS: CLASS
+//  ^ SAM-convertion classes created with LambdaMetafactory have no generic signatures
 
 // FILE: Provider.java
 

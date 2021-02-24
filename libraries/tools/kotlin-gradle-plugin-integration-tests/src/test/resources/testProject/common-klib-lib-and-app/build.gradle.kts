@@ -18,6 +18,17 @@ kotlin {
 	linuxX64()
 	linuxArm64()
 
+	// Linux-specific targets – embedded:
+	linuxMips32()
+	linuxMipsel32()
+
+	// macOS-specific targets - created by the ios() shortcut:
+	ios()
+
+	// Windows-specific targets:
+	mingwX64()
+	mingwX86()
+
 	sourceSets {
 		val commonMain by getting {
 			dependencies {
@@ -27,6 +38,11 @@ kotlin {
 
 		val linuxMain by creating {
 			dependsOn(commonMain)
+		}
+
+
+		configure(listOf(linuxX64(), linuxArm64())) {
+			compilations["main"].defaultSourceSet.dependsOn(linuxMain)
 		}
 
 		val jvmAndJsMain by creating {
@@ -47,8 +63,20 @@ kotlin {
 			}
 		}
 
-		configure(listOf(linuxX64(), linuxArm64())) {
-			compilations["main"].defaultSourceSet.dependsOn(linuxMain)
+		val embeddedMain by creating {
+			dependsOn(commonMain)
+		}
+
+		configure(listOf(linuxMips32(), linuxMipsel32())) {
+			compilations["main"].defaultSourceSet.dependsOn(embeddedMain)
+		}
+
+		val windowsMain by creating {
+			dependsOn(commonMain)
+		}
+
+		configure(listOf(mingwX64(), mingwX86())) {
+			compilations["main"].defaultSourceSet.dependsOn(windowsMain)
 		}
 	}
 }
@@ -60,10 +88,7 @@ publishing {
 }
 
 tasks {
-	val skipCompilationOfTargets = setOf(
-		"linuxX64",
-		"linuxArm64"
-	)
+	val skipCompilationOfTargets = kotlin.targets.matching { it.platformType.toString() == "native" }.names
 	all { 
 		val target = name.removePrefix("compileKotlin").decapitalize()
 		if (target in skipCompilationOfTargets) {

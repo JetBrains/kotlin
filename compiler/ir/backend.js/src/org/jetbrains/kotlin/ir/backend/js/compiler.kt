@@ -8,31 +8,30 @@ package org.jetbrains.kotlin.ir.backend.js
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.AbstractAnalyzerWithCompilerReport
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
-import org.jetbrains.kotlin.backend.common.phaser.PhaserState
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.lower.generateTests
 import org.jetbrains.kotlin.ir.backend.js.lower.moveBodilessDeclarationsToSeparatePlace
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
-import org.jetbrains.kotlin.ir.backend.js.utils.JsMainFunctionDetector
 import org.jetbrains.kotlin.ir.backend.js.utils.NameTables
-import org.jetbrains.kotlin.ir.backend.js.utils.isJsExport
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.StageController
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
+import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
-import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
-import org.jetbrains.kotlin.ir.util.generateTypicalIrProviderList
-import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
-import org.jetbrains.kotlin.ir.util.patchDeclarationParents
+import org.jetbrains.kotlin.ir.util.noUnboundLeft
+import org.jetbrains.kotlin.js.config.DceRuntimeDiagnostic
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.KtFile
 
 class CompilerResult(
-    val jsCode: String?,
-    val dceJsCode: String?,
+    val jsCode: JsCode?,
+    val dceJsCode: JsCode?,
     val tsDefinitions: String? = null
 )
+
+class JsCode(val mainModule: String, val dependencies: Iterable<Pair<String, String>> = emptyList())
 
 fun compile(
     project: Project,
@@ -46,68 +45,84 @@ fun compile(
     exportedDeclarations: Set<FqName> = emptySet(),
     generateFullJs: Boolean = true,
     generateDceJs: Boolean = false,
-    dceDriven: Boolean = false
+    dceDriven: Boolean = false,
+    dceRuntimeDiagnostic: DceRuntimeDiagnostic? = null,
+    es6mode: Boolean = false,
+    multiModule: Boolean = false,
+    relativeRequirePath: Boolean = false,
+    propertyLazyInitialization: Boolean,
 ): CompilerResult {
-    stageController = object : StageController {}
+    val irFactory = if (dceDriven) PersistentIrFactory() else IrFactoryImpl
 
     val (moduleFragment: IrModuleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer) =
-        loadIr(project, mainModule, analyzer, configuration, allDependencies, friendDependencies)
+        loadIr(project, mainModule, analyzer, configuration, allDependencies, friendDependencies, irFactory)
 
     val moduleDescriptor = moduleFragment.descriptor
-
-    val mainFunction = JsMainFunctionDetector.getMainFunctionOrNull(moduleFragment)
-
-    val context = JsIrBackendContext(moduleDescriptor, irBuiltIns, symbolTable, moduleFragment, exportedDeclarations, configuration)
-
-    // Load declarations referenced during `context` initialization
-    dependencyModules.forEach {
-        val irProviders = generateTypicalIrProviderList(it.descriptor, irBuiltIns, symbolTable, deserializer)
-        ExternalDependenciesGenerator(symbolTable, irProviders).generateUnboundSymbolsAsDependencies()
-    }
 
     val allModules = when (mainModule) {
         is MainModule.SourceFiles -> dependencyModules + listOf(moduleFragment)
         is MainModule.Klib -> dependencyModules
     }
 
-    val irFiles = allModules.flatMap { it.files }
+    val context = JsIrBackendContext(
+        moduleDescriptor,
+        irBuiltIns,
+        symbolTable,
+        allModules.first(),
+        exportedDeclarations,
+        configuration,
+        es6mode = es6mode,
+        dceRuntimeDiagnostic = dceRuntimeDiagnostic,
+        propertyLazyInitialization = propertyLazyInitialization,
+        irFactory = irFactory
+    )
 
-    moduleFragment.files.clear()
-    moduleFragment.files += irFiles
+    // Load declarations referenced during `context` initialization
+    val irProviders = listOf(deserializer)
+    ExternalDependenciesGenerator(symbolTable, irProviders).generateUnboundSymbolsAsDependencies()
 
-    val irProvidersWithoutDeserializer = generateTypicalIrProviderList(moduleDescriptor, irBuiltIns, symbolTable)
-    // Create stubs
-    ExternalDependenciesGenerator(symbolTable, irProvidersWithoutDeserializer).generateUnboundSymbolsAsDependencies()
-    moduleFragment.patchDeclarationParents()
+    deserializer.postProcess()
+    symbolTable.noUnboundLeft("Unbound symbols at the end of linker")
 
-    deserializer.finalizeExpectActualLinker()
+    allModules.forEach { module ->
+        moveBodilessDeclarationsToSeparatePlace(context, module)
+    }
 
-    moveBodilessDeclarationsToSeparatePlace(context, moduleFragment)
+    // TODO should be done incrementally
+    generateTests(context, allModules.last())
 
     if (dceDriven) {
-
-        // TODO we should only generate tests for the current module
-        // TODO should be done incrementally
-        generateTests(context, moduleFragment)
-
         val controller = MutableController(context, pirLowerings)
-        stageController = controller
+
+        check(irFactory is PersistentIrFactory)
+        irFactory.stageController = controller
 
         controller.currentStage = controller.lowerings.size + 1
 
-        eliminateDeadDeclarations(moduleFragment, context, mainFunction)
+        eliminateDeadDeclarations(allModules, context)
 
-        // TODO investigate whether this is needed anymore
-        stageController = object : StageController {
-            override val currentStage: Int = controller.currentStage
-        }
+        irFactory.stageController = StageController(controller.currentStage)
 
-        val transformer = IrModuleToJsTransformer(context, mainFunction, mainArguments)
-        return transformer.generateModule(moduleFragment, fullJs = true, dceJs = false)
+        val transformer = IrModuleToJsTransformer(
+            context,
+            mainArguments,
+            fullJs = true,
+            dceJs = false,
+            multiModule = multiModule,
+            relativeRequirePath = relativeRequirePath
+        )
+        return transformer.generateModule(allModules)
     } else {
-        jsPhases.invokeToplevel(phaseConfig, context, moduleFragment)
-        val transformer = IrModuleToJsTransformer(context, mainFunction, mainArguments)
-        return transformer.generateModule(moduleFragment, generateFullJs, generateDceJs)
+        jsPhases.invokeToplevel(phaseConfig, context, allModules)
+        val transformer = IrModuleToJsTransformer(
+            context,
+            mainArguments,
+            fullJs = generateFullJs,
+            dceJs = generateDceJs,
+            multiModule = multiModule,
+            relativeRequirePath = relativeRequirePath
+        )
+        return transformer.generateModule(allModules)
     }
 }
 
@@ -117,8 +132,8 @@ fun generateJsCode(
     nameTables: NameTables
 ): String {
     moveBodilessDeclarationsToSeparatePlace(context, moduleFragment)
-    jsPhases.invokeToplevel(PhaseConfig(jsPhases), context, moduleFragment)
+    jsPhases.invokeToplevel(PhaseConfig(jsPhases), context, listOf(moduleFragment))
 
-    val transformer = IrModuleToJsTransformer(context, null, null, true, nameTables)
-    return transformer.generateModule(moduleFragment).jsCode!!
+    val transformer = IrModuleToJsTransformer(context, null, true, nameTables)
+    return transformer.generateModule(listOf(moduleFragment)).jsCode!!.mainModule
 }

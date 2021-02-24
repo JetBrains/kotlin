@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 class P {
     var x : Int = 0
         private set

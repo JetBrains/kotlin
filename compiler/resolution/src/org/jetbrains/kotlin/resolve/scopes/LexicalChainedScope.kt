@@ -25,10 +25,11 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.utils.takeSnapshot
 import org.jetbrains.kotlin.util.collectionUtils.getFirstClassifierDiscriminateHeaders
 import org.jetbrains.kotlin.util.collectionUtils.getFromAllScopes
+import org.jetbrains.kotlin.util.collectionUtils.listOfNonEmptyScopes
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
-class LexicalChainedScope @JvmOverloads constructor(
+class LexicalChainedScope private constructor(
     parent: LexicalScope,
     override val ownerDescriptor: DeclarationDescriptor,
     override val isOwnerDescriptorAccessibleByLabel: Boolean,
@@ -36,7 +37,7 @@ class LexicalChainedScope @JvmOverloads constructor(
     override val kind: LexicalScopeKind,
     // NB. Here can be very special subtypes of MemberScope (e.g., DeprecatedMemberScope).
     // Please, do not leak them outside of LexicalChainedScope, because other parts of compiler are not ready to work with them
-    private val memberScopes: List<MemberScope>,
+    private val memberScopes: Array<MemberScope>,
     @Deprecated("This value is temporary hack for resolve -- don't use it!")
     val isStaticScope: Boolean = false
 ) : LexicalScope {
@@ -90,4 +91,30 @@ class LexicalChainedScope @JvmOverloads constructor(
         p.println("}")
     }
 
+    override fun definitelyDoesNotContainName(name: Name): Boolean {
+        return memberScopes.all { it.definitelyDoesNotContainName(name) }
+    }
+
+    override fun recordLookup(name: Name, location: LookupLocation) {
+        memberScopes.forEach { it.recordLookup(name, location) }
+    }
+
+    companion object {
+
+        @JvmOverloads
+        fun create(
+            parent: LexicalScope,
+            ownerDescriptor: DeclarationDescriptor,
+            isOwnerDescriptorAccessibleByLabel: Boolean,
+            implicitReceiver: ReceiverParameterDescriptor?,
+            kind: LexicalScopeKind,
+            vararg memberScopes: MemberScope?,
+            isStaticScope: Boolean = false
+        ): LexicalScope =
+            LexicalChainedScope(
+                parent, ownerDescriptor, isOwnerDescriptorAccessibleByLabel, implicitReceiver, kind,
+                listOfNonEmptyScopes(*memberScopes).toTypedArray(),
+                isStaticScope
+            )
+    }
 }

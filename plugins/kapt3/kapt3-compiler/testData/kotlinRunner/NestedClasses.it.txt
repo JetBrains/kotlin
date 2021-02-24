@@ -22,14 +22,15 @@ import java.lang.System;
 
 @kotlin.Metadata()
 public final class Simple {
+    @org.jetbrains.annotations.NotNull()
     public static final test.Simple.Companion Companion = null;
-
-    @MyAnnotation()
-    public final void myMethod() {
-    }
 
     public Simple() {
         super();
+    }
+
+    @MyAnnotation()
+    public final void myMethod() {
     }
 
     @kotlin.Metadata()

@@ -11,46 +11,42 @@ import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.loops.forLoopsPhase
 import org.jetbrains.kotlin.backend.common.lower.optimizations.foldConstantLoweringPhase
 import org.jetbrains.kotlin.backend.common.phaser.*
-import org.jetbrains.kotlin.backend.jvm.ir.getJvmVisibilityOfDefaultArgumentStub
+import org.jetbrains.kotlin.backend.jvm.codegen.shouldContainSuspendMarkers
 import org.jetbrains.kotlin.backend.jvm.lower.*
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.util.PatchDeclarationParentsVisitor
 import org.jetbrains.kotlin.ir.util.isAnonymousObject
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import org.jetbrains.kotlin.load.java.JavaVisibilities
+import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.NameUtils
 
-private fun makePatchParentsPhase(number: Int) = namedIrFilePhase(
-    lower = object : SameTypeCompilerPhase<CommonBackendContext, IrFile> {
-        override fun invoke(
-            phaseConfig: PhaseConfig,
-            phaserState: PhaserState<IrFile>,
-            context: CommonBackendContext,
-            input: IrFile
-        ): IrFile {
-            input.acceptVoid(PatchDeclarationParentsVisitor())
-            return input
-        }
-    },
+private fun makePatchParentsPhase(number: Int): NamedCompilerPhase<CommonBackendContext, IrFile> = makeIrFilePhase(
+    { PatchDeclarationParents() },
     name = "PatchParents$number",
     description = "Patch parent references in IrFile, pass $number",
-    nlevels = 0
 )
 
+private class PatchDeclarationParents : FileLoweringPass {
+    override fun lower(irFile: IrFile) {
+        irFile.acceptVoid(PatchDeclarationParentsVisitor())
+    }
+}
+
 private val validateIrBeforeLowering = makeCustomPhase<JvmBackendContext, IrModuleFragment>(
-    { context, module -> validationCallback(context, module) },
+    { context, module -> validationCallback(context, module, checkProperties = true) },
     name = "ValidateIrBeforeLowering",
     description = "Validate IR before lowering"
 )
 
 private val validateIrAfterLowering = makeCustomPhase<JvmBackendContext, IrModuleFragment>(
-    { context, module -> validationCallback(context, module) },
+    { context, module -> validationCallback(context, module, checkProperties = true) },
     name = "ValidateIrAfterLowering",
     description = "Validate IR after lowering"
 )
@@ -74,8 +70,8 @@ private val arrayConstructorPhase = makeIrFilePhase(
     description = "Transform `Array(size) { index -> value }` into a loop"
 )
 
-private val expectDeclarationsRemovingPhase = makeIrModulePhase<JvmBackendContext>(
-    { context -> ExpectDeclarationsRemoveLowering(context, keepOptionalAnnotations = true) },
+private val expectDeclarationsRemovingPhase = makeIrModulePhase(
+    ::ExpectDeclarationsRemoveLowering,
     name = "ExpectDeclarationsRemoving",
     description = "Remove expect declaration from module fragment"
 )
@@ -98,14 +94,22 @@ private val lateinitUsageLoweringPhase = makeIrFilePhase(
     description = "Insert checks for lateinit field references"
 )
 
-private val propertiesPhase = makeIrFilePhase(
+internal val propertiesPhase = makeIrFilePhase(
     ::JvmPropertiesLowering,
     name = "Properties",
-    description = "Move fields and accessors for properties to their classes, and create synthetic methods for property annotations",
+    description = "Move fields and accessors for properties to their classes, " +
+            "replace calls to default property accessors with field accesses, " +
+            "remove unused accessors and create synthetic methods for property annotations",
     stickyPostconditions = setOf((PropertiesLowering)::checkNoProperties)
 )
 
-internal val localDeclarationsPhase = makeIrFilePhase<CommonBackendContext>(
+internal val IrClass.isGeneratedLambdaClass: Boolean
+    get() = origin == JvmLoweredDeclarationOrigin.LAMBDA_IMPL ||
+            origin == JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA ||
+            origin == JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL ||
+            origin == JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE
+
+internal val localDeclarationsPhase = makeIrFilePhase(
     { context ->
         LocalDeclarationsLowering(
             context,
@@ -114,29 +118,32 @@ internal val localDeclarationsPhase = makeIrFilePhase<CommonBackendContext>(
                     NameUtils.sanitizeAsJavaIdentifier(super.localName(declaration))
             },
             object : VisibilityPolicy {
-                override fun forClass(declaration: IrClass, inInlineFunctionScope: Boolean): Visibility =
-                    if (declaration.origin == JvmLoweredDeclarationOrigin.LAMBDA_IMPL ||
-                        declaration.origin == JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL ||
-                        declaration.origin == JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE) {
+                // Note: any condition that results in non-`LOCAL` visibility here should be duplicated in `JvmLocalClassPopupLowering`,
+                // else it won't detect the class as local.
+                override fun forClass(declaration: IrClass, inInlineFunctionScope: Boolean): DescriptorVisibility =
+                    if (declaration.isGeneratedLambdaClass) {
                         scopedVisibility(inInlineFunctionScope)
                     } else {
                         declaration.visibility
                     }
 
-                override fun forConstructor(declaration: IrConstructor, inInlineFunctionScope: Boolean): Visibility =
+                override fun forConstructor(declaration: IrConstructor, inInlineFunctionScope: Boolean): DescriptorVisibility =
                     if (declaration.parentAsClass.isAnonymousObject)
                         scopedVisibility(inInlineFunctionScope)
                     else
                         declaration.visibility
 
-                private fun scopedVisibility(inInlineFunctionScope: Boolean): Visibility =
-                    if (inInlineFunctionScope) Visibilities.PUBLIC else JavaVisibilities.PACKAGE_VISIBILITY
+                override fun forCapturedField(value: IrValueSymbol): DescriptorVisibility =
+                    JavaDescriptorVisibilities.PACKAGE_VISIBILITY // avoid requiring a synthetic accessor for it
+
+                private fun scopedVisibility(inInlineFunctionScope: Boolean): DescriptorVisibility =
+                    if (inInlineFunctionScope) DescriptorVisibilities.PUBLIC else JavaDescriptorVisibilities.PACKAGE_VISIBILITY
             }
         )
     },
     name = "JvmLocalDeclarations",
     description = "Move local declarations to classes",
-    prerequisite = setOf(callableReferencePhase, sharedVariablesPhase)
+    prerequisite = setOf(functionReferencePhase, sharedVariablesPhase)
 )
 
 private val jvmLocalClassExtractionPhase = makeIrFilePhase(
@@ -174,7 +181,7 @@ private val defaultArgumentInjectorPhase = makeIrFilePhase(
     ::JvmDefaultParameterInjector,
     name = "DefaultParameterInjector",
     description = "Transform calls with default arguments into calls to stubs",
-    prerequisite = setOf(callableReferencePhase, inlineCallableReferenceToLambdaPhase)
+    prerequisite = setOf(functionReferencePhase, inlineCallableReferenceToLambdaPhase)
 )
 
 private val interfacePhase = makeIrFilePhase(
@@ -185,17 +192,23 @@ private val interfacePhase = makeIrFilePhase(
 )
 
 private val innerClassesPhase = makeIrFilePhase(
-    ::InnerClassesLowering,
+    { context -> InnerClassesLowering(context, context.innerClassesSupport) },
     name = "InnerClasses",
     description = "Add 'outer this' fields to inner classes",
     prerequisite = setOf(localDeclarationsPhase)
 )
 
 private val innerClassesMemberBodyPhase = makeIrFilePhase(
-    ::InnerClassesMemberBodyLowering,
+    { context -> InnerClassesMemberBodyLowering(context, context.innerClassesSupport) },
     name = "InnerClassesMemberBody",
     description = "Replace `this` with 'outer this' field references",
     prerequisite = setOf(innerClassesPhase)
+)
+
+private val innerClassConstructorCallsPhase = makeIrFilePhase<JvmBackendContext>(
+    { context -> InnerClassConstructorCallsLowering(context, context.innerClassesSupport) },
+    name = "InnerClassConstructorCalls",
+    description = "Handle constructor calls for inner classes"
 )
 
 private val staticInitializersPhase = makeIrFilePhase(
@@ -204,7 +217,7 @@ private val staticInitializersPhase = makeIrFilePhase(
     description = "Move code from object init blocks and static field initializers to a new <clinit> function"
 )
 
-private val initializersPhase = makeIrFilePhase<JvmBackendContext>(
+private val initializersPhase = makeIrFilePhase(
     ::InitializersLowering,
     name = "Initializers",
     description = "Merge init blocks and field initializers into constructors",
@@ -212,7 +225,7 @@ private val initializersPhase = makeIrFilePhase<JvmBackendContext>(
     prerequisite = setOf(jvmLocalClassExtractionPhase)
 )
 
-private val initializersCleanupPhase = makeIrFilePhase<JvmBackendContext>(
+private val initializersCleanupPhase = makeIrFilePhase(
     { context ->
         InitializersCleanupLowering(context) {
             it.constantValue(context) == null && (!it.isStatic || it.correspondingPropertySymbol?.owner?.isConst != true)
@@ -248,122 +261,140 @@ private val syntheticAccessorPhase = makeIrFilePhase(
     prerequisite = setOf(objectClassPhase, staticDefaultFunctionPhase, interfacePhase)
 )
 
-private val tailrecPhase = makeIrFilePhase<JvmBackendContext>(
+private val tailrecPhase = makeIrFilePhase(
     ::JvmTailrecLowering,
     name = "Tailrec",
     description = "Handle tailrec calls"
 )
 
-@Suppress("Reformat")
-private val jvmFilePhases =
-        renameAnonymousParametersLowering then
-        typeAliasAnnotationMethodsPhase then
-        stripTypeAliasDeclarationsPhase then
-        provisionalFunctionExpressionPhase then
-        inventNamesForLocalClassesPhase then
-        kCallableNamePropertyPhase then
-        annotationPhase then
-        polymorphicSignaturePhase then
-        varargPhase then
-        arrayConstructorPhase then
-        checkNotNullPhase then
+private val kotlinNothingValueExceptionPhase = makeIrFilePhase<CommonBackendContext>(
+    { context -> KotlinNothingValueExceptionLowering(context) { it is IrFunction && !it.shouldContainSuspendMarkers() } },
+    name = "KotlinNothingValueException",
+    description = "Throw proper exception for calls returning value of type 'kotlin.Nothing'"
+)
 
-        lateinitNullableFieldsPhase then
-        lateinitDeclarationLoweringPhase then
-        lateinitUsageLoweringPhase then
+private val jvmFilePhases = listOf(
+    typeAliasAnnotationMethodsPhase,
+    stripTypeAliasDeclarationsPhase,
+    provisionalFunctionExpressionPhase,
 
-        moveOrCopyCompanionObjectFieldsPhase then
-        inlineCallableReferenceToLambdaPhase then
-        propertyReferencePhase then
-        constPhase then
-        propertiesToFieldsPhase then
-        remapObjectFieldAccesses then
-        propertiesPhase then
-        anonymousObjectSuperConstructorPhase then
-        tailrecPhase then
+    jvmOverloadsAnnotationPhase,
+    mainMethodGenerationPhase,
 
-        jvmInlineClassPhase then
+    inventNamesForLocalClassesPhase,
+    kCallableNamePropertyPhase,
+    annotationPhase,
+    polymorphicSignaturePhase,
+    varargPhase,
+    arrayConstructorPhase,
+    checkNotNullPhase,
 
-        sharedVariablesPhase then
+    lateinitNullableFieldsPhase,
+    lateinitDeclarationLoweringPhase,
+    lateinitUsageLoweringPhase,
 
-        makePatchParentsPhase(1) then
+    inlineCallableReferenceToLambdaPhase,
+    functionReferencePhase,
+    suspendLambdaPhase,
+    propertyReferencePhase,
+    constPhase,
+    // TODO: merge the next three phases together, as visitors behave incorrectly between them
+    //  (backing fields moved out of companion objects are reachable by two paths):
+    moveOrCopyCompanionObjectFieldsPhase,
+    propertiesPhase,
+    remapObjectFieldAccesses,
+    anonymousObjectSuperConstructorPhase,
+    tailrecPhase,
 
-        enumWhenPhase then
-        singletonReferencesPhase then
+    jvmStandardLibraryBuiltInsPhase,
 
-        callableReferencePhase then
-        singleAbstractMethodPhase then
-        assertionPhase then
-        returnableBlocksPhase then
-        localDeclarationsPhase then
-        jvmLocalClassExtractionPhase then
+    rangeContainsLoweringPhase,
+    forLoopsPhase,
+    collectionStubMethodLowering,
+    jvmInlineClassPhase,
 
-        jvmOverloadsAnnotationPhase then
-        jvmDefaultConstructorPhase then
+    makePatchParentsPhase(1),
 
-        forLoopsPhase then
-        flattenStringConcatenationPhase then
-        foldConstantLoweringPhase then
-        computeStringTrimPhase then
-        jvmStringConcatenationLowering then
+    enumWhenPhase,
+    singletonReferencesPhase,
 
-        defaultArgumentStubPhase then
-        defaultArgumentInjectorPhase then
-        defaultArgumentCleanerPhase then
+    singleAbstractMethodPhase,
+    assertionPhase,
+    returnableBlocksPhase,
+    sharedVariablesPhase,
+    localDeclarationsPhase,
+    jvmLocalClassExtractionPhase,
+    staticCallableReferencePhase,
 
-        interfacePhase then
-        inheritedDefaultMethodsOnClassesPhase then
-        interfaceSuperCallsPhase then
-        interfaceDefaultCallsPhase then
-        interfaceObjectCallsPhase then
+    jvmDefaultConstructorPhase,
 
-        tailCallOptimizationPhase then
-        addContinuationPhase then
+    flattenStringConcatenationPhase,
+    foldConstantLoweringPhase,
+    computeStringTrimPhase,
+    jvmStringConcatenationLowering,
 
-        innerClassesPhase then
-        innerClassesMemberBodyPhase then
-        innerClassConstructorCallsPhase then
+    defaultArgumentStubPhase,
+    defaultArgumentInjectorPhase,
+    defaultArgumentCleanerPhase,
 
-        makePatchParentsPhase(2) then
+    interfacePhase,
+    inheritedDefaultMethodsOnClassesPhase,
+    replaceDefaultImplsOverriddenSymbolsPhase,
+    interfaceSuperCallsPhase,
+    interfaceDefaultCallsPhase,
+    interfaceObjectCallsPhase,
 
-        enumClassPhase then
-        objectClassPhase then
-        staticInitializersPhase then
-        initializersPhase then
-        initializersCleanupPhase then
-        collectionStubMethodLowering then
-        functionNVarargBridgePhase then
-        bridgePhase then
-        jvmStaticAnnotationPhase then
-        staticDefaultFunctionPhase then
-        syntheticAccessorPhase then
+    tailCallOptimizationPhase,
+    addContinuationPhase,
 
-        jvmArgumentNullabilityAssertions then
-        toArrayPhase then
-        jvmOptimizationLoweringPhase then
-        additionalClassAnnotationPhase then
-        typeOperatorLowering then
-        replaceKFunctionInvokeWithFunctionInvokePhase then
+    innerClassesPhase,
+    innerClassesMemberBodyPhase,
+    innerClassConstructorCallsPhase,
 
-        checkLocalNamesWithOldBackendPhase then
+    makePatchParentsPhase(2),
 
-        mainMethodGenerationPhase then
-        renameFieldsPhase then
-        fakeInliningLocalVariablesLowering then
+    enumClassPhase,
+    objectClassPhase,
+    staticInitializersPhase,
+    initializersPhase,
+    initializersCleanupPhase,
+    functionNVarargBridgePhase,
+    jvmStaticInCompanionPhase,
+    staticDefaultFunctionPhase,
+    bridgePhase,
+    syntheticAccessorPhase,
 
-        makePatchParentsPhase(3)
+    jvmArgumentNullabilityAssertions,
+    toArrayPhase,
+    jvmOptimizationLoweringPhase,
+    ifNullExpressionsFusionPhase,
+    additionalClassAnnotationPhase,
+    typeOperatorLowering,
+    replaceKFunctionInvokeWithFunctionInvokePhase,
+    kotlinNothingValueExceptionPhase,
 
-val jvmPhases = namedIrModulePhase(
+    renameFieldsPhase,
+    fakeInliningLocalVariablesLowering,
+
+    makePatchParentsPhase(3)
+)
+
+val jvmPhases = NamedCompilerPhase(
     name = "IrLowering",
     description = "IR lowering",
+    nlevels = 1,
+    actions = setOf(defaultDumper, validationAction),
     lower = validateIrBeforeLowering then
+            processOptionalAnnotationsPhase then
             expectDeclarationsRemovingPhase then
+            scriptsToClassesPhase then
             fileClassPhase then
+            jvmStaticInObjectPhase then
             performByIrFile(lower = jvmFilePhases) then
             generateMultifileFacadesPhase then
             resolveInlineCallsPhase then
             // should be last transformation
-            removeDeclarationsThatWouldBeInlined then
+            prepareForBytecodeInlining then
             validateIrAfterLowering
 )
 

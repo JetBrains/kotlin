@@ -3,7 +3,7 @@
 
 fun basic(): String {
     var current: String? = null
-    current = if (current == null) "bar" else <!NI;DEBUG_INFO_SMARTCAST!>current<!>
+    current = if (current == null) "bar" else current
     return <!DEBUG_INFO_SMARTCAST!>current<!>
 }
 
@@ -69,5 +69,5 @@ fun gau(flag: Boolean, arg: String?) {
         }
     }
 
-    <!NI;DEBUG_INFO_SMARTCAST!>x<!><!OI;UNSAFE_CALL!>.<!>hashCode()
+    <!DEBUG_INFO_SMARTCAST{NI}!>x<!><!UNSAFE_CALL{OI}!>.<!>hashCode()
 }

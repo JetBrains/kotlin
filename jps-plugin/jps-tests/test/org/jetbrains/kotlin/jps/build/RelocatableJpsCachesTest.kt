@@ -15,16 +15,19 @@ import org.jetbrains.kotlin.incremental.testingUtils.assertEqualDirectories
 import org.jetbrains.kotlin.jps.build.fixtures.EnableICFixture
 import org.jetbrains.kotlin.jps.incremental.KotlinDataContainerTarget
 import java.io.File
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.createTempDirectory
 import kotlin.reflect.KFunction1
 
 class RelocatableJpsCachesTest : BaseKotlinJpsBuildTestCase() {
     private val enableICFixture = EnableICFixture()
     private lateinit var workingDir: File
 
+    @OptIn(ExperimentalPathApi::class)
     override fun setUp() {
         super.setUp()
         enableICFixture.setUp()
-        workingDir = createTempDir("RelocatableJpsCachesTest", getTestName(false))
+        workingDir = createTempDirectory("RelocatableJpsCachesTest-" + getTestName(false)).toFile()
     }
 
     override fun tearDown() {

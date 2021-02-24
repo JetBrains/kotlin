@@ -1,0 +1,4 @@
+FILE: arrayAssignment.kt
+    public? final? fun test(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? fun foo(): <implicit> { LAZY_BLOCK }
+    public? final? fun test2(): R|kotlin/Unit| { LAZY_BLOCK }

@@ -33,11 +33,10 @@ import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.expression.InlineMetadata
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getModuleName
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
-import org.jetbrains.kotlin.resolve.inline.InlineStrategy
 import org.jetbrains.kotlin.utils.JsLibraryUtils
 import java.io.File
-import java.io.StringReader
 
 // TODO: add hash checksum to defineModule?
 /**
@@ -57,7 +56,8 @@ private val SPECIAL_FUNCTION_PATTERN = Regex("var\\s+($JS_IDENTIFIER)\\s*=\\s*($
 
 class FunctionReader(
     private val reporter: JsConfig.Reporter,
-    private val config: JsConfig
+    private val config: JsConfig,
+    private val bindingContext: BindingContext
 ) {
     /**
      * fileContent: .js file content, that contains this module definition.
@@ -207,7 +207,7 @@ class FunctionReader(
         info: ModuleInfo,
         fragment: JsProgramFragment
     ): FunctionWithWrapper {
-        val tag = Namer.getFunctionTag(descriptor, config)
+        val tag = Namer.getFunctionTag(descriptor, config, bindingContext)
         val moduleReference = fragment.inlineModuleMap[tag]?.deepCopy() ?: fragment.scope.declareName("_").makeRef()
         val allDefinedNames = collectDefinedNamesInAllScopes(fn.function)
         val replacements = hashMapOf(
@@ -236,7 +236,7 @@ class FunctionReader(
 
     private fun readFunctionFromSource(descriptor: CallableDescriptor, info: ModuleInfo): FunctionWithWrapper? {
         val source = info.fileContent
-        var tag = Namer.getFunctionTag(descriptor, config)
+        var tag = Namer.getFunctionTag(descriptor, config, bindingContext)
         var index = source.indexOf(tag)
 
         // Hack for compatibility with old versions of stdlib
@@ -401,7 +401,7 @@ private fun JsFunction.markInlineArguments(descriptor: CallableDescriptor) {
 
             (qualifier as? JsNameRef)?.name?.let { name ->
                 if (name in inlineFuns) {
-                    x.inlineStrategy = InlineStrategy.IN_PLACE
+                    x.isInline = true
                 }
             }
         }

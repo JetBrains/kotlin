@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.inspections
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.canMoveLambdaOutsideParentheses
 import org.jetbrains.kotlin.idea.core.getLastLambdaExpression
 import org.jetbrains.kotlin.idea.core.moveFunctionLiteralOutsideParentheses
@@ -27,7 +28,7 @@ class MoveLambdaOutsideParenthesesInspection : AbstractApplicabilityBasedInspect
     }
 
     private val KtCallExpression.verb: String
-        get() = if (withInformationLevel()) "can" else "should"
+        get() = if (withInformationLevel()) KotlinBundle.message("text.can") else KotlinBundle.message("text.should")
 
     override fun inspectionHighlightType(element: KtCallExpression): ProblemHighlightType =
         if (element.withInformationLevel()) ProblemHighlightType.INFORMATION else ProblemHighlightType.GENERIC_ERROR_OR_WARNING
@@ -40,11 +41,11 @@ class MoveLambdaOutsideParenthesesInspection : AbstractApplicabilityBasedInspect
         }
     }
 
-    override fun inspectionText(element: KtCallExpression) = "Lambda argument ${element.verb} be moved out of parentheses"
+    override fun inspectionText(element: KtCallExpression) = KotlinBundle.message("lambda.argument.0.be.moved.out", element.verb)
 
     override fun inspectionHighlightRangeInElement(element: KtCallExpression) = element.getLastLambdaExpression()
         ?.getStrictParentOfType<KtValueArgument>()?.asElement()
         ?.textRangeIn(element)
 
-    override val defaultFixText = "Move lambda argument out of parentheses"
+    override val defaultFixText get() = KotlinBundle.message("move.lambda.argument.out.of.parentheses")
 }

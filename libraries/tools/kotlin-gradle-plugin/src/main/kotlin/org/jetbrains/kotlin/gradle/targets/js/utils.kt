@@ -8,15 +8,21 @@ package org.jetbrains.kotlin.gradle.targets.js
 import java.io.File
 
 fun Appendable.appendConfigsFromDir(confDir: File) {
-    if (!confDir.isDirectory) return
+    val files = confDir.listFiles() ?: return
 
-    confDir.listFiles()
-        ?.toList()
-        ?.filter { it.name.endsWith(".js") }
-        ?.forEach {
+    files.asSequence()
+        .filter { it.isFile }
+        .filter { it.extension == "js" }
+        .sortedBy { it.name }
+        .forEach {
             appendln("// ${it.name}")
             append(it.readText())
             appendln()
             appendln()
         }
 }
+
+
+const val JS = "js"
+const val JS_MAP = "js.map"
+const val META_JS = "meta.js"

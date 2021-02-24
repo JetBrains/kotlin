@@ -55,7 +55,7 @@ public final class IrClassReference extends
           }
           case 8: {
             bitField0_ |= 0x00000001;
-            classSymbol_ = input.readInt32();
+            classSymbol_ = input.readInt64();
             break;
           }
           case 16: {
@@ -98,17 +98,17 @@ public final class IrClassReference extends
 
   private int bitField0_;
   public static final int CLASS_SYMBOL_FIELD_NUMBER = 1;
-  private int classSymbol_;
+  private long classSymbol_;
   /**
-   * <code>required int32 class_symbol = 1;</code>
+   * <code>required int64 class_symbol = 1;</code>
    */
   public boolean hasClassSymbol() {
     return ((bitField0_ & 0x00000001) == 0x00000001);
   }
   /**
-   * <code>required int32 class_symbol = 1;</code>
+   * <code>required int64 class_symbol = 1;</code>
    */
-  public int getClassSymbol() {
+  public long getClassSymbol() {
     return classSymbol_;
   }
 
@@ -128,7 +128,7 @@ public final class IrClassReference extends
   }
 
   private void initFields() {
-    classSymbol_ = 0;
+    classSymbol_ = 0L;
     classType_ = 0;
   }
   private byte memoizedIsInitialized = -1;
@@ -153,7 +153,7 @@ public final class IrClassReference extends
                       throws java.io.IOException {
     getSerializedSize();
     if (((bitField0_ & 0x00000001) == 0x00000001)) {
-      output.writeInt32(1, classSymbol_);
+      output.writeInt64(1, classSymbol_);
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
       output.writeInt32(2, classType_);
@@ -169,7 +169,7 @@ public final class IrClassReference extends
     size = 0;
     if (((bitField0_ & 0x00000001) == 0x00000001)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeInt32Size(1, classSymbol_);
+        .computeInt64Size(1, classSymbol_);
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
@@ -269,7 +269,7 @@ public final class IrClassReference extends
 
     public Builder clear() {
       super.clear();
-      classSymbol_ = 0;
+      classSymbol_ = 0L;
       bitField0_ = (bitField0_ & ~0x00000001);
       classType_ = 0;
       bitField0_ = (bitField0_ & ~0x00000002);
@@ -352,34 +352,34 @@ public final class IrClassReference extends
     }
     private int bitField0_;
 
-    private int classSymbol_ ;
+    private long classSymbol_ ;
     /**
-     * <code>required int32 class_symbol = 1;</code>
+     * <code>required int64 class_symbol = 1;</code>
      */
     public boolean hasClassSymbol() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>required int32 class_symbol = 1;</code>
+     * <code>required int64 class_symbol = 1;</code>
      */
-    public int getClassSymbol() {
+    public long getClassSymbol() {
       return classSymbol_;
     }
     /**
-     * <code>required int32 class_symbol = 1;</code>
+     * <code>required int64 class_symbol = 1;</code>
      */
-    public Builder setClassSymbol(int value) {
+    public Builder setClassSymbol(long value) {
       bitField0_ |= 0x00000001;
       classSymbol_ = value;
       
       return this;
     }
     /**
-     * <code>required int32 class_symbol = 1;</code>
+     * <code>required int64 class_symbol = 1;</code>
      */
     public Builder clearClassSymbol() {
       bitField0_ = (bitField0_ & ~0x00000001);
-      classSymbol_ = 0;
+      classSymbol_ = 0L;
       
       return this;
     }

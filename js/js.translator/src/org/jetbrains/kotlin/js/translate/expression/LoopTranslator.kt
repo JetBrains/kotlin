@@ -19,6 +19,7 @@
 package org.jetbrains.kotlin.js.translate.expression
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator
@@ -43,7 +44,6 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
-import org.jetbrains.kotlin.types.KotlinType
 
 fun createWhile(doWhile: Boolean, expression: KtWhileExpressionBase, context: TranslationContext): JsNode {
     val conditionExpression = expression.condition ?:
@@ -316,7 +316,7 @@ fun translateForExpression(expression: KtForExpression, context: TranslationCont
     }
 
     fun findCollection() =
-            context.currentModule.findClassAcrossModuleDependencies(ClassId.topLevel(KotlinBuiltIns.FQ_NAMES.collection))!!
+            context.currentModule.findClassAcrossModuleDependencies(ClassId.topLevel(StandardNames.FqNames.collection))!!
 
     fun translateForOverCollectionIndices(info: WithIndexInfo): JsStatement {
         val range = context.cacheExpressionIfNeeded(info.range)
@@ -337,7 +337,7 @@ fun translateForExpression(expression: KtForExpression, context: TranslationCont
     }
 
     fun findIterable() =
-        context.currentModule.findClassAcrossModuleDependencies(ClassId.topLevel(KotlinBuiltIns.FQ_NAMES.iterable))!!
+        context.currentModule.findClassAcrossModuleDependencies(ClassId.topLevel(StandardNames.FqNames.iterable))!!
 
     fun findSequence() =
             context.currentModule.findClassAcrossModuleDependencies(ClassId.topLevel(sequenceFqName))!!

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 class A {
     class Nested {
         companion object {

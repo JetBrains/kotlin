@@ -1,0 +1,4 @@
+val test: @FlexibleNullability String?
+  field = J().getFoo()
+  get
+

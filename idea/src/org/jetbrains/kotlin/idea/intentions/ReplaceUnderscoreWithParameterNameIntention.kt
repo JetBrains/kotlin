@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,6 +9,7 @@ import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.builtins.extractParameterNameFromFunctionTypeArgument
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.CollectingNameValidator
@@ -26,7 +27,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class ReplaceUnderscoreWithParameterNameIntention : SelfTargetingOffsetIndependentIntention<KtCallableDeclaration>(
     KtCallableDeclaration::class.java,
-    "Replace '_' with parameter name"
+    KotlinBundle.lazyMessage("replace.with.parameter.name")
 ) {
     override fun isApplicableTo(element: KtCallableDeclaration) =
         element.name == "_" && (element is KtDestructuringDeclarationEntry || element is KtParameter)
@@ -36,12 +37,14 @@ class ReplaceUnderscoreWithParameterNameIntention : SelfTargetingOffsetIndepende
         val validator = CollectingNameValidator(
             filter = NewDeclarationNameValidator(element.parent.parent, null, NewDeclarationNameValidator.Target.VARIABLES)
         )
+
         val name = suggestedParameterName?.let {
             KotlinNameSuggester.suggestNameByName(it, validator)
         } ?: run {
             val elementDescriptor = element.resolveToDescriptorIfAny() as? CallableDescriptor
             elementDescriptor?.returnType?.let { KotlinNameSuggester.suggestNamesByType(it, validator).firstOrNull() }
         } ?: return
+
         element.setName(name)
     }
 

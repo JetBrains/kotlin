@@ -13,6 +13,9 @@ import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irString
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 
 interface LoggingContext {
     var inVerbosePhase: Boolean
@@ -28,11 +31,18 @@ interface CommonBackendContext : BackendContext, LoggingContext {
     val scriptMode: Boolean
 
     fun throwUninitializedPropertyAccessException(builder: IrBuilderWithScope, name: String): IrExpression {
-        val throwErrorFunction = ir.symbols.ThrowUninitializedPropertyAccessException.owner
+        val throwErrorFunction = ir.symbols.throwUninitializedPropertyAccessException.owner
         return builder.irCall(throwErrorFunction).apply {
             putValueArgument(0, builder.irString(name))
         }
     }
 
     val mapping: Mapping
+
+    // Adjust internal structures after a deep copy of some declarations.
+    fun handleDeepCopy(
+        fileSymbolMap: MutableMap<IrFileSymbol, IrFileSymbol>,
+        classSymbolMap: MutableMap<IrClassSymbol, IrClassSymbol>,
+        functionSymbolMap: MutableMap<IrSimpleFunctionSymbol, IrSimpleFunctionSymbol>
+    ) {}
 }

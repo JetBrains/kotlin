@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 //KT-549 type inference failed
 
 package demo

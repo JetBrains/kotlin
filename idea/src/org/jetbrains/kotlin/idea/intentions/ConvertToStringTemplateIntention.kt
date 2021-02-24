@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.intentions
@@ -20,6 +9,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.util.PsiUtilCore
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
@@ -36,7 +26,7 @@ class ConvertToStringTemplateInspection : IntentionBasedInspection<KtBinaryExpre
 
 open class ConvertToStringTemplateIntention : SelfTargetingOffsetIndependentIntention<KtBinaryExpression>(
     KtBinaryExpression::class.java,
-    "Convert concatenation to template"
+    KotlinBundle.lazyMessage("convert.concatenation.to.template")
 ) {
     override fun isApplicableTo(element: KtBinaryExpression): Boolean {
         if (!isApplicableToNoParentCheck(element)) return false
@@ -70,7 +60,7 @@ open class ConvertToStringTemplateIntention : SelfTargetingOffsetIndependentInte
         }
 
         private fun fold(left: KtExpression?, right: String, factory: KtPsiFactory): KtStringTemplateExpression {
-            val forceBraces = !right.isEmpty() && right.first() != '$' && right.first().isJavaIdentifierPart()
+            val forceBraces = right.isNotEmpty() && right.first() != '$' && right.first().isJavaIdentifierPart()
 
             return if (left is KtBinaryExpression && isApplicableToNoParentCheck(left)) {
                 val leftRight = buildText(left.right, forceBraces)
@@ -86,6 +76,7 @@ open class ConvertToStringTemplateIntention : SelfTargetingOffsetIndependentInte
             val expression = KtPsiUtil.safeDeparenthesize(expr).let {
                 if ((it as? KtDotQualifiedExpression)?.isToString() == true) it.receiverExpression else it
             }
+
             val expressionText = expression.text
             when (expression) {
                 is KtConstantExpression -> {

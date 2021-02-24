@@ -1,0 +1,57 @@
+UFile (package = )
+    UClass (name = ReifiedParametersKt)
+        UMethod (name = functionWithLambda)
+            UParameter (name = t)
+                UAnnotation (fqName = org.jetbrains.annotations.Nullable)
+            UParameter (name = process)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UBlockExpression
+                UReturnExpression
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
+                        UIdentifier (Identifier (process))
+                        USimpleNameReferenceExpression (identifier = invoke, resolvesTo = null)
+                        USimpleNameReferenceExpression (identifier = t)
+        UMethod (name = functionWithVararg)
+            UParameter (name = i)
+                UAnnotation (fqName = org.jetbrains.annotations.Nullable)
+            UParameter (name = t)
+                UAnnotation (fqName = org.jetbrains.annotations.Nullable)
+            UBlockExpression
+                UReturnExpression
+                    UArrayAccessExpression
+                        USimpleNameReferenceExpression (identifier = t)
+                        ULiteralExpression (value = 0)
+        UMethod (name = functionWithReceiver)
+            UParameter (name = $this$functionWithReceiver)
+                UAnnotation (fqName = org.jetbrains.annotations.Nullable)
+            UParameter (name = i)
+                UAnnotation (fqName = org.jetbrains.annotations.Nullable)
+            UBlockExpression
+                UReturnExpression
+                    UThisExpression (label = null)
+        UMethod (name = name with spaces)
+            UParameter (name = $this$name with spaces)
+                UAnnotation (fqName = org.jetbrains.annotations.Nullable)
+            UParameter (name = i)
+                UAnnotation (fqName = org.jetbrains.annotations.Nullable)
+            UBlockExpression
+                UReturnExpression
+                    UThisExpression (label = null)
+        UMethod (name = functionWithParamAnnotation)
+            UParameter (name = t)
+                UAnnotation (fqName = org.jetbrains.annotations.Nullable)
+                UAnnotation (fqName = kotlin.Suppress)
+                    UNamedExpression (name = names)
+                        ULiteralExpression (value = "s")
+            UBlockExpression
+                UReturnExpression
+                    USimpleNameReferenceExpression (identifier = t)
+        UMethod (name = functionUnresolved)
+            UParameter (name = t)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+                UAnnotation (fqName = kotlin.Suppress)
+                    UNamedExpression (name = names)
+                        ULiteralExpression (value = "s")
+            UBlockExpression
+                UReturnExpression
+                    USimpleNameReferenceExpression (identifier = t)

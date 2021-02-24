@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 import Class.C.f
 import Class.C.p
 import Class.C.ext

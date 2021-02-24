@@ -11,6 +11,7 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.intentions.getCallableDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtCallExpression
@@ -25,7 +26,7 @@ class ConvertPairConstructorToToFunctionInspection : AbstractKotlinInspection() 
             if (expression.isPairConstructorCall()) {
                 holder.registerProblem(
                     expression,
-                    "Can be converted to 'to'",
+                    KotlinBundle.message("can.be.converted.to.to"),
                     ProblemHighlightType.INFORMATION,
                     ConvertPairConstructorToToFix()
                 )
@@ -35,7 +36,7 @@ class ConvertPairConstructorToToFunctionInspection : AbstractKotlinInspection() 
 }
 
 private class ConvertPairConstructorToToFix : LocalQuickFix {
-    override fun getName() = "Convert to 'to'"
+    override fun getName() = KotlinBundle.message("convert.pair.constructor.to.to.fix.text")
 
     override fun getFamilyName() = name
 

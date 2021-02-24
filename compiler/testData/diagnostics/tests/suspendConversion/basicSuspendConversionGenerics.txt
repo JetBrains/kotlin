@@ -1,0 +1,14 @@
+package
+
+public fun </*0*/ T> foo1(/*0*/ f: suspend (T) -> kotlin.String): T
+public fun </*0*/ T> foo2(/*0*/ f: suspend () -> T): T
+public fun </*0*/ T, /*1*/ K> foo3(/*0*/ f: suspend (T) -> K): Inv2<T, K>
+public fun </*0*/ I> id(/*0*/ e: I): I
+public fun test(/*0*/ f: (kotlin.Int) -> kotlin.String, /*1*/ g: () -> kotlin.String): kotlin.Unit
+
+public final class Inv2</*0*/ T, /*1*/ K> {
+    public constructor Inv2</*0*/ T, /*1*/ K>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

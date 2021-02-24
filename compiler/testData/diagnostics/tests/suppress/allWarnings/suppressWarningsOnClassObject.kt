@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class C {
     @Suppress("warnings")
     companion object {

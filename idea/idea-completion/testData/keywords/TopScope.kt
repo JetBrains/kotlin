@@ -1,3 +1,5 @@
+// COMPILER_ARGUMENTS: -XXLanguage:+SealedInterfaces -XXLanguage:+MultiPlatformProjects
+
 <caret>
 
 // EXIST:  abstract
@@ -23,9 +25,12 @@
 // EXIST:  infix
 // EXIST:  sealed class
 // EXIST:  sealed class TopScope
+// EXIST:  sealed interface TopScope
+// EXIST:  sealed interface
 // EXIST:  data class
 // EXIST:  { "lookupString":"data class", "itemText":"data class", "tailText":" TopScope(...)", "attributes":"bold" }
 // EXIST:  inline
+// EXIST:  value
 // EXIST:  tailrec
 // EXIST:  external
 // EXIST:  annotation class

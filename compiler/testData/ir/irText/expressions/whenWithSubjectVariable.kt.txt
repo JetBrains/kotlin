@@ -1,0 +1,18 @@
+fun foo(): Any {
+  return 1
+}
+
+fun test(): Int {
+  return { // BLOCK
+    val y: Any = foo()
+    when {
+      EQEQ(arg0 = y, arg1 = 42) -> 1
+      y is String -> y /*as String */.<get-length>()
+      y is Int.not() -> 2
+      0.rangeTo(other = 10).contains(value = y /*as Int */) -> 3
+      10.rangeTo(other = 20).contains(value = y /*as Int */).not() -> 4
+      else -> -1
+    }
+  }
+}
+

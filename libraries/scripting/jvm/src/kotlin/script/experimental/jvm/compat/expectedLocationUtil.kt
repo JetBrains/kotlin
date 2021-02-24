@@ -3,12 +3,13 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION")
+
 package kotlin.script.experimental.jvm.compat
 
 import kotlin.script.experimental.api.ScriptAcceptedLocation
 import kotlin.script.experimental.location.ScriptExpectedLocation
 
-@Suppress("DEPRECATION")
 fun List<ScriptAcceptedLocation>.mapToLegacyExpectedLocations(): List<ScriptExpectedLocation> = map {
     when (it) {
         ScriptAcceptedLocation.Sources -> ScriptExpectedLocation.SourcesOnly
@@ -19,7 +20,6 @@ fun List<ScriptAcceptedLocation>.mapToLegacyExpectedLocations(): List<ScriptExpe
     }
 }
 
-@Suppress("DEPRECATION")
 fun List<ScriptExpectedLocation>.mapLegacyExpectedLocations(): List<ScriptAcceptedLocation> = map {
     when (it) {
         ScriptExpectedLocation.SourcesOnly -> ScriptAcceptedLocation.Sources

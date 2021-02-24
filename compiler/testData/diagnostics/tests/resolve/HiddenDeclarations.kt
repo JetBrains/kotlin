@@ -36,7 +36,7 @@ open class A {
 
     fun foo() {
         <!UNRESOLVED_REFERENCE!>topLevelFun<!>()
-        <!UNRESOLVED_REFERENCE, VARIABLE_EXPECTED!>topLevelProperty<!><!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>++<!>
+        <!UNRESOLVED_REFERENCE, VARIABLE_EXPECTED!>topLevelProperty<!><!DEBUG_INFO_MISSING_UNRESOLVED!>++<!>
         "".<!UNRESOLVED_REFERENCE!>topLevelExtensionFun<!>()
         "".<!UNRESOLVED_REFERENCE!>topLevelExtensionProperty<!>
 

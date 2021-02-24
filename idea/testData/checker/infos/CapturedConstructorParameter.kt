@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 <info>import</info> kotlin.reflect.KProperty
 
 interface T

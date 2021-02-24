@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.intentions.getCallableDescriptor
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtExpression
@@ -19,7 +20,10 @@ class ChangeToPropertyAccessFix(
     private val isObjectCall: Boolean
 ) : KotlinQuickFixAction<KtCallExpression>(element) {
 
-    override fun getFamilyName() = if (isObjectCall) "Remove invocation" else "Change to property access"
+    override fun getFamilyName() = when {
+        isObjectCall -> KotlinBundle.message("fix.change.to.property.access.family.remove")
+        else -> KotlinBundle.message("fix.change.to.property.access.family.change")
+    }
 
     override fun getText() = familyName
 

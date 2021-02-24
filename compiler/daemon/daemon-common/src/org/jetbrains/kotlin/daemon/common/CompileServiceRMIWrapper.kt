@@ -23,6 +23,7 @@ class CompileServiceClientRMIWrapper(
     private fun reportNotImplemented(): Nothing = throw IllegalStateException("Unexpected call to deprecated method")
 
     // deprecated methods :
+    @Suppress("OverridingDeprecatedMember", "DEPRECATION")
     override fun remoteCompile(
         sessionId: Int,
         targetPlatform: CompileService.TargetPlatform,
@@ -36,6 +37,7 @@ class CompileServiceClientRMIWrapper(
         reportNotImplemented()
     }
 
+    @Suppress("OverridingDeprecatedMember", "DEPRECATION")
     override fun remoteIncrementalCompile(
         sessionId: Int,
         targetPlatform: CompileService.TargetPlatform,
@@ -49,6 +51,7 @@ class CompileServiceClientRMIWrapper(
         reportNotImplemented()
     }
 
+    @Suppress("OverridingDeprecatedMember", "DEPRECATION")
     override fun leaseReplSession(
         aliveFlagPath: String?,
         targetPlatform: CompileService.TargetPlatform,
@@ -66,10 +69,12 @@ class CompileServiceClientRMIWrapper(
         reportNotImplemented()
     }
 
+    @Suppress("OverridingDeprecatedMember")
     override fun remoteReplLineCheck(sessionId: Int, codeLine: ReplCodeLine): CompileService.CallResult<ReplCheckResult> {
         reportNotImplemented()
     }
 
+    @Suppress("OverridingDeprecatedMember")
     override fun remoteReplLineCompile(
         sessionId: Int,
         codeLine: ReplCodeLine,
@@ -78,6 +83,7 @@ class CompileServiceClientRMIWrapper(
         reportNotImplemented()
     }
 
+    @Suppress("OverridingDeprecatedMember")
     override fun remoteReplLineEval(
         sessionId: Int,
         codeLine: ReplCodeLine,

@@ -9,7 +9,7 @@ private open class A {
 
 private fun foo() {}
 
-fun makeA() = A()
+fun <!EXPOSED_FUNCTION_RETURN_TYPE!>makeA<!>() = A()
 
 private object PO {}
 
@@ -25,15 +25,15 @@ import a.PO
 fun test() {
     val y = makeA()
     y.bar()
-    <!INAPPLICABLE_CANDIDATE!>foo<!>()
+    <!HIDDEN!>foo<!>()
 
-    val u : A = <!INAPPLICABLE_CANDIDATE!>A<!>()
+    val u : A = <!HIDDEN!>A<!>()
     val a : java.util.Arrays.ArrayList<Int>;
 
-    val po = <!INAPPLICABLE_CANDIDATE!>PO<!>
+    val po = <!HIDDEN!>PO<!>
 }
 
-class B : <!INAPPLICABLE_CANDIDATE!>A<!>() {}
+class B : <!EXPOSED_SUPER_CLASS, HIDDEN!>A<!>() {}
 
 class Q {
     class W {

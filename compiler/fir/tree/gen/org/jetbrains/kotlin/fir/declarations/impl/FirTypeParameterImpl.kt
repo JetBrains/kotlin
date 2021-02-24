@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,10 +7,11 @@ package org.jetbrains.kotlin.fir.declarations.impl
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.Name
@@ -22,18 +23,19 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-class FirTypeParameterImpl(
-    override val source: FirSourceElement?,
+internal class FirTypeParameterImpl(
+    override var source: FirSourceElement?,
     override val session: FirSession,
+    override var resolvePhase: FirResolvePhase,
+    override val origin: FirDeclarationOrigin,
+    override val attributes: FirDeclarationAttributes,
     override val name: Name,
     override val symbol: FirTypeParameterSymbol,
     override val variance: Variance,
-    override val isReified: Boolean
-) : FirTypeParameter(), FirAbstractAnnotatedElement {
-    override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
-    override val bounds: MutableList<FirTypeRef> = mutableListOf()
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
-
+    override val isReified: Boolean,
+    override val bounds: MutableList<FirTypeRef>,
+    override val annotations: MutableList<FirAnnotationCall>,
+) : FirTypeParameter() {
     init {
         symbol.bind(this)
     }
@@ -45,11 +47,25 @@ class FirTypeParameterImpl(
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirTypeParameterImpl {
         bounds.transformInplace(transformer, data)
+        transformAnnotations(transformer, data)
+        return this
+    }
+
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirTypeParameterImpl {
         annotations.transformInplace(transformer, data)
         return this
     }
 
+    override fun replaceSource(newSource: FirSourceElement?) {
+        source = newSource
+    }
+
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
         resolvePhase = newResolvePhase
+    }
+
+    override fun replaceBounds(newBounds: List<FirTypeRef>) {
+        bounds.clear()
+        bounds.addAll(newBounds)
     }
 }

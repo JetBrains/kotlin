@@ -1,0 +1,31 @@
+class ResolvedCall<C : Any?> {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+class MyCandidate {
+  constructor(resolvedCall: ResolvedCall<*>) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val resolvedCall: ResolvedCall<*>
+    field = resolvedCall
+    get
+
+}
+
+private fun <A : Any?> allCandidatesResult(allCandidates: Collection<MyCandidate>): OverloadResolutionResultsImpl<A?>? {
+  return nameNotFound<A?>().apply<OverloadResolutionResultsImpl<A?>?>(block = local fun OverloadResolutionResultsImpl<A?>?.<anonymous>() {
+    <this>.setAllCandidates(allCandidates = allCandidates.map<MyCandidate, ResolvedCall<A>>(transform = local fun <anonymous>(it: MyCandidate): ResolvedCall<A> {
+      return it.<get-resolvedCall>() as ResolvedCall<A>
+    }
+))
+  }
+)
+}

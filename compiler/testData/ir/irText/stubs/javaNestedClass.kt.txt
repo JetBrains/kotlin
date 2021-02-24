@@ -1,0 +1,4 @@
+fun test(jj: JJ) {
+  return jj.foo()
+}
+

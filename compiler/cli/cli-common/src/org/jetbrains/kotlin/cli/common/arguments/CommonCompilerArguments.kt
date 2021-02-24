@@ -89,9 +89,12 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
     @Argument(
         value = "-Xskip-metadata-version-check",
-        description = "Load classes with bad metadata version anyway (incl. pre-release classes)"
+        description = "Allow to load classes with bad metadata version and pre-release classes"
     )
     var skipMetadataVersionCheck: Boolean by FreezableVar(false)
+
+    @Argument(value = "-Xskip-prerelease-check", description = "Allow to load pre-release classes")
+    var skipPrereleaseCheck: Boolean by FreezableVar(false)
 
     @Argument(
         value = "-Xallow-kotlin-package",
@@ -117,13 +120,6 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         description = "Path to the kotlin-compiler.jar or directory where IntelliJ configuration files can be found"
     )
     var intellijPluginRoot: String? by NullableStringFreezableVar(null)
-
-    @Argument(
-        value = "-Xcoroutines",
-        valueDescription = "{enable|warn|error}",
-        description = "Enable coroutines or report warnings or errors on declarations and use sites of 'suspend' modifier"
-    )
-    var coroutinesState: String? by NullableStringFreezableVar(DEFAULT)
 
     @Argument(
         value = "-Xnew-inference",
@@ -315,16 +311,28 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     var useFir: Boolean by FreezableVar(false)
 
     @Argument(
+        value = "-Xuse-fir-extended-checkers",
+        description = "Use extended analysis mode based on Front-end IR. Warning: this feature is far from being production-ready"
+    )
+    var useFirExtendedCheckers: Boolean by FreezableVar(false)
+
+    @Argument(
+        value = "-Xdisable-ultra-light-classes",
+        description = "Do not use the ultra light classes implementation"
+    )
+    var disableUltraLightClasses: Boolean by FreezableVar(false)
+
+    @Argument(
         value = "-Xuse-mixed-named-arguments",
         description = "Enable Support named arguments in their own position even if the result appears as mixed"
     )
     var useMixedNamedArguments: Boolean by FreezableVar(false)
 
     @Argument(
-        value = "-Xklib-mpp",
-        description = "Enable experimental support for multi-platform klib libraries"
+        value = "-Xexpect-actual-linker",
+        description = "Enable experimental expect/actual linker"
     )
-    var klibBasedMpp: Boolean by FreezableVar(false)
+    var expectActualLinker: Boolean by FreezableVar(false)
 
     @Argument(value = "-Xdisable-default-scripting-plugin", description = "Do not enable scripting plugin by default")
     var disableDefaultScriptingPlugin: Boolean by FreezableVar(false)
@@ -337,9 +345,29 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     )
     var explicitApi: String by FreezableVar(ExplicitApiMode.DISABLED.state)
 
+    @Argument(
+        value = "-Xinference-compatibility",
+        description = "Enable compatibility changes for generic type inference algorithm"
+    )
+    var inferenceCompatibility: Boolean by FreezableVar(false)
+
+    @Argument(
+        value = "-Xsuppress-version-warnings",
+        description = "Suppress warnings about outdated, inconsistent or experimental language or API versions"
+    )
+    var suppressVersionWarnings: Boolean by FreezableVar(false)
+
+    @Argument(
+        value = "-Xextended-compiler-checks",
+        description = "Enable additional compiler checks that might provide verbose diagnostic information for certain errors.\n" +
+                "Warning: this mode is not backward-compatible and might cause compilation errors in previously compiled code."
+    )
+    var extendedCompilerChecks: Boolean by FreezableVar(false)
+
     open fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {
             put(AnalysisFlags.skipMetadataVersionCheck, skipMetadataVersionCheck)
+            put(AnalysisFlags.skipPrereleaseCheck, skipPrereleaseCheck || skipMetadataVersionCheck)
             put(AnalysisFlags.multiPlatformDoNotCheckActual, noCheckActual)
             val experimentalFqNames = experimental?.toList().orEmpty()
             if (experimentalFqNames.isNotEmpty()) {
@@ -347,13 +375,14 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
                 collector.report(CompilerMessageSeverity.WARNING, "'-Xexperimental' is deprecated and will be removed in a future release")
             }
             put(AnalysisFlags.useExperimental, useExperimental?.toList().orEmpty() + optIn?.toList().orEmpty())
-            put(AnalysisFlags.klibBasedMpp, klibBasedMpp)
+            put(AnalysisFlags.expectActualLinker, expectActualLinker)
             put(AnalysisFlags.explicitApiVersion, apiVersion != null)
             put(AnalysisFlags.allowResultReturnType, allowResultReturnType)
             ExplicitApiMode.fromString(explicitApi)?.also { put(AnalysisFlags.explicitApiMode, it) } ?: collector.report(
                 CompilerMessageSeverity.ERROR,
                 "Unknown value for parameter -Xexplicit-api: '$explicitApi'. Value should be one of ${ExplicitApiMode.availableValues()}"
             )
+            put(AnalysisFlags.extendedCompilerChecks, extendedCompilerChecks)
         }
     }
 
@@ -363,21 +392,11 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
                 put(LanguageFeature.MultiPlatformProjects, LanguageFeature.State.ENABLED)
             }
 
-            when (coroutinesState) {
-                CommonCompilerArguments.ERROR -> put(LanguageFeature.Coroutines, LanguageFeature.State.ENABLED_WITH_ERROR)
-                CommonCompilerArguments.ENABLE -> put(LanguageFeature.Coroutines, LanguageFeature.State.ENABLED)
-                CommonCompilerArguments.WARN, CommonCompilerArguments.DEFAULT -> {
-                }
-                else -> {
-                    val message = "Invalid value of -Xcoroutines (should be: enable, warn or error): " + coroutinesState
-                    collector.report(CompilerMessageSeverity.ERROR, message, null)
-                }
-            }
-
             if (newInference) {
                 put(LanguageFeature.NewInference, LanguageFeature.State.ENABLED)
                 put(LanguageFeature.SamConversionPerArgument, LanguageFeature.State.ENABLED)
                 put(LanguageFeature.FunctionReferenceWithDefaultValueAsOtherType, LanguageFeature.State.ENABLED)
+                put(LanguageFeature.DisableCompatibilityModeForNewInference, LanguageFeature.State.ENABLED)
             }
 
             if (inlineClasses) {
@@ -407,6 +426,10 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
             if (useMixedNamedArguments) {
                 put(LanguageFeature.MixedNamedArgumentsInTheirOwnPosition, LanguageFeature.State.ENABLED)
+            }
+
+            if (inferenceCompatibility) {
+                put(LanguageFeature.InferenceCompatibility, LanguageFeature.State.ENABLED)
             }
 
             if (progressiveMode) {
@@ -457,6 +480,8 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
             if (!functionReferenceWithDefaultValueFeaturePassedExplicitly)
                 put(LanguageFeature.FunctionReferenceWithDefaultValueAsOtherType, LanguageFeature.State.ENABLED)
+
+            put(LanguageFeature.DisableCompatibilityModeForNewInference, LanguageFeature.State.ENABLED)
         }
 
         if (featuresThatForcePreReleaseBinaries.isNotEmpty()) {
@@ -485,9 +510,6 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         val apiVersion = parseVersion(collector, apiVersion, "API") ?: languageVersion
 
         checkApiVersionIsNotGreaterThenLanguageVersion(languageVersion, apiVersion, collector)
-        checkLanguageVersionIsStable(languageVersion, collector)
-        checkOutdatedVersions(languageVersion, apiVersion, collector)
-        checkProgressiveMode(languageVersion, collector)
 
         val languageVersionSettings = LanguageVersionSettingsImpl(
             languageVersion,
@@ -496,8 +518,13 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             configureLanguageFeatures(collector)
         )
 
-        checkCoroutines(languageVersionSettings, collector)
-        checkIrSupport(languageVersionSettings, collector)
+        if (!suppressVersionWarnings) {
+            checkLanguageVersionIsStable(languageVersion, collector)
+            checkOutdatedVersions(languageVersion, apiVersion, collector)
+            checkProgressiveMode(languageVersion, collector)
+
+            checkIrSupport(languageVersionSettings, collector)
+        }
 
         return languageVersionSettings
     }
@@ -564,17 +591,6 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
                         "Compiler behavior in such mode is undefined; please, consider moving to the latest stable version " +
                         "or turning off progressive mode."
             )
-        }
-    }
-
-    private fun checkCoroutines(languageVersionSettings: LanguageVersionSettings, collector: MessageCollector) {
-        if (languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)) {
-            if (coroutinesState != DEFAULT) {
-                collector.report(
-                    CompilerMessageSeverity.STRONG_WARNING,
-                    "-Xcoroutines has no effect: coroutines are enabled anyway in 1.3 and beyond"
-                )
-            }
         }
     }
 

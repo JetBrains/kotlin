@@ -13,7 +13,7 @@ fun myAssert(condition: Boolean) {
 
 fun testAssertSmartcast(x: Any?) {
     myAssert(x is String)
-    x.<!UNRESOLVED_REFERENCE!>length<!>
+    x.length
 }
 
 fun testInvertedAssert(x: Any?) {
@@ -24,24 +24,24 @@ fun testInvertedAssert(x: Any?) {
 fun testSpilling(x: Any?) {
     if (x != null) {
         myAssert(x is String)
-        x.<!UNRESOLVED_REFERENCE!>length<!>
+        x.length
     }
     x.<!UNRESOLVED_REFERENCE!>length<!>
 }
 
 fun testAssertInIf(x: Any?) {
     if (myAssert(x is String) == Unit) {
-        x.<!UNRESOLVED_REFERENCE!>length<!>
+        x.length
     }
     else {
-        x.<!UNRESOLVED_REFERENCE!>length<!>
+        x.length
     }
 }
 
 fun testTryCatch(x: Any?) {
     try {
         myAssert(x is String)
-        x.<!UNRESOLVED_REFERENCE!>length<!>
+        x.length
     } catch (e: kotlin.IllegalArgumentException) {
 
     }
@@ -51,7 +51,7 @@ fun testTryCatch(x: Any?) {
 fun testUncertainFlow(x: Any?) {
     repeat(x.toString().length) {
         myAssert(x is String)
-        x.<!UNRESOLVED_REFERENCE!>length<!>
+        x.length
     }
     x.<!UNRESOLVED_REFERENCE!>length<!>
 }
@@ -59,8 +59,8 @@ fun testUncertainFlow(x: Any?) {
 fun testAtLeastOnceFlow(x: Any?) {
     do {
         myAssert(x is String)
-        x.<!UNRESOLVED_REFERENCE!>length<!>
+        x.length
     } while (x != null)
 
-    x.<!UNRESOLVED_REFERENCE!>length<!>
+    x.length
 }

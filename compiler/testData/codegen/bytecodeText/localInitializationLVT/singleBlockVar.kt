@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
-
 fun test(): Char {
     var c: Char
     val l = Any()

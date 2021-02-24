@@ -16,7 +16,7 @@ fun foo(): Int {
         k.run()
         val d: Int = c
         // a is not null because of k constructor, but we do not know it
-        return a <!INAPPLICABLE_CANDIDATE!>+<!> d
+        return a <!NONE_APPLICABLE!>+<!> d
     }
     else return -1
 }

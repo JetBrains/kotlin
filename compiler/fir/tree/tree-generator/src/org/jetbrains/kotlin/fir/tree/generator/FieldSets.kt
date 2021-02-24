@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.declarationStatus
 import org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.expression
 import org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.reference
 import org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.typeParameter
+import org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.typeParameterRef
 import org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.typeProjection
 import org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.typeRef
 import org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.valueParameter
@@ -20,16 +21,16 @@ import org.jetbrains.kotlin.fir.tree.generator.context.type
 import org.jetbrains.kotlin.fir.tree.generator.model.*
 
 object FieldSets {
-    val calleeReference = field("calleeReference", reference)
+    val calleeReference = field("calleeReference", reference, withReplace = true)
 
     val receivers = fieldSet(
-        field("explicitReceiver", expression, nullable = true).withTransform(),
+        field("explicitReceiver", expression, nullable = true, withReplace = true).withTransform(),
         field("dispatchReceiver", expression).withTransform(),
         field("extensionReceiver", expression).withTransform()
     )
 
     val typeArguments =
-        fieldList("typeArguments", typeProjection)
+        fieldList("typeArguments", typeProjection, withReplace = true)
 
     val arguments =
         fieldList("arguments", expression)
@@ -37,7 +38,7 @@ object FieldSets {
     val declarations = fieldList(declaration)
 
     val annotations =
-        fieldList("annotations", annotationCall)
+        fieldList("annotations", annotationCall).withTransform(needTransformInOtherChildren = true)
 
     fun symbolWithPackage(packageName: String?, symbolClassName: String, argument: String? = null): Field {
         return field("symbol", type(packageName, symbolClassName), argument)
@@ -46,8 +47,8 @@ object FieldSets {
     fun symbol(symbolClassName: String, argument: String? = null): Field =
         symbolWithPackage("fir.symbols.impl", symbolClassName, argument)
 
-    fun body(nullable: Boolean = false) =
-        field("body", block, nullable)
+    fun body(nullable: Boolean = false, withReplace: Boolean = false) =
+        field("body", block, nullable, withReplace = withReplace)
 
     val returnTypeRef =
         field("returnTypeRef", typeRef)
@@ -59,7 +60,9 @@ object FieldSets {
 
     val valueParameters = fieldList(valueParameter)
 
-    val typeParameters = fieldList(typeParameter)
+    val typeParameters = fieldList("typeParameters", typeParameter)
+
+    val typeParameterRefs = fieldList("typeParameters", typeParameterRef)
 
     val name = field(nameType)
 
@@ -71,9 +74,11 @@ object FieldSets {
 
     val status = field("status", declarationStatus)
 
-    val controlFlowGraphReferenceField = field("controlFlowGraphReference", controlFlowGraphReference)
+    val controlFlowGraphReferenceField = field("controlFlowGraphReference", controlFlowGraphReference, withReplace = true, nullable = true)
 
     val visibility = field(visibilityType)
+
+    val effectiveVisibility = field("effectiveVisibility", effectiveVisibilityType)
 
     val modality = field(modalityType, nullable = true)
 

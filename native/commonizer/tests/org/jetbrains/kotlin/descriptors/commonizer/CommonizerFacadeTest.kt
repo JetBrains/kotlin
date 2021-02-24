@@ -5,74 +5,136 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer
 
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import kotlin.test.*
+import org.jetbrains.kotlin.descriptors.commonizer.ResultsConsumer.ModuleResult
+import org.jetbrains.kotlin.descriptors.commonizer.ResultsConsumer.Status
+import org.jetbrains.kotlin.descriptors.commonizer.konan.CommonNativeManifestDataProvider
+import org.jetbrains.kotlin.descriptors.commonizer.konan.TargetedNativeManifestDataProvider
+import org.jetbrains.kotlin.descriptors.commonizer.utils.MockResultsConsumer
+import org.jetbrains.kotlin.descriptors.commonizer.utils.MockModulesProvider
+import org.jetbrains.kotlin.descriptors.commonizer.utils.MockNativeManifestDataProvider
 import org.junit.Test
-import org.jetbrains.kotlin.descriptors.commonizer.AbstractCommonizationFromSourcesTest.Companion.eachModuleAsTarget
-import org.jetbrains.kotlin.descriptors.commonizer.utils.assertCommonizationPerformed
-import org.jetbrains.kotlin.descriptors.commonizer.utils.mockEmptyModule
 import kotlin.contracts.ExperimentalContracts
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 @ExperimentalContracts
 class CommonizerFacadeTest {
 
     @Test
-    fun nothingToCommonize0() {
-        val modules = listOf<ModuleDescriptor>()
-
-        val result = runCommonization(modules.eachModuleAsTarget())
-
-        assertEquals(NothingToCommonize, result)
-    }
+    fun nothingToCommonize0() = doTestNothingToCommonize(
+        emptyMap()
+    )
 
     @Test
-    fun nothingToCommonize1() {
-        val modules = listOf(
-            mockEmptyModule("<foo>")
+    fun nothingToCommonize1() = doTestNothingToCommonize(
+        mapOf(
+            "target1" to listOf("foo")
         )
-
-        val result = runCommonization(modules.eachModuleAsTarget())
-
-        assertEquals(NothingToCommonize, result)
-    }
+    )
 
     @Test
-    fun commonized() {
-        val modules = listOf(
-            mockEmptyModule("<foo>"),
-            mockEmptyModule("<foo>")
+    fun commonized1() = doTestSuccessfulCommonization(
+        mapOf(
+            "target1" to listOf("foo"),
+            "target2" to listOf("foo")
         )
+    )
 
-        val result = runCommonization(modules.eachModuleAsTarget())
+    @Test
+    fun commonized2() = doTestSuccessfulCommonization(
+        mapOf(
+            "target1" to listOf("foo", "bar"),
+            "target2" to listOf("bar", "foo")
+        )
+    )
 
-        assertCommonizationPerformed(result)
+    @Test
+    fun commonizedWithDifferentModules() = doTestNothingToCommonize(
+        mapOf(
+            "target1" to listOf("foo"),
+            "target2" to listOf("bar")
+        )
+    )
 
-        assertSingleModuleForTarget("<foo>", result.modulesByTargets.getValue(result.commonTarget))
+    @Test
+    fun commonizedWithMissingModules() = doTestSuccessfulCommonization(
+        mapOf(
+            "target1" to listOf("foo", "bar"),
+            "target2" to listOf("foo", "qix")
+        )
+    )
 
-        assertEquals(2, result.concreteTargets.size)
-        for (target in result.concreteTargets) {
-            assertSingleModuleForTarget("<foo>", result.modulesByTargets.getValue(target))
+    companion object {
+        private fun Map<String, List<String>>.toCommonizerParameters(
+            resultsConsumer: ResultsConsumer, manifestDataProvider: TargetedNativeManifestDataProvider = MockNativeManifestDataProvider()
+        ) = CommonizerParameters(resultsConsumer, manifestDataProvider).also { parameters ->
+            forEach { (targetName, moduleNames) ->
+                parameters.addTarget(
+                    TargetProvider(
+                        target = LeafCommonizerTarget(targetName),
+                        modulesProvider = MockModulesProvider.create(moduleNames),
+                        dependencyModulesProvider = null
+                    )
+                )
+            }
         }
-    }
 
-    @Test
-    fun mismatchedModules() {
-        val modules = listOf(
-            mockEmptyModule("<foo>"),
-            mockEmptyModule("<foo>"),
-            mockEmptyModule("<bar>")
-        )
+        private fun doTestNothingToCommonize(originalModules: Map<String, List<String>>) {
+            val results = MockResultsConsumer()
+            runCommonization(originalModules.toCommonizerParameters(results))
+            assertEquals(results.status, Status.NOTHING_TO_DO)
+            assertTrue(results.modulesByTargets.isEmpty())
+        }
 
-        val result = runCommonization(modules.eachModuleAsTarget())
+        private fun doTestSuccessfulCommonization(originalModules: Map<String, List<String>>) {
+            val results = MockResultsConsumer()
+            runCommonization(originalModules.toCommonizerParameters(results))
+            assertEquals(results.status, Status.DONE)
 
-        assertEquals(NothingToCommonize, result)
-    }
+            val expectedCommonModuleNames = mutableSetOf<String>()
+            originalModules.values.forEachIndexed { index, moduleNames ->
+                if (index == 0)
+                    expectedCommonModuleNames.addAll(moduleNames)
+                else
+                    expectedCommonModuleNames.retainAll(moduleNames)
+            }
+            assertModulesMatch(
+                expectedCommonizedModuleNames = expectedCommonModuleNames,
+                expectedMissingModuleNames = emptySet(),
+                actualModuleResults = results.modulesByTargets.getValue(results.sharedTarget)
+            )
 
-    private fun assertSingleModuleForTarget(
-        @Suppress("SameParameterValue") expectedModuleName: String,
-        modules: Collection<ModuleDescriptor>
-    ) {
-        assertEquals(1, modules.size)
-        assertEquals(expectedModuleName, modules.single().name.asString())
+            results.leafTargets.forEach { target ->
+                val allModuleNames = originalModules.getValue(target.name).toSet()
+                val expectedMissingModuleNames = allModuleNames - expectedCommonModuleNames
+
+                assertModulesMatch(
+                    expectedCommonizedModuleNames = expectedCommonModuleNames,
+                    expectedMissingModuleNames = expectedMissingModuleNames,
+                    actualModuleResults = results.modulesByTargets.getValue(target)
+                )
+            }
+        }
+
+        private fun assertModulesMatch(
+            expectedCommonizedModuleNames: Set<String>,
+            expectedMissingModuleNames: Set<String>,
+            actualModuleResults: Collection<ModuleResult>
+        ) {
+            assertEquals(expectedCommonizedModuleNames.size + expectedMissingModuleNames.size, actualModuleResults.size)
+
+            val actualCommonizedModuleNames = mutableSetOf<String>()
+            val actualMissingModuleNames = mutableSetOf<String>()
+
+            actualModuleResults.forEach { moduleResult ->
+                when (moduleResult) {
+                    is ModuleResult.Commonized -> actualCommonizedModuleNames += moduleResult.libraryName
+                    is ModuleResult.Missing -> actualMissingModuleNames += moduleResult.libraryName
+                }
+            }
+
+            assertEquals(expectedCommonizedModuleNames, actualCommonizedModuleNames)
+            assertEquals(expectedMissingModuleNames, actualMissingModuleNames)
+        }
     }
 }

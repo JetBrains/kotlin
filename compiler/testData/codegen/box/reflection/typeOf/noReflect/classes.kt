@@ -1,6 +1,5 @@
 // !USE_EXPERIMENTAL: kotlin.ExperimentalStdlibApi
 // !LANGUAGE: +NewInference
-// IGNORE_BACKEND_FIR: JVM_IR
 // TARGET_BACKEND: JVM
 // WITH_RUNTIME
 

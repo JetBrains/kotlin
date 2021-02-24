@@ -1,0 +1,4 @@
+$TESTDATA_DIR$/conflictingProjection.kt
+-Xuse-fir
+-d
+$TEMP_DIR$

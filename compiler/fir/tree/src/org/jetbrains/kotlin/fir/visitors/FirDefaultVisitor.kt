@@ -6,16 +6,11 @@
 package org.jetbrains.kotlin.fir.visitors
 
 import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
-import org.jetbrains.kotlin.fir.declarations.FirSealedClass
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.types.*
 
 abstract class FirDefaultVisitor<R, D> : FirVisitor<R, D>() {
-    override fun visitDelegatedTypeRef(delegatedTypeRef: FirDelegatedTypeRef, data: D): R {
-        return visitTypeRef(delegatedTypeRef, data)
-    }
-
     override fun visitImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef, data: D): R {
         return visitTypeRef(implicitTypeRef, data)
     }
@@ -26,10 +21,6 @@ abstract class FirDefaultVisitor<R, D> : FirVisitor<R, D>() {
 
     override fun visitErrorTypeRef(errorTypeRef: FirErrorTypeRef, data: D): R {
         return visitResolvedTypeRef(errorTypeRef, data)
-    }
-
-    override fun visitResolvedFunctionTypeRef(resolvedFunctionTypeRef: FirResolvedFunctionTypeRef, data: D): R {
-        return visitResolvedTypeRef(resolvedFunctionTypeRef, data)
     }
 
     override fun visitTypeRefWithNullability(typeRefWithNullability: FirTypeRefWithNullability, data: D): R {
@@ -81,10 +72,6 @@ abstract class FirDefaultVisitor<R, D> : FirVisitor<R, D>() {
         return visitWrappedArgumentExpression(namedArgumentExpression, data)
     }
 
-    override fun visitSealedClass(sealedClass: FirSealedClass, data: D): R {
-        return visitRegularClass(sealedClass, data)
-    }
-
     override fun visitErrorExpression(errorExpression: FirErrorExpression, data: D): R {
         return visitExpression(errorExpression, data)
     }
@@ -99,6 +86,14 @@ abstract class FirDefaultVisitor<R, D> : FirVisitor<R, D>() {
 
     override fun visitErrorFunction(errorFunction: FirErrorFunction, data: D): R {
         return visitFunction(errorFunction, data)
+    }
+
+    override fun visitErrorResolvedQualifier(errorResolvedQualifier: FirErrorResolvedQualifier, data: D): R {
+        return visitResolvedQualifier(errorResolvedQualifier, data)
+    }
+
+    override fun visitImplicitInvokeCall(implicitInvokeCall: FirImplicitInvokeCall, data: D): R {
+        return visitFunctionCall(implicitInvokeCall, data)
     }
 }
 

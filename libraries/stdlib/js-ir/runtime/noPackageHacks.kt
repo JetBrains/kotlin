@@ -51,6 +51,7 @@ internal fun <T> taggedArrayCopy(array: dynamic): T {
 }
 
 @PublishedApi
+@Suppress("NOTHING_TO_INLINE")
 internal inline fun withType(type: String, array: dynamic): dynamic {
     array.`$type$` = type
     return array

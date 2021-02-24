@@ -1,0 +1,10 @@
+// !DIAGNOSTICS: -UNUSED_PARAMETER
+// TARGET_BACKEND: JVM_OLD
+
+interface B<T> {
+    fun foo(t: T) {}
+}
+
+class <!CONFLICTING_JVM_DECLARATIONS!>C<!> : B<String> {
+    <!ACCIDENTAL_OVERRIDE, CONFLICTING_JVM_DECLARATIONS!>fun foo(o: Any)<!> {}
+}

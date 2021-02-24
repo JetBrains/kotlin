@@ -1,4 +1,3 @@
-// COMMON_COROUTINES_TEST
 // WITH_RUNTIME
 // WITH_COROUTINES
 // CHECK_STATE_MACHINE
@@ -6,7 +5,7 @@
 // FILE: inline.kt
 
 import helpers.*
-import COROUTINES_PACKAGE.*
+import kotlin.coroutines.*
 
 interface SuspendRunnable {
     suspend fun run()
@@ -40,10 +39,8 @@ inline suspend fun inlineMe(crossinline c1: suspend () -> Unit) {
 
 
 // FILE: box.kt
-// COMMON_COROUTINES_TEST
-
 import helpers.*
-import COROUTINES_PACKAGE.*
+import kotlin.coroutines.*
 
 fun builder(c: suspend () -> Unit) {
     c.startCoroutine(CheckStateMachineContinuation)

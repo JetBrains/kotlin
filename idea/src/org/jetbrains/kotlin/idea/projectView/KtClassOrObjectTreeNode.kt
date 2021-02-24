@@ -34,8 +34,9 @@ class KtClassOrObjectTreeNode(project: Project?, ktClassOrObject: KtClassOrObjec
     }
 
     override fun updateImpl(data: PresentationData) {
+        val project = project ?: return
         value?.let {
-            data.presentableText = it.name
+            data.presentableText = KtDeclarationTreeNode.tryGetRepresentableText(it, project)
         }
     }
 
@@ -74,6 +75,8 @@ class KtClassOrObjectTreeNode(project: Project?, ktClassOrObject: KtClassOrObjec
 
         return false
     }
+
+    override fun expandOnDoubleClick(): Boolean = false
 
     override fun getWeight() = 20
 }

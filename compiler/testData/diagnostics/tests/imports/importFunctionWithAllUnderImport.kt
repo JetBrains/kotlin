@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: importFunctionWithAllUnderImport.kt
 package test
 

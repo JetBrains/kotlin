@@ -1,0 +1,41 @@
+FILE: missingElse.kt
+    public final fun test(a: R|kotlin/Any|): R|kotlin/Unit| {
+        lval x: R|kotlin/Unit| = when (R|<local>/a|) {
+            ($subj$ is R|kotlin/Int|) ->  {
+                Int(1)
+            }
+            ($subj$ is R|kotlin/String|) ->  {
+                Int(2)
+            }
+        }
+
+        lval y: R|kotlin/Int| = when (R|<local>/a|) {
+            else ->  {
+                Int(1)
+            }
+        }
+
+        lval z: R|kotlin/Int| = when (R|<local>/a|) {
+            ($subj$ is R|kotlin/Int|) ->  {
+                Int(1)
+            }
+            ($subj$ is R|kotlin/String|) ->  {
+                Int(2)
+            }
+            else ->  {
+                Int(3)
+            }
+        }
+
+    }
+    public final fun test_2(a: R|kotlin/Any|): R|kotlin/Unit| {
+        when (R|<local>/a|) {
+            ($subj$ is R|kotlin/String|) ->  {
+                Int(1)
+            }
+            ($subj$ is R|kotlin/Int|) ->  {
+                Int(2)
+            }
+        }
+
+    }

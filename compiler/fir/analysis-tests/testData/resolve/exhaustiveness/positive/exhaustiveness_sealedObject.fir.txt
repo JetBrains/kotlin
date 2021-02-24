@@ -1,0 +1,45 @@
+FILE: exhaustiveness_sealedObject.kt
+    public sealed class A : R|kotlin/Any| {
+        protected constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class B : R|A| {
+        public constructor(): R|B| {
+            super<R|A|>()
+        }
+
+    }
+    public final object C : R|A| {
+        private constructor(): R|C| {
+            super<R|A|>()
+        }
+
+    }
+    public final fun takeString(s: R|kotlin/String|): R|kotlin/Unit| {
+    }
+    public final fun test_1(a: R|A|): R|kotlin/Unit| {
+        lval s: R|kotlin/String| = when (R|<local>/a|) {
+            ($subj$ is R|B|) ->  {
+                String()
+            }
+            ($subj$ is R|C|) ->  {
+                String()
+            }
+        }
+
+        R|/takeString|(R|<local>/s|)
+    }
+    public final fun test_2(a: R|A|): R|kotlin/Unit| {
+        lval s: R|kotlin/String| = when (R|<local>/a|) {
+            ($subj$ is R|B|) ->  {
+                String()
+            }
+            ==($subj$, Q|C|) ->  {
+                String()
+            }
+        }
+
+        R|/takeString|(R|<local>/s|)
+    }

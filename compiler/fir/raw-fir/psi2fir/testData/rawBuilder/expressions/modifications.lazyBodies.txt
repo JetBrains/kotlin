@@ -1,0 +1,4 @@
+FILE: modifications.kt
+    public? final? fun simple(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? fun List<String>.modify(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? fun Any.modify(): R|kotlin/Unit| { LAZY_BLOCK }

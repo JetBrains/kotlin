@@ -1,0 +1,34 @@
+package
+
+public open class K : foo.A {
+    public constructor K()
+    public final fun bar(/*0*/ d: kotlin.Double): kotlin.Unit
+    public final fun baz(/*0*/ i: kotlin.Int): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun foo(/*0*/ i: kotlin.Int): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public companion object Companion {
+        private constructor Companion()
+        public final fun bar(/*0*/ d: kotlin.Double): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public final fun foo(/*0*/ i: kotlin.Int): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+package foo {
+
+    public open class A {
+        public constructor A()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        // Static members
+        public/*package*/ open fun bar(/*0*/ s: kotlin.Double): kotlin.Unit
+        private open fun foo(/*0*/ s: kotlin.Int): kotlin.Unit
+    }
+}

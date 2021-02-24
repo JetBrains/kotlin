@@ -25,6 +25,7 @@ import com.intellij.openapi.roots.libraries.LibraryKind;
 import com.intellij.openapi.roots.ui.configuration.libraries.LibraryPresentationManager;
 import com.intellij.openapi.ui.Messages;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.idea.KotlinJvmBundle;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -54,10 +55,11 @@ public class FrameworksCompatibilityUtils {
             }
         }
 
-        removeWithConfirm(rootModel, existingEntries,
-                          String.format("Current module is already configured with '%s' framework.\nDo you want to remove it?",
-                                        presentableName),
-                          "Framework Conflict");
+        removeWithConfirm(
+                rootModel, existingEntries,
+                KotlinJvmBundle.message("frameworks.remove.conflict.question", presentableName),
+                KotlinJvmBundle.message("frameworks.remove.conflict.title")
+        );
     }
 
     private static void removeWithConfirm(ModifiableRootModel rootModel, List<OrderEntry> orderEntries, String message, String title) {

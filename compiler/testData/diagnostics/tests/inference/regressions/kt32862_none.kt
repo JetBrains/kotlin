@@ -7,5 +7,5 @@ fun foo(i: Long) {}
 fun bar(f: (Boolean) -> Unit) {}
 
 fun test() {
-    bar(::<!NI;CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY, OI;NONE_APPLICABLE!>foo<!>)
+    bar(::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY{NI}, NONE_APPLICABLE{OI}!>foo<!>)
 }

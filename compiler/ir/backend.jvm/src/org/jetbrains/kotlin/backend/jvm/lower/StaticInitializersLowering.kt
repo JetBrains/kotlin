@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.expressions.IrSetField
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
-import org.jetbrains.kotlin.load.java.JavaVisibilities
+import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.Name
 
 class StaticInitializersLowering(override val context: JvmBackendContext) : InitializersLoweringBase(context), ClassLoweringPass {
@@ -30,10 +30,11 @@ class StaticInitializersLowering(override val context: JvmBackendContext) : Init
         if (staticInitializerStatements.isNotEmpty()) {
             staticInitializerStatements.sortBy {
                 when ((it as? IrSetField)?.symbol?.owner?.origin) {
-                    IrDeclarationOrigin.FIELD_FOR_ENUM_ENTRY -> 1
-                    IrDeclarationOrigin.FIELD_FOR_ENUM_VALUES -> 2
-                    IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE -> 3
-                    else -> 4
+                    JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE -> 1
+                    IrDeclarationOrigin.FIELD_FOR_ENUM_ENTRY -> 2
+                    IrDeclarationOrigin.FIELD_FOR_ENUM_VALUES -> 3
+                    IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE -> 4
+                    else -> 5
                 }
             }
             irClass.addFunction {
@@ -43,7 +44,7 @@ class StaticInitializersLowering(override val context: JvmBackendContext) : Init
                 // TODO: mark as synthesized
                 origin = JvmLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER
                 returnType = context.irBuiltIns.unitType
-                visibility = JavaVisibilities.PACKAGE_VISIBILITY
+                visibility = JavaDescriptorVisibilities.PACKAGE_VISIBILITY
             }.apply {
                 body = IrBlockBodyImpl(irClass.startOffset, irClass.endOffset, staticInitializerStatements).patchDeclarationParents(this)
             }

@@ -65,7 +65,6 @@ public expect object OuterObject {
     }
 }
 
-
 // -- Module: <m2-jvm> --
 package
 
@@ -142,3 +141,4 @@ public actual object OuterObject {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 }
+

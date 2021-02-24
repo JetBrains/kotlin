@@ -10,7 +10,7 @@ fun test(a: A, b: B) {
 
         a.foo(this)
 
-        <!INAPPLICABLE_CANDIDATE!>(a.foo)()<!>
+        (a.foo)()
 
         (a.foo)(this)
     }

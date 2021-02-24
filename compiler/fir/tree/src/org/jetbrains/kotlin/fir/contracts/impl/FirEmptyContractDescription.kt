@@ -13,11 +13,13 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 object FirEmptyContractDescription : FirContractDescription() {
     override val source: FirSourceElement? get() = null
-    override val effects: List<ConeEffectDeclaration> get() = emptyList()
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirContractDescription {
         return this
+    }
+
+    override fun replaceSource(newSource: FirSourceElement?) {
     }
 }

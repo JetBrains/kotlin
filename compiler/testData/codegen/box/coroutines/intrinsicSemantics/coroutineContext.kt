@@ -1,9 +1,7 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 // WITH_RUNTIME
 // WITH_COROUTINES
-// COMMON_COROUTINES_TEST
 import helpers.*
-import COROUTINES_PACKAGE.*
+import kotlin.coroutines.*
 import kotlin.test.assertEquals
 
 suspend fun suspendHere() =

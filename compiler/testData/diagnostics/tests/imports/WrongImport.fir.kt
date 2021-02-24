@@ -1,7 +1,7 @@
 // FILE:a.kt
 package a.b
 
-// FILE:a.kt
+// FILE:b.kt
 package a
 
 val foo = object {
@@ -47,7 +47,7 @@ class D {
 }
 
 
-// FILE:b.kt
+// FILE:c.kt
 import a
 import a.b
 

@@ -18,7 +18,7 @@ import java.io.File
 abstract class AbstractUltraLightFacadeClassTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor(): LightProjectDescriptor = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
-    fun doTest(testDataPath: String) {
+    open fun doTest(testDataPath: String) {
         val sourceText = File(testDataPath).readText()
         myFixture.addFileToProject(testDataPath, sourceText) as KtFile
 
@@ -32,6 +32,10 @@ abstract class AbstractUltraLightFacadeClassTest : KotlinLightCodeInsightFixture
         val scope = GlobalSearchScope.allScope(project)
         val facades = KotlinAsJavaSupport.getInstance(project).getFacadeNames(FqName.ROOT, scope)
 
+        checkLightFacades(testDataPath, facades, scope)
+    }
+
+    protected open fun checkLightFacades(testDataPath: String, facades: Collection<String>, scope: GlobalSearchScope) {
         for (facadeName in facades) {
             val ultraLightClass = UltraLightChecker.checkFacadeEquivalence(FqName(facadeName), scope, project)
             if (ultraLightClass != null) {

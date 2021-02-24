@@ -75,7 +75,7 @@ public class PackageCodegenImpl implements PackageCodegen {
             }
             catch (Throwable e) {
                 VirtualFile vFile = file.getVirtualFile();
-                CodegenUtil.reportBackendException(e, "file facade code generation", vFile == null ? null : vFile.getUrl());
+                CodegenUtil.reportBackendException(e, "file facade code generation", vFile == null ? null : vFile.getUrl(), null);
             }
         }
     }
@@ -90,8 +90,12 @@ public class PackageCodegenImpl implements PackageCodegen {
         for (KtDeclaration declaration : file.getDeclarations()) {
             if (declaration instanceof KtClassOrObject) {
                 ClassDescriptor descriptor = state.getBindingContext().get(BindingContext.CLASS, declaration);
-                if (PsiUtilsKt.hasExpectModifier(declaration) &&
-                    (descriptor == null || !ExpectedActualDeclarationChecker.shouldGenerateExpectClass(descriptor))) {
+                if (PsiUtilsKt.hasExpectModifier(declaration)) {
+                    if (descriptor != null && ExpectedActualDeclarationChecker.shouldGenerateExpectClass(descriptor)) {
+                        assert ExpectedActualDeclarationChecker.isOptionalAnnotationClass(descriptor) :
+                                "Expect class should be generated only if it's an optional annotation: " + descriptor;
+                        state.getFactory().getPackagePartRegistry().getOptionalAnnotations().add(descriptor);
+                    }
                     continue;
                 }
 

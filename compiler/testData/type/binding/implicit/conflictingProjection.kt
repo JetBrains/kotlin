@@ -3,9 +3,5 @@ fun <T> getT(): T = null!!
 val foo = getT<List<in Int>>()
 /*
 psi: val foo = getT<List<in Int>>()
-type: List<in Int>
-    typeParameter: <out E> defined in kotlin.collections.List
-    typeProjection: in Int
-    psi: val foo = getT<List<in Int>>()
-    type: Int
+type: [ERROR : Inconsistent type: List<in Int> (0 parameter has declared variance: out, but argument variance is in)]
 */

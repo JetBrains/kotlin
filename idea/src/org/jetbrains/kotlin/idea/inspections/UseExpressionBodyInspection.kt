@@ -16,11 +16,13 @@ import com.intellij.openapi.project.Project
 import com.intellij.profile.codeInspection.ProjectInspectionProfileManager
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.canOmitDeclaredType
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.core.setType
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isOneLiner
+import org.jetbrains.kotlin.idea.core.util.isOneLiner
 import org.jetbrains.kotlin.idea.intentions.hasResultingIfWithoutElse
 import org.jetbrains.kotlin.idea.intentions.resultingWhens
 import org.jetbrains.kotlin.idea.util.CommentSaver
@@ -51,10 +53,10 @@ class UseExpressionBodyInspection(private val convertEmptyToUnit: Boolean) : Abs
 
         val toHighlight = valueStatement.toHighlight()
         return when {
-            valueStatement !is KtReturnExpression -> Status(toHighlight, "block body", INFORMATION)
-            valueStatement.returnedExpression is KtWhenExpression -> Status(toHighlight, "'return when'", INFORMATION)
-            valueStatement.isOneLiner() -> Status(toHighlight, "one-line return", GENERIC_ERROR_OR_WARNING)
-            else -> Status(toHighlight, "return", INFORMATION)
+            valueStatement !is KtReturnExpression -> Status(toHighlight, KotlinBundle.message("block.body"), INFORMATION)
+            valueStatement.returnedExpression is KtWhenExpression -> Status(toHighlight, KotlinBundle.message("return.when"), INFORMATION)
+            valueStatement.isOneLiner() -> Status(toHighlight, KotlinBundle.message("one.line.return"), GENERIC_ERROR_OR_WARNING)
+            else -> Status(toHighlight, KotlinBundle.message("text.return"), INFORMATION)
         }
     }
 
@@ -85,7 +87,7 @@ class UseExpressionBodyInspection(private val convertEmptyToUnit: Boolean) : Abs
 
             holder.registerProblemWithoutOfflineInformation(
                 declaration,
-                "Use expression body instead of $suffix",
+                KotlinBundle.message("use.expression.body.instead.of.0", suffix),
                 isOnTheFly,
                 highlightType,
                 toHighlightRange?.shiftRight(-declaration.startOffset),
@@ -167,7 +169,7 @@ class UseExpressionBodyInspection(private val convertEmptyToUnit: Boolean) : Abs
         if (!declaration.hasDeclaredReturnType() && declaration is KtNamedFunction && block.statements.isNotEmpty()) {
             val valueType = value.analyze().getType(value)
             if (valueType == null || !KotlinBuiltIns.isUnit(valueType)) {
-                declaration.setType(KotlinBuiltIns.FQ_NAMES.unit.asString(), shortenReferences = true)
+                declaration.setType(StandardNames.FqNames.unit.asString(), shortenReferences = true)
             }
         }
 
@@ -202,7 +204,7 @@ class UseExpressionBodyInspection(private val convertEmptyToUnit: Boolean) : Abs
     inner class ConvertToExpressionBodyFix : LocalQuickFix {
         override fun getFamilyName() = name
 
-        override fun getName() = "Convert to expression body"
+        override fun getName() = KotlinBundle.message("convert.to.expression.body.fix.text")
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             val declaration = descriptor.psiElement as? KtDeclarationWithBody ?: return

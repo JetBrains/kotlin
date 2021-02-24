@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -19,6 +19,7 @@ import org.intellij.plugins.intelliLang.Configuration
 import org.intellij.plugins.intelliLang.inject.*
 import org.intellij.plugins.intelliLang.inject.config.BaseInjection
 import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.idea.KotlinJvmBundle
 import org.jetbrains.kotlin.idea.patterns.KotlinPatterns
 import org.jetbrains.kotlin.idea.util.addAnnotation
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
@@ -73,7 +74,7 @@ class KotlinLanguageInjectionSupport : AbstractLanguageInjectionSupport() {
 
         TemporaryPlacesRegistry.getInstance(project).removeHostWithUndo(project, psiElement)
 
-        project.executeWriteCommand("remove injection in-code instructions") {
+        project.executeWriteCommand(KotlinJvmBundle.message("command.action.remove.injection.in.code.instructions")) {
             injectInstructions.forEach(PsiElement::delete)
         }
 
@@ -171,7 +172,7 @@ private fun addInjectionInstructionInCode(language: Language, host: PsiLanguageI
     val modifierListOwner = findElementToInjectWithAnnotation(ktHost)
 
     if (modifierListOwner != null && canInjectWithAnnotation(ktHost)) {
-        project.executeWriteCommand("Add injection annotation") {
+        project.executeWriteCommand(KotlinJvmBundle.message("command.action.add.injection.annotation")) {
             modifierListOwner.addAnnotation(FqName(AnnotationUtil.LANGUAGE), "\"${language.id}\"")
         }
 
@@ -185,7 +186,7 @@ private fun addInjectionInstructionInCode(language: Language, host: PsiLanguageI
     val psiFactory = KtPsiFactory(project)
     val injectComment = psiFactory.createComment("//language=" + language.id)
 
-    project.executeWriteCommand("Add injection comment") {
+    project.executeWriteCommand(KotlinJvmBundle.message("command.action.add.injection.comment")) {
         commentBeforeAnchor.parent.addBefore(injectComment, commentBeforeAnchor)
     }
 

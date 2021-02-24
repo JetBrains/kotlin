@@ -1,5 +1,5 @@
 fun test() {
-    var x = 0
+    var x = 1
     run {
         val obj = object {
             fun foo() { ++x }

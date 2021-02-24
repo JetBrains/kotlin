@@ -17,15 +17,31 @@ class KotlinSourceSetProto(
     val dependsOnSourceSets: Set<String>
 ) {
 
-    fun buildKotlinSourceSetImpl(doBuildDependencies: Boolean) = KotlinSourceSetImpl(
+    fun buildKotlinSourceSetImpl(
+        doBuildDependencies: Boolean,
+        allSourceSetsProtosByNames: Map<String, KotlinSourceSetProto>,
+        dependsOnCache: HashMap<String, Set<String>>
+    ) = KotlinSourceSetImpl(
         name,
         languageSettings,
         sourceDirs,
         resourceDirs,
         if (doBuildDependencies) dependencies.invoke() else emptyArray(),
-        dependsOnSourceSets
+        calculateDependsOnClosure(this, allSourceSetsProtosByNames, dependsOnCache)
     )
 
+    private fun calculateDependsOnClosure(
+        currentSourceSetProto: KotlinSourceSetProto,
+        sourceSetsMap: Map<String, KotlinSourceSetProto>,
+        cache: MutableMap<String, Set<String>>
+    ): Set<String> {
+        return cache.computeIfAbsent(currentSourceSetProto.name) {
+            currentSourceSetProto.dependsOnSourceSets.flatMap { name ->
+                val nextSourceSet = sourceSetsMap[name] ?: error("Source set $name is not found in map $sourceSetsMap")
+                calculateDependsOnClosure(nextSourceSet, sourceSetsMap, cache).union(setOf(name))
+            }.toSet()
+        }
+    }
 }
 
 class KotlinSourceSetImpl(
@@ -36,7 +52,6 @@ class KotlinSourceSetImpl(
     override val dependencies: Array<KotlinDependencyId>,
     override val dependsOnSourceSets: Set<String>,
     val defaultPlatform: KotlinPlatformContainerImpl = KotlinPlatformContainerImpl(),
-    val defaultIsTestModule: Boolean = false
 ) : KotlinSourceSet {
 
     constructor(kotlinSourceSet: KotlinSourceSet, cloningCache: MutableMap<Any, Any>) : this(
@@ -46,14 +61,15 @@ class KotlinSourceSetImpl(
         HashSet(kotlinSourceSet.resourceDirs),
         kotlinSourceSet.dependencies,
         HashSet(kotlinSourceSet.dependsOnSourceSets),
-        KotlinPlatformContainerImpl(kotlinSourceSet.actualPlatforms),
-        kotlinSourceSet.isTestModule
-    )
+        KotlinPlatformContainerImpl(kotlinSourceSet.actualPlatforms)
+    ) {
+        this.isTestModule = kotlinSourceSet.isTestModule
+    }
 
     override var actualPlatforms: KotlinPlatformContainer = defaultPlatform
         internal set
 
-    override var isTestModule: Boolean = defaultIsTestModule
+    override var isTestModule: Boolean = false
         internal set
 
     override fun toString() = name
@@ -104,7 +120,7 @@ data class KotlinCompilationArgumentsImpl(
 }
 
 data class KotlinNativeCompilationExtensionsImpl(
-    override val konanTarget: String? = null
+    override val konanTarget: String
 ) : KotlinNativeCompilationExtensions {
     constructor(extensions: KotlinNativeCompilationExtensions) : this(extensions.konanTarget)
 }
@@ -117,7 +133,7 @@ data class KotlinCompilationImpl(
     override val arguments: KotlinCompilationArguments,
     override val dependencyClasspath: Array<String>,
     override val kotlinTaskProperties: KotlinTaskProperties,
-    override val nativeExtensions: KotlinNativeCompilationExtensions
+    override val nativeExtensions: KotlinNativeCompilationExtensions?
 ) : KotlinCompilation {
 
     // create deep copy
@@ -133,7 +149,7 @@ data class KotlinCompilationImpl(
         KotlinCompilationArgumentsImpl(kotlinCompilation.arguments),
         kotlinCompilation.dependencyClasspath,
         KotlinTaskPropertiesImpl(kotlinCompilation.kotlinTaskProperties),
-        KotlinNativeCompilationExtensionsImpl(kotlinCompilation.nativeExtensions)
+        kotlinCompilation.nativeExtensions?.let(::KotlinNativeCompilationExtensionsImpl)
     ) {
         disambiguationClassifier = kotlinCompilation.disambiguationClassifier
         platform = kotlinCompilation.platform
@@ -162,7 +178,8 @@ data class KotlinTargetImpl(
     override val disambiguationClassifier: String?,
     override val platform: KotlinPlatform,
     override val compilations: Collection<KotlinCompilation>,
-    override val testTasks: Collection<KotlinTestTask>,
+    override val testRunTasks: Collection<KotlinTestRunTask>,
+    override val nativeMainRunTasks: Collection<KotlinNativeMainRunTask>,
     override val jar: KotlinTargetJar?,
     override val konanArtifacts: List<KonanArtifactModel>
 ) : KotlinTarget {
@@ -178,9 +195,23 @@ data class KotlinTargetImpl(
                 cloningCache[initialCompilation] = it
             }
         }.toList(),
-        target.testTasks.map { initialTestTask ->
-            (cloningCache[initialTestTask] as? KotlinTestTask)
-                ?: KotlinTestTaskImpl(initialTestTask.taskName, initialTestTask.compilationName).also {
+        target.testRunTasks.map { initialTestTask ->
+            (cloningCache[initialTestTask] as? KotlinTestRunTask)
+                ?: KotlinTestRunTaskImpl(
+                    initialTestTask.taskName,
+                    initialTestTask.compilationName
+                ).also {
+                    cloningCache[initialTestTask] = it
+                }
+        },
+        target.nativeMainRunTasks.map { initialTestTask ->
+            (cloningCache[initialTestTask] as? KotlinNativeMainRunTask)
+                ?: KotlinNativeMainRunTaskImpl(
+                    initialTestTask.taskName,
+                    initialTestTask.compilationName,
+                    initialTestTask.entryPoint,
+                    initialTestTask.debuggable
+                ).also {
                     cloningCache[initialTestTask] = it
                 }
         },
@@ -189,10 +220,17 @@ data class KotlinTargetImpl(
     )
 }
 
-data class KotlinTestTaskImpl(
+data class KotlinTestRunTaskImpl(
     override val taskName: String,
     override val compilationName: String
-) : KotlinTestTask
+) : KotlinTestRunTask
+
+data class KotlinNativeMainRunTaskImpl(
+    override val taskName: String,
+    override val compilationName: String,
+    override val entryPoint: String,
+    override val debuggable: Boolean
+) : KotlinNativeMainRunTask
 
 data class ExtraFeaturesImpl(
     override val coroutinesState: String?,
@@ -205,7 +243,8 @@ data class KotlinMPPGradleModelImpl(
     override val targets: Collection<KotlinTarget>,
     override val extraFeatures: ExtraFeatures,
     override val kotlinNativeHome: String,
-    override val dependencyMap: Map<KotlinDependencyId, KotlinDependency>
+    override val dependencyMap: Map<KotlinDependencyId, KotlinDependency>,
+    override val kotlinImportingDiagnostics: KotlinImportingDiagnosticsContainer = mutableSetOf()
 ) : KotlinMPPGradleModel {
 
     constructor(mppModel: KotlinMPPGradleModel, cloningCache: MutableMap<Any, Any>) : this(
@@ -226,7 +265,8 @@ data class KotlinMPPGradleModelImpl(
             mppModel.extraFeatures.isNativeDependencyPropagationEnabled
         ),
         mppModel.kotlinNativeHome,
-        mppModel.dependencyMap.map { it.key to it.value.deepCopy(cloningCache) }.toMap()
+        mppModel.dependencyMap.map { it.key to it.value.deepCopy(cloningCache) }.toMap(),
+        mppModel.kotlinImportingDiagnostics.mapTo(mutableSetOf()) { it.deepCopy(cloningCache) }
     )
 }
 

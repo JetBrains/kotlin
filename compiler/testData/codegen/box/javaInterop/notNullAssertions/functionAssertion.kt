@@ -1,6 +1,7 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 // SKIP_JDK6
 // TARGET_BACKEND: JVM
+// WITH_RUNTIME
+// FULL_JDK
 // FILE: F.java
 import java.util.function.Function;
 
@@ -11,8 +12,6 @@ public class F {
 }
 
 // FILE: test.kt
-// WITH_RUNTIME
-// FULL_JDK
 fun test(f: (Int?) -> String): String {
     return F.passNull(f)
 }

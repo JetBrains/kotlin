@@ -1,4 +1,7 @@
 FILE fqName:<root> fileName:/abbreviatedTypes.kt
+  TYPEALIAS name:I visibility:public expandedType:kotlin.Int
+  TYPEALIAS name:L visibility:public expandedType:kotlin.collections.List<T of <root>.L>
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
   FUN name:test1 visibility:public modality:FINAL <> (x:kotlin.collections.List<kotlin.Int>) returnType:kotlin.collections.List<kotlin.Int>
     VALUE_PARAMETER name:x index:0 type:kotlin.collections.List<kotlin.Int>
     BLOCK_BODY

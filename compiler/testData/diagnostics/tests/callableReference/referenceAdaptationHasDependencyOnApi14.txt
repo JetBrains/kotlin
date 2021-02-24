@@ -1,0 +1,15 @@
+package
+
+public fun allOfTheAbove(/*0*/ f: (A) -> kotlin.Unit): kotlin.Any
+public fun coercionToUnit(/*0*/ f: (A, kotlin.String, kotlin.LongArray) -> kotlin.Unit): kotlin.Any
+public fun defaultAndVararg(/*0*/ f: (A) -> kotlin.String): kotlin.Any
+public fun test(): kotlin.Unit
+public fun varargToElement(/*0*/ f: (A, kotlin.String, kotlin.Long, kotlin.Long) -> kotlin.String): kotlin.Any
+
+public final class A {
+    public constructor A()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun foo(/*0*/ s: kotlin.String = ..., /*1*/ vararg xs: kotlin.Long /*kotlin.LongArray*/): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

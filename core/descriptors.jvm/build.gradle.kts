@@ -10,7 +10,8 @@ dependencies {
     compile(project(":kotlin-annotations-jvm"))
     compile(project(":core:descriptors"))
     compile(project(":core:deserialization"))
-    compile(project(":core:metadata.jvm"))
+    api(project(":core:compiler.common.jvm"))
+    api(project(":core:deserialization.common.jvm"))
     compile(project(":core:util.runtime"))
     compile(commonDep("javax.inject"))
 }
@@ -23,4 +24,10 @@ sourceSets {
 tasks.withType<JavaCompile> {
     sourceCompatibility = "1.6"
     targetCompatibility = "1.6"
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    kotlinOptions {
+        freeCompilerArgs += "-Xsuppress-deprecated-jvm-target-warning"
+    }
 }

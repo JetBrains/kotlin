@@ -3,6 +3,8 @@
 //KT-2631 Check multiple assignment
 package a
 
+import checkSubtype
+
 class MyClass {
     operator fun component1() = 1
     operator fun component2() = "a"

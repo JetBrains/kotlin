@@ -6,14 +6,15 @@
 package org.jetbrains.kotlin.idea.run.script.standalone
 
 import com.intellij.execution.actions.ConfigurationContext
-import com.intellij.execution.actions.RunConfigurationProducer
+import com.intellij.execution.actions.LazyRunConfigurationProducer
+import com.intellij.execution.configurations.ConfigurationFactory
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 
 class KotlinStandaloneScriptRunConfigurationProducer :
-    RunConfigurationProducer<KotlinStandaloneScriptRunConfiguration>(KotlinStandaloneScriptRunConfigurationType.instance) {
+    LazyRunConfigurationProducer<KotlinStandaloneScriptRunConfiguration>() {
     override fun setupConfigurationFromContext(
         configuration: KotlinStandaloneScriptRunConfiguration,
         context: ConfigurationContext,
@@ -41,4 +42,6 @@ class KotlinStandaloneScriptRunConfigurationProducer :
             return script.containingKtFile.virtualFile.canonicalPath
         }
     }
+
+    override fun getConfigurationFactory(): ConfigurationFactory = KotlinStandaloneScriptRunConfigurationType.instance
 }

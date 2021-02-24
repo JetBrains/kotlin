@@ -1,4 +1,5 @@
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
+// !WITH_NEW_INFERENCE
 // SKIP_TXT
 
 /*
@@ -167,6 +168,6 @@ class case_10_class {
  */
 fun case_11(value_1: Any?, value_2: Any?, value_3: Any?) {
     funWithReturnsAndInvertCondition(value_1 !is String || value_2 !is Number || <!USELESS_IS_CHECK!>value_3 !is Any?<!>)
-    println(<!DEBUG_INFO_SMARTCAST!>value_1<!><!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.<!UNRESOLVED_REFERENCE!>length<!>)
+    println(<!DEBUG_INFO_SMARTCAST!>value_1<!><!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.<!OI;UNRESOLVED_REFERENCE!>length<!>)
     println(<!DEBUG_INFO_SMARTCAST!>value_2<!><!UNNECESSARY_SAFE_CALL!>?.<!>toByte())
 }

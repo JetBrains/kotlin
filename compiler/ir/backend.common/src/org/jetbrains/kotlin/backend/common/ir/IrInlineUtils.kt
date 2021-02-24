@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnableBlockImpl
 import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
-import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.isVararg
 import org.jetbrains.kotlin.ir.util.statements
 
@@ -44,12 +43,6 @@ private fun createParameterMapping(source: IrFunction, target: IrFunction): Map<
     return sourceParameters.zip(targetParameters).toMap()
 }
 
-fun IrFunction.copyBodyTo(target: IrFunction): IrBody? =
-    copyBodyTo(target, createParameterMapping(this, target))
-
-fun IrFunction.copyBodyTo(target: IrFunction, arguments: Map<IrValueParameter, IrValueDeclaration>): IrBody? =
-    body?.deepCopyWithSymbols(target)?.move(this, target, target.symbol, arguments)
-
 fun IrFunction.moveBodyTo(target: IrFunction): IrBody? =
     moveBodyTo(target, createParameterMapping(this, target))
 
@@ -72,12 +65,12 @@ private fun IrBody.move(
     override fun visitBlock(expression: IrBlock): IrExpression {
         // Might be an inline lambda argument; if the function has already been moved out, visit it explicitly.
         if (expression.origin == IrStatementOrigin.LAMBDA || expression.origin == IrStatementOrigin.ANONYMOUS_FUNCTION)
-            if (expression.statements[0] !is IrFunction && expression.statements[1] is IrFunctionReference)
-                (expression.statements[1] as IrFunctionReference).symbol.owner.transformChildrenVoid()
+            if (expression.statements.lastOrNull() is IrFunctionReference && expression.statements.none { it is IrFunction })
+                (expression.statements.last() as IrFunctionReference).symbol.owner.transformChildrenVoid()
         return super.visitBlock(expression)
     }
 
-    override fun visitDeclaration(declaration: IrDeclaration): IrStatement {
+    override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement {
         if (declaration.parent == source)
             declaration.parent = target
         return super.visitDeclaration(declaration)
@@ -87,6 +80,6 @@ private fun IrBody.move(
 // TODO use a generic inliner (e.g. JS/Native's FunctionInlining.Inliner)
 // Inline simple function calls without type parameters, default parameters, or varargs.
 fun IrFunction.inline(target: IrDeclarationParent, arguments: List<IrValueDeclaration> = listOf()): IrReturnableBlock =
-    IrReturnableBlockImpl(startOffset, endOffset, returnType, IrReturnableBlockSymbolImpl(descriptor), null, symbol).apply {
+    IrReturnableBlockImpl(startOffset, endOffset, returnType, IrReturnableBlockSymbolImpl(), null, symbol).apply {
         statements += body!!.move(this@inline, target, symbol, valueParameters.zip(arguments).toMap()).statements
     }

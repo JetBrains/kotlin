@@ -20,4 +20,4 @@ Extension receiver = NO_RECEIVER
 
 Value arguments mapping:
 
-MATCH_MODULO_UNINFERRED_TYPES  t : ??? = someList()
+SUCCESS  t : ??? = someList()

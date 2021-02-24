@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.nj2k.inference.mutability
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.nj2k.inference.common.State
 import org.jetbrains.kotlin.nj2k.inference.common.StateUpdater
@@ -54,13 +54,13 @@ class MutabilityStateUpdater : StateUpdater() {
         }
 
         val mutableToImmutable = mapOf(
-            KotlinBuiltIns.FQ_NAMES.mutableIterator to KotlinBuiltIns.FQ_NAMES.iterator,
-            KotlinBuiltIns.FQ_NAMES.mutableCollection to KotlinBuiltIns.FQ_NAMES.collection,
-            KotlinBuiltIns.FQ_NAMES.mutableList to KotlinBuiltIns.FQ_NAMES.list,
-            KotlinBuiltIns.FQ_NAMES.mutableListIterator to KotlinBuiltIns.FQ_NAMES.listIterator,
-            KotlinBuiltIns.FQ_NAMES.mutableSet to KotlinBuiltIns.FQ_NAMES.set,
-            KotlinBuiltIns.FQ_NAMES.mutableMap to KotlinBuiltIns.FQ_NAMES.map,
-            KotlinBuiltIns.FQ_NAMES.mutableMapEntry to KotlinBuiltIns.FQ_NAMES.mapEntry
+            StandardNames.FqNames.mutableIterator to StandardNames.FqNames.iterator,
+            StandardNames.FqNames.mutableCollection to StandardNames.FqNames.collection,
+            StandardNames.FqNames.mutableList to StandardNames.FqNames.list,
+            StandardNames.FqNames.mutableListIterator to StandardNames.FqNames.listIterator,
+            StandardNames.FqNames.mutableSet to StandardNames.FqNames.set,
+            StandardNames.FqNames.mutableMap to StandardNames.FqNames.map,
+            StandardNames.FqNames.mutableMapEntry to StandardNames.FqNames.mapEntry
         )
 
         val immutableToMutable = mutableToImmutable.map { (key, value) -> value to key }.toMap()

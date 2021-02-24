@@ -1,11 +1,12 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 // IGNORE_BACKEND: JS_IR, JS, NATIVE
+// IGNORE_BACKEND: JS_IR_ES6
 // WITH_REFLECT
 import kotlin.test.assertEquals
 
 var global = S("")
 
 inline class Z(val x: Int) {
+    @Suppress("RESERVED_VAR_PROPERTY_OF_VALUE_CLASS")
     var test: S
         get() = S("${global.x}$x")
         set(value) {
@@ -14,6 +15,7 @@ inline class Z(val x: Int) {
 }
 
 inline class L(val x: Long) {
+    @Suppress("RESERVED_VAR_PROPERTY_OF_VALUE_CLASS")
     var test: S
         get() = S("${global.x}$x")
         set(value) {
@@ -22,6 +24,7 @@ inline class L(val x: Long) {
 }
 
 inline class S(val x: String) {
+    @Suppress("RESERVED_VAR_PROPERTY_OF_VALUE_CLASS")
     var test: S
         get() = S("${global.x}$x")
         set(value) {
@@ -30,6 +33,7 @@ inline class S(val x: String) {
 }
 
 inline class A(val x: Any) {
+    @Suppress("RESERVED_VAR_PROPERTY_OF_VALUE_CLASS")
     var test: S
         get() = S("${global.x}$x")
         set(value) {

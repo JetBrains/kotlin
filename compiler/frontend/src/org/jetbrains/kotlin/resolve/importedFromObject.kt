@@ -51,8 +51,8 @@ class FunctionImportedFromObject(
     override fun getOriginal() = _original as FunctionDescriptor
 
     override fun copy(
-        newOwner: DeclarationDescriptor?, modality: Modality?, visibility: Visibility?,
-        kind: CallableMemberDescriptor.Kind?, copyOverrides: Boolean
+            newOwner: DeclarationDescriptor?, modality: Modality?, visibility: DescriptorVisibility?,
+            kind: CallableMemberDescriptor.Kind?, copyOverrides: Boolean
     ): FunctionDescriptor {
         throw UnsupportedOperationException("copy() should not be called on ${this::class.java.simpleName}, was called for $this")
     }
@@ -71,8 +71,8 @@ class PropertyImportedFromObject(
     override fun getOriginal() = _original as PropertyDescriptor
 
     override fun copy(
-        newOwner: DeclarationDescriptor?, modality: Modality?, visibility: Visibility?,
-        kind: CallableMemberDescriptor.Kind?, copyOverrides: Boolean
+            newOwner: DeclarationDescriptor?, modality: Modality?, visibility: DescriptorVisibility?,
+            kind: CallableMemberDescriptor.Kind?, copyOverrides: Boolean
     ): FunctionDescriptor {
         throw UnsupportedOperationException("copy() should not be called on ${this::class.java.simpleName}, was called for $this")
     }

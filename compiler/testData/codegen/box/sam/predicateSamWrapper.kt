@@ -1,8 +1,8 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 // TARGET_BACKEND: JVM
 // WITH_RUNTIME
 // FULL_JDK
 // SKIP_JDK6
+// SAM_CONVERSIONS: CLASS
 // FILE: test.kt
 // Test that SAM wrappers with type parameters are cached properly.
 class A {

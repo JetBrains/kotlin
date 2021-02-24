@@ -1,0 +1,158 @@
+FILE: conflictingProjection.kt
+    public final class None<T> : R|kotlin/Any| {
+        public constructor<T>(): R|None<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class In<in T> : R|kotlin/Any| {
+        public constructor<in T>(): R|In<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class Out<out T> : R|kotlin/Any| {
+        public constructor<out T>(): R|Out<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun a1(value: R|None<kotlin/Int>|): R|kotlin/Unit| {
+    }
+    public final fun a2(value: R|None<in kotlin/Int>|): R|kotlin/Unit| {
+    }
+    public final fun a3(value: R|None<out kotlin/Int>|): R|kotlin/Unit| {
+    }
+    public final fun a4(value: R|In<kotlin/Int>|): R|kotlin/Unit| {
+    }
+    public final fun a5(value: R|In<in kotlin/Int>|): R|kotlin/Unit| {
+    }
+    public final fun a6(value: R|In<out kotlin/Int>|): R|kotlin/Unit| {
+    }
+    public final fun a7(value: R|Out<kotlin/Int>|): R|kotlin/Unit| {
+    }
+    public final fun a8(value: R|Out<in kotlin/Int>|): R|kotlin/Unit| {
+    }
+    public final fun a9(value: R|Out<out kotlin/Int>|): R|kotlin/Unit| {
+    }
+    public final typealias A1<K> = R|None<K>|
+    public final typealias A2<K> = R|None<in K>|
+    public final typealias A3<K> = R|None<out K>|
+    public final typealias A4<in K> = R|None<K>|
+    public final typealias A5<in K> = R|None<in K>|
+    public final typealias A6<in K> = R|None<out K>|
+    public final typealias A7<out K> = R|None<K>|
+    public final typealias A8<out K> = R|None<in K>|
+    public final typealias A9<out K> = R|None<out K>|
+    public final typealias A10<K> = R|In<K>|
+    public final typealias A11<K> = R|In<in K>|
+    public final typealias A12<K> = R|In<out K>|
+    public final typealias A13<in K> = R|In<K>|
+    public final typealias A14<in K> = R|In<in K>|
+    public final typealias A15<in K> = R|In<out K>|
+    public final typealias A16<out K> = R|In<K>|
+    public final typealias A17<out K> = R|In<in K>|
+    public final typealias A18<out K> = R|In<out K>|
+    public final typealias A19<K> = R|Out<K>|
+    public final typealias A20<K> = R|Out<in K>|
+    public final typealias A21<K> = R|Out<out K>|
+    public final typealias A22<in K> = R|Out<K>|
+    public final typealias A23<in K> = R|Out<in K>|
+    public final typealias A24<in K> = R|Out<out K>|
+    public final typealias A25<out K> = R|Out<K>|
+    public final typealias A26<out K> = R|Out<in K>|
+    public final typealias A27<out K> = R|Out<out K>|
+    public final class Outer<T> : R|kotlin/Any| {
+        public constructor<T>(): R|Outer<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final inner class Intermediate<K, T> : R|kotlin/Any| {
+            public constructor<K>(): R|Outer.Intermediate<K, T>| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final inner class Inner<G, K, T> : R|kotlin/Any| {
+                public constructor<G>(): R|Outer.Intermediate.Inner<G, K, T>| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+        }
+
+    }
+    public final fun test1(): R|Outer.Intermediate.Inner<kotlin/Char, kotlin/String, kotlin/Int>| {
+        ^test1 R|/Outer.Outer|<R|kotlin/Int|>().R|SubstitutionOverride</Outer.Intermediate.Intermediate>|<R|kotlin/String|>().R|SubstitutionOverride</Outer.Intermediate.Inner.Inner>|<R|kotlin/Char|>()
+    }
+    public final fun test2(): R|Outer.Intermediate.Inner<kotlin/Char, kotlin/String, in kotlin/Int>| {
+        ^test2 R|/Outer.Outer|<R|kotlin/Int|>().R|SubstitutionOverride</Outer.Intermediate.Intermediate>|<R|kotlin/String|>().R|SubstitutionOverride</Outer.Intermediate.Inner.Inner>|<R|kotlin/Char|>()
+    }
+    public final fun test3(): R|Outer.Intermediate.Inner<kotlin/Char, kotlin/String, out kotlin/Int>| {
+        ^test3 R|/Outer.Outer|<R|kotlin/Int|>().R|SubstitutionOverride</Outer.Intermediate.Intermediate>|<R|kotlin/String|>().R|SubstitutionOverride</Outer.Intermediate.Inner.Inner>|<R|kotlin/Char|>()
+    }
+    public final fun test4(): R|Outer.Intermediate.Inner<kotlin/Char, in kotlin/String, kotlin/Int>| {
+        ^test4 R|/Outer.Outer|<R|kotlin/Int|>().R|SubstitutionOverride</Outer.Intermediate.Intermediate>|<R|kotlin/String|>().R|SubstitutionOverride</Outer.Intermediate.Inner.Inner>|<R|kotlin/Char|>()
+    }
+    public final fun test5(): R|Outer.Intermediate.Inner<kotlin/Char, out kotlin/String, kotlin/Int>| {
+        ^test5 R|/Outer.Outer|<R|kotlin/Int|>().R|SubstitutionOverride</Outer.Intermediate.Intermediate>|<R|kotlin/String|>().R|SubstitutionOverride</Outer.Intermediate.Inner.Inner>|<R|kotlin/Char|>()
+    }
+    public final fun test6(): R|Outer.Intermediate.Inner<in kotlin/Char, kotlin/String, kotlin/Int>| {
+        ^test6 R|/Outer.Outer|<R|kotlin/Int|>().R|SubstitutionOverride</Outer.Intermediate.Intermediate>|<R|kotlin/String|>().R|SubstitutionOverride</Outer.Intermediate.Inner.Inner>|<R|kotlin/Char|>()
+    }
+    public final fun test7(): R|Outer.Intermediate.Inner<out kotlin/Char, kotlin/String, kotlin/Int>| {
+        ^test7 R|/Outer.Outer|<R|kotlin/Int|>().R|SubstitutionOverride</Outer.Intermediate.Intermediate>|<R|kotlin/String|>().R|SubstitutionOverride</Outer.Intermediate.Inner.Inner>|<R|kotlin/Char|>()
+    }
+    public final fun test8(): R|Outer.Intermediate.Inner<kotlin/Char, out kotlin/String, in kotlin/Int>| {
+        ^test8 R|/Outer.Outer|<R|kotlin/Int|>().R|SubstitutionOverride</Outer.Intermediate.Intermediate>|<R|kotlin/String|>().R|SubstitutionOverride</Outer.Intermediate.Inner.Inner>|<R|kotlin/Char|>()
+    }
+    public final fun test9(): R|Outer.Intermediate.Inner<out kotlin/Char, in kotlin/String, kotlin/Int>| {
+        ^test9 R|/Outer.Outer|<R|kotlin/Int|>().R|SubstitutionOverride</Outer.Intermediate.Intermediate>|<R|kotlin/String|>().R|SubstitutionOverride</Outer.Intermediate.Inner.Inner>|<R|kotlin/Char|>()
+    }
+    public final class InOuter<in T> : R|kotlin/Any| {
+        public constructor<in T>(): R|InOuter<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final inner class OutIntermediate<out K, in T> : R|kotlin/Any| {
+            public constructor<out K>(): R|InOuter.OutIntermediate<K, T>| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final inner class InInner<in G, out K, in T> : R|kotlin/Any| {
+                public constructor<in G>(): R|InOuter.OutIntermediate.InInner<G, K, T>| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+        }
+
+    }
+    public final fun test10(): R|InOuter.OutIntermediate.InInner<kotlin/Char, kotlin/String, kotlin/Int>| {
+        ^test10 R|/InOuter.InOuter|<R|kotlin/Int|>().R|SubstitutionOverride</InOuter.OutIntermediate.OutIntermediate>|<R|kotlin/String|>().R|SubstitutionOverride</InOuter.OutIntermediate.InInner.InInner>|<R|kotlin/Char|>()
+    }
+    public final fun test11(): R|InOuter.OutIntermediate.InInner<kotlin/Char, kotlin/String, in kotlin/Int>| {
+        ^test11 R|/InOuter.InOuter|<R|kotlin/Int|>().R|SubstitutionOverride</InOuter.OutIntermediate.OutIntermediate>|<R|kotlin/String|>().R|SubstitutionOverride</InOuter.OutIntermediate.InInner.InInner>|<R|kotlin/Char|>()
+    }
+    public final fun test12(): R|InOuter.OutIntermediate.InInner<kotlin/Char, kotlin/String, out kotlin/Int>| {
+        ^test12 R|/InOuter.InOuter|<R|kotlin/Int|>().R|SubstitutionOverride</InOuter.OutIntermediate.OutIntermediate>|<R|kotlin/String|>().R|SubstitutionOverride</InOuter.OutIntermediate.InInner.InInner>|<R|kotlin/Char|>()
+    }
+    public final fun test13(): R|InOuter.OutIntermediate.InInner<kotlin/Char, in kotlin/String, kotlin/Int>| {
+        ^test13 R|/InOuter.InOuter|<R|kotlin/Int|>().R|SubstitutionOverride</InOuter.OutIntermediate.OutIntermediate>|<R|kotlin/String|>().R|SubstitutionOverride</InOuter.OutIntermediate.InInner.InInner>|<R|kotlin/Char|>()
+    }
+    public final fun test14(): R|InOuter.OutIntermediate.InInner<kotlin/Char, out kotlin/String, kotlin/Int>| {
+        ^test14 R|/InOuter.InOuter|<R|kotlin/Int|>().R|SubstitutionOverride</InOuter.OutIntermediate.OutIntermediate>|<R|kotlin/String|>().R|SubstitutionOverride</InOuter.OutIntermediate.InInner.InInner>|<R|kotlin/Char|>()
+    }
+    public final fun test15(): R|InOuter.OutIntermediate.InInner<in kotlin/Char, kotlin/String, kotlin/Int>| {
+        ^test15 R|/InOuter.InOuter|<R|kotlin/Int|>().R|SubstitutionOverride</InOuter.OutIntermediate.OutIntermediate>|<R|kotlin/String|>().R|SubstitutionOverride</InOuter.OutIntermediate.InInner.InInner>|<R|kotlin/Char|>()
+    }
+    public final fun test16(): R|InOuter.OutIntermediate.InInner<out kotlin/Char, kotlin/String, kotlin/Int>| {
+        ^test16 R|/InOuter.InOuter|<R|kotlin/Int|>().R|SubstitutionOverride</InOuter.OutIntermediate.OutIntermediate>|<R|kotlin/String|>().R|SubstitutionOverride</InOuter.OutIntermediate.InInner.InInner>|<R|kotlin/Any?|>()
+    }
+    public final fun test17(): R|InOuter.OutIntermediate.InInner<kotlin/Char, out kotlin/String, in kotlin/Int>| {
+        ^test17 R|/InOuter.InOuter|<R|kotlin/Int|>().R|SubstitutionOverride</InOuter.OutIntermediate.OutIntermediate>|<R|kotlin/String|>().R|SubstitutionOverride</InOuter.OutIntermediate.InInner.InInner>|<R|kotlin/Char|>()
+    }
+    public final fun test18(): R|InOuter.OutIntermediate.InInner<out kotlin/Char, in kotlin/String, kotlin/Int>| {
+        ^test18 R|/InOuter.InOuter|<R|kotlin/Int|>().R|SubstitutionOverride</InOuter.OutIntermediate.OutIntermediate>|<R|kotlin/String|>().R|SubstitutionOverride</InOuter.OutIntermediate.InInner.InInner>|<R|kotlin/Any?|>()
+    }

@@ -127,7 +127,7 @@ class ServiceLoaderLiteTestWithClassLoader : AbstractServiceLoaderLiteTest() {
     private inline fun <reified Intf : Any> impls(vararg impls: KClass<out Intf>): Entry {
         val content = buildString {
             for (impl in impls) {
-                appendln(impl.java.name)
+                appendLine(impl.java.name)
             }
         }
         return Entry("META-INF/services/" + Intf::class.java.name, content)

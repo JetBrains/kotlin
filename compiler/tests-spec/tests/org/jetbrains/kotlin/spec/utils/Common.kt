@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.spec.utils
 
 import org.jetbrains.kotlin.TestsExceptionType
+import org.jetbrains.kotlin.spec.utils.GeneralConfiguration.LINKED_TESTS_PATH
 import org.jetbrains.kotlin.spec.utils.models.LinkedSpecTestFileInfoElementType
 import org.jetbrains.kotlin.spec.utils.models.NotLinkedSpecTestFileInfoElementType
 import org.jetbrains.kotlin.spec.utils.parsers.BasePatterns
@@ -30,6 +31,17 @@ enum class TestType(val type: String) {
         val joinedValues = values().joinToString("|").withSpaces()
 
         fun fromValue(type: String) = map[type]
+    }
+}
+
+enum class TestOrigin(private val testDataPath: String, private val testsPath: String? = null) {
+    IMPLEMENTATION(GeneralConfiguration.TESTDATA_PATH),
+    SPEC(GeneralConfiguration.SPEC_TESTDATA_PATH, LINKED_TESTS_PATH);
+
+    fun getFilePath(testArea: TestArea) = buildString {
+        append("${testDataPath}/${testArea.testDataPath}")
+        if (testsPath != null)
+            append("/${testsPath}")
     }
 }
 

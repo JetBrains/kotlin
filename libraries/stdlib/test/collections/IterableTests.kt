@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -314,6 +314,17 @@ abstract class IterableTests<T : Iterable<String>>(val createFrom: (Array<out St
     }
 
     @Test
+    fun onEachIndexed() {
+        var count = 0
+        val newData = data.onEachIndexed { i, e -> count += i + e.length }
+        assertEquals(7, count)
+        assertSame(data, newData)
+
+        // static types test
+        assertStaticTypeIs<ArrayList<Int>>(arrayListOf(1, 2, 3).onEachIndexed { _, _ -> })
+    }
+
+    @Test
     fun contains() {
         assertTrue(data.contains("foo"))
         assertTrue("bar" in data)
@@ -383,15 +394,15 @@ abstract class IterableTests<T : Iterable<String>>(val createFrom: (Array<out St
     }
 
     @Test
-    fun max() {
-        expect("foo") { data.max() }
-        expect("bar") { data.maxBy { it.last() } }
+    fun maxOrNull() {
+        expect("foo") { data.maxOrNull() }
+        expect("bar") { data.maxByOrNull { it.last() } }
     }
 
     @Test
-    fun min() {
-        expect("bar") { data.min() }
-        expect("foo") { data.minBy { it.last() } }
+    fun minOrNull() {
+        expect("bar") { data.minOrNull() }
+        expect("foo") { data.minByOrNull { it.last() } }
     }
 
     @Test
@@ -439,8 +450,42 @@ abstract class IterableTests<T : Iterable<String>>(val createFrom: (Array<out St
     }
 
     @Test
+    fun scan() {
+        val accumulators = data.scan("baz") { acc, e -> acc + e }
+        assertEquals(3, accumulators.size)
+        assertEquals("baz", accumulators.first())
+        assertTrue(accumulators.elementAt(1) in listOf("bazfoo", "bazbar"))
+        assertTrue(accumulators.last() in listOf("bazfoobar", "bazbarfoo"))
+    }
+
+    @Test
+    fun scanIndexed() {
+        val accumulators = data.scanIndexed("baz") { i, acc, e -> acc + i + e }
+        assertEquals(3, accumulators.size)
+        assertEquals("baz", accumulators.first())
+        assertTrue(accumulators.elementAt(1) in listOf("baz0foo", "baz0bar"))
+        assertTrue(accumulators.last() in listOf("baz0foo1bar", "baz0bar1foo"))
+    }
+
+    @Test
+    fun runningReduce() {
+        val accumulators = data.runningReduce { acc, e -> acc + e }
+        assertEquals(2, accumulators.size)
+        assertTrue(accumulators.first() in listOf("foo", "bar"))
+        assertTrue(accumulators.last() in listOf("foobar", "barfoo"))
+    }
+
+    @Test
+    fun runningReduceIndexed() {
+        val accumulators = data.runningReduceIndexed { i, acc, e -> acc + i + e }
+        assertEquals(2, accumulators.size)
+        assertTrue(accumulators.first() in listOf("foo", "bar"))
+        assertTrue(accumulators.last() in listOf("foo1bar", "bar1foo"))
+    }
+
+    @Test
     fun mapAndJoinToString() {
-        val result = data.joinToString(separator = "-") { it.toUpperCase() }
+        val result = data.joinToString(separator = "-") { it.uppercase() }
         assertEquals("FOO-BAR", result)
     }
 

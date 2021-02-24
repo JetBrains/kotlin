@@ -19,10 +19,29 @@ object FunctionsFromAny {
     val HASH_CODE_METHOD_NAME = Name.identifier("hashCode")
     val TO_STRING_METHOD_NAME = Name.identifier("toString")
 
+    fun addFunctionFromAnyIfNeeded(
+        thisDescriptor: ClassDescriptor,
+        result: MutableCollection<SimpleFunctionDescriptor>,
+        name: Name,
+        fromSupertypes: Collection<SimpleFunctionDescriptor>,
+    ) {
+        if (shouldAddEquals(name, result, fromSupertypes)) {
+            result.add(createEqualsFunctionDescriptor(thisDescriptor))
+        }
+
+        if (shouldAddHashCode(name, result, fromSupertypes)) {
+            result.add(createHashCodeFunctionDescriptor(thisDescriptor))
+        }
+
+        if (shouldAddToString(name, result, fromSupertypes)) {
+            result.add(createToStringFunctionDescriptor(thisDescriptor))
+        }
+    }
+
     fun shouldAddEquals(
         name: Name,
         declaredFunctions: Collection<SimpleFunctionDescriptor>,
-        fromSupertypes: List<SimpleFunctionDescriptor>
+        fromSupertypes: Collection<SimpleFunctionDescriptor>
     ): Boolean {
         return name == EQUALS_METHOD_NAME && shouldAddFunctionFromAny(
             declaredFunctions,
@@ -36,7 +55,7 @@ object FunctionsFromAny {
     fun shouldAddHashCode(
         name: Name,
         declaredFunctions: Collection<SimpleFunctionDescriptor>,
-        fromSupertypes: List<SimpleFunctionDescriptor>
+        fromSupertypes: Collection<SimpleFunctionDescriptor>
     ): Boolean {
         return name == HASH_CODE_METHOD_NAME && shouldAddFunctionFromAny(
             declaredFunctions,
@@ -49,7 +68,7 @@ object FunctionsFromAny {
     fun shouldAddToString(
         name: Name,
         declaredFunctions: Collection<SimpleFunctionDescriptor>,
-        fromSupertypes: List<SimpleFunctionDescriptor>
+        fromSupertypes: Collection<SimpleFunctionDescriptor>
     ): Boolean {
         return name == TO_STRING_METHOD_NAME && shouldAddFunctionFromAny(
             declaredFunctions,
@@ -83,15 +102,15 @@ object FunctionsFromAny {
             functionFromAny.valueParameters.map { it.copy(functionDescriptor, it.name, it.index) },
             functionFromAny.returnType,
             Modality.OPEN,
-            Visibilities.PUBLIC
+            DescriptorVisibilities.PUBLIC
         )
 
         return functionDescriptor
     }
 
     private fun shouldAddFunctionFromAny(
-        declaredFunctions: Collection   <SimpleFunctionDescriptor>,
-        fromSupertypes: List<SimpleFunctionDescriptor>,
+        declaredFunctions: Collection<SimpleFunctionDescriptor>,
+        fromSupertypes: Collection<SimpleFunctionDescriptor>,
         checkParameters: (FunctionDescriptor) -> Boolean
     ): Boolean {
         // Add 'equals', 'hashCode', 'toString' iff there is no such declared member AND there is no such final member in supertypes

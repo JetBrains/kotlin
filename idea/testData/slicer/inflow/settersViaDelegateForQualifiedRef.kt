@@ -1,4 +1,6 @@
 // FLOW: IN
+// WITH_RUNTIME
+import kotlin.reflect.KProperty
 
 class Delegate {
     private var _value: String = ""

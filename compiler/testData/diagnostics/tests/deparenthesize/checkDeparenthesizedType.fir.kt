@@ -3,6 +3,8 @@
 
 package m
 
+import checkSubtype
+
 fun test(i: Int?) {
     if (i != null) {
         foo(l1@ i)
@@ -20,7 +22,7 @@ fun test(i: Int?) {
     <!INAPPLICABLE_CANDIDATE!>foo<!>(l4@ "")
     <!INAPPLICABLE_CANDIDATE!>foo<!>((""))
     foo(<!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Int>(""))
-    foo(<!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Long>(""))
+    <!INAPPLICABLE_CANDIDATE!>foo<!>(<!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Long>(""))
     
     use(a, b, c, d)
 }

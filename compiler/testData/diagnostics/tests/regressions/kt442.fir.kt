@@ -26,6 +26,6 @@ infix fun <T> T.with(f :  T.() -> Unit) {
 
 fun main() {
     val a = 1 with {
-        <!UNRESOLVED_REFERENCE!>plus<!>(1)
+        plus(1)
     }
 }

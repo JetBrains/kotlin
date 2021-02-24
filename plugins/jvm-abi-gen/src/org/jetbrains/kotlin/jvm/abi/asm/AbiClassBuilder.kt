@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.jvm.abi.asm
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.codegen.AbstractClassBuilder
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.resolve.inline.InlineUtil.isInlineOrContainingInline
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.org.objectweb.asm.ClassVisitor
@@ -78,7 +78,7 @@ internal class AbiClassBuilder(private val cv: ClassVisitor) : AbstractClassBuil
     }
 
     private fun isPrivate(descriptor: MemberDescriptor): Boolean =
-        descriptor.visibility == Visibilities.PRIVATE
+        descriptor.visibility == DescriptorVisibilities.PRIVATE
 
     private fun isPrivate(access: Int): Boolean =
         (access and Opcodes.ACC_PRIVATE) == Opcodes.ACC_PRIVATE

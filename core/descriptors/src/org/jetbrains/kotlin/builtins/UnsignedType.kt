@@ -23,10 +23,26 @@ enum class UnsignedType(val classId: ClassId) {
     val arrayClassId = ClassId(classId.packageFqName, Name.identifier(typeName.asString() + "Array"))
 }
 
+enum class UnsignedArrayType(val classId: ClassId) {
+    UBYTEARRAY(ClassId.fromString("kotlin/UByteArray")),
+    USHORTARRAY(ClassId.fromString("kotlin/UShortArray")),
+    UINTARRAY(ClassId.fromString("kotlin/UIntArray")),
+    ULONGARRAY(ClassId.fromString("kotlin/ULongArray"));
+
+    val typeName = classId.shortClassName
+}
+
 object UnsignedTypes {
     private val unsignedTypeNames = enumValues<UnsignedType>().map { it.typeName }.toSet()
+    private val unsignedArrayTypeNames = enumValues<UnsignedArrayType>().map { it.typeName }.toSet()
     private val arrayClassIdToUnsignedClassId = hashMapOf<ClassId, ClassId>()
     private val unsignedClassIdToArrayClassId = hashMapOf<ClassId, ClassId>()
+    val unsignedArrayTypeToArrayCall = hashMapOf(
+        UnsignedArrayType.UBYTEARRAY to Name.identifier("ubyteArrayOf"),
+        UnsignedArrayType.USHORTARRAY to Name.identifier("ushortArrayOf"),
+        UnsignedArrayType.UINTARRAY to Name.identifier("uintArrayOf"),
+        UnsignedArrayType.ULONGARRAY to Name.identifier("ulongArrayOf"),
+    )
 
     private val arrayClassesShortNames: Set<Name> = UnsignedType.values().mapTo(mutableSetOf()) { it.arrayClassId.shortClassName }
 
@@ -43,6 +59,7 @@ object UnsignedTypes {
     fun getUnsignedClassIdByArrayClassId(arrayClassId: ClassId): ClassId? = arrayClassIdToUnsignedClassId[arrayClassId]
     fun getUnsignedArrayClassIdByUnsignedClassId(arrayClassId: ClassId): ClassId? = unsignedClassIdToArrayClassId[arrayClassId]
 
+    @JvmStatic
     fun isUnsignedType(type: KotlinType): Boolean {
         if (TypeUtils.noExpectedType(type)) return false
 
@@ -62,7 +79,43 @@ object UnsignedTypes {
     fun isUnsignedClass(descriptor: DeclarationDescriptor): Boolean {
         val container = descriptor.containingDeclaration
         return container is PackageFragmentDescriptor &&
-                container.fqName == KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME &&
+                container.fqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME &&
                 descriptor.name in UnsignedTypes.unsignedTypeNames
+    }
+
+    @JvmStatic
+    fun isUnsignedArrayType(type: KotlinType): Boolean {
+        if (TypeUtils.noExpectedType(type)) return false
+
+        val descriptor = type.constructor.declarationDescriptor ?: return false
+        return isUnsignedArrayClass(descriptor)
+    }
+
+    @JvmStatic
+    fun toUnsignedArrayType(type: KotlinType): UnsignedArrayType? =
+        when {
+            KotlinBuiltIns.isUByteArray(type) -> UnsignedArrayType.UBYTEARRAY
+            KotlinBuiltIns.isUShortArray(type) -> UnsignedArrayType.USHORTARRAY
+            KotlinBuiltIns.isUIntArray(type) -> UnsignedArrayType.UINTARRAY
+            KotlinBuiltIns.isULongArray(type) -> UnsignedArrayType.ULONGARRAY
+            else -> null
+        }
+
+    @JvmStatic
+    fun toUnsignedArrayType(descriptor: DeclarationDescriptor): UnsignedArrayType? =
+        if (!isUnsignedArrayClass(descriptor)) null
+        else when (descriptor.name.asString()) {
+            "UByteArray" -> UnsignedArrayType.UBYTEARRAY
+            "UShortArray" -> UnsignedArrayType.USHORTARRAY
+            "UIntArray" -> UnsignedArrayType.UINTARRAY
+            "ULongArray" -> UnsignedArrayType.ULONGARRAY
+            else -> null
+        }
+
+    fun isUnsignedArrayClass(descriptor: DeclarationDescriptor): Boolean {
+        val container = descriptor.containingDeclaration
+        return container is PackageFragmentDescriptor &&
+                container.fqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME &&
+                descriptor.name in unsignedArrayTypeNames
     }
 }

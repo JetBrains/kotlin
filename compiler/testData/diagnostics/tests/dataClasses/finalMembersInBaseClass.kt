@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 abstract class Base {
     final override fun equals(other: Any?) = false
     final override fun hashCode() = 42

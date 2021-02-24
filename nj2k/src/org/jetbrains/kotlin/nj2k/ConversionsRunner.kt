@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.nj2k.tree.JKLambdaExpression
 import org.jetbrains.kotlin.nj2k.tree.JKParameter
 import org.jetbrains.kotlin.nj2k.tree.JKTreeRoot
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import java.util.*
 
 object ConversionsRunner {
     private fun createConversions(context: NewJ2kConverterContext) = listOf(
@@ -78,15 +79,40 @@ object ConversionsRunner {
         LiteralConversion(context),
         StaticMemberAccessConversion(context),
         RemoveRedundantQualifiersForCallsConversion(context),
+        FunctionalInterfacesConverter(context),
+
         FilterImportsConversion(context),
         MoveInitBlocksToTheEndConversion(context),
         AddElementsInfoConversion(context)
     )
 
-    fun doApply(trees: List<JKTreeRoot>, context: NewJ2kConverterContext) {
+
+    fun doApply(
+        trees: List<JKTreeRoot>,
+        context: NewJ2kConverterContext,
+        updateProgress: (conversionIndex: Int, conversionCount: Int, fileIndex: Int, String) -> Unit
+    ) {
+
         val conversions = createConversions(context)
-        for (conversion in conversions) {
-            conversion.runConversion(trees, context)
+        for ((conversionIndex, conversion) in conversions.withIndex()) {
+
+            val treeSequence = trees.asSequence().onEachIndexed { index, _ ->
+                updateProgress(conversionIndex, conversions.size, index, conversion.description())
+            }
+
+            conversion.runConversion(treeSequence, context)
         }
     }
+
+    private fun Conversion.description(): String {
+        val conversionName = this::class.simpleName
+        val words = conversionName?.let { wordRegex.findAll(conversionName).map { it.value.decapitalize(Locale.US) }.toList() }
+        return when {
+            conversionName == null -> "Converting..."
+            conversionName.endsWith("Conversion") -> "Converting ${words!!.dropLast(1).joinToString(" ")}"
+            else -> words!!.joinToString(" ")
+        }
+    }
+
+    private val wordRegex = "[A-Z][a-z0-9]+".toRegex()
 }

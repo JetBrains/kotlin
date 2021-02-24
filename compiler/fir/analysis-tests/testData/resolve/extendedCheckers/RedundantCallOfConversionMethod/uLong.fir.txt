@@ -1,0 +1,4 @@
+FILE: uLong.kt
+    public final fun test(i: R|kotlin/ULong|): R|kotlin/Unit| {
+        lval foo: R|kotlin/ULong| = R|<local>/i|.R|kotlin/ULong.toULong|()
+    }

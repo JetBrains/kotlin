@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.codeInsight.shorten.runRefactoringAndKeepDelayedRequests
 import org.jetbrains.kotlin.idea.core.CollectingNameValidator
@@ -41,7 +42,7 @@ import java.util.*
 
 object InitializePropertyQuickFixFactory : KotlinIntentionActionsFactory() {
     class AddInitializerFix(property: KtProperty) : KotlinQuickFixAction<KtProperty>(property) {
-        override fun getText() = "Add initializer"
+        override fun getText() = KotlinBundle.message("add.initializer")
         override fun getFamilyName() = text
 
         override fun invoke(project: Project, editor: Editor?, file: KtFile) {
@@ -58,7 +59,7 @@ object InitializePropertyQuickFixFactory : KotlinIntentionActionsFactory() {
     }
 
     class MoveToConstructorParameters(property: KtProperty) : KotlinQuickFixAction<KtProperty>(property) {
-        override fun getText() = "Move to constructor parameters"
+        override fun getText() = KotlinBundle.message("move.to.constructor.parameters")
         override fun getFamilyName() = text
 
         override fun startInWriteAction(): Boolean = false
@@ -122,7 +123,7 @@ object InitializePropertyQuickFixFactory : KotlinIntentionActionsFactory() {
     }
 
     class InitializeWithConstructorParameter(property: KtProperty) : KotlinQuickFixAction<KtProperty>(property) {
-        override fun getText() = "Initialize with constructor parameter"
+        override fun getText() = KotlinBundle.message("initialize.with.constructor.parameter")
         override fun getFamilyName() = text
 
         override fun startInWriteAction(): Boolean = false

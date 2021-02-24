@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: Super.java
 
 interface Super {

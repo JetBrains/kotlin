@@ -1,0 +1,40 @@
+val testSimpleUIntLiteral: UInt
+  field = 1
+  get
+
+val testSimpleUIntLiteralWithOverflow: UInt
+  field = -1
+  get
+
+val testUByteWithExpectedType: UByte
+  field = 1B
+  get
+
+val testUShortWithExpectedType: UShort
+  field = 1S
+  get
+
+val testUIntWithExpectedType: UInt
+  field = 1
+  get
+
+val testULongWithExpectedType: ULong
+  field = 1L
+  get
+
+val testToUByte: UByte
+  field = 1.toUByte()
+  get
+
+val testToUShort: UShort
+  field = 1.toUShort()
+  get
+
+val testToUInt: UInt
+  field = 1.toUInt()
+  get
+
+val testToULong: ULong
+  field = 1.toULong()
+  get
+

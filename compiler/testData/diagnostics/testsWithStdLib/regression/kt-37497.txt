@@ -1,0 +1,9 @@
+package
+
+public object Bug1 {
+    private constructor Bug1()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    @kotlin.jvm.JvmStatic public final fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

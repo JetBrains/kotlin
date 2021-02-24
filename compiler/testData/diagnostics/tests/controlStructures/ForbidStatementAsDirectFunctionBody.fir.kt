@@ -1,5 +1,5 @@
 
-fun foo1() = <!INFERENCE_ERROR, INFERENCE_ERROR, INFERENCE_ERROR!>while (b()) {}<!>
+fun foo1() = <!EXPRESSION_REQUIRED!>while (b()) {}<!>
 
 fun foo2() = <!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>for (i in 10) {}<!>
 

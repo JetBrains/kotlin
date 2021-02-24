@@ -31,10 +31,10 @@ abstract class AbstractIrCfgTestCase : AbstractIrGeneratorTestCase() {
         val builder = StringBuilder()
         for (declaration in this.declarations) {
             if (declaration is IrFunction) {
-                builder.appendln("// FUN: ${declaration.name}")
+                builder.appendLine("// FUN: ${declaration.name}")
                 val cfg = FunctionGenerator(declaration).generate()
-                builder.appendln(cfg.dump())
-                builder.appendln("// END FUN: ${declaration.name}")
+                builder.appendLine(cfg.dump())
+                builder.appendLine("// END FUN: ${declaration.name}")
             }
         }
         return builder.toString()
@@ -43,10 +43,10 @@ abstract class AbstractIrCfgTestCase : AbstractIrGeneratorTestCase() {
     private fun IrModuleFragment.cfgDump(): String {
         val builder = StringBuilder()
         for (file in this.files) {
-            builder.appendln("// FILE: ${file.path}")
-            builder.appendln(file.cfgDump())
-            builder.appendln("// END FILE: ${file.path}")
-            builder.appendln()
+            builder.appendLine("// FILE: ${file.path}")
+            builder.appendLine(file.cfgDump())
+            builder.appendLine("// END FILE: ${file.path}")
+            builder.appendLine()
         }
         return builder.toString()
     }

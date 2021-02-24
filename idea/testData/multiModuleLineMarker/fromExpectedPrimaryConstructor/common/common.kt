@@ -1,3 +1,3 @@
-expect class <lineMarker>NoConstructor2</lineMarker> {
-    fun <lineMarker>extraFun</lineMarker>()
+expect class <!LINE_MARKER("descr='Has actuals in JVM'")!>NoConstructor2<!> {
+    fun <!LINE_MARKER("descr='Has actuals in JVM'")!>extraFun<!>()
 }

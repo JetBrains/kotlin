@@ -1,34 +1,136 @@
 {
   "3": {
     "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 0,
+          "description": " check postfix increment expression",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-increment-expression/p-6/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 0,
+          "description": "check postfix increment expression",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-increment-expression/p-1/pos/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 0,
+          "description": "check postfix increment expression",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-increment-expression/p-1/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 0,
+          "description": "check postfix decrement expression has the same type as its operand expression",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-decrement-expression/p-6/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 0,
+          "description": "check postfix decrement expression",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-decrement-expression/p-1/pos/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 0,
+          "description": "check postfix decrement expression",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-decrement-expression/p-1/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 0,
+          "description": "",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression/p-6/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 0,
+          "description": "",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression/p-1/pos/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 0,
+          "description": "",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression/p-1/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 0,
+          "description": "",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-6/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 0,
+          "description": "",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-1/pos/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 0,
+          "description": "A prefix decrement expression is an expression which uses the prefix form of operator --",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-1/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ],
       "2": [
         {
           "specVersion": "0.1-213",
           "casesNumber": 0,
           "description": "check for A++ expression A must be an assignable expression (a navigation expression referring to a mutable property)",
           "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-increment-expression/p-4/pos/1.2.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-213",
           "casesNumber": 0,
           "description": "check for A-- expression A must be an assignable expression (a navigation expression referring to a mutable property)",
           "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-decrement-expression/p-4/pos/1.2.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-213",
           "casesNumber": 0,
           "description": "check for a prefix increment expression ++A expression A must be an assignable expression (a navigation expression referring to a mutable property)",
           "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression/p-4/pos/1.2.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-213",
           "casesNumber": 0,
           "description": "check for a prefix decrement expression --A expression A must be an assignable expression (a navigation expression referring to a mutable property)",
           "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-4/pos/1.2.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         }
       ],
       "3": [
@@ -37,28 +139,32 @@
           "casesNumber": 0,
           "description": "check for a  increment expression A++ expression A must be an assignable expression (an indexing expression)",
           "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-increment-expression/p-4/pos/1.1.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-213",
           "casesNumber": 0,
           "description": "check for a  decrement expression A-- expression A must be an assignable expression (an indexing expression)",
           "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/postfix-operator-expressions/postfix-decrement-expression/p-4/pos/1.1.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-213",
           "casesNumber": 0,
           "description": "check for a prefix increment expression ++A expression A must be an assignable expression (an indexing expression)",
           "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-increment-expression/p-4/pos/1.1.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-213",
           "casesNumber": 0,
           "description": "check for a prefix increment expression --A expression A must be an assignable expression (an indexing expression)",
           "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/prefix-decrement-expression/p-4/pos/1.1.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         }
       ]
     }

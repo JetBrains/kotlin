@@ -1,3 +1,5 @@
+// IGNORE_FIR
+
 @Deprecated(<error>)</error>
 fun foo() {}
 @Deprecated(<error>false</error>)

@@ -2,7 +2,7 @@
 var x
     get() = 1
     set(q) {
-        q checkType { <!UNRESOLVED_REFERENCE!>_<!><Int>() }
+        q checkType { _<Int>() }
     }
 
 var noSetter
@@ -10,8 +10,8 @@ var noSetter
 
 
 fun foo() {
-    x checkType { <!UNRESOLVED_REFERENCE!>_<!><Int>() }
-    noSetter checkType { <!UNRESOLVED_REFERENCE!>_<!><Int>() }
+    x checkType { _<Int>() }
+    noSetter checkType { _<Int>() }
 
     x = 1
     x = ""

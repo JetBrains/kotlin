@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.*
@@ -81,7 +82,7 @@ class KotlinGenerateSecondaryConstructorAction : KotlinGenerateMemberActionBase<
         if (ApplicationManager.getApplication().isUnitTestMode || candidates.isEmpty()) return candidates
 
         return with(MemberChooser(candidates.toTypedArray(), true, true, klass.project, false, null)) {
-            title = "Choose Properties to Initialize by Constructor"
+            title = KotlinBundle.message("action.generate.secondary.constructor.choose.properties")
             setCopyJavadocVisible(false)
             selectElements(candidates.filter { shouldPreselect(it.element) }.toTypedArray())
             show()
@@ -118,7 +119,8 @@ class KotlinGenerateSecondaryConstructorAction : KotlinGenerateMemberActionBase<
             }
 
             if (prototypes.isEmpty()) {
-                CommonRefactoringUtil.showErrorHint(targetClass.project, editor, "Constructor already exists", commandName, null)
+                val errorText = KotlinBundle.message("action.generate.secondary.constructor.error.already.exists")
+                CommonRefactoringUtil.showErrorHint(targetClass.project, editor, errorText, commandName, null)
                 return emptyList()
             }
 

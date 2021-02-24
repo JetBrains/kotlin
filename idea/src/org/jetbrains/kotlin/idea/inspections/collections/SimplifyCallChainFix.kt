@@ -21,6 +21,7 @@ import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.codeStyle.CodeStyleManager
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.moveFunctionLiteralOutsideParentheses
 import org.jetbrains.kotlin.idea.core.replaced
@@ -38,7 +39,7 @@ class SimplifyCallChainFix(
 ) : LocalQuickFix {
     private val shortenedText = conversion.replacement.substringAfterLast(".")
 
-    override fun getName() = "Merge call chain to '$shortenedText'"
+    override fun getName() = KotlinBundle.message("simplify.call.chain.fix.text", shortenedText)
 
     override fun getFamilyName() = name
 

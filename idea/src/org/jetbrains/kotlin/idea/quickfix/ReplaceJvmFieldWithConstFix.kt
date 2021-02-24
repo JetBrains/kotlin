@@ -10,6 +10,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -24,7 +25,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 
 class ReplaceJvmFieldWithConstFix(annotation: KtAnnotationEntry) : KotlinQuickFixAction<KtAnnotationEntry>(annotation) {
-    override fun getText(): String = "Replace '@JvmField' with 'const'"
+    override fun getText(): String = KotlinBundle.message("replace.jvmfield.with.const")
 
     override fun getFamilyName(): String = text
 

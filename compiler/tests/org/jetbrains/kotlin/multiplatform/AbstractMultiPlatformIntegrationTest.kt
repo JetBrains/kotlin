@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
 import java.io.File
 import java.nio.file.Files
@@ -40,7 +41,7 @@ abstract class AbstractMultiPlatformIntegrationTest : KtUsefulTestCase() {
         val common2Src = File(root, "common2.kt").takeIf(File::exists)
         val jvm2Src = File(root, "jvm2.kt").takeIf(File::exists)
 
-        val tmpdir = KotlinTestUtils.tmpDir(getTestName(true))
+        val tmpdir = KtTestUtil.tmpDir(getTestName(true))
 
         val optionalStdlibCommon =
             if (InTextDirectivesUtils.isDirectiveDefined(commonSrc.readText(), "WITH_RUNTIME"))
@@ -54,31 +55,31 @@ abstract class AbstractMultiPlatformIntegrationTest : KtUsefulTestCase() {
         val jvm2Dest = File(tmpdir, "jvm2").absolutePath.takeIf { jvm2Src != null }
 
         val result = buildString {
-            appendln("-- Common --")
-            appendln(K2MetadataCompiler().compile(commonSrc, null, "-d", commonDest, *optionalStdlibCommon))
+            appendLine("-- Common --")
+            appendLine(K2MetadataCompiler().compile(commonSrc, null, "-d", commonDest, *optionalStdlibCommon))
 
             if (jvmSrc != null) {
-                appendln()
-                appendln("-- JVM --")
-                appendln(K2JVMCompiler().compile(jvmSrc, commonSrc, "-d", jvmDest!!))
+                appendLine()
+                appendLine("-- JVM --")
+                appendLine(K2JVMCompiler().compile(jvmSrc, commonSrc, "-d", jvmDest!!))
             }
 
             if (jsSrc != null) {
-                appendln()
-                appendln("-- JS --")
-                appendln(K2JSCompiler().compile(jsSrc, commonSrc, "-output", jsDest!!))
+                appendLine()
+                appendLine("-- JS --")
+                appendLine(K2JSCompiler().compile(jsSrc, commonSrc, "-output", jsDest!!))
             }
 
             if (common2Src != null) {
-                appendln()
-                appendln("-- Common (2) --")
-                appendln(K2MetadataCompiler().compile(common2Src, null, "-d", common2Dest!!, "-cp", commonDest, *optionalStdlibCommon))
+                appendLine()
+                appendLine("-- Common (2) --")
+                appendLine(K2MetadataCompiler().compile(common2Src, null, "-d", common2Dest!!, "-cp", commonDest, *optionalStdlibCommon))
             }
 
             if (jvm2Src != null) {
-                appendln()
-                appendln("-- JVM (2) --")
-                appendln(
+                appendLine()
+                appendLine("-- JVM (2) --")
+                appendLine(
                     K2JVMCompiler().compile(
                         jvm2Src, common2Src, "-d", jvm2Dest!!,
                         "-cp", listOfNotNull(commonDest, common2Dest, jvmDest).joinToString(File.pathSeparator)
@@ -110,9 +111,9 @@ abstract class AbstractMultiPlatformIntegrationTest : KtUsefulTestCase() {
                     "-Xmulti-platform" + mainArguments +
                     loadExtraArguments(listOfNotNull(sources, commonSources))
         )
-        appendln("Exit code: $exitCode")
-        appendln("Output:")
-        appendln(output)
+        appendLine("Exit code: $exitCode")
+        appendLine("Output:")
+        appendLine(output)
     }.trimTrailingWhitespacesAndAddNewlineAtEOF().trimEnd('\r', '\n')
 
     private fun loadExtraArguments(sources: List<File>): List<String> = sources.flatMap { source ->

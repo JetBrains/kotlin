@@ -36,10 +36,10 @@ class DelegatedLocalPropertyLValue(
     AssignmentReceiver {
 
     override fun load(): IrExpression =
-        IrCallImpl(startOffset, endOffset, type, getterSymbol!!, origin)
+        IrCallImpl.fromSymbolDescriptor(startOffset, endOffset, type, getterSymbol!!, origin = origin)
 
     override fun store(irExpression: IrExpression): IrExpression =
-        IrCallImpl(startOffset, endOffset, context.irBuiltIns.unitType, setterSymbol!!, origin).apply {
+            IrCallImpl.fromSymbolDescriptor(startOffset, endOffset, context.irBuiltIns.unitType, setterSymbol!!, origin = origin).apply {
             putValueArgument(0, irExpression)
         }
 

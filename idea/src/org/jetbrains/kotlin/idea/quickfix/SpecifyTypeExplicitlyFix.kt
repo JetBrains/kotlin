@@ -22,6 +22,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyIntention
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -29,7 +30,7 @@ import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.types.isError
 
 class SpecifyTypeExplicitlyFix : PsiElementBaseIntentionAction() {
-    override fun getFamilyName() = "Specify type explicitly"
+    override fun getFamilyName() = KotlinBundle.message("specify.type.explicitly")
 
     override fun invoke(project: Project, editor: Editor, element: PsiElement) {
         if (!FileModificationService.getInstance().preparePsiElementForWrite(element)) return
@@ -43,8 +44,8 @@ class SpecifyTypeExplicitlyFix : PsiElementBaseIntentionAction() {
         val declaration = declarationByElement(element)
         if (declaration?.typeReference != null) return false
         text = when (declaration) {
-            is KtProperty -> "Specify type explicitly"
-            is KtNamedFunction -> "Specify return type explicitly"
+            is KtProperty -> KotlinBundle.message("specify.type.explicitly")
+            is KtNamedFunction -> KotlinBundle.message("specify.return.type.explicitly")
             else -> return false
         }
 

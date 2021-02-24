@@ -8,6 +8,6 @@ class Foo : BaseClass() {
     fun bar() {
         val f = foo()
         f.x
-        f.<!INAPPLICABLE_CANDIDATE!>y<!>
+        f.<!HIDDEN!>y<!>
     }
 }

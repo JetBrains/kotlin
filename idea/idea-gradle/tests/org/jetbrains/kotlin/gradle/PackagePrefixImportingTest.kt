@@ -5,19 +5,17 @@
 
 package org.jetbrains.kotlin.gradle
 
-import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
-import com.intellij.openapi.module.ModuleManager
-import com.intellij.openapi.roots.*
-import com.intellij.openapi.roots.impl.ModulesOrderEnumerator
-import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.jps.model.java.JavaResourceRootType
 import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.kotlin.idea.codeInsight.gradle.MultiplePluginVersionGradleImportingTestCase
+import org.jetbrains.kotlin.idea.codeInsight.gradle.legacyMppImportTestMinVersionForMaster
+import org.jetbrains.plugins.gradle.tooling.annotation.PluginTargetVersions
 import org.junit.Test
 
 class PackagePrefixImportingTest : MultiplePluginVersionGradleImportingTestCase() {
 
     @Test
+    @PluginTargetVersions(gradleVersionForLatestPlugin = legacyMppImportTestMinVersionForMaster)
     fun testPackagePrefixNonMPP() {
         configureByFiles()
         importProject()
@@ -49,7 +47,7 @@ class PackagePrefixImportingTest : MultiplePluginVersionGradleImportingTestCase(
         val isCreateEmptyContentRootDirectories = currentExternalProjectSettings.isCreateEmptyContentRootDirectories
         currentExternalProjectSettings.isCreateEmptyContentRootDirectories = true
         try {
-            super.importProject()
+            super.importProject(true)
         } finally {
             currentExternalProjectSettings.isCreateEmptyContentRootDirectories = isCreateEmptyContentRootDirectories
         }

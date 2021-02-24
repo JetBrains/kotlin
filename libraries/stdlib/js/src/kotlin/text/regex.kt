@@ -70,18 +70,30 @@ public actual class Regex actual constructor(pattern: String, options: Set<Regex
      *
      * @param startIndex An index to start search with, by default 0. Must be not less than zero and not greater than `input.length()`
      * @return An instance of [MatchResult] if match was found or `null` otherwise.
+     * @throws IndexOutOfBoundsException if [startIndex] is less than zero or greater than the length of the [input] char sequence.
      */
     @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
-    public actual fun find(input: CharSequence, startIndex: Int = 0): MatchResult? = nativePattern.findNext(input.toString(), startIndex)
+    public actual fun find(input: CharSequence, startIndex: Int = 0): MatchResult? {
+        if (startIndex < 0 || startIndex > input.length) {
+            throw IndexOutOfBoundsException("Start index out of bounds: $startIndex, input length: ${input.length}")
+        }
+        return nativePattern.findNext(input.toString(), startIndex)
+    }
 
     /**
      * Returns a sequence of all occurrences of a regular expression within the [input] string, beginning at the specified [startIndex].
      *
+     * @throws IndexOutOfBoundsException if [startIndex] is less than zero or greater than the length of the [input] char sequence.
+     *
      * @sample samples.text.Regexps.findAll
      */
     @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
-    public actual fun findAll(input: CharSequence, startIndex: Int = 0): Sequence<MatchResult> =
-        generateSequence({ find(input, startIndex) }, { match -> match.next() })
+    public actual fun findAll(input: CharSequence, startIndex: Int = 0): Sequence<MatchResult> {
+        if (startIndex < 0 || startIndex > input.length) {
+            throw IndexOutOfBoundsException("Start index out of bounds: $startIndex, input length: ${input.length}")
+        }
+        return generateSequence({ find(input, startIndex) }, { match -> match.next() })
+    }
 
     /**
      * Attempts to match the entire [input] CharSequence against the pattern.

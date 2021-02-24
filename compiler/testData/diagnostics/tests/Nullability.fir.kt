@@ -38,7 +38,7 @@ fun test() {
 
   if (out != null && ins != null || out != null) {
     ins?.read();
-    ins.<!INAPPLICABLE_CANDIDATE!>read<!>();
+    ins.<!NONE_APPLICABLE!>read<!>();
     out.println();
   }
 
@@ -114,12 +114,12 @@ fun test() {
   }
   else {
     out?.println();
-    out.<!INAPPLICABLE_CANDIDATE!>println<!>();
+    out.<!NONE_APPLICABLE!>println<!>();
   }
 
   if (out == null || out.println() == Unit) {
     out?.println();
-    out.<!INAPPLICABLE_CANDIDATE!>println<!>();
+    out.<!NONE_APPLICABLE!>println<!>();
   }
   else {
     out.println();
@@ -149,7 +149,7 @@ fun test() {
   
   while (out2 == null) {
     out2?.println();
-    out2.<!INAPPLICABLE_CANDIDATE!>println<!>();
+    out2.<!NONE_APPLICABLE!>println<!>();
   }
   out2.println()
 
@@ -158,7 +158,7 @@ fun test() {
 
 fun f(out : String?) {
   out?.get(0)
-  out.<!INAPPLICABLE_CANDIDATE!>get<!>(0)
+  out<!UNSAFE_CALL!>.<!>get(0)
   if (out != null) else return;
   out.get(0)
 }

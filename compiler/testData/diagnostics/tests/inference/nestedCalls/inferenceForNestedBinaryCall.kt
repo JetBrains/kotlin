@@ -1,6 +1,9 @@
+// FIR_IDENTICAL
 // !CHECK_TYPE
 
 package aaa
+
+import checkSubtype
 
 infix fun <T> T.foo(t: T) = t
 

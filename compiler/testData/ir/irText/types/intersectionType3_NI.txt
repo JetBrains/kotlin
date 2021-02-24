@@ -139,8 +139,8 @@ FILE fqName:<root> fileName:/intersectionType3_NI.kt
       RETURN type=kotlin.Nothing from='public final fun testInIs1 (x: <root>.In<<root>.A>, y: <root>.In<<root>.B>): kotlin.Boolean declared in <root>'
         CALL 'public final fun isT <T> (): kotlin.Boolean [inline] declared in <root>' type=kotlin.Boolean origin=null
           <T>: kotlin.Any
-          $receiver: CALL 'public final fun sel <S> (x: S of <root>.sel, y: S of <root>.sel): S of <root>.sel declared in <root>' type=<root>.In<kotlin.Any> origin=null
-            <S>: <root>.In<kotlin.Any>
+          $receiver: CALL 'public final fun sel <S> (x: S of <root>.sel, y: S of <root>.sel): S of <root>.sel declared in <root>' type=<root>.In<kotlin.Nothing> origin=null
+            <S>: <root>.In<kotlin.Nothing>
             x: GET_VAR 'x: <root>.In<<root>.A> declared in <root>.testInIs1' type=<root>.In<<root>.A> origin=null
             y: GET_VAR 'y: <root>.In<<root>.B> declared in <root>.testInIs1' type=<root>.In<<root>.B> origin=null
   FUN name:testInIs2 visibility:public modality:FINAL <> (x:<root>.In<<root>.Z1>, y:<root>.In<<root>.Z2>) returnType:kotlin.Boolean
@@ -150,8 +150,8 @@ FILE fqName:<root> fileName:/intersectionType3_NI.kt
       RETURN type=kotlin.Nothing from='public final fun testInIs2 (x: <root>.In<<root>.Z1>, y: <root>.In<<root>.Z2>): kotlin.Boolean declared in <root>'
         CALL 'public final fun isT <T> (): kotlin.Boolean [inline] declared in <root>' type=kotlin.Boolean origin=null
           <T>: kotlin.Any
-          $receiver: CALL 'public final fun sel <S> (x: S of <root>.sel, y: S of <root>.sel): S of <root>.sel declared in <root>' type=<root>.In<kotlin.Any> origin=null
-            <S>: <root>.In<kotlin.Any>
+          $receiver: CALL 'public final fun sel <S> (x: S of <root>.sel, y: S of <root>.sel): S of <root>.sel declared in <root>' type=<root>.In<kotlin.Nothing> origin=null
+            <S>: <root>.In<kotlin.Nothing>
             x: GET_VAR 'x: <root>.In<<root>.Z1> declared in <root>.testInIs2' type=<root>.In<<root>.Z1> origin=null
             y: GET_VAR 'y: <root>.In<<root>.Z2> declared in <root>.testInIs2' type=<root>.In<<root>.Z2> origin=null
   FUN name:testInIs3 visibility:public modality:FINAL <> (x:<root>.In<<root>.A1>, y:<root>.In<<root>.A2>) returnType:kotlin.Boolean
@@ -161,8 +161,8 @@ FILE fqName:<root> fileName:/intersectionType3_NI.kt
       RETURN type=kotlin.Nothing from='public final fun testInIs3 (x: <root>.In<<root>.A1>, y: <root>.In<<root>.A2>): kotlin.Boolean declared in <root>'
         CALL 'public final fun isT <T> (): kotlin.Boolean [inline] declared in <root>' type=kotlin.Boolean origin=null
           <T>: <root>.A
-          $receiver: CALL 'public final fun sel <S> (x: S of <root>.sel, y: S of <root>.sel): S of <root>.sel declared in <root>' type=<root>.In<<root>.A> origin=null
-            <S>: <root>.In<<root>.A>
+          $receiver: CALL 'public final fun sel <S> (x: S of <root>.sel, y: S of <root>.sel): S of <root>.sel declared in <root>' type=<root>.In<kotlin.Nothing> origin=null
+            <S>: <root>.In<kotlin.Nothing>
             x: GET_VAR 'x: <root>.In<<root>.A1> declared in <root>.testInIs3' type=<root>.In<<root>.A1> origin=null
             y: GET_VAR 'y: <root>.In<<root>.A2> declared in <root>.testInIs3' type=<root>.In<<root>.A2> origin=null
   FUN name:testInAs1 visibility:public modality:FINAL <> (x:<root>.In<<root>.A>, y:<root>.In<<root>.B>) returnType:kotlin.Unit
@@ -172,8 +172,8 @@ FILE fqName:<root> fileName:/intersectionType3_NI.kt
       RETURN type=kotlin.Nothing from='public final fun testInAs1 (x: <root>.In<<root>.A>, y: <root>.In<<root>.B>): kotlin.Unit declared in <root>'
         CALL 'public final fun asT <T> (): kotlin.Unit [inline] declared in <root>' type=kotlin.Unit origin=null
           <T>: kotlin.Any
-          $receiver: CALL 'public final fun sel <S> (x: S of <root>.sel, y: S of <root>.sel): S of <root>.sel declared in <root>' type=<root>.In<kotlin.Any> origin=null
-            <S>: <root>.In<kotlin.Any>
+          $receiver: CALL 'public final fun sel <S> (x: S of <root>.sel, y: S of <root>.sel): S of <root>.sel declared in <root>' type=<root>.In<kotlin.Nothing> origin=null
+            <S>: <root>.In<kotlin.Nothing>
             x: GET_VAR 'x: <root>.In<<root>.A> declared in <root>.testInAs1' type=<root>.In<<root>.A> origin=null
             y: GET_VAR 'y: <root>.In<<root>.B> declared in <root>.testInAs1' type=<root>.In<<root>.B> origin=null
   FUN name:testInAs2 visibility:public modality:FINAL <> (x:<root>.In<<root>.Z1>, y:<root>.In<<root>.Z2>) returnType:kotlin.Unit
@@ -183,8 +183,8 @@ FILE fqName:<root> fileName:/intersectionType3_NI.kt
       RETURN type=kotlin.Nothing from='public final fun testInAs2 (x: <root>.In<<root>.Z1>, y: <root>.In<<root>.Z2>): kotlin.Unit declared in <root>'
         CALL 'public final fun asT <T> (): kotlin.Unit [inline] declared in <root>' type=kotlin.Unit origin=null
           <T>: kotlin.Any
-          $receiver: CALL 'public final fun sel <S> (x: S of <root>.sel, y: S of <root>.sel): S of <root>.sel declared in <root>' type=<root>.In<kotlin.Any> origin=null
-            <S>: <root>.In<kotlin.Any>
+          $receiver: CALL 'public final fun sel <S> (x: S of <root>.sel, y: S of <root>.sel): S of <root>.sel declared in <root>' type=<root>.In<kotlin.Nothing> origin=null
+            <S>: <root>.In<kotlin.Nothing>
             x: GET_VAR 'x: <root>.In<<root>.Z1> declared in <root>.testInAs2' type=<root>.In<<root>.Z1> origin=null
             y: GET_VAR 'y: <root>.In<<root>.Z2> declared in <root>.testInAs2' type=<root>.In<<root>.Z2> origin=null
   FUN name:testInAs3 visibility:public modality:FINAL <> (x:<root>.In<<root>.A1>, y:<root>.In<<root>.A2>) returnType:kotlin.Unit
@@ -194,7 +194,7 @@ FILE fqName:<root> fileName:/intersectionType3_NI.kt
       RETURN type=kotlin.Nothing from='public final fun testInAs3 (x: <root>.In<<root>.A1>, y: <root>.In<<root>.A2>): kotlin.Unit declared in <root>'
         CALL 'public final fun asT <T> (): kotlin.Unit [inline] declared in <root>' type=kotlin.Unit origin=null
           <T>: <root>.A
-          $receiver: CALL 'public final fun sel <S> (x: S of <root>.sel, y: S of <root>.sel): S of <root>.sel declared in <root>' type=<root>.In<<root>.A> origin=null
-            <S>: <root>.In<<root>.A>
+          $receiver: CALL 'public final fun sel <S> (x: S of <root>.sel, y: S of <root>.sel): S of <root>.sel declared in <root>' type=<root>.In<kotlin.Nothing> origin=null
+            <S>: <root>.In<kotlin.Nothing>
             x: GET_VAR 'x: <root>.In<<root>.A1> declared in <root>.testInAs3' type=<root>.In<<root>.A1> origin=null
             y: GET_VAR 'y: <root>.In<<root>.A2> declared in <root>.testInAs3' type=<root>.In<<root>.A2> origin=null

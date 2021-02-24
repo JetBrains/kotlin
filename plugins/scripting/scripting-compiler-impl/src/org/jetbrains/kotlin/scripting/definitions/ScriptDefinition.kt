@@ -12,8 +12,7 @@ import java.io.File
 import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
-import kotlin.script.experimental.host.createCompilationConfigurationFromTemplate
-import kotlin.script.experimental.host.createEvaluationConfigurationFromTemplate
+import kotlin.script.experimental.host.createScriptDefinitionFromTemplate
 import kotlin.script.experimental.jvm.baseClassLoader
 import kotlin.script.experimental.jvm.jvm
 
@@ -32,6 +31,7 @@ abstract class ScriptDefinition : UserDataHolderBase() {
     abstract val fileExtension: String
     abstract val name: String
     open val defaultClassName: String = "Script"
+
     // TODO: used in settings, find out the reason and refactor accordingly
     abstract val definitionId: String
 
@@ -43,7 +43,13 @@ abstract class ScriptDefinition : UserDataHolderBase() {
 
     open val isDefault = false
 
+    // Store IDE-related settings in script definition
+    var order: Int = Integer.MAX_VALUE
+    open val canAutoReloadScriptConfigurationsBeSwitchedOff: Boolean get() = true
+    open val canDefinitionBeSwitchedOff: Boolean get() = true
+
     abstract val baseClassType: KotlinType
+    open val defaultCompilerOptions: Iterable<String> = emptyList()
     abstract val compilerOptions: Iterable<String>
     abstract val annotationsForSamWithReceivers: List<String>
 
@@ -58,10 +64,11 @@ abstract class ScriptDefinition : UserDataHolderBase() {
     @Suppress("OverridingDeprecatedMember", "DEPRECATION")
     open class FromLegacy(
         override val hostConfiguration: ScriptingHostConfiguration,
-        override val legacyDefinition: KotlinScriptDefinition
+        override val legacyDefinition: KotlinScriptDefinition,
+        override val defaultCompilerOptions: Iterable<String> = emptyList()
     ) : ScriptDefinition() {
 
-        override val compilationConfiguration by lazy {
+        override val compilationConfiguration: ScriptCompilationConfiguration by lazy {
             ScriptCompilationConfigurationFromDefinition(
                 hostConfiguration,
                 legacyDefinition
@@ -106,17 +113,19 @@ abstract class ScriptDefinition : UserDataHolderBase() {
     open class FromLegacyTemplate(
         hostConfiguration: ScriptingHostConfiguration,
         template: KClass<*>,
-        templateClasspath: List<File> = emptyList()
+        templateClasspath: List<File> = emptyList(),
+        defaultCompilerOptions: Iterable<String> = emptyList()
     ) : FromLegacy(
         hostConfiguration,
         KotlinScriptDefinitionFromAnnotatedTemplate(
             template,
             hostConfiguration[ScriptingHostConfiguration.getEnvironment]?.invoke(),
             templateClasspath
-        )
+        ),
+        defaultCompilerOptions
     )
 
-    abstract class FromConfigurationsBase : ScriptDefinition() {
+    abstract class FromConfigurationsBase() : ScriptDefinition() {
 
         @Suppress("OverridingDeprecatedMember", "DEPRECATION")
         override val legacyDefinition by lazy {
@@ -131,8 +140,9 @@ abstract class ScriptDefinition : UserDataHolderBase() {
         }
 
         override fun isScript(script: SourceCode): Boolean {
+            val extension = ".$fileExtension"
             val location = script.locationId ?: return false
-            return location.endsWith(".$fileExtension") && filePathPattern?.let {
+            return (script.name?.endsWith(extension) == true || location.endsWith(extension)) && filePathPattern?.let {
                 Regex(it).matches(FileUtilRt.toSystemIndependentName(location))
             } != false
         }
@@ -167,7 +177,7 @@ abstract class ScriptDefinition : UserDataHolderBase() {
             get() = compilationConfiguration[ScriptCompilationConfiguration.annotationsForSamWithReceivers].orEmpty().map { it.typeName }
 
         override fun equals(other: Any?): Boolean = this === other ||
-                (other as? FromConfigurations)?.let {
+                (other as? FromConfigurationsBase)?.let {
                     compilationConfiguration == it.compilationConfiguration && evaluationConfiguration == it.evaluationConfiguration
                 } == true
 
@@ -177,17 +187,31 @@ abstract class ScriptDefinition : UserDataHolderBase() {
     open class FromConfigurations(
         override val hostConfiguration: ScriptingHostConfiguration,
         override val compilationConfiguration: ScriptCompilationConfiguration,
-        override val evaluationConfiguration: ScriptEvaluationConfiguration?
+        override val evaluationConfiguration: ScriptEvaluationConfiguration?,
+        override val defaultCompilerOptions: Iterable<String> = emptyList()
     ) : FromConfigurationsBase()
 
+    open class FromNewDefinition(
+        private val baseHostConfiguration: ScriptingHostConfiguration,
+        private val definition: kotlin.script.experimental.host.ScriptDefinition,
+        override val defaultCompilerOptions: Iterable<String> = emptyList()
+    ) : FromConfigurationsBase() {
+        override val hostConfiguration: ScriptingHostConfiguration
+            get() = definition.compilationConfiguration[ScriptCompilationConfiguration.hostConfiguration] ?: baseHostConfiguration
+
+        override val compilationConfiguration: ScriptCompilationConfiguration get() = definition.compilationConfiguration
+        override val evaluationConfiguration: ScriptEvaluationConfiguration get() = definition.evaluationConfiguration
+    }
+
     open class FromTemplate(
-        hostConfiguration: ScriptingHostConfiguration,
+        baseHostConfiguration: ScriptingHostConfiguration,
         template: KClass<*>,
-        contextClass: KClass<*> = ScriptCompilationConfiguration::class
-    ) : FromConfigurations(
-        hostConfiguration,
-        createCompilationConfigurationFromTemplate(KotlinType(template), hostConfiguration, contextClass),
-        createEvaluationConfigurationFromTemplate(KotlinType(template), hostConfiguration, contextClass)
+        contextClass: KClass<*> = ScriptCompilationConfiguration::class,
+        defaultCompilerOptions: Iterable<String> = emptyList()
+    ) : FromNewDefinition(
+        baseHostConfiguration,
+        createScriptDefinitionFromTemplate(KotlinType(template), baseHostConfiguration, contextClass),
+        defaultCompilerOptions
     )
 
     companion object {

@@ -1,0 +1,3 @@
+FILE: while.kt
+    public? final? fun foo(limit: Int): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? fun bar(limit: Int): R|kotlin/Unit| { LAZY_BLOCK }

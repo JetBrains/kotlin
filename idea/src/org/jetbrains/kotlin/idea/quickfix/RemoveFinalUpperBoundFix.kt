@@ -20,6 +20,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtTypeParameter
 import org.jetbrains.kotlin.psi.KtTypeReference
@@ -30,7 +31,7 @@ class RemoveFinalUpperBoundFix(val typeReference: KtTypeReference) : KotlinQuick
         typeReference.getStrictParentOfType<KtTypeParameter>()?.extendsBound = null
     }
 
-    override fun getText() = "Remove final upper bound"
+    override fun getText() = KotlinBundle.message("remove.final.upper.bound")
 
     override fun getFamilyName() = text
 

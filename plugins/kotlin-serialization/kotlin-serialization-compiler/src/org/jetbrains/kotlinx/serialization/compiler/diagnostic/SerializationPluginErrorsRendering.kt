@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,7 +16,9 @@ object SerializationPluginErrorsRendering : DefaultErrorMessages.Extension {
     init {
         MAP.put(
             SerializationErrors.INLINE_CLASSES_NOT_SUPPORTED,
-            "Inline classes are not supported by kotlinx.serialization yet"
+            "Inline classes require runtime serialization library version at least {0}, while your classpath has {1}.",
+            Renderers.STRING,
+            Renderers.STRING,
         )
         MAP.put(
             SerializationErrors.PLUGIN_IS_NOT_ENABLED,
@@ -38,7 +40,7 @@ object SerializationPluginErrorsRendering : DefaultErrorMessages.Extension {
         )
         MAP.put(
             SerializationErrors.PRIMARY_CONSTRUCTOR_PARAMETER_IS_NOT_A_PROPERTY,
-            "This class is not serializable automatically because it has primary constructor parameters of which are not properties"
+            "This class is not serializable automatically because it has primary constructor parameters that are not properties"
         )
         MAP.put(
             SerializationErrors.DUPLICATE_SERIAL_NAME,
@@ -48,14 +50,21 @@ object SerializationPluginErrorsRendering : DefaultErrorMessages.Extension {
         MAP.put(
             SerializationErrors.SERIALIZER_NOT_FOUND,
             "Serializer has not been found for type ''{0}''. " +
-                    "To use context serializer as fallback, explicitly annotate type or property with @ContextualSerialization",
+                    "To use context serializer as fallback, explicitly annotate type or property with @Contextual",
             Renderers.RENDER_TYPE_WITH_ANNOTATIONS
         )
         MAP.put(
             SerializationErrors.SERIALIZER_NULLABILITY_INCOMPATIBLE,
             "Type ''{1}'' is non-nullable and therefore can not be serialized with serializer for nullable type ''{0}''",
-            Renderers.RENDER_TYPE_WITH_ANNOTATIONS,
-            Renderers.RENDER_TYPE_WITH_ANNOTATIONS
+            Renderers.RENDER_TYPE,
+            Renderers.RENDER_TYPE
+        )
+        MAP.put(
+            SerializationErrors.SERIALIZER_TYPE_INCOMPATIBLE,
+            "Class ''{1}'', which is serializer for type ''{2}'', is applied here to type ''{0}''. This may lead to errors or incorrect behavior.",
+            Renderers.RENDER_TYPE,
+            Renderers.RENDER_TYPE,
+            Renderers.RENDER_TYPE
         )
         MAP.put(
             SerializationErrors.TRANSIENT_MISSING_INITIALIZER,
@@ -64,6 +73,27 @@ object SerializationPluginErrorsRendering : DefaultErrorMessages.Extension {
         MAP.put(
             SerializationErrors.TRANSIENT_IS_REDUNDANT,
             "Property does not have backing field which makes it non-serializable and therefore @Transient is redundant"
+        )
+        MAP.put(
+            SerializationErrors.INCORRECT_TRANSIENT,
+            "@kotlin.jvm.Transient does not affect @Serializable classes. Please use @kotlinx.serialization.Transient instead."
+        )
+        MAP.put(
+            SerializationErrors.REQUIRED_KOTLIN_TOO_HIGH,
+            "Your current Kotlin version is {0}, while kotlinx.serialization core runtime {1} requires at least Kotlin {2}. " +
+                    "Please update your Kotlin compiler and IDE plugin.",
+            Renderers.STRING,
+            Renderers.STRING,
+            Renderers.STRING
+        )
+
+        MAP.put(
+            SerializationErrors.PROVIDED_RUNTIME_TOO_LOW,
+            "Your current kotlinx.serialization core version is {0}, while current Kotlin compiler plugin {1} requires at least {2}. " +
+                    "Please update your kotlinx.serialization runtime dependency.",
+            Renderers.STRING,
+            Renderers.STRING,
+            Renderers.STRING
         )
     }
 }

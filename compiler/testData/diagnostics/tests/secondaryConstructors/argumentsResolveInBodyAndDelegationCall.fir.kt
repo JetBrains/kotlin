@@ -5,7 +5,7 @@ class A : B {
     val myProp: Int = 1
     override val parentProp = 1
 
-    constructor(x: Int, y: Int = global): <!INAPPLICABLE_CANDIDATE!>super<!>(x + y + global) {
+    constructor(x: Int, y: Int = global): super(x + y + global) {
         foo(x, y, myProp)
         x + y + myProp + parentProp + super.parentProp
     }
@@ -17,7 +17,7 @@ class A : B {
         <!INAPPLICABLE_CANDIDATE!>foo<!>(x, y, myProp)
         x + y + myProp + parentProp + super.parentProp
     }
-    constructor(x: B, y: Int = <!UNRESOLVED_REFERENCE!>global2<!>): <!INAPPLICABLE_CANDIDATE!>this<!>("", x) {
+    constructor(x: B, y: Int = <!UNRESOLVED_REFERENCE!>global2<!>): <!NONE_APPLICABLE!>this<!>("", x) {
         x.parentProp + y + myProp + parentProp + super.parentProp
     }
 

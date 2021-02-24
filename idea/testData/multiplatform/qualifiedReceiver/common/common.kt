@@ -2,14 +2,14 @@
 
 package foo
 
-expect interface A {
-    fun commonFun()
-    val b: B
-    fun bFun(): B
+expect interface <!LINE_MARKER("descr='Has actuals in JVM'")!>A<!> {
+    fun <!LINE_MARKER("descr='Has actuals in JVM'")!>commonFun<!>()
+    val <!LINE_MARKER("descr='Has actuals in JVM'")!>b<!>: B
+    fun <!LINE_MARKER("descr='Has actuals in JVM'")!>bFun<!>(): B
 }
 
-expect interface B {
-    fun commonFunB()
+expect interface <!LINE_MARKER("descr='Has actuals in JVM'")!>B<!> {
+    fun <!LINE_MARKER("descr='Has actuals in JVM'")!>commonFunB<!>()
 }
 
 class Common {

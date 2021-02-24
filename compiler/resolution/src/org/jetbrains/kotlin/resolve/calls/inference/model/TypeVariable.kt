@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.calls.model.CallableReferenceKotlinCallArgument
 import org.jetbrains.kotlin.resolve.calls.model.LambdaKotlinCallArgument
+import org.jetbrains.kotlin.resolve.calls.model.PostponableKotlinCallArgument
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasOnlyInputTypesAnnotation
 import org.jetbrains.kotlin.types.KotlinType
@@ -49,10 +50,12 @@ class TypeVariableTypeConstructor(private val builtIns: KotlinBuiltIns, val debu
     override fun refine(kotlinTypeRefiner: KotlinTypeRefiner): TypeConstructor = this
 
     override fun toString() = "TypeVariable($debugName)"
+
+    var isContainedInInvariantOrContravariantPositions: Boolean = false
 }
 
 sealed class NewTypeVariable(builtIns: KotlinBuiltIns, name: String) : TypeVariableMarker {
-    val freshTypeConstructor: TypeConstructor = TypeVariableTypeConstructor(builtIns, name)
+    val freshTypeConstructor = TypeVariableTypeConstructor(builtIns, name)
 
     // member scope is used if we have receiver with type TypeVariable(T)
     // todo add to member scope methods from supertypes for type variable
@@ -77,7 +80,15 @@ class TypeVariableFromCallableDescriptor(
 }
 
 class TypeVariableForLambdaReturnType(
-    val lambdaArgument: LambdaKotlinCallArgument,
+    builtIns: KotlinBuiltIns,
+    name: String
+) : NewTypeVariable(builtIns, name) {
+    override fun hasOnlyInputTypesAnnotation(): Boolean = false
+}
+
+class TypeVariableForLambdaParameterType(
+    val atom: PostponableKotlinCallArgument,
+    val index: Int,
     builtIns: KotlinBuiltIns,
     name: String
 ) : NewTypeVariable(builtIns, name) {
@@ -85,6 +96,13 @@ class TypeVariableForLambdaReturnType(
 }
 
 class TypeVariableForCallableReferenceReturnType(
+    builtIns: KotlinBuiltIns,
+    name: String
+) : NewTypeVariable(builtIns, name) {
+    override fun hasOnlyInputTypesAnnotation(): Boolean = false
+}
+
+class TypeVariableForCallableReferenceParameterType(
     builtIns: KotlinBuiltIns,
     name: String
 ) : NewTypeVariable(builtIns, name) {

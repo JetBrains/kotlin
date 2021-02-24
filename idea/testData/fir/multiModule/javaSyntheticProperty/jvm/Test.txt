@@ -1,3 +1,0 @@
-FILE: Test.kt
-    public final val x: R|ft<kotlin/String, kotlin/String?>!| = R|/JavaClass.JavaClass|().R|/JavaClass.foo|
-        public get(): R|ft<kotlin/String, kotlin/String?>!|

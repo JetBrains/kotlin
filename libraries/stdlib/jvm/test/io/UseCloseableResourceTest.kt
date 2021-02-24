@@ -5,8 +5,8 @@
 
 package test.io
 
+import test.platformNull
 import java.io.*
-import java.util.*
 import kotlin.test.*
 
 class UseCloseableResourceTest {
@@ -22,9 +22,6 @@ class UseCloseableResourceTest {
         assertEquals("Hello", firstLine)
         assertEquals("World", secondLine)
     }
-
-
-    @Suppress("HasPlatformType", "UNCHECKED_CAST") fun <T> platformNull() = Collections.singletonList(null as T).first()
 
     class Resource(val faultyClose: Boolean = false) : Closeable {
 

@@ -1,0 +1,12 @@
+annotation class TestAnn : Annotation {
+  constructor(x: String) /* primary */
+  val x: String
+    field = x
+    get
+
+}
+
+fun foo() {
+  val testVal: String = "testVal"
+  var testVar: String = "testVar"
+}

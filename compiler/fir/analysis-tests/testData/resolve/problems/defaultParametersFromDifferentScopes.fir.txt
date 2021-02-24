@@ -1,0 +1,21 @@
+FILE: defaultParametersFromDifferentScopes.kt
+    public abstract interface Foo : R|kotlin/Any| {
+        public abstract fun some(x: R|kotlin/Int| = Int(1), y: R|kotlin/Int|): R|kotlin/Unit|
+
+    }
+    public abstract interface Bar : R|kotlin/Any| {
+        public abstract fun some(x: R|kotlin/Int|, y: R|kotlin/Int| = Int(2)): R|kotlin/Unit|
+
+    }
+    public final class Impl : R|Foo|, R|Bar| {
+        public constructor(): R|Impl| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final override fun some(x: R|kotlin/Int|, y: R|kotlin/Int|): R|kotlin/Unit| {
+        }
+
+    }
+    public final fun main(): R|kotlin/Unit| {
+        R|/Impl.Impl|().R|/Impl.some|()
+    }

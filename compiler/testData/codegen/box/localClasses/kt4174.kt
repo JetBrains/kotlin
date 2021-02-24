@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 open class C(val s: String) {
     fun test(): String {
         return s

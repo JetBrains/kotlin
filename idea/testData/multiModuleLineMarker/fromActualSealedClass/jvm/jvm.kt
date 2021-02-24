@@ -1,10 +1,10 @@
-actual sealed class <lineMarker>Sealed</lineMarker> {
+actual sealed class <!LINE_MARKER("descr='Is subclassed by Sealed1 in Sealed [jvm] Sealed2 in Sealed [jvm]'"), LINE_MARKER("descr='Has declaration in common module'")!>Sealed<!> {
 
-    actual object <lineMarker>Sealed1</lineMarker> : Sealed()
+    actual object <!LINE_MARKER("descr='Has declaration in common module'")!>Sealed1<!> : Sealed()
 
-    actual class <lineMarker>Sealed2</lineMarker> : Sealed() {
-        actual val <lineMarker>x</lineMarker> = 42
-        actual fun <lineMarker>foo</lineMarker>() = ""
+    actual class <!LINE_MARKER("descr='Has declaration in common module'")!>Sealed2<!> : Sealed() {
+        actual val <!LINE_MARKER("descr='Has declaration in common module'")!>x<!> = 42
+        actual fun <!LINE_MARKER("descr='Has declaration in common module'")!>foo<!>() = ""
     }
 }
 

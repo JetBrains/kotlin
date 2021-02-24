@@ -1,6 +1,6 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 // TARGET_BACKEND: JVM
 // WITH_RUNTIME
+// JVM_TARGET: 1.6
 
 @Target(AnnotationTarget.TYPE)
 annotation class A

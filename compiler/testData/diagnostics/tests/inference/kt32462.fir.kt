@@ -22,6 +22,6 @@ fun test_1() {
 fun test_2() {
     select(
         A::toB,
-        <!UNRESOLVED_REFERENCE!>A::toC<!>
+        A::toC
     )
 }

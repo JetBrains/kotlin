@@ -6,19 +6,19 @@
 package org.jetbrains.kotlin.compilerRunner
 
 import org.gradle.api.Project
-import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.isAtLeast
+import org.jetbrains.kotlin.gradle.tasks.CacheBuilder
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.jetbrains.kotlin.konan.CompilerVersion
+import org.jetbrains.kotlin.konan.properties.resolvablePropertyString
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
-import java.io.File
-import java.net.URLClassLoader
+import java.nio.file.Files
 import java.util.*
-import java.util.concurrent.ConcurrentHashMap
 
 private val Project.jvmArgs
     get() = PropertiesProvider(this).nativeJvmArgs?.split("\\s+".toRegex()).orEmpty()
@@ -34,8 +34,15 @@ internal val Project.konanVersion: CompilerVersion
     get() = PropertiesProvider(this).nativeVersion?.let { CompilerVersion.fromString(it) }
         ?: NativeCompilerDownloader.DEFAULT_KONAN_VERSION
 
-internal val Project.konanCacheKind: NativeCacheKind
-    get() = PropertiesProvider(this).nativeCacheKind
+internal fun Project.getKonanCacheKind(target: KonanTarget): NativeCacheKind {
+    val commonCacheKind = PropertiesProvider(this).nativeCacheKind
+    val targetCacheKind = PropertiesProvider(this).nativeCacheKindForTarget(target)
+    return when {
+        targetCacheKind != null -> targetCacheKind
+        commonCacheKind != null -> commonCacheKind
+        else -> CacheBuilder.defaultCacheKindForTarget(target)
+    }
+}
 
 internal abstract class KotlinNativeToolRunner(
     protected val toolName: String,
@@ -47,8 +54,7 @@ internal abstract class KotlinNativeToolRunner(
     final override val daemonEntryPoint get() = "daemonMain"
 
     // We need to unset some environment variables which are set by XCode and may potentially affect the tool executed.
-    override val environment = mapOf("LIBCLANG_DISABLE_CRASH_RECOVERY" to "1")
-    final override val environmentBlacklist: Set<String> by lazy {
+    final override val execEnvironmentBlacklist: Set<String> by lazy {
         HashSet<String>().also { collector ->
             KotlinNativeToolRunner::class.java.getResourceAsStream("/env_blacklist")?.let { stream ->
                 stream.reader().use { r -> r.forEachLine { collector.add(it) } }
@@ -56,19 +62,25 @@ internal abstract class KotlinNativeToolRunner(
         }
     }
 
-    final override val systemProperties by lazy {
-        mapOf(
-            "konan.home" to project.konanHome,
-            MessageRenderer.PROPERTY_KEY to MessageRenderer.GRADLE_STYLE.name,
-            "java.library.path" to "${project.konanHome}/konan/nativelib"
-        )
-    }
-    final override val systemPropertiesBlacklist = setOf("java.endorsed.dirs")
+    final override val execSystemProperties by lazy {
+        // Still set konan.home for versions prior to 1.4-M3.
+        val konanHomeRequired = project.konanVersion.let {
+            !it.isAtLeast(1, 4, 0) ||
+                    it.toString(showMeta = false, showBuild = false) in listOf("1.4-M1", "1.4-M2")
+        }
 
-    final override val classpath: FileCollection = project.fileTree("${project.konanHome}/konan/lib/").apply { include("*.jar") }
+        listOfNotNull(
+                if (konanHomeRequired) "konan.home" to project.konanHome else null,
+                MessageRenderer.PROPERTY_KEY to MessageRenderer.GRADLE_STYLE.name
+        ).toMap()
+    }
+
+    final override val classpath by lazy {
+        project.fileTree("${project.konanHome}/konan/lib/").apply { include("*.jar") }.toSet()
+    }
 
     final override fun checkClasspath() =
-        check(!classpath.isEmpty) {
+        check(classpath.isNotEmpty()) {
             """
                 Classpath of the tool is empty: $toolName
                 Probably the '${PropertiesProvider.KOTLIN_NATIVE_HOME}' project property contains an incorrect path.
@@ -76,31 +88,25 @@ internal abstract class KotlinNativeToolRunner(
             """.trimIndent()
         }
 
-    final override fun getIsolatedClassLoader() =
-        isolatedClassLoadersMap.computeIfAbsent(project.konanHome) {
-            val arrayOfURLs = classpath.map { File(it.absolutePath).toURI().toURL() }.toTypedArray()
-            URLClassLoader(arrayOfURLs, null)
-        }
+    final override val isolatedClassLoaderCacheKey get() = project.konanHome
 
     override fun transformArgs(args: List<String>) = listOf(toolName) + args
 
     final override fun getCustomJvmArgs() = project.jvmArgs
-
-    companion object {
-        private val isolatedClassLoadersMap = ConcurrentHashMap<String, ClassLoader>()
-    }
 }
 
-/** Kotlin/Native C-interop tool runner */
-internal class KotlinNativeCInteropRunner(project: Project) : KotlinNativeToolRunner("cinterop", project) {
+/** A common ancestor for all runners that run the cinterop tool. */
+internal abstract class AbstractKotlinNativeCInteropRunner(toolName: String, project: Project) : KotlinNativeToolRunner(toolName, project) {
     override val mustRunViaExec get() = true
 
-    override val environment by lazy {
-        val llvmExecutablesPath = llvmExecutablesPath
-        if (llvmExecutablesPath != null)
-            super.environment + ("PATH" to "$llvmExecutablesPath;${System.getenv("PATH")}")
-        else
-            super.environment
+    override val execEnvironment by lazy {
+        val result = mutableMapOf<String, String>()
+        result.putAll(super.execEnvironment)
+        result["LIBCLANG_DISABLE_CRASH_RECOVERY"] = "1"
+        llvmExecutablesPath?.let {
+            result["PATH"] = "$it;${System.getenv("PATH")}"
+        }
+        result
     }
 
     private val llvmExecutablesPath: String? by lazy {
@@ -110,7 +116,7 @@ internal class KotlinNativeCInteropRunner(project: Project) : KotlinNativeToolRu
                 project.file("${project.konanHome}/konan/konan.properties").inputStream().use(::load)
             }
 
-            konanProperties.getProperty("llvmHome.mingw_x64")?.let { toolchainDir ->
+            konanProperties.resolvablePropertyString("llvmHome.mingw_x64")?.let { toolchainDir ->
                 DependencyDirectories.defaultDependenciesRoot
                     .resolve("$toolchainDir/bin")
                     .absolutePath
@@ -119,6 +125,9 @@ internal class KotlinNativeCInteropRunner(project: Project) : KotlinNativeToolRu
             null
     }
 }
+
+/** Kotlin/Native C-interop tool runner */
+internal class KotlinNativeCInteropRunner(project: Project) : AbstractKotlinNativeCInteropRunner("cinterop", project)
 
 /** Kotlin/Native compiler runner */
 internal class KotlinNativeCompilerRunner(project: Project) : KotlinNativeToolRunner("konanc", project) {
@@ -129,7 +138,7 @@ internal class KotlinNativeCompilerRunner(project: Project) : KotlinNativeToolRu
     override fun transformArgs(args: List<String>): List<String> {
         if (!useArgFile) return super.transformArgs(args)
 
-        val argFile = createTempFile(prefix = "kotlinc-native-args", suffix = ".lst").apply { deleteOnExit() }
+        val argFile = Files.createTempFile(/* prefix = */ "kotlinc-native-args", /* suffix = */ ".lst").toFile().apply { deleteOnExit() }
         argFile.printWriter().use { w ->
             args.forEach { arg ->
                 val escapedArg = arg
@@ -146,4 +155,12 @@ internal class KotlinNativeCompilerRunner(project: Project) : KotlinNativeToolRu
 /** Klib management tool runner */
 internal class KotlinNativeKlibRunner(project: Project) : KotlinNativeToolRunner("klib", project) {
     override val mustRunViaExec get() = project.disableKonanDaemon
+}
+
+/** Platform libraries generation tool. Runs the cinterop tool under the hood. */
+internal class KotlinNativeLibraryGenerationRunner(project: Project) :
+    AbstractKotlinNativeCInteropRunner("generatePlatformLibraries", project)
+{
+    // The library generator works for a long time so enabling C2 can improve performance.
+    override val disableC2: Boolean = false
 }

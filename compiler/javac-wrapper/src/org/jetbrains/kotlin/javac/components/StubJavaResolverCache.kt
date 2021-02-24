@@ -24,12 +24,12 @@ import org.jetbrains.kotlin.load.java.components.AbstractJavaResolverCache
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaElement
 import org.jetbrains.kotlin.load.java.structure.JavaField
-import org.jetbrains.kotlin.load.java.structure.JavaMethod
+import org.jetbrains.kotlin.load.java.structure.JavaMember
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 
 class StubJavaResolverCache(resolveSession: ResolveSession) : AbstractJavaResolverCache(resolveSession) {
 
-    override fun recordMethod(method: JavaMethod, descriptor: SimpleFunctionDescriptor) {}
+    override fun recordMethod(member: JavaMember, descriptor: SimpleFunctionDescriptor) {}
 
     override fun recordConstructor(element: JavaElement, descriptor: ConstructorDescriptor) {}
 

@@ -1,0 +1,28 @@
+val n: Any?
+  field = null
+  get
+
+open enum class En : Enum<En> {
+  private constructor(x: String?) /* primary */ {
+    super/*Enum*/<En>()
+    /* <init>() */
+
+  }
+
+  val x: String?
+    field = x
+    get
+
+  ENTRY = En(x = { // BLOCK
+    val tmp0_safe_receiver: Any? = <get-n>()
+    when {
+      EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
+      else -> tmp0_safe_receiver.toString()
+    }
+  })
+
+  fun values(): Array<En> /* Synthetic body for ENUM_VALUES */
+
+  fun valueOf(value: String): En /* Synthetic body for ENUM_VALUEOF */
+
+}

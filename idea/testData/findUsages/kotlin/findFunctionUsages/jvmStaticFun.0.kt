@@ -7,3 +7,5 @@ class Foo {
         }
     }
 }
+
+// FIR_COMPARISON

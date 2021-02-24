@@ -44,6 +44,13 @@ public expect inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedO
     completion: Continuation<T>
 ): Any?
 
+// Internal version that support arity-2 suspending functions, might be made public in the future if needed
+internal expect inline fun <R, P, T> (suspend R.(P) -> T).startCoroutineUninterceptedOrReturn(
+    receiver: R,
+    param: P,
+    completion: Continuation<T>
+): Any?
+
 @SinceKotlin("1.3")
 public expect fun <T> (suspend () -> T).createCoroutineUnintercepted(
     completion: Continuation<T>

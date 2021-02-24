@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.idea.kdoc
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.util.KtTestUtil
 
 abstract class AbstractKDocTypingTest : KotlinLightCodeInsightFixtureTestCase() {
-    override fun getTestDataPath(): String = KotlinTestUtils.getHomeDirectory()
+    override fun getTestDataPath(): String = KtTestUtil.getHomeDirectory()
     override fun getProjectDescriptor() = KotlinLightProjectDescriptor.INSTANCE
 
     protected fun doTest(fileName: String) {

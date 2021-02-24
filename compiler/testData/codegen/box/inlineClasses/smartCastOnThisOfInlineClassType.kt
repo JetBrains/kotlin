@@ -1,5 +1,4 @@
 // !LANGUAGE: +InlineClasses
-// IGNORE_BACKEND_FIR: JVM_IR
 
 interface IBase {
     fun testDefault1() = if (this is B) this.foo() else "fail"

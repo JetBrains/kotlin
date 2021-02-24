@@ -43,7 +43,7 @@ class AlternativesRenderLogTest : AbstractKotlinUastTest() {
                     builder.append("    ".repeat(level))
                     builder.append("[${uElement.size}]:")
                     builder.append(uElement.joinToString(", ", "[", "]") { it.asLogString() })
-                    builder.appendln()
+                    builder.appendLine()
                 }
                 if (uElement.any()) level++
                 element.acceptChildren(this)

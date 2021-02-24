@@ -4,6 +4,7 @@
 package i
 
 import java.util.ArrayList
+import checkSubtype
 
 public infix fun<TItem> Iterable<TItem>.where(<!UNUSED_PARAMETER!>predicate<!> : (TItem)->Boolean) : ()->Iterable<TItem> {
 <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>

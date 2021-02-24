@@ -1,5 +1,6 @@
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: BIG_ARITY
 // !LANGUAGE: +FunctionTypesWithBigArity
-// IGNORE_BACKEND_FIR: JVM_IR
 
 class A(val value: Int) {
     // for (i in 1..254) { print("p${"%03d".format(i)}: A, "); if (i % 10 == 0) println() }; println()

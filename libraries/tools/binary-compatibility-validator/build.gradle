@@ -6,13 +6,12 @@ configurations {
 }
 
 dependencies {
-    compile project(':kotlin-stdlib')
-    compileOnly project(':kotlinx-metadata')
-    compileOnly project(':kotlinx-metadata-jvm')
-    compile 'org.ow2.asm:asm:6.0'
-    compile 'org.ow2.asm:asm-tree:6.0'
+    // Override dependency of binary-compatibility-validator:0.2.3 on kotlinx-metadata-jvm:0.1.0,
+    // until the new version of the binary compatibility validator is released.
+    // kotlinx-metadata-jvm 0.1.0 can't read metadata of version 1.5 and greater.
+    runtimeOnly("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.2.0")
 
-    runtime project(path: ':kotlinx-metadata-jvm', configuration: 'runtime')
+    compile("org.jetbrains.kotlinx:binary-compatibility-validator:0.2.3")
 
     testCompile project(':kotlin-test:kotlin-test-junit')
 
@@ -20,7 +19,6 @@ dependencies {
     testArtifacts project(':kotlin-stdlib-jdk7')
     testArtifacts project(':kotlin-stdlib-jdk8')
     testArtifacts project(':kotlin-reflect')
-    testArtifacts project(':kotlin-coroutines-experimental-compat')
 }
 
 pill {

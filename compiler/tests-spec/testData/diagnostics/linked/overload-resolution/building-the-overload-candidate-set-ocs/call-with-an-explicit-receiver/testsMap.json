@@ -1,0 +1,758 @@
+{
+  "1": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 1,
+          "description": "smart cast for the property available through the operator invoke",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts/smart-cast-sink-stability/p-5/pos/1.1.kt",
+          "unexpectedBehaviour": true,
+          "linkType": "primary"
+        }
+      ]
+    }
+  },
+  "3": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 1,
+          "description": "smart cast for the property available through the operator invoke",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/type-inference/smart-casts/smart-cast-sink-stability/p-5/pos/1.1.kt",
+          "unexpectedBehaviour": true,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 2,
+          "description": "The sets of local extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/2.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 1,
+          "description": "set of non-extension member callables only",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 1,
+          "description": "set of non-extension member callables only",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/2.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 1,
+          "description": "extension calls with explicit and implicit receiver",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/2.2.kt",
+          "unexpectedBehaviour": true,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 1,
+          "description": "sets of non-extension member callables only",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ],
+      "2": [
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 2,
+          "description": "The sets of local extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/2.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 1,
+          "description": "extension calls with explicit and implicit receiver",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/2.2.kt",
+          "unexpectedBehaviour": true,
+          "linkType": "primary"
+        }
+      ]
+    }
+  },
+  "6": {
+    "pos": {
+      "4": [
+        {
+          "specVersion": "0.1-300",
+          "casesNumber": 2,
+          "description": "infix fun: Star-imported infix extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.20.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 2,
+          "description": "Star-imported infix extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/pos/4.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 4,
+          "description": "Extension callables declared in the package scope",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 3,
+          "description": "The overload candidate sets for each pair of implicit receivers: declared in the package scope extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/2.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 3,
+          "description": "sets of local, explicitly imported, declared in the package scope and star-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/2.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 1,
+          "description": "sets of explicitly imported, declared in the package scope and star-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/3.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 6,
+          "description": "sets of extension callables declared in the package scope",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/4.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 1,
+          "description": "sets of declared in the package scope and star-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/4.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 1,
+          "description": "sets of explicitly imported callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/3.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 3,
+          "description": "sets of non-extension member callables, local, explicitly imported, declared in the package scope and star-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/1.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 5,
+          "description": "sets of non-extension member callables, local, explicitly imported, declared in the package scope and star-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/1.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ],
+      "5": [
+        {
+          "specVersion": "0.1-300",
+          "casesNumber": 1,
+          "description": "infix fun: Star-imported infix extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.21.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 1,
+          "description": "Star-imported infix extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/pos/4.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 3,
+          "description": "Star-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 1,
+          "description": "Star-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.6.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 3,
+          "description": "The overload candidate sets for each pair of implicit receivers: Implicitly imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/2.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 3,
+          "description": "sets of local, explicitly imported, declared in the package scope and star-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/2.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 1,
+          "description": "sets of explicitly imported, declared in the package scope and star-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/3.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 1,
+          "description": "set of star-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/5.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 1,
+          "description": "set of star-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/5.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 1,
+          "description": "sets of declared in the package scope and star-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/4.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 1,
+          "description": "sets of explicitly imported callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/3.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 3,
+          "description": "sets of non-extension member callables, local, explicitly imported, declared in the package scope and star-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/1.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 5,
+          "description": "sets of non-extension member callables, local, explicitly imported, declared in the package scope and star-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/1.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ],
+      "2": [
+        {
+          "specVersion": "0.1-300",
+          "casesNumber": 4,
+          "description": "Infix fun: Local extension infix extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.18.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 4,
+          "description": "Local extension infix extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/pos/4.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 5,
+          "description": "Non-extension member callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.2.kt",
+          "unexpectedBehaviour": true,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 3,
+          "description": "The overload candidate sets for each pair of implicit receivers: Local extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/2.2.kt",
+          "unexpectedBehaviour": true,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 2,
+          "description": "The sets of local extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/2.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 3,
+          "description": "sets of local, explicitly imported, declared in the package scope and star-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/2.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 3,
+          "description": "The sets of non-extension member callables named f of type T;",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/1.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 3,
+          "description": "sets of non-extension member callables, local, explicitly imported, declared in the package scope and star-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/1.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 1,
+          "description": "set of non-extension member callables only",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/2.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 5,
+          "description": "sets of non-extension member callables, local, explicitly imported, declared in the package scope and star-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/1.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 1,
+          "description": "extension calls with explicit and implicit receiver",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/2.2.kt",
+          "unexpectedBehaviour": true,
+          "linkType": "main"
+        }
+      ],
+      "3": [
+        {
+          "specVersion": "0.1-300",
+          "casesNumber": 2,
+          "description": "infix fun: Explicitly imported infix extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.19.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 2,
+          "description": "Explicitly imported infix extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/pos/4.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 4,
+          "description": "Explicitly imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 3,
+          "description": "The overload candidate sets for each pair of implicit receivers: Explicitly imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/2.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 3,
+          "description": "sets of local, explicitly imported, declared in the package scope and star-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/2.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 1,
+          "description": "sets of explicitly imported, declared in the package scope and star-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/3.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 1,
+          "description": "sets of explicitly imported callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/3.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 3,
+          "description": "sets of non-extension member callables, local, explicitly imported, declared in the package scope and star-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/1.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 5,
+          "description": "sets of non-extension member callables, local, explicitly imported, declared in the package scope and star-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/1.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ],
+      "1": [
+        {
+          "specVersion": "0.1-300",
+          "casesNumber": 6,
+          "description": "Infix fun: Local extension infix extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.17.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 6,
+          "description": "Local extension infix extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/pos/4.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 10,
+          "description": "Non-extension member callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2/pos/3.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 3,
+          "description": "The overload candidate sets for each pair of implicit receivers: Local extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/2.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 1,
+          "description": "set of non-extension member callables only",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 3,
+          "description": "The sets of non-extension member callables named f of type T;",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/1.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 3,
+          "description": "sets of non-extension member callables, local, explicitly imported, declared in the package scope and star-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/1.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 5,
+          "description": "sets of non-extension member callables, local, explicitly imported, declared in the package scope and star-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/1.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 1,
+          "description": "sets of non-extension member callables only",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        }
+      ],
+      "6": [
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 1,
+          "description": "set of implicitly-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/6.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        }
+      ]
+    },
+    "neg": {
+      "2": [
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 4,
+          "description": "Local extension infix extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/neg/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ],
+      "3": [
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 2,
+          "description": "Explicitly imported infix extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/neg/1.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 1,
+          "description": "The overload candidate sets for each pair of implicit receivers: Explicitly imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/neg/2.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ],
+      "5": [
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 1,
+          "description": "Star-imported extension callable only",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/neg/4.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 1,
+          "description": "The overload candidate sets for each pair of implicit receivers: Implicitly imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/neg/2.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ],
+      "4": [
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 2,
+          "description": "Star-imported infix extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/neg/1.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 2,
+          "description": "The overload candidate sets for each pair of implicit receivers: declared in the package scope extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/neg/2.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ],
+      "1": [
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 4,
+          "description": "Implicitly imported extension callable without infix modifier",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/neg/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ]
+    }
+  },
+  "2": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 2,
+          "description": "The sets of local extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/2.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 1,
+          "description": "set of non-extension member callables only",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 1,
+          "description": "set of non-extension member callables only",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/2.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 1,
+          "description": "extension calls with explicit and implicit receiver",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/2.2.kt",
+          "unexpectedBehaviour": true,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 1,
+          "description": "sets of non-extension member callables only",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ]
+    }
+  },
+  "11": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 3,
+          "description": "sets of local, explicitly imported, declared in the package scope and star-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/2.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 3,
+          "description": "The sets of non-extension member callables named f of type T;",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/1.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 1,
+          "description": "sets of explicitly imported, declared in the package scope and star-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/3.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 1,
+          "description": "set of star-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/5.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 1,
+          "description": "set of star-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/5.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 1,
+          "description": "set of implicitly-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/6.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 1,
+          "description": "sets of declared in the package scope and star-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/4.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 1,
+          "description": "sets of explicitly imported callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/3.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 3,
+          "description": "sets of non-extension member callables, local, explicitly imported, declared in the package scope and star-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/1.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 5,
+          "description": "sets of non-extension member callables, local, explicitly imported, declared in the package scope and star-imported extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/1.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ]
+    }
+  },
+  "9": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-268",
+          "casesNumber": 6,
+          "description": "sets of extension callables declared in the package scope",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/p-6/pos/4.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ]
+    }
+  }
+}

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: Statics.java
 
 public class Statics {

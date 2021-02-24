@@ -1,0 +1,362 @@
+{
+  "5": {
+    "neg": {
+      "1": [
+        {
+          "specVersion": "0.1-413",
+          "casesNumber": 3,
+          "description": "a callable reference is itself an argument to an overloaded function call",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-3/neg/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-409",
+          "casesNumber": 2,
+          "description": "the case of a call with a callable reference as a not parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/neg/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-409",
+          "casesNumber": 1,
+          "description": "the case of a call with a callable reference as a not parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/neg/1.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-409",
+          "casesNumber": 2,
+          "description": "the case of a call with a callable reference as a not parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/neg/1.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-409",
+          "casesNumber": 2,
+          "description": "the case of a call with a callable reference as a not parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/neg/1.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ]
+    },
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-413",
+          "casesNumber": 2,
+          "description": "the case of a call with a callable reference as a not parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ]
+    }
+  },
+  "1": {
+    "neg": {
+      "1": [
+        {
+          "specVersion": "0.1-409",
+          "casesNumber": 2,
+          "description": "the case of a call with a callable reference as a not parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/neg/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-409",
+          "casesNumber": 1,
+          "description": "the case of a call with a callable reference as a not parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/neg/1.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-409",
+          "casesNumber": 2,
+          "description": "the case of a call with a callable reference as a not parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/neg/1.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-409",
+          "casesNumber": 2,
+          "description": "the case of a call with a callable reference as a not parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/neg/1.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-413",
+          "casesNumber": 1,
+          "description": "the case of a call with a callable reference as a not parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/neg/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        }
+      ]
+    },
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-409",
+          "casesNumber": 3,
+          "description": "the case of a call with a callable reference as a not parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/pos/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-409",
+          "casesNumber": 1,
+          "description": "the case of a call with a callable reference as a not parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/pos/1.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-413",
+          "casesNumber": 2,
+          "description": "the case of a call with a callable reference as a not parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        }
+      ]
+    }
+  },
+  "2": {
+    "neg": {
+      "2": [
+        {
+          "specVersion": "0.1-409",
+          "casesNumber": 2,
+          "description": "the case of a call with a callable reference as a not parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/neg/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-409",
+          "casesNumber": 1,
+          "description": "the case of a call with a callable reference as a not parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/neg/1.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-409",
+          "casesNumber": 2,
+          "description": "the case of a call with a callable reference as a not parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/neg/1.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-409",
+          "casesNumber": 2,
+          "description": "the case of a call with a callable reference as a not parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/neg/1.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ],
+      "3": [
+        {
+          "specVersion": "0.1-409",
+          "casesNumber": 2,
+          "description": "the case of a call with a callable reference as a not parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/neg/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-409",
+          "casesNumber": 1,
+          "description": "the case of a call with a callable reference as a not parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/neg/1.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-409",
+          "casesNumber": 2,
+          "description": "the case of a call with a callable reference as a not parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/neg/1.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-409",
+          "casesNumber": 2,
+          "description": "the case of a call with a callable reference as a not parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/neg/1.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ],
+      "4": [
+        {
+          "specVersion": "0.1-409",
+          "casesNumber": 2,
+          "description": "the case of a call with a callable reference as a not parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/neg/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-409",
+          "casesNumber": 1,
+          "description": "the case of a call with a callable reference as a not parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/neg/1.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-409",
+          "casesNumber": 2,
+          "description": "the case of a call with a callable reference as a not parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/neg/1.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-409",
+          "casesNumber": 2,
+          "description": "the case of a call with a callable reference as a not parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/neg/1.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ],
+      "5": [
+        {
+          "specVersion": "0.1-409",
+          "casesNumber": 2,
+          "description": "the case of a call with a callable reference as a not parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/neg/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-409",
+          "casesNumber": 1,
+          "description": "the case of a call with a callable reference as a not parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/neg/1.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-409",
+          "casesNumber": 2,
+          "description": "the case of a call with a callable reference as a not parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/neg/1.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-409",
+          "casesNumber": 2,
+          "description": "the case of a call with a callable reference as a not parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/neg/1.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ]
+    },
+    "pos": {
+      "2": [
+        {
+          "specVersion": "0.1-409",
+          "casesNumber": 3,
+          "description": "the case of a call with a callable reference as a not parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/pos/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-409",
+          "casesNumber": 1,
+          "description": "the case of a call with a callable reference as a not parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/pos/1.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ],
+      "3": [
+        {
+          "specVersion": "0.1-409",
+          "casesNumber": 3,
+          "description": "the case of a call with a callable reference as a not parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/pos/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-409",
+          "casesNumber": 1,
+          "description": "the case of a call with a callable reference as a not parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/pos/1.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ],
+      "4": [
+        {
+          "specVersion": "0.1-409",
+          "casesNumber": 3,
+          "description": "the case of a call with a callable reference as a not parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/pos/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-409",
+          "casesNumber": 1,
+          "description": "the case of a call with a callable reference as a not parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/pos/1.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ],
+      "6": [
+        {
+          "specVersion": "0.1-409",
+          "casesNumber": 3,
+          "description": "the case of a call with a callable reference as a not parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/pos/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-409",
+          "casesNumber": 1,
+          "description": "the case of a call with a callable reference as a not parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/pos/1.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ]
+    }
+  },
+  "6": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-413",
+          "casesNumber": 2,
+          "description": "the case of a call with a callable reference as a not parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
+        }
+      ]
+    }
+  }
+}

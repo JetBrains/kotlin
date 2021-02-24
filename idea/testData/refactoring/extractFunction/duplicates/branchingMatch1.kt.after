@@ -16,7 +16,7 @@ fun foo1() {
     val x = 1
     var y: Int = x
     println(
-            i(x, y)
+        i(x, y)
     )
 }
 

@@ -26,7 +26,7 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
         put(ErrorsJs.NOT_SUPPORTED, "Cannot translate (not supported yet): ''{0}''", RenderFirstLineOfElementText)
         put(ErrorsJs.JSCODE_NO_JAVASCRIPT_PRODUCED, "Argument must be non-empty JavaScript code")
         put(ErrorsJs.NESTED_EXTERNAL_DECLARATION, "Non top-level `external` declaration")
-        put(ErrorsJs.WRONG_EXTERNAL_DECLARATION, "Declaration of such kind ({0}) can't be external", Renderers.STRING)
+        put(ErrorsJs.WRONG_EXTERNAL_DECLARATION, "Declaration of such kind ({0}) can''t be external", Renderers.STRING)
         put(ErrorsJs.EXTENSION_FUNCTION_IN_EXTERNAL_DECLARATION, "Function types with receiver are prohibited in external declarations")
         put(ErrorsJs.INLINE_CLASS_IN_EXTERNAL_DECLARATION, "Using inline classes as parameter type or return type of external declarations is not supported")
 
@@ -99,6 +99,10 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
         put(ErrorsJs.WRONG_MULTIPLE_INHERITANCE,
             "Can't apply multiple inheritance here, since it's impossible to generate bridge for system function {0}",
             Renderers.DECLARATION_NAME_WITH_KIND)
+
+        put(ErrorsJs.NESTED_JS_EXPORT, "@JsExport is only allowed on files and top-level declarations")
+        put(ErrorsJs.WRONG_EXPORTED_DECLARATION, "Declaration of such kind ({0}) can't be exported to JS", Renderers.STRING)
+        put(ErrorsJs.NON_EXPORTABLE_TYPE, "Exported declaration uses non-exportable {0} type: {1}", Renderers.STRING, RENDER_TYPE)
 
         this
     }

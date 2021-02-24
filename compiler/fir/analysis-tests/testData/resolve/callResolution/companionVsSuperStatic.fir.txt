@@ -1,0 +1,21 @@
+FILE: main.kt
+    public final class A : R|JavaClass| {
+        public constructor(): R|A| {
+            super<R|JavaClass|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|A.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val FIELD: R|kotlin/Int| = Int(1)
+                public get(): R|kotlin/Int|
+
+        }
+
+        public final fun foo(): R|kotlin/Unit| {
+            this@R|/A.Companion|.R|/A.Companion.FIELD|
+        }
+
+    }

@@ -1,4 +1,0 @@
-public open class JavaClass : R|Derived| {
-    public constructor(): R|JavaClass|
-
-}

@@ -14,11 +14,12 @@ import org.jetbrains.kotlin.console.KotlinConsoleKeeper
 import org.jetbrains.kotlin.console.KotlinConsoleRunner
 import org.jetbrains.kotlin.idea.completion.test.KotlinFixtureCompletionBaseTestCase
 import org.jetbrains.kotlin.idea.completion.test.testCompletion
+import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 
 abstract class AbstractIdeReplCompletionTest : KotlinFixtureCompletionBaseTestCase() {
@@ -27,11 +28,12 @@ abstract class AbstractIdeReplCompletionTest : KotlinFixtureCompletionBaseTestCa
     override fun setUp() {
         super.setUp()
         consoleRunner = KotlinConsoleKeeper.getInstance(project).run(module)!!
-        VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory())
+        ScriptConfigurationManager.updateScriptDependenciesSynchronously(consoleRunner!!.consoleFile)
+        VfsRootAccess.allowRootAccess(KtTestUtil.getHomeDirectory())
     }
 
     override fun tearDown() {
-        VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory())
+        VfsRootAccess.disallowRootAccess(KtTestUtil.getHomeDirectory())
         consoleRunner?.dispose()
         consoleRunner = null
         super.tearDown()

@@ -2,8 +2,8 @@
 
 package sample
 
-actual interface A {
-    actual fun foo()
+actual interface <!LINE_MARKER("descr='Is implemented by B'"), LINE_MARKER("descr='Has declaration in common module'")!>A<!> {
+    actual fun <!LINE_MARKER("descr='Has declaration in common module'")!>foo<!>()
     fun baz()
 }
 

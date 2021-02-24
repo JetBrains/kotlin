@@ -54,6 +54,16 @@ class JpsKotlinCompilerRunner {
         private var _jpsCompileServiceSession: CompileServiceSession? = null
 
         @TestOnly
+        fun shutdownDaemon() {
+            _jpsCompileServiceSession?.let {
+                try {
+                    it.compileService.shutdown()
+                } catch (_: Throwable) {
+                }
+            }
+            _jpsCompileServiceSession = null
+        }
+
         fun releaseCompileServiceSession() {
             _jpsCompileServiceSession?.let {
                 try {

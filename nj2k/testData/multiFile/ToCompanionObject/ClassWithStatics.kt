@@ -10,6 +10,5 @@ internal open class ClassWithStatics {
         @JvmField
         var staticNonFinalField = 1
         var value = 0
-
     }
 }

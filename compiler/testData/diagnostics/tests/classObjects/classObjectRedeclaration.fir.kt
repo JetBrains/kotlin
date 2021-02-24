@@ -2,19 +2,19 @@
 package test
 
 class A {
-    object Companion
+    <!REDECLARATION!>object Companion<!>
 
-    companion object
+    companion <!REDECLARATION!>object<!>
 }
 
 class B {
-    companion object Named
+    companion <!REDECLARATION!>object Named<!>
 
-    object Named
+    <!REDECLARATION!>object Named<!>
 }
 
 class C {
-    class Named
+    <!REDECLARATION!>class Named<!>
 
-    companion object Named
+    companion <!REDECLARATION!>object Named<!>
 }

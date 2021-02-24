@@ -1,0 +1,30 @@
+FILE: functionCallBound.kt
+    public open class Base : R|kotlin/Any| {
+        public constructor(): R|Base| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class Sub : R|Base| {
+        public constructor(data: R|Base|): R|Sub| {
+            super<R|Base|>()
+        }
+
+        public final val data: R|Base| = R|<local>/data|
+            public get(): R|Base|
+
+    }
+    public final fun R|Sub|.isOk(): R|kotlin/Boolean| {
+        ^isOk Boolean(true)
+    }
+    public final fun check(base: R|Base|): R|Base| {
+        ^check when () {
+            ==((R|<local>/base| as? R|Sub|)?.{ $subj$.R|/isOk|() }, Boolean(true)) ->  {
+                R|<local>/base|.R|/Sub.data|
+            }
+            else ->  {
+                R|<local>/base|
+            }
+        }
+
+    }

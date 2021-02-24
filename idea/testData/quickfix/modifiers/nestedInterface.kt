@@ -6,3 +6,4 @@ class A() {
         interface <caret>C
     }
 }
+/* FIR_COMPARISON */

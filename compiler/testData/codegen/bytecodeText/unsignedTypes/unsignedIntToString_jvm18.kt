@@ -1,6 +1,5 @@
 // JVM_TARGET: 1.8
 // WITH_RUNTIME
-// IGNORE_BACKEND: JVM_IR
 
 fun box(): String {
     val min = 0U.toString()

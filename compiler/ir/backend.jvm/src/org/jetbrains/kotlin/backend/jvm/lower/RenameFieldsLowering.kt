@@ -10,19 +10,17 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
-import org.jetbrains.kotlin.ir.descriptors.WrappedFieldDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetField
 import org.jetbrains.kotlin.ir.expressions.IrSetField
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -48,15 +46,14 @@ private class RenameFieldsLowering(val context: CommonBackendContext) : FileLowe
             if (fields.size < 2) continue
 
             var count = 0
-            // We never rename JvmField properties, since they are public ABI. Therefore we consider the JvmField-annotated property first,
-            // in order to make sure it'll claim its original name.
+            // We never rename fields that are part of public ABI (backing fields of const, lateinit, and JvmField properties).
+            // Therefore we consider such fields first, in order to make sure it'll claim its original name.
             // If there are non-static and static (moved from companion) fields with the same name, we try to make static properties retain
             // their original names first, since this is what the old JVM backend did. However this can easily be changed without any
             // major binary compatibility consequences (modulo access to private members via Java reflection).
             for (field in fields.sortedBy {
                 when {
-                    // TODO: also do not rename const properties
-                    it.isJvmField -> 0
+                    it.isPublicAbi() -> 0
                     it.isStatic -> 1
                     else -> 2
                 }
@@ -65,8 +62,7 @@ private class RenameFieldsLowering(val context: CommonBackendContext) : FileLowe
                 val newName = if (count == 0) oldName else Name.identifier(oldName.asString() + "$$count")
                 count++
 
-                // TODO: check visibility instead of annotation
-                if (field.isJvmField) continue
+                if (field.isPublicAbi()) continue
 
                 newNames[field] = newName
             }
@@ -76,6 +72,14 @@ private class RenameFieldsLowering(val context: CommonBackendContext) : FileLowe
         irFile.transform(renamer, null)
 
         irFile.transform(FieldAccessTransformer(renamer.newSymbols), null)
+    }
+
+    private fun IrField.isPublicAbi(): Boolean {
+        if (!visibility.isPublicAPI) return false
+        val correspondingProperty = correspondingPropertySymbol?.owner
+        return isJvmField ||
+                origin == IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE ||
+                correspondingProperty != null && (correspondingProperty.isLateinit || correspondingProperty.isConst)
     }
 
     private val IrField.isJvmField: Boolean
@@ -99,22 +103,16 @@ private class FieldRenamer(private val newNames: Map<IrField, Name>) : IrElement
 
     override fun visitField(declaration: IrField): IrStatement {
         val newName = newNames[declaration] ?: return super.visitField(declaration)
-
-        val descriptor = WrappedFieldDescriptor()
-        val symbol = IrFieldSymbolImpl(descriptor)
-        return IrFieldImpl(
-            declaration.startOffset, declaration.endOffset, declaration.origin, symbol, newName,
-            declaration.type, declaration.visibility, declaration.isFinal, declaration.isExternal, declaration.isStatic,
-            isFakeOverride = declaration.origin == IrDeclarationOrigin.FAKE_OVERRIDE
-        ).also {
-            descriptor.bind(it)
+        return declaration.factory.buildField {
+            updateFrom(declaration)
+            name = newName
+        }.also {
             it.parent = declaration.parent
             it.initializer = declaration.initializer
                 ?.transform(this, null)
                 ?.patchDeclarationParents(it)
-            it.metadata = declaration.metadata
 
-            newSymbols[declaration] = symbol
+            newSymbols[declaration] = it.symbol
         }
     }
 }

@@ -10,6 +10,6 @@ fun passLambdaValue(l: ContractBuilder.() -> Unit) {
 
 fun passAnonymousFunction(x: Boolean) {
     contract(fun ContractBuilder.() {
-        <!UNRESOLVED_REFERENCE!>returns<!>() <!UNRESOLVED_REFERENCE!>implies<!> x
+        returns() implies x
     })
 }

@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 inline fun <reified R> Iterable<*>.myFilterIsInstance(): List<R> {
     return filterIsInstanceTo(ArrayList<R>())
 }

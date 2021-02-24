@@ -1,6 +1,6 @@
 package sample
 
-actual interface A {
+actual interface <!LINE_MARKER("descr='Has declaration in common module'")!>A<!> {
     fun foo()
 }
 
@@ -10,7 +10,7 @@ fun test() {
     }
 
     anotherUseA {
-        <!UNRESOLVED_REFERENCE("foo")!>foo<!>()
+        <!UNRESOLVED_REFERENCE!>foo<!>()
     }
 
     anotherUseA {

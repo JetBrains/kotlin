@@ -44,7 +44,7 @@ fun translateJsCodeIntoStatementList(code: IrExpression): List<JsStatement> {
     return parseJsCode(foldString(code)) ?: emptyList()
 }
 
-private fun parseJsCode(jsCode: String): List<JsStatement>? {
+fun parseJsCode(jsCode: String): List<JsStatement>? {
     // Parser can change local or global scope.
     // In case of js we want to keep new local names,
     // but no new global ones.

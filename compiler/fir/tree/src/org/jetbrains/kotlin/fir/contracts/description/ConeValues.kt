@@ -35,7 +35,7 @@ class ConeBooleanConstantReference private constructor(name: String) : ConeConst
  * Index of value parameter of function
  * -1 means that it is reference to extension receiver
  */
-open class ConeValueParameterReference(val parameterIndex: Int) : ConeContractDescriptionValue {
+open class ConeValueParameterReference(val parameterIndex: Int, val name: String) : ConeContractDescriptionValue {
     init {
         assert(parameterIndex >= -1)
     }
@@ -44,7 +44,7 @@ open class ConeValueParameterReference(val parameterIndex: Int) : ConeContractDe
         contractDescriptionVisitor.visitValueParameterReference(this, data)
 }
 
-class ConeBooleanValueParameterReference(parameterIndex: Int) : ConeValueParameterReference(parameterIndex), ConeBooleanExpression {
+class ConeBooleanValueParameterReference(parameterIndex: Int, name: String) : ConeValueParameterReference(parameterIndex, name), ConeBooleanExpression {
     override fun <R, D> accept(contractDescriptionVisitor: ConeContractDescriptionVisitor<R, D>, data: D): R =
         contractDescriptionVisitor.visitBooleanValueParameterReference(this, data)
 }

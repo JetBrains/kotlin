@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.idea.platform.tooling
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.platform.idePlatformKind
+import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.psi.KtNamedFunction
 
 class KotlinRunLineMarkerContributor : RunLineMarkerContributor() {
@@ -35,9 +36,9 @@ class KotlinRunLineMarkerContributor : RunLineMarkerContributor() {
 
         if (function.isMainFunction()) {
             val platform = function.containingKtFile.module?.platform ?: return null
-            if (!platform.idePlatformKind.tooling.acceptsAsEntryPoint(function)) return null
+            if (platform.isCommon() || !platform.idePlatformKind.tooling.acceptsAsEntryPoint(function)) return null
 
-            return Info(AllIcons.RunConfigurations.TestState.Run, null, ExecutorAction.getActions(0))
+            return Info(AllIcons.RunConfigurations.TestState.Run, null, *ExecutorAction.getActions(0))
         }
 
         return null

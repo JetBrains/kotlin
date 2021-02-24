@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.gradle
 
 import com.intellij.testFramework.TestDataPath
+import org.gradle.api.logging.configuration.WarningMode
 import org.jetbrains.kotlin.gradle.internals.KOTLIN_12X_MPP_DEPRECATION_WARNING
 import org.jetbrains.kotlin.gradle.plugin.EXPECTED_BY_CONFIG_NAME
 import org.jetbrains.kotlin.gradle.plugin.IMPLEMENT_CONFIG_NAME
@@ -175,7 +176,7 @@ class MultiplatformGradleIT : BaseGradleIT() {
 
     @Test
     fun testMultipleCommonModules(): Unit = with(Project("multiplatformMultipleCommonModules")) {
-        build("build") {
+        build("build", options = defaultBuildOptions().copy(warningMode = WarningMode.Summary)) {
             assertSuccessful()
 
             val sourceSets = listOf("", "Test")
@@ -226,7 +227,7 @@ class MultiplatformGradleIT : BaseGradleIT() {
             ${'\n'}
             task printCompileConfiguration(type: DefaultTask) {
                 doFirst {
-                    configurations.compile.resolvedConfiguration.resolvedArtifacts.each {
+                    configurations.getByName("api").dependencies.each {
                         println("Dependency: '" + it.name + "'")
                     }
                 }
@@ -305,7 +306,7 @@ class MultiplatformGradleIT : BaseGradleIT() {
         val customSourceSetCompileTasks = listOf(":lib" to "Common", ":libJs" to "2Js", ":libJvm" to "")
             .map { (module, platform) -> "$module:compile${sourceSetName.capitalize()}Kotlin$platform" }
 
-        build(*customSourceSetCompileTasks.toTypedArray()) {
+        build(*customSourceSetCompileTasks.toTypedArray(), options = defaultBuildOptions().copy(warningMode = WarningMode.Summary)) {
             assertSuccessful()
             assertTasksExecuted(customSourceSetCompileTasks)
         }

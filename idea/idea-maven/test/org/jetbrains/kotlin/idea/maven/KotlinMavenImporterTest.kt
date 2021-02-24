@@ -12,6 +12,7 @@ import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.roots.CompilerModuleExtension
 import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
+import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import com.intellij.util.PathUtil
 import junit.framework.TestCase
@@ -624,7 +625,6 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             Assert.assertFalse(compilerArguments!!.autoAdvanceLanguageVersion)
             Assert.assertFalse(compilerArguments!!.autoAdvanceApiVersion)
             Assert.assertEquals(true, compilerArguments!!.suppressWarnings)
-            Assert.assertEquals(LanguageFeature.State.ENABLED, coroutineSupport)
             Assert.assertEquals("JVM 1.8", targetPlatform!!.oldFashionedDescription)
             Assert.assertEquals("1.8", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
             Assert.assertEquals("foobar.jar", (compilerArguments as K2JVMCompilerArguments).classpath)
@@ -820,7 +820,6 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             Assert.assertFalse(compilerArguments!!.autoAdvanceLanguageVersion)
             Assert.assertFalse(compilerArguments!!.autoAdvanceApiVersion)
             Assert.assertEquals(true, compilerArguments!!.suppressWarnings)
-            Assert.assertEquals(LanguageFeature.State.ENABLED, coroutineSupport)
             Assert.assertTrue(targetPlatform.isJs())
             with(compilerArguments as K2JSCompilerArguments) {
                 Assert.assertEquals(true, sourceMap)
@@ -975,7 +974,6 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             Assert.assertEquals("1.0", apiLevel!!.versionString)
             Assert.assertEquals("1.0", compilerArguments!!.apiVersion)
             Assert.assertEquals(true, compilerArguments!!.suppressWarnings)
-            Assert.assertEquals(LanguageFeature.State.ENABLED, coroutineSupport)
             Assert.assertEquals("JVM 1.8", targetPlatform!!.oldFashionedDescription)
             Assert.assertEquals("1.8", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
             Assert.assertEquals("foobar.jar", (compilerArguments as K2JVMCompilerArguments).classpath)
@@ -1038,7 +1036,6 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
         with(facetSettings) {
             Assert.assertEquals("JVM 1.8", targetPlatform!!.oldFashionedDescription)
             Assert.assertEquals("1.8", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
-            Assert.assertEquals(LanguageFeature.State.ENABLED, coroutineSupport)
             Assert.assertEquals("c:/program files/jdk1.8", (compilerArguments as K2JVMCompilerArguments).classpath)
         }
     }
@@ -1094,7 +1091,6 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
         with(facetSettings) {
             Assert.assertEquals("JVM 1.8", targetPlatform!!.oldFashionedDescription)
             Assert.assertEquals("1.8", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
-            Assert.assertEquals(LanguageFeature.State.ENABLED, coroutineSupport)
             Assert.assertEquals("c:/program files/jdk1.8", (compilerArguments as K2JVMCompilerArguments).classpath)
         }
     }
@@ -2526,10 +2522,12 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
     }
 
     fun testJDKImport() {
+        val mockJdkPath = "compiler/testData/mockJDK"
         object : WriteAction<Unit>() {
             override fun run(result: Result<Unit>) {
-                val jdk = JavaSdk.getInstance().createJdk("myJDK", "my/path/to/jdk")
+                val jdk = JavaSdk.getInstance().createJdk("myJDK", mockJdkPath)
                 getProjectJdkTableSafe().addJdk(jdk)
+                ProjectRootManager.getInstance(myProject).projectSdk = jdk
             }
         }.execute()
 
@@ -2568,7 +2566,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
                                 </execution>
                             </executions>
                             <configuration>
-                                <jdkHome>my/path/to/jdk</jdkHome>
+                                <jdkHome>${mockJdkPath}</jdkHome>
                             </configuration>
                         </plugin>
                     </plugins>
@@ -2582,12 +2580,13 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             val moduleSDK = ModuleRootManager.getInstance(getModule("project")).sdk!!
             Assert.assertTrue(moduleSDK.sdkType is JavaSdk)
             Assert.assertEquals("myJDK", moduleSDK.name)
-            Assert.assertEquals("my/path/to/jdk", moduleSDK.homePath)
+            Assert.assertEquals(mockJdkPath, moduleSDK.homePath)
         } finally {
             object : WriteAction<Unit>() {
                 override fun run(result: Result<Unit>) {
                     val jdkTable = getProjectJdkTableSafe()
                     jdkTable.removeJdk(jdkTable.findJdk("myJDK")!!)
+                    ProjectRootManager.getInstance(myProject).projectSdk = null
                 }
             }.execute()
         }
@@ -3036,7 +3035,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
     }
 
     private fun assertImporterStatePresent() {
-        assertNotNull("Kotlin importer component is not present", myTestFixture.module.getComponent(KotlinImporterComponent::class.java))
+        assertNotNull("Kotlin importer component is not present", myTestFixture.module.kotlinImporterComponent)
     }
 
     private fun facetSettings(moduleName: String) = KotlinFacet.get(getModule(moduleName))!!.configuration.settings

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.types.KotlinType
 interface SamConversionOracle {
     fun shouldRunSamConversionForFunction(candidate: CallableDescriptor): Boolean
     fun isPossibleSamType(samType: KotlinType): Boolean
+    fun isJavaApplicableCandidate(candidate: CallableDescriptor): Boolean
 }
 
 class SamConversionOracleDefault : SamConversionOracle {
@@ -23,4 +24,6 @@ class SamConversionOracleDefault : SamConversionOracle {
         val descriptor = samType.constructor.declarationDescriptor
         return descriptor is ClassDescriptor && descriptor.isFun
     }
+
+    override fun isJavaApplicableCandidate(candidate: CallableDescriptor): Boolean = false
 }

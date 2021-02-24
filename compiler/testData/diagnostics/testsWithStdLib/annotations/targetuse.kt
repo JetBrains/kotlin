@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: TargetUse.java
 
 import java.lang.annotation.Target;

@@ -5,7 +5,7 @@ fun foo() {
         FOO,
         BAR
     }
-    val foo = A.<!UNRESOLVED_REFERENCE!>FOO<!>
+    val foo = A.FOO
     val b = object {
         enum class B {}
     }

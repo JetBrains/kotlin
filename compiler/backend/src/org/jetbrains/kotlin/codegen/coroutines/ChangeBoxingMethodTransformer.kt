@@ -20,7 +20,7 @@ import java.util.*
 private val BOXING_CLASS_INTERNAL_NAME =
     RELEASE_COROUTINES_VERSION_SETTINGS.coroutinesJvmInternalPackageFqName().child(Name.identifier("Boxing")).topLevelClassInternalName()
 
-@UseExperimental(ExperimentalStdlibApi::class)
+@OptIn(ExperimentalStdlibApi::class)
 object ChangeBoxingMethodTransformer : MethodTransformer() {
     private val wrapperToInternalBoxing: Map<String, String>
 

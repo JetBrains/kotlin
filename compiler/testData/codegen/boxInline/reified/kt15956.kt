@@ -1,5 +1,8 @@
-// FILE: 1.kt
+// IGNORE_BACKEND: JS_IR_ES6
+// IGNORE_BACKEND: NATIVE
+// IGNORE_BACKEND: JS, JS_IR
 // WITH_REFLECT
+// FILE: 1.kt
 
 package foo
 

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.config
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.cli.common.arguments.Argument
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.copyBean
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
@@ -18,6 +19,9 @@ import org.jetbrains.kotlin.platform.compat.toIdePlatform
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.utils.DescriptionAware
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import kotlin.reflect.KProperty1
+import kotlin.reflect.full.findAnnotation
 
 @Deprecated("Use IdePlatformKind instead.", level = DeprecationLevel.ERROR)
 sealed class TargetPlatformKind<out Version : TargetPlatformVersion>(
@@ -44,29 +48,6 @@ sealed class TargetPlatformKind<out Version : TargetPlatformVersion>(
     )
 }
 
-object CoroutineSupport {
-    @JvmStatic
-    fun byCompilerArguments(arguments: CommonCompilerArguments?): LanguageFeature.State =
-        byCompilerArgumentsOrNull(arguments) ?: LanguageFeature.Coroutines.defaultState
-
-    fun byCompilerArgumentsOrNull(arguments: CommonCompilerArguments?): LanguageFeature.State? = when (arguments?.coroutinesState) {
-        CommonCompilerArguments.ENABLE -> LanguageFeature.State.ENABLED
-        CommonCompilerArguments.WARN, CommonCompilerArguments.DEFAULT -> LanguageFeature.State.ENABLED_WITH_WARNING
-        CommonCompilerArguments.ERROR -> LanguageFeature.State.ENABLED_WITH_ERROR
-        else -> null
-    }
-
-    fun byCompilerArgument(argument: String): LanguageFeature.State =
-        LanguageFeature.State.values().find { getCompilerArgument(it).equals(argument, ignoreCase = true) }
-            ?: LanguageFeature.Coroutines.defaultState
-
-    fun getCompilerArgument(state: LanguageFeature.State): String = when (state) {
-        LanguageFeature.State.ENABLED -> "enable"
-        LanguageFeature.State.ENABLED_WITH_WARNING -> "warn"
-        LanguageFeature.State.ENABLED_WITH_ERROR, LanguageFeature.State.DISABLED -> "error"
-    }
-}
-
 sealed class VersionView : DescriptionAware {
     abstract val version: LanguageVersion
 
@@ -87,14 +68,7 @@ sealed class VersionView : DescriptionAware {
     }
 
     companion object {
-        val RELEASED_VERSION by lazy {
-            val latestStable = LanguageVersion.LATEST_STABLE
-            if (latestStable.isPreRelease()) {
-                val versions = LanguageVersion.values()
-                val index = versions.indexOf(latestStable)
-                versions.getOrNull(index - 1) ?: LanguageVersion.KOTLIN_1_0
-            } else latestStable
-        }
+        val RELEASED_VERSION = LanguageVersion.LATEST_STABLE
 
         fun deserialize(value: String?, isAutoAdvance: Boolean): VersionView {
             if (isAutoAdvance) return LatestStable
@@ -143,22 +117,50 @@ val KotlinMultiplatformVersion?.isNewMPP: Boolean
 val KotlinMultiplatformVersion?.isHmpp: Boolean
     get() = this == KotlinMultiplatformVersion.M3
 
-data class ExternalSystemTestTask(val testName: String, val externalSystemProjectId: String, val targetName: String?) {
+interface ExternalSystemRunTask {
+    val taskName: String
+    val externalSystemProjectId: String
+    val targetName: String?
+}
 
-    fun toStringRepresentation() = "$testName|$externalSystemProjectId|$targetName"
+data class ExternalSystemTestRunTask(
+    override val taskName: String,
+    override val externalSystemProjectId: String,
+    override val targetName: String?
+) : ExternalSystemRunTask {
+
+    fun toStringRepresentation() = "$taskName|$externalSystemProjectId|$targetName"
 
     companion object {
         fun fromStringRepresentation(line: String) =
-            line.split("|").let { if (it.size == 3) ExternalSystemTestTask(it[0], it[1], it[2]) else null }
+            line.split("|").let { if (it.size == 3) ExternalSystemTestRunTask(it[0], it[1], it[2]) else null }
     }
 
-    override fun toString() = "$testName@$externalSystemProjectId [$targetName]"
+    override fun toString() = "$taskName@$externalSystemProjectId [$targetName]"
+}
+
+data class ExternalSystemNativeMainRunTask(
+    override val taskName: String,
+    override val externalSystemProjectId: String,
+    override val targetName: String?,
+    val entryPoint: String,
+    val debuggable: Boolean,
+) : ExternalSystemRunTask {
+
+    fun toStringRepresentation() = "$taskName|$externalSystemProjectId|$targetName|$entryPoint|$debuggable"
+
+    companion object {
+        fun fromStringRepresentation(line: String): ExternalSystemNativeMainRunTask? =
+            line.split("|").let {
+                if (it.size == 5) ExternalSystemNativeMainRunTask(it[0], it[1], it[2], it[3], it[4].toBoolean()) else null
+            }
+    }
 }
 
 class KotlinFacetSettings {
     companion object {
         // Increment this when making serialization-incompatible changes to configuration data
-        val CURRENT_VERSION = 3
+        val CURRENT_VERSION = 4
         val DEFAULT_VERSION = 0
     }
 
@@ -195,16 +197,34 @@ class KotlinFacetSettings {
             updateMergedArguments()
         }
 
+    /*
+    This function is needed as some setting values may not be present in compilerArguments
+    but present in additional arguments instead, so we have to check both cases manually
+     */
+    inline fun <reified A : CommonCompilerArguments> isCompilerSettingPresent(settingReference: KProperty1<A, Boolean>): Boolean {
+        val isEnabledByCompilerArgument = compilerArguments?.safeAs<A>()?.let(settingReference::get)
+        if (isEnabledByCompilerArgument == true) return true
+        val isEnabledByAdditionalSettings = run {
+            val stringArgumentName = settingReference.findAnnotation<Argument>()?.value ?: return@run null
+            compilerSettings?.additionalArguments?.contains(stringArgumentName, ignoreCase = true)
+        }
+        return isEnabledByAdditionalSettings ?: false
+    }
+
     var languageLevel: LanguageVersion?
         get() = compilerArguments?.languageVersion?.let { LanguageVersion.fromFullVersionString(it) }
         set(value) {
-            compilerArguments!!.languageVersion = value?.versionString
+            compilerArguments?.apply {
+                languageVersion = value?.versionString
+            }
         }
 
     var apiLevel: LanguageVersion?
         get() = compilerArguments?.apiVersion?.let { LanguageVersion.fromFullVersionString(it) }
         set(value) {
-            compilerArguments!!.apiVersion = value?.versionString
+            compilerArguments?.apply {
+                apiVersion = value?.versionString
+            }
         }
 
     var targetPlatform: TargetPlatform? = null
@@ -220,7 +240,7 @@ class KotlinFacetSettings {
             return field
         }
 
-    var externalSystemTestTasks: List<ExternalSystemTestTask> = emptyList()
+    var externalSystemRunTasks: List<ExternalSystemRunTask> = emptyList()
 
     @Suppress("DEPRECATION_ERROR")
     @Deprecated(
@@ -231,21 +251,6 @@ class KotlinFacetSettings {
     fun getPlatform(): org.jetbrains.kotlin.platform.IdePlatform<*, *>? {
         return targetPlatform?.toIdePlatform()
     }
-
-    var coroutineSupport: LanguageFeature.State?
-        get() {
-            val languageVersion = languageLevel ?: return LanguageFeature.Coroutines.defaultState
-            if (languageVersion < LanguageFeature.Coroutines.sinceVersion!!) return LanguageFeature.State.DISABLED
-            return CoroutineSupport.byCompilerArgumentsOrNull(compilerArguments)
-        }
-        set(value) {
-            compilerArguments?.coroutinesState = when (value) {
-                null -> CommonCompilerArguments.DEFAULT
-                LanguageFeature.State.ENABLED -> CommonCompilerArguments.ENABLE
-                LanguageFeature.State.ENABLED_WITH_WARNING -> CommonCompilerArguments.WARN
-                LanguageFeature.State.ENABLED_WITH_ERROR, LanguageFeature.State.DISABLED -> CommonCompilerArguments.ERROR
-            }
-        }
 
     var implementedModuleNames: List<String> = emptyList() // used for first implementation of MPP, aka 'old' MPP
     var dependsOnModuleNames: List<String> = emptyList() // used for New MPP and later implementations

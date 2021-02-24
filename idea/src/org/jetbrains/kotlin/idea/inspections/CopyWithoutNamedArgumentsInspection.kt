@@ -10,6 +10,7 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.AddNamesToCallArgumentsIntention
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
@@ -37,7 +38,7 @@ class CopyWithoutNamedArgumentsInspection : AbstractKotlinInspection() {
 
             holder.registerProblem(
                 expression.calleeExpression ?: return,
-                "'copy' method of data class is called without named arguments",
+                KotlinBundle.message("copy.method.of.data.class.is.called.without.named.arguments"),
                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                 IntentionWrapper(AddNamesToCallArgumentsIntention(), expression.containingKtFile)
             )

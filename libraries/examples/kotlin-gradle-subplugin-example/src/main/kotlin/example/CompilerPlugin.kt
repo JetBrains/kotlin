@@ -29,20 +29,23 @@ import com.intellij.mock.MockProject
 
 public object ExampleConfigurationKeys {
     public val EXAMPLE_KEY: CompilerConfigurationKey<String> = CompilerConfigurationKey.create<String>("example argument")
+    public val EXAMPLE_LEGACY_KEY: CompilerConfigurationKey<String> = CompilerConfigurationKey.create<String>("example legacy argument")
 }
 
 public class ExampleCommandLineProcessor : CommandLineProcessor {
     companion object {
         public val EXAMPLE_PLUGIN_ID: String = "example.plugin"
         public val EXAMPLE_OPTION: CliOption = CliOption("exampleKey", "<value>", "")
+        public val EXAMPLE_LEGACY_OPTION: CliOption = CliOption("exampleLegacyKey", "<value>", "")
     }
 
     override val pluginId: String = EXAMPLE_PLUGIN_ID
-    override val pluginOptions: Collection<CliOption> = listOf(EXAMPLE_OPTION)
+    override val pluginOptions: Collection<CliOption> = listOf(EXAMPLE_OPTION, EXAMPLE_LEGACY_OPTION)
 
     override fun processOption(option: CliOption, value: String, configuration: CompilerConfiguration) {
         when (option) {
             EXAMPLE_OPTION -> configuration.put(ExampleConfigurationKeys.EXAMPLE_KEY, value)
+            EXAMPLE_LEGACY_OPTION -> configuration.put(ExampleConfigurationKeys.EXAMPLE_LEGACY_KEY, value)
             else -> throw CliOptionProcessingException("Unknown option: ${option.name}")
         }
     }
@@ -51,7 +54,9 @@ public class ExampleCommandLineProcessor : CommandLineProcessor {
 public class ExampleComponentRegistrar : ComponentRegistrar {
     public override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
         val exampleValue = configuration.get(ExampleConfigurationKeys.EXAMPLE_KEY)
+        val exampleLegacyValue = configuration.get(ExampleConfigurationKeys.EXAMPLE_LEGACY_KEY)
         val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
         messageCollector.report(CompilerMessageSeverity.INFO, "Project component registration: $exampleValue")
+        messageCollector.report(CompilerMessageSeverity.INFO, "Project component registration: $exampleLegacyValue")
     }
 }

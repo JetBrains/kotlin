@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class TestInitVarFromParameter(var x: Int)
 
 class TestInitVarInClass {

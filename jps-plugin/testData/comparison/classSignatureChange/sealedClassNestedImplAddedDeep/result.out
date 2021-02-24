@@ -9,4 +9,5 @@ CHANGES in test/Base2.Nested1: CLASS_SIGNATURE, MEMBERS
 PROTO DIFFERENCE in test/Base3.Nested1: SEALED_SUBCLASS_FQ_NAME_LIST
 CHANGES in test/Base3.Nested1: CLASS_SIGNATURE
 PROTO DIFFERENCE in test/Base3.Nested1.Nested2: SUPERTYPE_LIST
-CHANGES in test/Base3.Nested1.Nested2: CLASS_SIGNATURE
+CHANGES in test/Base3.Nested1.Nested2: CLASS_SIGNATURE, PARENTS
+    [kotlin.Any, test.Base3.Nested1]

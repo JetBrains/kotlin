@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
+
 package kotlin
 
 /**
@@ -199,13 +201,28 @@ public class Long internal constructor(
     /** Creates a range from this value to the specified [other] value. */
     public operator fun rangeTo(other: Long): LongRange = LongRange(this, other)
 
-    /** Shifts this value left by the [bitCount] number of bits. */
+    /**
+     * Shifts this value left by the [bitCount] number of bits.
+     *
+     * Note that only the six lowest-order bits of the [bitCount] are used as the shift distance.
+     * The shift distance actually used is therefore always in the range `0..63`.
+     */
     public infix fun shl(bitCount: Int): Long = shiftLeft(bitCount)
 
-    /** Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with copies of the sign bit. */
+    /**
+     * Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with copies of the sign bit.
+     *
+     * Note that only the six lowest-order bits of the [bitCount] are used as the shift distance.
+     * The shift distance actually used is therefore always in the range `0..63`.
+     */
     public infix fun shr(bitCount: Int): Long = shiftRight(bitCount)
 
-    /** Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with zeros. */
+    /**
+     * Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with zeros.
+     *
+     * Note that only the six lowest-order bits of the [bitCount] are used as the shift distance.
+     * The shift distance actually used is therefore always in the range `0..63`.
+     */
     public infix fun ushr(bitCount: Int): Long = shiftRightUnsigned(bitCount)
 
     /** Performs a bitwise AND operation between the two values. */

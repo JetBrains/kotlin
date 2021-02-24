@@ -21,6 +21,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.PanelWithAnchor;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.idea.KotlinJvmBundle;
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition;
 
 import javax.swing.*;
@@ -49,7 +50,10 @@ public class KotlinStandaloneScriptRunConfigurationEditor extends SettingsEditor
                 })
                 .withTreeRootVisible(true);
 
-        chooseScriptFileTextField.addBrowseFolderListener("Choose script file", null, project, descriptor, TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT);
+        chooseScriptFileTextField.addBrowseFolderListener(
+                KotlinJvmBundle.message("script.choose.file"),
+                null, project, descriptor, TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT
+        );
     }
 
     @Override

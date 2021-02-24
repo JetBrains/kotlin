@@ -3,9 +3,9 @@ interface I {
 }
 
 class CCCC(
-        override val p: Int<caret>
-        private val v1: Int,
-        private val v2: Int
+    override val p: Int<caret>
+    private val v1: Int,
+    private val v2: Int
 ) : I
 
 // ELEMENT_TEXT: "override val p: Int"

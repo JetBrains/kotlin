@@ -1,0 +1,89 @@
+FILE: booleanOperators.kt
+    public final fun myRequire(b: R|kotlin/Boolean|): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            Returns(WILDCARD) -> b
+        >
+     {
+        [StubStatement]
+        when () {
+            R|<local>/b|.R|kotlin/Boolean.not|() ->  {
+                throw R|java/lang/IllegalStateException.IllegalStateException|()
+            }
+        }
+
+    }
+    public final fun myRequireAnd(b1: R|kotlin/Boolean|, b2: R|kotlin/Boolean|): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            Returns(WILDCARD) -> b1 && b2
+        >
+     {
+        [StubStatement]
+        when () {
+            R|<local>/b1| && R|<local>/b2|.R|kotlin/Boolean.not|() ->  {
+                throw R|java/lang/IllegalStateException.IllegalStateException|()
+            }
+        }
+
+    }
+    public final fun myRequireOr(b1: R|kotlin/Boolean|, b2: R|kotlin/Boolean|): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            Returns(WILDCARD) -> b1 || b2
+        >
+     {
+        [StubStatement]
+        when () {
+            R|<local>/b1| || R|<local>/b2|.R|kotlin/Boolean.not|() ->  {
+                throw R|java/lang/IllegalStateException.IllegalStateException|()
+            }
+        }
+
+    }
+    public final fun myRequireNot(b: R|kotlin/Boolean|): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            Returns(WILDCARD) -> !b
+        >
+     {
+        [StubStatement]
+        when () {
+            R|<local>/b| ->  {
+                throw R|java/lang/IllegalStateException.IllegalStateException|()
+            }
+        }
+
+    }
+    public abstract interface A : R|kotlin/Any| {
+        public abstract fun foo(): R|kotlin/Unit|
+
+    }
+    public abstract interface B : R|A| {
+        public abstract fun bar(): R|kotlin/Unit|
+
+    }
+    public abstract interface C : R|A| {
+        public abstract fun baz(): R|kotlin/Unit|
+
+    }
+    public final fun test_1(x: R|kotlin/Any|): R|kotlin/Unit| {
+        R|/myRequire|((R|<local>/x| is R|A|))
+        R|<local>/x|.R|/A.foo|()
+    }
+    public final fun test_2(x: R|kotlin/Any|): R|kotlin/Unit| {
+        R|/myRequireAnd|((R|<local>/x| is R|B|), (R|<local>/x| is R|C|))
+        R|<local>/x|.R|/A.foo|()
+        R|<local>/x|.R|/B.bar|()
+        R|<local>/x|.R|/C.baz|()
+    }
+    public final fun test_3(x: R|kotlin/Any|): R|kotlin/Unit| {
+        R|/myRequireOr|((R|<local>/x| is R|B|), (R|<local>/x| is R|C|))
+        R|<local>/x|.R|/A.foo|()
+        R|<local>/x|.<Unresolved name: bar>#()
+        R|<local>/x|.<Unresolved name: baz>#()
+    }
+    public final fun test_4(x: R|kotlin/Any|): R|kotlin/Unit| {
+        R|/myRequireNot|((R|<local>/x| !is R|A|))
+        R|<local>/x|.R|/A.foo|()
+    }

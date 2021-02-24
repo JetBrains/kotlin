@@ -20,13 +20,14 @@ package org.jetbrains.kotlin.js.translate.utils
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.js.backend.ast.*
-import org.jetbrains.kotlin.js.backend.ast.metadata.*
+import org.jetbrains.kotlin.js.backend.ast.metadata.descriptor
+import org.jetbrains.kotlin.js.backend.ast.metadata.isInline
+import org.jetbrains.kotlin.js.backend.ast.metadata.psiElement
 import org.jetbrains.kotlin.js.inline.util.isCallInvocation
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.reference.CallExpressionTranslator
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.inline.InlineStrategy
 
 /**
  * Recursively walks expression and sets metadata for all invocations of descriptor.
@@ -57,7 +58,7 @@ fun setInlineCallMetadata(
 
             if (invocation.name in candidateNames || invocation.name?.descriptor?.original == descriptor.original) {
                 invocation.descriptor = descriptor
-                invocation.inlineStrategy = InlineStrategy.IN_PLACE
+                invocation.isInline = true
                 invocation.psiElement = psiElement
             }
         }
@@ -81,9 +82,9 @@ fun setInlineCallMetadata(
         descriptor: CallableDescriptor,
         context: TranslationContext
 ) {
-    if (nameRef.inlineStrategy != null) return
+    if (nameRef.isInline != null) return
     nameRef.descriptor = descriptor
-    nameRef.inlineStrategy = InlineStrategy.IN_PLACE
+    nameRef.isInline = true
     nameRef.psiElement = psiElement
 
     context.addInlineCall(descriptor)

@@ -10,9 +10,9 @@ public class Outer<T> {
 
 // FILE: main.kt
 fun test(x: List<Int>, y: List<String>) {
-    Outer<Int>().Inner("", y, 1) checkType { <!UNRESOLVED_REFERENCE!>_<!><Outer<Int>.Inner<String>>() }
-    Outer<Int>().<!INAPPLICABLE_CANDIDATE!>Inner<!><CharSequence, String, Int>("", y, 1) <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!UNRESOLVED_REFERENCE!>_<!><Outer<Int>.Inner<CharSequence>>() }
+    Outer<Int>().Inner("", y, 1) checkType { _<Outer<Int>.Inner<String>>() }
+    Outer<Int>().Inner<CharSequence, String, Int>("", y, 1) checkType { _<Outer<Int>.Inner<CharSequence>>() }
 
-    Outer<Int>().Inner("", x, 1) checkType { <!UNRESOLVED_REFERENCE!>_<!><Outer<Int>.Inner<Any>>() }
+    Outer<Int>().Inner("", x, 1) checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Outer<Int>.Inner<Any>>() }
     Outer<Int>().<!INAPPLICABLE_CANDIDATE!>Inner<!><CharSequence, String, Int>("", x, 1)
 }

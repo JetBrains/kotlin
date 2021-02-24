@@ -3,6 +3,8 @@
 
 package a
 
+import checkSubtype
+
 fun <T> id(t: T): T = t
 
 fun <T> either(t1: T, <!UNUSED_PARAMETER!>t2<!>: T): T = t1
@@ -19,5 +21,5 @@ fun test() {
     val d = either(11, 2.3)
     checkSubtype<Any>(d)
 
-    val <!UNUSED_VARIABLE!>e<!>: Float = <!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH, OI;TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>id(1)<!>
+    val <!UNUSED_VARIABLE!>e<!>: Float = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH{OI}, TYPE_MISMATCH{NI}, TYPE_MISMATCH{NI}!>id(1)<!>
 }

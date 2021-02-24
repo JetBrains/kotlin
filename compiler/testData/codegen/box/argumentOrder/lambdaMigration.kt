@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 fun box(): String {
     var res = "";
     var call = test(a = {res += "K"; "K"}(), b = {res+="O"; "O"}(), c = {res += "L"; "L"})

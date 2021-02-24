@@ -1,0 +1,15 @@
+package
+
+public fun </*0*/ K> takeTwoInv(/*0*/ x: Inv<K>, /*1*/ y: Inv<K>): K
+public fun </*0*/ K> takeTwoInvOut(/*0*/ x: Inv<out K>, /*1*/ y: Inv<out K>): K
+public fun test1(/*0*/ y: kotlin.Any): kotlin.Unit
+public fun test2(/*0*/ x: kotlin.Any, /*1*/ y: Inv<kotlin.String>): kotlin.Unit
+public fun test3(/*0*/ x: kotlin.Any, /*1*/ y: Inv<kotlin.String>): kotlin.Unit
+
+public final class Inv</*0*/ T> {
+    public constructor Inv</*0*/ T>(/*0*/ y: T)
+    public final val y: T
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

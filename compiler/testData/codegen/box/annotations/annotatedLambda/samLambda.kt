@@ -1,6 +1,6 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 // TARGET_BACKEND: JVM
-
+// SAM_CONVERSIONS: CLASS
+//   ^ test checks reflection for synthetic classes
 // WITH_RUNTIME
 // FILE: Test.java
 
@@ -10,9 +10,10 @@ class Test {
     }
 }
 
-// FILE: test.kt
+// FILE: samLambda.kt
 
 import java.lang.reflect.Method
+
 import kotlin.test.assertEquals
 
 @Target(AnnotationTarget.FUNCTION)

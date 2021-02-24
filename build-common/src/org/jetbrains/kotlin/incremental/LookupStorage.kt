@@ -17,18 +17,17 @@
 package org.jetbrains.kotlin.incremental
 
 import com.intellij.util.containers.MultiMap
-import com.intellij.util.containers.StringInterner
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.components.Position
 import org.jetbrains.kotlin.incremental.components.ScopeKind
 import org.jetbrains.kotlin.incremental.storage.*
 import org.jetbrains.kotlin.utils.Printer
+import org.jetbrains.kotlin.utils.createStringInterner
 import org.jetbrains.kotlin.utils.keysToMap
 import java.io.File
 import java.io.IOException
 import java.util.*
-
 
 open class LookupStorage(
     targetDataDir: File,
@@ -80,7 +79,7 @@ open class LookupStorage(
 
         for (lookupSymbol in lookups.keySet().sorted()) {
             val key = LookupSymbolKey(lookupSymbol.name, lookupSymbol.scope)
-            val paths = lookups[lookupSymbol]!!
+            val paths = lookups[lookupSymbol]
             val fileIds = paths.mapTo(TreeSet()) { pathToId[it]!! }
             fileIds.addAll(lookupMap[key] ?: emptySet())
             lookupMap[key] = fileIds
@@ -212,8 +211,8 @@ open class LookupStorage(
 
 class LookupTrackerImpl(private val delegate: LookupTracker) : LookupTracker {
     val lookups = MultiMap.createSet<LookupSymbol, String>()
-    val pathInterner = StringInterner()
-    private val interner = StringInterner()
+    val pathInterner = createStringInterner()
+    private val interner = createStringInterner()
 
     override val requiresPosition: Boolean
         get() = delegate.requiresPosition

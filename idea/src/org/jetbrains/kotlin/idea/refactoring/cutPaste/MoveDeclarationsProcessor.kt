@@ -13,6 +13,7 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiManager
 import com.intellij.refactoring.RefactoringBundle
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.shorten.runRefactoringAndKeepDelayedRequests
 import org.jetbrains.kotlin.idea.core.util.range
@@ -87,13 +88,13 @@ class MoveDeclarationsProcessor(
     fun performRefactoring() {
         psiDocumentManager.commitAllDocuments()
 
-        val commandName = "Usage update"
+        val commandName = KotlinBundle.message("action.usage.update.text")
         val commandGroupId = Any() // we need to group both commands for undo
 
         // temporary revert imports to the state before they have been changed
         val importsSubstitution = if (sourcePsiFile.importDirectives.size != imports.size) {
-            val startOffset = sourcePsiFile.importDirectives.map { it.startOffset }.min() ?: 0
-            val endOffset = sourcePsiFile.importDirectives.map { it.endOffset }.min() ?: 0
+            val startOffset = sourcePsiFile.importDirectives.minOfOrNull { it.startOffset } ?: 0
+            val endOffset = sourcePsiFile.importDirectives.minOfOrNull { it.endOffset } ?: 0
             val importsDeclarationsText = sourceDocument.getText(TextRange(startOffset, endOffset))
 
             val tempImportsText = imports.joinToString(separator = "\n")

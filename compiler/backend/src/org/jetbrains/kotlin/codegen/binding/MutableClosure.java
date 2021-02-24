@@ -20,6 +20,7 @@ import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.AsmUtil;
+import org.jetbrains.kotlin.codegen.DescriptorAsmUtil;
 import org.jetbrains.kotlin.codegen.context.EnclosedValueDescriptor;
 import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.config.LanguageVersionSettings;
@@ -113,7 +114,7 @@ public final class MutableClosure implements CalculatedClosure {
                 return AsmUtil.CAPTURED_RECEIVER_FIELD;
             }
 
-            String labeledThis = AsmUtil.getNameForCapturedReceiverField(
+            String labeledThis = DescriptorAsmUtil.getNameForCapturedReceiverField(
                     enclosingFunWithReceiverDescriptor, bindingContext, languageVersionSettings);
 
             return AsmUtil.getCapturedFieldName(labeledThis);

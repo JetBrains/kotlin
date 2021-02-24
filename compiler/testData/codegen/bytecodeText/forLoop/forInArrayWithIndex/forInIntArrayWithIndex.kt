@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 val arr = intArrayOf(10, 20, 30, 40)
 
 fun box(): String {

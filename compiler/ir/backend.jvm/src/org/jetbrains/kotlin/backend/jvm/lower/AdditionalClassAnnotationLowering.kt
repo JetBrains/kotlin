@@ -9,12 +9,11 @@ import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.addChild
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
-import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
@@ -23,7 +22,6 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrEnumEntryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
-import org.jetbrains.kotlin.ir.descriptors.WrappedEnumEntryDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
@@ -32,16 +30,17 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetEnumValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrEnumEntrySymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.getAnnotation
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isAnnotationClass
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import java.lang.annotation.ElementType
 
 internal val additionalClassAnnotationPhase = makeIrFilePhase(
     ::AdditionalClassAnnotationLowering,
@@ -54,32 +53,28 @@ private class AdditionalClassAnnotationLowering(private val context: JvmBackendC
 
     // TODO: import IR structures from the library?
 
-    private val annotationPackage: IrPackageFragment = IrExternalPackageFragmentImpl(
-        IrExternalPackageFragmentSymbolImpl(
-            EmptyPackageFragmentDescriptor(
-                context.ir.irModule.descriptor,
-                FqName("java.lang.annotation")
-            )
-        )
+    private val annotationPackage: IrPackageFragment = IrExternalPackageFragmentImpl.createEmptyExternalPackageFragment(
+        context.ir.irModule.descriptor,
+        FqName("java.lang.annotation")
     )
 
     private fun buildAnnotationClass(
         className: String,
         classKind: ClassKind = ClassKind.ANNOTATION_CLASS
-    ): IrClass = buildClass {
+    ): IrClass = context.irFactory.buildClass {
         name = Name.identifier(className)
         kind = classKind
     }.apply {
         val irClass = this
         parent = annotationPackage
         annotationPackage.addChild(this)
-        thisReceiver = buildValueParameter {
+        thisReceiver = buildValueParameter(this) {
             name = Name.identifier("\$this")
             type = IrSimpleTypeImpl(irClass.symbol, false, emptyList(), emptyList())
         }
     }
 
-    private fun buildAnnotationConstructor(annotationClass: IrClass): IrConstructor = buildConstructor {
+    private fun buildAnnotationConstructor(annotationClass: IrClass): IrConstructor = context.irFactory.buildConstructor {
         isPrimary = true
     }.apply {
         parent = annotationClass
@@ -87,14 +82,15 @@ private class AdditionalClassAnnotationLowering(private val context: JvmBackendC
         returnType = annotationClass.defaultType
     }
 
-    private fun buildEnumEntry(enumClass: IrClass, entryName: String): IrEnumEntry = IrEnumEntryImpl(
-        UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB,
-        IrEnumEntrySymbolImpl(WrappedEnumEntryDescriptor()),
-        Name.identifier(entryName)
-    ).apply {
-        (descriptor as WrappedEnumEntryDescriptor).bind(this)
-        parent = enumClass
-        enumClass.addChild(this)
+    private fun buildEnumEntry(enumClass: IrClass, entryName: String): IrEnumEntry {
+        return IrEnumEntryImpl(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB,
+            IrEnumEntrySymbolImpl(),
+            Name.identifier(entryName)
+        ).apply {
+            parent = enumClass
+            enumClass.addChild(this)
+        }
     }
 
     private val documentedConstructor = buildAnnotationConstructor(buildAnnotationClass("Documented"))
@@ -133,7 +129,7 @@ private class AdditionalClassAnnotationLowering(private val context: JvmBackendC
     }
 
     private fun generateDocumentedAnnotation(irClass: IrClass) {
-        if (!irClass.hasAnnotation(KotlinBuiltIns.FQ_NAMES.mustBeDocumented) ||
+        if (!irClass.hasAnnotation(StandardNames.FqNames.mustBeDocumented) ||
             irClass.hasAnnotation(FqName("java.lang.annotation.Documented"))
         ) return
 
@@ -188,23 +184,19 @@ private class AdditionalClassAnnotationLowering(private val context: JvmBackendC
     )
 
     private val annotationTargetMaps: Map<JvmTarget, Map<KotlinTarget, IrEnumEntry>> =
-        mapOf(
-            JvmTarget.JVM_1_6 to jvm6TargetMap,
-            JvmTarget.JVM_1_8 to jvm8TargetMap,
-            JvmTarget.JVM_9 to jvm8TargetMap,
-            JvmTarget.JVM_10 to jvm8TargetMap,
-            JvmTarget.JVM_11 to jvm8TargetMap,
-            JvmTarget.JVM_12 to jvm8TargetMap,
-            JvmTarget.JVM_13 to jvm8TargetMap
-        )
+        JvmTarget.values().associate { target ->
+            target to (if (target == JvmTarget.JVM_1_6) jvm6TargetMap else jvm8TargetMap)
+        }
 
     private fun generateTargetAnnotation(irClass: IrClass) {
-        if (irClass.hasAnnotation(FqName("java.lang.annotation.Target"))) return
+        if (irClass.hasAnnotation(JvmAnnotationNames.TARGET_ANNOTATION)) return
         val annotationTargetMap = annotationTargetMaps[jvmTarget]
             ?: throw AssertionError("No annotation target map for JVM target $jvmTarget")
 
         val targets = irClass.applicableTargetSet() ?: return
-        val javaTargets = targets.mapNotNull { annotationTargetMap[it] }
+        val javaTargets = targets.mapNotNullTo(HashSet()) { annotationTargetMap[it] }.sortedBy {
+            ElementType.valueOf(it.symbol.owner.name.asString())
+        }
 
         val vararg = IrVarargImpl(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET,
@@ -240,7 +232,7 @@ private fun IrConstructorCall.getValueArgument(name: Name): IrExpression? {
 private val TARGET_ALLOWED_TARGETS = Name.identifier("allowedTargets")
 
 private fun IrClass.applicableTargetSet(): Set<KotlinTarget>? {
-    val targetEntry = getAnnotation(KotlinBuiltIns.FQ_NAMES.target) ?: return null
+    val targetEntry = getAnnotation(StandardNames.FqNames.target) ?: return null
     return loadAnnotationTargets(targetEntry)
 }
 

@@ -6,13 +6,14 @@
 package org.jetbrains.kotlin.load.java.lazy.descriptors
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.jvm.createMappedTypeParametersSubstitution
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorBase
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.FakePureImplementationsProvider
-import org.jetbrains.kotlin.load.java.JavaVisibilities
+import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.components.JavaResolverCache
 import org.jetbrains.kotlin.load.java.components.TypeUsage
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.load.java.lazy.types.toAttributes
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.load.java.structure.JavaType
+import org.jetbrains.kotlin.load.java.toDescriptorVisibility
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isValidJavaFqName
 import org.jetbrains.kotlin.resolve.constants.StringValue
@@ -74,7 +76,8 @@ class LazyJavaClassDescriptor(
 
     private val modality =
         if (jClass.isAnnotationType || jClass.isEnum) Modality.FINAL
-        else Modality.convertFromFlags(jClass.isAbstract || jClass.isInterface, !jClass.isFinal)
+        // TODO: replace false with jClass.isSealed when it will be properly supported in platform
+        else Modality.convertFromFlags(sealed = false, jClass.isSealed || jClass.isAbstract || jClass.isInterface, !jClass.isFinal)
 
     private val visibility = jClass.visibility
     private val isInner = jClass.outerClass != null && !jClass.isStatic
@@ -82,14 +85,21 @@ class LazyJavaClassDescriptor(
     override fun getKind() = kind
     override fun getModality() = modality
 
+    override fun isRecord(): Boolean = jClass.isRecord
+
     // To workaround a problem with Scala compatibility (KT-9700),
     // we consider private visibility of a Java top level class as package private
     // Shortly: Scala plugin introduces special kind of "private in package" classes
     // which can be inherited from the same package.
     // Kotlin considers this "private in package" just as "private" and thinks they are invisible for inheritors,
     // so their functions are invisible fake which is not true.
-    override fun getVisibility() =
-        if (visibility == Visibilities.PRIVATE && jClass.outerClass == null) JavaVisibilities.PACKAGE_VISIBILITY else visibility
+    override fun getVisibility(): DescriptorVisibility {
+        return if (visibility == DescriptorVisibilities.PRIVATE && jClass.outerClass == null) {
+            JavaDescriptorVisibilities.PACKAGE_VISIBILITY
+        } else {
+            visibility.toDescriptorVisibility()
+        }
+    }
 
     override fun isInner() = isInner
     override fun isData() = false
@@ -98,6 +108,7 @@ class LazyJavaClassDescriptor(
     override fun isExpect() = false
     override fun isActual() = false
     override fun isFun() = false
+    override fun isValue() = false
 
     private val typeConstructor = LazyJavaClassTypeConstructor()
     override fun getTypeConstructor(): TypeConstructor = typeConstructor
@@ -106,7 +117,7 @@ class LazyJavaClassDescriptor(
         LazyJavaClassMemberScope(c, this, jClass, skipRefinement = additionalSupertypeClassDescriptor != null)
 
     private val scopeHolder =
-        ScopesHolderForClass.create(this, c.storageManager, c.components.kotlinTypeChecker.kotlinTypeRefiner) { kotlinTypeRefiner ->
+        ScopesHolderForClass.create(this, c.storageManager, c.components.kotlinTypeChecker.kotlinTypeRefiner) {
             LazyJavaClassMemberScope(
                 c, this, jClass,
                 skipRefinement = additionalSupertypeClassDescriptor != null,
@@ -170,7 +181,14 @@ class LazyJavaClassDescriptor(
     fun wasScopeContentRequested() =
         getUnsubstitutedMemberScope().wasContentRequested() || staticScope.wasContentRequested()
 
-    override fun getSealedSubclasses(): Collection<ClassDescriptor> = emptyList()
+    override fun getSealedSubclasses(): Collection<ClassDescriptor> = if (modality == Modality.SEALED) {
+        val attributes = TypeUsage.COMMON.toAttributes()
+        jClass.permittedTypes.mapNotNull {
+            c.typeResolver.transformJavaType(it, attributes).constructor.declarationDescriptor as? ClassDescriptor
+        }
+    } else {
+        emptyList()
+    }
 
     override fun toString() = "Lazy Java class ${this.fqNameUnsafe}"
 
@@ -190,16 +208,21 @@ class LazyJavaClassDescriptor(
 
             for (javaType in javaTypes) {
                 val kotlinType = c.typeResolver.transformJavaType(javaType, TypeUsage.SUPERTYPE.toAttributes())
-                if (kotlinType.constructor.declarationDescriptor is NotFoundClasses.MockClassDescriptor) {
+                val areImprovementsEnabled = c.components.settings.typeEnhancementImprovements
+                val enhancedKotlinType = if (areImprovementsEnabled) {
+                    c.components.signatureEnhancement.enhanceSuperType(kotlinType, c)
+                } else kotlinType
+
+                if (enhancedKotlinType.constructor.declarationDescriptor is NotFoundClasses.MockClassDescriptor) {
                     incomplete.add(javaType)
                 }
 
-                if (kotlinType.constructor == purelyImplementedSupertype?.constructor) {
+                if (enhancedKotlinType.constructor == purelyImplementedSupertype?.constructor) {
                     continue
                 }
 
-                if (!KotlinBuiltIns.isAnyOrNullableAny(kotlinType)) {
-                    result.add(kotlinType)
+                if (!KotlinBuiltIns.isAnyOrNullableAny(enhancedKotlinType)) {
+                    result.add(enhancedKotlinType)
                 }
             }
 
@@ -225,7 +248,7 @@ class LazyJavaClassDescriptor(
 
         private fun getPurelyImplementedSupertype(): KotlinType? {
             val annotatedPurelyImplementedFqName = getPurelyImplementsFqNameFromAnnotation()?.takeIf { fqName ->
-                !fqName.isRoot && fqName.startsWith(KotlinBuiltIns.BUILT_INS_PACKAGE_NAME)
+                !fqName.isRoot && fqName.startsWith(StandardNames.BUILT_INS_PACKAGE_NAME)
             }
 
             val purelyImplementedFqName =

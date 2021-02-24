@@ -4,8 +4,8 @@
 /*
  * KOTLIN CODEGEN BOX SPEC TEST (POSITIVE)
  *
- * SPEC VERSION: 0.1-218
- * PLACE: expressions, when-expression -> paragraph 5 -> sentence 1
+ * SPEC VERSION: 0.1-313
+ * MAIN LINK: expressions, when-expression -> paragraph 5 -> sentence 1
  * NUMBER: 1
  * DESCRIPTION: The else condition must also be in the last when entry of when expression, otherwise it is a compile-time error.
  */

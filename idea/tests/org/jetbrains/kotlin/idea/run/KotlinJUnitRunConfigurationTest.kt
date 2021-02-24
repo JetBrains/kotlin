@@ -44,20 +44,20 @@ class KotlinJUnitRunConfigurationTest : AbstractRunConfigurationTest() {
             val kotlinFile = testDir.findChild("MyKotlinTest.kt")!!
 
             val javaClassConfiguration = getConfiguration(javaFile, project, "MyTest")
-            javaClassConfiguration.isProducedBy(TestInClassConfigurationProducer::class.java)
-            assert(javaClassConfiguration.configuration !is KotlinJUnitConfiguration)
+            assert(javaClassConfiguration.isProducedBy(TestInClassConfigurationProducer::class.java))
+            assert(javaClassConfiguration.configuration.name == "MyJavaTest")
 
             val javaMethodConfiguration = getConfiguration(javaFile, project, "testA")
-            javaMethodConfiguration.isProducedBy(TestInClassConfigurationProducer::class.java)
-            assert(javaMethodConfiguration.configuration !is KotlinJUnitConfiguration)
+            assert(javaMethodConfiguration.isProducedBy(TestInClassConfigurationProducer::class.java))
+            assert(javaMethodConfiguration.configuration.name == "MyJavaTest.testA")
 
             val kotlinClassConfiguration = getConfiguration(kotlinFile, project, "MyKotlinTest")
-            kotlinClassConfiguration.isProducedBy(KotlinJUnitRunConfigurationProducer::class.java)
-            assert(kotlinClassConfiguration.configuration is KotlinJUnitConfiguration)
+            assert(kotlinClassConfiguration.isProducedBy(KotlinJUnitRunConfigurationProducer::class.java))
+            assert(kotlinClassConfiguration.configuration.name == "MyKotlinTest")
 
             val kotlinFunctionConfiguration = getConfiguration(kotlinFile, project, "testA")
-            kotlinFunctionConfiguration.isProducedBy(KotlinJUnitRunConfigurationProducer::class.java)
-            assert(kotlinFunctionConfiguration.configuration is KotlinJUnitConfiguration)
+            assert(kotlinFunctionConfiguration.isProducedBy(KotlinJUnitRunConfigurationProducer::class.java))
+            assert(kotlinFunctionConfiguration.configuration.name == "MyKotlinTest.testA")
         } finally {
             detachJUnitLibrary()
         }

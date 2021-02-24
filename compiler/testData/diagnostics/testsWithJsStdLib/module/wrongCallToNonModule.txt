@@ -1,17 +1,5 @@
+// -- Module: <m1> --
 package
-
-package bar {
-    public inline fun </*0*/ reified T> boo(/*0*/ x: T): kotlin.Unit
-    public fun box(): kotlin.Unit
-
-    public final external class DerivedB : foo.B {
-        public constructor DerivedB()
-        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public final override /*1*/ /*fake_override*/ fun foo(): kotlin.Int
-        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    }
-}
 
 package foo {
     @kotlin.js.JsNonModule public external fun bar(): kotlin.Unit
@@ -40,3 +28,20 @@ package foo {
         }
     }
 }
+
+// -- Module: <m2> --
+package
+
+package bar {
+    public inline fun </*0*/ reified T> boo(/*0*/ x: T): kotlin.Unit
+    public fun box(): kotlin.Unit
+
+    public final external class DerivedB : foo.B {
+        public constructor DerivedB()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public final override /*1*/ /*fake_override*/ fun foo(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+

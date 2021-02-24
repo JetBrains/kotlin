@@ -11,6 +11,7 @@ import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.KtWhenExpression
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -28,7 +29,7 @@ class WhenWithOnlyElseInspection : AbstractKotlinInspection() {
             holder.registerProblem(
                 expression,
                 expression.whenKeyword.textRange.shiftLeft(expression.startOffset),
-                "'when' has only 'else' branch and should be simplified",
+                KotlinBundle.message("when.has.only.else.branch.and.should.be.simplified"),
                 SimplifyFix(usedAsExpression)
             )
         }
@@ -39,7 +40,7 @@ class WhenWithOnlyElseInspection : AbstractKotlinInspection() {
     ) : LocalQuickFix {
         override fun getFamilyName() = name
 
-        override fun getName() = "Simplify expression"
+        override fun getName() = KotlinBundle.message("simplify.fix.text")
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             val whenExpression = descriptor.psiElement as? KtWhenExpression ?: return

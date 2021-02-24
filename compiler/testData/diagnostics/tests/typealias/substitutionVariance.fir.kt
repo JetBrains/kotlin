@@ -6,11 +6,11 @@ class Inv<T>
 
 typealias In1<T> = In<T>
 typealias In2<T> = In<in T>
-typealias In3<T> = In<out T>
+typealias In3<T> = <!CONFLICTING_PROJECTION!>In<out T><!>
 typealias In4<T> = In<*>
 
 typealias Out1<T> = Out<T>
-typealias Out2<T> = Out<in T>
+typealias Out2<T> = <!CONFLICTING_PROJECTION!>Out<in T><!>
 typealias Out3<T> = Out<out T>
 typealias Out4<T> = Out<*>
 

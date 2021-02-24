@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.idea.configuration.GradleProjectImportHandler
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData
 import java.io.File
+import java.util.*
 
 class KaptGradleProjectImportHandler : GradleProjectImportHandler {
     override fun importBySourceSet(facet: KotlinFacet, sourceSetNode: DataNode<GradleSourceSetData>) {
@@ -42,7 +43,7 @@ class KaptGradleProjectImportHandler : GradleProjectImportHandler {
 
     private fun isKaptCompilerPluginPath(path: String): Boolean {
         val lastIndexOfFile = path.lastIndexOfAny(charArrayOf('/', File.separatorChar)).takeIf { it >= 0 } ?: return false
-        val fileName = path.drop(lastIndexOfFile + 1).toLowerCase()
+        val fileName = path.drop(lastIndexOfFile + 1).toLowerCase(Locale.US)
         return fileName.matches("kotlin\\-annotation\\-processing(\\-gradle)?\\-[0-9].*\\.jar".toRegex())
     }
 }

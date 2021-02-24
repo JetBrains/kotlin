@@ -1,21 +1,11 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.serialization.js
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
@@ -72,10 +62,11 @@ object KotlinJavascriptSerializationUtil {
         bindingContext: BindingContext,
         jsDescriptor: JsModuleDescriptor<ModuleDescriptor>,
         languageVersionSettings: LanguageVersionSettings,
-        metadataVersion: JsMetadataVersion
+        metadataVersion: JsMetadataVersion,
+        project: Project
     ): SerializedMetadata {
         val serializedFragments =
-            emptyMap<FqName, ByteArray>().missingMetadata(bindingContext, jsDescriptor.data, languageVersionSettings, metadataVersion)
+            emptyMap<FqName, ByteArray>().missingMetadata(bindingContext, jsDescriptor.data, languageVersionSettings, metadataVersion, project)
 
         return SerializedMetadata(serializedFragments, jsDescriptor, languageVersionSettings, metadataVersion)
     }
@@ -171,6 +162,7 @@ object KotlinJavascriptSerializationUtil {
         scope: Collection<DeclarationDescriptor>,
         fqName: FqName,
         languageVersionSettings: LanguageVersionSettings,
+        project: Project,
         metadataVersion: BinaryVersion
     ): ProtoBuf.PackageFragment {
         val builder = ProtoBuf.PackageFragment.newBuilder()
@@ -195,7 +187,7 @@ object KotlinJavascriptSerializationUtil {
             for (descriptor in descriptors) {
                 if (descriptor !is ClassDescriptor || skip(descriptor)) continue
 
-                val serializer = DescriptorSerializer.create(descriptor, extension, parentSerializer)
+                val serializer = DescriptorSerializer.create(descriptor, extension, parentSerializer, project)
                 serializeClasses(descriptor.unsubstitutedInnerClassesScope.getContributedDescriptors(), serializer)
                 val classProto = serializer.classProto(descriptor).build() ?: error("Class not serialized: $descriptor")
                 builder.addClass_(classProto)
@@ -316,7 +308,8 @@ fun Map<FqName, ByteArray>.missingMetadata(
     bindingContext: BindingContext,
     moduleDescriptor: ModuleDescriptor,
     languageVersionSettings: LanguageVersionSettings,
-    metadataVersion: JsMetadataVersion
+    metadataVersion: JsMetadataVersion,
+    project: Project
 ): Map<FqName, ByteArray> {
     val serializedFragments = HashMap<FqName, ByteArray>()
 
@@ -325,10 +318,10 @@ fun Map<FqName, ByteArray>.missingMetadata(
 
         val fragment = KotlinJavascriptSerializationUtil.serializeDescriptors(
             bindingContext, moduleDescriptor,
-            moduleDescriptor.packageFragmentProviderForModuleContentWithoutDependencies.getPackageFragments(fqName).flatMap {
+            moduleDescriptor.packageFragmentProviderForModuleContentWithoutDependencies.packageFragments(fqName).flatMap {
                 it.getMemberScope().getContributedDescriptors()
             },
-            fqName, languageVersionSettings, metadataVersion
+            fqName, languageVersionSettings, project, metadataVersion
         )
 
         if (!fragment.isEmpty()) {

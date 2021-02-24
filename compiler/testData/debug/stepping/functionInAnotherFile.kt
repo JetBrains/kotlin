@@ -1,4 +1,4 @@
-//FILE: foo.kt
+// FILE: foo.kt
 import bar
 fun foo(x: Int): Int {
     if (x >= 0) {   // 4
@@ -21,15 +21,15 @@ fun bar(x: Int) =
     }
 
 // LINENUMBERS
-// TestKt.box():4
-// FooKt.foo(int):4
-// FooKt.foo(int):7
-// TestKt.bar(int):8
-// TestKt.bar(int):9
-// FooKt.foo(int):4
-// FooKt.foo(int):5
-// TestKt.bar(int):9
-// TestKt.bar(int):12
-// FooKt.foo(int):7
-// TestKt.box():4
-// TestKt.box():5
+// test.kt:4 box
+// foo.kt:4 foo
+// foo.kt:7 foo
+// test.kt:8 bar
+// test.kt:9 bar
+// foo.kt:4 foo
+// foo.kt:5 foo
+// test.kt:9 bar
+// test.kt:12 bar
+// foo.kt:7 foo
+// test.kt:4 box
+// test.kt:5 box

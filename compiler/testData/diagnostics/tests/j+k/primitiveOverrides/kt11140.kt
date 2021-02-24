@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // JAVAC_EXPECTED_FILE
 // FILE: B.java
 public interface B<T1, T2> {

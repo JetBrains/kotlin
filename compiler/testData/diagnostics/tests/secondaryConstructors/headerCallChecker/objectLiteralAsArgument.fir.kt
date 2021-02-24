@@ -6,7 +6,7 @@ class A {
     fun foo() = 1
     constructor(x: Any?)
     constructor() : this(object {
-        fun bar() = foo() + this@A.foo() +
-                    foobar() + super@A.hashCode()
+        fun bar() = <!UNRESOLVED_REFERENCE!>foo<!>() + <!UNRESOLVED_LABEL!>this@A<!>.<!UNRESOLVED_REFERENCE!>foo<!>() +
+                    <!INAPPLICABLE_CANDIDATE!>foobar<!>() + super@A.<!UNRESOLVED_REFERENCE!>hashCode<!>()
     })
 }

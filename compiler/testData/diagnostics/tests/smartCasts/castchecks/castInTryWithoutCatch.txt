@@ -1,0 +1,4 @@
+package
+
+public fun castInTry(/*0*/ s: kotlin.Any): kotlin.Unit
+public fun castInTryAndFinally(/*0*/ s: kotlin.Any): kotlin.Unit

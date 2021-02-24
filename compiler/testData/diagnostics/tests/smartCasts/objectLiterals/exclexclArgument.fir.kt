@@ -11,7 +11,7 @@ fun foo(): Int {
         }
         k.run()
         val d: Int = c
-        return a <!INAPPLICABLE_CANDIDATE!>+<!> d
+        return a <!NONE_APPLICABLE!>+<!> d
     }
     else return -1
 }

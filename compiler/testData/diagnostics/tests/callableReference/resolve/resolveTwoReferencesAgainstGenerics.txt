@@ -1,0 +1,11 @@
+package
+
+public fun </*0*/ T> kotlin.collections.List<Option<T>>.flatten(): kotlin.collections.List<T>
+
+public final class Option</*0*/ out T> {
+    public constructor Option</*0*/ out T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun </*0*/ R> fold(/*0*/ ifEmpty: () -> R, /*1*/ ifSome: (T) -> R): R
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

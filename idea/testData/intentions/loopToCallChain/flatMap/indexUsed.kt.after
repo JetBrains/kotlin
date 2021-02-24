@@ -3,7 +3,7 @@
 // INTENTION_TEXT_2: "Replace with 'asSequence().mapIndexed{}.flatMap{}.firstOrNull{}'"
 fun foo(list: List<String>): String? {
     <caret>return list
-            .mapIndexed { index, s -> s.lines().take(index) }
-            .flatMap { it }
-            .firstOrNull { it.isNotBlank() }
+        .mapIndexed { index, s -> s.lines().take(index) }
+        .flatMap { it }
+        .firstOrNull { it.isNotBlank() }
 }

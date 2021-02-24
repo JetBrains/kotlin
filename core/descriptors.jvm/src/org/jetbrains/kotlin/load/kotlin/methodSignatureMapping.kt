@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature
 import org.jetbrains.kotlin.load.java.isFromJavaOrBuiltins
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
@@ -24,6 +24,10 @@ fun FunctionDescriptor.computeJvmDescriptor(withReturnType: Boolean = true, with
     }
 
     append("(")
+
+    extensionReceiverParameter?.let {
+        appendErasedType(it.type)
+    }
 
     for (parameter in valueParameters) {
         appendErasedType(parameter.type)
@@ -45,7 +49,7 @@ fun FunctionDescriptor.computeJvmDescriptor(withReturnType: Boolean = true, with
 fun forceSingleValueParameterBoxing(f: CallableDescriptor): Boolean {
     if (f !is FunctionDescriptor) return false
 
-    if (f.valueParameters.size != 1 || f.isFromJavaOrBuiltins() || f.name.asString() != "remove") return false
+    if (f.name.asString() != "remove" || f.valueParameters.size != 1 || f.isFromJavaOrBuiltins()) return false
     if ((f.original.valueParameters.single().type.mapToJvmType() as? JvmType.Primitive)?.jvmPrimitiveType != JvmPrimitiveType.INT) return false
 
     val overridden =
@@ -53,7 +57,7 @@ fun forceSingleValueParameterBoxing(f: CallableDescriptor): Boolean {
             ?: return false
 
     val overriddenParameterType = overridden.original.valueParameters.single().type.mapToJvmType()
-    return overridden.containingDeclaration.fqNameUnsafe == KotlinBuiltIns.FQ_NAMES.mutableCollection.toUnsafe()
+    return overridden.containingDeclaration.fqNameUnsafe == StandardNames.FqNames.mutableCollection.toUnsafe()
             && overriddenParameterType is JvmType.Object && overriddenParameterType.internalName == "java/lang/Object"
 }
 
@@ -79,11 +83,6 @@ internal val ClassDescriptor.internalName: String
         return computeInternalName(this)
     }
 
-val ClassId.internalName: String
-    get() {
-        return JvmClassName.byClassId(JavaToKotlinClassMap.mapKotlinToJava(asSingleFqName().toUnsafe()) ?: this).internalName
-    }
-
 private fun StringBuilder.appendErasedType(type: KotlinType) {
     append(type.mapToJvmType())
 }
@@ -99,6 +98,17 @@ sealed class JvmType {
     class Array(val elementType: JvmType) : JvmType()
 
     override fun toString() = JvmTypeFactoryImpl.toString(this)
+
+    companion object {
+        internal val BOOLEAN = Primitive(JvmPrimitiveType.BOOLEAN)
+        internal val CHAR = Primitive(JvmPrimitiveType.CHAR)
+        internal val BYTE = Primitive(JvmPrimitiveType.BYTE)
+        internal val SHORT = Primitive(JvmPrimitiveType.SHORT)
+        internal val INT = Primitive(JvmPrimitiveType.INT)
+        internal val FLOAT = Primitive(JvmPrimitiveType.FLOAT)
+        internal val LONG = Primitive(JvmPrimitiveType.LONG)
+        internal val DOUBLE = Primitive(JvmPrimitiveType.DOUBLE)
+    }
 }
 
 private object JvmTypeFactoryImpl : JvmTypeFactory<JvmType> {
@@ -132,7 +142,20 @@ private object JvmTypeFactoryImpl : JvmTypeFactory<JvmType> {
         }
     }
 
-    override fun createObjectType(internalName: String) = JvmType.Object(internalName)
+    override fun createPrimitiveType(primitiveType: PrimitiveType): JvmType =
+        when (primitiveType) {
+            PrimitiveType.BOOLEAN -> JvmType.BOOLEAN
+            PrimitiveType.CHAR -> JvmType.CHAR
+            PrimitiveType.BYTE -> JvmType.BYTE
+            PrimitiveType.SHORT -> JvmType.SHORT
+            PrimitiveType.INT -> JvmType.INT
+            PrimitiveType.FLOAT -> JvmType.FLOAT
+            PrimitiveType.LONG -> JvmType.LONG
+            PrimitiveType.DOUBLE -> JvmType.DOUBLE
+        }
+
+    override fun createObjectType(internalName: String): JvmType.Object =
+        JvmType.Object(internalName)
 
     override fun toString(type: JvmType): String =
         when (type) {

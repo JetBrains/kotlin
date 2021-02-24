@@ -6,10 +6,8 @@
 package org.jetbrains.kotlin.idea.configuration
 
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.util.registry.Registry
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.Consumer
-import com.intellij.util.SystemProperties
+import org.jetbrains.kotlin.idea.debugger.KotlinDebuggerSettings
 import org.jetbrains.plugins.gradle.service.project.AbstractProjectResolverExtension
 
 class KotlinGradleCoroutineDebugProjectResolver : AbstractProjectResolverExtension() {
@@ -17,27 +15,34 @@ class KotlinGradleCoroutineDebugProjectResolver : AbstractProjectResolverExtensi
 
     override fun enhanceTaskProcessing(taskNames: MutableList<String>, jvmParametersSetup: String?, initScriptConsumer: Consumer<String>) {
         try {
-            if (coroutineDebuggerEnabled())
+            val disableCoroutineAgent = KotlinDebuggerSettings.getInstance().debugDisableCoroutineAgent
+            if (!disableCoroutineAgent)
                 setupCoroutineAgentForJvmForkedTestTasks(initScriptConsumer)
         } catch (e: Exception) {
-            log.error("Gradle: not possible to attach coroutine debugger agent. Coroutine debugger disabled.", e)
+            log.error("Gradle: not possible to attach a coroutine debugger agent.", e)
         }
     }
 
     private fun setupCoroutineAgentForJvmForkedTestTasks(initScriptConsumer: Consumer<String>) {
-        val lines = arrayOf(
-            "gradle.taskGraph.beforeTask { Task task ->",
-            "  if (task instanceof Test) {",
-            "    def kotlinxCoroutinesDebugJar = task.classpath.find { it.name.startsWith(\"kotlinx-coroutines-debug\") }",
-            "    if (kotlinxCoroutinesDebugJar)",
-            "        task.jvmArgs (\"-javaagent:\${kotlinxCoroutinesDebugJar?.absolutePath}\", \"-ea\")",
-            "  }",
-            "}"
-        )
-        val script = StringUtil.join(lines, SystemProperties.getLineSeparator())
+        val script =
+            //language=Gradle
+            """
+            gradle.taskGraph.beforeTask { Task task ->
+                if (task instanceof Test || task instanceof JavaExec) {
+                    def kotlinxCoroutinesCoreJar = task.classpath.find { it.name.startsWith("kotlinx-coroutines-core") }
+                    if (kotlinxCoroutinesCoreJar) {
+                        def results = (kotlinxCoroutinesCoreJar.getName() =~ /kotlinx-coroutines-core(\-jvm)?-(\d[\w\.\-]+)\.jar${'$'}/).findAll()
+                        if (results) {
+                            def version = results.first()[2]
+                            def referenceVersion = org.gradle.util.VersionNumber.parse('1.3.7-255')
+                            if (org.gradle.util.VersionNumber.parse(version) > referenceVersion) {
+                                task.jvmArgs ("-javaagent:${'$'}{kotlinxCoroutinesCoreJar?.absolutePath}", "-ea")
+                            }
+                        }
+                    }
+                }
+            }
+            """.trimIndent()
         initScriptConsumer.consume(script)
     }
-
-    // supposed to be the same as [CoroutineProjectConnectionListener.kt].coroutineDebuggerEnabled
-    private fun coroutineDebuggerEnabled() = Registry.`is`("kotlin.debugger.coroutines")
 }

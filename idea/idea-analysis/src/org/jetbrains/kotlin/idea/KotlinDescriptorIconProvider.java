@@ -56,20 +56,20 @@ public final class KotlinDescriptorIconProvider {
     private static Icon getVisibilityIcon(@NotNull DeclarationDescriptor descriptor) {
         if (descriptor instanceof DeclarationDescriptorWithVisibility) {
             DeclarationDescriptorWithVisibility descriptorWithVisibility = (DeclarationDescriptorWithVisibility) descriptor;
-            Visibility visibility = descriptorWithVisibility.getVisibility().normalize();
-            if (visibility == Visibilities.PUBLIC) {
+            DescriptorVisibility visibility = descriptorWithVisibility.getVisibility().normalize();
+            if (visibility == DescriptorVisibilities.PUBLIC) {
                 return PlatformIcons.PUBLIC_ICON;
             }
 
-            if (visibility == Visibilities.PROTECTED) {
+            if (visibility == DescriptorVisibilities.PROTECTED) {
                 return PlatformIcons.PROTECTED_ICON;
             }
 
-            if (Visibilities.isPrivate(visibility)) {
+            if (DescriptorVisibilities.isPrivate(visibility)) {
                 return PlatformIcons.PRIVATE_ICON;
             }
 
-            if (visibility == Visibilities.INTERNAL) {
+            if (visibility == DescriptorVisibilities.INTERNAL) {
                 return PlatformIcons.PACKAGE_LOCAL_ICON;
             }
         }

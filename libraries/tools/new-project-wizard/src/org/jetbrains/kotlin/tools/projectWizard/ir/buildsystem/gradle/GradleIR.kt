@@ -1,6 +1,10 @@
 package org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle
 
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
+import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.FreeIR
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.RepositoryIR
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.render
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.BuildFilePrinter
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.GradlePrinter
 
@@ -19,7 +23,7 @@ data class RawGradleIR(
     override fun GradlePrinter.renderGradle() = renderer()
 }
 
-data class CreateGradleValueIR(val name: String, val body: GradleIR) : GradleIR {
+class CreateGradleValueIR(@NonNls val name: String, val body: BuildSystemIR) : GradleIR {
     override fun GradlePrinter.renderGradle() {
         when (dsl) {
             GradlePrinter.GradleDsl.KOTLIN -> {
@@ -40,10 +44,18 @@ data class CreateGradleValueIR(val name: String, val body: GradleIR) : GradleIR 
 }
 
 data class GradleCallIr(
-    val name: String,
-    val parameters: List<BuildSystemIR> = emptyList()
+    @NonNls val name: String,
+    val parameters: List<BuildSystemIR> = emptyList(),
+    val isConstructorCall: Boolean = false,
 ) : GradleIR {
+    constructor(
+        name: String,
+        vararg parameters: BuildSystemIR,
+        isConstructorCall: Boolean = false
+    ) : this(name, parameters.toList(), isConstructorCall)
+
     override fun GradlePrinter.renderGradle() {
+        if (isConstructorCall && dsl == GradlePrinter.GradleDsl.GROOVY) +"new "
         call(name, forceBrackets = true) {
             parameters.list { it.render(this) }
         }
@@ -51,7 +63,7 @@ data class GradleCallIr(
 }
 
 data class GradleNewInstanceCall(
-    val name: String,
+    @NonNls val name: String,
     val parameters: List<BuildSystemIR> = emptyList()
 ) : GradleIR {
     override fun GradlePrinter.renderGradle() {
@@ -65,21 +77,19 @@ data class GradleNewInstanceCall(
 }
 
 
-
-
 data class GradleSectionIR(
-    val name: String,
-    val body: BodyIR
+    @NonNls val name: String,
+    val irs: List<BuildSystemIR>
 ) : GradleIR, FreeIR {
     override fun GradlePrinter.renderGradle() {
-        +name
-        +" "
-        body.render(this)
+        sectionCall(name) {
+            irs.listNl()
+        }
     }
 }
 
 data class GradleAssignmentIR(
-    val target: String,
+    @NonNls val target: String,
     val assignee: BuildSystemIR
 ) : GradleIR, FreeIR {
     override fun GradlePrinter.renderGradle() {
@@ -89,7 +99,7 @@ data class GradleAssignmentIR(
 }
 
 data class GradleStringConstIR(
-    val text: String
+    @NonNls val text: String
 ) : GradleIR {
     override fun GradlePrinter.renderGradle() {
         +text.quotified
@@ -97,9 +107,9 @@ data class GradleStringConstIR(
 }
 
 data class CompilationAccessIr(
-    val targetName: String,
-    val compilationName: String,
-    val property: String?
+    @NonNls val targetName: String,
+    @NonNls val compilationName: String,
+    @NonNls val property: String?
 ) : GradleIR {
     override fun GradlePrinter.renderGradle() {
         when (dsl) {
@@ -110,7 +120,7 @@ data class CompilationAccessIr(
     }
 }
 
-data class GradleDynamicPropertyAccessIR(val qualifier: BuildSystemIR, val propertyName: String) : GradleIR {
+data class GradleDynamicPropertyAccessIR(val qualifier: BuildSystemIR, @NonNls val propertyName: String) : GradleIR {
     override fun GradlePrinter.renderGradle() {
         qualifier.render(this)
         when (dsl) {
@@ -133,7 +143,15 @@ data class GradleImportIR(val import: String) : GradleIR {
     }
 }
 
+data class GradleBinaryExpressionIR(val left: BuildSystemIR, val op: String, val right: BuildSystemIR) : GradleIR {
+    override fun GradlePrinter.renderGradle() {
+        left.render(this)
+        +" $op "
+        right.render(this)
+    }
+}
+
 interface BuildScriptIR : BuildSystemIR
 
-data class BuildScriptDependencyIR(val dependencyIR: GradleIR) : BuildScriptIR, BuildSystemIR by dependencyIR
+data class BuildScriptDependencyIR(val dependencyIR: BuildSystemIR) : BuildScriptIR, BuildSystemIR by dependencyIR
 data class BuildScriptRepositoryIR(val repositoryIR: RepositoryIR) : BuildScriptIR, BuildSystemIR by repositoryIR

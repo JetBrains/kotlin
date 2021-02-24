@@ -18,8 +18,10 @@ package org.jetbrains.uast.kotlin
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.KtBlockExpression
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtWhenEntry
 import org.jetbrains.kotlin.psi.KtWhenExpression
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.uast.*
 import org.jetbrains.uast.kotlin.declarations.KotlinUIdentifier
 import org.jetbrains.uast.kotlin.kinds.KotlinSpecialExpressionKinds
@@ -40,9 +42,9 @@ class KotlinUSwitchExpression(
 
     override fun asRenderString() = buildString {
         val expr = expression?.let { "(" + it.asRenderString() + ") " } ?: ""
-        appendln("switch $expr {")
-        appendln(body.asRenderString())
-        appendln("}")
+        appendLine("switch $expr {")
+        appendLine(body.asRenderString())
+        appendLine("}")
     }
 
     override val switchIdentifier: UIdentifier
@@ -60,28 +62,34 @@ class KotlinUSwitchEntry(
     override val body: UExpressionList by lz {
         object : KotlinUExpressionList(sourcePsi, KotlinSpecialExpressionKinds.WHEN_ENTRY, this@KotlinUSwitchEntry) {
             override fun asRenderString() = buildString {
-                appendln("{")
-                expressions.forEach { appendln(it.asRenderString().withMargin) }
-                appendln("}")
+                appendLine("{")
+                expressions.forEach { appendLine(it.asRenderString().withMargin) }
+                appendLine("}")
             }
-        }.apply {
+        }.apply KotlinUExpressionList@{
             val exprPsi = this@KotlinUSwitchEntry.sourcePsi.expression
             val userExpressions = when (exprPsi) {
                 is KtBlockExpression -> exprPsi.statements.map { KotlinConverter.convertOrEmpty(it, this) }
                 else -> listOf(KotlinConverter.convertOrEmpty(exprPsi, this))
             }
-            expressions = userExpressions + object : UBreakExpression, JvmDeclarationUElementPlaceholder {
-                override val javaPsi: PsiElement? = null
-                override val sourcePsi: PsiElement? = null
-                override val psi: PsiElement?
-                    get() = null
-                override val label: String?
-                    get() = null
-                override val uastParent: UElement?
-                    get() = this@KotlinUSwitchEntry
-                override val annotations: List<UAnnotation>
-                    get() = emptyList()
-            }
+            expressions =
+                if (userExpressions.isNotEmpty())
+                    userExpressions.subList(0, userExpressions.lastIndex) + object : UYieldExpression {
+                        override val javaPsi: PsiElement? = null
+                        override val sourcePsi: PsiElement? = null
+                        override val psi: PsiElement?
+                            get() = null
+                        override val label: String?
+                            get() = null
+                        override val uastParent: UElement?
+                            get() = this@KotlinUExpressionList
+                        override val annotations: List<UAnnotation>
+                            get() = emptyList()
+                        override val expression: UExpression?
+                            get() = userExpressions.lastOrNull()?.sourcePsi?.let { it.safeAs<KtExpression>() ?: it.parent.safeAs() }
+                                ?.let { KotlinConverter.convertExpression(it, this, DEFAULT_EXPRESSION_TYPES_LIST) }
+                    }
+                else emptyList()
         }
     }
 

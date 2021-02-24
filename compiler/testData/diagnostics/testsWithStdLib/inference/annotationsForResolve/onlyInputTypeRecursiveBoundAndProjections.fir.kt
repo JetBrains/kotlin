@@ -4,8 +4,8 @@
 
 interface IFace<K, out V>
 
-fun <@kotlin.internal.OnlyInputTypes K, V> IFace<out K, V>.get(key: K): V? = TODO()
-fun <@kotlin.internal.OnlyInputTypes I> id(arg: I): I = arg
+fun <<!HIDDEN!>@kotlin.internal.OnlyInputTypes<!> K, V> IFace<out K, V>.get(key: K): V? = TODO()
+fun <<!HIDDEN!>@kotlin.internal.OnlyInputTypes<!> I> id(arg: I): I = arg
 
 interface InvBase<B>
 class DerivedInv : InvBase<DerivedInv>

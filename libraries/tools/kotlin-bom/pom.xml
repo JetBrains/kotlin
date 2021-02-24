@@ -7,7 +7,7 @@
 
     <groupId>org.jetbrains.kotlin</groupId>
     <artifactId>kotlin-bom</artifactId>
-    <version>1.4-SNAPSHOT</version>
+    <version>1.5.255-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <!-- No parent to avoid accidentally inheriting parent's dependencyManagement section -->
@@ -159,6 +159,11 @@
                 <artifactId>kotlin-scripting-jvm-host</artifactId>
                 <version>${kotlin.version}</version>
             </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>kotlin-scripting-ide-services</artifactId>
+                <version>${kotlin.version}</version>
+            </dependency>
             <!-- Compiler dependency required by scripting -->
             <dependency>
                 <groupId>${project.groupId}</groupId>
@@ -196,7 +201,7 @@
                 <plugins>
                     <plugin>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.4</version>
+                        <version>1.6</version>
                         <configuration>
                             <passphrase>${kotlin.key.passphrase}</passphrase>
                             <keyname>${kotlin.key.name}</keyname>
@@ -209,6 +214,12 @@
                                 <goals>
                                     <goal>sign</goal>
                                 </goals>
+                                <configuration>
+                                    <gpgArguments>
+                                        <arg>--pinentry-mode</arg>
+                                        <arg>loopback</arg>
+                                    </gpgArguments>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>

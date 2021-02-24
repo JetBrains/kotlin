@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.jetbrains.kotlin.cli.jvm.compiler.setupIdeaStandaloneExecution
 import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
 import org.jetbrains.kotlin.daemon.common.*
 import java.io.File
@@ -112,6 +113,7 @@ abstract class KotlinCompileDaemonBase {
         log.info("daemon args: " + args.joinToString(" "))
 
         setIdeaIoUseFallback()
+        setupIdeaStandaloneExecution()
 
         val compilerId = CompilerId()
         val daemonOptions = DaemonOptions()

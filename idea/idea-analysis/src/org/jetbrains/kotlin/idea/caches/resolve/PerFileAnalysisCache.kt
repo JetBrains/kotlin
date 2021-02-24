@@ -23,11 +23,14 @@ import org.jetbrains.kotlin.context.withModule
 import org.jetbrains.kotlin.context.withProject
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.frontend.di.createContainerForLazyBodyResolve
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.caches.trackers.clearInBlockModifications
 import org.jetbrains.kotlin.idea.caches.trackers.inBlockModifications
+import org.jetbrains.kotlin.idea.compiler.IdeMainFunctionDetectorFactory
+import org.jetbrains.kotlin.idea.compiler.IdeSealedClassInheritorsProvider
 import org.jetbrains.kotlin.idea.project.IdeaModuleStructureOracle
 import org.jetbrains.kotlin.idea.project.findAnalyzerServices
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
@@ -38,10 +41,14 @@ import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.resolve.diagnostics.DiagnosticsElementsCache
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
+import org.jetbrains.kotlin.storage.CancellableSimpleLock
+import org.jetbrains.kotlin.storage.guarded
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice
+import org.jetbrains.kotlin.utils.checkWithAttachment
 import java.util.*
+import java.util.concurrent.locks.ReentrantLock
 
 internal class PerFileAnalysisCache(val file: KtFile, componentProvider: ComponentProvider) {
     private val globalContext = componentProvider.get<GlobalContext>()
@@ -52,44 +59,83 @@ internal class PerFileAnalysisCache(val file: KtFile, componentProvider: Compone
 
     private val cache = HashMap<PsiElement, AnalysisResult>()
     private var fileResult: AnalysisResult? = null
+    private val lock = ReentrantLock()
+    private val guardLock = CancellableSimpleLock(lock,
+                                                  checkCancelled = {
+                                                      ProgressIndicatorProvider.checkCanceled()
+                                                  },
+                                                  interruptedExceptionHandler = { throw ProcessCanceledException(it) })
 
-    fun getAnalysisResults(element: KtElement): AnalysisResult {
-        assert(element.containingKtFile == file) { "Wrong file. Expected $file, but was ${element.containingKtFile}" }
+    private fun check(element: KtElement) {
+        checkWithAttachment(element.containingFile == file, {
+            "Expected $file, but was ${element.containingFile} for ${if (element.isValid) "valid" else "invalid"} $element "
+        }) {
+            it.withAttachment("element.kt", element.text)
+            it.withAttachment("file.kt", element.containingFile.text)
+            it.withAttachment("original.kt", file.text)
+        }
+    }
 
-        val analyzableParent = KotlinResolveDataProvider.findAnalyzableParent(element)
+    internal fun fetchAnalysisResults(element: KtElement): AnalysisResult? {
+        check(element)
 
-        return synchronized(this) {
-            ProgressIndicatorProvider.checkCanceled()
+        if (lock.tryLock()) {
+            try {
+                updateFileResultFromCache()
 
+                return fileResult?.takeIf { file.inBlockModifications.isEmpty() }
+            } finally {
+                lock.unlock()
+            }
+        }
+        return null
+    }
+
+    internal fun getAnalysisResults(element: KtElement, callback: DiagnosticSink.DiagnosticsCallback? = null): AnalysisResult {
+        check(element)
+
+        val analyzableParent = KotlinResolveDataProvider.findAnalyzableParent(element) ?: return AnalysisResult.EMPTY
+
+        fun handleResult(result: AnalysisResult, callback: DiagnosticSink.DiagnosticsCallback?): AnalysisResult {
+            callback?.let { result.bindingContext.diagnostics.forEach(it::callback) }
+            return result
+        }
+
+        return guardLock.guarded {
             // step 1: perform incremental analysis IF it is applicable
-            getIncrementalAnalysisResult()?.let { return it }
+            getIncrementalAnalysisResult(callback)?.let {
+                return@guarded handleResult(it, callback)
+            }
 
             // cache does not contain AnalysisResult per each kt/psi element
             // instead it looks up analysis for its parents - see lookUp(analyzableElement)
 
             // step 2: return result if it is cached
             lookUp(analyzableParent)?.let {
-                return@synchronized it
+                return@guarded handleResult(it, callback)
             }
 
+            val localDiagnostics = mutableSetOf<Diagnostic>()
+            val localCallback = if (callback != null) { d: Diagnostic ->
+                localDiagnostics.add(d)
+                callback.callback(d)
+            } else null
+
             // step 3: perform analyze of analyzableParent as nothing has been cached yet
-            val result = analyze(analyzableParent)
+            val result = analyze(analyzableParent, null, localCallback)
+
+            // some of diagnostics could be not handled with a callback - send out the rest
+            callback?.let { c ->
+                result.bindingContext.diagnostics.filterNot { it in localDiagnostics }.forEach(c::callback)
+            }
             cache[analyzableParent] = result
 
-            return@synchronized result
+            return@guarded result
         }
     }
 
-    private fun getIncrementalAnalysisResult(): AnalysisResult? {
-        // move fileResult from cache if it is stored there
-        if (fileResult == null && cache.containsKey(file)) {
-            fileResult = cache[file]
-
-            // drop existed results for entire cache:
-            // if incremental analysis is applicable it will produce a single value for file
-            // otherwise those results are potentially stale
-            cache.clear()
-        }
+    private fun getIncrementalAnalysisResult(callback: DiagnosticSink.DiagnosticsCallback?): AnalysisResult? {
+        updateFileResultFromCache()
 
         val inBlockModifications = file.inBlockModifications
         if (inBlockModifications.isNotEmpty()) {
@@ -97,6 +143,8 @@ internal class PerFileAnalysisCache(val file: KtFile, componentProvider: Compone
                 // IF there is a cached result for ktFile and there are inBlockModifications
                 fileResult = fileResult?.let { result ->
                     var analysisResult = result
+                    // Force full analysis when existed is erroneous
+                    if (analysisResult.isError()) return@let null
                     for (inBlockModification in inBlockModifications) {
                         val resultCtx = analysisResult.bindingContext
 
@@ -123,7 +171,9 @@ internal class PerFileAnalysisCache(val file: KtFile, componentProvider: Compone
                                 )
                             }
 
-                        val newResult = analyze(inBlockModification, trace)
+                        callback?.let { trace.parentDiagnosticsApartElement.forEach(it::callback) }
+
+                        val newResult = analyze(inBlockModification, trace, callback)
                         analysisResult = wrapResult(result, newResult, trace)
                     }
                     file.clearInBlockModifications()
@@ -138,7 +188,22 @@ internal class PerFileAnalysisCache(val file: KtFile, componentProvider: Compone
                 throw e
             }
         }
+        if (fileResult == null) {
+            file.clearInBlockModifications()
+        }
         return fileResult
+    }
+
+    private fun updateFileResultFromCache() {
+        // move fileResult from cache if it is stored there
+        if (fileResult == null && cache.containsKey(file)) {
+            fileResult = cache[file]
+
+            // drop existed results for entire cache:
+            // if incremental analysis is applicable it will produce a single value for file
+            // otherwise those results are potentially stale
+            cache.clear()
+        }
     }
 
     private fun lookUp(analyzableElement: KtElement): AnalysisResult? {
@@ -181,7 +246,11 @@ internal class PerFileAnalysisCache(val file: KtFile, componentProvider: Compone
         }
     }
 
-    private fun analyze(analyzableElement: KtElement, bindingTrace: BindingTrace? = null): AnalysisResult {
+    private fun analyze(
+        analyzableElement: KtElement,
+        bindingTrace: BindingTrace?,
+        callback: DiagnosticSink.DiagnosticsCallback?
+    ): AnalysisResult {
         ProgressIndicatorProvider.checkCanceled()
 
         val project = analyzableElement.project
@@ -189,6 +258,7 @@ internal class PerFileAnalysisCache(val file: KtFile, componentProvider: Compone
             return AnalysisResult.EMPTY
         }
 
+        moduleDescriptor.assertValid()
         try {
             return KotlinResolveDataProvider.analyze(
                 project,
@@ -198,7 +268,8 @@ internal class PerFileAnalysisCache(val file: KtFile, componentProvider: Compone
                 codeFragmentAnalyzer,
                 bodyResolveCache,
                 analyzableElement,
-                bindingTrace
+                bindingTrace,
+                callback
             )
         } catch (e: ProcessCanceledException) {
             throw e
@@ -335,7 +406,7 @@ private object KotlinResolveDataProvider {
         KtTypeAlias::class.java
     )
 
-    fun findAnalyzableParent(element: KtElement): KtElement {
+    fun findAnalyzableParent(element: KtElement): KtElement? {
         if (element is KtFile) return element
 
         val topmostElement = KtPsiUtil.getTopmostParentOfTypes(element, *topmostElementTypes) as KtElement?
@@ -357,7 +428,7 @@ private object KotlinResolveDataProvider {
         // if none of the above worked, take the outermost declaration
             ?: PsiTreeUtil.getTopmostParentOfType(element, KtDeclaration::class.java)
             // if even that didn't work, take the whole file
-            ?: element.containingKtFile
+            ?: element.containingFile as? KtFile
     }
 
     fun analyze(
@@ -368,12 +439,14 @@ private object KotlinResolveDataProvider {
         codeFragmentAnalyzer: CodeFragmentAnalyzer,
         bodyResolveCache: BodyResolveCache,
         analyzableElement: KtElement,
-        bindingTrace: BindingTrace?
+        bindingTrace: BindingTrace?,
+        callback: DiagnosticSink.DiagnosticsCallback?
     ): AnalysisResult {
         try {
             if (analyzableElement is KtCodeFragment) {
                 val bodyResolveMode = BodyResolveMode.PARTIAL_FOR_COMPLETION
-                val bindingContext = codeFragmentAnalyzer.analyzeCodeFragment(analyzableElement, bodyResolveMode).bindingContext
+                val trace: BindingTrace = codeFragmentAnalyzer.analyzeCodeFragment(analyzableElement, bodyResolveMode)
+                val bindingContext = trace.bindingContext
                 return AnalysisResult.success(bindingContext, moduleDescriptor)
             }
 
@@ -387,29 +460,37 @@ private object KotlinResolveDataProvider {
 
             val targetPlatform = moduleInfo.platform
 
-            /*
-            Note that currently we *have* to re-create LazyTopDownAnalyzer with custom trace in order to disallow resolution of
-            bodies in top-level trace (trace from DI-container).
-            Resolving bodies in top-level trace may lead to memory leaks and incorrect resolution, because top-level
-            trace isn't invalidated on in-block modifications (while body resolution surely does)
+            callback?.let { trace.setCallback(it) }
 
-            Also note that for function bodies, we'll create DelegatingBindingTrace in ResolveElementCache anyways
-            (see 'functionAdditionalResolve'). However, this trace is still needed, because we have other
-            codepaths for other KtDeclarationWithBodies (like property accessors/secondary constructors/class initializers)
-             */
-            val lazyTopDownAnalyzer = createContainerForLazyBodyResolve(
-                //TODO: should get ModuleContext
-                globalContext.withProject(project).withModule(moduleDescriptor),
-                resolveSession,
-                trace,
-                targetPlatform,
-                bodyResolveCache,
-                targetPlatform.findAnalyzerServices,
-                analyzableElement.languageVersionSettings,
-                IdeaModuleStructureOracle()
+            try {
+                /*
+                Note that currently we *have* to re-create LazyTopDownAnalyzer with custom trace in order to disallow resolution of
+                bodies in top-level trace (trace from DI-container).
+                Resolving bodies in top-level trace may lead to memory leaks and incorrect resolution, because top-level
+                trace isn't invalidated on in-block modifications (while body resolution surely does)
+
+                Also note that for function bodies, we'll create DelegatingBindingTrace in ResolveElementCache anyways
+                (see 'functionAdditionalResolve'). However, this trace is still needed, because we have other
+                codepaths for other KtDeclarationWithBodies (like property accessors/secondary constructors/class initializers)
+                 */
+                val lazyTopDownAnalyzer = createContainerForLazyBodyResolve(
+                    //TODO: should get ModuleContext
+                    globalContext.withProject(project).withModule(moduleDescriptor),
+                    resolveSession,
+                    trace,
+                    targetPlatform,
+                    bodyResolveCache,
+                    targetPlatform.findAnalyzerServices(project),
+                    analyzableElement.languageVersionSettings,
+                    IdeaModuleStructureOracle(),
+                    IdeMainFunctionDetectorFactory(),
+                    IdeSealedClassInheritorsProvider
             ).get<LazyTopDownAnalyzer>()
 
-            lazyTopDownAnalyzer.analyzeDeclarations(TopDownAnalysisMode.TopLevelDeclarations, listOf(analyzableElement))
+                lazyTopDownAnalyzer.analyzeDeclarations(TopDownAnalysisMode.TopLevelDeclarations, listOf(analyzableElement))
+            } finally {
+                trace.resetCallback()
+            }
 
             return AnalysisResult.success(trace.bindingContext, moduleDescriptor)
         } catch (e: ProcessCanceledException) {

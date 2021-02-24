@@ -21,7 +21,6 @@ fun B.usage() {
     foo<caret>
 }
 
-// INVOCATION_COUNT: 2
 // EXIST: { lookupString: "fooForAny", itemText: "fooForAny" }
 
 // EXIST: { lookupString: "fooForT", itemText: "fooForT" }
@@ -30,7 +29,7 @@ fun B.usage() {
 // EXIST: { lookupString: "fooForTGeneric", itemText: "fooForTGeneric" }
 // EXIST: { lookupString: "fooForBGeneric", itemText: "fooForBGeneric" }
 
-// EXIST: fooNoReceiver
+// ABSENT: fooNoReceiver
 
 // ABSENT: fooForC
 // ABSENT: fooForCGeneric

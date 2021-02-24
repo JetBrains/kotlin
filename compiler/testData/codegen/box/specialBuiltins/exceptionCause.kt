@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 class CustomException : Throwable {
     constructor(message: String?, cause: Throwable?) : super(message, cause)
 

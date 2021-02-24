@@ -37,6 +37,10 @@
     text-decoration-color: red;
 }
 
+.white .subtype-error {
+    color: red;
+}
+
 .white .error.unsupported {
     text-decoration-color: cyan;
 }

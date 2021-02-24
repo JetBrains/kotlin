@@ -1,4 +1,4 @@
-// !specifyLocalVariableTypeByDefault: true
+// !SPECIFY_LOCAL_VARIABLE_TYPE_BY_DEFAULT: true
 fun bar(): String? {
     return null
 }

@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
-
 fun test(): UInt {
     var c: UInt
     run {
@@ -8,5 +6,5 @@ fun test(): UInt {
     return c
 }
 
-// 1 ASTORE 0
-// 1 LOCALVARIABLE c Lkotlin/jvm/internal/Ref\$IntRef; L1 L.* 0
+// 2 ISTORE 0
+// 1 LOCALVARIABLE c I

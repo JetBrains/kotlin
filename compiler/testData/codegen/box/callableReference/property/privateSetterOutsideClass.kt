@@ -1,4 +1,5 @@
-// IGNORE_BACKEND_FIR: JVM_IR
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: PROPERTY_REFERENCES
 // See KT-12337 Reference to property with invisible setter should not be a KMutableProperty
 
 import kotlin.reflect.KProperty1

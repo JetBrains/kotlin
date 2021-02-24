@@ -57,8 +57,8 @@ class DeserializerForClassfileDecompiler(
             BinaryClassAnnotationAndConstantLoaderImpl(moduleDescriptor, notFoundClasses, storageManager, classFinder)
 
         val configuration = object : DeserializationConfiguration {
-            override val readDeserializedContracts: Boolean
-                get() = true
+            override val readDeserializedContracts: Boolean = true
+            override val preserveDeclarationsOrdering: Boolean = true
         }
 
         deserializationComponents = DeserializationComponents(

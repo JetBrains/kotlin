@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class My {
     val x: Int
 

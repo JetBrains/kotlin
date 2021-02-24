@@ -60,6 +60,7 @@ public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implement
     }
 
     private ParameterNamesStatus parameterNamesStatus = null;
+    private final boolean isForRecordComponent;
 
     protected JavaMethodDescriptor(
             @NotNull DeclarationDescriptor containingDeclaration,
@@ -67,9 +68,11 @@ public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implement
             @NotNull Annotations annotations,
             @NotNull Name name,
             @NotNull Kind kind,
-            @NotNull SourceElement source
+            @NotNull SourceElement source,
+            boolean isForRecordComponent
     ) {
         super(containingDeclaration, original, annotations, name, kind, source);
+        this.isForRecordComponent = isForRecordComponent;
     }
 
     @NotNull
@@ -77,9 +80,10 @@ public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implement
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull Annotations annotations,
             @NotNull Name name,
-            @NotNull SourceElement source
+            @NotNull SourceElement source,
+            boolean isForRecordComponent
     ) {
-        return new JavaMethodDescriptor(containingDeclaration, null, annotations, name, Kind.DECLARATION, source);
+        return new JavaMethodDescriptor(containingDeclaration, null, annotations, name, Kind.DECLARATION, source, isForRecordComponent);
     }
 
     @NotNull
@@ -91,7 +95,7 @@ public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implement
             @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
             @Nullable KotlinType unsubstitutedReturnType,
             @Nullable Modality modality,
-            @NotNull Visibility visibility,
+            @NotNull DescriptorVisibility visibility,
             @Nullable Map<? extends UserDataKey<?>, ?> userData
     ) {
         SimpleFunctionDescriptorImpl descriptor = super.initialize(
@@ -118,6 +122,10 @@ public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implement
         this.parameterNamesStatus = ParameterNamesStatus.get(hasStableParameterNames, hasSynthesizedParameterNames);
     }
 
+    public boolean isForRecordComponent() {
+        return isForRecordComponent;
+    }
+
     @NotNull
     @Override
     protected JavaMethodDescriptor createSubstitutedCopy(
@@ -134,7 +142,8 @@ public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implement
                 annotations,
                 newName != null ? newName : getName(),
                 kind,
-                source
+                source,
+                isForRecordComponent
         );
         result.setParameterNamesStatus(hasStableParameterNames(), hasSynthesizedParameterNames());
         return result;

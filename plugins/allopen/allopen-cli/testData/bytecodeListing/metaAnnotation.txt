@@ -1,48 +1,61 @@
 @java.lang.annotation.Retention
 @kotlin.Metadata
-public annotation class AllOpen
+public annotation class AllOpen {
+    // source: 'metaAnnotation.kt'
+}
 
 @OtherComponent
 @java.lang.annotation.Retention
 @kotlin.Metadata
-public annotation class AnotherComponent
+public annotation class AnotherComponent {
+    // source: 'metaAnnotation.kt'
+}
 
 @Documented
 @kotlin.Metadata
 public final class ClassWithDocumented {
+    // source: 'metaAnnotation.kt'
     public method <init>(): void
 }
 
 @java.lang.annotation.Documented
 @java.lang.annotation.Retention
 @kotlin.Metadata
-public annotation class Documented
+public annotation class Documented {
+    // source: 'metaAnnotation.kt'
+}
 
 @AllOpen
 @java.lang.annotation.Retention
 @kotlin.Metadata
-public annotation class MyComponent
+public annotation class MyComponent {
+    // source: 'metaAnnotation.kt'
+}
 
 @MyComponent
 @kotlin.Metadata
 public abstract class MyComponentBase {
+    // source: 'metaAnnotation.kt'
     public method <init>(): void
 }
 
 @kotlin.Metadata
 public final class MyComponentImpl2_ShouldBeFinal {
+    // source: 'metaAnnotation.kt'
     public method <init>(): void
     public method method(): void
 }
 
 @kotlin.Metadata
 public class MyComponentImpl3_ShouldBeOpen {
+    // source: 'metaAnnotation.kt'
     public method <init>(): void
     public final method method_ShouldBeFinal(): void
 }
 
 @kotlin.Metadata
 public class MyComponentImpl_ShouldBeOpen {
+    // source: 'metaAnnotation.kt'
     public method <init>(): void
     public method method(): void
 }
@@ -50,33 +63,40 @@ public class MyComponentImpl_ShouldBeOpen {
 @MyComponent
 @java.lang.annotation.Retention
 @kotlin.Metadata
-public annotation class OtherComponent
+public annotation class OtherComponent {
+    // source: 'metaAnnotation.kt'
+}
 
 @AllOpen
 @kotlin.Metadata
 public class TestAllOpen_ShouldBeOpen {
+    // source: 'metaAnnotation.kt'
     public method <init>(): void
 }
 
 @AnotherComponent
 @kotlin.Metadata
 public class TestAnotherComponent_ShouldBeOpen {
+    // source: 'metaAnnotation.kt'
     public method <init>(): void
 }
 
 @MyComponent
 @kotlin.Metadata
 public class TestMyComponent_ShouldBeOpen {
+    // source: 'metaAnnotation.kt'
     public method <init>(): void
 }
 
 @OtherComponent
 @kotlin.Metadata
 public class TestOtherComponent_ShouldBeOpen {
+    // source: 'metaAnnotation.kt'
     public method <init>(): void
 }
 
 @kotlin.Metadata
 public final class TestWithoutAnnotations_ShouldBeFinal {
+    // source: 'metaAnnotation.kt'
     public method <init>(): void
 }

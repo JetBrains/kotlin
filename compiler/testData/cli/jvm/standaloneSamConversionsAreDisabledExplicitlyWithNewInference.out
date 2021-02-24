@@ -1,8 +1,0 @@
-warning: flag is not supported by this version of the compiler: -Xnew-inference -XXLanguage:-SamConversionPerArgument
-compiler/testData/cli/jvm/standaloneSamConversionsAreEnabledWithNewInference.kt:9:25: error: type mismatch: inferred type is () -> Unit but Runnable was expected
-    ForceSam.compare(r, {})
-                        ^
-compiler/testData/cli/jvm/standaloneSamConversionsAreEnabledWithNewInference.kt:10:22: error: type mismatch: inferred type is () -> Unit but Runnable was expected
-    ForceSam.compare({}, r)
-                     ^
-COMPILATION_ERROR

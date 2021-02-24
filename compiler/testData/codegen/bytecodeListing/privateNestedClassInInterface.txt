@@ -1,0 +1,12 @@
+@kotlin.Metadata
+final class IFoo$Nested {
+    // source: 'privateNestedClassInInterface.kt'
+    public method <init>(): void
+    private final inner class IFoo$Nested
+}
+
+@kotlin.Metadata
+public interface IFoo {
+    // source: 'privateNestedClassInInterface.kt'
+    private final inner class IFoo$Nested
+}

@@ -2,8 +2,8 @@
 
 package foo
 
-expect interface A {
-    fun commonFun()
+expect interface <!LINE_MARKER("descr='Is subclassed by AImpl'"), LINE_MARKER("descr='Has actuals in JVM'")!>A<!> {
+    fun <!LINE_MARKER("descr='Has actuals in JVM'"), LINE_MARKER("descr='Is overridden in foo.AImpl'")!>commonFun<!>()
 }
 
 class CommonGen<T : A> {

@@ -16,13 +16,12 @@
 
 package org.jetbrains.kotlin.codegen
 
-import com.intellij.openapi.util.Comparing
 import com.intellij.openapi.util.text.StringUtil
 import junit.framework.TestCase
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.org.objectweb.asm.*
-import org.junit.ComparisonFailure
+import org.junit.Assert
 import java.io.File
 import java.util.*
 import java.util.regex.Pattern
@@ -82,13 +81,7 @@ abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
     ) {
         val actual = getActualVariablesAsString(actualLocalVariables)
         val expected = getExpectedVariablesAsString(testFileLines)
-        if (!Comparing.equal(expected, actual)) {
-            throw ComparisonFailure(
-                "Variables differ from expected",
-                expected,
-                actual
-            )
-        }
+        Assert.assertEquals(expected, actual)
     }
 
     private fun getActualVariablesAsString(list: List<LocalVariable>) = if (backend.isIR) {
@@ -434,7 +427,7 @@ abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
                                         // conflicting types are represented with a CONFLICT type
                                         // which will never match a read instruction or a type in
                                         // a locals table.
-                                        if (!areCompatible(index, it, type)) {
+                                        if (!areCompatible(it, type)) {
                                             currentLocals[index] = "CONFLICT"
                                         }
                                     }
@@ -450,11 +443,11 @@ abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
                 // We only check that there is no confusion between object types and basic types.
                 // Therefore, we map all arrays types to type Object when comparing.
                 private fun checkCompatible(index: Int, type0: String, type1: String) {
-                    if (areCompatible(index, type0, type1)) return
+                    if (areCompatible(type0, type1)) return
                     throw Exception("Incompatible types for local $index: $type0 and $type1")
                 }
 
-                private fun areCompatible(index: Int, type0: String, type1: String): Boolean {
+                private fun areCompatible(type0: String, type1: String): Boolean {
                     val t0 = if (type0.startsWith("[")) "Ljava/lang/Object;" else type0
                     val t1 = if (type1.startsWith("[")) "Ljava/lang/Object;" else type1
                     if (t0.equals(t1)) return true

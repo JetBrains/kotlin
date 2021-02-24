@@ -1,0 +1,29 @@
+package
+
+public fun call(/*0*/ x: kotlin.String): kotlin.Unit
+public fun </*0*/ T> flow(/*0*/ @kotlin.BuilderInference block: suspend FlowCollector<T>.() -> kotlin.Unit): Flow<T>
+public fun foo(/*0*/ total: kotlin.Float, /*1*/ next: kotlin.Int): kotlin.Int
+public suspend fun foo(/*0*/ x: kotlin.Int): Flow<Bar>
+public fun foo(/*0*/ total: kotlin.Int, /*1*/ next: kotlin.Float): kotlin.Int
+public fun foo(/*0*/ total: kotlin.Int, /*1*/ next: kotlin.Int): kotlin.Int
+public fun </*0*/ T> materialize(): T
+
+public final class Bar {
+    public constructor Bar()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Flow</*0*/ T> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface FlowCollector</*0*/ in T> {
+    public abstract suspend fun emit(/*0*/ value: T): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

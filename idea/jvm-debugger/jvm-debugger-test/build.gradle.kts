@@ -5,6 +5,7 @@ plugins {
 
 dependencies {
     testCompileOnly(intellijDep())
+    testCompileOnly(project(":kotlin-reflect-api"))
 
     testCompile(project(":idea:jvm-debugger:jvm-debugger-core"))
     testCompile(project(":idea:jvm-debugger:jvm-debugger-evaluation"))
@@ -19,21 +20,14 @@ dependencies {
 
     testCompile(intellijPluginDep("stream-debugger"))
 
-    Platform[191].orLower {
-        testCompileOnly(intellijDep()) { includeJars("java-api", "java-impl") }
-    }
-
-    Platform[192].orHigher {
-        testCompileOnly(intellijPluginDep("java")) { includeJars("java-api", "java-impl", "aether-dependency-resolver") }
-        testRuntime(intellijPluginDep("java"))
-    }
+    testCompileOnly(intellijPluginDep("java")) { includeJars("java-api", "java-impl", "aether-dependency-resolver") }
+    testRuntime(intellijPluginDep("java"))
 
     testRuntime(project(":nj2k:nj2k-services")) { isTransitive = false }
     testRuntime(project(":idea:idea-jvm"))
     testRuntime(project(":idea:idea-native")) { isTransitive = false }
     testRuntime(project(":idea:idea-gradle-native")) { isTransitive = false }
-    testRuntime(project(":native:frontend.native")) { isTransitive = false }
-    testRuntime(project(":native:kotlin-native-utils")) { isTransitive = false }
+    testRuntime(project(":native:frontend.native"))
 
     testRuntime(project(":kotlin-reflect"))
     testRuntime(project(":sam-with-receiver-ide-plugin"))
@@ -41,6 +35,7 @@ dependencies {
     testRuntime(project(":noarg-ide-plugin"))
     testRuntime(project(":kotlin-scripting-idea"))
     testRuntime(project(":kotlinx-serialization-ide-plugin"))
+    testRuntime(project(":plugins:parcelize:parcelize-ide"))
 
     testRuntime(intellijDep())
     testRuntime(intellijRuntimeAnnotations())

@@ -4,6 +4,7 @@
  */
 
 @file:JvmName("ClassNameKt")
+
 package kotlinx.metadata
 
 /**

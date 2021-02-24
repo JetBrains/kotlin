@@ -59,7 +59,7 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
             @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
             @Nullable KotlinType unsubstitutedReturnType,
             @Nullable Modality modality,
-            @NotNull Visibility visibility
+            @NotNull DescriptorVisibility visibility
     ) {
         return initialize(extensionReceiverParameter, dispatchReceiverParameter, typeParameters, unsubstitutedValueParameters,
                           unsubstitutedReturnType, modality, visibility, null);
@@ -73,7 +73,7 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
             @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
             @Nullable KotlinType unsubstitutedReturnType,
             @Nullable Modality modality,
-            @NotNull Visibility visibility,
+            @NotNull DescriptorVisibility visibility,
             @Nullable Map<? extends UserDataKey<?>, ?> userData
     ) {
         super.initialize(extensionReceiverParameter, dispatchReceiverParameter, typeParameters, unsubstitutedValueParameters,
@@ -117,7 +117,7 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
     public SimpleFunctionDescriptor copy(
             DeclarationDescriptor newOwner,
             Modality modality,
-            Visibility visibility,
+            DescriptorVisibility visibility,
             Kind kind,
             boolean copyOverrides
     ) {

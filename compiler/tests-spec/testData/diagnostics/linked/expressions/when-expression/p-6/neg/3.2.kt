@@ -4,8 +4,8 @@
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
  *
- * SPEC VERSION: 0.1-100
- * PLACE: expressions, when-expression -> paragraph 6 -> sentence 3
+ * SPEC VERSION: 0.1-296
+ * MAIN LINK: expressions, when-expression -> paragraph 6 -> sentence 3
  * NUMBER: 2
  * DESCRIPTION: 'When' with bound value and 'when condition' with contains operator and type without defined contains operator.
  * HELPERS: classes
@@ -29,8 +29,8 @@ fun case_1(value_1: Int, value_2: EmptyClass, value_3: Int, value_4: Any): Strin
  */
 fun case_2(value_1: Int, value_3: Nothing) {
     when (value_1) {
-        <!OVERLOAD_RESOLUTION_AMBIGUITY, TYPE_MISMATCH_IN_RANGE, UNREACHABLE_CODE!>in<!> value_3 -> <!UNREACHABLE_CODE!>{}<!>
-        <!UNREACHABLE_CODE!><!OVERLOAD_RESOLUTION_AMBIGUITY, TYPE_MISMATCH_IN_RANGE!>in<!> throw Exception() -> {}<!>
-        <!UNREACHABLE_CODE!><!OVERLOAD_RESOLUTION_AMBIGUITY, TYPE_MISMATCH_IN_RANGE!>in<!> return -> {}<!>
+        <!OVERLOAD_RESOLUTION_AMBIGUITY, UNREACHABLE_CODE!>in<!> value_3 -> <!UNREACHABLE_CODE!>{}<!>
+        <!UNREACHABLE_CODE!><!OVERLOAD_RESOLUTION_AMBIGUITY!>in<!> throw Exception() -> {}<!>
+        <!UNREACHABLE_CODE!><!OVERLOAD_RESOLUTION_AMBIGUITY!>in<!> return -> {}<!>
     }
 }

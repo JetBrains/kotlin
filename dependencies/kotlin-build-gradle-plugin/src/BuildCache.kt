@@ -10,6 +10,7 @@ import java.net.URI
 
 fun Settings.setupBuildCache() {
     buildCache.local.isEnabled = kotlinBuildProperties.localBuildCacheEnabled
+    kotlinBuildProperties.localBuildCacheDirectory?.let { buildCache.local.directory = it }
     kotlinBuildProperties.buildCacheUrl?.let { remoteCacheUrl ->
         buildCache.remote(HttpBuildCache::class.java) { remoteCache ->
             remoteCache.url = URI(remoteCacheUrl)

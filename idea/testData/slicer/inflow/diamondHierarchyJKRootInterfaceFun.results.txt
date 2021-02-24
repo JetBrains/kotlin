@@ -1,6 +1,6 @@
-8 val <bold>x = a.foo()</bold>
-8 	val x = <bold>a.foo()</bold>
-4 		fun <bold>foo() = 1</bold>
-4 			fun foo() = <bold>1</bold>
+8 <bold>val x</bold> = a.foo() (in test(A, B,…))
+8 	val x = <bold>a.foo()</bold> (in test(A, B,…))
+4 		<bold>fun foo()</bold> = 1 (in A)
+4 			fun foo() = <bold>1</bold> (in A.foo())
 3 		return <bold>2</bold>;
 13 		return <bold>4</bold>;

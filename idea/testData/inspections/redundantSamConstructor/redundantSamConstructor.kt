@@ -40,4 +40,9 @@ fun test() {
 
     MyJavaClass.staticFunWithOtherParam(1, java.lang.Runnable { })
     klass.memberFun1(java.lang.Runnable { })
+
+    MyJavaClass.staticFun2(Runnable { }, Runnable {
+        if (p > 0) return@Runnable
+        print(1)
+    })
 }

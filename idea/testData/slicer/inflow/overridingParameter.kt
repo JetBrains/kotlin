@@ -6,7 +6,7 @@ open class A {
 
 open class B(override val foo: Int) : A()
 
-class C : B() {
+class C : B(1) {
     override val foo = 3
 }
 

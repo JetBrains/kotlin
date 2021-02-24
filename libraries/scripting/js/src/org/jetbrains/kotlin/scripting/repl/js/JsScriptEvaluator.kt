@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,11 +13,11 @@ class JsScriptEvaluator : ScriptEvaluator {
     private val engine = ScriptEngineNashorn()
 
     override suspend fun invoke(
-        compiledScript: CompiledScript<*>,
+        compiledScript: CompiledScript,
         scriptEvaluationConfiguration: ScriptEvaluationConfiguration
     ): ResultWithDiagnostics<EvaluationResult> {
         return try {
-            val evalResult = engine.eval<Any?>((compiledScript as JsCompiledScript).jsCode)
+            val evalResult = engine.evalWithTypedResult<Any?>((compiledScript as JsCompiledScript).jsCode)
             ResultWithDiagnostics.Success(
                 EvaluationResult(
                     ResultValue.Value(
@@ -33,6 +33,7 @@ class JsScriptEvaluator : ScriptEvaluator {
         } catch (e: Exception) {
             ResultWithDiagnostics.Failure(
                 ScriptDiagnostic(
+                    ScriptDiagnostic.unspecifiedError,
                     message = e.localizedMessage,
                     severity = ScriptDiagnostic.Severity.ERROR,
                     exception = e

@@ -6,13 +6,21 @@
 package org.jetbrains.kotlin.ir.types
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
+import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.ir.util.isAnonymousObject
+import org.jetbrains.kotlin.ir.util.isPropertyAccessor
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
@@ -21,17 +29,45 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 fun IrType.withHasQuestionMark(newHasQuestionMark: Boolean): IrType =
     when (this) {
-        is IrSimpleType ->
-            if (this.hasQuestionMark == newHasQuestionMark)
-                this
-            else
-                buildSimpleType {
-                    hasQuestionMark = newHasQuestionMark
-                    kotlinType = originalKotlinType?.run {
-                        if (newHasQuestionMark) makeNullable() else makeNotNullable()
-                    }
-                }
+        is IrSimpleType -> withHasQuestionMark(newHasQuestionMark)
         else -> this
+    }
+
+fun IrSimpleType.withHasQuestionMark(newHasQuestionMark: Boolean): IrSimpleType =
+    if (this.hasQuestionMark == newHasQuestionMark)
+        this
+    else
+        buildSimpleType {
+            hasQuestionMark = newHasQuestionMark
+            kotlinType = originalKotlinType?.run {
+                if (newHasQuestionMark) makeNullable() else makeNotNullable()
+            }
+        }
+
+fun IrType.addAnnotations(newAnnotations: List<IrConstructorCall>): IrType =
+    if (newAnnotations.isEmpty())
+        this
+    else when (this) {
+        is IrSimpleType ->
+            toBuilder().apply {
+                annotations = annotations + newAnnotations
+            }.buildSimpleType()
+        is IrDynamicType ->
+            IrDynamicTypeImpl(null, annotations + newAnnotations, Variance.INVARIANT)
+        else ->
+            this
+    }
+
+fun IrType.removeAnnotations(predicate: (IrConstructorCall) -> Boolean): IrType =
+    when (this) {
+        is IrSimpleType ->
+            toBuilder().apply {
+                annotations = annotations.filterNot(predicate)
+            }.buildSimpleType()
+        is IrDynamicType ->
+            IrDynamicTypeImpl(null, annotations.filterNot(predicate), Variance.INVARIANT)
+        else ->
+            this
     }
 
 val IrType.classifierOrFail: IrClassifierSymbol
@@ -42,6 +78,9 @@ val IrType.classifierOrNull: IrClassifierSymbol?
 
 val IrType.classOrNull: IrClassSymbol?
     get() = classifierOrNull as? IrClassSymbol
+
+val IrType.classFqName: FqName?
+    get() = classOrNull?.owner?.fqNameWhenAvailable
 
 val IrTypeArgument.typeOrNull: IrType? get() = (this as? IrTypeProjection)?.type
 
@@ -63,6 +102,7 @@ fun IrType.makeNullable() =
     else
         this
 
+@ObsoleteDescriptorBasedAPI
 fun IrType.toKotlinType(): KotlinType {
     originalKotlinType?.let {
         return it
@@ -85,6 +125,7 @@ fun IrClassSymbol.createType(hasQuestionMark: Boolean, arguments: List<IrTypeArg
         emptyList()
     )
 
+@ObsoleteDescriptorBasedAPI
 private fun makeKotlinType(
     classifier: IrClassifierSymbol,
     arguments: List<IrTypeArgument>,
@@ -119,9 +160,37 @@ val IrClassSymbol.starProjectedType: IrSimpleType
     get() = IrSimpleTypeImpl(
         this,
         hasQuestionMark = false,
-        arguments = owner.typeParameters.map { IrStarProjectionImpl },
+        arguments = owner.typeConstructorParameters.map { IrStarProjectionImpl }.toList(),
         annotations = emptyList()
     )
+
+val IrClass.typeConstructorParameters: Sequence<IrTypeParameter>
+    get() =
+        generateSequence(
+            this as IrTypeParametersContainer,
+            { current ->
+                val parent = current.parent as? IrTypeParametersContainer
+                when {
+                    parent is IrSimpleFunction && parent.isPropertyAccessor -> {
+                        // KT-42151
+                        // Property type parameters for local classes declared inside property accessors are not captured in FE descriptors.
+                        // In order to match type parameters against type arguments in IR types translated from KotlinTypes,
+                        // we should stop on property accessor here.
+                        // NB this can potentially cause problems with inline properties with reified type parameters.
+                        // Ideally this should be fixed in FE.
+                        null
+                    }
+                    current.isAnonymousObject -> {
+                        // Anonymous classes don't capture type parameters.
+                        null
+                    }
+                    parent is IrClass && current is IrClass && !current.isInner ->
+                        null
+                    else ->
+                        parent
+                }
+            }
+        ).flatMap { it.typeParameters }
 
 fun IrClassifierSymbol.typeWithParameters(parameters: List<IrTypeParameter>): IrSimpleType =
     typeWith(parameters.map { it.defaultType })
@@ -135,6 +204,9 @@ fun IrClassifierSymbol.typeWith(arguments: List<IrType>): IrSimpleType =
         arguments.map { makeTypeProjection(it, Variance.INVARIANT) },
         emptyList()
     )
+
+fun IrClassifierSymbol.typeWithArguments(arguments: List<IrTypeArgument>): IrSimpleType =
+    IrSimpleTypeImpl(this, false, arguments, emptyList())
 
 fun IrClass.typeWith(arguments: List<IrType>) = this.symbol.typeWith(arguments)
 

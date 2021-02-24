@@ -27,11 +27,11 @@ open class Base {
 }
 
 class Derived : Base() {
-    fun test(javaStaticInTypePosition: Classifier) {
-        method()
-        property
-        Classifier()
-        syntheticSam { }
+    fun test(javaStaticInTypePosition: <!UNRESOLVED_REFERENCE!>Classifier<!>) {
+        <!UNRESOLVED_REFERENCE!>method<!>()
+        <!UNRESOLVED_REFERENCE!>property<!>
+        <!UNRESOLVED_REFERENCE!>Classifier<!>()
+        <!UNRESOLVED_REFERENCE!>syntheticSam<!> { }
 
         // Instance members shouldn't be affected, but we check them, just in case
         val y = instanceSyntheticProperty
@@ -42,7 +42,7 @@ class Derived : Base() {
         <!UNRESOLVED_REFERENCE!>syntheticProperty<!> = 42
     }
 
-    class JavaStaticInSupertypeList : Classifier() {
+    class JavaStaticInSupertypeList : <!UNRESOLVED_REFERENCE!>Classifier<!>() {
 
     }
 }

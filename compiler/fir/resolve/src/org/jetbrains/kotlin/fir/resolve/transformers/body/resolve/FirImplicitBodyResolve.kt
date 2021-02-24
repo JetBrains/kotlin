@@ -3,99 +3,137 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("DuplicatedCode")
-
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
+import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
-import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
-import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.firProvider
-import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
-import org.jetbrains.kotlin.fir.resolve.transformers.TransformImplicitType
+import org.jetbrains.kotlin.fir.resolve.transformers.*
+import org.jetbrains.kotlin.fir.resolve.transformers.contracts.runContractResolveForLocalClass
+import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
+import org.jetbrains.kotlin.fir.symbols.impl.FirAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.impl.FirErrorTypeRefImpl
+import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
-import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.compose
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
-@Deprecated("It is temp", level = DeprecationLevel.WARNING, replaceWith = ReplaceWith("TODO(\"что-то нормальное\")"))
-class FirImplicitTypeBodyResolveTransformerAdapter(private val scopeSession: ScopeSession) : FirTransformer<Nothing?>() {
+@OptIn(AdapterForResolveProcessor::class)
+class FirImplicitTypeBodyResolveProcessor(
+    session: FirSession,
+    scopeSession: ScopeSession
+) : FirTransformerBasedResolveProcessor(session, scopeSession) {
+    override val transformer = FirImplicitTypeBodyResolveTransformerAdapter(session, scopeSession)
+}
+
+@AdapterForResolveProcessor
+class FirImplicitTypeBodyResolveTransformerAdapter(session: FirSession, scopeSession: ScopeSession) : FirTransformer<Nothing?>() {
     private val implicitBodyResolveComputationSession = ImplicitBodyResolveComputationSession()
+    private val returnTypeCalculator = ReturnTypeCalculatorWithJump(session, scopeSession, implicitBodyResolveComputationSession)
+
+    private val transformer = FirImplicitAwareBodyResolveTransformer(
+        session,
+        scopeSession,
+        implicitBodyResolveComputationSession,
+        FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE, implicitTypeOnly = true,
+        returnTypeCalculator
+    )
 
     override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
         return element.compose()
     }
 
     override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirFile> {
-        val session = file.session
-        scopeSession.returnTypeCalculator = ReturnTypeCalculatorWithJump(session, scopeSession, implicitBodyResolveComputationSession)
-        val transformer = FirImplicitBodyResolveTransformer(
-            session,
-            scopeSession,
-            implicitBodyResolveComputationSession
-        )
         return file.transform(transformer, ResolutionMode.ContextIndependent)
     }
 }
 
-fun createReturnTypeCalculatorForIDE(session: FirSession, scopeSession: ScopeSession): ReturnTypeCalculator =
-    ReturnTypeCalculatorWithJump(session, scopeSession, ImplicitBodyResolveComputationSession())
-
-// TODO: This class is unused because it's effectively unneeded while we have mutable trees
-// Once we decide to switch to persistent trees this, it should be applied to each file
-// If the decision is to stay with mutable trees, this class should be removed
-private class FirApplyInferredDeclarationTypesTransformer(
-    private val implicitBodyResolveComputationSession: ImplicitBodyResolveComputationSession
-) : FirDefaultTransformer<Nothing?>() {
-    override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
-        return element.compose()
+fun <F : FirClass<F>> F.runContractAndBodiesResolutionForLocalClass(
+    components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents,
+    resolutionMode: ResolutionMode,
+    localClassesNavigationInfo: LocalClassesNavigationInfo,
+): F {
+    val (designationMap, targetedClasses) = localClassesNavigationInfo.run {
+        designationMap to parentForClass.keys + this@runContractAndBodiesResolutionForLocalClass
     }
 
-    override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirDeclaration> {
-        file.replaceResolvePhase(FirResolvePhase.SUPER_TYPES)
+    val implicitBodyResolveComputationSession =
+        ((components.returnTypeCalculator as? ReturnTypeCalculatorWithJump)?.implicitBodyResolveComputationSession
+            ?: ImplicitBodyResolveComputationSession())
+    val returnTypeCalculator = ReturnTypeCalculatorWithJump(
+        components.session,
+        components.scopeSession,
+        implicitBodyResolveComputationSession,
+        designationMap,
+        createTransformer = components.returnTypeCalculator.getTransformerCreator()
+    )
 
-        return (file.transformChildren(this, null) as FirFile).compose()
-    }
+    val newContext = components.context.createSnapshotForLocalClasses(returnTypeCalculator, targetedClasses)
+    returnTypeCalculator.outerBodyResolveContext = newContext
 
-    override fun transformRegularClass(regularClass: FirRegularClass, data: Nothing?): CompositeTransformResult<FirStatement> {
-        return (regularClass.transformChildren(this, null) as FirRegularClass).compose()
-    }
+    runContractResolveForLocalClass(components.session, components.scopeSession, components.context, targetedClasses)
 
-    override fun transformSimpleFunction(simpleFunction: FirSimpleFunction, data: Nothing?): CompositeTransformResult<FirDeclaration> {
-        if (simpleFunction.returnTypeRef !is FirImplicitTypeRef) return simpleFunction.compose()
+    val transformer = FirImplicitAwareBodyResolveTransformer(
+        components.session, components.scopeSession,
+        implicitBodyResolveComputationSession,
+        FirResolvePhase.BODY_RESOLVE,
+        implicitTypeOnly = false,
+        returnTypeCalculator,
+        outerBodyResolveContext = newContext
+    )
 
-        val transformedDeclaration = implicitBodyResolveComputationSession.getComputedResult(simpleFunction.symbol).transformedDeclaration
-        return transformedDeclaration.compose()
-    }
+    val graphBuilder = components.context.dataFlowAnalyzerContext.graphBuilder
+    val members = localClassesNavigationInfo.allMembers
+    graphBuilder.prepareForLocalClassMembers(members)
 
-    override fun transformProperty(property: FirProperty, data: Nothing?): CompositeTransformResult<FirDeclaration> {
-        if (property.returnTypeRef !is FirImplicitTypeRef) return property.compose()
-
-        val transformedDeclaration = implicitBodyResolveComputationSession.getComputedResult(property.symbol).transformedDeclaration
-        return transformedDeclaration.compose()
+    return this.transform<F, ResolutionMode>(transformer, resolutionMode).single.also {
+        graphBuilder.cleanAfterForLocalClassMembers(members)
     }
 }
 
-private open class FirImplicitBodyResolveTransformer(
+private fun ReturnTypeCalculator.getTransformerCreator() = when (this) {
+    is ReturnTypeCalculatorWithJump -> createTransformer
+    else -> ::FirDesignatedBodyResolveTransformerForReturnTypeCalculator
+}
+
+fun createReturnTypeCalculatorForIDE(
     session: FirSession,
     scopeSession: ScopeSession,
-    private val implicitBodyResolveComputationSession: ImplicitBodyResolveComputationSession
+    implicitBodyResolveComputationSession: ImplicitBodyResolveComputationSession,
+    createTransformer: (
+        designation: Iterator<FirElement>,
+        FirSession,
+        ScopeSession,
+        ImplicitBodyResolveComputationSession,
+        ReturnTypeCalculator,
+        BodyResolveContext?
+    ) -> FirDesignatedBodyResolveTransformerForReturnTypeCalculator
+): ReturnTypeCalculator =
+    ReturnTypeCalculatorWithJump(session, scopeSession, implicitBodyResolveComputationSession, createTransformer = createTransformer)
+
+open class FirImplicitAwareBodyResolveTransformer(
+    session: FirSession,
+    scopeSession: ScopeSession,
+    private val implicitBodyResolveComputationSession: ImplicitBodyResolveComputationSession,
+    phase: FirResolvePhase,
+    implicitTypeOnly: Boolean,
+    returnTypeCalculator: ReturnTypeCalculator,
+    outerBodyResolveContext: BodyResolveContext? = null
 ) : FirBodyResolveTransformer(
     session,
-    phase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE,
-    implicitTypeOnly = true,
-    scopeSession = scopeSession,
-    returnTypeCalculator = ReturnTypeCalculatorWithJump(session, scopeSession, implicitBodyResolveComputationSession)
+    phase,
+    implicitTypeOnly,
+    scopeSession,
+    returnTypeCalculator,
+    outerBodyResolveContext
 ) {
     override fun transformSimpleFunction(
         simpleFunction: FirSimpleFunction,
@@ -132,7 +170,7 @@ private open class FirImplicitBodyResolveTransformer(
         require(status is ImplicitBodyResolveComputationStatus.NotComputed) {
             "Unexpected status in transformCallableMember ($status) for ${member.render()}"
         }
-        
+
         implicitBodyResolveComputationSession.startComputing(symbol)
         val result = transform()
         implicitBodyResolveComputationSession.storeResult(symbol, result.single)
@@ -144,18 +182,28 @@ private open class FirImplicitBodyResolveTransformer(
 private class ReturnTypeCalculatorWithJump(
     private val session: FirSession,
     private val scopeSession: ScopeSession,
-    private val implicitBodyResolveComputationSession: ImplicitBodyResolveComputationSession
+    val implicitBodyResolveComputationSession: ImplicitBodyResolveComputationSession,
+    val designationMapForLocalClasses: Map<FirCallableMemberDeclaration<*>, List<FirClass<*>>> = mapOf(),
+    val createTransformer: (
+        designation: Iterator<FirElement>,
+        session: FirSession,
+        scopeSession: ScopeSession,
+        implicitBodyResolveComputationSession: ImplicitBodyResolveComputationSession,
+        returnTypeCalculator: ReturnTypeCalculator,
+        outerBodyResolveContext: BodyResolveContext?
+    ) -> FirDesignatedBodyResolveTransformerForReturnTypeCalculator = ::FirDesignatedBodyResolveTransformerForReturnTypeCalculator,
 ) : ReturnTypeCalculator {
+
+    var outerBodyResolveContext: BodyResolveContext? = null
 
     override fun tryCalculateReturnType(declaration: FirTypedDeclaration): FirResolvedTypeRef {
         if (declaration is FirValueParameter && declaration.returnTypeRef is FirImplicitTypeRef) {
             // TODO?
             declaration.transformReturnTypeRef(
                 TransformImplicitType,
-                FirErrorTypeRefImpl(
-                    null,
-                    FirSimpleDiagnostic("Unsupported: implicit VP type")
-                )
+                buildErrorTypeRef {
+                    diagnostic = ConeSimpleDiagnostic("Unsupported: implicit VP type")
+                }
             )
         }
 
@@ -164,44 +212,64 @@ private class ReturnTypeCalculatorWithJump(
 
         require(declaration is FirCallableMemberDeclaration<*>) { "${declaration::class}: ${declaration.render()}" }
 
+        if (declaration is FirSyntheticProperty) {
+            return tryCalculateReturnType(declaration.getter.delegate)
+        }
+
+        if (declaration.isIntersectionOverride) {
+            val result = tryCalculateReturnType(declaration.symbol.baseForIntersectionOverride!!.fir)
+            declaration.replaceReturnTypeRef(result)
+            return result
+        }
+
+        runIf(declaration.isSubstitutionOverride) {
+            val overriddenDeclaration = declaration.originalForSubstitutionOverride ?: return@runIf
+            tryCalculateReturnType(overriddenDeclaration)
+            return FakeOverrideTypeCalculator.Forced.computeReturnType(declaration)
+        }
+
         return when (val status = implicitBodyResolveComputationSession.getStatus(declaration.symbol)) {
             is ImplicitBodyResolveComputationStatus.Computed -> status.resolvedTypeRef
             is ImplicitBodyResolveComputationStatus.Computing ->
-                FirErrorTypeRefImpl(null, FirSimpleDiagnostic("cycle", DiagnosticKind.RecursionInImplicitTypes))
+                buildErrorTypeRef { diagnostic = ConeSimpleDiagnostic("cycle", DiagnosticKind.RecursionInImplicitTypes) }
             else -> computeReturnTypeRef(declaration)
         }
     }
 
     private fun computeReturnTypeRef(declaration: FirCallableMemberDeclaration<*>): FirResolvedTypeRef {
         val symbol = declaration.symbol
-        val id = symbol.callableId
-
         val provider = session.firProvider
 
-        val file = provider.getFirCallableContainerFile(symbol)
+        val (designation, outerBodyResolveContext) = if (declaration in designationMapForLocalClasses) {
+            designationMapForLocalClasses.getValue(declaration) to outerBodyResolveContext
+        } else {
+            val file = provider.getFirCallableContainerFile(symbol)
 
-        val outerClasses = generateSequence(id.classId) { classId ->
-            classId.outerClassId
-        }.mapTo(mutableListOf()) { provider.getFirClassifierByFqName(it) }
+            val outerClasses = generateSequence(symbol.containingClass()?.classId) { classId ->
+                classId.outerClassId
+            }.mapTo(mutableListOf()) { provider.getFirClassifierByFqName(it) }
 
-        if (file == null || outerClasses.any { it == null }) {
-            return FirErrorTypeRefImpl(
-                null,
-                FirSimpleDiagnostic(
-                    "Cannot calculate return type (local class/object?)",
-                    DiagnosticKind.InferenceError
-                )
-            )
+            if (file == null || outerClasses.any { it == null }) {
+                return buildErrorTypeRef {
+                    diagnostic = ConeSimpleDiagnostic(
+                        "Cannot calculate return type (local class/object?)",
+                        DiagnosticKind.InferenceError
+                    )
+                }
+            }
+            (listOf(file) + outerClasses.filterNotNull().asReversed()) to null
         }
-        val designation = (listOf(file) + outerClasses.filterNotNull().asReversed() + listOf(declaration))
-        val transformer = FirDesignatedBodyResolveTransformerForReturnTypeCalculator(
-            designation.iterator(),
-            file.session,
+
+        val transformer = createTransformer(
+            (designation.drop(1) + declaration).iterator(),
+            session,
             scopeSession,
-            implicitBodyResolveComputationSession
+            implicitBodyResolveComputationSession,
+            this,
+            outerBodyResolveContext
         )
 
-        file.transform<FirElement, ResolutionMode>(transformer, ResolutionMode.ContextDependent)
+        designation.first().transform<FirElement, ResolutionMode>(transformer, ResolutionMode.ContextDependent)
 
         val transformedDeclaration = transformer.lastResult as? FirCallableMemberDeclaration<*>
             ?: error("Unexpected lastResult: ${transformer.lastResult?.render()}")
@@ -212,45 +280,50 @@ private class ReturnTypeCalculatorWithJump(
     }
 }
 
-private class FirDesignatedBodyResolveTransformerForReturnTypeCalculator(
+open class FirDesignatedBodyResolveTransformerForReturnTypeCalculator(
     private val designation: Iterator<FirElement>,
     session: FirSession,
     scopeSession: ScopeSession,
-    implicitBodyResolveComputationSession: ImplicitBodyResolveComputationSession
-) : FirImplicitBodyResolveTransformer(
+    implicitBodyResolveComputationSession: ImplicitBodyResolveComputationSession,
+    returnTypeCalculator: ReturnTypeCalculator,
+    outerBodyResolveContext: BodyResolveContext? = null
+) : FirImplicitAwareBodyResolveTransformer(
     session,
     scopeSession,
-    implicitBodyResolveComputationSession
+    implicitBodyResolveComputationSession,
+    FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE,
+    implicitTypeOnly = true,
+    returnTypeCalculator,
+    outerBodyResolveContext
 ) {
-
     var lastResult: FirElement? = null
 
-    override fun <E : FirElement> transformElement(element: E, data: ResolutionMode): CompositeTransformResult<E> {
+    override fun transformDeclarationContent(declaration: FirDeclaration, data: ResolutionMode): CompositeTransformResult<FirDeclaration> {
         if (designation.hasNext()) {
-            val result = designation.next().transform<E, ResolutionMode>(this, data).single
-            if (!designation.hasNext()) {
+            val result = designation.next().transform<FirDeclaration, ResolutionMode>(this, data).single
+            if (!designation.hasNext() && lastResult == null) {
                 lastResult = result
             }
-            return result.compose()
+            return declaration.compose()
         }
-        return super.transformElement(element, data)
-    }
 
-    override fun transformDeclaration(declaration: FirDeclaration, data: ResolutionMode): CompositeTransformResult<FirDeclaration> {
-        return components.withContainer(declaration) {
-            declaration.replaceResolvePhase(transformerPhase)
-            transformElement(declaration, data)
-        }
+        return super.transformDeclarationContent(declaration, data)
     }
 }
 
-private class ImplicitBodyResolveComputationSession {
+class ImplicitBodyResolveComputationSession {
     private val implicitBodyResolveStatusMap = hashMapOf<FirCallableSymbol<*>, ImplicitBodyResolveComputationStatus>()
 
-    fun getStatus(symbol: FirCallableSymbol<*>): ImplicitBodyResolveComputationStatus {
+    internal fun getStatus(symbol: FirCallableSymbol<*>): ImplicitBodyResolveComputationStatus {
+        if (symbol is FirAccessorSymbol) {
+            val fir = symbol.fir
+            if (fir is FirSyntheticProperty) {
+                return getStatus(fir.getter.delegate.symbol)
+            }
+        }
         return implicitBodyResolveStatusMap[symbol] ?: ImplicitBodyResolveComputationStatus.NotComputed
     }
-  
+
     fun startComputing(symbol: FirCallableSymbol<*>) {
         require(implicitBodyResolveStatusMap[symbol] == null) {
             "Unexpected static in startComputing for $symbol: ${implicitBodyResolveStatusMap[symbol]}"
@@ -269,23 +342,14 @@ private class ImplicitBodyResolveComputationSession {
 
         val returnTypeRef = transformedDeclaration.returnTypeRef
         require(returnTypeRef is FirResolvedTypeRef) {
-            "Not FirResolvedTypeRef (${transformedDeclaration.receiverTypeRef?.render()}) in storeResult for: ${symbol.fir.render()}"
+            "Not FirResolvedTypeRef (${transformedDeclaration.returnTypeRef.render()}) in storeResult for: ${symbol.fir.render()}"
         }
 
         implicitBodyResolveStatusMap[symbol] = ImplicitBodyResolveComputationStatus.Computed(returnTypeRef, transformedDeclaration)
     }
-
-    fun getComputedResult(symbol: FirCallableSymbol<*>): ImplicitBodyResolveComputationStatus.Computed {
-        val status = getStatus(symbol)
-        require(status is ImplicitBodyResolveComputationStatus.Computed) {
-            "Unexpected status $status for ${symbol.fir.render()}"
-        }
-
-        return status
-    }
 }
 
-private sealed class ImplicitBodyResolveComputationStatus {
+internal sealed class ImplicitBodyResolveComputationStatus {
     object NotComputed : ImplicitBodyResolveComputationStatus()
     object Computing : ImplicitBodyResolveComputationStatus()
 

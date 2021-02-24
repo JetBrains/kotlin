@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrCatch
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -28,13 +26,10 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.utils.SmartList
 
 class IrTryImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType
-) :
-    IrExpressionBase(startOffset, endOffset, type),
-    IrTry {
-
+    override val startOffset: Int,
+    override val endOffset: Int,
+    override var type: IrType,
+) : IrTry() {
     constructor(
         startOffset: Int,
         endOffset: Int,
@@ -74,20 +69,10 @@ class IrTryImpl(
 }
 
 class IrCatchImpl(
-    startOffset: Int,
-    endOffset: Int
-) :
-    IrElementBase(startOffset, endOffset),
-    IrCatch {
-
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        catchParameter: IrVariable
-    ) : this(startOffset, endOffset) {
-        this.catchParameter = catchParameter
-    }
-
+    override val startOffset: Int,
+    override val endOffset: Int,
+    override var catchParameter: IrVariable,
+) : IrCatch() {
     constructor(
         startOffset: Int,
         endOffset: Int,
@@ -97,10 +82,7 @@ class IrCatchImpl(
         this.result = result
     }
 
-    override lateinit var catchParameter: IrVariable
     override lateinit var result: IrExpression
-
-    override val parameter: VariableDescriptor get() = catchParameter.descriptor
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitCatch(this, data)

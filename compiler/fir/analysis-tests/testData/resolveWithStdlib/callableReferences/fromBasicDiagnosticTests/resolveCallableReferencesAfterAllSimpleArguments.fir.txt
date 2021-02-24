@@ -1,0 +1,15 @@
+FILE: resolveCallableReferencesAfterAllSimpleArguments.kt
+    public abstract interface A : R|kotlin/Any| {
+    }
+    public abstract interface B : R|kotlin/Any| {
+    }
+    public final fun fooB(b: R|B|): R|kotlin/Unit| {
+    }
+    public final fun <T> bar(f: R|(T) -> kotlin/Unit|, e: R|T|): R|kotlin/Unit| {
+    }
+    public final fun <T> baz(e: R|T|, f: R|(T) -> kotlin/Unit|): R|kotlin/Unit| {
+    }
+    public final fun test(a: R|A|, b: R|B|): R|kotlin/Unit| {
+        <Inapplicable(INAPPLICABLE): /baz>#<R|A|>(R|<local>/a|, ::<Unresolved reference: fooB>#)
+        <Inapplicable(INAPPLICABLE): /bar>#<R|A|>(::<Unresolved reference: fooB>#, R|<local>/a|)
+    }

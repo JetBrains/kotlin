@@ -17,5 +17,5 @@ public class A {
 package bar
 
 fun main() {
-    foo.A.<!INAPPLICABLE_CANDIDATE!>f<!> {}
+    foo.A.<!HIDDEN!>f<!> {}
 }

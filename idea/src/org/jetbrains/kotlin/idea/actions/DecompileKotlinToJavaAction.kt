@@ -13,6 +13,7 @@ import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.util.ActionCallback
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.internal.showDecompiledCode
 import org.jetbrains.kotlin.idea.util.isRunningInCidrIde
 import org.jetbrains.kotlin.psi.KtFile
@@ -52,14 +53,14 @@ class DecompileKotlinToJavaActionProvider : AttachSourcesProvider {
         if (psiFile !is KtFile || !psiFile.canBeDecompiledToJava()) return emptyList()
 
         return listOf(object : AttachSourcesProvider.AttachSourcesAction {
-            override fun getName() = "Decompile to Java"
+            override fun getName() = KotlinBundle.message("action.decompile.java.name")
 
             override fun perform(orderEntriesContainingFile: List<LibraryOrderEntry>?): ActionCallback {
                 showDecompiledCode(psiFile)
                 return ActionCallback.DONE
             }
 
-            override fun getBusyText() = "Kotlin Classfile"
+            override fun getBusyText() = KotlinBundle.message("action.decompile.busy.text")
         })
     }
 }

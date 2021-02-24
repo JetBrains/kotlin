@@ -10,9 +10,10 @@ import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElementVisitor
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors.*
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
@@ -26,7 +27,7 @@ class MigrateDiagnosticSuppressionInspection : AbstractKotlinInspection(), Clean
             if (annotationEntry.calleeExpression?.text != "Suppress") return
             val context = annotationEntry.analyze(BodyResolveMode.PARTIAL)
             val descriptor = context[BindingContext.ANNOTATION, annotationEntry] ?: return
-            if (descriptor.fqName != KotlinBuiltIns.FQ_NAMES.suppress) return
+            if (descriptor.fqName != StandardNames.FqNames.suppress) return
 
             for (argument in annotationEntry.valueArguments) {
                 val expression = argument.getArgumentExpression() as? KtStringTemplateExpression ?: continue
@@ -36,7 +37,7 @@ class MigrateDiagnosticSuppressionInspection : AbstractKotlinInspection(), Clean
 
                 holder.registerProblem(
                     expression,
-                    "Diagnostic name should be replaced by the new one",
+                    KotlinBundle.message("diagnostic.name.should.be.replaced.by.the.new.one"),
                     ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                     ReplaceDiagnosticNameFix(newDiagnosticFactory)
                 )
@@ -45,9 +46,9 @@ class MigrateDiagnosticSuppressionInspection : AbstractKotlinInspection(), Clean
     }
 
     class ReplaceDiagnosticNameFix(private val diagnosticFactory: DiagnosticFactory<*>) : LocalQuickFix {
-        override fun getName() = "$familyName with ${diagnosticFactory.name}"
+        override fun getName() = KotlinBundle.message("replace.diagnostic.name.fix.text", familyName, diagnosticFactory.name!!)
 
-        override fun getFamilyName() = "Replace diagnostic name"
+        override fun getFamilyName() = KotlinBundle.message("replace.diagnostic.name.fix.family.name")
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             val expression = descriptor.psiElement as? KtStringTemplateExpression ?: return

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrScriptSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
@@ -51,6 +52,7 @@ private tailrec fun erase(type: IrType): IrClass? {
 
     return when (classifier) {
         is IrClassSymbol -> classifier.owner
+        is IrScriptSymbol -> null // TODO: check if correct
         is IrTypeParameterSymbol -> erase(classifier.owner.superTypes.first())
         else -> error(classifier)
     }
@@ -67,11 +69,15 @@ fun getInlineClassUnderlyingType(irClass: IrClass): IrType {
 
 fun getInlineClassBackingField(irClass: IrClass): IrField {
     for (declaration in irClass.declarations) {
-        if (declaration is IrField)
+        if (declaration is IrField && !declaration.isStatic)
             return declaration
 
-        if (declaration is IrProperty)
-            return declaration.backingField ?: continue
+        if (declaration is IrProperty) {
+            val backingField = declaration.backingField
+            if (backingField != null && !backingField.isStatic) {
+                return backingField
+            }
+        }
     }
     error("Inline class has no field: ${irClass.fqNameWhenAvailable}")
 }

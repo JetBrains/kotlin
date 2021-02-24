@@ -4,8 +4,8 @@
 fun foo(list: List<String>, o: Any, result: MutableCollection<Int>) {
     if (o is CharSequence) {
         list
-                .map { it.length + (o as String).capitalize().hashCode() }
-                .map { it * o.length }
-                .filterTo(result) { it > 1000 }
+            .map { it.length + (o as String).capitalize().hashCode() }
+            .map { it * o.length }
+            .filterTo(result) { it > 1000 }
     }
 }

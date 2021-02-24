@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.psi.KtConstructor
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
@@ -15,7 +16,7 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 
 class ChangeObjectToClassFix(element: KtObjectDeclaration) : KotlinQuickFixAction<KtObjectDeclaration>(element) {
-    override fun getText(): String = "Change object to class"
+    override fun getText(): String = KotlinBundle.message("fix.change.object.to.class")
 
     override fun getFamilyName(): String = text
 

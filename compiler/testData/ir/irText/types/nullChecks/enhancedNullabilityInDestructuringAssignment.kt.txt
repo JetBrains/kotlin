@@ -1,0 +1,96 @@
+fun use(x: Any, y: Any) {
+}
+
+class P {
+  constructor(x: Int, y: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val x: Int
+    field = x
+    get
+
+  val y: Int
+    field = y
+    get
+
+  operator fun component1(): Int {
+    return <this>.<get-x>()
+  }
+
+  operator fun component2(): Int {
+    return <this>.<get-y>()
+  }
+
+}
+
+class Q<T1 : Any?, T2 : Any?> {
+  constructor(x: T1, y: T2) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val x: T1
+    field = x
+    get
+
+  val y: T2
+    field = y
+    get
+
+  operator fun component1(): T1 {
+    return <this>.<get-x>()
+  }
+
+  operator fun component2(): T2 {
+    return <this>.<get-y>()
+  }
+
+}
+
+fun test1() {
+  // COMPOSITE {
+  val tmp0_container: @EnhancedNullability P = notNullP()
+  val x: Int = tmp0_container /*!! P */.component1()
+  val y: Int = tmp0_container /*!! P */.component2()
+  // }
+  use(x = x, y = y)
+}
+
+fun test2() {
+  // COMPOSITE {
+  val tmp0_container: @FlexibleNullability Q<@NotNull @EnhancedNullability String, @NotNull @EnhancedNullability String>? = notNullComponents()
+  val x: @NotNull @EnhancedNullability String = tmp0_container /*!! Q<@NotNull @EnhancedNullability String, @NotNull @EnhancedNullability String> */.component1()
+  val y: @NotNull @EnhancedNullability String = tmp0_container /*!! Q<@NotNull @EnhancedNullability String, @NotNull @EnhancedNullability String> */.component2()
+  // }
+  use(x = x /*!! @NotNull String */, y = y /*!! @NotNull String */)
+}
+
+fun test2Desugared() {
+  val tmp: @FlexibleNullability Q<@NotNull @EnhancedNullability String, @NotNull @EnhancedNullability String>? = notNullComponents()
+  val x: @NotNull String = tmp /*!! Q<@NotNull @EnhancedNullability String, @NotNull @EnhancedNullability String> */.component1() /*!! @NotNull String */
+  val y: @NotNull String = tmp /*!! Q<@NotNull @EnhancedNullability String, @NotNull @EnhancedNullability String> */.component2() /*!! @NotNull String */
+  use(x = x, y = y)
+}
+
+fun test3() {
+  // COMPOSITE {
+  val tmp0_container: @EnhancedNullability Q<@NotNull @EnhancedNullability String, @NotNull @EnhancedNullability String> = notNullQAndComponents()
+  val x: @NotNull @EnhancedNullability String = tmp0_container /*!! Q<@NotNull @EnhancedNullability String, @NotNull @EnhancedNullability String> */.component1()
+  val y: @NotNull @EnhancedNullability String = tmp0_container /*!! Q<@NotNull @EnhancedNullability String, @NotNull @EnhancedNullability String> */.component2()
+  // }
+  use(x = x /*!! @NotNull String */, y = y /*!! @NotNull String */)
+}
+
+fun test4() {
+  // COMPOSITE {
+  val tmp0_container: IndexedValue<@NotNull @EnhancedNullability P> = listOfNotNull() /*!! List<@NotNull @EnhancedNullability P> */.withIndex<@NotNull @EnhancedNullability P>().first<IndexedValue<@NotNull @EnhancedNullability P>>()
+  val x: Int = tmp0_container.component1()
+  val y: @NotNull @EnhancedNullability P = tmp0_container.component2()
+  // }
+  use(x = x, y = y /*!! @NotNull P */)
+}
+

@@ -1,16 +1,18 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.expressions.impl
 
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirComponentCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.references.FirNamedReference
+import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -23,25 +25,25 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-class FirComponentCallImpl(
-    override val source: FirSourceElement?,
+@OptIn(FirImplementationDetail::class)
+internal class FirComponentCallImpl(
+    override var source: FirSourceElement?,
+    override val annotations: MutableList<FirAnnotationCall>,
+    override val typeArguments: MutableList<FirTypeProjection>,
+    override var dispatchReceiver: FirExpression,
+    override var extensionReceiver: FirExpression,
+    override var argumentList: FirArgumentList,
     override var explicitReceiver: FirExpression,
-    override val componentIndex: Int
-) : FirComponentCall(), FirCallWithArgumentList, FirAbstractAnnotatedElement {
+    override val componentIndex: Int,
+) : FirComponentCall() {
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
-    override val safe: Boolean get() = false
-    override val typeArguments: MutableList<FirTypeProjection> = mutableListOf()
-    override val dispatchReceiver: FirExpression get() = FirNoReceiverExpression
-    override val extensionReceiver: FirExpression get() = FirNoReceiverExpression
-    override val arguments: MutableList<FirExpression> = mutableListOf()
     override var calleeReference: FirNamedReference = FirSimpleNamedReference(source, Name.identifier("component$componentIndex"), null)
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         typeRef.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
         typeArguments.forEach { it.accept(visitor, data) }
-        arguments.forEach { it.accept(visitor, data) }
+        argumentList.accept(visitor, data)
         calleeReference.accept(visitor, data)
         explicitReceiver.accept(visitor, data)
         if (dispatchReceiver !== explicitReceiver) {
@@ -54,11 +56,22 @@ class FirComponentCallImpl(
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirComponentCallImpl {
         typeRef = typeRef.transformSingle(transformer, data)
-        annotations.transformInplace(transformer, data)
+        transformAnnotations(transformer, data)
         transformTypeArguments(transformer, data)
-        transformArguments(transformer, data)
+        argumentList = argumentList.transformSingle(transformer, data)
         transformCalleeReference(transformer, data)
         explicitReceiver = explicitReceiver.transformSingle(transformer, data)
+        if (dispatchReceiver !== explicitReceiver) {
+            dispatchReceiver = dispatchReceiver.transformSingle(transformer, data)
+        }
+        if (extensionReceiver !== explicitReceiver && extensionReceiver !== dispatchReceiver) {
+            extensionReceiver = extensionReceiver.transformSingle(transformer, data)
+        }
+        return this
+    }
+
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirComponentCallImpl {
+        annotations.transformInplace(transformer, data)
         return this
     }
 
@@ -68,15 +81,12 @@ class FirComponentCallImpl(
     }
 
     override fun <D> transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirComponentCallImpl {
+        dispatchReceiver = dispatchReceiver.transformSingle(transformer, data)
         return this
     }
 
     override fun <D> transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirComponentCallImpl {
-        return this
-    }
-
-    override fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirComponentCallImpl {
-        arguments.transformInplace(transformer, data)
+        extensionReceiver = extensionReceiver.transformSingle(transformer, data)
         return this
     }
 
@@ -90,7 +100,34 @@ class FirComponentCallImpl(
         return this
     }
 
+    override fun replaceSource(newSource: FirSourceElement?) {
+        source = newSource
+    }
+
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {
         typeRef = newTypeRef
+    }
+
+    override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>) {
+        typeArguments.clear()
+        typeArguments.addAll(newTypeArguments)
+    }
+
+    override fun replaceArgumentList(newArgumentList: FirArgumentList) {
+        argumentList = newArgumentList
+    }
+
+    override fun replaceCalleeReference(newCalleeReference: FirNamedReference) {
+        calleeReference = newCalleeReference
+    }
+
+    override fun replaceCalleeReference(newCalleeReference: FirReference) {
+        require(newCalleeReference is FirNamedReference)
+        replaceCalleeReference(newCalleeReference)
+    }
+
+    override fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?) {
+        require(newExplicitReceiver != null)
+        explicitReceiver = newExplicitReceiver
     }
 }

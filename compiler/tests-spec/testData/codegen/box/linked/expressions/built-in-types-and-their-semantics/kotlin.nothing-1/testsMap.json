@@ -6,61 +6,81 @@
           "specVersion": "0.1-213",
           "casesNumber": 0,
           "description": "check kotlin.Nothing type",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1/pos/1.6.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-213",
           "casesNumber": 0,
           "description": "check kotlin.Nothing type",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1/pos/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-213",
           "casesNumber": 0,
           "description": "check kotlin.Nothing type",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1/pos/1.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-213",
           "casesNumber": 0,
           "description": "check kotlin.Nothing type",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1/pos/1.7.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-213",
           "casesNumber": 0,
           "description": "ckeck a common type of String and Nothing is String",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1/pos/1.10.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-213",
           "casesNumber": 0,
           "description": "check kotlin.Nothing type",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1/pos/1.8.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-213",
           "casesNumber": 0,
           "description": "check kotlin.Nothing type",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1/pos/1.9.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-213",
           "casesNumber": 0,
           "description": "check kotlin.Nothing type",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1/pos/1.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-213",
           "casesNumber": 0,
           "description": "check kotlin.Nothing type",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1/pos/1.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-213",
           "casesNumber": 0,
           "description": "check kotlin.Nothing by throwing the exception",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/built-in-types-and-their-semantics/kotlin.nothing-1/p-1/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ]
     }

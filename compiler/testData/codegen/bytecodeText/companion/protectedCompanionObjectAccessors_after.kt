@@ -1,6 +1,4 @@
 // !LANGUAGE: +ProperVisibilityForCompanionObjectInstanceField
-// IGNORE_BACKEND: JVM_IR
-// ^ TODO implement ProperVisibilityForCompanionObjectInstanceField feature support in JMV_IR
 
 // FILE: Base.kt
 package a

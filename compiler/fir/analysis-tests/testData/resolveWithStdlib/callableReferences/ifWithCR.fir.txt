@@ -1,0 +1,23 @@
+FILE: ifWithCR.kt
+    private final var R|kotlin/Int|.readOnlyWrapper: R|kotlin/CharSequence?|
+        private get(): R|kotlin/CharSequence?| {
+            ^ Null(null)
+        }
+        private set(value: R|kotlin/CharSequence?|): R|kotlin/Unit|
+    private final var R|kotlin/Int|.mutableWrapper: R|kotlin/CharSequence?|
+        private get(): R|kotlin/CharSequence?| {
+            ^ Null(null)
+        }
+        private set(value: R|kotlin/CharSequence?|): R|kotlin/Unit|
+    public final fun main(x: R|kotlin/Int|): R|kotlin/Unit| {
+        lval x: R|kotlin/reflect/KMutableProperty0<kotlin/CharSequence?>| = when () {
+            CMP(>, R|<local>/x|.R|kotlin/Int.compareTo|(Int(1))) ->  {
+                R|<local>/x|::R|/readOnlyWrapper|
+            }
+            else ->  {
+                R|<local>/x|::R|/mutableWrapper|
+            }
+        }
+
+        R|<local>/x|.R|SubstitutionOverride<kotlin/reflect/KMutableProperty0.get: R|kotlin/CharSequence?|>|()
+    }

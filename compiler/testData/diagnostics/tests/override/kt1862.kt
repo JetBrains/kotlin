@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 open class Aaa() {
     open fun foo() = 1
 }

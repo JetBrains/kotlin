@@ -1,0 +1,4 @@
+package
+
+public fun calculateNumber(/*0*/ block: () -> kotlin.Int): kotlin.Int
+public fun </*0*/ R> calculateResult(/*0*/ num: kotlin.Int?, /*1*/ calculate: (kotlin.Int?) -> R): R

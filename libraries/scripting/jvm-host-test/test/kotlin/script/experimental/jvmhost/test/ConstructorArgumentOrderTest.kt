@@ -6,6 +6,7 @@
 package kotlin.script.experimental.jvmhost.test
 
 import org.junit.Test
+import kotlin.script.experimental.api.EvaluationResult
 import kotlin.script.experimental.api.ResultWithDiagnostics
 import kotlin.script.experimental.api.implicitReceivers
 import kotlin.script.experimental.api.providedProperties
@@ -21,7 +22,7 @@ class ConstructorArgumentsOrderTest {
 
         assertTrue(
             res is ResultWithDiagnostics.Success,
-            "test failed:\n  ${res.reports.joinToString("\n  ") { it.message + if (it.exception == null) "" else ": ${it.exception}" }}"
+            "test failed:\n  ${res.render()}"
         )
     }
 
@@ -33,7 +34,7 @@ class ConstructorArgumentsOrderTest {
 
         assertTrue(
             res is ResultWithDiagnostics.Success,
-            "test failed:\n  ${res.reports.joinToString("\n  ") { it.message + if (it.exception == null) "" else ": ${it.exception}" }}"
+            "test failed:\n  ${res.render()}"
         )
     }
 
@@ -46,7 +47,10 @@ class ConstructorArgumentsOrderTest {
 
         assertTrue(
             res is ResultWithDiagnostics.Success,
-            "test failed:\n  ${res.reports.joinToString("\n  ") { it.message + if (it.exception == null) "" else ": ${it.exception}" }}"
+            "test failed:\n  ${res.render()}"
         )
     }
+
+    private fun ResultWithDiagnostics<EvaluationResult>.render() =
+        reports.joinToString("\n  ") { it.message + if (it.exception == null) "" else ": ${it.exception!!.printStackTrace()}" }
 }

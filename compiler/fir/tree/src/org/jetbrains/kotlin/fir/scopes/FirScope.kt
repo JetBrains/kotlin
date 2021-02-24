@@ -1,31 +1,73 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.scopes
 
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
 
 abstract class FirScope {
-    open fun processClassifiersByName(
+    open fun processClassifiersByNameWithSubstitution(
         name: Name,
-        processor: (FirClassifierSymbol<*>) -> Unit
-    ) {}
+        processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit
+    ) {
+    }
 
     open fun processFunctionsByName(
         name: Name,
-        processor: (FirFunctionSymbol<*>) -> Unit
-    ) {}
+        processor: (FirNamedFunctionSymbol) -> Unit
+    ) {
+    }
 
     open fun processPropertiesByName(
         name: Name,
-        // NB: it'd be great to write FirVariableSymbol<*> here, but there is FirAccessorSymbol :(
-        processor: (FirCallableSymbol<*>) -> Unit
-    ) {}
+        processor: (FirVariableSymbol<*>) -> Unit
+    ) {
+    }
+
+    open fun processDeclaredConstructors(
+        processor: (FirConstructorSymbol) -> Unit
+    ) {
+    }
+
+    open fun mayContainName(name: Name) = true
+}
+
+fun FirScope.getSingleClassifier(name: Name): FirClassifierSymbol<*>? = mutableListOf<FirClassifierSymbol<*>>().apply {
+    processClassifiersByName(name, this::add)
+}.singleOrNull()
+
+fun FirScope.getFunctions(name: Name): List<FirNamedFunctionSymbol> = mutableListOf<FirNamedFunctionSymbol>().apply {
+    processFunctionsByName(name, this::add)
+}
+
+fun FirScope.getProperties(name: Name): List<FirVariableSymbol<*>> = mutableListOf<FirVariableSymbol<*>>().apply {
+    processPropertiesByName(name, this::add)
+}
+
+fun FirScope.getDeclaredConstructors(): List<FirConstructorSymbol> = mutableListOf<FirConstructorSymbol>().apply {
+    processDeclaredConstructors(this::add)
+}
+
+fun FirTypeScope.processOverriddenFunctionsAndSelf(
+    functionSymbol: FirNamedFunctionSymbol,
+    processor: (FirNamedFunctionSymbol) -> ProcessorAction
+): ProcessorAction {
+    if (!processor(functionSymbol)) return ProcessorAction.STOP
+
+    return processOverriddenFunctions(functionSymbol, processor)
+}
+
+fun FirTypeScope.processOverriddenPropertiesAndSelf(
+    propertySymbol: FirPropertySymbol,
+    processor: (FirPropertySymbol) -> ProcessorAction
+): ProcessorAction {
+    if (!processor(propertySymbol)) return ProcessorAction.STOP
+
+    return processOverriddenProperties(propertySymbol, processor)
 }
 
 enum class ProcessorAction {
@@ -48,4 +90,12 @@ enum class ProcessorAction {
         if (this == NEXT || other == NEXT) return NEXT
         return this
     }
+}
+
+@Suppress("NOTHING_TO_INLINE")
+inline fun FirScope.processClassifiersByName(
+    name: Name,
+    noinline processor: (FirClassifierSymbol<*>) -> Unit
+) {
+    processClassifiersByNameWithSubstitution(name) { symbol, _ -> processor(symbol) }
 }

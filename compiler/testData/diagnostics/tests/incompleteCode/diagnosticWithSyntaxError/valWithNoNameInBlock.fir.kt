@@ -40,11 +40,11 @@ fun foo() {
     property1 = 1
 
     val
-    propertyWithBy by <!UNRESOLVED_REFERENCE!>lazy<!> { 1 }
+    propertyWithBy by <!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>lazy<!> { 1 }
 
     val
     propertyWithType: Int
 
     val
-    (<!UNRESOLVED_REFERENCE!>a<!>, <!UNRESOLVED_REFERENCE!>b<!>) = 1
+    (a, b) = <!COMPONENT_FUNCTION_MISSING, COMPONENT_FUNCTION_MISSING!>1<!>
 }

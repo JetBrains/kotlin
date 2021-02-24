@@ -1,0 +1,6 @@
+// WITH_RUNTIME
+fun foo(list: List<String>): String {
+    val first = list.firstOrNull()
+    if (first == null) error("empty")
+    return "First length: ${first.length}"
+}

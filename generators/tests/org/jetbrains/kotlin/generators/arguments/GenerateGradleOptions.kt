@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.generators.arguments
 
 import org.jetbrains.kotlin.cli.common.arguments.*
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.Printer
 import java.io.File
@@ -49,7 +50,7 @@ fun generateKotlinGradleOptions(withPrinterToFile: (targetFile: File, Printer.()
                           commonOptions + additionalOptions)
     }
 
-    println("### Attributes Common for JVM, JS, and JS DCE\n")
+    println("### Attributes common for JVM, JS, and JS DCE\n")
     generateMarkdown(commonOptions + additionalOptions)
 
     val commonCompilerInterfaceFqName = FqName("org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions")
@@ -60,7 +61,7 @@ fun generateKotlinGradleOptions(withPrinterToFile: (targetFile: File, Printer.()
                           parentType = commonInterfaceFqName)
     }
 
-    println("\n### Attributes Common for JVM and JS\n")
+    println("\n### Attributes common for JVM and JS\n")
     generateMarkdown(commonCompilerOptions)
 
     // generate jvm interface
@@ -82,7 +83,7 @@ fun generateKotlinGradleOptions(withPrinterToFile: (targetFile: File, Printer.()
                      commonOptions + commonCompilerOptions + jvmOptions)
     }
 
-    println("\n### Attributes Specific for JVM\n")
+    println("\n### Attributes specific for JVM\n")
     generateMarkdown(jvmOptions)
 
     // generate js interface
@@ -103,7 +104,7 @@ fun generateKotlinGradleOptions(withPrinterToFile: (targetFile: File, Printer.()
                      commonOptions + commonCompilerOptions + jsOptions)
     }
 
-    println("\n### Attributes Specific for JS\n")
+    println("\n### Attributes specific for JS\n")
     generateMarkdown(jsOptions)
 
     // generate JS DCE interface and implementation
@@ -144,7 +145,7 @@ fun generateKotlinGradleOptions(withPrinterToFile: (targetFile: File, Printer.()
 
 }
 
-fun main(args: Array<String>) {
+fun main() {
     fun getPrinter(file: File, fn: Printer.()->Unit) {
         if (!file.exists()) {
             file.parentFile.mkdirs()
@@ -159,8 +160,15 @@ fun main(args: Array<String>) {
     generateKotlinGradleOptions(::getPrinter)
 }
 
+private inline fun <reified T : Any> List<KProperty1<T, *>>.filterToBeDeleted() = filter { prop ->
+    prop.findAnnotation<DeprecatedOption>()
+        ?.let { LanguageVersion.fromVersionString(it.removeAfter) }
+        ?.let { it >= LanguageVersion.LATEST_STABLE }
+        ?: true
+}
+
 private inline fun <reified T : Any> gradleOptions(): List<KProperty1<T, *>> =
-        T::class.declaredMemberProperties.filter { it.findAnnotation<GradleOption>() != null }.sortedBy { it.name }
+        T::class.declaredMemberProperties.filter { it.findAnnotation<GradleOption>() != null }.filterToBeDeleted().sortedBy { it.name }
 
 private fun File(baseDir: File, fqName: FqName): File {
     val fileRelativePath = fqName.asString().replace(".", "/") + ".kt"
@@ -173,6 +181,7 @@ private fun Printer.generateInterface(type: FqName, properties: List<KProperty1<
         for (property in properties) {
             println()
             generateDoc(property)
+            generateOptionDeprecation(property)
             generatePropertyDeclaration(property)
         }
     }
@@ -248,6 +257,12 @@ private fun Printer.generatePropertyDeclaration(property: KProperty1<*, *>, modi
     println("$modifiers var ${property.name}: $returnType")
 }
 
+private fun Printer.generateOptionDeprecation(property: KProperty1<*, *>) {
+    property.findAnnotation<DeprecatedOption>()
+        ?.let { DeprecatedOptionAnnotator.generateOptionAnnotation(it) }
+        ?.also { println(it) }
+}
+
 private fun Printer.generateDoc(property: KProperty1<*, *>) {
     val description = property.findAnnotation<Argument>()!!.description
     val possibleValues = property.gradleValues.possibleValues
@@ -274,6 +289,8 @@ private fun generateMarkdown(properties: List<KProperty1<*, *>>) {
     for (property in properties) {
         val name = property.name
         if (name == "includeRuntime") continue   // This option has no effect in Gradle builds
+        val renderName = listOfNotNull("`$name`", property.findAnnotation<DeprecatedOption>()?.let { "__(Deprecated)__" })
+            .joinToString(" ")
         val description = property.findAnnotation<Argument>()!!.description
         val possibleValues = property.gradleValues.possibleValues
         val defaultValue = when (property.gradleDefaultValue) {
@@ -282,7 +299,7 @@ private fun generateMarkdown(properties: List<KProperty1<*, *>>) {
             else -> property.gradleDefaultValue
         }
 
-        println("| `$name` | $description | ${possibleValues.orEmpty().joinToString()} | $defaultValue |")
+        println("| $renderName | $description | ${possibleValues.orEmpty().joinToString()} | $defaultValue |")
     }
 }
 
@@ -304,3 +321,12 @@ private val KProperty1<*, *>.gradleReturnType: String
 
 private inline fun <reified T> KAnnotatedElement.findAnnotation(): T? =
         annotations.filterIsInstance<T>().firstOrNull()
+
+object DeprecatedOptionAnnotator {
+    fun generateOptionAnnotation(annotation: DeprecatedOption): String {
+        val message = annotation.message.takeIf { it.isNotEmpty() }?.let { "message = \"$it\"" }
+        val level = "level = DeprecationLevel.${annotation.level.name}"
+        val arguments = listOfNotNull(message, level).joinToString()
+        return "@Deprecated($arguments)"
+    }
+}

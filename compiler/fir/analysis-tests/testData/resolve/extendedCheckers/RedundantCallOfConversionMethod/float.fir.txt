@@ -1,0 +1,3 @@
+FILE: float.kt
+    public final val foo: R|kotlin/Float| = Float(1.1).R|kotlin/Float.toFloat|()
+        public get(): R|kotlin/Float|

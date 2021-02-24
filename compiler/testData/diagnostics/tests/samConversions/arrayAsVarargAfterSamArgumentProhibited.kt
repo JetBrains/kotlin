@@ -12,7 +12,7 @@ public class Test {
         return null;
     }
     public Test(Runnable r, String... strs) {}
-    public Test(Runnable r, Runnable r, String... strs) {}
+    public Test(Runnable r1, Runnable r2, String... strs) {}
 }
 
 // FILE: main.kt

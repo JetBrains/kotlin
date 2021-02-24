@@ -1,0 +1,22 @@
+FILE: genericPropertyAccess.kt
+    public abstract class Base<T> : R|kotlin/Any| {
+        public constructor<T>(x: R|T|): R|Base<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|T| = R|<local>/x|
+            public get(): R|T|
+
+        public abstract fun foo(): R|T|
+
+    }
+    public final class Derived<T> : R|Base<T>| {
+        public constructor<T>(x: R|T|): R|Derived<T>| {
+            super<R|Base<T>|>(R|<local>/x|)
+        }
+
+        public final override fun foo(): R|T| {
+            ^foo this@R|/Derived|.R|SubstitutionOverride</Derived.x: R|T|>|
+        }
+
+    }

@@ -10,6 +10,7 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.diagnostics.Severity
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.quickfix.ChangeToLabeledReturnFix
 import org.jetbrains.kotlin.psi.KtLambdaExpression
@@ -28,7 +29,7 @@ class UnlabeledReturnInsideLambdaInspection : AbstractKotlinInspection() {
             if (returnExpression.analyze().diagnostics.forElement(returnExpression).any { it.severity == Severity.ERROR }) return
             holder.registerProblem(
                 returnExpression.returnKeyword,
-                "Unlabeled return inside lambda",
+                KotlinBundle.message("unlabeled.return.inside.lambda"),
                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                 IntentionWrapper(
                     ChangeToLabeledReturnFix(returnExpression, labeledReturn = "return@${parentFunction.name}"),

@@ -1,11 +1,10 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.declarations
 
-import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
@@ -17,16 +16,24 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-interface FirTypedDeclaration : FirDeclaration, FirAnnotationContainer {
+interface FirTypedDeclaration : FirAnnotatedDeclaration {
     override val source: FirSourceElement?
     override val session: FirSession
     override val resolvePhase: FirResolvePhase
+    override val origin: FirDeclarationOrigin
+    override val attributes: FirDeclarationAttributes
     override val annotations: List<FirAnnotationCall>
     val returnTypeRef: FirTypeRef
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitTypedDeclaration(this, data)
 
+    override fun replaceSource(newSource: FirSourceElement?)
+
+    override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
+
     fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef)
+
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirTypedDeclaration
 
     fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirTypedDeclaration
 }

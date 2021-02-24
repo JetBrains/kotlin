@@ -28,6 +28,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.popup.*
+import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.Pass
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
@@ -48,6 +49,7 @@ import com.intellij.ui.components.JBList
 import com.intellij.usageView.UsageViewTypeLocation
 import com.intellij.util.VisibilityUtil
 import com.intellij.util.containers.MultiMap
+import org.jetbrains.annotations.Nls
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.getAccessorLightMethods
@@ -75,12 +77,11 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.toValVar
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KtPsiClassWrapper
 import org.jetbrains.kotlin.idea.refactoring.rename.canonicalRender
 import org.jetbrains.kotlin.idea.roots.isOutsideKotlinAwareSourceRoot
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
-import org.jetbrains.kotlin.idea.util.actualsForExpected
-import org.jetbrains.kotlin.idea.util.liftToExpected
+import org.jetbrains.kotlin.idea.util.*
+import org.jetbrains.kotlin.idea.util.ProgressIndicatorUtils.underModalProgress
 import org.jetbrains.kotlin.idea.util.string.collapseSpaces
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.lexer.KtTokens.OVERRIDE_KEYWORD
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.psi.*
@@ -374,10 +375,10 @@ fun <T> chooseContainerElement(
             private fun PsiElement.renderDeclaration(): String? {
                 if (this is KtFunctionLiteral || isFunctionalExpression()) return renderText()
 
-                val descriptor = when {
-                    this is KtFile -> name
-                    this is KtElement -> analyze()[BindingContext.DECLARATION_TO_DESCRIPTOR, this]
-                    this is PsiMember -> getJavaMemberDescriptor()
+                val descriptor = when (this) {
+                    is KtFile -> name
+                    is KtElement -> analyze()[BindingContext.DECLARATION_TO_DESCRIPTOR, this]
+                    is PsiMember -> getJavaMemberDescriptor()
                     else -> null
                 } ?: return null
                 val name = renderName()
@@ -390,7 +391,7 @@ fun <T> chooseContainerElement(
             }
 
             private fun PsiElement.renderText(): String = when (this) {
-                is SeparateFileWrapper -> "Extract to separate file"
+                is SeparateFileWrapper -> KotlinBundle.message("refactoring.extract.to.separate.file.text")
                 is PsiPackageBase -> qualifiedName
                 else -> {
                     val text = text ?: "<invalid text>"
@@ -852,8 +853,41 @@ val PsiElement.isInsideInjectedFragment: Boolean
 fun checkSuperMethods(
     declaration: KtDeclaration,
     ignore: Collection<PsiElement>?,
-    actionString: String
+    @Nls actionString: String
 ): List<PsiElement> {
+    if (!declaration.hasModifier(OVERRIDE_KEYWORD)) return listOf(declaration)
+
+    val project = declaration.project
+
+    val (declarationDescriptor, overriddenElementsToDescriptor) =
+        underModalProgress(
+            project,
+            KotlinBundle.message("find.usages.progress.text.declaration.superMethods"))
+        {
+            val declarationDescriptor = declaration.unsafeResolveToDescriptor() as CallableDescriptor
+
+            if (declarationDescriptor is LocalVariableDescriptor) return@underModalProgress (declarationDescriptor to emptyMap<PsiElement, CallableDescriptor>())
+
+            val overriddenElementsToDescriptor = HashMap<PsiElement, CallableDescriptor>()
+            for (overriddenDescriptor in DescriptorUtils.getAllOverriddenDescriptors(
+                declarationDescriptor
+            )) {
+                val overriddenDeclaration = DescriptorToSourceUtilsIde.getAnyDeclaration(
+                    project,
+                    overriddenDescriptor
+                ) ?: continue
+                if (overriddenDeclaration is KtNamedFunction || overriddenDeclaration is KtProperty || overriddenDeclaration is PsiMethod || overriddenDeclaration is KtParameter) {
+                    overriddenElementsToDescriptor[overriddenDeclaration] = overriddenDescriptor
+                }
+            }
+            if (ignore != null) {
+                overriddenElementsToDescriptor.keys.removeAll(ignore)
+            }
+            (declarationDescriptor to overriddenElementsToDescriptor)
+        }
+
+    if (overriddenElementsToDescriptor.isEmpty()) return listOf(declaration)
+
     fun getClassDescriptions(overriddenElementsToDescriptor: Map<PsiElement, CallableDescriptor>): List<String> {
         return overriddenElementsToDescriptor.entries.map { entry ->
             val (element, descriptor) = entry
@@ -876,7 +910,7 @@ fun checkSuperMethods(
         val superClassDescriptions = getClassDescriptions(overriddenElementsToDescriptor)
 
         val message = KotlinBundle.message(
-            "x.overrides.y.in.class.list",
+            "override.declaration.x.overrides.y.in.class.list",
             DescriptorRenderer.COMPACT_WITH_SHORT_TYPES.render(declarationDescriptor),
             "\n${superClassDescriptions.joinToString(separator = "")}",
             actionString
@@ -892,25 +926,6 @@ fun checkSuperMethods(
             else -> emptyList()
         }
     }
-
-
-    val declarationDescriptor = declaration.unsafeResolveToDescriptor() as CallableDescriptor
-
-    if (declarationDescriptor is LocalVariableDescriptor) return listOf(declaration)
-
-    val project = declaration.project
-    val overriddenElementsToDescriptor = HashMap<PsiElement, CallableDescriptor>()
-    for (overriddenDescriptor in DescriptorUtils.getAllOverriddenDescriptors(declarationDescriptor)) {
-        val overriddenDeclaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, overriddenDescriptor) ?: continue
-        if (overriddenDeclaration is KtNamedFunction || overriddenDeclaration is KtProperty || overriddenDeclaration is PsiMethod || overriddenDeclaration is KtParameter) {
-            overriddenElementsToDescriptor[overriddenDeclaration] = overriddenDescriptor
-        }
-    }
-    if (ignore != null) {
-        overriddenElementsToDescriptor.keys.removeAll(ignore)
-    }
-
-    if (overriddenElementsToDescriptor.isEmpty()) return listOf(declaration)
 
     return askUserForMethodsToSearch(declarationDescriptor, overriddenElementsToDescriptor)
 }
@@ -1029,7 +1044,7 @@ fun PsiElement.getLineCount(): Int {
 
 @Deprecated(
     "Use org.jetbrains.kotlin.idea.core.util.toPsiDirectory() instead",
-    ReplaceWith("this.toPsiDirectory()", "org.jetbrains.kotlin.idea.core.util.toPsiDirectory"),
+    ReplaceWith("this.toPsiDirectory(project)", "org.jetbrains.kotlin.idea.core.util.toPsiDirectory"),
     DeprecationLevel.ERROR
 )
 fun VirtualFile.toPsiDirectory(project: Project): PsiDirectory? {
@@ -1038,7 +1053,7 @@ fun VirtualFile.toPsiDirectory(project: Project): PsiDirectory? {
 
 @Deprecated(
     "Use org.jetbrains.kotlin.idea.core.util.toPsiFile() instead",
-    ReplaceWith("this.toPsiFile()", "org.jetbrains.kotlin.idea.core.util.toPsiFile"),
+    ReplaceWith("this.toPsiFile(project)", "org.jetbrains.kotlin.idea.core.util.toPsiFile"),
     DeprecationLevel.ERROR
 )
 fun VirtualFile.toPsiFile(project: Project): PsiFile? {

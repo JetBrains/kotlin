@@ -5,54 +5,134 @@
 
 package org.jetbrains.kotlin.fir.scopes.jvm
 
-import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSettings
+import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.scopes.*
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
 
 class JvmMappedScope(
     private val declaredMemberScope: FirScope,
     private val javaMappedClassUseSiteScope: FirScope,
-    private val whiteListSignaturesByName: Map<Name, List<String>>
-) : FirScope() {
+    private val signatures: Signatures
+) : FirTypeScope() {
 
-    override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
-        val whiteListSignatures = whiteListSignaturesByName[name]
+    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
+        val visibleMethods = signatures.visibleMethodSignaturesByName[name]
             ?: return declaredMemberScope.processFunctionsByName(name, processor)
+
+        val declared = mutableListOf<FirNamedFunctionSymbol>()
+        declaredMemberScope.processFunctionsByName(name) { symbol ->
+            declared += symbol
+            processor(symbol)
+        }
+
+        val declaredSignatures by lazy {
+            declared.mapTo(mutableSetOf()) { it.fir.computeJvmDescriptor() }
+        }
+
         javaMappedClassUseSiteScope.processFunctionsByName(name) { symbol ->
             val jvmSignature = symbol.fir.computeJvmDescriptor()
-                .replace("kotlin/Any", "java/lang/Object")
-                .replace("kotlin/String", "java/lang/String")
-            if (jvmSignature in whiteListSignatures) {
+            if (jvmSignature in visibleMethods && jvmSignature !in declaredSignatures) {
                 processor(symbol)
             }
         }
-
-
-        declaredMemberScope.processFunctionsByName(name, processor)
     }
 
-    override fun processPropertiesByName(name: Name, processor: (FirCallableSymbol<*>) -> Unit) {
+    override fun processDirectOverriddenFunctionsWithBaseScope(
+        functionSymbol: FirNamedFunctionSymbol,
+        processor: (FirNamedFunctionSymbol, FirTypeScope) -> ProcessorAction
+    ) = ProcessorAction.NONE
+
+    override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {
+        val hiddenConstructors = signatures.hiddenConstructors
+        if (hiddenConstructors.isNotEmpty()) {
+            javaMappedClassUseSiteScope.processDeclaredConstructors { symbol ->
+                val jvmSignature = symbol.fir.computeJvmDescriptor()
+                if (jvmSignature !in hiddenConstructors) {
+                    processor(symbol)
+                }
+            }
+        } else {
+            javaMappedClassUseSiteScope.processDeclaredConstructors(processor)
+        }
+
+        declaredMemberScope.processDeclaredConstructors(processor)
+    }
+
+    override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
         declaredMemberScope.processPropertiesByName(name, processor)
     }
 
-    override fun processClassifiersByName(name: Name, processor: (FirClassifierSymbol<*>) -> Unit) {
-        declaredMemberScope.processClassifiersByName(name, processor)
+    override fun processDirectOverriddenPropertiesWithBaseScope(
+        propertySymbol: FirPropertySymbol,
+        processor: (FirPropertySymbol, FirTypeScope) -> ProcessorAction
+    ): ProcessorAction = ProcessorAction.NONE
+
+    override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
+        declaredMemberScope.processClassifiersByNameWithSubstitution(name, processor)
+    }
+
+    override fun getCallableNames(): Set<Name> {
+        return declaredMemberScope.getContainingCallableNamesIfPresent() + signatures.visibleMethodSignaturesByName.keys
+    }
+
+    override fun getClassifierNames(): Set<Name> {
+        return declaredMemberScope.getContainingClassifierNamesIfPresent()
     }
 
     companion object {
-        fun prepareSignatures(klass: FirRegularClass): Map<Name, List<String>> {
+        data class Signatures(val visibleMethodSignaturesByName: Map<Name, Set<String>>, val hiddenConstructors: Set<String>) {
+            fun isEmpty() = visibleMethodSignaturesByName.isEmpty() && hiddenConstructors.isEmpty()
+            fun isNotEmpty() = !isEmpty()
+        }
+
+        // NOTE: No-arg constructors
+        @OptIn(ExperimentalStdlibApi::class)
+        private val additionalHiddenConstructors = buildSet {
+            // kotlin.text.String pseudo-constructors should be used instead of java.lang.String constructors
+            listOf(
+                "",
+                "Lkotlin/ByteArray;IILjava/nio/charset/Charset;",
+                "Lkotlin/ByteArray;Ljava/nio/charset/Charset;",
+                "Lkotlin/ByteArray;II",
+                "Lkotlin/ByteArray;",
+                "Lkotlin/CharArray;",
+                "Lkotlin/CharArray;II",
+                "Lkotlin/IntArray;II",
+                "Ljava/lang/StringBuffer;",
+                "Ljava/lang/StringBuilder;",
+            ).mapTo(this) { arguments -> "java/lang/String.<init>($arguments)V" }
+
+            listOf(
+                "",
+                "Ljava/lang/String;Ljava/lang/Throwable;",
+                "Ljava/lang/Throwable;",
+                "Ljava/lang/String;"
+            ).mapTo(this) { arguments -> "java/lang/Throwable.<init>($arguments)V" }
+        }
+
+        fun prepareSignatures(klass: FirRegularClass, isMutable: Boolean): Signatures {
+
             val signaturePrefix = klass.symbol.classId.toString()
-            val filteredSignatures = JvmBuiltInsSettings.WHITE_LIST_METHOD_SIGNATURES.filter { signature ->
-                signature.startsWith(signaturePrefix)
+            val visibleMethodsByName = mutableMapOf<Name, MutableSet<String>>()
+            JvmBuiltInsSignatures.VISIBLE_METHOD_SIGNATURES.filter { signature ->
+                signature in JvmBuiltInsSignatures.MUTABLE_METHOD_SIGNATURES == isMutable &&
+                        signature.startsWith(signaturePrefix)
             }.map { signature ->
                 // +1 to delete dot before function name
                 signature.substring(signaturePrefix.length + 1)
+            }.forEach {
+                visibleMethodsByName.getOrPut(Name.identifier(it.substringBefore("("))) { mutableSetOf() }.add(it)
             }
-            return filteredSignatures.groupBy { Name.identifier(it.substringBefore("(")) }
+
+            val hiddenConstructors =
+                (JvmBuiltInsSignatures.HIDDEN_CONSTRUCTOR_SIGNATURES + additionalHiddenConstructors)
+                    .filter { it.startsWith(signaturePrefix) }
+                    .mapTo(mutableSetOf()) { it.substring(signaturePrefix.length + 1) }
+
+            return Signatures(visibleMethodsByName, hiddenConstructors)
         }
     }
 }

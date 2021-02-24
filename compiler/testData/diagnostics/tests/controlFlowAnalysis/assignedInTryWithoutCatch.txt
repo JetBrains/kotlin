@@ -1,0 +1,6 @@
+package
+
+public fun assignedInTry(): kotlin.Unit
+public fun assignedInTryAndFinally(): kotlin.Unit
+public fun sideEffectBeforeAssignmentInTry(/*0*/ s: kotlin.Any): kotlin.Unit
+public fun sideEffectBeforeAssignmentInTryButNotFinally(/*0*/ s: kotlin.Any): kotlin.Unit

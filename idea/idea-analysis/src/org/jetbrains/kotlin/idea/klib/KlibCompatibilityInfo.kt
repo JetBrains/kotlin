@@ -20,11 +20,11 @@ sealed class KlibCompatibilityInfo(val isCompatible: Boolean) {
 }
 
 fun KotlinLibrary.getCompatibilityInfo(): KlibCompatibilityInfo {
-    val hasPre14Manifest = readSafe(false) { has_pre_1_4_manifest }
+    val hasPre14Manifest = safeRead(false) { has_pre_1_4_manifest }
     if (hasPre14Manifest)
         return Pre14Layout
 
-    val metadataVersion = readSafe(null) { metadataVersion }
+    val metadataVersion = safeRead(null) { metadataVersion }
     return when {
         metadataVersion == null -> IncompatibleMetadata(true) // too old KLIB format, even doesn't have metadata version
         !metadataVersion.isCompatible() -> IncompatibleMetadata(!metadataVersion.isAtLeast(KlibMetadataVersion.INSTANCE))

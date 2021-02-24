@@ -18,15 +18,12 @@ internal interface I1 : I {
 internal open class B {
     open val fromB1: String
         get() = ""
-
     open var fromB2: String?
         get() = ""
         set(value) {}
-
     open var fromB3: String?
         get() = ""
         set(value) {}
-
     open var fromB4: String?
         get() = ""
         set(value) {}
@@ -36,10 +33,8 @@ internal open class B {
 
 internal abstract class C(override val something1: Int) : B(), I {
     private var mySomething6 = 0
-
     override val something2: Int
         get() = 0
-
     override var something3: Int
         get() = 0
         set(value) {}
@@ -59,19 +54,16 @@ internal abstract class C(override val something1: Int) : B(), I {
 
     override val fromB1: String
         get() = super.fromB1
-
     override var fromB2: String?
         get() = super.fromB2
         set(value) {
             super.fromB2 = value
         }
-
     override var fromB3: String?
         get() = super.fromB3
         set(fromB3) {
             super.fromB3 = fromB3
         }
-
     override var fromB4: String?
         get() = super.fromB4
         set(value) {
@@ -85,5 +77,4 @@ internal abstract class C(override val something1: Int) : B(), I {
     override fun setFromB5(value: String?) {
         super.setFromB5(value)
     }
-
 }

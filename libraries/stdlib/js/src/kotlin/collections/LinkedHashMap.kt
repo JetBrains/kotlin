@@ -1,7 +1,8 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+
 /*
  * Based on GWT LinkedHashMap
  * Copyright 2008 Google Inc.
@@ -30,12 +31,17 @@ public actual open class LinkedHashMap<K, V> : HashMap<K, V>, MutableMap<K, V> {
      * small modifications. Paying a small storage cost only if you use
      * LinkedHashMap and minimizing code size seemed like a better tradeoff
      */
-    private class ChainEntry<K, V>(key: K, value: V) : AbstractMutableMap.SimpleEntry<K, V>(key, value) {
+    private inner class ChainEntry<K, V>(key: K, value: V) : AbstractMutableMap.SimpleEntry<K, V>(key, value) {
         internal var next: ChainEntry<K, V>? = null
         internal var prev: ChainEntry<K, V>? = null
+
+        override fun setValue(newValue: V): V {
+            this@LinkedHashMap.checkIsMutable()
+            return super.setValue(newValue)
+        }
     }
 
-    private inner class EntrySet : AbstractMutableSet<MutableEntry<K, V>>() {
+    private inner class EntrySet : AbstractEntrySet<MutableEntry<K, V>, K, V>() {
 
         private inner class EntryIterator : MutableIterator<MutableEntry<K, V>> {
             // The last entry that was returned from this iterator.
@@ -65,6 +71,7 @@ public actual open class LinkedHashMap<K, V> : HashMap<K, V>, MutableMap<K, V> {
 
             override fun remove() {
                 check(last != null)
+                this@EntrySet.checkIsMutable()
 //                checkStructuralChange(map, this)
 
                 last!!.remove()
@@ -79,11 +86,12 @@ public actual open class LinkedHashMap<K, V> : HashMap<K, V>, MutableMap<K, V> {
             this@LinkedHashMap.clear()
         }
 
-        override operator fun contains(element: MutableEntry<K, V>): Boolean = containsEntry(element)
+        override fun containsEntry(element: Map.Entry<K, V>): Boolean = this@LinkedHashMap.containsEntry(element)
 
         override operator fun iterator(): MutableIterator<MutableEntry<K, V>> = EntryIterator()
 
         override fun remove(element: MutableEntry<K, V>): Boolean {
+            checkIsMutable()
             if (contains(element)) {
                 this@LinkedHashMap.remove(element.key)
                 return true
@@ -92,6 +100,8 @@ public actual open class LinkedHashMap<K, V> : HashMap<K, V>, MutableMap<K, V> {
         }
 
         override val size: Int get() = this@LinkedHashMap.size
+
+        override fun checkIsMutable(): Unit = this@LinkedHashMap.checkIsMutable()
     }
 
 
@@ -154,6 +164,8 @@ public actual open class LinkedHashMap<K, V> : HashMap<K, V>, MutableMap<K, V> {
    */
     private val map: HashMap<K, ChainEntry<K, V>>
 
+    private var isReadOnly: Boolean = false
+
     /**
      * Constructs an empty [LinkedHashMap] instance.
      */
@@ -189,7 +201,15 @@ public actual open class LinkedHashMap<K, V> : HashMap<K, V>, MutableMap<K, V> {
         this.putAll(original)
     }
 
+    @PublishedApi
+    internal fun build(): Map<K, V> {
+        checkIsMutable()
+        isReadOnly = true
+        return this
+    }
+
     actual override fun clear() {
+        checkIsMutable()
         map.clear()
         head = null
     }
@@ -219,6 +239,8 @@ public actual open class LinkedHashMap<K, V> : HashMap<K, V>, MutableMap<K, V> {
     actual override operator fun get(key: K): V? = map.get(key)?.value
 
     actual override fun put(key: K, value: V): V? {
+        checkIsMutable()
+
         val old = map.get(key)
         if (old == null) {
             val newEntry = ChainEntry(key, value)
@@ -231,6 +253,8 @@ public actual open class LinkedHashMap<K, V> : HashMap<K, V>, MutableMap<K, V> {
     }
 
     actual override fun remove(key: K): V? {
+        checkIsMutable()
+
         val entry = map.remove(key)
         if (entry != null) {
             entry.remove()
@@ -241,6 +265,9 @@ public actual open class LinkedHashMap<K, V> : HashMap<K, V>, MutableMap<K, V> {
 
     actual override val size: Int get() = map.size
 
+    internal override fun checkIsMutable() {
+        if (isReadOnly) throw UnsupportedOperationException()
+    }
 }
 
 /**

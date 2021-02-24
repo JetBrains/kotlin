@@ -1,3 +1,4 @@
+// KOTLIN_CONFIGURATION_FLAGS: SAM_CONVERSIONS=INDY
 // FILE: JFoo.java
 
 import org.jetbrains.annotations.Nullable;
@@ -16,16 +17,16 @@ fun test() {
     JFoo.foo2({}, runnable())
 }
 
-// 2 NEW
-
 // JVM_TEMPLATES
 // @TestKt.class:
+// 2 NEW
 // 0 IFNONNULL
 // 1 IFNULL
 // 1 ACONST_NULL
 
 // JVM_IR_TEMPLATES
 // @TestKt.class
+// 0 NEW
 // 1 IFNONNULL
 // 0 IFNULL
 // 2 ACONST_NULL

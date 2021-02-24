@@ -25,7 +25,7 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.idea.core.KotlinFileTypeFactory
+import org.jetbrains.kotlin.idea.core.KotlinFileTypeFactoryUtils
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
@@ -144,7 +144,7 @@ object DebuggerUtils {
 
     fun isKotlinSourceFile(fileName: String): Boolean {
         val extension = FileUtilRt.getExtension(fileName).toLowerCase()
-        return extension in KotlinFileTypeFactory.KOTLIN_EXTENSIONS
+        return extension in KotlinFileTypeFactoryUtils.KOTLIN_EXTENSIONS
     }
 
     private fun analyzeElementWithInline(

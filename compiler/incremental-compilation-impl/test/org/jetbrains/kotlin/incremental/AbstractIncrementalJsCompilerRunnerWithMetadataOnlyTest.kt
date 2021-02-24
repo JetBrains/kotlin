@@ -16,5 +16,5 @@ abstract class AbstractIncrementalJsCompilerRunnerWithMetadataOnlyTest : Abstrac
         }
 
     override val buildLogFinder: BuildLogFinder
-        get() = super.buildLogFinder.copy(isJsIrEnabled = true)
+        get() = super.buildLogFinder.copy(isKlibEnabled = true)
 }

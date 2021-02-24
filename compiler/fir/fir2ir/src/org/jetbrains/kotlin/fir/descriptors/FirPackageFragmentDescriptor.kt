@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
-class FirPackageFragmentDescriptor(override val fqName: FqName, val moduleDescriptor: ModuleDescriptor) : PackageFragmentDescriptor {
+open class FirPackageFragmentDescriptor(override val fqName: FqName, val moduleDescriptor: ModuleDescriptor) : PackageFragmentDescriptor {
     override fun getContainingDeclaration(): ModuleDescriptor {
         return moduleDescriptor
     }
@@ -29,8 +29,9 @@ class FirPackageFragmentDescriptor(override val fqName: FqName, val moduleDescri
         return fqName.shortName()
     }
 
+    @Suppress("UNCHECKED_CAST")
     override fun <R : Any?, D : Any?> accept(visitor: DeclarationDescriptorVisitor<R, D>?, data: D): R {
-        TODO("not implemented")
+        return visitor?.visitPackageFragmentDescriptor(this, data) as R
     }
 
     override fun getSource(): SourceElement {
@@ -38,7 +39,7 @@ class FirPackageFragmentDescriptor(override val fqName: FqName, val moduleDescri
     }
 
     override fun acceptVoid(visitor: DeclarationDescriptorVisitor<Void, Void>?) {
-        TODO("not implemented")
+        visitor?.visitPackageFragmentDescriptor(this, null)
     }
 
     override val annotations: Annotations

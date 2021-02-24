@@ -23,13 +23,14 @@ import com.intellij.refactoring.util.RefactoringUIUtil
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
+import org.jetbrains.kotlin.idea.core.util.runSynchronouslyWithProgress
 import org.jetbrains.kotlin.idea.refactoring.getUsageContext
 import org.jetbrains.kotlin.idea.refactoring.isInterfaceClass
-import org.jetbrains.kotlin.idea.core.util.runSynchronouslyWithProgress
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.psi.*
@@ -39,37 +40,41 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isSubclassOf
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
 import org.jetbrains.kotlin.util.findCallableMemberBySignature
 
-class MoveMemberOutOfCompanionObjectIntention : MoveMemberOutOfObjectIntention("Move out of companion object") {
+class MoveMemberOutOfCompanionObjectIntention : MoveMemberOutOfObjectIntention(KotlinBundle.lazyMessage("move.out.of.companion.object")) {
     override fun addConflicts(element: KtNamedDeclaration, conflicts: MultiMap<PsiElement, String>) {
-
-        val targetClass = element.containingClassOrObject!!.containingClassOrObject!!
+        val targetClass = element.containingClassOrObject?.containingClassOrObject ?: return
         val targetClassDescriptor = runReadAction { targetClass.unsafeResolveToDescriptor() as ClassDescriptor }
 
-        val refsRequiringClassInstance = element.project.runSynchronouslyWithProgress("Searching for ${element.name}", true) {
-            runReadAction {
-                ReferencesSearch
-                    .search(element)
-                    .mapNotNull { it.element }
-                    .filter {
-                        if (it !is KtElement) return@filter true
-                        val resolvedCall = it.resolveToCall() ?: return@filter false
-                        val dispatchReceiver = resolvedCall.dispatchReceiver ?: return@filter false
-                        if (dispatchReceiver !is ImplicitClassReceiver) return@filter true
-                        it.parents
-                            .filterIsInstance<KtClassOrObject>()
-                            .none {
-                                val classDescriptor = it.resolveToDescriptorIfAny()
-                                if (classDescriptor != null && classDescriptor.isSubclassOf(targetClassDescriptor)) return@none true
-                                if (it.isTopLevel() || it is KtObjectDeclaration || (it is KtClass && !it.isInner())) return@filter true
-                                false
-                            }
-                    }
-            }
-        } ?: return
+        val refsRequiringClassInstance =
+            element.project.runSynchronouslyWithProgress(KotlinBundle.message("searching.for.0", element.name.toString()), true) {
+                runReadAction {
+                    ReferencesSearch
+                        .search(element)
+                        .mapNotNull { it.element }
+                        .filter {
+                            if (it !is KtElement) return@filter true
+                            val resolvedCall = it.resolveToCall() ?: return@filter false
+                            val dispatchReceiver = resolvedCall.dispatchReceiver ?: return@filter false
+                            if (dispatchReceiver !is ImplicitClassReceiver) return@filter true
+                            it.parents
+                                .filterIsInstance<KtClassOrObject>()
+                                .none {
+                                    val classDescriptor = it.resolveToDescriptorIfAny()
+                                    if (classDescriptor != null && classDescriptor.isSubclassOf(targetClassDescriptor)) return@none true
+                                    if (it.isTopLevel() || it is KtObjectDeclaration || (it is KtClass && !it.isInner())) return@filter true
+                                    false
+                                }
+                        }
+                }
+            } ?: return
 
         for (refElement in refsRequiringClassInstance) {
             val context = refElement.getUsageContext()
-            val message = "'${refElement.text}' in ${RefactoringUIUtil.getDescription(context, false)} will require class instance"
+            val message = KotlinBundle.message(
+                "0.in.1.will.require.class.instance",
+                refElement.text,
+                RefactoringUIUtil.getDescription(context, false)
+            )
             conflicts.putValue(refElement, message)
         }
 
@@ -78,7 +83,14 @@ class MoveMemberOutOfCompanionObjectIntention : MoveMemberOutOfObjectIntention("
             targetClassDescriptor.findCallableMemberBySignature(callableDescriptor)?.let {
                 DescriptorToSourceUtilsIde.getAnyDeclaration(element.project, it)
             }?.let {
-                conflicts.putValue(it, "Class '${targetClass.name}' already contains ${RefactoringUIUtil.getDescription(it, false)}")
+                conflicts.putValue(
+                    it,
+                    KotlinBundle.message(
+                        "class.0.already.contains.1",
+                        targetClass.name.toString(),
+                        RefactoringUIUtil.getDescription(it, false)
+                    )
+                )
             }
         }
 

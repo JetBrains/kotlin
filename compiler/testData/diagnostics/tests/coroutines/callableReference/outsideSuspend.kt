@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !CHECK_TYPE
 // !LANGUAGE: +ReleaseCoroutines
 // SKIP_TXT

@@ -8,11 +8,12 @@ package org.jetbrains.kotlin.idea.inspections
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.codeStyle.CodeStyleManager
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
@@ -37,13 +38,13 @@ import java.util.*
 class DeprecatedCallableAddReplaceWithInspection : AbstractApplicabilityBasedInspection<KtCallableDeclaration>(
     KtCallableDeclaration::class.java
 ) {
-    override fun inspectionText(element: KtCallableDeclaration) = "@Deprecated annotation without 'replaceWith' argument"
+    override fun inspectionText(element: KtCallableDeclaration) = KotlinBundle.message("deprecated.annotation.without.replacewith.argument")
 
     override fun inspectionHighlightRangeInElement(element: KtCallableDeclaration) = element.annotationEntries.first {
         it.shortName == DEPRECATED_NAME
     }.textRangeIn(element)
 
-    override val defaultFixText = "Add 'replaceWith' argument to specify replacement pattern"
+    override val defaultFixText get() = KotlinBundle.message("add.replacewith.argument.to.specify.replacement.pattern")
 
     private class ReplaceWith(val expression: String, vararg val imports: String)
 
@@ -109,7 +110,7 @@ class DeprecatedCallableAddReplaceWithInspection : AbstractApplicabilityBasedIns
 
             val descriptor = resolvedCall.resultingDescriptor.containingDeclaration
             val descriptorFqName = DescriptorUtils.getFqName(descriptor).toSafe()
-            if (descriptorFqName != KotlinBuiltIns.FQ_NAMES.deprecated) continue
+            if (descriptorFqName != StandardNames.FqNames.deprecated) continue
 
             val args = resolvedCall.valueArguments.mapKeys { it.key.name.asString() }
             val replaceWithArguments = args["replaceWith"] /*TODO: kotlin.deprecated::replaceWith.name*/
@@ -159,7 +160,7 @@ class DeprecatedCallableAddReplaceWithInspection : AbstractApplicabilityBasedIns
 
             override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
                 val target = expression.resolveToCall()?.resultingDescriptor as? DeclarationDescriptorWithVisibility ?: return
-                if (Visibilities.isPrivate((target.visibility))) {
+                if (DescriptorVisibilities.isPrivate((target.visibility))) {
                     isGood = false
                 }
             }
@@ -230,6 +231,6 @@ class DeprecatedCallableAddReplaceWithInspection : AbstractApplicabilityBasedIns
     }
 
     companion object {
-        val DEPRECATED_NAME = KotlinBuiltIns.FQ_NAMES.deprecated.shortName()
+        val DEPRECATED_NAME = StandardNames.FqNames.deprecated.shortName()
     }
 }

@@ -17,6 +17,11 @@ actual fun todo(block: () -> Unit) {
     println("TODO at " + block)
 }
 
+/** Platform-specific construction of AssertionError with cause */
+@Suppress("NOTHING_TO_INLINE")
+internal actual inline fun AssertionErrorWithCause(message: String?, cause: Throwable?): AssertionError =
+    AssertionError(message, cause)
+
 
 @PublishedApi
 internal actual fun <T : Throwable> checkResultIsFailure(exceptionClass: KClass<T>, message: String?, blockResult: Result<Unit>): T {
@@ -29,7 +34,7 @@ internal actual fun <T : Throwable> checkResultIsFailure(exceptionClass: KClass<
                 @Suppress("UNCHECKED_CAST")
                 return e as T
             }
-            asserter.fail(messagePrefix(message) + "Expected an exception of $exceptionClass to be thrown, but was $e")
+            asserter.fail(messagePrefix(message) + "Expected an exception of $exceptionClass to be thrown, but was $e", e)
         }
     )
 }

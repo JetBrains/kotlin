@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
-import org.jetbrains.kotlin.resolve.jvm.checkers.isValidDalvikCharacter
 
 const val DESTRUCTURED_LAMBDA_ARGUMENT_VARIABLE_PREFIX = "\$dstr\$"
 
@@ -25,26 +24,4 @@ fun getNameForDestructuredParameterOrNull(valueParameterDescriptor: ValueParamet
             }
         )
     }
-}
-
-fun mangleNameIfNeeded(name: String): String {
-    if (name.all { it.isValidCharacter() }) {
-        return name
-    }
-
-    return buildString {
-        for (c in name) {
-            if (c.isValidCharacter()) {
-                append(c)
-            } else {
-                val hexString = Integer.toHexString(c.toInt())
-                assert(hexString.length <= 4)
-                append("_u").append(hexString)
-            }
-        }
-    }
-}
-
-private fun Char.isValidCharacter(): Boolean {
-    return this != '$' && this != '-' && isValidDalvikCharacter(this)
 }

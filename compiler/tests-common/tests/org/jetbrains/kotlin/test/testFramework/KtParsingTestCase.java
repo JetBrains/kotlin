@@ -126,6 +126,7 @@ public abstract class KtParsingTestCase extends KtPlatformLiteFixture {
 
         myProject.registerService(CachedValuesManager.class, new CachedValuesManagerImpl(myProject, new PsiCachedValuesFactory(myPsiManager)));
         myProject.registerService(PsiManager.class, myPsiManager);
+        myProject.registerService(TreeAspect.class, new TreeAspect());
 
         this.registerExtensionPoint(FileTypeFactory.FILE_TYPE_FACTORY_EP, FileTypeFactory.class);
         registerExtensionPoint(MetaLanguage.EP_NAME, MetaLanguage.class);
@@ -140,7 +141,6 @@ public abstract class KtParsingTestCase extends KtPlatformLiteFixture {
         // That's for reparse routines
         final PomModelImpl pomModel = new PomModelImpl(myProject);
         myProject.registerService(PomModel.class, pomModel);
-        new TreeAspect(pomModel);
     }
 
     public void configureFromParserDefinition(ParserDefinition definition, String extension) {

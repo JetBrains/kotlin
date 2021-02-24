@@ -1,4 +1,7 @@
 source(new File(basedir, "../../../verify-common.bsh").getAbsolutePath());
 
 assertBuildLogHasLine("[INFO] BUILD FAILURE");
-assertBuildLogHasLineThatContains("feature \"function types with big arity\" is only available since API version 1.3");
+assertBuildLogHasLineThatContains("Unresolved reference. None of the following candidates is applicable because of receiver type mismatch:");
+assertBuildLogHasLineThatContains("public fun <T> Iterable<TypeVariable(T)>.shuffled(): List<TypeVariable(T)> defined in kotlin.collections");
+assertBuildLogHasLineThatContains("public fun <T> Iterable<TypeVariable(T)>.shuffled(random: java.util.Random): List<TypeVariable(T)> defined in kotlin.collections");
+assertBuildLogHasLineThatContains("public fun <T> Iterable<TypeVariable(T)>.shuffled(random: kotlin.random.Random): List<TypeVariable(T)> defined in kotlin.collections");

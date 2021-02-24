@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.jps.build;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -25,7 +26,7 @@ public class DataContainerVersionChangedTestGenerated extends AbstractDataContai
     }
 
     public void testAllFilesPresentInCacheVersionChanged() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/cacheVersionChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/cacheVersionChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
     }
 
     @TestMetadata("clearedHasKotlin")
@@ -92,7 +93,7 @@ public class DataContainerVersionChangedTestGenerated extends AbstractDataContai
         }
 
         public void testAllFilesPresentInClearedHasKotlin() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/cacheVersionChanged/clearedHasKotlin"), Pattern.compile("^([^\\.]+)$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/cacheVersionChanged/clearedHasKotlin"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
     }
 
@@ -105,7 +106,7 @@ public class DataContainerVersionChangedTestGenerated extends AbstractDataContai
         }
 
         public void testAllFilesPresentInExportedModule() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/cacheVersionChanged/exportedModule"), Pattern.compile("^([^\\.]+)$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/cacheVersionChanged/exportedModule"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
     }
 
@@ -118,7 +119,7 @@ public class DataContainerVersionChangedTestGenerated extends AbstractDataContai
         }
 
         public void testAllFilesPresentInJavaOnlyModulesAreNotAffected() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/cacheVersionChanged/javaOnlyModulesAreNotAffected"), Pattern.compile("^([^\\.]+)$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/cacheVersionChanged/javaOnlyModulesAreNotAffected"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
     }
 
@@ -131,7 +132,7 @@ public class DataContainerVersionChangedTestGenerated extends AbstractDataContai
         }
 
         public void testAllFilesPresentInModule1Modified() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/cacheVersionChanged/module1Modified"), Pattern.compile("^([^\\.]+)$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/cacheVersionChanged/module1Modified"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
     }
 
@@ -144,7 +145,7 @@ public class DataContainerVersionChangedTestGenerated extends AbstractDataContai
         }
 
         public void testAllFilesPresentInModule2Modified() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/cacheVersionChanged/module2Modified"), Pattern.compile("^([^\\.]+)$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/cacheVersionChanged/module2Modified"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
     }
 
@@ -157,7 +158,7 @@ public class DataContainerVersionChangedTestGenerated extends AbstractDataContai
         }
 
         public void testAllFilesPresentInModuleWithConstantModified() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/cacheVersionChanged/moduleWithConstantModified"), Pattern.compile("^([^\\.]+)$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/cacheVersionChanged/moduleWithConstantModified"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
     }
 
@@ -170,7 +171,7 @@ public class DataContainerVersionChangedTestGenerated extends AbstractDataContai
         }
 
         public void testAllFilesPresentInModuleWithInlineModified() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/cacheVersionChanged/moduleWithInlineModified"), Pattern.compile("^([^\\.]+)$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/cacheVersionChanged/moduleWithInlineModified"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
     }
 
@@ -183,7 +184,7 @@ public class DataContainerVersionChangedTestGenerated extends AbstractDataContai
         }
 
         public void testAllFilesPresentInTouchedFile() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/cacheVersionChanged/touchedFile"), Pattern.compile("^([^\\.]+)$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/cacheVersionChanged/touchedFile"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
     }
 
@@ -196,7 +197,7 @@ public class DataContainerVersionChangedTestGenerated extends AbstractDataContai
         }
 
         public void testAllFilesPresentInTouchedOnlyJavaFile() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/cacheVersionChanged/touchedOnlyJavaFile"), Pattern.compile("^([^\\.]+)$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/cacheVersionChanged/touchedOnlyJavaFile"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
     }
 
@@ -209,7 +210,7 @@ public class DataContainerVersionChangedTestGenerated extends AbstractDataContai
         }
 
         public void testAllFilesPresentInUntouchedFiles() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/cacheVersionChanged/untouchedFiles"), Pattern.compile("^([^\\.]+)$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/cacheVersionChanged/untouchedFiles"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
     }
 
@@ -222,7 +223,7 @@ public class DataContainerVersionChangedTestGenerated extends AbstractDataContai
         }
 
         public void testAllFilesPresentInWithError() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/cacheVersionChanged/withError"), Pattern.compile("^([^\\.]+)$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/cacheVersionChanged/withError"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
     }
 }

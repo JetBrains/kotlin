@@ -17,56 +17,20 @@ public interface IrVariableOrBuilder extends
   org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase getBase();
 
   /**
-   * <code>required int32 name = 2;</code>
+   * <code>required int64 name_type = 2;</code>
    */
-  boolean hasName();
+  boolean hasNameType();
   /**
-   * <code>required int32 name = 2;</code>
+   * <code>required int64 name_type = 2;</code>
    */
-  int getName();
+  long getNameType();
 
   /**
-   * <code>required int32 type = 3;</code>
-   */
-  boolean hasType();
-  /**
-   * <code>required int32 type = 3;</code>
-   */
-  int getType();
-
-  /**
-   * <code>required bool is_var = 4;</code>
-   */
-  boolean hasIsVar();
-  /**
-   * <code>required bool is_var = 4;</code>
-   */
-  boolean getIsVar();
-
-  /**
-   * <code>required bool is_const = 5;</code>
-   */
-  boolean hasIsConst();
-  /**
-   * <code>required bool is_const = 5;</code>
-   */
-  boolean getIsConst();
-
-  /**
-   * <code>required bool is_lateinit = 6;</code>
-   */
-  boolean hasIsLateinit();
-  /**
-   * <code>required bool is_lateinit = 6;</code>
-   */
-  boolean getIsLateinit();
-
-  /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression initializer = 7;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression initializer = 3;</code>
    */
   boolean hasInitializer();
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression initializer = 7;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression initializer = 3;</code>
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression getInitializer();
 }

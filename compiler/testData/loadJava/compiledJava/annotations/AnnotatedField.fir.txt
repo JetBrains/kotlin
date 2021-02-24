@@ -1,7 +1,7 @@
 public open class AnnotatedField : R|kotlin/Any| {
-    @R|test/AnnotatedField.Anno|(String(static)) public final static field x: R|kotlin/Int|
+    @R|test/AnnotatedField.Anno|(String(static)) public final static field x: R|kotlin/Int| = Int(0)
 
-    @R|test/AnnotatedField.Anno|(String(member)) public final field y: R|kotlin/Int|
+    @R|test/AnnotatedField.Anno|(String(member)) public final field y: R|kotlin/Int| = Int(0)
 
     public constructor(): R|test/AnnotatedField|
 

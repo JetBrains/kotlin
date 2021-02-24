@@ -1,3 +1,0 @@
-import<!SYNTAX!><!>
-
-fun firstFun() {}

@@ -13,7 +13,7 @@ fun test1(b: Boolean?) {
         false -> null
         null -> materialize<String>()
     }
-    v checkType { <!UNRESOLVED_REFERENCE!>_<!><Inv<String>?>() }
+    v checkType { _<Inv<String>?>() }
 }
 
 fun test2() {

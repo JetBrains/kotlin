@@ -1,0 +1,6 @@
+// WITH_RUNTIME
+fun test(){
+    listOf(1, 2, 3).onEach { i ->
+        if (i % 2 == 0) return@onEach
+    }
+}

@@ -1,0 +1,13 @@
+FILE: redundantModifier.kt
+    public abstract class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public sealed class B : R|kotlin/Any| {
+        protected constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+    }

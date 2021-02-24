@@ -8,25 +8,25 @@ public interface IrBlockOrBuilder extends
     org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin origin = 1;</code>
-   */
-  boolean hasOrigin();
-  /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin origin = 1;</code>
-   */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin getOrigin();
-
-  /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement statement = 2;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement statement = 1;</code>
    */
   java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement> 
       getStatementList();
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement statement = 2;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement statement = 1;</code>
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement getStatement(int index);
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement statement = 2;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement statement = 1;</code>
    */
   int getStatementCount();
+
+  /**
+   * <code>optional int32 origin_name = 2;</code>
+   */
+  boolean hasOriginName();
+  /**
+   * <code>optional int32 origin_name = 2;</code>
+   */
+  int getOriginName();
 }

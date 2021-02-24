@@ -7,14 +7,16 @@ package org.jetbrains.kotlin.idea.inspections.substring
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtExpression
 
 class ReplaceSubstringWithSubstringAfterInspection : ReplaceSubstringInspection() {
-    override fun inspectionText(element: KtDotQualifiedExpression): String = "Replace 'substring' call with 'substringAfter' call"
+    override fun inspectionText(element: KtDotQualifiedExpression): String =
+        KotlinBundle.message("replace.substring.call.with.substringafter.call")
 
-    override val defaultFixText: String = "Replace 'substring' call with 'substringAfter' call"
+    override val defaultFixText: String get() = KotlinBundle.message("replace.substring.call.with.substringafter.call")
 
     override fun applyTo(element: KtDotQualifiedExpression, project: Project, editor: Editor?) {
         element.replaceWith(
@@ -30,9 +32,10 @@ class ReplaceSubstringWithSubstringAfterInspection : ReplaceSubstringInspection(
 }
 
 class ReplaceSubstringWithSubstringBeforeInspection : ReplaceSubstringInspection() {
-    override fun inspectionText(element: KtDotQualifiedExpression): String = "Replace 'substring' call with 'substringBefore' call"
+    override fun inspectionText(element: KtDotQualifiedExpression): String =
+        KotlinBundle.message("replace.substring.call.with.substringbefore.call")
 
-    override val defaultFixText: String = "Replace 'substring' call with 'substringBefore' call"
+    override val defaultFixText: String get() = KotlinBundle.message("replace.substring.call.with.substringbefore.call")
 
     override fun applyTo(element: KtDotQualifiedExpression, project: Project, editor: Editor?) {
         element.replaceWith(

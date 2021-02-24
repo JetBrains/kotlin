@@ -18,14 +18,15 @@ package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
 
 class ChangeToUseSpreadOperatorFix(element: KtExpression) : KotlinQuickFixAction<KtExpression>(element) {
-    override fun getFamilyName() = "Change to use spread operator"
+    override fun getFamilyName() = KotlinBundle.message("fix.change.to.use.spread.operator.family")
 
-    override fun getText() = "Change '${element?.text}' to '*${element?.text}'"
+    override fun getText() = KotlinBundle.message("fix.change.to.use.spread.operator.text", element?.text.toString(), "*${element?.text}")
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return

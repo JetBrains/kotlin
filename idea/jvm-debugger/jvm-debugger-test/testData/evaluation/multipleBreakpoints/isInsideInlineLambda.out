@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 LineBreakpoint created at isInsideInlineLambdaInLibrary.kt:7 lambdaOrdinal = 1
 LineBreakpoint created at isInsideInlineLambdaInLibrary.kt:12 lambdaOrdinal = 1
 LineBreakpoint created at isInsideInlineLambdaInLibrary.kt:18 lambdaOrdinal = 1

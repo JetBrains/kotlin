@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,7 +9,6 @@ package kotlin
 
 import kotlin.experimental.*
 
-@Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public inline class UInt @PublishedApi internal constructor(@PublishedApi internal val data: Int) : Comparable<UInt> {
@@ -145,12 +144,24 @@ public inline class UInt @PublishedApi internal constructor(@PublishedApi intern
     @kotlin.internal.InlineOnly
     public inline operator fun rangeTo(other: UInt): UIntRange = UIntRange(this, other)
 
-    /** Shifts this value left by the [bitCount] number of bits. */
+    /**
+     * Shifts this value left by the [bitCount] number of bits.
+     *
+     * Note that only the five lowest-order bits of the [bitCount] are used as the shift distance.
+     * The shift distance actually used is therefore always in the range `0..31`.
+     */
     @kotlin.internal.InlineOnly
     public inline infix fun shl(bitCount: Int): UInt = UInt(data shl bitCount)
-    /** Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with zeros. */
+
+    /**
+     * Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with zeros.
+     *
+     * Note that only the five lowest-order bits of the [bitCount] are used as the shift distance.
+     * The shift distance actually used is therefore always in the range `0..31`.
+     */
     @kotlin.internal.InlineOnly
     public inline infix fun shr(bitCount: Int): UInt = UInt(data ushr bitCount)
+
     /** Performs a bitwise AND operation between the two values. */
     @kotlin.internal.InlineOnly
     public inline infix fun and(other: UInt): UInt = UInt(this.data and other.data)

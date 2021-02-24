@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 import kotlin.reflect.KProperty1
 
 fun <T, R> getProperty(x: T, property: KProperty1<T, R>): R =

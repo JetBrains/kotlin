@@ -24,6 +24,7 @@ import com.intellij.ui.BooleanTableCellRenderer;
 import com.intellij.util.ui.ColumnInfo;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinFileType;
+import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinMethodDescriptor;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinParameterInfo;
 
@@ -71,7 +72,7 @@ public class KotlinFunctionParameterTableModel extends KotlinCallableParameterTa
         private KotlinParameterInfo receiver;
 
         public ReceiverColumn(Project project, @Nullable KotlinMethodDescriptor methodDescriptor) {
-            super("Receiver:");
+            super(KotlinBundle.message("column.name.receiver"));
             this.project = project;
             this.receiver = methodDescriptor != null ? methodDescriptor.getReceiver() : null;
         }

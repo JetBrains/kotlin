@@ -13,3 +13,5 @@ fun test() {
     a[2]++
     a[3]
 }
+
+// DISABLE-ERRORS

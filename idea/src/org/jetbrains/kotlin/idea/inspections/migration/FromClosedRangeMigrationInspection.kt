@@ -11,6 +11,7 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.application.ApplicationManager
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.configuration.MigrationInfo
@@ -95,7 +96,7 @@ class FromClosedRangeMigrationInspection : AbstractKotlinInspection(), Migration
         val problemDescriptor = holder.manager.createProblemDescriptor(
             simpleNameExpression,
             simpleNameExpression,
-            "It's prohibited to call $desc with MIN_VALUE step since 1.3",
+            KotlinBundle.message("it.s.prohibited.to.call.0.with.min.value.step.since.1.3", desc),
             if (isError) ProblemHighlightType.ERROR else ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
             isOnTheFly
         )

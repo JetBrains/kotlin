@@ -119,6 +119,20 @@ fun MethodNode.removeEmptyCatchBlocks() {
 
 fun MethodNode.removeUnusedLocalVariables() {
     val used = BooleanArray(maxLocals) { false }
+
+    // Arguments are always used whether or not they are in the local variable table
+    // or used by instructions.
+    var argumentIndex = 0
+    val isStatic = (access and Opcodes.ACC_STATIC) != 0
+    if (!isStatic) {
+        used[argumentIndex++] = true
+    }
+    for (argumentType in Type.getArgumentTypes(desc)) {
+        for (i in 0 until argumentType.size) {
+            used[argumentIndex++] = true
+        }
+    }
+
     for (insn in instructions) {
         when (insn) {
             is VarInsnNode -> {

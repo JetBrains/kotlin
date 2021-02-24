@@ -42,6 +42,6 @@ class ResolveTest {
             "test failed - expecting a failure with the message \"Unknown set of arguments to maven resolver: abracadabra\" but received " +
                     (if (res is ResultWithDiagnostics.Failure) "failure" else "success") +
                     ":\n  ${res.reports.joinToString("\n  ") { it.message + if (it.exception == null) "" else ": ${it.exception}" }}",
-            res is ResultWithDiagnostics.Failure && res.reports.any { it.message.contains("Unknown set of arguments to maven resolver: abracadabra") })
+            res is ResultWithDiagnostics.Failure && res.reports.any { it.message.contains("File 'abracadabra' not found") })
     }
 }

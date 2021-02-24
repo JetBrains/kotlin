@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !CHECK_TYPE
 // FILE: EventListener.java
 public interface EventListener<E> {

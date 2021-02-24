@@ -6,8 +6,8 @@ interface Out<out T>
 typealias InAlias<T> = In<T>
 typealias OutAlias<T> = Out<T>
 
-typealias TestOutForIn<T> = In<out T>
-typealias TestInForOut<T> = Out<in T>
+typealias TestOutForIn<T> = <!CONFLICTING_PROJECTION!>In<out T><!>
+typealias TestInForOut<T> = <!CONFLICTING_PROJECTION!>Out<in T><!>
 
 typealias TestOutForInWithinAlias<T> = InAlias<out T>
 typealias TestInForOutWithinAlias<T> = OutAlias<in T>

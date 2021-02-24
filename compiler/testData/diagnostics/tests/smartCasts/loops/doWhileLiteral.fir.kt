@@ -6,5 +6,5 @@ public fun foo(p: String?): Int {
         p!!.length
     } while (!x())
     // Literal is not called so p.length is unsafe
-    return p.<!INAPPLICABLE_CANDIDATE!>length<!>
+    return p.length
 }

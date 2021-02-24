@@ -1,0 +1,17 @@
+@kotlin.Metadata
+public final class MultiFileClass {
+    public final static method bar(): void
+    public final static method foo(): void
+}
+
+@kotlin.Metadata
+synthetic final class MultiFileClass__Part1Kt {
+    // source: 'part1.kt'
+    public final static method foo(): void
+}
+
+@kotlin.Metadata
+synthetic final class MultiFileClass__Part2Kt {
+    // source: 'part2.kt'
+    public final static method bar(): void
+}

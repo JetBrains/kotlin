@@ -1,0 +1,11 @@
+@kotlin.Metadata
+public abstract class A {
+    // source: 'inlineClassTypesInSignature.kt'
+    public method <init>(): void
+    public synthetic deprecated static @kotlin.Deprecated method getHidden-w2LRezQ$annotations(): void
+    public synthetic deprecated abstract method getHidden-w2LRezQ(): byte
+    public synthetic deprecated static @kotlin.Deprecated method getWarn-w2LRezQ$annotations(): void
+    public deprecated abstract method getWarn-w2LRezQ(): byte
+    public synthetic deprecated abstract method setHidden-7apg3OU(p0: byte): void
+    public deprecated abstract method setWarn-7apg3OU(p0: byte): void
+}

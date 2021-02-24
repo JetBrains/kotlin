@@ -6,7 +6,7 @@
 package kotlin.text
 
 /** Returns the negative [size] if [throwOnMalformed] is false, throws [CharacterCodingException] otherwise. */
-@UseExperimental(ExperimentalStdlibApi::class)
+@OptIn(ExperimentalStdlibApi::class)
 private fun malformed(size: Int, index: Int, throwOnMalformed: Boolean): Int {
     if (throwOnMalformed) throw CharacterCodingException("Malformed sequence starting at ${index - 1}")
     return -size

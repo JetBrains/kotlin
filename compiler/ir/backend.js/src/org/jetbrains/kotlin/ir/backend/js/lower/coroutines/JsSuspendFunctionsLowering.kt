@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.ir.backend.js.lower.coroutines
 
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.common.ir.isSuspend
-import org.jetbrains.kotlin.backend.common.lower.AbstractSuspendFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.FinallyBlocksLowering
 import org.jetbrains.kotlin.backend.common.lower.ReturnableBlockTransformer
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
@@ -16,8 +15,12 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
+import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.explicitParameters
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.*
@@ -36,7 +39,6 @@ class JsSuspendFunctionsLowering(ctx: JsIrBackendContext) : AbstractSuspendFunct
     private val coroutineImplResultSymbolGetter = ctx.coroutineImplResultSymbolGetter
     private val coroutineImplResultSymbolSetter = ctx.coroutineImplResultSymbolSetter
 
-    private var exceptionTrapId = -1
     private var coroutineId = 0
 
     override val stateMachineMethodName = Name.identifier("doResume")
@@ -91,9 +93,9 @@ class JsSuspendFunctionsLowering(ctx: JsIrBackendContext) : AbstractSuspendFunct
             body.endOffset,
             unit,
             COROUTINE_ROOT_LOOP,
-            rootTry,
-            JsIrBuilder.buildBoolean(context.irBuiltIns.booleanType, true)
         ).also {
+            it.condition = JsIrBuilder.buildBoolean(context.irBuiltIns.booleanType, true)
+            it.body = rootTry
             it.label = "\$sm"
         }
 
@@ -125,14 +127,23 @@ class JsSuspendFunctionsLowering(ctx: JsIrBackendContext) : AbstractSuspendFunct
 
         assignStateIds(stateMachineBuilder.entryState, stateVar.symbol, switch, rootLoop)
 
-        exceptionTrapId = stateMachineBuilder.rootExceptionTrap.id
+        // Set exceptionState to the global catch block
+        stateMachineBuilder.entryState.entryBlock.run {
+            val receiver = JsIrBuilder.buildGetValue(coroutineClass.thisReceiver!!.symbol)
+            val exceptionTrapId = stateMachineBuilder.rootExceptionTrap.id
+            assert(exceptionTrapId >= 0)
+            val id = JsIrBuilder.buildInt(context.irBuiltIns.intType, exceptionTrapId)
+            statements.add(0, JsIrBuilder.buildCall(coroutineImplExceptionStatePropertySetter.symbol).also { call ->
+                call.dispatchReceiver = receiver
+                call.putValueArgument(0, id)
+            })
+        }
 
-        val functionBody =
-            IrBlockBodyImpl(stateMachineFunction.startOffset, stateMachineFunction.endOffset, listOf(suspendResult, rootLoop))
+        val functionBody = context.irFactory.createBlockBody(
+            stateMachineFunction.startOffset, stateMachineFunction.endOffset, listOf(suspendResult, rootLoop)
+        )
 
         stateMachineFunction.body = functionBody
-        // TODO: Investigate parent problems
-        stateMachineFunction.patchDeclarationParents(stateMachineFunction.parent)
 
         // Move return targets to new function
         functionBody.transformChildrenVoid(object : IrElementTransformerVoid() {
@@ -159,13 +170,17 @@ class JsSuspendFunctionsLowering(ctx: JsIrBackendContext) : AbstractSuspendFunct
                 }
             }
         }
-        simplifiedFunction.explicitParameters.forEach {
+        val isSuspendLambda = transformingFunction.parent === coroutineClass
+        val parameters = if (isSuspendLambda) simplifiedFunction.valueParameters else simplifiedFunction.explicitParameters
+        parameters.forEach {
             localToPropertyMap.getOrPut(it.symbol) {
                 argumentToPropertiesMap.getValue(it).symbol
             }
         }
 
         stateMachineFunction.transform(LiveLocalsTransformer(localToPropertyMap, { JsIrBuilder.buildGetValue(thisReceiver) }, unit), null)
+        // TODO find out why some parents are incorrect
+        stateMachineFunction.body!!.patchDeclarationParents(stateMachineFunction)
     }
 
     private fun assignStateIds(entryState: SuspendState, subject: IrVariableSymbol, switch: IrWhen, rootLoop: IrLoop) {
@@ -211,18 +226,11 @@ class JsSuspendFunctionsLowering(ctx: JsIrBackendContext) : AbstractSuspendFunct
         return result
     }
 
-    override fun initializeStateMachine(coroutineConstructors: List<IrConstructor>, coroutineClassThis: IrValueDeclaration) {
-        for (it in coroutineConstructors) {
-            (it.body as? IrBlockBody)?.run {
-                val receiver = JsIrBuilder.buildGetValue(coroutineClassThis.symbol)
-                assert(exceptionTrapId >= 0)
-                val id = JsIrBuilder.buildInt(context.irBuiltIns.intType, exceptionTrapId)
-                statements += JsIrBuilder.buildCall(coroutineImplExceptionStatePropertySetter.symbol).also { call ->
-                    call.dispatchReceiver = receiver
-                    call.putValueArgument(0, id)
-                }
-            }
-        }
+    private fun needUnboxingOrUnit(fromType: IrType, toType: IrType): Boolean {
+        val icUtils = context.inlineClassesUtils
+
+        return (icUtils.getInlinedClass(fromType) == null && icUtils.getInlinedClass(toType) != null) ||
+                (fromType.isUnit() && !toType.isUnit())
     }
 
     override fun IrBuilderWithScope.generateDelegatedCall(expectedType: IrType, delegatingCall: IrExpression): IrExpression {

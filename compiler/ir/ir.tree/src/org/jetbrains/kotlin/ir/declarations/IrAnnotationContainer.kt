@@ -11,6 +11,6 @@ interface IrAnnotationContainer {
     val annotations: List<IrConstructorCall>
 }
 
-interface IrMutableAnnotationContainer: IrAnnotationContainer {
+interface IrMutableAnnotationContainer : IrAnnotationContainer {
     override var annotations: List<IrConstructorCall>
 }

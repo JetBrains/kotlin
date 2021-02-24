@@ -89,6 +89,10 @@ public interface KtStubElementTypes {
     KtPlaceHolderStubElementType<KtFunctionType> FUNCTION_TYPE =
             new KtPlaceHolderStubElementType<>("FUNCTION_TYPE", KtFunctionType.class);
 
+    KtTypeCodeFragmentType TYPE_CODE_FRAGMENT = new KtTypeCodeFragmentType();
+    KtExpressionCodeFragmentType EXPRESSION_CODE_FRAGMENT = new KtExpressionCodeFragmentType();
+    KtBlockCodeFragmentType BLOCK_CODE_FRAGMENT = new KtBlockCodeFragmentType();
+
     KtTypeProjectionElementType TYPE_PROJECTION = new KtTypeProjectionElementType("TYPE_PROJECTION");
 
     KtPlaceHolderStubElementType<KtFunctionTypeReceiver> FUNCTION_TYPE_RECEIVER =
@@ -106,6 +110,12 @@ public interface KtStubElementTypes {
 
     KtValueArgumentElementType<KtValueArgument> VALUE_ARGUMENT =
             new KtValueArgumentElementType<>("VALUE_ARGUMENT", KtValueArgument.class);
+
+    KtPlaceHolderStubElementType<KtContractEffectList> CONTRACT_EFFECT_LIST =
+            new KtContractEffectListElementType("CONTRACT_EFFECT_LIST");
+
+    KtContractEffectElementType CONTRACT_EFFECT =
+            new KtContractEffectElementType("CONTRACT_EFFECT", KtContractEffect.class);
 
     KtValueArgumentElementType<KtLambdaArgument> LAMBDA_ARGUMENT =
             new KtValueArgumentElementType<>("LAMBDA_ARGUMENT", KtLambdaArgument.class);

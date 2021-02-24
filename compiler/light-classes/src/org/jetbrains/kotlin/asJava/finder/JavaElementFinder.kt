@@ -17,24 +17,24 @@
 package org.jetbrains.kotlin.asJava.finder
 
 import com.google.common.collect.Sets
-import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Condition
 import com.intellij.psi.*
+import com.intellij.psi.impl.compiled.ClsClassImpl
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiUtilCore
 import com.intellij.util.SmartList
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
-import org.jetbrains.kotlin.asJava.classes.FakeLightClassForFileOfPackage
-import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isValidJavaFqName
+import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.KotlinFinderMarker
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.*
 
 class JavaElementFinder(
@@ -58,7 +58,9 @@ class JavaElementFinder(
         answer.addAll(kotlinAsJavaSupport.getFacadeClasses(qualifiedName, scope))
         answer.addAll(kotlinAsJavaSupport.getKotlinInternalClasses(qualifiedName, scope))
 
-        return answer.sortByClasspathPreferringNonFakeFiles(scope).toTypedArray()
+        sortByPreferenceToSourceFile(answer, scope)
+
+        return answer.toTypedArray()
     }
 
     // Finds explicitly declared classes and objects, not package classes
@@ -70,7 +72,7 @@ class JavaElementFinder(
 
         for (declaration in classOrObjectDeclarations) {
             if (declaration !is KtEnumEntry) {
-                val lightClass = declaration.toLightClass()
+                val lightClass = kotlinAsJavaSupport.getLightClass(declaration)
                 if (lightClass != null) {
                     answer.add(lightClass)
                 }
@@ -84,9 +86,10 @@ class JavaElementFinder(
         if (qualifiedName.shortName().asString() != JvmAbi.DEFAULT_IMPLS_CLASS_NAME) return
 
         for (classOrObject in kotlinAsJavaSupport.findClassOrObjectDeclarations(qualifiedName.parent(), scope)) {
+            ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
             //NOTE: can't filter out more interfaces right away because decompiled declarations do not have member bodies
             if (classOrObject is KtClass && classOrObject.isInterface()) {
-                val interfaceClass = classOrObject.toLightClass() ?: continue
+                val interfaceClass = kotlinAsJavaSupport.getLightClass(classOrObject) ?: continue
                 val implsClass = interfaceClass.findInnerClassByName(JvmAbi.DEFAULT_IMPLS_CLASS_NAME, false) ?: continue
                 answer.add(implsClass)
             }
@@ -137,18 +140,25 @@ class JavaElementFinder(
 
         val declarations = kotlinAsJavaSupport.findClassOrObjectDeclarationsInPackage(packageFQN, scope)
         for (declaration in declarations) {
-            val aClass = declaration.toLightClass() ?: continue
+            val aClass = kotlinAsJavaSupport.getLightClass(declaration) ?: continue
             answer.add(aClass)
         }
 
-        return answer.sortByClasspathPreferringNonFakeFiles(scope).toTypedArray()
+        sortByPreferenceToSourceFile(answer, scope)
+
+        return answer.toTypedArray()
     }
 
-    override fun getPackageFiles(psiPackage: PsiPackage, scope: GlobalSearchScope): Array<PsiFile> {
-        val packageFQN = FqName(psiPackage.qualifiedName)
-        // TODO: this does not take into account JvmPackageName annotation
-        return kotlinAsJavaSupport.findFilesForPackage(packageFQN, scope).toTypedArray()
+    private fun sortByPreferenceToSourceFile(list: SmartList<PsiClass>, searchScope: GlobalSearchScope) {
+        if (list.size < 2) return
+        // NOTE: this comparator might violate the contract depending on the scope passed
+        ContainerUtil.quickSort(list, byClasspathComparator(searchScope))
+        list.sortBy { it !is ClsClassImpl }
     }
+
+    // TODO: this does not take into account JvmPackageName annotation
+    override fun getPackageFiles(psiPackage: PsiPackage, scope: GlobalSearchScope): Array<PsiFile> =
+        kotlinAsJavaSupport.findFilesForPackage(FqName(psiPackage.qualifiedName), scope).toTypedArray()
 
     override fun getPackageFilesFilter(psiPackage: PsiPackage, scope: GlobalSearchScope): Condition<PsiFile>? {
         return Condition { input ->
@@ -161,16 +171,9 @@ class JavaElementFinder(
     }
 
     companion object {
-
-        fun getInstance(project: Project): JavaElementFinder {
-            val extensions = Extensions.getArea(project).getExtensionPoint(PsiElementFinder.EP_NAME).extensions
-            for (extension in extensions) {
-                if (extension is JavaElementFinder) {
-                    return extension
-                }
-            }
-            throw IllegalStateException(JavaElementFinder::class.java.simpleName + " is not found for project " + project)
-        }
+        fun getInstance(project: Project): JavaElementFinder =
+            EP.getPoint(project).extensions.firstIsInstanceOrNull()
+                ?: error(JavaElementFinder::class.java.simpleName + " is not found for project " + project)
 
         fun byClasspathComparator(searchScope: GlobalSearchScope): Comparator<PsiElement> {
             return Comparator { o1, o2 ->
@@ -183,16 +186,6 @@ class JavaElementFinder(
                     else -> searchScope.compare(f2, f1)
                 }
             }
-        }
-
-        private fun List<PsiClass>.sortByClasspathPreferringNonFakeFiles(searchScope: GlobalSearchScope): List<PsiClass> {
-            val result = this.toMutableList()
-            // NOTE: this comparator might violate the contract depending on the scope passed
-            ContainerUtil.quickSort(result, byClasspathComparator(searchScope))
-            result.sortBy {
-                it is FakeLightClassForFileOfPackage
-            }
-            return result
         }
     }
 }

@@ -26,19 +26,15 @@ open class GenerateProjectStructureMetadata : DefaultTask() {
 
     @get:OutputFile
     val resultXmlFile: File
-        get() = project.buildDir.resolve("kotlinProjectStructureMetadata/$MULTIPLATFORM_PROJECT_METADATA_FILE_NAME")
+        get() = project.buildDir.resolve("kotlinProjectStructureMetadata/$MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME")
 
     @TaskAction
     fun generateMetadataXml() {
         resultXmlFile.parentFile.mkdirs()
-
-        val document = kotlinProjectStructureMetadata.toXmlDocument()
-
-        TransformerFactory.newInstance().newTransformer().apply {
-            setOutputProperty(OutputKeys.INDENT, "yes")
-            setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4")
-        }.transform(DOMSource(document), StreamResult(resultXmlFile))
+        val resultString = kotlinProjectStructureMetadata.toJson()
+        resultXmlFile.writeText(resultString)
     }
 }
 
 internal const val MULTIPLATFORM_PROJECT_METADATA_FILE_NAME = "kotlin-project-structure-metadata.xml"
+internal const val MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME = "kotlin-project-structure-metadata.json"

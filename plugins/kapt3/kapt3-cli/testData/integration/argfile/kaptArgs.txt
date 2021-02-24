@@ -4,5 +4,5 @@
 -Kapt-classpath=output/ap
 -Kapt-processors=apt.SampleApt
 -d output/classes
--cp output/ap:%KOTLIN_STDLIB%
+-cp output/ap
 Test.kt

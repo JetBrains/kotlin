@@ -1,10 +1,10 @@
 // "Create property 'parameter4' as constructor parameter" "true"
 
 data class MyDto(
-        val parameter1: String,
-        val parameter2: String = "",
-        val parameter3: String = "",
-        val parameter4: String
+    val parameter1: String,
+    val parameter2: String = "",
+    val parameter3: String = "",
+    val parameter4: String
 )
 
 fun main(args: Array<String>) {

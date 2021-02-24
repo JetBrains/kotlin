@@ -19,5 +19,5 @@ package c
 import b.F
 
 fun f() {
-    F().<!INAPPLICABLE_CANDIDATE!>m<!>
+    F().<!HIDDEN!>m<!>
 }

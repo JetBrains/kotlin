@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 typealias MyString = String
 
 class Container<T>(val x: T)

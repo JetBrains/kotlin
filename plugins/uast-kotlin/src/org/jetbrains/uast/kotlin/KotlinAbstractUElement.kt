@@ -34,10 +34,10 @@ import org.jetbrains.uast.*
 import org.jetbrains.uast.kotlin.expressions.KotlinLocalFunctionULambdaExpression
 import org.jetbrains.uast.kotlin.expressions.KotlinUElvisExpression
 import org.jetbrains.uast.kotlin.internal.KotlinUElementWithComments
+import org.jetbrains.uast.kotlin.psi.UastKotlinPsiParameter
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiVariable
 
-abstract class KotlinAbstractUElement(private val givenParent: UElement?) : KotlinUElementWithComments,
-    JvmDeclarationUElementPlaceholder {
+abstract class KotlinAbstractUElement(private val givenParent: UElement?) : KotlinUElementWithComments {
 
     final override val uastParent: UElement? by lz {
         givenParent ?: convertParent()
@@ -86,16 +86,16 @@ abstract class KotlinAbstractUElement(private val givenParent: UElement?) : Kotl
                              ?: parent
                 AnnotationUseSiteTarget.FIELD ->
                     parent = (parentUnwrapped as? KtProperty)
-                             ?: (parentUnwrapped as? KtParameter)
-                                     ?.takeIf { it.isPropertyParameter() }
-                                     ?.let(LightClassUtil::getLightClassBackingField)
-                             ?: parent
+                        ?: (parentUnwrapped as? KtParameter)
+                            ?.takeIf { it.isPropertyParameter() }
+                            ?.let(LightClassUtil::getLightClassBackingField)
+                                ?: parent
                 AnnotationUseSiteTarget.SETTER_PARAMETER ->
                     parent = (parentUnwrapped as? KtParameter)
-                                     ?.toLightSetter()?.parameterList?.parameters?.firstOrNull() ?: parent
+                        ?.toLightSetter()?.parameterList?.parameters?.firstOrNull() ?: parent
             }
         }
-        if (psi is UastKotlinPsiVariable && parent != null) {
+        if ((psi is UastKotlinPsiVariable || psi is UastKotlinPsiParameter) && parent != null) {
             parent = parent.parent
         }
 
@@ -192,6 +192,10 @@ fun doConvertParent(element: UElement, parent: PsiElement?): UElement? {
     }
 
     if (result is USwitchClauseExpressionWithBody && !isInConditionBranch(element, result)) {
+        val uYieldExpression = result.body.expressions.lastOrNull().safeAs<UYieldExpression>()
+        if (uYieldExpression != null && uYieldExpression.expression == element)
+            return uYieldExpression
+
         return result.body
     }
 
@@ -205,11 +209,12 @@ fun doConvertParent(element: UElement, parent: PsiElement?): UElement? {
         return result.tempVarAssignment
     }
 
-    if (result is KotlinUElvisExpression && parent is KtBinaryExpression) {
-        when (element.psi) {
-            parent.left -> return result.lhsDeclaration
-            parent.right -> return result.rhsIfExpression
-        }
+    if (result is KotlinUElvisExpression && parentUnwrapped is KtBinaryExpression) {
+        val branch: Sequence<PsiElement?> = element.psi?.parentsWithSelf.orEmpty().takeWhile { it != parentUnwrapped }
+        if (branch.contains(parentUnwrapped.left))
+            return result.lhsDeclaration
+        if (branch.contains(parentUnwrapped.right))
+            return result.rhsIfExpression
     }
 
     if ((result is UMethod || result is KotlinLocalFunctionULambdaExpression)
@@ -245,8 +250,7 @@ private fun findAnnotationClassFromConstructorParameter(parameter: KtParameter):
 
 abstract class KotlinAbstractUExpression(givenParent: UElement?) :
     KotlinAbstractUElement(givenParent),
-    UExpression,
-    JvmDeclarationUElementPlaceholder {
+    UExpression {
 
     override val javaPsi: PsiElement? = null
 

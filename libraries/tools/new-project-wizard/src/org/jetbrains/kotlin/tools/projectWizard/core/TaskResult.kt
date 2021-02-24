@@ -1,13 +1,5 @@
 package org.jetbrains.kotlin.tools.projectWizard.core
 
-import kotlin.coroutines.Continuation
-import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.EmptyCoroutineContext
-import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
-import kotlin.coroutines.intrinsics.createCoroutineUnintercepted
-import kotlin.coroutines.intrinsics.suspendCoroutineUninterceptedOrReturn
-import kotlin.coroutines.resume
-
 
 sealed class TaskResult<out T : Any>
 data class Success<T : Any>(val value: T) : TaskResult<T>()
@@ -60,6 +52,9 @@ inline fun <A : Any, B : Any, R : Any> TaskResult<A>.mappendM(
 infix fun <T : Any> TaskResult<*>.andThen(other: TaskResult<T>): TaskResult<T> =
     mappendM(other) { _, _ -> other }
 
+infix fun <T : Any> TaskResult<T>.andThenIgnoring(other: TaskResult<Unit>): TaskResult<T> =
+    mappendM(other) { _, _ -> this }
+
 operator fun <T : Any> TaskResult<List<T>>.plus(other: TaskResult<List<T>>): TaskResult<Unit> =
     mappend(other) { _, _ -> Unit }
 
@@ -111,7 +106,7 @@ fun <T : Any, R : Any> TaskResult<T>.map(f: (T) -> R): TaskResult<R> = when (thi
     is Success<T> -> Success(f(value))
 }
 
-fun <T : Any> TaskResult<T>.mapFailure(f: (List<Error>) -> List<Error>): TaskResult<T> = when (this) {
+fun <T : Any> TaskResult<T>.mapFailure(f: (List<Error>) -> Error): TaskResult<T> = when (this) {
     is Failure -> Failure(f(errors))
     is Success<T> -> this
 }

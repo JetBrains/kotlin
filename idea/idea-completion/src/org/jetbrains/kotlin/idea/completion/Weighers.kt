@@ -22,7 +22,9 @@ import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.idea.util.toFuzzyType
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.findOriginalTopMostOverriddenDescriptors
 import org.jetbrains.kotlin.types.typeUtil.isNothing
@@ -219,6 +221,20 @@ object DeprecatedWeigher : LookupElementWeigher("kotlin.deprecated") {
     override fun weigh(element: LookupElement): Int {
         val o = element.`object` as? DeclarationLookupObject ?: return 0
         return if (o.isDeprecated) 1 else 0
+    }
+}
+
+/**
+ * This weigher is designed to "sink down" specific elements in completion.
+ *
+ * For now it only works on "Flow.collect" member method (see [https://youtrack.jetbrains.com/issue/KT-36808] for details).
+ */
+object KotlinUnwantedLookupElementWeigher : LookupElementWeigher("kotlin.unwantedElement") {
+    private val flowCollectFqName = FqName("kotlinx.coroutines.flow.Flow.collect")
+
+    override fun weigh(element: LookupElement): Int {
+        val descriptor = (element.`object` as? DeclarationLookupObject)?.descriptor ?: return 0
+        return if (descriptor.fqNameSafe == flowCollectFqName) 1 else 0
     }
 }
 

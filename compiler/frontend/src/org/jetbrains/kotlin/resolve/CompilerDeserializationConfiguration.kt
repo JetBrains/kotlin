@@ -14,10 +14,12 @@ import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfigu
 class CompilerDeserializationConfiguration(languageVersionSettings: LanguageVersionSettings) : DeserializationConfiguration {
     override val skipMetadataVersionCheck = languageVersionSettings.getFlag(AnalysisFlags.skipMetadataVersionCheck)
 
-    override val reportErrorsOnPreReleaseDependencies =
-        !skipMetadataVersionCheck && !languageVersionSettings.isPreRelease() && !KotlinCompilerVersion.isPreRelease()
+    override val skipPrereleaseCheck = languageVersionSettings.getFlag(AnalysisFlags.skipPrereleaseCheck)
 
-    override val reportErrorsOnIrDependencies = languageVersionSettings.getFlag(AnalysisFlags.reportErrorsOnIrDependencies)
+    override val reportErrorsOnPreReleaseDependencies =
+        !skipPrereleaseCheck && !languageVersionSettings.isPreRelease() && !KotlinCompilerVersion.isPreRelease()
+
+    override val allowUnstableDependencies = languageVersionSettings.getFlag(AnalysisFlags.allowUnstableDependencies)
 
     override val typeAliasesAllowed = languageVersionSettings.supportsFeature(LanguageFeature.TypeAliases)
 

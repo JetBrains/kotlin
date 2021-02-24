@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -30,12 +29,7 @@ class PrimitiveCompanionLowering(val context: JsIrBackendContext) : BodyLowering
         if (!irClass.isCompanion)
             return null
 
-        //TODO: Figure out how to check for primitive companion in case similar to REPL in better way
-        val parent = irClass.parent as? IrClass
-            ?: context.symbolTable.referenceClass(irClass.descriptor.containingDeclaration as ClassDescriptor).owner.also {
-                assert(context.scriptMode)
-            }
-
+        val parent = irClass.parent as IrClass
         if (!parent.defaultType.isPrimitiveType() && !parent.defaultType.isString())
             return null
 
@@ -78,9 +72,7 @@ class PrimitiveCompanionLowering(val context: JsIrBackendContext) : BodyLowering
             override fun visitCall(expression: IrCall): IrExpression {
                 val newCall = super.visitCall(expression) as IrCall
 
-                val function = expression.symbol.owner as IrSimpleFunction
-
-                val actualFunction = getActualPrimitiveCompanionPropertyAccessor(function)
+                val actualFunction = getActualPrimitiveCompanionPropertyAccessor(expression.symbol.owner)
                     ?: return newCall
 
                 return irCall(newCall, actualFunction)

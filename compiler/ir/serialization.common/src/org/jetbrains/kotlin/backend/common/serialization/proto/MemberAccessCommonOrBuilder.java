@@ -40,11 +40,15 @@ public interface MemberAccessCommonOrBuilder extends
   int getValueArgumentCount();
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.TypeArguments type_arguments = 4;</code>
+   * <code>repeated int32 type_argument = 4 [packed = true];</code>
    */
-  boolean hasTypeArguments();
+  java.util.List<java.lang.Integer> getTypeArgumentList();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.TypeArguments type_arguments = 4;</code>
+   * <code>repeated int32 type_argument = 4 [packed = true];</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.TypeArguments getTypeArguments();
+  int getTypeArgumentCount();
+  /**
+   * <code>repeated int32 type_argument = 4 [packed = true];</code>
+   */
+  int getTypeArgument(int index);
 }

@@ -24,11 +24,14 @@ import org.gradle.api.artifacts.dsl.RepositoryHandler
 import org.gradle.api.artifacts.repositories.IvyArtifactRepository
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.TaskProvider
-import org.gradle.kotlin.dsl.*
+import org.gradle.kotlin.dsl.DependencyHandlerScope
+import org.gradle.kotlin.dsl.extra
+import org.gradle.kotlin.dsl.register
 import java.io.File
 
 private fun Project.kotlinBuildLocalDependenciesDir(): File =
-    (findProperty("kotlin.build.dependencies.dir") as String?)?.let(::File) ?: project.rootDir.absoluteFile.resolve("dependencies")
+    (findProperty("kotlin.build.dependencies.dir") as String?)?.let(::File)
+        ?: rootProject.gradle.gradleUserHomeDir.resolve("kotlin-build-dependencies")
 
 private fun Project.kotlinBuildLocalRepoDir(): File = kotlinBuildLocalDependenciesDir().resolve("repo")
 
@@ -73,9 +76,9 @@ fun Project.jpsStandalone() = "kotlin.build:jps-standalone:${rootProject.extra["
 
 fun Project.nodeJSPlugin() = "kotlin.build:NodeJS:${rootProject.extra["versions.idea.NodeJS"]}"
 
-fun Project.androidDxJar() = "org.jetbrains.kotlin:android-dx:${rootProject.extra["versions.androidBuildTools"]}"
-
 fun Project.jpsBuildTest() = "com.jetbrains.intellij.idea:jps-build-test:${rootProject.extra["versions.intellijSdk"]}"
+
+fun Project.kotlinxCollectionsImmutable() = "org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:${rootProject.extra["versions.kotlinx-collections-immutable"]}"
 
 /**
  * Runtime version of annotations that are already in Kotlin stdlib (historically Kotlin has older version of this one).
@@ -127,12 +130,10 @@ object IntellijRootUtils {
     }
 }
 
-fun ModuleDependency.includeIntellijCoreJarDependencies(project: Project) =
-    includeJars(*(project.rootProject.extra["IntellijCoreDependencies"] as List<String>).toTypedArray(), rootProject = project.rootProject)
-
-fun ModuleDependency.includeIntellijCoreJarDependencies(project: Project, jarsFilterPredicate: (String) -> Boolean) =
+@Suppress("UNCHECKED_CAST")
+fun ModuleDependency.includeIntellijCoreJarDependencies(project: Project, jarsFilterPredicate: (String) -> Boolean = { true }): Unit =
     includeJars(
-        *(project.rootProject.extra["IntellijCoreDependencies"] as List<String>).filter { jarsFilterPredicate(it) }.toTypedArray(),
+        *(project.rootProject.extra["IntellijCoreDependencies"] as List<String>).filter(jarsFilterPredicate).toTypedArray(),
         rootProject = project.rootProject
     )
 
@@ -162,7 +163,7 @@ fun Project.runIdeTask(name: String, ideaPluginDir: File, ideaSandboxDir: File, 
 
         classpath = mainSourceSet.runtimeClasspath
 
-        main = "com.intellij.idea.Main"
+        mainClass.set("com.intellij.idea.Main")
 
         workingDir = File(intellijRootDir(), "bin")
 
@@ -174,11 +175,17 @@ fun Project.runIdeTask(name: String, ideaPluginDir: File, ideaSandboxDir: File, 
             "-Didea.debug.mode=true",
             "-Didea.system.path=$ideaSandboxDir",
             "-Didea.config.path=$ideaSandboxConfigDir",
+            "-Didea.tooling.debug=true",
+            "-Dfus.internal.test.mode=true",
             "-Dapple.laf.useScreenMenuBar=true",
             "-Dapple.awt.graphics.UseQuartz=true",
             "-Dsun.io.useCanonCaches=false",
             "-Dplugin.path=${ideaPluginDir.absolutePath}"
         )
+
+        if (Platform[201].orHigher() && !isIntellijUltimateSdkAvailable()) {
+            jvmArgs("-Didea.platform.prefix=Idea")
+        }
 
         if (rootProject.findProperty("versions.androidStudioRelease") != null) {
             jvmArgs("-Didea.platform.prefix=AndroidStudio")

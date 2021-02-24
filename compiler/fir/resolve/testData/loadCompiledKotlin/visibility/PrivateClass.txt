@@ -1,4 +1,0 @@
-private final class PrivateClass : R|kotlin/Any| {
-    public constructor(): R|test/PrivateClass|
-
-}

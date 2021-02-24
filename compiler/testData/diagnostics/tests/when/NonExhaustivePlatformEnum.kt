@@ -1,3 +1,13 @@
+// FIR_IDENTICAL
+/*
+ * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
+ *
+ * SPEC VERSION: 0.1-152
+ * PRIMARY LINKS: expressions, when-expression -> paragraph 5 -> sentence 1
+ * expressions, when-expression, exhaustive-when-expressions -> paragraph 1 -> sentence 1
+ * expressions, when-expression, exhaustive-when-expressions -> paragraph 2 -> sentence 9
+ */
+
 // See KT-6399: exhaustive whens on platform enums
 
 // FILE: J.java

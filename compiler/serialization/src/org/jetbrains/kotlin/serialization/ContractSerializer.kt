@@ -188,11 +188,11 @@ class ContractSerializer {
             }
         }
 
-        private fun invocationKindProtobufEnum(kind: InvocationKind): ProtoBuf.Effect.InvocationKind? = when (kind) {
-            InvocationKind.AT_MOST_ONCE -> ProtoBuf.Effect.InvocationKind.AT_MOST_ONCE
-            InvocationKind.EXACTLY_ONCE -> ProtoBuf.Effect.InvocationKind.EXACTLY_ONCE
-            InvocationKind.AT_LEAST_ONCE -> ProtoBuf.Effect.InvocationKind.AT_LEAST_ONCE
-            InvocationKind.UNKNOWN -> null
+        private fun invocationKindProtobufEnum(kind: EventOccurrencesRange): ProtoBuf.Effect.InvocationKind? = when (kind) {
+            EventOccurrencesRange.AT_MOST_ONCE -> ProtoBuf.Effect.InvocationKind.AT_MOST_ONCE
+            EventOccurrencesRange.EXACTLY_ONCE -> ProtoBuf.Effect.InvocationKind.EXACTLY_ONCE
+            EventOccurrencesRange.AT_LEAST_ONCE -> ProtoBuf.Effect.InvocationKind.AT_LEAST_ONCE
+            else -> null
         }
 
         private fun constantValueProtobufEnum(constantReference: ConstantReference): ProtoBuf.Expression.ConstantValue? =

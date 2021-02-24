@@ -10,11 +10,11 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiNamedElement
 import com.intellij.refactoring.HelpID
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.util.CommonRefactoringUtil
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
@@ -23,8 +23,6 @@ import org.jetbrains.kotlin.idea.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfoStorage
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.qualifiedClassNameForRendering
-import org.jetbrains.kotlin.idea.statistics.FUSEventGroups
-import org.jetbrains.kotlin.idea.statistics.KotlinFUSLogger
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
@@ -37,6 +35,7 @@ class KotlinPullUpHandler : AbstractPullPushMembersHandler(
     wrongPositionMessage = RefactoringBundle.message("the.caret.should.be.positioned.inside.a.class.to.pull.members.from")
 ) {
     companion object {
+        @NonNls
         const val PULL_UP_TEST_HELPER_KEY = "PULL_UP_TEST_HELPER_KEY"
     }
 
@@ -108,11 +107,6 @@ class KotlinPullUpHandler : AbstractPullPushMembersHandler(
             KotlinPullUpDialog(project, classOrObject, superClasses, memberInfoStorage).show()
         }
     }
-
-    override fun invoke(project: Project, editor: Editor, file: PsiFile, dataContext: DataContext?) {
-        super.invoke(project, editor, file, dataContext)
-        KotlinFUSLogger.log(FUSEventGroups.Refactoring, this.javaClass.simpleName)
-    }
 }
 
-const val PULL_MEMBERS_UP = "Pull Members Up"
+val PULL_MEMBERS_UP: String get() = RefactoringBundle.message("pull.members.up.title")

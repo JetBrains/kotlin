@@ -1,0 +1,8 @@
+// "Add parameter to function 'baz'" "true"
+fun bar(): Int = 42
+
+fun baz(kFunction0: () -> Int) {}
+
+fun foo() {
+    baz(::bar)
+}

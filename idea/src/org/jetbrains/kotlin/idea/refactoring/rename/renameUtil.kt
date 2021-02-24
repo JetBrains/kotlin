@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.core.dropDefaultValue
-import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.references.AbstractKtReference
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.resolve.source.getPsi
@@ -55,7 +55,7 @@ class UnresolvableConventionViolationUsageInfo(
     element: PsiElement,
     referencedElement: PsiElement
 ) : UnresolvableCollisionUsageInfo(element, referencedElement) {
-    override fun getDescription(): String = KotlinRefactoringBundle.message("naming.convention.will.be.violated.after.rename")
+    override fun getDescription(): String = KotlinBundle.message("naming.convention.will.be.violated.after.rename")
 }
 
 class LostDefaultValuesInOverridingFunctionUsageInfo(

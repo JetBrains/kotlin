@@ -1,8 +1,8 @@
 package test
 
-actual enum class <lineMarker>Enum</lineMarker> {
-    <lineMarker>A</lineMarker>,
-    <lineMarker>B</lineMarker>,
-    <lineMarker>C</lineMarker>,
+actual enum class <!LINE_MARKER("descr='Has declaration in common module'")!>Enum<!> {
+    <!LINE_MARKER("descr='Has declaration in common module'")!>A<!>,
+    <!LINE_MARKER("descr='Has declaration in common module'")!>B<!>,
+    <!LINE_MARKER("descr='Has declaration in common module'")!>C<!>,
     D
 }

@@ -1,6 +1,4 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 // TARGET_BACKEND: JVM
-
 // WITH_RUNTIME
 
 class MyCollection<T>(val delegate: Collection<T>): Collection<T> by delegate

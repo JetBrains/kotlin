@@ -6,19 +6,25 @@
           "specVersion": "0.1-218",
           "casesNumber": 0,
           "description": "operator \u0026\u0026 does not evaluate the right hand side argument unless the left hand side argument evaluated to false.",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/logical-conjunction-expression/p-1/pos/2.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-218",
           "casesNumber": 0,
           "description": "operator \u0026\u0026 does not evaluate the right hand side argument unless the left hand side argument evaluated to false.",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/logical-conjunction-expression/p-1/pos/2.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-218",
           "casesNumber": 0,
           "description": "operator \u0026\u0026 does not evaluate the right hand side argument unless the left hand side argument evaluated to false.",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/logical-conjunction-expression/p-1/pos/2.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ],
       "1": [
@@ -27,21 +33,24 @@
           "casesNumber": 0,
           "description": "operator \u0026\u0026 does not evaluate the right hand side argument unless the left hand side argument evaluated to false.",
           "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/logical-conjunction-expression/p-1/pos/2.1.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-218",
           "casesNumber": 0,
           "description": "operator \u0026\u0026 does not evaluate the right hand side argument unless the left hand side argument evaluated to false.",
           "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/logical-conjunction-expression/p-1/pos/2.3.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-218",
           "casesNumber": 0,
           "description": "operator \u0026\u0026 does not evaluate the right hand side argument unless the left hand side argument evaluated to false.",
           "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/logical-conjunction-expression/p-1/pos/2.2.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         }
       ]
     }

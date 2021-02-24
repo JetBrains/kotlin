@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 fun foo() = @ann 1
 
 @Target(AnnotationTarget.EXPRESSION)

@@ -57,7 +57,7 @@ internal object DefaultJsAsserter : Asserter {
 
     override fun assertTrue(lazyMessage: () -> String?, actual: Boolean) {
         if (!actual) {
-            failWithMessage(lazyMessage)
+            failWithMessage(lazyMessage, null)
         } else {
             invokeHook(true, lazyMessage)
         }
@@ -68,16 +68,18 @@ internal object DefaultJsAsserter : Asserter {
     }
 
     override fun fail(message: String?): Nothing {
-        failWithMessage { message }
+        fail(message, null)
     }
 
-    private fun failWithMessage(lazyMessage: () -> String?): Nothing {
+    @SinceKotlin("1.4")
+    override fun fail(message: String?, cause: Throwable?): Nothing {
+        failWithMessage({ message }, cause)
+    }
+
+    private inline fun failWithMessage(lazyMessage: () -> String?, cause: Throwable?): Nothing {
         val message = lazyMessage()
         invokeHook(false) { message }
-        if (message == null)
-            throw AssertionError()
-        else
-            throw AssertionError(message)
+        throw AssertionErrorWithCause(message, cause)
     }
 
     private fun invokeHook(result: Boolean, lazyMessage: () -> String?) {

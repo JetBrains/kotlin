@@ -10,7 +10,7 @@ fun test() {
         0xbbU
     )
 
-    <!INAPPLICABLE_CANDIDATE!>takeAll<!>(
+    takeAll(
         1u,
         2u,
         3u,

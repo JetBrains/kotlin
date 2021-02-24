@@ -6,5 +6,5 @@ val xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 fun main() {
     val c = xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-            ?: "abcdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdf"
+        ?: "abcdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdfdf"
 }

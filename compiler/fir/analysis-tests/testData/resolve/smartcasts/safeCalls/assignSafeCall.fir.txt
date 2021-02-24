@@ -1,0 +1,72 @@
+FILE: assignSafeCall.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun foo(): R|kotlin/Int| {
+            ^foo Int(1)
+        }
+
+        public final val x: R|kotlin/Int| = Int(1)
+            public get(): R|kotlin/Int|
+
+        public final fun bar(): R|kotlin/Unit| {
+        }
+
+    }
+    public final fun test_1(a: R|A?|): R|kotlin/Unit| {
+        lval x: R|kotlin/Int?| = R|<local>/a|?.{ $subj$.R|/A.x| }
+        when () {
+            !=(R|<local>/x|, Null(null)) ->  {
+                R|<local>/a|.R|/A.bar|()
+            }
+        }
+
+    }
+    public final fun test_2(a: R|A?|): R|kotlin/Unit| {
+        lval x: R|kotlin/Int?| = R|<local>/a|?.{ $subj$.R|/A.foo|() }
+        when () {
+            !=(R|<local>/x|, Null(null)) ->  {
+                R|<local>/a|.R|/A.bar|()
+            }
+        }
+
+    }
+    public final fun test_3(x: R|kotlin/Any?|): R|kotlin/Unit| {
+        lval a: R|A| = (R|<local>/x| as? R|A|) ?: ^test_3 Unit
+        R|<local>/a|.R|/A.foo|()
+        R|<local>/x|.R|/A.foo|()
+    }
+    public abstract interface B : R|kotlin/Any| {
+        public abstract fun foo(): R|kotlin/Int|
+
+        public abstract val x: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+        public abstract fun bar(): R|kotlin/Unit|
+
+    }
+    public final fun test_1(a: R|B?|): R|kotlin/Unit| {
+        lval x: R|kotlin/Int?| = R|<local>/a|?.{ $subj$.R|/B.x| }
+        when () {
+            !=(R|<local>/x|, Null(null)) ->  {
+                R|<local>/a|.R|/B.bar|()
+            }
+        }
+
+    }
+    public final fun test_2(a: R|B?|): R|kotlin/Unit| {
+        lval x: R|kotlin/Int?| = R|<local>/a|?.{ $subj$.R|/B.foo|() }
+        when () {
+            !=(R|<local>/x|, Null(null)) ->  {
+                R|<local>/a|.R|/B.bar|()
+            }
+        }
+
+    }
+    public final fun test_3(x: R|kotlin/Any?|): R|kotlin/Unit| {
+        lval a: R|B| = (R|<local>/x| as? R|B|) ?: ^test_3 Unit
+        R|<local>/a|.R|/B.foo|()
+        R|<local>/x|.R|/B.foo|()
+    }

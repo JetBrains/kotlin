@@ -13,6 +13,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToParameterDescriptorIfAny
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructorSubstitution
@@ -51,10 +53,10 @@ object SuperClassNotInitialized : KotlinIntentionActionsFactory() {
 
         val superClass = (type.constructor.declarationDescriptor as? ClassDescriptor) ?: return emptyList()
         val classDescriptor = classOrObjectDeclaration.resolveToDescriptorIfAny(BodyResolveMode.FULL) ?: return emptyList()
-        val containingPackage = superClass.containingDeclaration as? PackageFragmentDescriptor
-        val inSameFile = containingPackage == classDescriptor.containingDeclaration
+        val containingPackage = superClass.classId?.packageFqName
+        val inSamePackage = containingPackage != null && containingPackage == classDescriptor.classId?.packageFqName
         val constructors = superClass.constructors.filter {
-            it.isVisible(classDescriptor) || (superClass.modality == Modality.SEALED && inSameFile)
+            it.isVisible(classDescriptor) && (superClass.modality != Modality.SEALED || inSamePackage && classDescriptor.visibility != DescriptorVisibilities.LOCAL)
         }
         if (constructors.isEmpty() && (!superClass.isExpect || superClass.kind != ClassKind.CLASS)) {
             return emptyList() // no accessible constructor
@@ -87,7 +89,7 @@ object SuperClassNotInitialized : KotlinIntentionActionsFactory() {
 
                     fun canRenderOnlyFirstParameters(n: Int) = parameterTypes.map { it.take(n) }.toSet().size == parameterTypes.size
 
-                    val maxParams = parameterTypes.asSequence().map { it.size }.max()!!
+                    val maxParams = parameterTypes.maxOf { it.size }
                     val maxParamsToDisplay = if (maxParams <= DISPLAY_MAX_PARAMS) {
                         maxParams
                     } else {
@@ -99,7 +101,7 @@ object SuperClassNotInitialized : KotlinIntentionActionsFactory() {
                             types.asSequence().take(maxParamsToDisplay).map { DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(it) }
                                 .toList()
                         val parameterString = typesRendered.joinToString(", ", "(", if (types.size <= maxParamsToDisplay) ")" else ",...)")
-                        val text = "Add constructor parameters from " + superClass.name.asString() + parameterString
+                        val text = KotlinBundle.message("add.constructor.parameters.from.0.1", superClass.name.asString(), parameterString)
                         fixes.addIfNotNull(AddParametersFix.create(delegator, classOrObjectDeclaration, constructor, text))
                     }
                 }
@@ -114,7 +116,7 @@ object SuperClassNotInitialized : KotlinIntentionActionsFactory() {
         val putCaretIntoParenthesis: Boolean
     ) : KotlinQuickFixAction<KtSuperTypeEntry>(element), HighPriorityAction {
 
-        override fun getFamilyName() = "Change to constructor invocation" //TODO?
+        override fun getFamilyName() = KotlinBundle.message("change.to.constructor.invocation") //TODO?
 
         override fun getText() = familyName
 
@@ -200,7 +202,7 @@ object SuperClassNotInitialized : KotlinIntentionActionsFactory() {
             }
         }
 
-        override fun getFamilyName() = "Add constructor parameters from superclass"
+        override fun getFamilyName() = KotlinBundle.message("add.constructor.parameters.from.superclass")
 
         override fun getText() = text
 

@@ -1,0 +1,12 @@
+package
+
+@kotlin.OptIn(markerClass = {kotlin.ExperimentalStdlibApi::class}) public fun main(): kotlin.Unit
+@kotlin.OptIn(markerClass = {kotlin.experimental.ExperimentalTypeInference::class}) public fun </*0*/ E> myBuildList(/*0*/ @kotlin.BuilderInference builderAction: kotlin.collections.MutableList<E>.() -> kotlin.Unit): kotlin.Unit
+
+public final class Foo {
+    public constructor Foo(/*0*/ notNullProp: kotlin.String)
+    public final val notNullProp: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

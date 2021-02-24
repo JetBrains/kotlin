@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.inspections.coroutines
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.core.setType
@@ -27,8 +28,8 @@ class AddCallOrUnwrapTypeFix(
     val simplify: (KtExpression) -> Unit
 ) : LocalQuickFix {
     override fun getName(): String =
-        if (withBody) "Add '.$functionName()' to function result (breaks use-sites!)"
-        else "Unwrap '$typeName' return type (breaks use-sites!)"
+        if (withBody) KotlinBundle.message("add.call.or.unwrap.type.fix.text", functionName)
+        else KotlinBundle.message("add.call.or.unwrap.type.fix.text1", typeName)
 
     override fun getFamilyName(): String = name
 

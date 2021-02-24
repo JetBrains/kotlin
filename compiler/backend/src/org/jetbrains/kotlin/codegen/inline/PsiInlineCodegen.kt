@@ -7,14 +7,18 @@ package org.jetbrains.kotlin.codegen.inline
 
 import org.jetbrains.kotlin.builtins.isSuspendFunctionTypeOrSubtype
 import org.jetbrains.kotlin.codegen.*
-import org.jetbrains.kotlin.codegen.AsmUtil.getMethodAsmFlags
+import org.jetbrains.kotlin.codegen.DescriptorAsmUtil.getMethodAsmFlags
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtIfExpression
 import org.jetbrains.kotlin.psi.KtPsiUtil
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCallWithAssert
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
@@ -22,10 +26,10 @@ import org.jetbrains.kotlin.resolve.inline.InlineUtil.isInlinableParameterExpres
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
 class PsiInlineCodegen(
@@ -39,15 +43,11 @@ class PsiInlineCodegen(
     private val actualDispatchReceiver: Type = methodOwner
 ) : InlineCodegen<ExpressionCodegen>(
     codegen, state, function, methodOwner, signature, typeParameterMappings, sourceCompiler,
-    ReifiedTypeInliner(typeParameterMappings, object : ReifiedTypeInliner.IntrinsicsSupport<KotlinType> {
-        override fun putClassInstance(v: InstructionAdapter, type: KotlinType) {
-            AsmUtil.putJavaLangClassInstance(v, state.typeMapper.mapType(type), type, state.typeMapper)
-        }
-
-        override fun toKotlinType(type: KotlinType): KotlinType = type
-    }, codegen.typeSystem, state.languageVersionSettings)
+    ReifiedTypeInliner(
+        typeParameterMappings, PsiInlineIntrinsicsSupport(state), codegen.typeSystem,
+        state.languageVersionSettings, state.unifiedNullChecks
+    ),
 ), CallGenerator {
-
     override fun generateAssertFieldIfNeeded(info: RootInliningContext) {
         if (info.generateAssertField) {
             codegen.parentCodegen.generateAssertField()
@@ -60,16 +60,22 @@ class PsiInlineCodegen(
         callDefault: Boolean,
         codegen: ExpressionCodegen
     ) {
-        val inlineCall = InlineCallImpl.of(resolvedCall)
-        if (!state.globalInlineContext.enterIntoInlining(inlineCall)) {
+        if (!state.globalInlineContext.enterIntoInlining(resolvedCall?.resultingDescriptor, resolvedCall?.call?.callElement)) {
             generateStub(resolvedCall, codegen)
             return
         }
         try {
-            performInline(resolvedCall?.typeArguments?.keys?.toList(), callDefault, callDefault, codegen.typeSystem)
+            val registerLineNumber = registerLineNumberAfterwards(resolvedCall)
+            performInline(resolvedCall?.typeArguments?.keys?.toList(), callDefault, callDefault, codegen.typeSystem, registerLineNumber)
         } finally {
-            state.globalInlineContext.exitFromInliningOf(inlineCall)
+            state.globalInlineContext.exitFromInlining()
         }
+    }
+
+    private fun registerLineNumberAfterwards(resolvedCall: ResolvedCall<*>?): Boolean {
+        val callElement = resolvedCall?.call?.callElement ?: return false
+        val parentIfCondition = callElement.getParentOfType<KtIfExpression>(true)?.condition ?: return false
+        return parentIfCondition.isAncestor(callElement, false)
     }
 
     override fun processAndPutHiddenParameters(justProcess: Boolean) {
@@ -146,7 +152,8 @@ class PsiInlineCodegen(
         } else {
             val value = codegen.gen(argumentExpression)
             val kind = when {
-                isCallSiteIsSuspend(valueParameterDescriptor) -> ValueKind.NON_INLINEABLE_ARGUMENT_FOR_INLINE_PARAMETER_CALLED_IN_SUSPEND
+                isCallSiteIsSuspend(valueParameterDescriptor) && parameterType.kotlinType?.isSuspendFunctionTypeOrSubtype == true ->
+                    ValueKind.NON_INLINEABLE_ARGUMENT_FOR_INLINE_PARAMETER_CALLED_IN_SUSPEND
                 isInlineSuspendParameter(valueParameterDescriptor) -> ValueKind.NON_INLINEABLE_ARGUMENT_FOR_INLINE_SUSPEND_PARAMETER
                 else -> ValueKind.GENERAL
             }
@@ -203,4 +210,7 @@ class PsiInlineCodegen(
             ::PsiDefaultLambda
         )
     }
+
+    override fun descriptorIsDeserialized(memberDescriptor: CallableMemberDescriptor): Boolean =
+        memberDescriptor is DescriptorWithContainerSource
 }

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 object X
 
 class Y {

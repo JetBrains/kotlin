@@ -23,19 +23,18 @@ import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaElement
 import org.jetbrains.kotlin.load.java.structure.JavaField
-import org.jetbrains.kotlin.load.java.structure.JavaMethod
+import org.jetbrains.kotlin.load.java.structure.JavaMember
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.load.java.structure.impl.JavaElementImpl
 import org.jetbrains.kotlin.load.java.structure.impl.JavaFieldImpl
-import org.jetbrains.kotlin.load.java.structure.impl.JavaMethodImpl
 import org.jetbrains.kotlin.resolve.BindingContext.*
 import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 
 class LazyResolveBasedCache(resolveSession: ResolveSession) : AbstractJavaResolverCache(resolveSession) {
 
-    override fun recordMethod(method: JavaMethod, descriptor: SimpleFunctionDescriptor) {
-        BindingContextUtils.recordFunctionDeclarationToDescriptor(trace, (method as? JavaMethodImpl)?.psi ?: return, descriptor)
+    override fun recordMethod(member: JavaMember, descriptor: SimpleFunctionDescriptor) {
+        BindingContextUtils.recordFunctionDeclarationToDescriptor(trace, (member as? JavaElementImpl<*>)?.psi ?: return, descriptor)
     }
 
     override fun recordConstructor(element: JavaElement, descriptor: ConstructorDescriptor) {

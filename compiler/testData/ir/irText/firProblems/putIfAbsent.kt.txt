@@ -1,0 +1,14 @@
+class Owner {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun <T : Any?> foo(x: T, y: T) {
+    val map: MutableMap<T, T> = mutableMapOf<T, T>()
+    map.putIfAbsent(p0 = x, p1 = y) /*~> Unit */
+  }
+
+}
+

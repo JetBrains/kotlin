@@ -10,7 +10,7 @@ object CC : C()
 fun foo(a: A) {
     if (a is B) {
         if (a is C) {
-            val t = when (a) {
+            val t = <!NO_ELSE_IN_WHEN!>when<!> (a) {
                 is CC -> "CC"
             }
         }
@@ -20,7 +20,7 @@ fun foo(a: A) {
 fun foo2(a: A) {
     if (a is C) {
         if (a is B) {
-            val t = when (a) {
+            val t = <!NO_ELSE_IN_WHEN!>when<!> (a) {
                     is CC -> "CC"
             }
         }

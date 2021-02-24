@@ -1,0 +1,12 @@
+fun testUnaryMinus(d: dynamic): dynamic {
+  return -d
+}
+
+fun testUnaryPlus(d: dynamic): dynamic {
+  return +d
+}
+
+fun testExcl(d: dynamic): dynamic {
+  return !d
+}
+

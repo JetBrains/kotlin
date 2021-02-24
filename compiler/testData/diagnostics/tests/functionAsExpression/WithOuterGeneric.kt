@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 fun <T> parameter() = fun (t: T) = t

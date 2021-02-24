@@ -1,0 +1,8 @@
+// MOVE: down
+fun test(i: Int) {
+    do {
+        <caret>println()
+        run {
+        }
+    } while (i == 1)
+}

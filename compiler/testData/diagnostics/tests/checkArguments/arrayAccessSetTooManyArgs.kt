@@ -6,6 +6,6 @@ class A {
     operator fun set(x: String, value: Int) {}
 
     fun d(x: Int) {
-        this["", <!OI;TOO_MANY_ARGUMENTS!>1<!>] = <!NI;TOO_MANY_ARGUMENTS!>1<!>
+        this["", <!TOO_MANY_ARGUMENTS{OI}!>1<!>] = <!TOO_MANY_ARGUMENTS{NI}!>1<!>
     }
 }

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.util.runSynchronouslyWithProgress
@@ -46,9 +47,9 @@ class ChangeSuspendInHierarchyFix(
 ) : KotlinQuickFixAction<KtNamedFunction>(element) {
     override fun getFamilyName(): String {
         return if (addModifier) {
-            "Add 'suspend' modifier to all functions in hierarchy"
+            KotlinBundle.message("fix.change.suspend.hierarchy.add")
         } else {
-            "Remove 'suspend' modifier from all functions in hierarchy"
+            KotlinBundle.message("fix.change.suspend.hierarchy.remove")
         }
     }
 
@@ -70,7 +71,7 @@ class ChangeSuspendInHierarchyFix(
             val baseClass = DescriptorToSourceUtilsIde.getAnyDeclaration(project, baseClassDescriptor) ?: return@forEach
 
             val name = (baseClass as? PsiNamedElement)?.name ?: return@forEach
-            progressIndicator.text = "Looking for class $name inheritors..."
+            progressIndicator.text = KotlinBundle.message("fix.change.progress.looking.inheritors", name)
             val classes = listOf(baseClass) + HierarchySearchRequest(baseClass, baseClass.useScope).searchInheritors()
             classes.mapNotNullTo(result) {
                 val subClass = it.unwrapped as? KtClassOrObject ?: return@mapNotNullTo null
@@ -88,7 +89,7 @@ class ChangeSuspendInHierarchyFix(
     }
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
-        val functions = project.runSynchronouslyWithProgress("Analyzing class hierarchy...", true) {
+        val functions = project.runSynchronouslyWithProgress(KotlinBundle.message("fix.change.progress.analyzing.class.hierarchy"), true) {
             runReadAction { findAllFunctionToProcess(project) }
         } ?: return
 

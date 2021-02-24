@@ -1,0 +1,19 @@
+package test
+
+object Host {
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  inline fun <reified T : Any?> foo(): String {
+    return "OK"
+  }
+
+}
+
+fun test(): String {
+  return Host.foo<Any>()
+}
+

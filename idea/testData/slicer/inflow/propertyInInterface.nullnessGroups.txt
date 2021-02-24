@@ -1,0 +1,3 @@
+[NotNull Values]
+13 	<bold>val v</bold> = c.prop (in foo(I, C))
+13 		<bold>val v</bold> = c.prop (in foo(I, C))

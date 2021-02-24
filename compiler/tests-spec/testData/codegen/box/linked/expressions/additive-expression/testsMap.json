@@ -6,7 +6,9 @@
           "specVersion": "0.1-218",
           "casesNumber": 0,
           "description": "A - B is exactly the same as A.MINUS(B)",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/additive-expression/p-2/pos/2.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ],
       "1": [
@@ -14,7 +16,9 @@
           "specVersion": "0.1-218",
           "casesNumber": 0,
           "description": "A + B is exactly the same as A.plus(B)",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/additive-expression/p-2/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ]
     }
@@ -27,14 +31,56 @@
           "casesNumber": 0,
           "description": "A - B is exactly the same as A.MINUS(B)",
           "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/additive-expression/p-2/pos/2.1.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         },
         {
           "specVersion": "0.1-218",
           "casesNumber": 0,
           "description": "A + B is exactly the same as A.plus(B)",
           "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/additive-expression/p-2/pos/1.1.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ],
+      "2": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "A - B is exactly the same as A.MINUS(B)",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/additive-expression/p-2/pos/2.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "A + B is exactly the same as A.plus(B)",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/additive-expression/p-2/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ]
+    }
+  },
+  "3": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "A - B is exactly the same as A.MINUS(B)",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/additive-expression/p-2/pos/2.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "A + B is exactly the same as A.plus(B)",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/additive-expression/p-2/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         }
       ]
     }

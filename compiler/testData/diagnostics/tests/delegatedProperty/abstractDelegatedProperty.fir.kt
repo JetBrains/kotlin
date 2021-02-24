@@ -3,7 +3,7 @@
 import kotlin.reflect.KProperty
 
 abstract class A {
-    abstract val a: Int by Delegate()
+    abstract val a: Int by <!ABSTRACT_DELEGATED_PROPERTY!>Delegate()<!>
 }
 
 class Delegate {

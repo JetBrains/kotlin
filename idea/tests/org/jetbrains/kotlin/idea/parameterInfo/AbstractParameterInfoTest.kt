@@ -15,18 +15,21 @@ import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.idea.test.*
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.ProjectDescriptorWithStdlibSources
+import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
+import org.jetbrains.kotlin.idea.test.withCustomCompilerOptions
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.Assert
 import java.io.File
 
 abstract class AbstractParameterInfoTest : LightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor(): LightProjectDescriptor {
-        val root = KotlinTestUtils.getTestsRoot(this::class.java)
+        val root = KtTestUtil.getTestsRoot(this::class.java)
         if (root.contains("Lib")) {
             return SdkAndMockLibraryProjectDescriptor("$root/sharedLib", true, true, false, false)
         }
@@ -43,16 +46,18 @@ abstract class AbstractParameterInfoTest : LightCodeInsightFixtureTestCase() {
         val prefix = FileUtil.getNameWithoutExtension(PathUtil.getFileName(fileName))
         val mainFile = File(FileUtil.toSystemDependentName(fileName))
         mainFile.parentFile
-            .listFiles { _, name -> name.startsWith("$prefix.") && name != mainFile.name }
+            .listFiles { _, name ->
+                name.startsWith("$prefix.") &&
+                        name != mainFile.name &&
+                        name.substringAfterLast(".") in setOf("java", "kt")
+            }!!
             .forEach { myFixture.configureByFile(it.absolutePath.substringAfter(myFixture.testDataPath)) }
 
         myFixture.configureByFile(File(fileName).absolutePath.substringAfter(myFixture.testDataPath))
 
         val file = myFixture.file as KtFile
 
-        val configured = configureCompilerOptions(file.text, project, myFixture.module)
-
-        try {
+        withCustomCompilerOptions(file.text, project, myFixture.module) {
             val lastChild = file.allChildren.filter { it !is PsiWhiteSpace }.last()
             val expectedResultText = when (lastChild.node.elementType) {
                 KtTokens.BLOCK_COMMENT -> lastChild.text.substring(2, lastChild.text.length - 2).trim()
@@ -89,10 +94,6 @@ abstract class AbstractParameterInfoTest : LightCodeInsightFixtureTestCase() {
             }
 
             Assert.assertEquals(expectedResultText, parameterInfoUIContext.resultText)
-        } finally {
-            if (configured) {
-                rollbackCompilerOptions(project, myFixture.module)
-            }
         }
     }
 }

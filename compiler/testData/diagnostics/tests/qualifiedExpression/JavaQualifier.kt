@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: Owner.java
 
 public class Owner {

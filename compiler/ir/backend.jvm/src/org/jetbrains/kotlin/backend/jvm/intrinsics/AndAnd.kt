@@ -12,7 +12,8 @@ import org.jetbrains.org.objectweb.asm.Label
 
 object AndAnd : IntrinsicMethod() {
 
-    private class BooleanConjunction(val arg0: IrExpression, val arg1: IrExpression, codegen: ExpressionCodegen, val data: BlockInfo) : BooleanValue(codegen) {
+    private class BooleanConjunction(val arg0: IrExpression, val arg1: IrExpression, codegen: ExpressionCodegen, val data: BlockInfo) :
+        BooleanValue(codegen) {
 
         override fun jumpIfFalse(target: Label) {
             arg0.accept(codegen, data).coerceToBoolean().jumpIfFalse(target)
@@ -24,6 +25,13 @@ object AndAnd : IntrinsicMethod() {
             arg0.accept(codegen, data).coerceToBoolean().jumpIfFalse(stayLabel)
             arg1.accept(codegen, data).coerceToBoolean().jumpIfTrue(target)
             mv.visitLabel(stayLabel)
+        }
+
+        override fun discard() {
+            val end = Label()
+            arg0.accept(codegen, data).coerceToBoolean().jumpIfFalse(end)
+            arg1.accept(codegen, data).discard()
+            mv.visitLabel(end)
         }
     }
 

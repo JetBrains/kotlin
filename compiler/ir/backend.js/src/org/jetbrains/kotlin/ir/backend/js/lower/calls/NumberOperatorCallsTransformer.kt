@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,9 +13,12 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.name.Name
+
+private val HASH_CODE_NAME = Name.identifier("hashCode")
 
 class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransformer {
     private val intrinsics = context.intrinsics
@@ -52,10 +55,13 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
             add(it, OperatorNames.XOR) { call -> toBoolean(irCall(call, intrinsics.jsBitXor, receiversAsArguments = true)) }
 
             add(it, OperatorNames.NOT, intrinsics.jsNot)
+
+            add(it, HASH_CODE_NAME) { call -> toInt32(call.dispatchReceiver!!) }
         }
 
         for (type in primitiveNumbers) {
             add(type, Name.identifier("rangeTo"), ::transformRangeTo)
+            add(type, HASH_CODE_NAME, ::transformHashCode)
         }
 
         for (type in primitiveNumbers) {
@@ -73,7 +79,7 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
         }
     }
 
-    override fun transformFunctionAccess(call: IrFunctionAccessExpression): IrExpression {
+    override fun transformFunctionAccess(call: IrFunctionAccessExpression, doNotIntrinsify: Boolean): IrExpression {
         val function = call.symbol.owner
         function.dispatchReceiverParameter?.also {
             val key = SimpleMemberKey(it.type, function.name)
@@ -97,9 +103,22 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
         }
     }
 
+    private fun transformHashCode(call: IrFunctionAccessExpression): IrExpression {
+        return with(call.symbol.owner.dispatchReceiverParameter!!.type) {
+            when {
+                isByte() || isShort() || isInt() ->
+                    call.dispatchReceiver!!
+                isFloat() || isDouble() ->
+                    // TODO introduce doubleToHashCode?
+                    irCall(call, intrinsics.jsGetNumberHashCode, receiversAsArguments = true)
+                else -> call
+            }
+        }
+    }
+
     private fun irBinaryOp(
         call: IrFunctionAccessExpression,
-        intrinsic: IrFunctionSymbol,
+        intrinsic: IrSimpleFunctionSymbol,
         toInt32: Boolean = false
     ): IrExpression {
         val newCall = irCall(call, intrinsic, receiversAsArguments = true)
@@ -152,7 +171,7 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
     private fun transformDecrement(call: IrFunctionAccessExpression) =
         transformCrement(call, intrinsics.jsMinus)
 
-    private fun transformCrement(call: IrFunctionAccessExpression, correspondingBinaryOp: IrFunctionSymbol): IrExpression {
+    private fun transformCrement(call: IrFunctionAccessExpression, correspondingBinaryOp: IrSimpleFunctionSymbol): IrExpression {
         val operation = irCall(call, correspondingBinaryOp, receiversAsArguments = true).apply {
             putValueArgument(1, buildInt(1))
         }
@@ -190,7 +209,9 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
                             call.startOffset,
                             call.endOffset,
                             intrinsics.longToDouble.owner.returnType,
-                            intrinsics.longToDouble
+                            intrinsics.longToDouble,
+                            typeArgumentsCount = 0,
+                            valueArgumentsCount = 0
                         ).apply {
                             dispatchReceiver = arg
                         })
@@ -201,7 +222,9 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
                             call.startOffset,
                             call.endOffset,
                             intrinsics.longToFloat.owner.returnType,
-                            intrinsics.longToFloat
+                            intrinsics.longToFloat,
+                            typeArgumentsCount = 0,
+                            valueArgumentsCount = 0
                         ).apply {
                             dispatchReceiver = arg
                         })
@@ -212,7 +235,9 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
                             call.startOffset,
                             call.endOffset,
                             intrinsics.jsNumberToLong.owner.returnType,
-                            intrinsics.jsNumberToLong
+                            intrinsics.jsNumberToLong,
+                            typeArgumentsCount = 0,
+                            valueArgumentsCount = 1
                         ).apply {
                             putValueArgument(0, call.dispatchReceiver)
                         }
@@ -238,7 +263,7 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
             }
         }
 
-    fun IrFunctionSymbol.call(vararg arguments: IrExpression) =
+    fun IrSimpleFunctionSymbol.call(vararg arguments: IrExpression) =
         JsIrBuilder.buildCall(this, owner.returnType).apply {
             for ((idx, arg) in arguments.withIndex()) {
                 putValueArgument(idx, arg)

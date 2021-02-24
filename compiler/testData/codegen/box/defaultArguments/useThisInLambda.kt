@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 class X {
     fun g(x: () -> Boolean = { super.equals(this) }) = x()
 }

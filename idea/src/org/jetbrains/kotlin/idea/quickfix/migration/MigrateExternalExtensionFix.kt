@@ -9,9 +9,10 @@ import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyIntention
 import org.jetbrains.kotlin.idea.intentions.declarations.ConvertMemberToExtensionIntention
@@ -33,7 +34,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class MigrateExternalExtensionFix(declaration: KtNamedDeclaration) : KotlinQuickFixAction<KtNamedDeclaration>(declaration), CleanupFix {
 
-    override fun getText() = "Fix with 'asDynamic'"
+    override fun getText() = KotlinBundle.message("fix.with.asdynamic")
     override fun getFamilyName() = text
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
@@ -199,7 +200,7 @@ class MigrateExternalExtensionFix(declaration: KtNamedDeclaration) : KotlinQuick
         }
 
         if (declaration is KtFunction) {
-            declaration.addAnnotation(KotlinBuiltIns.FQ_NAMES.suppress, "\"NOTHING_TO_INLINE\"")
+            declaration.addAnnotation(StandardNames.FqNames.suppress, "\"NOTHING_TO_INLINE\"")
         }
 
         convertNativeAnnotationToJsName(declaration, annotations)

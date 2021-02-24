@@ -53,9 +53,9 @@ public final class IrGetEnumValue extends
             }
             break;
           }
-          case 16: {
+          case 8: {
             bitField0_ |= 0x00000001;
-            symbol_ = input.readInt32();
+            symbol_ = input.readInt64();
             break;
           }
         }
@@ -92,23 +92,23 @@ public final class IrGetEnumValue extends
   }
 
   private int bitField0_;
-  public static final int SYMBOL_FIELD_NUMBER = 2;
-  private int symbol_;
+  public static final int SYMBOL_FIELD_NUMBER = 1;
+  private long symbol_;
   /**
-   * <code>required int32 symbol = 2;</code>
+   * <code>required int64 symbol = 1;</code>
    */
   public boolean hasSymbol() {
     return ((bitField0_ & 0x00000001) == 0x00000001);
   }
   /**
-   * <code>required int32 symbol = 2;</code>
+   * <code>required int64 symbol = 1;</code>
    */
-  public int getSymbol() {
+  public long getSymbol() {
     return symbol_;
   }
 
   private void initFields() {
-    symbol_ = 0;
+    symbol_ = 0L;
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -128,7 +128,7 @@ public final class IrGetEnumValue extends
                       throws java.io.IOException {
     getSerializedSize();
     if (((bitField0_ & 0x00000001) == 0x00000001)) {
-      output.writeInt32(2, symbol_);
+      output.writeInt64(1, symbol_);
     }
     output.writeRawBytes(unknownFields);
   }
@@ -141,7 +141,7 @@ public final class IrGetEnumValue extends
     size = 0;
     if (((bitField0_ & 0x00000001) == 0x00000001)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeInt32Size(2, symbol_);
+        .computeInt64Size(1, symbol_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -237,7 +237,7 @@ public final class IrGetEnumValue extends
 
     public Builder clear() {
       super.clear();
-      symbol_ = 0;
+      symbol_ = 0L;
       bitField0_ = (bitField0_ & ~0x00000001);
       return this;
     }
@@ -307,34 +307,34 @@ public final class IrGetEnumValue extends
     }
     private int bitField0_;
 
-    private int symbol_ ;
+    private long symbol_ ;
     /**
-     * <code>required int32 symbol = 2;</code>
+     * <code>required int64 symbol = 1;</code>
      */
     public boolean hasSymbol() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>required int32 symbol = 2;</code>
+     * <code>required int64 symbol = 1;</code>
      */
-    public int getSymbol() {
+    public long getSymbol() {
       return symbol_;
     }
     /**
-     * <code>required int32 symbol = 2;</code>
+     * <code>required int64 symbol = 1;</code>
      */
-    public Builder setSymbol(int value) {
+    public Builder setSymbol(long value) {
       bitField0_ |= 0x00000001;
       symbol_ = value;
       
       return this;
     }
     /**
-     * <code>required int32 symbol = 2;</code>
+     * <code>required int64 symbol = 1;</code>
      */
     public Builder clearSymbol() {
       bitField0_ = (bitField0_ & ~0x00000001);
-      symbol_ = 0;
+      symbol_ = 0L;
       
       return this;
     }

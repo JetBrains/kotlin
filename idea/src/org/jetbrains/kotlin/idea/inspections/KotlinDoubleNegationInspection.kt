@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.inspections
 
 import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -31,7 +32,7 @@ class KotlinDoubleNegationInspection : AbstractKotlinInspection(), CleanupLocalI
             if (parent is KtPrefixExpression && parent.operationToken == KtTokens.EXCL) {
                 holder.registerProblem(
                     expression,
-                    "Redundant double negation",
+                    KotlinBundle.message("redundant.double.negation"),
                     ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                     DoubleNegationFix()
                 )
@@ -39,7 +40,7 @@ class KotlinDoubleNegationInspection : AbstractKotlinInspection(), CleanupLocalI
         })
 
     private class DoubleNegationFix : LocalQuickFix {
-        override fun getName() = "Remove redundant negations"
+        override fun getName() = KotlinBundle.message("double.negation.fix.text")
         override fun getFamilyName() = name
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {

@@ -5,23 +5,28 @@ import org.gradle.api.Project
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
-import org.gradle.kotlin.dsl.*
+import org.gradle.kotlin.dsl.named
+import org.gradle.kotlin.dsl.project
+import org.gradle.kotlin.dsl.provideDelegate
+import org.gradle.kotlin.dsl.register
 import java.io.File
 
-val kotlinEmbeddableRootPackage = "org.jetbrains.kotlin"
+const val kotlinEmbeddableRootPackage = "org.jetbrains.kotlin"
 
 val packagesToRelocate =
-        listOf( "com.intellij",
-                "com.google",
-                "com.sampullara",
-                "org.apache",
-                "org.jdom",
-                "org.picocontainer",
-                "org.jline",
-                "org.fusesource",
-                "kotlinx.coroutines",
-                "net.jpountz",
-                "one.util.streamex")
+    listOf(
+        "com.intellij",
+        "com.google",
+        "com.sampullara",
+        "org.apache",
+        "org.jdom",
+        "org.picocontainer",
+        "org.jline",
+        "org.fusesource",
+        "net.jpountz",
+        "one.util.streamex",
+        "kotlinx.collections.immutable"
+    )
 
 // The shaded compiler "dummy" is used to rewrite dependencies in projects that are used with the embeddable compiler
 // on the runtime and use some shaded dependencies from the compiler
@@ -29,21 +34,23 @@ val packagesToRelocate =
 // But due to the shadow plugin bug (https://github.com/johnrengelman/shadow/issues/262) it is not possible to use
 // packagesToRelocate list to for the include list. Therefore the exclude list has to be created.
 val packagesToExcludeFromDummy =
-        listOf("org/jetbrains/kotlin/**",
-               "org/intellij/lang/annotations/**",
-               "org/jetbrains/jps/**",
-               "META-INF/**",
-               "com/sun/jna/**",
-               "com/thoughtworks/xstream/**",
-               "javaslang/**",
-               "*.proto",
-               "messages/**",
-               "net/sf/cglib/**",
-               "one/util/streamex/**",
-               "org/iq80/snappy/**",
-               "org/jline/**",
-               "org/xmlpull/**",
-               "*.txt")
+    listOf(
+        "org/jetbrains/kotlin/**",
+        "org/intellij/lang/annotations/**",
+        "org/jetbrains/jps/**",
+        "META-INF/**",
+        "com/sun/jna/**",
+        "com/thoughtworks/xstream/**",
+        "javaslang/**",
+        "*.proto",
+        "messages/**",
+        "net/sf/cglib/**",
+        "one/util/streamex/**",
+        "org/iq80/snappy/**",
+        "org/jline/**",
+        "org/xmlpull/**",
+        "*.txt"
+    )
 
 private fun ShadowJar.configureEmbeddableCompilerRelocation(withJavaxInject: Boolean = true) {
     relocate("com.google.protobuf", "org.jetbrains.kotlin.protobuf")
@@ -65,8 +72,8 @@ private fun Project.compilerShadowJar(taskName: String, body: ShadowJar.() -> Un
     dependencies.add(compilerJar.name, dependencies.project(":kotlin-compiler", configuration = "runtimeJar"))
 
     return tasks.register<ShadowJar>(taskName) {
-        destinationDir = File(buildDir, "libs")
-        setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+        destinationDirectory.set(project.file(File(buildDir, "libs")))
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         from(compilerJar)
         body()
     }
@@ -105,8 +112,8 @@ fun Project.embeddableCompilerDummyForDependenciesRewriting(
     )
 
     return tasks.register<ShadowJar>(taskName) {
-        destinationDir = File(buildDir, "libs")
-        setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+        destinationDirectory.set(project.file(File(buildDir, "libs")))
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         from(compilerDummyJar)
         configureEmbeddableCompilerRelocation(withJavaxInject = false)
         body()
@@ -117,7 +124,7 @@ fun Project.rewriteDepsToShadedJar(
     originalJarTask: TaskProvider<out Jar>, shadowJarTask: TaskProvider<out Jar>, body: Jar.() -> Unit = {}
 ): TaskProvider<out Jar> {
     originalJarTask.configure {
-        classifier = "original"
+        archiveClassifier.set("original")
     }
 
     val compilerDummyJarFile by lazy { configurations.getAt("compilerDummyJar").singleFile }
@@ -130,7 +137,7 @@ fun Project.rewriteDepsToShadedJar(
         // which leads to the content of that JAR being excluded as well:
         exclude { it.file == compilerDummyJarFile }
 
-        classifier = ""
+        archiveClassifier.set("original")
         body()
     }
     return shadowJarTask

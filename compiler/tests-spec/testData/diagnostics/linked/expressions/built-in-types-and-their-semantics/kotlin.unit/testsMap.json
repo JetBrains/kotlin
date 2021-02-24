@@ -6,7 +6,10 @@
           "specVersion": "0.1-213",
           "casesNumber": 4,
           "description": "Check of Unit type",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/built-in-types-and-their-semantics/kotlin.unit/p-1/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main",
+          "helpers": "checkType"
         }
       ]
     }

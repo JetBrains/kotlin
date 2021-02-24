@@ -1,5 +1,4 @@
 // !LANGUAGE: +ProperComputationOrderOfTailrecDefaultParameters
-// IGNORE_BACKEND_FIR: JVM_IR
 // DONT_RUN_GENERATED_CODE: JS
 
 var counter = 0

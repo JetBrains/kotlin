@@ -12,9 +12,9 @@ Currently Kapt3 only works with the old backend. To enable IR, modify the isIrBa
 */
 
 abstract class AbstractIrClassFileToSourceStubConverterTest : AbstractClassFileToSourceStubConverterTest() {
-    override fun getBackend() = TargetBackend.JVM_IR
+    override val backend = TargetBackend.JVM_IR
 }
 
 abstract class AbstractIrKotlinKaptContextTest : AbstractKotlinKaptContextTest() {
-    override fun getBackend() = TargetBackend.JVM_IR
+    override val backend = TargetBackend.JVM_IR
 }

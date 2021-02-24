@@ -1,0 +1,39 @@
+fun test(i: Int): Int {
+  return when {
+    greater(arg0 = i, arg1 = 0) -> 1
+    else -> when {
+      less(arg0 = i, arg1 = 0) -> -1
+      else -> 0
+    }
+  }
+}
+
+fun testEmptyBranches1(flag: Boolean) {
+  when {
+    flag -> { // BLOCK
+    }
+    else -> true
+  } /*~> Unit */
+  when {
+    flag -> true
+  }
+}
+
+fun testEmptyBranches2(flag: Boolean) {
+  when {
+    flag -> { // BLOCK
+    }
+    else -> true
+  } /*~> Unit */
+  when {
+    flag -> true
+  }
+}
+
+fun testEmptyBranches3(flag: Boolean) {
+  when {
+    flag -> { // BLOCK
+    }
+    else -> true
+  } /*~> Unit */
+}

@@ -1,0 +1,68 @@
+package test
+
+class C {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+var C?.p: Int
+  get(): Int {
+    return 42
+  }
+  set(value: Int) {
+  }
+
+operator fun Int?.inc(): Int? {
+  return { // BLOCK
+    val tmp0_safe_receiver: Int? = <this>
+    when {
+      EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
+      else -> tmp0_safe_receiver.inc()
+    }
+  }
+}
+
+operator fun Int?.get(index: Int): Int {
+  return 42
+}
+
+operator fun Int?.set(index: Int, value: Int) {
+}
+
+fun testProperty(nc: C?) {
+  { // BLOCK
+    val tmp0_safe_receiver: C? = nc
+    when {
+      EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
+      else -> { // BLOCK
+        val tmp1_receiver: C? = tmp0_safe_receiver
+        { // BLOCK
+          val tmp2: Int = tmp1_receiver.<get-p>()
+          tmp1_receiver.<set-p>(value = tmp2.inc())
+          tmp2
+        }
+      }
+    }
+  } /*~> Unit */
+}
+
+fun testArrayAccess(nc: C?) {
+  { // BLOCK
+    val tmp1_array: Int? = { // BLOCK
+      val tmp0_safe_receiver: C? = nc
+      when {
+        EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
+        else -> tmp0_safe_receiver.<get-p>()
+      }
+    }
+    val tmp2_index0: Int = 0
+    val tmp3: Int = tmp1_array.get(index = tmp2_index0)
+    tmp1_array.set(index = tmp2_index0, value = tmp3.inc())
+    tmp3
+  } /*~> Unit */
+}
+

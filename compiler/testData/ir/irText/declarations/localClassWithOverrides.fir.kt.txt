@@ -1,0 +1,40 @@
+fun outer() {
+  local abstract class ALocal {
+    constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    abstract fun afun()
+    abstract val aval: Int
+      abstract get
+
+    abstract var avar: Int
+      abstract get
+      abstract set
+
+  }
+
+  local class Local : ALocal {
+    constructor() /* primary */ {
+      super/*ALocal*/()
+      /* <init>() */
+
+    }
+
+    override fun afun() {
+    }
+
+    override val aval: Int
+      field = 1
+      override get
+
+    override var avar: Int
+      field = 2
+      override get
+      override set
+
+  }
+
+}

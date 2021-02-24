@@ -23,6 +23,7 @@ import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.internal.CLibrary;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.CapitalizeDecapitalizeKt;
 
 import java.util.EnumSet;
 import java.util.Set;
@@ -58,7 +59,7 @@ public abstract class PlainTextMessageRenderer implements MessageRenderer {
     }
 
     @Override
-    public String render(@NotNull CompilerMessageSeverity severity, @NotNull String message, @Nullable CompilerMessageLocation location) {
+    public String render(@NotNull CompilerMessageSeverity severity, @NotNull String message, @Nullable CompilerMessageSourceLocation location) {
         StringBuilder result = new StringBuilder();
 
         int line = location != null ? location.getLine() : -1;
@@ -130,7 +131,7 @@ public abstract class PlainTextMessageRenderer implements MessageRenderer {
             return message;
         }
 
-        return StringsKt.decapitalize(message);
+        return CapitalizeDecapitalizeKt.decapitalizeAsciiOnly(message);
     }
 
     @NotNull
@@ -156,7 +157,7 @@ public abstract class PlainTextMessageRenderer implements MessageRenderer {
     }
 
     @Nullable
-    protected abstract String getPath(@NotNull CompilerMessageLocation location);
+    protected abstract String getPath(@NotNull CompilerMessageSourceLocation location);
 
     @Override
     public String renderUsage(@NotNull String usage) {

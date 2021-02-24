@@ -91,7 +91,7 @@ class IrTableWriter(private val data: List<Pair<Long, ByteArray>>) : IrFileWrite
 
 class IrDeclarationWriter(private val declarations: List<SerializedDeclaration>) : IrFileWriter() {
 
-    private val SINGLE_INDEX_RECORD_SIZE = Long.SIZE_BYTES + 2 * Int.SIZE_BYTES
+    private val SINGLE_INDEX_RECORD_SIZE = 3 * Int.SIZE_BYTES
     private val INDEX_HEADER_SIZE = Int.SIZE_BYTES
 
     override fun writeData(dataOutput: DataOutput) {
@@ -100,7 +100,7 @@ class IrDeclarationWriter(private val declarations: List<SerializedDeclaration>)
         var dataOffset = INDEX_HEADER_SIZE + SINGLE_INDEX_RECORD_SIZE * declarations.size
 
         for (d in declarations) {
-            dataOutput.writeLong(d.id)
+            dataOutput.writeInt(d.id)
             dataOutput.writeInt(dataOffset)
             dataOutput.writeInt(d.size)
             dataOffset += d.size
@@ -115,7 +115,7 @@ class IrDeclarationWriter(private val declarations: List<SerializedDeclaration>)
 
 class IrMemoryDeclarationWriter(private val declarations: List<SerializedDeclaration>) : IrMemoryWriter() {
 
-    private val SINGLE_INDEX_RECORD_SIZE = Long.SIZE_BYTES + 2 * Int.SIZE_BYTES
+    private val SINGLE_INDEX_RECORD_SIZE = 3 * Int.SIZE_BYTES
     private val INDEX_HEADER_SIZE = Int.SIZE_BYTES
 
     override fun writeData(dataOutput: DataOutput) {
@@ -124,7 +124,7 @@ class IrMemoryDeclarationWriter(private val declarations: List<SerializedDeclara
         var dataOffset = INDEX_HEADER_SIZE + SINGLE_INDEX_RECORD_SIZE * declarations.size
 
         for (d in declarations) {
-            dataOutput.writeLong(d.id)
+            dataOutput.writeInt(d.id)
             dataOutput.writeInt(dataOffset)
             dataOutput.writeInt(d.size)
             dataOffset += d.size

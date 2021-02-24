@@ -12,6 +12,7 @@ import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.idea.core.util.KotlinIdeaCoreBundle
 import org.jetbrains.kotlin.psi.KtFile
 
 class ScriptTrafficLightRendererContributor : TrafficLightRendererContributor {
@@ -26,14 +27,17 @@ class ScriptTrafficLightRendererContributor : TrafficLightRendererContributor {
         TrafficLightRenderer(project, document, file) {
         override fun getDaemonCodeAnalyzerStatus(severityRegistrar: SeverityRegistrar): DaemonCodeAnalyzerStatus {
             val status = super.getDaemonCodeAnalyzerStatus(severityRegistrar)
-            if (!ScriptDefinitionsManager.getInstance(file.project).isReady()) {
-                status.reasonWhySuspended = "Loading kotlin script definitions"
+
+            val configurations = ScriptConfigurationManager.getServiceIfCreated(project)
+            if (configurations == null) {
+                // services not yet initialized (it should be initialized under the LoadScriptDefinitionsStartupActivity)
+                status.reasonWhySuspended = KotlinIdeaCoreBundle.message("text.loading.kotlin.script.configuration")
                 status.errorAnalyzingFinished = false
-            } else if (
-                !ScriptConfigurationManager.getInstance(project).hasConfiguration(file)
-                && !ScriptConfigurationManager.isManualConfigurationLoading(file.originalFile.virtualFile)
-            ) {
-                status.reasonWhySuspended = "Loading kotlin script dependencies"
+            } else if (!ScriptDefinitionsManager.getInstance(file.project).isReady()) {
+                status.reasonWhySuspended = KotlinIdeaCoreBundle.message("text.loading.kotlin.script.definitions")
+                status.errorAnalyzingFinished = false
+            } else if (configurations.isConfigurationLoadingInProgress(file)) {
+                status.reasonWhySuspended = KotlinIdeaCoreBundle.message("text.loading.kotlin.script.configuration")
                 status.errorAnalyzingFinished = false
             }
             return status

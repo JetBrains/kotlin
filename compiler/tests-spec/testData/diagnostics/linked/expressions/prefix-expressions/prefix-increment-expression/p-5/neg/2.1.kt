@@ -6,7 +6,7 @@
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
  *
  * SPEC VERSION: 0.1-213
- * PLACE: expressions, prefix-expressions, prefix-increment-expression -> paragraph 5 -> sentence 2
+ * MAIN LINK: expressions, prefix-expressions, prefix-increment-expression -> paragraph 5 -> sentence 2
  * NUMBER: 1
  * DESCRIPTION: check as the result of inc is assigned to A, the return type of inc must be a subtype of A.
  */

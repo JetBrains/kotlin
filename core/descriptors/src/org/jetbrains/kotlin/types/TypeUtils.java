@@ -10,6 +10,7 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.builtins.StandardNames;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner;
 import org.jetbrains.kotlin.types.checker.NewTypeVariableConstructor;
 import org.jetbrains.kotlin.types.refinement.TypeRefinement;
+import org.jetbrains.kotlin.utils.SmartSet;
 
 import java.util.*;
 
@@ -295,6 +297,9 @@ public class TypeUtils {
         if (FlexibleTypesKt.isFlexible(type) && isNullableType(FlexibleTypesKt.asFlexibleType(type).getUpperBound())) {
             return true;
         }
+        if (SpecialTypesKt.isDefinitelyNotNullType(type)) {
+            return false;
+        }
         if (isTypeParameter(type)) {
             return hasNullableSuperType(type);
         }
@@ -415,20 +420,26 @@ public class TypeUtils {
             @Nullable KotlinType type,
             @NotNull Function1<UnwrappedType, Boolean> isSpecialType
     ) {
-        return contains(type, isSpecialType, new HashSet<KotlinType>());
+        return contains(type, isSpecialType, null);
     }
 
     private static boolean contains(
             @Nullable KotlinType type,
             @NotNull Function1<UnwrappedType, Boolean> isSpecialType,
-            HashSet<KotlinType> visited
+            SmartSet<KotlinType> visited
     ) {
         if (type == null) return false;
-        if (visited.contains(type)) return false;
-        visited.add(type);
 
         UnwrappedType unwrappedType = type.unwrap();
+
+        if (noExpectedType(type)) return isSpecialType.invoke(unwrappedType);
+        if (visited != null && visited.contains(type)) return false;
         if (isSpecialType.invoke(unwrappedType)) return true;
+
+        if (visited == null) {
+            visited = SmartSet.create();
+        }
+        visited.add(type);
 
         FlexibleType flexibleType = unwrappedType instanceof FlexibleType ? (FlexibleType) unwrappedType : null;
         if (flexibleType != null
@@ -489,10 +500,10 @@ public class TypeUtils {
             return longType;
         }
 
-        KotlinType uIntType = findByFqName(supertypes, KotlinBuiltIns.FQ_NAMES.uIntFqName);
+        KotlinType uIntType = findByFqName(supertypes, StandardNames.FqNames.uIntFqName);
         if (uIntType != null) return uIntType;
 
-        KotlinType uLongType = findByFqName(supertypes, KotlinBuiltIns.FQ_NAMES.uLongFqName);
+        KotlinType uLongType = findByFqName(supertypes, StandardNames.FqNames.uLongFqName);
         if (uLongType != null) return uLongType;
 
         return null;
@@ -537,7 +548,7 @@ public class TypeUtils {
             return literalTypeConstructor.getApproximatedType();
         }
 
-        // If approximated type does not mathc expected type then expected type is very
+        // If approximated type does not match expected type then expected type is very
         //  specific type (e.g. Comparable<Byte>), so only one of possible types could match it
         KotlinType approximatedType = literalTypeConstructor.getApproximatedType();
         if (KotlinTypeChecker.DEFAULT.isSubtypeOf(approximatedType, expectedType)) {

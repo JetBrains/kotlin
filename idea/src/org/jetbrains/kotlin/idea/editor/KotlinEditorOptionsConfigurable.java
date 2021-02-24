@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.editor;
 import com.intellij.openapi.options.BeanConfigurable;
 import com.intellij.openapi.options.UnnamedConfigurable;
 import com.intellij.ui.IdeBorderFactory;
+import org.jetbrains.kotlin.idea.KotlinBundle;
 
 import javax.swing.*;
 
@@ -15,13 +16,13 @@ public class KotlinEditorOptionsConfigurable extends BeanConfigurable<KotlinEdit
     public KotlinEditorOptionsConfigurable() {
         super(KotlinEditorOptions.getInstance());
         KotlinEditorOptions instance = KotlinEditorOptions.getInstance();
-        checkBox("Convert pasted Java code to Kotlin",
+        checkBox(KotlinBundle.message("editor.checkbox.title.convert.pasted.java.code.to.kotlin"),
                  instance::isEnableJavaToKotlinConversion,
                  instance::setEnableJavaToKotlinConversion);
-        checkBox("Don't show Java to Kotlin conversion dialog on paste",
+        checkBox(KotlinBundle.message("editor.checkbox.title.don.t.show.java.to.kotlin.conversion.dialog.on.paste"),
                  instance::isDonTShowConversionDialog,
                  instance::setDonTShowConversionDialog);
-        checkBox("Auto add val keyword to data/inline class constructor parameters",
+        checkBox(KotlinBundle.message("editor.checkbox.title.auto.add.val.keyword.to.data.inline.class.constructor.parameters"),
                  instance::isAutoAddValKeywordToDataClassParameters,
                  instance::setAutoAddValKeywordToDataClassParameters);
     }
@@ -29,7 +30,7 @@ public class KotlinEditorOptionsConfigurable extends BeanConfigurable<KotlinEdit
     @Override
     public JComponent createComponent() {
         JComponent component = super.createComponent();
-        component.setBorder(IdeBorderFactory.createTitledBorder("Kotlin"));
+        component.setBorder(IdeBorderFactory.createTitledBorder(KotlinBundle.message("editor.title.kotlin")));
         return component;
     }
 }

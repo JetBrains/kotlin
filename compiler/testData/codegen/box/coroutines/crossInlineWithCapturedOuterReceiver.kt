@@ -1,10 +1,8 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 // WITH_RUNTIME
-// COMMON_COROUTINES_TEST
 // WITH_COROUTINES
 import helpers.*
-import COROUTINES_PACKAGE.*
-import COROUTINES_PACKAGE.intrinsics.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 interface Consumer { fun consume(s: String) }
 

@@ -7,12 +7,14 @@ function box() {
         var f = functions[i];
         var result = f();
 
-        if (f.toString().indexOf("label: do {") < 0) {
-            // See http://bugs.java.com/bugdatabase/view_bug.do?bug_id=JDK-8177691
-            if (result === "OK") return "Looks like JDK-8177691 fixed for " + f;
-            if (result !== void 0) return "Result of function changed: " + f;
-        }
-        else if (result !== "OK") {
+        // Disabled check to run js optimizer tests using V8.
+        // Created the issue KT-39337 to address it separately.
+        // if (f.toString().indexOf("label: do {") < 0) {
+        //     // See http://bugs.java.com/bugdatabase/view_bug.do?bug_id=JDK-8177691
+        //     if (result === "OK") return "Looks like JDK-8177691 fixed for " + f;
+        //     if (result !== void 0) return "Result of function changed: " + f;
+        // }
+        if (result !== "OK") {
             return "fail on " + f
         }
     }

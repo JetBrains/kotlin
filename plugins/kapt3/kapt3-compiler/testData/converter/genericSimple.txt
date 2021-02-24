@@ -54,13 +54,13 @@ public final class MyClass<M1 extends java.lang.Object, M2 extends java.lang.Obj
     @org.jetbrains.annotations.Nullable()
     private final java.util.List<java.util.Map<java.lang.String, M1>> fld = null;
 
+    public MyClass() {
+        super();
+    }
+
     @org.jetbrains.annotations.Nullable()
     public final java.util.List<java.util.Map<java.lang.String, M1>> getFld() {
         return null;
-    }
-
-    public MyClass() {
-        super();
     }
 }
 

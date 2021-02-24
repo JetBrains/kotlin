@@ -1,0 +1,3 @@
+FILE: byte.kt
+    public final val foo: R|kotlin/Byte| = Q|kotlin/Byte|.R|kotlin/Byte.Companion.MAX_VALUE|.R|kotlin/Byte.toByte|()
+        public get(): R|kotlin/Byte|

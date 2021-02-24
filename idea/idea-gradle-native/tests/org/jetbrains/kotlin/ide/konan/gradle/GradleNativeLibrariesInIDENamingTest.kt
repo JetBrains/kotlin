@@ -12,7 +12,6 @@ import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.vfs.VfsUtilCore.urlToPath
 import org.jetbrains.kotlin.ide.konan.NativeLibraryKind
-import org.jetbrains.kotlin.idea.codeInsight.gradle.GradleImportingTestCase
 import org.jetbrains.kotlin.idea.configuration.externalCompilerVersion
 import org.jetbrains.kotlin.idea.framework.detectLibraryKind
 import org.jetbrains.kotlin.idea.project.platform
@@ -26,39 +25,12 @@ import org.junit.Test
 import org.junit.runners.Parameterized
 import java.io.File
 
-abstract class TestCaseWithFakeKotlinNative : GradleImportingTestCase() {
-    protected fun configureProject() {
-        configureByFiles()
-
-        // include data dir with fake Kotlin/Native libraries
-        val testSuiteDataDir = testDataDirectory().parentFile
-        val kotlinNativeHome = testSuiteDataDir.resolve(FAKE_KOTLIN_NATIVE_HOME_RELATIVE_PATH)
-
-        kotlinNativeHome.walkTopDown()
-            .filter { it.isFile }
-            .forEach { pathInTestSuite ->
-                // need to put copied file one directory upper than the project root, so adding ".." to the beginning of relative path
-                // reason: distribution KLIBs should not be appear in IDEA indexes, so they should be located outside of the project root
-                val relativePathInProject = DOUBLE_DOT_PATH.resolve(pathInTestSuite.relativeTo(testSuiteDataDir))
-                createProjectSubFile(relativePathInProject.toString(), pathInTestSuite.readText())
-            }
-    }
-}
 
 class GradleNativeLibrariesInIDENamingTest : TestCaseWithFakeKotlinNative() {
 
-    // Test naming of Kotlin/Native libraries in projects with Gradle plugin 1.3.21+
+    // Test naming of Kotlin/Native libraries
     @Test
     fun testLibrariesNaming() {
-        configureProject()
-        importProject()
-
-        myProject.allModules().forEach { assertValidModule(it, projectPath) }
-    }
-
-    // Test naming of Kotlin/Native libraries in projects with Gradle plugin 1.3.20 or earlier
-    @Test
-    fun testLegacyLibrariesNaming() {
         configureProject()
         importProject()
 
@@ -77,7 +49,6 @@ class GradleNativeLibrariesInIDENamingTest : TestCaseWithFakeKotlinNative() {
     }
 }
 
-private val FAKE_KOTLIN_NATIVE_HOME_RELATIVE_PATH = File("kotlin-native-data-dir", "kotlin-native-PLATFORM-VERSION")
 private val NATIVE_LIBRARY_NAME_REGEX = Regex("^Kotlin/Native ([\\d\\w\\.-]+) - ([\\w\\d]+)( \\[([\\w\\d_]+)\\])?$")
 
 private val NATIVE_LINUX_LIBRARIES = listOf(
@@ -100,7 +71,6 @@ private val NATIVE_MINGW_LIBRARIES = listOf(
     "Kotlin/Native {version} - opengl32 [mingw_x64]",
     "Kotlin/Native {version} - windows [mingw_x64]"
 )
-private val DOUBLE_DOT_PATH = File("..")
 
 private val Module.libraries
     get() = ModuleRootManager.getInstance(this).orderEntries
@@ -154,7 +124,12 @@ private fun assertValidNativeLibrary(library: Library, projectRoot: String) {
         .relativeTo(File(projectRoot).resolve(DOUBLE_DOT_PATH).normalize())
         .relativeTo(FAKE_KOTLIN_NATIVE_HOME_RELATIVE_PATH)
 
-    val expectedShortPath = if (platform.isEmpty()) konanCommonLibraryPath(name) else konanPlatformLibraryPath(name, platform)
+    val expectedDirectoryName = if (name == "stdlib") name else "org.jetbrains.kotlin.native.$name"
+    val expectedShortPath = if (platform.isEmpty()) {
+        konanCommonLibraryPath(expectedDirectoryName)
+    } else {
+        konanPlatformLibraryPath(expectedDirectoryName, platform)
+    }
     assertEquals("The short path of $fullName does not match its location", expectedShortPath, actualShortPath)
 }
 

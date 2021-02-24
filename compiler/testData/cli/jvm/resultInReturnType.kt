@@ -1,0 +1,1 @@
+fun foo() = Result.success(42)

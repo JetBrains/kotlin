@@ -12,6 +12,7 @@ import com.intellij.psi.ElementDescriptionUtil
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.usageView.UsageViewTypeLocation
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.addTypeParameter
@@ -38,11 +39,11 @@ class CreateTypeParameterFromUsageFix(
     private val presentTypeParameterNames: Boolean
 ) : CreateFromUsageFixBase<KtElement>(originalElement) {
     override fun getText(): String {
-        val prefix = "type parameter".let { if (data.typeParameters.size > 1) StringUtil.pluralize(it) else it }
+        val prefix = KotlinBundle.message("text.type.parameter", data.typeParameters.size)
         val typeParametersText = if (presentTypeParameterNames) data.typeParameters.joinToString(prefix = " ") { "'${it.name}'" } else ""
         val containerText = ElementDescriptionUtil.getElementDescription(data.declaration, UsageViewTypeLocation.INSTANCE) +
                 " '${data.declaration.name}'"
-        return "Create $prefix$typeParametersText in $containerText"
+        return KotlinBundle.message("create.0.in.1", prefix + typeParametersText, containerText)
     }
 
     override fun startInWriteAction() = false
@@ -55,7 +56,7 @@ class CreateTypeParameterFromUsageFix(
         val declaration = data.declaration
         if (!declaration.isWritable) return emptyList()
         val project = declaration.project
-        val usages = project.runSynchronouslyWithProgress("Searching ${declaration.name}...", true) {
+        val usages = project.runSynchronouslyWithProgress(KotlinBundle.message("searching.0", declaration.name.toString()), true) {
             runReadAction {
                 val expectedTypeArgumentCount = declaration.typeParameters.size + data.typeParameters.size
                 ReferencesSearch
@@ -98,12 +99,12 @@ class CreateTypeParameterFromUsageFix(
                 )
                 val anonymizedUpperBoundText = upperBoundType?.let {
                     TypeSubstitutor.create(
-                        mapOf(
-                            typeParameter.fakeTypeParameter.typeConstructor to TypeProjectionImpl(
-                                anonymizedTypeParameter.defaultType
+                            mapOf(
+                                typeParameter.fakeTypeParameter.typeConstructor to TypeProjectionImpl(
+                                    anonymizedTypeParameter.defaultType
+                                )
                             )
                         )
-                    )
                         .substitute(upperBoundType, Variance.INVARIANT)
                 }?.let {
                     IdeDescriptorRenderers.SOURCE_CODE.renderType(it)

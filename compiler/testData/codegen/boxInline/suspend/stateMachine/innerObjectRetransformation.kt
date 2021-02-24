@@ -1,4 +1,3 @@
-// COMMON_COROUTINES_TEST
 // WITH_RUNTIME
 // WITH_COROUTINES
 // CHECK_STATE_MACHINE
@@ -46,12 +45,10 @@ inline fun <T : Any, R : Any> Flow<T>.flowWith(crossinline builderBlock: suspend
     }
 
 // FILE: box.kt
-// COMMON_COROUTINES_TEST
-
 import flow.*
 
 import helpers.*
-import COROUTINES_PACKAGE.*
+import kotlin.coroutines.*
 
 fun builder(c: suspend () -> Unit) {
     c.startCoroutine(CheckStateMachineContinuation)

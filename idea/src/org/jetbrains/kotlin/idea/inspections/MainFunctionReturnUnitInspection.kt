@@ -12,7 +12,9 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
@@ -48,7 +50,7 @@ class MainFunctionReturnUnitInspection : AbstractKotlinInspection() {
 
             holder.registerProblem(
                 function.nameIdentifier ?: function,
-                "${if (isMain) "main" else "JUnit test"} should return Unit",
+                KotlinBundle.message("0.should.return.unit", if (isMain) "main" else KotlinBundle.message("junit.test")),
                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                 ChangeMainFunctionReturnTypeToUnitFix(function.typeReference != null)
             )
@@ -63,7 +65,10 @@ private fun KtAnnotationEntry.fqName(): FqName? {
 }
 
 private class ChangeMainFunctionReturnTypeToUnitFix(private val hasExplicitReturnType: Boolean) : LocalQuickFix {
-    override fun getName() = if (hasExplicitReturnType) "Change return type to Unit" else "Add explicit Unit return type"
+    override fun getName() = if (hasExplicitReturnType)
+        KotlinBundle.message("change.main.function.return.type.to.unit.fix.text2")
+    else
+        KotlinBundle.message("change.main.function.return.type.to.unit.fix.text")
 
     override fun getFamilyName() = name
 
@@ -72,7 +77,7 @@ private class ChangeMainFunctionReturnTypeToUnitFix(private val hasExplicitRetur
         if (function.hasBlockBody()) {
             function.typeReference = null
         } else {
-            function.setType(KotlinBuiltIns.FQ_NAMES.unit.asString())
+            function.setType(StandardNames.FqNames.unit.asString())
         }
     }
 }

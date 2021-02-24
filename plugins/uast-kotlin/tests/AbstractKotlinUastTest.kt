@@ -18,14 +18,13 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.idea.project.NewInferenceForIDEAnalysisComponent
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
-import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import org.jetbrains.kotlin.test.testFramework.resetApplicationToNull
 import org.jetbrains.uast.UastLanguagePlugin
 import org.jetbrains.uast.evaluation.UEvaluatorExtension
 import org.jetbrains.uast.kotlin.KotlinUastLanguagePlugin
@@ -67,8 +66,6 @@ abstract class AbstractKotlinUastTest : AbstractUastTest() {
     }
 
     private fun enableNewTypeInferenceIfNeeded() {
-        if (!NewInferenceForIDEAnalysisComponent.defaultState) return
-
         val currentLanguageVersionSettings = compilerConfiguration.languageVersionSettings
         if (currentLanguageVersionSettings.supportsFeature(LanguageFeature.NewInference)) return
 
@@ -158,7 +155,7 @@ abstract class AbstractKotlinUastTest : AbstractUastTest() {
         override fun dispose() {
             Disposer.dispose(parentDisposable)
             if (appWasNull) {
-                KtUsefulTestCase.resetApplicationToNull()
+                resetApplicationToNull()
             }
         }
     }

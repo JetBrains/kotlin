@@ -11,7 +11,7 @@ fun foo() {
     while (y != null) {
         bar(y)
     }
-    bar(y)
+    <!INAPPLICABLE_CANDIDATE!>bar<!>(y)
     
     val z: Int? = null
     while (z == null) {

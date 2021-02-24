@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 fun foo(a: Int, vararg b: Int, f: (IntArray) -> String): String {
   return "test" + a + " " + f(b)
 }

@@ -1,4 +1,4 @@
-// "Change object to class" "true"
+// "Change 'object' to 'class'" "true"
 annotation class Ann
 
 // comment

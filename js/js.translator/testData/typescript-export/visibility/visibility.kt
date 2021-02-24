@@ -1,6 +1,7 @@
-// TARGET_BACKEND: JS_IR
 // CHECK_TYPESCRIPT_DECLARATIONS
 // RUN_PLAIN_BOX_FUNCTION
+// SKIP_MINIFICATION
+// SKIP_NODE_JS
 
 // TODO fix statics export in DCE-driven mode
 // SKIP_DCE_DRIVEN
@@ -36,6 +37,7 @@ open class Class {
     protected class protectedClass
 
     public val publicVal = 10
+    @JsName("publicFun")  // TODO: Should work without JsName
     public fun publicFun() = 10
     public class publicClass
 }

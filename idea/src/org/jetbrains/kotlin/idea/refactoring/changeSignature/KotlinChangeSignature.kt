@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.getDeepestSuperDeclarations
 import org.jetbrains.kotlin.idea.refactoring.CallableRefactoring
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.refactoring.broadcastRefactoringExit
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.ui.KotlinChangePropertySignatureDialog
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.ui.KotlinChangeSignatureDialog
@@ -90,7 +91,12 @@ class KotlinChangeSignature(
             )
             is PsiMethod -> {
                 if (baseDeclaration.language != JavaLanguage.INSTANCE) {
-                    Messages.showErrorDialog("Can't change signature of ${baseDeclaration.language.displayName} method", commandName)
+                    Messages.showErrorDialog(
+                        KotlinBundle.message("error.text.can.t.change.signature.of.method",
+                            baseDeclaration.language.displayName
+                        ),
+                        commandName
+                    )
                     return
                 }
 
@@ -113,7 +119,11 @@ class KotlinChangeSignature(
                 }
 
                 if (baseDeclaration.language != JavaLanguage.INSTANCE) {
-                    Messages.showErrorDialog("Can't change signature of ${baseDeclaration.language.displayName} method", commandName)
+                    Messages.showErrorDialog(
+                        KotlinBundle.message("error.text.can.t.change.signature.of.method",
+                            baseDeclaration.language.displayName
+                        ), commandName
+                    )
                     return
                 }
 

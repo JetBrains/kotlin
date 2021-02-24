@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,15 +7,12 @@ package org.jetbrains.kotlin.ir.backend.js.lower.calls
 
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.util.getSimpleFunction
 import org.jetbrains.kotlin.ir.util.getPropertyGetter
+import org.jetbrains.kotlin.ir.util.getSimpleFunction
 
 class PrimitiveContainerMemberCallTransformer(private val context: JsIrBackendContext) : CallsTransformer {
     private val intrinsics = context.intrinsics
@@ -41,13 +38,16 @@ class PrimitiveContainerMemberCallTransformer(private val context: JsIrBackendCo
                         call.startOffset,
                         call.endOffset,
                         call.type,
-                        context.intrinsics.primitiveToSizeConstructor[elementType]!!
+                        context.intrinsics.primitiveToSizeConstructor[elementType]!!,
+                        typeArgumentsCount = 0,
+                        valueArgumentsCount = 1
                     ).apply {
                         putValueArgument(0, call.getValueArgument(0))
                     }
                 }
             }
 
+            add(context.irBuiltIns.stringClass.hashCodeFunction, intrinsics.jsGetStringHashCode, true)
             add(context.irBuiltIns.stringClass.lengthProperty, context.intrinsics.jsArrayLength, true)
             add(context.irBuiltIns.stringClass.getFunction, intrinsics.jsCharSequenceGet, true)
             add(context.irBuiltIns.stringClass.subSequence, intrinsics.jsCharSequenceSubSequence, true)
@@ -59,13 +59,13 @@ class PrimitiveContainerMemberCallTransformer(private val context: JsIrBackendCo
         }
     }
 
-    override fun transformFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
-        val symbol = expression.symbol
-        symbolToTransformer[symbol]?.let {
-            return it(expression)
+    override fun transformFunctionAccess(call: IrFunctionAccessExpression, doNotIntrinsify: Boolean): IrExpression {
+        if (doNotIntrinsify) return call
+        symbolToTransformer[call.symbol]?.let {
+            return it(call)
         }
 
-        return expression
+        return call
     }
 }
 
@@ -89,3 +89,6 @@ private val IrClassSymbol.lengthProperty
 
 private val IrClassSymbol.subSequence
     get() = getSimpleFunction("subSequence")!!
+
+private val IrClassSymbol.hashCodeFunction
+    get() = getSimpleFunction("hashCode")!!

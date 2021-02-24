@@ -1,6 +1,8 @@
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: IGNORED_IN_JS
 // !LANGUAGE: +InlineClasses
-// IGNORE_BACKEND_FIR: JVM_IR
 // IGNORE_BACKEND: JS, JS_IR, NATIVE
+// IGNORE_BACKEND: JS_IR_ES6
 // WITH_RUNTIME
 
 class CharacterLiteral(private val prefix: NamelessString, private val s: NamelessString) {

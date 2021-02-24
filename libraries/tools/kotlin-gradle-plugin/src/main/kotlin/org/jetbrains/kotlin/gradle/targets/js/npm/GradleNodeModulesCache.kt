@@ -5,46 +5,28 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
-import org.gradle.api.Project
-import org.gradle.api.artifacts.ResolvedArtifact
-import org.gradle.api.artifacts.ResolvedDependency
-import org.jetbrains.kotlin.gradle.internal.ProcessedFilesCache
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
+import org.jetbrains.kotlin.gradle.utils.ArchiveOperationsCompat
+import org.jetbrains.kotlin.gradle.utils.FileSystemOperationsCompat
 import java.io.File
 
 /**
  * Cache for storing already created [GradleNodeModule]s
  */
-internal class GradleNodeModulesCache(val nodeJs: NodeJsRootExtension) : AutoCloseable {
-    companion object {
-        const val STATE_FILE_NAME = ".visited"
-    }
+internal class GradleNodeModulesCache(nodeJs: NodeJsRootExtension) : AbstractNodeModulesCache(nodeJs) {
+    @Transient
+    private val project = nodeJs.rootProject
 
-    val project: Project get() = nodeJs.rootProject
-    internal val dir = nodeJs.nodeModulesGradleCacheDir
-    private val cache = ProcessedFilesCache(project, dir, STATE_FILE_NAME, "9")
+    private val fs = FileSystemOperationsCompat(project)
+    private val archiveOperations = ArchiveOperationsCompat(project)
 
-    @Synchronized
-    fun get(
-        dependency: ResolvedDependency,
-        artifact: ResolvedArtifact
-    ): GradleNodeModule? = cache.getOrCompute(artifact.file) {
-        buildImportedPackage(dependency, artifact)
-    }?.let {
-        GradleNodeModule(it)
-    }
-
-    private fun buildImportedPackage(
-        dependency: ResolvedDependency,
-        artifact: ResolvedArtifact
+    override fun buildImportedPackage(
+        name: String,
+        version: String,
+        file: File
     ): File? {
-        val module = GradleNodeModuleBuilder(project, dependency, listOf(artifact), this)
+        val module = GradleNodeModuleBuilder(fs, archiveOperations, name, version, listOf(file), dir)
         module.visitArtifacts()
         return module.rebuild()
-    }
-
-    @Synchronized
-    override fun close() {
-        cache.close()
     }
 }

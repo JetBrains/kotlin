@@ -16,15 +16,13 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.impl.PropertyGetterDescriptorImpl
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
-import org.jetbrains.kotlin.ir.util.declareFieldWithOverrides
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
@@ -43,39 +41,83 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
             generateSimpleProperty(ktProperty, propertyDescriptor)
     }
 
+    fun generateDestructuringDeclarationEntryAsPropertyDeclaration(ktEntry: KtDestructuringDeclarationEntry): IrProperty {
+        val propertyDescriptor = getPropertyDescriptor(ktEntry)
+        return context.symbolTable.declareProperty(
+            ktEntry.startOffsetSkippingComments, ktEntry.endOffset,
+            IrDeclarationOrigin.DEFINED,
+            propertyDescriptor,
+            isDelegated = false
+        ).buildWithScope { irProperty ->
+            irProperty.backingField = generatePropertyBackingField(ktEntry, propertyDescriptor) { null }
+
+            irProperty.getter = generateGetterIfRequired(ktEntry, propertyDescriptor)
+            irProperty.setter = generateSetterIfRequired(ktEntry, propertyDescriptor)
+
+            irProperty.linkCorrespondingPropertySymbol()
+        }
+    }
+
     fun generatePropertyForPrimaryConstructorParameter(ktParameter: KtParameter, irValueParameter: IrValueParameter): IrDeclaration {
         val propertyDescriptor = getOrFail(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, ktParameter)
+        return generateSyntheticProperty(ktParameter, propertyDescriptor, irValueParameter)
+    }
 
+    fun generateSyntheticProperty(
+        ktDeclarationContainer: KtElement, propertyDescriptor: PropertyDescriptor,
+        irValueParameter: IrValueParameter?, generateSyntheticAccessors: Boolean = false
+    ): IrProperty {
         val irPropertyType = propertyDescriptor.type.toIrType()
+        return generateSyntheticPropertyWithInitializer(ktDeclarationContainer, propertyDescriptor, generateSyntheticAccessors) {
+            if (irValueParameter == null) null
+            else {
+                context.irFactory.createExpressionBody(
+                    IrGetValueImpl(
+                        ktDeclarationContainer.startOffsetSkippingComments, ktDeclarationContainer.endOffset,
+                        irPropertyType,
+                        irValueParameter.symbol,
+                        IrStatementOrigin.INITIALIZE_PROPERTY_FROM_PARAMETER
+                    )
+                )
+            }
+        }
+    }
+
+    fun generateSyntheticPropertyWithInitializer(
+        ktDeclarationContainer: KtElement, propertyDescriptor: PropertyDescriptor,
+        generateSyntheticAccessors: Boolean, generateInitializer: (IrField) -> IrExpressionBody?
+    ): IrProperty {
         return context.symbolTable.declareProperty(
-            ktParameter.startOffsetSkippingComments, ktParameter.endOffset,
+            ktDeclarationContainer.startOffsetSkippingComments, ktDeclarationContainer.endOffset,
             IrDeclarationOrigin.DEFINED,
             propertyDescriptor,
             isDelegated = false
         ).also { irProperty ->
-            irProperty.backingField =
-                generatePropertyBackingField(ktParameter, propertyDescriptor) {
-                    IrExpressionBodyImpl(
-                        IrGetValueImpl(
-                            ktParameter.startOffsetSkippingComments, ktParameter.endOffset,
-                            irPropertyType,
-                            irValueParameter.symbol,
-                            IrStatementOrigin.INITIALIZE_PROPERTY_FROM_PARAMETER
-                        )
-                    )
-                }
+            irProperty.backingField = generatePropertyBackingField(ktDeclarationContainer, propertyDescriptor, generateInitializer)
 
             val getter = propertyDescriptor.getter
-                ?: throw AssertionError("Property declared in primary constructor has no getter: $propertyDescriptor")
+                ?: if (generateSyntheticAccessors)
+                    // TODO: check if this is the correct way to generate synthetic accessor
+                    PropertyGetterDescriptorImpl(
+                        propertyDescriptor,
+                        Annotations.EMPTY, Modality.FINAL, DescriptorVisibilities.PUBLIC, false, false, false,
+                        CallableMemberDescriptor.Kind.SYNTHESIZED, null, propertyDescriptor.source
+                    ).apply {
+                        initialize(propertyDescriptor.type)
+                    }
+                else throw AssertionError("Property declared in primary constructor has no getter: $propertyDescriptor")
             irProperty.getter =
-                FunctionGenerator(declarationGenerator).generateDefaultAccessorForPrimaryConstructorParameter(getter, ktParameter)
+                FunctionGenerator(declarationGenerator).generateDefaultAccessorForPrimaryConstructorParameter(getter, ktDeclarationContainer)
 
             if (propertyDescriptor.isVar) {
                 val setter = propertyDescriptor.setter
+                    // TODO: implement setter descriptor generation, if needed
                     ?: throw AssertionError("Property declared in primary constructor has no setter: $propertyDescriptor")
                 irProperty.setter =
-                    FunctionGenerator(declarationGenerator).generateDefaultAccessorForPrimaryConstructorParameter(setter, ktParameter)
+                    FunctionGenerator(declarationGenerator).generateDefaultAccessorForPrimaryConstructorParameter(setter, ktDeclarationContainer)
             }
+
+            irProperty.linkCorrespondingPropertySymbol()
         }
     }
 
@@ -105,7 +147,7 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
     private fun PropertyDescriptor.actuallyHasBackingField(bindingContext: BindingContext) =
         hasBackingField(bindingContext) || context.extensions.isPropertyWithPlatformField(this)
 
-    private fun generateSimpleProperty(ktProperty: KtProperty, propertyDescriptor: PropertyDescriptor): IrProperty =
+    private fun generateSimpleProperty(ktProperty: KtVariableDeclaration, propertyDescriptor: PropertyDescriptor): IrProperty =
         context.symbolTable.declareProperty(
             ktProperty.startOffsetSkippingComments, ktProperty.endOffset,
             IrDeclarationOrigin.DEFINED,
@@ -118,7 +160,7 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
                         ktProperty.initializer?.let { ktInitializer ->
                             val compileTimeConst = propertyDescriptor.compileTimeInitializer
                             if (propertyDescriptor.isConst && compileTimeConst != null)
-                                IrExpressionBodyImpl(
+                                context.irFactory.createExpressionBody(
                                     context.constantValueGenerator.generateConstantValueAsExpression(
                                         ktInitializer.startOffsetSkippingComments, ktInitializer.endOffset,
                                         compileTimeConst
@@ -133,59 +175,59 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
 
             irProperty.getter = generateGetterIfRequired(ktProperty, propertyDescriptor)
             irProperty.setter = generateSetterIfRequired(ktProperty, propertyDescriptor)
+
+            irProperty.linkCorrespondingPropertySymbol()
         }
 
     fun generateFakeOverrideProperty(propertyDescriptor: PropertyDescriptor, ktElement: KtPureElement): IrProperty? {
-        if (propertyDescriptor.visibility == Visibilities.INVISIBLE_FAKE) return null
+        if (propertyDescriptor.visibility == DescriptorVisibilities.INVISIBLE_FAKE) return null
 
         val startOffset = ktElement.pureStartOffsetOrUndefined
         val endOffset = ktElement.pureEndOffsetOrUndefined
 
-        val backingField =
-            if (propertyDescriptor.actuallyHasBackingField(context.bindingContext) && propertyDescriptor.fieldVisibility.admitsFakeOverride)
-                context.symbolTable.declareFieldWithOverrides(
-                    startOffset, endOffset, IrDeclarationOrigin.FAKE_OVERRIDE,
-                    propertyDescriptor, propertyDescriptor.type.toIrType()
-                ) { it.actuallyHasBackingField(context.bindingContext) }
-            else
-                null
-
         return context.symbolTable.declareProperty(startOffset, endOffset, IrDeclarationOrigin.FAKE_OVERRIDE, propertyDescriptor).apply {
-            this.backingField = backingField
             this.getter = propertyDescriptor.getter?.let {
                 FunctionGenerator(declarationGenerator).generateFakeOverrideFunction(it, ktElement)
             }
             this.setter = propertyDescriptor.setter?.let {
                 FunctionGenerator(declarationGenerator).generateFakeOverrideFunction(it, ktElement)
             }
+            this.linkCorrespondingPropertySymbol()
         }
     }
 
-    private fun generateGetterIfRequired(ktProperty: KtProperty, property: PropertyDescriptor): IrSimpleFunction? {
+    private fun generateGetterIfRequired(ktProperty: KtVariableDeclaration, property: PropertyDescriptor): IrSimpleFunction? {
         val getter = property.getter ?: return null
-        return FunctionGenerator(declarationGenerator).generatePropertyAccessor(getter, ktProperty, ktProperty.getter)
+        return FunctionGenerator(declarationGenerator).generatePropertyAccessor(getter, ktProperty, (ktProperty as? KtProperty)?.getter)
     }
 
-    private fun generateSetterIfRequired(ktProperty: KtProperty, property: PropertyDescriptor): IrSimpleFunction? {
+    private fun generateSetterIfRequired(ktProperty: KtVariableDeclaration, property: PropertyDescriptor): IrSimpleFunction? {
         if (!property.isVar) return null
         val setter = property.setter ?: return null
-        return FunctionGenerator(declarationGenerator).generatePropertyAccessor(setter, ktProperty, ktProperty.setter)
+        return FunctionGenerator(declarationGenerator).generatePropertyAccessor(setter, ktProperty, (ktProperty as? KtProperty)?.setter)
     }
 
-    private fun getPropertyDescriptor(ktProperty: KtProperty): PropertyDescriptor {
+    private fun getPropertyDescriptor(ktProperty: KtVariableDeclaration): PropertyDescriptor {
         val variableDescriptor = getOrFail(BindingContext.VARIABLE, ktProperty)
         return variableDescriptor as? PropertyDescriptor ?: TODO("not a property: $variableDescriptor")
     }
 
-    private val Visibility.admitsFakeOverride: Boolean
-        get() = !Visibilities.isPrivate(this) && this != Visibilities.INVISIBLE_FAKE
+    private val DescriptorVisibility.admitsFakeOverride: Boolean
+        get() = !DescriptorVisibilities.isPrivate(this) && this != DescriptorVisibilities.INVISIBLE_FAKE
 
-    private val PropertyDescriptor.fieldVisibility: Visibility
+    private val PropertyDescriptor.fieldVisibility: DescriptorVisibility
         get() = declarationGenerator.context.extensions.computeFieldVisibility(this)
             ?: when {
                 isLateInit -> setter?.visibility ?: visibility
                 isConst -> visibility
-                else -> Visibilities.PRIVATE
+                else -> DescriptorVisibilities.PRIVATE
             }
 }
+
+internal fun IrProperty.linkCorrespondingPropertySymbol() {
+    backingField?.correspondingPropertySymbol = symbol
+    getter?.correspondingPropertySymbol = symbol
+    setter?.correspondingPropertySymbol = symbol
+}
+
 

@@ -3,6 +3,8 @@
 //KT-1029 Wrong type inference
 package i
 
+import checkSubtype
+
 public fun<T> from(<!UNUSED_PARAMETER!>yielder<!>: ()->Iterable<T>) : Iterable<T> {
 <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 

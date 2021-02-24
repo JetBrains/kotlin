@@ -1,17 +1,16 @@
-10 get() = <bold>2</bold>
-20 	val <bold>y = b.foo</bold>
-20 		val y = <bold>b.foo</bold>
-9 			override val <bold>foo: Int</bold>
-10 				get() = <bold>2</bold>
+10 get() = <bold>2</bold> (in B.foo.get)
+20 	<bold>val y</bold> = b.foo (in test(A, B,…))
+20 		val y = <bold>b.foo</bold> (in test(A, B,…))
+9 			override <bold>val foo: Int</bold> (in B)
+10 				get() = <bold>2</bold> (in B.foo.get)
 
-15 get() = <bold>3</bold>
-20 	val <bold>y = b.foo</bold>
-20 		val y = <bold>b.foo</bold>
-14 			override val <bold>foo: Int</bold>
-15 				get() = <bold>3</bold>
+15 get() = <bold>3</bold> (in C.foo.get)
+20 	<bold>val y</bold> = b.foo (in test(A, B,…))
+20 		val y = <bold>b.foo</bold> (in test(A, B,…))
+14 			override <bold>val foo: Int</bold> (in C)
+15 				get() = <bold>3</bold> (in C.foo.get)
 
 3 return <bold>5</bold>;
-20 	val <bold>y = b.foo</bold>
-20 		val y = <bold>b.foo</bold>
+20 	<bold>val y</bold> = b.foo (in test(A, B,…))
+20 		val y = <bold>b.foo</bold> (in test(A, B,…))
 3 			return <bold>5</bold>;
-

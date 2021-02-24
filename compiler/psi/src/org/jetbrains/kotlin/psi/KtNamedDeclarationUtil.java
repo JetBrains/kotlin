@@ -70,6 +70,14 @@ public final class KtNamedDeclarationUtil {
         else if (parent instanceof KtObjectDeclaration) {
              return getFQName((KtNamedDeclaration) parent);
         }
+        else if (parent instanceof KtBlockExpression) {
+            PsiElement parentOfParent = parent.getParent();
+            if (parentOfParent instanceof KtScript) {
+                return ((KtScript)parentOfParent).getFqName();
+
+            }
+        }
+
         return null;
     }
 

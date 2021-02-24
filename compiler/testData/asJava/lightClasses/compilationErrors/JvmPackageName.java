@@ -1,4 +1,5 @@
 @kotlin.jvm.JvmPackageName(name = "a.b.c")
-public final class JvmPackageNameKt {
-    public static final void f() { /* compiled code */ }
+public final class JvmPackageNameKt /* a.b.c.JvmPackageNameKt*/ {
+  public static final void f();//  f()
+
 }

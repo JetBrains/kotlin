@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.core.util
 
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.util.TextRange
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -42,23 +43,26 @@ fun PsiElement.getLineNumber(start: Boolean = true): Int {
     return document?.getLineNumber(if (start) this.startOffset else this.endOffset) ?: 0
 }
 
+// Copied to formatter
 fun PsiElement.getLineCount(): Int {
     val doc = containingFile?.let { file -> PsiDocumentManager.getInstance(project).getDocument(file) }
     if (doc != null) {
         val spaceRange = textRange ?: TextRange.EMPTY_RANGE
 
-        if (spaceRange.endOffset <= doc.textLength) {
+        if (spaceRange.endOffset <= doc.textLength && spaceRange.startOffset < spaceRange.endOffset) {
             val startLine = doc.getLineNumber(spaceRange.startOffset)
             val endLine = doc.getLineNumber(spaceRange.endOffset)
 
-            return endLine - startLine
+            return endLine - startLine + 1
         }
     }
 
-    return (text ?: "").count { it == '\n' } + 1
+    return StringUtil.getLineBreakCount(text ?: error("Cannot count number of lines")) + 1
 }
 
-fun PsiElement.isMultiLine(): Boolean = getLineCount() > 1
+fun PsiElement.isMultiLine() = getLineCount() > 1
+
+fun PsiElement.isOneLiner() = getLineCount() == 1
 
 fun Document.getLineCountInRange(textRange: TextRange): Int = abs(getLineNumber(textRange.startOffset) - getLineNumber(textRange.endOffset))
 

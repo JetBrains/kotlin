@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.codegen
 
-import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
@@ -20,7 +19,7 @@ import org.jetbrains.org.objectweb.asm.util.Printer
 class CallableMethod(
     override val owner: Type,
     private val defaultImplOwner: Type?,
-    computeDefaultMethodDesc: () -> String,
+    computeDefaultMethod: () -> Method,
     private val signature: JvmMethodSignature,
     val invokeOpcode: Int,
     override val dispatchReceiverType: Type?,
@@ -30,9 +29,13 @@ class CallableMethod(
     override val generateCalleeType: Type?,
     override val returnKotlinType: KotlinType?,
     val isInterfaceMethod: Boolean,
-    private val isDefaultMethodInInterface: Boolean
+    private val isDefaultMethodInInterface: Boolean,
+    private val boxInlineClassBeforeInvoke: Boolean
 ) : Callable {
-    private val defaultMethodDesc: String by lazy(LazyThreadSafetyMode.PUBLICATION, computeDefaultMethodDesc)
+    private val defaultImplMethod: Method by lazy(LazyThreadSafetyMode.PUBLICATION, computeDefaultMethod)
+
+    private val defaultImplMethodName: String get() = defaultImplMethod.name
+    private val defaultMethodDesc: String get() = defaultImplMethod.descriptor
 
     fun getValueParameters(): List<JvmMethodParameterSignature> =
         signature.valueParameters
@@ -47,6 +50,9 @@ class CallableMethod(
         get() = getAsmMethod().argumentTypes
 
     override fun genInvokeInstruction(v: InstructionAdapter) {
+        if (boxInlineClassBeforeInvoke) {
+            StackValue.boxInlineClass(dispatchReceiverKotlinType!!, v)
+        }
         v.visitMethodInsn(
             invokeOpcode,
             owner.internalName,
@@ -68,10 +74,14 @@ class CallableMethod(
         } else {
             v.visitMethodInsn(
                 INVOKESTATIC, defaultImplOwner.internalName,
-                method.name + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX, defaultMethodDesc, isDefaultMethodInInterface
+                defaultImplMethodName, defaultMethodDesc, isDefaultMethodInInterface
             )
 
-            StackValue.coerce(Type.getReturnType(defaultMethodDesc), Type.getReturnType(signature.asmMethod.descriptor), v)
+            StackValue.coerce(
+                Type.getReturnType(defaultMethodDesc),
+                Type.getReturnType(signature.asmMethod.descriptor),
+                v
+            )
         }
     }
 

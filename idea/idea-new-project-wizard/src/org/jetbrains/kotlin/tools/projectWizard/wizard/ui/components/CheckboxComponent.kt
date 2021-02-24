@@ -1,32 +1,39 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components
 
 import com.intellij.ui.components.JBCheckBox
-import com.intellij.ui.components.JBTextField
-import org.jetbrains.kotlin.tools.projectWizard.core.ValuesReadingContext
+import com.intellij.util.ui.UIUtil
+import org.jetbrains.kotlin.tools.projectWizard.core.Context
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.SettingValidator
-import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.textField
+import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.componentWithCommentAtBottom
+import javax.swing.JComponent
 
 class CheckboxComponent(
-    valuesReadingContext: ValuesReadingContext,
+    context: Context,
     labelText: String? = null,
+    description: String? = null,
     initialValue: Boolean? = null,
     validator: SettingValidator<Boolean>? = null,
     onValueUpdate: (Boolean) -> Unit = {}
 ) : UIComponent<Boolean>(
-    valuesReadingContext,
-    labelText,
-    validator,
-    onValueUpdate
+    context,
+    labelText = null,
+    validator = validator,
+    onValueUpdate = onValueUpdate
 ) {
-    override val uiComponent: JBCheckBox = JBCheckBox(labelText, initialValue ?: false).apply {
+    private val checkbox = JBCheckBox(labelText, initialValue ?: false).apply {
+        font = UIUtil.getButtonFont()
         addChangeListener {
             fireValueUpdated(this@apply.isSelected)
         }
     }
 
+    override val alignTarget: JComponent? get() = checkbox
+
+    override val uiComponent = componentWithCommentAtBottom(checkbox, description, gap = 2)
+
     override fun updateUiValue(newValue: Boolean) = safeUpdateUi {
-        uiComponent.isSelected = newValue
+        checkbox.isSelected = newValue
     }
 
-    override fun getUiValue(): Boolean = uiComponent.isSelected
+    override fun getUiValue(): Boolean = checkbox.isSelected
 }

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +NewInference +SamConversionForKotlinFunctions +SamConversionPerArgument +FunctionalInterfaceConversion
 // !CHECK_TYPE
 

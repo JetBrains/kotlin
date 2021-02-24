@@ -10,6 +10,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.combineWhenConditions
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -18,7 +19,7 @@ import java.util.*
 
 class CommaInWhenConditionWithoutArgumentFix(element: PsiElement) : KotlinQuickFixAction<PsiElement>(element), CleanupFix {
     override fun getFamilyName(): String = text
-    override fun getText(): String = "Replace ',' with '||' in when"
+    override fun getText(): String = KotlinBundle.message("replace.with.in.when")
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val whenExpression = element as? KtWhenExpression ?: return

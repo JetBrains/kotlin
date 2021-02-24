@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.configuration
@@ -26,15 +15,18 @@ import com.intellij.openapi.roots.ModifiableModelsProvider
 import com.intellij.openapi.roots.ModifiableRootModel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.idea.KotlinIcons
+import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
 import org.jetbrains.kotlin.idea.configuration.KotlinBuildScriptManipulator.Companion.GSK_KOTLIN_VERSION_PROPERTY_NAME
 import org.jetbrains.kotlin.idea.configuration.KotlinBuildScriptManipulator.Companion.getKotlinGradlePluginClassPathSnippet
 import org.jetbrains.kotlin.idea.configuration.KotlinBuildScriptManipulator.Companion.getKotlinModuleDependencySnippet
 import org.jetbrains.kotlin.idea.formatter.KotlinStyleGuideCodeStyle
 import org.jetbrains.kotlin.idea.formatter.ProjectCodeStyleImporter
-import org.jetbrains.kotlin.idea.statistics.FUSEventGroups
-import org.jetbrains.kotlin.idea.statistics.KotlinFUSLogger
+import org.jetbrains.kotlin.idea.statistics.NewProjectWizardsFUSCollector
 import org.jetbrains.kotlin.idea.util.isSnapshot
-import org.jetbrains.kotlin.idea.versions.*
+import org.jetbrains.kotlin.idea.versions.MAVEN_JS_STDLIB_ID
+import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
+import org.jetbrains.kotlin.idea.versions.getDefaultJvmTarget
+import org.jetbrains.kotlin.idea.versions.getStdlibArtifactId
 import org.jetbrains.plugins.gradle.frameworkSupport.BuildScriptDataBuilder
 import org.jetbrains.plugins.gradle.frameworkSupport.KotlinDslGradleFrameworkSupportProvider
 import javax.swing.Icon
@@ -107,7 +99,7 @@ abstract class KotlinDslGradleKotlinFrameworkSupportProvider(
             GradlePropertiesFileFacade.forProject(module.project).addCodeStyleProperty(KotlinStyleGuideCodeStyle.CODE_STYLE_SETTING)
         }
 
-        KotlinFUSLogger.log(FUSEventGroups.NPWizards, this.javaClass.simpleName)
+        NewProjectWizardsFUSCollector.log(this.presentableName, "Gradle", true)
     }
 
     protected abstract fun getOldSyntaxPluginDefinition(): String
@@ -122,7 +114,11 @@ abstract class KotlinDslGradleKotlinFrameworkSupportProvider(
 }
 
 class KotlinDslGradleKotlinJavaFrameworkSupportProvider :
-    KotlinDslGradleKotlinFrameworkSupportProvider("KOTLIN", "Kotlin/JVM", KotlinIcons.SMALL_LOGO) {
+    KotlinDslGradleKotlinFrameworkSupportProvider(
+        "KOTLIN",
+        KotlinIdeaGradleBundle.message("display.name.kotlin.jvm"),
+        KotlinIcons.SMALL_LOGO
+    ) {
 
     override fun getOldSyntaxPluginDefinition() = "plugin(\"${KotlinGradleModuleConfigurator.KOTLIN}\")"
     override fun getPluginDefinition() = "kotlin(\"jvm\")"
@@ -148,7 +144,8 @@ class KotlinDslGradleKotlinJavaFrameworkSupportProvider :
         val minGradleVersion = GradleVersion.version("5.0")
         if (buildScriptData.gradleVersion >= minGradleVersion)
             buildScriptData
-                .addOther("""
+                .addOther(
+                    """
                     tasks {
                         compileKotlin {
                             kotlinOptions.jvmTarget = "1.8"
@@ -182,10 +179,38 @@ abstract class AbstractKotlinDslGradleKotlinJSFrameworkSupportProvider(
     ) {
         super.addSupport(projectId, module, rootModel, modifiableModelsProvider, buildScriptData)
 
-        buildScriptData.addOther("kotlin.target.$jsSubTargetName { }")
+        buildScriptData.addOther(
+            """
+                kotlin {
+                    js {
+                        $jsSubTargetName {
+                        """.trimIndent() +
+                    (
+                            additionalSubTargetSettings()
+                                ?.lines()
+                                ?.joinToString("\n", "\n", "\n") { line: String ->
+                                    if (line.isBlank()) {
+                                        line
+                                    } else {
+                                        line
+                                            .prependIndent()
+                                            .prependIndent()
+                                            .prependIndent()
+                                    }
+                                } ?: "\n"
+                            ) +
+                    """
+                        }
+                        binaries.executable()
+                    }
+                }
+            """.trimIndent()
+        )
         val artifactId = MAVEN_JS_STDLIB_ID.removePrefix("kotlin-")
         buildScriptData.addDependencyNotation(composeDependency(buildScriptData, artifactId))
     }
+
+    abstract fun additionalSubTargetSettings(): String?
 
     override fun getOldSyntaxPluginDefinition(): String = "plugin(\"${KotlinJsGradleModuleConfigurator.KOTLIN_JS}\")"
     override fun getPluginDefinition(): String = "id(\"org.jetbrains.kotlin.js\")"
@@ -193,19 +218,46 @@ abstract class AbstractKotlinDslGradleKotlinJSFrameworkSupportProvider(
 }
 
 class KotlinDslGradleKotlinJSBrowserFrameworkSupportProvider :
-    AbstractKotlinDslGradleKotlinJSFrameworkSupportProvider("KOTLIN_JS_BROWSER", "Kotlin/JS for browser") {
+    AbstractKotlinDslGradleKotlinJSFrameworkSupportProvider(
+        "KOTLIN_JS_BROWSER",
+        KotlinIdeaGradleBundle.message("display.name.kotlin.js.for.browser")
+    ) {
     override val jsSubTargetName: String
         get() = "browser"
+
+    override fun addSupport(
+        projectId: ProjectId,
+        module: Module,
+        rootModel: ModifiableRootModel,
+        modifiableModelsProvider: ModifiableModelsProvider,
+        buildScriptData: BuildScriptDataBuilder
+    ) {
+        super.addSupport(projectId, module, rootModel, modifiableModelsProvider, buildScriptData)
+        addBrowserSupport(module)
+    }
+
+    override fun additionalSubTargetSettings(): String? =
+        browserConfiguration()
 }
 
 class KotlinDslGradleKotlinJSNodeFrameworkSupportProvider :
-    AbstractKotlinDslGradleKotlinJSFrameworkSupportProvider("KOTLIN_JS_NODE", "Kotlin/JS for Node.js") {
+    AbstractKotlinDslGradleKotlinJSFrameworkSupportProvider(
+        "KOTLIN_JS_NODE",
+        KotlinIdeaGradleBundle.message("display.name.kotlin.js.for.node.js")
+    ) {
     override val jsSubTargetName: String
         get() = "nodejs"
+
+    override fun additionalSubTargetSettings(): String? =
+        null
 }
 
 class KotlinDslGradleKotlinMPPFrameworkSupportProvider :
-    KotlinDslGradleKotlinFrameworkSupportProvider("KOTLIN_MPP", "Kotlin/Multiplatform", KotlinIcons.MPP) {
+    KotlinDslGradleKotlinFrameworkSupportProvider(
+        "KOTLIN_MPP",
+        KotlinIdeaGradleBundle.message("display.name.kotlin.multiplatform"),
+        KotlinIcons.MPP
+    ) {
 
     override fun getOldSyntaxPluginDefinition() = "plugin(\"org.jetbrains.kotlin.multiplatform\")"
     override fun getPluginDefinition() = "kotlin(\"multiplatform\")"

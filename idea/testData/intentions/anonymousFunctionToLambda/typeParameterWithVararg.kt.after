@@ -1,0 +1,7 @@
+fun foo(p: String) {}
+
+fun <T> bar(vararg fn: (T) -> Unit) {}
+
+fun test() {
+    bar({ x: String -> foo(x) })
+}

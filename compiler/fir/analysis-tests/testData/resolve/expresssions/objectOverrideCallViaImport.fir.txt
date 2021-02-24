@@ -1,0 +1,15 @@
+FILE: objectOverrideCallViaImport.kt
+    public abstract interface Base : R|kotlin/Any| {
+        public open fun foo(): R|kotlin/Unit| {
+        }
+
+    }
+    public final object Derived : R|Base| {
+        private constructor(): R|Derived| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun test(): R|kotlin/Unit| {
+        Q|Derived|.R|/Base.foo|()
+    }

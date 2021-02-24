@@ -23,7 +23,7 @@ fun falseWhenString(x: Any?): Boolean {
 
 fun annotatedTrueAndTrue(x: Any?) {
     if (trueWhenString(x) && true) {
-        x.<!UNRESOLVED_REFERENCE!>length<!>
+        x.length
     }
     else {
         x.<!UNRESOLVED_REFERENCE!>length<!>
@@ -33,7 +33,7 @@ fun annotatedTrueAndTrue(x: Any?) {
 fun annotatedTrueAndFalse(x: Any?) {
     if (trueWhenString(x) && false) {
         // Unreachable
-        x.<!UNRESOLVED_REFERENCE!>length<!>
+        x.length
     }
     else {
         x.<!UNRESOLVED_REFERENCE!>length<!>

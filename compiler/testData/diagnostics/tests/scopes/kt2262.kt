@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 package kt2262
 
 //KT-2262 Cannot access protected member from inner class of subclass

@@ -1,7 +1,7 @@
 class Pair<out A, out B>(val first: A, val second: B)
 
 class Example {
-    <!INAPPLICABLE_INFIX_MODIFIER!>infix fun to(other: Example) = Pair(this, other)<!>
+    infix fun to(other: Example) = Pair(this, other)
     fun toNonInfix(other: Example) = Pair(this, other)
 }
 

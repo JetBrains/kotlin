@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 // TARGET_BACKEND: JVM
 // FILE: test.kt
 fun f(x: String) = "Fail 1"

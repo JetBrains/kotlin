@@ -18,26 +18,34 @@ package org.jetbrains.kotlin.resolve
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo
+import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 
 object DescriptorEquivalenceForOverrides {
 
     fun areEquivalent(
         a: DeclarationDescriptor?,
         b: DeclarationDescriptor?,
-        allowCopiesFromTheSameDeclaration: Boolean
+        allowCopiesFromTheSameDeclaration: Boolean,
+        distinguishExpectsAndNonExpects: Boolean = true
     ): Boolean {
         return when {
-            a is ClassDescriptor &&
-                    b is ClassDescriptor -> areClassesEquivalent(a, b)
+            a is ClassDescriptor && b is ClassDescriptor -> areClassesEquivalent(a, b)
 
-            a is TypeParameterDescriptor &&
-                    b is TypeParameterDescriptor -> areTypeParametersEquivalent(a, b, allowCopiesFromTheSameDeclaration)
+            a is TypeParameterDescriptor && b is TypeParameterDescriptor -> areTypeParametersEquivalent(
+                a,
+                b,
+                allowCopiesFromTheSameDeclaration
+            )
 
-            a is CallableDescriptor &&
-                    b is CallableDescriptor -> areCallableDescriptorsEquivalent(a, b, allowCopiesFromTheSameDeclaration)
+            a is CallableDescriptor && b is CallableDescriptor -> areCallableDescriptorsEquivalent(
+                a,
+                b,
+                allowCopiesFromTheSameDeclaration = allowCopiesFromTheSameDeclaration,
+                distinguishExpectsAndNonExpects = distinguishExpectsAndNonExpects,
+                kotlinTypeRefiner = KotlinTypeRefiner.Default
+            )
 
-            a is PackageFragmentDescriptor &&
-                    b is PackageFragmentDescriptor -> (a).fqName == (b).fqName
+            a is PackageFragmentDescriptor && b is PackageFragmentDescriptor -> (a).fqName == (b).fqName
 
             else -> a == b
         }
@@ -48,7 +56,8 @@ object DescriptorEquivalenceForOverrides {
         return a.typeConstructor == b.typeConstructor
     }
 
-    private fun areTypeParametersEquivalent(
+    @JvmOverloads
+    fun areTypeParametersEquivalent(
         a: TypeParameterDescriptor,
         b: TypeParameterDescriptor,
         allowCopiesFromTheSameDeclaration: Boolean,
@@ -72,14 +81,16 @@ object DescriptorEquivalenceForOverrides {
         a: CallableDescriptor,
         b: CallableDescriptor,
         allowCopiesFromTheSameDeclaration: Boolean,
-        ignoreReturnType: Boolean = false
+        distinguishExpectsAndNonExpects: Boolean = true,
+        ignoreReturnType: Boolean = false,
+        kotlinTypeRefiner: KotlinTypeRefiner
     ): Boolean {
         if (a == b) return true
         if (a.name != b.name) return false
+        if (distinguishExpectsAndNonExpects && a is MemberDescriptor && b is MemberDescriptor && a.isExpect != b.isExpect) return false
         if (a.containingDeclaration == b.containingDeclaration) {
             if (!allowCopiesFromTheSameDeclaration) return false
             if (a.singleSource() != b.singleSource()) return false
-            if (a is MemberDescriptor && b is MemberDescriptor && a.isExpect != b.isExpect) return false
         }
 
         // Distinct locals are not equivalent
@@ -87,7 +98,7 @@ object DescriptorEquivalenceForOverrides {
 
         if (!ownersEquivalent(a, b, { _, _ -> false }, allowCopiesFromTheSameDeclaration)) return false
 
-        val overridingUtil = OverridingUtil.createWithEqualityAxioms eq@{ c1, c2 ->
+        val overridingUtil = OverridingUtil.create(kotlinTypeRefiner) eq@{ c1, c2 ->
             if (c1 == c2) return@eq true
 
             val d1 = c1.declarationDescriptor

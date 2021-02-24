@@ -9,31 +9,35 @@ plugins {
 }
 
 dependencies {
+    Platform[193].orLower {
+        testCompileOnly(intellijDep()) { includeJars("openapi", rootProject = rootProject) }
+    }
+
     testCompileOnly(intellijDep()) {
-        includeJars("openapi", "extensions", "idea", "idea_rt", "util", "asm-all", rootProject = rootProject)
+        includeJars("extensions", "idea_rt", "util", "asm-all", "platform-util-ex", rootProject = rootProject)
     }
 
-    Platform[191].orLower {
-        testCompileOnly(intellijDep()) { includeJars("java-api") }
-    }
+    testCompileOnly(intellijPluginDep("java")) { includeJars("java-api") }
+    testRuntimeOnly(intellijPluginDep("java"))
 
-    Platform[192].orHigher {
-        testCompileOnly(intellijPluginDep("java")) { includeJars("java-api") }
-        testRuntimeOnly(intellijPluginDep("java"))
-    }
+    testRuntimeOnly(intellijDep())
 
-    testRuntime(intellijDep())
-
-    testCompile(commonDep("junit:junit"))
+    testApi(commonDep("junit:junit"))
     testCompileOnly(project(":kotlin-test:kotlin-test-jvm"))
     testCompileOnly(project(":kotlin-test:kotlin-test-junit"))
-    testCompile(projectTests(":compiler:tests-common"))
+    testApi(projectTests(":compiler:tests-common"))
 
     testCompileOnly(project(":kotlin-reflect-api"))
-    testRuntime(project(":kotlin-reflect"))
-    testCompile(projectTests(":compiler:fir:resolve"))
-    testCompile(project(":compiler:fir:resolve"))
-    testCompile(project(":compiler:fir:dump"))
+    testRuntimeOnly(project(":kotlin-reflect"))
+    testRuntimeOnly(project(":core:descriptors.runtime"))
+    testApi(projectTests(":compiler:fir:analysis-tests:legacy-fir-tests"))
+    testApi(project(":compiler:fir:resolve"))
+    testApi(project(":compiler:fir:dump"))
+
+    val asyncProfilerClasspath = project.findProperty("fir.bench.async.profiler.classpath") as? String
+    if (asyncProfilerClasspath != null) {
+        testRuntimeOnly(files(*asyncProfilerClasspath.split(File.pathSeparatorChar).toTypedArray()))
+    }
 }
 
 sourceSets {

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 internal open class My
 
 internal class Outer {

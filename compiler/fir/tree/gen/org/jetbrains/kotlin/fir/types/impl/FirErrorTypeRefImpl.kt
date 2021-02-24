@@ -1,14 +1,13 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.types.impl
 
 import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.fir.diagnostics.FirDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.types.ConeClassErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
@@ -20,20 +19,29 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-class FirErrorTypeRefImpl(
-    override val source: FirSourceElement?,
-    override val diagnostic: FirDiagnostic
-) : FirErrorTypeRef(), FirAbstractAnnotatedElement {
+internal class FirErrorTypeRefImpl(
+    override var source: FirSourceElement?,
+    override var delegatedTypeRef: FirTypeRef?,
+    override val diagnostic: ConeDiagnostic,
+) : FirErrorTypeRef() {
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
-    override val type: ConeKotlinType = ConeClassErrorType(diagnostic.reason)
-    override val delegatedTypeRef: FirTypeRef? get() = null
+    override val type: ConeKotlinType = ConeClassErrorType(diagnostic)
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirErrorTypeRefImpl {
+        transformAnnotations(transformer, data)
+        return this
+    }
+
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirErrorTypeRefImpl {
         annotations.transformInplace(transformer, data)
         return this
+    }
+
+    override fun replaceSource(newSource: FirSourceElement?) {
+        source = newSource
     }
 }

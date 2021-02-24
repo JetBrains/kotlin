@@ -1,0 +1,4 @@
+package
+
+@kotlin.OptIn(markerClass = {kotlin.ExperimentalStdlibApi::class}) public val list: kotlin.collections.List<kotlin.String>
+public fun maybe(): kotlin.collections.List<kotlin.String>?

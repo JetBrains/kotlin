@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 fun test(a: Int, b: Int, c: Int) {
     when (0) {
         a -> throw IllegalArgumentException("a is 0")

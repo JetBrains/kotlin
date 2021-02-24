@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class Annotation(val x: Int) {
     fun baz() {}
     fun bar() = x

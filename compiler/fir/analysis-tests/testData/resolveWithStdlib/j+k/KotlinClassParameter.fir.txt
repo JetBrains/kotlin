@@ -1,0 +1,12 @@
+FILE: K1.kt
+    public final class KotlinClass : R|kotlin/Any| {
+        public constructor(): R|KotlinClass| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+FILE: K2.kt
+    public final fun main(): R|kotlin/Unit| {
+        Q|JavaClass|.R|/JavaClass.baz|(R|/KotlinClass.KotlinClass|())
+        Q|JavaClass|.<Inapplicable(INAPPLICABLE): /JavaClass.baz>#(String())
+    }

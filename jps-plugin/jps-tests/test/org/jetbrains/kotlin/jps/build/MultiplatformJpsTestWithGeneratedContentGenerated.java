@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.jps.build;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -25,7 +26,7 @@ public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractM
     }
 
     public void testAllFilesPresentInMultiplatformMultiModule() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent"), Pattern.compile("^([^\\.]+)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent"), Pattern.compile("^([^\\.]+)$"), null, true);
     }
 
     @TestMetadata("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/ignoreAndWarnAboutNative")
@@ -37,7 +38,7 @@ public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractM
         }
 
         public void testAllFilesPresentInIgnoreAndWarnAboutNative() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/ignoreAndWarnAboutNative"), Pattern.compile("^([^\\.]+)$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/ignoreAndWarnAboutNative"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
 
         @TestMetadata("editingCKotlin")
@@ -54,7 +55,7 @@ public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractM
             }
 
             public void testAllFilesPresentInEditingCKotlin() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/ignoreAndWarnAboutNative/editingCKotlin"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/ignoreAndWarnAboutNative/editingCKotlin"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
     }
@@ -68,7 +69,7 @@ public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractM
         }
 
         public void testAllFilesPresentInSimple() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simple"), Pattern.compile("^([^\\.]+)$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simple"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
 
         @TestMetadata("editingCKotlin")
@@ -100,7 +101,7 @@ public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractM
             }
 
             public void testAllFilesPresentInEditingCKotlin() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simple/editingCKotlin"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simple/editingCKotlin"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
@@ -113,7 +114,7 @@ public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractM
             }
 
             public void testAllFilesPresentInEditingPJsKotlin() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simple/editingPJsKotlin"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simple/editingPJsKotlin"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
@@ -126,7 +127,7 @@ public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractM
             }
 
             public void testAllFilesPresentInEditingPJvmJava() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simple/editingPJvmJava"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simple/editingPJvmJava"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
@@ -139,7 +140,7 @@ public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractM
             }
 
             public void testAllFilesPresentInEditingPJvmKotlin() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simple/editingPJvmKotlin"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simple/editingPJvmKotlin"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
     }
@@ -153,7 +154,7 @@ public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractM
         }
 
         public void testAllFilesPresentInSimpleJsJvmProjectWithTests() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simpleJsJvmProjectWithTests"), Pattern.compile("^([^\\.]+)$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simpleJsJvmProjectWithTests"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
 
         @TestMetadata("editingCMainExpectActual")
@@ -175,7 +176,7 @@ public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractM
             }
 
             public void testAllFilesPresentInEditingCMainExpectActual() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simpleJsJvmProjectWithTests/editingCMainExpectActual"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simpleJsJvmProjectWithTests/editingCMainExpectActual"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
@@ -188,7 +189,7 @@ public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractM
             }
 
             public void testAllFilesPresentInEditingCTestsExpectActual() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simpleJsJvmProjectWithTests/editingCTestsExpectActual"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simpleJsJvmProjectWithTests/editingCTestsExpectActual"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
     }
@@ -202,7 +203,7 @@ public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractM
         }
 
         public void testAllFilesPresentInSimpleNewMpp() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simpleNewMpp"), Pattern.compile("^([^\\.]+)$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simpleNewMpp"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
 
         @TestMetadata("editingCKotlin")
@@ -234,7 +235,7 @@ public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractM
             }
 
             public void testAllFilesPresentInEditingCKotlin() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simpleNewMpp/editingCKotlin"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simpleNewMpp/editingCKotlin"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
@@ -247,7 +248,7 @@ public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractM
             }
 
             public void testAllFilesPresentInEditingPJsKotlin() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simpleNewMpp/editingPJsKotlin"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simpleNewMpp/editingPJsKotlin"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
@@ -260,7 +261,7 @@ public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractM
             }
 
             public void testAllFilesPresentInEditingPJvmJava() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simpleNewMpp/editingPJvmJava"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simpleNewMpp/editingPJvmJava"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
@@ -273,7 +274,7 @@ public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractM
             }
 
             public void testAllFilesPresentInEditingPJvmKotlin() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simpleNewMpp/editingPJvmKotlin"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simpleNewMpp/editingPJvmKotlin"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
     }
@@ -287,7 +288,7 @@ public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractM
         }
 
         public void testAllFilesPresentInUltimate() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/ultimate"), Pattern.compile("^([^\\.]+)$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/ultimate"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
 
         @TestMetadata("editingACommonExpectActual")
@@ -344,7 +345,7 @@ public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractM
             }
 
             public void testAllFilesPresentInEditingACommonExpectActual() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/ultimate/editingACommonExpectActual"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/ultimate/editingACommonExpectActual"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
@@ -357,7 +358,7 @@ public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractM
             }
 
             public void testAllFilesPresentInEditingAJsClientKotlin() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/ultimate/editingAJsClientKotlin"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/ultimate/editingAJsClientKotlin"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
@@ -370,7 +371,7 @@ public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractM
             }
 
             public void testAllFilesPresentInEditingAJvmClientJava() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/ultimate/editingAJvmClientJava"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/ultimate/editingAJvmClientJava"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
@@ -383,7 +384,7 @@ public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractM
             }
 
             public void testAllFilesPresentInEditingAJvmClientKotlin() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/ultimate/editingAJvmClientKotlin"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/ultimate/editingAJvmClientKotlin"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
@@ -396,7 +397,7 @@ public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractM
             }
 
             public void testAllFilesPresentInEditingBCommonExpectActual() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/ultimate/editingBCommonExpectActual"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/ultimate/editingBCommonExpectActual"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
@@ -409,7 +410,7 @@ public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractM
             }
 
             public void testAllFilesPresentInEditingRJsKotlin() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/ultimate/editingRJsKotlin"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/ultimate/editingRJsKotlin"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
@@ -422,7 +423,7 @@ public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractM
             }
 
             public void testAllFilesPresentInEditingRJvmKotlin() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/ultimate/editingRJvmKotlin"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/ultimate/editingRJvmKotlin"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
@@ -435,7 +436,7 @@ public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractM
             }
 
             public void testAllFilesPresentInEditingRaJsKotlin() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/ultimate/editingRaJsKotlin"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/ultimate/editingRaJsKotlin"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
@@ -448,7 +449,7 @@ public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractM
             }
 
             public void testAllFilesPresentInEditingRaJvmKotlin() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/ultimate/editingRaJvmKotlin"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/ultimate/editingRaJvmKotlin"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
     }

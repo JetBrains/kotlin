@@ -5,6 +5,7 @@
 
 package test.numbers
 
+import test.isFloat32RangeEnforced
 import kotlin.random.Random
 import kotlin.test.*
 
@@ -20,6 +21,13 @@ object NumbersTestConstants {
 
     public const val longMinSucc: Long = Long.MIN_VALUE + 1L
     public const val longMaxPred: Long = Long.MAX_VALUE - 1L
+
+    public const val doubleMaxHalf: Double = Double.MAX_VALUE / 2
+    public const val doubleMinTwice: Double = Double.MIN_VALUE * 2
+
+    public const val floatMaxHalf: Float = Float.MAX_VALUE / 2
+    public const val floatMinTwice: Float = Float.MIN_VALUE * 2
+
 }
 
 class NumbersTest {
@@ -27,6 +35,8 @@ class NumbersTest {
     var one: Int = 1
     var oneS: Short = 1
     var oneB: Byte = 1
+
+    var two: Int = 2
 
     @Test fun intMinMaxValues() {
         assertTrue(Int.MIN_VALUE < 0)
@@ -80,6 +90,9 @@ class NumbersTest {
         assertTrue(Double.MIN_VALUE > 0)
         assertTrue(Double.MAX_VALUE > 0)
 
+        assertEquals(NumbersTestConstants.doubleMaxHalf, Double.MAX_VALUE / two)
+        assertEquals(NumbersTestConstants.doubleMinTwice, Double.MIN_VALUE * two)
+
         // overflow behavior
         expect(Double.POSITIVE_INFINITY) { Double.MAX_VALUE * 2 }
         expect(Double.NEGATIVE_INFINITY) {-Double.MAX_VALUE * 2 }
@@ -90,10 +103,20 @@ class NumbersTest {
         assertTrue(Float.MIN_VALUE > 0)
         assertTrue(Float.MAX_VALUE > 0)
 
+        if (isFloat32RangeEnforced) {
+            assertEquals(NumbersTestConstants.floatMaxHalf, Float.MAX_VALUE / two)
+            assertEquals(NumbersTestConstants.floatMinTwice, Float.MIN_VALUE * two)
+        } else {
+            assertAlmostEquals(NumbersTestConstants.floatMaxHalf, Float.MAX_VALUE / two, 0.0000001 * NumbersTestConstants.floatMaxHalf)
+            assertAlmostEquals(NumbersTestConstants.floatMinTwice, Float.MIN_VALUE * two, 0.0000001 * NumbersTestConstants.floatMinTwice)
+        }
+
         // overflow behavior
-        expect(Float.POSITIVE_INFINITY) { Float.MAX_VALUE * 2 }
-        expect(Float.NEGATIVE_INFINITY) { -Float.MAX_VALUE * 2 }
-        expect(0.0F) { Float.MIN_VALUE / 2.0F }
+        if (isFloat32RangeEnforced) {
+            expect(Float.POSITIVE_INFINITY) { Float.MAX_VALUE * 2 }
+            expect(Float.NEGATIVE_INFINITY) { -Float.MAX_VALUE * 2 }
+            expect(0.0F) { Float.MIN_VALUE / 2.0F }
+        }
     }
 
     @Test fun charMinMaxValues() {
@@ -121,6 +144,16 @@ class NumbersTest {
         doTestNumber(Float.NaN, isNaN = true)
     }
 
+    @Test fun floatFitsInFloatArray() {
+        val values = listOf(1.0F, 0.0F, Float.MAX_VALUE, Float.MIN_VALUE, Float.POSITIVE_INFINITY, Float.NEGATIVE_INFINITY, Float.NaN)
+        val valuesArray = values.toFloatArray()
+
+        for (index in values.indices) {
+            val value = values[index]
+            val tolerance = if (value == Float.MIN_VALUE) 0.001 * value else 0.0000001 * value
+            assertAlmostEquals(value, valuesArray[index], tolerance)
+        }
+    }
 
     private fun doTestNumber(value: Double, isNaN: Boolean = false, isInfinite: Boolean = false) {
         assertEquals(isNaN, value.isNaN(), "Expected $value to have isNaN: $isNaN")
@@ -162,11 +195,25 @@ class NumbersTest {
     @Test fun floatToBits() {
         val PI_F = kotlin.math.PI.toFloat()
         assertEquals(0x40490fdb, PI_F.toBits())
-        assertAlmostEquals(PI_F, Float.fromBits(0x40490fdb)) // PI_F is actually Double in JS
-        // -Float.MAX_VALUE, Float.MAX_VALUE, -Float.MIN_VALUE, Float.MIN_VALUE: overflow or underflow
+        if (isFloat32RangeEnforced) {
+            assertEquals(PI_F, Float.fromBits(0x40490fdb))
+        } else {
+            assertAlmostEquals(PI_F, Float.fromBits(0x40490fdb)) // PI_F is actually Double in JS
+        }
         for (value in listOf(Float.NEGATIVE_INFINITY, -1.0F, -0.0F, 0.0F, Float.POSITIVE_INFINITY, 1.0F)) {
             assertEquals(value, Float.fromBits(value.toBits()))
             assertEquals(value, Float.fromBits(value.toRawBits()))
+        }
+
+        for (value in listOf(-Float.MAX_VALUE, Float.MAX_VALUE, -Float.MIN_VALUE, Float.MIN_VALUE)) {
+            if (isFloat32RangeEnforced) {
+                assertEquals(value, Float.fromBits(value.toBits()))
+                assertEquals(value, Float.fromBits(value.toRawBits()))
+            } else {
+                val tolerance = if (kotlin.math.abs(value) == Float.MIN_VALUE) 0.001 * value else 0.0000001 * value
+                assertAlmostEquals(value, Float.fromBits(value.toBits()), tolerance)
+                assertAlmostEquals(value, Float.fromBits(value.toRawBits()), tolerance)
+            }
         }
 
         assertTrue(Float.NaN.toBits().let(Float.Companion::fromBits).isNaN())
@@ -195,6 +242,9 @@ class NumbersTest {
         testSizes(Short, Short.SIZE_BYTES, Short.SIZE_BITS, 2)
         testSizes(Int, Int.SIZE_BYTES, Int.SIZE_BITS, 4)
         testSizes(Long, Long.SIZE_BYTES, Long.SIZE_BITS, 8)
+        
+        testSizes(Float, Float.SIZE_BYTES, Float.SIZE_BITS, 4)
+        testSizes(Double, Double.SIZE_BYTES, Double.SIZE_BITS, 8)
 
         testSizes(UByte, UByte.SIZE_BYTES, UByte.SIZE_BITS, 1)
         testSizes(UShort, UShort.SIZE_BYTES, UShort.SIZE_BITS, 2)

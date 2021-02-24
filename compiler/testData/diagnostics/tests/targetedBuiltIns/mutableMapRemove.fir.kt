@@ -22,7 +22,7 @@ fun foo(x: MutableMap<String, Int>, y: java.util.HashMap<String, Int>, z: java.u
     x.<!INAPPLICABLE_CANDIDATE!>remove<!>("", null)
 
     y.remove("", 1)
-    y.remove("", "")
+    y.<!INAPPLICABLE_CANDIDATE!>remove<!>("", "")
     y.remove("", null)
 
     z.remove("", 1)

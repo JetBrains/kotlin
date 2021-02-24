@@ -15,6 +15,7 @@ import com.intellij.refactoring.ui.RefactoringDialog
 import com.intellij.ui.NonFocusableCheckBox
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.core.util.isMultiLine
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ui.ExtractFunctionParameterTablePanel
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ui.KotlinExtractFunctionDialog
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
@@ -112,8 +113,7 @@ class KotlinIntroduceParameterDialog private constructor(
         gbConstraints.weightx = 0.0
         gbConstraints.weighty = 0.0
         gbConstraints.gridy = 0
-        val nameLabel = JLabel("Parameter name: ")
-        nameLabel.setDisplayedMnemonic('n')
+        val nameLabel = JLabel(KotlinBundle.message("text.parameter.name"))
         nameLabel.labelFor = nameField
         panel.add(nameLabel, gbConstraints)
 
@@ -129,8 +129,12 @@ class KotlinIntroduceParameterDialog private constructor(
         gbConstraints.gridx = 0
         gbConstraints.gridy++
         gbConstraints.fill = GridBagConstraints.NONE
-        val typeLabel = JLabel(if (lambdaExtractionDescriptor != null) "Lambda return type" else "Parameter type: ")
-        typeLabel.setDisplayedMnemonic('t')
+        val typeLabel = JLabel(
+            if (lambdaExtractionDescriptor != null)
+                                   KotlinBundle.message("text.lambda.return.type")
+                               else
+                KotlinBundle.message("text.parameter.type")
+        )
         typeLabel.labelFor = typeField
         panel.add(typeLabel, gbConstraints)
 
@@ -160,8 +164,7 @@ class KotlinIntroduceParameterDialog private constructor(
             gbConstraints.gridx = 0
             gbConstraints.gridy++
             gbConstraints.fill = GridBagConstraints.NONE
-            val parametersLabel = JLabel("Lambda parameters: ")
-            parametersLabel.setDisplayedMnemonic('p')
+            val parametersLabel = JLabel(KotlinBundle.message("text.lambda.parameters"))
             parametersLabel.labelFor = parameterTablePanel
             panel.add(parametersLabel, gbConstraints)
 
@@ -180,9 +183,8 @@ class KotlinIntroduceParameterDialog private constructor(
         gbConstraints.gridwidth = 2
         gbConstraints.gridy++
 
-        val defaultValueCheckBox = NonFocusableCheckBox("Introduce default value")
+        val defaultValueCheckBox = NonFocusableCheckBox(KotlinBundle.message("text.introduce.default.value"))
         defaultValueCheckBox.isSelected = descriptor.withDefaultValue
-        defaultValueCheckBox.setMnemonic('d')
         defaultValueCheckBox.addActionListener { updateRemoveParamCheckBoxes() }
         panel.add(defaultValueCheckBox, gbConstraints)
 
@@ -192,9 +194,10 @@ class KotlinIntroduceParameterDialog private constructor(
 
         if (occurrenceCount > 1) {
             gbConstraints.gridy++
-            val replaceAllCheckBox = NonFocusableCheckBox("Replace all occurrences ($occurrenceCount)")
+            val replaceAllCheckBox = NonFocusableCheckBox(
+                KotlinBundle.message("checkbox.text.replace.all.occurrences.0", occurrenceCount)
+            )
             replaceAllCheckBox.isSelected = true
-            replaceAllCheckBox.setMnemonic('R')
             replaceAllCheckBox.addActionListener { updateRemoveParamCheckBoxes() }
             panel.add(replaceAllCheckBox, gbConstraints)
             this.replaceAllCheckBox = replaceAllCheckBox
@@ -205,8 +208,13 @@ class KotlinIntroduceParameterDialog private constructor(
         }
 
         for (parameter in descriptor.parametersToRemove) {
-            val removeWhat = if (parameter is KtParameter) "parameter '${parameter.name}'" else "receiver"
-            val cb = NonFocusableCheckBox("Remove $removeWhat no longer used")
+            val removeWhat = if (parameter is KtParameter)
+                KotlinBundle.message("text.parameter.0", parameter.name.toString())
+            else
+                KotlinBundle.message("text.receiver")
+            val cb = NonFocusableCheckBox(
+                KotlinBundle.message("text.remove.0.no.longer.used", removeWhat)
+            )
 
             removeParamsCheckBoxes[cb] = parameter
             cb.isSelected = true
@@ -221,8 +229,10 @@ class KotlinIntroduceParameterDialog private constructor(
 
     override fun canRun() {
         val psiFactory = KtPsiFactory(myProject)
-        psiFactory.createExpressionIfPossible(nameField.enteredName.quoteIfNeeded()).validateElement("Invalid parameter name")
-        psiFactory.createTypeIfPossible(typeField.enteredName).validateElement("Invalid parameter type")
+        psiFactory.createExpressionIfPossible(nameField.enteredName.quoteIfNeeded()).validateElement(
+            KotlinBundle.message("error.text.invalid.parameter.name"))
+        psiFactory.createTypeIfPossible(typeField.enteredName).validateElement(
+            KotlinBundle.message("error.text.invalid.parameter.type"))
     }
 
     override fun doAction() {

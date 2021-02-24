@@ -7,9 +7,9 @@ object TestClass {
 }
 
 fun test(s: String): String {
-    val a = <!INAPPLICABLE_CANDIDATE!>TestClass<!> { <!INAPPLICABLE_CANDIDATE!>TestClass<!> { TestClass } }
-    a <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!UNRESOLVED_REFERENCE!>_<!><TestClass>() }
+    val a = TestClass { TestClass { TestClass } }
+    a checkType { _<TestClass>() }
 
-    val b = <!INAPPLICABLE_CANDIDATE!>TestClass<!> { return s }
-    b <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!UNRESOLVED_REFERENCE!>_<!><Nothing>() }
+    val b = TestClass { return s }
+    b checkType { _<Nothing>() }
 }

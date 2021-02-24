@@ -64,10 +64,10 @@ internal class KParameterImpl(
         get() = descriptor.let { it is ValueParameterDescriptor && it.varargElementType != null }
 
     override fun equals(other: Any?) =
-        other is KParameterImpl && callable == other.callable && descriptor == other.descriptor
+        other is KParameterImpl && callable == other.callable && index == other.index
 
     override fun hashCode() =
-        (callable.hashCode() * 31) + descriptor.hashCode()
+        (callable.hashCode() * 31) + index.hashCode()
 
     override fun toString() =
         ReflectionObjectRenderer.renderParameter(this)

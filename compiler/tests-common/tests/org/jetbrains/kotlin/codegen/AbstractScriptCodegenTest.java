@@ -38,6 +38,7 @@ public abstract class AbstractScriptCodegenTest extends CodegenTestCase {
 
     @Override
     protected void updateConfiguration(@NotNull CompilerConfiguration configuration) {
+        super.updateConfiguration(configuration);
         loadScriptingPlugin(configuration);
     }
 

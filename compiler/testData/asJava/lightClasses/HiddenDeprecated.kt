@@ -6,3 +6,4 @@ fun f() {
 
 }
 // LAZINESS:NoLaziness
+// FIR_COMPARISON

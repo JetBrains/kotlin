@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +InlineClasses
 
 inline class Name(val name: String)

@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
+import com.intellij.openapi.diagnostic.ControlFlowException
+import com.intellij.openapi.progress.ProcessCanceledException
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
@@ -14,13 +17,17 @@ import org.jetbrains.kotlin.analyzer.*
 import org.jetbrains.kotlin.context.GlobalContextImpl
 import org.jetbrains.kotlin.context.withProject
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.idea.caches.project.*
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.trackers.KotlinCodeBlockModificationListener
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.CompositeBindingContext
+import org.jetbrains.kotlin.storage.CancellableSimpleLock
+import org.jetbrains.kotlin.storage.guarded
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
+import java.util.concurrent.locks.ReentrantLock
 
 internal class ProjectResolutionFacade(
     private val debugString: String,
@@ -46,15 +53,44 @@ internal class ProjectResolutionFacade(
     private val cachedResolverForProject: ResolverForProject<IdeaModuleInfo>
         get() = globalContext.storageManager.compute { cachedValue.value }
 
+    private val analysisResultsLock = ReentrantLock()
+    private val analysisResultsSimpleLock = CancellableSimpleLock(analysisResultsLock,
+                                                                  checkCancelled = {
+                                                                      ProgressManager.checkCanceled()
+                                                                  },
+                                                                  interruptedExceptionHandler = { throw ProcessCanceledException(it) })
+
     private val analysisResults = CachedValuesManager.getManager(project).createCachedValue(
         {
             val resolverForProject = cachedResolverForProject
             val results = object : SLRUCache<KtFile, PerFileAnalysisCache>(2, 3) {
+                private val lock = ReentrantLock()
+
                 override fun createValue(file: KtFile): PerFileAnalysisCache {
                     return PerFileAnalysisCache(
                         file,
                         resolverForProject.resolverForModule(file.getModuleInfo()).componentProvider
                     )
+                }
+
+                override fun get(key: KtFile?): PerFileAnalysisCache {
+                    lock.lock()
+                    try {
+                        return super.get(key)
+                    } finally {
+                        lock.unlock()
+                    }
+                }
+
+                override fun getIfCached(key: KtFile?): PerFileAnalysisCache? {
+                    if (lock.tryLock()) {
+                        try {
+                            return super.getIfCached(key)
+                        } finally {
+                            lock.unlock()
+                        }
+                    }
+                    return null
                 }
             }
 
@@ -68,13 +104,8 @@ internal class ProjectResolutionFacade(
     private val resolverForProjectDependencies = dependencies + listOf(globalContext.exceptionTracker)
 
     private fun computeModuleResolverProvider(): ResolverForProject<IdeaModuleInfo> {
-        val delegateResolverForProject: ResolverForProject<IdeaModuleInfo>
-
-        if (reuseDataFrom != null) {
-            delegateResolverForProject = reuseDataFrom.cachedResolverForProject
-        } else {
-            delegateResolverForProject = EmptyResolverForProject()
-        }
+        val delegateResolverForProject: ResolverForProject<IdeaModuleInfo> =
+            reuseDataFrom?.cachedResolverForProject ?: EmptyResolverForProject()
 
         val allModuleInfos = (allModules ?: getModuleInfosFromIdeaModel(project, (settings as? PlatformAnalysisSettingsImpl)?.platform))
             .toMutableSet()
@@ -92,7 +123,6 @@ internal class ProjectResolutionFacade(
             syntheticFilesByModule,
             delegateResolverForProject,
             if (invalidateOnOOCB) KotlinModificationTrackerService.getInstance(project).outOfBlockModificationTracker else null,
-            settings.isReleaseCoroutines,
             constantSdkDependencyIfAny = if (settings is PlatformAnalysisSettingsImpl) settings.sdk?.let { SdkInfo(project, it) } else null
         )
 
@@ -115,17 +145,37 @@ internal class ProjectResolutionFacade(
         return cachedResolverForProject.descriptorForModule(ideaModuleInfo)
     }
 
-    internal fun getAnalysisResultsForElements(elements: Collection<KtElement>): AnalysisResult {
+    internal fun getResolverForProject(): ResolverForProject<IdeaModuleInfo> = cachedResolverForProject
+
+    internal fun getAnalysisResultsForElements(
+        elements: Collection<KtElement>,
+        callback: DiagnosticSink.DiagnosticsCallback? = null
+    ): AnalysisResult {
         assert(elements.isNotEmpty()) { "elements collection should not be empty" }
-        val slruCache = synchronized(analysisResults) {
+
+        val cache = analysisResultsSimpleLock.guarded {
             analysisResults.value!!
         }
-        val results = elements.map {
-            val perFileCache = synchronized(slruCache) {
-                slruCache[it.containingKtFile]
+        val results =
+            elements.map {
+                val containingKtFile = it.containingKtFile
+                val perFileCache = cache[containingKtFile]
+                try {
+                    perFileCache.getAnalysisResults(it, callback)
+                } catch (e: Throwable) {
+                    if (e is ControlFlowException) {
+                        throw e
+                    }
+                    val actualCache = analysisResultsSimpleLock.guarded {
+                        analysisResults.upToDateOrNull?.get()
+                    }
+                    if (cache !== actualCache) {
+                        throw IllegalStateException("Cache has been invalidated during performing analysis for $containingKtFile", e)
+                    }
+                    throw e
+                }
             }
-            perFileCache.getAnalysisResults(it)
-        }
+
         val withError = results.firstOrNull { it.isError() }
         val bindingContext = CompositeBindingContext.create(results.map { it.bindingContext })
         if (withError != null) {
@@ -134,6 +184,18 @@ internal class ProjectResolutionFacade(
 
         //TODO: (module refactoring) several elements are passed here in debugger
         return AnalysisResult.success(bindingContext, findModuleDescriptor(elements.first().getModuleInfo()))
+    }
+
+    internal fun fetchAnalysisResultsForElement(element: KtElement): AnalysisResult? {
+        val slruCache = if (analysisResultsLock.tryLock()) {
+            try {
+                analysisResults.upToDateOrNull?.get()
+            } finally {
+                analysisResultsLock.unlock()
+            }
+        } else null
+
+        return slruCache?.getIfCached(element.containingKtFile)?.fetchAnalysisResults(element)
     }
 
     override fun toString(): String {

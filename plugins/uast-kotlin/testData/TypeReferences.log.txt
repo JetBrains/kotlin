@@ -29,7 +29,6 @@ UFile (package = )
                         UExpressionList (elvis)
                             UDeclarationsExpression
                                 ULocalVariable (name = var708e23eb)
-                                    UAnnotation (fqName = org.jetbrains.annotations.Nullable)
                                     USimpleNameReferenceExpression (identifier = arg)
                             UIfExpression
                                 UBinaryExpression (operator = !=)
@@ -51,6 +50,7 @@ UFile (package = )
                                 UIdentifier (Identifier (map))
                                 USimpleNameReferenceExpression (identifier = map, resolvesTo = null)
                                 ULambdaExpression
+                                    UParameter (name = it)
                                     UBlockExpression
                                         UReturnExpression
                                             UQualifiedReferenceExpression

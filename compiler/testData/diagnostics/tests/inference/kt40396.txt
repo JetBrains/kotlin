@@ -1,0 +1,20 @@
+package
+
+public val </*0*/ C> C.foo: Foo<C>
+
+public final class Bar {
+    public constructor Bar()
+    public final val bar: kotlin.Unit
+    public final val baz: kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Foo</*0*/ K> {
+    public constructor Foo</*0*/ K>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final operator fun </*0*/ T> invoke(/*0*/ body: () -> kotlin.Unit): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

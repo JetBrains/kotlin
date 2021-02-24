@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 object Object {
     class NestedClass {
         fun test() {

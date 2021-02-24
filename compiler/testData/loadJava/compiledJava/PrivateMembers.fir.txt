@@ -3,9 +3,9 @@ public open class PrivateMembers : R|kotlin/Any| {
 
     private open static field staticField: R|kotlin/Int|
 
-    private open operator fun method(): R|kotlin/Unit|
+    private open fun method(): R|kotlin/Unit|
 
-    private open static operator fun staticMethod(): R|kotlin/Unit|
+    private open static fun staticMethod(): R|kotlin/Unit|
 
     private constructor(): R|test/PrivateMembers|
 

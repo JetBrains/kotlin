@@ -1,0 +1,43 @@
+FILE: Warning.kt
+    public final fun foo(): R|kotlin/Unit| {
+        lval <iterator>: R|kotlin/collections/IntIterator| = Int(2).R|kotlin/Int.rangeTo|(Int(1)).R|kotlin/ranges/IntProgression.iterator|()
+        while(R|<local>/<iterator>|.R|kotlin/collections/Iterator.hasNext|()) {
+            lval i: R|kotlin/Int| = R|<local>/<iterator>|.R|kotlin/collections/IntIterator.next|()
+        }
+
+        lval a: R|kotlin/ranges/IntRange| = Int(10).R|kotlin/Int.rangeTo|(Int(0))
+        lval v: R|kotlin/Int| = Int(1)
+        when () {
+            Int(10).R|kotlin/Int.rangeTo|(Int(1)).R|kotlin/ranges/IntRange.contains|(R|<local>/v|) ->  {
+            }
+        }
+
+    }
+    public final fun backward(): R|kotlin/Unit| {
+        lval <iterator>: R|kotlin/collections/IntIterator| = Int(1).R|kotlin/ranges/downTo|(Int(2)).R|kotlin/ranges/IntProgression.iterator|()
+        while(R|<local>/<iterator>|.R|kotlin/collections/Iterator.hasNext|()) {
+            lval i: R|kotlin/Int| = R|<local>/<iterator>|.R|kotlin/collections/IntIterator.next|()
+        }
+
+        lval a: R|kotlin/ranges/IntProgression| = Int(-3).R|kotlin/ranges/downTo|(Int(4))
+        lval v: R|kotlin/Int| = Int(1)
+        when () {
+            Int(0).R|kotlin/ranges/downTo|(Int(6)).R|kotlin/collections/contains|<R|kotlin/Int|>(R|<local>/v|) ->  {
+            }
+        }
+
+    }
+    public final fun until(): R|kotlin/Unit| {
+        lval <iterator>: R|kotlin/collections/IntIterator| = Int(1).R|kotlin/ranges/until|(Int(1)).R|kotlin/ranges/IntProgression.iterator|()
+        while(R|<local>/<iterator>|.R|kotlin/collections/Iterator.hasNext|()) {
+            lval i: R|kotlin/Int| = R|<local>/<iterator>|.R|kotlin/collections/IntIterator.next|()
+        }
+
+        lval a: R|kotlin/ranges/IntRange| = Int(4).R|kotlin/ranges/until|(Int(3))
+        lval v: R|kotlin/Int| = Int(1)
+        when () {
+            Int(-5).R|kotlin/ranges/until|(Int(-5)).R|kotlin/ranges/IntRange.contains|(R|<local>/v|) ->  {
+            }
+        }
+
+    }

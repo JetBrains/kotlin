@@ -5,7 +5,9 @@ class A
 
 operator fun A.get(i: Int) = this
 operator fun A.set(i: Int, a: A) = this
-operator fun A.plusAssign(a: A) = this
+operator fun A.plusAssign(a: A) {
+    val v = this
+}
 operator fun A.times(a: A) = this
 operator fun A.inc() = this
 

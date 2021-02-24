@@ -1,3 +1,3 @@
 [NotNull Values]
-17 	val <bold>y = b.foo()</bold>
-17 		val <bold>y = b.foo()</bold>
+17 	<bold>val y</bold> = b.foo() (in test(A, B,…))
+17 		<bold>val y</bold> = b.foo() (in test(A, B,…))

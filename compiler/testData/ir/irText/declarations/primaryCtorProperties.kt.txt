@@ -1,0 +1,18 @@
+class C {
+  constructor(test1: Int, test2: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val test1: Int
+    field = test1
+    get
+
+  var test2: Int
+    field = test2
+    get
+    set
+
+}
+

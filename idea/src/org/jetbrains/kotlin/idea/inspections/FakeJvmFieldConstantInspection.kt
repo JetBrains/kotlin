@@ -22,6 +22,7 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.elements.KtLightFieldForSourceDeclarationSupport
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.inspections.MayBeConstantInspection.Status.*
 import org.jetbrains.kotlin.idea.quickfix.AddConstModifierFix
 import org.jetbrains.kotlin.psi.KtProperty
@@ -98,7 +99,7 @@ class FakeJvmFieldConstantInspection : AbstractKotlinInspection() {
                 }
                 holder.registerProblem(
                     valueExpression,
-                    "Use of non-const Kotlin property as Java constant is incorrect. Will be forbidden in 1.4",
+                    KotlinBundle.message("use.of.non.const.kotlin.property.as.java.constant.is.incorrect.will.be.forbidden.in.1.4"),
                     ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                     *fixes.toTypedArray()
                 )

@@ -16,8 +16,8 @@ fun test1(s: String?) {
         catch (e: Exception) {
             requireNotNull(s)
         }
-        t2.<!UNRESOLVED_REFERENCE!>not<!>()
-        s.length
+        t2<!UNSAFE_CALL!>.<!>not()
+        s<!UNSAFE_CALL!>.<!>length
     }
 }
 
@@ -46,7 +46,7 @@ fun test3() {
         s = null
         return
     }
-    s.<!UNRESOLVED_REFERENCE!>length<!>
+    s.length
 }
 
 fun test4() {
@@ -62,7 +62,7 @@ fun test4() {
     catch (e: ExcB) {
 
     }
-    s.<!UNRESOLVED_REFERENCE!>length<!>
+    s.length
 }
 
 fun test5(s: String?) {
@@ -75,7 +75,7 @@ fun test5(s: String?) {
     catch (e: ExcB) {
 
     }
-    s.length
+    s<!UNSAFE_CALL!>.<!>length
 }
 
 fun test6(s: String?) {

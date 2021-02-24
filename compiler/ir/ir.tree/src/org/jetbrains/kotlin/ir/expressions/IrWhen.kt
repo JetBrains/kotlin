@@ -16,32 +16,44 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-interface IrWhen : IrExpression {
-    val origin: IrStatementOrigin?
+abstract class IrWhen : IrExpression() {
+    abstract val origin: IrStatementOrigin?
 
-    val branches: MutableList<IrBranch>
-}
-
-interface IrBranch : IrElement {
-    var condition: IrExpression
-    var result: IrExpression
-
-    override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrBranch =
-        transformer.visitBranch(this, data)
+    abstract val branches: MutableList<IrBranch>
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-        visitor.visitBranch(this, data)
+        visitor.visitWhen(this, data)
+
+    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+        branches.forEach { it.accept(visitor, data) }
+    }
+
+    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        branches.forEachIndexed { i, irBranch ->
+            branches[i] = irBranch.transform(transformer, data)
+        }
+    }
 }
 
-interface IrElseBranch : IrBranch {
-    override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrElseBranch =
-        transformer.visitElseBranch(this, data)
+abstract class IrBranch : IrElementBase() {
+    abstract var condition: IrExpression
+    abstract var result: IrExpression
 
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-        visitor.visitElseBranch(this, data)
+    abstract override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrBranch
+
+    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+        condition.accept(visitor, data)
+        result.accept(visitor, data)
+    }
+
+    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        condition = condition.transform(transformer, data)
+        result = result.transform(transformer, data)
+    }
 }
 
+abstract class IrElseBranch : IrBranch()

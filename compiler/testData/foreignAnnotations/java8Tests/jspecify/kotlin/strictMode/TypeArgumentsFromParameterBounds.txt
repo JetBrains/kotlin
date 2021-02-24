@@ -1,0 +1,51 @@
+package
+
+public fun main(/*0*/ aNotNullNotNullNotNull: TypeArgumentsFromParameterBounds<Test, Test, Test>, /*1*/ aNotNullNotNullNull: TypeArgumentsFromParameterBounds<Test, Test, Test?>, /*2*/ aNotNullNullNotNull: TypeArgumentsFromParameterBounds<Test, Test?, Test>, /*3*/ aNotNullNullNull: TypeArgumentsFromParameterBounds<Test, Test?, Test?>, /*4*/ a: A, /*5*/ b: B, /*6*/ c: C): kotlin.Unit
+
+public open class A {
+    public constructor A()
+    public open fun bar(/*0*/ a: TypeArgumentsFromParameterBounds<@org.jspecify.annotations.Nullable Test!, @org.jspecify.annotations.Nullable Test!, @org.jspecify.annotations.Nullable Test!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@org.jspecify.annotations.DefaultNonNull public open class B {
+    public constructor B()
+    public open fun bar(/*0*/ a: TypeArgumentsFromParameterBounds<Test!, Test!, Test!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class C {
+    public constructor C()
+    public open fun bar(/*0*/ a: TypeArgumentsFromParameterBounds<Test!, Test!, Test!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class Test {
+    public constructor Test()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@org.jspecify.annotations.DefaultNonNull public open class TypeArgumentsFromParameterBounds</*0*/ T : kotlin.Any!, /*1*/ E : @org.jspecify.annotations.Nullable kotlin.Any!, /*2*/ F : @org.jspecify.annotations.NullnessUnspecified kotlin.Any!> {
+    public constructor TypeArgumentsFromParameterBounds</*0*/ T : kotlin.Any!, /*1*/ E : @org.jspecify.annotations.Nullable kotlin.Any!, /*2*/ F : @org.jspecify.annotations.NullnessUnspecified kotlin.Any!>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@org.jspecify.annotations.DefaultNonNull public open class Use {
+    public constructor Use()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public open fun main(/*0*/ aNotNullNotNullNotNull: TypeArgumentsFromParameterBounds<Test!, Test!, Test!>!, /*1*/ aNotNullNotNullNull: TypeArgumentsFromParameterBounds<Test!, Test!, @org.jspecify.annotations.Nullable Test!>!, /*2*/ aNotNullNullNotNull: TypeArgumentsFromParameterBounds<Test!, @org.jspecify.annotations.Nullable Test!, Test!>!, /*3*/ aNotNullNullNull: TypeArgumentsFromParameterBounds<Test!, @org.jspecify.annotations.Nullable Test!, @org.jspecify.annotations.Nullable Test!>!, /*4*/ a: A!, /*5*/ b: B!, /*6*/ c: C!): kotlin.Unit
+}

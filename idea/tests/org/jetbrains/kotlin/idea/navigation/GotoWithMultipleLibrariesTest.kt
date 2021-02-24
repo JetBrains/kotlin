@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.idea.stubs.AbstractMultiModuleTest
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.allKotlinFiles
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
-import org.jetbrains.kotlin.test.MockLibraryUtil
+import org.jetbrains.kotlin.test.MockLibraryUtilExt
 import org.jetbrains.kotlin.test.util.addDependency
 import org.jetbrains.kotlin.test.util.jarRoot
 import org.jetbrains.kotlin.test.util.projectLibrary
@@ -45,7 +45,7 @@ class GotoWithMultipleLibrariesTest : AbstractMultiModuleTest() {
     private fun doTestSameJarSharedByLibrariesWithAndWithoutSourceAttached(withSource: Int, noSource: Int) {
         val srcPath = testDataPath + "src"
 
-        val sharedJar = MockLibraryUtil.compileJvmLibraryToJar(testDataPath + "libSrc", "sharedJar", addSources = true)
+        val sharedJar = MockLibraryUtilExt.compileJvmLibraryToJar(testDataPath + "libSrc", "sharedJar", addSources = true)
         val jarRoot = sharedJar.jarRoot
 
         var i = 0

@@ -18,15 +18,11 @@ package org.jetbrains.kotlin.resolve
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl
-import org.jetbrains.kotlin.resolve.calls.results.FlatSignature
-import org.jetbrains.kotlin.resolve.calls.results.SpecificityComparisonCallbacks
-import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
-import org.jetbrains.kotlin.resolve.calls.results.isSignatureNotLessSpecific
+import org.jetbrains.kotlin.resolve.calls.results.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasLowPriorityInOverloadResolution
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtensionProperty
 import org.jetbrains.kotlin.resolve.descriptorUtil.varargParameterPosition
 import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 
 object OverloadabilitySpecificityCallbacks : SpecificityComparisonCallbacks {

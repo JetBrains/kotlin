@@ -94,7 +94,9 @@ object TypeIntersector {
          * and other types is captured types or type parameters without not-null upper bound. Example: `String? & T` such types we should leave as is.
          */
         val correctNullability = inputTypes.mapTo(LinkedHashSet()) {
-            if (resultNullability == ResultNullability.NOT_NULL) it.makeSimpleTypeDefinitelyNotNullOrNotNull() else it
+            if (resultNullability == ResultNullability.NOT_NULL) {
+                (if (it is NewCapturedType) it.withNotNullProjection() else it).makeSimpleTypeDefinitelyNotNullOrNotNull()
+            } else it
         }
 
         return intersectTypesWithoutIntersectionType(correctNullability)

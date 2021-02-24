@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.inspections
 
 import com.intellij.codeInspection.ProblemsHolder
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
@@ -27,7 +28,7 @@ class KotlinEqualsBetweenInconvertibleTypesInspection : AbstractKotlinInspection
         val receiver = call.getQualifiedExpressionForSelector()?.receiverExpression ?: return
         val argument = call.valueArguments.singleOrNull()?.getArgumentExpression() ?: return
         if (call.analyze(BodyResolveMode.PARTIAL).isInconvertibleTypes(receiver, argument)) {
-            holder.registerProblem(callee, "'equals()' between objects of inconvertible types")
+            holder.registerProblem(callee, KotlinBundle.message("equals.between.objects.of.inconvertible.types"))
         }
     })
 

@@ -15,7 +15,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.ui.EditorTextField
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.AbstractKotlinInspection
@@ -25,10 +27,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getImplicitReceiverValue
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import java.awt.BorderLayout
 import javax.swing.JPanel
 
@@ -55,7 +54,7 @@ class ConvertCallChainIntoSequenceInspection : AbstractKotlinInspection() {
 
             holder.registerProblemWithoutOfflineInformation(
                 qualified,
-                "Call chain on collection could be converted into 'Sequence' to improve performance",
+                KotlinBundle.message("call.chain.on.collection.could.be.converted.into.sequence.to.improve.performance"),
                 isOnTheFly,
                 highlightType,
                 rangeInElement,
@@ -74,14 +73,14 @@ class ConvertCallChainIntoSequenceInspection : AbstractKotlinInspection() {
                     owner.callChainLengthText = regexField.text
                 }
             })
-            val labeledComponent = LabeledComponent.create(regexField, "Call chain length to transform:", BorderLayout.WEST)
+            val labeledComponent = LabeledComponent.create(regexField, KotlinBundle.message("call.chain.length.to.transform"), BorderLayout.WEST)
             add(labeledComponent, BorderLayout.NORTH)
         }
     }
 }
 
 private class ConvertCallChainIntoSequenceFix : LocalQuickFix {
-    override fun getName() = "Convert call chain into 'Sequence'"
+    override fun getName() = KotlinBundle.message("convert.call.chain.into.sequence.fix.text")
 
     override fun getFamilyName() = name
 
@@ -146,9 +145,7 @@ private fun KtQualifiedExpression.findCallChain(): CallChain? {
     if (calls.isEmpty()) return null
 
     val lastCall = calls.last()
-    val receiverType =
-        (lastCall.getQualifiedExpressionForSelector())?.receiverExpression?.getResolvedCall(context)?.resultingDescriptor?.returnType
-            ?: lastCall.implicitReceiver(context)?.type
+    val receiverType = lastCall.receiverType(context)
     if (receiverType?.isIterable(DefaultBuiltIns.Instance) != true) return null
 
     val firstCall = calls.first()
@@ -184,10 +181,6 @@ private fun KtQualifiedExpression.collectCallExpression(context: BindingContext)
     return transformationCalls
 }
 
-private fun KtExpression.implicitReceiver(context: BindingContext): ImplicitReceiver? {
-    return getResolvedCall(context)?.getImplicitReceiverValue()
-}
-
 private fun KtCallExpression.hasReturn(): Boolean = valueArguments.any { arg ->
     arg.anyDescendantOfType<KtReturnExpression> { it.labelQualifier == null }
 }
@@ -207,6 +200,7 @@ private fun KtCallExpression.isLazyTermination(context: BindingContext): Boolean
     return isCalling(fqName, context)
 }
 
+@NonNls
 private val transformations = listOf(
     "chunked",
     "distinct",
@@ -226,6 +220,7 @@ private val transformations = listOf(
     "minus",
     "minusElement",
     "onEach",
+    "onEachIndexed",
     "plus",
     "plusElement",
     "requireNoNulls",
@@ -239,9 +234,9 @@ private val transformations = listOf(
     "windowed",
     "withIndex",
     "zipWithNext"
-).associate { it to FqName("kotlin.collections.$it") }
+).associateWith { FqName("kotlin.collections.$it") }
 
-private val terminations = listOf(
+internal val collectionTerminationFunctionNames = listOf(
     "all",
     "any",
     "asIterable",
@@ -285,18 +280,41 @@ private val terminations = listOf(
     "max",
     "maxBy",
     "maxWith",
+    "maxOrNull",
+    "maxByOrNull",
+    "maxWithOrNull",
+    "maxOf",
+    "maxOfOrNull",
+    "maxOfWith",
+    "maxOfWithOrNull",
     "min",
     "minBy",
     "minWith",
+    "minOrNull",
+    "minByOrNull",
+    "minWithOrNull",
+    "minOf",
+    "minOfOrNull",
+    "minOfWith",
+    "minOfWithOrNull",
     "none",
     "partition",
     "reduce",
     "reduceIndexed",
+    "reduceIndexedOrNull",
+    "reduceOrNull",
+    "runningFold",
+    "runningFoldIndexed",
+    "runningReduce",
+    "runningReduceIndexed",
+    "scan",
+    "scanIndexed",
     "single",
     "singleOrNull",
     "sum",
     "sumBy",
     "sumByDouble",
+    "sumOf",
     "toCollection",
     "toHashSet",
     "toList",
@@ -305,9 +323,12 @@ private val terminations = listOf(
     "toSet",
     "toSortedSet",
     "unzip"
-).associate {
+)
+
+@NonNls
+private val terminations = collectionTerminationFunctionNames.associateWith {
     val pkg = if (it in listOf("contains", "indexOf", "lastIndexOf")) "kotlin.collections.List" else "kotlin.collections"
-    it to FqName("$pkg.$it")
+    FqName("$pkg.$it")
 }
 
 private val lazyTerminations = terminations.filter { (key, _) -> key == "groupingBy" }

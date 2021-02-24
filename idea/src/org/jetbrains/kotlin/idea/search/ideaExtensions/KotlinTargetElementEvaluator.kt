@@ -101,7 +101,7 @@ class KotlinTargetElementEvaluator : TargetElementEvaluatorEx, TargetElementUtil
         return null
     }
 
-    override fun isIdentifierPart(file: PsiFile, text: CharSequence?, offset: Int): Boolean {
+    override fun isIdentifierPart(file: PsiFile, text: CharSequence, offset: Int): Boolean {
         val elementAtCaret = file.findElementAt(offset)
 
         if (elementAtCaret?.node?.elementType == KtTokens.IDENTIFIER) return true

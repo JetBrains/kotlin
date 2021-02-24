@@ -57,7 +57,7 @@ abstract class AbstractSmartStepIntoTest : KotlinLightCodeInsightFixtureTestCase
     private fun renderTableWithResults(expected: List<String>, actual: List<String>): String {
         val sb = StringBuilder()
 
-        val maxExtStrSize = (expected.maxBy { it.length }?.length ?: 0) + 5
+        val maxExtStrSize = (expected.maxOfOrNull { it.length } ?: 0) + 5
         val longerList = (if (expected.size < actual.size) actual else expected).sorted()
         val shorterList = (if (expected.size < actual.size) expected else actual).sorted()
         for ((i, element) in longerList.withIndex()) {

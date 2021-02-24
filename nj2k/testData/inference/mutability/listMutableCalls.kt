@@ -1,12 +1,12 @@
 fun a(
-        l0: /*T1@*/MutableList</*T0@*/Int>,
-        l1: /*T3@*/MutableList</*T2@*/Int>,
-        l2: /*T5@*/MutableList</*T4@*/Int>,
-        l3: /*T7@*/MutableList</*T6@*/Int>,
-        l4: /*T9@*/MutableList</*T8@*/Int>,
-        l5: /*T11@*/MutableList</*T10@*/Int>,
-        l6: /*T13@*/MutableList</*T12@*/Int>,
-        l7: /*T15@*/MutableList</*T14@*/Int>
+    l0: /*T1@*/MutableList</*T0@*/Int>,
+    l1: /*T3@*/MutableList</*T2@*/Int>,
+    l2: /*T5@*/MutableList</*T4@*/Int>,
+    l3: /*T7@*/MutableList</*T6@*/Int>,
+    l4: /*T9@*/MutableList</*T8@*/Int>,
+    l5: /*T11@*/MutableList</*T10@*/Int>,
+    l6: /*T13@*/MutableList</*T12@*/Int>,
+    l7: /*T15@*/MutableList</*T14@*/Int>
 ) {
     l0/*T1@MutableList<T0@Int>*/.add(1/*LIT*/)
     l1/*T3@MutableList<T2@Int>*/.addAll(1/*LIT*/, l1/*T3@MutableList<T2@Int>*/)

@@ -27,5 +27,5 @@ class B : A() {
 }
 
 fun baz(a: A) {
-    a.<!INAPPLICABLE_CANDIDATE!>foo<!> { }
+    a.<!HIDDEN!>foo<!> { }
 }

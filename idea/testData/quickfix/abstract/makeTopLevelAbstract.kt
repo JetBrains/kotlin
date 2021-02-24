@@ -1,4 +1,4 @@
-// "Make 'foo' abstract" "false"
+// "Make 'foo' 'abstract'" "false"
 // ACTION: Add function body
 // ACTION: Create test
 // ACTION: Make internal
@@ -6,3 +6,4 @@
 // ERROR: Function 'foo' must have a body
 
 <caret>fun foo()
+/* FIR_COMPARISON */

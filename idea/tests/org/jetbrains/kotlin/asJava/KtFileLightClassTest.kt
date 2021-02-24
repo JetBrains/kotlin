@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.asJava
 import com.intellij.injected.editor.EditorWindow
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiMethod
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.testFramework.LightProjectDescriptor
 import junit.framework.TestCase
@@ -93,9 +94,17 @@ class KtFileLightClassTest : KotlinLightCodeInsightFixtureTestCase() {
         assertEquals("Injected class should be `A`", "A", ((injectedFile as KtFile).declarations.single() as KtClass).toLightClass()!!.name)
     }
 
+    fun testPropertyWithPrivateSetter() {
+        val file = myFixture.configureByFile("propWithPrivateSetter.kt") as KtFile
+        val aClass = file.classes.single()
+        val methods = aClass.methods
+        val methodNames = methods.map(PsiMethod::getName)
+        assertEquals(methodNames.toString(), 3, methods.size)
+        assertTrue(methods.toString(), "getProp" in methodNames)
+        assertTrue(methods.toString(), "setProp" in methodNames)
+    }
 
     fun testSameVirtualFileForLightElement() {
-
         val psiFile = myFixture.addFileToProject(
             "pkg/AnnotatedClass.kt", """
             package pkg

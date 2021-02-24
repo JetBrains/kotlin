@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 package something
 
 class SomeTempClass {

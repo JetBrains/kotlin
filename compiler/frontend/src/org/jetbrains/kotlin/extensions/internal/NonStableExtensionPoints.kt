@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.extensions.internal
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
@@ -17,16 +18,19 @@ import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.calls.tower.ImplicitScopeTower
 import org.jetbrains.kotlin.resolve.calls.tower.NewResolutionOldInference
+import org.jetbrains.kotlin.resolve.calls.tower.PSICallResolver
 import org.jetbrains.kotlin.resolve.scopes.ResolutionScope
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
-
 
 /**
  * This is marker for non-stable experimental extension points.
  * Extension points marked with this meta-annotation will be broken in the future version.
  * Please do not use them in general code.
  */
+@RequiresOptIn(level = RequiresOptIn.Level.ERROR)
+@Suppress("DEPRECATION")
 @Experimental(level = Experimental.Level.ERROR)
 @Retention(AnnotationRetention.BINARY)
 internal annotation class InternalNonStableExtensionPoints
@@ -48,16 +52,68 @@ interface TypeResolutionInterceptorExtension {
 
 @InternalNonStableExtensionPoints
 interface CallResolutionInterceptorExtension {
+    @JvmDefault
     fun interceptCandidates(
         candidates: Collection<NewResolutionOldInference.MyCandidate>,
         context: BasicCallResolutionContext,
         candidateResolver: CandidateResolver,
-        callResolver: CallResolver?,
+        callResolver: CallResolver,
         name: Name,
         kind: NewResolutionOldInference.ResolutionKind,
         tracing: TracingStrategy
     ): Collection<NewResolutionOldInference.MyCandidate> = candidates
 
+    @JvmDefault
+    fun interceptFunctionCandidates(
+        candidates: Collection<FunctionDescriptor>,
+        scopeTower: ImplicitScopeTower,
+        resolutionContext: BasicCallResolutionContext,
+        resolutionScope: ResolutionScope,
+        callResolver: CallResolver,
+        name: Name,
+        location: LookupLocation
+    ): Collection<FunctionDescriptor> = candidates
+
+    @JvmDefault
+    fun interceptFunctionCandidates(
+        candidates: Collection<FunctionDescriptor>,
+        scopeTower: ImplicitScopeTower,
+        resolutionContext: BasicCallResolutionContext,
+        resolutionScope: ResolutionScope,
+        callResolver: PSICallResolver,
+        name: Name,
+        location: LookupLocation,
+        dispatchReceiver: ReceiverValueWithSmartCastInfo?,
+        extensionReceiver: ReceiverValueWithSmartCastInfo?
+    ): Collection<FunctionDescriptor> = candidates
+
+    @JvmDefault
+    fun interceptVariableCandidates(
+        candidates: Collection<VariableDescriptor>,
+        scopeTower: ImplicitScopeTower,
+        resolutionContext: BasicCallResolutionContext,
+        resolutionScope: ResolutionScope,
+        callResolver: CallResolver,
+        name: Name,
+        location: LookupLocation
+    ): Collection<VariableDescriptor> = candidates
+
+    @JvmDefault
+    fun interceptVariableCandidates(
+        candidates: Collection<VariableDescriptor>,
+        scopeTower: ImplicitScopeTower,
+        resolutionContext: BasicCallResolutionContext,
+        resolutionScope: ResolutionScope,
+        callResolver: PSICallResolver,
+        name: Name,
+        location: LookupLocation,
+        dispatchReceiver: ReceiverValueWithSmartCastInfo?,
+        extensionReceiver: ReceiverValueWithSmartCastInfo?
+    ): Collection<VariableDescriptor> = candidates
+
+    @Suppress("DeprecatedCallableAddReplaceWith")
+    @Deprecated("Please use dedicated interceptVariableCandidates and interceptFunctionCandidates instead")
+    @JvmDefault
     fun interceptCandidates(
         candidates: Collection<FunctionDescriptor>,
         scopeTower: ImplicitScopeTower,

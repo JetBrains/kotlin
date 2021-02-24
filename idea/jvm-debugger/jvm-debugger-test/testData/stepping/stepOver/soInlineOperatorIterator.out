@@ -1,22 +1,15 @@
-LineBreakpoint created at soInlineOperatorIterator.kt:7
+LineBreakpoint created at soInlineOperatorIterator.kt:5
 Run Java
 Connected to the target VM
+soInlineOperatorIterator.kt:5
+soInlineOperatorIterator.kt:6
 soInlineOperatorIterator.kt:7
-soInlineOperatorIterator.kt:8
-soInlineOperatorIterator.kt:23
-soInlineOperatorIterator.kt:27
+soInlineOperatorIterator.kt:6
+soInlineOperatorIterator.kt:7
+soInlineOperatorIterator.kt:6
+soInlineOperatorIterator.kt:7
+soInlineOperatorIterator.kt:6
 soInlineOperatorIterator.kt:9
-soInlineOperatorIterator.kt:8
-soInlineOperatorIterator.kt:23
-soInlineOperatorIterator.kt:27
-soInlineOperatorIterator.kt:9
-soInlineOperatorIterator.kt:8
-soInlineOperatorIterator.kt:23
-soInlineOperatorIterator.kt:27
-soInlineOperatorIterator.kt:9
-soInlineOperatorIterator.kt:8
-soInlineOperatorIterator.kt:23
-soInlineOperatorIterator.kt:11
 Disconnected from the target VM
 
 Process finished with exit code 0

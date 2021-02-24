@@ -1,0 +1,9 @@
+public final fun builder(c: R|suspend test/Controller.() -> kotlin/Unit|): R|kotlin/Unit|
+
+public final class Controller : R|kotlin/Any| {
+    public final suspend fun suspendFun(): R|kotlin/Unit|
+
+    public constructor(): R|test/Controller|
+
+}
+

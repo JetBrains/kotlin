@@ -1,0 +1,43 @@
+FILE: supertypeInitializedWithoutPrimaryConstructor.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class B : R|A| {
+        public constructor(): R|B| {
+            super<R|A|>()
+        }
+
+    }
+    public final class C : R|kotlin/Any| {
+        public constructor(x: R|kotlin/Int|): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class D : R|C| {
+        public constructor(): R|D| {
+            super<R|C|>()
+        }
+
+    }
+    public final class E : R|C| {
+        public constructor(): R|E| {
+            super<R|C|>(Int(10))
+        }
+
+    }
+    public final class F : R|C| {
+        public constructor(): R|F| {
+            super<R|C|>(Int(10))
+        }
+
+    }
+    public final class G : R|C| {
+        public constructor(): R|G| {
+            super<R|C|>(Int(1))
+        }
+
+    }

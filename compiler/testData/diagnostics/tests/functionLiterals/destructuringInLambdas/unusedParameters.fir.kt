@@ -32,12 +32,12 @@ fun bar() {
     }
 
     foobar { (a, b), (c, d) ->
-        <!UNRESOLVED_REFERENCE!>a<!> <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!UNRESOLVED_REFERENCE!>_<!><Int>() }
+        <!UNRESOLVED_REFERENCE!>a<!> <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><Int>() }
         d checkType { _<Short>() }
     }
 
     foobar { (a, b), (c, d) ->
-        <!UNRESOLVED_REFERENCE!>b<!> <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!UNRESOLVED_REFERENCE!>_<!><String>() }
+        <!UNRESOLVED_REFERENCE!>b<!> <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><String>() }
         c checkType { _<Double>() }
     }
 }

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +NewInference +SamConversionPerArgument
 // !CHECK_TYPE
 // FILE: J.java

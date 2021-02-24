@@ -5,15 +5,23 @@
 
 package org.jetbrains.kotlin.backend.common.serialization
 
-import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.builtins.FunctionInterfacePackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.library.SerializedIrFile
 import org.jetbrains.kotlin.library.SerializedIrModule
 
-abstract class IrModuleSerializer<F : IrFileSerializer>(protected val logger: LoggingContext) {
+abstract class IrModuleSerializer<F : IrFileSerializer>(protected val messageLogger: IrMessageLogger) {
     abstract fun createSerializerForFile(file: IrFile): F
+
+    /**
+     * Allows to skip [file] during serialization.
+     *
+     * For example, some files should be generated anew instead of deserialization.
+     */
+    protected open fun backendSpecificFileFilter(file: IrFile): Boolean =
+        true
 
     private fun serializeIrFile(file: IrFile): SerializedIrFile {
         val fileSerializer = createSerializerForFile(file)
@@ -21,6 +29,10 @@ abstract class IrModuleSerializer<F : IrFileSerializer>(protected val logger: Lo
     }
 
     fun serializedIrModule(module: IrModuleFragment): SerializedIrModule {
-        return SerializedIrModule(module.files.filter { it.packageFragmentDescriptor !is FunctionInterfacePackageFragment }.map { serializeIrFile(it) })
+        val serializedFiles = module.files
+            .filter { it.packageFragmentDescriptor !is FunctionInterfacePackageFragment }
+            .filter(this::backendSpecificFileFilter)
+            .map(this::serializeIrFile)
+        return SerializedIrModule(serializedFiles)
     }
 }

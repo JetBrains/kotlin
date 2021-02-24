@@ -9,6 +9,7 @@ import com.intellij.codeInsight.CodeInsightBundle
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.ui.Messages
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMemberChooserObject
 import org.jetbrains.kotlin.idea.core.overrideImplement.generateMember
@@ -40,8 +41,7 @@ fun getPropertiesToUseInGeneratedMember(classOrObject: KtClassOrObject): List<Kt
         classOrObject.declarations.asSequence().filterIsInstance<KtProperty>().filterTo(this) {
             val descriptor = it.unsafeResolveToDescriptor()
             when (descriptor) {
-                is ValueParameterDescriptor -> true
-                is PropertyDescriptor -> descriptor.getter?.isDefault ?: true
+                is ValueParameterDescriptor, is PropertyDescriptor -> true
                 else -> false
             }
         }
@@ -59,8 +59,8 @@ private val MEMBER_RENDERER = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_
 fun confirmMemberRewrite(targetClass: KtClass, vararg descriptors: FunctionDescriptor): Boolean {
     if (ApplicationManager.getApplication().isUnitTestMode) return true
 
-    val functionsText = descriptors.joinToString(separator = " and ") { "'${MEMBER_RENDERER.render(it)}'" }
-    val message = "Functions $functionsText are already defined\nfor class ${targetClass.name}. Do you want to delete them and proceed?"
+    val functionsText = descriptors.joinToString(separator = " ${KotlinBundle.message("configuration.text.and")} ") { "'${MEMBER_RENDERER.render(it)}'" }
+    val message = KotlinBundle.message("action.generate.functions.already.defined", functionsText, targetClass.name.toString())
     return Messages.showYesNoDialog(
         targetClass.project, message,
         CodeInsightBundle.message("generate.equals.and.hashcode.already.defined.title"),

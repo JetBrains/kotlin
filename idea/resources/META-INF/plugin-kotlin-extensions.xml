@@ -25,9 +25,6 @@
 
     <highlighterExtension implementation="org.jetbrains.kotlin.idea.highlighter.dsl.DslHighlighterExtension"/>
 
-    <idePlatformKind implementation="org.jetbrains.kotlin.platform.impl.CommonIdePlatformKind"/>
-
-    <idePlatformKindTooling implementation="org.jetbrains.kotlin.idea.core.platform.impl.CommonIdePlatformKindTooling"/>
 
     <syntheticResolveExtension implementation="org.jetbrains.kotlin.scripting.extensions.ScriptingResolveExtension"/>
     <extraImportsProviderExtension implementation="org.jetbrains.kotlin.scripting.extensions.ScriptExtraImportsProviderExtension"/>

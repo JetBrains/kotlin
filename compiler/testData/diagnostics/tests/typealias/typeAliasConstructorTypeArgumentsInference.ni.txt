@@ -6,9 +6,9 @@ public val test2: C<kotlin.Int> /* = Cons<kotlin.Int> */
 public val test3: [ERROR : Type for CC(1, 2)]
 public val test4: CC<kotlin.Int> /* = Cons<Cons<kotlin.Int>> */
 public val test5: PL<kotlin.Int> /* = Pair<kotlin.Int, kotlin.collections.List<kotlin.Int>> */
-public fun testProjections1(/*0*/ x: Pair<in kotlin.Int, out kotlin.String>): Foo<out kotlin.String>
-public fun testProjections2(/*0*/ x: Pair<in kotlin.Int, out kotlin.Number>): Foo<out kotlin.Number>
-public fun testProjections3(/*0*/ x: Pair<in kotlin.Number, out kotlin.Int>): Foo<out kotlin.Int>
+public fun testProjections1(/*0*/ x: Pair<in kotlin.Int, out kotlin.String>): Foo<in kotlin.Int>
+public fun testProjections2(/*0*/ x: Pair<in kotlin.Int, out kotlin.Number>): Foo<in kotlin.Int>
+public fun testProjections3(/*0*/ x: Pair<in kotlin.Number, out kotlin.Int>): Foo<in kotlin.Number>
 public fun testProjections4(/*0*/ x: Pair<in kotlin.Int, in kotlin.Int>): Foo<in kotlin.Int>
 
 public final class Cons</*0*/ T> {

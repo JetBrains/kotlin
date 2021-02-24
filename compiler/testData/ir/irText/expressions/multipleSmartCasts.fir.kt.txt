@@ -1,0 +1,22 @@
+interface IC1 {
+  abstract operator fun component1(): Int
+
+}
+
+interface IC2 {
+  abstract operator fun component2(): String
+
+}
+
+fun test(x: Any) {
+  when {
+    when {
+      x is IC1 -> x /*as IC1 */ is IC2
+      else -> false
+    } -> { // BLOCK
+      val <destruct>: Any = x /*as IC1 */
+      val x1: Int = <destruct> /*as IC1 */.component1()
+      val x2: String = <destruct> /*as IC1 */ /*as IC2 */.component2()
+    }
+  }
+}

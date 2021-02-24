@@ -1,0 +1,97 @@
+open enum class Test0 : Enum<Test0> {
+  private constructor(x: Int) /* primary */ {
+    super/*Enum*/<Test0>()
+    /* <init>() */
+
+  }
+
+  val x: Int
+    field = x
+    get
+
+  ZERO = Test0()
+
+  private constructor() {
+    this/*Test0*/(x = 0)
+  }
+
+  fun values(): Array<Test0> /* Synthetic body for ENUM_VALUES */
+
+  fun valueOf(value: String): Test0 /* Synthetic body for ENUM_VALUEOF */
+
+}
+
+open enum class Test1 : Enum<Test1> {
+  private constructor(x: Int) /* primary */ {
+    super/*Enum*/<Test1>()
+    /* <init>() */
+
+  }
+
+  val x: Int
+    field = x
+    get
+
+  ZERO = Test1()
+
+  ONE = Test1(x = 1)
+
+  private constructor() {
+    this/*Test1*/(x = 0)
+  }
+
+  fun values(): Array<Test1> /* Synthetic body for ENUM_VALUES */
+
+  fun valueOf(value: String): Test1 /* Synthetic body for ENUM_VALUEOF */
+
+}
+
+abstract enum class Test2 : Enum<Test2> {
+  private constructor(x: Int) /* primary */ {
+    super/*Enum*/<Test2>()
+    /* <init>() */
+
+  }
+
+  val x: Int
+    field = x
+    get
+
+  ZERO = ZERO()
+  private enum entry class ZERO : Test2 {
+    private constructor() /* primary */ {
+      super/*Test2*/()
+      /* <init>() */
+
+    }
+
+    override fun foo() {
+      println(message = "ZERO")
+    }
+
+  }
+
+  ONE = ONE()
+  private enum entry class ONE : Test2 {
+    private constructor() /* primary */ {
+      super/*Test2*/(x = 1)
+      /* <init>() */
+
+    }
+
+    override fun foo() {
+      println(message = "ONE")
+    }
+
+  }
+
+  private constructor() {
+    this/*Test2*/(x = 0)
+  }
+
+  abstract fun foo()
+  fun values(): Array<Test2> /* Synthetic body for ENUM_VALUES */
+
+  fun valueOf(value: String): Test2 /* Synthetic body for ENUM_VALUEOF */
+
+}

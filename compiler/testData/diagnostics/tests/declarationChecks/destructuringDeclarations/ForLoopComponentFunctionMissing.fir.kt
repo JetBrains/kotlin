@@ -7,7 +7,7 @@ class C {
 }
 
 fun test() {
-    for ((x, <!UNRESOLVED_REFERENCE!>y<!>) in C()) {
+    for ((x, y) in <!COMPONENT_FUNCTION_MISSING!>C()<!>) {
 
     }
 }

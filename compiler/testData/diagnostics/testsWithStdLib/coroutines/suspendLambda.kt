@@ -1,6 +1,6 @@
-// COMMON_COROUTINES_TEST
+// FIR_IDENTICAL
 // SKIP_TXT
-import COROUTINES_PACKAGE.*
+import kotlin.coroutines.*
 
 fun <T> foo(): Continuation<T> = null!!
 

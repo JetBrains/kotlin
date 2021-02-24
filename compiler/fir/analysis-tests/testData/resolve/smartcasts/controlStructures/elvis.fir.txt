@@ -1,0 +1,31 @@
+FILE: elvis.kt
+    public abstract interface A : R|kotlin/Any| {
+        public abstract fun foo(): R|kotlin/Unit|
+
+        public abstract val b: R|kotlin/Boolean|
+            public get(): R|kotlin/Boolean|
+
+    }
+    public final fun test_1(x: R|A?|): R|kotlin/Unit| {
+        when () {
+            R|<local>/x|?.{ $subj$.R|/A.b| } ?: ^test_1 Unit ->  {
+                R|<local>/x|.R|/A.foo|()
+            }
+        }
+
+    }
+    public final fun test2(a: R|kotlin/Any?|, b: R|kotlin/Any?|): R|kotlin/String| {
+        when () {
+            (R|<local>/b| !is R|kotlin/String|) ->  {
+                ^test2 String()
+            }
+        }
+
+        when () {
+            (R|<local>/a| !is R|kotlin/String?|) ->  {
+                ^test2 String()
+            }
+        }
+
+        ^test2 R|<local>/a| ?: R|<local>/b|
+    }

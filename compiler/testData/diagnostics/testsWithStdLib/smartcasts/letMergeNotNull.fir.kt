@@ -4,6 +4,6 @@ fun foo(y: String?) {
     var x: String? = null
     if (x != null) {
         y?.let { x = it }
-        x.<!INAPPLICABLE_CANDIDATE!>length<!> // not-null or not-null
+        x.length // not-null or not-null
     }
 }

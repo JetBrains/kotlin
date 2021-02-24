@@ -1,0 +1,25 @@
+package
+
+public open class A {
+    protected constructor A()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final inline fun foo(/*0*/ f: () -> kotlin.Unit): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class SomeContainer {
+    public constructor SomeContainer()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final inline fun foo(/*0*/ f: () -> kotlin.Unit): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    protected final fun makeLimit(): SomeContainer.Limit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    protected final class Limit {
+        public constructor Limit()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

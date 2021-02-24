@@ -21,6 +21,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters2
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.ConstantConditionIfInspection
 import org.jetbrains.kotlin.idea.intentions.SimplifyBooleanWithConstantsIntention
@@ -29,9 +30,9 @@ import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 class SimplifyComparisonFix(element: KtExpression, val value: Boolean) : KotlinQuickFixAction<KtExpression>(element) {
-    override fun getFamilyName() = "Simplify $element to '$value'"
+    override fun getFamilyName() = KotlinBundle.message("simplify.0.to.1", element.toString(), value)
 
-    override fun getText() = "Simplify comparison"
+    override fun getText() = KotlinBundle.message("simplify.comparison")
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return

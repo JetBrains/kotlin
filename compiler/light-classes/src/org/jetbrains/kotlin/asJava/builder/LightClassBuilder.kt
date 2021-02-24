@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.asJava.builder
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProcessCanceledException
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.impl.compiled.ClsFileImpl
@@ -26,6 +25,7 @@ import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
 import com.intellij.psi.impl.java.stubs.impl.PsiJavaFileStubImpl
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
@@ -44,7 +44,7 @@ fun buildLightClass(
     val project = files.first().project
 
     try {
-        val classBuilderFactory = KotlinLightClassBuilderFactory(createJavaFileStub(project, packageFqName, files))
+        val classBuilderFactory = KotlinLightClassBuilderFactory(createJavaFileStub(packageFqName, files))
         val state = GenerationState.Builder(
                 project,
                 classBuilderFactory,
@@ -54,6 +54,7 @@ fun buildLightClass(
                 context.languageVersionSettings?.let {
                     CompilerConfiguration().apply {
                         languageVersionSettings = it
+                        put(JVMConfigurationKeys.JVM_TARGET, context.jvmTarget)
                         isReadOnly = true
                     }
                 } ?: CompilerConfiguration.EMPTY
@@ -77,7 +78,7 @@ fun buildLightClass(
     }
 }
 
-private fun createJavaFileStub(project: Project, packageFqName: FqName, files: Collection<KtFile>): PsiJavaFileStub {
+private fun createJavaFileStub(packageFqName: FqName, files: Collection<KtFile>): PsiJavaFileStub {
     val javaFileStub = PsiJavaFileStubImpl(packageFqName.asString(), /*compiled = */true)
     javaFileStub.psiFactory = ClsWrapperStubPsiFactory.INSTANCE
 

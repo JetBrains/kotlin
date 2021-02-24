@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,6 +13,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.JarFileSystem
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.idea.KotlinJvmBundle
 import org.jetbrains.kotlin.idea.configuration.*
 import org.jetbrains.kotlin.idea.framework.JavaRuntimeDetectionUtil
 import org.jetbrains.kotlin.idea.framework.isExternalLibrary
@@ -25,9 +26,8 @@ fun updateLibraries(project: Project, libraries: Collection<Library>) {
     if (project.allModules().any { module -> module.getBuildSystemType() != BuildSystemType.JPS }) {
         Messages.showMessageDialog(
             project,
-            "Automatic library version update for Maven and Gradle projects is currently unsupported. " +
-                    "Please update your build scripts manually.",
-            "Update Kotlin Runtime Library",
+            KotlinJvmBundle.message("automatic.library.version.update.for.maven.and.gradle.projects.is.currently.unsupported.please.update.your.build.scripts.manually"),
+            KotlinJvmBundle.message("update.kotlin.runtime.library"),
             Messages.getErrorIcon()
         )
         return
@@ -93,8 +93,8 @@ private fun updateJar(
     } catch (e: IOException) {
         Messages.showErrorDialog(
             project,
-            "Failed to update $jarPath: ${e.message}",
-            "Library update failed"
+            KotlinJvmBundle.message("failed.to.update.0.1", jarPath, e.message.toString()),
+            KotlinJvmBundle.message("library.update.failed")
         )
         return
     }
@@ -106,7 +106,11 @@ private fun updateJar(
                 model.removeRoot(oldUrl, libraryJarDescriptor.orderRootType)
 
                 val newRoot = JarFileSystem.getInstance().getJarRootForLocalFile(newVFile) ?: run {
-                    Messages.showErrorDialog(project, "Failed to find root for file: ${newVFile.canonicalPath}", "Library update failed")
+                    Messages.showErrorDialog(
+                        project,
+                        KotlinJvmBundle.message("failed.to.find.root.for.file.0", newVFile.canonicalPath.toString()),
+                        KotlinJvmBundle.message("library.update.failed1")
+                    )
                     return@runWriteAction
                 }
 

@@ -13,4 +13,8 @@ class PropertyCommonizationFromSourcesTest : AbstractCommonizationFromSourcesTes
     fun testSpecifics() = doTestSuccessfulCommonization()
 
     fun testSetters() = doTestSuccessfulCommonization()
+
+    fun testLiftingUpConst() = doTestSuccessfulCommonization()
+
+    fun testOverloadingByUpperBounds() = doTestSuccessfulCommonization()
 }

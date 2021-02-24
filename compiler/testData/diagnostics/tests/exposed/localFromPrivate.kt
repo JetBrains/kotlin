@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class A {
     private open class B
     fun f() {

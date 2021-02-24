@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrInstanceInitializerCall
-import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.util.constructors
@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 // Create primary constructor if it doesn't exist
-class PrimaryConstructorLowering(context: JsCommonBackendContext) : DeclarationTransformer {
+class PrimaryConstructorLowering(val context: JsCommonBackendContext) : DeclarationTransformer {
 
     private var IrClass.syntheticPrimaryConstructor by context.mapping.classToSyntheticPrimaryConstructor
 
@@ -38,22 +38,22 @@ class PrimaryConstructorLowering(context: JsCommonBackendContext) : DeclarationT
         return null
     }
 
-    private object SYNTHETIC_PRIMARY_CONSTRUCTOR : IrDeclarationOriginImpl("SYNTHETIC_PRIMARY_CONSTRUCTOR")
+    object SYNTHETIC_PRIMARY_CONSTRUCTOR : IrDeclarationOriginImpl("SYNTHETIC_PRIMARY_CONSTRUCTOR")
 
     private val unitType = context.irBuiltIns.unitType
 
     private fun createPrimaryConstructor(irClass: IrClass): IrConstructor {
         // TODO better API for declaration creation. This case doesn't fit the usual transformFlat-like API.
-        val declaration = stageController.unrestrictDeclarationListsAccess {
+        val declaration = context.irFactory.stageController.unrestrictDeclarationListsAccess {
             irClass.addConstructor {
                 origin = SYNTHETIC_PRIMARY_CONSTRUCTOR
                 isPrimary = true
-                visibility = Visibilities.PRIVATE
+                visibility = DescriptorVisibilities.PRIVATE
             }
         }
 
         declaration.body = irClass.run {
-            IrBlockBodyImpl(startOffset, endOffset, listOf(IrInstanceInitializerCallImpl(startOffset, endOffset, symbol, unitType)))
+            factory.createBlockBody(startOffset, endOffset, listOf(IrInstanceInitializerCallImpl(startOffset, endOffset, symbol, unitType)))
         }
 
         return declaration
@@ -68,10 +68,15 @@ class DelegateToSyntheticPrimaryConstructor(context: JsCommonBackendContext) : B
         if (container is IrConstructor && !container.isPrimary) {
             container.parentAsClass.syntheticPrimaryConstructor?.let { primary ->
                 val initializeTransformer = object : IrElementTransformerVoid() {
-                    override fun visitDeclaration(declaration: IrDeclaration) = declaration // optimize visiting
+                    override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement = declaration // optimize visiting
 
                     override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall) = expression.run {
-                        IrDelegatingConstructorCallImpl(startOffset, endOffset, type, primary.symbol)
+                        IrDelegatingConstructorCallImpl(
+                            startOffset, endOffset, type,
+                            primary.symbol,
+                            valueArgumentsCount = primary.valueParameters.size,
+                            typeArgumentsCount = primary.typeParameters.size
+                        )
                     }
                 }
 

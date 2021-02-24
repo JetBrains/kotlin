@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 //KT-2226 Parameter used as delegation by object marked as unused
 package a
 

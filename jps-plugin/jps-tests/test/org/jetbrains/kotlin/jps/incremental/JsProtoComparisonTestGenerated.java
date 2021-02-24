@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.jps.incremental;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -27,7 +28,7 @@ public class JsProtoComparisonTestGenerated extends AbstractJsProtoComparisonTes
         }
 
         public void testAllFilesPresentInClassSignatureChange() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/classSignatureChange"), Pattern.compile("^([^\\.]+)$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/classSignatureChange"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
 
         @TestMetadata("classAnnotationListChanged")
@@ -94,7 +95,7 @@ public class JsProtoComparisonTestGenerated extends AbstractJsProtoComparisonTes
             }
 
             public void testAllFilesPresentInClassAnnotationListChanged() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/classSignatureChange/classAnnotationListChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/classSignatureChange/classAnnotationListChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
@@ -107,7 +108,7 @@ public class JsProtoComparisonTestGenerated extends AbstractJsProtoComparisonTes
             }
 
             public void testAllFilesPresentInClassFlagsAndMembersChanged() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/classSignatureChange/classFlagsAndMembersChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/classSignatureChange/classFlagsAndMembersChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
@@ -120,7 +121,7 @@ public class JsProtoComparisonTestGenerated extends AbstractJsProtoComparisonTes
             }
 
             public void testAllFilesPresentInClassFlagsChanged() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/classSignatureChange/classFlagsChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/classSignatureChange/classFlagsChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
@@ -133,7 +134,7 @@ public class JsProtoComparisonTestGenerated extends AbstractJsProtoComparisonTes
             }
 
             public void testAllFilesPresentInClassTypeParameterListChanged() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/classSignatureChange/classTypeParameterListChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/classSignatureChange/classTypeParameterListChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
@@ -146,7 +147,7 @@ public class JsProtoComparisonTestGenerated extends AbstractJsProtoComparisonTes
             }
 
             public void testAllFilesPresentInClassWithSuperTypeListChanged() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/classSignatureChange/classWithSuperTypeListChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/classSignatureChange/classWithSuperTypeListChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
@@ -159,7 +160,7 @@ public class JsProtoComparisonTestGenerated extends AbstractJsProtoComparisonTes
             }
 
             public void testAllFilesPresentInNestedClassSignatureChanged() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/classSignatureChange/nestedClassSignatureChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/classSignatureChange/nestedClassSignatureChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
@@ -172,7 +173,7 @@ public class JsProtoComparisonTestGenerated extends AbstractJsProtoComparisonTes
             }
 
             public void testAllFilesPresentInSealedClassImplAdded() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/classSignatureChange/sealedClassImplAdded"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/classSignatureChange/sealedClassImplAdded"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
@@ -185,7 +186,7 @@ public class JsProtoComparisonTestGenerated extends AbstractJsProtoComparisonTes
             }
 
             public void testAllFilesPresentInSealedClassImplRemoved() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/classSignatureChange/sealedClassImplRemoved"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/classSignatureChange/sealedClassImplRemoved"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
@@ -198,7 +199,7 @@ public class JsProtoComparisonTestGenerated extends AbstractJsProtoComparisonTes
             }
 
             public void testAllFilesPresentInSealedClassNestedImplAdded() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/classSignatureChange/sealedClassNestedImplAdded"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/classSignatureChange/sealedClassNestedImplAdded"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
@@ -211,7 +212,7 @@ public class JsProtoComparisonTestGenerated extends AbstractJsProtoComparisonTes
             }
 
             public void testAllFilesPresentInSealedClassNestedImplAddedDeep() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/classSignatureChange/sealedClassNestedImplAddedDeep"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/classSignatureChange/sealedClassNestedImplAddedDeep"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
@@ -224,7 +225,7 @@ public class JsProtoComparisonTestGenerated extends AbstractJsProtoComparisonTes
             }
 
             public void testAllFilesPresentInSealedClassNestedImplRemoved() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/classSignatureChange/sealedClassNestedImplRemoved"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/classSignatureChange/sealedClassNestedImplRemoved"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
     }
@@ -238,7 +239,7 @@ public class JsProtoComparisonTestGenerated extends AbstractJsProtoComparisonTes
         }
 
         public void testAllFilesPresentInClassPrivateOnlyChange() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/classPrivateOnlyChange"), Pattern.compile("^([^\\.]+)$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/classPrivateOnlyChange"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
 
         @TestMetadata("classWithPrivateFunChanged")
@@ -275,7 +276,7 @@ public class JsProtoComparisonTestGenerated extends AbstractJsProtoComparisonTes
             }
 
             public void testAllFilesPresentInClassWithPrivateFunChanged() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/classPrivateOnlyChange/classWithPrivateFunChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/classPrivateOnlyChange/classWithPrivateFunChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
@@ -288,7 +289,7 @@ public class JsProtoComparisonTestGenerated extends AbstractJsProtoComparisonTes
             }
 
             public void testAllFilesPresentInClassWithPrivatePrimaryConstructorChanged() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/classPrivateOnlyChange/classWithPrivatePrimaryConstructorChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/classPrivateOnlyChange/classWithPrivatePrimaryConstructorChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
@@ -301,7 +302,7 @@ public class JsProtoComparisonTestGenerated extends AbstractJsProtoComparisonTes
             }
 
             public void testAllFilesPresentInClassWithPrivateSecondaryConstructorChanged() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/classPrivateOnlyChange/classWithPrivateSecondaryConstructorChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/classPrivateOnlyChange/classWithPrivateSecondaryConstructorChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
@@ -314,7 +315,7 @@ public class JsProtoComparisonTestGenerated extends AbstractJsProtoComparisonTes
             }
 
             public void testAllFilesPresentInClassWithPrivateValChanged() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/classPrivateOnlyChange/classWithPrivateValChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/classPrivateOnlyChange/classWithPrivateValChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
@@ -327,7 +328,7 @@ public class JsProtoComparisonTestGenerated extends AbstractJsProtoComparisonTes
             }
 
             public void testAllFilesPresentInClassWithPrivateVarChanged() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/classPrivateOnlyChange/classWithPrivateVarChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/classPrivateOnlyChange/classWithPrivateVarChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
     }
@@ -341,7 +342,7 @@ public class JsProtoComparisonTestGenerated extends AbstractJsProtoComparisonTes
         }
 
         public void testAllFilesPresentInClassMembersOnlyChanged() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/classMembersOnlyChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/classMembersOnlyChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
 
         @TestMetadata("classWithCompanionObjectChanged")
@@ -403,7 +404,7 @@ public class JsProtoComparisonTestGenerated extends AbstractJsProtoComparisonTes
             }
 
             public void testAllFilesPresentInClassWithCompanionObjectChanged() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/classMembersOnlyChanged/classWithCompanionObjectChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/classMembersOnlyChanged/classWithCompanionObjectChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
@@ -416,7 +417,7 @@ public class JsProtoComparisonTestGenerated extends AbstractJsProtoComparisonTes
             }
 
             public void testAllFilesPresentInClassWithConstructorChanged() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/classMembersOnlyChanged/classWithConstructorChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/classMembersOnlyChanged/classWithConstructorChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
@@ -429,7 +430,7 @@ public class JsProtoComparisonTestGenerated extends AbstractJsProtoComparisonTes
             }
 
             public void testAllFilesPresentInClassWithFunAndValChanged() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/classMembersOnlyChanged/classWithFunAndValChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/classMembersOnlyChanged/classWithFunAndValChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
@@ -442,7 +443,7 @@ public class JsProtoComparisonTestGenerated extends AbstractJsProtoComparisonTes
             }
 
             public void testAllFilesPresentInClassWithNestedClassesChanged() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/classMembersOnlyChanged/classWithNestedClassesChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/classMembersOnlyChanged/classWithNestedClassesChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
@@ -455,7 +456,7 @@ public class JsProtoComparisonTestGenerated extends AbstractJsProtoComparisonTes
             }
 
             public void testAllFilesPresentInClassWitnEnumChanged() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/classMembersOnlyChanged/classWitnEnumChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/classMembersOnlyChanged/classWitnEnumChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
@@ -468,7 +469,7 @@ public class JsProtoComparisonTestGenerated extends AbstractJsProtoComparisonTes
             }
 
             public void testAllFilesPresentInDefaultValues() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/classMembersOnlyChanged/defaultValues"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/classMembersOnlyChanged/defaultValues"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
@@ -481,7 +482,7 @@ public class JsProtoComparisonTestGenerated extends AbstractJsProtoComparisonTes
             }
 
             public void testAllFilesPresentInMembersAnnotationListChanged() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/classMembersOnlyChanged/membersAnnotationListChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/classMembersOnlyChanged/membersAnnotationListChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
@@ -494,7 +495,7 @@ public class JsProtoComparisonTestGenerated extends AbstractJsProtoComparisonTes
             }
 
             public void testAllFilesPresentInMembersFlagsChanged() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/classMembersOnlyChanged/membersFlagsChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/classMembersOnlyChanged/membersFlagsChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
@@ -507,7 +508,7 @@ public class JsProtoComparisonTestGenerated extends AbstractJsProtoComparisonTes
             }
 
             public void testAllFilesPresentInNestedClassMembersChanged() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/classMembersOnlyChanged/nestedClassMembersChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/classMembersOnlyChanged/nestedClassMembersChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
@@ -520,7 +521,7 @@ public class JsProtoComparisonTestGenerated extends AbstractJsProtoComparisonTes
             }
 
             public void testAllFilesPresentInSealedClassImplAdded() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/classMembersOnlyChanged/sealedClassImplAdded"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/classMembersOnlyChanged/sealedClassImplAdded"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
     }
@@ -534,7 +535,7 @@ public class JsProtoComparisonTestGenerated extends AbstractJsProtoComparisonTes
         }
 
         public void testAllFilesPresentInPackageMembers() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/packageMembers"), Pattern.compile("^([^\\.]+)$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/packageMembers"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
 
         @TestMetadata("defaultValues")
@@ -571,7 +572,7 @@ public class JsProtoComparisonTestGenerated extends AbstractJsProtoComparisonTes
             }
 
             public void testAllFilesPresentInDefaultValues() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/packageMembers/defaultValues"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/packageMembers/defaultValues"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
@@ -584,7 +585,7 @@ public class JsProtoComparisonTestGenerated extends AbstractJsProtoComparisonTes
             }
 
             public void testAllFilesPresentInMembersAnnotationListChanged() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/packageMembers/membersAnnotationListChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/packageMembers/membersAnnotationListChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
@@ -597,7 +598,7 @@ public class JsProtoComparisonTestGenerated extends AbstractJsProtoComparisonTes
             }
 
             public void testAllFilesPresentInMembersFlagsChanged() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/packageMembers/membersFlagsChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/packageMembers/membersFlagsChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
@@ -610,7 +611,7 @@ public class JsProtoComparisonTestGenerated extends AbstractJsProtoComparisonTes
             }
 
             public void testAllFilesPresentInPackageFacadePrivateOnlyChanges() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/packageMembers/packageFacadePrivateOnlyChanges"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/packageMembers/packageFacadePrivateOnlyChanges"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
@@ -623,7 +624,7 @@ public class JsProtoComparisonTestGenerated extends AbstractJsProtoComparisonTes
             }
 
             public void testAllFilesPresentInPackageFacadePublicChanges() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/packageMembers/packageFacadePublicChanges"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/packageMembers/packageFacadePublicChanges"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
     }
@@ -637,7 +638,7 @@ public class JsProtoComparisonTestGenerated extends AbstractJsProtoComparisonTes
         }
 
         public void testAllFilesPresentInUnchanged() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/unchanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/unchanged"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
 
         @TestMetadata("unchangedClass")
@@ -659,7 +660,7 @@ public class JsProtoComparisonTestGenerated extends AbstractJsProtoComparisonTes
             }
 
             public void testAllFilesPresentInUnchangedClass() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/unchanged/unchangedClass"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/unchanged/unchangedClass"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
@@ -672,7 +673,7 @@ public class JsProtoComparisonTestGenerated extends AbstractJsProtoComparisonTes
             }
 
             public void testAllFilesPresentInUnchangedPackageFacade() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/unchanged/unchangedPackageFacade"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/unchanged/unchangedPackageFacade"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
     }
@@ -686,7 +687,7 @@ public class JsProtoComparisonTestGenerated extends AbstractJsProtoComparisonTes
         }
 
         public void testAllFilesPresentInJsOnly() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/jsOnly"), Pattern.compile("^([^\\.]+)$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/jsOnly"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
 
         @TestMetadata("externals")
@@ -703,7 +704,7 @@ public class JsProtoComparisonTestGenerated extends AbstractJsProtoComparisonTes
             }
 
             public void testAllFilesPresentInExternals() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/jsOnly/externals"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/comparison/jsOnly/externals"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
     }

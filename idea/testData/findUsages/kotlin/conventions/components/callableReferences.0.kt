@@ -24,3 +24,5 @@ fun foo(x: X) {
 
     val (a4, b4) = A::class.java.newInstance()
 }
+
+// FIR_IGNORE

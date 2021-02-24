@@ -10,7 +10,7 @@ val a /* :(Int?) -> Int? */ = l@ { it: Int? -> // but must be (Int?) -> Int
 fun <R> let(<!UNUSED_PARAMETER!>f<!>: (Int?) -> R): R = null!!
 
 val b /*: Int? */ = let { // but must be Int
-    if (it != null) return@let <!NI;DEBUG_INFO_SMARTCAST!>it<!>
+    if (it != null) return@let <!DEBUG_INFO_SMARTCAST{NI}!>it<!>
     5
 }
 

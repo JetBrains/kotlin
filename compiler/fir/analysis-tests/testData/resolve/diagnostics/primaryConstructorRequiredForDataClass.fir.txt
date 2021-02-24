@@ -1,0 +1,21 @@
+FILE: primaryConstructorRequiredForDataClass.kt
+    public final data class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun copy(): R|A|
+
+    }
+    public final data class B : R|kotlin/Any| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final data class C : R|kotlin/Any| {
+        public constructor(x: R|kotlin/Int|): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+    }

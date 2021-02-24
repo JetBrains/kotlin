@@ -26,17 +26,23 @@ import com.intellij.refactoring.rename.RenameProcessor
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.analysis.analyzeAsReplacement
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.references.resolveMainReferenceToDescriptors
-import org.jetbrains.kotlin.psi.KtFunctionLiteral
-import org.jetbrains.kotlin.psi.KtNameReferenceExpression
-import org.jetbrains.kotlin.psi.KtSimpleNameExpression
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class ReplaceExplicitFunctionLiteralParamWithItIntention : PsiElementBaseIntentionAction() {
-    override fun getFamilyName() = "Replace explicit lambda parameter with 'it'"
+    override fun getFamilyName() = KotlinBundle.message("replace.explicit.lambda.parameter.with.it")
 
     override fun isAvailable(project: Project, editor: Editor, element: PsiElement): Boolean {
         val functionLiteral = targetFunctionLiteral(element, editor.caretModel.offset) ?: return false
@@ -49,7 +55,22 @@ class ReplaceExplicitFunctionLiteralParamWithItIntention : PsiElementBaseIntenti
                 literal.usesName(element.text) && (!literal.hasParameterSpecification() || literal.usesName("it"))
             }) return false
 
-        text = "Replace explicit parameter '${parameter.name}' with 'it'"
+        val lambda = functionLiteral.parent as? KtLambdaExpression ?: return false
+        val lambdaParent = lambda.parent
+        if (lambdaParent is KtWhenEntry || lambdaParent is KtContainerNodeForControlStructureBody) return false
+        val call = lambda.getStrictParentOfType<KtCallExpression>()
+        if (call != null) {
+            val argumentIndex = call.valueArguments.indexOfFirst { it.getArgumentExpression() == lambda }
+            val callOrQualified = call.getQualifiedExpressionForSelectorOrThis()
+            val newCallOrQualified = callOrQualified.copied()
+            val newCall = newCallOrQualified.safeAs<KtQualifiedExpression>()?.callExpression ?: newCallOrQualified.safeAs() ?: return false
+            val newArgument = newCall.valueArguments.getOrNull(argumentIndex) ?: newCall.lambdaArguments.singleOrNull() ?: return false
+            newArgument.replace(KtPsiFactory(element).createLambdaExpression("", "TODO()"))
+            val newContext = newCallOrQualified.analyzeAsReplacement(callOrQualified, callOrQualified.analyze(BodyResolveMode.PARTIAL))
+            if (newCallOrQualified.getResolvedCall(newContext)?.resultingDescriptor == null) return false
+        }
+
+        text = KotlinBundle.message("replace.explicit.parameter.0.with.it", parameter.name.toString())
         return true
     }
 

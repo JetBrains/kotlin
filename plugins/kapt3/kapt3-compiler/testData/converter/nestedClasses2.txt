@@ -2,21 +2,21 @@ import java.lang.System;
 
 @kotlin.Metadata()
 public final class A$B {
-    @org.jetbrains.annotations.NotNull()
+    @kotlin.jvm.JvmField()
     public A$B.C c;
-    @org.jetbrains.annotations.NotNull()
+    @kotlin.jvm.JvmField()
     public A$B.D$E de;
-    @org.jetbrains.annotations.NotNull()
+    @kotlin.jvm.JvmField()
     public J$B.C jc;
-    @org.jetbrains.annotations.NotNull()
+    @kotlin.jvm.JvmField()
     public J$B.D$E jde;
-    @org.jetbrains.annotations.NotNull()
+    @kotlin.jvm.JvmField()
     public A$B.D$$E dee;
-    @org.jetbrains.annotations.NotNull()
+    @kotlin.jvm.JvmField()
     public A$B.D$$$E deee;
-    @org.jetbrains.annotations.NotNull()
+    @kotlin.jvm.JvmField()
     public J$B.D$$E jdee;
-    @org.jetbrains.annotations.NotNull()
+    @kotlin.jvm.JvmField()
     public J$B.D$$$E jdeee;
 
     public A$B() {
@@ -33,13 +33,13 @@ public final class A$B {
 
     @kotlin.Metadata()
     public static final class D$E {
-        @org.jetbrains.annotations.NotNull()
+        @kotlin.jvm.JvmField()
         public A$B.D$E.F f;
-        @org.jetbrains.annotations.NotNull()
+        @kotlin.jvm.JvmField()
         public A$B.D$E.F$G fg;
-        @org.jetbrains.annotations.NotNull()
+        @kotlin.jvm.JvmField()
         public J$B.D$E.F jf;
-        @org.jetbrains.annotations.NotNull()
+        @kotlin.jvm.JvmField()
         public J$B.D$E.F$G jfg;
 
         public D$E() {
@@ -101,15 +101,15 @@ public final class Experiment {
     @Experiment.Type()
     public static final class Group {
 
-        public Group(@org.jetbrains.annotations.NotNull()
-        java.lang.String s) {
-            super();
-        }
-
         @org.jetbrains.annotations.NotNull()
         public final Experiment.Group copy(@org.jetbrains.annotations.NotNull()
         java.lang.String s) {
             return null;
+        }
+
+        public Group(@org.jetbrains.annotations.NotNull()
+        java.lang.String s) {
+            super();
         }
     }
 }
@@ -135,6 +135,7 @@ public final class Foo {
 
         @kotlin.Metadata()
         public static final class Zoo {
+            @org.jetbrains.annotations.NotNull()
             public static final Foo.Bar.Zoo INSTANCE = null;
 
             private Zoo() {
@@ -256,6 +257,16 @@ public final class Test1 extends Foo.Bar implements IFoo.IBar, IFoo.IBar.IZoo {
     @org.jetbrains.annotations.NotNull()
     private final Foo.Bar.Zoo zoo = null;
 
+    public Test1(@org.jetbrains.annotations.NotNull()
+    Foo.Bar.Zoo zoo) {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final Foo.Bar.Zoo getZoo() {
+        return null;
+    }
+
     @org.jetbrains.annotations.NotNull()
     public final java.lang.Thread.State a() {
         return null;
@@ -264,15 +275,5 @@ public final class Test1 extends Foo.Bar implements IFoo.IBar, IFoo.IBar.IZoo {
     public final void b(@org.jetbrains.annotations.NotNull()
     JavaClass.Foo foo, @org.jetbrains.annotations.NotNull()
     JavaClass.Foo.Bar bar) {
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final Foo.Bar.Zoo getZoo() {
-        return null;
-    }
-
-    public Test1(@org.jetbrains.annotations.NotNull()
-    Foo.Bar.Zoo zoo) {
-        super();
     }
 }

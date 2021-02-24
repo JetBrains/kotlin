@@ -32,7 +32,7 @@ fun main() {
     outer.set(outer.Inner())
 
     val x: Outer<String>.Inner = factoryString()
-    outer.set(x)
+    outer.<!INAPPLICABLE_CANDIDATE!>set<!>(x)
     val y: Outer<CharSequence>.Inner = infer<CharSequence>("")
     outer.set(y)
 

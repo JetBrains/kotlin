@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.android.synthetic.res.AndroidSyntheticProperty
 import org.jetbrains.kotlin.android.synthetic.res.isErrorType
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
-import org.jetbrains.kotlin.diagnostics.reportFromPlugin
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
@@ -51,7 +50,7 @@ class AndroidExtensionPropertiesCallChecker : CallChecker {
 
     private fun DiagnosticSink.checkDeprecated(expression: KtExpression, packageDescriptor: AndroidSyntheticPackageFragmentDescriptor) {
         if (packageDescriptor.packageData.isDeprecated) {
-            reportFromPlugin(SYNTHETIC_DEPRECATED_PACKAGE.on(expression), DefaultErrorMessagesAndroid)
+            report(SYNTHETIC_DEPRECATED_PACKAGE.on(expression))
         }
     }
 
@@ -60,7 +59,7 @@ class AndroidExtensionPropertiesCallChecker : CallChecker {
         val type = property.errorType ?: return
 
         val warning = if (type.contains('.')) SYNTHETIC_UNRESOLVED_WIDGET_TYPE else SYNTHETIC_INVALID_WIDGET_TYPE
-        reportFromPlugin(warning.on(expression, type), DefaultErrorMessagesAndroid)
+        report(warning.on(expression, type))
     }
 
     private fun DiagnosticSink.checkPartiallyDefinedResource(
@@ -73,7 +72,7 @@ class AndroidExtensionPropertiesCallChecker : CallChecker {
 
         val expectedType = context.resolutionContext.expectedType
         if (!TypeUtils.noExpectedType(expectedType) && !expectedType.isMarkedNullable && !expectedType.isFlexible()) {
-            reportFromPlugin(UNSAFE_CALL_ON_PARTIALLY_DEFINED_RESOURCE.on(calleeExpression), DefaultErrorMessagesAndroid)
+            report(UNSAFE_CALL_ON_PARTIALLY_DEFINED_RESOURCE.on(calleeExpression))
             return
         }
 
@@ -81,7 +80,7 @@ class AndroidExtensionPropertiesCallChecker : CallChecker {
         val usage = outermostQualifiedExpression.parent
 
         if (usage is KtDotQualifiedExpression && usage.receiverExpression == outermostQualifiedExpression) {
-            reportFromPlugin(UNSAFE_CALL_ON_PARTIALLY_DEFINED_RESOURCE.on(calleeExpression), DefaultErrorMessagesAndroid)
+            report(UNSAFE_CALL_ON_PARTIALLY_DEFINED_RESOURCE.on(calleeExpression))
         }
     }
 

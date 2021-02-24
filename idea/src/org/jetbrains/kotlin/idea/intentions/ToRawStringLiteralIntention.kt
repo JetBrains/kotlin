@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.intentions
@@ -19,6 +8,7 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.text.StringUtilRt
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.psi.KtEscapeStringTemplateEntry
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -29,7 +19,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 class ToRawStringLiteralIntention : SelfTargetingOffsetIndependentIntention<KtStringTemplateExpression>(
     KtStringTemplateExpression::class.java,
-    "To raw string literal"
+    KotlinBundle.lazyMessage("to.raw.string.literal")
 ), LowPriorityAction {
     override fun isApplicableTo(element: KtStringTemplateExpression): Boolean {
         val text = element.text
@@ -58,6 +48,7 @@ class ToRawStringLiteralIntention : SelfTargetingOffsetIndependentIntention<KtSt
             endOffset == currentOffset -> replaced.endOffset
             else -> minOf(currentOffset + 2, replaced.endOffset)
         }
+
         editor?.caretModel?.moveToOffset(offset)
     }
 
@@ -78,15 +69,17 @@ class ToRawStringLiteralIntention : SelfTargetingOffsetIndependentIntention<KtSt
                 append(value)
             }
         }
+
         return StringUtilRt.convertLineSeparators(text, "\n")
     }
 
     private fun hasTrailingSpaces(text: String): Boolean {
-        var afterSpace = true
+        var afterSpace = false
         for (c in text) {
             if ((c == '\n' || c == '\r') && afterSpace) return true
             afterSpace = c == ' ' || c == '\t'
         }
+
         return false
     }
 

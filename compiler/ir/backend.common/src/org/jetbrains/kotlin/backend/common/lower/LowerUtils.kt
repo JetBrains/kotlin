@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.common.lower
@@ -56,16 +45,18 @@ abstract class AbstractVariableRemapper : IrElementTransformerVoid() {
         remapVariable(expression.symbol.owner)?.let {
             IrGetValueImpl(expression.startOffset, expression.endOffset, it.type, it.symbol, expression.origin)
         } ?: expression
+
+    override fun visitSetValue(expression: IrSetValue): IrExpression {
+        expression.transformChildrenVoid()
+        return remapVariable(expression.symbol.owner)?.let {
+            IrSetValueImpl(expression.startOffset, expression.endOffset, it.type, it.symbol, expression.value, expression.origin)
+        } ?: expression
+    }
 }
 
 open class VariableRemapper(val mapping: Map<IrValueParameter, IrValueDeclaration>) : AbstractVariableRemapper() {
     override fun remapVariable(value: IrValueDeclaration): IrValueDeclaration? =
         mapping[value]
-}
-
-class VariableRemapperDesc(val mapping: Map<ValueDescriptor, IrValueParameter>) : AbstractVariableRemapper() {
-    override fun remapVariable(value: IrValueDeclaration): IrValueDeclaration? =
-        mapping[value.descriptor]
 }
 
 fun BackendContext.createIrBuilder(
@@ -109,11 +100,8 @@ fun IrBuilderWithScope.irNot(arg: IrExpression) =
 fun IrBuilderWithScope.irThrow(arg: IrExpression) =
     IrThrowImpl(startOffset, endOffset, context.irBuiltIns.nothingType, arg)
 
-fun IrBuilderWithScope.irCatch(catchParameter: IrVariable) =
-    IrCatchImpl(
-        startOffset, endOffset,
-        catchParameter
-    )
+fun IrBuilderWithScope.irCatch(catchParameter: IrVariable, result: IrExpression): IrCatch =
+    IrCatchImpl(startOffset, endOffset, catchParameter, result)
 
 fun IrBuilderWithScope.irImplicitCoercionToUnit(arg: IrExpression) =
     IrTypeOperatorCallImpl(
@@ -156,6 +144,18 @@ open class IrBuildingTransformer(private val context: BackendContext) : IrElemen
             return super.visitAnonymousInitializer(declaration)
         }
     }
+
+    override fun visitEnumEntry(declaration: IrEnumEntry): IrStatement {
+        withBuilder(declaration.symbol) {
+            return super.visitEnumEntry(declaration)
+        }
+    }
+
+    override fun visitScript(declaration: IrScript): IrStatement {
+        withBuilder(declaration.symbol) {
+            return super.visitScript(declaration)
+        }
+    }
 }
 
 fun IrConstructor.callsSuper(irBuiltIns: IrBuiltIns): Boolean {
@@ -180,12 +180,12 @@ fun IrConstructor.callsSuper(irBuiltIns: IrBuiltIns): Boolean {
             val delegatingClass = expression.symbol.owner.parent as IrClass
             // TODO: figure out why Lazy IR multiplies Declarations for descriptors and fix it
             // It happens because of IrBuiltIns whose IrDeclarations are different for runtime and test
-            if (delegatingClass.descriptor == superClass.classifierOrFail.descriptor)
+            if (delegatingClass.symbol == superClass.classifierOrFail)
                 callsSuper = true
-            else if (delegatingClass.descriptor != constructedClass.descriptor)
+            else if (delegatingClass.symbol != constructedClass.symbol)
                 throw AssertionError(
                     "Expected either call to another constructor of the class being constructed or" +
-                            " call to super class constructor. But was: $delegatingClass"
+                            " call to super class constructor. But was: $delegatingClass with '${delegatingClass.name}' name"
                 )
         }
     })

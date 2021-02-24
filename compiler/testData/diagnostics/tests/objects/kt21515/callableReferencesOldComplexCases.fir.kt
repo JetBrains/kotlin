@@ -12,7 +12,7 @@ object A {
     }
 
     class Derived : Base() {
-        val a = FromBaseCompanion::foo
+        val a = <!UNRESOLVED_REFERENCE!><!UNRESOLVED_REFERENCE!>FromBaseCompanion<!>::foo<!>
     }
 }
 
@@ -30,7 +30,7 @@ object B {
     }
 
     class Derived : Base() {
-        val a = FromBaseCompanion::foo
+        val a = <!UNRESOLVED_REFERENCE!><!UNRESOLVED_REFERENCE!>FromBaseCompanion<!>::foo<!>
     }
 }
 
@@ -48,7 +48,7 @@ object C {
     }
 
     class Derived : Base() {
-        val a = FromBaseCompanion::foo
+        val a = <!UNRESOLVED_REFERENCE!><!UNRESOLVED_REFERENCE!>FromBaseCompanion<!>::foo<!>
     }
 }
 
@@ -64,6 +64,6 @@ object D {
     }
 
     class Derived : Base() {
-        val a = FromBaseCompanion::foo
+        val a = <!UNRESOLVED_REFERENCE!><!UNRESOLVED_REFERENCE!>FromBaseCompanion<!>::foo<!>
     }
 }

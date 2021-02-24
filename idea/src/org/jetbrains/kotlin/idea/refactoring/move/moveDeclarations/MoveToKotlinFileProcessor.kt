@@ -27,6 +27,7 @@ import com.intellij.usageView.UsageInfo
 import com.intellij.usageView.UsageViewDescriptor
 import com.intellij.util.containers.MultiMap
 import com.intellij.util.text.UniqueNameGenerator
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.psi.KtFile
 
 class MoveToKotlinFileProcessor @JvmOverloads constructor(
@@ -49,7 +50,7 @@ class MoveToKotlinFileProcessor @JvmOverloads constructor(
     moveCallback,
     prepareSuccessfulCallback
 ) {
-    override fun getCommandName() = "Move ${sourceFile.name}"
+    override fun getCommandName() = KotlinBundle.message("text.move.file.0", sourceFile.name)
 
     override fun createUsageViewDescriptor(usages: Array<out UsageInfo>): UsageViewDescriptor {
         return MoveFilesWithDeclarationsViewDescriptor(arrayOf(sourceFile), targetDirectory)
@@ -65,22 +66,19 @@ class MoveToKotlinFileProcessor @JvmOverloads constructor(
         return super.showConflicts(conflicts, usages)
     }
 
-    // Assign a temporary name to file-under-move to avoid naming conflict during the refactoring
-    private fun renameFileTemporarily() {
-        if (targetDirectory.findFile(targetFileName) == null) return
+    private fun renameFileTemporarilyIfNeeded() {
+        if (targetDirectory.findFile(sourceFile.name) == null) return
+
+        val containingDirectory = sourceFile.containingDirectory ?: return
 
         val temporaryName = UniqueNameGenerator.generateUniqueName("temp", "", ".kt") {
-            sourceFile.containingDirectory!!.findFile(it) == null
+            containingDirectory.findFile(it) == null
         }
         sourceFile.name = temporaryName
     }
 
     override fun performRefactoring(usages: Array<UsageInfo>) {
-        val needTemporaryRename = targetDirectory.findFile(sourceFile.name) != null
-        if (needTemporaryRename) {
-            renameFileTemporarily()
-        }
-
+        renameFileTemporarilyIfNeeded()
         super.performRefactoring(usages)
         sourceFile.name = targetFileName
     }

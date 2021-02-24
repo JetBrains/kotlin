@@ -76,7 +76,7 @@ class KotlinLiteralCopyPasteProcessor : CopyPastePreProcessor {
             while (givenTextOffset < fileRange.endOffset) {
                 val element: PsiElement? = file.findElementAt(givenTextOffset)
                 if (element == null) {
-                    buffer.append(fileText.substring(givenTextOffset, fileRange.endOffset))
+                    buffer.append(fileText.substring(givenTextOffset, fileRange.endOffset - 1))
                     break
                 }
                 val elTp = element.node.elementType
@@ -243,8 +243,8 @@ private class TemplateTokenSequence(private val inputString: String) : Sequence<
             while (to < inputString.length) {
                 val c = inputString[to]
                 if (c == '\\') {
-                    to += 1
-                    if (to < inputString.length) to += 1
+                    to += 1.toInt()
+                    if (to < inputString.length) to += 1.toInt()
                     continue
                 } else if (c == '$') {
                     if (inputString.substring(to).guessIsTemplateEntryStart()) {

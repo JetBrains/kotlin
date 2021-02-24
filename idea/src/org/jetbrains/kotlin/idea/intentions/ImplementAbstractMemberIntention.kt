@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaClassDescriptor
 import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideImplementMembersHandler
@@ -46,8 +47,10 @@ import org.jetbrains.kotlin.util.findCallableMemberBySignature
 import java.util.*
 import javax.swing.ListSelectionModel
 
-abstract class ImplementAbstractMemberIntentionBase :
-    SelfTargetingRangeIntention<KtNamedDeclaration>(KtNamedDeclaration::class.java, "", "Implement abstract member") {
+abstract class ImplementAbstractMemberIntentionBase : SelfTargetingRangeIntention<KtNamedDeclaration>(
+    KtNamedDeclaration::class.java,
+    KotlinBundle.lazyMessage("implement.abstract.member")
+) {
     companion object {
         private val LOG = Logger.getInstance("#${ImplementAbstractMemberIntentionBase::class.java.canonicalName}")
     }
@@ -92,12 +95,12 @@ abstract class ImplementAbstractMemberIntentionBase :
             .filter(::acceptSubClass)
     }
 
-    protected abstract fun computeText(element: KtNamedDeclaration): String?
+    protected abstract fun computeText(element: KtNamedDeclaration): (() -> String)?
 
     override fun applicabilityRange(element: KtNamedDeclaration): TextRange? {
         if (!element.isAbstract()) return null
 
-        text = computeText(element) ?: return null
+        setTextGetter(computeText(element) ?: return null)
 
         if (!findClassesToProcess(element).any()) return null
 
@@ -129,9 +132,9 @@ abstract class ImplementAbstractMemberIntentionBase :
 
     private fun implementInClass(member: KtNamedDeclaration, targetClasses: List<PsiElement>) {
         val project = member.project
-        project.executeCommand(CodeInsightBundle.message("intention.implement.abstract.method.command.name")) {
+        project.executeCommand<Unit>(CodeInsightBundle.message("intention.implement.abstract.method.command.name")) {
             if (!FileModificationService.getInstance().preparePsiElementsForWrite(targetClasses)) return@executeCommand
-            runWriteAction {
+            runWriteAction<Unit> {
                 for (targetClass in targetClasses) {
                     try {
                         val descriptor = OpenFileDescriptor(project, targetClass.containingFile.virtualFile)
@@ -220,9 +223,9 @@ abstract class ImplementAbstractMemberIntentionBase :
 }
 
 class ImplementAbstractMemberIntention : ImplementAbstractMemberIntentionBase() {
-    override fun computeText(element: KtNamedDeclaration): String? = when (element) {
-        is KtProperty -> "Implement abstract property"
-        is KtNamedFunction -> "Implement abstract function"
+    override fun computeText(element: KtNamedDeclaration): (() -> String)? = when (element) {
+        is KtProperty -> KotlinBundle.lazyMessage("implement.abstract.property")
+        is KtNamedFunction -> KotlinBundle.lazyMessage("implement.abstract.function")
         else -> null
     }
 
@@ -235,9 +238,9 @@ class ImplementAbstractMemberIntention : ImplementAbstractMemberIntentionBase() 
 }
 
 class ImplementAbstractMemberAsConstructorParameterIntention : ImplementAbstractMemberIntentionBase() {
-    override fun computeText(element: KtNamedDeclaration): String? {
+    override fun computeText(element: KtNamedDeclaration): (() -> String)? {
         if (element !is KtProperty) return null
-        return "Implement as constructor parameter"
+        return KotlinBundle.lazyMessage("implement.as.constructor.parameter")
     }
 
     override fun acceptSubClass(subClassDescriptor: ClassDescriptor, memberDescriptor: CallableMemberDescriptor): Boolean {

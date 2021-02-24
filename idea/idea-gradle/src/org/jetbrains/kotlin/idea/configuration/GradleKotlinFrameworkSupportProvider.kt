@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.configuration
@@ -25,20 +14,18 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ModifiableModelsProvider
 import com.intellij.openapi.roots.ModifiableRootModel
-import com.intellij.openapi.vfs.LocalFileSystem
-import com.intellij.openapi.vfs.VfsUtil.createDirectoryIfMissing
 import com.intellij.psi.PsiFile
+import org.jetbrains.annotations.Nls
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.idea.KotlinIcons
+import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
 import org.jetbrains.kotlin.idea.formatter.KotlinStyleGuideCodeStyle
 import org.jetbrains.kotlin.idea.formatter.ProjectCodeStyleImporter
-import org.jetbrains.kotlin.idea.statistics.FUSEventGroups
-import org.jetbrains.kotlin.idea.statistics.KotlinFUSLogger
+import org.jetbrains.kotlin.idea.statistics.NewProjectWizardsFUSCollector
 import org.jetbrains.kotlin.idea.util.isSnapshot
 import org.jetbrains.kotlin.idea.versions.*
 import org.jetbrains.plugins.gradle.frameworkSupport.BuildScriptDataBuilder
 import org.jetbrains.plugins.gradle.frameworkSupport.GradleFrameworkSupportProvider
-import java.io.File
-import java.io.Writer
 import javax.swing.Icon
 import javax.swing.JComponent
 import javax.swing.JTextPane
@@ -154,7 +141,7 @@ abstract class GradleKotlinFrameworkSupportProvider(
             ProjectCodeStyleImporter.apply(module.project, KotlinStyleGuideCodeStyle.INSTANCE)
             GradlePropertiesFileFacade.forProject(module.project).addCodeStyleProperty(KotlinStyleGuideCodeStyle.CODE_STYLE_SETTING)
         }
-        KotlinFUSLogger.log(FUSEventGroups.NPWizards, this.javaClass.simpleName)
+        NewProjectWizardsFUSCollector.log(this.presentableName, "Gradle", false)
     }
 
     protected open fun updateSettingsScript(settingsBuilder: SettingsScriptBuilder<out PsiFile>, specifyPluginVersionIfNeeded: Boolean) {}
@@ -162,9 +149,13 @@ abstract class GradleKotlinFrameworkSupportProvider(
     protected abstract fun getDependencies(sdk: Sdk?): List<String>
     protected open fun getTestDependencies(): List<String> = listOf()
 
+    @NonNls
     protected abstract fun getPluginId(): String
+
+    @NonNls
     protected abstract fun getPluginExpression(): String
 
+    @Nls
     protected abstract fun getDescription(): String
 }
 
@@ -194,7 +185,8 @@ open class GradleKotlinJavaFrameworkSupportProvider(
         }
     }
 
-    override fun getDescription() = "A single-platform Kotlin library or application targeting the JVM"
+    override fun getDescription() =
+        KotlinIdeaGradleBundle.message("description.text.a.single.platform.kotlin.library.or.application.targeting.the.jvm")
 }
 
 abstract class GradleKotlinJSFrameworkSupportProvider(
@@ -212,14 +204,43 @@ abstract class GradleKotlinJSFrameworkSupportProvider(
     ) {
         super.addSupport(buildScriptData, module, sdk, specifyPluginVersionIfNeeded, explicitPluginVersion)
 
-        buildScriptData.addOther("kotlin.target.$jsSubTargetName { }")
+        buildScriptData.addOther(
+            """
+                kotlin {
+                    js {
+                        $jsSubTargetName {
+                        """.trimIndent() +
+                    (
+                            additionalSubTargetSettings()
+                                ?.lines()
+                                ?.joinToString("\n", "\n", "\n") { line ->
+                                    if (line.isBlank()) {
+                                        line
+                                    } else {
+                                        line
+                                            .prependIndent()
+                                            .prependIndent()
+                                            .prependIndent()
+                                    }
+                                } ?: "\n"
+                            ) +
+                    """
+                        }
+                        binaries.executable()
+                    }
+                }
+            """.trimIndent()
+        )
     }
+
+    abstract fun additionalSubTargetSettings(): String?
 
     override fun getPluginId() = KotlinJsGradleModuleConfigurator.KOTLIN_JS
     override fun getPluginExpression() = "id 'org.jetbrains.kotlin.js'"
     override fun getDependencies(sdk: Sdk?) = listOf(MAVEN_JS_STDLIB_ID)
     override fun getTestDependencies() = listOf(MAVEN_JS_TEST_ID)
-    override fun getDescription() = "A single-platform Kotlin library or application targeting JavaScript"
+    override fun getDescription() =
+        KotlinIdeaGradleBundle.message("description.text.a.single.platform.kotlin.library.or.application.targeting.javascript")
 }
 
 open class GradleKotlinJSBrowserFrameworkSupportProvider(
@@ -229,7 +250,8 @@ open class GradleKotlinJSBrowserFrameworkSupportProvider(
     override val jsSubTargetName: String
         get() = "browser"
 
-    override fun getDescription() = "A single-platform Kotlin library or application targeting JavaScript for browser"
+    override fun getDescription() =
+        KotlinIdeaGradleBundle.message("description.text.a.single.platform.kotlin.library.or.application.targeting.js.for.browser")
 
     override fun addSupport(
         buildScriptData: BuildScriptDataBuilder,
@@ -239,50 +261,11 @@ open class GradleKotlinJSBrowserFrameworkSupportProvider(
         explicitPluginVersion: String?
     ) {
         super.addSupport(buildScriptData, module, sdk, specifyPluginVersionIfNeeded, explicitPluginVersion)
-
-        getNewFileWriter(module, "src/main/resources", "index.html")?.use {
-            it.write("""
-                <!DOCTYPE html>
-                <html lang="en">
-                <head>
-                    <meta charset="UTF-8">
-                    <title>${module.name}</title>
-                    <script src="${module.name}.js"></script>
-                </head>
-                <body>
-                
-                </body>
-                </html>
-            """.trimIndent().trim())
-        }
-
-
-        getNewFileWriter(module, "src/main/kotlin", "main.kt")?.use {
-            it.write("""
-                import kotlin.browser.document
-                
-                fun main() {
-                    document.write("Hello, world!")
-                }
-            """.trimIndent().trim())
-        }
+        addBrowserSupport(module)
     }
 
-    /**
-     * create parent directories and file
-     * @return null if file already exists
-     */
-    private fun getNewFileWriter(module: Module, relativeDir: String, fileName: String): Writer? {
-        val contentEntryPath = module.gradleModuleBuilder?.contentEntryPath ?: return null
-        if (contentEntryPath.isEmpty()) return null
-        val contentRootDir = File(contentEntryPath)
-        val modelContentRootDir = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(contentRootDir) ?: return null
-
-        val dir = createDirectoryIfMissing(modelContentRootDir, relativeDir) ?: return null
-        if (dir.findChild(fileName) != null) return null
-        val file = dir.createChildData(null, fileName)
-        return file.getOutputStream(null).writer()
-    }
+    override fun additionalSubTargetSettings(): String? =
+        browserConfiguration()
 }
 
 open class GradleKotlinJSNodeFrameworkSupportProvider(
@@ -292,11 +275,15 @@ open class GradleKotlinJSNodeFrameworkSupportProvider(
     override val jsSubTargetName: String
         get() = "nodejs"
 
-    override fun getDescription() = "A single-platform Kotlin library or application targeting JavaScript for Node.js"
+    override fun additionalSubTargetSettings(): String? =
+        null
+
+    override fun getDescription() =
+        KotlinIdeaGradleBundle.message("description.text.a.single.platform.kotlin.library.or.application.targeting.js.for.node.js")
 }
 
 open class GradleKotlinMPPFrameworkSupportProvider : GradleKotlinFrameworkSupportProvider(
-    "KOTLIN_MPP", "Kotlin/Multiplatform", KotlinIcons.MPP
+    "KOTLIN_MPP", KotlinIdeaGradleBundle.message("display.name.kotlin.multiplatform"), KotlinIcons.MPP
 ) {
     override fun getPluginId() = "org.jetbrains.kotlin.multiplatform"
     override fun getPluginExpression() = "id 'org.jetbrains.kotlin.multiplatform'"
@@ -305,8 +292,7 @@ open class GradleKotlinMPPFrameworkSupportProvider : GradleKotlinFrameworkSuppor
     override fun getTestDependencies(): List<String> = listOf()
 
     override fun getDescription() =
-        "Multi-targeted (JVM, JS, iOS, etc.) project with shared code in common modules. " +
-                "The targets can be configured in the project's build script."
+        KotlinIdeaGradleBundle.message("description.text.multi.targeted.jvm.js.ios.etc.project.with.shared.code.in.common.modules")
 }
 
 open class GradleKotlinMPPSourceSetsFrameworkSupportProvider : GradleKotlinMPPFrameworkSupportProvider() {
@@ -319,6 +305,7 @@ open class GradleKotlinMPPSourceSetsFrameworkSupportProvider : GradleKotlinMPPFr
         explicitPluginVersion: String?
     ) {
         super.addSupport(buildScriptData, module, sdk, specifyPluginVersionIfNeeded, explicitPluginVersion)
+        NewProjectWizardsFUSCollector.log(this.presentableName + " as framework", "Gradle", false)
 
         buildScriptData.addOther(
             """kotlin {

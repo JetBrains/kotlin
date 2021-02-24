@@ -4,6 +4,7 @@ package i
 
 //+JDK
 import java.util.*
+import checkSubtype
 
 fun <T, R> Collection<T>.map1(f : (T) -> R) : List<R> {}
 fun <T, R> java.lang.Iterable<T>.map1(f : (T) -> R) : List<R> {}

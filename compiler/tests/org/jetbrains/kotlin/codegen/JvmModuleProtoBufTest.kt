@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
 import org.jetbrains.kotlin.test.CompilerTestUtil
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 
 class JvmModuleProtoBufTest : KtUsefulTestCase() {
@@ -35,8 +36,8 @@ class JvmModuleProtoBufTest : KtUsefulTestCase() {
         loadWith: LanguageVersion = LanguageVersion.LATEST_STABLE,
         extraOptions: List<String> = emptyList()
     ) {
-        val directory = KotlinTestUtils.getTestDataPathBase() + relativeDirectory
-        val tmpdir = KotlinTestUtils.tmpDir(this::class.simpleName)
+        val directory = KtTestUtil.getTestDataPathBase() + relativeDirectory
+        val tmpdir = KtTestUtil.tmpDir(this::class.simpleName)
 
         val moduleName = "main"
         CompilerTestUtil.executeCompilerAssertSuccessful(
@@ -55,10 +56,10 @@ class JvmModuleProtoBufTest : KtUsefulTestCase() {
         )
         val result = buildString {
             for (annotationClassId in mapping.moduleData.annotations) {
-                appendln("@$annotationClassId")
+                appendLine("@$annotationClassId")
             }
             for ((fqName, packageParts) in mapping.packageFqName2Parts) {
-                appendln(fqName)
+                appendLine(fqName)
                 for (part in packageParts.parts) {
                     append("  ")
                     append(part)
@@ -68,7 +69,7 @@ class JvmModuleProtoBufTest : KtUsefulTestCase() {
                         append(facadeName)
                         append(")")
                     }
-                    appendln()
+                    appendLine()
                 }
             }
         }

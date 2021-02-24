@@ -5,16 +5,15 @@
 
 package org.jetbrains.kotlin.idea.slicer
 
-import com.intellij.slicer.SliceNullnessAnalyzerBase
 import com.intellij.slicer.SliceRootNode
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
 abstract class AbstractSlicerNullnessGroupingTest : AbstractSlicerTest() {
     override fun doTest(path: String, sliceProvider: KotlinSliceProvider, rootNode: SliceRootNode) {
-        val treeStructure = SliceTreeStructure(rootNode)
+        val treeStructure = TestSliceTreeStructure(rootNode)
         val analyzer = sliceProvider.nullnessAnalyzer
-        val nullnessByNode = SliceNullnessAnalyzerBase.createMap()
+        val nullnessByNode = HackedSliceNullnessAnalyzerBase.createMap()
         val nullness = analyzer.calcNullableLeaves(rootNode, treeStructure, nullnessByNode)
         val newRootNode = analyzer.createNewTree(nullness, rootNode, nullnessByNode)
         val renderedForest = buildString {

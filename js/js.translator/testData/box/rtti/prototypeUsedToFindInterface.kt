@@ -1,4 +1,6 @@
 // EXPECTED_REACHABLE_NODES: 1371
+// IGNORE_BACKEND: JS_IR_ES6
+
 interface A {
     fun foo(): String
 }

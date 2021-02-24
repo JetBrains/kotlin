@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 enum class ProtocolState {
   WAITING {
     override fun signal() = ProtocolState.TALKING

@@ -10,6 +10,7 @@ import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.getCallableDescriptor
 import org.jetbrains.kotlin.idea.util.getFactoryForImplicitReceiverWithSubtypeOf
@@ -50,7 +51,12 @@ class ImplicitThisInspection : AbstractKotlinInspection() {
             val receiverText = if (expressionFactory.isImmediate) "this" else expressionFactory.expressionText
 
             val fix = fixFactory(receiverText)
-            holder.registerProblem(expression, "Add explicit '$receiverText'", ProblemHighlightType.GENERIC_ERROR_OR_WARNING, fix)
+            holder.registerProblem(
+                expression,
+                KotlinBundle.message("callable.reference.fix.family.name", receiverText),
+                ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                fix
+            )
         }
 
         private fun KtExpression.isSelectorOfDotQualifiedExpression(): Boolean {
@@ -60,7 +66,7 @@ class ImplicitThisInspection : AbstractKotlinInspection() {
     }
 
     private class CallFix(private val receiverText: String) : LocalQuickFix {
-        override fun getFamilyName() = "Add explicit '$receiverText'"
+        override fun getFamilyName() = KotlinBundle.message("callable.reference.fix.family.name", receiverText)
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             val expression = descriptor.psiElement as? KtExpression ?: return
@@ -72,7 +78,7 @@ class ImplicitThisInspection : AbstractKotlinInspection() {
     }
 
     private class CallableReferenceFix(private val receiverText: String) : LocalQuickFix {
-        override fun getFamilyName() = "Add explicit '$receiverText'"
+        override fun getFamilyName() = KotlinBundle.message("callable.reference.fix.family.name", receiverText)
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             val expression = descriptor.psiElement as? KtCallableReferenceExpression ?: return

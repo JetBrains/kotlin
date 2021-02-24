@@ -1,7 +1,0 @@
-// "Fix with 'asDynamic'" "true"
-// JS
-
-class A
-
-inline val A.boo: Int
-    get() = asDynamic().boo

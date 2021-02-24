@@ -24,6 +24,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.getCallableDescriptor
 import org.jetbrains.kotlin.idea.references.mainReference
@@ -42,7 +43,7 @@ class ExplicitThisInspection : AbstractKotlinInspection() {
             if (hasExplicitThis(expression)) {
                 holder.registerProblem(
                     thisExpression,
-                    "Redundant explicit this",
+                    KotlinBundle.message("redundant.explicit.this"),
                     LIKE_UNUSED_SYMBOL,
                     ExplicitThisExpressionFix(thisExpression.text)
                 )
@@ -108,7 +109,7 @@ class ExplicitThisInspection : AbstractKotlinInspection() {
 }
 
 class ExplicitThisExpressionFix(private val text: String) : LocalQuickFix {
-    override fun getFamilyName(): String = "Remove redundant '$text'"
+    override fun getFamilyName(): String = KotlinBundle.message("explicit.this.expression.fix.family.name", text)
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         val thisExpression = descriptor.psiElement as? KtThisExpression ?: return

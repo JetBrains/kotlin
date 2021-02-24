@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -22,25 +22,20 @@ import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.idea.references.KtReference
+import org.jetbrains.kotlin.idea.references.getImportAlias
+import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinMethodReferencesSearchParameters
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOptions
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchParameters
-import org.jetbrains.kotlin.idea.search.or
-import org.jetbrains.kotlin.idea.search.projectScope
-import org.jetbrains.kotlin.idea.statistics.FUSEventGroups
-import org.jetbrains.kotlin.idea.statistics.KotlinFUSLogger
 import org.jetbrains.kotlin.idea.util.actualsForExpected
 import org.jetbrains.kotlin.idea.util.liftToExpected
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.isIdentifier
-import org.jetbrains.kotlin.psi.psiUtil.parents
-import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.ImportPath
 import java.util.ArrayList
-import kotlin.collections.*
 
 abstract class RenameKotlinPsiProcessor : RenamePsiElementProcessor() {
+
     class MangledJavaRefUsageInfo(
         val manglingSuffix: String,
         element: PsiElement,
@@ -57,19 +52,29 @@ abstract class RenameKotlinPsiProcessor : RenamePsiElementProcessor() {
 
     override fun canProcessElement(element: PsiElement): Boolean = element is KtNamedDeclaration
 
-    override fun findReferences(element: PsiElement): Collection<PsiReference> {
-        KotlinFUSLogger.log(FUSEventGroups.Refactoring, this.javaClass.simpleName)
-
-        val searchParameters = KotlinReferencesSearchParameters(
-            element,
-            element.project.projectScope() or element.useScope,
-            kotlinOptions = KotlinReferencesSearchOptions(searchForComponentConventions = false)
-        )
-        val references = ReferencesSearch.search(searchParameters).toMutableList()
+    protected fun findReferences(
+        element: PsiElement,
+        searchParameters: KotlinReferencesSearchParameters
+    ): Collection<PsiReference> {
+        val references = ReferencesSearch.search(searchParameters).toMutableSet()
         if (element is KtNamedFunction || (element is KtProperty && !element.isLocal) || (element is KtParameter && element.hasValOrVar())) {
-            element.toLightMethods().flatMapTo(references) { MethodReferencesSearch.search(it) }
+            element.toLightMethods().flatMapTo(references) { method ->
+                MethodReferencesSearch.search(
+                    KotlinMethodReferencesSearchParameters(
+                        method,
+                        kotlinOptions = KotlinReferencesSearchOptions(
+                            acceptImportAlias = false
+                        )
+                    )
+                )
+            }
         }
-        return references
+        return references.filter {
+            // have to filter so far as
+            // - text-matched reference could be named as imported alias and found in ReferencesSearch
+            // - MethodUsagesSearcher could create its own MethodReferencesSearchParameters regardless provided one
+            it.element.getNonStrictParentOfType<KtImportDirective>() != null || it.getImportAlias() == null
+        }
     }
 
     override fun createUsageInfo(element: PsiElement, ref: PsiReference, referenceElement: PsiElement): UsageInfo {
@@ -155,10 +160,10 @@ abstract class RenameKotlinPsiProcessor : RenamePsiElementProcessor() {
         listener: RefactoringElementListener?
     ) {
         val simpleUsages = ArrayList<UsageInfo>(usages.size)
-        for (usage in usages) {
-            if (renameMangledUsageIfPossible(usage, element, newName)) continue
+        ForeignUsagesRenameProcessor.processAll(element, newName, usages, fallbackHandler = { usage ->
+            if (renameMangledUsageIfPossible(usage, element, newName)) return@processAll
             simpleUsages += usage
-        }
+        })
 
         RenameUtil.doRenameGenericNamedElement(element, newName, simpleUsages.toTypedArray(), listener)
     }
@@ -186,4 +191,21 @@ abstract class RenameKotlinPsiProcessor : RenamePsiElementProcessor() {
             element.ambiguousImportUsages = null
         }
     }
+
+    override fun findReferences(
+        element: PsiElement,
+        searchScope: SearchScope,
+        searchInCommentsAndStrings: Boolean
+    ): Collection<PsiReference> {
+        val searchParameters = KotlinReferencesSearchParameters(
+            element,
+            searchScope,
+            kotlinOptions = KotlinReferencesSearchOptions(
+                searchForComponentConventions = false,
+                acceptImportAlias = false
+            )
+        )
+        return findReferences(element, searchParameters)
+    }
+
 }

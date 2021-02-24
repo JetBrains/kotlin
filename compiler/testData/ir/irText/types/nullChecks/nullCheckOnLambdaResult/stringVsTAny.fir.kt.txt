@@ -1,0 +1,10 @@
+fun <T : Any> useTAny(fn: Function0<T>): T {
+  return fn.invoke()
+}
+
+fun testNoNullCheck() {
+  useTAny<String?>(fn = local fun <anonymous>(): String? {
+    return string()
+  }
+) /*~> Unit */
+}

@@ -1,0 +1,13 @@
+var testSimple: Int
+  field = 0
+  get
+  set(value: Int) {
+    #testSimple = value
+  }
+
+var testAugmented: Int
+  field = 0
+  get
+  set(value: Int) {
+    #testAugmented = #testAugmented.plus(other = value)
+  }

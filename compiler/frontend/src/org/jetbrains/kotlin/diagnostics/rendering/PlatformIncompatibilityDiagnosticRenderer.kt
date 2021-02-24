@@ -64,11 +64,11 @@ class IncompatibleExpectedActualClassScopesRenderer(
 
 open class MultiplatformDiagnosticRenderingMode {
     open fun newLine(sb: StringBuilder) {
-        sb.appendln()
+        sb.appendLine()
     }
 
     open fun renderList(sb: StringBuilder, elements: List<() -> Unit>) {
-        sb.appendln()
+        sb.appendLine()
         for (element in elements) {
             element()
         }
@@ -77,7 +77,7 @@ open class MultiplatformDiagnosticRenderingMode {
     open fun renderDescriptor(sb: StringBuilder, descriptor: DeclarationDescriptor, context: RenderingContext, indent: String) {
         sb.append(indent)
         sb.append(INDENTATION_UNIT)
-        sb.appendln(Renderers.COMPACT_WITH_MODIFIERS.render(descriptor, context))
+        sb.appendLine(Renderers.COMPACT_WITH_MODIFIERS.render(descriptor, context))
     }
 }
 

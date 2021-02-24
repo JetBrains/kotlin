@@ -20,6 +20,8 @@ fun A.forEach(s: String) {}
 package a
 
 import b.*
+import checkType
+import _
 
 class A {
     fun forEach() = this
@@ -42,7 +44,7 @@ fun test(a: A) {
 
     a.<!OVERLOAD_RESOLUTION_AMBIGUITY!>forEach<!>("")
 
-    <!NI;NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>with<!>(a) {
+    with(a) {
         forEach() checkType { _<String>() }
 
         forEach(1) checkType { _<Int>() }

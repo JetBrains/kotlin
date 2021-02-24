@@ -1,3 +1,5 @@
+// FIR_COMPARISON
+
 fun Some.first() {
 }
 

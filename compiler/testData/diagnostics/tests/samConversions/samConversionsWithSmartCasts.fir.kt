@@ -49,11 +49,11 @@ fun test6(a: Any) {
 
 fun test7(a: (Int) -> Int) {
     a as () -> Unit
-    J().<!INAPPLICABLE_CANDIDATE!>run1<!>(a)
+    J().run1(a)
 }
 
 fun test8(a: () -> Unit) {
-    J().<!INAPPLICABLE_CANDIDATE!>run1<!>(J.id(a))
+    J().run1(J.id(a))
 }
 
 fun test9() {

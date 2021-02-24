@@ -6,7 +6,9 @@
           "specVersion": "0.1-218",
           "casesNumber": 0,
           "description": "+A is exactly the same as A.unaryPlus() where unaryMinus is a valid operator function available in the current scope.",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/unary-plus-expression/p-2/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ]
     }
@@ -19,7 +21,32 @@
           "casesNumber": 0,
           "description": "+A is exactly the same as A.unaryPlus() where unaryMinus is a valid operator function available in the current scope.",
           "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/unary-plus-expression/p-2/pos/1.1.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ],
+      "2": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "+A is exactly the same as A.unaryPlus() where unaryMinus is a valid operator function available in the current scope.",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/unary-plus-expression/p-2/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ]
+    }
+  },
+  "3": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-218",
+          "casesNumber": 0,
+          "description": "+A is exactly the same as A.unaryPlus() where unaryMinus is a valid operator function available in the current scope.",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/prefix-expressions/unary-plus-expression/p-2/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         }
       ]
     }

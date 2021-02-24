@@ -1,5 +1,5 @@
 // !RENDER_DIAGNOSTICS_MESSAGES
-// JAVAC_SKIP
+// SKIP_JAVAC
 
 // FILE: A.java
 
@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 annotation class An
 
 class B : A {
-    override fun foo(): String? = null
+    override fun foo(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>String?<!> = null
 }
 
 @An
@@ -38,5 +38,5 @@ public interface C {
 }
 
 class D : C {
-    override fun foo(): String? = null
+    override fun foo(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>String?<!> = null
 }

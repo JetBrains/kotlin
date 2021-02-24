@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // See KT-10276
 
 class Bar() {

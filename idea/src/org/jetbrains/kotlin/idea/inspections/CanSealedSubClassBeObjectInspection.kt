@@ -20,6 +20,7 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.asJava.classes.KtLightClassImpl
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.getModalityFromDescriptor
 import org.jetbrains.kotlin.idea.quickfix.sealedSubClassToObject.ConvertSealedSubClassToObjectFix
@@ -45,6 +46,7 @@ class CanSealedSubClassBeObjectInspection : AbstractKotlinInspection() {
 
                 val candidates = klass.getSubclasses()
                     .withEmptyConstructors()
+                    .thatHasNoClassModifiers()
                     .thatAreFinal()
                     .thatHasNoTypeParameters()
                     .thatHasNoInnerClasses()
@@ -59,7 +61,7 @@ class CanSealedSubClassBeObjectInspection : AbstractKotlinInspection() {
                 val keyword = klass.getClassOrInterfaceKeyword() ?: return
                 holder.registerProblem(
                     keyword,
-                    "Sealed sub-class has no state and no overridden equals",
+                    KotlinBundle.message("sealed.sub.class.has.no.state.and.no.overridden.equals"),
                     ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                     ConvertSealedSubClassToObjectFix(),
                     GenerateIdentityEqualsFix()
@@ -77,6 +79,13 @@ class CanSealedSubClassBeObjectInspection : AbstractKotlinInspection() {
         return map { it.kotlinOrigin }.asSequence().filterIsInstance<KtClass>()
             .filter { it.primaryConstructorParameters.isEmpty() }
             .filter { klass -> klass.secondaryConstructors.all { cons -> cons.valueParameters.isEmpty() } }.toList()
+    }
+
+    private fun List<KtClass>.thatHasNoClassModifiers(): List<KtClass> {
+        return filter { klass ->
+            val modifierList = klass.modifierList ?: return@filter true
+            CLASS_MODIFIERS.none { modifierList.hasModifier(it) }
+        }
     }
 
     private fun List<KtClass>.thatHasNoCompanionObjects(): List<KtClass> {
@@ -109,7 +118,7 @@ class CanSealedSubClassBeObjectInspection : AbstractKotlinInspection() {
 
     private fun KtClass.hasNoStateOrEquals(): Boolean {
         if (primaryConstructor?.valueParameters?.isNotEmpty() == true) return false
-        val body = getBody()
+        val body = body
         return body == null || run {
             val declarations = body.declarations
             declarations.asSequence().filterIsInstance<KtProperty>().none { property ->
@@ -131,7 +140,7 @@ class CanSealedSubClassBeObjectInspection : AbstractKotlinInspection() {
     }
 
     private fun KtClass.hasNoInnerClass(): Boolean {
-        val internalClasses = getBody()
+        val internalClasses = body
             ?.declarations
             ?.filterIsInstance<KtClass>() ?: return true
 
@@ -142,5 +151,13 @@ class CanSealedSubClassBeObjectInspection : AbstractKotlinInspection() {
         val EQUALS = OperatorNameConventions.EQUALS.asString()
 
         const val HASH_CODE = "hashCode"
+
+        val CLASS_MODIFIERS = listOf(
+            KtTokens.ANNOTATION_KEYWORD,
+            KtTokens.DATA_KEYWORD,
+            KtTokens.ENUM_KEYWORD,
+            KtTokens.INNER_KEYWORD,
+            KtTokens.SEALED_KEYWORD,
+        )
     }
 }

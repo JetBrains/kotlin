@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 
 inline fun <R> inlineFunWithAnnotation(crossinline p: () -> R) {
     inlineFun {

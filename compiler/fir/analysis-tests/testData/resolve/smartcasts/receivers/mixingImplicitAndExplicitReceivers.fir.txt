@@ -1,0 +1,29 @@
+FILE: mixingImplicitAndExplicitReceivers.kt
+    public final fun takeString(s: R|kotlin/String|): R|kotlin/Unit| {
+    }
+    public final class Wrapper : R|kotlin/Any| {
+        public constructor(s: R|kotlin/String?|): R|Wrapper| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val s: R|kotlin/String?| = R|<local>/s|
+            public get(): R|kotlin/String?|
+
+        public final fun withThis(): R|kotlin/Unit| {
+            when () {
+                !=(this@R|/Wrapper|.R|/Wrapper.s|, Null(null)) ->  {
+                    R|/takeString|(this@R|/Wrapper|.R|/Wrapper.s|)
+                }
+            }
+
+            when () {
+                !=(this@R|/Wrapper|.R|/Wrapper.s|, Null(null)) ->  {
+                    R|/takeString|(this@R|/Wrapper|.R|/Wrapper.s|)
+                }
+            }
+
+        }
+
+    }
+    public final fun takeString(s: R|kotlin/String|): R|kotlin/Unit| {
+    }

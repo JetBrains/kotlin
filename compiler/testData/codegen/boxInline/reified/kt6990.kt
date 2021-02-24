@@ -1,6 +1,8 @@
-// TARGET_BACKEND: JVM
-// FILE: 1.kt
 // WITH_REFLECT
+// TARGET_BACKEND: JVM
+// IGNORE_BACKEND: ANDROID
+
+// FILE: 1.kt
 package test
 
 public inline fun <reified T : Any> inlineMeIfYouCan(): String? =

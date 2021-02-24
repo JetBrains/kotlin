@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 //KT-337 Can't break a line before a dot
 
 class A() {

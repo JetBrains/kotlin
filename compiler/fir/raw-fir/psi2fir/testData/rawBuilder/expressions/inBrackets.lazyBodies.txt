@@ -1,0 +1,2 @@
+FILE: inBrackets.kt
+    public? final? fun test(e: ( Int.() -> String )): R|kotlin/Unit| { LAZY_BLOCK }

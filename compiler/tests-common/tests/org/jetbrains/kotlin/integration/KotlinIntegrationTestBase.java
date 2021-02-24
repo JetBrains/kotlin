@@ -22,7 +22,6 @@ import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.process.ProcessOutputTypes;
-import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
@@ -34,6 +33,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.config.KotlinCompilerVersion;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir;
+import org.jetbrains.kotlin.test.WithMutedInDatabaseRunTest;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.utils.KotlinPaths;
 import org.jetbrains.kotlin.utils.PathUtil;
 
@@ -41,9 +42,16 @@ import java.io.File;
 import java.io.IOException;
 import java.util.regex.Pattern;
 
+@WithMutedInDatabaseRunTest
 public abstract class KotlinIntegrationTestBase extends TestCaseWithTmpdir {
     static {
         System.setProperty("java.awt.headless", "true");
+    }
+
+    @Override
+    protected void runTest() throws Throwable {
+        //noinspection Convert2MethodRef
+        KotlinTestUtils.runTestWithThrowable(this, () -> super.runTest());
     }
 
     protected int runJava(@NotNull String testDataDir, @Nullable String logName, @NotNull String... arguments) throws Exception {
@@ -80,7 +88,7 @@ public abstract class KotlinIntegrationTestBase extends TestCaseWithTmpdir {
         content = normalizePath(content, testDataDir, "[TestData]");
         content = normalizePath(content, tmpdir, "[Temp]");
         content = normalizePath(content, getCompilerLib(), "[CompilerLib]");
-        content = normalizePath(content, new File(KotlinTestUtils.getHomeDirectory()), "[KotlinProjectHome]");
+        content = normalizePath(content, new File(KtTestUtil.getHomeDirectory()), "[KotlinProjectHome]");
         content = content.replaceAll(Pattern.quote(KotlinCompilerVersion.VERSION), "[KotlinVersion]");
         content = content.replaceAll("\\(JRE .+\\)", "(JRE [JREVersion])");
         content = StringUtil.convertLineSeparators(content);

@@ -3,3 +3,5 @@ object Test {   // TODO restore correct behavior
     fun test() {<caret>
     }
 }
+
+// IGNORE_FORMATTER

@@ -76,7 +76,7 @@ fun KmAnnotationArgument<*>.writeAnnotationArgument(strings: StringTable): Proto
             }
             is KmAnnotationArgument.ULongValue -> {
                 this.type = ProtoBuf.Annotation.Argument.Value.Type.LONG
-                this.intValue = value.toLong()
+                this.intValue = value
                 this.flags = Flags.IS_UNSIGNED.toFlags(true)
             }
             is KmAnnotationArgument.StringValue -> {

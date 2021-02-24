@@ -30,7 +30,7 @@ class A {
 
         @JvmStatic override val base1: Int = 0
 
-        @JvmStatic open fun f() {}
+        @JvmStatic <!NON_FINAL_MEMBER_IN_OBJECT!>open<!> fun f() {}
 
         override val base2: Int = 0
             @JvmStatic get

@@ -4,5 +4,4 @@ internal class C(private val s: String?) {
             print("not null")
         }
     }
-
 }

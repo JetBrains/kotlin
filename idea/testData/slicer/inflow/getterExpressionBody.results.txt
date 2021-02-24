@@ -1,4 +1,4 @@
-7 val <bold>x = foo</bold>
-7 	val x = <bold>foo</bold>
-3 		val <bold>foo: Int</bold>
-4 			get() = <bold>0</bold>
+7 <bold>val x</bold> = foo (in test())
+7 	val x = <bold>foo</bold> (in test())
+3 		<bold>val foo: Int</bold>
+4 			get() = <bold>0</bold> (in foo.get)

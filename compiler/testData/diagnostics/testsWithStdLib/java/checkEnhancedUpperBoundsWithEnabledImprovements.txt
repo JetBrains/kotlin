@@ -1,0 +1,37 @@
+package
+
+public fun main1(/*0*/ x: A<kotlin.Int?> /* = MapLike<kotlin.Int?, kotlin.Int> */): kotlin.Unit
+public fun main2(/*0*/ x: A2<kotlin.Int?> /* = Foo<MapLike<kotlin.Int?, kotlin.Int>> */): kotlin.Unit
+public fun main3(): kotlin.Unit
+public fun main3(/*0*/ x: A3<kotlin.Int?> /* = ListLike<kotlin.collections.List<kotlin.Int?>> */): kotlin.Unit
+public fun test0(/*0*/ map: MapLike<kotlin.Int?, kotlin.Int>): kotlin.Unit
+public fun </*0*/ K> test11(/*0*/ map: MapLike<K, K>): kotlin.Unit
+public fun </*0*/ K> test12(/*0*/ map: MapLike<K?, K>): kotlin.Unit
+public fun </*0*/ K : kotlin.Any> test13(/*0*/ map: MapLike<K, K>): kotlin.Unit
+public fun </*0*/ K : kotlin.Any> test14(/*0*/ map: MapLike<K?, K>): kotlin.Unit
+
+public final class Foo</*0*/ K> {
+    public constructor Foo</*0*/ K>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class ListLike</*0*/ K : kotlin.collections.(Mutable)Collection<@org.jetbrains.annotations.NotNull kotlin.Any>!> {
+    public constructor ListLike</*0*/ K : kotlin.collections.(Mutable)Collection<@org.jetbrains.annotations.NotNull kotlin.Any>!>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class MapLike</*0*/ @org.jetbrains.annotations.NotNull K : kotlin.Any, /*1*/ V : kotlin.Any!> {
+    public constructor MapLike</*0*/ @org.jetbrains.annotations.NotNull K : kotlin.Any, /*1*/ V : kotlin.Any!>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public/*package*/ open fun putAll(/*0*/ map: kotlin.collections.(Mutable)Map<K, V!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+public typealias A</*0*/ A> = MapLike<A, kotlin.Int>
+public typealias A2</*0*/ B> = Foo<MapLike<B, kotlin.Int>>
+public typealias A3</*0*/ C> = ListLike<kotlin.collections.List<C>>
+

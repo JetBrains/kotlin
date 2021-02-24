@@ -1,0 +1,19 @@
+FILE: varargProjection.kt
+    public open class Base : R|kotlin/Any| {
+        public constructor(): R|Base| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class Sub : R|Base| {
+        public constructor(): R|Sub| {
+            super<R|Base|>()
+        }
+
+    }
+    public final fun foo(vararg arg: R|kotlin/Array<out Base>|): R|kotlin/Unit| {
+    }
+    public final fun bar(base: R|kotlin/Array<Base>|, sub: R|kotlin/Array<Sub>|): R|kotlin/Unit| {
+        R|/foo|(vararg(*R|<local>/base|))
+        R|/foo|(vararg(*R|<local>/sub|))
+    }

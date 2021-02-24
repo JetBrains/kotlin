@@ -12,8 +12,13 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Alarm
 import com.intellij.util.containers.HashSetQueue
-import org.jetbrains.kotlin.idea.core.script.debug
+import org.jetbrains.kotlin.idea.core.script.configuration.CompositeScriptConfigurationManager
+import org.jetbrains.kotlin.idea.core.script.configuration.utils.DefaultBackgroundExecutor.Companion.PROGRESS_INDICATOR_DELAY
+import org.jetbrains.kotlin.idea.core.script.configuration.utils.DefaultBackgroundExecutor.Companion.PROGRESS_INDICATOR_MIN_QUEUE
+import org.jetbrains.kotlin.idea.core.script.scriptingDebugLog
+import org.jetbrains.kotlin.idea.core.util.KotlinIdeaCoreBundle
 import java.util.*
+import javax.swing.SwingUtilities
 
 /**
  * Sequentially loads script configuration in background.
@@ -31,13 +36,14 @@ import java.util.*
  */
 internal class DefaultBackgroundExecutor(
     val project: Project,
-    val rootsManager: ScriptClassRootsIndexer
+    val manager: CompositeScriptConfigurationManager
 ) : BackgroundExecutor {
     companion object {
         const val PROGRESS_INDICATOR_DELAY = 1000
         const val PROGRESS_INDICATOR_MIN_QUEUE = 3
     }
 
+    val rootsManager get() = manager.updater
     private val work = Any()
     private val queue: Queue<LoadTask> = HashSetQueue()
 
@@ -68,7 +74,7 @@ internal class DefaultBackgroundExecutor(
         val task = LoadTask(key, actions)
 
         if (queue.add(task)) {
-            debug(task.key) { "added to update queue" }
+            scriptingDebugLog(task.key) { "added to update queue" }
 
             // If the queue is longer than PROGRESS_INDICATOR_MIN_QUEUE, show progress and cancel button
             if (queue.size > PROGRESS_INDICATOR_MIN_QUEUE) {
@@ -136,7 +142,7 @@ internal class DefaultBackgroundExecutor(
     private fun ensureInTransaction() {
         if (inTransaction) return
         inTransaction = true
-        rootsManager.startTransaction()
+        rootsManager.beginUpdating()
     }
 
     @Synchronized
@@ -203,7 +209,7 @@ internal class DefaultBackgroundExecutor(
         override fun start() {
             super.start()
 
-            object : Task.Backgroundable(project, "Kotlin: Loading script dependencies...", true) {
+            object : Task.Backgroundable(project, KotlinIdeaCoreBundle.message("text.kotlin.loading.script.configuration"), true) {
                 override fun run(indicator: ProgressIndicator) {
                     progressIndicator = indicator
                     updateProgress()
@@ -226,9 +232,12 @@ internal class DefaultBackgroundExecutor(
         override fun start() {
             super.start()
 
-            BackgroundTaskUtil.executeOnPooledThread(project, Runnable {
-                run()
-            })
+            // executeOnPooledThread requires read lock, and we may fail to acquire it
+            SwingUtilities.invokeLater {
+                BackgroundTaskUtil.executeOnPooledThread(project, {
+                    run()
+                })
+            }
         }
 
         override fun close() {

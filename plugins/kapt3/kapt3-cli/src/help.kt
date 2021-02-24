@@ -17,7 +17,7 @@ internal fun printHelp() {
         .filter { it.cliToolOption != null }
         .map { OptionToRender(it.nameArgs(), it.description) }
 
-    val optionNameColumnWidth = options.asSequence().map { it.nameArgs.length }.max()!! + 2
+    val optionNameColumnWidth = options.maxOf { it.nameArgs.length } + 2
     val renderedOptions = options.joinToString("\n|") { it.render(optionNameColumnWidth) }
 
     val message = """

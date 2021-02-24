@@ -20,12 +20,13 @@ import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 class RemoveSingleLambdaParameterFix(element: KtParameter) : KotlinQuickFixAction<KtParameter>(element) {
-    override fun getFamilyName() = "Remove single lambda parameter declaration"
+    override fun getFamilyName() = KotlinBundle.message("remove.single.lambda.parameter.declaration")
     override fun getText() = familyName
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
@@ -46,6 +47,9 @@ class RemoveSingleLambdaParameterFix(element: KtParameter) : KotlinQuickFixActio
             if (parameterList.parameters.size != 1) return null
 
             val lambda = parameterList.parent.parent as? KtLambdaExpression ?: return null
+
+            val lambdaParent = lambda.parent
+            if (lambdaParent is KtWhenEntry || lambdaParent is KtContainerNodeForControlStructureBody) return null
 
             val property = lambda.getStrictParentOfType<KtProperty>()
             if (property != null && property.typeReference == null) return null

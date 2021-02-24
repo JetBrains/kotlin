@@ -28,10 +28,10 @@ import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.KotlinScriptDefinitionFromAnnotatedTemplate
-import org.jetbrains.kotlin.scripts.TestKotlinScriptDependenciesResolver
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.org.objectweb.asm.Opcodes
 import java.io.File
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
@@ -133,7 +133,7 @@ class ScriptGenTest : CodegenTestCase() {
             add(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS, NO_PARAM_SCRIPT_DEFINITION)
             put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
 
-            addKotlinSourceRoots(sourcePaths.map { "${KotlinTestUtils.getTestDataPathBase()}/codegen/$it" })
+            addKotlinSourceRoots(sourcePaths.map { "${KtTestUtil.getTestDataPathBase()}/codegen/$it" })
             addJvmClasspathRoots(additionalDependencies)
         }
         loadScriptingPlugin(configuration)
@@ -145,8 +145,5 @@ class ScriptGenTest : CodegenTestCase() {
 }
 
 @Suppress("unused")
-@ScriptTemplateDefinition(
-    scriptFilePattern = ".*\\.lang\\.kts",
-    resolver = TestKotlinScriptDependenciesResolver::class
-)
+@ScriptTemplateDefinition(scriptFilePattern = ".*\\.lang\\.kts")
 abstract class ScriptWithIntParam(val num: Int)

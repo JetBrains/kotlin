@@ -16,15 +16,15 @@
 
 package org.jetbrains.kotlin.idea.debugger.stepping;
 
+import com.intellij.debugger.SourcePosition;
 import com.intellij.debugger.engine.DebugProcessImpl;
+import com.intellij.debugger.engine.RequestHint;
 import com.intellij.debugger.engine.SuspendContextImpl;
 import com.intellij.debugger.engine.evaluation.EvaluateException;
 import com.intellij.debugger.impl.DebuggerUtilsEx;
 import com.intellij.debugger.jdi.StackFrameProxyImpl;
 import com.intellij.debugger.jdi.ThreadReferenceProxyImpl;
 import com.intellij.debugger.settings.DebuggerSettings;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.extensions.Extensions;
 import com.intellij.ui.classFilter.ClassFilter;
 import com.intellij.ui.classFilter.DebuggerClassFilterProvider;
 import com.sun.jdi.Location;
@@ -34,92 +34,89 @@ import com.sun.jdi.ThreadReference;
 import com.sun.jdi.request.EventRequest;
 import com.sun.jdi.request.EventRequestManager;
 import com.sun.jdi.request.StepRequest;
+import one.util.streamex.StreamEx;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.debugger.NoStrataPositionManagerHelperKt;
-import org.jetbrains.kotlin.psi.KtFunctionLiteral;
-import org.jetbrains.kotlin.psi.KtNamedFunction;
+import org.jetbrains.kotlin.idea.debugger.DebuggerUtilKt;
+import org.jetbrains.kotlin.idea.debugger.SafeUtilKt;
 
-import java.util.ArrayList;
 import java.util.List;
 
-
 public class DebuggerSteppingHelper {
-    private static final Logger LOG = Logger.getInstance(DebuggerSteppingHelper.class);
-
     public static DebugProcessImpl.ResumeCommand createStepOverCommand(
             SuspendContextImpl suspendContext,
             boolean ignoreBreakpoints,
-            KotlinSteppingCommandProvider.KotlinSourcePosition kotlinSourcePosition
+            SourcePosition sourcePosition
     ) {
         DebugProcessImpl debugProcess = suspendContext.getDebugProcess();
 
         return debugProcess.new ResumeCommand(suspendContext) {
             @Override
             public void contextAction() {
-                boolean isDexDebug = NoStrataPositionManagerHelperKt.isDexDebug(suspendContext.getDebugProcess());
+                StackFrameProxyImpl frameProxy = suspendContext.getFrameProxy();
+                Location location = frameProxy == null ? null : SafeUtilKt.safeLocation(frameProxy);
 
-                try {
-                    StackFrameProxyImpl frameProxy = suspendContext.getFrameProxy();
-                    if (frameProxy != null) {
-                        Action action = KotlinSteppingCommandProviderKt.getStepOverAction(
-                                frameProxy.location(),
-                                kotlinSourcePosition,
-                                frameProxy,
-                                isDexDebug
-                        );
+                if (location != null) {
+                    KotlinStepAction action = KotlinSteppingCommandProviderKt
+                                .getStepOverAction(location, sourcePosition, suspendContext, frameProxy);
 
-                        createStepRequest(
-                                suspendContext, getContextThread(),
-                                debugProcess.getVirtualMachineProxy().eventRequestManager(),
-                                StepRequest.STEP_LINE, StepRequest.STEP_OUT);
+                    createStepRequest(
+                            suspendContext, getContextThread(),
+                            debugProcess.getVirtualMachineProxy().eventRequestManager(),
+                            StepRequest.STEP_LINE, StepRequest.STEP_OUT);
 
-                        action.apply(debugProcess, suspendContext, ignoreBreakpoints);
-                        return;
-                    }
-
-                    debugProcess.createStepOutCommand(suspendContext).contextAction();
+                    action.apply(debugProcess, suspendContext, ignoreBreakpoints);
+                    return;
                 }
-                catch (EvaluateException e) {
-                    LOG.error(e);
-                }
+
+                debugProcess.createStepOutCommand(suspendContext).contextAction();
             }
         };
     }
 
-    public static DebugProcessImpl.ResumeCommand createStepOutCommand(
-            SuspendContextImpl suspendContext,
-            boolean ignoreBreakpoints,
-            List<KtNamedFunction> inlineFunctions,
-            KtFunctionLiteral inlineArgument
-    ) {
+    public static DebugProcessImpl.ResumeCommand createStepOverCommandForSuspendSwitch(SuspendContextImpl suspendContext) {
+        DebugProcessImpl debugProcess = suspendContext.getDebugProcess();
+        return debugProcess.new StepOverCommand(suspendContext, false, null, StepRequest.STEP_MIN) {
+            @NotNull @Override
+            protected RequestHint getHint(SuspendContextImpl suspendContext, ThreadReferenceProxyImpl stepThread) {
+                RequestHint hint = new RequestHint(stepThread, suspendContext, StepRequest.STEP_MIN, StepRequest.STEP_OVER, myMethodFilter) {
+                    @Override
+                    public int getNextStepDepth(SuspendContextImpl context) {
+                        StackFrameProxyImpl frameProxy = context.getFrameProxy();
+                        if (frameProxy != null && DebuggerUtilKt.isOnSuspensionPoint(frameProxy)) {
+                            return StepRequest.STEP_OVER;
+                        }
+
+                        return super.getNextStepDepth(context);
+                    }
+                };
+                hint.setIgnoreFilters(suspendContext.getDebugProcess().getSession().shouldIgnoreSteppingFilters());
+                return hint;
+            }
+        };
+    }
+
+    public static DebugProcessImpl.ResumeCommand createStepOutCommand(SuspendContextImpl suspendContext, boolean ignoreBreakpoints) {
         DebugProcessImpl debugProcess = suspendContext.getDebugProcess();
         return debugProcess.new ResumeCommand(suspendContext) {
             @Override
             public void contextAction() {
-                try {
-                    StackFrameProxyImpl frameProxy = suspendContext.getFrameProxy();
-                    if (frameProxy != null) {
-                        Action action = KotlinSteppingCommandProviderKt.getStepOutAction(
-                                frameProxy.location(),
-                                suspendContext,
-                                inlineFunctions,
-                                inlineArgument
-                        );
+                StackFrameProxyImpl frameProxy = suspendContext.getFrameProxy();
+                Location location = frameProxy == null ? null : SafeUtilKt.safeLocation(frameProxy);
 
-                        createStepRequest(
-                                suspendContext, getContextThread(),
-                                debugProcess.getVirtualMachineProxy().eventRequestManager(),
-                                StepRequest.STEP_LINE, StepRequest.STEP_OUT);
+                if (location != null) {
+                    KotlinStepAction action = KotlinSteppingCommandProviderKt.getStepOutAction(location, frameProxy);
 
-                        action.apply(debugProcess, suspendContext, ignoreBreakpoints);
-                        return;
-                    }
+                    createStepRequest(
+                            suspendContext, getContextThread(),
+                            debugProcess.getVirtualMachineProxy().eventRequestManager(),
+                            StepRequest.STEP_LINE, StepRequest.STEP_OUT);
 
-                    debugProcess.createStepOverCommand(suspendContext, ignoreBreakpoints).contextAction();
+                    action.apply(debugProcess, suspendContext, ignoreBreakpoints);
+                    return;
                 }
-                catch (EvaluateException ignored) {
-                }
+
+                debugProcess.createStepOverCommand(suspendContext, ignoreBreakpoints).contextAction();
             }
         };
     }
@@ -171,34 +168,24 @@ public class DebuggerSteppingHelper {
     // copied from DebugProcessImpl.getActiveFilters
     @NotNull
     private static List<ClassFilter> getActiveFilters() {
-        List<ClassFilter> activeFilters = new ArrayList<>();
         DebuggerSettings settings = DebuggerSettings.getInstance();
+        StreamEx<ClassFilter> stream = StreamEx.of(DebuggerClassFilterProvider.EP_NAME.getExtensionList())
+                .flatCollection(DebuggerClassFilterProvider::getFilters);
         if (settings.TRACING_FILTERS_ENABLED) {
-            for (ClassFilter filter : settings.getSteppingFilters()) {
-                if (filter.isEnabled()) {
-                    activeFilters.add(filter);
-                }
-            }
+            stream = stream.prepend(settings.getSteppingFilters());
         }
-        //noinspection deprecation
-        for (DebuggerClassFilterProvider provider : Extensions.getExtensions(DebuggerClassFilterProvider.EP_NAME)) {
-            for (ClassFilter filter : provider.getFilters()) {
-                if (filter.isEnabled()) {
-                    activeFilters.add(filter);
-                }
-            }
-        }
-        return activeFilters;
+        return stream.filter(ClassFilter::isEnabled).toList();
     }
 
-    // copied from DebugProcessImpl.getActiveFilters
+    // copied from DebugProcessImpl.getCurrentClassName
     @Nullable
     private static String getCurrentClassName(ThreadReferenceProxyImpl thread) {
         try {
             if (thread != null && thread.frameCount() > 0) {
                 StackFrameProxyImpl stackFrame = thread.frame(0);
+                Location location = stackFrame == null ? null : SafeUtilKt.safeLocation(stackFrame);
+
                 if (stackFrame != null) {
-                    Location location = stackFrame.location();
                     ReferenceType referenceType = location == null ? null : location.declaringType();
                     if (referenceType != null) {
                         return referenceType.name();

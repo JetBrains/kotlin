@@ -37,6 +37,7 @@ import com.intellij.psi.impl.PsiFileFactoryImpl
 import com.intellij.testFramework.LightVirtualFile
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.KotlinIdeaReplBundle
 import org.jetbrains.kotlin.console.actions.BuildAndRestartConsoleAction
 import org.jetbrains.kotlin.console.actions.KtExecuteCommandAction
 import org.jetbrains.kotlin.console.gutter.ConsoleGutterContentProvider
@@ -122,7 +123,7 @@ class KotlinConsoleRunner(
     var compilerHelper: ConsoleCompilerHelper by Delegates.notNull()
 
     private val consoleScriptDefinition = object : KotlinScriptDefinition(Any::class) {
-        override val name = "Kotlin REPL"
+        override val name get() = KotlinIdeaReplBundle.message("name.kotlin.repl")
         override fun isScript(fileName: String): Boolean = fileName.startsWith(consoleView.virtualFile.name)
         override fun getScriptName(script: KtScript) = Name.identifier("REPL")
     }
@@ -206,13 +207,13 @@ class KotlinConsoleRunner(
     override fun createConsoleExecAction(consoleExecuteActionHandler: ProcessBackedConsoleExecuteActionHandler) =
         ConsoleExecuteAction(consoleView, consoleExecuteActionHandler, KOTLIN_SHELL_EXECUTE_ACTION_ID, consoleExecuteActionHandler)
 
-    override fun constructConsoleTitle(title: String) = "$title (in module ${module.name})"
+    override fun constructConsoleTitle(title: String) = KotlinIdeaReplBundle.message("constructor.title.0.in.module.1", title, module.name)
 
     private fun setupPlaceholder(editor: EditorEx) {
         val executeCommandAction = ActionManager.getInstance().getAction(KOTLIN_SHELL_EXECUTE_ACTION_ID)
         val executeCommandActionShortcutText = KeymapUtil.getFirstKeyboardShortcutText(executeCommandAction)
 
-        editor.setPlaceholder("<$executeCommandActionShortcutText> to execute")
+        editor.setPlaceholder(KotlinIdeaReplBundle.message("command.0.to.execute", executeCommandActionShortcutText))
         editor.setShowPlaceholderWhenFocused(true)
 
         val placeholderAttrs = TextAttributes()

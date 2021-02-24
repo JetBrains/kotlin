@@ -1,660 +1,274 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.common.serialization
 
-import org.jetbrains.kotlin.backend.common.LoggingContext
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
-import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
+import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
+import org.jetbrains.kotlin.backend.common.overrides.FileLocalAwareLinker
+import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.descriptors.*
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrLoopBase
+import org.jetbrains.kotlin.ir.expressions.IrBody
+import org.jetbrains.kotlin.ir.linkage.IrDeserializer
+import org.jetbrains.kotlin.ir.linkage.KotlinIrLinkerInternalException
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.symbols.impl.*
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.library.IrLibrary
+import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite.newInstance
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
-import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference as ProtoDescriptorReference
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration as ProtoDeclaration
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFile
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbolData as ProtoSymbolData
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbolKind as ProtoSymbolKind
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrType as ProtoType
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement as ProtoStatement
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression as ProtoExpression
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall as ProtoConstructorCall
-import org.jetbrains.kotlin.backend.common.serialization.proto.Actual as ProtoActual
+import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 abstract class KotlinIrLinker(
-    val logger: LoggingContext,
+    private val currentModule: ModuleDescriptor?,
+    val messageLogger: IrMessageLogger,
     val builtIns: IrBuiltIns,
     val symbolTable: SymbolTable,
     private val exportedDependencies: List<ModuleDescriptor>,
-    private val forwardModuleDescriptor: ModuleDescriptor?,
-    mangler: KotlinMangler,
-    private val tolerateNonKlibDescriptors: Boolean = false
-) : DescriptorUniqIdAware, IrDeserializer {
+) : IrDeserializer, FileLocalAwareLinker {
 
-    private val expectUniqIdToActualUniqId = mutableMapOf<UniqId, UniqId>()
-    private val topLevelActualUniqItToDeserializer = mutableMapOf<UniqId, IrModuleDeserializer>()
-    private val expectSymbols = mutableMapOf<UniqId, IrSymbol>()
-    private val actualSymbols = mutableMapOf<UniqId, IrSymbol>()
+    // Kotlin-MPP related data. Consider some refactoring
+    internal val expectUniqIdToActualUniqId = mutableMapOf<IdSignature, IdSignature>()
+    internal val topLevelActualUniqItToDeserializer = mutableMapOf<IdSignature, IrModuleDeserializer>()
+    internal val expectSymbols = mutableMapOf<IdSignature, IrSymbol>()
+    internal val actualSymbols = mutableMapOf<IdSignature, IrSymbol>()
 
-    sealed class DeserializationState<T> {
-        val deserializedSymbols = mutableMapOf<UniqId, IrSymbol>()
+    internal val modulesWithReachableTopLevels = mutableSetOf<ModuleDeserializationState>()
 
-        operator fun contains(key: UniqId) = key in deserializedSymbols
-        operator fun get(key: UniqId): IrSymbol = deserializedSymbols[key] ?: error("No deserialized symbol found for $key")
-
-        abstract fun addUniqID(key: UniqId)
-        abstract fun processPendingDeclarations(processor: (T) -> Unit)
-
-        class ModuleDeserializationState(val module: IrModuleDeserializer): DeserializationState<IrModuleDeserializer.IrDeserializerForFile>() {
-            private val filesWithPendingTopLevels = mutableSetOf<IrModuleDeserializer.IrDeserializerForFile>()
-
-            fun enqueueFile(fileDeserializer: IrModuleDeserializer.IrDeserializerForFile) {
-                filesWithPendingTopLevels.add(fileDeserializer)
-                module.enqueueModule()
-            }
-
-            override fun addUniqID(key: UniqId) {
-                val fileDeserializer = module.moduleReversedFileIndex[key] ?: error("No file found for key $key")
-                fileDeserializer.fileLocalDeserializationState.addUniqID(key)
-
-                enqueueFile(fileDeserializer)
-            }
-
-            override fun processPendingDeclarations(processor: (IrModuleDeserializer.IrDeserializerForFile) -> Unit) {
-                while (filesWithPendingTopLevels.isNotEmpty()) {
-                    val pendingDeserializer = filesWithPendingTopLevels.first()
-
-                    processor(pendingDeserializer)
-
-                    filesWithPendingTopLevels.remove(pendingDeserializer)
-                }
-            }
-        }
-
-        class SimpleDeserializationState: DeserializationState<UniqId>() {
-            private val reachableTopLevels = LinkedHashSet<UniqId>()
-
-            override fun addUniqID(key: UniqId) {
-                reachableTopLevels.add(key)
-            }
-
-            override fun processPendingDeclarations(processor: (UniqId) -> Unit) {
-                while (reachableTopLevels.isNotEmpty()) {
-                    val reachableKey = reachableTopLevels.first()
-
-                    if (deserializedSymbols[reachableKey]?.isBound != true) {
-                        processor(reachableKey)
-                    }
-
-                    reachableTopLevels.remove(reachableKey)
-                }
-            }
-        }
-    }
-
-    protected val globalDeserializationState = DeserializationState.SimpleDeserializationState()
-    private val modulesWithReachableTopLevels = mutableSetOf<IrModuleDeserializer>()
-
-    //TODO: This is Native specific. Eliminate me.
-    private val forwardDeclarations = mutableSetOf<IrSymbol>()
-    val resolvedForwardDeclarations = mutableMapOf<UniqId, UniqId>()
-
+    // TODO: replace with Map<Name, IrModuleDeserializer>
     protected val deserializersForModules = mutableMapOf<ModuleDescriptor, IrModuleDeserializer>()
 
-    private fun getForwardDeclararationModuleDeserializer() = deserializersForModules.entries.single { it.key.isForwardDeclarationModule }.value
+    abstract val fakeOverrideBuilder: FakeOverrideBuilder
 
-    inner class IrModuleDeserializer(
-        private val moduleDescriptor: ModuleDescriptor,
-        private val deserializationStrategy: DeserializationStrategy
-    ) {
+    abstract val translationPluginContext: TranslationPluginContext?
 
-        val fileToDeserializerMap = mutableMapOf<IrFile, IrDeserializerForFile>()
+    internal val triedToDeserializeDeclarationForSymbol = mutableSetOf<IrSymbol>()
+    internal val deserializedSymbols = mutableSetOf<IrSymbol>()
 
-        protected val moduleResolvedForwardDeclarations = mutableMapOf<UniqId, UniqId>()
+    private lateinit var linkerExtensions: Collection<IrDeserializer.IrLinkerExtension>
 
-        private val moduleDeserializationState = DeserializationState.ModuleDeserializationState(this)
-        val moduleReversedFileIndex = mutableMapOf<UniqId, IrDeserializerForFile>()
-        private val moduleDependencies by lazy {
-            moduleDescriptor.allDependencyModules.filter { it != moduleDescriptor }.mapNotNull {
-                deserializersForModules[it] ?: if (tolerateNonKlibDescriptors) null else error("Module without deserializer $it")
-            }
+    public open fun handleNoModuleDeserializerFound(idSignature: IdSignature, currentModule: ModuleDescriptor, dependencies: Collection<IrModuleDeserializer>): IrModuleDeserializer {
+        val message = buildString {
+            append("Module $currentModule has reference $idSignature, unfortunately neither itself nor its dependencies ")
+            dependencies.joinTo(this, "\n\t", "[\n\t", "\n]")
+            append(" contain this declaration")
+            append("\n")
+            append("Please check that project configuration is correct and has required dependencies.")
         }
+        messageLogger.report(IrMessageLogger.Severity.ERROR, message, null)
 
-        // This is a heavy initializer
-        val module = deserializeIrModuleHeader()
+        throw KotlinIrLinkerInternalException
+    }
 
-        inner class IrDeserializerForFile(
-            private var annotations: List<ProtoConstructorCall>?,
-            private val actuals: List<ProtoActual>,
-            private val fileIndex: Int,
-            onlyHeaders: Boolean
-        ) : IrFileDeserializer(logger, builtIns, symbolTable) {
-
-            private var fileLoops = mutableMapOf<Int, IrLoopBase>()
-
-            private val symbolProtosCache = mutableMapOf<Int, ProtoSymbolData>()
-            private val typeProtosCache = mutableMapOf<Int, ProtoType>()
-            private val stringsCache = mutableMapOf<Int, String>()
-
-            lateinit var file: IrFile
-
-            private val deserializeBodies: Boolean = !onlyHeaders
-
-            private val fileLocalResolvedForwardDeclarations = mutableMapOf<UniqId, UniqId>()
-
-            val fileLocalDeserializationState = DeserializationState.SimpleDeserializationState()
-
-            fun deserializeDeclaration(key: UniqId): IrDeclaration {
-                return deserializeDeclaration(loadTopLevelDeclarationProto(key), file)
-            }
-
-            fun deserializeExpectActualMapping() {
-                actuals.forEach {
-                    val expectSymbol = loadSymbolProto(it.expectSymbol)
-                    val actualSymbol = loadSymbolProto(it.actualSymbol)
-                    val expect = UniqId(expectSymbol.uniqIdIndex)
-                    val actual = UniqId(actualSymbol.uniqIdIndex)
-                    assert(expectUniqIdToActualUniqId[expect] == null) {
-                        "Expect uniqid ${expect.index} is already actualized by ${expectUniqIdToActualUniqId[expect]?.index}, while we try to record ${actual.index}"
-                    }
-                    expectUniqIdToActualUniqId.put(expect, actual)
-                    // Non-null only for topLevel declarations.
-                    getModuleForTopLevelId(actual)?. let { topLevelActualUniqItToDeserializer.put(actual, it) }
+    public open fun resolveModuleDeserializer(module: ModuleDescriptor, signature: IdSignature?): IrModuleDeserializer {
+        return deserializersForModules[module] ?: run {
+            val message = buildString {
+                append("Could not load module ")
+                append(module)
+                signature?.let {
+                    append("; It was an attempt to find deserializer for ")
+                    append(it)
                 }
             }
+            messageLogger.report(IrMessageLogger.Severity.ERROR, message, null)
 
-            private fun loadTopLevelDeclarationProto(uniqId: UniqId): ProtoDeclaration {
-                val stream = reader(moduleDescriptor, fileIndex, uniqId).codedInputStream
-                return ProtoDeclaration.parseFrom(stream, newInstance())
-            }
-
-            private fun loadSymbolProto(index: Int): ProtoSymbolData {
-                val stream = readSymbol(moduleDescriptor, fileIndex, index).codedInputStream
-                return ProtoSymbolData.parseFrom(stream, newInstance())
-            }
-
-            private fun loadTypeProto(index: Int): ProtoType {
-                val stream = readType(moduleDescriptor, fileIndex, index).codedInputStream
-                return ProtoType.parseFrom(stream, newInstance())
-            }
-
-            private fun loadStatementBodyProto(index: Int): ProtoStatement {
-                val stream = readBody(moduleDescriptor, fileIndex, index).codedInputStream
-                return ProtoStatement.parseFrom(stream, newInstance())
-            }
-
-            private fun loadExpressionBodyProto(index: Int): ProtoExpression {
-                val stream = readBody(moduleDescriptor, fileIndex, index).codedInputStream
-                return ProtoExpression.parseFrom(stream, newInstance())
-            }
-
-            private fun loadStringProto(index: Int): String {
-                return String(readString(moduleDescriptor, fileIndex, index))
-            }
-
-            private fun referenceDeserializedSymbol(
-                proto: ProtoSymbolData,
-                descriptor: DeclarationDescriptor?
-            ): IrSymbol = when (proto.kind) {
-                ProtoSymbolKind.ANONYMOUS_INIT_SYMBOL ->
-                    IrAnonymousInitializerSymbolImpl(
-                        descriptor as ClassDescriptor?
-                            ?: WrappedClassDescriptor()
-                    )
-                ProtoSymbolKind.CLASS_SYMBOL ->
-                    symbolTable.referenceClass(
-                        descriptor as ClassDescriptor?
-                            ?: WrappedClassDescriptor()
-                    )
-                ProtoSymbolKind.CONSTRUCTOR_SYMBOL ->
-                    symbolTable.referenceConstructor(
-                        descriptor as ClassConstructorDescriptor?
-                            ?: WrappedClassConstructorDescriptor()
-                    )
-                ProtoSymbolKind.TYPE_PARAMETER_SYMBOL ->
-                    symbolTable.referenceTypeParameter(
-                        descriptor as TypeParameterDescriptor?
-                            ?: WrappedTypeParameterDescriptor()
-                    )
-                ProtoSymbolKind.ENUM_ENTRY_SYMBOL ->
-                    symbolTable.referenceEnumEntry(
-                        descriptor as ClassDescriptor?
-                            ?: WrappedEnumEntryDescriptor()
-                    )
-                ProtoSymbolKind.STANDALONE_FIELD_SYMBOL ->
-                    symbolTable.referenceField(WrappedFieldDescriptor())
-
-                ProtoSymbolKind.FIELD_SYMBOL ->
-                    symbolTable.referenceField(
-                        descriptor as PropertyDescriptor?
-                            ?: WrappedPropertyDescriptor()
-                    )
-                ProtoSymbolKind.FUNCTION_SYMBOL ->
-                    symbolTable.referenceSimpleFunction(
-                        descriptor as FunctionDescriptor?
-                            ?: WrappedSimpleFunctionDescriptor()
-                    )
-                ProtoSymbolKind.TYPEALIAS_SYMBOL ->
-                    symbolTable.referenceTypeAlias(
-                        descriptor as TypeAliasDescriptor?
-                            ?: WrappedTypeAliasDescriptor()
-                    )
-                ProtoSymbolKind.VARIABLE_SYMBOL ->
-                    IrVariableSymbolImpl(
-                        descriptor as VariableDescriptor?
-                            ?: WrappedVariableDescriptor()
-                    )
-                ProtoSymbolKind.VALUE_PARAMETER_SYMBOL ->
-                    IrValueParameterSymbolImpl(
-                        descriptor as ParameterDescriptor?
-                            ?: WrappedValueParameterDescriptor()
-                    )
-                ProtoSymbolKind.RECEIVER_PARAMETER_SYMBOL ->
-                    IrValueParameterSymbolImpl(
-                        descriptor as ParameterDescriptor? ?: WrappedReceiverParameterDescriptor()
-                    )
-                ProtoSymbolKind.PROPERTY_SYMBOL ->
-                    symbolTable.referenceProperty(
-                        descriptor as PropertyDescriptor? ?: WrappedPropertyDescriptor()
-                    )
-                ProtoSymbolKind.LOCAL_DELEGATED_PROPERTY_SYMBOL ->
-                    IrLocalDelegatedPropertySymbolImpl(
-                        descriptor as? VariableDescriptorWithAccessors ?: WrappedVariableDescriptorWithAccessor()
-                    )
-                else -> TODO("Unexpected classifier symbol kind: ${proto.kind}")
-            }
-
-            fun loadSymbolData(index: Int): ProtoSymbolData {
-                return symbolProtosCache.getOrPut(index) {
-                    loadSymbolProto(index)
-                }
-            }
-
-            private fun loadTypeData(index: Int): ProtoType {
-                return typeProtosCache.getOrPut(index) {
-                    loadTypeProto(index)
-                }
-            }
-
-            private fun loadString(index: Int): String {
-                return stringsCache.getOrPut(index) {
-                    loadStringProto(index)
-                }
-            }
-
-            private fun isGlobalUniqID(uniqId: UniqId): Boolean {
-                return uniqId in globalDeserializationState ||
-                        descriptorReferenceDeserializer.checkIfSpecialDescriptorId(uniqId.index)
-            }
-
-            private fun getModuleForTopLevelId(key: UniqId): IrModuleDeserializer? {
-                if (key in moduleReversedFileIndex) return this@IrModuleDeserializer
-                return moduleDependencies.firstOrNull { key in it.moduleReversedFileIndex }
-            }
-
-            private fun getStateForID(key: UniqId): DeserializationState<*> {
-                if (key.isLocal) return fileLocalDeserializationState
-                if (isGlobalUniqID(key)) return globalDeserializationState
-                return getModuleForTopLevelId(key)?.moduleDeserializationState ?: handleNoModuleDeserializerFound(key)
-            }
-
-            private fun deserializeIrSymbolData(proto: ProtoSymbolData): IrSymbol {
-                val key = UniqId(proto.uniqIdIndex)
-                val topLevelKey = UniqId(proto.topLevelUniqIdIndex)
-
-                val topLevelDeserializationState = getStateForID(topLevelKey)
-
-                if (topLevelKey !in topLevelDeserializationState) {
-                    topLevelDeserializationState.addUniqID(topLevelKey)
-                }
-
-                // If topLevel declaration is module-public and current declaration in not (e.g. value parameter)
-                // they should be proccesed via different tables
-                val deserializationState =
-                    if (topLevelKey.isLocal xor key.isLocal) getStateForID(key) else topLevelDeserializationState
-
-                val symbol = deserializationState.deserializedSymbols.getOrPut(key) {
-                    val descriptor = if (proto.hasDescriptorReference()) {
-                        deserializeDescriptorReference(proto.descriptorReference)
-                    } else {
-                        null
-                    }
-
-                    resolvedForwardDeclarations[key]?.let {
-                        val fdState = getStateForID(it)
-                        if (it !in fdState) fdState.addUniqID(it)
-                    }
-
-                    val symbol = referenceDeserializedSymbol(proto, descriptor).let {
-                        if (expectUniqIdToActualUniqId[key] != null) wrapInDelegatedSymbol(it) else it
-                    }
-
-                    if (key in expectUniqIdToActualUniqId.keys) expectSymbols.put(key, symbol)
-                    if (key in expectUniqIdToActualUniqId.values) actualSymbols.put(key, symbol)
-
-                    symbol
-                }
-                if (symbol.descriptor is ClassDescriptor &&
-                    symbol.descriptor !is WrappedDeclarationDescriptor<*> &&
-                    symbol.descriptor.module.isForwardDeclarationModule
-                ) {
-                    forwardDeclarations.add(symbol)
-                }
-
-                return symbol
-            }
-
-            override fun deserializeDescriptorReference(proto: ProtoDescriptorReference) =
-                descriptorReferenceDeserializer.deserializeDescriptorReference(
-                    deserializeFqName(proto.packageFqNameList),
-                    deserializeFqName(proto.classFqNameList),
-                    deserializeString(proto.name),
-                    proto.flags,
-                    if (proto.hasUniqIdIndex()) proto.uniqIdIndex else null
-                )
-
-            override fun deserializeIrSymbol(index: Int): IrSymbol {
-                val symbolData = loadSymbolProto(index)
-                return deserializeIrSymbolData(symbolData)
-            }
-
-            override fun deserializeIrType(index: Int): IrType {
-                val typeData = loadTypeProto(index)
-                return deserializeIrTypeData(typeData)
-            }
-
-            override fun deserializeString(index: Int): String =
-                loadStringProto(index)
-
-            override fun deserializeLoopHeader(loopIndex: Int, loopBuilder: () -> IrLoopBase) =
-                fileLoops.getOrPut(loopIndex, loopBuilder)
-
-            override fun deserializeExpressionBody(index: Int): IrExpression {
-                if (deserializeBodies) {
-                    val bodyData = loadExpressionBodyProto(index)
-                    return deserializeExpression(bodyData)
-                } else {
-                    val errorType = IrErrorTypeImpl(null, emptyList(), Variance.INVARIANT)
-                    return IrErrorExpressionImpl(-1, -1, errorType, "Expression body is not deserialized yet")
-                }
-            }
-
-            override fun deserializeStatementBody(index: Int): IrElement {
-                if (deserializeBodies) {
-                    val bodyData = loadStatementBodyProto(index)
-                    return deserializeStatement(bodyData)
-                } else {
-                    val errorType = IrErrorTypeImpl(null, emptyList(), Variance.INVARIANT)
-                    return IrBlockBodyImpl(-1, -1, listOf(IrErrorExpressionImpl(-1, -1, errorType, "Statement body is not deserialized yet")))
-                }
-            }
-
-            fun deserializeFileImplicitDataIfFirstUse() {
-                annotations?.let {
-                    file.annotations += deserializeAnnotations(it)
-                    annotations = null
-                }
-            }
-
-            fun deserializeAllFileReachableTopLevel() {
-                fileLocalDeserializationState.processPendingDeclarations {
-                    val declaration = deserializeDeclaration(it)
-                    file.declarations.add(declaration)
-                }
-            }
-        }
-
-        private fun deserializeIrFile(fileProto: ProtoFile, fileIndex: Int): IrFile {
-
-            val fileName = fileProto.fileEntry.name
-
-            val fileEntry = NaiveSourceBasedFileEntryImpl(fileName, fileProto.fileEntry.lineStartOffsetsList.toIntArray())
-
-            val fileDeserializer =
-                IrDeserializerForFile(fileProto.annotationList, fileProto.actualsList, fileIndex, !deserializationStrategy.needBodies).apply {
-
-                    // Explicitly exported declarations (e.g. top-level initializers) must be deserialized before all other declarations.
-                    // Thus we schedule their deserialization in deserializer's constructor.
-                    fileProto.explicitlyExportedToCompilerList.forEach {
-                        fileLocalDeserializationState.addUniqID(UniqId(loadSymbolData(it).topLevelUniqIdIndex))
-                    }
-                }
-
-            val fqName = fileDeserializer.deserializeFqName(fileProto.fqNameList)
-
-            val packageFragmentDescriptor = EmptyPackageFragmentDescriptor(moduleDescriptor, fqName)
-
-            val symbol = IrFileSymbolImpl(packageFragmentDescriptor)
-            val file = IrFileImpl(fileEntry, symbol, fqName)
-
-            fileDeserializer.file = file
-            fileToDeserializerMap[file] = fileDeserializer
-
-            val fileUniqIdIndex = fileProto.declarationIdList.map { UniqId(it) }
-
-            fileUniqIdIndex.forEach {
-                moduleReversedFileIndex.getOrPut(it) { fileDeserializer }
-            }
-
-            if (deserializationStrategy.theWholeWorld) {
-                for (id in fileUniqIdIndex) {
-                    assert(id.isPublic)
-                    moduleDeserializationState.addUniqID(id)
-                }
-                moduleDeserializationState.enqueueFile(fileDeserializer)
-            } else if (deserializationStrategy.explicitlyExported) {
-                moduleDeserializationState.enqueueFile(fileDeserializer)
-            }
-
-            return file
-        }
-
-        private fun deserializeIrModuleHeader(): IrModuleFragment {
-            val fileCount = readFileCount(moduleDescriptor)
-
-            val files = mutableListOf<IrFile>()
-
-            for (i in 0 until fileCount) {
-                files.add(deserializeIrFile(ProtoFile.parseFrom(readFile(moduleDescriptor, i), newInstance()), i))
-            }
-
-            return IrModuleFragmentImpl(moduleDescriptor, builtIns, files)
-        }
-
-        fun deserializeAllModuleReachableTopLevels() {
-            moduleDeserializationState.processPendingDeclarations { fileDeserializer ->
-                fileDeserializer.deserializeFileImplicitDataIfFirstUse()
-                fileDeserializer.deserializeAllFileReachableTopLevel()
-            }
-        }
-
-        fun enqueueModule() {
-            modulesWithReachableTopLevels.add(this)
-        }
-
-        fun addModuleReachableTopLevel(key: UniqId) {
-            moduleDeserializationState.addUniqID(key)
+            throw KotlinIrLinkerInternalException
         }
     }
 
-    protected abstract val descriptorReferenceDeserializer: DescriptorReferenceDeserializer
+    protected abstract fun createModuleDeserializer(
+        moduleDescriptor: ModuleDescriptor,
+        klib: IrLibrary?,
+        strategy: DeserializationStrategy,
+    ): IrModuleDeserializer
 
-    private fun loadKnownBuiltinSymbols(mangler: KotlinMangler) {
-        val mask = 1L shl 63
-        val globalDeserializedSymbols = globalDeserializationState.deserializedSymbols
-        builtIns.knownBuiltins.forEach {
-            val currentIndex = with(mangler) { it.mangle.hashMangle }
-            globalDeserializedSymbols[UniqId(currentIndex or mask)] = it.symbol
-            assert(symbolTable.referenceSimpleFunction(it.symbol.descriptor as SimpleFunctionDescriptor).owner === it)
-        }
-    }
+    protected abstract val functionalInterfaceFactory: IrAbstractFunctionFactory
 
-    init {
-        loadKnownBuiltinSymbols(mangler)
-    }
-
-    private val ByteArray.codedInputStream: org.jetbrains.kotlin.protobuf.CodedInputStream
-        get() {
-            val codedInputStream = org.jetbrains.kotlin.protobuf.CodedInputStream.newInstance(this)
-            codedInputStream.setRecursionLimit(65535) // The default 64 is blatantly not enough for IR.
-            return codedInputStream
-        }
-
-    protected abstract fun reader(moduleDescriptor: ModuleDescriptor, fileIndex: Int, uniqId: UniqId): ByteArray
-    protected abstract fun readSymbol(moduleDescriptor: ModuleDescriptor, fileIndex: Int, symbolIndex: Int): ByteArray
-    protected abstract fun readType(moduleDescriptor: ModuleDescriptor, fileIndex: Int, typeIndex: Int): ByteArray
-    protected abstract fun readString(moduleDescriptor: ModuleDescriptor, fileIndex: Int, stringIndex: Int): ByteArray
-    protected abstract fun readBody(moduleDescriptor: ModuleDescriptor, fileIndex: Int, bodyIndex: Int): ByteArray
-    protected abstract fun readFile(moduleDescriptor: ModuleDescriptor, fileIndex: Int): ByteArray
-    protected abstract fun readFileCount(moduleDescriptor: ModuleDescriptor): Int
-
-    protected open fun handleNoModuleDeserializerFound(key: UniqId): DeserializationState<*> {
-        error("Deserializer for declaration $key is not found")
-    }
-
-    /**
-     * Check that descriptor shouldn't be processed by some backend-specific logic.
-     * For example, it is the case for Native interop libraries where there is no IR in libraries.
-     */
-    protected open fun DeclarationDescriptor.shouldBeDeserialized(): Boolean = true
+    protected abstract fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean
 
     private fun deserializeAllReachableTopLevels() {
-        do {
-            val moduleDeserializer = modulesWithReachableTopLevels.first()
-            modulesWithReachableTopLevels.remove(moduleDeserializer)
+        while (modulesWithReachableTopLevels.isNotEmpty()) {
+            val moduleDeserializationState = modulesWithReachableTopLevels.first()
+            modulesWithReachableTopLevels.remove(moduleDeserializationState)
 
-            moduleDeserializer.deserializeAllModuleReachableTopLevels()
-        } while (modulesWithReachableTopLevels.isNotEmpty())
+            moduleDeserializationState.deserializeReachableDeclarations()
+        }
     }
 
-    private fun findDeserializedDeclarationForDescriptor(descriptor: DeclarationDescriptor): DeclarationDescriptor? {
-        val topLevelDescriptor = descriptor.findTopLevelDescriptor() as DeclarationDescriptorWithVisibility
+    private fun findDeserializedDeclarationForSymbol(symbol: IrSymbol): DeclarationDescriptor? {
+        assert(symbol.isPublicApi || symbol.descriptor.module === currentModule || platformSpecificSymbol(symbol))
 
-        // This is Native specific. Try to eliminate.
-        if (topLevelDescriptor.module.isForwardDeclarationModule) return null
-
-        //
-        if (!topLevelDescriptor.shouldBeDeserialized()) return null
-
-        if (topLevelDescriptor !is DeserializedClassDescriptor && topLevelDescriptor !is DeserializedCallableMemberDescriptor) {
+        if (symbol in triedToDeserializeDeclarationForSymbol || symbol in deserializedSymbols) {
             return null
         }
+        triedToDeserializeDeclarationForSymbol.add(symbol)
 
-        val moduleOfOrigin = topLevelDescriptor.module
+        val descriptor = symbol.descriptor
 
-        val moduleDeserializer = deserializersForModules[moduleOfOrigin] ?:
-        if (tolerateNonKlibDescriptors) {
-            return null
-        } else {
-            error("No module deserializer found for $moduleOfOrigin")
-        }
+        val moduleDeserializer = resolveModuleDeserializer(descriptor.module, symbol.signature)
 
-        val descriptorUniqId = topLevelDescriptor.getUniqId()
-            ?: if (tolerateNonKlibDescriptors) {
-                return null
-            } else {
-                error("Could not get descriptor uniq id for $topLevelDescriptor")
-            }
-        val topLevelKey = UniqId(descriptorUniqId)
-
-        moduleDeserializer.addModuleReachableTopLevel(topLevelKey)
+//        moduleDeserializer.deserializeIrSymbol(signature, symbol.kind())
+        moduleDeserializer.declareIrSymbol(symbol)
 
         deserializeAllReachableTopLevels()
-        return topLevelDescriptor
+        if (!symbol.isBound) return null
+        return descriptor
+    }
+
+    protected open fun platformSpecificSymbol(symbol: IrSymbol): Boolean = false
+
+    private fun tryResolveCustomDeclaration(symbol: IrSymbol): IrDeclaration? {
+        if (!symbol.hasDescriptor) return null
+
+        val descriptor = symbol.descriptor
+
+        if (descriptor is CallableMemberDescriptor) {
+            if (descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+                // skip fake overrides
+                return null
+            }
+        }
+
+        return translationPluginContext?.let { ctx ->
+            linkerExtensions.firstNotNullResult {
+                it.resolveSymbol(symbol, ctx)
+            }?.also {
+                require(symbol.owner == it)
+            }
+        }
     }
 
     override fun getDeclaration(symbol: IrSymbol): IrDeclaration? {
 
+        if (!symbol.isPublicApi) {
+            val descriptor = symbol.descriptor
+            if (!platformSpecificSymbol(symbol)) {
+                if (descriptor.module !== currentModule) return null
+            }
+        }
+
         if (!symbol.isBound) {
-            findDeserializedDeclarationForDescriptor(symbol.descriptor) ?: return null
+            findDeserializedDeclarationForSymbol(symbol) ?: tryResolveCustomDeclaration(symbol) ?: return null
         }
 
         // TODO: we do have serializations for those, but let's just create a stub for now.
-        if (!symbol.isBound && (symbol.descriptor.isExpectMember || symbol.descriptor.containingDeclaration?.isExpectMember ?: false)) return null
+        if (!symbol.isBound && (symbol.descriptor.isExpectMember || symbol.descriptor.containingDeclaration?.isExpectMember == true))
+            return null
 
-        assert(symbol.isBound) {
-            "getDeclaration: symbol ${symbol} is unbound, descriptor = ${symbol.descriptor}, hash = ${symbol.descriptor.hashCode()}"
-        }
+        if (!symbol.isBound) return null
+
+        //assert(symbol.isBound) {
+        //    "getDeclaration: symbol $symbol is unbound, descriptor = ${symbol.descriptor}, signature = ${symbol.signature}"
+        //}
 
         return symbol.owner as IrDeclaration
     }
 
-    // TODO: This is Native specific. Eliminate me.
-    override fun declareForwardDeclarations() {
-        if (forwardModuleDescriptor == null) return
+    override fun tryReferencingSimpleFunctionByLocalSignature(parent: IrDeclaration, idSignature: IdSignature): IrSimpleFunctionSymbol? {
+        if (idSignature.isPublic) return null
+        val file = parent.file
+        val moduleDescriptor = file.packageFragmentDescriptor.containingDeclaration
+        return resolveModuleDeserializer(moduleDescriptor, null).referenceSimpleFunctionByLocalSignature(file, idSignature)
+    }
 
-        val packageFragments = forwardDeclarations.map { it.descriptor.findPackage() }.distinct()
+    override fun tryReferencingPropertyByLocalSignature(parent: IrDeclaration, idSignature: IdSignature): IrPropertySymbol? {
+        if (idSignature.isPublic) return null
+        val file = parent.file
+        val moduleDescriptor = file.packageFragmentDescriptor.containingDeclaration
+        return resolveModuleDeserializer(moduleDescriptor, null).referencePropertyByLocalSignature(file, idSignature)
+    }
 
-        // We don't bother making a real IR module here, as we have no need in it any later.
-        // All we need is just to declare forward declarations in the symbol table
-        // In case you need a full fledged module, turn the forEach into a map and collect
-        // produced files into an IrModuleFragment.
+    protected open fun createCurrentModuleDeserializer(moduleFragment: IrModuleFragment, dependencies: Collection<IrModuleDeserializer>): IrModuleDeserializer =
+        CurrentModuleDeserializer(moduleFragment, dependencies)
 
-        packageFragments.forEach { packageFragment ->
-            val symbol = IrFileSymbolImpl(packageFragment)
-            val file = IrFileImpl(NaiveSourceBasedFileEntryImpl("forward declarations pseudo-file"), symbol)
-            val symbols = forwardDeclarations
-                .filter { !it.isBound }
-                .filter { it.descriptor.findPackage() == packageFragment }
-            val declarations = symbols.map {
-
-                val classDescriptor = it.descriptor as ClassDescriptor
-                val declaration = symbolTable.declareClass(
-                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, irrelevantOrigin,
-                    classDescriptor,
-                    classDescriptor.modality
-                ) { symbol: IrClassSymbol -> IrClassImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irrelevantOrigin, symbol) }
-                    .also {
-                        it.parent = file
-                    }
-                declaration
-
+    override fun init(moduleFragment: IrModuleFragment?, extensions: Collection<IrDeserializer.IrLinkerExtension>) {
+        linkerExtensions = extensions
+        if (moduleFragment != null) {
+            val currentModuleDependencies = moduleFragment.descriptor.allDependencyModules.map {
+                resolveModuleDeserializer(it, null)
             }
-            file.declarations.addAll(declarations)
+            val currentModuleDeserializer = createCurrentModuleDeserializer(moduleFragment, currentModuleDependencies)
+            deserializersForModules[moduleFragment.descriptor] =
+                maybeWrapWithBuiltInAndInit(moduleFragment.descriptor, currentModuleDeserializer)
+        }
+        deserializersForModules.values.forEach { it.init() }
+    }
+
+    override fun postProcess() {
+        finalizeExpectActualLinker()
+        fakeOverrideBuilder.provideFakeOverrides()
+        triedToDeserializeDeclarationForSymbol.clear()
+        deserializedSymbols.clear()
+
+        // TODO: fix IrPluginContext to make it not produce additional external reference
+        // symbolTable.noUnboundLeft("unbound after fake overrides:")
+    }
+
+    fun handleExpectActualMapping(idSig: IdSignature, rawSymbol: IrSymbol): IrSymbol {
+
+        // Actual signature
+        if (idSig in expectUniqIdToActualUniqId.values) {
+            actualSymbols[idSig] = rawSymbol
+        }
+
+        // Expect signature
+        expectUniqIdToActualUniqId[idSig]?.let { actualSig ->
+            assert(idSig.run { IdSignature.Flags.IS_EXPECT.test() })
+
+            val referencingSymbol = wrapInDelegatedSymbol(rawSymbol)
+
+            expectSymbols[idSig] = referencingSymbol
+
+            // Trigger actual symbol deserialization
+            topLevelActualUniqItToDeserializer[actualSig]?.let { moduleDeserializer -> // Not null if top-level
+                val actualSymbol = actualSymbols[actualSig]
+                // Check if
+                if (actualSymbol == null || !actualSymbol.isBound) {
+                    moduleDeserializer.addModuleReachableTopLevel(actualSig)
+                }
+            }
+
+            return referencingSymbol
+        }
+
+        return rawSymbol
+    }
+
+    private fun topLevelKindToSymbolKind(kind: IrDeserializer.TopLevelSymbolKind): BinarySymbolData.SymbolKind {
+        return when (kind) {
+            IrDeserializer.TopLevelSymbolKind.CLASS_SYMBOL -> BinarySymbolData.SymbolKind.CLASS_SYMBOL
+            IrDeserializer.TopLevelSymbolKind.PROPERTY_SYMBOL -> BinarySymbolData.SymbolKind.PROPERTY_SYMBOL
+            IrDeserializer.TopLevelSymbolKind.FUNCTION_SYMBOL -> BinarySymbolData.SymbolKind.FUNCTION_SYMBOL
+            IrDeserializer.TopLevelSymbolKind.TYPEALIAS_SYMBOL -> BinarySymbolData.SymbolKind.TYPEALIAS_SYMBOL
         }
     }
 
-    fun initializeExpectActualLinker() {
-        deserializersForModules.values.forEach {
-            it.fileToDeserializerMap.values.forEach {
-                it.deserializeExpectActualMapping()
-            }
+    override fun resolveBySignatureInModule(signature: IdSignature, kind: IrDeserializer.TopLevelSymbolKind, moduleName: Name): IrSymbol {
+        val moduleDeserializer =
+            deserializersForModules.entries.find { it.key.name == moduleName }?.value ?: error("No module for name '$moduleName' found")
+        assert(signature == signature.topLevelSignature()) { "Signature '$signature' has to be top level" }
+        if (signature !in moduleDeserializer) error("No signature $signature in module $moduleName")
+        return moduleDeserializer.deserializeIrSymbol(signature, topLevelKindToSymbolKind(kind)).also {
+            deserializeAllReachableTopLevels()
         }
     }
 
     // The issue here is that an expect can not trigger its actual deserialization by reachability
     // because the expect can not see the actual higher in the module dependency dag.
     // So we force deserialization of actuals for all deserialized expect symbols here.
-    fun finalizeExpectActualLinker() {
-        expectUniqIdToActualUniqId.filter{ topLevelActualUniqItToDeserializer[it.value] != null}.forEach {
-            val expectSymbol = expectSymbols[it.key]
-            val actualSymbol = actualSymbols[it.value]
-            if (expectSymbol != null && (actualSymbol == null || !actualSymbol.isBound)) {
-                topLevelActualUniqItToDeserializer[it.value]!!.addModuleReachableTopLevel(it.value)
-                deserializeAllReachableTopLevels()
-            }
-        }
-
-        // Now after all actuals have been deserialized, retarget delegating symbols from expects to actuals.
+    private fun finalizeExpectActualLinker() {
+        // All actuals have been deserialized, retarget delegating symbols from expects to actuals.
         expectUniqIdToActualUniqId.forEach {
             val expectSymbol = expectSymbols[it.key]
             val actualSymbol = actualSymbols[it.value]
@@ -678,16 +292,24 @@ abstract class KotlinIrLinker(
 
     fun deserializeIrModuleHeader(
         moduleDescriptor: ModuleDescriptor,
+        kotlinLibrary: KotlinLibrary?,
         deserializationStrategy: DeserializationStrategy = DeserializationStrategy.ONLY_REFERENCED
     ): IrModuleFragment {
         val deserializerForModule = deserializersForModules.getOrPut(moduleDescriptor) {
-            IrModuleDeserializer(moduleDescriptor, deserializationStrategy)
+            maybeWrapWithBuiltInAndInit(moduleDescriptor, createModuleDeserializer(moduleDescriptor, kotlinLibrary, deserializationStrategy))
         }
         // The IrModule and its IrFiles have been created during module initialization.
-        return deserializerForModule.module
+        return deserializerForModule.moduleFragment
     }
 
-    fun deserializeIrModuleHeader(moduleDescriptor: ModuleDescriptor): IrModuleFragment? {
+    private fun maybeWrapWithBuiltInAndInit(
+        moduleDescriptor: ModuleDescriptor,
+        moduleDeserializer: IrModuleDeserializer
+    ): IrModuleDeserializer =
+        if (isBuiltInModule(moduleDescriptor)) IrModuleDeserializerWithBuiltIns(builtIns, functionalInterfaceFactory, moduleDeserializer)
+        else moduleDeserializer
+
+    fun deserializeIrModuleHeader(moduleDescriptor: ModuleDescriptor, kotlinLibrary: KotlinLibrary?): IrModuleFragment {
         // TODO: consider skip deserializing explicitly exported declarations for libraries.
         // Now it's not valid because of all dependencies that must be computed.
         val deserializationStrategy =
@@ -696,23 +318,28 @@ abstract class KotlinIrLinker(
             } else {
                 DeserializationStrategy.EXPLICITLY_EXPORTED
             }
-        return deserializeIrModuleHeader(moduleDescriptor, deserializationStrategy)
+        return deserializeIrModuleHeader(moduleDescriptor, kotlinLibrary, deserializationStrategy)
     }
 
-    fun deserializeFullModule(moduleDescriptor: ModuleDescriptor): IrModuleFragment =
-        deserializeIrModuleHeader(moduleDescriptor, DeserializationStrategy.ALL)
+    fun deserializeFullModule(moduleDescriptor: ModuleDescriptor, kotlinLibrary: KotlinLibrary?): IrModuleFragment =
+        deserializeIrModuleHeader(moduleDescriptor, kotlinLibrary, DeserializationStrategy.ALL)
 
-    fun deserializeOnlyHeaderModule(moduleDescriptor: ModuleDescriptor): IrModuleFragment =
-        deserializeIrModuleHeader(moduleDescriptor, DeserializationStrategy.ONLY_DECLARATION_HEADERS)
+    fun deserializeOnlyHeaderModule(moduleDescriptor: ModuleDescriptor, kotlinLibrary: KotlinLibrary?): IrModuleFragment =
+        deserializeIrModuleHeader(moduleDescriptor, kotlinLibrary, DeserializationStrategy.ONLY_DECLARATION_HEADERS)
 
-    fun getAllIrFiles(): List<IrFile> {
-        return deserializersForModules.values.flatMap { it.module.files }
-    }
+    fun deserializeHeadersWithInlineBodies(moduleDescriptor: ModuleDescriptor, kotlinLibrary: KotlinLibrary?): IrModuleFragment =
+        deserializeIrModuleHeader(moduleDescriptor, kotlinLibrary, DeserializationStrategy.WITH_INLINE_BODIES)
 }
 
-enum class DeserializationStrategy(val needBodies: Boolean, val explicitlyExported: Boolean, val theWholeWorld: Boolean) {
-    ONLY_REFERENCED(true, false, false),
-    ALL(true, true, true),
-    EXPLICITLY_EXPORTED(true, true, false),
-    ONLY_DECLARATION_HEADERS(false, false, false)
+enum class DeserializationStrategy(
+    val needBodies: Boolean,
+    val explicitlyExported: Boolean,
+    val theWholeWorld: Boolean,
+    val inlineBodies: Boolean
+) {
+    ONLY_REFERENCED(true, false, false, true),
+    ALL(true, true, true, true),
+    EXPLICITLY_EXPORTED(true, true, false, true),
+    ONLY_DECLARATION_HEADERS(false, false, false, false),
+    WITH_INLINE_BODIES(false, false, false, true)
 }

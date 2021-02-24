@@ -33,9 +33,13 @@ internal fun isAbstract(access: Int) = (access and Opcodes.ACC_ABSTRACT) != 0
 private const val LONG_DEPRECATED = Opcodes.ACC_DEPRECATED.toLong()
 internal fun isDeprecated(access: Long) = (access and LONG_DEPRECATED) != 0L
 
+internal fun ClassNode.isInterface() = (access and Opcodes.ACC_INTERFACE) != 0
 internal fun ClassNode.isEnum() = (access and Opcodes.ACC_ENUM) != 0
 internal fun ClassNode.isAnnotation() = (access and Opcodes.ACC_ANNOTATION) != 0
+
 internal fun MethodNode.isVarargs() = (access and Opcodes.ACC_VARARGS) != 0
+internal fun MethodNode.isAbstract() = (access and Opcodes.ACC_ABSTRACT) != 0
+internal fun MethodNode.isStatic() = (access and Opcodes.ACC_STATIC) != 0
 
 internal fun FieldNode.isEnumValue() = (access and Opcodes.ACC_ENUM) != 0
 

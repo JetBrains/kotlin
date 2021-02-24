@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 fun inlineCallExplicitError(): String {
     inlineFun lamba@ {
         if (true) {

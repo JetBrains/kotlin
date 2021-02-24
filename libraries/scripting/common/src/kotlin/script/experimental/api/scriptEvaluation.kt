@@ -120,7 +120,7 @@ data class RefineEvaluationConfigurationData(
 }
 
 fun ScriptEvaluationConfiguration.refineBeforeEvaluation(
-    script: CompiledScript<*>,
+    script: CompiledScript,
     contextData: ScriptEvaluationContextData? = null
 ): ResultWithDiagnostics<ScriptEvaluationConfiguration> {
     val hostConfiguration = get(ScriptEvaluationConfiguration.hostConfiguration)
@@ -191,7 +191,7 @@ interface ScriptEvaluator {
      * @param scriptEvaluationConfiguration evaluation configuration
      */
     suspend operator fun invoke(
-        compiledScript: CompiledScript<*>,
+        compiledScript: CompiledScript,
         scriptEvaluationConfiguration: ScriptEvaluationConfiguration = ScriptEvaluationConfiguration.Default
     ): ResultWithDiagnostics<EvaluationResult>
 }

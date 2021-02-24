@@ -46,5 +46,9 @@ class InnerClassesScopeWrapper(val workerScope: MemberScope) : MemberScopeImpl()
 
     override fun definitelyDoesNotContainName(name: Name) = workerScope.definitelyDoesNotContainName(name)
 
+    override fun recordLookup(name: Name, location: LookupLocation) {
+        workerScope.recordLookup(name, location)
+    }
+
     override fun toString() = "Classes from $workerScope"
 }

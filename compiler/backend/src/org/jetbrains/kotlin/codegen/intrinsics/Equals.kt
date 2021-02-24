@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.codegen.intrinsics
 
-import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.Callable
 import org.jetbrains.kotlin.codegen.CallableMethod
+import org.jetbrains.kotlin.codegen.DescriptorAsmUtil
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 import org.jetbrains.org.objectweb.asm.Type
 
@@ -33,7 +33,7 @@ class Equals : IntrinsicMethod() {
                     nullOrObject(method.dispatchReceiverType),
                     nullOrObject(method.extensionReceiverType)
             ) {
-                AsmUtil.genAreEqualCall(it)
+                DescriptorAsmUtil.genAreEqualCall(it)
             }
 }
 

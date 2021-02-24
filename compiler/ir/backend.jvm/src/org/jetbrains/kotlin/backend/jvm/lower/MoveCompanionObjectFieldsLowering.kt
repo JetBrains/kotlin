@@ -9,11 +9,13 @@ import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.replaceThisByStaticReference
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.ir.builders.declarations.addField
+import org.jetbrains.kotlin.backend.jvm.propertiesPhase
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.builders.declarations.addProperty
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
+import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrAnonymousInitializerImpl
 import org.jetbrains.kotlin.ir.expressions.*
@@ -23,6 +25,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 
 internal val moveOrCopyCompanionObjectFieldsPhase = makeIrFilePhase(
     ::MoveOrCopyCompanionObjectFieldsLowering,
@@ -34,12 +37,12 @@ internal val remapObjectFieldAccesses = makeIrFilePhase(
     ::RemapObjectFieldAccesses,
     name = "RemapObjectFieldAccesses",
     description = "Make IrGetField/IrSetField to objects' fields point to the static versions",
-    prerequisite = setOf(propertiesToFieldsPhase)
+    prerequisite = setOf(propertiesPhase)
 )
 
 private class MoveOrCopyCompanionObjectFieldsLowering(val context: JvmBackendContext) : ClassLoweringPass {
     override fun lower(irClass: IrClass) {
-        if (irClass.isObject && !irClass.isCompanion) {
+        if (irClass.isNonCompanionObject) {
             irClass.handle()
         } else {
             (irClass.declarations.singleOrNull { it is IrClass && it.isCompanion } as IrClass?)?.handle()
@@ -49,7 +52,7 @@ private class MoveOrCopyCompanionObjectFieldsLowering(val context: JvmBackendCon
     private fun IrClass.handle() {
         val newDeclarations = declarations.map {
             when (it) {
-                is IrProperty -> context.declarationFactory.getStaticBackingField(it)?.also { newField ->
+                is IrProperty -> context.cachedDeclarations.getStaticBackingField(it)?.also { newField ->
                     it.backingField = newField
                     newField.correspondingPropertySymbol = it.symbol
                 }
@@ -90,7 +93,7 @@ private class MoveOrCopyCompanionObjectFieldsLowering(val context: JvmBackendCon
     }
 
     private val IrProperty.hasPublicVisibility: Boolean
-        get() = !Visibilities.isPrivate(visibility) && visibility != Visibilities.PROTECTED
+        get() = !DescriptorVisibilities.isPrivate(visibility) && visibility != DescriptorVisibilities.PROTECTED
 
     private fun makeAnonymousInitializerStatic(oldInitializer: IrAnonymousInitializer, newParent: IrClass) =
         with(oldInitializer) {
@@ -98,20 +101,19 @@ private class MoveOrCopyCompanionObjectFieldsLowering(val context: JvmBackendCon
             val newSymbol = IrAnonymousInitializerSymbolImpl(newParent.symbol)
             IrAnonymousInitializerImpl(startOffset, endOffset, origin, newSymbol, isStatic = true).apply {
                 parent = newParent
-                body = this@with.body
-                    .replaceThisByStaticReference(context.declarationFactory, oldParent, oldParent.thisReceiver!!)
-                    .patchDeclarationParents(newParent) as IrBlockBody
+                body = this@with.body.patchDeclarationParents(newParent)
+                replaceThisByStaticReference(context.cachedDeclarations, oldParent, oldParent.thisReceiver!!)
             }
         }
 
     private fun copyConstProperty(oldProperty: IrProperty, newParent: IrClass): IrProperty =
-        newParent.addProperty {
+        newParent.addProperty() {
             updateFrom(oldProperty)
             name = oldProperty.name
             isConst = true
         }.also { property ->
             val oldField = oldProperty.backingField!!
-            property.backingField = buildField {
+            property.backingField = context.irFactory.buildField {
                 updateFrom(oldField)
                 name = oldField.name
                 isStatic = true
@@ -122,6 +124,13 @@ private class MoveOrCopyCompanionObjectFieldsLowering(val context: JvmBackendCon
                 initializer = with(oldField.initializer!!) {
                     IrExpressionBodyImpl(startOffset, endOffset, (expression as IrConst<*>).copy())
                 }
+
+                if (oldProperty.parentAsClass.visibility == DescriptorVisibilities.PRIVATE) {
+                    context.createJvmIrBuilder(this.symbol).run {
+                        annotations = filterOutAnnotations(DeprecationResolver.JAVA_DEPRECATED, annotations) +
+                                irCall(irSymbols.javaLangDeprecatedConstructorWithDeprecatedFlag)
+                    }
+                }
             }
         }
 }
@@ -130,7 +139,7 @@ private class RemapObjectFieldAccesses(val context: JvmBackendContext) : FileLow
     override fun lower(irFile: IrFile) = irFile.transformChildrenVoid()
 
     private fun IrField.remap(): IrField? =
-        correspondingPropertySymbol?.owner?.let(context.declarationFactory::getStaticBackingField)
+        correspondingPropertySymbol?.owner?.let(context.cachedDeclarations::getStaticBackingField)
 
     override fun visitGetField(expression: IrGetField): IrExpression =
         expression.symbol.owner.remap()?.let {

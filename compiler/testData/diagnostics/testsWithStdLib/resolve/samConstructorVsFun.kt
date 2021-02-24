@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 // FILE: s/SamConstructor.java
 package s;

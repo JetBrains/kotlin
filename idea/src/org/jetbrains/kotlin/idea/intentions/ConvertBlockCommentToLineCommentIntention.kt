@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,15 +9,14 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtPsiFactory
 
 class ConvertBlockCommentToLineCommentIntention : SelfTargetingIntention<PsiComment>(
-    PsiComment::class.java, "Replace with end of line comment"
+    PsiComment::class.java, KotlinBundle.lazyMessage("replace.with.end.of.line.comment")
 ) {
-    override fun isApplicableTo(element: PsiComment, caretOffset: Int): Boolean {
-        return element.isBlockComment()
-    }
+    override fun isApplicableTo(element: PsiComment, caretOffset: Int): Boolean = element.isBlockComment()
 
     override fun applyTo(element: PsiComment, editor: Editor?) {
         val psiFactory = KtPsiFactory(element)
@@ -35,6 +34,7 @@ class ConvertBlockCommentToLineCommentIntention : SelfTargetingIntention<PsiComm
             .trim()
             .split("\n")
             .reversed()
+
         val lastIndex = comments.size - 1
         val parent = element.parent
         comments.forEachIndexed { index, comment ->

@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.backend.common.ir
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.builtins.*
+import org.jetbrains.kotlin.builtins.StandardNames.KOTLIN_REFLECT_FQ_NAME
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
@@ -14,16 +16,17 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.components.isVararg
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
@@ -33,6 +36,8 @@ abstract class Ir<out T : CommonBackendContext>(val context: T, val irModule: Ir
     abstract val symbols: Symbols<T>
 
     val defaultParameterDeclarationsCache = mutableMapOf<IrFunction, IrFunction>()
+
+    internal val localScopeWithCounterMap = LocalDeclarationsLowering.LocalScopeWithCounterMap()
 
     // If irType is an inline class type, return the underlying type according to the
     // unfolding rules of the current backend. Otherwise, returns null.
@@ -44,7 +49,7 @@ abstract class Ir<out T : CommonBackendContext>(val context: T, val irModule: Ir
 /**
  * Symbols for builtins that are available without any context and are not specific to any backend
  */
-open class BuiltinSymbolsBase(protected val builtIns: KotlinBuiltIns, private val symbolTable: SymbolTable) {
+open class BuiltinSymbolsBase(protected val irBuiltIns: IrBuiltIns, protected val builtIns: KotlinBuiltIns, private val symbolTable: ReferenceSymbolTable) {
     protected fun builtInsPackage(vararg packageNameSegments: String) =
         builtIns.builtInsModule.getPackage(FqName.fromSegments(listOf(*packageNameSegments))).memberScope
 
@@ -60,9 +65,13 @@ open class BuiltinSymbolsBase(protected val builtIns: KotlinBuiltIns, private va
         )
 
     private fun getClass(name: Name, vararg packageNameSegments: String = arrayOf("kotlin")): IrClassSymbol =
-        symbolTable.referenceClass(
-            builtInsPackage(*packageNameSegments).getContributedClassifier(name, NoLookupLocation.FROM_BACKEND) as ClassDescriptor
-        )
+        getClassOrNull(name, *packageNameSegments) ?: error("Class '$name' not found in package '${packageNameSegments.joinToString(".")}'")
+
+    private fun getClassOrNull(name: Name, vararg packageNameSegments: String = arrayOf("kotlin")): IrClassSymbol? =
+        (builtInsPackage(*packageNameSegments).getContributedClassifier(
+            name,
+            NoLookupLocation.FROM_BACKEND
+        ) as? ClassDescriptor)?.let { symbolTable.referenceClass(it) }
 
     /**
      * Use this table to reference external dependencies.
@@ -85,18 +94,61 @@ open class BuiltinSymbolsBase(protected val builtIns: KotlinBuiltIns, private va
         .map { symbolTable.referenceFunction(it) }
 
     private fun progression(name: String) = getClass(Name.identifier(name), "kotlin", "ranges")
+    private fun progressionOrNull(name: String) = getClassOrNull(Name.identifier(name), "kotlin", "ranges")
+
+    // The "...OrNull" variants are used for the classes below because the minimal stdlib used in tests do not include those classes.
+    // It was not feasible to add them to the JS reduced runtime because all its transitive dependencies also need to be
+    // added, which would include a lot of the full stdlib.
+    open val uByte = getClassOrNull(Name.identifier("UByte"), "kotlin")
+    open val uShort = getClassOrNull(Name.identifier("UShort"), "kotlin")
+    open val uInt = getClassOrNull(Name.identifier("UInt"), "kotlin")
+    open val uLong = getClassOrNull(Name.identifier("ULong"), "kotlin")
+    val uIntProgression = progressionOrNull("UIntProgression")
+    val uLongProgression = progressionOrNull("ULongProgression")
+    val uIntRange = progressionOrNull("UIntRange")
+    val uLongRange = progressionOrNull("ULongRange")
+    val sequence = getClassOrNull(Name.identifier("Sequence"), "kotlin", "sequences")
 
     val charProgression = progression("CharProgression")
     val intProgression = progression("IntProgression")
     val longProgression = progression("LongProgression")
-    val progressionClasses = listOf(charProgression, intProgression, longProgression)
-    val progressionClassesTypes = progressionClasses.map { it.descriptor.defaultType }.toSet()
+    val progressionClasses = listOfNotNull(charProgression, intProgression, longProgression, uIntProgression, uLongProgression)
 
-    val getProgressionLastElementByReturnType = builtInsPackage("kotlin", "internal").getContributedFunctions(
-        Name.identifier("getProgressionLastElement"),
+    val charRange = progression("CharRange")
+    val intRange = progression("IntRange")
+    val longRange = progression("LongRange")
+    val rangeClasses = listOfNotNull(charRange, intRange, longRange, uIntRange, uLongRange)
+
+    val closedRange = progression("ClosedRange")
+
+    val getProgressionLastElementByReturnType = builtInsPackage("kotlin", "internal")
+        .getContributedFunctions(Name.identifier("getProgressionLastElement"), NoLookupLocation.FROM_BACKEND)
+        .filter { it.containingDeclaration !is BuiltInsPackageFragment }
+        .map { d ->
+            val klass = d.returnType?.constructor?.declarationDescriptor?.let { symbolTable.referenceClassifier(it) }
+            val function = symbolTable.referenceSimpleFunction(d)
+            klass to function
+        }.toMap()
+
+    val toUIntByExtensionReceiver = builtInsPackage("kotlin").getContributedFunctions(
+        Name.identifier("toUInt"),
         NoLookupLocation.FROM_BACKEND
-    ).filter { it.containingDeclaration !is BuiltInsPackageFragment }
-        .map { Pair(it.returnType!!, symbolTable.referenceSimpleFunction(it)) }.toMap()
+    ).filter { it.containingDeclaration !is BuiltInsPackageFragment && it.extensionReceiverParameter != null }
+        .map {
+            val klass = symbolTable.referenceClassifier(it.extensionReceiverParameter!!.type.constructor.declarationDescriptor!!)
+            val function = symbolTable.referenceSimpleFunction(it)
+            klass to function
+        }.toMap()
+
+    val toULongByExtensionReceiver = builtInsPackage("kotlin").getContributedFunctions(
+        Name.identifier("toULong"),
+        NoLookupLocation.FROM_BACKEND
+    ).filter { it.containingDeclaration !is BuiltInsPackageFragment && it.extensionReceiverParameter != null }
+        .map {
+            val klass = symbolTable.referenceClassifier(it.extensionReceiverParameter!!.type.constructor.declarationDescriptor!!)
+            val function = symbolTable.referenceSimpleFunction(it)
+            klass to function
+        }.toMap()
 
     val any = symbolTable.referenceClass(builtIns.any)
     val unit = symbolTable.referenceClass(builtIns.unit)
@@ -107,9 +159,10 @@ open class BuiltinSymbolsBase(protected val builtIns: KotlinBuiltIns, private va
     val short = symbolTable.referenceClass(builtIns.short)
     val int = symbolTable.referenceClass(builtIns.int)
     val long = symbolTable.referenceClass(builtIns.long)
+    val float = symbolTable.referenceClass(builtIns.float)
+    val double = symbolTable.referenceClass(builtIns.double)
 
     val integerClasses = listOf(byte, short, int, long)
-    val integerClassesTypes = integerClasses.map { it.descriptor.defaultType }
 
     val arrayOf = getSimpleFunction(Name.identifier("arrayOf")) {
         it.extensionReceiverParameter == null && it.dispatchReceiverParameter == null && it.valueParameters.size == 1 &&
@@ -171,36 +224,44 @@ open class BuiltinSymbolsBase(protected val builtIns: KotlinBuiltIns, private va
     val mutableIterable = symbolTable.referenceClass(builtIns.mutableIterable)
     val mutableIterator = symbolTable.referenceClass(builtIns.mutableIterator)
     val mutableListIterator = symbolTable.referenceClass(builtIns.mutableListIterator)
+    val comparable = symbolTable.referenceClass(builtIns.comparable)
 
-    private val binaryOperatorCache = mutableMapOf<Triple<Name, KotlinType, KotlinType>, IrSimpleFunctionSymbol>()
+    private val binaryOperatorCache = mutableMapOf<Triple<Name, IrType, IrType>, IrSimpleFunctionSymbol>()
 
-    fun getBinaryOperator(name: Name, lhsType: KotlinType, rhsType: KotlinType): IrSimpleFunctionSymbol {
+    fun getBinaryOperator(name: Name, lhsType: IrType, rhsType: IrType): IrSimpleFunctionSymbol {
+        require(lhsType is IrSimpleType) { "Expected IrSimpleType in getBinaryOperator, got $lhsType" }
+        val classifier = lhsType.classifier
+        require(classifier is IrClassSymbol && classifier.isBound) {
+            "Expected a bound IrClassSymbol for lhsType in getBinaryOperator, got $classifier"
+        }
         val key = Triple(name, lhsType, rhsType)
         return binaryOperatorCache.getOrPut(key) {
-            symbolTable.referenceSimpleFunction(
-                lhsType.memberScope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND)
-                    .first { it.valueParameters.size == 1 && it.valueParameters[0].type == rhsType }
-            )
+            classifier.functions.single {
+                val function = it.owner
+                function.name == name && function.valueParameters.size == 1 && function.valueParameters[0].type == rhsType
+            }
         }
     }
 
-    private val unaryOperatorCache = mutableMapOf<Pair<Name, KotlinType>, IrSimpleFunctionSymbol>()
+    private val unaryOperatorCache = mutableMapOf<Pair<Name, IrType>, IrSimpleFunctionSymbol>()
 
-    fun getUnaryOperator(name: Name, receiverType: KotlinType): IrSimpleFunctionSymbol {
-        val key = name to receiverType
+    fun getUnaryOperator(name: Name, receiverType: IrType): IrSimpleFunctionSymbol {
+        require(receiverType is IrSimpleType) { "Expected IrSimpleType in getBinaryOperator, got $receiverType" }
+        val classifier = receiverType.classifier
+        require(classifier is IrClassSymbol && classifier.isBound) {
+            "Expected a bound IrClassSymbol for receiverType in getBinaryOperator, got $classifier"
+        }
+        val key = Pair(name, receiverType)
         return unaryOperatorCache.getOrPut(key) {
-            symbolTable.referenceSimpleFunction(
-                receiverType.memberScope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND)
-                    .first { it.valueParameters.isEmpty() }
-            )
+            classifier.functions.single {
+                val function = it.owner
+                function.name == name && function.valueParameters.isEmpty()
+            }
         }
     }
 
-    val intAnd = getBinaryOperator(OperatorNameConventions.AND, builtIns.intType, builtIns.intType)
-    val intPlusInt = getBinaryOperator(OperatorNameConventions.PLUS, builtIns.intType, builtIns.intType)
-
-    open fun functionN(n: Int): IrClassSymbol = symbolTable.lazyWrapper.referenceClass(builtIns.getFunction(n))
-    open fun suspendFunctionN(n: Int): IrClassSymbol = symbolTable.lazyWrapper.referenceClass(builtIns.getSuspendFunction(n))
+    open fun functionN(n: Int): IrClassSymbol = irBuiltIns.function(n)
+    open fun suspendFunctionN(n: Int): IrClassSymbol = irBuiltIns.suspendFunction(n)
 
     fun kproperty0(): IrClassSymbol = symbolTable.referenceClass(builtIns.kProperty0)
     fun kproperty1(): IrClassSymbol = symbolTable.referenceClass(builtIns.kProperty1)
@@ -224,13 +285,18 @@ open class BuiltinSymbolsBase(protected val builtIns: KotlinBuiltIns, private va
 
 // Some symbols below are used in kotlin-native, so they can't be private
 @Suppress("MemberVisibilityCanBePrivate", "PropertyName")
-abstract class Symbols<out T : CommonBackendContext>(val context: T, symbolTable: SymbolTable) :
-    BuiltinSymbolsBase(context.builtIns, symbolTable) {
-    abstract val ThrowNullPointerException: IrFunctionSymbol
-    abstract val ThrowNoWhenBranchMatchedException: IrFunctionSymbol
-    abstract val ThrowTypeCastException: IrFunctionSymbol
+abstract class Symbols<out T : CommonBackendContext>(val context: T, irBuiltIns: IrBuiltIns, symbolTable: SymbolTable) :
+    BuiltinSymbolsBase(irBuiltIns, context.builtIns, symbolTable) {
+    abstract val throwNullPointerException: IrSimpleFunctionSymbol
+    abstract val throwNoWhenBranchMatchedException: IrSimpleFunctionSymbol
+    abstract val throwTypeCastException: IrSimpleFunctionSymbol
 
-    abstract val ThrowUninitializedPropertyAccessException: IrSimpleFunctionSymbol
+    abstract val throwUninitializedPropertyAccessException: IrSimpleFunctionSymbol
+
+    abstract val throwKotlinNothingValueException: IrSimpleFunctionSymbol
+
+    open val throwISE: IrSimpleFunctionSymbol
+        get() = error("throwISE is not implemented")
 
     abstract val stringBuilder: IrClassSymbol
 
@@ -252,6 +318,10 @@ abstract class Symbols<out T : CommonBackendContext>(val context: T, symbolTable
 
     abstract val returnIfSuspended: IrSimpleFunctionSymbol
 
+    abstract val functionAdapter: IrClassSymbol
+
+    open val unsafeCoerceIntrinsic: IrSimpleFunctionSymbol? = null
+
     companion object {
         fun isLateinitIsInitializedPropertyGetter(symbol: IrFunctionSymbol): Boolean =
             symbol is IrSimpleFunctionSymbol && symbol.owner.let { function ->
@@ -260,7 +330,7 @@ abstract class Symbols<out T : CommonBackendContext>(val context: T, symbolTable
                         function.getPackageFragment()!!.fqName.asString() == "kotlin" &&
                         function.valueParameters.isEmpty() &&
                         symbol.owner.extensionReceiverParameter?.type?.classOrNull?.owner.let { receiverClass ->
-                            receiverClass?.fqNameWhenAvailable?.toUnsafe() == KotlinBuiltIns.FQ_NAMES.kProperty0
+                            receiverClass?.fqNameWhenAvailable?.toUnsafe() == StandardNames.FqNames.kProperty0
                         }
             }
 

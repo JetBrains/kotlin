@@ -1,13 +1,11 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.references
 
-import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiMethod
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -22,14 +20,22 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getReferenceTargets
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
 
-sealed class SyntheticPropertyAccessorReference(expression: KtNameReferenceExpression, private val getter: Boolean) :
-    KtSimpleReference<KtNameReferenceExpression>(expression) {
+class SyntheticPropertyAccessorReferenceDescriptorImpl(
+    expression: KtNameReferenceExpression,
+    getter: Boolean
+) : SyntheticPropertyAccessorReference(expression, getter), KtDescriptorsBasedReference {
+    override fun isReferenceTo(element: PsiElement): Boolean =
+        super<SyntheticPropertyAccessorReference>.isReferenceTo(element)
+
+    override fun additionalIsReferenceToChecker(element: PsiElement): Boolean = matchesTarget(element)
+
     override fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor> {
-        val descriptors = super.getTargetDescriptors(context)
+        val descriptors = expression.getReferenceTargets(context)
         if (descriptors.none { it is SyntheticJavaPropertyDescriptor }) return emptyList()
 
         val result = SmartList<FunctionDescriptor>()
@@ -44,23 +50,6 @@ sealed class SyntheticPropertyAccessorReference(expression: KtNameReferenceExpre
         }
         return result
     }
-
-    override fun isReferenceTo(element: PsiElement): Boolean {
-        if (element !is PsiMethod || !isAccessorName(element.name)) return false
-        if (!getter && expression.readWriteAccess(true) == ReferenceAccess.READ) return false
-        return super.isReferenceTo(element)
-    }
-
-    private fun isAccessorName(name: String): Boolean {
-        if (getter) {
-            return name.startsWith("get") || name.startsWith("is")
-        }
-        return name.startsWith("set")
-    }
-
-    override fun getRangeInElement() = TextRange(0, expression.textLength)
-
-    override fun canRename() = true
 
     private fun renameByPropertyName(newName: String): PsiElement? {
         val nameIdentifier = KtPsiFactory(expression).createNameIdentifier(newName)
@@ -183,7 +172,4 @@ sealed class SyntheticPropertyAccessorReference(expression: KtNameReferenceExpre
 
     override val resolvesByNames: Collection<Name>
         get() = listOf(element.getReferencedNameAsName())
-
-    class Getter(expression: KtNameReferenceExpression) : SyntheticPropertyAccessorReference(expression, true)
-    class Setter(expression: KtNameReferenceExpression) : SyntheticPropertyAccessorReference(expression, false)
 }

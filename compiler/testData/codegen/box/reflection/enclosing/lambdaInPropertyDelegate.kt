@@ -1,6 +1,6 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 // TARGET_BACKEND: JVM
 // WITH_RUNTIME
+package test
 
 class C {
     val f by foo {
@@ -20,7 +20,7 @@ fun box(): String {
     if (emInner?.getName() != "invoke") return "Fail: incorrect enclosing method for inner lambda: $emInner"
 
     val ecInner = innerLambda.getEnclosingClass()
-    if (ecInner?.getName() != "C\$f\$2") return "Fail: incorrect enclosing class for inner lambda: $ecInner"
+    if (ecInner?.getName() != "test.C\$f\$2") return "Fail: incorrect enclosing class for inner lambda: $ecInner"
 
     val ectorInner = innerLambda.getEnclosingConstructor()
     if (ectorInner != null) return "Fail: inner lambda should not have enclosing constructor: $ectorInner"
@@ -36,7 +36,7 @@ fun box(): String {
     if (emOuter != null) return "Fail: outer lambda should not have enclosing method: $emOuter"
 
     val ecOuter = outerLambda.getEnclosingClass()
-    if (ecOuter?.getName() != "C") return "Fail: incorrect enclosing class for outer lambda: $ecOuter"
+    if (ecOuter?.getName() != "test.C") return "Fail: incorrect enclosing class for outer lambda: $ecOuter"
 
     val ectorOuter = outerLambda.getEnclosingConstructor()
     if (ectorOuter == null) return "Fail: outer lambda _should_ have enclosing constructor"

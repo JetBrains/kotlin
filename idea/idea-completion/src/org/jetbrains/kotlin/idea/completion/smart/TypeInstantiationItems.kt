@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.idea.formatter.ktCodeStyleSettings
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.load.java.sam.SamConstructorDescriptor
+import org.jetbrains.kotlin.resolve.sam.SamConstructorDescriptor
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -152,7 +152,7 @@ class TypeInstantiationItems(
         val allConstructors = classifier.constructors
         val visibleConstructors = allConstructors.filter {
             if (isAbstract)
-                visibilityFilter(it) || it.visibility == Visibilities.PROTECTED
+                visibilityFilter(it) || it.visibility == DescriptorVisibilities.PROTECTED
             else
                 visibilityFilter(it)
         }

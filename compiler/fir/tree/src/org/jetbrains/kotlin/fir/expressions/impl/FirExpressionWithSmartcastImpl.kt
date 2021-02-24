@@ -19,10 +19,10 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 
-class FirExpressionWithSmartcastImpl(
+internal class FirExpressionWithSmartcastImpl(
     override var originalExpression: FirQualifiedAccessExpression,
     override val typeRef: FirTypeRef,
-    override val typesFromSmartcast: Collection<ConeKotlinType>
+    override val typesFromSmartCast: Collection<ConeKotlinType>
 ) : FirExpressionWithSmartcast() {
     init {
         assert(originalExpression.typeRef is FirResolvedTypeRef)
@@ -30,7 +30,6 @@ class FirExpressionWithSmartcastImpl(
 
     override val source: FirSourceElement? get() = originalExpression.source
     override val annotations: List<FirAnnotationCall> get() = originalExpression.annotations
-    override val safe: Boolean get() = originalExpression.safe
     override val typeArguments: List<FirTypeProjection> get() = originalExpression.typeArguments
     override val explicitReceiver: FirExpression? get() = originalExpression.explicitReceiver
     override val dispatchReceiver: FirExpression get() = originalExpression.dispatchReceiver
@@ -67,5 +66,24 @@ class FirExpressionWithSmartcastImpl(
         throw IllegalStateException()
     }
 
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirExpressionWithSmartcast {
+        throw IllegalStateException()
+    }
+
+    override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>) {
+        throw IllegalStateException()
+    }
+
+    override fun replaceCalleeReference(newCalleeReference: FirReference) {
+        throw IllegalStateException()
+    }
+
+    override fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?) {
+        throw IllegalStateException()
+    }
+
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {}
+
+    override fun replaceSource(newSource: FirSourceElement?) {
+    }
 }

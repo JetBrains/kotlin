@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.nj2k.conversions
 
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.tree.*
 
@@ -30,7 +31,7 @@ class JavaAnnotationsConversion(context: NewJ2kConverterContext) : RecursiveAppl
             annotation.classSymbol = symbolProvider.provideClassSymbol("kotlin.Deprecated")
             annotation.arguments = listOf(JKAnnotationParameterImpl(JKLiteralExpression("\"\"", JKLiteralExpression.LiteralType.STRING)))
         }
-        if (annotation.classSymbol.fqName == "java.lang.annotation.Target") {
+        if (annotation.classSymbol.fqName == JvmAnnotationNames.TARGET_ANNOTATION.asString()) {
             annotation.classSymbol = symbolProvider.provideClassSymbol("kotlin.annotation.Target")
 
             val arguments = annotation.arguments.singleOrNull()?.let { parameter ->

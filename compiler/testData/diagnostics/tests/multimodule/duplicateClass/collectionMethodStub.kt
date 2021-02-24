@@ -1,5 +1,6 @@
-// FILE: f1.kt
+// FIR_IDENTICAL
 // SKIP_TXT
+// FILE: f1.kt
 
 package kotlin
 

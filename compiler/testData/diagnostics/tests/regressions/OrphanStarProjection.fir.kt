@@ -1,3 +1,3 @@
 class B {}
 
-val b : B<*> = 1
+val b : <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>B<*><!> = 1

@@ -11,5 +11,4 @@ enum class E(private val p: Int) {
 
     fun foo(p: Int) {}
     abstract fun bar()
-
 }

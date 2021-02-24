@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorFactory
+import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isConventionCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
@@ -88,7 +89,7 @@ class DynamicCallableDescriptors(private val storageManager: StorageManager, bui
             owner,
             Annotations.EMPTY,
             Modality.FINAL,
-            Visibilities.PUBLIC,
+            DescriptorVisibilities.PUBLIC,
             true,
             name,
             CallableMemberDescriptor.Kind.DECLARATION,
@@ -131,9 +132,10 @@ class DynamicCallableDescriptors(private val storageManager: StorageManager, bui
             createValueParameters(functionDescriptor, call),
             dynamicType,
             Modality.FINAL,
-            Visibilities.PUBLIC
+            DescriptorVisibilities.PUBLIC
         )
         functionDescriptor.setHasSynthesizedParameterNames(true)
+        functionDescriptor.isOperator = isConventionCall(call)
         return functionDescriptor
     }
 

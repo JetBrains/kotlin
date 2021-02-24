@@ -1,0 +1,13 @@
+FILE: main.kt
+    public final fun foo(j: R|MyJavaClass|): R|kotlin/Unit| {
+        R|<local>/j|.R|/MyJavaClass.bar|()
+    }
+    public abstract class MyClass : R|kotlin/Any| {
+        public constructor(): R|MyClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open fun bar(y: R|kotlin/String?| = Null(null)): R|kotlin/Unit| {
+        }
+
+    }

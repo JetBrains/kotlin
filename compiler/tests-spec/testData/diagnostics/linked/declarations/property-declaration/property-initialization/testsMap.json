@@ -7,7 +7,8 @@
           "casesNumber": 2,
           "description": "All non-abstract properties must be definitely initialized before their first use.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/property-declaration/local-property-declaration/p-1/neg/1.1.kt",
-          "unexpectedBehaviour": true
+          "unexpectedBehaviour": true,
+          "linkType": "primary"
         }
       ]
     }

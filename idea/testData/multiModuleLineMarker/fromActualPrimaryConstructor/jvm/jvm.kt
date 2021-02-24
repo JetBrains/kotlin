@@ -1,5 +1,5 @@
-actual class <lineMarker>NoConstructor2</lineMarker>(name: String) {
+actual class <!LINE_MARKER("descr='Has declaration in common module'")!>NoConstructor2<!>(name: String) {
     val myName = name
-    actual fun <lineMarker>extraFun</lineMarker>() {}
+    actual fun <!LINE_MARKER("descr='Has declaration in common module'")!>extraFun<!>() {}
 }
 

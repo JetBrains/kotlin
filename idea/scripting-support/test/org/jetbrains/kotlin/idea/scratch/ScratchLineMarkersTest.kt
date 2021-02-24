@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.idea.scratch
 
 import com.intellij.codeInsight.daemon.LineMarkerInfo
-import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerImpl
 import com.intellij.ide.scratch.ScratchFileService
 import com.intellij.ide.scratch.ScratchRootType
+import com.intellij.openapi.application.Application
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.util.io.FileUtil
@@ -37,7 +37,7 @@ abstract class AbstractScratchLineMarkersTest : FileEditorManagerTestCase() {
 
         myFixture.openFileInEditor(scratchVirtualFile)
 
-        ScriptConfigurationManager.updateScriptDependenciesSynchronously(myFixture.file, project)
+        ScriptConfigurationManager.updateScriptDependenciesSynchronously(myFixture.file)
 
         val scratchFileEditor = getScratchEditorForSelectedFile(FileEditorManager.getInstance(project), myFixture.file.virtualFile)
             ?: error("Couldn't find scratch panel")
@@ -47,7 +47,7 @@ abstract class AbstractScratchLineMarkersTest : FileEditorManagerTestCase() {
         val project = myFixture.project
         val document = myFixture.editor.document
 
-        val data = ExpectedHighlightingData(document, false, false, false, myFixture.file)
+        val data = ExpectedHighlightingData(document, false, false, false)
         data.init()
 
         PsiDocumentManager.getInstance(project).commitAllDocuments()
@@ -55,13 +55,8 @@ abstract class AbstractScratchLineMarkersTest : FileEditorManagerTestCase() {
         val markers = doAndCheckHighlighting(document, data, File(path))
 
         AbstractLineMarkersTest.assertNavigationElements(myFixture.project, myFixture.file as KtFile, markers)
-    }
-
-    override fun tearDown() {
-        super.tearDown()
-
-        ScratchFileService.getInstance().scratchesMapping.mappings.forEach { file, _ ->
-            runWriteAction { file.delete(this) }
+        runWriteAction {
+            scratchVirtualFile.delete(this)
         }
     }
 
@@ -70,7 +65,7 @@ abstract class AbstractScratchLineMarkersTest : FileEditorManagerTestCase() {
     ): List<LineMarkerInfo<*>> {
         myFixture.doHighlighting()
 
-        return AbstractLineMarkersTest.checkHighlighting(myFixture.project, documentToAnalyze, expectedHighlighting, expectedFile)
+        return AbstractLineMarkersTest.checkHighlighting(myFixture.file, documentToAnalyze, expectedHighlighting, expectedFile)
     }
 
 }

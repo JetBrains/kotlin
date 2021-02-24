@@ -17,14 +17,12 @@
 package org.jetbrains.kotlin.utils
 
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import java.io.*
 import java.util.*
 import java.util.jar.Attributes
 import java.util.jar.JarFile
 import java.util.jar.Manifest
-import java.util.zip.ZipFile
 
 object LibraryUtils {
     private val LOG = Logger.getInstance(LibraryUtils::class.java)
@@ -60,36 +58,8 @@ object LibraryUtils {
         return classesRoots.firstOrNull { it.name == jarName }
     }
 
-    @Suppress("unused") // used in K2JSCompilerMojo
-    @JvmStatic fun isKotlinJavascriptLibrary(library: File): Boolean = KotlinJavascriptMetadataUtils.loadMetadata(library).isNotEmpty()
-
     @JvmStatic fun isKotlinJavascriptStdLibrary(library: File): Boolean {
         return checkAttributeValue(library, TITLE_KOTLIN_JAVASCRIPT_STDLIB, Attributes.Name.IMPLEMENTATION_TITLE)
-    }
-
-    private fun isZippedKlibInZip(candidate: File): Boolean {
-        var manifestFound = false
-        var irFound = false
-        for (entry in ZipFile(candidate).entries()) {
-            if (entry.name == "manifest") manifestFound = true
-            if (entry.name == "ir/") irFound = true
-        }
-        return manifestFound && irFound
-    }
-
-    private fun isZippedKlib(candidate: File): Boolean {
-        return candidate.extension == "klib"
-    }
-
-    @JvmStatic
-    fun isKotlinJavascriptIrLibrary(candidate: File): Boolean {
-        return when {
-            isZippedKlib(candidate) -> true
-            FileUtil.isJarOrZip(candidate) -> isZippedKlibInZip(candidate)
-            !File(candidate, "manifest").isFile -> false
-            !File(candidate, "ir").isDirectory -> false
-            else -> true
-        }
     }
 
     private fun getManifestFromJar(library: File): Manifest? {

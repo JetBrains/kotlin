@@ -1,3 +1,5 @@
+// FIR_COMPARISON
+
 fun shouldCompleteTopLevelCallablesFromIndex() = true
 
 fun foo(statement: String) {

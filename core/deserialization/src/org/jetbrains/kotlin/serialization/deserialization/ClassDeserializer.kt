@@ -16,8 +16,9 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.packageFragments
 import org.jetbrains.kotlin.metadata.deserialization.TypeTable
 import org.jetbrains.kotlin.metadata.deserialization.VersionRequirementTable
 import org.jetbrains.kotlin.name.ClassId
@@ -52,7 +53,7 @@ class ClassDeserializer(private val components: DeserializationComponents) {
 
             outerClass.c
         } else {
-            val fragments = components.packageFragmentProvider.getPackageFragments(classId.packageFqName)
+            val fragments = components.packageFragmentProvider.packageFragments(classId.packageFqName)
             val fragment = fragments.firstOrNull { it !is DeserializedPackageFragment || it.hasTopLevelClass(classId.shortClassName) }
                 ?: return null
 
@@ -83,7 +84,7 @@ class ClassDeserializer(private val components: DeserializationComponents) {
          * but the metadata is still serialized for kotlin-reflect 1.0 to work (see BuiltInsSerializer.kt).
          */
         val BLACK_LIST = setOf(
-            ClassId.topLevel(KotlinBuiltIns.FQ_NAMES.cloneable.toSafe())
+            ClassId.topLevel(StandardNames.FqNames.cloneable.toSafe())
         )
     }
 }

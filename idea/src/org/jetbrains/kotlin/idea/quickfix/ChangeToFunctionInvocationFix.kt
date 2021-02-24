@@ -19,10 +19,11 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.psi.*
 
 class ChangeToFunctionInvocationFix(element: KtExpression) : KotlinQuickFixAction<KtExpression>(element) {
-    override fun getFamilyName() = "Change to function invocation"
+    override fun getFamilyName() = KotlinBundle.message("fix.change.to.function.invocation")
 
     override fun getText() = familyName
 

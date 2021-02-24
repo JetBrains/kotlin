@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.test.CompilerTestUtil
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 import java.util.concurrent.TimeUnit
 
@@ -20,7 +21,7 @@ class ReflectionIntegrationTest : KtUsefulTestCase() {
     fun testClassLoaderForBuiltIns() {
         val tmpdir = KotlinTestUtils.tmpDirForTest(this)
 
-        val root = KotlinTestUtils.getTestDataPathBase() + "/reflection/classLoaderForBuiltIns"
+        val root = KtTestUtil.getTestDataPathBase() + "/reflection/classLoaderForBuiltIns"
         KotlinTestUtils.compileJavaFiles(
             listOf(File("$root/Main.java")),
             listOf("-d", tmpdir.absolutePath)

@@ -1,5 +1,6 @@
-// FILE: 1.kt
 // FULL_JDK
+// TARGET_BACKEND: JVM
+// FILE: 1.kt
 
 package test
 
@@ -23,4 +24,3 @@ fun box() : String {
         }
     }
 }
-

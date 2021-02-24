@@ -1,0 +1,7 @@
+FILE: valueIsNeverRead.kt
+    public final fun foo(): R|kotlin/Unit| {
+        lvar a: R|kotlin/Int| = Int(1)
+        R|<local>/a| = Int(2)
+        R|<local>/a| = Int(3)
+        R|<local>/a| = R|<local>/a|.R|kotlin/Int.plus|(Int(1))
+    }

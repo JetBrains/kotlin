@@ -1,0 +1,5 @@
+FILE: logicOperators.kt
+    public final fun foo(something: R|kotlin/Boolean|): R|kotlin/Unit| {
+        lvar res: R|kotlin/Boolean| = Boolean(false)
+        R|<local>/res| = R|<local>/res|.R|kotlin/Boolean.and|(R|<local>/something|)
+    }

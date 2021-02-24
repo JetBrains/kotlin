@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: A.java
 public interface A<T extends A<? super T, ?>, S extends A<? super T, ?>> {}
 

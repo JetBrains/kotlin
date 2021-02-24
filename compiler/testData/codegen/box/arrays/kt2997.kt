@@ -1,4 +1,5 @@
-// IGNORE_BACKEND_FIR: JVM_IR
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: WASM_NULL_CAST
 //KT-2997 Automatically cast error (Array)
 
 fun foo(a: Any): Int {

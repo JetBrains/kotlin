@@ -222,6 +222,6 @@ abstract class CustomLibraryDescriptorWithDeferredConfig(
 
     companion object {
 
-        private val DEFAULT_LIB_DIR_NAME = "lib"
+        private const val DEFAULT_LIB_DIR_NAME = "lib"
     }
 }

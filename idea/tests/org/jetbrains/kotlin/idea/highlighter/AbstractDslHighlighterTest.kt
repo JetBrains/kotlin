@@ -34,10 +34,12 @@ abstract class AbstractDslHighlighterTest : KotlinLightCodeInsightFixtureTestCas
             val styleIdByCall = extension.highlightCall(element, call)?.externalName
             if (styleIdByCall != null && styleIdByCall == styleIdByComment) {
                 val annotationHolder = AnnotationHolderImpl(AnnotationSession(psiFile))
-                val checkers = KotlinPsiChecker.getAfterAnalysisVisitor(annotationHolder, bindingContext)
-                checkers.forEach { call.call.callElement.accept(it) }
+                annotationHolder.runAnnotatorWithContext(file) { _, _ ->
+                    val checkers = AbstractKotlinHighlightingPass.getAfterAnalysisVisitor(annotationHolder, bindingContext)
+                    checkers.forEach { call.call.callElement.accept(it) }
+                }
                 assertTrue(
-                    "KotlinPsiChecker did not contribute an Annotation containing the correct text attribute key at line ${lineNumber + 1}",
+                    "KotlinHighlightingPass did not contribute an Annotation containing the correct text attribute key at line ${lineNumber + 1}",
                     annotationHolder.any {
                         it.textAttributes.externalName == styleIdByComment
                     }

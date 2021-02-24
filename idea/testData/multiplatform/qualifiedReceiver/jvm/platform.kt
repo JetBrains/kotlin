@@ -2,14 +2,14 @@
 
 package foo
 
-actual interface A {
-    actual fun commonFun()
-    actual val b: B
-    actual fun bFun(): B
+actual interface <!LINE_MARKER("descr='Has declaration in common module'")!>A<!> {
+    actual fun <!LINE_MARKER("descr='Has declaration in common module'")!>commonFun<!>()
+    actual val <!LINE_MARKER("descr='Has declaration in common module'")!>b<!>: B
+    actual fun <!LINE_MARKER("descr='Has declaration in common module'")!>bFun<!>(): B
     fun platformFun()
 }
 
-actual interface B {
-    actual fun commonFunB()
+actual interface <!LINE_MARKER("descr='Has declaration in common module'")!>B<!> {
+    actual fun <!LINE_MARKER("descr='Has declaration in common module'")!>commonFunB<!>()
     fun platformFunB()
 }

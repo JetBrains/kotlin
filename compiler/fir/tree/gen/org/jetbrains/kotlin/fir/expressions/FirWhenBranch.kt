@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,6 +21,8 @@ abstract class FirWhenBranch : FirPureAbstractElement(), FirElement {
     abstract val result: FirBlock
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitWhenBranch(this, data)
+
+    abstract override fun replaceSource(newSource: FirSourceElement?)
 
     abstract fun <D> transformCondition(transformer: FirTransformer<D>, data: D): FirWhenBranch
 

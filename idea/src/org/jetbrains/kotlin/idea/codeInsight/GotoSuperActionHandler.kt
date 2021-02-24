@@ -104,9 +104,9 @@ class GotoSuperActionHandler : CodeInsightActionHandler {
 
     private fun getTitle(descriptor: DeclarationDescriptor): String? =
         when (descriptor) {
-            is ClassDescriptor -> KotlinBundle.message("goto.super.class.chooser.title")
-            is PropertyDescriptor -> KotlinBundle.message("goto.super.property.chooser.title")
-            is SimpleFunctionDescriptor -> KotlinBundle.message("goto.super.function.chooser.title")
+            is ClassDescriptor -> KotlinBundle.message("goto.super.chooser.class.title")
+            is PropertyDescriptor -> KotlinBundle.message("goto.super.chooser.property.title")
+            is SimpleFunctionDescriptor -> KotlinBundle.message("goto.super.chooser.function.title")
             else -> null
         }
 

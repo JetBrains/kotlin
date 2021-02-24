@@ -120,7 +120,7 @@ open class ValueParameterDescriptorImpl(
         )
     }
 
-    override fun getVisibility() = Visibilities.LOCAL
+    override fun getVisibility() = DescriptorVisibilities.LOCAL
 
     override fun getOverriddenDescriptors(): Collection<ValueParameterDescriptor> {
         return containingDeclaration.overriddenDescriptors.map {

@@ -31,7 +31,3 @@ fun configureScriptDefinitions(
     configuration.addAll(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS, templatesFromClasspath.toList())
 }
 
-fun makeHostConfiguration(project: Project, configuration: CompilerConfiguration): ScriptingHostConfiguration =
-    ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {
-        // TODO: add jdk path and other params if needed
-    }

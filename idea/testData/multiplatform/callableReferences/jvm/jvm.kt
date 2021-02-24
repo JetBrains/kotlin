@@ -2,8 +2,8 @@
 
 package sample
 
-actual interface C {
-    actual fun common_2_C()
+actual interface <!LINE_MARKER("descr='Has declaration in common module'")!>C<!> {
+    actual fun <!LINE_MARKER("descr='Has declaration in common module'")!>common_2_C<!>()
     fun jvm_C()
 }
 

@@ -5,6 +5,7 @@ package i
 
 //+JDK
 import java.util.*
+import checkSubtype
 
 fun <T, K> someFunction(list: List<T>, transform: (T) -> K): List<K> {
     val result = arrayList<K>()

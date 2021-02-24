@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.varargParameterPosition
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.kotlin.utils.keysToMap
 import kotlin.jvm.internal.FunctionBase
 
@@ -172,14 +173,14 @@ abstract class FileRankingCalculator(private val checkClassFqName: Boolean = tru
             return -MAJOR
 
         // boolean is
-        return if (methodName.drop(3) == propertyName.capitalize()) MAJOR else -NORMAL
+        return if (methodName.drop(3) == propertyName.capitalizeAsciiOnly()) MAJOR else -NORMAL
     }
 
     private fun rankingForVisibility(descriptor: DeclarationDescriptorWithVisibility, accessible: Accessible): Ranking {
         return collect(
-            accessible.isPublic && descriptor.visibility == Visibilities.PUBLIC,
-            accessible.isProtected && descriptor.visibility == Visibilities.PROTECTED,
-            accessible.isPrivate && descriptor.visibility == Visibilities.PRIVATE
+            accessible.isPublic && descriptor.visibility == DescriptorVisibilities.PUBLIC,
+            accessible.isProtected && descriptor.visibility == DescriptorVisibilities.PROTECTED,
+            accessible.isPrivate && descriptor.visibility == DescriptorVisibilities.PRIVATE
         )
     }
 
@@ -342,7 +343,8 @@ abstract class FileRankingCalculator(private val checkClassFqName: Boolean = tru
             bindingContext,
             ClassBuilderMode.LIGHT_CLASSES,
             "debugger",
-            KotlinTypeMapper.LANGUAGE_VERSION_SETTINGS_DEFAULT // TODO use proper LanguageVersionSettings
+            KotlinTypeMapper.LANGUAGE_VERSION_SETTINGS_DEFAULT, // TODO use proper LanguageVersionSettings
+            useOldInlineClassesManglingScheme = false
         )
     }
 

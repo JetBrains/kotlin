@@ -45,6 +45,10 @@ class LazyJavaTypeParameterDescriptor(
     override val annotations = LazyJavaAnnotations(c, javaTypeParameter)
 
     override fun resolveUpperBounds(): List<KotlinType> {
+        return computeNotEnhancedBounds()
+    }
+
+    private fun computeNotEnhancedBounds(): List<KotlinType> {
         val bounds = javaTypeParameter.upperBounds
         if (bounds.isEmpty()) {
             return listOf(
@@ -57,6 +61,10 @@ class LazyJavaTypeParameterDescriptor(
         return bounds.map {
             c.typeResolver.transformJavaType(it, TypeUsage.COMMON.toAttributes(upperBoundForTypeParameter = this))
         }
+    }
+
+    override fun processBoundsWithoutCycles(bounds: List<KotlinType>): List<KotlinType> {
+        return c.components.signatureEnhancement.enhanceTypeParameterBounds(this, bounds, c)
     }
 
     override fun reportSupertypeLoopError(type: KotlinType) {

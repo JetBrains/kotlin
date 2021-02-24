@@ -35,6 +35,9 @@ Building pJvm
 Cleaning output files:
   out/production/pJvm/META-INF/pJvm.kotlin_module
 End of files
+Cleaning output files:
+  out/production/pJvm/FgKt.class
+End of files
 Compiling files:
   c/src/f.kt
   c/src/g.kt

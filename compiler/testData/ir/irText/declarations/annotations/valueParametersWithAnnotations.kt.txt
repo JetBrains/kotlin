@@ -1,0 +1,24 @@
+annotation class TestAnn : Annotation {
+  constructor(x: String) /* primary */ 
+  val x: String
+    field = x
+    get
+
+}
+
+fun testFun(@TestAnn(x = "testFun.x") x: Int) {
+}
+
+class TestClassConstructor1 {
+  constructor(@TestAnn(x = "TestClassConstructor1.x") x: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val xx: Int
+    field = x
+    get
+
+}
+

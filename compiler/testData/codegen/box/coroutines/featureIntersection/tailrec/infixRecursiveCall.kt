@@ -1,11 +1,9 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 // WITH_RUNTIME
 // WITH_COROUTINES
-// COMMON_COROUTINES_TEST
 // DONT_RUN_GENERATED_CODE: JS
 
 import helpers.*
-import COROUTINES_PACKAGE.*
+import kotlin.coroutines.*
 
 tailrec suspend infix fun Int.foo(x: Int) {
     if (x == 0) return

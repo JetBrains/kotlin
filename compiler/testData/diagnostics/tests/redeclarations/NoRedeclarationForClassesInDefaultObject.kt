@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 package kt2247
 
 class B {

@@ -88,7 +88,7 @@ class DebugLabelPropertyDescriptorProvider(val codeFragment: KtCodeFragment, val
             propertyDescriptor,
             Annotations.EMPTY,
             Modality.FINAL,
-            Visibilities.PUBLIC,
+            DescriptorVisibilities.PUBLIC,
             /* isDefault = */ false,
             /* isExternal = */ false,
             /* isInline = */ false,
@@ -189,7 +189,10 @@ private object DebugLabelModuleDescriptor : DeclarationDescriptorImpl(Annotation
     override val expectedByModules: List<ModuleDescriptor>
         get() = emptyList()
 
-    override fun <T> getCapability(capability: ModuleDescriptor.Capability<T>): T? = null
+    override val allExpectedByModules: Set<ModuleDescriptor>
+        get() = emptySet()
+
+    override fun <T> getCapability(capability: ModuleCapability<T>): T? = null
 
     override val isValid: Boolean
         get() = true
@@ -205,7 +208,7 @@ internal class DebugLabelPropertyDescriptor(
     null,
     Annotations.EMPTY,
     Modality.FINAL,
-    Visibilities.PUBLIC,
+    DescriptorVisibilities.PUBLIC,
     /*isVar = */false,
     Name.identifier(labelName + "_DebugLabel"),
     CallableMemberDescriptor.Kind.SYNTHESIZED,

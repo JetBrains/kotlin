@@ -18,16 +18,16 @@ fun case_1() {
     val x = case_1(Out(10), Inv(0.1))
 
     if (x != null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Double & Int}> & Number} & {Comparable<{Double & Int}> & Number}?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Double & Int}> & Number} & {Comparable<{Double & Int}> & Number}?"), DEBUG_INFO_SMARTCAST!>x<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Double & Int}> & Number} & {Comparable<{Double & Int}> & Number}?"), DEBUG_INFO_SMARTCAST!>x<!>.propT
-        <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Double & Int}> & Number} & {Comparable<{Double & Int}> & Number}?"), DEBUG_INFO_SMARTCAST!>x<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Double & Int}> & Number} & {Comparable<{Double & Int}> & Number}?")!>x<!>.propNullableT
-        <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Double & Int}> & Number} & {Comparable<{Double & Int}> & Number}?")!>x<!>.propNullableAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Double & Int}> & Number} & {Comparable<{Double & Int}> & Number}?"), DEBUG_INFO_SMARTCAST!>x<!>.funT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Double & Int}> & Number} & {Comparable<{Double & Int}> & Number}?"), DEBUG_INFO_SMARTCAST!>x<!>.funAny()
-        <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Double & Int}> & Number} & {Comparable<{Double & Int}> & Number}?")!>x<!>.funNullableT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Double & Int}> & Number} & {Comparable<{Double & Int}> & Number}?")!>x<!>.funNullableAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<*> & Number} & {Comparable<*> & Number}?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<*> & Number} & {Comparable<*> & Number}?")!>x<!>.equals(null)
+        <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<*> & Number} & {Comparable<*> & Number}?")!>x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<*> & Number} & {Comparable<*> & Number}?")!>x<!>.propAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<*> & Number} & {Comparable<*> & Number}?")!>x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<*> & Number} & {Comparable<*> & Number}?")!>x<!>.propNullableAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<*> & Number} & {Comparable<*> & Number}?")!>x<!>.funT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<*> & Number} & {Comparable<*> & Number}?")!>x<!>.funAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<*> & Number} & {Comparable<*> & Number}?")!>x<!>.funNullableT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<*> & Number} & {Comparable<*> & Number}?")!>x<!>.funNullableAny()
     }
 }
 
@@ -38,16 +38,16 @@ fun case_2(y: Int) {
     val x = case_2(Out(y), Inv(0.1))
 
     if (x != null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Double & Int}> & Number} & {Comparable<{Double & Int}> & Number}?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Double & Int}> & Number} & {Comparable<{Double & Int}> & Number}?"), DEBUG_INFO_SMARTCAST!>x<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Double & Int}> & Number} & {Comparable<{Double & Int}> & Number}?"), DEBUG_INFO_SMARTCAST!>x<!>.propT
-        <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Double & Int}> & Number} & {Comparable<{Double & Int}> & Number}?"), DEBUG_INFO_SMARTCAST!>x<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Double & Int}> & Number} & {Comparable<{Double & Int}> & Number}?")!>x<!>.propNullableT
-        <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Double & Int}> & Number} & {Comparable<{Double & Int}> & Number}?")!>x<!>.propNullableAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Double & Int}> & Number} & {Comparable<{Double & Int}> & Number}?"), DEBUG_INFO_SMARTCAST!>x<!>.funT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Double & Int}> & Number} & {Comparable<{Double & Int}> & Number}?"), DEBUG_INFO_SMARTCAST!>x<!>.funAny()
-        <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Double & Int}> & Number} & {Comparable<{Double & Int}> & Number}?")!>x<!>.funNullableT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Double & Int}> & Number} & {Comparable<{Double & Int}> & Number}?")!>x<!>.funNullableAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<*> & Number} & {Comparable<*> & Number}?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<*> & Number} & {Comparable<*> & Number}?")!>x<!>.equals(null)
+        <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<*> & Number} & {Comparable<*> & Number}?")!>x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<*> & Number} & {Comparable<*> & Number}?")!>x<!>.propAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<*> & Number} & {Comparable<*> & Number}?")!>x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<*> & Number} & {Comparable<*> & Number}?")!>x<!>.propNullableAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<*> & Number} & {Comparable<*> & Number}?")!>x<!>.funT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<*> & Number} & {Comparable<*> & Number}?")!>x<!>.funAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<*> & Number} & {Comparable<*> & Number}?")!>x<!>.funNullableT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<*> & Number} & {Comparable<*> & Number}?")!>x<!>.funNullableAny()
     }
 }
 
@@ -61,32 +61,32 @@ fun case_3(a: Int?, b: Float?, c: Double?, d: Boolean?) {
         false -> b
         null -> c
     }.apply {
-        <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Double & Float & Int}>? & Number?}"), DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Double & Float & Int}>? & Number?}")!>this<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<Nothing>? & Number?}"), DEBUG_INFO_EXPRESSION_TYPE("{Comparable<Nothing>? & Number?}")!>this<!>
         if (this != null) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Double & Float & Int}> & Number} & {Comparable<{Double & Float & Int}>? & Number?}"), DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Double & Float & Int}>? & Number?}")!>this<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Double & Float & Int}> & Number}"), DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Double & Float & Int}>? & Number?}"), DEBUG_INFO_SMARTCAST!>this<!>.equals(null)
-            <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Double & Float & Int}> & Number}"), DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Double & Float & Int}>? & Number?}"), DEBUG_INFO_SMARTCAST!>this<!>.propT
-            <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Double & Float & Int}> & Number}"), DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Double & Float & Int}>? & Number?}"), DEBUG_INFO_SMARTCAST!>this<!>.propAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Double & Float & Int}> & Number} & {Comparable<{Double & Float & Int}>? & Number?}"), DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Double & Float & Int}>? & Number?}")!>this<!>.propNullableT
-            <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Double & Float & Int}> & Number} & {Comparable<{Double & Float & Int}>? & Number?}"), DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Double & Float & Int}>? & Number?}")!>this<!>.propNullableAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Double & Float & Int}> & Number}"), DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Double & Float & Int}>? & Number?}"), DEBUG_INFO_SMARTCAST!>this<!>.funT()
-            <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Double & Float & Int}> & Number}"), DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Double & Float & Int}>? & Number?}"), DEBUG_INFO_SMARTCAST!>this<!>.funAny()
-            <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Double & Float & Int}> & Number} & {Comparable<{Double & Float & Int}>? & Number?}"), DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Double & Float & Int}>? & Number?}")!>this<!>.funNullableT()
-            <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Double & Float & Int}> & Number} & {Comparable<{Double & Float & Int}>? & Number?}"), DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Double & Float & Int}>? & Number?}")!>this<!>.funNullableAny()
+            <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<Nothing> & Number} & {Comparable<Nothing>? & Number?}"), DEBUG_INFO_EXPRESSION_TYPE("{Comparable<Nothing>? & Number?}")!>this<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<Nothing> & Number}"), DEBUG_INFO_EXPRESSION_TYPE("{Comparable<Nothing>? & Number?}"), DEBUG_INFO_SMARTCAST!>this<!>.equals(null)
+            <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<Nothing> & Number}"), DEBUG_INFO_EXPRESSION_TYPE("{Comparable<Nothing>? & Number?}"), DEBUG_INFO_SMARTCAST!>this<!>.propT
+            <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<Nothing> & Number}"), DEBUG_INFO_EXPRESSION_TYPE("{Comparable<Nothing>? & Number?}"), DEBUG_INFO_SMARTCAST!>this<!>.propAny
+            <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<Nothing> & Number} & {Comparable<Nothing>? & Number?}"), DEBUG_INFO_EXPRESSION_TYPE("{Comparable<Nothing>? & Number?}")!>this<!>.propNullableT
+            <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<Nothing> & Number} & {Comparable<Nothing>? & Number?}"), DEBUG_INFO_EXPRESSION_TYPE("{Comparable<Nothing>? & Number?}")!>this<!>.propNullableAny
+            <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<Nothing> & Number}"), DEBUG_INFO_EXPRESSION_TYPE("{Comparable<Nothing>? & Number?}"), DEBUG_INFO_SMARTCAST!>this<!>.funT()
+            <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<Nothing> & Number}"), DEBUG_INFO_EXPRESSION_TYPE("{Comparable<Nothing>? & Number?}"), DEBUG_INFO_SMARTCAST!>this<!>.funAny()
+            <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<Nothing> & Number} & {Comparable<Nothing>? & Number?}"), DEBUG_INFO_EXPRESSION_TYPE("{Comparable<Nothing>? & Number?}")!>this<!>.funNullableT()
+            <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<Nothing> & Number} & {Comparable<Nothing>? & Number?}"), DEBUG_INFO_EXPRESSION_TYPE("{Comparable<Nothing>? & Number?}")!>this<!>.funNullableAny()
         }
     }.let {
-        <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Double & Float & Int}>? & Number?}")!>it<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<Nothing>? & Number?}")!>it<!>
         if (it != null) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Double & Float & Int}> & Number} & {Comparable<{Double & Float & Int}>? & Number?}")!>it<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Double & Float & Int}> & Number} & {Comparable<{Double & Float & Int}>? & Number?}"), DEBUG_INFO_SMARTCAST!>it<!>.equals(null)
-            <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Double & Float & Int}> & Number} & {Comparable<{Double & Float & Int}>? & Number?}"), DEBUG_INFO_SMARTCAST!>it<!>.propT
-            <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Double & Float & Int}> & Number} & {Comparable<{Double & Float & Int}>? & Number?}"), DEBUG_INFO_SMARTCAST!>it<!>.propAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Double & Float & Int}> & Number} & {Comparable<{Double & Float & Int}>? & Number?}")!>it<!>.propNullableT
-            <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Double & Float & Int}> & Number} & {Comparable<{Double & Float & Int}>? & Number?}")!>it<!>.propNullableAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Double & Float & Int}> & Number} & {Comparable<{Double & Float & Int}>? & Number?}"), DEBUG_INFO_SMARTCAST!>it<!>.funT()
-            <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Double & Float & Int}> & Number} & {Comparable<{Double & Float & Int}>? & Number?}"), DEBUG_INFO_SMARTCAST!>it<!>.funAny()
-            <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Double & Float & Int}> & Number} & {Comparable<{Double & Float & Int}>? & Number?}")!>it<!>.funNullableT()
-            <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Double & Float & Int}> & Number} & {Comparable<{Double & Float & Int}>? & Number?}")!>it<!>.funNullableAny()
+            <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<Nothing> & Number} & {Comparable<Nothing>? & Number?}")!>it<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<Nothing> & Number} & {Comparable<Nothing>? & Number?}"), DEBUG_INFO_SMARTCAST!>it<!>.equals(null)
+            <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<Nothing> & Number} & {Comparable<Nothing>? & Number?}"), DEBUG_INFO_SMARTCAST!>it<!>.propT
+            <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<Nothing> & Number} & {Comparable<Nothing>? & Number?}"), DEBUG_INFO_SMARTCAST!>it<!>.propAny
+            <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<Nothing> & Number} & {Comparable<Nothing>? & Number?}")!>it<!>.propNullableT
+            <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<Nothing> & Number} & {Comparable<Nothing>? & Number?}")!>it<!>.propNullableAny
+            <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<Nothing> & Number} & {Comparable<Nothing>? & Number?}"), DEBUG_INFO_SMARTCAST!>it<!>.funT()
+            <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<Nothing> & Number} & {Comparable<Nothing>? & Number?}"), DEBUG_INFO_SMARTCAST!>it<!>.funAny()
+            <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<Nothing> & Number} & {Comparable<Nothing>? & Number?}")!>it<!>.funNullableT()
+            <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<Nothing> & Number} & {Comparable<Nothing>? & Number?}")!>it<!>.funNullableAny()
         }
     }
 }

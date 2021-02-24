@@ -1,0 +1,17 @@
+fun test(j: J) {
+  j.getFoo() /*~> Unit */
+  j.setFoo(x = 1)
+  { // BLOCK
+    val tmp0_receiver: J = j
+    { // BLOCK
+      val tmp1: Int = tmp0_receiver.getFoo()
+      tmp0_receiver.setFoo(x = tmp1.inc())
+      tmp1
+    }
+  } /*~> Unit */
+  { // BLOCK
+    val tmp2_receiver: J = j
+    tmp2_receiver.setFoo(x = tmp2_receiver.getFoo().plus(other = 1))
+  }
+}
+

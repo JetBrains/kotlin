@@ -1,0 +1,60 @@
+interface K {
+
+}
+
+interface I : K {
+  abstract fun ff()
+
+}
+
+interface J : K {
+
+}
+
+class A : I, J {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun ff() {
+  }
+
+}
+
+class B : I, J {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun ff() {
+  }
+
+}
+
+fun testIntersection(a: A, b: B) {
+  val v: I = when {
+    true -> a
+    else -> b
+  }
+  v.ff()
+}
+
+fun testFlexible1() {
+  val v: I? = when {
+    true -> a()
+    else -> b()
+  }
+  v.ff()
+}
+
+fun testFlexible2(a: A, b: B) {
+  val v: I? = when {
+    true -> id<A?>(x = a)
+    else -> id<B?>(x = b)
+  }
+  v.ff()
+}

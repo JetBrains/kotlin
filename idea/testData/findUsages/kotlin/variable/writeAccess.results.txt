@@ -1,5 +1,5 @@
-Value write 11 v += 1
-Value write 12 (v) -= 1
-Value write 6 (@X v) = 2
-Value write 8 ++ @X v
-Value write 9 v--
+Value write 10 ++ @X v
+Value write 11 v--
+Value write 13 v += 1
+Value write 14 (v) -= 1
+Value write 8 (@X v) = 2

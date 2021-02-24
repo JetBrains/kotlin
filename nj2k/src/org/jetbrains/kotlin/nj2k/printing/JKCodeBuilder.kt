@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.visitors.JKVisitorWithCommentsPrinting
 import org.jetbrains.kotlin.nj2k.types.JKContextType
 import org.jetbrains.kotlin.nj2k.types.isInterface
+import org.jetbrains.kotlin.nj2k.types.isUnit
 import org.jetbrains.kotlin.nj2k.types.updateNullability
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -141,6 +142,14 @@ internal class JKCodeBuilder(context: NewJ2kConverterContext) {
             printer.renderSymbol(classAccessExpression.identifier, classAccessExpression)
         }
 
+        override fun visitMethodAccessExpression(methodAccessExpression: JKMethodAccessExpression) {
+            printer.renderSymbol(methodAccessExpression.identifier, methodAccessExpression)
+        }
+
+        override fun visitTypeQualifierExpression(typeQualifierExpression: JKTypeQualifierExpression) {
+            printer.renderType(typeQualifierExpression.type, typeQualifierExpression)
+        }
+
         override fun visitFileRaw(file: JKFile) {
             if (file.packageDeclaration.name.value.isNotEmpty()) {
                 file.packageDeclaration.accept(this)
@@ -217,7 +226,7 @@ internal class JKCodeBuilder(context: NewJ2kConverterContext) {
                             ?.let { it as? JKDelegationConstructorCall }
                     if (delegationCall != null) {
                         printer.par { delegationCall.arguments.accept(this) }
-                    } else if (!superType.isInterface() && primaryConstructor != null) {
+                    } else if (!superType.isInterface() && (primaryConstructor != null || parentClass.isObjectOrCompanionObject)) {
                         printer.print("()")
                     }
                 }
@@ -346,8 +355,10 @@ internal class JKCodeBuilder(context: NewJ2kConverterContext) {
                 it.accept(this)
             }
             renderTokenElement(method.rightParen)
-            printer.print(": ")
-            method.returnType.accept(this)
+            if (!method.returnType.type.isUnit()) {
+                printer.print(": ")
+                method.returnType.accept(this)
+            }
             renderExtraTypeParametersUpperBounds(method.typeParameterList)
             method.block.accept(this)
         }

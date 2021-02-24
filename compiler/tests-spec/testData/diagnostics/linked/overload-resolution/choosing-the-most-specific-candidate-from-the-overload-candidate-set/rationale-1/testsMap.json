@@ -1,0 +1,30 @@
+{
+  "3": {
+    "neg": {
+      "1": [
+        {
+          "specVersion": "0.1-387",
+          "casesNumber": 1,
+          "description": "If there are several functions with this property, none of them are the most specific and an overload resolution ambiguity error should be reported by the compiler",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/rationale-1/p-3/neg/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        }
+      ]
+    }
+  },
+  "2": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-387",
+          "casesNumber": 6,
+          "description": "The most specific callable can forward itself to any other callable from the overload candidate set, while the opposite is not true.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/rationale-1/p-2/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        }
+      ]
+    }
+  }
+}

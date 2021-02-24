@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 //FILE: Bbb.kt
 open class Bbb
 

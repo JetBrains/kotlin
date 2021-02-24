@@ -1,0 +1,17 @@
+public final class A : R|kotlin/Any| {
+    public final var a: R|kotlin/Int|
+        public get(): R|kotlin/Int|
+        public set(<set-?>: R|kotlin/Int|): R|kotlin/Unit|
+
+    public constructor(): R|test/A|
+
+}
+
+public final class MyProperty<T> : R|kotlin/Any| {
+    public final operator fun getValue(t: R|T|, p: R|kotlin/reflect/KProperty<*>|): R|kotlin/Int|
+
+    public final operator fun setValue(t: R|T|, p: R|kotlin/reflect/KProperty<*>|, i: R|kotlin/Int|): R|kotlin/Unit|
+
+    public constructor<T>(): R|test/MyProperty<T>|
+
+}

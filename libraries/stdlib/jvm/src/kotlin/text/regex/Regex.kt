@@ -122,11 +122,17 @@ internal constructor(private val nativePattern: Pattern) : Serializable {
     /**
      * Returns a sequence of all occurrences of a regular expression within the [input] string, beginning at the specified [startIndex].
      *
+     * @throws IndexOutOfBoundsException if [startIndex] is less than zero or greater than the length of the [input] char sequence.
+     *
      * @sample samples.text.Regexps.findAll
      */
     @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
-    public actual fun findAll(input: CharSequence, startIndex: Int = 0): Sequence<MatchResult> =
-        generateSequence({ find(input, startIndex) }, MatchResult::next)
+    public actual fun findAll(input: CharSequence, startIndex: Int = 0): Sequence<MatchResult> {
+        if (startIndex < 0 || startIndex > input.length) {
+            throw IndexOutOfBoundsException("Start index out of bounds: $startIndex, input length: ${input.length}")
+        }
+        return generateSequence({ find(input, startIndex) }, MatchResult::next)
+    }
 
     /**
      * Attempts to match the entire [input] CharSequence against the pattern.

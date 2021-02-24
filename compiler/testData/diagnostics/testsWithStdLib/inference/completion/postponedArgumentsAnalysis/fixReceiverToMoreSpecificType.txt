@@ -1,0 +1,4 @@
+package
+
+public fun main(): kotlin.Unit
+public fun </*0*/ T : kotlin.Any> xSelectButton2(/*0*/ items: (matcher: kotlin.String) -> kotlin.collections.List<T>, /*1*/ handler: T.() -> kotlin.Unit): kotlin.Unit

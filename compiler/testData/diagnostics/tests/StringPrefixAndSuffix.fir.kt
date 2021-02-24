@@ -11,7 +11,7 @@ fun test(a: Any) {
     a foo"asd${a}sfsa"
     a foo"""sdf"""
     a foo'd'
-    a foo<!INFERENCE_ERROR!>''<!>
+    a foo<!ILLEGAL_CONST_EXPRESSION!>''<!>
 
     a foo""foo a
     a foo"asd"foo a
@@ -19,17 +19,17 @@ fun test(a: Any) {
     a foo"asd${a}sfsa"foo a
     a foo"""sdf"""foo a
     a foo'd'foo a
-    a foo<!INFERENCE_ERROR!>''<!>foo a
+    a foo<!ILLEGAL_CONST_EXPRESSION!>''<!>foo a
 
     a in"foo"
     a in"""foo"""
     a in's'
-    a in<!INFERENCE_ERROR!>''<!>
+    a in<!ILLEGAL_CONST_EXPRESSION!>''<!>
 
     a !in"foo"
     a !in"""foo"""
     a !in's'
-    a !in<!INFERENCE_ERROR!>''<!>
+    a !in<!ILLEGAL_CONST_EXPRESSION!>''<!>
 
     if("s"is Any) {}
     if("s"is Any) {}

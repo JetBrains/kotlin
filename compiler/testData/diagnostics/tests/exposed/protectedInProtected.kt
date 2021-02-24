@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // See KT-9540 
 
 // all protected should have lower bound that is more permissive than private

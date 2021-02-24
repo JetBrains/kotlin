@@ -1,11 +1,11 @@
 class Foo {
-    open fun openFoo() {}
+    <!NON_FINAL_MEMBER_IN_FINAL_CLASS!>open<!> fun openFoo() {}
     fun finalFoo() {}
 }
 
 class Bar : Foo() {
     override fun openFoo() {}
-    override fun finalFoo() {}
+    <!OVERRIDING_FINAL_MEMBER!>override<!> fun finalFoo() {}
 }
 
 

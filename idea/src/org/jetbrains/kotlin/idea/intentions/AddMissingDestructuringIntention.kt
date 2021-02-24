@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.CollectingNameValidator
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
@@ -15,8 +16,10 @@ import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.createDestructuringDeclarationByPattern
 
-class AddMissingDestructuringIntention :
-    SelfTargetingIntention<KtDestructuringDeclaration>(KtDestructuringDeclaration::class.java, "Add missing component") {
+class AddMissingDestructuringIntention : SelfTargetingIntention<KtDestructuringDeclaration>(
+    KtDestructuringDeclaration::class.java,
+    KotlinBundle.lazyMessage("add.missing.component")
+) {
     override fun isApplicableTo(element: KtDestructuringDeclaration, caretOffset: Int): Boolean {
         val entriesCount = element.entries.size
 
@@ -36,16 +39,19 @@ class AddMissingDestructuringIntention :
             filter = NewDeclarationNameValidator(element.parent.parent, null, NewDeclarationNameValidator.Target.VARIABLES)
         )
 
-        val newEntries = entries.joinToString(postfix = ", ") { it.text } +
-                primaryParameters.asSequence().drop(entries.size).joinToString {
-                    KotlinNameSuggester.suggestNameByName(it.name.asString(), nameValidator)
-                }
-        val initializer = element.initializer ?: return
+        val entriesSize = entries.size
+        val newEntries = entries.joinToString(postfix = if (entriesSize == 0) "" else ", ") {
+            it.text
+        } + primaryParameters.asSequence().drop(entriesSize).joinToString {
+            KotlinNameSuggester.suggestNameByName(it.name.asString(), nameValidator)
+        }
 
+        val initializer = element.initializer ?: return
         val newDestructuringDeclaration = factory.createDestructuringDeclarationByPattern(
             if (element.isVar) "var ($0) = $1" else "val ($0) = $1",
             newEntries, initializer
         )
+
         element.replace(newDestructuringDeclaration)
     }
 

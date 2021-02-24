@@ -16,3 +16,5 @@ class A(val y: Int) {
 
     fun component1() = y
 }
+
+// FIR_COMPARISON

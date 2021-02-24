@@ -1,5 +1,3 @@
-// COMPILER_ARGUMENTS: -XXLanguage:-NewInference
-
 fun foo(f: List<Int>) {}
 
 fun f() {

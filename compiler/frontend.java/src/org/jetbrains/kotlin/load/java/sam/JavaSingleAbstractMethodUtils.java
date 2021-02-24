@@ -17,104 +17,21 @@
 package org.jetbrains.kotlin.load.java.sam;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.descriptors.annotations.Annotations;
-import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
-import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassConstructorDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor;
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaClassDescriptor;
-import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.resolve.jvm.JavaResolverUtils;
-import org.jetbrains.kotlin.resolve.sam.SamConversionOracle;
-import org.jetbrains.kotlin.resolve.sam.SamConversionResolver;
-import org.jetbrains.kotlin.resolve.sam.SamConversionResolverImplKt;
+import org.jetbrains.kotlin.resolve.sam.*;
 import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.SimpleType;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
 import org.jetbrains.kotlin.types.Variance;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 public class JavaSingleAbstractMethodUtils {
     private JavaSingleAbstractMethodUtils() {
-    }
-
-    @NotNull
-    public static SamConstructorDescriptor createSamConstructorFunction(
-            @NotNull DeclarationDescriptor owner,
-            @NotNull ClassDescriptor samInterface,
-            @NotNull SamConversionResolver samResolver,
-            @NotNull SamConversionOracle samConversionOracle
-    ) {
-        assert SamConversionResolverImplKt.getSingleAbstractMethodOrNull(samInterface) != null : samInterface;
-
-        SamConstructorDescriptorImpl result = new SamConstructorDescriptorImpl(owner, samInterface);
-
-        List<TypeParameterDescriptor> samTypeParameters = samInterface.getTypeConstructor().getParameters();
-        SimpleType unsubstitutedSamType = samInterface.getDefaultType();
-        initializeSamConstructorDescriptor(samInterface, result, samTypeParameters, unsubstitutedSamType, samResolver, samConversionOracle);
-
-        return result;
-    }
-
-    private static void initializeSamConstructorDescriptor(
-            @NotNull ClassDescriptor samInterface,
-            @NotNull SimpleFunctionDescriptorImpl samConstructor,
-            @NotNull List<TypeParameterDescriptor> samTypeParameters,
-            @NotNull KotlinType unsubstitutedSamType,
-            @NotNull SamConversionResolver samResolver,
-            @NotNull SamConversionOracle samConversionOracle
-    ) {
-        TypeParameters typeParameters = recreateAndInitializeTypeParameters(samTypeParameters, samConstructor);
-
-        KotlinType parameterTypeUnsubstituted =
-                SamConversionResolverImplKt.getFunctionTypeForSamType(unsubstitutedSamType, samResolver, samConversionOracle);
-        assert parameterTypeUnsubstituted != null : "couldn't get function type for SAM type " + unsubstitutedSamType;
-        KotlinType parameterType = typeParameters.substitutor.substitute(parameterTypeUnsubstituted, Variance.IN_VARIANCE);
-        assert parameterType != null : "couldn't substitute type: " + parameterTypeUnsubstituted +
-                                       ", substitutor = " + typeParameters.substitutor;
-        ValueParameterDescriptor parameter = new ValueParameterDescriptorImpl(
-                samConstructor, null, 0, Annotations.Companion.getEMPTY(), Name.identifier("function"), parameterType,
-                /* declaresDefaultValue = */ false,
-                /* isCrossinline = */ false,
-                /* isNoinline = */ false,
-                null, SourceElement.NO_SOURCE);
-
-        KotlinType returnType = typeParameters.substitutor.substitute(unsubstitutedSamType, Variance.OUT_VARIANCE);
-        assert returnType != null : "couldn't substitute type: " + unsubstitutedSamType +
-                                    ", substitutor = " + typeParameters.substitutor;
-
-        samConstructor.initialize(
-                null,
-                null,
-                typeParameters.descriptors,
-                Collections.singletonList(parameter),
-                returnType,
-                Modality.FINAL,
-                samInterface.getVisibility()
-        );
-    }
-
-    public static SamConstructorDescriptor createTypeAliasSamConstructorFunction(
-            @NotNull TypeAliasDescriptor typeAliasDescriptor,
-            @NotNull SamConstructorDescriptor underlyingSamConstructor,
-            @NotNull SamConversionResolver samResolver,
-            @NotNull SamConversionOracle samConversionOracle
-    ) {
-        SamTypeAliasConstructorDescriptorImpl result = new SamTypeAliasConstructorDescriptorImpl(typeAliasDescriptor, underlyingSamConstructor);
-
-        ClassDescriptor samInterface = underlyingSamConstructor.getBaseDescriptorForSynthetic();
-        List<TypeParameterDescriptor> samTypeParameters = typeAliasDescriptor.getTypeConstructor().getParameters();
-        SimpleType unsubstitutedSamType = typeAliasDescriptor.getExpandedType();
-        initializeSamConstructorDescriptor(samInterface, result, samTypeParameters, unsubstitutedSamType, samResolver, samConversionOracle);
-
-        return result;
     }
 
     public static boolean isSamClassDescriptor(@NotNull ClassDescriptor descriptor) {
@@ -146,7 +63,8 @@ public class JavaSingleAbstractMethodUtils {
     public static SamAdapterDescriptor<JavaMethodDescriptor> createSamAdapterFunction(
             @NotNull JavaMethodDescriptor original,
             @NotNull SamConversionResolver samResolver,
-            @NotNull SamConversionOracle samConversionOracle
+            @NotNull SamConversionOracle samConversionOracle,
+            boolean allowNonSpreadArraysForVarargAfterSam
     ) {
         SamAdapterFunctionDescriptor result = new SamAdapterFunctionDescriptor(original);
         return initSamAdapter(original, result, new FunctionInitializer() {
@@ -166,14 +84,15 @@ public class JavaSingleAbstractMethodUtils {
                         original.getVisibility()
                 );
             }
-        }, samResolver, samConversionOracle);
+        }, samResolver, samConversionOracle, allowNonSpreadArraysForVarargAfterSam);
     }
 
     @NotNull
     public static SamAdapterDescriptor<JavaClassConstructorDescriptor> createSamAdapterConstructor(
             @NotNull JavaClassConstructorDescriptor original,
             @NotNull SamConversionResolver samResolver,
-            @NotNull SamConversionOracle samConversionOracle
+            @NotNull SamConversionOracle samConversionOracle,
+            boolean allowNonSpreadArraysForVarargAfterSam
     ) {
         SamAdapterClassConstructorDescriptor result = new SamAdapterClassConstructorDescriptor(original);
         return initSamAdapter(original, result, new FunctionInitializer() {
@@ -186,7 +105,7 @@ public class JavaSingleAbstractMethodUtils {
                 result.initialize(valueParameters, original.getVisibility());
                 result.setReturnType(returnType);
             }
-        }, samResolver, samConversionOracle);
+        }, samResolver, samConversionOracle, allowNonSpreadArraysForVarargAfterSam);
     }
 
     @NotNull
@@ -195,23 +114,29 @@ public class JavaSingleAbstractMethodUtils {
             @NotNull SamAdapterDescriptor<F> adapter,
             @NotNull FunctionInitializer initializer,
             @NotNull SamConversionResolver samResolver,
-            @NotNull SamConversionOracle samConversionOracle
+            @NotNull SamConversionOracle samConversionOracle,
+            boolean allowNonSpreadArraysForVarargAfterSam
     ) {
-        TypeParameters typeParameters = recreateAndInitializeTypeParameters(original.getTypeParameters(), adapter);
+        SamConstructorTypeParameters typeParameters;
+        if (adapter instanceof SamAdapterClassConstructorDescriptor) {
+            typeParameters = new SamConstructorTypeParameters(original.getTypeParameters(), TypeSubstitutor.EMPTY);
+        } else {
+            typeParameters = SamConstructorUtilsKt.recreateAndInitializeTypeParameters(original.getTypeParameters(), adapter);
+        }
 
         KotlinType returnTypeUnsubstituted = original.getReturnType();
         assert returnTypeUnsubstituted != null : "Creating SAM adapter for not initialized original: " + original;
 
-        TypeSubstitutor substitutor = typeParameters.substitutor;
+        TypeSubstitutor substitutor = typeParameters.getSubstitutor();
         KotlinType returnType = substitutor.substitute(returnTypeUnsubstituted, Variance.INVARIANT);
         assert returnType != null : "couldn't substitute type: " + returnTypeUnsubstituted +
                                         ", substitutor = " + substitutor;
 
 
         List<ValueParameterDescriptor> valueParameters =
-                createValueParametersForSamAdapter(original, adapter, substitutor, samResolver, samConversionOracle);
+                createValueParametersForSamAdapter(original, adapter, substitutor, samResolver, samConversionOracle, allowNonSpreadArraysForVarargAfterSam);
 
-        initializer.initialize(typeParameters.descriptors, valueParameters, returnType);
+        initializer.initialize(typeParameters.getDescriptors(), valueParameters, returnType);
 
         return adapter;
     }
@@ -221,7 +146,8 @@ public class JavaSingleAbstractMethodUtils {
             @NotNull FunctionDescriptor samAdapter,
             @NotNull TypeSubstitutor substitutor,
             @NotNull SamConversionResolver samResolver,
-            @NotNull SamConversionOracle samConversionOracle
+            @NotNull SamConversionOracle samConversionOracle,
+            boolean allowNonSpreadArraysForVarargAfterSam
     ) {
         List<ValueParameterDescriptor> originalValueParameters = original.getValueParameters();
         List<ValueParameterDescriptor> valueParameters = new ArrayList<>(originalValueParameters.size());
@@ -232,56 +158,26 @@ public class JavaSingleAbstractMethodUtils {
             KotlinType newType = substitutor.substitute(newTypeUnsubstituted, Variance.IN_VARIANCE);
             assert newType != null : "couldn't substitute type: " + newTypeUnsubstituted + ", substitutor = " + substitutor;
 
+            /*
+             * Before 1.5 we allowed passing non-spread arrays into vararg parameter, after sam conversion like:
+             *      public static String foo1(Runnable r, String... strs) { }
+             *      ...
+             *      Test.foo1({}, arrayOf())
+             * For that, we don't pass `varargElementType` from the original parameter descriptor.
+             */
+            KotlinType varargElementType = allowNonSpreadArraysForVarargAfterSam ? null : originalParam.getVarargElementType();
+
             ValueParameterDescriptor newParam = new ValueParameterDescriptorImpl(
                     samAdapter, null, originalParam.getIndex(), originalParam.getAnnotations(),
                     originalParam.getName(), newType,
                     /* declaresDefaultValue = */ false,
                     /* isCrossinline = */ false,
                     /* isNoinline = */ false,
-                    null, SourceElement.NO_SOURCE
+                    varargElementType, SourceElement.NO_SOURCE
             );
             valueParameters.add(newParam);
         }
         return valueParameters;
-    }
-
-    @NotNull
-    private static TypeParameters recreateAndInitializeTypeParameters(
-            @NotNull List<TypeParameterDescriptor> originalParameters,
-            @Nullable DeclarationDescriptor newOwner
-    ) {
-        if (newOwner instanceof SamAdapterClassConstructorDescriptor) {
-            return new TypeParameters(originalParameters, TypeSubstitutor.EMPTY);
-        }
-
-        Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> traitToFunTypeParameters =
-                JavaResolverUtils.recreateTypeParametersAndReturnMapping(originalParameters, newOwner);
-        TypeSubstitutor typeParametersSubstitutor = JavaResolverUtils.createSubstitutorForTypeParameters(traitToFunTypeParameters);
-        for (Map.Entry<TypeParameterDescriptor, TypeParameterDescriptorImpl> mapEntry : traitToFunTypeParameters.entrySet()) {
-            TypeParameterDescriptor traitTypeParameter = mapEntry.getKey();
-            TypeParameterDescriptorImpl funTypeParameter = mapEntry.getValue();
-
-            for (KotlinType upperBound : traitTypeParameter.getUpperBounds()) {
-                KotlinType upperBoundSubstituted = typeParametersSubstitutor.substitute(upperBound, Variance.INVARIANT);
-                assert upperBoundSubstituted != null : "couldn't substitute type: " + upperBound + ", substitutor = " + typeParametersSubstitutor;
-                funTypeParameter.addUpperBound(upperBoundSubstituted);
-            }
-
-            funTypeParameter.setInitialized();
-        }
-
-        List<TypeParameterDescriptor> typeParameters = new ArrayList<>(traitToFunTypeParameters.values());
-        return new TypeParameters(typeParameters, typeParametersSubstitutor);
-    }
-
-    private static class TypeParameters {
-        public final List<TypeParameterDescriptor> descriptors;
-        public final TypeSubstitutor substitutor;
-
-        private TypeParameters(List<TypeParameterDescriptor> descriptors, TypeSubstitutor substitutor) {
-            this.descriptors = descriptors;
-            this.substitutor = substitutor;
-        }
     }
 
     private static abstract class FunctionInitializer {
@@ -291,6 +187,4 @@ public class JavaSingleAbstractMethodUtils {
                 @NotNull KotlinType returnType
         );
     }
-
-
 }

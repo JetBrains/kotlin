@@ -6,16 +6,37 @@
 package org.jetbrains.kotlin.gradle.targets.js.dsl
 
 import groovy.lang.Closure
+import org.gradle.api.GradleException
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsDce
+import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlatformTestRun
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsReportAggregatingTestRun
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsBinaryContainer
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 
-interface KotlinJsTargetDsl {
+interface KotlinJsSubTargetContainerDsl : KotlinTarget {
+    val nodejs: KotlinJsNodeDsl
+
+    val browser: KotlinJsBrowserDsl
+
+    val isNodejsConfigured: Boolean
+
+    val isBrowserConfigured: Boolean
+
+    fun whenNodejsConfigured(body: KotlinJsNodeDsl.() -> Unit)
+
+    fun whenBrowserConfigured(body: KotlinJsBrowserDsl.() -> Unit)
+}
+
+interface KotlinJsTargetDsl : KotlinTarget {
+    var moduleName: String?
+
     fun browser() = browser { }
     fun browser(body: KotlinJsBrowserDsl.() -> Unit)
     fun browser(fn: Closure<*>) {
@@ -32,10 +53,36 @@ interface KotlinJsTargetDsl {
         }
     }
 
+    fun useCommonJs()
+
+    val binaries: KotlinJsBinaryContainer
+
+    @Deprecated(
+        message = "produceExecutable() was changed on binaries.executable()",
+        replaceWith = ReplaceWith("binaries.executable()"),
+        level = DeprecationLevel.ERROR
+    )
+    fun produceExecutable() {
+        throw GradleException("Please change produceExecutable() on binaries.executable()")
+    }
+
     val testRuns: NamedDomainObjectContainer<KotlinJsReportAggregatingTestRun>
+
+    // Need to compatibility when users use KotlinJsCompilation specific in build script
+    override val compilations: NamedDomainObjectContainer<out KotlinJsCompilation>
 }
 
 interface KotlinJsSubTargetDsl {
+    @ExperimentalDistributionDsl
+    fun distribution(body: Distribution.() -> Unit)
+
+    @ExperimentalDistributionDsl
+    fun distribution(fn: Closure<*>) {
+        distribution {
+            ConfigureUtil.configure(fn, this)
+        }
+    }
+
     fun testTask(body: KotlinJsTest.() -> Unit)
     fun testTask(fn: Closure<*>) {
         testTask {
@@ -47,19 +94,16 @@ interface KotlinJsSubTargetDsl {
 }
 
 interface KotlinJsBrowserDsl : KotlinJsSubTargetDsl {
-    fun runTask(body: KotlinWebpack.() -> Unit)
-    fun runTask(fn: Closure<*>) {
-        runTask {
+    fun commonWebpackConfig(body: KotlinWebpackConfig.() -> Unit)
+    fun commonWebpackConfig(fn: Closure<*>) {
+        commonWebpackConfig {
             ConfigureUtil.configure(fn, this)
         }
     }
 
-    @ExperimentalDistributionDsl
-    fun distribution(body: Distribution.() -> Unit)
-
-    @ExperimentalDistributionDsl
-    fun distribution(fn: Closure<*>) {
-        distribution {
+    fun runTask(body: KotlinWebpack.() -> Unit)
+    fun runTask(fn: Closure<*>) {
+        runTask {
             ConfigureUtil.configure(fn, this)
         }
     }

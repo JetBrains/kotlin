@@ -5,6 +5,6 @@ fun test() {
     <!INAPPLICABLE_CANDIDATE!>Int<!>()
     <!INAPPLICABLE_CANDIDATE!>Short<!>()
     <!INAPPLICABLE_CANDIDATE!>Byte<!>()
-    <!INAPPLICABLE_CANDIDATE!>Char<!>()
+    <!HIDDEN!>Char<!>()
     <!INAPPLICABLE_CANDIDATE!>Boolean<!>()
 }

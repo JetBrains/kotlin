@@ -201,7 +201,7 @@ class InplaceRenameTest : LightPlatformCodeInsightTestCase() {
 
         val project = editor.project!!
 
-        TemplateManagerImpl.setTemplateTesting(project, testRootDisposable)
+        TemplateManagerImpl.setTemplateTesting(testRootDisposable)
 
         object : WriteCommandAction.Simple<Any>(project) {
             override fun run() {

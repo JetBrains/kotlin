@@ -1,7 +1,7 @@
 fun test1() {
     fun bar() {
         var i : Int
-        doSmth(i)
+        doSmth(<!UNINITIALIZED_VARIABLE!>i<!>)
     }
 }
 
@@ -16,21 +16,21 @@ fun test2() {
             doSmth(e)
         }
 
-        doSmth(s)
+        doSmth(<!UNINITIALIZED_VARIABLE!>s<!>)
     }
 }
 
 fun test3() {
     val f = {
         val a : Int
-        doSmth(a)
+        doSmth(<!UNINITIALIZED_VARIABLE!>a<!>)
     }
 }
 
 fun test4() {
     doSmth {
         val a : Int
-        doSmth(a)
+        doSmth(<!UNINITIALIZED_VARIABLE!>a<!>)
     }
 }
 
@@ -40,7 +40,7 @@ fun test5() {
             fun inner3() {
                 fun inner4() {
                     val a : Int
-                    doSmth(a)
+                    doSmth(<!UNINITIALIZED_VARIABLE!>a<!>)
                 }
             }
         }

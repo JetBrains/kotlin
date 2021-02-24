@@ -78,7 +78,10 @@ fun getFunctionTypeForAbstractMethod(
 
     var startIndex = 0
     var receiverType: KotlinType? = null
-    if (shouldConvertFirstParameterToDescriptor && function.valueParameters.isNotEmpty()) {
+    val extensionReceiver = function.extensionReceiverParameter
+    if (extensionReceiver != null) {
+        receiverType = extensionReceiver.type
+    } else if (shouldConvertFirstParameterToDescriptor && function.valueParameters.isNotEmpty()) {
         receiverType = valueParameters[0].type
         startIndex = 1
     }

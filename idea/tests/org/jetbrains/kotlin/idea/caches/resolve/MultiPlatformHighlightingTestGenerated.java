@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.caches.resolve;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -24,13 +25,18 @@ public class MultiPlatformHighlightingTestGenerated extends AbstractMultiPlatfor
         KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
+    @TestMetadata("actualizedSupertype")
+    public void testActualizedSupertype() throws Exception {
+        runTest("idea/testData/multiModuleHighlighting/multiplatform/actualizedSupertype/");
+    }
+
     @TestMetadata("additionalMembersInPlatformInterface")
     public void testAdditionalMembersInPlatformInterface() throws Exception {
         runTest("idea/testData/multiModuleHighlighting/multiplatform/additionalMembersInPlatformInterface/");
     }
 
     public void testAllFilesPresentInMultiplatform() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/multiModuleHighlighting/multiplatform"), Pattern.compile("^([^\\.]+)$"), null, false);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/multiModuleHighlighting/multiplatform"), Pattern.compile("^([^\\.]+)$"), null, false);
     }
 
     @TestMetadata("basic")

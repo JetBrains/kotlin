@@ -1,3 +1,1 @@
-// FIR_COMPARISON
-
-fun g() = 1 < <error>class A</error>
+fun g() = 1 < <error descr="[DECLARATION_IN_ILLEGAL_CONTEXT] Declarations are not allowed in this position">class A</error>

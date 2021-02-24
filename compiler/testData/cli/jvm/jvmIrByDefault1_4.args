@@ -1,0 +1,5 @@
+$TESTDATA_DIR$/jvmIrByDefault.kt
+-d
+$TEMP_DIR$
+-language-version
+1.4

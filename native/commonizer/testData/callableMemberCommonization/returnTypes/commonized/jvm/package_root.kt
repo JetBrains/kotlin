@@ -7,7 +7,6 @@ actual val propertyWithInferredType4 get() = null
 actual val propertyWithInferredType5 get() = Planet("Earth", 12742)
 
 typealias B = Planet
-actual typealias C = Planet
 
 actual val property1 = 1
 actual val property2 = "hello"
@@ -62,3 +61,19 @@ fun <T, Q> functionWithUnsubstitutedTypeParametersInReturnType6(): Q = TODO()
 fun functionWithUnsubstitutedTypeParametersInReturnType7(): String = TODO()
 actual fun <T> functionWithUnsubstitutedTypeParametersInReturnType8(): Box<T> = TODO()
 fun functionWithUnsubstitutedTypeParametersInReturnType9(): Box<String> = TODO()
+
+actual class Outer<A> actual constructor() {
+    actual class Nested<B> actual constructor() {
+        actual class Nested<C> actual constructor()
+        actual inner class Inner<D> actual constructor()
+    }
+    actual inner class Inner<E> actual constructor() {
+        actual inner class Inner<F> actual constructor()
+    }
+}
+
+actual fun <T> returnOuter(): Outer<T> = TODO()
+actual fun <T> returnOuterNested(): Outer.Nested<T> = TODO()
+actual fun <T> returnOuterNestedNested(): Outer.Nested.Nested<T> = TODO()
+actual fun <T, R> returnOuterInner(): Outer<T>.Inner<R> = TODO()
+actual fun <T, R, S> returnOuterInnerInner(): Outer<T>.Inner<R>.Inner<S> = TODO()

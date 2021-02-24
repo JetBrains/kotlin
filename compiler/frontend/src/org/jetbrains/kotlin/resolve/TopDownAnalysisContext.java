@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.lazy.DeclarationScopeProvider;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
+import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext;
 
 import java.io.PrintStream;
 import java.util.*;
@@ -49,6 +50,7 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
 
     private final TopDownAnalysisMode topDownAnalysisMode;
     private final DeclarationScopeProvider declarationScopeProvider;
+    private final ExpressionTypingContext localContext;
 
     private StringBuilder debugOutput;
 
@@ -60,6 +62,25 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
         this.topDownAnalysisMode = topDownAnalysisMode;
         this.outerDataFlowInfo = outerDataFlowInfo;
         this.declarationScopeProvider = declarationScopeProvider;
+        this.localContext = null;
+    }
+
+    public TopDownAnalysisContext(
+            @NotNull TopDownAnalysisMode topDownAnalysisMode,
+            @NotNull DataFlowInfo outerDataFlowInfo,
+            @NotNull DeclarationScopeProvider declarationScopeProvider,
+            @Nullable ExpressionTypingContext localContext
+    ) {
+        this.topDownAnalysisMode = topDownAnalysisMode;
+        this.outerDataFlowInfo = outerDataFlowInfo;
+        this.declarationScopeProvider = declarationScopeProvider;
+        this.localContext = localContext;
+    }
+
+    @Override
+    @Nullable
+    public ExpressionTypingContext getLocalContext() {
+        return localContext;
     }
 
     @Override

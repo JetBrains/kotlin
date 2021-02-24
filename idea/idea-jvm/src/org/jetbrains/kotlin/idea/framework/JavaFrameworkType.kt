@@ -19,13 +19,14 @@ package org.jetbrains.kotlin.idea.framework
 import com.intellij.framework.FrameworkTypeEx
 import com.intellij.framework.addSupport.FrameworkSupportInModuleProvider
 import org.jetbrains.kotlin.idea.KotlinIcons
+import org.jetbrains.kotlin.idea.KotlinJvmBundle
 import javax.swing.Icon
 
 class JavaFrameworkType : FrameworkTypeEx("kotlin-java-framework-id") {
 
     override fun createProvider(): FrameworkSupportInModuleProvider = JavaFrameworkSupportProvider()
 
-    override fun getPresentableName() = "Kotlin/JVM"
+    override fun getPresentableName() = KotlinJvmBundle.message("presentable.name.kotlin.jvm")
 
     override fun getIcon(): Icon = KotlinIcons.SMALL_LOGO
 

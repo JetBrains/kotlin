@@ -20,7 +20,7 @@ class MainKtsScriptDefinitionSource : ScriptDefinitionsProvider {
 
         val paths = PathUtil.kotlinPathsForIdeaPlugin
         return if (paths.jar(KotlinPaths.Jar.MainKts).exists()) {
-            paths.classPath(KotlinPaths.ClassPaths.MainKts)
+            paths.classPath(KotlinPaths.ClassPaths.MainKts).map { it.absoluteFile }
         } else {
             Logger.getInstance(MainKtsScriptDefinitionSource::class.java).warn("[kts] Support for .main.kts scripts is not loaded: kotlin-main-kts.jar not found")
             emptyList()

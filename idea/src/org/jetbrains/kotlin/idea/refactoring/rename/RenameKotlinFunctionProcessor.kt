@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,6 +10,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Pass
 import com.intellij.psi.*
 import com.intellij.psi.search.SearchScope
+import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.listeners.RefactoringElementListener
 import com.intellij.refactoring.rename.*
 import com.intellij.refactoring.util.CommonRefactoringUtil
@@ -21,10 +22,9 @@ import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.asJava.unwrapped
-import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper.InternalNameMapper.demangleInternalName
-import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper.InternalNameMapper.getModuleNameSuffix
-import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper.InternalNameMapper.mangleInternalName
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.refactoring.*
 import org.jetbrains.kotlin.idea.references.KtReference
@@ -35,9 +35,10 @@ import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.liftToExpected
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import java.util.*
+import java.util.ArrayList
 
 class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
+
     private val javaMethodProcessorInstance = RenameJavaMethodProcessor()
 
     override fun canProcessElement(element: PsiElement): Boolean {
@@ -61,8 +62,10 @@ class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
         return DescriptorUtils.getJvmName(descriptor)
     }
 
-    override fun findReferences(element: PsiElement): Collection<PsiReference> {
-        val allReferences = super.findReferences(element)
+    protected fun processFoundReferences(
+        element: PsiElement,
+        allReferences: Collection<PsiReference>
+    ): Collection<PsiReference> {
         return when {
             getJvmName(element) == null -> allReferences
             element is KtElement -> allReferences.filterIsInstance<KtReference>()
@@ -111,7 +114,7 @@ class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
                 javaMethodProcessorInstance.substituteElementToRename(wrappedMethod, editor)
             }
             else -> {
-                val chosenElements = checkSuperMethods(element, null, "rename")
+                val chosenElements = checkSuperMethods(element, null, KotlinBundle.message("text.rename.as.part.of.phrase"))
                 if (chosenElements.size > 1) FunctionWithSupersWrapper(element, chosenElements) else wrappedMethod
             }
         }
@@ -154,7 +157,7 @@ class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
             }
             else -> {
                 val declaration = element.unwrapped as? KtNamedFunction ?: return
-                checkSuperMethodsWithPopup(declaration, deepestSuperMethods.toList(), "Rename", editor) {
+                checkSuperMethodsWithPopup(declaration, deepestSuperMethods.toList(), RefactoringBundle.message("rename.title"), editor) {
                     preprocessAndPass(if (it.size > 1) FunctionWithSupersWrapper(declaration, it) else wrappedMethod ?: element)
                 }
             }
@@ -188,8 +191,11 @@ class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
             val psiMethod = wrapPsiMethod(declaration) ?: continue
             allRenames[declaration] = newName
             val baseName = psiMethod.name
-            val newBaseName = if (demangleInternalName(baseName) == originalName) {
-                mangleInternalName(newName, getModuleNameSuffix(baseName)!!)
+            val newBaseName = if (KotlinTypeMapper.InternalNameMapper.demangleInternalName(baseName) == originalName) {
+                KotlinTypeMapper.InternalNameMapper.mangleInternalName(
+                    newName,
+                    KotlinTypeMapper.InternalNameMapper.getModuleNameSuffix(baseName)!!
+                )
             } else newName
             if (psiMethod.containingClass != null) {
                 psiMethod.forEachOverridingMethod(scope) {
@@ -212,10 +218,10 @@ class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
     override fun renameElement(element: PsiElement, newName: String, usages: Array<UsageInfo>, listener: RefactoringElementListener?) {
         val simpleUsages = ArrayList<UsageInfo>(usages.size)
         val ambiguousImportUsages = SmartList<UsageInfo>()
-        for (usage in usages) {
+        ForeignUsagesRenameProcessor.processAll(element, newName, usages, fallbackHandler = { usage ->
             if (usage is LostDefaultValuesInOverridingFunctionUsageInfo) {
                 usage.apply()
-                continue
+                return@processAll
             }
 
             if (usage.isAmbiguousImportUsage()) {
@@ -225,7 +231,7 @@ class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
                     simpleUsages += usage
                 }
             }
-        }
+        })
         element.ambiguousImportUsages = ambiguousImportUsages
 
         RenameUtil.doRenameGenericNamedElement(element, newName, simpleUsages.toTypedArray(), listener)
@@ -242,4 +248,14 @@ class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
         }
         else -> throw IllegalStateException("Can't be for element $element there because of canProcessElement()")
     }
+
+    override fun findReferences(
+        element: PsiElement,
+        searchScope: SearchScope,
+        searchInCommentsAndStrings: Boolean
+    ): Collection<PsiReference> {
+        val references = super.findReferences(element, searchScope, searchInCommentsAndStrings)
+        return processFoundReferences(element, references)
+    }
+
 }

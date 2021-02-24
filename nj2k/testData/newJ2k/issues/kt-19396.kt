@@ -6,5 +6,4 @@ class TestValReassign(private val s1: String?) {
     constructor(s1: String?, s2: String?) : this(s1) {
         this.s2 = s2
     }
-
 }

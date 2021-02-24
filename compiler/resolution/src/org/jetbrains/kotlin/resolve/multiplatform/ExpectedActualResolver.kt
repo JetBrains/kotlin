@@ -18,14 +18,14 @@ import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver.Compati
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.TypeConstructorSubstitution
 import org.jetbrains.kotlin.types.TypeSubstitutor
-import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
 import org.jetbrains.kotlin.types.checker.ClassicTypeCheckerContext
+import org.jetbrains.kotlin.types.checker.ClassicTypeSystemContext
+import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.keysToMap
@@ -328,14 +328,17 @@ object ExpectedActualResolver {
         if (b == null) return false
 
         with(NewKotlinTypeChecker.Default) {
-            val context = object : ClassicTypeCheckerContext(false) {
-                override fun areEqualTypeConstructors(a: TypeConstructor, b: TypeConstructor): Boolean {
-                    return isExpectedClassAndActualTypeAlias(a, b, platformModule) ||
-                            isExpectedClassAndActualTypeAlias(b, a, platformModule) ||
-                            super.areEqualTypeConstructors(a, b)
+            val context = object : ClassicTypeSystemContext {
+                override fun areEqualTypeConstructors(c1: TypeConstructorMarker, c2: TypeConstructorMarker): Boolean {
+                    require(c1 is TypeConstructor)
+                    require(c2 is TypeConstructor)
+                    return isExpectedClassAndActualTypeAlias(c1, c2, platformModule) ||
+                            isExpectedClassAndActualTypeAlias(c2, c1, platformModule) ||
+                            super.areEqualTypeConstructors(c1, c2)
                 }
             }
-            return context.equalTypes(a.unwrap(), b.unwrap())
+            return ClassicTypeCheckerContext(errorTypeEqualsToAnything = false, typeSystemContext = context)
+                .equalTypes(a.unwrap(), b.unwrap())
         }
     }
 
@@ -457,7 +460,7 @@ object ExpectedActualResolver {
         a: CallableMemberDescriptor,
         b: CallableMemberDescriptor
     ): Boolean {
-        val compare = Visibilities.compare(a.visibility, b.visibility)
+        val compare = DescriptorVisibilities.compare(a.visibility, b.visibility)
         return if (a.isOverridable) {
             // For overridable declarations visibility should match precisely, see KT-19664
             compare == 0
@@ -581,5 +584,4 @@ fun DeclarationDescriptor.findActuals(inModule: ModuleDescriptor = this.module):
 // TODO: Klibs still need to better handle source in deserialized descriptors.
 val DeclarationDescriptorWithSource.couldHaveASource: Boolean get() =
     this.source.containingFile != SourceFile.NO_SOURCE_FILE ||
-    this is DeserializedMemberDescriptor ||
-    this is DeserializedClassDescriptor
+    this is DeserializedDescriptor

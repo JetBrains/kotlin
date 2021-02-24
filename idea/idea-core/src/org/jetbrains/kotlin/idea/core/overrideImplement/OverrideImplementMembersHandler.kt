@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.prevSiblingOfSameType
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -146,9 +147,9 @@ abstract class OverrideImplementMembersHandler : LanguageCodeInsightActionHandle
 
             fun ClassDescriptor.findElement(memberDescriptor: CallableMemberDescriptor): KtDeclaration? {
                 return implementedElements[memberDescriptor]
-                    ?: (findCallableMemberBySignature(memberDescriptor)?.source?.getPsi() as? KtDeclaration)?.also {
-                        implementedElements[memberDescriptor] = it
-                    }
+                    ?: (findCallableMemberBySignature(memberDescriptor)?.source?.getPsi() as? KtDeclaration)
+                        ?.takeIf { it != classOrObject && it !is KtParameter }
+                        ?.also { implementedElements[memberDescriptor] = it }
             }
 
             fun getAnchor(selectedElement: KtDeclaration): PsiElement? {

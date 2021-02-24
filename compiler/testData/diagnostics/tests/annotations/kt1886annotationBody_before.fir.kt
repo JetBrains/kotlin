@@ -1,11 +1,11 @@
 // !LANGUAGE: -NestedClassesInAnnotations
 
 annotation class Annotation2() {
-    public val s: String = ""
+    <!ANNOTATION_CLASS_MEMBER!>public val s: String = ""<!>
 }
 
 annotation class Annotation3() {
-    public fun foo() {}
+    <!ANNOTATION_CLASS_MEMBER!>public fun foo() {}<!>
 }
 
 annotation class Annotation4() {
@@ -17,14 +17,14 @@ annotation class Annotation5() {
 }
 
 annotation class Annotation6() {
-    init {}
+    <!ANNOTATION_CLASS_MEMBER!>init {}<!>
 }
 
 annotation class Annotation1() {}
 
 annotation class Annotation7(val name: String) {}
 
-annotation class Annotation8(var name: String = "") {}
+annotation class Annotation8(<!VAR_ANNOTATION_PARAMETER!>var<!> name: String = "") {}
 
 annotation class Annotation9(val name: String)
 

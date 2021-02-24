@@ -71,7 +71,6 @@ public final expect class E {
     }
 }
 
-
 // -- Module: <m1-jvm> --
 package
 
@@ -149,3 +148,4 @@ public final actual class E {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 }
+

@@ -9,28 +9,31 @@ import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
-import org.jetbrains.kotlin.idea.core.script.configuration.DefaultScriptConfigurationManager
+import org.jetbrains.kotlin.idea.core.script.configuration.DefaultScriptingSupport
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtFile
 
 /**
  * [ScriptChangesNotifier] will call first applicable [ScriptChangeListener] when editor is activated or document changed.
- *
- * Listener may call [ScriptConfigurationUpdater] to invalidate configuration and schedule reloading.
- *
- * @see DefaultScriptConfigurationManager for more details.
+ * Listener should do something to invalidate configuration and schedule reloading.
  */
-abstract class ScriptChangeListener(protected val project: Project) {
-    abstract fun editorActivated(vFile: VirtualFile, updater: ScriptConfigurationUpdater)
-    abstract fun documentChanged(vFile: VirtualFile, updater: ScriptConfigurationUpdater)
+abstract class ScriptChangeListener(val project: Project) {
+    val default: DefaultScriptingSupport
+        get() = DefaultScriptingSupport.getInstance(project)
+
+    abstract fun editorActivated(vFile: VirtualFile)
+    abstract fun documentChanged(vFile: VirtualFile)
 
     abstract fun isApplicable(vFile: VirtualFile): Boolean
 
     protected fun getAnalyzableKtFileForScript(vFile: VirtualFile): KtFile? {
-        if (project.isDisposed) return null
-
-        return (PsiManager.getInstance(project).findFile(vFile) as? KtFile)?.takeIf {
-            ProjectRootsUtil.isInProjectSource(it, includeScriptsOutsideSourceRoots = true)
+        return runReadAction {
+            if (project.isDisposed) return@runReadAction null
+            if (!vFile.isValid) return@runReadAction null
+            (PsiManager.getInstance(project).findFile(vFile) as? KtFile)?.takeIf {
+                ProjectRootsUtil.isInProjectSource(it, includeScriptsOutsideSourceRoots = true)
+            }
         }
     }
 

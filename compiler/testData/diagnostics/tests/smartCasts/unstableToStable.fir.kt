@@ -3,15 +3,15 @@ class Foo(var x: Int?) {
         if (x != null) {
             val y = x
             // Error: x is not stable, Type(y) = Int?
-            x.hashCode()
-            y.hashCode()
+            x<!UNSAFE_CALL!>.<!>hashCode()
+            y<!UNSAFE_CALL!>.<!>hashCode()
             if (y == x) {
                 // Still error
-                y.hashCode()
+                y<!UNSAFE_CALL!>.<!>hashCode()
             }
             if (x == null && y != x) {
                 // Still error
-                y.hashCode()
+                y<!UNSAFE_CALL!>.<!>hashCode()
             }
         }
     }

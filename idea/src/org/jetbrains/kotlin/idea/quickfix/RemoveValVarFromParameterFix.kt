@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtValVarKeywordOwner
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
@@ -21,12 +22,12 @@ class RemoveValVarFromParameterFix(element: KtValVarKeywordOwner) : KotlinQuickF
         varOrVal = valOrVarNode.text
     }
 
-    override fun getFamilyName() = "Remove 'val/var' from parameter"
+    override fun getFamilyName() = KotlinBundle.message("remove.val.var.from.parameter")
 
     override fun getText(): String {
         val element = element ?: return ""
         val varOrVal = element.valOrVarKeyword?.text ?: return familyName
-        return "Remove '$varOrVal' from parameter"
+        return KotlinBundle.message("remove.0.from.parameter", varOrVal)
     }
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {

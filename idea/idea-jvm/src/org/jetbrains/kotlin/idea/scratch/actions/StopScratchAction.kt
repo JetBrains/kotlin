@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.idea.scratch.actions
 
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnActionEvent
-import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.KotlinJvmBundle
 import org.jetbrains.kotlin.idea.scratch.getScratchFileFromSelectedEditor
 
 class StopScratchAction : ScratchAction(
-    KotlinBundle.message("scratch.stop.button"),
+    KotlinJvmBundle.message("scratch.stop.button"),
     AllIcons.Actions.Suspend
 ) {
 

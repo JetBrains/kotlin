@@ -8,35 +8,51 @@ plugins {
     id("jps-compatible")
 }
 
+val JDK_18: String by rootProject.extra
 val jarBaseName = property("archivesBaseName") as String
 
-val proguardLibraryJars by configurations.creating
+val localPackagesToRelocate =
+    listOf(
+        "kotlinx.coroutines"
+    )
+
+val proguardLibraryJars by configurations.creating {
+    attributes {
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_API))
+    }
+}
+
+val relocatedJarContents by configurations.creating
+        
+val embedded by configurations
 
 dependencies {
     compileOnly("org.apache.ivy:ivy:2.5.0")
     compileOnly(project(":compiler:cli-common"))
-    compileOnly(project(":kotlin-scripting-jvm-host"))
+    compileOnly(project(":kotlin-scripting-jvm-host-unshaded"))
     compileOnly(project(":kotlin-scripting-dependencies"))
-    compileOnly(project(":kotlin-script-util"))
-    testCompile(project(":kotlin-scripting-jvm-host"))
-    testCompile(project(":kotlin-script-util"))
-    runtime(project(":kotlin-compiler-embeddable"))
-    runtime(project(":kotlin-scripting-compiler-embeddable"))
-    runtime(project(":kotlin-scripting-jvm-host-embeddable"))
-    runtime(project(":kotlin-reflect"))
+    runtimeOnly(project(":kotlin-scripting-compiler-embeddable"))
+    runtimeOnly(kotlinStdlib())
+    runtimeOnly(project(":kotlin-reflect"))
     embedded(project(":kotlin-scripting-common")) { isTransitive = false }
     embedded(project(":kotlin-scripting-jvm")) { isTransitive = false }
-    embedded(project(":kotlin-scripting-jvm-host")) { isTransitive = false }
+    embedded(project(":kotlin-scripting-jvm-host-unshaded")) { isTransitive = false }
     embedded(project(":kotlin-scripting-dependencies")) { isTransitive = false }
-    embedded(project(":kotlin-script-util")) { isTransitive = false }
     embedded("org.apache.ivy:ivy:2.5.0")
     embedded(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
-    proguardLibraryJars(files(firstFromJavaHomeThatExists("jre/lib/rt.jar", "../Classes/classes.jar"),
-                              firstFromJavaHomeThatExists("jre/lib/jsse.jar", "../Classes/jsse.jar"),
-                              toolsJarFile()))
+    embedded(commonDep("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm")) { 
+        isTransitive = false
+        attributes {
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
+        }
+    }
+
     proguardLibraryJars(kotlinStdlib())
     proguardLibraryJars(project(":kotlin-reflect"))
     proguardLibraryJars(project(":kotlin-compiler"))
+
+    relocatedJarContents(embedded)
+    relocatedJarContents(mainSourceSet.output)
 }
 
 sourceSets {
@@ -48,54 +64,52 @@ publish()
 
 noDefaultJar()
 
-val mainKtsRootPackage = "org.jetbrains.kotlin.mainKts"
-val mainKtsRelocatedDepsRootPackage = "$mainKtsRootPackage.relocatedDeps"
-
-val packJar by task<ShadowJar> {
-    configurations = emptyList()
+val relocatedJar by task<ShadowJar> {
+    configurations = listOf(relocatedJarContents)
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     destinationDirectory.set(File(buildDir, "libs"))
     archiveClassifier.set("before-proguard")
-
-    from(mainSourceSet.output)
-    from(project.configurations.embedded)
 
     // don't add this files to resources classpath to avoid IDE exceptions on kotlin project
     from("jar-resources")
 
     if (kotlinBuildProperties.relocation) {
-        packagesToRelocate.forEach {
-            relocate(it, "$mainKtsRelocatedDepsRootPackage.$it")
+        (packagesToRelocate + localPackagesToRelocate).forEach {
+            relocate(it, "$kotlinEmbeddableRootPackage.$it")
         }
     }
 }
 
-val proguard by task<ProGuardTask> {
-    dependsOn(packJar)
+val proguard by task<CacheableProguardTask> {
+    dependsOn(relocatedJar)
     configuration("main-kts.pro")
 
-    injars(mapOf("filter" to "!META-INF/versions/**"), packJar.get().outputs.files)
+    injars(mapOf("filter" to "!META-INF/versions/**,!kotlinx/coroutines/debug/**"), relocatedJar.get().outputs.files)
 
-    val outputJar = fileFrom(buildDir, "libs", "$jarBaseName-$version-after-proguard.jar")
+    outjars(fileFrom(buildDir, "libs", "$jarBaseName-$version-after-proguard.jar"))
 
-    outjars(outputJar)
-
-    inputs.files(packJar.get().outputs.files.singleFile)
-    outputs.file(outputJar)
-
+    jdkHome = File(JDK_18)
     libraryjars(mapOf("filter" to "!META-INF/versions/**"), proguardLibraryJars)
+    libraryjars(
+        files(
+            firstFromJavaHomeThatExists("jre/lib/rt.jar", "../Classes/classes.jar", jdkHome = jdkHome!!),
+            firstFromJavaHomeThatExists("jre/lib/jsse.jar", "../Classes/jsse.jar", jdkHome = jdkHome!!),
+            toolsJarFile(jdkHome = jdkHome!!)
+        )
+    )
 }
 
 val resultJar by task<Jar> {
-    val pack = if (kotlinBuildProperties.proguard) proguard else packJar
+    val pack = if (kotlinBuildProperties.proguard) proguard else relocatedJar
     dependsOn(pack)
     setupPublicJar(jarBaseName)
     from {
-        zipTree(pack.get().outputs.files.singleFile)
+        zipTree(pack.get().singleOutputFile())
     }
 }
 
 addArtifact("runtime", resultJar)
+addArtifact("runtimeElements", resultJar)
 addArtifact("archives", resultJar)
 
 sourcesJar()

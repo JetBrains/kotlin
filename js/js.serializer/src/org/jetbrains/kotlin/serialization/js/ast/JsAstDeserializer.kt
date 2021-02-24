@@ -30,7 +30,6 @@ import java.io.FileInputStream
 import java.io.InputStream
 import java.io.InputStreamReader
 import java.util.*
-import org.jetbrains.kotlin.resolve.inline.InlineStrategy as KotlinInlineStrategy
 
 class JsAstDeserializer(program: JsProgram, private val sourceRoots: Iterable<File>) {
     private val scope = JsRootScope(program)
@@ -386,7 +385,7 @@ class JsAstDeserializer(program: JsProgram, private val sourceRoots: Iterable<Fi
             val qualifier = if (nameRefProto.hasQualifier()) deserialize(nameRefProto.qualifier) else null
             JsNameRef(deserializeName(nameRefProto.nameId), qualifier).apply {
                 if (nameRefProto.hasInlineStrategy()) {
-                    inlineStrategy = map(nameRefProto.inlineStrategy)
+                    isInline = map(nameRefProto.inlineStrategy)
                 }
             }
         }
@@ -396,7 +395,7 @@ class JsAstDeserializer(program: JsProgram, private val sourceRoots: Iterable<Fi
             val qualifier = if (propertyRefProto.hasQualifier()) deserialize(propertyRefProto.qualifier) else null
             JsNameRef(deserializeString(propertyRefProto.stringId), qualifier).apply {
                 if (propertyRefProto.hasInlineStrategy()) {
-                    inlineStrategy = map(propertyRefProto.inlineStrategy)
+                    isInline = map(propertyRefProto.inlineStrategy)
                 }
             }
         }
@@ -408,7 +407,7 @@ class JsAstDeserializer(program: JsProgram, private val sourceRoots: Iterable<Fi
                     invocationProto.argumentList.map { deserialize(it) }
             ).apply {
                 if (invocationProto.hasInlineStrategy()) {
-                    inlineStrategy = map(invocationProto.inlineStrategy)
+                    isInline = map(invocationProto.inlineStrategy)
                 }
             }
         }
@@ -541,11 +540,8 @@ class JsAstDeserializer(program: JsProgram, private val sourceRoots: Iterable<Fi
         SideEffects.PURE -> SideEffectKind.PURE
     }
 
-    private fun map(inlineStrategy: InlineStrategy) = when(inlineStrategy) {
-        InlineStrategy.AS_FUNCTION -> KotlinInlineStrategy.AS_FUNCTION
-        InlineStrategy.IN_PLACE -> KotlinInlineStrategy.IN_PLACE
-        InlineStrategy.NOT_INLINE -> KotlinInlineStrategy.NOT_INLINE
-    }
+    private fun map(inlineStrategy: InlineStrategy) =
+        inlineStrategy == InlineStrategy.AS_FUNCTION || inlineStrategy == InlineStrategy.IN_PLACE
 
     private fun map(specialFunction: JsAstProtoBuf.SpecialFunction) = when(specialFunction) {
         JsAstProtoBuf.SpecialFunction.DEFINE_INLINE_FUNCTION -> SpecialFunction.DEFINE_INLINE_FUNCTION

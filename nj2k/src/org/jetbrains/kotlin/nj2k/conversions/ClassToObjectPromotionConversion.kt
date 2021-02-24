@@ -49,7 +49,7 @@ class ClassToObjectPromotionConversion(context: NewJ2kConverterContext) : Recurs
                                 it is JKClass && it.classKind != JKClass.ClassKind.COMPANION
                             }.map { it.detached(element.classBody) }
                         },
-                        JKAnnotationList(),
+                        element.annotationList,
                         element.otherModifierElements,
                         element.visibilityElement,
                         JKModalityModifierElement(Modality.FINAL)

@@ -27,7 +27,6 @@ internal actual constructor(
 
     private companion object {
         @Suppress("UNCHECKED_CAST")
-        @JvmStatic
         private val RESULT = AtomicReferenceFieldUpdater.newUpdater<SafeContinuation<*>, Any?>(
             SafeContinuation::class.java, Any::class.java as Class<Any?>, "result"
         )

@@ -9,7 +9,8 @@ import kotlin.js.*
 
 internal fun arrayToString(array: Array<*>) = array.joinToString(", ", "[", "]") { toString(it) }
 
-internal fun <T> Array<out T>.contentDeepHashCodeInternal(): Int {
+internal fun <T> Array<out T>?.contentDeepHashCodeInternal(): Int {
+    if (this == null) return 0
     var result = 1
     for (element in this) {
         val elementHash = when {
@@ -35,7 +36,7 @@ internal fun <T> T.contentEqualsInternal(other: T): Boolean {
 
     if (a === b) return true
 
-    if (!isArrayish(b) || a.length != b.length) return false
+    if (a == null || b == null || !isArrayish(b) || a.length != b.length) return false
 
     for (i in 0 until a.length) {
         if (!equals(a[i], b[i])) {
@@ -47,6 +48,8 @@ internal fun <T> T.contentEqualsInternal(other: T): Boolean {
 
 internal fun <T> T.contentHashCodeInternal(): Int {
     val a = this.asDynamic()
+    if (a == null) return 0
+
     var result = 1
 
     for (i in 0 until a.length) {

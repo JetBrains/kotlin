@@ -1,0 +1,132 @@
+FILE: booleanOperators.kt
+    public abstract interface A : R|kotlin/Any| {
+        public abstract fun foo(): R|kotlin/Unit|
+
+        public abstract fun bool(): R|kotlin/Boolean|
+
+    }
+    public abstract interface B : R|A| {
+        public abstract fun bar(): R|kotlin/Unit|
+
+    }
+    public abstract interface C : R|A| {
+        public abstract fun baz(): R|kotlin/Unit|
+
+    }
+    public final fun test_1(x: R|kotlin/Any|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/x| is R|B|) && (R|<local>/x| is R|C|) ->  {
+                R|<local>/x|.R|/A.foo|()
+                R|<local>/x|.R|/B.bar|()
+                R|<local>/x|.R|/C.baz|()
+            }
+        }
+
+    }
+    public final fun test_2(x: R|kotlin/Any|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/x| is R|B|) || (R|<local>/x| is R|C|) ->  {
+                R|<local>/x|.R|/A.foo|()
+                R|<local>/x|.<Unresolved name: bar>#()
+                R|<local>/x|.<Unresolved name: baz>#()
+            }
+        }
+
+    }
+    public final fun test_3(x: R|kotlin/Any|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/x| !is R|A|).R|kotlin/Boolean.not|() ->  {
+                R|<local>/x|.R|/A.foo|()
+            }
+        }
+
+    }
+    public final fun test_4(x: R|kotlin/Any|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/x| !is R|kotlin/String|) || ==(R|<local>/x|.R|kotlin/String.length|, Int(0)) ->  {
+                R|<local>/x|.<Unresolved name: length>#
+            }
+        }
+
+        R|<local>/x|.<Unresolved name: length>#
+    }
+    public final fun test_5(x: R|kotlin/Any|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/x| is R|A|) && R|<local>/x|.R|/A.bool|() ->  {
+                R|<local>/x|.R|/A.foo|()
+            }
+        }
+
+    }
+    public final fun test_6(x: R|kotlin/Any|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/x| !is R|A|).R|kotlin/Boolean.not|() ->  {
+                R|<local>/x|.R|/A.foo|()
+            }
+        }
+
+    }
+    public final fun test_7(x: R|kotlin/Any|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/x| is R|A|) || Boolean(false) ->  {
+                R|<local>/x|.<Unresolved name: foo>#()
+            }
+        }
+
+    }
+    public final fun test_8(x: R|kotlin/Any|): R|kotlin/Unit| {
+        when () {
+            Boolean(false) || (R|<local>/x| is R|A|) ->  {
+                R|<local>/x|.<Unresolved name: foo>#()
+            }
+        }
+
+    }
+    public final fun test_9(x: R|kotlin/Any|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/x| is R|A|) || Boolean(true) ->  {
+                R|<local>/x|.<Unresolved name: foo>#()
+            }
+        }
+
+    }
+    public final fun test_10(x: R|kotlin/Any|): R|kotlin/Unit| {
+        when () {
+            Boolean(true) || (R|<local>/x| is R|A|) ->  {
+                R|<local>/x|.<Unresolved name: foo>#()
+            }
+        }
+
+    }
+    public final fun test_11(x: R|kotlin/Any|, b: R|kotlin/Boolean|): R|kotlin/Unit| {
+        when () {
+            Boolean(false) && (R|<local>/x| is R|A|) ->  {
+                R|<local>/x|.<Unresolved name: foo>#()
+            }
+        }
+
+    }
+    public final fun test_12(x: R|kotlin/Any|, b: R|kotlin/Boolean|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/x| is R|A|) && Boolean(false) ->  {
+                R|<local>/x|.R|/A.foo|()
+            }
+        }
+
+    }
+    public final fun test_13(x: R|kotlin/Any|, b: R|kotlin/Boolean|): R|kotlin/Unit| {
+        when () {
+            Boolean(true) && (R|<local>/x| is R|A|) ->  {
+                R|<local>/x|.R|/A.foo|()
+            }
+        }
+
+    }
+    public final fun test_14(x: R|kotlin/Any|, b: R|kotlin/Boolean|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/x| is R|A|) && Boolean(false) ->  {
+                R|<local>/x|.R|/A.foo|()
+            }
+        }
+
+    }

@@ -16,9 +16,10 @@ import org.jetbrains.kotlin.platform.IdePlatform
 import org.jetbrains.kotlin.platform.IdePlatformKind
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.platform.jvm.isJvm
 
 object JvmIdePlatformKind : IdePlatformKind<JvmIdePlatformKind>() {
-    override fun supportsTargetPlatform(platform: TargetPlatform): Boolean = platforms.contains(platform)
+    override fun supportsTargetPlatform(platform: TargetPlatform): Boolean = platform.isJvm()
 
     override fun platformByCompilerArguments(arguments: CommonCompilerArguments): TargetPlatform? {
         if (arguments !is K2JVMCompilerArguments) return null
@@ -37,7 +38,7 @@ object JvmIdePlatformKind : IdePlatformKind<JvmIdePlatformKind>() {
         message = "IdePlatform is deprecated and will be removed soon, please, migrate to org.jetbrains.kotlin.platform.TargetPlatform",
         level = DeprecationLevel.ERROR
     )
-    override fun getDefaultPlatform(): Platform = Platform(JvmTarget.JVM_1_6)
+    override fun getDefaultPlatform(): Platform = Platform(JvmTarget.DEFAULT)
 
     override fun createArguments(): CommonCompilerArguments {
         return K2JVMCompilerArguments()

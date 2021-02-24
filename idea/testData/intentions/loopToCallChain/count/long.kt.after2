@@ -4,8 +4,8 @@
 fun foo(list: List<String>): Long {
     var count = 0L
     list
-            .asSequence()
-            .filter { it.length > 10 }
-            .forEach { count++ }
+        .asSequence()
+        .filter { it.length > 10 }
+        .forEach { count++ }
     return count
 }

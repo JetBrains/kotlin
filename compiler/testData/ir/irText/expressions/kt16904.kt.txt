@@ -1,0 +1,60 @@
+abstract class A {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val x: B
+    field = B()
+    get
+
+  var y: Int
+    field = 0
+    get
+    set
+
+}
+
+class B {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  operator fun plusAssign(x: Int) {
+  }
+
+}
+
+class Test1 : A {
+  constructor() {
+    super/*A*/()
+    /* <init>() */
+
+    { // BLOCK
+      val tmp0_this: Test1 = <this>
+      tmp0_this.<get-x>().plusAssign(x = 42)
+    }
+    { // BLOCK
+      val tmp1_this: Test1 = <this>
+      tmp1_this.<set-y>(<set-?> = tmp1_this.<get-y>().plus(other = 42))
+    }
+  }
+
+}
+
+class Test2 : J {
+  constructor() /* primary */ {
+    super/*J*/()
+    /* <init>() */
+
+  }
+
+  init {
+    <this>super.#field = 42
+  }
+
+}
+

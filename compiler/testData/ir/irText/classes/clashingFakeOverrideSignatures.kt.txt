@@ -1,0 +1,172 @@
+open class Base<T : Any?> {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun foo(x: T) {
+  }
+
+  fun foo(y: String) {
+  }
+
+  val T.bar: Int
+    get(): Int {
+      return 1
+    }
+
+  val String.bar: Int
+    get(): Int {
+      return 2
+    }
+
+}
+
+open class Derived : Base<String> {
+  constructor() /* primary */ {
+    super/*Base*/<String>()
+    /* <init>() */
+
+  }
+
+}
+
+class Derived2 : Derived {
+  constructor() /* primary */ {
+    super/*Derived*/()
+    /* <init>() */
+
+  }
+
+}
+
+fun test(b: Base<String>, d: Derived, d2: Derived2) {
+  b.foo(x = "")
+  b.foo(y = "")
+  d.foo(x = "")
+  d.foo(y = "")
+  d2.foo(x = "")
+  d2.foo(y = "")
+}
+
+open class BaseXY<X : Any?, Y : Any?> {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun foo(x: X, y: String) {
+  }
+
+  fun foo(x: String, y: Y) {
+  }
+
+}
+
+class DerivedXY : BaseXY<String, String> {
+  constructor() /* primary */ {
+    super/*BaseXY*/<String, String>()
+    /* <init>() */
+
+  }
+
+}
+
+fun outerFun() {
+  local open class LocalBase<T : Any?> {
+    constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    fun foo(x: T) {
+    }
+
+    fun foo(y: String) {
+    }
+
+    val T.bar: Int
+      get(): Int {
+        return 1
+      }
+
+    val String.bar: Int
+      get(): Int {
+        return 2
+      }
+
+  }
+
+  local open class LocalDerived : LocalBase<String> {
+    constructor() /* primary */ {
+      super/*LocalBase*/<String>()
+      /* <init>() */
+
+    }
+
+  }
+
+  local class LocalDerived2 : LocalDerived {
+    constructor() /* primary */ {
+      super/*LocalDerived*/()
+      /* <init>() */
+
+    }
+
+  }
+
+  local fun test(b: LocalBase<String>, d: LocalDerived, d2: LocalDerived2) {
+    b.foo(x = "")
+    b.foo(y = "")
+    d.foo(x = "")
+    d.foo(y = "")
+    d2.foo(x = "")
+    d2.foo(y = "")
+  }
+
+}
+
+open class Outer<T : Any?> {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  open inner class Inner {
+    constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    fun foo(x: T) {
+    }
+
+    fun foo(y: String) {
+    }
+
+  }
+
+}
+
+class OuterDerived : Outer<String> {
+  constructor() /* primary */ {
+    super/*Outer*/<String>()
+    /* <init>() */
+
+  }
+
+  inner class InnerDerived : Inner<String> {
+    constructor() /* primary */ {
+      <this>.super/*Inner*/()
+      /* <init>() */
+
+    }
+
+  }
+
+}

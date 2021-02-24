@@ -1,0 +1,24 @@
+fun test1(x: Int): Int {
+  return x.unaryMinus()
+}
+
+fun test2(): Int {
+  return -42
+}
+
+fun test3(x: Int): Int {
+  return x.unaryPlus()
+}
+
+fun test4(): Int {
+  return 42
+}
+
+fun test5(x: Boolean): Boolean {
+  return x.not()
+}
+
+fun test6(): Boolean {
+  return false
+}
+

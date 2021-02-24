@@ -10,9 +10,11 @@ import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.jetbrains.kotlin.test.WithMutedInDatabaseRunTest
 import org.jetbrains.kotlin.test.runTest
 import org.junit.runner.RunWith
 
+@WithMutedInDatabaseRunTest
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class NavigateFromJSLibrarySourcesTest : AbstractNavigateFromLibrarySourcesTest() {
     fun testIcon() {

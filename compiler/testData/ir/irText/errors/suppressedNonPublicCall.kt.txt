@@ -1,0 +1,16 @@
+class C {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  internal fun bar() {
+  }
+
+}
+
+inline fun C.foo() {
+  <this>.bar()
+}
+

@@ -1,4 +1,3 @@
 [NotNull Values]
-4 	fun foo(n: Int, <bold>s: String = "???"</bold>) {
-4 		fun foo(n: Int, <bold>s: String = "???"</bold>) {
-
+5 	fun foo(n: Int, <bold>s: String</bold> = "???") { (in foo(Int, String = ...))
+5 		fun foo(n: Int, <bold>s: String</bold> = "???") { (in foo(Int, String = ...))

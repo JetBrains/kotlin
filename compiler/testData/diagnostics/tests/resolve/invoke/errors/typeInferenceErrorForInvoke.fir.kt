@@ -10,5 +10,5 @@ fun foo(s: String, ai: A<Int>) {
 
     <!INAPPLICABLE_CANDIDATE!>s<!>(ai)
 
-    <!INAPPLICABLE_CANDIDATE!>""(ai)<!>
+    <!INAPPLICABLE_CANDIDATE!>""<!>(ai)
 }

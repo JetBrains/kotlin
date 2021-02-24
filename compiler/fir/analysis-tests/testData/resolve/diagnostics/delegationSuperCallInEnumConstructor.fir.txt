@@ -1,0 +1,38 @@
+FILE: delegationSuperCallInEnumConstructor.kt
+    public final enum class A : R|kotlin/Enum<A>| {
+        public final static enum entry A: R|A| = object : R|A| {
+            private constructor(): R|<anonymous>| {
+                super<R|A|>(Int(1))
+            }
+
+        }
+
+        public final static enum entry B: R|A| = object : R|A| {
+            private constructor(): R|<anonymous>| {
+                super<R|A|>(Int(2))
+            }
+
+        }
+
+        public final static enum entry C: R|A| = object : R|A| {
+            private constructor(): R|<anonymous>| {
+                super<R|A|>(String(test))
+            }
+
+        }
+
+        private constructor(x: R|kotlin/Int|): R|A| {
+            super<R|kotlin/Enum<A>|>()
+        }
+
+        private constructor(t: R|kotlin/String|): R|A| {
+            this<R|A|>(Int(10))
+        }
+
+        public final static fun values(): R|kotlin/Array<A>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|A| {
+        }
+
+    }

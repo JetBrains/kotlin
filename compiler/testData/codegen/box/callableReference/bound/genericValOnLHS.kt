@@ -1,5 +1,5 @@
-// IGNORE_BACKEND_FIR: JVM_IR
-
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: BINDING_RECEIVERS
 class Generic<P : Any>(val p: P)
 
 class Host {

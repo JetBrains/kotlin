@@ -11,7 +11,7 @@ class A(val a:Int) {
         checkSubtype<A>(this@A)
       }
       val <!UNUSED_VARIABLE!>b<!>: Double.() -> Unit = a@{ checkSubtype<Double>(this@a) + checkSubtype<Byte>(this@xx) }
-      val <!UNUSED_VARIABLE!>c<!> = a@{ -> <!NO_THIS!>this@a<!> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>+<!> checkSubtype<Byte>(this@xx) }
+      val <!UNUSED_VARIABLE!>c<!> = a@{ -> <!NO_THIS!>this@a<!> <!DEBUG_INFO_MISSING_UNRESOLVED!>+<!> checkSubtype<Byte>(this@xx) }
       return (a@{checkSubtype<Double>(this@a) + checkSubtype<Byte>(this@xx)})
     }
   }

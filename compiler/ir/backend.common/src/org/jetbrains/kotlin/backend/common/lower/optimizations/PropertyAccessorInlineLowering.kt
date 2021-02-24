@@ -8,20 +8,24 @@ package org.jetbrains.kotlin.backend.common.lower.optimizations
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.ir.isTopLevel
+import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.backend.common.lower.irBlock
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.ir.builders.irImplicitCast
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
+import org.jetbrains.kotlin.ir.util.isPure
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 class PropertyAccessorInlineLowering(private val context: CommonBackendContext) : BodyLoweringPass {
 
-    private val IrProperty.isSafeToInline: Boolean get() = isTopLevel || (modality === Modality.FINAL || visibility == Visibilities.PRIVATE) || (parent as IrClass).modality === Modality.FINAL
+    private val IrProperty.isSafeToInline: Boolean get() = isTopLevel || (modality === Modality.FINAL || visibility == DescriptorVisibilities.PRIVATE) || (parent as IrClass).modality === Modality.FINAL
 
     // TODO: implement general function inlining optimization and replace it with
     private inner class AccessorInliner : IrElementTransformerVoid() {
@@ -31,7 +35,7 @@ class PropertyAccessorInlineLowering(private val context: CommonBackendContext) 
         override fun visitCall(expression: IrCall): IrExpression {
             expression.transformChildrenVoid(this)
 
-            val callee = expression.symbol.owner as IrSimpleFunction
+            val callee = expression.symbol.owner
             val property = callee.correspondingPropertySymbol?.owner ?: return expression
 
             // Some devirtualization required here
@@ -46,13 +50,25 @@ class PropertyAccessorInlineLowering(private val context: CommonBackendContext) 
             }
             if (property.isEffectivelyExternal()) return expression
 
+            val backingField = property.backingField ?: return expression
+
             if (property.isConst) {
                 val initializer =
-                    (property.backingField?.initializer ?: error("Constant property has to have a backing field with initializer"))
-                return initializer.expression.deepCopyWithSymbols()
+                    (backingField.initializer ?: error("Constant property has to have a backing field with initializer"))
+                val constExpression = initializer.expression.deepCopyWithSymbols()
+                val receiver = expression.dispatchReceiver
+                if (receiver != null && !receiver.isPure(true)) {
+                    val builder = context.createIrBuilder(expression.symbol,
+                            expression.startOffset, expression.endOffset)
+                    return builder.irBlock(expression) {
+                        +receiver
+                        +constExpression
+                    }
+                }
+                return constExpression
             }
 
-            val backingField = property.backingField ?: return expression
+
 
             if (property.getter === callee) {
                 return tryInlineSimpleGetter(expression, callee, backingField) ?: expression
@@ -68,9 +84,17 @@ class PropertyAccessorInlineLowering(private val context: CommonBackendContext) 
         private fun tryInlineSimpleGetter(call: IrCall, callee: IrSimpleFunction, backingField: IrField): IrExpression? {
             if (!isSimpleGetter(callee, backingField)) return null
 
-            return call.run {
+            val builder = context.createIrBuilder(call.symbol, call.startOffset, call.endOffset)
+
+            val getField = call.run {
                 IrGetFieldImpl(startOffset, endOffset, backingField.symbol, backingField.type, call.dispatchReceiver, origin)
             }
+
+            // Preserve call types when backingField have different type. This usually happens with generic field types.
+            return if (backingField.type != call.type)
+                builder.irImplicitCast(getField, call.type)
+            else
+                getField
         }
 
         private fun isSimpleGetter(callee: IrSimpleFunction, backingField: IrField): Boolean {

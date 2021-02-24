@@ -104,7 +104,9 @@ object J2KPostProcessingRegistrarImpl : J2KPostProcessingRegistrar {
         }
 
         registerDiagnosticBasedProcessing<KtTypeProjection>(Errors.REDUNDANT_PROJECTION) { _, diagnostic ->
-            val fix = RemoveModifierFix.createRemoveProjectionFactory(true).createActions(diagnostic).single() as RemoveModifierFix
+            val fix = RemoveModifierFix.createRemoveProjectionFactory(true)
+                .asKotlinIntentionActionsFactory()
+                .createActions(diagnostic).single() as RemoveModifierFix
             fix.invoke()
         }
 

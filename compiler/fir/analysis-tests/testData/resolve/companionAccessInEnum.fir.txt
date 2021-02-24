@@ -1,0 +1,30 @@
+FILE: companionAccessInEnum.kt
+    public final enum class A : R|kotlin/Enum<A>| {
+        private constructor(): R|A| {
+            super<R|kotlin/Enum<A>|>()
+        }
+
+        public final static enum entry X: R|A|
+        public final static enum entry Y: R|A|
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|A.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun foo(): R|kotlin/Int| {
+                ^foo Int(1)
+            }
+
+        }
+
+        public final fun foo(): R|kotlin/Int| {
+            ^foo Q|A.Companion|.R|/A.Companion.foo|()
+        }
+
+        public final static fun values(): R|kotlin/Array<A>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|A| {
+        }
+
+    }

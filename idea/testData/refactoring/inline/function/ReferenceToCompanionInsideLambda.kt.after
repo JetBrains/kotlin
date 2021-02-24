@@ -1,0 +1,12 @@
+import A.Companion.bar
+
+private class A {
+
+    companion object {
+        const val bar = 4
+    }
+}
+
+private fun test(a: A) {
+    { bar }()
+}

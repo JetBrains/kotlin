@@ -9,8 +9,6 @@ import groovy.lang.Closure
 import org.gradle.api.InvalidUserCodeException
 import org.gradle.api.Project
 import org.gradle.api.file.SourceDirectorySet
-import org.gradle.api.internal.file.DefaultSourceDirectorySet
-import org.gradle.api.internal.file.FileResolver
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
@@ -19,8 +17,8 @@ import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.GranularMetadataTransformation
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution
-import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
-import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
+import org.jetbrains.kotlin.gradle.utils.*
 import java.io.File
 import java.lang.reflect.Constructor
 import java.util.*
@@ -29,21 +27,20 @@ const val METADATA_CONFIGURATION_NAME_SUFFIX = "DependenciesMetadata"
 
 class DefaultKotlinSourceSet(
     private val project: Project,
-    val displayName: String,
-    fileResolver: FileResolver
+    val displayName: String
 ) : KotlinSourceSet {
 
     override val apiConfigurationName: String
-        get() = disambiguateName("api")
+        get() = disambiguateName(API)
 
     override val implementationConfigurationName: String
-        get() = disambiguateName("implementation")
+        get() = disambiguateName(IMPLEMENTATION)
 
     override val compileOnlyConfigurationName: String
-        get() = disambiguateName("compileOnly")
+        get() = disambiguateName(COMPILE_ONLY)
 
     override val runtimeOnlyConfigurationName: String
-        get() = disambiguateName("runtimeOnly")
+        get() = disambiguateName(RUNTIME_ONLY)
 
     override val apiMetadataConfigurationName: String
         get() = lowerCamelCaseName(apiConfigurationName, METADATA_CONFIGURATION_NAME_SUFFIX)
@@ -57,7 +54,7 @@ class DefaultKotlinSourceSet(
     override val runtimeOnlyMetadataConfigurationName: String
         get() = lowerCamelCaseName(runtimeOnlyConfigurationName, METADATA_CONFIGURATION_NAME_SUFFIX)
 
-    override val kotlin: SourceDirectorySet = createDefaultSourceDirectorySet(project, "$name Kotlin source", fileResolver).apply {
+    override val kotlin: SourceDirectorySet = createDefaultSourceDirectorySet(project, "$name Kotlin source").apply {
         filter.include("**/*.java")
         filter.include("**/*.kt")
         filter.include("**/*.kts")
@@ -65,7 +62,7 @@ class DefaultKotlinSourceSet(
 
     override val languageSettings: LanguageSettingsBuilder = DefaultLanguageSettingsBuilder()
 
-    override val resources: SourceDirectorySet = createDefaultSourceDirectorySet(project, "$name resources", fileResolver)
+    override val resources: SourceDirectorySet = createDefaultSourceDirectorySet(project, "$name resources")
 
     override fun kotlin(configureClosure: Closure<Any?>): SourceDirectorySet =
         kotlin.apply { ConfigureUtil.configure(configureClosure, this) }
@@ -88,7 +85,7 @@ class DefaultKotlinSourceSet(
         // Fail-fast approach: check on each new added edge and report a circular dependency at once when the edge is added.
         checkForCircularDependencies()
 
-        project.afterEvaluate { defaultSourceSetLanguageSettingsChecker.runAllChecks(this, other) }
+        project.whenEvaluated { defaultSourceSetLanguageSettingsChecker.runAllChecks(this@DefaultKotlinSourceSet, other) }
     }
 
     private val dependsOnSourceSetsImpl = mutableSetOf<KotlinSourceSet>()
@@ -156,10 +153,11 @@ class DefaultKotlinSourceSet(
     internal fun getDependenciesTransformation(scope: KotlinDependencyScope): Iterable<MetadataDependencyTransformation> {
         val metadataDependencyResolutionByModule =
             dependencyTransformations[scope]?.metadataDependencyResolutions
-                ?.associateBy { it.dependency.moduleGroup to it.dependency.moduleName }
+                ?.associateBy { ModuleIds.fromComponent(project, it.dependency) }
                 ?: emptyMap()
 
-        val baseDir = project.buildDir.resolve("tmp/kotlinMetadata/$name/${scope.scopeName}")
+        val baseDir = SourceSetMetadataStorageForIde.sourceSetStorageWithScope(project, this@DefaultKotlinSourceSet.name, scope)
+
         if (metadataDependencyResolutionByModule.values.any { it is MetadataDependencyResolution.ChooseVisibleSourceSets }) {
             if (baseDir.isDirectory) {
                 baseDir.deleteRecursively()
@@ -169,7 +167,7 @@ class DefaultKotlinSourceSet(
 
         return metadataDependencyResolutionByModule.mapNotNull { (groupAndName, resolution) ->
             val (group, name) = groupAndName
-            val projectPath = resolution.projectDependency?.dependencyProject?.path
+            val projectPath = resolution.projectDependency?.path
             when (resolution) {
                 is MetadataDependencyResolution.KeepOriginalDependency -> null
 
@@ -181,6 +179,7 @@ class DefaultKotlinSourceSet(
                         baseDir,
                         doProcessFiles = true
                     )
+
                     MetadataDependencyTransformation(
                         group, name, projectPath,
                         resolution.projectStructureMetadata,
@@ -227,28 +226,8 @@ internal fun KotlinSourceSet.disambiguateName(simpleName: String): String {
     return lowerCamelCaseName(*nameParts.toTypedArray())
 }
 
-private fun createDefaultSourceDirectorySet(project: Project, name: String?, resolver: FileResolver?): SourceDirectorySet {
-    if (isGradleVersionAtLeast(5, 0)) {
-        val objects = project.objects
-        val sourceDirectorySetMethod = objects.javaClass.methods.single { it.name == "sourceDirectorySet" && it.parameterCount == 2 }
-        return sourceDirectorySetMethod(objects, name, name) as SourceDirectorySet
-    }
-
-    val klass = DefaultSourceDirectorySet::class.java
-    val defaultConstructor = klass.constructorOrNull(String::class.java, FileResolver::class.java)
-
-    return if (defaultConstructor != null && defaultConstructor.getAnnotation(java.lang.Deprecated::class.java) == null) {
-        // TODO: drop when gradle < 2.12 are obsolete
-        defaultConstructor.newInstance(name, resolver)
-    } else {
-        val directoryFileTreeFactoryClass = Class.forName("org.gradle.api.internal.file.collections.DirectoryFileTreeFactory")
-        val alternativeConstructor = klass.getConstructor(String::class.java, FileResolver::class.java, directoryFileTreeFactoryClass)
-
-        val defaultFileTreeFactoryClass = Class.forName("org.gradle.api.internal.file.collections.DefaultDirectoryFileTreeFactory")
-        val defaultFileTreeFactory = defaultFileTreeFactoryClass.getConstructor().newInstance()
-        alternativeConstructor.newInstance(name, resolver, defaultFileTreeFactory)
-    }
-}
+private fun createDefaultSourceDirectorySet(project: Project, name: String?): SourceDirectorySet =
+    project.objects.sourceDirectorySet(name, name)
 
 internal fun KotlinSourceSet.getSourceSetHierarchy(): Set<KotlinSourceSet> {
     val result = mutableSetOf<KotlinSourceSet>()

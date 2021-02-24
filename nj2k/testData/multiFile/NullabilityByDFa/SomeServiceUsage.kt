@@ -1,7 +1,6 @@
 class SomeServiceUsage {
     val service: SomeService
         get() = SomeService.getInstanceNotNull()
-
     val serviceNullable: SomeService
         get() = SomeService.getInstanceNullable()
 
@@ -40,6 +39,10 @@ class SomeServiceUsage {
     // nullable, safe-call
     fun aString6(): String? {
         val s = serviceNullable
-        return s?.nullableString()
+        return if (s != null) {
+            s.nullableString()
+        } else {
+            null
+        }
     }
 }

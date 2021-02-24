@@ -10,11 +10,11 @@ import org.jetbrains.kotlin.fir.tree.generator.pureAbstractElementType
 
 import java.io.File
 
-fun Implementation.generateCode(generationPath: File) {
+fun Implementation.generateCode(generationPath: File): GeneratedFile {
     val dir = generationPath.resolve(packageName.replace(".", "/"))
-    dir.mkdirs()
     val file = File(dir, "$type.kt")
-    file.useSmartPrinter {
+    val stringBuilder = StringBuilder()
+    SmartPrinter(stringBuilder).apply {
         printCopyright()
         println("package $packageName")
         println()
@@ -26,6 +26,7 @@ fun Implementation.generateCode(generationPath: File) {
         printGeneratedMessage()
         printImplementation(this@generateCode)
     }
+    return GeneratedFile(file, stringBuilder.toString())
 }
 
 fun SmartPrinter.printImplementation(implementation: Implementation) {
@@ -45,10 +46,14 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
     }
 
     with(implementation) {
+        if (requiresOptIn) {
+            println("@OptIn(FirImplementationDetail::class)")
+        }
+        if (!isPublic) {
+            print("internal ")
+        }
         print("${kind!!.title} $type")
         print(element.typeParameters)
-        val fieldsWithoutDefault = allFields.filter { it.defaultValue == null && !it.isLateinit }
-        val fieldsWithDefault = allFields.filter { it.defaultValue != null || it.isLateinit }
 
         val isInterface = kind == Implementation.Kind.Interface
         val isAbstract = kind == Implementation.Kind.AbstractClass
@@ -60,11 +65,13 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
         }
 
         if (!isInterface && !isAbstract && fieldsWithoutDefault.isNotEmpty()) {
+            if (isPublic) {
+                print(" @FirImplementationDetail constructor")
+            }
             println("(")
             withIndent {
-                fieldsWithoutDefault.forEachIndexed { i, field ->
-                    val end = if (i == fieldsWithoutDefault.size - 1) "" else ","
-                    printField(field, isImplementation = true, override = true, end = end)
+                fieldsWithoutDefault.forEachIndexed { _, field ->
+                    printField(field, isImplementation = true, override = true, end = ",")
                 }
             }
             print(")")
@@ -91,8 +98,14 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                 }
             }
 
+
             element.allFields.filter { it.type.contains("Symbol") && it !is FieldList }
-                .takeIf { it.isNotEmpty() && !isInterface && !isAbstract && !element.type.contains("Reference") }
+                .takeIf {
+                    it.isNotEmpty() && !isInterface && !isAbstract &&
+                            !element.type.contains("Reference")
+                            && !element.type.contains("ResolvedQualifier")
+                            && !element.type.endsWith("Ref")
+                }
                 ?.let { symbolFields ->
                     println("init {")
                     for (symbolField in symbolFields) {
@@ -135,14 +148,12 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                                 }
 
                                 else -> {
-                                    if (type in setOf("FirClassImpl", "FirSealedClassImpl") && field.name == "declarations") {
-                                        println("(declarations.firstOrNull { it is FirConstructorImpl } as? FirConstructorImpl)?.typeParameters?.forEach { it.accept(visitor, data) }")
-                                    }
                                     if (type == "FirWhenExpressionImpl" && field.name == "subject") {
                                         println(
                                             """
-                                        |if (subjectVariable != null) {
-                                        |            subjectVariable.accept(visitor, data)
+                                        |val subjectVariable_ = subjectVariable
+                                        |        if (subjectVariable_ != null) {
+                                        |            subjectVariable_.accept(visitor, data)
                                         |        } else {
                                         |            subject?.accept(visitor, data)
                                         |        }
@@ -209,17 +220,14 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
 
                             field.name in setOf("dispatchReceiver", "extensionReceiver") -> {}
 
-                            type in setOf("FirClassImpl", "FirSealedClassImpl") && field.name == "declarations" -> {
-                                println("(declarations.firstOrNull { it is FirConstructorImpl } as? FirConstructorImpl)?.typeParameters?.transformInplace(transformer, data)")
-                                println("declarations.transformInplace(transformer, data)")
-                            }
-
                             field.name == "companionObject" -> {
                                 println("companionObject = declarations.asSequence().filterIsInstance<FirRegularClass>().firstOrNull { it.status.isCompanion }")
                             }
 
                             field.needsSeparateTransform -> {
-                                println("transform${field.name.capitalize()}(transformer, data)")
+                                if (!(element.needTransformOtherChildren && field.needTransformInOtherChildren)) {
+                                    println("transform${field.name.capitalize()}(transformer, data)")
+                                }
                             }
 
                             !element.needTransformOtherChildren -> {
@@ -257,6 +265,7 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                                 """
                                 |if (subjectVariable != null) {
                                 |            subjectVariable = subjectVariable?.transformSingle(transformer, data)
+                                |            subject = subjectVariable?.initializer
                                 |        } else {
                                 |            subject = subject?.transformSingle(transformer, data)
                                 |        }
@@ -285,6 +294,9 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                             if (!field.needsSeparateTransform) {
                                 field.transform()
                             }
+                            if (field.needTransformInOtherChildren) {
+                                println("transform${field.name.capitalize()}(transformer, data)")
+                            }
                         }
                         println("return this")
                     }
@@ -292,22 +304,35 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                 }
             }
 
-            for (field in allFields.filter { it.withReplace }) {
+            fun generateReplace(
+                field: Field,
+                overridenType: Importable? = null,
+                forceNullable: Boolean = false,
+                body: () -> Unit,
+            ) {
                 println()
                 abstract()
-                print("override ${field.replaceFunctionDeclaration()}")
+                print("override ${field.replaceFunctionDeclaration(overridenType, forceNullable)}")
                 if (isInterface || isAbstract) {
                     println()
-                    continue
+                    return
                 }
                 print(" {")
                 if (!field.isMutable) {
                     println("}")
-                    continue
+                    return
                 }
                 println()
                 withIndent {
-                    val newValue = "new${field.name.capitalize()}"
+                    body()
+                }
+                println("}")
+            }
+
+            for (field in allFields.filter { it.withReplace }) {
+                val capitalizedFieldName = field.name.capitalize()
+                val newValue = "new$capitalizedFieldName"
+                generateReplace(field, forceNullable = field.useNullableForReplace) {
                     when {
                         field.withGetter -> {}
 
@@ -317,11 +342,20 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                         }
 
                         else -> {
+                            if (field.useNullableForReplace) {
+                                println("require($newValue != null)")
+                            }
                             println("${field.name} = $newValue")
                         }
                     }
                 }
-                println("}")
+
+                for (overridenType in field.overridenTypes) {
+                    generateReplace(field, overridenType) {
+                        println("require($newValue is ${field.typeWithArguments})")
+                        println("replace$capitalizedFieldName($newValue)")
+                    }
+                }
             }
         }
         println("}")

@@ -9,7 +9,7 @@ fun foo(javaClass: JavaClass, kotlinClass: KotlinClass) {
     javaClass.something = 1
     javaClass.<!UNRESOLVED_REFERENCE!>Something<!>
     useInt(kotlinClass.getSomething())
-    kotlinClass.something
+    kotlinClass.<!UNRESOLVED_REFERENCE!>something<!>
 }
 
 fun useInt(i: Int) {}

@@ -2,10 +2,10 @@
 
 fun test(foo: Foo): List<Int> {
     return foo.getList()
-            .asSequence()
-            .filter { it > 1 }
-            .map { it * 2 }
-            .toList()
+        .asSequence()
+        .filter { it > 1 }
+        .map { it * 2 }
+        .toList()
 }
 
 class Foo {

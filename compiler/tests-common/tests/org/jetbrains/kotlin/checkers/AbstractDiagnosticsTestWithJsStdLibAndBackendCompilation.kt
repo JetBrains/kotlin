@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.checkers
 
+import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.context.ModuleContext
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.js.facade.MainCallParameters
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingTrace
 
+@OptIn(ObsoleteTestInfrastructure::class)
 abstract class AbstractDiagnosticsTestWithJsStdLibAndBackendCompilation : AbstractDiagnosticsTestWithJsStdLib() {
     override fun analyzeModuleContents(
             moduleContext: ModuleContext,

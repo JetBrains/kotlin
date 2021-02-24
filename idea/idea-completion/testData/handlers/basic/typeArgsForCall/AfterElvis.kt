@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 fun foo(list: List<String>?) {
     val v = list ?: emp<caret>
 }

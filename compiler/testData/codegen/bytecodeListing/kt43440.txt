@@ -1,0 +1,25 @@
+@kotlin.Metadata
+public final class A$DefaultImpls {
+    // source: 'kt43440.kt'
+    private static method f(p0: A): java.lang.Object
+    public final inner class A$DefaultImpls
+}
+
+@kotlin.Metadata
+public interface A {
+    // source: 'kt43440.kt'
+    public final inner class A$DefaultImpls
+}
+
+@kotlin.Metadata
+public final class B$DefaultImpls {
+    // source: 'kt43440.kt'
+    private static method f(p0: B): java.lang.Object
+    public final inner class B$DefaultImpls
+}
+
+@kotlin.Metadata
+public interface B {
+    // source: 'kt43440.kt'
+    public final inner class B$DefaultImpls
+}

@@ -24,7 +24,7 @@ fun <T : CharSequence?> foo(x: T) {
         x?.bar1()
     }
 
-    x.length
+    x.<!INAPPLICABLE_CANDIDATE!>length<!>
 
     if (x is String) {
         x.length

@@ -1,15 +1,18 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
+import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.repl.ReplCompileResult
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
 import org.jetbrains.kotlin.ir.backend.js.utils.NameTables
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptCompilerProxy
 import org.jetbrains.kotlin.scripting.repl.js.JsCompiledScript
@@ -19,8 +22,8 @@ import org.jetbrains.kotlin.scripting.repl.js.readLibrariesFromConfiguration
 import kotlin.script.experimental.api.*
 
 class JsScriptCompilerWithDependenciesProxy(private val environment: KotlinCoreEnvironment) : ScriptCompilerProxy {
-    private val nameTables = NameTables(emptyList())
-    private val symbolTable = SymbolTable()
+    private val nameTables = NameTables(emptyList(), mappedNames = mutableMapOf())
+    private val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc), IrFactoryImpl)
     private val dependencies: List<ModuleDescriptor> = readLibrariesFromConfiguration(environment.configuration)
     private val compiler = JsCoreScriptingCompiler(environment, nameTables, symbolTable, dependencies)
     private var scriptDependencyCompiler: JsScriptDependencyCompiler? =
@@ -29,7 +32,7 @@ class JsScriptCompilerWithDependenciesProxy(private val environment: KotlinCoreE
     override fun compile(
         script: SourceCode,
         scriptCompilationConfiguration: ScriptCompilationConfiguration
-    ): ResultWithDiagnostics<CompiledScript<*>> {
+    ): ResultWithDiagnostics<CompiledScript> {
         val parentMessageCollector = environment.configuration[CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY]
         return withMessageCollector(script = script, parentMessageCollector = parentMessageCollector) { messageCollector ->
             environment.configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
@@ -43,10 +46,11 @@ class JsScriptCompilerWithDependenciesProxy(private val environment: KotlinCoreE
                         )
                     }
                     is ReplCompileResult.Incomplete -> ResultWithDiagnostics.Failure(
-                        ScriptDiagnostic("Incomplete code")
+                        ScriptDiagnostic(ScriptDiagnostic.incompleteCode, "Incomplete code")
                     )
                     is ReplCompileResult.Error -> ResultWithDiagnostics.Failure(
                         ScriptDiagnostic(
+                            ScriptDiagnostic.unspecifiedError,
                             message = compileResult.message,
                             severity = ScriptDiagnostic.Severity.ERROR
                         )

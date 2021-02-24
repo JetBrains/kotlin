@@ -52,6 +52,10 @@ class KaptLineMappingCollector(private val kaptContext: KaptContextForStubGenera
         signatureInfo[declaration.getJavacSignature()] = method.name + method.desc
     }
 
+    fun getPosition(clazz: ClassNode): KotlinPosition? = lineInfo[clazz.name]
+    fun getPosition(clazz: ClassNode, method: MethodNode): KotlinPosition? = lineInfo[clazz.name + "#" + method.name + method.desc]
+    fun getPosition(clazz: ClassNode, field: FieldNode): KotlinPosition? = lineInfo[clazz.name + "#" + field.name]
+
     private fun register(asmNode: Any, fqName: String) {
         val psiElement = kaptContext.origins[asmNode]?.element ?: return
         register(fqName, psiElement)

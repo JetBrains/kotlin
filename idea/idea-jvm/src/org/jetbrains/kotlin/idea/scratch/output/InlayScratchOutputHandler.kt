@@ -106,8 +106,7 @@ class InlayScratchOutputHandler(
         val doc = textEditor.editor.document
         return file.getExpressions()
             .flatMap { it.lineStart..it.lineEnd }
-            .map { doc.getLineEndOffset(it) - doc.getLineStartOffset(it) }
-            .max() ?: 0
+            .maxOfOrNull { doc.getLineEndOffset(it) - doc.getLineStartOffset(it) } ?: 0
     }
 
     private fun clearInlays(editor: TextEditor) {

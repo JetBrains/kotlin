@@ -4,45 +4,49 @@ import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.ActionPlaces
 import com.intellij.openapi.actionSystem.DefaultActionGroup
-import com.intellij.ui.JBColor
-import com.intellij.ui.JBSplitter
+import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.util.ThrowableComputable
+import com.intellij.ui.ColorUtil
 import com.intellij.ui.PopupHandler
+import com.intellij.ui.SimpleTextAttributes
 import com.intellij.ui.ToolbarDecorator
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBTextField
 import com.intellij.util.ui.UIUtil
+import com.intellij.util.ui.components.BorderLayoutPanel
+import org.jetbrains.annotations.Nls
 import org.jetbrains.kotlin.idea.KotlinIcons
-import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.ModuleConfigurator
-import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.SimpleTargetConfigurator
-import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.TargetConfigurator
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.*
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleSubType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
-import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.UiConstants.GAP_BORDER_SIZE
 import java.awt.BorderLayout
-import java.awt.Cursor
 import java.awt.Font
 import java.awt.LayoutManager
-import java.awt.event.MouseAdapter
-import java.awt.event.MouseEvent
-import javax.swing.BorderFactory
-import javax.swing.Icon
-import javax.swing.JComponent
-import javax.swing.JPanel
+import javax.swing.*
+import javax.swing.border.Border
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
 
 internal inline fun label(text: String, bold: Boolean = false, init: JBLabel.() -> Unit = {}) = JBLabel().apply {
-    font = UIUtil.getButtonFont().deriveFont(if (bold) Font.BOLD else Font.PLAIN)
+    font = UIUtil.getLabelFont().deriveFont(if (bold) Font.BOLD else Font.PLAIN)
     this.text = text
     init()
 }
 
-inline fun panel(layout: LayoutManager = BorderLayout(), init: JPanel.() -> Unit = {}) = JPanel(layout).apply(init)
+inline fun customPanel(layout: LayoutManager? = BorderLayout(), init: JPanel.() -> Unit = {}) = JPanel(layout).apply(init)
 
-fun textField(defaultValue: String?, onUpdated: (value: String) -> Unit) = JBTextField(defaultValue).apply {
+inline fun borderPanel(init: BorderLayoutPanel.() -> Unit = {}) = BorderLayoutPanel().apply(init)
+
+
+fun textField(defaultValue: String?, onUpdated: (value: String) -> Unit) =
+    JBTextField(defaultValue)
+        .withOnUpdatedListener(onUpdated)
+
+fun <F : JTextField> F.withOnUpdatedListener(onUpdated: (value: String) -> Unit) = apply {
     document.addDocumentListener(object : DocumentListener {
         override fun insertUpdate(e: DocumentEvent?) = onUpdated(this@apply.text)
         override fun removeUpdate(e: DocumentEvent?) = onUpdated(this@apply.text)
@@ -50,60 +54,61 @@ fun textField(defaultValue: String?, onUpdated: (value: String) -> Unit) = JBTex
     })
 }
 
-internal fun hyperlinkLabel(
-    text: String,
-    onClick: () -> Unit
-) = DescriptionPanel().apply {
-    cursor = Cursor(Cursor.HAND_CURSOR)
-    addMouseListener(object : MouseAdapter() {
-        override fun mouseClicked(e: MouseEvent?) = onClick()
-    })
-    updateText("<a href='javascript:void(0)'>$text</a>".asHtml())
-}
-
 internal fun String.asHtml() = "<html><body>$this</body></html>"
 
-
-val DisplayableSettingItem.htmlText
-    get() = (text + greyText?.let { " <i>($greyText)</i>" }.orEmpty()).asHtml()
-
-fun splitterFor(
-    vararg components: JComponent,
-    vertical: Boolean = false
-) = components.reduce { left, right ->
-    JBSplitter(vertical, 1f / components.size).apply {
-        firstComponent = left
-        secondComponent = right
-        dividerWidth = 1
+fun ValidationResult.ValidationError.asHtml() = when (messages.size) {
+    0 -> ""
+    1 -> messages.single()
+    else -> {
+        val errorsList = messages.joinToString(separator = "") { "<li>${it}</li>" }
+        "<ul>$errorsList</ul>".asHtml()
     }
 }
 
 val ModuleType.icon: Icon
     get() = when (this) {
-        ModuleType.jvm -> KotlinIcons.SMALL_LOGO
-        ModuleType.js -> KotlinIcons.JS
-        ModuleType.native -> KotlinIcons.NATIVE
+        ModuleType.jvm -> KotlinIcons.Wizard.JVM
+        ModuleType.js -> KotlinIcons.Wizard.JS
+        ModuleType.native -> KotlinIcons.Wizard.NATIVE
         ModuleType.common -> KotlinIcons.SMALL_LOGO
+        ModuleType.android -> KotlinIcons.Wizard.ANDROID
     }
 
 
 val Module.icon: Icon
-    get() = when (kind) {
-        ModuleKind.target -> configurator.moduleType.icon
-        ModuleKind.multiplatform -> AllIcons.Nodes.Module
-        ModuleKind.singleplatformJs -> KotlinIcons.JS
-        ModuleKind.singleplatformJvm -> AllIcons.Nodes.Module
-    }
-
+    get() = configurator.icon
 
 val ModuleSubType.icon: Icon
-    get() = moduleType.icon
+    get() = when (this) {
+        ModuleSubType.jvm -> KotlinIcons.Wizard.JVM
+        ModuleSubType.js -> KotlinIcons.Wizard.JS
+        ModuleSubType.android, ModuleSubType.androidNativeArm32, ModuleSubType.androidNativeArm64 -> KotlinIcons.Wizard.ANDROID
+        ModuleSubType.iosArm32, ModuleSubType.iosArm64, ModuleSubType.iosX64, ModuleSubType.ios -> KotlinIcons.Wizard.IOS
+        ModuleSubType.linuxArm32Hfp, ModuleSubType.linuxMips32, ModuleSubType.linuxMipsel32, ModuleSubType.linuxX64 ->
+            KotlinIcons.Wizard.LINUX
+        ModuleSubType.macosX64 -> KotlinIcons.Wizard.MAC_OS
+        ModuleSubType.mingwX64, ModuleSubType.mingwX86 -> KotlinIcons.Wizard.WINDOWS
+        ModuleSubType.common -> KotlinIcons.SMALL_LOGO
+    }
+
+val ModuleKind.icon: Icon
+    get() = when (this) {
+        ModuleKind.multiplatform -> KotlinIcons.MPP
+        ModuleKind.singleplatformJsBrowser -> KotlinIcons.Wizard.JS
+        ModuleKind.singleplatformJsNode -> KotlinIcons.Wizard.NODE_JS
+        ModuleKind.singleplatformJvm -> KotlinIcons.Wizard.JVM
+        ModuleKind.target -> AllIcons.Nodes.Module
+        ModuleKind.singleplatformAndroid -> KotlinIcons.Wizard.ANDROID
+    }
 
 val ModuleConfigurator.icon: Icon
     get() = when (this) {
+        is JsBrowserTargetConfigurator -> KotlinIcons.Wizard.WEB
+        is JsNodeTargetConfigurator -> KotlinIcons.Wizard.NODE_JS
+        is IOSSinglePlatformModuleConfigurator -> KotlinIcons.Wizard.IOS
         is SimpleTargetConfigurator -> moduleSubType.icon
         is TargetConfigurator -> moduleType.icon
-        else -> AllIcons.Nodes.Module
+        else -> moduleKind.icon
     }
 
 fun ToolbarDecorator.createPanelWithPopupHandler(popupTarget: JComponent) = createPanel().apply toolbarApply@{
@@ -119,30 +124,29 @@ fun ToolbarDecorator.createPanelWithPopupHandler(popupTarget: JComponent) = crea
     )
 }
 
-fun <C : JComponent> C.bordered(
-    needTopEmptyBorder: Boolean = true,
-    needBottomEmptyBorder: Boolean = true,
-    needInnerEmptyBorder: Boolean = true,
-    needLineBorder: Boolean = true
-) = apply {
-    val lineBorder = if (needLineBorder) BorderFactory.createLineBorder(JBColor.border()) else null
-    border = BorderFactory.createCompoundBorder(
-        BorderFactory.createEmptyBorder(
-            if (needTopEmptyBorder) GAP_BORDER_SIZE else 0,
-            0,
-            if (needBottomEmptyBorder) GAP_BORDER_SIZE else 0,
-            0
-        ),
-        when {
-            needInnerEmptyBorder -> BorderFactory.createCompoundBorder(
-                lineBorder,
-                BorderFactory.createEmptyBorder(GAP_BORDER_SIZE, GAP_BORDER_SIZE, GAP_BORDER_SIZE, GAP_BORDER_SIZE)
-            )
-            else -> lineBorder
-        }
-    )
+fun <C : JComponent> C.addBorder(border: Border): C = apply {
+    this.border = BorderFactory.createCompoundBorder(border, this.border)
 }
 
-object UiConstants {
-    const val GAP_BORDER_SIZE = 5
+fun <T> runWithProgressBar(@Nls title: String, action: () -> T): T =
+    ProgressManager.getInstance().runProcessWithProgressSynchronously(
+        ThrowableComputable<T, Exception> { action() },
+        title,
+        true,
+        null
+    )
+
+val DisplayableSettingItem.fullTextHtml
+    get() = buildString {
+        append(text)
+        greyText?.let { grey ->
+            append(" ")
+            append("""<span style="color:${ColorUtil.toHtmlColor(SimpleTextAttributes.GRAYED_ATTRIBUTES.fgColor)};">""")
+            append(grey)
+            append("</span>")
+        }
+    }.asHtml()
+
+object UIConstants {
+    const val PADDING = 8
 }

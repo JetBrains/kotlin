@@ -8,6 +8,6 @@ class Controller<T : Number> {
 
 fun <S : Number> generate(g: suspend Controller<S>.() -> Unit): S = TODO()
 
-val test = <!NI;NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
+val test = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER{NI}, TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER{OI}!>generate<!> {
     yield("foo")
 }

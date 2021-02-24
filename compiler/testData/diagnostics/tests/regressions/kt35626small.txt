@@ -1,0 +1,22 @@
+package
+
+public fun </*0*/ K1, /*1*/ K2, /*2*/ K3, /*3*/ K4> rules(/*0*/ res: Result<kotlin.Any>): Result<TupleX<K1, K2, K3, K4>>
+
+public final class Result</*0*/ T> {
+    public constructor Result</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun </*0*/ R> map(/*0*/ transform: (T) -> R): Result<R>
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class TupleX</*0*/ T1, /*1*/ T2, /*2*/ T3, /*3*/ T4> {
+    public constructor TupleX</*0*/ T1, /*1*/ T2, /*2*/ T3, /*3*/ T4>(/*0*/ _1: T1, /*1*/ _2: T2, /*2*/ _3: T3, /*3*/ _4: T4)
+    public final val _1: T1
+    public final val _2: T2
+    public final val _3: T3
+    public final val _4: T4
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

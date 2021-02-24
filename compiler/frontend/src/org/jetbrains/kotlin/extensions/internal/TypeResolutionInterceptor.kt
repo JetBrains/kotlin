@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
 
-@UseExperimental(InternalNonStableExtensionPoints::class)
+@OptIn(InternalNonStableExtensionPoints::class)
 class TypeResolutionInterceptor(project: Project) {
     private val extensions = getInstances(project)
 

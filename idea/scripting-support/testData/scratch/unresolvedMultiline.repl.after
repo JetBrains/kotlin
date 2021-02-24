@@ -10,9 +10,9 @@ fun goo(a: String) {    // ERROR: error: unresolved reference: goo...
 /** unresolvedMultiline.kts:3 error: unresolved reference: foo
 foo.forEach {
 ^
-error: cannot choose among the following candidates without completing type inference:
-public inline fun <T> Iterable<???>.forEach(action: (???) -> Unit): Unit defined in kotlin.collections
-public inline fun <K, V> Map<out ???, ???>.forEach(action: (Map.Entry<???, ???>) -> Unit): Unit defined in kotlin.collections
+error: overload resolution ambiguity:
+public inline fun <T> Iterable<TypeVariable(T)>.forEach(action: (TypeVariable(T)) -> Unit): Unit defined in kotlin.collections
+public inline fun <K, V> Map<out TypeVariable(K), TypeVariable(V)>.forEach(action: (Map.Entry<TypeVariable(K), TypeVariable(V)>) -> Unit): Unit defined in kotlin.collections
 foo.forEach {
 ^ */
 /** unresolvedMultiline.kts:7 error: unresolved reference: goo

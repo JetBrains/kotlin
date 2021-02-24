@@ -12,14 +12,12 @@ package org.jetbrains.kotlin.metadata.deserialization
 // fix the bug in serialization when the binary version advances to the value supported in the first bug fix.
 
 /**
- * Before Kotlin 1.4, version requirements for nested classes were deserialized incorrectly: the version requirement table was loaded from
- * the outermost class and passed to the nested classes and their members, even though indices of their version requirements were pointing
- * to the other table stored in the nested class (which was not read by deserialization). See KT-25120 for more information
+ * Before metadata version 1.4, version requirements for nested classes were deserialized incorrectly: the version requirement table was
+ * loaded from the outermost class and passed to the nested classes and their members, even though indices of their version requirements
+ * were pointing to the other table stored in the nested class (which was not read by deserialization). See KT-25120 for more information.
  */
 fun isVersionRequirementTableWrittenCorrectly(version: BinaryVersion): Boolean =
     isKotlin1Dot4OrLater(version)
 
-fun isKotlin1Dot4OrLater(version: BinaryVersion): Boolean {
-    // All metadata versions (JVM, JS, common) will be advanced to 1.4.0 in Kotlin 1.4
-    return version.major == 1 && version.minor >= 4
-}
+fun isKotlin1Dot4OrLater(version: BinaryVersion): Boolean =
+    version.major == 1 && version.minor >= 4

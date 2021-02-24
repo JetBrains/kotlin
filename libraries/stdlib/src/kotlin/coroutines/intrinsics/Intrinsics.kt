@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@
 
 package kotlin.coroutines.intrinsics
 
+import kotlin.contracts.*
 import kotlin.coroutines.*
 import kotlin.internal.InlineOnly
 
@@ -37,8 +38,10 @@ import kotlin.internal.InlineOnly
 @SinceKotlin("1.3")
 @InlineOnly
 @Suppress("UNUSED_PARAMETER", "RedundantSuspendModifier")
-public suspend inline fun <T> suspendCoroutineUninterceptedOrReturn(crossinline block: (Continuation<T>) -> Any?): T =
+public suspend inline fun <T> suspendCoroutineUninterceptedOrReturn(crossinline block: (Continuation<T>) -> Any?): T {
+    contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
     throw NotImplementedError("Implementation of suspendCoroutineUninterceptedOrReturn is intrinsic")
+}
 
 /**
  * This value is used as a return value of [suspendCoroutineUninterceptedOrReturn] `block` argument to state that

@@ -1,0 +1,10 @@
+package
+
+internal final class Z</*0*/ K> {
+    public constructor Z</*0*/ K>()
+    public final val map: kotlin.collections.HashMap<kotlin.String, kotlin.String> /* = java.util.HashMap<kotlin.String, kotlin.String> */
+    public final inline fun compute(/*0*/ key: kotlin.String, /*1*/ producer: () -> kotlin.String): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

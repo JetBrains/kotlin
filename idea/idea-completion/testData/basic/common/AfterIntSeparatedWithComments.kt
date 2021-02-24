@@ -1,3 +1,5 @@
+// FIR_COMPARISON
+
 infix fun Int.func(s: String): Int{}
 
 fun test() {

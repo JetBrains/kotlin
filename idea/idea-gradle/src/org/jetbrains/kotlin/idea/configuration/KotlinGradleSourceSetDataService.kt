@@ -30,9 +30,7 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.impl.libraries.LibraryEx
-import com.intellij.openapi.roots.impl.libraries.LibraryImpl
 import com.intellij.openapi.roots.libraries.Library
-import com.intellij.openapi.roots.libraries.PersistentLibraryKind
 import com.intellij.openapi.util.Key
 import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
@@ -94,9 +92,10 @@ class KotlinGradleProjectSettingsDataService : AbstractProjectDataService<Projec
         project: Project,
         modelsProvider: IdeModifiableModelsProvider
     ) {
-        val allSettings = modelsProvider.modules.mapNotNull {
+        val allSettings = modelsProvider.modules.mapNotNull { module ->
+            if (module.isDisposed) return@mapNotNull null
             val settings = modelsProvider
-                .getModifiableFacetModel(it)
+                .getModifiableFacetModel(module)
                 .findFacet(KotlinFacetType.TYPE_ID, KotlinFacetType.INSTANCE.defaultFacetName)
                 ?.configuration
                 ?.settings ?: return@mapNotNull null
@@ -185,10 +184,11 @@ class KotlinGradleLibraryDataService : AbstractProjectDataService<LibraryData, V
             val modifiableModel = modelsProvider.getModifiableLibraryModel(ideLibrary) as LibraryEx.ModifiableModelEx
             if (anyNonJvmModules || ideLibrary.looksAsNonJvmLibrary()) {
                 detectLibraryKind(modifiableModel.getFiles(OrderRootType.CLASSES))?.let { modifiableModel.kind = it }
-            } else if (ideLibrary is LibraryImpl
-                && (ideLibrary.kind === JSLibraryKind || ideLibrary.kind === NativeLibraryKind || ideLibrary.kind === CommonLibraryKind)
+            } else if (
+                ideLibrary is LibraryEx &&
+                (ideLibrary.kind === JSLibraryKind || ideLibrary.kind === NativeLibraryKind || ideLibrary.kind === CommonLibraryKind)
             ) {
-                resetLibraryKind(modifiableModel)
+                modifiableModel.kind = null
             }
         }
     }
@@ -200,23 +200,6 @@ class KotlinGradleLibraryDataService : AbstractProjectDataService<LibraryData, V
         }
 
         return getFiles(OrderRootType.CLASSES).firstOrNull()?.extension == KLIB_FILE_EXTENSION
-    }
-
-    private fun resetLibraryKind(modifiableModel: LibraryEx.ModifiableModelEx) {
-        try {
-            val cls = LibraryImpl::class.java
-            // Don't use name-based lookup because field names are scrambled in IDEA Ultimate
-            for (field in cls.declaredFields) {
-                if (field.type == PersistentLibraryKind::class.java) {
-                    field.isAccessible = true
-                    field.set(modifiableModel, null)
-                    return
-                }
-            }
-            LOG.info("Could not find field of type PersistentLibraryKind in LibraryImpl.class")
-        } catch (e: Exception) {
-            LOG.info("Failed to reset library kind", e)
-        }
     }
 
     companion object {
@@ -290,14 +273,9 @@ fun configureFacetByGradleModule(
     // TODO there should be a way to figure out the correct platform version
     val platform = platformKind?.defaultPlatform
 
-    val coroutinesProperty = CoroutineSupport.byCompilerArgument(
-        moduleNode.coroutines ?: findKotlinCoroutinesProperty(ideModule.project)
-    )
-
     val kotlinFacet = ideModule.getOrCreateFacet(modelsProvider, false, GradleConstants.SYSTEM_ID.id)
     kotlinFacet.configureFacet(
         compilerVersion,
-        coroutinesProperty,
         platform,
         modelsProvider
     )
@@ -354,9 +332,4 @@ internal fun adjustClasspath(kotlinFacet: KotlinFacet, dependencyClasspath: List
     if (fullClasspath.isEmpty()) return
     val newClasspath = fullClasspath - dependencyClasspath
     arguments.classpath = if (newClasspath.isNotEmpty()) newClasspath.joinToString(File.pathSeparator) else null
-}
-
-internal fun findKotlinCoroutinesProperty(project: Project): String {
-    return GradlePropertiesFileFacade.forProject(project).readProperty("kotlin.coroutines")
-        ?: CoroutineSupport.getCompilerArgument(LanguageFeature.Coroutines.defaultState)
 }

@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProv
 import org.jetbrains.kotlin.resolve.lazy.declarations.PackageMemberDeclarationProvider
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
+import org.jetbrains.kotlin.utils.addToStdlib.flatMapToNullable
 import java.util.*
 
 //----------------------------------------------------------------
@@ -43,8 +44,18 @@ interface SyntheticResolveExtension {
                 override fun getSyntheticNestedClassNames(thisDescriptor: ClassDescriptor): List<Name> =
                     instances.flatMap { withLinkageErrorLogger(it) { getSyntheticNestedClassNames(thisDescriptor) } }
 
+                override fun getPossibleSyntheticNestedClassNames(thisDescriptor: ClassDescriptor): List<Name>? =
+                    instances.flatMapToNullable(ArrayList<Name>()) {
+                        withLinkageErrorLogger(it) {
+                            getPossibleSyntheticNestedClassNames(thisDescriptor)
+                        }
+                    }
+
                 override fun getSyntheticFunctionNames(thisDescriptor: ClassDescriptor): List<Name> =
                     instances.flatMap { withLinkageErrorLogger(it) { getSyntheticFunctionNames(thisDescriptor) } }
+
+                override fun getSyntheticPropertiesNames(thisDescriptor: ClassDescriptor): List<Name> =
+                    instances.flatMap { withLinkageErrorLogger(it) { getSyntheticPropertiesNames(thisDescriptor) } }
 
                 override fun generateSyntheticClasses(
                     thisDescriptor: ClassDescriptor, name: Name,
@@ -134,7 +145,18 @@ interface SyntheticResolveExtension {
 
     fun getSyntheticFunctionNames(thisDescriptor: ClassDescriptor): List<Name> = emptyList()
 
+    @JvmDefault
+    fun getSyntheticPropertiesNames(thisDescriptor: ClassDescriptor): List<Name> = emptyList()
+
     fun getSyntheticNestedClassNames(thisDescriptor: ClassDescriptor): List<Name> = emptyList()
+
+    /**
+     * This method should return either superset of what [getSyntheticNestedClassNames] returns,
+     * or null in case it needs to run resolution and inference and/or it is very costly.
+     * Override this method if resolution started to fail with recursion.
+     */
+    @JvmDefault
+    fun getPossibleSyntheticNestedClassNames(thisDescriptor: ClassDescriptor): List<Name>? = getSyntheticNestedClassNames(thisDescriptor)
 
     fun addSyntheticSupertypes(thisDescriptor: ClassDescriptor, supertypes: MutableList<KotlinType>) {}
 

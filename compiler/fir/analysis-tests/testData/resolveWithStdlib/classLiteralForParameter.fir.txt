@@ -1,0 +1,5 @@
+FILE: classLiteralForParameter.kt
+    public final inline fun <reified T : R|kotlin/Any|> foo(t: R|T|): R|T| {
+        lval klass: R|java/lang/Class<T>| = <getClass>(R|T|).R|kotlin/jvm/java|<R|T|>
+        ^foo R|<local>/t|
+    }

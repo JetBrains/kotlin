@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 package jet121
 
 fun box() : String {

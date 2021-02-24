@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.idea.refactoring.memberInfo.KtPsiClassWrapper
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.test.util.findElementsByCommentPrefix
 import java.io.File
 
@@ -30,7 +31,7 @@ abstract class AbstractMemberPullPushTest : KotlinLightCodeInsightFixtureTestCas
         val afterFile = File("$path.after")
         val conflictFile = File("$path.messages")
 
-        fixture.testDataPath = "${KotlinTestUtils.getHomeDirectory()}/${mainFile.parent}"
+        fixture.testDataPath = "${KtTestUtil.getHomeDirectory()}/${mainFile.parent}"
 
         val mainFileName = mainFile.name
         val mainFileBaseName = FileUtil.getNameWithoutExtension(mainFileName)

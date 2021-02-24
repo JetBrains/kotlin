@@ -3,7 +3,6 @@ import org.jetbrains.kotlin.pill.PillExtension
 
 plugins {
     kotlin("jvm")
-    maven
     id("jps-compatible")
 }
 
@@ -21,9 +20,11 @@ pill {
 
 tasks {
     withType<KotlinCompile> {
-        kotlinOptions.languageVersion = "1.2"
-        kotlinOptions.apiVersion = "1.2"
-        kotlinOptions.freeCompilerArgs += listOf("-Xskip-metadata-version-check")
+        kotlinOptions.languageVersion = "1.3"
+        kotlinOptions.apiVersion = "1.3"
+        kotlinOptions.freeCompilerArgs += listOf(
+            "-Xskip-prerelease-check", "-Xsuppress-version-warnings"
+        )
     }
 
     named<Jar>("jar") {

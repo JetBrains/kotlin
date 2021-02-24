@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 interface Interface {
     fun foo(x: Int): Int
 }

@@ -5,9 +5,9 @@ import java.util.*
 
 fun foo(list: List<String>): List<Int> {
     val <caret>result = list
-            .asSequence()
-            .filterIndexed { i, s -> s.length > i }
-            .map { it.length }
-            .toList()
+        .asSequence()
+        .filterIndexed { i, s -> s.length > i }
+        .map { it.length }
+        .toList()
     return result
 }

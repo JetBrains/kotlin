@@ -1,0 +1,332 @@
+{
+  "2": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-300",
+          "casesNumber": 2,
+          "description": "infix fun: Star-imported infix extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.20.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-300",
+          "casesNumber": 1,
+          "description": "infix fun: Star-imported infix extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.21.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-300",
+          "casesNumber": 4,
+          "description": "Infix fun: Local extension infix extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.18.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-300",
+          "casesNumber": 2,
+          "description": "infix fun: Explicitly imported infix extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.19.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-300",
+          "casesNumber": 6,
+          "description": "Infix fun: Local extension infix extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.17.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 1,
+          "description": "Star-imported infix extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/pos/4.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 6,
+          "description": "Local extension infix extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/pos/4.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 2,
+          "description": "Star-imported infix extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/pos/4.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 2,
+          "description": "Explicitly imported infix extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/pos/4.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 4,
+          "description": "Local extension infix extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/pos/4.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ],
+      "2": [
+        {
+          "specVersion": "0.1-300",
+          "casesNumber": 2,
+          "description": "infix fun: Star-imported infix extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.20.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-300",
+          "casesNumber": 1,
+          "description": "infix fun: Star-imported infix extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.21.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-300",
+          "casesNumber": 4,
+          "description": "Infix fun: Local extension infix extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.18.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-300",
+          "casesNumber": 2,
+          "description": "infix fun: Explicitly imported infix extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.19.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-300",
+          "casesNumber": 6,
+          "description": "Infix fun: Local extension infix extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-trailing-lambda-expressions/p-1/pos/2.17.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 1,
+          "description": "Star-imported infix extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/pos/4.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 6,
+          "description": "Local extension infix extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/pos/4.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 2,
+          "description": "Star-imported infix extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/pos/4.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 2,
+          "description": "Explicitly imported infix extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/pos/4.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 4,
+          "description": "Local extension infix extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/pos/4.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ],
+      "4": [
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 1,
+          "description": "Star-imported infix extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/pos/4.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 6,
+          "description": "Local extension infix extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/pos/4.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 2,
+          "description": "Star-imported infix extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/pos/4.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 2,
+          "description": "Explicitly imported infix extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/pos/4.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 4,
+          "description": "Local extension infix extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/pos/4.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        }
+      ]
+    },
+    "neg": {
+      "1": [
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 4,
+          "description": "Local extension infix extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/neg/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 4,
+          "description": "Local extension infix extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/neg/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 2,
+          "description": "Explicitly imported infix extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/neg/1.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 2,
+          "description": "Explicitly imported infix extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/neg/1.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 1,
+          "description": "Star-imported extension callable only",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/neg/4.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 2,
+          "description": "Star-imported infix extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/neg/1.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 2,
+          "description": "Star-imported infix extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/neg/1.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 4,
+          "description": "Implicitly imported extension callable without infix modifier",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/neg/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        }
+      ],
+      "2": [
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 4,
+          "description": "Local extension infix extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/neg/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 2,
+          "description": "Explicitly imported infix extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/neg/1.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 1,
+          "description": "Star-imported extension callable only",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/neg/4.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 2,
+          "description": "Star-imported infix extension callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/neg/1.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 4,
+          "description": "Implicitly imported extension callable without infix modifier",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/neg/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ],
+      "4": [
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 1,
+          "description": "Star-imported extension callable only",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/infix-function-call/p-2/neg/4.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        }
+      ]
+    }
+  }
+}

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.isOverridable
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.util.CachedValue
 import org.jetbrains.kotlin.idea.core.util.getValue
@@ -86,15 +87,16 @@ class MakeOverriddenMemberOpenFix(declaration: KtDeclaration) : KotlinQuickFixAc
         val element = element ?: return ""
         if (containingDeclarationsNames.size == 1) {
             val name = containingDeclarationsNames[0] + "." + element.name
-            return "Make $name $OPEN_KEYWORD"
+            return KotlinBundle.message("make.0", "$name $OPEN_KEYWORD")
         }
         val sortedDeclarationNames = containingDeclarationsNames.sorted()
-        val declarations = sortedDeclarationNames.subList(0, sortedDeclarationNames.size - 1).joinToString(", ") + " and " +
+        val declarations = sortedDeclarationNames.subList(0, sortedDeclarationNames.size - 1).joinToString(", ") +
+                " ${KotlinBundle.message("configuration.text.and")} " +
                 sortedDeclarationNames.last()
-        return "Make '${element.name}' in $declarations open"
+        return KotlinBundle.message("make.0.in.1.open", element.name.toString(), declarations)
     }
 
-    override fun getFamilyName(): String = "Add Modifier"
+    override fun getFamilyName(): String = KotlinBundle.message("add.modifier")
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         for (overriddenMember in overriddenNonOverridableMembers) {

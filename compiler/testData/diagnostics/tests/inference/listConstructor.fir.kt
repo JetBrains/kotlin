@@ -3,6 +3,7 @@
 package a
 //+JDK
 import java.util.*
+import checkSubtype
 
 fun <A> cons(x: A, xs: List<A>): List<A> = xs
 

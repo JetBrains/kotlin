@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
-
 fun test(): UInt {
     val c: UInt
     run {
@@ -9,4 +7,4 @@ fun test(): UInt {
 }
 
 // 2 ISTORE 0
-// 1 LOCALVARIABLE c I L1 L.* 0
+// 1 LOCALVARIABLE c I

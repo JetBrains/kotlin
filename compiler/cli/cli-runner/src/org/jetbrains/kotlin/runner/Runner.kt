@@ -21,6 +21,7 @@ import java.net.URL
 interface Runner {
     fun run(
         classpath: List<URL>,
+        compilerArguments: List<String>,
         arguments: List<String>,
         compilerClasspath: List<URL>
     )

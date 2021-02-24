@@ -1,3 +1,12 @@
+/*
+ * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
+ *
+ * SPEC VERSION: 0.1-152
+ * PRIMARY LINKS: expressions, when-expression -> paragraph 5 -> sentence 1
+ * expressions, when-expression, exhaustive-when-expressions -> paragraph 2 -> sentence 9
+ * type-inference, smart-casts, smart-cast-types -> paragraph 9 -> sentence 1
+ */
+
 // KT-7857: when exhaustiveness does not take previous nullability checks into account
 enum class X { A, B }
 fun foo(arg: X?): Int {

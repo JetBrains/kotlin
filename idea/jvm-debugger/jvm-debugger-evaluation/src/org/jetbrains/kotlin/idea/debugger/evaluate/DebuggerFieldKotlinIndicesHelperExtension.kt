@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.synthetic.JavaSyntheticPropertiesScope
 import org.jetbrains.kotlin.types.KotlinType
-import java.lang.IllegalStateException
 
 class DebuggerFieldKotlinIndicesHelperExtension : KotlinIndicesHelperExtension {
     override fun appendExtensionCallables(
@@ -23,7 +22,8 @@ class DebuggerFieldKotlinIndicesHelperExtension : KotlinIndicesHelperExtension {
         nameFilter: (String) -> Boolean,
         lookupLocation: LookupLocation
     ) {
-        val javaPropertiesScope = JavaSyntheticPropertiesScope(LockBasedStorageManager.NO_LOCKS, LookupTracker.DO_NOTHING)
+        val javaPropertiesScope =
+            JavaSyntheticPropertiesScope(LockBasedStorageManager.NO_LOCKS, LookupTracker.DO_NOTHING, supportJavaRecords = true)
         val fieldScope = DebuggerFieldSyntheticScope(javaPropertiesScope)
 
         for (property in fieldScope.getSyntheticExtensionProperties(receiverTypes, lookupLocation)) {

@@ -6,10 +6,8 @@ plugins {
 }
 
 dependencies {
-    compile(project(":compiler:frontend.common"))
-    compile(project(":core:descriptors"))
-    compile(project(":compiler:fir:cones"))
-    compile(project(":compiler:resolution"))
+    api(project(":compiler:frontend.common"))
+    api(project(":compiler:fir:cones"))
 
     // Necessary only to store bound PsiElement inside FirElement
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
@@ -42,6 +40,7 @@ val generateTree by tasks.registering(NoDebugJavaExec::class) {
     outputs.dirs(generationRoot)
 
     args(generationRoot)
+    workingDir = rootDir
     classpath = generatorClasspath
     main = "org.jetbrains.kotlin.fir.tree.generator.MainKt"
     systemProperties["line.separator"] = "\n"
@@ -50,6 +49,12 @@ val generateTree by tasks.registering(NoDebugJavaExec::class) {
 val compileKotlin by tasks
 
 compileKotlin.dependsOn(generateTree)
+
+tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
+    kotlinOptions {
+        freeCompilerArgs += "-Xinline-classes"
+    }
+}
 
 if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
     apply(plugin = "idea")

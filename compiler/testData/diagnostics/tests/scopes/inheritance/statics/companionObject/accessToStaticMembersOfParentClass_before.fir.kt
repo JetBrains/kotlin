@@ -13,30 +13,30 @@ open class A {
 
 class B : A() {
     init {
-        foo()
+        <!UNRESOLVED_REFERENCE!>foo<!>()
         bar()
     }
 
     fun test2() {
-        foo()
+        <!UNRESOLVED_REFERENCE!>foo<!>()
         bar()
     }
 
     object O {
         fun test() {
-            foo()
+            <!UNRESOLVED_REFERENCE!>foo<!>()
             bar()
         }
     }
 
     companion object {
         init {
-            foo()
+            <!UNRESOLVED_REFERENCE!>foo<!>()
             bar()
         }
 
         fun test() {
-            foo()
+            <!UNRESOLVED_REFERENCE!>foo<!>()
             bar()
         }
 

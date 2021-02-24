@@ -10,14 +10,16 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.Services
 import java.io.File
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.createTempDirectory
 
 abstract class BaseJvmAbiTest : TestCase() {
     private lateinit var workingDir: File
 
+    @OptIn(ExperimentalPathApi::class)
     override fun setUp() {
         super.setUp()
-        workingDir = createTempDir(javaClass.simpleName)
-        workingDir.deleteOnExit()
+        workingDir = createTempDirectory(javaClass.simpleName).toFile().apply { deleteOnExit() }
     }
 
     override fun tearDown() {

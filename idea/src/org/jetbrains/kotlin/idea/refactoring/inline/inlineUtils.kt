@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -20,6 +20,7 @@ import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.refactoring.util.RefactoringMessageDialog
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
@@ -36,6 +37,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -62,13 +64,16 @@ fun showDialog(
     if (ApplicationManager.getApplication().isUnitTestMode) return true
 
     val kind = when (declaration) {
-        is KtProperty -> if (declaration.isLocal) "local variable" else "property"
-        is KtTypeAlias -> "type alias"
+        is KtProperty -> if (declaration.isLocal)
+            KotlinBundle.message("text.local.variable")
+        else
+            KotlinBundle.message("text.local.property")
+        is KtTypeAlias -> KotlinBundle.message("text.type.alias")
         else -> return false
     }
     val dialog = RefactoringMessageDialog(
         title,
-        "Inline " + kind + " '" + name + "'? " + RefactoringBundle.message("occurences.string", usages.size),
+        KotlinBundle.message("text.inline.0.1.2", kind, name, RefactoringBundle.message("occurences.string", usages.size)),
         helpTopic,
         "OptionPane.questionIcon",
         true,
@@ -114,19 +119,17 @@ internal fun buildCodeToInline(
     isBlockBody: Boolean,
     editor: Editor?
 ): CodeToInline? {
-    val bodyCopy = bodyOrInitializer.copied()
-
-    val expectedType = if (!isBlockBody && isReturnTypeExplicit)
-        returnType ?: TypeUtils.NO_EXPECTED_TYPE
-    else
-        TypeUtils.NO_EXPECTED_TYPE
-
-    fun analyzeBodyCopy(): BindingContext = bodyCopy.analyzeInContext(
-        bodyOrInitializer.getResolutionScope(),
+    val scope by lazy { bodyOrInitializer.getResolutionScope() }
+    fun analyzeExpressionInContext(expression: KtExpression): BindingContext = expression.analyzeInContext(
+        scope = scope,
         contextExpression = bodyOrInitializer,
-        expectedType = expectedType
+        expectedType = if (isReturnTypeExplicit && (!isBlockBody || expression.parent is KtReturnExpression))
+            returnType ?: TypeUtils.NO_EXPECTED_TYPE
+        else
+            TypeUtils.NO_EXPECTED_TYPE
     )
 
+    val bodyCopy = bodyOrInitializer.copied()
     val descriptor = declaration.unsafeResolveToDescriptor()
     val builder = CodeToInlineBuilder(descriptor as CallableDescriptor, declaration.getResolutionFacade())
     if (isBlockBody) {
@@ -134,27 +137,37 @@ internal fun buildCodeToInline(
         val statements = bodyCopy.statements
 
         val returnStatements = bodyCopy.collectDescendantsOfType<KtReturnExpression> {
-            it.getLabelName().let { it == null || it == declaration.name }
+            val function = it.getStrictParentOfType<KtFunction>()
+            if (function != null && function != declaration) return@collectDescendantsOfType false
+            it.getLabelName().let { label -> label == null || label == declaration.name }
         }
 
         val lastReturn = statements.lastOrNull() as? KtReturnExpression
         if (returnStatements.any { it != lastReturn }) {
             val message = RefactoringBundle.getCannotRefactorMessage(
                 if (returnStatements.size > 1)
-                    "Inline Function is not supported for functions with multiple return statements."
+                    KotlinBundle.message("error.text.inline.function.is.not.supported.for.functions.with.multiple.return.statements")
                 else
-                    "Inline Function is not supported for functions with return statements not at the end of the body."
+                    KotlinBundle.message("error.text.inline.function.is.not.supported.for.functions.with.return.statements.not.at.the.end.of.the.body")
             )
-            CommonRefactoringUtil.showErrorHint(declaration.project, editor, message, "Inline Function", null)
+
+            CommonRefactoringUtil.showErrorHint(
+                declaration.project,
+                editor,
+                message,
+                KotlinBundle.message("title.inline.function"),
+                null
+            )
+
             return null
         }
 
         return builder.prepareCodeToInline(
             lastReturn?.returnedExpression,
-            statements.dropLast(returnStatements.size), ::analyzeBodyCopy, reformat = true
+            statements.dropLast(returnStatements.size), ::analyzeExpressionInContext, reformat = true
         )
     } else {
-        return builder.prepareCodeToInline(bodyCopy, emptyList(), ::analyzeBodyCopy, reformat = true)
+        return builder.prepareCodeToInline(bodyCopy, emptyList(), ::analyzeExpressionInContext, reformat = true)
     }
 }
 

@@ -1,14 +1,11 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
-
 buildscript {
     repositories {
         google()
         jcenter()
     }
     dependencies {        
-        classpath 'com.android.tools.build:gradle:3.3.2'
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
+        classpath 'com.android.tools.build:gradle:4.1.2'
     }
 }
 apply plugin: 'com.android.application'
@@ -19,8 +16,8 @@ repositories {
 }
 
 android {
-    compileSdkVersion 19
-    buildToolsVersion "28.0.3"
+    compileSdkVersion 26
+    buildToolsVersion "29.0.3"
 
     defaultConfig {
         applicationId "org.jetbrains.kotlin.android.tests"
@@ -40,18 +37,10 @@ android {
 
     packagingOptions { exclude 'META-INF/build.txt' }
 
-    //TODO run under java 6, cause there is error on implicit 'stream' import in 'asWithMutable' test
-    lintOptions {
-        abortOnError false
-    }
-
-    compileOptions {
-        incremental = false
-    }
 
     dexOptions {
         dexInProcess false
-        javaMaxHeapSize "1200m"
+        javaMaxHeapSize "1500m"
         maxProcessCount 4
         additionalParameters "--debug"
     }
@@ -60,15 +49,43 @@ android {
         resultsDir = "build/test/results"
     }
 
+    compileOptions {
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
+    }
 
     flavorDimensions "box"
 
     productFlavors {
-        ktest0 {
+        common0 {
             dimension "box"
         }
 
-        ktest1 {
+        common1 {
+            dimension "box"
+        }
+
+        common2 {
+            dimension "box"
+        }
+
+        reflect0 {
+            dimension "box"
+        }
+
+        common_ir0 {
+            dimension "box"
+        }
+
+        common_ir1 {
+            dimension "box"
+        }
+
+        common_ir2 {
+            dimension "box"
+        }
+
+        reflect_ir0 {
             dimension "box"
         }
     }
@@ -78,9 +95,9 @@ android {
 task jarTestFolders() {
     println "Jar folders..."
     new File("${projectDir}/libs/").listFiles().each { File file ->
-        if (file.isDirectory() && !file.name.equals("test")) {
+        if (file.isDirectory()) {
             println "Jar '${file.name}' folder..."
-            ant.jar(basedir: "libs/${file.name}/", destfile: "libs/test/" +  file.name  + ".jar")
+            ant.jar(basedir: "libs/${file.name}/", destfile: "libs/" +  file.name  + ".jar")
         }
     }
 }
@@ -90,10 +107,18 @@ tasks.withType(JavaCompile) {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(dir: 'libs', include: ['kotlin-test.jar', 'kotlin-stdlib.jar'])
     androidTestImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
 
-    ktest0Implementation fileTree(dir: 'libs/test', include: ['libtest0.jar'])
-    ktest1Implementation fileTree(dir: 'libs/test', include: ['libtest1.jar'])
+    android.applicationVariants.all { variant ->
+        variant.productFlavors.each {
+            def configuration = configurations.getByName(it.name + 'Implementation').name
+            add(configuration, project.fileTree(dir: 'libs', include: [it.name + ".jar"]))
+
+            if (it.name.startsWith("reflect")) {
+                add(configuration, project.fileTree(dir: 'libs', include: ['kotlin-reflect.jar']))
+            }
+        }
+    }
 }

@@ -1,10 +1,7 @@
-// IGNORE_BACKEND: JVM_IR
-// IGNORE_BACKEND_MULTI_MODULE: JVM_IR
-// FILE: test.kt
-// COMMON_COROUTINES_TEST
-// WITH_RUNTIME
 // WITH_COROUTINES
 // NO_CHECK_LAMBDA_INLINING
+// WITH_RUNTIME
+// FILE: test.kt
 // TARGET_BACKEND: JVM
 
 suspend inline fun test1(c: () -> Unit) {
@@ -38,12 +35,10 @@ suspend inline fun test5(crossinline c: suspend() -> Unit) {
 }
 
 // FILE: box.kt
-// COMMON_COROUTINES_TEST
-
-import COROUTINES_PACKAGE.*
-import COROUTINES_PACKAGE.intrinsics.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 import helpers.*
-import COROUTINES_PACKAGE.jvm.internal.*
+import kotlin.coroutines.jvm.internal.*
 
 
 fun builder(c: suspend () -> Unit) {

@@ -22,24 +22,32 @@ class MentionedTypesTaskListener(
 ) : TaskListener {
 
     var time = 0L
+    var failureReason: String? = null
+
     override fun started(e: TaskEvent) {
         // do nothing, we just process on finish
     }
 
     override fun finished(e: TaskEvent) {
+        if (failureReason != null) return // stop processing if we failed to analyze some sources
+
         if (e.kind != TaskEvent.Kind.ENTER || cache.isAlreadyProcessed(e.sourceFile.toUri())) return
 
-        val l = System.currentTimeMillis()
-        val compilationUnit = e.compilationUnit
+        try {
+            val l = System.currentTimeMillis()
+            val compilationUnit = e.compilationUnit
 
-        val structure = SourceFileStructure(e.sourceFile.toUri())
+            val structure = SourceFileStructure(e.sourceFile.toUri())
 
-        val treeVisitor = TypeTreeVisitor(elementUtils, trees, compilationUnit, structure)
-        compilationUnit.typeDecls.forEach {
-            it.accept(treeVisitor, Visibility.ABI)
+            val treeVisitor = TypeTreeVisitor(elementUtils, trees, compilationUnit, structure)
+            compilationUnit.typeDecls.forEach {
+                it.accept(treeVisitor, Visibility.ABI)
+            }
+            cache.addSourceStructure(structure)
+            time += System.currentTimeMillis() - l
+        } catch (t: Throwable) {
+            failureReason = "Running non-incrementally because analyzing ${e.sourceFile.toUri()} failed."
         }
-        cache.addSourceStructure(structure)
-        time += System.currentTimeMillis() - l
     }
 }
 
@@ -237,29 +245,5 @@ private class ConstantTreeVisitor(val sourceStructure: SourceFileStructure) : Tr
         val containingClass = sym.owner
 
         sourceStructure.addMentionedConstant(containingClass.qualifiedName.toString(), name.toString())
-    }
-}
-
-class GeneratedTypesTaskListener(private val cache: JavaClassCache) : TaskListener {
-
-    override fun started(e: TaskEvent) {
-        // do nothing, we just process on finish
-    }
-
-    override fun finished(e: TaskEvent) {
-        if (e.kind != TaskEvent.Kind.ENTER || cache.isAlreadyProcessed(e.sourceFile.toUri())) return
-
-        val treeVisitor = object : SimpleTreeVisitor<Void, Void>() {
-            override fun visitClass(node: ClassTree, p: Void?): Void? {
-                node as JCTree.JCClassDecl
-                cache.addGeneratedType(node.sym.fullname.toString(), File(e.sourceFile.toUri()))
-
-                node.members.forEach { visit(it, null) }
-                return null
-            }
-        }
-        e.compilationUnit.typeDecls.forEach {
-            it.accept(treeVisitor, null)
-        }
     }
 }

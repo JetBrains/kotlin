@@ -16,16 +16,22 @@
 
 package org.jetbrains.kotlin.gradle.utils
 
-import org.gradle.api.Action
 import org.gradle.api.GradleException
+import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.artifacts.repositories.IvyArtifactRepository
-import org.gradle.api.artifacts.repositories.IvyPatternRepositoryLayout
+import org.gradle.api.file.ArchiveOperations
+import org.gradle.api.file.CopySpec
+import org.gradle.api.file.FileSystemOperations
+import org.gradle.api.file.FileTree
+import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.tasks.TaskInputs
 import org.gradle.api.tasks.TaskOutputs
+import org.gradle.api.tasks.WorkResult
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.util.GradleVersion
 import java.io.File
+
+const val minSupportedGradleVersion = "5.3"
 
 internal val Task.inputsCompatible: TaskInputs get() = inputs
 
@@ -51,59 +57,57 @@ internal fun TaskInputs.dirCompatible(dirPath: Any) {
     inputsDirMethod(this, dirPath)
 }
 
-internal fun checkGradleCompatibility(minSupportedVersion: GradleVersion = GradleVersion.version("4.9")) {
+internal fun checkGradleCompatibility(
+    withComponent: String = "the Kotlin Gradle plugin",
+    minSupportedVersion: GradleVersion = GradleVersion.version(minSupportedGradleVersion)
+) {
     val currentVersion = GradleVersion.current()
     if (currentVersion < minSupportedVersion) {
         throw GradleException(
-            "Current version of Gradle $currentVersion is not compatible with Kotlin plugin. " +
-                    "Please use Gradle $minSupportedVersion or newer or previous version of Kotlin plugin."
+            "The current Gradle version ${currentVersion.version} is not compatible with $withComponent. " +
+                    "Please use Gradle ${minSupportedVersion.version} or newer, or the previous version of the Kotlin plugin."
         )
     }
 }
 
-internal fun AbstractArchiveTask.setArchiveAppendixCompatible(appendixProvider: () -> String) {
-    if (isGradleVersionAtLeast(5, 2)) {
-        archiveAppendix.set(project.provider { appendixProvider() })
-    } else {
-        @Suppress("DEPRECATION")
-        appendix = appendixProvider()
-    }
-}
-
 internal val AbstractArchiveTask.archivePathCompatible: File
-    get() =
-        if (isGradleVersionAtLeast(5, 1)) {
-            archiveFile.get().asFile
-        } else {
-            @Suppress("DEPRECATION")
-            archivePath
-        }
+    get() = archiveFile.get().asFile
 
-internal val AbstractArchiveTask.archiveNameCompatible: String
-    get() =
-        if (isGradleVersionAtLeast(5, 1)) {
-            archiveFileName.get()
-        } else {
-            @Suppress("DEPRECATION")
-            archiveName
-        }
+internal class ArchiveOperationsCompat(@Transient private val project: Project) {
+    private val archiveOperations: Any? = try {
+        (project as ProjectInternal).services.get(ArchiveOperations::class.java)
+    } catch (e: NoClassDefFoundError) {
+        // Gradle version < 6.6
+        null
+    }
 
-internal fun AbstractArchiveTask.setArchiveClassifierCompatible(classifierProvider: () -> String) {
-    if (isGradleVersionAtLeast(5, 2)) {
-        archiveClassifier.set(project.provider { classifierProvider() })
-    } else {
-        @Suppress("DEPRECATION")
-        classifier = classifierProvider()
+    fun zipTree(obj: Any): FileTree {
+        return when (archiveOperations) {
+            is ArchiveOperations -> archiveOperations.zipTree(obj)
+            else -> project.zipTree(obj)
+        }
+    }
+
+    fun tarTree(obj: Any): FileTree {
+        return when (archiveOperations) {
+            is ArchiveOperations -> archiveOperations.tarTree(obj)
+            else -> project.tarTree(obj)
+        }
     }
 }
 
-internal fun IvyArtifactRepository.patternLayoutCompatible(config: IvyPatternRepositoryLayout.() -> Unit) {
-    if (isGradleVersionAtLeast(5, 0)) {
-        patternLayout(config)
-    } else {
-        // The "layout" method is planned to be removed in Gradle 6.0. Access it using reflection.
-        javaClass
-            .getMethod("layout", String::class.java, Action::class.java)
-            .invoke(this, "pattern", Action<IvyPatternRepositoryLayout> { it.config() })
+internal class FileSystemOperationsCompat(@Transient private val project: Project) {
+    private val fileSystemOperations: Any? = try {
+        (project as ProjectInternal).services.get(FileSystemOperations::class.java)
+    } catch (e: NoClassDefFoundError) {
+        // Gradle version < 6.0
+        null
+    }
+
+    fun copy(action: (CopySpec) -> Unit): WorkResult? {
+        return when (fileSystemOperations) {
+            is FileSystemOperations -> fileSystemOperations.copy(action)
+            else -> project.copy(action)
+        }
     }
 }

@@ -100,9 +100,6 @@ class KotlinBuildScriptManipulator(
         return originalText != scriptFile.text
     }
 
-    override fun changeCoroutineConfiguration(coroutineOption: String): PsiElement? =
-        scriptFile.changeCoroutineConfiguration(coroutineOption)
-
     override fun changeLanguageFeatureConfiguration(
         feature: LanguageFeature,
         state: LanguageFeature.State,

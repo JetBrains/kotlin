@@ -7,10 +7,10 @@ fun nonConstLong(): Long = TODO()
 
 annotation class Anno(vararg val value: Long)
 
-@Anno(value = nonConstArray)
+@Anno(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>value = nonConstArray<!>)
 fun foo1() {}
 
-@Anno(value = nonConstFun())
+@Anno(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>value = nonConstFun()<!>)
 fun foo2() {}
 
 @Anno(value = longArrayOf(nonConstLong()))
@@ -19,8 +19,8 @@ fun foo3() {}
 @Anno(value = [nonConstLong()])
 fun foo4() {}
 
-@Anno(value = *nonConstArray)
+@Anno(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>value = *nonConstArray<!>)
 fun bar1() {}
 
-@Anno(*nonConstArray)
+@Anno(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>*nonConstArray<!>)
 fun bar2() {}

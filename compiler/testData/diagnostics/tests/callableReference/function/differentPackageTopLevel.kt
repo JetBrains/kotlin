@@ -3,6 +3,8 @@
 
 package first
 
+import checkSubtype
+
 fun foo() {}
 fun bar(<!UNUSED_PARAMETER!>x<!>: Int) {}
 fun baz() = "OK"
@@ -16,6 +18,7 @@ import kotlin.reflect.*
 import first.foo
 import first.bar
 import first.baz
+import checkSubtype
 
 fun main() {
     val x = ::foo

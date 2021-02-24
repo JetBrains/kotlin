@@ -1,0 +1,61 @@
+@kotlin.Metadata
+public final class DeprecatedPropertyKt {
+    // source: 'deprecatedProperty.kt'
+    public deprecated static field testLateinitVar: java.lang.Object
+    private deprecated final static field testVal: int
+    private deprecated final static field testValWithExplicitDefaultGet: int
+    private deprecated static field testVar: int
+    private deprecated static field testVarWithExplicitDefaultGet: int
+    private deprecated static field testVarWithExplicitDefaultGetSet: int
+    private deprecated static field testVarWithExplicitDefaultSet: int
+    static method <clinit>(): void
+    public synthetic deprecated static @kotlin.Deprecated method getTestExtVal$annotations(p0: java.lang.Object): void
+    public deprecated final static method getTestExtVal(@org.jetbrains.annotations.NotNull p0: java.lang.Object): int
+    public synthetic deprecated static @kotlin.Deprecated method getTestGenExtVal$annotations(p0: java.util.List): void
+    public deprecated final static method getTestGenExtVal(@org.jetbrains.annotations.NotNull p0: java.util.List): int
+    public synthetic deprecated static @kotlin.Deprecated method getTestLateinitVar$annotations(): void
+    public deprecated final static @org.jetbrains.annotations.NotNull method getTestLateinitVar(): java.lang.Object
+    public synthetic deprecated static @kotlin.Deprecated method getTestVal$annotations(): void
+    public deprecated final static method getTestVal(): int
+    public synthetic deprecated static @kotlin.Deprecated method getTestValWithExplicitDefaultGet$annotations(): void
+    public deprecated final static method getTestValWithExplicitDefaultGet(): int
+    public synthetic deprecated static @kotlin.Deprecated method getTestValWithExplicitGet$annotations(): void
+    public deprecated final static method getTestValWithExplicitGet(): int
+    public synthetic deprecated static @kotlin.Deprecated method getTestVar$annotations(): void
+    public deprecated final static method getTestVar(): int
+    public synthetic deprecated static @kotlin.Deprecated method getTestVarWithExplicitDefaultGet$annotations(): void
+    public deprecated final static method getTestVarWithExplicitDefaultGet(): int
+    public synthetic deprecated static @kotlin.Deprecated method getTestVarWithExplicitDefaultGetSet$annotations(): void
+    public deprecated final static method getTestVarWithExplicitDefaultGetSet(): int
+    public synthetic deprecated static @kotlin.Deprecated method getTestVarWithExplicitDefaultSet$annotations(): void
+    public deprecated final static method getTestVarWithExplicitDefaultSet(): int
+    public synthetic deprecated static @kotlin.Deprecated method getTestVarWithExplicitGetSet$annotations(): void
+    public deprecated final static method getTestVarWithExplicitGetSet(): int
+    public synthetic deprecated static @kotlin.Deprecated method getTextExtVar$annotations(p0: java.lang.Object): void
+    public deprecated final static method getTextExtVar(@org.jetbrains.annotations.NotNull p0: java.lang.Object): int
+    public synthetic deprecated static @kotlin.Deprecated method getTextGenExtVar$annotations(p0: java.util.List): void
+    public deprecated final static method getTextGenExtVar(@org.jetbrains.annotations.NotNull p0: java.util.List): int
+    public deprecated final static method setTestLateinitVar(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
+    public deprecated final static method setTestVar(p0: int): void
+    public deprecated final static method setTestVarWithExplicitDefaultGet(p0: int): void
+    public deprecated final static method setTestVarWithExplicitDefaultGetSet(p0: int): void
+    public deprecated final static method setTestVarWithExplicitDefaultSet(p0: int): void
+    public deprecated final static method setTestVarWithExplicitGetSet(p0: int): void
+    public deprecated final static method setTextExtVar(@org.jetbrains.annotations.NotNull p0: java.lang.Object, p1: int): void
+    public deprecated final static method setTextGenExtVar(@org.jetbrains.annotations.NotNull p0: java.util.List, p1: int): void
+}
+
+@kotlin.Metadata
+public final class I$DefaultImpls {
+    // source: 'deprecatedProperty.kt'
+    public synthetic deprecated static @kotlin.Deprecated method getId$annotations(p0: java.lang.Object): void
+    public deprecated static method getId(@org.jetbrains.annotations.NotNull p0: I, p1: java.lang.Object): java.lang.Object
+    public final inner class I$DefaultImpls
+}
+
+@kotlin.Metadata
+public interface I {
+    // source: 'deprecatedProperty.kt'
+    public deprecated abstract method getId(p0: java.lang.Object): java.lang.Object
+    public final inner class I$DefaultImpls
+}

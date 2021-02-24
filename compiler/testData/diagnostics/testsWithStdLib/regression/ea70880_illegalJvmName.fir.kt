@@ -1,8 +1,8 @@
-@JvmName()
+<!INAPPLICABLE_CANDIDATE!>@JvmName()<!>
 fun foo() {}
 
-@JvmName(42)
+<!INAPPLICABLE_CANDIDATE!>@JvmName(42)<!>
 fun bar() {}
 
-@JvmName("a", "b")
+<!INAPPLICABLE_CANDIDATE!>@JvmName("a", "b")<!>
 fun baz() {}

@@ -1,0 +1,104 @@
+== Test_1 ==
+class Test_1 {
+    @Target(AnnotationTarget.VALUE_PARAMETER)
+    annotation class Range(val min: Long = 0)
+
+    fun foo(@Range(min = -90L) x: Int) = Unit // KtPrefixExpression isn't marked as BindingContext.USED_AS_EXPRESSION
+}
+---------------------
+L0:
+  1 <START>
+L1:
+    <END>      NEXT:[<SINK>]
+error:
+    <ERROR>    PREV:[]
+sink:
+    <SINK>     PREV:[<ERROR>, <END>]
+=====================
+== foo ==
+fun foo(@Range(min = -90L) x: Int) = Unit // KtPrefixExpression isn't marked as BindingContext.USED_AS_EXPRESSION
+---------------------
+L0:
+  1 <START>
+    v(@Range(min = -90L) x: Int)
+    magic[FAKE_INITIALIZER](@Range(min = -90L) x: Int) -> <v0>
+    w(x|<v0>)
+    r(Unit) -> <v1>
+    ret(*|<v1>) L1
+L1:
+    <END>                                                         NEXT:[<SINK>]
+error:
+    <ERROR>                                                       PREV:[]
+sink:
+    <SINK>                                                        PREV:[<ERROR>, <END>]
+=====================
+== Test_2 ==
+class Test_2 {
+    @Target(AnnotationTarget.FUNCTION)
+    annotation class Range(val min: Long = 0)
+
+    @Range(min = -90L) // KtPrefixExpression is marked as BindingContext.USED_AS_EXPRESSION
+    fun foo(x: Int) = Unit
+}
+---------------------
+L0:
+  1 <START>
+L1:
+    <END>      NEXT:[<SINK>]
+error:
+    <ERROR>    PREV:[]
+sink:
+    <SINK>     PREV:[<ERROR>, <END>]
+=====================
+== foo ==
+@Range(min = -90L) // KtPrefixExpression is marked as BindingContext.USED_AS_EXPRESSION
+    fun foo(x: Int) = Unit
+---------------------
+L0:
+  1 <START>
+    v(x: Int)
+    magic[FAKE_INITIALIZER](x: Int) -> <v0>
+    w(x|<v0>)
+    r(Unit) -> <v1>
+    ret(*|<v1>) L1
+L1:
+    <END>                                      NEXT:[<SINK>]
+error:
+    <ERROR>                                    PREV:[]
+sink:
+    <SINK>                                     PREV:[<ERROR>, <END>]
+=====================
+== Test_3 ==
+class Test_3 {
+    @Target(AnnotationTarget.EXPRESSION)
+    annotation class Range(val min: Long = 0)
+
+    fun foo(x: Int) = @Range(min = -90L) Unit
+}
+---------------------
+L0:
+  1 <START>
+L1:
+    <END>      NEXT:[<SINK>]
+error:
+    <ERROR>    PREV:[]
+sink:
+    <SINK>     PREV:[<ERROR>, <END>]
+=====================
+== foo ==
+fun foo(x: Int) = @Range(min = -90L) Unit
+---------------------
+L0:
+  1 <START>
+    v(x: Int)
+    magic[FAKE_INITIALIZER](x: Int) -> <v0>
+    w(x|<v0>)
+    r(Unit) -> <v1>
+    ret(*|<v1>) L1
+L1:
+    <END>                                      NEXT:[<SINK>]
+error:
+    <ERROR>                                    PREV:[]
+sink:
+    <SINK>                                     PREV:[<ERROR>, <END>]
+=====================

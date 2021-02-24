@@ -14,33 +14,28 @@ compiler/testData/cli/jvm/signatureClash.kt:9:5: error: platform declaration cla
     val a: Int = 1
     ^
 compiler/testData/cli/jvm/signatureClash.kt:12:1: error: platform declaration clash: The following declarations have the same JVM signature (getB()I):
-    fun <get-b>(): Int defined in root package in file signatureClash.kt
-    fun getB(): Int defined in root package in file signatureClash.kt
+    fun <get-b>(): Int defined in root package
+    fun getB(): Int defined in root package
 fun getB(): Int = 1
 ^
 compiler/testData/cli/jvm/signatureClash.kt:13:1: error: platform declaration clash: The following declarations have the same JVM signature (getB()I):
-    fun <get-b>(): Int defined in root package in file signatureClash.kt
-    fun getB(): Int defined in root package in file signatureClash.kt
+    fun <get-b>(): Int defined in root package
+    fun getB(): Int defined in root package
 val b: Int = 1
 ^
-compiler/testData/cli/jvm/signatureClash.kt:19:7: error: platform declaration clash: The following declarations have the same JVM signature (getTr()I):
+compiler/testData/cli/jvm/signatureClash.kt:20:5: error: accidental override: The following declarations have the same JVM signature (getTr()I):
     fun <get-tr>(): Int defined in SubTr
-    fun getTr(): Int defined in Tr
-class SubTr : Tr {
-      ^
-compiler/testData/cli/jvm/signatureClash.kt:20:5: error: platform declaration clash: The following declarations have the same JVM signature (getTr()I):
-    fun <get-tr>(): Int defined in SubTr
-    fun getTr(): Int defined in Tr
+    fun getTr(): Int defined in SubTr
     val tr = 1
     ^
 compiler/testData/cli/jvm/signatureClash.kt:24:7: error: platform declaration clash: The following declarations have the same JVM signature (access$f(LC;)V):
+    fun `access$f`(`$this`: C): Unit defined in C
     fun `access$f`(c: C): Unit defined in C
-    fun f(): Unit defined in C
 class C {
       ^
 compiler/testData/cli/jvm/signatureClash.kt:26:5: error: platform declaration clash: The following declarations have the same JVM signature (access$f(LC;)V):
+    fun `access$f`(`$this`: C): Unit defined in C
     fun `access$f`(c: C): Unit defined in C
-    fun f(): Unit defined in C
     fun `access$f`(c: C) {}
     ^
 COMPILATION_ERROR

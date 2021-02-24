@@ -1,9 +1,9 @@
 // !WITH_NEW_INFERENCE
 // !CHECK_TYPE
-// JAVAC_SKIP
+// SKIP_JAVAC
 // FULL_JDK
 
-// FILE: f.kt
+// FILE: a.kt
 
 import java.*
 import java.util.*
@@ -22,10 +22,10 @@ fun test(<!UNUSED_PARAMETER!>l<!> : <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.util
 
   val <!UNUSED_VARIABLE!>f<!> : java.io.File? = null
 
-  Collections.<!FUNCTION_CALL_EXPECTED, NI;NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>emptyList<!>
+  Collections.<!FUNCTION_CALL_EXPECTED, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER{NI}, TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER{OI}!>emptyList<!>
   Collections.<!FUNCTION_CALL_EXPECTED!>emptyList<Int><!>
   Collections.emptyList<Int>()
-  Collections.<!NI;NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>emptyList<!>()
+  Collections.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER{NI}, TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER{OI}!>emptyList<!>()
 
   checkSubtype<Set<Int>?>(Collections.singleton<Int>(1))
   Collections.singleton<Int>(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1.0<!>)
@@ -53,6 +53,6 @@ fun test(<!UNUSED_PARAMETER!>l<!> : <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.util
 }
 
 
-// FILE: f.kt
+// FILE: b.kt
 package xxx
   import java.lang.Class;

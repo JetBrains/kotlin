@@ -87,6 +87,13 @@ infix fun FieldSet.with(set: FieldSet): FieldSet {
     return this + set
 }
 
-fun Field.withTransform(): Field = copy().apply { needsSeparateTransform = true }
+fun Field.withTransform(needTransformInOtherChildren: Boolean = false): Field = copy().apply {
+    needsSeparateTransform = true
+    this.needTransformInOtherChildren = needTransformInOtherChildren
+}
+
+fun Field.withReplace(): Field = copy().apply {
+    withReplace = true
+}
 
 fun FieldSet.withTransform(): FieldSet = this.map { it.withTransform() }

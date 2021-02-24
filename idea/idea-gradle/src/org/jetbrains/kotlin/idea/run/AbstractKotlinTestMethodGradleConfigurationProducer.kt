@@ -8,9 +8,12 @@ package org.jetbrains.kotlin.idea.run
 import com.intellij.execution.Location
 import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.execution.actions.ConfigurationFromContext
-import com.intellij.execution.configurations.ConfigurationFactory
+import com.intellij.execution.actions.ConfigurationFromContextImpl
 import com.intellij.execution.junit.InheritorChooser
+import com.intellij.execution.junit2.PsiMemberParameterizedLocation
+import com.intellij.execution.junit2.info.MethodLocation
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemRunConfiguration
+import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiClass
@@ -42,12 +45,17 @@ abstract class AbstractKotlinMultiplatformTestMethodGradleConfigurationProducer 
         return isApplicable(module, platform)
     }
 
+    private fun shouldDisgraceConfiguration(other: ConfigurationFromContext): Boolean {
+        return other.isJpsJunitConfiguration() ||
+                (other as? ConfigurationFromContextImpl)?.configurationProducer is TestMethodGradleConfigurationProducer
+    }
+
     override fun isPreferredConfiguration(self: ConfigurationFromContext, other: ConfigurationFromContext): Boolean {
-        return other.isJpsJunitConfiguration() || super.isPreferredConfiguration(self, other)
+        return shouldDisgraceConfiguration(other)
     }
 
     override fun shouldReplace(self: ConfigurationFromContext, other: ConfigurationFromContext): Boolean {
-        return other.isJpsJunitConfiguration() || super.shouldReplace(self, other)
+        return shouldDisgraceConfiguration(other)
     }
 
     override fun onFirstRun(fromContext: ConfigurationFromContext, context: ConfigurationContext, performRunnable: Runnable) {
@@ -76,13 +84,25 @@ abstract class AbstractKotlinMultiplatformTestMethodGradleConfigurationProducer 
     ) {
         val dataContext = MultiplatformTestTasksChooser.createContext(context.dataContext, psiMethod.name)
 
-        mppTestTasksChooser.multiplatformChooseTasks(context.project, dataContext, classes.asList()) { tasks ->
+        val contextualSuffix = when (context.location) {
+            is PsiMemberParameterizedLocation -> (context.location as? PsiMemberParameterizedLocation)?.paramSetName?.trim('[', ']')
+            is MethodLocation -> "jvm"  // jvm, being default target, is treated differently
+            else -> null // from gutters
+        }
+
+        mppTestTasksChooser.multiplatformChooseTasks(context.project, dataContext, classes.asList(), contextualSuffix) { tasks ->
             val configuration = fromContext.configuration as ExternalSystemRunConfiguration
             val settings = configuration.settings
 
             val result = settings.applyTestConfiguration(context.module, tasks, *classes) {
-                createTestFilterFrom(context.location, it, psiMethod, true)
+                var filters = createTestFilterFrom(context.location, it, psiMethod, true)
+                if (context.location is PsiMemberParameterizedLocation && contextualSuffix != null) {
+                    filters = filters.replace("[*$contextualSuffix*]", "")
+                }
+                filters
             }
+
+            settings.externalProjectPath = ExternalSystemApiUtil.getExternalProjectPath(context.module)
 
             if (result) {
                 configuration.name = (if (classes.size == 1) classes[0].name!! + "." else "") + psiMethod.name
@@ -97,10 +117,6 @@ abstract class AbstractKotlinMultiplatformTestMethodGradleConfigurationProducer 
 
 abstract class AbstractKotlinTestMethodGradleConfigurationProducer
     : TestMethodGradleConfigurationProducer(), KotlinGradleConfigurationProducer {
-    override fun getConfigurationFactory(): ConfigurationFactory {
-        return KotlinGradleExternalTaskConfigurationType.instance.factory
-    }
-
     override fun isConfigurationFromContext(configuration: ExternalSystemRunConfiguration, context: ConfigurationContext): Boolean {
         if (!context.check()) {
             return false

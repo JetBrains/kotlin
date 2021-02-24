@@ -1,0 +1,2 @@
+FILE: in.kt
+    public? final? fun foo(x: Int, y: Int, c: Collection<Int>): <implicit> { LAZY_BLOCK }

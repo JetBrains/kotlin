@@ -317,3 +317,41 @@ PsiJetFileStubImpl[package=test]
               REFERENCE_EXPRESSION[referencedName=ArraysSpread]
         VALUE_ARGUMENT_LIST
           VALUE_ARGUMENT[isSpread=true]
+  CLASS[fqName=test.WithComplexDotQualifiedAnnotation, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithComplexDotQualifiedAnnotation, superNames=[]]
+    MODIFIER_LIST[]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=SomeAnno1]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=SomeAnno1]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            VALUE_ARGUMENT_NAME
+              REFERENCE_EXPRESSION[referencedName=x]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=SomeAnno2]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=SomeAnno2]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            VALUE_ARGUMENT_NAME
+              REFERENCE_EXPRESSION[referencedName=x]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=SomeAnno3]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=SomeAnno3]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            VALUE_ARGUMENT_NAME
+              REFERENCE_EXPRESSION[referencedName=x]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=SomeAnno4]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=SomeAnno4]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            VALUE_ARGUMENT_NAME
+              REFERENCE_EXPRESSION[referencedName=x]

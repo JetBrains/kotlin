@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.js.backend.ast.JsExpression
 import org.jetbrains.kotlin.js.backend.ast.JsNameRef
-import org.jetbrains.kotlin.js.backend.ast.metadata.inlineStrategy
+import org.jetbrains.kotlin.js.backend.ast.metadata.isInline
 import org.jetbrains.kotlin.js.descriptorUtils.isCoroutineLambda
 import org.jetbrains.kotlin.js.translate.callTranslator.CallInfo
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.checkers.isBuiltInCoroutineContext
-import org.jetbrains.kotlin.resolve.inline.InlineStrategy
 
 object CoroutineContextFIF : FunctionIntrinsicFactory {
     override fun getIntrinsic(descriptor: FunctionDescriptor, context: TranslationContext): FunctionIntrinsic? {
@@ -48,7 +47,7 @@ object CoroutineContextFIF : FunctionIntrinsicFactory {
                 if (context.declarationDescriptor?.isCoroutineLambda == true) JsAstUtils.stateMachineReceiver()
                 else TranslationUtils.translateContinuationArgument(context)
             )
-            res.inlineStrategy = InlineStrategy.NOT_INLINE
+            res.isInline = false
             return res
         }
     }

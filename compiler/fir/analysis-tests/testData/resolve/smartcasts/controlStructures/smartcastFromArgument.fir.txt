@@ -1,0 +1,16 @@
+FILE: smartcastFromArgument.kt
+    public abstract interface A : R|kotlin/Any| {
+        public abstract fun foo(): R|kotlin/Unit|
+
+    }
+    public final fun takeA(a: R|A|): R|kotlin/Boolean| {
+        ^takeA Boolean(true)
+    }
+    public final fun test(a: R|kotlin/Any|): R|kotlin/Unit| {
+        when () {
+            R|/takeA|((R|<local>/a| as? R|A|) ?: ^test Unit) ->  {
+                R|<local>/a|.R|/A.foo|()
+            }
+        }
+
+    }

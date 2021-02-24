@@ -3,5 +3,5 @@ public final class PropertyInitializerWithoutSetterKt {
     public static final fun getWithoutSetter() : java.lang.String {
         return field
     }
-    public static final fun setWithoutSetter(@org.jetbrains.annotations.NotNull p: java.lang.String) : void = UastEmptyExpression
+    public static final fun setWithoutSetter(@org.jetbrains.annotations.NotNull withoutSetter: java.lang.String) : void = UastEmptyExpression
 }

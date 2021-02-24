@@ -12,7 +12,7 @@ class Outer {
 fun Activity.toast() = Unit
 class Activity(){
     class Fragment{
-        fun call() = <!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>toast<!>()
+        fun call() = <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>toast<!>()
     }
 }
 

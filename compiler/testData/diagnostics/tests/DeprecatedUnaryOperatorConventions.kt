@@ -16,7 +16,7 @@ operator fun String.unaryPlus(): Int = 0
 fun test() {
     requireInt(+ "")
     requireInt(+ Example())
-    requireString(<!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>+<!> ExampleDeprecated())
+    requireString(<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>+<!> ExampleDeprecated())
 }
 
 fun requireInt(n: Int) {}
@@ -27,7 +27,7 @@ class Example2 {
     <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun minus() = this
 
     fun test() {
-        <!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>+<!>this
+        <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>+<!>this
         <!UNRESOLVED_REFERENCE!>-<!>this
     }
 }

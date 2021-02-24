@@ -49,7 +49,7 @@ sealed class Variant {
     object Another : Variant()
 }
 
-fun nonExhaustiveSealed(v: Variant) = <error descr="[NO_ELSE_IN_WHEN] 'when' expression must be exhaustive, add necessary 'is Something', 'Another' branches or 'else' branch instead">when</error>(v) {
+fun nonExhaustiveSealed(v: Variant) = <error descr="[NO_ELSE_IN_WHEN] 'when' expression must be exhaustive, add necessary 'Another', 'is Something' branches or 'else' branch instead">when</error>(v) {
     Variant.Singleton -> false
 }
 

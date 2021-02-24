@@ -17,7 +17,6 @@ import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiExpression
 import com.intellij.util.IncorrectOperationException
 import com.sun.jdi.*
-import org.jetbrains.org.objectweb.asm.Type as AsmType
 
 class LabeledThisData(val label: String, val name: String, val value: Value?) : DescriptorData<ValueDescriptorImpl>() {
     override fun createDescriptorImpl(project: Project): ValueDescriptorImpl {

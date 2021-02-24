@@ -13,6 +13,7 @@ UFile (package = )
                         UIdentifier (Identifier (filter))
                         USimpleNameReferenceExpression (identifier = filter, resolvesTo = null)
                         ULambdaExpression
+                            UParameter (name = it)
                             UBlockExpression
                                 UReturnExpression
                                     UQualifiedReferenceExpression

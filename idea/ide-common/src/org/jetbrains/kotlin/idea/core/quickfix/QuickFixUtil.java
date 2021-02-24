@@ -167,7 +167,14 @@ public class QuickFixUtil {
     public static boolean canFunctionOrGetterReturnExpression(@NotNull KtDeclaration functionOrGetter, @NotNull KtExpression expression) {
         if (functionOrGetter instanceof KtFunctionLiteral) {
             KtBlockExpression functionLiteralBody = ((KtFunctionLiteral) functionOrGetter).getBodyExpression();
-            PsiElement returnedElement = functionLiteralBody == null ? null : functionLiteralBody.getLastChild();
+            PsiElement returnedElement = null;
+            if (functionLiteralBody != null) {
+                PsiElement[] children = functionLiteralBody.getChildren();
+                int length = children.length;
+                if (length > 0) {
+                    returnedElement = children[length - 1];
+                }
+            }
             return returnedElement instanceof KtExpression && canEvaluateTo((KtExpression) returnedElement, expression);
         }
         else {

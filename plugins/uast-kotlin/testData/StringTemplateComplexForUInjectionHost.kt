@@ -8,6 +8,8 @@ val literalInLiteral = "a ${"literal$case4"} z"
 
 val literalInLiteral2 = "a ${"literal$case4".repeat(4)} z"
 
+val empty = ""
+
 fun simpleForTemplate(i: Int = 0) = "$i"
 
 fun foo() {

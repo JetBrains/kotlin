@@ -1,3 +1,6 @@
+// !WITH_NEW_INFERENCE
+// NI_EXPECTED_FILE
+
 // FILE: A.java
 public @interface A {
     String[] value();
@@ -22,6 +25,6 @@ public @interface A {
 
 @A fun test8() {}
 
-@A(x = Any::class, *arrayOf("5", "6"), "7", y = 3) fun test9() {}
-@A(x = Any::class, value = ["5", "6"], "7", y = 3) fun test10() {}
+<!INAPPLICABLE_CANDIDATE!>@A(x = Any::class, *arrayOf("5", "6"), "7", y = 3)<!> fun test9() {}
+<!INAPPLICABLE_CANDIDATE!>@A(x = Any::class, value = ["5", "6"], "7", y = 3)<!> fun test10() {}
 @A(x = Any::class, value = ["5", "6", "7"], y = 3) fun test11() {}

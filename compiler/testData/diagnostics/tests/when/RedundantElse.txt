@@ -50,7 +50,7 @@ public final enum class MyEnum : kotlin.Enum<MyEnum!> {
 }
 
 public sealed class X {
-    private constructor X()
+    protected constructor X()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -69,3 +69,4 @@ public sealed class X {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 }
+

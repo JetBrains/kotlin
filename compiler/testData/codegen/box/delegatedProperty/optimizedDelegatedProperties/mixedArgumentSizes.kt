@@ -1,4 +1,5 @@
-// IGNORE_BACKEND_FIR: JVM_IR
+// !LANGUAGE: -NewInference
+
 inline operator fun Double.provideDelegate(thisRef: Any?, kProp: Any?) = this.toLong()
 
 inline operator fun Long.getValue(thisRef: Any?, kProp: Any?) = this.toInt()

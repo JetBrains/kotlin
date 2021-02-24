@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.kdoc
 import com.intellij.openapi.components.ServiceManager
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.idea.util.getFileResolutionScope
@@ -119,6 +120,8 @@ private fun resolveDefaultKDocLink(
     }
 
     val moduleDescriptor = fromDescriptor.module
+
+    @OptIn(FrontendInternals::class)
     val qualifiedExpressionResolver = resolutionFacade.getFrontendService(moduleDescriptor, QualifiedExpressionResolver::class.java)
 
     val contextElement = DescriptorToSourceUtils.descriptorToDeclaration(fromDescriptor)
@@ -156,12 +159,12 @@ private fun getClassInnerScope(outerScope: LexicalScope, descriptor: ClassDescri
         descriptor.constructors.forEach { addFunctionDescriptor(it) }
     }
 
-    val scopeChain = listOfNotNull(
+    return LexicalChainedScope.create(
+        headerScope, descriptor, false, null, LexicalScopeKind.SYNTHETIC,
         descriptor.defaultType.memberScope,
         descriptor.staticScope,
         descriptor.companionObjectDescriptor?.defaultType?.memberScope
     )
-    return LexicalChainedScope(headerScope, descriptor, false, null, LexicalScopeKind.SYNTHETIC, scopeChain)
 }
 
 fun getKDocLinkResolutionScope(resolutionFacade: ResolutionFacade, contextDescriptor: DeclarationDescriptor): LexicalScope {
@@ -212,7 +215,7 @@ fun getKDocLinkMemberScope(descriptor: DeclarationDescriptor, contextScope: Lexi
         is PackageViewDescriptor -> descriptor.memberScope
 
         is ClassDescriptor -> {
-            ChainedMemberScope(
+            ChainedMemberScope.create(
                 "Member scope for KDoc resolve", listOfNotNull(
                     descriptor.unsubstitutedMemberScope,
                     descriptor.staticScope,

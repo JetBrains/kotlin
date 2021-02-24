@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.framework
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.libraries.LibraryKind
+import org.jetbrains.kotlin.idea.KotlinJvmBundle
 import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JvmCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.configuration.KotlinJavaModuleConfigurator
 import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
@@ -36,12 +37,12 @@ class JavaRuntimeLibraryDescription(project: Project?) : CustomLibraryDescriptor
     }
 
     companion object {
-        val KOTLIN_JAVA_RUNTIME_KIND = LibraryKind.create("kotlin-java-runtime")
-        val LIBRARY_NAME = "KotlinJavaRuntime"
+        val KOTLIN_JAVA_RUNTIME_KIND: LibraryKind = LibraryKind.create("kotlin-java-runtime")
+        const val LIBRARY_NAME = "KotlinJavaRuntime"
 
-        val JAVA_RUNTIME_LIBRARY_CREATION = "Java Runtime Library Creation"
-        val DIALOG_TITLE = "Create Kotlin Java Runtime Library"
-        val LIBRARY_CAPTION = "Kotlin Java Runtime Library"
+        val JAVA_RUNTIME_LIBRARY_CREATION get() = KotlinJvmBundle.message("java.runtime.library.creation")
+        val DIALOG_TITLE get() = KotlinJvmBundle.message("create.kotlin.java.runtime.library")
+        val LIBRARY_CAPTION get() = KotlinJvmBundle.message("kotlin.java.runtime.library")
         val SUITABLE_LIBRARY_KINDS: Set<LibraryKind> = setOf(KOTLIN_JAVA_RUNTIME_KIND)
     }
 }

@@ -1,5 +1,4 @@
 // !LANGUAGE: +InlineClasses
-// IGNORE_BACKEND_FIR: JVM_IR
 
 inline class Name(private val value: String) {
     fun asValue(): String = value

@@ -14,8 +14,8 @@ import org.gradle.api.tasks.testing.AbstractTestTask
 import org.gradle.process.internal.ExecHandleFactory
 import org.jetbrains.kotlin.gradle.internal.testing.KotlinTestRunnerListener
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutor
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.utils.injected
-import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import javax.inject.Inject
 
 abstract class KotlinTest : AbstractTestTask() {
@@ -39,7 +39,7 @@ abstract class KotlinTest : AbstractTestTask() {
 
     @Suppress("DEPRECATION")
     val excludePatterns: Set<String>
-        @Input get() = excludes + if (isGradleVersionAtLeast(5, 0)) filterExt.excludePatterns else emptySet()
+        @Input get() = excludes + filterExt.excludePatterns
 
     @get:Inject
     open val fileResolver: FileResolver
@@ -58,10 +58,15 @@ abstract class KotlinTest : AbstractTestTask() {
         runListeners.add(listener)
     }
 
+    private val ignoreTcsmOverflow by lazy {
+        PropertiesProvider(project).ignoreTcsmOverflow
+    }
+
     override fun createTestExecuter() = TCServiceMessagesTestExecutor(
         execHandleFactory,
         buildOperationExecutor,
         runListeners,
+        ignoreTcsmOverflow,
         ignoreRunFailures
     )
 }

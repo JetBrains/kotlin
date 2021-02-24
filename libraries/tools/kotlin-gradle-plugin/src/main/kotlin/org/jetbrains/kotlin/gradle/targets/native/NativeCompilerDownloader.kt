@@ -13,7 +13,8 @@ import org.gradle.api.logging.Logger
 import org.jetbrains.kotlin.compilerRunner.KotlinNativeCompilerRunner
 import org.jetbrains.kotlin.compilerRunner.konanVersion
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionType
+import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionTypeProvider
 import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.MetaVersion
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -26,7 +27,7 @@ class NativeCompilerDownloader(
 ) {
 
     companion object {
-        internal val DEFAULT_KONAN_VERSION: CompilerVersion by lazy {
+        val DEFAULT_KONAN_VERSION: CompilerVersion by lazy {
             CompilerVersion.fromString(loadPropertyFromResources("project.properties", "kotlin.native.version"))
         }
 
@@ -39,18 +40,20 @@ class NativeCompilerDownloader(
     private val logger: Logger
         get() = project.logger
 
-    // We provide restricted distributions only for Mac.
-    private val restrictedDistribution: Boolean
-        get() = HostManager.hostIsMac && PropertiesProvider(project).nativeRestrictedDistribution ?: false
+    private val distributionType: NativeDistributionType
+        get() = NativeDistributionTypeProvider(project).getDistributionType(compilerVersion)
 
     private val simpleOsName: String
         get() = HostManager.simpleOsName()
 
     private val dependencyName: String
-        get() = if (restrictedDistribution) {
-            "kotlin-native-restricted-$simpleOsName"
-        } else {
-            "kotlin-native-$simpleOsName"
+        get() {
+            val dependencySuffix = distributionType.suffix
+            return if (dependencySuffix != null) {
+                "kotlin-native-$dependencySuffix-$simpleOsName"
+            } else {
+                "kotlin-native-$simpleOsName"
+            }
         }
 
     private val dependencyNameWithVersion: String
@@ -79,8 +82,8 @@ class NativeCompilerDownloader(
     private fun setupRepo(repoUrl: String): ArtifactRepository {
         return project.repositories.ivy { repo ->
             repo.setUrl(repoUrl)
-            repo.patternLayoutCompatible {
-                artifact("[artifact]-[revision].[ext]")
+            repo.patternLayout {
+                it.artifact("[artifact]-[revision].[ext]")
             }
             repo.metadataSources {
                 it.artifact()
@@ -134,7 +137,7 @@ class NativeCompilerDownloader(
     }
 
     fun downloadIfNeeded() {
-        if (KotlinNativeCompilerRunner(project).classpath.isEmpty) {
+        if (KotlinNativeCompilerRunner(project).classpath.isEmpty()) {
             downloadAndExtract()
         }
     }

@@ -19,13 +19,10 @@ package org.jetbrains.kotlin.codegen;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.codegen.inline.FileMapping;
+import org.jetbrains.kotlin.codegen.inline.SourceMapper;
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
-import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
-import org.jetbrains.org.objectweb.asm.ClassVisitor;
-import org.jetbrains.org.objectweb.asm.FieldVisitor;
-import org.jetbrains.org.objectweb.asm.MethodVisitor;
+import org.jetbrains.org.objectweb.asm.*;
 
 public abstract class DelegatingClassBuilder implements ClassBuilder {
     @NotNull
@@ -55,6 +52,14 @@ public abstract class DelegatingClassBuilder implements ClassBuilder {
             @Nullable String[] exceptions
     ) {
         return getDelegate().newMethod(origin, access, name, desc, signature, exceptions);
+    }
+
+    @NotNull
+    @Override
+    public RecordComponentVisitor newRecordComponent(
+            @NotNull String name, @NotNull String desc, @Nullable String signature
+    ) {
+        return getDelegate().newRecordComponent(name, desc, signature);
     }
 
     @NotNull
@@ -99,6 +104,11 @@ public abstract class DelegatingClassBuilder implements ClassBuilder {
     }
 
     @Override
+    public void visitSMAP(@NotNull SourceMapper smap, boolean backwardsCompatibleSyntax) {
+        getDelegate().visitSMAP(smap, backwardsCompatibleSyntax);
+    }
+
+    @Override
     public void visitOuterClass(@NotNull String owner, @Nullable String name, @Nullable String desc) {
         getDelegate().visitOuterClass(owner, name, desc);
     }
@@ -112,10 +122,5 @@ public abstract class DelegatingClassBuilder implements ClassBuilder {
     @Override
     public String getThisName() {
         return getDelegate().getThisName();
-    }
-
-    @Override
-    public void addSMAP(FileMapping mapping) {
-        getDelegate().addSMAP(mapping);
     }
 }

@@ -2,7 +2,7 @@
 // It doesn't work on JS due to how numbers are represented, but it could be changed in the future.
 // IGNORE_BACKEND: JS
 // IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND_FIR: JVM_IR
+// IGNORE_BACKEND: JS_IR_ES6
 
 fun <A: Double, B: Any> eq_double_any(a: A, b: B) = a == b
 

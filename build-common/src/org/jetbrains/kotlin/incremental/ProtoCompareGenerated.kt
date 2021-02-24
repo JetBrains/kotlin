@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("UNUSED_PARAMETER")
+
 package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
@@ -206,6 +208,11 @@ open class ProtoCompareGenerated(
             if (!checkStringEquals(old.getExtension(JvmProtoBuf.anonymousObjectOriginName), new.getExtension(JvmProtoBuf.anonymousObjectOriginName))) return false
         }
 
+        if (old.hasExtension(JvmProtoBuf.jvmClassFlags) != new.hasExtension(JvmProtoBuf.jvmClassFlags)) return false
+        if (old.hasExtension(JvmProtoBuf.jvmClassFlags)) {
+            if (old.getExtension(JvmProtoBuf.jvmClassFlags) != new.getExtension(JvmProtoBuf.jvmClassFlags)) return false
+        }
+
         if (old.getExtensionCount(JsProtoBuf.classAnnotation) != new.getExtensionCount(JsProtoBuf.classAnnotation)) {
             return false
         }
@@ -264,6 +271,7 @@ open class ProtoCompareGenerated(
         JVM_EXT_CLASS_MODULE_NAME,
         JVM_EXT_CLASS_LOCAL_VARIABLE_LIST,
         JVM_EXT_ANONYMOUS_OBJECT_ORIGIN_NAME,
+        JVM_EXT_JVM_CLASS_FLAGS,
         JS_EXT_CLASS_ANNOTATION_LIST,
         JS_EXT_CLASS_CONTAINING_FILE_ID,
         JAVA_EXT_IS_PACKAGE_PRIVATE_CLASS,
@@ -330,6 +338,11 @@ open class ProtoCompareGenerated(
         if (old.hasExtension(JvmProtoBuf.anonymousObjectOriginName) != new.hasExtension(JvmProtoBuf.anonymousObjectOriginName)) result.add(ProtoBufClassKind.JVM_EXT_ANONYMOUS_OBJECT_ORIGIN_NAME)
         if (old.hasExtension(JvmProtoBuf.anonymousObjectOriginName)) {
             if (!checkStringEquals(old.getExtension(JvmProtoBuf.anonymousObjectOriginName), new.getExtension(JvmProtoBuf.anonymousObjectOriginName))) result.add(ProtoBufClassKind.JVM_EXT_ANONYMOUS_OBJECT_ORIGIN_NAME)
+        }
+
+        if (old.hasExtension(JvmProtoBuf.jvmClassFlags) != new.hasExtension(JvmProtoBuf.jvmClassFlags)) result.add(ProtoBufClassKind.JVM_EXT_JVM_CLASS_FLAGS)
+        if (old.hasExtension(JvmProtoBuf.jvmClassFlags)) {
+            if (old.getExtension(JvmProtoBuf.jvmClassFlags) != new.getExtension(JvmProtoBuf.jvmClassFlags)) result.add(ProtoBufClassKind.JVM_EXT_JVM_CLASS_FLAGS)
         }
 
         if (old.getExtensionCount(JsProtoBuf.classAnnotation) != new.getExtensionCount(JsProtoBuf.classAnnotation)) {
@@ -1733,6 +1746,10 @@ fun ProtoBuf.Class.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) ->
 
     if (hasExtension(JvmProtoBuf.anonymousObjectOriginName)) {
         hashCode = 31 * hashCode + stringIndexes(getExtension(JvmProtoBuf.anonymousObjectOriginName))
+    }
+
+    if (hasExtension(JvmProtoBuf.jvmClassFlags)) {
+        hashCode = 31 * hashCode + getExtension(JvmProtoBuf.jvmClassFlags)
     }
 
     for(i in 0..getExtensionCount(JsProtoBuf.classAnnotation) - 1) {

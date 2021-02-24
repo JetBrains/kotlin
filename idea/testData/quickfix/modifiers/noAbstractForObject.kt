@@ -9,3 +9,4 @@ interface T {
 }
 
 object <caret>Some : T
+/* FIR_COMPARISON */

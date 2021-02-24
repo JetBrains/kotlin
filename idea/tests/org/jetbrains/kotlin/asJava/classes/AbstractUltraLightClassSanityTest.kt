@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.asJava.classes
 
 import com.intellij.testFramework.LightProjectDescriptor
+import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.perf.UltraLightChecker
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
@@ -25,6 +26,10 @@ abstract class AbstractUltraLightClassSanityTest : KotlinLightCodeInsightFixture
         val file = myFixture.addFileToProject(testDataPath, sourceText) as KtFile
 
         UltraLightChecker.checkForReleaseCoroutine(sourceText, module)
+
+        if (file.safeIsScript()) {
+            ScriptConfigurationManager.updateScriptDependenciesSynchronously(file)
+        }
 
         UltraLightChecker.checkClassEquivalence(file)
     }

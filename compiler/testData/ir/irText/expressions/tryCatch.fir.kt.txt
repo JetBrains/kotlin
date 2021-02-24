@@ -1,0 +1,20 @@
+fun test1() {
+  try println()
+  catch (e: Throwable)println()
+  finally println()
+}
+
+fun test2(): Int {
+  return try { // BLOCK
+    println()
+    42
+  }
+  catch (e: Throwable){ // BLOCK
+    println()
+    24
+  }
+  finally { // BLOCK
+    println()
+    555
+  }
+}

@@ -26,140 +26,52 @@ public interface IrClassOrBuilder extends
   int getName();
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.ClassKind kind = 3;</code>
-   */
-  boolean hasKind();
-  /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.ClassKind kind = 3;</code>
-   */
-  org.jetbrains.kotlin.backend.common.serialization.proto.ClassKind getKind();
-
-  /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Visibility visibility = 4;</code>
-   */
-  boolean hasVisibility();
-  /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Visibility visibility = 4;</code>
-   */
-  org.jetbrains.kotlin.backend.common.serialization.proto.Visibility getVisibility();
-
-  /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.ModalityKind modality = 5;</code>
-   */
-  boolean hasModality();
-  /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.ModalityKind modality = 5;</code>
-   */
-  org.jetbrains.kotlin.backend.common.serialization.proto.ModalityKind getModality();
-
-  /**
-   * <code>required bool is_companion = 6;</code>
-   *
-   * <pre>
-   * TODO: consider using flags for the booleans.
-   * </pre>
-   */
-  boolean hasIsCompanion();
-  /**
-   * <code>required bool is_companion = 6;</code>
-   *
-   * <pre>
-   * TODO: consider using flags for the booleans.
-   * </pre>
-   */
-  boolean getIsCompanion();
-
-  /**
-   * <code>required bool is_inner = 7;</code>
-   */
-  boolean hasIsInner();
-  /**
-   * <code>required bool is_inner = 7;</code>
-   */
-  boolean getIsInner();
-
-  /**
-   * <code>required bool is_data = 8;</code>
-   */
-  boolean hasIsData();
-  /**
-   * <code>required bool is_data = 8;</code>
-   */
-  boolean getIsData();
-
-  /**
-   * <code>required bool is_external = 9;</code>
-   */
-  boolean hasIsExternal();
-  /**
-   * <code>required bool is_external = 9;</code>
-   */
-  boolean getIsExternal();
-
-  /**
-   * <code>required bool is_inline = 10;</code>
-   */
-  boolean hasIsInline();
-  /**
-   * <code>required bool is_inline = 10;</code>
-   */
-  boolean getIsInline();
-
-  /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter this_receiver = 11;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter this_receiver = 3;</code>
    */
   boolean hasThisReceiver();
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter this_receiver = 11;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter this_receiver = 3;</code>
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter getThisReceiver();
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameterContainer type_parameters = 12;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter type_parameter = 4;</code>
    */
-  boolean hasTypeParameters();
+  java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter> 
+      getTypeParameterList();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameterContainer type_parameters = 12;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter type_parameter = 4;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameterContainer getTypeParameters();
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter getTypeParameter(int index);
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter type_parameter = 4;</code>
+   */
+  int getTypeParameterCount();
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationContainer declaration_container = 13;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration declaration = 5;</code>
    */
-  boolean hasDeclarationContainer();
+  java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration> 
+      getDeclarationList();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationContainer declaration_container = 13;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration declaration = 5;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationContainer getDeclarationContainer();
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration getDeclaration(int index);
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration declaration = 5;</code>
+   */
+  int getDeclarationCount();
 
   /**
-   * <code>repeated int32 super_type = 14;</code>
+   * <code>repeated int32 super_type = 6 [packed = true];</code>
    */
   java.util.List<java.lang.Integer> getSuperTypeList();
   /**
-   * <code>repeated int32 super_type = 14;</code>
+   * <code>repeated int32 super_type = 6 [packed = true];</code>
    */
   int getSuperTypeCount();
   /**
-   * <code>repeated int32 super_type = 14;</code>
+   * <code>repeated int32 super_type = 6 [packed = true];</code>
    */
   int getSuperType(int index);
-
-  /**
-   * <code>required bool is_expect = 15;</code>
-   */
-  boolean hasIsExpect();
-  /**
-   * <code>required bool is_expect = 15;</code>
-   */
-  boolean getIsExpect();
-
-  /**
-   * <code>required bool is_fun = 16;</code>
-   */
-  boolean hasIsFun();
-  /**
-   * <code>required bool is_fun = 16;</code>
-   */
-  boolean getIsFun();
 }

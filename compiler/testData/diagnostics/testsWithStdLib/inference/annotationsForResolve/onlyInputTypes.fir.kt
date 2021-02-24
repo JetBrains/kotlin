@@ -3,7 +3,7 @@
 // !WITH_NEW_INFERENCE
 
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
-public fun <@kotlin.internal.OnlyInputTypes T> Iterable<T>.contains1(element: T): Boolean = null!!
+public fun <<!HIDDEN!>@kotlin.internal.OnlyInputTypes<!> T> Iterable<T>.contains1(element: T): Boolean = null!!
 
 class In<in T>
 

@@ -4,8 +4,6 @@ plugins {
     id("jps-compatible")
 }
 
-jvmTarget = "1.6"
-
 dependencies {
     compile(project(":kotlin-scripting-common"))
     compileOnly(project(":compiler:backend.js"))

@@ -6,23 +6,26 @@
 package org.jetbrains.kotlin.daemon.client.experimental
 
 import io.ktor.network.sockets.Socket
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.daemon.client.CompileServiceSessionAsync
-import org.jetbrains.kotlin.daemon.client.KotlinCompilerDaemonClient
 import org.jetbrains.kotlin.daemon.client.DaemonReportMessage
 import org.jetbrains.kotlin.daemon.client.DaemonReportingTargets
+import org.jetbrains.kotlin.daemon.client.KotlinCompilerDaemonClient
+import org.jetbrains.kotlin.daemon.client.launchProcessWithFallback
 import org.jetbrains.kotlin.daemon.common.*
-import org.jetbrains.kotlin.daemon.common.Profiler
 import org.jetbrains.kotlin.daemon.common.experimental.*
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.ServerSocketWrapper
-import org.jetbrains.kotlin.daemon.common.*
 import java.io.File
 import java.io.Serializable
 import java.net.SocketException
 import java.nio.channels.ClosedChannelException
+import java.nio.file.Files
 import java.rmi.ConnectException
 import java.rmi.ConnectIOException
 import java.rmi.UnmarshalException
@@ -30,7 +33,6 @@ import java.util.concurrent.Semaphore
 import java.util.concurrent.TimeUnit
 import java.util.logging.Logger
 import kotlin.concurrent.thread
-import org.jetbrains.kotlin.daemon.client.launchProcessWithFallback
 
 
 class KotlinCompilerClient : KotlinCompilerDaemonClient {
@@ -296,13 +298,13 @@ class KotlinCompilerClient : KotlinCompilerDaemonClient {
                     log.info("Executing daemon compilation with args: " + filteredArgs.joinToString(" "))
                     val servicesFacade =
                         CompilerCallbackServicesFacadeServerServerSide()
-                    val serverRun = servicesFacade.runServer()
+                    servicesFacade.runServer()
                     try {
                         val memBefore = daemon.getUsedMemory().get() / 1024
                         val startTime = System.nanoTime()
 
                         val compResults = createCompResults()
-                        val compResultsServerRun = compResults.runServer()
+                        compResults.runServer()
                         val res = daemon.compile(
                             CompileService.NO_SESSION,
                             filteredArgs.toList().toTypedArray(),
@@ -372,7 +374,6 @@ class KotlinCompilerClient : KotlinCompilerDaemonClient {
 
     // --- Implementation ---------------------------------------
 
-    @Synchronized
     private inline fun <R> connectLoop(reportingTargets: DaemonReportingTargets, autostart: Boolean, body: (Boolean) -> R?): R? {
         try {
             var attempts = 1
@@ -422,7 +423,7 @@ class KotlinCompilerClient : KotlinCompilerDaemonClient {
         report: (DaemonReportCategory, String) -> Unit
     ): Deferred<Pair<CompileServiceAsync?, DaemonJVMOptions>> = GlobalScope.async {
         registryDir.mkdirs()
-        val timestampMarker = createTempFile("kotlin-daemon-client-tsmarker", directory = registryDir)
+        val timestampMarker = Files.createTempFile(registryDir.toPath(), "kotlin-daemon-client-tsmarker", null).toFile()
         val aliveWithMetadata = try {
             walkDaemonsAsync(registryDir, compilerId, timestampMarker, report = report)
         } finally {
@@ -543,6 +544,7 @@ class KotlinCompilerClient : KotlinCompilerDaemonClient {
             // assuming that all important output is already done, the rest should be routed to the log by the daemon itself
             if (stdoutThread.isAlive) {
                 // TODO: find better method to stop the thread, but seems it will require asynchronous consuming of the stream
+                @Suppress("DEPRECATION")
                 stdoutThread.stop()
             }
             reportingTargets.out?.flush()

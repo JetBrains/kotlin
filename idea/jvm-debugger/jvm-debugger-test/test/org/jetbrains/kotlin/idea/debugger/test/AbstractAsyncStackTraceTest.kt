@@ -9,11 +9,9 @@ import com.intellij.debugger.engine.AsyncStackTraceProvider
 import com.intellij.debugger.engine.JavaValue
 import com.intellij.debugger.memory.utils.StackFrameItem
 import com.intellij.execution.process.ProcessOutputTypes
-import com.intellij.openapi.extensions.Extensions
-import io.ktor.util.findAllSupertypes
-import org.jetbrains.kotlin.idea.debugger.coroutine.CoroutineAsyncStackTraceProvider
+import org.jetbrains.kotlin.idea.debugger.coroutine.util.CoroutineFrameBuilder
+import org.jetbrains.kotlin.idea.debugger.coroutine.util.isPreFlight
 import org.jetbrains.kotlin.idea.debugger.test.preference.DebuggerPreferences
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.getSafe
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -27,19 +25,17 @@ abstract class AbstractAsyncStackTraceTest : KotlinDescriptorTestCaseWithSteppin
     }
 
     override fun doMultiFileTest(files: TestFiles, preferences: DebuggerPreferences) {
-        val asyncStackTraceProvider = getAsyncStackTraceProvider()
-        if (asyncStackTraceProvider == null) {
-            finish()
-            return
-        }
-
         doOnBreakpoint {
             val frameProxy = this.frameProxy
             if (frameProxy != null) {
                 try {
-                    val stackTrace = asyncStackTraceProvider.getAsyncStackTraceSafe(frameProxy, this)
-                    if (stackTrace != null && stackTrace.isNotEmpty()) {
-                        print(renderAsyncStackTrace(stackTrace), ProcessOutputTypes.SYSTEM)
+                    val sem = frameProxy.location().isPreFlight()
+                    val coroutineInfoData = if (sem.isCoroutineFound())
+                        CoroutineFrameBuilder.lookupContinuation(this, frameProxy, sem)?.coroutineInfoData
+                    else
+                        null
+                    if (coroutineInfoData != null && coroutineInfoData.stackTrace.isNotEmpty()) {
+                        print(renderAsyncStackTrace(coroutineInfoData.stackTrace), ProcessOutputTypes.SYSTEM)
                     } else {
                         println("No async stack trace available", ProcessOutputTypes.SYSTEM)
                     }
@@ -56,23 +52,6 @@ abstract class AbstractAsyncStackTraceTest : KotlinDescriptorTestCaseWithSteppin
         }
     }
 
-    private fun getAsyncStackTraceProvider(): CoroutineAsyncStackTraceProvider? {
-        val area = Extensions.getArea(null)
-        if (!area.hasExtensionPoint(ASYNC_STACKTRACE_EP_NAME)) {
-            System.err.println("$ASYNC_STACKTRACE_EP_NAME extension point is not found (probably old IDE version)")
-            return null
-        }
-
-        val extensionPoint = area.getExtensionPoint<Any>(ASYNC_STACKTRACE_EP_NAME)
-        val provider = extensionPoint.extensions.firstIsInstanceOrNull<CoroutineAsyncStackTraceProvider>()
-
-        if (provider == null) {
-            System.err.println("Kotlin coroutine async stack trace provider is not found")
-        }
-
-        return provider
-    }
-
     private fun Throwable.stackTraceAsString(): String {
         val writer = StringWriter()
         printStackTrace(PrintWriter(writer))
@@ -80,9 +59,9 @@ abstract class AbstractAsyncStackTraceTest : KotlinDescriptorTestCaseWithSteppin
     }
 
     private fun renderAsyncStackTrace(trace: List<StackFrameItem>) = buildString {
-        appendln("Async stack trace:")
+        appendLine("Async stack trace:")
         for (item in trace) {
-            append(MARGIN).appendln(item.toString())
+            append(MARGIN).appendLine(item.toString())
             val declaredFields = listDeclaredFields(item.javaClass)
 
             @Suppress("UNCHECKED_CAST")
@@ -98,7 +77,7 @@ abstract class AbstractAsyncStackTraceTest : KotlinDescriptorTestCaseWithSteppin
                     val name = descriptor.calcValueName()
                     val value = descriptor.calcValue(evaluationContext)
 
-                    append(MARGIN).append(MARGIN).append(name).append(" = ").appendln(value)
+                    append(MARGIN).append(MARGIN).append(name).append(" = ").appendLine(value)
                 }
             }
         }

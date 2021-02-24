@@ -14,3 +14,5 @@ fun y(o: Any) {
     val list = o as List<A>
     val (x, y) = list[0]
 }
+// DISABLE-ERRORS
+// FIR_IGNORE

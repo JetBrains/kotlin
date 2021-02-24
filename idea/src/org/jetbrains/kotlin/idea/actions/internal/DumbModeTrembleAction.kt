@@ -16,6 +16,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.util.TimeoutUtil
+import org.jetbrains.kotlin.idea.KotlinBundle
 import java.util.*
 import kotlin.random.Random
 
@@ -39,7 +40,10 @@ class DumbModeTrembleAction : DumbAwareAction() {
         }
 
         val isTrembleDumb = isTrembleDumb(project)
-        e.presentation.text = if (isTrembleDumb) "Disable Tremble Dumb Mode" else "Enable Tremble Dumb Mode"
+        e.presentation.text = if (isTrembleDumb)
+            KotlinBundle.message("disable.tremble.dumb.mode")
+        else
+            KotlinBundle.message("enable.tremble.dumb.mode")
     }
 
     companion object {

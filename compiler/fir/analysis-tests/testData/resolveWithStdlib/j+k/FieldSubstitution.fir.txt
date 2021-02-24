@@ -1,0 +1,11 @@
+FILE: Derived.kt
+    public final class Derived : R|JavaClass<kotlin/String>| {
+        public constructor(): R|Derived| {
+            super<R|JavaClass<kotlin/String>|>()
+        }
+
+        public final fun test(): R|kotlin/Unit| {
+            this@R|/Derived|.R|SubstitutionOverride</Derived.myHost>|.R|kotlin/String.length|
+        }
+
+    }

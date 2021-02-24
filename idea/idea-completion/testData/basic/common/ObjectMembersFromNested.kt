@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 object O {
     fun foo() {}
 

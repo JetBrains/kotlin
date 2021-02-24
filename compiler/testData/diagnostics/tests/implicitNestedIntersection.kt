@@ -8,7 +8,7 @@ open class B : In<B>
 
 fun <T> select(x: T, y: T) = x
 
-fun <!OI;IMPLICIT_INTERSECTION_TYPE!>foo2<!>() = select(A(), B()) // Type "In<A & B>" is prohibited in return position
+fun <!IMPLICIT_INTERSECTION_TYPE{OI}!>foo2<!>() = select(A(), B()) // Type "In<A & B>" is prohibited in return position
 
 
 
@@ -21,4 +21,4 @@ open class H : In<H>
 
 fun <S> select8(a: S, b: S, c: S, d: S, e: S, f: S, g: S, h: S) = a
 
-fun <!OI;IMPLICIT_INTERSECTION_TYPE!>foo8<!>() = select8(A(), B(), C(), D(), E(), F(), G(), H())
+fun <!IMPLICIT_INTERSECTION_TYPE{OI}!>foo8<!>() = select8(A(), B(), C(), D(), E(), F(), G(), H())

@@ -8,13 +8,13 @@ public interface IrStatementOrBuilder extends
     org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Coordinates coordinates = 1;</code>
+   * <code>required int64 coordinates = 1;</code>
    */
   boolean hasCoordinates();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Coordinates coordinates = 1;</code>
+   * <code>required int64 coordinates = 1;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.Coordinates getCoordinates();
+  long getCoordinates();
 
   /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration declaration = 2;</code>

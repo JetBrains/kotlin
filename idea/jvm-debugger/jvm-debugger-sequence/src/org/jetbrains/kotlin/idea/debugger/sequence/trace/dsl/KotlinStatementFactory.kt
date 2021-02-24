@@ -11,6 +11,7 @@ import com.intellij.debugger.streams.trace.dsl.impl.TextExpression
 import com.intellij.debugger.streams.trace.dsl.impl.VariableImpl
 import com.intellij.debugger.streams.trace.impl.handler.type.GenericType
 import com.intellij.debugger.streams.wrapper.IntermediateStreamCall
+import org.jetbrains.annotations.NonNls
 
 class KotlinStatementFactory(private val peekCallFactory: PeekCallFactory) : StatementFactory {
     override fun createNewListExpression(elementType: GenericType, vararg args: Expression): Expression =
@@ -87,6 +88,8 @@ class KotlinStatementFactory(private val peekCallFactory: PeekCallFactory) : Sta
 
     override fun createNewArrayExpression(elementType: GenericType, vararg args: Expression): Expression {
         val arguments = args.joinToString { it.toCode() }
+
+        @NonNls
         val text = when (elementType) {
             types.BOOLEAN -> "kotlin.booleanArrayOf($arguments)"
             KotlinSequenceTypes.BYTE -> "kotlin.byteArrayOf($arguments)"

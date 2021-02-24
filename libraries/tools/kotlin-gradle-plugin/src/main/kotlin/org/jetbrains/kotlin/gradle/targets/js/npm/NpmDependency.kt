@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
@@ -15,15 +15,18 @@ import org.gradle.api.internal.artifacts.ResolvableDependency
 import org.gradle.api.internal.artifacts.dependencies.SelfResolvingDependencyInternal
 import org.gradle.api.tasks.TaskDependency
 import org.gradle.internal.component.local.model.DefaultLibraryBinaryIdentifier
-import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.PACKAGE_JSON
+import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
 import java.io.File
 
 data class NpmDependency(
-    internal val project: Project,
+    @Transient
+    internal val project: Project?,
     private val name: String,
     private val version: String,
-    val scope: Scope = Scope.NORMAL
+    val scope: Scope = Scope.NORMAL,
+    val generateExternals: Boolean = false
 ) : SelfResolvingDependency,
     SelfResolvingDependencyInternal,
     ResolvableDependency,
@@ -43,59 +46,20 @@ data class NpmDependency(
     internal var resolvedVersion: String? = null
     internal var integrity: String? = null
 
-    fun getDependenciesRecursively(): Set<NpmDependency> {
-        val visited = mutableSetOf<NpmDependency>()
-
-        fun visit(it: NpmDependency) {
-            if (!visited.add(it)) return
-
-            it.dependencies.forEach { child ->
-                visit(child)
+    override fun resolve(transitive: Boolean): Set<File> =
+        resolveProject()
+            ?.let {
+                it
+                    .npmProject
+                    .nodeJs
+                    .packageManager
+                    .resolveDependency(
+                        it,
+                        this,
+                        transitive
+                    )
             }
-        }
-
-        visit(this)
-
-        return visited
-    }
-
-    override fun resolve(transitive: Boolean): Set<File> {
-        val npmPackage = resolveProject() ?: return mutableSetOf()
-        val npmProject = npmPackage.npmProject
-
-        val all = mutableSetOf<File>()
-        val visited = mutableSetOf<NpmDependency>()
-
-        fun visit(item: NpmDependency) {
-            if (item in visited) return
-            visited.add(item)
-
-            npmProject.resolve(item.key)?.let {
-                if (it.isFile) all.add(it)
-                if (it.path.endsWith(".js")) {
-                    val baseName = it.path.removeSuffix(".js")
-                    val metaJs = File(baseName + ".meta.js")
-                    if (metaJs.isFile) all.add(metaJs)
-                    val kjsmDir = File(baseName)
-                    if (kjsmDir.isDirectory) {
-                        kjsmDir.walkTopDown()
-                            .filter { it.extension == "kjsm" }
-                            .forEach { all.add(it) }
-                    }
-                }
-            }
-
-            if (transitive) {
-                item.dependencies.forEach {
-                    visit(it)
-                }
-            }
-        }
-
-        visit(this)
-
-        return all
-    }
+            ?: mutableSetOf()
 
     override fun resolve(): MutableSet<File> {
         val npmPackage = parent?.resolveProject()
@@ -118,7 +82,7 @@ data class NpmDependency(
     // (it can be called since NpmDependency added to configuration that
     // requires resolve to build package.json, in this case we should just skip this call)
     private fun resolveProject(): KotlinCompilationNpmResolution? {
-        val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
+        val nodeJs = NodeJsRootPlugin.apply(project!!.rootProject)
         return nodeJs.npmResolutionManager.getNpmDependencyResolvedCompilation(this)
     }
 
@@ -126,7 +90,7 @@ data class NpmDependency(
 
     override fun toString() = "$key: $version"
 
-    override fun getFiles(): FileCollection = project.files(resolve(true))
+    override fun getFiles(): FileCollection = project!!.files(resolve(true))
 
     override fun getName() = name
 
@@ -136,7 +100,7 @@ data class NpmDependency(
 
     override fun contentEquals(dependency: Dependency) = this == dependency
 
-    override fun getTargetComponentId() = DefaultLibraryBinaryIdentifier(project.path, key, "npm")
+    override fun getTargetComponentId() = DefaultLibraryBinaryIdentifier(project!!.path, key, "npm")
 
     override fun copy(): Dependency = this.copy(name = name)
 
@@ -148,3 +112,47 @@ data class NpmDependency(
 
     override fun getReason(): String? = reason
 }
+
+internal fun directoryNpmDependency(
+    project: Project,
+    name: String,
+    directory: File,
+    scope: NpmDependency.Scope,
+    generateExternals: Boolean
+): NpmDependency {
+    check(directory.isDirectory) {
+        "Dependency on local path should point on directory but $directory found"
+    }
+
+    return NpmDependency(
+        project = project,
+        name = name,
+        version = fileVersion(directory),
+        scope = scope,
+        generateExternals = generateExternals
+    )
+}
+
+internal fun onlyNameNpmDependency(
+    name: String
+): Nothing {
+    throw IllegalArgumentException("NPM dependency '$name' doesn't have version. Please, set version explicitly.")
+}
+
+fun String.isFileVersion() =
+    startsWith(FILE_VERSION_PREFIX)
+
+internal fun fileVersion(directory: File): String =
+    "$FILE_VERSION_PREFIX${directory.canonicalPath}"
+
+internal fun moduleName(directory: File): String {
+    val packageJson = directory.resolve(PACKAGE_JSON)
+
+    if (packageJson.isFile) {
+        return fromSrcPackageJson(packageJson)!!.name
+    }
+
+    return directory.name
+}
+
+const val FILE_VERSION_PREFIX = "file:"

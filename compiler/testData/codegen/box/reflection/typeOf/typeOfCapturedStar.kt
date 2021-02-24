@@ -1,8 +1,10 @@
 // !USE_EXPERIMENTAL: kotlin.ExperimentalStdlibApi
 // !LANGUAGE: +NewInference
-// IGNORE_BACKEND_FIR: JVM_IR
 // IGNORE_BACKEND: JS, JS_IR
+// IGNORE_BACKEND: JS_IR_ES6
 // WITH_REFLECT
+
+package test
 
 import kotlin.reflect.typeOf
 import kotlin.reflect.KClass
@@ -33,7 +35,7 @@ fun box(): String {
     }
     val (w, f) = bar(q) // T should be inferred to KFunction<Captured(*)> and should be approximated to KFunction<Any>, not KFunction<*>
 
-    val expected = "KFunction<kotlin.Any>"
+    val expected = "test.KFunction<kotlin.Any>"
     if (w.toString() != expected) return "Fail 1: $w"
     if (typeOfValue(f).toString() != expected) return "Fail 2: $f"
     return "OK"

@@ -6,15 +6,15 @@
 package org.jetbrains.kotlin.idea.compiler.configuration;
 
 import com.intellij.icons.AllIcons;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.TextComponentAccessor;
-import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.openapi.ui.*;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.ui.RawCommandLineEditor;
@@ -33,44 +33,43 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments;
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants;
 import org.jetbrains.kotlin.config.*;
+import org.jetbrains.kotlin.idea.PluginStartupApplicationService;
 import org.jetbrains.kotlin.idea.KotlinBundle;
-import org.jetbrains.kotlin.idea.PluginStartupService;
 import org.jetbrains.kotlin.idea.facet.DescriptionListCellRenderer;
 import org.jetbrains.kotlin.idea.facet.KotlinFacet;
-import org.jetbrains.kotlin.idea.project.NewInferenceForIDEAnalysisComponent;
 import org.jetbrains.kotlin.idea.roots.RootUtilsKt;
 import org.jetbrains.kotlin.idea.util.CidrUtil;
 import org.jetbrains.kotlin.idea.util.application.ApplicationUtilsKt;
 import org.jetbrains.kotlin.platform.IdePlatformKind;
 import org.jetbrains.kotlin.platform.PlatformUtilKt;
+import org.jetbrains.kotlin.platform.TargetPlatform;
 import org.jetbrains.kotlin.platform.impl.JsIdePlatformUtil;
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind;
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformUtil;
-import org.jetbrains.kotlin.config.JvmTarget;
 import org.jetbrains.kotlin.platform.jvm.JdkPlatform;
-import org.jetbrains.kotlin.platform.TargetPlatform;
 
 import javax.swing.*;
 import java.util.*;
+import java.util.List;
 
 public class KotlinCompilerConfigurableTab implements SearchableConfigurable {
     private static final Map<String, String> moduleKindDescriptions = new LinkedHashMap<>();
-    private static final Map<String, String> soruceMapSourceEmbeddingDescriptions = new LinkedHashMap<>();
-    private static final List<LanguageFeature.State> languageFeatureStates = Arrays.asList(
-            LanguageFeature.State.ENABLED, LanguageFeature.State.ENABLED_WITH_WARNING, LanguageFeature.State.ENABLED_WITH_ERROR
-    );
+    private static final Map<String, String> sourceMapSourceEmbeddingDescriptions = new LinkedHashMap<>();
     private static final int MAX_WARNING_SIZE = 75;
 
-    static {
-        moduleKindDescriptions.put(K2JsArgumentConstants.MODULE_PLAIN, "Plain (put to global scope)");
-        moduleKindDescriptions.put(K2JsArgumentConstants.MODULE_AMD, "AMD");
-        moduleKindDescriptions.put(K2JsArgumentConstants.MODULE_COMMONJS, "CommonJS");
-        moduleKindDescriptions.put(K2JsArgumentConstants.MODULE_UMD, "UMD (detect AMD or CommonJS if available, fallback to plain)");
+    private static final Disposable validatorsDisposable = Disposer.newDisposable();
 
-        soruceMapSourceEmbeddingDescriptions.put(K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_NEVER, "Never");
-        soruceMapSourceEmbeddingDescriptions.put(K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_ALWAYS, "Always");
-        soruceMapSourceEmbeddingDescriptions.put(K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_INLINING,
-                                                 "When inlining a function from other module with embedded sources");
+    static {
+        moduleKindDescriptions.put(K2JsArgumentConstants.MODULE_PLAIN, KotlinBundle.message("configuration.description.plain.put.to.global.scope"));
+        moduleKindDescriptions.put(K2JsArgumentConstants.MODULE_AMD, KotlinBundle.message("configuration.description.amd"));
+        moduleKindDescriptions.put(K2JsArgumentConstants.MODULE_COMMONJS, KotlinBundle.message("configuration.description.commonjs"));
+        moduleKindDescriptions.put(K2JsArgumentConstants.MODULE_UMD, KotlinBundle.message("configuration.description.umd.detect.amd.or.commonjs.if.available.fallback.to.plain"));
+
+        sourceMapSourceEmbeddingDescriptions
+                .put(K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_NEVER, KotlinBundle.message("configuration.description.never"));
+        sourceMapSourceEmbeddingDescriptions
+                .put(K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_ALWAYS, KotlinBundle.message("configuration.description.always"));
+        sourceMapSourceEmbeddingDescriptions.put(K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_INLINING, KotlinBundle.message("configuration.description.when.inlining.a.function.from.other.module.with.embedded.sources"));
     }
 
     @Nullable
@@ -97,23 +96,17 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable {
     private JComboBox moduleKindComboBox;
     private JTextField scriptTemplatesField;
     private JTextField scriptTemplatesClasspathField;
-    private JLabel scriptTemplatesLabel;
-    private JLabel scriptTemplatesClasspathLabel;
     private JPanel k2jvmPanel;
     private JPanel k2jsPanel;
     private JComboBox jvmVersionComboBox;
     private JComboBox<VersionView> languageVersionComboBox;
-    private JComboBox coroutineSupportComboBox;
     private JComboBox<VersionView> apiVersionComboBox;
     private JPanel scriptPanel;
     private JLabel labelForOutputPrefixFile;
     private JLabel labelForOutputPostfixFile;
     private JLabel warningLabel;
     private JTextField sourceMapPrefix;
-    private JLabel labelForSourceMapPrefix;
     private JComboBox sourceMapEmbedSources;
-    private JPanel coroutinesPanel;
-    private ThreeStateCheckBox enableNewInferenceInIDECheckBox;
     private boolean isEnabled = true;
 
     public KotlinCompilerConfigurableTab(
@@ -142,7 +135,6 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable {
         additionalArgsOptionsField.attachLabel(additionalArgsLabel);
 
         fillLanguageAndAPIVersionList();
-        fillCoroutineSupportList();
 
         if (CidrUtil.isRunningInCidrIde()) {
             keepAliveCheckBox.setVisible(false);
@@ -154,7 +146,6 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable {
         }
 
         reportWarningsCheckBox.setThirdStateEnabled(isMultiEditor);
-        enableNewInferenceInIDECheckBox.setThirdStateEnabled(isMultiEditor);
 
         if (isProjectSettings) {
             List<String> modulesOverridingProjectSettings = ArraysKt.mapNotNull(
@@ -189,13 +180,13 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable {
 
     private void initializeNonCidrSettings(boolean isMultiEditor) {
         setupFileChooser(labelForOutputPrefixFile, outputPrefixFile,
-                         KotlinBundle.message("kotlin.compiler.js.option.output.prefix.browse.title"),
+                         KotlinBundle.message("configuration.title.kotlin.compiler.js.option.output.prefix.browse.title"),
                          true);
         setupFileChooser(labelForOutputPostfixFile, outputPostfixFile,
-                         KotlinBundle.message("kotlin.compiler.js.option.output.postfix.browse.title"),
+                         KotlinBundle.message("configuration.title.kotlin.compiler.js.option.output.postfix.browse.title"),
                          true);
         setupFileChooser(labelForOutputDirectory, outputDirectory,
-                         "Choose Output Directory",
+                         KotlinBundle.message("configuration.title.choose.output.directory"),
                          false);
 
         fillModuleKindList();
@@ -212,7 +203,6 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable {
             keepAliveCheckBox.setVisible(false);
             k2jvmPanel.setVisible(false);
             enableIncrementalCompilationForJsCheckBox.setVisible(false);
-            enableNewInferenceInIDECheckBox.setVisible(false);
         }
 
         updateOutputDirEnabled();
@@ -233,11 +223,12 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable {
         int nameCountToShow = calculateNameCountToShowInWarning(modulesOverridingProjectSettings);
         int allNamesCount = modulesOverridingProjectSettings.size();
         if (nameCountToShow == 0) {
-            return String.valueOf(allNamesCount) + " modules override project settings";
+            return KotlinBundle.message("configuration.warning.text.modules.override.project.settings", String.valueOf(allNamesCount));
         }
 
         StringBuilder builder = new StringBuilder();
-        builder.append("<html>Following modules override project settings: ");
+        builder.append("<html>");
+        builder.append(KotlinBundle.message("configuration.warning.text.following.modules.override.project.settings")).append(" ");
         CollectionsKt.joinTo(
                 modulesOverridingProjectSettings.subList(0, nameCountToShow),
                 builder,
@@ -254,7 +245,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable {
                 }
         );
         if (nameCountToShow < allNamesCount) {
-            builder.append(" and ").append(allNamesCount - nameCountToShow).append(" other(s)");
+            builder.append(" ").append(KotlinBundle.message("configuration.text.and")).append(" ").append(allNamesCount - nameCountToShow).append(" ").append(KotlinBundle.message("configuration.text.other.s"));
         }
         return builder.toString();
     }
@@ -270,7 +261,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable {
     @NotNull
     private static String getSourceMapSourceEmbeddingDescription(@Nullable String sourceMapSourceEmbeddingId) {
         if (sourceMapSourceEmbeddingId == null) return "";
-        String result = soruceMapSourceEmbeddingDescriptions.get(sourceMapSourceEmbeddingId);
+        String result = sourceMapSourceEmbeddingDescriptions.get(sourceMapSourceEmbeddingId);
         assert result != null : "Source map source embedding mode " + sourceMapSourceEmbeddingId +
                                 " was not added to combobox, therefore it should not be here";
         return result;
@@ -330,9 +321,9 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable {
         return VersionComparatorUtil.compare(version.getVersionString(), upperBound.getVersionString()) <= 0;
     }
 
-    public void onLanguageLevelChanged(VersionView languageLevel) {
+    public void onLanguageLevelChanged(@Nullable VersionView languageLevel) {
+        if (languageLevel == null) return;
         restrictAPIVersions(languageLevel);
-        coroutinesPanel.setVisible(languageLevel.getVersion().compareTo(LanguageVersion.KOTLIN_1_3) < 0);
     }
 
     @SuppressWarnings("unchecked")
@@ -362,7 +353,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable {
     @SuppressWarnings("unchecked")
     private void fillJvmVersionList() {
         for (TargetPlatform jvm : JvmIdePlatformKind.INSTANCE.getPlatforms()) {
-            jvmVersionComboBox.addItem(PlatformUtilKt.subplatformOfType(jvm, JdkPlatform.class).getTargetVersion().getDescription());
+            jvmVersionComboBox.addItem(PlatformUtilKt.subplatformsOfType(jvm, JdkPlatform.class).get(0).getTargetVersion().getDescription());
         }
     }
 
@@ -371,7 +362,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable {
         apiVersionComboBox.addItem(VersionView.LatestStable.INSTANCE);
 
         for (LanguageVersion version : LanguageVersion.values()) {
-            if (version.isUnsupported() || !version.isStable() && !ApplicationManager.getApplication().isInternal()) {
+            if (version.isUnsupported() || !LanguageVersionSettingsKt.isStableOrReadyForPreview(version) && !ApplicationManager.getApplication().isInternal()) {
                 continue;
             }
 
@@ -381,14 +372,6 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable {
         }
         languageVersionComboBox.setRenderer(new DescriptionListCellRenderer());
         apiVersionComboBox.setRenderer(new DescriptionListCellRenderer());
-    }
-
-    @SuppressWarnings("unchecked")
-    private void fillCoroutineSupportList() {
-        for (LanguageFeature.State coroutineSupport : languageFeatureStates) {
-            coroutineSupportComboBox.addItem(coroutineSupport);
-        }
-        coroutineSupportComboBox.setRenderer(new DescriptionListCellRenderer());
     }
 
     public void setTargetPlatform(@Nullable IdePlatformKind<?> targetPlatform) {
@@ -411,7 +394,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable {
 
     @SuppressWarnings("unchecked")
     private void fillSourceMapSourceEmbeddingList() {
-        for (String moduleKind : soruceMapSourceEmbeddingDescriptions.keySet()) {
+        for (String moduleKind : sourceMapSourceEmbeddingDescriptions.keySet()) {
             sourceMapEmbedSources.addItem(moduleKind);
         }
         sourceMapEmbedSources.setRenderer(new ListCellRendererWrapper<String>() {
@@ -443,10 +426,8 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable {
     @Override
     public boolean isModified() {
         return isModified(reportWarningsCheckBox, !commonCompilerArguments.getSuppressWarnings()) ||
-               isModified(enableNewInferenceInIDECheckBox, NewInferenceForIDEAnalysisComponent.isEnabled(project)) ||
                !getSelectedLanguageVersionView().equals(KotlinFacetSettingsKt.getLanguageVersionView(commonCompilerArguments)) ||
                !getSelectedAPIVersionView().equals(KotlinFacetSettingsKt.getApiVersionView(commonCompilerArguments)) ||
-               !getSelectedCoroutineState().equals(commonCompilerArguments.getCoroutinesState()) ||
                !additionalArgsOptionsField.getText().equals(compilerSettings.getAdditionalArguments()) ||
                isModified(scriptTemplatesField, compilerSettings.getScriptTemplates()) ||
                isModified(scriptTemplatesClasspathField, compilerSettings.getScriptTemplatesClasspath()) ||
@@ -494,22 +475,6 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable {
         return item != null ? (VersionView) item : VersionView.LatestStable.INSTANCE;
     }
 
-    @NotNull
-    private String getSelectedCoroutineState() {
-        if (getSelectedLanguageVersionView().getVersion().compareTo(LanguageVersion.KOTLIN_1_3) >= 0) {
-            return CommonCompilerArguments.DEFAULT;
-        }
-
-        LanguageFeature.State state = (LanguageFeature.State) coroutineSupportComboBox.getSelectedItem();
-        if (state == null) return CommonCompilerArguments.DEFAULT;
-        switch (state) {
-            case ENABLED: return CommonCompilerArguments.ENABLE;
-            case ENABLED_WITH_WARNING: return CommonCompilerArguments.WARN;
-            case ENABLED_WITH_ERROR: return CommonCompilerArguments.ERROR;
-            default: return CommonCompilerArguments.DEFAULT;
-        }
-    }
-
     public void applyTo(
             CommonCompilerArguments commonCompilerArguments,
             K2JVMCompilerArguments k2jvmCompilerArguments,
@@ -520,9 +485,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable {
             boolean shouldInvalidateCaches =
                     !getSelectedLanguageVersionView().equals(KotlinFacetSettingsKt.getLanguageVersionView(commonCompilerArguments)) ||
                     !getSelectedAPIVersionView().equals(KotlinFacetSettingsKt.getApiVersionView(commonCompilerArguments)) ||
-                    !getSelectedCoroutineState().equals(commonCompilerArguments.getCoroutinesState()) ||
-                    !additionalArgsOptionsField.getText().equals(compilerSettings.getAdditionalArguments()) ||
-                    enableNewInferenceInIDECheckBox.isSelected() != NewInferenceForIDEAnalysisComponent.isEnabled(project);
+                    !additionalArgsOptionsField.getText().equals(compilerSettings.getAdditionalArguments());
 
             if (shouldInvalidateCaches) {
                 ApplicationUtilsKt.runWriteAction(
@@ -538,11 +501,8 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable {
         }
 
         commonCompilerArguments.setSuppressWarnings(!reportWarningsCheckBox.isSelected());
-        NewInferenceForIDEAnalysisComponent.setEnabled(project, enableNewInferenceInIDECheckBox.isSelected());
         KotlinFacetSettingsKt.setLanguageVersionView(commonCompilerArguments, getSelectedLanguageVersionView());
         KotlinFacetSettingsKt.setApiVersionView(commonCompilerArguments, getSelectedAPIVersionView());
-
-        commonCompilerArguments.setCoroutinesState(getSelectedCoroutineState());
 
         compilerSettings.setAdditionalArguments(additionalArgsOptionsField.getText());
         compilerSettings.setScriptTemplates(scriptTemplatesField.getText());
@@ -557,7 +517,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable {
             boolean oldEnableDaemon = compilerWorkspaceSettings.getEnableDaemon();
             compilerWorkspaceSettings.setEnableDaemon(keepAliveCheckBox.isSelected());
             if (keepAliveCheckBox.isSelected() != oldEnableDaemon) {
-                PluginStartupService.getInstance().resetAliveFlag();
+                PluginStartupApplicationService.getInstance().resetAliveFlag();
             }
         }
 
@@ -567,7 +527,8 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable {
         k2jsCompilerArguments.setModuleKind(getSelectedModuleKind());
 
         k2jsCompilerArguments.setSourceMapPrefix(sourceMapPrefix.getText());
-        k2jsCompilerArguments.setSourceMapEmbedSources(generateSourceMapsCheckBox.isSelected() ? getSelectedSourceMapSourceEmbedding() : null);
+        k2jsCompilerArguments
+                .setSourceMapEmbedSources(generateSourceMapsCheckBox.isSelected() ? getSelectedSourceMapSourceEmbedding() : null);
 
         k2jvmCompilerArguments.setJvmTarget(getSelectedJvmVersion());
 
@@ -591,11 +552,9 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable {
     @Override
     public void reset() {
         reportWarningsCheckBox.setSelected(!commonCompilerArguments.getSuppressWarnings());
-        enableNewInferenceInIDECheckBox.setSelected(NewInferenceForIDEAnalysisComponent.isEnabled(project));
-        languageVersionComboBox.setSelectedItem(KotlinFacetSettingsKt.getLanguageVersionView(commonCompilerArguments));
-        onLanguageLevelChanged(getSelectedLanguageVersionView());
-        apiVersionComboBox.setSelectedItem(KotlinFacetSettingsKt.getApiVersionView(commonCompilerArguments));
-        coroutineSupportComboBox.setSelectedItem(CoroutineSupport.byCompilerArguments(commonCompilerArguments));
+        setSelectedItem(languageVersionComboBox, KotlinFacetSettingsKt.getLanguageVersionView(commonCompilerArguments));
+        onLanguageLevelChanged((VersionView) languageVersionComboBox.getSelectedItem()); // getSelectedLanguageVersionView() replaces null
+        setSelectedItem(apiVersionComboBox, KotlinFacetSettingsKt.getApiVersionView(commonCompilerArguments));
         additionalArgsOptionsField.setText(compilerSettings.getAdditionalArguments());
         scriptTemplatesField.setText(compilerSettings.getScriptTemplates());
         scriptTemplatesClasspathField.setText(compilerSettings.getScriptTemplatesClasspath());
@@ -620,6 +579,15 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable {
         jvmVersionComboBox.setSelectedItem(getJvmVersionOrDefault(k2jvmCompilerArguments.getJvmTarget()));
     }
 
+    private static void setSelectedItem(JComboBox<VersionView> comboBox, VersionView versionView) {
+        // Imported projects might have outdated language/api versions - we display them as well (see createVersionValidator() for details)
+        int index = ((DefaultComboBoxModel<VersionView>) comboBox.getModel()).getIndexOf(versionView);
+        if (index == -1)
+            comboBox.addItem(versionView);
+
+        comboBox.setSelectedItem(versionView);
+    }
+
     @Override
     public void disposeUIResources() {
     }
@@ -627,7 +595,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable {
     @Nls
     @Override
     public String getDisplayName() {
-        return "Kotlin Compiler";
+        return KotlinBundle.message("configuration.name.kotlin.compiler");
     }
 
     @Nullable
@@ -642,10 +610,6 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable {
 
     public ThreeStateCheckBox getReportWarningsCheckBox() {
         return reportWarningsCheckBox;
-    }
-
-    public ThreeStateCheckBox getEnableNewInferenceInIDECheckBox() {
-        return enableNewInferenceInIDECheckBox;
     }
 
     public RawCommandLineEditor getAdditionalArgsOptionsField() {
@@ -696,10 +660,6 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable {
         return apiVersionComboBox;
     }
 
-    public JComboBox getCoroutineSupportComboBox() {
-        return coroutineSupportComboBox;
-    }
-
     public void setEnabled(boolean value) {
         isEnabled = value;
         UIUtil.setEnabled(getContentPane(), value, true);
@@ -738,6 +698,13 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable {
     }
 
     private void createUIComponents() {
+        // Explicit use of DefaultComboBoxModel guarantees that setSelectedItem() can make safe cast.
+        languageVersionComboBox = new ComboBox<>(new DefaultComboBoxModel<>());
+        apiVersionComboBox = new ComboBox<>(new DefaultComboBoxModel<>());
+
+        createVersionValidator(languageVersionComboBox, "configuration.warning.text.language.version.unsupported");
+        createVersionValidator(apiVersionComboBox, "configuration.warning.text.api.version.unsupported");
+
         // Workaround: ThreeStateCheckBox doesn't send suitable notification on state change
         // TODO: replace with PropertyChangerListener after fix is available in IDEA
         copyRuntimeFilesCheckBox = new ThreeStateCheckBox() {
@@ -747,5 +714,20 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable {
                 updateOutputDirEnabled();
             }
         };
+    }
+
+    private static void createVersionValidator(JComboBox<VersionView> component, String messageKey) {
+        new ComponentValidator(validatorsDisposable)
+                .withValidator(() -> {
+                    VersionView selectedItem = (VersionView) component.getSelectedItem();
+                    if (selectedItem == null) return null;
+
+                    LanguageVersion version = selectedItem.getVersion();
+                    if (version.isUnsupported())
+                        return new ValidationInfo(KotlinBundle.message(messageKey, version.getVersionString()), component);
+
+                    return null;
+                }).installOn(component);
+        component.addActionListener(e -> ComponentValidator.getInstance(component).ifPresent(ComponentValidator::revalidate));
     }
 }

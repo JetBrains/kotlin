@@ -1,0 +1,28 @@
+const val I0: Int
+  field = 0
+  get
+
+const val I1: Int
+  field = 1
+  get
+
+const val I2: Int
+  field = 2
+  get
+
+const val STR1: String
+  field = "String1"
+  get
+
+const val STR2: String
+  field = "String2"
+  get
+
+const val STR3: String
+  field = "String1String2"
+  get
+
+const val STR4: String
+  field = "String1String2"
+  get
+

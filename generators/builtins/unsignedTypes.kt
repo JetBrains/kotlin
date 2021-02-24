@@ -42,7 +42,6 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
         out.println("import kotlin.experimental.*")
         out.println()
 
-        out.println("@Suppress(\"NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS\")")
         out.println("@SinceKotlin(\"1.3\")")
         out.println("@ExperimentalUnsignedTypes")
         out.println("public inline class $className @PublishedApi internal constructor(@PublishedApi internal val data: $storageType) : Comparable<$className> {")
@@ -176,9 +175,15 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
 
         fun generateShiftOperator(name: String, implementation: String = name) {
             val doc = GeneratePrimitives.shiftOperators[implementation]!!
-            out.println("    /** $doc */")
+            val detail = GeneratePrimitives.shiftOperatorsDocDetail(type.asSigned)
+            out.println("    /**")
+            out.println("     * $doc")
+            out.println("     *")
+            out.println(detail.replaceIndent("     "))
+            out.println("     */")
             out.println("    @kotlin.internal.InlineOnly")
             out.println("    public inline infix fun $name(bitCount: Int): $className = $className(data $implementation bitCount)")
+            out.println()
         }
 
         generateShiftOperator("shl")
@@ -417,7 +422,6 @@ class UnsignedArrayGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIn
         out.println("@SinceKotlin(\"1.3\")")
         out.println("@ExperimentalUnsignedTypes")
         out.println("public inline class $arrayType")
-        out.println("@Suppress(\"NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS\")")
         out.println("@PublishedApi")
         out.println("internal constructor(@PublishedApi internal val storage: $storageArrayType) : Collection<$elementType> {")
         out.println(
@@ -458,6 +462,7 @@ class UnsignedArrayGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIn
     override fun contains(element: $elementType): Boolean {
         // TODO: Eliminate this check after KT-30016 gets fixed.
         // Currently JS BE does not generate special bridge method for this method.
+        @Suppress("USELESS_CAST")
         if ((element as Any?) !is $elementType) return false
 
         return storage.contains(element.to$storageElementType())

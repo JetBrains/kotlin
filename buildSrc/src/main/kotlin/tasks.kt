@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 
@@ -31,10 +20,61 @@ import java.lang.Character.isUpperCase
 import java.nio.file.Files
 import java.nio.file.Path
 
+val kotlinGradlePluginAndItsRequired = arrayOf(
+    ":kotlin-allopen",
+    ":kotlin-noarg",
+    ":kotlin-sam-with-receiver",
+    ":kotlin-android-extensions",
+    ":kotlin-parcelize-compiler",
+    ":kotlin-build-common",
+    ":kotlin-compiler-embeddable",
+    ":native:kotlin-native-utils",
+    ":kotlin-util-klib",
+    ":kotlin-util-io",
+    ":kotlin-compiler-runner",
+    ":kotlin-daemon-embeddable",
+    ":kotlin-daemon-client",
+    ":kotlin-gradle-plugin-api",
+    ":kotlin-gradle-plugin",
+    ":kotlin-gradle-plugin-model",
+    ":kotlin-reflect",
+    ":kotlin-annotation-processing-gradle",
+    ":kotlin-test",
+    ":kotlin-gradle-subplugin-example",
+    ":kotlin-stdlib-common",
+    ":kotlin-stdlib",
+    ":kotlin-stdlib-jdk8",
+    ":kotlin-stdlib-js",
+    ":examples:annotation-processor-example",
+    ":kotlin-script-runtime",
+    ":kotlin-scripting-common",
+    ":kotlin-scripting-jvm",
+    ":kotlin-scripting-compiler-embeddable",
+    ":kotlin-scripting-compiler-impl-embeddable",
+    ":kotlin-test-js-runner",
+    ":native:kotlin-klib-commonizer-embeddable",
+    ":native:kotlin-klib-commonizer-api"
+)
+
+fun Task.dependsOnKotlinGradlePluginInstall() {
+    kotlinGradlePluginAndItsRequired.forEach {
+        dependsOn("${it}:install")
+    }
+}
+
+fun Task.dependsOnKotlinGradlePluginPublish() {
+    kotlinGradlePluginAndItsRequired.forEach {
+        project.rootProject.tasks.findByPath("${it}:publish")?.let { task ->
+            dependsOn(task)
+        }
+    }
+}
+
 fun Project.projectTest(
     taskName: String = "test",
     parallel: Boolean = false,
     shortenTempRootName: Boolean = false,
+    jUnit5Enabled: Boolean = false,
     body: Test.() -> Unit = {}
 ): TaskProvider<Test> = getOrCreateTask(taskName) {
     doFirst {
@@ -68,32 +108,48 @@ fun Project.projectTest(
                 }
             }
 
-            include {
-                val path = it.path
-                if (it.isDirectory) {
+            val parentNames = if (jUnit5Enabled) {
+                /*
+                 * If we run test from inner test class with junit 5 we need
+                 *   to include all containing classes of our class
+                 */
+                val nestedNames = classFileNameWithoutExtension.split("$")
+                mutableListOf(nestedNames.first()).also {
+                    for (s in nestedNames.subList(1, nestedNames.size)) {
+                        it += "${it.last()}\$$s"
+                    }
+                }
+            } else emptyList()
+
+            include { treeElement ->
+                val path = treeElement.path
+                if (treeElement.isDirectory) {
                     classFileNameWithoutExtension.startsWith(path)
                 } else {
-                    path == classFileName || (path.endsWith(".class") && path.startsWith("$classFileNameWithoutExtension$"))
+                    if (jUnit5Enabled) {
+                        path == classFileName || (path.endsWith(".class") && parentNames.any { path.startsWith(it) })
+                    } else {
+                        path == classFileName || (path.endsWith(".class") && path.startsWith("$classFileNameWithoutExtension$"))
+                    }
                 }
             }
         }
     }
 
-    doFirst {
-        val agent = tasks.findByPath(":test-instrumenter:jar")!!.outputs.files.singleFile
-
-        val args = project.findProperty("kotlin.test.instrumentation.args")?.let { "=$it" }.orEmpty()
-
-        jvmArgs("-javaagent:$agent$args")
+    if (project.findProperty("kotlin.test.instrumentation.disable")?.toString()?.toBoolean() != true) {
+        doFirst {
+            val agent = tasks.findByPath(":test-instrumenter:jar")!!.outputs.files.singleFile
+            val args = project.findProperty("kotlin.test.instrumentation.args")?.let { "=$it" }.orEmpty()
+            jvmArgs("-javaagent:$agent$args")
+        }
+        dependsOn(":test-instrumenter:jar")
     }
-
-    dependsOn(":test-instrumenter:jar")
 
     jvmArgs(
         "-ea",
         "-XX:+HeapDumpOnOutOfMemoryError",
         "-XX:+UseCodeCacheFlushing",
-        "-XX:ReservedCodeCacheSize=128m",
+        "-XX:ReservedCodeCacheSize=256m",
         "-Djna.nosys=true"
     )
 
@@ -106,10 +162,15 @@ fun Project.projectTest(
     environment("PROJECT_BUILD_DIR", buildDir)
     systemProperty("jps.kotlin.home", rootProject.extra["distKotlinHomeDir"]!!)
     systemProperty("kotlin.ni", if (rootProject.hasProperty("newInferenceTests")) "true" else "false")
+    systemProperty("org.jetbrains.kotlin.skip.muted.tests", if (rootProject.hasProperty("skipMutedTests")) "true" else "false")
+
+    if (Platform[202].orHigher()) {
+        systemProperty("idea.ignore.disabled.plugins", "true")
+    }
 
     var subProjectTempRoot: Path? = null
     doFirst {
-        val teamcity = rootProject.findProperty("teamcity") as? Map<Any?, *>
+        val teamcity = rootProject.findProperty("teamcity") as? Map<*, *>
         val systemTempRoot =
             // TC by default doesn't switch `teamcity.build.tempDir` to 'java.io.tmpdir' so it could cause to wasted disk space
             // Should be fixed soon on Teamcity side
@@ -135,7 +196,7 @@ fun Project.projectTest(
     if (parallel) {
         maxParallelForks =
             project.findProperty("kotlin.test.maxParallelForks")?.toString()?.toInt()
-                ?: Math.max(Runtime.getRuntime().availableProcessors() / if (kotlinBuildProperties.isTeamcityBuild) 2 else 4, 1)
+                ?: (Runtime.getRuntime().availableProcessors() / if (kotlinBuildProperties.isTeamcityBuild) 2 else 4).coerceAtLeast(1)
     }
     body()
 }
@@ -153,6 +214,10 @@ object TaskUtils {
 
     fun useAndroidJar(task: Task) {
         task.useAndroidConfiguration(systemPropertyName = "android.jar", configName = "androidJar")
+    }
+
+    fun useAndroidEmulator(task: Task) {
+        task.useAndroidConfiguration(systemPropertyName = "android.sdk", configName = "androidEmulator")
     }
 }
 

@@ -1,0 +1,8 @@
+package
+
+public fun foo(/*0*/ x: kotlin.Array<kotlin.Int>): kotlin.Unit
+public fun foo(/*0*/ vararg x: kotlin.Int? /*kotlin.Array<out kotlin.Int?>*/): kotlin.Unit
+public fun foo(/*0*/ nn: kotlin.Array<out kotlin.Number>): kotlin.Unit
+public fun foo(/*0*/ vararg nn: kotlin.Number /*kotlin.Array<out kotlin.Number>*/): kotlin.Unit
+public fun foo(/*0*/ vararg x: kotlin.Int /*kotlin.IntArray*/): kotlin.Unit
+public fun foo(/*0*/ x: kotlin.IntArray): kotlin.Unit

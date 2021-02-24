@@ -15,14 +15,17 @@ import com.intellij.openapi.externalSystem.util.Order
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.util.Consumer
 import org.gradle.tooling.model.idea.IdeaModule
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.gradle.KotlinMPPGradleModel
 import org.jetbrains.kotlin.gradle.KotlinMPPGradleModelBuilder
 import org.jetbrains.kotlin.idea.configuration.getMppModel
 import org.jetbrains.plugins.gradle.service.project.AbstractProjectResolverExtension
+import org.jetbrains.plugins.gradle.service.project.GradleProjectResolverExtension
 
 @Order(Int.MIN_VALUE)
 open class KotlinTestTasksResolver : AbstractProjectResolverExtension() {
     companion object {
+        @NonNls
         private const val ENABLED_REGISTRY_KEY = "kotlin.gradle.testing.enabled"
     }
 
@@ -53,7 +56,7 @@ open class KotlinTestTasksResolver : AbstractProjectResolverExtension() {
     ): MutableCollection<TaskData> {
         val testTaskNames = mutableSetOf<String>().apply {
             mppModel.targets.forEach { target ->
-                target.testTasks.forEach { testTaskModel ->
+                target.testRunTasks.forEach { testTaskModel ->
                     add(testTaskModel.taskName)
                 }
             }
@@ -80,6 +83,32 @@ open class KotlinTestTasksResolver : AbstractProjectResolverExtension() {
         replacementMap.values.forEach { ideModule.createChild(ProjectKeys.TASK, it) }
 
         return originalTaskData.mapTo(arrayListOf<TaskData>()) { replacementMap[it] ?: it }
+    }
+
+    override fun enhanceTaskProcessing(
+        taskNames: MutableList<String>,
+        initScriptConsumer: Consumer<String>,
+        parameters: MutableMap<String, String>
+    ) {
+        if (!Registry.`is`(ENABLED_REGISTRY_KEY))
+            return
+
+        val testExecutionExpected = parameters[GradleProjectResolverExtension.TEST_EXECUTION_EXPECTED_KEY]
+
+        if (java.lang.Boolean.valueOf(testExecutionExpected)) {
+            try {
+                val addTestListenerScript = javaClass
+                    .getResourceAsStream("/org/jetbrains/kotlin/idea/gradle/testing/addKotlinMppTestListener.groovy")
+                    .bufferedReader()
+                    .readText()
+                initScriptConsumer.consume(addTestListenerScript)
+            } catch (e: Exception) {
+                LOG.error(e)
+            }
+        }
+
+        val jvmParametersSetup = parameters[GradleProjectResolverExtension.JVM_PARAMETERS_SETUP_KEY]
+        enhanceTaskProcessing(taskNames, jvmParametersSetup, initScriptConsumer)
     }
 
     override fun enhanceTaskProcessing(taskNames: MutableList<String>, jvmAgentSetup: String?, initScriptConsumer: Consumer<String>) {

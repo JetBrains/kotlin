@@ -20,7 +20,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation;
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation;
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer;
@@ -41,7 +41,7 @@ public abstract class AbstractModuleXmlParserTest extends TestCase {
         ModuleChunk result = ModuleXmlParser.parseModuleScript(xmlPath, new MessageCollector() {
             @Override
             public void report(
-                    @NotNull CompilerMessageSeverity severity, @NotNull String message, @Nullable CompilerMessageLocation location
+                    @NotNull CompilerMessageSeverity severity, @NotNull String message, @Nullable CompilerMessageSourceLocation location
             ) {
                 throw new AssertionError(MessageRenderer.PLAIN_FULL_PATHS.render(severity, message, location));
             }

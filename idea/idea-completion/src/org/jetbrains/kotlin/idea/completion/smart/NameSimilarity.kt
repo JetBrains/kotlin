@@ -20,7 +20,7 @@ object NameSimilarityWeigher : LookupElementWeigher("kotlin.nameSimilarity") {
 }
 
 fun calcNameSimilarity(name: String, expectedInfos: Collection<ExpectedInfo>): Int =
-    expectedInfos.mapNotNull { it.expectedName }.map { calcNameSimilarity(name, it) }.max() ?: 0
+    expectedInfos.mapNotNull { it.expectedName }.maxOfOrNull { calcNameSimilarity(name, it) } ?: 0
 
 private fun calcNameSimilarity(name: String, expectedName: String): Int {
     val words1 = NameUtil.nameToWordsLowerCase(name)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -19,6 +19,7 @@ import com.intellij.refactoring.rename.inplace.MyLookupExpression
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.references.mainReference
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import org.jetbrains.kotlin.idea.references.resolveToDescriptors
 
 class MapPlatformClassToKotlinFix(
     element: KtReferenceExpression,
@@ -41,13 +43,16 @@ class MapPlatformClassToKotlinFix(
         val platformClassQualifiedName = DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(platformClass.defaultType)
         val singleClass = possibleClasses.singleOrNull()
         return if (singleClass != null)
-            "Change all usages of '$platformClassQualifiedName' in this file to '${DescriptorRenderer.FQ_NAMES_IN_TYPES
-                .renderType(singleClass.defaultType)}'"
+            KotlinBundle.message(
+                "change.all.usages.of.0.in.this.file.to.1",
+                platformClassQualifiedName,
+                DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(singleClass.defaultType)
+            )
         else
-            "Change all usages of '$platformClassQualifiedName' in this file to a Kotlin class"
+            KotlinBundle.message("change.all.usages.of.0.in.this.file.to.a.kotlin.class", platformClassQualifiedName)
     }
 
-    override fun getFamilyName() = "Change to Kotlin class"
+    override fun getFamilyName() = KotlinBundle.message("change.to.kotlin.class")
 
     public override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val bindingContext = file.analyzeWithContent()
@@ -121,8 +126,14 @@ class MapPlatformClassToKotlinFix(
         caretModel.moveToOffset(file.node.startOffset)
 
         val builder = TemplateBuilderImpl(file)
-        val expression =
-            MyLookupExpression(primaryReplacedExpression.text, options, null, null, false, "Choose an appropriate Kotlin class")
+        val expression = MyLookupExpression(
+            primaryReplacedExpression.text,
+            options,
+            null,
+            null,
+            false,
+            KotlinBundle.message("choose.an.appropriate.kotlin.class")
+        )
 
         builder.replaceElement(primaryReplacedExpression, PRIMARY_USAGE, expression, true)
         for (replacedExpression in replacedElements) {

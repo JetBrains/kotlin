@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.rendering.RenderingContext
 import org.jetbrains.kotlin.diagnostics.rendering.SmartTypeRenderer
 import org.jetbrains.kotlin.diagnostics.rendering.asRenderer
+import org.jetbrains.kotlin.idea.KotlinIdeaAnalysisBundle
 import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.RenderingFormat
@@ -67,10 +68,10 @@ fun renderResolvedCall(resolvedCall: ResolvedCall<*>, context: RenderingContext)
         val typeParameters = resolvedCall.candidateDescriptor.typeParameters
         val (inferredTypeParameters, notInferredTypeParameters) = typeParameters.partition(TypeParameterDescriptor::isInferred)
 
-        append("<br/>$indent<i>where</i> ")
+        append("<br/>$indent<i>${KotlinIdeaAnalysisBundle.message("type.parameters.where")}</i> ")
         if (notInferredTypeParameters.isNotEmpty()) {
             append(notInferredTypeParameters.joinToString { typeParameter -> renderError(typeParameter.name) })
-            append("<i> cannot be inferred</i>")
+            append("<i> ${KotlinIdeaAnalysisBundle.message("cannot.be.inferred")}</i>")
             if (inferredTypeParameters.isNotEmpty()) {
                 append("; ")
             }
@@ -95,14 +96,14 @@ fun renderResolvedCall(resolvedCall: ResolvedCall<*>, context: RenderingContext)
 
     if (resolvedCall.candidateDescriptor.typeParameters.isNotEmpty()) {
         appendTypeParametersSubstitution()
-        append("<i> for </i><br/>$indent")
+        append(KotlinIdeaAnalysisBundle.message("i.for.i.br.0", indent))
         // candidate descriptor is not in context of the rest of the message
         append(descriptorRenderer.render(resolvedCall.candidateDescriptor, RenderingContext.of(resolvedCall.candidateDescriptor)))
     } else {
-        append(" <i>defined in</i> ")
+        append(" <i>${KotlinIdeaAnalysisBundle.message("defined.in")}</i> ")
         val containingDeclaration = resultingDescriptor.containingDeclaration
         val fqName = DescriptorUtils.getFqName(containingDeclaration)
-        append(if (fqName.isRoot) "root package" else fqName.asString())
+        append(if (fqName.isRoot) KotlinIdeaAnalysisBundle.message("root.package") else fqName.asString())
     }
     return stringBuilder.toString()
 }

@@ -8,6 +8,6 @@ fun <T> takeIt(x: T, f: SubFunction) {}
 fun cr() {}
 
 fun test() {
-    <!INAPPLICABLE_CANDIDATE!>takeIt<!>(42, ::cr)
+    <!INAPPLICABLE_CANDIDATE!>takeIt<!>(42, <!UNRESOLVED_REFERENCE!>::cr<!>)
     <!INAPPLICABLE_CANDIDATE!>takeIt<!>(42, { })
 }

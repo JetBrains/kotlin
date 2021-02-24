@@ -37,43 +37,40 @@ class KotlinFilePathReferenceContributor : PsiReferenceContributor() {
             if (element !is KtStringTemplateExpression) return PsiReference.EMPTY_ARRAY
             if (!element.isPlain()) return PsiReference.EMPTY_ARRAY
             val refByElem = getReferencesByElement(element, element.plainContent, element.getContentRange().startOffset, true)
-            val res = refByElem
-                .map {
-                    if (it is FileReference) {
-                        object : FileReference(it.fileReferenceSet, it.rangeInElement, it.index, it.text) {
-                            override fun getVariants(): Array<out Any> {
-                                return super.getVariants()
-                                    .map {
-                                        (it as? LookupElement)?.apply {
-                                            putUserData(KotlinCompletionCharFilter.SUPPRESS_ITEM_SELECTION_BY_CHARS_ON_TYPING, Unit)
-                                        } ?: it
-                                    }
-                                    .toTypedArray()
-                            }
-
-                            // Note: this is a hack that prevents IDE from renaming paths in string literals when doing move.
-                            // TODO: find another way of doing this (that may need re-implementing move files refactoring using .java move)
-                            override fun getLastFileReference() = null
-
-                            override fun bindToElement(element: PsiElement): PsiElement {
-                                return rename(element.text)
-                            }
-
-                            override fun bindToElement(element: PsiElement, absolute: Boolean): PsiElement {
-                                return rename(element.text)
-                            }
-                        }
-                    } else it
-                }
-                .toTypedArray()
-            return res
+            return refByElem.map { if (it is FileReference) FixedFileReference(it) else it }.toTypedArray()
         }
     }
 
     override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) {
         registrar.registerReferenceProvider(
             PlatformPatterns.psiElement(KtStringTemplateExpression::class.java),
-            KotlinFilePathReferenceProvider
+            KotlinFilePathReferenceProvider,
         )
     }
+}
+
+private class FixedFileReference(fileReference: FileReference) : FileReference(fileReference) {
+    override fun getVariants(): Array<out Any> {
+        val variants = super.getVariants()
+
+        variants.forEach {
+            if (it is LookupElement) {
+                it.putUserData(KotlinCompletionCharFilter.SUPPRESS_ITEM_SELECTION_BY_CHARS_ON_TYPING, Unit)
+            }
+        }
+
+        return variants
+    }
+
+    /**
+     * We have a bug that turns file references in code like `"."` and `".."` into `""` during file move because .kt files
+     * are moved by [org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.KotlinAwareMoveFilesOrDirectoriesProcessor],
+     * which is an extender of [com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesProcessor]. It uses
+     * this method to obtain the referenced file, and if it's null, it will not try to replace the reference to it.
+     *
+     * However, this is a hack, because there are probably some usages where this reference should not be null.
+     *
+     * TODO Try to resolve this issue again when IDEA-232942 is resolved (maybe this won't be an issue anymore)
+     */
+    override fun getLastFileReference(): FileReference? = null
 }

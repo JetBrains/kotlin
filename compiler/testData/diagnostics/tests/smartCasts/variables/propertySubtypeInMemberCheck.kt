@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 fun bar(s: Any): Int {
     return s.hashCode()
 }

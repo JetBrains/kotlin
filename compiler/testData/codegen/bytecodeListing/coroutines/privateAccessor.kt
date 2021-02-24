@@ -1,6 +1,5 @@
 // WITH_RUNTIME
-// COMMON_COROUTINES_TEST
-import COROUTINES_PACKAGE.*
+import kotlin.coroutines.*
 
 private fun foo() {}
 

@@ -1,3 +1,5 @@
+// FIR_COMPARISON
+
 class Test
 
 val localTest1 = Test() <error>-</error> 12

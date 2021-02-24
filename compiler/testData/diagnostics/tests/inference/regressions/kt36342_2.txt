@@ -1,0 +1,5 @@
+package
+
+public fun </*0*/ K> id(/*0*/ arg: K): K
+public fun </*0*/ M> materialize(): M
+public fun test(/*0*/ b: kotlin.Boolean): kotlin.Unit

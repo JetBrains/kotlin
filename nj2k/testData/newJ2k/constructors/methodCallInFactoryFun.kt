@@ -16,5 +16,4 @@ internal class C(private val arg1: Int, private val arg2: Int, private val arg3:
             return 0
         }
     }
-
 }

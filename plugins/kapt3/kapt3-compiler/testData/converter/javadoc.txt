@@ -57,6 +57,10 @@ public final class B {
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String d = "";
 
+    public B() {
+        super();
+    }
+
     @org.jetbrains.annotations.NotNull()
     public final java.lang.String getA() {
         return null;
@@ -75,9 +79,5 @@ public final class B {
     @org.jetbrains.annotations.NotNull()
     public final java.lang.String getD() {
         return null;
-    }
-
-    public B() {
-        super();
     }
 }

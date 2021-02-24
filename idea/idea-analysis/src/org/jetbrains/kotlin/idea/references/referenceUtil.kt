@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,16 +10,13 @@ import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.builtins.isExtensionFunctionType
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.intentions.OperatorToFunctionIntention
-import org.jetbrains.kotlin.idea.kdoc.KDocReference
 import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
 import org.jetbrains.kotlin.idea.stubindex.KotlinFunctionShortNameIndex
 import org.jetbrains.kotlin.idea.stubindex.KotlinPropertyShortNameIndex
@@ -49,6 +46,26 @@ import org.jetbrains.kotlin.utils.addToStdlib.constant
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.*
+
+@Deprecated("For binary compatibility with AS, see KT-42061", replaceWith = ReplaceWith("mainReference"))
+@get:JvmName("getMainReference")
+val KtSimpleNameExpression.mainReferenceCompat: KtSimpleNameReference
+    get() = mainReference
+
+@Deprecated("For binary compatibility with AS, see KT-42061", replaceWith = ReplaceWith("mainReference"))
+@get:JvmName("getMainReference")
+val KtReferenceExpression.mainReferenceCompat: KtReference
+    get() = mainReference
+
+@Deprecated("For binary compatibility with AS, see KT-42061", replaceWith = ReplaceWith("mainReference"))
+@get:JvmName("getMainReference")
+val KDocName.mainReferenceCompat: KDocReference
+    get() = mainReference
+
+@Deprecated("For binary compatibility with AS, see KT-42061", replaceWith = ReplaceWith("mainReference"))
+@get:JvmName("getMainReference")
+val KtElement.mainReferenceCompat: KtReference?
+    get() = mainReference
 
 // Navigation element of the resolved reference
 // For property accessor return enclosing property
@@ -223,71 +240,28 @@ fun AbstractKtReference<out KtExpression>.renameImplicitConventionalCall(newName
     return newExpression
 }
 
-val KtSimpleNameExpression.mainReference: KtSimpleNameReference
-    get() = references.firstIsInstance()
-
-val KtReferenceExpression.mainReference: KtReference
-    get() = if (this is KtSimpleNameExpression) mainReference else references.firstIsInstance<KtReference>()
-
-val KDocName.mainReference: KDocReference
-    get() = references.firstIsInstance()
-
-val KtElement.mainReference: KtReference?
-    get() = when (this) {
-        is KtReferenceExpression -> mainReference
-        is KDocName -> mainReference
-        else -> references.firstIsInstanceOrNull<KtReference>()
-    }
-
 fun KtElement.resolveMainReferenceToDescriptors(): Collection<DeclarationDescriptor> {
     val bindingContext = analyze(BodyResolveMode.PARTIAL)
     return mainReference?.resolveToDescriptors(bindingContext) ?: emptyList()
 }
 
+fun PsiReference.getImportAlias(): KtImportAlias? {
+    return (this as? KtSimpleNameReference)?.getImportAlias()
+}
+
 // ----------- Read/write access -----------------------------------------------------------------------------------------------------------------------
 
-enum class ReferenceAccess(val isRead: Boolean, val isWrite: Boolean) {
-    READ(true, false), WRITE(false, true), READ_WRITE(true, true)
-}
-
-fun KtExpression.readWriteAccess(useResolveForReadWrite: Boolean) = readWriteAccessWithFullExpression(useResolveForReadWrite).first
-
-fun KtExpression.readWriteAccessWithFullExpression(useResolveForReadWrite: Boolean): Pair<ReferenceAccess, KtExpression> {
-    var expression = getQualifiedExpressionForSelectorOrThis()
-    loop@ while (true) {
-        when (val parent = expression.parent) {
-            is KtParenthesizedExpression, is KtAnnotatedExpression, is KtLabeledExpression -> expression = parent as KtExpression
-            else -> break@loop
-        }
-    }
-
-    val assignment = expression.getAssignmentByLHS()
-    if (assignment != null) {
-        when (assignment.operationToken) {
-            KtTokens.EQ -> return ReferenceAccess.WRITE to assignment
-
-            else -> {
-                if (!useResolveForReadWrite) return ReferenceAccess.READ_WRITE to assignment
-
-                val resolvedCall = assignment.resolveToCall() ?: return ReferenceAccess.READ_WRITE to assignment
-                if (!resolvedCall.isReallySuccess()) return ReferenceAccess.READ_WRITE to assignment
-                return if (resolvedCall.resultingDescriptor.name in OperatorConventions.ASSIGNMENT_OPERATIONS.values)
-                    ReferenceAccess.READ to assignment
-                else
-                    ReferenceAccess.READ_WRITE to assignment
-            }
-        }
-    }
-
-    val unaryExpression = expression.parent as? KtUnaryExpression
-    return if (unaryExpression != null && unaryExpression.operationToken in constant { setOf(KtTokens.PLUSPLUS, KtTokens.MINUSMINUS) })
-        ReferenceAccess.READ_WRITE to unaryExpression
-    else
-        ReferenceAccess.READ to expression
-}
-
 fun KtReference.canBeResolvedViaImport(target: DeclarationDescriptor, bindingContext: BindingContext): Boolean {
-    if (this is KDocReference) return element.getQualifiedName().size == 1
+    if (this is KDocReference) {
+        val qualifier = element.getQualifier() ?: return true
+        return if (target.isExtension) {
+            val elementHasFunctionDescriptor = element.resolveMainReferenceToDescriptors().any { it is FunctionDescriptor }
+            val qualifierHasClassDescriptor = qualifier.resolveMainReferenceToDescriptors().any { it is ClassDescriptor }
+            elementHasFunctionDescriptor && qualifierHasClassDescriptor
+        } else {
+            false
+        }
+    }
     return element.canBeResolvedViaImport(target, bindingContext)
 }
 

@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.GenerationUtils
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
@@ -32,10 +33,12 @@ import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
 import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.test.ConfigurationKind
-import org.jetbrains.kotlin.test.KotlinTestUtils.*
+import org.jetbrains.kotlin.test.KotlinTestUtils.createEnvironmentWithMockJdkAndIdeaAnnotations
+import org.jetbrains.kotlin.test.KotlinTestUtils.newConfiguration
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.test.TestJdkKind
-import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.validateAndCompareDescriptorWithFile
+import org.jetbrains.kotlin.test.util.KtTestUtil
+import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparatorAdaptor.validateAndCompareDescriptorWithFile
 import org.junit.Assert
 import java.io.File
 import java.lang.annotation.Retention
@@ -66,13 +69,15 @@ abstract class AbstractCompileKotlinAgainstJavaTest : TestCaseWithTmpdir() {
 
         val environment = KotlinCoreEnvironment.createForTests(
             testRootDisposable,
-            newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, getAnnotationsJar(), out),
+            newConfiguration(
+                ConfigurationKind.ALL, TestJdkKind.MOCK_JDK,
+                KtTestUtil.getAnnotationsJar(), out),
             EnvironmentConfigFiles.JVM_CONFIG_FILES
         )
 
         environment.configuration.put(JVMConfigurationKeys.USE_JAVAC, true)
         environment.configuration.put(JVMConfigurationKeys.OUTPUT_DIRECTORY, out)
-        environment.registerJavac(emptyList(), bootClasspath = listOf(findMockJdkRtJar()))
+        environment.registerJavac(emptyList(), bootClasspath = listOf(KtTestUtil.findMockJdkRtJar()))
 
         val analysisResult = JvmResolveUtil.analyze(environment)
         val packageView = analysisResult.moduleDescriptor.getPackage(LoadDescriptorUtil.TEST_PACKAGE_FQNAME)
@@ -90,16 +95,21 @@ abstract class AbstractCompileKotlinAgainstJavaTest : TestCaseWithTmpdir() {
         aptMode: Boolean
     ): Boolean {
         val environment = createEnvironmentWithMockJdkAndIdeaAnnotations(disposable)
+        updateConfiguration(environment.configuration)
         environment.configuration.put(JVMConfigurationKeys.USE_JAVAC, true)
         environment.configuration.put(JVMConfigurationKeys.COMPILE_JAVA, true)
         val ktFiles = kotlinFiles.map { kotlinFile: File ->
-            createFile(kotlinFile.name, FileUtil.loadFile(kotlinFile, true), environment.project)
+            KtTestUtil.createFile(
+                kotlinFile.name,
+                FileUtil.loadFile(kotlinFile, true),
+                environment.project
+            )
         }
         environment.registerJavac(
             javaFiles = javaFiles,
             kotlinFiles = ktFiles,
             arguments = if (aptMode) arrayOf() else arrayOf("-proc:none"),
-            bootClasspath = listOf(findMockJdkRtJar())
+            bootClasspath = listOf(KtTestUtil.findMockJdkRtJar())
         )
         ModuleVisibilityManager.SERVICE.getInstance(environment.project).addModule(
             ModuleBuilder("module for test", tmpdir.absolutePath, "test")
@@ -114,6 +124,8 @@ abstract class AbstractCompileKotlinAgainstJavaTest : TestCaseWithTmpdir() {
 
         return JavacWrapper.getInstance(environment.project).use { it.compile(outDir) }
     }
+
+    open fun updateConfiguration(configuration: CompilerConfiguration) {}
 
     companion object {
         // Do not render parameter names because there are test cases where classes inherit from JDK collections,

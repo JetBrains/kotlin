@@ -1,5 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_EXPRESSION
-// JSR305_GLOBAL_REPORT warn
+// JSR305_GLOBAL_REPORT: warn
 
 // FILE: MyNotNull.java
 import javax.annotation.Nonnull;

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 abstract class C {
     fun test(x: Int) {
         if (x == 0) return

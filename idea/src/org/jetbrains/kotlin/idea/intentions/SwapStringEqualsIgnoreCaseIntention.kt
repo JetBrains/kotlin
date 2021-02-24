@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,6 +9,7 @@ import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.moveCaret
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.name.FqName
@@ -18,9 +19,10 @@ import org.jetbrains.kotlin.psi.createExpressionByPattern
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 
-class SwapStringEqualsIgnoreCaseIntention :
-    SelfTargetingRangeIntention<KtDotQualifiedExpression>(KtDotQualifiedExpression::class.java, "Flip 'equals'"), LowPriorityAction {
-
+class SwapStringEqualsIgnoreCaseIntention : SelfTargetingRangeIntention<KtDotQualifiedExpression>(
+    KtDotQualifiedExpression::class.java,
+    KotlinBundle.lazyMessage("flip.equals")
+), LowPriorityAction {
     override fun applicabilityRange(element: KtDotQualifiedExpression): TextRange? {
         val descriptor = element.getCallableDescriptor() ?: return null
 
@@ -45,6 +47,7 @@ class SwapStringEqualsIgnoreCaseIntention :
             receiverExpression,
             valueArguments[1].text
         )
+
         val replacedElement = element.replaced(newElement) as? KtDotQualifiedExpression
         replacedElement?.callExpression?.calleeExpression?.startOffset?.let {
             editor?.moveCaret(it + offset)

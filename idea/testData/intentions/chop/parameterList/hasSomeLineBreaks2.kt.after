@@ -1,6 +1,6 @@
 fun foo(
-        p: Int,
-        c: Char,
-        b: <caret>Boolean
+    p: Int,
+    c: Char,
+    b: <caret>Boolean
 ) {
 }

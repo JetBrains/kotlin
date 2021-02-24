@@ -22,8 +22,10 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isStableSimpleExpression
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.psi.psiUtil.getLastParentOfTypeInRow
@@ -41,7 +43,7 @@ class SurroundWithNullCheckFix(
 
     override fun getFamilyName() = text
 
-    override fun getText() = "Surround with null check"
+    override fun getText() = KotlinBundle.message("surround.with.null.check")
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return
@@ -67,7 +69,7 @@ class SurroundWithNullCheckFix(
             val nullableExpression =
                 when (parent) {
                     is KtDotQualifiedExpression -> parent.receiverExpression
-                    is KtBinaryExpression -> parent.left
+                    is KtBinaryExpression -> if (parent.operationToken == KtTokens.IN_KEYWORD) parent.right else parent.left
                     is KtCallExpression -> parent.calleeExpression
                     else -> return null
                 } as? KtReferenceExpression ?: return null

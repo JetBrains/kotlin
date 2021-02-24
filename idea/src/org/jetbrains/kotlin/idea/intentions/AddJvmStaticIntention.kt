@@ -14,6 +14,7 @@ import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightField
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.util.runSynchronouslyWithProgress
 import org.jetbrains.kotlin.idea.search.restrictByFileType
 import org.jetbrains.kotlin.idea.util.addAnnotation
@@ -31,7 +32,7 @@ import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 
 class AddJvmStaticIntention : SelfTargetingRangeIntention<KtNamedDeclaration>(
     KtNamedDeclaration::class.java,
-    "Add '@JvmStatic' annotation"
+    KotlinBundle.lazyMessage("add.jvmstatic.annotation")
 ), LowPriorityAction {
     private val JvmStaticFqName = FqName("kotlin.jvm.JvmStatic")
     private val JvmFieldFqName = FqName("kotlin.jvm.JvmField")
@@ -63,7 +64,7 @@ class AddJvmStaticIntention : SelfTargetingRangeIntention<KtNamedDeclaration>(
         val project = element.project
 
         val expressionsToReplaceWithQualifier =
-            project.runSynchronouslyWithProgress("Looking for usages in Java files...", true) {
+            project.runSynchronouslyWithProgress(KotlinBundle.message("looking.for.usages.in.java.files"), true) {
                 runReadAction {
                     val searchScope = element.useScope.restrictByFileType(JavaFileType.INSTANCE)
                     ReferencesSearch

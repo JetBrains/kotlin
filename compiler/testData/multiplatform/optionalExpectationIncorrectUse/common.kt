@@ -18,3 +18,10 @@ annotation class InOtherAnnotation(val a: A)
 
 @InOtherAnnotation(A())
 fun useInOtherAnnotation() {}
+
+
+
+expect class C {
+    @OptionalExpectation
+    annotation class Nested
+}

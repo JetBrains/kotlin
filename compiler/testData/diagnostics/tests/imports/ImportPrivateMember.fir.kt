@@ -29,7 +29,7 @@ private object TopLevelObject {
 }
 
 fun testAccess() {
-    <!INAPPLICABLE_CANDIDATE!>NestedClass<!>()
+    <!HIDDEN!>NestedClass<!>()
     E1
     InNested()
     NestedEntry

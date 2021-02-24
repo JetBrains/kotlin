@@ -12,6 +12,8 @@ import java.lang.System;
 
 @kotlin.Metadata()
 public final class NonExistentType {
+    @org.jetbrains.annotations.NotNull()
+    public static final NonExistentType INSTANCE = null;
     @org.jetbrains.annotations.Nullable()
     private static final error.NonExistentClass a = null;
     @org.jetbrains.annotations.Nullable()
@@ -20,19 +22,16 @@ public final class NonExistentType {
     private static final kotlin.jvm.functions.Function1<error.NonExistentClass, kotlin.Unit> c = null;
     @org.jetbrains.annotations.Nullable()
     private static final error.NonExistentClass d = null;
-    @org.jetbrains.annotations.NotNull()
     public static java.lang.String string2;
-    @org.jetbrains.annotations.NotNull()
     public static error.NonExistentClass coocoo;
-    @org.jetbrains.annotations.NotNull()
     public static error.NonExistentClass coocoo2;
-    @org.jetbrains.annotations.NotNull()
     public static error.NonExistentClass coocoo21;
-    @org.jetbrains.annotations.NotNull()
     public static error.NonExistentClass coocoo3;
-    @org.jetbrains.annotations.NotNull()
     public static error.NonExistentClass coocoo31;
-    public static final NonExistentType INSTANCE = null;
+
+    private NonExistentType() {
+        super();
+    }
 
     @org.jetbrains.annotations.Nullable()
     public final error.NonExistentClass getA() {
@@ -119,10 +118,6 @@ public final class NonExistentType {
     public final error.NonExistentClass b(@org.jetbrains.annotations.NotNull()
     java.lang.String s) {
         return null;
-    }
-
-    private NonExistentType() {
-        super();
     }
 }
 

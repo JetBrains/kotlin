@@ -5,7 +5,7 @@ fun foo(o: JavaClass2) {
     o.something = ""
     o.setSomething(1)
     o.something = 1 // we generate extension property for JavaClass2 with more specific type
-    o.<!VARIABLE_EXPECTED!>something<!> += "1"
+    o.something += "1"
 }
 
 fun useString(i: String) {}

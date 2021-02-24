@@ -1,0 +1,53 @@
+fun checkAny(fn: Function0<Any>): Any {
+  return fn.invoke()
+}
+
+fun checkAnyN(fn: Function0<Any?>): Any? {
+  return fn.invoke()
+}
+
+fun <T : Any?> id(x: T): T {
+  return x
+}
+
+fun test1(): Any {
+  return checkAny(fn = local fun <anonymous>(): Any {
+    return foo() /*!! String */
+  }
+)
+}
+
+val test2: Function0<Any>
+  field = local fun <anonymous>(): String? {
+    return foo()
+  }
+
+  get
+
+val test3: Function0<Any>
+  field = local fun <anonymous>(): String? {
+    return foo()
+  }
+ as Function0<Any>
+  get
+
+val test4: Function0<Any>
+  field = id<Function0<String?>>(x = local fun <anonymous>(): String? {
+    return foo()
+  }
+)
+  get
+
+fun test5(): Any? {
+  return checkAnyN(fn = local fun <anonymous>(): Any? {
+    return foo()
+  }
+)
+}
+
+fun test6(): Any? {
+  return checkAnyN(fn = local fun <anonymous>(): Any? {
+    return nnFoo()
+  }
+)
+}

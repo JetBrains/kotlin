@@ -5,40 +5,39 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirClassifiersCache
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirCommonFunction
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirFunction
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirFunction
+import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirFunctionFactory
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirKnownClassifiers
 
-class FunctionCommonizer(cache: CirClassifiersCache) : AbstractFunctionOrPropertyCommonizer<CirFunction>(cache) {
-    private val modifiers = FunctionModifiersCommonizer.default()
-    private val valueParameters = ValueParameterListCommonizer.default(cache)
-    private var hasStableParameterNames = true
-    private var hasSynthesizedParameterNames = false
+class FunctionCommonizer(classifiers: CirKnownClassifiers) : AbstractFunctionOrPropertyCommonizer<CirFunction>(classifiers) {
+    private val annotations = AnnotationsCommonizer()
+    private val modifiers = FunctionModifiersCommonizer()
+    private val valueParameters = CallableValueParametersCommonizer(classifiers)
 
-    override fun commonizationResult() = CirCommonFunction(
-        name = name,
-        modality = modality.result,
-        visibility = visibility.result,
-        extensionReceiver = extensionReceiver.result,
-        returnType = returnType.result,
-        kind = kind,
-        modifiers = modifiers.result,
-        valueParameters = valueParameters.result,
-        typeParameters = typeParameters.result,
-        hasStableParameterNames = hasStableParameterNames,
-        hasSynthesizedParameterNames = hasSynthesizedParameterNames
-    )
+    override fun commonizationResult(): CirFunction {
+        val valueParameters = valueParameters.result
+        valueParameters.patchCallables()
+
+        return CirFunctionFactory.create(
+            annotations = annotations.result,
+            name = name,
+            typeParameters = typeParameters.result,
+            visibility = visibility.result,
+            modality = modality.result,
+            containingClass = null, // does not matter
+            valueParameters = valueParameters.valueParameters,
+            hasStableParameterNames = valueParameters.hasStableParameterNames,
+            extensionReceiver = extensionReceiver.result,
+            returnType = returnType.result,
+            kind = kind,
+            modifiers = modifiers.result
+        )
+    }
 
     override fun doCommonizeWith(next: CirFunction): Boolean {
-        val result = super.doCommonizeWith(next)
-                && modifiers.commonizeWith(next)
-                && valueParameters.commonizeWith(next.valueParameters)
-
-        if (result) {
-            hasStableParameterNames = hasStableParameterNames && next.hasStableParameterNames
-            hasSynthesizedParameterNames = hasSynthesizedParameterNames || next.hasSynthesizedParameterNames
-        }
-
-        return result
+        return super.doCommonizeWith(next)
+                && annotations.commonizeWith(next.annotations)
+                && modifiers.commonizeWith(next.modifiers)
+                && valueParameters.commonizeWith(next)
     }
 }

@@ -1,0 +1,18 @@
+package
+
+public open class Base {
+    public constructor Base()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open fun `foo$default`(/*0*/ d: Derived, /*1*/ i: kotlin.Int, /*2*/ mask: kotlin.Int, /*3*/ mh: kotlin.Any): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Derived : Base {
+    public constructor Derived()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun foo(/*0*/ i: kotlin.Int = ...): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun `foo$default`(/*0*/ d: Derived, /*1*/ i: kotlin.Int, /*2*/ mask: kotlin.Int, /*3*/ mh: kotlin.Any): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

@@ -22,14 +22,14 @@ internal class B
 import p.*
 
 fun test() {
-    val _a = <!INAPPLICABLE_CANDIDATE!>a<!>
-    val _v = <!INAPPLICABLE_CANDIDATE!>v<!>
-    <!INAPPLICABLE_CANDIDATE!>a<!>()
-    <!INAPPLICABLE_CANDIDATE!>B<!>()
+    val _a = <!HIDDEN!>a<!>
+    val _v = <!HIDDEN!>v<!>
+    <!HIDDEN!>a<!>()
+    <!HIDDEN!>B<!>()
 
     val inst = A()
-    val ia = inst.<!INAPPLICABLE_CANDIDATE!>a<!>
-    val iv = inst.<!INAPPLICABLE_CANDIDATE!>v<!>
-    inst.<!INAPPLICABLE_CANDIDATE!>a<!>()
-    inst.<!INAPPLICABLE_CANDIDATE!>B<!>()
+    val ia = inst.<!HIDDEN!>a<!>
+    val iv = inst.<!HIDDEN!>v<!>
+    inst.<!HIDDEN!>a<!>()
+    inst.<!HIDDEN!>B<!>()
 }

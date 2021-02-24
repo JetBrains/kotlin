@@ -1,4 +1,4 @@
-// !LANGUAGE: +NewInference
+// !LANGUAGE: +NewInference -SamConversionForKotlinFunctions
 // FILE: Runnable.java
 public interface Runnable {
     void run();

@@ -20,8 +20,6 @@ import org.jetbrains.kotlin.test.ConfigurationKind;
 
 import java.lang.reflect.Method;
 
-import static org.jetbrains.kotlin.codegen.CodegenTestUtil.assertThrows;
-
 public class ControlStructuresTest extends CodegenTestCase {
     @Override
     protected void setUp() throws Exception {
@@ -47,7 +45,7 @@ public class ControlStructuresTest extends CodegenTestCase {
     public void testThrowCheckedException() throws Exception {
         loadText("fun foo() { throw Exception(); }");
         Method main = generateFunction();
-        assertThrows(main, Exception.class, null);
+        CodegenTestUtil.assertThrows(main, Exception.class, null);
     }
 
     public void testCompareToZero() throws Exception {

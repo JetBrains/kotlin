@@ -172,7 +172,7 @@ class KotlinChangeSignatureData(
 
     override fun getParametersCount(): Int = baseDescriptor.valueParameters.size
 
-    override fun getVisibility(): Visibility = baseDescriptor.visibility
+    override fun getVisibility(): DescriptorVisibility = baseDescriptor.visibility
 
     override fun getMethod(): PsiElement = baseDeclaration
 

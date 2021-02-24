@@ -9,6 +9,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.evaluatesTo
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -23,9 +24,9 @@ import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberType
 
 class ConvertTwoComparisonsToRangeCheckInspection :
     AbstractApplicabilityBasedInspection<KtBinaryExpression>(KtBinaryExpression::class.java) {
-    override fun inspectionText(element: KtBinaryExpression) = "Two comparisons should be converted to a range check"
+    override fun inspectionText(element: KtBinaryExpression) = KotlinBundle.message("two.comparisons.should.be.converted.to.a.range.check")
 
-    override val defaultFixText = "Convert to a range check"
+    override val defaultFixText get() = KotlinBundle.message("convert.to.a.range.check")
 
     override fun isApplicable(element: KtBinaryExpression) = generateRangeExpressionData(element) != null
 
@@ -111,10 +112,24 @@ class ConvertTwoComparisonsToRangeCheckInspection :
                 is KtConstantExpression -> {
                     val constantValue = ConstantExpressionEvaluator.getConstant(this, context)?.getValue(type) ?: return null
                     return when {
-                        KotlinBuiltIns.isInt(type) -> (constantValue as Int + number).toString()
-                        KotlinBuiltIns.isLong(type) -> (constantValue as Long + number).toString()
+                        KotlinBuiltIns.isInt(type) -> (constantValue as Int + number).let {
+                            val text = this.text
+                            when {
+                                text.startsWith("0x") -> "0x${it.toString(16)}"
+                                text.startsWith("0b") -> "0b${it.toString(2)}"
+                                else -> it.toString()
+                            }
+                        }
+                        KotlinBuiltIns.isLong(type) -> (constantValue as Long + number).let {
+                            val text = this.text
+                            when {
+                                text.startsWith("0x") -> "0x${it.toString(16)}"
+                                text.startsWith("0b") -> "0b${it.toString(2)}"
+                                else -> it.toString()
+                            }
+                        }
                         KotlinBuiltIns.isChar(type) -> "'${constantValue as Char + number}'"
-                        else -> return null
+                        else -> null
                     }
                 }
                 else -> return if (number >= 0) "($text + $number)" else "($text - ${-number})"
@@ -141,6 +156,8 @@ class ConvertTwoComparisonsToRangeCheckInspection :
             if (valType.isPrimitiveNumberType() && minType.isPrimitiveNumberType() && maxType.isPrimitiveNumberType()) {
                 //char is comparable to chars only
                 if (KotlinBuiltIns.isChar(valType) || KotlinBuiltIns.isChar(minType) || KotlinBuiltIns.isChar(maxType)) return null
+                //floating point ranges can't contain integer types and vise versa
+                if (valType.isInteger() && (minType.isFloatingPoint() || maxType.isFloatingPoint())) return null
 
                 if (valType.isFloatingPoint()) {
                     if (minType.isInteger())

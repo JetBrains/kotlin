@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +NewInference +SamConversionForKotlinFunctions
 // FILE: Runnable.java
 public interface Runnable {
@@ -11,7 +12,7 @@ interface K<T> {
 
 fun test(k: K<Runnable>, r: Runnable) {
     k.foo(r, r)
-    k.foo(r, <!TYPE_MISMATCH!>{}<!>)
-    k.foo(<!TYPE_MISMATCH!>{}<!>, r)
-    k.foo(<!TYPE_MISMATCH!>{}<!>, <!TYPE_MISMATCH!>{}<!>)
+    k.foo(r, {})
+    k.foo({}, r)
+    k.foo({}, {})
 }

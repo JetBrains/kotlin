@@ -5,11 +5,10 @@
 
 package org.jetbrains.kotlin.idea
 
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.DependencyScope
 import com.intellij.openapi.roots.ModifiableRootModel
-import com.intellij.openapi.roots.impl.ModuleOrderEntryImpl
-import  com.intellij.openapi.diagnostic.Logger
 
 /**
  * Returns the dependency scope which has flags specific to the both provided scopes
@@ -57,7 +56,7 @@ fun addModuleDependencyIfNeeded(
     dependOnTest: Boolean
 ) {
     val existingEntry = rootModel.findModuleOrderEntry(dependeeModule)
-    val existingDependOnTest = (existingEntry as? ModuleOrderEntryImpl)?.isProductionOnTestDependency ?: false
+    val existingDependOnTest = existingEntry?.isProductionOnTestDependency ?: false
 
     val requiredScope = getScopeContainingBoth(if (testScope) DependencyScope.TEST else DependencyScope.COMPILE, existingEntry?.scope)
     if (existingEntry != null) {
@@ -72,6 +71,6 @@ fun addModuleDependencyIfNeeded(
     }
     rootModel.addModuleOrderEntry(dependeeModule).also {
         it.scope = requiredScope
-        (it as? ModuleOrderEntryImpl)?.isProductionOnTestDependency = dependOnTest || existingDependOnTest
+        it.isProductionOnTestDependency = dependOnTest || existingDependOnTest
     }
 }

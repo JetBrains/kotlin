@@ -5,17 +5,20 @@
 
 package org.jetbrains.kotlin.builtins
 
+import org.jetbrains.kotlin.builtins.StandardNames.CONTINUATION_INTERFACE_FQ_NAME_EXPERIMENTAL
+import org.jetbrains.kotlin.builtins.StandardNames.CONTINUATION_INTERFACE_FQ_NAME_RELEASE
+import org.jetbrains.kotlin.builtins.StandardNames.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL
+import org.jetbrains.kotlin.builtins.StandardNames.COROUTINES_PACKAGE_FQ_NAME_RELEASE
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.SourceElement
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.impl.MutableClassDescriptor
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
@@ -23,12 +26,12 @@ import org.jetbrains.kotlin.types.typeUtil.builtIns
 
 private val FAKE_CONTINUATION_CLASS_DESCRIPTOR_EXPERIMENTAL =
     MutableClassDescriptor(
-        EmptyPackageFragmentDescriptor(ErrorUtils.getErrorModule(), DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL),
+        EmptyPackageFragmentDescriptor(ErrorUtils.getErrorModule(), COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL),
         ClassKind.INTERFACE, /* isInner = */ false, /* isExternal = */ false,
-        DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME_EXPERIMENTAL.shortName(), SourceElement.NO_SOURCE, LockBasedStorageManager.NO_LOCKS
+        CONTINUATION_INTERFACE_FQ_NAME_EXPERIMENTAL.shortName(), SourceElement.NO_SOURCE, LockBasedStorageManager.NO_LOCKS
     ).apply {
         modality = Modality.ABSTRACT
-        visibility = Visibilities.PUBLIC
+        visibility = DescriptorVisibilities.PUBLIC
         setTypeParameterDescriptors(
             TypeParameterDescriptorImpl.createWithDefaultBound(
                 this, Annotations.EMPTY, false, Variance.IN_VARIANCE, Name.identifier("T"), 0, LockBasedStorageManager.NO_LOCKS
@@ -39,12 +42,12 @@ private val FAKE_CONTINUATION_CLASS_DESCRIPTOR_EXPERIMENTAL =
 
 private val FAKE_CONTINUATION_CLASS_DESCRIPTOR_RELEASE =
     MutableClassDescriptor(
-        EmptyPackageFragmentDescriptor(ErrorUtils.getErrorModule(), DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME_RELEASE),
+        EmptyPackageFragmentDescriptor(ErrorUtils.getErrorModule(), COROUTINES_PACKAGE_FQ_NAME_RELEASE),
         ClassKind.INTERFACE, /* isInner = */ false, /* isExternal = */ false,
-        DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME_RELEASE.shortName(), SourceElement.NO_SOURCE, LockBasedStorageManager.NO_LOCKS
+        CONTINUATION_INTERFACE_FQ_NAME_RELEASE.shortName(), SourceElement.NO_SOURCE, LockBasedStorageManager.NO_LOCKS
     ).apply {
         modality = Modality.ABSTRACT
-        visibility = Visibilities.PUBLIC
+        visibility = DescriptorVisibilities.PUBLIC
         setTypeParameterDescriptors(
             TypeParameterDescriptorImpl.createWithDefaultBound(
                 this, Annotations.EMPTY, false, Variance.IN_VARIANCE, Name.identifier("T"), 0, LockBasedStorageManager.NO_LOCKS
@@ -79,6 +82,6 @@ fun transformSuspendFunctionToRuntimeFunctionType(suspendFunType: KotlinType, is
 }
 
 fun isContinuation(name: FqName?, isReleaseCoroutines: Boolean): Boolean {
-    return if (isReleaseCoroutines) name == DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME_RELEASE
-    else name == DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME_EXPERIMENTAL
+    return if (isReleaseCoroutines) name == CONTINUATION_INTERFACE_FQ_NAME_RELEASE
+    else name == CONTINUATION_INTERFACE_FQ_NAME_EXPERIMENTAL
 }

@@ -90,7 +90,6 @@ class ExpectActualTable(val expectDescriptorToSymbol: MutableMap<DeclarationDesc
 
     fun findExpectsForActuals(declaration: IrDeclaration) {
         if (declaration.descriptor !is MemberDescriptor) return
-        if (declaration !is IrSymbolDeclaration<*>) return
 
         val descriptor = declaration.symbol.descriptor
 
@@ -106,9 +105,9 @@ class ExpectActualTable(val expectDescriptorToSymbol: MutableMap<DeclarationDesc
         }
 
         val expects: List<MemberDescriptor> = if (descriptor is ClassConstructorDescriptor && descriptor.isPrimary) {
-            (descriptor.containingDeclaration.findExpects() as List<ClassDescriptor>).map {
-                it.unsubstitutedPrimaryConstructor
-            }.filterNotNull()
+            descriptor.containingDeclaration.findExpects().mapNotNull {
+                (it as ClassDescriptor).unsubstitutedPrimaryConstructor
+            }
         } else {
             descriptor.findExpects()
         }

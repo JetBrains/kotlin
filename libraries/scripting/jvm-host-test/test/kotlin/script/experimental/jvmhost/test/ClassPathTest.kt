@@ -3,17 +3,20 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:OptIn(ExperimentalPathApi::class)
+
 package kotlin.script.experimental.jvmhost.test
 
 import junit.framework.TestCase
 import org.junit.Assert
 import org.junit.Test
 import java.io.File
-import java.io.FileOutputStream
 import java.net.URLClassLoader
+import java.nio.file.Path
 import java.util.jar.JarEntry
 import java.util.jar.JarOutputStream
 import java.util.jar.Manifest
+import kotlin.io.path.*
 import kotlin.script.experimental.jvm.util.classPathFromTypicalResourceUrls
 import kotlin.script.experimental.jvm.util.classpathFromClass
 import kotlin.script.experimental.jvm.util.classpathFromClassloader
@@ -21,22 +24,22 @@ import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContext
 
 class ClassPathTest : TestCase() {
 
-    lateinit var tempDir: File
+    lateinit var tempDir: Path
 
     override fun setUp() {
-        tempDir = createTempDir(ClassPathTest::class.simpleName!!)
+        tempDir = createTempDirectory(ClassPathTest::class.simpleName!!)
         super.setUp()
     }
 
     override fun tearDown() {
         super.tearDown()
-        tempDir.deleteRecursively()
+        tempDir.toFile().deleteRecursively()
     }
 
     @Test
     fun testExtractFromFat() {
-        val collection = createTempFile("col", ".jar", directory = tempDir).apply { createCollectionJar(emulatedCollectionFiles, "BOOT-INF") }
-        val cl = URLClassLoader(arrayOf(collection.toURI().toURL()), null)
+        val collection = createTempFile(directory = tempDir, "col", ".jar").apply { createCollectionJar(emulatedCollectionFiles, "BOOT-INF") }
+        val cl = URLClassLoader(arrayOf(collection.toUri().toURL()), null)
         val cp = classpathFromClassloader(cl, true)
         Assert.assertTrue(cp != null && cp.isNotEmpty())
 
@@ -45,40 +48,40 @@ class ClassPathTest : TestCase() {
 
     @Test
     fun testDetectClasspathFromResources() {
-        val root1 = createTempDir("root1", directory = tempDir)
-        val jar = createTempFile("jar1", ".jar", directory = tempDir).apply { createJarWithManifest() }
+        val root1 = createTempDirectory(directory = tempDir, "root1")
+        val jar = createTempFile(directory = tempDir, "jar1", ".jar").apply { createJarWithManifest() }
         val cl = URLClassLoader(
-            (emulatedClasspath.map { File(root1, it).apply { mkdirs() }.toURI().toURL() }
-                    + jar.toURI().toURL()).toTypedArray(),
+            (emulatedClasspath.map { (root1 / it).apply { createDirectories() }.toUri().toURL() }
+                    + jar.toUri().toURL()).toTypedArray(),
             null
         )
         val cp = cl.classPathFromTypicalResourceUrls().toList().map { it.canonicalFile }
 
-        Assert.assertTrue(cp.contains(jar.canonicalFile))
+        Assert.assertTrue(cp.contains(jar.toFile().canonicalFile))
         for (el in emulatedClasspath) {
-            Assert.assertTrue(cp.contains(File(root1, el).canonicalFile))
+            Assert.assertTrue(cp.contains((root1 / el).toFile().canonicalFile))
         }
     }
 
     @Test
     fun testFilterClasspath() {
-        val tempDir = createTempDir().canonicalFile
+        val tempDir = createTempDirectory().toRealPath()
         try {
             val files = listOf(
-                File(tempDir, "projX/classes"),
-                File(tempDir, "projX/test-classes"),
-                File(tempDir, "projY/classes")
+                (tempDir / "projX/classes"),
+                (tempDir / "projX/test-classes"),
+                (tempDir / "projY/classes")
             )
-            files.forEach { it.mkdirs() }
+            files.forEach { it.createDirectories() }
 
-            val classloader = URLClassLoader(files.map { it.toURI().toURL() }.toTypedArray(), null)
+            val classloader = URLClassLoader(files.map { it.toUri().toURL() }.toTypedArray(), null)
 
             val classpath =
-                scriptCompilationClasspathFromContextOrNull("projX", classLoader = classloader)!!.map { it.toRelativeString(tempDir) }
+                scriptCompilationClasspathFromContextOrNull("projX", classLoader = classloader)!!.map { it.toPath().relativeTo(tempDir) }
 
-            Assert.assertEquals(files.dropLast(1).map { it.toRelativeString(tempDir) }, classpath)
+            Assert.assertEquals(files.dropLast(1).map { it.relativeTo(tempDir) }, classpath)
         } finally {
-            tempDir.deleteRecursively()
+            tempDir.toFile().deleteRecursively()
         }
     }
 
@@ -103,8 +106,8 @@ private val emulatedClasspath = arrayOf(
     "module2/classes/java/test/"
 )
 
-fun File.createCollectionJar(fileNames: Array<String>, infDirName: String) {
-    FileOutputStream(this).use { fileStream ->
+fun Path.createCollectionJar(fileNames: Array<String>, infDirName: String) {
+    this.outputStream().use { fileStream ->
         val jarStream = JarOutputStream(fileStream)
         jarStream.putNextEntry(JarEntry("$infDirName/classes/"))
         jarStream.putNextEntry(JarEntry("$infDirName/lib/"))
@@ -131,8 +134,8 @@ fun testUnpackedCollection(classpath: List<File>, fileNames: Array<String>) {
     jars.checkFiles(cpJars.first().parentFile.parentFile)
 }
 
-fun File.createJarWithManifest() {
-    FileOutputStream(this).use { fileStream ->
+fun Path.createJarWithManifest() {
+    this.outputStream().use { fileStream ->
         val jarStream = JarOutputStream(fileStream, Manifest())
         jarStream.finish()
     }

@@ -1,5 +1,5 @@
-// FILE: 1.kt
 // SKIP_INLINE_CHECK_IN: inlineFun$default
+// FILE: 1.kt
 package test
 
 inline fun inlineFun(a: Int, lambda: (Int) -> Int = 1::plus): Int {

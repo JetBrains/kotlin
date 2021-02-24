@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 open class A {
     private fun foo() : Int = 1
 }

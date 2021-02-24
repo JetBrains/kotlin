@@ -1,8 +1,10 @@
-// OUT_OF_CODE_BLOCK: FALSE
+// TODO NOTE: [VD] Temporary workaround for KT-36460
+// SKIP_ANALYZE_CHECK
+// OUT_OF_CODE_BLOCK: TRUE
+
 // Problem with lazy initialization of nullable properties
 
-// TODO: Investigate
-// --ERROR: Unresolved reference: q
+// ERROR: Unresolved reference: a
 interface Some
 
 val test: Some? = object: Some {

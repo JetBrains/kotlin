@@ -1,0 +1,14 @@
+FILE: stringConstructors.kt
+    public final fun consumeString(s: R|kotlin/String|): R|kotlin/Unit| {
+    }
+    public final fun foo(byteArray: R|kotlin/ByteArray|, charArray: R|kotlin/CharArray|, intArray: R|kotlin/IntArray|, charset: R|java/nio/charset/Charset|, stringBuilder: R|java/lang/StringBuilder|, stringBuffer: R|java/lang/StringBuffer|): R|kotlin/Unit| {
+        R|/consumeString|(R|kotlin/String.String|())
+        R|/consumeString|(R|kotlin/text/String|(R|<local>/byteArray|, Int(0), Int(1), R|<local>/charset|))
+        R|/consumeString|(R|kotlin/text/String|(R|<local>/byteArray|, R|<local>/charset|))
+        R|/consumeString|(R|kotlin/text/String|(R|<local>/byteArray|))
+        R|/consumeString|(R|kotlin/text/String|(R|<local>/charArray|))
+        R|/consumeString|(R|kotlin/text/String|(R|<local>/charArray|, Int(0), Int(1)))
+        R|/consumeString|(R|kotlin/text/String|(R|<local>/intArray|, Int(0), Int(1)))
+        R|/consumeString|(R|kotlin/text/String|(R|<local>/stringBuffer|))
+        R|/consumeString|(R|kotlin/text/String|(R|<local>/stringBuilder|))
+    }

@@ -4,7 +4,7 @@ interface Allowed
 
 open class NotAllowed
 
-abstract data class Base(val x: Int)
+<!INCOMPATIBLE_MODIFIERS!>abstract<!> <!INCOMPATIBLE_MODIFIERS!>data<!> class Base(val x: Int)
 
 class Derived: Base(42)
 

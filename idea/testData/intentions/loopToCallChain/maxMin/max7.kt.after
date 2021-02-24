@@ -5,9 +5,9 @@ import java.lang.Math.max
 
 fun getMaxLineWidth(count: Int): Double {
     val <caret>m = (0..count-1)
-            .map { getLineWidth(it) }
-            .max()
-            ?: 0.0
+        .map { getLineWidth(it) }
+        .max()
+        ?: 0.0
     return m
 }
 

@@ -1,0 +1,9 @@
+val <T : Any?> T.id: T
+  get(): T {
+    return <this>
+  }
+
+val test: String
+  field = "abc".<get-id><String>()
+  get
+

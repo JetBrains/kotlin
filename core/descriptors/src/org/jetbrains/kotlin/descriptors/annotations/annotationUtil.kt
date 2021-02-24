@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.descriptors.annotations
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.AnnotationValue
@@ -31,9 +32,9 @@ fun KotlinBuiltIns.createDeprecatedAnnotation(
         level: String = "WARNING"
 ): AnnotationDescriptor {
     val replaceWithAnnotation = BuiltInAnnotationDescriptor(
-            this,
-            KotlinBuiltIns.FQ_NAMES.replaceWith,
-            mapOf(
+        this,
+        StandardNames.FqNames.replaceWith,
+        mapOf(
                     REPLACE_WITH_EXPRESSION_NAME to StringValue(replaceWith),
                     REPLACE_WITH_IMPORTS_NAME to ArrayValue(emptyList()) { module ->
                         module.builtIns.getArrayType(Variance.INVARIANT, stringType)
@@ -42,14 +43,14 @@ fun KotlinBuiltIns.createDeprecatedAnnotation(
     )
 
     return BuiltInAnnotationDescriptor(
-            this,
-            KotlinBuiltIns.FQ_NAMES.deprecated,
-            mapOf(
+        this,
+        StandardNames.FqNames.deprecated,
+        mapOf(
                     DEPRECATED_MESSAGE_NAME to StringValue(message),
                     DEPRECATED_REPLACE_WITH_NAME to AnnotationValue(replaceWithAnnotation),
                     DEPRECATED_LEVEL_NAME to EnumValue(
-                            ClassId.topLevel(KotlinBuiltIns.FQ_NAMES.deprecationLevel),
-                            Name.identifier(level)
+                        ClassId.topLevel(StandardNames.FqNames.deprecationLevel),
+                        Name.identifier(level)
                     )
             )
     )

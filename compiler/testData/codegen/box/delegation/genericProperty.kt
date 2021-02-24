@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
-
 interface I {
     val <T> T.id: T
         get() = this

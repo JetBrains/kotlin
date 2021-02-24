@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -79,8 +80,13 @@ class DirectUseOfResultTypeInspection : AbstractIsResultInspection(
             val typeName = returnTypeArgument?.constructor?.declarationDescriptor?.name?.asString() ?: "T"
             holder.registerProblem(
                 toReport,
-                "Function '$name' returning '$SHORT_NAME<$typeName>' without the corresponding " +
-                        "function '$nameWithoutCatching' returning '$typeName'",
+                KotlinBundle.message(
+                    "function.0.returning.1.without.the.corresponding",
+                    name,
+                    "$SHORT_NAME<$typeName>",
+                    nameWithoutCatching,
+                    typeName
+                ),
                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING
             )
         }

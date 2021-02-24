@@ -1,0 +1,12 @@
+apply plugin: 'org.jetbrains.kotlin.jvm'
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7"
+
+    testImplementation project(':lib2')
+    testImplementation 'junit:junit:4.13'
+}
+
+kotlin.target.compilations.test {
+    compileDependencyFiles = compileDependencyFiles - kotlin.target.compilations.main.output.classesDirs
+}

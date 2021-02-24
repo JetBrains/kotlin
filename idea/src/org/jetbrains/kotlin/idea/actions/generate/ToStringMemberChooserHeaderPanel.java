@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.actions.generate;
 import com.intellij.openapi.ui.ComboBox;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.java.generate.template.toString.ToStringTemplatesManager;
+import org.jetbrains.kotlin.idea.KotlinBundle;
 
 import javax.swing.*;
 import java.awt.*;
@@ -50,7 +51,7 @@ public class ToStringMemberChooserHeaderPanel extends JPanel {
         );
         comboBox.setSelectedItem(ToStringTemplatesManager.getInstance().getDefaultTemplate());
 
-        JLabel templatesLabel = new JLabel("Choose implementation: ");
+        JLabel templatesLabel = new JLabel(KotlinBundle.message("action.generate.tostring.choose.implementation"));
         templatesLabel.setDisplayedMnemonic('i');
         templatesLabel.setLabelFor(comboBox);
 
@@ -65,7 +66,7 @@ public class ToStringMemberChooserHeaderPanel extends JPanel {
         add(comboBox, constraints);
 
         if (allowSuperCall) {
-            generateSuperCheckBox = new JCheckBox("Generate call to super.toString()");
+            generateSuperCheckBox = new JCheckBox(KotlinBundle.message("action.generate.tostring.generate.super.call"));
             generateSuperCheckBox.setMnemonic('s');
             constraints.gridx = 2;
             constraints.weightx = 0.0;

@@ -1,20 +1,7 @@
+// CHECK_BY_JAVA_FILE
 class Prop {
     private val someProp = object { }
 }
-
-
-
-class Fun {
-    private fun someFun() = object { }
-}
-
-
-class ArrayOfAnonymous {
-    val a1 = arrayOf(
-        object { val fy = "text"}
-    )
-}
-
 
 private class C(val y: Int) {
     val initChild = { ->
@@ -27,17 +14,6 @@ private class C(val y: Int) {
 }
 
 
-abstract class Super {
-    abstract val a: Any?
-}
-
-
-class Sub : Super() {
-    override val a = arrayOf(
-        object { val fy = "text"}
-    )
-
-}
 class ValidPublicSupertype {
     val x = object : Runnable {
         override fun run() {}

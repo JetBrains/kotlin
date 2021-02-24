@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.utils.StringsKt;
 import java.util.List;
 
 import static kotlin.collections.CollectionsKt.*;
+import static org.jetbrains.kotlin.diagnostics.Errors.UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION;
 import static org.jetbrains.kotlin.diagnostics.rendering.Renderers.*;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.*;
 
@@ -52,8 +53,11 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(OVERLOADS_LOCAL, "'@JvmOverloads' annotation cannot be used on local declarations");
         MAP.put(OVERLOADS_ANNOTATION_CLASS_CONSTRUCTOR_WARNING, "'@JvmOverloads' annotation on constructors of annotation classes is deprecated");
         MAP.put(OVERLOADS_ANNOTATION_CLASS_CONSTRUCTOR, "'@JvmOverloads' annotation cannot be used on constructors of annotation classes");
+        MAP.put(OVERLOADS_ANNOTATION_HIDDEN_CONSTRUCTOR, "'@JvmOverloads' annotation cannot be used on constructors hidden by inline class rules");
+        MAP.put(OVERLOADS_ANNOTATION_MANGLED_FUNCTION, "'@JvmOverloads' annotation cannot be used on functions mangled by inline class rules");
         MAP.put(INAPPLICABLE_JVM_NAME, "'@JvmName' annotation is not applicable to this declaration");
         MAP.put(ILLEGAL_JVM_NAME, "Illegal JVM name");
+
         MAP.put(VOLATILE_ON_VALUE, "'@Volatile' annotation cannot be used on immutable properties");
         MAP.put(VOLATILE_ON_DELEGATE, "'@Volatile' annotation cannot be used on delegated properties");
         MAP.put(SYNCHRONIZED_ON_ABSTRACT, "'@Synchronized' annotation cannot be used on abstract functions");
@@ -82,6 +86,17 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC, "Using non-JVM static members protected in the superclass companion is unsupported yet");
 
         MAP.put(NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS, "Type mismatch: inferred type is {1} but {0} was expected", RENDER_TYPE, RENDER_TYPE);
+        MAP.put(UPPER_BOUND_VIOLATED_BASED_ON_JAVA_ANNOTATIONS, "Type argument is not within its bounds: should be subtype of ''{0}''", RENDER_TYPE, RENDER_TYPE);
+        MAP.put(UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION_BASED_ON_JAVA_ANNOTATIONS,
+                "Type argument resulting from type alias expansion is not within required bounds for ''{2}'': " +
+                "should be subtype of ''{0}'', substituted type is ''{1}''",
+                RENDER_TYPE, RENDER_TYPE, NAME);
+        MAP.put(NULLABLE_TYPE_PARAMETER_AGAINST_NOT_NULL_TYPE_PARAMETER,
+                "Type mismatch: value of a nullable type {0} is used where non-nullable type is expected. " +
+                "This warning will become an error soon. " +
+                "See https://youtrack.jetbrains.com/issue/KT-36770 for details",
+                RENDER_TYPE
+        );
         MAP.put(RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS,
                 "Unsafe use of a nullable receiver of type {0}", RENDER_TYPE);
 
@@ -135,15 +150,30 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
                                                    "See https://youtrack.jetbrains.com/issue/KT-21354 for more details");
 
         MAP.put(JVM_DEFAULT_NOT_IN_INTERFACE,"'@JvmDefault' is only supported on interface members");
-        MAP.put(JVM_DEFAULT_IN_JVM6_TARGET,"'@JvmDefault' is only supported since JVM target 1.8. Recompile with '-jvm-target 1.8'");
+        MAP.put(JVM_DEFAULT_IN_JVM6_TARGET,"''@{0}'' is only supported since JVM target 1.8. Recompile with ''-jvm-target 1.8''", STRING);
         MAP.put(JVM_DEFAULT_REQUIRED_FOR_OVERRIDE, "'@JvmDefault' is required for an override of a '@JvmDefault' member");
-        MAP.put(JVM_DEFAULT_IN_DECLARATION, "Usage of '@JvmDefault' is only allowed with -Xjvm-default option");
+        MAP.put(JVM_DEFAULT_IN_DECLARATION, "Usage of ''@{0}'' is only allowed with -Xjvm-default option", STRING);
         MAP.put(JVM_DEFAULT_THROUGH_INHERITANCE, "Inheritance from an interface with '@JvmDefault' members is only allowed with -Xjvm-default option");
         MAP.put(USAGE_OF_JVM_DEFAULT_THROUGH_SUPER_CALL, "Super calls of '@JvmDefault' members are only allowed with -Xjvm-default option");
-        MAP.put(NON_JVM_DEFAULT_OVERRIDES_JAVA_DEFAULT, "Non-@JvmDefault interface method cannot override default Java method. Please annotate this method with @JvmDefault");
+        MAP.put(NON_JVM_DEFAULT_OVERRIDES_JAVA_DEFAULT, "Non-@JvmDefault interface method cannot override default Java method. Please annotate this method with @JvmDefault or enable `-Xjvm-default=all|all-compatibility`");
         MAP.put(EXPLICIT_METADATA_IS_DISALLOWED, "Explicit @Metadata is disallowed");
         MAP.put(SUSPENSION_POINT_INSIDE_MONITOR, "A suspension point at {0} is inside a critical section", STRING);
         MAP.put(SUSPENSION_POINT_INSIDE_CRITICAL_SECTION, "The ''{0}'' suspension point is inside a critical section", NAME);
+
+        MAP.put(LOCAL_JVM_RECORD, "Local @JvmRecord classes are not allowed");
+        MAP.put(NON_FINAL_JVM_RECORD, "@JvmRecord class should be final");
+        MAP.put(ENUM_JVM_RECORD, "@JvmRecord class should not be an enum");
+        MAP.put(JVM_RECORD_WITHOUT_PRIMARY_CONSTRUCTOR_PARAMETERS, "Primary constructor with parameters is required for @JvmRecord class");
+        MAP.put(JVM_RECORD_NOT_VAL_PARAMETER, "Constructor parameter of @JvmRecord class should be a val");
+        MAP.put(JVM_RECORD_NOT_LAST_VARARG_PARAMETER, "Only the last constructor parameter of @JvmRecord may be a vararg");
+        MAP.put(JVM_RECORD_EXTENDS_CLASS, "Record cannot inherit a class" , RENDER_TYPE);
+        MAP.put(JVM_RECORD_REQUIRES_JDK15, "Using @JvmRecords requires at least JDK 15");
+        MAP.put(INNER_JVM_RECORD, "@JvmRecord class should not be inner");
+        MAP.put(FIELD_IN_JVM_RECORD, "It's not allowed to have non-constructor properties with backing filed in @JvmRecord class");
+        MAP.put(DELEGATION_BY_IN_JVM_RECORD, "Delegation is not allowed for @JvmRecord classes");
+        MAP.put(NON_DATA_CLASS_JVM_RECORD, "Only data classes are allowed to be marked as @JvmRecord");
+        MAP.put(ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE, "Classes cannot have explicit 'java.lang.Record' supertype");
+        MAP.put(JVM_RECORDS_ILLEGAL_BYTECODE_TARGET, "Using @JvmRecord is only allowed with -jvm-target 15 and -Xjvm-enable-preview flag enabled");
 
         String MESSAGE_FOR_CONCURRENT_HASH_MAP_CONTAINS =
                 "Method 'contains' from ConcurrentHashMap may have unexpected semantics: it calls 'containsValue' instead of 'containsKey'. " +
@@ -156,6 +186,26 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         String spreadOnPolymorphicSignature = "Spread operator is prohibited for arguments to signature-polymorphic calls";
         MAP.put(SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL, spreadOnPolymorphicSignature);
         MAP.put(SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL_ERROR, spreadOnPolymorphicSignature);
+
+        MAP.put(FUNCTION_DELEGATE_MEMBER_NAME_CLASH,
+                "Functional interface member cannot have this name on JVM because it clashes with an internal member getFunctionDelegate");
+
+        MAP.put(EXPLICIT_OVERRIDE_REQUIRED_IN_COMPATIBILITY_MODE,
+                "Compatibility mode requires to explicitly override ''{1}'' with specialization ''{0}'', " +
+                "or annotate the class with @JvmDefaultWithoutCompatibility. " +
+                "Please refer to KT-39603 for details",
+                COMPACT, SHORT_NAMES_IN_TYPES);
+
+        MAP.put(EXPLICIT_OVERRIDE_REQUIRED_IN_MIXED_MODE,
+                "Explicit override is required for ''{0}'' in the ''-Xjvm-default={2}'' mode. " +
+                "Otherwise, implicit class override ''{1}'' (compiled in the old -Xjvm-default mode) " +
+                "is not fully overridden and might be incorrectly called at runtime",
+                SHORT_NAMES_IN_TYPES, SHORT_NAMES_IN_TYPES, TO_STRING);
+
+        MAP.put(DANGEROUS_CHARACTERS, "Name contains characters which can cause problems on Windows: {0}", STRING);
+
+        MAP.put(VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION, "Value classes without @JvmInline annotation are not supported yet");
+        MAP.put(JVM_INLINE_WITHOUT_VALUE_CLASS, "@JvmInline annotation is only applicable to value classes");
     }
 
     @NotNull

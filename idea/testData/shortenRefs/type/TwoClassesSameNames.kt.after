@@ -2,5 +2,5 @@ import java.util.Date
 import java.util.HashMap
 
 class A {
-    val x: HashMap<Date, java.sql.Date>
+    val x: HashMap<Date, dependency.Date>
 }

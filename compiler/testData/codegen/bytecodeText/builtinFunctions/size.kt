@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 abstract class A1 : Collection<String> {
     override val size: Int get() = 1
 }
@@ -52,10 +53,6 @@ fun box(
     c1.size
     c2.size
 }
-
-/*
-
-*/
 
 // 8 public final bridge size\(\)I
 // 8 INVOKEVIRTUAL A[0-9]+\.size \(\)I

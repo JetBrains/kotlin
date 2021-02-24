@@ -35,14 +35,14 @@ import a.D
 
 fun test() {
     f(A)
-    f(<!INAPPLICABLE_CANDIDATE!>B<!>)
+    f(<!HIDDEN!>B<!>)
     f(C)
-    f(<!INAPPLICABLE_CANDIDATE!>D<!>)
+    f(<!HIDDEN!>D<!>)
 
     A.foo()
-    <!INAPPLICABLE_CANDIDATE!>B<!>.<!UNRESOLVED_REFERENCE!>bar<!>()
+    <!HIDDEN!>B<!>.bar()
     C.baz()
-    <!INAPPLICABLE_CANDIDATE!>D<!>.<!UNRESOLVED_REFERENCE!>quux<!>()
+    <!HIDDEN!>D<!>.quux()
 
     a.A.foo()
     a.C.baz()

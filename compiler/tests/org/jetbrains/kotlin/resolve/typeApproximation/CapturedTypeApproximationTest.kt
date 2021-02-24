@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.types.TypeProjection
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.TypeSubstitutor
@@ -38,7 +39,7 @@ import java.util.*
 
 class CapturedTypeApproximationTest : KotlinTestWithEnvironment() {
     private val testDataPath: String
-        get() = KotlinTestUtils.getTestDataPathBase() + "/capturedTypeApproximation/"
+        get() = KtTestUtil.getTestDataPathBase() + "/capturedTypeApproximation/"
 
     override fun createEnvironment(): KotlinCoreEnvironment = createEnvironmentWithMockJdk(ConfigurationKind.JDK_ONLY)
 
@@ -46,7 +47,8 @@ class CapturedTypeApproximationTest : KotlinTestWithEnvironment() {
         assert(substitutions.size in 1..2) { "Captured type approximation test requires substitutions for (T) or (T, R)" }
         val oneTypeVariable = substitutions.size == 1
 
-        val declarationsText = KotlinTestUtils.doLoadFile(File(testDataPath + "/declarations.kt"))
+        val declarationsText =
+            KtTestUtil.doLoadFile(File(testDataPath + "/declarations.kt"))
 
         fun analyzeTestFile(testType: String) = run {
             val test = declarationsText.replace("#TestType#", testType)
@@ -97,10 +99,10 @@ class CapturedTypeApproximationTest : KotlinTestWithEnvironment() {
                 val typeParameters = functionFoo.typeParameters
                 val type = functionFoo.returnType
 
-                appendln(testType)
+                appendLine(testType)
 
                 if (bindingContext.diagnostics.noSuppression().any { it.severity == Severity.ERROR }) {
-                    appendln("  compiler error\n")
+                    appendLine("  compiler error\n")
                     continue
                 }
 
@@ -119,9 +121,9 @@ class CapturedTypeApproximationTest : KotlinTestWithEnvironment() {
                         if (testSubstitution.size > 1) append("${typeParameter.name} = ")
                         append("${testSubstitution[typeParameter]}. ")
                     }
-                    appendln("lower: $lower; upper: $upper; substitution: $substitution")
+                    appendLine("lower: $lower; upper: $upper; substitution: $substitution")
                 }
-                if (testTypes.lastIndex != index) appendln()
+                if (testTypes.lastIndex != index) appendLine()
             }
         }
 

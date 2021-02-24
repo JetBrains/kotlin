@@ -6,10 +6,10 @@ fun <T> listOf(vararg <!UNUSED_PARAMETER!>values<!>: T): List<T> = null!!
 fun commonSystemFailed(a: List<Int>) {
     a.map {
         if (it == 0) return@map listOf(it)
-        <!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>listOf<!>()
+        <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER{OI}!>listOf<!>()
     }
     a.map {
-        if (it == 0) return@map <!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>listOf<!>()
+        if (it == 0) return@map <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER{OI}!>listOf<!>()
         listOf(it)
     }
     a.map {

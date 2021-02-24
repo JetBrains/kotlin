@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 import java.util.Enumeration
 
 fun <T> java.util.Enumeration<T>.iterator() = object: Iterator<T> {

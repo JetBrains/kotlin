@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 class A(val f: () -> Int) {
     constructor() : this({ 23 })
 }

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 fun test(x: Int, y: Int): String {
     var result: String
     if (x == 6) {
@@ -17,5 +16,10 @@ fun infiniteLoop() {
     while(true) {}
 }
 
+// JVM_TEMPLATES
 // 2 GOTO L7
 // 1 GOTO L1
+
+// JVM_IR_TEMPLATES
+// 2 GOTO L6
+// 1 GOTO L0

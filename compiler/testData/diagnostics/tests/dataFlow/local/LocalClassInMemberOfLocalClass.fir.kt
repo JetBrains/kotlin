@@ -6,8 +6,8 @@ fun test(x: Any) {
       if (y !is String) return
       class Local {
         init {
-          x.<!UNRESOLVED_REFERENCE!>length<!>
-          y.<!UNRESOLVED_REFERENCE!>length<!>
+          x.length
+          y.length
         }
       }
     }

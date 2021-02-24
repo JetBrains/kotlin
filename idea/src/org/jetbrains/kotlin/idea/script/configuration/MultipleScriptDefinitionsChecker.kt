@@ -17,6 +17,7 @@ import com.intellij.psi.PsiManager
 import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.EditorNotifications
 import com.intellij.ui.HyperlinkLabel
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionsManager
 import org.jetbrains.kotlin.idea.core.script.StandardIdeScriptDefinition
@@ -38,6 +39,7 @@ class MultipleScriptDefinitionsChecker(private val project: Project) : EditorNot
 
         if (!ktFile.isScript()) return null
         if (KotlinScriptingSettings.getInstance(ktFile.project).suppressDefinitionsCheck) return null
+        if (!ScriptDefinitionsManager.getInstance(ktFile.project).isReady()) return null
 
         val allApplicableDefinitions = ScriptDefinitionsManager.getInstance(project)
             .getAllDefinitions()
@@ -55,22 +57,23 @@ class MultipleScriptDefinitionsChecker(private val project: Project) : EditorNot
         )
     }
 
-    private fun areDefinitionsForGradleKts(allApplicableDefinitions: List<ScriptDefinition>): Boolean =
-        if (allApplicableDefinitions.size == 2) {
-            (allApplicableDefinitions[0].asLegacyOrNull<KotlinScriptDefinitionFromAnnotatedTemplate>()?.scriptFilePattern
-                ?.pattern == "^(settings|.+\\.settings)\\.gradle\\.kts\$" &&
-                    allApplicableDefinitions[1].asLegacyOrNull<KotlinScriptDefinitionFromAnnotatedTemplate>()?.scriptFilePattern
-                        ?.pattern == ".*\\.gradle\\.kts")
-        } else
-            false
+    private fun areDefinitionsForGradleKts(allApplicableDefinitions: List<ScriptDefinition>): Boolean {
+        return allApplicableDefinitions.all {
+            val pattern = it.asLegacyOrNull<KotlinScriptDefinitionFromAnnotatedTemplate>()?.scriptFilePattern?.pattern
+            pattern == ".*\\.gradle\\.kts" || pattern == "^(settings|.+\\.settings)\\.gradle\\.kts\$" || pattern == ".+\\.init\\.gradle\\.kts"
+        }
+    }
 
     companion object {
         private val KEY = Key.create<EditorNotificationPanel>("MultipleScriptDefinitionsChecker")
 
         private fun createNotification(psiFile: KtFile, defs: List<ScriptDefinition>): EditorNotificationPanel =
             EditorNotificationPanel().apply {
-                setText("Multiple script definitions are applicable for this script. ${defs.first().name} is used")
-                createComponentActionLabel("Show all") { label ->
+                setText(
+                    KotlinBundle.message("script.text.multiple.script.definitions.are.applicable.for.this.script", defs.first().name))
+                createComponentActionLabel(
+                    KotlinBundle.message("script.action.text.show.all")
+                ) { label ->
                     val list = JBPopupFactory.getInstance().createListPopup(
                         object : BaseListPopupStep<ScriptDefinition>(null, defs) {
                             override fun getTextFor(value: ScriptDefinition): String =
@@ -84,12 +87,12 @@ class MultipleScriptDefinitionsChecker(private val project: Project) : EditorNot
                     list.showUnderneathOf(label)
                 }
 
-                createComponentActionLabel("Ignore") {
+                createComponentActionLabel(KotlinBundle.message("script.action.text.ignore")) {
                     KotlinScriptingSettings.getInstance(psiFile.project).suppressDefinitionsCheck = true
                     EditorNotifications.getInstance(psiFile.project).updateAllNotifications()
                 }
 
-                createComponentActionLabel("Open Settings") {
+                createComponentActionLabel(KotlinBundle.message("script.action.text.open.settings")) {
                     ShowSettingsUtilImpl.showSettingsDialog(psiFile.project, KotlinScriptingSettingsConfigurable.ID, "")
                 }
             }

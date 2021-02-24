@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2000-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.Severity
+import org.jetbrains.kotlin.idea.FrontendInternals
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.configuration.ui.NotPropertyListPanel
@@ -25,6 +27,8 @@ import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.frontendService
+import org.jetbrains.kotlin.idea.resolve.getDataFlowValueFactory
+import org.jetbrains.kotlin.idea.resolve.getLanguageVersionSettings
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.util.shouldNotConvertToProperty
@@ -79,7 +83,7 @@ class UsePropertyAccessSyntaxInspection : IntentionBasedInspection<KtCallExpress
 
     override fun createOptionsPanel(): JComponent? {
         val list = NotPropertyListPanel(fqNameList)
-        return LabeledComponent.create(list, "Excluded methods")
+        return LabeledComponent.create(list, KotlinBundle.message("excluded.methods"))
     }
 
     override fun inspectionTarget(element: KtCallExpression): PsiElement? {
@@ -92,7 +96,7 @@ class UsePropertyAccessSyntaxInspection : IntentionBasedInspection<KtCallExpress
             1 -> "setter"
             else -> null
         }
-        return "Use of $accessor method instead of property access syntax"
+        return KotlinBundle.message("use.of.0.method.instead.of.property.access.syntax", accessor.toString())
     }
 }
 
@@ -105,7 +109,6 @@ class NotPropertiesServiceImpl(private val project: Project) : NotPropertiesServ
     }
 
     companion object {
-
         private val atomicMethods = listOf(
             "getAndIncrement", "getAndDecrement", "getAcquire", "getOpaque", "getPlain"
         )
@@ -125,11 +128,11 @@ class NotPropertiesServiceImpl(private val project: Project) : NotPropertiesServ
     }
 }
 
-class UsePropertyAccessSyntaxIntention :
-    SelfTargetingOffsetIndependentIntention<KtCallExpression>(KtCallExpression::class.java, "Use property access syntax") {
-    override fun isApplicableTo(element: KtCallExpression): Boolean {
-        return detectPropertyNameToUse(element) != null
-    }
+class UsePropertyAccessSyntaxIntention : SelfTargetingOffsetIndependentIntention<KtCallExpression>(
+    KtCallExpression::class.java,
+    KotlinBundle.lazyMessage("use.property.access.syntax")
+) {
+    override fun isApplicableTo(element: KtCallExpression): Boolean = detectPropertyNameToUse(element) != null
 
     override fun applyTo(element: KtCallExpression, editor: Editor?) {
         val propertyName = detectPropertyNameToUse(element) ?: return
@@ -138,13 +141,10 @@ class UsePropertyAccessSyntaxIntention :
         }
     }
 
-    fun applyTo(element: KtCallExpression, propertyName: Name, reformat: Boolean): KtExpression {
-        val arguments = element.valueArguments
-        return when (arguments.size) {
-            0 -> replaceWithPropertyGet(element, propertyName)
-            1 -> replaceWithPropertySet(element, propertyName, reformat)
-            else -> error("More than one argument in call to accessor")
-        }
+    fun applyTo(element: KtCallExpression, propertyName: Name, reformat: Boolean): KtExpression = when (element.valueArguments.size) {
+        0 -> replaceWithPropertyGet(element, propertyName)
+        1 -> replaceWithPropertySet(element, propertyName, reformat)
+        else -> error("More than one argument in call to accessor")
     }
 
     fun detectPropertyNameToUse(callExpression: KtCallExpression): Name? {
@@ -167,6 +167,8 @@ class UsePropertyAccessSyntaxIntention :
         if (function.shouldNotConvertToProperty(notProperties)) return null
 
         val resolutionScope = callExpression.getResolutionScope(bindingContext, resolutionFacade)
+
+        @OptIn(FrontendInternals::class)
         val property = findSyntheticProperty(function, resolutionFacade.getFrontendService(SyntheticScopes::class.java)) ?: return null
 
         if (KtTokens.KEYWORDS.types.any { it.toString() == property.name.asString() }) return null
@@ -191,6 +193,7 @@ class UsePropertyAccessSyntaxIntention :
         val valueArgumentExpression = callExpression.valueArguments.firstOrNull()?.getArgumentExpression()?.takeUnless {
             it is KtLambdaExpression || it is KtNamedFunction || it is KtCallableReferenceExpression
         }
+
         if (isSetUsage && valueArgumentExpression == null) {
             return null
         }
@@ -216,6 +219,7 @@ class UsePropertyAccessSyntaxIntention :
                 expectedType = expectedType,
                 isStatement = true
             )
+
             if (newBindingContext.diagnostics.any { it.severity == Severity.ERROR }) return null
         }
 
@@ -245,9 +249,11 @@ class UsePropertyAccessSyntaxIntention :
         val context = BasicCallResolutionContext.create(
             bindingTrace, resolutionScope, newCall, expectedType, dataFlowInfo,
             ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
-            false, facade.frontendService<LanguageVersionSettings>(),
-            facade.frontendService<DataFlowValueFactory>()
+            false, facade.getLanguageVersionSettings(),
+            facade.getDataFlowValueFactory()
         )
+
+        @OptIn(FrontendInternals::class)
         val callResolver = facade.frontendService<CallResolver>()
         val result = callResolver.resolveSimpleProperty(context)
         return result.isSuccess && result.resultingDescriptor.original == property
@@ -273,7 +279,7 @@ class UsePropertyAccessSyntaxIntention :
         val callParent = call.parent
         var callToConvert = callExpression
         if (callParent is KtDeclarationWithBody && call == callParent.bodyExpression) {
-            ConvertToBlockBodyIntention.convert(callParent)
+            ConvertToBlockBodyIntention.convert(callParent, true)
             val firstStatement = callParent.bodyBlockExpression?.statements?.first()
             callToConvert = (firstStatement as? KtQualifiedExpression)?.selectorExpression as? KtCallExpression
                 ?: firstStatement as? KtCallExpression
@@ -288,6 +294,7 @@ class UsePropertyAccessSyntaxIntention :
                 is KtSafeQualifiedExpression -> "$0?.$1=$2"
                 else -> error(qualifiedExpression) //TODO: make it sealed?
             }
+
             val newExpression = KtPsiFactory(callToConvert).createExpressionByPattern(
                 pattern,
                 qualifiedExpression.receiverExpression,

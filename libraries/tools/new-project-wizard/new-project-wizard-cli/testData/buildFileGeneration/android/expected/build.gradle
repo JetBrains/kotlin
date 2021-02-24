@@ -1,17 +1,23 @@
 buildscript {
     repositories {
         gradlePluginPortal()
-        google()
         jcenter()
+        google()
+        mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.1'
-        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.61'
+        classpath('org.jetbrains.kotlin:kotlin-gradle-plugin:KOTLIN_VERSION')
+        classpath('com.android.tools.build:gradle:4.0.1')
     }
 }
+
 group = 'testGroupId'
 version = '1.0-SNAPSHOT'
 
-repositories {
-    mavenCentral()
+allprojects {
+    repositories {
+        google()
+        jcenter()
+        mavenCentral()
+    }
 }

@@ -14,9 +14,12 @@ import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.psi.*
+import org.jetbrains.annotations.Nls
+import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.core.getFqNameWithImplicitPrefix
-import org.jetbrains.kotlin.idea.core.quoteIfNeeded
 import org.jetbrains.kotlin.idea.core.util.CodeInsightUtils
 import org.jetbrains.kotlin.idea.quickfix.IntentionActionPriority
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.CreateFromUsageFixBase
@@ -42,13 +45,13 @@ import org.jetbrains.kotlin.utils.SmartList
 import java.util.*
 import com.intellij.codeInsight.daemon.impl.quickfix.ClassKind as IdeaClassKind
 
-enum class ClassKind(val keyword: String, val description: String) {
-    PLAIN_CLASS("class", "class"),
-    ENUM_CLASS("enum class", "enum"),
-    ENUM_ENTRY("", "enum constant"),
-    ANNOTATION_CLASS("annotation class", "annotation"),
-    INTERFACE("interface", "interface"),
-    OBJECT("object", "object"),
+enum class ClassKind(@NonNls val keyword: String, @Nls val description: String) {
+    PLAIN_CLASS("class", KotlinBundle.message("text.class")),
+    ENUM_CLASS("enum class", KotlinBundle.message("text.enum")),
+    ENUM_ENTRY("", KotlinBundle.message("text.enum.constant")),
+    ANNOTATION_CLASS("annotation class", KotlinBundle.message("text.annotation")),
+    INTERFACE("interface", KotlinBundle.message("text.interface")),
+    OBJECT("object", KotlinBundle.message("text.object")),
     DEFAULT("", "") // Used as a placeholder and must be replaced with one of the kinds above
 }
 
@@ -65,7 +68,8 @@ data class ClassInfo(
     val inner: Boolean = false,
     val open: Boolean = false,
     val typeArguments: List<TypeInfo> = Collections.emptyList(),
-    val parameterInfos: List<ParameterInfo> = Collections.emptyList()
+    val parameterInfos: List<ParameterInfo> = Collections.emptyList(),
+    val primaryConstructorVisibility: DescriptorVisibility? = null
 ) {
     val applicableParents by lazy {
         targetParents.filter {
@@ -79,7 +83,7 @@ open class CreateClassFromUsageFix<E : KtElement> protected constructor(
     element: E,
     private val classInfo: ClassInfo
 ) : CreateFromUsageFixBase<E>(element) {
-    override fun getText() = "Create ${classInfo.kind.description} '${classInfo.name}'"
+    override fun getText() = KotlinBundle.message("create.0.1", classInfo.kind.description, classInfo.name)
 
     override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {
         with(classInfo) {
@@ -124,7 +128,13 @@ open class CreateClassFromUsageFix<E : KtElement> protected constructor(
             return doInvoke(targetParent, editor, file)
         }
 
-        chooseContainerElementIfNecessary(applicableParents.reversed(), editor, "Choose class container", true, { it }) {
+        chooseContainerElementIfNecessary(
+            applicableParents.reversed(),
+            editor,
+            KotlinBundle.message("choose.class.container"),
+            true,
+            { it }
+        ) {
             doInvoke(it, editor, file)
         }
     }
@@ -155,8 +165,8 @@ open class CreateClassFromUsageFix<E : KtElement> protected constructor(
             CodeInsightUtils.showErrorHint(
                 targetDirectory.project,
                 editor,
-                "File $filePath already exists but does not correspond to Kotlin file",
-                "Create file",
+                KotlinBundle.message("file.0.already.exists.but.does.not.correspond.to.kotlin.file", filePath),
+                KotlinBundle.message("create.file"),
                 null
             )
         }
@@ -175,7 +185,7 @@ open class CreateClassFromUsageFix<E : KtElement> protected constructor(
             val defaultPackageFqName = file.packageFqName
             val dialog = object : CreateKotlinClassDialog(
                 file.project,
-                "Create ${ideaClassKind.description.capitalize()}",
+                KotlinBundle.message("create.0", ideaClassKind.description.capitalize()),
                 className,
                 defaultPackageFqName.asString(),
                 ideaClassKind,
@@ -189,7 +199,7 @@ open class CreateClassFromUsageFix<E : KtElement> protected constructor(
 
             val targetDirectory = dialog.targetDirectory ?: return
             val fileName = "$className.${KotlinFileType.EXTENSION}"
-            val packageFqName = targetDirectory.getFqNameWithImplicitPrefix()?.quoteIfNeeded()
+            val packageFqName = targetDirectory.getFqNameWithImplicitPrefix()
 
             file.project.executeWriteCommand(text) {
                 val targetFile = getOrCreateKotlinFile(fileName, targetDirectory, (packageFqName ?: defaultPackageFqName).asString())
@@ -202,7 +212,7 @@ open class CreateClassFromUsageFix<E : KtElement> protected constructor(
 
         val element = element ?: return
 
-        runWriteAction {
+        runWriteAction<Unit> {
             with(classInfo) {
                 val targetParent =
                     when (selectedParent) {
@@ -213,7 +223,8 @@ open class CreateClassFromUsageFix<E : KtElement> protected constructor(
                 val constructorInfo = ClassWithPrimaryConstructorInfo(
                     classInfo,
                     // Need for #KT-22137
-                    if (expectedTypeInfo.isUnit) TypeInfo.Empty else expectedTypeInfo
+                    if (expectedTypeInfo.isUnit) TypeInfo.Empty else expectedTypeInfo,
+                    primaryConstructorVisibility = classInfo.primaryConstructorVisibility
                 )
                 val builder = CallableBuilderConfiguration(
                     Collections.singletonList(constructorInfo),

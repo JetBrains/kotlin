@@ -14,11 +14,11 @@ fun test() {
 }
 
 fun check() {
-    [1, 2] checkType { <!UNRESOLVED_REFERENCE!>_<!><Array<Int>>() }
-    [""] checkType { <!UNRESOLVED_REFERENCE!>_<!><Array<String>>() }
+    [1, 2] <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><Array<Int>>() }
+    [""] <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><Array<String>>() }
 
     val f: IntArray = [1]
-    [f] checkType { <!UNRESOLVED_REFERENCE!>_<!><Array<IntArray>>() }
+    [f] <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><Array<IntArray>>() }
 
-    [1, ""] checkType { <!UNRESOLVED_REFERENCE!>_<!><Array<Any>>() }
+    [1, ""] <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><Array<Any>>() }
 }

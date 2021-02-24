@@ -8,40 +8,40 @@ public interface IrPropertyReferenceOrBuilder extends
     org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
   /**
-   * <code>optional int32 field = 1;</code>
+   * <code>optional int64 field = 1;</code>
    */
   boolean hasField();
   /**
-   * <code>optional int32 field = 1;</code>
+   * <code>optional int64 field = 1;</code>
    */
-  int getField();
+  long getField();
 
   /**
-   * <code>optional int32 getter = 2;</code>
+   * <code>optional int64 getter = 2;</code>
    */
   boolean hasGetter();
   /**
-   * <code>optional int32 getter = 2;</code>
+   * <code>optional int64 getter = 2;</code>
    */
-  int getGetter();
+  long getGetter();
 
   /**
-   * <code>optional int32 setter = 3;</code>
+   * <code>optional int64 setter = 3;</code>
    */
   boolean hasSetter();
   /**
-   * <code>optional int32 setter = 3;</code>
+   * <code>optional int64 setter = 3;</code>
    */
-  int getSetter();
+  long getSetter();
 
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin origin = 4;</code>
+   * <code>optional int32 origin_name = 4;</code>
    */
-  boolean hasOrigin();
+  boolean hasOriginName();
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin origin = 4;</code>
+   * <code>optional int32 origin_name = 4;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin getOrigin();
+  int getOriginName();
 
   /**
    * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon member_access = 5;</code>
@@ -53,11 +53,11 @@ public interface IrPropertyReferenceOrBuilder extends
   org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon getMemberAccess();
 
   /**
-   * <code>required int32 symbol = 6;</code>
+   * <code>required int64 symbol = 6;</code>
    */
   boolean hasSymbol();
   /**
-   * <code>required int32 symbol = 6;</code>
+   * <code>required int64 symbol = 6;</code>
    */
-  int getSymbol();
+  long getSymbol();
 }

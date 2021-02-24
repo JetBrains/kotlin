@@ -14,7 +14,7 @@ android {
 }
 
 dependencies {
-    compile "com.android.support:appcompat-v7:$support_lib_version"
+    implementation "com.android.support:appcompat-v7:$support_lib_version"
     kapt "com.squareup.dagger:dagger-compiler:$dagger_version"
 }
 

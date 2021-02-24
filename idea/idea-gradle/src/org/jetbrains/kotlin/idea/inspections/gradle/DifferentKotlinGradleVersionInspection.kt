@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.inspections.gradle
 
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
 import org.jetbrains.kotlin.idea.inspections.PluginVersionDependentInspection
 import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -36,9 +37,8 @@ class DifferentKotlinGradleVersionInspection : BaseInspection(), PluginVersionDe
 
     override fun getGroupDisplayName() = PROBABLE_BUGS
 
-    override fun buildErrorString(vararg args: Any): String {
-        return "Kotlin version that is used for building with Gradle (${args[0]}) differs from the one bundled into the IDE plugin (${args[1]})"
-    }
+    override fun buildErrorString(vararg args: Any): String =
+        KotlinIdeaGradleBundle.message("error.text.different.kotlin.gradle.version", args[0], args[1])
 
     private abstract class VersionFinder : KotlinGradleInspectionVisitor() {
         protected abstract fun onFound(kotlinPluginVersion: String, kotlinPluginStatement: GrCallExpression)

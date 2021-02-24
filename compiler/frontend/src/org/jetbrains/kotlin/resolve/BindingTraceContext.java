@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.psi.KtExpression;
+import org.jetbrains.kotlin.resolve.diagnostics.BindingContextSuppressCache;
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
 import org.jetbrains.kotlin.resolve.diagnostics.MutableDiagnosticsWithSuppression;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -37,11 +38,9 @@ public class BindingTraceContext implements BindingTrace {
     /* package */ final static boolean TRACK_WITH_STACK_TRACES = true;
 
     private final MutableSlicedMap map;
-    @Nullable private final MutableDiagnosticsWithSuppression mutableDiagnostics;
-    @NotNull private final BindingTraceFilter filter;
+    private final MutableDiagnosticsWithSuppression mutableDiagnostics;
 
-    private final BindingContext bindingContext = new BindingContext() {
-
+    private final BindingContext bindingContext = new CleanableBindingContext() {
         @NotNull
         @Override
         public Diagnostics getDiagnostics() {
@@ -76,6 +75,11 @@ public class BindingTraceContext implements BindingTrace {
         public void addOwnDataTo(@NotNull BindingTrace trace, boolean commitDiagnostics) {
             BindingContextUtils.addOwnDataTo(trace, null, commitDiagnostics, map, mutableDiagnostics);
         }
+
+        @Override
+        public void clear() {
+            map.clear();
+        }
     };
 
     public BindingTraceContext() {
@@ -87,17 +91,15 @@ public class BindingTraceContext implements BindingTrace {
     }
 
     public BindingTraceContext(BindingTraceFilter filter, boolean allowSliceRewrite) {
-        //noinspection ConstantConditions
         this(TRACK_REWRITES && !allowSliceRewrite ? new TrackingSlicedMap(TRACK_WITH_STACK_TRACES) : new SlicedMapImpl(allowSliceRewrite), filter);
     }
 
-
     private BindingTraceContext(@NotNull MutableSlicedMap map, BindingTraceFilter filter) {
         this.map = map;
-        this.mutableDiagnostics = !filter.getIgnoreDiagnostics()
-                                  ? new MutableDiagnosticsWithSuppression(bindingContext, Diagnostics.Companion.getEMPTY())
-                                  : null;
-        this.filter = filter;
+        this.mutableDiagnostics =
+                filter.getIgnoreDiagnostics()
+                ? null
+                : new MutableDiagnosticsWithSuppression(new BindingContextSuppressCache(bindingContext), Diagnostics.Companion.getEMPTY());
     }
 
     @TestOnly

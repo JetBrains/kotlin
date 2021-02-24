@@ -14,7 +14,7 @@ class C : A() {
 
 //------------
 open class D {
-    private open fun self() : D = this
+    <!INCOMPATIBLE_MODIFIERS!>private<!> <!INCOMPATIBLE_MODIFIERS!>open<!> fun self() : D = this
 }
 
 class E : D() {
@@ -35,7 +35,7 @@ class G : F() {
 }
 
 fun test_fun_stays_protected(g: G) {
-    g.protected_fun()
+    g.<!HIDDEN!>protected_fun<!>()
 }
 
 //------------
@@ -65,7 +65,7 @@ open class L : T {
 }
 
 class M : L() {
-    internal override fun foo() {}
+    <!CANNOT_WEAKEN_ACCESS_PRIVILEGE!>internal<!> override fun foo() {}
 }
 //---------------
 interface R {
@@ -81,5 +81,5 @@ interface Q : R {
 }
 
 class S : P, Q {
-    internal override fun foo() {}
+    <!CANNOT_WEAKEN_ACCESS_PRIVILEGE!>internal<!> override fun foo() {}
 }

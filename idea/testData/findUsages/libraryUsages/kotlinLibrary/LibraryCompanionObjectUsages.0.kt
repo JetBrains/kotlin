@@ -2,6 +2,7 @@
 // OPTIONS: usages, constructorUsages
 // FIND_BY_REF
 // WITH_FILE_NAME
+
 package usages
 
 import library.*
@@ -9,3 +10,5 @@ import library.*
 fun test() {
     val a = A.<caret>Companion
 }
+
+// FIR_IGNORE

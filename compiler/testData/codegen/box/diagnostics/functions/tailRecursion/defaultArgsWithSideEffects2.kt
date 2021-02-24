@@ -1,5 +1,4 @@
 // !LANGUAGE: +ProperComputationOrderOfTailrecDefaultParameters
-// IGNORE_BACKEND_FIR: JVM_IR
 // Flag above doesn't matter cause 1 default value is passed explicitly in tail recursion call
 // DONT_RUN_GENERATED_CODE: JS
 

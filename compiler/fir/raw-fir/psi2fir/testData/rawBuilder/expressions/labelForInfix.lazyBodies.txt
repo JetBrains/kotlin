@@ -1,0 +1,2 @@
+FILE: labelForInfix.kt
+    public? final? fun main(): R|kotlin/Unit| { LAZY_BLOCK }

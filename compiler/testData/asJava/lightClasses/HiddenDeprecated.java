@@ -1,2 +1,2 @@
-public final class HiddenDeprecatedKt {
+public final class HiddenDeprecatedKt /* a.HiddenDeprecatedKt*/ {
 }

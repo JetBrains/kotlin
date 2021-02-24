@@ -37,6 +37,7 @@ import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBTextField
 import com.intellij.uiDesigner.core.GridConstraints
 import kotlinx.coroutines.*
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.project.ModuleOrigin
 import org.jetbrains.kotlin.idea.caches.project.getNullableModuleInfo
@@ -201,17 +202,17 @@ internal abstract class AbstractCompletionBenchmarkScenario(
         if (result == JFileChooser.APPROVE_OPTION) {
             val file = jfc.selectedFile
             file.writeText(buildString {
-                appendln("n, file, lines, ff, full")
+                appendLine("n, file, lines, ff, full")
                 var i = 0
                 allResults.forEach {
                     append(i++)
                     append(", ")
                     it.toCSV(this)
-                    appendln()
+                    appendLine()
                 }
             })
         }
-        AbstractCompletionBenchmarkAction.showPopup(project, "Done")
+        AbstractCompletionBenchmarkAction.showPopup(project, KotlinBundle.message("title.done"))
     }
 
     abstract suspend fun doBenchmark()

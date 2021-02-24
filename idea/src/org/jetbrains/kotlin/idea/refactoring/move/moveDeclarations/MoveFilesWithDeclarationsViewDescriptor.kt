@@ -12,6 +12,7 @@ import com.intellij.refactoring.RefactoringBundle
 import com.intellij.usageView.UsageViewBundle
 import com.intellij.usageView.UsageViewDescriptor
 import com.intellij.usageView.UsageViewUtil
+import org.jetbrains.kotlin.idea.KotlinBundle
 
 internal class MoveFilesWithDeclarationsViewDescriptor(
     private val myElementsToMove: Array<PsiElement>,
@@ -27,8 +28,11 @@ internal class MoveFilesWithDeclarationsViewDescriptor(
                 UsageViewUtil.getType(myElementsToMove[0]),
                 newParent.virtualFile.presentableUrl
             ).capitalize()
-            myCodeReferencesText =
-                "References in code to ${UsageViewUtil.getType(myElementsToMove[0])} ${UsageViewUtil.getLongName(myElementsToMove[0])} and its declarations"
+            myCodeReferencesText = KotlinBundle.message(
+                "text.references.in.code.to.0.1.and.its.declarations",
+                UsageViewUtil.getType(myElementsToMove[0]),
+                UsageViewUtil.getLongName(myElementsToMove[0])
+            )
         } else {
             myProcessedElementsHeader =
                 StringUtil.capitalize(RefactoringBundle.message("move.files.elements.header", newParent.virtualFile.presentableUrl))

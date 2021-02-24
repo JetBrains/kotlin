@@ -14,9 +14,4 @@ fun testNonApplicableAmbiguity(p: Int) {
         if (p > 0) return@Runnable
         print(1)
     })
-
-    MyJavaClass.staticFun2(Runnable { }, Runnable {
-        if (p > 0) return@Runnable
-        print(1)
-    })
 }

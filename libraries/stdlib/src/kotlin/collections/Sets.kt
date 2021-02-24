@@ -5,7 +5,7 @@
 
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("SetsKt")
-@file:UseExperimental(kotlin.experimental.ExperimentalTypeInference::class)
+@file:OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 
 package kotlin.collections
 
@@ -91,6 +91,25 @@ public inline fun <T> linkedSetOf(): LinkedHashSet<T> = LinkedHashSet()
 public fun <T> linkedSetOf(vararg elements: T): LinkedHashSet<T> = elements.toCollection(LinkedHashSet(mapCapacity(elements.size)))
 
 /**
+ * Returns a new read-only set either with single given element, if it is not null, or empty set if the element is null.
+ * The returned set is serializable (JVM).
+ * @sample samples.collections.Collections.Sets.setOfNotNull
+ */
+@SinceKotlin("1.4")
+public fun <T : Any> setOfNotNull(element: T?): Set<T> = if (element != null) setOf(element) else emptySet()
+
+/**
+ * Returns a new read-only set only with those given elements, that are not null.
+ * Elements of the set are iterated in the order they were specified.
+ * The returned set is serializable (JVM).
+ * @sample samples.collections.Collections.Sets.setOfNotNull
+ */
+@SinceKotlin("1.4")
+public fun <T : Any> setOfNotNull(vararg elements: T?): Set<T> {
+    return elements.filterNotNullTo(LinkedHashSet())
+}
+
+/**
  * Builds a new read-only [Set] by populating a [MutableSet] using the given [builderAction]
  * and returning a read-only set with the same elements.
  *
@@ -106,8 +125,14 @@ public fun <T> linkedSetOf(vararg elements: T): LinkedHashSet<T> = elements.toCo
 @kotlin.internal.InlineOnly
 public inline fun <E> buildSet(@BuilderInference builderAction: MutableSet<E>.() -> Unit): Set<E> {
     contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
-    return LinkedHashSet<E>().apply(builderAction)
+    return buildSetInternal(builderAction)
 }
+
+@PublishedApi
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+internal expect inline fun <E> buildSetInternal(builderAction: MutableSet<E>.() -> Unit): Set<E>
 
 /**
  * Builds a new read-only [Set] by populating a [MutableSet] using the given [builderAction]
@@ -129,9 +154,14 @@ public inline fun <E> buildSet(@BuilderInference builderAction: MutableSet<E>.()
 @kotlin.internal.InlineOnly
 public inline fun <E> buildSet(capacity: Int, @BuilderInference builderAction: MutableSet<E>.() -> Unit): Set<E> {
     contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
-    checkBuilderCapacity(capacity)
-    return LinkedHashSet<E>(mapCapacity(capacity)).apply(builderAction)
+    return buildSetInternal(capacity, builderAction)
 }
+
+@PublishedApi
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+internal expect inline fun <E> buildSetInternal(capacity: Int, builderAction: MutableSet<E>.() -> Unit): Set<E>
 
 
 /** Returns this Set if it's not `null` and the empty set otherwise. */

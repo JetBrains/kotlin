@@ -1,0 +1,7 @@
+ OverloadedFunKt.class
+<1><3><5>// IntelliJ API Decompiler stub source generated from a class file
+// Implementation of methods is not available
+
+package testData.libraries
+
+@kotlin.jvm.JvmOverloads public fun <T> kotlin.String.<2><4><6>overloadedFun(vararg specs: kotlin.String, allowExisting: kotlin.Boolean /* = compiled code */, x: kotlin.Int, y: kotlin.Int /* = compiled code */, z: T): kotlin.String { /* compiled code */ }

@@ -1,0 +1,10 @@
+FILE: getOnKProperty.kt
+    public final val R|kotlin/Any?|.meaning: R|kotlin/Int|
+        public get(): R|kotlin/Int| {
+            ^ Int(42)
+        }
+    public final fun test(): R|kotlin/Unit| {
+        lval f: R|kotlin/reflect/KProperty1<kotlin/Any?, kotlin/Int>| = Q|kotlin/Any?|::R|/meaning|
+        R|<local>/f|.R|SubstitutionOverride<kotlin/reflect/KProperty1.get: R|kotlin/Int|>|(Null(null))
+        R|<local>/f|.R|SubstitutionOverride<kotlin/reflect/KProperty1.get: R|kotlin/Int|>|(String())
+    }

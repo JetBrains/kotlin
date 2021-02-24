@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 open class Foo(val value: String) {
 
     open inner class Inner(val d: Double = -1.0, val s: String, vararg val y: Int) {

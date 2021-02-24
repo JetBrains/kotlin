@@ -17,11 +17,11 @@ public interface IrSpreadElementOrBuilder extends
   org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression getExpression();
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Coordinates coordinates = 2;</code>
+   * <code>required int64 coordinates = 2;</code>
    */
   boolean hasCoordinates();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Coordinates coordinates = 2;</code>
+   * <code>required int64 coordinates = 2;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.Coordinates getCoordinates();
+  long getCoordinates();
 }

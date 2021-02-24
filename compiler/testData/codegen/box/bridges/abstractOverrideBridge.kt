@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 
 open class Base<T> {
     open fun f(x: T): String {

@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndexImpl
 import org.jetbrains.kotlin.cli.jvm.index.SingleJavaFileRootsIndex
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.name.ClassId
@@ -36,6 +38,7 @@ import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 
 class KotlinCliJavaFileManagerTest : KotlinTestWithEnvironment() {
@@ -182,10 +185,10 @@ class KotlinCliJavaFileManagerTest : KotlinTestWithEnvironment() {
     }
 
     override fun createEnvironment(): KotlinCoreEnvironment {
-        javaFilesDir = KotlinTestUtils.tmpDir("java-file-manager-test")
+        javaFilesDir = KtTestUtil.tmpDir("java-file-manager-test")
 
         val configuration = KotlinTestUtils.newConfiguration(
-                ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, emptyList(), listOf(javaFilesDir)
+            ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, emptyList(), listOf(javaFilesDir)
         )
 
         return KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
@@ -203,10 +206,10 @@ class KotlinCliJavaFileManagerTest : KotlinTestWithEnvironment() {
 
         val root = StandardFileSystems.local().findFileByPath(javaFilesDir.path)!!
         coreJavaFileManager.initialize(
-                JvmDependenciesIndexImpl(listOf(JavaRoot(root, JavaRoot.RootType.SOURCE))),
-                emptyList(),
-                SingleJavaFileRootsIndex(emptyList()),
-                usePsiClassFilesReading = false
+            JvmDependenciesIndexImpl(listOf(JavaRoot(root, JavaRoot.RootType.SOURCE))),
+            emptyList(),
+            SingleJavaFileRootsIndex(emptyList()),
+            usePsiClassFilesReading = false
         )
 
         return coreJavaFileManager

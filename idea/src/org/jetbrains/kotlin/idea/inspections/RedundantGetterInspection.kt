@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.inspections
 import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
@@ -21,7 +22,7 @@ class RedundantGetterInspection : AbstractKotlinInspection(), CleanupLocalInspec
             if (accessor.isRedundantGetter()) {
                 holder.registerProblem(
                     accessor,
-                    "Redundant getter",
+                    KotlinBundle.message("redundant.getter"),
                     ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                     rangeInElement,
                     RemoveRedundantGetterFix()
@@ -62,7 +63,7 @@ fun KtPropertyAccessor.deleteBody() {
 }
 
 class RemoveRedundantGetterFix : LocalQuickFix {
-    override fun getName() = "Remove redundant getter"
+    override fun getName() = KotlinBundle.message("remove.redundant.getter.fix.text")
 
     override fun getFamilyName() = name
 

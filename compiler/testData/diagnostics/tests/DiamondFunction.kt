@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 interface Base {
     fun f() = 1
 }

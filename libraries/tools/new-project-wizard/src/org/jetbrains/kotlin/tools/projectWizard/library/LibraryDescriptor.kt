@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.tools.projectWizard.library
 
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Repository
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 
@@ -7,12 +8,12 @@ sealed class LibraryArtifact
 
 data class MavenArtifact(
     val repository: Repository,
-    val groupId: String,
-    val artifactId: String
+    @NonNls val groupId: String,
+    @NonNls val artifactId: String
 ) : LibraryArtifact()
 
 data class NpmArtifact(
-    val name: String
+    @NonNls val name: String
 ) : LibraryArtifact()
 
 

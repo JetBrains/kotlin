@@ -1,0 +1,4 @@
+package jvmWithJavaData
+
+class SomeJVMWithJavaClass {
+}

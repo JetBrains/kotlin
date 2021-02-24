@@ -20,20 +20,19 @@ import com.intellij.util.ArrayUtil
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.resolveSupertypesInTheAir
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.resolve.jvm.KotlinFinderMarker
 
@@ -45,13 +44,12 @@ class FirJavaElementFinder(
     private val firProvider = session.firProvider
 
     override fun findPackage(qualifiedName: String): PsiPackage? {
-        if (firProvider.getClassNamesInPackage(FqName(qualifiedName)).isEmpty()) return null
+        if (firProvider.symbolProvider.getPackage(FqName(qualifiedName)) == null) return null
         return PsiPackageImpl(psiManager, qualifiedName)
     }
 
     override fun getClasses(psiPackage: PsiPackage, scope: GlobalSearchScope): Array<PsiClass> {
-        return firProvider
-            .getClassNamesInPackage(FqName(psiPackage.qualifiedName))
+        return firProvider.getClassNamesInPackage(FqName(psiPackage.qualifiedName))
             .mapNotNull { findClass(psiPackage.qualifiedName + "." + it.identifier, scope) }
             .toTypedArray()
     }
@@ -68,8 +66,7 @@ class FirJavaElementFinder(
             firProvider.getFirClassifierByFqName(classId) as? FirRegularClass
                 ?: return null
 
-        val ktFile = firClass.psi?.containingFile as? KtFile ?: return null
-        val fileStub = createJavaFileStub(classId.packageFqName, listOf(ktFile))
+        val fileStub = createJavaFileStub(classId.packageFqName, psiManager)
 
         return buildStub(firClass, fileStub).psi
     }
@@ -91,7 +88,7 @@ class FirJavaElementFinder(
 
         newTypeParameterList(
             stub,
-            firClass.typeParameters.map { Pair(it.name.asString(), arrayOf(CommonClassNames.JAVA_LANG_OBJECT)) }
+            firClass.typeParameters.filterIsInstance<FirTypeParameter>().map { Pair(it.name.asString(), arrayOf(CommonClassNames.JAVA_LANG_OBJECT)) }
         )
 
         val superTypeRefs = when {
@@ -112,9 +109,9 @@ class FirJavaElementFinder(
 
 private fun FirRegularClass.packFlags(): Int {
     var flags = when (visibility) {
-        Visibilities.PRIVATE -> ModifierFlags.PRIVATE_MASK
-        Visibilities.PROTECTED -> ModifierFlags.PROTECTED_MASK
-        Visibilities.PUBLIC -> ModifierFlags.PUBLIC_MASK
+        Visibilities.Private -> ModifierFlags.PRIVATE_MASK
+        Visibilities.Protected -> ModifierFlags.PROTECTED_MASK
+        Visibilities.Public -> ModifierFlags.PUBLIC_MASK
         else -> ModifierFlags.PACKAGE_LOCAL_MASK
     }
 
@@ -187,20 +184,16 @@ private fun newTypeParameterList(parent: StubElement<*>, parameters: List<Pair<S
     }
 }
 
-private fun createJavaFileStub(packageFqName: FqName, files: Collection<KtFile>): PsiJavaFileStub {
+private fun createJavaFileStub(packageFqName: FqName, psiManager: PsiManager): PsiJavaFileStub {
     val javaFileStub = PsiJavaFileStubImpl(packageFqName.asString(), /*compiled = */true)
     javaFileStub.psiFactory = ClsStubPsiFactory.INSTANCE
 
-    val fakeFile = object : ClsFileImpl(files.first().viewProvider) {
+    val fakeFile = object : ClsFileImpl(DummyHolderViewProvider(psiManager)) {
         override fun getStub() = javaFileStub
 
         override fun getPackageName() = packageFqName.asString()
 
         override fun isPhysical() = false
-
-        override fun getText(): String {
-            return files.singleOrNull()?.text ?: super.getText()
-        }
     }
 
     javaFileStub.psi = fakeFile
@@ -239,7 +232,7 @@ private fun ConeClassLikeType.mapToCanonicalNoExpansionString(session: FirSessio
     if (lookupTag.classId == StandardClassIds.Array) {
         return when (val typeProjection = typeArguments[0]) {
             is ConeStarProjection -> CommonClassNames.JAVA_LANG_OBJECT
-            is ConeTypedProjection -> {
+            is ConeKotlinTypeProjection -> {
                 if (typeProjection.kind == ProjectionKind.IN)
                     CommonClassNames.JAVA_LANG_VOID
                 else
@@ -249,9 +242,7 @@ private fun ConeClassLikeType.mapToCanonicalNoExpansionString(session: FirSessio
         } + "[]"
     }
 
-    val context = ConeTypeCheckerContext(isErrorTypeEqualsToAnything = false, isStubTypeEqualsToAnything = true, session = session)
-
-    with(context) {
+    with(session.typeContext) {
         val typeConstructor = typeConstructor()
         typeConstructor.getPrimitiveType()?.let { return JvmPrimitiveType.get(it).wrapperFqName.asString() }
         typeConstructor.getPrimitiveArrayType()?.let { return JvmPrimitiveType.get(it).javaKeywordName + "[]" }
@@ -266,10 +257,10 @@ private fun ConeClassLikeType.mapToCanonicalNoExpansionString(session: FirSessio
 
 }
 
-private fun ConeKotlinTypeProjection.mapToCanonicalString(session: FirSession): String {
+private fun ConeTypeProjection.mapToCanonicalString(session: FirSession): String {
     return when (this) {
         is ConeStarProjection -> "?"
-        is ConeTypedProjection -> {
+        is ConeKotlinTypeProjection -> {
             val wildcard = when (kind) {
                 ProjectionKind.STAR -> error("Should be handled in the case above")
                 ProjectionKind.IN -> "? super "

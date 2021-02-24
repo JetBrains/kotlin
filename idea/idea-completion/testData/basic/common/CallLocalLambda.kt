@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 class TestClass {
     public fun testMethod() {
     }

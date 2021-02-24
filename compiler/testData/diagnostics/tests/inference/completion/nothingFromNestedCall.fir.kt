@@ -9,5 +9,5 @@ fun <K> invOut(y: K?): Inv<Out<K>> = TODO()
 fun <R> test(x: Inv<Out<R>>): R = TODO()
 
 fun testNothing() {
-    test(invOut(null)) checkType { <!UNRESOLVED_REFERENCE!>_<!><Nothing>() }
+    test(invOut(null)) checkType { _<Nothing>() }
 }

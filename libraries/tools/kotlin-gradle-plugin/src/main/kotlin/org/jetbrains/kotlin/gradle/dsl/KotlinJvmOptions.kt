@@ -8,6 +8,7 @@ interface KotlinJvmOptions  : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOption
      * Include Kotlin runtime into the resulting JAR
      * Default value: false
      */
+    @Deprecated(message = "This option has no effect and will be removed in a future release.", level = DeprecationLevel.ERROR)
      var includeRuntime: kotlin.Boolean
 
     /**
@@ -23,11 +24,17 @@ interface KotlinJvmOptions  : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOption
      var jdkHome: kotlin.String?
 
     /**
-     * Target version of the generated JVM bytecode (1.6, 1.8, 9, 10, 11, 12 or 13), default is 1.6
-     * Possible values: "1.6", "1.8", "9", "10", "11", "12", "13"
-     * Default value: "1.6"
+     * Target version of the generated JVM bytecode (1.6 (DEPRECATED), 1.8, 9, 10, 11, 12, 13, 14 or 15), default is 1.8
+     * Possible values: "1.6", "1.8", "9", "10", "11", "12", "13", "14", "15"
+     * Default value: "1.8"
      */
      var jvmTarget: kotlin.String
+
+    /**
+     * Name of the generated .kotlin_module file
+     * Default value: null
+     */
+     var moduleName: kotlin.String?
 
     /**
      * Don't automatically include the Java runtime into the classpath
@@ -39,12 +46,14 @@ interface KotlinJvmOptions  : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOption
      * Don't automatically include Kotlin reflection into the classpath
      * Default value: true
      */
+    @Deprecated(message = "This option has no effect and will be removed in a future release.", level = DeprecationLevel.ERROR)
      var noReflect: kotlin.Boolean
 
     /**
      * Don't automatically include the Kotlin/JVM stdlib and Kotlin reflection into the classpath
      * Default value: true
      */
+    @Deprecated(message = "This option has no effect and will be removed in a future release.", level = DeprecationLevel.ERROR)
      var noStdlib: kotlin.Boolean
 
     /**
@@ -52,4 +61,10 @@ interface KotlinJvmOptions  : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOption
      * Default value: false
      */
      var useIR: kotlin.Boolean
+
+    /**
+     * Use the old JVM backend
+     * Default value: false
+     */
+     var useOldBackend: kotlin.Boolean
 }

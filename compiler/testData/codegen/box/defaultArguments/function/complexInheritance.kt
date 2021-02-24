@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 // See KT-21968
 
 interface A {

@@ -1,6 +1,6 @@
-package usages
+package usages;
 
-import library.*
+import library.*;
 
 class J extends A {
     public J() {

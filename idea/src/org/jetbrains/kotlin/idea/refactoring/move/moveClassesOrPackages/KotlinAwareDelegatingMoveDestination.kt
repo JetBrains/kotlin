@@ -25,6 +25,7 @@ import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.refactoring.MoveDestination
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.containers.MultiMap
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.refactoring.move.createMoveUsageInfoIfPossible
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.KotlinDirectoryMoveTarget
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.analyzeConflictsInFile
@@ -42,7 +43,7 @@ class KotlinAwareDelegatingMoveDestination(
     private val targetDirectory: PsiDirectory?
 ) : MoveDestination by delegate {
     override fun analyzeModuleConflicts(
-        elements: MutableCollection<PsiElement>,
+        elements: Collection<PsiElement>,
         conflicts: MultiMap<PsiElement, String>,
         usages: Array<out UsageInfo>
     ) {
@@ -78,7 +79,7 @@ class KotlinAwareDelegatingMoveDestination(
 
         val extraUsages = ArrayList<UsageInfo>()
         try {
-            progressIndicator.text = "Looking for Usages"
+            progressIndicator.text = KotlinBundle.message("text.looking.for.usages")
             for ((index, element) in extraElementsForReferenceSearch.withIndex()) {
                 progressIndicator.fraction = (index + 1) / extraElementsForReferenceSearch.size.toDouble()
                 ReferencesSearch.search(element, projectScope).mapNotNullTo(extraUsages) { ref ->

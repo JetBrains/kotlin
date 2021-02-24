@@ -26,7 +26,7 @@ public class AndroidUsageHighlightingTestGenerated extends AbstractAndroidUsageH
     }
 
     public void testAllFilesPresentInUsageHighlighting() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/android-extensions/android-extensions-idea/testData/android/usageHighlighting"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
+        org.jetbrains.kotlin.test.util.KtTestUtil.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/android-extensions/android-extensions-idea/testData/android/usageHighlighting"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
     }
 
     @TestMetadata("simple")

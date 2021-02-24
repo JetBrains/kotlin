@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.checkers
 
-import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.checkers.diagnostics.TextDiagnostic
+import org.jetbrains.kotlin.utils.SmartList
 
 class DiagnosedRange constructor(val start: Int) {
     var end: Int = 0
-    private val diagnostics = ContainerUtil.newSmartList<TextDiagnostic>()
+    private val diagnostics = SmartList<TextDiagnostic>()
 
     fun getDiagnostics(): List<TextDiagnostic> {
         return diagnostics

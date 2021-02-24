@@ -6,7 +6,7 @@ fun foo() {
     val y = x
     x = null
     if (y != null) {
-        x.<!UNRESOLVED_REFERENCE!>hashCode<!>()
+        x.hashCode()
     }
 }
 
@@ -23,7 +23,7 @@ fun bar(s: String?) {
     val hashCode = ss?.hashCode()
     ss = null
     if (hashCode != null) {
-        ss.<!UNRESOLVED_REFERENCE!>hashCode<!>()
+        ss<!UNSAFE_CALL!>.<!>hashCode()
     }
 }
 
@@ -41,6 +41,6 @@ fun baz(arg: Some?) {
     val ss = arg?.s
     if (ss != null) {
         arg.hashCode()
-        arg.s.<!INAPPLICABLE_CANDIDATE!>hashCode<!>()
+        arg.s<!UNSAFE_CALL!>.<!>hashCode()
     }
 }

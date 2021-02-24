@@ -17,7 +17,6 @@ class A {
     }
 }
 
-// INVOCATION_COUNT: 2
 // EXIST: { lookupString: "fooForA", itemText: "fooForA" }
 // EXIST: { lookupString: "fooForB", itemText: "fooForB" }
 // EXIST: { lookupString: "fooForT", itemText: "fooForT" }

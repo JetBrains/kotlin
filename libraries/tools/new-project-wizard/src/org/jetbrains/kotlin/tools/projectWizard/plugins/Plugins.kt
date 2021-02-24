@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.tools.projectWizard.plugins
 
+import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.kotlin.tools.projectWizard.core.Context
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.JpsPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.MavenPlugin
@@ -11,7 +12,7 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.templates.*
 
 object Plugins {
     val allPlugins = { context: Context ->
-        listOf(
+        persistentListOf(
             StructurePlugin(context),
 
             GroovyDslPlugin(context),
@@ -23,12 +24,17 @@ object Plugins {
             TemplatesPlugin(context),
             ProjectTemplatesPlugin(context),
             RunConfigurationsPlugin(context),
+            AndroidPlugin(context),
 
             // templates
             ConsoleJvmApplicationTemplatePlugin(context),
             KtorTemplatesPlugin(context),
             JsTemplatesPlugin(context),
-            NativeConsoleApplicationTemplatePlugin(context)
+            ReactJsTemplatesPlugin(context),
+            SimpleNodeJsTemplatesPlugin(context),
+            NativeConsoleApplicationTemplatePlugin(context),
+            ComposeTemplatesPlugin(context),
+            MobileMppTemplatePlugin(context),
         )
     }
 }

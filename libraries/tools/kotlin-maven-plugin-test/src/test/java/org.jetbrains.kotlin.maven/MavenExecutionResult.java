@@ -107,8 +107,8 @@ class MavenExecutionResult {
                 }
                 Arrays.sort(expectedPaths);
 
-                String expected = StringUtil.join(expectedPaths, "\n");
-                String actual = StringUtil.join(actualPaths, "\n");
+                String expected = StringUtil.join(Arrays.asList(expectedPaths), "\n");
+                String actual = StringUtil.join(Arrays.asList(actualPaths), "\n");
                 Assert.assertEquals("Compiled files differ", expected, actual);
             }
         });

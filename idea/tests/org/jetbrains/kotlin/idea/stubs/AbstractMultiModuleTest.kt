@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -23,25 +23,31 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.psi.PsiFile
 import com.intellij.testFramework.PsiTestUtil
-import org.jetbrains.kotlin.config.*
+import com.intellij.util.ThrowableRunnable
+import org.jetbrains.kotlin.config.CompilerSettings
+import org.jetbrains.kotlin.config.KotlinFacetSettings
+import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.idea.facet.getOrCreateFacet
 import org.jetbrains.kotlin.idea.facet.initializeIfNeeded
-import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
-import org.jetbrains.kotlin.idea.test.KotlinJdkAndLibraryProjectDescriptor
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.*
 import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.test.WithMutedInDatabaseRunTest
+import org.jetbrains.kotlin.test.runTest
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.Assert
 import java.io.File
 
+@WithMutedInDatabaseRunTest
 abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
 
     abstract override fun getTestDataPath(): String
 
     override fun setUp() {
         super.setUp()
-        VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory())
+        enableKotlinOfficialCodeStyle(project)
+        VfsRootAccess.allowRootAccess(KtTestUtil.getHomeDirectory())
     }
 
     fun module(name: String, jdk: TestJdkKind = TestJdkKind.MOCK_JDK, hasTestRoot: Boolean = false): Module {
@@ -60,13 +66,18 @@ abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
         return moduleWithSrcRootSet
     }
 
-    override fun tearDown() {
-        VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory())
-        super.tearDown()
-    }
+    override fun tearDown() = runAll(
+        ThrowableRunnable { VfsRootAccess.disallowRootAccess(KtTestUtil.getHomeDirectory()) },
+        ThrowableRunnable { disableKotlinOfficialCodeStyle(project) },
+        ThrowableRunnable { super.tearDown() },
+    )
 
     public override fun createModule(path: String, moduleType: ModuleType<*>): Module {
         return super.createModule(path, moduleType)
+    }
+
+    override fun runTest() {
+        runTest { super.runTest() }
     }
 
     fun addRoot(module: Module, sourceDirInTestData: File, isTestRoot: Boolean, transformContainedFiles: ((File) -> Unit)? = null) {
@@ -124,7 +135,6 @@ abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
             ?: error("Facet settings are not found")
 
         facetSettings.useProjectSettings = false
-        facetSettings.coroutineSupport = LanguageFeature.State.ENABLED
     }
 
     protected fun checkFiles(
@@ -151,21 +161,25 @@ fun Module.createFacet(
 fun Module.createMultiplatformFacetM1(
     platformKind: TargetPlatform? = null,
     useProjectSettings: Boolean = true,
-    implementedModuleNames: List<String>
+    implementedModuleNames: List<String>,
+    pureKotlinSourceFolders: List<String>
 ) {
     createFacetWithAdditionalSetup(platformKind, useProjectSettings) {
         this.implementedModuleNames = implementedModuleNames
+        this.pureKotlinSourceFolders = pureKotlinSourceFolders
     }
 }
 
 fun Module.createMultiplatformFacetM3(
     platformKind: TargetPlatform? = null,
     useProjectSettings: Boolean = true,
-    dependsOnModuleNames: List<String>
+    dependsOnModuleNames: List<String>,
+    pureKotlinSourceFolders: List<String>
 ) {
     createFacetWithAdditionalSetup(platformKind, useProjectSettings) {
         this.dependsOnModuleNames = dependsOnModuleNames
         this.isHmppEnabled = true
+        this.pureKotlinSourceFolders = pureKotlinSourceFolders
     }
 }
 

@@ -3,6 +3,8 @@
 
 package s
 
+import checkSubtype
+
 interface In<in T>
 
 interface A

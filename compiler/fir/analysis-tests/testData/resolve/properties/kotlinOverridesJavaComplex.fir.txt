@@ -1,0 +1,56 @@
+FILE: Test.kt
+    public final fun R|kotlin/collections/List<kotlin/String>|.single(): R|kotlin/String| {
+        ^single String()
+    }
+    public final fun R|kotlin/collections/List<kotlin/Int>|.single(): R|kotlin/Int| {
+        ^single Int(2)
+    }
+    public final fun listOf(): R|kotlin/collections/List<kotlin/String>| {
+    }
+    public final class LightMember<D> : R|Member<D>|, R|Light| {
+        public constructor<D>(): R|LightMember<D>| {
+            super<R|Light|>()
+        }
+
+        public final override fun getName(): R|kotlin/String| {
+            ^getName String(Light)
+        }
+
+    }
+    public final class LightClassWrapper : R|Light|, R|Klass| {
+        public constructor(): R|LightClassWrapper| {
+            super<R|Light|>()
+        }
+
+        public final fun test(): R|kotlin/String| {
+            ^test this@R|/LightClassWrapper|.R|/LightClassWrapper.typeParameters|.R|/single|()
+        }
+
+    }
+    public abstract class Light : R|Field|, R|TypeParametersOwner| {
+        public constructor(): R|Light| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun getTypeParameters(): R|kotlin/collections/List<kotlin/String>| {
+            ^getTypeParameters R|/listOf|()
+        }
+
+    }
+    public abstract interface Field : R|Named| {
+    }
+    public final class LightField<D> : R|LightMember<kotlin/Any>|, R|Field| {
+        public constructor<D>(): R|LightField<D>| {
+            super<R|LightMember<kotlin/Any>|>()
+        }
+
+        public final fun test(other: R|kotlin/Any?|): R|kotlin/Unit| {
+            when () {
+                (R|<local>/other| is R|LightField<*>|) ->  {
+                    R|<local>/other|.R|/LightField.name|
+                }
+            }
+
+        }
+
+    }

@@ -5,7 +5,9 @@
 package org.jetbrains.kotlin.kapt.cli.test
 
 import junit.framework.TestCase
-import org.jetbrains.kotlin.daemon.TestMessageCollector
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.kapt.cli.transformArgs
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -23,10 +25,30 @@ abstract class AbstractArgumentParsingTest : TestCase() {
         val before = sections.single { it.name == "before" }
 
         val messageCollector = TestMessageCollector()
-        val transformedArgs = transformArgs(before.content.split(LINE_SEPARATOR), messageCollector, isTest = true)
+        val transformedArgs = transformArgs(before.content.lines(), messageCollector, isTest = true)
         val actualAfter = if (messageCollector.hasErrors()) messageCollector.toString() else transformedArgs.joinToString(LINE_SEPARATOR)
         val actual = sections.replacingSection("after", actualAfter).render()
 
         KotlinTestUtils.assertEqualsToFile(testFile, actual)
+    }
+}
+
+class TestMessageCollector : MessageCollector {
+    data class Message(val severity: CompilerMessageSeverity, val message: String, val location: CompilerMessageSourceLocation?)
+
+    val messages = arrayListOf<Message>()
+
+    override fun clear() {
+        messages.clear()
+    }
+
+    override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
+        messages.add(Message(severity, message, location))
+    }
+
+    override fun hasErrors(): Boolean = messages.any { it.severity == CompilerMessageSeverity.EXCEPTION || it.severity == CompilerMessageSeverity.ERROR }
+
+    override fun toString(): String {
+        return messages.joinToString("\n") { "${it.severity}: ${it.message}${it.location?.let{" at $it"} ?: ""}" }
     }
 }

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 class Identifier() {
     private var myNullable : Boolean = false
         set(l : Boolean) {

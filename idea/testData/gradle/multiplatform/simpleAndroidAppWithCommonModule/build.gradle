@@ -1,7 +1,6 @@
 buildscript {
     repositories {
-        jcenter()
-        maven { url 'https://maven.google.com' }
+        {{kotlin_plugin_repositories}}
     }
 
     dependencies {
@@ -32,7 +31,7 @@ project('app') {
 
     android {
         compileSdkVersion 26
-        buildToolsVersion "23.0.1"
+        buildToolsVersion "28.0.3"
         defaultConfig {
             applicationId "org.jetbrains.kotlin"
             minSdkVersion 18

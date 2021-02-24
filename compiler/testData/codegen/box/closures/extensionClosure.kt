@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 class Point(val x : Int, val y : Int)
 
 fun box() : String {

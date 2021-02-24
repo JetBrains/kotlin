@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // KT-316 Members of traits must be open by default
 
 interface B {

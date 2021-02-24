@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.android.parcel.serializers
 
+import kotlinx.android.parcel.TypeParceler
 import org.jetbrains.kotlin.android.parcel.ParcelableSyntheticComponent
 import org.jetbrains.kotlin.android.parcel.isParcelize
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -13,13 +14,17 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.android.parcel.ParcelableSyntheticComponent.ComponentKind.*
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.name.FqName
+import java.io.FileDescriptor
 
 interface ParcelableExtensionBase {
 
     companion object {
-        private val CREATOR_NAME = Name.identifier("CREATOR")
+        val FILE_DESCRIPTOR_FQNAME = FqName(FileDescriptor::class.java.canonicalName)
 
-        private val ALLOWED_CLASS_KINDS = listOf(ClassKind.CLASS, ClassKind.OBJECT, ClassKind.ENUM_CLASS)
+        val CREATOR_NAME = Name.identifier("CREATOR")
+
+        val ALLOWED_CLASS_KINDS = listOf(ClassKind.CLASS, ClassKind.OBJECT, ClassKind.ENUM_CLASS)
     }
 
     fun ClassDescriptor.hasCreatorField(): Boolean {

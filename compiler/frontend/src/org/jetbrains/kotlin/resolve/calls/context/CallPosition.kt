@@ -33,5 +33,5 @@ sealed class CallPosition {
         val valueArgument: ValueArgument
     ) : CallPosition()
 
-    class PropertyAssignment(val leftPart: KtExpression?) : CallPosition()
+    class PropertyAssignment(val leftPart: KtExpression?, val isLeft: Boolean) : CallPosition()
 }

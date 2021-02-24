@@ -18,12 +18,10 @@ package org.jetbrains.kotlin.ir.builders
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.types.IrType
@@ -63,7 +61,7 @@ open class IrBlockBodyBuilder(
     startOffset: Int,
     endOffset: Int
 ) : IrStatementsBuilder<IrBlockBody>(context, scope, startOffset, endOffset) {
-    private val irBlockBody = IrBlockBodyImpl(startOffset, endOffset)
+    private val irBlockBody = context.irFactory.createBlockBody(startOffset, endOffset)
 
     inline fun blockBody(body: IrBlockBodyBuilder.() -> Unit): IrBlockBody {
         body()

@@ -33,7 +33,6 @@ class MultipleKotlinFacetEditor(
             //TODO(auskov): Support bulk editing target platforms?
             with(compilerConfigurable) {
                 helper.bind(reportWarningsCheckBox, editors) { it.compilerConfigurable.reportWarningsCheckBox }
-                helper.bind(enableNewInferenceInIDECheckBox, editors) { it.compilerConfigurable.enableNewInferenceInIDECheckBox }
                 helper.bind(additionalArgsOptionsField.textField, editors) { it.compilerConfigurable.additionalArgsOptionsField.textField }
                 helper.bind(generateSourceMapsCheckBox, editors) { it.compilerConfigurable.generateSourceMapsCheckBox }
                 helper.bind(outputPrefixFile.textField, editors) { it.compilerConfigurable.outputPrefixFile.textField }
@@ -46,7 +45,6 @@ class MultipleKotlinFacetEditor(
                 helper.bind(scriptTemplatesClasspathField, editors) { it.compilerConfigurable.scriptTemplatesClasspathField }
                 helper.bind(languageVersionComboBox, editors) { it.compilerConfigurable.languageVersionComboBox }
                 helper.bind(apiVersionComboBox, editors) { it.compilerConfigurable.apiVersionComboBox }
-                helper.bind(coroutineSupportComboBox, editors) { it.compilerConfigurable.coroutineSupportComboBox }
             }
         }
     }

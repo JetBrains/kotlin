@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: Aaa.java
 // http://youtrack.jetbrains.com/issue/KT-1880
 

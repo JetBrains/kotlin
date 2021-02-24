@@ -27,9 +27,9 @@ import k.two
 import k.all
 
 fun test() {
-    <!INAPPLICABLE_CANDIDATE!>zero<!>()
-    <!INAPPLICABLE_CANDIDATE!>zero<!>(1)
-    <!INAPPLICABLE_CANDIDATE!>zero<!>("")
+    <!NONE_APPLICABLE!>zero<!>()
+    <!NONE_APPLICABLE!>zero<!>(1)
+    <!NONE_APPLICABLE!>zero<!>("")
 
     one()
     <!INAPPLICABLE_CANDIDATE!>one<!>(1)

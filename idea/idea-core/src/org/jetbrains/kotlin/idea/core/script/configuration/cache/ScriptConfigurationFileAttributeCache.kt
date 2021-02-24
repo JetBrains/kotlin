@@ -9,7 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptConfigurationLoader
 import org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptConfigurationLoadingContext
-import org.jetbrains.kotlin.idea.core.script.debug
+import org.jetbrains.kotlin.idea.core.script.scriptingDebugLog
 import org.jetbrains.kotlin.idea.core.util.cachedFileAttribute
 import org.jetbrains.kotlin.idea.core.util.readObject
 import org.jetbrains.kotlin.idea.core.util.writeObject
@@ -18,9 +18,8 @@ import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper.FromCompilationConfiguration
 import java.io.Serializable
-import kotlin.script.experimental.api.ScriptCompilationConfiguration
-import kotlin.script.experimental.api.ScriptDiagnostic
-import kotlin.script.experimental.api.dependencies
+import kotlin.script.experimental.api.*
+import kotlin.script.experimental.host.withDefaultsFrom
 import kotlin.script.experimental.jvm.impl.toClassPathOrEmpty
 
 internal class ScriptConfigurationFileAttributeCache(
@@ -45,7 +44,13 @@ internal class ScriptConfigurationFileAttributeCache(
             ScriptConfigurationSnapshot(
                 fromFs.inputs,
                 fromFs.reports,
-                FromCompilationConfiguration(KtFileScriptSource(ktFile), fromFs.configuration)
+                FromCompilationConfiguration(
+                    KtFileScriptSource(ktFile),
+                    fromFs.configuration.with {
+                        // should be updated from definition because host configuration is transient
+                        hostConfiguration.update { it.withDefaultsFrom(scriptDefinition.hostConfiguration) }
+                    }
+                )
             )
         )
         return fromFs.inputs.isUpToDate(ktFile.project, virtualFile, ktFile)
@@ -55,7 +60,7 @@ internal class ScriptConfigurationFileAttributeCache(
         virtualFile: VirtualFile
     ): ScriptConfigurationSnapshotForFS? {
         val configurationSnapshot = virtualFile.scriptConfigurationSnapshot ?: return null
-        debug(virtualFile) { "configuration from fileAttributes = $configurationSnapshot" }
+        scriptingDebugLog(virtualFile) { "configuration from fileAttributes = $configurationSnapshot" }
 
         val configuration = configurationSnapshot.configuration ?: return null
 
@@ -73,7 +78,7 @@ internal class ScriptConfigurationFileAttributeCache(
             if (it.exists()) {
                 true
             } else {
-                debug(file) {
+                scriptingDebugLog(file) {
                     "classpath root saved to file attribute doesn't exist: ${it.path}"
                 }
                 false

@@ -1,0 +1,20 @@
+interface IThing {
+
+}
+
+fun test1(x: Any): Boolean {
+  return x is IThing
+}
+
+fun test2(x: Any): Boolean {
+  return x !is IThing
+}
+
+fun test3(x: Any): IThing {
+  return x as IThing
+}
+
+fun test4(x: Any): IThing? {
+  return x as? IThing
+}
+

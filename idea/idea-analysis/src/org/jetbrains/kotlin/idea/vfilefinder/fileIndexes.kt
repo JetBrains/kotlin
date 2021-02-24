@@ -11,10 +11,14 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.indexing.*
 import com.intellij.util.io.IOUtil
 import com.intellij.util.io.KeyDescriptor
+import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsPackageFragmentProvider
 import org.jetbrains.kotlin.idea.caches.IDEKotlinBinaryClassCache
 import org.jetbrains.kotlin.idea.decompiler.builtIns.BuiltInDefinitionFile
 import org.jetbrains.kotlin.idea.decompiler.builtIns.KotlinBuiltInFileType
 import org.jetbrains.kotlin.idea.decompiler.js.KotlinJavaScriptMetaFileType
+import org.jetbrains.kotlin.idea.klib.KlibLoadingMetadataCache
+import org.jetbrains.kotlin.idea.klib.KlibMetaFileType
+import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.metadata.js.JsProtoBuf
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -22,10 +26,12 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.MetadataPackageFragment
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.utils.JsMetadataVersion
+import org.jetbrains.lang.manifest.ManifestFileType
 import java.io.ByteArrayInputStream
 import java.io.DataInput
 import java.io.DataOutput
 import java.util.*
+import java.util.jar.Manifest
 
 abstract class KotlinFileIndexBase<T>(classOfIndex: Class<T>) : ScalarIndexExtension<FqName>() {
     val KEY: ID<FqName, Void> = ID.create(classOfIndex.canonicalName)
@@ -49,8 +55,7 @@ abstract class KotlinFileIndexBase<T>(classOfIndex: Class<T>) : ScalarIndexExten
     override fun getKeyDescriptor() = KEY_DESCRIPTOR
 
     protected fun indexer(f: (FileContent) -> FqName?): DataIndexer<FqName, Void, FileContent> =
-        // See KT-11323
-        DataIndexer<FqName, Void, FileContent> {
+        DataIndexer {
             try {
                 val fqName = f(it)
                 if (fqName != null) {
@@ -116,7 +121,7 @@ open class KotlinMetadataFileIndexBase<T>(classOfIndex: Class<T>, indexFunction:
         if (fileContent.fileType == KotlinBuiltInFileType &&
             fileContent.fileName.endsWith(MetadataPackageFragment.DOT_METADATA_FILE_EXTENSION)
         ) {
-            val builtins = BuiltInDefinitionFile.read(fileContent.content, fileContent.file.parent)
+            val builtins = BuiltInDefinitionFile.read(fileContent.content, fileContent.file)
             (builtins as? BuiltInDefinitionFile)?.let { builtinDefFile ->
                 val proto = builtinDefFile.proto
                 proto.class_List.singleOrNull()?.let { cls ->
@@ -139,3 +144,77 @@ object KotlinMetadataFileIndex : KotlinMetadataFileIndexBase<KotlinMetadataFileI
 object KotlinMetadataFilePackageIndex : KotlinMetadataFileIndexBase<KotlinMetadataFilePackageIndex>(
     KotlinMetadataFilePackageIndex::class.java, ClassId::getPackageFqName
 )
+
+object KotlinBuiltInsMetadataIndex : KotlinFileIndexBase<KotlinBuiltInsMetadataIndex>(KotlinBuiltInsMetadataIndex::class.java) {
+    override fun getIndexer() = INDEXER
+
+    override fun getInputFilter() = FileBasedIndex.InputFilter { file -> file.fileType == KotlinBuiltInFileType }
+
+    override fun getVersion() = VERSION
+
+    private val VERSION = 1
+
+    private val INDEXER = indexer { fileContent ->
+        if (fileContent.fileType == KotlinBuiltInFileType &&
+            fileContent.fileName.endsWith(JvmBuiltInsPackageFragmentProvider.DOT_BUILTINS_METADATA_FILE_EXTENSION)) {
+            val builtins = BuiltInDefinitionFile.read(fileContent.content, fileContent.file.parent)
+            (builtins as? BuiltInDefinitionFile)?.packageFqName
+        } else null
+    }
+}
+
+object KotlinStdlibIndex : KotlinFileIndexBase<KotlinStdlibIndex>(KotlinStdlibIndex::class.java) {
+    private const val LIBRARY_NAME_MANIFEST_ATTRIBUTE = "Implementation-Title"
+    private const val STDLIB_TAG_MANIFEST_ATTRIBUTE = "Kotlin-Runtime-Component"
+    val KOTLIN_STDLIB_NAME = FqName("kotlin-stdlib")
+    val KOTLIN_STDLIB_COMMON_NAME = FqName("kotlin-stdlib-common")
+
+    val STANDARD_LIBRARY_DEPENDENCY_NAMES = setOf(
+        KOTLIN_STDLIB_COMMON_NAME,
+    )
+
+    override fun getIndexer() = INDEXER
+
+    override fun getInputFilter() = FileBasedIndex.InputFilter { file -> file.fileType is ManifestFileType }
+
+    override fun getVersion() = VERSION
+
+    private val VERSION = 1
+
+    // TODO: refactor [KotlinFileIndexBase] and get rid of FqName here, it's never a proper fully qualified name, just a String wrapper
+    private val INDEXER = indexer { fileContent ->
+        if (fileContent.fileType is ManifestFileType) {
+            val manifest = Manifest(ByteArrayInputStream(fileContent.content))
+            val attributes = manifest.mainAttributes
+            attributes.getValue(STDLIB_TAG_MANIFEST_ATTRIBUTE) ?: return@indexer null
+            val libraryName = attributes.getValue(LIBRARY_NAME_MANIFEST_ATTRIBUTE) ?: return@indexer null
+            FqName(libraryName)
+        } else null
+    }
+}
+
+object KlibMetaFileIndex : KotlinFileIndexBase<KlibMetaFileIndex>(KlibMetaFileIndex::class.java) {
+
+    override fun getIndexer() = INDEXER
+
+    override fun getInputFilter() = FileBasedIndex.InputFilter { it.fileType === KlibMetaFileType
+    }
+
+    override fun getVersion() = VERSION
+
+    // This is to express intention to index all Kotlin/Native metadata files irrespectively to file size:
+    override fun getFileTypesWithSizeLimitNotApplicable() = listOf(KlibMetaFileType)
+
+    private const val VERSION = 4
+
+    /*todo: check version?!*/
+    private val INDEXER = indexer { fileContent ->
+        val fragment = KlibLoadingMetadataCache
+            .getInstance().getCachedPackageFragment(fileContent.file)
+        if (fragment != null)
+            FqName(fragment.getExtension(KlibMetadataProtoBuf.fqName))
+        else
+            null
+    }
+}
+

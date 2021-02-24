@@ -1,0 +1,31 @@
+FILE: superAny.kt
+    public abstract interface A : R|kotlin/Any| {
+    }
+    public open class B : R|kotlin/Any| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open override operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| {
+            ^equals this@R|/B|.super<R|kotlin/Any|>.R|kotlin/Any.equals|(R|<local>/other|)
+        }
+
+        public open override fun hashCode(): R|kotlin/Int| {
+            ^hashCode this@R|/B|.super<R|kotlin/Any|>.R|kotlin/Any.hashCode|()
+        }
+
+    }
+    public final class C : R|A|, R|B| {
+        public constructor(): R|C| {
+            super<R|B|>()
+        }
+
+        public final override operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| {
+            ^equals this@R|/C|.super<R|B|>.R|/B.equals|(R|<local>/other|)
+        }
+
+        public final override fun hashCode(): R|kotlin/Int| {
+            ^hashCode this@R|/C|.super<R|B|>.R|/B.hashCode|()
+        }
+
+    }

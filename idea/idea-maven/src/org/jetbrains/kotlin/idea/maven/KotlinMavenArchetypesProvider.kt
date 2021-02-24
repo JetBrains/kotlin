@@ -105,7 +105,7 @@ class KotlinMavenArchetypesProvider(private val kotlinPluginVersion: String, pri
             }
 
     private fun chooseVersion(versions: List<MavenArchetype>): MavenArchetype? {
-        return versions.maxBy { MavenVersionComparable(it.version) }
+        return versions.maxByOrNull { MavenVersionComparable(it.version) }
     }
 
     private fun <R> connectAndApply(url: String, timeoutSeconds: Int = 15, block: (HttpURLConnection) -> R): R {

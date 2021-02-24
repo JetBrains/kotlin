@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,10 +8,7 @@ package org.jetbrains.kotlin.idea.project
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.registry.Registry
-import com.intellij.util.text.nullize
 import org.jetbrains.kotlin.caches.project.cacheByClassInvalidatingOnRootModifications
-import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.config.isHmpp
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 

@@ -1,5 +1,7 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 // TARGET_BACKEND: JVM
+
+// Out of memory on Android 4.4
+// IGNORE_BACKEND: ANDROID
 
 // WITH_REFLECT
 

@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.gradle.internal.testing
 
 import org.gradle.api.internal.tasks.testing.TestExecuter
@@ -30,15 +35,16 @@ class TCServiceMessagesTestExecutor(
     val execHandleFactory: ExecHandleFactory,
     val buildOperationExecutor: BuildOperationExecutor,
     val runListeners: MutableList<KotlinTestRunnerListener>,
+    val ignoreTcsmOverflow: Boolean,
     val ignoreRunFailures: Boolean
 ) : TestExecuter<TCServiceMessagesTestExecutionSpec> {
-    var execHandle: ExecHandle? = null
+    private lateinit var execHandle: ExecHandle
     var outputReaderThread: Thread? = null
     var shouldStop = false
 
     override fun execute(spec: TCServiceMessagesTestExecutionSpec, testResultProcessor: TestResultProcessor) {
         spec.wrapExecute {
-            val rootOperation = buildOperationExecutor.currentOperation.parentId
+            val rootOperation = buildOperationExecutor.currentOperation.parentId!!
 
             val client = spec.createClient(testResultProcessor, log)
 
@@ -46,17 +52,28 @@ class TCServiceMessagesTestExecutor(
                 val exec = execHandleFactory.newExec()
                 spec.forkOptions.copyTo(exec)
                 exec.args = spec.args
-                exec.standardOutput = TCServiceMessageOutputStreamHandler(client, { spec.showSuppressedOutput() }, log)
+                exec.standardOutput = TCServiceMessageOutputStreamHandler(
+                    client,
+                    { spec.showSuppressedOutput() },
+                    log,
+                    ignoreTcsmOverflow
+                )
+                exec.errorOutput = TCServiceMessageOutputStreamHandler(
+                    client,
+                    { spec.showSuppressedOutput() },
+                    log,
+                    ignoreTcsmOverflow
+                )
                 execHandle = exec.build()
 
                 lateinit var result: ExecResult
                 client.root(rootOperation) {
-                    execHandle!!.start()
-                    result = execHandle!!.waitForFinish()
+                    execHandle.start()
+                    result = execHandle.waitForFinish()
                 }
 
                 if (spec.checkExitCode && result.exitValue != 0) {
-                    error("$execHandle exited with errors (exit code: ${result.exitValue})")
+                    error(client.testFailedMessage(execHandle, result.exitValue))
                 }
             } catch (e: Throwable) {
                 spec.showSuppressedOutput()
@@ -78,7 +95,9 @@ class TCServiceMessagesTestExecutor(
 
     override fun stopNow() {
         shouldStop = true
-        execHandle?.abort()
+        if (::execHandle.isInitialized) {
+            execHandle.abort()
+        }
         outputReaderThread?.join()
     }
 

@@ -1,0 +1,17 @@
+typealias IntAlias = Cell<Int>
+class Cell<T : Any?> {
+  constructor(value: T) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val value: T
+    field = value
+    get
+
+}
+
+fun test(): Cell<Int> {
+  return Cell<Any?>(value = 42)
+}

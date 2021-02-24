@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 fun foo(x: Int?) {
     // Both parts of the Elvis should be alive, see KT-7936
     x?.let {

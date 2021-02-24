@@ -44,7 +44,7 @@ public abstract class KotlinIfSurrounderBase extends KotlinStatementsSurrounder 
         statements = MoveDeclarationsOutHelperKt.move(container, statements, isGenerateDefaultInitializers());
 
         if (statements.length == 0) {
-            KotlinSurrounderUtils.showErrorHint(project, editor, KotlinSurrounderUtils.SURROUND_WITH_ERROR);
+            KotlinSurrounderUtils.showErrorHint(project, editor, KotlinSurrounderUtils.SURROUND_WITH_ERROR());
             return null;
         }
 

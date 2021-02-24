@@ -87,7 +87,10 @@ fun getComparisonGeneratorForRangeContainsCall(
             getComparisonGeneratorForKotlinType(elementType)
 
         KotlinBuiltIns.isUInt(elementType) ->
-            UIntComparisonGenerator
+            if (KotlinBuiltIns.isULong(valueParameterType))
+                null
+            else
+                UIntComparisonGenerator
 
         KotlinBuiltIns.isULong(elementType) ->
             ULongComparisonGenerator

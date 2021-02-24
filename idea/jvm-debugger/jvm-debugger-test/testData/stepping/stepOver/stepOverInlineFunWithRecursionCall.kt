@@ -18,4 +18,4 @@ inline fun inlineCall(l: () -> Unit) {
     l()
 }
 
-// STEP_OVER: 4
+// STEP_OVER: 5

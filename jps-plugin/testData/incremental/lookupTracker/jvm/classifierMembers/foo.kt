@@ -18,16 +18,16 @@ import bar.*
         /*c:foo.A*/foo()
         /*p:foo(A) p:kotlin(Int)*/this./*c:foo.A*/a
         /*p:foo(A)*/this./*c:foo.A*/foo()
-        /*c:foo.A c:foo.A(getBaz) c:foo.A(getBAZ) c:foo.A.Companion p:foo p:bar p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io p:kotlin.comparisons p:kotlin.jvm p:java.lang*/baz()
-        /*c:foo.A c:foo.A.Companion p:foo p:bar p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io p:kotlin.comparisons p:kotlin.jvm p:java.lang p:kotlin(Int)*/Companion./*c:foo.A.Companion*/a
-        /*c:foo.A c:foo.A.Companion p:foo p:bar p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io p:kotlin.comparisons p:kotlin.jvm p:java.lang p:kotlin(String)*/O./*c:foo.A.O*/v = /*p:kotlin(String)*/"OK"
+        /*c:foo.A c:foo.A(getBAZ) c:foo.A(getBaz) c:foo.A.Companion p:bar p:foo p:java.lang p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.comparisons p:kotlin.io p:kotlin.jvm p:kotlin.ranges p:kotlin.sequences p:kotlin.text*/baz()
+        /*c:foo.A c:foo.A.Companion p:bar p:foo p:java.lang p:kotlin p:kotlin(Int) p:kotlin.annotation p:kotlin.collections p:kotlin.comparisons p:kotlin.io p:kotlin.jvm p:kotlin.ranges p:kotlin.sequences p:kotlin.text*/Companion./*c:foo.A.Companion*/a
+        /*c:foo.A c:foo.A.Companion p:bar p:foo p:java.lang p:kotlin p:kotlin(String) p:kotlin.annotation p:kotlin.collections p:kotlin.comparisons p:kotlin.io p:kotlin.jvm p:kotlin.ranges p:kotlin.sequences p:kotlin.text*/O./*c:foo.A.O*/v = /*p:kotlin(String)*/"OK"
     }
 
     class B {
         val a = /*p:kotlin(Int)*/1
 
         companion object CO {
-            fun bar(a: /*c:foo.A.B.CO c:foo.A.B c:foo.A c:foo.A.Companion p:foo p:kotlin*/Int) {}
+            fun bar(a: /*c:foo.A c:foo.A.B c:foo.A.B.CO c:foo.A.Companion p:foo p:kotlin*/Int) {}
         }
     }
 
@@ -54,7 +54,7 @@ import bar.*
     override var a = /*p:kotlin(Int)*/1
     override fun foo() {}
     val b = /*p:kotlin(Int)*/1
-    fun bar(): /*c:foo.Obj p:foo*/I = /*p:kotlin(Nothing) p:foo(I)*/null as /*c:foo.Obj p:foo*/I
+    fun bar(): /*c:foo.Obj p:foo*/I = /*p:foo(I) p:kotlin(Nothing)*/null as /*c:foo.Obj p:foo*/I
 }
 
 /*p:foo*/enum class E {
@@ -64,8 +64,8 @@ import bar.*
     val a = /*p:kotlin(Int)*/1
     fun foo() {
         /*c:foo.E p:kotlin(Int)*/a
-        /*c:foo.E p:foo p:bar p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io p:kotlin.comparisons p:kotlin.jvm p:java.lang p:kotlin(Int)*/Y./*c:foo.E*/a
+        /*c:foo.E p:bar p:foo p:java.lang p:kotlin p:kotlin(Int) p:kotlin.annotation p:kotlin.collections p:kotlin.comparisons p:kotlin.io p:kotlin.jvm p:kotlin.ranges p:kotlin.sequences p:kotlin.text*/Y./*c:foo.E*/a
         /*c:foo.E*/foo()
-        /*c:foo.E p:foo p:bar p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io p:kotlin.comparisons p:kotlin.jvm p:java.lang*/X./*c:foo.E*/foo()
+        /*c:foo.E p:bar p:foo p:java.lang p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.comparisons p:kotlin.io p:kotlin.jvm p:kotlin.ranges p:kotlin.sequences p:kotlin.text*/X./*c:foo.E*/foo()
     }
 }

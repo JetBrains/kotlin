@@ -11,6 +11,7 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.intentions.callExpression
@@ -29,7 +30,7 @@ class MapGetWithNotNullAssertionOperatorInspection : AbstractKotlinInspection() 
             if (expression.baseExpression?.resolveToCall()?.resultingDescriptor?.fqNameSafe != FqName("kotlin.collections.Map.get")) return
             holder.registerProblem(
                 expression.operationReference,
-                "map.get() with not-null assertion operator (!!)",
+                KotlinBundle.message("map.get.with.not.null.assertion.operator"),
                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                 ReplaceWithGetValueCallFix(),
                 ReplaceWithGetOrElseFix(),
@@ -38,7 +39,7 @@ class MapGetWithNotNullAssertionOperatorInspection : AbstractKotlinInspection() 
         })
 
     private class ReplaceWithGetValueCallFix : LocalQuickFix {
-        override fun getName() = "Replace with 'getValue' call"
+        override fun getName() = KotlinBundle.message("replace.with.get.value.call.fix.text")
         override fun getFamilyName() = name
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             val expression = descriptor.psiElement.parent as? KtPostfixExpression ?: return
@@ -49,7 +50,7 @@ class MapGetWithNotNullAssertionOperatorInspection : AbstractKotlinInspection() 
     }
 
     private class ReplaceWithGetOrElseFix : LocalQuickFix {
-        override fun getName() = "Replace with 'getOrElse' call"
+        override fun getName() = KotlinBundle.message("replace.with.get.or.else.fix.text")
         override fun getFamilyName() = name
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             val expression = descriptor.psiElement.parent as? KtPostfixExpression ?: return
@@ -66,7 +67,7 @@ class MapGetWithNotNullAssertionOperatorInspection : AbstractKotlinInspection() 
     }
 
     private class ReplaceWithElvisErrorFix : LocalQuickFix {
-        override fun getName() = "Replace with '?: error(\"\")'"
+        override fun getName() = KotlinBundle.message("replace.with.elvis.error.fix.text")
         override fun getFamilyName() = name
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             val expression = descriptor.psiElement.parent as? KtPostfixExpression ?: return

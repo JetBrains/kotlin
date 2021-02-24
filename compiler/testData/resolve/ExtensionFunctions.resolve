@@ -14,7 +14,6 @@
 
   1.`foo`foo()
   true.`T.foo`foo()
-  3.`!null`foo(4)
 
   1
 }

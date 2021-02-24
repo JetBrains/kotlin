@@ -27,7 +27,7 @@ public class XmlMessageRenderer implements MessageRenderer {
     }
 
     @Override
-    public String render(@NotNull CompilerMessageSeverity severity, @NotNull String message, @Nullable CompilerMessageLocation location) {
+    public String render(@NotNull CompilerMessageSeverity severity, @NotNull String message, @Nullable CompilerMessageSourceLocation location) {
         StringBuilder out = new StringBuilder();
         String tagName = severity.getPresentableName();
         out.append("<").append(tagName);
@@ -45,7 +45,7 @@ public class XmlMessageRenderer implements MessageRenderer {
     }
 
     private static String e(String str) {
-        return StringUtil.escapeXml(str);
+        return StringUtil.escapeXmlEntities(str);
     }
 
     @Override

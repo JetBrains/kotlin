@@ -61,9 +61,6 @@ operator fun setValue(t: T, p: KProperty<*>, i: Int) {}
 @delegate:Transient
 val plainField: Int = 1
 
-@delegate:Transient
-val lazy by lazy { 1 }
-
 public var int1: Int
 	private set
 	protected get
@@ -71,3 +68,10 @@ public var int2: Int
 	public get
 	internal set
 
+private val privateVal: Int = 42
+private val privateVar: Int = 42
+private fun privateFun(): Int = 42
+val x: String = ""
+	get;
+var x: String = ""
+	private set;

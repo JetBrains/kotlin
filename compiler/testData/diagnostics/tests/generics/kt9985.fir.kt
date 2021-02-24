@@ -24,23 +24,23 @@ fun <T> B<T>.bar() = ""
 
 fun foo(l: A<String>?) {
     // No errors should be here
-    foo(l?.bar()) checkType { <!UNRESOLVED_REFERENCE!>_<!><String?>() }
-    foo(l?.gav()) checkType { <!UNRESOLVED_REFERENCE!>_<!><String?>() }
+    foo(l?.bar()) checkType { _<String?>() }
+    foo(l?.gav()) checkType { _<String?>() }
     if (l != null) {
-        foo(l?.bar()) checkType { <!UNRESOLVED_REFERENCE!>_<!><String>() }
-        foo(l?.gav()) checkType { <!UNRESOLVED_REFERENCE!>_<!><String>() }
+        foo(l?.bar()) checkType { <!INAPPLICABLE_CANDIDATE!>_<!><String>() }
+        foo(l?.gav()) checkType { <!INAPPLICABLE_CANDIDATE!>_<!><String>() }
     }
 }
 
 fun fooNotNull(l: A<String>) {
     // No errors should be here
-    foo(l?.bar()) checkType { <!UNRESOLVED_REFERENCE!>_<!><String>() }
-    foo(l?.gav()) checkType { <!UNRESOLVED_REFERENCE!>_<!><String>() }
+    foo(l?.bar()) checkType { <!INAPPLICABLE_CANDIDATE!>_<!><String>() }
+    foo(l?.gav()) checkType { <!INAPPLICABLE_CANDIDATE!>_<!><String>() }
 }
 
 fun bar() {
     val l = B.create<String>()
-    foo(l?.bar()) checkType { <!UNRESOLVED_REFERENCE!>_<!><String?>() }
-    foo(l?.gav()) checkType { <!UNRESOLVED_REFERENCE!>_<!><String?>() }
+    foo(l?.bar()) checkType { _<String?>() }
+    foo(l?.gav()) checkType { _<String?>() }
 }
 

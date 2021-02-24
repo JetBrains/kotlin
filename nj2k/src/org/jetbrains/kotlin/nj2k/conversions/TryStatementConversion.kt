@@ -17,9 +17,10 @@ import org.jetbrains.kotlin.nj2k.useExpression
 class TryStatementConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKJavaTryStatement) return recurse(element)
-        return if (element.resourceDeclarations.isEmpty())
+        return if (element.isTryWithResources)
+            recurse(convertTryStatementWithResources(element))
+        else
             recurse(convertNoResourcesTryStatement(element))
-        else recurse(convertTryStatementWithResources(element))
     }
 
     private fun convertNoResourcesTryStatement(tryStatement: JKJavaTryStatement): JKStatement =
@@ -49,16 +50,20 @@ class TryStatementConversion(context: NewJ2kConverterContext) : RecursiveApplica
     }
 
     private fun resourceDeclarationsToUseExpression(
-        resourceDeclarations: List<JKDeclaration>,
+        resourceDeclarations: List<JKJavaResourceElement>,
         innerStatement: JKStatement
     ): JKStatement =
         resourceDeclarations
             .reversed()
-            .fold(innerStatement) { inner, variable ->
+            .fold(innerStatement) { inner, element ->
+                val (receiver, name) = when (element) {
+                    is JKJavaResourceExpression -> element::expression.detached() to null
+                    is JKJavaResourceDeclaration -> element.declaration::initializer.detached() to element.declaration::name.detached()
+                }
                 JKExpressionStatement(
                     useExpression(
-                        receiver = (variable as JKLocalVariable)::initializer.detached(),
-                        variableIdentifier = variable::name.detached(),
+                        receiver = receiver,
+                        variableIdentifier = name,
                         body = inner,
                         symbolProvider = symbolProvider
                     )

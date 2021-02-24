@@ -11,11 +11,14 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.moveCaret
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -66,7 +69,7 @@ class RedundantWithInspection : AbstractKotlinInspection() {
                 }
                 holder.registerProblem(
                     callee,
-                    "Redundant 'with' call",
+                    KotlinBundle.message("redundant.with.call"),
                     ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                     quickfix
                 )
@@ -78,14 +81,28 @@ private fun KtValueArgument.lambdaExpression(): KtLambdaExpression? =
     (this as? KtLambdaArgument)?.getLambdaExpression() ?: this.getArgumentExpression() as? KtLambdaExpression
 
 private class RemoveRedundantWithFix : LocalQuickFix {
-    override fun getName() = "Remove redundant 'with' call"
+    override fun getName() = KotlinBundle.message("remove.redundant.with.fix.text")
 
     override fun getFamilyName() = name
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         val callExpression = descriptor.psiElement.parent as? KtCallExpression ?: return
-        val lambdaBody = callExpression.valueArguments.getOrNull(1)?.lambdaExpression()?.bodyExpression ?: return
-        val replaced = callExpression.replaced(lambdaBody)
-        replaced.findExistingEditor()?.moveCaret(replaced.startOffset)
+        val lambdaExpression = callExpression.valueArguments.getOrNull(1)?.lambdaExpression() ?: return
+        val lambdaBody = lambdaExpression.bodyExpression ?: return
+        val declaration = callExpression.getStrictParentOfType<KtDeclarationWithBody>()
+        val replaced = if (declaration?.equalsToken != null && KtPsiUtil.deparenthesize(declaration.bodyExpression) == callExpression) {
+            val singleReturnedExpression = (lambdaBody.statements.singleOrNull() as? KtReturnExpression)?.returnedExpression
+            if (singleReturnedExpression != null) {
+                callExpression.replaced(singleReturnedExpression)
+            } else {
+                declaration.equalsToken?.delete()
+                declaration.bodyExpression?.replaced(KtPsiFactory(project).createSingleStatementBlock(lambdaBody))
+            }
+        } else {
+            callExpression.replaced(lambdaBody)
+        }
+        if (replaced != null) {
+            replaced.findExistingEditor()?.moveCaret(replaced.startOffset)
+        }
     }
 }

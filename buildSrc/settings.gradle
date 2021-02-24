@@ -14,20 +14,18 @@ pluginManagement {
 buildscript {
     repositories {
         if (cacheRedirectorEnabled == 'true') {
-            maven { url "https://cache-redirector.jetbrains.com/kotlin.bintray.com/kotlin-dependencies" }
+            maven { url "https://cache-redirector.jetbrains.com/maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies" }
         } else {
-            maven { url "https://kotlin.bintray.com/kotlin-dependencies" }
+            maven { url "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies" }
         }
     }
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.8")
+        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.21")
     }
 }
 
 def buildProperties = BuildPropertiesKt.getKotlinBuildPropertiesForSettings(settings)
 def projectVersions = file("../gradle/versions.properties").text
-
-BuildCacheKt.setupBuildCache(settings)
 
 include "prepare-deps"
 
@@ -39,18 +37,21 @@ if (target_AppCode_Clion) {
     logger.info("Including modules for AC and CL in buildSrc/settings.gradle")
 
     include ":prepare-deps:kotlin-native-platform-deps"
+    include ":prepare-deps:native-debug-plugin"
 
     project(":prepare-deps:kotlin-native-platform-deps").projectDir =
             file("${buildProperties.propertiesProvider.rootProjectDir}/kotlin-ultimate/buildSrc/prepare-deps/kotlin-native-platform-deps")
+    project(":prepare-deps:native-debug-plugin").projectDir =
+            file("${buildProperties.propertiesProvider.rootProjectDir}/kotlin-ultimate/buildSrc/prepare-deps/native-debug-plugin")
 } else if (target_AndroidStudio) {
     logger.info("Including modules for AS (mobile plugin) in buildSrc/settings.gradle")
 
-    include ":prepare-deps:cocoa-common-binaries"
+    include ":prepare-deps:appcode-binaries"
     include ":prepare-deps:lldb-framework"
     include ":prepare-deps:lldb-frontend"
 
-    project(":prepare-deps:cocoa-common-binaries").projectDir =
-            file("${buildProperties.propertiesProvider.rootProjectDir}/kotlin-ultimate/buildSrc/prepare-deps/cocoa-common-binaries")
+    project(":prepare-deps:appcode-binaries").projectDir =
+            file("${buildProperties.propertiesProvider.rootProjectDir}/kotlin-ultimate/buildSrc/prepare-deps/appcode-binaries")
     project(":prepare-deps:lldb-framework").projectDir =
             file("${buildProperties.propertiesProvider.rootProjectDir}/kotlin-ultimate/buildSrc/prepare-deps/lldb-framework")
     project(":prepare-deps:lldb-frontend").projectDir =

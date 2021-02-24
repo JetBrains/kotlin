@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.visualizer.fir
 
-import com.intellij.openapi.extensions.Extensions
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
@@ -16,8 +15,8 @@ import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.createSession
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.firProvider
-import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
-import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveTransformer
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
+import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveProcessor
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.visualizer.AbstractVisualizer
 import org.junit.Assert
@@ -25,8 +24,7 @@ import java.io.File
 
 abstract class AbstractFirVisualizer : AbstractVisualizer() {
     override fun doVisualizerTest(file: File, environment: KotlinCoreEnvironment) {
-        Extensions.getArea(environment.project)
-            .getExtensionPoint(PsiElementFinder.EP_NAME)
+        PsiElementFinder.EP.getPoint(environment.project)
             .unregisterExtension(JavaElementFinder::class.java)
 
         val ktFiles = environment.getSourceFiles()
@@ -35,16 +33,16 @@ abstract class AbstractFirVisualizer : AbstractVisualizer() {
         val session = createSession(environment, scope)
 
         val firProvider = (session.firProvider as FirProviderImpl)
-        val builder = RawFirBuilder(session, firProvider.kotlinScopeProvider, stubMode = false)
+        val builder = RawFirBuilder(session, firProvider.kotlinScopeProvider)
 
-        val transformer = FirTotalResolveTransformer()
+        val transformer = FirTotalResolveProcessor(session)
         val firFiles = ktFiles.map {
             val firFile = builder.buildFirFile(it)
             firProvider.recordFile(firFile)
             firFile
         }.also {
             try {
-                transformer.processFiles(it)
+                transformer.process(it)
             } catch (e: Exception) {
                 it.forEach { println(it.render()) }
                 throw e

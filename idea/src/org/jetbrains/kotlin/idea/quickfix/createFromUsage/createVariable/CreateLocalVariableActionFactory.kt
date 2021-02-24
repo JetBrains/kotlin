@@ -37,7 +37,7 @@ object CreateLocalVariableActionFactory : KotlinSingleIntentionActionFactory() {
             .firstOrNull() as? KtElement ?: return null
 
         return object : CreateFromUsageFixBase<KtSimpleNameExpression>(refExpr) {
-            override fun getText(): String = KotlinBundle.message("create.local.variable.from.usage", propertyName)
+            override fun getText(): String = KotlinBundle.message("fix.create.from.usage.local.variable", propertyName)
 
             override fun invoke(project: Project, editor: Editor?, file: KtFile) {
                 val assignment = refExpr.getAssignmentByLHS()
@@ -46,7 +46,7 @@ object CreateLocalVariableActionFactory : KotlinSingleIntentionActionFactory() {
 
                 val actualContainer = when (container) {
                     is KtBlockExpression -> container
-                    else -> ConvertToBlockBodyIntention.convert(container as KtDeclarationWithBody).bodyExpression!!
+                    else -> ConvertToBlockBodyIntention.convert(container as KtDeclarationWithBody, true).bodyExpression!!
                 } as KtBlockExpression
 
                 if (actualContainer != container) {

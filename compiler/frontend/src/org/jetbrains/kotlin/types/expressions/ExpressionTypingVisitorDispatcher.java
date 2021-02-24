@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.types.expressions;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.IndexNotReadyException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -159,6 +160,7 @@ public abstract class ExpressionTypingVisitorDispatcher extends KtVisitor<Kotlin
 
     @NotNull
     private KotlinTypeInfo getTypeInfo(@NotNull KtExpression expression, ExpressionTypingContext context, KtVisitor<KotlinTypeInfo, ExpressionTypingContext> visitor) {
+        ProgressManager.checkCanceled();
         return typeInfoPerfCounter.time(() -> {
             try {
                 KotlinTypeInfo recordedTypeInfo = BindingContextUtils.getRecordedTypeInfo(expression, context.trace.getBindingContext());

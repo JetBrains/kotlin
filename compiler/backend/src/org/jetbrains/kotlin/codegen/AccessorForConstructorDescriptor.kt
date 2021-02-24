@@ -42,11 +42,11 @@ class AccessorForConstructorDescriptor(
     override fun substitute(substitutor: TypeSubstitutor) = super.substitute(substitutor) as ClassConstructorDescriptor
 
     override fun copy(
-        newOwner: DeclarationDescriptor,
-        modality: Modality,
-        visibility: Visibility,
-        kind: CallableMemberDescriptor.Kind,
-        copyOverrides: Boolean
+            newOwner: DeclarationDescriptor,
+            modality: Modality,
+            visibility: DescriptorVisibility,
+            kind: CallableMemberDescriptor.Kind,
+            copyOverrides: Boolean
     ): AccessorForConstructorDescriptor {
         throw UnsupportedOperationException()
     }
@@ -61,7 +61,7 @@ class AccessorForConstructorDescriptor(
             copyValueParameters(calleeDescriptor),
             calleeDescriptor.returnType,
             Modality.FINAL,
-            Visibilities.LOCAL
+            DescriptorVisibilities.LOCAL
         )
     }
 }

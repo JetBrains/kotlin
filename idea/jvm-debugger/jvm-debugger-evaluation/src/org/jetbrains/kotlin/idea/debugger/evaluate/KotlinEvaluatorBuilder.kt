@@ -22,7 +22,6 @@ import com.intellij.debugger.engine.evaluation.EvaluateException
 import com.intellij.debugger.engine.evaluation.EvaluateExceptionUtil
 import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
 import com.intellij.debugger.engine.evaluation.expression.*
-import com.intellij.lang.java.JavaLanguage
 import com.intellij.openapi.diagnostic.Attachment
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProcessCanceledException
@@ -83,7 +82,7 @@ object KotlinEvaluatorBuilder : EvaluatorBuilder {
 
         if (file != null && file !is KtFile) {
             reportError(codeFragment, position, "Unknown context${codeFragment.context?.javaClass}")
-            evaluationException("Couldn't evaluate Kotlin expression in this context")
+            evaluationException(KotlinDebuggerEvaluationBundle.message("error.bad.context"))
         }
 
         return ExpressionEvaluatorImpl(KotlinEvaluator(codeFragment, position))
@@ -124,7 +123,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, private val sourcePositi
         runReadAction {
             if (DumbService.getInstance(codeFragment.project).isDumb) {
                 status.error(EvaluationError.DumbMode)
-                evaluationException("Code fragment evaluation is not available in the dumb mode")
+                evaluationException(KotlinDebuggerEvaluationBundle.message("error.dumb.mode"))
             }
         }
 
@@ -140,12 +139,12 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, private val sourcePositi
 
         val operatingThread = context.suspendContext.thread ?: run {
             status.error(EvaluationError.ThreadNotAvailable)
-            evaluationException("Cannot evaluate a code fragment: thread is not available")
+            evaluationException(KotlinDebuggerEvaluationBundle.message("error.thread.unavailable"))
         }
 
         if (!operatingThread.isSuspended) {
             status.error(EvaluationError.ThreadNotSuspended)
-            evaluationException("Evaluation is available only for the suspended threads")
+            evaluationException(KotlinDebuggerEvaluationBundle.message("error.thread.not.suspended"))
         }
 
         try {
@@ -174,10 +173,10 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, private val sourcePositi
             }
 
             status.error(EvaluationError.GenericException)
-            reportError(codeFragment, sourcePosition, e.message ?: "An exception occurred", e)
+            reportError(codeFragment, sourcePosition, e.message ?: KotlinDebuggerEvaluationBundle.message("error.exception.occurred"), e)
 
             val cause = if (e.message != null) ": ${e.message}" else ""
-            evaluationException("Cannot evaluate the expression: $cause")
+            evaluationException(KotlinDebuggerEvaluationBundle.message("error.cant.evaluate") + cause)
         }
     }
 
@@ -221,7 +220,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, private val sourcePositi
             analysisResult = analyze(codeFragment, status, debugProcess)
         }
 
-        val (bindingContext) = runReadAction {
+        val (bindingContext, filesToCompile) = runReadAction {
             val resolutionFacade = getResolutionFacadeForCodeFragment(codeFragment)
             DebuggerUtils.analyzeInlinedFunctions(resolutionFacade, codeFragment, false, analysisResult.bindingContext)
         }
@@ -229,7 +228,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, private val sourcePositi
         val moduleDescriptor = analysisResult.moduleDescriptor
 
         try {
-            val result = CodeFragmentCompiler(context, status).compile(codeFragment, bindingContext, moduleDescriptor)
+            val result = CodeFragmentCompiler(context, status).compile(codeFragment, filesToCompile, bindingContext, moduleDescriptor)
             return createCompiledDataDescriptor(result, sourcePosition)
         } catch (e: Throwable) {
             status.error(EvaluationError.BackendException)
@@ -260,7 +259,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, private val sourcePositi
                 KtPsiFactory(expression.project).createExpression("($expressionText).toString()")
             }
             runInEdtAndWait {
-                expression.project.executeWriteCommand("Wrap with 'toString()'") {
+                expression.project.executeWriteCommand(KotlinDebuggerEvaluationBundle.message("wrap.with.tostring")) {
                     expression.replace(newExpression)
                 }
             }
@@ -422,19 +421,19 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, private val sourcePositi
 
                 if (parameter.kind == CodeFragmentParameter.Kind.COROUTINE_CONTEXT) {
                     status.error(EvaluationError.CoroutineContextUnavailable)
-                    evaluationException("'coroutineContext' is not available")
+                    evaluationException(KotlinDebuggerEvaluationBundle.message("error.coroutine.context.unavailable"))
                 } else if (parameter in compiledData.crossingBounds) {
                     status.error(EvaluationError.ParameterNotCaptured)
-                    evaluationException("'$name' is not captured")
+                    evaluationException(KotlinDebuggerEvaluationBundle.message("error.not.captured", name))
                 } else if (parameter.kind == CodeFragmentParameter.Kind.FIELD_VAR) {
                     status.error(EvaluationError.BackingFieldNotFound)
-                    evaluationException("Cannot find the backing field '${parameter.name}'")
+                    evaluationException(KotlinDebuggerEvaluationBundle.message("error.cant.find.backing.field", parameter.name))
                 } else if (parameter.kind == CodeFragmentParameter.Kind.ORDINARY && isInsideDefaultInterfaceMethod()) {
                     status.error(EvaluationError.InsideDefaultMethod)
-                    evaluationException("Parameter evaluation is not supported for '\$default' methods")
+                    evaluationException(KotlinDebuggerEvaluationBundle.message("error.parameter.evaluation.default.methods"))
                 } else {
                     status.error(EvaluationError.CannotFindVariable)
-                    evaluationException("Cannot find local variable '$name' with type " + asmType.className)
+                    evaluationException(KotlinDebuggerEvaluationBundle.message("error.cant.find.variable", name, asmType.className))
                 }
             }
 
@@ -445,8 +444,11 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, private val sourcePositi
     override fun getModifier() = null
 
     companion object {
-        private val IGNORED_DIAGNOSTICS: Set<DiagnosticFactory<*>> =
-            Errors.INVISIBLE_REFERENCE_DIAGNOSTICS + setOf(Errors.EXPERIMENTAL_API_USAGE_ERROR)
+        private val IGNORED_DIAGNOSTICS: Set<DiagnosticFactory<*>> = Errors.INVISIBLE_REFERENCE_DIAGNOSTICS +
+                setOf(
+                    Errors.EXPERIMENTAL_API_USAGE_ERROR, Errors.MISSING_DEPENDENCY_SUPERCLASS, Errors.IR_WITH_UNSTABLE_ABI_COMPILED_CLASS,
+                    Errors.FIR_COMPILED_CLASS
+                )
 
         private val DEFAULT_METHOD_MARKERS = listOf(AsmTypes.OBJECT_TYPE, AsmTypes.DEFAULT_CONSTRUCTOR_MARKER)
 

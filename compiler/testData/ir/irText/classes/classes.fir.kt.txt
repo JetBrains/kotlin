@@ -1,0 +1,39 @@
+class TestClass {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+interface TestInterface {
+
+}
+
+object TestObject {
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+annotation class TestAnnotationClass : Annotation {
+  constructor() /* primary */
+
+}
+
+enum class TestEnumClass : Enum<TestEnumClass> {
+  private constructor() /* primary */ {
+    super/*Enum*/<TestEnumClass>()
+    /* <init>() */
+
+  }
+
+  fun values(): Array<TestEnumClass> /* Synthetic body for ENUM_VALUES */
+
+  fun valueOf(value: String): TestEnumClass /* Synthetic body for ENUM_VALUEOF */
+
+}

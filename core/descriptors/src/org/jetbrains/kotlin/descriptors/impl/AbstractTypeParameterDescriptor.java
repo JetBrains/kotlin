@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.resolve.DescriptorEquivalenceForOverrides;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.scopes.LazyScopeAdapter;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
@@ -72,14 +73,14 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
                 return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
                         Annotations.Companion.getEMPTY(),
                         getTypeConstructor(), Collections.<TypeProjection>emptyList(), false,
-                        new LazyScopeAdapter(storageManager.createLazyValue(
+                        new LazyScopeAdapter(
                                 new Function0<MemberScope>() {
                                     @Override
                                     public MemberScope invoke() {
                                         return TypeIntersectionScope.create("Scope for type parameter " + name.asString(), getUpperBounds());
                                     }
                                 }
-                        ))
+                        )
                 );
             }
         });
@@ -134,6 +135,11 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
     @Override
     public TypeParameterDescriptor getOriginal() {
         return (TypeParameterDescriptor) super.getOriginal();
+    }
+
+    @NotNull
+    protected List<KotlinType> processBoundsWithoutCycles(@NotNull List<KotlinType> bounds) {
+        return bounds;
     }
 
     @Override
@@ -206,10 +212,26 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
             AbstractTypeParameterDescriptor.this.reportSupertypeLoopError(type);
         }
 
+        @NotNull
+        @Override
+        protected List<KotlinType> processSupertypesWithoutCycles(@NotNull List<KotlinType> supertypes) {
+            return processBoundsWithoutCycles(supertypes);
+        }
+
         @Nullable
         @Override
         protected KotlinType defaultSupertypeIfEmpty() {
             return ErrorUtils.createErrorType("Cyclic upper bounds");
+        }
+
+        @Override
+        protected boolean isSameClassifier(@NotNull ClassifierDescriptor classifier) {
+            return classifier instanceof TypeParameterDescriptor &&
+                   DescriptorEquivalenceForOverrides.INSTANCE.areTypeParametersEquivalent(
+                           AbstractTypeParameterDescriptor.this,
+                           (TypeParameterDescriptor) classifier,
+                           true
+                   );
         }
     }
 }

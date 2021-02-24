@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.j2k.ExternalCodeProcessing
 import org.jetbrains.kotlin.j2k.ProgressPortionReporter
 import org.jetbrains.kotlin.j2k.ReferenceSearcher
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.nj2k.KotlinNJ2KBundle
 import org.jetbrains.kotlin.nj2k.fqNameWithoutCompanions
 import org.jetbrains.kotlin.nj2k.psi
 import org.jetbrains.kotlin.nj2k.tree.JKDeclaration
@@ -72,7 +73,7 @@ class NewExternalCodeProcessing(
     }
 
     override fun prepareWriteOperation(progress: ProgressIndicator?): (List<KtFile>) -> Unit {
-        progress?.text = "Searching usages to update..."
+        progress?.text = KotlinNJ2KBundle.message("progress.searching.usages.to.update")
 
         val usages = mutableListOf<ExternalUsagesFixer.JKMemberInfoWithUsages>()
         for ((index, member) in members.values.withIndex()) {

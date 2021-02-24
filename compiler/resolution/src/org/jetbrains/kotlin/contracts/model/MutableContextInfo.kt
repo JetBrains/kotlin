@@ -115,13 +115,13 @@ class MutableContextInfo private constructor(
             this.entries.filter { it.value.isNotEmpty() }.forEach { (key, value) ->
                 append(key.toString())
                 append(" $separator ")
-                appendln(value.toString())
+                appendLine(value.toString())
             }
         }
 
         append("Fired effects: ")
         append(info.firedEffects.joinToString(separator = ", "))
-        appendln("")
+        appendLine("")
 
         subtypes.printMapEntriesWithSeparator("is")
 

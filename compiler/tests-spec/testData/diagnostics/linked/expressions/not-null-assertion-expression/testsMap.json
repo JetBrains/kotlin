@@ -1,24 +1,29 @@
 {
-  "4": {
-    "pos": {
-      "1": [
-        {
-          "specVersion": "0.1-220",
-          "casesNumber": 5,
-          "description": "The type of non-null assertion e!! expression is the non-nullable variant of the type of e.",
-          "unexpectedBehaviour": false
-        }
-      ]
-    }
-  },
   "3": {
     "pos": {
       "1": [
         {
-          "specVersion": "0.1-220",
+          "specVersion": "0.1-296",
+          "casesNumber": 5,
+          "description": "The type of non-null assertion e!! expression is the non-nullable variant of the type of e.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expression/p-3/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main",
+          "helpers": "checkType"
+        }
+      ]
+    }
+  },
+  "2": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-296",
           "casesNumber": 5,
           "description": "If the type of e is non-nullable, not-null assertion expression e!! has no effect.",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/not-null-assertion-expression/p-2/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ]
     }

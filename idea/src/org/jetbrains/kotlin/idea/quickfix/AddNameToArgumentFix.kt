@@ -24,6 +24,7 @@ import com.intellij.openapi.ui.popup.ListPopupStep
 import com.intellij.openapi.ui.popup.PopupStep
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
@@ -57,13 +58,15 @@ class AddNameToArgumentFix(argument: KtValueArgument) : KotlinQuickFixAction<KtV
     }
 
     override fun getText(): String {
-        return calculatePossibleArgumentNames()
-            .singleOrNull()
-            ?.let { "Add name to argument: '${createArgumentWithName(it, reformat = false).text}'" }
-            ?: "Add name to argument..."
+        val argumentName = calculatePossibleArgumentNames().singleOrNull()
+        if (argumentName != null) {
+            return KotlinBundle.message("fix.add.argument.name.text", createArgumentWithName(argumentName, reformat = false).text)
+        } else {
+            return KotlinBundle.message("fix.add.argument.name.text.generic")
+        }
     }
 
-    override fun getFamilyName() = "Add name to argument"
+    override fun getFamilyName() = KotlinBundle.message("fix.add.argument.name.family")
 
     private fun calculatePossibleArgumentNames(): List<Name> {
         val callElement = element!!.getParentOfType<KtCallElement>(true) ?: return emptyList()
@@ -89,7 +92,7 @@ class AddNameToArgumentFix(argument: KtValueArgument) : KotlinQuickFixAction<KtV
     }
 
     private fun addName(project: Project, argument: KtValueArgument, name: Name) {
-        project.executeWriteCommand("Add name to argument") {
+        project.executeWriteCommand(KotlinBundle.message("fix.add.argument.name.family")) {
             argument.replace(createArgumentWithName(name))
         }
     }
@@ -104,7 +107,7 @@ class AddNameToArgumentFix(argument: KtValueArgument) : KotlinQuickFixAction<KtV
     }
 
     private fun getNamePopup(project: Project, names: List<Name>): ListPopupStep<Name> {
-        return object : BaseListPopupStep<Name>("Choose parameter name", names) {
+        return object : BaseListPopupStep<Name>(KotlinBundle.message("fix.add.argument.name.step.choose.parameter.name"), names) {
             override fun onChosen(selectedValue: Name, finalChoice: Boolean): PopupStep<*>? {
                 addName(project, element!!, selectedValue)
                 return PopupStep.FINAL_CHOICE

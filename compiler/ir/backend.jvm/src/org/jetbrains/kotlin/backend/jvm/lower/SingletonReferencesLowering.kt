@@ -46,23 +46,16 @@ private class SingletonReferencesLowering(val context: JvmBackendContext) : File
             // must be replaced with `SomeEnumEntry.this`.
             IrGetValueImpl(expression.startOffset, expression.endOffset, expression.type, appropriateThis.symbol)
         } else {
-            val entrySymbol = context.declarationFactory.getFieldForEnumEntry(expression.symbol.owner)
+            val entrySymbol = context.cachedDeclarations.getFieldForEnumEntry(expression.symbol.owner)
             IrGetFieldImpl(expression.startOffset, expression.endOffset, entrySymbol.symbol, expression.type)
         }
     }
 
     override fun visitGetObjectValue(expression: IrGetObjectValue): IrExpression {
-        // When in an instance method of the object, use the dispatch receiver. Do not use the dispatch
-        // receiver in the constructor, as in the case of an `object` the only way it can be used is
-        // in a super constructor call argument (=> it has JVM type "uninitialized this" and is not usable)
-        // while for a `companion object` all initializers are in `<clinit>` and have no receiver at all.
-        thisOfClass(expression.symbol.owner, false)?.let {
-            return IrGetValueImpl(expression.startOffset, expression.endOffset, it.symbol)
-        }
         val instanceField = if (allScopes.any { it.irElement == expression.symbol.owner })
-            context.declarationFactory.getPrivateFieldForObjectInstance(expression.symbol.owner) // Constructor or static method.
+            context.cachedDeclarations.getPrivateFieldForObjectInstance(expression.symbol.owner) // Constructor or static method.
         else
-            context.declarationFactory.getFieldForObjectInstance(expression.symbol.owner) // Not in object scope at all.
+            context.cachedDeclarations.getFieldForObjectInstance(expression.symbol.owner) // Not in object scope at all.
         return IrGetFieldImpl(expression.startOffset, expression.endOffset, instanceField.symbol, expression.type)
     }
 

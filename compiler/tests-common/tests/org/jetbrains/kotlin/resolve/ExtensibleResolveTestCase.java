@@ -13,10 +13,10 @@ import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.*;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 
 import java.io.File;
 import java.util.List;
-import java.util.Map;
 
 public abstract class ExtensibleResolveTestCase extends KotlinTestWithEnvironment {
     private ExpectedResolveData expectedResolveData;
@@ -44,14 +44,14 @@ public abstract class ExtensibleResolveTestCase extends KotlinTestWithEnvironmen
 
     protected void doTest(@NonNls String filePath) throws Exception {
         File file = new File(filePath);
-        String text = KotlinTestUtils.doLoadFile(file);
+        String text = KtTestUtil.doLoadFile(file);
         List<KtFile> files = TestFiles.createTestFiles("file.kt", text, new TestFiles.TestFileFactoryNoModules<KtFile>() {
             @NotNull
             @Override
-            public KtFile create(@NotNull String fileName, @NotNull String text, @NotNull Map<String, String> directives) {
+            public KtFile create(@NotNull String fileName, @NotNull String text, @NotNull Directives directives) {
                 return expectedResolveData.createFileFromMarkedUpText(fileName, text);
             }
-        }, "");
+        });
         expectedResolveData.checkResult(ExpectedResolveData.analyze(files, getEnvironment()));
     }
 }

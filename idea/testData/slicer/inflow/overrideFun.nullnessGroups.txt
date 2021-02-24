@@ -1,0 +1,3 @@
+[NotNull Values]
+9 	val v = <bold>p</bold> (in C.foo(Int))
+9 		val v = <bold>p</bold> (in C.foo(Int))

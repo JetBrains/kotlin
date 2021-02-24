@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 open class Cell<T>(val value: T)
 
 typealias CT<T> = Cell<T>

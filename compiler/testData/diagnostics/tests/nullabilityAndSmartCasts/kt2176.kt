@@ -3,6 +3,8 @@
 //KT-2176 non-nullability is not inferred after !! or "as"
 package kt2176
 
+import checkSubtype
+
 fun f1(a: String?) {
     a!!
     checkSubtype<String>(<!DEBUG_INFO_SMARTCAST!>a<!>)

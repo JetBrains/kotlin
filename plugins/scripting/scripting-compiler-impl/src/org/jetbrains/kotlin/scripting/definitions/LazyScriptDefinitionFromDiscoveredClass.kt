@@ -8,14 +8,11 @@ package org.jetbrains.kotlin.scripting.definitions
 import java.io.File
 import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.api.*
-import kotlin.script.experimental.host.ScriptingHostConfiguration
-import kotlin.script.experimental.host.configurationDependencies
-import kotlin.script.experimental.host.createCompilationConfigurationFromTemplate
-import kotlin.script.experimental.host.createEvaluationConfigurationFromTemplate
+import kotlin.script.experimental.host.*
 import kotlin.script.experimental.jvm.JvmDependency
 
 class LazyScriptDefinitionFromDiscoveredClass internal constructor(
-    baseHostConfiguration: ScriptingHostConfiguration,
+    private val baseHostConfiguration: ScriptingHostConfiguration,
     private val annotationsFromAsm: ArrayList<BinAnnData>,
     private val className: String,
     private val classpath: List<File>,
@@ -30,31 +27,21 @@ class LazyScriptDefinitionFromDiscoveredClass internal constructor(
         messageReporter: MessageReporter
     ) : this(baseHostConfiguration, loadAnnotationsFromClass(classBytes), className, classpath, messageReporter)
 
-    override val hostConfiguration: ScriptingHostConfiguration by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        ScriptingHostConfiguration(baseHostConfiguration) {
-            configurationDependencies.append(JvmDependency(classpath))
-        }
-    }
-
-    private val configurations by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    private val definition: kotlin.script.experimental.host.ScriptDefinition by lazy(LazyThreadSafetyMode.PUBLICATION) {
         messageReporter(
             ScriptDiagnostic.Severity.DEBUG,
             "Configure scripting: loading script definition class $className using classpath $classpath\n.  ${Thread.currentThread().stackTrace}"
         )
         try {
-            val compileCfg =
-                createCompilationConfigurationFromTemplate(
-                    KotlinType(className),
-                    hostConfiguration,
-                    LazyScriptDefinitionFromDiscoveredClass::class
-                )
-            val evalCfg =
-                createEvaluationConfigurationFromTemplate(
-                    KotlinType(className),
-                    hostConfiguration,
-                    LazyScriptDefinitionFromDiscoveredClass::class
-                )
-            compileCfg to evalCfg
+            createScriptDefinitionFromTemplate(
+                KotlinType(className),
+                baseHostConfiguration.with {
+                    if (classpath.isNotEmpty()) {
+                        configurationDependencies.append(JvmDependency(classpath))
+                    }
+                },
+                LazyScriptDefinitionFromDiscoveredClass::class
+            )
         } catch (ex: ClassNotFoundException) {
             messageReporter(ScriptDiagnostic.Severity.ERROR, "Cannot find script definition class $className")
             InvalidScriptDefinition
@@ -67,8 +54,11 @@ class LazyScriptDefinitionFromDiscoveredClass internal constructor(
         }
     }
 
-    override val compilationConfiguration: ScriptCompilationConfiguration get() = configurations.first
-    override val evaluationConfiguration: ScriptEvaluationConfiguration get() = configurations.second
+    override val hostConfiguration: ScriptingHostConfiguration
+        get() = definition.compilationConfiguration[ScriptCompilationConfiguration.hostConfiguration] ?: baseHostConfiguration
+
+    override val compilationConfiguration: ScriptCompilationConfiguration get() = definition.compilationConfiguration
+    override val evaluationConfiguration: ScriptEvaluationConfiguration get() = definition.evaluationConfiguration
 
     override val fileExtension: String by lazy(LazyThreadSafetyMode.PUBLICATION) {
         annotationsFromAsm.find { it.name == KotlinScript::class.java.simpleName }?.args
@@ -84,4 +74,5 @@ class LazyScriptDefinitionFromDiscoveredClass internal constructor(
     }
 }
 
-val InvalidScriptDefinition = ScriptCompilationConfiguration() to ScriptEvaluationConfiguration()
+val InvalidScriptDefinition =
+    ScriptDefinition(ScriptCompilationConfiguration(), ScriptEvaluationConfiguration())

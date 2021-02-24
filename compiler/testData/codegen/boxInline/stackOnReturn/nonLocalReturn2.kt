@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS
 // FILE: 1.kt
 inline fun run(f: () -> Unit) = f()
 inline fun withAny(f: Any.() -> Unit) = Any().f()

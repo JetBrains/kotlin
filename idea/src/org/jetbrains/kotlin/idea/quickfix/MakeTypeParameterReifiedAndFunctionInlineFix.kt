@@ -9,6 +9,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtFile
@@ -25,13 +26,13 @@ class MakeTypeParameterReifiedAndFunctionInlineFix(
 
     private val inlineFix = AddInlineToFunctionWithReifiedFix(function)
 
-    override fun getText() = "Make type parameter reified and function inline"
+    override fun getText() = KotlinBundle.message("make.type.parameter.reified.and.function.inline")
 
     override fun getFamilyName() = text
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         inlineFix.invoke(project, editor, file)
-        AddModifierFix(typeParameter, KtTokens.REIFIED_KEYWORD).invoke(project, editor, file)
+        AddModifierFixMpp(typeParameter, KtTokens.REIFIED_KEYWORD).invoke(project, editor, file)
     }
 
     companion object : KotlinSingleIntentionActionFactory() {

@@ -13,6 +13,7 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateEqualsAndHashcodeAction
 import org.jetbrains.kotlin.idea.actions.generate.findDeclaredEquals
 import org.jetbrains.kotlin.idea.actions.generate.findDeclaredHashCode
@@ -24,7 +25,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.source.getPsi
 
 object DeleteEqualsAndHashCodeFix : LocalQuickFix {
-    override fun getName() = "Delete equals()/hashCode()"
+    override fun getName() = KotlinBundle.message("delete.equals.and.hash.code.fix.text")
 
     override fun getFamilyName() = name
 
@@ -39,11 +40,11 @@ object DeleteEqualsAndHashCodeFix : LocalQuickFix {
 
 sealed class GenerateEqualsOrHashCodeFix : LocalQuickFix {
     object Equals : GenerateEqualsOrHashCodeFix() {
-        override fun getName() = "Generate 'equals()'"
+        override fun getName() = KotlinBundle.message("equals.text")
     }
 
     object HashCode : GenerateEqualsOrHashCodeFix() {
-        override fun getName() = "Generate 'hashCode()'"
+        override fun getName() = KotlinBundle.message("hash.code.text")
     }
 
     override fun getFamilyName() = name
@@ -68,7 +69,11 @@ class EqualsOrHashCodeInspection : AbstractKotlinInspection() {
             when (classDescriptor.kind) {
                 ClassKind.OBJECT -> {
                     if (classOrObject.superTypeListEntries.isNotEmpty()) return
-                    holder.registerProblem(nameIdentifier, "equals()/hashCode() in object declaration", DeleteEqualsAndHashCodeFix)
+                    holder.registerProblem(
+                        nameIdentifier,
+                        KotlinBundle.message("equals.hashcode.in.object.declaration"),
+                        DeleteEqualsAndHashCodeFix
+                    )
                 }
                 ClassKind.CLASS -> {
                     if (hasEquals && hasHashCode) return

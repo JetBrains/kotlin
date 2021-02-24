@@ -48,7 +48,6 @@ import org.jetbrains.kotlin.tests.di.InjectionKt;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -100,12 +99,10 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
                     return Unit.INSTANCE;
                 }
         );
-        return new LexicalChainedScope(
+        return LexicalChainedScope.Companion.create(
                 typeParameters, module, false, null, LexicalScopeKind.SYNTHETIC,
-                Arrays.asList(
-                        contextClass.getDefaultType().getMemberScope(),
-                        module.getBuiltIns().getBuiltInsPackageScope()
-                )
+                contextClass.getDefaultType().getMemberScope(),
+                module.getBuiltIns().getBuiltInsPackageScope()
         );
     }
 

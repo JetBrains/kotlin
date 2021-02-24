@@ -6,7 +6,10 @@
           "specVersion": "0.1-218",
           "casesNumber": 3,
           "description": "The return type of these functions is not restricted.",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/additive-expression/p-4/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main",
+          "helpers": "checkType"
         }
       ],
       "2": [
@@ -15,7 +18,9 @@
           "casesNumber": 3,
           "description": "The return type of these functions is not restricted.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/additive-expression/p-4/pos/1.1.kt",
-          "unexpectedBehaviour": false
+          "unexpectedBehaviour": false,
+          "linkType": "primary",
+          "helpers": "checkType"
         }
       ]
     }

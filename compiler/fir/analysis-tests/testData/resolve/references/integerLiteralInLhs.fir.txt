@@ -1,0 +1,12 @@
+FILE: integerLiteralInLhs.kt
+    public final fun R|kotlin/Short|.foo(): R|kotlin/Int| {
+        ^foo Int(1)
+    }
+    public final fun R|kotlin/Int|.foo(): R|kotlin/Int| {
+        ^foo Int(2)
+    }
+    public final fun testRef(f: R|() -> kotlin/Int|): R|kotlin/Unit| {
+    }
+    public final fun test(): R|kotlin/Unit| {
+        R|/testRef|(Int(1)::R|/foo|)
+    }

@@ -26,16 +26,12 @@ import org.jetbrains.kotlin.name.Name
 
 class IrModuleFragmentImpl(
     override val descriptor: ModuleDescriptor,
-    override val irBuiltins: IrBuiltIns
-) : IrModuleFragment {
-
-    constructor(descriptor: ModuleDescriptor, irBuiltins: IrBuiltIns, files: List<IrFile>) : this(descriptor, irBuiltins) {
-        this.files.addAll(files)
-    }
-
+    override val irBuiltins: IrBuiltIns,
+    files: List<IrFile> = emptyList(),
+) : IrModuleFragment() {
     override val name: Name get() = descriptor.name // TODO
 
-    override val files: MutableList<IrFile> = ArrayList()
+    override val files: MutableList<IrFile> = files.toMutableList()
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitModuleFragment(this, data)

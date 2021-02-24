@@ -10,6 +10,8 @@ import com.intellij.openapi.util.registry.Registry;
 import com.intellij.util.ui.AsyncProcessIcon;
 import org.jetbrains.kotlin.idea.KotlinPluginUtil;
 import org.jetbrains.kotlin.idea.PlatformVersion;
+import org.jetbrains.kotlin.idea.configuration.ExperimentalFeaturesPanel;
+import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.util.VersioningKt;
 
 import javax.swing.*;
@@ -28,20 +30,18 @@ public class KotlinLanguageConfigurationForm {
     private JTextPane currentVersion;
     private JPanel bundledCompilerVersionPanel;
     private JTextPane compilerVersion;
-    public JCheckBox useNewJ2kCheckBox;
-    public JCheckBox useNewProjectWizardCheckBox;
+    public ExperimentalFeaturesPanel experimentalFeaturesPanel;
+    private JPanel experimentalFeaturesPanelContainer;
 
     public KotlinLanguageConfigurationForm() {
         showVerifierDisabledStatus();
-
-        useNewProjectWizardCheckBox.setVisible(!isAndroidStudio());
-
+        experimentalFeaturesPanelContainer.setVisible(ExperimentalFeaturesPanel.Companion.shouldBeShown());
         String pluginVersion = KotlinPluginUtil.getPluginVersion();
 
         if (KotlinPluginUtil.isPatched()) {
             @SuppressWarnings("deprecation")
             String pluginVersionFromIdea = KotlinPluginUtil.getPluginVersionFromIdea();
-            currentVersion.setText(pluginVersion + " (Patched! Original: " + pluginVersionFromIdea + ")");
+            currentVersion.setText(KotlinBundle.message("configuration.text.patched.original", pluginVersion, pluginVersionFromIdea));
         } else {
             currentVersion.setText(pluginVersion);
         }
@@ -107,7 +107,7 @@ public class KotlinLanguageConfigurationForm {
     private void showVerifierDisabledStatus() {
         //noinspection UnresolvedPropertyKey
         if (!Registry.is("kotlin.plugin.update.verifier.enabled", true)) {
-            verifierDisabledText.setText("(verifier disabled)");
+            verifierDisabledText.setText(KotlinBundle.message("configuration.message.verifier.disabled"));
         }
         else {
             verifierDisabledText.setText("");

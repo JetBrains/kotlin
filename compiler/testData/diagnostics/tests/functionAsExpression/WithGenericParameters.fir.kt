@@ -4,10 +4,10 @@
 interface A
 fun devNull(a: Any?){}
 
-val generic_fun = fun<T>(t: T): T = null!!
-val extension_generic_fun = fun<T>T.(t: T): T = null!!
+val generic_fun = fun<T>(t: <!UNRESOLVED_REFERENCE!>T<!>): T = null!!
+val extension_generic_fun = fun<T><!UNRESOLVED_REFERENCE!>T<!>.(t: <!UNRESOLVED_REFERENCE!>T<!>): T = null!!
 
-fun fun_with_where() = fun <T> T.(t: T): T where T: A = null!!
+fun fun_with_where() = fun <T> <!UNRESOLVED_REFERENCE!>T<!>.(t: <!UNRESOLVED_REFERENCE!>T<!>): T where T: A = null!!
 
 
 fun outer() {

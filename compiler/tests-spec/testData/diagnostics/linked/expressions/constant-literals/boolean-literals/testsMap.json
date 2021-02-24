@@ -3,10 +3,13 @@
     "neg": {
       "2": [
         {
-          "specVersion": "0.1-218",
+          "specVersion": "0.1-300",
           "casesNumber": 7,
           "description": "checking of type for Boolean values: impossible to use as identifiers",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/boolean-literals/p-1/neg/2.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main",
+          "helpers": "checkType"
         }
       ],
       "3": [
@@ -14,17 +17,23 @@
           "specVersion": "0.1-100",
           "casesNumber": 1,
           "description": "Checking of type for Boolean values",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/boolean-literals/p-1/neg/3.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main",
+          "helpers": "checkType"
         }
       ]
     },
     "pos": {
       "2": [
         {
-          "specVersion": "0.1-218",
+          "specVersion": "0.1-300",
           "casesNumber": 7,
           "description": "checking of type for Boolean values: possible to use as identifiers if surround with backticks",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/boolean-literals/p-1/pos/2.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main",
+          "helpers": "checkType"
         }
       ],
       "3": [
@@ -32,13 +41,19 @@
           "specVersion": "0.1-100",
           "casesNumber": 1,
           "description": "Checking of type for Boolean values",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/boolean-literals/p-1/pos/3.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main",
+          "helpers": "checkType"
         },
         {
           "specVersion": "0.1-100",
           "casesNumber": 1,
           "description": "Checking of subtype for Boolean values",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/boolean-literals/p-1/pos/3.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main",
+          "helpers": "checkType"
         }
       ]
     }

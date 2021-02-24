@@ -1,0 +1,13 @@
+package
+
+public fun </*0*/ T> storing(/*0*/ transform: kotlin.String.() -> T): Bar<T>
+public fun test(): kotlin.Unit
+public fun </*0*/ T> Bar<T>.default(/*0*/ defaultValue: () -> T): Bar<T>
+public fun </*0*/ T> Bar<T>.default(/*0*/ defaultValue: T): Bar<T>
+
+public final class Bar</*0*/ out T> {
+    public constructor Bar</*0*/ out T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

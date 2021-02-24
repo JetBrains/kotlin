@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -80,9 +80,9 @@ abstract class AbstractReplTestRunner : TestCase() {
                 if (b != Unit) return "fail2: ${'$'}b"
 
                 return "OK"
-            },
-            box()
-            """
+            }
+            """,
+            "box()"
         )
         Assert.assertEquals("OK", compileAndEval(lines))
     }
@@ -143,7 +143,10 @@ abstract class AbstractReplTestRunner : TestCase() {
                 var t = 2 * 2
                 class A(val value: Int = 5) {
                     fun bar(): Int {
-                        var q = 4
+                        class B(val value: Int = 4) {
+                            fun baz(): Int = value
+                        }
+                        var q = B().baz()
                         var w = 1
                         return q + w
                     }
@@ -211,6 +214,42 @@ abstract class AbstractReplTestRunner : TestCase() {
         Assert.assertEquals("10#$@123456_81goo", compileAndEval(lines))
     }
 
+    @Test
+    fun testFunctionReference() {
+        val lines = listOf(
+            """
+            fun foo(k: String) = "O" + k
+            val f = ::foo
+            f("K")
+            """
+        )
+
+        Assert.assertEquals("OK", compileAndEval(lines))
+    }
+
+    @Test
+    fun testPropertyReference() {
+        val lines = listOf(
+            """
+            var r = ""
+            val o = "O"
+            val ro = ::o
+            r += ro.get()
+            r += ro()
+            
+            var k = "k"
+            var rk = ::k
+            r += rk.get()
+            rk.set("y")
+            r += rk()
+            
+            r
+            """
+        )
+
+        Assert.assertEquals("OOky", compileAndEval(lines))
+    }
+
     private fun compileAndEval(lines: List<String>): Any? {
         var result: Any? = null
         getTester().use { tester ->
@@ -221,9 +260,11 @@ abstract class AbstractReplTestRunner : TestCase() {
                 if (compileResult !is ReplCompileResult.CompiledClasses) return compileResult.toString()
 
                 val evalResult = tester.evaluate(compileResult)
-                if (evalResult !is ReplEvalResult.ValueResult) return evalResult.toString()
-
-                result = evalResult.value
+                when (evalResult) {
+                    is ReplEvalResult.Error.Runtime -> return evalResult.cause.toString()
+                    !is ReplEvalResult.ValueResult -> return evalResult.toString()
+                    else -> result = evalResult.value
+                }
             }
         }
         return result

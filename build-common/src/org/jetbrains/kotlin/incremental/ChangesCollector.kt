@@ -19,12 +19,14 @@ package org.jetbrains.kotlin.incremental
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
+import org.jetbrains.kotlin.metadata.deserialization.supertypes
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 
 class ChangesCollector {
     private val removedMembers = hashMapOf<FqName, MutableSet<String>>()
+    private val changedParents = hashMapOf<FqName, MutableSet<FqName>>()
     private val changedMembers = hashMapOf<FqName, MutableSet<String>>()
     private val areSubclassesAffected = hashMapOf<FqName, Boolean>()
 
@@ -45,6 +47,10 @@ class ChangesCollector {
 
         for ((fqName, areSubclassesAffected) in areSubclassesAffected) {
             changes.add(ChangeInfo.SignatureChanged(fqName, areSubclassesAffected))
+        }
+
+        for ((fqName, changedParents) in changedParents) {
+            changes.add(ChangeInfo.ParentsChanged(fqName, changedParents))
         }
 
         return changes
@@ -79,12 +85,12 @@ class ChangesCollector {
         }
 
         if (oldData == null) {
-            newData!!.collectAll(isRemoved = false, collectAllMembersForNewClass = collectAllMembersForNewClass)
+            newData!!.collectAll(isRemoved = false, isAdded = true, collectAllMembersForNewClass = collectAllMembersForNewClass)
             return
         }
 
         if (newData == null) {
-            oldData.collectAll(isRemoved = true)
+            oldData.collectAll(isRemoved = true, isAdded = false)
             return
         }
 
@@ -98,6 +104,7 @@ class ChangesCollector {
                             collectSignature(oldData, diff.areSubclassesAffected)
                         }
                         collectChangedMembers(fqName, diff.changedMembersNames)
+                        addChangedParents(fqName, diff.changedSupertypes)
                     }
                     is PackagePartProtoData -> {
                         collectSignature(oldData, areSubclassesAffected = true)
@@ -121,10 +128,11 @@ class ChangesCollector {
     private fun <T> T.getNonPrivateNames(nameResolver: NameResolver, vararg members: T.() -> List<MessageLite>): Set<String> =
             members.flatMap { this.it().filterNot { it.isPrivate }.names(nameResolver) }.toSet()
 
-    private fun ProtoData.collectAll(isRemoved: Boolean, collectAllMembersForNewClass: Boolean = false) =
+    //TODO remember all sealed parent classes
+    private fun ProtoData.collectAll(isRemoved: Boolean, isAdded: Boolean, collectAllMembersForNewClass: Boolean = false) =
         when (this) {
             is PackagePartProtoData -> collectAllFromPackage(isRemoved)
-            is ClassProtoData -> collectAllFromClass(isRemoved, collectAllMembersForNewClass)
+            is ClassProtoData -> collectAllFromClass(isRemoved, isAdded, collectAllMembersForNewClass)
         }
 
     private fun PackagePartProtoData.collectAllFromPackage(isRemoved: Boolean) {
@@ -143,7 +151,7 @@ class ChangesCollector {
         }
     }
 
-    private fun ClassProtoData.collectAllFromClass(isRemoved: Boolean, collectAllMembersForNewClass: Boolean = false) {
+    private fun ClassProtoData.collectAllFromClass(isRemoved: Boolean, isAdded: Boolean, collectAllMembersForNewClass: Boolean = false) {
         val classFqName = nameResolver.getClassId(proto.fqName).asSingleFqName()
         val kind = Flags.CLASS_KIND.get(proto.flags)
 
@@ -162,6 +170,23 @@ class ChangesCollector {
 
             collectSignature(classFqName, areSubclassesAffected = true)
         }
+
+        if (isRemoved || isAdded) {
+            collectChangedParents(classFqName, proto.supertypeList)
+        }
+    }
+
+    private fun addChangedParents(fqName: FqName, parents: Collection<FqName>) {
+        if (parents.isNotEmpty()) {
+            changedParents.getOrPut(fqName) { HashSet() }.addAll(parents)
+        }
+    }
+
+    private fun ClassProtoData.collectChangedParents(fqName: FqName, parents: Collection<ProtoBuf.Type>) {
+        val changedParentsFqNames = parents.map { type ->
+            nameResolver.getClassId(type.className).asSingleFqName()
+        }
+        addChangedParents(fqName, changedParentsFqNames)
     }
 
     private fun ClassProtoData.getNonPrivateMemberNames(): Set<String> {

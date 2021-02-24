@@ -8,5 +8,5 @@ package org.jetbrains.kotlin.kapt3.test
 import org.jetbrains.kotlin.test.TargetBackend
 
 abstract class AbstractIrKotlinKapt3IntegrationTest : AbstractKotlinKapt3IntegrationTest() {
-    override fun getBackend() = TargetBackend.JVM_IR
+    override val backend = TargetBackend.JVM_IR
 }

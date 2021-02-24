@@ -1,40 +1,50 @@
 {
   "1": {
-    "neg": {
-      "2": [
-        {
-          "specVersion": "0.1-218",
-          "casesNumber": 0,
-          "description": "E is T: The type T must be runtime-available, otherwise it is a compiler error",
-          "unexpectedBehaviour": false
-        }
-      ]
-    },
     "pos": {
       "3": [
         {
           "specVersion": "0.1-213",
           "casesNumber": 0,
           "description": "checks whether the runtime type of E is not a subtype of T for !is operator.",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-1/pos/3.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         },
         {
           "specVersion": "0.1-213",
           "casesNumber": 0,
           "description": "checks whether the runtime type of EE is a subtype of TT for is operator",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-1/pos/3.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ]
     }
   },
-  "4": {
+  "2": {
+    "neg": {
+      "1": [
+        {
+          "specVersion": "0.1-313",
+          "casesNumber": 0,
+          "description": "E is T: The type T must be runtime-available, otherwise it is a compiler error",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-2/neg/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        }
+      ]
+    }
+  },
+  "5": {
     "pos": {
       "1": [
         {
-          "specVersion": "0.1-218",
+          "specVersion": "0.1-313",
           "casesNumber": 0,
           "description": "the expression null is T? for any type T always evaluates to true",
-          "unexpectedBehaviour": false
+          "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/type-checking-and-containment-checking-expressions/type-checking-expression/p-5/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ]
     }

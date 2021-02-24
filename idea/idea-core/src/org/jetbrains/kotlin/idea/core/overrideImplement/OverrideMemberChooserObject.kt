@@ -144,7 +144,7 @@ fun OverrideMemberChooserObject.generateMember(
     val renderer = baseRenderer.withOptions {
         if (descriptor is ClassConstructorDescriptor && descriptor.isPrimary) {
             val containingClass = descriptor.containingDeclaration
-            if (containingClass.kind == ClassKind.ANNOTATION_CLASS || containingClass.isInline) {
+            if (containingClass.kind == ClassKind.ANNOTATION_CLASS || containingClass.isInline || containingClass.isValue) {
                 renderPrimaryConstructorParametersAsProperties = true
             }
         }

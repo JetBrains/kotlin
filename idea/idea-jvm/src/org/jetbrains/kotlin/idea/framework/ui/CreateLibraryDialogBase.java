@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.framework.ui;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.ui.SeparatorWithText;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.versions.KotlinRuntimeLibraryUtilKt;
@@ -40,8 +41,8 @@ public abstract class CreateLibraryDialogBase extends DialogWrapper {
     public CreateLibraryDialogBase(
             @Nullable Project project,
             @NotNull String defaultPath,
-            @NotNull String title,
-            @NotNull String libraryCaption
+            @Nls @NotNull String title,
+            @Nls @NotNull String libraryCaption
     ) {
         super(project);
 

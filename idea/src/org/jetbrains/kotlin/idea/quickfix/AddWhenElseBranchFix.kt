@@ -20,6 +20,7 @@ import com.intellij.codeInsight.CodeInsightUtilCore
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtWhenEntry
@@ -28,7 +29,7 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
 class AddWhenElseBranchFix(element: KtWhenExpression) : KotlinQuickFixAction<KtWhenExpression>(element) {
-    override fun getFamilyName() = "Add else branch"
+    override fun getFamilyName() = KotlinBundle.message("fix.add.else.branch.when")
     override fun getText() = familyName
 
     override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {

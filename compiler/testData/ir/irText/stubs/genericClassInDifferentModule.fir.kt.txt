@@ -1,0 +1,52 @@
+// MODULE: m1
+// FILE: genericClassInDifferentModule_m1.kt
+
+abstract class Base<T : Any?> {
+  constructor(x: T) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val x: T
+    field = x
+    get
+
+  abstract fun <Y : Any?> foo(y: Y): T
+  abstract var bar: T
+    abstract get
+    abstract set
+
+  abstract var <Z : Any?> Z.exn: T
+    abstract get
+    abstract set
+
+}
+
+// MODULE: m2
+// FILE: genericClassInDifferentModule_m2.kt
+
+class Derived1<T : Any?> : Base<T> {
+  constructor(x: T) /* primary */ {
+    super/*Base*/<T>(x = x)
+    /* <init>() */
+
+  }
+
+  override fun <Y : Any?> foo(y: Y): T {
+    return <this>.<get-x>()
+  }
+
+  override var bar: T
+    field = x
+    override get
+    override set
+
+  override var <Z : Any?> Z.exn: T
+    override get(): T {
+      return <this>.<get-x>()
+    }
+    override set(value: T) {
+    }
+
+}

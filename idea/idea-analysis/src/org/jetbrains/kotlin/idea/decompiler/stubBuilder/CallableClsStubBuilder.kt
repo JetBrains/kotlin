@@ -26,15 +26,14 @@ import org.jetbrains.kotlin.serialization.deserialization.AnnotatedCallableKind
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.serialization.deserialization.getName
 
-fun createDeclarationsStubs(
+fun createPackageDeclarationsStubs(
     parentStub: StubElement<out PsiElement>,
     outerContext: ClsStubBuilderContext,
-    protoContainer: ProtoContainer,
+    protoContainer: ProtoContainer.Package,
     packageProto: ProtoBuf.Package
 ) {
-    createDeclarationsStubs(
-        parentStub, outerContext, protoContainer, packageProto.functionList, packageProto.propertyList, packageProto.typeAliasList
-    )
+    createDeclarationsStubs(parentStub, outerContext, protoContainer, packageProto.functionList, packageProto.propertyList)
+    createTypeAliasesStubs(parentStub, outerContext, protoContainer, packageProto.typeAliasList)
 }
 
 fun createDeclarationsStubs(
@@ -43,7 +42,6 @@ fun createDeclarationsStubs(
     protoContainer: ProtoContainer,
     functionProtos: List<ProtoBuf.Function>,
     propertyProtos: List<ProtoBuf.Property>,
-    typeAliasesProtos: List<ProtoBuf.TypeAlias>
 ) {
     for (propertyProto in propertyProtos) {
         if (!shouldSkip(propertyProto.flags, outerContext.nameResolver.getName(propertyProto.name))) {
@@ -55,7 +53,14 @@ fun createDeclarationsStubs(
             FunctionClsStubBuilder(parentStub, outerContext, protoContainer, functionProto).build()
         }
     }
+}
 
+fun createTypeAliasesStubs(
+    parentStub: StubElement<out PsiElement>,
+    outerContext: ClsStubBuilderContext,
+    protoContainer: ProtoContainer,
+    typeAliasesProtos: List<ProtoBuf.TypeAlias>
+) {
     for (typeAliasProto in typeAliasesProtos) {
         createTypeAliasStub(parentStub, typeAliasProto, protoContainer, outerContext)
     }
@@ -139,7 +144,7 @@ private class FunctionClsStubBuilder(
                 .map { ClassIdWithTarget(it, AnnotationUseSiteTarget.RECEIVER) }
         }
 
-    override val returnType: ProtoBuf.Type?
+    override val returnType: ProtoBuf.Type
         get() = functionProto.returnType(c.typeTable)
 
     override fun createValueParameterList() {
@@ -152,6 +157,9 @@ private class FunctionClsStubBuilder(
             callableStub, functionProto.flags,
             listOf(VISIBILITY, OPERATOR, INFIX, EXTERNAL_FUN, INLINE, TAILREC, SUSPEND) + modalityModifier
         )
+
+        // If function is marked as having no annotations, we don't create stubs for it
+        if (!Flags.HAS_ANNOTATIONS.get(functionProto.flags)) return
 
         val annotationIds = c.components.annotationLoader.loadCallableAnnotations(
             protoContainer, functionProto, AnnotatedCallableKind.FUNCTION
@@ -192,7 +200,7 @@ private class PropertyClsStubBuilder(
             .loadExtensionReceiverParameterAnnotations(protoContainer, propertyProto, AnnotatedCallableKind.PROPERTY_GETTER)
             .map { ClassIdWithTarget(it, AnnotationUseSiteTarget.RECEIVER) }
 
-    override val returnType: ProtoBuf.Type?
+    override val returnType: ProtoBuf.Type
         get() = propertyProto.returnType(c.typeTable)
 
     override fun createValueParameterList() {
@@ -206,6 +214,9 @@ private class PropertyClsStubBuilder(
             callableStub, propertyProto.flags,
             listOf(VISIBILITY, LATEINIT, EXTERNAL_PROPERTY) + constModifier + modalityModifier
         )
+
+        // If field is marked as having no annotations, we don't create stubs for it
+        if (!Flags.HAS_ANNOTATIONS.get(propertyProto.flags)) return
 
         val propertyAnnotations =
             c.components.annotationLoader.loadCallableAnnotations(protoContainer, propertyProto, AnnotatedCallableKind.PROPERTY)
@@ -259,6 +270,9 @@ private class ConstructorClsStubBuilder(
 
     override fun createModifierListStub() {
         val modifierListStubImpl = createModifierListStubForDeclaration(callableStub, constructorProto.flags, listOf(VISIBILITY))
+
+        // If constructor is marked as having no annotations, we don't create stubs for it
+        if (!Flags.HAS_ANNOTATIONS.get(constructorProto.flags)) return
 
         val annotationIds = c.components.annotationLoader.loadCallableAnnotations(
             protoContainer, constructorProto, AnnotatedCallableKind.FUNCTION

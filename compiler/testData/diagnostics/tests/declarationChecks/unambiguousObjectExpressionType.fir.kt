@@ -27,7 +27,7 @@ class Foo {
         privateProperty.visible()
         protected2Property.<!UNRESOLVED_REFERENCE!>invisible<!>()
         public2Property.<!UNRESOLVED_REFERENCE!>invisible<!>()
-        internalProperty.invisible()
+        internalProperty.<!UNRESOLVED_REFERENCE!>invisible<!>()
     }
 
 
@@ -51,7 +51,7 @@ class Foo {
         protected2Function().f1()
 
         privateFunction().visible()
-        internalFunction().invisible()
+        internalFunction().<!UNRESOLVED_REFERENCE!>invisible<!>()
         public2Function().<!UNRESOLVED_REFERENCE!>invisible<!>()
         protected2Function().<!UNRESOLVED_REFERENCE!>invisible<!>()
     }
@@ -81,7 +81,7 @@ class Foo {
             privateProperty.visible()
             protected2Property.<!UNRESOLVED_REFERENCE!>invisible<!>()
             public2Property.<!UNRESOLVED_REFERENCE!>invisible<!>()
-            internalProperty.invisible()
+            internalProperty.<!UNRESOLVED_REFERENCE!>invisible<!>()
         }
 
 
@@ -105,7 +105,7 @@ class Foo {
             protected2Function().f1()
 
             privateFunction().visible()
-            internalFunction().invisible()
+            internalFunction().<!UNRESOLVED_REFERENCE!>invisible<!>()
             public2Function().<!UNRESOLVED_REFERENCE!>invisible<!>()
             protected2Function().<!UNRESOLVED_REFERENCE!>invisible<!>()
         }
@@ -137,7 +137,7 @@ fun testProperties() {
     packagePublic2Property.f1()
 
     packagePrivateProperty.invisible()
-    packageInternalProperty.invisible()
+    packageInternalProperty.<!UNRESOLVED_REFERENCE!>invisible<!>()
     packagePublic2Property.<!UNRESOLVED_REFERENCE!>invisible<!>()
 }
 
@@ -160,7 +160,7 @@ fun testFunctions() {
     public2Function().f1()
 
     privateFunction().invisible()
-    internalFunction().invisible()
+    internalFunction().<!UNRESOLVED_REFERENCE!>invisible<!>()
     public2Function().<!UNRESOLVED_REFERENCE!>invisible<!>()
 }
 

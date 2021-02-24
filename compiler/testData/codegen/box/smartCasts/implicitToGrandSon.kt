@@ -1,3 +1,4 @@
+
 open class A {
     open fun foo() = "FAIL"
 

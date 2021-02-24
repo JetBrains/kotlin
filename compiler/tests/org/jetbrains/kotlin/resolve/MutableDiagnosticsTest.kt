@@ -30,9 +30,9 @@ import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
 import org.junit.Assert
 
 class MutableDiagnosticsTest : KotlinTestWithEnvironment() {
-    override fun createEnvironment(): KotlinCoreEnvironment? {
+    override fun createEnvironment(): KotlinCoreEnvironment {
         return KotlinCoreEnvironment.createForTests(
-                testRootDisposable, KotlinTestUtils.newConfiguration(), EnvironmentConfigFiles.JVM_CONFIG_FILES
+            testRootDisposable, KotlinTestUtils.newConfiguration(), EnvironmentConfigFiles.JVM_CONFIG_FILES
         )
     }
 
@@ -137,19 +137,18 @@ class MutableDiagnosticsTest : KotlinTestWithEnvironment() {
     private class DummyDiagnosticFactory : DiagnosticFactory<DummyDiagnostic>("DUMMY", Severity.ERROR)
 
     private inner class DummyDiagnostic : Diagnostic {
-        private val factory = DummyDiagnosticFactory()
+        override val factory = DummyDiagnosticFactory()
         private val dummyElement = KtPsiFactory(environment.project).createType("Int")
 
         init {
-            dummyElement.getContainingKtFile().doNotAnalyze = null
+            dummyElement.containingKtFile.doNotAnalyze = null
         }
 
-        override fun getFactory() = factory
-        override fun getSeverity() = factory.severity
-        override fun getPsiElement() = dummyElement
-        override fun getTextRanges() = unimplemented()
-        override fun getPsiFile() = unimplemented()
-        override fun isValid() = unimplemented()
+        override val severity get() = factory.severity
+        override val psiElement get() = dummyElement
+        override val textRanges get() = unimplemented()
+        override val psiFile get() = unimplemented()
+        override val isValid get() = unimplemented()
 
         private fun unimplemented(): Nothing = throw UnsupportedOperationException()
     }

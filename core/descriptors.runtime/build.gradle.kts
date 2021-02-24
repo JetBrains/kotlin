@@ -14,10 +14,8 @@ dependencies {
     testCompile(projectTests(":generators:test-generator"))
 
     testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    Platform[192].orHigher {
-        testRuntimeOnly(intellijDep()) { includeJars("platform-concurrency") }
-        testRuntimeOnly(intellijPluginDep("jps-standalone")) { includeJars("jps-model") }
-    }
+    testRuntimeOnly(intellijDep()) { includeJars("platform-concurrency") }
+    testRuntimeOnly(jpsStandalone()) { includeJars("jps-model") }
 }
 
 sourceSets {
@@ -31,8 +29,11 @@ val compileJava by tasks.getting(JavaCompile::class) {
 }
 
 val compileKotlin by tasks.getting(KotlinCompile::class) {
-    kotlinOptions.jvmTarget = "1.6"
-    kotlinOptions.jdkHome = rootProject.extra["JDK_16"] as String
+    kotlinOptions {
+        jvmTarget = "1.6"
+        jdkHome = rootProject.extra["JDK_16"] as String
+        freeCompilerArgs += "-Xsuppress-deprecated-jvm-target-warning"
+    }
 }
 
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateRuntimeDescriptorTestsKt")

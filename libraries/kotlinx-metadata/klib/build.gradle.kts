@@ -12,9 +12,6 @@ group = "org.jetbrains.kotlinx"
 val deployVersion = findProperty("kotlinxMetadataKlibDeployVersion") as String?
 version = deployVersion ?: "0.0.1-SNAPSHOT"
 
-jvmTarget = "1.6"
-javaHome = rootProject.extra["JDK_16"] as String
-
 sourceSets {
     "main" { projectDefault() }
 }
@@ -28,10 +25,10 @@ configurations.getByName("testCompile").extendsFrom(shadows)
 dependencies {
     compile(kotlinStdlib())
     shadows(project(":kotlinx-metadata"))
-    // TODO: Get rid of this heavyweight dependency.
-    shadows(project(":core:descriptors"))
+    shadows(project(":core:compiler.common"))
     shadows(project(":core:metadata"))
     shadows(project(":core:deserialization"))
+    shadows(project(":core:deserialization.common"))
     shadows(project(":compiler:serialization"))
     shadows(project(":kotlin-util-klib-metadata"))
     shadows(project(":kotlin-util-klib"))
@@ -44,7 +41,7 @@ if (deployVersion != null) {
 
 noDefaultJar()
 
-tasks.register<ShadowJar>("shadowJar") {
+runtimeJar(tasks.register<ShadowJar>("shadowJar")) {
     callGroovy("manifestAttributes", manifest, project)
     manifest.attributes["Implementation-Version"] = version
 
@@ -52,10 +49,6 @@ tasks.register<ShadowJar>("shadowJar") {
     exclude("**/*.proto")
     configurations = listOf(shadows)
     relocate("org.jetbrains.kotlin", "kotlinx.metadata.internal")
-
-    val artifactRef = outputs.files.singleFile
-    runtimeJarArtifactBy(this, artifactRef)
-    addArtifact("runtime", this, artifactRef)
 }
 
 sourcesJar {

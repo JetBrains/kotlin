@@ -1,0 +1,22 @@
+fun a(): String {
+  return "string"
+}
+
+class A {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val b: String
+    get
+
+  init {
+    a().apply<String>(block = local fun String.<anonymous>() {
+      <this>.#b = <this>
+    }
+) /*~> Unit */
+  }
+
+}

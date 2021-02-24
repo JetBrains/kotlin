@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 enum class E {
     E1 {
         override fun foo() = outerFun() + super.outerFun()

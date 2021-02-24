@@ -11,3 +11,5 @@ fun main(a: A) {
     a.copy(1)
     B(0).copy(1)
 }
+
+// DISABLE-ERRORS

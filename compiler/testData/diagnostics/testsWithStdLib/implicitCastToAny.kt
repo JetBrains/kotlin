@@ -6,20 +6,20 @@ val smallWords = hashSetOf<String>()
 fun test1(word: String) =
         run {
             if (word.length > 4) {
-                <!OI;IMPLICIT_CAST_TO_ANY!>longWords++<!>
+                <!IMPLICIT_CAST_TO_ANY{OI}!>longWords++<!>
             }
             else {
-                <!OI;IMPLICIT_CAST_TO_ANY!>smallWords.add(word)<!>
+                <!IMPLICIT_CAST_TO_ANY{OI}!>smallWords.add(word)<!>
             }
         }
 
 fun test2(word: String) =
         run {
             if (word.length > 4) {
-                <!INVALID_IF_AS_EXPRESSION!>if<!> (word.startsWith("a")) <!OI;IMPLICIT_CAST_TO_ANY!>longWords++<!>
+                <!INVALID_IF_AS_EXPRESSION!>if<!> (word.startsWith("a")) <!IMPLICIT_CAST_TO_ANY{OI}!>longWords++<!>
             }
             else {
-                <!OI;IMPLICIT_CAST_TO_ANY!>smallWords.add(word)<!>
+                <!IMPLICIT_CAST_TO_ANY{OI}!>smallWords.add(word)<!>
             }
         }
 

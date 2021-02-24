@@ -74,7 +74,6 @@ fun ExpressionCodegen.createRangeValueForExpression(rangeExpression: KtExpressio
     }
 }
 
-@Suppress("DEPRECATION")
 fun isLocalVarReference(rangeExpression: KtExpression, bindingContext: BindingContext): Boolean {
     if (rangeExpression !is KtSimpleNameExpression) return false
     val resultingDescriptor = rangeExpression.getResolvedCall(bindingContext)?.resultingDescriptor ?: return false

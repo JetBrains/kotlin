@@ -5,24 +5,21 @@
 
 package org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem
 
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.tools.projectWizard.core.buildList
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.*
 
-fun runTaskIrs(mainClass: String, classPath: BuildSystemIR? = null) = buildList<BuildSystemIR> {
+fun runTaskIrs(@NonNls mainClass: String, classPath: BuildSystemIR? = null) = irsList {
     +ApplicationPluginIR(mainClass)
 
-    +GradleSectionIR("application", buildBody {
-        +GradleAssignmentIR("mainClassName", GradleStringConstIR(mainClass))
-    })
+    "application" {
+        "mainClassName" assign const(mainClass)
+    }
 
     if (classPath != null) {
-        +GradleConfigureTaskIR(
-            GradleByNameTaskAccessIR(
-                name = "run",
-                taskClass = "JavaExec"
-            ),
-            irs = listOf(GradleAssignmentIR("classpath", classPath))
-        )
+        +GradleConfigureTaskIR(GradleByNameTaskAccessIR("run", "JavaExec")) {
+            "classpath" assign classPath
+        }
     }
 }
 

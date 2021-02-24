@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.inspections.coroutines
 
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.inspections.collections.AbstractCallChainChecker
 import org.jetbrains.kotlin.idea.inspections.collections.SimplifyCallChainFix
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -21,7 +22,7 @@ class RedundantRunCatchingInspection : AbstractCallChainChecker() {
             val descriptor = holder.manager.createProblemDescriptor(
                 expression,
                 expression.firstCalleeExpression()!!.textRange.shiftRight(-expression.startOffset),
-                "Redundant 'runCatching' call may be reduced to '$replacement'",
+                KotlinBundle.message("redundant.runcatching.call.may.be.reduced.to.0", replacement),
                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                 isOnTheFly,
                 SimplifyCallChainFix(conversion)

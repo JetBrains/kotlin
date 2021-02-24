@@ -95,9 +95,9 @@ fun <T> Inv<out T>.case_7() {
 // TESTCASE NUMBER: 8
 fun <T> T.case_8() {
     this <!UNCHECKED_CAST!>as MutableList<T><!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction1<@kotlin.ParameterName kotlin.Any?, kotlin.Boolean>")!><!DEBUG_INFO_SMARTCAST!>this<!>::equals<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction1<kotlin.Any?, kotlin.Boolean>")!><!DEBUG_INFO_SMARTCAST!>this<!>::equals<!>
     <!DEBUG_INFO_SMARTCAST!>this<!>.equals(10)
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction1<@kotlin.ParameterName kotlin.Any?, kotlin.Boolean>")!>::<!DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>equals<!><!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction1<kotlin.Any?, kotlin.Boolean>")!>::<!DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>equals<!><!>
     <!DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>equals<!>(10)
 }
 

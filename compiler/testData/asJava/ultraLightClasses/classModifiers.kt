@@ -14,3 +14,5 @@ sealed class Season {
 }
 
 sealed class SealedWithArgs(val a: Int)
+
+// FIR_COMPARISON

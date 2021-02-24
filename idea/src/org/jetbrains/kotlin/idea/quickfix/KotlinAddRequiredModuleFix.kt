@@ -15,6 +15,7 @@ import com.intellij.psi.*
 import com.intellij.psi.util.PsiUtil
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.util.findRequireDirective
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
@@ -22,7 +23,7 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 class KotlinAddRequiredModuleFix(module: PsiJavaModule, private val requiredName: String) :
     LocalQuickFixAndIntentionActionOnPsiElement(module) {
     @Suppress("InvalidBundleOrProperty")
-    override fun getFamilyName(): String = "Add 'requires' directive to module-info.java"
+    override fun getFamilyName(): String = KotlinBundle.message("kotlin.add.required.module.fix.family.name")
 
     @Suppress("InvalidBundleOrProperty")
     override fun getText(): String = QuickFixBundle.message("module.info.add.requires.name", requiredName)

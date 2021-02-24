@@ -1,0 +1,8 @@
+private class A {
+    val bar = 1
+}
+
+private fun test(a: A) {
+    { a.bar }()
+    a.bar
+}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,11 +8,11 @@ package kotlin.js
 /**
  * Exposes the JavaScript [Math object](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Math) to Kotlin.
  */
-@Deprecated("Use top-level functions from kotlin.math package instead.", level = DeprecationLevel.WARNING)
+@Deprecated("Use top-level functions from kotlin.math package instead.", level = DeprecationLevel.ERROR)
 public external object Math {
     @Deprecated("Use kotlin.math.PI instead.", ReplaceWith("PI", "kotlin.math.PI"), level = DeprecationLevel.ERROR)
     public val PI: Double
-    @Deprecated("Use Random.nextDouble instead", ReplaceWith("kotlin.random.Random.nextDouble()", "kotlin.random.Random"), level = DeprecationLevel.WARNING)
+    @Deprecated("Use Random.nextDouble instead", ReplaceWith("kotlin.random.Random.nextDouble()", "kotlin.random.Random"), level = DeprecationLevel.ERROR)
     public fun random(): Double
     @Deprecated("Use kotlin.math.abs instead.", ReplaceWith("abs(value)", "kotlin.math.abs"), level = DeprecationLevel.ERROR)
     public fun abs(value: Double): Double
@@ -95,13 +95,13 @@ public external object Math {
 /**
  * Returns the smaller of two values.
  */
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION_ERROR")
 @Deprecated("Use minOf or kotlin.math.min instead", ReplaceWith("minOf(a, b)"), level = DeprecationLevel.ERROR)
 public fun Math.min(a: Long, b: Long): Long = if (a <= b) a else b
 
 /**
  * Returns the greater of two values.
  */
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION_ERROR")
 @Deprecated("Use maxOf or kotlin.math.max instead", ReplaceWith("maxOf(a, b)"), level = DeprecationLevel.ERROR)
 public fun Math.max(a: Long, b: Long): Long = if (a >= b) a else b

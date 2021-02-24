@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -30,7 +30,8 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyIntention;
-import org.jetbrains.kotlin.idea.references.ReferenceUtilKt;
+import org.jetbrains.kotlin.idea.KotlinBundle;
+import org.jetbrains.kotlin.idea.references.ReferenceUtilsKt;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
@@ -201,9 +202,9 @@ public class KotlinInplaceVariableIntroducer<D extends KtCallableDeclaration> ex
         return new Function0<JComponent>() {
             @Override
             public JComponent invoke() {
-                final JCheckBox exprTypeCheckbox = new NonFocusableCheckBox("Specify type explicitly");
+                final JCheckBox exprTypeCheckbox = new NonFocusableCheckBox(
+                        KotlinBundle.message("checkbox.text.specify.type.explicitly"));
                 exprTypeCheckbox.setSelected(false);
-                exprTypeCheckbox.setMnemonic('t');
                 exprTypeCheckbox.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(@NotNull ActionEvent e) {
@@ -237,9 +238,8 @@ public class KotlinInplaceVariableIntroducer<D extends KtCallableDeclaration> ex
         return new Function0<JComponent>() {
             @Override
             public JComponent invoke() {
-                final JCheckBox varCheckbox = new NonFocusableCheckBox("Declare with var");
+                final JCheckBox varCheckbox = new NonFocusableCheckBox(KotlinBundle.message("checkbox.text.declare.with.var"));
                 varCheckbox.setSelected(isVar);
-                varCheckbox.setMnemonic('v');
                 varCheckbox.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(@NotNull ActionEvent e) {
@@ -382,7 +382,7 @@ public class KotlinInplaceVariableIntroducer<D extends KtCallableDeclaration> ex
                 new Function1<KtSimpleNameExpression, PsiReference>() {
                     @Override
                     public PsiReference invoke(KtSimpleNameExpression expression) {
-                        return ReferenceUtilKt.getMainReference(expression);
+                        return ReferenceUtilsKt.getMainReference(expression);
                     }
                 }
         );

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,7 +11,7 @@ package kotlin.collections
 
 @Deprecated("Use sortWith(comparator) instead.", ReplaceWith("this.sortWith(comparator)"), level = DeprecationLevel.ERROR)
 @kotlin.internal.InlineOnly
-@Suppress("UNUSED_PARAMETER")
+@Suppress("UNUSED_PARAMETER", "EXTENSION_SHADOWED_BY_MEMBER")
 public inline fun <T> MutableList<T>.sort(comparator: Comparator<in T>): Unit = throw NotImplementedError()
 
 @Deprecated("Use sortWith(Comparator(comparison)) instead.", ReplaceWith("this.sortWith(Comparator(comparison))"), level = DeprecationLevel.ERROR)
@@ -71,16 +71,3 @@ public actual inline fun <T> MutableList<T>.shuffle() {
 public inline fun <T> MutableList<T>.shuffle(random: java.util.Random) {
     java.util.Collections.shuffle(this, random)
 }
-
-/**
- * Returns a new list with the elements of this list randomly shuffled.
- */
-@SinceKotlin("1.2")
-public actual fun <T> Iterable<T>.shuffled(): List<T> = toMutableList().apply { shuffle() }
-
-/**
- * Returns a new list with the elements of this list randomly shuffled
- * using the specified [random] instance as the source of randomness.
- */
-@SinceKotlin("1.2")
-public fun <T> Iterable<T>.shuffled(random: java.util.Random): List<T> = toMutableList().apply { shuffle(random) }

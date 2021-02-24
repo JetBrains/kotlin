@@ -1,0 +1,34 @@
+class A : Cloneable {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+interface I : Cloneable {
+
+}
+
+class C : I {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+class OC : I {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  protected override fun clone(): OC {
+    return OC()
+  }
+
+}

@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.resolve.calls.components
 
+import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionContext
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
-import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode
+import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.components.TrivialConstraintTypeInferenceOracle
 import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
 import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
@@ -18,7 +19,7 @@ import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.newLinkedHashMapWithExpectedSize
 import java.util.*
 
-typealias CsCompleterContext = KotlinConstraintSystemCompleter.Context
+typealias CsCompleterContext = ConstraintSystemCompletionContext
 
 class CompletionModeCalculator {
     companion object {
@@ -26,8 +27,11 @@ class CompletionModeCalculator {
             candidate: KotlinResolutionCandidate,
             expectedType: UnwrappedType?,
             returnType: UnwrappedType?,
-            trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle
+            trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle,
+            inferenceSession: InferenceSession
         ): ConstraintSystemCompletionMode = with(candidate) {
+            inferenceSession.computeCompletionMode(candidate)?.let { return it }
+
             val csCompleterContext = getSystem().asConstraintSystemCompleterContext()
 
             if (candidate.isErrorCandidate()) return ConstraintSystemCompletionMode.FULL
@@ -52,7 +56,7 @@ class CompletionModeCalculator {
         private val candidate: KotlinResolutionCandidate,
         private val returnType: UnwrappedType?,
         private val csCompleterContext: CsCompleterContext,
-        private val trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle
+        private val trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle,
     ) {
         private enum class FixationDirection {
             TO_SUBTYPE, EQUALITY
@@ -192,13 +196,32 @@ class CompletionModeCalculator {
             val constraints = variableWithConstraints.constraints
             val variable = variableWithConstraints.typeVariable
 
-            // todo check correctness for @Exact
-            return constraints.isNotEmpty() && constraints.any { constraint ->
-                constraint.hasRequiredKind(direction)
-                        && isProperType(constraint.type)
-                        && !constraint.type.typeConstructor().isIntegerLiteralTypeConstructor()
-                        && !isNothingConstraintForPartiallyAnalyzedVariable(constraint, variable)
+            // ILT constraint tracking is necessary to prevent incorrect full completion from Nothing constraint
+            // Consider ILT <: T; Nothing <: T for T requiring lower constraint
+            // Nothing would trigger full completion, but resulting type would be Int
+            // Possible restrictions on integer constant from outer calls would be ignored
+
+            var iltConstraintPresent = false
+            var properConstraintPresent = false
+            var nonNothingProperConstraintPresent = false
+
+            for (constraint in constraints) {
+                if (!constraint.hasRequiredKind(direction) || !isProperType(constraint.type))
+                    continue
+
+                if (constraint.type.typeConstructor().isIntegerLiteralTypeConstructor()) {
+                    iltConstraintPresent = true
+                } else if (trivialConstraintTypeInferenceOracle.isSuitableResultedType(constraint.type)) {
+                    properConstraintPresent = true
+                    nonNothingProperConstraintPresent = true
+                } else if (!isLowerConstraintForPartiallyAnalyzedVariable(constraint, variable)) {
+                    properConstraintPresent = true
+                }
             }
+
+            if (!properConstraintPresent) return false
+
+            return !iltConstraintPresent || nonNothingProperConstraintPresent
         }
 
         private fun Constraint.hasRequiredKind(direction: FixationDirection) = when (direction) {
@@ -206,14 +229,13 @@ class CompletionModeCalculator {
             FixationDirection.EQUALITY -> kind.isEqual()
         }
 
-        private fun CsCompleterContext.isNothingConstraintForPartiallyAnalyzedVariable(
+        private fun CsCompleterContext.isLowerConstraintForPartiallyAnalyzedVariable(
             constraint: Constraint,
             variable: TypeVariableMarker
         ): Boolean {
-            if (trivialConstraintTypeInferenceOracle.isSuitableResultedType(constraint.type) || !constraint.kind.isLower())
-                return false
-            return postponedAtoms.any { atom ->
-                atom.expectedType?.contains { type -> variable.defaultType() == type } ?: false
+            val defaultType = variable.defaultType()
+            return constraint.kind.isLower() && postponedAtoms.any { atom ->
+                atom.expectedType?.contains { type -> defaultType == type } ?: false
             }
         }
     }

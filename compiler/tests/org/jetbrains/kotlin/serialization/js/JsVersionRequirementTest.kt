@@ -8,10 +8,7 @@ package org.jetbrains.kotlin.serialization.js
 import org.jetbrains.kotlin.cli.common.output.writeAllTo
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.config.ApiVersion
-import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
-import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.context.ContextForNewModule
 import org.jetbrains.kotlin.context.MutableModuleContext
 import org.jetbrains.kotlin.context.ProjectContext
@@ -30,12 +27,24 @@ import org.jetbrains.kotlin.serialization.AbstractVersionRequirementTest
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 
 class JsVersionRequirementTest : AbstractVersionRequirementTest() {
-    override fun compileFiles(files: List<File>, outputDirectory: File, languageVersion: LanguageVersion) {
+    override fun compileFiles(
+        files: List<File>,
+        outputDirectory: File,
+        languageVersion: LanguageVersion,
+        analysisFlags: Map<AnalysisFlag<*>, Any?>
+    ) {
         val environment = createEnvironment(languageVersion)
-        val ktFiles = files.map { file -> KotlinTestUtils.createFile(file.name, file.readText(), environment.project) }
+        val ktFiles = files.map { file ->
+            KtTestUtil.createFile(
+                file.name,
+                file.readText(),
+                environment.project
+            )
+        }
         val trace = BindingTraceContext()
         val analysisResult = TopDownAnalyzerFacadeForJS.analyzeFilesWithGivenTrace(
             ktFiles, trace, createModule(environment), environment.configuration

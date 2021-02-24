@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.quickfix.sealedSubClassToObject
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -44,5 +45,5 @@ class GenerateIdentityEqualsFix : LocalQuickFix {
         klass.addDeclaration(hashCodeFunction)
     }
 
-    override fun getFamilyName() = "Generate equals & hashCode by identity"
+    override fun getFamilyName() = KotlinBundle.message("generate.identity.equals.fix.family.name")
 }

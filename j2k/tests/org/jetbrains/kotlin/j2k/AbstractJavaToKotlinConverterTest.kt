@@ -22,11 +22,11 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.pom.java.LanguageLevel
 import com.intellij.testFramework.LightPlatformTestCase
+import org.jetbrains.kotlin.idea.caches.PerModulePackageCacheService.Companion.DEBUG_LOG_ENABLE_PerModulePackageCache
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.invalidateLibraryCache
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.idea.caches.PerModulePackageCacheService.Companion.DEBUG_LOG_ENABLE_PerModulePackageCache
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 
 abstract class AbstractJavaToKotlinConverterTest : KotlinLightCodeInsightFixtureTestCase() {
@@ -40,7 +40,7 @@ abstract class AbstractJavaToKotlinConverterTest : KotlinLightCodeInsightFixture
             LanguageLevelProjectExtension.getInstance(project).languageLevel = LanguageLevel.JDK_1_8
         }
 
-        VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory())
+        VfsRootAccess.allowRootAccess(KtTestUtil.getHomeDirectory())
 
         invalidateLibraryCache(project)
 
@@ -49,7 +49,7 @@ abstract class AbstractJavaToKotlinConverterTest : KotlinLightCodeInsightFixture
     }
 
     override fun tearDown() {
-        VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory())
+        VfsRootAccess.disallowRootAccess(KtTestUtil.getHomeDirectory())
 
         project.DEBUG_LOG_ENABLE_PerModulePackageCache = false
         super.tearDown()

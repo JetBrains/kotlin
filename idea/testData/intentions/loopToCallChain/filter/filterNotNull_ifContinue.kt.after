@@ -3,7 +3,7 @@
 // INTENTION_TEXT_2: "Replace with 'asSequence().filterNotNull().map{}.firstOrNull()'"
 fun foo(list: List<Any?>): Int? {
     <caret>return list
-            .filterNotNull()
-            .map { it.hashCode() }
-            .firstOrNull()
+        .filterNotNull()
+        .map { it.hashCode() }
+        .firstOrNull()
 }

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class A<T>(val x: Array<T>) {
     val y: Int = x[0].toString().length
 

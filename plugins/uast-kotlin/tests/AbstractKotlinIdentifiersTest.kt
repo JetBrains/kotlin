@@ -5,7 +5,7 @@ import org.jetbrains.uast.*
 import org.jetbrains.uast.test.common.UElementToParentMap
 import org.jetbrains.uast.test.common.kotlin.IdentifiersTestBase
 import org.jetbrains.uast.test.common.visitUFileAndGetResult
-import org.jetbrains.uast.test.env.assertEqualsToFile
+import org.jetbrains.uast.test.env.kotlin.assertEqualsToFile
 import java.io.File
 import kotlin.test.assertNotNull
 

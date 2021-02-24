@@ -22,6 +22,7 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import java.io.File
+import java.nio.file.Files
 import java.util.*
 
 class BuildDiffsStorageTest {
@@ -30,7 +31,7 @@ class BuildDiffsStorageTest {
 
     @Before
     fun setUp() {
-        storageFile = File.createTempFile("BuildDiffsStorageTest", "storage")
+        storageFile = Files.createTempFile("BuildDiffsStorageTest", "storage").toFile()
     }
 
     @After
@@ -45,7 +46,7 @@ class BuildDiffsStorageTest {
         val diff = BuildDifference(100, true, DirtyData(lookupSymbols, fqNames))
         val diffs = BuildDiffsStorage(listOf(diff))
         Assert.assertEquals(
-            "BuildDiffsStorage(buildDiffs=[BuildDifference(ts=100, isIncremental=true, dirtyData=DirtyData(dirtyLookupSymbols=[LookupSymbol(name=foo, scope=bar)], dirtyClassesFqNames=[fizz.Buzz]))])",
+            "BuildDiffsStorage(buildDiffs=[BuildDifference(ts=100, isIncremental=true, dirtyData=DirtyData(dirtyLookupSymbols=[LookupSymbol(name=foo, scope=bar)], dirtyClassesFqNames=[fizz.Buzz], dirtyClassesFqNamesForceRecompile=[]))])",
             diffs.toString()
         )
     }

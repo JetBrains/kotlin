@@ -1,5 +1,4 @@
 Checked type of parameter a of FOR
-Checked type of parameter a of FOR
 Resolved for (a in A<Int>()) {}
 Resolved for (a in A<String>()) {}
 Searched references to A

@@ -74,12 +74,12 @@ abstract class AbstractAsmLikeInstructionListingTest : CodegenTestCase() {
                 append(" : " + superTypes.joinToString())
             }
 
-            appendln(" {")
+            appendLine(" {")
 
             fields.joinTo(this, LINE_SEPARATOR.repeat(2)) { renderField(it, showTypeAnnotations).withMargin() }
 
             if (fields.isNotEmpty()) {
-                appendln().appendln()
+                appendLine().appendLine()
             }
 
             methods.joinTo(this, LINE_SEPARATOR.repeat(2)) {
@@ -87,7 +87,7 @@ abstract class AbstractAsmLikeInstructionListingTest : CodegenTestCase() {
                 renderMethod(it, showBytecode, showLocalVariables, showTypeAnnotations).withMargin()
             }
 
-            appendln().append("}")
+            appendLine().append("}")
         }
     }
 
@@ -147,7 +147,7 @@ abstract class AbstractAsmLikeInstructionListingTest : CodegenTestCase() {
         val actualShowLocalVariables = showLocalVariables && method.localVariables?.takeIf { it.isNotEmpty() } != null
 
         if (actualShowBytecode || actualShowLocalVariables) {
-            appendln(" {")
+            appendLine(" {")
 
             if (actualShowLocalVariables) {
                 val localVariableTable = buildLocalVariableTable(method)
@@ -158,12 +158,12 @@ abstract class AbstractAsmLikeInstructionListingTest : CodegenTestCase() {
 
             if (actualShowBytecode) {
                 if (actualShowLocalVariables) {
-                    appendln().appendln()
+                    appendLine().appendLine()
                 }
                 append(renderBytecodeInstructions(method.instructions).trimEnd().withMargin())
             }
 
-            appendln().append("}")
+            appendLine().append("}")
 
             method.visibleTypeAnnotations
         }
@@ -188,7 +188,7 @@ abstract class AbstractAsmLikeInstructionListingTest : CodegenTestCase() {
         return buildString {
             append("Local variables:")
             for (variable in localVariables) {
-                appendln().append((variable.index.toString() + " " + variable.name + ": " + variable.desc).withMargin())
+                appendLine().append((variable.index.toString() + " " + variable.name + ": " + variable.desc).withMargin())
             }
         }
     }
@@ -205,12 +205,12 @@ abstract class AbstractAsmLikeInstructionListingTest : CodegenTestCase() {
 
     private fun StringBuilder.renderInstruction(node: AbstractInsnNode, labelMappings: LabelMappings) {
         if (node is LabelNode) {
-            appendln("LABEL (L" + labelMappings[node.label] + ")")
+            appendLine("LABEL (L" + labelMappings[node.label] + ")")
             return
         }
 
         if (node is LineNumberNode) {
-            appendln("LINENUMBER (" + node.line + ")")
+            appendLine("LINENUMBER (" + node.line + ")")
             return
         }
 
@@ -227,7 +227,7 @@ abstract class AbstractAsmLikeInstructionListingTest : CodegenTestCase() {
             is LdcInsnNode -> append(" (" + node.cst + ")")
         }
 
-        appendln()
+        appendLine()
     }
 
     private fun String.withMargin(margin: String = "    "): String {

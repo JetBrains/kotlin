@@ -126,7 +126,7 @@ open class KotlinJvmReplService(
     templateClasspath: List<File>,
     templateClassName: String,
     messageCollector: MessageCollector,
-    @Deprecated("drop it")
+    // TODO: drop it
     protected val operationsTracer: RemoteOperationsTracer?
 ) : KotlinJvmReplServiceBase(disposable, compilerId, templateClasspath, templateClassName, messageCollector) {
 
@@ -142,9 +142,11 @@ open class KotlinJvmReplService(
     @Deprecated("remove after removal state-less check/compile/eval methods")
     protected val defaultStateFacade: RemoteReplStateFacadeServer by lazy { createRemoteState() }
 
+    @Suppress("DEPRECATION")
     @Deprecated("Use check(state, line) instead")
     fun check(codeLine: ReplCodeLine): ReplCheckResult = check(defaultStateFacade.state, codeLine)
 
+    @Suppress("DEPRECATION", "UNUSED_PARAMETER")
     @Deprecated("Use compile(state, line) instead")
     fun compile(codeLine: ReplCodeLine, verifyHistory: List<ReplCodeLine>?): ReplCompileResult = compile(defaultStateFacade.state, codeLine)
 
@@ -168,9 +170,9 @@ internal class KeepFirstErrorMessageCollector(compilerMessagesStream: PrintStrea
     private val innerCollector = PrintingMessageCollector(compilerMessagesStream, MessageRenderer.WITHOUT_PATHS, false)
 
     internal var firstErrorMessage: String? = null
-    internal var firstErrorLocation: CompilerMessageLocation? = null
+    internal var firstErrorLocation: CompilerMessageSourceLocation? = null
 
-    override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation?) {
+    override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
         if (firstErrorMessage == null && severity.isError) {
             firstErrorMessage = message
             firstErrorLocation = location

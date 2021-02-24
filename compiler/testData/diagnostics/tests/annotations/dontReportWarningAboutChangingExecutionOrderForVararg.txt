@@ -1,0 +1,34 @@
+package
+
+@Anno(x = {{"a", "b"}, {"a", "b"}}, y = "a") public fun foo1(): kotlin.Unit
+@Anno(x = {"a", "b"}, y = "a") public fun foo2(): kotlin.Unit
+@Anno(x = {{"a"}, {"b"}}, y = "a") public fun foo3(): kotlin.Unit
+@Anno(x = {"a", "b"}, y = "a") public fun foo4(): kotlin.Unit
+@Anno1(x = {"", Anno2(x = {""}, y = "")}, y = "") public fun foo5(): kotlin.Unit
+
+@kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) public final annotation class Anno : kotlin.Annotation {
+    public constructor Anno(/*0*/ vararg x: kotlin.String /*kotlin.Array<out kotlin.String>*/, /*1*/ y: kotlin.String)
+    public final val x: kotlin.Array<out kotlin.String>
+    public final val y: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) public final annotation class Anno1 : kotlin.Annotation {
+    public constructor Anno1(/*0*/ x: kotlin.Array<in kotlin.String>, /*1*/ y: kotlin.String)
+    public final val x: kotlin.Array<in kotlin.String>
+    public final val y: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) public final annotation class Anno2 : kotlin.Annotation {
+    public constructor Anno2(/*0*/ vararg x: kotlin.String /*kotlin.Array<out kotlin.String>*/, /*1*/ y: kotlin.String)
+    public final val x: kotlin.Array<out kotlin.String>
+    public final val y: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

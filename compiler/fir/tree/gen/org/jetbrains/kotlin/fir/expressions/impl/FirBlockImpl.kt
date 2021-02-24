@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.*
@@ -19,11 +18,11 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-class FirBlockImpl(
-    override val source: FirSourceElement?
-) : FirBlock(), FirAbstractAnnotatedElement {
-    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
-    override val statements: MutableList<FirStatement> = mutableListOf()
+internal class FirBlockImpl(
+    override var source: FirSourceElement?,
+    override val annotations: MutableList<FirAnnotationCall>,
+    override val statements: MutableList<FirStatement>,
+) : FirBlock() {
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
@@ -33,10 +32,29 @@ class FirBlockImpl(
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirBlockImpl {
+        transformStatements(transformer, data)
+        transformOtherChildren(transformer, data)
+        return this
+    }
+
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirBlockImpl {
         annotations.transformInplace(transformer, data)
+        return this
+    }
+
+    override fun <D> transformStatements(transformer: FirTransformer<D>, data: D): FirBlockImpl {
         statements.transformInplace(transformer, data)
+        return this
+    }
+
+    override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirBlockImpl {
+        transformAnnotations(transformer, data)
         typeRef = typeRef.transformSingle(transformer, data)
         return this
+    }
+
+    override fun replaceSource(newSource: FirSourceElement?) {
+        source = newSource
     }
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {

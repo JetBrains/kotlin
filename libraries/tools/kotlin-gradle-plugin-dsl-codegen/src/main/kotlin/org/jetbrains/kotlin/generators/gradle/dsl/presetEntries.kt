@@ -41,12 +41,6 @@ internal val jvmPresetEntry = KotlinPresetEntry(
     typeName("org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget")
 )
 
-internal val jsPresetEntry = KotlinPresetEntry(
-    "js",
-    typeName("$MPP_PACKAGE.KotlinJsTargetPreset"),
-    typeName("org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget")
-)
-
 internal val androidPresetEntry = KotlinPresetEntry(
     "android",
     typeName("$MPP_PACKAGE.KotlinAndroidTargetPreset"),
@@ -55,11 +49,10 @@ internal val androidPresetEntry = KotlinPresetEntry(
 
 // Note: modifying these sets should also be reflected in the MPP plugin code, see 'setupDefaultPresets'
 private val nativeTargetsWithHostTests = setOf(KonanTarget.LINUX_X64, KonanTarget.MACOS_X64, KonanTarget.MINGW_X64)
-private val nativeTargetsWithSimulatorTests = setOf(KonanTarget.IOS_X64, KonanTarget.WATCHOS_X86, KonanTarget.TVOS_X64)
-private val disabledNativeTargets = setOf(KonanTarget.WATCHOS_X64)
+private val nativeTargetsWithSimulatorTests =
+        setOf(KonanTarget.IOS_X64, KonanTarget.WATCHOS_X86, KonanTarget.WATCHOS_X64, KonanTarget.TVOS_X64)
 
 internal val nativePresetEntries = HostManager().targets
-    .filter { (_, target) -> target !in disabledNativeTargets }
     .map { (_, target) ->
 
         val (presetType, targetType) = when (target) {
@@ -76,6 +69,5 @@ internal val nativePresetEntries = HostManager().targets
 
 internal val allPresetEntries = listOf(
     jvmPresetEntry,
-    jsPresetEntry,
     androidPresetEntry
 ) + nativePresetEntries

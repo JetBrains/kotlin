@@ -23,7 +23,7 @@ fun bar() {
     }
 
     foo { (a, b), (c, b) ->
-        <!UNRESOLVED_REFERENCE!>a<!> <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!UNRESOLVED_REFERENCE!>_<!><Int>() }
+        <!UNRESOLVED_REFERENCE!>a<!> <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><Int>() }
         b checkType { <!INAPPLICABLE_CANDIDATE!>_<!><String>() }
         c checkType { <!INAPPLICABLE_CANDIDATE!>_<!><B>() }
     }

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // KT-587 Unresolved reference
 
 class Main {

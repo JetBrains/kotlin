@@ -5,21 +5,33 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir
 
-import org.jetbrains.kotlin.backend.common.LoggingContext
-import org.jetbrains.kotlin.backend.common.serialization.IrFileSerializer
 import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
-import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.backend.common.serialization.IrFileSerializer
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.util.IrMessageLogger
+import org.jetbrains.kotlin.ir.util.hasAnnotation
+import org.jetbrains.kotlin.name.FqName
 
 class JsIrFileSerializer(
-    logger: LoggingContext,
+    messageLogger: IrMessageLogger,
     declarationTable: DeclarationTable,
-    private val expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
+    expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
     skipExpects: Boolean,
     bodiesOnlyForInlines: Boolean = false
-) : IrFileSerializer(logger, declarationTable, expectDescriptorToSymbol, bodiesOnlyForInlines = bodiesOnlyForInlines, skipExpects = skipExpects) {
+) : IrFileSerializer(
+    messageLogger,
+    declarationTable,
+    expectDescriptorToSymbol,
+    bodiesOnlyForInlines = bodiesOnlyForInlines,
+    skipExpects = skipExpects
+) {
+    companion object {
+        private val JS_EXPORT_FQN = FqName("kotlin.js.JsExport")
+    }
 
-    // Temporary keep order of any property, even of constants
-    override fun keepOrderOfProperties(property: IrProperty): Boolean = true
+    override fun backendSpecificExplicitRoot(node: IrAnnotationContainer): Boolean {
+        return node.annotations.hasAnnotation(JS_EXPORT_FQN)
+    }
 }

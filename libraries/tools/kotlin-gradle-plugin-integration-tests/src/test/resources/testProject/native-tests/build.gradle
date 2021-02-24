@@ -1,0 +1,83 @@
+group 'com.example'
+version '1.0'
+
+buildscript {
+    repositories {
+        mavenLocal()
+        jcenter()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+apply plugin: 'kotlin-multiplatform'
+
+repositories {
+    mavenLocal()
+    jcenter()
+}
+
+kotlin {
+    targets {
+        fromPreset(presets.<SingleNativeTarget>, 'host')
+
+        fromPreset(presets.iosX64, 'ios')
+
+        configure([host]) {
+            compilations.create("anotherTest")
+            binaries {
+                test("another", [DEBUG]) {
+                    compilation = compilations.anotherTest
+                }
+            }
+        }
+    }
+
+    sourceSets {
+        anotherTest
+        hostAnotherTest.dependsOn(anotherTest)
+    }
+}
+
+// Check that test events are correctly reported in CLI.
+configure([hostTest, iosTest]){
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+}
+
+// Check that getting a test binary in an old way fails showing the corresponding warning
+task checkOldGet {
+    doLast {
+        kotlin.targets {
+            configure([host]) {
+                println("Get test: ${binaries.getExecutable("test", DEBUG)}")
+            }
+        }
+    }
+}
+
+// Check that finding a test binary in an old way returns null showing the corresponding warning.
+task checkOldFind {
+    doLast {
+        kotlin.targets {
+            configure([host]) {
+                println("Find test: ${binaries.findExecutable("test", DEBUG)}")
+            }
+        }
+    }
+}
+
+task checkNewGetters {
+    doLast {
+        kotlin.targets {
+            configure([host]) {
+                println("Get test: ${binaries.getTest(DEBUG).outputFile.name}")
+                println("Find test: ${binaries.findTest(DEBUG).outputFile.name}")
+                println("Get test: ${binaries.getTest("another", DEBUG).outputFile.name}")
+                println("Find test: ${binaries.findTest("another", DEBUG).outputFile.name}")
+            }
+        }
+    }
+}

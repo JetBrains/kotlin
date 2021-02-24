@@ -1,0 +1,24 @@
+fun foo(x: Int, y: Int): Int {
+  return x
+}
+
+fun bar(x: Int): Int {
+  return foo(x = x, y = 1)
+}
+
+fun qux(x: Int): Int {
+  return foo(x = foo(x = x, y = x), y = x)
+}
+
+fun Int.ext1(): Int {
+  return <this>
+}
+
+fun Int.ext2(x: Int): Int {
+  return foo(x = <this>, y = x)
+}
+
+fun Int.ext3(x: Int): Int {
+  return foo(x = <this>.ext1(), y = x)
+}
+

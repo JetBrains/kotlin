@@ -47,7 +47,7 @@ open class KotlinMetadataStubBuilder(
                 val context = components.createContext(nameResolver, packageFqName, TypeTable(packageProto.typeTable))
 
                 val fileStub = createFileStub(packageFqName, isScript = false)
-                createDeclarationsStubs(
+                createPackageDeclarationsStubs(
                     fileStub, context,
                     ProtoContainer.Package(packageFqName, context.nameResolver, context.typeTable, source = null),
                     packageProto

@@ -10,6 +10,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors.CAST_NEVER_SUCCEEDS
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS
@@ -24,8 +25,8 @@ class ReplacePrimitiveCastWithNumberConversionFix(
     private val targetShortType: String
 ) : KotlinQuickFixAction<KtBinaryExpressionWithTypeRHS>(element) {
 
-    override fun getText() = "Replace cast with call to 'to$targetShortType()'"
-    override fun getFamilyName() = "Replace cast with primitive conversion method"
+    override fun getText() = KotlinBundle.message("replace.cast.with.call.to.to.0", targetShortType)
+    override fun getFamilyName() = KotlinBundle.message("replace.cast.with.primitive.conversion.method")
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return

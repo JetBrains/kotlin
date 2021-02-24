@@ -10,6 +10,7 @@ import com.intellij.lang.ASTNode
 import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
+import org.jetbrains.annotations.NonNls
 import kotlin.collections.ArrayList
 
 abstract class NodeIndentStrategy {
@@ -124,7 +125,7 @@ abstract class NodeIndentStrategy {
             return ConstIndentStrategy(indent)
         }
 
-        fun strategy(debugInfo: String?): PositionStrategy {
+        fun strategy(@NonNls debugInfo: String?): PositionStrategy {
             return PositionStrategy(debugInfo)
         }
     }

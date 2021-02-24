@@ -20,5 +20,5 @@ class In<in F> {
 
 fun test() {
     A.foo().x() checkType { _<Any?>() }
-    A.bar().<!OI;MEMBER_PROJECTED_OUT!>y<!>(<!NI;NULL_FOR_NONNULL_TYPE!>null<!>)
+    A.bar().<!MEMBER_PROJECTED_OUT{OI}!>y<!>(<!NULL_FOR_NONNULL_TYPE{NI}!>null<!>)
 }

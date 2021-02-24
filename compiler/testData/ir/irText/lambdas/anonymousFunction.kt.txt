@@ -1,0 +1,7 @@
+val anonymous: Function0<Unit>
+  field = local fun <no name provided>() {
+    println()
+  }
+
+  get
+

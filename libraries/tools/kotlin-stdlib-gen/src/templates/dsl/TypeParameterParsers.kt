@@ -33,8 +33,8 @@ fun parseTypeParameter(typeString: String): TypeParameter =
 
 fun parseTypeRef(typeRef: String): TypeRef =
     typeRef.trim().run {
-        if (contains('<') && endsWith('>')) {
-            val name = substringBefore('<')
+        if (contains('<') && (endsWith('>') || endsWith(">?"))) {
+            val name = substringBefore('<') + if (endsWith(">?")) "?" else ""
             val params = substringAfter('<').substringBeforeLast('>')
             TypeRef(name, parseArguments(params))
         }

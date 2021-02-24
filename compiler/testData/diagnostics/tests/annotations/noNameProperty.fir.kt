@@ -1,1 +1,0 @@
-annotation class Ann(val x: Int, val<!SYNTAX!><!> )

@@ -1,0 +1,2 @@
+fun a() = try
+<caret>

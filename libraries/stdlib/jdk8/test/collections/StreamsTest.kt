@@ -24,7 +24,7 @@ import kotlin.test.*
 class StreamsTest {
 
     @Test fun toList() {
-        val data = arrayOf(1, 2L, 1.23, null)
+        val data = arrayOf<Any?>(1, 2L, 1.23, null)
         val streamBuilder = { Stream.of(*data) }
 
         assertEquals(data.asList(), streamBuilder().toList())

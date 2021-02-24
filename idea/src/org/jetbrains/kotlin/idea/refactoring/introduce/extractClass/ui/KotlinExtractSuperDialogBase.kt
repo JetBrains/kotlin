@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.core.unquote
 import org.jetbrains.kotlin.idea.core.util.onTextChange
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractClass.ExtractSuperInfo
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberSelectionPanel
@@ -98,7 +99,7 @@ abstract class KotlinExtractSuperDialogBase(
 
     protected abstract fun createMemberInfoModel(): MemberInfoModelBase
 
-    override fun getDocCommentPanelName() = "KDoc for abstracts"
+    override fun getDocCommentPanelName() = KotlinBundle.message("name.kdoc.for.abstracts")
 
     override fun checkConflicts() = conflictChecker(this)
 
@@ -116,7 +117,7 @@ abstract class KotlinExtractSuperDialogBase(
         val targetDirectoryPanel = super.createDestinationRootPanel()
         val targetFileNamePanel = JPanel(BorderLayout()).apply {
             border = BorderFactory.createEmptyBorder(10, 0, 0, 0)
-            val label = JBLabel("Target file name:")
+            val label = JBLabel(KotlinBundle.message("label.text.target.file.name"))
             add(label, BorderLayout.NORTH)
             label.labelFor = fileNameField
             add(fileNameField, BorderLayout.CENTER)
@@ -174,7 +175,7 @@ abstract class KotlinExtractSuperDialogBase(
     override fun validateName(name: String): String? {
         return when {
             !name.quoteIfNeeded().isIdentifier() -> RefactoringMessageUtil.getIncorrectIdentifierMessage(name)
-            name.unquote() == mySourceClass.name -> "Different name expected"
+            name.unquote() == mySourceClass.name -> KotlinBundle.message("error.text.different.name.expected")
             else -> null
         }
     }

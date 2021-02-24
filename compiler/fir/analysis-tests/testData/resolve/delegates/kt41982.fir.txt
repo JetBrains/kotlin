@@ -1,0 +1,40 @@
+FILE: kt41982.kt
+    public final class Delegate<R, T> : R|kotlin/Any| {
+        public constructor<R, T>(): R|Delegate<R, T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final operator fun getValue(thisRef: R|R|, property: R|kotlin/reflect/KProperty<*>|): R|T| {
+            ^getValue Null(null)!!
+        }
+
+        public final operator fun setValue(thisRef: R|R|, property: R|kotlin/reflect/KProperty<*>|, value: R|T|): R|kotlin/Unit| {
+        }
+
+    }
+    public abstract class DelegateProvider<in Type> : R|kotlin/Any| {
+        public constructor<in Type>(): R|DelegateProvider<Type>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun <Type : R|Base|, Base : R|DelegateProvider<Base>|> R|Type|.long(initializer: R|() -> kotlin/Long?| = Null(null)): R|Delegate<Type, kotlin/Long>| {
+        ^long Null(null)!!
+    }
+    public final class Test : R|DelegateProvider<kotlin/Any>| {
+        public constructor(): R|Test| {
+            super<R|DelegateProvider<kotlin/Any>|>()
+        }
+
+        public final var start: R|kotlin/Long|by this@R|/Test|.R|/long|<R|Test?|, R|Test?|>(<L> = long@fun <anonymous>(): R|kotlin/Long?| {
+            ^ Long(0)
+        }
+        )
+            public get(): R|kotlin/Long| {
+                ^ this@R|/Test|.D|/Test.start|.R|SubstitutionOverride</Delegate.getValue: R|kotlin/Long|>|(this@R|/Test|, ::R|/Test.start|)
+            }
+            public set(<set-?>: R|kotlin/Long|): R|kotlin/Unit| {
+                this@R|/Test|.D|/Test.start|.R|SubstitutionOverride</Delegate.setValue: R|kotlin/Unit|>|(this@R|/Test|, ::R|/Test.start|, R|<local>/start|)
+            }
+
+    }

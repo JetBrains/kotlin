@@ -1,0 +1,7 @@
+fun test(x: Any): Boolean {
+  return EQEQ(arg0 = x, arg1 = when {
+    x !is Double -> CHECK_NOT_NULL<Nothing>(arg0 = null)
+    else -> x /*as Double */
+  })
+}
+

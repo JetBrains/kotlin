@@ -9,7 +9,7 @@ class A {
 fun test(a: A) {
     fun A.foo() = 4
 
-    a.foo() checkType { <!UNRESOLVED_REFERENCE!>_<!><A>() }
+    a.foo() checkType { _<A>() }
 
     with(a) {
         foo() checkType { _<A>() }

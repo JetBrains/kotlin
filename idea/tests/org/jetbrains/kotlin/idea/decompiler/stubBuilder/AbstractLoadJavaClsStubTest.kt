@@ -20,10 +20,10 @@ import org.jetbrains.kotlin.idea.decompiler.classFile.KtClsFile
 import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil
 import org.jetbrains.kotlin.psi.stubs.elements.KtFileStubBuilder
 import org.jetbrains.kotlin.test.ConfigurationKind
-import org.jetbrains.kotlin.test.KotlinTestUtils.getAnnotationsJar
 import org.jetbrains.kotlin.test.KotlinTestUtils.newConfiguration
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.test.util.KtTestUtil.getAnnotationsJar
 import org.junit.Assert
 import java.io.File
 
@@ -37,7 +37,9 @@ abstract class AbstractLoadJavaClsStubTest : TestCaseWithTmpdir() {
     private fun doTestCompiledKotlin(ktFileName: String, configurationKind: ConfigurationKind, useTypeTableInSerializer: Boolean) {
         val ktFile = File(ktFileName)
 
-        val configuration = newConfiguration(configurationKind, TestJdkKind.MOCK_JDK, getAnnotationsJar())
+        val configuration = newConfiguration(configurationKind, TestJdkKind.MOCK_JDK,
+                                             getAnnotationsJar()
+        )
         if (useTypeTableInSerializer) {
             configuration.put(JVMConfigurationKeys.USE_TYPE_TABLE, true)
         }

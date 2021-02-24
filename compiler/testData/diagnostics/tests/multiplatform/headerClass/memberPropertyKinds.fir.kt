@@ -14,8 +14,8 @@ expect class Foo {
     var varWithGetSet: String
         get set
 
-    val backingFieldVal: String = "no"
-    var backingFieldVar: String = "no"
+    val backingFieldVal: String = <!EXPECTED_PROPERTY_INITIALIZER!>"no"<!>
+    var backingFieldVar: String = <!EXPECTED_PROPERTY_INITIALIZER!>"no"<!>
 
     val customAccessorVal: String
     get() = "no"
@@ -25,7 +25,7 @@ expect class Foo {
 
     lateinit var lateinitVar: String
 
-    val delegated: String by Delegate
+    val delegated: String by <!EXPECTED_DELEGATED_PROPERTY!>Delegate<!>
 }
 
 object Delegate { operator fun getValue(x: Any?, y: Any?): String = "" }

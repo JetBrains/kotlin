@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class Ref(var x: Int)
 
 fun test1() {

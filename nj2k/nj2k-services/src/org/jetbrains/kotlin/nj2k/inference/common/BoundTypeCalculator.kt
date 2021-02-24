@@ -214,7 +214,7 @@ open class BoundTypeCalculatorImpl(
                                 inferenceContext
                             ) ?: return null
                         }
-                        TypeParameter(argumentBoundType, constructor.parameters[i].variance)
+                        TypeParameter(argumentBoundType, constructor.parameters.getOrNull(i)?.variance ?: return null)
                     }
                 )
 

@@ -10,16 +10,15 @@ import org.jetbrains.kotlin.backend.common.ir.returnType
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
-import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
-import org.jetbrains.kotlin.ir.descriptors.WrappedVariableDescriptor
+import org.jetbrains.kotlin.ir.builders.declarations.buildVariable
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -175,7 +174,7 @@ class FinallyBlocksLowering(val context: CommonBackendContext, private val throw
         currentTryScope.jumps.getOrPut(jump) {
             val type = (jump as? Return)?.target?.owner?.returnType(context) ?: value.type
             jump.toString()
-            val symbol = IrReturnableBlockSymbolImpl(WrappedSimpleFunctionDescriptor())
+            val symbol = IrReturnableBlockSymbolImpl()
             with(currentTryScope) {
                 irBuilder.run {
                     val inlinedFinally = irInlineFinally(symbol, type, expression, finallyExpression)
@@ -210,25 +209,23 @@ class FinallyBlocksLowering(val context: CommonBackendContext, private val throw
         val transformer = this
         irBuilder.run {
             val transformedFinallyExpression = finallyExpression.transform(transformer, null)
-            val parameter = WrappedVariableDescriptor()
-            val catchParameter = IrVariableImpl(
-                startOffset, endOffset, IrDeclarationOrigin.CATCH_PARAMETER, IrVariableSymbolImpl(parameter),
-                Name.identifier("t"), throwableType, isVar = false, isConst = false, isLateinit = false
-            ).also { parameter.bind(it) }
-
-            catchParameter.parent = scope.getLocalDeclarationParent()
+            val catchParameter = buildVariable(
+                scope.getLocalDeclarationParent(), startOffset, endOffset, IrDeclarationOrigin.CATCH_PARAMETER, Name.identifier("t"),
+                throwableType
+            )
 
             val syntheticTry = IrTryImpl(
                 startOffset = startOffset,
                 endOffset = endOffset,
                 type = context.irBuiltIns.unitType
             ).apply {
-                this.catches += irCatch(catchParameter).apply {
-                    result = irComposite {
+                this.catches += irCatch(
+                    catchParameter,
+                    irComposite {
                         +finallyExpression.copy()
                         +irThrow(irGet(catchParameter))
                     }
-                }
+                )
 
                 this.finallyExpression = null
             }
@@ -236,7 +233,7 @@ class FinallyBlocksLowering(val context: CommonBackendContext, private val throw
             using(TryScope(syntheticTry, transformedFinallyExpression, this)) {
 
                 val fallThroughType = aTry.type
-                val fallThroughSymbol = IrReturnableBlockSymbolImpl(WrappedSimpleFunctionDescriptor())
+                val fallThroughSymbol = IrReturnableBlockSymbolImpl()
                 val transformedResult = aTry.tryResult.transform(transformer, null)
                 val returnedResult = irReturn(fallThroughSymbol, transformedResult)
 

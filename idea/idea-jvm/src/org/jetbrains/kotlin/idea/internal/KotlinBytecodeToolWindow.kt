@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,6 +15,7 @@ import com.intellij.openapi.editor.ScrollType
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.Pair
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
+import org.jetbrains.kotlin.idea.KotlinJvmBundle
 import org.jetbrains.kotlin.idea.debugger.DebuggerUtils
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.project.platform
@@ -50,9 +52,7 @@ import java.awt.FlowLayout
 import java.io.PrintWriter
 import java.io.StringWriter
 import java.util.*
-import javax.swing.JButton
-import javax.swing.JCheckBox
-import javax.swing.JPanel
+import javax.swing.*
 import kotlin.math.min
 
 sealed class BytecodeGenerationResult {
@@ -67,7 +67,7 @@ class KotlinBytecodeToolWindow(private val myProject: Project, private val toolW
     private val enableOptimization: JCheckBox
     private val enableAssertions: JCheckBox
     private val decompile: JButton
-    private val jvm8Target: JCheckBox
+    private val jvmTargets: JComboBox<String>
     private val ir: JCheckBox
 
     private inner class UpdateBytecodeToolWindowTask : LongRunningReadTask<Location, BytecodeGenerationResult>(this) {
@@ -113,9 +113,7 @@ class KotlinBytecodeToolWindow(private val myProject: Project, private val toolW
                 configuration.put(JVMConfigurationKeys.DISABLE_OPTIMIZATION, true)
             }
 
-            if (jvm8Target.isSelected) {
-                configuration.put(JVMConfigurationKeys.JVM_TARGET, JvmTarget.JVM_1_8)
-            }
+            configuration.put(JVMConfigurationKeys.JVM_TARGET, JvmTarget.fromString(jvmTargets.selectedItem as String)!!)
 
             if (ir.isSelected) {
                 configuration.put(JVMConfigurationKeys.IR, true)
@@ -180,7 +178,7 @@ class KotlinBytecodeToolWindow(private val myProject: Project, private val toolW
         val optionPanel = JPanel(FlowLayout())
         add(optionPanel, BorderLayout.NORTH)
 
-        decompile = JButton("Decompile")
+        decompile = JButton(KotlinJvmBundle.message("button.text.decompile"))
         if (KotlinDecompilerService.getInstance() != null) {
             optionPanel.add(decompile)
             decompile.addActionListener {
@@ -191,7 +189,11 @@ class KotlinBytecodeToolWindow(private val myProject: Project, private val toolW
                         showDecompiledCode(file)
                     } catch (ex: DecompileFailedException) {
                         LOG.info(ex)
-                        Messages.showErrorDialog(myProject, "Failed to decompile " + file.name + ": " + ex, "Kotlin Bytecode Decompiler")
+                        Messages.showErrorDialog(
+                            myProject,
+                            KotlinJvmBundle.message("failed.to.decompile.0.1", file.name, ex),
+                            KotlinJvmBundle.message("kotlin.bytecode.decompiler")
+                        )
                     }
 
                 }
@@ -199,16 +201,19 @@ class KotlinBytecodeToolWindow(private val myProject: Project, private val toolW
         }
 
         /*TODO: try to extract default parameter from compiler options*/
-        enableInline = JCheckBox("Inline", true)
-        enableOptimization = JCheckBox("Optimization", true)
-        enableAssertions = JCheckBox("Assertions", true)
-        jvm8Target = JCheckBox("JVM 8 target", false)
-        ir = JCheckBox("IR", false)
+        enableInline = JCheckBox(KotlinJvmBundle.message("checkbox.text.inline"), true)
+        enableOptimization = JCheckBox(KotlinJvmBundle.message("checkbox.text.optimization"), true)
+        enableAssertions = JCheckBox(KotlinJvmBundle.message("checkbox.text.assertions"), true)
+        jvmTargets = ComboBox(JvmTarget.values().map { it.description }.toTypedArray())
+        jvmTargets.selectedItem = JvmTarget.DEFAULT.description
+        ir = JCheckBox(KotlinJvmBundle.message("checkbox.text.ir"), false)
         optionPanel.add(enableInline)
         optionPanel.add(enableOptimization)
         optionPanel.add(enableAssertions)
         optionPanel.add(ir)
-        optionPanel.add(jvm8Target)
+
+        optionPanel.add(JLabel("Target:"))
+        optionPanel.add(jvmTargets)
 
         InfinitePeriodicalTask(
             UPDATE_DELAY.toLong(),
@@ -241,7 +246,7 @@ class KotlinBytecodeToolWindow(private val myProject: Project, private val toolW
             val state: GenerationState
             try {
                 state = compileSingleFile(ktFile, configuration)
-                    ?: return BytecodeGenerationResult.Error("Cannot compile ${ktFile.name} to bytecode.")
+                    ?: return BytecodeGenerationResult.Error(KotlinJvmBundle.message("cannot.compile.0.to.bytecode", ktFile.name))
             } catch (e: ProcessCanceledException) {
                 throw e
             } catch (e: Exception) {
@@ -278,7 +283,7 @@ class KotlinBytecodeToolWindow(private val myProject: Project, private val toolW
 
         fun compileSingleFile(
             ktFile: KtFile,
-            configuration: CompilerConfiguration
+            initialConfiguration: CompilerConfiguration
         ): GenerationState? {
             val platform = ktFile.platform
             if (!platform.isCommon() && !platform.isJvm()) return null
@@ -288,6 +293,10 @@ class KotlinBytecodeToolWindow(private val myProject: Project, private val toolW
                 ?: return null
 
             val bindingContextForFile = resolutionFacade.analyzeWithAllCompilerChecks(listOf(ktFile)).bindingContext
+
+            val configuration = initialConfiguration.copy().apply {
+                put(JVMConfigurationKeys.DO_NOT_CLEAR_BINDING_CONTEXT, true)
+            }
 
             val (bindingContext, toProcess) = DebuggerUtils.analyzeInlinedFunctions(
                 resolutionFacade, ktFile, configuration.getBoolean(CommonConfigurationKeys.DISABLE_INLINE),

@@ -40,9 +40,7 @@ sealed class DoubleColonLHS(val type: ConeKotlinType) {
 internal val FirFunctionCall.hasExplicitValueArguments: Boolean
     get() = true // TODO: hasExplicitArgumentList || hasExplicitLambdaArguments
 
-class FirDoubleColonExpressionResolver(
-    private val session: FirSession
-) {
+class FirDoubleColonExpressionResolver(private val session: FirSession) {
 
     // Returns true if the expression is not a call expression without value arguments (such as "A<B>") or a qualified expression
     // which contains such call expression as one of its parts.
@@ -69,7 +67,7 @@ class FirDoubleColonExpressionResolver(
 
     private fun shouldTryResolveLHSAsExpression(expression: FirCallableReferenceAccess): Boolean {
         val lhs = expression.explicitReceiver ?: return false
-        return lhs.canBeConsideredProperExpression() && !expression.safe
+        return lhs.canBeConsideredProperExpression() && !expression.hasQuestionMarkAtLHS
     }
 
     private fun shouldTryResolveLHSAsType(expression: FirCallableReferenceAccess): Boolean {
@@ -119,8 +117,7 @@ class FirDoubleColonExpressionResolver(
     }
 
     private fun FirResolvedQualifier.expandedRegularClassIfAny(): FirRegularClass? {
-        val classId = classId ?: return null
-        var fir = session.firSymbolProvider.getClassLikeSymbolByFqName(classId)?.fir
+        var fir = symbol?.fir ?: return null
         while (fir is FirTypeAlias) {
             fir = fir.expandedConeType?.lookupTag?.toSymbol(session)?.fir ?: return null
         }
@@ -128,7 +125,7 @@ class FirDoubleColonExpressionResolver(
     }
 
     private fun resolveExpressionOnLHS(expression: FirExpression): DoubleColonLHS.Expression? {
-        val type = (expression.typeRef as? FirResolvedTypeRef)?.type ?: return null
+        val type = expression.typeRef.coneType
 
         if (expression is FirResolvedQualifier) {
             val firClass = expression.expandedRegularClassIfAny() ?: return null
@@ -157,9 +154,8 @@ class FirDoubleColonExpressionResolver(
                 if (typeArgument == null) ConeStarProjection
                 else when (typeArgument) {
                     is FirTypeProjectionWithVariance -> {
-                        val coneType = typeArgument.typeRef.coneTypeSafe<ConeKotlinType>()
-                        if (coneType == null) ConeStarProjection
-                        else when (typeArgument.variance) {
+                        val coneType = typeArgument.typeRef.coneType
+                        when (typeArgument.variance) {
                             Variance.INVARIANT -> coneType
                             Variance.IN_VARIANCE -> ConeKotlinTypeProjectionIn(coneType)
                             Variance.OUT_VARIANCE -> ConeKotlinTypeProjectionOut(coneType)
@@ -168,7 +164,7 @@ class FirDoubleColonExpressionResolver(
                     else -> ConeStarProjection
                 }
             },
-            isNullable = expression.safe
+            isNullable = resolvedExpression.isNullableLHSForCallableReference
         )
 
         return DoubleColonLHS.Type(type)

@@ -1,5 +1,5 @@
-// IGNORE_BACKEND_FIR: JVM_IR
-// IGNORE_BACKEND: JS_IR
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: PROPERTY_REFERENCES
 import kotlin.reflect.KMutableProperty
 
 class Bar(name: String) {

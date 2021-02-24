@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: a.kt
 // KT-26 Import namespaces defined in this file
 

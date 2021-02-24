@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -20,6 +20,7 @@ import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.ui.UIUtil
 import junit.framework.TestCase
+import org.jetbrains.annotations.NotNull
 import org.jetbrains.kotlin.idea.caches.resolve.ResolveInDispatchThreadException
 import org.jetbrains.kotlin.idea.caches.resolve.forceCheckForResolveInDispatchThreadInTests
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
@@ -41,59 +42,54 @@ abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase(), Q
             """.trimIndent()
         )
 
-        private fun unwrapIntention(action: Any): Any {
-            return when (action) {
-                is IntentionActionDelegate -> unwrapIntention(action.delegate)
-                is IntentionActionWrapper -> unwrapIntention(action.delegate)
-                is QuickFixWrapper -> unwrapIntention(action.fix)
-                else -> action
-            }
+        private fun unwrapIntention(action: Any): Any = when (action) {
+            is IntentionActionDelegate -> unwrapIntention(action.delegate)
+            is IntentionActionWrapper -> unwrapIntention(action.delegate)
+            is QuickFixWrapper -> unwrapIntention(action.fix)
+            else -> action
         }
     }
 
     @Throws(Exception::class)
-    protected fun doTest(beforeFileName: String) {
+    protected open fun doTest(beforeFileName: String) {
         val beforeFileText = FileUtil.loadFile(File(beforeFileName))
-        val configured = configureCompilerOptions(beforeFileText, project, module)
+        withCustomCompilerOptions(beforeFileText, project, module) {
+            val inspections = parseInspectionsToEnable(beforeFileName, beforeFileText).toTypedArray()
+            try {
+                myFixture.enableInspections(*inspections)
 
-        val inspections = parseInspectionsToEnable(beforeFileName, beforeFileText).toTypedArray()
-
-        try {
-            myFixture.enableInspections(*inspections)
-
-            doKotlinQuickFixTest(beforeFileName)
-            checkForUnexpectedErrors()
-        } finally {
-            myFixture.disableInspections(*inspections)
-            if (configured) {
-                rollbackCompilerOptions(project, module)
+                doKotlinQuickFixTest(beforeFileName)
+                checkForUnexpectedErrors()
+            } finally {
+                myFixture.disableInspections(*inspections)
             }
         }
     }
 
-    override fun getProjectDescriptor(): LightProjectDescriptor {
+    override fun getProjectDescriptor(): LightProjectDescriptor =
         if ("createfromusage" in testDataPath.toLowerCase()) {
-            return KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
+            KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
+        } else {
+            super.getProjectDescriptor()
         }
-        return super.getProjectDescriptor()
-    }
 
     override val captureExceptions: Boolean
         get() = false
 
-    fun shouldBeAvailableAfterExecution(): Boolean {
-        return InTextDirectivesUtils.isDirectiveDefined(myFixture.file.text, "// SHOULD_BE_AVAILABLE_AFTER_EXECUTION")
-    }
+    private fun shouldBeAvailableAfterExecution(): Boolean = InTextDirectivesUtils.isDirectiveDefined(
+        myFixture.file.text,
+        "// SHOULD_BE_AVAILABLE_AFTER_EXECUTION"
+    )
 
     protected open fun configExtra(options: String) {
 
     }
 
     private fun getPathAccordingToPackage(name: String, text: String): String {
-        val packagePath = text.lines().let { it.find { it.trim().startsWith("package") } }
+        val packagePath = text.lines().let { list -> list.find { it.trim().startsWith("package") } }
             ?.removePrefix("package")
             ?.trim()?.replace(".", "/") ?: ""
-        return packagePath + "/" + name
+        return "$packagePath/$name"
     }
 
     private fun doKotlinQuickFixTest(beforeFileName: String) {
@@ -216,13 +212,13 @@ abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase(), Q
             if (actionHint.expectedText.startsWith(prefix)) {
                 val className = actionHint.expectedText.substring(prefix.length)
                 val aClass = Class.forName(className)
-                assert(IntentionAction::class.java.isAssignableFrom(aClass)) { className + " should be inheritor of IntentionAction" }
+                assert(IntentionAction::class.java.isAssignableFrom(aClass)) { "$className should be inheritor of IntentionAction" }
 
                 val validActions = HashSet(InTextDirectivesUtils.findLinesWithPrefixesRemoved(text, "// ACTION:"))
 
                 actions.removeAll { action -> !aClass.isAssignableFrom(action.javaClass) || validActions.contains(action.text) }
 
-                if (!actions.isEmpty()) {
+                if (actions.isNotEmpty()) {
                     Assert.fail("Unexpected intention actions present\n " + actions.map { action ->
                         action.javaClass.toString() + " " + action.toString() + "\n"
                     }
@@ -236,12 +232,12 @@ abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase(), Q
                 }
             } else {
                 // Action shouldn't be found. Check that other actions are expected and thus tested action isn't there under another name.
-                DirectiveBasedActionUtils.checkAvailableActionsAreExpected(myFixture.file, actions)
+                checkAvailableActionsAreExpected(actions)
             }
         }
     }
 
-    fun findActionWithText(text: String): IntentionAction? {
+    private fun findActionWithText(text: String): IntentionAction? {
         val intentions = myFixture.availableIntentions.filter { it.text == text }
         if (intentions.isNotEmpty()) return intentions.first()
 
@@ -264,18 +260,20 @@ abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase(), Q
         return null
     }
 
-    fun checkForUnexpectedErrors() {
-        DirectiveBasedActionUtils.checkForUnexpectedErrors(myFixture.file as KtFile)
+    protected open fun checkAvailableActionsAreExpected(actions: List<IntentionAction>) {
+        DirectiveBasedActionUtils.checkAvailableActionsAreExpected(myFixture.file, actions)
     }
+
+    protected open fun checkForUnexpectedErrors() = DirectiveBasedActionUtils.checkForUnexpectedErrors(myFixture.file as KtFile)
 
     override fun getTestDataPath(): String {
         // Ensure full path is returned. Otherwise FileComparisonFailureException does not provide link to file diff
         val testDataPath = super.getTestDataPath()
-        try {
-            return File(testDataPath).getCanonicalPath()
+        return try {
+            File(testDataPath).canonicalPath
         } catch (e: IOException) {
             e.printStackTrace()
-            return testDataPath
+            testDataPath
         }
 
     }

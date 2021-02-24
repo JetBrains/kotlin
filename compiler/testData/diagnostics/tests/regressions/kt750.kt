@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 //KT-750 Type inference failed: Constraint violation
 fun main() {
   var i : Int? = Integer.valueOf(100)

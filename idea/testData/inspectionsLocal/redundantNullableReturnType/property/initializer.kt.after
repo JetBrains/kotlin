@@ -1,0 +1,2 @@
+// PROBLEM: 'foo' is always non-null type
+val foo: String = ""

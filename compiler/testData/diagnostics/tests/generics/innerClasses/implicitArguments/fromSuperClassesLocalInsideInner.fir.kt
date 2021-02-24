@@ -12,12 +12,12 @@ class Outer<T> {
                     fun a() = A<T, F, E, X, Y, Z>()
                 }
 
-                typealias LocalAlias<W> = A<T, F, E, X, Y, W>
+                typealias LocalAlias<W> = A<<!UNRESOLVED_REFERENCE!>T<!>, <!UNRESOLVED_REFERENCE!>F<!>, <!UNRESOLVED_REFERENCE!>E<!>, <!UNRESOLVED_REFERENCE!>X<!>, <!UNRESOLVED_REFERENCE!>Y<!>, <!UNRESOLVED_REFERENCE!>W<!>>
             }
 
             class Derived : LocalOuter<Double, Short>() {
                 fun foo(): LocalInner<Long> = null!!
-                fun bar(): LocalAlias<Char> = null!!
+                fun bar(): <!UNRESOLVED_REFERENCE!>LocalAlias<Char><!> = null!!
             }
 
             Derived()
@@ -29,12 +29,12 @@ class Outer<T> {
                     fun a() = A<T, F, Any, X, Y, Z>()
                 }
 
-                typealias LocalAlias2<W> = A<T, F, Any, X, Y, W>
+                typealias LocalAlias2<W> = A<<!UNRESOLVED_REFERENCE!>T<!>, <!UNRESOLVED_REFERENCE!>F<!>, <!UNRESOLVED_REFERENCE!>Any<!>, <!UNRESOLVED_REFERENCE!>X<!>, <!UNRESOLVED_REFERENCE!>Y<!>, <!UNRESOLVED_REFERENCE!>W<!>>
             }
 
             class Derived2 : LocalOuter2<Double, Short>() {
                 fun foo(): LocalInner2<Long> = null!!
-                fun bar(): LocalAlias2<Char> = null!!
+                fun bar(): <!UNRESOLVED_REFERENCE!>LocalAlias2<Char><!> = null!!
             }
             Derived2()
         }
@@ -52,7 +52,7 @@ class Outer<T> {
             var y = noParameters()
             y = noParameters()
 
-            y().foo().a() checkType { <!INAPPLICABLE_CANDIDATE!>_<!><A<T, F, Any, Double, Short, Long>>() }
+            y().foo().a() checkType { _<A<T, F, Any, Double, Short, Long>>() }
             y().bar() <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><A<T, F, Any, Double, Short, Char>>() }
         }
     }

@@ -1,4 +1,6 @@
-// IGNORE_BACKEND_FIR: JVM_IR
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: STDLIB_COLLECTIONS
+
 // KJS_WITH_FULL_RUNTIME
 fun box () : String {
     val s = ArrayList<String>()

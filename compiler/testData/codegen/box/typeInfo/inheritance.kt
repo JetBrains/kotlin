@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 open class A<T> () {
    fun plus(e: T) = B<T> (e)
 }

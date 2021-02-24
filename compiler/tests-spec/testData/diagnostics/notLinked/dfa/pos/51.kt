@@ -143,8 +143,8 @@ fun case_12(z: Any?) {
         return@let it as Int
         <!UNREACHABLE_CODE!>it as? Float ?: 10f<!>
     }
-    <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Float & Int}> & Number}")!>y<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Float & Int}> & Number}")!>y<!>.toByte()
+    <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<*> & Number}")!>y<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<*> & Number}")!>y<!>.toByte()
 }
 
 /*
@@ -167,8 +167,8 @@ fun case_14(z: Any?) {
         return@run this as Int
         <!UNREACHABLE_CODE!>this as? Float ?: 10f<!>
     }
-    <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Float & Int}> & Number}")!>y<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<{Float & Int}> & Number}")!>y<!>.toByte()
+    <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<*> & Number}")!>y<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("{Comparable<*> & Number}")!>y<!>.toByte()
 }
 
 /*

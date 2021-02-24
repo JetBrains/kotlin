@@ -8,5 +8,6 @@ package org.jetbrains.kotlin.gradle.targets.js.dsl
 import java.io.File
 
 interface Distribution {
-    var directory: File?
+    var name: String?
+    var directory: File
 }

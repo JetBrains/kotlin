@@ -16,14 +16,14 @@
 
 package org.jetbrains.kotlin.idea.search.usagesSearch
 
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.LightClassUtil.PropertyAccessorsPsiMethods
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToParameterDescriptorIfAny
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -31,6 +31,11 @@ import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DataClassDescriptorResolver
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.findOriginalTopMostOverriddenDescriptors
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
+import org.jetbrains.kotlin.resolve.source.getPsi
 import java.util.*
 
 fun PsiNamedElement.getAccessorNames(readable: Boolean = true, writable: Boolean = true): List<String> {
@@ -87,3 +92,26 @@ fun KtParameter.isDataClassProperty(): Boolean {
     return this.containingClassOrObject?.hasModifier(KtTokens.DATA_KEYWORD) ?: false
 }
 
+fun getTopMostOverriddenElementsToHighlight(target: PsiElement): List<PsiElement> {
+    val callableDescriptor = (target as? KtCallableDeclaration)?.resolveToDescriptorIfAny() as? CallableDescriptor
+    val descriptorsToHighlight = if (callableDescriptor is ParameterDescriptor)
+        listOf(callableDescriptor)
+    else
+        callableDescriptor?.findOriginalTopMostOverriddenDescriptors() ?: emptyList()
+
+    return descriptorsToHighlight.mapNotNull { it.source.getPsi() }.filter { it != target }
+}
+
+val KtDeclaration.descriptor: DeclarationDescriptor?
+    get() = if (this is KtParameter) this.descriptor else this.resolveToDescriptorIfAny(BodyResolveMode.FULL)
+
+val KtParameter.descriptor: ValueParameterDescriptor?
+    get() = this.resolveToParameterDescriptorIfAny(BodyResolveMode.FULL)
+
+fun isCallReceiverRefersToCompanionObject(element: KtElement, companionObject: KtObjectDeclaration): Boolean {
+    val companionObjectDescriptor = companionObject.descriptor
+    val bindingContext = element.analyze()
+    val resolvedCall = bindingContext[BindingContext.CALL, element]?.getResolvedCall(bindingContext) ?: return false
+    return (resolvedCall.dispatchReceiver as? ImplicitClassReceiver)?.declarationDescriptor == companionObjectDescriptor ||
+            (resolvedCall.extensionReceiver as? ImplicitClassReceiver)?.declarationDescriptor == companionObjectDescriptor
+}

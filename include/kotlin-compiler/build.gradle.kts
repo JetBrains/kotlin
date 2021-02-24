@@ -4,7 +4,13 @@ plugins {
 }
 
 val compile by configurations
-val fatJarContents by configurations.creating
+val fatJarContents by configurations.creating {
+    isCanBeResolved = true
+    isCanBeConsumed = false
+    attributes {
+        attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
+    }
+}
 val fatJarContentsStripMetadata by configurations.creating
 val fatJarContentsStripServices by configurations.creating
 
@@ -22,13 +28,18 @@ dependencies {
     fatJarContents(protobufFull())
     fatJarContents(commonDep("com.google.code.findbugs", "jsr305"))
     fatJarContents(commonDep("io.javaslang", "javaslang"))
-    fatJarContents(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
 
     fatJarContents(intellijCoreDep()) { includeJars("intellij-core") }
     fatJarContents(intellijDep()) { includeIntellijCoreJarDependencies(project, { !(it.startsWith("jdom") || it.startsWith("log4j")) }) }
     fatJarContents(intellijDep()) { includeJars("jna-platform") }
     fatJarContentsStripServices(jpsStandalone()) { includeJars("jps-model") }
     fatJarContentsStripMetadata(intellijDep()) { includeJars("oro", "jdom", "log4j", rootProject = rootProject) }
+
+    if (Platform.P202()) {
+        fatJarContents(intellijDep()) { includeJars("intellij-deps-fastutil-8.3.1-1") }
+    } else if (Platform.P203.orHigher()) {
+        fatJarContents(intellijDep()) { includeJars("intellij-deps-fastutil-8.3.1-3") }
+    }
 }
 
 val jar: Jar by tasks

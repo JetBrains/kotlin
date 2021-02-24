@@ -172,12 +172,12 @@ abstract class KtCodeFragment(
     override fun getExceptionHandler() = exceptionHandler
 
     fun getContextContainingFile(): KtFile? {
-        return getOriginalContext()?.containingKtFile
+        return getOriginalContext()?.takeIf { it.isValid }?.containingKtFile
     }
 
     fun getOriginalContext(): KtElement? {
         val contextElement = getContext() as? KtElement
-        val contextFile = contextElement?.containingKtFile
+        val contextFile = contextElement?.containingFile as? KtFile
         if (contextFile is KtCodeFragment) {
             return contextFile.getOriginalContext()
         }

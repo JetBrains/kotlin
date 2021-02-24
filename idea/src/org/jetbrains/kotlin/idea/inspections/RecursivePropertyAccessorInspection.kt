@@ -11,6 +11,7 @@ import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContext.DECLARATION_TO_DESCRIPTOR
 import org.jetbrains.kotlin.resolve.BindingContext.REFERENCE_TARGET
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 
 class RecursivePropertyAccessorInspection : AbstractKotlinInspection() {
 
@@ -28,14 +30,14 @@ class RecursivePropertyAccessorInspection : AbstractKotlinInspection() {
             if (isRecursivePropertyAccess(expression)) {
                 holder.registerProblem(
                     expression,
-                    "Recursive property accessor",
+                    KotlinBundle.message("recursive.property.accessor"),
                     ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                     ReplaceWithFieldFix()
                 )
             } else if (isRecursiveSyntheticPropertyAccess(expression)) {
                 holder.registerProblem(
                     expression,
-                    "Recursive synthetic property accessor",
+                    KotlinBundle.message("recursive.synthetic.property.accessor"),
                     ProblemHighlightType.GENERIC_ERROR_OR_WARNING
                 )
             }
@@ -44,7 +46,7 @@ class RecursivePropertyAccessorInspection : AbstractKotlinInspection() {
 
     class ReplaceWithFieldFix : LocalQuickFix {
 
-        override fun getName() = "Replace with 'field'"
+        override fun getName() = KotlinBundle.message("replace.with.field.fix.text")
 
         override fun getFamilyName() = name
 
@@ -97,7 +99,7 @@ class RecursivePropertyAccessorInspection : AbstractKotlinInspection() {
             if (element !is KtSimpleNameExpression) return false
             val namedFunction = element.getParentOfType<KtDeclarationWithBody>(true) as? KtNamedFunction ?: return false
             val name = namedFunction.name ?: return false
-            val referencedName = element.text.capitalize()
+            val referencedName = element.text.capitalizeAsciiOnly()
             val isGetter = name == "get$referencedName"
             val isSetter = name == "set$referencedName"
             if (!isGetter && !isSetter) return false

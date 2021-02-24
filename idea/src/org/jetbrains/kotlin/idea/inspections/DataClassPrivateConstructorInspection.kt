@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.inspections
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElementVisitor
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.primaryConstructorVisitor
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
@@ -21,7 +22,7 @@ class DataClassPrivateConstructorInspection : AbstractKotlinInspection() {
                 val problemDescriptor = holder.manager.createProblemDescriptor(
                     keyword,
                     keyword,
-                    "Private data class constructor is exposed via the generated 'copy' method.",
+                    KotlinBundle.message("private.data.class.constructor.is.exposed.via.the.generated.copy.method"),
                     ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                     isOnTheFly
                 )

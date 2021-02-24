@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -63,9 +63,6 @@ expect enum class RegexOption {
 
 // From char.kt
 
-expect fun Char.isWhitespace(): Boolean
-expect fun Char.toLowerCase(): Char
-expect fun Char.toUpperCase(): Char
 expect fun Char.isHighSurrogate(): Boolean
 expect fun Char.isLowSurrogate(): Boolean
 
@@ -76,6 +73,7 @@ expect fun Char.isLowSurrogate(): Boolean
  * Converts the characters in the specified array to a string.
  */
 @SinceKotlin("1.2")
+@Deprecated("Use CharArray.concatToString() instead", ReplaceWith("chars.concatToString()"))
 public expect fun String(chars: CharArray): String
 
 /**
@@ -85,13 +83,14 @@ public expect fun String(chars: CharArray): String
  * or `offset + length` is out of [chars] array bounds.
  */
 @SinceKotlin("1.2")
+@Deprecated("Use CharArray.concatToString(startIndex, endIndex) instead", ReplaceWith("chars.concatToString(offset, offset + length)"))
 public expect fun String(chars: CharArray, offset: Int, length: Int): String
 
 /**
  * Concatenates characters in this [CharArray] into a String.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 public expect fun CharArray.concatToString(): String
 
 /**
@@ -103,15 +102,15 @@ public expect fun CharArray.concatToString(): String
  * @throws IndexOutOfBoundsException if [startIndex] is less than zero or [endIndex] is greater than the size of this array.
  * @throws IllegalArgumentException if [startIndex] is greater than [endIndex].
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 public expect fun CharArray.concatToString(startIndex: Int = 0, endIndex: Int = this.size): String
 
 /**
  * Returns a [CharArray] containing characters of this string.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 public expect fun String.toCharArray(): CharArray
 
 /**
@@ -123,8 +122,8 @@ public expect fun String.toCharArray(): CharArray
  * @throws IndexOutOfBoundsException if [startIndex] is less than zero or [endIndex] is greater than the length of this string.
  * @throws IllegalArgumentException if [startIndex] is greater than [endIndex].
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 public expect fun String.toCharArray(startIndex: Int = 0, endIndex: Int = this.length): CharArray
 
 /**
@@ -132,8 +131,8 @@ public expect fun String.toCharArray(startIndex: Int = 0, endIndex: Int = this.l
  *
  * Malformed byte sequences are replaced by the replacement char `\uFFFD`.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 public expect fun ByteArray.decodeToString(): String
 
 /**
@@ -147,8 +146,8 @@ public expect fun ByteArray.decodeToString(): String
  * @throws IllegalArgumentException if [startIndex] is greater than [endIndex].
  * @throws CharacterCodingException if the byte array contains malformed UTF-8 byte sequence and [throwOnInvalidSequence] is true.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 public expect fun ByteArray.decodeToString(
     startIndex: Int = 0,
     endIndex: Int = this.size,
@@ -160,8 +159,8 @@ public expect fun ByteArray.decodeToString(
  *
  * Any malformed char sequence is replaced by the replacement byte sequence.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 public expect fun String.encodeToByteArray(): ByteArray
 
 /**
@@ -175,8 +174,8 @@ public expect fun String.encodeToByteArray(): ByteArray
  * @throws IllegalArgumentException if [startIndex] is greater than [endIndex].
  * @throws CharacterCodingException if this string contains malformed char sequence and [throwOnInvalidSequence] is true.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 public expect fun String.encodeToByteArray(
     startIndex: Int = 0,
     endIndex: Int = this.length,
@@ -191,32 +190,21 @@ internal expect fun String.nativeLastIndexOf(str: String, fromIndex: Int): Int
 public expect fun String.substring(startIndex: Int): String
 public expect fun String.substring(startIndex: Int, endIndex: Int): String
 
-/**
- * Returns a copy of this string converted to upper case using the rules of the default locale.
- *
- * @sample samples.text.Strings.toUpperCase
- */
-public expect fun String.toUpperCase(): String
-
-/**
- * Returns a copy of this string converted to lower case using the rules of the default locale.
- *
- * @sample samples.text.Strings.toLowerCase
- */
-public expect fun String.toLowerCase(): String
-public expect fun String.capitalize(): String
-public expect fun String.decapitalize(): String
 public expect fun CharSequence.repeat(n: Int): String
 
 
 /**
  * Returns a new string with all occurrences of [oldChar] replaced with [newChar].
+ * 
+ * @sample samples.text.Strings.replace
  */
 expect fun String.replace(oldChar: Char, newChar: Char, ignoreCase: Boolean = false): String
 
 /**
  * Returns a new string obtained by replacing all occurrences of the [oldValue] substring in this string
  * with the specified [newValue] string.
+ *
+ * @sample samples.text.Strings.replace
  */
 expect fun String.replace(oldValue: String, newValue: String, ignoreCase: Boolean = false): String
 
@@ -282,9 +270,18 @@ public expect val String.Companion.CASE_INSENSITIVE_ORDER: Comparator<String>
 
 
 /**
- * Returns `true` if the contents of this string is equal to the word "true", ignoring case, and `false` otherwise.
+ * Returns `true` if the content of this string is equal to the word "true", ignoring case, and `false` otherwise.
  */
-expect fun String.toBoolean(): Boolean
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
+@kotlin.internal.InlineOnly
+public expect fun String.toBoolean(): Boolean
+
+/**
+ * Returns `true` if this string is not `null` and its content is equal to the word "true", ignoring case, and `false` otherwise.
+ */
+@SinceKotlin("1.4")
+public expect fun String?.toBoolean(): Boolean
 
 /**
  * Parses the string as a signed [Byte] number and returns the result.

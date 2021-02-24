@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.util.parentAsClass
 
@@ -27,7 +26,7 @@ class AnnotationConstructorLowering(context: CommonBackendContext) : Declaration
 
         // put empty body to make sure proper initializer is generated
         // TODO what about its previous body?
-        declaration.body = IrBlockBodyImpl(declaration.startOffset, declaration.endOffset) {
+        declaration.body = declaration.factory.createBlockBody(declaration.startOffset, declaration.endOffset) {
             statements += IrInstanceInitializerCallImpl(startOffset, endOffset, irClass.symbol, unitType)
         }
 

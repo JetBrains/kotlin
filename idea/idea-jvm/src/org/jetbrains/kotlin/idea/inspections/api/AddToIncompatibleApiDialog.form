@@ -3,7 +3,7 @@
   <grid id="cbd77" binding="contentPane" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="10" left="10" bottom="10" right="10"/>
     <constraints>
-      <xy x="48" y="54" width="436" height="297"/>
+      <xy x="48" y="54" width="624" height="297"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -24,7 +24,7 @@
             </constraints>
             <properties>
               <labelFor value="49f89"/>
-              <text value="Re&amp;ference"/>
+              <text resource-bundle="messages/KotlinJvmBundle" key="api.dialog.reference"/>
             </properties>
           </component>
           <vspacer id="eac19">
@@ -44,7 +44,7 @@
             </constraints>
             <properties>
               <labelFor value="ec77c"/>
-              <text value="&amp;Reason"/>
+              <text resource-bundle="messages/KotlinJvmBundle" key="api.dialog.reason"/>
             </properties>
           </component>
           <component id="ec77c" class="javax.swing.JTextField" binding="reasonTextField">

@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.android.synthetic.res
 
 import com.intellij.openapi.module.Module
-import com.intellij.openapi.module.ModuleServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
@@ -145,7 +144,8 @@ abstract class AndroidLayoutXmlFileManager(val project: Project) {
 
     companion object {
         fun getInstance(module: Module): AndroidLayoutXmlFileManager? {
-            val service = ModuleServiceManager.getService(module, AndroidLayoutXmlFileManager::class.java)
+            @Suppress("DEPRECATION")
+            val service = com.intellij.openapi.module.ModuleServiceManager.getService(module, AndroidLayoutXmlFileManager::class.java)
             return service ?: module.getComponent(AndroidLayoutXmlFileManager::class.java)
         }
     }

@@ -99,6 +99,7 @@ public class ExpressionTypingUtils {
         return fakeExpression;
     }
 
+    @SuppressWarnings("deprecation")
     public static void checkVariableShadowing(
             @NotNull LexicalScope scope,
             @NotNull BindingTrace trace,
@@ -238,7 +239,7 @@ public class ExpressionTypingUtils {
 
     public static boolean isLocalFunction(@Nullable DeclarationDescriptor descriptor) {
         if (descriptor != null && descriptor.getClass() == SimpleFunctionDescriptorImpl.class) {
-            return ((SimpleFunctionDescriptorImpl) descriptor).getVisibility() == Visibilities.LOCAL;
+            return ((SimpleFunctionDescriptorImpl) descriptor).getVisibility() == DescriptorVisibilities.LOCAL;
         }
         return false;
     }

@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.intentions
@@ -40,6 +29,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptorWithResolutionScopes
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
@@ -72,7 +62,7 @@ import org.jetbrains.kotlin.util.findCallableMemberBySignature
 
 class MoveMemberToCompanionObjectIntention : SelfTargetingRangeIntention<KtNamedDeclaration>(
     KtNamedDeclaration::class.java,
-    "Move to companion object"
+    KotlinBundle.lazyMessage("move.to.companion.object")
 ) {
     override fun applicabilityRange(element: KtNamedDeclaration): TextRange? {
         if (element !is KtNamedFunction && element !is KtProperty && element !is KtClassOrObject) return null
@@ -105,6 +95,7 @@ class MoveMemberToCompanionObjectIntention : SelfTargetingRangeIntention<KtNamed
         val validator = CollectingNameValidator(element.getValueParameters().mapNotNull { it.name }) {
             companionMemberScope.getContributedVariables(Name.identifier(it), NoLookupLocation.FROM_IDE).isEmpty()
         }
+
         return KotlinNameSuggester.suggestNamesByType(containingClassDescriptor.defaultType, validator, "receiver")
     }
 
@@ -294,13 +285,13 @@ class MoveMemberToCompanionObjectIntention : SelfTargetingRangeIntention<KtNamed
 
         if (HierarchySearchRequest(element, element.useScope, false).searchOverriders().any()) {
             return CommonRefactoringUtil.showErrorHint(
-                project, editor, "$description is overridden by declaration(s) in a subclass", text, null
+                project, editor, KotlinBundle.message("0.is.overridden.by.declaration.s.in.a.subclass", description), text, null
             )
         }
 
         if (hasTypeParameterReferences(containingClass, element)) {
             return CommonRefactoringUtil.showErrorHint(
-                project, editor, "$description references type parameters of the containing class", text, null
+                project, editor, KotlinBundle.message("0.references.type.parameters.of.the.containing.class", description), text, null
             )
         }
 
@@ -314,20 +305,29 @@ class MoveMemberToCompanionObjectIntention : SelfTargetingRangeIntention<KtNamed
             companionDescriptor.findCallableMemberBySignature(callableDescriptor)?.let {
                 DescriptorToSourceUtilsIde.getAnyDeclaration(project, it)
             }?.let {
-                conflicts.putValue(it, "Companion object already contains ${RefactoringUIUtil.getDescription(it, false)}")
+                conflicts.putValue(
+                    it,
+                    KotlinBundle.message("companion.object.already.contains.0", RefactoringUIUtil.getDescription(it, false))
+                )
             }
         }
 
         val outerInstanceReferences = collectOuterInstanceReferences(element)
         if (outerInstanceReferences.isNotEmpty()) {
             if (element is KtProperty) {
-                conflicts.putValue(element, "Usages of outer class instance inside of property '${element.name}' won't be processed")
+                conflicts.putValue(
+                    element,
+                    KotlinBundle.message(
+                        "usages.of.outer.class.instance.inside.of.property.0.won.t.be.processed",
+                        element.name.toString()
+                    )
+                )
             } else {
                 outerInstanceReferences.filterNotTo(outerInstanceUsages) { it.reportConflictIfAny(conflicts) }
             }
         }
 
-        project.runSynchronouslyWithProgress("Searching for ${element.name}", true) {
+        project.runSynchronouslyWithProgress(KotlinBundle.message("searching.for.0", element.name.toString()), true) {
             runReadAction {
                 ReferencesSearch.search(element).mapNotNullTo(externalUsages) { ref ->
                     when (ref) {
@@ -343,7 +343,7 @@ class MoveMemberToCompanionObjectIntention : SelfTargetingRangeIntention<KtNamed
                             if (extensionReceiver != null && extensionReceiver !is ImplicitReceiver) {
                                 conflicts.putValue(
                                     callExpression,
-                                    "Calls with explicit extension receiver won't be processed: ${callExpression.text}"
+                                    KotlinBundle.message("calls.with.explicit.extension.receiver.won.t.be.processed.0", callExpression.text)
                                 )
                                 return@mapNotNullTo null
                             }
@@ -367,8 +367,6 @@ class MoveMemberToCompanionObjectIntention : SelfTargetingRangeIntention<KtNamed
     }
 
     companion object : KotlinSingleIntentionActionFactory() {
-        override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-            return MoveMemberToCompanionObjectIntention()
-        }
+        override fun createAction(diagnostic: Diagnostic): IntentionAction? = MoveMemberToCompanionObjectIntention()
     }
 }

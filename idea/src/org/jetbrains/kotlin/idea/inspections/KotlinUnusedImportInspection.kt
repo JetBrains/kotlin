@@ -40,22 +40,24 @@ import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.PsiUtilBase
 import com.intellij.util.DocumentUtil
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.KotlinCodeInsightWorkspaceSettings
 import org.jetbrains.kotlin.idea.core.targetDescriptors
 import org.jetbrains.kotlin.idea.imports.KotlinImportOptimizer
 import org.jetbrains.kotlin.idea.imports.OptimizedImportsBuilder
 import org.jetbrains.kotlin.idea.imports.importableFqName
+import org.jetbrains.kotlin.idea.references.KtInvokeFunctionReference
+import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.KtCodeFragment
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtImportDirective
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.resolve.ImportPath
 
 class KotlinUnusedImportInspection : AbstractKotlinInspection() {
-    data class ImportData(val unusedImports: List<KtImportDirective>, val optimizerData: OptimizedImportsBuilder.InputData)
+    class ImportData(val unusedImports: List<KtImportDirective>, val optimizerData: OptimizedImportsBuilder.InputData)
 
     companion object {
         fun analyzeImports(file: KtFile): ImportData? {
@@ -85,6 +87,11 @@ class KotlinUnusedImportInspection : AbstractKotlinInspection() {
                 }
             }
 
+            val invokeFunctionCallFqNames = optimizerData.references.mapNotNull {
+                val reference = (it.element as? KtCallExpression)?.mainReference as? KtInvokeFunctionReference ?: return@mapNotNull null
+                (reference.resolve() as? KtNamedFunction)?.descriptor?.importableFqName
+            }
+
             val importPaths = HashSet<ImportPath>(directives.size)
             val unusedImports = ArrayList<KtImportDirective>()
 
@@ -93,15 +100,18 @@ class KotlinUnusedImportInspection : AbstractKotlinInspection() {
                 val importPath = directive.importPath ?: continue
 
                 val isUsed = when {
+                    importPath.importedName in optimizerData.unresolvedNames &&
+                            directive.targetDescriptors(resolutionFacade).isEmpty() -> true
+
                     !importPaths.add(importPath) -> false
-                    importPath.isAllUnder -> importPath.fqName in parentFqNames
+                    importPath.isAllUnder -> optimizerData.unresolvedNames.isNotEmpty() || importPath.fqName in parentFqNames
                     importPath.fqName in fqNames -> importPath.importedName?.let { it in fqNames.getValue(importPath.fqName) } ?: false
+                    importPath.fqName in invokeFunctionCallFqNames -> true
                     // case for type alias
                     else -> directive.targetDescriptors(resolutionFacade).firstOrNull()?.let { it.importableFqName in fqNames } ?: false
                 }
 
                 if (!isUsed) {
-                    if (directive.targetDescriptors(resolutionFacade).isEmpty()) continue // do not highlight unresolved imports as unused
                     unusedImports += directive
                 }
             }
@@ -109,8 +119,6 @@ class KotlinUnusedImportInspection : AbstractKotlinInspection() {
             return ImportData(unusedImports, optimizerData)
         }
     }
-
-    override fun runForWholeFile() = true
 
     override fun checkFile(file: PsiFile, manager: InspectionManager, isOnTheFly: Boolean): Array<out ProblemDescriptor>? {
         if (file !is KtFile) return null
@@ -122,9 +130,10 @@ class KotlinUnusedImportInspection : AbstractKotlinInspection() {
             if (!KotlinCodeInsightWorkspaceSettings.getInstance(file.project).optimizeImportsOnTheFly) {
                 fixes.add(EnableOptimizeImportsOnTheFlyFix(file))
             }
+
             manager.createProblemDescriptor(
                 it,
-                "Unused import directive",
+                KotlinBundle.message("unused.import.directive"),
                 isOnTheFly,
                 fixes.toTypedArray(),
                 ProblemHighlightType.LIKE_UNUSED_SYMBOL
@@ -220,7 +229,7 @@ class KotlinUnusedImportInspection : AbstractKotlinInspection() {
     }
 
     private class OptimizeImportsQuickFix(file: KtFile) : LocalQuickFixOnPsiElement(file) {
-        override fun getText() = "Optimize imports"
+        override fun getText() = KotlinBundle.message("optimize.imports")
 
         override fun getFamilyName() = name
 

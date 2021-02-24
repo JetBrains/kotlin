@@ -29,9 +29,13 @@ open class KaptExtension {
 
     open var correctErrorTypes: Boolean = false
 
+    open var dumpDefaultParameterValues: Boolean = false
+
     open var mapDiagnosticLocations: Boolean = false
 
     open var strictMode: Boolean = false
+
+    open var stripMetadata: Boolean = false
     
     open var showProcessorTimings: Boolean = false
 

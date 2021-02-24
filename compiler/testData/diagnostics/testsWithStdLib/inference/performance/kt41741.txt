@@ -1,0 +1,49 @@
+package
+
+public fun main(/*0*/ x: kotlin.collections.List<Instance>): kotlin.Unit
+public fun </*0*/ K, /*1*/ V, /*2*/ C : E, /*3*/ E : kotlin.collections.Collection<V>, /*4*/ B : Simple<K, V, C, E>> kotlin.collections.Iterable<V>.groupByTo(/*0*/ destination: B, /*1*/ keySelector: (V) -> K): B
+
+public final enum class Format : kotlin.Enum<Format> {
+    enum entry Foo
+
+    enum entry Bar
+
+    private constructor Format()
+    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: Format): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+    public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<Format!>!
+    public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): Format
+    public final /*synthesized*/ fun values(): kotlin.Array<Format>
+}
+
+public final class Instance {
+    public constructor Instance(/*0*/ format: Format)
+    public final val format: Format
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class Simple</*0*/ K : kotlin.Any!, /*1*/ V : kotlin.Any!, /*2*/ C : E!, /*3*/ E : kotlin.collections.(Mutable)Collection<V!>!> {
+    public constructor Simple</*0*/ K : kotlin.Any!, /*1*/ V : kotlin.Any!, /*2*/ C : E!, /*3*/ E : kotlin.collections.(Mutable)Collection<V!>!>(/*0*/ backingMap: kotlin.collections.(Mutable)Map<K!, C!>!, /*1*/ innerCollectionCreator: java.util.function.Supplier<out C!>!)
+    public final fun add(/*0*/ key: K!, /*1*/ value: V!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public open class ListSimple</*0*/ K : kotlin.Any!, /*1*/ V : kotlin.Any!> : Simple<K!, V!, kotlin.collections.(Mutable)List<V!>!, kotlin.collections.(Mutable)List<V!>!> {
+        public constructor ListSimple</*0*/ K : kotlin.Any!, /*1*/ V : kotlin.Any!>(/*0*/ backingMap: kotlin.collections.(Mutable)Map<K!, kotlin.collections.(Mutable)List<V!>!>!, /*1*/ innerCollectionCreator: java.util.function.Supplier<out kotlin.collections.(Mutable)List<V!>!>!)
+        public final override /*1*/ /*fake_override*/ fun add(/*0*/ key: K!, /*1*/ value: V!): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
