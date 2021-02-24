@@ -229,8 +229,9 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
 
             val constructedClass = constructedClass
 
-            if (!DescriptorVisibilities.isPrivate(visibility) && !constructedClass.isInline && hasMangledParameters)
-                return true
+            if (!DescriptorVisibilities.isPrivate(visibility) && !constructedClass.isInline && hasMangledParameters &&
+                !constructedClass.isAnonymousObject
+            ) return true
 
             if (visibility != DescriptorVisibilities.PUBLIC && constructedClass.modality == Modality.SEALED)
                 return true
