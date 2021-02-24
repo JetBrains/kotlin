@@ -2245,6 +2245,12 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
         }
 
         @Test
+        @TestMetadata("anonymousObject.kt")
+        public void testAnonymousObject() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/inlineClasses/anonymousObject.kt");
+        }
+
+        @Test
         @TestMetadata("inlineClassWithInlineValReturningInlineClass.kt")
         public void testInlineClassWithInlineValReturningInlineClass() throws Exception {
             runTest("compiler/testData/codegen/boxInline/inlineClasses/inlineClassWithInlineValReturningInlineClass.kt");

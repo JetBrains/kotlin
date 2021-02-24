@@ -1795,6 +1795,11 @@ public class IrJsCodegenInlineES6TestGenerated extends AbstractIrJsCodegenInline
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
         }
 
+        @TestMetadata("anonymousObject.kt")
+        public void testAnonymousObject() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/inlineClasses/anonymousObject.kt");
+        }
+
         @TestMetadata("inlineClassWithInlineValReturningInlineClass.kt")
         public void testInlineClassWithInlineValReturningInlineClass() throws Exception {
             runTest("compiler/testData/codegen/boxInline/inlineClasses/inlineClassWithInlineValReturningInlineClass.kt");

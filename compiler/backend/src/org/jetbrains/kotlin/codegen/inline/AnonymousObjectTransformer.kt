@@ -90,7 +90,10 @@ class AnonymousObjectTransformer(
                 val node = MethodNode(access, name, desc, signature, exceptions)
                 if (name == "<init>") {
                     if (constructor != null) {
-                        throw RuntimeException("Lambda, SAM or anonymous object should have only one constructor")
+                        throw RuntimeException(
+                            "Lambda, SAM or anonymous object should have only one constructor.\n" +
+                                    "First:\n${constructor.nodeText}\n\nSecond:\n${node.nodeText}\n"
+                        )
                     }
                     constructor = node
                 } else {
