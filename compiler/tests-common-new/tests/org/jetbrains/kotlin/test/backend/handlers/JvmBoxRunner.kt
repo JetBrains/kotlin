@@ -28,7 +28,7 @@ import java.lang.reflect.Method
 import java.net.URL
 import java.net.URLClassLoader
 
-class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(testServices, doNotRunIfThereWerePreviousFailures = true) {
+class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(testServices) {
     companion object {
         private val BOX_IN_SEPARATE_PROCESS_PORT = System.getProperty("kotlin.test.box.in.separate.process.port")
     }
