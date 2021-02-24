@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.generator
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.fir.FirEffectiveVisibility
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.DiagnosticData
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.DiagnosticList
@@ -166,7 +167,7 @@ private object FirToKtConversionCreator {
         WhenMissingCase::class to HLFunctionCallConversion(
             """TODO("WhenMissingCase conversion is not supported yet")""",
             Any::class.createType(),
-            importsToAdd = listOf("org.jetbrains.kotlin.fir.expressions.WhenMissingCase")
+            importsToAdd = listOf("org.jetbrains.kotlin.diagnostics.WhenMissingCase")
         ),
     )
 

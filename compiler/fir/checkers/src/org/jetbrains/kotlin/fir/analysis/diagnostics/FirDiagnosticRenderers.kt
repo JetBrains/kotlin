@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.fir.analysis.diagnostics
 
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.diagnostics.rendering.Renderer
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.expressions.WhenMissingCase
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
