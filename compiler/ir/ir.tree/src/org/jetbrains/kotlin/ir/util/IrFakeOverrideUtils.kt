@@ -36,6 +36,7 @@ fun IrSimpleFunction.collectRealOverrides(
 ): Set<IrSimpleFunction> {
     if (isReal && !toSkip(this)) return setOf(this)
 
+    @Suppress("UNCHECKED_CAST")
     return this.overriddenSymbols
         .map { it.owner }
         .collectAndFilterRealOverrides(
@@ -44,9 +45,7 @@ fun IrSimpleFunction.collectRealOverrides(
                 toSkip(it)
             },
             filter
-        )
-        .map { it as IrSimpleFunction }
-        .toSet()
+        ) as Set<IrSimpleFunction>
 }
 
 fun Collection<IrOverridableMember>.collectAndFilterRealOverrides(
