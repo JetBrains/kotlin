@@ -434,6 +434,11 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/primitiveTypes.kt");
     }
 
+    @TestMetadata("properties.kt")
+    public void testProperties() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/properties.kt");
+    }
+
     @TestMetadata("propertyAnnotations.kt")
     public void testPropertyAnnotations() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/propertyAnnotations.kt");
