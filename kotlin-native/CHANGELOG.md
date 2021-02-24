@@ -1,3 +1,9 @@
+# 1.4.31 (Feb 2021)
+  * [KT-44295](https://youtrack.jetbrains.com/issue/KT-44295) Fix Kotlin/Native compiler crash on Android NDK
+  * [KT-44826](https://youtrack.jetbrains.com/issue/KT-44826) Fix failing build with "Backend Internal error: Exception during IR lowering"
+  * [KT-44764](https://youtrack.jetbrains.com/issue/KT-44764) Fix failing build with "AssertionError: FUN name:onError_6 visibility:public modality:OPEN"
+  * [GH-4588](https://github.com/JetBrains/kotlin-native/pull/4588) Fix runtime crash in createTypeInfo in release framework binaries
+
 # 1.4.30 (Feb 2021)
   * [KT-44083](https://youtrack.jetbrains.com/issue/KT-44083) Fix NSUInteger size for Watchos x64
 
