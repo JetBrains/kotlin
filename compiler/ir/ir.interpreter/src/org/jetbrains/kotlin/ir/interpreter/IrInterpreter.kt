@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import java.lang.invoke.MethodHandle
-import kotlin.concurrent.thread
 
 private const val MAX_COMMANDS = 500_000
 
@@ -75,23 +74,19 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
 
     fun interpret(expression: IrExpression): IrExpression {
         stack.clean()
-        lateinit var result: IrExpression
-        thread(start = true) {
-            result = try {
-                when (val returnLabel = expression.interpret().returnLabel) {
-                    ReturnLabel.REGULAR -> stack.popReturnValue().toIrExpression(expression)
-                    ReturnLabel.EXCEPTION -> {
-                        val message = (stack.popReturnValue() as ExceptionState).getFullDescription()
-                        IrErrorExpressionImpl(expression.startOffset, expression.endOffset, expression.type, "\n" + message)
-                    }
-                    else -> TODO("$returnLabel not supported as result of interpretation")
+        return try {
+            when (val returnLabel = expression.interpret().returnLabel) {
+                ReturnLabel.REGULAR -> stack.popReturnValue().toIrExpression(expression)
+                ReturnLabel.EXCEPTION -> {
+                    val message = (stack.popReturnValue() as ExceptionState).getFullDescription()
+                    IrErrorExpressionImpl(expression.startOffset, expression.endOffset, expression.type, "\n" + message)
                 }
-            } catch (e: InterpreterException) {
-                // TODO don't handle, throw to lowering
-                IrErrorExpressionImpl(expression.startOffset, expression.endOffset, expression.type, "\n" + e.message)
+                else -> TODO("$returnLabel not supported as result of interpretation")
             }
-        }.join()
-        return result
+        } catch (e: InterpreterException) {
+            // TODO don't handle, throw to lowering
+            IrErrorExpressionImpl(expression.startOffset, expression.endOffset, expression.type, "\n" + e.message)
+        }
     }
 
     private fun IrElement.interpret(): ExecutionResult {
