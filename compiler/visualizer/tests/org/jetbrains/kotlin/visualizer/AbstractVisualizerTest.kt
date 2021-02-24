@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
-import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendFacade
 import org.jetbrains.kotlin.test.model.FrontendKind
@@ -64,11 +63,3 @@ abstract class AbstractVisualizerTest : AbstractKotlinCompilerTest() {
     }
 }
 
-internal object VisualizerDirectives : SimpleDirectivesContainer() {
-    val TEST_FILE_PATH by stringDirective(
-        description = "Specify that part of test file path must be replaced with EXPECTED_FILE_PATH"
-    )
-    val EXPECTED_FILE_PATH by stringDirective(
-        description = "Specify the path to expected result file that will be inserted instead of TEST_FILE_PATH"
-    )
-}
