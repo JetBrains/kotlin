@@ -10,7 +10,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndex
 import com.intellij.psi.stubs.StubIndexKey
-import org.jetbrains.kotlin.fir.symbols.CallableId
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.idea.fir.low.level.api.IndexHelper.Companion.asStringForIndexes
 import org.jetbrains.kotlin.idea.stubindex.*
 import org.jetbrains.kotlin.name.ClassId
