@@ -88,7 +88,6 @@ repositories {
     maven("https://jetbrains.bintray.com/intellij-third-party-dependencies/")
     maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
     maven("https://kotlin.bintray.com/kotlinx")
-    maven("https://kotlin.bintray.com/kotlin-dev")
     gradlePluginPortal()
 
     extra["bootstrapKotlinRepo"]?.let {
