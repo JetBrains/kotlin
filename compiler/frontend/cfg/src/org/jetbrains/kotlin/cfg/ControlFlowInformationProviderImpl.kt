@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.*
+import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -1003,6 +1004,10 @@ class ControlFlowInformationProviderImpl private constructor(
                 if (usedAsExpression && missingCases.isNotEmpty()) {
                     if (elseEntry != null) continue
                     trace.report(NO_ELSE_IN_WHEN.on(element, missingCases))
+                    missingCases.firstOrNull { it is WhenMissingCase.ConditionTypeIsExpect }?.let {
+                        require(it is WhenMissingCase.ConditionTypeIsExpect)
+                        trace.report(EXPECT_TYPE_IN_WHEN_WITHOUT_ELSE.on(element, it.typeOfDeclaration))
+                    }
                 } else if (subjectExpression != null) {
                     val subjectType = trace.getType(subjectExpression)
                     if (elseEntry != null) {

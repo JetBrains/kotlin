@@ -17,6 +17,16 @@ sealed class WhenMissingCase {
         override val branchConditionText: String = "else"
     }
 
+    sealed class ConditionTypeIsExpect(val typeOfDeclaration: String) : WhenMissingCase() {
+        object SealedClass : ConditionTypeIsExpect("sealed class")
+        object SealedInterface : ConditionTypeIsExpect("sealed interface")
+        object Enum : ConditionTypeIsExpect("enum")
+
+        override val branchConditionText: String = "else"
+
+        override fun toString(): String = "unknown"
+    }
+
     object NullIsMissing : WhenMissingCase() {
         override val branchConditionText: String = "null"
     }
