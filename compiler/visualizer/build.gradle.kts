@@ -14,15 +14,12 @@ dependencies {
     testImplementation(project(":compiler:visualizer:render-psi"))
     testImplementation(project(":compiler:visualizer:render-fir"))
 
-    testApi(platform("org.junit:junit-bom:5.7.0"))
-    testApi("org.junit.jupiter:junit-jupiter")
-    testApi("org.junit.platform:junit-platform-commons:1.7.0")
-    testApi("org.junit.platform:junit-platform-launcher:1.7.0")
+    testApiJUnit5()
 
-    testImplementation(projectTests(":compiler:tests-common"))
-    testImplementation(projectTests(":compiler:tests-common-new"))
-    testImplementation(projectTests(":compiler:test-infrastructure"))
-    testImplementation(projectTests(":compiler:fir:analysis-tests:legacy-fir-tests"))
+    testApi(projectTests(":compiler:tests-compiler-utils"))
+    testApi(projectTests(":compiler:tests-common-new"))
+    testApi(projectTests(":compiler:test-infrastructure"))
+    testApi(projectTests(":compiler:fir:analysis-tests:legacy-fir-tests"))
 }
 
 val generationRoot = projectDir.resolve("tests-gen")
