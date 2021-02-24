@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.integration.AbstractAntTaskTest
 import org.jetbrains.kotlin.ir.AbstractIrCfgTestCase
 import org.jetbrains.kotlin.ir.AbstractIrJsTextTestCase
 import org.jetbrains.kotlin.ir.AbstractIrSourceRangesTestCase
-import org.jetbrains.kotlin.ir.AbstractIrTextTestCase
 import org.jetbrains.kotlin.jvm.compiler.*
 import org.jetbrains.kotlin.jvm.compiler.ir.AbstractIrCompileJavaAgainstKotlinTest
 import org.jetbrains.kotlin.jvm.compiler.ir.AbstractIrCompileKotlinAgainstJavaTest
@@ -58,8 +57,6 @@ import org.jetbrains.kotlin.resolve.constraintSystem.AbstractConstraintSystemTes
 import org.jetbrains.kotlin.serialization.AbstractLocalClassProtoTest
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.types.AbstractTypeBindingTest
-import org.jetbrains.kotlin.visualizer.fir.AbstractFirVisualizer
-import org.jetbrains.kotlin.visualizer.psi.AbstractPsiVisualizer
 
 fun generateJUnit3CompilerTests(args: Array<String>) {
     generateTestGroupSuite(args) {

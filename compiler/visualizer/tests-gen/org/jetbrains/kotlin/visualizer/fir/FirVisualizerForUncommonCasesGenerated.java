@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/visualizer/testData/uncommonCases/testFiles")
 @TestDataPath("$PROJECT_ROOT")
-public class FirVisualizerForUncommonCasesGenerated extends AbstractFirVisualizer {
+public class FirVisualizerForUncommonCasesGenerated extends AbstractFirVisualizerTest {
     @Test
     public void testAllFilesPresentInTestFiles() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/visualizer/testData/uncommonCases/testFiles"), Pattern.compile("^(.+)\\.kt$"), null, true);

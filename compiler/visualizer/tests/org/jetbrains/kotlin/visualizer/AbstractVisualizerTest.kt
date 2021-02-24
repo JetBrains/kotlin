@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
 
-abstract class AbstractVisualizer : AbstractKotlinCompilerTest() {
+abstract class AbstractVisualizerTest : AbstractKotlinCompilerTest() {
     abstract val handler: Constructor<FrontendOutputHandler<*>>
     abstract val frontendKind: FrontendKind<*>
     abstract val frontendFacade: Constructor<FrontendFacade<*>>

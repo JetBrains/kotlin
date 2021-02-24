@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder")
 @TestDataPath("$PROJECT_ROOT")
-public class PsiVisualizerForRawFirDataGenerated extends AbstractPsiVisualizer {
+public class PsiVisualizerForRawFirDataGenerated extends AbstractPsiVisualizerTest {
     @Test
     public void testAllFilesPresentInRawBuilder() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder"), Pattern.compile("^(.+)\\.kt$"), null, true);
