@@ -163,11 +163,6 @@ private object FirToKtConversionCreator {
             KtVariableSymbol::class.createType(),
             importsToAdd = listOf("org.jetbrains.kotlin.fir.declarations.FirProperty")
         ),
-        WhenMissingCase::class to HLFunctionCallConversion(
-            """TODO("WhenMissingCase conversion is not supported yet")""",
-            Any::class.createType(),
-            importsToAdd = listOf("org.jetbrains.kotlin.diagnostics.WhenMissingCase")
-        ),
     )
 
     private val allowedTypesWithoutTypeParams = setOf(
@@ -177,6 +172,7 @@ private object FirToKtConversionCreator {
         EventOccurrencesRange::class,
         KtModifierKeywordToken::class,
         Visibility::class,
+        WhenMissingCase::class,
     )
 
     private val KType.kClass: KClass<*>
