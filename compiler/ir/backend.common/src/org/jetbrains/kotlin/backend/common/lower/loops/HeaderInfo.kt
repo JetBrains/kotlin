@@ -17,8 +17,6 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
@@ -350,6 +348,3 @@ internal class NestedHeaderInfoBuilderForWithIndex(context: CommonBackendContext
         DefaultSequenceHandler(context),
     )
 }
-
-internal val Symbols<*>.progressionElementTypes: Collection<IrType>
-    get() = listOfNotNull(byte, short, int, long, char, uByte, uShort, uInt, uLong).map { it.defaultType }

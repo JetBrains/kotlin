@@ -23,11 +23,11 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.components.isVararg
-import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 // This is what Context collects about IR.
@@ -163,6 +163,10 @@ open class BuiltinSymbolsBase(protected val irBuiltIns: IrBuiltIns, protected va
     val double = symbolTable.referenceClass(builtIns.double)
 
     val integerClasses = listOf(byte, short, int, long)
+
+    val progressionElementTypes: Collection<IrType> by lazy {
+        listOfNotNull(byte, short, int, long, char, uByte, uShort, uInt, uLong).map { it.defaultType }
+    }
 
     val arrayOf = getSimpleFunction(Name.identifier("arrayOf")) {
         it.extensionReceiverParameter == null && it.dispatchReceiverParameter == null && it.valueParameters.size == 1 &&
