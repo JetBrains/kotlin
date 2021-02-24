@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir.symbols
 
+import org.jetbrains.kotlin.name.CallableId
+
 interface SyntheticSymbol
 
 interface AccessorSymbol {
