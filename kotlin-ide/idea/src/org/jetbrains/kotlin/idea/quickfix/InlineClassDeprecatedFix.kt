@@ -11,8 +11,10 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.util.addAnnotation
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtModifierListOwner
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
@@ -22,7 +24,10 @@ class InlineClassDeprecatedFix(
     element: KtModifierListOwner
 ) : KotlinQuickFixAction<KtModifierListOwner>(element), CleanupFix {
 
-    private val text = KotlinBundle.message("replace.with.0", "@JvmInline value")
+    private val text = KotlinBundle.message(
+        "replace.with.0",
+        (if (TargetPlatformDetector.getPlatform(element.containingKtFile).isJvm()) "@JvmInline " else "") + "value"
+    )
 
     override fun getText() = text
 
@@ -31,7 +36,9 @@ class InlineClassDeprecatedFix(
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         element?.removeModifier(KtTokens.INLINE_KEYWORD)
         element?.addModifier(KtTokens.VALUE_KEYWORD)
-        element?.addAnnotation(JVM_INLINE_ANNOTATION_FQ_NAME)
+        if (TargetPlatformDetector.getPlatform(file).isJvm()) {
+            element?.addAnnotation(JVM_INLINE_ANNOTATION_FQ_NAME)
+        }
     }
 
     companion object : KotlinSingleIntentionActionFactory() {
