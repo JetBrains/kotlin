@@ -5,12 +5,10 @@
 
 package org.jetbrains.kotlin.gradle.internal.kapt.incremental
 
-import org.gradle.api.artifacts.transform.InputArtifact
-import org.gradle.api.artifacts.transform.TransformAction
-import org.gradle.api.artifacts.transform.TransformOutputs
-import org.gradle.api.artifacts.transform.TransformParameters
+import org.gradle.api.artifacts.transform.*
 import org.gradle.api.file.FileSystemLocation
 import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.Classpath
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassWriter
 import java.io.*
@@ -20,8 +18,10 @@ import java.util.zip.ZipFile
 const val CLASS_STRUCTURE_ARTIFACT_TYPE = "class-structure"
 private const val MODULE_INFO = "module-info.class"
 
+@CacheableTransform
 abstract class StructureTransformAction : TransformAction<TransformParameters.None> {
     @get:InputArtifact
+    @get:Classpath
     abstract val inputArtifact: Provider<FileSystemLocation>
 
     override fun transform(outputs: TransformOutputs) {
@@ -39,8 +39,10 @@ abstract class StructureTransformAction : TransformAction<TransformParameters.No
  * supported until gradle version 5.4. Once our minimal supported gradle version is 5.4 or above, this legacy artifact transform can be
  * removed.
  */
+@CacheableTransform
 abstract class StructureTransformLegacyAction : TransformAction<TransformParameters.None> {
     @get:InputArtifact
+    @get:Classpath
     abstract val inputArtifact: File
 
     override fun transform(outputs: TransformOutputs) {
