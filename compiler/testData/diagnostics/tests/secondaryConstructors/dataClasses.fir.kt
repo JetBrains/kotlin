@@ -11,4 +11,4 @@ data class A2(val y: String, val z: Int) {
     constructor()
 }<!>
 
-data class A4 internal constructor()
+data class A4 <!DATA_CLASS_WITHOUT_PARAMETERS!>internal constructor()<!>
