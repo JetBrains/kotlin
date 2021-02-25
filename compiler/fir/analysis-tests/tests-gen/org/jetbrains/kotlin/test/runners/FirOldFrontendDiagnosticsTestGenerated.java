@@ -18920,6 +18920,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("literalReceiverWithIntegerValueType.kt")
+            public void testLiteralReceiverWithIntegerValueType() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/numbers/literalReceiverWithIntegerValueType.kt");
+            }
+
+            @Test
             @TestMetadata("numberAsUnionAndIntersection.kt")
             public void testNumberAsUnionAndIntersection() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/numbers/numberAsUnionAndIntersection.kt");

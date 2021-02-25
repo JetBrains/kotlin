@@ -20,7 +20,6 @@ open class GeneratorExtensions : StubGeneratorExtensions() {
         get() = SamConversion
 
     open class SamConversion {
-
         open fun isPlatformSamType(type: KotlinType): Boolean = false
 
         open fun getSamTypeForValueParameter(valueParameter: ValueParameterDescriptor): KotlinType? = null
@@ -37,4 +36,7 @@ open class GeneratorExtensions : StubGeneratorExtensions() {
         descriptor: ClassDescriptor,
         context: GeneratorContext,
     ): IrDelegatingConstructorCall? = null
+
+    open val shouldPreventDeprecatedIntegerValueTypeLiteralConversion: Boolean
+        get() = false
 }

@@ -39,6 +39,12 @@ object OperatorNameConventions {
 
     @JvmField val AND = Name.identifier("and")
     @JvmField val OR = Name.identifier("or")
+    @JvmField val XOR = Name.identifier("xor")
+    @JvmField val INV = Name.identifier("inv")
+
+    @JvmField val SHL = Name.identifier("shl")
+    @JvmField val SHR = Name.identifier("shr")
+    @JvmField val USHR = Name.identifier("ushr")
 
     @JvmField val INC = Name.identifier("inc")
     @JvmField val DEC = Name.identifier("dec")
