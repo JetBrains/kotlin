@@ -23,9 +23,9 @@ open external class internal {
 
     B = NestedExternalEnum()
 
-    fun values(): Array<NestedExternalEnum> /* Synthetic body for ENUM_VALUES */
+    external fun values(): Array<NestedExternalEnum> /* Synthetic body for ENUM_VALUES */
 
-    fun valueOf(value: String): NestedExternalEnum /* Synthetic body for ENUM_VALUEOF */
+    external fun valueOf(value: String): NestedExternalEnum /* Synthetic body for ENUM_VALUEOF */
 
   }
 
