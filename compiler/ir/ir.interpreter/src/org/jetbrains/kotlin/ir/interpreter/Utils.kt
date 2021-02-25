@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.interpreter
 
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
@@ -48,7 +49,7 @@ internal fun State.toIrExpression(expression: IrExpression): IrExpression {
         is Complex -> {
             val stateType = this.irClass.defaultType
             when {
-                stateType.isUnsigned() -> (this.fields.single().state as Primitive<*>).value.toIrConst(type, start, end)
+                stateType.isUnsignedType() -> (this.fields.single().state as Primitive<*>).value.toIrConst(type, start, end)
                 else -> expression
             }
         }
@@ -79,13 +80,15 @@ fun Any?.toIrConst(irType: IrType, startOffset: Int = UNDEFINED_OFFSET, endOffse
         PrimitiveType.FLOAT -> IrConstImpl.float(startOffset, endOffset, constType, (this as Number).toFloat())
         PrimitiveType.LONG -> IrConstImpl.long(startOffset, endOffset, constType, (this as Number).toLong())
         PrimitiveType.DOUBLE -> IrConstImpl.double(startOffset, endOffset, constType, (this as Number).toDouble())
-        else -> when {
-            constType.isString() -> IrConstImpl.string(startOffset, endOffset, constType, this as String)
-            constType.isUByte() -> IrConstImpl.byte(startOffset, endOffset, constType, (this as Number).toByte())
-            constType.isUShort() -> IrConstImpl.short(startOffset, endOffset, constType, (this as Number).toShort())
-            constType.isUInt() -> IrConstImpl.int(startOffset, endOffset, constType, (this as Number).toInt())
-            constType.isULong() -> IrConstImpl.long(startOffset, endOffset, constType, (this as Number).toLong())
-            else -> throw UnsupportedOperationException("Unsupported const element type ${constType.render()}")
+        null -> when (constType.getUnsignedType()) {
+            UnsignedType.UBYTE -> IrConstImpl.byte(startOffset, endOffset, constType, (this as Number).toByte())
+            UnsignedType.USHORT -> IrConstImpl.short(startOffset, endOffset, constType, (this as Number).toShort())
+            UnsignedType.UINT -> IrConstImpl.int(startOffset, endOffset, constType, (this as Number).toInt())
+            UnsignedType.ULONG -> IrConstImpl.long(startOffset, endOffset, constType, (this as Number).toLong())
+            null -> when {
+                constType.isString() -> IrConstImpl.string(startOffset, endOffset, constType, this as String)
+                else -> throw UnsupportedOperationException("Unsupported const element type ${constType.render()}")
+            }
         }
     }
 }
@@ -212,8 +215,6 @@ internal fun State?.getCorrectReceiverByFunction(irFunction: IrFunction): State?
 }
 
 internal fun IrFunction.getCapitalizedFileName() = this.file.name.replace(".kt", "Kt").capitalizeAsciiOnly()
-
-internal fun IrType.isUnsigned() = this.isUByte() || this.isUShort() || this.isUInt() || this.isULong()
 
 internal fun IrType.isPrimitiveArray(): Boolean {
     return this.getClass()?.fqNameWhenAvailable?.toUnsafe()?.let { StandardNames.isPrimitiveArray(it) } ?: false

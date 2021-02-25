@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.ir.interpreter
 
-import org.jetbrains.kotlin.ir.interpreter.builtins.compileTimeAnnotation
-import org.jetbrains.kotlin.ir.interpreter.builtins.contractsDslAnnotation
-import org.jetbrains.kotlin.ir.interpreter.builtins.evaluateIntrinsicAnnotation
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.interpreter.builtins.compileTimeAnnotation
+import org.jetbrains.kotlin.ir.interpreter.builtins.contractsDslAnnotation
+import org.jetbrains.kotlin.ir.interpreter.builtins.evaluateIntrinsicAnnotation
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -45,7 +45,7 @@ class IrCompileTimeChecker(
             parentType?.isPrimitiveType() == true -> (this as IrFunction).name.asString() !in setOf("inc", "dec", "rangeTo", "hashCode")
             parentType?.isString() == true -> (this as IrDeclarationWithName).name.asString() !in setOf("subSequence", "hashCode")
             parentType?.isAny() == true -> (this as IrFunction).name.asString() == "toString" && expression?.dispatchReceiver !is IrGetObjectValue
-            parent?.isObject == true -> parent.parentClassOrNull?.defaultType?.let { it.isPrimitiveType() || it.isUnsigned() } == true
+            parent?.isObject == true -> parent.parentClassOrNull?.defaultType?.let { it.isPrimitiveType() || it.isUnsignedType() } == true
             else -> false
         }
     }
