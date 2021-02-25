@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegenUtilKt;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegenProvider;
 import org.jetbrains.kotlin.codegen.when.WhenByEnumsMapping;
+import org.jetbrains.kotlin.config.JvmDefaultMode;
 import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.coroutines.CoroutineUtilKt;
@@ -87,6 +88,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
     private final LanguageVersionSettings languageVersionSettings;
     private final ClassBuilderMode classBuilderMode;
     private final DelegatedPropertiesCodegenHelper delegatedPropertiesCodegenHelper;
+    private final JvmDefaultMode jvmDefaultMode;
 
     public CodegenAnnotatingVisitor(@NotNull GenerationState state) {
         this.bindingTrace = state.getBindingTrace();
@@ -97,6 +99,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         this.languageVersionSettings = state.getLanguageVersionSettings();
         this.classBuilderMode = state.getClassBuilderMode();
         this.delegatedPropertiesCodegenHelper = new DelegatedPropertiesCodegenHelper(state);
+        jvmDefaultMode = state.getJvmDefaultMode();
     }
 
     @NotNull
@@ -585,7 +588,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
                 }
 
                 return AsmUtil.asmTypeByClassId(
-                        DescriptorUtils.isInterface(descriptor)
+                        DescriptorUtils.isInterface(descriptor) && !jvmDefaultMode.getForAllMethodsWithBody()
                         ? classId.createNestedClassId(Name.identifier(JvmAbi.DEFAULT_IMPLS_CLASS_NAME))
                         : classId
                 );

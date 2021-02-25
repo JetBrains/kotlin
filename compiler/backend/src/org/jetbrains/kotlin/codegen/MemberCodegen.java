@@ -660,7 +660,8 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
         List<VariableDescriptorWithAccessors> delegatedProperties = bindingContext.get(CodegenBinding.DELEGATED_PROPERTIES_WITH_METADATA, thisAsmType);
         if (delegatedProperties == null || delegatedProperties.isEmpty()) return;
 
-        v.newField(NO_ORIGIN, ACC_STATIC | ACC_FINAL | ACC_SYNTHETIC, JvmAbi.DELEGATED_PROPERTIES_ARRAY_NAME,
+        int additionalFlags = context.getContextKind() != OwnerKind.DEFAULT_IMPLS && isInterface(context.getContextDescriptor()) ? ACC_PUBLIC : 0;
+        v.newField(NO_ORIGIN, ACC_STATIC | ACC_FINAL | ACC_SYNTHETIC | additionalFlags, JvmAbi.DELEGATED_PROPERTIES_ARRAY_NAME,
                    "[" + K_PROPERTY_TYPE, null, null);
 
         if (!state.getClassBuilderMode().generateBodies) return;

@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.isInlineClassFieldGetter
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
@@ -41,6 +42,7 @@ import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.Variance
@@ -191,7 +193,8 @@ private class PropertyReferenceLowering(val context: JvmBackendContext) : IrElem
             origin = JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE
             isFinal = true
             isStatic = true
-            visibility = JavaDescriptorVisibilities.PACKAGE_VISIBILITY
+            visibility =
+                if (irClass.isInterface && context.state.jvmDefaultMode.forAllMethodsWithBody) DescriptorVisibilities.PUBLIC else JavaDescriptorVisibilities.PACKAGE_VISIBILITY
         }
 
         val localProperties = mutableListOf<IrLocalDelegatedPropertySymbol>()

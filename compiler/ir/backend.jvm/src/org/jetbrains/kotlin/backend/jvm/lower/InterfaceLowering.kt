@@ -161,7 +161,9 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
 
         // Move $$delegatedProperties array and $assertionsDisabled field
         for (field in irClass.declarations.filterIsInstance<IrField>()) {
-            if (field.origin != JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE && field.origin != JvmLoweredDeclarationOrigin.GENERATED_ASSERTION_ENABLED_FIELD)
+            if ((jvmDefaultMode.forAllMethodsWithBody || field.origin != JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE) &&
+                field.origin != JvmLoweredDeclarationOrigin.GENERATED_ASSERTION_ENABLED_FIELD
+            )
                 continue
 
             irClass.declarations.remove(field)
