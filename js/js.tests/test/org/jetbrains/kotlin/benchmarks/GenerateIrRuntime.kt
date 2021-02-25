@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVe
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.metrics.DoNothingBuildMetricsReporter
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -29,13 +30,18 @@ import org.jetbrains.kotlin.descriptors.konan.kotlinLibrary
 import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.jetbrains.kotlin.incremental.EmptyICReporter
 import org.jetbrains.kotlin.incremental.IncrementalJsCompilerRunner
+import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.multiproject.EmptyModulesApiHistory
 import org.jetbrains.kotlin.incremental.withJsIC
-import org.jetbrains.kotlin.ir.backend.js.*
+import org.jetbrains.kotlin.ir.backend.js.CompilerResult
+import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.jsPhases
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrModuleSerializer
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
+import org.jetbrains.kotlin.ir.backend.js.serializeModuleIntoKlib
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
+import org.jetbrains.kotlin.ir.compiler.wjs.ModuleLoader
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
@@ -44,10 +50,8 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
 import org.jetbrains.kotlin.js.config.ErrorTolerancePolicy
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
-import org.jetbrains.kotlin.library.KotlinAbiVersion
-import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.KotlinLibraryVersioning
-import org.jetbrains.kotlin.library.SerializedIrModule
+import org.jetbrains.kotlin.konan.properties.propertyList
+import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.impl.KotlinLibraryOnlyIrWriter
 import org.jetbrains.kotlin.library.impl.createKotlinLibrary
@@ -60,6 +64,8 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 import org.jetbrains.kotlin.serialization.js.ModuleKind
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.storage.StorageManager
 import org.junit.After
 import org.junit.Before
 import org.junit.Ignore
@@ -462,7 +468,6 @@ class GenerateIrRuntime {
             IrMessageLogger.None,
             psi2IrContext.irBuiltIns,
             psi2IrContext.symbolTable,
-            functionFactory,
             null
         )
 
@@ -487,11 +492,30 @@ class GenerateIrRuntime {
             moduleFragment,
             mutableMapOf(),
             emptyList(),
+            null,
             true,
             perFile
         )
 
         return tmpKlibDir
+    }
+
+    private val JsFactories = ModuleLoader.jsMetadataFactories
+
+    private fun getModuleDescriptorByLibrary(current: KotlinLibrary, mapping: Map<String, ModuleDescriptorImpl>): ModuleDescriptorImpl {
+        val md = JsFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
+            current,
+            LanguageVersionSettingsImpl.DEFAULT,
+            LockBasedStorageManager.NO_LOCKS,
+            null,
+            packageAccessHandler = null, // TODO: This is a speed optimization used by Native. Don't bother for now.
+            lookupTracker = LookupTracker.DO_NOTHING
+        )
+
+        val dependencies = current.manifestProperties.propertyList(KLIB_PROPERTY_DEPENDS, escapeInQuotes = true).map { mapping.getValue(it) }
+
+        md.setDependencies(listOf(md) + dependencies)
+        return md
     }
 
     private fun doDeserializeModuleMetadata(moduleRef: KotlinLibrary): ModuleDescriptorImpl {
@@ -520,7 +544,7 @@ class GenerateIrRuntime {
         val functionFactory = IrFunctionFactory(irBuiltIns, symbolTable)
         irBuiltIns.functionFactory = functionFactory
 
-        val jsLinker = JsIrLinker(moduleDescriptor, IrMessageLogger.None, irBuiltIns, symbolTable, functionFactory, null)
+        val jsLinker = JsIrLinker(moduleDescriptor, IrMessageLogger.None, irBuiltIns, symbolTable, null)
 
         val moduleFragment = jsLinker.deserializeFullModule(moduleDescriptor, moduleDescriptor.kotlinLibrary)
         jsLinker.init(null, emptyList())
@@ -547,7 +571,7 @@ class GenerateIrRuntime {
         val functionFactory = IrFunctionFactory(irBuiltIns, symbolTable)
         irBuiltIns.functionFactory = functionFactory
 
-        val jsLinker = JsIrLinker(moduleDescriptor, IrMessageLogger.None, irBuiltIns, symbolTable, functionFactory, null)
+        val jsLinker = JsIrLinker(moduleDescriptor, IrMessageLogger.None, irBuiltIns, symbolTable, null)
 
         val moduleFragment = jsLinker.deserializeFullModule(moduleDescriptor, moduleDescriptor.kotlinLibrary)
         // Create stubs

@@ -12,17 +12,18 @@ import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.messages.*
+import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
+import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
+import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
+import org.jetbrains.kotlin.ir.compiler.wjs.Ir2WJCompiler
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
-import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 import org.jetbrains.kotlin.serialization.js.ModuleKind
-import org.jetbrains.kotlin.util.Logger
+import org.jetbrains.kotlin.util.DummyLogger
 import java.io.File
 
 fun buildConfiguration(environment: KotlinCoreEnvironment, moduleName: String): CompilerConfiguration {
@@ -71,27 +72,32 @@ fun buildKLib(
     moduleName: String,
     sources: List<String>,
     outputPath: String,
-    allDependencies: KotlinLibraryResolveResult,
+    allDependencies: Collection<String>,
     commonSources: List<String>
 ) {
     val configuration = buildConfiguration(environment, moduleName)
-    generateKLib(
-        project = environment.project,
-        files = sources.map { source ->
-            val file = createPsiFile(source)
-            if (source in commonSources) {
-                file.isCommonSource = true
-            }
-            file
-        },
-        analyzer = AnalyzerWithCompilerReport(configuration),
-        configuration = configuration,
-        allDependencies = allDependencies,
-        friendDependencies = emptyList(),
-        irFactory = PersistentIrFactory(), // TODO: IrFactoryImpl?
-        outputKlibPath = outputPath,
-        nopack = true
-    )
+    return with(
+        Ir2WJCompiler(
+            environment.project,
+            configuration,
+            AnalyzerWithCompilerReport(configuration),
+            allDependencies,
+            emptyList(),
+            DummyLogger
+        )
+    ) {
+        options.nopack = true
+        compileKlib(
+            files = sources.map { source ->
+                val file = createPsiFile(source)
+                if (source in commonSources) {
+                    file.isCommonSource = true
+                }
+                file
+            },
+            outputKlibPath = outputPath
+        )
+    }
 }
 
 private fun listOfKtFilesFrom(paths: List<String>): List<String> {
@@ -133,21 +139,5 @@ fun main(args: Array<String>) {
         error("Please set module name: `-n module-name`")
     }
 
-    val resolvedLibraries = jsResolveLibraries(
-        dependencies, emptyList(), messageCollectorLogger(MessageCollector.NONE)
-    )
-
-    buildKLib(moduleName, listOfKtFilesFrom(inputFiles), outputPath, resolvedLibraries, listOfKtFilesFrom(commonSources))
-}
-
-// Copied here from `K2JsIrCompiler` instead of reusing in order to avoid circular dependencies between Gradle tasks
-private fun messageCollectorLogger(collector: MessageCollector) = object : Logger {
-    override fun warning(message: String)= collector.report(CompilerMessageSeverity.STRONG_WARNING, message)
-    override fun error(message: String) = collector.report(CompilerMessageSeverity.ERROR, message)
-    override fun log(message: String) = collector.report(CompilerMessageSeverity.LOGGING, message)
-    override fun fatal(message: String): Nothing {
-        collector.report(CompilerMessageSeverity.ERROR, message)
-        (collector as? GroupingMessageCollector)?.flush()
-        kotlin.error(message)
-    }
+    buildKLib(moduleName, listOfKtFilesFrom(inputFiles), outputPath, dependencies, listOfKtFilesFrom(commonSources))
 }

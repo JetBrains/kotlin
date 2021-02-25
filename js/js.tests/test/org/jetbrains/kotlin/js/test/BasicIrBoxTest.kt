@@ -11,8 +11,9 @@ import org.jetbrains.kotlin.backend.common.phaser.toPhaseMap
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.js.messageCollectorLogger
-import org.jetbrains.kotlin.ir.backend.js.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
+import org.jetbrains.kotlin.ir.backend.js.JsCode
+import org.jetbrains.kotlin.ir.backend.js.jsPhases
+import org.jetbrains.kotlin.ir.compiler.wjs.Ir2WJCompiler
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.facade.MainCallParameters
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.js.facade.TranslationUnit
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.parsing.parseBoolean
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.util.DummyLogger
 import org.jetbrains.kotlin.utils.fileUtils.withReplacedExtensionOrNull
 import java.io.File
 import java.lang.Boolean.getBoolean
@@ -103,11 +105,18 @@ abstract class BasicIrBoxTest(
             compilationCache[it] ?: error("Can't find compiled module for dependency $it")
         }).map { File(it).absolutePath }
 
-        val resolvedLibraries = jsResolveLibraries(allKlibPaths, emptyList(), messageCollectorLogger(MessageCollector.NONE))
-
         val actualOutputFile = outputFile.absolutePath.let {
             if (!isMainModule) it.replace("_v5.js", "/") else it
         }
+
+        val compiler = Ir2WJCompiler(
+            config.project,
+            config.configuration,
+            AnalyzerWithCompilerReport(config.configuration),
+            allKlibPaths,
+            friendDependencies = emptyList(),
+            DummyLogger
+        )
 
         if (isMainModule) {
             logger.logFile("Output JS", outputFile)
@@ -130,21 +139,18 @@ abstract class BasicIrBoxTest(
             }
 
             if (!skipRegularMode) {
-                val compiledModule = compile(
-                    project = config.project,
-                    mainModule = MainModule.SourceFiles(filesToCompile),
-                    analyzer = AnalyzerWithCompilerReport(config.configuration),
-                    configuration = config.configuration,
-                    phaseConfig = phaseConfig,
-                    allDependencies = resolvedLibraries,
-                    friendDependencies = emptyList(),
-                    mainArguments = mainCallParameters.run { if (shouldBeGenerated()) arguments() else null },
-                    exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, testFunction))),
-                    generateFullJs = true,
-                    generateDceJs = runIrDce,
-                    es6mode = runEs6Mode,
-                    multiModule = splitPerModule || perModule,
-                    propertyLazyInitialization = propertyLazyInitialization,
+
+                compiler.options.generateFullJs = true
+                compiler.options.generateDceJs = runIrDce
+                compiler.options.es6mode = runEs6Mode
+                compiler.options.multiModule = splitPerModule || perModule
+                compiler.options.propertyLazyInitialization = propertyLazyInitialization
+
+                val compiledModule = compiler.compileBinaryJs(
+                    Ir2WJCompiler.MainModule.SourceFiles(filesToCompile),
+                    phaseConfig,
+                    mainCallParameters.run { if (shouldBeGenerated()) arguments() else null },
+                    setOf(FqName.fromSegments(listOfNotNull(testPackage, testFunction)))
                 )
 
                 compiledModule.jsCode!!.writeTo(outputFile, config)
@@ -159,34 +165,23 @@ abstract class BasicIrBoxTest(
             }
 
             if (runIrPir && !skipDceDriven) {
-                compile(
-                    project = config.project,
-                    mainModule = MainModule.SourceFiles(filesToCompile),
-                    analyzer = AnalyzerWithCompilerReport(config.configuration),
-                    configuration = config.configuration,
-                    phaseConfig = phaseConfig,
-                    allDependencies = resolvedLibraries,
-                    friendDependencies = emptyList(),
-                    mainArguments = mainCallParameters.run { if (shouldBeGenerated()) arguments() else null },
-                    exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, testFunction))),
-                    dceDriven = true,
-                    es6mode = runEs6Mode,
-                    multiModule = splitPerModule || perModule,
-                    propertyLazyInitialization = propertyLazyInitialization
+
+                compiler.options.dceDriven = true
+                compiler.options.es6mode = runEs6Mode
+                compiler.options.multiModule = splitPerModule || perModule
+                compiler.options.propertyLazyInitialization = propertyLazyInitialization
+
+                compiler.compileBinaryJs(
+                    Ir2WJCompiler.MainModule.SourceFiles(filesToCompile),
+                    phaseConfig,
+                    mainCallParameters.run { if (shouldBeGenerated()) arguments() else null },
+                    setOf(FqName.fromSegments(listOfNotNull(testPackage, testFunction)))
                 ).jsCode!!.writeTo(pirOutputFile, config)
             }
         } else {
-            generateKLib(
-                project = config.project,
-                files = filesToCompile,
-                analyzer = AnalyzerWithCompilerReport(config.configuration),
-                configuration = config.configuration,
-                allDependencies = resolvedLibraries,
-                friendDependencies = emptyList(),
-                irFactory = IrFactoryImpl,
-                outputKlibPath = actualOutputFile,
-                nopack = true
-            )
+
+            compiler.options.nopack = true
+            compiler.compileKlib(filesToCompile, actualOutputFile)
 
             logger.logFile("Output klib", File(actualOutputFile))
 

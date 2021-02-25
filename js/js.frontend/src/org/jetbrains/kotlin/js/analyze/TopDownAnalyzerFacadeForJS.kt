@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.serialization.js.PackagesWithHeaderMetadata
 import org.jetbrains.kotlin.utils.JsMetadataVersion
-import java.lang.Exception
 
 abstract class AbstractTopDownAnalyzerFacadeForJS {
 
@@ -45,7 +44,7 @@ abstract class AbstractTopDownAnalyzerFacadeForJS {
         project: Project,
         configuration: CompilerConfiguration,
         moduleDescriptors: List<ModuleDescriptorImpl>,
-        friendModuleDescriptors: List<ModuleDescriptorImpl>,
+        friendModuleDescriptors: Collection<ModuleDescriptorImpl>,
         targetEnvironment: TargetEnvironment,
         thisIsBuiltInsModule: Boolean = false,
         customBuiltInsModule: ModuleDescriptorImpl? = null

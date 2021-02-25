@@ -16,9 +16,13 @@ import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.generateJsCode
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.backend.js.utils.NameTables
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.descriptors.IrFunctionFactory
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
+import org.jetbrains.kotlin.ir.util.IrMessageLogger
+import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
@@ -31,7 +35,7 @@ class JsScriptDependencyCompiler(
     private val nameTables: NameTables,
     private val symbolTable: SymbolTable
 ) {
-    fun compile(dependencies: List<ModuleDescriptor>): String {
+    fun compile(dependencies: Collection<ModuleDescriptor>): String {
         val builtIns: KotlinBuiltIns = dependencies.single { it.allDependencyModules.isEmpty() }.builtIns
         val languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT
         val messageLogger = configuration[IrMessageLogger.IR_MESSAGE_LOGGER] ?: IrMessageLogger.None
@@ -46,7 +50,7 @@ class JsScriptDependencyCompiler(
         val irBuiltIns = IrBuiltIns(builtIns, typeTranslator, symbolTable)
         val functionFactory = IrFunctionFactory(irBuiltIns, symbolTable)
         irBuiltIns.functionFactory = functionFactory
-        val jsLinker = JsIrLinker(null, messageLogger, irBuiltIns, symbolTable, functionFactory, null)
+        val jsLinker = JsIrLinker(null, messageLogger, irBuiltIns, symbolTable, null)
 
         val irDependencies = dependencies.map { jsLinker.deserializeFullModule(it, it.kotlinLibrary) }
         val moduleFragment = irDependencies.last()
@@ -65,7 +69,7 @@ class JsScriptDependencyCompiler(
             moduleFragment,
             emptySet(),
             configuration,
-            true
+            true, irFactory = IrFactoryImpl
         )
 
         ExternalDependenciesGenerator(symbolTable, irProviders)

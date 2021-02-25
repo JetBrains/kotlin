@@ -10,14 +10,14 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
-import org.jetbrains.kotlin.backend.wasm.compileWasm
 import org.jetbrains.kotlin.backend.wasm.wasmPhases
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.ExitCode.COMPILATION_ERROR
 import org.jetbrains.kotlin.cli.common.ExitCode.OK
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants
-import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.*
+import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.DCE_RUNTIME_DIAGNOSTIC_EXCEPTION
+import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.DCE_RUNTIME_DIAGNOSTIC_LOG
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.extensions.ScriptEvaluationExtension
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
@@ -37,8 +37,8 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.incremental.js.IncrementalNextRoundChecker
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
-import org.jetbrains.kotlin.ir.backend.js.*
-import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
+import org.jetbrains.kotlin.ir.backend.js.jsPhases
+import org.jetbrains.kotlin.ir.compiler.wjs.Ir2WJCompiler
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
@@ -178,15 +178,24 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         // TODO: Handle non-empty main call arguments
         val mainCallArguments = if (K2JsArgumentConstants.NO_CALL == arguments.main) null else emptyList<String>()
 
-        val resolvedLibraries = jsResolveLibraries(
+        val compiler = Ir2WJCompiler(
+            projectJs,
+            config.configuration,
+            AnalyzerWithCompilerReport(config.configuration),
             libraries,
-            configuration[JSConfigurationKeys.REPOSITORIES] ?: emptyList(),
-            messageCollectorLogger(configuration[CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY] ?: error("Could not find message collector"))
+            friendLibraries,
+            messageCollectorLogger(messageCollector)
         )
 
-        val friendAbsolutePaths = friendLibraries.map { File(it).absolutePath }
-        val friendDependencies = resolvedLibraries.getFullList().filter {
-            it.libraryFile.absolutePath in friendAbsolutePaths
+        compiler.options.run {
+            nopack = arguments.irProduceKlibDir
+            generateFullJs = !arguments.irDce
+            generateDceJs = arguments.irDce
+            dceDriven = arguments.irDceDriven
+            multiModule = arguments.irPerModule
+            relativeRequirePath = true
+            propertyLazyInitialization = arguments.irPropertyLazyInitialization
+            dceRuntimeDiagnostics = DceRuntimeDiagnostic.resolve(arguments.irDceRuntimeDiagnostic, messageCollector)
         }
 
         if (arguments.irProduceKlibDir || arguments.irProduceKlibFile) {
@@ -194,46 +203,24 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 require(outputFile.extension == KLIB_FILE_EXTENSION) { "Please set up .klib file as output" }
             }
 
-            generateKLib(
-                project = config.project,
-                files = sourcesFiles,
-                analyzer = AnalyzerWithCompilerReport(config.configuration),
-                configuration = config.configuration,
-                allDependencies = resolvedLibraries,
-                friendDependencies = friendDependencies,
-                irFactory = PersistentIrFactory(), // TODO IrFactoryImpl?
-                outputKlibPath = outputFile.path,
-                nopack = arguments.irProduceKlibDir
-            )
+            compiler.compileKlib(sourcesFiles, outputFile.path)
         }
 
         if (arguments.irProduceJs) {
             val phaseConfig = createPhaseConfig(jsPhases, arguments, messageCollector)
 
             val includes = arguments.includes
-
             val mainModule = if (includes != null) {
                 if (sourcesFiles.isNotEmpty()) {
                     messageCollector.report(ERROR, "Source files are not supported when -Xinclude is present")
                 }
-                val allLibraries = resolvedLibraries.getFullList()
-                val mainLib = allLibraries.find { it.libraryFile.absolutePath == File(includes).absolutePath }!!
-                MainModule.Klib(mainLib)
+                Ir2WJCompiler.MainModule.Klib(includes)
             } else {
-                MainModule.SourceFiles(sourcesFiles)
+                Ir2WJCompiler.MainModule.SourceFiles(sourcesFiles)
             }
 
             if (arguments.wasm) {
-                val res = compileWasm(
-                    projectJs,
-                    mainModule,
-                    AnalyzerWithCompilerReport(config.configuration),
-                    config.configuration,
-                    PhaseConfig(wasmPhases),
-                    allDependencies = resolvedLibraries,
-                    friendDependencies = friendDependencies,
-                    exportedDeclarations = setOf(FqName("main"))
-                )
+                val res = compiler.compileBinaryWasm(mainModule, PhaseConfig(wasmPhases), emptyList(), setOf(FqName("main")))
                 val outputWasmFile = outputFile.withReplacedExtensionOrNull(outputFile.extension, "wasm")!!
                 outputWasmFile.writeBytes(res.wasm)
                 val outputWatFile = outputFile.withReplacedExtensionOrNull(outputFile.extension, "wat")!!
@@ -250,27 +237,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 return OK
             }
 
-            val compiledModule = compile(
-                projectJs,
-                mainModule,
-                AnalyzerWithCompilerReport(config.configuration),
-                config.configuration,
-                phaseConfig,
-                allDependencies = resolvedLibraries,
-                friendDependencies = friendDependencies,
-                mainArguments = mainCallArguments,
-                generateFullJs = !arguments.irDce,
-                generateDceJs = arguments.irDce,
-                dceRuntimeDiagnostic = DceRuntimeDiagnostic.resolve(
-                    arguments.irDceRuntimeDiagnostic,
-                    messageCollector
-                ),
-                dceDriven = arguments.irDceDriven,
-                multiModule = arguments.irPerModule,
-                relativeRequirePath = true,
-                propertyLazyInitialization = arguments.irPropertyLazyInitialization,
-            )
-
+            val compiledModule = compiler.compileBinaryJs(mainModule, phaseConfig, mainCallArguments, emptySet())
 
             val jsCode = if (arguments.irDce && !arguments.irDceDriven) compiledModule.dceJsCode!! else compiledModule.jsCode!!
             outputFile.writeText(jsCode.mainModule)

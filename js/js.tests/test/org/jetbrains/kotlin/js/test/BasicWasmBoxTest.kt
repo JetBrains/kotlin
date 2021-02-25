@@ -8,21 +8,18 @@ package org.jetbrains.kotlin.js.test
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.toPhaseMap
-import org.jetbrains.kotlin.backend.wasm.compileWasm
 import org.jetbrains.kotlin.backend.wasm.wasmPhases
 import org.jetbrains.kotlin.checkers.parseLanguageVersionSettings
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.ir.backend.js.MainModule
-import org.jetbrains.kotlin.ir.backend.js.loadKlib
+import org.jetbrains.kotlin.ir.compiler.wjs.Ir2WJCompiler
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.facade.TranslationUnit
 import org.jetbrains.kotlin.js.test.engines.ExternalTool
 import org.jetbrains.kotlin.js.test.engines.SpiderMonkeyEngine
-import org.jetbrains.kotlin.library.resolver.impl.KotlinLibraryResolverResultImpl
-import org.jetbrains.kotlin.library.resolver.impl.KotlinResolvedLibraryImpl
+import org.jetbrains.kotlin.library.resolveSingleFileKlib
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -31,12 +28,10 @@ import org.jetbrains.kotlin.test.Directives
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
 import org.jetbrains.kotlin.test.TestFiles
 import org.jetbrains.kotlin.test.util.KtTestUtil
+import org.jetbrains.kotlin.util.DummyLogger
 import java.io.Closeable
 import java.io.File
 import java.lang.Boolean.getBoolean
-
-private val wasmRuntimeKlib =
-    loadKlib(System.getProperty("kotlin.wasm.stdlib.path"))
 
 abstract class BasicWasmBoxTest(
     private val pathToTestDir: String,
@@ -131,16 +126,23 @@ abstract class BasicWasmBoxTest(
             PhaseConfig(wasmPhases)
         }
 
-        val compilerResult = compileWasm(
-            project = config.project,
-            mainModule = MainModule.SourceFiles(filesToCompile),
-            analyzer = AnalyzerWithCompilerReport(config.configuration),
-            configuration = config.configuration,
-            phaseConfig = phaseConfig,
-            // TODO: Bypass the resolver fow wasm.
-            allDependencies = KotlinLibraryResolverResultImpl(listOf(KotlinResolvedLibraryImpl(wasmRuntimeKlib))),
+        val compiler = Ir2WJCompiler(
+            config.project,
+            config.configuration,
+            AnalyzerWithCompilerReport(config.configuration),
+            listOf(
+                System.getProperty("kotlin.wasm.stdlib.path")
+                    ?: error("Please set up path to stdlib with `kotlin.wasm.stdlib.path` property")
+            ),
             friendDependencies = emptyList(),
-            exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, testFunction)))
+            DummyLogger
+        )
+
+        val compilerResult = compiler.compileBinaryWasm(
+            Ir2WJCompiler.MainModule.SourceFiles(filesToCompile),
+            phaseConfig,
+            emptyList(),
+            setOf(FqName.fromSegments(listOfNotNull(testPackage, testFunction)))
         )
 
         outputWatFile.write(compilerResult.wat)

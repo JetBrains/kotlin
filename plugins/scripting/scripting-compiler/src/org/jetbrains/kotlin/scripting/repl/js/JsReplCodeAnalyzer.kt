@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.scripting.definitions.ScriptPriorities
 
 class JsReplCodeAnalyzer(
     environment: KotlinCoreEnvironment,
-    dependencies: List<ModuleDescriptor>,
+    dependencies: Collection<ModuleDescriptor>,
     private val replState: ReplCodeAnalyzerBase.ResettableAnalyzerState
 ) : AbstractJsScriptlikeCodeAnalyser(environment, dependencies) {
 

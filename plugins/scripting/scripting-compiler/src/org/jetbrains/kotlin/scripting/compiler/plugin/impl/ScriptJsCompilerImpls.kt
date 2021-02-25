@@ -24,7 +24,7 @@ import kotlin.script.experimental.api.*
 class JsScriptCompilerWithDependenciesProxy(private val environment: KotlinCoreEnvironment) : ScriptCompilerProxy {
     private val nameTables = NameTables(emptyList(), mappedNames = mutableMapOf())
     private val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc), IrFactoryImpl)
-    private val dependencies: List<ModuleDescriptor> = readLibrariesFromConfiguration(environment.configuration)
+    private val dependencies: Collection<ModuleDescriptor> = readLibrariesFromConfiguration(environment.configuration)
     private val compiler = JsCoreScriptingCompiler(environment, nameTables, symbolTable, dependencies)
     private var scriptDependencyCompiler: JsScriptDependencyCompiler? =
         JsScriptDependencyCompiler(environment.configuration, nameTables, symbolTable)

@@ -7,8 +7,7 @@ plugins {
 dependencies {
     compile(project(":compiler:ir.psi2ir"))
     compile(project(":compiler:ir.serialization.common"))
-    compile(project(":js:js.frontend"))
-    implementation(project(":compiler:ir.backend.common"))
+    compile(project(":js:js.config"))
 
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 }

@@ -7,6 +7,11 @@ package org.jetbrains.kotlin.scripting.repl.js
 
 import org.jetbrains.kotlin.cli.common.repl.IReplStageHistory
 import org.jetbrains.kotlin.cli.common.repl.IReplStageState
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.ScriptDescriptor
+import org.jetbrains.kotlin.ir.backend.js.utils.NameTables
+import org.jetbrains.kotlin.cli.common.repl.IReplStageHistory
+import org.jetbrains.kotlin.cli.common.repl.IReplStageState
 import org.jetbrains.kotlin.js.engine.ScriptEngineWithTypedResult
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.reflect.KClass

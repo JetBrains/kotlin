@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProvid
 
 abstract class AbstractJsScriptlikeCodeAnalyser(
     private val environment: KotlinCoreEnvironment,
-    private val dependencies: List<ModuleDescriptor>
+    private val dependencies: Collection<ModuleDescriptor>
 ) {
 
     protected class JsScriptAnalysisResult(

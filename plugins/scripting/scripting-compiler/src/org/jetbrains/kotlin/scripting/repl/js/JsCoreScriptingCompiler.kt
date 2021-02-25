@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.backend.js.generateJsCode
 import org.jetbrains.kotlin.ir.backend.js.utils.NameTables
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrScript
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.descriptors.IrFunctionFactory
 import org.jetbrains.kotlin.ir.symbols.IrScriptSymbol
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
@@ -38,7 +39,7 @@ class JsCoreScriptingCompiler(
     private val environment: KotlinCoreEnvironment,
     private val nameTables: NameTables,
     private val symbolTable: SymbolTable,
-    private val dependencyDescriptors: List<ModuleDescriptor>,
+    private val dependencyDescriptors: Collection<ModuleDescriptor>,
     private val replCompilerState: JsReplCompilerState? = null
 ) {
     fun compile(codeLine: ReplCodeLine): ReplCompileResult {
@@ -89,7 +90,7 @@ class JsCoreScriptingCompiler(
             irModuleFragment,
             emptySet(),
             environment.configuration,
-            true
+            true, irFactory = IrFactoryImpl
         )
 
         ExternalDependenciesGenerator(

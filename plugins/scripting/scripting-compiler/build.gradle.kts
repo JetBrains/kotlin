@@ -21,6 +21,7 @@ dependencies {
     compile(project(":kotlin-util-klib"))
     compile(project(":kotlin-scripting-jvm"))
     compile(project(":kotlin-scripting-compiler-impl"))
+    compile(project(":compiler:ir.compiler.wjs"))
     compile(kotlinStdlib())
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 

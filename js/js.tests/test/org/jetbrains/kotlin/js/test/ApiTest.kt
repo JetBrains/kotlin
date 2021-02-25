@@ -6,19 +6,13 @@
 package org.jetbrains.kotlin.js.test
 
 import junit.framework.TestCase
-import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.js.messageCollectorLogger
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.EnumEntrySyntheticClassDescriptor
-import org.jetbrains.kotlin.ir.backend.js.MainModule
-import org.jetbrains.kotlin.ir.backend.js.jsResolveLibraries
-import org.jetbrains.kotlin.ir.backend.js.loadIr
-import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
+import org.jetbrains.kotlin.ir.compiler.wjs.ModuleLoader
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.jvm.compiler.ExpectedLoadErrorsUtil
@@ -28,8 +22,10 @@ import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.MemberComparator
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyPublicApi
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
+import org.jetbrains.kotlin.util.DummyLogger
 import java.io.File
 
 // use -Poverwrite.output=true or -Pfd.overwrite.output=true
@@ -72,21 +68,17 @@ class ApiTest : KotlinTestWithEnvironment() {
         get() {
             val fullRuntimeKlib: String = System.getProperty("kotlin.js.full.stdlib.path")
 
-            val resolvedLibraries =
-                jsResolveLibraries(listOf(File(fullRuntimeKlib).absolutePath), emptyList(), messageCollectorLogger(MessageCollector.NONE))
-
-            val project = environment.project
             val configuration = environment.configuration
 
-            return loadIr(
-                project,
-                MainModule.Klib(resolvedLibraries.getFullList().single()),
-                AnalyzerWithCompilerReport(configuration),
+            return ModuleLoader(
+                listOf(fullRuntimeKlib),
+                ModuleLoader.jsMetadataFactories.DefaultDeserializedDescriptorFactory,
                 configuration,
-                resolvedLibraries,
-                listOf(),
-                IrFactoryImpl,
-            ).module.descriptor.packagesSerialized()
+                LockBasedStorageManager("API Test"),
+                DummyLogger
+            ).run {
+                builtInsModule!!.packagesSerialized()
+            }
         }
 
     private fun Map<FqName, String>.markUniqueLinesComparedTo(other: Map<FqName, String>): Map<FqName, String> {
