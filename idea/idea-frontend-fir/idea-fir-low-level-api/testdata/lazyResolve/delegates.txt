@@ -5,41 +5,41 @@ FILE: delegates.kt
         R|/variableWithExplicitType| = Int(10)
         R|/variableWithImplicitType| = Int(10)
     }
-    public final [STATUS] fun receive(value: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [STATUS] fun receive([STATUS] value: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
     public final [IMPLICIT_TYPES_BODY_RESOLVE] val delegate: R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>| = object : R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>| {
         private [BODY_RESOLVE] constructor(): R|<anonymous>| {
             super<R|kotlin/Any|>()
         }
 
-        public final override operator [BODY_RESOLVE] fun getValue(thisRef: R|kotlin/Any?|, property: R|kotlin/reflect/KProperty<*>|): R|kotlin/Int| {
+        public final override operator [BODY_RESOLVE] fun getValue([BODY_RESOLVE] thisRef: R|kotlin/Any?|, [BODY_RESOLVE] property: R|kotlin/reflect/KProperty<*>|): R|kotlin/Int| {
             ^getValue Int(1)
         }
 
-        public final override operator [BODY_RESOLVE] fun setValue(thisRef: R|kotlin/Any?|, property: R|kotlin/reflect/KProperty<*>|, value: R|kotlin/Int|): R|kotlin/Unit| {
+        public final override operator [BODY_RESOLVE] fun setValue([BODY_RESOLVE] thisRef: R|kotlin/Any?|, [BODY_RESOLVE] property: R|kotlin/reflect/KProperty<*>|, [BODY_RESOLVE] value: R|kotlin/Int|): R|kotlin/Unit| {
         }
 
     }
 
-        public get(): R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>|
+        [IMPLICIT_TYPES_BODY_RESOLVE] public get(): R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>|
     public final [STATUS] val valueWithExplicitType: R|kotlin/Int|by LAZY_EXPRESSION
-        public get(): <implicit> {
+        [STATUS] public get(): <implicit> {
             ^ D|/valueWithExplicitType|.getValue#(Null(null), ::R|/valueWithExplicitType|)
         }
     public final [IMPLICIT_TYPES_BODY_RESOLVE] val valueWithImplicitType: R|kotlin/Int|by R|/delegate|
-        public get(): R|kotlin/Int| {
+        [IMPLICIT_TYPES_BODY_RESOLVE] public get(): R|kotlin/Int| {
             ^ D|/valueWithImplicitType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.getValue: R|kotlin/Int|>|(Null(null), ::R|/valueWithImplicitType|)
         }
     public final [STATUS] var variableWithExplicitType: R|kotlin/Int|by LAZY_EXPRESSION
-        public get(): <implicit> {
+        [STATUS] public get(): <implicit> {
             ^ D|/variableWithExplicitType|.getValue#(Null(null), ::R|/variableWithExplicitType|)
         }
-        public set(<set-?>: <implicit>): R|kotlin/Unit| {
+        [STATUS] public set([RAW_FIR] <set-?>: <implicit>): R|kotlin/Unit| {
             D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
         }
     public final [IMPLICIT_TYPES_BODY_RESOLVE] var variableWithImplicitType: R|kotlin/Int|by R|/delegate|
-        public get(): R|kotlin/Int| {
+        [IMPLICIT_TYPES_BODY_RESOLVE] public get(): R|kotlin/Int| {
             ^ D|/variableWithImplicitType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.getValue: R|kotlin/Int|>|(Null(null), ::R|/variableWithImplicitType|)
         }
-        public set(<set-?>: R|kotlin/Int|): R|kotlin/Unit| {
+        [IMPLICIT_TYPES_BODY_RESOLVE] public set([IMPLICIT_TYPES_BODY_RESOLVE] <set-?>: R|kotlin/Int|): R|kotlin/Unit| {
             D|/variableWithImplicitType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
         }

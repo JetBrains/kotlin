@@ -511,6 +511,7 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
     }
 
     override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor) {
+        propertyAccessor.renderPhaseIfNeeded()
         propertyAccessor.annotations.renderAnnotations()
         print(propertyAccessor.visibility.asString() + " ")
         print(if (propertyAccessor.isGetter) "get" else "set")
@@ -522,6 +523,7 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
     }
 
     override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction) {
+        anonymousFunction.renderPhaseIfNeeded()
         anonymousFunction.annotations.renderAnnotations()
         val label = anonymousFunction.label
         if (label != null) {
@@ -620,6 +622,7 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
     }
 
     override fun visitValueParameter(valueParameter: FirValueParameter) {
+        valueParameter.renderPhaseIfNeeded()
         valueParameter.annotations.renderAnnotations()
         if (valueParameter.isCrossinline) {
             print("crossinline ")

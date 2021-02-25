@@ -3,7 +3,7 @@ FILE: propertyWithGetterAndSetter.kt
         R|/receive|(R|/withGetterAndSetter|)
         R|/withGetterAndSetter| = Int(123)
     }
-    public final [STATUS] fun receive(value: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [STATUS] fun receive([STATUS] value: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
     public final [STATUS] var withGetterAndSetter: R|kotlin/Int| = LAZY_EXPRESSION
-        public get(): R|kotlin/Int| { LAZY_BLOCK }
-        public set(value: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
+        [STATUS] public get(): R|kotlin/Int| { LAZY_BLOCK }
+        [STATUS] public set([RAW_FIR] value: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }

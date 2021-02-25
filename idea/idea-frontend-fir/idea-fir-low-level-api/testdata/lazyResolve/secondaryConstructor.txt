@@ -2,8 +2,8 @@ FILE: secondaryConstructor.kt
     public final [BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
         R|/receive|(R|/A.A|(Int(42)))
     }
-    public final [STATUS] fun receive(value: R|A|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [STATUS] fun receive([STATUS] value: R|A|): R|kotlin/Unit| { LAZY_BLOCK }
     public final [STATUS] class A : R|kotlin/Any| {
-        public [STATUS] constructor(x: R|kotlin/Int|): R|A| { LAZY_BLOCK }
+        public [STATUS] constructor([STATUS] x: R|kotlin/Int|): R|A| { LAZY_BLOCK }
 
     }

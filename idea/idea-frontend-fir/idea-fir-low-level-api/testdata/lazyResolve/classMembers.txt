@@ -9,9 +9,9 @@ FILE: classMembers.kt
         }
 
         public final [CONTRACTS] val x: R|kotlin/Int| = LAZY_EXPRESSION
-            public get(): R|kotlin/Int| { LAZY_BLOCK }
+            [STATUS] public get(): R|kotlin/Int| { LAZY_BLOCK }
 
-        public final [CONTRACTS] fun receive(value: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+        public final [CONTRACTS] fun receive([STATUS] value: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
         public final [CONTRACTS] fun functionWithLazyBody(): R|kotlin/String| { LAZY_BLOCK }
 

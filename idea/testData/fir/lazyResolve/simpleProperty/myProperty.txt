@@ -1,5 +1,5 @@
 FILE: myProperty.kt
     public final [IMPLICIT_TYPES_BODY_RESOLVE] val myProperty: R|kotlin/Int|
-        public get(): R|kotlin/Int| {
+        [IMPLICIT_TYPES_BODY_RESOLVE] public get(): R|kotlin/Int| {
             ^ Int(42)
         }

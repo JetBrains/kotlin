@@ -7,6 +7,6 @@ FILE: main.kt
     public final [STATUS] fun foo(): R|kotlin/Unit| {
         [RAW_FIR] lval y: <implicit> = Double(2.0)
     }
-    public final [IMPLICIT_TYPES_BODY_RESOLVE] fun bar(x: R|kotlin/Int|, y: R|kotlin/Int|): R|kotlin/Int| {
+    public final [IMPLICIT_TYPES_BODY_RESOLVE] fun bar([IMPLICIT_TYPES_BODY_RESOLVE] x: R|kotlin/Int|, [IMPLICIT_TYPES_BODY_RESOLVE] y: R|kotlin/Int|): R|kotlin/Int| {
         ^bar R|<local>/x|.R|kotlin/Int.plus|(R|<local>/y|)
     }

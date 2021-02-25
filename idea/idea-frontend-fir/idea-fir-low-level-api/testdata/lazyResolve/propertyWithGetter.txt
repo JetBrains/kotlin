@@ -2,6 +2,6 @@ FILE: propertyWithGetter.kt
     public final [BODY_RESOLVE] fun resolveMe(): R|kotlin/Unit| {
         R|/receive|(R|/withGetter|)
     }
-    public final [STATUS] fun receive(value: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [STATUS] fun receive([STATUS] value: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
     public final [STATUS] val withGetter: R|kotlin/Int|
-        public get(): R|kotlin/Int| { LAZY_BLOCK }
+        [STATUS] public get(): R|kotlin/Int| { LAZY_BLOCK }

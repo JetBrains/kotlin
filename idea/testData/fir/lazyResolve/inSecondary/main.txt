@@ -1,7 +1,7 @@
 FILE: main.kt
     public final [CONTRACTS] class Foo : R|kotlin/Any| {
         public final [CONTRACTS] val x: R|kotlin/Int|
-            public get(): R|kotlin/Int|
+            [STATUS] public get(): R|kotlin/Int|
 
         public [BODY_RESOLVE] constructor(): R|Foo| {
             super<R|kotlin/Any|>()
