@@ -45,7 +45,7 @@ open class KaptGenerateStubsTask : KotlinCompile() {
     lateinit var stubsDir: File
 
     @get:Internal
-    lateinit var generatedSourcesDir: File
+    lateinit var generatedSourcesDirs: List<File>
 
     @get:Classpath
     @get:InputFiles
@@ -83,7 +83,7 @@ open class KaptGenerateStubsTask : KotlinCompile() {
     private fun isSourceRootAllowed(source: File): Boolean =
         !destinationDir.isParentOf(source) &&
                 !stubsDir.isParentOf(source) &&
-                !generatedSourcesDir.isParentOf(source)
+                generatedSourcesDirs.none { it.isParentOf(source) }
 
     private val compileKotlinArgumentsContributor by project.provider {
         kotlinCompileTask.compilerArgumentsContributor
@@ -106,7 +106,7 @@ open class KaptGenerateStubsTask : KotlinCompile() {
     private val sourceRoots by project.provider {
         kotlinCompileTask.getSourceRoots().let {
             val javaSourceRoots = it.javaSourceRoots.filterTo(HashSet()) { isSourceRootAllowed(it) }
-            val kotlinSourceFiles = it.kotlinSourceFiles
+            val kotlinSourceFiles = it.kotlinSourceFiles.filterTo(ArrayList()) { isSourceRootAllowed(it) }
             SourceRoots.ForJvm(kotlinSourceFiles, javaSourceRoots)
         }
     }
