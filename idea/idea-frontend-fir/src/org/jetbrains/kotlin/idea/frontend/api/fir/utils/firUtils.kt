@@ -6,7 +6,7 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.utils
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.getPrimaryConstructorIfAny
+import org.jetbrains.kotlin.fir.declarations.primaryConstructor
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -22,7 +22,7 @@ internal fun mapAnnotationParameters(annotationCall: FirAnnotationCall, session:
 
     val annotationCone = annotationCall.annotationTypeRef.coneType as? ConeClassLikeType ?: return emptyMap()
 
-    val annotationPrimaryCtor = (annotationCone.lookupTag.toSymbol(session)?.fir as? FirRegularClass)?.getPrimaryConstructorIfAny()
+    val annotationPrimaryCtor = (annotationCone.lookupTag.toSymbol(session)?.fir as? FirRegularClass)?.primaryConstructor
     val annotationCtorParameterNames = annotationPrimaryCtor?.valueParameters?.map { it.name }
 
     val resultSet = mutableMapOf<String, FirExpression>()

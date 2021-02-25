@@ -454,7 +454,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         }
         val labelName =
             if (anonymousObject.classKind == ClassKind.ENUM_ENTRY) {
-                anonymousObject.getPrimaryConstructorIfAny()?.symbol?.callableId?.className?.shortName()
+                anonymousObject.primaryConstructor?.symbol?.callableId?.className?.shortName()
             } else null
         val result = withScopesForClass(labelName, anonymousObject, type) {
             transformDeclarationContent(anonymousObject, data).single as FirAnonymousObject

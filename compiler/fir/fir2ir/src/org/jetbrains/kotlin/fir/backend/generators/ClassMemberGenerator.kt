@@ -44,7 +44,7 @@ internal class ClassMemberGenerator(
     fun convertClassContent(irClass: IrClass, klass: FirClass<*>) {
         declarationStorage.enterScope(irClass)
         conversionScope.withClass(irClass) {
-            val primaryConstructor = klass.getPrimaryConstructorIfAny()
+            val primaryConstructor = klass.primaryConstructor
             val irPrimaryConstructor = primaryConstructor?.let { declarationStorage.getCachedIrConstructor(it)!! }
             if (irPrimaryConstructor != null) {
                 with(declarationStorage) {
