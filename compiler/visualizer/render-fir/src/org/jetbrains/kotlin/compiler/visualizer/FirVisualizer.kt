@@ -249,6 +249,11 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             super.visitWhenExpression(expression)
         }
 
+        override fun visitDotQualifiedExpression(expression: KtDotQualifiedExpression) {
+            expression.firstOfTypeWithLocalReplace<FirFunctionCall>(expression.selectorExpression) { this.calleeReference.name.asString() }
+            super.visitDotQualifiedExpression(expression)
+        }
+
         override fun visitCallExpression(expression: KtCallExpression) {
             expression.firstOfTypeWithLocalReplace<FirFunctionCall> { this.calleeReference.name.asString() }
             expression.children.filter { it.node.elementType != KtNodeTypes.REFERENCE_EXPRESSION }.forEach { psi ->
