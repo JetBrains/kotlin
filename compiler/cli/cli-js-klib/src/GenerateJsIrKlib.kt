@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
+import org.jetbrains.kotlin.ir.compiler.wjs.Ir2WJCompiler
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.psi.KtFile
@@ -75,8 +75,10 @@ fun buildKLib(
     commonSources: List<String>
 ) {
     val configuration = buildConfiguration(environment, moduleName)
-    generateKLib(
-        project = environment.project,
+    val compiler =
+        Ir2WJCompiler(environment.project, configuration, AnalyzerWithCompilerReport(configuration), allDependencies, emptyList())
+    compiler.options.nopack = true
+    compiler.compileKlib(
         files = sources.map { source ->
             val file = createPsiFile(source)
             if (source in commonSources) {
@@ -84,13 +86,7 @@ fun buildKLib(
             }
             file
         },
-        analyzer = AnalyzerWithCompilerReport(configuration),
-        configuration = configuration,
-        allDependencies = allDependencies,
-        friendDependencies = emptyList(),
-        irFactory = PersistentIrFactory(), // TODO: IrFactoryImpl?
-        outputKlibPath = outputPath,
-        nopack = true
+        outputKlibPath = outputPath
     )
 }
 

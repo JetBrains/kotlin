@@ -7,17 +7,13 @@
 
 package org.jetbrains.kotlin.ir.backend.js
 
-import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analyzer.AbstractAnalyzerWithCompilerReport
 import org.jetbrains.kotlin.backend.common.lower.inline.InlineFunctionFlatHashBuilder
 import org.jetbrains.kotlin.backend.common.lower.inline.InlineFunctionHashBuilder
 import org.jetbrains.kotlin.backend.common.lower.inline.InlineFunctionHashProvider
 import org.jetbrains.kotlin.backend.common.lower.inline.md5
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.ir.backend.js.lower.generateTests
 import org.jetbrains.kotlin.ir.backend.js.lower.moveBodilessDeclarationsToSeparatePlace
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
@@ -25,15 +21,12 @@ import org.jetbrains.kotlin.ir.backend.js.utils.NameTables
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.declarations.StageController
-import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
-import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.file
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.SerializedIrFile
-import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 class CompilerResult(
@@ -345,124 +338,6 @@ fun actualizationCacheLoop(
 
         val cacheConsumer = persistentCacheConsumers[library] ?: error("No cache consumer found for $library")
         buildCacheForModule(irModule, dirtySet, cleanInlineHashes, cacheConsumer)
-    }
-}
-
-
-fun compile(
-    project: Project,
-    mainModule: MainModule,
-    analyzer: AbstractAnalyzerWithCompilerReport,
-    configuration: CompilerConfiguration,
-    phaseConfig: PhaseConfig,
-    allDependencies: KotlinLibraryResolveResult,
-    friendDependencies: List<KotlinLibrary>,
-    mainArguments: List<String>?,
-    exportedDeclarations: Set<FqName> = emptySet(),
-    generateFullJs: Boolean = true,
-    generateDceJs: Boolean = false,
-    dceDriven: Boolean = false,
-    es6mode: Boolean = false,
-    multiModule: Boolean = false,
-    relativeRequirePath: Boolean = false,
-    propertyLazyInitialization: Boolean,
-): CompilerResult {
-    val irFactory = if (dceDriven) PersistentIrFactory() else IrFactoryImpl
-
-    val (moduleFragment: IrModuleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer) =
-        loadIr(project, mainModule, analyzer, configuration, allDependencies, friendDependencies, irFactory)
-
-    val moduleDescriptor = moduleFragment.descriptor
-
-    val allModules = when (mainModule) {
-        is MainModule.SourceFiles -> dependencyModules + listOf(moduleFragment)
-        is MainModule.Klib -> dependencyModules
-    }
-
-    val context = JsIrBackendContext(
-        moduleDescriptor,
-        irBuiltIns,
-        symbolTable,
-        allModules.first(),
-        exportedDeclarations,
-        configuration,
-        es6mode = es6mode,
-        propertyLazyInitialization = propertyLazyInitialization,
-        irFactory = irFactory
-    )
-
-    // Load declarations referenced during `context` initialization
-    val irProviders = listOf(deserializer)
-    ExternalDependenciesGenerator(symbolTable, irProviders).generateUnboundSymbolsAsDependencies()
-
-    deserializer.postProcess()
-    symbolTable.noUnboundLeft("Unbound symbols at the end of linker")
-
-//    val inlineGraphTracker2 = InlineGraphTracker2()
-//    moduleFragment.acceptVoid(inlineGraphTracker2)
-//    val inlineGraphTracker = InlineGraphTracker()
-//    moduleFragment.accept(inlineGraphTracker, null)
-//
-//    val sets = allModules.flatMap { m ->
-//        m.files.map { f ->
-//            inlineGraphTracker2.getInvalidationSetForDirtyFile(f.fileEntry.name)
-//        }
-//    }.filter { !it.isEmpty() }
-//
-//    val dependentSets = moduleFragment.files.map { it.fileEntry.name to inlineGraphTracker[it.fileEntry.name] }.toMap()
-//
-//    val invalidated = mutableMapOf<IrFile, InlineGraphTracker2>()
-
-//    allModules.forEach { m ->
-//        m.files.forEach { f ->
-//            val newGraph = inlineGraphTracker2.copy()
-//            if (newGraph.invalidateForFile(f.fileEntry.name)) {
-//                invalidated[f] = newGraph
-//            }
-//        }
-//    }
-//
-//    val sssets = sets.map { it.toString() }
-
-    allModules.forEach { module ->
-        moveBodilessDeclarationsToSeparatePlace(context, module)
-    }
-
-    // TODO should be done incrementally
-    generateTests(context, allModules.last())
-
-    if (dceDriven) {
-        val controller = MutableController(context, pirLowerings)
-
-        check(irFactory is PersistentIrFactory)
-        irFactory.stageController = controller
-
-        controller.currentStage = controller.lowerings.size + 1
-
-        eliminateDeadDeclarations(allModules, context)
-
-        irFactory.stageController = StageController(controller.currentStage)
-
-        val transformer = IrModuleToJsTransformer(
-            context,
-            mainArguments,
-            fullJs = true,
-            dceJs = false,
-            multiModule = multiModule,
-            relativeRequirePath = relativeRequirePath
-        )
-        return transformer.generateModule(allModules)
-    } else {
-        jsPhases.invokeToplevel(phaseConfig, context, allModules)
-        val transformer = IrModuleToJsTransformer(
-            context,
-            mainArguments,
-            fullJs = generateFullJs,
-            dceJs = generateDceJs,
-            multiModule = multiModule,
-            relativeRequirePath = relativeRequirePath
-        )
-        return transformer.generateModule(allModules)
     }
 }
 

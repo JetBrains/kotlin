@@ -13,6 +13,7 @@ dependencies {
     compileOnly(project(":compiler:plugin-api"))
     compileOnly(project(":compiler:cli"))
     compileOnly(project(":compiler:backend.js"))
+    compileOnly(project(":compiler:ir.serialization.js"))
     compileOnly(project(":core:descriptors.runtime"))
     compileOnly(project(":compiler:ir.tree.impl"))
     compileOnly(project(":kotlin-reflect-api"))
@@ -31,6 +32,7 @@ dependencies {
     testCompile(project(":compiler:cli-common"))
     testCompile(project(":compiler:frontend.java"))
     testCompile(project(":compiler:backend.js"))
+    testCompile(project(":compiler:ir.serialization.js"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(commonDep("junit:junit"))
 

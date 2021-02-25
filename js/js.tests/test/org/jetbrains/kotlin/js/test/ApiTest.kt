@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.js.test
 
 import junit.framework.TestCase
-import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.js.messageCollectorLogger
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -15,10 +14,8 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.EnumEntrySyntheticClassDescriptor
-import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.jsResolveLibraries
-import org.jetbrains.kotlin.ir.backend.js.loadIr
-import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
+import org.jetbrains.kotlin.ir.compiler.wjs.ModuleLoader
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.jvm.compiler.ExpectedLoadErrorsUtil
@@ -27,6 +24,7 @@ import org.jetbrains.kotlin.renderer.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.MemberComparator
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyPublicApi
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
 import java.io.File
@@ -74,18 +72,11 @@ class ApiTest : KotlinTestWithEnvironment() {
             val resolvedLibraries =
                 jsResolveLibraries(listOf(File(fullRuntimeKlib).absolutePath), emptyList(), messageCollectorLogger(MessageCollector.NONE))
 
-            val project = environment.project
             val configuration = environment.configuration
 
-            return loadIr(
-                project,
-                MainModule.Klib(resolvedLibraries.getFullList().single()),
-                AnalyzerWithCompilerReport(configuration),
-                configuration,
-                resolvedLibraries,
-                listOf(),
-                IrFactoryImpl,
-            ).module.descriptor.packagesSerialized()
+            return ModuleLoader(resolvedLibraries, ModuleLoader.jsMetadataFactories.DefaultDeserializedDescriptorFactory, configuration, LockBasedStorageManager("API Test")).run {
+                builtInsModule!!.packagesSerialized()
+            }
         }
 
     private fun Map<FqName, String>.markUniqueLinesComparedTo(other: Map<FqName, String>): Map<FqName, String> {

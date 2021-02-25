@@ -39,6 +39,7 @@ dependencies {
     testCompileOnly(project(":compiler:util"))
     testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     testCompileOnly(intellijDep()) { includeJars("idea", "idea_rt", "util") }
+    testCompile(project(":compiler:ir.compiler.wjs"))
     testCompile(project(":compiler:backend.js"))
     testCompile(project(":compiler:backend.wasm"))
     testCompile(project(":js:js.translator"))

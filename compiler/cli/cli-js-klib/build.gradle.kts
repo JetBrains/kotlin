@@ -5,7 +5,8 @@ plugins {
 
 dependencies {
     compile(project(":compiler:cli"))
-    compile(project(":compiler:ir.serialization.js"))
+    compile(project(":compiler:backend.js"))
+    compile(project(":compiler:ir.compiler.wjs"))
     compileOnly(project(":compiler:ir.tree.persistent"))
     runtimeOnly(project(":kotlin-reflect"))
     if (Platform[193].orLower()) {

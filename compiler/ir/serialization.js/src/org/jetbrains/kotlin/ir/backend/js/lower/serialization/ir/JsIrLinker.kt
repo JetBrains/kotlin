@@ -24,11 +24,12 @@ import org.jetbrains.kotlin.resolve.BindingContext
 
 class JsIrLinker(
     private val currentModule: ModuleDescriptor?, messageLogger: IrMessageLogger, builtIns: IrBuiltIns, symbolTable: SymbolTable,
-    override val functionalInterfaceFactory: IrAbstractFunctionFactory,
+//    override val functionalInterfaceFactory: IrAbstractFunctionFactory,
     override val translationPluginContext: TranslationPluginContext?,
     private val icData: ICData? = null
 ) : KotlinIrLinker(currentModule, messageLogger, builtIns, symbolTable, emptyList()) {
 
+    override val functionalInterfaceFactory: IrAbstractFunctionFactory = builtIns.functionFactory
     override val fakeOverrideBuilder = FakeOverrideBuilder(this, symbolTable, IdSignatureSerializer(JsManglerIr), builtIns)
 
     override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean =
