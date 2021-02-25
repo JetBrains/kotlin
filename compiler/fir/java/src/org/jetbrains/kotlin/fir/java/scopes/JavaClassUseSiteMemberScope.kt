@@ -104,29 +104,16 @@ class JavaClassUseSiteMemberScope(
     }
 
     private fun FirVariableSymbol<*>.createOverridePropertyIfExists(scope: FirScope): FirPropertySymbol? {
-        if (this !is FirPropertySymbol || !doesClassOverridesProperty(this, scope)) return null
-
-        val getterSymbol = this.findGetterOverride(scope)!!
+        if (this !is FirPropertySymbol) return null
+        val getterSymbol = this.findGetterOverride(scope) ?: return null
         val setterSymbol =
             if (this.fir.isVar)
-                this.findSetterOverride(scope)!!
+                this.findSetterOverride(scope) ?: return null
             else
                 null
+        if (setterSymbol != null && setterSymbol.fir.modality != getterSymbol.fir.modality) return null
 
         return generateAccessorSymbol(getterSymbol, setterSymbol, fir.name)
-    }
-
-    private fun doesClassOverridesProperty(
-        propertySymbolFromSupertype: FirPropertySymbol,
-        scope: FirScope,
-    ): Boolean {
-        val getter = propertySymbolFromSupertype.findGetterOverride(scope)
-        val setter = propertySymbolFromSupertype.findSetterOverride(scope)
-
-        if (getter == null) return false
-        if (!propertySymbolFromSupertype.fir.isVar) return true
-
-        return setter != null && setter.fir.modality == getter.fir.modality
     }
 
     private fun FirPropertySymbol.findGetterOverride(
