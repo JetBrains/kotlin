@@ -20792,6 +20792,34 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             }
         }
 
+        @TestMetadata("compiler/testData/codegen/box/multiplatform/exhaustiveness")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Exhaustiveness extends AbstractLightAnalysisModeTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInExhaustiveness() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/exhaustiveness"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+            }
+
+            @TestMetadata("commonEnum.kt")
+            public void testCommonEnum() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/exhaustiveness/commonEnum.kt");
+            }
+
+            @TestMetadata("commonSealedClass.kt")
+            public void testCommonSealedClass() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/exhaustiveness/commonSealedClass.kt");
+            }
+
+            @TestMetadata("commonSealedInterface.kt")
+            public void testCommonSealedInterface() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/exhaustiveness/commonSealedInterface.kt");
+            }
+        }
+
         @TestMetadata("compiler/testData/codegen/box/multiplatform/multiModule")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

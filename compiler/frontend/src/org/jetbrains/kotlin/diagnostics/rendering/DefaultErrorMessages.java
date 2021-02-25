@@ -610,6 +610,7 @@ public class DefaultErrorMessages {
         MAP.put(NO_ELSE_IN_WHEN, "''when'' expression must be exhaustive, add necessary {0}", RENDER_WHEN_MISSING_CASES);
         MAP.put(NON_EXHAUSTIVE_WHEN, "''when'' expression on enum is recommended to be exhaustive, add {0}", RENDER_WHEN_MISSING_CASES);
         MAP.put(NON_EXHAUSTIVE_WHEN_ON_SEALED_CLASS, "''when'' expression on sealed classes is recommended to be exhaustive, add {0}", RENDER_WHEN_MISSING_CASES);
+        MAP.put(EXPECT_TYPE_IN_WHEN_WITHOUT_ELSE, "'when' with expect {0} as subject can not be exhaustive without else branch", STRING);
 
         MAP.put(TYPE_MISMATCH_IN_RANGE, "Type mismatch: incompatible types of range and element checked in it");
         MAP.put(CYCLIC_INHERITANCE_HIERARCHY, "There's a cycle in the inheritance hierarchy for this type");

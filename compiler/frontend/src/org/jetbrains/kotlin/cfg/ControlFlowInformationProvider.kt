@@ -1004,6 +1004,10 @@ class ControlFlowInformationProvider private constructor(
                 if (usedAsExpression && missingCases.isNotEmpty()) {
                     if (elseEntry != null) continue
                     trace.report(NO_ELSE_IN_WHEN.on(element, missingCases))
+                    missingCases.firstOrNull { it is ConditionTypeIsExpectMissingCase }?.let {
+                        require(it is ConditionTypeIsExpectMissingCase)
+                        trace.report(EXPECT_TYPE_IN_WHEN_WITHOUT_ELSE.on(element, it.typeOfDeclaration))
+                    }
                 } else if (subjectExpression != null) {
                     val subjectType = trace.getType(subjectExpression)
                     if (elseEntry != null) {

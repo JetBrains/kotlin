@@ -16397,6 +16397,19 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
             }
         }
 
+        @TestMetadata("compiler/testData/codegen/box/multiplatform/exhaustiveness")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Exhaustiveness extends AbstractIrJsCodegenBoxES6Test {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR_ES6, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInExhaustiveness() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/exhaustiveness"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+            }
+        }
+
         @TestMetadata("compiler/testData/codegen/box/multiplatform/multiModule")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

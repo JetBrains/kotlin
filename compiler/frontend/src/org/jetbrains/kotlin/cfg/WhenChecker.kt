@@ -38,6 +38,8 @@ import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluat
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.util.*
 
 sealed class WhenMissingCase {
@@ -52,7 +54,7 @@ object UnknownMissingCase : WhenMissingCase() {
 }
 
 val List<WhenMissingCase>.hasUnknown: Boolean
-    get() = firstOrNull() == UnknownMissingCase
+    get() = any { it == UnknownMissingCase || it is ConditionTypeIsExpectMissingCase }
 
 private interface WhenExhaustivenessChecker {
     fun getMissingCases(
@@ -90,6 +92,30 @@ private object WhenOnNullableExhaustivenessChecker /* : WhenExhaustivenessChecke
             }
         }
         return listOf(NullMissingCase)
+    }
+}
+
+sealed class ConditionTypeIsExpectMissingCase(val typeOfDeclaration: String) : WhenMissingCase() {
+    object SealedClass : ConditionTypeIsExpectMissingCase("sealed class")
+    object SealedInterface : ConditionTypeIsExpectMissingCase("sealed interface")
+    object Enum : ConditionTypeIsExpectMissingCase("enum")
+
+    override val branchConditionText: String = "else"
+
+    override fun toString(): String = "unknown"
+}
+
+// It's not a regular exhaustiveness checker, invoke it only inside other checkers
+private object WhenOnExpectExhaustivenessChecker {
+    fun getMissingCase(subjectDescriptor: ClassDescriptor?): WhenMissingCase? {
+        return runIf(subjectDescriptor?.isExpect == true) {
+            when (subjectDescriptor!!.kind) {
+                ClassKind.CLASS -> ConditionTypeIsExpectMissingCase.SealedClass
+                ClassKind.INTERFACE -> ConditionTypeIsExpectMissingCase.SealedInterface
+                ClassKind.ENUM_CLASS -> ConditionTypeIsExpectMissingCase.Enum
+                else -> UnknownMissingCase
+            }
+        }
     }
 }
 
@@ -224,6 +250,7 @@ internal abstract class WhenOnClassExhaustivenessChecker : WhenExhaustivenessChe
 }
 
 private object WhenOnEnumExhaustivenessChecker : WhenOnClassExhaustivenessChecker() {
+    @OptIn(ExperimentalStdlibApi::class)
     override fun getMissingCases(
         expression: KtWhenExpression,
         context: BindingContext,
@@ -231,8 +258,11 @@ private object WhenOnEnumExhaustivenessChecker : WhenOnClassExhaustivenessChecke
         nullable: Boolean
     ): List<WhenMissingCase> {
         assert(isEnumClass(subjectDescriptor)) { "isWhenOnEnumExhaustive should be called with an enum class descriptor" }
-        return getMissingClassCases(expression, subjectDescriptor!!.enumEntries, context) +
-                WhenOnNullableExhaustivenessChecker.getMissingCases(expression, context, nullable)
+        return buildList {
+            addAll(getMissingClassCases(expression, subjectDescriptor!!.enumEntries, context))
+            addAll(WhenOnNullableExhaustivenessChecker.getMissingCases(expression, context, nullable))
+            addIfNotNull(WhenOnExpectExhaustivenessChecker.getMissingCase(subjectDescriptor))
+        }
     }
 
     override fun isApplicable(subjectType: KotlinType): Boolean {
@@ -241,7 +271,7 @@ private object WhenOnEnumExhaustivenessChecker : WhenOnClassExhaustivenessChecke
 }
 
 internal object WhenOnSealedExhaustivenessChecker : WhenOnClassExhaustivenessChecker() {
-
+    @OptIn(ExperimentalStdlibApi::class)
     override fun getMissingCases(
         expression: KtWhenExpression,
         context: BindingContext,
@@ -253,8 +283,11 @@ internal object WhenOnSealedExhaustivenessChecker : WhenOnClassExhaustivenessChe
         }
 
         val allSubclasses = subjectDescriptor!!.deepSealedSubclasses
-        return getMissingClassCases(expression, allSubclasses.toSet(), context) +
-                WhenOnNullableExhaustivenessChecker.getMissingCases(expression, context, nullable)
+        return buildList {
+            addAll(getMissingClassCases(expression, allSubclasses.toSet(), context))
+            addAll(WhenOnNullableExhaustivenessChecker.getMissingCases(expression, context, nullable))
+            addIfNotNull(WhenOnExpectExhaustivenessChecker.getMissingCase(subjectDescriptor))
+        }
     }
 
     override fun isApplicable(subjectType: KotlinType): Boolean {

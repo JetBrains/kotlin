@@ -24493,6 +24493,34 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Nested
+        @TestMetadata("compiler/testData/codegen/box/multiplatform/exhaustiveness")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Exhaustiveness {
+            @Test
+            public void testAllFilesPresentInExhaustiveness() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/exhaustiveness"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+            }
+
+            @Test
+            @TestMetadata("commonEnum.kt")
+            public void testCommonEnum() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/exhaustiveness/commonEnum.kt");
+            }
+
+            @Test
+            @TestMetadata("commonSealedClass.kt")
+            public void testCommonSealedClass() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/exhaustiveness/commonSealedClass.kt");
+            }
+
+            @Test
+            @TestMetadata("commonSealedInterface.kt")
+            public void testCommonSealedInterface() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/exhaustiveness/commonSealedInterface.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/codegen/box/multiplatform/multiModule")
         @TestDataPath("$PROJECT_ROOT")
         public class MultiModule {
