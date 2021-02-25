@@ -91,7 +91,7 @@ class JvmSerializerExtension @JvmOverloads constructor(
         }
         //TODO: support local delegated properties in new defaults scheme
         val containerAsmType =
-            if (isInterface(descriptor)) typeMapper.mapDefaultImpls(descriptor) else typeMapper.mapClass(descriptor)
+            if (isInterface(descriptor) && !jvmDefaultMode.forAllMethodsWithBody) typeMapper.mapDefaultImpls(descriptor) else typeMapper.mapClass(descriptor)
         writeLocalProperties(proto, containerAsmType, JvmProtoBuf.classLocalVariable)
         writeVersionRequirementForJvmDefaultIfNeeded(descriptor, proto, versionRequirementTable)
 

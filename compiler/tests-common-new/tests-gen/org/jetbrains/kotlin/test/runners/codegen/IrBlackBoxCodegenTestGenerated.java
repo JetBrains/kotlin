@@ -21997,6 +21997,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 }
 
                 @Test
+                @TestMetadata("localDelegatedProperties.kt")
+                public void testLocalDelegatedProperties() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/localDelegatedProperties.kt");
+                }
+
+                @Test
                 @TestMetadata("privateFunInInterface.kt")
                 public void testPrivateFunInInterface() throws Exception {
                     runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/privateFunInInterface.kt");
@@ -22328,6 +22334,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 @TestMetadata("kt42674.kt")
                 public void testKt42674() throws Exception {
                     runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/kt42674.kt");
+                }
+
+                @Test
+                @TestMetadata("localDelegatedProperties.kt")
+                public void testLocalDelegatedProperties() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/localDelegatedProperties.kt");
+                }
+
+                @Test
+                @TestMetadata("localDelegatedProperties2.kt")
+                public void testLocalDelegatedProperties2() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/localDelegatedProperties2.kt");
                 }
 
                 @Test

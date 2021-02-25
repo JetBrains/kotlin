@@ -7522,11 +7522,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/coroutines/featureIntersection/funInterface.kt");
             }
 
-            @TestMetadata("jvmDefault.kt")
-            public void ignoreJvmDefault() throws Exception {
-                runTest("compiler/testData/codegen/box/coroutines/featureIntersection/jvmDefault.kt");
-            }
-
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
             }
@@ -7568,6 +7563,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestMetadata("interfaceMethodWithBodyGeneric.kt")
             public void testInterfaceMethodWithBodyGeneric() throws Exception {
                 runTest("compiler/testData/codegen/box/coroutines/featureIntersection/interfaceMethodWithBodyGeneric.kt");
+            }
+
+            @TestMetadata("jvmDefault.kt")
+            public void testJvmDefault() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/featureIntersection/jvmDefault.kt");
             }
 
             @TestMetadata("overrideInInlineClass.kt")
@@ -18378,6 +18378,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
             public static class AllCompatibility extends AbstractLightAnalysisModeTest {
+                @TestMetadata("privateSuspend.kt")
+                public void ignorePrivateSuspend() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/privateSuspend.kt");
+                }
+
                 @TestMetadata("suspendFunction.kt")
                 public void ignoreSuspendFunction() throws Exception {
                     runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/suspendFunction.kt");
@@ -18516,14 +18521,14 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                     runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/kt42674.kt");
                 }
 
+                @TestMetadata("localDelegatedProperties.kt")
+                public void testLocalDelegatedProperties() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/localDelegatedProperties.kt");
+                }
+
                 @TestMetadata("privateFunInInterface.kt")
                 public void testPrivateFunInInterface() throws Exception {
                     runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/privateFunInInterface.kt");
-                }
-
-                @TestMetadata("privateSuspend.kt")
-                public void testPrivateSuspend() throws Exception {
-                    runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/privateSuspend.kt");
                 }
 
                 @TestMetadata("propertyAnnotation.kt")
@@ -18806,6 +18811,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 @TestMetadata("kt42674.kt")
                 public void testKt42674() throws Exception {
                     runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/kt42674.kt");
+                }
+
+                @TestMetadata("localDelegatedProperties.kt")
+                public void testLocalDelegatedProperties() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/localDelegatedProperties.kt");
+                }
+
+                @TestMetadata("localDelegatedProperties2.kt")
+                public void testLocalDelegatedProperties2() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/localDelegatedProperties2.kt");
                 }
 
                 @TestMetadata("privateFunInInterface.kt")
