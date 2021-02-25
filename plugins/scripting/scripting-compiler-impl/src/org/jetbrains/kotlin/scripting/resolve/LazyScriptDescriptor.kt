@@ -148,11 +148,11 @@ class LazyScriptDescriptor(
     override fun <R, D> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R =
         visitor.visitScriptDescriptor(this, data)
 
-    override fun createMemberScope(
+    override fun createScopesHolderForClass(
         c: LazyClassContext,
         declarationProvider: ClassMemberDeclarationProvider
     ): ScopesHolderForClass<LazyClassMemberScope> =
-        ScopesHolderForClass.create(this, c.storageManager, c.kotlinTypeChecker.kotlinTypeRefiner) {
+        ScopesHolderForClass.create(this, c.storageManager, c.kotlinTypeCheckerOfOwnerModule.kotlinTypeRefiner) {
             LazyScriptClassMemberScope(
                 // Must be a ResolveSession for scripts
                 c as ResolveSession,

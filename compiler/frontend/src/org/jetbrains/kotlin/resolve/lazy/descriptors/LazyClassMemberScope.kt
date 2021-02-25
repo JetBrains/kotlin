@@ -53,7 +53,7 @@ open class LazyClassMemberScope(
     declarationProvider: ClassMemberDeclarationProvider,
     thisClass: ClassDescriptorWithResolutionScopes,
     trace: BindingTrace,
-    private val kotlinTypeRefiner: KotlinTypeRefiner = c.kotlinTypeChecker.kotlinTypeRefiner,
+    private val kotlinTypeRefiner: KotlinTypeRefiner = c.kotlinTypeCheckerOfOwnerModule.kotlinTypeRefiner,
     scopeForDeclaredMembers: LazyClassMemberScope? = null
 ) : AbstractLazyMemberScope<ClassDescriptorWithResolutionScopes, ClassMemberDeclarationProvider>(
     c, declarationProvider, thisClass, trace, scopeForDeclaredMembers
