@@ -721,9 +721,16 @@ class CoroutineCodegenForNamedFunction private constructor(
                     }
 
                     val isInterfaceMethod = DescriptorUtils.isInterface(suspendFunctionJvmView.containingDeclaration)
+                    val callableAccessorMethod =
+                        typeMapper.mapToCallableMethod(
+                            context.accessibleDescriptor(suspendFunctionJvmView.unwrapFrontendVersion(), null),
+                            // Obtain default impls method for interfaces
+                            isInterfaceMethod
+                        )
+
                     val callableMethod =
                         typeMapper.mapToCallableMethod(
-                            suspendFunctionJvmView,
+                            suspendFunctionJvmView.unwrapFrontendVersion(),
                             // Obtain default impls method for interfaces
                             isInterfaceMethod
                         )
@@ -736,10 +743,10 @@ class CoroutineCodegenForNamedFunction private constructor(
 
                     if (suspendFunctionJvmView.isOverridable && !isInterfaceMethod && captureThisType != null) {
                         val owner = captureThisType.internalName
-                        val impl = callableMethod.getAsmMethod().getImplForOpenMethod(owner)
+                        val impl = callableAccessorMethod.getAsmMethod().getImplForOpenMethod(owner)
                         codegen.v.invokestatic(owner, impl.name, impl.descriptor, false)
                     } else {
-                        callableMethod.genInvokeInstruction(codegen.v)
+                        callableAccessorMethod.genInvokeInstruction(codegen.v)
                     }
 
                     if (inlineClassToBoxInInvokeSuspend != null) {

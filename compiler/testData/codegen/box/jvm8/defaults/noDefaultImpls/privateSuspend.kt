@@ -3,7 +3,6 @@
 // JVM_TARGET: 1.8
 // WITH_COROUTINES
 // WITH_RUNTIME
-// IGNORE_BACKEND: JVM
 import helpers.*
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*

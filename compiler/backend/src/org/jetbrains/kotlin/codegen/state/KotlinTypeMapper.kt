@@ -493,9 +493,8 @@ class KotlinTypeMapper @JvmOverloads constructor(
                         boxInlineClassBeforeInvoke = true
                     }
                     else -> {
-                        val isPrivateFunInvocation =
-                            DescriptorVisibilities.isPrivate(functionDescriptor.visibility) && !functionDescriptor.isSuspend
-                        invokeOpcode = if (superCall || isPrivateFunInvocation) INVOKESPECIAL else INVOKEVIRTUAL
+                        invokeOpcode =
+                            if (superCall || DescriptorVisibilities.isPrivate(functionDescriptor.visibility)) INVOKESPECIAL else INVOKEVIRTUAL
                         isInterfaceMember = false
                     }
                 }
