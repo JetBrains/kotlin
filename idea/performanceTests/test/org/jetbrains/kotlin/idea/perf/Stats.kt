@@ -95,7 +95,8 @@ class Stats(
         setUp: (TestData<SV, TV>) -> Unit = { },
         test: (TestData<SV, TV>) -> Unit,
         tearDown: (TestData<SV, TV>) -> Unit = { },
-        checkStability: Boolean = true
+        checkStability: Boolean = true,
+        stopAtException: Boolean = false,
     ) {
         val warmPhaseData = PhaseData(
             iterations = warmUpIterations,
@@ -114,8 +115,8 @@ class Stats(
         val block = {
             val metricChildren = mutableListOf<Metric>()
             try {
-                warmUpPhase(warmPhaseData, metricChildren)
-                val statInfoArray = mainPhase(mainPhaseData, metricChildren)
+                warmUpPhase(warmPhaseData, metricChildren, stopAtException)
+                val statInfoArray = mainPhase(mainPhaseData, metricChildren, stopAtException)
 
                 assertEquals(iterations, statInfoArray.size)
                 if (testName != WARM_UP) {
@@ -150,6 +151,9 @@ class Stats(
                 }
             } catch (e: Throwable) {
                 processTimings(testName, emptyArray(), metricChildren)
+                if (stopAtException) {
+                    throw e
+                }
             }
         }
 
@@ -225,8 +229,12 @@ class Stats(
         }
     }
 
-    private fun <SV, TV> warmUpPhase(phaseData: PhaseData<SV, TV>, metricChildren: MutableList<Metric>) {
-        val warmUpStatInfosArray = phase(phaseData, WARM_UP, true)
+    private fun <SV, TV> warmUpPhase(
+        phaseData: PhaseData<SV, TV>,
+        metricChildren: MutableList<Metric>,
+        stopAtException: Boolean,
+    ) {
+        val warmUpStatInfosArray = phase(phaseData, WARM_UP, true, stopAtException)
 
         if (phaseData.testName != WARM_UP) {
             printWarmUpTimings(phaseData.testName, warmUpStatInfosArray, metricChildren)
@@ -243,8 +251,12 @@ class Stats(
         warmUpStatInfosArray.filterNotNull().map { it[ERROR_KEY] as? Throwable }.firstOrNull()?.let { throw it }
     }
 
-    private fun <SV, TV> mainPhase(phaseData: PhaseData<SV, TV>, metricChildren: MutableList<Metric>): Array<StatInfos> {
-        val statInfosArray = phase(phaseData, "")
+    private fun <SV, TV> mainPhase(
+        phaseData: PhaseData<SV, TV>,
+        metricChildren: MutableList<Metric>,
+        stopAtException: Boolean,
+    ): Array<StatInfos> {
+        val statInfosArray = phase(phaseData, "", stopAtException = stopAtException)
         statInfosArray.filterNotNull().map { it[ERROR_KEY] as? Throwable }.firstOrNull()?.let {
             convertStatInfoIntoMetrics(
                 phaseData.testName,
@@ -257,7 +269,12 @@ class Stats(
         return statInfosArray
     }
 
-    private fun <SV, TV> phase(phaseData: PhaseData<SV, TV>, phaseName: String, warmup: Boolean = false): Array<StatInfos> {
+    private fun <SV, TV> phase(
+        phaseData: PhaseData<SV, TV>,
+        phaseName: String,
+        warmup: Boolean = false,
+        stopAtException: Boolean,
+    ): Array<StatInfos> {
         val statInfosArray = Array<StatInfos>(phaseData.iterations) { null }
         val testData = TestData<SV, TV>(null, null)
 
@@ -311,6 +328,9 @@ class Stats(
         } catch (t: Throwable) {
             logMessage(t) { "error at ${phaseData.testName}" }
             TeamCity.testFailed(name, error = t)
+            if (stopAtException) {
+                throw t
+            }
         }
         return statInfosArray
     }

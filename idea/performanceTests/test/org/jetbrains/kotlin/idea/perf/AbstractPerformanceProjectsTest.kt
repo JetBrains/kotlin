@@ -243,7 +243,8 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
         lookupElements: List<String>,
         typeAfterMarker: Boolean = true,
         revertChangesAtTheEnd: Boolean = true,
-        note: String = ""
+        note: String = "",
+        stopAtException: Boolean = false,
     ) = perfTypeAndAutocomplete(
         project = project(),
         stats = stats,
@@ -255,7 +256,8 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
         lookupElements = lookupElements,
         typeAfterMarker = typeAfterMarker,
         revertChangesAtTheEnd = revertChangesAtTheEnd,
-        note = note
+        note = note,
+        stopAtException = stopAtException,
     )
 
     fun perfTypeAndAutocomplete(
@@ -269,7 +271,8 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
         lookupElements: List<String>,
         typeAfterMarker: Boolean = true,
         revertChangesAtTheEnd: Boolean = true,
-        note: String = ""
+        note: String = "",
+        stopAtException: Boolean = false,
     ) {
         assertTrue("lookupElements has to be not empty", lookupElements.isNotEmpty())
         perfTypeAndDo(
@@ -297,7 +300,8 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
                     assertTrue("'$lookupElement' has to be present in items $items", items.contains(lookupElement))
                 }
             },
-            revertChangesAtTheEnd = revertChangesAtTheEnd
+            revertChangesAtTheEnd = revertChangesAtTheEnd,
+            stopAtException = stopAtException,
         )
     }
 
@@ -353,7 +357,8 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
         setupAfterTypingBlock: (Fixture) -> Unit,
         testBlock: (Fixture) -> V,
         tearDownCheck: (Fixture, V?) -> Unit,
-        revertChangesAtTheEnd: Boolean
+        revertChangesAtTheEnd: Boolean,
+        stopAtException: Boolean = false,
     ) {
         openFixture(project, fileName).use { fixture ->
             val editor = fixture.editor
@@ -403,6 +408,7 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
                         commitAllDocuments()
                     }
                 }
+                stopAtException(stopAtException)
             }
         }
     }
@@ -583,8 +589,8 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
         note: String = ""
     ): List<HighlightInfo> = perfHighlightFile(project(), name, stats, tools = tools, note = note)
 
-    protected fun perfHighlightFileEmptyProfile(name: String, stats: Stats): List<HighlightInfo> =
-        perfHighlightFile(project(), name, stats, tools = emptyArray(), note = "empty profile")
+    protected fun perfHighlightFileEmptyProfile(name: String, stats: Stats, stopAtException: Boolean = false): List<HighlightInfo> =
+        perfHighlightFile(project(), name, stats, tools = emptyArray(), note = "empty profile", stopAtException = stopAtException)
 
     protected fun perfHighlightFile(
         project: Project,
@@ -595,6 +601,7 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
         warmUpIterations: Int = 3,
         iterations: Int = 10,
         checkStability: Boolean = true,
+        stopAtException: Boolean = false,
         filenameSimplifier: (String) -> String = ::simpleFilename
     ): List<HighlightInfo> {
         val profileManager = ProjectInspectionProfileManager.getInstance(project)
@@ -629,6 +636,7 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
                         PsiManager.getInstance(project).dropPsiCaches()
                     }
                     profilerConfig.enabled = true
+                    stopAtException(stopAtException)
                 }
                 highlightInfos
             }
