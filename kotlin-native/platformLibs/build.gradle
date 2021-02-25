@@ -2,29 +2,20 @@ import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanCacheTask
 import org.jetbrains.kotlin.KlibInstall
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.util.*
+import org.jetbrains.kotlin.UtilsKt
 
 import static org.jetbrains.kotlin.konan.util.VisibleNamedKt.getVisibleName
 
 buildscript {
     repositories {
+        if (UtilsKt.getCacheRedirectorEnabled(project))
+            maven { url 'https://cache-redirector.jetbrains.com/maven-central'}
+        else
+            mavenCentral()
         maven {
-            url 'https://cache-redirector.jetbrains.com/maven-central'
+            url project.bootstrapKotlinRepo
         }
-        mavenCentral()
-        maven {
-            url buildKotlinCompilerRepo
-        }
-        maven {
-            url kotlinCompilerRepo
-        }
-        maven {
-            url "https://kotlin.bintray.com/kotlinx"
-        }
-    }
-
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:$gradlePluginVersion"
-        classpath "org.jetbrains.kotlin:kotlin-native-build-tools:$konanVersion"
+        maven { url UtilsKt.redirectIfEnabled(project, "https://kotlin.bintray.com/kotlinx") }
     }
 }
 // These properties are used by the 'konan' plugin, thus we set them before applying it.
@@ -54,7 +45,7 @@ private String defFileToLibName(String target, String name) {
 
 // TODO: I think most for the non-DSL language below can either be incorporated into DSL
 // or moved out of .gradle file.
-project.rootProject.ext.platformManager.enabled.each { target ->
+rootProject.project("kotlin-native").ext.platformManager.enabled.each { target ->
 
     def targetName = target.visibleName
 
@@ -67,7 +58,7 @@ project.rootProject.ext.platformManager.enabled.each { target ->
             it.originalKlib = file("$konanHome/klib/common/stdlib")
             it.cacheRoot = file("$konanHome/klib/cache")
 
-            it.dependsOn ":${targetName}CrossDistRuntime"
+            it.dependsOn ":kotlin-native:${targetName}CrossDistRuntime"
         }
     }
 
@@ -94,7 +85,7 @@ project.rootProject.ext.platformManager.enabled.each { target ->
         def libTask = konanArtifacts."$libName"."$targetName"
         libTask.configure {
             it.dependsOn df.config.depends.collect { defFileToLibName(targetName, it) }
-            it.dependsOn ":${targetName}CrossDist"
+            it.dependsOn ":kotlin-native:${targetName}CrossDist"
             it.enableParallel = true
         }
 
@@ -112,7 +103,7 @@ project.rootProject.ext.platformManager.enabled.each { target ->
                 it.originalKlib = tasks[libName].installDir.get()
                 it.cacheRoot = file("$konanHome/klib/cache")
 
-                it.dependsOn ":${targetName}StdlibCache"
+                it.dependsOn ":kotlin-native:${targetName}StdlibCache"
                 it.dependsOn tasks[libName]
                 it.dependsOn df.config.depends.collect {
                     def depName = defFileToLibName(targetName, it)

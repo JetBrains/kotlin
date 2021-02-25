@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.konan.target.*
 
 open class CompileNativeTest @Inject constructor(
         @InputFile val inputFile: File,
-        @Input val target: KonanTarget,
+        @Input val target: KonanTarget
 ) : DefaultTask() {
     @OutputFile
     var outputFile = project.buildDir.resolve("bin/test/${target.name}/${inputFile.nameWithoutExtension}.o")
@@ -42,13 +42,13 @@ open class CompileNativeTest @Inject constructor(
         val args = clangArgs + sanitizerFlags + listOf(inputFile.absolutePath, "-o", outputFile.absolutePath)
         if (target.family.isAppleFamily) {
             plugin.execToolchainClang(target) {
-                it.executable = "clang++"
-                it.args = args
+                executable = "clang++"
+                this.args = args
             }
         } else {
             plugin.execBareClang {
-                it.executable = "clang++"
-                it.args = args
+                executable = "clang++"
+                this.args = args
             }
         }
     }
@@ -82,13 +82,13 @@ open class LlvmLinkNativeTest @Inject constructor(
         // except the one containing the entry point to a single *.bc without internalization. The second
         // run internalizes this big module and links it with a module containing the entry point.
         project.exec {
-            it.executable = "$llvmDir/bin/llvm-link"
-            it.args = listOf("-o", tmpOutput.absolutePath) + inputFiles.map { it.absolutePath }
+            executable = "$llvmDir/bin/llvm-link"
+            args = listOf("-o", tmpOutput.absolutePath) + inputFiles.map { it.absolutePath }
         }
 
         project.exec {
-            it.executable = "$llvmDir/bin/llvm-link"
-            it.args = listOf(
+            executable = "$llvmDir/bin/llvm-link"
+            args = listOf(
                     "-o", outputFile.absolutePath,
                     mainFile.absolutePath,
                     tmpOutput.absolutePath,
@@ -104,7 +104,7 @@ open class LinkNativeTest @Inject constructor(
         @Internal val target: String,
         @Internal val linkerArgs: List<String>,
         private val  platformManager: PlatformManager,
-        private val mimallocEnabled: Boolean,
+        private val mimallocEnabled: Boolean
 ) : DefaultTask () {
     companion object {
         fun create(
@@ -115,7 +115,7 @@ open class LinkNativeTest @Inject constructor(
                 target: String,
                 outputFile: File,
                 linkerArgs: List<String>,
-                mimallocEnabled: Boolean,
+                mimallocEnabled: Boolean
         ): LinkNativeTest = project.tasks.create(
                 taskName,
                 LinkNativeTest::class.java,
@@ -165,7 +165,7 @@ open class LinkNativeTest @Inject constructor(
                     outputDsymBundle = "",
                     needsProfileLibrary = false,
                     mimallocEnabled = mimallocEnabled,
-                    sanitizer = sanitizer,
+                    sanitizer = sanitizer
             ).map { it.argsWithExecutable }
         }
 
@@ -173,7 +173,7 @@ open class LinkNativeTest @Inject constructor(
     fun link() {
         for (command in commands) {
             project.exec {
-                it.commandLine(command)
+                commandLine(command)
             }
         }
     }
@@ -184,9 +184,9 @@ private fun createTestTask(
         testName: String,
         testedTaskNames: List<String>,
         sanitizer: SanitizerKind?,
-        configureCompileToBitcode: CompileToBitcode.() -> Unit = {},
+        configureCompileToBitcode: CompileToBitcode.() -> Unit = {}
 ): Task {
-    val platformManager = project.rootProject.findProperty("platformManager") as PlatformManager
+    val platformManager = project.project(":kotlin-native").findProperty("platformManager") as PlatformManager
     val googleTestExtension = project.extensions.getByName(RuntimeTestingPlugin.GOOGLE_TEST_EXTENSION_NAME) as GoogleTestExtension
     val testedTasks = testedTaskNames.map {
         project.tasks.getByName(it) as CompileToBitcode
@@ -243,7 +243,7 @@ private fun createTestTask(
             "${testName}Compile",
             CompileNativeTest::class.java,
             llvmLinkTask.outputFile,
-            konanTarget,
+            konanTarget
     ).apply {
         this.sanitizer = sanitizer
         dependsOn(llvmLinkTask)
@@ -259,7 +259,7 @@ private fun createTestTask(
             listOf(compileTask.outputFile),
             target,
             testName,
-            mimallocEnabled,
+            mimallocEnabled
     ).apply {
         this.sanitizer = sanitizer
         dependsOn(compileTask)
@@ -302,9 +302,9 @@ fun createTestTasks(
         targetName: String,
         testTaskName: String,
         testedTaskNames: List<String>,
-        configureCompileToBitcode: CompileToBitcode.() -> Unit = {},
+        configureCompileToBitcode: CompileToBitcode.() -> Unit = {}
 ): List<Task> {
-    val platformManager = project.rootProject.findProperty("platformManager") as PlatformManager
+    val platformManager = project.rootProject.project(":kotlin-native").findProperty("platformManager") as PlatformManager
     val target = platformManager.targetByName(targetName)
     val sanitizers: List<SanitizerKind?> = target.supportedSanitizers() + listOf(null)
     return sanitizers.map { sanitizer ->

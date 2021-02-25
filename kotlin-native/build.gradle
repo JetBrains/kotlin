@@ -33,19 +33,20 @@ buildscript {
     apply from: "gradle/kotlinGradlePlugin.gradle"
 
     repositories {
-        maven { url kotlinCompilerRepo }
-        maven { url "https://kotlin.bintray.com/kotlinx" }
-        maven { url "https://cache-redirector.jetbrains.com/maven-central" }
-        mavenCentral()
-        maven { url "https://dl.bintray.com/kotlin/kotlin-dev" }
-        maven { url "https://cache-redirector.jetbrains.com/jcenter" }
-        jcenter()
+        if (UtilsKt.getCacheRedirectorEnabled(project)) {
+            maven { url "https://cache-redirector.jetbrains.com/dl.kotlin.bintray.com/kotlinx" }
+            maven { url "https://cache-redirector.jetbrains.com/maven-central" }
+            maven { url "https://cache-redirector.jetbrains.com/jcenter" }
+        }
+        else {
+            maven { url "https://kotlin.bintray.com/kotlinx" }
+            mavenCentral()
+            jcenter()
+        }
     }
 
     dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-native-utils:$kotlinVersion"
-        classpath "org.jetbrains.kotlin:kotlin-native-shared:$konanVersion"
-        classpath "org.jetbrains.kotlin:kotlin-native-build-tools:$konanVersion"
+        //classpath project(":kotlin-native-utils")
         classpath 'com.github.jengelman.gradle.plugins:shadow:5.1.0'
     }
 }
@@ -53,10 +54,10 @@ import org.jetbrains.kotlin.konan.*
 
 // Allows generating wrappers for the root build and all the samples during execution of the default 'wrapper' task.
 // Run './gradlew wrapper --gradle-version <version>' to update all the wrappers.
-apply plugin: org.jetbrains.kotlin.GradleWrappers
-
-wrappers.projects = ['samples', 'samples/calculator', 'samples/androidNativeActivity', 'samples/cocoapods/kotlin-library']
-wrapper.distributionType = Wrapper.DistributionType.ALL
+//apply plugin: org.jetbrains.kotlin.GradleWrappers
+//
+//wrappers.projects = ['samples', 'samples/calculator', 'samples/androidNativeActivity', 'samples/cocoapods/kotlin-library']
+//wrapper.distributionType = Wrapper.DistributionType.ALL
 
 // FIXME: Remove until IDEA-231214 is fixed.
 //defaultTasks 'clean', 'dist'
@@ -68,7 +69,7 @@ if (isMac()) {
 }
 
 ext {
-    distDir = file('dist')
+    distDir = UtilsKt.getKotlinNativeDist(project)
     dependenciesDir = DependencyProcessor.defaultDependenciesRoot
     experimentalEnabled = project.hasProperty("org.jetbrains.kotlin.native.experimentalTargets")
     platformManager = new PlatformManager(DistributionKt.buildDistribution(projectDir.absolutePath),
@@ -85,46 +86,39 @@ ext {
             KonanTarget.LINUX_MIPSEL32.INSTANCE
     ]
 
-    kotlinCompilerModule="org.jetbrains.kotlin:kotlin-compiler:${kotlinVersion}"
-    kotlinStdLibModule="org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}"
-    kotlinCommonStdlibModule="org.jetbrains.kotlin:kotlin-stdlib-common:${kotlinStdlibVersion}:sources"
-    kotlinTestCommonModule="org.jetbrains.kotlin:kotlin-test-common:${kotlinStdlibVersion}:sources"
-    kotlinTestAnnotationsCommonModule="org.jetbrains.kotlin:kotlin-test-annotations-common:${kotlinStdlibVersion}:sources"
-    kotlinReflectModule="org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}"
-    kotlinScriptRuntimeModule="org.jetbrains.kotlin:kotlin-script-runtime:${kotlinVersion}"
-    kotlinUtilKliMetadatabModule="org.jetbrains.kotlin:kotlin-util-klib-metadata:${kotlinVersion}"
+    kotlinCompilerModule= [path: ":kotlin-compiler", configuration: "runtimeElements"]
+    kotlinStdLibModule= project(":kotlin-stdlib")
+    kotlinCommonStdlibModule= project(":kotlin-stdlib-common")
+    kotlinTestCommonModule= project(":kotlin-test:kotlin-test-common")
+    kotlinTestAnnotationsCommonModule= project(":kotlin-test:kotlin-test-annotations-common")
+    kotlinReflectModule= project(":kotlin-reflect")
+    kotlinScriptRuntimeModule= project(":kotlin-script-runtime")
+    kotlinUtilKliMetadatabModule= project(":kotlin-util-klib-metadata")
 
-    konanVersionFull = CompilerVersionGeneratedKt.getCurrentCompilerVersion()
+    konanVersionFull = ext.kotlinNativeVersion
     gradlePluginVersion = konanVersionFull
 }
 
 allprojects {
     buildscript {
         repositories {
-            maven {
-                url 'https://cache-redirector.jetbrains.com/jcenter'
-            }
-            jcenter()
-            maven { url "https://dl.bintray.com/kotlin/kotlin-dev" }
+            if (UtilsKt.getCacheRedirectorEnabled(project))
+                maven { url 'https://cache-redirector.jetbrains.com/jcenter' }
+            else
+                jcenter()
         }
     }
-    if (path != ":dependencies") {
-        evaluationDependsOn(":dependencies")
+    if (path != ":kotlin-native:dependencies") {
+        evaluationDependsOn(":kotlin-native:dependencies")
     }
 
     repositories {
+        if (UtilsKt.getCacheRedirectorEnabled(project))
+            maven { url 'https://cache-redirector.jetbrains.com/maven-central' }
+        else
+            mavenCentral()
         maven {
-            url 'https://cache-redirector.jetbrains.com/maven-central'
-        }
-        mavenCentral()
-        maven {
-            url kotlinStdlibRepo
-        }
-        maven {
-            url kotlinCompilerRepo
-        }
-        maven {
-            url "https://dl.bintray.com/kotlin/kotlin-dev"
+            url project.bootstrapKotlinRepo
         }
     }
 
@@ -151,7 +145,7 @@ void setupHostAndTarget() {
 
 void setupClang(Project project) {
 
-    project.convention.plugins.platformManager = project.rootProject.ext.platformManager
+    project.convention.plugins.platformManager = project.project(":kotlin-native").ext.platformManager
     project.convention.plugins.execClang = new org.jetbrains.kotlin.ExecClang(project)
 
     project.plugins.withType(NativeComponentPlugin) {
@@ -223,28 +217,28 @@ dependencies {
     [kotlinCommonStdlibModule, kotlinTestCommonModule, kotlinTestAnnotationsCommonModule].each {
         kotlinCommonSources(it) { transitive = false }
     }
-    distPack project(':Interop:Runtime')
-    distPack project(':Interop:Indexer')
-    distPack project(':Interop:StubGenerator')
-    distPack project(':backend.native')
-    distPack project(':utilities:cli-runner')
-    distPack project(':utilities:basic-utils')
-    distPack project(':klib')
-    distPack project(path: ':endorsedLibraries:kotlinx.cli', configuration: "jvmRuntimeElements")
-    distPack "org.jetbrains.kotlin:kotlin-native-shared:$konanVersion"
+    distPack project(':kotlin-native:Interop:Runtime')
+    distPack project(':kotlin-native:Interop:Indexer')
+    distPack project(':kotlin-native:Interop:StubGenerator')
+    distPack project(':kotlin-native:backend.native')
+    distPack project(':kotlin-native:utilities:cli-runner')
+    distPack project(':kotlin-native:utilities:basic-utils')
+    distPack project(':kotlin-native:klib')
+    distPack project(path: ':kotlin-native:endorsedLibraries:kotlinx.cli', configuration: "jvmRuntimeElements")
+    //distPack "org.jetbrains.kotlin:kotlin-native-shared:$konanVersion"
 }
 
-task sharedJar {
-    dependsOn gradle.includedBuild('shared').task(':jar')
-}
+//task sharedJar {
+//    dependsOn gradle.includedBuild('shared').task(':jar')
+//}
 
-task gradlePluginJar {
-    dependsOn gradle.includedBuild('kotlin-native-gradle-plugin').task(':shadowJar')
-}
+//task gradlePluginJar {
+//    dependsOn gradle.includedBuild('kotlin-native-gradle-plugin').task(':shadowJar')
+//}
 
-task gradlePluginCheck {
-    dependsOn gradle.includedBuild('kotlin-native-gradle-plugin').task(':check')
-}
+//task gradlePluginCheck {
+//    dependsOn gradle.includedBuild('kotlin-native-gradle-plugin').task(':check')
+//}
 
 task dist_compiler(dependsOn: "distCompiler")
 task dist_runtime(dependsOn: "distRuntime")
@@ -256,7 +250,7 @@ task build {
 
 task distCommonSources(type: CopyCommonSources) {
     outputDir "$distDir/sources"
-    sourcePaths configurations.kotlinCommonSources.files
+    sourcePaths project(":kotlin-stdlib-common").file("src")
     zipSources true
 }
 
@@ -267,16 +261,16 @@ task distNativeSources(type: Zip) {
     includeEmptyDirs = false
     include('**/*.kt')
 
-    from(project(':runtime').file('src/main/kotlin'))
-    from(project(':Interop:Runtime').file('src/main/kotlin'))
-    from(project(':Interop:Runtime').file('src/native/kotlin'))
-    from(project(':Interop:JsRuntime').file('src/main/kotlin')) {
+    from(project(':kotlin-native:runtime').file('src/main/kotlin'))
+    from(project(':kotlin-native:Interop:Runtime').file('src/main/kotlin'))
+    from(project(':kotlin-native:Interop:Runtime').file('src/native/kotlin'))
+    from(project(':kotlin-native:Interop:JsRuntime').file('src/main/kotlin')) {
         into('kotlinx/wasm/jsinterop')
     }
 }
 
 task distEndorsedSources {
-    dependsOn(':endorsedLibraries:endorsedLibsSources')
+    dependsOn(':kotlin-native:endorsedLibraries:endorsedLibsSources')
 }
 
 task distSources {
@@ -347,7 +341,7 @@ task detectJarCollision(type: CollisionDetector) {
 }
 
 task shadowJar(type: ShadowJar) {
-    dependsOn ':detectJarCollision'
+    //dependsOn ':kotlin-native:detectJarCollision'
     mergeServiceFiles()
     destinationDirectory.set(file("$distDir/konan/lib"))
     archiveBaseName.set("kotlin-native")
@@ -356,45 +350,49 @@ task shadowJar(type: ShadowJar) {
     exclude("META-INF/versions/9/module-info.class")
     configurations = [project.configurations.distPack]
     archiveClassifier.set(null)
-    transform(CollisionTransformer.class) {
-        resolvedConflicts = detectJarCollision.resolvedConflicts
+    outputs.upToDateWhen {
+        archiveFile.getOrNull()?.asFile.exists() ?: false
     }
+    //transform(CollisionTransformer.class) {
+    //    resolvedConflicts = detectJarCollision.resolvedConflicts
+    //}
 }
 
 task distCompiler(type: Copy) {
-    dependsOn ':shadowJar'
+    dependsOn ":kotlin-native:dependencies:update"
+    dependsOn ':kotlin-native:shadowJar'
 
     destinationDir distDir
 
-    from(project(':backend.native').file("build/nativelibs/$hostName")) {
+    from(project(':kotlin-native:backend.native').file("build/nativelibs/$hostName")) {
         into('konan/nativelib')
     }
 
-    from(project(':backend.native').file('build/external_jars/trove4j.jar')) {
+    from(project(':kotlin-native:backend.native').file('build/external_jars/trove4j.jar')) {
         into('konan/lib')
     }
 
-    from(project(':Interop').file('Indexer/build/nativelibs')) {
+    from(project(':kotlin-native:Interop').file('Indexer/build/nativelibs')) {
         into('konan/nativelib')
     }
 
-    from(project(':Interop').file('Runtime/build/nativelibs')) {
+    from(project(':kotlin-native:Interop').file('Runtime/build/nativelibs')) {
         into('konan/nativelib')
     }
 
-    from(project(':llvmCoverageMappingC').file('build/libs/coverageMapping/shared')) {
+    from(project(':kotlin-native:llvmCoverageMappingC').file('build/libs/coverageMapping/shared')) {
         into('konan/nativelib')
     }
 
-    from(project(':llvmDebugInfoC').file('build/libs/debugInfo/shared')) {
+    from(project(':kotlin-native:llvmDebugInfoC').file('build/libs/debugInfo/shared')) {
         into('konan/nativelib')
     }
 
-    from(project(':llvmDebugInfoC').file('src/scripts/konan_lldb.py')) {
+    from(project(':kotlin-native:llvmDebugInfoC').file('src/scripts/konan_lldb.py')) {
         into('tools')
     }
 
-    from(project(':utilities').file('env_blacklist')) {
+    from(project(':kotlin-native:utilities').file('env_blacklist')) {
         into('tools')
     }
 
@@ -428,7 +426,7 @@ task distDef(type: Copy) {
     destinationDir distDir
 
     platformManager.targetValues.each { target ->
-        from(project("platformLibs").file("src/platform/${target.family.name().toLowerCase()}")) {
+        from(project(":kotlin-native:platformLibs").file("src/platform/${target.family.name().toLowerCase()}")) {
             into("konan/platformDef/${target.visibleName}")
             include '**/*.def'
             if (target in targetsWithoutZlib) {
@@ -489,12 +487,12 @@ task crossDistEndorsedCache {
 
 targetList.each { target ->
     task("${target}CrossDistRuntime", type: Copy) {
-        dependsOn ":runtime:${target}Runtime"
-        dependsOn ":backend.native:${target}Stdlib"
+        dependsOn ":kotlin-native:runtime:${target}Runtime"
+        dependsOn ":kotlin-native:backend.native:${target}Stdlib"
 
         destinationDir distDir
 
-        from(project(':runtime').file("build/${target}Stdlib")) {
+        from(project(':kotlin-native:runtime').file("build/${target}Stdlib")) {
             include('**')
             into(stdlib)
             eachFile {
@@ -507,38 +505,38 @@ targetList.each { target ->
                 }
             }
         }
-        from(project(':runtime').file("build/bitcode/main/$target")) {
+        from(project(':kotlin-native:runtime').file("build/bitcode/main/$target")) {
             include("runtime.bc")
             into("$stdlibDefaultComponent/targets/$target/native")
         }
-        from(project(':runtime').file("build/bitcode/main/$target")) {
+        from(project(':kotlin-native:runtime').file("build/bitcode/main/$target")) {
             include("*.bc")
             exclude("runtime.bc")
             into("konan/targets/$target/native")
         }
         if (target == 'wasm32') {
             into("$stdlibDefaultComponent/targets/wasm32/included") {
-                from(project(':runtime').file('src/main/js'))
-                from(project(':runtime').file('src/launcher/js'))
-                from(project(':Interop:JsRuntime').file('src/main/js'))
+                from(project(':kotlin-native:runtime').file('src/main/js'))
+                from(project(':kotlin-native:runtime').file('src/launcher/js'))
+                from(project(':kotlin-native:Interop:JsRuntime').file('src/main/js'))
             }
         }
     }
 
     task("${target}PlatformLibs") {
-        dependsOn ":platformLibs:${target}Install"
+        dependsOn ":kotlin-native:platformLibs:${target}Install"
         if (target in cacheableTargetNames) {
-            dependsOn(":platformLibs:${target}Cache")
+            dependsOn(":kotlin-native:platformLibs:${target}Cache")
         }
     }
 
     if (target in cacheableTargetNames) {
         task "${target}StdlibCache" {
-            dependsOn ":platformLibs:${target}StdlibCache"
+            dependsOn ":kotlin-native:platformLibs:${target}StdlibCache"
         }
 
         task "${target}EndorsedCache" {
-            dependsOn ":endorsedLibraries:${target}Cache"
+            dependsOn ":kotlin-native:endorsedLibraries:${target}Cache"
         }
     }
 
@@ -550,10 +548,10 @@ targetList.each { target ->
     }
 
     task("${target}CrossDistEndorsedLibraries", type: Copy) {
-        dependsOn ":endorsedLibraries:${target}EndorsedLibraries"
+        dependsOn ":kotlin-native:endorsedLibraries:${target}EndorsedLibraries"
 
         destinationDir distDir
-        from(project(':endorsedLibraries').file("build")) {
+        from(project(':kotlin-native:endorsedLibraries').file("build")) {
             include('**')
             into("$endorsedLibsBase")
         }
@@ -561,8 +559,8 @@ targetList.each { target ->
 }
 
 task distPlatformLibs {
-    dependsOn ':platformLibs:hostInstall'
-    dependsOn ':platformLibs:hostCache'
+    dependsOn ':kotlin-native:platformLibs:hostInstall'
+    dependsOn ':kotlin-native:platformLibs:hostCache'
 }
 
 task dist {
@@ -652,12 +650,11 @@ configure([bundleRegular, bundlePrebuilt]) {
 }
 
 task 'tc-dist'(type: (isWindows()) ? Zip : Tar) {
-    dependsOn('distPlatformLibs')
     dependsOn('dist')
     dependsOn('distSources')
     def simpleOsName = HostManager.simpleOsName()
     archiveBaseName.set("kotlin-native-dist-$simpleOsName-$konanVersionFull")
-    from("$project.rootDir/dist") {
+    from(UtilsKt.getKotlinNativeDist(project)) {
         include '**'
         exclude 'dependencies'
         into archiveBaseName
@@ -719,9 +716,9 @@ project.tasks.register("copySamples", CopySamples) {
 }
 
 task uploadBundle {
-    dependsOn ':bundle'
+    dependsOn ':kotlin-native:bundle'
     if (isMac()) {
-        dependsOn ':bundleRestricted'
+        dependsOn ':kotlin-native:bundleRestricted'
     }
     doLast {
         def kind = (konanVersionFull.meta == MetaVersion.DEV) ? "dev" : "releases"
@@ -757,7 +754,7 @@ task teamcityCompilerVersion {
     }
 }
 
-task clean {
+task clean(type: Delete) {
     dependsOn subprojects.collect { it.tasks.matching { it.name == "clean" } }
     doLast {
         delete distDir
@@ -768,7 +765,7 @@ task clean {
 
 task pusher(type: KotlinBuildPusher){
     kotlinVersion = project.kotlinVersion
-    konanVersion = CompilerVersionGeneratedKt.getCurrentCompilerVersion()
+    konanVersion = project.ext.kotlinNativeVersion
     buildServer = "buildserver.labs.intellij.net"
     compilerConfigurationId = System.getenv("TEAMCITY_COMPILER_ID") ?: "Kotlin_KotlinDev_Compiler"
     overrideConfigurationId = System.getenv("TEAMCITY_OVERRIDE_NATIVE_ID") ?: "Kotlin_KotlinDev_DeployMavenArtifacts_OverrideNative"
@@ -777,8 +774,8 @@ task pusher(type: KotlinBuildPusher){
 
 targetList.each { target ->
     CompilationDatabaseKt.mergeCompilationDatabases(project, "${target}CompilationDatabase".toString(), [
-            ":common:${target}CompilationDatabase".toString(),
-            ":runtime:${target}CompilationDatabase".toString()
+            ":kotlin-native::common:${target}CompilationDatabase".toString(),
+            ":kotlin-native:runtime:${target}CompilationDatabase".toString()
     ]).configure {
         outputFile = file("$buildDir/${target}/compile_commands.json")
     }

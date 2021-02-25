@@ -19,5 +19,4 @@ if (System.getProperty("os.name") == "Mac OS X") {
     }
 }
 
-includeBuild '../build-tools'
-
+includeBuild '../tools/benchmarksAnalyzer'

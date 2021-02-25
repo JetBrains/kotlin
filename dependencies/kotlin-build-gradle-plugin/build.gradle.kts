@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "org.jetbrains.kotlin"
-version = "0.0.21"
+version = "0.0.25"
 
 repositories {
     mavenCentral()
@@ -29,8 +29,13 @@ java {
 
 sourceSets {
     main {
-        java.setSrcDirs(listOf("src"))
+        /*TODO: move version to build-plugin*/
+        java.setSrcDirs(listOf("src", "../../compiler/util-io/src"))
     }
+}
+
+tasks.withType<GenerateModuleMetadata> {
+    enabled = false
 }
 
 publishing {

@@ -12,10 +12,14 @@
       <item index="2" class="java.lang.String" itemvalue="org.gradle.api.tasks.options.Option" />
     </list>
   </component>
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="FrameworkDetectionExcludesConfiguration">
     <file type="web" url="file://$PROJECT_DIR$" />
   </component>
   <component name="IdProvider" IDEtalkID="71A301FF1940049D6D82F12C40F1E1D5" />
+  <component name="JavaScriptSettings">
+    <option name="languageLevel" value="ES6" />
+  </component>
   <component name="JavadocGenerationManager">
     <option name="OTHER_OPTIONS" value="" />
   </component>

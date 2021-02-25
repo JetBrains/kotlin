@@ -32,9 +32,9 @@ class DependencyDownloader(
         customProgressCallback: ProgressCallback? = null
 ) {
 
-    private val progressCallback = customProgressCallback ?: { url, currentBytes, totalBytes ->
-        print("\rDownloading dependency: $url (${currentBytes.humanReadable}/${totalBytes.humanReadable}). ")
-    }
+    private val progressCallback = customProgressCallback ?: TODO()/* { url, currentBytes, totalBytes ->
+        print("\nDownloading dependency: $url (${currentBytes.humanReadable}/${totalBytes.humanReadable}). ")
+    }*/
 
     val executor = ExecutorCompletionService<Unit>(Executors.newSingleThreadExecutor(object : ThreadFactory {
         override fun newThread(r: Runnable?): Thread {

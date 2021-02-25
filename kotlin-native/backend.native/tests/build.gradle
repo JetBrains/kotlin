@@ -3,10 +3,11 @@
  * that can be found in the LICENSE file.
  */
 
-import shadow.org.jetbrains.kotlin.gradle.plugin.tasks.KonanCompileNativeBinary
+import org.jetbrains.kotlin.gradle.plugin.tasks.KonanCompileNativeBinary
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.UtilsKt
 
 import java.nio.file.Paths
 
@@ -14,32 +15,21 @@ import static org.jetbrains.kotlin.konan.target.Architecture.*
 
 buildscript {
     repositories {
-        maven {
-            url 'https://cache-redirector.jetbrains.com/maven-central'
-        }
-        mavenCentral()
-        maven {
-            url buildKotlinCompilerRepo
-        }
-	    maven {
-            url kotlinCompilerRepo
-        }
-    }
+        if (UtilsKt.getCacheRedirectorEnabled(project))
+            maven { url 'https://cache-redirector.jetbrains.com/maven-central'}
+        else
+            mavenCentral()
 
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:$gradlePluginVersion"
+        maven {
+            url project.bootstrapKotlinRepo
+        }
     }
-    ext.useCustomDist = project.hasProperty("kotlin.native.home") ||
-            project.hasProperty("org.jetbrains.kotlin.native.home") ||
-            project.hasProperty("konan.home")
-    ext.kotlinNativeDist = project.findProperty("kotlin.native.home")
-            ?: project.findProperty("org.jetbrains.kotlin.native.home")
-            ?: project.findProperty("konan.home")
-            ?: distDir.absolutePath
+    ext.useCustomDist = UtilsKt.getUseCustomDist(project)
+    ext.kotlinNativeDist = UtilsKt.getKotlinNativeDist(project)
     if (!useCustomDist) {
-        ext.setProperty("kotlin.native.home", distDir.absolutePath)
-        ext.setProperty("org.jetbrains.kotlin.native.home", distDir.absolutePath)
-        ext.setProperty("konan.home", distDir.absolutePath)
+        ext.setProperty("kotlin.native.home", kotlinNativeDist.absolutePath)
+        ext.setProperty("org.jetbrains.kotlin.native.home", kotlinNativeDist.absolutePath)
+        ext.setProperty("konan.home", kotlinNativeDist.absolutePath)
     }
 }
 
@@ -50,50 +40,15 @@ configurations {
     cli_bc
     update_tests
     update_stdlib_tests
-}
 
-repositories {
-    ivy {
-        ivyPattern      'https://teamcity.jetbrains.com/guestAuth/repository/download/[module]/[revision]/teamcity-ivy.xml'
-        artifactPattern 'https://teamcity.jetbrains.com/guestAuth/repository/download/[module]/[revision]/[artifact](.[ext])'
-    }
+    compile
+    nopPluginCompile
+    compile.extendsFrom nopPluginCompile
 }
 
 dependencies {
     compile 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.7'
-    cli_bc project(path: ':backend.native', configuration: 'cli_bc')
-    def updateTestData = true
-    if (project.hasProperty("kotlinProjectPath")) {
-        def kotlinProj = project.property("kotlinProjectPath").toString()
-        def testDataZip = Paths.get(kotlinProj, "dist", "kotlin-test-data.zip").toFile()
-        if (testDataZip.exists()) {
-            update_tests files(testDataZip)
-            updateTestData = false
-        } else {
-            println("WARN: using tests provided by gradle.properties. Please execute :kotlin:zipTestData")
-        }
-        def stdlibTestsZip = Paths.get(kotlinProj, "dist", "kotlin-stdlib-tests.zip").toFile()
-        if (stdlibTestsZip.exists()) {
-            update_stdlib_tests files(stdlibTestsZip)
-            updateTestData = false
-        } else {
-            println("WARNING: using stdlib tests provided by gradle.properties. Please execute :kotlin:zipTestData")
-        }
-    }
-    if (updateTestData) {
-        update_tests(group: 'org', name: 'Kotlin_KotlinPublic_Compiler', version: testKotlinCompilerVersion) {
-            artifact {
-                name = 'internal/kotlin-test-data'
-                type = 'zip'
-            }
-        }
-        update_stdlib_tests (group: 'org',  name: 'Kotlin_KotlinPublic_Compiler', version: kotlinStdlibTestsVersion) {
-            artifact {
-                name = 'internal/kotlin-stdlib-tests'
-                type = 'zip'
-            }
-        }
-    }
+    cli_bc project(path: ':kotlin-native:backend.native', configuration: 'cli_bc')
 }
 ext.testOutputRoot = rootProject.file("test.output").absolutePath
 ext.externalTestsDir = project.file("build/external")
@@ -101,10 +56,10 @@ ext.externalStdlibTestsDir = project.file("build/stdlib_external/stdlib")
 externalTestsDir.mkdirs()
 externalStdlibTestsDir.mkdirs()
 
-ext.platformManager = project.rootProject.platformManager
+ext.platformManager = project.project(":kotlin-native").platformManager
 ext.target = platformManager.targetManager(project.testTarget).target
 
-ext.testLibraryDir = "${ext.kotlinNativeDist}/klib/platform/${project.target.name}"
+ext.testLibraryDir = "${ext.testOutputRoot}/klib/platform/${project.target.name}"
 
 // Add executor to run tests depending on a target
 project.convention.plugins.executor = ExecutorServiceKt.create(project)
@@ -175,23 +130,17 @@ allprojects {
 testOutputExternal.mkdirs()
 testOutputStdlib.mkdirs()
 
-ext.dist = project.rootProject.file(project.findProperty("org.jetbrains.kotlin.native.home") ?:
-        project.findProperty("konan.home") ?: "dist")
-
 konanArtifacts {
     library('testLibrary') {
-        if (!useCustomDist) {
-            dependsOn ':dist'
-        }
         srcDir 'testLibrary'
     }
     def target = project.testTarget ?: 'host'
     library('baseTestClass', targets: [target]) {
-        if (!useCustomDist) {
-            dependsOn ':dist'
-        }
         srcFiles 'testing/library.kt'
     }
+}
+configure(project.tasks.findByName("compileKonanBaseTestClass${UtilsKt.getTestTargetSuffix(project)}")) {
+  UtilsKt.dependsOnDist(it)
 }
 
 def installTestLib = tasks.register("installTestLibrary", KlibInstall) {
@@ -206,47 +155,9 @@ def installTestLib = tasks.register("installTestLibrary", KlibInstall) {
     }
 }
 
-// Gets tests from the same Kotlin compiler build
-def update_external_tests() {
-    // Copy only used tests into the test directory.
-    if (externalTestsDir.exists()) {
-        delete(externalTestsDir)
-    }
-    externalTestsDir.mkdirs()
-
-    def compilerTestsFiles = configurations.update_tests.asFileTree
-    copy {
-        compilerTestsFiles.each {
-            from(zipTree(it))
-            into(externalTestsDir)
-            include 'compiler/codegen/box/**'
-            include 'compiler/codegen/boxInline/**'
-            include 'compiler/compileKotlinAgainstKotlin/**'
-            include 'compiler/binaryCompatibility/klibEvolution/**'
-            exclude 'stdlib/**'
-        }
-    }
-
-    if (externalStdlibTestsDir.exists()) {
-        delete(externalStdlibTestsDir)
-    }
-    externalStdlibTestsDir.mkdirs()
-    def stdlibTestsFiles = configurations.update_stdlib_tests.asFileTree
-    copy {
-        stdlibTestsFiles.each {
-            from(zipTree(it))
-            into(externalStdlibTestsDir)
-            include 'common/**'
-            include 'test/**'
-            exclude 'test/js/**'
-            include 'kotlin-test/**'
-        }
-    }
-}
-
 void konanc(String[] args) {
    def konancScript = isWindows() ? "konanc.bat" : "konanc"
-   def konanc = "$dist/bin/$konancScript"
+   def konanc = "$kotlinNativeDist/bin/$konancScript"
    def allArgs = args.join(" ")
    println("$konanc $allArgs")
    "$konanc $allArgs".execute().waitFor()
@@ -254,7 +165,7 @@ void konanc(String[] args) {
 
 clean {
     doLast {
-        delete(rootProject.file(testOutputRoot))
+        delete(project(":kotlin-native").file(testOutputRoot))
     }
 }
 
@@ -275,19 +186,8 @@ run {
 }
 
 task sanity {
-    doFirst {
-        if (!project.hasProperty("test.disable_update")) {
-            update_external_tests()
-        }
-    }
-    def platformLibsTasks = targetList.collect { ":${it}PlatformLibs" } + ":distPlatformLibs"
-    dependsOn(tasksOf(KonanTest) { task ->
-        task.getDependsOn().every { !platformLibsTasks.contains(it) } &&
-        task.name != "library_mismatch" // This test requires the wasm32 stdlib which is unavailable during a sanity run.
-    })
-    dependsOn(tasksOf(FrameworkTest) { task ->
-        task.getDependsOn().every { !platformLibsTasks.contains(it) }
-    })
+    dependsOn(tasksOf(KonanTest))
+    dependsOn(tasksOf(FrameworkTest))
     dependsOn(tasksOf(MetadataComparisonTest))
     // Add regular gradle test tasks
     dependsOn(tasksOf(Test))
@@ -331,37 +231,6 @@ boolean isExcluded(String dir) {
         }
     }
     return result
-}
-
-def createTestTasks(File testRoot, Class<Task> taskType) {
-    testRoot.eachDirRecurse {
-        // Skip build directory and directories without *.kt files.
-        if (it.name == "build" || it.listFiles().count { it.name.endsWith(".kt") && it.isFile() } == 0) {
-            return
-        }
-
-        def taskDirectory = project.relativePath(it).substring("build/".length())
-        if (!isExcluded(taskDirectory)) {
-            def taskName = taskDirectory.replaceAll("[-/\\\\]", '_')
-            project.tasks.register(taskName, taskType) {
-                it.groupDirectory = taskDirectory
-                it.finalizedBy resultsTask
-            }
-        } else {
-            println("$taskDirectory is excluded")
-        }
-    }
-}
-
-void dependsOnPlatformLibs(Task t) {
-    if (!useCustomDist) {
-        def testTarget = project.target
-        if (testTarget != project.platformManager.Companion.host) {
-            t.dependsOn(":${testTarget}PlatformLibs")
-        } else {
-            t.dependsOn(':distPlatformLibs')
-        }
-    }
 }
 
 /**
@@ -448,14 +317,29 @@ Task dynamicTest(String name, Closure<KonanDynamicTest> configureClosure) {
     }
 }
 
-task run_external () {
-    // Set this property to disable auto update tests
-    if (!project.hasProperty("test.disable_update")) {
-        update_external_tests()
-    }
+def ignoredTests = [
+        "compiler_testData_codegen_box_callableReference" : ["genericConstructorReference.kt"]
+]
 
-    // Create tasks for external tests.
-    createTestTasks(externalTestsDir, RunExternalTestGroup)
+task run_external () {
+    outputs.upToDateWhen{ false }
+
+    rootProject.files(
+            'compiler/testData/codegen/box',
+            'compiler/codegen/boxInline',
+            'compiler/compileKotlinAgainstKotlin'
+    ).asFileTree.visit { file ->
+        if (!file.isDirectory() || !file.file.list().any{ it.endsWith(".kt")})
+            return
+        def taskPath = rootProject.relativePath(file.file)
+        def fileSeparator = System.properties["file.separator"]
+        def taskName = taskPath.split("\\$fileSeparator").join('_')
+        project.tasks.register(taskName, RunExternalTestGroup) {
+            it.groupDirectory = taskPath
+            it.finalizedBy resultsTask
+            it.ignoredTests = ignoredTests[taskName]
+        }
+    }
 
     // Set up dependencies.
     dependsOn(tasksOf(RunExternalTestGroup))
@@ -2210,10 +2094,10 @@ linkTest("link_omit_unused") {
 }
 
 standaloneTest("link_default_libs") {
-    dependsOnPlatformLibs(it)
     enabled = (project.testTarget != 'wasm32') // there will be no posix.klib for wasm
     goldValue = "sizet = 0\n"
     source = "link/default/default.kt"
+    UtilsKt.dependsOnPlatformLibs(it)
 }
 
 standaloneTest("link_testLib_explicitly") {
@@ -2224,7 +2108,7 @@ standaloneTest("link_testLib_explicitly") {
     goldValue = "This is a side effect of a test library linked into the binary.\nYou should not be seeing this.\n\nHello\n"
     source = "link/omit/hello.kt"
     // We force library inclusion, so need to see the warning banner.
-    flags = ['-l', 'testLibrary']
+    flags = ['-l', 'testLibrary', '-r', testLibraryDir]
     doLast {
         def file = new File("$testLibraryDir/testLibrary")
         file.deleteDir()
@@ -2232,11 +2116,11 @@ standaloneTest("link_testLib_explicitly") {
 }
 
 linkTest("no_purge_for_dependencies") {
-    dependsOnPlatformLibs(it)
     enabled = (project.testTarget != 'wasm32') // there will be no posix.klib for wasm
     goldValue = "linked library\nand symbols from posix available: 17; 1.0\n"
     source = "link/purge1/prog.kt"
     lib = "link/purge1/lib.kt"
+    UtilsKt.dependsOnPlatformLibs(it)
 }
 
 task for0(type: KonanLocalTest) {
@@ -4041,10 +3925,10 @@ Task interopTestMultifile(String name, Closure<KonanInteropTest> configureClosur
 }
 
 standaloneTest("interop_objc_allocException") {
-    dependsOnPlatformLibs(it)
     disabled = !isAppleTarget(project)
     expectedExitStatus = 0
     source = "interop/objc/allocException.kt"
+    UtilsKt.dependsOnPlatformLibs(it)
 }
 
 interopTest("interop0") {
@@ -4095,10 +3979,10 @@ interopTest("interop4") {
 }
 
 standaloneTest("interop5") {
-    dependsOnPlatformLibs(it)
     enabled = (project.testTarget != 'wasm32') // No interop for wasm yet.
     goldValue = "Hello!\n"
     source = "interop/basics/5.kt"
+    UtilsKt.dependsOnPlatformLibs(it)
 }
 
 interopTest("interop_bitfields") {
@@ -4415,7 +4299,7 @@ if (PlatformInfo.isAppleTarget(project)) {
     interopTest("interop_objc_foreignException") {
         source = "interop/objc/foreignException/objc_wrap.kt"
         interop = 'foreignException'
-        dependsOnPlatformLibs(it)
+        UtilsKt.dependsOnPlatformLibs(it)
 
         doBeforeBuild {
             mkdir(buildDir)
@@ -4434,7 +4318,7 @@ if (PlatformInfo.isAppleTarget(project)) {
         source = "interop/objc/foreignException/objcExceptionMode.kt"
         interop = 'foreignExceptionMode_wrap'
         goldValue = "OK: ForeignException\n"
-        dependsOnPlatformLibs(it)
+        UtilsKt.dependsOnPlatformLibs(it)
 
         doBeforeBuild {
             mkdir(buildDir)
@@ -4453,7 +4337,7 @@ if (PlatformInfo.isAppleTarget(project)) {
         source = "interop/objc/foreignException/objcExceptionMode.kt"
         interop = 'foreignExceptionMode_default'
         goldValue = "OK: Ends with uncaught exception handler\n"
-        dependsOnPlatformLibs(it)
+        UtilsKt.dependsOnPlatformLibs(it)
 
         doBeforeBuild {
             mkdir(buildDir)
@@ -4511,12 +4395,12 @@ if (PlatformInfo.isAppleTarget(project)) {
 standaloneTest("jsinterop_math") {
     doBeforeBuild {
         def jsinteropScript = isWindows() ? "jsinterop.bat" : "jsinterop"
-        def jsinterop = "$dist/bin/$jsinteropScript"
+        def jsinterop = "$kotlinNativeDist/bin/$jsinteropScript"
         // TODO: We probably need a NativeInteropPlugin for jsinterop?
         "$jsinterop -pkg kotlinx.interop.wasm.math -o $buildDir/jsmath -target wasm32".execute().waitFor()
 
     }
-    dependsOn ':wasm32PlatformLibs'
+    dependsOn ':kotlin-native:wasm32PlatformLibs'
     enabled = (project.testTarget == 'wasm32')
     goldValue = "e = 2.718281828459045, pi = 3.141592653589793, sin(pi) = 1.2246467991473532E-16, sin(pi/2) = 1.0, ln(1) = 0.0, ln(e) = 1.0\n"
     source = "jsinterop/math.kt"
@@ -4524,24 +4408,24 @@ standaloneTest("jsinterop_math") {
 }
 
 standaloneTest("interop_libiconv") {
-    dependsOnPlatformLibs(it)
     enabled = (project.testTarget == null)
     source = "interop/libiconv.kt"
     goldValue = "72 72\n101 101\n108 108\n108 108\n111 111\n33 33\n"
+    UtilsKt.dependsOnPlatformLibs(it)
 }
 
 standaloneTest("interop_zlib") {
-    dependsOnPlatformLibs(it)
     enabled = (project.testTarget == null)
     source = "interop/platform_zlib.kt"
     goldValue = "Hello!\nHello!\n"
+    UtilsKt.dependsOnPlatformLibs(it)
 }
 
 standaloneTest("interop_objc_illegal_sharing") {
-    dependsOnPlatformLibs(it)
     disabled = !isAppleTarget(project) ||
         isExperimentalMM  // Experimental MM doesn't support multiple mutators yet.
     source = "interop/objc/illegal_sharing.kt"
+    UtilsKt.dependsOnPlatformLibs(it)
     expectedExitStatusChecker = { it != 0 }
     outputChecker = {
       it.startsWith("Before") && !it.contains("After")
@@ -4553,25 +4437,25 @@ dynamicTest("produce_dynamic") {
     source = "produce_dynamic/simple/hello.kt"
     cSource = "$projectDir/produce_dynamic/simple/main.c"
     goldValue = "Hello, dynamic!\n" +
-                "Base.foo\n" +
-                "Base.fooParam: a 1 q\n" +
-                "Child.fooParam: b 2 null\n" +
-                "Child.fooParam: c 3 null\n" +
-                "Impl1.I: d 4 Impl1\n" +
-                "Impl2.I: e 5 Impl2\n" +
-                "String is Kotlin/Native nullable is Hi null is OK\n" +
-                "RO property is 42\n" +
-                "RW property is 239\n" +
-                "enum100 = 100\n" +
-                "enum42 = 42\n" +
-                "object = 42\n" +
-                "singleton = I am single\n" +
-                "mutable = foo\n" +
-                "topLevel = 777 3\n" +
-                "IsInstance1 = PASS\n" +
-                "IsInstance2 = PASS\n" +
-                "getVector128 = (1, 2, 3, 4)\n" +
-                "Error handler: kotlin.Error: Expected error\n"
+            "Base.foo\n" +
+            "Base.fooParam: a 1 q\n" +
+            "Child.fooParam: b 2 null\n" +
+            "Child.fooParam: c 3 null\n" +
+            "Impl1.I: d 4 Impl1\n" +
+            "Impl2.I: e 5 Impl2\n" +
+            "String is Kotlin/Native nullable is Hi null is OK\n" +
+            "RO property is 42\n" +
+            "RW property is 239\n" +
+            "enum100 = 100\n" +
+            "enum42 = 42\n" +
+            "object = 42\n" +
+            "singleton = I am single\n" +
+            "mutable = foo\n" +
+            "topLevel = 777 3\n" +
+            "IsInstance1 = PASS\n" +
+            "IsInstance2 = PASS\n" +
+            "getVector128 = (1, 2, 3, 4)\n" +
+            "Error handler: kotlin.Error: Expected error\n"
 }
 
 dynamicTest("kt36639") {
@@ -4676,8 +4560,8 @@ tasks.register("library_mismatch", KonanDriverTest) {
 
     if (!useCustomDist) {
         // we actually need any target other than the current one.
-        dependsOn ':wasm32CrossDistRuntime'
-        dependsOn ':wasm32CrossDistEndorsedLibraries'
+        dependsOn ':kotlin-native:wasm32CrossDistRuntime'
+        dependsOn ':kotlin-native:wasm32CrossDistEndorsedLibraries'
     }
 
     doBeforeBuild {
@@ -4692,12 +4576,13 @@ tasks.register("library_mismatch", KonanDriverTest) {
     compilerMessages = true
     def messages =
         "warning: skipping $dir/1.2/empty.klib. The library versions don't match. Expected '5.6', found '1.2'\n" +
-        "warning: skipping $dir/3.4/empty.klib. The target doesn't match. Expected '$currentTarget', found [$someOtherTarget]\n" +
+        //"warning: skipping $dir/3.4/empty.klib. The target doesn't match. Expected '$currentTarget', found [$someOtherTarget]\n" +
         "Hello, versioned world!\n"
     goldValue = PlatformInfo.isWindows() ? messages.replaceAll('\\/', '\\\\') : messages
     outputChecker = { out ->
+        def outV = out.split("\n").findAll{ !it.startsWith("WARNING: ") }.join("\n")
         goldValue.split("\n")
-                .collect { line -> out.contains(line) }
+                .collect { line -> outV.contains(line) }
                 .every { it == true }
     }
 }
@@ -4757,6 +4642,7 @@ linkTest("private_fake_overrides_1") {
 Task frameworkTest(String name, Closure<FrameworkTest> configurator) {
     return KotlinNativeTestKt.createTest(project, name, FrameworkTest) { task ->
         configurator.delegate = task
+        UtilsKt.dependsOnDist(task)
         configurator()
         if (task.enabled) {
             konanArtifacts {
@@ -4776,10 +4662,6 @@ Task frameworkTest(String name, Closure<FrameworkTest> configurator) {
                             UtilsKt.dependsOnKonanBuildingTask(task, fr.library, target)
                         }
 
-                        if (!useCustomDist) {
-                            dependsOn ":${target.name}CrossDistRuntime", ':distCompiler'
-                        }
-
                         extraOpts fr.bitcode ? "-Xembed-bitcode" : "-Xembed-bitcode-marker"
                         if (fr.isStatic) extraOpts "-Xstatic-framework"
                         extraOpts fr.opts
@@ -4787,6 +4669,7 @@ Task frameworkTest(String name, Closure<FrameworkTest> configurator) {
 
                         artifactName fr.artifact
                     }
+                    UtilsKt.dependsOnDist(project.tasks.findByName("compileKonan${fr.name.capitalize()}${UtilsKt.getTestTargetSuffix(project)}"))
                 }
             }
         }
@@ -4827,9 +4710,8 @@ if (isAppleTarget(project)) {
             library(libraryName, targets: [target.name]) {
                 srcDir "objcexport/library"
                 artifactName "test-library"
-
-                if (!useCustomDist) {
-                    dependsOn ":${target.name}CrossDistRuntime", ':distCompiler'
+                delegate.getByTarget(target.name).configure{
+                    UtilsKt.dependsOnDist(it)
                 }
 
                 extraOpts "-Xshort-module-name=MyLibrary"
@@ -4855,8 +4737,8 @@ if (isAppleTarget(project)) {
                 srcDir "objcexport/library"
                 artifactName "test-library"
 
-                if (!useCustomDist) {
-                    dependsOn ":${target.name}CrossDistRuntime", ':distCompiler'
+                delegate.getByTarget(target.name).configure{
+                    UtilsKt.dependsOnDist(it)
                 }
 
                 extraOpts "-Xshort-module-name=MyLibrary"
@@ -5155,11 +5037,13 @@ private void createStdlibTest(String name, boolean inWorker) {
  */
 private void configureStdlibTest(KonanGTest task, boolean inWorker) {
     def sources = UtilsKt.getFilesToCompile(project,
-            [ 'build/stdlib_external/stdlib', 'stdlib_external/utils.kt',
-                                 'stdlib_external/collections',
-                                 'stdlib_external/jsCollectionFactoriesActuals.kt',
-                                 'stdlib_external/text/StringEncodingTestNative.kt'],
-            [ 'build/stdlib_external/stdlib/test/internalAnnotations.kt' ])
+            [ '../../../libraries/stdlib/common/test',
+              '../../../libraries/stdlib/test',
+              '../../../libraries/kotlin.test/common/src/test/kotlin',
+              'stdlib_external/utils.kt',
+              'stdlib_external/jsCollectionFactoriesActuals.kt',
+              'stdlib_external/text/StringEncodingTestNative.kt'],
+            [ /*'build/stdlib_external/stdlib/test/internalAnnotations.kt'*/ ])
 
     konanArtifacts {
         program(task.name, targets: [target.name]) {
@@ -5169,7 +5053,7 @@ private void configureStdlibTest(KonanGTest task, boolean inWorker) {
             extraOpts inWorker ? '-trw' : '-tr',
                     '-Xverify-ir',
                     '-Xopt-in=kotlin.RequiresOptIn,kotlin.ExperimentalStdlibApi',
-                    "-friend-modules", project.rootProject.file("${project.properties['konan.home']}/klib/common/stdlib").absolutePath
+                    "-friend-modules", project.rootProject.file("${UtilsKt.getKotlinNativeDist(project)}/klib/common/stdlib").absolutePath
             extraOpts project.globalTestArgs
         }
     }
@@ -5237,6 +5121,13 @@ sourceSets {
             srcDir 'debugger/src/test/kotlin'
         }
     }
+    update_stdlib_tests{
+        kotlin {
+            srcDir '../../../libraries/stdlib/common/test'
+            srcDir '../../../libraries/stdlib/test'
+            srcDir '../../../libraries/kotlin.test/common/src/test/kotlin'
+        }
+    }
 }
 
 compileNopPluginKotlin {
@@ -5276,9 +5167,22 @@ pluginTest("runtime_basic_init", "nopPlugin") {
 }
 
 dependencies {
-    nopPluginCompile kotlinCompilerModule
-    compile kotlinCompilerModule
-    compile project(path: ':backend.native', configuration: 'cli_bc')
+    nopPluginCompile project(kotlinCompilerModule)
+    nopPluginCompile project(":native:kotlin-native-utils")
+    nopPluginCompile project(":core:descriptors")
+    nopPluginCompile project(":compiler:ir.tree")
+    nopPluginCompile project(":compiler:ir.tree.impl")
+    nopPluginCompile project(":compiler:ir.backend.common")
+    nopPluginCompile project(":compiler:util")
+    nopPluginCompile project(":native:frontend.native")
+    nopPluginCompile project(":compiler:cli-common")
+    nopPluginCompile project(":compiler:cli")
+    nopPluginCompile project(":kotlin-util-klib")
+    nopPluginCompile project(":kotlin-util-klib-metadata")
+    nopPluginCompile project(":compiler:ir.serialization.common")
+
+    compile project(kotlinCompilerModule)
+    compile project(path: ':kotlin-native:backend.native', configuration: 'cli_bc')
     compile 'junit:junit:4.12'
 }
 
@@ -5292,7 +5196,7 @@ project.tasks.register("debugger_test", Test.class) {
     enabled = (target.family == Family.OSX)  // KT-30366
     testLogging { exceptionFormat = 'full' }
     UtilsKt.dependsOnDist(it)
-    systemProperties = ['kotlin.native.home': dist]
+    systemProperties = ['kotlin.native.home': kotlinNativeDist]
 }
 
 // Configure build for iOS device targets.

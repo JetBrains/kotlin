@@ -1,12 +1,13 @@
 import org.jetbrains.kotlin.CopyCommonSources
 import org.jetbrains.kotlin.konan.target.HostManager
-
+import org.jetbrains.kotlin.*
+import org.jetbrains.gradle.plugins.tools.*
 /*
  * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
 buildscript {
-    apply from: "$rootDir/gradle/kotlinGradlePlugin.gradle"
+    apply from: "../../kotlin-native/gradle/kotlinGradlePlugin.gradle"
     apply plugin: 'project-report'
 
     dependencies {
@@ -21,13 +22,6 @@ apply plugin: 'kotlin'
 apply plugin: org.jetbrains.kotlin.NativeInteropPlugin
 apply plugin: "maven-publish"
 
-// (gets applied to this project and all its subprojects)
-allprojects {
-    repositories {
-        maven { url buildKotlinCompilerRepo }
-    }
-}
-
 sourceSets {
     compiler {
         proto.srcDir 'compiler/ir/backend.native/src/'
@@ -37,8 +31,13 @@ sourceSets {
         }
         kotlin {
             srcDir 'compiler/ir/backend.native/src/'
+            srcDir '../shared/src/main/kotlin'
+            srcDir '../shared/src/library/kotlin'
+            srcDir(VersionGeneratorKt.kotlinNativeVersionSrc(project))
         }
         resources.srcDir 'compiler/ir/backend.native/resources/'
+        /* PATH to META-INF */
+        resources.srcDir VersionGeneratorKt.kotlinNativeVersionResourceFile(project).parentFile.parent
     }
     cli_bc {
         java.srcDir 'cli.bc/src'
@@ -87,22 +86,23 @@ task renamePackage {
 
 kotlinNativeInterop {
     llvm {
-        dependsOn ":llvmDebugInfoC:debugInfoStaticLibrary"
-        dependsOn ":llvmCoverageMappingC:coverageMappingStaticLibrary"
+
+        dependsOn ":kotlin-native:llvmDebugInfoC:${NativePluginKt.lib("debugInfo")}"
+        dependsOn ":kotlin-native:llvmCoverageMappingC:${NativePluginKt.lib("coverageMapping")}"
         defFile 'llvm.def'
         if (!project.parent.convention.plugins.platformInfo.isWindows())
             compilerOpts "-fPIC"
-        compilerOpts "-I$llvmDir/include", "-I${project(':llvmDebugInfoC').projectDir}/src/main/include", "-I${project(':llvmCoverageMappingC').projectDir}/src/main/include"
-        linkerOpts "-L$llvmDir/lib", "-L${project(':llvmDebugInfoC').buildDir}/libs/debugInfo/static", "-L${project(':llvmCoverageMappingC').buildDir}/libs/coverageMapping/static"
+        compilerOpts "-I$llvmDir/include", "-I${rootProject.project(':kotlin-native:llvmDebugInfoC').projectDir}/src/main/include", "-I${rootProject.project(':kotlin-native:llvmCoverageMappingC').projectDir}/src/main/include"
+        linkerOpts "-L$llvmDir/lib", "-L${rootProject.project(':kotlin-native:llvmDebugInfoC').buildDir}", "-L${rootProject.project(':kotlin-native:llvmCoverageMappingC').buildDir}"
     }
 
     hash { // TODO: copy-pasted from ':common:compileHash'
-        if (!project.parent.convention.plugins.platformInfo.isWindows()) {
+        if (!rootProject.project(":kotlin-native").convention.plugins.platformInfo.isWindows()) {
             compilerOpts '-fPIC'
             linkerOpts '-fPIC'
         }
         linker 'clang++'
-        linkOutputs ":common:${hostName}Hash"
+        linkOutputs ":kotlin-native:common:${hostName}Hash"
 
         headers fileTree('../common/src/hash/headers') {
             include '**/*.h'
@@ -113,12 +113,12 @@ kotlinNativeInterop {
     }
 
     files {
-        if (!project.parent.convention.plugins.platformInfo.isWindows()) {
+        if (!project.project(":kotlin-native").convention.plugins.platformInfo.isWindows()) {
             compilerOpts '-fPIC'
             linkerOpts '-fPIC'
         }
         linker 'clang++'
-        linkOutputs ":common:${hostName}Files"
+        linkOutputs ":kotlin-native:common:${hostName}Files"
 
         headers fileTree('../common/src/files/headers') {
             include '**/*.h'
@@ -146,34 +146,62 @@ configurations {
     cli_bc {
         extendsFrom cli_bcRuntime
     }
+    cli_bcCompile.extendsFrom compilerCompile
 }
 
 dependencies {
     trove4j_jar "org.jetbrains.intellij.deps:trove4j:1.0.20181211@jar"
-    kotlin_compiler_jar "$kotlinCompilerModule@jar"
-    kotlin_stdlib_jar "$kotlinStdLibModule@jar"
-    kotlin_reflect_jar "$kotlinReflectModule@jar"
-    kotlin_script_runtime_jar "$kotlinScriptRuntimeModule@jar"
+    kotlin_compiler_jar project(kotlinCompilerModule)
+    kotlin_stdlib_jar kotlinStdLibModule
+    kotlin_reflect_jar kotlinReflectModule
+    kotlin_script_runtime_jar project(":kotlin-script-runtime")
 
     [kotlinCommonStdlibModule, kotlinTestCommonModule, kotlinTestAnnotationsCommonModule].each {
         kotlinCommonSources(it) { transitive = false }
     }
 
-    compilerCompile project(":utilities:basic-utils")
+    compilerCompile project(":kotlin-native:utilities:basic-utils")
 
     compilerCompile "com.google.protobuf:protobuf-java:${protobufVersion}"
 
-    compilerCompile kotlinCompilerModule
+    compilerCompile project(kotlinCompilerModule)
+    compilerCompile project(":native:kotlin-native-utils")
+    compilerCompile project(":core:descriptors")
+    compilerCompile project(":compiler:ir.tree")
+    compilerCompile project(":compiler:ir.tree.impl")
+    compilerCompile project(":compiler:ir.backend.common")
+    compilerCompile project(":compiler:util")
+    compilerCompile project(":native:frontend.native")
+    compilerCompile project(":compiler:cli-common")
+    compilerCompile project(":compiler:cli")
+    compilerCompile project(":kotlin-util-klib")
+    compilerCompile project(":kotlin-util-klib-metadata")
+    compilerCompile project(":compiler:ir.serialization.common")
+    use(LocalDependenciesKt) {
+        compilerCompile(intellijCoreDep()){
+            artifact {
+                name = "intellij-core"
+                type = "jar"
+            }
+        }
+        compilerCompile(intellijDep()){
+            artifact {
+                name = "util"
+                type = "jar"
+                //extention = "jar"
+            }
+        }
+        compileOnly(jpsStandalone())
+    }
+
     compilerCompile kotlinNativeInterop['llvm'].configuration
     compilerCompile kotlinNativeInterop['hash'].configuration
     compilerCompile kotlinNativeInterop['files'].configuration
-    compilerCompile "org.jetbrains.kotlin:kotlin-native-shared:$konanVersion"
 
-    cli_bcCompile kotlinCompilerModule
-    cli_bcCompile "org.jetbrains.kotlin:kotlin-native-shared:$konanVersion"
+
     cli_bcCompile sourceSets.compiler.output
 
-    bc_frontendCompile kotlinCompilerModule
+    bc_frontendCompile project(kotlinCompilerModule)
 
     cli_bc sourceSets.cli_bc.output
 }
@@ -185,18 +213,13 @@ classes.dependsOn 'compilerClasses', 'cli_bcClasses', 'bc_frontendClasses'
 // These are just a couple of aliases
 task stdlib(dependsOn: "${hostName}Stdlib")
 
-def commonSrc = file('build/stdlib')
-
-task unzipStdlibSources(type: CopyCommonSources) {
-    outputDir commonSrc
-    sourcePaths configurations.kotlinCommonSources
-}
+def commonSrc = project(":kotlin-stdlib-common").files("src/kotlin", "src/generated", "../unsigned/src", "../src").files
 
 final List<File> stdLibSrc = [
-        project(':Interop:Runtime').file('src/main/kotlin'),
-        project(':Interop:Runtime').file('src/native/kotlin'),
-        project(':Interop:JsRuntime').file('src/main/kotlin'),
-        project(':runtime').file('src/main/kotlin')
+        project(':kotlin-native:Interop:Runtime').file('src/main/kotlin'),
+        project(':kotlin-native:Interop:Runtime').file('src/native/kotlin'),
+        project(':kotlin-native:Interop:JsRuntime').file('src/main/kotlin'),
+        project(':kotlin-native:runtime').file('src/main/kotlin')
 ]
 
 // These files are built before the 'dist' is complete,
@@ -211,33 +234,41 @@ targetList.each { target ->
     if (target != "wasm32") defaultArgs += '-g'
     def konanArgs = [*defaultArgs,
                      '-target', target,
-                     "-Xruntime=${project(':runtime').file('build/bitcode/main/' + target + '/runtime.bc')}",
+                     "-Xruntime=${project(':kotlin-native:runtime').file('build/bitcode/main/' + target + '/runtime.bc')}",
                      *project.globalBuildArgs]
 
     task("${target}Stdlib", type: JavaExec) {
         main = 'org.jetbrains.kotlin.cli.bc.K2NativeKt'
         // This task depends on distCompiler, so the compiler jar is already in the dist directory.
-        classpath = fileTree("${rootProject.projectDir}/dist/konan/lib") {
+        classpath = fileTree("${UtilsKt.getKotlinNativeDist(project)}/konan/lib") {
             include "*.jar"
         }
+        systemProperties "konan.home": UtilsKt.getKotlinNativeDist(project)
         jvmArgs = konanJvmArgs
+        def testAnnotationCommon = project(":kotlin-test:kotlin-test-annotations-common").files("src/main/kotlin").files
+        def testCommon = project(":kotlin-test:kotlin-test-common").files("src/main/kotlin").files
         args = [*konanArgs,
-                '-output', project(':runtime').file("build/${target}Stdlib"),
+                '-output', project(':kotlin-native:runtime').file("build/${target}Stdlib"),
                 '-produce', 'library', '-module-name', 'stdlib', '-XXLanguage:+AllowContractsForCustomFunctions',
                 '-Xmulti-platform', '-Xopt-in=kotlin.RequiresOptIn', '-Xinline-classes',
                 '-Xopt-in=kotlin.contracts.ExperimentalContracts',
                 '-Xopt-in=kotlin.ExperimentalMultiplatform',
                 '-Xallow-result-return-type',
-                commonSrc.absolutePath,
-                "-Xcommon-sources=${commonSrc.absolutePath}",
+                *commonSrc.toList(),
+                *testAnnotationCommon.toList(),
+                *testCommon.toList(),
+                "-Xcommon-sources=${commonSrc.join(',')}",
+                "-Xcommon-sources=${testAnnotationCommon.join(',')}",
+                "-Xcommon-sources=${testCommon.join(',')}",
                 *stdLibSrc]
         stdLibSrc.forEach { inputs.dir(it) }
-        inputs.dir(commonSrc)
-        outputs.dir(project(':runtime').file("build/${target}Stdlib"))
+        commonSrc.forEach{
+            inputs.dir(it)
+        }
+        outputs.dir(project(':kotlin-native:runtime').file("build/${target}Stdlib"))
 
-        dependsOn 'unzipStdlibSources'
-        dependsOn ":runtime:${target}Runtime"
-        dependsOn ":distCompiler"
+        dependsOn ":kotlin-native:runtime:${target}Runtime"
+        dependsOn ":kotlin-native:distCompiler"
     }
 }
 
@@ -254,7 +285,7 @@ jar {
             sourceSets.filesInteropStubs.output,
             sourceSets.llvmInteropStubs.output
 
-    dependsOn ':runtime:hostRuntime', 'external_jars'
+    dependsOn ':kotlin-native:runtime:hostRuntime', 'external_jars'
 }
 
 def externalJars = ['compiler', 'stdlib', 'reflect', 'script_runtime']

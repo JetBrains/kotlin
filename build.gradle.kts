@@ -27,7 +27,7 @@ buildscript {
     dependencies {
         bootstrapCompilerClasspath(kotlin("compiler-embeddable", bootstrapKotlinVersion))
 
-        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.21")
+        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.25")
         classpath(kotlin("gradle-plugin", bootstrapKotlinVersion))
         classpath(kotlin("serialization", bootstrapKotlinVersion))
         classpath("org.jetbrains.dokka:dokka-gradle-plugin:0.9.17")
@@ -115,6 +115,10 @@ extra["ideaUltimateSandboxDir"] = project.file(ideaUltimateSandboxDir)
 extra["ideaPluginDir"] = project.file(ideaPluginDir)
 extra["ideaUltimatePluginDir"] = project.file(ideaUltimatePluginDir)
 extra["isSonatypeRelease"] = false
+val kotlinNativeVersionObject = project.kotlinNativeVersionValue()
+subprojects {
+    extra["kotlinNativeVersion"] = kotlinNativeVersionObject
+}
 
 // Work-around necessary to avoid setting null javaHome. Will be removed after support of lazy task configuration
 val jdkNotFoundConst = "JDK NOT FOUND"

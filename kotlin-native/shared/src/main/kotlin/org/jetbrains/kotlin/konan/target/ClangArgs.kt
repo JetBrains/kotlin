@@ -226,9 +226,15 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
     private val targetClangXXCmd
             = listOf("${absoluteLlvmHome}/bin/clang++") + clangArgs
 
+    private val targetArCmd
+            = listOf("${absoluteLlvmHome}/bin/llvm-ar")
+
+
     fun clangC(vararg userArgs: String) = targetClangCmd + userArgs.asList()
 
     fun clangCXX(vararg userArgs: String) = targetClangXXCmd + userArgs.asList()
+
+    fun llvmAr(vararg userArgs: String) = targetArCmd + userArgs.asList()
 
     companion object {
         @JvmStatic

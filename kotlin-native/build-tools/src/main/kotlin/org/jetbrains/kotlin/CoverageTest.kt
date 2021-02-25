@@ -64,7 +64,11 @@ open class CoverageTest : DefaultTask() {
     override fun configure(closure: Closure<Any>): Task {
         super.configure(closure)
         dependsOnDist()
-        dependsOn(project.tasks.getByName("compileKonan$binaryName"))
+        val compileBinaryTask = project.tasks.getByName("compileKonan$binaryName")
+        compileBinaryTask.konanOldPluginTaskDependenciesWalker{
+            dependsOnDist()
+        }
+        dependsOn(compileBinaryTask)
         return this
     }
 

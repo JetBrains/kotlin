@@ -7,6 +7,9 @@ package org.jetbrains.kotlin
 
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.tasks.TaskState
+import org.gradle.api.logging.LogLevel
+import org.gradle.api.tasks.TaskCollection
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.properties.propertyList
 import org.jetbrains.kotlin.konan.properties.saveProperties
@@ -17,9 +20,38 @@ import java.util.concurrent.TimeUnit
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.Base64
-import org.jetbrains.report.json.*
 import java.nio.file.Path
 import org.jetbrains.kotlin.konan.file.File as KFile
+import org.gradle.nativeplatform.toolchain.internal.*
+import org.gradle.nativeplatform.toolchain.plugins.ClangCompilerPlugin
+import org.gradle.api.Incubating
+import org.gradle.api.NamedDomainObjectFactory
+import org.gradle.api.NonNullApi
+import org.gradle.api.Plugin
+import org.gradle.api.internal.file.FileResolver
+import org.gradle.api.internal.plugins.PotentialPlugin
+import org.gradle.internal.operations.BuildOperationExecutor
+import org.gradle.internal.os.OperatingSystem
+import org.gradle.internal.reflect.Instantiator
+import org.gradle.internal.service.ServiceRegistry
+import org.gradle.internal.work.WorkerLeaseService
+import org.gradle.model.Defaults
+import org.gradle.model.RuleSource
+import org.gradle.nativeplatform.internal.CompilerOutputFileNamingSchemeFactory
+import org.gradle.nativeplatform.platform.internal.NativePlatformInternal
+import org.gradle.nativeplatform.plugins.NativeComponentPlugin
+import org.gradle.nativeplatform.toolchain.Clang
+import org.gradle.nativeplatform.toolchain.internal.clang.ClangToolChain
+import org.gradle.nativeplatform.toolchain.internal.gcc.AbstractGccCompatibleToolChain
+import org.gradle.nativeplatform.toolchain.internal.gcc.DefaultGccPlatformToolChain
+import org.gradle.nativeplatform.toolchain.internal.gcc.metadata.SystemLibraryDiscovery
+import org.gradle.nativeplatform.toolchain.internal.metadata.CompilerMetaDataProviderFactory
+import org.gradle.nativeplatform.toolchain.internal.tools.CommandLineToolSearchResult
+import org.gradle.nativeplatform.toolchain.internal.tools.GccCommandLineToolConfigurationInternal
+import org.gradle.nativeplatform.toolchain.internal.tools.ToolSearchPath
+import org.gradle.process.internal.ExecActionFactory
+import java.io.ByteArrayOutputStream
+import java.net.URI
 
 //region Project properties.
 
@@ -28,6 +60,9 @@ val Project.platformManager
 
 val Project.testTarget
     get() = findProperty("target") as KonanTarget
+
+val Project.testTargetSuffix
+    get() = (findProperty("target") as KonanTarget ?: HostManager.host).name.capitalize()
 
 val Project.verboseTest
     get() = hasProperty("test_verbose")
@@ -47,9 +82,50 @@ val Project.testOutputFramework
 val Project.testOutputExternal
     get() = (findProperty("testOutputExternal") as File).toString()
 
+val Project.cacheRedirectorEnabled
+    get() = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() ?: false
+
+fun Project.redirectIfEnabled(url: String):String = if (cacheRedirectorEnabled) {
+    val base = URL(url)
+    "https://cache-redirector.jetbrains.com/${base.host}/${base.path}"
+} else
+    url
+
+val validPropertiesNames = listOf("kotlin.native.home",
+                                  "org.jetbrains.kotlin.native.home",
+                                  "konan.home")
+
 val Project.kotlinNativeDist
-    get() = this.rootProject.file(this.findProperty("org.jetbrains.kotlin.native.home")
-            ?: this.findProperty("konan.home") ?: "dist")
+    get() = rootProject.currentKotlinNativeDist
+
+val Project.currentKotlinNativeDist
+    get() = file(validPropertiesNames.firstOrNull{ hasProperty(it) }?.let{ findProperty(it) } ?: "dist")
+
+val kotlinNativeHome
+    get() = validPropertiesNames.mapNotNull(System::getProperty).first()
+
+val Project.useCustomDist
+    get() = hasProperty("kotlin.native.home") ||
+            hasProperty("org.jetbrains.kotlin.native.home") ||
+            hasProperty("konan.home")
+
+private val libraryRegexp = Regex("""^import\s+platform\.(\S+)\..*$""")
+fun File.dependencies() =
+    readLines().filter(libraryRegexp::containsMatchIn)
+        .map { libraryRegexp.matchEntire(it)?.groups?.get(1)?.value ?: "" }
+        .toSortedSet()
+
+
+fun Task.dependsOnPlatformLibs() {
+    val platformManager = project.project(":kotlin-native").platformManager
+    val target = project.testTarget ?: platformManager.hostPlatform.target
+    (this as? KonanTest)?.run {
+        project.file(source).dependencies().forEach {
+            this.dependsOn(":kotlin-native:platformLibs:${target.name}-$it")
+            //this.dependsOn(":kotlin-native:platformLibs:${target.name}-${it}Cache")
+        }
+    } ?: error("unsupported task : $this")
+}
 
 @Suppress("UNCHECKED_CAST")
 val Project.globalTestArgs: List<String>
@@ -105,16 +181,21 @@ fun Project.dependsOnDist(taskName: String) {
 }
 
 fun Task.dependsOnDist() {
-    val rootTasks = project.rootProject.tasks
-    // We don't build the compiler if a custom dist path is specified.
-    if (!(project.findProperty("useCustomDist") as Boolean)) {
-        dependsOn(rootTasks.getByName("dist"))
-        val target = project.testTarget
-        if (target != HostManager.host) {
-            // if a test_target property is set then tests should depend on a crossDist
-            // otherwise, runtime components would not be build for a target.
-            dependsOn(rootTasks.getByName("${target.name}CrossDist"))
-        }
+    dependsOn(":kotlin-native:dist")
+    val target = project.testTarget
+    if (target != HostManager.host) {
+        // if a test_target property is set then tests should depend on a crossDist
+        // otherwise, runtime components would not be build for a target.
+        dependsOn(":kotlin-native:${target.name}CrossDist")
+    }
+}
+
+fun Task.konanOldPluginTaskDependenciesWalker(index:Int = 0, walker: Task.(Int)->Unit) {
+    walker(index + 1)
+    dependsOn.forEach{
+        val task = (it as? Task) ?: return@forEach
+        if (task.name.startsWith("compileKonan"))
+            task.konanOldPluginTaskDependenciesWalker(index + 1, walker)
     }
 }
 
@@ -140,7 +221,9 @@ fun Task.sameDependenciesAs(task: Task) {
  */
 fun Task.dependsOnKonanBuildingTask(artifact: String, target: KonanTarget) {
     val buildTask = project.findKonanBuildTask(artifact, target)
-    buildTask.dependsOnDist()
+    buildTask.konanOldPluginTaskDependenciesWalker {
+        dependsOnDist()
+    }
     buildTask.sameDependenciesAs(this)
     dependsOn(buildTask)
 }
@@ -174,31 +257,6 @@ data class Commit(val revision: String, val developer: String, val webUrlWithDes
 
 val teamCityUrl = "http://buildserver.labs.intellij.net"
 
-// List of commits.
-class CommitsList(data: JsonElement): ConvertedFromJson {
-
-    val commits: List<Commit>
-
-    init {
-        if (data !is JsonObject) {
-            error("Commits description is expected to be a json object!")
-        }
-        val changesElement = data.getOptionalField("change")
-        commits = changesElement?.let {
-            if (changesElement !is JsonArray) {
-                error("Change field is expected to be an array. Please, check source.")
-            }
-            changesElement.jsonArray.map {
-                with(it as JsonObject) {
-                    Commit(elementToString(getRequiredField("version"), "version"),
-                            elementToString(getRequiredField("username"), "username"),
-                            elementToString(getRequiredField("webUrl"), "webUrl")
-                    )
-                }
-            }
-        } ?: listOf<Commit>()
-    }
-}
 
 fun buildsUrl(buildLocator: String) =
         "$teamCityUrl/app/rest/builds/?locator=$buildLocator"
@@ -221,13 +279,6 @@ fun sendGetRequest(url: String, username: String? = null, password: String? = nu
     return connection.inputStream.use { it.reader().use { reader -> reader.readText() } }
 }
 
-fun getBuildProperty(buildJsonDescription: String, property: String) =
-        with(JsonTreeParser.parse(buildJsonDescription) as JsonObject) {
-            if (getPrimitive("count").int == 0) {
-                error("No build information on TeamCity for $buildJsonDescription!")
-            }
-            (getArray("build").getObject(0).getPrimitive(property) as JsonLiteral).unquoted()
-        }
 
 @JvmOverloads
 fun compileSwift(project: Project, target: KonanTarget, sources: List<String>, options: List<String>,
@@ -333,16 +384,16 @@ fun Project.buildStaticLibrary(cSources: Collection<File>, output: File, objDir:
 
     objDir.mkdirs()
     exec {
-        it.commandLine(platform.clang.clangC(
+        commandLine(platform.clang.clangC(
                 "-c",
                 *cSources.map { it.absolutePath }.toTypedArray()
         ))
-        it.workingDir(objDir)
+        workingDir(objDir)
     }
 
     output.parentFile.mkdirs()
     exec {
-        it.commandLine(
+        commandLine(
                 "${platform.configurables.absoluteLlvmHome}/bin/llvm-ar",
                 "-rc",
                 output,

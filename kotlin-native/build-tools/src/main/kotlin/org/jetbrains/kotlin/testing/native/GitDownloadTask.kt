@@ -56,10 +56,10 @@ open class GitDownloadTask @Inject constructor(
             execConfiguration: ExecSpec.() -> Unit = {}
     ): ExecResult =
             project.exec {
-                it.executable = "git"
-                it.args(*args)
-                it.isIgnoreExitValue = ignoreExitValue
-                it.execConfiguration()
+                executable = "git"
+                args(*args)
+                isIgnoreExitValue = ignoreExitValue
+                execConfiguration()
             }
 
     private fun tryCloneBranch(): Boolean {
@@ -93,7 +93,7 @@ open class GitDownloadTask @Inject constructor(
         }
 
         project.delete {
-            it.delete(outputDirectory)
+            delete(outputDirectory)
         }
 
         if (!tryCloneBranch()) {

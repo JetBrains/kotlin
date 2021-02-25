@@ -111,20 +111,23 @@ class DependencyProcessor(dependenciesRoot: File,
                 properties: KonanPropertiesLoader,
                 dependenciesUrl: String = properties.dependenciesUrl,
                 keepUnstable:Boolean = true,
-                archiveType: ArchiveType = ArchiveType.systemDefault) : this(
+                archiveType: ArchiveType = ArchiveType.systemDefault,
+                customProgressCallback: ProgressCallback? = null) : this(
             dependenciesRoot,
             properties.properties,
             properties.dependencies,
             dependenciesUrl,
             keepUnstable = keepUnstable,
-            archiveType = archiveType)
+            archiveType = archiveType,
+            customProgressCallback = customProgressCallback)
 
     constructor(dependenciesRoot: File,
                 properties: Properties,
                 dependencies: List<String>,
                 dependenciesUrl: String = properties.dependenciesUrl,
                 keepUnstable:Boolean = true,
-                archiveType: ArchiveType = ArchiveType.systemDefault) : this(
+                archiveType: ArchiveType = ArchiveType.systemDefault,
+                customProgressCallback: ProgressCallback? = null ) : this(
             dependenciesRoot,
             dependenciesUrl,
             dependencyToCandidates = properties.findCandidates(dependencies),
@@ -132,7 +135,8 @@ class DependencyProcessor(dependenciesRoot: File,
             maxAttempts = properties.downloadingAttempts,
             attemptIntervalMs = properties.downloadingAttemptIntervalMs,
             keepUnstable = keepUnstable,
-            archiveType = archiveType)
+            archiveType = archiveType,
+            customProgressCallback = customProgressCallback)
 
 
     class DependencyFile(directory: File, fileName: String) {

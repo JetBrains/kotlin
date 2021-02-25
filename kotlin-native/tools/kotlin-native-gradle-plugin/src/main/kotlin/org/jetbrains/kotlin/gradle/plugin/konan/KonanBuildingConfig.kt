@@ -117,20 +117,20 @@ abstract class KonanBuildingConfig<T : KonanBuildingTask>(
     private fun createTask(target: KonanTarget): TaskProvider<T> =
         project.tasks.register(generateTaskName(target), type) {
             val outputDescription = determineOutputPlacement(target)
-            it.init(this, outputDescription.destinationDir, outputDescription.artifactName, target)
-            it.group = BasePlugin.BUILD_GROUP
-            it.description = generateTaskDescription(it)
+            init(this@KonanBuildingConfig, outputDescription.destinationDir, outputDescription.artifactName, target)
+            group = BasePlugin.BUILD_GROUP
+            description = generateTaskDescription(this)
         } ?: throw Exception("Cannot create task for target: ${target.visibleName}")
 
     private fun createAggregateTask(): TaskProvider<Task> =
-        project.tasks.register(generateAggregateTaskName()) { task ->
-            task.group = BasePlugin.BUILD_GROUP
-            task.description = generateAggregateTaskDescription(task)
+        project.tasks.register(generateAggregateTaskName()) {
+            group = BasePlugin.BUILD_GROUP
+            description = generateAggregateTaskDescription(this)
 
             targetToTask.filter {
                 project.targetIsRequested(it.key)
             }.forEach {
-                task.dependsOn(it.value)
+                dependsOn(it.value)
             }
         }.also {
             project.compileAllTask.dependsOn(it)
@@ -141,9 +141,9 @@ abstract class KonanBuildingConfig<T : KonanBuildingTask>(
 
         return this[canonicalTarget]?.let { canonicalBuild ->
             project.tasks.register(generateTargetAliasTaskName(targetName)) {
-                it.group = BasePlugin.BUILD_GROUP
-                it.description = generateTargetAliasTaskDescription(it, targetName)
-                it.dependsOn(canonicalBuild)
+                group = BasePlugin.BUILD_GROUP
+                description = generateTargetAliasTaskDescription(this, targetName)
+                dependsOn(canonicalBuild)
             }
         }
     }
@@ -160,43 +160,43 @@ abstract class KonanBuildingConfig<T : KonanBuildingTask>(
 
     // Common building DSL.
 
-    override fun artifactName(name: String) = tasks().forEach { it.configure { t -> t.artifactName(name) } }
+    override fun artifactName(name: String) = tasks().forEach { it.configure { artifactName(name) } }
 
     fun baseDir(dir: Any) =
         tasks().forEach {
-            it.configure { t ->
-                t.destinationDir(
-                    project.file(dir).targetSubdir(t.konanTarget)
+            it.configure {
+                destinationDir(
+                    project.file(dir).targetSubdir(konanTarget)
                 )
             }
         }
 
     override fun libraries(closure: Closure<Unit>) =
-        tasks().forEach { it.configure { t -> t.libraries(closure) } }
+        tasks().forEach { it.configure { libraries(closure) } }
 
     override fun libraries(action: Action<KonanLibrariesSpec>) =
-        tasks().forEach { it.configure { t -> t.libraries(action) } }
+        tasks().forEach { it.configure { libraries(action) } }
 
     override fun libraries(configure: KonanLibrariesSpec.() -> Unit) =
-        tasks().forEach { it.configure { t -> t.libraries(configure) } }
+        tasks().forEach { it.configure { libraries(configure) } }
 
     override fun noDefaultLibs(flag: Boolean) =
-        tasks().forEach { it.configure { t -> t.noDefaultLibs(flag) } }
+        tasks().forEach { it.configure { noDefaultLibs(flag) } }
 
     override fun noEndorsedLibs(flag: Boolean) =
-        tasks().forEach { it.configure { t -> t.noEndorsedLibs(flag) } }
+        tasks().forEach { it.configure { noEndorsedLibs(flag) } }
 
     override fun dumpParameters(flag: Boolean) =
-        tasks().forEach { it.configure { t -> t.dumpParameters(flag) } }
+        tasks().forEach { it.configure { dumpParameters(flag) } }
 
     override fun extraOpts(vararg values: Any) =
-        tasks().forEach { it.configure { t -> t.extraOpts(*values) } }
+        tasks().forEach { it.configure { extraOpts(*values) } }
 
     override fun extraOpts(values: List<Any>) =
-        tasks().forEach { it.configure { t -> t.extraOpts(values) } }
+        tasks().forEach { it.configure { extraOpts(values) } }
 
     fun dependsOn(vararg dependencies: Any?) =
-        tasks().forEach { it.configure { t -> t.dependsOn(*dependencies) } }
+        tasks().forEach { it.configure { dependsOn(*dependencies) } }
 
     fun target(targetString: String, configureAction: T.() -> Unit) {
         val target = project.hostManager.targetByName(targetString)

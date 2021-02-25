@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.buildDistribution
 import org.jetbrains.kotlin.konan.target.customerDistribution
 import org.jetbrains.kotlin.konan.util.DependencyProcessor
+import org.jetbrains.kotlin.*
 import java.io.File
 import javax.inject.Inject
 
@@ -87,14 +88,13 @@ internal fun Project.setProperty(property: KonanPlugin.ProjectProperty, value: A
 // konanHome extension is set by downloadKonanCompiler task.
 internal val Project.konanHome: String
     get() {
-        assert(hasProperty(KonanPlugin.ProjectProperty.KONAN_HOME))
-        return project.file(getProperty(KonanPlugin.ProjectProperty.KONAN_HOME)).canonicalPath
+        return project.kotlinNativeDist.absolutePath
     }
 
 internal val Project.konanVersion: CompilerVersion
     get() = project.findProperty(KonanPlugin.ProjectProperty.KONAN_VERSION)
         ?.toString()?.let { CompilerVersion.fromString(it) }
-        ?: CompilerVersion.CURRENT
+        ?: project.findProperty("kotlinNativeVersion") as? CompilerVersion ?: CompilerVersion.CURRENT
 
 internal val Project.konanBuildRoot          get() = buildDir.resolve("konan")
 internal val Project.konanBinBaseDir         get() = konanBuildRoot.resolve("bin")
@@ -327,7 +327,7 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
     }
 
 
-    override fun apply(project: ProjectInternal?) {
+    override fun apply(project: ProjectInternal) {
         if (project == null) {
             return
         }
@@ -346,7 +346,7 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
         project.warnAboutDeprecatedProperty(ProjectProperty.KONAN_HOME)
 
         // Set additional project properties like org.jetbrains.kotlin.native.home, konan.build.targets etc.
-        if (!project.hasProperty(ProjectProperty.KONAN_HOME)) {
+        if (!project.useCustomDist) {
             project.setProperty(ProjectProperty.KONAN_HOME, project.konanCompilerDownloadDir())
             project.setProperty(ProjectProperty.DOWNLOAD_COMPILER, true)
         }
@@ -370,16 +370,16 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
                     val isCrossCompile = (task.target != HostManager.host.visibleName)
                     if (!isCrossCompile && !project.hasProperty("konanNoRun"))
                     task.runTask = project.tasks.register("run${task.artifactName.capitalize()}", Exec::class.java) {
-                        it.group= "run"
-                        it.dependsOn(task)
+                        group= "run"
+                        dependsOn(task)
                         val artifactPathClosure = object : Closure<String>(this) {
                             override fun call() = task.artifactPath
                         }
                         // Use GString to evaluate a path to the artifact lazily thus allow changing it at configuration phase.
                         val lazyArtifactPath = GStringImpl(arrayOf(artifactPathClosure), arrayOf(""))
-                        it.executable(lazyArtifactPath)
+                        executable(lazyArtifactPath)
                         // Add values passed in the runArgs project property as arguments.
-                        it.argumentProviders.add(task.RunArgumentProvider())
+                        argumentProviders.add(task.RunArgumentProvider())
                     }
                 }
         }
@@ -390,7 +390,7 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
                 .filterIsInstance(KonanProgram::class.java)
                 .forEach { program ->
                     program.tasks().forEach { compile ->
-                        compile.configure { it.runTask?.let { runTask.dependsOn(it) } }
+                        compile.configure { this@configure.runTask?.let { runTask.dependsOn(it) } }
                     }
                 }
         }
@@ -403,7 +403,7 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
                     val konanSoftwareComponent = buildingConfig.mainVariant
                     project.extensions.configure(PublishingExtension::class.java) {
                         val builtArtifact = buildingConfig.name
-                        val mavenPublication = it.publications.maybeCreate(builtArtifact, MavenPublication::class.java)
+                        val mavenPublication = publications.maybeCreate(builtArtifact, MavenPublication::class.java)
                         mavenPublication.apply {
                             artifactId = builtArtifact
                             groupId = project.group.toString()
@@ -416,22 +416,22 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
                     }
 
                     project.extensions.configure(PublishingExtension::class.java) {
-                        val publishing = it
                         for (v in konanSoftwareComponent.variants) {
-                            publishing.publications.create(v.name, MavenPublication::class.java) { mavenPublication ->
+                            this@configure.publications.create(v.name, MavenPublication::class.java) {
                                 val coordinates = (v as NativeVariantIdentity).coordinates
                                 project.logger.info("variant with coordinates($coordinates) and module: ${coordinates.module}")
-                                mavenPublication.artifactId = coordinates.module.name
-                                mavenPublication.groupId = coordinates.group
-                                mavenPublication.version = coordinates.version
-                                mavenPublication.from(v)
-                                (mavenPublication as MavenPublicationInternal).publishWithOriginalFileName()
+                                artifactId = coordinates.module.name
+                                groupId = coordinates.group
+                                version = coordinates.version
+                                from(v)
+                                (this as MavenPublicationInternal).publishWithOriginalFileName()
                                 buildingConfig.pomActions.forEach {
-                                    mavenPublication.pom(it)
+                                    pom(it)
                                 }
                             }
                         }
                     }
+                    true
                 }
             }
         }

@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.konan.file.*
 
 class ExecClang(private val project: Project) {
 
-    private val platformManager = project.rootProject.findProperty("platformManager") as PlatformManager
+    private val platformManager = project.project(":kotlin-native").findProperty("platformManager") as PlatformManager
 
     private fun konanArgs(target: KonanTarget): List<String> {
         return platformManager.platform(target).clang.clangArgsForKonanSources.asList()
@@ -108,11 +108,9 @@ class ExecClang(private val project: Project) {
     }
 
     fun execToolchainClang(target: KonanTarget, action: Action<in ExecSpec>): ExecResult {
-        val extendedAction = Action<ExecSpec> { execSpec ->
-            action.execute(execSpec)
-            execSpec.apply {
-                executable = resolveToolchainExecutable(target, executable)
-            }
+        val extendedAction = Action<ExecSpec> {
+            action.execute(this)
+            executable = resolveToolchainExecutable(target, executable)
         }
         return project.exec(extendedAction)
     }
@@ -128,16 +126,14 @@ class ExecClang(private val project: Project) {
     }
 
     private fun execClang(defaultArgs: List<String>, action: Action<in ExecSpec>): ExecResult {
-        val extendedAction = Action<ExecSpec> { execSpec ->
-            action.execute(execSpec)
-            execSpec.apply {
-                executable = resolveExecutable(executable)
+        val extendedAction = Action<ExecSpec> {
+            action.execute(this)
+            executable = resolveExecutable(executable)
 
-                val hostPlatform = project.findProperty("hostPlatform") as Platform
-                environment["PATH"] = project.files(hostPlatform.clang.clangPaths).asPath +
-                        java.io.File.pathSeparator + environment["PATH"]
-                args = args + defaultArgs
-            }
+            val hostPlatform = project.findProperty("hostPlatform") as Platform
+            environment["PATH"] = project.files(hostPlatform.clang.clangPaths).asPath +
+                    java.io.File.pathSeparator + environment["PATH"]
+            args = args + defaultArgs
         }
         return project.exec(extendedAction)
     }

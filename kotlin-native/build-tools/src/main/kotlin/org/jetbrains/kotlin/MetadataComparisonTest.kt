@@ -4,7 +4,9 @@
  */
 package org.jetbrains.kotlin
 
+import groovy.lang.Closure
 import org.gradle.api.DefaultTask
+import org.gradle.api.Task
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 import org.jetbrains.kotlin.klib.metadata.CInteropComparisonConfig
@@ -50,12 +52,18 @@ open class MetadataComparisonTest : DefaultTask() {
         val sourcecodeLibrary = cinterop(project.file(defFile), Mode.SOURCECODE)
         compareKlibMetadata(CInteropComparisonConfig(), sourcecodeLibrary.absolutePath, metadataLibrary.absolutePath).let { result ->
             if (result is MetadataCompareResult.Fail) {
-                val message = StringBuilder().also {
-                    expandFail(result, it::appendln)
-                }.toString()
+                val message = buildString {
+                    expandFail(result, {x:String -> appendln(x)})
+                }
                 throw TestFailedException(message)
             }
         }
+    }
+
+    override fun configure(closure: Closure<Any>): Task {
+        super.configure(closure)
+        dependsOnDist()
+        return this
     }
 
     private fun cinterop(defFile: File, mode: Mode): File {

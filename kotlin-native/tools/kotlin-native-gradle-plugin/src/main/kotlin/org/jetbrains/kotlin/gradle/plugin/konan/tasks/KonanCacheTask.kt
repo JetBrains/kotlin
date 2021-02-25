@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.gradle.plugin.konan.KonanCompilerRunner
 import org.jetbrains.kotlin.gradle.plugin.konan.konanHome
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.PlatformManager
+import org.jetbrains.kotlin.*
 import java.io.File
 
 enum class KonanCacheKind(val outputKind: CompilerOutputKind) {
@@ -45,7 +46,7 @@ open class KonanCacheTask: DefaultTask() {
     @Input
     /** Path to a compiler distribution that is used to build this cache. */
     val compilerDistributionPath: Property<File> = project.objects.property(File::class.java).apply {
-        set(project.provider { project.file(project.konanHome) })
+        set(project.provider { project.kotlinNativeDist })
     }
 
     @TaskAction

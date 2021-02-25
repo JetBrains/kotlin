@@ -1,37 +1,24 @@
-def properties = ['buildKotlinVersion', 'buildKotlinCompilerRepo', 'kotlinVersion', 'kotlinCompilerRepo']
-
-for (prop in properties) {
-    if (!hasProperty(prop)) {
-        throw new GradleException("Please ensure the '$prop' property is defined before applying this script.")
-    }
-}
+import org.jetbrains.kotlin.UtilsKt
 
 project.buildscript.repositories {
     maven {
-        url buildKotlinCompilerRepo
+        url BootstrapKt.getBootstrapKotlinRepo(project)
     }
-    maven {
-        url kotlinCompilerRepo
-    }
-    maven {
-        url 'https://cache-redirector.jetbrains.com/maven-central'
-    }
-    mavenCentral()
+    if (UtilsKt.getCacheRedirectorEnabled(project))
+        maven { url 'https://cache-redirector.jetbrains.com/maven-central' }
+    else
+        mavenCentral()
 }
 
 project.buildscript.dependencies {
-    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}"
 }
 configurations {
     kotlinCompilerClasspath
 }
-project.repositories {
-    maven { url buildKotlinCompilerRepo }
-    maven {
-        url kotlinCompilerRepo
-    }
-}
 
-project.dependencies {
-    kotlinCompilerClasspath("org.jetbrains.kotlin:kotlin-compiler-embeddable:$buildKotlinVersion")
+if (!(project.findProperty("withoutEmbedabble")?.toString()?.toBoolean() ?: false)) {
+    project.dependencies {
+        kotlinCompilerClasspath(project(path: ":kotlin-compiler-embeddable", configuration: "runtimeJar"))
+    }
 }

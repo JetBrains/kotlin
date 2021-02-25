@@ -28,13 +28,13 @@ open class SwiftBenchmarkingPlugin : BenchmarkingPlugin() {
     override fun Project.configureJvmJsonTask(jvmRun: Task): Task {
         return tasks.create("jvmJsonReport") {
             logger.info("JVM run is unsupported")
-            jvmRun.finalizedBy(it)
+            jvmRun.finalizedBy(this)
         }
     }
 
     override fun Project.configureJvmTask(): Task {
-        return tasks.create("jvmRun") { task ->
-            task.doLast {
+        return tasks.create("jvmRun") {
+            doLast {
                 logger.info("JVM run is unsupported")
             }
         }
@@ -79,9 +79,9 @@ open class SwiftBenchmarkingPlugin : BenchmarkingPlugin() {
         val nativeTarget = kotlin.targets.getByName(NATIVE_TARGET_NAME) as KotlinNativeTarget
         // Build executable from swift code.
         framework = nativeTarget.binaries.getFramework(nativeFrameworkName, benchmark.buildType)
-        tasks.create("buildSwift") { task ->
-            task.dependsOn(framework.linkTaskName)
-            task.doLast {
+        tasks.create("buildSwift") {
+            dependsOn(framework.linkTaskName)
+            doLast {
                 val frameworkParentDirPath = framework.outputDirectory.absolutePath
                 val options = listOf("-O", "-wmo", "-Xlinker", "-rpath", "-Xlinker", frameworkParentDirPath, "-F", frameworkParentDirPath)
                 compileSwift(project, nativeTarget.konanTarget, benchmark.swiftSources, options,

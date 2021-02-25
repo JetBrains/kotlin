@@ -38,10 +38,10 @@ open class RuntimeTestingPlugin : Plugin<Project> {
                 provider { extension.fetchDirectory }
         )
         task.configure {
-            it.refresh.set(provider { extension.refresh })
-            it.onlyIf { extension.localSourceRoot == null }
-            it.description = "Retrieves GoogleTest from the given repository"
-            it.group = "Google Test"
+            refresh.set(provider { extension.refresh })
+            onlyIf { extension.localSourceRoot == null }
+            description = "Retrieves GoogleTest from the given repository"
+            group = "Google Test"
         }
         return task
     }

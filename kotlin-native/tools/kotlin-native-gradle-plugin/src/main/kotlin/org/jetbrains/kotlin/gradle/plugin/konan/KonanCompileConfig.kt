@@ -43,33 +43,33 @@ abstract class KonanCompileConfig<T: KonanCompileTask>(name: String,
     override fun generateTargetAliasTaskDescription(task: Task, targetName: String) =
             "Build the Kotlin/Native $typeForDescription '${task.name}' for target '$targetName'"
 
-    override fun srcDir(dir: Any) = tasks().forEach { it.configure { t -> t.srcDir(dir) } }
-    override fun srcFiles(vararg files: Any) = tasks().forEach { it.configure { t -> t.srcFiles(*files) } }
-    override fun srcFiles(files: Collection<Any>) = tasks().forEach { it.configure { t -> t.srcFiles(files) } }
+    override fun srcDir(dir: Any) = tasks().forEach { it.configure { srcDir(dir) } }
+    override fun srcFiles(vararg files: Any) = tasks().forEach { it.configure { srcFiles(*files) } }
+    override fun srcFiles(files: Collection<Any>) = tasks().forEach { it.configure { srcFiles(files) } }
 
-    override fun nativeLibrary(lib: Any) = tasks().forEach { it.configure { t -> t.nativeLibrary(lib) } }
-    override fun nativeLibraries(vararg libs: Any) = tasks().forEach { it.configure { t -> t.nativeLibraries(*libs) } }
-    override fun nativeLibraries(libs: FileCollection) = tasks().forEach { it.configure { t -> t.nativeLibraries(libs) } }
+    override fun nativeLibrary(lib: Any) = tasks().forEach { it.configure { nativeLibrary(lib) } }
+    override fun nativeLibraries(vararg libs: Any) = tasks().forEach { it.configure { nativeLibraries(*libs) } }
+    override fun nativeLibraries(libs: FileCollection) = tasks().forEach { it.configure { nativeLibraries(libs) } }
 
     @Deprecated("Use commonSourceSets instead", ReplaceWith("commonSourceSets(sourceSetName)"))
-    override fun commonSourceSet(sourceSetName: String) = tasks().forEach { it.configure { t -> t.commonSourceSets(sourceSetName) } }
-    override fun commonSourceSets(vararg sourceSetNames: String) = tasks().forEach { it.configure { t -> t.commonSourceSets(*sourceSetNames) } }
-    override fun enableMultiplatform(flag: Boolean) = tasks().forEach { it.configure { t -> t.enableMultiplatform(flag) } }
+    override fun commonSourceSet(sourceSetName: String) = tasks().forEach { it.configure { commonSourceSets(sourceSetName) } }
+    override fun commonSourceSets(vararg sourceSetNames: String) = tasks().forEach { it.configure { commonSourceSets(*sourceSetNames) } }
+    override fun enableMultiplatform(flag: Boolean) = tasks().forEach { it.configure { enableMultiplatform(flag) } }
 
-    override fun linkerOpts(values: List<String>) = tasks().forEach { it.configure { t -> t.linkerOpts(values) } }
-    override fun linkerOpts(vararg values: String) = tasks().forEach { it.configure { t -> t.linkerOpts(*values) } }
+    override fun linkerOpts(values: List<String>) = tasks().forEach { it.configure { linkerOpts(values) } }
+    override fun linkerOpts(vararg values: String) = tasks().forEach { it.configure { linkerOpts(*values) } }
 
-    override fun enableDebug(flag: Boolean) = tasks().forEach { it.configure { t -> t.enableDebug(flag) } }
-    override fun noStdLib(flag: Boolean) = tasks().forEach { it.configure { t -> t.noStdLib(flag) } }
-    override fun noMain(flag: Boolean) = tasks().forEach { it.configure { t -> t.noMain(flag) } }
-    override fun enableOptimizations(flag: Boolean) = tasks().forEach { it.configure { t -> t.enableOptimizations(flag) } }
-    override fun enableAssertions(flag: Boolean) = tasks().forEach { it.configure { t -> t.enableAssertions(flag) } }
+    override fun enableDebug(flag: Boolean) = tasks().forEach { it.configure { enableDebug(flag) } }
+    override fun noStdLib(flag: Boolean) = tasks().forEach { it.configure { noStdLib(flag) } }
+    override fun noMain(flag: Boolean) = tasks().forEach { it.configure { noMain(flag) } }
+    override fun enableOptimizations(flag: Boolean) = tasks().forEach { it.configure { enableOptimizations(flag) } }
+    override fun enableAssertions(flag: Boolean) = tasks().forEach { it.configure { enableAssertions(flag) } }
 
-    override fun entryPoint(entryPoint: String) = tasks().forEach { it.configure { t -> t.entryPoint(entryPoint) } }
+    override fun entryPoint(entryPoint: String) = tasks().forEach { it.configure { entryPoint(entryPoint) } }
 
-    override fun measureTime(flag: Boolean) = tasks().forEach { it.configure { t -> t.measureTime(flag) } }
+    override fun measureTime(flag: Boolean) = tasks().forEach { it.configure { measureTime(flag) } }
 
-    override fun dependencies(closure: Closure<Unit>) = tasks().forEach { it.configure { t -> t.dependencies(closure) } }
+    override fun dependencies(closure: Closure<Unit>) = tasks().forEach { it.configure { dependencies(closure) } }
 }
 
 open class KonanProgram(name: String,

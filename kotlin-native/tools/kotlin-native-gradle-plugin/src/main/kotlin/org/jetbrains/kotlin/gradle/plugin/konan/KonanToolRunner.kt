@@ -19,12 +19,15 @@ package org.jetbrains.kotlin.gradle.plugin.konan
 import org.gradle.api.Named
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
+import org.gradle.api.Action
+import org.gradle.process.JavaExecSpec
 import org.jetbrains.kotlin.gradle.plugin.konan.KonanPlugin.ProjectProperty.KONAN_HOME
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.DependencyProcessor
 import java.nio.file.Files
+import org.jetbrains.kotlin.*
 
 internal interface KonanToolRunner: Named {
     val mainClass: String
@@ -91,21 +94,24 @@ internal abstract class KonanCliRunner(
                     "Please change it to the compiler root directory and rerun the build.")
         }
 
-        project.javaexec { spec ->
-            spec.main = mainClass
-            spec.classpath = classpath
-            spec.jvmArgs(jvmArgs)
-            spec.systemProperties(
-                System.getProperties().asSequence()
-                    .map { (k, v) -> k.toString() to v.toString() }
-                    .filter { (k, _) -> k !in blacklistProperties }
-                    .escapeQuotesForWindows()
-                    .toMap()
-            )
-            spec.args(listOf(toolName) + transformArgs(args))
-            blacklistEnvironment.forEach { spec.environment.remove(it) }
-            spec.environment(environment)
-        }
+        project.javaexec(object :Action<JavaExecSpec> {
+            override fun execute(exec: JavaExecSpec) {
+                exec.main = mainClass
+                exec.classpath = classpath
+                exec.jvmArgs(jvmArgs)
+                exec.systemProperties(
+                    System.getProperties().asSequence()
+                        .map { (k, v) -> k.toString() to v.toString() }
+                        .filter { (k, _) -> k !in this@KonanCliRunner.blacklistProperties }
+                        .escapeQuotesForWindows()
+                        .toMap()
+                )
+                exec.systemProperty("konan.home", project.kotlinNativeDist.absolutePath)
+                exec.args(listOf(toolName) + transformArgs(args))
+                this@KonanCliRunner.blacklistEnvironment.forEach { environment.remove(it) }
+                exec.environment(environment)
+            }
+        })
     }
 }
 

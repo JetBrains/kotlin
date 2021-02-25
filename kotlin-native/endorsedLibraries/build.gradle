@@ -1,15 +1,14 @@
 import org.jetbrains.kotlin.UtilsKt
 import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanCacheTask
 import org.jetbrains.kotlin.EndorsedLibraryInfo
+import org.jetbrains.kotlin.UtilsKt
 
 buildscript {
     repositories {
-        maven { url 'https://cache-redirector.jetbrains.com/jcenter' }
-        jcenter()
-    }
-
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:$gradlePluginVersion"
+        if (UtilsKt.getCacheRedirectorEnabled(project))
+            maven { url 'https://cache-redirector.jetbrains.com/jcenter' }
+        else
+            jcenter()
     }
 }
 
@@ -63,7 +62,7 @@ targetList.each { target ->
         def cacheTask = task("${target}Cache")
 
         endorsedLibrariesList.each { library ->
-            def dist = rootProject.file("dist")
+            def dist = UtilsKt.getKotlinNativeDist(project)
             task("${target}${library.taskName}Cache", type: KonanCacheTask) {
                 it.target = target
                 originalKlib = file("${project.buildDir}/${library.name}")
@@ -71,8 +70,8 @@ targetList.each { target ->
                 compilerDistributionPath.set(distDir)
 
                 dependsOn "${target}EndorsedLibraries"
-                dependsOn ":${target}CrossDistRuntime"
-                dependsOn ":${target}StdlibCache"
+                dependsOn ":kotlin-native:${target}CrossDistRuntime"
+                dependsOn ":kotlin-native:${target}StdlibCache"
 
                 cacheTask.dependsOn it
             }
@@ -82,7 +81,7 @@ targetList.each { target ->
 
 endorsedLibrariesList.each { library ->
     task("${library.taskName}CommonSources", type: Zip) {
-        destinationDirectory = file("${rootProject.projectDir}/dist/sources")
+        destinationDirectory = file("${UtilsKt.getKotlinNativeDist(project)}/dist/sources")
         archiveFileName = "${library.name}-common-sources.zip"
 
         includeEmptyDirs = false
@@ -91,7 +90,7 @@ endorsedLibrariesList.each { library ->
         from(library.project.file('src/main/kotlin'))
     }
     task("${library.taskName}NativeSources", type: Zip) {
-        destinationDirectory = file("${rootProject.projectDir}/dist/sources")
+        destinationDirectory = file("${UtilsKt.getKotlinNativeDist(project)}/dist/sources")
         archiveFileName = "${library.name}-native-sources.zip"
 
         includeEmptyDirs = false

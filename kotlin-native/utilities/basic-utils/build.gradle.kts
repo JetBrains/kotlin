@@ -6,7 +6,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {
-    apply(from = "$rootDir/gradle/kotlinGradlePlugin.gradle")
+    apply(from = "$rootDir/kotlin-native/gradle/kotlinGradlePlugin.gradle")
 }
 
 plugins {
@@ -19,11 +19,8 @@ tasks.named<KotlinCompile>("compileKotlin") {
     }
 }
 
-// Convert to normal strings since originally these properties contain GStrings.
-val kotlinCompilerModule = rootProject.ext["kotlinCompilerModule"].toString()
-val kotlinStdLibModule = rootProject.ext["kotlinStdLibModule"].toString()
-
 dependencies {
-    api(kotlinStdLibModule)
-    implementation(kotlinCompilerModule)
+    api(project(":kotlin-stdlib"))
+    implementation(project(project.project(":kotlin-native").extra["kotlinCompilerModule"] as Map<String, *>))
+    implementation(project(":compiler:util"))
 }
