@@ -48,6 +48,17 @@ internal fun checkProperty(
     reporter: DiagnosticReporter,
     context: CheckerContext
 ) {
+    checkPropertyInitializer(containingClass, modifierList, property, reporter, context)
+    checkPropertyAccessors(property, reporter, context)
+}
+
+private fun checkPropertyInitializer(
+    containingClass: FirRegularClass?,
+    modifierList: FirModifierList?,
+    property: FirProperty,
+    reporter: DiagnosticReporter,
+    context: CheckerContext
+) {
     val inInterface = containingClass?.isInterface == true
     val hasAbstractModifier = modifierList?.modifiers?.any { it.token == KtTokens.ABSTRACT_KEYWORD } == true
     val isAbstract = property.isAbstract || hasAbstractModifier
@@ -64,12 +75,6 @@ internal fun checkProperty(
     if (inInterface && backingFieldRequired && property.hasAccessorImplementation) {
         property.source?.let {
             reporter.reportOn(it, FirErrors.BACKING_FIELD_IN_INTERFACE, context)
-        }
-    }
-
-    property.setter?.source?.let {
-        if (property.isVal) {
-            reporter.reportOn(it, FirErrors.VAL_WITH_SETTER, context)
         }
     }
 
@@ -123,6 +128,18 @@ internal fun checkProperty(
                     }
                 }
             }
+        }
+    }
+}
+
+private fun checkPropertyAccessors(
+    property: FirProperty,
+    reporter: DiagnosticReporter,
+    context: CheckerContext
+) {
+    property.setter?.source?.let {
+        if (property.isVal) {
+            reporter.reportOn(it, FirErrors.VAL_WITH_SETTER, context)
         }
     }
 }
