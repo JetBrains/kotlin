@@ -70,6 +70,10 @@ fun Task.dependsOnKotlinGradlePluginPublish() {
     }
 }
 
+/**
+ * @param parallel is redundant if @param jUnit5Enabled is true, because
+ *   JUnit5 supports parallel test execution by itself, without gradle help
+ */
 fun Project.projectTest(
     taskName: String = "test",
     parallel: Boolean = false,
@@ -193,7 +197,7 @@ fun Project.projectTest(
         }
     }
 
-    if (parallel) {
+    if (parallel && !jUnit5Enabled) {
         maxParallelForks =
             project.findProperty("kotlin.test.maxParallelForks")?.toString()?.toInt()
                 ?: (Runtime.getRuntime().availableProcessors() / if (kotlinBuildProperties.isTeamcityBuild) 2 else 4).coerceAtLeast(1)
