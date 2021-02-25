@@ -160,6 +160,9 @@ class JvmGeneratorExtensionsImpl(private val generateFacades: Boolean = true) : 
         )
     }
 
+    override val shouldPreventDeprecatedIntegerValueTypeLiteralConversion: Boolean
+        get() = true
+
     private val flexibleNullabilityAnnotationClass =
         createSpecialAnnotationClass(JvmSymbols.FLEXIBLE_NULLABILITY_ANNOTATION_FQ_NAME, kotlinIrInternalPackage)
 
