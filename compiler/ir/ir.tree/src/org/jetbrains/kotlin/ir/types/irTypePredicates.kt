@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.types
 
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
@@ -98,6 +99,20 @@ fun IrType.isNullablePrimitiveType(): Boolean = isPrimitiveType(true)
 fun IrType.getPrimitiveType(): PrimitiveType? =
     if (this is IrSimpleType && classifier is IrClassSymbol)
         idSignatureToPrimitiveType[classifier.signature]
+    else null
+
+fun IrType.isUnsignedType(hasQuestionMark: Boolean = false): Boolean =
+    this is IrSimpleType && hasQuestionMark == this.hasQuestionMark && getUnsignedType() != null
+
+fun IrType.getUnsignedType(): UnsignedType? =
+    if (this is IrSimpleType && classifier is IrClassSymbol)
+        when (classifier.signature) {
+            IdSignatureValues.uByte -> UnsignedType.UBYTE
+            IdSignatureValues.uShort -> UnsignedType.USHORT
+            IdSignatureValues.uInt -> UnsignedType.UINT
+            IdSignatureValues.uLong -> UnsignedType.ULONG
+            else -> null
+        }
     else null
 
 fun IrType.isMarkedNullable() = (this as? IrSimpleType)?.hasQuestionMark ?: false
