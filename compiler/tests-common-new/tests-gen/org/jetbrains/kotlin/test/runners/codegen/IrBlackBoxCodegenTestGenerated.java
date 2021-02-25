@@ -25621,9 +25621,21 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("kt39880.kt")
+        public void testKt39880() throws Exception {
+            runTest("compiler/testData/codegen/box/operatorConventions/kt39880.kt");
+        }
+
+        @Test
         @TestMetadata("kt4152.kt")
         public void testKt4152() throws Exception {
             runTest("compiler/testData/codegen/box/operatorConventions/kt4152.kt");
+        }
+
+        @Test
+        @TestMetadata("kt42722.kt")
+        public void testKt42722() throws Exception {
+            runTest("compiler/testData/codegen/box/operatorConventions/kt42722.kt");
         }
 
         @Test
