@@ -91,7 +91,7 @@ class Fir2IrConverter(
         anonymousObject: FirAnonymousObject,
         irClass: IrClass = classifierStorage.getCachedIrClass(anonymousObject)!!
     ): IrClass {
-        anonymousObject.getPrimaryConstructorIfAny()?.let {
+        anonymousObject.primaryConstructor?.let {
             irClass.declarations += declarationStorage.createIrConstructor(
                 it, irClass, isLocal = true
             )
@@ -127,7 +127,7 @@ class Fir2IrConverter(
         regularClass: FirRegularClass,
         irClass: IrClass = classifierStorage.getCachedIrClass(regularClass)!!
     ): IrClass {
-        val irConstructor = regularClass.getPrimaryConstructorIfAny()?.let {
+        val irConstructor = regularClass.primaryConstructor?.let {
             declarationStorage.getOrCreateIrConstructor(it, irClass, isLocal = regularClass.isLocal)
         }
         if (irConstructor != null) {
