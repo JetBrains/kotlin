@@ -687,12 +687,12 @@ class GeneralNativeIT : BaseGradleIT() {
             val expectedTestResults = if (GradleVersion.version(testGradleVersion) < GradleVersion.version("6.6")) {
                 listOf(
                     "testProject/native-tests/TEST-TestKt_pre6.6.xml",
-                    "testProject/native-tests/TEST-TestKt-IOSsim_pre6.6.xml",
+                    "testProject/native-tests/TEST-TestKt-iOSsim_pre6.6.xml",
                 )
             } else {
                 listOf(
                     "testProject/native-tests/TEST-TestKt.xml",
-                    "testProject/native-tests/TEST-TestKt-IOSsim.xml",
+                    "testProject/native-tests/TEST-TestKt-iOSsim.xml",
                 )
             }
             assertTestResults(expectedTestResults.first(), hostTestTask)
