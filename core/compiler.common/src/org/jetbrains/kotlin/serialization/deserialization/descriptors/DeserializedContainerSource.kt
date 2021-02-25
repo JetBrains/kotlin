@@ -21,6 +21,9 @@ interface DeserializedContainerSource : SourceElement {
 
     // This string should only be used in error messages
     val presentableString: String
+
+    // This string used in error messages
+    val compilerVersion: String?
 }
 
 enum class DeserializedContainerAbiStability {

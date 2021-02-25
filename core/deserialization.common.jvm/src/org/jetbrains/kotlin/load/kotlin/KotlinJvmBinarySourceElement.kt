@@ -31,6 +31,9 @@ class KotlinJvmBinarySourceElement(
     override val presentableString: String
         get() = "Class '${binaryClass.classId.asSingleFqName().asString()}'"
 
+    override val compilerVersion: String?
+        get() = binaryClass.classHeader.compilerVersion
+
     override fun getContainingFile(): SourceFile = SourceFile.NO_SOURCE_FILE
 
     override fun toString() = "${this::class.java.simpleName}: $binaryClass"
