@@ -63,4 +63,5 @@ internal fun DurationUnit.shortName(): String = when (this) {
     DurationUnit.MINUTES -> "m"
     DurationUnit.HOURS -> "h"
     DurationUnit.DAYS -> "d"
+    else -> error("Unknown unit: $this")
 }
