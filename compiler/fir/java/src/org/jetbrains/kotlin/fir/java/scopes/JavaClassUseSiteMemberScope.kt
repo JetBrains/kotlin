@@ -43,6 +43,7 @@ class JavaClassUseSiteMemberScope(
 ) {
     private val typeParameterStack = klass.javaTypeParameterStack
     private val specialFunctions = hashMapOf<Name, Collection<FirNamedFunctionSymbol>>()
+    private val accessorByNameMap = hashMapOf<Name, FirAccessorSymbol>()
 
     override fun getCallableNames(): Set<Name> {
         return declaredMemberScope.getContainingCallableNamesIfPresent() + superTypesScope.getCallableNames()
@@ -57,16 +58,18 @@ class JavaClassUseSiteMemberScope(
         setterSymbol: FirNamedFunctionSymbol?,
         syntheticPropertyName: Name,
     ): FirAccessorSymbol {
-        return buildSyntheticProperty {
-            session = this@JavaClassUseSiteMemberScope.session
-            name = syntheticPropertyName
-            symbol = FirAccessorSymbol(
-                accessorId = getterSymbol.callableId,
-                callableId = CallableId(getterSymbol.callableId.packageName, getterSymbol.callableId.className, syntheticPropertyName)
-            )
-            delegateGetter = getterSymbol.fir
-            delegateSetter = setterSymbol?.fir
-        }.symbol
+        return accessorByNameMap.getOrPut(syntheticPropertyName) {
+            buildSyntheticProperty {
+                session = this@JavaClassUseSiteMemberScope.session
+                name = syntheticPropertyName
+                symbol = FirAccessorSymbol(
+                    accessorId = getterSymbol.callableId,
+                    callableId = CallableId(getterSymbol.callableId.packageName, getterSymbol.callableId.className, syntheticPropertyName)
+                )
+                delegateGetter = getterSymbol.fir
+                delegateSetter = setterSymbol?.fir
+            }.symbol
+        }
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
