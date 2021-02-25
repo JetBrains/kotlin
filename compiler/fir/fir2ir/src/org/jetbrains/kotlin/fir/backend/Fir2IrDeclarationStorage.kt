@@ -866,8 +866,9 @@ class Fir2IrDeclarationStorage(
         irClass: IrClass,
         callableDeclaration: FirCallableDeclaration<*>
     ): FirCallableDeclaration<*>? {
-        // Init lazy class if necessary
-        irClass.declarations
+        if (irClass is Fir2IrLazyClass) {
+            irClass.getFakeOverridesByName(callableDeclaration.symbol.callableId.callableName)
+        }
         return fakeOverridesInClass[irClass]?.get(callableDeclaration)
     }
 
