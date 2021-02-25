@@ -45,8 +45,24 @@ interface LazyClassContext {
     val syntheticResolveExtension: SyntheticResolveExtension
     val delegationFilter: DelegationFilter
     val wrappedTypeFactory: WrappedTypeFactory
-    val kotlinTypeChecker: NewKotlinTypeChecker
     val samConversionResolver: SamConversionResolver
     val additionalClassPartsProvider: AdditionalClassPartsProvider
     val sealedClassInheritorsProvider: SealedClassInheritorsProvider
+
+    /**
+     * Important notice!
+     *
+     * This is the type checker of *owner* module, i.e. the module which has declared the class.
+     *
+     * In MPP, we have different "views" on the one and the same class. I.e. if we have a common 'class Foo : Expect',
+     * and on JVM we have 'actual typealias Expect = CharSequence', then from "common view" Foo isn't assigneable to CharSequence,
+     * while from the "JVM view" it is.
+     *
+     * LazyClassContext is usually shared across all such views, so be careful - using this typechecker in "platform views" is not correct.
+     * Relevant entities usually have a separate instance of KotlinTypeChecker/KotlinTypeRefiner, see for example
+     * [org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassMemberScope].
+     *
+     * See also KT-44898 for example of issues which might happen if the wrong typechecker is used in "platform view".
+     */
+    val kotlinTypeCheckerOfOwnerModule: NewKotlinTypeChecker
 }

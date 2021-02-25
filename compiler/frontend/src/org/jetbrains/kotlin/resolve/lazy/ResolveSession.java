@@ -504,7 +504,7 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
 
     @NotNull
     @Override
-    public NewKotlinTypeChecker getKotlinTypeChecker() {
+    public NewKotlinTypeChecker getKotlinTypeCheckerOfOwnerModule() {
         return kotlinTypeChecker;
     }
 
