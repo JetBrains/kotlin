@@ -33,8 +33,8 @@ dependencies {
     testImplementation(projectTests(":idea"))
     testImplementation(project(":idea:idea-gradle")) { isTransitive = false }
     testImplementation(commonDep("junit:junit"))
-    testImplementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.11.+")
-    testImplementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.11.+")
+    testImplementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.11.4")
+    testImplementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.11.4")
     testImplementation("khttp:khttp:1.0.0")
 
     testCompileOnly(intellijPluginDep("java"))

@@ -22,6 +22,7 @@ import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileSystemOperations
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.internal.ConventionTask
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.tasks.*
@@ -31,6 +32,51 @@ import java.io.File
 import javax.inject.Inject
 
 fun Project.configureFormInstrumentation() {
+    plugins.matching { it::class.java.canonicalName.startsWith("org.jetbrains.kotlin.gradle.plugin") }.configureEach {
+        // When we change the output classes directory, Gradle will automatically configure
+        // the test compile tasks to use the instrumented classes. Normally this is fine,
+        // however, it causes problems for Kotlin projects:
+
+        // The "internal" modifier can be used to restrict access to the same module.
+        // To make it possible to use internal methods from the main source set in test classes,
+        // the Kotlin Gradle plugin adds the original output directory of the Java task
+        // as "friendly directory" which makes it possible to access internal members
+        // of the main module. Also this directory should be available on classpath during compilation
+
+        // This fails when we change the classes dir. The easiest fix is to prepend the
+        // classes from the "friendly directory" to the compile classpath.
+        if (!tasks.names.contains("compileTestKotlin")) return@configureEach
+
+        tasks.named<AbstractCompile>("compileTestKotlin") {
+            val objects = project.objects
+            val classesDirs = project.mainSourceSet.output.classesDirs
+            val classesDirsCopy = project.provider { (mainSourceSet as ExtensionAware).extra.get("classesDirsCopy") }
+            doFirst {
+                val originalClassesDirs = objects.fileCollection().from(classesDirsCopy)
+
+                classpath = (classpath
+                        - classesDirs
+                        + originalClassesDirs)
+
+                // Since Kotlin 1.3.60, the friend paths available to the test compile task are calculated as the main source set's
+                // output.classesDirs. Since the classesDirs are excluded from the classpath (replaced by the originalClassesDirs),
+                // in order to be able to access the internals of 'main', tests need to receive the original classes dirs as a
+                // -Xfriend-paths compiler argument as well.
+                fun addFreeCompilerArgs(kotlinCompileTask: AbstractCompile, vararg args: String) {
+                    val getKotlinOptions = kotlinCompileTask::class.java.getMethod("getKotlinOptions")
+                    val kotlinOptions = getKotlinOptions(kotlinCompileTask)
+
+                    val getFreeCompilerArgs = kotlinOptions::class.java.getMethod("getFreeCompilerArgs")
+                    val freeCompilerArgs = getFreeCompilerArgs(kotlinOptions) as List<*>
+
+                    val setFreeCompilerArgs = kotlinOptions::class.java.getMethod("setFreeCompilerArgs", List::class.java)
+                    setFreeCompilerArgs(kotlinOptions, freeCompilerArgs + args)
+                }
+                addFreeCompilerArgs(this as AbstractCompile, "-Xfriend-paths=" + originalClassesDirs.joinToString(",")  { it.absolutePath })
+            }
+        }
+    }
+
     val instrumentationClasspathCfg = configurations.create("instrumentationClasspath")
 
     dependencies {
@@ -51,55 +97,15 @@ fun Project.configureFormInstrumentation() {
             val instrumentTask =
                 project.tasks.register(sourceSetParam.getTaskName("instrument", "classes"), IntelliJInstrumentCodeTask::class.java) {
                     dependsOn(sourceSetParam.classesTaskName)
-                    sourceSet = sourceSetParam
+                    compileClasspath.from(sourceSetParam.compileClasspath)
+                    sourceDirs.from(project.files({ sourceSetParam.allSource.srcDirs.filter { !sourceSetParam.resources.contains(it) && it.exists() } }))
                     instrumentationClasspathConfiguration = instrumentationClasspathCfg
-                    originalClassesDirs = classesDirsCopy
-                    output = instrumentedClassesDir
-                    outputs.dir(instrumentedClassesDir)
+                    originalClassesDirs.from(classesDirsCopy)
+                    output.set(instrumentedClassesDir)
                 }
 
             // Ensure that our task is invoked when the source set is built
             sourceSetParam.compiledBy(instrumentTask)
-        }
-
-        plugins.matching { it::class.java.canonicalName.startsWith("org.jetbrains.kotlin.gradle.plugin") }.configureEach {
-            // When we change the output classes directory, Gradle will automatically configure
-            // the test compile tasks to use the instrumented classes. Normally this is fine,
-            // however, it causes problems for Kotlin projects:
-
-            // The "internal" modifier can be used to restrict access to the same module.
-            // To make it possible to use internal methods from the main source set in test classes,
-            // the Kotlin Gradle plugin adds the original output directory of the Java task
-            // as "friendly directory" which makes it possible to access internal members
-            // of the main module. Also this directory should be available on classpath during compilation
-
-            // This fails when we change the classes dir. The easiest fix is to prepend the
-            // classes from the "friendly directory" to the compile classpath.
-            if (!tasks.names.contains("compileTestKotlin")) return@configureEach
-
-            tasks.named<AbstractCompile>("compileTestKotlin").configure {
-                val originalClassesDirs = project.files((project.mainSourceSet as ExtensionAware).extra.get("classesDirsCopy"))
-
-                classpath = (classpath
-                        - project.mainSourceSet.output.classesDirs
-                        + originalClassesDirs)
-
-                // Since Kotlin 1.3.60, the friend paths available to the test compile task are calculated as the main source set's
-                // output.classesDirs. Since the classesDirs are excluded from the classpath (replaced by the originalClassesDirs),
-                // in order to be able to access the internals of 'main', tests need to receive the original classes dirs as a
-                // -Xfriend-paths compiler argument as well.
-                fun addFreeCompilerArgs(kotlinCompileTask: AbstractCompile, vararg args: String) {
-                    val getKotlinOptions = kotlinCompileTask::class.java.getMethod("getKotlinOptions")
-                    val kotlinOptions = getKotlinOptions(kotlinCompileTask)
-
-                    val getFreeCompilerArgs = kotlinOptions::class.java.getMethod("getFreeCompilerArgs")
-                    val freeCompilerArgs = getFreeCompilerArgs(kotlinOptions) as List<*>
-
-                    val setFreeCompilerArgs = kotlinOptions::class.java.getMethod("setFreeCompilerArgs", List::class.java)
-                    setFreeCompilerArgs(kotlinOptions, freeCompilerArgs + args)
-                }
-                addFreeCompilerArgs(this, "-Xfriend-paths=" + originalClassesDirs.joinToString(",")  { it.absolutePath })
-            }
         }
     }
 }
@@ -120,21 +126,17 @@ abstract class IntelliJInstrumentCodeTask : ConventionTask() {
         instrumentationClasspathConfiguration.asPath
     }
 
-    @InputFiles
-    @PathSensitive(PathSensitivity.RELATIVE)
-    @SkipWhenEmpty
-    lateinit var originalClassesDirs: FileCollection
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    @get:SkipWhenEmpty
+    abstract val originalClassesDirs: ConfigurableFileCollection
 
     @get:Input
     var instrumentNotNull: Boolean = false
 
-    @Transient
-    @Internal
-    lateinit var sourceSet: SourceSet
-
-    private val compileClasspath by lazy {
-        sourceSet.compileClasspath
-    }
+    @get:InputFiles
+    @get:Classpath
+    abstract val compileClasspath: ConfigurableFileCollection
 
     // Instrumentation needs to have access to sources of forms for inclusion
     private val depSourceDirectorySets by lazy {
@@ -144,12 +146,10 @@ abstract class IntelliJInstrumentCodeTask : ConventionTask() {
 
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
-    val sourceDirs: FileCollection by lazy {
-        project.files(sourceSet.allSource.srcDirs.filter { !sourceSet.resources.contains(it) && it.exists() })
-    }
+    abstract val sourceDirs: ConfigurableFileCollection
 
     @get:OutputDirectory
-    lateinit var output: File
+    abstract val output: RegularFileProperty
 
     @get:Inject
     abstract val fs: FileSystemOperations
@@ -157,11 +157,13 @@ abstract class IntelliJInstrumentCodeTask : ConventionTask() {
     @TaskAction
     fun instrumentClasses() {
         logger.info(
-            "input files are: ${originalClassesDirs.joinToString(
-                "; ",
-                transform = { "'${it.name}'${if (it.exists()) "" else " (does not exists)"}" })}"
+            "input files are: ${
+                originalClassesDirs.joinToString(
+                    "; ",
+                    transform = { "'${it.name}'${if (it.exists()) "" else " (does not exists)"}" })
+            }"
         )
-        output.deleteRecursively()
+        output.asFile.get().deleteRecursively()
         copyOriginalClasses()
 
         val classpath = instrumentationClasspath
@@ -203,9 +205,10 @@ abstract class IntelliJInstrumentCodeTask : ConventionTask() {
 
     private fun instrumentCode(srcDirs: FileCollection, instrumentNotNull: Boolean) {
         val headlessOldValue = System.setProperty("java.awt.headless", "true")
+        val output = output.get().asFile
 
         val instrumentationClasspath =
-            depSourceDirectorySets.fold(compileClasspath) { acc, v -> acc + v }.asPath.also {
+            depSourceDirectorySets.fold(compileClasspath as FileCollection) { acc, v -> acc + v }.asPath.also {
                 logger.info("Using following dependency source dirs: $it")
             }
 
