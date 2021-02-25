@@ -56,6 +56,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
 import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.backend.common.SamType;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.org.objectweb.asm.Type;
 
@@ -861,7 +862,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         if (valueArguments == null) return;
 
         for (ValueParameterDescriptor valueParameter : valueParametersWithSAMConversion) {
-            SamType samType = SamType.createByValueParameter(valueParameter);
+            SamType samType = JvmSamTypeFactory.INSTANCE.createByValueParameter(valueParameter);
             if (samType == null) continue;
 
             ResolvedValueArgument resolvedValueArgument = valueArguments.get(valueParameter.getIndex());
@@ -873,7 +874,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
     }
 
     private void recordSamTypeOnArgumentExpression(ValueParameterDescriptor valueParameter, ValueArgument valueArgument) {
-        SamType samType = SamType.createByValueParameter(valueParameter);
+        SamType samType = JvmSamTypeFactory.INSTANCE.createByValueParameter(valueParameter);
         if (samType == null) return;
 
         recordSamTypeOnArgumentExpression(samType, valueArgument);
@@ -955,7 +956,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         bindingTrace.record(SAM_CONSTRUCTOR_TO_ARGUMENT, expression, argumentExpression);
 
         //noinspection ConstantConditions
-        SamType samType = SamType.create(callableDescriptor.getReturnType());
+        SamType samType = JvmSamTypeFactory.INSTANCE.create(callableDescriptor.getReturnType());
         bindingTrace.record(SAM_VALUE, argumentExpression, samType);
     }
 
@@ -972,7 +973,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         FunctionDescriptor original = SamCodegenUtil.getOriginalIfSamAdapter((FunctionDescriptor) operationDescriptor);
         if (original == null) return;
 
-        SamType samType = SamType.createByValueParameter(original.getValueParameters().get(0));
+        SamType samType = JvmSamTypeFactory.INSTANCE.createByValueParameter(original.getValueParameters().get(0));
         if (samType == null) return;
 
         IElementType token = expression.getOperationToken();
@@ -1001,7 +1002,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         List<KtExpression> indexExpressions = expression.getIndexExpressions();
         List<ValueParameterDescriptor> parameters = original.getValueParameters();
         for (ValueParameterDescriptor valueParameter : parameters) {
-            SamType samType = SamType.createByValueParameter(valueParameter);
+            SamType samType = JvmSamTypeFactory.INSTANCE.createByValueParameter(valueParameter);
             if (samType == null) continue;
 
             if (isSetter && valueParameter.getIndex() == parameters.size() - 1) {

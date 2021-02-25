@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.kotlin.backend.common.SamType
 
 class SamWrapperClasses(private val state: GenerationState) {
 
