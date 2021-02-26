@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics
 
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.analysis.CheckersComponent
@@ -41,6 +42,9 @@ internal abstract class AbstractFirIdeDiagnosticsCollector(
         ::FirIdeDesignatedBodyResolveTransformerForReturnTypeCalculator
     )
 ) {
+    private val beforeElementDiagnosticCollectionHandler: BeforeElementDiagnosticCollectionHandler? =
+        session.beforeElementDiagnosticCollectionHandler
+
     init {
         val declarationCheckers = CheckersFactory.createDeclarationCheckers(useExtendedCheckers)
         val expressionCheckers = CheckersFactory.createExpressionCheckers(useExtendedCheckers)
@@ -70,8 +74,12 @@ internal abstract class AbstractFirIdeDiagnosticsCollector(
         reporter = Reporter()
     }
 
-    override fun beforeCollecting() {
+    override fun beforeRunningSingleComponentOnElement(element: FirElement) {
         checkCanceled()
+    }
+
+    override fun beforeRunningAllComponentsOnElement(element: FirElement) {
+        beforeElementDiagnosticCollectionHandler?.beforeCollectingForElement(element)
     }
 
     override fun getCollectedDiagnostics(): List<FirDiagnostic<*>> {

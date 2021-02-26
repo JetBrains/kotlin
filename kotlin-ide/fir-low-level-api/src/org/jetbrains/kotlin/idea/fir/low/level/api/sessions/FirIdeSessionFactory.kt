@@ -58,6 +58,7 @@ internal object FirIdeSessionFactory {
         isRootModule: Boolean,
         librariesCache: LibrariesCache,
         languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
+        configureSession: (FirIdeSession.() -> Unit)? = null
     ): FirIdeSourcesSession {
         sessionsCache[moduleInfo]?.let { return it }
         val scopeProvider = KotlinScopeProvider(::wrapScopeWithJvmMapped)
@@ -108,7 +109,8 @@ internal object FirIdeSessionFactory {
                                 project,
                                 builtinsAndCloneableSession,
                                 builtinTypes,
-                                librariesCache
+                                librariesCache,
+                                configureSession = configureSession,
                             ).symbolProvider
                         )
                         dependentModules
@@ -123,6 +125,7 @@ internal object FirIdeSessionFactory {
                                     sessionsCache,
                                     isRootModule = false,
                                     librariesCache,
+                                    configureSession = configureSession,
                                 ).symbolProvider
                             }
                     }
@@ -137,6 +140,8 @@ internal object FirIdeSessionFactory {
                     registerExtendedCommonCheckers()
                 }
             }.configure()
+
+            configureSession?.invoke(this)
         }
     }
 
@@ -147,6 +152,7 @@ internal object FirIdeSessionFactory {
         builtinTypes: BuiltinTypes,
         librariesCache: LibrariesCache,
         languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
+        configureSession: (FirIdeSession.() -> Unit)?,
     ): FirIdeLibrariesSession = librariesCache.cached(moduleInfo) {
         checkCanceled()
         val searchScope = ModuleLibrariesSearchScope(moduleInfo.module)
@@ -191,13 +197,15 @@ internal object FirIdeSessionFactory {
                 )
             )
             register(FirJvmTypeMapper::class, FirJvmTypeMapper(this))
+            configureSession?.invoke(this)
         }
     }
 
     fun createBuiltinsAndCloneableSession(
         project: Project,
         builtinTypes: BuiltinTypes,
-        languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT
+        languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
+        configureSession: (FirIdeSession.() -> Unit)? = null,
     ): FirIdeBuiltinsAndCloneableSession {
         return FirIdeBuiltinsAndCloneableSession(project, builtinTypes).apply {
             registerIdeComponents()
@@ -215,6 +223,7 @@ internal object FirIdeSessionFactory {
                 )
             )
             register(FirJvmTypeMapper::class, FirJvmTypeMapper(this))
+            configureSession?.invoke(this)
         }
     }
 

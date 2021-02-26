@@ -71,6 +71,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.AbstractFileSt
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.AbstractFileStructureTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.AbstractSessionsInvalidationTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.trackers.AbstractProjectWideOutOfBlockKotlinModificationTrackerTest
+import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostic.AbstractDiagnosticTraversalCounterTest
 import org.jetbrains.kotlin.idea.folding.AbstractKotlinFoldingTest
 import org.jetbrains.kotlin.idea.frontend.api.components.AbstractExpectedExpressionTypeTest
 import org.jetbrains.kotlin.idea.frontend.api.components.AbstractReturnExpressionTargetTest
@@ -1065,6 +1066,9 @@ private fun assembleWorkspace(): TWorkspace = workspace {
         }
         testClass<AbstractFileStructureTest> {
             model("fileStructure")
+        }
+        testClass<AbstractDiagnosticTraversalCounterTest> {
+            model("diagnosticTraversalCounter")
         }
         testClass<AbstractSessionsInvalidationTest> {
             model("sessionInvalidation", isRecursive = false, pattern = DIRECTORY)
