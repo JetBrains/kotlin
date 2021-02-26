@@ -2,7 +2,8 @@ buildscript {
     repositories {
         mavenLocal()
         maven { url 'https://maven.google.com' }
-        jcenter()
+        mavenCentral()
+        maven { url = uri("https://jcenter.bintray.com/") }
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -13,7 +14,8 @@ buildscript {
 repositories {
     mavenLocal()
     maven { url 'https://maven.google.com' }
-    jcenter()
+    mavenCentral()
+    maven { url = uri("https://jcenter.bintray.com/") }
 }
 
 apply plugin: 'com.android.library'

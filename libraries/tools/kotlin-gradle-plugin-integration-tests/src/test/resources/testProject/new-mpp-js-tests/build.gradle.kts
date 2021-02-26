@@ -5,7 +5,7 @@ plugins {
 repositories {
     mavenLocal()
     mavenCentral()
-    jcenter()
+    mavenCentral()
 }
 
 kotlin {

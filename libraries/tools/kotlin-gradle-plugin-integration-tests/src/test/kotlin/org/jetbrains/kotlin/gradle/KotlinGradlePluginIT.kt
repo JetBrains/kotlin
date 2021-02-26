@@ -1078,7 +1078,7 @@ class KotlinGradleIT : BaseGradleIT() {
         build(
             ":lib1:compileDebugUnitTestKotlin",
             options = defaultBuildOptions().copy(
-                androidGradlePluginVersion = AGPVersion.v3_2_0,
+                androidGradlePluginVersion = AGPVersion.v3_6_0,
                 androidHome = KtTestUtil.findAndroidSdk(),
             ),
         ) {

@@ -123,7 +123,10 @@ class MultiplatformGradleIT : BaseGradleIT() {
                 File(projectDir, "$subDirectory/build.gradle").modify {
                     """
                     buildscript {
-                        repositories { mavenLocal(); jcenter() }
+                        repositories { 
+                             mavenLocal();
+                             maven { url = uri("https://jcenter.bintray.com/") }
+                        }
                         dependencies {
                             classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${'$'}kotlin_version"
                         }
