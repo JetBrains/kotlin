@@ -1,0 +1,9 @@
+depends = OpenGLCommon darwin posix
+language = Objective-C
+package = platform.OpenGL
+headers = OpenGL/glu.h
+
+headerFilter = OpenGL/gl.h OpenGL/glext.h OpenGL/glu.h
+
+compilerOpts = -framework OpenGL
+linkerOpts = -framework OpenGL

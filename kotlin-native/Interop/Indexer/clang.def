@@ -1,0 +1,16 @@
+headers = clang-c/Index.h clang-c/ext.h clang-c/ExtVector.h
+
+headerFilter = clang-c/**
+
+compiler = clang
+
+compilerOpts = -std=c99 -fPIC
+linkerOpts.linux = -Wl,-z,noexecstack
+
+linker = clang++
+
+linkerOpts = -fPIC
+
+strictEnums = CXErrorCode CXCursorKind CXTypeKind CXDiagnosticSeverity CXLoadDiag_Error CXSaveError \
+    CXTUResourceUsageKind CXLinkageKind CXVisibilityKind CXLanguageKind CXCallingConv CXChildVisitResult \
+    CXTokenKind CXEvalResultKind CXVisitorResult CXResult CXIdxEntityKind

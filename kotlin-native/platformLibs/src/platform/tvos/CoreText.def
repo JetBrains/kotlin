@@ -1,0 +1,7 @@
+depends = CoreFoundation CoreGraphics darwin posix
+language = Objective-C
+package = platform.CoreText
+modules = CoreText
+
+compilerOpts = -framework CoreText
+linkerOpts = -framework CoreText

@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.IOKit
+
+modules = IOKit
+compilerOpts = -framework IOKit
+linkerOpts = -framework IOKit
+#Disabled: Not officially available for tvos

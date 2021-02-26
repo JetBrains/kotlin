@@ -1,0 +1,25 @@
+depends = CoreFoundation darwin posix
+language = Objective-C
+package = platform.Security
+modules = Security
+
+excludedFunctions = CSSMOID_APPLE_EXTENSION_DEVELOPER_AUTHENTICATION CSSMOID_APPLE_EXTENSION_PROVISIONING_PROFILE_SIGNING \
+                    CSSMOID_APPLE_EXTENSION_SERVER_AUTHENTICATION CSSMOID_APPLE_TP_PCS_ESCROW_SERVICE \
+		    CSSMOID_APPLE_TP_PROVISIONING_PROFILE_SIGNING CSSMOID_DES_CBC CSSMOID_DomainComponent CSSMOID_InhibitAnyPolicy \
+		    CSSM_KR_CreateRecoveryEnablementContext CSSM_KR_CreateRecoveryRegistrationContext CSSM_KR_CreateRecoveryRequestContext \
+		    CSSM_KR_GenerateRecoveryFields CSSM_KR_GetPolicyInfo CSSM_KR_GetRecoveredObject CSSM_KR_PassThrough \
+		    CSSM_KR_ProcessRecoveryFields CSSM_KR_QueryPolicyInfo CSSM_KR_RecoveryRequest CSSM_KR_RecoveryRequestAbort \
+		    CSSM_KR_RecoveryRetrieve CSSM_KR_RegistrationRequest CSSM_KR_RegistrationRetrieve CSSM_KR_SetEnterpriseRecoveryPolicy \
+		    CSSM_SPI_ModuleAttach CSSM_SPI_ModuleDetach CSSM_SPI_ModuleLoad CSSM_SPI_ModuleUnload ModuleManagerAuthenticate \
+		    SecDecryptTransformGetTypeID SecDigestTransformGetTypeID SecEncryptTransformGetTypeID kSecACLAuthorizationChangeACL \
+		    kSecACLAuthorizationChangeOwner kSecCertificateUsageDeriveAndSign kSecCertificateUsageSigning \
+		    kSecCertificateUsageSigningAndEncrypting kSecCodeInfoPlatformIdentifier kSecGuestAttributeArchitecture \
+		    kSecGuestAttributeSubarchitecture kSecOAEPMGF1DigestAlgorithmAttributeName kSecOAEPMessageLengthAttributeName \
+		    kSecOIDAPPLE_EXTENSION_AAI_INTERMEDIATE kSecOIDAPPLE_EXTENSION_APPLEID_INTERMEDIATE \
+		    kSecOIDAPPLE_EXTENSION_INTERMEDIATE_MARKER kSecOIDAPPLE_EXTENSION_ITMS_INTERMEDIATE \
+		    kSecOIDAPPLE_EXTENSION_WWDR_INTERMEDIATE kSecPolicyAppleiChat oidAnsip384r1 oidAnsip521r1 oidEcPrime192v1 \
+		    oidEcPrime256v1 oidExtendedKeyUsageTimeStamping oidNameConstraints AuthorizationPluginCreate
+
+
+compilerOpts = -framework Security
+linkerOpts = -framework Security

@@ -1,0 +1,6 @@
+depends = CoreFoundation Foundation darwin posix
+language = Objective-C
+package = platform.VideoSubscriberAccount
+modules = VideoSubscriberAccount
+compilerOpts = -framework VideoSubscriberAccount
+linkerOpts = -framework VideoSubscriberAccount

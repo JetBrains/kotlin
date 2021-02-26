@@ -1,0 +1,7 @@
+depends = AVFoundation AppKit ApplicationServices AudioToolbox CFNetwork CoreAudio CoreAudioTypes CoreData CoreFoundation CoreGraphics CoreImage CoreMIDI CoreMedia CoreServices CoreText CoreVideo DiskArbitration Foundation IOKit IOSurface ImageIO MediaToolbox Metal OpenGLCommon QuartzCore Security UniformTypeIdentifiers darwin libkern osx posix
+language = Objective-C
+package = platform.ReplayKit
+
+modules = ReplayKit
+compilerOpts = -framework ReplayKit
+linkerOpts = -framework ReplayKit

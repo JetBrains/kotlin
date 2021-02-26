@@ -1,0 +1,1 @@
+#define ANSWER 42

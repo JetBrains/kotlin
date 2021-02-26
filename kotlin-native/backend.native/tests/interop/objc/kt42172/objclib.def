@@ -1,0 +1,3 @@
+language = Objective-C
+headerFilter = **/objclib.h
+linkerOpts = -lobjc_kt42172

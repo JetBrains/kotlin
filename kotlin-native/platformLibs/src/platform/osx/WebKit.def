@@ -1,0 +1,23 @@
+depends = AppKit ApplicationServices CFNetwork CoreData CoreFoundation CoreGraphics CoreImage CoreServices CoreText CoreVideo DiskArbitration Foundation IOKit IOSurface ImageIO JavaScriptCore Metal OpenGLCommon QuartzCore Security darwin libkern osx posix
+language = Objective-C
+package = platform.WebKit
+modules = WebKit
+
+compilerOpts = -framework WebKit
+linkerOpts = -framework WebKit
+
+excludedFunctions = NPN_Construct NPN_ConvertPoint NPN_CreateObject NPN_DestroyStream NPN_Enumerate \
+                    NPN_Evaluate NPN_ForceRedraw NPN_GetAuthenticationInfo NPN_GetIntIdentifier \
+                    NPN_GetJavaEnv NPN_GetJavaPeer NPN_GetProperty NPN_GetStringIdentifier \
+                    NPN_GetStringIdentifiers NPN_GetURL NPN_GetURLNotify NPN_GetValue NPN_GetValueForURL \
+                    NPN_HandleEvent NPN_HasMethod NPN_HasProperty NPN_IdentifierIsString NPN_IntFromIdentifier \
+                    NPN_InvalidateRect NPN_InvalidateRegion NPN_Invoke NPN_InvokeDefault NPN_MemAlloc \
+                    NPN_MemFlush NPN_MemFree NPN_NewStream NPN_PluginThreadAsyncCall NPN_PopPopupsEnabledState \
+                    NPN_PopUpContextMenu NPN_PostURL NPN_PostURLNotify NPN_PushPopupsEnabledState NPN_ReleaseObject \
+                    NPN_ReleaseVariantValue NPN_ReloadPlugins NPN_RemoveProperty NPN_RequestRead NPN_RetainObject \
+                    NPN_ScheduleTimer NPN_SetException NPN_SetProperty NPN_SetValue NPN_SetValueForURL NPN_Status \
+                    NPN_URLRedirectResponse NPN_UTF8FromIdentifier NPN_UnfocusInstance NPN_UnscheduleTimer \
+                    NPN_UserAgent NPN_Version NPN_Write NPP_ClearSiteData NPP_Destroy NPP_DestroyStream \
+                    NPP_GetJavaClass NPP_GetSitesWithData NPP_GetValue NPP_GotFocus NPP_HandleEvent NPP_Initialize \
+                    NPP_LostFocus NPP_New NPP_NewStream NPP_Print NPP_SetValue NPP_SetWindow NPP_Shutdown \
+                    NPP_StreamAsFile NPP_URLNotify NPP_URLRedirectNotify NPP_Write NPP_WriteReady

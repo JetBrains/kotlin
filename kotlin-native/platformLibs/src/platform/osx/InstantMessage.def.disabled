@@ -1,0 +1,6 @@
+language = Objective-C
+package = platform.InstantMessage
+modules = InstantMessage
+compilerOpts = -framework InstantMessage
+linkerOpts = -framework InstantMessage
+#Disabled: Unavailable

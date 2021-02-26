@@ -1,0 +1,5 @@
+package = platform.opengl32
+headers = GL/gl.h GL/glext.h
+headerFilter = GL/gl.h GL/glext.h
+compilerOpts = -DUNICODE
+linkerOpts = -lopengl32

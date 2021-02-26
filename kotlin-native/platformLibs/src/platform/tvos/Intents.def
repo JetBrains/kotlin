@@ -1,0 +1,6 @@
+depends = CFNetwork CoreFoundation CoreGraphics CoreLocation Foundation Security darwin posix
+language = Objective-C
+package = platform.Intents
+modules = Intents
+compilerOpts = -framework Intents
+linkerOpts = -framework Intents
