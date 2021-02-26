@@ -1,0 +1,25 @@
+FILE: propertyWithSetter.kt
+    public abstract [BODY_RESOLVE] class Foo : R|kotlin/Any| {
+        public [BODY_RESOLVE] constructor(): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract [BODY_RESOLVE] var id: R|kotlin/Int|
+            [BODY_RESOLVE] public get(): R|kotlin/Int|
+            [BODY_RESOLVE] protected set([BODY_RESOLVE] value: R|kotlin/Int|): R|kotlin/Unit|
+
+    }
+    public final [BODY_RESOLVE] class Bar : R|Foo| {
+        public [BODY_RESOLVE] constructor(): R|Bar| {
+            super<R|Foo|>()
+        }
+
+        public final override [BODY_RESOLVE] var id: R|kotlin/Int| = Int(1)
+            [BODY_RESOLVE] public get(): R|kotlin/Int|
+            [BODY_RESOLVE] public set([BODY_RESOLVE] value: R|kotlin/Int|): R|kotlin/Unit|
+
+    }
+    public final [BODY_RESOLVE] fun test(): R|kotlin/Unit| {
+        [BODY_RESOLVE] lval bar: R|Bar| = R|/Bar.Bar|()
+        R|<local>/bar|.R|/Bar.id| = Int(1)
+    }

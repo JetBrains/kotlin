@@ -1,0 +1,13 @@
+FILE: localClass.kt
+    public final [BODY_RESOLVE] fun x(): R|kotlin/Unit| {
+        local final [BODY_RESOLVE] class Local : R|kotlin/Any| {
+            public [BODY_RESOLVE] constructor(): R|Local| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [BODY_RESOLVE] fun foo(): R|kotlin/Unit| {
+            }
+
+        }
+
+    }

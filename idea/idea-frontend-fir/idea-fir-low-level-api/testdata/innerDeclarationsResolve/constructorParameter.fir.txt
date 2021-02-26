@@ -1,0 +1,10 @@
+FILE: constructorParameter.kt
+    public final [BODY_RESOLVE] class A : R|kotlin/Any| {
+        public [BODY_RESOLVE] constructor([BODY_RESOLVE] x: R|kotlin/String|): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [BODY_RESOLVE] val x: R|kotlin/String| = R|<local>/x|
+            [BODY_RESOLVE] public get(): R|kotlin/String|
+
+    }

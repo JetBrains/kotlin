@@ -1,0 +1,6 @@
+FILE: functionWithImplicitType.kt
+    public final [BODY_RESOLVE] fun <T> checkSubtype([BODY_RESOLVE] t: R|T|): R|T| {
+        ^checkSubtype R|<local>/t|
+    }
+    public final [BODY_RESOLVE] val ab: R|kotlin/collections/List<kotlin/Int>?| = R|/checkSubtype|<R|kotlin/collections/List<kotlin/Int>?|>(Q|java/util/Collections|.R|java/util/Collections.emptyList|<R|ft<kotlin/Int, kotlin/Int?>!|>())
+        [BODY_RESOLVE] public get(): R|kotlin/collections/List<kotlin/Int>?|

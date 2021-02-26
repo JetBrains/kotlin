@@ -1,0 +1,26 @@
+FILE: lambdasInWithBodyFunction.kt
+    public final inline [BODY_RESOLVE] fun <T, R> with([BODY_RESOLVE] receiver: R|T|, [BODY_RESOLVE] block: R|T.() -> R|): R|R| {
+        ^with R|<local>/block|.R|SubstitutionOverride<kotlin/Function1.invoke: R|R|>|(R|<local>/receiver|)
+    }
+    public final inline [BODY_RESOLVE] fun <T, R> R|T|.let([BODY_RESOLVE] block: R|(T) -> R|): R|R| {
+        ^let R|<local>/block|.R|SubstitutionOverride<kotlin/Function1.invoke: R|R|>|(this@R|/let|)
+    }
+    public final [BODY_RESOLVE] class A : R|kotlin/Any| {
+        public [BODY_RESOLVE] constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [BODY_RESOLVE] fun foo(): R|kotlin/Unit| {
+            [BODY_RESOLVE] lval a: R|kotlin/Int| = R|/with|<R|kotlin/Int|, R|kotlin/Int|>(Int(1), <L> = [BODY_RESOLVE] with@fun R|kotlin/Int|.<anonymous>(): R|kotlin/Int| <kind=UNKNOWN>  {
+                ^ this@R|special/anonymous|.R|/let|<R|kotlin/Int|, R|kotlin/Int|>(<L> = [BODY_RESOLVE] let@fun <anonymous>([BODY_RESOLVE] it: R|kotlin/Int|): R|kotlin/Int| <kind=UNKNOWN>  {
+                    ^ R|<local>/it|
+                }
+                )
+            }
+            ).R|/let|<R|kotlin/Int|, R|kotlin/Int|>(<L> = [BODY_RESOLVE] let@fun <anonymous>([BODY_RESOLVE] it: R|kotlin/Int|): R|kotlin/Int| <kind=UNKNOWN>  {
+                ^ Int(2)
+            }
+            )
+        }
+
+    }
