@@ -419,7 +419,7 @@ object ExpectedActualResolver {
 
         if (a.kind != b.kind) return Incompatible.ClassKind
 
-        if (!equalBy(a, b) { listOf(it.isCompanionObject, it.isInner, it.isInline) }) return Incompatible.ClassModifiers
+        if (!equalBy(a, b) { listOf(it.isCompanionObject, it.isInner, it.isInline || it.isValue) }) return Incompatible.ClassModifiers
 
         val aTypeParams = a.declaredTypeParameters
         val bTypeParams = b.declaredTypeParameters
