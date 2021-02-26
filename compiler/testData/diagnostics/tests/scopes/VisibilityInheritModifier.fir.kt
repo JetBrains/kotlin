@@ -5,7 +5,7 @@ open class A {
 }
 
 class B : A() {
-    protected override fun foo() {}
+    <!CANNOT_CHANGE_ACCESS_PRIVILEGE!>protected<!> override fun foo() {}
 }
 
 class C : A() {
@@ -48,7 +48,7 @@ class I : H() {
 }
 
 class J : H() {
-    internal override fun pi_fun() {}
+    <!CANNOT_CHANGE_ACCESS_PRIVILEGE!>internal<!> override fun pi_fun() {}
 }
 
 class K : H() {
