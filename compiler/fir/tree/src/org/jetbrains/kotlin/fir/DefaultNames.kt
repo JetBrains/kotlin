@@ -13,6 +13,4 @@ val CONSTRUCTOR_NAME = Name.special("<init>")
 
 // Data class synthetic members
 val COPY_NAME = Name.identifier("copy")
-val EQUALS_NAME = Name.identifier("equals")
 val HASHCODE_NAME = Name.identifier("hashCode")
-val TOSTRING_NAME = Name.identifier("toString")
