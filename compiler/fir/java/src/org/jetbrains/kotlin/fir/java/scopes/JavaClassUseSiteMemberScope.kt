@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.SpecialGenericSignatures
 import org.jetbrains.kotlin.load.java.SpecialGenericSignatures.Companion.ERASED_COLLECTION_PARAMETER_NAMES
 import org.jetbrains.kotlin.load.java.SpecialGenericSignatures.Companion.sameAsBuiltinMethodWithErasedValueParameters
+import org.jetbrains.kotlin.load.java.SpecialGenericSignatures.Companion.sameAsRenamedInJvmBuiltin
 import org.jetbrains.kotlin.load.java.getPropertyNamesCandidatesByAccessorName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -191,7 +192,7 @@ class JavaClassUseSiteMemberScope(
         val renamedSpecialBuiltInNames = SpecialGenericSignatures.getBuiltinFunctionNamesByJvmName(name)
 
         if (potentialPropertyNames.isEmpty() && renamedSpecialBuiltInNames.isEmpty() &&
-            !name.sameAsBuiltinMethodWithErasedValueParameters
+            !name.sameAsBuiltinMethodWithErasedValueParameters && !name.sameAsRenamedInJvmBuiltin
         ) {
             return super.processFunctionsByName(name, processor)
         }
@@ -387,10 +388,7 @@ class JavaClassUseSiteMemberScope(
 
         superTypesScope.processOverriddenFunctions(this) {
             if (!it.isFromBuiltInClass(session)) return@processOverriddenFunctions ProcessorAction.NEXT
-            if (SpecialGenericSignatures.SIGNATURE_TO_JVM_REPRESENTATION_NAME.containsKey(
-                    it.fir.computeJvmSignature()
-                )
-            ) {
+            if (SpecialGenericSignatures.SIGNATURE_TO_JVM_REPRESENTATION_NAME.containsKey(it.fir.computeJvmSignature())) {
                 result = it
                 return@processOverriddenFunctions ProcessorAction.STOP
             }
