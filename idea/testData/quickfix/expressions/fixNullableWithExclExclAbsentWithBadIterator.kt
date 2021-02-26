@@ -11,3 +11,4 @@ fun foo() {
     val test: Some? = Some()
     for (i in <caret>test) { }
 }
+/* FIR_COMPARISON */
