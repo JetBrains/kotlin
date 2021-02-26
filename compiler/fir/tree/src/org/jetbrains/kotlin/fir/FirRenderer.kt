@@ -54,6 +54,8 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         val renderCallableFqNames: Boolean,
         val renderDeclarationResolvePhase: Boolean,
         val renderAnnotation: Boolean,
+        val renderBodies: Boolean = true,
+        val renderPropertyAccessors: Boolean = true,
     ) {
         object Normal : RenderMode(
             renderLambdaBodies = true,
@@ -85,6 +87,16 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
             renderCallableFqNames = false,
             renderDeclarationResolvePhase = true,
             renderAnnotation = true,
+        )
+
+        object NoBodies : RenderMode(
+            renderLambdaBodies = false,
+            renderCallArguments = false,
+            renderCallableFqNames = false,
+            renderDeclarationResolvePhase = false,
+            renderAnnotation = false,
+            renderBodies = false,
+            renderPropertyAccessors = false,
         )
     }
 
@@ -442,6 +454,7 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
     override fun visitProperty(property: FirProperty) {
         visitVariable(property)
         if (property.isLocal) return
+        if (!mode.renderPropertyAccessors) return
         println()
         pushIndent()
         property.getter?.accept(this)
@@ -543,14 +556,17 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         anonymousInitializer.body?.renderBody()
     }
 
-    private fun FirBlock.renderBody(additionalStatements: List<FirStatement> = emptyList()) = when (this) {
-        is FirLazyBlock -> {
-            println(" { LAZY_BLOCK }")
-        }
-        else -> renderInBraces {
-            for (statement in additionalStatements + statements) {
-                statement.accept(this@FirRenderer)
-                println()
+    private fun FirBlock.renderBody(additionalStatements: List<FirStatement> = emptyList()) {
+        if (!mode.renderBodies) return
+        when (this) {
+            is FirLazyBlock -> {
+                println(" { LAZY_BLOCK }")
+            }
+            else -> renderInBraces {
+                for (statement in additionalStatements + statements) {
+                    statement.accept(this@FirRenderer)
+                    println()
+                }
             }
         }
     }
