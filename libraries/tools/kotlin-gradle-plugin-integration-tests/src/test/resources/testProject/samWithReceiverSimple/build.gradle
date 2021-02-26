@@ -14,7 +14,7 @@ apply plugin: "kotlin-sam-with-receiver"
 
 repositories {
     mavenLocal()
-    jcenter()
+    mavenCentral()
 }
 
 sourceSets {

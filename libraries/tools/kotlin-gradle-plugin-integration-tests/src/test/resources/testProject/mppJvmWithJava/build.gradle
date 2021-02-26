@@ -5,7 +5,8 @@ buildscript {
     repositories {
         mavenLocal()
         google()
-        jcenter()
+        mavenCentral()
+        maven { url = uri("https://jcenter.bintray.com/") }
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -16,7 +17,8 @@ buildscript {
 repositories {
     mavenLocal()
     google()
-    jcenter()
+    mavenCentral()
+    maven { url = uri("https://jcenter.bintray.com/") }
 }
 
 kotlin {
@@ -35,7 +37,7 @@ allprojects {
     repositories {
         mavenLocal()
         google()
-        jcenter()
+        mavenCentral()
     }
 }
 

@@ -1,7 +1,7 @@
 buildscript {
     repositories {
         mavenLocal()
-        jcenter()
+        mavenCentral()
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -13,8 +13,8 @@ apply plugin: "kotlin"
 apply plugin: "kotlin-kapt"
 
 repositories {
-    jcenter()
     mavenLocal()
+    mavenCentral()
     maven {
         url "https://jetbrains.bintray.com/intellij-third-party-dependencies/"
     }

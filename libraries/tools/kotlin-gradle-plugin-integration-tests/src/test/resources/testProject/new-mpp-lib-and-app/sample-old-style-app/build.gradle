@@ -1,7 +1,7 @@
 buildscript {
 	repositories {
 		mavenLocal()
-		jcenter()
+		mavenCentral()
 	}
 	dependencies {
 		classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -11,7 +11,7 @@ buildscript {
 allprojects {
 	repositories {
 	    mavenLocal()
-	    jcenter()
+	    mavenCentral()
 	    // NB: Build of this module depends on 'sample-lib' publication. You need to add the local
 	    // repository where 'sample-lib' artifacts are published.
 	}
