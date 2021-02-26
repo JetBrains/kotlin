@@ -328,9 +328,6 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
 
 
     override fun apply(project: ProjectInternal) {
-        if (project == null) {
-            return
-        }
         checkGradleVersion()
         project.plugins.apply("base")
         // Create necessary tasks and extensions.

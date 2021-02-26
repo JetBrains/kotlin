@@ -31,13 +31,13 @@ internal val Project.kotlin: KotlinMultiplatformExtension
     get() = extensions.getByName("kotlin") as KotlinMultiplatformExtension
 
 internal val NamedDomainObjectCollection<KotlinTargetPreset<*>>.macosX64: KotlinTargetPreset<*>
-    get() = getByName(::macosX64.name) as KotlinTargetPreset<*>
+    get() = getByName(::macosX64.name)
 
 internal val NamedDomainObjectCollection<KotlinTargetPreset<*>>.linuxX64: KotlinTargetPreset<*>
-    get() = getByName(::linuxX64.name) as KotlinTargetPreset<*>
+    get() = getByName(::linuxX64.name)
 
 internal val NamedDomainObjectCollection<KotlinTargetPreset<*>>.mingwX64: KotlinTargetPreset<*>
-    get() = getByName(::mingwX64.name) as KotlinTargetPreset<*>
+    get() = getByName(::mingwX64.name)
 
 internal val NamedDomainObjectContainer<out KotlinCompilation<*>>.main: KotlinNativeCompilation
     get() = getByName(::main.name) as KotlinNativeCompilation

@@ -62,7 +62,7 @@ val Project.testTarget
     get() = findProperty("target") as KonanTarget
 
 val Project.testTargetSuffix
-    get() = (findProperty("target") as KonanTarget ?: HostManager.host).name.capitalize()
+    get() = (findProperty("target") as KonanTarget).name.capitalize()
 
 val Project.verboseTest
     get() = hasProperty("test_verbose")
@@ -117,12 +117,10 @@ fun File.dependencies() =
 
 
 fun Task.dependsOnPlatformLibs() {
-    val platformManager = project.project(":kotlin-native").platformManager
-    val target = project.testTarget ?: platformManager.hostPlatform.target
     (this as? KonanTest)?.run {
         project.file(source).dependencies().forEach {
-            this.dependsOn(":kotlin-native:platformLibs:${target.name}-$it")
-            //this.dependsOn(":kotlin-native:platformLibs:${target.name}-${it}Cache")
+            this.dependsOn(":kotlin-native:platformLibs:${project.testTarget.name}-$it")
+            //this.dependsOn(":kotlin-native:platformLibs:${project.testTarget.name}-${it}Cache")
         }
     } ?: error("unsupported task : $this")
 }
@@ -400,4 +398,10 @@ fun Project.buildStaticLibrary(cSources: Collection<File>, output: File, objDir:
                 *fileTree(objDir).files.toTypedArray()
         )
     }
+}
+
+// Workaround the deprecation warning from stdlib's appendln, which is reported because this module is compiled with API version 1.3.
+internal fun StringBuilder.appendln(o: Any?) {
+    append(o)
+    append('\n')
 }

@@ -19,18 +19,18 @@ package org.jetbrains.kotlin.gradle.plugin.konan
 import groovy.lang.Closure
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectFactory
+import org.gradle.api.internal.CollectionCallbackActionDecorator
 import org.gradle.api.internal.DefaultPolymorphicDomainObjectContainer
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.internal.reflect.Instantiator
 import org.gradle.util.ConfigureUtil
 import kotlin.reflect.KClass
 
-open class KonanArtifactContainer(val project: ProjectInternal)
-    : DefaultPolymorphicDomainObjectContainer<KonanBuildingConfig<*>>(
-        KonanBuildingConfig::class.java,
-        project.services.get(Instantiator::class.java)
+open class KonanArtifactContainer(val project: ProjectInternal) : DefaultPolymorphicDomainObjectContainer<KonanBuildingConfig<*>>(
+    KonanBuildingConfig::class.java,
+    project.services.get(Instantiator::class.java),
+    CollectionCallbackActionDecorator.NOOP
 ) {
-
     private inner class KonanBuildingConfigFactory<T: KonanBuildingConfig<*>>(val configClass: KClass<T>)
         : NamedDomainObjectFactory<T> {
 
