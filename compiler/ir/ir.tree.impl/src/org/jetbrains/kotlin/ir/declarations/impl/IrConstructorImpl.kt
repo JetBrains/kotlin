@@ -38,7 +38,7 @@ class IrConstructorImpl(
     override var visibility: DescriptorVisibility,
     returnType: IrType,
     override val isInline: Boolean,
-    override var isExternal: Boolean,
+    override val isExternal: Boolean,
     override val isPrimary: Boolean,
     override val isExpect: Boolean,
     override val containerSource: DeserializedContainerSource? = null,

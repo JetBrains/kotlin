@@ -26,7 +26,6 @@ internal interface ClassCarrier : DeclarationCarrier{
     val attributeOwnerIdField: IrAttributeContainer
     val typeParametersField: List<IrTypeParameter>
     val superTypesField: List<IrType>
-    val isExternalField: Boolean
 
     override fun clone(): ClassCarrier {
         return ClassCarrierImpl(
@@ -40,8 +39,7 @@ internal interface ClassCarrier : DeclarationCarrier{
             modalityField,
             attributeOwnerIdField,
             typeParametersField,
-            superTypesField,
-            isExternalField
+            superTypesField
         )
     }
 }
@@ -57,6 +55,5 @@ internal class ClassCarrierImpl(
     override val modalityField: Modality,
     override val attributeOwnerIdField: IrAttributeContainer,
     override val typeParametersField: List<IrTypeParameter>,
-    override val superTypesField: List<IrType>,
-    override val isExternalField: Boolean
+    override val superTypesField: List<IrType>
 ) : ClassCarrier

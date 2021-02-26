@@ -70,7 +70,7 @@ internal object PersistentIrGenerator {
     val isCompanion = +"override val isCompanion: Boolean = false"
     val isInner = +"override val isInner: Boolean = false"
     val isData = +"override val isData: Boolean = false"
-    val isExternal = +"isExternal: Boolean"
+    val isExternal = +"override val isExternal: Boolean"
     val isFinal = +"override val isFinal: Boolean"
     val isInline = +"override val isInline: Boolean"
     val isExpect = +"override val isExpect: Boolean"

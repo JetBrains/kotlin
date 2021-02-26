@@ -37,7 +37,7 @@ abstract class IrPropertyCommonImpl(
     override val isConst: Boolean,
     override val isLateinit: Boolean,
     override val isDelegated: Boolean,
-    override var isExternal: Boolean,
+    override val isExternal: Boolean,
     override val isExpect: Boolean,
     override val containerSource: DeserializedContainerSource?,
 ) : IrProperty() {

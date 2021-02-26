@@ -32,7 +32,7 @@ internal class PersistentIrField(
     type: IrType,
     override var visibility: DescriptorVisibility,
     override val isFinal: Boolean,
-    isExternal: Boolean,
+    override val isExternal: Boolean,
     override val isStatic: Boolean,
     override val factory: PersistentIrFactory
 ) : IrField(),
@@ -101,17 +101,6 @@ internal class PersistentIrField(
             if (type !== v) {
                 setCarrier()
                 typeField = v
-            }
-        }
-
-    override var isExternalField: Boolean = isExternal
-
-    override var isExternal: Boolean
-        get() = getCarrier().isExternalField
-        set(v) {
-            if (isExternal != v) {
-                setCarrier()
-                isExternalField = v
             }
         }
 }

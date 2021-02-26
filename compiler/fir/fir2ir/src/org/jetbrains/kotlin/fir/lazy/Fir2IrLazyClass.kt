@@ -84,11 +84,8 @@ class Fir2IrLazyClass(
     override val isData: Boolean
         get() = fir.isData
 
-    override var isExternal: Boolean
+    override val isExternal: Boolean
         get() = fir.isExternal
-        set(_) {
-            error("Mutating Fir2Ir lazy elements is not possible")
-        }
 
     override val isInline: Boolean
         get() = fir.isInline

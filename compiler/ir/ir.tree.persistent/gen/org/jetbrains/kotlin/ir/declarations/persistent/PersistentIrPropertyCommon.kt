@@ -31,7 +31,7 @@ internal abstract class PersistentIrPropertyCommon(
     override val isConst: Boolean,
     override val isLateinit: Boolean,
     override val isDelegated: Boolean,
-    isExternal: Boolean,
+    override val isExternal: Boolean,
     override val isExpect: Boolean,
     override val containerSource: DeserializedContainerSource?,
     override val factory: PersistentIrFactory
@@ -102,17 +102,6 @@ internal abstract class PersistentIrPropertyCommon(
             if (attributeOwnerId !== v) {
                 setCarrier()
                 attributeOwnerIdField = v
-            }
-        }
-
-    override var isExternalField: Boolean = isExternal
-
-    override var isExternal: Boolean
-        get() = getCarrier().isExternalField
-        set(v) {
-            if (isExternal != v) {
-                setCarrier()
-                isExternalField = v
             }
         }
 }

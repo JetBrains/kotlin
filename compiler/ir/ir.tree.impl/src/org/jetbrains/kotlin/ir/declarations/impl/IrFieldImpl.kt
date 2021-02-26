@@ -36,7 +36,7 @@ class IrFieldImpl(
     override var type: IrType,
     override var visibility: DescriptorVisibility,
     override val isFinal: Boolean,
-    override var isExternal: Boolean,
+    override val isExternal: Boolean,
     override val isStatic: Boolean,
 ) : IrField() {
     init {

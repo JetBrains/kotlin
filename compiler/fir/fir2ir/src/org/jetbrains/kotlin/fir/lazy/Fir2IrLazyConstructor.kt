@@ -50,11 +50,8 @@ class Fir2IrLazyConstructor(
     override val isInline: Boolean
         get() = fir.isInline
 
-    override var isExternal: Boolean
+    override val isExternal: Boolean
         get() = fir.isExternal
-        set(_) {
-            error("Mutating Fir2Ir lazy elements is not possible")
-        }
 
     override val isExpect: Boolean
         get() = fir.isExpect

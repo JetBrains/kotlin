@@ -32,7 +32,7 @@ class IrLazyField(
     override val name: Name,
     override var visibility: DescriptorVisibility,
     override val isFinal: Boolean,
-    override var isExternal: Boolean,
+    override val isExternal: Boolean,
     override val isStatic: Boolean,
     override val stubGenerator: DeclarationStubGenerator,
     override val typeTranslator: TypeTranslator,

@@ -29,7 +29,7 @@ abstract class IrFunctionCommonImpl(
     override var visibility: DescriptorVisibility,
     returnType: IrType,
     override val isInline: Boolean,
-    override var isExternal: Boolean,
+    override val isExternal: Boolean,
     override val isTailrec: Boolean,
     override val isSuspend: Boolean,
     override val isOperator: Boolean,

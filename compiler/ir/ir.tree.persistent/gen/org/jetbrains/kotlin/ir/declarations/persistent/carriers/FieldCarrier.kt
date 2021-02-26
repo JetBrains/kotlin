@@ -20,7 +20,6 @@ internal interface FieldCarrier : DeclarationCarrier{
     val initializerField: IrExpressionBody?
     val correspondingPropertySymbolField: IrPropertySymbol?
     val metadataField: MetadataSource?
-    val isExternalField: Boolean
 
     override fun clone(): FieldCarrier {
         return FieldCarrierImpl(
@@ -31,8 +30,7 @@ internal interface FieldCarrier : DeclarationCarrier{
             typeField,
             initializerField,
             correspondingPropertySymbolField,
-            metadataField,
-            isExternalField
+            metadataField
         )
     }
 }
@@ -45,6 +43,5 @@ internal class FieldCarrierImpl(
     override val typeField: IrType,
     override val initializerField: IrExpressionBody?,
     override val correspondingPropertySymbolField: IrPropertySymbol?,
-    override val metadataField: MetadataSource?,
-    override val isExternalField: Boolean
+    override val metadataField: MetadataSource?
 ) : FieldCarrier

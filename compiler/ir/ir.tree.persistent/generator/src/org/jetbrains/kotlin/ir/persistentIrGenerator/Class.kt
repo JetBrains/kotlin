@@ -13,7 +13,6 @@ internal fun PersistentIrGenerator.generateClass() {
     val metadataField = Field("metadata", irDeclaration("MetadataSource") + "?")
     val modalityField = Field("modality", descriptorType("Modality"))
     val attributeOwnerIdField = Field("attributeOwnerId", IrAttributeContainer)
-    val isExternalField = Field("isExternal", +"Boolean", notEq = "!=")
 
     writeFile("PersistentIrClass.kt", renderFile("org.jetbrains.kotlin.ir.declarations.persistent") {
         lines(
@@ -69,7 +68,6 @@ internal fun PersistentIrGenerator.generateClass() {
                 superTypesField.toPersistentField(+"emptyList()"),
                 metadataField.toPersistentField(+"null"),
                 modalityField.toPersistentField(+"modality"),
-                isExternalField.toPersistentField(+"isExternal"),
                 attributeOwnerIdField.toPersistentField(+"this"),
             ),
             id,
@@ -86,7 +84,6 @@ internal fun PersistentIrGenerator.generateClass() {
             attributeOwnerIdField,
             typeParametersField,
             superTypesField,
-            isExternalField,
         )()
     })
 }

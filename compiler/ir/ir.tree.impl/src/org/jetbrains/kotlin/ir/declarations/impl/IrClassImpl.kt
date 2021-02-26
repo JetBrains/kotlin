@@ -36,7 +36,7 @@ class IrClassImpl(
     override val isCompanion: Boolean = false,
     override val isInner: Boolean = false,
     override val isData: Boolean = false,
-    override var isExternal: Boolean = false,
+    override val isExternal: Boolean = false,
     override val isInline: Boolean = false,
     override val isExpect: Boolean = false,
     override val isFun: Boolean = false,

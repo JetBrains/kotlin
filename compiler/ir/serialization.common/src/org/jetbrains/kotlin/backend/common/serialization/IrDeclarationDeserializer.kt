@@ -634,22 +634,21 @@ class IrDeclarationDeserializer(
                     flags.isFakeOverride
                 )
             }.apply {
-                if (proto.hasGetter()) {
-                    getter = deserializeIrFunction(proto.getter).also {
-                        it.correspondingPropertySymbol = symbol
-                        it.isExternal = this.isExternal
+                withExternalValue(isExternal) {
+                    if (proto.hasGetter()) {
+                        getter = deserializeIrFunction(proto.getter).also {
+                            it.correspondingPropertySymbol = symbol
+                        }
                     }
-                }
-                if (proto.hasSetter()) {
-                    setter = deserializeIrFunction(proto.setter).also {
-                        it.correspondingPropertySymbol = symbol
-                        it.isExternal = this.isExternal
+                    if (proto.hasSetter()) {
+                        setter = deserializeIrFunction(proto.setter).also {
+                            it.correspondingPropertySymbol = symbol
+                        }
                     }
-                }
-                if (proto.hasBackingField()) {
-                    backingField = deserializeIrField(proto.backingField).also {
-                        it.correspondingPropertySymbol = symbol
-                        it.isExternal = this.isExternal
+                    if (proto.hasBackingField()) {
+                        backingField = deserializeIrField(proto.backingField).also {
+                            it.correspondingPropertySymbol = symbol
+                        }
                     }
                 }
             }
