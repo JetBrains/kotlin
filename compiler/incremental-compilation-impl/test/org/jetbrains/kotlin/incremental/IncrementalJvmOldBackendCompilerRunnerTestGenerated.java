@@ -2060,11 +2060,6 @@ public class IncrementalJvmOldBackendCompilerRunnerTestGenerated extends Abstrac
                 runTest("jps-plugin/testData/incremental/withJava/other/multifileClassRemoved/");
             }
 
-            @TestMetadata("multifileDependantUsage")
-            public void testMultifileDependantUsage() throws Exception {
-                runTest("jps-plugin/testData/incremental/withJava/other/multifileDependantUsage/");
-            }
-
             @TestMetadata("multifilePackagePartMethodAdded")
             public void testMultifilePackagePartMethodAdded() throws Exception {
                 runTest("jps-plugin/testData/incremental/withJava/other/multifilePackagePartMethodAdded/");
@@ -2380,19 +2375,6 @@ public class IncrementalJvmOldBackendCompilerRunnerTestGenerated extends Abstrac
 
                 public void testAllFilesPresentInMultifileClassRemoved() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/withJava/other/multifileClassRemoved"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM, true);
-                }
-            }
-
-            @TestMetadata("jps-plugin/testData/incremental/withJava/other/multifileDependantUsage")
-            @TestDataPath("$PROJECT_ROOT")
-            @RunWith(JUnit3RunnerWithInners.class)
-            public static class MultifileDependantUsage extends AbstractIncrementalJvmOldBackendCompilerRunnerTest {
-                private void runTest(String testDataFilePath) throws Exception {
-                    KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
-                }
-
-                public void testAllFilesPresentInMultifileDependantUsage() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/withJava/other/multifileDependantUsage"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM, true);
                 }
             }
 
