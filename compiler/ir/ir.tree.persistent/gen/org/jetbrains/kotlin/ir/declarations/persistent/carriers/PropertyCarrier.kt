@@ -21,7 +21,6 @@ internal interface PropertyCarrier : DeclarationCarrier{
     val setterField: IrSimpleFunction?
     val metadataField: MetadataSource?
     val attributeOwnerIdField: IrAttributeContainer
-    val isExternalField: Boolean
 
     override fun clone(): PropertyCarrier {
         return PropertyCarrierImpl(
@@ -33,8 +32,7 @@ internal interface PropertyCarrier : DeclarationCarrier{
             getterField,
             setterField,
             metadataField,
-            attributeOwnerIdField,
-            isExternalField
+            attributeOwnerIdField
         )
     }
 }
@@ -48,6 +46,5 @@ internal class PropertyCarrierImpl(
     override val getterField: IrSimpleFunction?,
     override val setterField: IrSimpleFunction?,
     override val metadataField: MetadataSource?,
-    override val attributeOwnerIdField: IrAttributeContainer,
-    override val isExternalField: Boolean
+    override val attributeOwnerIdField: IrAttributeContainer
 ) : PropertyCarrier

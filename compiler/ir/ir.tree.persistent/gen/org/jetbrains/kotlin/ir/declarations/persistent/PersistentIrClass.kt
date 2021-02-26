@@ -42,7 +42,7 @@ internal class PersistentIrClass(
     override val isCompanion: Boolean = false,
     override val isInner: Boolean = false,
     override val isData: Boolean = false,
-    isExternal: Boolean = false,
+    override val isExternal: Boolean = false,
     override val isInline: Boolean = false,
     override val isExpect: Boolean = false,
     override val isFun: Boolean = false,
@@ -149,17 +149,6 @@ internal class PersistentIrClass(
             if (modality !== v) {
                 setCarrier()
                 modalityField = v
-            }
-        }
-
-    override var isExternalField: Boolean = isExternal
-
-    override var isExternal: Boolean
-        get() = getCarrier().isExternalField
-        set(v) {
-            if (isExternal != v) {
-                setCarrier()
-                isExternalField = v
             }
         }
 

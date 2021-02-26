@@ -32,7 +32,6 @@ internal interface FunctionCarrier : DeclarationCarrier{
     val correspondingPropertySymbolField: IrPropertySymbol?
     val overriddenSymbolsField: List<IrSimpleFunctionSymbol>
     val attributeOwnerIdField: IrAttributeContainer
-    val isExternalField: Boolean
 
     override fun clone(): FunctionCarrier {
         return FunctionCarrierImpl(
@@ -50,8 +49,7 @@ internal interface FunctionCarrier : DeclarationCarrier{
             valueParametersField,
             correspondingPropertySymbolField,
             overriddenSymbolsField,
-            attributeOwnerIdField,
-            isExternalField
+            attributeOwnerIdField
         )
     }
 }
@@ -71,6 +69,5 @@ internal class FunctionCarrierImpl(
     override val valueParametersField: List<IrValueParameter>,
     override val correspondingPropertySymbolField: IrPropertySymbol?,
     override val overriddenSymbolsField: List<IrSimpleFunctionSymbol>,
-    override val attributeOwnerIdField: IrAttributeContainer,
-    override val isExternalField: Boolean
+    override val attributeOwnerIdField: IrAttributeContainer
 ) : FunctionCarrier

@@ -32,7 +32,7 @@ class IrLazyClass(
     override val isCompanion: Boolean,
     override val isInner: Boolean,
     override val isData: Boolean,
-    override var isExternal: Boolean,
+    override val isExternal: Boolean,
     override val isInline: Boolean,
     override val isExpect: Boolean,
     override val isFun: Boolean,

@@ -61,7 +61,7 @@ interface IrDeclarationWithName : IrDeclaration {
 }
 
 interface IrPossiblyExternalDeclaration : IrDeclarationWithName {
-    var isExternal: Boolean
+    val isExternal: Boolean
 }
 
 interface IrOverridableMember : IrDeclarationWithVisibility, IrDeclarationWithName, IrSymbolOwner {

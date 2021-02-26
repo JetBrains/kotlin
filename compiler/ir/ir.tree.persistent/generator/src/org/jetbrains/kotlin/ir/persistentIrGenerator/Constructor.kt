@@ -14,7 +14,6 @@ internal fun PersistentIrGenerator.generateConstructor() {
     val bodyField = Field("body", IrBody + "?")
     val metadataField = Field("metadata", MetadataSource + "?")
     val visibilityField = Field("visibility", DescriptorVisibility)
-    val isExternalField = Field("isExternal", +"Boolean", notEq = "!=")
 
     writeFile("PersistentIrConstructor.kt", renderFile("org.jetbrains.kotlin.ir.declarations.persistent") {
         lines(
@@ -57,7 +56,6 @@ internal fun PersistentIrGenerator.generateConstructor() {
                 bodyField.toBody(),
                 metadataField.toPersistentField(+"null"),
                 visibilityField.toPersistentField(+"visibility"),
-                isExternalField.toPersistentField(+"isExternal"),
                 descriptor(ClassConstructorDescriptor)
             ),
             id,
@@ -75,7 +73,6 @@ internal fun PersistentIrGenerator.generateConstructor() {
             visibilityField,
             typeParametersField,
             valueParametersField,
-            isExternalField,
         )()
     })
 }
