@@ -3135,6 +3135,67 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     )
 
     @Test
+    fun testSourceLocationOfCapturingComposableLambdas(): Unit = verifyComposeIrTransform(
+        source = """
+            import androidx.compose.runtime.Composable
+
+            class SomeClass {
+                var a = "Test"
+                fun onCreate() {
+                    setContent {
+                        B(a)
+                        B(a)
+                    }
+                }
+            }
+
+            fun Test() {
+                var a = "Test"
+                setContent {
+                    B(a)
+                    B(a)
+                }
+            }
+        """,
+        extra = """
+            import androidx.compose.runtime.Composable
+
+            fun setContent(block: @Composable () -> Unit) { }
+            @Composable fun B(value: String) { }
+        """,
+        expectedTransformed = """
+            @StabilityInferred(parameters = 0)
+            class SomeClass {
+              var a: String = "Test"
+              fun onCreate() {
+                setContent(composableLambdaInstance(<>, true, "C<B(a)>,<B(a)>:Test.kt") { %composer: Composer?, %changed: Int ->
+                  if (%changed and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+                    B(a, %composer, 0)
+                    B(a, %composer, 0)
+                  } else {
+                    %composer.skipToGroupEnd()
+                  }
+                }
+                )
+              }
+              static val %stable: Int = 8
+            }
+            fun Test() {
+              var a = "Test"
+              setContent(composableLambdaInstance(<>, true, "C<B(a)>,<B(a)>:Test.kt") { %composer: Composer?, %changed: Int ->
+                if (%changed and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+                  B(a, %composer, 0)
+                  B(a, %composer, 0)
+                } else {
+                  %composer.skipToGroupEnd()
+                }
+              }
+              )
+            }
+        """
+    )
+
+    @Test
     fun testSourceLineInformationForNormalInline(): Unit = verifyComposeIrTransform(
         source = """
             import androidx.compose.runtime.Composable
