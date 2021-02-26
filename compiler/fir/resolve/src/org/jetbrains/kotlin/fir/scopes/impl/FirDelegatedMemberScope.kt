@@ -7,11 +7,8 @@ package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.isIntersectionOverride
-import org.jetbrains.kotlin.fir.isSubstitutionOverride
-import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
@@ -155,15 +152,6 @@ class FirDelegatedMemberScope(
         return useSiteScope.getClassifierNames()
     }
 }
-
-private object DelegatedWrapperDataKey : FirDeclarationDataKey()
-class DelegatedWrapperData<D : FirCallableDeclaration<*>>(
-    val wrapped: D,
-    val containingClass: ConeClassLikeLookupTag,
-    val delegateField: FirField,
-)
-var <D : FirCallableDeclaration<*>>
-        D.delegatedWrapperData: DelegatedWrapperData<D>? by FirDeclarationDataRegistry.data(DelegatedWrapperDataKey)
 
 inline fun <reified S : FirCallableSymbol<D>, reified D : FirCallableMemberDeclaration<D>> S.unwrapDelegateTarget(
     subClassLookupTag: ConeClassLikeLookupTag,

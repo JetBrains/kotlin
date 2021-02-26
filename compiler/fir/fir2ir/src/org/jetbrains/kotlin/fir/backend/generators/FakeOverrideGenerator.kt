@@ -13,9 +13,7 @@ import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.FirFakeOverrideGenerator
-import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -140,9 +138,6 @@ class FakeOverrideGenerator(
         baseFunctionSymbols[fakeOverride] = baseFirSymbolsForFakeOverride
     }
 
-    private fun FirCallableSymbol<*>.shouldHaveComputedBaseSymbolsForClass(classLookupTag: ConeClassLikeLookupTag): Boolean =
-        fir.origin.fromSupertypes && dispatchReceiverClassOrNull() == classLookupTag
-
     private inline fun <reified D : FirCallableMemberDeclaration<D>, reified S : FirCallableSymbol<D>, reified I : IrDeclaration> createFakeOverriddenIfNeeded(
         klass: FirClass<*>,
         irClass: IrClass,
@@ -204,29 +199,6 @@ class FakeOverrideGenerator(
         }
         baseSymbols[irDeclaration] = baseFirSymbolsForFakeOverride
         result += irDeclaration
-    }
-
-    private inline fun <reified S : FirCallableSymbol<*>> computeBaseSymbols(
-        symbol: S,
-        directOverridden: FirTypeScope.(S) -> List<S>,
-        scope: FirTypeScope,
-        containingClass: ConeClassLikeLookupTag,
-    ): List<S> {
-        if (symbol.fir.origin == FirDeclarationOrigin.SubstitutionOverride) {
-            return listOf(symbol.originalForSubstitutionOverride!!)
-        }
-
-        return scope.directOverridden(symbol).map {
-            // Unwrapping should happen only for fake overrides members from the same class, not from supertypes
-            if (it.dispatchReceiverClassOrNull() != containingClass) return@map it
-            when {
-                it.fir.isSubstitutionOverride ->
-                    it.originalForSubstitutionOverride!!
-                it.fir.origin == FirDeclarationOrigin.Delegated ->
-                    it.fir.delegatedWrapperData?.wrapped?.symbol!! as S
-                else -> it
-            }
-        }
     }
 
     internal fun getOverriddenSymbolsForFakeOverride(function: IrSimpleFunction): List<IrSimpleFunctionSymbol>? {

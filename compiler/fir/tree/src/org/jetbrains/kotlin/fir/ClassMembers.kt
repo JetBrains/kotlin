@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
@@ -52,6 +53,32 @@ val FirSimpleFunction.isJavaDefault: Boolean
         return origin == FirDeclarationOrigin.Enhancement && modality == Modality.OPEN
     }
 
+fun FirCallableSymbol<*>.shouldHaveComputedBaseSymbolsForClass(classLookupTag: ConeClassLikeLookupTag): Boolean =
+    fir.origin.fromSupertypes && dispatchReceiverClassOrNull() == classLookupTag
+
+inline fun <reified S : FirCallableSymbol<*>> computeBaseSymbols(
+    symbol: S,
+    directOverridden: FirTypeScope.(S) -> List<S>,
+    scope: FirTypeScope,
+    containingClass: ConeClassLikeLookupTag,
+): List<S> {
+    if (symbol.fir.origin == FirDeclarationOrigin.SubstitutionOverride) {
+        return listOf(symbol.originalForSubstitutionOverride!!)
+    }
+
+    return scope.directOverridden(symbol).map {
+        // Unwrapping should happen only for fake overrides members from the same class, not from supertypes
+        if (it.dispatchReceiverClassOrNull() != containingClass) return@map it
+        when {
+            it.fir.isSubstitutionOverride ->
+                it.originalForSubstitutionOverride!!
+            it.fir.origin == FirDeclarationOrigin.Delegated ->
+                it.fir.delegatedWrapperData?.wrapped?.symbol!! as S
+            else -> it
+        }
+    }
+}
+
 inline fun <reified D : FirCallableDeclaration<*>> D.originalIfFakeOverride(): D? =
     originalForSubstitutionOverride ?: baseForIntersectionOverride
 
@@ -79,3 +106,12 @@ var <D : FirCallableDeclaration<*>>
 
 private object InitialSignatureKey : FirDeclarationDataKey()
 var FirCallableDeclaration<*>.initialSignatureAttr: FirCallableDeclaration<*>? by FirDeclarationDataRegistry.data(InitialSignatureKey)
+
+private object DelegatedWrapperDataKey : FirDeclarationDataKey()
+class DelegatedWrapperData<D : FirCallableDeclaration<*>>(
+    val wrapped: D,
+    val containingClass: ConeClassLikeLookupTag,
+    val delegateField: FirField,
+)
+var <D : FirCallableDeclaration<*>>
+        D.delegatedWrapperData: DelegatedWrapperData<D>? by FirDeclarationDataRegistry.data(DelegatedWrapperDataKey)
