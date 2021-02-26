@@ -4,3 +4,4 @@ fun foo(a: String?) {
     val b = a
         ?.length
 }
+/* FIR_COMPARISON */
