@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 // NUMBER: 3
 // EXIST: foo.txt
 // EXIST: bar.txt

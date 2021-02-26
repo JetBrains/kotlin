@@ -116,6 +116,7 @@ dependencies {
     testCompile(project(":kotlin-test:kotlin-test-junit"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(projectTests(":idea:idea-test-framework")) { isTransitive = false }
+    testImplementation(projectTests(":idea:idea-frontend-independent")) { isTransitive = false }
     testCompile(project(":idea:idea-jvm")) { isTransitive = false }
     testCompile(project(":idea:idea-gradle")) { isTransitive = false }
     testCompile(project(":idea:idea-maven")) { isTransitive = false }

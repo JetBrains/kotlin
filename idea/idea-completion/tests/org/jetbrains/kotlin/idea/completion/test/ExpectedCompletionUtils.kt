@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.platform.js.isJs
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import org.jetbrains.kotlin.test.uitls.IgnoreTests
 import org.junit.Assert
 import java.util.*
 
@@ -134,7 +135,8 @@ object ExpectedCompletionUtils {
         RUNTIME_TYPE,
         COMPLETION_TYPE_PREFIX,
         LightClassComputationControl.LIGHT_CLASS_DIRECTIVE,
-        AstAccessControl.ALLOW_AST_ACCESS_DIRECTIVE
+        AstAccessControl.ALLOW_AST_ACCESS_DIRECTIVE,
+        IgnoreTests.DIRECTIVES.FIR_COMPARISON,
     )
 
     fun itemsShouldExist(fileText: String, platform: TargetPlatform?): Array<CompletionProposal> = when {

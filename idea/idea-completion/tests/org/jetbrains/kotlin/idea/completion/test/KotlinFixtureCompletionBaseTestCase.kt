@@ -43,7 +43,7 @@ abstract class KotlinFixtureCompletionBaseTestCase : KotlinLightCodeInsightFixtu
                         { completionType, count -> complete(completionType, count) },
                         defaultCompletionType(),
                         defaultInvocationCount(),
-                        additionalValidDirectives = CompilerTestDirectives.ALL_COMPILER_TEST_DIRECTIVES + "FIR_COMPARISON"
+                        additionalValidDirectives = CompilerTestDirectives.ALL_COMPILER_TEST_DIRECTIVES
                     )
                 }
             }

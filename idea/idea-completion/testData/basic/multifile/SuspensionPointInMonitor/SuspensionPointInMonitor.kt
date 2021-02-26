@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 inline val C.v: Int get() = 1
 class C {
     fun f(block: suspend C.() -> Unit): Unit = TODO()
