@@ -95,6 +95,10 @@ open class IdSignatureSerializer(val mangler: KotlinMangler.IrMangler) : IdSigna
         override fun visitEnumEntry(declaration: IrEnumEntry) {
             collectFqNames(declaration)
         }
+
+        override fun visitField(declaration: IrField) {
+            collectFqNames(declaration)
+        }
     }
 
     private val publicSignatureBuilder = PublicIdSigBuilder()

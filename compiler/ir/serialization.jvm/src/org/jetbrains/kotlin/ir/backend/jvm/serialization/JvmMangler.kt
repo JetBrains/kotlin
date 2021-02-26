@@ -20,7 +20,10 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.load.java.lazy.descriptors.isJavaField
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 
 abstract class AbstractJvmManglerIr : IrBasedKotlinManglerImpl() {
 
@@ -30,6 +33,11 @@ abstract class AbstractJvmManglerIr : IrBasedKotlinManglerImpl() {
 
     private class JvmIrExportChecker : IrExportCheckerVisitor() {
         override fun IrDeclaration.isPlatformSpecificExported() = false
+
+        override fun visitField(declaration: IrField, data: Nothing?): Boolean {
+            if (declaration.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB) return true
+            return super.visitField(declaration, data)
+        }
     }
 
     private class JvmIrManglerComputer(builder: StringBuilder, mode: MangleMode) : IrMangleComputer(builder, mode) {
