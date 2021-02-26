@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.fir.checkers.generator.diagnostics
 
 import org.jetbrains.kotlin.fir.checkers.generator.*
-import org.jetbrains.kotlin.fir.tree.generator.printer.SmartPrinter
 import org.jetbrains.kotlin.fir.tree.generator.printer.printCopyright
 import org.jetbrains.kotlin.fir.tree.generator.printer.printGeneratedMessage
-import org.jetbrains.kotlin.fir.tree.generator.printer.writeToFileUsingSmartPrinterIfFileContentChanged
+import org.jetbrains.kotlin.fir.tree.generator.util.writeToFileUsingSmartPrinterIfFileContentChanged
+import org.jetbrains.kotlin.util.SmartPrinter
 import java.io.File
 import kotlin.reflect.KClass
 import kotlin.reflect.KType

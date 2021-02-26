@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.tree.generator.printer
 
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
+import org.jetbrains.kotlin.util.SmartPrinter
 import java.io.File
 
 private val COPYRIGHT = File("license/COPYRIGHT_HEADER.txt").readText()

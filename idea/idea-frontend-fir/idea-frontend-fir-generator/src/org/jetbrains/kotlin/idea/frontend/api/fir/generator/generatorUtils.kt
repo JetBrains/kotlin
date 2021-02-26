@@ -5,10 +5,9 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.fir.generator
 
-import org.jetbrains.kotlin.fir.tree.generator.printer.SmartPrinter
+import org.jetbrains.kotlin.util.SmartPrinter
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
-
 
 internal fun SmartPrinter.printTypeWithShortNames(type: KType) {
     print((type.classifier as KClass<*>).simpleName!!)

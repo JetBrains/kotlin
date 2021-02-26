@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
 import org.jetbrains.kotlin.fir.tree.generator.model.*
 import org.jetbrains.kotlin.fir.tree.generator.pureAbstractElementType
 import org.jetbrains.kotlin.fir.tree.generator.util.get
+import org.jetbrains.kotlin.util.SmartPrinter
+import org.jetbrains.kotlin.util.withIndent
 
 import java.io.File
 

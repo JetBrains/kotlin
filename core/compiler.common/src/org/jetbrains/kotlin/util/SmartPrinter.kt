@@ -1,12 +1,10 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.tree.generator.printer
+package org.jetbrains.kotlin.util
 
-import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
-import java.io.File
 import java.lang.Appendable
 
 class SmartPrinter(appendable: Appendable) {
@@ -48,9 +46,4 @@ inline fun SmartPrinter.withIndent(block: () -> Unit) {
     pushIndent()
     block()
     popIndent()
-}
-
-inline fun File.writeToFileUsingSmartPrinterIfFileContentChanged(block: SmartPrinter.() -> Unit) {
-    val newText = buildString { SmartPrinter(this).block() }
-    GeneratorsFileUtil.writeFileIfContentChanged(this, newText, logNotChanged = false)
 }

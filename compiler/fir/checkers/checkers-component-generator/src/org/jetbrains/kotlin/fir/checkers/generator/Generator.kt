@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.fir.checkers.generator
 
 import org.jetbrains.kotlin.fir.tree.generator.printer.*
+import org.jetbrains.kotlin.fir.tree.generator.util.writeToFileUsingSmartPrinterIfFileContentChanged
+import org.jetbrains.kotlin.util.SmartPrinter
+import org.jetbrains.kotlin.util.withIndent
 import java.io.File
 
 private typealias Alias = String

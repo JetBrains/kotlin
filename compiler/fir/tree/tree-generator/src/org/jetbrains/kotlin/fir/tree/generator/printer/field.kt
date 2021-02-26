@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.tree.generator.printer
 
 import org.jetbrains.kotlin.fir.tree.generator.model.Field
+import org.jetbrains.kotlin.util.SmartPrinter
 
 
 fun SmartPrinter.printField(field: Field, isImplementation: Boolean, override: Boolean, end: String) {

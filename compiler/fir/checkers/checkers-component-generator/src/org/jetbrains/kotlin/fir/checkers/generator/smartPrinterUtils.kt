@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.checkers.generator
 
-import org.jetbrains.kotlin.fir.tree.generator.printer.SmartPrinter
-import org.jetbrains.kotlin.fir.tree.generator.printer.withIndent
+import org.jetbrains.kotlin.util.SmartPrinter
+import org.jetbrains.kotlin.util.withIndent
 
 inline fun SmartPrinter.inBracketsWithIndent(header: String = "", body: () -> Unit) {
     println("$header {")
