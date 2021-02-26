@@ -68,13 +68,15 @@ abstract class AbstractDiagnosticCollector(
         componentsInitialized = true
     }
 
-    protected open fun beforeCollecting() {}
+    protected open fun beforeRunningAllComponentsOnElement(element: FirElement) {}
+    protected open fun beforeRunningSingleComponentOnElement(element: FirElement) {}
 
     private inner class Visitor : FirDefaultVisitor<Unit, Nothing?>() {
         private fun <T : FirElement> T.runComponents() {
             if (currentAction.checkInCurrentDeclaration) {
+                beforeRunningAllComponentsOnElement(this)
                 components.forEach {
-                    beforeCollecting()
+                    beforeRunningSingleComponentOnElement(this)
                     this.accept(it, context)
                 }
             }

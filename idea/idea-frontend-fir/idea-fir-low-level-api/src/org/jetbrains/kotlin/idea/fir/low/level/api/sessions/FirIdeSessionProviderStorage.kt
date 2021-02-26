@@ -26,7 +26,10 @@ internal class FirIdeSessionProviderStorage(private val project: Project) {
 
     private val librariesCache by cachedValue(project, LibraryModificationTracker.getInstance(project)) { LibrariesCache() }
 
-    fun getSessionProvider(rootModule: ModuleSourceInfo): FirIdeSessionProvider {
+    fun getSessionProvider(
+        rootModule: ModuleSourceInfo,
+        configureSession: (FirIdeSession.() -> Unit)? = null
+    ): FirIdeSessionProvider {
         val firPhaseRunner = FirPhaseRunner()
 
         val builtinTypes = BuiltinTypes()
@@ -45,6 +48,7 @@ internal class FirIdeSessionProviderStorage(private val project: Project) {
                     sessions,
                     isRootModule = true,
                     librariesCache,
+                    configureSession = configureSession,
                 )
             }
             sessions to session

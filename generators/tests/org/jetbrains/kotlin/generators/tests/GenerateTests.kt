@@ -83,6 +83,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirLazyDeclarationRes
 import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirLazyResolveTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirMultiModuleLazyResolveTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirMultiModuleResolveTest
+import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostic.AbstractDiagnosticTraversalCounterTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.AbstractFileStructureAndOutOfBlockModificationTrackerConsistencyTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.AbstractFileStructureTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.AbstractSessionsInvalidationTest
@@ -1072,6 +1073,9 @@ fun main(args: Array<String>) {
             }
             testClass<AbstractFileStructureTest> {
                 model("fileStructure")
+            }
+            testClass<AbstractDiagnosticTraversalCounterTest> {
+                model("diagnosticTraversalCounter")
             }
             testClass<AbstractSessionsInvalidationTest> {
                 model("sessionInvalidation", recursive = false, extension = null)
