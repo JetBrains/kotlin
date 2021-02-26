@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.GeneratedMessageLite
-import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_DEFAULT_FQ_NAME
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.types.AbstractTypeApproximator
 import org.jetbrains.org.objectweb.asm.Type
@@ -108,22 +107,6 @@ class FirJvmSerializerExtension(
         versionRequirementTable: MutableVersionRequirementTable
     ) {
         if (klass is FirRegularClass && klass.classKind == ClassKind.INTERFACE) {
-            if (jvmDefaultMode == JvmDefaultMode.ENABLE && klass.declarations.any {
-                    it is FirCallableMemberDeclaration<*> && it.annotations.any { annotationCall ->
-                        val classId = annotationCall.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.classId
-                        classId?.asSingleFqName() == JVM_DEFAULT_FQ_NAME
-                    }
-                }) {
-                builder.addVersionRequirement(
-                    DescriptorSerializer.writeVersionRequirement(
-                        1,
-                        2,
-                        40,
-                        ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION,
-                        versionRequirementTable
-                    )
-                )
-            }
             if (jvmDefaultMode == JvmDefaultMode.ALL_INCOMPATIBLE) {
                 builder.addVersionRequirement(
                     DescriptorSerializer.writeVersionRequirement(
@@ -261,16 +244,6 @@ class FirJvmSerializerExtension(
 
         if (property.isJvmFieldPropertyInInterfaceCompanion() && versionRequirementTable != null) {
             proto.setExtension(JvmProtoBuf.flags, JvmFlags.getPropertyFlags(true))
-
-            proto.addVersionRequirement(
-                DescriptorSerializer.writeVersionRequirement(
-                    1,
-                    2,
-                    70,
-                    ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION,
-                    versionRequirementTable
-                )
-            )
         }
 
         if (getter?.needsInlineParameterNullCheckRequirement() == true || setter?.needsInlineParameterNullCheckRequirement() == true) {
