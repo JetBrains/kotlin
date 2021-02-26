@@ -25,9 +25,13 @@ sealed class FirMetadataSource : MetadataSource {
             else -> null
         }
 
-    class File(override val fir: FirFile) : FirMetadataSource(), MetadataSource.File
+    class File(override val fir: FirFile) : FirMetadataSource(), MetadataSource.File {
+        override var serializedIr: ByteArray? = null
+    }
 
-    class Class(override val fir: FirClass<*>) : FirMetadataSource(), MetadataSource.Class
+    class Class(override val fir: FirClass<*>) : FirMetadataSource(), MetadataSource.Class {
+        override var serializedIr: ByteArray? = null
+    }
 
     class Function(override val fir: FirFunction<*>) : FirMetadataSource(), MetadataSource.Function
 

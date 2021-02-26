@@ -107,6 +107,7 @@ where advanced options include:
                              problems with parentheses in identifiers on certain platforms
   -Xscript-resolver-environment=<key=value[,]>
                              Script resolver environment in key-value pairs (the value could be quoted and escaped)
+  -Xserialize-ir             Save IR to metadata
   -Xsingle-module            Combine modules for source files and binary dependencies into a single module
   -Xskip-runtime-version-check Allow Kotlin runtime libraries of incompatible versions in the classpath
   -Xstrict-java-nullability-assertions
@@ -194,4 +195,3 @@ where advanced options include:
 
 Advanced options are non-standard and may be changed or removed without any notice.
 OK
-

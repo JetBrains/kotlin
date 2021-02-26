@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmManglerDesc
 import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.descriptors.IrFunctionFactory
@@ -182,6 +183,16 @@ class JvmIrCodegenFactory(private val phaseConfig: PhaseConfig) : CodegenFactory
         )
         /* JvmBackendContext creates new unbound symbols, have to resolve them. */
         ExternalDependenciesGenerator(symbolTable, irProviders).generateUnboundSymbolsAsDependencies()
+
+        if (state.configuration.getBoolean(JVMConfigurationKeys.SERIALIZE_IR)) {
+            for (irFile in irModuleFragment.files) {
+                (irFile.metadata as? MetadataSource.File)?.serializedIr = serializeIrFile(context, irFile)
+
+                for (irClass in irFile.declarations.filterIsInstance<IrClass>()) {
+                    (irClass.metadata as? MetadataSource.Class)?.serializedIr = serializeTopLevelIrClass(context, irClass)
+                }
+            }
+        }
 
         state.mapInlineClass = { descriptor ->
             context.typeMapper.mapType(context.referenceClass(descriptor).defaultType)
