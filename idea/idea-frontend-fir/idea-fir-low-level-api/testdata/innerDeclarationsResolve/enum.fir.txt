@@ -1,0 +1,23 @@
+FILE: enum.kt
+    public final [BODY_RESOLVE] enum class Enum : R|kotlin/Enum<Enum>| {
+        private [BODY_RESOLVE] constructor([BODY_RESOLVE] x: R|kotlin/Int|): R|Enum| {
+            super<R|kotlin/Enum<Enum>|>()
+        }
+
+        public final [BODY_RESOLVE] val x: R|kotlin/Int| = R|<local>/x|
+            [BODY_RESOLVE] public get(): R|kotlin/Int|
+
+        public final static [BODY_RESOLVE] enum entry A: R|Enum| = object : R|Enum| {
+            private [BODY_RESOLVE] constructor(): R|<anonymous>| {
+                super<R|Enum|>(Int(1))
+            }
+
+        }
+
+        public final static [BODY_RESOLVE] fun values(): R|kotlin/Array<Enum>| {
+        }
+
+        public final static [BODY_RESOLVE] fun valueOf([BODY_RESOLVE] value: R|kotlin/String|): R|Enum| {
+        }
+
+    }

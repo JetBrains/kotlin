@@ -44,6 +44,11 @@ public class InnerDeclarationsResolvePhaseTestGenerated extends AbstractInnerDec
         runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/innerDeclarationsResolve/constructorParameter.kt");
     }
 
+    @TestMetadata("enum.kt")
+    public void testEnum() throws Exception {
+        runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/innerDeclarationsResolve/enum.kt");
+    }
+
     @TestMetadata("funWithoutTypes.kt")
     public void testFunWithoutTypes() throws Exception {
         runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/innerDeclarationsResolve/funWithoutTypes.kt");

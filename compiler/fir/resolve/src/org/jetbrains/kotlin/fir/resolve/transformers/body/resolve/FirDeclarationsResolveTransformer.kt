@@ -115,6 +115,8 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
     }
 
     override fun transformEnumEntry(enumEntry: FirEnumEntry, data: ResolutionMode): CompositeTransformResult<FirDeclaration> {
+        if (enumEntry.resolvePhase == transformerPhase) return enumEntry.compose()
+        transformer.replaceDeclarationResolvePhaseIfNeeded(enumEntry, transformerPhase)
         context.withTowerDataMode(FirTowerDataMode.CONSTRUCTOR_HEADER) {
             return (enumEntry.transformChildren(this, data) as FirEnumEntry).compose()
         }
