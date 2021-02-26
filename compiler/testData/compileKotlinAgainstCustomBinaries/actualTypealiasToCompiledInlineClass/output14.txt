@@ -1,0 +1,13 @@
+compiler/testData/compileKotlinAgainstCustomBinaries/actualTypealiasToCompiledInlineClass/expectActualLv14.kt:9:1: error: actual typealias 'ExpectInlineActualInline' has no corresponding expected declaration
+The following declaration is incompatible because modifiers are different (companion, inner, inline):
+    public final expect inline class ExpectInlineActualInline
+
+actual typealias ExpectInlineActualInline = lib.InlineClass
+^
+compiler/testData/compileKotlinAgainstCustomBinaries/actualTypealiasToCompiledInlineClass/expectActualLv14.kt:10:1: error: actual typealias 'ExpectInlineActualValue' has no corresponding expected declaration
+The following declaration is incompatible because modifiers are different (companion, inner, inline):
+    public final expect inline class ExpectInlineActualValue
+
+actual typealias ExpectInlineActualValue = lib.ValueClass
+^
+COMPILATION_ERROR
