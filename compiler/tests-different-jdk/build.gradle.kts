@@ -83,16 +83,11 @@ codegenTest(target = 8, jvm = 11) {}
 codegenTest(target = 11, jvm = 11) {}
 
 //JDK 15
-codegenTest(target = 6, jvm = 15) {
-    jvmArgs( "-XX:-FailOverToOldVerifier")
-}
+codegenTest(target = 6, jvm = 15) {}
 
-codegenTest(target = 8, jvm = 15) {
-    jvmArgs( "-XX:-FailOverToOldVerifier")
-}
+codegenTest(target = 8, jvm = 15) {}
 
 codegenTest(target = 15, jvm = 15) {
-    jvmArgs( "-XX:-FailOverToOldVerifier")
     systemProperty("kotlin.test.box.d8.disable", true)
 }
 
