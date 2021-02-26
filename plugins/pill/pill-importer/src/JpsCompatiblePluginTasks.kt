@@ -36,8 +36,7 @@ class JpsCompatiblePluginTasks(private val rootProject: Project, private val pla
             ":kotlin-reflect",
             ":kotlin-test:kotlin-test-jvm",
             ":kotlin-test:kotlin-test-junit",
-            ":kotlin-script-runtime",
-            ":kotlin-coroutines-experimental-compat"
+            ":kotlin-script-runtime"
         )
 
         private val IGNORED_LIBRARIES = listOf(
@@ -299,7 +298,7 @@ class JpsCompatiblePluginTasks(private val rootProject: Project, private val pla
             fun List<File>.filterExisting() = filter { it.exists() }
 
             for (path in DIST_LIBRARIES) {
-                val project = rootProject.findProject(path) ?: error("Project not found")
+                val project = rootProject.findProject(path) ?: error("Project '$path' not found")
                 val archiveName = project.convention.findPlugin(BasePluginConvention::class.java)!!.archivesBaseName
                 val classesJars = listOf(File(distLibDir, "$archiveName.jar")).filterExisting()
                 val sourcesJars = listOf(File(distLibDir, "$archiveName-sources.jar")).filterExisting()
