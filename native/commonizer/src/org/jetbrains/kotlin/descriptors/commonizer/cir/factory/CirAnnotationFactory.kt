@@ -22,7 +22,7 @@ object CirAnnotationFactory {
     private val interner = Interner<CirAnnotation>()
 
     fun create(source: AnnotationDescriptor): CirAnnotation {
-        val type = CirTypeFactory.create(source.type, useAbbreviation = false) as CirClassType
+        val type = CirTypeFactory.create(source.type) as CirClassType
 
         val allValueArguments: Map<Name, ConstantValue<*>> = source.allValueArguments
         if (allValueArguments.isEmpty())

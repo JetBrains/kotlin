@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirClassTypeImpl
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirTypeAliasTypeImpl
+import org.jetbrains.kotlin.descriptors.commonizer.core.computeExpandedType
 import org.jetbrains.kotlin.descriptors.commonizer.utils.*
 import org.jetbrains.kotlin.types.*
 
@@ -28,22 +29,22 @@ object CirTypeFactory {
     private val typeAliasTypeInterner = Interner<CirTypeAliasType>()
     private val typeParameterTypeInterner = Interner<CirTypeParameterType>()
 
-    fun create(source: KotlinType, useAbbreviation: Boolean = true): CirType = source.unwrap().run {
+    fun create(source: KotlinType): CirType = source.unwrap().run {
         when (this) {
-            is SimpleType -> create(this, useAbbreviation)
-            is FlexibleType -> CirFlexibleType(create(lowerBound, useAbbreviation), create(upperBound, useAbbreviation))
+            is SimpleType -> create(this)
+            is FlexibleType -> CirFlexibleType(create(lowerBound), create(upperBound))
         }
     }
 
-    fun create(source: SimpleType, useAbbreviation: Boolean): CirSimpleType {
-        if (useAbbreviation && source is AbbreviatedType) {
+    fun create(source: SimpleType): CirSimpleType {
+        if (source is AbbreviatedType) {
             val abbreviation = source.abbreviation
             when (val classifierDescriptor = abbreviation.declarationDescriptor) {
                 is TypeAliasDescriptor -> {
                     return createTypeAliasType(
                         typeAliasId = classifierDescriptor.classifierId,
-                        underlyingType = create(extractExpandedType(source), useAbbreviation = true) as CirClassOrTypeAliasType,
-                        arguments = createArguments(abbreviation.arguments, useAbbreviation = true),
+                        underlyingType = create(extractExpandedType(source)) as CirClassOrTypeAliasType,
+                        arguments = createArguments(abbreviation.arguments),
                         isMarkedNullable = abbreviation.isMarkedNullable
                     )
                 }
@@ -54,7 +55,7 @@ object CirTypeFactory {
         return when (val classifierDescriptor = source.declarationDescriptor) {
             is ClassDescriptor -> createClassTypeWithAllOuterTypes(
                 classDescriptor = classifierDescriptor,
-                arguments = createArguments(source.arguments, useAbbreviation),
+                arguments = createArguments(source.arguments),
                 isMarkedNullable = source.isMarkedNullable
             )
             is TypeAliasDescriptor -> {
@@ -65,13 +66,13 @@ object CirTypeFactory {
 
                 val expandedType = extractExpandedType(abbreviatedType)
 
-                val cirExpandedType = create(expandedType, useAbbreviation = true) as CirClassOrTypeAliasType
+                val cirExpandedType = create(expandedType) as CirClassOrTypeAliasType
                 val cirExpandedTypeWithProperNullability = if (source.isMarkedNullable) makeNullable(cirExpandedType) else cirExpandedType
 
                 createTypeAliasType(
                     typeAliasId = classifierDescriptor.classifierId,
                     underlyingType = cirExpandedTypeWithProperNullability,
-                    arguments = createArguments(source.arguments, useAbbreviation = true),
+                    arguments = createArguments(source.arguments),
                     isMarkedNullable = source.isMarkedNullable
                 )
             }
@@ -147,6 +148,42 @@ object CirTypeFactory {
                 )
             }
 
+    fun unabbreviate(type: CirClassOrTypeAliasType): CirClassType = when (type) {
+        is CirClassType -> {
+            var hasAbbreviationsInArguments = false
+            val unabreviatedArguments = type.arguments.compactMap { argument ->
+                val argumentType =
+                    (argument as? CirTypeProjectionImpl)?.type as? CirClassOrTypeAliasType ?: return@compactMap argument
+                val unabbreviatedArgumentType = unabbreviate(argumentType)
+
+                if (argumentType == unabbreviatedArgumentType)
+                    argument
+                else {
+                    hasAbbreviationsInArguments = true
+                    CirTypeProjectionImpl(
+                        projectionKind = argument.projectionKind,
+                        type = unabbreviatedArgumentType
+                    )
+                }
+            }
+
+            val outerType = type.outerType
+            val unabbreviatedOuterType = outerType?.let(::unabbreviate)
+
+            if (!hasAbbreviationsInArguments && outerType == unabbreviatedOuterType)
+                type
+            else
+                createClassType(
+                    classId = type.classifierId,
+                    outerType = unabbreviatedOuterType,
+                    visibility = type.visibility,
+                    arguments = unabreviatedArguments,
+                    isMarkedNullable = type.isMarkedNullable
+                )
+        }
+        is CirTypeAliasType -> unabbreviate(computeExpandedType(type))
+    }
+
     private fun createClassTypeWithAllOuterTypes(
         classDescriptor: ClassDescriptor,
         arguments: List<CirTypeProjection>,
@@ -178,14 +215,14 @@ object CirTypeFactory {
     }
 
     @Suppress("NOTHING_TO_INLINE")
-    private inline fun createArguments(arguments: List<TypeProjection>, useAbbreviation: Boolean): List<CirTypeProjection> =
+    private inline fun createArguments(arguments: List<TypeProjection>): List<CirTypeProjection> =
         arguments.compactMap { projection ->
             if (projection.isStarProjection)
                 CirStarTypeProjection
             else
                 CirTypeProjectionImpl(
                     projectionKind = projection.projectionKind,
-                    type = create(projection.type, useAbbreviation)
+                    type = create(projection.type)
                 )
         }
 
