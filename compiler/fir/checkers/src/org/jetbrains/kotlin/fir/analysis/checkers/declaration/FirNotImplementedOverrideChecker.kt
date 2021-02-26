@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.FirDeclarationPresenter
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.findClosestFile
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClass
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
@@ -207,13 +208,19 @@ object FirNotImplementedOverrideChecker : FirClassChecker() {
         val classScope = firClass.unsubstitutedScope(context)
 
         fun checkFunctionSymbolAndAddToResult(originalSymbol: FirCallableSymbol<*>) {
-            if (shouldCreateFakeOverridden<FirSimpleFunction, FirNamedFunctionSymbol>(firClass, originalSymbol, contributedDeclarations)) {
+            if (shouldCreateFakeOverridden<FirSimpleFunction, FirNamedFunctionSymbol>(
+                    firClass,
+                    originalSymbol,
+                    contributedDeclarations,
+                    context
+                )
+            ) {
                 result.add(originalSymbol.fir)
             }
         }
 
         fun checkPropertySymbolAndAddToResult(originalSymbol: FirCallableSymbol<*>) {
-            if (shouldCreateFakeOverridden<FirProperty, FirPropertySymbol>(firClass, originalSymbol, contributedDeclarations)) {
+            if (shouldCreateFakeOverridden<FirProperty, FirPropertySymbol>(firClass, originalSymbol, contributedDeclarations, context)) {
                 result.add(originalSymbol.fir)
             }
         }
@@ -245,6 +252,7 @@ object FirNotImplementedOverrideChecker : FirClassChecker() {
         firClass: FirClass<*>,
         originalSymbol: FirCallableSymbol<*>,
         contributedDeclarations: Collection<FirDeclaration>,
+        context: CheckerContext
     ): Boolean {
         if (originalSymbol !is S || originalSymbol.fir in contributedDeclarations) return false
         val classLookupTag = firClass.symbol.toLookupTag()
@@ -256,7 +264,7 @@ object FirNotImplementedOverrideChecker : FirClassChecker() {
                 // Substitution case
                 false
             }
-            originalDeclaration.allowsToHaveFakeOverrideIn(firClass) -> {
+            originalDeclaration.allowsToHaveFakeOverrideIn(firClass, context) -> {
                 // Trivial fake override case
                 true
             }
@@ -266,10 +274,16 @@ object FirNotImplementedOverrideChecker : FirClassChecker() {
         }
     }
 
-    // TODO: Need to refactor the counterpart in FakeOverrideGenerator?
-    private fun FirCallableMemberDeclaration<*>.allowsToHaveFakeOverrideIn(firClass: FirClass<*>): Boolean {
+    private fun FirCallableMemberDeclaration<*>.allowsToHaveFakeOverrideIn(
+        firClass: FirClass<*>,
+        context: CheckerContext
+    ): Boolean {
         if (!allowsToHaveFakeOverride) return false
+        // NB: the counterpart in [FakeOverrideGenerator] does the following simple check. But, Java visibility isn't accessible here.
         // if (this.visibility != JavaDescriptorVisibilities.PACKAGE_VISIBILITY) return true
+        val session = context.session
+        val useSiteFile = context.findClosestFile() ?: return false
+        if (!session.visibilityChecker.isVisible(this, session, useSiteFile, context.containingDeclarations, null)) return false
         return this.symbol.callableId.packageName == firClass.symbol.classId.packageFqName
     }
 }

@@ -200,6 +200,16 @@ fun CheckerContext.findClosestClassOrObject(): FirClass<*>? {
     return null
 }
 
+fun CheckerContext.findClosestFile(): FirFile? {
+    for (it in containingDeclarations.asReversed()) {
+        if (it is FirFile) {
+            return it
+        }
+    }
+
+    return null
+}
+
 /**
  * Returns the list of functions that overridden by given
  */
