@@ -152,4 +152,7 @@ public class JVMConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> NO_REFLECT =
             CompilerConfigurationKey.create("Don't automatically include kotlin-reflect.jar into the output if the output is a jar");
+
+    public static final CompilerConfigurationKey<Boolean> SERIALIZE_IR =
+            CompilerConfigurationKey.create("serialize IR to class metadata");
 }

@@ -11,8 +11,12 @@ import org.jetbrains.kotlin.name.Name
 interface MetadataSource {
     val name: Name?
 
-    interface File : MetadataSource
-    interface Class : MetadataSource
+    interface File : MetadataSource {
+        var serializedIr: ByteArray?
+    }
+    interface Class : MetadataSource {
+        var serializedIr: ByteArray?
+    }
     interface Script : MetadataSource
     interface Function : MetadataSource
     interface Property : MetadataSource {
@@ -27,9 +31,13 @@ sealed class DescriptorMetadataSource : MetadataSource {
     override val name: Name?
         get() = descriptor?.name
 
-    class File(val descriptors: List<DeclarationDescriptor>) : DescriptorMetadataSource(), MetadataSource.File
+    class File(val descriptors: List<DeclarationDescriptor>) : DescriptorMetadataSource(), MetadataSource.File {
+        override var serializedIr: ByteArray? = null
+    }
 
-    class Class(override val descriptor: ClassDescriptor) : DescriptorMetadataSource(), MetadataSource.Class
+    class Class(override val descriptor: ClassDescriptor) : DescriptorMetadataSource(), MetadataSource.Class {
+        override var serializedIr: ByteArray? = null
+    }
 
     class Script(override val descriptor: ScriptDescriptor) : DescriptorMetadataSource(), MetadataSource.Script
 
