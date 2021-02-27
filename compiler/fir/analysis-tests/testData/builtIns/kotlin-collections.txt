@@ -1,5 +1,5 @@
 public/*package*/ open class ArraysUtilJVM : R|kotlin/Any| {
-    public/*package*/ open static fun <T : R|ft<@FlexibleNullability kotlin/Any, kotlin/Any?>!|> asList(p0: ):
+    public/*package*/ open static fun <T : R|ft<@FlexibleNullability kotlin/Any, kotlin/Any?>!|> asList(p0: T[]): java.util.List<T>
 
     public/*package*/ constructor(): R|kotlin/collections/ArraysUtilJVM|
 

@@ -947,6 +947,10 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
 
     override fun visitUserTypeRef(userTypeRef: FirUserTypeRef) {
         userTypeRef.annotations.renderAnnotations()
+        if (userTypeRef.customRenderer) {
+            print(userTypeRef.toString())
+            return
+        }
         for ((index, qualifier) in userTypeRef.qualifier.withIndex()) {
             if (index != 0) {
                 print(".")

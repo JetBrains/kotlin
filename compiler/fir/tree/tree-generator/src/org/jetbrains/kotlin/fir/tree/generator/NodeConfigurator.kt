@@ -571,6 +571,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         userTypeRef.configure {
             +fieldList("qualifier", firQualifierPartType)
+            +booleanField("customRenderer")
         }
 
         functionTypeRef.configure {

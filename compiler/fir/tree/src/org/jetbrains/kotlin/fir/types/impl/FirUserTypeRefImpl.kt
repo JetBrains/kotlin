@@ -21,6 +21,8 @@ class FirUserTypeRefImpl(
     override val qualifier: MutableList<FirQualifierPart>,
     override val annotations: MutableList<FirAnnotationCall>
 ) : FirUserTypeRef(), FirAnnotationContainer {
+    override val customRenderer: Boolean
+        get() = false
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         for (part in qualifier) {
