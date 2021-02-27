@@ -16,7 +16,7 @@ abstract class AbstractSymbol<E> where E : Recursive<E>, E : Something {
   }
 
   fun foo(list: List<Any>) {
-    val result: List<AbstractSymbol<out Recursive<*>>> = list.filterIsInstance<Recursive<*>>().map<Recursive<*>, AbstractSymbol<out Recursive<*>>>(transform = Recursive::symbol)
+    val result: List<AbstractSymbol<*>> = list.filterIsInstance<Recursive<*>>().map<Recursive<*>, AbstractSymbol<*>>(transform = Recursive::symbol)
   }
 
 }

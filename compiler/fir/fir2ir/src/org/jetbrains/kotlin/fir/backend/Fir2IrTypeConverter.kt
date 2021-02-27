@@ -8,8 +8,11 @@ package org.jetbrains.kotlin.fir.backend
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.classId
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
+import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
@@ -20,6 +23,7 @@ import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.Variance
 
 class Fir2IrTypeConverter(
@@ -59,6 +63,8 @@ class Fir2IrTypeConverter(
 
     private val capturedTypeCache = mutableMapOf<ConeCapturedType, IrType>()
     private val errorTypeForCapturedTypeStub by lazy { createErrorType() }
+
+    private val typeApproximator = ConeTypeApproximator(session.typeContext)
 
     fun FirTypeRef.toIrType(typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT): IrType {
         capturedTypeCache.clear()
@@ -106,9 +112,10 @@ class Fir2IrTypeConverter(
                     typeAnnotations += callGenerator.convertToIrConstructorCall(attributeAnnotation) as? IrConstructorCall ?: continue
                 }
                 val expandedType = fullyExpandedType(session)
+                val approximatedType = approximateType(expandedType)
                 IrSimpleTypeImpl(
-                    irSymbol, !typeContext.definitelyNotNull && expandedType.isMarkedNullable,
-                    expandedType.typeArguments.map { it.toIrTypeArgument(typeContext) },
+                    irSymbol, !typeContext.definitelyNotNull && approximatedType.isMarkedNullable,
+                    approximatedType.typeArguments.map { it.toIrTypeArgument(typeContext) },
                     typeAnnotations
                 )
             }
@@ -210,6 +217,22 @@ class Fir2IrTypeConverter(
 
     private fun getBuiltInClassSymbol(classId: ClassId?): IrClassSymbol? {
         return classIdToSymbolMap[classId] ?: getArrayClassSymbol(classId)
+    }
+
+    private fun approximateType(type: ConeKotlinType): ConeKotlinType {
+        if (type is ConeClassLikeType && type.typeArguments.isEmpty()) return type
+        val substitutor = object : AbstractConeSubstitutor() {
+            override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
+                return if (type is ConeIntersectionType) {
+                    type.alternativeType?.let { substituteOrSelf(it) }
+                } else null
+            }
+        }
+        val typeWithSpecifiedIntersectionTypes = substitutor.substituteOrSelf(type)
+        return typeApproximator.approximateToSuperType(
+            typeWithSpecifiedIntersectionTypes,
+            TypeApproximatorConfiguration.PublicDeclaration
+        ) ?: type
     }
 }
 

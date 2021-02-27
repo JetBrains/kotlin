@@ -485,7 +485,11 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         firstCandidate: KotlinTypeMarker,
         secondCandidate: KotlinTypeMarker
     ): KotlinTypeMarker {
-        // TODO
-        return firstCandidate
+        require(firstCandidate is ConeKotlinType)
+        require(secondCandidate is ConeKotlinType)
+        val intersectionType = firstCandidate.lowerBoundIfFlexible() as? ConeIntersectionType ?: error {
+            "Expected type is intersection, found $firstCandidate"
+        }
+        return intersectionType.withAlternative(secondCandidate)
     }
 }
