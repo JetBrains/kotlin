@@ -42,7 +42,7 @@ internal class KtFirTypeProvider(
 
     override fun buildSelfClassType(symbol: KtClassOrObjectSymbol): KtType {
         require(symbol is KtFirClassOrObjectSymbol)
-        val type = symbol.firRef.withFir(FirResolvePhase.TYPES) { firClass ->
+        val type = symbol.firRef.withFir(FirResolvePhase.SUPER_TYPES) { firClass ->
             ConeClassLikeTypeImpl(
                 firClass.symbol.toLookupTag(),
                 firClass.typeParameters.map { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), isNullable = false) }.toTypedArray(),
