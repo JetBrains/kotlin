@@ -39,7 +39,7 @@ object Versions {
         val KOTLIN_REACT_REDUX = wrapperVersion("7.2.2")
 
         private fun wrapperVersion(version: String): Version =
-            version("$version-pre.148-kotlin-1.4.21")
+            version("$version-pre.148-kotlin-1.4.30")
     }
 
     object GRADLE_PLUGINS {
