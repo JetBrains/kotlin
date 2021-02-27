@@ -243,5 +243,5 @@ class FirCallCompleter(
     private fun ConeKotlinType.approximateLambdaInputType(): ConeKotlinType =
         session.inferenceComponents.approximator.approximateToSuperType(
             this, TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference
-        ) as ConeKotlinType? ?: this
+        ) ?: this
 }

@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
 import org.jetbrains.kotlin.types.model.typeConstructor
@@ -161,7 +160,7 @@ data class ConeSubstitutorByMap(val substitution: Map<FirTypeParameterSymbol, Co
         if (type.isUnsafeVarianceType(session)) {
             return session.inferenceComponents.approximator.approximateToSuperType(
                 result, TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference
-            ) as? ConeKotlinType ?: result
+            ) ?: result
         }
         return result
     }

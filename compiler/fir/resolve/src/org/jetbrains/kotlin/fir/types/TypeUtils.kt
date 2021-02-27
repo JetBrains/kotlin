@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
 import org.jetbrains.kotlin.types.AbstractStrictEqualityTypeChecker
-import org.jetbrains.kotlin.types.AbstractTypeApproximator
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.model.*
@@ -250,7 +249,7 @@ fun FirTypeRef.withReplacedConeType(
 }
 
 fun FirTypeRef.approximated(
-    typeApproximator: AbstractTypeApproximator,
+    typeApproximator: ConeTypeApproximator,
     toSuper: Boolean,
     conf: TypeApproximatorConfiguration = TypeApproximatorConfiguration.PublicDeclaration
 ): FirTypeRef {
@@ -258,11 +257,11 @@ fun FirTypeRef.approximated(
         typeApproximator.approximateToSuperType(coneType, conf)
     else
         typeApproximator.approximateToSubType(coneType, conf)
-    return withReplacedConeType(approximatedType as? ConeKotlinType)
+    return withReplacedConeType(approximatedType)
 }
 
 fun FirTypeRef.approximatedIfNeededOrSelf(
-    approximator: AbstractTypeApproximator,
+    approximator: ConeTypeApproximator,
     containingCallableVisibility: Visibility?,
     isInlineFunction: Boolean = false
 ): FirTypeRef {
@@ -273,7 +272,7 @@ fun FirTypeRef.approximatedIfNeededOrSelf(
     return approximated.hideLocalTypeIfNeeded(containingCallableVisibility, isInlineFunction).withoutEnhancedNullability()
 }
 
-fun FirTypeRef.approximatedForPublicPosition(approximator: AbstractTypeApproximator): FirTypeRef =
+fun FirTypeRef.approximatedForPublicPosition(approximator: ConeTypeApproximator): FirTypeRef =
     if (this is FirResolvedTypeRef && type.requiresApproximationInPublicPosition())
         this.approximated(approximator, toSuper = true)
     else

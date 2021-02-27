@@ -971,7 +971,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         access.resultType = typeFromCallee.withReplacedConeType(
             session.inferenceComponents.approximator.approximateToSuperType(
                 typeFromCallee.type, TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference
-            ) as ConeKotlinType?
+            )
         )
     }
 }
