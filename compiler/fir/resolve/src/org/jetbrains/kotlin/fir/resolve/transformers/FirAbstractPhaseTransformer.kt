@@ -47,13 +47,3 @@ abstract class FirAbstractPhaseTransformer<D>(
         }
     }
 }
-
-fun FirFile.runResolve(toPhase: FirResolvePhase, fromPhase: FirResolvePhase = FirResolvePhase.RAW_FIR) {
-    val scopeSession = ScopeSession()
-    var currentPhase = fromPhase
-    while (currentPhase < toPhase) {
-        currentPhase = currentPhase.next
-        val phaseProcessor = currentPhase.createTransformerBasedProcessorByPhase(session, scopeSession)
-        phaseProcessor.processFile(this)
-    }
-}
