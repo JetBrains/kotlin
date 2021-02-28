@@ -7,6 +7,7 @@
 #include <thread>
 
 #include "Memory.h"
+#include "Runtime.h"
 
 namespace kotlin {
 
@@ -20,24 +21,13 @@ constexpr int kDefaultThreadCount = 10;
 constexpr int kDefaultThreadCount = 100;
 #endif
 
-// Performs minimal initialization of the current thread memory subsystem.
-// This initilization is enough for running tests for the C++ part for the stdlib.
-//  - For the new MM: registeres the current thread in the thread registry.
-//  - For the legacy MM: does nothing, returns nullptr.
-MemoryState* InitMemoryForTests();
-
-// Deinitiliazes memory subsystem used for C++ stdlib tests.
-//  - For the new MM: unregisteres the current thread, nullify current thread data.
-//  - For the legacy MM: does nothing.
-void DeinitMemoryForTests(MemoryState* state);
-
-// Scopely initializes the memory subsystem using the functions above.
-class ScopedMemoryInit : private kotlin::Pinned {
+// Scopely initializes the memory subsystem of the current thread for tests.
+class ScopedRuntimeInit : private kotlin::Pinned {
 public:
-    ScopedMemoryInit() : memoryState_(InitMemoryForTests()) {}
-    ~ScopedMemoryInit() {
+    ScopedRuntimeInit() : memoryState_(InitMemory(false)) {}
+    ~ScopedRuntimeInit() {
         ClearMemoryForTests(memoryState());
-        DeinitMemoryForTests(memoryState_);
+        DeinitMemory(memoryState_, false);
     }
 
     MemoryState* memoryState() { return memoryState_; }
@@ -45,15 +35,15 @@ private:
     MemoryState* memoryState_;
 };
 
-// Runs the given function in a separate thread with minimally initialized memory subsystem.
+// Runs the given function in a separate thread with minimally initialized runtime.
 inline void RunInNewThread(std::function<void(MemoryState*)> f) {
     std::thread([&f]() {
-        ScopedMemoryInit init;
+        ScopedRuntimeInit init;
         f(init.memoryState());
     }).join();
 }
 
-// Runs the given function in a separate thread with minimally initialized memory subsystem.
+// Runs the given function in a separate thread with minimally initialized runtime.
 inline void RunInNewThread(std::function<void()> f) {
     RunInNewThread([&f](MemoryState* unused) {
         f();

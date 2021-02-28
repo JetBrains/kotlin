@@ -52,7 +52,6 @@ bool Kotlin_cleanersLeakCheckerEnabled();
 bool Kotlin_forceCheckedShutdown();
 
 #ifdef __cplusplus
-}
+} // extern "C"
 #endif
-
 #endif // RUNTIME_RUNTIME_H

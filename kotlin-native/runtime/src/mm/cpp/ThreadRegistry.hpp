@@ -31,26 +31,19 @@ public:
     // Locks `ThreadRegistry` for safe iteration.
     Iterable Iter() noexcept;
 
-    // Try not to use it very often, as (1) thread local access can be slow on some platforms,
+    // Try not to use these methods very often, as (1) thread local access can be slow on some platforms,
     // (2) TLS gets deallocated before our thread destruction hooks run.
     // Using this after `Unregister` for the thread has been called is undefined behaviour.
-    ThreadData* CurrentThreadData() const noexcept { return currentThreadData_; }
-
-    class TestSupport {
-    public:
-        static void SetCurrentThreadData(ThreadData* newThreadData) {
-            ThreadRegistry::currentThreadData_ = newThreadData;
-        }
-    };
+    ALWAYS_INLINE ThreadData* CurrentThreadData() const noexcept;
+    Node* CurrentThreadDataNode() const noexcept { return currentThreadDataNode_; }
 
 private:
     friend class GlobalData;
-    friend class ThreadRegistry::TestSupport;
 
     ThreadRegistry();
     ~ThreadRegistry();
 
-    static thread_local ThreadData* currentThreadData_;
+    static thread_local Node* currentThreadDataNode_;
 
     SingleLockList<ThreadData> list_;
 };
