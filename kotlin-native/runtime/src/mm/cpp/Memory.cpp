@@ -99,8 +99,7 @@ extern "C" void RestoreMemory(MemoryState*) {
 }
 
 extern "C" void ClearMemoryForTests(MemoryState* state) {
-    auto* threadData = FromMemoryState(state)->Get();
-    threadData->ClearForTests();
+    state->GetThreadData()->ClearForTests();
 }
 
 extern "C" RUNTIME_NOTHROW OBJ_GETTER(AllocInstance, const TypeInfo* typeInfo) {
