@@ -17,9 +17,9 @@ mm::ThreadRegistry& mm::ThreadRegistry::Instance() noexcept {
 
 mm::ThreadRegistry::Node* mm::ThreadRegistry::RegisterCurrentThread() noexcept {
     auto* threadDataNode = list_.Emplace(pthread_self());
-    ThreadData*& currentData = currentThreadData_;
-    RuntimeAssert(currentData == nullptr, "This thread already had some data assigned to it.");
-    currentData = threadDataNode->Get();
+    Node*& currentDataNode = currentThreadDataNode_;
+    RuntimeAssert(currentDataNode == nullptr, "This thread already had some data assigned to it.");
+    currentDataNode = threadDataNode;
     return threadDataNode;
 }
 
@@ -32,8 +32,12 @@ mm::ThreadRegistry::Iterable mm::ThreadRegistry::Iter() noexcept {
     return list_.Iter();
 }
 
+ALWAYS_INLINE mm::ThreadData* mm::ThreadRegistry::CurrentThreadData() const noexcept {
+    return CurrentThreadDataNode()->Get();
+}
+
 mm::ThreadRegistry::ThreadRegistry() = default;
 mm::ThreadRegistry::~ThreadRegistry() = default;
 
 // static
-thread_local mm::ThreadData* mm::ThreadRegistry::currentThreadData_ = nullptr;
+thread_local mm::ThreadRegistry::Node* mm::ThreadRegistry::currentThreadDataNode_ = nullptr;
