@@ -14,7 +14,7 @@
 using namespace kotlin;
 
 TEST(ThreadStateTest, StateSwitch) {
-    mm::RunInNewThread([](mm::ThreadData& threadData) {
+    RunInNewThread([](mm::ThreadData& threadData) {
         auto initialState = threadData.state();
         EXPECT_EQ(mm::ThreadState::kRunnable, initialState);
 
@@ -32,7 +32,7 @@ TEST(ThreadStateTest, StateSwitch) {
 }
 
 TEST(ThreadStateTest, StateGuard) {
-    mm::RunInNewThread([](mm::ThreadData& threadData) {
+    RunInNewThread([](mm::ThreadData& threadData) {
         auto initialState = threadData.state();
         EXPECT_EQ(mm::ThreadState::kRunnable, initialState);
         {
@@ -44,14 +44,14 @@ TEST(ThreadStateTest, StateGuard) {
 }
 
 TEST(ThreadStateDeathTest, StateAsserts) {
-    mm::RunInNewThread([](mm::ThreadData& threadData) {
+    RunInNewThread([](mm::ThreadData& threadData) {
         EXPECT_DEATH(mm::AssertThreadState(&threadData, mm::ThreadState::kNative),
                      "runtime assert: Unexpected thread state. Expected: NATIVE. Actual: RUNNABLE");
     });
 }
 
 TEST(ThreadStateDeathTest, IncorrectStateSwitch) {
-    mm::RunInNewThread([](mm::ThreadData& threadData) {
+    RunInNewThread([](mm::ThreadData& threadData) {
         EXPECT_DEATH(mm::SwitchThreadState(&threadData, kotlin::mm::ThreadState::kRunnable),
                      "runtime assert: Illegal thread state switch. Old state: RUNNABLE. New state: RUNNABLE");
         EXPECT_DEATH(Kotlin_mm_switchThreadStateRunnable(),

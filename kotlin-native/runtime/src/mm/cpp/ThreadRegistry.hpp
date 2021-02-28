@@ -36,8 +36,16 @@ public:
     // Using this after `Unregister` for the thread has been called is undefined behaviour.
     ThreadData* CurrentThreadData() const noexcept { return currentThreadData_; }
 
+    class TestSupport {
+    public:
+        static void SetCurrentThreadData(ThreadData* newThreadData) {
+            ThreadRegistry::currentThreadData_ = newThreadData;
+        }
+    };
+
 private:
     friend class GlobalData;
+    friend class ThreadRegistry::TestSupport;
 
     ThreadRegistry();
     ~ThreadRegistry();

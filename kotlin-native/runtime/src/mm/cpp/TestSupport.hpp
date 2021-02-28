@@ -5,32 +5,15 @@
 
 #include "../../main/cpp/TestSupport.hpp"
 
-#include <thread>
-
+#include "MemoryPrivate.hpp"
 #include "ThreadData.hpp"
-#include "ThreadRegistry.hpp"
 
 namespace kotlin {
-namespace mm {
 
-template <typename F>
-void RunInNewThread(F f) {
-    std::thread([&f]() {
-        class ScopedRegistration : private kotlin::Pinned {
-        public:
-            ScopedRegistration() : node_(mm::ThreadRegistry::Instance().RegisterCurrentThread()) {}
-
-            ~ScopedRegistration() { mm::ThreadRegistry::Instance().Unregister(node_); }
-
-            mm::ThreadData& threadData() { return *node_->Get(); }
-
-        private:
-            mm::ThreadRegistry::Node* node_;
-        } registration;
-
-        f(registration.threadData());
-    }).join();
+inline void RunInNewThread(std::function<void(mm::ThreadData&)> f) {
+    kotlin::RunInNewThread([&f](MemoryState* state) {
+        f(*state->GetThreadData());
+    });
 }
 
-} // namespace mm
 } // namespace kotlin
