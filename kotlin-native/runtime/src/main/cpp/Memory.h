@@ -17,6 +17,8 @@
 #ifndef RUNTIME_MEMORY_H
 #define RUNTIME_MEMORY_H
 
+#include <utility>
+
 #include "KAssert.h"
 #include "Common.h"
 #include "TypeInfo.h"
@@ -370,5 +372,67 @@ public:
     // Exceptions are not on a hot path, so having virtual dispatch is fine.
     virtual ~ExceptionObjHolder() = default;
 };
+
+namespace kotlin {
+namespace mm {
+
+// Returns the MemoryState for the current thread. The runtime must be initialized.
+// Try not to use it very often, as (1) thread local access can be slow on some platforms,
+// (2) TLS gets deallocated before our thread destruction hooks run.
+MemoryState* GetMemoryState();
+
+} // namespace mm
+
+enum class ThreadState {
+    kRunnable, kNative
+};
+
+// Switches the state of the given thread to `newState` and returns the previous thread state.
+ALWAYS_INLINE ThreadState SwitchThreadState(MemoryState* thread, ThreadState newState) noexcept;
+
+// Asserts that the given thread is in the given state.
+ALWAYS_INLINE void AssertThreadState(MemoryState* thread, ThreadState expected) noexcept;
+
+// Asserts that the current thread is in the the given state.
+ALWAYS_INLINE inline void AssertThreadState(ThreadState expected) noexcept {
+    AssertThreadState(mm::GetMemoryState(), expected);
+}
+
+// Scopely sets the given thread state for the given thread.
+class ThreadStateGuard final : private Pinned {
+public:
+    // Set the state for the given thread.
+    ThreadStateGuard(MemoryState* thread, ThreadState state) noexcept : thread_(thread) {
+        oldState_ = SwitchThreadState(thread_, state);
+    }
+
+    // Sets the state for the current thread.
+    explicit ThreadStateGuard(ThreadState state) noexcept
+        : ThreadStateGuard(mm::GetMemoryState(), state) {};
+
+    ~ThreadStateGuard() noexcept {
+        SwitchThreadState(thread_, oldState_);
+    }
+private:
+    MemoryState* thread_;
+    ThreadState oldState_;
+};
+
+// Calls the given function in the `Runnable` thread state.
+template <typename R, typename... Args>
+ALWAYS_INLINE inline R CallKotlin(R(*kotlinFunction)(Args...), Args... args) {
+    ThreadStateGuard guard(ThreadState::kRunnable);
+    return kotlinFunction(std::forward<Args>(args)...);
+}
+
+// Calls the given function in the `Runnable` thread state. The function must be marked as RUNTIME_NORETURN.
+// If the function returns, behaviour is undefined.
+template <typename... Args>
+ALWAYS_INLINE RUNTIME_NORETURN inline void CallKotlinNoReturn(void(*noreturnKotlinFunction)(Args...), Args... args) {
+    CallKotlin(noreturnKotlinFunction, std::forward<Args>(args)...);
+    RuntimeFail("The function must not return");
+}
+
+} // namespace kotlin
 
 #endif // RUNTIME_MEMORY_H
