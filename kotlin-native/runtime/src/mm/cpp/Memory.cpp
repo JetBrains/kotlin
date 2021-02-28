@@ -4,6 +4,7 @@
  */
 
 #include "Memory.h"
+#include "MemoryPrivate.hpp"
 
 #include "Exceptions.h"
 #include "ExtraObjectData.hpp"
@@ -20,13 +21,6 @@
 
 using namespace kotlin;
 
-// Delete all means of creating this type directly as it only serves
-// as a typedef for `mm::ThreadRegistry::Node`.
-extern "C" struct MemoryState : Pinned {
-    MemoryState() = delete;
-    ~MemoryState() = delete;
-};
-
 // TODO: This name does not make sense anymore.
 // Delete all means of creating this type directly as it only serves
 // as a typedef for `mm::StableRefRegistry::Node`.
@@ -40,24 +34,12 @@ namespace {
 
 // `reinterpret_cast` to it and back to the same type
 // will yield precisely the same pointer, so it's safe.
-ALWAYS_INLINE MemoryState* ToMemoryState(mm::ThreadRegistry::Node* data) {
-    return reinterpret_cast<MemoryState*>(data);
-}
-
-ALWAYS_INLINE mm::ThreadRegistry::Node* FromMemoryState(MemoryState* state) {
-    return reinterpret_cast<mm::ThreadRegistry::Node*>(state);
-}
-
 ALWAYS_INLINE ForeignRefManager* ToForeignRefManager(mm::StableRefRegistry::Node* data) {
     return reinterpret_cast<ForeignRefManager*>(data);
 }
 
 ALWAYS_INLINE mm::StableRefRegistry::Node* FromForeignRefManager(ForeignRefManager* manager) {
     return reinterpret_cast<mm::StableRefRegistry::Node*>(manager);
-}
-
-ALWAYS_INLINE mm::ThreadData* GetThreadData(MemoryState* state) {
-    return FromMemoryState(state)->Get();
 }
 
 } // namespace
@@ -105,11 +87,11 @@ ALWAYS_INLINE bool isShareable(const ObjHeader* obj) {
 }
 
 extern "C" MemoryState* InitMemory(bool firstRuntime) {
-    return ToMemoryState(mm::ThreadRegistry::Instance().RegisterCurrentThread());
+    return mm::ToMemoryState(mm::ThreadRegistry::Instance().RegisterCurrentThread());
 }
 
 extern "C" void DeinitMemory(MemoryState* state, bool destroyRuntime) {
-    mm::ThreadRegistry::Instance().Unregister(FromMemoryState(state));
+    mm::ThreadRegistry::Instance().Unregister(mm::FromMemoryState(state));
 }
 
 extern "C" void RestoreMemory(MemoryState*) {
@@ -228,15 +210,15 @@ extern "C" RUNTIME_NOTHROW void LeaveFrame(ObjHeader** start, int parameters, in
 }
 
 extern "C" RUNTIME_NOTHROW void AddTLSRecord(MemoryState* memory, void** key, int size) {
-    GetThreadData(memory)->tls().AddRecord(key, size);
+    memory->GetThreadData()->tls().AddRecord(key, size);
 }
 
 extern "C" RUNTIME_NOTHROW void CommitTLSStorage(MemoryState* memory) {
-    GetThreadData(memory)->tls().Commit();
+    memory->GetThreadData()->tls().Commit();
 }
 
 extern "C" RUNTIME_NOTHROW void ClearTLS(MemoryState* memory) {
-    GetThreadData(memory)->tls().Clear();
+    memory->GetThreadData()->tls().Clear();
 }
 
 extern "C" RUNTIME_NOTHROW ObjHeader** LookupTLS(void** key, int index) {
@@ -342,7 +324,7 @@ extern "C" void Kotlin_Any_share(ObjHeader* thiz) {
 }
 
 extern "C" RUNTIME_NOTHROW void PerformFullGC(MemoryState* memory) {
-    GetThreadData(memory)->gc().PerformFullGC();
+    memory->GetThreadData()->gc().PerformFullGC();
 }
 
 extern "C" RUNTIME_NOTHROW bool ClearSubgraphReferences(ObjHeader* root, bool checked) {
