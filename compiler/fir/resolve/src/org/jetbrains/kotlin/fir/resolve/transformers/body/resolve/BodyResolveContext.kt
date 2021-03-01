@@ -181,6 +181,10 @@ class BodyResolveContext(
         updateLastScope { storeVariable(variable) }
     }
 
+    fun storeBackingField(property: FirProperty) {
+        updateLastScope { storeBackingField(property) }
+    }
+
     fun saveContextForAnonymousFunction(anonymousFunction: FirAnonymousFunction) {
         towerDataContextForAnonymousFunctions[anonymousFunction.symbol] = towerDataContext
     }

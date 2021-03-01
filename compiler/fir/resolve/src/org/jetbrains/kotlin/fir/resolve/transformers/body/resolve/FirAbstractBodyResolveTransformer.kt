@@ -59,6 +59,16 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
         }
     }
 
+    protected inline fun <T> withPrimaryConstructorParameters(includeProperties: Boolean, crossinline l: () -> T): T {
+        return context.withTowerDataCleanup {
+            addLocalScope(
+                if (includeProperties) context.getPrimaryConstructorAllParametersScope()
+                else context.getPrimaryConstructorPureParametersScope()
+            )
+            l()
+        }
+    }
+
     protected fun addNewLocalScope() {
         context.addLocalScope(FirLocalScope())
     }
