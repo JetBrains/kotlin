@@ -88,9 +88,6 @@ constructor(
             target.project.path + "@" + target.name + ":" + it.compilationName
         }
 
-    val nodeModulesToLoad: List<String>
-        @Internal get() = listOf("./" + compilation.npmProject.main)
-
     override val nodeModulesRequired: Boolean
         @Internal get() = testFramework!!.nodeModulesRequired
 

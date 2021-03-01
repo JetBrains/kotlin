@@ -300,9 +300,7 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
     ): TCServiceMessagesTestExecutionSpec {
         val npmProject = compilation.npmProject
 
-        val file = task.nodeModulesToLoad
-            .map { npmProject.require(it) }
-            .single()
+        val file = task.inputFileProperty.get().asFile.toString()
 
         val adapterJs = createAdapterJs(file, debug)
 
