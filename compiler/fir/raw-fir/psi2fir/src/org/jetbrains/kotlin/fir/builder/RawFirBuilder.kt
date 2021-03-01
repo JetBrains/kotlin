@@ -87,7 +87,7 @@ class RawFirBuilder(
     // TODO this is a (temporary) hack, instead we should properly initialize [context]
     private fun FirDeclaration.copyContainingClassAttrFrom(from: FirDeclaration) {
         (this as? FirCallableMemberDeclaration<*>)?.let {
-            it.containingClassAttr = (from as? FirCallableMemberDeclaration<*>)?.containingClassAttr
+            it.containingClassAttr = (from as? FirCallableMemberDeclaration<*>)?.containingClass()
         }
     }
 
