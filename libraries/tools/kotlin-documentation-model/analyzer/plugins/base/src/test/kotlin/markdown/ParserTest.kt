@@ -5,6 +5,9 @@ import org.intellij.markdown.MarkdownElementTypes
 import org.jetbrains.dokka.model.doc.*
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 
 class ParserTest : KDocTest() {
@@ -1436,6 +1439,47 @@ class ParserTest : KDocTest() {
             )
         )
         executeTest(kdoc, expectedDocumentationNode)
+    }
+
+    @Test
+    fun `short link without destination`() {
+        val kdoc = """
+        | This is [link]()
+        """.trimMargin()
+        val expectedDocumentationNode = DocumentationNode(
+            listOf(
+                Description(
+                    CustomDocTag(
+                        listOf(
+                            P(
+                                listOf(
+                                    Text("This is "),
+                                    A(
+                                        listOf(Text("link")),
+                                        mapOf("href" to "")
+                                    )
+                                )
+                            )
+                        ), name = MarkdownElementTypes.MARKDOWN_FILE.name
+                    )
+                )
+            )
+        )
+        executeTest(kdoc, expectedDocumentationNode)
+    }
+
+    @Test
+    fun `exception thrown by empty header should point to location of a file`() {
+        val kdoc = """
+        | ###
+        """.trimMargin()
+        val expectedDocumentationNode = DocumentationNode(emptyList())
+        val exception = runCatching { executeTest(kdoc, expectedDocumentationNode) }.exceptionOrNull()
+
+        assertEquals(
+            "Wrong AST Tree. Header does not contain expected content in Test.kt/example.Test, element starts from offset 0 and ends 3: ###",
+            exception?.message
+        )
     }
 }
 
