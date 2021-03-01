@@ -314,9 +314,7 @@ class KotlinKarma(
         nodeJsArgs: MutableList<String>,
         debug: Boolean
     ): TCServiceMessagesTestExecutionSpec {
-        val file = task.nodeModulesToLoad
-            .map { npmProject.require(it) }
-            .single()
+        val file = task.inputFileProperty.get().asFile.toString()
 
         val adapterJs = createAdapterJs(file, debug)
 

@@ -97,11 +97,6 @@ constructor(
         }
     }
 
-    @get:Internal
-    val nodeModulesToLoad: List<String> by lazy {
-        listOf("./" + compilation.npmProject.main)
-    }
-
     override val nodeModulesRequired: Boolean
         @Internal get() = testFramework!!.nodeModulesRequired
 
