@@ -10,7 +10,7 @@ fun <T> test5() = listOf(<!OTHER_ERROR!>T<!>::class)
 
 fun <T> test6(): kotlin.reflect.KClass<T> = <!OTHER_ERROR!>T<!>::class
 fun <T> test7(): kotlin.reflect.KClass<*> = <!OTHER_ERROR!>T<!>::class
-fun test8() = String?::class
+fun test8() = <!NULLABLE_TYPE_IN_CLASS_LITERAL_LHS!>String?::class<!>
 
 fun <T> listOf(e: T): List<T> = null!!
 
