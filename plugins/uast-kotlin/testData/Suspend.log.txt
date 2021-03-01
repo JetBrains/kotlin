@@ -21,10 +21,12 @@ UFile (package = test.pkg)
                     UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
                         UIdentifier (Identifier (suspendPrivate))
                         USimpleNameReferenceExpression (identifier = suspendPrivate, resolvesTo = null)
-        UMethod (name = Context)
         UMethod (name = suspendPrivate)
+            UParameter (name = $completion)
+                UAnnotation (fqName = null)
             UBlockExpression
                 UReturnExpression
                     UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
                         UIdentifier (Identifier (inner))
                         USimpleNameReferenceExpression (identifier = inner, resolvesTo = null)
+        UMethod (name = Context)
