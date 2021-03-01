@@ -76,7 +76,10 @@ class IrCompileTimeChecker(
     override fun visitElement(element: IrElement, data: Nothing?) = false
 
     private fun visitStatements(statements: List<IrStatement>, data: Nothing?): Boolean {
-        if (mode == EvaluationMode.ONLY_BUILTINS) return false
+        if (mode == EvaluationMode.ONLY_BUILTINS) {
+            val statement = statements.singleOrNull() ?: return false
+            return statement is IrConst<*>
+        }
         return statements.all { it.accept(this, data) }
     }
 
