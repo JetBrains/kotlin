@@ -252,7 +252,7 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
     }
 
     val REDECLARATIONS by object : DiagnosticGroup("Redeclarations") {
-        val MANY_COMPANION_OBJECTS by error<FirSourceElement, PsiElement>()
+        val MANY_COMPANION_OBJECTS by error<FirSourceElement, KtObjectDeclaration>(PositioningStrategy.COMPANION_OBJECT)
         val CONFLICTING_OVERLOADS by error<FirSourceElement, PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
             parameter<Collection<AbstractFirBasedSymbol<*>>>("conflictingOverloads")
         }

@@ -55,6 +55,18 @@ object LightTreePositioningStrategies {
         }
     }
 
+    val COMPANION_OBJECT: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
+        override fun mark(
+            node: LighterASTNode,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>
+        ): List<TextRange> {
+            val target = tree.companionKeyword(node) ?: node
+            return markElement(target, startOffset, endOffset, tree, node)
+        }
+    }
+
     val SECONDARY_CONSTRUCTOR_DELEGATION_CALL: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
         override fun mark(
             node: LighterASTNode,
@@ -404,6 +416,9 @@ fun FirSourceElement.hasVar(): Boolean =
 
 fun FirSourceElement.hasPrimaryConstructor(): Boolean =
     treeStructure.primaryConstructor(lighterASTNode) != null
+
+private fun FlyweightCapableTreeStructure<LighterASTNode>.companionKeyword(node: LighterASTNode): LighterASTNode? =
+    modifierList(node)?.let { findChildByType(it, KtTokens.COMPANION_KEYWORD) }
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.constructorKeyword(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, KtTokens.CONSTRUCTOR_KEYWORD)

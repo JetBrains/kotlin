@@ -18,6 +18,11 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.VAL_OR_VAR_NODE
     )
 
+    val COMPANION_OBJECT = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.COMPANION_OBJECT,
+        PositioningStrategies.COMPANION_OBJECT
+    )
+
     val SECONDARY_CONSTRUCTOR_DELEGATION_CALL = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.SECONDARY_CONSTRUCTOR_DELEGATION_CALL,
         PositioningStrategies.SECONDARY_CONSTRUCTOR_DELEGATION_CALL
