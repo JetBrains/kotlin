@@ -43,19 +43,38 @@ public actual fun String?.equals(other: String?, ignoreCase: Boolean): Boolean {
         return false
     return if (!ignoreCase)
         this.equals(other)
+    else if (length != other.length)
+        false
     else
-        stringEqualsIgnoreCase(this, other)
+        unsafeRangeEqualsIgnoreCase(0, other, 0, length)
 }
-
-@SymbolName("Kotlin_String_equalsIgnoreCase")
-internal external fun stringEqualsIgnoreCase(thiz: String, other: String): Boolean
 
 /**
  * Returns a new string with all occurrences of [oldChar] replaced with [newChar].
  */
+public actual fun String.replace(oldChar: Char, newChar: Char, ignoreCase: Boolean): String {
+    return if (!ignoreCase)
+        replace(oldChar, newChar)
+    else
+        replaceIgnoreCase(oldChar, newChar)
+}
+
 @SymbolName("Kotlin_String_replace")
-public actual external fun String.replace(
-        oldChar: Char, newChar: Char, ignoreCase: Boolean): String
+private external fun String.replace(oldChar: Char, newChar: Char): String
+
+@OptIn(ExperimentalStdlibApi::class)
+private fun String.replaceIgnoreCase(oldChar: Char, newChar: Char): String {
+    val charArray = CharArray(length)
+    val oldCharLower = oldChar.lowercaseChar()
+
+    for (index in 0 until length) {
+        val thisChar = this[index]
+        val thisCharLower = thisChar.lowercaseChar()
+        charArray[index] = if (thisCharLower == oldCharLower) newChar else thisChar
+    }
+
+    return charArray.concatToString()
+}
 
 /**
  * Returns a new string obtained by replacing all occurrences of the [oldValue] substring in this string
@@ -147,16 +166,41 @@ public actual fun CharSequence.regionMatches(
  * @param otherOffset the start offset in the other string of the substring to compare.
  * @param length the length of the substring to compare.
  */
-@SymbolName("Kotlin_String_regionMatches")
-public external fun String.regionMatches(
+public fun String.regionMatches(
         thisOffset: Int, other: String, otherOffset: Int, length: Int,
-        ignoreCase: Boolean = false): Boolean
+        ignoreCase: Boolean = false): Boolean {
+    if (length < 0 || thisOffset < 0 || otherOffset < 0
+            || thisOffset + length > this.length
+            || otherOffset + length > other.length) {
+        return false
+    }
+    return if (!ignoreCase)
+        unsafeRangeEquals(thisOffset, other, otherOffset, length)
+    else
+        unsafeRangeEqualsIgnoreCase(thisOffset, other, otherOffset, length)
+}
+
+// Bounds must be checked before calling this method
+@SymbolName("Kotlin_String_unsafeRangeEquals")
+private external fun String.unsafeRangeEquals(thisOffset: Int, other: String, otherOffset: Int, length: Int): Boolean
+
+// Bounds must be checked before calling this method
+@OptIn(ExperimentalStdlibApi::class)
+private fun String.unsafeRangeEqualsIgnoreCase(thisOffset: Int, other: String, otherOffset: Int, length: Int): Boolean {
+    for (index in 0 until length) {
+        val thisCharLower = this[thisOffset + index].lowercaseChar()
+        val otherCharLower = other[otherOffset + index].lowercaseChar()
+        if (thisCharLower != otherCharLower) {
+            return false
+        }
+    }
+    return true
+}
 
 /**
  * Returns a copy of this string converted to upper case using the rules of the default locale.
  */
-@SymbolName("Kotlin_String_toUpperCase")
-public actual external fun String.toUpperCase(): String
+public actual fun String.toUpperCase(): String = uppercaseImpl()
 
 /**
  * Returns a copy of this string converted to upper case using Unicode mapping rules of the invariant locale.
@@ -168,13 +212,12 @@ public actual external fun String.toUpperCase(): String
  */
 @SinceKotlin("1.4")
 @ExperimentalStdlibApi
-public actual fun String.uppercase(): String = toUpperCase()
+public actual fun String.uppercase(): String = uppercaseImpl()
 
 /**
  * Returns a copy of this string converted to lower case using the rules of the default locale.
  */
-@SymbolName("Kotlin_String_toLowerCase")
-public actual external fun String.toLowerCase(): String
+public actual fun String.toLowerCase(): String = lowercaseImpl()
 
 /**
  * Returns a copy of this string converted to lower case using Unicode mapping rules of the invariant locale.
@@ -186,7 +229,7 @@ public actual external fun String.toLowerCase(): String
  */
 @SinceKotlin("1.4")
 @ExperimentalStdlibApi
-public actual fun String.lowercase(): String = toLowerCase()
+public actual fun String.lowercase(): String = lowercaseImpl()
 
 /**
  * Returns a [CharArray] containing characters of this string.
@@ -358,8 +401,25 @@ public actual fun String.encodeToByteArray(startIndex: Int, endIndex: Int, throw
         unsafeStringToUtf8(startIndex, endIndex - startIndex)
 }
 
-@SymbolName("Kotlin_String_compareToIgnoreCase")
-internal external fun compareToIgnoreCase(thiz: String, other: String): Int
+@OptIn(ExperimentalStdlibApi::class)
+internal fun compareToIgnoreCase(thiz: String, other: String): Int {
+    val length = minOf(thiz.length, other.length)
+
+    for (index in 0 until length) {
+        val thisLowerChar = thiz[index].lowercaseChar()
+        val otherLowerChar = other[index].lowercaseChar()
+        if (thisLowerChar != otherLowerChar) {
+            return if (thisLowerChar < otherLowerChar) -1 else 1
+        }
+    }
+
+    return if (thiz.length == other.length)
+        0
+    else if (thiz.length < other.length)
+        -1
+    else
+        1
+}
 
 public actual fun String.compareTo(other: String, ignoreCase: Boolean): Int {
     return if (!ignoreCase) this.compareTo(other)

@@ -23,5 +23,5 @@ task generateUnicodeData(type: JavaExec) {
     group 'application'
     main 'generators.unicode.GenerateUnicodeDataKt'
     classpath configurations.generatorRuntime
-    args = ["native", "${project(":runtime").projectDir}/src/main/kotlin/generated"]
+    args = ["native", "${project(":runtime").projectDir}/src/main/kotlin/generated", "${project(":backend.native").projectDir}/tests/stdlib_external/text"]
 }
