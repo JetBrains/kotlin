@@ -80,6 +80,11 @@ public class CheckLocalVariablesTableTestGenerated extends AbstractCheckLocalVar
         runTest("compiler/testData/checkLocalVariablesTable/objectInLocalPropertyDelegate.kt");
     }
 
+    @TestMetadata("suspendFunctionDeadVariables.kt")
+    public void testSuspendFunctionDeadVariables() throws Exception {
+        runTest("compiler/testData/checkLocalVariablesTable/suspendFunctionDeadVariables.kt");
+    }
+
     @TestMetadata("underscoreNames.kt")
     public void testUnderscoreNames() throws Exception {
         runTest("compiler/testData/checkLocalVariablesTable/underscoreNames.kt");

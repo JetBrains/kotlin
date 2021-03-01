@@ -15,7 +15,7 @@ fun main(args: Array<String>) {
 suspend fun SequenceScope<Int>.awaitSeq(): Int = 42
 
 
-// 1 LOCALVARIABLE a I L[0-9]+ L18
+// 1 LOCALVARIABLE a I L[0-9]+ L4
 
 /* TODO: JVM_IR does not generate LINENUMBER at the end of the lambda */
 // JVM_TEMPLATES
