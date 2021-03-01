@@ -39,6 +39,16 @@ public class FileStructureAndOutOfBlockModificationTrackerConsistencyTestGenerat
         runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/outOfBlockProjectWide/localFun.kt");
     }
 
+    @TestMetadata("memberFunWithType.kt")
+    public void testMemberFunWithType() throws Exception {
+        runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/outOfBlockProjectWide/memberFunWithType.kt");
+    }
+
+    @TestMetadata("memberPropertyWithType.kt")
+    public void testMemberPropertyWithType() throws Exception {
+        runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/outOfBlockProjectWide/memberPropertyWithType.kt");
+    }
+
     @TestMetadata("topLevelExpressionBodyFunWithType.kt")
     public void testTopLevelExpressionBodyFunWithType() throws Exception {
         runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/outOfBlockProjectWide/topLevelExpressionBodyFunWithType.kt");
