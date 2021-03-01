@@ -238,27 +238,7 @@ public inline fun Char.toTitleCase(): Char = titlecaseChar()
 @SinceKotlin("1.4")
 @ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
-public inline fun Char.titlecaseChar(): Char = Character.toTitleCase(this)
-
-/**
- * Converts this character to title case using Unicode mapping rules of the invariant locale.
- *
- * This function supports one-to-many character mapping, thus the length of the returned string can be greater than one.
- * For example, `'\uFB00'.titlecase()` returns `"\u0046\u0066"`,
- * where `'\uFB00'` is the LATIN SMALL LIGATURE FF character (`ﬀ`).
- * If this character has no title case mapping, the result of [uppercase] is returned instead.
- *
- * @sample samples.text.Chars.titlecase
- */
-@SinceKotlin("1.4")
-@ExperimentalStdlibApi
-public fun Char.titlecase(): String {
-    val uppercase = uppercase()
-    if (uppercase.length > 1) {
-        return if (this == '\u0149') uppercase else uppercase[0] + uppercase.substring(1).lowercase()
-    }
-    return titlecaseChar().toString()
-}
+public actual inline fun Char.titlecaseChar(): Char = Character.toTitleCase(this)
 
 /**
  * Converts this character to title case using Unicode mapping rules of the specified [locale].

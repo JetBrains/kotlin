@@ -80,6 +80,19 @@ public actual fun Char.uppercaseChar(): Char {
 public actual inline fun Char.uppercase(): String = toString().asDynamic().toUpperCase() as String
 
 /**
+ * Converts this character to title case using Unicode mapping rules of the invariant locale.
+ *
+ * This function performs one-to-one character mapping.
+ * To support one-to-many character mapping use the [titlecase] function.
+ * If this character has no mapping equivalent, the result of calling [uppercaseChar] is returned.
+ *
+ * @sample samples.text.Chars.titlecase
+ */
+@SinceKotlin("1.4")
+@ExperimentalStdlibApi
+public actual fun Char.titlecaseChar(): Char = titlecaseCharImpl()
+
+/**
  * Returns `true` if this character is a Unicode high-surrogate code unit (also known as leading-surrogate code unit).
  */
 public actual fun Char.isHighSurrogate(): Boolean = this in Char.MIN_HIGH_SURROGATE..Char.MAX_HIGH_SURROGATE
