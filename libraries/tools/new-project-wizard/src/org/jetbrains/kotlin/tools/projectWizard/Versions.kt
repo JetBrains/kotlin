@@ -14,7 +14,7 @@ object Versions {
     val KTOR = version("1.5.2")
     val JUNIT = version("4.13")
     val JUNIT5 = version("5.6.0")
-    val JETBRAINS_COMPOSE = version("0.3.0-build149")
+    val JETBRAINS_COMPOSE = version("0.3.1")
 
     val KOTLIN_VERSION_FOR_COMPOSE = version("1.4.30")
 
