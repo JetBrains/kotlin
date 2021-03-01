@@ -50,6 +50,11 @@ fun <R : ResultingArtifact.FrontendOutput<R>> TestConfigurationBuilder.commonCon
     useBackendFacades(backendFacade)
 }
 
+fun TestConfigurationBuilder.dumpHandlersForCodegenTest() {
+    useBackendHandlers(::IrTextDumpHandler)
+    useArtifactsHandlers(::BytecodeListingHandler)
+}
+
 fun TestConfigurationBuilder.commonHandlersForBoxTest() {
     commonHandlersForCodegenTest()
     useArtifactsHandlers(

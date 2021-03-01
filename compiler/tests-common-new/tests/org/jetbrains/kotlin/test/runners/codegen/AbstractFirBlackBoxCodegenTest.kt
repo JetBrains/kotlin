@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.test.runners.codegen
 
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
-import org.jetbrains.kotlin.test.backend.handlers.BytecodeListingHandler
-import org.jetbrains.kotlin.test.backend.handlers.IrTextDumpHandler
 import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_PSI_CLASS_FILES_READING
@@ -42,8 +40,7 @@ open class AbstractFirBlackBoxCodegenTest : AbstractJvmBlackBoxCodegenTestBase<F
             }
             useFrontendHandlers(::FirDumpHandler, ::FirScopeDumpHandler)
             useFrontendHandlers(::FirCfgDumpHandler)
-            useBackendHandlers(::IrTextDumpHandler)
-            useArtifactsHandlers(::BytecodeListingHandler)
+            dumpHandlersForCodegenTest()
         }
     }
 }
