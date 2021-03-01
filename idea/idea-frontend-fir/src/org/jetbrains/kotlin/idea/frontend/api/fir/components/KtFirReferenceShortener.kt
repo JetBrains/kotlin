@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.resolveToPackageOrClass
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.getFunctions
+import org.jetbrains.kotlin.fir.scopes.getProperties
 import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractStarImportingScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirExplicitSimpleImportingScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
@@ -120,8 +121,8 @@ private class FirShorteningContext(val firResolveState: FirModuleResolveState) {
         return scopes.flatMap { it.getFunctions(name) }
     }
 
-    fun findSinglePropertyInScopesByName(scopes: List<FirScope>, name: Name): FirVariableSymbol<*>? {
-        return scopes.asSequence().mapNotNull { it.getSinglePropertyByName(name) }.singleOrNull()
+    fun findPropertiesInScopes(scopes: List<FirScope>, name: Name): List<FirVariableSymbol<*>> {
+        return scopes.flatMap { it.getProperties(name) }
     }
 
     private fun FirScope.findFirstClassifierByName(name: Name): FirClassifierSymbol<*>? {
@@ -135,10 +136,6 @@ private class FirShorteningContext(val firResolveState: FirModuleResolveState) {
 
         return element
     }
-
-    @OptIn(ExperimentalStdlibApi::class)
-    private fun FirScope.getSinglePropertyByName(name: Name): FirVariableSymbol<*>? =
-        buildList { processPropertiesByName(name, this::add) }.singleOrNull()
 
     @OptIn(ExperimentalStdlibApi::class)
     fun findScopesAtPosition(position: KtElement, newImports: List<FqName>): List<FirScope>? {
@@ -316,11 +313,15 @@ private class ElementsToShortenCollector(private val shorteningContext: FirShort
         val propertyId = (resolvedNamedReference.resolvedSymbol as? FirCallableSymbol<*>)?.callableId ?: return
 
         val scopes = shorteningContext.findScopesAtPosition(qualifiedProperty, namesToImport) ?: return
-        val singleAvailableProperty = shorteningContext.findSinglePropertyInScopesByName(scopes, propertyId.callableName)
+        val singleAvailableProperty = shorteningContext.findPropertiesInScopes(scopes, propertyId.callableName)
 
-        if (singleAvailableProperty?.callableId == propertyId) {
-            addElementToShorten(ShortenQualifier(qualifiedProperty))
+        val propertyToShorten = when {
+            singleAvailableProperty.isEmpty() -> ShortenQualifier(qualifiedProperty, propertyId.asImportableFqName())
+            singleAvailableProperty.all { it.callableId == propertyId } -> ShortenQualifier(qualifiedProperty)
+            else -> findFakePackageToShorten(qualifiedProperty)
         }
+
+        propertyToShorten?.let(::addElementToShorten)
     }
 
     private fun processFunctionCall(functionCall: FirFunctionCall) {
