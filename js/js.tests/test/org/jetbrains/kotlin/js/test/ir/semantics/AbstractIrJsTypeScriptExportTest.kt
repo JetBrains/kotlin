@@ -24,6 +24,7 @@ abstract class AbstractIrJsTypeScriptExportTest(
     private val updateReferenceDtsFiles = getBoolean("kotlin.js.updateReferenceDtsFiles")
 
     override fun performAdditionalChecks(inputFile: File, outputFile: File) {
+        if (skipRegularMode) return
         val referenceDtsFile = inputFile.withReplacedExtensionOrNull(".kt", ".d.ts")
             ?: error("Can't find reference .d.ts file")
         val generatedDtsFile = outputFile.withReplacedExtensionOrNull("_v5", ".d.ts")
