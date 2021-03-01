@@ -5,27 +5,31 @@
 
 package generators.unicode.mappings.oneToMany.writers
 
-import generators.unicode.ranges.RangesWritingStrategy
-import generators.unicode.writeMappings
+import generators.unicode.toHexCharLiteral
 import java.io.FileWriter
 
-internal class OneToManyTitlecaseMappingsWriter(private val strategy: RangesWritingStrategy) : OneToManyMappingsWriter {
+internal class OneToManyTitlecaseMappingsWriter : OneToManyMappingsWriter {
     override fun write(mappings: Map<Int, List<String>>, writer: FileWriter) {
-        strategy.beforeWritingRanges(writer)
-        writer.writeMappings(mappings, strategy)
-        strategy.afterWritingRanges(writer)
-        writer.appendLine()
-        writer.appendLine(titlecaseImpl())
+        // We have decided to ignore GREEK EXTENDED block due to their rare usage.
+        // It also leads to decreased js code size and simplified implementation.
+        val nonGreekExtended = mappings.filterNot { it.key in 0x1f00..0x1fff }
+
+        check(nonGreekExtended.size == 1)
+        val n = nonGreekExtended.keys.single()
+        check(n == 0x0149) // LATIN SMALL LETTER N PRECEDED BY APOSTROPHE
+
+        // one-to-many titlecase equivalent of the char is "\u02BC\u004E", the same as the uppercase equivalent
+        writer.appendLine(titlecaseImpl(n.toHexCharLiteral()))
     }
 
-    private fun titlecaseImpl(): String = """
+    private fun titlecaseImpl(apostropheN: String): String = """
+        @OptIn(ExperimentalStdlibApi::class)
         internal fun Char.titlecaseImpl(): String {
-            val code = this.toInt()
-            val index = binarySearchRange(keys, code)
-            if (index >= 0 && keys[index] == code) {
-                return values[index]
+            val uppercase = uppercase()
+            if (uppercase.length > 1) {
+                return if (this == $apostropheN) uppercase else uppercase[0] + uppercase.substring(1).lowercase()
             }
-            return titlecaseCharImpl().toString()
+            return titlecaseChar().toString()
         }
     """.trimIndent()
 }

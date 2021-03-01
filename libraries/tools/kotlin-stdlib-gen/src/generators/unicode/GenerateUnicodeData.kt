@@ -92,10 +92,8 @@ fun main(args: Array<String>) {
     fun addOneToManyMappingsGenerators(generatedDir: File, target: KotlinTarget) {
         val uppercase = OneToManyMappingsGenerator.forUppercase(generatedDir.resolve("_OneToManyUppercaseMappings.kt"), target, bmpUnicodeDataLines)
         val lowercase = OneToManyMappingsGenerator.forLowercase(generatedDir.resolve("_OneToManyLowercaseMappings.kt"), target, bmpUnicodeDataLines)
-        val titlecase = OneToManyMappingsGenerator.forTitlecase(generatedDir.resolve("_OneToManyTitlecaseMappings.kt"), target, bmpUnicodeDataLines)
         oneToManyMappingsGenerators.add(uppercase)
         oneToManyMappingsGenerators.add(lowercase)
-        oneToManyMappingsGenerators.add(titlecase)
     }
 
     var categoryTestGenerator: CharCategoryTestGenerator? = null
@@ -112,11 +110,16 @@ fun main(args: Array<String>) {
             val categoryTestFile = baseDir.resolve("libraries/stdlib/js/test/text/unicodeData/_CharCategoryTest.kt")
             categoryTestGenerator = CharCategoryTestGenerator(categoryTestFile)
 
+            val commonGeneratedDir = baseDir.resolve("libraries/stdlib/common/src/generated")
+            oneToManyMappingsGenerators.add(OneToManyMappingsGenerator.forTitlecase(commonGeneratedDir.resolve("_OneToManyTitlecaseMappings.kt"), bmpUnicodeDataLines))
+
             val jsGeneratedDir = baseDir.resolve("libraries/stdlib/js/src/generated/")
             addRangesGenerators(jsGeneratedDir, KotlinTarget.JS)
+            oneToOneMappingsGenerators.add(MappingsGenerator.forTitlecase(jsGeneratedDir.resolve("_TitlecaseMappings.kt")))
 
             val jsIrGeneratedDir = baseDir.resolve("libraries/stdlib/js-ir/src/generated/")
             addRangesGenerators(jsIrGeneratedDir, KotlinTarget.JS_IR)
+            oneToOneMappingsGenerators.add(MappingsGenerator.forTitlecase(jsIrGeneratedDir.resolve("_TitlecaseMappings.kt")))
 
             // For debugging. To see the file content
             fun downloadFile(fromUrl: String) {

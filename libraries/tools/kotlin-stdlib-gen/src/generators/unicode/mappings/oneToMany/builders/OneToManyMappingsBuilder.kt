@@ -11,7 +11,7 @@ import generators.unicode.hexToInt
 import java.util.TreeMap
 
 internal abstract class OneToManyMappingsBuilder(bmpUnicodeDataLines: List<UnicodeDataLine>) {
-    private val bmpUnicodeDataLines = bmpUnicodeDataLines.associateBy { it.char.hexToInt() }
+    protected val bmpUnicodeDataLines = bmpUnicodeDataLines.associateBy { it.char.hexToInt() }
     private val mappings = TreeMap<Int, List<String>>()
 
     fun append(line: SpecialCasingLine) {
@@ -33,7 +33,7 @@ internal abstract class OneToManyMappingsBuilder(bmpUnicodeDataLines: List<Unico
     }
 
     private fun mapping(charCode: Int, line: SpecialCasingLine): List<String>? {
-        val mapping = line.mapping()
+        val mapping = line.mapping() ?: return null
 
         check(mapping.isNotEmpty() && mapping.all { it.isNotEmpty() })
 
@@ -53,6 +53,6 @@ internal abstract class OneToManyMappingsBuilder(bmpUnicodeDataLines: List<Unico
         return mapping
     }
 
-    abstract fun SpecialCasingLine.mapping(): List<String>
+    abstract fun SpecialCasingLine.mapping(): List<String>?
     abstract fun UnicodeDataLine.mapping(): String
 }

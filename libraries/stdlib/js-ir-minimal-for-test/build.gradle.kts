@@ -27,6 +27,7 @@ val commonMainSources by task<Sync> {
                 "libraries/stdlib/common/src/generated/_Collections.kt",
                 "libraries/stdlib/common/src/generated/_Comparisons.kt",
                 "libraries/stdlib/common/src/generated/_Maps.kt",
+                "libraries/stdlib/common/src/generated/_OneToManyTitlecaseMappings.kt",
                 "libraries/stdlib/common/src/generated/_Sequences.kt",
                 "libraries/stdlib/common/src/generated/_Sets.kt",
                 "libraries/stdlib/common/src/generated/_Strings.kt",
