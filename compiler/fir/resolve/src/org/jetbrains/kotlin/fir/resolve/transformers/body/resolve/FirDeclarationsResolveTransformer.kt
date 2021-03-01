@@ -115,7 +115,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
     }
 
     override fun transformEnumEntry(enumEntry: FirEnumEntry, data: ResolutionMode): CompositeTransformResult<FirDeclaration> {
-        context.withTowerDataContext(context.getTowerDataContextForConstructorResolution()) {
+        context.withTowerDataMode(FirTowerDataMode.CONSTRUCTOR_HEADER) {
             return (enumEntry.transformChildren(this, data) as FirEnumEntry).compose()
         }
     }
@@ -185,7 +185,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         return withFullBodyResolve {
             withLocalScopeCleanup {
                 val primaryConstructorParametersScope = context.getPrimaryConstructorAllParametersScope()
-                context.withTowerDataContext(context.getTowerDataContextForConstructorResolution()) {
+                context.withTowerDataMode(FirTowerDataMode.CONSTRUCTOR_HEADER) {
                     context.withContainer(field) {
                         withLocalScopeCleanup {
                             addLocalScope(primaryConstructorParametersScope)
@@ -400,15 +400,13 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             return regularClass.runAllPhasesForLocalClass(transformer, components, data).compose()
         }
 
-        return context.withTowerDataCleanup {
+        return context.withTowerModeCleanup {
             if (!regularClass.isInner && context.containerIfAny is FirRegularClass) {
-                context.replaceTowerDataContext(
-                    if (regularClass.isCompanion) {
-                        context.getTowerDataContextForCompanionUnsafe()
-                    } else {
-                        context.getTowerDataContextForStaticNestedClassesUnsafe()
-                    }
-                )
+                if (regularClass.isCompanion) {
+                    context.towerDataMode = FirTowerDataMode.COMPANION_OBJECT
+                } else {
+                    context.towerDataMode = FirTowerDataMode.NESTED_CLASS
+                }
             }
 
             doTransformRegularClass(regularClass, data)
@@ -642,7 +640,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             /*
              * Default values of constructor can't access members of constructing class
              */
-            context.withTowerDataContext(context.getTowerDataContextForConstructorResolution()) {
+            context.withTowerDataMode(FirTowerDataMode.CONSTRUCTOR_HEADER) {
                 if (owningClass != null && !constructor.isPrimary) {
                     context.addReceiver(
                         null,
@@ -669,8 +667,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
              * Delegated constructor call is called before constructor body, so we need to
              *   analyze it before body, so body can access smartcasts from that call
              */
-            context.withTowerDataCleanup {
-                addLocalScope(scopeWithValueParameters)
+            withLocalScope(scopeWithValueParameters) {
                 constructor.transformDelegatedConstructor(transformer, data)
             }
 
@@ -681,7 +678,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                      *   In it's body we don't have this receiver for building class, so we need to use
                      *   special towerDataContext
                      */
-                    context.withTowerDataContext(context.getTowerDataContextForConstructorResolution()) {
+                    context.withTowerDataMode(FirTowerDataMode.CONSTRUCTOR_HEADER) {
                         addLocalScope(scopeWithValueParameters)
                         constructor.transformBody(transformer, data)
                     }
@@ -914,7 +911,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         owner: FirClass<*>,
         type: ConeKotlinType,
         block: () -> T
-    ): T = context.withTowerDataCleanup {
+    ): T {
         val towerElementsForClass = components.collectTowerDataElementsForClass(owner, type)
 
         val base = context.towerDataContext.addNonLocalTowerDataElements(towerElementsForClass.superClassesStaticsAndCompanionReceivers)
@@ -952,9 +949,8 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                 null to null
             }
 
-        components.context.replaceTowerDataContext(forMembersResolution)
-
         val newContexts = FirTowerDataContextsForClassParts(
+            forMembersResolution,
             newTowerDataContextForStaticNestedClasses,
             statics,
             scopeForConstructorHeader,
@@ -962,7 +958,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             primaryConstructorAllParametersScope
         )
 
-        context.withNewTowerDataForClassParts(newContexts) {
+        return context.withNewTowerDataForClassParts(newContexts) {
             block()
         }
     }

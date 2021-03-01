@@ -10,6 +10,7 @@ import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.kotlin.fir.FirCallResolver
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.resolve.FirTowerDataMode.*
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitDispatchReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitExtensionReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addIfNotNull
+import java.util.*
 
 interface SessionHolder {
     val session: FirSession
@@ -141,13 +143,56 @@ fun FirScope.asTowerDataElement(isLocal: Boolean): FirTowerDataElement =
 
 typealias TowerDataContextForAnonymousFunctions = Map<FirAnonymousFunctionSymbol, FirTowerDataContext>
 
+enum class FirTowerDataMode {
+    MEMBER_DECLARATION,
+    NESTED_CLASS,
+    COMPANION_OBJECT,
+    CONSTRUCTOR_HEADER,
+    SPECIAL,
+}
+
 class FirTowerDataContextsForClassParts(
-    val forNestedClasses: FirTowerDataContext,
-    val forCompanionObject: FirTowerDataContext,
-    val forConstructorHeaders: FirTowerDataContext,
-    val primaryConstructorPureParametersScope: FirLocalScope?,
-    val primaryConstructorAllParametersScope: FirLocalScope?,
-)
+    forMemberDeclarations: FirTowerDataContext,
+    forNestedClasses: FirTowerDataContext? = null,
+    forCompanionObject: FirTowerDataContext? = null,
+    forConstructorHeaders: FirTowerDataContext? = null,
+    val primaryConstructorPureParametersScope: FirLocalScope? = null,
+    val primaryConstructorAllParametersScope: FirLocalScope? = null,
+) {
+    private val modeMap = EnumMap<FirTowerDataMode, FirTowerDataContext>(FirTowerDataMode::class.java)
+
+    init {
+        modeMap[MEMBER_DECLARATION] = forMemberDeclarations
+        modeMap[NESTED_CLASS] = forNestedClasses
+        modeMap[COMPANION_OBJECT] = forCompanionObject
+        modeMap[CONSTRUCTOR_HEADER] = forConstructorHeaders
+    }
+
+    var mode: FirTowerDataMode = MEMBER_DECLARATION
+
+    val forMemberDeclaration: FirTowerDataContext get() = modeMap.getValue(MEMBER_DECLARATION)
+    val forNestedClasses: FirTowerDataContext get() = modeMap.getValue(NESTED_CLASS)
+    val forCompanionObject: FirTowerDataContext get() = modeMap.getValue(COMPANION_OBJECT)
+    val forConstructorHeaders: FirTowerDataContext get() = modeMap.getValue(CONSTRUCTOR_HEADER)
+
+    var special: FirTowerDataContext
+        get() = modeMap.getValue(SPECIAL)
+        set(value) {
+            mode = SPECIAL
+            modeMap[SPECIAL] = value
+        }
+    var currentContext: FirTowerDataContext
+        get() = modeMap.getValue(mode)
+        set(value) {
+            modeMap[mode] = value
+        }
+
+    fun withMemberDeclarationContext(newContextForMemberDeclarations: FirTowerDataContext): FirTowerDataContextsForClassParts =
+        FirTowerDataContextsForClassParts(
+            newContextForMemberDeclarations, modeMap[NESTED_CLASS], modeMap[COMPANION_OBJECT], modeMap[CONSTRUCTOR_HEADER],
+            primaryConstructorPureParametersScope, primaryConstructorAllParametersScope
+        )
+}
 
 // --------------------------------------- Utils ---------------------------------------
 

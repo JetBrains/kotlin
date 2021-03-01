@@ -223,7 +223,7 @@ class FirCallCompleter(
             }
 
             val localContext = components.towerDataContextForAnonymousFunctions[lambdaArgument.symbol] ?: error("")
-            transformer.context.withTowerDataContext(localContext) {
+            transformer.context.withSpecialTowerDataContext(localContext) {
                 if (builderInferenceSession != null) {
                     transformer.context.withInferenceSession(builderInferenceSession) {
                         lambdaArgument.transformSingle(transformer, ResolutionMode.LambdaResolution(expectedReturnTypeRef))

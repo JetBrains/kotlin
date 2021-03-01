@@ -253,7 +253,7 @@ class FirCallResolver(
         val towerDataContext =
             transformer.context.towerDataContextForCallableReferences[callableReferenceAccess] ?: transformer.context.towerDataContext
 
-        val result = transformer.context.withTowerDataContext(towerDataContext) {
+        val result = transformer.context.withSpecialTowerDataContext(towerDataContext) {
             towerResolver.runResolver(
                 info,
                 transformer.resolutionContext,
