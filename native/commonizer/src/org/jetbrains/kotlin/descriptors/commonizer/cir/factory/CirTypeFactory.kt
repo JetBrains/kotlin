@@ -67,7 +67,7 @@ object CirTypeFactory {
                 val expandedType = extractExpandedType(abbreviatedType)
 
                 val cirExpandedType = create(expandedType) as CirClassOrTypeAliasType
-                val cirExpandedTypeWithProperNullability = if (source.isMarkedNullable) makeNullable(cirExpandedType) else cirExpandedType
+                val cirExpandedTypeWithProperNullability = makeNullableIfNecessary(cirExpandedType, source.isMarkedNullable)
 
                 createTypeAliasType(
                     typeAliasId = classifierDescriptor.classifierId,
@@ -128,25 +128,38 @@ object CirTypeFactory {
         )
     }
 
-    fun makeNullable(classOrTypeAliasType: CirClassOrTypeAliasType): CirClassOrTypeAliasType =
-        if (classOrTypeAliasType.isMarkedNullable)
-            classOrTypeAliasType
-        else
-            when (classOrTypeAliasType) {
-                is CirClassType -> createClassType(
-                    classId = classOrTypeAliasType.classifierId,
-                    outerType = classOrTypeAliasType.outerType,
-                    visibility = classOrTypeAliasType.visibility,
-                    arguments = classOrTypeAliasType.arguments,
-                    isMarkedNullable = true
-                )
-                is CirTypeAliasType -> createTypeAliasType(
-                    typeAliasId = classOrTypeAliasType.classifierId,
-                    underlyingType = makeNullable(classOrTypeAliasType.underlyingType),
-                    arguments = classOrTypeAliasType.arguments,
-                    isMarkedNullable = true
-                )
-            }
+    fun <T : CirSimpleType> makeNullable(type: T): T {
+        if (type.isMarkedNullable)
+            return type
+
+        val result = when (type) {
+            is CirClassType -> createClassType(
+                classId = type.classifierId,
+                outerType = type.outerType,
+                visibility = type.visibility,
+                arguments = type.arguments,
+                isMarkedNullable = true
+            )
+            is CirTypeAliasType -> createTypeAliasType(
+                typeAliasId = type.classifierId,
+                underlyingType = makeNullable(type.underlyingType),
+                arguments = type.arguments,
+                isMarkedNullable = true
+            )
+            is CirTypeParameterType -> createTypeParameterType(
+                index = type.index,
+                isMarkedNullable = true
+            )
+            else -> error("Unsupported type: $type")
+        }
+
+        @Suppress("UNCHECKED_CAST")
+        return result as T
+    }
+
+    @Suppress("NOTHING_TO_INLINE")
+    inline fun <T : CirSimpleType> makeNullableIfNecessary(type: T, necessary: Boolean): T =
+        if (!necessary) type else makeNullable(type)
 
     fun unabbreviate(type: CirClassOrTypeAliasType): CirClassType = when (type) {
         is CirClassType -> {
