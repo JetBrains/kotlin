@@ -29,6 +29,8 @@ public interface SerializationErrors {
     DiagnosticFactory0<PsiElement> TRANSIENT_MISSING_INITIALIZER = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<PsiElement> TRANSIENT_IS_REDUNDANT = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<PsiElement> JSON_FORMAT_REDUNDANT_DEFAULT = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<PsiElement> JSON_FORMAT_REDUNDANT = DiagnosticFactory0.create(WARNING);
 
     DiagnosticFactory0<PsiElement> INCORRECT_TRANSIENT = DiagnosticFactory0.create(WARNING);
 
