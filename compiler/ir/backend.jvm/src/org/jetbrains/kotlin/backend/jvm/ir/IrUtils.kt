@@ -113,7 +113,7 @@ val IrType.erasedUpperBound: IrClass
     get() = when (val classifier = classifierOrNull) {
         is IrClassSymbol -> classifier.owner
         is IrTypeParameterSymbol -> classifier.owner.erasedUpperBound
-        else -> throw IllegalStateException()
+        else -> error(render())
     }
 
 /**

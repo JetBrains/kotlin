@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.ReturnTypeIsNotInitializedException
+import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.Variance
@@ -103,7 +104,7 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
         when (this) {
             is IrDynamicType -> "dynamic"
 
-            is IrErrorType -> "IrErrorType"
+            is IrErrorType -> "IrErrorType($originalKotlinType)"
 
             is IrSimpleType -> buildTrimEnd {
                 append(classifier.renderClassifierFqn())

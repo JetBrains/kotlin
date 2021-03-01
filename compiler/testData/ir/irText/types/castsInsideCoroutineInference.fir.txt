@@ -61,21 +61,21 @@ FILE fqName:<root> fileName:/castsInsideCoroutineInference.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun unsafeFlow <T> (block: @[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<<root>.FlowCollector<T of <root>.unsafeFlow>, kotlin.Unit>): <root>.Flow<T of <root>.unsafeFlow> [inline] declared in <root>'
         CALL 'public final fun TODO (): kotlin.Nothing [inline] declared in kotlin.StandardKt' type=kotlin.Nothing origin=null
-  FUN name:onCompletion visibility:public modality:FINAL <T> ($receiver:<root>.Flow<T of <root>.onCompletion>, action:kotlin.coroutines.SuspendFunction1<kotlin.Throwable?, kotlin.Unit>) returnType:IrErrorType
+  FUN name:onCompletion visibility:public modality:FINAL <T> ($receiver:<root>.Flow<T of <root>.onCompletion>, action:kotlin.coroutines.SuspendFunction1<kotlin.Throwable?, kotlin.Unit>) returnType:IrErrorType(null)
     annotations:
       Deprecated(message = 'binary compatibility with a version w/o FlowCollector receiver', replaceWith = <null>, level = GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:HIDDEN' type=kotlin.DeprecationLevel)
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
     $receiver: VALUE_PARAMETER name:<this> type:<root>.Flow<T of <root>.onCompletion>
     VALUE_PARAMETER name:action index:0 type:kotlin.coroutines.SuspendFunction1<kotlin.Throwable?, kotlin.Unit>
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun onCompletion <T> (action: kotlin.coroutines.SuspendFunction1<kotlin.Throwable?, kotlin.Unit>): IrErrorType declared in <root>'
-        ERROR_CALL 'Unresolved reference: <Ambiguity: onCompletion, [/onCompletion, /onCompletion]>#' type=IrErrorType
+      RETURN type=kotlin.Nothing from='public final fun onCompletion <T> (action: kotlin.coroutines.SuspendFunction1<kotlin.Throwable?, kotlin.Unit>): IrErrorType(null) declared in <root>'
+        ERROR_CALL 'Unresolved reference: <Ambiguity: onCompletion, [/onCompletion, /onCompletion]>#' type=IrErrorType(null)
           FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
               BLOCK_BODY
                 CALL 'public abstract fun invoke (p1: P1 of kotlin.coroutines.SuspendFunction1): R of kotlin.coroutines.SuspendFunction1 [suspend,operator] declared in kotlin.coroutines.SuspendFunction1' type=kotlin.Unit origin=null
                   $this: GET_VAR 'action: kotlin.coroutines.SuspendFunction1<kotlin.Throwable?, kotlin.Unit> declared in <root>.onCompletion' type=kotlin.coroutines.SuspendFunction1<kotlin.Throwable?, kotlin.Unit> origin=VARIABLE_AS_FUNCTION
-                  p1: ERROR_CALL 'Unresolved reference: <Unresolved name: it>#' type=IrErrorType
+                  p1: ERROR_CALL 'Unresolved reference: <Unresolved name: it>#' type=IrErrorType(null)
   FUN name:asFairChannel visibility:private modality:FINAL <> ($receiver:<root>.CoroutineScope, flow:<root>.Flow<*>) returnType:<root>.ReceiveChannel<kotlin.Any>
     $receiver: VALUE_PARAMETER name:<this> type:<root>.CoroutineScope
     VALUE_PARAMETER name:flow index:0 type:<root>.Flow<*>
