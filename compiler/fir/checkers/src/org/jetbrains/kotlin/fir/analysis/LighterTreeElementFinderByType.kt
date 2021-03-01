@@ -21,7 +21,7 @@ class LighterTreeElementFinderByType(
         return visitNode(node, 0)
     }
 
-    fun visitNode(node: LighterASTNode, currentDepth: Int): LighterASTNode? {
+    private fun visitNode(node: LighterASTNode, currentDepth: Int): LighterASTNode? {
         if (node.tokenType in types) {
             if (index == 0) {
                 return node
@@ -44,4 +44,5 @@ class LighterTreeElementFinderByType(
         tree.getChildren(this, ref)
         return ref.get()?.filterNotNull() ?: emptyList()
     }
+
 }

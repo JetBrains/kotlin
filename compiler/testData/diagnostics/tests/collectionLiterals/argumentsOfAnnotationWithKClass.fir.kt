@@ -18,7 +18,7 @@ fun test2() {}
 @Foo([Array::class])
 fun test3() {}
 
-@Foo([Gen<Int>::class])
+@Foo([<!CLASS_LITERAL_LHS_NOT_A_CLASS!>Gen<Int>::class<!>])
 fun test4() {}
 
 @Foo([""])
