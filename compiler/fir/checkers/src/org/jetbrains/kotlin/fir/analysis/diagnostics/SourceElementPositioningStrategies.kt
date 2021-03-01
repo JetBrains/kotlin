@@ -178,6 +178,11 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.RETURN_WITH_LABEL
     )
 
+    val ASSIGNMENT_VALUE = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.ASSIGNMENT_VALUE,
+        PositioningStrategies.ASSIGNMENT_VALUE
+    )
+
     val LONG_LITERAL_SUFFIX = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.LONG_LITERAL_SUFFIX,
         PositioningStrategies.LONG_LITERAL_SUFFIX

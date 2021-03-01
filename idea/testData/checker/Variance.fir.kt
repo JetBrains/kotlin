@@ -7,13 +7,13 @@ abstract class Producer<out T> {}
 abstract class Usual<T> {}
 
 fun foo(c: Consumer<Int>, p: Producer<Int>, u: Usual<Int>) {
-    val c1: Consumer<Any> = c
+    val c1: Consumer<Any> = <error descr="[INITIALIZER_TYPE_MISMATCH] Initializer type mismatch: expected variance/Consumer<kotlin/Any>, actual variance/Consumer<kotlin/Int>">c</error>
     val c2: Consumer<Int> = c1
 
     val p1: Producer<Any> = p
     val p2: Producer<Int> = p1
 
-    val u1: Usual<Any> = u
+    val u1: Usual<Any> = <error descr="[INITIALIZER_TYPE_MISMATCH] Initializer type mismatch: expected variance/Usual<kotlin/Any>, actual variance/Usual<kotlin/Int>">u</error>
     val u2: Usual<Int> = u1
 }
 

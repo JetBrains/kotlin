@@ -1,4 +1,4 @@
-// !LANGUAGE: +NewInference
+// FULL_JDK
 // !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION
 // SKIP_TXT
 
@@ -10,7 +10,7 @@ package testsCase1
 
 class Case() {
     fun case(v: V) {
-        // InitializertTypeCheckerMismatch bug
+        // InitializerTypeMismatchChecker bug
         val va: () -> String = <!INITIALIZER_TYPE_MISMATCH!>(V)::a<!>
 
         val vb: () -> String = (V)::b

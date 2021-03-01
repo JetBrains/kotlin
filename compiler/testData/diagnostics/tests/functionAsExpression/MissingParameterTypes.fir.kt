@@ -6,13 +6,13 @@ val a = fun (x) = x
 
 val b: (Int) -> Int = fun (x) = x + 3
 
-val c: (Int, String) -> Int = fun (x) = 3
+val c: (Int, String) -> Int = <!INITIALIZER_TYPE_MISMATCH!>fun (x) = 3<!>
 
-val d: (Int, String) -> Int = fun (x) = 3
+val d: (Int, String) -> Int = <!INITIALIZER_TYPE_MISMATCH!>fun (x) = 3<!>
 
-val e: (Int, String) -> Int = fun (x: String) = 3
+val e: (Int, String) -> Int = <!INITIALIZER_TYPE_MISMATCH!>fun (x: String) = 3<!>
 
-val f: (Int) -> Int = fun (x: String) = 3
+val f: (Int) -> Int = <!INITIALIZER_TYPE_MISMATCH!>fun (x: String) = 3<!>
 
 fun test1(a: (Int) -> Unit) {
     test1(fun (x) { checkSubtype<Int>(x)})

@@ -8,4 +8,4 @@ open class Bar() : <error descr="[OTHER_ERROR] Unknown (other) error">Foo</error
 
 }
 
-val x : Int = Foo()
+val x : Int = <error descr="[INITIALIZER_TYPE_MISMATCH] Initializer type mismatch: expected kotlin/Int, actual Foo">Foo()</error>

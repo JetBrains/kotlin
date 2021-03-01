@@ -780,6 +780,26 @@ object PositioningStrategies {
     val REFERENCE_BY_QUALIFIED: PositioningStrategy<PsiElement> = FindReferencePositioningStrategy(false)
     val REFERENCED_NAME_BY_QUALIFIED: PositioningStrategy<PsiElement> = FindReferencePositioningStrategy(true)
 
+    val ASSIGNMENT_VALUE: PositioningStrategy<KtProperty> = object : PositioningStrategy<PsiElement>() {
+        override fun mark(element: PsiElement): List<TextRange> {
+            return if (element is KtProperty) {
+                mark(element.initializer ?: element)
+            } else {
+                super.mark(element)
+            }
+        }
+    }
+
+    val RETURN_EXPRESSION: PositioningStrategy<KtReturnExpression> = object : PositioningStrategy<PsiElement>() {
+        override fun mark(element: PsiElement): List<TextRange> {
+            return if (element is KtReturnExpression) {
+                markElement(element.returnedExpression ?: element)
+            } else {
+                markElement(element)
+            }
+        }
+    }
+
     /**
      * @param locateReferencedName whether to remove any nested parentheses while locating the reference element. This is useful for
      * diagnostics on super and unresolved references. For example, with the following, only the part inside the parentheses should be

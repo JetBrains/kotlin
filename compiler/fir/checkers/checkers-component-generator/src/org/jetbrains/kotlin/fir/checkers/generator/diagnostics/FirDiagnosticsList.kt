@@ -495,6 +495,10 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
             parameter<ConeKotlinType>("expectedType")
             parameter<ConeKotlinType>("actualType")
         }
+        val INITIALIZER_TYPE_MISMATCH by error<FirSourceElement, KtProperty>(PositioningStrategy.ASSIGNMENT_VALUE) {
+            parameter<ConeKotlinType>("expected")
+            parameter<ConeKotlinType>("actual")
+        }
     }
 
     val MPP_PROJECTS by object : DiagnosticGroup("Multi-platform projects") {

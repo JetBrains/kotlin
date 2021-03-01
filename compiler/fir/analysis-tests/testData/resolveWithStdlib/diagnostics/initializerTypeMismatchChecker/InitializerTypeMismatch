@@ -1,0 +1,31 @@
+// FULL_JDK
+
+import java.util.*
+
+open class A
+open class B : A()
+class C : B()
+
+fun foo() {
+    // InitializerTypeMismatchChecker doesn't report here due this is work for another checker
+    val (a: Int, b: Int) = bar()
+}
+
+fun bar(): Pair<Int?, Int?> = null to null
+
+class Classes {
+    val p: Int = 1 // ok
+    <!INITIALIZER_TYPE_MISMATCH{LT}!>val <!INITIALIZER_TYPE_MISMATCH{PSI}!>incorrect<!>: C = B()<!>
+    val correct: A = C()
+}
+
+class Expressions {
+    val n: Number = 1 // ok
+    <!INITIALIZER_TYPE_MISMATCH{LT}!>val <!INITIALIZER_TYPE_MISMATCH{PSI}!>s<!>: Number = "" // not ok<!>
+    <!INITIALIZER_TYPE_MISMATCH{LT}!>val <!INITIALIZER_TYPE_MISMATCH{PSI}!>s2<!>: Number = "" + "expression" // not ok<!>
+}
+
+class Generics {
+    val n: SortedSet<Int> = TreeSet() // ok
+    val b: SortedSet<Int> = TreeSet<Int>() // ok
+}

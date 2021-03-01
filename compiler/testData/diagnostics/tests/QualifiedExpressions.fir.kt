@@ -2,7 +2,7 @@
 package qualified_expressions
 
 fun test(s: IntRange?) {
-   val a: Int = s?.start
+   val a: Int = <!INITIALIZER_TYPE_MISMATCH!>s?.start<!>
    val b: Int? = s?.start
    val c: Int = s?.start ?: -11
    val d: Int = s?.start ?: "empty"

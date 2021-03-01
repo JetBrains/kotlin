@@ -3,7 +3,7 @@
 fun <E> bar(x: E) {}
 
 fun <T> foo(): T {
-    val x1: T = null
+    val x1: T = <!INITIALIZER_TYPE_MISMATCH!>null<!>
     val x2: T? = null
 
     bar<T>(<!ARGUMENT_TYPE_MISMATCH!>null<!>)
@@ -20,7 +20,7 @@ class A<F> {
     fun xyz(x: F) {}
 
     fun foo(): F {
-        val x1: F = null
+        val x1: F = <!INITIALIZER_TYPE_MISMATCH!>null<!>
         val x2: F? = null
 
         xyz(<!ARGUMENT_TYPE_MISMATCH!>null<!>)

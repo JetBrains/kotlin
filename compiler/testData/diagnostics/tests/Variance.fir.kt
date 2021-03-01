@@ -8,13 +8,13 @@ abstract class Producer<out T> {}
 abstract class Usual<T> {}
 
 fun foo(c: Consumer<Int>, p: Producer<Int>, u: Usual<Int>) {
-    val c1: Consumer<Any> = c
+    val c1: Consumer<Any> = <!INITIALIZER_TYPE_MISMATCH!>c<!>
     val c2: Consumer<Int> = c1
 
     val p1: Producer<Any> = p
     val p2: Producer<Int> = p1
 
-    val u1: Usual<Any> = u
+    val u1: Usual<Any> = <!INITIALIZER_TYPE_MISMATCH!>u<!>
     val u2: Usual<Int> = u1
 }
 

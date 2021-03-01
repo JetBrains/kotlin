@@ -4,32 +4,32 @@
 
 // TESTCASE NUMBER: 1
 fun case_1() {
-    val x: Int = null
+    val x: Int = <!INITIALIZER_TYPE_MISMATCH!>null<!>
 }
 
 // TESTCASE NUMBER: 2
 fun case_2() {
-    val x: Any = null
+    val x: Any = <!INITIALIZER_TYPE_MISMATCH!>null<!>
 }
 
 // TESTCASE NUMBER: 3
 fun case_3() {
-    val x: Nothing = null
+    val x: Nothing = <!INITIALIZER_TYPE_MISMATCH!>null<!>
 }
 
 // TESTCASE NUMBER: 4
 fun case_4() {
-    var x: Int = null
+    var x: Int = <!INITIALIZER_TYPE_MISMATCH!>null<!>
 }
 
 // TESTCASE NUMBER: 5
 fun case_5() {
-    var x: Any = null
+    var x: Any = <!INITIALIZER_TYPE_MISMATCH!>null<!>
 }
 
 // TESTCASE NUMBER: 6
 fun case_6() {
-    var x: Nothing = null
+    var x: Nothing = <!INITIALIZER_TYPE_MISMATCH!>null<!>
 }
 
 // TESTCASE NUMBER: 7
@@ -47,7 +47,7 @@ fun case_8() {
 // TESTCASE NUMBER: 9
 fun case_9() {
     val x = null
-    val y: Int = x
+    val y: Int = <!INITIALIZER_TYPE_MISMATCH!>x<!>
 }
 
 // TESTCASE NUMBER: 10

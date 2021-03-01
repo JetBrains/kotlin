@@ -34,6 +34,6 @@ fun main() {
         }
     }
 
-    val f : String = a<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
+    val f : String = <!INITIALIZER_TYPE_MISMATCH!>a<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!><!>
     checkSubtype<String>(<!ARGUMENT_TYPE_MISMATCH!>a<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!><!>)
 }

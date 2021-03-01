@@ -60,6 +60,6 @@ const val constVal = 10
 
 val globalVariableWithGetter: Int get() = 0
 
-val prop: UByte = 255
+val prop: UByte = <!INITIALIZER_TYPE_MISMATCH!>255<!>
 
 fun Int.myPlus(other: Int): Int = this + other

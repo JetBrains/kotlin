@@ -27,7 +27,7 @@ fun foo() {
             z = 34
         }
     }
-    val f: ()-> Int = r
+    val f: ()-> Int = <!INITIALIZER_TYPE_MISMATCH!>r<!>
     val g: ()-> Any = r
 }
 
@@ -80,7 +80,7 @@ fun testCoercionToUnit() {
             45
         }
     }
-    val f : () -> String = checkType
+    val f : () -> String = <!INITIALIZER_TYPE_MISMATCH!>checkType<!>
 }
 
 fun doSmth(i: Int) {}

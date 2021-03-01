@@ -11,7 +11,7 @@ fun foo(x: A<String, Any?>, cs: CharSequence, ls: List<CharSequence>) {
     val y: A<CharSequence, String> = x
 
     y.foo(<!ARGUMENT_TYPE_MISMATCH!>cs<!>)
-    val s: String = y.foo(<!ARGUMENT_TYPE_MISMATCH!>cs<!>, <!ARGUMENT_TYPE_MISMATCH!>ls<!>)
+    val s: String = <!INITIALIZER_TYPE_MISMATCH!>y.foo(<!ARGUMENT_TYPE_MISMATCH!>cs<!>, <!ARGUMENT_TYPE_MISMATCH!>ls<!>)<!>
 
-    val ls2: List<String> = y.bar()
+    val ls2: List<String> = <!INITIALIZER_TYPE_MISMATCH!>y.bar()<!>
 }
