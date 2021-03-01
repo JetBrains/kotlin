@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
+import org.jetbrains.kotlin.metadata.jvm.deserialization.BitEncoding
 import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.protobuf.MessageLite
@@ -241,6 +242,11 @@ class ClassCodegen private constructor(
             entry is MultifileFacadeFileEntry -> KotlinClassHeader.Kind.MULTIFILE_CLASS
             else -> KotlinClassHeader.Kind.SYNTHETIC_CLASS
         }
+        val serializedIr = when (metadata) {
+            is MetadataSource.Class -> metadata.serializedIr
+            is MetadataSource.File -> metadata.serializedIr
+            else -> null
+        }
 
         val isMultifileClassOrPart = kind == KotlinClassHeader.Kind.MULTIFILE_CLASS || kind == KotlinClassHeader.Kind.MULTIFILE_CLASS_PART
 
@@ -252,15 +258,15 @@ class ClassCodegen private constructor(
             extraFlags = extraFlags or JvmAnnotationNames.METADATA_SCRIPT_FLAG
         }
 
-        writeKotlinMetadata(visitor, state, kind, extraFlags) {
+        writeKotlinMetadata(visitor, state, kind, extraFlags) { av ->
             if (metadata != null) {
                 metadataSerializer.serialize(metadata)?.let { (proto, stringTable) ->
-                    DescriptorAsmUtil.writeAnnotationData(it, proto, stringTable)
+                    DescriptorAsmUtil.writeAnnotationData(av, proto, stringTable)
                 }
             }
 
             if (entry is MultifileFacadeFileEntry) {
-                val arv = it.visitArray(JvmAnnotationNames.METADATA_DATA_FIELD_NAME)
+                val arv = av.visitArray(JvmAnnotationNames.METADATA_DATA_FIELD_NAME)
                 for (partFile in entry.partFiles) {
                     val fileClass = partFile.declarations.singleOrNull { it.isFileClass } as IrClass?
                     if (fileClass != null) arv.visit(null, typeMapper.mapClass(fileClass).internalName)
@@ -269,14 +275,16 @@ class ClassCodegen private constructor(
             }
 
             if (facadeClassName != null) {
-                it.visit(JvmAnnotationNames.METADATA_MULTIFILE_CLASS_NAME_FIELD_NAME, facadeClassName.internalName)
+                av.visit(JvmAnnotationNames.METADATA_MULTIFILE_CLASS_NAME_FIELD_NAME, facadeClassName.internalName)
             }
 
             if (irClass in context.classNameOverride) {
                 val isFileClass = isMultifileClassOrPart || kind == KotlinClassHeader.Kind.FILE_FACADE
                 assert(isFileClass) { "JvmPackageName is not supported for classes: ${irClass.render()}" }
-                it.visit(JvmAnnotationNames.METADATA_PACKAGE_NAME_FIELD_NAME, irClass.fqNameWhenAvailable!!.parent().asString())
+                av.visit(JvmAnnotationNames.METADATA_PACKAGE_NAME_FIELD_NAME, irClass.fqNameWhenAvailable!!.parent().asString())
             }
+
+            serializedIr?.let { storeSerializedIr(av, it) }
         }
     }
 
@@ -562,3 +570,12 @@ private val Modality.flags: Int
 
 private val DescriptorVisibility.flags: Int
     get() = DescriptorAsmUtil.getVisibilityAccessFlag(this) ?: throw AssertionError("Unsupported visibility $this")
+
+private fun storeSerializedIr(av: AnnotationVisitor, serializedIr: ByteArray) {
+    val serializedIrParts = BitEncoding.encodeBytes(serializedIr)
+    val partsVisitor = av.visitArray(JvmAnnotationNames.METADATA_SERIALIZED_IR_FIELD_NAME)
+    for (part in serializedIrParts) {
+        partsVisitor.visit(null, part)
+    }
+    partsVisitor.visitEnd()
+}

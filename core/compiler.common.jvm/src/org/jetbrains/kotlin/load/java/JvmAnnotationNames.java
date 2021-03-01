@@ -37,6 +37,7 @@ public final class JvmAnnotationNames {
     public static final String METADATA_PACKAGE_NAME_FIELD_NAME = "pn";
     public static final String METADATA_MULTIFILE_CLASS_NAME_FIELD_NAME = METADATA_EXTRA_STRING_FIELD_NAME;
     public static final String METADATA_EXTRA_INT_FIELD_NAME = "xi";
+    public static final String METADATA_SERIALIZED_IR_FIELD_NAME = "si";
 
     public static final int METADATA_MULTIFILE_PARTS_INHERIT_FLAG = 1 << 0;
     public static final int METADATA_PRE_RELEASE_FLAG = 1 << 1;
