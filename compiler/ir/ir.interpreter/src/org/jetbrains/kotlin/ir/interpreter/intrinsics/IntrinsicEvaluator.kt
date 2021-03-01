@@ -23,6 +23,7 @@ internal class IntrinsicEvaluator {
             JsPrimitives.equalTo(irFunction) -> JsPrimitives.evaluate(irFunction, stack, interpret)
             ArrayConstructor.equalTo(irFunction) -> ArrayConstructor.evaluate(irFunction, stack, interpret)
             SourceLocation.equalTo(irFunction) -> SourceLocation.evaluate(irFunction, stack, interpret)
+            AssertIntrinsic.equalTo(irFunction) -> AssertIntrinsic.evaluate(irFunction, stack, interpret)
             else -> throw InterpreterMethodNotFoundError("Method ${irFunction.name} hasn't implemented")
         }
     }

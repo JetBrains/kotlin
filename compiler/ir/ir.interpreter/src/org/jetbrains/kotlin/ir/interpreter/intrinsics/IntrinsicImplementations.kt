@@ -206,3 +206,24 @@ internal object SourceLocation : IntrinsicBase() {
         return Next
     }
 }
+
+internal object AssertIntrinsic : IntrinsicBase() {
+    override fun equalTo(irFunction: IrFunction): Boolean {
+        val fqName = irFunction.fqNameWhenAvailable.toString()
+        return fqName == "kotlin.PreconditionsKt.assert"
+    }
+
+    override fun evaluate(irFunction: IrFunction, stack: Stack, interpret: IrElement.() -> ExecutionResult): ExecutionResult {
+        val value = stack.getVariable(irFunction.valueParameters.first().symbol).state.asBoolean()
+        when (irFunction.valueParameters.size) {
+            1 -> if (!value) AssertionError("Assertion failed").throwAsUserException()
+            2 -> if (!value) {
+                val messageLambda = stack.getVariable(irFunction.valueParameters.last().symbol).state as KFunctionState
+                stack.newFrame(asSubFrame = true) { messageLambda.irFunction.body!!.interpret() }
+                    .check(ReturnLabel.RETURN) { return it }
+                AssertionError(stack.popReturnValue().asString()).throwAsUserException()
+            }
+        }
+        return Next
+    }
+}
