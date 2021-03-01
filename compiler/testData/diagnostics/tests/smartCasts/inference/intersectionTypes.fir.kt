@@ -31,7 +31,7 @@ fun test(a: A, b: B, c: C) {
         val k = three(a, b, c)
         checkSubtype<A>(k)
         <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><B>(k)
-        val l: Int = three(a, b, c)
+        val l: Int = <!INITIALIZER_TYPE_MISMATCH!>three(a, b, c)<!>
 
         use(d, e, f, g, h, k, l)
     }

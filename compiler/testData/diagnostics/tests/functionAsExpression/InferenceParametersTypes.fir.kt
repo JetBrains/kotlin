@@ -17,4 +17,4 @@ fun test2(a: () -> List<Int>) {
 
 val a: (Int) -> Unit = fun(x) { checkSubtype<Int>(x) }
 
-val b: (Int) -> Unit = fun(x: String) {}
+val b: (Int) -> Unit = <!INITIALIZER_TYPE_MISMATCH!>fun(x: String) {}<!>

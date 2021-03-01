@@ -20,7 +20,7 @@ fun <X> InvBase<X>.myLastInv(): X = TODO()
 
 fun <T> fooInv(x: InvBase<T>) {
     if (x is InvDerived<*>) {
-        val l: T = x.<!INAPPLICABLE_CANDIDATE!>myLastInv<!>() // required T, found Cap(*). Only in NI
+        val l: T = <!INITIALIZER_TYPE_MISMATCH!>x.<!INAPPLICABLE_CANDIDATE!>myLastInv<!>()<!> // required T, found Cap(*). Only in NI
     }
 }
 

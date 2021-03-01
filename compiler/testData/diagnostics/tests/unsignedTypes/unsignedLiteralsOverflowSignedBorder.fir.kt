@@ -21,5 +21,5 @@ fun test() {
     takeUByte(0xFFu)
 }
 
-val s1: UByte = 256u
+val s1: UByte = <!INITIALIZER_TYPE_MISMATCH!>256u<!>
 val s2 = <!ILLEGAL_CONST_EXPRESSION!>18446744073709551616u<!>

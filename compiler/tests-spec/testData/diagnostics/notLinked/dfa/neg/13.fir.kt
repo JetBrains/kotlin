@@ -12,7 +12,7 @@ fun case_1(x: Class?) {
 
 // TESTCASE NUMBER: 2
 fun case_2() {
-    var x: Class? = 10
+    var x: Class? = <!INITIALIZER_TYPE_MISMATCH!>10<!>
     x!!
     <!NONE_APPLICABLE!>x<!>(if (true) {x=null;0} else 0, <!DEBUG_INFO_EXPRESSION_TYPE("Class?")!>x<!>)
     <!DEBUG_INFO_EXPRESSION_TYPE("Class?")!>x<!>

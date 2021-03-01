@@ -19,6 +19,6 @@ val test1 = generate {
     yield(A)
 }
 
-val test2: Int = generate {
+val test2: Int = <!INITIALIZER_TYPE_MISMATCH!>generate {
     yield(A())
-}
+}<!>

@@ -8,5 +8,5 @@ class Client<T, X: Base<T>>(x: X)
 
 fun test() {
     val c = Client(StringBase()) // Type inference fails here for T.
-    val i : Int = c
+    val i : Int = <!INITIALIZER_TYPE_MISMATCH!>c<!>
 }

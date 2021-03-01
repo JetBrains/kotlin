@@ -34,6 +34,6 @@ fun main() {
         }
     }
 
-    val f : String = a!!
+    val f : String = <!INITIALIZER_TYPE_MISMATCH!>a!!<!>
     <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><String>(a!!)
 }

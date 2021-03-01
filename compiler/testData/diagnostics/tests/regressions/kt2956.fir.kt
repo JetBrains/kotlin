@@ -1,1 +1,1 @@
-val a: String = Nothing
+val a: String = <!INITIALIZER_TYPE_MISMATCH!>Nothing<!>

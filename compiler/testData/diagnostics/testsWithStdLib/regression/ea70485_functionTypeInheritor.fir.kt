@@ -13,5 +13,5 @@ class Ext : String.() -> Unit {
 }
 
 fun test2() {
-    val f: Ext = {}
+    val f: Ext = <!INITIALIZER_TYPE_MISMATCH!>{}<!>
 }

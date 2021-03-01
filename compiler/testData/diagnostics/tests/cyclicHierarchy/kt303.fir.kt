@@ -9,4 +9,4 @@ open class Bar() : <!OTHER_ERROR!>Foo<!>() {
 
 }
 
-val x : Int = Foo()
+val x : Int = <!INITIALIZER_TYPE_MISMATCH!>Foo()<!>

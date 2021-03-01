@@ -171,31 +171,31 @@ class B() {
 }
 
 fun testFunctionLiterals() {
-    val endsWithVarDeclaration : () -> Boolean = {
+    val endsWithVarDeclaration : () -> Boolean = <!INITIALIZER_TYPE_MISMATCH!>{
         val x = 2
-    }
+    }<!>
 
-    val endsWithAssignment: () -> Int = {
+    val endsWithAssignment: () -> Int = <!INITIALIZER_TYPE_MISMATCH!>{
         var x = 1
         x = 333
-    }
+    }<!>
 
-    val endsWithReAssignment: () -> Int = {
+    val endsWithReAssignment: () -> Int = <!INITIALIZER_TYPE_MISMATCH!>{
         var x = 1
         x += 333
-    }
+    }<!>
 
-    val endsWithFunDeclaration : () -> String = {
+    val endsWithFunDeclaration : () -> String = <!INITIALIZER_TYPE_MISMATCH!>{
         var x = 1
         x = 333
         fun meow() : Unit {}
-    }
+    }<!>
 
-    val endsWithObjectDeclaration : () -> Int = {
+    val endsWithObjectDeclaration : () -> Int = <!INITIALIZER_TYPE_MISMATCH!>{
         var x = 1
         x = 333
         <!LOCAL_OBJECT_NOT_ALLOWED!>object A<!> {}
-    }
+    }<!>
 
     val expectedUnitReturnType1: () -> Unit = {
         val x = 1

@@ -7,13 +7,13 @@ class A {
 }
 
 fun foo() {
-    val i1: Int = Boo
-    val i2: Int = A.Boo
+    val i1: Int = <!INITIALIZER_TYPE_MISMATCH!>Boo<!>
+    val i2: Int = <!INITIALIZER_TYPE_MISMATCH!>A.Boo<!>
     <!INAPPLICABLE_CANDIDATE!>useInt<!>(Boo)
     <!INAPPLICABLE_CANDIDATE!>useInt<!>(A.Boo)
 }
 fun bar() {
-    val i1: Int = Unit
+    val i1: Int = <!INITIALIZER_TYPE_MISMATCH!>Unit<!>
     <!INAPPLICABLE_CANDIDATE!>useInt<!>(Unit)
 }
 

@@ -55,6 +55,7 @@ enum class PositioningStrategy(private val strategy: String? = null) {
     VALUE_ARGUMENTS,
     SUPERTYPES_LIST,
     RETURN_WITH_LABEL,
+    ASSIGNMENT_VALUE,
 
     ;
 

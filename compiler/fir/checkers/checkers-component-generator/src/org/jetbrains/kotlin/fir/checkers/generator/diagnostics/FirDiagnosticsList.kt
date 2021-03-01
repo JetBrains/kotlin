@@ -299,9 +299,9 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         }
 
         val UPPER_BOUND_IS_EXTENSION_FUNCTION_TYPE by error<FirSourceElement, PsiElement>()
-        
+
         val BOUNDS_NOT_ALLOWED_IF_BOUNDED_BY_TYPE_PARAMETER by error<FirSourceElement, PsiElement>()
-        
+
         val ONLY_ONE_CLASS_BOUND_ALLOWED by error<FirSourceElement, PsiElement>()
     }
 
@@ -480,6 +480,10 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val WRONG_SETTER_PARAMETER_TYPE by error<FirSourceElement, KtTypeReference> {
             parameter<ConeKotlinType>("expectedType")
             parameter<ConeKotlinType>("actualType")
+        }
+        val INITIALIZER_TYPE_MISMATCH by error<FirSourceElement, KtProperty>(PositioningStrategy.ASSIGNMENT_VALUE) {
+            parameter<ConeKotlinType>("expected")
+            parameter<ConeKotlinType>("actual")
         }
     }
 

@@ -17,7 +17,8 @@ public class Inv<T> {
 // FILE: test.kt
 
 fun test(inv: Inv<String>) {
-    val m: ((String) -> String) -> Inv<String> = inv::map
+    // InitializerTypeMismatch Checker bug?
+    val m: ((String) -> String) -> Inv<String> = <!INITIALIZER_TYPE_MISMATCH!>inv::map<!>
     <!INAPPLICABLE_CANDIDATE!>take<!>(inv::<!UNRESOLVED_REFERENCE!>map<!>)
 }
 

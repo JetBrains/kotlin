@@ -11,7 +11,11 @@ fun foo(x: A<String, Any?>, cs: CharSequence, ls: List<CharSequence>) {
     val y: A<CharSequence, String> = x
 
     y.<!INAPPLICABLE_CANDIDATE!>foo<!>(cs)
-    val s: String = y.<!INAPPLICABLE_CANDIDATE!>foo<!>(cs, ls)
+    // behaviour is different from old front-end
+    // the type of y.foo() was String, but now it is Any?
+    val s: String = <!INITIALIZER_TYPE_MISMATCH!>y.<!INAPPLICABLE_CANDIDATE!>foo<!>(cs, ls)<!>
 
-    val ls2: List<String> = y.bar()
+    // behaviour is different from old front-end
+    // the type of y.foo() was List<String>, but now it is Any?
+    val ls2: List<String> = <!INITIALIZER_TYPE_MISMATCH!>y.bar()<!>
 }

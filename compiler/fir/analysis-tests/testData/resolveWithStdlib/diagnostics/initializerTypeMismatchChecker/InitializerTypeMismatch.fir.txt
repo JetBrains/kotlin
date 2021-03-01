@@ -1,0 +1,69 @@
+FILE: InitializerTypeMismatch.kt
+    public open class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public open class B : R|A| {
+        public constructor(): R|B| {
+            super<R|A|>()
+        }
+
+    }
+    public final class C : R|B| {
+        public constructor(): R|C| {
+            super<R|B|>()
+        }
+
+    }
+    public final fun foo(): R|kotlin/Unit| {
+        lval <destruct>: R|kotlin/Pair<kotlin/Int?, kotlin/Int?>| = R|/bar|()
+        lval a: R|kotlin/Int| = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Pair.component1: R|kotlin/Int?|>|()
+        lval b: R|kotlin/Int| = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Pair.component2: R|kotlin/Int?|>|()
+    }
+    public final fun bar(): R|kotlin/Pair<kotlin/Int?, kotlin/Int?>| {
+        ^bar Null(null).R|kotlin/to|<R|kotlin/Nothing?|, R|kotlin/Nothing?|>(Null(null))
+    }
+    public final class Classes : R|kotlin/Any| {
+        public constructor(): R|Classes| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val p: R|kotlin/Int| = Int(1)
+            public get(): R|kotlin/Int|
+
+        public final val incorrect: R|C| = R|/B.B|()
+            public get(): R|C|
+
+        public final val correct: R|A| = R|/C.C|()
+            public get(): R|A|
+
+    }
+    public final class Expressions : R|kotlin/Any| {
+        public constructor(): R|Expressions| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val n: R|kotlin/Number| = Int(1)
+            public get(): R|kotlin/Number|
+
+        public final val s: R|kotlin/Number| = String()
+            public get(): R|kotlin/Number|
+
+        public final val s2: R|kotlin/Number| = String().R|kotlin/String.plus|(String(expression))
+            public get(): R|kotlin/Number|
+
+    }
+    public final class Generics : R|kotlin/Any| {
+        public constructor(): R|Generics| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val n: R|java/util/SortedSet<kotlin/Int>| = R|java/util/TreeSet.TreeSet|<R|ft<kotlin/Int, kotlin/Int?>|>()
+            public get(): R|java/util/SortedSet<kotlin/Int>|
+
+        public final val b: R|java/util/SortedSet<kotlin/Int>| = R|java/util/TreeSet.TreeSet|<R|ft<kotlin/Int, kotlin/Int?>|>()
+            public get(): R|java/util/SortedSet<kotlin/Int>|
+
+    }

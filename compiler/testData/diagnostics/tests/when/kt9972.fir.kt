@@ -21,9 +21,9 @@ fun test1(): Int {
 }
 
 fun test2(): Int {
-    val x: String = when {
+    val x: String = <!INITIALIZER_TYPE_MISMATCH!>when {
                         true -> Any()
                         else -> null
-                    } ?: return 0
+                    } ?: return 0<!>
     return x.hashCode()
 }

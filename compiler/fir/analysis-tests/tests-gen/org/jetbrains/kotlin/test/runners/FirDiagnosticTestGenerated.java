@@ -4755,6 +4755,32 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
         }
 
         @Nested
+        @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/diagnostics")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Diagnostics {
+            @Test
+            public void testAllFilesPresentInDiagnostics() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/diagnostics"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            }
+
+            @Nested
+            @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/diagnostics/initializerTypeMismatchChecker")
+            @TestDataPath("$PROJECT_ROOT")
+            public class InitializerTypeMismatchChecker {
+                @Test
+                public void testAllFilesPresentInInitializerTypeMismatchChecker() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/diagnostics/initializerTypeMismatchChecker"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+                }
+
+                @Test
+                @TestMetadata("functionType.kt")
+                public void testFunctionType() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/diagnostics/initializerTypeMismatchChecker/functionType.kt");
+                }
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference")
         @TestDataPath("$PROJECT_ROOT")
         public class Inference {

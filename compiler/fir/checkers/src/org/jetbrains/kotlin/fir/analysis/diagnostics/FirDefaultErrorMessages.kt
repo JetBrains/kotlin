@@ -105,6 +105,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_LATE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCOMPATIBLE_MODIFIERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INFERENCE_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INITIALIZER_REQUIRED_FOR_DESTRUCTURING_DECLARATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INITIALIZER_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INLINE_CLASS_CANNOT_BE_RECURSIVE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INLINE_CLASS_CANNOT_EXTEND_CLASSES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INLINE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION
@@ -659,6 +660,7 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
                 RENDER_TYPE,
                 RENDER_TYPE
             )
+            map.put(INITIALIZER_TYPE_MISMATCH, "Initializer type mismatch: expected {0}, actual {1}", RENDER_TYPE, RENDER_TYPE)
 
             // Multi-platform projects
             map.put(EXPECTED_DECLARATION_WITH_BODY, "Expected declaration must not have a body")

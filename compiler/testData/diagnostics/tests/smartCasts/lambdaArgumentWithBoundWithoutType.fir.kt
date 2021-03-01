@@ -19,8 +19,8 @@ val foofoo: Foo = run {
     x
 }
 
-val bar: Bar = run {
+val bar: Bar = <!INITIALIZER_TYPE_MISMATCH!>run {
     val x = foo()
     if (x == null) throw Exception()
     x
-}
+}<!>

@@ -172,4 +172,9 @@ object SourceElementPositioningStrategies {
         LightTreePositioningStrategies.RETURN_WITH_LABEL,
         PositioningStrategies.RETURN_WITH_LABEL
     )
+
+    val ASSIGNMENT_VALUE = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.ASSIGNMENT_VALUE,
+        PositioningStrategies.ASSIGNMENT_VALUE
+    )
 }

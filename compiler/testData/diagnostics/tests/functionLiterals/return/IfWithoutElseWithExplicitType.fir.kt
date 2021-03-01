@@ -1,8 +1,8 @@
 val flag = true
 
-val a: () -> Int = l@ {
+val a: () -> Int = <!INITIALIZER_TYPE_MISMATCH!>l@ {
     if (flag) return@l 4
-}
+}<!>
 
 val b: () -> Unit = l@ {
     if (flag) return@l 4
@@ -17,6 +17,6 @@ val d: () -> Int = l@ {
     5
 }
 
-val e: () -> Int = l@ {
+val e: () -> Int = <!INITIALIZER_TYPE_MISMATCH!>l@ {
     if (flag) 4
-}
+}<!>
