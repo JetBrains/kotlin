@@ -34,6 +34,7 @@ class TestDokkaConfigurationBuilder {
     var pluginsConfigurations: MutableList<PluginConfigurationImpl> = mutableListOf()
     var failOnWarning: Boolean = false
     var modules: List<DokkaModuleDescriptionImpl> = emptyList()
+    var suppressObviousFunctions: Boolean = DokkaDefaults.suppressObviousFunctions
     private val lazySourceSets = mutableListOf<Lazy<DokkaSourceSetImpl>>()
 
     fun build() = DokkaConfigurationImpl(
@@ -47,6 +48,7 @@ class TestDokkaConfigurationBuilder {
         pluginsConfiguration = pluginsConfigurations,
         modules = modules,
         failOnWarning = failOnWarning,
+        suppressObviousFunctions = suppressObviousFunctions
     )
 
     fun sourceSets(block: SourceSetsBuilder.() -> Unit) {

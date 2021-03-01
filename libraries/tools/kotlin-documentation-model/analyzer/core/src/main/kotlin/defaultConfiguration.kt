@@ -16,6 +16,7 @@ data class DokkaConfigurationImpl(
     override val modules: List<DokkaModuleDescriptionImpl> = emptyList(),
     override val failOnWarning: Boolean = DokkaDefaults.failOnWarning,
     override val delayTemplateSubstitution: Boolean = false,
+    override val suppressObviousFunctions: Boolean = DokkaDefaults.suppressObviousFunctions,
 ) : DokkaConfiguration
 
 data class PluginConfigurationImpl(

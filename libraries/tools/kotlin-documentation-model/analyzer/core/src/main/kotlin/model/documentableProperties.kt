@@ -34,3 +34,7 @@ data class ExceptionInSupertypes(val exceptions: SourceSetDependent<List<TypeCon
 
     override val key: ExtraProperty.Key<Documentable, *> = ExceptionInSupertypes
 }
+
+object ObviousMember : ExtraProperty<Documentable>, ExtraProperty.Key<Documentable, ObviousMember> {
+    override val key: ExtraProperty.Key<Documentable, *> = this
+}

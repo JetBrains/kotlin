@@ -6,7 +6,7 @@ import org.jetbrains.dokka.plugability.DokkaContext
 import org.jetbrains.dokka.model.doc.Suppress
 
 class SuppressTagDocumentableFilter(val dokkaContext: DokkaContext) :
-    SuppressedByTagDocumentableFilterTransformer(dokkaContext) {
+    SuppressedByConditionDocumentableFilterTransformer(dokkaContext) {
     override fun shouldBeSuppressed(d: Documentable): Boolean =
         d.documentation.any { (_, docs) -> docs.dfs { it is Suppress } != null }
 }
