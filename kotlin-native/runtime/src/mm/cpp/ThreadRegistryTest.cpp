@@ -16,8 +16,14 @@ using namespace kotlin;
 
 TEST(ThreadRegistryTest, RegisterCurrentThread) {
     std::thread t([]() {
-        auto* node = mm::ThreadRegistry::Instance().RegisterCurrentThread();
-        auto* threadData = node->Get();
+        class ScopedRegistration {
+        public:
+            ScopedRegistration() : node(mm::ThreadRegistry::Instance().RegisterCurrentThread()) {}
+            ~ScopedRegistration() { mm::ThreadRegistry::Instance().Unregister(node); }
+            mm::ThreadRegistry::Node* node;
+        } registration;
+
+        auto* threadData = registration.node->Get();
         EXPECT_EQ(pthread_self(), threadData->threadId());
         EXPECT_EQ(threadData, mm::ThreadRegistry::Instance().CurrentThreadData());
     });

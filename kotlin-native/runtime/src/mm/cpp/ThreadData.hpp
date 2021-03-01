@@ -66,6 +66,12 @@ public:
         objectFactoryThreadQueue_.Publish();
     }
 
+    void ClearForTests() noexcept {
+        globalsThreadQueue_.ClearForTests();
+        stableRefThreadQueue_.ClearForTests();
+        objectFactoryThreadQueue_.ClearForTests();
+    }
+
 private:
     const pthread_t threadId_;
     GlobalsRegistry::ThreadQueue globalsThreadQueue_;
