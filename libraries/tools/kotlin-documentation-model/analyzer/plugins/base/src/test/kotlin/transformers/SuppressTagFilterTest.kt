@@ -34,7 +34,7 @@ class SuppressTagFilterTest : BaseAbstractTest() {
             |class Suppressed 
             """.trimIndent(), configuration
         ) {
-            documentablesFirstTransformationStep = { modules ->
+            preMergeDocumentablesTransformationStage = { modules ->
                 assertEquals(
                     "NotSuppressed",
                     modules.flatMap { it.packages }.flatMap { it.classlikes }.singleOrNull()?.name
@@ -57,7 +57,7 @@ class SuppressTagFilterTest : BaseAbstractTest() {
             |}
             """.trimIndent(), configuration
         ) {
-            documentablesFirstTransformationStep = { modules ->
+            preMergeDocumentablesTransformationStage = { modules ->
                 assertNull(modules.flatMap { it.packages }.flatMap { it.classlikes }.flatMap { it.functions }
                     .firstOrNull { it.name == "suppressedFun" })
             }
@@ -81,7 +81,7 @@ class SuppressTagFilterTest : BaseAbstractTest() {
             |fun notSuppressedFun() { }
             """.trimIndent(), configuration
         ) {
-            documentablesFirstTransformationStep = { modules ->
+            preMergeDocumentablesTransformationStage = { modules ->
                 assertNull(modules.flatMap { it.packages }.flatMap { it.functions }
                     .firstOrNull { it.name == "suppressedFun" })
             }
@@ -105,7 +105,7 @@ class SuppressTagFilterTest : BaseAbstractTest() {
             |typealias notSuppressedTypeAlias = String
             """.trimIndent(), configuration
         ) {
-            documentablesFirstTransformationStep = { modules ->
+            preMergeDocumentablesTransformationStage = { modules ->
                 assertNull(modules.flatMap { it.packages }.flatMap { it.typealiases }
                     .firstOrNull { it.name == "suppressedTypeAlias" })
                 assertNotNull(modules.flatMap { it.packages }.flatMap { it.typealiases }
@@ -129,7 +129,7 @@ class SuppressTagFilterTest : BaseAbstractTest() {
             |}
             """.trimIndent(), configuration
         ) {
-            documentablesFirstTransformationStep = { modules ->
+            preMergeDocumentablesTransformationStage = { modules ->
                 assertNull((modules.flatMap { it.packages }.flatMap { it.classlikes }
                     .firstOrNull { it.name == "Suppressed" } as? WithCompanion)?.companion)
             }
@@ -152,7 +152,7 @@ class SuppressTagFilterTest : BaseAbstractTest() {
             |}
             """.trimIndent(), configuration
         ) {
-            documentablesFirstTransformationStep = { modules ->
+            preMergeDocumentablesTransformationStage = { modules ->
                 val testingClass = modules.flatMap { it.packages }.flatMap { it.classlikes }.single()
                 assertNull(testingClass.classlikes.firstOrNull())
             }
@@ -178,7 +178,7 @@ class SuppressTagFilterTest : BaseAbstractTest() {
             |}
             """.trimIndent(), configuration
         ) {
-            documentablesFirstTransformationStep = { modules ->
+            preMergeDocumentablesTransformationStage = { modules ->
                 val testingClass = modules.flatMap { it.packages }.flatMap { it.classlikes }.single() as DEnum
                 assertEquals(listOf("NOT_SUPPRESSED"), testingClass.entries.map { it.name })
             }
