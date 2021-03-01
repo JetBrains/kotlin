@@ -115,7 +115,9 @@ private class VariableLookupElementFactory {
         if (setterName != null) "$getterName()/$setterName()" else "$getterName()"
 
     private fun createInsertHandler(symbol: KtVariableLikeSymbol): InsertHandler<LookupElement> {
-        return QuotedNamesAwareInsertionHandler(symbol.name)
+        val callableId = symbol.callableIdIfExists ?: return QuotedNamesAwareInsertionHandler(symbol.name)
+
+        return ShorteningVariableInsertionHandler(callableId)
     }
 
     private val KtVariableLikeSymbol.callableIdIfExists: FqName?
@@ -314,6 +316,21 @@ private class ShorteningFunctionInsertionHandler(
         context.commitDocument()
 
         addArguments(context, element)
+        context.commitDocument()
+
+        shortenReferences(targetFile, TextRange(context.startOffset, context.tailOffset))
+    }
+}
+
+private class ShorteningVariableInsertionHandler(private val name: FqName) : InsertHandler<LookupElement> {
+    override fun handleInsert(context: InsertionContext, item: LookupElement) {
+        val targetFile = context.file as? KtFile ?: return
+
+        context.document.replaceString(
+            context.startOffset,
+            context.tailOffset,
+            name.withRootPrefixIfNeeded().render()
+        )
         context.commitDocument()
 
         shortenReferences(targetFile, TextRange(context.startOffset, context.tailOffset))
