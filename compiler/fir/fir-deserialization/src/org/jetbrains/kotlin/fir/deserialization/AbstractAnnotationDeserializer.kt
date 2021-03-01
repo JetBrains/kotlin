@@ -78,6 +78,7 @@ abstract class AbstractAnnotationDeserializer(
     open fun loadPropertyAnnotations(
         containerSource: DeserializedContainerSource?,
         propertyProto: ProtoBuf.Property,
+        containingClassProto: ProtoBuf.Class?,
         nameResolver: NameResolver,
         typeTable: TypeTable
     ): List<FirAnnotationCall> {
