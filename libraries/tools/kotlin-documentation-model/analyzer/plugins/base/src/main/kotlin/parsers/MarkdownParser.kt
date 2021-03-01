@@ -1,6 +1,7 @@
 package org.jetbrains.dokka.base.parsers
 
 import com.intellij.psi.PsiElement
+import org.intellij.markdown.MarkdownElementType
 import org.intellij.markdown.MarkdownElementTypes
 import org.intellij.markdown.MarkdownTokenTypes
 import org.intellij.markdown.ast.ASTNode
@@ -370,7 +371,19 @@ open class MarkdownParser(
         this.filterNot { it.type == GFMTokenTypes.TABLE_SEPARATOR }
 
     private fun List<ASTNode>.evaluateChildren(): List<DocTag> =
-        this.removeUselessTokens().mergeLeafASTNodes().map { visitNode(it) }
+        this.removeUselessTokens().swapImagesThatShouldBeLinks().mergeLeafASTNodes().map { visitNode(it) }
+
+    private fun List<ASTNode>.swapImagesThatShouldBeLinks(): List<ASTNode> =
+        flatMap { node ->
+            if (node.type == MarkdownElementTypes.IMAGE
+                && node.children.firstOrNull()?.let { it is LeafASTNode && it.type.name == "!" } == true
+                && node.children.lastOrNull()?.type == MarkdownElementTypes.SHORT_REFERENCE_LINK
+            ) {
+                node.children
+            } else {
+                listOf(node)
+            }
+        }
 
     private fun List<ASTNode>.removeUselessTokens(): List<ASTNode> =
         this.filterIndexed { index, node ->
@@ -452,7 +465,8 @@ open class MarkdownParser(
                     if (link is DocumentationLink) link.dri else null
                 }
 
-                val allTags = listOf(kDocTag) + if(kDocTag.canHaveParent()) getAllKDocTags(findParent(kDocTag)) else emptyList()
+                val allTags =
+                    listOf(kDocTag) + if (kDocTag.canHaveParent()) getAllKDocTags(findParent(kDocTag)) else emptyList()
                 DocumentationNode(
                     allTags.map {
                         when (it.knownTag) {
