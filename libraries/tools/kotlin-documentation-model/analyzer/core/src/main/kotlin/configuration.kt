@@ -32,6 +32,7 @@ object DokkaDefaults {
     const val sourceSetName = "main"
     val moduleVersion: String? = null
     val pluginsConfiguration = mutableListOf<PluginConfigurationImpl>()
+    const val suppressObviousFunctions = true
 }
 
 enum class Platform(val key: String) {
@@ -98,6 +99,7 @@ interface DokkaConfiguration : Serializable {
     val pluginsClasspath: List<File>
     val pluginsConfiguration: List<PluginConfiguration>
     val delayTemplateSubstitution: Boolean
+    val suppressObviousFunctions: Boolean
 
     enum class SerializationFormat : Serializable {
         JSON, XML

@@ -4,7 +4,7 @@ import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.plugability.DokkaContext
 import org.jetbrains.dokka.transformers.documentation.PreMergeDocumentableTransformer
 
-abstract class SuppressedByTagDocumentableFilterTransformer(val context: DokkaContext) : PreMergeDocumentableTransformer {
+abstract class SuppressedByConditionDocumentableFilterTransformer(val context: DokkaContext) : PreMergeDocumentableTransformer {
     override fun invoke(modules: List<DModule>): List<DModule> =
         modules.map { module ->
             val (documentable, wasChanged) = processModule(module)

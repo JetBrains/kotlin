@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test
 
 class DefaultDescriptorToDocumentableTranslatorTest : BaseAbstractTest() {
     val configuration = dokkaConfiguration {
+        suppressObviousFunctions = false
         sourceSets {
             sourceSet {
                 sourceRoots = listOf("src/main/kotlin")
