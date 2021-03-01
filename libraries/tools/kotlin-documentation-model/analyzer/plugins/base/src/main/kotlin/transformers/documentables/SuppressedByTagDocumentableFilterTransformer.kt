@@ -1,0 +1,110 @@
+package org.jetbrains.dokka.base.transformers.documentables
+
+import org.jetbrains.dokka.model.*
+import org.jetbrains.dokka.plugability.DokkaContext
+import org.jetbrains.dokka.transformers.documentation.PreMergeDocumentableTransformer
+
+abstract class SuppressedByTagDocumentableFilterTransformer(val context: DokkaContext) : PreMergeDocumentableTransformer {
+    override fun invoke(modules: List<DModule>): List<DModule> =
+        modules.map { module ->
+            val (documentable, wasChanged) = processModule(module)
+            documentable.takeIf { wasChanged } ?: module
+        }
+
+    abstract fun shouldBeSuppressed(d: Documentable): Boolean
+
+    private fun processModule(module: DModule): DocumentableWithChanges<DModule> {
+        val afterProcessing = module.packages.map { processPackage(it) }
+        val processedModule = module.takeIf { afterProcessing.none { it.changed } }
+            ?: module.copy(packages = afterProcessing.mapNotNull { it.documentable })
+        return DocumentableWithChanges(processedModule, afterProcessing.any { it.changed })
+    }
+
+    private fun processPackage(dPackage: DPackage): DocumentableWithChanges<DPackage> {
+        val classlikes = dPackage.classlikes.map { processClassLike(it) }
+        val typeAliases = dPackage.typealiases.map { processMember(it) }
+        val functions = dPackage.functions.map { processMember(it) }
+        val properies = dPackage.properties.map { processMember(it) }
+
+        val wasChanged = (classlikes + typeAliases + functions + properies).any { it.changed }
+        return (dPackage.takeIf { !wasChanged } ?: dPackage.copy(
+            classlikes = classlikes.mapNotNull { it.documentable },
+            typealiases = typeAliases.mapNotNull { it.documentable },
+            functions = functions.mapNotNull { it.documentable },
+            properties = properies.mapNotNull { it.documentable }
+        )).let { processedPackage -> DocumentableWithChanges(processedPackage, wasChanged) }
+    }
+
+    private fun processClassLike(classlike: DClasslike): DocumentableWithChanges<DClasslike> {
+        if (shouldBeSuppressed(classlike)) return DocumentableWithChanges.filteredDocumentable()
+
+        val functions = classlike.functions.map { processMember(it) }
+        val classlikes = classlike.classlikes.map { processClassLike(it) }
+        val properties = classlike.properties.map { processMember(it) }
+        val companion = (classlike as? WithCompanion)?.companion?.let { processClassLike(it) }
+
+        val wasClasslikeChanged = (functions + classlikes + properties).any { it.changed } || companion?.changed == true
+        return when (classlike) {
+            is DClass -> {
+                val constructors = classlike.constructors.map { processMember(it) }
+                val wasClassChange =
+                    wasClasslikeChanged || constructors.any { it.changed }
+                (classlike.takeIf { !wasClassChange } ?: classlike.copy(
+                    functions = functions.mapNotNull { it.documentable },
+                    classlikes = classlikes.mapNotNull { it.documentable },
+                    properties = properties.mapNotNull { it.documentable },
+                    constructors = constructors.mapNotNull { it.documentable },
+                    companion = companion?.documentable as? DObject
+                )).let { DocumentableWithChanges(it, wasClassChange) }
+            }
+            is DInterface -> (classlike.takeIf { !wasClasslikeChanged } ?: classlike.copy(
+                functions = functions.mapNotNull { it.documentable },
+                classlikes = classlikes.mapNotNull { it.documentable },
+                properties = properties.mapNotNull { it.documentable },
+                companion = companion?.documentable as? DObject
+            )).let { DocumentableWithChanges(it, wasClasslikeChanged) }
+            is DObject -> (classlike.takeIf { !wasClasslikeChanged } ?: classlike.copy(
+                functions = functions.mapNotNull { it.documentable },
+                classlikes = classlikes.mapNotNull { it.documentable },
+                properties = properties.mapNotNull { it.documentable },
+            )).let { DocumentableWithChanges(it, wasClasslikeChanged) }
+            is DAnnotation -> {
+                val constructors = classlike.constructors.map { processMember(it) }
+                val wasClassChange =
+                    wasClasslikeChanged || constructors.any { it.changed }
+                (classlike.takeIf { !wasClassChange } ?: classlike.copy(
+                    functions = functions.mapNotNull { it.documentable },
+                    classlikes = classlikes.mapNotNull { it.documentable },
+                    properties = properties.mapNotNull { it.documentable },
+                    constructors = constructors.mapNotNull { it.documentable },
+                    companion = companion?.documentable as? DObject
+                )).let { DocumentableWithChanges(it, wasClassChange) }
+            }
+            is DEnum -> {
+                val constructors = classlike.constructors.map { processMember(it) }
+                val entries = classlike.entries.map { processMember(it) }
+                val wasClassChange =
+                    wasClasslikeChanged || (constructors + entries).any { it.changed }
+                (classlike.takeIf { !wasClassChange } ?: classlike.copy(
+                    functions = functions.mapNotNull { it.documentable },
+                    classlikes = classlikes.mapNotNull { it.documentable },
+                    properties = properties.mapNotNull { it.documentable },
+                    constructors = constructors.mapNotNull { it.documentable },
+                    companion = companion?.documentable as? DObject,
+                    entries = entries.mapNotNull { it.documentable }
+                )).let { DocumentableWithChanges(it, wasClassChange) }
+            }
+        }
+    }
+
+    private fun <T : Documentable> processMember(member: T): DocumentableWithChanges<T> =
+        if (shouldBeSuppressed(member)) DocumentableWithChanges.filteredDocumentable()
+        else DocumentableWithChanges(member, false)
+
+    private data class DocumentableWithChanges<T : Documentable>(val documentable: T?, val changed: Boolean = false) {
+        companion object {
+            fun <T : Documentable> filteredDocumentable(): DocumentableWithChanges<T> =
+                DocumentableWithChanges(null, true)
+        }
+    }
+}

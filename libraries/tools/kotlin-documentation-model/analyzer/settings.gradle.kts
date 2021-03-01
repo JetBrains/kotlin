@@ -19,6 +19,7 @@ include("plugins:base:base-test-utils")
 include("plugins:all-modules-page")
 include("plugins:templating")
 include("plugins:versioning")
+include("plugins:android-documentation")
 
 include("plugins:mathjax")
 include("plugins:gfm")
