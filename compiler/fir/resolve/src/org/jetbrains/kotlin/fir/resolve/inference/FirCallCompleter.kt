@@ -222,8 +222,7 @@ class FirCallCompleter(
                 FirBuilderInferenceSession(transformer.resolutionContext, stubsForPostponedVariables as Map<ConeTypeVariable, ConeStubType>)
             }
 
-            val localContext = components.towerDataContextForAnonymousFunctions[lambdaArgument.symbol] ?: error("")
-            transformer.context.withSpecialTowerDataContext(localContext) {
+            transformer.context.withAnonymousFunctionTowerDataContext(lambdaArgument.symbol) {
                 if (builderInferenceSession != null) {
                     transformer.context.withInferenceSession(builderInferenceSession) {
                         lambdaArgument.transformSingle(transformer, ResolutionMode.LambdaResolution(expectedReturnTypeRef))

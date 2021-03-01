@@ -35,7 +35,6 @@ open class FirBodyResolveTransformer(
     val returnTypeCalculator: ReturnTypeCalculator = ReturnTypeCalculatorForFullBodyResolve(),
     outerBodyResolveContext: BodyResolveContext? = null
 ) : FirAbstractBodyResolveTransformer(phase) {
-    private var packageFqName = FqName.ROOT
 
     final override val context: BodyResolveContext =
         outerBodyResolveContext ?: BodyResolveContext(returnTypeCalculator, DataFlowAnalyzerContext.empty(session))
@@ -50,12 +49,9 @@ open class FirBodyResolveTransformer(
 
     override fun transformFile(file: FirFile, data: ResolutionMode): CompositeTransformResult<FirFile> {
         checkSessionConsistency(file)
-        context.cleanContextForAnonymousFunction()
-        context.towerDataContextForCallableReferences.clear()
-        context.cleanDataFlowContext()
+        context.clear()
         @OptIn(PrivateForInline::class)
         context.file = file
-        packageFqName = file.packageFqName
         return withScopeCleanup(context.fileImportsScope) {
             context.withTowerDataCleanup {
                 val importingScopes = createImportingScopes(file, session, components.scopeSession)

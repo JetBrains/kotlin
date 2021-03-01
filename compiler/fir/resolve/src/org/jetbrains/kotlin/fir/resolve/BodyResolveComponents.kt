@@ -10,6 +10,7 @@ import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.kotlin.fir.FirCallResolver
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.resolve.FirTowerDataMode.*
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitDispatchReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitExtensionReceiverValue
@@ -43,7 +44,6 @@ abstract class BodyResolveComponents : SessionHolder {
     abstract val towerDataElements: List<FirTowerDataElement>
     abstract val towerDataContext: FirTowerDataContext
     abstract val localScopes: FirLocalScopes
-    abstract val towerDataContextForAnonymousFunctions: TowerDataContextForAnonymousFunctions
     abstract val noExpectedType: FirTypeRef
     abstract val symbolProvider: FirSymbolProvider
     abstract val file: FirFile
@@ -175,9 +175,12 @@ class FirTowerDataContextsForClassParts(
     val forCompanionObject: FirTowerDataContext get() = modeMap.getValue(COMPANION_OBJECT)
     val forConstructorHeaders: FirTowerDataContext get() = modeMap.getValue(CONSTRUCTOR_HEADER)
 
+    val towerDataContextForAnonymousFunctions: MutableMap<FirAnonymousFunctionSymbol, FirTowerDataContext> = mutableMapOf()
+    val towerDataContextForCallableReferences: MutableMap<FirCallableReferenceAccess, FirTowerDataContext> = mutableMapOf()
+
     var special: FirTowerDataContext
         get() = modeMap.getValue(SPECIAL)
-        set(value) {
+        private set(value) {
             mode = SPECIAL
             modeMap[SPECIAL] = value
         }
@@ -186,6 +189,17 @@ class FirTowerDataContextsForClassParts(
         set(value) {
             modeMap[mode] = value
         }
+
+    fun setAnonymousFunctionContext(symbol: FirAnonymousFunctionSymbol) {
+        special = towerDataContextForAnonymousFunctions.getValue(symbol)
+    }
+
+    fun setCallableReferenceContextIfAny(access: FirCallableReferenceAccess) {
+        val context = towerDataContextForCallableReferences[access]
+        if (context != null) {
+            special = context
+        }
+    }
 
     fun withMemberDeclarationContext(newContextForMemberDeclarations: FirTowerDataContext): FirTowerDataContextsForClassParts =
         FirTowerDataContextsForClassParts(

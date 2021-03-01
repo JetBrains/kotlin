@@ -35,23 +35,27 @@ class BodyResolveContext(
     lateinit var file: FirFile
         internal set
 
-    val implicitReceiverStack: ImplicitReceiverStack get() = towerDataContext.implicitReceiverStack
-
-    val towerDataContext: FirTowerDataContext
-        get() = towerDataContextsForClassParts.currentContext
-
     @set:PrivateForInline
     var towerDataContextsForClassParts: FirTowerDataContextsForClassParts =
         FirTowerDataContextsForClassParts(forMemberDeclarations = FirTowerDataContext())
 
-    val containerIfAny: FirDeclaration?
-        get() = containers.lastOrNull()
+    val towerDataContext: FirTowerDataContext
+        get() = towerDataContextsForClassParts.currentContext
+
+    val implicitReceiverStack: ImplicitReceiverStack
+        get() = towerDataContext.implicitReceiverStack
+
+    val towerDataContextForAnonymousFunctions: MutableMap<FirAnonymousFunctionSymbol, FirTowerDataContext>
+        get() = towerDataContextsForClassParts.towerDataContextForAnonymousFunctions
+
+    val towerDataContextForCallableReferences: MutableMap<FirCallableReferenceAccess, FirTowerDataContext>
+        get() = towerDataContextsForClassParts.towerDataContextForCallableReferences
 
     @set:PrivateForInline
     var containers: PersistentList<FirDeclaration> = persistentListOf()
 
-    val towerDataContextForAnonymousFunctions: MutableMap<FirAnonymousFunctionSymbol, FirTowerDataContext> = mutableMapOf()
-    val towerDataContextForCallableReferences: MutableMap<FirCallableReferenceAccess, FirTowerDataContext> = mutableMapOf()
+    val containerIfAny: FirDeclaration?
+        get() = containers.lastOrNull()
 
     @set:PrivateForInline
     var inferenceSession: FirInferenceSession = FirInferenceSession.DEFAULT
@@ -115,9 +119,16 @@ class BodyResolveContext(
         }
     }
 
-    inline fun <T> withSpecialTowerDataContext(context: FirTowerDataContext, f: () -> T): T {
+    inline fun <T> withAnonymousFunctionTowerDataContext(symbol: FirAnonymousFunctionSymbol, f: () -> T): T {
         return withTowerModeCleanup {
-            towerDataContextsForClassParts.special = context
+            towerDataContextsForClassParts.setAnonymousFunctionContext(symbol)
+            f()
+        }
+    }
+
+    inline fun <T> withCallableReferenceTowerDataContext(access: FirCallableReferenceAccess, f: () -> T): T {
+        return withTowerModeCleanup {
+            towerDataContextsForClassParts.setCallableReferenceContextIfAny(access)
             f()
         }
     }
@@ -193,11 +204,9 @@ class BodyResolveContext(
         towerDataContextForAnonymousFunctions.remove(anonymousFunction.symbol)
     }
 
-    fun cleanContextForAnonymousFunction() {
+    fun clear() {
         towerDataContextForAnonymousFunctions.clear()
-    }
-
-    fun cleanDataFlowContext() {
+        towerDataContextForCallableReferences.clear()
         dataFlowAnalyzerContext.reset()
     }
 

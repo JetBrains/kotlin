@@ -140,7 +140,6 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
         override val file: FirFile get() = context.file
         override val implicitReceiverStack: ImplicitReceiverStack get() = context.implicitReceiverStack
         override val containingDeclarations: List<FirDeclaration> get() = context.containers
-        override val towerDataContextForAnonymousFunctions: TowerDataContextForAnonymousFunctions get() = context.towerDataContextForAnonymousFunctions
         override val returnTypeCalculator: ReturnTypeCalculator get() = context.returnTypeCalculator
         override val container: FirDeclaration get() = context.containerIfAny!!
 
