@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertIterableEquals
 import org.junit.jupiter.api.Test
 
-class SuppressedDocumentableFilterTransformerTest : BaseAbstractTest() {
+class SuppressedByConfigurationDocumentableFilterTransformerTest : BaseAbstractTest() {
 
     @Test
     fun `class filtered by package options`() {

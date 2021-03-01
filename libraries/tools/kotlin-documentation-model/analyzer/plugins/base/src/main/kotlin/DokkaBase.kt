@@ -67,7 +67,11 @@ class DokkaBase : DokkaPlugin() {
     }
 
     val suppressedDocumentableFilter by extending {
-        preMergeDocumentableTransformer providing ::SuppressedDocumentableFilterTransformer
+        preMergeDocumentableTransformer providing ::SuppressedByConfigurationDocumentableFilterTransformer
+    }
+
+    val suppressedBySuppressTagDocumentableFilter by extending {
+        preMergeDocumentableTransformer providing ::SuppressTagDocumentableFilter
     }
 
     val documentableVisbilityFilter by extending {
@@ -76,7 +80,12 @@ class DokkaBase : DokkaPlugin() {
 
     val emptyPackagesFilter by extending {
         preMergeDocumentableTransformer providing ::EmptyPackagesFilterTransformer order {
-            after(deprecatedDocumentableFilter, suppressedDocumentableFilter, documentableVisbilityFilter)
+            after(
+                deprecatedDocumentableFilter,
+                suppressedDocumentableFilter,
+                documentableVisbilityFilter,
+                suppressedBySuppressTagDocumentableFilter
+            )
         }
     }
 
