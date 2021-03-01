@@ -1,0 +1,7 @@
+depends = CoreFoundation CoreServices darwin posix
+language = Objective-C
+package = platform.MobileCoreServices
+modules = MobileCoreServices
+
+compilerOpts = -framework MobileCoreServices
+linkerOpts = -framework MobileCoreServices

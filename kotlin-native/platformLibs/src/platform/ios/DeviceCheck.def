@@ -1,0 +1,7 @@
+depends = CFNetwork CoreFoundation Foundation Security darwin posix
+language = Objective-C
+package = platform.DeviceCheck
+modules = DeviceCheck
+
+compilerOpts = -framework DeviceCheck
+linkerOpts = -framework DeviceCheck

@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtIfExpression
 import org.jetbrains.kotlin.psi.KtModifierListOwner
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
@@ -61,6 +62,7 @@ object FirErrors {
     val VARIABLE_EXPECTED by error0<FirSourceElement, PsiElement>()
     val RETURN_NOT_ALLOWED by error0<FirSourceElement, PsiElement>()
     val DELEGATION_IN_INTERFACE by error0<FirSourceElement, PsiElement>()
+    val NESTED_CLASS_NOT_ALLOWED by error1<FirSourceElement, KtNamedDeclaration, String>(SourceElementPositioningStrategies.DECLARATION_NAME)
 
     // Unresolved
     val HIDDEN by error1<FirSourceElement, PsiElement, AbstractFirBasedSymbol<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
@@ -180,7 +182,7 @@ object FirErrors {
     val NON_FINAL_MEMBER_IN_OBJECT by warning0<FirSourceElement, KtNamedDeclaration>(SourceElementPositioningStrategies.OPEN_MODIFIER)
 
     // Redeclarations
-    val MANY_COMPANION_OBJECTS by error0<FirSourceElement, PsiElement>()
+    val MANY_COMPANION_OBJECTS by error0<FirSourceElement, KtObjectDeclaration>(SourceElementPositioningStrategies.COMPANION_OBJECT)
     val CONFLICTING_OVERLOADS by error1<FirSourceElement, PsiElement, Collection<AbstractFirBasedSymbol<*>>>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
     val REDECLARATION by error1<FirSourceElement, PsiElement, Collection<AbstractFirBasedSymbol<*>>>()
     val ANY_METHOD_IMPLEMENTED_IN_INTERFACE by error0<FirSourceElement, PsiElement>()

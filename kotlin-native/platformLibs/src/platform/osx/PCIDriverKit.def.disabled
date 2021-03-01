@@ -1,0 +1,6 @@
+language = Objective-C
+package = platform.PCIDriverKit
+modules = PCIDriverKit
+compilerOpts = -framework PCIDriverKit
+linkerOpts = -framework PCIDriverKit
+#Disabled: part of DriverKit

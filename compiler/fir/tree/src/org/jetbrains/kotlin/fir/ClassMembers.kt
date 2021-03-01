@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir
 
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -29,7 +30,6 @@ fun FirCallableDeclaration<*>.containingClass(): ConeClassLikeLookupTag? {
 private object ContainingClassKey : FirDeclarationDataKey()
 var FirCallableDeclaration<*>.containingClassAttr: ConeClassLikeLookupTag? by FirDeclarationDataRegistry.data(ContainingClassKey)
 
-
 val FirCallableDeclaration<*>.isIntersectionOverride get() = origin == FirDeclarationOrigin.IntersectionOverride
 val FirCallableDeclaration<*>.isSubstitutionOverride get() = origin == FirDeclarationOrigin.SubstitutionOverride
 val FirCallableDeclaration<*>.isSubstitutionOrIntersectionOverride get() = isSubstitutionOverride || isIntersectionOverride
@@ -45,6 +45,12 @@ inline val <reified D : FirCallableDeclaration<*>> D.baseForIntersectionOverride
 
 inline val <reified S : FirCallableSymbol<*>> S.baseForIntersectionOverride: S?
     get() = fir.baseForIntersectionOverride?.symbol as S?
+
+val FirSimpleFunction.isJavaDefault: Boolean
+    get() {
+        if (isIntersectionOverride) return baseForIntersectionOverride!!.isJavaDefault
+        return origin == FirDeclarationOrigin.Enhancement && modality == Modality.OPEN
+    }
 
 inline fun <reified D : FirCallableDeclaration<*>> D.originalIfFakeOverride(): D? =
     originalForSubstitutionOverride ?: baseForIntersectionOverride

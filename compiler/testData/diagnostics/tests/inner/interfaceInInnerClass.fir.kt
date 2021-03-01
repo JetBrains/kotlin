@@ -1,5 +1,5 @@
 class Outer {
     inner class Inner {
-        interface TestNestedInterface
+        <!NESTED_CLASS_NOT_ALLOWED!>interface TestNestedInterface<!>
     }
 }

@@ -1,0 +1,45 @@
+depends =
+package = platform.posix
+headers = alloca.h ar.h assert.h complex.h ctype.h dirent.h dlfcn.h err.h errno.h fcntl.h \
+    fenv.h fnmatch.h fts.h ftw.h getopt.h grp.h inttypes.h libgen.h limits.h \
+    locale.h math.h memory.h netdb.h paths.h poll.h \
+    pthread.h pwd.h regex.h resolv.h sched.h search.h semaphore.h setjmp.h signal.h \
+    stdatomic.h stdbool.h stdint.h stdio.h stdlib.h string.h strings.h syslog.h termios.h \
+    time.h ucontext.h unistd.h utime.h utmp.h wchar.h wctype.h xlocale.h \
+    net/ethernet.h net/if.h net/if_arp.h net/route.h \
+    netinet/icmp6.h netinet/if_ether.h netinet/in.h netinet/in_systm.h \
+    netinet/ip.h netinet/ip6.h netinet/ip_icmp.h netinet/tcp.h netinet/udp.h \
+    sys/ioctl.h sys/ipc.h sys/mman.h sys/poll.h sys/ptrace.h \
+    sys/queue.h sys/select.h sys/shm.h sys/stat.h \
+    sys/time.h sys/times.h sys/utsname.h sys/wait.h
+
+linkerOpts = -ldl
+
+---
+// cinterop -target android_arm32 -def klib/src/platform/android/posix.def -o platform.posix.klib
+
+// Wrapper to access errno variable.
+static int posix_errno() {
+        return errno;
+}
+
+static void set_posix_errno(int value) {
+        errno = value;
+}
+
+
+// Wrapper to access h_errno variable.
+static int posix_h_errno() {
+        return h_errno;
+}
+
+static void set_posix_h_errno(int value) {
+        h_errno = value;
+}
+
+static int init_sockets() {
+        return 0;
+}
+
+static void deinit_sockets() {
+}

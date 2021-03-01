@@ -16,7 +16,6 @@ open class KotlinAndroid36GradleIT : KotlinAndroid34GradleIT() {
     override val androidGradlePluginVersion: AGPVersion
         get() = AGPVersion.v3_6_0
 
-    @Ignore
     @Test
     fun testAndroidMppSourceSets(): Unit = with(
         Project("new-mpp-android-source-sets")
@@ -26,7 +25,7 @@ open class KotlinAndroid36GradleIT : KotlinAndroid34GradleIT() {
         // leading to the issue that ":sourceSets" task is always in 'UP-TO-DATE' state.
         // Skipping this check until test will start using AGP 7.0-alpha03+
         if (GradleVersion.version(chooseWrapperVersionOrFinishTest()) < GradleVersion.version("6.8")) {
-            build("sourceSets", options = defaultBuildOptions().copy(debug = true)) {
+            build("sourceSets") {
                 assertSuccessful()
 
                 assertContains("Android resources: [lib/src/main/res, lib/src/androidMain/res]")

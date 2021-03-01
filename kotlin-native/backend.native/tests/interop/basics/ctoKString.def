@@ -1,0 +1,6 @@
+---
+const char* empty() { return ""; }
+const char* foo() { return "foo"; }
+const char* kuku() { return "куку"; }
+const char* invalid_utf8() { return "\x85\xAF"; }
+const char* zero_in_the_middle() { return "before zero\0after zero"; }

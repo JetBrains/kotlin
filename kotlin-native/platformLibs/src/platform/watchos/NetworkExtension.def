@@ -1,0 +1,6 @@
+depends = CoreFoundation Foundation Network Security darwin posix
+language = Objective-C
+package = platform.NetworkExtension
+modules = NetworkExtension
+compilerOpts = -framework NetworkExtension
+linkerOpts = -framework NetworkExtension

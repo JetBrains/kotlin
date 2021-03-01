@@ -11,7 +11,7 @@ enum class C {
             O_O
         }
 
-        class G
+        <!NESTED_CLASS_NOT_ALLOWED!>class G<!>
     },
 
     E4 {

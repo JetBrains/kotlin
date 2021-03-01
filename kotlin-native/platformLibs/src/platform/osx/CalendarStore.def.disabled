@@ -1,0 +1,6 @@
+language = Objective-C
+package = platform.CalendarStore
+modules = CalendarStore
+compilerOpts = -framework CalendarStore
+linkerOpts = -framework CalendarStore
+#Disabled: Unavailable

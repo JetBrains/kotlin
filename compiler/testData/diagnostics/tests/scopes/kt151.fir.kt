@@ -24,7 +24,7 @@ interface T {
 }
 
 class D : C(), T {
-    protected override fun foo() {}
+    <!CANNOT_CHANGE_ACCESS_PRIVILEGE!>protected<!> override fun foo() {}
 }
 
 class E : C(), T {

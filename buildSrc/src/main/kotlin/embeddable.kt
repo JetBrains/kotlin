@@ -25,6 +25,7 @@ val packagesToRelocate =
         "org.fusesource",
         "net.jpountz",
         "one.util.streamex",
+        "it.unimi.dsi.fastutil",
         "kotlinx.collections.immutable"
     )
 

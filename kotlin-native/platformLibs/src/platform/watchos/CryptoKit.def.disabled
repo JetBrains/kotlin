@@ -1,0 +1,6 @@
+language = Objective-C
+package = platform.CryptoKit
+modules = CryptoKit
+compilerOpts = -framework CryptoKit
+linkerOpts = -framework CryptoKit
+#Disabled: Swift-only framework
