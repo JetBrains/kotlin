@@ -17,7 +17,7 @@ import org.junit.runner.RunWith
 import java.io.File
 
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
-class CompletionMultiFileHandlerTest : KotlinFixtureCompletionBaseTestCase() {
+open class CompletionMultiFileHandlerTest : KotlinFixtureCompletionBaseTestCase() {
     fun testExtensionFunctionImport() {
         doTest()
     }
@@ -118,8 +118,11 @@ class CompletionMultiFileHandlerTest : KotlinFixtureCompletionBaseTestCase() {
         doTest()
     }
 
-    fun doTest(completionChar: Char = '\n', vararg extraFileNames: String, tailText: String? = null) {
-        val fileName = getTestName(false)
+    private fun doTest(completionChar: Char = '\n', vararg extraFileNames: String, tailText: String? = null) {
+        doTest(getTestName(false), completionChar, extraFileNames, tailText)
+    }
+
+    open fun doTest(fileName: String, completionChar: Char, extraFileNames: Array<out String>, tailText: String?) {
 
         val defaultFiles = listOf("$fileName-1.kt", "$fileName-2.kt")
         val filteredFiles = defaultFiles.filter { File(testDataPath, it).exists() }

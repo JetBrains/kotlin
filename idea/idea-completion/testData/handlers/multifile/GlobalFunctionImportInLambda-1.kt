@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 object XXX {
     fun authorize(handler: String.() -> Unit) { }
 }

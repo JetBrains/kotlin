@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 package a
 
 import a.b.foo
