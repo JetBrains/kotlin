@@ -23,7 +23,8 @@ import java.net.URL
 import org.intellij.markdown.parser.MarkdownParser as IntellijMarkdownParser
 
 open class MarkdownParser(
-    private val externalDri: (String) -> DRI?
+    private val externalDri: (String) -> DRI?,
+    private val kdocLocation: String?
 ) : Parser() {
 
     private lateinit var destinationLinksMap: Map<String, String>
@@ -65,7 +66,8 @@ open class MarkdownParser(
         DocTagsFromIElementFactory.getInstance(
             node.type,
             visitNode(node.children.find { it.type == MarkdownTokenTypes.ATX_CONTENT }
-                ?: throw IllegalStateException("Wrong AST Tree. ATX Header does not contain expected content")).children
+                ?: throw detailedException("Wrong AST Tree. Header does not contain expected content", node)
+            ).children
         )
 
     private fun horizontalRulesHandler(node: ASTNode) =
@@ -163,7 +165,7 @@ open class MarkdownParser(
 
     private fun referenceLinksHandler(node: ASTNode): DocTag {
         val linkLabel = node.children.find { it.type == MarkdownElementTypes.LINK_LABEL }
-            ?: throw IllegalStateException("Wrong AST Tree. Reference link does not contain expected content")
+            ?: throw detailedException("Wrong AST Tree. Reference link does not contain link label", node)
         val linkText = node.children.findLast { it.type == MarkdownElementTypes.LINK_TEXT } ?: linkLabel
 
         val linkKey = text.substring(linkLabel.startOffset, linkLabel.endOffset)
@@ -175,12 +177,12 @@ open class MarkdownParser(
 
     private fun inlineLinksHandler(node: ASTNode): DocTag {
         val linkText = node.children.find { it.type == MarkdownElementTypes.LINK_TEXT }
-            ?: throw IllegalStateException("Wrong AST Tree. Inline link does not contain expected content")
+            ?: throw detailedException("Wrong AST Tree. Inline link does not contain link text", node)
         val linkDestination = node.children.find { it.type == MarkdownElementTypes.LINK_DESTINATION }
-            ?: throw IllegalStateException("Wrong AST Tree. Inline link does not contain expected content")
         val linkTitle = node.children.find { it.type == MarkdownElementTypes.LINK_TITLE }
 
-        val link = text.substring(linkDestination.startOffset, linkDestination.endOffset)
+        // Link destination may be ommited: https://github.github.com/gfm/#example-495
+        val link = linkDestination?.let { text.substring(it.startOffset, it.endOffset) }
 
         return linksHandler(linkText, link, linkTitle)
     }
@@ -197,18 +199,18 @@ open class MarkdownParser(
         return linksHandler(node, link)
     }
 
-    private fun linksHandler(linkText: ASTNode, link: String, linkTitle: ASTNode? = null): DocTag {
-        val dri: DRI? = resolveDRI(link)
+    private fun linksHandler(linkText: ASTNode, link: String?, linkTitle: ASTNode? = null): DocTag {
+        val dri: DRI? = link?.let { resolveDRI(it) }
+        val linkOrEmpty = link ?: ""
         val linkTextString =
-            if (linkTitle == null) link else text.substring(linkTitle.startOffset + 1, linkTitle.endOffset - 1)
+            if (linkTitle == null) linkOrEmpty else text.substring(linkTitle.startOffset + 1, linkTitle.endOffset - 1)
 
         val params = if (linkTitle == null)
-            mapOf("href" to link)
+            mapOf("href" to linkOrEmpty)
         else
-            mapOf("href" to link, "title" to linkTextString)
+            mapOf("href" to linkOrEmpty, "title" to linkTextString)
 
-
-        return if (dri == null && !link.isRemoteLink()) {
+        return if (link != null && dri == null && !linkOrEmpty.isRemoteLink()) {
             DocTagsFromIElementFactory.getInstance(
                 MarkdownTokenTypes.TEXT,
                 params = params,
@@ -451,14 +453,28 @@ open class MarkdownParser(
         .replace(Regex("\n"), " ")
         .replace(Regex(" >+ +"), " ")      // Replacement used in blockquotes, get rid of garbage
 
+    private fun detailedException(baseMessage: String, node: ASTNode) =
+        IllegalStateException(
+            baseMessage + " in ${kdocLocation ?: "unspecified location"}, element starts from offset ${node.startOffset} and ends ${node.endOffset}: ${
+                text.substring(
+                    node.startOffset,
+                    node.endOffset
+                )
+            }"
+        )
+
 
     companion object {
-
-        fun parseFromKDocTag(kDocTag: KDocTag?, externalDri: (String) -> DRI?): DocumentationNode {
+        fun parseFromKDocTag(
+            kDocTag: KDocTag?,
+            externalDri: (String) -> DRI?,
+            kdocLocation: String?
+        ): DocumentationNode {
             return if (kDocTag == null) {
                 DocumentationNode(emptyList())
             } else {
-                fun parseStringToDocNode(text: String) = MarkdownParser(externalDri).parseStringToDocNode(text)
+                fun parseStringToDocNode(text: String) =
+                    MarkdownParser(externalDri, kdocLocation).parseStringToDocNode(text)
 
                 fun pointedLink(tag: KDocTag): DRI? = (parseStringToDocNode("[${tag.getSubjectName()}]")).let {
                     val link = it.children[0].children[0]
