@@ -18,11 +18,13 @@ import org.jetbrains.kotlin.load.kotlin.MemberSignature
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmFlags
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class JvmBinaryAnnotationDeserializer(
     val session: FirSession,
@@ -81,7 +83,14 @@ class JvmBinaryAnnotationDeserializer(
     ): List<FirAnnotationCall> {
         val signature = getPropertySignature(propertyProto, nameResolver, typeTable, synthetic = true) ?: return emptyList()
         val classIsInterface = containingClassProto?.let { Flags.CLASS_KIND.get(it.flags) == ProtoBuf.Class.Kind.INTERFACE } ?: false
-        return findJvmBinaryClassAndLoadMemberAnnotations(signature, searchInDefaultImpls = classIsInterface).map {
+        val jvmClassFlags = runIf(containingClassProto?.hasExtension(JvmProtoBuf.jvmClassFlags) == true) {
+            containingClassProto?.getExtension(JvmProtoBuf.jvmClassFlags)
+        }
+        val allCompatibilityModeIsEnabled = jvmClassFlags?.let { JvmFlags.IS_ALL_COMPATIBILITY_MODE.get(it) } ?: true
+        return findJvmBinaryClassAndLoadMemberAnnotations(
+            signature,
+            searchInDefaultImpls = classIsInterface && allCompatibilityModeIsEnabled
+        ).map {
             buildAnnotationCall {
                 annotationTypeRef = it.annotationTypeRef
                 argumentList = it.argumentList
