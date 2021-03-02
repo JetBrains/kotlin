@@ -107,7 +107,6 @@ TEST_F(KonanAllocatorAwareTest, PlacementAllocated) {
     EXPECT_THAT(a->value(), 42);
     EXPECT_CALL(*destructorHook, Call(42));
     a->~A();
-    testing::Mock::VerifyAndClearExpectations(destructorHook.get());
 }
 
 TEST_F(KonanAllocatorAwareTest, PlacementConstructedArray) {
@@ -131,5 +130,4 @@ TEST_F(KonanAllocatorAwareTest, PlacementConstructedArray) {
     for (A* a = as; a != as + kCount; ++a) {
         a->~A();
     }
-    testing::Mock::VerifyAndClearExpectations(destructorHook.get());
 }
