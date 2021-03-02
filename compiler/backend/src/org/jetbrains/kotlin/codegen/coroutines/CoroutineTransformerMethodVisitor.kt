@@ -1252,8 +1252,7 @@ private fun updateLvtAccordingToLiveness(method: MethodNode, isForNamedFunction:
         for (insnIndex in 0 until (method.instructions.size() - 1)) {
             val insn = method.instructions[insnIndex]
             if (!isAlive(insnIndex, variableIndex) && isAlive(insnIndex + 1, variableIndex)) {
-                val lvtRecord = oldLvt.findRecord(insnIndex, variableIndex) ?: continue
-                startLabel = max(lvtRecord.start, previousSuspensionPointLabel(insn))
+                startLabel = insn as? LabelNode ?: insn.findNextOrNull { it is LabelNode } as? LabelNode
             }
             if (isAlive(insnIndex, variableIndex) && !isAlive(insnIndex + 1, variableIndex)) {
                 // No variable in LVT -> do not add one
