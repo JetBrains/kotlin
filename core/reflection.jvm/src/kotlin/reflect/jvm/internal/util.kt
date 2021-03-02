@@ -16,6 +16,8 @@
 
 package kotlin.reflect.jvm.internal
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
@@ -36,6 +38,7 @@ import org.jetbrains.kotlin.metadata.deserialization.TypeTable
 import org.jetbrains.kotlin.metadata.deserialization.VersionRequirementTable
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
@@ -43,6 +46,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.isInlineClassType
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext
 import org.jetbrains.kotlin.serialization.deserialization.MemberDeserializer
+import java.lang.RuntimeException
 import java.lang.reflect.Type
 import kotlin.jvm.internal.FunctionReference
 import kotlin.jvm.internal.PropertyReference
@@ -138,7 +142,7 @@ private fun AnnotationDescriptor.toAnnotationInstance(): Annotation? {
 // TODO: consider throwing exceptions such as AnnotationFormatError/AnnotationTypeMismatchException if a value of unexpected type is found
 private fun ConstantValue<*>.toRuntimeValue(classLoader: ClassLoader): Any? = when (this) {
     is AnnotationValue -> value.toAnnotationInstance()
-    is ArrayValue -> value.map { it.toRuntimeValue(classLoader) }.toTypedArray()
+    is ArrayValue -> toRuntimeValue(classLoader)
     is EnumValue -> {
         val (enumClassId, entryName) = value
         loadClass(classLoader, enumClassId)?.let { enumClass ->
@@ -156,6 +160,65 @@ private fun ConstantValue<*>.toRuntimeValue(classLoader: ClassLoader): Any? = wh
     }
     is ErrorValue, is NullValue -> null
     else -> value  // Primitives and strings
+}
+
+private fun ArrayValue.toRuntimeValue(classLoader: ClassLoader): Any? {
+    class MockException : RuntimeException()
+
+    val mockModuleDescriptor = object : ModuleDescriptor {
+        override val builtIns: Nothing get() = throw MockException()
+        override val stableName: Nothing get() = throw MockException()
+        override val platform: Nothing get() = throw MockException()
+        override fun shouldSeeInternalsOf(targetModule: ModuleDescriptor): Nothing = throw MockException()
+        override fun getPackage(fqName: FqName): Nothing = throw MockException()
+        override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Nothing = throw MockException()
+        override val allDependencyModules: Nothing get() = throw MockException()
+        override val expectedByModules: Nothing get() = throw MockException()
+        override val allExpectedByModules: Nothing get() = throw MockException()
+        override fun <T> getCapability(capability: ModuleCapability<T>): Nothing = throw MockException()
+        override val isValid: Nothing get() = throw MockException()
+        override fun assertValid(): Nothing = throw MockException()
+        override fun getName(): Nothing = throw MockException()
+        override fun getOriginal(): Nothing = throw MockException()
+        override fun acceptVoid(visitor: DeclarationDescriptorVisitor<Void, Void>?): Nothing = throw MockException()
+        override val annotations: Nothing get() = throw MockException()
+    }
+
+    val type = try {
+        getType(mockModuleDescriptor)
+    } catch (e: MockException) {
+        return null
+    }
+    val values = value.map { it.toRuntimeValue(classLoader) }
+
+    return when (KotlinBuiltIns.getPrimitiveArrayElementType(type)) {
+        PrimitiveType.BOOLEAN -> BooleanArray(value.size) { values[it] as Boolean }
+        PrimitiveType.CHAR -> CharArray(value.size) { values[it] as Char }
+        PrimitiveType.BYTE -> ByteArray(value.size) { values[it] as Byte }
+        PrimitiveType.SHORT -> ShortArray(value.size) { values[it] as Short }
+        PrimitiveType.INT -> IntArray(value.size) { values[it] as Int }
+        PrimitiveType.FLOAT -> FloatArray(value.size) { values[it] as Float }
+        PrimitiveType.LONG -> LongArray(value.size) { values[it] as Long }
+        PrimitiveType.DOUBLE -> DoubleArray(value.size) { values[it] as Double }
+        null -> {
+            val argType = type.arguments.single().type
+            when {
+                KotlinBuiltIns.isString(argType) -> Array(value.size) { values[it] as String }
+                KotlinBuiltIns.isKClass(argType.constructor.declarationDescriptor as ClassDescriptor) -> {
+                    Array(value.size) { values[it] as Class<*> }
+                }
+                else -> {
+                    val argClass = loadClass(classLoader, argType.constructor.declarationDescriptor.classId!!)
+                        ?: return null
+
+                    @Suppress("UNCHECKED_CAST")
+                    val array = java.lang.reflect.Array.newInstance(argClass, value.size) as Array<in Any?>
+                    repeat(values.size) { array[it] = values[it] }
+                    array
+                }
+            }
+        }
+    }
 }
 
 // TODO: wrap other exceptions
