@@ -258,8 +258,21 @@ fun argumentsWithVarargAsSingleArray(
         concatElements.add(JsArrayLiteral(arraysForConcat))
     }
 
+    if (concatElements.isEmpty()) {
+        return JsArrayLiteral()
+    }
+
+    if (concatElements.all { it is JsArrayLiteral }) {
+        return concatElements
+            .fold(mutableListOf<JsExpression>()) { aggregatedArrayExpressions, arrayLiteral ->
+                arrayLiteral as JsArrayLiteral
+                aggregatedArrayExpressions.addAll(arrayLiteral.expressions)
+                aggregatedArrayExpressions
+            }
+            .let { JsArrayLiteral(it) }
+    }
+
     return when (concatElements.size) {
-        0 -> JsArrayLiteral()
         1 -> concatElements[0]
         else -> JsInvocation(
             JsNameRef("concat", concatElements.first()),
