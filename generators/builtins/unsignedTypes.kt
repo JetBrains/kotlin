@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.generators.builtins.unsigned
 
 
-import org.jetbrains.kotlin.generators.builtins.PrimitiveType
-import org.jetbrains.kotlin.generators.builtins.UnsignedType
-import org.jetbrains.kotlin.generators.builtins.convert
+import org.jetbrains.kotlin.generators.builtins.*
 import org.jetbrains.kotlin.generators.builtins.generateBuiltIns.BuiltInsSourceGenerator
 import org.jetbrains.kotlin.generators.builtins.numbers.GeneratePrimitives
 import java.io.File
@@ -36,6 +34,32 @@ fun generateUnsignedTypes(
 class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltInsSourceGenerator(out) {
     val className = type.capitalized
     val storageType = type.asSigned.capitalized
+
+    internal fun binaryOperatorDoc(operator: String, operand1: UnsignedType, operand2: UnsignedType): String = when (operator) {
+        "floorDiv" ->
+            """
+            Divides this value by the other value, flooring the result to an integer that is closer to negative infinity.
+            
+            For unsigned types, the results of flooring division and truncating division are the same.
+            """.trimIndent()
+        "rem" -> {
+            """
+                Calculates the remainder of truncating division of this value by the other value.
+                
+                The result is always less than the divisor.
+                """.trimIndent()
+        }
+        "mod" -> {
+            """
+                Calculates the remainder of flooring division of this value by the other value.
+
+                The result is always less than the divisor.
+                
+                For unsigned types, the remainders of flooring division and truncating division are the same.
+                """.trimIndent()
+        }
+        else -> GeneratePrimitives.binaryOperatorDoc(operator, operand1.asSigned, operand2.asSigned)
+    }
 
     override fun generateBody() {
 
@@ -124,18 +148,18 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
     }
 
     private fun generateBinaryOperators() {
-        for ((name, doc) in GeneratePrimitives.binaryOperators) {
-            generateOperator(name, doc)
+        for (name in GeneratePrimitives.binaryOperators) {
+            generateOperator(name)
         }
-        generateFloorDivMod("floorDiv", "TODO")
-        generateFloorDivMod("mod", "TODO")
+        generateFloorDivMod("floorDiv")
+        generateFloorDivMod("mod")
     }
 
-    private fun generateOperator(name: String, doc: String) {
+    private fun generateOperator(name: String) {
         for (otherType in UnsignedType.values()) {
             val returnType = getOperatorReturnType(type, otherType)
 
-            out.println("    /** $doc */")
+            out.printDoc(binaryOperatorDoc(name, type, otherType), "    ")
             out.println("    @kotlin.internal.InlineOnly")
             out.print("    public inline operator fun $name(other: ${otherType.capitalized}): ${returnType.capitalized} = ")
             if (type == otherType && type == returnType) {
@@ -152,12 +176,12 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
         out.println()
     }
 
-    private fun generateFloorDivMod(name: String, doc: String) {
+    private fun generateFloorDivMod(name: String) {
         for (otherType in UnsignedType.values()) {
             val operationType = getOperatorReturnType(type, otherType)
             val returnType = if (name == "mod") otherType else operationType
 
-            out.println("    /** $doc */")
+            out.printDoc(binaryOperatorDoc(name, type, otherType), "    ")
             out.println("    @kotlin.internal.InlineOnly")
             out.print("    public inline fun $name(other: ${otherType.capitalized}): ${returnType.capitalized} = ")
             if (type == otherType && type == operationType) {
