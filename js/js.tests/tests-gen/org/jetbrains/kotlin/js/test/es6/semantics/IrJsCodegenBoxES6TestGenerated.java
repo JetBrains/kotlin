@@ -10945,6 +10945,11 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
         public void testClassCanNotBeCastedToVoid() throws Exception {
             runTest("compiler/testData/codegen/box/fir/classCanNotBeCastedToVoid.kt");
         }
+
+        @TestMetadata("falsePositiveBoundSmartcast.kt")
+        public void testFalsePositiveBoundSmartcast() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/falsePositiveBoundSmartcast.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/fullJdk")

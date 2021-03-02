@@ -3550,6 +3550,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
                 }
 
                 @Test
+                @TestMetadata("complexIfWithOr.kt")
+                public void testComplexIfWithOr() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/safeCalls/complexIfWithOr.kt");
+                }
+
+                @Test
                 @TestMetadata("safeCallAndEqualityToBool.kt")
                 public void testSafeCallAndEqualityToBool() throws Exception {
                     runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/safeCalls/safeCallAndEqualityToBool.kt");

@@ -49,6 +49,12 @@ class DataFlowAnalyzerContext<FLOW : Flow>(
     var variableStorage = variableStorage
         private set
 
+    private var assignmentCounter = 0
+
+    fun newAssignmentIndex(): Int {
+        return assignmentCounter++
+    }
+
     fun reset() {
         graphBuilder.reset()
         variablesForWhenConditions.clear()
@@ -84,7 +90,6 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
                 private val receiverStack: PersistentImplicitReceiverStack
                     get() = components.implicitReceiverStack as PersistentImplicitReceiverStack
 
-                private val symbolProvider = components.session.symbolProvider
                 private val visibilityChecker = components.session.visibilityChecker
 
                 override val logicSystem: PersistentLogicSystem =
@@ -673,7 +678,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         if (possiblyChangedVariables.isEmpty()) return
         val flow = node.flow
         for (variable in possiblyChangedVariables) {
-            logicSystem.removeAllAboutVariableIncludingAliasInformation(flow, variable)
+            flow.removeAllAboutVariable(variable)
         }
     }
 
@@ -792,17 +797,17 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
 
     fun exitSafeCall(safeCall: FirSafeCallExpression) {
         val node = graphBuilder.exitSafeCall().mergeIncomingFlow()
-        val previousFlow = node.previousFlow
+        val flow = node.flow
 
-        val variable = variableStorage.getOrCreateVariable(previousFlow, safeCall)
+        val variable = variableStorage.getOrCreateVariable(flow, safeCall)
         val receiverVariable = when (variable) {
             // There is some bug with invokes. See KT-36014
             is RealVariable -> variable.explicitReceiverVariable ?: return
-            is SyntheticVariable -> variableStorage.getOrCreateVariable(previousFlow, safeCall.receiver)
+            is SyntheticVariable -> variableStorage.getOrCreateVariable(flow, safeCall.receiver)
         }
-        logicSystem.addImplication(node.flow, (variable notEq null) implies (receiverVariable notEq null))
+        logicSystem.addImplication(flow, (variable notEq null) implies (receiverVariable notEq null))
         if (receiverVariable.isReal()) {
-            logicSystem.addImplication(node.flow, (variable notEq null) implies (receiverVariable typeEq any))
+            logicSystem.addImplication(flow, (variable notEq null) implies (receiverVariable typeEq any))
         }
     }
 
@@ -946,6 +951,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         if (isAssignment) {
             logicSystem.removeLocalVariableAlias(flow, propertyVariable)
             flow.removeAllAboutVariable(propertyVariable)
+            logicSystem.recordNewAssignment(flow, propertyVariable, context.newAssignmentIndex())
         }
 
         variableStorage.getOrCreateRealVariable(flow, initializer.symbol, initializer)?.let { initializerVariable ->
@@ -1256,7 +1262,9 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
 
     private fun FLOW.removeAllAboutVariable(variable: RealVariable?) {
         if (variable == null) return
-        logicSystem.removeAllAboutVariable(this, variable)
+        logicSystem.removeTypeStatementsAboutVariable(this, variable)
+        logicSystem.removeLogicStatementsAboutVariable(this, variable)
+        logicSystem.removeAliasInformationAboutVariable(this, variable)
     }
 
     private fun FLOW.fork(): FLOW {

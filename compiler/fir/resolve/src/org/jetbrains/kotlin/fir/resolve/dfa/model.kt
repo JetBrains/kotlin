@@ -128,6 +128,7 @@ private infix fun FirElement.isEqualsTo(other: FirElement): Boolean {
 
 sealed class Statement<T : Statement<T>> {
     abstract fun invert(): T
+    abstract val variable: DataFlowVariable
 }
 
 /*
@@ -137,7 +138,7 @@ sealed class Statement<T : Statement<T>> {
  * d == True
  * d == False
  */
-data class OperationStatement(val variable: DataFlowVariable, val operation: Operation) : Statement<OperationStatement>() {
+data class OperationStatement(override val variable: DataFlowVariable, val operation: Operation) : Statement<OperationStatement>() {
     override fun invert(): OperationStatement {
         return OperationStatement(variable, operation.invert())
     }
@@ -148,7 +149,7 @@ data class OperationStatement(val variable: DataFlowVariable, val operation: Ope
 }
 
 abstract class TypeStatement : Statement<TypeStatement>() {
-    abstract val variable: RealVariable
+    abstract override val variable: RealVariable
     abstract val exactType: Set<ConeKotlinType>
     abstract val exactNotType: Set<ConeKotlinType>
 
@@ -208,6 +209,8 @@ fun Implication.invertCondition(): Implication = Implication(condition.invert(),
 
 typealias TypeStatements = Map<RealVariable, TypeStatement>
 typealias MutableTypeStatements = MutableMap<RealVariable, MutableTypeStatement>
+
+typealias MutableOperationStatements = MutableMap<RealVariable, MutableTypeStatement>
 
 fun MutableTypeStatements.addStatement(variable: RealVariable, statement: TypeStatement) {
     put(variable, statement.asMutableStatement()) { it.apply { this += statement } }
