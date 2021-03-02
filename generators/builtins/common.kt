@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.generators.builtins
 
 import org.jetbrains.kotlin.generators.builtins.ProgressionKind.*
+import java.io.PrintWriter
 
 enum class PrimitiveType(val byteSize: Int) {
     BYTE(1),
@@ -65,3 +66,15 @@ fun hashLong(v: String) = "($v xor ($v ushr 32))"
 fun convert(v: String, from: UnsignedType, to: UnsignedType) = if (from == to) v else "$v.to${to.capitalized}()"
 
 fun convert(v: String, from: PrimitiveType, to: PrimitiveType) = if (from == to) v else "$v.to${to.capitalized}()"
+
+
+fun PrintWriter.printDoc(documentation: String, indent: String) {
+    val docLines = documentation.lines()
+    if (docLines.size == 1) {
+        this.println("$indent/** $documentation */")
+    } else {
+        this.println("$indent/**")
+        docLines.forEach { this.println("$indent * $it") }
+        this.println("$indent */")
+    }
+}

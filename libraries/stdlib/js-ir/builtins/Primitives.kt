@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -118,35 +118,59 @@ public class Byte private constructor() : Number(), Comparable<Byte> {
     /** Multiplies this value by the other value. */
     public operator fun times(other: Double): Double
 
-    /** Divides this value by the other value. */
+    /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     public operator fun div(other: Byte): Int
-    /** Divides this value by the other value. */
+    /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     public operator fun div(other: Short): Int
-    /** Divides this value by the other value. */
+    /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     public operator fun div(other: Int): Int
-    /** Divides this value by the other value. */
+    /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     public operator fun div(other: Long): Long
     /** Divides this value by the other value. */
     public operator fun div(other: Float): Float
     /** Divides this value by the other value. */
     public operator fun div(other: Double): Double
 
-    /** Calculates the remainder of dividing this value by the other value. */
+    /**
+     * Calculates the remainder of truncating division of this value by the other value.
+     *
+     * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
+     */
     @SinceKotlin("1.1")
     public operator fun rem(other: Byte): Int
-    /** Calculates the remainder of dividing this value by the other value. */
+    /**
+     * Calculates the remainder of truncating division of this value by the other value.
+     *
+     * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
+     */
     @SinceKotlin("1.1")
     public operator fun rem(other: Short): Int
-    /** Calculates the remainder of dividing this value by the other value. */
+    /**
+     * Calculates the remainder of truncating division of this value by the other value.
+     *
+     * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
+     */
     @SinceKotlin("1.1")
     public operator fun rem(other: Int): Int
-    /** Calculates the remainder of dividing this value by the other value. */
+    /**
+     * Calculates the remainder of truncating division of this value by the other value.
+     *
+     * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
+     */
     @SinceKotlin("1.1")
     public operator fun rem(other: Long): Long
-    /** Calculates the remainder of dividing this value by the other value. */
+    /**
+     * Calculates the remainder of truncating division of this value by the other value.
+     *
+     * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
+     */
     @SinceKotlin("1.1")
     public operator fun rem(other: Float): Float
-    /** Calculates the remainder of dividing this value by the other value. */
+    /**
+     * Calculates the remainder of truncating division of this value by the other value.
+     *
+     * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
+     */
     @SinceKotlin("1.1")
     public operator fun rem(other: Double): Double
 
@@ -334,35 +358,59 @@ public class Short private constructor() : Number(), Comparable<Short> {
     /** Multiplies this value by the other value. */
     public operator fun times(other: Double): Double
 
-    /** Divides this value by the other value. */
+    /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     public operator fun div(other: Byte): Int
-    /** Divides this value by the other value. */
+    /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     public operator fun div(other: Short): Int
-    /** Divides this value by the other value. */
+    /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     public operator fun div(other: Int): Int
-    /** Divides this value by the other value. */
+    /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     public operator fun div(other: Long): Long
     /** Divides this value by the other value. */
     public operator fun div(other: Float): Float
     /** Divides this value by the other value. */
     public operator fun div(other: Double): Double
 
-    /** Calculates the remainder of dividing this value by the other value. */
+    /**
+     * Calculates the remainder of truncating division of this value by the other value.
+     *
+     * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
+     */
     @SinceKotlin("1.1")
     public operator fun rem(other: Byte): Int
-    /** Calculates the remainder of dividing this value by the other value. */
+    /**
+     * Calculates the remainder of truncating division of this value by the other value.
+     *
+     * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
+     */
     @SinceKotlin("1.1")
     public operator fun rem(other: Short): Int
-    /** Calculates the remainder of dividing this value by the other value. */
+    /**
+     * Calculates the remainder of truncating division of this value by the other value.
+     *
+     * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
+     */
     @SinceKotlin("1.1")
     public operator fun rem(other: Int): Int
-    /** Calculates the remainder of dividing this value by the other value. */
+    /**
+     * Calculates the remainder of truncating division of this value by the other value.
+     *
+     * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
+     */
     @SinceKotlin("1.1")
     public operator fun rem(other: Long): Long
-    /** Calculates the remainder of dividing this value by the other value. */
+    /**
+     * Calculates the remainder of truncating division of this value by the other value.
+     *
+     * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
+     */
     @SinceKotlin("1.1")
     public operator fun rem(other: Float): Float
-    /** Calculates the remainder of dividing this value by the other value. */
+    /**
+     * Calculates the remainder of truncating division of this value by the other value.
+     *
+     * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
+     */
     @SinceKotlin("1.1")
     public operator fun rem(other: Double): Double
 
@@ -548,35 +596,59 @@ public class Int private constructor() : Number(), Comparable<Int> {
     /** Multiplies this value by the other value. */
     public operator fun times(other: Double): Double
 
-    /** Divides this value by the other value. */
+    /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     public operator fun div(other: Byte): Int
-    /** Divides this value by the other value. */
+    /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     public operator fun div(other: Short): Int
-    /** Divides this value by the other value. */
+    /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     public operator fun div(other: Int): Int
-    /** Divides this value by the other value. */
+    /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     public operator fun div(other: Long): Long
     /** Divides this value by the other value. */
     public operator fun div(other: Float): Float
     /** Divides this value by the other value. */
     public operator fun div(other: Double): Double
 
-    /** Calculates the remainder of dividing this value by the other value. */
+    /**
+     * Calculates the remainder of truncating division of this value by the other value.
+     *
+     * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
+     */
     @SinceKotlin("1.1")
     public operator fun rem(other: Byte): Int
-    /** Calculates the remainder of dividing this value by the other value. */
+    /**
+     * Calculates the remainder of truncating division of this value by the other value.
+     *
+     * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
+     */
     @SinceKotlin("1.1")
     public operator fun rem(other: Short): Int
-    /** Calculates the remainder of dividing this value by the other value. */
+    /**
+     * Calculates the remainder of truncating division of this value by the other value.
+     *
+     * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
+     */
     @SinceKotlin("1.1")
     public operator fun rem(other: Int): Int
-    /** Calculates the remainder of dividing this value by the other value. */
+    /**
+     * Calculates the remainder of truncating division of this value by the other value.
+     *
+     * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
+     */
     @SinceKotlin("1.1")
     public operator fun rem(other: Long): Long
-    /** Calculates the remainder of dividing this value by the other value. */
+    /**
+     * Calculates the remainder of truncating division of this value by the other value.
+     *
+     * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
+     */
     @SinceKotlin("1.1")
     public operator fun rem(other: Float): Float
-    /** Calculates the remainder of dividing this value by the other value. */
+    /**
+     * Calculates the remainder of truncating division of this value by the other value.
+     *
+     * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
+     */
     @SinceKotlin("1.1")
     public operator fun rem(other: Double): Double
 
@@ -828,22 +900,46 @@ public class Float private constructor() : Number(), Comparable<Float> {
     /** Divides this value by the other value. */
     public operator fun div(other: Double): Double
 
-    /** Calculates the remainder of dividing this value by the other value. */
+    /**
+     * Calculates the remainder of truncating division of this value by the other value.
+     *
+     * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
+     */
     @SinceKotlin("1.1")
     public operator fun rem(other: Byte): Float
-    /** Calculates the remainder of dividing this value by the other value. */
+    /**
+     * Calculates the remainder of truncating division of this value by the other value.
+     *
+     * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
+     */
     @SinceKotlin("1.1")
     public operator fun rem(other: Short): Float
-    /** Calculates the remainder of dividing this value by the other value. */
+    /**
+     * Calculates the remainder of truncating division of this value by the other value.
+     *
+     * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
+     */
     @SinceKotlin("1.1")
     public operator fun rem(other: Int): Float
-    /** Calculates the remainder of dividing this value by the other value. */
+    /**
+     * Calculates the remainder of truncating division of this value by the other value.
+     *
+     * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
+     */
     @SinceKotlin("1.1")
     public operator fun rem(other: Long): Float
-    /** Calculates the remainder of dividing this value by the other value. */
+    /**
+     * Calculates the remainder of truncating division of this value by the other value.
+     *
+     * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
+     */
     @SinceKotlin("1.1")
     public operator fun rem(other: Float): Float
-    /** Calculates the remainder of dividing this value by the other value. */
+    /**
+     * Calculates the remainder of truncating division of this value by the other value.
+     *
+     * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
+     */
     @SinceKotlin("1.1")
     public operator fun rem(other: Double): Double
 
@@ -1046,22 +1142,46 @@ public class Double private constructor() : Number(), Comparable<Double> {
     /** Divides this value by the other value. */
     public operator fun div(other: Double): Double
 
-    /** Calculates the remainder of dividing this value by the other value. */
+    /**
+     * Calculates the remainder of truncating division of this value by the other value.
+     *
+     * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
+     */
     @SinceKotlin("1.1")
     public operator fun rem(other: Byte): Double
-    /** Calculates the remainder of dividing this value by the other value. */
+    /**
+     * Calculates the remainder of truncating division of this value by the other value.
+     *
+     * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
+     */
     @SinceKotlin("1.1")
     public operator fun rem(other: Short): Double
-    /** Calculates the remainder of dividing this value by the other value. */
+    /**
+     * Calculates the remainder of truncating division of this value by the other value.
+     *
+     * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
+     */
     @SinceKotlin("1.1")
     public operator fun rem(other: Int): Double
-    /** Calculates the remainder of dividing this value by the other value. */
+    /**
+     * Calculates the remainder of truncating division of this value by the other value.
+     *
+     * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
+     */
     @SinceKotlin("1.1")
     public operator fun rem(other: Long): Double
-    /** Calculates the remainder of dividing this value by the other value. */
+    /**
+     * Calculates the remainder of truncating division of this value by the other value.
+     *
+     * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
+     */
     @SinceKotlin("1.1")
     public operator fun rem(other: Float): Double
-    /** Calculates the remainder of dividing this value by the other value. */
+    /**
+     * Calculates the remainder of truncating division of this value by the other value.
+     *
+     * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
+     */
     @SinceKotlin("1.1")
     public operator fun rem(other: Double): Double
 

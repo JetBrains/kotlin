@@ -109,55 +109,111 @@ public value class ULong @PublishedApi internal constructor(@PublishedApi intern
     @kotlin.internal.InlineOnly
     public inline operator fun times(other: ULong): ULong = ULong(this.data.times(other.data))
 
-    /** Divides this value by the other value. */
+    /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     @kotlin.internal.InlineOnly
     public inline operator fun div(other: UByte): ULong = this.div(other.toULong())
-    /** Divides this value by the other value. */
+    /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     @kotlin.internal.InlineOnly
     public inline operator fun div(other: UShort): ULong = this.div(other.toULong())
-    /** Divides this value by the other value. */
+    /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     @kotlin.internal.InlineOnly
     public inline operator fun div(other: UInt): ULong = this.div(other.toULong())
-    /** Divides this value by the other value. */
+    /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     @kotlin.internal.InlineOnly
     public inline operator fun div(other: ULong): ULong = ulongDivide(this, other)
 
-    /** Calculates the remainder of dividing this value by the other value. */
+    /**
+     * Calculates the remainder of truncating division of this value by the other value.
+     * 
+     * The result is always less than the divisor.
+     */
     @kotlin.internal.InlineOnly
     public inline operator fun rem(other: UByte): ULong = this.rem(other.toULong())
-    /** Calculates the remainder of dividing this value by the other value. */
+    /**
+     * Calculates the remainder of truncating division of this value by the other value.
+     * 
+     * The result is always less than the divisor.
+     */
     @kotlin.internal.InlineOnly
     public inline operator fun rem(other: UShort): ULong = this.rem(other.toULong())
-    /** Calculates the remainder of dividing this value by the other value. */
+    /**
+     * Calculates the remainder of truncating division of this value by the other value.
+     * 
+     * The result is always less than the divisor.
+     */
     @kotlin.internal.InlineOnly
     public inline operator fun rem(other: UInt): ULong = this.rem(other.toULong())
-    /** Calculates the remainder of dividing this value by the other value. */
+    /**
+     * Calculates the remainder of truncating division of this value by the other value.
+     * 
+     * The result is always less than the divisor.
+     */
     @kotlin.internal.InlineOnly
     public inline operator fun rem(other: ULong): ULong = ulongRemainder(this, other)
 
-    /** TODO */
+    /**
+     * Divides this value by the other value, flooring the result to an integer that is closer to negative infinity.
+     * 
+     * For unsigned types, the results of flooring division and truncating division are the same.
+     */
     @kotlin.internal.InlineOnly
     public inline fun floorDiv(other: UByte): ULong = this.floorDiv(other.toULong())
-    /** TODO */
+    /**
+     * Divides this value by the other value, flooring the result to an integer that is closer to negative infinity.
+     * 
+     * For unsigned types, the results of flooring division and truncating division are the same.
+     */
     @kotlin.internal.InlineOnly
     public inline fun floorDiv(other: UShort): ULong = this.floorDiv(other.toULong())
-    /** TODO */
+    /**
+     * Divides this value by the other value, flooring the result to an integer that is closer to negative infinity.
+     * 
+     * For unsigned types, the results of flooring division and truncating division are the same.
+     */
     @kotlin.internal.InlineOnly
     public inline fun floorDiv(other: UInt): ULong = this.floorDiv(other.toULong())
-    /** TODO */
+    /**
+     * Divides this value by the other value, flooring the result to an integer that is closer to negative infinity.
+     * 
+     * For unsigned types, the results of flooring division and truncating division are the same.
+     */
     @kotlin.internal.InlineOnly
     public inline fun floorDiv(other: ULong): ULong = div(other)
 
-    /** TODO */
+    /**
+     * Calculates the remainder of flooring division of this value by the other value.
+     * 
+     * The result is always less than the divisor.
+     * 
+     * For unsigned types, the remainders of flooring division and truncating division are the same.
+     */
     @kotlin.internal.InlineOnly
     public inline fun mod(other: UByte): UByte = this.mod(other.toULong()).toUByte()
-    /** TODO */
+    /**
+     * Calculates the remainder of flooring division of this value by the other value.
+     * 
+     * The result is always less than the divisor.
+     * 
+     * For unsigned types, the remainders of flooring division and truncating division are the same.
+     */
     @kotlin.internal.InlineOnly
     public inline fun mod(other: UShort): UShort = this.mod(other.toULong()).toUShort()
-    /** TODO */
+    /**
+     * Calculates the remainder of flooring division of this value by the other value.
+     * 
+     * The result is always less than the divisor.
+     * 
+     * For unsigned types, the remainders of flooring division and truncating division are the same.
+     */
     @kotlin.internal.InlineOnly
     public inline fun mod(other: UInt): UInt = this.mod(other.toULong()).toUInt()
-    /** TODO */
+    /**
+     * Calculates the remainder of flooring division of this value by the other value.
+     * 
+     * The result is always less than the divisor.
+     * 
+     * For unsigned types, the remainders of flooring division and truncating division are the same.
+     */
     @kotlin.internal.InlineOnly
     public inline fun mod(other: ULong): ULong = rem(other)
 

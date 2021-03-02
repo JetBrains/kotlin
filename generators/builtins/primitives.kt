@@ -8,16 +8,17 @@ package org.jetbrains.kotlin.generators.builtins.numbers
 import org.jetbrains.kotlin.generators.builtins.PrimitiveType
 import org.jetbrains.kotlin.generators.builtins.convert
 import org.jetbrains.kotlin.generators.builtins.generateBuiltIns.BuiltInsSourceGenerator
+import org.jetbrains.kotlin.generators.builtins.printDoc
 import java.io.PrintWriter
 
 class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
     companion object {
-        internal val binaryOperators: Map<String, String> = mapOf(
-            "plus" to "Adds the other value to this value.",
-            "minus" to "Subtracts the other value from this value.",
-            "times" to "Multiplies this value by the other value.",
-            "div" to "Divides this value by the other value.",
-            "rem" to "Calculates the remainder of dividing this value by the other value."
+        internal val binaryOperators: List<String> = listOf(
+            "plus",
+            "minus",
+            "times",
+            "div",
+            "rem",
         )
         internal val unaryOperators: Map<String, String> = mapOf(
             "inc" to "Increments this value.",
@@ -44,6 +45,37 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
                 * Note that only the $bitsUsed lowest-order bits of the [bitCount] are used as the shift distance.
                 * The shift distance actually used is therefore always in the range `0..${kind.bitSize - 1}`.
                 """
+        }
+
+        internal fun binaryOperatorDoc(operator: String, operand1: PrimitiveType, operand2: PrimitiveType): String = when (operator) {
+            "plus" -> "Adds the other value to this value."
+            "minus" -> "Subtracts the other value from this value."
+            "times" -> "Multiplies this value by the other value."
+            "div" -> {
+                if (operand1.isIntegral && operand2.isIntegral)
+                    "Divides this value by the other value, truncating the result to an integer that is closer to zero."
+                else
+                    "Divides this value by the other value."
+            }
+            "floorDiv" ->
+                "Divides this value by the other value, flooring the result to an integer that is closer to negative infinity."
+            "rem" -> {
+                """
+                Calculates the remainder of truncating division of this value by the other value.
+                
+                The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
+                """.trimIndent()
+            }
+            "mod" -> {
+                """
+                Calculates the remainder of flooring division of this value by the other value.
+
+                The result is either zero or has the same sign as the _divisor_ and has the absolute value less than the absolute value of the divisor.
+                """.trimIndent() + if (operand1.isFloatingPoint)
+                    "\n\n" + "If the result cannot be represented exactly, it is rounded to the nearest representable number. In this case the absolute value of the result can be less than or _equal to_ the absolute value of the divisor."
+                else ""
+            }
+            else -> error("No documentation for operator $operator")
         }
     }
     private val typeDescriptions: Map<PrimitiveType, String> = mapOf(
@@ -173,16 +205,16 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
     }
 
     private fun generateBinaryOperators(thisKind: PrimitiveType) {
-        for ((name, doc) in binaryOperators) {
-            generateOperator(name, doc, thisKind)
+        for (name in binaryOperators) {
+            generateOperator(name, thisKind)
         }
     }
 
-    private fun generateOperator(name: String, doc: String, thisKind: PrimitiveType) {
+    private fun generateOperator(name: String, thisKind: PrimitiveType) {
         for (otherKind in PrimitiveType.onlyNumeric) {
             val returnType = getOperatorReturnType(thisKind, otherKind)
 
-            out.println("    /** $doc */")
+            out.printDoc(binaryOperatorDoc(name, thisKind, otherKind), "    ")
             when (name) {
                 "rem" ->
                     out.println("    @SinceKotlin(\"1.1\")")
@@ -427,6 +459,7 @@ class GenerateFloorDivMod(out: PrintWriter) : BuiltInsSourceGenerator(out) {
     private fun generateFloorDiv(thisKind: PrimitiveType, otherKind: PrimitiveType) {
         val returnType = getOperatorReturnType(thisKind, otherKind)
         val returnTypeName = returnType.capitalized
+        out.printDoc(GeneratePrimitives.binaryOperatorDoc("floorDiv", thisKind, otherKind), "")
         out.println("""@SinceKotlin("1.5")""")
         out.println("@kotlin.internal.InlineOnly")
         val declaration = "public inline fun ${thisKind.capitalized}.floorDiv(other: ${otherKind.capitalized}): $returnTypeName"
@@ -451,6 +484,7 @@ class GenerateFloorDivMod(out: PrintWriter) : BuiltInsSourceGenerator(out) {
     private fun generateMod(thisKind: PrimitiveType, otherKind: PrimitiveType) {
         val operationType = getOperatorReturnType(thisKind, otherKind)
         val returnType = otherKind
+        out.printDoc(GeneratePrimitives.binaryOperatorDoc("mod", thisKind, otherKind),"")
         out.println("""@SinceKotlin("1.5")""")
         out.println("@kotlin.internal.InlineOnly")
         val declaration = "public inline fun ${thisKind.capitalized}.mod(other: ${otherKind.capitalized}): ${returnType.capitalized}"
@@ -475,6 +509,7 @@ class GenerateFloorDivMod(out: PrintWriter) : BuiltInsSourceGenerator(out) {
 
     private fun generateFpMod(thisKind: PrimitiveType, otherKind: PrimitiveType) {
         val operationType = getOperatorReturnType(thisKind, otherKind)
+        out.printDoc(GeneratePrimitives.binaryOperatorDoc("mod", thisKind, otherKind), "")
         out.println("""@SinceKotlin("1.5")""")
         out.println("@kotlin.internal.InlineOnly")
         val declaration = "public inline fun ${thisKind.capitalized}.mod(other: ${otherKind.capitalized}): ${operationType.capitalized}"
