@@ -571,12 +571,30 @@ public class SequenceTest {
         assertEquals(expected, fibonacci().drop(4).flatMap { it.toString().asSequence() }.take(10).toList())
     }
 
-    @Test fun flatMap() {
-        val result1 = sequenceOf(1, 2).flatMap { (0..it).asSequence() }
-        val result2 = sequenceOf(1, 2).flatMap { 0..it }
+    @Test fun flatMapSequenceToList() {
+        val result = sequenceOf(1, 2).flatMap { (0..it).asSequence() }
         val expected = listOf(0, 1, 0, 1, 2)
-        assertEquals(expected, result1.toList())
-        assertEquals(expected, result2.toList())
+        assertEquals(expected, result.toList())
+    }
+
+    @Test fun flatMapIterableToList() {
+        val result = sequenceOf(1, 2).flatMap { 0..it }
+        val expected = listOf(0, 1, 0, 1, 2)
+
+        // Uses the underlyingIterator() path for FlatteningToIterableSequence in toCollection().
+        assertEquals(expected, result.toList())
+
+        // Can only use the iterator() function in toCollection().
+        assertEquals(expected, result.asIterable().toList())
+    }
+
+    @Test fun flatMapMappedIterableToList() {
+        val result = sequenceOf(0, 1).map { it + 1 }.flatMap { 0..it }
+        val expected = listOf(0, 1, 0, 1, 2)
+
+        // See flatMapIterableToList() for reasoning.
+        assertEquals(expected, result.toList())
+        assertEquals(expected, result.asIterable().toList())
     }
 
     @Test fun flatMapOnEmpty() {
@@ -609,11 +627,18 @@ public class SequenceTest {
         val seqMappedSeq = sequenceOf(1, 2).map { (0..it).asSequence() }.flatten()
         assertEquals(expected, seqMappedSeq.toList())
 
+
+        // Test both the fast path (underlyingIterator()) and slow path (iterator()) of FlatteningToIterableSequence.
+        // sequence.toList() will use the fast path, while sequence.asIterable().toList() will use the slow path (since the Iterable
+        // toList() cannot know that its operating on a FlatteningToIterableSequence).
+
         val seqOfIterable = sequenceOf(0..1, 0..2).flatten()
         assertEquals(expected, seqOfIterable.toList())
+        assertEquals(expected, seqOfIterable.asIterable().toList())
 
         val seqMappedIterable = sequenceOf(1, 2).map { 0..it }.flatten()
         assertEquals(expected, seqMappedIterable.toList())
+        assertEquals(expected, seqMappedIterable.asIterable().toList())
     }
 
     @Test fun distinct() {
