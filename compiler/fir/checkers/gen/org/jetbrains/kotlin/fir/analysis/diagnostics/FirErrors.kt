@@ -145,6 +145,7 @@ object FirErrors {
     val NONE_APPLICABLE by error1<FirSourceElement, PsiElement, Collection<AbstractFirBasedSymbol<*>>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
     val INAPPLICABLE_CANDIDATE by error1<FirSourceElement, PsiElement, AbstractFirBasedSymbol<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
     val INAPPLICABLE_LATEINIT_MODIFIER by error1<FirSourceElement, KtModifierListOwner, String>(SourceElementPositioningStrategies.LATEINIT_MODIFIER)
+    val VARARG_OUTSIDE_PARENTHESES by error0<FirSourceElement, KtExpression>()
 
     // Ambiguity
     val AMBIGUITY by error1<FirSourceElement, PsiElement, Collection<AbstractFirBasedSymbol<*>>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)

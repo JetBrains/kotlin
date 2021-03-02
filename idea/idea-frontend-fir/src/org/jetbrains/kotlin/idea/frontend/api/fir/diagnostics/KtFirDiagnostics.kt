@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtIfExpression
 import org.jetbrains.kotlin.psi.KtModifierListOwner
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
@@ -389,6 +390,10 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val reason: String
     }
 
+    abstract class VarargOutsideParentheses : KtFirDiagnostic<KtExpression>() {
+        override val diagnosticClass get() = VarargOutsideParentheses::class
+    }
+
     abstract class Ambiguity : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = Ambiguity::class
         abstract val candidates: List<KtSymbol>
@@ -535,7 +540,7 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = NonFinalMemberInObject::class
     }
 
-    abstract class ManyCompanionObjects : KtFirDiagnostic<PsiElement>() {
+    abstract class ManyCompanionObjects : KtFirDiagnostic<KtObjectDeclaration>() {
         override val diagnosticClass get() = ManyCompanionObjects::class
     }
 
