@@ -166,6 +166,8 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val INAPPLICABLE_LATEINIT_MODIFIER by error<FirSourceElement, KtModifierListOwner>(PositioningStrategy.LATEINIT_MODIFIER) {
             parameter<String>("reason")
         }
+
+        val VARARG_OUTSIDE_PARENTHESES by error<FirSourceElement, KtExpression>()
     }
 
     val AMBIGUITY by object : DiagnosticGroup("Ambiguity") {

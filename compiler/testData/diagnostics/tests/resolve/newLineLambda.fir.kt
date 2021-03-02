@@ -69,23 +69,23 @@ fun testLambdaArg() {
 
 fun testVararg() {
     varargFn(1,2,3)
-    <!INAPPLICABLE_CANDIDATE!>varargFn<!> {}
-    <!INAPPLICABLE_CANDIDATE!>varargFn<!>(1,2,3) {}
+    varargFn <!VARARG_OUTSIDE_PARENTHESES!>{}<!>
+    varargFn(1,2,3) <!VARARG_OUTSIDE_PARENTHESES!>{}<!>
     varargFn(1,2,3) // {}
-    <!INAPPLICABLE_CANDIDATE!>varargFn<!>(1,2,3) /* */ {}
-    <!INAPPLICABLE_CANDIDATE!>varargFn<!>(1,2,3) /*
+    varargFn(1,2,3) /* */ <!VARARG_OUTSIDE_PARENTHESES!>{}<!>
+    varargFn(1,2,3) /*
         block comment, no new line
-    */ {}
-    <!INAPPLICABLE_CANDIDATE!>varargFn<!>(1,2,3)
+    */ <!VARARG_OUTSIDE_PARENTHESES!>{}<!>
+    varargFn(1,2,3)
     /*
         block comment with new line
-    */ {}
-    <!INAPPLICABLE_CANDIDATE!>varargFn<!>(1,2,3) // comment
+    */ <!VARARG_OUTSIDE_PARENTHESES!>{}<!>
+    varargFn(1,2,3) // comment
     // comment
-    {}
-    <!INAPPLICABLE_CANDIDATE!>varargFn<!>(1,2,3) {} {}
-    <!INAPPLICABLE_CANDIDATE!>varargFn<!>(1,2,3) {}
-    {}
+    <!VARARG_OUTSIDE_PARENTHESES!>{}<!>
+    varargFn(1,2,3) {} <!VARARG_OUTSIDE_PARENTHESES!>{}<!>
+    varargFn(1,2,3) {}
+    <!VARARG_OUTSIDE_PARENTHESES!>{}<!>
 }
 
 fun testTwoLambdas() {
