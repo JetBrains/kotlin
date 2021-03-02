@@ -258,7 +258,8 @@ abstract class BaseGradleIT {
         val verbose: Boolean,
         val useWorkers: Boolean,
         val incrementalKapt: Boolean = false,
-        val includeCompileClasspath: Boolean = true
+        val includeCompileClasspath: Boolean = true,
+        val classLoadersCacheSize: Int? = null
     )
 
     open inner class Project(
@@ -913,6 +914,9 @@ Finished executing task ':$taskName'|
                 add("-Pkapt.use.worker.api=${kaptOptions.useWorkers}")
                 add("-Pkapt.incremental.apt=${kaptOptions.incrementalKapt}")
                 add("-Pkapt.include.compile.classpath=${kaptOptions.includeCompileClasspath}")
+                kaptOptions.classLoadersCacheSize?.also { cacheSize ->
+                    add("-Pkapt.classloaders.cache.size=$cacheSize")
+                }
             }
 
             options.parallelTasksInProject?.let {

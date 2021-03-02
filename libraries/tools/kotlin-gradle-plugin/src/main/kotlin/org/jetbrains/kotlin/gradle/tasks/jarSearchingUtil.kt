@@ -119,7 +119,7 @@ internal fun findToolsJar(): File? {
     return javacUtilContextClass?.let(::findJarByClass)
 }
 
-private fun findJarByClass(klass: Class<*>): File? {
+internal fun findJarByClass(klass: Class<*>): File? {
     val classFileName = klass.name.substringAfterLast(".") + ".class"
     val resource = klass.getResource(classFileName) ?: return null
     val uri = resource.toString()
