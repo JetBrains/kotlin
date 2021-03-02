@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.idea.core.withRootPrefixIfNeeded
 import org.jetbrains.kotlin.idea.frontend.api.HackToForceAllowRunningAnalyzeOnEDT
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.analyze
+import org.jetbrains.kotlin.idea.frontend.api.fir.utils.addImportToFile
 import org.jetbrains.kotlin.idea.frontend.api.hackyAllowRunningOnEdt
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtNamedSymbol
@@ -115,10 +116,13 @@ private class VariableLookupElementFactory {
         if (setterName != null) "$getterName()/$setterName()" else "$getterName()"
 
     private fun createInsertHandler(symbol: KtVariableLikeSymbol): InsertHandler<LookupElement> {
-        val callableId = symbol.callableIdIfExists
-        if (callableId == null || !symbol.canBeCalledByFqName) return QuotedNamesAwareInsertionHandler(symbol.name)
+        val callableId = symbol.callableIdIfExists ?: return QuotedNamesAwareInsertionHandler(symbol.name)
 
-        return ShorteningVariableInsertionHandler(callableId)
+        return if (symbol.canBeCalledByFqName) {
+            ShorteningVariableInsertionHandler(callableId)
+        } else {
+            SimpleVariableInsertionHandler(callableId)
+        }
     }
 
     private val KtVariableLikeSymbol.callableIdIfExists: FqName?
@@ -181,7 +185,6 @@ private class FunctionLookupElementFactory {
 
     private fun KtAnalysisSession.createInsertHandler(symbol: KtFunctionSymbol): InsertHandler<LookupElement> {
         val functionFqName = symbol.callableIdIfNonLocal
-
         return if (functionFqName != null && canBeCalledByFqName(symbol)) {
             ShorteningFunctionInsertionHandler(
                 functionFqName,
@@ -192,10 +195,14 @@ private class FunctionLookupElementFactory {
             SimpleFunctionInsertionHandler(
                 symbol.name,
                 inputValueArguments = symbol.valueParameters.isNotEmpty(),
-                insertEmptyLambda = insertLambdaBraces(symbol)
+                insertEmptyLambda = insertLambdaBraces(symbol),
+                nameToImport = symbol.importableFqName,
             )
         }
     }
+
+    private val KtFunctionSymbol.importableFqName: FqName?
+        get() = if (dispatchType == null) callableIdIfNonLocal else null
 
     private fun canBeCalledByFqName(symbol: KtFunctionSymbol): Boolean {
         return !symbol.isExtension && symbol.dispatchType == null
@@ -299,15 +306,22 @@ private abstract class AbstractFunctionInsertionHandler(
 private class SimpleFunctionInsertionHandler(
     name: Name,
     inputValueArguments: Boolean,
-    insertEmptyLambda: Boolean
+    insertEmptyLambda: Boolean,
+    private val nameToImport: FqName?
 ) : AbstractFunctionInsertionHandler(name, inputValueArguments, insertEmptyLambda) {
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
         super.handleInsert(context, item)
+
+        val targetFile = context.file as? KtFile ?: return
 
         val startOffset = context.startOffset
         val element = context.file.findElementAt(startOffset) ?: return
 
         addArguments(context, element)
+
+        if (nameToImport != null && targetFile.importDirectives.none { it.importPath?.fqName == nameToImport }) {
+            addImportToFile(context.project, targetFile, nameToImport)
+        }
     }
 }
 
@@ -349,6 +363,19 @@ private class ShorteningVariableInsertionHandler(private val name: FqName) : Ins
         context.commitDocument()
 
         shortenReferences(targetFile, TextRange(context.startOffset, context.tailOffset))
+    }
+}
+
+private class SimpleVariableInsertionHandler(private val nameToImport: FqName) :
+    QuotedNamesAwareInsertionHandler(nameToImport.shortName()) {
+    override fun handleInsert(context: InsertionContext, item: LookupElement) {
+        super.handleInsert(context, item)
+
+        val targetFile = context.file as? KtFile ?: return
+
+        if (targetFile.importDirectives.none { it.importPath?.fqName == nameToImport }) {
+            addImportToFile(context.project, targetFile, nameToImport)
+        }
     }
 }
 

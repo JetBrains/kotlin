@@ -98,6 +98,33 @@ public class IndexHelper(val project: Project, private val scope: GlobalSearchSc
         return (functions + properties).toList()
     }
 
+    fun getTopLevelExtensions(nameFilter: (Name) -> Boolean, receiverTypeNames: Set<String>): Collection<KtCallableDeclaration> {
+        val index = KotlinTopLevelExtensionsByReceiverTypeIndex.INSTANCE
+
+        return index.getAllKeys(project).asSequence()
+            .onEach { ProgressManager.checkCanceled() }
+            .filter { KotlinTopLevelExtensionsByReceiverTypeIndex.receiverTypeNameFromKey(it) in receiverTypeNames }
+            .filter { nameFilter(Name.identifier(KotlinTopLevelExtensionsByReceiverTypeIndex.callableNameFromKey(it))) }
+            .flatMap { key -> index[key, project, scope] }
+            .toList()
+    }
+
+    fun getPossibleTypeAliasExpansionNames(originalTypeName: String): Set<String> {
+        val index = KotlinTypeAliasByExpansionShortNameIndex.INSTANCE
+        val out = mutableSetOf<String>()
+
+        fun searchRecursively(typeName: String) {
+            ProgressManager.checkCanceled()
+            index[typeName, project, scope].asSequence()
+                .mapNotNull { it.name }
+                .filter { out.add(it) }
+                .forEach(::searchRecursively)
+        }
+
+        searchRecursively(originalTypeName)
+        return out
+    }
+
     companion object {
         private fun CallableId.asStringForIndexes(): String =
             (if (packageName.isRoot) callableName.asString() else toString()).replace('/', '.')

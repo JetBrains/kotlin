@@ -21,7 +21,7 @@ private val SimpleImportPathComparator: Comparator<ImportPath> = compareBy(Impor
  *
  * We want it as a copy because we do not yet care about imports ordering, so we do not need a fancy comparator.
  */
-internal fun addImportToFile(
+fun addImportToFile(
     project: Project,
     file: KtFile,
     fqName: FqName,
