@@ -98,7 +98,9 @@ int main(void) {
     __ DisposeStablePointer(impl2.pinned);
     __ DisposeStablePointer(enum1.pinned);
     __ DisposeStablePointer(object1.pinned);
+    __ DisposeStablePointer(data.pinned);
     __ DisposeStablePointer(nullableInt.pinned);
+    __ DisposeStablePointer(nullableUnit.pinned);
     __ DisposeStablePointer(enum2.pinned);
 
     __ kotlin.root.setCErrorHandler(&errorHandler);
