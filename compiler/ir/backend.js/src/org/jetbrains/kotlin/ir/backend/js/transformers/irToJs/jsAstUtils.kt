@@ -205,10 +205,17 @@ fun translateCall(
                 }
             }
         } else {
-            JsInvocation(
-                JsNameRef("apply", JsNameRef(symbolName)),
-                listOf(JsNullLiteral(), argumentsAsSingleArray)
-            )
+            if (argumentsAsSingleArray is JsArrayLiteral) {
+                JsInvocation(
+                    JsNameRef(symbolName),
+                    argumentsAsSingleArray.expressions
+                )
+            } else {
+                JsInvocation(
+                    JsNameRef("apply", JsNameRef(symbolName)),
+                    listOf(JsNullLiteral(), argumentsAsSingleArray)
+                )
+            }
         }
     } else {
         JsInvocation(ref, listOfNotNull(jsExtensionReceiver) + arguments)
