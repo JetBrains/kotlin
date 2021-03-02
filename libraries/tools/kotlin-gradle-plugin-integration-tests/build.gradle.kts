@@ -79,7 +79,7 @@ fun Test.includeNative(include: Boolean) {
 }
 
 fun Test.advanceGradleVersion() {
-    val gradleVersionForTests = "6.8.1"
+    val gradleVersionForTests = "7.0-milestone-2"
     systemProperty("kotlin.gradle.version.for.tests", gradleVersionForTests)
 }
 
@@ -208,4 +208,8 @@ tasks.withType<Test> {
             override fun beforeTest(testDescriptor: TestDescriptor) {}
         })
     }
+}
+
+java {
+    withSourcesJar()
 }
