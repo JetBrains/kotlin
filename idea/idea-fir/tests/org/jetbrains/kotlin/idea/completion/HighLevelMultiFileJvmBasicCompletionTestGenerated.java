@@ -379,6 +379,11 @@ public class HighLevelMultiFileJvmBasicCompletionTestGenerated extends AbstractH
         runTest("idea/idea-completion/testData/basic/multifile/SyntheticExtensionNonVoidSetter/");
     }
 
+    @TestMetadata("SyntheticPrimitiveJavaProperty")
+    public void testSyntheticPrimitiveJavaProperty() throws Exception {
+        runTest("idea/idea-completion/testData/basic/multifile/SyntheticPrimitiveJavaProperty/");
+    }
+
     @TestMetadata("TopLevelFunction")
     public void testTopLevelFunction() throws Exception {
         runTest("idea/idea-completion/testData/basic/multifile/TopLevelFunction/");
