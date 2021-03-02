@@ -170,33 +170,32 @@ interface ParcelizeSyntheticComponent {
 }
 
 val TYPE_PARCELER_FQ_NAMES = listOf(
-    FqName(kotlinx.parcelize.TypeParceler::class.java.name),
-    FqName(kotlinx.android.parcel.TypeParceler::class.java.name)
+    FqName("kotlinx.parcelize.TypeParceler"),
+    FqName("kotlinx.android.parcel.TypeParceler")
 )
 
 val WRITE_WITH_FQ_NAMES = listOf(
-    FqName(kotlinx.parcelize.WriteWith::class.java.name),
-    FqName(kotlinx.android.parcel.WriteWith::class.java.name)
+    FqName("kotlinx.parcelize.WriteWith"),
+    FqName("kotlinx.android.parcel.WriteWith")
 )
 
 val IGNORED_ON_PARCEL_FQ_NAMES = listOf(
-    FqName(kotlinx.parcelize.IgnoredOnParcel::class.java.name),
-    FqName(kotlinx.android.parcel.IgnoredOnParcel::class.java.name)
+    FqName("kotlinx.parcelize.IgnoredOnParcel"),
+    FqName("kotlinx.android.parcel.IgnoredOnParcel")
 )
 
 val PARCELIZE_CLASS_FQ_NAMES: List<FqName> = listOf(
-    FqName(kotlinx.parcelize.Parcelize::class.java.canonicalName),
-    FqName(kotlinx.android.parcel.Parcelize::class.java.canonicalName)
+    FqName("kotlinx.parcelize.Parcelize"),
+    FqName("kotlinx.android.parcel.Parcelize")
 )
 
 val RAW_VALUE_ANNOTATION_FQ_NAMES = listOf(
-    FqName(kotlinx.parcelize.RawValue::class.java.name),
-    @Suppress("DEPRECATION") FqName(kotlinx.android.parcel.RawValue::class.java.name)
+    FqName("kotlinx.parcelize.RawValue"),
+    FqName("kotlinx.android.parcel.RawValue")
 )
 
-internal val PARCELER_FQNAME = FqName(kotlinx.parcelize.Parceler::class.java.canonicalName)
-
-internal val OLD_PARCELER_FQNAME = FqName(kotlinx.android.parcel.Parceler::class.java.canonicalName)
+internal val PARCELER_FQNAME = FqName("kotlinx.parcelize.Parceler")
+internal val OLD_PARCELER_FQNAME = FqName("kotlinx.android.parcel.Parceler")
 
 val ClassDescriptor.isParcelize: Boolean
     get() {

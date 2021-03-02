@@ -65,8 +65,8 @@ interface ParcelSerializer {
 
     companion object {
         private val WRITE_WITH_FQ_NAMES = listOf(
-            FqName(kotlinx.parcelize.WriteWith::class.java.name),
-            @Suppress("DEPRECATION") FqName(kotlinx.android.parcel.WriteWith::class.java.name),
+            FqName("kotlinx.parcelize.WriteWith"),
+            FqName("kotlinx.android.parcel.WriteWith"),
         )
 
         private fun KotlinTypeMapper.mapTypeSafe(type: KotlinType, forceBoxed: Boolean) = when {
