@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.parcelize.serializers
 
-import kotlinx.parcelize.Parceler
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.FrameMap
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
@@ -30,7 +29,7 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 internal val PARCEL_TYPE = Type.getObjectType("android/os/Parcel")
-internal val PARCELER_TYPE = Type.getObjectType(Parceler::class.java.name.replace(".", "/"))
+internal val PARCELER_TYPE = Type.getObjectType("kotlinx/parcelize/Parceler")
 
 internal class GenericParcelSerializer(override val asmType: Type) : ParcelSerializer {
     override fun writeValue(v: InstructionAdapter) {
