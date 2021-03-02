@@ -1,5 +1,5 @@
 package first
 
 fun foo() {
-    "".ext<caret>
+    "".extensi<caret>
 }
