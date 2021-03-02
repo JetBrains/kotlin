@@ -706,7 +706,12 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
                 entityKind = TypeKind.TYPE_ARGUMENT,
                 entitiesComparator = ::compareTypes
             )
-            compareNullableValues(typeProjectionContext, typeProjectionA.variance, typeProjectionB.variance, EntityKind.TypeArgumentVariance)
+            compareNullableValues(
+                containerContext = typeProjectionContext,
+                valueA = typeProjectionA.variance,
+                valueB = typeProjectionB.variance,
+                valueKind = EntityKind.TypeArgumentVariance
+            )
         }
 
         compareNullableEntities(
@@ -737,7 +742,12 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
                 entityKind = TypeKind.UPPER_BOUND,
                 entitiesComparator = ::compareTypes
             )
-            compareNullableValues(typeUpperBoundContext, upperBoundA.typeFlexibilityId, upperBoundB.typeFlexibilityId, EntityKind.TypeFlexibilityId)
+            compareNullableValues(
+                containerContext = typeUpperBoundContext,
+                valueA = upperBoundA.typeFlexibilityId,
+                valueB = upperBoundB.typeFlexibilityId,
+                valueKind = EntityKind.TypeFlexibilityId
+            )
         }
     }
 
@@ -762,8 +772,18 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         effectExpressionB: KmEffectExpression
     ) {
         compareFlags(effectExpressionContext, effectExpressionA.flags, effectExpressionB.flags, EFFECT_EXPRESSION_FLAGS)
-        compareNullableValues(effectExpressionContext, effectExpressionA.parameterIndex, effectExpressionB.parameterIndex, EntityKind.EffectExpressionParameterIndex)
-        compareNullableValues(effectExpressionContext, effectExpressionA.constantValue, effectExpressionB.constantValue, EntityKind.EffectExpressionConstantValue)
+        compareNullableValues(
+            containerContext = effectExpressionContext,
+            valueA = effectExpressionA.parameterIndex,
+            valueB = effectExpressionB.parameterIndex,
+            valueKind = EntityKind.EffectExpressionParameterIndex
+        )
+        compareNullableValues(
+            containerContext = effectExpressionContext,
+            valueA = effectExpressionA.constantValue,
+            valueB = effectExpressionB.constantValue,
+            valueKind = EntityKind.EffectExpressionConstantValue
+        )
 
         compareNullableEntities(
             containerContext = effectExpressionContext,
