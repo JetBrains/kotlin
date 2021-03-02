@@ -7,6 +7,8 @@ package
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    @kotlin.jvm.JvmStatic public final /*synthesized*/ fun `write$Self`(/*0*/ self: Derived, /*1*/ output: kotlinx.serialization.encoding.CompositeEncoder, /*2*/ serialDesc: kotlinx.serialization.descriptors.SerialDescriptor): kotlin.Unit
+    @kotlin.jvm.JvmStatic public final override /*1*/ /*fake_override*/ fun `write$Self`(/*0*/ self: Parent, /*1*/ output: kotlinx.serialization.encoding.CompositeEncoder, /*2*/ serialDesc: kotlinx.serialization.descriptors.SerialDescriptor): kotlin.Unit
 
     @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "This synthesized declaration should not be used directly", replaceWith = kotlin.ReplaceWith(expression = "", imports = {})) public object `$serializer` : kotlinx.serialization.internal.GeneratedSerializer<Derived> {
         private constructor `$serializer`()
@@ -36,6 +38,7 @@ package
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    @kotlin.jvm.JvmStatic public final /*synthesized*/ fun `write$Self`(/*0*/ self: Parent, /*1*/ output: kotlinx.serialization.encoding.CompositeEncoder, /*2*/ serialDesc: kotlinx.serialization.descriptors.SerialDescriptor): kotlin.Unit
 
     @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "This synthesized declaration should not be used directly", replaceWith = kotlin.ReplaceWith(expression = "", imports = {})) public object `$serializer` : kotlinx.serialization.internal.GeneratedSerializer<Parent> {
         private constructor `$serializer`()

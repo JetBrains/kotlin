@@ -1,15 +1,16 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlinx.serialization.compiler.backend.common
 
-import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.secondaryConstructors
+import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 
 abstract class SerializableCodegen(
@@ -37,7 +38,15 @@ abstract class SerializableCodegen(
     private fun generateSyntheticMethods() {
         val serializerDescriptor = serializableDescriptor.classSerializer ?: return
         if (serializableDescriptor.shouldHaveSpecificSyntheticMethods { SerializerCodegen.getSyntheticSaveMember(serializerDescriptor) }) {
-            val func = KSerializerDescriptorResolver.createWriteSelfFunctionDescriptor(serializableDescriptor)
+            val func =
+                serializableDescriptor.unsubstitutedMemberScope.getContributedFunctions(
+                    Name.identifier(SerialEntityNames.WRITE_SELF_NAME.toString()),
+                    NoLookupLocation.FROM_BACKEND
+                ).singleOrNull { function ->
+                    function.kind == CallableMemberDescriptor.Kind.SYNTHESIZED &&
+                            function.modality == Modality.FINAL &&
+                            function.returnType?.isUnit() ?: false
+                } ?: return
             generateWriteSelfMethod(func)
         }
     }

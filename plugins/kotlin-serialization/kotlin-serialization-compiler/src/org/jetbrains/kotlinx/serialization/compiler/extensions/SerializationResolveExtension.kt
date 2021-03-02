@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -39,7 +39,23 @@ open class SerializationResolveExtension @JvmOverloads constructor(val metadataP
     override fun getSyntheticFunctionNames(thisDescriptor: ClassDescriptor): List<Name> = when {
         thisDescriptor.isSerializableObject || thisDescriptor.isCompanionObject && getSerializableClassDescriptorByCompanion(thisDescriptor) != null ->
             listOf(SerialEntityNames.SERIALIZER_PROVIDER_NAME)
+        thisDescriptor.isInternalSerializable && thisDescriptor.platform?.isJvm() == true && !hasCustomizedSerializeMethod(thisDescriptor) -> {
+            // add write$Self, but only if .serialize was not customized in companion.
+            // It works not only on JVM, but I see no reason to enable it on other platforms —
+            // private fields there have no access control, and additional function
+            // only increases compiled code size.
+            listOf(SerialEntityNames.WRITE_SELF_NAME)
+        }
         else -> emptyList()
+    }
+
+    private fun hasCustomizedSerializeMethod(serializableClass: ClassDescriptor): Boolean {
+        // We cannot check whether companion has @Serializer(MyClass::class) annotation due to recursive resolve problems
+        // (apparently, resolve MyClass type asks for all function names, which leads us to this function again)
+        // so we rely on less strict check that companion just has non-empty @Serializer annotation.
+        // Anyway, I doubt that serializable class companion would ever be serializer for _another_ class.
+        val companion = serializableClass.companionObjectDescriptor ?: return false
+        return companion.annotations.hasAnnotation(SerializationAnnotations.serializerAnnotationFqName)
     }
 
     override fun generateSyntheticClasses(
@@ -91,6 +107,7 @@ open class SerializationResolveExtension @JvmOverloads constructor(val metadataP
     ) {
         KSerializerDescriptorResolver.generateSerializerMethods(thisDescriptor, fromSupertypes, name, result)
         KSerializerDescriptorResolver.generateCompanionObjectMethods(thisDescriptor, name, result)
+        KSerializerDescriptorResolver.generateSerializableClassMethods(thisDescriptor, name, result)
     }
 
     override fun generateSyntheticProperties(

@@ -25,9 +25,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.getOrPutNullable
-import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializableCodegen
-import org.jetbrains.kotlinx.serialization.compiler.backend.common.isStaticSerializable
-import org.jetbrains.kotlinx.serialization.compiler.backend.common.serialName
+import org.jetbrains.kotlinx.serialization.compiler.backend.common.*
 import org.jetbrains.kotlinx.serialization.compiler.diagnostic.serializableAnnotationIsUseless
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
@@ -284,7 +282,57 @@ class SerializableIrGenerator(
     }
 
     override fun generateWriteSelfMethod(methodDescriptor: FunctionDescriptor) {
-        // no-op
+        irClass.contributeFunction(methodDescriptor, ignoreWhenMissing = true) { writeSelfFunction ->
+            val objectToSerialize = writeSelfFunction.valueParameters[0]
+            val localOutput = writeSelfFunction.valueParameters[1]
+            val localSerialDesc = writeSelfFunction.valueParameters[2]
+            val serializableProperties = properties.serializableProperties
+            val kOutputClass = serializableDescriptor.getClassFromSerializationPackage(SerialEntityNames.STRUCTURE_ENCODER_CLASS)
+
+            val propertyByParamReplacer: (ValueParameterDescriptor) -> IrExpression? =
+                createPropertyByParamReplacer(irClass, serializableProperties, objectToSerialize, bindingContext)
+
+            // Since writeSelf is a static method, we have to replace all references to this in property initializers
+            val thisSymbol = irClass.thisReceiver!!.symbol
+            val initializerAdapter: (IrExpressionBody) -> IrExpression = createInitializerAdapter(irClass, propertyByParamReplacer, thisSymbol to { irGet(objectToSerialize) })
+
+            // Compute offset of properties in superclass
+            var ignoreIndexTo = -1
+            val superClass = irClass.getSuperClassOrAny()
+            if (superClass.descriptor.isInternalSerializable) {
+                ignoreIndexTo = bindingContext.serializablePropertiesFor(superClass.descriptor).size
+
+                // call super.writeSelf
+                val superWriteSelfF = superClass.findWriteSelfMethod()
+                if (superWriteSelfF != null) {
+                    val args = mutableListOf<IrExpression>(irGet(objectToSerialize), irGet(localOutput), irGet(localSerialDesc))
+
+                    val typeArgsForParent = serializableDescriptor.typeConstructor.supertypes.single { it.toClassDescriptor?.isInternalSerializable == true }.arguments
+                    val parentWriteSelfSerializers = typeArgsForParent.map { arg ->
+                        val genericIdx = serializableDescriptor.defaultType.arguments.indexOf(arg).let { if (it == -1) null else it }
+                        val serial = findTypeSerializerOrContext(serializableDescriptor.module, arg.type)
+                        serializerInstance(
+                            this@SerializableIrGenerator,
+                            serial,
+                            serializableDescriptor.module,
+                            arg.type,
+                            genericIdx
+                        ) { it, _ ->
+                            irGet(writeSelfFunction.valueParameters[3 + it])
+                        }!!
+                    }
+                    +irInvoke(null, superWriteSelfF.symbol, typeArgsForParent.map { it.type.toIrType() }, args + parentWriteSelfSerializers)
+                }
+            }
+
+            serializeAllProperties(
+                this@SerializableIrGenerator, irClass, serializableProperties,
+                objectToSerialize, localOutput, localSerialDesc,
+                kOutputClass, ignoreIndexTo, initializerAdapter
+            ) { it, _ ->
+                irGet(writeSelfFunction.valueParameters[3 + it])
+            }
+        }
     }
 
     companion object {
@@ -298,8 +346,7 @@ class SerializableIrGenerator(
             if (serializableClass.isInternalSerializable) {
                 SerializableIrGenerator(irClass, context, bindingContext).generate()
                 irClass.patchDeclarationParents(irClass.parent)
-            }
-            else if (serializableClass.serializableAnnotationIsUseless) {
+            } else if (serializableClass.serializableAnnotationIsUseless) {
                 throw CompilationException(
                     "@Serializable annotation on $serializableClass would be ignored because it is impossible to serialize it automatically. " +
                             "Provide serializer manually via e.g. companion object", null, serializableClass.findPsi()

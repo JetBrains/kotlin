@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -215,6 +215,11 @@ object KSerializerDescriptorResolver {
         if (isSave || isLoad || isDescriptorGetter || isTypeParamsSerializersGetter) {
             result.add(doCreateSerializerFunction(thisDescriptor, name))
         }
+    }
+
+    fun generateSerializableClassMethods(thisDescriptor: ClassDescriptor, name: Name, result: MutableCollection<SimpleFunctionDescriptor>) {
+        if (thisDescriptor.isInternalSerializable && name == SerialEntityNames.WRITE_SELF_NAME)
+            result.add(createWriteSelfFunctionDescriptor(thisDescriptor))
     }
 
     private fun createSerializableClassPropertyDescriptor(
@@ -490,7 +495,7 @@ object KSerializerDescriptorResolver {
         if (KotlinBuiltIns.isPrimitiveType(this)) this
         else this.makeNullable()
 
-    fun createWriteSelfFunctionDescriptor(thisClass: ClassDescriptor): FunctionDescriptor {
+    fun createWriteSelfFunctionDescriptor(thisClass: ClassDescriptor): SimpleFunctionDescriptor {
         val jvmStaticClass = thisClass.module.findClassAcrossModuleDependencies(
             ClassId(
                 FqName("kotlin.jvm"),
@@ -570,7 +575,7 @@ object KSerializerDescriptorResolver {
 
         f.initialize(
             null,
-            thisClass.thisAsReceiverParameter,
+            null,
             typeArgs,
             args,
             returnType,
