@@ -11,6 +11,7 @@ import org.gradle.api.file.FileTree
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
@@ -63,7 +64,7 @@ private class IosFrameworkFiles(val rootDir: File) {
 /**
  * Task running lipo to create a fat framework from several simple frameworks. It also merges headers, plists and module files.
  */
-open class FatFrameworkTask: DefaultTask() {
+open class FatFrameworkTask : DefaultTask() {
 
     //region DSL properties.
     /**
@@ -334,5 +335,17 @@ open class FatFrameworkTask: DefaultTask() {
         createModuleFile(fatFramework.moduleFile, frameworkName)
         mergePlists(fatFramework.infoPlist, frameworkName)
         mergeDSYM()
+    }
+
+    companion object {
+        private val supportedTargets = listOf(
+            IOS_ARM32, IOS_ARM64, IOS_X64,
+            WATCHOS_ARM32, WATCHOS_ARM64, WATCHOS_X86, WATCHOS_X64,
+            TVOS_ARM64, TVOS_X64
+        )
+
+        fun isSupportedTarget(target: KotlinNativeTarget): Boolean {
+            return target.konanTarget in supportedTargets
+        }
     }
 }

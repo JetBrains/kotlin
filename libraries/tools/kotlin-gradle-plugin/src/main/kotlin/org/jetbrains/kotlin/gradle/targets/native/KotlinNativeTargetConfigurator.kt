@@ -194,44 +194,50 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget>(
             }
         }
 
+        fun configureFatFramework() {
+            val fatFrameworkConfigurationName = lowerCamelCaseName(binary.name, binary.target.konanTarget.family.name.toLowerCase(), "fat")
+            val fatFrameworkTaskName = "link${fatFrameworkConfigurationName.capitalize()}"
+
+            val fatFrameworkTask = if (fatFrameworkTaskName in tasks.names) {
+                tasks.named(fatFrameworkTaskName, FatFrameworkTask::class.java)
+            } else {
+                tasks.register(fatFrameworkTaskName, FatFrameworkTask::class.java) {
+                    it.baseName = binary.baseName
+                    it.destinationDir = it.destinationDir.resolve(binary.buildType.name.toLowerCase())
+                }
+            }
+
+            fatFrameworkTask.configure {
+                try {
+                    it.from(binary)
+                } catch (e: Exception) {
+                    logger.warn("Cannot add binary ${binary.name} dependency to default fat framework", e)
+                }
+            }
+
+            // maybeCreate is not used as it does not provide way to configure once
+            val fatConfiguration =
+                configurations.findByName(fatFrameworkConfigurationName) ?: configurations.create(fatFrameworkConfigurationName) {
+                    it.isCanBeConsumed = true
+                    it.isCanBeResolved = false
+                    it.configureConfiguration(fatFrameworkTask)
+                }
+
+            fatConfiguration.attributes.attribute(
+                Framework.frameworkTargets,
+                (fatConfiguration.attributes.getAttribute(Framework.frameworkTargets) ?: setOf<String>()) + binary.target.konanTarget.name
+            )
+        }
+
         configurations.create(lowerCamelCaseName(binary.name, binary.target.name)) {
             it.isCanBeConsumed = true
             it.isCanBeResolved = false
             it.configureConfiguration(linkTask)
         }
 
-        val fatFrameworkConfigurationName = lowerCamelCaseName(binary.name, binary.target.konanTarget.family.name.toLowerCase(), "fat")
-        val fatFrameworkTaskName = "link${fatFrameworkConfigurationName.capitalize()}"
-
-        val fatFrameworkTask = try {
-            tasks.named(fatFrameworkTaskName, FatFrameworkTask::class.java)
-        } catch (e: UnknownDomainObjectException) {
-            tasks.register(fatFrameworkTaskName, FatFrameworkTask::class.java) {
-                it.baseName = binary.baseName
-                it.destinationDir = it.destinationDir.resolve(binary.buildType.name.toLowerCase())
-            }
+        if (FatFrameworkTask.isSupportedTarget(binary.target)) {
+            configureFatFramework()
         }
-
-        fatFrameworkTask.configure {
-            try {
-                it.from(binary)
-            } catch (e: Exception) {
-                logger.warn("Cannot add binary ${binary.name} dependency to fat framework", e)
-            }
-        }
-
-        // maybeCreate is not used as it does not provide way to configure once
-        val fatConfiguration =
-            configurations.findByName(fatFrameworkConfigurationName) ?: configurations.create(fatFrameworkConfigurationName) {
-                it.isCanBeConsumed = true
-                it.isCanBeResolved = false
-                it.configureConfiguration(fatFrameworkTask)
-            }
-
-        fatConfiguration.attributes.attribute(
-            Framework.frameworkTargets,
-            (fatConfiguration.attributes.getAttribute(Framework.frameworkTargets) ?: setOf<String>()) + binary.target.konanTarget.name
-        )
     }
 
     private fun Project.createRunTask(binary: Executable) {
