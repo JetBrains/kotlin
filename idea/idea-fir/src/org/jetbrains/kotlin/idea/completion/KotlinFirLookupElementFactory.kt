@@ -115,7 +115,8 @@ private class VariableLookupElementFactory {
         if (setterName != null) "$getterName()/$setterName()" else "$getterName()"
 
     private fun createInsertHandler(symbol: KtVariableLikeSymbol): InsertHandler<LookupElement> {
-        val callableId = symbol.callableIdIfExists ?: return QuotedNamesAwareInsertionHandler(symbol.name)
+        val callableId = symbol.callableIdIfExists
+        if (callableId == null || !symbol.canBeCalledByFqName) return QuotedNamesAwareInsertionHandler(symbol.name)
 
         return ShorteningVariableInsertionHandler(callableId)
     }
@@ -132,6 +133,20 @@ private class VariableLookupElementFactory {
             is KtFunctionParameterSymbol,
             is KtConstructorParameterSymbol,
             is KtSetterParameterSymbol -> null
+        }
+
+    private val KtVariableLikeSymbol.canBeCalledByFqName: Boolean
+        get() = when (this) {
+            is KtKotlinPropertySymbol -> dispatchType == null && receiverType == null
+
+            is KtEnumEntrySymbol -> true
+
+            is KtJavaFieldSymbol,
+            is KtSyntheticJavaPropertySymbol,
+            is KtLocalVariableSymbol,
+            is KtFunctionParameterSymbol,
+            is KtConstructorParameterSymbol,
+            is KtSetterParameterSymbol -> false
         }
 }
 
