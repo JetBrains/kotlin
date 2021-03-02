@@ -9,8 +9,7 @@ import kotlinx.metadata.klib.KlibModuleMetadata
 import org.jetbrains.kotlin.descriptors.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.descriptors.commonizer.identityString
 import org.jetbrains.kotlin.descriptors.commonizer.metadata.utils.MetadataDeclarationsComparator
-import org.jetbrains.kotlin.descriptors.commonizer.metadata.utils.MetadataDeclarationsComparator.Mismatch
-import org.jetbrains.kotlin.descriptors.commonizer.metadata.utils.MetadataDeclarationsComparator.Result
+import org.jetbrains.kotlin.descriptors.commonizer.metadata.utils.MetadataDeclarationsComparator.*
 import org.jetbrains.kotlin.descriptors.commonizer.metadata.utils.SerializedMetadataLibraryProvider
 import org.jetbrains.kotlin.library.SerializedMetadata
 import java.io.File
@@ -31,7 +30,7 @@ fun assertModulesAreEqual(reference: SerializedMetadata, generated: SerializedMe
         is Result.Success -> Unit
         is Result.Failure -> {
             val mismatches = result.mismatches
-                .filter(FILTER_OUR_ACCEPTABLE_MISMATCHES)
+                .filter(FILTER_OUT_ACCEPTABLE_MISMATCHES)
                 .sortedBy { it::class.java.simpleName + "_" + it.kind }
 
             if (mismatches.isEmpty()) return
@@ -50,23 +49,29 @@ fun assertModulesAreEqual(reference: SerializedMetadata, generated: SerializedMe
     }
 }
 
-private val FILTER_OUR_ACCEPTABLE_MISMATCHES: (Mismatch) -> Boolean = { mismatch ->
+private val FILTER_OUT_ACCEPTABLE_MISMATCHES: (Mismatch) -> Boolean = { mismatch ->
     var isAcceptableMismatch = false // don't filter it out by default
 
     if (mismatch is Mismatch.MissingEntity) {
-        if (mismatch.kind == "AbbreviatedType") {
+        if (mismatch.kind == EntityKind.TypeKind.ABBREVIATED) {
             val usefulPath = mismatch.path
-                .dropWhile { !it.startsWith("Package ") }
+                .dropWhile { it !is PathElement.Package }
                 .drop(1)
-                .joinToString(" > ") { it.substringBefore(' ') }
 
             if (mismatch.missingInA) {
-                if (usefulPath == "TypeAlias > ExpandedType") {
+                if (usefulPath.size == 2
+                    && usefulPath[0] is PathElement.TypeAlias
+                    && (usefulPath[1] as? PathElement.Type)?.kind == EntityKind.TypeKind.EXPANDED
+                ) {
                     // extra abbreviated type appeared in commonized declaration, it's OK
                     isAcceptableMismatch = true
                 }
             } else /*if (mismatch.missingInB)*/ {
-                if ("> ReturnType >" in usefulPath && usefulPath.endsWith("TypeProjection > Type")) {
+                if (usefulPath.size > 2
+                    && usefulPath.any { (it as? PathElement.Type)?.kind == EntityKind.TypeKind.RETURN }
+                    && usefulPath[usefulPath.size - 2] is PathElement.TypeArgument
+                    && (usefulPath[usefulPath.size - 1] as? PathElement.Type)?.kind == EntityKind.TypeKind.TYPE_ARGUMENT
+                ) {
                     // extra abbreviated type gone in type argument of commonized declaration, it's OK
                     isAcceptableMismatch = true
                 }

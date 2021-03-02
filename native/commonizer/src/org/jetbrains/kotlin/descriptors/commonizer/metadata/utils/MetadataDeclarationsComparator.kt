@@ -5,25 +5,28 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.metadata.utils
 
+import com.intellij.util.containers.FactoryMap
 import kotlinx.metadata.*
 import kotlinx.metadata.klib.*
+import org.jetbrains.kotlin.descriptors.commonizer.metadata.utils.MetadataDeclarationsComparator.EntityKind.AnnotationKind
+import org.jetbrains.kotlin.descriptors.commonizer.metadata.utils.MetadataDeclarationsComparator.EntityKind.TypeKind
+import org.jetbrains.kotlin.descriptors.commonizer.metadata.utils.MetadataDeclarationsComparator.EntityKind.FlagKind
 import org.jetbrains.kotlin.descriptors.commonizer.utils.KNI_BRIDGE_FUNCTION_PREFIX
 import java.util.*
+import kotlin.reflect.KProperty
 import kotlin.reflect.KProperty0
 
 /**
  * Compares two metadata modules ([KlibModuleMetadata]). Returns [Result], which may hold a list
  * of found [Mismatch]s.
  *
- * The entry point is [MetadataDeclarationsComparator.Companion.compareModules] function.
+ * The entry point is [MetadataDeclarationsComparator.Companion.compare] function.
  */
 // TODO: extract to kotlinx-metadata-klib library?
+@Suppress("unused")
 class MetadataDeclarationsComparator private constructor(private val config: Config) {
 
     interface Config {
-        val rootPathElement: String
-            get() = "<root>"
-
         /**
          * Certain auxiliary metadata entities may be intentionally excluded from comparison.
          * Ex: Kotlin/Native interface bridge functions.
@@ -51,16 +54,195 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         }
     }
 
+    @Suppress("MemberVisibilityCanBePrivate")
+    sealed interface PathElement {
+        val name: String
+
+        object Root : PathElement {
+            override val name get() = "Root"
+        }
+
+        class Module(val moduleA: KlibModuleMetadata, val moduleB: KlibModuleMetadata) : PathElement {
+            override val name get() = moduleA.name
+        }
+
+        class Package(packageFqName: String, val fragmentsA: List<KmModuleFragment>, val fragmentsB: List<KmModuleFragment>) : PathElement {
+            override val name = packageFqName.ifEmpty { "<root>" }
+        }
+
+        class Class(val clazzA: KmClass, val clazzB: KmClass) : PathElement {
+            override val name get() = clazzA.name
+        }
+
+        class TypeAlias(val typeAliasA: KmTypeAlias, val typeAliasB: KmTypeAlias) : PathElement {
+            override val name get() = typeAliasA.name
+        }
+
+        class Property(val propertyA: KmProperty, val propertyB: KmProperty) : PathElement {
+            override val name get() = propertyA.name
+        }
+
+        class Function(val functionA: KmFunction, val functionB: KmFunction) : PathElement {
+            override val name get() = functionA.name
+        }
+
+        class Constructor(val constructorA: KmConstructor, val constructorB: KmConstructor) : PathElement {
+            override val name get() = "constructor"
+        }
+
+        class ValueParameter(val parameterA: KmValueParameter, val parameterB: KmValueParameter, val index: Int) : PathElement {
+            override val name get() = index.toString()
+        }
+
+        class TypeParameter(val parameterA: KmTypeParameter, val parameterB: KmTypeParameter, val index: Int) : PathElement {
+            override val name get() = index.toString()
+        }
+
+        class Type(val typeA: KmType, val typeB: KmType, val kind: TypeKind, val index: Int?) : PathElement {
+            override val name get() = if (index != null) "$kind $index" else kind.toString()
+        }
+
+        class TypeArgument(val argumentA: KmTypeProjection, val argumentB: KmTypeProjection, val index: Int) : PathElement {
+            override val name get() = index.toString()
+        }
+
+        class EnumEntry(val entryA: KlibEnumEntry, val entryB: KlibEnumEntry) : PathElement {
+            override val name get() = entryA.name
+        }
+
+        companion object {
+            internal fun <E : Any> guess(entityA: E, entityB: E, entityKind: EntityKind, entityKey: String?): PathElement {
+                return when {
+                    entityA is KmClass && entityB is KmClass -> Class(entityA, entityB)
+                    entityA is KmTypeAlias && entityB is KmTypeAlias -> TypeAlias(entityA, entityB)
+                    entityA is KmProperty && entityB is KmProperty -> Property(entityA, entityB)
+                    entityA is KmFunction && entityB is KmFunction -> Function(entityA, entityB)
+                    entityA is KmConstructor && entityB is KmConstructor -> Constructor(entityA, entityB)
+                    entityA is KmValueParameter && entityB is KmValueParameter -> {
+                        // there is single value parameter for property setter that does not have index, use 0 as fallback value
+                        val index = entityKey?.toInt() ?: 0
+                        ValueParameter(entityA, entityB, index)
+                    }
+                    entityA is KmTypeParameter && entityB is KmTypeParameter -> {
+                        val index = entityKey!!.toInt()
+                        TypeParameter(entityA, entityB, index)
+                    }
+                    entityA is KmType && entityB is KmType -> {
+                        val optionalIndex = entityKey?.toInt()
+                        val typeKind = entityKind as TypeKind
+                        Type(entityA, entityB, typeKind, optionalIndex)
+                    }
+                    entityA is KmTypeProjection && entityB is KmTypeProjection -> {
+                        val index = entityKey!!.toInt()
+                        TypeArgument(entityA, entityB, index)
+                    }
+                    entityA is KlibEnumEntry && entityB is KlibEnumEntry -> EnumEntry(entityA, entityB)
+                    else -> error("Unknown combination of entities: ${entityA::class.java}, ${entityB::class.java}")
+                }
+            }
+        }
+    }
+
+    sealed interface EntityKind {
+        enum class AnnotationKind : EntityKind {
+            REGULAR,
+            GETTER,
+            SETTER;
+
+            override fun toString() = "AnnotationKind.$name"
+        }
+
+        enum class TypeKind : EntityKind {
+            RETURN,
+            SUPERTYPE,
+            UNDERLYING,
+            EXPANDED,
+            RECEIVER,
+            ABBREVIATED,
+            OUTER,
+            UPPER_BOUND,
+            VALUE_PARAMETER,
+            VALUE_PARAMETER_VARARG,
+            TYPE_ARGUMENT;
+
+            override fun toString() = "TypeKind.$name"
+        }
+
+        enum class FlagKind : EntityKind {
+            REGULAR,
+            GETTER,
+            SETTER;
+
+            override fun toString() = "FlagKind.$name"
+        }
+
+        companion object {
+            val ModuleName by EntityKindImpl
+
+            val Classifier by EntityKindImpl
+
+            val Class by EntityKindImpl
+            val TypeAlias by EntityKindImpl
+            val Property by EntityKindImpl
+            val Function by EntityKindImpl
+            val Constructor by EntityKindImpl
+
+            val FunctionValueParameter by EntityKindImpl
+            val SetterValueParameter by EntityKindImpl
+
+            val TypeParameter by EntityKindImpl
+            val TypeParameterId by EntityKindImpl
+            val TypeParameterName by EntityKindImpl
+            val TypeParameterVariance by EntityKindImpl
+
+            val TypeArgument by EntityKindImpl
+            val TypeArgumentVariance by EntityKindImpl
+
+            val CompanionObject by EntityKindImpl
+            val NestedClass by EntityKindImpl
+            val SealedSubclass by EntityKindImpl
+            val EnumEntry by EntityKindImpl
+            val EnumEntryInKlib by EntityKindImpl
+            val EnumEntryInKlibOrdinal by EntityKindImpl
+
+            val CompileTimeValue by EntityKindImpl
+
+            val Contract by EntityKindImpl
+            val Effect by EntityKindImpl
+            val EffectType by EntityKindImpl
+            val EffectInvocationKind by EntityKindImpl
+            val EffectConstructorArguments by EntityKindImpl
+            val EffectConclusion by EntityKindImpl
+            val EffectExpressionParameterIndex by EntityKindImpl
+            val EffectExpressionConstantValue by EntityKindImpl
+            val EffectExpressionIsInstanceType by EntityKindImpl
+            val EffectExpressionAndArguments by EntityKindImpl
+            val EffectExpressionOrArguments by EntityKindImpl
+
+            val FlexibleTypeUpperBounds by EntityKindImpl
+            val TypeFlexibilityId by EntityKindImpl
+        }
+
+        private class EntityKindImpl(val name: String) : EntityKind {
+            override fun toString() = name
+
+            companion object {
+                private val cache = FactoryMap.create<String, EntityKind> { name -> EntityKindImpl(name) }
+                operator fun getValue(companion: EntityKind.Companion, property: KProperty<*>): EntityKind = cache.getValue(property.name)
+            }
+        }
+    }
+
     sealed class Mismatch {
-        abstract val kind: String
+        abstract val kind: EntityKind
         abstract val name: String
-        abstract val path: List<String>
+        abstract val path: List<PathElement>
 
         // an entity has different non-nullable values
         data class DifferentValues(
-            override val kind: String,
+            override val kind: EntityKind,
             override val name: String,
-            override val path: List<String>,
+            override val path: List<PathElement>,
             val valueA: Any,
             val valueB: Any
         ) : Mismatch()
@@ -68,9 +250,9 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         // an entity is missing at one side and present at another side,
         // or: an entity has nullable value at one side and non-nullable value at another side
         data class MissingEntity(
-            override val kind: String,
+            override val kind: EntityKind,
             override val name: String,
-            override val path: List<String>,
+            override val path: List<PathElement>,
             val existentValue: Any,
             val missingInA: Boolean
         ) : Mismatch() {
@@ -81,9 +263,9 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
 
     private val mismatches = mutableListOf<Mismatch>()
 
-    private class Context(pathElement: String, parent: Context? = null) {
-        val path: List<String> = parent?.path.orEmpty() + pathElement
-        fun next(pathElement: String): Context = Context(pathElement, this)
+    private class Context(pathElement: PathElement, parent: Context? = null) {
+        val path: List<PathElement> = parent?.path.orEmpty() + pathElement
+        fun next(pathElement: PathElement): Context = Context(pathElement, this)
     }
 
     private fun toResult() = if (mismatches.isEmpty()) Result.Success else Result.Failure(mismatches)
@@ -92,13 +274,13 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         metadataA: KlibModuleMetadata,
         metadataB: KlibModuleMetadata
     ): Result {
-        val rootContext = Context(config.rootPathElement)
+        val rootContext = Context(PathElement.Root)
 
-        compareValues(rootContext, metadataA.name, metadataB.name, "ModuleName")
+        compareValues(rootContext, metadataA.name, metadataB.name, EntityKind.ModuleName)
         if (mismatches.isNotEmpty())
             return toResult()
 
-        val moduleContext = rootContext.next("Module ${metadataA.name}")
+        val moduleContext = rootContext.next(PathElement.Module(metadataA, metadataB))
 
         compareAnnotationLists(moduleContext, metadataA.annotations, metadataB.annotations)
         compareModuleFragmentLists(moduleContext, metadataA.fragments, metadataB.fragments)
@@ -110,7 +292,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         containerContext: Context,
         annotationListA: List<KmAnnotation>,
         annotationListB: List<KmAnnotation>,
-        annotationKind: String = "Annotation"
+        annotationKind: AnnotationKind = AnnotationKind.REGULAR
     ) {
         compareRepetitiveEntityLists(
             entityListA = annotationListA,
@@ -144,7 +326,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
             entityListB = fragmentListB,
             groupingKeySelector = { _, fragment -> fragment.fqName.orEmpty() },
             groupedEntityListsComparator = { packageFqName: String, fragmentsA: List<KmModuleFragment>, fragmentsB: List<KmModuleFragment> ->
-                val packageContext = moduleContext.next("Package ${packageFqName.ifEmpty { "<empty>" }}")
+                val packageContext = moduleContext.next(PathElement.Package(packageFqName, fragmentsA, fragmentsB))
 
                 val classesA: List<KmClass> = fragmentsA.flatMap { it.classes }
                 val classesB: List<KmClass> = fragmentsB.flatMap { it.classes }
@@ -174,7 +356,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
             containerContext = containerContext,
             entityListA = classListA,
             entityListB = classListB,
-            entityKind = "Class",
+            entityKind = EntityKind.Class,
             groupingKeySelector = { _, clazz -> clazz.name },
             entitiesComparator = ::compareClasses
         )
@@ -189,7 +371,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
             containerContext = containerContext,
             entityListA = typeAliasListA,
             entityListB = typeAliasListB,
-            entityKind = "TypeAlias",
+            entityKind = EntityKind.TypeAlias,
             groupingKeySelector = { _, typeAlias -> typeAlias.name },
             entitiesComparator = ::compareTypeAliases
         )
@@ -204,7 +386,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
             containerContext = containerContext,
             entityListA = propertyListA,
             entityListB = propertyListB,
-            entityKind = "Property",
+            entityKind = EntityKind.Property,
             groupingKeySelector = { _, property -> property.name },
             entitiesComparator = ::compareProperties
         )
@@ -219,7 +401,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
             containerContext = containerContext,
             entityListA = functionListA,
             entityListB = functionListB,
-            entityKind = "Function",
+            entityKind = EntityKind.Function,
             groupingKeySelector = { _, function -> function.mangle() },
             entitiesComparator = ::compareFunctions
         )
@@ -234,7 +416,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
             containerContext = containerContext,
             entityListA = constructorListA,
             entityListB = constructorListB,
-            entityKind = "Constructor",
+            entityKind = EntityKind.Constructor,
             groupingKeySelector = { _, constructor -> constructor.mangle() },
             entitiesComparator = ::compareConstructors
         )
@@ -249,7 +431,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
             containerContext = containerContext,
             entityListA = valueParameterListA,
             entityListB = valueParameterListB,
-            entityKind = "ValueParameter",
+            entityKind = EntityKind.FunctionValueParameter,
             groupingKeySelector = { index, _ -> index.toString() },
             entitiesComparator = ::compareValueParameters
         )
@@ -259,7 +441,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         containerContext: Context,
         typeListA: List<KmType>,
         typeListB: List<KmType>,
-        typeKind: String
+        typeKind: TypeKind
     ) {
         compareUniqueEntityLists(
             containerContext = containerContext,
@@ -280,7 +462,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
             containerContext = containerContext,
             entityListA = typeParameterListA,
             entityListB = typeParameterListB,
-            entityKind = "TypeParameter",
+            entityKind = EntityKind.TypeParameter,
             groupingKeySelector = { index, _ -> index.toString() },
             entitiesComparator = ::compareTypeParameters
         )
@@ -290,7 +472,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         containerContext: Context,
         effectExpressionListA: List<KmEffectExpression>,
         effectExpressionListB: List<KmEffectExpression>,
-        effectExpressionKind: String
+        effectExpressionKind: EntityKind
     ) {
         compareUniqueEntityLists(
             containerContext = containerContext,
@@ -312,27 +494,27 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
 
         compareTypeParameterLists(classContext, classA.typeParameters, classB.typeParameters)
 
-        compareTypeLists(classContext, classA.supertypes, classB.supertypes, "Supertype")
+        compareTypeLists(classContext, classA.supertypes, classB.supertypes, TypeKind.SUPERTYPE)
 
         compareConstructorLists(classContext, classA.constructors, classB.constructors)
         compareTypeAliasLists(classContext, classA.typeAliases, classB.typeAliases)
         comparePropertyLists(classContext, classA.properties, classB.properties)
         compareFunctionLists(classContext, classA.functions, classB.functions)
 
-        compareNullableValues(classContext, classA.companionObject, classB.companionObject, "CompanionObject")
-        compareValueLists(classContext, classA.nestedClasses, classB.nestedClasses, "NestedClass")
-        compareValueLists(classContext, classA.sealedSubclasses, classB.sealedSubclasses, "SealedSubclass")
-        compareValueLists(classContext, classA.enumEntries, classB.enumEntries, "EnumEntry")
+        compareNullableValues(classContext, classA.companionObject, classB.companionObject, EntityKind.CompanionObject)
+        compareValueLists(classContext, classA.nestedClasses, classB.nestedClasses, EntityKind.NestedClass)
+        compareValueLists(classContext, classA.sealedSubclasses, classB.sealedSubclasses, EntityKind.SealedSubclass)
+        compareValueLists(classContext, classA.enumEntries, classB.enumEntries, EntityKind.EnumEntry)
 
         compareUniqueEntityLists(
             containerContext = classContext,
             entityListA = classA.klibEnumEntries,
             entityListB = classB.klibEnumEntries,
-            entityKind = "KlibEnumEntry",
+            entityKind = EntityKind.EnumEntryInKlib,
             groupingKeySelector = { _, enumEntry -> enumEntry.name }
         ) { klibEnumEntryContext, entryA, entryB ->
             compareAnnotationLists(klibEnumEntryContext, entryA.annotations, entryB.annotations)
-            compareNullableValues(klibEnumEntryContext, entryA.ordinal, entryB.ordinal, "Ordinal")
+            compareNullableValues(klibEnumEntryContext, entryA.ordinal, entryB.ordinal, EntityKind.EnumEntryInKlibOrdinal)
         }
     }
 
@@ -350,14 +532,14 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
             containerContext = typeAliasContext,
             entityA = typeAliasA.underlyingType,
             entityB = typeAliasB.underlyingType,
-            entityKind = "UnderlyingType",
+            entityKind = TypeKind.UNDERLYING,
             entitiesComparator = ::compareTypes
         )
         compareEntities(
             containerContext = typeAliasContext,
             entityA = typeAliasA.expandedType,
             entityB = typeAliasB.expandedType,
-            entityKind = "ExpandedType",
+            entityKind = TypeKind.EXPANDED,
             entitiesComparator = ::compareTypes
         )
     }
@@ -369,12 +551,12 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         propertyB: KmProperty
     ) {
         compareFlags(propertyContext, propertyA.flags, propertyB.flags, PROPERTY_FLAGS)
-        compareFlags(propertyContext, propertyA.getterFlags, propertyB.getterFlags, PROPERTY_ACCESSOR_FLAGS, "GetterFlag")
-        compareFlags(propertyContext, propertyA.setterFlags, propertyB.setterFlags, PROPERTY_ACCESSOR_FLAGS, "SetterFlag")
+        compareFlags(propertyContext, propertyA.getterFlags, propertyB.getterFlags, PROPERTY_ACCESSOR_FLAGS, FlagKind.GETTER)
+        compareFlags(propertyContext, propertyA.setterFlags, propertyB.setterFlags, PROPERTY_ACCESSOR_FLAGS, FlagKind.SETTER)
 
         compareAnnotationLists(propertyContext, propertyA.annotations, propertyB.annotations)
-        compareAnnotationLists(propertyContext, propertyA.getterAnnotations, propertyB.getterAnnotations, "GetterAnnotation")
-        compareAnnotationLists(propertyContext, propertyA.setterAnnotations, propertyB.setterAnnotations, "SetterAnnotation")
+        compareAnnotationLists(propertyContext, propertyA.getterAnnotations, propertyB.getterAnnotations, AnnotationKind.GETTER)
+        compareAnnotationLists(propertyContext, propertyA.setterAnnotations, propertyB.setterAnnotations, AnnotationKind.SETTER)
 
         compareTypeParameterLists(propertyContext, propertyA.typeParameters, propertyB.typeParameters)
 
@@ -382,14 +564,14 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
             containerContext = propertyContext,
             entityA = propertyA.receiverParameterType,
             entityB = propertyB.receiverParameterType,
-            entityKind = "ReceiverParameterType",
+            entityKind = TypeKind.RECEIVER,
             entitiesComparator = ::compareTypes
         )
         compareEntities(
             containerContext = propertyContext,
             entityA = propertyA.returnType,
             entityB = propertyB.returnType,
-            entityKind = "ReturnType",
+            entityKind = TypeKind.RETURN,
             entitiesComparator = ::compareTypes
         )
 
@@ -397,11 +579,11 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
             containerContext = propertyContext,
             entityA = propertyA.setterParameter,
             entityB = propertyB.setterParameter,
-            entityKind = "SetterValueParameter",
+            entityKind = EntityKind.SetterValueParameter,
             entitiesComparator = ::compareValueParameters
         )
 
-        compareNullableValues(propertyContext, propertyA.compileTimeValue, propertyB.compileTimeValue, "CompileTimeValue")
+        compareNullableValues(propertyContext, propertyA.compileTimeValue, propertyB.compileTimeValue, EntityKind.CompileTimeValue)
     }
 
     @Suppress("DuplicatedCode")
@@ -419,14 +601,14 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
             containerContext = functionContext,
             entityA = functionA.receiverParameterType,
             entityB = functionB.receiverParameterType,
-            entityKind = "ReceiverParameterType",
+            entityKind = TypeKind.RECEIVER,
             entitiesComparator = ::compareTypes
         )
         compareEntities(
             containerContext = functionContext,
             entityA = functionA.returnType,
             entityB = functionB.returnType,
-            entityKind = "ReturnType",
+            entityKind = TypeKind.RETURN,
             entitiesComparator = ::compareTypes
         )
 
@@ -436,29 +618,29 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
             containerContext = functionContext,
             entityA = functionA.contract,
             entityB = functionB.contract,
-            entityKind = "Contract"
+            entityKind = EntityKind.Contract
         ) { contractContext, contractA, contractB ->
             compareUniqueEntityLists(
                 containerContext = contractContext,
                 entityListA = contractA.effects,
                 entityListB = contractB.effects,
-                entityKind = "Effect",
+                entityKind = EntityKind.Effect,
                 groupingKeySelector = { index, _ -> index.toString() }
             ) { effectContext, effectA, effectB ->
-                compareValues(effectContext, effectA.type, effectB.type, "EffectType")
-                compareNullableValues(effectContext, effectA.invocationKind, effectB.invocationKind, "EffectInvocationKind")
+                compareValues(effectContext, effectA.type, effectB.type, EntityKind.EffectType)
+                compareNullableValues(effectContext, effectA.invocationKind, effectB.invocationKind, EntityKind.EffectInvocationKind)
 
                 compareEffectExpressionLists(
                     containerContext = effectContext,
                     effectExpressionListA = effectA.constructorArguments,
                     effectExpressionListB = effectB.constructorArguments,
-                    effectExpressionKind = "ConstructorArguments"
+                    effectExpressionKind = EntityKind.EffectConstructorArguments
                 )
                 compareNullableEntities(
                     containerContext = effectContext,
                     entityA = effectA.conclusion,
                     entityB = effectB.conclusion,
-                    entityKind = "Conclusion",
+                    entityKind = EntityKind.EffectConclusion,
                     entitiesComparator = ::compareEffectExpressions
                 )
             }
@@ -488,14 +670,14 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
             containerContext = valueParameterContext,
             entityA = valueParameterA.type,
             entityB = valueParameterB.type,
-            entityKind = "Type",
+            entityKind = TypeKind.VALUE_PARAMETER,
             entitiesComparator = ::compareTypes
         )
         compareNullableEntities(
             containerContext = valueParameterContext,
             entityA = valueParameterA.varargElementType,
             entityB = valueParameterB.varargElementType,
-            entityKind = "VarargElementType",
+            entityKind = TypeKind.VALUE_PARAMETER_VARARG,
             entitiesComparator = ::compareTypes
         )
     }
@@ -508,37 +690,37 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         compareFlags(typeContext, typeA.flags, typeB.flags, TYPE_FLAGS)
         compareAnnotationLists(typeContext, typeA.annotations, typeB.annotations)
 
-        compareValues(typeContext, typeA.classifier, typeB.classifier, "Classifier")
+        compareValues(typeContext, typeA.classifier, typeB.classifier, EntityKind.Classifier)
 
         compareUniqueEntityLists(
             containerContext = typeContext,
             entityListA = typeA.arguments,
             entityListB = typeB.arguments,
-            entityKind = "TypeProjection",
+            entityKind = EntityKind.TypeArgument,
             groupingKeySelector = { index, _ -> index.toString() }
         ) { typeProjectionContext, typeProjectionA, typeProjectionB ->
             compareNullableEntities(
                 containerContext = typeProjectionContext,
                 entityA = typeProjectionA.type,
                 entityB = typeProjectionB.type,
-                entityKind = "Type",
+                entityKind = TypeKind.TYPE_ARGUMENT,
                 entitiesComparator = ::compareTypes
             )
-            compareNullableValues(typeProjectionContext, typeProjectionA.variance, typeProjectionB.variance, "Variance")
+            compareNullableValues(typeProjectionContext, typeProjectionA.variance, typeProjectionB.variance, EntityKind.TypeArgumentVariance)
         }
 
         compareNullableEntities(
             containerContext = typeContext,
             entityA = typeA.abbreviatedType,
             entityB = typeB.abbreviatedType,
-            entityKind = "AbbreviatedType",
+            entityKind = TypeKind.ABBREVIATED,
             entitiesComparator = ::compareTypes
         )
         compareNullableEntities(
             containerContext = typeContext,
             entityA = typeA.outerType,
             entityB = typeB.outerType,
-            entityKind = "OuterType",
+            entityKind = TypeKind.OUTER,
             entitiesComparator = ::compareTypes
         )
 
@@ -546,16 +728,16 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
             containerContext = typeContext,
             entityA = typeA.flexibleTypeUpperBound,
             entityB = typeB.flexibleTypeUpperBound,
-            entityKind = "FlexibleTypeUpperBounds",
+            entityKind = EntityKind.FlexibleTypeUpperBounds,
         ) { typeUpperBoundContext, upperBoundA, upperBoundB ->
             compareEntities(
                 containerContext = typeUpperBoundContext,
                 entityA = upperBoundA.type,
                 entityB = upperBoundB.type,
-                entityKind = "Type",
+                entityKind = TypeKind.UPPER_BOUND,
                 entitiesComparator = ::compareTypes
             )
-            compareNullableValues(typeUpperBoundContext, upperBoundA.typeFlexibilityId, upperBoundB.typeFlexibilityId, "TypeFlexibilityId")
+            compareNullableValues(typeUpperBoundContext, upperBoundA.typeFlexibilityId, upperBoundB.typeFlexibilityId, EntityKind.TypeFlexibilityId)
         }
     }
 
@@ -567,11 +749,11 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         compareFlags(typeParameterContext, typeParameterA.flags, typeParameterB.flags, TYPE_PARAMETER_FLAGS)
         compareAnnotationLists(typeParameterContext, typeParameterA.annotations, typeParameterB.annotations)
 
-        compareValues(typeParameterContext, typeParameterA.id, typeParameterB.id, "Id")
-        compareValues(typeParameterContext, typeParameterA.name, typeParameterB.name, "Name")
+        compareValues(typeParameterContext, typeParameterA.id, typeParameterB.id, EntityKind.TypeParameterId)
+        compareValues(typeParameterContext, typeParameterA.name, typeParameterB.name, EntityKind.TypeParameterName)
 
-        compareValues(typeParameterContext, typeParameterA.variance, typeParameterB.variance, "Variance")
-        compareTypeLists(typeParameterContext, typeParameterA.upperBounds, typeParameterB.upperBounds, "UpperBoundType")
+        compareValues(typeParameterContext, typeParameterA.variance, typeParameterB.variance, EntityKind.TypeParameterVariance)
+        compareTypeLists(typeParameterContext, typeParameterA.upperBounds, typeParameterB.upperBounds, TypeKind.UPPER_BOUND)
     }
 
     private fun compareEffectExpressions(
@@ -580,14 +762,14 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         effectExpressionB: KmEffectExpression
     ) {
         compareFlags(effectExpressionContext, effectExpressionA.flags, effectExpressionB.flags, EFFECT_EXPRESSION_FLAGS)
-        compareNullableValues(effectExpressionContext, effectExpressionA.parameterIndex, effectExpressionB.parameterIndex, "ParameterIndex")
-        compareNullableValues(effectExpressionContext, effectExpressionA.constantValue, effectExpressionB.constantValue, "ConstantValue")
+        compareNullableValues(effectExpressionContext, effectExpressionA.parameterIndex, effectExpressionB.parameterIndex, EntityKind.EffectExpressionParameterIndex)
+        compareNullableValues(effectExpressionContext, effectExpressionA.constantValue, effectExpressionB.constantValue, EntityKind.EffectExpressionConstantValue)
 
         compareNullableEntities(
             containerContext = effectExpressionContext,
             entityA = effectExpressionA.isInstanceType,
             entityB = effectExpressionB.isInstanceType,
-            entityKind = "IsInstanceType",
+            entityKind = EntityKind.EffectExpressionIsInstanceType,
             entitiesComparator = ::compareTypes
         )
 
@@ -595,13 +777,13 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
             containerContext = effectExpressionContext,
             effectExpressionListA = effectExpressionA.andArguments,
             effectExpressionListB = effectExpressionB.andArguments,
-            effectExpressionKind = "AndArguments"
+            effectExpressionKind = EntityKind.EffectExpressionAndArguments
         )
         compareEffectExpressionLists(
             containerContext = effectExpressionContext,
             effectExpressionListA = effectExpressionA.orArguments,
             effectExpressionListB = effectExpressionB.orArguments,
-            effectExpressionKind = "OrArguments"
+            effectExpressionKind = EntityKind.EffectExpressionOrArguments
         )
     }
 
@@ -609,7 +791,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         containerContext: Context,
         valueA: E,
         valueB: E,
-        valueKind: String,
+        valueKind: EntityKind,
         valueName: String? = null
     ) {
         if (valueA != valueB)
@@ -620,7 +802,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         containerContext: Context,
         listA: Collection<E>,
         listB: Collection<E>,
-        valueKind: String
+        valueKind: EntityKind
     ) {
         if (listA.isEmpty() && listB.isEmpty())
             return
@@ -638,7 +820,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         containerContext: Context,
         valueA: E?,
         valueB: E?,
-        valueKind: String
+        valueKind: EntityKind
     ) {
         when {
             valueA == null && valueB != null -> {
@@ -657,11 +839,11 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         containerContext: Context,
         entityA: E,
         entityB: E,
-        entityKind: String,
+        entityKind: EntityKind,
         entityKey: String? = null,
         entitiesComparator: (Context, E, E) -> Unit
     ) {
-        val entityContext = containerContext.next("$entityKind${if (entityKey.isNullOrEmpty()) "" else " $entityKey"}")
+        val entityContext = containerContext.next(PathElement.guess(entityA, entityB, entityKind, entityKey))
         entitiesComparator(entityContext, entityA, entityB)
     }
 
@@ -669,7 +851,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         containerContext: Context,
         entityA: E?,
         entityB: E?,
-        entityKind: String,
+        entityKind: EntityKind,
         entityKey: String? = null,
         entitiesComparator: (Context, E, E) -> Unit
     ) {
@@ -690,7 +872,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         containerContext: Context,
         entityListA: List<E>,
         entityListB: List<E>,
-        entityKind: String,
+        entityKind: EntityKind,
         groupingKeySelector: (index: Int, E) -> String,
         entitiesComparator: (Context, E, E) -> Unit
     ) {
@@ -743,7 +925,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         flagsA: Flags,
         flagsB: Flags,
         flagsToCompare: Array<KProperty0<Flag>>,
-        flagKind: String = "Flag"
+        flagKind: FlagKind = FlagKind.REGULAR
     ) {
         for (flag in flagsToCompare) {
             val valueA = flag.get()(flagsA)
