@@ -5,7 +5,7 @@
 //
 fun jvmSpecific(args: Array<String>) {
     val x: Cloneable? = null
-    args.clone()
+    args.<!MISSING_DEPENDENCY_SUPERCLASS!>clone<!>()
 }
 
 //fun nativeSpecific() {

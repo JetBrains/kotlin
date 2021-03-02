@@ -5,6 +5,6 @@ MODULE js { platform=[JS] }
 MODULE common { platform=[JVM, JS] }
 
 jvm -> STDLIB_JVM, MOCK_JDK { kind=DEPENDENCY }
-js -> STDLIB_JS { kind=DEPENDENCY }
-common -> STDLIB_COMMON, STDLIB_JVM { kind=DEPENDENCY }
+js -> STDLIB_JS, KOTLIN_SDK { kind=DEPENDENCY }
+common -> STDLIB_COMMON, STDLIB_JVM, KOTLIN_SDK { kind=DEPENDENCY }
 jvm -> common { kind=DEPENDS_ON }

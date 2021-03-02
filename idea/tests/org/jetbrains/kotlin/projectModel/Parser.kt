@@ -22,6 +22,7 @@ open class ProjectStructureParser(private val projectRoot: File) {
         "STDLIB_COMMON" to ResolveLibrary.Builder(Stdlib.CommonStdlib),
         "FULL_JDK" to ResolveLibrary.Builder(FullJdk),
         "MOCK_JDK" to ResolveLibrary.Builder(MockJdk),
+        "KOTLIN_SDK" to ResolveLibrary.Builder(KotlinSdk),
         "KOTLIN_TEST_JS" to ResolveLibrary.Builder(KotlinTest.JsKotlinTest),
         "KOTLIN_TEST_JVM" to ResolveLibrary.Builder(KotlinTest.JvmKotlinTest),
         "KOTLIN_TEST" to ResolveLibrary.Builder(KotlinTest.JustKotlinTest),
