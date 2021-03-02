@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import java.lang.invoke.MethodHandle
 
 private const val MAX_COMMANDS = 500_000
@@ -206,6 +207,7 @@ class IrInterpreter(val irBuiltIns: IrBuiltIns, private val bodyMap: Map<IdSigna
                 else -> throw InterpreterError("Unsupported number of arguments for invocation as builtin functions")
             }
         }
+        // TODO check "result is Unit"
         stack.pushReturnValue(result.toState(result.getType(irFunction.returnType)))
         return Next
     }
@@ -235,8 +237,15 @@ class IrInterpreter(val irBuiltIns: IrBuiltIns, private val bodyMap: Map<IdSigna
         }
         val valueParametersSymbols = receiverAsFirstArgument + irFunction.valueParameters.map { it.symbol }
 
+        fun IrValueParameter.getDefault(): IrExpressionBody? {
+            return defaultValue
+                ?: (this.parent as? IrSimpleFunction)?.overriddenSymbols
+                    ?.map { it.owner.valueParameters[this.index].getDefault() }
+                    ?.firstNotNullResult { it }
+        }
+
         val valueArguments = (0 until expression.valueArgumentsCount).map { expression.getValueArgument(it) }
-        val defaultValues = irFunction.valueParameters.map { it.defaultValue?.expression }
+        val defaultValues = irFunction.valueParameters.map { expression.symbol.owner.valueParameters[it.index].getDefault()?.expression }
 
         return stack.newFrame(asSubFrame = true, initPool = pool) {
             for (i in valueArguments.indices) {
@@ -747,7 +756,7 @@ class IrInterpreter(val irBuiltIns: IrBuiltIns, private val bodyMap: Map<IdSigna
             return@flatMap when (val result = stack.popReturnValue()) {
                 is Wrapper -> listOf(result.value)
                 is Primitive<*> -> when {
-                    expression.varargElementType.isArray() -> listOf(result)
+                    expression.varargElementType.isArray() || expression.varargElementType.isPrimitiveArray() -> listOf(result)
                     else -> arrayToList(result.value)
                 }
                 is Common -> when {

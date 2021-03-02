@@ -110,7 +110,7 @@ internal class StackImpl : Stack {
     override fun clean(rootFile: IrFile?) {
         stackCount = 0
         frameList.clear()
-        rootFile?.let { frameList.add(FrameContainer(rootFile)) }
+        frameList.add(FrameContainer(rootFile))
     }
 
     override fun addVar(variable: Variable) {
