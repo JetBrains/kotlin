@@ -141,8 +141,6 @@ fun ImplicitReceiverValue<*>.asTowerDataElement(): FirTowerDataElement =
 fun FirScope.asTowerDataElement(isLocal: Boolean): FirTowerDataElement =
     FirTowerDataElement(this, implicitReceiver = null, isLocal)
 
-typealias TowerDataContextForAnonymousFunctions = Map<FirAnonymousFunctionSymbol, FirTowerDataContext>
-
 enum class FirTowerDataMode {
     MEMBER_DECLARATION,
     NESTED_CLASS,
@@ -171,19 +169,10 @@ class FirTowerDataContextsForClassParts(
     var mode: FirTowerDataMode = MEMBER_DECLARATION
 
     val forMemberDeclaration: FirTowerDataContext get() = modeMap.getValue(MEMBER_DECLARATION)
-    val forNestedClasses: FirTowerDataContext get() = modeMap.getValue(NESTED_CLASS)
-    val forCompanionObject: FirTowerDataContext get() = modeMap.getValue(COMPANION_OBJECT)
-    val forConstructorHeaders: FirTowerDataContext get() = modeMap.getValue(CONSTRUCTOR_HEADER)
 
     val towerDataContextForAnonymousFunctions: MutableMap<FirAnonymousFunctionSymbol, FirTowerDataContext> = mutableMapOf()
     val towerDataContextForCallableReferences: MutableMap<FirCallableReferenceAccess, FirTowerDataContext> = mutableMapOf()
 
-    var special: FirTowerDataContext
-        get() = modeMap.getValue(SPECIAL)
-        private set(value) {
-            mode = SPECIAL
-            modeMap[SPECIAL] = value
-        }
     var currentContext: FirTowerDataContext
         get() = modeMap.getValue(mode)
         set(value) {
@@ -191,21 +180,17 @@ class FirTowerDataContextsForClassParts(
         }
 
     fun setAnonymousFunctionContext(symbol: FirAnonymousFunctionSymbol) {
-        special = towerDataContextForAnonymousFunctions.getValue(symbol)
+        mode = SPECIAL
+        modeMap[SPECIAL] = towerDataContextForAnonymousFunctions.getValue(symbol)
     }
 
     fun setCallableReferenceContextIfAny(access: FirCallableReferenceAccess) {
         val context = towerDataContextForCallableReferences[access]
         if (context != null) {
-            special = context
+            mode = SPECIAL
+            modeMap[SPECIAL] = context
         }
     }
-
-    fun withMemberDeclarationContext(newContextForMemberDeclarations: FirTowerDataContext): FirTowerDataContextsForClassParts =
-        FirTowerDataContextsForClassParts(
-            newContextForMemberDeclarations, modeMap[NESTED_CLASS], modeMap[COMPANION_OBJECT], modeMap[CONSTRUCTOR_HEADER],
-            primaryConstructorPureParametersScope, primaryConstructorAllParametersScope
-        )
 }
 
 // --------------------------------------- Utils ---------------------------------------
