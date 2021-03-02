@@ -79,7 +79,12 @@ public fun <T> Sequence<T>.ifEmpty(defaultValue: () -> Sequence<T>): Sequence<T>
  *
  * @sample samples.collections.Sequences.Transformations.flattenSequenceOfSequences
  */
-public fun <T> Sequence<Sequence<T>>.flatten(): Sequence<T> = flatten { it.iterator() }
+public fun <T> Sequence<Sequence<T>>.flatten(): Sequence<T> {
+    if (this is TransformingSequence<*, *>) {
+        return (this as TransformingSequence<*, Sequence<T>>).flatten { it.iterator() }
+    }
+    return FlatteningSequence(this, { it }, { it.iterator() })
+}
 
 /**
  * Returns a sequence of all elements from all iterables in this sequence.
@@ -89,13 +94,11 @@ public fun <T> Sequence<Sequence<T>>.flatten(): Sequence<T> = flatten { it.itera
  * @sample samples.collections.Sequences.Transformations.flattenSequenceOfLists
  */
 @kotlin.jvm.JvmName("flattenSequenceOfIterable")
-public fun <T> Sequence<Iterable<T>>.flatten(): Sequence<T> = flatten { it.iterator() }
-
-private fun <T, R> Sequence<T>.flatten(iterator: (T) -> Iterator<R>): Sequence<R> {
+public fun <T> Sequence<Iterable<T>>.flatten(): Sequence<T> {
     if (this is TransformingSequence<*, *>) {
-        return (this as TransformingSequence<*, T>).flatten(iterator)
+        return (this as TransformingSequence<*, Iterable<T>>).flattenToIterable { it }
     }
-    return FlatteningSequence(this, { it }, iterator)
+    return FlatteningToIterableSequence(this, { it }, { it })
 }
 
 /**
@@ -218,6 +221,10 @@ constructor(private val sequence: Sequence<T>, private val transformer: (T) -> R
     internal fun <E> flatten(iterator: (R) -> Iterator<E>): Sequence<E> {
         return FlatteningSequence<T, R, E>(sequence, transformer, iterator)
     }
+
+    internal fun <E> flattenToIterable(iterable: (R) -> Iterable<E>): Sequence<E> {
+        return FlatteningToIterableSequence<T, R, E>(sequence, transformer, iterable)
+    }
 }
 
 /**
@@ -283,13 +290,12 @@ constructor(
     }
 }
 
-internal class FlatteningSequence<T, R, E>
-constructor(
-    private val sequence: Sequence<T>,
-    private val transformer: (T) -> R,
-    private val iterator: (R) -> Iterator<E>
-) : Sequence<E> {
-    override fun iterator(): Iterator<E> = object : Iterator<E> {
+private fun <T, R, E> flatteningSequenceIterator(
+    sequence: Sequence<T>,
+    transformer: (T) -> R,
+    iteratorFun: (R) -> Iterator<E>,
+): Iterator<E> {
+    return object : Iterator<E> {
         val iterator = sequence.iterator()
         var itemIterator: Iterator<E>? = null
 
@@ -312,7 +318,7 @@ constructor(
                     return false
                 } else {
                     val element = iterator.next()
-                    val nextItemIterator = iterator(transformer(element))
+                    val nextItemIterator = iteratorFun(transformer(element))
                     if (nextItemIterator.hasNext()) {
                         itemIterator = nextItemIterator
                         return true
@@ -320,6 +326,36 @@ constructor(
                 }
             }
             return true
+        }
+    }
+}
+
+internal class FlatteningSequence<T, R, E>
+constructor(
+    private val sequence: Sequence<T>,
+    private val transformer: (T) -> R,
+    private val iterator: (R) -> Iterator<E>
+) : Sequence<E> {
+    override fun iterator(): Iterator<E> = flatteningSequenceIterator(sequence, transformer, iterator)
+}
+
+internal class FlatteningToIterableSequence<T, R, E>
+constructor(
+    private val sequence: Sequence<T>,
+    private val transformer: (T) -> R,
+    private val iterable: (R) -> Iterable<E>,
+) : Sequence<E> {
+    override fun iterator(): Iterator<E> = flatteningSequenceIterator(sequence, transformer, { iterable(it).iterator() })
+
+    internal fun underlyingIterator(): Iterator<Iterable<E>> = object : Iterator<Iterable<E>> {
+        private val iterator = sequence.iterator()
+
+        override fun hasNext(): Boolean {
+            return iterator.hasNext()
+        }
+
+        override fun next(): Iterable<E> {
+            return iterable(transformer(iterator.next()))
         }
     }
 }

@@ -749,6 +749,13 @@ public inline fun <K, V, M : MutableMap<in K, in V>> Sequence<K>.associateWithTo
  * The operation is _terminal_.
  */
 public fun <T, C : MutableCollection<in T>> Sequence<T>.toCollection(destination: C): C {
+    if (this is FlatteningToIterableSequence<*, *, *>) {
+        val iter = (this as FlatteningToIterableSequence<*, *, T>).underlyingIterator()
+        while (iter.hasNext()) {
+            destination.addAll(iter.next())
+        }
+        return destination
+    }
     for (item in this) {
         destination.add(item)
     }
@@ -805,7 +812,7 @@ public fun <T> Sequence<T>.toSet(): Set<T> {
 @OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("flatMapIterable")
 public fun <T, R> Sequence<T>.flatMap(transform: (T) -> Iterable<R>): Sequence<R> {
-    return FlatteningSequence(this, transform, Iterable<R>::iterator)
+    return FlatteningToIterableSequence(this, transform, { it })
 }
 
 /**

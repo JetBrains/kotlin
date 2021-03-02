@@ -33,6 +33,25 @@ object Snapshots : TemplateGroupBase() {
             return destination
             """
         }
+
+        specialFor(Sequences) {
+            body {
+                """
+                if (this is FlatteningToIterableSequence<*, *, *>) {
+                    val iter = (this as FlatteningToIterableSequence<*, *, T>).underlyingIterator()
+                    while (iter.hasNext()) {
+                        destination.addAll(iter.next())
+                    }
+                    return destination
+                }
+                
+                for (item in this) {
+                    destination.add(item)
+                }
+                return destination
+                """
+            }
+        }
     }
 
     val f_toSet = fn("toSet()") {
