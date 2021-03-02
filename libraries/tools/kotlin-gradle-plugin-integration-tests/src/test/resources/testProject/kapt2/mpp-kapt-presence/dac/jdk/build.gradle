@@ -7,4 +7,5 @@ targetCompatibility = JavaVersion.VERSION_1_8
 dependencies {
   expectedBy project(':dac')
   implementation deps.kotlin.stdlib.jdk
+  kapt deps.other.ap_example
 }

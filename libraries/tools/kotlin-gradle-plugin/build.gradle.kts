@@ -58,6 +58,7 @@ dependencies {
     embedded(project(":kotlin-gradle-build-metrics"))
 
     implementation("com.google.code.gson:gson:${rootProject.extra["versions.jar.gson"]}")
+    implementation("com.google.guava:guava:${rootProject.extra["versions.jar.guava"]}")
     implementation("de.undercouch:gradle-download-task:4.1.1")
     implementation("com.github.gundy:semver4j:0.16.4:nodeps") {
         exclude(group = "*")
@@ -81,7 +82,7 @@ dependencies {
     runtimeOnly(project(":kotlin-reflect"))
 
     jarContents(compileOnly(intellijDep()) {
-        includeJars("asm-all", "gson", "serviceMessages", rootProject = rootProject)
+        includeJars("asm-all", "gson", "guava", "serviceMessages", rootProject = rootProject)
     })
 
     // com.android.tools.build:gradle has ~50 unneeded transitive dependencies
