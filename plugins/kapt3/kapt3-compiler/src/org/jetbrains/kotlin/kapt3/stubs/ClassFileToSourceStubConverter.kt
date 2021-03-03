@@ -134,6 +134,8 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
 
     private val importsFromRoot by lazy(::collectImportsFromRootPackage)
 
+    private val compiledClassByName = kaptContext.compiledClasses.associateBy { it.name!! }
+
     private var done = false
 
     fun convert(): List<KaptStub> {
@@ -364,7 +366,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
             for (innerClass in clazz.innerClasses) {
                 // Class should have the same name as enum value
                 if (innerClass.innerName != field.name) continue
-                val classNode = kaptContext.compiledClasses.firstOrNull { it.name == innerClass.name } ?: continue
+                val classNode = compiledClassByName[innerClass.name] ?: continue
 
                 // Super class name of the class should be our enum class
                 if (classNode.superName != clazz.name) continue
@@ -423,7 +425,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         val nestedClasses = mapJList<InnerClassNode, JCTree>(clazz.innerClasses) { innerClass ->
             if (enumValuesData.any { it.innerClass == innerClass }) return@mapJList null
             if (innerClass.outerName != clazz.name) return@mapJList null
-            val innerClassNode = kaptContext.compiledClasses.firstOrNull { it.name == innerClass.name } ?: return@mapJList null
+            val innerClassNode = compiledClassByName[innerClass.name] ?: return@mapJList null
             convertClass(innerClassNode, lineMappings, packageFqName, false)
         }
 
@@ -613,7 +615,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
             return false
         }
 
-        val clazz = kaptContext.compiledClasses.firstOrNull { it.name == internalName } ?: return true
+        val clazz = compiledClassByName[internalName] ?: return true
 
         if (doesInnerClassNameConflictWithOuter(clazz)) {
             if (strictMode) {
@@ -634,7 +636,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
 
     private fun findContainingClassNode(clazz: ClassNode): ClassNode? {
         val innerClassForOuter = clazz.innerClasses.firstOrNull { it.name == clazz.name } ?: return null
-        return kaptContext.compiledClasses.firstOrNull { it.name == innerClassForOuter.outerName }
+        return compiledClassByName[innerClassForOuter.outerName]
     }
 
     // Java forbids outer and inner class names to be the same. Check if the names are different

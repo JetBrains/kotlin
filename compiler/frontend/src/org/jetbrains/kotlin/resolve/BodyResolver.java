@@ -1018,7 +1018,7 @@ public class BodyResolver {
         valueParameterResolver.resolveValueParameters(valueParameters, valueParameterDescriptors, scope, outerDataFlowInfo, trace);
     }
 
-    private static void computeDeferredType(KotlinType type) {
+    public static void computeDeferredType(KotlinType type) {
         // handle type inference loop: function or property body contains a reference to itself
         // fun f() = { f() }
         // val x = x
