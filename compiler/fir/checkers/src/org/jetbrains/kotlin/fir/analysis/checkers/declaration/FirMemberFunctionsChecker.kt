@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.lexer.KtTokens
 
 // See old FE's [DeclarationsChecker]
-object FirMemberFunctionChecker : FirRegularClassChecker() {
+object FirMemberFunctionsChecker : FirRegularClassChecker() {
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
         for (member in declaration.declarations) {
             if (member is FirSimpleFunction) {

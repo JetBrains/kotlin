@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 
 // See old FE's [DeclarationsChecker]
-object FirTopLevelPropertyChecker : FirFileChecker() {
+object FirTopLevelPropertiesChecker : FirFileChecker() {
     override fun check(declaration: FirFile, context: CheckerContext, reporter: DiagnosticReporter) {
         for (topLevelDeclaration in declaration.declarations) {
             if (topLevelDeclaration is FirProperty) {
