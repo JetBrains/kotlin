@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getOutermostParentContainedIn
 import org.jetbrains.kotlinx.serialization.compiler.diagnostic.SerializationErrors
 
-internal class JsonRedundantQuickFix(expression: KtReferenceExpression) : KotlinQuickFixAction<KtReferenceExpression>(expression) {
+internal class JsonRedundantQuickFix(expression: KtCallExpression) : KotlinQuickFixAction<KtCallExpression>(expression) {
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         editor ?: return
         val element = element ?: return
@@ -49,7 +49,7 @@ internal class JsonRedundantQuickFix(expression: KtReferenceExpression) : Kotlin
             if (diagnostic.factory != SerializationErrors.JSON_FORMAT_REDUNDANT) return null
             val castedDiagnostic = SerializationErrors.JSON_FORMAT_REDUNDANT.cast(diagnostic)
 
-            val element: KtReferenceExpression = castedDiagnostic.psiElement as? KtReferenceExpression ?: return null
+            val element: KtCallExpression = castedDiagnostic.psiElement as? KtCallExpression ?: return null
             return JsonRedundantQuickFix(element)
         }
     }

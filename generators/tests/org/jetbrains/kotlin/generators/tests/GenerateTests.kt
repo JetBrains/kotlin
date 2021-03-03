@@ -196,6 +196,7 @@ import org.jetbrains.kotlin.tools.projectWizard.wizard.AbstractYamlNewWizardProj
 import org.jetbrains.kotlinx.serialization.AbstractSerializationIrBytecodeListingTest
 import org.jetbrains.kotlinx.serialization.AbstractSerializationPluginBytecodeListingTest
 import org.jetbrains.kotlinx.serialization.AbstractSerializationPluginDiagnosticTest
+import org.jetbrains.kotlinx.serialization.idea.AbstractSerializationPluginIdeDiagnosticTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -1792,6 +1793,15 @@ fun main(args: Array<String>) {
 
             testClass<AbstractSerializationIrBytecodeListingTest> {
                 model("codegen")
+            }
+        }
+
+        testGroup(
+            "plugins/kotlin-serialization/kotlin-serialization-ide/test",
+            "plugins/kotlin-serialization/kotlin-serialization-ide/testData"
+        ) {
+            testClass<AbstractSerializationPluginIdeDiagnosticTest> {
+                model("diagnostics")
             }
         }
 
