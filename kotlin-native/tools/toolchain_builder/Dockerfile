@@ -40,7 +40,8 @@ RUN mkdir src
 
 ENV TARGET=x86_64-unknown-linux-gnu
 ENV VERSION=gcc-8.3.0-glibc-2.19-kernel-4.9
+ENV TOOLCHAIN_VERSION_SUFFIX=""
 
 # Add entry point.
 COPY build_toolchain.sh .
-ENTRYPOINT "/bin/bash" "build_toolchain.sh" ${TARGET} ${VERSION}
+ENTRYPOINT "/bin/bash" "build_toolchain.sh" ${TARGET} ${VERSION} ${TOOLCHAIN_VERSION_SUFFIX}
