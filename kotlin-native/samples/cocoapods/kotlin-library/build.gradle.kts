@@ -5,7 +5,6 @@ plugins {
 
 repositories {
     jcenter()
-    maven { setUrl("https://dl.bintray.com/kotlin/kotlin-eap") }
 }
 
 group = "org.jetbrains.kotlin.sample.native"

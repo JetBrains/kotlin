@@ -3,7 +3,6 @@ buildscript {
         google()
         jcenter()
         mavenCentral()
-        maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
         if (project.hasProperty("kotlinCompilerRepo")) {
             maven { setUrl(project.property("kotlinCompilerRepo")) }
         }
@@ -20,7 +19,6 @@ allprojects {
         google()
         jcenter()
         mavenCentral()
-        maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
         if (project.hasProperty("kotlinCompilerRepo")) {
             maven { setUrl(project.property("kotlinCompilerRepo")) }
         }

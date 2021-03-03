@@ -58,7 +58,6 @@ open class CopySamples : Copy() {
     }
 
     private val replacements = listOf(
-        "https://dl.bintray.com/kotlin/kotlin-eap" to "https://cache-redirector.jetbrains.com/dl.bintray.com/kotlin/kotlin-eap",
         "https://plugins.gradle.org/m2" to "https://cache-redirector.jetbrains.com/plugins.gradle.org/m2",
         "mavenCentral()" to "maven { setUrl(\"https://cache-redirector.jetbrains.com/maven-central\") }",
         "jcenter()" to "maven { setUrl(\"https://cache-redirector.jetbrains.com/jcenter\") }"

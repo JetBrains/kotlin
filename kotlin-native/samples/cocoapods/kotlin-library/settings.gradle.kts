@@ -1,9 +1,4 @@
 pluginManagement {
-    repositories {
-        jcenter()
-        maven { setUrl("https://dl.bintray.com/kotlin/kotlin-eap") }
-    }
-
     resolutionStrategy {
         val kotlin_version: String by settings
         eachPlugin {

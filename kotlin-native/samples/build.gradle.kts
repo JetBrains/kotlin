@@ -1,7 +1,6 @@
 buildscript {
     repositories {
         mavenCentral()
-        maven("https://dl.bintray.com/kotlin/kotlin-eap")
 
         val kotlinCompilerRepo: String? by rootProject
         kotlinCompilerRepo?.let { maven(it) }
@@ -16,7 +15,6 @@ buildscript {
 allprojects {
     repositories {
         mavenCentral()
-        maven("https://dl.bintray.com/kotlin/kotlin-eap")
 
         val kotlinCompilerRepo: String? by rootProject
         kotlinCompilerRepo?.let { maven(it) }
