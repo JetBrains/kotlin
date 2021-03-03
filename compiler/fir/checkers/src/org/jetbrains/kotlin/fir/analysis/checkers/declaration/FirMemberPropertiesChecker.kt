@@ -149,7 +149,7 @@ object FirMemberPropertiesChecker : FirRegularClassChecker() {
         val modifierList = with(FirModifierList) { property.source.getModifierList() }
 
         checkProperty(containingDeclaration, property, modifierList, isInitialized, reporter, context)
-        checkExpectDeclarationVisibilityAndBody(property, source, modifierList, reporter, context)
+        checkExpectDeclarationVisibilityAndBody(property, source, reporter, context)
 
         val hasAbstractModifier = modifierList?.modifiers?.any { it.token == KtTokens.ABSTRACT_KEYWORD } == true
         val isAbstract = property.isAbstract || hasAbstractModifier

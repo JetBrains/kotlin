@@ -50,7 +50,6 @@ object FirMemberFunctionsChecker : FirRegularClassChecker() {
         }
         val isInsideExpectClass = isInsideExpectClass(containingDeclaration, context)
         val hasOpenModifier = modifierList?.modifiers?.any { it.token == KtTokens.OPEN_KEYWORD } == true
-        val isExternal = function.isExternal || modifierList?.modifiers?.any { it.token == KtTokens.EXTERNAL_KEYWORD } == true
         if (!function.hasBody) {
             if (containingDeclaration.isInterface) {
                 if (Visibilities.isPrivate(function.visibility)) {
@@ -59,11 +58,11 @@ object FirMemberFunctionsChecker : FirRegularClassChecker() {
                 if (!isInsideExpectClass && !hasAbstractModifier && hasOpenModifier) {
                     reporter.reportOn(source, FirErrors.REDUNDANT_OPEN_IN_INTERFACE, context)
                 }
-            } else if (!isInsideExpectClass && !hasAbstractModifier && !isExternal) {
+            } else if (!isInsideExpectClass && !hasAbstractModifier && !function.isExternal) {
                 reporter.reportOn(source, FirErrors.NON_ABSTRACT_FUNCTION_WITH_NO_BODY, function, context)
             }
         }
 
-        checkExpectDeclarationVisibilityAndBody(function, source, modifierList, reporter, context)
+        checkExpectDeclarationVisibilityAndBody(function, source, reporter, context)
     }
 }

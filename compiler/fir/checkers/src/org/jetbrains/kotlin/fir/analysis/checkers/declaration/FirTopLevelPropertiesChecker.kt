@@ -29,6 +29,6 @@ object FirTopLevelPropertiesChecker : FirFileChecker() {
         val modifierList = with(FirModifierList) { source.getModifierList() }
 
         checkProperty(null, property, modifierList, property.initializer != null, reporter, context)
-        checkExpectDeclarationVisibilityAndBody(property, source, modifierList, reporter, context)
+        checkExpectDeclarationVisibilityAndBody(property, source, reporter, context)
     }
 }

@@ -36,22 +36,18 @@ private inline fun isInsideSpecificClass(
 
 internal fun FirMemberDeclaration.isEffectivelyExpect(
     containingClass: FirRegularClass?,
-    modifierList: FirModifierList? = null,
     context: CheckerContext,
 ): Boolean {
-    val isExpect = this.isExpect || modifierList?.modifiers?.any { it.token == KtTokens.EXPECT_KEYWORD } == true
-    if (isExpect) return true
+    if (this.isExpect) return true
 
     return containingClass != null && isInsideExpectClass(containingClass, context)
 }
 
 internal fun FirMemberDeclaration.isEffectivelyExternal(
     containingClass: FirRegularClass?,
-    modifierList: FirModifierList? = null,
     context: CheckerContext,
 ): Boolean {
-    val isExternal = this.isExternal || modifierList?.modifiers?.any { it.token == KtTokens.EXTERNAL_KEYWORD } == true
-    if (isExternal) return true
+    if (this.isExternal) return true
 
     // NB: [MemberDescriptor.isEffectivelyExternal] checks property accessors for property and vice versa.
     // But, raw FIR creation already did such upward/downward propagation of modifiers.
@@ -63,11 +59,10 @@ internal fun FirMemberDeclaration.isEffectivelyExternal(
 internal fun checkExpectDeclarationVisibilityAndBody(
     declaration: FirMemberDeclaration,
     source: FirSourceElement,
-    modifierList: FirModifierList?,
     reporter: DiagnosticReporter,
     context: CheckerContext
 ) {
-    if (declaration.isExpect || modifierList?.modifiers?.any { it.token == KtTokens.EXPECT_KEYWORD } == true) {
+    if (declaration.isExpect) {
         if (Visibilities.isPrivate(declaration.visibility)) {
             reporter.reportOn(source, FirErrors.EXPECTED_PRIVATE_DECLARATION, context)
         }
@@ -116,7 +111,7 @@ private fun checkPropertyInitializer(
         }
     }
 
-    val isExpect = property.isEffectivelyExpect(containingClass, modifierList, context)
+    val isExpect = property.isEffectivelyExpect(containingClass, context)
 
     when {
         property.initializer != null -> {
@@ -150,7 +145,7 @@ private fun checkPropertyInitializer(
             }
         }
         else -> {
-            val isExternal = property.isEffectivelyExternal(containingClass, modifierList, context)
+            val isExternal = property.isEffectivelyExternal(containingClass, context)
             if (backingFieldRequired && !inInterface && !property.isLateInit && !isExpect && !isInitialized && !isExternal) {
                 property.source?.let {
                     if (property.receiverTypeRef != null && !property.hasAccessorImplementation) {
