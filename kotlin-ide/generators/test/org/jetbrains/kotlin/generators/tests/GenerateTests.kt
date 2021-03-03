@@ -742,39 +742,6 @@ private fun assembleWorkspace(): TWorkspace = workspace {
 
         testClass<AbstractCommonDecompiledTextTest> {
             model("decompiler/decompiledText", pattern = """^([^\.]+)$""".toRegex())
-            testClass<AbstractFirKotlinHighlightingPassTest> {
-                model("checker", isRecursive = false)
-                model("checker/regression")
-                model("checker/recovery")
-                model("checker/rendering")
-                model("checker/infos")
-                model("checker/diagnosticsMessage")
-            }
-
-
-            testClass<AbstractHighLevelQuickFixTest> {
-                val pattern = "^([\\w\\-_]+)\\.kt$".toRegex()
-                model("quickfix/abstract", pattern = pattern)
-                model("quickfix/lateinit", pattern = pattern)
-                model("quickfix/modifiers", pattern = pattern, isRecursive = false)
-                model("quickfix/override/typeMismatchOnOverride", pattern = pattern, isRecursive = false)
-                model("quickfix/variables/changeMutability", pattern = pattern, isRecursive = false)
-            }
-
-            testClass<AbstractHLInspectionTest> {
-                val pattern = "^(inspections\\.test)$".toRegex()
-                model("inspections/redundantUnitReturnType", pattern = pattern)
-            }
-
-
-            testClass<AbstractHLIntentionTest> {
-                val pattern = "^([\\w\\-_]+)\\.(kt|kts)$".toRegex()
-                model("intentions/specifyTypeExplicitly", pattern = pattern)
-            }
-
-            testClass<AbstractFirShortenRefsTest> {
-                model("shortenRefsFir", pattern = KT_WITHOUT_DOTS, testMethodName = "doTestWithMuting")
-            }
         }
 
         testClass<AbstractJvmDecompiledTextTest> {
@@ -1089,13 +1056,13 @@ private fun assembleWorkspace(): TWorkspace = workspace {
     }*/
 
     testGroup("fir", testDataPath = "../idea/testData") {
+        testClass<AbstractFirReferenceResolveTest> {
+            model("resolve/references", pattern = KT_WITHOUT_DOTS)
+        }
+
         testClass<AbstractFirHighlightingTest> {
             model("highlighter")
             model("../../fir/testData/highlighterFir", pattern = KT_WITHOUT_DOTS)
-        }
-
-        testClass<AbstractFirReferenceResolveTest> {
-            model("resolve/references", pattern = KT_WITHOUT_DOTS)
         }
 
         testClass<AbstractFirKotlinHighlightingPassTest> {
@@ -1105,6 +1072,29 @@ private fun assembleWorkspace(): TWorkspace = workspace {
             model("checker/rendering")
             model("checker/infos")
             model("checker/diagnosticsMessage")
+        }
+
+        testClass<AbstractHighLevelQuickFixTest> {
+            val pattern = "^([\\w\\-_]+)\\.kt$".toRegex()
+            model("quickfix/abstract", pattern = pattern)
+            model("quickfix/lateinit", pattern = pattern)
+            model("quickfix/modifiers", pattern = pattern, isRecursive = false)
+            model("quickfix/override/typeMismatchOnOverride", pattern = pattern, isRecursive = false)
+            model("quickfix/variables/changeMutability", pattern = pattern, isRecursive = false)
+        }
+
+        testClass<AbstractHLInspectionTest> {
+            val pattern = "^(inspections\\.test)$".toRegex()
+            model("inspections/redundantUnitReturnType", pattern = pattern)
+        }
+
+        testClass<AbstractHLIntentionTest> {
+            val pattern = "^([\\w\\-_]+)\\.(kt|kts)$".toRegex()
+            model("intentions/specifyTypeExplicitly", pattern = pattern)
+        }
+
+        testClass<AbstractFirShortenRefsTest> {
+            model("shortenRefsFir", pattern = KT_WITHOUT_DOTS, testMethodName = "doTestWithMuting")
         }
     }
 
