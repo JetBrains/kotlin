@@ -49,7 +49,7 @@ import org.jetbrains.kotlin.storage.StorageManager
  * targets (which is not supported yet), or a Native library where one fragment is produced via C-interop tool and the other one
  * is compiled from Kotlin/Native source code (not sure this should be supported at all).
  */
-class CirTreeMergerV2(
+class CirTreeMerger(
     private val storageManager: StorageManager,
     private val classifiers: CirKnownClassifiers,
     private val parameters: CommonizerParameters
