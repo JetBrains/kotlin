@@ -30,7 +30,7 @@ abstract class KaptTask : ConventionTask(), TaskWithLocalState {
         outputs.cacheIf(reason) { useBuildCache }
     }
 
-    override fun localStateDirectories(): FileCollection = objects.fileCollection()
+    override fun localStateDirectories(): FileCollection = objects.fileCollection().from(incAptCache)
 
     @get:Internal
     @field:Transient
