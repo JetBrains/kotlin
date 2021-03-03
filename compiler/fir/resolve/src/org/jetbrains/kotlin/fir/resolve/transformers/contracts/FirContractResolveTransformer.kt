@@ -280,7 +280,7 @@ open class FirContractResolveTransformer(
             get() = contractDescription is FirLegacyRawContractDescription || contractDescription is FirRawContractDescription
 
         private fun FirDeclaration.updatePhase() {
-            replaceDeclarationResolvePhaseIfNeeded(this, FirResolvePhase.CONTRACTS)
+            transformer.replaceDeclarationResolvePhaseIfNeeded(this, FirResolvePhase.CONTRACTS)
         }
     }
 }

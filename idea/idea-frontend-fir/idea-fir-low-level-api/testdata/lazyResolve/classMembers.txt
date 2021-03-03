@@ -1,6 +1,6 @@
 FILE: classMembers.kt
-    public final [CONTRACTS] class A : R|kotlin/Any| {
-        public [CONTRACTS] constructor(): R|A| {
+    public final [STATUS] class A : R|kotlin/Any| {
+        public [STATUS] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
@@ -8,11 +8,11 @@ FILE: classMembers.kt
             this@R|/A|.R|/A.receive|(this@R|/A|.R|/A.functionWithLazyBody|())
         }
 
-        public final [CONTRACTS] val x: R|kotlin/Int| = LAZY_EXPRESSION
+        public final [STATUS] val x: R|kotlin/Int| = LAZY_EXPRESSION
             [STATUS] public get(): R|kotlin/Int| { LAZY_BLOCK }
 
-        public final [CONTRACTS] fun receive([STATUS] value: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+        public final [STATUS] fun receive([STATUS] value: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public final [CONTRACTS] fun functionWithLazyBody(): R|kotlin/String| { LAZY_BLOCK }
+        public final [STATUS] fun functionWithLazyBody(): R|kotlin/String| { LAZY_BLOCK }
 
     }

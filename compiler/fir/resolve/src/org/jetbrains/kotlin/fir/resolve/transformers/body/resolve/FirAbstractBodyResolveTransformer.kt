@@ -84,7 +84,7 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
     protected open fun needReplacePhase(firDeclaration: FirDeclaration) = true
 
     fun replaceDeclarationResolvePhaseIfNeeded(firDeclaration: FirDeclaration, newResolvePhase: FirResolvePhase) {
-        if (needReplacePhase(firDeclaration)) {
+        if (needReplacePhase(firDeclaration) && newResolvePhase > firDeclaration.resolvePhase) {
             firDeclaration.replaceResolvePhase(newResolvePhase)
         }
     }
