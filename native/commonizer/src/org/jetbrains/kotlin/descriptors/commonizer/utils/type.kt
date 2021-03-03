@@ -7,49 +7,11 @@ package org.jetbrains.kotlin.descriptors.commonizer.utils
 
 import gnu.trove.TIntHashSet
 import kotlinx.metadata.*
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirEntityId
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirName
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirPackageName
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirTypeSignature
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.TypeParameterResolver
-import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.typeUtil.isNullableAny
-
-internal inline val KotlinType.declarationDescriptor: ClassifierDescriptor
-    get() = (constructor.declarationDescriptor ?: error("No declaration descriptor found for $constructor"))
-
-// eliminate unnecessary repeated abbreviations
-internal fun extractExpandedType(abbreviated: AbbreviatedType): SimpleType {
-    var expanded = abbreviated.expandedType
-    while (expanded is AbbreviatedType) {
-        if (expanded.abbreviation.declarationDescriptor !== abbreviated.abbreviation.declarationDescriptor)
-            break
-        else
-            expanded = expanded.expandedType
-    }
-    return expanded
-}
-
-internal val ClassifierDescriptorWithTypeParameters.classifierId: CirEntityId
-    get() = when (val owner = containingDeclaration) {
-        is PackageFragmentDescriptor -> CirEntityId.create(
-            packageName = CirPackageName.create(owner.fqName),
-            relativeName = CirName.create(name)
-        )
-        is ClassDescriptor -> owner.classifierId.createNestedEntityId(CirName.create(name))
-        else -> error("Unexpected containing declaration type for $this: ${owner::class}, $owner")
-    }
-
-internal inline val TypeParameterDescriptor.filteredUpperBounds: List<KotlinType>
-    get() = upperBounds.takeUnless { it.singleOrNull()?.isNullableAny() == true } ?: emptyList()
 
 internal inline val KmTypeParameter.filteredUpperBounds: List<KmType>
     get() = upperBounds.takeUnless { it.singleOrNull()?.isNullableAny == true } ?: emptyList()
-
-internal inline val ClassDescriptor.filteredSupertypes: Collection<KotlinType>
-    get() = typeConstructor.supertypes.takeUnless { it.size == 1 && KotlinBuiltIns.isAny(it.first()) } ?: emptyList()
 
 internal inline val KmClass.filteredSupertypes: List<KmType>
     get() = supertypes.takeUnless { it.singleOrNull()?.isAny == true } ?: emptyList()

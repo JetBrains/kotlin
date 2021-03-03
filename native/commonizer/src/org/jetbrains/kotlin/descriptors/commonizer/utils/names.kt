@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.descriptors.commonizer.utils
 import kotlinx.metadata.ClassName
 import kotlinx.metadata.KmAnnotation
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirName
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirPackageName
@@ -72,13 +70,6 @@ internal val CirPackageName.isUnderKotlinNativeSyntheticPackages: Boolean
 
 internal val CirEntityId.isObjCInteropCallableAnnotation: Boolean
     get() = packageName == CINTEROP_PACKAGE && relativeNameSegments.singleOrNull() in OBJC_INTEROP_CALLABLE_ANNOTATIONS
-
-internal val AnnotationDescriptor.isObjCInteropCallableAnnotation: Boolean
-    get() {
-        val classifier = type.declarationDescriptor
-        return CirName.create(classifier.name) in OBJC_INTEROP_CALLABLE_ANNOTATIONS
-                && (classifier.containingDeclaration as? PackageFragmentDescriptor)?.fqName?.let(CirPackageName::create) == CINTEROP_PACKAGE
-    }
 
 internal val KmAnnotation.isObjCInteropCallableAnnotation: Boolean
     get() = className in OBJC_INTEROP_CALLABLE_ANNOTATION_FULL_NAMES

@@ -9,7 +9,10 @@ import kotlinx.metadata.Flag
 import kotlinx.metadata.KmAnnotation
 import kotlinx.metadata.KmClass
 import kotlinx.metadata.klib.annotations
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirClassImpl
 import org.jetbrains.kotlin.descriptors.commonizer.metadata.decodeClassKind
@@ -17,26 +20,8 @@ import org.jetbrains.kotlin.descriptors.commonizer.metadata.decodeModality
 import org.jetbrains.kotlin.descriptors.commonizer.metadata.decodeVisibility
 import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMap
 import org.jetbrains.kotlin.descriptors.commonizer.utils.filteredSupertypes
-import org.jetbrains.kotlin.resolve.isInlineClass
 
 object CirClassFactory {
-    fun create(source: ClassDescriptor): CirClass = create(
-        annotations = source.annotations.compactMap(CirAnnotationFactory::create),
-        name = CirName.create(source.name),
-        typeParameters = source.declaredTypeParameters.compactMap(CirTypeParameterFactory::create),
-        visibility = source.visibility,
-        modality = source.modality,
-        kind = source.kind,
-        companion = source.companionObjectDescriptor?.name?.let(CirName::create),
-        isCompanion = source.isCompanionObject,
-        isData = source.isData,
-        isInline = source.isInlineClass(),
-        isInner = source.isInner,
-        isExternal = source.isExternal
-    ).apply {
-        setSupertypes(source.filteredSupertypes.compactMap { CirTypeFactory.create(it) })
-    }
-
     fun create(name: CirName, source: KmClass, typeResolver: CirTypeResolver): CirClass = create(
         annotations = CirAnnotationFactory.createAnnotations(source.flags, typeResolver, source::annotations),
         name = name,

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.descriptors.commonizer.cir.factory
 
 import kotlinx.metadata.KmTypeAlias
-import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirTypeAliasImpl
@@ -14,20 +13,6 @@ import org.jetbrains.kotlin.descriptors.commonizer.metadata.decodeVisibility
 import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMap
 
 object CirTypeAliasFactory {
-    fun create(source: TypeAliasDescriptor): CirTypeAlias {
-        val underlyingType = CirTypeFactory.create(source.underlyingType) as CirClassOrTypeAliasType
-        val expandedType = CirTypeFactory.unabbreviate(underlyingType)
-
-        return create(
-            annotations = source.annotations.compactMap(CirAnnotationFactory::create),
-            name = CirName.create(source.name),
-            typeParameters = source.declaredTypeParameters.compactMap(CirTypeParameterFactory::create),
-            visibility = source.visibility,
-            underlyingType = underlyingType,
-            expandedType = expandedType
-        )
-    }
-
     fun create(name: CirName, source: KmTypeAlias, typeResolver: CirTypeResolver): CirTypeAlias {
         val underlyingType = CirTypeFactory.create(source.underlyingType, typeResolver) as CirClassOrTypeAliasType
         val expandedType = CirTypeFactory.unabbreviate(underlyingType)
