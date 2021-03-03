@@ -28,7 +28,7 @@ class GradleBuildRootIndexTest : AbstractScriptConfigurationLoadingTest() {
 
         val buildGradleKts = rootDir.walkTopDown().find { it.name == GradleConstants.KOTLIN_DSL_SCRIPT_NAME }
             ?: error("Couldn't find main script")
-        configureScriptFile(rootDir.path, buildGradleKts)
+        configureScriptFile(rootDir, buildGradleKts)
         val build = (myFile as? KtFile) ?: error("")
 
         val newProjectSettings = GradleProjectSettings()

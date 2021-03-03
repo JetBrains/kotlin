@@ -28,6 +28,7 @@
     <orderEntry type="library" scope="TEST" name="gson" level="project" />
     <orderEntry type="module" module-name="kotlin.resources-fir" scope="TEST" />
     <orderEntry type="module" module-name="kotlin.fir.frontend-fir" scope="TEST" />
+    <orderEntry type="module" module-name="kotlin.fir.frontend-api" />
     <orderEntry type="module" module-name="kotlin.tests-common" scope="TEST" />
     <orderEntry type="module" module-name="kotlin.test-framework" scope="TEST" />
     <orderEntry type="module" module-name="kotlin.idea" scope="TEST" />
