@@ -872,6 +872,12 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ConstValWithDelegate::class
     }
 
+    abstract class WrongSetterParameterType : KtFirDiagnostic<KtProperty>() {
+        override val diagnosticClass get() = WrongSetterParameterType::class
+        abstract val expectedType: KtType
+        abstract val actualType: KtType
+    }
+
     abstract class ExpectedDeclarationWithBody : KtFirDiagnostic<KtDeclaration>() {
         override val diagnosticClass get() = ExpectedDeclarationWithBody::class
     }

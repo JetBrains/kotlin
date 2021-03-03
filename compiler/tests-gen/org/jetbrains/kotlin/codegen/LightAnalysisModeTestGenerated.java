@@ -8105,11 +8105,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Resume extends AbstractLightAnalysisModeTest {
-                @TestMetadata("boxTypeParameterOfSuperType.kt")
-                public void ignoreBoxTypeParameterOfSuperType() throws Exception {
-                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/resume/boxTypeParameterOfSuperType.kt");
-                }
-
                 private void runTest(String testDataFilePath) throws Exception {
                     KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
                 }
@@ -8126,6 +8121,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 @TestMetadata("boxReturnValueOfSuspendLambda.kt")
                 public void testBoxReturnValueOfSuspendLambda() throws Exception {
                     runTest("compiler/testData/codegen/box/coroutines/inlineClasses/resume/boxReturnValueOfSuspendLambda.kt");
+                }
+
+                @TestMetadata("boxTypeParameterOfSuperType.kt")
+                public void testBoxTypeParameterOfSuperType() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/resume/boxTypeParameterOfSuperType.kt");
                 }
 
                 @TestMetadata("boxUnboxInsideCoroutine.kt")
@@ -8338,11 +8338,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
             public static class ResumeWithException extends AbstractLightAnalysisModeTest {
-                @TestMetadata("boxTypeParameterOfSuperType.kt")
-                public void ignoreBoxTypeParameterOfSuperType() throws Exception {
-                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/boxTypeParameterOfSuperType.kt");
-                }
-
                 private void runTest(String testDataFilePath) throws Exception {
                     KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
                 }
@@ -8359,6 +8354,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 @TestMetadata("boxReturnValueOfSuspendLambda.kt")
                 public void testBoxReturnValueOfSuspendLambda() throws Exception {
                     runTest("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/boxReturnValueOfSuspendLambda.kt");
+                }
+
+                @TestMetadata("boxTypeParameterOfSuperType.kt")
+                public void testBoxTypeParameterOfSuperType() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/boxTypeParameterOfSuperType.kt");
                 }
 
                 @TestMetadata("boxUnboxInsideCoroutine.kt")

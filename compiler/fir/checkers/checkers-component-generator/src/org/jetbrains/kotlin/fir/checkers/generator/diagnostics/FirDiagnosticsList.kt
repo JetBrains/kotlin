@@ -424,6 +424,10 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT by error<FirSourceElement, KtProperty>(PositioningStrategy.CONST_MODIFIER)
         val CONST_VAL_WITH_GETTER by error<FirSourceElement, KtProperty>()
         val CONST_VAL_WITH_DELEGATE by error<FirSourceElement, KtPropertyDelegate>()
+        val WRONG_SETTER_PARAMETER_TYPE by error<FirSourceElement, KtProperty> {
+            parameter<ConeKotlinType>("expectedType")
+            parameter<ConeKotlinType>("actualType")
+        }
     }
 
     val MPP_PROJECTS by object : DiagnosticGroup("Multi-platform projects") {

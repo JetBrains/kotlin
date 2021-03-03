@@ -1,0 +1,13 @@
+FILE: settersGetters.kt
+    public final class SomeClass : R|kotlin/Any| {
+        public constructor(): R|SomeClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final var foo: R|kotlin/Int| = Int(0)
+            public get(): R|kotlin/Int|
+            public set(value: R|kotlin/String|): R|kotlin/Unit| {
+                this@R|/SomeClass|.F|/SomeClass.foo| = R|<local>/value|
+            }
+
+    }

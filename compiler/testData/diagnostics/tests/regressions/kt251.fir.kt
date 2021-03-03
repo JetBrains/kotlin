@@ -2,7 +2,7 @@
 class A() {
     var x: Int = 0
         get() = "s"
-        set(value: String) {
+        set(value: <!WRONG_SETTER_PARAMETER_TYPE!>String<!>) {
             field = value
         }
     val y: Int
@@ -13,7 +13,7 @@ class A() {
         }
 
     var a: Any = 1
-        set(v: String) {
+        set(v: <!WRONG_SETTER_PARAMETER_TYPE!>String<!>) {
             field = v
         }
     val b: Int

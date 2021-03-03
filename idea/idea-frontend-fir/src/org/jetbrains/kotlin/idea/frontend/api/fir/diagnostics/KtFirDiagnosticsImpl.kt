@@ -1413,6 +1413,15 @@ internal class ConstValWithDelegateImpl(
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
 }
 
+internal class WrongSetterParameterTypeImpl(
+    override val expectedType: KtType,
+    override val actualType: KtType,
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.WrongSetterParameterType(), KtAbstractFirDiagnostic<KtProperty> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
 internal class ExpectedDeclarationWithBodyImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
