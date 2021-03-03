@@ -4,7 +4,7 @@
     <properties/>
     <testcase name="fooTest[ios]" classname="org.foo.test.TestKt" time="..."/>
     <testcase name="barTest[ios]" classname="org.foo.test.TestKt" time="..."/>
-    <testcase name="fail[ios" classname="org.foo.test.TestKt" time="...">
+    <testcase name="fail[ios]" classname="org.foo.test.TestKt" time="...">
       <failure message="..." type="kotlin.IllegalStateException">...</failure>
     </testcase>
     <system-out><![CDATA[Foo call
