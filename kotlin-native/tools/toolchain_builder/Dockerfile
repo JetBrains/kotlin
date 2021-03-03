@@ -1,5 +1,5 @@
 # We might want to switch to alpine, but it is not stable enough yet.
-FROM ubuntu:20.04
+FROM ubuntu:14.04
 
 ENV TZ=Europe/Moscow
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
@@ -7,7 +7,7 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 # Install crosstool-ng deps.
 RUN apt-get update
 RUN apt-get install -y curl gcc git g++ gperf bison flex texinfo help2man make libncurses5-dev \
-    python3-dev autoconf automake libtool libtool-bin gawk wget bzip2 xz-utils unzip \
+    python3-dev autoconf automake libtool gawk wget bzip2 xz-utils unzip \
     patch libstdc++6 rsync
 
 # Put a fix for strip.
