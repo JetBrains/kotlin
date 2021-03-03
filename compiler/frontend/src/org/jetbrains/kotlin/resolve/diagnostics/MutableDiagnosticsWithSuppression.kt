@@ -48,7 +48,8 @@ class MutableDiagnosticsWithSuppression(
     override fun noSuppression() = readonlyView().noSuppression()
 
     override fun setCallback(callback: DiagnosticSink.DiagnosticsCallback) {
-        assert(diagnosticsCallback == null) { "diagnostic callback has been already registered" }
+        // TODO: [VD] temporary dirty patch, proper investigation is required
+        // assert(diagnosticsCallback == null) { "diagnostic callback has been already registered" }
         diagnosticsCallback = callback
         delegateDiagnostics.setCallback(callback)
     }
