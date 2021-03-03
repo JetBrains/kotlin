@@ -9,7 +9,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.project.Project
 
-fun <T> addExtensionPointInTest(
+fun <T : Any> addExtensionPointInTest(
     pointName: ExtensionPointName<T>,
     project: Project,
     provider: T,
