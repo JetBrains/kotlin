@@ -11,8 +11,6 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.jetbrains.kotlin.gradle.*
 import org.jetbrains.plugins.gradle.tooling.ErrorMessageBuilder
-import org.jetbrains.plugins.gradle.tooling.ModelBuilderContext
-import org.jetbrains.plugins.gradle.tooling.ModelBuilderService
 import java.io.File
 import java.io.Serializable
 import java.lang.Exception
@@ -51,7 +49,7 @@ class KaptGradleModelImpl(
 ) : KaptGradleModel
 
 
-class KaptModelBuilderService : AbstractKotlinGradleModelBuilder(), ModelBuilderService.Ex  {
+class KaptModelBuilderService : AbstractKotlinGradleModelBuilder() {
     override fun getErrorMessageBuilder(project: Project, e: Exception): ErrorMessageBuilder {
         return ErrorMessageBuilder.create(project, e, "Gradle import errors")
             .withDescription("Unable to build kotlin-kapt plugin configuration")
@@ -59,26 +57,13 @@ class KaptModelBuilderService : AbstractKotlinGradleModelBuilder(), ModelBuilder
 
     override fun canBuild(modelName: String?): Boolean = modelName == KaptGradleModel::class.java.name
 
-    override fun buildAll(modelName: String?, project: Project): KaptGradleModelImpl {
-        return buildAll(project, null)
-    }
-
-    override fun buildAll(modelName: String, project: Project, builderContext: ModelBuilderContext): KaptGradleModelImpl {
-        return buildAll(project, builderContext)
-    }
-
-    private fun buildAll(project: Project, builderContext: ModelBuilderContext?): KaptGradleModelImpl {
+    override fun buildAll(modelName: String?, project: Project): Any {
         val kaptPlugin: Plugin<*>? = project.plugins.findPlugin("kotlin-kapt")
         val kaptIsEnabled = kaptPlugin != null
 
         val sourceSets = mutableListOf<KaptSourceSetModel>()
 
         if (kaptIsEnabled) {
-            // When running in Android Studio, Android Studio would request specific source sets only to avoid syncing
-            // currently not active build variants. We convert names to the lower case to avoid ambiguity with build variants
-            // accidentally named starting with upper case.
-            val requestedVariants: Set<String>? = builderContext?.parameter?.splitToSequence(',')?.map { it.toLowerCase() }?.toSet()
-
             val targets = project.getTargets()
 
             fun handleCompileTask(moduleName: String, compileTask: Task) {
@@ -115,7 +100,6 @@ class KaptModelBuilderService : AbstractKotlinGradleModelBuilder(), ModelBuilder
                     ?: project.getAllTasks(false)[project]
                 compileTasks?.forEach{ compileTask ->
                     val sourceSetName = compileTask.getSourceSetName()
-                    if (requestedVariants != null && !requestedVariants.contains(sourceSetName.toLowerCase())) return@forEach
                     handleCompileTask(sourceSetName, compileTask)
                 }
             }

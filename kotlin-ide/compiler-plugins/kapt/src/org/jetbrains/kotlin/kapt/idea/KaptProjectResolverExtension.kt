@@ -20,7 +20,6 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.ProjectKeys
 import com.intellij.openapi.externalSystem.model.project.*
-import com.intellij.openapi.util.Key
 import org.gradle.tooling.model.idea.IdeaModule
 import org.jetbrains.kotlin.idea.framework.GRADLE_SYSTEM_ID
 import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData
@@ -32,15 +31,7 @@ class KaptProjectResolverExtension : AbstractProjectResolverExtension() {
         private val LOG = Logger.getInstance(KaptProjectResolverExtension::class.java)
     }
 
-    override fun getExtraProjectModelClasses(): Set<Class<KaptGradleModel>> {
-        val isAndroidPluginRequestingKotlinGradleModelKey = Key.findKeyByName("IS_ANDROID_PLUGIN_REQUESTING_KAPT_GRADLE_MODEL_KEY")
-        if (isAndroidPluginRequestingKotlinGradleModelKey != null && resolverCtx.getUserData(isAndroidPluginRequestingKotlinGradleModelKey) != null) {
-            return emptySet()
-        }
-
-        return setOf(KaptGradleModel::class.java)
-    }
-
+    override fun getExtraProjectModelClasses() = setOf(KaptGradleModel::class.java)
     override fun getToolingExtensionsClasses() = setOf(KaptModelBuilderService::class.java, Unit::class.java)
 
     override fun populateModuleExtraModels(gradleModule: IdeaModule, ideModule: DataNode<ModuleData>) {
