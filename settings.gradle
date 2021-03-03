@@ -42,7 +42,6 @@ gradleEnterprise {
     buildScan {
         if (buildProperties.buildScanServer != null) {
             server = buildProperties.buildScanServer
-            allowUntrustedServer = true
             captureTaskInputFiles = true
             publishAlways()
         } else {
