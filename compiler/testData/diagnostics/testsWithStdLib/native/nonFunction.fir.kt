@@ -1,9 +1,9 @@
-external class A
+<!WRONG_MODIFIER_TARGET!>external<!> class A
 
-external val foo: Int = 23
+<!WRONG_MODIFIER_TARGET!>external<!> val foo: Int = 23
 
 class B {
-    external class A
+    <!WRONG_MODIFIER_TARGET!>external<!> class A
 
-    external val foo: Int = 23
+    <!WRONG_MODIFIER_TARGET!>external<!> val foo: Int = 23
 }

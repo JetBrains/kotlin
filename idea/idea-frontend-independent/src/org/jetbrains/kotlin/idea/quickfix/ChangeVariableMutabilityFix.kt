@@ -9,6 +9,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -72,6 +73,13 @@ class ChangeVariableMutabilityFix(
                 } else {
                     listOf(ChangeVariableMutabilityFix(property, makeVar = true))
                 }
+            }
+
+        val CONST_VAL_FACTORY: QuickFixesPsiBasedFactory<PsiElement> =
+            quickFixesPsiBasedFactory { psiElement: PsiElement ->
+                if (psiElement.node.elementType as? KtModifierKeywordToken != KtTokens.CONST_KEYWORD) return@quickFixesPsiBasedFactory emptyList()
+                val property = psiElement.getStrictParentOfType<KtProperty>() ?: return@quickFixesPsiBasedFactory emptyList()
+                listOf(ChangeVariableMutabilityFix(property, makeVar = false))
             }
 
         val MUST_BE_INITIALIZED_FACTORY: QuickFixesPsiBasedFactory<PsiElement> =

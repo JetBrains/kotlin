@@ -39,16 +39,6 @@ class ReassignmentActionFactory(val factory: DiagnosticFactory1<*, DeclarationDe
     }
 }
 
-// TODO: Move this to idea-fir-independent
-object ConstValFactory : KotlinSingleIntentionActionFactory() {
-    override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-        val (modifier, element) = Errors.WRONG_MODIFIER_TARGET.cast(diagnostic).run { a to psiElement }
-        if (modifier != KtTokens.CONST_KEYWORD) return null
-        val property = element.getStrictParentOfType<KtProperty>() ?: return null
-        return ChangeVariableMutabilityFix(property, makeVar = false)
-    }
-}
-
 object DelegatedPropertyValFactory : KotlinSingleIntentionActionFactory() {
     override fun createAction(diagnostic: Diagnostic): IntentionAction? {
         val element = Errors.DELEGATE_SPECIAL_FUNCTION_MISSING.cast(diagnostic).psiElement

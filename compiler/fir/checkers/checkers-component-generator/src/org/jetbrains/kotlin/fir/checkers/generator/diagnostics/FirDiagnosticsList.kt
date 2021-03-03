@@ -160,6 +160,10 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
             parameter<KtModifierKeywordToken>("modifier2")
         }
         val REDUNDANT_OPEN_IN_INTERFACE by warning<FirSourceElement, KtModifierListOwner>(PositioningStrategy.OPEN_MODIFIER)
+        val WRONG_MODIFIER_TARGET by error<FirSourceElement, PsiElement> {
+            parameter<KtModifierKeywordToken>("modifier")
+            parameter<String>("target")
+        }
     }
 
     val INLINE_CLASSES by object : DiagnosticGroup("Inline classes") {

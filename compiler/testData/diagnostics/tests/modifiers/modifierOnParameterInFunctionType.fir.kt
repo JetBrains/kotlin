@@ -26,7 +26,7 @@ val allProhibited: (<!INCOMPATIBLE_MODIFIERS, REDUNDANT_MODIFIER!>abstract<!>
                     <!INCOMPATIBLE_MODIFIERS!>crossinline<!>
                     <!INCOMPATIBLE_MODIFIERS!>data<!>
                     enum
-                    external
+                    <!WRONG_MODIFIER_TARGET!>external<!>
                     <!INCOMPATIBLE_MODIFIERS!>final<!>
                     <!INCOMPATIBLE_MODIFIERS!>in<!>
                     <!INCOMPATIBLE_MODIFIERS!>inline<!>

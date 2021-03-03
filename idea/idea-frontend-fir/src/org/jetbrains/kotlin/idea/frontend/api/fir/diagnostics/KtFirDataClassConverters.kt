@@ -628,6 +628,14 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.WRONG_MODIFIER_TARGET) { firDiagnostic ->
+        WrongModifierTargetImpl(
+            firDiagnostic.a,
+            firDiagnostic.b,
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
     add(FirErrors.NONE_APPLICABLE) { firDiagnostic ->
         NoneApplicableImpl(
             firDiagnostic.a.map { abstractFirBasedSymbol ->

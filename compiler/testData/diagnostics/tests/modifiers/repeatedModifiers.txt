@@ -1,6 +1,8 @@
 package
 
 public val bar: kotlin.Int = 1
+public external val i: kotlin.Int = 0
+public const var x: kotlin.Int
 public fun foo(): kotlin.Int
 public fun test(): kotlin.Unit
 

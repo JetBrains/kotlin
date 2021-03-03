@@ -4,7 +4,7 @@ import kotlin.reflect.KProperty
 
 const val topLevel: Int = 0
 const val topLevelInferred = 1
-const var topLeveLVar: Int = 2
+<!WRONG_MODIFIER_TARGET!>const<!> var topLeveLVar: Int = 2
 
 private val privateTopLevel = 3
 
