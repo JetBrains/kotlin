@@ -3262,6 +3262,10 @@ task inlineClass_secondaryConstructorWithGenerics(type: KonanLocalTest) {
     source = "codegen/inlineClass/secondaryConstructorWithGenerics.kt"
 }
 
+task inlineClass_nestedInlineClasses(type: KonanLocalTest) {
+    source = "codegen/inlineClass/nestedInlineClasses.kt"
+}
+
 task valueClass0(type: KonanLocalTest) {
     source = "codegen/inlineClass/valueClass0.kt"
 }
