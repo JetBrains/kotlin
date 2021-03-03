@@ -1,0 +1,30 @@
+enum class Order {
+    FIRST,
+    SECOND,
+    THIRD,
+}
+enum class Planet {
+    MERCURY,
+    VENERA,
+    EARTH,
+    constructor(m: Double, r: Double)
+    val m: Double
+    internal val r: Double
+    val g: Double
+    abstract fun sayHello()
+    companion object {
+        const val G: Double
+    }
+}
+enum class PseudoInsn {
+    FIX_STACK_BEFORE_JUMP,
+    FAKE_ALWAYS_TRUE_IFEQ,
+    FAKE_ALWAYS_FALSE_IFEQ,
+    SAVE_STACK_BEFORE_TRY,
+    RESTORE_STACK_IN_TRY_CATCH,
+    STORE_NOT_NULL,
+    AS_NOT_NULL,
+    constructor(signature: String = ...)
+    val signature: String
+    fun emit()
+}

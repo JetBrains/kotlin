@@ -95,6 +95,7 @@ import org.jetbrains.kotlin.idea.frontend.api.components.AbstractExpectedExpress
 import org.jetbrains.kotlin.idea.frontend.api.components.AbstractHLExpressionTypeTest
 import org.jetbrains.kotlin.idea.frontend.api.components.AbstractOverriddenDeclarationProviderTest
 import org.jetbrains.kotlin.idea.frontend.api.components.AbstractReturnExpressionTargetTest
+import org.jetbrains.kotlin.idea.frontend.api.components.AbstractRendererTest
 import org.jetbrains.kotlin.idea.frontend.api.fir.AbstractResolveCallTest
 import org.jetbrains.kotlin.idea.frontend.api.scopes.AbstractFileScopeTest
 import org.jetbrains.kotlin.idea.frontend.api.scopes.AbstractMemberScopeByFqNameTest
@@ -1041,6 +1042,10 @@ fun main(args: Array<String>) {
 
             testClass<AbstractHLExpressionTypeTest> {
                 model("components/expressionType")
+            }
+
+            testClass<AbstractRendererTest> {
+                model("components/declarationRenderer")
             }
         }
 

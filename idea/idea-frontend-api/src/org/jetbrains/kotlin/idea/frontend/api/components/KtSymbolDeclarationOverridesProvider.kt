@@ -32,7 +32,7 @@ interface KtSymbolDeclarationOverridesProviderMixIn : KtAnalysisSessionMixIn {
     /**
      * Return a list of symbols which are **directly** overridden by symbol
      **
-     * E.g, if we have `A.foo` overrides `B.foo` overrides `C.foo`, only declarations directly overriden `B.foo` will be returned
+     * E.g, if we have `A.foo` overrides `B.foo` overrides `C.foo`, only declarations directly overridden `B.foo` will be returned
      *
      * Unwraps substituted overridden symbols (see [org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbolOrigin.INTERSECTION_OVERRIDE])
      *

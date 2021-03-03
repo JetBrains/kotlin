@@ -104,6 +104,8 @@ object StandardClassIds {
     val MapEntry = Map.createNestedClassId(Name.identifier("Entry"))
     val MutableMapEntry = MutableMap.createNestedClassId(Name.identifier("MutableEntry"))
 
+    val extensionFunctionType = "ExtensionFunctionType".baseId()
+
     val Suppress = "Suppress".baseId()
 
     val FlexibleNullability = ClassId(FqName("kotlin.internal.ir"), Name.identifier("FlexibleNullability"))

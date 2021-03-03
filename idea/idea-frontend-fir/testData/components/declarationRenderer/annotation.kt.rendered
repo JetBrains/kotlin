@@ -1,0 +1,16 @@
+@Target(allowedTargets = NOT_CONST_EXPRESSION) annotation class base
+@base annotation class derived
+@base class correct {
+    constructor(@base x: Int)
+    @base val x: Int
+    @base constructor()
+}
+@base enum class My {
+    FIRST,
+    SECOND,
+}
+@base fun foo(@base y: @base Int): Int {
+    @base fun bar(@base z: @base Int): Int
+    @base val local: Int
+}
+@base val z: Int

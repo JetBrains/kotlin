@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api.util
 
-import org.jetbrains.kotlin.fir.containingClass
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.psi
-import org.jetbrains.kotlin.fir.realPsi
+import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.InvalidFirElementTypeException
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.collectDesignation
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
@@ -135,18 +137,10 @@ private fun KtTypeAlias.findFir(firSymbolProvider: FirSymbolProvider): FirTypeAl
 val FirDeclaration.isGeneratedDeclaration
     get() = realPsi == null
 
-internal fun FirDeclaration.collectDesignation(): List<FirDeclaration> {
-    require(this is FirCallableDeclaration<*>)
-    val designation = mutableListOf<FirDeclaration>()
-    val firProvider = session.firIdeProvider
-    var containingClassId = containingClass()?.classId
-    while (containingClassId != null) {
-        val klass = firProvider.getFirClassifierByFqName(containingClassId)
-        if (klass != null) {
-            designation.add(klass)
-        }
-        containingClassId = containingClassId.outerClassId
-    }
-    designation.reverse()
-    return designation
+internal fun FirCallableDeclaration<*>.collectDesignation(): List<FirClassLikeDeclaration<*>> {
+    return containingClass()
+        ?.toFirRegularClass(session)
+        ?.collectDesignation()
+        ?: return emptyList()
 }
+
