@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.element.builder
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.FirTowerDataContext
@@ -16,6 +17,11 @@ import org.jetbrains.kotlin.psi.*
 @ThreadSafeMutableState
 class FirTowerDataContextCollector {
     private val state: MutableMap<KtElement, FirTowerDataContext> = hashMapOf()
+
+    fun addFileContext(file: FirFile, context: FirTowerDataContext) {
+        val ktFile = file.psi as? KtFile ?: return
+        state[ktFile] = context
+    }
 
     fun addStatementContext(statement: FirStatement, context: FirTowerDataContext) {
         val closestStatementInBlock = statement.psi?.closestBlockLevelOrInitializerExpression() ?: return

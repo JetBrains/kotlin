@@ -50,6 +50,9 @@ interface KtScopeProviderMixIn : KtAnalysisSessionMixIn {
 
     fun KtFile.getScopeContextForPosition(positionInFakeFile: KtElement): KtScopeContext =
         analysisSession.scopeProvider.getScopeContextForPosition(this, positionInFakeFile)
+
+    fun KtFile.getScopeContextForFile(): KtScopeContext =
+        analysisSession.scopeProvider.getScopeContextForPosition(this, this)
 }
 
 data class KtScopeContext(val scopes: KtCompositeScope, val implicitReceiversTypes: List<KtType>)
