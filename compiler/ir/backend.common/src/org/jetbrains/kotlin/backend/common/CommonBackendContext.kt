@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irString
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
@@ -45,4 +46,8 @@ interface CommonBackendContext : BackendContext, LoggingContext {
         classSymbolMap: MutableMap<IrClassSymbol, IrClassSymbol>,
         functionSymbolMap: MutableMap<IrSimpleFunctionSymbol, IrSimpleFunctionSymbol>
     ) {}
+
+    fun isSideEffectFree(call: IrCall): Boolean {
+        return false
+    }
 }

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.types.*
@@ -57,6 +58,9 @@ class JsIrBackendContext(
     override val builtIns = module.builtIns
 
     override var inVerbosePhase: Boolean = false
+
+    override fun isSideEffectFree(call: IrCall): Boolean =
+        call.symbol in intrinsics.primitiveToLiteralConstructor.values
 
     val devMode = configuration[JSConfigurationKeys.DEVELOPER_MODE] ?: false
     val errorPolicy = configuration[JSConfigurationKeys.ERROR_TOLERANCE_POLICY] ?: ErrorTolerancePolicy.DEFAULT
@@ -131,6 +135,7 @@ class JsIrBackendContext(
         private val COROUTINE_CONTEXT_NAME = Name.identifier("coroutineContext")
         private val COROUTINE_IMPL_NAME = Name.identifier("CoroutineImpl")
         private val CONTINUATION_NAME = Name.identifier("Continuation")
+
         // TODO: what is more clear way reference this getter?
         private val CONTINUATION_CONTEXT_GETTER_NAME = Name.special("<get-context>")
 
@@ -262,15 +267,29 @@ class JsIrBackendContext(
     val coroutineGetContext: IrSimpleFunctionSymbol
         get() {
             val contextGetter =
-                continuationClass.owner.declarations.filterIsInstance<IrSimpleFunction>().atMostOne { it.name == CONTINUATION_CONTEXT_GETTER_NAME }
-                    ?: continuationClass.owner.declarations.filterIsInstance<IrProperty>().atMostOne { it.name == CONTINUATION_CONTEXT_PROPERTY_NAME }?.getter!!
+                continuationClass.owner.declarations.filterIsInstance<IrSimpleFunction>()
+                    .atMostOne { it.name == CONTINUATION_CONTEXT_GETTER_NAME }
+                    ?: continuationClass.owner.declarations.filterIsInstance<IrProperty>()
+                        .atMostOne { it.name == CONTINUATION_CONTEXT_PROPERTY_NAME }?.getter!!
             return contextGetter.symbol
         }
 
     val coroutineGetContextJs
         get() = ir.symbols.coroutineGetContext
 
-    val coroutineEmptyContinuation = symbolTable.referenceProperty(getProperty(FqName.fromSegments(listOf("kotlin", "coroutines", "js", "internal", "EmptyContinuation"))))
+    val coroutineEmptyContinuation = symbolTable.referenceProperty(
+        getProperty(
+            FqName.fromSegments(
+                listOf(
+                    "kotlin",
+                    "coroutines",
+                    "js",
+                    "internal",
+                    "EmptyContinuation"
+                )
+            )
+        )
+    )
 
     val coroutineContextProperty: PropertyDescriptor
         get() {
@@ -283,7 +302,8 @@ class JsIrBackendContext(
 
     val newThrowableSymbol = symbolTable.referenceSimpleFunction(getJsInternalFunction("newThrowable"))
     val extendThrowableSymbol = symbolTable.referenceSimpleFunction(getJsInternalFunction("extendThrowable"))
-    val setPropertiesToThrowableInstanceSymbol = symbolTable.referenceSimpleFunction(getJsInternalFunction("setPropertiesToThrowableInstance"))
+    val setPropertiesToThrowableInstanceSymbol =
+        symbolTable.referenceSimpleFunction(getJsInternalFunction("setPropertiesToThrowableInstance"))
 
     val throwISEsymbol = symbolTable.referenceSimpleFunction(getFunctions(kotlinPackageFqn.child(Name.identifier("THROW_ISE"))).single())
     val throwIAEsymbol = symbolTable.referenceSimpleFunction(getFunctions(kotlinPackageFqn.child(Name.identifier("THROW_IAE"))).single())
@@ -314,7 +334,8 @@ class JsIrBackendContext(
     val defaultThrowableCtor by lazy2 { throwableConstructors.single { !it.owner.isPrimary && it.owner.valueParameters.size == 0 } }
 
     val kpropertyBuilder = getFunctions(FqName("kotlin.js.getPropertyCallableRef")).single().let { symbolTable.referenceSimpleFunction(it) }
-    val klocalDelegateBuilder = getFunctions(FqName("kotlin.js.getLocalDelegateReference")).single().let { symbolTable.referenceSimpleFunction(it) }
+    val klocalDelegateBuilder =
+        getFunctions(FqName("kotlin.js.getLocalDelegateReference")).single().let { symbolTable.referenceSimpleFunction(it) }
 
     private fun referenceOperators(): Map<Name, MutableMap<IrClassifierSymbol, IrSimpleFunctionSymbol>> {
         val primitiveIrSymbols = irBuiltIns.primitiveIrTypes.map { it.classifierOrFail as IrClassSymbol }
