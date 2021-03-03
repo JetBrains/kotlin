@@ -121,23 +121,9 @@ private class VariableLookupElementFactory {
         return if (symbol.canBeCalledByFqName) {
             ShorteningVariableInsertionHandler(callableId)
         } else {
-            SimpleVariableInsertionHandler(callableId)
+            SimpleVariableInsertionHandler(symbol.name, symbol.importableFqName)
         }
     }
-
-    private val KtVariableLikeSymbol.callableIdIfExists: FqName?
-        get() = when (this) {
-            is KtJavaFieldSymbol -> callableIdIfNonLocal
-            is KtKotlinPropertySymbol -> callableIdIfNonLocal
-            is KtSyntheticJavaPropertySymbol -> callableIdIfNonLocal
-
-            // Compiler will complain if there would be a new type in the hierarchy
-            is KtEnumEntrySymbol,
-            is KtLocalVariableSymbol,
-            is KtFunctionParameterSymbol,
-            is KtConstructorParameterSymbol,
-            is KtSetterParameterSymbol -> null
-        }
 
     private val KtVariableLikeSymbol.canBeCalledByFqName: Boolean
         get() = when (this) {
@@ -318,9 +304,10 @@ private class SimpleFunctionInsertionHandler(
         val element = context.file.findElementAt(startOffset) ?: return
 
         addArguments(context, element)
+        context.commitDocument()
 
-        if (nameToImport != null && targetFile.importDirectives.none { it.importPath?.fqName == nameToImport }) {
-            addImportToFile(context.project, targetFile, nameToImport)
+        if (nameToImport != null) {
+            addCallableImportIfRequired(targetFile, nameToImport)
         }
     }
 }
@@ -366,15 +353,15 @@ private class ShorteningVariableInsertionHandler(private val name: FqName) : Ins
     }
 }
 
-private class SimpleVariableInsertionHandler(private val nameToImport: FqName) :
-    QuotedNamesAwareInsertionHandler(nameToImport.shortName()) {
+private class SimpleVariableInsertionHandler(name: Name, private val nameToImport: FqName?) :
+    QuotedNamesAwareInsertionHandler(name) {
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
         super.handleInsert(context, item)
 
         val targetFile = context.file as? KtFile ?: return
 
-        if (targetFile.importDirectives.none { it.importPath?.fqName == nameToImport }) {
-            addImportToFile(context.project, targetFile, nameToImport)
+        if (nameToImport != null) {
+            addCallableImportIfRequired(targetFile, nameToImport)
         }
     }
 }
@@ -391,6 +378,56 @@ private open class QuotedNamesAwareInsertionHandler(private val name: Name) : In
     }
 }
 
+private fun addCallableImportIfRequired(targetFile: KtFile, nameToImport: FqName) {
+    if (!alreadyHasImport(targetFile, nameToImport)) {
+        addImportToFile(targetFile.project, targetFile, nameToImport)
+    }
+}
+
+private fun alreadyHasImport(file: KtFile, nameToImport: FqName): Boolean {
+    if (file.importDirectives.any { it.importPath?.fqName == nameToImport }) return false
+
+    withAllowedResolve {
+        analyze(file) {
+            val scopes = file.getScopeContextForFile().scopes
+            if (!scopes.containsName(nameToImport.shortName())) return false
+
+            return scopes
+                .getCallableSymbols { it == nameToImport.shortName() }
+                .any {
+                    it is KtVariableLikeSymbol && it.callableIdIfExists == nameToImport ||
+                            it is KtFunctionSymbol && it.callableIdIfNonLocal == nameToImport
+                }
+        }
+    }
+}
+
+private val KtVariableLikeSymbol.callableIdIfExists: FqName?
+    get() = when (this) {
+        is KtJavaFieldSymbol -> callableIdIfNonLocal
+        is KtKotlinPropertySymbol -> callableIdIfNonLocal
+        is KtSyntheticJavaPropertySymbol -> callableIdIfNonLocal
+
+        // Compiler will complain if there would be a new type in the hierarchy
+        is KtEnumEntrySymbol,
+        is KtLocalVariableSymbol,
+        is KtFunctionParameterSymbol,
+        is KtConstructorParameterSymbol,
+        is KtSetterParameterSymbol -> null
+    }
+
+private val KtVariableLikeSymbol.importableFqName: FqName?
+    get() = when (this) {
+        is KtKotlinPropertySymbol -> if (dispatchType == null) callableIdIfNonLocal else null
+
+        is KtEnumEntrySymbol,
+        is KtJavaFieldSymbol,
+        is KtSyntheticJavaPropertySymbol,
+        is KtLocalVariableSymbol,
+        is KtFunctionParameterSymbol,
+        is KtConstructorParameterSymbol,
+        is KtSetterParameterSymbol -> null
+    }
 
 private object ShortNamesRenderer {
     fun KtAnalysisSession.renderFunctionParameters(function: KtFunctionSymbol): String =

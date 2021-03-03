@@ -26,6 +26,10 @@ open class CompletionMultiFileHandlerTest : KotlinFixtureCompletionBaseTestCase(
         doTest()
     }
 
+    fun testExtensionPropertyInSamePackageNoImport() {
+        doTest()
+    }
+
     fun testImportAlreadyImportedObject() {
         doTest()
     }
@@ -47,6 +51,10 @@ open class CompletionMultiFileHandlerTest : KotlinFixtureCompletionBaseTestCase(
     }
 
     fun testTopLevelPropertyImport() {
+        doTest()
+    }
+
+    fun testTopLevelPropertyInSamePackageNoImport() {
         doTest()
     }
 

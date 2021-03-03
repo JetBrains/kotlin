@@ -1,0 +1,6 @@
+// FIR_COMPARISON
+package some
+
+fun other() {
+    someProp<caret>
+}
