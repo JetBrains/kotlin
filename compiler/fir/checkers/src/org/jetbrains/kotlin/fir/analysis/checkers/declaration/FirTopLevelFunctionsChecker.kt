@@ -30,12 +30,11 @@ object FirTopLevelFunctionsChecker : FirFileChecker() {
         // So, our source of truth should be the full modifier list retrieved from the source.
         val modifierList = with(FirModifierList) { source.getModifierList() }
         if (modifierList?.modifiers?.any { it.token == KtTokens.ABSTRACT_KEYWORD } == true) return
-        if (function.isExternal || modifierList?.modifiers?.any { it.token == KtTokens.EXTERNAL_KEYWORD } == true) return
-        val isExpect = function.isExpect || modifierList?.modifiers?.any { it.token == KtTokens.EXPECT_KEYWORD } == true
-        if (!function.hasBody && !isExpect) {
+        if (function.isExternal) return
+        if (!function.hasBody && !function.isExpect) {
             reporter.reportOn(source, FirErrors.NON_MEMBER_FUNCTION_NO_BODY, function, context)
         }
 
-        checkExpectDeclarationVisibilityAndBody(function, source, modifierList, reporter, context)
+        checkExpectDeclarationVisibilityAndBody(function, source, reporter, context)
     }
 }
