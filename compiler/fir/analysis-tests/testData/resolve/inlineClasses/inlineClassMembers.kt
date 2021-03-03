@@ -13,11 +13,11 @@ inline class DelegatedProp(val x: Int) {
 }
 
 inline class ReversedMembers(val x: Int) {
-    <!RESERVED_MEMBER_INSIDE_INLINE_CLASS{LT}!>fun <!RESERVED_MEMBER_INSIDE_INLINE_CLASS{PSI}!>box<!>() {}<!>
-    <!RESERVED_MEMBER_INSIDE_INLINE_CLASS{LT}!>fun <!RESERVED_MEMBER_INSIDE_INLINE_CLASS{PSI}!>unbox<!>() {}<!>
+    fun <!RESERVED_MEMBER_INSIDE_INLINE_CLASS!>box<!>() {}
+    fun <!RESERVED_MEMBER_INSIDE_INLINE_CLASS!>unbox<!>() {}
 
-    <!RESERVED_MEMBER_INSIDE_INLINE_CLASS{LT}!>override fun <!RESERVED_MEMBER_INSIDE_INLINE_CLASS{PSI}!>equals<!>(other: Any?) = true<!>
-    <!RESERVED_MEMBER_INSIDE_INLINE_CLASS{LT}!>override fun <!RESERVED_MEMBER_INSIDE_INLINE_CLASS{PSI}!>hashCode<!>() = 1<!>
+    override fun <!RESERVED_MEMBER_INSIDE_INLINE_CLASS!>equals<!>(other: Any?) = true
+    override fun <!RESERVED_MEMBER_INSIDE_INLINE_CLASS!>hashCode<!>() = 1
 }
 
 inline class SecondaryConstructors(val x: Int) {

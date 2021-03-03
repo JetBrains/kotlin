@@ -1,5 +1,5 @@
 fun f() {
-    <!UNUSED_VARIABLE{LT}!><!REDUNDANT_VISIBILITY_MODIFIER!>public<!> <!CAN_BE_VAL!>var<!> <!UNUSED_VARIABLE{PSI}!>baz<!> = 0<!>
+    <!REDUNDANT_VISIBILITY_MODIFIER!>public<!> <!CAN_BE_VAL!>var<!> <!UNUSED_VARIABLE!>baz<!> = 0
     class LocalClass {
         <!REDUNDANT_VISIBILITY_MODIFIER!>internal<!> var foo = 0
     }

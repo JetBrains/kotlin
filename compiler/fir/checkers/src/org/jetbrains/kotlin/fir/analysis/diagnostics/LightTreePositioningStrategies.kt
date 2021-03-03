@@ -145,7 +145,7 @@ object LightTreePositioningStrategies {
 
                     return markRange(startElement, nameIdentifier, startOffset, endOffset, tree, node)
                 }
-                return markElement(node, startOffset, endOffset, tree)
+                return markElement(nameIdentifier, startOffset, endOffset, tree, node)
             }
             if (node.tokenType == KtNodeTypes.FUN) {
                 return DECLARATION_SIGNATURE.mark(node, startOffset, endOffset, tree)

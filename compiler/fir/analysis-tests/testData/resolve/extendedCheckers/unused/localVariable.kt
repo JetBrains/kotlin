@@ -4,7 +4,7 @@ class Outer {
     fun foo() {
         class Local {
             fun bar() {
-                <!UNUSED_VARIABLE{LT}!>val <!UNUSED_VARIABLE{PSI}!>x<!> = y<!>
+                val <!UNUSED_VARIABLE!>x<!> = y
             }
         }
     }
@@ -22,13 +22,13 @@ fun f() {
 
 
 fun foo(v: Int) {
-    <!UNUSED_VARIABLE{LT}!>val <!UNUSED_VARIABLE{PSI}!>d<!>: Int by Delegate<!>
-    <!UNUSED_VARIABLE{LT}!>val <!UNUSED_VARIABLE{PSI}!>a<!>: Int<!>
-    <!UNUSED_VARIABLE{LT}!>val <!UNUSED_VARIABLE{PSI}!>b<!> = 1<!>
+    val <!UNUSED_VARIABLE!>d<!>: Int by Delegate
+    val <!UNUSED_VARIABLE!>a<!>: Int
+    val <!UNUSED_VARIABLE!>b<!> = 1
     val c = 2
 
-    <!UNUSED_VARIABLE{LT}!>@Anno
-    val <!UNUSED_VARIABLE{PSI}!>e<!>: Int<!>
+    @Anno
+    val <!UNUSED_VARIABLE!>e<!>: Int
 
     foo(c)
 }
