@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.providers.firIdeProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.trasformers.FirDesignatedBodyResolveTransformerForIDE
 import org.jetbrains.kotlin.idea.fir.low.level.api.trasformers.FirDesignatedContractsResolveTransformerForIDE
 import org.jetbrains.kotlin.idea.fir.low.level.api.trasformers.FirDesignatedImplicitTypesTransformerForIDE
+import org.jetbrains.kotlin.idea.fir.low.level.api.trasformers.FirDesignation
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.*
 import org.jetbrains.kotlin.psi.*
 
@@ -158,7 +159,6 @@ internal class FirLazyDeclarationResolver(
 
         val transformer = phase.createLazyTransformer(
             designation,
-            firDeclarationToResolve,
             containerFirFile,
             scopeSession,
             towerDataContextCollector
@@ -171,27 +171,23 @@ internal class FirLazyDeclarationResolver(
 
     private fun FirResolvePhase.createLazyTransformer(
         designation: List<FirDeclaration>,
-        targetDeclaration: FirDeclaration,
         containerFirFile: FirFile,
         scopeSession: ScopeSession,
         towerDataContextCollector: FirTowerDataContextCollector?
     ) = when (this) {
         FirResolvePhase.CONTRACTS -> FirDesignatedContractsResolveTransformerForIDE(
-            designation.iterator(),
-            targetDeclaration,
+            FirDesignation(designation),
             containerFirFile.session,
             scopeSession,
         )
         FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE -> FirDesignatedImplicitTypesTransformerForIDE(
-            designation.iterator(),
-            targetDeclaration,
+            FirDesignation(designation),
             containerFirFile.session,
             scopeSession,
             towerDataContextCollector,
         )
         FirResolvePhase.BODY_RESOLVE -> FirDesignatedBodyResolveTransformerForIDE(
-            designation.iterator(),
-            targetDeclaration,
+            FirDesignation(designation),
             containerFirFile.session,
             scopeSession,
             towerDataContextCollector
