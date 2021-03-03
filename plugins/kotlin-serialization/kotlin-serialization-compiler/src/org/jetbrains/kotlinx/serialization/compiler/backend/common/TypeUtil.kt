@@ -101,6 +101,8 @@ fun ClassDescriptor.serialName(): String {
     return annotations.serialNameValue ?: fqNameUnsafe.asString()
 }
 
+internal val ClassDescriptor.isStaticSerializable: Boolean get() = this.declaredTypeParameters.isEmpty()
+
 /**
  * Returns class descriptor for ContextSerializer or PolymorphicSerializer
  * if [annotations] contains @Contextual or @Polymorphic annotation
