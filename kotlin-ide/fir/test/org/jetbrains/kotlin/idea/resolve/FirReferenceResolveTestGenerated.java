@@ -143,7 +143,7 @@ public class FirReferenceResolveTestGenerated extends AbstractFirReferenceResolv
 
     @TestMetadata("ExternalCompanionObject.kt")
     public void testExternalCompanionObject() throws Exception {
-        runTest("idea/testData/resolve/references/ExternalCompanionObject.kt");
+        runTest("../idea/testData/resolve/references/ExternalCompanionObject.kt");
     }
 
     @TestMetadata("FakeJavaLang1.kt")
@@ -368,52 +368,52 @@ public class FirReferenceResolveTestGenerated extends AbstractFirReferenceResolv
 
     @TestMetadata("TopLevelClassVsLocalClassConstructor.kt")
     public void testTopLevelClassVsLocalClassConstructor() throws Exception {
-        runTest("idea/testData/resolve/references/TopLevelClassVsLocalClassConstructor.kt");
+        runTest("../idea/testData/resolve/references/TopLevelClassVsLocalClassConstructor.kt");
     }
 
     @TestMetadata("TopLevelClassVsLocalClassConstructor2.kt")
     public void testTopLevelClassVsLocalClassConstructor2() throws Exception {
-        runTest("idea/testData/resolve/references/TopLevelClassVsLocalClassConstructor2.kt");
+        runTest("../idea/testData/resolve/references/TopLevelClassVsLocalClassConstructor2.kt");
     }
 
     @TestMetadata("TopLevelClassVsLocalClassQualifier.kt")
     public void testTopLevelClassVsLocalClassQualifier() throws Exception {
-        runTest("idea/testData/resolve/references/TopLevelClassVsLocalClassQualifier.kt");
+        runTest("../idea/testData/resolve/references/TopLevelClassVsLocalClassQualifier.kt");
     }
 
     @TestMetadata("TopLevelCompanionObjectVsLocalClassConstructor.kt")
     public void testTopLevelCompanionObjectVsLocalClassConstructor() throws Exception {
-        runTest("idea/testData/resolve/references/TopLevelCompanionObjectVsLocalClassConstructor.kt");
+        runTest("../idea/testData/resolve/references/TopLevelCompanionObjectVsLocalClassConstructor.kt");
     }
 
     @TestMetadata("TopLevelCompanionObjectVsLocalClassConstructor2.kt")
     public void testTopLevelCompanionObjectVsLocalClassConstructor2() throws Exception {
-        runTest("idea/testData/resolve/references/TopLevelCompanionObjectVsLocalClassConstructor2.kt");
+        runTest("../idea/testData/resolve/references/TopLevelCompanionObjectVsLocalClassConstructor2.kt");
     }
 
     @TestMetadata("TopLevelCompanionObjectVsLocalClassQualifier.kt")
     public void testTopLevelCompanionObjectVsLocalClassQualifier() throws Exception {
-        runTest("idea/testData/resolve/references/TopLevelCompanionObjectVsLocalClassQualifier.kt");
+        runTest("../idea/testData/resolve/references/TopLevelCompanionObjectVsLocalClassQualifier.kt");
     }
 
     @TestMetadata("TopLevelObjectVsLocalClassConstructor.kt")
     public void testTopLevelObjectVsLocalClassConstructor() throws Exception {
-        runTest("idea/testData/resolve/references/TopLevelObjectVsLocalClassConstructor.kt");
+        runTest("../idea/testData/resolve/references/TopLevelObjectVsLocalClassConstructor.kt");
     }
 
     @TestMetadata("TopLevelObjectVsLocalClassConstructor2.kt")
     public void testTopLevelObjectVsLocalClassConstructor2() throws Exception {
-        runTest("idea/testData/resolve/references/TopLevelObjectVsLocalClassConstructor2.kt");
+        runTest("../idea/testData/resolve/references/TopLevelObjectVsLocalClassConstructor2.kt");
     }
 
     @TestMetadata("TopLevelObjectVsLocalClassConstructor3.kt")
     public void testTopLevelObjectVsLocalClassConstructor3() throws Exception {
-        runTest("idea/testData/resolve/references/TopLevelObjectVsLocalClassConstructor3.kt");
+        runTest("../idea/testData/resolve/references/TopLevelObjectVsLocalClassConstructor3.kt");
     }
 
     @TestMetadata("TopLevelObjectVsLocalClassQualifier.kt")
     public void testTopLevelObjectVsLocalClassQualifier() throws Exception {
-        runTest("idea/testData/resolve/references/TopLevelObjectVsLocalClassQualifier.kt");
+        runTest("../idea/testData/resolve/references/TopLevelObjectVsLocalClassQualifier.kt");
     }
 
     @TestMetadata("TypeAlias.kt")
@@ -483,7 +483,7 @@ public class FirReferenceResolveTestGenerated extends AbstractFirReferenceResolv
 
     @TestMetadata("WrongNumberOfTypeArguments3.kt")
     public void testWrongNumberOfTypeArguments3() throws Exception {
-        runTest("idea/testData/resolve/references/WrongNumberOfTypeArguments3.kt");
+        runTest("../idea/testData/resolve/references/WrongNumberOfTypeArguments3.kt");
     }
 
     @TestMetadata("WrongNumberOfTypeArgumentsInSupertype.kt")

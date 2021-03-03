@@ -38,12 +38,12 @@ public class ProjectWideOutOfBlockKotlinModificationTrackerTestGenerated extends
 
     @TestMetadata("memberFunWithType.kt")
     public void testMemberFunWithType() throws Exception {
-        runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/outOfBlockProjectWide/memberFunWithType.kt");
+        runTest("testdata/outOfBlockProjectWide/memberFunWithType.kt");
     }
 
     @TestMetadata("memberPropertyWithType.kt")
     public void testMemberPropertyWithType() throws Exception {
-        runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/outOfBlockProjectWide/memberPropertyWithType.kt");
+        runTest("testdata/outOfBlockProjectWide/memberPropertyWithType.kt");
     }
 
     @TestMetadata("topLevelExpressionBodyFunWithType.kt")

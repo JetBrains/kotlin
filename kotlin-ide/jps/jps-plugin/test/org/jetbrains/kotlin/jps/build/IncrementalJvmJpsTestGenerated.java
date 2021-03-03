@@ -1213,7 +1213,7 @@ public class IncrementalJvmJpsTestGenerated extends AbstractIncrementalJvmJpsTes
 
             @TestMetadata("multifileDependantUsage")
             public void testMultifileDependantUsage() throws Exception {
-                runTest("jps-plugin/testData/incremental/withJava/other/multifileDependantUsage/");
+                runTest("testData/incremental/withJava/other/multifileDependantUsage/");
             }
 
             @TestMetadata("multifilePackagePartMethodAdded")

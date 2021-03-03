@@ -5196,22 +5196,22 @@ public abstract class LocalInspectionTestGenerated extends AbstractLocalInspecti
 
             @TestMetadata("afterRightBrace.kt")
             public void testAfterRightBrace() throws Exception {
-                runTest("idea/testData/inspectionsLocal/liftOut/ifToAssignment/afterRightBrace.kt");
+                runTest("testData/inspectionsLocal/liftOut/ifToAssignment/afterRightBrace.kt");
             }
 
             @TestMetadata("afterRightBrace2.kt")
             public void testAfterRightBrace2() throws Exception {
-                runTest("idea/testData/inspectionsLocal/liftOut/ifToAssignment/afterRightBrace2.kt");
+                runTest("testData/inspectionsLocal/liftOut/ifToAssignment/afterRightBrace2.kt");
             }
 
             @TestMetadata("afterRightBrace3.kt")
             public void testAfterRightBrace3() throws Exception {
-                runTest("idea/testData/inspectionsLocal/liftOut/ifToAssignment/afterRightBrace3.kt");
+                runTest("testData/inspectionsLocal/liftOut/ifToAssignment/afterRightBrace3.kt");
             }
 
             @TestMetadata("afterRightParenthesis.kt")
             public void testAfterRightParenthesis() throws Exception {
-                runTest("idea/testData/inspectionsLocal/liftOut/ifToAssignment/afterRightParenthesis.kt");
+                runTest("testData/inspectionsLocal/liftOut/ifToAssignment/afterRightParenthesis.kt");
             }
 
             @TestMetadata("cascadeIf.kt")

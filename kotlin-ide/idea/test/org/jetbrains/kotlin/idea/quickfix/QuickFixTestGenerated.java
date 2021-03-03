@@ -7766,9 +7766,8 @@ public abstract class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
-    @TestMetadata("idea/testData/quickfix/inlineClass")
-    @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
+    @TestMetadata("testData/quickfix/inlineClass")
     public static class InlineClass extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
@@ -7776,17 +7775,15 @@ public abstract class QuickFixTestGenerated extends AbstractQuickFixTest {
 
         @TestMetadata("inlineClassDeprecated.kt")
         public void testInlineClassDeprecated() throws Exception {
-            runTest("idea/testData/quickfix/inlineClass/inlineClassDeprecated.kt");
+            runTest("testData/quickfix/inlineClass/inlineClassDeprecated.kt");
         }
 
         @TestMetadata("inlineClassDeprecated_js.kt")
         public void testInlineClassDeprecated_js() throws Exception {
-            runTest("idea/testData/quickfix/inlineClass/inlineClassDeprecated_js.kt");
+            runTest("testData/quickfix/inlineClass/inlineClassDeprecated_js.kt");
         }
     }
 
-    @TestMetadata("idea/testData/quickfix/inlineClassConstructorNotValParameter")
-    @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/inlineClassConstructorNotValParameter")
     public static class InlineClassConstructorNotValParameter extends AbstractQuickFixTest {
@@ -8352,7 +8349,7 @@ public abstract class QuickFixTestGenerated extends AbstractQuickFixTest {
 
         @TestMetadata("abstractVarWithPrivateSetter.kt")
         public void testAbstractVarWithPrivateSetter() throws Exception {
-            runTest("idea/testData/quickfix/modifiers/abstractVarWithPrivateSetter.kt");
+            runTest("testData/quickfix/modifiers/abstractVarWithPrivateSetter.kt");
         }
 
         @TestMetadata("addLateinit.kt")
@@ -8497,12 +8494,12 @@ public abstract class QuickFixTestGenerated extends AbstractQuickFixTest {
 
         @TestMetadata("openVarWithPrivateSetter1.kt")
         public void testOpenVarWithPrivateSetter1() throws Exception {
-            runTest("idea/testData/quickfix/modifiers/openVarWithPrivateSetter1.kt");
+            runTest("testData/quickfix/modifiers/openVarWithPrivateSetter1.kt");
         }
 
         @TestMetadata("openVarWithPrivateSetter2.kt")
         public void testOpenVarWithPrivateSetter2() throws Exception {
-            runTest("idea/testData/quickfix/modifiers/openVarWithPrivateSetter2.kt");
+            runTest("testData/quickfix/modifiers/openVarWithPrivateSetter2.kt");
         }
 
         @TestMetadata("operatorModifier.kt")
@@ -8532,12 +8529,12 @@ public abstract class QuickFixTestGenerated extends AbstractQuickFixTest {
 
         @TestMetadata("overrideWithPrivateSetter1.kt")
         public void testOverrideWithPrivateSetter1() throws Exception {
-            runTest("idea/testData/quickfix/modifiers/overrideWithPrivateSetter1.kt");
+            runTest("testData/quickfix/modifiers/overrideWithPrivateSetter1.kt");
         }
 
         @TestMetadata("overrideWithPrivateSetter2.kt")
         public void testOverrideWithPrivateSetter2() throws Exception {
-            runTest("idea/testData/quickfix/modifiers/overrideWithPrivateSetter2.kt");
+            runTest("testData/quickfix/modifiers/overrideWithPrivateSetter2.kt");
         }
 
         @TestMetadata("packageMemberCannotBeProtected.kt")
@@ -13746,6 +13743,11 @@ public abstract class QuickFixTestGenerated extends AbstractQuickFixTest {
             @TestMetadata("valWithSetter.kt")
             public void testValWithSetter() throws Exception {
                 runTest("testData/quickfix/variables/changeMutability/valWithSetter.kt");
+            }
+
+            @TestMetadata("varAnnotationParameter.kt")
+            public void testVarAnnotationParameter() throws Exception {
+                runTest("testData/quickfix/variables/changeMutability/varAnnotationParameter.kt");
             }
 
             @RunWith(JUnit3RunnerWithInners.class)
