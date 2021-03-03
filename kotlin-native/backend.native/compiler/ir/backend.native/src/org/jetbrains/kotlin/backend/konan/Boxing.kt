@@ -42,8 +42,14 @@ private fun KonanSymbols.getTypeConversionImpl(
 internal object DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION : IrDeclarationOriginImpl("INLINE_CLASS_SPECIAL_FUNCTION")
 
 internal val Context.getBoxFunction: (IrClass) -> IrSimpleFunction by Context.lazyMapMember { inlinedClass ->
-    assert(inlinedClass.isUsedAsBoxClass())
-    assert(inlinedClass.parent is IrFile) { "Expected top level inline class" }
+    require(inlinedClass.isUsedAsBoxClass())
+    val classes = mutableListOf<IrClass>(inlinedClass)
+    var parent = inlinedClass.parent
+    while (parent is IrClass) {
+        classes.add(parent)
+        parent = parent.parent
+    }
+    require(parent is IrFile) { "Local inline classes are not supported" }
 
     val symbols = ir.symbols
 
@@ -61,7 +67,7 @@ internal val Context.getBoxFunction: (IrClass) -> IrSimpleFunction by Context.la
             startOffset, endOffset,
             DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION,
             IrSimpleFunctionSymbolImpl(),
-            Name.special("<${inlinedClass.name}-box>"),
+            Name.special("<${classes.reversed().joinToString(".") { it.name.asString() }}-box>"),
             DescriptorVisibilities.PUBLIC,
             Modality.FINAL,
             returnType,
@@ -95,8 +101,14 @@ internal val Context.getBoxFunction: (IrClass) -> IrSimpleFunction by Context.la
 }
 
 internal val Context.getUnboxFunction: (IrClass) -> IrSimpleFunction by Context.lazyMapMember { inlinedClass ->
-    assert(inlinedClass.isUsedAsBoxClass())
-    assert(inlinedClass.parent is IrFile) { "Expected top level inline class" }
+    require(inlinedClass.isUsedAsBoxClass())
+    val classes = mutableListOf<IrClass>(inlinedClass)
+    var parent = inlinedClass.parent
+    while (parent is IrClass) {
+        classes.add(parent)
+        parent = parent.parent
+    }
+    require(parent is IrFile) { "Local inline classes are not supported" }
 
     val symbols = ir.symbols
 
@@ -114,7 +126,7 @@ internal val Context.getUnboxFunction: (IrClass) -> IrSimpleFunction by Context.
             startOffset, endOffset,
             DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION,
             IrSimpleFunctionSymbolImpl(),
-            Name.special("<${inlinedClass.name}-unbox>"),
+            Name.special("<${classes.reversed().joinToString(".") { it.name.asString() } }-unbox>"),
             DescriptorVisibilities.PUBLIC,
             Modality.FINAL,
             returnType,
