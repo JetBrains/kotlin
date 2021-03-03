@@ -145,6 +145,7 @@ object FirErrors {
     val DEPRECATED_MODIFIER_PAIR by error2<FirSourceElement, PsiElement, KtModifierKeywordToken, KtModifierKeywordToken>()
     val INCOMPATIBLE_MODIFIERS by error2<FirSourceElement, PsiElement, KtModifierKeywordToken, KtModifierKeywordToken>()
     val REDUNDANT_OPEN_IN_INTERFACE by warning0<FirSourceElement, KtModifierListOwner>(SourceElementPositioningStrategies.OPEN_MODIFIER)
+    val WRONG_MODIFIER_TARGET by error2<FirSourceElement, PsiElement, KtModifierKeywordToken, String>()
 
     // Inline classes
     val INLINE_CLASS_NOT_TOP_LEVEL by error0<FirSourceElement, KtDeclaration>(SourceElementPositioningStrategies.INLINE_OR_VALUE_MODIFIER)

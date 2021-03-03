@@ -2,3 +2,4 @@
 object Test {
     <caret>const var foo = "123"
 }
+/* FIR_COMPARISON */

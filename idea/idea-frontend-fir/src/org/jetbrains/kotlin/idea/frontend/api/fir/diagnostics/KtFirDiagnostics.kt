@@ -451,6 +451,12 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ValueClassCannotBeCloneable::class
     }
 
+    abstract class WrongModifierTarget : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = WrongModifierTarget::class
+        abstract val modifier: KtModifierKeywordToken
+        abstract val target: String
+    }
+
     abstract class NoneApplicable : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = NoneApplicable::class
         abstract val candidates: List<KtSymbol>

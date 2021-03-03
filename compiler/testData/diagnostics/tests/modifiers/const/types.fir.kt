@@ -12,6 +12,6 @@ const val arrayConst: Array<String> = arrayOf("1")
 const val intArrayConst: IntArray = intArrayOf()
 
 const val unresolvedConst1 = <!UNRESOLVED_REFERENCE!>Unresolved<!>
-const var unresolvedConst2 = <!UNRESOLVED_REFERENCE!>Unresolved<!>
+<!WRONG_MODIFIER_TARGET!>const<!> var unresolvedConst2 = <!UNRESOLVED_REFERENCE!>Unresolved<!>
 const val unresolvedConst3 = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD, UNRESOLVED_REFERENCE!>Unresolved<!>
 get() = 10
