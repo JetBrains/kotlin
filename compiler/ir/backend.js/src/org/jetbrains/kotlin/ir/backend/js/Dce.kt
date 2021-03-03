@@ -50,18 +50,41 @@ private fun IrField.isConstant(): Boolean {
     return correspondingPropertySymbol?.owner?.isConst ?: false
 }
 
-private fun buildRoots(modules: Iterable<IrModuleFragment>, context: JsIrBackendContext): Iterable<IrDeclaration> {
-    val rootDeclarations =
-        (modules.flatMap { it.files } + context.packageLevelJsModules + context.externalPackageFragment.values).flatMapTo(mutableListOf()) { file ->
-            file.declarations.flatMap { if (it is IrProperty) listOfNotNull(it.backingField, it.getter, it.setter) else listOf(it) }
-                .filter {
-                    it is IrField && it.initializer != null && !it.isKotlinPackage()
-                            || it.isExported(context)
-                            || it.isEffectivelyExternal()
-                            || it is IrField && it.correspondingPropertySymbol?.owner?.isExported(context) == true
-                            || it is IrSimpleFunction && it.correspondingPropertySymbol?.owner?.isExported(context) == true
-                }.filter { !(it is IrField && it.isConstant() && !it.isExported(context)) }
+private fun IrDeclaration.addRootsTo(to: MutableCollection<IrDeclaration>, context: JsIrBackendContext) {
+    when {
+        this is IrProperty -> {
+            backingField?.addRootsTo(to, context)
+            getter?.addRootsTo(to, context)
+            setter?.addRootsTo(to, context)
         }
+        isEffectivelyExternal() -> {
+            to += this
+        }
+        isExported(context) -> {
+            to += this
+        }
+        this is IrField -> {
+            // TODO: simplify
+            if ((initializer != null && !isKotlinPackage() || correspondingPropertySymbol?.owner?.isExported(context) == true) && !isConstant()) {
+                to += this
+            }
+        }
+        this is IrSimpleFunction -> {
+            if (correspondingPropertySymbol?.owner?.isExported(context) == true) {
+                to += this
+            }
+        }
+    }
+}
+
+private fun buildRoots(modules: Iterable<IrModuleFragment>, context: JsIrBackendContext): Iterable<IrDeclaration> {
+    val rootDeclarations = mutableListOf<IrDeclaration>()
+    val allFiles = (modules.flatMap { it.files } + context.packageLevelJsModules + context.externalPackageFragment.values)
+    allFiles.forEach {
+        it.declarations.forEach {
+            it.addRootsTo(rootDeclarations, context)
+        }
+    }
 
     rootDeclarations += context.testRoots.values
 
