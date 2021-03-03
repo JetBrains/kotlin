@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.lexer.KtTokens
 
 // See old FE's [DeclarationsChecker]
-object FirMemberPropertyChecker : FirRegularClassChecker() {
+object FirMemberPropertiesChecker : FirRegularClassChecker() {
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
         val memberPropertySymbols = declaration.declarations.filterIsInstance<FirProperty>().map { it.symbol }.toSet()
         val initializedInConstructor =

@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.lexer.KtTokens
 
 // See old FE's [DeclarationsChecker]
-object FirTopLevelFunctionChecker : FirFileChecker() {
+object FirTopLevelFunctionsChecker : FirFileChecker() {
     override fun check(declaration: FirFile, context: CheckerContext, reporter: DiagnosticReporter) {
         for (topLevelDeclaration in declaration.declarations) {
             if (topLevelDeclaration is FirSimpleFunction) {
