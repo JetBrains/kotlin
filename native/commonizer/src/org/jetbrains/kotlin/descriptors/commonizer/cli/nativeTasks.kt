@@ -136,6 +136,8 @@ internal class NativeDistributionCommonize(options: Collection<Option<*>>) : Tas
             progressLogger = progressLogger
         ).run()
 
+        statsCollector?.writeTo(FileStatsOutput(destination, statsType.name.toLowerCase()))
+
         println("$description: Done")
     }
 
