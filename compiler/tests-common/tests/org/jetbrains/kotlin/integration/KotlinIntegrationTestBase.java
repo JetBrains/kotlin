@@ -104,7 +104,7 @@ public abstract class KotlinIntegrationTestBase extends TestCaseWithTmpdir {
         KotlinTestUtils.assertEqualsToFile(expectedFile, normalizedContent);
     }
 
-    private static int runProcess(GeneralCommandLine commandLine, StringBuilder executionLog) throws ExecutionException {
+    protected static int runProcess(GeneralCommandLine commandLine, StringBuilder executionLog) throws ExecutionException {
         OSProcessHandler handler =
                 new OSProcessHandler(commandLine.createProcess(), commandLine.getCommandLineString(), commandLine.getCharset());
 
@@ -132,7 +132,7 @@ public abstract class KotlinIntegrationTestBase extends TestCaseWithTmpdir {
         }
     }
 
-    private static File getJavaRuntime() {
+    protected static File getJavaRuntime() {
         File javaHome = new File(System.getProperty("java.home"));
         String javaExe = SystemInfo.isWindows ? "java.exe" : "java";
 
