@@ -17,7 +17,6 @@ abstract class SerializableCodegen(
     bindingContext: BindingContext
 ) : AbstractSerialGenerator(bindingContext, serializableDescriptor) {
     protected val properties = bindingContext.serializablePropertiesFor(serializableDescriptor)
-    protected val staticDescriptor = serializableDescriptor.declaredTypeParameters.isEmpty()
 
     fun generate() {
         generateSyntheticInternalConstructor()

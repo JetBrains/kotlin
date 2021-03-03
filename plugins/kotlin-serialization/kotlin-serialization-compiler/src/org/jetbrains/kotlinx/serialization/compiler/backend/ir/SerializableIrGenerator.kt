@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
@@ -27,13 +26,14 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.getOrPutNullable
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializableCodegen
+import org.jetbrains.kotlinx.serialization.compiler.backend.common.isStaticSerializable
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.serialName
 import org.jetbrains.kotlinx.serialization.compiler.diagnostic.serializableAnnotationIsUseless
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.INITIALIZED_DESCRIPTOR_FIELD_NAME
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.MISSING_FIELD_EXC
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SERIAL_DESC_FIELD
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.initializedDescriptorFieldName
 
 class SerializableIrGenerator(
     val irClass: IrClass,
@@ -41,7 +41,7 @@ class SerializableIrGenerator(
     bindingContext: BindingContext
 ) : SerializableCodegen(irClass.descriptor, bindingContext), IrBuilderExtension {
 
-    private val descriptorGenerationFunctionName = "createInitializedDescriptor"
+    private val descriptorGenerationFunctionName = Name.identifier("createInitializedDescriptor")
 
     private val serialDescClass: ClassDescriptor = serializableDescriptor.module
         .getClassFromSerializationDescriptorsPackage(SerialEntityNames.SERIAL_DESCRIPTOR_CLASS)
@@ -49,7 +49,7 @@ class SerializableIrGenerator(
     private val serialDescImplClass: ClassDescriptor = serializableDescriptor
         .getClassFromInternalSerializationPackage(SerialEntityNames.SERIAL_DESCRIPTOR_CLASS_IMPL)
 
-    private val addElementFun = serialDescImplClass.findFunctionSymbol(CallingConventions.addElement)
+    private val addElementFun = serialDescImplClass.referenceFunctionSymbol(CallingConventions.addElement)
 
     private fun IrClass.hasSerializableAnnotationWithoutArgs(): Boolean {
         val annot = getAnnotation(SerializationAnnotations.serializableAnnotationFqName) ?: return false
@@ -170,7 +170,7 @@ class SerializableIrGenerator(
         }
 
     private fun IrBlockBodyBuilder.getSerialDescriptorExpr(): IrExpression {
-        return if (serializableDescriptor.shouldHaveGeneratedSerializer && staticDescriptor) {
+        return if (serializableDescriptor.isStaticSerializable) {
             val serializer = serializableDescriptor.classSerializer!!
             val serialDescriptorGetter = compilerContext.referenceClass(serializer.fqNameSafe)!!.getPropertyGetter(SERIAL_DESC_FIELD)!!
             irGet(
@@ -187,7 +187,7 @@ class SerializableIrGenerator(
         val serialDescItType = serialDescClass.defaultType.toIrType()
 
         val function = irClass.createInlinedFunction(
-            Name.identifier(descriptorGenerationFunctionName),
+            descriptorGenerationFunctionName,
             DescriptorVisibilities.PRIVATE,
             SERIALIZABLE_PLUGIN_ORIGIN,
             serialDescItType
@@ -203,7 +203,7 @@ class SerializableIrGenerator(
         }
 
         return irClass.addField {
-            name = Name.identifier(initializedDescriptorFieldName)
+            name = Name.identifier(INITIALIZED_DESCRIPTOR_FIELD_NAME)
             visibility = DescriptorVisibilities.PRIVATE
             origin = SERIALIZABLE_PLUGIN_ORIGIN
             isFinal = true
@@ -232,16 +232,6 @@ class SerializableIrGenerator(
             irBoolean(property.optional),
             typeHint = compilerContext.irBuiltIns.unitType
         )
-    }
-
-    private inline fun ClassDescriptor.findFunctionSymbol(
-        functionName: String,
-        predicate: (IrSimpleFunction) -> Boolean = { true }
-    ): IrFunctionSymbol {
-        val irClass = compilerContext.referenceClass(fqNameSafe)?.owner ?: error("Couldn't load class $this")
-        val simpleFunctions = irClass.declarations.filterIsInstance<IrSimpleFunction>()
-
-        return simpleFunctions.filter { it.name.asString() == functionName }.single { predicate(it) }.symbol
     }
 
     private fun IrBlockBodyBuilder.generateSuperNonSerializableCall(superClass: IrClass) {
