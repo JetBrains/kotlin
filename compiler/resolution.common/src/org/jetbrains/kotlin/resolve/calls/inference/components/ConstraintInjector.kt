@@ -122,17 +122,6 @@ class ConstraintInjector(
                     constraintIncorporator.incorporate(typeCheckerContext, typeVariable, constraintToIncorporate)
                 }
             }
-
-            val contextOps = c as? ConstraintSystemOperation
-            if (!typeCheckerContext.hasConstraintsToProcess() ||
-                (contextOps != null && c.notFixedTypeVariables.all { typeVariable ->
-                    typeVariable.value.constraints.any { constraint ->
-                        constraint.kind == EQUALITY && contextOps.isProperType(constraint.type)
-                    }
-                })
-            ) {
-                break
-            }
         }
     }
 
