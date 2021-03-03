@@ -11,38 +11,38 @@ import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.common.CommonDependenciesContainer
 import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
 import org.jetbrains.kotlin.analyzer.common.CommonResolverForModuleFactory
+import org.jetbrains.kotlin.backend.common.serialization.metadata.impl.ClassifierAliasingPackageFragmentDescriptor
+import org.jetbrains.kotlin.backend.common.serialization.metadata.impl.ExportedForwardDeclarationsPackageFragmentDescriptor
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.commonizer.ResultsConsumer.ModuleResult
 import org.jetbrains.kotlin.descriptors.commonizer.ResultsConsumer.Status
 import org.jetbrains.kotlin.descriptors.commonizer.SourceModuleRoot.Companion.SHARED_TARGET_NAME
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirPackageName
 import org.jetbrains.kotlin.descriptors.commonizer.konan.TargetedNativeManifestDataProvider
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ClassCollector
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.FunctionCollector
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.collectMembers
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.collectNonEmptyPackageMemberScopes
 import org.jetbrains.kotlin.descriptors.commonizer.utils.*
 import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies
 import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.library.SerializedMetadata
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
+import org.jetbrains.kotlin.resolve.scopes.ChainedMemberScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.test.KotlinTestUtils.newConfiguration
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.test.util.KtTestUtil
+import org.jetbrains.kotlin.utils.alwaysTrue
 import java.io.File
 import kotlin.contracts.ExperimentalContracts
 import kotlin.test.fail
@@ -393,24 +393,49 @@ private class DependenciesContainerImpl(
 
 private object PatchingTestDescriptorVisitor : DeclarationDescriptorVisitorEmptyBodies<Unit, Unit>() {
     override fun visitModuleDeclaration(descriptor: ModuleDescriptor, data: Unit) {
-        descriptor.collectNonEmptyPackageMemberScopes { _, memberScope ->
-            visitMemberScope(memberScope)
+        // we don's need to process fragments from other modules which are the dependencies of this module, so
+        // let's use the appropriate package fragment provider
+        val packageFragmentProvider = (descriptor as ModuleDescriptorImpl).packageFragmentProviderForModuleContentWithoutDependencies
+
+        fun recurse(packageFqName: FqName) {
+            val ownPackageMemberScopes = packageFragmentProvider.packageFragments(packageFqName)
+                .asSequence()
+                .filter { it !is ExportedForwardDeclarationsPackageFragmentDescriptor && it !is ClassifierAliasingPackageFragmentDescriptor }
+                .map { it.getMemberScope() }
+                .filter { it != MemberScope.Empty }
+                .toList()
+
+            if (ownPackageMemberScopes.isNotEmpty()) {
+                // don't include subpackages into chained member scope
+                val memberScope = ChainedMemberScope.create(
+                    "package member scope for $packageFqName",
+                    ownPackageMemberScopes
+                )
+
+                visitMemberScope(memberScope)
+            }
+
+            packageFragmentProvider.getSubPackagesOf(packageFqName, alwaysTrue()).toSet().map { recurse(it) }
         }
+
+        recurse(FqName.ROOT)
     }
 
     private fun visitMemberScope(memberScope: MemberScope) {
-        memberScope.collectMembers(
-            ClassCollector {
-                it.constructors.forEach(::visitCallableMemberDescriptor)
-                visitMemberScope(it.unsubstitutedMemberScope)
-            },
-            FunctionCollector {
-                visitCallableMemberDescriptor(it)
-            },
-            {
-                true // eat and ignore everything else
+        memberScope.getContributedDescriptors().forEach { descriptor ->
+            when (descriptor) {
+                is ClassDescriptor -> {
+                    descriptor.constructors.forEach(::visitCallableMemberDescriptor)
+                    visitMemberScope(descriptor.unsubstitutedMemberScope)
+                }
+                is SimpleFunctionDescriptor -> {
+                    if (descriptor.kind.isReal && !descriptor.isKniBridgeFunction() && !descriptor.isDeprecatedTopLevelFunction()) {
+                        visitCallableMemberDescriptor(descriptor)
+                    }
+                }
+                else -> Unit // ignore everything else
             }
-        )
+        }
     }
 
     private fun visitCallableMemberDescriptor(callableDescriptor: CallableMemberDescriptor) {
@@ -426,4 +451,10 @@ private object PatchingTestDescriptorVisitor : DeclarationDescriptorVisitorEmpty
             }
         }
     }
+
+    private fun SimpleFunctionDescriptor.isKniBridgeFunction() =
+        name.asString().startsWith(KNI_BRIDGE_FUNCTION_PREFIX)
+
+    private fun SimpleFunctionDescriptor.isDeprecatedTopLevelFunction() =
+        containingDeclaration is PackageFragmentDescriptor && annotations.hasAnnotation(DEPRECATED_ANNOTATION_FQN)
 }
