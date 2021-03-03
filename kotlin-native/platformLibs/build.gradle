@@ -15,7 +15,6 @@ buildscript {
         maven {
             url project.bootstrapKotlinRepo
         }
-        maven { url UtilsKt.redirectIfEnabled(project, "https://kotlin.bintray.com/kotlinx") }
     }
 }
 // These properties are used by the 'konan' plugin, thus we set them before applying it.
