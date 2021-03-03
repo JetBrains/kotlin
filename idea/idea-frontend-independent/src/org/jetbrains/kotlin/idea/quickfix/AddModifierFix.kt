@@ -106,13 +106,12 @@ open class AddModifierFix(
     }
 
     companion object : Factory<AddModifierFix> {
-        val addAbstractModifier: QuickFixesPsiBasedFactory<PsiElement> = AddModifierFix.createFactory(KtTokens.ABSTRACT_KEYWORD)
-        val addAbstractToContainingClass: QuickFixesPsiBasedFactory<PsiElement> =
-            AddModifierFix.createFactory(KtTokens.ABSTRACT_KEYWORD, KtClassOrObject::class.java)
-        val addOpenToContainingClass: QuickFixesPsiBasedFactory<PsiElement> =
-            AddModifierFix.createFactory(KtTokens.OPEN_KEYWORD, KtClassOrObject::class.java)
-        val addFinalToProperty: QuickFixesPsiBasedFactory<PsiElement> =
-            AddModifierFix.createFactory(KtTokens.FINAL_KEYWORD, KtProperty::class.java)
+        val addAbstractModifier = AddModifierFix.createFactory(KtTokens.ABSTRACT_KEYWORD)
+        val addAbstractToContainingClass = AddModifierFix.createFactory(KtTokens.ABSTRACT_KEYWORD, KtClassOrObject::class.java)
+        val addOpenToContainingClass = AddModifierFix.createFactory(KtTokens.OPEN_KEYWORD, KtClassOrObject::class.java)
+        val addFinalToProperty = AddModifierFix.createFactory(KtTokens.FINAL_KEYWORD, KtProperty::class.java)
+        val addInnerModifier = createFactory(KtTokens.INNER_KEYWORD)
+
         private val modalityModifiers: Set<KtModifierKeywordToken> =
             setOf(KtTokens.ABSTRACT_KEYWORD, KtTokens.OPEN_KEYWORD, KtTokens.FINAL_KEYWORD)
 
