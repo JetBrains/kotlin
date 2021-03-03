@@ -5,21 +5,15 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirEntityId
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirType
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirClassFactory
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeAliasFactory
-import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeFactory
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.*
-import org.jetbrains.kotlin.descriptors.commonizer.utils.classifierId
 import org.jetbrains.kotlin.descriptors.commonizer.utils.isUnderStandardKotlinPackages
 import org.jetbrains.kotlin.descriptors.commonizer.utils.mockClassType
 import org.jetbrains.kotlin.descriptors.commonizer.utils.mockTAType
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.getAbbreviation
 import org.junit.Before
 import org.junit.Test
 
@@ -42,222 +36,222 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
 
     @Test
     fun classTypesInKotlinPackageWithSameName() = doTestSuccess(
-        expected = mockClassType("kotlin.collections.List"),
-        mockClassType("kotlin.collections.List"),
-        mockClassType("kotlin.collections.List"),
-        mockClassType("kotlin.collections.List")
+        expected = mockClassType("kotlin/collections/List"),
+        mockClassType("kotlin/collections/List"),
+        mockClassType("kotlin/collections/List"),
+        mockClassType("kotlin/collections/List")
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun classTypesInKotlinPackageWithDifferentNames1() = doTestFailure(
-        mockClassType("kotlin.collections.List"),
-        mockClassType("kotlin.collections.List"),
-        mockClassType("kotlin.fictitiousPackageName.List")
+        mockClassType("kotlin/collections/List"),
+        mockClassType("kotlin/collections/List"),
+        mockClassType("kotlin/fictitiousPackageName/List")
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun classTypesInKotlinPackageWithDifferentNames2() = doTestFailure(
-        mockClassType("kotlin.collections.List"),
-        mockClassType("kotlin.collections.List"),
-        mockClassType("kotlin.collections.Set")
+        mockClassType("kotlin/collections/List"),
+        mockClassType("kotlin/collections/List"),
+        mockClassType("kotlin/collections/Set")
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun classTypesInKotlinPackageWithDifferentNames3() = doTestFailure(
-        mockClassType("kotlin.collections.List"),
-        mockClassType("kotlin.collections.List"),
-        mockClassType("org.sample.Foo")
+        mockClassType("kotlin/collections/List"),
+        mockClassType("kotlin/collections/List"),
+        mockClassType("org/sample/Foo")
     )
 
     @Test
     fun classTypesInKotlinxPackageWithSameName() = doTestSuccess(
-        expected = mockClassType("kotlinx.cinterop.CPointer"),
-        mockClassType("kotlinx.cinterop.CPointer"),
-        mockClassType("kotlinx.cinterop.CPointer"),
-        mockClassType("kotlinx.cinterop.CPointer")
+        expected = mockClassType("kotlinx/cinterop/CPointer"),
+        mockClassType("kotlinx/cinterop/CPointer"),
+        mockClassType("kotlinx/cinterop/CPointer"),
+        mockClassType("kotlinx/cinterop/CPointer")
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun classTypesInKotlinxPackageWithDifferentNames1() = doTestFailure(
-        mockClassType("kotlinx.cinterop.CPointer"),
-        mockClassType("kotlinx.cinterop.CPointer"),
-        mockClassType("kotlinx.fictitiousPackageName.CPointer")
+        mockClassType("kotlinx/cinterop/CPointer"),
+        mockClassType("kotlinx/cinterop/CPointer"),
+        mockClassType("kotlinx/fictitiousPackageName/CPointer")
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun classTypesInKotlinxPackageWithDifferentNames2() = doTestFailure(
-        mockClassType("kotlinx.cinterop.CPointer"),
-        mockClassType("kotlinx.cinterop.CPointer"),
-        mockClassType("kotlinx.cinterop.ObjCObject")
+        mockClassType("kotlinx/cinterop/CPointer"),
+        mockClassType("kotlinx/cinterop/CPointer"),
+        mockClassType("kotlinx/cinterop/ObjCObject")
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun classTypesInKotlinxPackageWithDifferentNames3() = doTestFailure(
-        mockClassType("kotlinx.cinterop.CPointer"),
-        mockClassType("kotlinx.cinterop.CPointer"),
-        mockClassType("org.sample.Foo")
+        mockClassType("kotlinx/cinterop/CPointer"),
+        mockClassType("kotlinx/cinterop/CPointer"),
+        mockClassType("org/sample/Foo")
     )
 
     @Test
     fun classTypesInUserPackageWithSameName() = doTestSuccess(
-        expected = mockClassType("org.sample.Foo"),
-        mockClassType("org.sample.Foo"),
-        mockClassType("org.sample.Foo"),
-        mockClassType("org.sample.Foo")
+        expected = mockClassType("org/sample/Foo"),
+        mockClassType("org/sample/Foo"),
+        mockClassType("org/sample/Foo"),
+        mockClassType("org/sample/Foo")
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun classTypesInUserPackageWithDifferentNames1() = doTestFailure(
-        mockClassType("org.sample.Foo"),
-        mockClassType("org.fictitiousPackageName.Foo"),
+        mockClassType("org/sample/Foo"),
+        mockClassType("org/fictitiousPackageName/Foo"),
         shouldFailOnFirstVariant = true
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun classTypesInUserPackageWithDifferentNames2() = doTestFailure(
-        mockClassType("org.sample.Foo"),
-        mockClassType("org.sample.Bar"),
+        mockClassType("org/sample/Foo"),
+        mockClassType("org/sample/Bar"),
         shouldFailOnFirstVariant = true
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun classTypesInUserPackageWithDifferentNames3() = doTestFailure(
-        mockClassType("org.sample.Foo"),
-        mockClassType("kotlin.String"),
+        mockClassType("org/sample/Foo"),
+        mockClassType("kotlin/String"),
         shouldFailOnFirstVariant = true
     )
 
     @Test
     fun classTypesInKotlinPackageWithSameNullability1() = doTestSuccess(
-        expected = mockClassType("kotlin.collections.List", nullable = false),
-        mockClassType("kotlin.collections.List", nullable = false),
-        mockClassType("kotlin.collections.List", nullable = false),
-        mockClassType("kotlin.collections.List", nullable = false)
+        expected = mockClassType("kotlin/collections/List", nullable = false),
+        mockClassType("kotlin/collections/List", nullable = false),
+        mockClassType("kotlin/collections/List", nullable = false),
+        mockClassType("kotlin/collections/List", nullable = false)
     )
 
     @Test
     fun classTypesInKotlinPackageWithSameNullability2() = doTestSuccess(
-        expected = mockClassType("kotlin.collections.List", nullable = true),
-        mockClassType("kotlin.collections.List", nullable = true),
-        mockClassType("kotlin.collections.List", nullable = true),
-        mockClassType("kotlin.collections.List", nullable = true)
+        expected = mockClassType("kotlin/collections/List", nullable = true),
+        mockClassType("kotlin/collections/List", nullable = true),
+        mockClassType("kotlin/collections/List", nullable = true),
+        mockClassType("kotlin/collections/List", nullable = true)
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun classTypesInKotlinPackageWithDifferentNullability1() = doTestFailure(
-        mockClassType("kotlin.collections.List", nullable = false),
-        mockClassType("kotlin.collections.List", nullable = false),
-        mockClassType("kotlin.collections.List", nullable = true)
+        mockClassType("kotlin/collections/List", nullable = false),
+        mockClassType("kotlin/collections/List", nullable = false),
+        mockClassType("kotlin/collections/List", nullable = true)
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun classTypesInKotlinPackageWithDifferentNullability2() = doTestFailure(
-        mockClassType("kotlin.collections.List", nullable = true),
-        mockClassType("kotlin.collections.List", nullable = true),
-        mockClassType("kotlin.collections.List", nullable = false)
+        mockClassType("kotlin/collections/List", nullable = true),
+        mockClassType("kotlin/collections/List", nullable = true),
+        mockClassType("kotlin/collections/List", nullable = false)
     )
 
     @Test
     fun classTypesInUserPackageWithSameNullability1() = doTestSuccess(
-        expected = mockClassType("org.sample.Foo", nullable = false),
-        mockClassType("org.sample.Foo", nullable = false),
-        mockClassType("org.sample.Foo", nullable = false),
-        mockClassType("org.sample.Foo", nullable = false)
+        expected = mockClassType("org/sample/Foo", nullable = false),
+        mockClassType("org/sample/Foo", nullable = false),
+        mockClassType("org/sample/Foo", nullable = false),
+        mockClassType("org/sample/Foo", nullable = false)
     )
 
     @Test
     fun classTypesInUserPackageWithSameNullability2() = doTestSuccess(
-        expected = mockClassType("org.sample.Foo", nullable = true),
-        mockClassType("org.sample.Foo", nullable = true),
-        mockClassType("org.sample.Foo", nullable = true),
-        mockClassType("org.sample.Foo", nullable = true)
+        expected = mockClassType("org/sample/Foo", nullable = true),
+        mockClassType("org/sample/Foo", nullable = true),
+        mockClassType("org/sample/Foo", nullable = true),
+        mockClassType("org/sample/Foo", nullable = true)
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun classTypesInUserPackageWithDifferentNullability1() = doTestFailure(
-        mockClassType("org.sample.Foo", nullable = false),
-        mockClassType("org.sample.Foo", nullable = false),
-        mockClassType("org.sample.Foo", nullable = true)
+        mockClassType("org/sample/Foo", nullable = false),
+        mockClassType("org/sample/Foo", nullable = false),
+        mockClassType("org/sample/Foo", nullable = true)
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun classTypesInUserPackageWithDifferentNullability2() = doTestFailure(
-        mockClassType("org.sample.Foo", nullable = true),
-        mockClassType("org.sample.Foo", nullable = true),
-        mockClassType("org.sample.Foo", nullable = false)
+        mockClassType("org/sample/Foo", nullable = true),
+        mockClassType("org/sample/Foo", nullable = true),
+        mockClassType("org/sample/Foo", nullable = false)
     )
 
     @Test
     // why success: matching FQNs from the standard Kotlin packages
     fun taTypesInKotlinPackageWithSameNameAndClass() = doTestSuccess(
-        expected = mockTAType("kotlin.sequences.SequenceBuilder") { mockClassType("kotlin.sequences.SequenceScope") },
-        mockTAType("kotlin.sequences.SequenceBuilder") { mockClassType("kotlin.sequences.SequenceScope") },
-        mockTAType("kotlin.sequences.SequenceBuilder") { mockClassType("kotlin.sequences.SequenceScope") },
-        mockTAType("kotlin.sequences.SequenceBuilder") { mockClassType("kotlin.sequences.SequenceScope") }
+        expected = mockTAType("kotlin/sequences/SequenceBuilder") { mockClassType("kotlin/sequences/SequenceScope") },
+        mockTAType("kotlin/sequences/SequenceBuilder") { mockClassType("kotlin/sequences/SequenceScope") },
+        mockTAType("kotlin/sequences/SequenceBuilder") { mockClassType("kotlin/sequences/SequenceScope") },
+        mockTAType("kotlin/sequences/SequenceBuilder") { mockClassType("kotlin/sequences/SequenceScope") }
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun taTypesInKotlinPackageWithDifferentNames() = doTestFailure(
-        mockTAType("kotlin.sequences.SequenceBuilder") { mockClassType("kotlin.sequences.SequenceScope") },
-        mockTAType("kotlin.sequences.SequenceBuilder") { mockClassType("kotlin.sequences.SequenceScope") },
-        mockTAType("kotlin.sequences.FictitiousTypeAlias") { mockClassType("kotlin.sequences.SequenceScope") }
+        mockTAType("kotlin/sequences/SequenceBuilder") { mockClassType("kotlin/sequences/SequenceScope") },
+        mockTAType("kotlin/sequences/SequenceBuilder") { mockClassType("kotlin/sequences/SequenceScope") },
+        mockTAType("kotlin/sequences/FictitiousTypeAlias") { mockClassType("kotlin/sequences/SequenceScope") }
     )
 
     @Test
     // why success: matching FQNs from the standard Kotlin packages
     fun taTypesInKotlinPackageWithDifferentClasses() = doTestSuccess(
-        expected = mockTAType("kotlin.sequences.SequenceBuilder") { mockClassType("kotlin.sequences.SequenceScope") },
-        mockTAType("kotlin.sequences.SequenceBuilder") { mockClassType("kotlin.sequences.SequenceScope") },
-        mockTAType("kotlin.sequences.SequenceBuilder") { mockClassType("kotlin.sequences.SequenceScope") },
-        mockTAType("kotlin.sequences.SequenceBuilder") { mockClassType("kotlin.sequences.FictitiousClass") }
+        expected = mockTAType("kotlin/sequences/SequenceBuilder") { mockClassType("kotlin/sequences/SequenceScope") },
+        mockTAType("kotlin/sequences/SequenceBuilder") { mockClassType("kotlin/sequences/SequenceScope") },
+        mockTAType("kotlin/sequences/SequenceBuilder") { mockClassType("kotlin/sequences/SequenceScope") },
+        mockTAType("kotlin/sequences/SequenceBuilder") { mockClassType("kotlin/sequences/FictitiousClass") }
     )
 
     @Test
     // why success: matching FQNs from the standard Kotlin packages
     fun taTypesInKotlinxPackageWithSameNameAndClass() = doTestSuccess(
-        expected = mockTAType("kotlinx.cinterop.CArrayPointer") { mockClassType("kotlinx.cinterop.CPointer") },
-        mockTAType("kotlinx.cinterop.CArrayPointer") { mockClassType("kotlinx.cinterop.CPointer") },
-        mockTAType("kotlinx.cinterop.CArrayPointer") { mockClassType("kotlinx.cinterop.CPointer") },
-        mockTAType("kotlinx.cinterop.CArrayPointer") { mockClassType("kotlinx.cinterop.CPointer") }
+        expected = mockTAType("kotlinx/cinterop/CArrayPointer") { mockClassType("kotlinx/cinterop/CPointer") },
+        mockTAType("kotlinx/cinterop/CArrayPointer") { mockClassType("kotlinx/cinterop/CPointer") },
+        mockTAType("kotlinx/cinterop/CArrayPointer") { mockClassType("kotlinx/cinterop/CPointer") },
+        mockTAType("kotlinx/cinterop/CArrayPointer") { mockClassType("kotlinx/cinterop/CPointer") }
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun taTypesInKotlinxPackageWithDifferentNames() = doTestFailure(
-        mockTAType("kotlinx.cinterop.CArrayPointer") { mockClassType("kotlinx.cinterop.CPointer") },
-        mockTAType("kotlinx.cinterop.CArrayPointer") { mockClassType("kotlinx.cinterop.CPointer") },
-        mockTAType("kotlinx.cinterop.FictitiousTypeAlias") { mockClassType("kotlinx.cinterop.CPointer") }
+        mockTAType("kotlinx/cinterop/CArrayPointer") { mockClassType("kotlinx/cinterop/CPointer") },
+        mockTAType("kotlinx/cinterop/CArrayPointer") { mockClassType("kotlinx/cinterop/CPointer") },
+        mockTAType("kotlinx/cinterop/FictitiousTypeAlias") { mockClassType("kotlinx/cinterop/CPointer") }
     )
 
     @Test
     // why success: matching FQNs from the standard Kotlin packages
     fun taTypesInKotlinxPackageWithDifferentClasses() = doTestSuccess(
-        expected = mockTAType("kotlinx.cinterop.CArrayPointer") { mockClassType("kotlinx.cinterop.CPointer") },
-        mockTAType("kotlinx.cinterop.CArrayPointer") { mockClassType("kotlinx.cinterop.CPointer") },
-        mockTAType("kotlinx.cinterop.CArrayPointer") { mockClassType("kotlinx.cinterop.CPointer") },
-        mockTAType("kotlinx.cinterop.CArrayPointer") { mockClassType("kotlinx.cinterop.FictitiousClass") }
+        expected = mockTAType("kotlinx/cinterop/CArrayPointer") { mockClassType("kotlinx/cinterop/CPointer") },
+        mockTAType("kotlinx/cinterop/CArrayPointer") { mockClassType("kotlinx/cinterop/CPointer") },
+        mockTAType("kotlinx/cinterop/CArrayPointer") { mockClassType("kotlinx/cinterop/CPointer") },
+        mockTAType("kotlinx/cinterop/CArrayPointer") { mockClassType("kotlinx/cinterop/FictitiousClass") }
     )
 
     @Test
     // why success: matching FQNs from the standard Kotlin packages
     fun multilevelTATypesInKotlinPackageWithSameNameAndRightHandSideClass() = doTestSuccess(
-        expected = mockTAType("kotlin.FictitiousTypeAlias") {
-            mockClassType("kotlin.FictitiousClass")
+        expected = mockTAType("kotlin/FictitiousTypeAlias") {
+            mockClassType("kotlin/FictitiousClass")
         },
 
-        mockTAType("kotlin.FictitiousTypeAlias") {
-            mockClassType("kotlin.FictitiousClass")
+        mockTAType("kotlin/FictitiousTypeAlias") {
+            mockClassType("kotlin/FictitiousClass")
         },
 
-        mockTAType("kotlin.FictitiousTypeAlias") {
-            mockTAType("kotlin.FictitiousTypeAliasL2") {
-                mockClassType("kotlin.FictitiousClass")
+        mockTAType("kotlin/FictitiousTypeAlias") {
+            mockTAType("kotlin/FictitiousTypeAliasL2") {
+                mockClassType("kotlin/FictitiousClass")
             }
         },
 
-        mockTAType("kotlin.FictitiousTypeAlias") {
-            mockTAType("kotlin.FictitiousTypeAliasL2") {
-                mockTAType("kotlin.FictitiousTypeAliasL3") {
-                    mockClassType("kotlin.FictitiousClass")
+        mockTAType("kotlin/FictitiousTypeAlias") {
+            mockTAType("kotlin/FictitiousTypeAliasL2") {
+                mockTAType("kotlin/FictitiousTypeAliasL3") {
+                    mockClassType("kotlin/FictitiousClass")
                 }
             }
         }
@@ -266,41 +260,41 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
     @Test
     // why success: lifting up
     fun taTypesInUserPackageWithSameNameAndClass() = doTestSuccess(
-        expected = mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo") },
-        mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo") },
-        mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo") },
-        mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo") }
+        expected = mockTAType("org/sample/FooAlias") { mockClassType("org/sample/Foo") },
+        mockTAType("org/sample/FooAlias") { mockClassType("org/sample/Foo") },
+        mockTAType("org/sample/FooAlias") { mockClassType("org/sample/Foo") },
+        mockTAType("org/sample/FooAlias") { mockClassType("org/sample/Foo") }
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun taTypesInUserPackageWithDifferentNames() = doTestFailure(
-        mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo") },
-        mockTAType("org.sample.BarAlias") { mockClassType("org.sample.Foo") },
+        mockTAType("org/sample/FooAlias") { mockClassType("org/sample/Foo") },
+        mockTAType("org/sample/BarAlias") { mockClassType("org/sample/Foo") },
         shouldFailOnFirstVariant = true
     )
 
     @Test
     // why success: expect class/actual TAs
     fun taTypesInUserPackageWithDifferentClasses() = doTestSuccess(
-        expected = mockClassType("org.sample.FooAlias"),
-        mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo") },
-        mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Bar") }
+        expected = mockClassType("org/sample/FooAlias"),
+        mockTAType("org/sample/FooAlias") { mockClassType("org/sample/Foo") },
+        mockTAType("org/sample/FooAlias") { mockClassType("org/sample/Bar") }
     )
 
     @Test
     // why success: short-circuiting & lifting up
     fun multilevelTATypesInUserPackageWithSameNameAndRightHandSideClass1() = doTestSuccess(
-        expected = mockTAType("org.sample.FooAlias") {
-            mockClassType("org.sample.Foo")
+        expected = mockTAType("org/sample/FooAlias") {
+            mockClassType("org/sample/Foo")
         },
 
-        mockTAType("org.sample.FooAlias") {
-            mockClassType("org.sample.Foo")
+        mockTAType("org/sample/FooAlias") {
+            mockClassType("org/sample/Foo")
         },
 
-        mockTAType("org.sample.FooAlias") {
-            mockTAType("org.sample.FooAliasL2") {
-                mockClassType("org.sample.Foo")
+        mockTAType("org/sample/FooAlias") {
+            mockTAType("org/sample/FooAliasL2") {
+                mockClassType("org/sample/Foo")
             }
         }
     )
@@ -308,39 +302,39 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
     @Test
     // why success: short-circuiting & lifting up
     fun multilevelTATypesInUserPackageWithSameNameAndRightHandSideClass2() = doTestSuccess(
-        expected = mockTAType("org.sample.FooAlias") {
-            mockClassType("org.sample.Foo")
+        expected = mockTAType("org/sample/FooAlias") {
+            mockClassType("org/sample/Foo")
         },
 
-        mockTAType("org.sample.FooAlias") {
-            mockTAType("org.sample.FooAliasL2") {
-                mockClassType("org.sample.Foo")
+        mockTAType("org/sample/FooAlias") {
+            mockTAType("org/sample/FooAliasL2") {
+                mockClassType("org/sample/Foo")
             }
         },
 
-        mockTAType("org.sample.FooAlias") {
-            mockClassType("org.sample.Foo")
+        mockTAType("org/sample/FooAlias") {
+            mockClassType("org/sample/Foo")
         }
     )
 
     @Test
     // why success: lifting up (inner and outer TAs)
     fun multilevelTATypesInUserPackageWithSameNameAndRightHandSideClass3() = doTestSuccess(
-        expected = mockTAType("org.sample.FooAlias") {
-            mockTAType("org.sample.FooAliasL2") {
-                mockClassType("org.sample.Foo")
+        expected = mockTAType("org/sample/FooAlias") {
+            mockTAType("org/sample/FooAliasL2") {
+                mockClassType("org/sample/Foo")
             }
         },
 
-        mockTAType("org.sample.FooAlias") {
-            mockTAType("org.sample.FooAliasL2") {
-                mockClassType("org.sample.Foo")
+        mockTAType("org/sample/FooAlias") {
+            mockTAType("org/sample/FooAliasL2") {
+                mockClassType("org/sample/Foo")
             }
         },
 
-        mockTAType("org.sample.FooAlias") {
-            mockTAType("org.sample.FooAliasL2") {
-                mockClassType("org.sample.Foo")
+        mockTAType("org/sample/FooAlias") {
+            mockTAType("org/sample/FooAliasL2") {
+                mockClassType("org/sample/Foo")
             }
         }
     )
@@ -348,21 +342,21 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
     @Test
     // why success: lifting up outer TA and expect class for inner TA
     fun multilevelTATypesInUserPackageWithSameNameAndRightHandSideClass4() = doTestSuccess(
-        expected = mockTAType("org.sample.FooAlias") {
-            mockTAType("org.sample.FooAliasL2") {
-                mockClassType("org.sample.Foo")
+        expected = mockTAType("org/sample/FooAlias") {
+            mockTAType("org/sample/FooAliasL2") {
+                mockClassType("org/sample/Foo")
             }
         },
 
-        mockTAType("org.sample.FooAlias") {
-            mockTAType("org.sample.FooAliasL2") {
-                mockClassType("org.sample.Bar")
+        mockTAType("org/sample/FooAlias") {
+            mockTAType("org/sample/FooAliasL2") {
+                mockClassType("org/sample/Bar")
             }
         },
 
-        mockTAType("org.sample.FooAlias") {
-            mockTAType("org.sample.FooAliasL2") {
-                mockClassType("org.sample.Baz")
+        mockTAType("org/sample/FooAlias") {
+            mockTAType("org/sample/FooAliasL2") {
+                mockClassType("org/sample/Baz")
             }
         }
     )
@@ -370,136 +364,151 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
     @Test
     // why success: types with the same nullability are treated as equal
     fun taTypesInKotlinPackageWithSameNullability1() = doTestSuccess(
-        expected = mockTAType("kotlin.sequences.SequenceBuilder", nullable = false) { mockClassType("kotlin.sequences.SequenceScope") },
-        mockTAType("kotlin.sequences.SequenceBuilder", nullable = false) { mockClassType("kotlin.sequences.SequenceScope") },
-        mockTAType("kotlin.sequences.SequenceBuilder", nullable = false) { mockClassType("kotlin.sequences.SequenceScope") },
-        mockTAType("kotlin.sequences.SequenceBuilder", nullable = false) { mockClassType("kotlin.sequences.SequenceScope") }
+        expected = mockTAType("kotlin/sequences/SequenceBuilder", nullable = false) { mockClassType("kotlin/sequences/SequenceScope") },
+        mockTAType("kotlin/sequences/SequenceBuilder", nullable = false) { mockClassType("kotlin/sequences/SequenceScope") },
+        mockTAType("kotlin/sequences/SequenceBuilder", nullable = false) { mockClassType("kotlin/sequences/SequenceScope") },
+        mockTAType("kotlin/sequences/SequenceBuilder", nullable = false) { mockClassType("kotlin/sequences/SequenceScope") }
     )
 
     @Test
     // why success: types with the same nullability are treated as equal
     fun taTypesInKotlinPackageWithSameNullability2() = doTestSuccess(
-        expected = mockTAType("kotlin.sequences.SequenceBuilder", nullable = true) { mockClassType("kotlin.sequences.SequenceScope") },
-        mockTAType("kotlin.sequences.SequenceBuilder", nullable = true) { mockClassType("kotlin.sequences.SequenceScope") },
-        mockTAType("kotlin.sequences.SequenceBuilder", nullable = true) { mockClassType("kotlin.sequences.SequenceScope") },
-        mockTAType("kotlin.sequences.SequenceBuilder", nullable = true) { mockClassType("kotlin.sequences.SequenceScope") }
+        expected = mockTAType("kotlin/sequences/SequenceBuilder", nullable = true) { mockClassType("kotlin/sequences/SequenceScope") },
+        mockTAType("kotlin/sequences/SequenceBuilder", nullable = true) { mockClassType("kotlin/sequences/SequenceScope") },
+        mockTAType("kotlin/sequences/SequenceBuilder", nullable = true) { mockClassType("kotlin/sequences/SequenceScope") },
+        mockTAType("kotlin/sequences/SequenceBuilder", nullable = true) { mockClassType("kotlin/sequences/SequenceScope") }
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun taTypesInKotlinPackageWithDifferentNullability1() = doTestFailure(
-        mockTAType("kotlin.sequences.SequenceBuilder", nullable = false) { mockClassType("kotlin.sequences.SequenceScope") },
-        mockTAType("kotlin.sequences.SequenceBuilder", nullable = false) { mockClassType("kotlin.sequences.SequenceScope") },
-        mockTAType("kotlin.sequences.SequenceBuilder", nullable = true) { mockClassType("kotlin.sequences.SequenceScope") }
+        mockTAType("kotlin/sequences/SequenceBuilder", nullable = false) { mockClassType("kotlin/sequences/SequenceScope") },
+        mockTAType("kotlin/sequences/SequenceBuilder", nullable = false) { mockClassType("kotlin/sequences/SequenceScope") },
+        mockTAType("kotlin/sequences/SequenceBuilder", nullable = true) { mockClassType("kotlin/sequences/SequenceScope") }
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun taTypesInKotlinPackageWithDifferentNullability2() = doTestFailure(
-        mockTAType("kotlin.sequences.SequenceBuilder", nullable = true) { mockClassType("kotlin.sequences.SequenceScope") },
-        mockTAType("kotlin.sequences.SequenceBuilder", nullable = true) { mockClassType("kotlin.sequences.SequenceScope") },
-        mockTAType("kotlin.sequences.SequenceBuilder", nullable = false) { mockClassType("kotlin.sequences.SequenceScope") }
+        mockTAType("kotlin/sequences/SequenceBuilder", nullable = true) { mockClassType("kotlin/sequences/SequenceScope") },
+        mockTAType("kotlin/sequences/SequenceBuilder", nullable = true) { mockClassType("kotlin/sequences/SequenceScope") },
+        mockTAType("kotlin/sequences/SequenceBuilder", nullable = false) { mockClassType("kotlin/sequences/SequenceScope") }
     )
 
     @Test
     // why success: nullability of underlying type does not matter if typealias belongs to one of the standard Kotlin packages
     fun taTypesInKotlinPackageWithDifferentNullability3() = doTestSuccess(
-        expected = mockTAType("kotlin.sequences.SequenceBuilder") { mockClassType("kotlin.sequences.SequenceScope", nullable = false) },
-        mockTAType("kotlin.sequences.SequenceBuilder") { mockClassType("kotlin.sequences.SequenceScope", nullable = false) },
-        mockTAType("kotlin.sequences.SequenceBuilder") { mockClassType("kotlin.sequences.SequenceScope", nullable = false) },
-        mockTAType("kotlin.sequences.SequenceBuilder") { mockClassType("kotlin.sequences.SequenceScope", nullable = true) }
+        expected = mockTAType("kotlin/sequences/SequenceBuilder") { mockClassType("kotlin/sequences/SequenceScope", nullable = false) },
+        mockTAType("kotlin/sequences/SequenceBuilder") { mockClassType("kotlin/sequences/SequenceScope", nullable = false) },
+        mockTAType("kotlin/sequences/SequenceBuilder") { mockClassType("kotlin/sequences/SequenceScope", nullable = false) },
+        mockTAType("kotlin/sequences/SequenceBuilder") { mockClassType("kotlin/sequences/SequenceScope", nullable = true) }
     )
 
     @Test
     // why success: nullability of underlying type does not matter if typealias belongs to one of the standard Kotlin packages
     fun taTypesInKotlinPackageWithDifferentNullability4() = doTestSuccess(
-        expected = mockTAType("kotlin.sequences.SequenceBuilder") { mockClassType("kotlin.sequences.SequenceScope", nullable = true) },
-        mockTAType("kotlin.sequences.SequenceBuilder") { mockClassType("kotlin.sequences.SequenceScope", nullable = true) },
-        mockTAType("kotlin.sequences.SequenceBuilder") { mockClassType("kotlin.sequences.SequenceScope", nullable = true) },
-        mockTAType("kotlin.sequences.SequenceBuilder") { mockClassType("kotlin.sequences.SequenceScope", nullable = false) }
+        expected = mockTAType("kotlin/sequences/SequenceBuilder") { mockClassType("kotlin/sequences/SequenceScope", nullable = true) },
+        mockTAType("kotlin/sequences/SequenceBuilder") { mockClassType("kotlin/sequences/SequenceScope", nullable = true) },
+        mockTAType("kotlin/sequences/SequenceBuilder") { mockClassType("kotlin/sequences/SequenceScope", nullable = true) },
+        mockTAType("kotlin/sequences/SequenceBuilder") { mockClassType("kotlin/sequences/SequenceScope", nullable = false) }
     )
 
     @Test
     // why success: types with the same nullability are treated as equal
     fun taTypesInUserPackageWithSameNullability1() = doTestSuccess(
-        expected = mockTAType("org.sample.FooAlias", nullable = false) { mockClassType("org.sample.Foo") },
-        mockTAType("org.sample.FooAlias", nullable = false) { mockClassType("org.sample.Foo") },
-        mockTAType("org.sample.FooAlias", nullable = false) { mockClassType("org.sample.Foo") },
-        mockTAType("org.sample.FooAlias", nullable = false) { mockClassType("org.sample.Foo") }
+        expected = mockTAType("org/sample/FooAlias", nullable = false) { mockClassType("org/sample/Foo") },
+        mockTAType("org/sample/FooAlias", nullable = false) { mockClassType("org/sample/Foo") },
+        mockTAType("org/sample/FooAlias", nullable = false) { mockClassType("org/sample/Foo") },
+        mockTAType("org/sample/FooAlias", nullable = false) { mockClassType("org/sample/Foo") }
     )
 
     @Test
     // why success: types with the same nullability are treated as equal
     fun taTypesInUserPackageWithSameNullability2() = doTestSuccess(
-        expected = mockTAType("org.sample.FooAlias", nullable = true) { mockClassType("org.sample.Foo") },
-        mockTAType("org.sample.FooAlias", nullable = true) { mockClassType("org.sample.Foo") },
-        mockTAType("org.sample.FooAlias", nullable = true) { mockClassType("org.sample.Foo") },
-        mockTAType("org.sample.FooAlias", nullable = true) { mockClassType("org.sample.Foo") }
+        expected = mockTAType("org/sample/FooAlias", nullable = true) { mockClassType("org/sample/Foo") },
+        mockTAType("org/sample/FooAlias", nullable = true) { mockClassType("org/sample/Foo") },
+        mockTAType("org/sample/FooAlias", nullable = true) { mockClassType("org/sample/Foo") },
+        mockTAType("org/sample/FooAlias", nullable = true) { mockClassType("org/sample/Foo") }
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun taTypesInUserPackageWithDifferentNullability1() = doTestFailure(
-        mockTAType("org.sample.FooAlias", nullable = false) { mockClassType("org.sample.Foo") },
-        mockTAType("org.sample.FooAlias", nullable = false) { mockClassType("org.sample.Foo") },
-        mockTAType("org.sample.FooAlias", nullable = true) { mockClassType("org.sample.Foo") }
+        mockTAType("org/sample/FooAlias", nullable = false) { mockClassType("org/sample/Foo") },
+        mockTAType("org/sample/FooAlias", nullable = false) { mockClassType("org/sample/Foo") },
+        mockTAType("org/sample/FooAlias", nullable = true) { mockClassType("org/sample/Foo") }
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun taTypesInUserPackageWithDifferentNullability2() = doTestFailure(
-        mockTAType("org.sample.FooAlias", nullable = true) { mockClassType("org.sample.Foo") },
-        mockTAType("org.sample.FooAlias", nullable = true) { mockClassType("org.sample.Foo") },
-        mockTAType("org.sample.FooAlias", nullable = false) { mockClassType("org.sample.Foo") }
+        mockTAType("org/sample/FooAlias", nullable = true) { mockClassType("org/sample/Foo") },
+        mockTAType("org/sample/FooAlias", nullable = true) { mockClassType("org/sample/Foo") },
+        mockTAType("org/sample/FooAlias", nullable = false) { mockClassType("org/sample/Foo") }
     )
 
     @Test
     // why success: nullability of underlying type does not matter if expect class/actual TAs created
     fun taTypesInUserPackageWithDifferentNullability3() = doTestSuccess(
-        expected = mockClassType("org.sample.FooAlias"),
-        mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo", nullable = false) },
-        mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo", nullable = true) }
+        expected = mockClassType("org/sample/FooAlias"),
+        mockTAType("org/sample/FooAlias") { mockClassType("org/sample/Foo", nullable = false) },
+        mockTAType("org/sample/FooAlias") { mockClassType("org/sample/Foo", nullable = true) }
     )
 
     @Test
     // why success: nullability of underlying type does not matter if expect class/actual TAs created
     fun taTypesInUserPackageWithDifferentNullability4() = doTestSuccess(
-        expected = mockClassType("org.sample.FooAlias"),
-        mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo", nullable = true) },
-        mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo", nullable = false) }
+        expected = mockClassType("org/sample/FooAlias"),
+        mockTAType("org/sample/FooAlias") { mockClassType("org/sample/Foo", nullable = true) },
+        mockTAType("org/sample/FooAlias") { mockClassType("org/sample/Foo", nullable = false) }
     )
 
-    private fun prepareCache(variants: Array<out KotlinType>) {
+    private fun prepareCache(variants: Array<out CirClassOrTypeAliasType>) {
         check(variants.isNotEmpty())
 
-        fun recurse(type: KotlinType, index: Int) {
-            @Suppress("MoveVariableDeclarationIntoWhen")
-            val descriptor = (type.getAbbreviation() ?: type).constructor.declarationDescriptor
-            when (descriptor) {
-                is ClassDescriptor -> {
-                    val classId = descriptor.classifierId
-                    val node = classifiers.classNode(classId) {
+        fun recurse(type: CirClassOrTypeAliasType, index: Int) {
+            when (type) {
+                is CirClassType -> {
+                    val node = classifiers.classNode(type.classifierId) {
                         buildClassNode(
                             storageManager = LockBasedStorageManager.NO_LOCKS,
                             size = variants.size,
                             classifiers = classifiers,
                             parentCommonDeclaration = null,
-                            classId = classId
+                            classId = type.classifierId
                         )
                     }
-                    node.targetDeclarations[index] = CirClassFactory.create(descriptor)
+                    node.targetDeclarations[index] = CirClassFactory.create(
+                        annotations = emptyList(),
+                        name = type.classifierId.relativeNameSegments.last(),
+                        typeParameters = emptyList(),
+                        visibility = DescriptorVisibilities.PUBLIC,
+                        modality = Modality.FINAL,
+                        kind = ClassKind.CLASS,
+                        companion = null,
+                        isCompanion = false,
+                        isData = false,
+                        isInline = false,
+                        isInner = false,
+                        isExternal = false
+                    )
                 }
-                is TypeAliasDescriptor -> {
-                    val typeAliasId = descriptor.classifierId
-                    val node = classifiers.typeAliasNode(typeAliasId) {
+                is CirTypeAliasType -> {
+                    val node = classifiers.typeAliasNode(type.classifierId) {
                         buildTypeAliasNode(
                             storageManager = LockBasedStorageManager.NO_LOCKS,
                             size = variants.size,
                             classifiers = classifiers,
-                            typeAliasId = typeAliasId
+                            typeAliasId = type.classifierId
                         )
                     }
-                    node.targetDeclarations[index] = CirTypeAliasFactory.create(descriptor)
+                    node.targetDeclarations[index] = CirTypeAliasFactory.create(
+                        annotations = emptyList(),
+                        name = type.classifierId.relativeNameSegments.last(),
+                        typeParameters = emptyList(),
+                        visibility = DescriptorVisibilities.PUBLIC,
+                        underlyingType = type.underlyingType,
+                        expandedType = computeExpandedType(type.underlyingType)
+                    )
 
-                    recurse(descriptor.underlyingType, index) // expand underlying types recursively
+                    recurse(type.underlyingType, index) // expand underlying types recursively
                 }
-                else -> error("Unexpected descriptor of KotlinType: $descriptor, $type")
             }
         }
 
@@ -508,22 +517,14 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
         }
     }
 
-    fun doTestSuccess(expected: KotlinType, vararg variants: KotlinType) {
+    fun doTestSuccess(expected: CirClassOrTypeAliasType, vararg variants: CirClassOrTypeAliasType) {
         prepareCache(variants)
-
-        doTestSuccess(
-            expected = CirTypeFactory.create(expected),
-            variants = variants.map(CirTypeFactory::create).toTypedArray()
-        )
+        super.doTestSuccess(expected, *variants)
     }
 
-    fun doTestFailure(vararg variants: KotlinType, shouldFailOnFirstVariant: Boolean = false) {
+    fun doTestFailure(vararg variants: CirClassOrTypeAliasType, shouldFailOnFirstVariant: Boolean = false) {
         prepareCache(variants)
-
-        doTestFailure(
-            variants = variants.map(CirTypeFactory::create).toTypedArray(),
-            shouldFailOnFirstVariant = shouldFailOnFirstVariant
-        )
+        super.doTestFailure(*variants, shouldFailOnFirstVariant = shouldFailOnFirstVariant)
     }
 
     override fun createCommonizer() = TypeCommonizer(classifiers)

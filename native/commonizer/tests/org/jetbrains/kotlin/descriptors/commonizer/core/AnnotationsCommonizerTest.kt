@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.commonizer.cir.*
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirAnnotation
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirConstantValue
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirConstantValue.*
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirEntityId
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirName
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirAnnotationFactory
-import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeFactory
 import org.jetbrains.kotlin.descriptors.commonizer.utils.mockClassType
 import org.junit.Test
 import kotlin.DeprecationLevel.*
@@ -28,13 +30,13 @@ class AnnotationsCommonizerTest : AbstractCommonizerTest<List<CirAnnotation>, Li
         expected = emptyList(),
         emptyList(),
         emptyList(),
-        listOf(mockAnnotation("org.sample.Foo"))
+        listOf(mockAnnotation("org/sample/Foo"))
     )
 
     @Test
     fun noRelevantAnnotations2() = doTestSuccess(
         expected = emptyList(),
-        listOf(mockAnnotation("org.sample.Foo")),
+        listOf(mockAnnotation("org/sample/Foo")),
         emptyList(),
         emptyList()
     )
@@ -42,25 +44,25 @@ class AnnotationsCommonizerTest : AbstractCommonizerTest<List<CirAnnotation>, Li
     @Test
     fun noRelevantAnnotations3() = doTestSuccess(
         expected = emptyList(),
-        listOf(mockAnnotation("org.sample.Foo")),
-        listOf(mockAnnotation("org.sample.Foo")),
-        listOf(mockAnnotation("org.sample.Foo"))
+        listOf(mockAnnotation("org/sample/Foo")),
+        listOf(mockAnnotation("org/sample/Foo")),
+        listOf(mockAnnotation("org/sample/Foo"))
     )
 
     @Test
     fun noRelevantAnnotations4() = doTestSuccess(
         expected = emptyList(),
-        listOf(mockAnnotation("org.sample.Foo")),
-        listOf(mockAnnotation("org.sample.Bar")),
-        listOf(mockAnnotation("org.sample.Baz"))
+        listOf(mockAnnotation("org/sample/Foo")),
+        listOf(mockAnnotation("org/sample/Bar")),
+        listOf(mockAnnotation("org/sample/Baz"))
     )
 
     @Test
     fun noRelevantAnnotations5() = doTestSuccess(
         expected = emptyList(),
-        listOf(mockAnnotation("kotlin.PublishedApi")),
-        listOf(mockAnnotation("kotlin.PublishedApi")),
-        listOf(mockAnnotation("kotlin.PublishedApi"))
+        listOf(mockAnnotation("kotlin/PublishedApi")),
+        listOf(mockAnnotation("kotlin/PublishedApi")),
+        listOf(mockAnnotation("kotlin/PublishedApi"))
     )
 
     @Test
@@ -279,11 +281,11 @@ class AnnotationsCommonizerTest : AbstractCommonizerTest<List<CirAnnotation>, Li
 }
 
 private fun mockAnnotation(
-    fqName: String,
+    classId: String,
     constantValueArguments: Map<CirName, CirConstantValue<*>> = emptyMap(),
     annotationValueArguments: Map<CirName, CirAnnotation> = emptyMap()
 ): CirAnnotation = CirAnnotationFactory.create(
-    type = CirTypeFactory.create(mockClassType(fqName)) as CirClassType,
+    type = mockClassType(classId),
     constantValueArguments = constantValueArguments,
     annotationValueArguments = annotationValueArguments
 )
@@ -296,7 +298,7 @@ private fun mockDeprecated(
 ): CirAnnotation {
     val replaceWith: CirAnnotation? = if (replaceWithExpression.isNotEmpty() || replaceWithImports.isNotEmpty()) {
         mockAnnotation(
-            fqName = "kotlin.ReplaceWith",
+            classId = "kotlin/ReplaceWith",
             constantValueArguments = mapOf(
                 CirName.create("expression") to StringValue(replaceWithExpression),
                 CirName.create("imports") to ArrayValue(replaceWithImports.map(::StringValue))
@@ -306,7 +308,7 @@ private fun mockDeprecated(
     } else null
 
     return mockAnnotation(
-        fqName = "kotlin.Deprecated",
+        classId = "kotlin/Deprecated",
         constantValueArguments = HashMap<CirName, CirConstantValue<*>>().apply {
             this[CirName.create("message")] = StringValue(message)
 

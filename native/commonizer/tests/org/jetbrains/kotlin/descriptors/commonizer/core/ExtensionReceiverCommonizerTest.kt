@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirExtensionReceiver
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirExtensionReceiverFactory
-import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeFactory
 import org.jetbrains.kotlin.descriptors.commonizer.utils.MOCK_CLASSIFIERS
 import org.jetbrains.kotlin.descriptors.commonizer.utils.mockClassType
 import org.junit.Test
@@ -22,23 +21,23 @@ class ExtensionReceiverCommonizerTest : AbstractCommonizerTest<CirExtensionRecei
 
     @Test
     fun sameReceiver() = doTestSuccess(
-        expected = mockExtensionReceiver("kotlin.String"),
-        mockExtensionReceiver("kotlin.String"),
-        mockExtensionReceiver("kotlin.String"),
-        mockExtensionReceiver("kotlin.String")
+        expected = mockExtensionReceiver("kotlin/String"),
+        mockExtensionReceiver("kotlin/String"),
+        mockExtensionReceiver("kotlin/String"),
+        mockExtensionReceiver("kotlin/String")
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun differentReceivers() = doTestFailure(
-        mockExtensionReceiver("kotlin.String"),
-        mockExtensionReceiver("kotlin.String"),
-        mockExtensionReceiver("kotlin.Int")
+        mockExtensionReceiver("kotlin/String"),
+        mockExtensionReceiver("kotlin/String"),
+        mockExtensionReceiver("kotlin/Int")
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun nullAndNonNullReceivers1() = doTestFailure(
-        mockExtensionReceiver("kotlin.String"),
-        mockExtensionReceiver("kotlin.String"),
+        mockExtensionReceiver("kotlin/String"),
+        mockExtensionReceiver("kotlin/String"),
         null
     )
 
@@ -46,13 +45,13 @@ class ExtensionReceiverCommonizerTest : AbstractCommonizerTest<CirExtensionRecei
     fun nullAndNonNullReceivers2() = doTestFailure(
         null,
         null,
-        mockExtensionReceiver("kotlin.String")
+        mockExtensionReceiver("kotlin/String")
     )
 
     override fun createCommonizer() = ExtensionReceiverCommonizer(MOCK_CLASSIFIERS)
 }
 
-private fun mockExtensionReceiver(typeFqName: String) = CirExtensionReceiverFactory.create(
+private fun mockExtensionReceiver(receiverClassId: String) = CirExtensionReceiverFactory.create(
     annotations = emptyList(),
-    type = CirTypeFactory.create(mockClassType(typeFqName))
+    type = mockClassType(receiverClassId)
 )

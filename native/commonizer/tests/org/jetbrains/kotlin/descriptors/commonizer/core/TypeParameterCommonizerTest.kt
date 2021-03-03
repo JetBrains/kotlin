@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirName
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirTypeParameter
-import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeFactory
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeParameterFactory
 import org.jetbrains.kotlin.descriptors.commonizer.utils.MOCK_CLASSIFIERS
 import org.jetbrains.kotlin.descriptors.commonizer.utils.mockClassType
@@ -63,23 +62,23 @@ class TypeParameterCommonizerTest : AbstractCommonizerTest<CirTypeParameter, Cir
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun differentUpperBounds1() = doTestFailure(
-        mockTypeParam(upperBounds = listOf("kotlin.String")),
-        mockTypeParam(upperBounds = listOf("kotlin.String")),
-        mockTypeParam(upperBounds = listOf("kotlin.Int"))
+        mockTypeParam(upperBounds = listOf("kotlin/String")),
+        mockTypeParam(upperBounds = listOf("kotlin/String")),
+        mockTypeParam(upperBounds = listOf("kotlin/Int"))
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun differentUpperBounds2() = doTestFailure(
-        mockTypeParam(upperBounds = listOf("kotlin.String", "kotlin.Int")),
-        mockTypeParam(upperBounds = listOf("kotlin.String", "kotlin.Int")),
-        mockTypeParam(upperBounds = listOf("kotlin.String"))
+        mockTypeParam(upperBounds = listOf("kotlin/String", "kotlin/Int")),
+        mockTypeParam(upperBounds = listOf("kotlin/String", "kotlin/Int")),
+        mockTypeParam(upperBounds = listOf("kotlin/String"))
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun differentUpperBounds3() = doTestFailure(
-        mockTypeParam(upperBounds = listOf("kotlin.String", "kotlin.Int")),
-        mockTypeParam(upperBounds = listOf("kotlin.String", "kotlin.Int")),
-        mockTypeParam(upperBounds = listOf("kotlin.Int", "kotlin.String"))
+        mockTypeParam(upperBounds = listOf("kotlin/String", "kotlin/Int")),
+        mockTypeParam(upperBounds = listOf("kotlin/String", "kotlin/Int")),
+        mockTypeParam(upperBounds = listOf("kotlin/Int", "kotlin/String"))
     )
 
     internal companion object {
@@ -87,13 +86,13 @@ class TypeParameterCommonizerTest : AbstractCommonizerTest<CirTypeParameter, Cir
             name: String = "T",
             isReified: Boolean = false,
             variance: Variance = Variance.INVARIANT,
-            upperBounds: List<String> = listOf("kotlin.Any")
+            upperBounds: List<String> = listOf("kotlin/Any")
         ) = CirTypeParameterFactory.create(
             annotations = emptyList(),
             name = CirName.create(name),
             isReified = isReified,
             variance = variance,
-            upperBounds = upperBounds.map { CirTypeFactory.create(mockClassType(it)) }
+            upperBounds = upperBounds.map(::mockClassType)
         )
     }
 }

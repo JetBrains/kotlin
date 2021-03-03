@@ -22,38 +22,38 @@ class TypeParameterListCommonizerTest : AbstractCommonizerTest<List<CirTypeParam
     @Test
     fun matchedParameters() = doTestSuccess(
         expected = mockTypeParams(
-            "T" to "kotlin.Any?",
-            "R" to "kotlin.CharSequence",
-            "Q" to "org.sample.Foo?"
+            "T" to "kotlin/Any",
+            "R" to "kotlin/CharSequence",
+            "Q" to "org/sample/Foo"
         ),
         mockTypeParams(
-            "T" to "kotlin.Any?",
-            "R" to "kotlin.CharSequence",
-            "Q" to "org.sample.Foo?"
+            "T" to "kotlin/Any",
+            "R" to "kotlin/CharSequence",
+            "Q" to "org/sample/Foo"
         ),
         mockTypeParams(
-            "T" to "kotlin.Any?",
-            "R" to "kotlin.CharSequence",
-            "Q" to "org.sample.Foo?"
+            "T" to "kotlin/Any",
+            "R" to "kotlin/CharSequence",
+            "Q" to "org/sample/Foo"
         ),
         mockTypeParams(
-            "T" to "kotlin.Any?",
-            "R" to "kotlin.CharSequence",
-            "Q" to "org.sample.Foo?"
+            "T" to "kotlin/Any",
+            "R" to "kotlin/CharSequence",
+            "Q" to "org/sample/Foo"
         )
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun mismatchedParameterListSize1() = doTestFailure(
         mockTypeParams(
-            "T" to "kotlin.Any?",
-            "R" to "kotlin.CharSequence",
-            "Q" to "org.sample.Foo?"
+            "T" to "kotlin/Any",
+            "R" to "kotlin/CharSequence",
+            "Q" to "org/sample/Foo"
         ),
         mockTypeParams(
-            "T" to "kotlin.Any?",
-            "R" to "kotlin.CharSequence",
-            "Q" to "org.sample.Foo?"
+            "T" to "kotlin/Any",
+            "R" to "kotlin/CharSequence",
+            "Q" to "org/sample/Foo"
         ),
         emptyList()
     )
@@ -61,50 +61,50 @@ class TypeParameterListCommonizerTest : AbstractCommonizerTest<List<CirTypeParam
     @Test(expected = IllegalCommonizerStateException::class)
     fun mismatchedParameterListSize2() = doTestFailure(
         mockTypeParams(
-            "T" to "kotlin.Any?",
-            "R" to "kotlin.CharSequence",
-            "Q" to "org.sample.Foo?"
+            "T" to "kotlin/Any",
+            "R" to "kotlin/CharSequence",
+            "Q" to "org/sample/Foo"
         ),
         mockTypeParams(
-            "T" to "kotlin.Any?",
-            "R" to "kotlin.CharSequence",
-            "Q" to "org.sample.Foo?"
+            "T" to "kotlin/Any",
+            "R" to "kotlin/CharSequence",
+            "Q" to "org/sample/Foo"
         ),
         mockTypeParams(
-            "T" to "kotlin.Any?",
-            "R" to "kotlin.CharSequence"
+            "T" to "kotlin/Any",
+            "R" to "kotlin/CharSequence"
         )
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun mismatchedParameterListSize3() = doTestFailure(
         mockTypeParams(
-            "T" to "kotlin.Any?",
-            "R" to "kotlin.CharSequence",
-            "Q" to "org.sample.Foo?"
+            "T" to "kotlin/Any",
+            "R" to "kotlin/CharSequence",
+            "Q" to "org/sample/Foo"
         ),
         mockTypeParams(
-            "T" to "kotlin.Any?",
-            "R" to "kotlin.CharSequence",
-            "Q" to "org.sample.Foo?"
+            "T" to "kotlin/Any",
+            "R" to "kotlin/CharSequence",
+            "Q" to "org/sample/Foo"
         ),
         mockTypeParams(
-            "T" to "kotlin.Any?",
-            "R" to "kotlin.CharSequence",
-            "Q" to "org.sample.Foo?",
-            "V" to "org.sample.Bar"
+            "T" to "kotlin/Any",
+            "R" to "kotlin/CharSequence",
+            "Q" to "org/sample/Foo",
+            "V" to "org/sample/Bar"
         )
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun mismatchedParameterNames() = doTestFailure(
         mockTypeParams(
-            "T" to "kotlin.Any?",
-            "R" to "kotlin.CharSequence"
+            "T" to "kotlin/Any",
+            "R" to "kotlin/CharSequence"
         ),
         mockTypeParams(
-            "T" to "kotlin.Any?",
-            "Q" to "kotlin.CharSequence"
+            "T" to "kotlin/Any",
+            "Q" to "kotlin/CharSequence"
         )
     )
 
@@ -113,10 +113,10 @@ class TypeParameterListCommonizerTest : AbstractCommonizerTest<List<CirTypeParam
     private companion object {
         fun mockTypeParams(vararg params: Pair<String, String>): List<CirTypeParameter> {
             check(params.isNotEmpty())
-            return params.map { (name, returnTypeFqName) ->
+            return params.map { (name, upperBounds) ->
                 TypeParameterCommonizerTest.mockTypeParam(
                     name = name,
-                    upperBounds = listOf(returnTypeFqName)
+                    upperBounds = listOf(upperBounds)
                 )
             }
         }
