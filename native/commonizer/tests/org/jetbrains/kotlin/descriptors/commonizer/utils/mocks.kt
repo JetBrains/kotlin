@@ -168,8 +168,6 @@ internal class MockModulesProvider private constructor(
         return SERIALIZER.serializeModule(module)
     }
 
-    override fun loadModules(dependencies: Collection<ModuleDescriptor>) = modules
-
     private fun fakeModuleInfo(name: String) = ModuleInfo(name, File("/tmp/commonizer/mocks/$name"), null)
 
     companion object {

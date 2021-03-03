@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.library.impl.BaseWriterImpl
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.impl.KotlinLibraryLayoutForWriter
 import org.jetbrains.kotlin.library.impl.KotlinLibraryWriterImpl
-import org.jetbrains.kotlin.util.Logger
 import java.io.File
 
 internal class ModuleSerializer(

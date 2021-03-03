@@ -8,12 +8,10 @@ package org.jetbrains.kotlin.descriptors.commonizer.cir.factory
 import kotlinx.metadata.Flag
 import kotlinx.metadata.KmProperty
 import kotlinx.metadata.klib.getterAnnotations
-import org.jetbrains.kotlin.descriptors.PropertyGetterDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirAnnotation
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirPropertyGetter
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirPropertyGetterImpl
 import org.jetbrains.kotlin.descriptors.commonizer.utils.Interner
-import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMap
 
 object CirPropertyGetterFactory {
     private val interner = Interner<CirPropertyGetter>()
@@ -25,18 +23,6 @@ object CirPropertyGetterFactory {
         isExternal = false,
         isInline = false
     )
-
-    fun create(source: PropertyGetterDescriptor): CirPropertyGetter {
-        return if (source.isDefault && source.annotations.isEmpty())
-            DEFAULT_NO_ANNOTATIONS
-        else
-            create(
-                annotations = source.annotations.compactMap(CirAnnotationFactory::create),
-                isDefault = source.isDefault,
-                isExternal = source.isExternal,
-                isInline = source.isInline
-            )
-    }
 
     fun create(source: KmProperty, typeResolver: CirTypeResolver): CirPropertyGetter? {
         if (!Flag.Property.HAS_GETTER(source.flags))

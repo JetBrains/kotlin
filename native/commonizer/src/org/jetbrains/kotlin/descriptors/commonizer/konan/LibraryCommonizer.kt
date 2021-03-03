@@ -6,13 +6,11 @@
 package org.jetbrains.kotlin.descriptors.commonizer.konan
 
 import org.jetbrains.kotlin.descriptors.commonizer.*
-import org.jetbrains.kotlin.descriptors.commonizer.LeafCommonizerTarget
 import org.jetbrains.kotlin.descriptors.commonizer.konan.LibraryCommonizer.*
 import org.jetbrains.kotlin.descriptors.commonizer.repository.Repository
 import org.jetbrains.kotlin.descriptors.commonizer.stats.StatsCollector
 import org.jetbrains.kotlin.descriptors.commonizer.utils.ProgressLogger
 import org.jetbrains.kotlin.konan.library.*
-import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
 internal class LibraryCommonizer internal constructor(
     private val konanDistribution: KonanDistribution,
@@ -52,15 +50,14 @@ internal class LibraryCommonizer internal constructor(
         val manifestProvider = TargetedNativeManifestDataProvider(allLibraries)
 
         val parameters = CommonizerParameters(resultsConsumer, manifestProvider, statsCollector, progressLogger::log).apply {
-            val storageManager = LockBasedStorageManager("Commonized modules")
-            dependencyModulesProvider = NativeDistributionModulesProvider.forStandardLibrary(storageManager, allLibraries.stdlib)
+            dependencyModulesProvider = NativeDistributionModulesProvider.forStandardLibrary(allLibraries.stdlib)
 
             allLibraries.librariesByTargets.forEach { (target, librariesToCommonize) ->
                 if (librariesToCommonize.libraries.isEmpty()) return@forEach
 
-                val modulesProvider = NativeDistributionModulesProvider.platformLibraries(storageManager, librariesToCommonize)
+                val modulesProvider = NativeDistributionModulesProvider.platformLibraries(librariesToCommonize)
                 val dependencyModuleProvider = NativeDistributionModulesProvider.platformLibraries(
-                    storageManager, NativeLibrariesToCommonize(dependencies.getLibraries(target).toList()),
+                    NativeLibrariesToCommonize(dependencies.getLibraries(target).toList()),
                 )
 
                 addTarget(

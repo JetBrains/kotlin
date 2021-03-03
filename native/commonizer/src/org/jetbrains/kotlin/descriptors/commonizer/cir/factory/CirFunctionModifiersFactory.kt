@@ -7,22 +7,12 @@ package org.jetbrains.kotlin.descriptors.commonizer.cir.factory
 
 import kotlinx.metadata.Flag
 import kotlinx.metadata.KmFunction
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirFunctionModifiers
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirFunctionModifiersImpl
 import org.jetbrains.kotlin.descriptors.commonizer.utils.Interner
 
 object CirFunctionModifiersFactory {
     private val interner = Interner<CirFunctionModifiers>()
-
-    fun create(source: SimpleFunctionDescriptor): CirFunctionModifiers = create(
-        isOperator = source.isOperator,
-        isInfix = source.isInfix,
-        isInline = source.isInline,
-        isTailrec = source.isTailrec,
-        isSuspend = source.isSuspend,
-        isExternal = source.isExternal
-    )
 
     fun create(source: KmFunction): CirFunctionModifiers = create(
         isOperator = Flag.Function.IS_OPERATOR(source.flags),

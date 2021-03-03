@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.descriptors.commonizer.cir.factory
 import kotlinx.metadata.Flag
 import kotlinx.metadata.KmFunction
 import kotlinx.metadata.klib.annotations
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirFunctionImpl
 import org.jetbrains.kotlin.descriptors.commonizer.metadata.decodeCallableKind
@@ -17,21 +19,6 @@ import org.jetbrains.kotlin.descriptors.commonizer.metadata.decodeVisibility
 import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMap
 
 object CirFunctionFactory {
-    fun create(source: SimpleFunctionDescriptor, containingClass: CirContainingClass?): CirFunction = create(
-        annotations = source.annotations.compactMap(CirAnnotationFactory::create),
-        name = CirName.create(source.name),
-        typeParameters = source.typeParameters.compactMap(CirTypeParameterFactory::create),
-        visibility = source.visibility,
-        modality = source.modality,
-        containingClass = containingClass,
-        valueParameters = source.valueParameters.compactMap(CirValueParameterFactory::create),
-        hasStableParameterNames = source.hasStableParameterNames(),
-        extensionReceiver = source.extensionReceiverParameter?.let(CirExtensionReceiverFactory::create),
-        returnType = CirTypeFactory.create(source.returnType!!),
-        kind = source.kind,
-        modifiers = CirFunctionModifiersFactory.create(source),
-    )
-
     fun create(name: CirName, source: KmFunction, containingClass: CirContainingClass?, typeResolver: CirTypeResolver): CirFunction {
         return create(
             annotations = CirAnnotationFactory.createAnnotations(source.flags, typeResolver, source::annotations),

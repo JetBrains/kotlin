@@ -12,7 +12,6 @@ import kotlinx.metadata.klib.compileTimeValue
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirPropertyImpl
 import org.jetbrains.kotlin.descriptors.commonizer.metadata.decodeCallableKind
@@ -21,37 +20,6 @@ import org.jetbrains.kotlin.descriptors.commonizer.metadata.decodeVisibility
 import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMap
 
 object CirPropertyFactory {
-    fun create(source: PropertyDescriptor, containingClass: CirContainingClass?): CirProperty {
-        val compileTimeInitializer = source.compileTimeInitializer?.let { constantValue ->
-            CirConstantValueFactory.createSafely(
-                constantValue = constantValue,
-                owner = source,
-            )
-        } ?: CirConstantValue.NullValue
-
-        return create(
-            annotations = source.annotations.compactMap(CirAnnotationFactory::create),
-            name = CirName.create(source.name),
-            typeParameters = source.typeParameters.compactMap(CirTypeParameterFactory::create),
-            visibility = source.visibility,
-            modality = source.modality,
-            containingClass = containingClass,
-            isExternal = source.isExternal,
-            extensionReceiver = source.extensionReceiverParameter?.let(CirExtensionReceiverFactory::create),
-            returnType = CirTypeFactory.create(source.returnType!!),
-            kind = source.kind,
-            isVar = source.isVar,
-            isLateInit = source.isLateInit,
-            isConst = source.isConst,
-            isDelegate = source.isDelegated,
-            getter = source.getter?.let(CirPropertyGetterFactory::create),
-            setter = source.setter?.let(CirPropertySetterFactory::create),
-            backingFieldAnnotations = source.backingField?.annotations?.compactMap(CirAnnotationFactory::create).orEmpty(),
-            delegateFieldAnnotations = source.delegateField?.annotations?.compactMap(CirAnnotationFactory::create).orEmpty(),
-            compileTimeInitializer = compileTimeInitializer
-        )
-    }
-
     fun create(name: CirName, source: KmProperty, containingClass: CirContainingClass?, typeResolver: CirTypeResolver): CirProperty {
         val compileTimeInitializer = if (Flag.Property.HAS_CONSTANT(source.flags)) {
             CirConstantValueFactory.createSafely(

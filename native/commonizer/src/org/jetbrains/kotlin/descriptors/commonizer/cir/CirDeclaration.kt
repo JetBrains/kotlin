@@ -5,18 +5,22 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.cir
 
-import org.jetbrains.kotlin.descriptors.*
+import kotlinx.metadata.*
+import kotlinx.metadata.klib.KlibModuleMetadata
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Modality
 
 /**
- * An intermediate representation of [DeclarationDescriptor]s for commonization purposes.
+ * An intermediate representation of declarations for commonization purposes.
  *
  * The most essential subclasses are:
- * - [CirClass] - represents [ClassDescriptor]
- * - [CirTypeAlias] - [TypeAliasDescriptor]
- * - [CirFunction] - [SimpleFunctionDescriptor]
- * - [CirProperty] - [PropertyDescriptor]
- * - [CirPackage] - union of multiple [PackageFragmentDescriptor]s with the same FQ name contributed by commonized [ModuleDescriptor]s
- * - [CirModule] - [ModuleDescriptor]
+ * - [CirClass] - represents [KmClass]
+ * - [CirTypeAlias] - [KmTypeAlias]
+ * - [CirFunction] - [KmFunction]
+ * - [CirProperty] - [KmProperty]
+ * - [CirPackage] - union of multiple [KmModuleFragment]s with the same FQ name contributed by commonized [KlibModuleMetadata]s
+ * - [CirModule] - [KlibModuleMetadata]
  * - [CirRoot] - the root of the whole Commonizer IR tree
  */
 interface CirDeclaration

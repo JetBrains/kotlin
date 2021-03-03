@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.serialization.metadata.impl.ExportedF
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirPackageName
 import org.jetbrains.kotlin.descriptors.commonizer.utils.*
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.scopes.ChainedMemberScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -39,19 +40,6 @@ internal inline fun ClassCollector(
 ): (DeclarationDescriptor) -> Boolean = Collector(typedCollector)
 
 @Suppress("FunctionName")
-internal inline fun TypeAliasCollector(
-    crossinline typedCollector: (TypeAliasDescriptor) -> Unit
-): (DeclarationDescriptor) -> Boolean = Collector(typedCollector)
-
-@Suppress("FunctionName")
-internal inline fun PropertyCollector(
-    crossinline typedCollector: (PropertyDescriptor) -> Unit
-): (DeclarationDescriptor) -> Boolean = Collector<PropertyDescriptor> { candidate ->
-    if (candidate.kind.isReal) // omit fake overrides
-        typedCollector(candidate)
-}
-
-@Suppress("FunctionName")
 internal inline fun FunctionCollector(
     crossinline typedCollector: (SimpleFunctionDescriptor) -> Unit
 ): (DeclarationDescriptor) -> Boolean = Collector<SimpleFunctionDescriptor> { candidate ->
@@ -67,7 +55,7 @@ internal inline fun FunctionCollector(
 internal fun ModuleDescriptor.collectNonEmptyPackageMemberScopes(collector: (CirPackageName, MemberScope) -> Unit) {
     // we don's need to process fragments from other modules which are the dependencies of this module, so
     // let's use the appropriate package fragment provider
-    val packageFragmentProvider = this.packageFragmentProvider
+    val packageFragmentProvider = (this as ModuleDescriptorImpl).packageFragmentProviderForModuleContentWithoutDependencies
 
     fun recurse(packageFqName: FqName) {
         val ownPackageMemberScopes = packageFragmentProvider.packageFragments(packageFqName)

@@ -8,35 +8,13 @@ package org.jetbrains.kotlin.descriptors.commonizer.cir.factory
 import kotlinx.metadata.Flag
 import kotlinx.metadata.KmConstructor
 import kotlinx.metadata.klib.annotations
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirClassConstructorImpl
 import org.jetbrains.kotlin.descriptors.commonizer.metadata.decodeVisibility
 import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMap
-import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMapNotNull
 
 object CirClassConstructorFactory {
-    fun create(source: ClassConstructorDescriptor, containingClass: CirContainingClass): CirClassConstructor {
-        check(source.kind == CallableMemberDescriptor.Kind.DECLARATION) {
-            "Unexpected ${CallableMemberDescriptor.Kind::class.java} for class constructor $source, ${source::class.java}: ${source.kind}"
-        }
-
-        return create(
-            annotations = source.annotations.compactMap(CirAnnotationFactory::create),
-            typeParameters = source.typeParameters.compactMapNotNull { typeParameter ->
-                // save only type parameters that are contributed by the constructor itself
-                typeParameter.takeIf { it.containingDeclaration == source }?.let(CirTypeParameterFactory::create)
-            },
-            visibility = source.visibility,
-            containingClass = containingClass,
-            valueParameters = source.valueParameters.compactMap(CirValueParameterFactory::create),
-            hasStableParameterNames = source.hasStableParameterNames(),
-            isPrimary = source.isPrimary
-        )
-    }
-
     fun create(source: KmConstructor, containingClass: CirContainingClass, typeResolver: CirTypeResolver): CirClassConstructor {
         return create(
             annotations = CirAnnotationFactory.createAnnotations(source.flags, typeResolver, source::annotations),

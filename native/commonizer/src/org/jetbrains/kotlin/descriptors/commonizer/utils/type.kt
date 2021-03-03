@@ -14,10 +14,8 @@ import org.jetbrains.kotlin.descriptors.commonizer.cir.CirName
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirPackageName
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirTypeSignature
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.TypeParameterResolver
-import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.isNullableAny
-import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 
 internal inline val KotlinType.declarationDescriptor: ClassifierDescriptor
     get() = (constructor.declarationDescriptor ?: error("No declaration descriptor found for $constructor"))
@@ -62,58 +60,6 @@ private inline val KmType.isNullableAny: Boolean
 private inline val KmType.isAny: Boolean
     get() = (classifier as? KmClassifier.Class)?.name == ANY_CLASS_FULL_NAME && !Flag.Type.IS_NULLABLE(flags)
 
-internal val KotlinType.signature: CirTypeSignature
-    get() {
-        // use of interner saves up to 95% of duplicates
-        return typeSignatureInterner.intern(buildString { buildTypeSignature(this@signature, HashSet()) })
-    }
-
-private fun StringBuilder.buildTypeSignature(type: KotlinType, exploredTypeParameters: MutableSet<KotlinType>) {
-    val typeParameterDescriptor = TypeUtils.getTypeParameterDescriptorOrNull(type)
-    if (typeParameterDescriptor != null) {
-        // N.B this is type parameter type
-        append(typeParameterDescriptor.name.asString())
-
-        if (exploredTypeParameters.add(type.makeNotNullable())) { // print upper bounds once the first time when type parameter type is met
-            append(':').append('[')
-            typeParameterDescriptor.filteredUpperBounds.forEachIndexed { index, upperBound ->
-                if (index > 0)
-                    append(',')
-                buildTypeSignature(upperBound, exploredTypeParameters)
-            }
-            append(']')
-        }
-
-        if (type.isMarkedNullable)
-            append('?')
-    } else {
-        // N.B. this is classifier type
-        val abbreviation = (type as? AbbreviatedType)?.abbreviation ?: type
-        append(abbreviation.declarationDescriptor.classId!!.asString())
-
-        val arguments = abbreviation.arguments
-        if (arguments.isNotEmpty()) {
-            append('<')
-            arguments.forEachIndexed { index, argument ->
-                if (index > 0)
-                    append(',')
-
-                if (argument.isStarProjection)
-                    append('*')
-                else {
-                    val variance = argument.projectionKind
-                    if (variance != Variance.INVARIANT)
-                        append(variance.label).append(' ')
-                    buildTypeSignature(argument.type, exploredTypeParameters)
-                }
-            }
-            append('>')
-        }
-
-        if (abbreviation.isMarkedNullable)
-            append('?')
-    }
-}
 
 internal fun KmType.computeSignature(typeParameterResolver: TypeParameterResolver): CirTypeSignature {
     // use of interner saves up to 95% of duplicates

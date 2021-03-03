@@ -9,7 +9,6 @@ import kotlinx.metadata.Flag
 import kotlinx.metadata.KmProperty
 import kotlinx.metadata.klib.annotations
 import kotlinx.metadata.klib.setterAnnotations
-import org.jetbrains.kotlin.descriptors.PropertySetterDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirAnnotation
@@ -17,19 +16,9 @@ import org.jetbrains.kotlin.descriptors.commonizer.cir.CirPropertySetter
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirPropertySetterImpl
 import org.jetbrains.kotlin.descriptors.commonizer.metadata.decodeVisibility
 import org.jetbrains.kotlin.descriptors.commonizer.utils.Interner
-import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMap
 
 object CirPropertySetterFactory {
     private val interner = Interner<CirPropertySetter>()
-
-    fun create(source: PropertySetterDescriptor): CirPropertySetter = create(
-        annotations = source.annotations.compactMap(CirAnnotationFactory::create),
-        parameterAnnotations = source.valueParameters[0].annotations.compactMap(CirAnnotationFactory::create),
-        visibility = source.visibility,
-        isDefault = source.isDefault,
-        isExternal = source.isExternal,
-        isInline = source.isInline
-    )
 
     fun create(source: KmProperty, typeResolver: CirTypeResolver): CirPropertySetter? {
         if (!Flag.Property.HAS_SETTER(source.flags))

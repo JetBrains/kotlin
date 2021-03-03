@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer
 
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.library.SerializedMetadata
 import java.io.File
 
@@ -36,7 +35,4 @@ interface ModulesProvider {
      * Loads metadata for the specified module.
      */
     fun loadModuleMetadata(name: String): SerializedMetadata
-
-    @Deprecated("To be replaced by loadModuleMetadata()")
-    fun loadModules(dependencies: Collection<ModuleDescriptor>): Map<String, ModuleDescriptor>
 }

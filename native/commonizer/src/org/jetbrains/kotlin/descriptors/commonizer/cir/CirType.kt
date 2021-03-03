@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.cir
 
-import org.jetbrains.kotlin.types.AbbreviatedType
+import kotlinx.metadata.KmType
 import org.jetbrains.kotlin.types.Variance
 
 typealias CirTypeSignature = String
@@ -83,7 +83,7 @@ abstract class CirClassType : CirClassOrTypeAliasType(), CirHasVisibility {
 }
 
 /**
- * All attributes are read from the abbreviation type: [AbbreviatedType.abbreviation].
+ * All attributes are read from the abbreviation type: [KmType.abbreviatedType].
  *
  * This is necessary to properly compare types for type aliases, where abbreviation type represents the type alias itself while
  * expanded type represents right-hand side declaration that should be processed separately.
