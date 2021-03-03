@@ -36,6 +36,6 @@ class E1 : C.D(), B {
     override fun foo(x: Any, y: Fun<Any?>) {}
 }
 
-<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class E2<!> : B {
+class E2 : B {
     override fun foo(x: Any, y: Fun<String?>) {}
 }

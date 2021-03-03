@@ -144,6 +144,7 @@ object FirNotImplementedOverrideChecker : FirClassChecker() {
         val contributedInSupertypes = mutableMapOf<Name, FirCallableDeclaration<*>>()
         val classScope = firClass.unsubstitutedScope(context)
         for (name in SYNTHETIC_NAMES) {
+            if (name in contributedInThisType) continue
             classScope.processFunctionsByName(name) {
                 val declaration = it.fir
                 if (declaration.matchesDataClassSyntheticMemberSignatures && declaration.modality != Modality.FINAL) {
@@ -154,7 +155,6 @@ object FirNotImplementedOverrideChecker : FirClassChecker() {
 
         val result = mutableListOf<FirCallableDeclaration<*>>()
         for (name in SYNTHETIC_NAMES) {
-            if (name in contributedInThisType) continue
             contributedInSupertypes[name]?.let { result.add(it) }
         }
         return result
@@ -228,7 +228,16 @@ object FirNotImplementedOverrideChecker : FirClassChecker() {
             )
         }
 
-        val superTypesCallableNames = classScope.getCallableNames()
+        val contributedDeclarationNames = contributedDeclarations.mapNotNullTo(mutableSetOf()) l@{
+            val callableDeclaration = (it as? FirCallableMemberDeclaration<*>) ?: return@l null
+            // TODO: for multi-inheritance, we may need much stronger conditions like something in [FakeOverrideGenerator]
+            // For now, collect non-abstract members only
+            if (callableDeclaration.status.modality == Modality.ABSTRACT) null
+            // Otherwise, bail out early based on the name of the contributed member declaration
+            else callableDeclaration.symbol.callableId.callableName
+        }
+
+        val superTypesCallableNames = classScope.getCallableNames().filter { it !in contributedDeclarationNames }
         for (name in superTypesCallableNames) {
             classScope.processFunctionsByName(name) { functionSymbol ->
                 // TODO: MANY_* as well as some conflict diagnostics
