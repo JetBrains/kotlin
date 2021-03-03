@@ -1,0 +1,19 @@
+package
+
+public fun </*0*/ A, /*1*/ B> unsafeCast(/*0*/ value: A): B
+
+public sealed class Subtype</*0*/ A1, /*1*/ B1> {
+    protected constructor Subtype</*0*/ A1, /*1*/ B1>()
+    public abstract fun cast(/*0*/ value: A1): B1
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public final class Trivial</*0*/ A2 : B2, /*1*/ B2> : Subtype<A2, B2> {
+        public constructor Trivial</*0*/ A2 : B2, /*1*/ B2>()
+        public open override /*1*/ fun cast(/*0*/ value: A2): B2
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
