@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.psi.KtArrayAccessExpression
+import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
@@ -436,6 +437,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.VAR_ANNOTATION_PARAMETER) { firDiagnostic ->
         VarAnnotationParameterImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.SUPERTYPES_FOR_ANNOTATION_CLASS) { firDiagnostic ->
+        SupertypesForAnnotationClassImpl(
             firDiagnostic as FirPsiDiagnostic<*>,
             token,
         )
@@ -1320,6 +1327,14 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.CONST_VAL_WITH_DELEGATE) { firDiagnostic ->
         ConstValWithDelegateImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.WRONG_SETTER_PARAMETER_TYPE) { firDiagnostic ->
+        WrongSetterParameterTypeImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
             firDiagnostic as FirPsiDiagnostic<*>,
             token,
         )

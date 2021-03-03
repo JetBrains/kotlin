@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtArrayAccessExpression
+import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
@@ -509,6 +510,13 @@ internal class VarAnnotationParameterImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.VarAnnotationParameter(), KtAbstractFirDiagnostic<KtParameter> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
+internal class SupertypesForAnnotationClassImpl(
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.SupertypesForAnnotationClass(), KtAbstractFirDiagnostic<KtClass> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
 }
 
@@ -1511,6 +1519,15 @@ internal class ConstValWithDelegateImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.ConstValWithDelegate(), KtAbstractFirDiagnostic<KtPropertyDelegate> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
+internal class WrongSetterParameterTypeImpl(
+    override val expectedType: KtType,
+    override val actualType: KtType,
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.WrongSetterParameterType(), KtAbstractFirDiagnostic<KtTypeReference> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
 }
 

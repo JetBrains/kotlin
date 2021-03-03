@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtArrayAccessExpression
+import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
@@ -317,6 +318,10 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class VarAnnotationParameter : KtFirDiagnostic<KtParameter>() {
         override val diagnosticClass get() = VarAnnotationParameter::class
+    }
+
+    abstract class SupertypesForAnnotationClass : KtFirDiagnostic<KtClass>() {
+        override val diagnosticClass get() = SupertypesForAnnotationClass::class
     }
 
     abstract class ExposedTypealiasExpandedType : KtFirDiagnostic<KtNamedDeclaration>() {
@@ -935,6 +940,12 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class ConstValWithDelegate : KtFirDiagnostic<KtPropertyDelegate>() {
         override val diagnosticClass get() = ConstValWithDelegate::class
+    }
+
+    abstract class WrongSetterParameterType : KtFirDiagnostic<KtTypeReference>() {
+        override val diagnosticClass get() = WrongSetterParameterType::class
+        abstract val expectedType: KtType
+        abstract val actualType: KtType
     }
 
     abstract class ExpectedDeclarationWithBody : KtFirDiagnostic<KtDeclaration>() {

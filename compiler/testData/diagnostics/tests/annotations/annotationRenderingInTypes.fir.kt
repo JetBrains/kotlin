@@ -18,7 +18,7 @@ fun test2(a: @Ann Array<in @Ann Int>) {
 
 
 var test3: Int = 0
-    set(s: @Ann String) {}
+    set(s: <!WRONG_SETTER_PARAMETER_TYPE!>@Ann String<!>) {}
 
 
 fun f4(fn: (@Ann Int, @Ann Int) -> Unit) {}
