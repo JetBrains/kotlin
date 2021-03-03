@@ -49,10 +49,7 @@ val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?
 repositories {
     maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
     jcenter()
-    maven("https://jetbrains.bintray.com/intellij-third-party-dependencies/")
-    maven("https://cache-redirector.jetbrains.com/dl.kotlin.bintray.com/kotlinx")
     gradlePluginPortal()
-    maven("https://kotlin.bintray.com/kotlin-dev")
     extra["bootstrapKotlinRepo"]?.let {
         maven(url = it)
     }
@@ -64,10 +61,8 @@ tasks.validatePlugins.configure {
 
 
 sourceSets["main"].withConvention(org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet::class) {
-    //kotlin.srcDir("tools/benchmarks/shared/src/main/kotlin")
     kotlin.srcDir("../../../build-tools/src/main/kotlin")
     kotlin.srcDir("../../../performance/buildSrc/src/main/kotlin")
-    //kotlin.srcDir("../../build-tools/src/main/kotlin")
     kotlin.srcDir("../../../shared/src/library/kotlin")
     kotlin.srcDir("../../../shared/src/main/kotlin")
     kotlin.srcDir("../../benchmarks/shared/src/main/kotlin/report")
@@ -85,6 +80,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.25")
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}")
     api("org.jetbrains.kotlin:kotlin-native-utils:${project.bootstrapKotlinVersion}")
+    api("org.jetbrains.kotlin:kotlin-util-klib:${project.bootstrapKotlinVersion}")
     compileOnly(gradleApi())
     val kotlinVersion = project.bootstrapKotlinVersion
     val ktorVersion = "1.2.1"
@@ -106,6 +102,5 @@ dependencies {
     // Located in <repo root>/shared and always provided by the composite build.
     //api("org.jetbrains.kotlin:kotlin-native-shared:$konanVersion")
     implementation("com.github.jengelman.gradle.plugins:shadow:$shadowVersion")
-
     implementation("org.jetbrains.kotlinx:kotlinx-metadata-klib:$metadataVersion")
 }
