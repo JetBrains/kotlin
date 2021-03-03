@@ -1098,11 +1098,11 @@ private fun assembleWorkspace(): TWorkspace = workspace {
         }
     }
 
-    testGroup("fir", testDataPath = "../idea/testData") {
+    testGroup("fir", testDataPath = "..") {
         testClass<AbstractHLLocalInspectionTest> {
             val pattern = "^([\\w\\-_]+)\\.(kt|kts)$".toRegex()
-            model("testData/inspectionsLocal/redundantVisibilityModifier", pattern = pattern)
-            model("idea-fir/testData/inspectionsLocal", pattern = pattern)
+            model("idea/testData/inspectionsLocal/redundantVisibilityModifier", pattern = pattern)
+            model("fir/testData/inspectionsLocal", pattern = pattern)
         }
     }
 
