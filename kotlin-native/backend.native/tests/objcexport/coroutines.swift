@@ -51,7 +51,11 @@ private func testSuspendFuncAsync(doThrow: Bool) throws {
     var result: AnyObject? = nil
     var error: Error? = nil
 
+#if NO_GENERICS
+    let continuationHolder = ContinuationHolder()
+#else
     let continuationHolder = ContinuationHolder<AnyObject>()
+#endif
 
     CoroutinesKt.suspendFunAsync(result: nil, continuationHolder: continuationHolder) { _result, _error in
         completionCalled += 1
@@ -114,7 +118,11 @@ private class SuspendFunImpl : SuspendFun {
 }
 
 private func testSuspendFunImpl(doYield: Bool, doThrow: Bool) throws {
+#if NO_GENERICS
+    let resultHolder = ResultHolder()
+#else
     let resultHolder = ResultHolder<KotlinInt>()
+#endif
 
     let impl = SuspendFunImpl()
 
@@ -141,7 +149,7 @@ private func testSuspendFunImpl(doYield: Bool, doThrow: Bool) throws {
             try fail()
         }
     } else {
-        try assertEquals(actual: resultHolder.result, expected: 17)
+        try assertEquals(actual: resultHolder.result as! Int, expected: 17)
         try assertNil(resultHolder.exception)
     }
 }
@@ -213,12 +221,16 @@ private class SwiftSuspendBridge : AbstractSuspendBridge {
 }
 
 private func testBridges() throws {
+#if NO_GENERICS
+    let resultHolder = ResultHolder()
+#else
     let resultHolder = ResultHolder<KotlinUnit>()
+#endif
     try CoroutinesKt.callSuspendBridge(bridge: SwiftSuspendBridge(), resultHolder: resultHolder)
 
     try assertEquals(actual: resultHolder.completed, expected: 1)
     try assertNil(resultHolder.exception)
-    try assertSame(actual: resultHolder.result, expected: KotlinUnit())
+    try assertSame(actual: resultHolder.result as AnyObject, expected: KotlinUnit())
 }
 
 private func testImplicitThrows1() throws {

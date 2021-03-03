@@ -150,9 +150,14 @@ internal class ObjCExportLazyImpl(
         }
     }
 
-    private fun translateGenerics(ktClassOrObject: KtClassOrObject): List<String> = if (configuration.objcGenerics) {
+    private fun translateGenerics(ktClassOrObject: KtClassOrObject): List<ObjCGenericTypeDeclaration> = if (configuration.objcGenerics) {
         ktClassOrObject.typeParametersWithOuter
-                .map { nameTranslator.getTypeParameterName(it) }
+                .map {
+                    ObjCGenericTypeRawDeclaration(
+                            nameTranslator.getTypeParameterName(it),
+                            ObjCVariance.fromKotlinVariance(it.variance)
+                    )
+                }
                 .toList()
     } else {
         emptyList()
@@ -316,7 +321,7 @@ internal class ObjCExportLazyImpl(
     private class LazyObjCInterfaceImpl(
         name: ObjCExportNamer.ClassOrProtocolName,
         attributes: List<String>,
-        generics: List<String>,
+        generics: List<ObjCGenericTypeDeclaration>,
         override val psi: KtClassOrObject,
         private val lazy: ObjCExportLazyImpl
     ) : LazyObjCInterface(name = name, generics = generics, categoryName = null, attributes = attributes) {
@@ -382,14 +387,14 @@ private abstract class LazyObjCInterface : ObjCInterface {
 
     constructor(
             name: ObjCExportNamer.ClassOrProtocolName,
-            generics: List<String>,
+            generics: List<ObjCGenericTypeDeclaration>,
             categoryName: String?,
             attributes: List<String>
     ) : super(name.objCName, generics, categoryName, attributes + name.toNameAttributes())
 
     constructor(
             name: String,
-            generics: List<String>,
+            generics: List<ObjCGenericTypeDeclaration>,
             categoryName: String,
             attributes: List<String>
     ) : super(name, generics, categoryName, attributes)

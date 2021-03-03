@@ -14,6 +14,11 @@ class ObjCComment(val contentLines: List<String>) {
     constructor(vararg contentLines: String) : this(contentLines.toList())
 }
 
+data class ObjCClassForwardDeclaration(
+        val className: String,
+        val typeDeclarations: List<ObjCGenericTypeDeclaration> = emptyList()
+)
+
 abstract class Stub<out D : DeclarationDescriptor>(val name: String, val comment: ObjCComment? = null) {
     abstract val descriptor: D?
     open val psi: PsiElement?
@@ -41,7 +46,7 @@ class ObjCProtocolImpl(
         attributes: List<String> = emptyList()) : ObjCProtocol(name, attributes)
 
 abstract class ObjCInterface(name: String,
-                             val generics: List<String>,
+                             val generics: List<ObjCGenericTypeDeclaration>,
                              val categoryName: String?,
                              attributes: List<String>) : ObjCClass<ClassDescriptor>(name, attributes) {
     abstract val superClass: String?
@@ -50,7 +55,7 @@ abstract class ObjCInterface(name: String,
 
 class ObjCInterfaceImpl(
         name: String,
-        generics: List<String> = emptyList(),
+        generics: List<ObjCGenericTypeDeclaration> = emptyList(),
         override val descriptor: ClassDescriptor? = null,
         override val superClass: String? = null,
         override val superClassGenerics: List<ObjCNonNullReferenceType> = emptyList(),

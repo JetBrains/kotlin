@@ -384,7 +384,11 @@ func testGenericsFoo() throws {
 }
 
 func testVararg() throws {
+#if NO_GENERICS
+    let ktArray = KotlinArray(size: 3, init: { (_) -> NSNumber in return 42 })
+#else
     let ktArray = KotlinArray<AnyObject>(size: 3, init: { (_) -> NSNumber in return 42 })
+#endif
     let arr: [Int] = ValuesKt.varargToList(args: ktArray) as! [Int]
     try assertEquals(actual: arr, expected: [42, 42, 42])
 }
@@ -507,13 +511,21 @@ func testDataClass() throws {
     let s = "2"
     let t = "3"
 
+#if NO_GENERICS
+    let tripleVal = TripleVals(first: f as NSString, second: s as NSString, third: t as NSString)
+#else
     let tripleVal = TripleVals<NSString>(first: f as NSString, second: s as NSString, third: t as NSString)
+#endif
     try assertEquals(actual: tripleVal.first as! String, expected: f, "Data class' value")
     try assertEquals(actual: tripleVal.component2() as! String, expected: s, "Data class' component")
     print(tripleVal)
     try assertEquals(actual: String(describing: tripleVal), expected: "TripleVals(first=\(f), second=\(s), third=\(t))")
 
+#if NO_GENERICS
+    let tripleVar = TripleVars(first: f as NSString, second: s as NSString, third: t as NSString)
+#else
     let tripleVar = TripleVars<NSString>(first: f as NSString, second: s as NSString, third: t as NSString)
+#endif
     try assertEquals(actual: tripleVar.first as! String, expected: f, "Data class' value")
     try assertEquals(actual: tripleVar.component2() as! String, expected: s, "Data class' component")
     print(tripleVar)
@@ -542,7 +554,11 @@ func testInlineClasses() throws {
     let ic1N = ValuesKt.box(ic1: 17)
     let ic2 = "foo"
     let ic2N = "bar"
+#if NO_GENERICS
+    let ic3 = TripleVals(first: 1, second: 2, third: 3)
+#else
     let ic3 = TripleVals<NSNumber>(first: 1, second: 2, third: 3)
+#endif
     let ic3N = ValuesKt.box(ic3: nil)
 
     try assertEquals(
@@ -609,7 +625,11 @@ func testPureSwiftClasses() throws {
 func testNames() throws {
     try assertEquals(actual: ValuesKt.PROPERTY_NAME_MUST_NOT_BE_ALTERED_BY_SWIFT, expected: 111)
     try assertEquals(actual: Deeply.NestedType().thirtyTwo, expected: 32)
+#if NO_GENERICS
+    try assertEquals(actual: WithGenericDeeply.NestedType().thirtyThree, expected: 33)
+#else
     try assertEquals(actual: WithGenericDeeplyNestedType<AnyObject>().thirtyThree, expected: 33)
+#endif
     try assertEquals(actual: CKeywords(float: 1.0, enum : 42, goto: true).goto_, expected: true)
     try assertEquals(actual: TypeOuter.Type_().thirtyFour, expected: 34)
     try assertTrue(String(describing: DeeplyNestedIType.self).hasSuffix("DeeplyNestedIType"))
@@ -637,7 +657,11 @@ class TransformIntToLongCallingSuper : TransformIntToLong {
 }
 
 func testKotlinOverride() throws {
+#if NO_GENERICS
+    try assertEquals(actual: TransformInheritingDefault().map(value: 1) as! Int32, expected: 1)
+#else
     try assertEquals(actual: TransformInheritingDefault<NSNumber>().map(value: 1) as! Int32, expected: 1)
+#endif
     try assertEquals(actual: TransformIntToDecimalString().map(value: 2), expected: "2")
     try assertEquals(actual: TransformIntToDecimalString().map(intValue: 3), expected: "3")
     try assertEquals(actual: ValuesKt.createTransformDecimalStringToInt().map(value: "4") as! Int32, expected: 4)

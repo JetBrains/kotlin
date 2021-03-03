@@ -33,7 +33,11 @@ private class DeallocRetain : DeallocRetainBase {
     static var deallocated = false
     static var retainObject: DeallocRetain? = nil
     static weak var weakObject: DeallocRetain? = nil
+#if NO_GENERICS
+    static var kotlinWeakRef: KotlinWeakReference? = nil
+#else
     static var kotlinWeakRef: KotlinWeakReference<AnyObject>? = nil
+#endif
 
     override init() {
         super.init()
@@ -43,7 +47,7 @@ private class DeallocRetain : DeallocRetainBase {
 
     func checkWeak() throws {
         try assertSame(actual: DeallocRetain.weakObject, expected: self)
-        try assertSame(actual: DeallocRetain.kotlinWeakRef!.value, expected: self)
+        try assertSame(actual: DeallocRetain.kotlinWeakRef!.value as AnyObject, expected: self)
     }
 
     deinit {

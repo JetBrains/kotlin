@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.objcexport
 
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.types.Variance
 
 sealed class ObjCType {
     final override fun toString(): String = this.render()
@@ -18,7 +19,7 @@ sealed class ObjCType {
             if (attrsAndName.isEmpty()) this else "$this ${attrsAndName.trimStart()}"
 }
 
-class ObjCRawType(
+data class ObjCRawType(
         val rawText: String
 ) : ObjCType() {
     override fun render(attrsAndName: String): String = rawText.withAttrsAndName(attrsAndName)
@@ -34,7 +35,7 @@ data class ObjCNullableReferenceType(
     override fun render(attrsAndName: String) = nonNullType.render(" _Nullable".withAttrsAndName(attrsAndName))
 }
 
-class ObjCClassType(
+data class ObjCClassType(
         val className: String,
         val typeArguments: List<ObjCNonNullReferenceType> = emptyList()
 ) : ObjCNonNullReferenceType() {
@@ -51,16 +52,24 @@ class ObjCClassType(
     }
 }
 
-class ObjCGenericTypeDeclaration(
-        val typeParameterDescriptor: TypeParameterDescriptor,
-        val namer: ObjCExportNamer
-) : ObjCNonNullReferenceType() {
-    override fun render(attrsAndName: String): String {
-        return namer.getTypeParameterName(typeParameterDescriptor).withAttrsAndName(attrsAndName)
+sealed class ObjCGenericTypeUsage: ObjCNonNullReferenceType() {
+    abstract val typeName: String
+    final override fun render(attrsAndName: String): String {
+        return typeName.withAttrsAndName(attrsAndName)
     }
 }
 
-class ObjCProtocolType(
+data class ObjCGenericTypeRawUsage(override val typeName: String) : ObjCGenericTypeUsage()
+
+data class ObjCGenericTypeParameterUsage(
+        val typeParameterDescriptor: TypeParameterDescriptor,
+        val namer: ObjCExportNamer
+) : ObjCGenericTypeUsage() {
+    override val typeName: String
+        get() = namer.getTypeParameterName(typeParameterDescriptor)
+}
+
+data class ObjCProtocolType(
         val protocolName: String
 ) : ObjCNonNullReferenceType() {
     override fun render(attrsAndName: String) = "id<$protocolName>".withAttrsAndName(attrsAndName)
@@ -74,7 +83,7 @@ object ObjCInstanceType : ObjCNonNullReferenceType() {
     override fun render(attrsAndName: String): String = "instancetype".withAttrsAndName(attrsAndName)
 }
 
-class ObjCBlockPointerType(
+data class ObjCBlockPointerType(
         val returnType: ObjCType,
         val parameterTypes: List<ObjCReferenceType>
 ) : ObjCNonNullReferenceType() {
@@ -124,7 +133,7 @@ sealed class ObjCPrimitiveType(
     override fun render(attrsAndName: String) = cName.withAttrsAndName(attrsAndName)
 }
 
-class ObjCPointerType(
+data class ObjCPointerType(
         val pointee: ObjCType,
         val nullable: Boolean = false
 ) : ObjCType() {
@@ -154,6 +163,41 @@ internal enum class ObjCValueType(val encoding: String) {
     FLOAT("f"),
     DOUBLE("d"),
     POINTER("^v")
+}
+
+enum class ObjCVariance(internal val declaration: String) {
+    INVARIANT(""),
+    COVARIANT("__covariant "),
+    CONTRAVARIANT("__contravariant ");
+
+    companion object {
+        fun fromKotlinVariance(variance: Variance): ObjCVariance = when (variance) {
+            Variance.OUT_VARIANCE -> COVARIANT
+            Variance.IN_VARIANCE -> CONTRAVARIANT
+            else -> INVARIANT
+        }
+    }
+}
+
+sealed class ObjCGenericTypeDeclaration {
+    abstract val typeName: String
+    abstract val variance: ObjCVariance
+    final override fun toString(): String = variance.declaration + typeName
+}
+
+data class ObjCGenericTypeRawDeclaration(
+        override val typeName: String,
+        override val variance: ObjCVariance = ObjCVariance.INVARIANT
+) : ObjCGenericTypeDeclaration()
+
+data class ObjCGenericTypeParameterDeclaration(
+        val typeParameterDescriptor: TypeParameterDescriptor,
+        val namer: ObjCExportNamer
+) : ObjCGenericTypeDeclaration() {
+    override val typeName: String
+        get() = namer.getTypeParameterName(typeParameterDescriptor)
+    override val variance: ObjCVariance
+        get() = ObjCVariance.fromKotlinVariance(typeParameterDescriptor.variance)
 }
 
 internal fun ObjCType.makeNullableIfReferenceOrPointer(): ObjCType = when (this) {
