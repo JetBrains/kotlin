@@ -31,6 +31,9 @@ open class FrameworkTest : DefaultTask(), KonanTestExecutable {
     lateinit var swiftSources: List<String>
 
     @Input
+    var swiftExtraOpts: List<String> = emptyList()
+
+    @Input
     lateinit var frameworks: MutableList<Framework>
 
     @Input
@@ -159,7 +162,7 @@ open class FrameworkTest : DefaultTask(), KonanTestExecutable {
                 "-F", frameworkParentDirPath,
                 "-Xcc", "-Werror" // To fail compilation on warnings in framework header.
         )
-        compileSwift(project, project.testTarget, sources, options, Paths.get(executable), fullBitcode)
+        compileSwift(project, project.testTarget, sources, options + swiftExtraOpts, Paths.get(executable), fullBitcode)
     }
 
     @TaskAction

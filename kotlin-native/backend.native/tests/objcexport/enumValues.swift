@@ -5,10 +5,10 @@ private func testEnumValues() throws {
 
     try assertEquals(actual: values.size, expected: 4)
 
-    try assertSame(actual: values.get(index: 0), expected: EnumLeftRightUpDown.left)
-    try assertSame(actual: values.get(index: 1), expected: EnumLeftRightUpDown.right)
-    try assertSame(actual: values.get(index: 2), expected: EnumLeftRightUpDown.up)
-    try assertSame(actual: values.get(index: 3), expected: EnumLeftRightUpDown.down)
+    try assertSame(actual: values.get(index: 0) as AnyObject, expected: EnumLeftRightUpDown.left)
+    try assertSame(actual: values.get(index: 1) as AnyObject, expected: EnumLeftRightUpDown.right)
+    try assertSame(actual: values.get(index: 2) as AnyObject, expected: EnumLeftRightUpDown.up)
+    try assertSame(actual: values.get(index: 3) as AnyObject, expected: EnumLeftRightUpDown.down)
 }
 
 private func testEnumValuesMangled() throws {
@@ -16,10 +16,10 @@ private func testEnumValuesMangled() throws {
 
     try assertEquals(actual: values.size, expected: 4)
 
-    try assertSame(actual: values.get(index: 0), expected: EnumOneTwoThreeValues.one)
-    try assertSame(actual: values.get(index: 1), expected: EnumOneTwoThreeValues.two)
-    try assertSame(actual: values.get(index: 2), expected: EnumOneTwoThreeValues.three)
-    try assertSame(actual: values.get(index: 3), expected: EnumOneTwoThreeValues.values)
+    try assertSame(actual: values.get(index: 0) as AnyObject, expected: EnumOneTwoThreeValues.one)
+    try assertSame(actual: values.get(index: 1) as AnyObject, expected: EnumOneTwoThreeValues.two)
+    try assertSame(actual: values.get(index: 2) as AnyObject, expected: EnumOneTwoThreeValues.three)
+    try assertSame(actual: values.get(index: 3) as AnyObject, expected: EnumOneTwoThreeValues.values)
 }
 
 private func testEnumValuesMangledTwice() throws {
@@ -27,8 +27,8 @@ private func testEnumValuesMangledTwice() throws {
 
     try assertEquals(actual: values.size, expected: 2)
 
-    try assertSame(actual: values.get(index: 0), expected: EnumValuesValues_.values)
-    try assertSame(actual: values.get(index: 1), expected: EnumValuesValues_.values_)
+    try assertSame(actual: values.get(index: 0) as AnyObject, expected: EnumValuesValues_.values)
+    try assertSame(actual: values.get(index: 1) as AnyObject, expected: EnumValuesValues_.values_)
 }
 
 private func testEnumValuesEmpty() throws {

@@ -4730,6 +4730,59 @@ if (isAppleTarget(project)) {
         swiftSources = ['objcexport']
     }
 
+    frameworkTest('testObjCExportNoGenerics') {
+        enabled = !isExperimentalMM // Experimental MM doesn't support ObjC blocks yet.
+        final String frameworkName = 'KtNoGenerics'
+        final String frameworkArtifactName = 'Kt'
+        final String dir = "$testOutputFramework/testObjCExportNoGenerics"
+        final File lazyHeader = file("$dir/$target-lazy.h")
+
+        doLast {
+            final String expectedLazyHeaderName = "expectedLazyNoGenerics.h"
+            final String expectedLazyHeaderDir = file("objcexport/")
+            final File expectedLazyHeader = new File(expectedLazyHeaderDir, expectedLazyHeaderName)
+
+            if (expectedLazyHeader.readLines() != lazyHeader.readLines()) {
+                exec {
+                    commandLine 'diff', '-u', expectedLazyHeader, lazyHeader
+                    ignoreExitValue = true
+                }
+
+                copy {
+                    from(lazyHeader)
+                    into(expectedLazyHeaderDir)
+                    rename { expectedLazyHeaderName }
+                }
+
+                throw new Error("$expectedLazyHeader file patched;\nre-run the test and don't forget to commit the patch")
+            }
+
+        }
+
+        def libraryName = frameworkName + "Library"
+        konanArtifacts {
+            library(libraryName, targets: [target.name]) {
+                srcDir "objcexport/library"
+                artifactName "test-library"
+
+                if (!useCustomDist) {
+                    dependsOn ":${target.name}CrossDistRuntime", ':distCompiler'
+                }
+
+                extraOpts "-Xshort-module-name=MyLibrary"
+                extraOpts "-module-name", "org.jetbrains.kotlin.native.test-library"
+            }
+        }
+        framework(frameworkName) {
+            sources = ['objcexport']
+            artifact = frameworkArtifactName
+            library = libraryName
+            opts = ["-Xemit-lazy-objc-header=$lazyHeader", "-Xno-objc-generics"]
+        }
+        swiftSources = ['objcexport']
+        swiftExtraOpts = [ '-D', 'NO_GENERICS' ]
+    }
+
     frameworkTest('testObjCExportStatic') {
         enabled = !isExperimentalMM // Experimental MM doesn't support ObjC blocks yet.
         final String frameworkName = 'KtStatic'

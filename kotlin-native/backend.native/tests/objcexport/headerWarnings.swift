@@ -9,6 +9,7 @@ import Kt
 // It is enough to have just Kotlin declarations at the moment.
 // Adding usages for all declarations to avoid any kind of DCE that may appear later.
 
+#if !NO_GENERICS
 private func testIncompatiblePropertyType() throws {
     let c = TestIncompatiblePropertyTypeWarning.ClassOverridingInterfaceWithGenericProperty(
             p: TestIncompatiblePropertyTypeWarningGeneric<NSString>(value: "cba")
@@ -21,6 +22,7 @@ private func testIncompatiblePropertyType() throws {
     let pi: TestIncompatiblePropertyTypeWarningGeneric<AnyObject> = i.p
     try assertEquals(actual: pi.value as! String, expected: "cba")
 }
+#endif
 
 private func testGH3992() throws {
     let d = TestGH3992.D(a: TestGH3992.B())
@@ -36,7 +38,9 @@ class HeaderWarningsTests : SimpleTestProvider {
     override init() {
         super.init()
 
+#if !NO_GENERICS
         test("TestIncompatiblePropertyType", testIncompatiblePropertyType)
+#endif
         test("TestGH3992", testGH3992)
     }
 }
