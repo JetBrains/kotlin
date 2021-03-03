@@ -215,7 +215,20 @@ class ResultTypeResolver(
         val upperConstraints =
             variableWithConstraints.constraints.filter { it.kind == ConstraintKind.UPPER && this@findSuperType.isProperTypeForFixation(it.type) }
         if (upperConstraints.isNotEmpty()) {
-            val upperType = intersectTypes(upperConstraints.map { it.type })
+            val intersectionUpperType = intersectTypes(upperConstraints.map { it.type })
+            val isThereExpectedTypeConstraint = upperConstraints.any { it.isExpectedTypePosition() }
+            val nonExpectedTypeConstraints = upperConstraints.filterNot { it.isExpectedTypePosition() }
+            val resultIsActuallyIntersection = intersectionUpperType.typeConstructor().isIntersection()
+            val upperType = if (isThereExpectedTypeConstraint && nonExpectedTypeConstraints.isNotEmpty() && resultIsActuallyIntersection) {
+                /*
+                 * We shouldn't infer a type variable into the intersection type if there is an explicit expected type,
+                 * otherwise it can lead to something like this:
+                 *
+                 * fun <T : String> materialize(): T = null as T
+                 * val bar: Int = materialize() // no errors, T is inferred into String & Int
+                 */
+                intersectTypes(nonExpectedTypeConstraints.map { it.type })
+            } else intersectionUpperType
 
             return typeApproximator.approximateToSubType(
                 upperType,

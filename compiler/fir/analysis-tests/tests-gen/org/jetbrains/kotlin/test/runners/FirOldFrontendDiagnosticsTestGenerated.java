@@ -28732,6 +28732,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("dontIntersectUpperBoundWithExpectedType.kt")
+            public void testDontIntersectUpperBoundWithExpectedType() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/typeParameters/dontIntersectUpperBoundWithExpectedType.kt");
+            }
+
+            @Test
             @TestMetadata("extFunctionTypeAsUpperBound.kt")
             public void testExtFunctionTypeAsUpperBound() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/typeParameters/extFunctionTypeAsUpperBound.kt");
@@ -28765,6 +28771,18 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             @TestMetadata("implicitNothingOnDelegates.kt")
             public void testImplicitNothingOnDelegates() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/typeParameters/implicitNothingOnDelegates.kt");
+            }
+
+            @Test
+            @TestMetadata("kt42396.kt")
+            public void testKt42396() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/typeParameters/kt42396.kt");
+            }
+
+            @Test
+            @TestMetadata("kt42472.kt")
+            public void testKt42472() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/typeParameters/kt42472.kt");
             }
 
             @Test
