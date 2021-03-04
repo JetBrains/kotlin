@@ -38,3 +38,20 @@ RUNTIME_WEAK void __throw_length_error(const char* __s __attribute__((unused))) 
 }  // namespace std
 
 #endif // KONAN_LINUX || KONAN_WINDOWS
+
+#if KONAN_LINUX
+
+#include <system_error>
+
+// Since GCC 4.8.5 mangling for std::system_category has changed from _ZNSt3_V215system_categoryEv to _ZSt15system_categoryv.
+// It causes linkage problems in case of kotlinx-datetime:0.1.1 usage, because its C++ dependency is compiled with old GCC 4.8.5.
+// So to avoid nasty linkage problems when users migrate their projects with kotlinx-datetime:0.1.1 dependency from 1.4.x to 1.5.x
+// we provide this compatibility layer.
+RUNTIME_WEAK
+const std::error_category& std_system_category_backward_compatibility_with_gcc_4_8_5() noexcept __asm("_ZSt15system_categoryv");
+
+const std::error_category& std_system_category_backward_compatibility_with_gcc_4_8_5() noexcept {
+    return std::system_category();
+}
+
+#endif // KONAN_LINUX
