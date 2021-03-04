@@ -32,7 +32,6 @@ object CirTypeFactory {
 
     private val classTypeInterner = Interner<CirClassType>()
     private val typeAliasTypeInterner = Interner<CirTypeAliasType>()
-    private val typeParameterTypeInterner = Interner<CirTypeParameterType>()
 
     fun create(source: KmType, typeResolver: CirTypeResolver): CirType {
         @Suppress("NAME_SHADOWING")
@@ -76,7 +75,7 @@ object CirTypeFactory {
                 )
             }
             is KmClassifier.TypeParameter -> {
-                createTypeParameterType(
+                CirTypeParameterType.createInterned(
                     index = typeResolver.resolveTypeParameterIndex(classifier.id),
                     isMarkedNullable = isMarkedNullable
                 )
@@ -118,19 +117,6 @@ object CirTypeFactory {
         )
     }
 
-    @Suppress("MemberVisibilityCanBePrivate")
-    fun createTypeParameterType(
-        index: Int,
-        isMarkedNullable: Boolean
-    ): CirTypeParameterType {
-        return typeParameterTypeInterner.intern(
-            CirTypeParameterType(
-                index = index,
-                isMarkedNullable = isMarkedNullable
-            )
-        )
-    }
-
     fun <T : CirSimpleType> makeNullable(type: T): T {
         if (type.isMarkedNullable)
             return type
@@ -149,7 +135,7 @@ object CirTypeFactory {
                 arguments = type.arguments,
                 isMarkedNullable = true
             )
-            is CirTypeParameterType -> createTypeParameterType(
+            is CirTypeParameterType -> CirTypeParameterType.createInterned(
                 index = type.index,
                 isMarkedNullable = true
             )

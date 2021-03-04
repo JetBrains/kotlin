@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.descriptors.commonizer.cir
 
 import kotlinx.metadata.KmType
+import org.jetbrains.kotlin.descriptors.commonizer.utils.Interner
 import org.jetbrains.kotlin.types.Variance
 
 typealias CirTypeSignature = String
@@ -46,13 +47,26 @@ sealed class CirSimpleType : CirType() {
     }
 }
 
-data class CirTypeParameterType(
-    val index: Int,
-    override val isMarkedNullable: Boolean
-) : CirSimpleType() {
+abstract class CirTypeParameterType : CirSimpleType() {
+    abstract val index: Int
+
     override fun appendDescriptionTo(builder: StringBuilder) {
         builder.append('#').append(index)
         super.appendDescriptionTo(builder)
+    }
+
+    companion object {
+        fun createInterned(
+            index: Int,
+            isMarkedNullable: Boolean
+        ): CirTypeParameterType = interner.intern(
+            CirTypeParameterTypeInternedImpl(
+                index = index,
+                isMarkedNullable = isMarkedNullable
+            )
+        )
+
+        private val interner = Interner<CirTypeParameterTypeInternedImpl>()
     }
 }
 
@@ -111,3 +125,8 @@ data class CirTypeProjectionImpl(val projectionKind: Variance, val type: CirType
         type.appendDescriptionTo(this)
     }
 }
+
+private data class CirTypeParameterTypeInternedImpl(
+    override val index: Int,
+    override val isMarkedNullable: Boolean
+) : CirTypeParameterType()

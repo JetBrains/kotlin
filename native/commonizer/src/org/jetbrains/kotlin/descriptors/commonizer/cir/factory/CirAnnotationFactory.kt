@@ -34,7 +34,7 @@ object CirAnnotationFactory {
             arguments = clazz.typeParameters.compactMap { typeParameter ->
                 CirTypeProjectionImpl(
                     projectionKind = typeParameter.variance,
-                    type = CirTypeFactory.createTypeParameterType(
+                    type = CirTypeParameterType.createInterned(
                         index = typeParameter.index,
                         isMarkedNullable = false
                     )
