@@ -46,7 +46,7 @@ internal fun ComponentProvider.postprocessComponents(context: Context, files: Co
     context.frontendServices = this.get<FrontendServices>()
 
     context.config.configuration.get(KonanConfigKeys.EMIT_LAZY_OBJC_HEADER_FILE)?.let {
-        this.get<ObjCExportLazy>().dumpObjCHeader(files, it)
+        this.get<ObjCExportLazy>().dumpObjCHeader(files, it, context.shouldExportKDoc())
     }
 }
 

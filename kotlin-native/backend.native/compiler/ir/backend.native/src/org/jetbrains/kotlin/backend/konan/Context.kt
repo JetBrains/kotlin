@@ -399,6 +399,9 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
         printIr()
         printBitCode()
     }
+
+    fun shouldExportKDoc() = config.configuration.getBoolean(KonanConfigKeys.EXPORT_KDOC)
+
     fun shouldVerifyBitCode() = config.configuration.getBoolean(KonanConfigKeys.VERIFY_BITCODE)
 
     fun shouldPrintBitCode() = config.configuration.getBoolean(KonanConfigKeys.PRINT_BITCODE)

@@ -173,6 +173,8 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 put(OVERRIDE_CLANG_OPTIONS, arguments.clangOptions.toNonNullList())
                 put(ALLOCATION_MODE, arguments.allocator)
 
+                put(EXPORT_KDOC, arguments.exportKDoc)
+
                 put(PRINT_IR, arguments.printIr)
                 put(PRINT_IR_WITH_DESCRIPTORS, arguments.printIrWithDescriptors)
                 put(PRINT_DESCRIPTORS, arguments.printDescriptors)

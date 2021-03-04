@@ -6,18 +6,32 @@
 package org.jetbrains.kotlin.backend.konan.objcexport
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
+import org.jetbrains.kotlin.backend.common.serialization.extractSerializedKdocString
+import org.jetbrains.kotlin.backend.common.serialization.metadata.findKDocString
 
 object StubRenderer {
-    fun render(stub: Stub<*>): List<String> = collect {
+    fun render(stub: Stub<*>): List<String> = render(stub, false)
+    internal fun render(stub: Stub<*>, shouldExportKDoc: Boolean): List<String> = collect {
         stub.run {
-            this.comment?.let { comment ->
+            val kDoc = if (shouldExportKDoc) {
+                this.descriptor?.extractKDocString()
+            } else null
+            kDoc?.let {
                 +"" // Probably makes the output more readable.
+                +it // Let's try to keep non-trivial kdoc formatting intact
+            }
+
+            this.comment?.let { comment ->
+                kDoc?: let { +"" } // Probably makes the output more readable.
                 +"/**"
                 comment.contentLines.forEach {
                     +" $it"
                 }
                 +"*/"
             }
+
             when (this) {
                 is ObjCProtocol -> {
                     attributes.forEach {
@@ -25,7 +39,7 @@ object StubRenderer {
                     }
                     +renderProtocolHeader()
                     +"@required"
-                    renderMembers(this)
+                    renderMembers(this, shouldExportKDoc)
                     +"@end;"
                 }
                 is ObjCInterface -> {
@@ -33,7 +47,7 @@ object StubRenderer {
                         +renderAttribute(it)
                     }
                     +renderInterfaceHeader()
-                    renderMembers(this)
+                    renderMembers(this, shouldExportKDoc)
                     +"@end;"
                 }
                 is ObjCMethod -> {
@@ -168,9 +182,9 @@ object StubRenderer {
         appendSuperProtocols(this@renderInterfaceHeader)
     }
 
-    private fun Collector.renderMembers(clazz: ObjCClass<*>) {
+    private fun Collector.renderMembers(clazz: ObjCClass<*>, shouldExportKDoc: Boolean) {
         clazz.members.forEach {
-            +render(it)
+            +render(it, shouldExportKDoc)
         }
     }
 
@@ -200,5 +214,10 @@ internal fun formatGenerics(buffer: Appendable, generics:List<String>) {
     if (generics.isNotEmpty()) {
         generics.joinTo(buffer, separator = ", ", prefix = "<", postfix = ">")
     }
+}
+
+private fun DeclarationDescriptor.extractKDocString(): String? {
+    return (this as? DeclarationDescriptorWithSource)?.findKDocString()
+            ?: extractSerializedKdocString()
 }
 

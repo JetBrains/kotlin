@@ -23,6 +23,9 @@ internal class ObjCExportHeaderGeneratorImpl(
         namer: ObjCExportNamer,
         objcGenerics: Boolean
 ) : ObjCExportHeaderGenerator(moduleDescriptors, mapper, namer, objcGenerics, ProblemCollector(context)) {
+
+    override val shouldExportKDoc = context.shouldExportKDoc()
+
     private class ProblemCollector(val context: Context) : ObjCExportProblemCollector {
         override fun reportWarning(text: String) {
             context.reportCompilationWarning(text)
