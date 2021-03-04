@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirName
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirType
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirValueParameter
-import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirValueParameterFactory
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirKnownClassifiers
 import org.jetbrains.kotlin.descriptors.commonizer.utils.isNull
 
@@ -19,7 +18,7 @@ class ValueParameterCommonizer(classifiers: CirKnownClassifiers) : AbstractStand
     private var isCrossinline = true
     private var isNoinline = true
 
-    override fun commonizationResult() = CirValueParameterFactory.create(
+    override fun commonizationResult() = CirValueParameter.createInterned(
         annotations = emptyList(),
         name = name,
         returnType = returnType.result,

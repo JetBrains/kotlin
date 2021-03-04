@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirValueParameter
-import org.jetbrains.kotlin.descriptors.commonizer.core.CirTestValueParameter.Companion.areEqual
+import org.jetbrains.kotlin.descriptors.commonizer.core.CirValueParameterTestImpl.Companion.areEqual
 import org.jetbrains.kotlin.descriptors.commonizer.utils.MOCK_CLASSIFIERS
 import org.junit.Test
 

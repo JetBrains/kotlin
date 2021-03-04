@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.cir.CirAnnotation
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirName
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirType
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirValueParameter
-import org.jetbrains.kotlin.descriptors.commonizer.core.CirTestValueParameter.Companion.areEqual
+import org.jetbrains.kotlin.descriptors.commonizer.core.CirValueParameterTestImpl.Companion.areEqual
 import org.jetbrains.kotlin.descriptors.commonizer.core.TypeCommonizerTest.Companion.areEqual
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirKnownClassifiers
 import org.jetbrains.kotlin.descriptors.commonizer.utils.MOCK_CLASSIFIERS
@@ -156,7 +156,7 @@ class ValueParameterCommonizerTest : AbstractCommonizerTest<CirValueParameter, C
         ): CirValueParameter {
             val returnType = mockClassType(returnTypeClassId)
 
-            return CirTestValueParameter(
+            return CirValueParameterTestImpl(
                 name = CirName.create(name),
                 annotations = emptyList(),
                 returnType = returnType,
@@ -169,7 +169,7 @@ class ValueParameterCommonizerTest : AbstractCommonizerTest<CirValueParameter, C
     }
 }
 
-internal data class CirTestValueParameter(
+internal data class CirValueParameterTestImpl(
     override val name: CirName,
     override val annotations: List<CirAnnotation>,
     override val returnType: CirType,

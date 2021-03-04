@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.descriptors.commonizer.cir.CirCallableMemberWithPara
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirHasAnnotations
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirName
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirValueParameter
-import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirValueParameterFactory
 import org.jetbrains.kotlin.descriptors.commonizer.core.CallableValueParametersCommonizer.CallableToPatch.Companion.doNothing
 import org.jetbrains.kotlin.descriptors.commonizer.core.CallableValueParametersCommonizer.CallableToPatch.Companion.patchCallables
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirKnownClassifiers
@@ -51,7 +50,7 @@ class CallableValueParametersCommonizer(
                         callable.valueParameters = callable.valueParameters.compactMapIndexed { index, valueParameter ->
                             val newName = newNames[index]
                             if (valueParameter.name != newName) {
-                                CirValueParameterFactory.create(
+                                CirValueParameter.createInterned(
                                     annotations = valueParameter.annotations,
                                     name = newName,
                                     returnType = valueParameter.returnType,

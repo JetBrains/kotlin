@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.common.serialization.metadata.DynamicTypeDes
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeFactory
-import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirValueParameterImpl
 import org.jetbrains.kotlin.descriptors.commonizer.core.computeExpandedType
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.*
 import org.jetbrains.kotlin.descriptors.commonizer.metadata.TypeAliasExpansion.*
@@ -168,15 +167,15 @@ internal fun CirProperty.buildProperty(
         property.receiverParameterType = receiver.type.buildType(context)
     }
     setter?.takeIf { !it.isDefault }?.let { setter ->
-        property.setterParameter = CirValueParameterImpl(
-            annotations = setter.parameterAnnotations,
-            name = DEFAULT_SETTER_VALUE_NAME,
-            returnType = returnType,
-            varargElementType = null,
-            declaresDefaultValue = false,
-            isCrossinline = false,
-            isNoinline = false
-        ).buildValueParameter(context)
+        property.setterParameter = object : CirValueParameter {
+            override val annotations get() = setter.parameterAnnotations
+            override val name get() = DEFAULT_SETTER_VALUE_NAME
+            override val returnType get() = this@buildProperty.returnType
+            override val varargElementType: CirType? get() = null
+            override val declaresDefaultValue get() = false
+            override val isCrossinline get() = false
+            override val isNoinline get() = false
+        }.buildValueParameter(context)
     }
     property.returnType = returnType.buildType(context)
 }
