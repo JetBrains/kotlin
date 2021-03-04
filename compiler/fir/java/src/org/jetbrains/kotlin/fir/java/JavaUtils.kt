@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
+import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
@@ -519,7 +520,7 @@ private fun buildArgumentMapping(
     val mapping = annotationArguments.associateTo(linkedMapOf()) { argument ->
         val parameter = annotationConstructor.valueParameters.find { it.name == (argument.name ?: JavaSymbolProvider.VALUE_METHOD_NAME) }
             ?: return null
-        argument.toFirExpression(session, javaTypeParameterStack) to parameter
+        argument.toFirExpression(session, javaTypeParameterStack, parameter.returnTypeRef) to parameter
     }
     return buildResolvedArgumentList(mapping)
 }
@@ -555,7 +556,12 @@ internal fun JavaAnnotation.toFirAnnotationCall(
             null -> null
             else -> buildArgumentMapping(session, javaTypeParameterStack, lookupTag!!, arguments)
         } ?: buildArgumentList {
-            this@toFirAnnotationCall.arguments.mapTo(arguments) { it.toFirExpression(session, javaTypeParameterStack) }
+            this@toFirAnnotationCall.arguments.mapTo(arguments) {
+                val expectedArgumentType = buildErrorTypeRef {
+                    diagnostic = ConeSimpleDiagnostic("java annotation argument without expected type")
+                }
+                it.toFirExpression(session, javaTypeParameterStack, expectedArgumentType)
+            }
         }
         calleeReference = FirReferencePlaceholderForResolvedAnnotations
     }
@@ -624,14 +630,19 @@ private fun JavaType?.toConeProjectionWithoutEnhancement(
     }
 }
 
-private fun JavaAnnotationArgument.toFirExpression(
-    session: FirSession, javaTypeParameterStack: JavaTypeParameterStack
+internal fun JavaAnnotationArgument.toFirExpression(
+    session: FirSession, javaTypeParameterStack: JavaTypeParameterStack, expectedTypeRef: FirTypeRef
 ): FirExpression {
     return when (this) {
         is JavaLiteralAnnotationArgument -> value.createConstantOrError(session)
         is JavaArrayAnnotationArgument -> buildArrayOfCall {
+            typeRef = expectedTypeRef
+            val argumentTypeRef = buildResolvedTypeRef {
+                type = expectedTypeRef.coneTypeSafe<ConeKotlinType>()?.lowerBoundIfFlexible()?.arrayElementType()
+                    ?: ConeClassErrorType(ConeSimpleDiagnostic("expected type is not array type"))
+            }
             argumentList = buildArgumentList {
-                getElements().mapTo(arguments) { it.toFirExpression(session, javaTypeParameterStack) }
+                getElements().mapTo(arguments) { it.toFirExpression(session, javaTypeParameterStack, argumentTypeRef) }
             }
         }
         is JavaEnumValueAnnotationArgument -> buildEnumCall(session, enumClassId, entryName)

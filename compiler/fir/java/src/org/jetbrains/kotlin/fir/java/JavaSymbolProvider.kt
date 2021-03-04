@@ -454,8 +454,8 @@ class JavaSymbolProvider(
                 session = this@JavaSymbolProvider.session
                 returnTypeRef = firJavaMethod.returnTypeRef
                 name = methodName
-                if (javaMethod.hasAnnotationParameterDefaultValue) {
-                    defaultValue = buildExpressionStub()
+                javaMethod.annotationParameterDefaultValue?.let { javaDefaultValue ->
+                    defaultValue = javaDefaultValue.toFirExpression(session, javaTypeParameterStack, returnTypeRef)
                 }
                 isVararg = returnType is JavaArrayType && methodName == VALUE_METHOD_NAME
                 annotationBuilder = { emptyList() }

@@ -203,6 +203,8 @@ class FirSignatureEnhancement(
         }
 
         val newValueParameters = firMethod.valueParameters.zip(enhancedValueParameterTypes) { valueParameter, enhancedReturnType ->
+            valueParameter.defaultValue?.replaceTypeRef(enhancedReturnType)
+
             buildValueParameter {
                 source = valueParameter.source
                 session = this@FirSignatureEnhancement.session
