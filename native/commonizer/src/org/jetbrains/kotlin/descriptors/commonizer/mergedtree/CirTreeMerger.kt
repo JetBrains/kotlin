@@ -166,7 +166,7 @@ class CirTreeMerger(
         val packageNode: CirPackageNode = moduleNode.packages.getOrPut(packageName) {
             buildPackageNode(storageManager, leafTargetsSize)
         }
-        packageNode.targetDeclarations[context.targetIndex] = CirPackageFactory.create(packageName)
+        packageNode.targetDeclarations[context.targetIndex] = CirPackage.create(packageName)
 
         val classesToProcess = ClassesToProcess()
         fragments.forEach { fragment ->
