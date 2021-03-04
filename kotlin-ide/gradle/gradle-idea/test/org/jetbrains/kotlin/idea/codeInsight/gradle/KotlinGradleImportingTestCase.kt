@@ -34,11 +34,6 @@ abstract class KotlinGradleImportingTestCase : GradleImportingTestCase() {
         return File(baseDir, getTestName(true).substringBefore("_"))
     }
 
-    override fun setUp() {
-        Assume.assumeFalse(AndroidStudioTestUtils.skipIncompatibleTestAgainstAndroidStudio())
-        super.setUp()
-    }
-
     protected fun configureKotlinVersionAndProperties(text: String, properties: Map<String, String>? = null): String {
         var result = text
         (properties ?: mapOf("kotlin_plugin_version" to LATEST_STABLE_GRADLE_PLUGIN_VERSION)).forEach { (key, value) ->
