@@ -75,19 +75,7 @@ internal fun checkExpectDeclarationVisibilityAndBody(
     }
 }
 
-internal fun checkProperty(
-    containingClass: FirRegularClass?,
-    property: FirProperty,
-    modifierList: FirModifierList?,
-    isInitialized: Boolean,
-    reporter: DiagnosticReporter,
-    context: CheckerContext
-) {
-    checkPropertyInitializer(containingClass, property, modifierList, isInitialized, reporter, context)
-    checkPropertyAccessors(property, reporter, context)
-}
-
-private fun checkPropertyInitializer(
+internal fun checkPropertyInitializer(
     containingClass: FirRegularClass?,
     property: FirProperty,
     modifierList: FirModifierList?,
@@ -166,7 +154,7 @@ private fun checkPropertyInitializer(
     }
 }
 
-private fun checkPropertyAccessors(
+internal fun checkPropertyAccessors(
     property: FirProperty,
     reporter: DiagnosticReporter,
     context: CheckerContext
