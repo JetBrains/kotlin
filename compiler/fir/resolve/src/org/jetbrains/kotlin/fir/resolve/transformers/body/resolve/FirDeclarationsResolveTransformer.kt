@@ -115,7 +115,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
     }
 
     override fun transformEnumEntry(enumEntry: FirEnumEntry, data: ResolutionMode): CompositeTransformResult<FirDeclaration> {
-        context.withTowerDataContext(context.getTowerDataContextForConstructorResolution()) {
+        context.withTowerDataMode(FirTowerDataMode.CONSTRUCTOR_HEADER) {
             return (enumEntry.transformChildren(this, data) as FirEnumEntry).compose()
         }
     }
@@ -141,34 +141,31 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             }
             dataFlowAnalyzer.enterProperty(property)
             withFullBodyResolve {
-                withLocalScopeCleanup {
-                    val primaryConstructorParametersScope = context.getPrimaryConstructorPureParametersScope()
-                    context.withContainer(property) {
+                context.withContainer(property) {
+                    withPrimaryConstructorParameters(includeProperties = false) {
                         if (property.delegate != null) {
-                            addLocalScope(primaryConstructorParametersScope)
                             transformPropertyWithDelegate(property)
                         } else {
-                            withLocalScopeCleanup {
-                                addLocalScope(primaryConstructorParametersScope)
-                                property.transformChildrenWithoutAccessors(returnTypeRef)
-                            }
+                            property.transformChildrenWithoutAccessors(returnTypeRef)
                             if (property.initializer != null) {
                                 storeVariableReturnType(property)
                             }
-                            withLocalScopeCleanup {
-                                if (property.receiverTypeRef == null && property.returnTypeRef !is FirImplicitTypeRef) {
-                                    addLocalScope(FirLocalScope().storeBackingField(property))
-                                }
-                                property.transformAccessors()
-                            }
                         }
                     }
-                    transformer.replaceDeclarationResolvePhaseIfNeeded(property, transformerPhase)
-                    dataFlowAnalyzer.exitProperty(property)?.let {
-                        property.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(it))
+                    if (property.delegate == null) {
+                        withNewLocalScope {
+                            if (property.receiverTypeRef == null && property.returnTypeRef !is FirImplicitTypeRef) {
+                                context.storeBackingField(property)
+                            }
+                            property.transformAccessors()
+                        }
                     }
-                    property.compose()
                 }
+                transformer.replaceDeclarationResolvePhaseIfNeeded(property, transformerPhase)
+                dataFlowAnalyzer.exitProperty(property)?.let {
+                    property.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(it))
+                }
+                property.compose()
             }
         }
     }
@@ -183,23 +180,19 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         }
         dataFlowAnalyzer.enterField(field)
         return withFullBodyResolve {
-            withLocalScopeCleanup {
-                val primaryConstructorParametersScope = context.getPrimaryConstructorAllParametersScope()
-                context.withTowerDataContext(context.getTowerDataContextForConstructorResolution()) {
-                    context.withContainer(field) {
-                        withLocalScopeCleanup {
-                            addLocalScope(primaryConstructorParametersScope)
-                            field.transformChildren(transformer, withExpectedType(returnTypeRef))
-                        }
-                        if (field.initializer != null) {
-                            storeVariableReturnType(field)
-                        }
+            context.withTowerDataMode(FirTowerDataMode.CONSTRUCTOR_HEADER) {
+                context.withContainer(field) {
+                    withPrimaryConstructorParameters(includeProperties = true) {
+                        field.transformChildren(transformer, withExpectedType(returnTypeRef))
+                    }
+                    if (field.initializer != null) {
+                        storeVariableReturnType(field)
                     }
                 }
-                transformer.replaceDeclarationResolvePhaseIfNeeded(field, transformerPhase)
-                dataFlowAnalyzer.exitField(field)
-                field.compose()
             }
+            transformer.replaceDeclarationResolvePhaseIfNeeded(field, transformerPhase)
+            dataFlowAnalyzer.exitField(field)
+            field.compose()
         }
     }
 
@@ -400,15 +393,13 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             return regularClass.runAllPhasesForLocalClass(transformer, components, data).compose()
         }
 
-        return context.withTowerDataCleanup {
+        return context.withTowerModeCleanup {
             if (!regularClass.isInner && context.containerIfAny is FirRegularClass) {
-                context.replaceTowerDataContext(
-                    if (regularClass.isCompanion) {
-                        context.getTowerDataContextForCompanionUnsafe()
-                    } else {
-                        context.getTowerDataContextForStaticNestedClassesUnsafe()
-                    }
-                )
+                if (regularClass.isCompanion) {
+                    context.towerDataMode = FirTowerDataMode.COMPANION_OBJECT
+                } else {
+                    context.towerDataMode = FirTowerDataMode.NESTED_CLASS
+                }
             }
 
             doTransformRegularClass(regularClass, data)
@@ -642,7 +633,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             /*
              * Default values of constructor can't access members of constructing class
              */
-            context.withTowerDataContext(context.getTowerDataContextForConstructorResolution()) {
+            context.withTowerDataMode(FirTowerDataMode.CONSTRUCTOR_HEADER) {
                 if (owningClass != null && !constructor.isPrimary) {
                     context.addReceiver(
                         null,
@@ -669,8 +660,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
              * Delegated constructor call is called before constructor body, so we need to
              *   analyze it before body, so body can access smartcasts from that call
              */
-            context.withTowerDataCleanup {
-                addLocalScope(scopeWithValueParameters)
+            withLocalScope(scopeWithValueParameters) {
                 constructor.transformDelegatedConstructor(transformer, data)
             }
 
@@ -681,7 +671,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                      *   In it's body we don't have this receiver for building class, so we need to use
                      *   special towerDataContext
                      */
-                    context.withTowerDataContext(context.getTowerDataContextForConstructorResolution()) {
+                    context.withTowerDataMode(FirTowerDataMode.CONSTRUCTOR_HEADER) {
                         addLocalScope(scopeWithValueParameters)
                         constructor.transformBody(transformer, data)
                     }
@@ -705,11 +695,8 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         data: ResolutionMode
     ): CompositeTransformResult<FirDeclaration> {
         if (implicitTypeOnly) return anonymousInitializer.compose()
-        return withLocalScopeCleanup {
+        return withPrimaryConstructorParameters(includeProperties = false) {
             dataFlowAnalyzer.enterInitBlock(anonymousInitializer)
-            addLocalScope(
-                context.getPrimaryConstructorPureParametersScope()
-            )
             addNewLocalScope()
             val result =
                 transformDeclarationContent(anonymousInitializer, ResolutionMode.ContextIndependent).single as FirAnonymousInitializer
@@ -914,7 +901,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         owner: FirClass<*>,
         type: ConeKotlinType,
         block: () -> T
-    ): T = context.withTowerDataCleanup {
+    ): T {
         val towerElementsForClass = components.collectTowerDataElementsForClass(owner, type)
 
         val base = context.towerDataContext.addNonLocalTowerDataElements(towerElementsForClass.superClassesStaticsAndCompanionReceivers)
@@ -952,9 +939,8 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                 null to null
             }
 
-        components.context.replaceTowerDataContext(forMembersResolution)
-
         val newContexts = FirTowerDataContextsForClassParts(
+            forMembersResolution,
             newTowerDataContextForStaticNestedClasses,
             statics,
             scopeForConstructorHeader,
@@ -962,7 +948,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             primaryConstructorAllParametersScope
         )
 
-        context.withNewTowerDataForClassParts(newContexts) {
+        return context.withNewTowerDataForClassParts(newContexts) {
             block()
         }
     }

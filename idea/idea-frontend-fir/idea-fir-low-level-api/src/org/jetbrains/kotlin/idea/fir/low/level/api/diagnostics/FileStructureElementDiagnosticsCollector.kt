@@ -49,7 +49,7 @@ internal class FileStructureElementDiagnosticsCollector private constructor(priv
             result.addValueFor(diagnostic.psiElement, diagnostic)
         }
 
-        override fun onDeclarationEnter(
+        override fun getDeclarationActionOnDeclarationEnter(
             declaration: FirDeclaration,
         ): DiagnosticCollectorDeclarationAction =
             onDeclarationEnter.invoke(declaration)

@@ -39,7 +39,6 @@ public:
 
         RuntimeCheck(*globalMockLocation_ == mock_.get(), "unexpected global mock location");
 
-        testing::Mock::VerifyAndClear(mock_.get());
         mock_.reset();
 
         *globalMockLocation_ = nullptr;

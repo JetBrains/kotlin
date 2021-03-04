@@ -26,7 +26,7 @@ internal class HLQuickFix<PSI : PsiElement, in INPUT : HLApplicatorInput>(
     }
 
     override fun getText(): String {
-        val element = element ?: return applicator.getFamilyName()
+        val element = element ?: return familyName
         return if (input.isValidFor(element)) {
             applicator.getActionName(element, input)
         } else {

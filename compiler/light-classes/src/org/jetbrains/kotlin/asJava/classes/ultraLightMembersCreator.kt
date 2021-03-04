@@ -116,11 +116,6 @@ internal class UltraLightMembersCreator(
             || ktFunction.hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME)
         ) return emptyList()
 
-
-        if (ktFunction.modifierList?.hasSuspendModifier() == true && ktFunction.isPrivate()) {
-            return emptyList()
-        }
-
         var methodIndex = METHOD_INDEX_BASE
         val basicMethod = asJavaMethod(ktFunction, forceStatic, forcePrivate, methodIndex = methodIndex)
 

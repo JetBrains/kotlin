@@ -5,20 +5,12 @@
 
 package org.jetbrains.kotlin.util
 
+import org.jetbrains.kotlin.konan.file.File
 import kotlin.system.measureTimeMillis
-import org.jetbrains.kotlin.konan.file.*
-import java.lang.StringBuilder
 
-fun <T> printMillisec(message: String, body: () -> T): T {
-    var msec = 0L
-    try {
-        msec = measureTimeMillis {
-            return body()
-        }
-    } finally {
-        println("$message: $msec msec")
-    }
-    error("shouldn't happens")
+private fun printMilliseconds(message: String, body: () -> Unit) {
+    val time = measureTimeMillis(body)
+    println("$message: $time ms")
 }
 
 fun profile(message: String, body: () -> Unit) = profileIf(
@@ -26,8 +18,8 @@ fun profile(message: String, body: () -> Unit) = profileIf(
     message, body
 )
 
-fun profileIf(condition: Boolean, message: String, body: () -> Unit) =
-    if (condition) printMillisec(message, body) else body()
+private fun profileIf(condition: Boolean, message: String, body: () -> Unit) =
+    if (condition) printMilliseconds(message, body) else body()
 
 fun nTabs(amount: Int): String {
     return String.format("%1$-${(amount+1)*4}s", "")

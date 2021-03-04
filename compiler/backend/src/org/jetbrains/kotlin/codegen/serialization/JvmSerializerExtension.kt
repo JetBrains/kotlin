@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.codegen.createFreeFakeLocalPropertyDescriptor
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
@@ -32,7 +31,6 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils.isInterface
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyPrivateApi
 import org.jetbrains.kotlin.resolve.descriptorUtil.nonSourceAnnotations
-import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmDefaultAnnotation
 import org.jetbrains.kotlin.resolve.jvm.requiresFunctionNameManglingForParameterTypes
 import org.jetbrains.kotlin.resolve.jvm.requiresFunctionNameManglingForReturnType
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
@@ -91,7 +89,7 @@ class JvmSerializerExtension @JvmOverloads constructor(
         }
         //TODO: support local delegated properties in new defaults scheme
         val containerAsmType =
-            if (isInterface(descriptor)) typeMapper.mapDefaultImpls(descriptor) else typeMapper.mapClass(descriptor)
+            if (isInterface(descriptor) && !jvmDefaultMode.forAllMethodsWithBody) typeMapper.mapDefaultImpls(descriptor) else typeMapper.mapClass(descriptor)
         writeLocalProperties(proto, containerAsmType, JvmProtoBuf.classLocalVariable)
         writeVersionRequirementForJvmDefaultIfNeeded(descriptor, proto, versionRequirementTable)
 
@@ -114,13 +112,6 @@ class JvmSerializerExtension @JvmOverloads constructor(
         versionRequirementTable: MutableVersionRequirementTable
     ) {
         if (isInterface(classDescriptor)) {
-            if (jvmDefaultMode == JvmDefaultMode.ENABLE && classDescriptor.unsubstitutedMemberScope.getContributedDescriptors().any {
-                    it is CallableMemberDescriptor && it.hasJvmDefaultAnnotation()
-                }) {
-                builder.addVersionRequirement(
-                    writeVersionRequirement(1, 2, 40, ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION, versionRequirementTable)
-                )
-            }
             if (jvmDefaultMode == JvmDefaultMode.ALL_INCOMPATIBLE) {
                 builder.addVersionRequirement(
                     writeVersionRequirement(1, 4, 0, ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION, versionRequirementTable)
@@ -280,10 +271,6 @@ class JvmSerializerExtension @JvmOverloads constructor(
 
         if (descriptor.isJvmFieldPropertyInInterfaceCompanion() && versionRequirementTable != null) {
             proto.setExtension(JvmProtoBuf.flags, JvmFlags.getPropertyFlags(true))
-
-            proto.addVersionRequirement(
-                writeVersionRequirement(1, 2, 70, ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION, versionRequirementTable)
-            )
         }
 
         if (getter?.needsInlineParameterNullCheckRequirement() == true || setter?.needsInlineParameterNullCheckRequirement() == true) {

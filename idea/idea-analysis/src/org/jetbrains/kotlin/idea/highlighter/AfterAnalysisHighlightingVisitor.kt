@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.idea.highlighter
 
-import com.intellij.lang.annotation.AnnotationHolder
+import com.intellij.codeInsight.daemon.impl.analysis.HighlightInfoHolder
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.psi.PsiElement
@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 abstract class AfterAnalysisHighlightingVisitor protected constructor(
-    holder: AnnotationHolder, protected var bindingContext: BindingContext
-) : HighlightingVisitor(holder) {
+    holder: HighlightInfoHolder, protected var bindingContext: BindingContext
+) : AbstractHighlightInfoHolderHighlightingVisitor(holder) {
 
     protected fun attributeKeyForDeclarationFromExtensions(element: PsiElement, descriptor: DeclarationDescriptor): TextAttributesKey? {
         @Suppress("DEPRECATION")

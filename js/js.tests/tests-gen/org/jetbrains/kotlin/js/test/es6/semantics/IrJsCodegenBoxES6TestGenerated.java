@@ -4561,6 +4561,16 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
                         KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR_ES6, testDataFilePath);
                     }
 
+                    @TestMetadata("allAgainsAllCompatibility.kt")
+                    public void testAllAgainsAllCompatibility() throws Exception {
+                        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/allAgainsAllCompatibility.kt");
+                    }
+
+                    @TestMetadata("allCompatibilityAgainsAll.kt")
+                    public void testAllCompatibilityAgainsAll() throws Exception {
+                        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/allCompatibilityAgainsAll.kt");
+                    }
+
                     public void testAllFilesPresentInInterop() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
                     }
@@ -4598,6 +4608,24 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
                     @TestMetadata("newSchemeWithJvmDefault.kt")
                     public void testNewSchemeWithJvmDefault() throws Exception {
                         runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/newSchemeWithJvmDefault.kt");
+                    }
+                }
+
+                @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/noDefaultImpls")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class NoDefaultImpls extends AbstractIrJsCodegenBoxES6Test {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR_ES6, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInNoDefaultImpls() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/noDefaultImpls"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+                    }
+
+                    @TestMetadata("superPropAccessFromInterface.kt")
+                    public void testSuperPropAccessFromInterface() throws Exception {
+                        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/noDefaultImpls/superPropAccessFromInterface.kt");
                     }
                 }
             }
@@ -4708,6 +4736,11 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
         @TestMetadata("comparisonTrue.kt")
         public void testComparisonTrue() throws Exception {
             runTest("compiler/testData/codegen/box/constants/comparisonTrue.kt");
+        }
+
+        @TestMetadata("constValFromAnotherModuleInConsVal.kt")
+        public void testConstValFromAnotherModuleInConsVal() throws Exception {
+            runTest("compiler/testData/codegen/box/constants/constValFromAnotherModuleInConsVal.kt");
         }
 
         @TestMetadata("constantsInWhen.kt")
@@ -10906,6 +10939,11 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
 
         public void testAllFilesPresentInFir() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/fir"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        }
+
+        @TestMetadata("classCanNotBeCastedToVoid.kt")
+        public void testClassCanNotBeCastedToVoid() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/classCanNotBeCastedToVoid.kt");
         }
     }
 

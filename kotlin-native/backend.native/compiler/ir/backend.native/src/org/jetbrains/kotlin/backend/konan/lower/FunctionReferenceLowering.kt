@@ -213,30 +213,8 @@ internal class FunctionReferenceLowering(val context: Context): FileLoweringPass
 
         private val samSuperClass = samSuperType?.let { it.classOrNull ?: error("Expected a class but was: ${it.render()}") }
 
-        private val adapteeCall: IrFunctionAccessExpression? =
-                // TODO: Copied from JVM.
-                if (referencedFunction.origin == IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE) {
-                    // The body of a callable reference adapter contains either only a call, or an IMPLICIT_COERCION_TO_UNIT type operator
-                    // applied to a call. That call's target is the original function which we need to get owner/name/signature.
-                    val call = when (val statement = referencedFunction.body!!.statements.single()) {
-                        is IrTypeOperatorCall -> {
-                            assert(statement.operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT) {
-                                "Unexpected type operator in ADAPTER_FOR_CALLABLE_REFERENCE: ${referencedFunction.render()}"
-                            }
-                            statement.argument
-                        }
-                        is IrReturn -> statement.value
-                        else -> statement
-                    }
-                    if (call !is IrFunctionAccessExpression) {
-                        throw UnsupportedOperationException("Unknown structure of ADAPTER_FOR_CALLABLE_REFERENCE: ${referencedFunction.render()}")
-                    }
-                    call
-                } else {
-                    null
-                }
+        private val adaptedReferenceOriginalTarget: IrFunction? = functionReference.reflectionTarget?.owner
 
-        private val adaptedReferenceOriginalTarget: IrFunction? = adapteeCall?.symbol?.owner
         private val functionReferenceTarget = adaptedReferenceOriginalTarget ?: referencedFunction
 
         private val functionReferenceClass: IrClass =
@@ -404,13 +382,21 @@ internal class FunctionReferenceLowering(val context: Context): FileLoweringPass
         }
 
         private fun hasVarargMappedToElement(): Boolean {
-            if (adapteeCall == null) return false
-            for (i in 0 until adapteeCall.valueArgumentsCount) {
-                val arg = adapteeCall.getValueArgument(i) ?: continue
-                if (arg !is IrVararg) continue
-                for (varargElement in arg.elements) {
-                    if (varargElement is IrGetValue) return true
+            if (adaptedReferenceOriginalTarget == null) return false
+            val originalParameters = adaptedReferenceOriginalTarget.allParameters
+            val adaptedParameters = functionReference.symbol.owner.allParameters
+            var index = 0
+            // TODO: There should be similar code somewhere in the resolve.
+            while (index < originalParameters.size && index < adaptedParameters.size) {
+                val originalParameter = originalParameters[index]
+                val adaptedParameter = adaptedParameters[index]
+                if (originalParameter.defaultValue != null) return false
+                if (originalParameter.isVararg) {
+                    if (originalParameter.varargElementType!!.erasureForTypeOperation()
+                            == adaptedParameter.type.erasureForTypeOperation())
+                        return true
                 }
+                ++index
             }
             return false
         }

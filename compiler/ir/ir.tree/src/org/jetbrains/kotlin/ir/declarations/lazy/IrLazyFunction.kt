@@ -34,7 +34,7 @@ class IrLazyFunction(
     override var visibility: DescriptorVisibility,
     override val modality: Modality,
     override val isInline: Boolean,
-    override var isExternal: Boolean,
+    override val isExternal: Boolean,
     override val isTailrec: Boolean,
     override val isSuspend: Boolean,
     override val isExpect: Boolean,

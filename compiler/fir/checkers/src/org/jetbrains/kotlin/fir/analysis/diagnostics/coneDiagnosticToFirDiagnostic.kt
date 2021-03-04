@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.isInfix
 import org.jetbrains.kotlin.fir.declarations.isOperator
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.calls.InapplicableWrongReceiver
+import org.jetbrains.kotlin.fir.resolve.calls.VarargArgumentOutsideParentheses
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -95,7 +96,11 @@ private fun mapInapplicableCandidateError(
 
         return FirErrors.UNSAFE_CALL.on(source, rootCause.actualType!!)
     }
-    return FirErrors.INAPPLICABLE_CANDIDATE.on(source, diagnostic.candidate.symbol)
+
+    return when (rootCause) {
+        is VarargArgumentOutsideParentheses -> FirErrors.VARARG_OUTSIDE_PARENTHESES.on(rootCause.argument.source ?: source)
+        else -> FirErrors.INAPPLICABLE_CANDIDATE.on(source, diagnostic.candidate.symbol)
+    }
 }
 
 private fun ConeSimpleDiagnostic.getFactory(): FirDiagnosticFactory0<FirSourceElement, *> {

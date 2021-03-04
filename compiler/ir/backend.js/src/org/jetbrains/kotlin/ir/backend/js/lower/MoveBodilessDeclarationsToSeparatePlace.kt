@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.FqName
@@ -48,7 +49,7 @@ private fun isBuiltInClass(declaration: IrDeclaration): Boolean =
 fun moveBodilessDeclarationsToSeparatePlace(context: JsIrBackendContext, moduleFragment: IrModuleFragment) {
     MoveBodilessDeclarationsToSeparatePlaceLowering(context).let { moveBodiless ->
         moduleFragment.files.forEach {
-            markExternalDeclarations(it)
+            validateIsExternal(it)
             moveBodiless.lower(it)
         }
     }
@@ -114,29 +115,31 @@ class MoveBodilessDeclarationsToSeparatePlaceLowering(private val context: JsIrB
     }
 }
 
-fun markExternalDeclarations(packageFragment: IrPackageFragment) {
+fun validateIsExternal(packageFragment: IrPackageFragment) {
     for (declaration in packageFragment.declarations) {
-        if (declaration is IrPossiblyExternalDeclaration) {
-            if (declaration.isExternal) {
-                markNestedExternalDeclarations(declaration)
-            }
-        }
+        validateNestedExternalDeclarations(declaration, (declaration as? IrPossiblyExternalDeclaration)?.isExternal ?: false)
     }
 }
 
 
-fun markNestedExternalDeclarations(declaration: IrDeclaration) {
+fun validateNestedExternalDeclarations(declaration: IrDeclaration, isExternalTopLevel: Boolean) {
+    fun IrPossiblyExternalDeclaration.checkExternal() {
+        if (isExternal != isExternalTopLevel) {
+            throw error("isExternal validation failed for declaration ${declaration.render()}")
+        }
+    }
+
     if (declaration is IrPossiblyExternalDeclaration) {
-        declaration.isExternal = true
+        declaration.checkExternal()
     }
     if (declaration is IrProperty) {
-        declaration.getter?.isExternal = true
-        declaration.setter?.isExternal = true
-        declaration.backingField?.isExternal = true
+        declaration.getter?.checkExternal()
+        declaration.setter?.checkExternal()
+        declaration.backingField?.checkExternal()
     }
     if (declaration is IrClass) {
         declaration.declarations.forEach {
-            markNestedExternalDeclarations(it)
+            validateNestedExternalDeclarations(it, isExternalTopLevel)
         }
     }
 }

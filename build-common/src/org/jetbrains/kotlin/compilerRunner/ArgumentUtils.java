@@ -29,20 +29,42 @@ import org.jetbrains.kotlin.cli.common.arguments.Argument;
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments;
 import org.jetbrains.kotlin.cli.common.arguments.InternalArgument;
 import org.jetbrains.kotlin.cli.common.arguments.ParseCommandLineArgumentsKt;
+import org.jetbrains.kotlin.idea.ExplicitDefaultSubstitutor;
+import org.jetbrains.kotlin.idea.ExplicitDefaultSubstitutorsKt;
 import org.jetbrains.kotlin.utils.StringsKt;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class ArgumentUtils {
-    private ArgumentUtils() {}
+    private ArgumentUtils() {
+    }
 
     @NotNull
     public static List<String> convertArgumentsToStringList(@NotNull CommonToolArguments arguments)
+            throws InstantiationException, IllegalAccessException, InvocationTargetException {
+        List<String> convertedArguments = convertArgumentsToStringListInternal(arguments);
+
+        Map<KClass<? extends CommonToolArguments>, Collection<ExplicitDefaultSubstitutor>> defaultSubstitutorsMap =
+                ExplicitDefaultSubstitutorsKt.getDefaultSubstitutors();
+        KClass<? extends CommonToolArguments> argumentsKClass = JvmClassMappingKt.getKotlinClass(arguments.getClass());
+        Collection<ExplicitDefaultSubstitutor> defaultSubstitutors = defaultSubstitutorsMap.get(argumentsKClass);
+        if (defaultSubstitutors != null) {
+            for (ExplicitDefaultSubstitutor substitutor : defaultSubstitutors) {
+                if (substitutor.isSubstitutable(convertedArguments)) convertedArguments.addAll(substitutor.getNewSubstitution());
+            }
+        }
+        return convertedArguments;
+    }
+
+    @NotNull
+    public static List<String> convertArgumentsToStringListNoDefaults(@NotNull CommonToolArguments arguments)
+            throws InstantiationException, IllegalAccessException, InvocationTargetException {
+        return convertArgumentsToStringListInternal(arguments);
+    }
+
+    private static List<String> convertArgumentsToStringListInternal(@NotNull CommonToolArguments arguments)
             throws InstantiationException, IllegalAccessException, InvocationTargetException {
         List<String> result = new ArrayList<>();
         Class<? extends CommonToolArguments> argumentsClass = arguments.getClass();

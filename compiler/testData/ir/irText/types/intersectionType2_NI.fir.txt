@@ -86,7 +86,7 @@ FILE fqName:<root> fileName:/intersectionType2_NI.kt
       RETURN type=kotlin.Nothing from='public final fun foo (): kotlin.Any declared in <root>'
         CALL 'public final fun run <T> (fn: kotlin.Function0<T of <root>.run>): T of <root>.run declared in <root>' type=<root>.Foo origin=null
           <T>: <root>.Foo
-          fn: FUN_EXPR type=kotlin.Function0<<root>.Foo> origin=LAMBDA
+          fn: FUN_EXPR type=kotlin.Function0<kotlin.Any> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<root>.Foo
               BLOCK_BODY
                 VAR name:mm type:<root>.B [val]

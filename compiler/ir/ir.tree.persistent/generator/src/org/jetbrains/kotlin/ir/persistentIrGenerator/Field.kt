@@ -10,7 +10,6 @@ internal fun PersistentIrGenerator.generateField() {
     val correspondingPropertySymbolField = Field("correspondingPropertySymbol", IrPropertySymbol + "?")
     val metadataField = Field("metadata", MetadataSource + "?")
     val typeField = Field("type", IrType)
-    val isExternalField = Field("isExternal", +"Boolean", notEq = "!=")
 
     writeFile("PersistentIrField.kt", renderFile("org.jetbrains.kotlin.ir.declarations.persistent") {
         lines(
@@ -37,7 +36,6 @@ internal fun PersistentIrGenerator.generateField() {
                 correspondingPropertySymbolField.toPersistentField(+"null"),
                 metadataField.toPersistentField(+"null"),
                 typeField.toPersistentField(+"type"),
-                isExternalField.toPersistentField(+"isExternal"),
             ),
             id,
         )()
@@ -50,7 +48,6 @@ internal fun PersistentIrGenerator.generateField() {
             initializerField,
             correspondingPropertySymbolField,
             metadataField,
-            isExternalField,
         )()
     })
 }

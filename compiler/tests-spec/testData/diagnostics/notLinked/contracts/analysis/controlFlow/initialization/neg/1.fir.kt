@@ -4,7 +4,7 @@
 // TESTCASE NUMBER: 1
 fun case_1() {
     val value_1: Int
-    funWithAtLeastOnceCallsInPlace { value_1 = 10 }
+    funWithAtLeastOnceCallsInPlace { <!VAL_REASSIGNMENT!>value_1<!> = 10 }
     value_1.inc()
 }
 
@@ -18,7 +18,7 @@ fun case_2() {
 // TESTCASE NUMBER: 3
 fun case_3() {
     val value_1: Int
-    funWithUnknownCallsInPlace { value_1 = 10 }
+    funWithUnknownCallsInPlace { <!VAL_REASSIGNMENT!>value_1<!> = 10 }
     <!UNINITIALIZED_VARIABLE!>value_1<!>.inc()
 }
 
@@ -52,7 +52,7 @@ class case_5 {
 fun case_6() {
     val value_1: Int
     for (i in 0..1)
-        funWithExactlyOnceCallsInPlace { value_1 = 10 }
+        funWithExactlyOnceCallsInPlace { <!VAL_REASSIGNMENT!>value_1<!> = 10 }
     <!UNINITIALIZED_VARIABLE!>value_1<!>.dec()
 }
 

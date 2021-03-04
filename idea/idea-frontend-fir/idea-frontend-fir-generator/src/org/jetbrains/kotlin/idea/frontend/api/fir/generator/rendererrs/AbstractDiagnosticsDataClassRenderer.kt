@@ -9,13 +9,13 @@ import org.jetbrains.kotlin.fir.checkers.generator.collectClassNamesTo
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.DiagnosticList
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.DiagnosticListRenderer
 import org.jetbrains.kotlin.fir.checkers.generator.printImports
-import org.jetbrains.kotlin.fir.tree.generator.printer.SmartPrinter
 import org.jetbrains.kotlin.fir.tree.generator.printer.printCopyright
 import org.jetbrains.kotlin.fir.tree.generator.printer.printGeneratedMessage
-import org.jetbrains.kotlin.fir.tree.generator.printer.writeToFileUsingSmartPrinterIfFileContentChanged
+import org.jetbrains.kotlin.fir.tree.generator.util.writeToFileUsingSmartPrinterIfFileContentChanged
 import org.jetbrains.kotlin.idea.frontend.api.fir.generator.HLDiagnosticConverter
 import org.jetbrains.kotlin.idea.frontend.api.fir.generator.HLDiagnosticList
 import org.jetbrains.kotlin.idea.frontend.api.fir.generator.HLDiagnosticParameter
+import org.jetbrains.kotlin.util.SmartPrinter
 import java.io.File
 
 abstract class AbstractDiagnosticsDataClassRenderer : DiagnosticListRenderer() {

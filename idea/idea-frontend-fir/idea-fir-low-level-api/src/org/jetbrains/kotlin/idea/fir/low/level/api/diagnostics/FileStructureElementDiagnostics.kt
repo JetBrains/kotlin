@@ -10,6 +10,7 @@ import com.intellij.util.SmartList
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.DiagnosticCheckerFilter
+import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.FileStructureElement
 
 internal class FileStructureElementDiagnostics(
     private val firFile: FirFile,

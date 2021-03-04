@@ -250,10 +250,7 @@ class FirCallResolver(
         // No reset here!
         val localCollector = CandidateCollector(components, components.resolutionStageRunner)
 
-        val towerDataContext =
-            transformer.context.towerDataContextForCallableReferences[callableReferenceAccess] ?: transformer.context.towerDataContext
-
-        val result = transformer.context.withTowerDataContext(towerDataContext) {
+        val result = transformer.context.withCallableReferenceTowerDataContext(callableReferenceAccess) {
             towerResolver.runResolver(
                 info,
                 transformer.resolutionContext,

@@ -25,7 +25,7 @@ internal interface ErrorDeclarationCarrier : DeclarationCarrier{
 
 internal class ErrorDeclarationCarrierImpl(
     override val lastModified: Int,
-    override var parentField: IrDeclarationParent?,
-    override var originField: IrDeclarationOrigin,
-    override var annotationsField: List<IrConstructorCall>
+    override val parentField: IrDeclarationParent?,
+    override val originField: IrDeclarationOrigin,
+    override val annotationsField: List<IrConstructorCall>
 ) : ErrorDeclarationCarrier

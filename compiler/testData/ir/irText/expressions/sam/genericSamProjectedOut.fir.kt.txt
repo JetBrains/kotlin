@@ -2,13 +2,14 @@ fun test(a: SomeJavaClass<out String>) {
   a.someFunction(hello = local fun <anonymous>(it: String?) {
     return Unit
   }
- /*-> Hello<String>? */)
+ /*-> Hello<String?>? */)
   a.plus(hello = local fun <anonymous>(it: String?) {
     return Unit
   }
- /*-> Hello<String>? */)
+ /*-> Hello<String?>? */)
   a.get(hello = local fun <anonymous>(it: String?) {
     return Unit
   }
- /*-> Hello<String>? */)
+ /*-> Hello<String?>? */)
 }
+

@@ -2779,6 +2779,10 @@ task funInterface_nonTrivialProjectionInSuperType(type: KonanLocalTest) {
     source = "codegen/funInterface/nonTrivialProjectionInSuperType.kt"
 }
 
+task funInterface_kt43887(type: KonanLocalTest) {
+    source = "codegen/funInterface/kt43887.kt"
+}
+
 task objectExpression1(type: KonanLocalTest) {
     goldValue = "aabb\n"
     source = "codegen/objectExpression/expr1.kt"
@@ -5042,7 +5046,7 @@ private void configureStdlibTest(KonanGTest task, boolean inWorker) {
               '../../../libraries/kotlin.test/common/src/test/kotlin',
               'stdlib_external/utils.kt',
               'stdlib_external/jsCollectionFactoriesActuals.kt',
-              'stdlib_external/text/StringEncodingTestNative.kt'],
+              'stdlib_external/text'],
             [ /*'build/stdlib_external/stdlib/test/internalAnnotations.kt'*/ ])
 
     konanArtifacts {

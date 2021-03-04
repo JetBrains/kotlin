@@ -23,6 +23,6 @@ fun case_3() {
 // TESTCASE NUMBER: 4
 fun case_4() {
     val value_1: Boolean?
-    funWithUnknownCallsInPlace { value_1 = true }
+    funWithUnknownCallsInPlace { <!VAL_REASSIGNMENT!>value_1<!> = true }
     <!UNINITIALIZED_VARIABLE!>value_1<!><!UNSAFE_CALL!>.<!>not()
 }

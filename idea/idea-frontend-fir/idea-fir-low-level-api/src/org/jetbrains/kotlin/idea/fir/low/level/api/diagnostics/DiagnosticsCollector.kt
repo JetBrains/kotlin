@@ -16,14 +16,15 @@ internal class DiagnosticsCollector(
     private val fileStructureCache: FileStructureCache,
     private val cache: ModuleFileCache,
 ) {
-    fun getDiagnosticsFor(element: KtElement, filter: DiagnosticCheckerFilter): List<FirPsiDiagnostic<*>> =
-        fileStructureCache
-            .getFileStructure(element.containingKtFile, cache)
-            .getStructureElementFor(element)
-            .diagnostics.diagnosticsFor(filter, element)
+    fun getDiagnosticsFor(element: KtElement, filter: DiagnosticCheckerFilter): List<FirPsiDiagnostic<*>> {
+        val fileStructure = fileStructureCache.getFileStructure(element.containingKtFile, cache)
+        val structureElement = fileStructure.getStructureElementFor(element)
+        val diagnostics = structureElement.diagnostics
+        return diagnostics.diagnosticsFor(filter, element)
+    }
 
-    fun collectDiagnosticsForFile(ktFile: KtFile, filter: DiagnosticCheckerFilter): Collection<FirPsiDiagnostic<*>> =
-        fileStructureCache
-            .getFileStructure(ktFile, cache)
-            .getAllDiagnosticsForFile(filter)
+    fun collectDiagnosticsForFile(ktFile: KtFile, filter: DiagnosticCheckerFilter): Collection<FirPsiDiagnostic<*>> {
+        val fileStructure = fileStructureCache.getFileStructure(ktFile, cache)
+        return fileStructure.getAllDiagnosticsForFile(filter)
+    }
 }

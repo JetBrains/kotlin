@@ -189,6 +189,18 @@ class IrDeclarationDeserializer(
         }
     }
 
+    private var isEffectivelyExternal = false
+
+    private inline fun withExternalValue(value: Boolean, fn: () -> Unit) {
+        val oldExternalValue = isEffectivelyExternal
+        isEffectivelyExternal = value
+        try {
+            fn()
+        } finally {
+            isEffectivelyExternal = oldExternalValue
+        }
+    }
+
     private inline fun <T> withDeserializedIrDeclarationBase(
         proto: ProtoDeclarationBase,
         block: (IrSymbol, IdSignature, Int, Int, IrDeclarationOrigin, Long) -> T
@@ -287,7 +299,7 @@ class IrDeclarationDeserializer(
                     flags.isCompanion,
                     flags.isInner,
                     flags.isData,
-                    flags.isExternal,
+                    flags.isExternal || isEffectivelyExternal,
                     flags.isInline,
                     flags.isExpect,
                     flags.isFun,
@@ -297,9 +309,11 @@ class IrDeclarationDeserializer(
 
                 superTypes = proto.superTypeList.map { deserializeIrType(it) }
 
-                proto.declarationList
-                    .filterNot { isSkippableFakeOverride(it, this) }
-                    .mapTo(declarations) { deserializeDeclaration(it) }
+                withExternalValue(isExternal) {
+                    proto.declarationList
+                        .filterNot { isSkippableFakeOverride(it, this) }
+                        .mapTo(declarations) { deserializeDeclaration(it) }
+                }
 
                 thisReceiver = deserializeIrValueParameter(proto.thisReceiver, -1)
 
@@ -484,7 +498,7 @@ class IrDeclarationDeserializer(
                     flags.modality,
                     IrUninitializedType,
                     flags.isInline,
-                    flags.isExternal,
+                    flags.isExternal || isEffectivelyExternal,
                     flags.isTailrec,
                     flags.isSuspend,
                     flags.isOperator,
@@ -548,7 +562,7 @@ class IrDeclarationDeserializer(
                     flags.visibility,
                     IrUninitializedType,
                     flags.isInline,
-                    flags.isExternal,
+                    flags.isExternal || isEffectivelyExternal,
                     flags.isPrimary,
                     flags.isExpect
                 )
@@ -570,7 +584,7 @@ class IrDeclarationDeserializer(
                     type,
                     flags.visibility,
                     flags.isFinal,
-                    flags.isExternal,
+                    flags.isExternal || isEffectivelyExternal,
                     flags.isStatic,
                 )
             }.usingParent {
@@ -615,24 +629,26 @@ class IrDeclarationDeserializer(
                     flags.isConst,
                     flags.isLateinit,
                     flags.isDelegated,
-                    flags.isExternal,
+                    flags.isExternal || isEffectivelyExternal,
                     flags.isExpect,
                     flags.isFakeOverride
                 )
             }.apply {
-                if (proto.hasGetter()) {
-                    getter = deserializeIrFunction(proto.getter).also {
-                        it.correspondingPropertySymbol = symbol
+                withExternalValue(isExternal) {
+                    if (proto.hasGetter()) {
+                        getter = deserializeIrFunction(proto.getter).also {
+                            it.correspondingPropertySymbol = symbol
+                        }
                     }
-                }
-                if (proto.hasSetter()) {
-                    setter = deserializeIrFunction(proto.setter).also {
-                        it.correspondingPropertySymbol = symbol
+                    if (proto.hasSetter()) {
+                        setter = deserializeIrFunction(proto.setter).also {
+                            it.correspondingPropertySymbol = symbol
+                        }
                     }
-                }
-                if (proto.hasBackingField()) {
-                    backingField = deserializeIrField(proto.backingField).also {
-                        it.correspondingPropertySymbol = symbol
+                    if (proto.hasBackingField()) {
+                        backingField = deserializeIrField(proto.backingField).also {
+                            it.correspondingPropertySymbol = symbol
+                        }
                     }
                 }
             }

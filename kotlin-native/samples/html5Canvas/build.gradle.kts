@@ -8,7 +8,6 @@ plugins {
 
 repositories {
     jcenter()
-    mavenCentral()
 }
 
 val hostOs = System.getProperty("os.name")

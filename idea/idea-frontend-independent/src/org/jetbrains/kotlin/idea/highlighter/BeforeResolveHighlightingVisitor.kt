@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-internal class BeforeResolveHighlightingVisitor(holder: AnnotationHolder) : HighlightingVisitor(holder) {
+internal class BeforeResolveHighlightingVisitor(holder: AnnotationHolder) : AbstractAnnotationHolderHighlightingVisitor(holder) {
 
     override fun visitElement(element: PsiElement) {
         val elementType = element.node.elementType

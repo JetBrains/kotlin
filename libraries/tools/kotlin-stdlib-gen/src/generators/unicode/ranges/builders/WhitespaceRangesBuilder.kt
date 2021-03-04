@@ -5,8 +5,6 @@
 
 package generators.unicode.ranges.builders
 
-import generators.unicode.ranges.patterns.RangePattern
-
 internal class WhitespaceRangesBuilder : RangesBuilder() {
 
     init {
@@ -23,13 +21,6 @@ internal class WhitespaceRangesBuilder : RangesBuilder() {
 
     override fun shouldSkip(categoryId: String): Boolean {
         return categoryId == NOT_WS
-    }
-
-    override val makeOnePeriodCategory: (Array<String>) -> Int
-        get() = { 0 }
-
-    override fun evolveLastRange(lastRange: RangePattern, charCode: Int, categoryId: String): RangePattern? {
-        return null
     }
 }
 

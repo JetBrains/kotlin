@@ -1,4 +1,11 @@
+// CORRECT_ERROR_TYPES
+
 import kotlin.reflect.KProperty
+
+class ConcreteDelegate {
+    operator fun getValue(t: Any?, p: KProperty<*>): Int = 1
+}
+
 
 class Test {
 
@@ -23,6 +30,8 @@ class Test {
             override fun run() {}
         }
     }
+
+    val concreteDelegate: Int by ConcreteDelegate()
 
 }
 

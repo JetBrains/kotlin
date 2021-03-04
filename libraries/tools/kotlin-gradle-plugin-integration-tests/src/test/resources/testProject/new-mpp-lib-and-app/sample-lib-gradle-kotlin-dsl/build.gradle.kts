@@ -8,7 +8,7 @@ version = "1.0"
 
 repositories {
     mavenLocal()
-    jcenter()
+    mavenCentral()
 }
 
 kotlin {
@@ -39,7 +39,6 @@ kotlin {
         js.compilations["main"].defaultSourceSet {
         	dependencies {
                 api(kotlin("stdlib-js"))
-        		implementation("org.jetbrains.kotlinx:kotlinx-html-js:0.6.11")
         	}
         }
     }

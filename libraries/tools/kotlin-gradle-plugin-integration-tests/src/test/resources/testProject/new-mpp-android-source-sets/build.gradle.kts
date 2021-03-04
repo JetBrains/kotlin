@@ -3,7 +3,7 @@ buildscript {
         mavenCentral()
         google()
         mavenLocal()
-        jcenter()
+        maven { url = uri("https://jcenter.bintray.com/") }
     }
 
     dependencies {
@@ -17,6 +17,6 @@ allprojects {
         mavenCentral()
         google()
         mavenLocal()
-        jcenter()
+        maven { url = uri("https://jcenter.bintray.com/") }
     }
 }

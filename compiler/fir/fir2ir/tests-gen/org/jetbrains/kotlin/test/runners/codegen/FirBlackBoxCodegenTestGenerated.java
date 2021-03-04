@@ -6837,6 +6837,18 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
                 @TestDataPath("$PROJECT_ROOT")
                 public class Interop {
                     @Test
+                    @TestMetadata("allAgainsAllCompatibility.kt")
+                    public void testAllAgainsAllCompatibility() throws Exception {
+                        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/allAgainsAllCompatibility.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("allCompatibilityAgainsAll.kt")
+                    public void testAllCompatibilityAgainsAll() throws Exception {
+                        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/allCompatibilityAgainsAll.kt");
+                    }
+
+                    @Test
                     public void testAllFilesPresentInInterop() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
                     }
@@ -6881,6 +6893,22 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
                     @TestMetadata("newSchemeWithJvmDefault.kt")
                     public void testNewSchemeWithJvmDefault() throws Exception {
                         runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/newSchemeWithJvmDefault.kt");
+                    }
+                }
+
+                @Nested
+                @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/noDefaultImpls")
+                @TestDataPath("$PROJECT_ROOT")
+                public class NoDefaultImpls {
+                    @Test
+                    public void testAllFilesPresentInNoDefaultImpls() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/noDefaultImpls"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+                    }
+
+                    @Test
+                    @TestMetadata("superPropAccessFromInterface.kt")
+                    public void testSuperPropAccessFromInterface() throws Exception {
+                        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/noDefaultImpls/superPropAccessFromInterface.kt");
                     }
                 }
             }
@@ -6996,6 +7024,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         @TestMetadata("comparisonTrue.kt")
         public void testComparisonTrue() throws Exception {
             runTest("compiler/testData/codegen/box/constants/comparisonTrue.kt");
+        }
+
+        @Test
+        @TestMetadata("constValFromAnotherModuleInConsVal.kt")
+        public void testConstValFromAnotherModuleInConsVal() throws Exception {
+            runTest("compiler/testData/codegen/box/constants/constValFromAnotherModuleInConsVal.kt");
         }
 
         @Test
@@ -14889,6 +14923,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("classCanNotBeCastedToVoid.kt")
+        public void testClassCanNotBeCastedToVoid() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/classCanNotBeCastedToVoid.kt");
+        }
+
+        @Test
         @TestMetadata("ConstValAccess.kt")
         public void testConstValAccess() throws Exception {
             runTest("compiler/testData/codegen/box/fir/ConstValAccess.kt");
@@ -16586,6 +16626,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         @TestMetadata("integerLiteralTypeInLamdaReturnType.kt")
         public void testIntegerLiteralTypeInLamdaReturnType() throws Exception {
             runTest("compiler/testData/codegen/box/inference/integerLiteralTypeInLamdaReturnType.kt");
+        }
+
+        @Test
+        @TestMetadata("intersectionTypeInArguments.kt")
+        public void testIntersectionTypeInArguments() throws Exception {
+            runTest("compiler/testData/codegen/box/inference/intersectionTypeInArguments.kt");
         }
 
         @Test
@@ -21969,9 +22015,21 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
                 }
 
                 @Test
+                @TestMetadata("localDelegatedProperties.kt")
+                public void testLocalDelegatedProperties() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/localDelegatedProperties.kt");
+                }
+
+                @Test
                 @TestMetadata("privateFunInInterface.kt")
                 public void testPrivateFunInInterface() throws Exception {
                     runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/privateFunInInterface.kt");
+                }
+
+                @Test
+                @TestMetadata("privateSuspend.kt")
+                public void testPrivateSuspend() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/privateSuspend.kt");
                 }
 
                 @Test
@@ -22297,9 +22355,27 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
                 }
 
                 @Test
+                @TestMetadata("localDelegatedProperties.kt")
+                public void testLocalDelegatedProperties() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/localDelegatedProperties.kt");
+                }
+
+                @Test
+                @TestMetadata("localDelegatedProperties2.kt")
+                public void testLocalDelegatedProperties2() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/localDelegatedProperties2.kt");
+                }
+
+                @Test
                 @TestMetadata("privateFunInInterface.kt")
                 public void testPrivateFunInInterface() throws Exception {
                     runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/privateFunInInterface.kt");
+                }
+
+                @Test
+                @TestMetadata("privateSuspend.kt")
+                public void testPrivateSuspend() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/privateSuspend.kt");
                 }
 
                 @Test

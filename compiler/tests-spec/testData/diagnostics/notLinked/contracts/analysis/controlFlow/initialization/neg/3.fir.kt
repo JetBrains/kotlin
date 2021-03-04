@@ -121,7 +121,7 @@ fun case_8() {
     funWithExactlyOnceCallsInPlace outer@ {
         funWithAtMostOnceCallsInPlace {
             funWithUnknownCallsInPlace {
-                x = 42
+                <!VAL_REASSIGNMENT!>x<!> = 42
             }
             return@outer
         }

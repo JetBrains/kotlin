@@ -9,28 +9,38 @@
 
 namespace {
 
-TypeInfo theAnyTypeInfoImpl = {};
-TypeInfo theArrayTypeInfoImpl = {};
-TypeInfo theBooleanArrayTypeInfoImpl = {};
-TypeInfo theByteArrayTypeInfoImpl = {};
-TypeInfo theCharArrayTypeInfoImpl = {};
-TypeInfo theDoubleArrayTypeInfoImpl = {};
-TypeInfo theFloatArrayTypeInfoImpl = {};
-TypeInfo theForeignObjCObjectTypeInfoImpl = {};
-TypeInfo theFreezableAtomicReferenceTypeInfoImpl = {};
-TypeInfo theIntArrayTypeInfoImpl = {};
-TypeInfo theLongArrayTypeInfoImpl = {};
-TypeInfo theNativePtrArrayTypeInfoImpl = {};
-TypeInfo theObjCObjectWrapperTypeInfoImpl = {};
-TypeInfo theOpaqueFunctionTypeInfoImpl = {};
-TypeInfo theShortArrayTypeInfoImpl = {};
-TypeInfo theStringTypeInfoImpl = {};
-TypeInfo theThrowableTypeInfoImpl = {};
-TypeInfo theUnitTypeInfoImpl = {};
-TypeInfo theWorkerBoundReferenceTypeInfoImpl = {};
-TypeInfo theCleanerImplTypeInfoImpl = {};
+class TypeInfoImpl {
+public:
+    TypeInfoImpl() { type_.typeInfo_ = &type_; }
 
-ArrayHeader theEmptyStringImpl = { &theStringTypeInfoImpl, /* element count */ 0 };
+    TypeInfo* type() { return &type_; }
+
+private:
+    TypeInfo type_;
+};
+
+TypeInfoImpl theAnyTypeInfoImpl;
+TypeInfoImpl theArrayTypeInfoImpl;
+TypeInfoImpl theBooleanArrayTypeInfoImpl;
+TypeInfoImpl theByteArrayTypeInfoImpl;
+TypeInfoImpl theCharArrayTypeInfoImpl;
+TypeInfoImpl theDoubleArrayTypeInfoImpl;
+TypeInfoImpl theFloatArrayTypeInfoImpl;
+TypeInfoImpl theForeignObjCObjectTypeInfoImpl;
+TypeInfoImpl theFreezableAtomicReferenceTypeInfoImpl;
+TypeInfoImpl theIntArrayTypeInfoImpl;
+TypeInfoImpl theLongArrayTypeInfoImpl;
+TypeInfoImpl theNativePtrArrayTypeInfoImpl;
+TypeInfoImpl theObjCObjectWrapperTypeInfoImpl;
+TypeInfoImpl theOpaqueFunctionTypeInfoImpl;
+TypeInfoImpl theShortArrayTypeInfoImpl;
+TypeInfoImpl theStringTypeInfoImpl;
+TypeInfoImpl theThrowableTypeInfoImpl;
+TypeInfoImpl theUnitTypeInfoImpl;
+TypeInfoImpl theWorkerBoundReferenceTypeInfoImpl;
+TypeInfoImpl theCleanerImplTypeInfoImpl;
+
+ArrayHeader theEmptyStringImpl = {theStringTypeInfoImpl.type(), /* element count */ 0};
 
 template <class T>
 struct KBox {
@@ -48,28 +58,28 @@ extern "C" {
 // Set to 1 to enable runtime assertions.
 extern const int KonanNeedDebugInfo = 1;
 
-extern const TypeInfo* theAnyTypeInfo = &theAnyTypeInfoImpl;
-extern const TypeInfo* theArrayTypeInfo = &theArrayTypeInfoImpl;
-extern const TypeInfo* theBooleanArrayTypeInfo = &theBooleanArrayTypeInfoImpl;
-extern const TypeInfo* theByteArrayTypeInfo = &theByteArrayTypeInfoImpl;
-extern const TypeInfo* theCharArrayTypeInfo = &theCharArrayTypeInfoImpl;
-extern const TypeInfo* theDoubleArrayTypeInfo = &theDoubleArrayTypeInfoImpl;
-extern const TypeInfo* theFloatArrayTypeInfo = &theFloatArrayTypeInfoImpl;
-extern const TypeInfo* theForeignObjCObjectTypeInfo = &theForeignObjCObjectTypeInfoImpl;
-extern const TypeInfo* theFreezableAtomicReferenceTypeInfo = &theFreezableAtomicReferenceTypeInfoImpl;
-extern const TypeInfo* theIntArrayTypeInfo = &theIntArrayTypeInfoImpl;
-extern const TypeInfo* theLongArrayTypeInfo = &theLongArrayTypeInfoImpl;
-extern const TypeInfo* theNativePtrArrayTypeInfo = &theNativePtrArrayTypeInfoImpl;
-extern const TypeInfo* theObjCObjectWrapperTypeInfo = &theObjCObjectWrapperTypeInfoImpl;
-extern const TypeInfo* theOpaqueFunctionTypeInfo = &theOpaqueFunctionTypeInfoImpl;
-extern const TypeInfo* theShortArrayTypeInfo = &theShortArrayTypeInfoImpl;
-extern const TypeInfo* theStringTypeInfo = &theStringTypeInfoImpl;
-extern const TypeInfo* theThrowableTypeInfo = &theThrowableTypeInfoImpl;
-extern const TypeInfo* theUnitTypeInfo = &theUnitTypeInfoImpl;
-extern const TypeInfo* theWorkerBoundReferenceTypeInfo = &theWorkerBoundReferenceTypeInfoImpl;
-extern const TypeInfo* theCleanerImplTypeInfo = &theCleanerImplTypeInfoImpl;
+extern const TypeInfo* theAnyTypeInfo = theAnyTypeInfoImpl.type();
+extern const TypeInfo* theArrayTypeInfo = theArrayTypeInfoImpl.type();
+extern const TypeInfo* theBooleanArrayTypeInfo = theBooleanArrayTypeInfoImpl.type();
+extern const TypeInfo* theByteArrayTypeInfo = theByteArrayTypeInfoImpl.type();
+extern const TypeInfo* theCharArrayTypeInfo = theCharArrayTypeInfoImpl.type();
+extern const TypeInfo* theDoubleArrayTypeInfo = theDoubleArrayTypeInfoImpl.type();
+extern const TypeInfo* theFloatArrayTypeInfo = theFloatArrayTypeInfoImpl.type();
+extern const TypeInfo* theForeignObjCObjectTypeInfo = theForeignObjCObjectTypeInfoImpl.type();
+extern const TypeInfo* theFreezableAtomicReferenceTypeInfo = theFreezableAtomicReferenceTypeInfoImpl.type();
+extern const TypeInfo* theIntArrayTypeInfo = theIntArrayTypeInfoImpl.type();
+extern const TypeInfo* theLongArrayTypeInfo = theLongArrayTypeInfoImpl.type();
+extern const TypeInfo* theNativePtrArrayTypeInfo = theNativePtrArrayTypeInfoImpl.type();
+extern const TypeInfo* theObjCObjectWrapperTypeInfo = theObjCObjectWrapperTypeInfoImpl.type();
+extern const TypeInfo* theOpaqueFunctionTypeInfo = theOpaqueFunctionTypeInfoImpl.type();
+extern const TypeInfo* theShortArrayTypeInfo = theShortArrayTypeInfoImpl.type();
+extern const TypeInfo* theStringTypeInfo = theStringTypeInfoImpl.type();
+extern const TypeInfo* theThrowableTypeInfo = theThrowableTypeInfoImpl.type();
+extern const TypeInfo* theUnitTypeInfo = theUnitTypeInfoImpl.type();
+extern const TypeInfo* theWorkerBoundReferenceTypeInfo = theWorkerBoundReferenceTypeInfoImpl.type();
+extern const TypeInfo* theCleanerImplTypeInfo = theCleanerImplTypeInfoImpl.type();
 
-extern const ArrayHeader theEmptyArray = { &theArrayTypeInfoImpl, /* element count */0 };
+extern const ArrayHeader theEmptyArray = {theArrayTypeInfoImpl.type(), /* element count */ 0};
 
 OBJ_GETTER0(TheEmptyString) {
     RETURN_OBJ(theEmptyStringImpl.obj());

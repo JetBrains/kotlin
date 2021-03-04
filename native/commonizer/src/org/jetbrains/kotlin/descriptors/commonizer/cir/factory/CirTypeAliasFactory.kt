@@ -12,14 +12,19 @@ import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirTypeAliasImpl
 import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMap
 
 object CirTypeAliasFactory {
-    fun create(source: TypeAliasDescriptor): CirTypeAlias = create(
-        annotations = source.annotations.compactMap(CirAnnotationFactory::create),
-        name = CirName.create(source.name),
-        typeParameters = source.declaredTypeParameters.compactMap(CirTypeParameterFactory::create),
-        visibility = source.visibility,
-        underlyingType = CirTypeFactory.create(source.underlyingType, useAbbreviation = true) as CirClassOrTypeAliasType,
-        expandedType = CirTypeFactory.create(source.expandedType, useAbbreviation = false) as CirClassType
-    )
+    fun create(source: TypeAliasDescriptor): CirTypeAlias {
+        val underlyingType = CirTypeFactory.create(source.underlyingType) as CirClassOrTypeAliasType
+        val expandedType = CirTypeFactory.unabbreviate(underlyingType)
+
+        return create(
+            annotations = source.annotations.compactMap(CirAnnotationFactory::create),
+            name = CirName.create(source.name),
+            typeParameters = source.declaredTypeParameters.compactMap(CirTypeParameterFactory::create),
+            visibility = source.visibility,
+            underlyingType = underlyingType,
+            expandedType = expandedType
+        )
+    }
 
     @Suppress("NOTHING_TO_INLINE")
     inline fun create(

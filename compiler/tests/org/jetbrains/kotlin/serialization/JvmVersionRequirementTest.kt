@@ -63,17 +63,6 @@ class JvmVersionRequirementTest : AbstractVersionRequirementTest() {
         )
     ).moduleDescriptor
 
-    fun testJvmDefault() {
-        doTest(
-            VersionRequirement.Version(1, 2, 40), DeprecationLevel.ERROR, null, COMPILER_VERSION, null,
-            analysisFlags = mapOf(JvmAnalysisFlags.jvmDefaultMode to JvmDefaultMode.ENABLE),
-            fqNamesWithRequirements = listOf(
-                "test.Base",
-                "test.Derived"
-            )
-        )
-    }
-
     fun testAllJvmDefault() {
         doTest(
             VersionRequirement.Version(1, 4, 0), DeprecationLevel.ERROR, null, COMPILER_VERSION, null,
@@ -106,13 +95,6 @@ class JvmVersionRequirementTest : AbstractVersionRequirementTest() {
                 "test.WithAbstractDeclaration",
                 "test.DerivedFromWithAbstractDeclaration"
             )
-        )
-    }
-
-    fun testJvmFieldInInterfaceCompanion() {
-        doTest(
-            VersionRequirement.Version(1, 2, 70), DeprecationLevel.ERROR, null, COMPILER_VERSION, null,
-            fqNamesWithRequirements = listOf("test.Base.Companion.foo")
         )
     }
 

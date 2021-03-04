@@ -70,7 +70,7 @@ internal object PersistentIrGenerator {
     val isCompanion = +"override val isCompanion: Boolean = false"
     val isInner = +"override val isInner: Boolean = false"
     val isData = +"override val isData: Boolean = false"
-    val isExternal = +"isExternal: Boolean"
+    val isExternal = +"override val isExternal: Boolean"
     val isFinal = +"override val isFinal: Boolean"
     val isInline = +"override val isInline: Boolean"
     val isExpect = +"override val isExpect: Boolean"
@@ -143,7 +143,8 @@ internal object PersistentIrGenerator {
                             +"v.container = this"
                         ),
                         id
-                    ) else id) + "setCarrier().${name}Field = v"
+                    ) else id) + "setCarrier()",
+                    +"${name}Field = v"
                 )
             )
         ).indent()
@@ -161,7 +162,7 @@ internal object PersistentIrGenerator {
     fun carriers(name: String, vararg fields: Field): E = lines(
         id,
         +"internal interface ${name}Carrier : DeclarationCarrier" + block(
-            *(fields.map { +"var ${it.name}Field: " + it.type + if (it.lateinit) "?" else "" }.toTypedArray()),
+            *(fields.map { +"val ${it.name}Field: " + it.type + if (it.lateinit) "?" else "" }.toTypedArray()),
             id,
             +"override fun clone(): ${name}Carrier " + block(
                 +"return ${name}CarrierImpl(",
@@ -179,10 +180,10 @@ internal object PersistentIrGenerator {
         +"internal class ${name}CarrierImpl(",
         arrayOf(
             +"override val lastModified: Int",
-            +"override var parentField: " + IrDeclarationParent + "?",
-            +"override var originField: " + IrDeclarationOrigin,
-            +"override var annotationsField: List<" + IrConstructorCall + ">",
-            *(fields.map { +"override var ${it.name}Field: " + it.type + if (it.lateinit) "?" else "" }.toTypedArray()),
+            +"override val parentField: " + IrDeclarationParent + "?",
+            +"override val originField: " + IrDeclarationOrigin,
+            +"override val annotationsField: List<" + IrConstructorCall + ">",
+            *(fields.map { +"override val ${it.name}Field: " + it.type + if (it.lateinit) "?" else "" }.toTypedArray()),
         ).join(separator = ",\n").indent(),
         +") : ${name}Carrier",
         id,

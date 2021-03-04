@@ -5,27 +5,27 @@
 
 package org.jetbrains.kotlin.fir.checkers.generator
 
-import org.jetbrains.kotlin.fir.tree.generator.printer.SmartPrinter
+import org.jetbrains.kotlin.util.SmartPrinter
 
 private object ImportPrinter {
-   fun SmartPrinter.printImports(imports: Collection<String>) {
-       val importsToPrint = imports.filterNot { it.isDefaultImport() }.distinct().sorted()
-       for (import in importsToPrint) {
-           println("import $import")
-       }
-   }
+    fun SmartPrinter.printImports(imports: Collection<String>) {
+        val importsToPrint = imports.filterNot { it.isDefaultImport() }.distinct().sorted()
+        for (import in importsToPrint) {
+            println("import $import")
+        }
+    }
 
-   private fun String.isDefaultImport() = substringBeforeLast('.') in defaultImportedPackages
+    private fun String.isDefaultImport() = substringBeforeLast('.') in defaultImportedPackages
 
-   private val defaultImportedPackages = setOf(
-       "kotlin",
-       "kotlin.annotation",
-       "kotlin.collections",
-       "kotlin.ranges",
-       "kotlin.sequences",
-       "kotlin.text",
-       "kotlin.io",
-   )
+    private val defaultImportedPackages = setOf(
+        "kotlin",
+        "kotlin.annotation",
+        "kotlin.collections",
+        "kotlin.ranges",
+        "kotlin.sequences",
+        "kotlin.text",
+        "kotlin.io",
+    )
 }
 
 fun SmartPrinter.printImports(imports: Collection<String>) {

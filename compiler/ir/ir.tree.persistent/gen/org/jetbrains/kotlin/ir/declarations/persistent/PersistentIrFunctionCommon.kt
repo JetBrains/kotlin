@@ -35,7 +35,7 @@ internal abstract class PersistentIrFunctionCommon(
     visibility: DescriptorVisibility,
     returnType: IrType,
     override val isInline: Boolean,
-    isExternal: Boolean,
+    override val isExternal: Boolean,
     override val isTailrec: Boolean,
     override val isSuspend: Boolean,
     override val isOperator: Boolean,
@@ -63,7 +63,8 @@ internal abstract class PersistentIrFunctionCommon(
         get() = getCarrier().returnTypeFieldField
         set(v) {
             if (returnTypeField !== v) {
-                setCarrier().returnTypeFieldField = v
+                setCarrier()
+                returnTypeFieldField = v
             }
         }
 
@@ -81,7 +82,8 @@ internal abstract class PersistentIrFunctionCommon(
         get() = getCarrier().typeParametersField
         set(v) {
             if (typeParameters !== v) {
-                setCarrier().typeParametersField = v
+                setCarrier()
+                typeParametersField = v
             }
         }
 
@@ -91,7 +93,8 @@ internal abstract class PersistentIrFunctionCommon(
         get() = getCarrier().dispatchReceiverParameterField
         set(v) {
             if (dispatchReceiverParameter !== v) {
-                setCarrier().dispatchReceiverParameterField = v
+                setCarrier()
+                dispatchReceiverParameterField = v
             }
         }
 
@@ -101,7 +104,8 @@ internal abstract class PersistentIrFunctionCommon(
         get() = getCarrier().extensionReceiverParameterField
         set(v) {
             if (extensionReceiverParameter !== v) {
-                setCarrier().extensionReceiverParameterField = v
+                setCarrier()
+                extensionReceiverParameterField = v
             }
         }
 
@@ -111,7 +115,8 @@ internal abstract class PersistentIrFunctionCommon(
         get() = getCarrier().valueParametersField
         set(v) {
             if (valueParameters !== v) {
-                setCarrier().valueParametersField = v
+                setCarrier()
+                valueParametersField = v
             }
         }
 
@@ -124,7 +129,8 @@ internal abstract class PersistentIrFunctionCommon(
                 if (v is PersistentIrBodyBase<*>) {
                     v.container = this
                 }
-                setCarrier().bodyField = v
+                setCarrier()
+                bodyField = v
             }
         }
 
@@ -134,7 +140,8 @@ internal abstract class PersistentIrFunctionCommon(
         get() = getCarrier().metadataField
         set(v) {
             if (metadata !== v) {
-                setCarrier().metadataField = v
+                setCarrier()
+                metadataField = v
             }
         }
 
@@ -144,7 +151,8 @@ internal abstract class PersistentIrFunctionCommon(
         get() = getCarrier().visibilityField
         set(v) {
             if (visibility !== v) {
-                setCarrier().visibilityField = v
+                setCarrier()
+                visibilityField = v
             }
         }
 
@@ -154,7 +162,8 @@ internal abstract class PersistentIrFunctionCommon(
         get() = getCarrier().overriddenSymbolsField
         set(v) {
             if (overriddenSymbols !== v) {
-                setCarrier().overriddenSymbolsField = v
+                setCarrier()
+                overriddenSymbolsField = v
             }
         }
 
@@ -165,7 +174,8 @@ internal abstract class PersistentIrFunctionCommon(
         get() = getCarrier().attributeOwnerIdField
         set(v) {
             if (attributeOwnerId !== v) {
-                setCarrier().attributeOwnerIdField = v
+                setCarrier()
+                attributeOwnerIdField = v
             }
         }
 
@@ -175,17 +185,8 @@ internal abstract class PersistentIrFunctionCommon(
         get() = getCarrier().correspondingPropertySymbolField
         set(v) {
             if (correspondingPropertySymbol !== v) {
-                setCarrier().correspondingPropertySymbolField = v
-            }
-        }
-
-    override var isExternalField: Boolean = isExternal
-
-    override var isExternal: Boolean
-        get() = getCarrier().isExternalField
-        set(v) {
-            if (isExternal != v) {
-                setCarrier().isExternalField = v
+                setCarrier()
+                correspondingPropertySymbolField = v
             }
         }
 }

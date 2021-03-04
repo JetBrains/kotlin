@@ -4195,6 +4195,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/constants/comparisonTrue.kt");
         }
 
+        @TestMetadata("constValFromAnotherModuleInConsVal.kt")
+        public void testConstValFromAnotherModuleInConsVal() throws Exception {
+            runTest("compiler/testData/codegen/box/constants/constValFromAnotherModuleInConsVal.kt");
+        }
+
         @TestMetadata("constantsInWhen.kt")
         public void testConstantsInWhen() throws Exception {
             runTest("compiler/testData/codegen/box/constants/constantsInWhen.kt");
@@ -10391,6 +10396,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
 
         public void testAllFilesPresentInFir() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/fir"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
+        }
+
+        @TestMetadata("classCanNotBeCastedToVoid.kt")
+        public void testClassCanNotBeCastedToVoid() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/classCanNotBeCastedToVoid.kt");
         }
     }
 

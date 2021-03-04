@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.psi2ir.generators.hasNoSideEffects
-import org.jetbrains.kotlin.types.AbstractTypeApproximator
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 
 class CallAndReferenceGenerator(
@@ -50,7 +49,7 @@ class CallAndReferenceGenerator(
     private val conversionScope: Fir2IrConversionScope
 ) : Fir2IrComponents by components {
 
-    private val approximator = object : AbstractTypeApproximator(session.typeContext) {}
+    private val approximator = ConeTypeApproximator(session.typeContext)
     private val adapterGenerator = AdapterGenerator(components, conversionScope)
     private val samResolver = FirSamResolverImpl(session, scopeSession)
 

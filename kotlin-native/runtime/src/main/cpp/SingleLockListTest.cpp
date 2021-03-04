@@ -342,5 +342,4 @@ TEST(SingleLockListTest, Destructor) {
             EXPECT_CALL(hook, Call(first));
         }
     }
-    testing::Mock::VerifyAndClear(&hook);
 }

@@ -149,8 +149,7 @@ public actual fun Char.isTitleCase(): Boolean {
 /**
  * Converts this character to upper case using Unicode mapping rules of the invariant locale.
  */
-@SymbolName("Kotlin_Char_toUpperCase")
-external public actual fun Char.toUpperCase(): Char
+public actual fun Char.toUpperCase(): Char = uppercaseCharImpl()
 
 /**
  * Converts this character to upper case using Unicode mapping rules of the invariant locale.
@@ -163,7 +162,7 @@ external public actual fun Char.toUpperCase(): Char
  */
 @SinceKotlin("1.4")
 @ExperimentalStdlibApi
-public actual fun Char.uppercaseChar(): Char = toUpperCase()
+public actual fun Char.uppercaseChar(): Char = uppercaseCharImpl()
 
 /**
  * Converts this character to upper case using Unicode mapping rules of the invariant locale.
@@ -177,15 +176,12 @@ public actual fun Char.uppercaseChar(): Char = toUpperCase()
  */
 @SinceKotlin("1.4")
 @ExperimentalStdlibApi
-public actual fun Char.uppercase(): String {
-    return uppercaseChar().toString()
-}
+public actual fun Char.uppercase(): String = uppercaseImpl()
 
 /**
  * Converts this character to lower case using Unicode mapping rules of the invariant locale.
  */
-@SymbolName("Kotlin_Char_toLowerCase")
-external public actual fun Char.toLowerCase(): Char
+public actual fun Char.toLowerCase(): Char = lowercaseCharImpl()
 
 /**
  * Converts this character to lower case using Unicode mapping rules of the invariant locale.
@@ -198,7 +194,7 @@ external public actual fun Char.toLowerCase(): Char
  */
 @SinceKotlin("1.4")
 @ExperimentalStdlibApi
-public actual fun Char.lowercaseChar(): Char = toLowerCase()
+public actual fun Char.lowercaseChar(): Char = lowercaseCharImpl()
 
 /**
  * Converts this character to lower case using Unicode mapping rules of the invariant locale.
@@ -212,9 +208,19 @@ public actual fun Char.lowercaseChar(): Char = toLowerCase()
  */
 @SinceKotlin("1.4")
 @ExperimentalStdlibApi
-public actual fun Char.lowercase(): String {
-    return lowercaseChar().toString()
-}
+public actual fun Char.lowercase(): String = lowercaseImpl()
+
+/**
+ * Converts this character to title case using Unicode mapping rules of the invariant locale.
+ *
+ * This function performs one-to-one character mapping.
+ * To support one-to-many character mapping use the [titlecase] function.
+ * If this character has no mapping equivalent, the result of calling [uppercaseChar] is returned.
+ *
+ * @sample samples.text.Chars.titlecase
+ */
+@SinceKotlin("1.4")
+public actual fun Char.titlecaseChar(): Char = titlecaseCharImpl()
 
 /**
  * Returns `true` if this character is a Unicode high-surrogate code unit (also known as leading-surrogate code unit).

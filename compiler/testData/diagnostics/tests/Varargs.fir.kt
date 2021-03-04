@@ -12,6 +12,6 @@ fun test() {
     v1({}, {})
     <!INAPPLICABLE_CANDIDATE!>v1<!>({}, 1, {})
     v1({}, {}, {it})
-    <!INAPPLICABLE_CANDIDATE!>v1<!>({}) {}
-    <!INAPPLICABLE_CANDIDATE!>v1<!> {}
+    v1({}) <!VARARG_OUTSIDE_PARENTHESES!>{}<!>
+    v1 <!VARARG_OUTSIDE_PARENTHESES!>{}<!>
 }

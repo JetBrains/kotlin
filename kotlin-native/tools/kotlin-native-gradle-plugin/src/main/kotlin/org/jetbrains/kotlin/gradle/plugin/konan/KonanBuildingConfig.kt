@@ -120,7 +120,7 @@ abstract class KonanBuildingConfig<T : KonanBuildingTask>(
             init(this@KonanBuildingConfig, outputDescription.destinationDir, outputDescription.artifactName, target)
             group = BasePlugin.BUILD_GROUP
             description = generateTaskDescription(this)
-        } ?: throw Exception("Cannot create task for target: ${target.visibleName}")
+        }
 
     private fun createAggregateTask(): TaskProvider<Task> =
         project.tasks.register(generateAggregateTaskName()) {

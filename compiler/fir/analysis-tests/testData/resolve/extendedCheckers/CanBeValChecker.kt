@@ -105,9 +105,9 @@ fun foo() {
     <!VARIABLE_NEVER_READ{LT}!><!CAN_BE_VAL!>var<!> <!VARIABLE_NEVER_READ{PSI}!>a<!>: Int<!>
     val bool = true
     if (bool) <!ASSIGNED_VALUE_IS_NEVER_READ!>a<!> = 4 else <!ASSIGNED_VALUE_IS_NEVER_READ!>a<!> = 42
-    <!UNUSED_VARIABLE{LT}!>val <!UNUSED_VARIABLE{PSI}!>b<!>: String<!>
+    <!VARIABLE_NEVER_READ{LT}!>val <!VARIABLE_NEVER_READ{PSI}!>b<!>: String<!>
 
-    <!ASSIGNED_VALUE_IS_NEVER_READ!>bool<!> = false
+    <!ASSIGNED_VALUE_IS_NEVER_READ!>b<!> = false
 }
 
 fun cycles() {

@@ -18,7 +18,6 @@ internal fun PersistentIrGenerator.generateFunction() {
     val overriddenSymbolsField = Field("overriddenSymbols", +"List<" + irSymbol("IrSimpleFunctionSymbol") + ">")
     val attributeOwnerIdField = Field("attributeOwnerId", IrAttributeContainer)
     val correspondingPropertySymbolField = Field("correspondingPropertySymbol", IrPropertySymbol + "?")
-    val isExternalField = Field("isExternal", +"Boolean", notEq = "!=")
 
     writeFile("PersistentIrFunctionCommon.kt", renderFile("org.jetbrains.kotlin.ir.declarations.persistent") {
         lines(
@@ -74,7 +73,6 @@ internal fun PersistentIrGenerator.generateFunction() {
                     attributeOwnerIdField.toPersistentField(+"this"),
                 ),
                 correspondingPropertySymbolField.toPersistentField(+"null"),
-                isExternalField.toPersistentField(+"isExternal")
             ),
             id,
         )()
@@ -94,7 +92,6 @@ internal fun PersistentIrGenerator.generateFunction() {
             correspondingPropertySymbolField,
             overriddenSymbolsField,
             attributeOwnerIdField,
-            isExternalField,
         )()
     })
 }

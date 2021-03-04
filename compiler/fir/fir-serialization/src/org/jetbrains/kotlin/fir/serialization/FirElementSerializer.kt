@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
@@ -196,6 +197,12 @@ class FirElementSerializer private constructor(
         return builder
     }
 
+    private fun FirPropertyAccessor.nonSourceAnnotations(session: FirSession, property: FirProperty): List<FirAnnotationCall> =
+        (this as FirAnnotationContainer).nonSourceAnnotations(session) + property.nonSourceAnnotations(session).filter {
+            it.useSiteTarget == AnnotationUseSiteTarget.PROPERTY_GETTER && isGetter ||
+                    it.useSiteTarget == AnnotationUseSiteTarget.PROPERTY_SETTER && isSetter
+        }
+
     fun propertyProto(property: FirProperty): ProtoBuf.Property.Builder? {
         if (!extension.shouldSerializeProperty(property)) return null
 
@@ -235,7 +242,7 @@ class FirElementSerializer private constructor(
             }
 
             if (setter !is FirDefaultPropertyAccessor ||
-                setter.nonSourceAnnotations(session).isNotEmpty() ||
+                setter.nonSourceAnnotations(session, property).isNotEmpty() ||
                 setter.visibility != property.visibility
             ) {
                 val setterLocal = local.createChildSerializer(setter)
@@ -713,10 +720,12 @@ class FirElementSerializer private constructor(
     private fun getAccessorFlags(accessor: FirPropertyAccessor, property: FirProperty): Int {
         // [FirDefaultPropertyAccessor]---a property accessor without body---can still hold other information, such as annotations,
         // user-contributed visibility, and modifiers, such as `external` or `inline`.
-        val nonSourceAnnotations = accessor.nonSourceAnnotations(session)
+        val nonSourceAnnotations = accessor.nonSourceAnnotations(session, property)
         val isDefault = accessor is FirDefaultPropertyAccessor &&
-                nonSourceAnnotations.isEmpty() && accessor.visibility == property.visibility &&
-                !accessor.isExternal && !accessor.isInline
+                nonSourceAnnotations.isEmpty() &&
+                accessor.visibility == property.visibility &&
+                !accessor.isExternal &&
+                !accessor.isInline
         return Flags.getAccessorFlags(
             nonSourceAnnotations.isNotEmpty(),
             ProtoEnumFlags.visibility(normalizeVisibility(accessor)),

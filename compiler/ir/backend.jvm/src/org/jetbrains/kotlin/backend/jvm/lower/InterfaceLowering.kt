@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
 import org.jetbrains.kotlin.backend.jvm.ir.*
+import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -123,9 +124,12 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
                  * 3) Private methods (not compiled to JVM defaults), default parameter dispatchers (not compiled to JVM defaults)
                  *    and $annotation methods are always moved without bridges
                  */
-                (DescriptorVisibilities.isPrivate(function.visibility) && !function.isCompiledToJvmDefault(jvmDefaultMode))
-                        || (function.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER && !function.isCompiledToJvmDefault(jvmDefaultMode))
-                        || function.origin == JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS -> {
+                (!function.isCompiledToJvmDefault(jvmDefaultMode) && (DescriptorVisibilities.isPrivate(function.visibility)
+                        || function.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER
+                        || function.origin == JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS)) ||
+                        (function.origin == JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS &&
+                                (isCompatibilityMode || jvmDefaultMode == JvmDefaultMode.ENABLE) &&
+                                function.isCompiledToJvmDefault(jvmDefaultMode)) -> {
                     val defaultImpl = createDefaultImpl(function)
                     defaultImpl.body = function.moveBodyTo(defaultImpl)
                     removedFunctions[function.symbol] = defaultImpl.symbol
@@ -157,7 +161,9 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
 
         // Move $$delegatedProperties array and $assertionsDisabled field
         for (field in irClass.declarations.filterIsInstance<IrField>()) {
-            if (field.origin != JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE && field.origin != JvmLoweredDeclarationOrigin.GENERATED_ASSERTION_ENABLED_FIELD)
+            if ((jvmDefaultMode.forAllMethodsWithBody || field.origin != JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE) &&
+                field.origin != JvmLoweredDeclarationOrigin.GENERATED_ASSERTION_ENABLED_FIELD
+            )
                 continue
 
             irClass.declarations.remove(field)

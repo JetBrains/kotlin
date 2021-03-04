@@ -11,7 +11,6 @@ internal fun PersistentIrGenerator.generateProperty() {
     val setterField = Field("setter", irDeclaration("IrSimpleFunction") + "?")
     val metadataField = Field("metadata", MetadataSource + "?")
     val attributeOwnerIdField = Field("attributeOwnerId", IrAttributeContainer)
-    val isExternalField = Field("isExternal", +"Boolean", notEq = "!=")
 
     writeFile("PersistentIrPropertyCommon.kt", renderFile("org.jetbrains.kotlin.ir.declarations.persistent") {
         lines(
@@ -42,7 +41,6 @@ internal fun PersistentIrGenerator.generateProperty() {
                     +"@Suppress(\"LeakingThis\")",
                     attributeOwnerIdField.toPersistentField(+"this"),
                 ),
-                isExternalField.toPersistentField(+"isExternal"),
             ),
             id,
         )()
@@ -56,7 +54,6 @@ internal fun PersistentIrGenerator.generateProperty() {
             setterField,
             metadataField,
             attributeOwnerIdField,
-            isExternalField,
         )()
     })
 }

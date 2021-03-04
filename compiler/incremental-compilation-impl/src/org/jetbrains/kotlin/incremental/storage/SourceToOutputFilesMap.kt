@@ -9,21 +9,22 @@ import org.jetbrains.kotlin.incremental.dumpCollection
 import java.io.File
 
 class SourceToOutputFilesMap(
-    storageFile: File
+    storageFile: File,
+    private val pathConverter: FileToPathConverter
 ) : BasicStringMap<Collection<String>>(storageFile, PathStringDescriptor, StringCollectionExternalizer) {
 
     @Synchronized
     operator fun set(sourceFile: File, outputFiles: Collection<File>) {
-        storage[sourceFile.absolutePath] = outputFiles.map { it.absolutePath }
+        storage[pathConverter.toPath(sourceFile)] = outputFiles.map(pathConverter::toPath)
     }
 
     operator fun get(sourceFile: File): Collection<File> =
-        storage[sourceFile.absolutePath].orEmpty().map(::File)
+        storage[pathConverter.toPath(sourceFile)].orEmpty().map(pathConverter::toFile)
 
     override fun dumpValue(value: Collection<String>) =
         value.dumpCollection()
 
     @Synchronized
     fun remove(file: File): Collection<File> =
-        get(file).also { storage.remove(file.absolutePath) }
+        get(file).also { storage.remove(pathConverter.toPath(file)) }
 }

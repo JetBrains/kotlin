@@ -282,29 +282,27 @@ internal class EnumClassLowering(val context: Context) : FileLoweringPass {
             val valuesInitializer = irBuilder.irBlock(startOffset, endOffset) {
                 val receiver = implObject.thisReceiver!!
                 val instances = irTemporary(irGetField(irGet(receiver), loweredEnum.valuesField))
-                enumEntries
-                        .sortedBy { it.name }
-                        .withIndex()
-                        .forEach {
-                            val instance = irCall(arrayGetSymbol).apply {
-                                dispatchReceiver = irGet(instances)
-                                putValueArgument(0, irInt(it.index))
-                            }
-                            val initializer = it.value.initializerExpression!!.expression
-                            initializer.setDeclarationsParent(constructor)
-                            when {
-                                initializer is IrConstructorCall -> +initInstanceCall(instance, initializer)
+                val enumIndices = enumEntries.sortedBy { it.name }.withIndex().associate { it.value to it.index }
+                enumEntries.forEach {
+                    val instance = irCall(arrayGetSymbol).apply {
+                        dispatchReceiver = irGet(instances)
+                        putValueArgument(0, irInt(enumIndices[it]!!))
+                    }
+                    val initializer = it.initializerExpression!!.expression
+                    initializer.setDeclarationsParent(constructor)
+                    when {
+                        initializer is IrConstructorCall -> +initInstanceCall(instance, initializer)
 
-                                initializer is IrBlock && initializer.origin == ARGUMENTS_REORDERING_FOR_CALL -> {
-                                    val statements = initializer.statements
-                                    val constructorCall = statements.last() as IrConstructorCall
-                                    statements[statements.lastIndex] = initInstanceCall(instance, constructorCall)
-                                    +initializer
-                                }
-
-                                else -> error("Unexpected initializer: $initializer")
-                            }
+                        initializer is IrBlock && initializer.origin == ARGUMENTS_REORDERING_FOR_CALL -> {
+                            val statements = initializer.statements
+                            val constructorCall = statements.last() as IrConstructorCall
+                            statements[statements.lastIndex] = initInstanceCall(instance, constructorCall)
+                            +initializer
                         }
+
+                        else -> error("Unexpected initializer: $initializer")
+                    }
+                }
                 +irCall(this@EnumClassLowering.context.ir.symbols.freeze, listOf(arrayType)).apply {
                     extensionReceiver = irGet(receiver)
                 }

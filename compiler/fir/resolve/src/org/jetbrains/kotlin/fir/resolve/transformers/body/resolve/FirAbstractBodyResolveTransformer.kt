@@ -51,6 +51,24 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
         }
     }
 
+    protected inline fun <T> withLocalScope(localScope: FirLocalScope?, crossinline l: () -> T): T {
+        if (localScope == null) return l()
+        return context.withTowerDataCleanup {
+            addLocalScope(localScope)
+            l()
+        }
+    }
+
+    protected inline fun <T> withPrimaryConstructorParameters(includeProperties: Boolean, crossinline l: () -> T): T {
+        return context.withTowerDataCleanup {
+            addLocalScope(
+                if (includeProperties) context.getPrimaryConstructorAllParametersScope()
+                else context.getPrimaryConstructorPureParametersScope()
+            )
+            l()
+        }
+    }
+
     protected fun addNewLocalScope() {
         context.addLocalScope(FirLocalScope())
     }
@@ -122,7 +140,6 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
         override val file: FirFile get() = context.file
         override val implicitReceiverStack: ImplicitReceiverStack get() = context.implicitReceiverStack
         override val containingDeclarations: List<FirDeclaration> get() = context.containers
-        override val towerDataContextForAnonymousFunctions: TowerDataContextForAnonymousFunctions get() = context.towerDataContextForAnonymousFunctions
         override val returnTypeCalculator: ReturnTypeCalculator get() = context.returnTypeCalculator
         override val container: FirDeclaration get() = context.containerIfAny!!
 

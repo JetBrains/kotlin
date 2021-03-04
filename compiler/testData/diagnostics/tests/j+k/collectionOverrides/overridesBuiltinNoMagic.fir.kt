@@ -150,14 +150,14 @@ class Y2 : X() {
 
 fun main() {
     X().remove("")
-    X().removeAt(1)
+    X().<!AMBIGUITY!>removeAt<!>(1)
 
     val y: MutableList<String> = Y()
     y.removeAt(1)
 
     Y().remove("")
-    Y().removeAt(1)
+    Y().<!AMBIGUITY!>removeAt<!>(1)
 
     X().remove("")
-    X().removeAt(1)
+    X().<!AMBIGUITY!>removeAt<!>(1)
 }

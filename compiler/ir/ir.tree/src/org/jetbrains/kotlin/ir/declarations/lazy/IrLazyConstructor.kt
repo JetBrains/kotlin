@@ -30,7 +30,7 @@ class IrLazyConstructor(
     override val name: Name,
     override var visibility: DescriptorVisibility,
     override val isInline: Boolean,
-    override var isExternal: Boolean,
+    override val isExternal: Boolean,
     override val isPrimary: Boolean,
     override val isExpect: Boolean,
     override val stubGenerator: DeclarationStubGenerator,

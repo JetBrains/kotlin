@@ -56,5 +56,5 @@ class KotlinBeforeResolveHighlightingPass(file: KtFile, document: Document) : Ab
 }
 
 interface BeforeResolveHighlightingExtension {
-    fun createVisitor(holder: AnnotationHolder): HighlightingVisitor
+    fun createVisitor(holder: AnnotationHolder): AbstractHighlightingVisitor
 }

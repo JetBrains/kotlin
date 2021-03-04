@@ -827,24 +827,21 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         var result = delegatedConstructorCall
         try {
             val lastDispatchReceiver = implicitReceiverStack.lastDispatchReceiver()
-            context.withTowerDataCleanup {
-                if ((context.containerIfAny as? FirConstructor)?.isPrimary == true) {
-                    context.replaceTowerDataContext(context.getTowerDataContextForConstructorResolution())
-                    context.getPrimaryConstructorAllParametersScope()?.let(context::addLocalScope)
-                }
 
-                // it's just a constructor parameters scope created in
-                // `FirDeclarationResolveTransformer::doTransformConstructor()`
-                val parametersScope = context.towerDataContext.localScopes.lastOrNull()
-
-                // because there's a `context.saveContextForAnonymousFunction(anonymousFunction)`
-                // call inside of the FirDeclarationResolveTransformer and accessing `this`
-                // inside a lambda which is a value parameter of a constructor delegate
-                // is prohibited
-                context.withTowerDataContext(context.getTowerDataContextForConstructorResolution()) {
-                    parametersScope?.let {
-                        addLocalScope(it)
+            // because there's a `context.saveContextForAnonymousFunction(anonymousFunction)`
+            // call inside of the FirDeclarationResolveTransformer and accessing `this`
+            // inside a lambda which is a value parameter of a constructor delegate
+            // is prohibited
+            context.withTowerDataMode(FirTowerDataMode.CONSTRUCTOR_HEADER) {
+                context.withTowerDataCleanup {
+                    if ((context.containerIfAny as? FirConstructor)?.isPrimary == true) {
+                        context.getPrimaryConstructorAllParametersScope()?.let(context::addLocalScope)
                     }
+
+                    // it's just a constructor parameters scope created in
+                    // `FirDeclarationResolveTransformer::doTransformConstructor()`
+                    context.towerDataContextsForClassParts.forMemberDeclaration.localScopes.lastOrNull()?.let(context::addLocalScope)
+
                     if (containingClass is FirRegularClass && !containingConstructor.isPrimary) {
                         context.addReceiver(
                             null,
@@ -971,7 +968,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         access.resultType = typeFromCallee.withReplacedConeType(
             session.inferenceComponents.approximator.approximateToSuperType(
                 typeFromCallee.type, TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference
-            ) as ConeKotlinType?
+            )
         )
     }
 }

@@ -22,14 +22,12 @@ internal class ModuleSerializer(
         val librariesDestination = outputLayout.getTargetDirectory(destination, target)
         when (moduleResult) {
             is ResultsConsumer.ModuleResult.Commonized -> {
-                val libraryName = moduleResult.libraryName
-                val libraryDestination = librariesDestination.resolve(libraryName)
+                val libraryDestination = librariesDestination.resolve(moduleResult.fileSystemCompatibleLibraryName)
                 writeLibrary(moduleResult.metadata, moduleResult.manifest, libraryDestination)
             }
             is ResultsConsumer.ModuleResult.Missing -> {
-                val libraryName = moduleResult.libraryName
                 val missingModuleLocation = moduleResult.originalLocation
-                missingModuleLocation.copyRecursively(librariesDestination.resolve(libraryName))
+                missingModuleLocation.copyRecursively(librariesDestination.resolve(moduleResult.fileSystemCompatibleLibraryName))
             }
         }
     }
@@ -54,3 +52,10 @@ private fun writeLibrary(
     manifestData.applyTo(library.base as BaseWriterImpl)
     library.commit()
 }
+
+/**
+ * Returns [ResultsConsumer.ModuleResult.libraryName] but replaces potentially occurring colons ':' with underscores '_'.
+ * Colons cannot be used as filenames on Windows, but they occured as libraryNames for Klibs produced by the cinterop tool.
+ */
+val ResultsConsumer.ModuleResult.fileSystemCompatibleLibraryName: String
+    get() = libraryName.replace(":", "_")

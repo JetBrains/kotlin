@@ -36,7 +36,7 @@ fun test() {
                 myRun { <!VAL_REASSIGNMENT!>x<!> = 42 }
                 break
             }
-            // x is I?D here because loop could've been execited
+            // x is ID? here because loop could've been execited
             // VAL_REASSIGNMENT isn't reported because of repeating diagnostic
             x = 42
             // x is ID now

@@ -112,7 +112,7 @@ class KotlinDeserializedJvmSymbolsProvider(
                 packageProto,
                 FirDeserializationContext.createForPackage(
                     packageFqName, packageProto, nameResolver, session,
-                    JvmBinaryAnnotationDeserializer(session, kotlinJvmBinaryClass, byteContent),
+                    JvmBinaryAnnotationDeserializer(session, kotlinJvmBinaryClass, kotlinClassFinder, byteContent),
                     FirConstDeserializer(session, facadeBinaryClass ?: kotlinJvmBinaryClass),
                     source
                 ),
@@ -197,7 +197,7 @@ class KotlinDeserializedJvmSymbolsProvider(
         val symbol = FirRegularClassSymbol(classId)
         deserializeClassToSymbol(
             classId, classProto, symbol, nameResolver, session,
-            JvmBinaryAnnotationDeserializer(session, kotlinClass.kotlinJvmBinaryClass, kotlinClass.byteContent),
+            JvmBinaryAnnotationDeserializer(session, kotlinClass.kotlinJvmBinaryClass, kotlinClassFinder, kotlinClass.byteContent),
             kotlinScopeProvider,
             parentContext, KotlinJvmBinarySourceElement(kotlinClass.kotlinJvmBinaryClass),
             deserializeNestedClass = this::getClass,

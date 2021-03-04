@@ -34,7 +34,6 @@ TEST_F(FreezeHooksTest, TypeWithFreezeHook) {
     ObjHeader obj = {&type};
     EXPECT_CALL(freezeHook(), Call(&obj));
     RunFreezeHooks(&obj);
-    testing::Mock::VerifyAndClearExpectations(&freezeHook());
 }
 
 TEST_F(FreezeHooksTest, TypeWithoutFreezeHook) {
@@ -44,5 +43,4 @@ TEST_F(FreezeHooksTest, TypeWithoutFreezeHook) {
     ObjHeader obj = {&type};
     EXPECT_CALL(freezeHook(), Call(_)).Times(0);
     RunFreezeHooks(&obj);
-    testing::Mock::VerifyAndClearExpectations(&freezeHook());
 }

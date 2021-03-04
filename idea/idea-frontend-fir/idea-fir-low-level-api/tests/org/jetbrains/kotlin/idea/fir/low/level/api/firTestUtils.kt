@@ -9,6 +9,9 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirRenderer
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.trackers.KotlinFirModificationTrackerService
@@ -20,6 +23,9 @@ inline fun resolveWithClearCaches(context: KtElement, action: (FirModuleResolveS
     val resolveState = createResolveStateForNoCaching(context.getModuleInfo())
     action(resolveState)
 }
+
+internal fun FirElement.renderWithClassName(renderMode: FirRenderer.RenderMode = FirRenderer.RenderMode.Normal): String =
+    "${this::class.simpleName} `${render(renderMode)}`"
 
 internal fun Module.incModificationTracker() {
     project.service<KotlinFirModificationTrackerService>().increaseModificationCountForModule(this)

@@ -4,7 +4,7 @@ plugins {
 
 repositories {
     mavenLocal()
-    jcenter()
+    mavenCentral()
 }
 
 val disambiguation1Attribute = Attribute.of("myDisambiguation1Attribute", String::class.java)

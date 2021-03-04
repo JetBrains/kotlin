@@ -58,7 +58,7 @@ abstract class AbstractDiagnosticCollector(
 
     @Suppress("LeakingThis")
     private var context = PersistentCheckerContext(this, returnTypeCalculator)
-    private var currentAction = DiagnosticCollectorDeclarationAction.CHECK_CURRENT_DECLARATION_AND_CHECK_NESTED
+    private var currentAction = DiagnosticCollectorDeclarationAction.CHECK_IN_CURRENT_DECLARATION_AND_LOOKUP_FOR_NESTED
 
     fun initializeComponents(vararg components: AbstractDiagnosticCollectorComponent) {
         if (componentsInitialized) {
@@ -68,13 +68,17 @@ abstract class AbstractDiagnosticCollector(
         componentsInitialized = true
     }
 
-    protected open fun beforeCollecting() {}
+    protected open fun beforeRunningAllComponentsOnElement(element: FirElement) {}
+    protected open fun beforeRunningSingleComponentOnElement(element: FirElement) {}
 
     private inner class Visitor : FirDefaultVisitor<Unit, Nothing?>() {
         private fun <T : FirElement> T.runComponents() {
-            components.forEach {
-                beforeCollecting()
-                this.accept(it, context)
+            if (currentAction.checkInCurrentDeclaration) {
+                beforeRunningAllComponentsOnElement(this)
+                components.forEach {
+                    beforeRunningSingleComponentOnElement(this)
+                    this.accept(it, context)
+                }
             }
         }
 
@@ -220,13 +224,11 @@ abstract class AbstractDiagnosticCollector(
             declaration: FirDeclaration,
             block: () -> Unit = { declaration.acceptChildren(this, null) }
         ) {
-            if (!currentAction.checkNested) return
+            if (!currentAction.lookupForNestedDeclaration) return
 
-            val action = onDeclarationEnter(declaration)
-            if (action.checkCurrentDeclaration) {
-                declaration.runComponents()
-            }
+            val action = getDeclarationActionOnDeclarationEnter(declaration)
             withDiagnosticsAction(action) {
+                declaration.runComponents()
                 withDeclaration(declaration) {
                     block()
                 }
@@ -258,8 +260,8 @@ abstract class AbstractDiagnosticCollector(
         }
     }
 
-    protected open fun onDeclarationEnter(declaration: FirDeclaration): DiagnosticCollectorDeclarationAction =
-        DiagnosticCollectorDeclarationAction.CHECK_CURRENT_DECLARATION_AND_CHECK_NESTED
+    protected open fun getDeclarationActionOnDeclarationEnter(declaration: FirDeclaration): DiagnosticCollectorDeclarationAction =
+        DiagnosticCollectorDeclarationAction.CHECK_IN_CURRENT_DECLARATION_AND_LOOKUP_FOR_NESTED
 
     protected open fun onDeclarationExit(declaration: FirDeclaration) {}
 
@@ -334,11 +336,11 @@ abstract class AbstractDiagnosticCollector(
     }
 }
 
-enum class DiagnosticCollectorDeclarationAction(val checkCurrentDeclaration: Boolean, val checkNested: Boolean) {
-    CHECK_CURRENT_DECLARATION_AND_CHECK_NESTED(checkCurrentDeclaration = true, checkNested = true),
-    CHECK_CURRENT_DECLARATION_AND_SKIP_NESTED(checkCurrentDeclaration = true, checkNested = false),
-    SKIP_CURRENT_DECLARATION_AND_CHECK_NESTED(checkCurrentDeclaration = false, checkNested = true),
-    SKIP(checkCurrentDeclaration = false, checkNested = false),
+enum class DiagnosticCollectorDeclarationAction(val checkInCurrentDeclaration: Boolean, val lookupForNestedDeclaration: Boolean) {
+    CHECK_IN_CURRENT_DECLARATION_AND_LOOKUP_FOR_NESTED(checkInCurrentDeclaration = true, lookupForNestedDeclaration = true),
+    CHECK_IN_CURRENT_DECLARATION_AND_DO_NOT_LOOKUP_FOR_NESTED(checkInCurrentDeclaration = true, lookupForNestedDeclaration = false),
+    DO_NOT_CHECK_IN_CURRENT_DECLARATION_AND_LOOKUP_FOR_NESTED(checkInCurrentDeclaration = false, lookupForNestedDeclaration = true),
+    SKIP(checkInCurrentDeclaration = false, lookupForNestedDeclaration = false),
 }
 
 fun AbstractDiagnosticCollector.registerAllComponents() {

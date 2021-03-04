@@ -42,7 +42,7 @@ internal class PersistentIrClass(
     override val isCompanion: Boolean = false,
     override val isInner: Boolean = false,
     override val isData: Boolean = false,
-    isExternal: Boolean = false,
+    override val isExternal: Boolean = false,
     override val isInline: Boolean = false,
     override val isExpect: Boolean = false,
     override val isFun: Boolean = false,
@@ -76,7 +76,8 @@ internal class PersistentIrClass(
         get() = getCarrier().visibilityField
         set(v) {
             if (visibility !== v) {
-                setCarrier().visibilityField = v
+                setCarrier()
+                visibilityField = v
             }
         }
 
@@ -86,7 +87,8 @@ internal class PersistentIrClass(
         get() = getCarrier().thisReceiverField
         set(v) {
             if (thisReceiver !== v) {
-                setCarrier().thisReceiverField = v
+                setCarrier()
+                thisReceiverField = v
             }
         }
 
@@ -112,7 +114,8 @@ internal class PersistentIrClass(
         get() = getCarrier().typeParametersField
         set(v) {
             if (typeParameters !== v) {
-                setCarrier().typeParametersField = v
+                setCarrier()
+                typeParametersField = v
             }
         }
 
@@ -122,7 +125,8 @@ internal class PersistentIrClass(
         get() = getCarrier().superTypesField
         set(v) {
             if (superTypes !== v) {
-                setCarrier().superTypesField = v
+                setCarrier()
+                superTypesField = v
             }
         }
 
@@ -132,7 +136,8 @@ internal class PersistentIrClass(
         get() = getCarrier().metadataField
         set(v) {
             if (metadata !== v) {
-                setCarrier().metadataField = v
+                setCarrier()
+                metadataField = v
             }
         }
 
@@ -142,17 +147,8 @@ internal class PersistentIrClass(
         get() = getCarrier().modalityField
         set(v) {
             if (modality !== v) {
-                setCarrier().modalityField = v
-            }
-        }
-
-    override var isExternalField: Boolean = isExternal
-
-    override var isExternal: Boolean
-        get() = getCarrier().isExternalField
-        set(v) {
-            if (isExternal != v) {
-                setCarrier().isExternalField = v
+                setCarrier()
+                modalityField = v
             }
         }
 
@@ -162,7 +158,8 @@ internal class PersistentIrClass(
         get() = getCarrier().attributeOwnerIdField
         set(v) {
             if (attributeOwnerId !== v) {
-                setCarrier().attributeOwnerIdField = v
+                setCarrier()
+                attributeOwnerIdField = v
             }
         }
 }

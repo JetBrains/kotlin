@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 fun jsVar(name: JsName, initializer: IrExpression?, context: JsGenerationContext): JsVars {
     val jsInitializer = initializer?.accept(IrElementToJsExpressionTransformer(), context)
@@ -161,34 +162,48 @@ fun translateCall(
         )
 
         if (jsDispatchReceiver != null) {
-            // TODO: Do not create IIFE when receiver expression is simple or has no side effects
-            // TODO: Do not create IIFE at all? (Currently there is no reliable way to create temporary variable in current scope)
-            val receiverName = JsName("\$externalVarargReceiverTmp")
-            val receiverRef = receiverName.makeRef()
-            JsInvocation(
-                // Create scope for temporary variable holding dispatch receiver
-                // It is used both during method reference and passing `this` value to `apply` function.
-                JsNameRef(
-                    "call",
-                    JsFunction(
-                        emptyScope,
-                        JsBlock(
-                            JsVars(JsVars.JsVar(receiverName, jsDispatchReceiver)),
-                            JsReturn(
-                                JsInvocation(
-                                    JsNameRef("apply", JsNameRef(symbolName, receiverRef)),
-                                    listOf(
-                                        receiverRef,
-                                        argumentsAsSingleArray
-                                    )
+            if (argumentsAsSingleArray is JsArrayLiteral) {
+                JsInvocation(
+                    JsNameRef(symbolName, jsDispatchReceiver),
+                    argumentsAsSingleArray.expressions
+                )
+            } else {
+                // TODO: Do not create IIFE at all? (Currently there is no reliable way to create temporary variable in current scope)
+                val receiverName = JsName("\$externalVarargReceiverTmp")
+                val receiverRef = receiverName.makeRef()
+
+                val iifeFun = JsFunction(
+                    emptyScope,
+                    JsBlock(
+                        JsVars(JsVars.JsVar(receiverName, jsDispatchReceiver)),
+                        JsReturn(
+                            JsInvocation(
+                                JsNameRef("apply", JsNameRef(symbolName, receiverRef)),
+                                listOf(
+                                    receiverRef,
+                                    argumentsAsSingleArray
                                 )
                             )
+                        )
+                    ),
+                    "VarargIIFE"
+                )
+
+                val iifeFunHasContext = (jsDispatchReceiver as? JsNameRef)?.qualifier is JsThisRef
+                if (iifeFunHasContext) {
+                    JsInvocation(
+                        // Create scope for temporary variable holding dispatch receiver
+                        // It is used both during method reference and passing `this` value to `apply` function.
+                        JsNameRef(
+                            "call",
+                            iifeFun
                         ),
-                        "VarargIIFE"
+                        JsThisRef()
                     )
-                ),
-                JsThisRef()
-            )
+                } else {
+                    JsInvocation(iifeFun)
+                }
+            }
         } else {
             JsInvocation(
                 JsNameRef("apply", JsNameRef(symbolName)),
@@ -208,10 +223,10 @@ fun argumentsWithVarargAsSingleArray(
     // External vararg arguments should be represented in JS as multiple "plain" arguments (opposed to arrays in Kotlin)
     // We are using `Function.prototype.apply` function to pass all arguments as a single array.
     // For this purpose are concatenating non-vararg arguments with vararg.
-    var arraysForConcat: MutableList<JsExpression> = mutableListOf<JsExpression>().apply {
-        additionalReceiver?.let { add(it) }
-    }
-    val concatElements: MutableList<JsExpression> = mutableListOf()
+    var arraysForConcat = mutableListOf<JsExpression>()
+    arraysForConcat.addIfNotNull(additionalReceiver)
+
+    val concatElements = mutableListOf<JsExpression>()
 
     arguments
         .forEachIndexed { index, argument ->
@@ -219,15 +234,16 @@ fun argumentsWithVarargAsSingleArray(
 
                 // Call `Array.prototype.slice` on vararg arguments in order to convert array-like objects into proper arrays
                 varargParameterIndex -> {
-                    concatElements.add(JsArrayLiteral(arraysForConcat))
+                    if (arraysForConcat.isNotEmpty()) {
+                        concatElements.add(JsArrayLiteral(arraysForConcat))
+                    }
                     arraysForConcat = mutableListOf()
 
-                    val varargArgument = if (argument is JsArrayLiteral) {
-                        argument
-                    } else {
-                        val arraySliceCall = JsNameRef("call", JsNameRef("slice", JsArrayLiteral()))
-                        JsInvocation(arraySliceCall, argument)
-                    }
+                    val varargArgument = when (argument) {
+                        is JsArrayLiteral -> argument
+                        is JsNew -> argument.arguments.firstOrNull() as? JsArrayLiteral
+                        else -> null
+                    } ?: JsInvocation(JsNameRef("call", JsNameRef("slice", JsArrayLiteral())), argument)
 
                     concatElements.add(varargArgument)
                 }
@@ -238,15 +254,18 @@ fun argumentsWithVarargAsSingleArray(
             }
         }
 
-    if (arraysForConcat.isNotEmpty() || concatElements.isEmpty()) {
+    if (arraysForConcat.isNotEmpty()) {
         concatElements.add(JsArrayLiteral(arraysForConcat))
     }
 
-    return concatElements.singleOrNull()
-        ?: JsInvocation(
+    return when (concatElements.size) {
+        0 -> JsArrayLiteral()
+        1 -> concatElements[0]
+        else -> JsInvocation(
             JsNameRef("concat", concatElements.first()),
             concatElements.drop(1)
         )
+    }
 }
 
 fun IrFunction.varargParameterIndex() = valueParameters.indexOfFirst { it.varargElementType != null }

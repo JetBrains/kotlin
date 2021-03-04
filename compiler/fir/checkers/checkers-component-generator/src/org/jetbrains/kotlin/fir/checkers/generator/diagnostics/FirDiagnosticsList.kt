@@ -166,6 +166,8 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val INAPPLICABLE_LATEINIT_MODIFIER by error<FirSourceElement, KtModifierListOwner>(PositioningStrategy.LATEINIT_MODIFIER) {
             parameter<String>("reason")
         }
+
+        val VARARG_OUTSIDE_PARENTHESES by error<FirSourceElement, KtExpression>()
     }
 
     val AMBIGUITY by object : DiagnosticGroup("Ambiguity") {
@@ -355,7 +357,10 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
     }
 
     val CONTROL_FLOW by object : DiagnosticGroup("Control flow diagnostics") {
-        val UNINITIALIZED_VARIABLE by error<FirSourceElement, PsiElement> {
+        val UNINITIALIZED_VARIABLE by error<FirSourceElement, KtSimpleNameExpression> {
+            parameter<FirPropertySymbol>("variable")
+        }
+        val VAL_REASSIGNMENT by error<FirSourceElement, KtExpression> {
             parameter<FirPropertySymbol>("variable")
         }
         val WRONG_INVOCATION_KIND by warning<FirSourceElement, PsiElement> {

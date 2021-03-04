@@ -751,6 +751,31 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
             listOf("-Xexpect-actual-linker")
         )
     }
+    
+    fun testActualTypealiasToCompiledInlineClass() {
+        val library14 = compileLibrary(
+            "library14",
+            additionalOptions = listOf("-language-version", "1.4")
+        )
+        val library15 = compileLibrary(
+            "library15",
+            additionalOptions = listOf("-language-version", "1.5")
+        )
+        compileKotlin(
+            "expectActualLv14.kt",
+            output = tmpdir,
+            classpath = listOf(library14, library15),
+            additionalOptions = listOf("-language-version", "1.4", "-Xmulti-platform"),
+            expectedFileName = "output14.txt",
+        )
+        compileKotlin(
+            "expectActualLv15.kt",
+            output = tmpdir,
+            classpath = listOf(library14, library15),
+            additionalOptions = listOf("-language-version", "1.5", "-Xmulti-platform"),
+            expectedFileName = "output15.txt",
+        )
+    }
 
     private fun loadClassFile(className: String, dir: File, library: File) {
         val classLoader = URLClassLoader(arrayOf(dir.toURI().toURL(), library.toURI().toURL()))

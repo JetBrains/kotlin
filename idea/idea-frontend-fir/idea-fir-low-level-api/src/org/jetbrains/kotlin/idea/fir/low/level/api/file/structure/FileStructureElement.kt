@@ -60,10 +60,10 @@ internal sealed class ReanalyzableStructureElement<KT : KtDeclaration>(firFile: 
                     when {
                         firDeclaration == declaration -> {
                             inCurrentDeclaration = true
-                            DiagnosticCollectorDeclarationAction.CHECK_CURRENT_DECLARATION_AND_CHECK_NESTED
+                            DiagnosticCollectorDeclarationAction.CHECK_IN_CURRENT_DECLARATION_AND_LOOKUP_FOR_NESTED
                         }
-                        inCurrentDeclaration -> DiagnosticCollectorDeclarationAction.CHECK_CURRENT_DECLARATION_AND_CHECK_NESTED
-                        else -> DiagnosticCollectorDeclarationAction.SKIP_CURRENT_DECLARATION_AND_CHECK_NESTED
+                        inCurrentDeclaration -> DiagnosticCollectorDeclarationAction.CHECK_IN_CURRENT_DECLARATION_AND_LOOKUP_FOR_NESTED
+                        else -> DiagnosticCollectorDeclarationAction.DO_NOT_CHECK_IN_CURRENT_DECLARATION_AND_LOOKUP_FOR_NESTED
                     }
                 },
                 onDeclarationExit = { firDeclaration ->
@@ -176,19 +176,19 @@ internal class NonReanalyzableDeclarationStructureElement(
                         // Some generated declaration contains structures that we need to check. For example the FIR representation of an
                         // enum entry initializer, when present, is a generated anonymous object of kind `ENUM_ENTRY`.
                         firDeclaration.isGeneratedDeclaration ->
-                            DiagnosticCollectorDeclarationAction.SKIP_CURRENT_DECLARATION_AND_CHECK_NESTED
-                        firDeclaration is FirFile -> DiagnosticCollectorDeclarationAction.CHECK_CURRENT_DECLARATION_AND_CHECK_NESTED
+                            DiagnosticCollectorDeclarationAction.DO_NOT_CHECK_IN_CURRENT_DECLARATION_AND_LOOKUP_FOR_NESTED
+                        firDeclaration is FirFile -> DiagnosticCollectorDeclarationAction.DO_NOT_CHECK_IN_CURRENT_DECLARATION_AND_LOOKUP_FOR_NESTED
                         firDeclaration == fir -> {
                             inCurrentDeclaration = true
-                            DiagnosticCollectorDeclarationAction.CHECK_CURRENT_DECLARATION_AND_CHECK_NESTED
+                            DiagnosticCollectorDeclarationAction.CHECK_IN_CURRENT_DECLARATION_AND_LOOKUP_FOR_NESTED
                         }
                         FileElementFactory.isReanalyzableContainer(firDeclaration.ktDeclaration) -> {
                             DiagnosticCollectorDeclarationAction.SKIP
                         }
                         inCurrentDeclaration -> {
-                            DiagnosticCollectorDeclarationAction.CHECK_CURRENT_DECLARATION_AND_CHECK_NESTED
+                            DiagnosticCollectorDeclarationAction.CHECK_IN_CURRENT_DECLARATION_AND_LOOKUP_FOR_NESTED
                         }
-                        else -> DiagnosticCollectorDeclarationAction.SKIP_CURRENT_DECLARATION_AND_CHECK_NESTED
+                        else -> DiagnosticCollectorDeclarationAction.DO_NOT_CHECK_IN_CURRENT_DECLARATION_AND_LOOKUP_FOR_NESTED
                     }
                 },
                 onDeclarationExit = { firDeclaration ->
@@ -233,7 +233,7 @@ internal class RootStructureElement(
     private object DiagnosticRetriever : FileStructureElementDiagnosticRetriever() {
         override fun retrieve(firFile: FirFile, collector: FileStructureElementDiagnosticsCollector): FileStructureElementDiagnosticList {
             return collector.collectForStructureElement(firFile) { firDeclaration ->
-                if (firDeclaration is FirFile) DiagnosticCollectorDeclarationAction.CHECK_CURRENT_DECLARATION_AND_SKIP_NESTED
+                if (firDeclaration is FirFile) DiagnosticCollectorDeclarationAction.CHECK_IN_CURRENT_DECLARATION_AND_DO_NOT_LOOKUP_FOR_NESTED
                 else DiagnosticCollectorDeclarationAction.SKIP
             }
         }

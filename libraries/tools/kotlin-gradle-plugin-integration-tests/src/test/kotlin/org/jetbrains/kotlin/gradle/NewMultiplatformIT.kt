@@ -693,6 +693,28 @@ class NewMultiplatformIT : BaseGradleIT() {
     }
 
     @Test
+    fun testLanguageSettingsClosureForKotlinDsl() = with(transformNativeTestProjectWithPluginDsl("sample-lib-gradle-kotlin-dsl", gradleVersion, "new-mpp-lib-and-app")) {
+        gradleBuildScript().appendText(
+                "\n" + """
+            kotlin.sourceSets.all {
+                languageSettings {
+                    languageVersion = "1.3"
+                    apiVersion = "1.3" 
+                }
+            }
+        """.trimIndent()
+        )
+
+        listOf("compileKotlinMetadata", "compileKotlinJvm6", "compileKotlinNodeJs").forEach {
+            build(it) {
+                assertSuccessful()
+                assertTasksExecuted(":$it")
+                assertContains("-language-version 1.3", "-api-version 1.3")
+            }
+        }
+    }
+
+    @Test
     fun testLanguageSettingsApplied() = with(transformNativeTestProject("sample-lib", gradleVersion, "new-mpp-lib-and-app")) {
         gradleBuildScript().appendText(
             "\n" + """

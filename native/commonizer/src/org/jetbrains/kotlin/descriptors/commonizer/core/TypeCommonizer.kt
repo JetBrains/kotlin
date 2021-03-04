@@ -143,11 +143,7 @@ private class TypeAliasTypeCommonizer(private val classifiers: CirKnownClassifie
             // type alias don't needs to be commonized because it is from the standard library
             fun forKnownUnderlyingType(underlyingType: CirClassOrTypeAliasType) = object : CommonizedTypeAliasTypeBuilder {
                 override fun build(typeAliasId: CirEntityId, arguments: List<CirTypeProjection>, isMarkedNullable: Boolean): CirTypeAliasType {
-                    val underlyingTypeWithProperNullability = if (isMarkedNullable && !underlyingType.isMarkedNullable)
-                        CirTypeFactory.makeNullable(underlyingType)
-                    else
-                        underlyingType
-
+                    val underlyingTypeWithProperNullability = CirTypeFactory.makeNullableIfNecessary(underlyingType, isMarkedNullable)
                     return CirTypeFactory.createTypeAliasType(
                         typeAliasId = typeAliasId,
                         underlyingType = underlyingTypeWithProperNullability, // TODO replace arguments???

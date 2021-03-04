@@ -58,7 +58,8 @@ internal class PersistentIrTypeParameter(
         get() = getCarrier().superTypesField
         set(v) {
             if (superTypes !== v) {
-                setCarrier().superTypesField = v
+                setCarrier()
+                superTypesField = v
             }
         }
 }

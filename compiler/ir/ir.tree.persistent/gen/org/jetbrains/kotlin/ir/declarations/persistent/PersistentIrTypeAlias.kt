@@ -59,7 +59,8 @@ internal class PersistentIrTypeAlias(
         get() = getCarrier().typeParametersField
         set(v) {
             if (typeParameters !== v) {
-                setCarrier().typeParametersField = v
+                setCarrier()
+                typeParametersField = v
             }
         }
 
@@ -69,7 +70,8 @@ internal class PersistentIrTypeAlias(
         get() = getCarrier().expandedTypeField
         set(v) {
             if (expandedType !== v) {
-                setCarrier().expandedTypeField = v
+                setCarrier()
+                expandedTypeField = v
             }
         }
 }

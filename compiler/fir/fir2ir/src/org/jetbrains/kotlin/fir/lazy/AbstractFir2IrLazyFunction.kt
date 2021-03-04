@@ -58,9 +58,8 @@ abstract class AbstractFir2IrLazyFunction<F : FirMemberDeclaration>(
     override val isInline: Boolean
         get() = fir.isInline
 
-    override var isExternal: Boolean by lazyVar {
-        fir.isExternal
-    }
+    override val isExternal: Boolean
+        get() = fir.isExternal
 
     override val isExpect: Boolean
         get() = fir.isExpect

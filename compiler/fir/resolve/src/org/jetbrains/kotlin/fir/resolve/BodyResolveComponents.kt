@@ -10,6 +10,8 @@ import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.kotlin.fir.FirCallResolver
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
+import org.jetbrains.kotlin.fir.resolve.FirTowerDataMode.*
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitDispatchReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitExtensionReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
@@ -27,6 +29,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addIfNotNull
+import java.util.*
 
 interface SessionHolder {
     val session: FirSession
@@ -41,7 +44,6 @@ abstract class BodyResolveComponents : SessionHolder {
     abstract val towerDataElements: List<FirTowerDataElement>
     abstract val towerDataContext: FirTowerDataContext
     abstract val localScopes: FirLocalScopes
-    abstract val towerDataContextForAnonymousFunctions: TowerDataContextForAnonymousFunctions
     abstract val noExpectedType: FirTypeRef
     abstract val symbolProvider: FirSymbolProvider
     abstract val file: FirFile
@@ -139,15 +141,57 @@ fun ImplicitReceiverValue<*>.asTowerDataElement(): FirTowerDataElement =
 fun FirScope.asTowerDataElement(isLocal: Boolean): FirTowerDataElement =
     FirTowerDataElement(this, implicitReceiver = null, isLocal)
 
-typealias TowerDataContextForAnonymousFunctions = Map<FirAnonymousFunctionSymbol, FirTowerDataContext>
+enum class FirTowerDataMode {
+    MEMBER_DECLARATION,
+    NESTED_CLASS,
+    COMPANION_OBJECT,
+    CONSTRUCTOR_HEADER,
+    SPECIAL,
+}
 
 class FirTowerDataContextsForClassParts(
-    val forNestedClasses: FirTowerDataContext,
-    val forCompanionObject: FirTowerDataContext,
-    val forConstructorHeaders: FirTowerDataContext,
-    val primaryConstructorPureParametersScope: FirLocalScope?,
-    val primaryConstructorAllParametersScope: FirLocalScope?,
-)
+    forMemberDeclarations: FirTowerDataContext,
+    forNestedClasses: FirTowerDataContext? = null,
+    forCompanionObject: FirTowerDataContext? = null,
+    forConstructorHeaders: FirTowerDataContext? = null,
+    val primaryConstructorPureParametersScope: FirLocalScope? = null,
+    val primaryConstructorAllParametersScope: FirLocalScope? = null,
+) {
+    private val modeMap = EnumMap<FirTowerDataMode, FirTowerDataContext>(FirTowerDataMode::class.java)
+
+    init {
+        modeMap[MEMBER_DECLARATION] = forMemberDeclarations
+        modeMap[NESTED_CLASS] = forNestedClasses
+        modeMap[COMPANION_OBJECT] = forCompanionObject
+        modeMap[CONSTRUCTOR_HEADER] = forConstructorHeaders
+    }
+
+    var mode: FirTowerDataMode = MEMBER_DECLARATION
+
+    val forMemberDeclaration: FirTowerDataContext get() = modeMap.getValue(MEMBER_DECLARATION)
+
+    val towerDataContextForAnonymousFunctions: MutableMap<FirAnonymousFunctionSymbol, FirTowerDataContext> = mutableMapOf()
+    val towerDataContextForCallableReferences: MutableMap<FirCallableReferenceAccess, FirTowerDataContext> = mutableMapOf()
+
+    var currentContext: FirTowerDataContext
+        get() = modeMap.getValue(mode)
+        set(value) {
+            modeMap[mode] = value
+        }
+
+    fun setAnonymousFunctionContext(symbol: FirAnonymousFunctionSymbol) {
+        mode = SPECIAL
+        modeMap[SPECIAL] = towerDataContextForAnonymousFunctions.getValue(symbol)
+    }
+
+    fun setCallableReferenceContextIfAny(access: FirCallableReferenceAccess) {
+        val context = towerDataContextForCallableReferences[access]
+        if (context != null) {
+            mode = SPECIAL
+            modeMap[SPECIAL] = context
+        }
+    }
+}
 
 // --------------------------------------- Utils ---------------------------------------
 

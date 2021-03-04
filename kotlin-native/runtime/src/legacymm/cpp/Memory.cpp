@@ -39,12 +39,14 @@
 #include "CyclicCollector.h"
 #endif  // USE_CYCLIC_GC
 #include "Exceptions.h"
+#include "FinalizerHooks.hpp"
 #include "FreezeHooks.hpp"
 #include "KString.h"
 #include "Memory.h"
 #include "MemoryPrivate.hpp"
 #include "Mutex.hpp"
 #include "Natives.h"
+#include "ObjectTraversal.hpp"
 #include "Porting.h"
 #include "Runtime.h"
 #include "Utils.hpp"
@@ -977,31 +979,6 @@ inline container_size_t objectSize(const ObjHeader* obj) {
 }
 
 template <typename func>
-inline void traverseObjectFields(ObjHeader* obj, func process) {
-  const TypeInfo* typeInfo = obj->type_info();
-  if (typeInfo != theArrayTypeInfo) {
-    for (int index = 0; index < typeInfo->objOffsetsCount_; index++) {
-      ObjHeader** location = reinterpret_cast<ObjHeader**>(
-          reinterpret_cast<uintptr_t>(obj) + typeInfo->objOffsets_[index]);
-      process(location);
-    }
-  } else {
-    ArrayHeader* array = obj->array();
-    for (uint32_t index = 0; index < array->count_; index++) {
-      process(ArrayAddressOfElementAt(array, index));
-    }
-  }
-}
-
-template <typename func>
-inline void traverseReferredObjects(ObjHeader* obj, func process) {
-  traverseObjectFields(obj, [process](ObjHeader** location) {
-    ObjHeader* ref = *location;
-    if (ref != nullptr) process(ref);
-  });
-}
-
-template <typename func>
 inline void traverseContainerObjects(ContainerHeader* container, func process) {
   RuntimeAssert(!isAggregatingFrozenContainer(container), "Must not be called on such containers");
   ObjHeader* obj = reinterpret_cast<ObjHeader*>(container + 1);
@@ -1015,7 +992,7 @@ inline void traverseContainerObjects(ContainerHeader* container, func process) {
 template <typename func>
 inline void traverseContainerObjectFields(ContainerHeader* container, func process) {
   traverseContainerObjects(container, [process](ObjHeader* obj) {
-    traverseObjectFields(obj, process);
+      kotlin::traverseObjectFields(obj, process);
   });
 }
 
@@ -1198,27 +1175,11 @@ void freeAggregatingFrozenContainer(ContainerHeader* container) {
   MEMORY_LOG("Freeing subcontainers done\n");
 }
 
-// Not inlining this call as it affects deallocation performance for
-// all types.
-NO_INLINE RUNTIME_NOTHROW void runFinalizers(ObjHeader* obj) {
-    auto* type_info = obj->type_info();
-    if (type_info == theCleanerImplTypeInfo) {
-        DisposeCleaner(obj);
-    }
-    if (type_info == theWorkerBoundReferenceTypeInfo) {
-        DisposeWorkerBoundReference(obj);
-    }
-}
-
 // This is called from 2 places where it's unconditionally called,
 // so better be inlined.
 ALWAYS_INLINE void runDeallocationHooks(ContainerHeader* container) {
   ObjHeader* obj = reinterpret_cast<ObjHeader*>(container + 1);
   for (uint32_t index = 0; index < container->objectCount(); index++) {
-    auto* type_info = obj->type_info();
-    if ((type_info->flags_ & TF_HAS_FINALIZER) != 0) {
-      runFinalizers(obj);
-    }
 #if USE_CYCLIC_GC
     if ((type_info->flags_ & TF_LEAK_DETECTOR_CANDIDATE) != 0) {
       cyclicRemoveAtomicRoot(obj);
@@ -1227,9 +1188,7 @@ ALWAYS_INLINE void runDeallocationHooks(ContainerHeader* container) {
 #if USE_CYCLE_DETECTOR
     CycleDetector::removeCandidateIfNeeded(obj);
 #endif  // USE_CYCLE_DETECTOR
-    if (obj->has_meta_object()) {
-      ObjHeader::destroyMetaObject(obj);
-    }
+    kotlin::RunFinalizers(obj);
     obj = reinterpret_cast<ObjHeader*>(reinterpret_cast<uintptr_t>(obj) + objectSize(obj));
   }
 }
@@ -2887,7 +2846,7 @@ void runFreezeHooksRecursive(ObjHeader* root) {
 
     kotlin::RunFreezeHooks(obj);
 
-    traverseReferredObjects(obj, [&seen, &toVisit](ObjHeader* field) {
+    kotlin::traverseReferredObjects(obj, [&seen, &toVisit](ObjHeader* field) {
       auto wasNotSeenYet = seen.insert(field).second;
       // Only iterating on unseen objects which containers will get frozen by freezeCyclic or freezeAcyclic.
       if (wasNotSeenYet && canFreeze(containerFor(field))) {
@@ -3014,7 +2973,7 @@ CycleDetectorRootset CycleDetector::collectRootset() {
       continue;
     rootset.roots.push_back(candidate);
     rootset.heldRefs.emplace_back(candidate);
-    traverseReferredObjects(candidate, [&rootset, candidate](KRef field) {
+    kotlin::traverseReferredObjects(candidate, [&rootset, candidate](KRef field) {
       rootset.rootToFields[candidate].push_back(field);
       // TODO: There's currently a race here:
       // some other thread might null this field and destroy it in GC before
@@ -3039,7 +2998,7 @@ KStdVector<KRef> findCycleWithDFS(KRef root, const CycleDetectorRootset& rootset
       return;
     }
 
-    traverseReferredObjects(obj, process);
+    kotlin::traverseReferredObjects(obj, process);
   };
 
   KStdVector<KStdVector<KRef>> toVisit;

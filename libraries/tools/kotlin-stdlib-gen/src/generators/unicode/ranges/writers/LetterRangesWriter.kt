@@ -5,8 +5,11 @@
 
 package generators.unicode.ranges.writers
 
+import generators.unicode.TO_BASE64
 import generators.unicode.ranges.RangesWritingStrategy
 import generators.unicode.ranges.patterns.GapRangePattern
+import generators.unicode.toVarLenBase64
+import generators.unicode.writeIntArray
 import java.io.FileWriter
 
 internal open class LetterRangesWriter(protected val strategy: RangesWritingStrategy) : RangesWriter {

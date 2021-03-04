@@ -1,0 +1,6 @@
+// "Remove 'private' modifier" "true"
+abstract class My {
+    abstract var foo: Int
+        set
+}
+/* FIR_COMPARISON */

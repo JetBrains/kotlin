@@ -26,7 +26,7 @@ fun case1() {
 fun case2() {
     val x: Boolean = false
     try {
-        x = (throw Exception()) || true //VAL_REASSIGNMENT should be
+        <!VAL_REASSIGNMENT!>x<!> = (throw Exception()) || true //VAL_REASSIGNMENT should be
     } catch (e: Exception) {
     }
 }

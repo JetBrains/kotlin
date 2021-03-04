@@ -130,6 +130,19 @@ public actual fun Char.uppercaseChar(): Char = TODO("Wasm stdlib: Text")
 @ExperimentalStdlibApi
 public actual fun Char.uppercase(): String = TODO("Wasm stdlib: Text")
 
+/**
+ * Converts this character to title case using Unicode mapping rules of the invariant locale.
+ *
+ * This function performs one-to-one character mapping.
+ * To support one-to-many character mapping use the [titlecase] function.
+ * If this character has no mapping equivalent, the result of calling [uppercaseChar] is returned.
+ *
+ * @sample samples.text.Chars.titlecase
+ */
+@SinceKotlin("1.4")
+@ExperimentalStdlibApi
+public actual fun Char.titlecaseChar(): Char = TODO("Wasm stdlib: Text")
+
 
 /**
  * Returns the Unicode general category of this character.

@@ -236,7 +236,8 @@ class ConeRawType(lowerBound: ConeKotlinType, upperBound: ConeKotlinType) : Cone
  *   only via ConeTypeIntersector
  */
 class ConeIntersectionType(
-    val intersectedTypes: Collection<ConeKotlinType>
+    val intersectedTypes: Collection<ConeKotlinType>,
+    val alternativeType: ConeKotlinType? = null,
 ) : ConeSimpleKotlinType(), IntersectionTypeConstructorMarker {
     override val typeArguments: Array<out ConeTypeProjection>
         get() = emptyArray()
@@ -266,7 +267,10 @@ class ConeIntersectionType(
         if (hashCode != 0) return hashCode
         return intersectedTypes.hashCode().also { hashCode = it }
     }
+}
 
+fun ConeIntersectionType.withAlternative(alternativeType: ConeKotlinType): ConeIntersectionType {
+    return ConeIntersectionType(intersectedTypes, alternativeType)
 }
 
 fun ConeIntersectionType.mapTypes(func: (ConeKotlinType) -> ConeKotlinType): ConeIntersectionType {

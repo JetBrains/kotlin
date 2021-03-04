@@ -105,6 +105,26 @@ interface IrBuilderExtension {
         return function
     }
 
+    fun IrClass.createSingletonLambda(
+        returnType: IrType,
+        startOffset: Int,
+        endOffset: Int,
+        bodyGen: IrBlockBodyBuilder.() -> Unit
+    ): IrSimpleFunction {
+        val function = compilerContext.irFactory.buildFun {
+            this.startOffset = startOffset
+            this.endOffset = endOffset
+            this.returnType = returnType
+            name = Name.identifier("<anonymous>")
+            visibility = DescriptorVisibilities.LOCAL
+            origin = SERIALIZABLE_PLUGIN_ORIGIN
+        }
+        function.body =
+            DeclarationIrBuilder(compilerContext, function.symbol, startOffset, endOffset).irBlockBody(startOffset, endOffset, bodyGen)
+
+        return function
+    }
+
     fun IrBuilderWithScope.irInvoke(
         dispatchReceiver: IrExpression? = null,
         callee: IrFunctionSymbol,
@@ -145,6 +165,16 @@ interface IrBuilderExtension {
         return irCall(compilerContext.symbols.arrayOf, arrayType, typeArguments = typeArguments).apply {
             putValueArgument(0, arg0)
         }
+    }
+
+    fun ClassDescriptor.referenceFunctionSymbol(
+        functionName: String,
+        predicate: (IrSimpleFunction) -> Boolean = { true }
+    ): IrFunctionSymbol {
+        val irClass = compilerContext.referenceClass(fqNameSafe)?.owner ?: error("Couldn't load class $this")
+        val simpleFunctions = irClass.declarations.filterIsInstance<IrSimpleFunction>()
+
+        return simpleFunctions.filter { it.name.asString() == functionName }.single { predicate(it) }.symbol
     }
 
     fun IrBuilderWithScope.createPrimitiveArrayOfExpression(
@@ -455,7 +485,7 @@ interface IrBuilderExtension {
                 property.factory.createFunction(
                     fieldSymbol.owner.startOffset, fieldSymbol.owner.endOffset, SERIALIZABLE_PLUGIN_ORIGIN, IrSimpleFunctionSymbolImpl(descriptor),
                     name, visibility, modality, returnType!!.toIrType(),
-                    isInline, isExternal, isTailrec, isSuspend, isOperator, isInfix, isExpect
+                    isInline, isEffectivelyExternal(), isTailrec, isSuspend, isOperator, isInfix, isExpect
                 )
             }.also { f ->
                 generateOverriddenFunctionSymbols(f, compilerContext.symbolTable)

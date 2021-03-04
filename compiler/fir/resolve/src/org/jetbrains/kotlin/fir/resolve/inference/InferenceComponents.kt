@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.fir.resolve.inference
 
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.types.ConeInferenceContext
+import org.jetbrains.kotlin.fir.types.ConeTypeApproximator
 import org.jetbrains.kotlin.resolve.calls.inference.components.*
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
-import org.jetbrains.kotlin.types.AbstractTypeApproximator
 
 @NoMutableState
 class InferenceComponents(val session: FirSession) : FirSessionComponent {
@@ -18,7 +18,7 @@ class InferenceComponents(val session: FirSession) : FirSessionComponent {
             get() = this@InferenceComponents.session
     }
 
-    val approximator: AbstractTypeApproximator = object : AbstractTypeApproximator(ctx) {}
+    val approximator: ConeTypeApproximator = ConeTypeApproximator(ctx)
     val trivialConstraintTypeInferenceOracle = TrivialConstraintTypeInferenceOracle.create(ctx)
     private val incorporator = ConstraintIncorporator(approximator, trivialConstraintTypeInferenceOracle, ConeConstraintSystemUtilContext)
     private val injector = ConstraintInjector(

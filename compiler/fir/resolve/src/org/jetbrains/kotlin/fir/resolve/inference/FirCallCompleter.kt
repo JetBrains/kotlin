@@ -222,8 +222,7 @@ class FirCallCompleter(
                 FirBuilderInferenceSession(transformer.resolutionContext, stubsForPostponedVariables as Map<ConeTypeVariable, ConeStubType>)
             }
 
-            val localContext = components.towerDataContextForAnonymousFunctions[lambdaArgument.symbol] ?: error("")
-            transformer.context.withTowerDataContext(localContext) {
+            transformer.context.withAnonymousFunctionTowerDataContext(lambdaArgument.symbol) {
                 if (builderInferenceSession != null) {
                     transformer.context.withInferenceSession(builderInferenceSession) {
                         lambdaArgument.transformSingle(transformer, ResolutionMode.LambdaResolution(expectedReturnTypeRef))
@@ -243,5 +242,5 @@ class FirCallCompleter(
     private fun ConeKotlinType.approximateLambdaInputType(): ConeKotlinType =
         session.inferenceComponents.approximator.approximateToSuperType(
             this, TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference
-        ) as ConeKotlinType? ?: this
+        ) ?: this
 }

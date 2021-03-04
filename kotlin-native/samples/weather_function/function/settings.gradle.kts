@@ -4,7 +4,6 @@ pluginManagement {
     repositories {
         gradlePluginPortal()
         jcenter()
-        maven("https://dl.bintray.com/jetbrains/kotlin-native-dependencies")
     }
 
     // This way we can map plugin to standard maven artifact
@@ -12,7 +11,7 @@ pluginManagement {
     resolutionStrategy {
         eachPlugin {
             if (requested.id.id == "konan") {
-                val kotlinNativeVer = "0.7.1"
+                val kotlinNativeVer = "1.3.41"
                 useModule("org.jetbrains.kotlin:kotlin-native-gradle-plugin:$kotlinNativeVer")
             }
         }

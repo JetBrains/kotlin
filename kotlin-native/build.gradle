@@ -34,12 +34,10 @@ buildscript {
 
     repositories {
         if (UtilsKt.getCacheRedirectorEnabled(project)) {
-            maven { url "https://cache-redirector.jetbrains.com/dl.kotlin.bintray.com/kotlinx" }
             maven { url "https://cache-redirector.jetbrains.com/maven-central" }
             maven { url "https://cache-redirector.jetbrains.com/jcenter" }
         }
         else {
-            maven { url "https://kotlin.bintray.com/kotlinx" }
             mavenCentral()
             jcenter()
         }
@@ -588,7 +586,7 @@ task bundle {
 task bundleRegular(type: (isWindows()) ? Zip : Tar) {
     def simpleOsName = HostManager.simpleOsName()
     archiveBaseName.set("kotlin-native-$simpleOsName-$konanVersionFull")
-    from("$project.rootDir/dist") {
+    from(UtilsKt.getKotlinNativeDist(project)) {
         include '**'
         exclude 'dependencies'
         exclude 'klib/testLibrary'
@@ -609,7 +607,7 @@ task bundlePrebuilt(type: (isWindows()) ? Zip : Tar) {
     dependsOn("crossDistPlatformLibs")
     def simpleOsName = HostManager.simpleOsName()
     archiveBaseName.set("kotlin-native-prebuilt-$simpleOsName-$konanVersionFull")
-    from("$project.rootDir/dist") {
+    from(UtilsKt.getKotlinNativeDist(project)) {
         include '**'
         exclude 'dependencies'
         exclude 'klib/testLibrary'

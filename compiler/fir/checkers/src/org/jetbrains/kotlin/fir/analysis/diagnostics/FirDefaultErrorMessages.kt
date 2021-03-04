@@ -171,7 +171,9 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSAFE_OPERATOR_C
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNUSED_VARIABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UPPER_BOUND_VIOLATED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.USELESS_VARARG_ON_PARAMETER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VAL_REASSIGNMENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VAL_WITH_SETTER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VARARG_OUTSIDE_PARENTHESES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VARIABLE_EXPECTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VARIABLE_INITIALIZER_IS_REDUNDANT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VARIABLE_NEVER_READ
@@ -322,6 +324,7 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
             map.put(NONE_APPLICABLE, "None of the following functions are applicable: {0}", SYMBOLS)
             map.put(INAPPLICABLE_CANDIDATE, "Inapplicable candidate(s): {0}", SYMBOL)
             map.put(INAPPLICABLE_LATEINIT_MODIFIER, "''lateinit'' modifier {0}", TO_STRING)
+            map.put(VARARG_OUTSIDE_PARENTHESES, "Passing value as a vararg is only allowed inside a parenthesized argument list")
 
             // Ambiguity
             map.put(AMBIGUITY, "Ambiguity between candidates: {0}", SYMBOLS)
@@ -510,6 +513,7 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
 
             // Control flow diagnostics
             map.put(UNINITIALIZED_VARIABLE, "{0} must be initialized before access", PROPERTY_NAME)
+            map.put(VAL_REASSIGNMENT, "Val cannot be reassigned", PROPERTY_NAME)
             map.put(
                 WRONG_INVOCATION_KIND,
                 "{2} wrong invocation kind: given {3} case, but {4} case is possible",

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.analysis
 
-import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.fir.FirSession
@@ -37,7 +36,10 @@ class FirAnalyzerFacade(
     val useLightTree: Boolean = false
 ) {
     private var firFiles: List<FirFile>? = null
-    private var scopeSession: ScopeSession? = null
+    private var _scopeSession: ScopeSession? = null
+    val scopeSession: ScopeSession
+        get() = _scopeSession!!
+
     private var collectedDiagnostics: Map<FirFile, List<FirDiagnostic<*>>>? = null
 
     private fun buildRawFir() {
@@ -62,16 +64,16 @@ class FirAnalyzerFacade(
 
     fun runResolution(): List<FirFile> {
         if (firFiles == null) buildRawFir()
-        if (scopeSession != null) return firFiles!!
+        if (_scopeSession != null) return firFiles!!
         val resolveProcessor = FirTotalResolveProcessor(session)
         resolveProcessor.process(firFiles!!)
-        scopeSession = resolveProcessor.scopeSession
+        _scopeSession = resolveProcessor.scopeSession
         return firFiles!!
     }
 
     @OptIn(ExperimentalStdlibApi::class)
     fun runCheckers(): Map<FirFile, List<FirDiagnostic<*>>> {
-        if (scopeSession == null) runResolution()
+        if (_scopeSession == null) runResolution()
         if (collectedDiagnostics != null) return collectedDiagnostics!!
         val collector = FirDiagnosticsCollector.create(session)
         collectedDiagnostics = buildMap {
@@ -83,11 +85,11 @@ class FirAnalyzerFacade(
     }
 
     fun convertToIr(extensions: GeneratorExtensions): Fir2IrResult {
-        if (scopeSession == null) runResolution()
+        if (_scopeSession == null) runResolution()
         val signaturer = JvmIdSignatureDescriptor(JvmManglerDesc())
 
         return Fir2IrConverter.createModuleFragment(
-            session, scopeSession!!, firFiles!!,
+            session, _scopeSession!!, firFiles!!,
             languageVersionSettings, signaturer,
             extensions, FirJvmKotlinMangler(session), IrFactoryImpl,
             FirJvmVisibilityConverter,

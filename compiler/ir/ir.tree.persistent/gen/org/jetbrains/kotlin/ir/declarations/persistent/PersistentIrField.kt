@@ -32,7 +32,7 @@ internal class PersistentIrField(
     type: IrType,
     override var visibility: DescriptorVisibility,
     override val isFinal: Boolean,
-    isExternal: Boolean,
+    override val isExternal: Boolean,
     override val isStatic: Boolean,
     override val factory: PersistentIrFactory
 ) : IrField(),
@@ -66,7 +66,8 @@ internal class PersistentIrField(
                 if (v is PersistentIrBodyBase<*>) {
                     v.container = this
                 }
-                setCarrier().initializerField = v
+                setCarrier()
+                initializerField = v
             }
         }
 
@@ -76,7 +77,8 @@ internal class PersistentIrField(
         get() = getCarrier().correspondingPropertySymbolField
         set(v) {
             if (correspondingPropertySymbol !== v) {
-                setCarrier().correspondingPropertySymbolField = v
+                setCarrier()
+                correspondingPropertySymbolField = v
             }
         }
 
@@ -86,7 +88,8 @@ internal class PersistentIrField(
         get() = getCarrier().metadataField
         set(v) {
             if (metadata !== v) {
-                setCarrier().metadataField = v
+                setCarrier()
+                metadataField = v
             }
         }
 
@@ -96,17 +99,8 @@ internal class PersistentIrField(
         get() = getCarrier().typeField
         set(v) {
             if (type !== v) {
-                setCarrier().typeField = v
-            }
-        }
-
-    override var isExternalField: Boolean = isExternal
-
-    override var isExternal: Boolean
-        get() = getCarrier().isExternalField
-        set(v) {
-            if (isExternal != v) {
-                setCarrier().isExternalField = v
+                setCarrier()
+                typeField = v
             }
         }
 }
