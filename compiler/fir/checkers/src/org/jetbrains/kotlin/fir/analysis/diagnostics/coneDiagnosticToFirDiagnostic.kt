@@ -21,13 +21,13 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import org.jetbrains.kotlin.utils.ifEmpty
 
-fun ConeDiagnostic.toFirDiagnostic(source: FirSourceElement): FirDiagnostic<FirSourceElement>? = when (this) {
+private fun ConeDiagnostic.toFirDiagnostic(source: FirSourceElement): FirDiagnostic<FirSourceElement>? = when (this) {
     is ConeUnresolvedReferenceError -> FirErrors.UNRESOLVED_REFERENCE.on(source, this.name?.asString() ?: "<No name>")
     is ConeUnresolvedSymbolError -> FirErrors.UNRESOLVED_REFERENCE.on(source, this.classId.asString())
     is ConeUnresolvedNameError -> FirErrors.UNRESOLVED_REFERENCE.on(source, this.name.asString())
     is ConeHiddenCandidateError -> FirErrors.HIDDEN.on(source, this.candidateSymbol)
-    is ConeInapplicableCandidateError -> mapInapplicableCandidateError(this, source)
     is ConeAmbiguityError -> if (!this.applicability.isSuccess) {
         FirErrors.NONE_APPLICABLE.on(source, this.candidates)
     } else {
@@ -53,6 +53,13 @@ fun ConeDiagnostic.toFirDiagnostic(source: FirSourceElement): FirDiagnostic<FirS
     else -> throw IllegalArgumentException("Unsupported diagnostic type: ${this.javaClass}")
 }
 
+fun ConeDiagnostic.toFirDiagnostics(source: FirSourceElement): List<FirDiagnostic<FirSourceElement>> {
+    if (this is ConeInapplicableCandidateError) {
+        return mapInapplicableCandidateError(this, source)
+    }
+    return listOfNotNull(toFirDiagnostic(source))
+}
+
 private fun ConeKotlinType.isEffectivelyNotNull(): Boolean {
     return when (this) {
         is ConeClassLikeType -> !isMarkedNullable
@@ -68,8 +75,7 @@ private fun mapUnsafeCallError(
     source: FirSourceElement,
     rootCause: ResolutionDiagnostic?,
 ): FirDiagnostic<*>? {
-    if (rootCause != null &&
-        rootCause is InapplicableWrongReceiver &&
+    if (rootCause is InapplicableWrongReceiver &&
         rootCause.actualType?.isNullable == true &&
         (rootCause.expectedType == null || rootCause.expectedType!!.isEffectivelyNotNull())
     ) {
@@ -102,15 +108,16 @@ private fun mapUnsafeCallError(
 private fun mapInapplicableCandidateError(
     diagnostic: ConeInapplicableCandidateError,
     source: FirSourceElement,
-): FirDiagnostic<*> {
+): List<FirDiagnostic<FirSourceElement>> {
     // TODO: Need to distinguish SMARTCAST_IMPOSSIBLE
-    val rootCause = diagnostic.candidate.diagnostics.find { it.applicability == diagnostic.applicability }
-    mapUnsafeCallError(diagnostic, source, rootCause)?.let { return it }
+    return diagnostic.candidate.diagnostics.filter { it.applicability == diagnostic.applicability }.mapNotNull { rootCause ->
+        mapUnsafeCallError(diagnostic, source, rootCause)?.let { return@mapNotNull it }
 
-    return when (rootCause) {
-        is VarargArgumentOutsideParentheses -> FirErrors.VARARG_OUTSIDE_PARENTHESES.on(rootCause.argument.source ?: source)
-        else -> FirErrors.INAPPLICABLE_CANDIDATE.on(source, diagnostic.candidate.symbol)
-    }
+        when (rootCause) {
+            is VarargArgumentOutsideParentheses -> FirErrors.VARARG_OUTSIDE_PARENTHESES.on(rootCause.argument.source ?: source)
+            else -> null
+        }
+    }.ifEmpty { listOf(FirErrors.INAPPLICABLE_CANDIDATE.on(source, diagnostic.candidate.symbol)) }
 }
 
 private fun ConeSimpleDiagnostic.getFactory(): FirDiagnosticFactory0<FirSourceElement, *> {
