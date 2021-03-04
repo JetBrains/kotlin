@@ -14,10 +14,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.CommonizerParameters
 import org.jetbrains.kotlin.descriptors.commonizer.LeafCommonizerTarget
 import org.jetbrains.kotlin.descriptors.commonizer.ModulesProvider.ModuleInfo
 import org.jetbrains.kotlin.descriptors.commonizer.TargetProvider
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirEntityId
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirName
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirPackageName
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirRoot
+import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.*
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ClassesToProcess.ClassEntry
 import org.jetbrains.kotlin.descriptors.commonizer.metadata.utils.SerializedMetadataLibraryProvider
@@ -149,7 +146,7 @@ class CirTreeMerger(
         val moduleNode: CirModuleNode = rootNode.modules.getOrPut(moduleName) {
             buildModuleNode(storageManager, leafTargetsSize)
         }
-        moduleNode.targetDeclarations[context.targetIndex] = CirModuleFactory.create(moduleName)
+        moduleNode.targetDeclarations[context.targetIndex] = CirModule.create(moduleName)
 
         val groupedFragments: Map<CirPackageName, Collection<KmModuleFragment>> = module.fragments.foldToMap { fragment ->
             fragment.fqName?.let(CirPackageName::create) ?: error("A fragment without FQ name in module $moduleName: $fragment")

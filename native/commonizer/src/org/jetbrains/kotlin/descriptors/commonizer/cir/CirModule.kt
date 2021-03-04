@@ -5,4 +5,13 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.cir
 
-interface CirModule : CirDeclaration, CirHasName
+interface CirModule : CirDeclaration, CirHasName {
+    companion object {
+        @Suppress("NOTHING_TO_INLINE")
+        inline fun create(name: CirName): CirModule = CirModuleImpl(name)
+    }
+}
+
+data class CirModuleImpl(
+    override val name: CirName
+) : CirModule
