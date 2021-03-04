@@ -1,0 +1,5 @@
+depends = posix
+package = platform.iconv
+headers = iconv.h
+headerFilter = **
+linkerOpts = -liconv

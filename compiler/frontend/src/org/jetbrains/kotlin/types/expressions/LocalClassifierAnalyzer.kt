@@ -184,7 +184,7 @@ class LocalClassDescriptorHolder(
                     override val syntheticResolveExtension = this@LocalClassDescriptorHolder.syntheticResolveExtension
                     override val delegationFilter: DelegationFilter = this@LocalClassDescriptorHolder.delegationFilter
                     override val wrappedTypeFactory: WrappedTypeFactory = this@LocalClassDescriptorHolder.wrappedTypeFactory
-                    override val kotlinTypeChecker: NewKotlinTypeChecker = this@LocalClassDescriptorHolder.kotlinTypeChecker
+                    override val kotlinTypeCheckerOfOwnerModule: NewKotlinTypeChecker = this@LocalClassDescriptorHolder.kotlinTypeChecker
                     override val samConversionResolver: SamConversionResolver = this@LocalClassDescriptorHolder.samConversionResolver
                     override val additionalClassPartsProvider: AdditionalClassPartsProvider =
                         this@LocalClassDescriptorHolder.additionalClassPartsProvider

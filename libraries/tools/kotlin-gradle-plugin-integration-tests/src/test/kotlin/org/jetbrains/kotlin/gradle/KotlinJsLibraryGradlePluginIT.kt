@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Test
 
 class KotlinJsIrLibraryGradlePluginIT : BaseGradleIT() {
+    override val defaultGradleVersion = GradleVersionRequired.AtLeast("6.1")
+
     override fun defaultBuildOptions(): BuildOptions =
         super.defaultBuildOptions().copy(
             jsIrBackend = true,

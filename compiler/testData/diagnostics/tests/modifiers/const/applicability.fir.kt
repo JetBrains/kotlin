@@ -61,7 +61,7 @@ enum class MyEnum {
 
 class Outer {
     inner class Inner {
-        object C {
+        <!NESTED_CLASS_NOT_ALLOWED!>object C<!> {
             const val a = 18
         }
     }

@@ -11,12 +11,12 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 object Versions {
     val KOTLIN = version("1.4.10") // used as fallback version
     val GRADLE = version("6.6.1")
-    val KTOR = version("1.4.0")
+    val KTOR = version("1.5.2")
     val JUNIT = version("4.13")
     val JUNIT5 = version("5.6.0")
-    val JETBRAINS_COMPOSE = version("0.1.0-dev106")
+    val JETBRAINS_COMPOSE = version("0.3.1")
 
-    val KOTLIN_VERSION_FOR_COMPOSE = version("1.4.0")
+    val KOTLIN_VERSION_FOR_COMPOSE = version("1.4.30")
 
     object ANDROID {
         val ANDROID_MATERIAL = version("1.2.1")
@@ -31,15 +31,15 @@ object Versions {
     }
 
     object JS_WRAPPERS {
-        val KOTLIN_REACT = wrapperVersion("16.13.1")
+        val KOTLIN_REACT = wrapperVersion("17.0.1")
         val KOTLIN_REACT_DOM = KOTLIN_REACT
-        val KOTLIN_STYLED = wrapperVersion("1.0.0")
-        val KOTLIN_REACT_ROUTER_DOM = wrapperVersion("5.1.2")
-        val KOTLIN_REDUX = wrapperVersion("4.0.0")
-        val KOTLIN_REACT_REDUX = wrapperVersion("5.0.7")
+        val KOTLIN_STYLED = wrapperVersion("5.2.1")
+        val KOTLIN_REACT_ROUTER_DOM = wrapperVersion("5.2.0")
+        val KOTLIN_REDUX = wrapperVersion("4.0.5")
+        val KOTLIN_REACT_REDUX = wrapperVersion("7.2.2")
 
         private fun wrapperVersion(version: String): Version =
-            version("$version-pre.113-kotlin-1.4.0")
+            version("$version-pre.148-kotlin-1.4.30")
     }
 
     object GRADLE_PLUGINS {

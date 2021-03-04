@@ -42,6 +42,9 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val VARIABLE_EXPECTED by error<FirSourceElement, PsiElement>()
         val RETURN_NOT_ALLOWED by error<FirSourceElement, PsiElement>()
         val DELEGATION_IN_INTERFACE by error<FirSourceElement, PsiElement>()
+        val NESTED_CLASS_NOT_ALLOWED by error<FirSourceElement, KtNamedDeclaration>(PositioningStrategy.DECLARATION_NAME) {
+            parameter<String>("declaration")
+        }
     }
 
     val UNRESOLVED by object : DiagnosticGroup("Unresolved") {
@@ -249,7 +252,7 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
     }
 
     val REDECLARATIONS by object : DiagnosticGroup("Redeclarations") {
-        val MANY_COMPANION_OBJECTS by error<FirSourceElement, PsiElement>()
+        val MANY_COMPANION_OBJECTS by error<FirSourceElement, KtObjectDeclaration>(PositioningStrategy.COMPANION_OBJECT)
         val CONFLICTING_OVERLOADS by error<FirSourceElement, PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
             parameter<Collection<AbstractFirBasedSymbol<*>>>("conflictingOverloads")
         }

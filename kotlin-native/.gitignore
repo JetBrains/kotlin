@@ -1,0 +1,80 @@
+.DS_Store
+.idea/shelf
+*.iml
+/dependencies/all
+dist
+kotlin-native-*.tar.gz
+kotlin-native-*.zip
+translator/src/test/kotlin/tests/*/linked
+out
+tmp
+workspace.xml
+*.versionsBackup
+
+local.properties
+.gradle
+build
+translator/.gradle/2.9/taskArtifacts
+
+kotstd/kotstd.iml
+
+# test suit products.
+*.bc
+*.bc.o
+*.kt.S
+*.kt.exe
+*.log
+test.output
+*.kexe
+
+# Ignore Gradle GUI config
+gradle-app.setting
+
+# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
+!gradle-wrapper.jar
+
+# Cache of project
+.gradletasknamecache
+
+# local project files
+lib/
+.idea/
+proto/compiler/protoc-artifacts
+proto/compiler/tests
+
+proto/compiler/google/src/google/protobuf/compiler/kotlin/bin
+proto/compiler/google/src/google/protobuf/compiler/kotlin/protoc
+
+peformance/build
+
+# translator auto generated artifacts
+kotstd/ll
+
+# test teamcity property: commitable only with -f
+backend.native/tests/teamcity-test.property
+
+# Sample output
+samples/**/*.kt.bc-build
+samples/androidNativeActivity/Polyhedron
+
+# CMake
+llvmCoverageMappingC/CMakeLists.txt
+tools/performance-server/node_modules
+tools/performance-server/server
+tools/performance-server/ui/js
+runtime/cmake-build-debug/
+
+# compilation database
+compile_commands.json
+
+# clangd caches
+.clangd/
+
+# googletest framework used by runtime tests
+runtime/googletest/
+
+# Toolchain builder artifacts
+tools/toolchain_builder/artifacts
+
+# ignore the project model created by CLion (for now).
+runtime/.idea

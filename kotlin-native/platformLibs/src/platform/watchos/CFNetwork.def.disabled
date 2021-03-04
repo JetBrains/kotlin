@@ -1,0 +1,6 @@
+language = Objective-C
+package = platform.CFNetwork
+modules = CFNetwork
+compilerOpts = -framework CFNetwork
+linkerOpts = -framework CFNetwork
+#Disabled: Not officially available for watchos

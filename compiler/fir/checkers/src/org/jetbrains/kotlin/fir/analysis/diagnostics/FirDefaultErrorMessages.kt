@@ -98,6 +98,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LOCAL_INTERFACE_N
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LOCAL_OBJECT_NOT_ALLOWED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MANY_COMPANION_OBJECTS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_VAL_ON_ANNOTATION_PARAMETER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NESTED_CLASS_NOT_ALLOWED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MULTIPLE_VARARG_PARAMETERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NONE_APPLICABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_ABSTRACT_FUNCTION_WITH_NO_BODY
@@ -211,6 +212,7 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
             map.put(VARIABLE_EXPECTED, "Variable expected")
             map.put(RETURN_NOT_ALLOWED, "'return' is not allowed here")
             map.put(DELEGATION_IN_INTERFACE, "Interfaces cannot use delegation")
+            map.put(NESTED_CLASS_NOT_ALLOWED, "{0} is not allowed here", TO_STRING)
 
             // Unresolved
             map.put(HIDDEN, "Symbol {0} is invisible", SYMBOL)

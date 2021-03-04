@@ -1,0 +1,357 @@
+import org.jetbrains.kotlin.CopyCommonSources
+import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.*
+import org.jetbrains.gradle.plugins.tools.*
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the LICENSE file.
+ */
+buildscript {
+    apply from: "../../kotlin-native/gradle/kotlinGradlePlugin.gradle"
+    apply plugin: 'project-report'
+
+    dependencies {
+        classpath "com.google.protobuf:protobuf-gradle-plugin:0.8.8"
+    }
+}
+
+String protobufVersion = '2.6.1'
+apply plugin: "com.google.protobuf"
+apply plugin: 'java'
+apply plugin: 'kotlin'
+apply plugin: org.jetbrains.kotlin.NativeInteropPlugin
+apply plugin: "maven-publish"
+
+sourceSets {
+    compiler {
+        proto.srcDir 'compiler/ir/backend.native/src/'
+        java {
+            srcDir 'compiler/ir/backend.native/src/'
+            srcDir 'build/renamed/source/proto/compiler/java'
+        }
+        kotlin {
+            srcDir 'compiler/ir/backend.native/src/'
+            srcDir '../shared/src/main/kotlin'
+            srcDir '../shared/src/library/kotlin'
+            srcDir(VersionGeneratorKt.kotlinNativeVersionSrc(project))
+        }
+        resources.srcDir 'compiler/ir/backend.native/resources/'
+        /* PATH to META-INF */
+        resources.srcDir VersionGeneratorKt.kotlinNativeVersionResourceFile(project).parentFile.parent
+    }
+    cli_bc {
+        java.srcDir 'cli.bc/src'
+        kotlin.srcDir 'cli.bc/src'
+    }
+    bc_frontend {
+        java.srcDir 'bc.frontend/src'
+        kotlin.srcDir 'bc.frontend/src'
+    }
+}
+
+compileCompilerKotlin {
+    dependsOn('renamePackage')
+    // The protobuf plugin specifies this dependency for java by itself,
+    // but not for Kotlin.
+    dependsOn('generateCompilerProto')
+    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.allWarningsAsErrors=true
+    kotlinOptions.freeCompilerArgs += ['-Xopt-in=kotlin.RequiresOptIn', '-Xopt-in=org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI', '-Xskip-prerelease-check']
+}
+
+compileCli_bcKotlin {
+    kotlinOptions.freeCompilerArgs += ['-Xskip-prerelease-check']
+}
+
+compileCompilerJava {
+    dependsOn('renamePackage')
+}
+
+task copyGenerated(type: Copy) {
+    dependsOn('generateCompilerProto')
+    from 'build/generated/source/proto/compiler/java'
+    into 'build/renamed/source/proto/compiler/java'
+    filter { line -> line.replaceAll("com.google.protobuf", "org.jetbrains.kotlin.protobuf") }
+    outputs.dir('build/renamed')
+}
+
+task deleteGenerated(type: Delete) {
+    dependsOn('copyGenerated')
+    delete 'build/generated/source/proto/compiler/java'
+}
+
+task renamePackage {
+    dependsOn('copyGenerated', 'deleteGenerated')
+}
+
+kotlinNativeInterop {
+    llvm {
+
+        dependsOn ":kotlin-native:llvmDebugInfoC:${NativePluginKt.lib("debugInfo")}"
+        dependsOn ":kotlin-native:llvmCoverageMappingC:${NativePluginKt.lib("coverageMapping")}"
+        defFile 'llvm.def'
+        if (!project.parent.convention.plugins.platformInfo.isWindows())
+            compilerOpts "-fPIC"
+        compilerOpts "-I$llvmDir/include", "-I${rootProject.project(':kotlin-native:llvmDebugInfoC').projectDir}/src/main/include", "-I${rootProject.project(':kotlin-native:llvmCoverageMappingC').projectDir}/src/main/include"
+        linkerOpts "-L$llvmDir/lib", "-L${rootProject.project(':kotlin-native:llvmDebugInfoC').buildDir}", "-L${rootProject.project(':kotlin-native:llvmCoverageMappingC').buildDir}"
+    }
+
+    hash { // TODO: copy-pasted from ':common:compileHash'
+        if (!rootProject.project(":kotlin-native").convention.plugins.platformInfo.isWindows()) {
+            compilerOpts '-fPIC'
+            linkerOpts '-fPIC'
+        }
+        linker 'clang++'
+        linkOutputs ":kotlin-native:common:${hostName}Hash"
+
+        headers fileTree('../common/src/hash/headers') {
+            include '**/*.h'
+            include '**/*.hpp'
+        }
+
+        pkg 'org.jetbrains.kotlin.backend.konan.hash'
+    }
+
+    files {
+        if (!project.project(":kotlin-native").convention.plugins.platformInfo.isWindows()) {
+            compilerOpts '-fPIC'
+            linkerOpts '-fPIC'
+        }
+        linker 'clang++'
+        linkOutputs ":kotlin-native:common:${hostName}Files"
+
+        headers fileTree('../common/src/files/headers') {
+            include '**/*.h'
+            include '**/*.hpp'
+        }
+
+        pkg 'org.jetbrains.kotlin.backend.konan.files'
+    }
+}
+
+
+configurations {
+    kotlin_compiler_jar
+    kotlin_stdlib_jar
+    kotlin_reflect_jar
+    kotlin_script_runtime_jar
+    trove4j_jar
+    kotlinCommonSources
+
+    cli_bcRuntime {
+        extendsFrom compilerRuntime
+        extendsFrom kotlin_script_runtime_jar
+    }
+
+    cli_bc {
+        extendsFrom cli_bcRuntime
+    }
+    cli_bcCompile.extendsFrom compilerCompile
+}
+
+dependencies {
+    trove4j_jar "org.jetbrains.intellij.deps:trove4j:1.0.20181211@jar"
+    kotlin_compiler_jar project(kotlinCompilerModule)
+    kotlin_stdlib_jar kotlinStdLibModule
+    kotlin_reflect_jar kotlinReflectModule
+    kotlin_script_runtime_jar project(":kotlin-script-runtime")
+
+    [kotlinCommonStdlibModule, kotlinTestCommonModule, kotlinTestAnnotationsCommonModule].each {
+        kotlinCommonSources(it) { transitive = false }
+    }
+
+    compilerCompile project(":kotlin-native:utilities:basic-utils")
+
+    compilerCompile "com.google.protobuf:protobuf-java:${protobufVersion}"
+
+    compilerCompile project(kotlinCompilerModule)
+    compilerCompile project(":native:kotlin-native-utils")
+    compilerCompile project(":core:descriptors")
+    compilerCompile project(":compiler:ir.tree")
+    compilerCompile project(":compiler:ir.tree.impl")
+    compilerCompile project(":compiler:ir.backend.common")
+    compilerCompile project(":compiler:util")
+    compilerCompile project(":native:frontend.native")
+    compilerCompile project(":compiler:cli-common")
+    compilerCompile project(":compiler:cli")
+    compilerCompile project(":kotlin-util-klib")
+    compilerCompile project(":kotlin-util-klib-metadata")
+    compilerCompile project(":compiler:ir.serialization.common")
+    use(LocalDependenciesKt) {
+        compilerCompile(intellijCoreDep()){
+            artifact {
+                name = "intellij-core"
+                type = "jar"
+            }
+        }
+        compilerCompile(intellijDep()){
+            artifact {
+                name = "util"
+                type = "jar"
+                //extention = "jar"
+            }
+        }
+        compileOnly(jpsStandalone())
+    }
+
+    compilerCompile kotlinNativeInterop['llvm'].configuration
+    compilerCompile kotlinNativeInterop['hash'].configuration
+    compilerCompile kotlinNativeInterop['files'].configuration
+
+
+    cli_bcCompile sourceSets.compiler.output
+
+    bc_frontendCompile project(kotlinCompilerModule)
+
+    cli_bc sourceSets.cli_bc.output
+}
+
+
+classes.dependsOn 'compilerClasses', 'cli_bcClasses', 'bc_frontendClasses'
+
+
+// These are just a couple of aliases
+task stdlib(dependsOn: "${hostName}Stdlib")
+
+def commonSrc = project(":kotlin-stdlib-common").files("src/kotlin", "src/generated", "../unsigned/src", "../src").files
+
+final List<File> stdLibSrc = [
+        project(':kotlin-native:Interop:Runtime').file('src/main/kotlin'),
+        project(':kotlin-native:Interop:Runtime').file('src/native/kotlin'),
+        project(':kotlin-native:Interop:JsRuntime').file('src/main/kotlin'),
+        project(':kotlin-native:runtime').file('src/main/kotlin')
+]
+
+// These files are built before the 'dist' is complete,
+// so we provide a custom value for --runtime
+
+targetList.each { target ->
+    def konanJvmArgs =  [*HostManager.regularJvmArgs]
+
+    def defaultArgs = ['-nopack', '-nostdlib', '-no-default-libs', '-no-endorsed-libs',
+                       //Uncomment this '-Werror' when common stdlib will be ready
+    ]
+    if (target != "wasm32") defaultArgs += '-g'
+    def konanArgs = [*defaultArgs,
+                     '-target', target,
+                     "-Xruntime=${project(':kotlin-native:runtime').file('build/bitcode/main/' + target + '/runtime.bc')}",
+                     *project.globalBuildArgs]
+
+    task("${target}Stdlib", type: JavaExec) {
+        main = 'org.jetbrains.kotlin.cli.bc.K2NativeKt'
+        // This task depends on distCompiler, so the compiler jar is already in the dist directory.
+        classpath = fileTree("${UtilsKt.getKotlinNativeDist(project)}/konan/lib") {
+            include "*.jar"
+        }
+        systemProperties "konan.home": UtilsKt.getKotlinNativeDist(project)
+        jvmArgs = konanJvmArgs
+        def testAnnotationCommon = project(":kotlin-test:kotlin-test-annotations-common").files("src/main/kotlin").files
+        def testCommon = project(":kotlin-test:kotlin-test-common").files("src/main/kotlin").files
+        args = [*konanArgs,
+                '-output', project(':kotlin-native:runtime').file("build/${target}Stdlib"),
+                '-produce', 'library', '-module-name', 'stdlib', '-XXLanguage:+AllowContractsForCustomFunctions',
+                '-Xmulti-platform', '-Xopt-in=kotlin.RequiresOptIn', '-Xinline-classes',
+                '-Xopt-in=kotlin.contracts.ExperimentalContracts',
+                '-Xopt-in=kotlin.ExperimentalMultiplatform',
+                '-Xallow-result-return-type',
+                *commonSrc.toList(),
+                *testAnnotationCommon.toList(),
+                *testCommon.toList(),
+                "-Xcommon-sources=${commonSrc.join(',')}",
+                "-Xcommon-sources=${testAnnotationCommon.join(',')}",
+                "-Xcommon-sources=${testCommon.join(',')}",
+                *stdLibSrc]
+        stdLibSrc.forEach { inputs.dir(it) }
+        commonSrc.forEach{
+            inputs.dir(it)
+        }
+        outputs.dir(project(':kotlin-native:runtime').file("build/${target}Stdlib"))
+
+        dependsOn ":kotlin-native:runtime:${target}Runtime"
+        dependsOn ":kotlin-native:distCompiler"
+    }
+}
+
+task run {
+    doLast {
+        logger.quiet("Run the outer project 'demo' target to compile the test source.")
+    }
+}
+
+jar {
+    from sourceSets.cli_bc.output,
+            sourceSets.compiler.output,
+            sourceSets.hashInteropStubs.output,
+            sourceSets.filesInteropStubs.output,
+            sourceSets.llvmInteropStubs.output
+
+    dependsOn ':kotlin-native:runtime:hostRuntime', 'external_jars'
+}
+
+def externalJars = ['compiler', 'stdlib', 'reflect', 'script_runtime']
+
+task trove4jCopy(type: Copy) {
+    from configurations.getByName("trove4j_jar") {
+        include "trove4j*.jar"
+        rename "trove4j(.*).jar", "trove4j.jar"
+
+        into 'build/external_jars'
+    }
+} 
+
+externalJars.each { arg ->
+    def jar = arg.replace('_', '-') // :(
+    task("${arg}Copy", type: Copy) {
+        from configurations.getByName("kotlin_${arg}_jar") {
+            include "kotlin-${jar}*.jar"
+            rename "kotlin-${jar}(.*).jar", "kotlin-${jar}.jar"
+
+            into 'build/external_jars'
+        }
+    }
+}
+
+task external_jars(type: Copy) {
+    dependsOn externalJars.collect { "${it}Copy" }
+    dependsOn trove4jCopy
+
+    from configurations.compilerCompile {
+
+        include "protobuf-java-${protobufVersion}.jar"
+
+        into 'build/external_jars'
+    }
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:${protobufVersion}"
+    }
+}
+
+task debugCompiler(type: JavaExec) {
+    dependsOn ':dist'
+    main = 'org.jetbrains.kotlin.cli.bc.K2NativeKt'
+    classpath = project.fileTree("${distDir.canonicalPath}/konan/lib/") {
+        include '*.jar'
+    }
+    jvmArgs "-Dorg.jetbrains.kotlin.native.home=${distDir.canonicalPath}"
+    enableAssertions = true
+    args = findProperty("konan.debug.args").toString().tokenize() ?: []
+}
+
+publishing {
+    repositories {
+        maven { url = "$buildDir/repo" }
+    }
+
+    publications {
+        maven(MavenPublication) {
+            groupId = 'org.jetbrains.kotlin'
+            artifactId = 'backend.native'
+            version = konanVersionFull
+
+            from components.java
+        }
+    }
+}

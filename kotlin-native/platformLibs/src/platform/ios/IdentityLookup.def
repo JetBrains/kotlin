@@ -1,0 +1,7 @@
+depends = CFNetwork CoreFoundation Foundation Security darwin posix
+language = Objective-C
+package = platform.IdentityLookup
+modules = IdentityLookup
+
+compilerOpts = -framework IdentityLookup
+linkerOpts = -framework IdentityLookup

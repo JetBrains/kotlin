@@ -54,7 +54,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static kotlin.collections.CollectionsKt.emptyList;
 import static kotlin.collections.CollectionsKt.firstOrNull;
 import static org.jetbrains.kotlin.descriptors.DescriptorVisibilities.PRIVATE;
 import static org.jetbrains.kotlin.descriptors.DescriptorVisibilities.PUBLIC;
@@ -130,7 +129,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
         StorageManager storageManager = c.getStorageManager();
 
-        this.scopesHolderForClass = createMemberScope(c, this.declarationProvider);
+        this.scopesHolderForClass = createScopesHolderForClass(c, this.declarationProvider);
         this.kind = classLikeInfo.getClassKind();
         this.staticScope = kind == ClassKind.ENUM_CLASS ? new StaticScopeForKotlinEnum(storageManager, this) : MemberScope.Empty.INSTANCE;
 
@@ -321,23 +320,22 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
     // NOTE: Called from constructor!
     @NotNull
-    protected ScopesHolderForClass<LazyClassMemberScope> createMemberScope(
+    protected ScopesHolderForClass<LazyClassMemberScope> createScopesHolderForClass(
             @NotNull LazyClassContext c,
             @NotNull ClassMemberDeclarationProvider declarationProvider
     ) {
         return ScopesHolderForClass.Companion.create(
                 this,
                 c.getStorageManager(),
-                c.getKotlinTypeChecker().getKotlinTypeRefiner(),
-                kotlinTypeRefiner -> {
+                c.getKotlinTypeCheckerOfOwnerModule().getKotlinTypeRefiner(),
+                kotlinTypeRefinerForDependentModule -> {
                     LazyClassMemberScope scopeForDeclaredMembers =
-                            !kotlinTypeRefiner.isRefinementNeededForModule(c.getModuleDescriptor())
+                            !kotlinTypeRefinerForDependentModule.isRefinementNeededForModule(c.getModuleDescriptor())
                                 ? null
-                            // TODO: or kotlinTypeRefiner.getModuleDescriptor()
-                                : scopesHolderForClass.getScope(c.getKotlinTypeChecker().getKotlinTypeRefiner());
+                                : scopesHolderForClass.getScope(c.getKotlinTypeCheckerOfOwnerModule().getKotlinTypeRefiner()); // essentially, a scope for owner-module
 
                     return new LazyClassMemberScope(
-                            c, declarationProvider, this, c.getTrace(), kotlinTypeRefiner,
+                            c, declarationProvider, this, c.getTrace(), kotlinTypeRefinerForDependentModule,
                             scopeForDeclaredMembers
                     );
                 }

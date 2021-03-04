@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -114,14 +115,13 @@ object FirOverrideChecker : FirClassChecker() {
             it to (it.fir as FirMemberDeclaration).visibility
         }.sortedBy { pair ->
             // Regard `null` compare as Int.MIN so that we can report CANNOT_CHANGE_... first deterministically
-            visibility.compareTo(pair.second) ?: Int.MIN_VALUE
+            Visibilities.compare(visibility, pair.second) ?: Int.MIN_VALUE
         }
 
         for ((overridden, overriddenVisibility) in visibilities) {
-            val compare = visibility.compareTo(overriddenVisibility)
+            val compare = Visibilities.compare(visibility, overriddenVisibility)
             if (compare == null) {
-                // TODO: not ready yet (even after determinism massage), e.g., a Kotlin class that extends a Java class
-                // reporter.reportCannotChangeAccessPrivilege(this, overridden.fir)
+                reporter.reportCannotChangeAccessPrivilege(this, overridden.fir, context)
                 return
             } else if (compare < 0) {
                 reporter.reportCannotWeakenAccessPrivilege(this, overridden.fir, context)

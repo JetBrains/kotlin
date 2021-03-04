@@ -5,7 +5,7 @@ class A {
   companion <!REDECLARATION!>object<!> {
     val x = 1
   }
-  companion <!MANY_COMPANION_OBJECTS, REDECLARATION!>object<!> {
+  <!MANY_COMPANION_OBJECTS!>companion<!> <!REDECLARATION!>object<!> {
     val x = 1
   }
 }
@@ -14,10 +14,10 @@ class AA {
   companion object {
     val x = 1
   }
-  companion <!MANY_COMPANION_OBJECTS!>object A<!> {
+  <!MANY_COMPANION_OBJECTS!>companion<!> object A {
     val x = 1
   }
-    companion <!MANY_COMPANION_OBJECTS!>object AA<!> {
+    <!MANY_COMPANION_OBJECTS!>companion<!> object AA {
     val x = 1
   }
 }

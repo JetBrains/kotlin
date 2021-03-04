@@ -1,0 +1,67 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the LICENSE file.
+ */
+buildscript {
+    apply from: "$rootDir/kotlin-native/gradle/kotlinGradlePlugin.gradle"
+
+    ext.useCustomDist = project.hasProperty("org.jetbrains.kotlin.native.home") || project.hasProperty("konan.home")
+    if (!useCustomDist) {
+        ext.setProperty("org.jetbrains.kotlin.native.home", distDir.absolutePath)
+    }
+    if (project.hasProperty("konan.home")) {
+        ext.setProperty("org.jetbrains.kotlin.native.home", project.getProperty("konan.home"))
+    }
+}
+
+apply plugin: 'kotlin'
+apply plugin: 'konan'
+
+konanArtifacts {
+    def testFiles = fileTree('src/test/testData') {
+        include "*.kt"
+    }
+    testFiles.files.each { file ->
+        def name = file.name
+        library(name.take(name.lastIndexOf('.'))) {
+            srcFiles file.absolutePath
+
+            // Build the compiler before building the test unless a custom path to the distribution is specified.
+            if (!useCustomDist) {
+                dependsOn ':dist'
+            }
+        }
+    }
+}
+
+compileKotlin {
+    kotlinOptions.freeCompilerArgs += ['-Xskip-prerelease-check']
+}
+
+repositories {
+    maven {
+        url buildKotlinCompilerRepo
+    }
+}
+
+dependencies {
+    implementation project(":kotlin-stdlib")
+    implementation project(path: ':kotlin-native:backend.native', configuration: 'cli_bc')
+    implementation project(":kotlin-native:utilities:basic-utils")
+    testImplementation "junit:junit:4.12"
+    testImplementation project(":kotlin-test:kotlin-test-junit")
+}
+
+test {
+    dependsOn 'cleanTest'
+    // Specify a path to the distribution that is used in the tests.
+    systemProperty('konan.home', getProperty("org.jetbrains.kotlin.native.home"))
+    dependsOn konanArtifacts.collect { it.getByTarget('host') }
+    if (useCustomDist) {
+        // Use the klib utility from the distribution
+        def distClasspath = fileTree("${project.getProperty("org.jetbrains.kotlin.native.home")}/konan/lib") {
+            include "**/*.jar"
+        }
+        classpath = distClasspath + sourceSets.test.runtimeClasspath - sourceSets.main.runtimeClasspath
+    }
+}

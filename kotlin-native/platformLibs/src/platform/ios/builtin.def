@@ -1,0 +1,101 @@
+depends = posix
+package = platform.builtin
+headerFilter = **
+language = C
+
+excludedFunctions.ios_arm32 = builtin_clear_cache
+excludedFunctions.ios_arm64 = builtin_clear_cache
+---
+// See https://github.com/llvm-mirror/clang/blob/master/include/clang/Basic/Builtins.def
+// TODO: autogenerate from machine format.
+
+// Returns x with the order of the bytes reversed; for example, 0xaabb becomes 0xbbaa. Byte here always means exactly 8 bits.
+static inline short builtin_bswap16(short x) {
+   return __builtin_bswap16(x);
+}
+
+static inline int builtin_bswap32(int x) {
+   return __builtin_bswap32(x);
+}
+
+static inline long long builtin_bswap64(long long x) {
+   return __builtin_bswap64(x);
+}
+
+// Returns the number of leading 0-bits in x, starting at the most significant bit position. If x is 0, the result is undefined.
+static inline int builtin_clzs(unsigned short x) {
+   return __builtin_clzs(x);
+}
+
+static inline int builtin_clz(unsigned int x) {
+   return __builtin_clz(x);
+}
+
+static inline int builtin_clzl(unsigned long x) {
+   return __builtin_clzl(x);
+}
+
+static inline int builtin_clzll(unsigned long long x) {
+   return __builtin_clzll(x);
+}
+
+// Returns the number of trailing 0-bits in x, starting at the least significant bit position. If x is 0, the result is undefined.
+static inline int builtin_ctzs(unsigned short x) {
+   return __builtin_ctzs(x);
+}
+
+static inline int builtin_ctz(unsigned int x) {
+   return __builtin_ctz(x);
+}
+
+static inline int builtin_ctzl(unsigned long x) {
+   return __builtin_ctzl(x);
+}
+
+static inline int builtin_ctzll(unsigned long long x) {
+   return __builtin_ctzll(x);
+}
+
+// Returns one plus the index of the least significant 1-bit of x, or if x is zero, returns zero.
+static inline int builtin_ffs(int x) {
+   return __builtin_ffs(x);
+}
+
+static inline int builtin_ffsl(long x) {
+   return __builtin_ffsl(x);
+}
+
+static inline int builtin_ffsll(long long x) {
+   return __builtin_ffsll(x);
+}
+
+// Returns the parity of x, i.e. the number of 1-bits in x modulo 2.
+static inline int builtin_parity(int x) {
+   return __builtin_parity(x);
+}
+
+static inline int builtin_parityl(unsigned long x) {
+   return __builtin_parityl(x);
+}
+
+static inline int builtin_parityll(unsigned long long x) {
+   return __builtin_parityll(x);
+}
+
+// Returns the number of 1-bits in x.
+static inline int builtin_popcount(int x) {
+   return __builtin_popcount(x);
+}
+
+static inline int builtin_popcountl(long x) {
+   return __builtin_popcountl(x);
+}
+
+static inline int builtin_popcountll(long long x) {
+    return __builtin_popcountll(x);
+}
+
+// This function is used to flush the processor's instruction cache for the region of memory between begin inclusive and end exclusive.
+static inline void builtin_clear_cache(void* begin, void* end) {
+    __builtin___clear_cache(begin, end);
+}

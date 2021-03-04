@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.konan.MetaVersion
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
 import java.io.File
+import java.nio.file.Files
 
 class NativeCompilerDownloader(
     val project: Project,
@@ -56,8 +57,14 @@ class NativeCompilerDownloader(
             }
         }
 
+    val versionStringRepresentation = compilerVersion.toStringPre1_5_20(
+        compilerVersion.meta != MetaVersion.RELEASE,
+        compilerVersion.meta != MetaVersion.RELEASE
+    )
+
+
     private val dependencyNameWithVersion: String
-        get() = "$dependencyName-$compilerVersion"
+        get() = "$dependencyName-$versionStringRepresentation"
 
     private val dependencyFileName: String
         get() = "$dependencyNameWithVersion.$archiveExtension"
@@ -99,7 +106,7 @@ class NativeCompilerDownloader(
         val repoUrl = buildString {
             append("$BASE_DOWNLOAD_URL/")
             append(if (compilerVersion.meta == MetaVersion.DEV) "dev/" else "releases/")
-            append("$compilerVersion/")
+            append("$versionStringRepresentation/")
             append(simpleOsName)
         }
         val dependencyUrl = "$repoUrl/$dependencyFileName"
@@ -109,7 +116,7 @@ class NativeCompilerDownloader(
         val compilerDependency = project.dependencies.create(
             mapOf(
                 "name" to dependencyName,
-                "version" to compilerVersion.toString(),
+                "version" to versionStringRepresentation,
                 "ext" to archiveExtension
             )
         )
@@ -127,9 +134,24 @@ class NativeCompilerDownloader(
 
         logger.lifecycle("Unpack Kotlin/Native compiler to $compilerDirectory")
         logger.lifecycleWithDuration("Unpack Kotlin/Native compiler to $compilerDirectory finished,") {
-            project.copy {
-                it.from(archiveFileTree(archive))
-                it.into(DependencyDirectories.localKonanDir)
+            val kotlinNativeDir = compilerDirectory.parentFile.also { it.mkdirs() }
+            val tmpDir = Files.createTempDirectory(kotlinNativeDir.toPath(), "compiler-").toFile()
+            try {
+                logger.debug("Unpacking Kotlin/Native compiler to tmp directory $tmpDir")
+                project.copy {
+                    it.from(archiveFileTree(archive))
+                    it.into(tmpDir)
+                }
+                val compilerTmp = tmpDir.resolve(dependencyNameWithVersion)
+                if (!compilerTmp.renameTo(compilerDirectory)) {
+                    project.copy {
+                        it.from(compilerTmp)
+                        it.into(compilerDirectory)
+                    }
+                }
+                logger.debug("Moved Kotlin/Native compiler from $tmpDir to $compilerDirectory")
+            } finally {
+                tmpDir.deleteRecursively()
             }
         }
 
@@ -142,3 +164,35 @@ class NativeCompilerDownloader(
         }
     }
 }
+/**
+ * Once we've decide to make K/N version like K one (with droppable maintenance 0), but this breaks old publications,
+ * when did merging kotlin with kotlin/native after 1.5.0 release.
+ * older 1.5.20?
+ */
+fun CompilerVersion.toStringPre1_5_20(showMeta: Boolean = meta != MetaVersion.RELEASE, showBuild: Boolean = meta != MetaVersion.RELEASE) =
+    buildString {
+        if (major > 1
+            || minor > 5
+            || maintenance > 20
+        )
+            return toString(showMeta, showBuild)
+        append(major)
+        append('.')
+        append(minor)
+        if (maintenance != 0) {
+            append('.')
+            append(maintenance)
+        }
+        if (milestone != -1) {
+            append("-M")
+            append(milestone)
+        }
+        if (showMeta) {
+            append('-')
+            append(meta.metaString)
+        }
+        if (showBuild && build != -1) {
+            append('-')
+            append(build)
+        }
+    }

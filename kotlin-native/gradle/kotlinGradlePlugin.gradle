@@ -1,0 +1,24 @@
+import org.jetbrains.kotlin.UtilsKt
+
+project.buildscript.repositories {
+    maven {
+        url BootstrapKt.getBootstrapKotlinRepo(project)
+    }
+    if (UtilsKt.getCacheRedirectorEnabled(project))
+        maven { url 'https://cache-redirector.jetbrains.com/maven-central' }
+    else
+        mavenCentral()
+}
+
+project.buildscript.dependencies {
+    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}"
+}
+configurations {
+    kotlinCompilerClasspath
+}
+
+if (!(project.findProperty("withoutEmbedabble")?.toString()?.toBoolean() ?: false)) {
+    project.dependencies {
+        kotlinCompilerClasspath(project(path: ":kotlin-compiler-embeddable", configuration: "runtimeJar"))
+    }
+}

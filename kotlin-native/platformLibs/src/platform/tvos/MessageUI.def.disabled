@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.MessageUI
+
+modules = MessageUI
+compilerOpts = -framework MessageUI
+linkerOpts = -framework MessageUI
+#Disabled: Not officially available for tvos

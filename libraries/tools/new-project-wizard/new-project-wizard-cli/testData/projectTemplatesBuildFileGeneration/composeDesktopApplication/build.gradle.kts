@@ -2,8 +2,8 @@ import org.jetbrains.compose.compose
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.4.0"
-    id("org.jetbrains.compose") version "0.1.0-dev106"
+    kotlin("jvm") version "1.4.30"
+    id("org.jetbrains.compose") version "0.3.1"
     application
 }
 

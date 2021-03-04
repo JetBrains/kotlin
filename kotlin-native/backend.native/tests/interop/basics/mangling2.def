@@ -1,0 +1,6 @@
+---
+
+// test mangling of special names
+
+enum Companion {One, Two};
+

@@ -87,12 +87,12 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
         val rootProjectName = "js-composite-build"
         val appProject = transformProjectWithPluginsDsl(
             projectName = "app",
-            directoryPrefix = rootProjectName
+            directoryPrefix = rootProjectName,
         )
 
         val libProject = transformProjectWithPluginsDsl(
             projectName = "lib",
-            directoryPrefix = rootProjectName
+            directoryPrefix = rootProjectName,
         )
 
         libProject.gradleProperties().appendText(jsCompilerType(KotlinJsCompilerType.IR))
@@ -298,6 +298,8 @@ class Kotlin2JsGradlePluginIT : AbstractKotlin2JsGradlePluginIT(false) {
 }
 
 abstract class AbstractKotlin2JsGradlePluginIT(val irBackend: Boolean) : BaseGradleIT() {
+    override val defaultGradleVersion = GradleVersionRequired.AtLeast("6.1")
+
     override fun defaultBuildOptions(): BuildOptions =
         super.defaultBuildOptions().copy(
             jsIrBackend = irBackend,
