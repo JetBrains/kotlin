@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.descriptors.commonizer.metadata
 
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
-import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeFactory
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeResolver
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirProvided
 import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMapIndexed
@@ -52,7 +51,7 @@ object CirTypeAliasExpander {
         }
 
         val expandedType = expandedProjection.type as CirClassOrTypeAliasType
-        return CirTypeFactory.makeNullableIfNecessary(expandedType, expansion.isMarkedNullable)
+        return expandedType.makeNullableIfNecessary(expansion.isMarkedNullable)
     }
 
     private fun expandTypeProjection(
@@ -101,7 +100,7 @@ object CirTypeAliasExpander {
                     }
                 }
 
-                val substitutedType = CirTypeFactory.makeNullableIfNecessary(argumentType, type.isMarkedNullable)
+                val substitutedType = argumentType.makeNullableIfNecessary(type.isMarkedNullable)
 
                 CirTypeProjectionImpl(resultingVariance, substitutedType)
             }
@@ -170,7 +169,7 @@ object CirTypeAliasExpander {
 
                 CirTypeProjectionImpl(
                     projectionKind = projection.projectionKind,
-                    type = CirTypeFactory.makeNullable(projectionType)
+                    type = projectionType.makeNullable()
                 )
             }
         }

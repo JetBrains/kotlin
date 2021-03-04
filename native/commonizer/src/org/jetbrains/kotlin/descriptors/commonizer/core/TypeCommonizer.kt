@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
-import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeFactory
 import org.jetbrains.kotlin.descriptors.commonizer.core.CommonizedTypeAliasAnswer.Companion.FAILURE_MISSING_IN_SOME_TARGET
 import org.jetbrains.kotlin.descriptors.commonizer.core.CommonizedTypeAliasAnswer.Companion.SUCCESS_FROM_DEPENDENCY_LIBRARY
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirKnownClassifiers
@@ -143,7 +142,7 @@ private class TypeAliasTypeCommonizer(private val classifiers: CirKnownClassifie
             // type alias don't needs to be commonized because it is from the standard library
             fun forKnownUnderlyingType(underlyingType: CirClassOrTypeAliasType) = object : CommonizedTypeAliasTypeBuilder {
                 override fun build(typeAliasId: CirEntityId, arguments: List<CirTypeProjection>, isMarkedNullable: Boolean): CirTypeAliasType {
-                    val underlyingTypeWithProperNullability = CirTypeFactory.makeNullableIfNecessary(underlyingType, isMarkedNullable)
+                    val underlyingTypeWithProperNullability = underlyingType.makeNullableIfNecessary(isMarkedNullable)
                     return CirTypeAliasType.createInterned(
                         typeAliasId = typeAliasId,
                         underlyingType = underlyingTypeWithProperNullability, // TODO replace arguments???

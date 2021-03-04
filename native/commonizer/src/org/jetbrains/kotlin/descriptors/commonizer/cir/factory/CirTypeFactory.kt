@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.descriptors.commonizer.cir.factory
 import gnu.trove.TIntObjectHashMap
 import kotlinx.metadata.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
-import org.jetbrains.kotlin.descriptors.commonizer.core.computeExpandedType
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirProvided
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirProvidedClassifiers
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.TypeParameterResolver
@@ -68,80 +67,11 @@ object CirTypeFactory {
         }
     }
 
-    fun <T : CirSimpleType> makeNullable(type: T): T {
-        if (type.isMarkedNullable)
-            return type
-
-        val result = when (type) {
-            is CirClassType -> CirClassType.createInterned(
-                classId = type.classifierId,
-                outerType = type.outerType,
-                visibility = type.visibility,
-                arguments = type.arguments,
-                isMarkedNullable = true
-            )
-            is CirTypeAliasType -> CirTypeAliasType.createInterned(
-                typeAliasId = type.classifierId,
-                underlyingType = makeNullable(type.underlyingType),
-                arguments = type.arguments,
-                isMarkedNullable = true
-            )
-            is CirTypeParameterType -> CirTypeParameterType.createInterned(
-                index = type.index,
-                isMarkedNullable = true
-            )
-            else -> error("Unsupported type: $type")
-        }
-
-        @Suppress("UNCHECKED_CAST")
-        return result as T
-    }
-
-    @Suppress("NOTHING_TO_INLINE")
-    inline fun <T : CirSimpleType> makeNullableIfNecessary(type: T, necessary: Boolean): T =
-        if (!necessary) type else makeNullable(type)
-
     @Suppress("NOTHING_TO_INLINE")
     inline fun decodeVariance(variance: KmVariance): Variance = when (variance) {
         KmVariance.INVARIANT -> Variance.INVARIANT
         KmVariance.IN -> Variance.IN_VARIANCE
         KmVariance.OUT -> Variance.OUT_VARIANCE
-    }
-
-    fun unabbreviate(type: CirClassOrTypeAliasType): CirClassType = when (type) {
-        is CirClassType -> {
-            var hasAbbreviationsInArguments = false
-            val unabbreviatedArguments = type.arguments.compactMap { argument ->
-                val argumentType =
-                    (argument as? CirTypeProjectionImpl)?.type as? CirClassOrTypeAliasType ?: return@compactMap argument
-                val unabbreviatedArgumentType = unabbreviate(argumentType)
-
-                if (argumentType == unabbreviatedArgumentType)
-                    argument
-                else {
-                    hasAbbreviationsInArguments = true
-                    CirTypeProjectionImpl(
-                        projectionKind = argument.projectionKind,
-                        type = unabbreviatedArgumentType
-                    )
-                }
-            }
-
-            val outerType = type.outerType
-            val unabbreviatedOuterType = outerType?.let(::unabbreviate)
-
-            if (!hasAbbreviationsInArguments && outerType == unabbreviatedOuterType)
-                type
-            else
-                CirClassType.createInterned(
-                    classId = type.classifierId,
-                    outerType = unabbreviatedOuterType,
-                    visibility = type.visibility,
-                    arguments = unabbreviatedArguments,
-                    isMarkedNullable = type.isMarkedNullable
-                )
-        }
-        is CirTypeAliasType -> unabbreviate(computeExpandedType(type))
     }
 
     @Suppress("NOTHING_TO_INLINE")

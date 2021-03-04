@@ -11,13 +11,6 @@ import org.jetbrains.kotlin.descriptors.commonizer.cir.CirTypeAliasType
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirTypeProjection
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirKnownClassifiers
 
-tailrec fun computeExpandedType(underlyingType: CirClassOrTypeAliasType): CirClassType {
-    return when (underlyingType) {
-        is CirClassType -> underlyingType
-        is CirTypeAliasType -> computeExpandedType(underlyingType.underlyingType)
-    }
-}
-
 internal tailrec fun computeSuitableUnderlyingType(
     classifiers: CirKnownClassifiers,
     underlyingType: CirClassOrTypeAliasType

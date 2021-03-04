@@ -30,6 +30,3 @@ object CirClassifierRecursionMarker : CirClassifier, CirRecursionMarker {
     override val typeParameters get() = unsupported()
     override val visibility get() = unsupported()
 }
-
-@Suppress("unused", "NOTHING_TO_INLINE")
-internal inline fun CirDeclaration.unsupported(): Nothing = error("This method should never be called on ${this::class.java}, $this")
