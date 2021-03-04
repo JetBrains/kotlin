@@ -25,6 +25,10 @@
 #include "Porting.h"
 #include "Types.h"
 
+#include <iostream>
+#include <fstream>
+#include <sstream>
+
 #ifndef KONAN_NO_DEBUG_API
 
 extern "C" OBJ_GETTER(KonanObjectToUtf8Array, KRef object);
@@ -32,6 +36,9 @@ extern "C" OBJ_GETTER(KonanObjectToUtf8Array, KRef object);
 namespace {
 
 char debugBuffer[4096];
+
+std::ofstream fout("/Users/kirill.shmakov/.konan/dependencies/lldb-3-macos-new/runtime_log.txt", std::ios::out);
+std::mutex printer;
 
 constexpr int runtimeTypeSize[] = {
     -1,                  // INVALID
@@ -221,7 +228,32 @@ const char* Konan_DebugGetTypeNameImpl(KRef obj) {
   if (type_info == nullptr)
     return "<unknown>";
 
-  return CreateCStringFromString(type_info->relativeName_);
+  std::stringstream sout;
+
+  sout << "DebugGetTypeNameImpl >";
+
+  for (const TypeInfo* info = type_info; info != nullptr; info = info->superType_) {
+      char * relativeName = CreateCStringFromString(info->relativeName_);
+      char * packageName = CreateCStringFromString(info->packageName_);
+      std::string rel = relativeName == nullptr ? "<null>" : std::string(relativeName);
+      std::string pac = packageName == nullptr ? "<null>" : std::string(packageName);
+      sout << " " << rel << " @ " << pac << " ;";
+  }
+
+  sout << std::endl;
+
+  {
+    std::lock_guard<std::mutex> guard(printer);
+    fout << sout.str() << std::flush;
+  }
+
+//  return CreateCStringFromString(type_info->relativeName_);
+
+  char* result = CreateCStringFromString(type_info->relativeName_);
+  if (result != nullptr)
+    return result;
+
+  return "239";
 }
 
 }  // namespace
