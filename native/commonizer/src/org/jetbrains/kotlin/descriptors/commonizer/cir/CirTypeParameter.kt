@@ -11,4 +11,29 @@ interface CirTypeParameter : CirHasAnnotations, CirHasName {
     val isReified: Boolean
     val variance: Variance
     val upperBounds: List<CirType>
+
+    companion object {
+        @Suppress("NOTHING_TO_INLINE")
+        inline fun create(
+            annotations: List<CirAnnotation>,
+            name: CirName,
+            isReified: Boolean,
+            variance: Variance,
+            upperBounds: List<CirType>
+        ): CirTypeParameter = CirTypeParameterImpl(
+            annotations = annotations,
+            name = name,
+            isReified = isReified,
+            variance = variance,
+            upperBounds = upperBounds
+        )
+    }
 }
+
+data class CirTypeParameterImpl(
+    override val annotations: List<CirAnnotation>,
+    override val name: CirName,
+    override val isReified: Boolean,
+    override val variance: Variance,
+    override val upperBounds: List<CirType>
+) : CirTypeParameter

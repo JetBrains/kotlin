@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirName
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirTypeParameter
-import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeParameterFactory
 import org.jetbrains.kotlin.descriptors.commonizer.utils.MOCK_CLASSIFIERS
 import org.jetbrains.kotlin.descriptors.commonizer.utils.mockClassType
 import org.jetbrains.kotlin.types.Variance
@@ -87,7 +86,7 @@ class TypeParameterCommonizerTest : AbstractCommonizerTest<CirTypeParameter, Cir
             isReified: Boolean = false,
             variance: Variance = Variance.INVARIANT,
             upperBounds: List<String> = listOf("kotlin/Any")
-        ) = CirTypeParameterFactory.create(
+        ) = CirTypeParameter.create(
             annotations = emptyList(),
             name = CirName.create(name),
             isReified = isReified,
