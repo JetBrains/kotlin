@@ -6,6 +6,6 @@ public @interface A {
 }
 
 // FILE: b.kt
-<!INAPPLICABLE_CANDIDATE!>@A(false,
+@A(false,
 1.0,
-false, 1, 2)<!> fun foo1() {}
+false, <!TOO_MANY_ARGUMENTS!>1<!>, <!TOO_MANY_ARGUMENTS!>2<!>) fun foo1() {}

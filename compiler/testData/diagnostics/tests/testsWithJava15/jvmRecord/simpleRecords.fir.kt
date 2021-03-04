@@ -8,7 +8,7 @@ public record MyRecord(int x, CharSequence y) {
 // FILE: main.kt
 
 fun foo(mr: MyRecord) {
-    <!INAPPLICABLE_CANDIDATE!>MyRecord<!>(1, "")
+    MyRecord(<!TOO_MANY_ARGUMENTS!>1<!>, <!TOO_MANY_ARGUMENTS!>""<!>)
 
     mr.<!UNRESOLVED_REFERENCE!>x<!>()
     mr.<!UNRESOLVED_REFERENCE!>y<!>()

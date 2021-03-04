@@ -31,7 +31,7 @@ fun test() {
         x.foo().checkType { _<CharSequence?>() }
         x.baz("")
         x.baz(1).checkType { _<Unit>() }
-        x.<!INAPPLICABLE_CANDIDATE!>baz<!>(1, 2)
+        x.baz(1, <!TOO_MANY_ARGUMENTS!>2<!>)
 
         x.<!UNRESOLVED_REFERENCE!>foobar<!>().checkType { <!INAPPLICABLE_CANDIDATE!>_<!><String>() }
     }

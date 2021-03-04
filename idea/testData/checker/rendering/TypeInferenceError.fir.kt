@@ -4,7 +4,7 @@ fun <K, V> testMutableMapEntry(map: MutableMap<K, V>, k1: K, v: V) {
 }
 
 fun foo() {
-    <error descr="[INAPPLICABLE_CANDIDATE] Inapplicable candidate(s): /testMutableMapEntry">testMutableMapEntry</error>(hashMap(1 to 'a'), 'b')
+    testMutableMapEntry(hashMap(1 to 'a'), 'b'<error descr="[NO_VALUE_FOR_PARAMETER] No value passed for parameter 'v'">)</error>
 }
 
 //extract from library

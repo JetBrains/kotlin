@@ -39,7 +39,7 @@ fun <R> select(vararg x: R) = x[0]
 fun poll0(): Flow<String> {
     return flow {
         val inv = select(::bar, ::foo)
-        <!INAPPLICABLE_CANDIDATE!>inv<!>()
+        inv(<!NO_VALUE_FOR_PARAMETER!>)<!>
     }
 }
 
@@ -123,7 +123,7 @@ fun poll14(flag: Boolean): Flow<String> {
 fun poll15(flag: Boolean): Flow<String> {
     return flow {
         val inv = if (flag) { ::bar5 } else { ::foo5 }
-        <!INAPPLICABLE_CANDIDATE!>inv<!>()
+        inv(<!NO_VALUE_FOR_PARAMETER!>)<!>
     }
 }
 
@@ -144,7 +144,7 @@ fun poll17(flag: Boolean): Flow<String> {
 fun poll2(flag: Boolean): Flow<String> {
     return flow {
         val inv = when (flag) { true -> ::bar else -> ::foo }
-        <!INAPPLICABLE_CANDIDATE!>inv<!>()
+        inv(<!NO_VALUE_FOR_PARAMETER!>)<!>
     }
 }
 
@@ -193,7 +193,7 @@ fun poll26(flag: Boolean): Flow<String> {
 fun poll3(flag: Boolean): Flow<String> {
     return flow {
         val inv = when (flag) { true -> ::bar false -> ::foo }
-        <!INAPPLICABLE_CANDIDATE!>inv<!>()
+        inv(<!NO_VALUE_FOR_PARAMETER!>)<!>
     }
 }
 
@@ -242,7 +242,7 @@ fun poll36(flag: Boolean): Flow<String> {
 fun poll4(): Flow<String> {
     return flow {
         val inv = try { ::bar } finally { ::foo }
-        <!INAPPLICABLE_CANDIDATE!>inv<!>()
+        inv(<!NO_VALUE_FOR_PARAMETER!>)<!>
     }
 }
 
@@ -270,7 +270,7 @@ fun poll43(): Flow<String> {
 fun poll44(): Flow<String> {
     return flow {
         val inv = try { ::bar5 } finally { ::foo5 }
-        <!INAPPLICABLE_CANDIDATE!>inv<!>()
+        inv(<!NO_VALUE_FOR_PARAMETER!>)<!>
     }
 }
 
@@ -291,7 +291,7 @@ fun poll46(): Flow<String> {
 fun poll5(): Flow<String> {
     return flow {
         val inv = try { ::bar } catch (e: Exception) { ::foo } finally { ::foo }
-        <!INAPPLICABLE_CANDIDATE!>inv<!>()
+        inv(<!NO_VALUE_FOR_PARAMETER!>)<!>
     }
 }
 
@@ -319,7 +319,7 @@ fun poll53(): Flow<String> {
 fun poll54(): Flow<String> {
     return flow {
         val inv = try { ::bar5 } catch (e: Exception) { ::foo5 } finally { ::foo5 }
-        <!INAPPLICABLE_CANDIDATE!>inv<!>()
+        inv(<!NO_VALUE_FOR_PARAMETER!>)<!>
     }
 }
 
@@ -389,7 +389,7 @@ fun poll66(): Flow<String> {
 fun poll7(): Flow<String> {
     return flow {
         val inv = ::bar!!
-        <!INAPPLICABLE_CANDIDATE!>inv<!>()
+        inv(<!NO_VALUE_FOR_PARAMETER!>)<!>
     }
 }
 

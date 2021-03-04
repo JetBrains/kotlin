@@ -13,7 +13,7 @@ fun test() {
     checkSubtype<KProperty1<A, Int>>(p)
     <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><KMutableProperty1<A, Int>>(p)
     checkSubtype<Int>(p.get(A()))
-    p.<!INAPPLICABLE_CANDIDATE!>get<!>()
+    p.get(<!NO_VALUE_FOR_PARAMETER!>)<!>
     p.<!UNRESOLVED_REFERENCE!>set<!>(A(), 239)
 
     val q = A::bar

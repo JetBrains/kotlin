@@ -5,7 +5,7 @@ annotation class Ann2(val x: Int)
 class A {
     @Ann1
     constructor()
-    <!INAPPLICABLE_CANDIDATE!>@Ann2<!>
+    <!NO_VALUE_FOR_PARAMETER!>@Ann2<!>
     constructor(x1: Int)
     @Ann2(2)
     constructor(x1: Int, x2: Int)

@@ -16,7 +16,7 @@ class A
 infix operator fun A.plus(a : Any) {
 
   1.foo()
-  true.<error descr="[INAPPLICABLE_CANDIDATE] Inapplicable candidate(s): /foo">foo</error>()
+  true.foo(<error descr="[NO_VALUE_FOR_PARAMETER] No value passed for parameter 'x'"><error descr="[NO_VALUE_FOR_PARAMETER] No value passed for parameter 'y'">)</error></error>
 
   1
 }

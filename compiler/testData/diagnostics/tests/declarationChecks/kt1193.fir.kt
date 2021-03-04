@@ -5,7 +5,7 @@ package kt1193
 
 enum class MyEnum(val i: Int) {
     A(12),
-    <!INAPPLICABLE_CANDIDATE!>B<!>  //no error
+    <!NO_VALUE_FOR_PARAMETER!>B<!>  //no error
 }
 
 open class A(x: Int = 1)

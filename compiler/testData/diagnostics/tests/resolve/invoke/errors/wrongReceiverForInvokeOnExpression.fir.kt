@@ -7,7 +7,7 @@ fun test1() {
 
 fun test2(f: String.(Int) -> Unit) {
     11.(<!INAPPLICABLE_CANDIDATE!>f<!>)(1)
-    11.(<!INAPPLICABLE_CANDIDATE!>f<!>)()
+    11.(f)(<!NO_VALUE_FOR_PARAMETER!>)<!>
 }
 
 fun test3() {

@@ -34,11 +34,11 @@ object MismatchingArities2 {
 }
 
 fun testMismatchingArities() {
-    ++<!INAPPLICABLE_CANDIDATE!>MismatchingArities1[0]<!>
-    <!INAPPLICABLE_CANDIDATE!>MismatchingArities1[0]<!>++
+    <!NO_VALUE_FOR_PARAMETER!>++MismatchingArities1[0]<!>
+    <!NO_VALUE_FOR_PARAMETER!>MismatchingArities1[0]++<!>
     MismatchingArities1[0] <!UNRESOLVED_REFERENCE!>+=<!> 1
 
-    ++<!INAPPLICABLE_CANDIDATE!>MismatchingArities2[0]<!>
-    <!INAPPLICABLE_CANDIDATE!>MismatchingArities2[0]<!>++
-    <!INAPPLICABLE_CANDIDATE!>MismatchingArities2[0]<!> <!UNRESOLVED_REFERENCE!>+=<!> 1
+    <!NO_VALUE_FOR_PARAMETER!>++MismatchingArities2[0]<!>
+    <!NO_VALUE_FOR_PARAMETER!>MismatchingArities2[0]++<!>
+    <!NO_VALUE_FOR_PARAMETER!>MismatchingArities2[0]<!> <!UNRESOLVED_REFERENCE!>+=<!> 1
 }

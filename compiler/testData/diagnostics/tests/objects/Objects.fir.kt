@@ -4,15 +4,15 @@ package toplevelObjectDeclarations
     open fun foo() : Int = 1
   }
 
-  <!INAPPLICABLE_CANDIDATE!>class T : <!SUPERTYPE_NOT_INITIALIZED!>Foo<!> {}<!>
+  <!NO_VALUE_FOR_PARAMETER!>class T : <!SUPERTYPE_NOT_INITIALIZED!>Foo<!> {}<!>
 
-  <!INAPPLICABLE_CANDIDATE!>object A : <!SUPERTYPE_NOT_INITIALIZED!>Foo<!> {
+  object A : <!SUPERTYPE_NOT_INITIALIZED!>Foo<!> {
     val x : Int = 2
 
     fun test() : Int {
-      return x + foo()
+      return x + foo(<!NO_VALUE_FOR_PARAMETER!>)<!>
     }
-  }<!>
+  }
 
   object B : A {}
 

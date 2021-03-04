@@ -24,9 +24,9 @@ fun case_1(x: Any?, y: Any?) {
 fun case_2(x: Any?, y: Any?) {
     if (x as Int === y) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Int")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Int")!>x<!>.<!INAPPLICABLE_CANDIDATE!>inv<!>(10)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Int")!>x<!>.inv(<!TOO_MANY_ARGUMENTS!>10<!>)
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Int")!>y<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Int")!>y<!>.<!INAPPLICABLE_CANDIDATE!>inv<!>(10)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Int")!>y<!>.inv(<!TOO_MANY_ARGUMENTS!>10<!>)
     }
 }
 
@@ -52,8 +52,8 @@ fun case_3(x: Any?, y: Any?) {
 fun case_4(x: Any?, y: Any?) {
     if (y === x as Int) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Int")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Int")!>x<!>.<!INAPPLICABLE_CANDIDATE!>inv<!>(10)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Int")!>x<!>.inv(<!TOO_MANY_ARGUMENTS!>10<!>)
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Int")!>y<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Int")!>y<!>.<!INAPPLICABLE_CANDIDATE!>inv<!>(10)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Int")!>y<!>.inv(<!TOO_MANY_ARGUMENTS!>10<!>)
     }
 }

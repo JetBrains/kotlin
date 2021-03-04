@@ -36,7 +36,7 @@ fun test() {
 
         severalParams("", 89) checkType { _<Double>() }
         // TODO: should we allow somehow to call with passing continuation explicitly?
-        <!INAPPLICABLE_CANDIDATE!>severalParams<!>("", 89, 6.9) checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Unit>() }
+        severalParams("", 89, <!TOO_MANY_ARGUMENTS!>6.9<!>) checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Unit>() }
 
         "".stringReceiver(1)
         Any().anyReceiver(1)

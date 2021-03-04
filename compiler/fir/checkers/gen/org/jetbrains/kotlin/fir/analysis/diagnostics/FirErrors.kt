@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.diagnostics
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiTypeElement
+import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.SourceElementPositioningStr
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
@@ -47,6 +49,7 @@ import org.jetbrains.kotlin.psi.KtTypeAlias
 import org.jetbrains.kotlin.psi.KtTypeParameter
 import org.jetbrains.kotlin.psi.KtTypeParameterList
 import org.jetbrains.kotlin.psi.KtTypeReference
+import org.jetbrains.kotlin.psi.KtValueArgument
 import org.jetbrains.kotlin.psi.KtWhenExpression
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
 
@@ -178,7 +181,11 @@ object FirErrors {
     val INAPPLICABLE_CANDIDATE by error1<FirSourceElement, PsiElement, AbstractFirBasedSymbol<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
     val INAPPLICABLE_LATEINIT_MODIFIER by error1<FirSourceElement, KtModifierListOwner, String>(SourceElementPositioningStrategies.LATEINIT_MODIFIER)
     val VARARG_OUTSIDE_PARENTHESES by error0<FirSourceElement, KtExpression>()
-    val NAMED_ARGUMENTS_NOT_ALLOWED by error1<FirSourceElement, PsiElement, ForbiddenNamedArgumentsTarget>()
+    val NAMED_ARGUMENTS_NOT_ALLOWED by error1<FirSourceElement, KtValueArgument, ForbiddenNamedArgumentsTarget>(SourceElementPositioningStrategies.NAME_OF_NAMED_ARGUMENT)
+    val NON_VARARG_SPREAD by error0<FirSourceElement, LeafPsiElement>()
+    val ARGUMENT_PASSED_TWICE by error0<FirSourceElement, KtValueArgument>(SourceElementPositioningStrategies.NAME_OF_NAMED_ARGUMENT)
+    val TOO_MANY_ARGUMENTS by error1<FirSourceElement, PsiElement, FirCallableDeclaration<*>>()
+    val NO_VALUE_FOR_PARAMETER by error1<FirSourceElement, KtElement, FirValueParameter>(SourceElementPositioningStrategies.VALUE_ARGUMENTS)
 
     // Ambiguity
     val AMBIGUITY by error1<FirSourceElement, PsiElement, Collection<AbstractFirBasedSymbol<*>>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)

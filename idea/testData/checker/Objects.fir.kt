@@ -3,15 +3,15 @@ package toplevelObjectDeclarations
     open fun foo() : Int = 1
   }
 
-  <error descr="[INAPPLICABLE_CANDIDATE] Inapplicable candidate(s): toplevelObjectDeclarations/Foo.Foo">class T : <error descr="[SUPERTYPE_NOT_INITIALIZED] This type has a constructor, and thus must be initialized here">Foo</error> {}</error>
+  <error descr="[NO_VALUE_FOR_PARAMETER] No value passed for parameter 'y'">class T : <error descr="[SUPERTYPE_NOT_INITIALIZED] This type has a constructor, and thus must be initialized here">Foo</error> {}</error>
 
-  <error descr="[INAPPLICABLE_CANDIDATE] Inapplicable candidate(s): toplevelObjectDeclarations/Foo.Foo">object A : <error descr="[SUPERTYPE_NOT_INITIALIZED] This type has a constructor, and thus must be initialized here">Foo</error> {
+  object A : <error descr="[SUPERTYPE_NOT_INITIALIZED] This type has a constructor, and thus must be initialized here">Foo</error> {
     val x : Int = 2
 
     fun test() : Int {
-      return x + foo()
+      return x + foo(<error descr="[NO_VALUE_FOR_PARAMETER] No value passed for parameter 'y'">)</error>
     }
-  }</error>
+  }
 
   object B : A {}
 

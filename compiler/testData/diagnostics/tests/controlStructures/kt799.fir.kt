@@ -9,7 +9,7 @@ fun test() {
 
     doSmth(if (true) 3 else return)
 
-    <!INAPPLICABLE_CANDIDATE!>doSmth<!>(if (true) 3 else return, 1)
+    doSmth(if (true) 3 else return, <!TOO_MANY_ARGUMENTS!>1<!>)
 }
 
 val a : Nothing = return 1

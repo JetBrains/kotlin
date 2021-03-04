@@ -107,7 +107,7 @@ object SourceElementPositioningStrategies {
         LightTreePositioningStrategies.OPERATOR,
         PositioningStrategies.OPERATOR
     )
-    
+
     val PARAMETER_DEFAULT_VALUE = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.PARAMETER_DEFAULT_VALUE,
         PositioningStrategies.PARAMETER_DEFAULT_VALUE
@@ -116,6 +116,16 @@ object SourceElementPositioningStrategies {
     val PARAMETER_VARARG_MODIFIER = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.PARAMETER_VARARG_MODIFIER,
         PositioningStrategies.PARAMETER_VARARG_MODIFIER
+    )
+
+    val NAME_OF_NAMED_ARGUMENT = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.NAME_OF_NAMED_ARGUMENT,
+        PositioningStrategies.NAME_OF_NAMED_ARGUMENT
+    )
+
+    val VALUE_ARGUMENTS = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.VALUE_ARGUMENTS,
+        PositioningStrategies.VALUE_ARGUMENTS
     )
 
     val DOT_BY_QUALIFIED = SourceElementPositioningStrategy(

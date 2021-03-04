@@ -5,5 +5,5 @@ class A
 
 annotation class AnnVarargs(val x: Int, vararg val y: String, val z: Int)
 
-<!INAPPLICABLE_CANDIDATE!>@AnnVarargs(1, "a", "b", "c", 2)<!>
+@AnnVarargs(1, "a", "b", "c", 2<!NO_VALUE_FOR_PARAMETER!>)<!>
 class B

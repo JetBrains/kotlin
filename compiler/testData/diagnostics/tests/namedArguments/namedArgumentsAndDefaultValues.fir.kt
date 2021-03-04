@@ -11,17 +11,17 @@ fun test() {
     foo(b = "")
     foo(1, "")
     foo(a = 2)
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(1, "", "")
+    foo(1, "", <!TOO_MANY_ARGUMENTS!>""<!>)
 
     bar(z = "")
-    <!INAPPLICABLE_CANDIDATE!>bar<!>()
-    <!INAPPLICABLE_CANDIDATE!>bar<!>("")
+    bar(<!NO_VALUE_FOR_PARAMETER!>)<!>
+    bar(""<!NO_VALUE_FOR_PARAMETER!>)<!>
     bar(1, 1, "")
     bar(1, 1, "")
     bar(1, z = "")
     bar(1, z = "", y = 2)
     <!INAPPLICABLE_CANDIDATE!>bar<!>(z = "", 1)
-    <!INAPPLICABLE_CANDIDATE!>bar<!>(1, zz = "",
+    bar(1, zz = "",
            <!UNRESOLVED_REFERENCE!>zz<!>.foo
-           )
+           <!NO_VALUE_FOR_PARAMETER!>)<!>
 }

@@ -13,10 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.isInfix
 import org.jetbrains.kotlin.fir.declarations.isOperator
 import org.jetbrains.kotlin.fir.diagnostics.*
-import org.jetbrains.kotlin.fir.resolve.calls.InapplicableWrongReceiver
-import org.jetbrains.kotlin.fir.resolve.calls.NamedArgumentNotAllowed
-import org.jetbrains.kotlin.fir.resolve.calls.ResolutionDiagnostic
-import org.jetbrains.kotlin.fir.resolve.calls.VarargArgumentOutsideParentheses
+import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -132,9 +129,13 @@ private fun mapInapplicableCandidateError(
                 rootCause.argument.source ?: qualifiedAccessSource
             )
             is NamedArgumentNotAllowed -> FirErrors.NAMED_ARGUMENTS_NOT_ALLOWED.on(
-                rootCause.argument.source ?: qualifiedAccessSource,
+                rootCause.argument.source,
                 rootCause.forbiddenNamedArgumentsTarget
             )
+            is NonVarargSpread -> FirErrors.NON_VARARG_SPREAD.on(rootCause.argument.source?.getChild(KtTokens.MUL, depth = 1)!!)
+            is ArgumentPassedTwice -> FirErrors.ARGUMENT_PASSED_TWICE.on(rootCause.argument.source)
+            is TooManyArguments -> FirErrors.TOO_MANY_ARGUMENTS.on(rootCause.argument.source ?: source, rootCause.function)
+            is NoValueForParameter -> FirErrors.NO_VALUE_FOR_PARAMETER.on(qualifiedAccessSource ?: source, rootCause.valueParameter)
             else -> null
         }
     }.ifEmpty { listOf(FirErrors.INAPPLICABLE_CANDIDATE.on(source, diagnostic.candidate.symbol)) }

@@ -6,6 +6,6 @@ class A(foo: Int.() -> Unit) {
 
 fun test(foo: Int.(String) -> Unit) {
     4.foo("")
-    4.<!INAPPLICABLE_CANDIDATE!>foo<!>(p1 = "")
-    4.foo(<!NAMED_ARGUMENTS_NOT_ALLOWED!>p2 = ""<!>)
+    4.foo(p1 = ""<!NO_VALUE_FOR_PARAMETER!>)<!>
+    4.foo(<!NAMED_ARGUMENTS_NOT_ALLOWED!>p2<!> = "")
 }

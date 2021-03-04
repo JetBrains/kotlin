@@ -7,7 +7,7 @@ class SomeClass
 
 fun test(identifier: SomeClass, fn: String.() -> Unit) {
     <!INAPPLICABLE_CANDIDATE!>identifier<!>()
-    <!INAPPLICABLE_CANDIDATE!>identifier<!>(123)
-    <!INAPPLICABLE_CANDIDATE!>identifier<!>(1, 2)
+    identifier(<!TOO_MANY_ARGUMENTS!>123<!>)
+    identifier(<!TOO_MANY_ARGUMENTS!>1<!>, <!TOO_MANY_ARGUMENTS!>2<!>)
     1.<!INAPPLICABLE_CANDIDATE!>fn<!>()
 }

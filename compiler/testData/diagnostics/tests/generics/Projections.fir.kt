@@ -50,5 +50,5 @@ fun testInOut() {
     (null as Inv<out Int>).outf()
     (null as Inv<*>).outf()
 
-    Inv<Int>().<!INAPPLICABLE_CANDIDATE!>outf<!>(1) // Wrong Arg
+    Inv<Int>().outf(<!TOO_MANY_ARGUMENTS!>1<!>) // Wrong Arg
 }

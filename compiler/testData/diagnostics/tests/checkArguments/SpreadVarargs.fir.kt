@@ -10,7 +10,7 @@ fun main() {
     join(1)
     join(1, "2")
     join(1, "2", "3")
-    <!INAPPLICABLE_CANDIDATE!>join<!>(*1, "2")
+    join(<!NON_VARARG_SPREAD!>*<!>1, "2")
     <!INAPPLICABLE_CANDIDATE!>join<!>(1, *"2")
     join(x = 1, a = "2")
     join(x = *1, a = *"2")
@@ -30,7 +30,7 @@ fun main() {
     join(a = a, x = 1)
 
     joinG<String>(1, "2")
-    <!INAPPLICABLE_CANDIDATE!>joinG<!><String>(*1, "2")
+    joinG<String>(<!NON_VARARG_SPREAD!>*<!>1, "2")
     <!INAPPLICABLE_CANDIDATE!>joinG<!><String>(1, *"2")
     joinG<String>(x = 1, a = a)
     joinG<String>(x = 1, a = "2")
@@ -43,7 +43,7 @@ fun main() {
     joinG<String>(a = a, x = 1)
 
     joinG(1, "2")
-    <!INAPPLICABLE_CANDIDATE!>joinG<!>(*1, "2")
+    joinG(<!NON_VARARG_SPREAD!>*<!>1, "2")
     <!INAPPLICABLE_CANDIDATE!>joinG<!>(1, *"2")
     joinG(x = 1, a = a)
     joinG(x = 1, a = "2")
@@ -57,7 +57,7 @@ fun main() {
 
     val x1 = joinT(1, "2")
     checkSubtype<String?>(x1)
-    val x2 = <!INAPPLICABLE_CANDIDATE!>joinT<!>(*1, "2")
+    val x2 = joinT(<!NON_VARARG_SPREAD!>*<!>1, "2")
     checkSubtype<String?>(x2)
     val x6 = joinT(1, *a)
     checkSubtype<String?>(x6)

@@ -9,4 +9,4 @@ public class C {
 
 // FILE: main.kt
 
-fun foo() = <!INAPPLICABLE_CANDIDATE!>C<!>()
+fun foo() = C(<!NO_VALUE_FOR_PARAMETER!>)<!>

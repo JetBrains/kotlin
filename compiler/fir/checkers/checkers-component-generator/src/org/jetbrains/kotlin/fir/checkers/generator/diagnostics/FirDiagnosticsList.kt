@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.checkers.generator.diagnostics
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiTypeElement
+import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
@@ -218,9 +220,17 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
 
         val VARARG_OUTSIDE_PARENTHESES by error<FirSourceElement, KtExpression>()
 
-        // TODO: implement a position strategy that highlights the argument name instead of the whole named argument
-        val NAMED_ARGUMENTS_NOT_ALLOWED by error<FirSourceElement, PsiElement> {
+        val NAMED_ARGUMENTS_NOT_ALLOWED by error<FirSourceElement, KtValueArgument>(PositioningStrategy.NAME_OF_NAMED_ARGUMENT) {
             parameter<ForbiddenNamedArgumentsTarget>("forbiddenNamedArgumentsTarget")
+        }
+
+        val NON_VARARG_SPREAD by error<FirSourceElement, LeafPsiElement>()
+        val ARGUMENT_PASSED_TWICE by error<FirSourceElement, KtValueArgument>(PositioningStrategy.NAME_OF_NAMED_ARGUMENT)
+        val TOO_MANY_ARGUMENTS by error<FirSourceElement, PsiElement> {
+            parameter<FirCallableDeclaration<*>>("function")
+        }
+        val NO_VALUE_FOR_PARAMETER by error<FirSourceElement, KtElement>(PositioningStrategy.VALUE_ARGUMENTS) {
+            parameter<FirValueParameter>("violatedParameter")
         }
     }
 

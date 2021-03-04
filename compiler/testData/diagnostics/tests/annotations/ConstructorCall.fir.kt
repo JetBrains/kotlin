@@ -16,7 +16,7 @@ fun foo() {
     Ann()
     val a = Ann()
 
-    <!INAPPLICABLE_CANDIDATE!>Ann1<!>()
+    Ann1(<!NO_VALUE_FOR_PARAMETER!>)<!>
     Ann1(1)
     bar(Ann())
     bar(a = Ann())
