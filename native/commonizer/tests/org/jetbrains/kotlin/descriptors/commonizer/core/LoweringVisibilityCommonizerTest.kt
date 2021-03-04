@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirContainingClass
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirFunctionOrProperty
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirHasVisibility
-import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.unsupported
+import org.jetbrains.kotlin.descriptors.commonizer.cir.unsupported
 import org.junit.Test
 
 abstract class LoweringVisibilityCommonizerTest(

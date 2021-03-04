@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.descriptors.commonizer.mergedtree
 
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirDeclaration
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirEntityId
-import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirClassRecursionMarker
-import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirClassifierRecursionMarker
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClassRecursionMarker
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClassifierRecursionMarker
 import org.jetbrains.kotlin.descriptors.commonizer.core.*
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroup
 import org.jetbrains.kotlin.storage.NullableLazyValue
