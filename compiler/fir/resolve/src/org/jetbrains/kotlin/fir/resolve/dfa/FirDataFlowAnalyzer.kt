@@ -792,17 +792,17 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
 
     fun exitSafeCall(safeCall: FirSafeCallExpression) {
         val node = graphBuilder.exitSafeCall().mergeIncomingFlow()
-        val previousFlow = node.previousFlow
+        val flow = node.flow
 
-        val variable = variableStorage.getOrCreateVariable(previousFlow, safeCall)
+        val variable = variableStorage.getOrCreateVariable(flow, safeCall)
         val receiverVariable = when (variable) {
             // There is some bug with invokes. See KT-36014
             is RealVariable -> variable.explicitReceiverVariable ?: return
-            is SyntheticVariable -> variableStorage.getOrCreateVariable(previousFlow, safeCall.receiver)
+            is SyntheticVariable -> variableStorage.getOrCreateVariable(flow, safeCall.receiver)
         }
-        logicSystem.addImplication(node.flow, (variable notEq null) implies (receiverVariable notEq null))
+        logicSystem.addImplication(flow, (variable notEq null) implies (receiverVariable notEq null))
         if (receiverVariable.isReal()) {
-            logicSystem.addImplication(node.flow, (variable notEq null) implies (receiverVariable typeEq any))
+            logicSystem.addImplication(flow, (variable notEq null) implies (receiverVariable typeEq any))
         }
     }
 
