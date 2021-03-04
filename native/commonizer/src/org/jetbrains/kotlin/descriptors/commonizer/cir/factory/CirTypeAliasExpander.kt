@@ -121,7 +121,7 @@ object CirTypeAliasExpander {
         val nestedExpansion = CirTypeAliasExpansion(typeAlias, expandedArguments, type.isMarkedNullable, expansion.typeResolver)
         val nestedExpandedType = expand(nestedExpansion)
 
-        return CirTypeFactory.createTypeAliasType(
+        return CirTypeAliasType.createInterned(
             typeAliasId = type.typeAliasId,
             underlyingType = nestedExpandedType,
             arguments = expandedArguments,

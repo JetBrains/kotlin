@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClassOrTypeAliasType
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClassType
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirTypeAliasType
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirTypeProjection
-import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeFactory
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirKnownClassifiers
 
 tailrec fun computeExpandedType(underlyingType: CirClassOrTypeAliasType): CirClassType {
@@ -62,7 +61,7 @@ private fun CirTypeAliasType.withCommonizedArguments(classifiers: CirKnownClassi
     } ?: return null
 
     return if (newArguments !== existingArguments || newUnderlyingType !== existingUnderlyingType)
-        CirTypeFactory.createTypeAliasType(
+        CirTypeAliasType.createInterned(
             typeAliasId = classifierId,
             underlyingType = newUnderlyingType,
             arguments = newArguments,

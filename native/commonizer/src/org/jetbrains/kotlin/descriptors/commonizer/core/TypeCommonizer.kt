@@ -144,7 +144,7 @@ private class TypeAliasTypeCommonizer(private val classifiers: CirKnownClassifie
             fun forKnownUnderlyingType(underlyingType: CirClassOrTypeAliasType) = object : CommonizedTypeAliasTypeBuilder {
                 override fun build(typeAliasId: CirEntityId, arguments: List<CirTypeProjection>, isMarkedNullable: Boolean): CirTypeAliasType {
                     val underlyingTypeWithProperNullability = CirTypeFactory.makeNullableIfNecessary(underlyingType, isMarkedNullable)
-                    return CirTypeFactory.createTypeAliasType(
+                    return CirTypeAliasType.createInterned(
                         typeAliasId = typeAliasId,
                         underlyingType = underlyingTypeWithProperNullability, // TODO replace arguments???
                         arguments = arguments,

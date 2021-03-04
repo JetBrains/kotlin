@@ -133,6 +133,24 @@ abstract class CirTypeAliasType : CirClassOrTypeAliasType() {
         builder.append(" -> ")
         underlyingType.appendDescriptionTo(builder)
     }
+
+    companion object {
+        fun createInterned(
+            typeAliasId: CirEntityId,
+            underlyingType: CirClassOrTypeAliasType,
+            arguments: List<CirTypeProjection>,
+            isMarkedNullable: Boolean
+        ): CirTypeAliasType = interner.intern(
+            CirTypeAliasTypeInternedImpl(
+                classifierId = typeAliasId,
+                underlyingType = underlyingType,
+                arguments = arguments,
+                isMarkedNullable = isMarkedNullable
+            )
+        )
+
+        private val interner = Interner<CirTypeAliasTypeInternedImpl>()
+    }
 }
 
 sealed class CirTypeProjection
@@ -186,6 +204,39 @@ private class CirClassTypeInternedImpl(
                 && visibility == other.visibility
                 && arguments == other.arguments
                 && outerType == other.outerType
+        else -> false
+    }
+}
+
+private class CirTypeAliasTypeInternedImpl(
+    override val classifierId: CirEntityId,
+    override val underlyingType: CirClassOrTypeAliasType,
+    override val arguments: List<CirTypeProjection>,
+    override val isMarkedNullable: Boolean
+) : CirTypeAliasType() {
+    // See also org.jetbrains.kotlin.types.KotlinType.cachedHashCode
+    private var cachedHashCode = 0
+
+    private fun computeHashCode() = hashCode(classifierId)
+        .appendHashCode(underlyingType)
+        .appendHashCode(arguments)
+        .appendHashCode(isMarkedNullable)
+
+    override fun hashCode(): Int {
+        var currentHashCode = cachedHashCode
+        if (currentHashCode != 0) return currentHashCode
+
+        currentHashCode = computeHashCode()
+        cachedHashCode = currentHashCode
+        return currentHashCode
+    }
+
+    override fun equals(other: Any?): Boolean = when {
+        other === this -> true
+        other is CirTypeAliasType -> classifierId == other.classifierId
+                && underlyingType == other.underlyingType
+                && isMarkedNullable == other.isMarkedNullable
+                && arguments == other.arguments
         else -> false
     }
 }

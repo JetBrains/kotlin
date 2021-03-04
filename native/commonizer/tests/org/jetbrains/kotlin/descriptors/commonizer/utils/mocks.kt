@@ -28,7 +28,7 @@ internal fun mockTAType(
     typeAliasId: String,
     nullable: Boolean = false,
     underlyingType: () -> CirClassOrTypeAliasType
-): CirTypeAliasType = CirTypeFactory.createTypeAliasType(
+): CirTypeAliasType = CirTypeAliasType.createInterned(
     typeAliasId = createValidClassifierId(typeAliasId),
     underlyingType = CirTypeFactory.makeNullableIfNecessary(underlyingType(), nullable),
     arguments = emptyList(),

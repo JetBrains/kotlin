@@ -9,7 +9,6 @@ import gnu.trove.TIntObjectHashMap
 import kotlinx.metadata.*
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
-import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirTypeAliasTypeImpl
 import org.jetbrains.kotlin.descriptors.commonizer.core.computeExpandedType
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirProvided
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirProvidedClassifiers
@@ -27,8 +26,6 @@ object CirTypeFactory {
             isMarkedNullable = false
         )
     }
-
-    private val typeAliasTypeInterner = Interner<CirTypeAliasType>()
 
     fun create(source: KmType, typeResolver: CirTypeResolver): CirType {
         @Suppress("NAME_SHADOWING")
@@ -64,7 +61,7 @@ object CirTypeFactory {
                     CirTypeAliasExpansion.create(typeAliasId, arguments, isMarkedNullable, typeResolver)
                 )
 
-                createTypeAliasType(
+                CirTypeAliasType.createInterned(
                     typeAliasId = typeAliasId,
                     underlyingType = underlyingType,
                     arguments = arguments,
@@ -80,22 +77,6 @@ object CirTypeFactory {
         }
     }
 
-    fun createTypeAliasType(
-        typeAliasId: CirEntityId,
-        underlyingType: CirClassOrTypeAliasType,
-        arguments: List<CirTypeProjection>,
-        isMarkedNullable: Boolean
-    ): CirTypeAliasType {
-        return typeAliasTypeInterner.intern(
-            CirTypeAliasTypeImpl(
-                classifierId = typeAliasId,
-                underlyingType = underlyingType,
-                arguments = arguments,
-                isMarkedNullable = isMarkedNullable
-            )
-        )
-    }
-
     fun <T : CirSimpleType> makeNullable(type: T): T {
         if (type.isMarkedNullable)
             return type
@@ -108,7 +89,7 @@ object CirTypeFactory {
                 arguments = type.arguments,
                 isMarkedNullable = true
             )
-            is CirTypeAliasType -> createTypeAliasType(
+            is CirTypeAliasType -> CirTypeAliasType.createInterned(
                 typeAliasId = type.classifierId,
                 underlyingType = makeNullable(type.underlyingType),
                 arguments = type.arguments,
