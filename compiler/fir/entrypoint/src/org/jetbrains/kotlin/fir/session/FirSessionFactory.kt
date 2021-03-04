@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.analysis.extensions.additionalCheckers
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.caches.FirThreadUnsafeCachesFactory
 import org.jetbrains.kotlin.fir.checkers.registerCommonCheckers
+import org.jetbrains.kotlin.fir.checkers.registerJvmCheckers
 import org.jetbrains.kotlin.fir.extensions.BunchOfRegisteredExtensions
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.registerExtensions
@@ -94,6 +95,7 @@ object FirSessionFactory {
 
             FirSessionConfigurator(this).apply {
                 registerCommonCheckers()
+                registerJvmCheckers()
                 init()
             }.configure()
 
