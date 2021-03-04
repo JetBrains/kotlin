@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.psi.KtTypeParameter
 import org.jetbrains.kotlin.psi.KtTypeParameterList
 import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.psi.KtWhenExpression
+import org.jetbrains.kotlin.resolve.BadNamedArgumentsTarget
 
 /*
  * This file was generated automatically
@@ -467,6 +468,11 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class VarargOutsideParentheses : KtFirDiagnostic<KtExpression>() {
         override val diagnosticClass get() = VarargOutsideParentheses::class
+    }
+
+    abstract class NamedArgumentsNotAllowed : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = NamedArgumentsNotAllowed::class
+        abstract val badNamedArgumentTarget: BadNamedArgumentsTarget
     }
 
     abstract class Ambiguity : KtFirDiagnostic<PsiElement>() {

@@ -657,6 +657,13 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.NAMED_ARGUMENTS_NOT_ALLOWED) { firDiagnostic ->
+        NamedArgumentsNotAllowedImpl(
+            firDiagnostic.a,
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
     add(FirErrors.AMBIGUITY) { firDiagnostic ->
         AmbiguityImpl(
             firDiagnostic.a.map { abstractFirBasedSymbol ->
