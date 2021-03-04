@@ -16,6 +16,7 @@ abstract class AbstractModelTest(val path: String? = null, val pkg: String) : Mo
         block: DModule.() -> Unit
     ) {
         val testConfiguration = configuration ?: dokkaConfiguration {
+            suppressObviousFunctions = false
             sourceSets {
                 sourceSet {
                     sourceRoots = listOf("src/")
