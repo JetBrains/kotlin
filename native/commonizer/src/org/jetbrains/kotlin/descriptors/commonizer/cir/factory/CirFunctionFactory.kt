@@ -8,19 +8,17 @@ package org.jetbrains.kotlin.descriptors.commonizer.cir.factory
 import kotlinx.metadata.Flag
 import kotlinx.metadata.KmFunction
 import kotlinx.metadata.klib.annotations
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.descriptors.commonizer.cir.*
-import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirFunctionImpl
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirContainingClass
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirFunction
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirName
 import org.jetbrains.kotlin.descriptors.commonizer.metadata.decodeCallableKind
 import org.jetbrains.kotlin.descriptors.commonizer.metadata.decodeModality
 import org.jetbrains.kotlin.descriptors.commonizer.metadata.decodeVisibility
 import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMap
 
 object CirFunctionFactory {
-    fun create(name: CirName, source: KmFunction, containingClass: CirContainingClass?, typeResolver: CirTypeResolver): CirFunction {
-        return create(
+    fun create(name: CirName, source: KmFunction, containingClass: CirContainingClass?, typeResolver: CirTypeResolver): CirFunction =
+        CirFunction.create(
             annotations = CirAnnotationFactory.createAnnotations(source.flags, typeResolver, source::annotations),
             name = name,
             typeParameters = source.typeParameters.compactMap { CirTypeParameterFactory.create(it, typeResolver) },
@@ -34,36 +32,4 @@ object CirFunctionFactory {
             kind = decodeCallableKind(source.flags),
             modifiers = CirFunctionModifiersFactory.create(source),
         )
-    }
-
-    @Suppress("NOTHING_TO_INLINE")
-    inline fun create(
-        annotations: List<CirAnnotation>,
-        name: CirName,
-        typeParameters: List<CirTypeParameter>,
-        visibility: Visibility,
-        modality: Modality,
-        containingClass: CirContainingClass?,
-        valueParameters: List<CirValueParameter>,
-        hasStableParameterNames: Boolean,
-        extensionReceiver: CirExtensionReceiver?,
-        returnType: CirType,
-        kind: CallableMemberDescriptor.Kind,
-        modifiers: CirFunctionModifiers
-    ): CirFunction {
-        return CirFunctionImpl(
-            annotations = annotations,
-            name = name,
-            typeParameters = typeParameters,
-            visibility = visibility,
-            modality = modality,
-            containingClass = containingClass,
-            valueParameters = valueParameters,
-            hasStableParameterNames = hasStableParameterNames,
-            extensionReceiver = extensionReceiver,
-            returnType = returnType,
-            kind = kind,
-            modifiers = modifiers
-        )
-    }
 }

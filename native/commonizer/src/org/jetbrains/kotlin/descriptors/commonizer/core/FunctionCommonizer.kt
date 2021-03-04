@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirFunction
-import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirFunctionFactory
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirKnownClassifiers
 
 class FunctionCommonizer(classifiers: CirKnownClassifiers) : AbstractFunctionOrPropertyCommonizer<CirFunction>(classifiers) {
@@ -18,7 +17,7 @@ class FunctionCommonizer(classifiers: CirKnownClassifiers) : AbstractFunctionOrP
         val valueParameters = valueParameters.result
         valueParameters.patchCallables()
 
-        return CirFunctionFactory.create(
+        return CirFunction.create(
             annotations = annotations.result,
             name = name,
             typeParameters = typeParameters.result,
