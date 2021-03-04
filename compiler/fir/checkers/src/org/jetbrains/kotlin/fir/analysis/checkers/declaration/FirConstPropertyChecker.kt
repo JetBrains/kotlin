@@ -12,13 +12,11 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.fir.declarations.isConst
 
 object FirConstPropertyChecker : FirPropertyChecker() {
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
-        val modifierList = with(FirModifierList) { declaration.source.getModifierList() }
-        if (modifierList?.modifiers?.any { it.token == KtTokens.CONST_KEYWORD } != true)
-            return
+        if (!declaration.isConst) return
         val classKind = (context.containingDeclarations.lastOrNull() as? FirRegularClass)?.classKind
         if (classKind != ClassKind.OBJECT && context.containingDeclarations.size > 1)
             reporter.reportOn(declaration.source, FirErrors.CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT, context)

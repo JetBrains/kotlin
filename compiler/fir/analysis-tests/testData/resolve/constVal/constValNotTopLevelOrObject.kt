@@ -38,5 +38,5 @@ object F {
 }
 
 fun foo() {
-    <!CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT!>const<!> val a = "2"
+    const val a = "2"
 }

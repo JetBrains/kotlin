@@ -12,7 +12,7 @@ object A {
     const val inObject: Int = 4
 }
 
-class B(<!CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT!>const<!> val constructor: Int = 5)
+class B(const val constructor: Int = 5)
 
 abstract class C {
     <!INCOMPATIBLE_MODIFIERS!>open<!> <!CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT, INCOMPATIBLE_MODIFIERS!>const<!> val x: Int = 6
@@ -48,7 +48,7 @@ const val withExplicitDefaultGetter: Int = 1
     get
 
 fun foo(): Int {
-    <!CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT!>const<!> val local: Int = 14
+    const val local: Int = 14
     return 15
 }
 

@@ -8,7 +8,7 @@ fun test() {
     val <T> a0 = 0
     val <T : __UNRESOLVED__> a1 = ""
     val <T : String> a2 = 0
-    <!CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT!>const<!> val <T> a3 = 0
+    const val <T> a3 = 0
     <!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit<!> val <T> a4 = 0
     val <T> a5 by Delegate<Int>()
     val <T> a6 by <!INAPPLICABLE_CANDIDATE!>Delegate<!><<!UNRESOLVED_REFERENCE!>T<!>>()
