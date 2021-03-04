@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.cir
 
+import org.jetbrains.kotlin.descriptors.Visibility
+
 interface CirClassConstructor :
     CirDeclaration,
     CirHasAnnotations,
@@ -15,4 +17,35 @@ interface CirClassConstructor :
 
     val isPrimary: Boolean
     override val containingClass: CirContainingClass // non-nullable
+
+    companion object {
+        @Suppress("NOTHING_TO_INLINE")
+        inline fun create(
+            annotations: List<CirAnnotation>,
+            typeParameters: List<CirTypeParameter>,
+            visibility: Visibility,
+            containingClass: CirContainingClass,
+            valueParameters: List<CirValueParameter>,
+            hasStableParameterNames: Boolean,
+            isPrimary: Boolean
+        ): CirClassConstructor = CirClassConstructorImpl(
+            annotations = annotations,
+            typeParameters = typeParameters,
+            visibility = visibility,
+            containingClass = containingClass,
+            valueParameters = valueParameters,
+            hasStableParameterNames = hasStableParameterNames,
+            isPrimary = isPrimary
+        )
+    }
 }
+
+data class CirClassConstructorImpl(
+    override val annotations: List<CirAnnotation>,
+    override val typeParameters: List<CirTypeParameter>,
+    override val visibility: Visibility,
+    override val containingClass: CirContainingClass,
+    override var valueParameters: List<CirValueParameter>,
+    override var hasStableParameterNames: Boolean,
+    override val isPrimary: Boolean
+) : CirClassConstructor

@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClassConstructor
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirContainingClass
-import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirClassConstructorFactory
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirKnownClassifiers
 
 class ClassConstructorCommonizer(
@@ -24,7 +23,7 @@ class ClassConstructorCommonizer(
         val valueParameters = valueParameters.result
         valueParameters.patchCallables()
 
-        return CirClassConstructorFactory.create(
+        return CirClassConstructor.create(
             annotations = emptyList(),
             typeParameters = typeParameters.result,
             visibility = visibility.result,
