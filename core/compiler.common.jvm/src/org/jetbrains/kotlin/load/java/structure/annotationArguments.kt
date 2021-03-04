@@ -43,3 +43,5 @@ interface JavaClassObjectAnnotationArgument : JavaAnnotationArgument {
 interface JavaAnnotationAsAnnotationArgument : JavaAnnotationArgument {
     fun getAnnotation(): JavaAnnotation
 }
+
+interface JavaUnknownAnnotationArgument : JavaAnnotationArgument

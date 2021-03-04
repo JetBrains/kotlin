@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-abstract class JavaAnnotationArgumentImpl(
+sealed class JavaAnnotationArgumentImpl(
     override val name: Name?
 ) : JavaAnnotationArgument {
     companion object Factory {
@@ -44,7 +44,7 @@ abstract class JavaAnnotationArgumentImpl(
                 is PsiReferenceExpression -> JavaEnumValueAnnotationArgumentImpl(argument, name)
                 is PsiArrayInitializerMemberValue -> JavaArrayAnnotationArgumentImpl(argument, name)
                 is PsiAnnotation -> JavaAnnotationAsAnnotationArgumentImpl(argument, name)
-                else -> throw UnsupportedOperationException("Unsupported annotation argument type: $argument")
+                else -> JavaUnknownAnnotationArgumentImpl(name)
             }
         }
     }
@@ -95,3 +95,5 @@ class JavaAnnotationAsAnnotationArgumentImpl(
 ) : JavaAnnotationArgumentImpl(name), JavaAnnotationAsAnnotationArgument {
     override fun getAnnotation() = JavaAnnotationImpl(psiAnnotation)
 }
+
+class JavaUnknownAnnotationArgumentImpl(name: Name?) : JavaAnnotationArgumentImpl(name), JavaUnknownAnnotationArgument
