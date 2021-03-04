@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
-import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirClassFactory
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirKnownClassifiers
 
 /**
@@ -112,7 +111,7 @@ private class TypeAliasExpectClassCommonizer : AbstractStandardCommonizer<CirTyp
     private lateinit var name: CirName
     private val classVisibility = VisibilityCommonizer.equalizing()
 
-    override fun commonizationResult(): CirClass = CirClassFactory.create(
+    override fun commonizationResult(): CirClass = CirClass.create(
         annotations = emptyList(),
         name = name,
         typeParameters = emptyList(),

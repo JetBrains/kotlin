@@ -12,9 +12,10 @@ import kotlinx.metadata.klib.annotations
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.descriptors.commonizer.cir.*
-import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirClassImpl
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClass
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClassType
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirEntityId
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirName
 import org.jetbrains.kotlin.descriptors.commonizer.metadata.decodeClassKind
 import org.jetbrains.kotlin.descriptors.commonizer.metadata.decodeModality
 import org.jetbrains.kotlin.descriptors.commonizer.metadata.decodeVisibility
@@ -22,7 +23,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMap
 import org.jetbrains.kotlin.descriptors.commonizer.utils.filteredSupertypes
 
 object CirClassFactory {
-    fun create(name: CirName, source: KmClass, typeResolver: CirTypeResolver): CirClass = create(
+    fun create(name: CirName, source: KmClass, typeResolver: CirTypeResolver): CirClass = CirClass.create(
         annotations = CirAnnotationFactory.createAnnotations(source.flags, typeResolver, source::annotations),
         name = name,
         typeParameters = source.typeParameters.compactMap { CirTypeParameterFactory.create(it, typeResolver) },
@@ -45,7 +46,7 @@ object CirClassFactory {
         enumClassId: CirEntityId,
         enumClass: KmClass,
         typeResolver: CirTypeResolver
-    ): CirClass = create(
+    ): CirClass = CirClass.create(
         annotations = annotations.compactMap { CirAnnotationFactory.create(it, typeResolver) },
         name = name,
         typeParameters = emptyList(),
@@ -67,36 +68,5 @@ object CirClassFactory {
             isMarkedNullable = false
         )
         setSupertypes(listOf(enumClassType))
-    }
-
-    @Suppress("NOTHING_TO_INLINE")
-    inline fun create(
-        annotations: List<CirAnnotation>,
-        name: CirName,
-        typeParameters: List<CirTypeParameter>,
-        visibility: Visibility,
-        modality: Modality,
-        kind: ClassKind,
-        companion: CirName?,
-        isCompanion: Boolean,
-        isData: Boolean,
-        isInline: Boolean,
-        isInner: Boolean,
-        isExternal: Boolean
-    ): CirClass {
-        return CirClassImpl(
-            annotations = annotations,
-            name = name,
-            typeParameters = typeParameters,
-            visibility = visibility,
-            modality = modality,
-            kind = kind,
-            companion = companion,
-            isCompanion = isCompanion,
-            isData = isData,
-            isInline = isInline,
-            isInner = isInner,
-            isExternal = isExternal
-        )
     }
 }

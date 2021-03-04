@@ -56,7 +56,7 @@ internal val MOCK_CLASSIFIERS = CirKnownClassifiers(
         private val MOCK_CLASS_NODE = CirClassNode(
             CommonizedGroup(0),
             LockBasedStorageManager.NO_LOCKS.createNullableLazyValue {
-                CirClassFactory.create(
+                CirClass.create(
                     annotations = emptyList(),
                     name = CirName.create("Any"),
                     typeParameters = emptyList(),

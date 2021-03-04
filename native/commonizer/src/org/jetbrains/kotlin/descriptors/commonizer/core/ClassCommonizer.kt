@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClass
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirName
-import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirClassFactory
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirKnownClassifiers
 
 class ClassCommonizer(classifiers: CirKnownClassifiers) : AbstractStandardCommonizer<CirClass, CirClass>() {
@@ -21,7 +20,7 @@ class ClassCommonizer(classifiers: CirKnownClassifiers) : AbstractStandardCommon
     private var isInline = false
     private var isCompanion = false
 
-    override fun commonizationResult() = CirClassFactory.create(
+    override fun commonizationResult() = CirClass.create(
         annotations = emptyList(),
         name = name,
         typeParameters = typeParameters.result,

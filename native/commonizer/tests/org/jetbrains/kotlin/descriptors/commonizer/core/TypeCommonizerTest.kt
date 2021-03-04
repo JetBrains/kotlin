@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
-import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirClassFactory
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.*
 import org.jetbrains.kotlin.descriptors.commonizer.utils.isUnderStandardKotlinPackages
 import org.jetbrains.kotlin.descriptors.commonizer.utils.mockClassType
@@ -474,7 +473,7 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
                             classId = type.classifierId
                         )
                     }
-                    node.targetDeclarations[index] = CirClassFactory.create(
+                    node.targetDeclarations[index] = CirClass.create(
                         annotations = emptyList(),
                         name = type.classifierId.relativeNameSegments.last(),
                         typeParameters = emptyList(),
