@@ -31,5 +31,5 @@ fun test() {
     D[0] = ""
     D[0] = 2.72
 
-    <!INAPPLICABLE_CANDIDATE!>Z[0]<!> = ""
+    Z[<!TOO_MANY_ARGUMENTS!>0<!>] = <!TOO_MANY_ARGUMENTS!>""<!>
 }

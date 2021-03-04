@@ -20,8 +20,8 @@ fun Int.foo() {}
 fun test3(s: String?) {
     "".<!INAPPLICABLE_CANDIDATE!>foo<!>()
     s<!UNSAFE_CALL!>.<!>foo()
-    "".<!INAPPLICABLE_CANDIDATE!>foo<!>(1)
-    s.<!INAPPLICABLE_CANDIDATE!>foo<!>("a")
+    "".foo(<!TOO_MANY_ARGUMENTS!>1<!>)
+    s.foo(<!TOO_MANY_ARGUMENTS!>"a"<!>)
 }
 
 interface A

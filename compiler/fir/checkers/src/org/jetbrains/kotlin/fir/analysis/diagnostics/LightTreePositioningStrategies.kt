@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.MODALITY_MODIFIERS
 import org.jetbrains.kotlin.lexer.KtTokens.VISIBILITY_MODIFIERS
 import org.jetbrains.kotlin.psi.KtParameter.VAL_VAR_TOKEN_SET
+import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 object LightTreePositioningStrategies {
     val DEFAULT = object : LightTreePositioningStrategy() {
@@ -336,6 +337,34 @@ object LightTreePositioningStrategies {
         }
     }
 
+    val NAME_OF_NAMED_ARGUMENT: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
+        override fun mark(
+            node: LighterASTNode,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>
+        ): List<TextRange> {
+            return tree.findChildByType(node, KtNodeTypes.VALUE_ARGUMENT_NAME)?.let { valueArgumentName ->
+                markElement(valueArgumentName, startOffset, endOffset, tree, node)
+            } ?: markElement(node, startOffset, endOffset, tree, node)
+        }
+    }
+
+    val VALUE_ARGUMENTS: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
+        override fun mark(
+            node: LighterASTNode,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>
+        ): List<TextRange> {
+            return tree.findDescendantByType(node, KtNodeTypes.VALUE_ARGUMENT_LIST)?.let { valueArgumentList ->
+                tree.findLastChildByType(valueArgumentList, KtTokens.RPAR)?.let { rpar ->
+                    markElement(rpar, startOffset, endOffset, tree, node)
+                }
+            } ?: markElement(node, startOffset, endOffset, tree, node)
+        }
+    }
+
     val DOT_BY_QUALIFIED: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
         override fun mark(
             node: LighterASTNode,
@@ -604,13 +633,31 @@ fun FlyweightCapableTreeStructure<LighterASTNode>.findChildByType(node: LighterA
     return childrenRef.get()?.firstOrNull { it?.tokenType == type }
 }
 
+fun FlyweightCapableTreeStructure<LighterASTNode>.findLastChildByType(node: LighterASTNode, type: IElementType): LighterASTNode? {
+    val childrenRef = Ref<Array<LighterASTNode?>>()
+    getChildren(node, childrenRef)
+    return childrenRef.get()?.lastOrNull { it?.tokenType == type }
+}
+
+fun FlyweightCapableTreeStructure<LighterASTNode>.findDescendantByType(node: LighterASTNode, type: IElementType): LighterASTNode? {
+    val childrenRef = Ref<Array<LighterASTNode?>>()
+    getChildren(node, childrenRef)
+    return childrenRef.get()?.firstOrNull { it?.tokenType == type } ?: childrenRef.get()
+        ?.firstNotNullResult { child -> child?.let { findDescendantByType(it, type) } }
+}
+
 private fun FlyweightCapableTreeStructure<LighterASTNode>.findChildByType(node: LighterASTNode, type: TokenSet): LighterASTNode? {
     val childrenRef = Ref<Array<LighterASTNode?>>()
     getChildren(node, childrenRef)
     return childrenRef.get()?.firstOrNull { it?.tokenType in type }
 }
 
-private fun FlyweightCapableTreeStructure<LighterASTNode>.findParentOfType(node: LighterASTNode, type: IElementType): LighterASTNode? {
+private fun FlyweightCapableTreeStructure<LighterASTNode>.findParentOfType(
+    node: LighterASTNode,
+    type: IElementType,
+    strict: Boolean = true
+): LighterASTNode? {
+    if (!strict && node.tokenType == type) return node
     var parent = getParent(node)
     while (parent != null) {
         if (parent.tokenType == type) return parent

@@ -1,8 +1,8 @@
-<!INAPPLICABLE_CANDIDATE!>@JvmName()<!>
+@JvmName(<!NO_VALUE_FOR_PARAMETER!>)<!>
 fun foo() {}
 
 <!INAPPLICABLE_CANDIDATE!>@JvmName(42)<!>
 fun bar() {}
 
-<!INAPPLICABLE_CANDIDATE!>@JvmName("a", "b")<!>
+@JvmName("a", <!TOO_MANY_ARGUMENTS!>"b"<!>)
 fun baz() {}

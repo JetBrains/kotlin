@@ -6,6 +6,6 @@ annotation class Ann(val s: String = "")
 @Ann("s")
 fun foo() {}
 
-val bar = <!INAPPLICABLE_CANDIDATE!>foo<!>(
-    15
+val bar = foo(
+    <!TOO_MANY_ARGUMENTS!>15<!>
 )

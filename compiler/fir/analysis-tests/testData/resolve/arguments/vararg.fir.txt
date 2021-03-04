@@ -13,4 +13,5 @@ FILE: vararg.kt
         R|/bar|(Int(1), z = Boolean(true), vararg(y = *R|kotlin/arrayOf|<R|kotlin/String|>(vararg(String(my), String(yours)))))
         <Inapplicable(INAPPLICABLE): /bar>#(Int(0), z = Boolean(false), y = String(), y = String(other))
         <Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): /bar>#(Int(0), String(), Boolean(true))
+        <Inapplicable(INAPPLICABLE): /bar>#(Int(0), z = Boolean(false), y = String(), y = String(other), y = String(yet other))
     }

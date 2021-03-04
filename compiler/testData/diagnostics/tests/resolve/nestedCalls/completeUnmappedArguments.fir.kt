@@ -9,6 +9,6 @@ fun test() {
 
     bar(<!INAPPLICABLE_CANDIDATE!>foo<!>(xx = zzz(11) { j: Int -> j + 7 }))
 
-    <!INAPPLICABLE_CANDIDATE!>bar<!>(zz = <!INAPPLICABLE_CANDIDATE!>foo<!>(
-      xx = zzz(12) { i: Int -> i + i }))
+    bar(zz = <!INAPPLICABLE_CANDIDATE!>foo<!>(
+      xx = zzz(12) { i: Int -> i + i })<!NO_VALUE_FOR_PARAMETER!>)<!>
 }

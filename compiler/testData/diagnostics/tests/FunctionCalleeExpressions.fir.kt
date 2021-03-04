@@ -28,8 +28,8 @@ fun <T> fooT2() : (t : T) -> T {
 
 fun main(args : Array<String>) {
     args.foo()()
-    <!INAPPLICABLE_CANDIDATE!>args.foo1()<!>()
-    <!INAPPLICABLE_CANDIDATE!><!UNRESOLVED_REFERENCE!>a<!>.foo1()<!>()
+    args.foo1(<!NO_VALUE_FOR_PARAMETER!>)<!>()
+    <!UNRESOLVED_REFERENCE!>a<!>.foo1(<!NO_VALUE_FOR_PARAMETER!>)<!>()
     <!UNRESOLVED_REFERENCE!>a<!>.foo1()(<!UNRESOLVED_REFERENCE!>a<!>)
 
     args.foo1()(1)
@@ -38,7 +38,7 @@ fun main(args : Array<String>) {
     <!UNRESOLVED_REFERENCE!>a<!>.foo1()(<!UNRESOLVED_REFERENCE!>a<!>)
 
     foo2()({})
-    <!INAPPLICABLE_CANDIDATE!>foo2<!>(){}
+    foo2()<!TOO_MANY_ARGUMENTS!>{}<!>
     (foo2()){}
     <!INAPPLICABLE_CANDIDATE!>(foo2())<!>{x -> }
     <!INAPPLICABLE_CANDIDATE!>foo2()<!>({x -> })
@@ -76,8 +76,8 @@ fun main1() {
 }
 
 fun test() {
-    <!INAPPLICABLE_CANDIDATE!>{x : Int -> 1}<!>();
-    <!INAPPLICABLE_CANDIDATE!>(fun Int.() = 1)<!>()
+    {x : Int -> 1}(<!NO_VALUE_FOR_PARAMETER!>)<!>;
+    (fun Int.() = 1)(<!NO_VALUE_FOR_PARAMETER!>)<!>
     "sd".(<!UNRESOLVED_REFERENCE!>fun Int.() = 1<!>)()
     val i : Int? = null
     i.(<!UNRESOLVED_REFERENCE!>fun Int.() = 1<!>)();

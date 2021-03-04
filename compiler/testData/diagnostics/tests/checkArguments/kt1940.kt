@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 //KT-1940 Exception while repeating named parameters
 package kt1940
 

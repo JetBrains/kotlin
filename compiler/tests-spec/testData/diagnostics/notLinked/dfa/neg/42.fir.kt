@@ -20,7 +20,7 @@ fun case_1(x: Any) {
 fun case_2(x: Any?) {
     if (x is Int || x is Float?) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Number? & kotlin.Comparable<kotlin.Int & kotlin.Float>?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Number? & kotlin.Comparable<kotlin.Int & kotlin.Float>?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>toByte<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Number? & kotlin.Comparable<kotlin.Int & kotlin.Float>?")!>x<!>.toByte(<!NO_VALUE_FOR_PARAMETER!>)<!>
     }
 }
 
@@ -31,7 +31,7 @@ fun case_2(x: Any?) {
 fun case_3(x: Any?) {
     if (x is Int? || x is Float) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Number? & kotlin.Comparable<kotlin.Int & kotlin.Float>?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Number? & kotlin.Comparable<kotlin.Int & kotlin.Float>?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>toByte<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Number? & kotlin.Comparable<kotlin.Int & kotlin.Float>?")!>x<!>.toByte(<!NO_VALUE_FOR_PARAMETER!>)<!>
     }
 }
 
@@ -75,7 +75,7 @@ fun <T> case_6(x: T) {
 fun <T> case_7(x: T) {
     if (x is Int? || x is Float?) {
         <!DEBUG_INFO_EXPRESSION_TYPE("T & kotlin.Number? & kotlin.Comparable<kotlin.Int & kotlin.Float>? & T")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & kotlin.Number? & kotlin.Comparable<kotlin.Int & kotlin.Float>? & T")!>x<!>.<!INAPPLICABLE_CANDIDATE!>toByte<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & kotlin.Number? & kotlin.Comparable<kotlin.Int & kotlin.Float>? & T")!>x<!>.toByte(<!NO_VALUE_FOR_PARAMETER!>)<!>
     }
 }
 
@@ -86,7 +86,7 @@ fun <T> case_7(x: T) {
 inline fun <reified T> case_8(x: T) {
     if (x is Int? || x is Float?) {
         <!DEBUG_INFO_EXPRESSION_TYPE("T & kotlin.Number? & kotlin.Comparable<kotlin.Int & kotlin.Float>? & T")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("T & kotlin.Number? & kotlin.Comparable<kotlin.Int & kotlin.Float>? & T")!>x<!>.<!INAPPLICABLE_CANDIDATE!>toByte<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & kotlin.Number? & kotlin.Comparable<kotlin.Int & kotlin.Float>? & T")!>x<!>.toByte(<!NO_VALUE_FOR_PARAMETER!>)<!>
     }
 }
 

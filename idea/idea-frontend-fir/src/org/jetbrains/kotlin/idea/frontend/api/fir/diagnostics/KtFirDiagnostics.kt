@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.diagnostics
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiTypeElement
+import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
@@ -43,6 +44,7 @@ import org.jetbrains.kotlin.psi.KtTypeAlias
 import org.jetbrains.kotlin.psi.KtTypeParameter
 import org.jetbrains.kotlin.psi.KtTypeParameterList
 import org.jetbrains.kotlin.psi.KtTypeReference
+import org.jetbrains.kotlin.psi.KtValueArgument
 import org.jetbrains.kotlin.psi.KtWhenExpression
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
 
@@ -498,9 +500,27 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = VarargOutsideParentheses::class
     }
 
-    abstract class NamedArgumentsNotAllowed : KtFirDiagnostic<PsiElement>() {
+    abstract class NamedArgumentsNotAllowed : KtFirDiagnostic<KtValueArgument>() {
         override val diagnosticClass get() = NamedArgumentsNotAllowed::class
         abstract val forbiddenNamedArgumentsTarget: ForbiddenNamedArgumentsTarget
+    }
+
+    abstract class NonVarargSpread : KtFirDiagnostic<LeafPsiElement>() {
+        override val diagnosticClass get() = NonVarargSpread::class
+    }
+
+    abstract class ArgumentPassedTwice : KtFirDiagnostic<KtValueArgument>() {
+        override val diagnosticClass get() = ArgumentPassedTwice::class
+    }
+
+    abstract class TooManyArguments : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = TooManyArguments::class
+        abstract val function: KtCallableSymbol
+    }
+
+    abstract class NoValueForParameter : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = NoValueForParameter::class
+        abstract val violatedParameter: KtSymbol
     }
 
     abstract class Ambiguity : KtFirDiagnostic<PsiElement>() {

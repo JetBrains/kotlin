@@ -4,24 +4,24 @@ class Function1Impl : (String) -> Unit {
 
 fun test1(f: Function1Impl) {
     f("")
-    <!INAPPLICABLE_CANDIDATE!>f<!>(p0 = "")
+    f(p0 = ""<!NO_VALUE_FOR_PARAMETER!>)<!>
     f(myParamName = "")
     f.invoke("")
-    f.<!INAPPLICABLE_CANDIDATE!>invoke<!>(p0 = "")
+    f.invoke(p0 = ""<!NO_VALUE_FOR_PARAMETER!>)<!>
     f.invoke(myParamName = "")
 }
 
 fun test2(f: (String) -> Unit) {
     f("")
-    <!INAPPLICABLE_CANDIDATE!>f<!>(p0 = "")
-    <!INAPPLICABLE_CANDIDATE!>f<!>(myParamName = "")
+    f(p0 = ""<!NO_VALUE_FOR_PARAMETER!>)<!>
+    f(myParamName = ""<!NO_VALUE_FOR_PARAMETER!>)<!>
     f.invoke("")
-    f.<!INAPPLICABLE_CANDIDATE!>invoke<!>(p0 = "")
-    f.<!INAPPLICABLE_CANDIDATE!>invoke<!>(myParamName = "")
+    f.invoke(p0 = ""<!NO_VALUE_FOR_PARAMETER!>)<!>
+    f.invoke(myParamName = ""<!NO_VALUE_FOR_PARAMETER!>)<!>
 }
 
 fun test3(f: String.(String) -> Unit) {
     "".f("")
-    "".<!INAPPLICABLE_CANDIDATE!>f<!>(p0 = "")
-    "".<!INAPPLICABLE_CANDIDATE!>f<!>(zzz = "")
+    "".f(p0 = ""<!NO_VALUE_FOR_PARAMETER!>)<!>
+    "".f(zzz = ""<!NO_VALUE_FOR_PARAMETER!>)<!>
 }

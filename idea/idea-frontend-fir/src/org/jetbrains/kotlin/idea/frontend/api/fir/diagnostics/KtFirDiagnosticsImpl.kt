@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.diagnostics
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiTypeElement
+import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
@@ -45,6 +46,7 @@ import org.jetbrains.kotlin.psi.KtTypeAlias
 import org.jetbrains.kotlin.psi.KtTypeParameter
 import org.jetbrains.kotlin.psi.KtTypeParameterList
 import org.jetbrains.kotlin.psi.KtTypeReference
+import org.jetbrains.kotlin.psi.KtValueArgument
 import org.jetbrains.kotlin.psi.KtWhenExpression
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
 
@@ -800,7 +802,37 @@ internal class NamedArgumentsNotAllowedImpl(
     override val forbiddenNamedArgumentsTarget: ForbiddenNamedArgumentsTarget,
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.NamedArgumentsNotAllowed(), KtAbstractFirDiagnostic<PsiElement> {
+) : KtFirDiagnostic.NamedArgumentsNotAllowed(), KtAbstractFirDiagnostic<KtValueArgument> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
+internal class NonVarargSpreadImpl(
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.NonVarargSpread(), KtAbstractFirDiagnostic<LeafPsiElement> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
+internal class ArgumentPassedTwiceImpl(
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.ArgumentPassedTwice(), KtAbstractFirDiagnostic<KtValueArgument> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
+internal class TooManyArgumentsImpl(
+    override val function: KtCallableSymbol,
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.TooManyArguments(), KtAbstractFirDiagnostic<PsiElement> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
+internal class NoValueForParameterImpl(
+    override val violatedParameter: KtSymbol,
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.NoValueForParameter(), KtAbstractFirDiagnostic<KtElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
 }
 

@@ -10,7 +10,7 @@ fun test() : Int {
 }
 
 class A() {
-    val x : Int = <!INAPPLICABLE_CANDIDATE!>foo1<!>(<!UNRESOLVED_REFERENCE!>xx<!>)
+    val x : Int = foo1(<!TOO_MANY_ARGUMENTS, UNRESOLVED_REFERENCE!>xx<!>)
 }
 
 fun foo1() {}

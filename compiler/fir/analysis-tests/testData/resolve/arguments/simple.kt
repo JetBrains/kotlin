@@ -7,11 +7,11 @@ fun test() {
     foo(1, second = 3.14, third = false, fourth = "!?")
     foo(third = false, second = 2.71, fourth = "?!", first = 0)
 
-    <!INAPPLICABLE_CANDIDATE!>foo<!>()
+    foo(<!NO_VALUE_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER!>)<!>
     <!INAPPLICABLE_CANDIDATE!>foo<!>(0.0, false, 0, "")
     foo(1, 2.0, third = true, "")
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(second = 0.0, first = 0, fourth = "")
+    foo(second = 0.0, first = 0, fourth = ""<!NO_VALUE_FOR_PARAMETER!>)<!>
     <!INAPPLICABLE_CANDIDATE!>foo<!>(first = 0.0, second = 0, third = "", fourth = false)
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(first = 0, second = 0.0, third = false, fourth = "", first = 1)
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(0, 0.0, false, foth = "")
+    foo(first = 0, second = 0.0, third = false, fourth = "", <!ARGUMENT_PASSED_TWICE!>first<!> = 1)
+    foo(0, 0.0, false, foth = ""<!NO_VALUE_FOR_PARAMETER!>)<!>
 }

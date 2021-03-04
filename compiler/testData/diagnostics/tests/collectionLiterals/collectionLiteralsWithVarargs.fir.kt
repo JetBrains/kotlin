@@ -34,7 +34,7 @@ fun test6() {}
 
 annotation class AnnArray(val a: Array<String>)
 
-<!INAPPLICABLE_CANDIDATE!>@AnnArray(*["/"])<!>
+@AnnArray(<!NON_VARARG_SPREAD!>*<!>["/"])
 fun testArray() {}
 
 @Ann1([""])

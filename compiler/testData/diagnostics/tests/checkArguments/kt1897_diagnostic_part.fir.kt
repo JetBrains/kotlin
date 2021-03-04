@@ -9,21 +9,21 @@ fun foo(i: Int, s: String) {}
 
 fun test() {
 
-    <!INAPPLICABLE_CANDIDATE!>bar<!>(<!UNRESOLVED_REFERENCE!>xx<!>)
+    bar(<!TOO_MANY_ARGUMENTS, UNRESOLVED_REFERENCE!>xx<!>)
 
-    <!INAPPLICABLE_CANDIDATE!>bar<!> { }
+    bar <!TOO_MANY_ARGUMENTS!>{ }<!>
 
-    <!INAPPLICABLE_CANDIDATE!>foo<!>("", 1, <!UNRESOLVED_REFERENCE!>xx<!>)
+    foo("", 1, <!TOO_MANY_ARGUMENTS, UNRESOLVED_REFERENCE!>xx<!>)
 
     <!INAPPLICABLE_CANDIDATE!>foo<!>(r = <!UNRESOLVED_REFERENCE!>xx<!>, i = "", s = "")
 
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(i = 1, i = 1, s = 11)
+    foo(i = 1, <!ARGUMENT_PASSED_TWICE!>i<!> = 1, s = 11)
 
     <!INAPPLICABLE_CANDIDATE!>foo<!>("", s = 2)
 
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(i = "", s = 2, 33)
+    foo(i = "", s = 2, <!TOO_MANY_ARGUMENTS!>33<!>)
 
-    <!INAPPLICABLE_CANDIDATE!>foo<!>("", 1) {}
+    foo("", 1) <!TOO_MANY_ARGUMENTS!>{}<!>
 
-    <!INAPPLICABLE_CANDIDATE!>foo<!>("", 1) {} {}
+    foo("", 1) <!TOO_MANY_ARGUMENTS!>{}<!> <!TOO_MANY_ARGUMENTS!>{}<!>
 }

@@ -44,7 +44,7 @@ fun test() {
 
   if (out == null || out.println(0) == Unit) {
     out?.println(1)
-    out.<!INAPPLICABLE_CANDIDATE!>println<!>(1)
+    out.println(<!TOO_MANY_ARGUMENTS!>1<!>)
   }
   else {
     out.println(2)
@@ -66,11 +66,11 @@ fun test() {
 
   if (1 == 2 || out != null && out.println(1) == Unit) {
     out?.println(2);
-    out.<!INAPPLICABLE_CANDIDATE!>println<!>(2);
+    out.println(<!TOO_MANY_ARGUMENTS!>2<!>);
   }
   else {
     out?.println(3)
-    out.<!INAPPLICABLE_CANDIDATE!>println<!>(3)
+    out.println(<!TOO_MANY_ARGUMENTS!>3<!>)
   }
 
   out?.println()
@@ -103,7 +103,7 @@ fun test() {
 
   if (out == null || out.println(0) == Unit) {
     out?.println(1)
-    out.<!INAPPLICABLE_CANDIDATE!>println<!>(1)
+    out.println(<!TOO_MANY_ARGUMENTS!>1<!>)
   }
   else {
     out.println(2)
@@ -127,11 +127,11 @@ fun test() {
 
   if (1 == 2 || out != null && out.println(1) == Unit) {
     out?.println(2);
-    out.<!INAPPLICABLE_CANDIDATE!>println<!>(2);
+    out.println(<!TOO_MANY_ARGUMENTS!>2<!>);
   }
   else {
     out?.println(3)
-    out.<!INAPPLICABLE_CANDIDATE!>println<!>(3)
+    out.println(<!TOO_MANY_ARGUMENTS!>3<!>)
   }
 
   if (1 > 2) {

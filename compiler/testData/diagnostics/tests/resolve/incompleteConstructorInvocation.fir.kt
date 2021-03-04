@@ -4,7 +4,7 @@ class X<V>(provider: () -> V, trackValue: Boolean) {
 }
 
 class B {
-    val c = <!INAPPLICABLE_CANDIDATE!>X<!><String> {
+    val c = <!NO_VALUE_FOR_PARAMETER!>X<String> {
         "e"
-    }
+    }<!>
 }

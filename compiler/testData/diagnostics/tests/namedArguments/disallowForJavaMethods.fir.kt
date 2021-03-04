@@ -8,11 +8,11 @@ public class JavaSuperClass {
 
 // FILE: 1.kt
 
-fun directInvocation() = JavaSuperClass().foo(<!NAMED_ARGUMENTS_NOT_ALLOWED!>javaName = 1<!>)
+fun directInvocation() = JavaSuperClass().foo(<!NAMED_ARGUMENTS_NOT_ALLOWED!>javaName<!> = 1)
 
 open class KotlinSubClass : JavaSuperClass()
 
-fun viaFakeOverride() = KotlinSubClass().foo(<!NAMED_ARGUMENTS_NOT_ALLOWED!>javaName = 2<!>)
+fun viaFakeOverride() = KotlinSubClass().foo(<!NAMED_ARGUMENTS_NOT_ALLOWED!>javaName<!> = 2)
 
 class KotlinSubSubClass : KotlinSubClass() {
     override fun foo(kotlinName: Int) {}
@@ -21,7 +21,7 @@ class KotlinSubSubClass : KotlinSubClass() {
 fun viaRealOverride() = KotlinSubSubClass().foo(kotlinName = 3)
 
 
-fun unresolvedParameter() = JavaSuperClass().<!INAPPLICABLE_CANDIDATE!>foo<!>(nonexistentName = 4)
+fun unresolvedParameter() = JavaSuperClass(<!NO_VALUE_FOR_PARAMETER!>)<!>.foo(nonexistentName = 4)
 
 
-fun multipleParameters() = JavaSuperClass().multipleParameters(<!NAMED_ARGUMENTS_NOT_ALLOWED!>first = 1<!>, <!NAMED_ARGUMENTS_NOT_ALLOWED!>second = 2L<!>, <!NAMED_ARGUMENTS_NOT_ALLOWED!>third = "3"<!>)
+fun multipleParameters() = JavaSuperClass().multipleParameters(<!NAMED_ARGUMENTS_NOT_ALLOWED!>first<!> = 1, <!NAMED_ARGUMENTS_NOT_ALLOWED!>second<!> = 2L, <!NAMED_ARGUMENTS_NOT_ALLOWED!>third<!> = "3")

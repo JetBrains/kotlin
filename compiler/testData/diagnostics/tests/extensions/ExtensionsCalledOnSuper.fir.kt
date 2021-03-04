@@ -16,7 +16,7 @@ class C : T {
         super.foo() // OK
         super.<!UNRESOLVED_REFERENCE!>bar<!>() // Error
         super.buzz() // OK, resolved to a member
-        super.<!INAPPLICABLE_CANDIDATE!>buzz1<!>() // Resolved to an extension
+        super.buzz1(<!NO_VALUE_FOR_PARAMETER!>)<!> // Resolved to an extension
         super.<!INAPPLICABLE_CANDIDATE!>buzz1<!>("") // Resolved to a member
     }
 }

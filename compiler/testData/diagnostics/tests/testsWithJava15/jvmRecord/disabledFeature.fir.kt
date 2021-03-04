@@ -13,7 +13,7 @@ class MyRec(
 )
 
 fun foo(jr: JRecord) {
-    <!INAPPLICABLE_CANDIDATE!>JRecord<!>(1, "")
+    JRecord(<!TOO_MANY_ARGUMENTS!>1<!>, <!TOO_MANY_ARGUMENTS!>""<!>)
 
     jr.<!UNRESOLVED_REFERENCE!>x<!>()
     jr.<!UNRESOLVED_REFERENCE!>y<!>()

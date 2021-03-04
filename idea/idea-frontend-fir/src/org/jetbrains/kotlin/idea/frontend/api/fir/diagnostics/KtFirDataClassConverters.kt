@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.diagnostics
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiTypeElement
+import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
@@ -37,6 +38,7 @@ import org.jetbrains.kotlin.psi.KtTypeAlias
 import org.jetbrains.kotlin.psi.KtTypeParameter
 import org.jetbrains.kotlin.psi.KtTypeParameterList
 import org.jetbrains.kotlin.psi.KtTypeReference
+import org.jetbrains.kotlin.psi.KtValueArgument
 import org.jetbrains.kotlin.psi.KtWhenExpression
 
 /*
@@ -694,6 +696,32 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     add(FirErrors.NAMED_ARGUMENTS_NOT_ALLOWED) { firDiagnostic ->
         NamedArgumentsNotAllowedImpl(
             firDiagnostic.a,
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.NON_VARARG_SPREAD) { firDiagnostic ->
+        NonVarargSpreadImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.ARGUMENT_PASSED_TWICE) { firDiagnostic ->
+        ArgumentPassedTwiceImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.TOO_MANY_ARGUMENTS) { firDiagnostic ->
+        TooManyArgumentsImpl(
+            firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.a as FirCallableDeclaration),
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.NO_VALUE_FOR_PARAMETER) { firDiagnostic ->
+        NoValueForParameterImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
             firDiagnostic as FirPsiDiagnostic<*>,
             token,
         )

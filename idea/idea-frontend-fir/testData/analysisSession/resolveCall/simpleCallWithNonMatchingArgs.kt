@@ -4,4 +4,6 @@ fun x() {
 
 fun foo(){}
 
-// CALL: KtFunctionCall: targetFunction = ERR<Inapplicable candidate(s): /foo, [/foo(): kotlin.Unit]>
+// CALL: KtFunctionCall: targetFunction = ERR<Too many arguments for org.jetbrains.kotlin.fir.declarations.impl.FirSimpleFunctionImpl@5f1f1786: public final fun /foo(): R|kotlin/Unit| {
+}
+, [/foo(): kotlin.Unit]>

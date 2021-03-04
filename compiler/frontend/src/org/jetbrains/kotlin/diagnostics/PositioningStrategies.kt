@@ -470,6 +470,17 @@ object PositioningStrategies {
         }
     }
 
+    /**
+     * Mark the name of a named argument. If the given element is not a named argument or doesn't have a name, then the entire given element
+     * is marked instead.
+     */
+    @JvmField
+    val NAME_OF_NAMED_ARGUMENT: PositioningStrategy<KtValueArgument> = object : PositioningStrategy<KtValueArgument>() {
+        override fun mark(element: KtValueArgument): List<TextRange> {
+            return markElement(element.getArgumentName() ?: element)
+        }
+    }
+
     @JvmField
     val CALL_ELEMENT: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
         override fun mark(element: PsiElement): List<TextRange> {
@@ -563,7 +574,7 @@ object PositioningStrategies {
     @JvmField
     val VALUE_ARGUMENTS: PositioningStrategy<KtElement> = object : PositioningStrategy<KtElement>() {
         override fun mark(element: KtElement): List<TextRange> {
-            return markElement((element as? KtValueArgumentList)?.rightParenthesis ?: element)
+            return markElement(element.findDescendantOfType<KtValueArgumentList>()?.rightParenthesis ?: element)
         }
     }
 
