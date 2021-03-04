@@ -340,7 +340,7 @@ private fun CirTypeProjection.buildArgument(
     val effectiveExpansion = if (expansion == FOR_TOP_LEVEL_TYPE) FOR_NESTED_TYPE else expansion
     return when (this) {
         CirStarTypeProjection -> KmTypeProjection.STAR
-        is CirTypeProjectionImpl -> KmTypeProjection(
+        is CirRegularTypeProjection -> KmTypeProjection(
             variance = projectionKind.buildVariance(),
             type = type.buildType(context, effectiveExpansion)
         )

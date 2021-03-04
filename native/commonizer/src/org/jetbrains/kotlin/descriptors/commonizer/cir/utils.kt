@@ -45,14 +45,14 @@ fun CirClassOrTypeAliasType.unabbreviate(): CirClassType = when (this) {
         var hasAbbreviationsInArguments = false
         val unabbreviatedArguments = arguments.compactMap { argument ->
             val argumentType =
-                (argument as? CirTypeProjectionImpl)?.type as? CirClassOrTypeAliasType ?: return@compactMap argument
+                (argument as? CirRegularTypeProjection)?.type as? CirClassOrTypeAliasType ?: return@compactMap argument
             val unabbreviatedArgumentType = argumentType.unabbreviate()
 
             if (argumentType == unabbreviatedArgumentType)
                 argument
             else {
                 hasAbbreviationsInArguments = true
-                CirTypeProjectionImpl(
+                CirRegularTypeProjection(
                     projectionKind = argument.projectionKind,
                     type = unabbreviatedArgumentType
                 )

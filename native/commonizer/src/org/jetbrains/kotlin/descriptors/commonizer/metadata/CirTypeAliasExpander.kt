@@ -42,7 +42,7 @@ object CirTypeAliasExpander {
         val underlyingProjection = CirProvided.RegularTypeProjection(Variance.INVARIANT, underlyingType)
 
         val expandedProjection = expandTypeProjection(expansion, underlyingProjection, Variance.INVARIANT)
-        check(expandedProjection is CirTypeProjectionImpl) {
+        check(expandedProjection is CirRegularTypeProjection) {
             "Type alias expansion: result for $underlyingType is $expandedProjection, should not be a star projection"
         }
         check(expandedProjection.projectionKind == Variance.INVARIANT) {
@@ -67,17 +67,17 @@ object CirTypeAliasExpander {
             is CirProvided.TypeParameterType -> expansion.arguments[type.index]
             is CirProvided.TypeAliasType -> {
                 val substitutedType = expandTypeAliasType(expansion, type)
-                CirTypeProjectionImpl(projection.variance, substitutedType)
+                CirRegularTypeProjection(projection.variance, substitutedType)
             }
             is CirProvided.ClassType -> {
                 val substitutedType = expandClassType(expansion, type)
-                CirTypeProjectionImpl(projection.variance, substitutedType)
+                CirRegularTypeProjection(projection.variance, substitutedType)
             }
         }
 
         return when (argument) {
             is CirStarTypeProjection -> CirStarTypeProjection
-            is CirTypeProjectionImpl -> {
+            is CirRegularTypeProjection -> {
                 val argumentType = argument.type as CirSimpleType
 
                 val resultingVariance = run {
@@ -101,7 +101,7 @@ object CirTypeAliasExpander {
 
                 val substitutedType = argumentType.makeNullableIfNecessary(type.isMarkedNullable)
 
-                CirTypeProjectionImpl(resultingVariance, substitutedType)
+                CirRegularTypeProjection(resultingVariance, substitutedType)
             }
         }
     }
@@ -157,7 +157,7 @@ object CirTypeAliasExpander {
     ): CirTypeProjection {
         return when (projection) {
             is CirStarTypeProjection -> CirStarTypeProjection
-            is CirTypeProjectionImpl -> {
+            is CirRegularTypeProjection -> {
                 val originalTypeIsNullable = (originalArgument as? CirProvided.RegularTypeProjection)?.type?.isMarkedNullable == true
                 if (!originalTypeIsNullable)
                     return projection
@@ -166,7 +166,7 @@ object CirTypeAliasExpander {
                 if (projectionType.isMarkedNullable)
                     return projection
 
-                CirTypeProjectionImpl(
+                CirRegularTypeProjection(
                     projectionKind = projection.projectionKind,
                     type = projectionType.makeNullable()
                 )

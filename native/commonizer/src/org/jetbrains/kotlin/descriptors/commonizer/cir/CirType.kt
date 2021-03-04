@@ -159,7 +159,7 @@ object CirStarTypeProjection : CirTypeProjection() {
     override fun toString() = "*"
 }
 
-data class CirTypeProjectionImpl(val projectionKind: Variance, val type: CirType) : CirTypeProjection() {
+data class CirRegularTypeProjection(val projectionKind: Variance, val type: CirType) : CirTypeProjection() {
     override fun toString() = buildString {
         append(projectionKind)
         if (isNotEmpty()) append(' ')

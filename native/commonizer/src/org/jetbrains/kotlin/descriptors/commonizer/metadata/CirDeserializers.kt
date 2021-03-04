@@ -34,7 +34,7 @@ object CirDeserializers {
             outerType = null, // annotation class can't be inner class
             visibility = clazz.visibility,
             arguments = clazz.typeParameters.compactMap { typeParameter ->
-                CirTypeProjectionImpl(
+                CirRegularTypeProjection(
                     projectionKind = typeParameter.variance,
                     type = CirTypeParameterType.createInterned(
                         index = typeParameter.index,
@@ -398,7 +398,7 @@ object CirDeserializers {
             val variance = argument.variance ?: return@compactMap CirStarTypeProjection
             val argumentType = argument.type ?: return@compactMap CirStarTypeProjection
 
-            CirTypeProjectionImpl(
+            CirRegularTypeProjection(
                 projectionKind = variance(variance),
                 type = type(argumentType, typeResolver)
             )
