@@ -27,7 +27,7 @@ abstract class IrDeclarationReference : IrExpression() {
 
 abstract class IrGetSingletonValue : IrDeclarationReference()
 
-abstract class IrGetObjectValue : IrGetSingletonValue() {
+abstract class IrGetObjectValue : IrGetSingletonValue(), IrExpressionWithCopy {
     abstract override val symbol: IrClassSymbol
 }
 
