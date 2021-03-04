@@ -977,14 +977,6 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         print("|")
     }
 
-    private val FirResolvedTypeRef.functionTypeKind: FunctionClassKind?
-        get() {
-            val classId = (type as? ConeClassLikeType)?.lookupTag?.classId ?: return null
-            return FunctionClassKind.getFunctionalClassKind(
-                classId.shortClassName.asString(), classId.packageFqName
-            )
-        }
-
     override fun visitUserTypeRef(userTypeRef: FirUserTypeRef) {
         userTypeRef.annotations.renderAnnotations()
         if (userTypeRef.customRenderer) {
