@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.calls.ImplicitExtensionReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
 import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowAnalyzerContext
 import org.jetbrains.kotlin.fir.resolve.dfa.PersistentFlow
@@ -26,6 +27,8 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirMemberTypeParameterScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.Name
 
 class BodyResolveContext(
@@ -345,11 +348,6 @@ class BodyResolveContext(
         }
     }
 
-    fun FirMemberDeclaration.typeParameterScope(): FirMemberTypeParameterScope? {
-        if (typeParameters.isEmpty()) return null
-        return FirMemberTypeParameterScope(this)
-    }
-
     fun FirConstructor.scopesWithPrimaryConstructorParameters(
         ownerClass: FirClass<*>
     ): Pair<FirLocalScope, FirLocalScope> {
@@ -364,5 +362,57 @@ class BodyResolveContext(
             }
         }
         return parameterScope to allScope
+    }
+
+    inline fun <T> withSimpleFunction(
+        simpleFunction: FirSimpleFunction,
+        holder: SessionHolder,
+        crossinline f: () -> T
+    ): T {
+        if (containerIfAny !is FirClass<*>) {
+            storeFunction(simpleFunction)
+        }
+
+        return withTypeParametersOf(simpleFunction) {
+            val receiverTypeRef = simpleFunction.receiverTypeRef
+            if (receiverTypeRef != null) {
+                withLabelAndReceiverType(simpleFunction.name, simpleFunction, receiverTypeRef.coneType, holder, f)
+            } else {
+                f()
+            }
+        }
+    }
+
+    inline fun <T> withLabelAndReceiverType(
+        labelName: Name?,
+        owner: FirCallableDeclaration<*>,
+        type: ConeKotlinType?,
+        holder: SessionHolder,
+        f: () -> T
+    ): T = withTowerDataCleanup {
+        if (type != null) {
+            val receiver = ImplicitExtensionReceiverValue(
+                owner.symbol,
+                type,
+                holder.session,
+                holder.scopeSession
+            )
+            addReceiver(labelName, receiver)
+        }
+
+        f()
+    }
+
+    inline fun <T> withTypeParametersOf(declaration: FirMemberDeclaration, crossinline l: () -> T): T {
+        val scope = declaration.typeParameterScope()
+        return withTowerDataCleanup {
+            scope?.let { addNonLocalTowerDataElement(it.asTowerDataElement(isLocal = false)) }
+            l()
+        }
+    }
+
+    fun FirMemberDeclaration.typeParameterScope(): FirMemberTypeParameterScope? {
+        if (typeParameters.isEmpty()) return null
+        return FirMemberTypeParameterScope(this)
     }
 }
