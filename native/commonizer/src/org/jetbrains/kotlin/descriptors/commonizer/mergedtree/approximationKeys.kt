@@ -10,6 +10,7 @@ import kotlinx.metadata.klib.annotations
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirName
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirTypeSignature
 import org.jetbrains.kotlin.descriptors.commonizer.core.Commonizer
+import org.jetbrains.kotlin.descriptors.commonizer.metadata.TypeParameterResolver
 import org.jetbrains.kotlin.descriptors.commonizer.utils.appendHashCode
 import org.jetbrains.kotlin.descriptors.commonizer.utils.computeSignature
 import org.jetbrains.kotlin.descriptors.commonizer.utils.hashCode
@@ -76,10 +77,6 @@ data class ConstructorApproximationKey(
 
     override fun hashCode() = hashCode(valueParametersTypes)
         .appendHashCode(additionalValueParametersNamesHash)
-}
-
-interface TypeParameterResolver {
-    fun resolveTypeParameter(id: Int): KmTypeParameter?
 }
 
 @Suppress("NOTHING_TO_INLINE")

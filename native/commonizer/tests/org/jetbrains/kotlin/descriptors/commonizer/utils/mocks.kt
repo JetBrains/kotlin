@@ -13,8 +13,6 @@ import org.jetbrains.kotlin.descriptors.commonizer.*
 import org.jetbrains.kotlin.descriptors.commonizer.ModulesProvider.ModuleInfo
 import org.jetbrains.kotlin.descriptors.commonizer.ResultsConsumer.ModuleResult
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
-import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirClassFactory
-import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeFactory
 import org.jetbrains.kotlin.descriptors.commonizer.konan.NativeSensitiveManifestData
 import org.jetbrains.kotlin.descriptors.commonizer.konan.TargetedNativeManifestDataProvider
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.*

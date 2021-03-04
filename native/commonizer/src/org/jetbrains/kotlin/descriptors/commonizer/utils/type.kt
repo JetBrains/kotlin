@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.descriptors.commonizer.utils
 import gnu.trove.TIntHashSet
 import kotlinx.metadata.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirTypeSignature
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.TypeParameterResolver
+import org.jetbrains.kotlin.descriptors.commonizer.metadata.TypeParameterResolver
 
 internal inline val KmTypeParameter.filteredUpperBounds: List<KmType>
     get() = upperBounds.takeUnless { it.singleOrNull()?.isNullableAny == true } ?: emptyList()

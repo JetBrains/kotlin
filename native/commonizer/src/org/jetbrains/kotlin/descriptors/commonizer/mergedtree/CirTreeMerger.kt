@@ -15,8 +15,9 @@ import org.jetbrains.kotlin.descriptors.commonizer.LeafCommonizerTarget
 import org.jetbrains.kotlin.descriptors.commonizer.ModulesProvider.ModuleInfo
 import org.jetbrains.kotlin.descriptors.commonizer.TargetProvider
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
-import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.*
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ClassesToProcess.ClassEntry
+import org.jetbrains.kotlin.descriptors.commonizer.metadata.CirDeserializers
+import org.jetbrains.kotlin.descriptors.commonizer.metadata.CirTypeResolver
 import org.jetbrains.kotlin.descriptors.commonizer.metadata.utils.SerializedMetadataLibraryProvider
 import org.jetbrains.kotlin.descriptors.commonizer.prettyName
 import org.jetbrains.kotlin.descriptors.commonizer.utils.*
@@ -208,7 +209,7 @@ class CirTreeMerger(
         val propertyNode: CirPropertyNode = ownerNode.properties.getOrPut(approximationKey) {
             buildPropertyNode(storageManager, leafTargetsSize, classifiers, maybeClassOwnerNode?.commonDeclaration)
         }
-        propertyNode.targetDeclarations[context.targetIndex] = CirPropertyFactory.create(
+        propertyNode.targetDeclarations[context.targetIndex] = CirDeserializers.property(
             name = approximationKey.name,
             source = property,
             containingClass = maybeClassOwnerNode?.targetDeclarations?.get(context.targetIndex),
@@ -234,7 +235,7 @@ class CirTreeMerger(
         val functionNode: CirFunctionNode = ownerNode.functions.getOrPut(approximationKey) {
             buildFunctionNode(storageManager, leafTargetsSize, classifiers, maybeClassOwnerNode?.commonDeclaration)
         }
-        functionNode.targetDeclarations[context.targetIndex] = CirFunctionFactory.create(
+        functionNode.targetDeclarations[context.targetIndex] = CirDeserializers.function(
             name = approximationKey.name,
             source = function,
             containingClass = maybeClassOwnerNode?.targetDeclarations?.get(context.targetIndex),
@@ -264,13 +265,13 @@ class CirTreeMerger(
                 clazz = classEntry.clazz
                 isEnumEntry = Flag.Class.IS_ENUM_ENTRY(clazz.flags)
 
-                CirClassFactory.create(className, clazz, context.typeResolver)
+                CirDeserializers.clazz(className, clazz, context.typeResolver)
             }
             is ClassEntry.EnumEntry -> {
                 clazz = null
                 isEnumEntry = true
 
-                CirClassFactory.createDefaultEnumEntry(
+                CirDeserializers.defaultEnumEntry(
                     name = className,
                     annotations = classEntry.annotations,
                     enumClassId = classEntry.enumClassId,
@@ -313,7 +314,7 @@ class CirTreeMerger(
         val constructorNode: CirClassConstructorNode = classNode.constructors.getOrPut(approximationKey) {
             buildClassConstructorNode(storageManager, leafTargetsSize, classifiers, classNode.commonDeclaration)
         }
-        constructorNode.targetDeclarations[context.targetIndex] = CirClassConstructorFactory.create(
+        constructorNode.targetDeclarations[context.targetIndex] = CirDeserializers.constructor(
             source = constructor,
             containingClass = classNode.targetDeclarations[context.targetIndex]!!,
             typeResolver = context.typeResolver
@@ -331,7 +332,7 @@ class CirTreeMerger(
         val typeAliasNode: CirTypeAliasNode = packageNode.typeAliases.getOrPut(typeAliasName) {
             buildTypeAliasNode(storageManager, leafTargetsSize, classifiers, typeAliasId)
         }
-        typeAliasNode.targetDeclarations[context.targetIndex] = CirTypeAliasFactory.create(
+        typeAliasNode.targetDeclarations[context.targetIndex] = CirDeserializers.typeAlias(
             name = typeAliasName,
             source = typeAlias,
             typeResolver = context.typeResolver

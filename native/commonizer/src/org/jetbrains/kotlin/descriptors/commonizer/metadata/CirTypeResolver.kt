@@ -3,14 +3,13 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.descriptors.commonizer.cir.factory
+package org.jetbrains.kotlin.descriptors.commonizer.metadata
 
 import gnu.trove.TIntObjectHashMap
 import kotlinx.metadata.KmTypeParameter
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirProvided
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirProvidedClassifiers
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.TypeParameterResolver
 
 typealias TypeParameterId = Int
 typealias TypeParameterIndex = Int
