@@ -450,7 +450,7 @@ class RawFirBuilder(
                 this.isExpect = isExpect
                 isActual = hasActualModifier()
                 isOverride = hasModifier(OVERRIDE_KEYWORD)
-                isConst = false
+                isConst = hasModifier(CONST_KEYWORD)
                 isLateInit = false
             }
             val propertySource = toFirSourceElement(FirFakeSourceElementKind.PropertyFromParameter)

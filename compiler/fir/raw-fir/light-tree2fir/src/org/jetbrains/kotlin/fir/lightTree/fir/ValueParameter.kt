@@ -66,7 +66,7 @@ class ValueParameter(
                 this.isExpect = isExpect
                 isActual = modifiers.hasActual()
                 isOverride = modifiers.hasOverride()
-                isConst = false
+                isConst = modifiers.hasConst()
                 isLateInit = false
             }
             annotations += this@ValueParameter.firValueParameter.annotations

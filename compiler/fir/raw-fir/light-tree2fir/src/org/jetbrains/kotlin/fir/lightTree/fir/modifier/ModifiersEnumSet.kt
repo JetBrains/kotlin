@@ -51,7 +51,8 @@ enum class InheritanceModifier {
 enum class ParameterModifier {
     VARARG,
     NOINLINE,
-    CROSSINLINE
+    CROSSINLINE,
+    CONST
 }
 
 enum class PlatformModifier {

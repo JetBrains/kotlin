@@ -12,7 +12,7 @@ object A {
     const val inObject: Int = 4
 }
 
-class B(const val constructor: Int = 5)
+class B(<!CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT!>const<!> val constructor: Int = 5)
 
 abstract class C {
     <!INCOMPATIBLE_MODIFIERS!>open<!> <!CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT, INCOMPATIBLE_MODIFIERS!>const<!> val x: Int = 6

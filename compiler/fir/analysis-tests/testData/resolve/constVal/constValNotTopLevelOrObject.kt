@@ -4,7 +4,7 @@ object B {
     const val b = 2
 }
 
-class C {
+class C(<!CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT!>const<!> val b: Boolean) {
     <!CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT!>const<!> val c = 3
 }
 

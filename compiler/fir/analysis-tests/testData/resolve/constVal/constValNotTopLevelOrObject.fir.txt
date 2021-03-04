@@ -11,9 +11,12 @@ FILE: constValNotTopLevelOrObject.kt
 
     }
     public final class C : R|kotlin/Any| {
-        public constructor(): R|C| {
+        public constructor(b: R|kotlin/Boolean|): R|C| {
             super<R|kotlin/Any|>()
         }
+
+        public final const val b: R|kotlin/Boolean| = R|<local>/b|
+            public get(): R|kotlin/Boolean|
 
         public final const val c: R|kotlin/Int| = Int(3)
             public get(): R|kotlin/Int|
