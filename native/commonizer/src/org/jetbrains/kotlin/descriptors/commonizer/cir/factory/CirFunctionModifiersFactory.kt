@@ -8,13 +8,9 @@ package org.jetbrains.kotlin.descriptors.commonizer.cir.factory
 import kotlinx.metadata.Flag
 import kotlinx.metadata.KmFunction
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirFunctionModifiers
-import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirFunctionModifiersImpl
-import org.jetbrains.kotlin.descriptors.commonizer.utils.Interner
 
 object CirFunctionModifiersFactory {
-    private val interner = Interner<CirFunctionModifiers>()
-
-    fun create(source: KmFunction): CirFunctionModifiers = create(
+    fun create(source: KmFunction) = CirFunctionModifiers.createInterned(
         isOperator = Flag.Function.IS_OPERATOR(source.flags),
         isInfix = Flag.Function.IS_INFIX(source.flags),
         isInline = Flag.Function.IS_INLINE(source.flags),
@@ -22,24 +18,4 @@ object CirFunctionModifiersFactory {
         isSuspend = Flag.Function.IS_SUSPEND(source.flags),
         isExternal = Flag.Function.IS_EXTERNAL(source.flags)
     )
-
-    fun create(
-        isOperator: Boolean,
-        isInfix: Boolean,
-        isInline: Boolean,
-        isTailrec: Boolean,
-        isSuspend: Boolean,
-        isExternal: Boolean
-    ): CirFunctionModifiers {
-        return interner.intern(
-            CirFunctionModifiersImpl(
-                isOperator = isOperator,
-                isInfix = isInfix,
-                isInline = isInline,
-                isTailrec = isTailrec,
-                isSuspend = isSuspend,
-                isExternal = isExternal
-            )
-        )
-    }
 }

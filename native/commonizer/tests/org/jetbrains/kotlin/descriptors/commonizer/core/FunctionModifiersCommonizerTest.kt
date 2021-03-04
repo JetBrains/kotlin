@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirFunctionModifiers
-import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirFunctionModifiersFactory
 import org.junit.Test
 
 class FunctionModifiersCommonizerTest : AbstractCommonizerTest<CirFunctionModifiers, CirFunctionModifiers>() {
@@ -171,7 +170,7 @@ private fun mockFunctionModifiers(
     isTailrec: Boolean = false,
     isSuspend: Boolean = false,
     isExternal: Boolean = false
-) = CirFunctionModifiersFactory.create(
+) = CirFunctionModifiers.createInterned(
     isOperator = isOperator,
     isInfix = isInfix,
     isInline = isInline,

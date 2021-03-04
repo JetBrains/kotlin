@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirFunctionModifiers
-import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirFunctionModifiersFactory
 
 class FunctionModifiersCommonizer : AbstractStandardCommonizer<CirFunctionModifiers, CirFunctionModifiers>() {
     private class MutableModifiers(
@@ -26,7 +25,7 @@ class FunctionModifiersCommonizer : AbstractStandardCommonizer<CirFunctionModifi
             isExternal = immutable.isExternal
         )
 
-        fun toImmutableModifiers(): CirFunctionModifiers = CirFunctionModifiersFactory.create(
+        fun toImmutableModifiers() = CirFunctionModifiers.createInterned(
             isOperator = isOperator,
             isInfix = isInfix,
             isInline = isInline,
