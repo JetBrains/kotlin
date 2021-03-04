@@ -199,8 +199,10 @@ class FirElementSerializer private constructor(
 
     private fun FirPropertyAccessor.nonSourceAnnotations(session: FirSession, property: FirProperty): List<FirAnnotationCall> =
         (this as FirAnnotationContainer).nonSourceAnnotations(session) + property.nonSourceAnnotations(session).filter {
-            it.useSiteTarget == AnnotationUseSiteTarget.PROPERTY_GETTER && isGetter ||
-                    it.useSiteTarget == AnnotationUseSiteTarget.PROPERTY_SETTER && isSetter
+            val useSiteTarget = it.useSiteTarget
+            useSiteTarget == AnnotationUseSiteTarget.PROPERTY_GETTER && isGetter ||
+                    useSiteTarget == AnnotationUseSiteTarget.PROPERTY_SETTER && isSetter ||
+                    useSiteTarget == AnnotationUseSiteTarget.SETTER_PARAMETER && isSetter
         }
 
     fun propertyProto(property: FirProperty): ProtoBuf.Property.Builder? {
@@ -241,13 +243,15 @@ class FirElementSerializer private constructor(
                 builder.setterFlags = accessorFlags
             }
 
+            val nonSourceAnnotations = setter.nonSourceAnnotations(session, property)
             if (setter !is FirDefaultPropertyAccessor ||
-                setter.nonSourceAnnotations(session, property).isNotEmpty() ||
+                nonSourceAnnotations.isNotEmpty() ||
                 setter.visibility != property.visibility
             ) {
                 val setterLocal = local.createChildSerializer(setter)
                 for (valueParameterDescriptor in setter.valueParameters) {
-                    builder.setSetterValueParameter(setterLocal.valueParameterProto(valueParameterDescriptor))
+                    val annotations = nonSourceAnnotations.filter { it.useSiteTarget == AnnotationUseSiteTarget.SETTER_PARAMETER }
+                    builder.setSetterValueParameter(setterLocal.valueParameterProto(valueParameterDescriptor, annotations))
                 }
             }
         }
@@ -480,14 +484,19 @@ class FirElementSerializer private constructor(
         return builder
     }
 
-    private fun valueParameterProto(parameter: FirValueParameter): ProtoBuf.ValueParameter.Builder {
+    private fun valueParameterProto(
+        parameter: FirValueParameter,
+        additionalAnnotations: List<FirAnnotationCall> = emptyList()
+    ): ProtoBuf.ValueParameter.Builder {
         val builder = ProtoBuf.ValueParameter.newBuilder()
 
         val declaresDefaultValue = parameter.defaultValue != null // TODO: || parameter.isActualParameterWithAnyExpectedDefault
 
         val flags = Flags.getValueParameterFlags(
-            parameter.nonSourceAnnotations(session).isNotEmpty(), declaresDefaultValue,
-            parameter.isCrossinline, parameter.isNoinline
+            additionalAnnotations.isNotEmpty() || parameter.nonSourceAnnotations(session).isNotEmpty(),
+            declaresDefaultValue,
+            parameter.isCrossinline,
+            parameter.isNoinline
         )
         if (flags != builder.flags) {
             builder.flags = flags
