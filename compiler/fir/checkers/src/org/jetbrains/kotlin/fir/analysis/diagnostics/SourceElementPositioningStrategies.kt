@@ -88,6 +88,11 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.VARIANCE_MODIFIER
     )
 
+    val CONST_MODIFIER = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.CONST_MODIFIER,
+        PositioningStrategies.CONST_MODIFIER
+    )
+
     val OPERATOR = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.OPERATOR,
         PositioningStrategies.OPERATOR
@@ -128,8 +133,4 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.IF_EXPRESSION
     )
 
-    val CONST_MODIFIER = SourceElementPositioningStrategy(
-        LightTreePositioningStrategies.CONST_MODIFIER,
-        PositioningStrategies.CONST_MODIFIER
-    )
 }
