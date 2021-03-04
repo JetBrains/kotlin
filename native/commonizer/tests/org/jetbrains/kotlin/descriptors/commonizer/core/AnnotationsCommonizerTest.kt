@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.descriptors.commonizer.cir.CirConstantValue
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirConstantValue.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirName
-import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirAnnotationFactory
 import org.jetbrains.kotlin.descriptors.commonizer.utils.mockClassType
 import org.junit.Test
 import kotlin.DeprecationLevel.*
@@ -284,7 +283,7 @@ private fun mockAnnotation(
     classId: String,
     constantValueArguments: Map<CirName, CirConstantValue<*>> = emptyMap(),
     annotationValueArguments: Map<CirName, CirAnnotation> = emptyMap()
-): CirAnnotation = CirAnnotationFactory.create(
+): CirAnnotation = CirAnnotation.createInterned(
     type = mockClassType(classId),
     constantValueArguments = constantValueArguments,
     annotationValueArguments = annotationValueArguments

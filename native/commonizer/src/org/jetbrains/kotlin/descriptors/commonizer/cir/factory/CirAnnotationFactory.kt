@@ -11,15 +11,11 @@ import kotlinx.metadata.Flags
 import kotlinx.metadata.KmAnnotation
 import kotlinx.metadata.KmAnnotationArgument
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
-import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirAnnotationImpl
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirProvided
-import org.jetbrains.kotlin.descriptors.commonizer.utils.Interner
 import org.jetbrains.kotlin.descriptors.commonizer.utils.compact
 import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMap
 
 object CirAnnotationFactory {
-    private val interner = Interner<CirAnnotation>()
-
     fun createAnnotations(flags: Flags, typeResolver: CirTypeResolver, annotations: () -> List<KmAnnotation>): List<CirAnnotation> {
         return if (!Flag.Common.HAS_ANNOTATIONS(flags))
             emptyList()
@@ -49,7 +45,7 @@ object CirAnnotationFactory {
 
         val allValueArguments: Map<String, KmAnnotationArgument<*>> = source.arguments
         if (allValueArguments.isEmpty())
-            return create(type = type, constantValueArguments = emptyMap(), annotationValueArguments = emptyMap())
+            return CirAnnotation.createInterned(type = type, constantValueArguments = emptyMap(), annotationValueArguments = emptyMap())
 
         val constantValueArguments: MutableMap<CirName, CirConstantValue<*>> = THashMap(allValueArguments.size)
         val annotationValueArguments: MutableMap<CirName, CirAnnotation> = THashMap(allValueArguments.size)
@@ -66,24 +62,10 @@ object CirAnnotationFactory {
                 )
         }
 
-        return create(
+        return CirAnnotation.createInterned(
             type = type,
             constantValueArguments = constantValueArguments.compact(),
             annotationValueArguments = annotationValueArguments.compact()
-        )
-    }
-
-    fun create(
-        type: CirClassType,
-        constantValueArguments: Map<CirName, CirConstantValue<*>>,
-        annotationValueArguments: Map<CirName, CirAnnotation>
-    ): CirAnnotation {
-        return interner.intern(
-            CirAnnotationImpl(
-                type = type,
-                constantValueArguments = constantValueArguments,
-                annotationValueArguments = annotationValueArguments
-            )
         )
     }
 }

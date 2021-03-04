@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.descriptors.commonizer.cir.CirConstantValue
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirConstantValue.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirName
-import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirAnnotationFactory
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeFactory
 import org.jetbrains.kotlin.descriptors.commonizer.core.AnnotationsCommonizer.Companion.FALLBACK_MESSAGE
 import org.jetbrains.kotlin.descriptors.commonizer.utils.DEPRECATED_ANNOTATION_CLASS_ID
@@ -74,7 +73,7 @@ private class DeprecatedAnnotationCommonizer : Commonizer<CirAnnotation, CirAnno
                 } else
                     compactMapOf(PROPERTY_NAME_REPLACE_WITH, replaceWithExpression.toReplaceWithValue(replaceWithImports))
 
-            return CirAnnotationFactory.create(
+            return CirAnnotation.createInterned(
                 type = DEPRECATED_ANNOTATION_TYPE,
                 constantValueArguments = constantValueArguments,
                 annotationValueArguments = annotationValueArguments
@@ -216,7 +215,7 @@ private class DeprecatedAnnotationCommonizer : Commonizer<CirAnnotation, CirAnno
         }
 
         private inline fun createReplaceWithAnnotation(expression: String, imports: List<String>): CirAnnotation =
-            CirAnnotationFactory.create(
+            CirAnnotation.createInterned(
                 type = REPLACE_WITH_ANNOTATION_TYPE,
                 constantValueArguments = compactMapOf(
                     PROPERTY_NAME_EXPRESSION, StringValue(expression),
