@@ -564,6 +564,10 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = InnerClassOfGenericThrowableSubclass::class
     }
 
+    abstract class CallableReferenceLhsNotAClass : KtFirDiagnostic<KtExpression>() {
+        override val diagnosticClass get() = CallableReferenceLhsNotAClass::class
+    }
+
     abstract class ClassLiteralLhsNotAClass : KtFirDiagnostic<KtExpression>() {
         override val diagnosticClass get() = ClassLiteralLhsNotAClass::class
     }
@@ -884,6 +888,16 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class InvalidIfAsExpression : KtFirDiagnostic<KtIfExpression>() {
         override val diagnosticClass get() = InvalidIfAsExpression::class
+    }
+
+    abstract class TypeParameterIsNotAnExpression : KtFirDiagnostic<KtSimpleNameExpression>() {
+        override val diagnosticClass get() = TypeParameterIsNotAnExpression::class
+        abstract val typeParameter: KtTypeParameterSymbol
+    }
+
+    abstract class TypeParameterOnLhsOfDot : KtFirDiagnostic<KtSimpleNameExpression>() {
+        override val diagnosticClass get() = TypeParameterOnLhsOfDot::class
+        abstract val typeParameter: KtTypeParameterSymbol
     }
 
     abstract class ErrorInContractDescription : KtFirDiagnostic<KtElement>() {

@@ -797,6 +797,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.CALLABLE_REFERENCE_LHS_NOT_A_CLASS) { firDiagnostic ->
+        CallableReferenceLhsNotAClassImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
     add(FirErrors.CLASS_LITERAL_LHS_NOT_A_CLASS) { firDiagnostic ->
         ClassLiteralLhsNotAClassImpl(
             firDiagnostic as FirPsiDiagnostic<*>,
@@ -1259,6 +1265,20 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.INVALID_IF_AS_EXPRESSION) { firDiagnostic ->
         InvalidIfAsExpressionImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.TYPE_PARAMETER_IS_NOT_AN_EXPRESSION) { firDiagnostic ->
+        TypeParameterIsNotAnExpressionImpl(
+            firSymbolBuilder.buildTypeParameterSymbol(firDiagnostic.a.fir as FirTypeParameter),
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.TYPE_PARAMETER_ON_LHS_OF_DOT) { firDiagnostic ->
+        TypeParameterOnLhsOfDotImpl(
+            firSymbolBuilder.buildTypeParameterSymbol(firDiagnostic.a.fir as FirTypeParameter),
             firDiagnostic as FirPsiDiagnostic<*>,
             token,
         )

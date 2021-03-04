@@ -28,8 +28,8 @@ class Test1<T>()
   {
 
   fun test(t : T) {
-    <!OTHER_ERROR!>T<!>.<!UNRESOLVED_REFERENCE!>foo<!>()
-    <!OTHER_ERROR!>T<!>.<!UNRESOLVED_REFERENCE!>bar<!>()
+    <!TYPE_PARAMETER_ON_LHS_OF_DOT!>T<!>.<!UNRESOLVED_REFERENCE!>foo<!>()
+    <!TYPE_PARAMETER_ON_LHS_OF_DOT!>T<!>.<!UNRESOLVED_REFERENCE!>bar<!>()
     t.foo()
     t.bar()
   }
@@ -56,8 +56,8 @@ fun <T> test2(t : T)
     T : B,
     B : T
 {
-  <!OTHER_ERROR!>T<!>.<!UNRESOLVED_REFERENCE!>foo<!>()
-  <!OTHER_ERROR!>T<!>.<!UNRESOLVED_REFERENCE!>bar<!>()
+  <!TYPE_PARAMETER_ON_LHS_OF_DOT!>T<!>.<!UNRESOLVED_REFERENCE!>foo<!>()
+  <!TYPE_PARAMETER_ON_LHS_OF_DOT!>T<!>.<!UNRESOLVED_REFERENCE!>bar<!>()
   t.foo()
   t.bar()
 }

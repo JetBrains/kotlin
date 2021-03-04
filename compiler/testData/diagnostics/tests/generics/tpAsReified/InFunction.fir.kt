@@ -1,5 +1,9 @@
 // !WITH_NEW_INFERENCE
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// !DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_EXPRESSION
+
+inline fun <reified T> foo() {
+    <!CALLABLE_REFERENCE_LHS_NOT_A_CLASS!>T::toString<!>
+}
 
 inline fun <reified T> f(): T = throw UnsupportedOperationException()
 
