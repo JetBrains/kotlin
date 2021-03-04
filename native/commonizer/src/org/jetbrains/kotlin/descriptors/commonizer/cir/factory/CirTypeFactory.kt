@@ -5,12 +5,9 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.cir.factory
 
-import gnu.trove.TIntObjectHashMap
 import kotlinx.metadata.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirProvided
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirProvidedClassifiers
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.TypeParameterResolver
 import org.jetbrains.kotlin.descriptors.commonizer.metadata.CirTypeAliasExpander
 import org.jetbrains.kotlin.descriptors.commonizer.metadata.CirTypeAliasExpansion
 import org.jetbrains.kotlin.descriptors.commonizer.utils.*
@@ -85,70 +82,5 @@ object CirTypeFactory {
                 type = create(argumentType, typeResolver)
             )
         }
-    }
-}
-
-typealias TypeParameterId = Int
-typealias TypeParameterIndex = Int
-
-abstract class CirTypeResolver : TypeParameterResolver {
-    abstract val providedClassifiers: CirProvidedClassifiers
-    protected abstract val typeParameterIndexOffset: Int
-
-    inline fun <reified T : CirProvided.Classifier> resolveClassifier(classifierId: CirEntityId): T {
-        val classifier = providedClassifiers.classifier(classifierId)
-            ?: error("Unresolved classifier: $classifierId")
-
-        check(classifier is T) {
-            "Resolved classifier $classifierId of type ${classifier::class.java.simpleName}. Expected: ${T::class.java.simpleName}."
-        }
-
-        return classifier
-    }
-
-    abstract fun resolveTypeParameterIndex(id: TypeParameterId): TypeParameterIndex
-    abstract override fun resolveTypeParameter(id: TypeParameterId): KmTypeParameter
-
-    private class TopLevel(override val providedClassifiers: CirProvidedClassifiers) : CirTypeResolver() {
-        override val typeParameterIndexOffset get() = 0
-
-        override fun resolveTypeParameterIndex(id: TypeParameterId) = error("Unresolved type parameter: id=$id")
-        override fun resolveTypeParameter(id: TypeParameterId) = error("Unresolved type parameter: id=$id")
-    }
-
-    private class Nested(
-        private val parent: CirTypeResolver,
-        private val typeParameterMapping: TIntObjectHashMap<TypeParameterInfo>
-    ) : CirTypeResolver() {
-        override val providedClassifiers get() = parent.providedClassifiers
-        override val typeParameterIndexOffset = typeParameterMapping.size() + parent.typeParameterIndexOffset
-
-        override fun resolveTypeParameterIndex(id: TypeParameterId) =
-            typeParameterMapping[id]?.index ?: parent.resolveTypeParameterIndex(id)
-
-        override fun resolveTypeParameter(id: TypeParameterId) =
-            typeParameterMapping[id]?.typeParameter ?: parent.resolveTypeParameter(id)
-    }
-
-    private class TypeParameterInfo(val index: TypeParameterIndex, val typeParameter: KmTypeParameter)
-
-    fun create(typeParameters: List<KmTypeParameter>): CirTypeResolver =
-        if (typeParameters.isEmpty())
-            this
-        else {
-            val mapping = TIntObjectHashMap<TypeParameterInfo>(typeParameters.size * 2)
-            typeParameters.forEachIndexed { localIndex, typeParameter ->
-                val typeParameterInfo = TypeParameterInfo(
-                    index = localIndex + typeParameterIndexOffset,
-                    typeParameter = typeParameter
-                )
-                mapping.put(typeParameter.id, typeParameterInfo)
-            }
-
-            Nested(this, mapping)
-        }
-
-    companion object {
-        fun create(providedClassifiers: CirProvidedClassifiers): CirTypeResolver = TopLevel(providedClassifiers)
     }
 }
