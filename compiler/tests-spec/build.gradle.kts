@@ -51,3 +51,5 @@ tasks.named<Test>("test") {
         excludeTestsMatching("org.jetbrains.kotlin.spec.consistency.SpecTestsConsistencyTest")
     }
 }
+
+testsJar()
