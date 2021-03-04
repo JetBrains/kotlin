@@ -36,7 +36,7 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
             @StabilityInferred(parameters = 0)
             class A {
               val b: String = ""
-              val c: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, true, "") { %composer: Composer?, %changed: Int ->
+              val c: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, true, "C:") { %composer: Composer?, %changed: Int ->
                 if (%changed and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
                   print(b)
                 } else {

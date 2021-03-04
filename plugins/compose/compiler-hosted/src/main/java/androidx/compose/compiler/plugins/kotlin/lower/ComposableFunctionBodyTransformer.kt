@@ -2487,20 +2487,25 @@ class ComposableFunctionBodyTransformer(
             }
             expression.isComposableSingletonGetter() -> {
                 // This looks like `ComposableSingletonClass.lambda-123`, which is a static/saved
-                // call of composableLambdaInstance. We want to pass
-                // locations on the top level of the lambda as the startRestartGroup is in the
-                // composable lambda wrapper.
+                // call of composableLambdaInstance. We want to transform the property here now
+                // so the assuptions about the invocation order assumed by source locations is
+                // preserved.
                 val getter = expression.symbol.owner
                 val property = getter.correspondingPropertySymbol?.owner
-                val fieldInitializer = property?.backingField?.initializer?.expression
-                val composableLambdaInstanceCall = fieldInitializer as IrCall
-                val composableLambdaScope = withScope(Scope.ComposableLambdaScope()) {
-                    property.transformChildrenVoid()
-                }
-                if (collectSourceInformation) {
-                    recordSourceParameter(composableLambdaInstanceCall, 2, composableLambdaScope)
-                }
+                property?.transformChildrenVoid()
                 return super.visitCall(expression)
+            }
+            collectSourceInformation &&
+                expression.symbol.descriptor.fqNameSafe ==
+                ComposeFqNames.composableLambdaInstance -> {
+                // For calls to `composableLambdaInstance` that are not singletons we introduce a
+                // scope to collect the source locations on the top level of the lambda as the
+                // startRestartGroup is in the composable lambda wrapper.
+                val composableLambdaScope = withScope(Scope.ComposableLambdaScope()) {
+                    expression.transformChildrenVoid()
+                }
+                recordSourceParameter(expression, 2, composableLambdaScope)
+                return expression
             }
             else -> return super.visitCall(expression)
         }
