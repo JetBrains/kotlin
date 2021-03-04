@@ -8,9 +8,7 @@ package org.jetbrains.kotlin.descriptors.commonizer.cir.factory
 import gnu.trove.TIntObjectHashMap
 import kotlinx.metadata.*
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
-import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirClassTypeImpl
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirTypeAliasTypeImpl
 import org.jetbrains.kotlin.descriptors.commonizer.core.computeExpandedType
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirProvided
@@ -21,7 +19,7 @@ import org.jetbrains.kotlin.types.Variance
 
 object CirTypeFactory {
     object StandardTypes {
-        val ANY: CirClassType = createClassType(
+        val ANY: CirClassType = CirClassType.createInterned(
             classId = ANY_CLASS_ID,
             outerType = null,
             visibility = Visibilities.Public,
@@ -30,7 +28,6 @@ object CirTypeFactory {
         )
     }
 
-    private val classTypeInterner = Interner<CirClassType>()
     private val typeAliasTypeInterner = Interner<CirTypeAliasType>()
 
     fun create(source: KmType, typeResolver: CirTypeResolver): CirType {
@@ -50,7 +47,7 @@ object CirTypeFactory {
 
                 val clazz: CirProvided.Class = typeResolver.resolveClassifier(classId)
 
-                createClassType(
+                CirClassType.createInterned(
                     classId = classId,
                     outerType = outerType,
                     visibility = clazz.visibility,
@@ -83,24 +80,6 @@ object CirTypeFactory {
         }
     }
 
-    fun createClassType(
-        classId: CirEntityId,
-        outerType: CirClassType?,
-        visibility: Visibility,
-        arguments: List<CirTypeProjection>,
-        isMarkedNullable: Boolean
-    ): CirClassType {
-        return classTypeInterner.intern(
-            CirClassTypeImpl(
-                classifierId = classId,
-                outerType = outerType,
-                visibility = visibility,
-                arguments = arguments,
-                isMarkedNullable = isMarkedNullable
-            )
-        )
-    }
-
     fun createTypeAliasType(
         typeAliasId: CirEntityId,
         underlyingType: CirClassOrTypeAliasType,
@@ -122,7 +101,7 @@ object CirTypeFactory {
             return type
 
         val result = when (type) {
-            is CirClassType -> createClassType(
+            is CirClassType -> CirClassType.createInterned(
                 classId = type.classifierId,
                 outerType = type.outerType,
                 visibility = type.visibility,
@@ -182,7 +161,7 @@ object CirTypeFactory {
             if (!hasAbbreviationsInArguments && outerType == unabbreviatedOuterType)
                 type
             else
-                createClassType(
+                CirClassType.createInterned(
                     classId = type.classifierId,
                     outerType = unabbreviatedOuterType,
                     visibility = type.visibility,

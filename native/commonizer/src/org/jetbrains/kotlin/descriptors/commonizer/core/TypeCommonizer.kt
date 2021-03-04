@@ -43,7 +43,7 @@ private class ClassTypeCommonizer(private val classifiers: CirKnownClassifiers) 
     private val arguments = TypeArgumentListCommonizer(classifiers)
     private var isMarkedNullable = false
 
-    override fun commonizationResult() = CirTypeFactory.createClassType(
+    override fun commonizationResult() = CirClassType.createInterned(
         classId = classId,
         outerType = outerType.result,
         // N.B. The 'visibility' field in class types is needed ONLY for TA commonization. The class type constructed here is
@@ -127,7 +127,7 @@ private class TypeAliasTypeCommonizer(private val classifiers: CirKnownClassifie
             // type alias has been commonized to expect class, need to build type for expect class
             fun forClass(commonClass: CirClass) = object : CommonizedTypeAliasTypeBuilder {
                 override fun build(typeAliasId: CirEntityId, arguments: List<CirTypeProjection>, isMarkedNullable: Boolean) =
-                    CirTypeFactory.createClassType(
+                    CirClassType.createInterned(
                         classId = typeAliasId,
                         outerType = null, // there can't be outer type
                         visibility = commonClass.visibility,

@@ -40,7 +40,7 @@ private fun CirClassType.withCommonizedArguments(classifiers: CirKnownClassifier
     val newOuterType = existingOuterType?.let { it.withCommonizedArguments(classifiers) ?: return null }
 
     return if (newArguments !== existingArguments || newOuterType !== existingOuterType)
-        CirTypeFactory.createClassType(
+        CirClassType.createInterned(
             classId = classifierId,
             outerType = newOuterType,
             visibility = visibility,

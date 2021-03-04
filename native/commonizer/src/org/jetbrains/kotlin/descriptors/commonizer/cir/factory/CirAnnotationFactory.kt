@@ -27,7 +27,7 @@ object CirAnnotationFactory {
         val classId = CirEntityId.create(source.className)
         val clazz: CirProvided.Class = typeResolver.resolveClassifier(classId)
 
-        val type = CirTypeFactory.createClassType(
+        val type = CirClassType.createInterned(
             classId = classId,
             outerType = null, // annotation class can't be inner class
             visibility = clazz.visibility,

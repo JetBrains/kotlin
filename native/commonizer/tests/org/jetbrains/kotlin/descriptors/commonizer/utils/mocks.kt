@@ -38,7 +38,7 @@ internal fun mockTAType(
 internal fun mockClassType(
     classId: String,
     nullable: Boolean = false
-): CirClassType = CirTypeFactory.createClassType(
+): CirClassType = CirClassType.createInterned(
     classId = createValidClassifierId(classId),
     outerType = null,
     visibility = Visibilities.Public,

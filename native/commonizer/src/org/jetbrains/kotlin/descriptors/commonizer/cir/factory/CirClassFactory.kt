@@ -59,7 +59,7 @@ object CirClassFactory {
         isInner = false,
         isExternal = false
     ).apply {
-        val enumClassType = CirTypeFactory.createClassType(
+        val enumClassType = CirClassType.createInterned(
             classId = enumClassId,
             outerType = null,
             visibility = decodeVisibility(enumClass.flags),

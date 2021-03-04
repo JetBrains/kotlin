@@ -6,12 +6,8 @@
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirAnnotation
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirConstantValue
+import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirConstantValue.*
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirEntityId
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirName
-import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeFactory
 import org.jetbrains.kotlin.descriptors.commonizer.core.AnnotationsCommonizer.Companion.FALLBACK_MESSAGE
 import org.jetbrains.kotlin.descriptors.commonizer.utils.DEPRECATED_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMap
@@ -154,7 +150,7 @@ private class DeprecatedAnnotationCommonizer : Commonizer<CirAnnotation, CirAnno
             it.name to EnumValue(DEPRECATION_LEVEL_CLASS_ID, CirName.create(it.name))
         }
 
-        private fun buildAnnotationType(classId: CirEntityId) = CirTypeFactory.createClassType(
+        private fun buildAnnotationType(classId: CirEntityId) = CirClassType.createInterned(
             classId = classId,
             outerType = null,
             visibility = Visibilities.Public,

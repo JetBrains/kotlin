@@ -141,7 +141,7 @@ object CirTypeAliasExpander {
             makeNullableTypeIfNecessary(projection, argument)
         }
 
-        return CirTypeFactory.createClassType(
+        return CirClassType.createInterned(
             classId = type.classId,
             outerType = type.outerType?.let { expandClassType(expansion, it) },
             visibility = clazz.visibility,

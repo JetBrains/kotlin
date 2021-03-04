@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.descriptors.commonizer.cir
 
 import kotlinx.metadata.KmType
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.commonizer.utils.Interner
+import org.jetbrains.kotlin.descriptors.commonizer.utils.appendHashCode
+import org.jetbrains.kotlin.descriptors.commonizer.utils.hashCode
 import org.jetbrains.kotlin.types.Variance
 
 typealias CirTypeSignature = String
@@ -94,6 +97,26 @@ abstract class CirClassType : CirClassOrTypeAliasType(), CirHasVisibility {
         }
         super.appendDescriptionTo(builder, shortNameOnly = outerType != null)
     }
+
+    companion object {
+        fun createInterned(
+            classId: CirEntityId,
+            outerType: CirClassType?,
+            visibility: Visibility,
+            arguments: List<CirTypeProjection>,
+            isMarkedNullable: Boolean
+        ): CirClassType = interner.intern(
+            CirClassTypeInternedImpl(
+                classifierId = classId,
+                outerType = outerType,
+                visibility = visibility,
+                arguments = arguments,
+                isMarkedNullable = isMarkedNullable
+            )
+        )
+
+        private val interner = Interner<CirClassTypeInternedImpl>()
+    }
 }
 
 /**
@@ -130,3 +153,39 @@ private data class CirTypeParameterTypeInternedImpl(
     override val index: Int,
     override val isMarkedNullable: Boolean
 ) : CirTypeParameterType()
+
+private class CirClassTypeInternedImpl(
+    override val classifierId: CirEntityId,
+    override val outerType: CirClassType?,
+    override val visibility: Visibility, // visibility of the class descriptor
+    override val arguments: List<CirTypeProjection>,
+    override val isMarkedNullable: Boolean,
+) : CirClassType() {
+    // See also org.jetbrains.kotlin.types.KotlinType.cachedHashCode
+    private var cachedHashCode = 0
+
+    private fun computeHashCode() = hashCode(classifierId)
+        .appendHashCode(outerType)
+        .appendHashCode(visibility)
+        .appendHashCode(arguments)
+        .appendHashCode(isMarkedNullable)
+
+    override fun hashCode(): Int {
+        var currentHashCode = cachedHashCode
+        if (currentHashCode != 0) return currentHashCode
+
+        currentHashCode = computeHashCode()
+        cachedHashCode = currentHashCode
+        return currentHashCode
+    }
+
+    override fun equals(other: Any?): Boolean = when {
+        other === this -> true
+        other is CirClassType -> classifierId == other.classifierId
+                && isMarkedNullable == other.isMarkedNullable
+                && visibility == other.visibility
+                && arguments == other.arguments
+                && outerType == other.outerType
+        else -> false
+    }
+}
