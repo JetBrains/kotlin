@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.TargetProvider
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirName
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirPackageName
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirRoot
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.*
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ClassesToProcess.ClassEntry
 import org.jetbrains.kotlin.descriptors.commonizer.metadata.utils.SerializedMetadataLibraryProvider
@@ -115,7 +116,7 @@ class CirTreeMerger(
         targetProvider: TargetProvider,
         commonModuleInfos: Collection<ModuleInfo>
     ) {
-        rootNode.targetDeclarations[targetIndex] = CirRootFactory.create(targetProvider.target)
+        rootNode.targetDeclarations[targetIndex] = CirRoot.create(targetProvider.target)
 
         if (commonModuleInfos.isEmpty())
             return

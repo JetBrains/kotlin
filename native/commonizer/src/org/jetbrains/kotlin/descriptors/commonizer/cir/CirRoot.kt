@@ -9,4 +9,13 @@ import org.jetbrains.kotlin.descriptors.commonizer.CommonizerTarget
 
 interface CirRoot : CirDeclaration {
     val target: CommonizerTarget
+
+    companion object {
+        @Suppress("NOTHING_TO_INLINE")
+        inline fun create(target: CommonizerTarget): CirRoot = CirRootImpl(target)
+    }
 }
+
+data class CirRootImpl(
+    override val target: CommonizerTarget
+) : CirRoot

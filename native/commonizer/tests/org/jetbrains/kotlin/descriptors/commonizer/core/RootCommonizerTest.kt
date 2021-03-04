@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.descriptors.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.descriptors.commonizer.LeafCommonizerTarget
 import org.jetbrains.kotlin.descriptors.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirRoot
-import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirRootFactory
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.junit.Test
 
@@ -104,6 +103,6 @@ class RootCommonizerTest : AbstractCommonizerTest<CirRoot, CirRoot>() {
     override fun isEqual(a: CirRoot?, b: CirRoot?) = (a === b) || (a != null && b != null && a.target == b.target)
 
     private companion object {
-        fun CommonizerTarget.toMock() = CirRootFactory.create(target = this)
+        fun CommonizerTarget.toMock() = CirRoot.create(target = this)
     }
 }

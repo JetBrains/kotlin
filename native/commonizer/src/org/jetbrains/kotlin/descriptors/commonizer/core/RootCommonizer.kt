@@ -8,12 +8,11 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 import org.jetbrains.kotlin.descriptors.commonizer.LeafCommonizerTarget
 import org.jetbrains.kotlin.descriptors.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirRoot
-import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirRootFactory
 
 class RootCommonizer : AbstractStandardCommonizer<CirRoot, CirRoot>() {
     private val leafTargets = mutableSetOf<LeafCommonizerTarget>()
 
-    override fun commonizationResult() = CirRootFactory.create(
+    override fun commonizationResult() = CirRoot.create(
         target = SharedCommonizerTarget(leafTargets)
     )
 
