@@ -1,5 +1,6 @@
 package org.jetbrains.dokka.transformers.sources
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.model.DModule
@@ -9,7 +10,7 @@ interface AsyncSourceToDocumentableTranslator : SourceToDocumentableTranslator {
     suspend fun invokeSuspending(sourceSet: DokkaConfiguration.DokkaSourceSet, context: DokkaContext): DModule
 
     override fun invoke(sourceSet: DokkaConfiguration.DokkaSourceSet, context: DokkaContext): DModule =
-        runBlocking {
+        runBlocking(Dispatchers.Default) {
             invokeSuspending(sourceSet, context)
         }
 }
