@@ -107,9 +107,9 @@ abstract class KotlinGradleImportingTestCase : GradleImportingTestCase() {
         super.importProject()
     }
 
-    protected fun importProjectFromTestData(skipIndexing: Boolean? = null): List<VirtualFile> {
+    protected fun importProjectFromTestData(): List<VirtualFile> {
         val files = configureByFiles()
-        importProject(skipIndexing)
+        importProject()
         return files
     }
 
