@@ -20,7 +20,6 @@
       <root url="jar://$PROJECT_DIR$/out/artifacts/KotlinPlugin/lib/kotlin-compiler-plugins-scripting.jar!/" />
       <root url="jar://$PROJECT_DIR$/out/artifacts/KotlinPlugin/lib/kotlin-core.jar!/" />
       <root url="jar://$PROJECT_DIR$/out/artifacts/KotlinPlugin/lib/kotlin-eval4j.jar!/" />
-      <root url="jar://$PROJECT_DIR$/out/artifacts/KotlinPlugin/lib/kotlin-fir.jar!/" />
       <root url="jar://$PROJECT_DIR$/out/artifacts/KotlinPlugin/lib/kotlin-formatter.jar!/" />
       <root url="jar://$PROJECT_DIR$/out/artifacts/KotlinPlugin/lib/kotlin-frontend-independent.jar!/" />
       <root url="jar://$PROJECT_DIR$/out/artifacts/KotlinPlugin/lib/kotlin-git.jar!/" />
@@ -51,6 +50,7 @@
       <root url="jar://$PROJECT_DIR$/out/artifacts/KotlinPlugin/lib/kotlin-project-wizard-idea.jar!/" />
       <root url="jar://$PROJECT_DIR$/out/artifacts/KotlinPlugin/lib/kotlin-reflect.jar!/" />
       <root url="jar://$PROJECT_DIR$/out/artifacts/KotlinPlugin/lib/kotlin-repl.jar!/" />
+      <root url="jar://$PROJECT_DIR$/out/artifacts/KotlinPlugin/lib/kotlin-resources-descriptors.jar!/" />
       <root url="jar://$PROJECT_DIR$/out/artifacts/KotlinPlugin/lib/kotlin-script-runtime.jar!/" />
       <root url="jar://$PROJECT_DIR$/out/artifacts/KotlinPlugin/lib/kotlin-script-util.jar!/" />
       <root url="jar://$PROJECT_DIR$/out/artifacts/KotlinPlugin/lib/kotlin-scripting-common.jar!/" />
@@ -97,7 +97,6 @@
       <root url="jar://$PROJECT_DIR$/out/artifacts/KotlinPlugin/lib/kotlin-compiler-plugins-scripting.jar!/" />
       <root url="jar://$PROJECT_DIR$/out/artifacts/KotlinPlugin/lib/kotlin-core.jar!/" />
       <root url="jar://$PROJECT_DIR$/out/artifacts/KotlinPlugin/lib/kotlin-eval4j.jar!/" />
-      <root url="jar://$PROJECT_DIR$/out/artifacts/KotlinPlugin/lib/kotlin-fir.jar!/" />
       <root url="jar://$PROJECT_DIR$/out/artifacts/KotlinPlugin/lib/kotlin-formatter.jar!/" />
       <root url="jar://$PROJECT_DIR$/out/artifacts/KotlinPlugin/lib/kotlin-frontend-independent.jar!/" />
       <root url="jar://$PROJECT_DIR$/out/artifacts/KotlinPlugin/lib/kotlin-git.jar!/" />
@@ -128,6 +127,7 @@
       <root url="jar://$PROJECT_DIR$/out/artifacts/KotlinPlugin/lib/kotlin-project-wizard-idea.jar!/" />
       <root url="jar://$PROJECT_DIR$/out/artifacts/KotlinPlugin/lib/kotlin-reflect.jar!/" />
       <root url="jar://$PROJECT_DIR$/out/artifacts/KotlinPlugin/lib/kotlin-repl.jar!/" />
+      <root url="jar://$PROJECT_DIR$/out/artifacts/KotlinPlugin/lib/kotlin-resources-descriptors.jar!/" />
       <root url="jar://$PROJECT_DIR$/out/artifacts/KotlinPlugin/lib/kotlin-script-runtime.jar!/" />
       <root url="jar://$PROJECT_DIR$/out/artifacts/KotlinPlugin/lib/kotlin-script-util.jar!/" />
       <root url="jar://$PROJECT_DIR$/out/artifacts/KotlinPlugin/lib/kotlin-scripting-common.jar!/" />

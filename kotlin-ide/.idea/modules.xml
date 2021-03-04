@@ -855,12 +855,14 @@
       <module fileurl="file://$PROJECT_DIR$/compiler-plugins/kapt/kotlin.compiler-plugins.kapt.iml" filepath="$PROJECT_DIR$/compiler-plugins/kapt/kotlin.compiler-plugins.kapt.iml" />
       <module fileurl="file://$PROJECT_DIR$/compiler-plugins/kotlinx-serialization/kotlin.compiler-plugins.kotlinx-serialization.iml" filepath="$PROJECT_DIR$/compiler-plugins/kotlinx-serialization/kotlin.compiler-plugins.kotlinx-serialization.iml" />
       <module fileurl="file://$PROJECT_DIR$/compiler-plugins/noarg/kotlin.compiler-plugins.noarg.iml" filepath="$PROJECT_DIR$/compiler-plugins/noarg/kotlin.compiler-plugins.noarg.iml" />
+      <module fileurl="file://$PROJECT_DIR$/compiler-plugins/parcelize/kotlin.compiler-plugins.parcelize.iml" filepath="$PROJECT_DIR$/compiler-plugins/parcelize/kotlin.compiler-plugins.parcelize.iml" />
       <module fileurl="file://$PROJECT_DIR$/compiler-plugins/sam-with-receiver/kotlin.compiler-plugins.sam-with-receiver.iml" filepath="$PROJECT_DIR$/compiler-plugins/sam-with-receiver/kotlin.compiler-plugins.sam-with-receiver.iml" />
       <module fileurl="file://$PROJECT_DIR$/compiler-plugins/scripting/kotlin.compiler-plugins.scripting.iml" filepath="$PROJECT_DIR$/compiler-plugins/scripting/kotlin.compiler-plugins.scripting.iml" />
       <module fileurl="file://$PROJECT_DIR$/compiler-plugins/scripting-ide-services/kotlin.compiler-plugins.scripting-ide-services.iml" filepath="$PROJECT_DIR$/compiler-plugins/scripting-ide-services/kotlin.compiler-plugins.scripting-ide-services.iml" />
       <module fileurl="file://$PROJECT_DIR$/core/kotlin.core.iml" filepath="$PROJECT_DIR$/core/kotlin.core.iml" />
       <module fileurl="file://$PROJECT_DIR$/jvm-debugger/eval4j/kotlin.eval4j.iml" filepath="$PROJECT_DIR$/jvm-debugger/eval4j/kotlin.eval4j.iml" />
       <module fileurl="file://$PROJECT_DIR$/fir/kotlin.fir.iml" filepath="$PROJECT_DIR$/fir/kotlin.fir.iml" />
+      <module fileurl="file://$PROJECT_DIR$/kotlin.fir-all-tests/kotlin.fir-all-tests.iml" filepath="$PROJECT_DIR$/kotlin.fir-all-tests/kotlin.fir-all-tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/fir-low-level-api/kotlin.fir.fir-low-level-api.iml" filepath="$PROJECT_DIR$/fir-low-level-api/kotlin.fir.fir-low-level-api.iml" />
       <module fileurl="file://$PROJECT_DIR$/frontend-api/kotlin.fir.frontend-api.iml" filepath="$PROJECT_DIR$/frontend-api/kotlin.fir.frontend-api.iml" />
       <module fileurl="file://$PROJECT_DIR$/frontend-fir/kotlin.fir.frontend-fir.iml" filepath="$PROJECT_DIR$/frontend-fir/kotlin.fir.frontend-fir.iml" />
@@ -902,7 +904,6 @@
       <module fileurl="file://$PROJECT_DIR$/uast/uast-kotlin/kotlin.uast.uast-kotlin.iml" filepath="$PROJECT_DIR$/uast/uast-kotlin/kotlin.uast.uast-kotlin.iml" />
       <module fileurl="file://$PROJECT_DIR$/uast/uast-kotlin-idea/kotlin.uast.uast-kotlin-idea.iml" filepath="$PROJECT_DIR$/uast/uast-kotlin-idea/kotlin.uast.uast-kotlin-idea.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin-compiler-classpath/kotlin.util.compiler-classpath.iml" filepath="$PROJECT_DIR$/kotlin-compiler-classpath/kotlin.util.compiler-classpath.iml" />
-      <module fileurl="file://$PROJECT_DIR$/compiler-plugins/parcelize/kotlin.compiler-plugins.parcelize.iml" filepath="$PROJECT_DIR$/compiler-plugins/parcelize/kotlin.compiler-plugins.parcelize.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin.intellij-kotlin.iml" filepath="$PROJECT_DIR$/kotlin.intellij-kotlin.iml" />
     </modules>
   </component>

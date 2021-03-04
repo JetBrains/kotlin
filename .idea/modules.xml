@@ -1023,6 +1023,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-lang/debugger/intellij.c.debugger.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-lang/debugger/intellij.c.debugger.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-lang-dfa/intellij.c.dfa.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-lang-dfa/intellij.c.dfa.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/doxygen/intellij.c.doxygen.iml" filepath="$PROJECT_DIR$/intellij/CIDR/doxygen/intellij.c.doxygen.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-lang/features/intellij.c.features.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-lang/features/intellij.c.features.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-lang/plugin/intellij.c.plugin.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-lang/plugin/intellij.c.plugin.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-lang/testing/intellij.c.testing.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-lang/testing/intellij.c.testing.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/contrib/CFML/intellij.cfml.iml" filepath="$PROJECT_DIR$/intellij/contrib/CFML/intellij.cfml.iml" />
