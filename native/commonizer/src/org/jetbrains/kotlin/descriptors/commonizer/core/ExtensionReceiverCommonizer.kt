@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirExtensionReceiver
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirType
-import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirExtensionReceiverFactory
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirKnownClassifiers
 
 class ExtensionReceiverCommonizer(classifiers: CirKnownClassifiers) :
@@ -15,7 +14,7 @@ class ExtensionReceiverCommonizer(classifiers: CirKnownClassifiers) :
         wrappedCommonizerFactory = { TypeCommonizer(classifiers) },
         extractor = { it.type },
         builder = { receiverType ->
-            CirExtensionReceiverFactory.create(
+            CirExtensionReceiver.create(
                 annotations = emptyList(),
                 type = receiverType
             )
