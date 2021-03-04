@@ -41,10 +41,11 @@ import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) : FirPartialBodyResolveTransformer(transformer) {
-    private var containingClass: FirRegularClass? = null
+    private val containingClass: FirRegularClass?
+        get() = context.containers.asReversed().firstOrNull { it is FirRegularClass } as? FirRegularClass
+
     private val statusResolver: FirStatusResolver = FirStatusResolver(session, scopeSession)
 
     private fun FirDeclaration.visibilityForApproximation(): Visibility {
@@ -414,8 +415,6 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             dataFlowAnalyzer.enterClass()
         }
 
-        val oldContainingClass = containingClass
-        containingClass = regularClass
         val type = regularClass.defaultType()
         val result = withScopesForClass(regularClass.name, regularClass, type) {
             transformDeclarationContent(regularClass, data).single as FirRegularClass
@@ -430,7 +429,6 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             }
         }
 
-        containingClass = oldContainingClass
         return (@Suppress("UNCHECKED_CAST")
         result.compose())
     }
@@ -603,7 +601,8 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
 
     override fun transformConstructor(constructor: FirConstructor, data: ResolutionMode): CompositeTransformResult<FirDeclaration> {
         if (implicitTypeOnly) return constructor.compose()
-        if (constructor.isPrimary && containingClass?.classKind == ClassKind.ANNOTATION_CLASS) {
+        val container = context.containerIfAny as? FirRegularClass
+        if (constructor.isPrimary && container?.classKind == ClassKind.ANNOTATION_CLASS) {
             return withFirArrayOfCallTransformer {
                 @Suppress("UNCHECKED_CAST")
                 doTransformConstructor(constructor, data)
@@ -614,6 +613,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
     }
 
     private fun doTransformConstructor(constructor: FirConstructor, data: ResolutionMode): CompositeTransformResult<FirConstructor> {
+        val owningClass = context.containerIfAny as? FirRegularClass
         return context.withContainer(constructor) {
             transformer.replaceDeclarationResolvePhaseIfNeeded(constructor, transformerPhase)
             dataFlowAnalyzer.enterFunction(constructor)
@@ -622,9 +622,6 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                 .transformAnnotations(transformer, data)
                 .transformReceiverTypeRef(transformer, data)
                 .transformReturnTypeRef(transformer, data)
-
-            val containers = context.containers
-            val owningClass = containers[containers.lastIndex - 1].safeAs<FirRegularClass>()
 
             /*
              * Default values of constructor can't access members of constructing class
