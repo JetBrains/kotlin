@@ -48,7 +48,7 @@ open class FirBodyResolveTransformer(
 
     override fun transformFile(file: FirFile, data: ResolutionMode): CompositeTransformResult<FirFile> {
         checkSessionConsistency(file)
-        return context.withFile(file, session, components.scopeSession) {
+        return context.withFile(file, components) {
             file.replaceResolvePhase(transformerPhase)
             @Suppress("UNCHECKED_CAST")
             transformDeclarationContent(file, data) as CompositeTransformResult<FirFile>

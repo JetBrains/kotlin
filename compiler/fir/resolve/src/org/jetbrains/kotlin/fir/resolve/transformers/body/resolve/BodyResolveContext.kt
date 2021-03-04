@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
@@ -21,9 +21,11 @@ import org.jetbrains.kotlin.fir.resolve.transformers.withScopeCleanup
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.createImportingScopes
 import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirMemberTypeParameterScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.name.Name
 
 class BodyResolveContext(
@@ -239,8 +241,7 @@ class BodyResolveContext(
 
     internal inline fun <T> withFile(
         file: FirFile,
-        session: FirSession,
-        scopeSession: ScopeSession,
+        holder: SessionHolder,
         crossinline f: () -> T
     ): T {
         clear()
@@ -248,11 +249,111 @@ class BodyResolveContext(
         this.file = file
         return withScopeCleanup(mutableFileImportsScope) {
             withTowerDataCleanup {
-                val importingScopes = createImportingScopes(file, session, scopeSession)
+                val importingScopes = createImportingScopes(file, holder.session, holder.scopeSession)
                 mutableFileImportsScope += importingScopes
                 addNonLocalTowerDataElements(importingScopes.map { it.asTowerDataElement(isLocal = false) })
                 f()
             }
         }
+    }
+
+    inline fun <T> withRegularClass(
+        regularClass: FirRegularClass,
+        holder: SessionHolder,
+        crossinline f: () -> T
+    ): T {
+        storeClassIfNotNested(regularClass)
+        return withTowerModeCleanup {
+            if (!regularClass.isInner && containerIfAny is FirRegularClass) {
+                towerDataMode = if (regularClass.isCompanion) {
+                    FirTowerDataMode.COMPANION_OBJECT
+                } else {
+                    FirTowerDataMode.NESTED_CLASS
+                }
+            }
+
+            withScopesForClass(regularClass.name, regularClass, regularClass.defaultType(), holder) {
+                f()
+            }
+        }
+    }
+
+    inline fun <T> withScopesForClass(
+        labelName: Name?,
+        owner: FirClass<*>,
+        type: ConeKotlinType,
+        holder: SessionHolder,
+        f: () -> T
+    ): T {
+        val towerElementsForClass = holder.collectTowerDataElementsForClass(owner, type)
+
+        val base = towerDataContext.addNonLocalTowerDataElements(towerElementsForClass.superClassesStaticsAndCompanionReceivers)
+        val statics = base
+            .addNonLocalScopeIfNotNull(towerElementsForClass.companionStaticScope)
+            .addNonLocalScopeIfNotNull(towerElementsForClass.staticScope)
+
+        val companionReceiver = towerElementsForClass.companionReceiver
+        val staticsAndCompanion = if (companionReceiver == null) statics else base
+            .addReceiver(null, companionReceiver)
+            .addNonLocalScopeIfNotNull(towerElementsForClass.companionStaticScope)
+            .addNonLocalScopeIfNotNull(towerElementsForClass.staticScope)
+
+        val typeParameterScope = (owner as? FirRegularClass)?.let(this::createTypeParameterScope)
+
+        val forMembersResolution =
+            staticsAndCompanion
+                .addReceiver(labelName, towerElementsForClass.thisReceiver)
+                .addNonLocalScopeIfNotNull(typeParameterScope)
+
+        val scopeForConstructorHeader =
+            staticsAndCompanion.addNonLocalScopeIfNotNull(typeParameterScope)
+
+        val newTowerDataContextForStaticNestedClasses =
+            if ((owner as? FirRegularClass)?.classKind?.isSingleton == true)
+                forMembersResolution
+            else
+                staticsAndCompanion
+
+        val constructor = (owner as? FirRegularClass)?.declarations?.firstOrNull { it is FirConstructor } as? FirConstructor
+        val (primaryConstructorPureParametersScope, primaryConstructorAllParametersScope) =
+            if (constructor?.isPrimary == true) {
+                constructor.scopesWithPrimaryConstructorParameters(owner)
+            } else {
+                null to null
+            }
+
+        val newContexts = FirTowerDataContextsForClassParts(
+            forMembersResolution,
+            newTowerDataContextForStaticNestedClasses,
+            statics,
+            scopeForConstructorHeader,
+            primaryConstructorPureParametersScope,
+            primaryConstructorAllParametersScope
+        )
+
+        return withNewTowerDataForClassParts(newContexts) {
+            f()
+        }
+    }
+
+    fun createTypeParameterScope(declaration: FirMemberDeclaration): FirMemberTypeParameterScope? {
+        if (declaration.typeParameters.isEmpty()) return null
+        return FirMemberTypeParameterScope(declaration)
+    }
+
+    fun FirConstructor.scopesWithPrimaryConstructorParameters(
+        ownerClass: FirClass<*>
+    ): Pair<FirLocalScope, FirLocalScope> {
+        var parameterScope = FirLocalScope()
+        var allScope = FirLocalScope()
+        val properties = ownerClass.declarations.filterIsInstance<FirProperty>().associateBy { it.name }
+        for (parameter in valueParameters) {
+            allScope = allScope.storeVariable(parameter)
+            val property = properties[parameter.name]
+            if (property?.source?.kind != FirFakeSourceElementKind.PropertyFromParameter) {
+                parameterScope = parameterScope.storeVariable(parameter)
+            }
+        }
+        return parameterScope to allScope
     }
 }

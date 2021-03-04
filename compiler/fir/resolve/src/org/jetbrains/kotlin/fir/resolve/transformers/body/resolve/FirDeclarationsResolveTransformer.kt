@@ -98,13 +98,15 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
 
     protected fun createTypeParameterScope(declaration: FirMemberDeclaration): FirMemberTypeParameterScope? {
         if (declaration.typeParameters.isEmpty()) return null
+        doTransformTypeParameters(declaration)
+        return FirMemberTypeParameterScope(declaration)
+    }
 
+    private fun doTransformTypeParameters(declaration: FirMemberDeclaration) {
         for (typeParameter in declaration.typeParameters) {
             (typeParameter as? FirTypeParameter)?.let { transformer.replaceDeclarationResolvePhaseIfNeeded(it, FirResolvePhase.STATUS) }
             typeParameter.transformChildren(transformer, ResolutionMode.ContextIndependent)
         }
-
-        return FirMemberTypeParameterScope(declaration)
     }
 
     protected inline fun <T> withTypeParametersOf(declaration: FirMemberDeclaration, crossinline l: () -> T): T {
@@ -386,21 +388,12 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
     }
 
     override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): CompositeTransformResult<FirStatement> {
-        context.storeClassIfNotNested(regularClass)
-
         if (regularClass.isLocal && regularClass !in context.targetedLocalClasses) {
             return regularClass.runAllPhasesForLocalClass(transformer, components, data).compose()
         }
 
-        return context.withTowerModeCleanup {
-            if (!regularClass.isInner && context.containerIfAny is FirRegularClass) {
-                if (regularClass.isCompanion) {
-                    context.towerDataMode = FirTowerDataMode.COMPANION_OBJECT
-                } else {
-                    context.towerDataMode = FirTowerDataMode.NESTED_CLASS
-                }
-            }
-
+        doTransformTypeParameters(regularClass)
+        return context.withRegularClass(regularClass, components) {
             doTransformRegularClass(regularClass, data)
         }
     }
@@ -415,10 +408,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             dataFlowAnalyzer.enterClass()
         }
 
-        val type = regularClass.defaultType()
-        val result = withScopesForClass(regularClass.name, regularClass, type) {
-            transformDeclarationContent(regularClass, data).single as FirRegularClass
-        }
+        val result = transformDeclarationContent(regularClass, data).single as FirRegularClass
 
         if (notAnalyzed) {
             if (!implicitTypeOnly) {
