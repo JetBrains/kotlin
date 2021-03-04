@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.descriptors.commonizer.cir.factory
 
 import gnu.trove.TIntObjectHashMap
 import kotlinx.metadata.*
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.commonizer.core.computeExpandedType
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirProvided
@@ -19,16 +18,6 @@ import org.jetbrains.kotlin.descriptors.commonizer.utils.*
 import org.jetbrains.kotlin.types.Variance
 
 object CirTypeFactory {
-    object StandardTypes {
-        val ANY: CirClassType = CirClassType.createInterned(
-            classId = ANY_CLASS_ID,
-            outerType = null,
-            visibility = Visibilities.Public,
-            arguments = emptyList(),
-            isMarkedNullable = false
-        )
-    }
-
     fun create(source: KmType, typeResolver: CirTypeResolver): CirType {
         @Suppress("NAME_SHADOWING")
         val source = source.abbreviatedType ?: source

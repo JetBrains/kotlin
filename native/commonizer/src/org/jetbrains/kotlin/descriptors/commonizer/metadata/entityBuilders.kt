@@ -10,7 +10,6 @@ import kotlinx.metadata.klib.*
 import org.jetbrains.kotlin.backend.common.serialization.metadata.DynamicTypeDeserializer
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
-import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeFactory
 import org.jetbrains.kotlin.descriptors.commonizer.core.computeExpandedType
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.*
 import org.jetbrains.kotlin.descriptors.commonizer.metadata.TypeAliasExpansion.*
@@ -103,7 +102,7 @@ internal fun CirClass.buildClass(
 
     val supertypes = supertypes
     if (supertypes.isEmpty() && className !in SPECIAL_CLASS_WITHOUT_SUPERTYPES_CLASS_NAMES)
-        clazz.supertypes += CirTypeFactory.StandardTypes.ANY.buildType(context)
+        clazz.supertypes += CirStandardTypes.ANY.buildType(context)
     else
         supertypes.mapTo(clazz.supertypes) { it.buildType(context) }
 }
