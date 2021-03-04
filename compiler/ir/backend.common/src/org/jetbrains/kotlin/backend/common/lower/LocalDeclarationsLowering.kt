@@ -726,6 +726,8 @@ class LocalDeclarationsLowering(
             )
             newDeclaration.recordTransformedValueParameters(constructorContext)
 
+            newDeclaration.annotations = oldDeclaration.annotations
+
             newDeclaration.metadata = oldDeclaration.metadata
 
             transformedDeclarations[oldDeclaration] = newDeclaration
