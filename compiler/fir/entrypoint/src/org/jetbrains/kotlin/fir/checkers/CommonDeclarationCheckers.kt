@@ -63,7 +63,6 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirMemberPropertiesChecker,
         FirNestedClassChecker,
         FirInlineClassDeclarationChecker,
-        FirInnerClassInsideInlineClassChecker,
     )
 
     override val constructorCheckers: Set<FirConstructorChecker> = setOf(

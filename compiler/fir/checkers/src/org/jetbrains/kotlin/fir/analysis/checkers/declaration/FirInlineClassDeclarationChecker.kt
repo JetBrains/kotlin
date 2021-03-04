@@ -5,24 +5,27 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.isSupertypeOf
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClass
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.calls.isPotentiallyArray
-import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
-import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
+import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 
 object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
+
+    private val reservedFunctionNames = setOf("box", "unbox", "equals", "hashCode")
+    private val kotlinCloneableType = ClassId.fromString("kotlin/Cloneable").constructClassLikeType(emptyArray(), false)
+    private val javaCloneableType = ClassId.fromString("java/lang/Cloneable").constructClassLikeType(emptyArray(), false)
+
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!declaration.isInlineOrValueClass())
             return
@@ -38,8 +41,6 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
         for (supertypeEntry in declaration.superTypeRefs) {
             if (supertypeEntry.toRegularClass(context.session)?.isInterface != true) {
                 reporter.reportOn(supertypeEntry.source, FirErrors.INLINE_CLASS_CANNOT_EXTEND_CLASSES, context)
-            } else if (supertypeEntry.implementedByDelegation()) {
-                reporter.reportOn(supertypeEntry.source, FirErrors.INLINE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION, context)
             }
         }
 
@@ -47,47 +48,113 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
             reporter.reportOn(declaration.source, FirErrors.VALUE_CLASS_CANNOT_BE_CLONEABLE, context)
         }
 
-        declaration.declarations.filter { it.isSecondaryConstructorWithBody() }.forEach {
-            reporter.reportOn((it as FirConstructor).body!!.source, FirErrors.SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_INLINE_CLASS, context)
+        var primaryConstructor: FirConstructor? = null
+        var primaryConstructorParameter: FirValueParameter? = null
+        var primaryConstructorProperty: FirProperty? = null
+
+        for (innerDeclaration in declaration.declarations) {
+            when (innerDeclaration) {
+                is FirConstructor -> {
+                    when {
+                        innerDeclaration.isPrimary -> {
+                            primaryConstructor = innerDeclaration
+                            primaryConstructorParameter = innerDeclaration.valueParameters.singleOrNull()
+                        }
+
+                        innerDeclaration.body != null -> {
+                            val bodySource = innerDeclaration.body!!.source
+                            reporter.reportOn(bodySource, FirErrors.SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_INLINE_CLASS, context)
+                        }
+                    }
+                }
+                is FirRegularClass -> {
+                    if (innerDeclaration.isInner) {
+                        reporter.reportOn(innerDeclaration.source, FirErrors.INNER_CLASS_INSIDE_INLINE_CLASS, context)
+                    }
+                }
+                is FirSimpleFunction -> {
+                    val functionName = innerDeclaration.name.asString()
+
+                    if (functionName in reservedFunctionNames) {
+                        reporter.reportOn(innerDeclaration.source, FirErrors.RESERVED_MEMBER_INSIDE_INLINE_CLASS, functionName, context)
+                    }
+                }
+                is FirField -> {
+                    if (innerDeclaration.isSynthetic) {
+                        val delegatedTypeRefSource = (innerDeclaration.returnTypeRef as FirResolvedTypeRef).delegatedTypeRef?.source
+                        reporter.reportOn(delegatedTypeRefSource, FirErrors.INLINE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION, context)
+                    }
+                }
+                is FirProperty -> {
+                    if (innerDeclaration.isRelatedToParameter(primaryConstructorParameter)) {
+                        primaryConstructorProperty = innerDeclaration
+                    } else {
+                        when {
+                            innerDeclaration.delegate != null ->
+                                reporter.reportOn(
+                                    innerDeclaration.delegate!!.source,
+                                    FirErrors.DELEGATED_PROPERTY_INSIDE_INLINE_CLASS,
+                                    context
+                                )
+
+                            innerDeclaration.hasBackingField &&
+                                    innerDeclaration.source?.kind !is FirFakeSourceElementKind ->
+                                reporter.reportOn(
+                                    innerDeclaration.source,
+                                    FirErrors.PROPERTY_WITH_BACKING_FIELD_INSIDE_INLINE_CLASS,
+                                    context
+                                )
+                        }
+                    }
+                }
+            }
         }
 
-        val primaryConstructor = declaration.getRealPrimaryConstructor() ?: run {
+        if (primaryConstructor?.source?.kind !is FirRealSourceElementKind) {
             reporter.reportOn(declaration.source, FirErrors.ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_INLINE_CLASS, context)
             return
         }
 
-        val parameter = primaryConstructor.valueParameters.singleOrNull() ?: run {
+        if (primaryConstructorParameter == null) {
             reporter.reportOn(primaryConstructor.source, FirErrors.INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE, context)
             return
         }
 
         when {
-            parameter.isNotFinalReadOnly(declaration) ->
-                reporter.reportOn(parameter.source, FirErrors.INLINE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER, context)
-
-            parameter.returnTypeRef.isInapplicableParameterType() ->
+            primaryConstructorParameter.isNotFinalReadOnly(primaryConstructorProperty) ->
                 reporter.reportOn(
-                    parameter.returnTypeRef.source,
-                    FirErrors.INLINE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE,
-                    parameter.returnTypeRef.coneType,
+                    primaryConstructorParameter.source,
+                    FirErrors.INLINE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER,
                     context
                 )
 
-            parameter.returnTypeRef.coneType.isRecursiveInlineClassType(context.session) ->
-                reporter.reportOn(parameter.returnTypeRef.source, FirErrors.INLINE_CLASS_CANNOT_BE_RECURSIVE, context)
+            primaryConstructorParameter.returnTypeRef.isInapplicableParameterType() ->
+                reporter.reportOn(
+                    primaryConstructorParameter.returnTypeRef.source,
+                    FirErrors.INLINE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE,
+                    primaryConstructorParameter.returnTypeRef.coneType,
+                    context
+                )
+
+            primaryConstructorParameter.returnTypeRef.coneType.isRecursiveInlineClassType(context.session) ->
+                reporter.reportOn(
+                    primaryConstructorParameter.returnTypeRef.source,
+                    FirErrors.INLINE_CLASS_CANNOT_BE_RECURSIVE,
+                    context
+                )
         }
     }
 
-    private fun FirDeclaration.isSecondaryConstructorWithBody() =
-        this is FirConstructor && !isPrimary && body != null
+    private fun FirProperty.isRelatedToParameter(parameter: FirValueParameter?) =
+        name == parameter?.name && source?.kind is FirFakeSourceElementKind
 
-    private fun FirValueParameter.isNotFinalReadOnly(declaration: FirRegularClass): Boolean {
-        val associatedProperty = declaration.getFirstPrimaryConstructorProperty() ?: return true
+    private fun FirValueParameter.isNotFinalReadOnly(primaryConstructorProperty: FirProperty?): Boolean {
+        if (primaryConstructorProperty == null) return true
 
         val modifierList = with(FirModifierList) { source.getModifierList() }
         val isOpen = modifierList?.modifiers?.any { it.token == KtTokens.OPEN_KEYWORD } == true
 
-        return isVararg || !associatedProperty.isVal || isOpen
+        return isVararg || !primaryConstructorProperty.isVal || isOpen
     }
 
     private fun FirTypeRef.isInapplicableParameterType() =
@@ -111,7 +178,8 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
         val asRegularClass = this.toRegularClass(session) ?: return false
 
         return asRegularClass.isInlineOrValueClass() &&
-                asRegularClass.getRealPrimaryConstructor()
+                asRegularClass.primaryConstructor
+                    ?.takeIf { it.source?.kind is FirRealSourceElementKind }
                     ?.valueParameters
                     ?.firstOrNull()
                     ?.returnTypeRef
@@ -119,17 +187,11 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
                     ?.isRecursiveInlineClassType(visited, session) == true
     }
 
-    private fun FirTypeRef.implementedByDelegation() =
-        source?.let {
-            it.treeStructure.getParent(it.lighterASTNode)?.tokenType == KtNodeTypes.DELEGATED_SUPER_TYPE_ENTRY
-        } ?: false
-
     private fun FirRegularClass.isSubtypeOfCloneable(context: CheckerContext): Boolean {
-        val kotlinCloneable = ConeClassLikeLookupTagImpl(ClassId.fromString("kotlin/Cloneable"))
-            .toFirRegularClass(context.session)
-        val javaCloneable = ConeClassLikeLookupTagImpl(ClassId.fromString("java/lang/Cloneable"))
-            .toFirRegularClass(context.session)
+        val coneType = this.defaultType()
+        val typeContext = context.session.typeContext
 
-        return kotlinCloneable?.isSupertypeOf(this) == true || javaCloneable?.isSupertypeOf(this) == true
+        return AbstractTypeChecker.isSubtypeOf(typeContext, coneType, kotlinCloneableType) ||
+                AbstractTypeChecker.isSubtypeOf(typeContext, coneType, javaCloneableType)
     }
 }

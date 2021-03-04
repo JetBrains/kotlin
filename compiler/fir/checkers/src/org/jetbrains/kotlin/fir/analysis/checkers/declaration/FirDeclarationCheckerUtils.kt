@@ -188,14 +188,3 @@ internal fun FirRegularClass.isInlineOrValueClass(): Boolean {
     val modifierList = with(FirModifierList) { source.getModifierList() }
     return isInline || modifierList?.modifiers?.any { it.token == KtTokens.VALUE_KEYWORD } == true
 }
-
-internal fun FirRegularClass.getRealPrimaryConstructor() =
-    declarations.firstOrNull { it is FirConstructor && it.isPrimary && it.source?.kind !is FirFakeSourceElementKind }
-            as? FirConstructor
-
-internal fun FirRegularClass.getFirstPrimaryConstructorProperty(): FirProperty? {
-    val parameter = getRealPrimaryConstructor()?.valueParameters?.firstOrNull() ?: return null
-
-    return declarations.find { it is FirProperty && it.name == parameter.name && it.source?.kind is FirFakeSourceElementKind }
-            as? FirProperty
-}
