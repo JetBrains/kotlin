@@ -9,8 +9,8 @@ import kotlinx.metadata.Flag
 import kotlinx.metadata.KmProperty
 import kotlinx.metadata.klib.annotations
 import kotlinx.metadata.klib.setterAnnotations
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirAnnotation
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirPropertySetter
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirPropertySetterImpl
@@ -41,7 +41,7 @@ object CirPropertySetterFactory {
     fun create(
         annotations: List<CirAnnotation>,
         parameterAnnotations: List<CirAnnotation>,
-        visibility: DescriptorVisibility,
+        visibility: Visibility,
         isDefault: Boolean,
         isExternal: Boolean,
         isInline: Boolean
@@ -59,11 +59,11 @@ object CirPropertySetterFactory {
     }
 
     @Suppress("NOTHING_TO_INLINE")
-    inline fun createDefaultNoAnnotations(visibility: DescriptorVisibility): CirPropertySetter = create(
+    inline fun createDefaultNoAnnotations(visibility: Visibility): CirPropertySetter = create(
         annotations = emptyList(),
         parameterAnnotations = emptyList(),
         visibility = visibility,
-        isDefault = visibility == DescriptorVisibilities.PUBLIC,
+        isDefault = visibility == Visibilities.Public,
         isExternal = false,
         isInline = false
     )

@@ -7,14 +7,14 @@ package org.jetbrains.kotlin.descriptors.commonizer.cir.impl
 
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 
 data class CirFunctionImpl(
     override val annotations: List<CirAnnotation>,
     override val name: CirName,
     override val typeParameters: List<CirTypeParameter>,
-    override val visibility: DescriptorVisibility,
+    override val visibility: Visibility,
     override val modality: Modality,
     override val containingClass: CirContainingClass?,
     override var valueParameters: List<CirValueParameter>,

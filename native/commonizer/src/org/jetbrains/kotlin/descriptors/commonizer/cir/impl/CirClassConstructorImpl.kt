@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.cir.impl
 
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 
 data class CirClassConstructorImpl(
     override val annotations: List<CirAnnotation>,
     override val typeParameters: List<CirTypeParameter>,
-    override val visibility: DescriptorVisibility,
+    override val visibility: Visibility,
     override val containingClass: CirContainingClass,
     override var valueParameters: List<CirValueParameter>,
     override var hasStableParameterNames: Boolean,

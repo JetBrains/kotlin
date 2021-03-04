@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.descriptors.commonizer.cir.factory
 import kotlinx.metadata.Flag
 import kotlinx.metadata.KmConstructor
 import kotlinx.metadata.klib.annotations
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirClassConstructorImpl
 import org.jetbrains.kotlin.descriptors.commonizer.metadata.decodeVisibility
@@ -31,7 +31,7 @@ object CirClassConstructorFactory {
     inline fun create(
         annotations: List<CirAnnotation>,
         typeParameters: List<CirTypeParameter>,
-        visibility: DescriptorVisibility,
+        visibility: Visibility,
         containingClass: CirContainingClass,
         valueParameters: List<CirValueParameter>,
         hasStableParameterNames: Boolean,

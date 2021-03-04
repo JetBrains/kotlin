@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeFactory
 import org.jetbrains.kotlin.descriptors.commonizer.core.CommonizedTypeAliasAnswer.Companion.FAILURE_MISSING_IN_SOME_TARGET
@@ -39,7 +39,7 @@ class TypeCommonizer(private val classifiers: CirKnownClassifiers) : AbstractSta
 private class ClassTypeCommonizer(private val classifiers: CirKnownClassifiers) : AbstractStandardCommonizer<CirClassType, CirClassType>() {
     private lateinit var classId: CirEntityId
     private val outerType = OuterClassTypeCommonizer(classifiers)
-    private lateinit var anyVisibility: DescriptorVisibility
+    private lateinit var anyVisibility: Visibility
     private val arguments = TypeArgumentListCommonizer(classifiers)
     private var isMarkedNullable = false
 

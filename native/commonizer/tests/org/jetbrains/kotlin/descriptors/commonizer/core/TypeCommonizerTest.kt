@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirClassFactory
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeAliasFactory
@@ -478,7 +480,7 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
                         annotations = emptyList(),
                         name = type.classifierId.relativeNameSegments.last(),
                         typeParameters = emptyList(),
-                        visibility = DescriptorVisibilities.PUBLIC,
+                        visibility = Visibilities.Public,
                         modality = Modality.FINAL,
                         kind = ClassKind.CLASS,
                         companion = null,
@@ -502,7 +504,7 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
                         annotations = emptyList(),
                         name = type.classifierId.relativeNameSegments.last(),
                         typeParameters = emptyList(),
-                        visibility = DescriptorVisibilities.PUBLIC,
+                        visibility = Visibilities.Public,
                         underlyingType = type.underlyingType,
                         expandedType = computeExpandedType(type.underlyingType)
                     )

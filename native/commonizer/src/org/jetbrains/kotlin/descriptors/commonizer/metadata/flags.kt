@@ -99,12 +99,12 @@ internal fun CirTypeAlias.typeAliasFlags(): Flags =
     )
 
 @Suppress("NOTHING_TO_INLINE")
-internal inline fun decodeVisibility(flags: Flags): DescriptorVisibility =
+internal inline fun decodeVisibility(flags: Flags): Visibility =
     when {
-        Flag.Common.IS_PUBLIC(flags) -> DescriptorVisibilities.PUBLIC
-        Flag.Common.IS_PROTECTED(flags) -> DescriptorVisibilities.PROTECTED
-        Flag.Common.IS_INTERNAL(flags) -> DescriptorVisibilities.INTERNAL
-        Flag.Common.IS_PRIVATE(flags) -> DescriptorVisibilities.PRIVATE
+        Flag.Common.IS_PUBLIC(flags) -> Visibilities.Public
+        Flag.Common.IS_PROTECTED(flags) -> Visibilities.Protected
+        Flag.Common.IS_INTERNAL(flags) -> Visibilities.Internal
+        Flag.Common.IS_PRIVATE(flags) -> Visibilities.Private
         else -> error("Can't decode visibility from flags: $flags")
     }
 
@@ -156,10 +156,10 @@ private inline val CirProperty.hasAnnotationsFlag: Flag?
 
 private inline val CirHasVisibility.visibilityFlag: Flag
     get() = when (visibility) {
-        DescriptorVisibilities.PUBLIC -> Flag.Common.IS_PUBLIC
-        DescriptorVisibilities.PROTECTED -> Flag.Common.IS_PROTECTED
-        DescriptorVisibilities.INTERNAL -> Flag.Common.IS_INTERNAL
-        DescriptorVisibilities.PRIVATE -> Flag.Common.IS_PRIVATE
+        Visibilities.Public -> Flag.Common.IS_PUBLIC
+        Visibilities.Protected -> Flag.Common.IS_PROTECTED
+        Visibilities.Internal -> Flag.Common.IS_INTERNAL
+        Visibilities.Private -> Flag.Common.IS_PRIVATE
         else -> error("Unexpected visibility: $this")
     }
 

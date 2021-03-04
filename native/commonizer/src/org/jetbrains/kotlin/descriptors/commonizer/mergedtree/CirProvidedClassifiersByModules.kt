@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.descriptors.commonizer.mergedtree
 
 import com.intellij.util.containers.FactoryMap
 import gnu.trove.THashMap
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.commonizer.ModulesProvider
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirName
@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.library.metadata.parsePackageFragment
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
-import org.jetbrains.kotlin.serialization.deserialization.descriptorVisibility
 import org.jetbrains.kotlin.types.Variance
 
 internal class CirProvidedClassifiersByModules private constructor(
@@ -63,7 +62,7 @@ internal class CirProvidedClassifiersByModules private constructor(
             return CirProvidedClassifiersByModules(hasForwardDeclarations, classifiers)
         }
 
-        private val FALLBACK_FORWARD_DECLARATION_CLASS = CirProvided.Class(emptyList(), DescriptorVisibilities.PUBLIC)
+        private val FALLBACK_FORWARD_DECLARATION_CLASS = CirProvided.Class(emptyList(), Visibilities.Public)
     }
 }
 
@@ -137,7 +136,7 @@ private fun readClass(
         typeParameterProtos = classProto.typeParameterList,
         typeParameterIndexOffset = typeParameterIndexOffset
     )
-    val visibility = ProtoEnumFlags.descriptorVisibility(Flags.VISIBILITY.get(classProto.flags))
+    val visibility = ProtoEnumFlags.visibility(Flags.VISIBILITY.get(classProto.flags))
     val clazz = CirProvided.Class(typeParameters, visibility)
 
     consumer(classId, clazz)

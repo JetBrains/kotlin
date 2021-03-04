@@ -5,8 +5,12 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.*
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Visibilities.Internal
+import org.jetbrains.kotlin.descriptors.Visibilities.Local
+import org.jetbrains.kotlin.descriptors.Visibilities.Private
+import org.jetbrains.kotlin.descriptors.Visibilities.Protected
+import org.jetbrains.kotlin.descriptors.Visibilities.Public
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirPropertySetter
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirPropertySetterFactory
 import org.junit.Test
@@ -21,79 +25,79 @@ class PropertySetterCommonizerTest : AbstractCommonizerTest<CirPropertySetter?, 
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun missingAndPublic() = doTestFailure(
-        null, null, null, PUBLIC
+        null, null, null, Public
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun publicAndMissing() = doTestFailure(
-        PUBLIC, PUBLIC, PUBLIC, null
+        Public, Public, Public, null
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun protectedAndMissing() = doTestFailure(
-        PROTECTED, PROTECTED, null
+        Protected, Protected, null
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun missingAndInternal() = doTestFailure(
-        null, null, INTERNAL
+        null, null, Internal
     )
 
     @Test
     fun publicOnly() = doTestSuccess(
-        expected = PUBLIC,
-        PUBLIC, PUBLIC, PUBLIC
+        expected = Public,
+        Public, Public, Public
     )
 
     @Test
     fun protectedOnly() = doTestSuccess(
-        expected = PROTECTED,
-        PROTECTED, PROTECTED, PROTECTED
+        expected = Protected,
+        Protected, Protected, Protected
     )
 
     @Test
     fun internalOnly() = doTestSuccess(
-        expected = INTERNAL,
-        INTERNAL, INTERNAL, INTERNAL
+        expected = Internal,
+        Internal, Internal, Internal
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun privateOnly() = doTestFailure(
-        PRIVATE
+        Private
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun publicAndProtected() = doTestFailure(
-        PUBLIC, PUBLIC, PROTECTED
+        Public, Public, Protected
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun publicAndInternal() = doTestFailure(
-        PUBLIC, PUBLIC, INTERNAL
+        Public, Public, Internal
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun protectedAndInternal() = doTestFailure(
-        PROTECTED, PROTECTED, INTERNAL
+        Protected, Protected, Internal
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun publicAndPrivate() = doTestFailure(
-        PUBLIC, PUBLIC, PRIVATE
+        Public, Public, Private
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun somethingUnexpected() = doTestFailure(
-        PUBLIC, LOCAL
+        Public, Local
     )
 
-    private fun doTestSuccess(expected: DescriptorVisibility?, vararg variants: DescriptorVisibility?) =
+    private fun doTestSuccess(expected: Visibility?, vararg variants: Visibility?) =
         super.doTestSuccess(
             expected = expected?.let { CirPropertySetterFactory.createDefaultNoAnnotations(expected) },
             *variants.map { it?.let(CirPropertySetterFactory::createDefaultNoAnnotations) }.toTypedArray()
         )
 
-    private fun doTestFailure(vararg variants: DescriptorVisibility?) =
+    private fun doTestFailure(vararg variants: Visibility?) =
         super.doTestFailure(
             *variants.map { it?.let(CirPropertySetterFactory::createDefaultNoAnnotations) }.toTypedArray(),
             shouldFailOnFirstVariant = false

@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.descriptors.commonizer.cir.factory
 
 import gnu.trove.TIntObjectHashMap
 import kotlinx.metadata.*
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirClassTypeImpl
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirTypeAliasTypeImpl
@@ -24,7 +24,7 @@ object CirTypeFactory {
         val ANY: CirClassType = createClassType(
             classId = ANY_CLASS_ID,
             outerType = null,
-            visibility = DescriptorVisibilities.PUBLIC,
+            visibility = Visibilities.Public,
             arguments = emptyList(),
             isMarkedNullable = false
         )
@@ -87,7 +87,7 @@ object CirTypeFactory {
     fun createClassType(
         classId: CirEntityId,
         outerType: CirClassType?,
-        visibility: DescriptorVisibility,
+        visibility: Visibility,
         arguments: List<CirTypeProjection>,
         isMarkedNullable: Boolean
     ): CirClassType {

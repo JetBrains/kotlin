@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.cir.impl
 
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClassType
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirTypeProjection
@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.utils.hashCode
 data class CirClassTypeImpl(
     override val classifierId: CirEntityId,
     override val outerType: CirClassType?,
-    override val visibility: DescriptorVisibility, // visibility of the class descriptor
+    override val visibility: Visibility, // visibility of the class descriptor
     override val arguments: List<CirTypeProjection>,
     override val isMarkedNullable: Boolean,
 ) : CirClassType() {

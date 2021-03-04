@@ -41,7 +41,7 @@ internal fun mockClassType(
 ): CirClassType = CirTypeFactory.createClassType(
     classId = createValidClassifierId(classId),
     outerType = null,
-    visibility = DescriptorVisibilities.PUBLIC,
+    visibility = Visibilities.Public,
     arguments = emptyList(),
     isMarkedNullable = nullable
 )
@@ -60,7 +60,7 @@ internal val MOCK_CLASSIFIERS = CirKnownClassifiers(
                     annotations = emptyList(),
                     name = CirName.create("Any"),
                     typeParameters = emptyList(),
-                    visibility = DescriptorVisibilities.PUBLIC,
+                    visibility = Visibilities.Public,
                     modality = Modality.OPEN,
                     kind = ClassKind.CLASS,
                     companion = null,

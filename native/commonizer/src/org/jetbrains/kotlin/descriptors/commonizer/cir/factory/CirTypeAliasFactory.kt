@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.descriptors.commonizer.cir.factory
 
 import kotlinx.metadata.KmTypeAlias
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirTypeAliasImpl
 import org.jetbrains.kotlin.descriptors.commonizer.metadata.decodeVisibility
@@ -32,7 +32,7 @@ object CirTypeAliasFactory {
         annotations: List<CirAnnotation>,
         name: CirName,
         typeParameters: List<CirTypeParameter>,
-        visibility: DescriptorVisibility,
+        visibility: Visibility,
         underlyingType: CirClassOrTypeAliasType,
         expandedType: CirClassType
     ): CirTypeAlias {

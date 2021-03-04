@@ -5,14 +5,14 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.cir.impl
 
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 
 data class CirTypeAliasImpl(
     override val annotations: List<CirAnnotation>,
     override val name: CirName,
     override val typeParameters: List<CirTypeParameter>,
-    override val visibility: DescriptorVisibility,
+    override val visibility: Visibility,
     override val underlyingType: CirClassOrTypeAliasType,
     override val expandedType: CirClassType // only for commonization algorithm; does not participate in building resulting declarations
 ) : CirTypeAlias {

@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.descriptors.commonizer.cir
 import kotlinx.metadata.*
 import kotlinx.metadata.klib.KlibModuleMetadata
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibility
 
 /**
  * An intermediate representation of declarations for commonization purposes.
@@ -34,7 +34,7 @@ interface CirHasName {
 }
 
 interface CirHasVisibility {
-    val visibility: DescriptorVisibility
+    val visibility: Visibility
 }
 
 interface CirHasModality {

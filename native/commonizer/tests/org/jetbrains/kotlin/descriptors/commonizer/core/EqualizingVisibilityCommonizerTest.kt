@@ -5,64 +5,68 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.*
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Visibilities.Internal
+import org.jetbrains.kotlin.descriptors.Visibilities.Local
+import org.jetbrains.kotlin.descriptors.Visibilities.Private
+import org.jetbrains.kotlin.descriptors.Visibilities.Protected
+import org.jetbrains.kotlin.descriptors.Visibilities.Public
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirHasVisibility
 import org.junit.Test
 
-class EqualizingVisibilityCommonizerTest : AbstractCommonizerTest<CirHasVisibility, DescriptorVisibility>() {
+class EqualizingVisibilityCommonizerTest : AbstractCommonizerTest<CirHasVisibility, Visibility>() {
 
     @Test
     fun publicOnly() = doTestSuccess(
-        expected = PUBLIC,
-        PUBLIC.toMock(), PUBLIC.toMock(), PUBLIC.toMock()
+        expected = Public,
+        Public.toMock(), Public.toMock(), Public.toMock()
     )
 
     @Test
     fun protectedOnly() = doTestSuccess(
-        expected = PROTECTED,
-        PROTECTED.toMock(), PROTECTED.toMock(), PROTECTED.toMock()
+        expected = Protected,
+        Protected.toMock(), Protected.toMock(), Protected.toMock()
     )
 
     @Test
     fun internalOnly() = doTestSuccess(
-        expected = INTERNAL,
-        INTERNAL.toMock(), INTERNAL.toMock(), INTERNAL.toMock()
+        expected = Internal,
+        Internal.toMock(), Internal.toMock(), Internal.toMock()
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun privateOnly() = doTestFailure(
-        PRIVATE.toMock()
+        Private.toMock()
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun publicAndProtected() = doTestFailure(
-        PROTECTED.toMock(), PROTECTED.toMock(), PUBLIC.toMock()
+        Protected.toMock(), Protected.toMock(), Public.toMock()
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun publicAndInternal() = doTestFailure(
-        INTERNAL.toMock(), INTERNAL.toMock(), PUBLIC.toMock()
+        Internal.toMock(), Internal.toMock(), Public.toMock()
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun protectedAndInternal() = doTestFailure(
-        PROTECTED.toMock(), PROTECTED.toMock(), INTERNAL.toMock()
+        Protected.toMock(), Protected.toMock(), Internal.toMock()
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun publicAndPrivate() = doTestFailure(
-        PUBLIC.toMock(), PUBLIC.toMock(), PRIVATE.toMock()
+        Public.toMock(), Public.toMock(), Private.toMock()
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun somethingUnexpected() = doTestFailure(
-        PUBLIC.toMock(), LOCAL.toMock()
+        Public.toMock(), Local.toMock()
     )
 
     override fun createCommonizer() = VisibilityCommonizer.equalizing()
 }
 
-private fun DescriptorVisibility.toMock() = object : CirHasVisibility {
-    override val visibility: DescriptorVisibility = this@toMock
+private fun Visibility.toMock() = object : CirHasVisibility {
+    override val visibility: Visibility = this@toMock
 }

@@ -5,40 +5,40 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirFunctionOrProperty
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirHasVisibility
 
-abstract class VisibilityCommonizer : Commonizer<CirHasVisibility, DescriptorVisibility> {
+abstract class VisibilityCommonizer : Commonizer<CirHasVisibility, Visibility> {
 
     companion object {
         fun lowering(): VisibilityCommonizer = LoweringVisibilityCommonizer()
         fun equalizing(): VisibilityCommonizer = EqualizingVisibilityCommonizer()
     }
 
-    private var temp: DescriptorVisibility? = null
+    private var temp: Visibility? = null
 
-    override val result: DescriptorVisibility
-        get() = checkState(temp, temp == DescriptorVisibilities.UNKNOWN)
+    override val result: Visibility
+        get() = checkState(temp, temp == Visibilities.Unknown)
 
     override fun commonizeWith(next: CirHasVisibility): Boolean {
-        if (temp == DescriptorVisibilities.UNKNOWN)
+        if (temp == Visibilities.Unknown)
             return false
 
         val nextVisibility = next.visibility
-        if (DescriptorVisibilities.isPrivate(nextVisibility) || !canBeCommonized(next)) {
-            temp = DescriptorVisibilities.UNKNOWN
+        if (Visibilities.isPrivate(nextVisibility) || !canBeCommonized(next)) {
+            temp = Visibilities.Unknown
             return false
         }
 
         temp = temp?.let { temp -> getNext(temp, nextVisibility) } ?: nextVisibility
 
-        return temp != DescriptorVisibilities.UNKNOWN
+        return temp != Visibilities.Unknown
     }
 
     protected abstract fun canBeCommonized(next: CirHasVisibility): Boolean
-    protected abstract fun getNext(current: DescriptorVisibility, next: DescriptorVisibility): DescriptorVisibility
+    protected abstract fun getNext(current: Visibility, next: Visibility): Visibility
 }
 
 /**
@@ -56,26 +56,26 @@ private class LoweringVisibilityCommonizer : VisibilityCommonizer() {
         return !atLeastOneVirtualCallableMet || !atLeastTwoVisibilitiesMet
     }
 
-    override fun getNext(current: DescriptorVisibility, next: DescriptorVisibility): DescriptorVisibility {
-        val comparisonResult: Int = DescriptorVisibilities.compare(current, next)
-            ?: return DescriptorVisibilities.UNKNOWN // two visibilities that can't be compared against each one, ex: protected vs internal
+    override fun getNext(current: Visibility, next: Visibility): Visibility {
+        val comparisonResult: Int = Visibilities.compare(current, next)
+            ?: return Visibilities.Unknown // two visibilities that can't be compared against each one, ex: protected vs internal
 
         if (!atLeastTwoVisibilitiesMet)
             atLeastTwoVisibilitiesMet = comparisonResult != 0
 
         if (atLeastOneVirtualCallableMet && atLeastTwoVisibilitiesMet)
-            return DescriptorVisibilities.UNKNOWN
+            return Visibilities.Unknown
 
         return if (comparisonResult <= 0) current else next
     }
 }
 
 /**
- * Make sure that visibilities of all member descriptors are equal and are not private according to [DescriptorVisibilities.isPrivate].
+ * Make sure that visibilities of all member descriptors are equal and are not private according to [Visibilities.isPrivate].
  */
 private class EqualizingVisibilityCommonizer : VisibilityCommonizer() {
     override fun canBeCommonized(next: CirHasVisibility) = true
 
-    override fun getNext(current: DescriptorVisibility, next: DescriptorVisibility) =
-        if (DescriptorVisibilities.compare(current, next) == 0) current else DescriptorVisibilities.UNKNOWN
+    override fun getNext(current: Visibility, next: Visibility) =
+        if (Visibilities.compare(current, next) == 0) current else Visibilities.Unknown
 }

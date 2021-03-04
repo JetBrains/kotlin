@@ -10,9 +10,9 @@ import kotlinx.metadata.KmAnnotation
 import kotlinx.metadata.KmClass
 import kotlinx.metadata.klib.annotations
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirClassImpl
 import org.jetbrains.kotlin.descriptors.commonizer.metadata.decodeClassKind
@@ -49,7 +49,7 @@ object CirClassFactory {
         annotations = annotations.compactMap { CirAnnotationFactory.create(it, typeResolver) },
         name = name,
         typeParameters = emptyList(),
-        visibility = DescriptorVisibilities.PUBLIC,
+        visibility = Visibilities.Public,
         modality = Modality.FINAL,
         kind = ClassKind.ENUM_ENTRY,
         companion = null,
@@ -74,7 +74,7 @@ object CirClassFactory {
         annotations: List<CirAnnotation>,
         name: CirName,
         typeParameters: List<CirTypeParameter>,
-        visibility: DescriptorVisibility,
+        visibility: Visibility,
         modality: Modality,
         kind: ClassKind,
         companion: CirName?,

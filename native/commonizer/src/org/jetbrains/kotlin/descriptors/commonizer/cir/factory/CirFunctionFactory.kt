@@ -9,8 +9,8 @@ import kotlinx.metadata.Flag
 import kotlinx.metadata.KmFunction
 import kotlinx.metadata.klib.annotations
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirFunctionImpl
 import org.jetbrains.kotlin.descriptors.commonizer.metadata.decodeCallableKind
@@ -41,7 +41,7 @@ object CirFunctionFactory {
         annotations: List<CirAnnotation>,
         name: CirName,
         typeParameters: List<CirTypeParameter>,
-        visibility: DescriptorVisibility,
+        visibility: Visibility,
         modality: Modality,
         containingClass: CirContainingClass?,
         valueParameters: List<CirValueParameter>,

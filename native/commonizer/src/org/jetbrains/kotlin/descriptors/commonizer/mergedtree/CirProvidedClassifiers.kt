@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.mergedtree
 
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.commonizer.ModulesProvider
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.types.Variance
@@ -61,7 +61,7 @@ object CirProvided {
 
     data class Class(
         override val typeParameters: List<TypeParameter>,
-        val visibility: DescriptorVisibility
+        val visibility: Visibility
     ) : Classifier
 
     data class TypeAlias(

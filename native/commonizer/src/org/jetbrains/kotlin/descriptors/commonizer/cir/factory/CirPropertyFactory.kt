@@ -10,8 +10,8 @@ import kotlinx.metadata.KmProperty
 import kotlinx.metadata.klib.annotations
 import kotlinx.metadata.klib.compileTimeValue
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirPropertyImpl
 import org.jetbrains.kotlin.descriptors.commonizer.metadata.decodeCallableKind
@@ -56,7 +56,7 @@ object CirPropertyFactory {
         annotations: List<CirAnnotation>,
         name: CirName,
         typeParameters: List<CirTypeParameter>,
-        visibility: DescriptorVisibility,
+        visibility: Visibility,
         modality: Modality,
         containingClass: CirContainingClass?,
         isExternal: Boolean,
