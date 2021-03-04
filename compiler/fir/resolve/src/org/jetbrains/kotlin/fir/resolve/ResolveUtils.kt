@@ -22,9 +22,12 @@ import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitDispatchReceiverValue
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
+import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
 import org.jetbrains.kotlin.fir.resolve.providers.*
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolved
+import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
+import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectData
 import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
@@ -35,6 +38,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.BadNamedArgumentsTarget
 
 fun List<FirQualifierPart>.toTypeProjections(): Array<ConeTypeProjection> =
     asReversed().flatMap { it.typeArgumentList.typeArguments.map { typeArgument -> typeArgument.toConeTypeProjection() } }.toTypedArray()
@@ -349,3 +353,51 @@ fun BodyResolveComponents.initialTypeOfCandidate(candidate: Candidate): ConeKotl
 private fun initialTypeOfCandidate(candidate: Candidate, typeRef: FirResolvedTypeRef): ConeKotlinType {
     return candidate.substitutor.substituteOrSelf(typeRef.type)
 }
+
+inline val FirCallableDeclaration<*>.containingClass: FirRegularClass?
+    get() = this.containingClassAttr?.let { lookupTag ->
+        session.symbolProvider.getSymbolByLookupTag(lookupTag)?.fir as? FirRegularClass
+    }
+
+val FirFunction<*>.asBadForNamedArgumentTarget: BadNamedArgumentsTarget?
+    get() {
+        if (this is FirConstructor && this.isPrimary) {
+            this.containingClass?.let { containingClass ->
+                if (containingClass.classKind == ClassKind.ANNOTATION_CLASS) {
+                    // Java annotation classes allow (actually require) named parameters.
+                    return null
+                }
+            }
+        }
+        if (this is FirMemberDeclaration && status.isExpect) {
+            return BadNamedArgumentsTarget.EXPECTED_CLASS_MEMBER
+        }
+        return when (origin) {
+            FirDeclarationOrigin.Source, FirDeclarationOrigin.Library, FirDeclarationOrigin.BuiltIns -> null
+            FirDeclarationOrigin.Delegated -> delegatedWrapperData?.wrapped?.asBadForNamedArgumentTarget
+            FirDeclarationOrigin.ImportedFromObject -> importedFromObjectData?.original?.asBadForNamedArgumentTarget
+            // For intersection overrides, the logic in
+            // org.jetbrains.kotlin.fir.scopes.impl.FirTypeIntersectionScope#selectMostSpecificMember picks the most specific one and store
+            // it in originalForIntersectionOverrideAttr. This follows from FE1.0 behavior which selects the most specific function
+            // (org.jetbrains.kotlin.resolve.OverridingUtil#selectMostSpecificMember), from which the `hasStableParameterNames` status is
+            // copied.
+            FirDeclarationOrigin.IntersectionOverride -> originalForIntersectionOverrideAttr?.asBadForNamedArgumentTarget
+            FirDeclarationOrigin.Java, FirDeclarationOrigin.Enhancement -> BadNamedArgumentsTarget.NON_KOTLIN_FUNCTION
+            FirDeclarationOrigin.SamConstructor -> null
+            FirDeclarationOrigin.SubstitutionOverride -> originalForSubstitutionOverrideAttr?.asBadForNamedArgumentTarget
+            // referenced function of a Kotlin function type is synthetic
+            FirDeclarationOrigin.Synthetic -> {
+                if (dispatchReceiverClassOrNull()?.isBuiltinFunctionalType() == true) {
+                    BadNamedArgumentsTarget.INVOKE_ON_FUNCTION_TYPE
+                } else {
+                    null
+                }
+            }
+            is FirDeclarationOrigin.Plugin -> null // TODO: figure out what to do with plugin generated functions
+        }
+    }
+
+// TODO: handle functions with non-stable parameter names, see also
+//  org.jetbrains.kotlin.fir.serialization.FirElementSerializer.functionProto
+//  org.jetbrains.kotlin.fir.serialization.FirElementSerializer.constructorProto
+inline val FirFunction<*>.hasStableParameterNames: Boolean get() = asBadForNamedArgumentTarget == null

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.isInfix
 import org.jetbrains.kotlin.fir.declarations.isOperator
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.calls.InapplicableWrongReceiver
+import org.jetbrains.kotlin.fir.resolve.calls.NamedArgumentNotAllowed
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionDiagnostic
 import org.jetbrains.kotlin.fir.resolve.calls.VarargArgumentOutsideParentheses
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
@@ -115,6 +116,10 @@ private fun mapInapplicableCandidateError(
 
         when (rootCause) {
             is VarargArgumentOutsideParentheses -> FirErrors.VARARG_OUTSIDE_PARENTHESES.on(rootCause.argument.source ?: source)
+            is NamedArgumentNotAllowed -> FirErrors.NAMED_ARGUMENTS_NOT_ALLOWED.on(
+                rootCause.argument.source ?: source,
+                rootCause.badNamedArgumentsTarget
+            )
             else -> null
         }
     }.ifEmpty { listOf(FirErrors.INAPPLICABLE_CANDIDATE.on(source, diagnostic.candidate.symbol)) }

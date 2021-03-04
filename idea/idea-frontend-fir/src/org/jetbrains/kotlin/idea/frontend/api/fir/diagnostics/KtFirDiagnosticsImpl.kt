@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.psi.KtTypeParameter
 import org.jetbrains.kotlin.psi.KtTypeParameterList
 import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.psi.KtWhenExpression
+import org.jetbrains.kotlin.resolve.BadNamedArgumentsTarget
 
 /*
  * This file was generated automatically
@@ -752,6 +753,14 @@ internal class VarargOutsideParenthesesImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.VarargOutsideParentheses(), KtAbstractFirDiagnostic<KtExpression> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
+internal class NamedArgumentsNotAllowedImpl(
+    override val badNamedArgumentTarget: BadNamedArgumentsTarget,
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.NamedArgumentsNotAllowed(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
 }
 
