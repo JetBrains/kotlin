@@ -179,8 +179,13 @@ internal class KtUltraLightParameterForSource(
 
     override val givenAnnotations: List<KtLightAbstractAnnotation>?
         get() {
-            val site = if (kotlinOrigin.hasValOrVar()) AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER else null
-            return kotlinOrigin.annotationEntries.toLightAnnotations(this, site)
+            return if (kotlinOrigin.hasValOrVar()) {
+                val entriesWithoutJvmField = kotlinOrigin.annotationEntries.filter { it.shortName?.identifier != "JvmField" }
+                entriesWithoutJvmField.toLightAnnotations(this, null) +
+                        entriesWithoutJvmField.toLightAnnotations(this, AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER)
+            } else {
+                kotlinOrigin.annotationEntries.toLightAnnotations(this, null)
+            }
         }
 
     override fun getText(): String? = kotlinOrigin.text
