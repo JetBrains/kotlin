@@ -152,6 +152,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/annotations/javaAnnotationOnProperty.kt");
         }
 
+        @TestMetadata("javaAnnotationOnSecondaryConstructorOfLocalClass.kt")
+        public void testJavaAnnotationOnSecondaryConstructorOfLocalClass() throws Exception {
+            runTest("compiler/testData/codegen/box/annotations/javaAnnotationOnSecondaryConstructorOfLocalClass.kt");
+        }
+
         @TestMetadata("javaNegativePropertyAsAnnotationParameter.kt")
         public void testJavaNegativePropertyAsAnnotationParameter() throws Exception {
             runTest("compiler/testData/codegen/box/annotations/javaNegativePropertyAsAnnotationParameter.kt");
