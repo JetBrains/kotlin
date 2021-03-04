@@ -12,11 +12,15 @@ import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitExtensionReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
+import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowAnalyzerContext
 import org.jetbrains.kotlin.fir.resolve.dfa.PersistentFlow
+import org.jetbrains.kotlin.fir.resolve.inference.FirCallCompleter
+import org.jetbrains.kotlin.fir.resolve.inference.FirDelegatedPropertyInferenceSession
 import org.jetbrains.kotlin.fir.resolve.inference.FirInferenceSession
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.withScopeCleanup
@@ -28,6 +32,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.Name
 
@@ -380,6 +385,62 @@ class BodyResolveContext(
             } else {
                 f()
             }
+        }
+    }
+
+    inline fun <T> withProperty(
+        property: FirProperty,
+        crossinline f: () -> T
+    ): T {
+        return withTypeParametersOf(property) {
+            withContainer(property, f)
+        }
+    }
+
+    inline fun <T> withPropertyAccessor(
+        property: FirProperty,
+        holder: SessionHolder,
+        crossinline f: () -> T
+    ): T {
+        return withTowerDataCleanup {
+            val receiverTypeRef = property.receiverTypeRef
+            if (receiverTypeRef == null && property.returnTypeRef !is FirImplicitTypeRef &&
+                !property.isLocal && property.delegate == null
+            ) {
+                addLocalScope(FirLocalScope())
+                storeBackingField(property)
+            }
+            if (receiverTypeRef != null) {
+                withLabelAndReceiverType(property.name, property, receiverTypeRef.coneType, holder, f)
+            } else {
+                f()
+            }
+        }
+    }
+
+    inline fun <T> forPropertyInitializer(crossinline f: () -> T): T {
+        return withTowerDataCleanup {
+            getPrimaryConstructorPureParametersScope()?.let { addLocalScope(it) }
+            f()
+        }
+    }
+
+    inline fun <T> forPropertyDelegateAccessors(
+        property: FirProperty,
+        delegateExpression: FirExpression,
+        resolutionContext: ResolutionContext,
+        callCompleter: FirCallCompleter,
+        crossinline f: FirDelegatedPropertyInferenceSession.() -> T
+    ) {
+        val inferenceSession = FirDelegatedPropertyInferenceSession(
+            property,
+            delegateExpression,
+            resolutionContext,
+            callCompleter.createPostponedArgumentsAnalyzer(resolutionContext)
+        )
+
+        withInferenceSession(inferenceSession) {
+            inferenceSession.f()
         }
     }
 
