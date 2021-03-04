@@ -279,7 +279,7 @@ class BinaryJavaAnnotationVisitor(
     }
 }
 
-abstract class PlainJavaAnnotationArgument(name: String?) : JavaAnnotationArgument {
+sealed class PlainJavaAnnotationArgument(name: String?) : JavaAnnotationArgument {
     override val name: Name? = name?.takeIf(Name::isValidIdentifier)?.let(Name::identifier)
 }
 

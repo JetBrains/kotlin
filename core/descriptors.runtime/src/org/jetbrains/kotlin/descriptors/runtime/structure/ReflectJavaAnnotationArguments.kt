@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
-abstract class ReflectJavaAnnotationArgument(
+sealed class ReflectJavaAnnotationArgument(
     override val name: Name?
 ) : JavaAnnotationArgument {
     companion object Factory {
