@@ -10,7 +10,7 @@ import kotlinx.metadata.klib.annotations
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirName
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirTypeSignature
 import org.jetbrains.kotlin.descriptors.commonizer.core.Commonizer
-import org.jetbrains.kotlin.descriptors.commonizer.metadata.TypeParameterResolver
+import org.jetbrains.kotlin.descriptors.commonizer.metadata.CirTypeParameterResolver
 import org.jetbrains.kotlin.descriptors.commonizer.utils.appendHashCode
 import org.jetbrains.kotlin.descriptors.commonizer.utils.computeSignature
 import org.jetbrains.kotlin.descriptors.commonizer.utils.hashCode
@@ -21,7 +21,7 @@ data class PropertyApproximationKey(
     val name: CirName,
     val extensionReceiverParameterType: CirTypeSignature?
 ) {
-    constructor(property: KmProperty, typeParameterResolver: TypeParameterResolver) : this(
+    constructor(property: KmProperty, typeParameterResolver: CirTypeParameterResolver) : this(
         CirName.create(property.name),
         property.receiverParameterType?.computeSignature(typeParameterResolver)
     )
@@ -34,7 +34,7 @@ data class FunctionApproximationKey(
     private val additionalValueParametersNamesHash: Int,
     val extensionReceiverParameterType: CirTypeSignature?
 ) {
-    constructor(function: KmFunction, typeParameterResolver: TypeParameterResolver) : this(
+    constructor(function: KmFunction, typeParameterResolver: CirTypeParameterResolver) : this(
         CirName.create(function.name),
         function.valueParameters.computeSignatures(typeParameterResolver),
         additionalValueParameterNamesHash(function.annotations, function.valueParameters),
@@ -62,7 +62,7 @@ data class ConstructorApproximationKey(
     val valueParametersTypes: Array<CirTypeSignature>,
     private val additionalValueParametersNamesHash: Int
 ) {
-    constructor(constructor: KmConstructor, typeParameterResolver: TypeParameterResolver) : this(
+    constructor(constructor: KmConstructor, typeParameterResolver: CirTypeParameterResolver) : this(
         constructor.valueParameters.computeSignatures(typeParameterResolver),
         additionalValueParameterNamesHash(constructor.annotations, constructor.valueParameters)
     )
@@ -80,7 +80,7 @@ data class ConstructorApproximationKey(
 }
 
 @Suppress("NOTHING_TO_INLINE")
-private inline fun List<KmValueParameter>.computeSignatures(typeParameterResolver: TypeParameterResolver): Array<CirTypeSignature> =
+private inline fun List<KmValueParameter>.computeSignatures(typeParameterResolver: CirTypeParameterResolver): Array<CirTypeSignature> =
     if (isEmpty()) emptyArray() else Array(size) { index -> this[index].type?.computeSignature(typeParameterResolver).orEmpty() }
 
 private fun additionalValueParameterNamesHash(annotations: List<KmAnnotation>, valueParameters: List<KmValueParameter>): Int {

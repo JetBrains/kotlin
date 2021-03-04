@@ -7,6 +7,6 @@ package org.jetbrains.kotlin.descriptors.commonizer.metadata
 
 import kotlinx.metadata.KmTypeParameter
 
-interface TypeParameterResolver {
+interface CirTypeParameterResolver {
     fun resolveTypeParameter(id: Int): KmTypeParameter?
 }

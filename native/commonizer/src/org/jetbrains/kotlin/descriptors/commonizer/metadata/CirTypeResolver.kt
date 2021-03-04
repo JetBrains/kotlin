@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirProvidedClassif
 typealias TypeParameterId = Int
 typealias TypeParameterIndex = Int
 
-abstract class CirTypeResolver : TypeParameterResolver {
+abstract class CirTypeResolver : CirTypeParameterResolver {
     abstract val providedClassifiers: CirProvidedClassifiers
     protected abstract val typeParameterIndexOffset: Int
 

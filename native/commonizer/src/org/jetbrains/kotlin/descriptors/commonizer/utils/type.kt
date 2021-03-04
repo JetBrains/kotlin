@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.descriptors.commonizer.utils
 import gnu.trove.TIntHashSet
 import kotlinx.metadata.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirTypeSignature
-import org.jetbrains.kotlin.descriptors.commonizer.metadata.TypeParameterResolver
+import org.jetbrains.kotlin.descriptors.commonizer.metadata.CirTypeParameterResolver
 
 internal inline val KmTypeParameter.filteredUpperBounds: List<KmType>
     get() = upperBounds.takeUnless { it.singleOrNull()?.isNullableAny == true } ?: emptyList()
@@ -23,7 +23,7 @@ private inline val KmType.isAny: Boolean
     get() = (classifier as? KmClassifier.Class)?.name == ANY_CLASS_FULL_NAME && !Flag.Type.IS_NULLABLE(flags)
 
 
-internal fun KmType.computeSignature(typeParameterResolver: TypeParameterResolver): CirTypeSignature {
+internal fun KmType.computeSignature(typeParameterResolver: CirTypeParameterResolver): CirTypeSignature {
     // use of interner saves up to 95% of duplicates
     return typeSignatureInterner.intern(
         buildString {
@@ -38,7 +38,7 @@ internal fun KmType.computeSignature(typeParameterResolver: TypeParameterResolve
 
 private fun StringBuilder.buildTypeSignature(
     type: KmType,
-    typeParameterResolver: TypeParameterResolver,
+    typeParameterResolver: CirTypeParameterResolver,
     exploredTypeParameters: TIntHashSet
 ) {
     when (val classifier = type.classifier) {
