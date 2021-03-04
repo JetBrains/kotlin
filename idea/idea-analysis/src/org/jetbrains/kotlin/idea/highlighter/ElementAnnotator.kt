@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.idea.highlighter
 
+
+import com.intellij.codeInsight.daemon.impl.HighlightInfo
+import com.intellij.codeInsight.daemon.impl.analysis.HighlightInfoHolder
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.codeInspection.ProblemHighlightType
-import com.intellij.lang.annotation.Annotation
-import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.openapi.diagnostic.ControlFlowException
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.colors.CodeInsightColors
@@ -31,10 +32,10 @@ internal class ElementAnnotator(
     private val shouldSuppressUnusedParameter: (KtParameter) -> Boolean
 ) {
     fun registerDiagnosticsAnnotations(
-        holder: AnnotationHolder,
+        holder: HighlightInfoHolder,
         diagnostics: Collection<Diagnostic>,
-        annotationByDiagnostic: MutableMap<Diagnostic, Annotation>?,
-        annotationByTextRange: MutableMap<TextRange, Annotation>?,
+        highlightInfoByDiagnostic: MutableMap<Diagnostic, HighlightInfo>?,
+        highlightInfoByTextRange: MutableMap<TextRange, HighlightInfo>?,
         noFixes: Boolean,
         calculatingInProgress: Boolean
     ) = diagnostics.groupBy { it.factory }
@@ -42,18 +43,18 @@ internal class ElementAnnotator(
             registerSameFactoryDiagnosticsAnnotations(
                 holder,
                 it.value,
-                annotationByDiagnostic,
-                annotationByTextRange,
+                highlightInfoByDiagnostic,
+                highlightInfoByTextRange,
                 noFixes,
                 calculatingInProgress
             )
         }
 
     private fun registerSameFactoryDiagnosticsAnnotations(
-        holder: AnnotationHolder,
+        holder: HighlightInfoHolder,
         diagnostics: Collection<Diagnostic>,
-        annotationByDiagnostic: MutableMap<Diagnostic, Annotation>?,
-        annotationByTextRange: MutableMap<TextRange, Annotation>?,
+        highlightInfoByDiagnostic: MutableMap<Diagnostic, HighlightInfo>?,
+        highlightInfoByTextRange: MutableMap<TextRange, HighlightInfo>?,
         noFixes: Boolean,
         calculatingInProgress: Boolean
     ) {
@@ -62,8 +63,8 @@ internal class ElementAnnotator(
             holder,
             diagnostics,
             presentationInfo,
-            annotationByDiagnostic,
-            annotationByTextRange,
+            highlightInfoByDiagnostic,
+            highlightInfoByTextRange,
             noFixes,
             calculatingInProgress
         )
@@ -71,21 +72,21 @@ internal class ElementAnnotator(
 
     fun registerDiagnosticsQuickFixes(
         diagnostics: List<Diagnostic>,
-        annotationByDiagnostic: MutableMap<Diagnostic, Annotation>
+        highlightInfoByDiagnostic: MutableMap<Diagnostic, HighlightInfo>
     ) = diagnostics.groupBy { it.factory }
-        .forEach { registerDiagnosticsSameFactoryQuickFixes(it.value, annotationByDiagnostic) }
+        .forEach { registerDiagnosticsSameFactoryQuickFixes(it.value, highlightInfoByDiagnostic) }
 
     private fun registerDiagnosticsSameFactoryQuickFixes(
         diagnostics: List<Diagnostic>,
-        annotationByDiagnostic: MutableMap<Diagnostic, Annotation>
+        highlightInfoByDiagnostic: MutableMap<Diagnostic, HighlightInfo>
     ) {
         val presentationInfo = presentationInfo(diagnostics) ?: return
         val fixesMap = createFixesMap(diagnostics) ?: return
 
         diagnostics.forEach {
-            val annotation = annotationByDiagnostic[it] ?: return
+            val highlightInfo = highlightInfoByDiagnostic[it] ?: return
 
-            presentationInfo.applyFixes(fixesMap, it, annotation)
+            presentationInfo.applyFixes(fixesMap, it, highlightInfo)
         }
     }
 
@@ -161,18 +162,18 @@ internal class ElementAnnotator(
     }
 
     private fun setUpAnnotations(
-        holder: AnnotationHolder,
+        holder: HighlightInfoHolder,
         diagnostics: Collection<Diagnostic>,
         data: AnnotationPresentationInfo,
-        annotationByDiagnostic: MutableMap<Diagnostic, Annotation>?,
-        annotationByTextRange: MutableMap<TextRange, Annotation>?,
+        highlightInfoByDiagnostic: MutableMap<Diagnostic, HighlightInfo>?,
+        highlightInfoByTextRange: MutableMap<TextRange, HighlightInfo>?,
         noFixes: Boolean,
         calculatingInProgress: Boolean
     ) {
         val fixesMap =
             createFixesMap(diagnostics, noFixes)
 
-        data.processDiagnostics(holder, diagnostics, annotationByDiagnostic, annotationByTextRange, fixesMap, calculatingInProgress)
+        data.processDiagnostics(holder, diagnostics, highlightInfoByDiagnostic, highlightInfoByTextRange, fixesMap, calculatingInProgress)
     }
 
     private fun createFixesMap(

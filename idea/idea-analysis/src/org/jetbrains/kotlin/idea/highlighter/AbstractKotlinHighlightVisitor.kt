@@ -1,64 +1,66 @@
-/*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
- * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
- */
-
 package org.jetbrains.kotlin.idea.highlighter
 
 import com.intellij.codeInsight.daemon.impl.Divider
 import com.intellij.codeInsight.daemon.impl.HighlightInfo
+import com.intellij.codeInsight.daemon.impl.HighlightVisitor
+import com.intellij.codeInsight.daemon.impl.analysis.HighlightInfoHolder
 import com.intellij.codeInsight.intention.IntentionAction
-import com.intellij.codeInsight.problems.ProblemImpl
-import com.intellij.lang.annotation.Annotation
-import com.intellij.lang.annotation.AnnotationHolder
-import com.intellij.lang.annotation.Annotator
-import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.editor.Document
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.TextRange
-import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.problems.Problem
-import com.intellij.problems.WolfTheProblemSolver
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiManager
+import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiRecursiveElementVisitor
+import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.CommonProcessors
 import com.intellij.util.containers.MultiMap
+import org.jetbrains.kotlin.asJava.getJvmSignatureDiagnostics
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.rendering.RenderingContext
+import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithAllCompilerChecks
+import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.quickfix.QuickFixes
+import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
+import org.jetbrains.kotlin.platform.jvm.isJvm
+import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.types.KotlinType
 import java.lang.reflect.*
 import java.util.*
+import kotlin.collections.ArrayList
 
-abstract class AbstractKotlinHighlightingPass(file: KtFile, document: Document) :
-    AbstractBindingContextAwareHighlightingPassBase(file, document) {
-    override val annotator: Annotator
-        get() = KotlinAfterAnalysisAnnotator()
+abstract class AbstractKotlinHighlightVisitor : HighlightVisitor {
+    private var afterAnalysisVisitor: Array<AfterAnalysisHighlightingVisitor>? = null
 
-    private inner class KotlinAfterAnalysisAnnotator : Annotator {
-        override fun annotate(element: PsiElement, holder: AnnotationHolder) {
-            val bindingContext = bindingContext()
-            getAfterAnalysisVisitor(holder, bindingContext).forEach { visitor -> element.accept(visitor) }
+    override fun suitableForFile(file: PsiFile) = file is KtFile
+
+    override fun visit(element: PsiElement) {
+        afterAnalysisVisitor?.forEach(element::accept)
+    }
+
+    override fun analyze(psiFile: PsiFile, updateWholeFile: Boolean, holder: HighlightInfoHolder, action: Runnable): Boolean {
+        val file = psiFile as? KtFile ?: return false
+
+        try {
+            analyze(file, holder)
+
+            action.run()
+        } finally {
+            afterAnalysisVisitor = null
         }
+
+        return true
     }
 
-    override fun doApplyInformationToEditor() {
-        super.doApplyInformationToEditor()
-
-        reportErrorsToWolf()
-    }
-
-    override fun buildBindingContext(holder: AnnotationHolder): BindingContext {
+    private fun analyze(file: KtFile, holder: HighlightInfoHolder) {
         val dividedElements: List<Divider.DividedElements> = ArrayList()
         Divider.divideInsideAndOutsideAllRoots(
             file, file.textRange, file.textRange, { true },
@@ -71,8 +73,8 @@ abstract class AbstractKotlinHighlightingPass(file: KtFile, document: Document) 
 
         // annotate diagnostics on fly: show diagnostics as soon as front-end reports them
         // don't create quick fixes as it could require some resolve
-        val annotationByDiagnostic = mutableMapOf<Diagnostic, Annotation>()
-        val annotationByTextRange = mutableMapOf<TextRange, Annotation>()
+        val highlightInfoByDiagnostic = mutableMapOf<Diagnostic, HighlightInfo>()
+        val highlightInfoByTextRange = mutableMapOf<TextRange, HighlightInfo>()
 
         // render of on-fly diagnostics with descriptors could lead to recursion
         fun checkIfDescriptor(candidate: Any?): Boolean =
@@ -82,61 +84,84 @@ abstract class AbstractKotlinHighlightingPass(file: KtFile, document: Document) 
             file.analyzeWithAllCompilerChecks({
                                                   val element = it.psiElement
                                                   if (element in elements &&
-                                                      it !in annotationByDiagnostic &&
+                                                      it !in highlightInfoByDiagnostic &&
                                                       !RenderingContext.parameters(it).any(::checkIfDescriptor)
                                                   ) {
-                                                      annotateDiagnostic(element, holder, it, annotationByDiagnostic, annotationByTextRange)
+                                                      annotateDiagnostic(
+                                                          file,
+                                                          element,
+                                                          holder,
+                                                          it,
+                                                          highlightInfoByDiagnostic,
+                                                          highlightInfoByTextRange
+                                                      )
                                                   }
-                                              }).also { it.throwIfError() }
+                                              }
+            ).also { it.throwIfError() }
         // resolve is done!
 
         val bindingContext = analysisResult.bindingContext
 
-        cleanUpCalculatingAnnotations(annotationByTextRange)
-        // TODO: for some reasons it could be duplicated diagnostics for the same factory
-        //  see [PsiCheckerTestGenerated$Checker.testRedeclaration]
-        val diagnostics = bindingContext.diagnostics.asSequence().filter { it.psiElement in elements }.toSet()
+        afterAnalysisVisitor = getAfterAnalysisVisitor(holder, bindingContext)
 
-        if (diagnostics.isNotEmpty()) {
-            // annotate diagnostics those were not possible to render on fly
-            diagnostics.asSequence().filterNot { it in annotationByDiagnostic }.forEach {
-                annotateDiagnostic(it.psiElement, holder, it, annotationByDiagnostic, calculatingInProgress = false)
-            }
-            // apply quick fixes for all diagnostics grouping by element
-            diagnostics.groupBy(Diagnostic::psiElement).forEach {
-                annotateQuickFixes(it.key, it.value, annotationByDiagnostic)
-            }
+        cleanUpCalculatingAnnotations(highlightInfoByTextRange)
+
+        annotateDuplicateJvmSignature(file, holder, bindingContext.diagnostics)
+
+        for (diagnostic in bindingContext.diagnostics) {
+            val psiElement = diagnostic.psiElement
+            if (psiElement !in elements) continue
+            // has been processed earlier e.g. on-fly or for some reasons it could be duplicated diagnostics for the same factory
+            //  see [PsiCheckerTestGenerated$Checker.testRedeclaration]
+            if (diagnostic in highlightInfoByDiagnostic) continue
+
+            // annotate diagnostics those were not possible to report (and therefore render) on fly
+            annotateDiagnostic(file, psiElement, holder, diagnostic, highlightInfoByDiagnostic, calculatingInProgress = false)
         }
-        return bindingContext
+
+        // apply quick fixes for all diagnostics grouping by element
+        highlightInfoByDiagnostic.keys.groupBy { it.psiElement }.forEach {
+            annotateQuickFixes(file, it.key, it.value, highlightInfoByDiagnostic)
+        }
+    }
+
+    private fun annotateDuplicateJvmSignature(file: KtFile, holder: HighlightInfoHolder, otherDiagnostics: Diagnostics) {
+        if (!(ProjectRootsUtil.isInProjectSource(file) && TargetPlatformDetector.getPlatform(file).isJvm())) return
+
+        val duplicateJvmSignatureAnnotator =
+            DuplicateJvmSignatureAnnotator(file, holder, otherDiagnostics, file.getModuleInfo().contentScope())
+        duplicateJvmSignatureAnnotator.visit()
     }
 
     private fun annotateDiagnostic(
+        file: KtFile,
         element: PsiElement,
-        holder: AnnotationHolder,
+        holder: HighlightInfoHolder,
         diagnostic: Diagnostic,
-        annotationByDiagnostic: MutableMap<Diagnostic, Annotation>? = null,
-        annotationByTextRange: MutableMap<TextRange, Annotation>? = null,
+        highlightInfoByDiagnostic: MutableMap<Diagnostic, HighlightInfo>? = null,
+        highlightInfoByTextRange: MutableMap<TextRange, HighlightInfo>? = null,
         calculatingInProgress: Boolean = true
-    ) = annotateDiagnostics(element, holder, listOf(diagnostic), annotationByDiagnostic, annotationByTextRange, true, calculatingInProgress)
+    ) = annotateDiagnostics(file, element, holder, listOf(diagnostic), highlightInfoByDiagnostic, highlightInfoByTextRange, true, calculatingInProgress)
 
-    private fun cleanUpCalculatingAnnotations(annotationByTextRange: Map<TextRange, Annotation>) {
-        annotationByTextRange.values.forEach { annotation ->
-            annotation.quickFixes?.removeIf {
-                it.quickFix is CalculatingIntentionAction
+    private fun cleanUpCalculatingAnnotations(highlightInfoByTextRange: Map<TextRange, HighlightInfo>) {
+        highlightInfoByTextRange.values.forEach { annotation ->
+            annotation.unregisterQuickFix {
+                it is CalculatingIntentionAction
             }
         }
     }
 
     private fun annotateDiagnostics(
+        file: KtFile,
         element: PsiElement,
-        holder: AnnotationHolder,
+        holder: HighlightInfoHolder,
         diagnostics: List<Diagnostic>,
-        annotationByDiagnostic: MutableMap<Diagnostic, Annotation>? = null,
-        annotationByTextRange: MutableMap<TextRange, Annotation>? = null,
+        highlightInfoByDiagnostic: MutableMap<Diagnostic, HighlightInfo>? = null,
+        highlightInfoByTextRange: MutableMap<TextRange, HighlightInfo>? = null,
         noFixes: Boolean = false,
         calculatingInProgress: Boolean = false
     ) = annotateDiagnostics(
-        file, element, holder, diagnostics, annotationByDiagnostic, annotationByTextRange,
+        file, element, holder, diagnostics, highlightInfoByDiagnostic, highlightInfoByTextRange,
         ::shouldSuppressUnusedParameter,
         noFixes = noFixes, calculatingInProgress = calculatingInProgress
     )
@@ -145,9 +170,10 @@ abstract class AbstractKotlinHighlightingPass(file: KtFile, document: Document) 
      * [diagnostics] has to belong to the same element
      */
     private fun annotateQuickFixes(
+        file: KtFile,
         element: PsiElement,
         diagnostics: List<Diagnostic>,
-        annotationByDiagnostic: MutableMap<Diagnostic, Annotation>
+        highlightInfoByDiagnostic: MutableMap<Diagnostic, HighlightInfo>
     ) {
         if (diagnostics.isEmpty()) return
 
@@ -161,63 +187,64 @@ abstract class AbstractKotlinHighlightingPass(file: KtFile, document: Document) 
         if (shouldHighlightErrors) {
             ElementAnnotator(element) { param ->
                 shouldSuppressUnusedParameter(param)
-            }.registerDiagnosticsQuickFixes(diagnostics, annotationByDiagnostic)
+            }.registerDiagnosticsQuickFixes(diagnostics, highlightInfoByDiagnostic)
         }
     }
 
     protected open fun shouldSuppressUnusedParameter(parameter: KtParameter): Boolean = false
 
-    private fun reportErrorsToWolf() {
-        if (!file.viewProvider.isPhysical) return  // e.g. errors in evaluate expression
-        val project: Project = file.project
-        if (!PsiManager.getInstance(project).isInProject(file)) return  // do not report problems in libraries
-        val file: VirtualFile = file.virtualFile ?: return
+    private inner class DuplicateJvmSignatureAnnotator(
+        private val file: KtFile,
+        private val holder: HighlightInfoHolder,
+        private val otherDiagnostics: Diagnostics,
+        private val moduleScope: GlobalSearchScope
+    ) {
+        fun visit() {
+            file.accept(object : PsiRecursiveElementVisitor() {
+                override fun visitElement(element: PsiElement) {
+                    annotate(element)
+                    super.visitElement(element)
+                }
+            })
+        }
 
-        val wolf = WolfTheProblemSolver.getInstance(project)
+        private fun annotate(element: PsiElement) {
+            if (element !is KtFile && element !is KtDeclaration) return
 
-        val hasSyntaxErrors = wolf.hasSyntaxErrors(file)
-        val problemFile = wolf.isProblemFile(file)
+            val diagnostics = getJvmSignatureDiagnostics(element, otherDiagnostics, moduleScope) ?: return
 
-        // do nothing if file has already problems
-        if (hasSyntaxErrors || problemFile) return
+            val diagnosticsForElement = diagnostics.forElement(element).toSet()
 
-        val problems = convertToProblems(infos, file)
-        wolf.reportProblems(file, problems)
+            annotateDiagnostics(file, element, holder, diagnosticsForElement)
+        }
     }
 
-    private fun convertToProblems(
-        infos: Collection<HighlightInfo>,
-        file: VirtualFile,
-        hasErrorElement: Boolean = true
-    ): List<Problem> =
-        infos.filter { it.severity == HighlightSeverity.ERROR }.map { ProblemImpl(file, it, hasErrorElement) }
-
     companion object {
-        fun createQuickFixes(diagnostic: Diagnostic): Collection<IntentionAction> =
-            createQuickFixes(listOfNotNull(diagnostic))[diagnostic]
+        private val UNRESOLVED_KEY = Key<Unit>("KotlinHighlightVisitor.UNRESOLVED_KEY")
 
-        private val UNRESOLVED_KEY = Key<Unit>("KotlinHighlightingPass.UNRESOLVED_KEY")
-
-        fun wasUnresolved(element: KtNameReferenceExpression) = element.getUserData(UNRESOLVED_KEY) != null
-
-        fun getAfterAnalysisVisitor(holder: AnnotationHolder, bindingContext: BindingContext) = arrayOf(
+        fun getAfterAnalysisVisitor(holder: HighlightInfoHolder, bindingContext: BindingContext) = arrayOf(
             PropertiesHighlightingVisitor(holder, bindingContext),
             FunctionsHighlightingVisitor(holder, bindingContext),
             VariablesHighlightingVisitor(holder, bindingContext),
             TypeKindHighlightingVisitor(holder, bindingContext)
         )
 
-        private fun assertBelongsToTheSameElement(element: PsiElement, diagnostics: Collection<Diagnostic>) {
+        fun createQuickFixes(diagnostic: Diagnostic): Collection<IntentionAction> =
+            createQuickFixes(listOfNotNull(diagnostic))[diagnostic]
+
+        fun wasUnresolved(element: KtNameReferenceExpression) = element.getUserData(UNRESOLVED_KEY) != null
+
+        internal fun assertBelongsToTheSameElement(element: PsiElement, diagnostics: Collection<Diagnostic>) {
             assert(diagnostics.all { it.psiElement == element })
         }
 
         fun annotateDiagnostics(
             file: KtFile,
             element: PsiElement,
-            holder: AnnotationHolder,
+            holder: HighlightInfoHolder,
             diagnostics: Collection<Diagnostic>,
-            annotationByDiagnostic: MutableMap<Diagnostic, Annotation>? = null,
-            annotationByTextRange: MutableMap<TextRange, Annotation>? = null,
+            highlightInfoByDiagnostic: MutableMap<Diagnostic, HighlightInfo>? = null,
+            highlightInfoByTextRange: MutableMap<TextRange, HighlightInfo>? = null,
             shouldSuppressUnusedParameter: (KtParameter) -> Boolean = { false },
             noFixes: Boolean = false,
             calculatingInProgress: Boolean = false
@@ -241,15 +268,15 @@ abstract class AbstractKotlinHighlightingPass(file: KtFile, document: Document) 
                     shouldSuppressUnusedParameter(param)
                 }
                 elementAnnotator.registerDiagnosticsAnnotations(
-                    holder, diagnostics, annotationByDiagnostic,
-                    annotationByTextRange,
+                    holder, diagnostics, highlightInfoByDiagnostic,
+                    highlightInfoByTextRange,
                     noFixes = noFixes, calculatingInProgress = calculatingInProgress
                 )
             }
         }
+
     }
 }
-
 
 internal fun createQuickFixes(similarDiagnostics: Collection<Diagnostic>): MultiMap<Diagnostic, IntentionAction> {
     val first = similarDiagnostics.minByOrNull { it.toString() }
@@ -277,6 +304,7 @@ internal fun createQuickFixes(similarDiagnostics: Collection<Diagnostic>): Multi
 
     return actions
 }
+
 
 private fun Diagnostic.getRealDiagnosticFactory(): DiagnosticFactory<*> =
     when (factory) {
@@ -330,3 +358,4 @@ private object NoDeclarationDescriptorsChecker {
         }
     }
 }
+

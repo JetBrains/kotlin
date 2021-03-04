@@ -5,17 +5,13 @@
 
 package org.jetbrains.kotlin.idea.highlighter
 
-import com.intellij.lang.annotation.AnnotationHolder
-import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtVisitorVoid
 
-abstract class HighlightingVisitor protected constructor(
-    private val holder: AnnotationHolder
-) : KtVisitorVoid() {
+abstract class AbstractHighlightingVisitor : KtVisitorVoid() {
 
     protected fun createInfoAnnotation(element: PsiElement, message: String? = null, textAttributes: TextAttributesKey) {
         createInfoAnnotation(element.textRange, message, textAttributes)
@@ -24,17 +20,7 @@ abstract class HighlightingVisitor protected constructor(
     protected fun createInfoAnnotation(element: PsiElement, message: String? = null) =
         createInfoAnnotation(element.textRange, message)
 
-    protected open fun createInfoAnnotation(textRange: TextRange, message: String? = null, textAttributes: TextAttributesKey? = null) {
-        (message?.let { holder.newAnnotation(HighlightSeverity.INFORMATION, it) }
-            ?: holder.newSilentAnnotation(HighlightSeverity.INFORMATION))
-            .range(textRange)
-            .also { builder ->
-                textAttributes?.let {
-                    builder.textAttributes(it)
-                }
-            }
-            .create()
-    }
+    protected abstract fun createInfoAnnotation(textRange: TextRange, message: String? = null, textAttributes: TextAttributesKey? = null)
 
     protected fun highlightName(element: PsiElement, attributesKey: TextAttributesKey, message: String? = null) {
         if (NameHighlighter.namesHighlightingEnabled && !element.textRange.isEmpty) {

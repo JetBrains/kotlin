@@ -114,10 +114,9 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
     <projectService serviceImplementation="org.jetbrains.kotlin.idea.completion.LookupCancelService"/>
     <projectService serviceImplementation="org.jetbrains.kotlin.idea.configuration.KotlinMigrationProjectService"/>
 
+    <highlightVisitor implementation="org.jetbrains.kotlin.idea.highlighter.KotlinHighlightVisitor"/>
     <highlightingPassFactory implementation="org.jetbrains.kotlin.idea.highlighter.KotlinBeforeResolveHighlightingPass$Registrar"/>
-    <highlightingPassFactory implementation="org.jetbrains.kotlin.idea.highlighter.KotlinHighlightingPass$Registrar"/>
     <highlightingPassFactory implementation="org.jetbrains.kotlin.idea.highlighter.DebugInfoHighlightingPass$Registrar"/>
-    <highlightingPassFactory implementation="org.jetbrains.kotlin.idea.highlighter.DuplicateJvmSignatureHighlightPass$Registrar"/>
     <highlightingPassFactory implementation="org.jetbrains.kotlin.idea.highlighter.ScriptExternalHighlightingPass$Registrar"/>
     <highlightingPassFactory implementation="org.jetbrains.kotlin.idea.refactoring.cutPaste.MoveDeclarationsPassFactory$Registrar"/>
 

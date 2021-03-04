@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithAllCompilerChecks
-import org.jetbrains.kotlin.idea.highlighter.AbstractKotlinHighlightingPass
+import org.jetbrains.kotlin.idea.highlighter.AbstractKotlinHighlightVisitor
 import org.jetbrains.kotlin.idea.quickfix.CleanupFix
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.quickfix.ReplaceObsoleteLabelSyntaxFix
@@ -99,7 +99,7 @@ class KotlinCleanupInspection : LocalInspectionTool(), CleanupLocalInspectionToo
     }
 
     private fun Diagnostic.toCleanupFixes(): Collection<CleanupFix> {
-        return AbstractKotlinHighlightingPass.createQuickFixes(this).filterIsInstance<CleanupFix>()
+        return AbstractKotlinHighlightVisitor.createQuickFixes(this).filterIsInstance<CleanupFix>()
     }
 
     private class Wrapper(val intention: IntentionAction, file: KtFile) : IntentionWrapper(intention, file) {
