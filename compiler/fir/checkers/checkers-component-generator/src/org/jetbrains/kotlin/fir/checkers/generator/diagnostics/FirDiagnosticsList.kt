@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.checkers.generator.diagnostics
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiTypeElement
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.fir.FirEffectiveVisibility
@@ -235,6 +236,8 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
     }
 
     val REFLECTION by object : DiagnosticGroup("Reflection") {
+        val CALLABLE_REFERENCE_LHS_NOT_A_CLASS by error<FirSourceElement, KtExpression>()
+
         val CLASS_LITERAL_LHS_NOT_A_CLASS by error<FirSourceElement, KtExpression>()
         val NULLABLE_TYPE_IN_CLASS_LITERAL_LHS by error<FirSourceElement, KtExpression>()
     }
@@ -431,6 +434,15 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
             parameter<List<WhenMissingCase>>("missingWhenCases")
         }
         val INVALID_IF_AS_EXPRESSION by error<FirSourceElement, KtIfExpression>(PositioningStrategy.IF_EXPRESSION)
+    }
+
+    val CONTEXT_TRACKING by object : DiagnosticGroup("Context tracking") {
+        val TYPE_PARAMETER_IS_NOT_AN_EXPRESSION by error<FirSourceElement, KtSimpleNameExpression> {
+            parameter<FirTypeParameterSymbol>("typeParameter")
+        }
+        val TYPE_PARAMETER_ON_LHS_OF_DOT by error<FirSourceElement, KtSimpleNameExpression> {
+            parameter<FirTypeParameterSymbol>("typeParameter")
+        }
     }
 
     val FUNCTION_CONTRACTS by object : DiagnosticGroup("Function contracts") {

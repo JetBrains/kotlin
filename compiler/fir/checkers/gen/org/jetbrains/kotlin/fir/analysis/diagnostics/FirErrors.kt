@@ -189,6 +189,7 @@ object FirErrors {
     val INNER_CLASS_OF_GENERIC_THROWABLE_SUBCLASS by error0<FirSourceElement, KtClassOrObject>(SourceElementPositioningStrategies.DECLARATION_NAME)
 
     // Reflection
+    val CALLABLE_REFERENCE_LHS_NOT_A_CLASS by error0<FirSourceElement, KtExpression>()
     val CLASS_LITERAL_LHS_NOT_A_CLASS by error0<FirSourceElement, KtExpression>()
     val NULLABLE_TYPE_IN_CLASS_LITERAL_LHS by error0<FirSourceElement, KtExpression>()
 
@@ -275,6 +276,10 @@ object FirErrors {
     // When expressions
     val NO_ELSE_IN_WHEN by error1<FirSourceElement, KtWhenExpression, List<WhenMissingCase>>(SourceElementPositioningStrategies.WHEN_EXPRESSION)
     val INVALID_IF_AS_EXPRESSION by error0<FirSourceElement, KtIfExpression>(SourceElementPositioningStrategies.IF_EXPRESSION)
+
+    // Context tracking
+    val TYPE_PARAMETER_IS_NOT_AN_EXPRESSION by error1<FirSourceElement, KtSimpleNameExpression, FirTypeParameterSymbol>()
+    val TYPE_PARAMETER_ON_LHS_OF_DOT by error1<FirSourceElement, KtSimpleNameExpression, FirTypeParameterSymbol>()
 
     // Function contracts
     val ERROR_IN_CONTRACT_DESCRIPTION by error1<FirSourceElement, KtElement, String>(SourceElementPositioningStrategies.SELECTOR_BY_QUALIFIED)

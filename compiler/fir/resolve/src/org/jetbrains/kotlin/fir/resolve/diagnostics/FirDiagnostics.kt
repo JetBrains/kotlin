@@ -82,6 +82,10 @@ class ConeTypeParameterSupertype(val symbol: FirTypeParameterSymbol) : ConeDiagn
     override val reason: String get() = "Type parameter ${symbol.fir.name} cannot be a supertype"
 }
 
+class ConeTypeParameterInQualifiedAccess(val symbol: FirTypeParameterSymbol) : ConeDiagnostic() {
+    override val reason: String get() = "Type parameter ${symbol.fir.name} in qualified access"
+}
+
 private fun describeSymbol(symbol: AbstractFirBasedSymbol<*>): String {
     return when (symbol) {
         is FirClassLikeSymbol<*> -> symbol.classId.asString()

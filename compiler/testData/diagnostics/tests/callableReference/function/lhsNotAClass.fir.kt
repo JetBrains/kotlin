@@ -1,19 +1,19 @@
 // !WITH_NEW_INFERENCE
 
 class A<T, U : Any> {
-    fun foo() = <!OTHER_ERROR!>T<!>::toString
+    fun foo() = <!CALLABLE_REFERENCE_LHS_NOT_A_CLASS!>T::toString<!>
 
-    fun bar() = <!OTHER_ERROR!>U<!>::toString
+    fun bar() = <!CALLABLE_REFERENCE_LHS_NOT_A_CLASS!>U::toString<!>
 
     fun baz() {
-        take(<!OTHER_ERROR!>T<!>::toString)
+        take(<!CALLABLE_REFERENCE_LHS_NOT_A_CLASS!>T::toString<!>)
 
-        take(<!OTHER_ERROR!>U<!>::toString)
+        take(<!CALLABLE_REFERENCE_LHS_NOT_A_CLASS!>U::toString<!>)
     }
 }
 
-fun <T> foo() = <!OTHER_ERROR!>T<!>::toString
+fun <T> foo() = <!CALLABLE_REFERENCE_LHS_NOT_A_CLASS!>T::toString<!>
 
-fun <U : Any> bar() = <!OTHER_ERROR!>U<!>::toString
+fun <U : Any> bar() = <!CALLABLE_REFERENCE_LHS_NOT_A_CLASS!>U::toString<!>
 
 fun take(arg: Any) {}

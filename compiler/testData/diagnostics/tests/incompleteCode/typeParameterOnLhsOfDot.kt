@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 package bar
 
 class S<T> {

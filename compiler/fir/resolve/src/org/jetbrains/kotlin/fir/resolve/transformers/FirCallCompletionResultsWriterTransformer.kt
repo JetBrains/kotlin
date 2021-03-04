@@ -16,8 +16,8 @@ import org.jetbrains.kotlin.fir.references.builder.buildResolvedCallableReferenc
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
-import org.jetbrains.kotlin.fir.resolve.calls.CallableReferenceAdaptation
 import org.jetbrains.kotlin.fir.resolve.dfa.FirDataFlowAnalyzer
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeTypeParameterInQualifiedAccess
 import org.jetbrains.kotlin.fir.resolve.inference.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirArrayOfCallTransformer
@@ -90,11 +90,14 @@ class FirCallCompletionResultsWriterTransformer(
             // e.g. `T::toString` where T is a generic type.
             // in these cases we should report an error on
             // the calleeReference.source which is not a fake source.
-            // uncommenting `?.fakeElement...` here removes reports
-            // of OTHER_ERROR from tests.
             buildErrorTypeRef {
-                source = calleeReference.source //?.fakeElement(FirFakeSourceElementKind.ImplicitTypeRef)
-                diagnostic = ConeSimpleDiagnostic("Callee reference to candidate without return type: ${declaration.render()}")
+                source = calleeReference.source?.fakeElement(FirFakeSourceElementKind.ImplicitTypeRef)
+                diagnostic =
+                    when (declaration) {
+                        is FirTypeParameter -> ConeTypeParameterInQualifiedAccess(declaration.symbol)
+                        is FirResolvedReifiedParameterReference -> ConeTypeParameterInQualifiedAccess(declaration.symbol)
+                        else -> ConeSimpleDiagnostic("Callee reference to candidate without return type: ${declaration.render()}")
+                    }
             }
         }
 
