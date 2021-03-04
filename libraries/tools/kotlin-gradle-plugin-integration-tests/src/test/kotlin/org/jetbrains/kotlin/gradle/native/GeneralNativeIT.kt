@@ -623,11 +623,47 @@ class GeneralNativeIT : BaseGradleIT() {
             assertFileExists(defaultOutputFile)
         }
 
+        checkTestsUpToDate(testsToExecute, testsToSkip)
+
         // Check simulator process leaking.
         val bootedSimulatorsAfter = getBootedSimulators(projectDir)
         assertEquals(bootedSimulatorsBefore, bootedSimulatorsAfter)
 
         // Check the case with failed tests.
+        checkFailedTests(hostTestTask, testsToExecute, testsToSkip)
+
+        build("linkAnotherDebugTestHost") {
+            assertSuccessful()
+            assertFileExists(anotherOutputFile)
+        }
+    }
+
+    private fun Project.checkTestsUpToDate(testsToExecute: List<String>, testsToSkip: List<String>) {
+        // Check that test tasks are up-to-date on second run
+        build("check") {
+            assertSuccessful()
+
+            assertTasksUpToDate(*testsToExecute.toTypedArray())
+            assertTasksSkipped(*testsToSkip.toTypedArray())
+        }
+
+        // Check that setting new value to tracked environment variable triggers tests rerun
+        build("check", options = defaultBuildOptions().copy(androidHome = projectDir)) {
+            assertSuccessful()
+
+            assertTasksExecuted(*testsToExecute.toTypedArray())
+            assertTasksSkipped(*testsToSkip.toTypedArray())
+        }
+
+        build("check", options = defaultBuildOptions().copy(androidHome = projectDir)) {
+            assertSuccessful()
+
+            assertTasksUpToDate(*testsToExecute.toTypedArray())
+            assertTasksSkipped(*testsToSkip.toTypedArray())
+        }
+    }
+
+    private fun Project.checkFailedTests(hostTestTask: String, testsToExecute: List<String>, testsToSkip: List<String>) {
         projectDir.resolve("src/commonTest/kotlin/test.kt").appendText(
             """
                 @Test
@@ -698,8 +734,8 @@ class GeneralNativeIT : BaseGradleIT() {
             assertTestResults(expectedTestResults.first(), hostTestTask)
             // K/N doesn't report line numbers correctly on Linux (see KT-35408).
             // TODO: Uncomment when this is fixed.
-            //assertStacktrace(hostTestTask)
-            if (hostIsMac) {
+            //assertStacktrace(hostTestTask, "host")
+            if (HostManager.hostIsMac) {
                 assertTestResultsAnyOf(
                     expectedTestResults[0],
                     expectedTestResults[1],
@@ -707,11 +743,6 @@ class GeneralNativeIT : BaseGradleIT() {
                 )
                 assertStacktrace("iosTest")
             }
-        }
-
-        build("linkAnotherDebugTestHost") {
-            assertSuccessful()
-            assertFileExists(anotherOutputFile)
         }
     }
 
