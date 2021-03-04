@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.declarations.*
@@ -25,7 +26,6 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirMemberTypeParameterScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.name.Name
 
 class BodyResolveContext(
@@ -272,19 +272,28 @@ class BodyResolveContext(
                 }
             }
 
-            withScopesForClass(regularClass.name, regularClass, regularClass.defaultType(), holder) {
-                f()
-            }
+            withScopesForClass(regularClass, holder, f)
         }
     }
 
+    inline fun <T> withAnonymousObject(
+        anonymousObject: FirAnonymousObject,
+        holder: SessionHolder,
+        crossinline f: () -> T
+    ): T {
+        return withScopesForClass(anonymousObject, holder, f)
+    }
+
     inline fun <T> withScopesForClass(
-        labelName: Name?,
         owner: FirClass<*>,
-        type: ConeKotlinType,
         holder: SessionHolder,
         f: () -> T
     ): T {
+        val labelName = (owner as? FirRegularClass)?.name
+            ?: if (owner.classKind == ClassKind.ENUM_ENTRY) {
+                owner.primaryConstructor?.symbol?.callableId?.className?.shortName()
+            } else null
+        val type = owner.defaultType()
         val towerElementsForClass = holder.collectTowerDataElementsForClass(owner, type)
 
         val base = towerDataContext.addNonLocalTowerDataElements(towerElementsForClass.superClassesStaticsAndCompanionReceivers)
@@ -298,7 +307,7 @@ class BodyResolveContext(
             .addNonLocalScopeIfNotNull(towerElementsForClass.companionStaticScope)
             .addNonLocalScopeIfNotNull(towerElementsForClass.staticScope)
 
-        val typeParameterScope = (owner as? FirRegularClass)?.let(this::createTypeParameterScope)
+        val typeParameterScope = (owner as? FirRegularClass)?.typeParameterScope()
 
         val forMembersResolution =
             staticsAndCompanion
@@ -336,9 +345,9 @@ class BodyResolveContext(
         }
     }
 
-    fun createTypeParameterScope(declaration: FirMemberDeclaration): FirMemberTypeParameterScope? {
-        if (declaration.typeParameters.isEmpty()) return null
-        return FirMemberTypeParameterScope(declaration)
+    fun FirMemberDeclaration.typeParameterScope(): FirMemberTypeParameterScope? {
+        if (typeParameters.isEmpty()) return null
+        return FirMemberTypeParameterScope(this)
     }
 
     fun FirConstructor.scopesWithPrimaryConstructorParameters(

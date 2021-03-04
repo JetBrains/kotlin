@@ -431,18 +431,13 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             return anonymousObject.runAllPhasesForLocalClass(transformer, components, data).compose()
         }
         dataFlowAnalyzer.enterClass()
-        val type = anonymousObject.defaultType()
         if (anonymousObject.typeRef !is FirResolvedTypeRef) {
             anonymousObject.resultType = buildResolvedTypeRef {
                 source = anonymousObject.source
-                this.type = type
+                this.type = anonymousObject.defaultType()
             }
         }
-        val labelName =
-            if (anonymousObject.classKind == ClassKind.ENUM_ENTRY) {
-                anonymousObject.primaryConstructor?.symbol?.callableId?.className?.shortName()
-            } else null
-        val result = withScopesForClass(labelName, anonymousObject, type) {
+        val result = context.withAnonymousObject(anonymousObject, components) {
             transformDeclarationContent(anonymousObject, data).single as FirAnonymousObject
         }
         if (!implicitTypeOnly && result.controlFlowGraphReference == null) {
@@ -879,81 +874,8 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         return this
     }
 
-    private inline fun <T> withScopesForClass(
-        labelName: Name?,
-        owner: FirClass<*>,
-        type: ConeKotlinType,
-        block: () -> T
-    ): T {
-        val towerElementsForClass = components.collectTowerDataElementsForClass(owner, type)
-
-        val base = context.towerDataContext.addNonLocalTowerDataElements(towerElementsForClass.superClassesStaticsAndCompanionReceivers)
-        val statics = base
-            .addNonLocalScopeIfNotNull(towerElementsForClass.companionStaticScope)
-            .addNonLocalScopeIfNotNull(towerElementsForClass.staticScope)
-
-        val companionReceiver = towerElementsForClass.companionReceiver
-        val staticsAndCompanion = if (companionReceiver == null) statics else base
-            .addReceiver(null, companionReceiver)
-            .addNonLocalScopeIfNotNull(towerElementsForClass.companionStaticScope)
-            .addNonLocalScopeIfNotNull(towerElementsForClass.staticScope)
-
-        val typeParameterScope = (owner as? FirRegularClass)?.let(this::createTypeParameterScope)
-
-        val forMembersResolution =
-            staticsAndCompanion
-                .addReceiver(labelName, towerElementsForClass.thisReceiver)
-                .addNonLocalScopeIfNotNull(typeParameterScope)
-
-        val scopeForConstructorHeader =
-            staticsAndCompanion.addNonLocalScopeIfNotNull(typeParameterScope)
-
-        val newTowerDataContextForStaticNestedClasses =
-            if ((owner as? FirRegularClass)?.classKind?.isSingleton == true)
-                forMembersResolution
-            else
-                staticsAndCompanion
-
-        val constructor = (owner as? FirRegularClass)?.declarations?.firstOrNull { it is FirConstructor } as? FirConstructor
-        val (primaryConstructorPureParametersScope, primaryConstructorAllParametersScope) =
-            if (constructor?.isPrimary == true) {
-                constructor.scopesWithPrimaryConstructorParameters(owner)
-            } else {
-                null to null
-            }
-
-        val newContexts = FirTowerDataContextsForClassParts(
-            forMembersResolution,
-            newTowerDataContextForStaticNestedClasses,
-            statics,
-            scopeForConstructorHeader,
-            primaryConstructorPureParametersScope,
-            primaryConstructorAllParametersScope
-        )
-
-        return context.withNewTowerDataForClassParts(newContexts) {
-            block()
-        }
-    }
-
     private fun FirConstructor.scopeWithParameters(): FirLocalScope {
         return valueParameters.fold(FirLocalScope()) { acc, param -> acc.storeVariable(param) }
-    }
-
-    private fun FirConstructor.scopesWithPrimaryConstructorParameters(
-        ownerClass: FirClass<*>
-    ): Pair<FirLocalScope, FirLocalScope> {
-        var parameterScope = FirLocalScope()
-        var allScope = FirLocalScope()
-        val properties = ownerClass.declarations.filterIsInstance<FirProperty>().associateBy { it.name }
-        for (parameter in valueParameters) {
-            allScope = allScope.storeVariable(parameter)
-            val property = properties[parameter.name]
-            if (property?.source?.kind != FirFakeSourceElementKind.PropertyFromParameter) {
-                parameterScope = parameterScope.storeVariable(parameter)
-            }
-        }
-        return parameterScope to allScope
     }
 
     protected inline fun <T> withLabelAndReceiverType(
