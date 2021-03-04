@@ -2193,6 +2193,37 @@ void updateHeapRef(ObjHeader** location, const ObjHeader* object) {
 }
 
 template <bool Strict>
+void updateHeapRefsInsideOneArray(const ArrayHeader* array, int fromIndex, int toIndex, int count) {
+  // In case of coping inside same array number of decrements and increments of RC can be decreased.
+  auto countIndex = [=](int i) { return (fromIndex < toIndex) ? count - 1 - i : i; };
+  int rewrittenElementsNumber = std::abs(fromIndex - toIndex);
+  // Release rewritten elements.
+  for (int i = 0; i < rewrittenElementsNumber; i++) {
+    int index = countIndex(i);
+    ObjHeader* old = *ArrayAddressOfElementAt(array, toIndex + index);
+    *const_cast<const ObjHeader**>(ArrayAddressOfElementAt(array, toIndex + index)) =
+      *ArrayAddressOfElementAt(array, fromIndex + index);
+    if (old != nullptr) {
+      releaseHeapRef<Strict>(old);
+    }
+  }
+  for (int i = rewrittenElementsNumber; i < count - rewrittenElementsNumber; i++) {
+    int index = countIndex(i);
+    *const_cast<const ObjHeader**>(ArrayAddressOfElementAt(array, toIndex + index)) =
+         *ArrayAddressOfElementAt(array, fromIndex + index);
+  }
+  for (int i = count - rewrittenElementsNumber; i < count; i++) {
+    int index = countIndex(i);
+    ObjHeader* object = *ArrayAddressOfElementAt(array, fromIndex + index);
+    // Add extra heap ref for copied elements.
+    if (object != nullptr) {
+      addHeapRef(object);
+    }
+    *const_cast<const ObjHeader**>(ArrayAddressOfElementAt(array, toIndex + index)) = object;
+  }
+}
+
+template <bool Strict>
 void updateStackRef(ObjHeader** location, const ObjHeader* object) {
   UPDATE_REF_EVENT(memoryState, *location, object, location, 1)
   RuntimeAssert(object != reinterpret_cast<ObjHeader*>(1), "Markers disallowed here");
@@ -3365,6 +3396,15 @@ RUNTIME_NOTHROW void UpdateHeapRefStrict(ObjHeader** location, const ObjHeader* 
 }
 RUNTIME_NOTHROW void UpdateHeapRefRelaxed(ObjHeader** location, const ObjHeader* object) {
   updateHeapRef<false>(location, object);
+}
+
+RUNTIME_NOTHROW void UpdateHeapRefsInsideOneArrayStrict(const ArrayHeader* array, int fromIndex, int toIndex,
+                                                        int count) {
+  updateHeapRefsInsideOneArray<true>(array, fromIndex, toIndex, count);
+}
+RUNTIME_NOTHROW void UpdateHeapRefsInsideOneArrayRelaxed(const ArrayHeader* array, int fromIndex, int toIndex,
+                                                         int count) {
+  updateHeapRefsInsideOneArray<false>(array, fromIndex, toIndex, count);
 }
 
 RUNTIME_NOTHROW void UpdateReturnRefStrict(ObjHeader** returnSlot, const ObjHeader* value) {

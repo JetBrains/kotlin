@@ -67,4 +67,8 @@ RUNTIME_NOTHROW void UpdateStackRef(ObjHeader** location, const ObjHeader* objec
     UpdateStackRefRelaxed(location, object);
 }
 
+RUNTIME_NOTHROW void UpdateHeapRefsInsideOneArray(const ArrayHeader* array, int fromIndex, int toIndex, int count) {
+  UpdateHeapRefsInsideOneArrayRelaxed(array, fromIndex, toIndex, count);
+}
+
 }  // extern "C"

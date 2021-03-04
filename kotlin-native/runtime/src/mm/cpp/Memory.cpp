@@ -189,6 +189,11 @@ extern "C" ALWAYS_INLINE RUNTIME_NOTHROW void UpdateHeapRefIfNull(ObjHeader** lo
     mm::CompareAndSwapHeapRef(location, nullptr, const_cast<ObjHeader*>(object), &result);
 }
 
+extern "C" ALWAYS_INLINE RUNTIME_NOTHROW void UpdateHeapRefsInsideOneArray(const ArrayHeader* array, int fromIndex,
+                                                                           int toIndex, int count) {
+    RuntimeFail("Only for legacy MM");
+}
+
 extern "C" ALWAYS_INLINE RUNTIME_NOTHROW void UpdateReturnRef(ObjHeader** returnSlot, const ObjHeader* object) {
     mm::SetStackRef(returnSlot, const_cast<ObjHeader*>(object));
 }
