@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
@@ -16,7 +17,9 @@ import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowAnalyzerContext
 import org.jetbrains.kotlin.fir.resolve.dfa.PersistentFlow
 import org.jetbrains.kotlin.fir.resolve.inference.FirInferenceSession
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
+import org.jetbrains.kotlin.fir.resolve.transformers.withScopeCleanup
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.createImportingScopes
 import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
@@ -29,11 +32,14 @@ class BodyResolveContext(
     val targetedLocalClasses: Set<FirClass<*>> = emptySet(),
     val outerLocalClassForNested: MutableMap<FirClassLikeSymbol<*>, FirClassLikeSymbol<*>> = mutableMapOf()
 ) {
-    val fileImportsScope: MutableList<FirScope> = mutableListOf()
+    private val mutableFileImportsScope: MutableList<FirScope> = mutableListOf()
+
+    val fileImportsScope: List<FirScope>
+        get() = mutableFileImportsScope
 
     @set:PrivateForInline
     lateinit var file: FirFile
-        internal set
+        private set
 
     @set:PrivateForInline
     var towerDataContextsForClassParts: FirTowerDataContextsForClassParts =
@@ -228,4 +234,25 @@ class BodyResolveContext(
             replaceTowerDataContext(this@BodyResolveContext.towerDataContext)
             anonymousFunctionsAnalyzedInDependentContext.addAll(this@BodyResolveContext.anonymousFunctionsAnalyzedInDependentContext)
         }
+
+    // WITH FirElement functions
+
+    internal inline fun <T> withFile(
+        file: FirFile,
+        session: FirSession,
+        scopeSession: ScopeSession,
+        crossinline f: () -> T
+    ): T {
+        clear()
+        @OptIn(PrivateForInline::class)
+        this.file = file
+        return withScopeCleanup(mutableFileImportsScope) {
+            withTowerDataCleanup {
+                val importingScopes = createImportingScopes(file, session, scopeSession)
+                mutableFileImportsScope += importingScopes
+                addNonLocalTowerDataElements(importingScopes.map { it.asTowerDataElement(isLocal = false) })
+                f()
+            }
+        }
+    }
 }

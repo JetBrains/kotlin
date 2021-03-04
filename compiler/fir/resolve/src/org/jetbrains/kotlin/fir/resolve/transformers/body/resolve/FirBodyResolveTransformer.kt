@@ -5,19 +5,19 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirTargetElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.asTowerDataElement
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowAnalyzerContext
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
-import org.jetbrains.kotlin.fir.resolve.transformers.withScopeCleanup
 import org.jetbrains.kotlin.fir.scopes.FirCompositeScope
-import org.jetbrains.kotlin.fir.scopes.createImportingScopes
 import org.jetbrains.kotlin.fir.scopes.impl.createCurrentScopeList
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.compose
-import org.jetbrains.kotlin.name.FqName
 
 open class FirBodyResolveTransformer(
     session: FirSession,
@@ -49,19 +48,10 @@ open class FirBodyResolveTransformer(
 
     override fun transformFile(file: FirFile, data: ResolutionMode): CompositeTransformResult<FirFile> {
         checkSessionConsistency(file)
-        context.clear()
-        @OptIn(PrivateForInline::class)
-        context.file = file
-        return withScopeCleanup(context.fileImportsScope) {
-            context.withTowerDataCleanup {
-                val importingScopes = createImportingScopes(file, session, components.scopeSession)
-                context.fileImportsScope += importingScopes
-                context.addNonLocalTowerDataElements(importingScopes.map { it.asTowerDataElement(isLocal = false) })
-
-                file.replaceResolvePhase(transformerPhase)
-                @Suppress("UNCHECKED_CAST")
-                transformDeclarationContent(file, data) as CompositeTransformResult<FirFile>
-            }
+        return context.withFile(file, session, components.scopeSession) {
+            file.replaceResolvePhase(transformerPhase)
+            @Suppress("UNCHECKED_CAST")
+            transformDeclarationContent(file, data) as CompositeTransformResult<FirFile>
         }
     }
 
