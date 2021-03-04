@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.descriptors.commonizer.core.computeExpandedType
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirProvided
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirProvidedClassifiers
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.TypeParameterResolver
+import org.jetbrains.kotlin.descriptors.commonizer.metadata.CirTypeAliasExpander
+import org.jetbrains.kotlin.descriptors.commonizer.metadata.CirTypeAliasExpansion
 import org.jetbrains.kotlin.descriptors.commonizer.utils.*
 import org.jetbrains.kotlin.types.Variance
 
