@@ -133,15 +133,20 @@ void Kotlin_Array_copyImpl(KConstRef thiz, KInt fromIndex,
     ThrowArrayIndexOutOfBoundsException();
   }
   mutabilityCheck(destination);
-  if (fromIndex >= toIndex) {
-    for (int index = 0; index < count; index++) {
-      UpdateHeapRef(ArrayAddressOfElementAt(destinationArray, toIndex + index),
-                      *ArrayAddressOfElementAt(array, fromIndex + index));
-    }
+  if (CurrentMemoryModel != MemoryModel::kExperimental && array == destinationArray &&
+      std::abs(fromIndex - toIndex) < count) {
+    UpdateHeapRefsInsideOneArray(array, fromIndex, toIndex, count);
   } else {
-    for (int index = count - 1; index >= 0; index--) {
-      UpdateHeapRef(ArrayAddressOfElementAt(destinationArray, toIndex + index),
-                      *ArrayAddressOfElementAt(array, fromIndex + index));
+    if (fromIndex >= toIndex) {
+      for (int index = 0; index < count; index++) {
+        UpdateHeapRef(ArrayAddressOfElementAt(destinationArray, toIndex + index),
+                        *ArrayAddressOfElementAt(array, fromIndex + index));
+      }
+    } else {
+      for (int index = count - 1; index >= 0; index--) {
+        UpdateHeapRef(ArrayAddressOfElementAt(destinationArray, toIndex + index),
+                        *ArrayAddressOfElementAt(array, fromIndex + index));
+      }
     }
   }
 }
