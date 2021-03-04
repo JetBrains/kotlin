@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.toFirDiagnostic
+import org.jetbrains.kotlin.fir.analysis.diagnostics.toFirDiagnostics
 import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
@@ -77,7 +77,8 @@ class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollect
         if (source.kind == FirFakeSourceElementKind.ImplicitConstructor) {
             return
         }
-        val coneDiagnostic = diagnostic.toFirDiagnostic(source)
-        reporter.report(coneDiagnostic, context)
+        for (coneDiagnostic in diagnostic.toFirDiagnostics(source)) {
+            reporter.report(coneDiagnostic, context)
+        }
     }
 }

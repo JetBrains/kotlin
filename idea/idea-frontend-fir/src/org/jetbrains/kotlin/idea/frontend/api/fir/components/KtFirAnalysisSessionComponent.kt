@@ -9,14 +9,11 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
-import org.jetbrains.kotlin.fir.analysis.diagnostics.toFirDiagnostic
+import org.jetbrains.kotlin.fir.analysis.diagnostics.toFirDiagnostics
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeCheckerContext
-import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
-import org.jetbrains.kotlin.idea.frontend.api.components.KtAnalysisSessionComponent
-import org.jetbrains.kotlin.idea.frontend.api.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.idea.frontend.api.diagnostics.KtDiagnosticWithPsi
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.fir.diagnostics.KT_DIAGNOSTIC_CONVERTER
@@ -34,7 +31,7 @@ internal interface KtFirAnalysisSessionComponent {
         KT_DIAGNOSTIC_CONVERTER.convert(analysisSession, this as FirDiagnostic<*>)
 
     fun ConeDiagnostic.asKtDiagnostic(source: FirSourceElement): KtDiagnosticWithPsi<*>? {
-        val firDiagnostic = toFirDiagnostic(source) ?: return null
+        val firDiagnostic = toFirDiagnostics(source).firstOrNull() ?: return null
         check(firDiagnostic is FirPsiDiagnostic<*>)
         return firDiagnostic.asKtDiagnostic()
     }

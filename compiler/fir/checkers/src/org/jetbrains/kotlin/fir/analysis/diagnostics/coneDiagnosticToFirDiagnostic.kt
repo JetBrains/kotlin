@@ -20,36 +20,39 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import org.jetbrains.kotlin.utils.ifEmpty
 
-fun ConeDiagnostic.toFirDiagnostic(source: FirSourceElement): FirDiagnostic<FirSourceElement>? = when (this) {
-    is ConeUnresolvedReferenceError -> FirErrors.UNRESOLVED_REFERENCE.on(source, this.name?.asString() ?: "<No name>")
-    is ConeUnresolvedSymbolError -> FirErrors.UNRESOLVED_REFERENCE.on(source, this.classId.asString())
-    is ConeUnresolvedNameError -> FirErrors.UNRESOLVED_REFERENCE.on(source, this.name.asString())
-    is ConeHiddenCandidateError -> FirErrors.HIDDEN.on(source, this.candidateSymbol)
-    is ConeInapplicableCandidateError -> mapInapplicableCandidateError(this, source)
-    is ConeAmbiguityError -> if (!this.applicability.isSuccess) {
-        FirErrors.NONE_APPLICABLE.on(source, this.candidates)
-    } else {
-        FirErrors.AMBIGUITY.on(source, this.candidates)
-    }
-    is ConeOperatorAmbiguityError -> FirErrors.ASSIGN_OPERATOR_AMBIGUITY.on(source, this.candidates)
-    is ConeVariableExpectedError -> FirErrors.VARIABLE_EXPECTED.on(source)
-    is ConeTypeMismatchError -> FirErrors.TYPE_MISMATCH.on(source, this.expectedType, this.actualType)
-    is ConeUnexpectedTypeArgumentsError -> FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED.on(this.source.safeAs() ?: source)
-    is ConeIllegalAnnotationError -> FirErrors.NOT_AN_ANNOTATION_CLASS.on(source, this.name.asString())
-    is ConeWrongNumberOfTypeArgumentsError ->
-        FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(source, this.desiredCount, this.type)
-    is ConeSimpleDiagnostic -> when {
-        source.kind is FirFakeSourceElementKind -> null
-        this.kind == DiagnosticKind.SymbolNotFound -> FirErrors.UNRESOLVED_REFERENCE.on(source, "<No name>")
-        else -> this.getFactory().on(source)
-    }
-    is ConeInstanceAccessBeforeSuperCall -> FirErrors.INSTANCE_ACCESS_BEFORE_SUPER_CALL.on(source, this.target)
-    is ConeStubDiagnostic -> null
-    is ConeIntermediateDiagnostic -> null
-    is ConeContractDescriptionError -> FirErrors.ERROR_IN_CONTRACT_DESCRIPTION.on(source, this.reason)
-    is ConeTypeParameterSupertype -> FirErrors.SUPERTYPE_NOT_A_CLASS_OR_INTERFACE.on(source, this.reason)
-    else -> throw IllegalArgumentException("Unsupported diagnostic type: ${this.javaClass}")
+fun ConeDiagnostic.toFirDiagnostics(source: FirSourceElement): List<FirDiagnostic<FirSourceElement>> {
+    return when (this) {
+        is ConeUnresolvedReferenceError -> FirErrors.UNRESOLVED_REFERENCE.on(source, this.name?.asString() ?: "<No name>")
+        is ConeUnresolvedSymbolError -> FirErrors.UNRESOLVED_REFERENCE.on(source, this.classId.asString())
+        is ConeUnresolvedNameError -> FirErrors.UNRESOLVED_REFERENCE.on(source, this.name.asString())
+        is ConeHiddenCandidateError -> FirErrors.HIDDEN.on(source, this.candidateSymbol)
+        is ConeInapplicableCandidateError -> return mapInapplicableCandidateError(this, source)
+        is ConeAmbiguityError -> if (!this.applicability.isSuccess) {
+            FirErrors.NONE_APPLICABLE.on(source, this.candidates)
+        } else {
+            FirErrors.AMBIGUITY.on(source, this.candidates)
+        }
+        is ConeOperatorAmbiguityError -> FirErrors.ASSIGN_OPERATOR_AMBIGUITY.on(source, this.candidates)
+        is ConeVariableExpectedError -> FirErrors.VARIABLE_EXPECTED.on(source)
+        is ConeTypeMismatchError -> FirErrors.TYPE_MISMATCH.on(source, this.expectedType, this.actualType)
+        is ConeUnexpectedTypeArgumentsError -> FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED.on(this.source.safeAs() ?: source)
+        is ConeIllegalAnnotationError -> FirErrors.NOT_AN_ANNOTATION_CLASS.on(source, this.name.asString())
+        is ConeWrongNumberOfTypeArgumentsError ->
+            FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(source, this.desiredCount, this.type)
+        is ConeSimpleDiagnostic -> when {
+            source.kind is FirFakeSourceElementKind -> null
+            this.kind == DiagnosticKind.SymbolNotFound -> FirErrors.UNRESOLVED_REFERENCE.on(source, "<No name>")
+            else -> this.getFactory().on(source)
+        }
+        is ConeInstanceAccessBeforeSuperCall -> FirErrors.INSTANCE_ACCESS_BEFORE_SUPER_CALL.on(source, this.target)
+        is ConeStubDiagnostic -> null
+        is ConeIntermediateDiagnostic -> null
+        is ConeContractDescriptionError -> FirErrors.ERROR_IN_CONTRACT_DESCRIPTION.on(source, this.reason)
+        is ConeTypeParameterSupertype -> FirErrors.SUPERTYPE_NOT_A_CLASS_OR_INTERFACE.on(source, this.reason)
+        else -> throw IllegalArgumentException("Unsupported diagnostic type: ${this.javaClass}")
+    }.let { listOfNotNull(it) }
 }
 
 private fun ConeKotlinType.isEffectivelyNotNull(): Boolean {
@@ -65,42 +68,42 @@ private fun ConeKotlinType.isEffectivelyNotNull(): Boolean {
 private fun mapInapplicableCandidateError(
     diagnostic: ConeInapplicableCandidateError,
     source: FirSourceElement,
-): FirDiagnostic<*> {
+): List<FirDiagnostic<FirSourceElement>> {
     // TODO: Need to distinguish SMARTCAST_IMPOSSIBLE
-    val rootCause = diagnostic.candidate.diagnostics.find { it.applicability == diagnostic.applicability }
-    if (rootCause != null &&
-        rootCause is InapplicableWrongReceiver &&
-        rootCause.actualType?.isNullable == true &&
-        (rootCause.expectedType == null || rootCause.expectedType!!.isEffectivelyNotNull())
-    ) {
-        if (diagnostic.candidate.callInfo.isImplicitInvoke) {
-            return FirErrors.UNSAFE_IMPLICIT_INVOKE_CALL.on(source, rootCause.actualType!!)
-        }
-
-        val candidateFunction = diagnostic.candidate.symbol.fir as? FirSimpleFunction
-        val candidateFunctionName = candidateFunction?.name
-        val left = diagnostic.candidate.callInfo.explicitReceiver
-        val right = diagnostic.candidate.callInfo.argumentList.arguments.singleOrNull()
-        if (left != null && right != null &&
-            source.elementType == KtNodeTypes.OPERATION_REFERENCE &&
-            (candidateFunction?.isOperator == true || candidateFunction?.isInfix == true)
+    return diagnostic.candidate.diagnostics.filter { it.applicability == diagnostic.applicability }.mapNotNull { rootCause ->
+        if (rootCause is InapplicableWrongReceiver &&
+            rootCause.actualType?.isNullable == true &&
+            (rootCause.expectedType == null || rootCause.expectedType!!.isEffectivelyNotNull())
         ) {
-            val operationToken = source.getChild(KtTokens.IDENTIFIER)
-            if (candidateFunction.isInfix && operationToken?.elementType == KtTokens.IDENTIFIER) {
-                return FirErrors.UNSAFE_INFIX_CALL.on(source, left, candidateFunctionName!!.asString(), right)
+            if (diagnostic.candidate.callInfo.isImplicitInvoke) {
+                return@mapNotNull FirErrors.UNSAFE_IMPLICIT_INVOKE_CALL.on(source, rootCause.actualType!!)
             }
-            if (candidateFunction.isOperator && operationToken == null) {
-                return FirErrors.UNSAFE_OPERATOR_CALL.on(source, left, candidateFunctionName!!.asString(), right)
+
+            val candidateFunction = diagnostic.candidate.symbol.fir as? FirSimpleFunction
+            val candidateFunctionName = candidateFunction?.name
+            val left = diagnostic.candidate.callInfo.explicitReceiver
+            val right = diagnostic.candidate.callInfo.argumentList.arguments.singleOrNull()
+            if (left != null && right != null &&
+                source.elementType == KtNodeTypes.OPERATION_REFERENCE &&
+                (candidateFunction?.isOperator == true || candidateFunction?.isInfix == true)
+            ) {
+                val operationToken = source.getChild(KtTokens.IDENTIFIER)
+                if (candidateFunction.isInfix && operationToken?.elementType == KtTokens.IDENTIFIER) {
+                    return@mapNotNull FirErrors.UNSAFE_INFIX_CALL.on(source, left, candidateFunctionName!!.asString(), right)
+                }
+                if (candidateFunction.isOperator && operationToken == null) {
+                    return@mapNotNull FirErrors.UNSAFE_OPERATOR_CALL.on(source, left, candidateFunctionName!!.asString(), right)
+                }
             }
+
+            return@mapNotNull FirErrors.UNSAFE_CALL.on(source, rootCause.actualType!!)
         }
 
-        return FirErrors.UNSAFE_CALL.on(source, rootCause.actualType!!)
-    }
-
-    return when (rootCause) {
-        is VarargArgumentOutsideParentheses -> FirErrors.VARARG_OUTSIDE_PARENTHESES.on(rootCause.argument.source ?: source)
-        else -> FirErrors.INAPPLICABLE_CANDIDATE.on(source, diagnostic.candidate.symbol)
-    }
+        when (rootCause) {
+            is VarargArgumentOutsideParentheses -> FirErrors.VARARG_OUTSIDE_PARENTHESES.on(rootCause.argument.source ?: source)
+            else -> null
+        }
+    }.ifEmpty { listOf(FirErrors.INAPPLICABLE_CANDIDATE.on(source, diagnostic.candidate.symbol)) }
 }
 
 private fun ConeSimpleDiagnostic.getFactory(): FirDiagnosticFactory0<FirSourceElement, *> {
