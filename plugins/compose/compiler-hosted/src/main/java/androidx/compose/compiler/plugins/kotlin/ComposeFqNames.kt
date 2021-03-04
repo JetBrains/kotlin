@@ -45,6 +45,7 @@ object ComposeFqNames {
     val ExplicitGroupsComposable = fqNameFor("ExplicitGroupsComposable")
     val NonRestartableComposable = fqNameFor("NonRestartableComposable")
     val composableLambda = internalFqNameFor("composableLambda")
+    val composableLambdaInstance = internalFqNameFor("composableLambdaInstance")
     val remember = fqNameFor("remember")
     val key = fqNameFor("key")
     val StableMarker = fqNameFor("StableMarker")
