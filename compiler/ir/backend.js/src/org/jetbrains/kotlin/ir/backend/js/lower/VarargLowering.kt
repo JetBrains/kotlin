@@ -16,7 +16,10 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.getInlineClassBackingField
+import org.jetbrains.kotlin.ir.util.getInlineClassUnderlyingType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
@@ -26,11 +29,14 @@ class VarargLowering(val context: JsIrBackendContext) : BodyLoweringPass {
         irBody.transformChildrenVoid(VarargTransformer(context))
     }
 }
+
 private class VarargTransformer(
     val context: JsIrBackendContext
 ) : IrElementTransformerVoid() {
 
     fun IrType.getInlinedClass() = context.inlineClassesUtils.getInlinedClass(this)
+
+    var externalVarargs = mutableSetOf<IrVararg>()
 
     private fun List<IrExpression>.toArrayLiteral(type: IrType, varargElementType: IrType): IrExpression {
 
@@ -138,7 +144,7 @@ private class VarargTransformer(
 
         // empty vararg => empty array literal
         if (segments.isEmpty()) {
-            with (arrayInfo) {
+            with(arrayInfo) {
                 return boxArrayIfNeeded(toPrimitiveArrayLiteral(emptyList<IrExpression>()))
             }
         }
@@ -146,6 +152,10 @@ private class VarargTransformer(
         // vararg with a single segment => no need to concatenate
         if (segments.size == 1) {
             val segment = segments.first()
+            if (expression in externalVarargs) {
+                externalVarargs.remove(expression)
+                return segment
+            }
             val argument = if (expression.elements.any { it is IrSpreadElement }) {
                 val elementType = arrayInfo.primitiveElementType
                 val copyFunction =
@@ -197,6 +207,17 @@ private class VarargTransformer(
     }
 
     private fun transformFunctionAccessExpression(expression: IrFunctionAccessExpression): IrExpression {
+        if (expression.symbol.owner.isExternal) {
+            for (i in 0 until expression.valueArgumentsCount) {
+                val parameter = expression.symbol.owner.valueParameters[i]
+                val varargElementType = parameter.varargElementType
+                if (varargElementType != null) {
+                    (expression.getValueArgument(i) as IrVararg?)?.let {
+                        externalVarargs.add(it)
+                    }
+                }
+            }
+        }
         expression.transformChildrenVoid()
         val size = expression.valueArgumentsCount
 
@@ -206,7 +227,7 @@ private class VarargTransformer(
             val varargElementType = parameter.varargElementType
             if (argument == null && varargElementType != null) {
                 val arrayInfo = InlineClassArrayInfo(varargElementType, parameter.type)
-                val emptyArray = with (arrayInfo) {
+                val emptyArray = with(arrayInfo) {
                     boxArrayIfNeeded(toPrimitiveArrayLiteral(emptyList()))
                 }
 
