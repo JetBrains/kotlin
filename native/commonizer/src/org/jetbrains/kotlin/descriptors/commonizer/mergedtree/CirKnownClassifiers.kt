@@ -6,13 +6,10 @@
 package org.jetbrains.kotlin.descriptors.commonizer.mergedtree
 
 import gnu.trove.THashMap
-import gnu.trove.THashSet
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirEntityId
-import org.jetbrains.kotlin.descriptors.commonizer.utils.isUnderKotlinNativeSyntheticPackages
 
 class CirKnownClassifiers(
     val commonizedNodes: CirCommonizedClassifierNodes,
-    val forwardDeclarations: CirForwardDeclarations,
     val commonDependencies: CirProvidedClassifiers
 )
 
@@ -42,28 +39,6 @@ interface CirCommonizedClassifierNodes {
             override fun addTypeAliasNode(typeAliasId: CirEntityId, node: CirTypeAliasNode) {
                 val oldNode = typeAliases.put(typeAliasId, node)
                 check(oldNode == null) { "Rewriting type alias node $typeAliasId" }
-            }
-        }
-    }
-}
-
-/** A set of all exported forward declaration classes/objects/structs. */
-interface CirForwardDeclarations {
-    /* Accessors */
-    fun isExportedForwardDeclaration(classId: CirEntityId): Boolean
-
-    /* Mutators */
-    fun addExportedForwardDeclaration(classId: CirEntityId)
-
-    companion object {
-        fun default() = object : CirForwardDeclarations {
-            private val exportedForwardDeclarations = THashSet<CirEntityId>()
-
-            override fun isExportedForwardDeclaration(classId: CirEntityId) = classId in exportedForwardDeclarations
-
-            override fun addExportedForwardDeclaration(classId: CirEntityId) {
-                check(classId.packageName.isUnderKotlinNativeSyntheticPackages)
-                exportedForwardDeclarations += classId
             }
         }
     }

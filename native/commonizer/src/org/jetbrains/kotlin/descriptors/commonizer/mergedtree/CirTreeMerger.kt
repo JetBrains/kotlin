@@ -88,9 +88,6 @@ class CirTreeMerger(
     private fun processRoot(): CirTreeMergeResult {
         val rootNode: CirRootNode = buildRootNode(storageManager, leafTargetsSize)
 
-        // remember any exported forward declarations from common fragments of dependee modules
-        parameters.dependencyModulesProvider?.loadModuleInfos()?.forEach(::processCInteropModuleAttributes)
-
         val commonModuleNames = parameters.getCommonModuleNames()
         val missingModuleInfosByTargets = mutableMapOf<LeafCommonizerTarget, Collection<ModuleInfo>>()
 
@@ -138,18 +135,15 @@ class CirTreeMerger(
         commonModuleInfos.forEach { moduleInfo ->
             val metadata = targetProvider.modulesProvider.loadModuleMetadata(moduleInfo.name)
             val module = KlibModuleMetadata.read(SerializedMetadataLibraryProvider(metadata))
-            processModule(context, rootNode, moduleInfo, module)
+            processModule(context, rootNode, module)
         }
     }
 
     private fun processModule(
         context: CirTreeMergingContext,
         rootNode: CirRootNode,
-        moduleInfo: ModuleInfo,
         module: KlibModuleMetadata
     ) {
-        processCInteropModuleAttributes(moduleInfo)
-
         val moduleName: CirName = CirName.create(module.name)
         val moduleNode: CirModuleNode = rootNode.modules.getOrPut(moduleName) {
             buildModuleNode(storageManager, leafTargetsSize)
@@ -344,19 +338,6 @@ class CirTreeMerger(
             source = typeAlias,
             typeResolver = context.typeResolver
         )
-    }
-
-    private fun processCInteropModuleAttributes(moduleInfo: ModuleInfo) {
-        val cInteropAttributes = moduleInfo.cInteropAttributes ?: return
-        val exportForwardDeclarations = cInteropAttributes.exportForwardDeclarations.takeIf { it.isNotEmpty() } ?: return
-
-        exportForwardDeclarations.forEach { classFqName ->
-            // Class has synthetic package FQ name (cnames/objcnames). Need to transfer it to the main package.
-            val packageName = CirPackageName.create(classFqName.substringBeforeLast('.', missingDelimiterValue = ""))
-            val className = CirName.create(classFqName.substringAfterLast('.'))
-
-            classifiers.forwardDeclarations.addExportedForwardDeclaration(CirEntityId.create(packageName, className))
-        }
     }
 }
 

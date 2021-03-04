@@ -40,7 +40,6 @@ private fun mergeAndCommonize(storageManager: StorageManager, parameters: Common
     // build merged tree:
     val classifiers = CirKnownClassifiers(
         commonizedNodes = CirCommonizedClassifierNodes.default(),
-        forwardDeclarations = CirForwardDeclarations.default(),
         commonDependencies = CirProvidedClassifiers.of(
             CirFictitiousFunctionClassifiers,
             CirProvidedClassifiers.by(parameters.dependencyModulesProvider)

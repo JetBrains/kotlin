@@ -47,7 +47,7 @@ internal class CirProvidedClassifiersByModules private constructor(
             var hasForwardDeclarations = false
 
             modulesProvider.loadModuleInfos().forEach { moduleInfo ->
-                if (moduleInfo.cInteropAttributes != null) {
+                if (moduleInfo.isCInterop) {
                     // this is a C-interop module
                     hasForwardDeclarations = true
                 }

@@ -78,10 +78,6 @@ internal val MOCK_CLASSIFIERS = CirKnownClassifiers(
         override fun addClassNode(classId: CirEntityId, node: CirClassNode) = error("This method should not be called")
         override fun addTypeAliasNode(typeAliasId: CirEntityId, node: CirTypeAliasNode) = error("This method should not be called")
     },
-    forwardDeclarations = object : CirForwardDeclarations {
-        override fun isExportedForwardDeclaration(classId: CirEntityId) = false
-        override fun addExportedForwardDeclaration(classId: CirEntityId) = error("This method should not be called")
-    },
     commonDependencies = CirProvidedClassifiers.EMPTY
 )
 
@@ -97,7 +93,7 @@ internal class MockModulesProvider private constructor(
         return SERIALIZER.serializeModule(module)
     }
 
-    private fun fakeModuleInfo(name: String) = ModuleInfo(name, File("/tmp/commonizer/mocks/$name"), null)
+    private fun fakeModuleInfo(name: String) = ModuleInfo(name, File("/tmp/commonizer/mocks/$name"), false)
 
     companion object {
         @JvmName("createByModuleNames")

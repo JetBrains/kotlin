@@ -28,7 +28,6 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
         // reset cache
         classifiers = CirKnownClassifiers(
             commonizedNodes = CirCommonizedClassifierNodes.default(),
-            forwardDeclarations = CirForwardDeclarations.default(),
             commonDependencies = object : CirProvidedClassifiers {
                 override fun hasClassifier(classifierId: CirEntityId) = classifierId.packageName.isUnderStandardKotlinPackages
                 override fun classifier(classifierId: CirEntityId) = error("This method should not be called")

@@ -202,10 +202,8 @@ private fun commonizeClass(classId: CirEntityId, classifiers: CirKnownClassifier
 
     return when (val node = classifiers.commonizedNodes.classNode(classId)) {
         null -> {
-            // No node means that the class was not subject for commonization.
-            // - Either it is missing in certain targets at all => not commonized.
-            // - Or it is a known forward declaration => consider it as commonized.
-            classifiers.forwardDeclarations.isExportedForwardDeclaration(classId)
+            // No node means that the type alias was not subject for commonization. It is missing in some target(s) => not commonized.
+            false
         }
         else -> {
             // Common declaration in node is not null -> successfully commonized.

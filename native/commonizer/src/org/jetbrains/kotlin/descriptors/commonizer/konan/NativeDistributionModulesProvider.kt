@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.descriptors.commonizer.konan
 
 import org.jetbrains.kotlin.descriptors.commonizer.ModulesProvider
-import org.jetbrains.kotlin.descriptors.commonizer.ModulesProvider.CInteropModuleAttributes
 import org.jetbrains.kotlin.descriptors.commonizer.ModulesProvider.ModuleInfo
 import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
 import org.jetbrains.kotlin.library.SerializedMetadata
@@ -18,8 +17,8 @@ internal class NativeDistributionModulesProvider(libraries: Collection<NativeLib
         name: String,
         originalLocation: File,
         val dependencies: Set<String>,
-        cInteropAttributes: CInteropModuleAttributes?
-    ) : ModuleInfo(name, originalLocation, cInteropAttributes)
+        isCInterop: Boolean
+    ) : ModuleInfo(name, originalLocation, isCInterop)
 
     private val libraryMap: Map<String, NativeLibrary>
     private val moduleInfoMap: Map<String, NativeModuleInfo>
@@ -35,12 +34,8 @@ internal class NativeDistributionModulesProvider(libraries: Collection<NativeLib
             val location = File(library.library.libraryFile.path)
             val dependencies = manifestData.dependencies.toSet()
 
-            val cInteropAttributes = if (manifestData.isInterop) {
-                CInteropModuleAttributes(manifestData.exportForwardDeclarations)
-            } else null
-
             libraryMap.put(name, library)?.let { error("Duplicated libraries: $name") }
-            moduleInfoMap[name] = NativeModuleInfo(name, location, dependencies, cInteropAttributes)
+            moduleInfoMap[name] = NativeModuleInfo(name, location, dependencies, manifestData.isInterop)
         }
 
         this.libraryMap = libraryMap
