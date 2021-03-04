@@ -19,6 +19,7 @@ import org.jetbrains.dokka.utilities.parallelMap
 import org.jetbrains.dokka.utilities.report
 
 class SingleModuleGeneration(private val context: DokkaContext) : Generation {
+
     override fun Timer.generate() {
         report("Validity check")
         validityCheck(context)
@@ -48,7 +49,7 @@ class SingleModuleGeneration(private val context: DokkaContext) : Generation {
         reportAfterRendering()
     }
 
-    override val generationName = " documentation for ${context.configuration.moduleName}"
+    override val generationName = "documentation for ${context.configuration.moduleName}"
 
     fun createDocumentationModels() = runBlocking(Dispatchers.Default) {
         context.configuration.sourceSets.parallelMap { sourceSet -> translateSources(sourceSet, context) }.flatten()

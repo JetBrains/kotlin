@@ -2,10 +2,15 @@
 
 package org.jetbrains.dokka
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.scheduling.ExperimentalCoroutineDispatcher
 import org.jetbrains.dokka.generation.GracefulGenerationExit
 import org.jetbrains.dokka.plugability.DokkaContext
 import org.jetbrains.dokka.plugability.DokkaPlugin
 import org.jetbrains.dokka.utilities.DokkaLogger
+import kotlin.reflect.full.memberProperties
+import kotlin.reflect.jvm.isAccessible
 
 /**
  * DokkaGenerator is the main entry point for generating documentation
@@ -16,15 +21,22 @@ class DokkaGenerator(
     private val configuration: DokkaConfiguration,
     private val logger: DokkaLogger
 ) {
+
     fun generate() = timed(logger) {
         report("Initializing plugins")
         val context = initializePlugins(configuration, logger)
 
-        context.single(CoreExtensions.generation).run {
-            logger.progress("Dokka is performing: $generationName")
-            generate()
+        runCatching {
+            context.single(CoreExtensions.generation).run {
+                logger.progress("Dokka is performing: $generationName")
+                generate()
+            }
+        }.exceptionOrNull()?.let { e ->
+            finalizeCoroutines()
+            throw e
         }
 
+        finalizeCoroutines()
     }.dump("\n\n === TIME MEASUREMENT ===\n")
 
     fun initializePlugins(
@@ -32,6 +44,29 @@ class DokkaGenerator(
         logger: DokkaLogger,
         additionalPlugins: List<DokkaPlugin> = emptyList()
     ) = DokkaContext.create(configuration, logger, additionalPlugins)
+
+    private fun finalizeCoroutines() {
+        runCatching {
+            Dispatchers.Default.closeExecutor()
+
+            Dispatchers.IO.let { dispatcher ->
+                dispatcher::class.memberProperties.find {
+                    it.name == "dispatcher"
+                }?.also {
+                    it.isAccessible = true
+                }?.call(dispatcher)
+            }?.closeExecutor()
+        }
+    }
+
+    @OptIn(InternalCoroutinesApi::class)
+    private fun Any.closeExecutor() = (this as ExperimentalCoroutineDispatcher).also {
+        it.executor::class.members
+            .find { it.name == "close" }
+            ?.also {
+                it.isAccessible = true
+            }?.call(it.executor)
+    }
 }
 
 class Timer internal constructor(startTime: Long, private val logger: DokkaLogger?) {
