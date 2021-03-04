@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.descriptors.commonizer.cir.factory
 
 import kotlinx.metadata.KmTypeAlias
-import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.descriptors.commonizer.cir.*
-import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirTypeAliasImpl
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClassOrTypeAliasType
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirName
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirTypeAlias
 import org.jetbrains.kotlin.descriptors.commonizer.metadata.decodeVisibility
 import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMap
 
@@ -17,30 +17,11 @@ object CirTypeAliasFactory {
         val underlyingType = CirTypeFactory.create(source.underlyingType, typeResolver) as CirClassOrTypeAliasType
         val expandedType = CirTypeFactory.unabbreviate(underlyingType)
 
-        return create(
+        return CirTypeAlias.create(
             annotations = CirAnnotationFactory.createAnnotations(source.flags, typeResolver, source::annotations),
             name = name,
             typeParameters = source.typeParameters.compactMap { CirTypeParameterFactory.create(it, typeResolver) },
             visibility = decodeVisibility(source.flags),
-            underlyingType = underlyingType,
-            expandedType = expandedType
-        )
-    }
-
-    @Suppress("NOTHING_TO_INLINE")
-    inline fun create(
-        annotations: List<CirAnnotation>,
-        name: CirName,
-        typeParameters: List<CirTypeParameter>,
-        visibility: Visibility,
-        underlyingType: CirClassOrTypeAliasType,
-        expandedType: CirClassType
-    ): CirTypeAlias {
-        return CirTypeAliasImpl(
-            annotations = annotations,
-            name = name,
-            typeParameters = typeParameters,
-            visibility = visibility,
             underlyingType = underlyingType,
             expandedType = expandedType
         )
