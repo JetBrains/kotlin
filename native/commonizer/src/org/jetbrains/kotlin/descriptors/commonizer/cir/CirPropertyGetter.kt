@@ -5,4 +5,43 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.cir
 
-interface CirPropertyGetter : CirPropertyAccessor
+import org.jetbrains.kotlin.descriptors.commonizer.utils.Interner
+
+interface CirPropertyGetter : CirPropertyAccessor {
+    companion object {
+        // optimization for speed
+        val DEFAULT_NO_ANNOTATIONS: CirPropertyGetter
+
+        fun createInterned(
+            annotations: List<CirAnnotation>,
+            isDefault: Boolean,
+            isExternal: Boolean,
+            isInline: Boolean
+        ): CirPropertyGetter = interner.intern(
+            CirPropertyGetterInternedImpl(
+                annotations = annotations,
+                isDefault = isDefault,
+                isExternal = isExternal,
+                isInline = isInline
+            )
+        )
+
+        private val interner = Interner<CirPropertyGetterInternedImpl>()
+
+        init {
+            DEFAULT_NO_ANNOTATIONS = createInterned(
+                annotations = emptyList(),
+                isDefault = true,
+                isExternal = false,
+                isInline = false
+            )
+        }
+    }
+}
+
+private data class CirPropertyGetterInternedImpl(
+    override val annotations: List<CirAnnotation>,
+    override val isDefault: Boolean,
+    override val isExternal: Boolean,
+    override val isInline: Boolean
+) : CirPropertyGetter

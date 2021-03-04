@@ -8,22 +8,9 @@ package org.jetbrains.kotlin.descriptors.commonizer.cir.factory
 import kotlinx.metadata.Flag
 import kotlinx.metadata.KmProperty
 import kotlinx.metadata.klib.getterAnnotations
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirAnnotation
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirPropertyGetter
-import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirPropertyGetterImpl
-import org.jetbrains.kotlin.descriptors.commonizer.utils.Interner
 
 object CirPropertyGetterFactory {
-    private val interner = Interner<CirPropertyGetter>()
-
-    // speed optimization
-    val DEFAULT_NO_ANNOTATIONS: CirPropertyGetter = create(
-        annotations = emptyList(),
-        isDefault = true,
-        isExternal = false,
-        isInline = false
-    )
-
     fun create(source: KmProperty, typeResolver: CirTypeResolver): CirPropertyGetter? {
         if (!Flag.Property.HAS_GETTER(source.flags))
             return null
@@ -34,29 +21,13 @@ object CirPropertyGetterFactory {
         val annotations = CirAnnotationFactory.createAnnotations(getterFlags, typeResolver, source::getterAnnotations)
 
         if (isDefault && annotations.isEmpty())
-            return DEFAULT_NO_ANNOTATIONS
+            return CirPropertyGetter.DEFAULT_NO_ANNOTATIONS
 
-        return create(
+        return CirPropertyGetter.createInterned(
             annotations = annotations,
             isDefault = isDefault,
             isExternal = Flag.PropertyAccessor.IS_EXTERNAL(getterFlags),
             isInline = Flag.PropertyAccessor.IS_INLINE(getterFlags)
-        )
-    }
-
-    fun create(
-        annotations: List<CirAnnotation>,
-        isDefault: Boolean,
-        isExternal: Boolean,
-        isInline: Boolean
-    ): CirPropertyGetter {
-        return interner.intern(
-            CirPropertyGetterImpl(
-                annotations = annotations,
-                isDefault = isDefault,
-                isExternal = isExternal,
-                isInline = isInline
-            )
         )
     }
 }
