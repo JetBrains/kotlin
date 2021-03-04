@@ -14947,6 +14947,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("falsePositiveBoundSmartcast.kt")
+        public void testFalsePositiveBoundSmartcast() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/falsePositiveBoundSmartcast.kt");
+        }
+
+        @Test
         @TestMetadata("Fir2IrClassifierStorage.kt")
         public void testFir2IrClassifierStorage() throws Exception {
             runTest("compiler/testData/codegen/box/fir/Fir2IrClassifierStorage.kt");

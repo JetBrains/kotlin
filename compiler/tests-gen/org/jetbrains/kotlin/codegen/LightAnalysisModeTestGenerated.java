@@ -12338,6 +12338,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/fir/FakeOverrideBuilder.kt");
         }
 
+        @TestMetadata("falsePositiveBoundSmartcast.kt")
+        public void testFalsePositiveBoundSmartcast() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/falsePositiveBoundSmartcast.kt");
+        }
+
         @TestMetadata("Fir2IrClassifierStorage.kt")
         public void testFir2IrClassifierStorage() throws Exception {
             runTest("compiler/testData/codegen/box/fir/Fir2IrClassifierStorage.kt");

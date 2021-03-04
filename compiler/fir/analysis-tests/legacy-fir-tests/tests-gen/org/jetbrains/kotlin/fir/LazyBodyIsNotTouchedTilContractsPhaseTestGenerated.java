@@ -3141,6 +3141,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
                 runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/safeCalls/boundSafeCallAndIsCheck.kt");
             }
 
+            @TestMetadata("complexIfWithOr.kt")
+            public void testComplexIfWithOr() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/safeCalls/complexIfWithOr.kt");
+            }
+
             @TestMetadata("safeCallAndEqualityToBool.kt")
             public void testSafeCallAndEqualityToBool() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/safeCalls/safeCallAndEqualityToBool.kt");

@@ -18,6 +18,7 @@ abstract class Flow {
 
     abstract val directAliasMap: Map<RealVariable, RealVariableAndType>
     abstract val backwardsAliasMap: Map<RealVariable, List<RealVariable>>
+    abstract val assignmentIndex: Map<RealVariable, Int>
 }
 
 fun Flow.unwrapVariable(variable: RealVariable): RealVariable {
@@ -36,8 +37,9 @@ abstract class LogicSystem<FLOW : Flow>(protected val context: ConeInferenceCont
 
     abstract fun addImplication(flow: FLOW, implication: Implication)
 
-    abstract fun removeAllAboutVariable(flow: FLOW, variable: RealVariable)
-    abstract fun removeAllAboutVariableIncludingAliasInformation(flow: FLOW, variable: RealVariable)
+    abstract fun removeTypeStatementsAboutVariable(flow: FLOW, variable: RealVariable)
+    abstract fun removeLogicStatementsAboutVariable(flow: FLOW, variable: DataFlowVariable)
+    abstract fun removeAliasInformationAboutVariable(flow: FLOW, variable: RealVariable)
 
     abstract fun translateVariableFromConditionInStatements(
         flow: FLOW,
@@ -57,6 +59,8 @@ abstract class LogicSystem<FLOW : Flow>(protected val context: ConeInferenceCont
 
     abstract fun addLocalVariableAlias(flow: FLOW, alias: RealVariable, underlyingVariable: RealVariableAndType)
     abstract fun removeLocalVariableAlias(flow: FLOW, alias: RealVariable)
+
+    abstract fun recordNewAssignment(flow: FLOW, variable: RealVariable, index: Int)
 
     protected abstract fun getImplicationsWithVariable(flow: FLOW, variable: DataFlowVariable): Collection<Implication>
 
