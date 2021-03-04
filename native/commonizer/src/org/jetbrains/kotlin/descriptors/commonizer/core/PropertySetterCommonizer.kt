@@ -8,10 +8,9 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirHasVisibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirPropertySetter
-import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirPropertySetterFactory
 
 class PropertySetterCommonizer : AbstractNullableCommonizer<CirPropertySetter, CirPropertySetter, CirHasVisibility, Visibility>(
     wrappedCommonizerFactory = { VisibilityCommonizer.equalizing() },
     extractor = { it },
-    builder = CirPropertySetterFactory::createDefaultNoAnnotations
+    builder = CirPropertySetter::createDefaultNoAnnotations
 )

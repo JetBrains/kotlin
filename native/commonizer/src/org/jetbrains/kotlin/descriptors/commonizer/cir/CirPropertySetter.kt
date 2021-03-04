@@ -5,6 +5,51 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.cir
 
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.commonizer.utils.Interner
+
 interface CirPropertySetter : CirDeclaration, CirPropertyAccessor, CirHasVisibility {
     val parameterAnnotations: List<CirAnnotation>
+
+    companion object {
+        fun createInterned(
+            annotations: List<CirAnnotation>,
+            parameterAnnotations: List<CirAnnotation>,
+            visibility: Visibility,
+            isDefault: Boolean,
+            isExternal: Boolean,
+            isInline: Boolean
+        ): CirPropertySetter = interner.intern(
+            CirPropertySetterInternedImpl(
+                annotations = annotations,
+                parameterAnnotations = parameterAnnotations,
+                visibility = visibility,
+                isDefault = isDefault,
+                isExternal = isExternal,
+                isInline = isInline
+            )
+        )
+
+        @Suppress("NOTHING_TO_INLINE")
+        inline fun createDefaultNoAnnotations(visibility: Visibility): CirPropertySetter = createInterned(
+            annotations = emptyList(),
+            parameterAnnotations = emptyList(),
+            visibility = visibility,
+            isDefault = visibility == Visibilities.Public,
+            isExternal = false,
+            isInline = false
+        )
+
+        private val interner = Interner<CirPropertySetterInternedImpl>()
+    }
 }
+
+private data class CirPropertySetterInternedImpl(
+    override val annotations: List<CirAnnotation>,
+    override val parameterAnnotations: List<CirAnnotation>,
+    override val visibility: Visibility,
+    override val isDefault: Boolean,
+    override val isExternal: Boolean,
+    override val isInline: Boolean
+) : CirPropertySetter

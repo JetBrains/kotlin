@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.descriptors.Visibilities.Protected
 import org.jetbrains.kotlin.descriptors.Visibilities.Public
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirPropertySetter
-import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirPropertySetterFactory
 import org.junit.Test
 
 class PropertySetterCommonizerTest : AbstractCommonizerTest<CirPropertySetter?, CirPropertySetter?>() {
@@ -93,13 +92,13 @@ class PropertySetterCommonizerTest : AbstractCommonizerTest<CirPropertySetter?, 
 
     private fun doTestSuccess(expected: Visibility?, vararg variants: Visibility?) =
         super.doTestSuccess(
-            expected = expected?.let { CirPropertySetterFactory.createDefaultNoAnnotations(expected) },
-            *variants.map { it?.let(CirPropertySetterFactory::createDefaultNoAnnotations) }.toTypedArray()
+            expected = expected?.let { CirPropertySetter.createDefaultNoAnnotations(expected) },
+            *variants.map { it?.let(CirPropertySetter::createDefaultNoAnnotations) }.toTypedArray()
         )
 
     private fun doTestFailure(vararg variants: Visibility?) =
         super.doTestFailure(
-            *variants.map { it?.let(CirPropertySetterFactory::createDefaultNoAnnotations) }.toTypedArray(),
+            *variants.map { it?.let(CirPropertySetter::createDefaultNoAnnotations) }.toTypedArray(),
             shouldFailOnFirstVariant = false
         )
 
