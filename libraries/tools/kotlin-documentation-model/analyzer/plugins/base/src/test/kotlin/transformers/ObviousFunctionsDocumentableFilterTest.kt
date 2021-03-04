@@ -40,6 +40,23 @@ class ObviousFunctionsDocumentableFilterTest : BaseAbstractTest() {
     }
 
     @Test
+    fun `should suppress toString, equals and hashcode for interface`() {
+        testInline(
+            """
+            /src/suppressed/Suppressed.kt
+            package suppressed
+            interface Suppressed
+            """.trimIndent(),
+            suppressingConfiguration
+        ) {
+            preMergeDocumentablesTransformationStage = { modules ->
+                val functions = modules.flatMap { it.packages }.flatMap { it.classlikes }.flatMap { it.functions }
+                assertEquals(0, functions.size)
+            }
+        }
+    }
+
+    @Test
     fun `should suppress toString, equals and hashcode in Java`() {
         testInline(
             """
@@ -121,6 +138,23 @@ class ObviousFunctionsDocumentableFilterTest : BaseAbstractTest() {
     }
 
     @Test
+    fun `not should suppress toString, equals and hashcode for interface if custom config is provided`() {
+        testInline(
+            """
+            /src/suppressed/Suppressed.kt
+            package suppressed
+            interface Suppressed
+            """.trimIndent(),
+            nonSuppressingConfiguration
+        ) {
+            preMergeDocumentablesTransformationStage = { modules ->
+                val functions = modules.flatMap { it.packages }.flatMap { it.classlikes }.flatMap { it.functions }
+                assertEquals(listOf("equals", "hashCode", "toString").sorted(), functions.map { it.name }.sorted())
+            }
+        }
+    }
+
+    @Test
     fun `should not suppress toString, equals and hashcode if custom config is provided in Java`() {
         testInline(
             """
@@ -136,7 +170,13 @@ class ObviousFunctionsDocumentableFilterTest : BaseAbstractTest() {
                 //I would normally just assert names but this would make it JDK dependent, so this is better
                 assertEquals(
                     5,
-                    setOf("equals", "hashCode", "toString", "notify", "notifyAll").intersect(functions.map { it.name }).size
+                    setOf(
+                        "equals",
+                        "hashCode",
+                        "toString",
+                        "notify",
+                        "notifyAll"
+                    ).intersect(functions.map { it.name }).size
                 )
             }
         }
