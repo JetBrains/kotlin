@@ -9,14 +9,16 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.fir.*
 
-fun FirSourceElement.getChild(type: IElementType, index: Int = 0, depth: Int = -1): FirSourceElement? =
-    getChild(setOf(type), index, depth)
+fun FirSourceElement.getChild(type: IElementType, index: Int = 0, depth: Int = -1): FirSourceElement? {
+    return getChild(setOf(type), index, depth)
+}
 
-fun FirSourceElement.getChild(types: TokenSet, index: Int = 0, depth: Int = -1): FirSourceElement? =
-    getChild(types.types.toSet(), index, depth)
+fun FirSourceElement.getChild(types: TokenSet, index: Int = 0, depth: Int = -1): FirSourceElement? {
+    return getChild(types.types.toSet(), index, depth)
+}
 
-fun FirSourceElement.getChild(types: Set<IElementType>, index: Int = 0, depth: Int = -1): FirSourceElement? =
-    when (this) {
+fun FirSourceElement.getChild(types: Set<IElementType>, index: Int = 0, depth: Int = -1): FirSourceElement? {
+    return when (this) {
         is FirPsiSourceElement<*> -> {
             getChild(types, index, depth)
         }
@@ -25,6 +27,7 @@ fun FirSourceElement.getChild(types: Set<IElementType>, index: Int = 0, depth: I
         }
         else -> null
     }
+}
 
 private fun FirPsiSourceElement<*>.getChild(types: Set<IElementType>, index: Int, depth: Int): FirSourceElement? {
     val visitor = PsiElementFinderByType(types, index, depth)
