@@ -18,7 +18,6 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirModifierChecker,
         FirConflictsChecker,
         FirConflictingProjectionChecker,
-        FirConstDeclarationChecker,
     )
 
     override val memberDeclarationCheckers: Set<FirMemberDeclarationChecker> = setOf(
