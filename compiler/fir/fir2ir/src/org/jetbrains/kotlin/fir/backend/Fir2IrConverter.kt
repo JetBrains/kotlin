@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.Name
@@ -252,7 +253,8 @@ class Fir2IrConverter(
             mangler: FirMangler,
             irFactory: IrFactory,
             visibilityConverter: Fir2IrVisibilityConverter,
-            specialSymbolProvider: Fir2IrSpecialSymbolProvider?
+            specialSymbolProvider: Fir2IrSpecialSymbolProvider?,
+            deserializedIrProviderProvider: (FirModuleDescriptor) -> IrProvider,
         ): Fir2IrResult {
             val moduleDescriptor = FirModuleDescriptor(session)
             val symbolTable = SymbolTable(signaturer, irFactory)
@@ -290,7 +292,8 @@ class Fir2IrConverter(
             }
             val irModuleFragment = IrModuleFragmentImpl(moduleDescriptor, irBuiltIns, irFiles)
             val irProviders =
-                generateTypicalIrProviderList(irModuleFragment.descriptor, irBuiltIns, symbolTable, extensions = generatorExtensions)
+                listOf(deserializedIrProviderProvider(moduleDescriptor)) +
+                    generateTypicalIrProviderList(irModuleFragment.descriptor, irBuiltIns, symbolTable, extensions = generatorExtensions)
             val externalDependenciesGenerator = ExternalDependenciesGenerator(
                 symbolTable,
                 irProviders

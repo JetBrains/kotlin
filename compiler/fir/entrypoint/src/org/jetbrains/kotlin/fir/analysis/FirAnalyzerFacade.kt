@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.analysis
 
-import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
+import org.jetbrains.kotlin.backend.jvm.serialization.SingleClassJvmIrProvider
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.collectors.FirDiagnosticsCollector
@@ -91,7 +91,8 @@ class FirAnalyzerFacade(
             languageVersionSettings, signaturer,
             extensions, FirJvmKotlinMangler(session), IrFactoryImpl,
             FirJvmVisibilityConverter,
-            Fir2IrJvmSpecialAnnotationSymbolProvider()
+            Fir2IrJvmSpecialAnnotationSymbolProvider(),
+            ::SingleClassJvmIrProvider,
         )
     }
 }

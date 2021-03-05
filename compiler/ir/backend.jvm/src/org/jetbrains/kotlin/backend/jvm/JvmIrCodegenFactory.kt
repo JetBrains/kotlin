@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen
 import org.jetbrains.kotlin.backend.jvm.lower.MultifileFacadeFileEntry
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
+import org.jetbrains.kotlin.backend.jvm.serialization.SingleClassJvmIrProvider
 import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
@@ -136,7 +137,7 @@ class JvmIrCodegenFactory(private val phaseConfig: PhaseConfig) : CodegenFactory
             }
             irLinker.deserializeIrModuleHeader(it, kotlinLibrary)
         }
-        val irProviders = listOf(irLinker)
+        val irProviders = listOf(SingleClassJvmIrProvider(psi2irContext.moduleDescriptor), irLinker)
 
         val irModuleFragment = psi2ir.generateModuleFragment(psi2irContext, files, irProviders, pluginExtensions, expectDescriptorToSymbol = null)
         irLinker.postProcess()
