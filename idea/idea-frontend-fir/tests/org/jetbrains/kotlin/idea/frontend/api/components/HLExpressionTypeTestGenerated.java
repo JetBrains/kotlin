@@ -33,4 +33,15 @@ public class HLExpressionTypeTestGenerated extends AbstractHLExpressionTypeTest 
     public void testAssignmentExpressionTarget() throws Exception {
         runTest("idea/idea-frontend-fir/testData/components/expressionType/assignmentExpressionTarget.kt");
     }
+
+    @TestMetadata("forExpression.kt")
+    public void testForExpression() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/components/expressionType/forExpression.kt");
+    }
+
+
+    @TestMetadata("whileExpression.kt")
+    public void testWhileExpression() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/components/expressionType/whileExpression.kt");
+    }
 }

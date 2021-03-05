@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.FirLoop
 import org.jetbrains.kotlin.fir.expressions.argumentMapping
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
@@ -40,12 +41,12 @@ internal class KtFirExpressionTypeProvider(
     }
 
     override fun getKtExpressionType(expression: KtExpression): KtType = withValidityAssertion {
-        val coneType = when (val fir = expression.getOrBuildFir(firResolveState)) {
-            is FirExpression -> fir.typeRef.coneType
-            is FirNamedReference -> fir.getReferencedElementType()
+        when (val fir = expression.getOrBuildFir(firResolveState)) {
+            is FirExpression -> fir.typeRef.coneType.asKtType()
+            is FirNamedReference -> fir.getReferencedElementType().asKtType()
+            is FirLoop -> with(analysisSession) { builtinTypes.UNIT }
             else -> error("Unexpected ${fir::class}")
         }
-        coneType.asKtType()
     }
 
     private fun FirNamedReference.getReferencedElementType(): ConeKotlinType {
