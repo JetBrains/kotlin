@@ -993,7 +993,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
             Flag.Class::IS_DATA,
             Flag.Class::IS_EXTERNAL,
             Flag.Class::IS_EXPECT,
-            Flag.Class::IS_INLINE,
+            Flag.Class::IS_VALUE,
             Flag.Class::IS_FUN
         )
 
