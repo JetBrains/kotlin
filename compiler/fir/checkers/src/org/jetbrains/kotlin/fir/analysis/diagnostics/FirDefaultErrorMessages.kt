@@ -185,6 +185,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_ARGUMENTS_NO
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETERS_IN_ENUM
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETERS_IN_OBJECT
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETER_AS_REIFIED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETER_AS_SUPERTYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETER_IN_CATCH_CLAUSE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETER_IS_NOT_AN_EXPRESSION
@@ -393,6 +394,8 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
             map.put(CATCH_PARAMETER_WITH_DEFAULT_VALUE, "Catch clause parameter may not have a default value")
             map.put(REIFIED_TYPE_IN_CATCH_CLAUSE, "Reified type is forbidden for catch parameter")
             map.put(TYPE_PARAMETER_IN_CATCH_CLAUSE, "Type parameter is forbidden for catch parameter")
+
+            map.put(TYPE_PARAMETER_AS_REIFIED, "Cannot use ''{0}'' as reified type parameter. Use a class instead", SYMBOL)
 
             // Reflection
             map.put(CALLABLE_REFERENCE_LHS_NOT_A_CLASS, "Left-hand side of a callable reference cannot be a type parameter")
