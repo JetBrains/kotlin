@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeWrongNumberOfTypeArgumen
 import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.idea.fir.getCandidateSymbols
@@ -174,11 +175,18 @@ internal object FirReferenceResolveHelper {
             is FirReturnExpression -> getSymbolsByReturnExpression(expression, fir, symbolBuilder)
             is FirErrorNamedReference -> getSymbolsByErrorNamedReference(fir, symbolBuilder)
             is FirVariableAssignment -> getSymbolsByVariableAssignment(fir, session, symbolBuilder)
+            is FirResolvedNamedReference -> getSymbolByResolvedNameReference(fir, session, symbolBuilder)
             is FirResolvable -> getSymbolsByResolvable(fir, expression, session, symbolBuilder)
             is FirNamedArgumentExpression -> getSymbolsByNameArgumentExpression(expression, analysisSession, symbolBuilder)
             else -> handleUnknownFirElement(expression, analysisSession, session, symbolBuilder)
         }
     }
+
+    private fun getSymbolByResolvedNameReference(
+        fir: FirResolvedNamedReference,
+        session: FirSession,
+        symbolBuilder: KtSymbolByFirBuilder
+    ): Collection<KtSymbol> = fir.toTargetSymbol(session, symbolBuilder)
 
     private fun KtSimpleNameExpression.isSyntheticOperatorReference() = when (this) {
         is KtOperationReferenceExpression -> operationSignTokenType in syntheticTokenTypes
@@ -265,18 +273,23 @@ internal object FirReferenceResolveHelper {
         return calleeReference.toTargetSymbol(session, symbolBuilder)
     }
 
+
     private fun getSymbolsByErrorNamedReference(
         fir: FirErrorNamedReference,
         symbolBuilder: KtSymbolByFirBuilder
-    ): List<KtSymbol> {
-        val candidates = when (val diagnostic = fir.diagnostic) {
-            is ConeAmbiguityError -> diagnostic.candidates
-            is ConeOperatorAmbiguityError -> diagnostic.candidates
-            is ConeInapplicableCandidateError -> listOf(diagnostic.candidate.symbol)
-            else -> emptyList()
-        }
-        return candidates.mapNotNull { it.fir.buildSymbol(symbolBuilder) }
+    ): List<KtSymbol> =
+        getFirSymbolsByErrorNamedReference(fir).mapNotNull { it.fir.buildSymbol(symbolBuilder) }
+
+
+    fun getFirSymbolsByErrorNamedReference(
+        errorNamedReference: FirErrorNamedReference,
+    ): Collection<FirBasedSymbol<*>> = when (val diagnostic = errorNamedReference.diagnostic) {
+        is ConeAmbiguityError -> diagnostic.candidates
+        is ConeOperatorAmbiguityError -> diagnostic.candidates
+        is ConeInapplicableCandidateError -> listOf(diagnostic.candidate.symbol)
+        else -> emptyList()
     }
+
 
     private fun getSymbolsByReturnExpression(
         expression: KtSimpleNameExpression,

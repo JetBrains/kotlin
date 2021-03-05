@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.test.framework
 
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiJavaFile
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import java.nio.file.Path
 
@@ -14,7 +15,7 @@ class TestFileStructure(
     val filePath: Path,
     val caretPosition: Int?,
     val directives: TestFileDirectives,
-    val mainFile: TestFile.KtTestFile,
+    val mainFile: TestFile.KtTestRootFile,
     val otherFiles: List<TestFile>,
 ) {
     val mainKtFile: KtFile
@@ -23,7 +24,9 @@ class TestFileStructure(
     val allFiles: List<TestFile> = listOf(mainFile) + otherFiles
 }
 
-data class TestStructureExpectedDataBlock(val name: String, val values: List<String>)
+data class TestStructureExpectedDataBlock(val name: String? = null, val values: List<String>) {
+    constructor(vararg values: String) : this(name = null, values.toList())
+}
 
 class TestFileDirectives(
     private val directives: Map<String, Any>
@@ -44,6 +47,7 @@ sealed class TestFile {
     abstract val psiFile: PsiFile
 
     data class KtTestFile(override val psiFile: KtFile) : TestFile()
+    data class KtTestRootFile(override val psiFile: KtFile, val selectedExpression: KtElement?) : TestFile()
     data class JavaTestFile(override val psiFile: PsiJavaFile) : TestFile()
 
     companion object {

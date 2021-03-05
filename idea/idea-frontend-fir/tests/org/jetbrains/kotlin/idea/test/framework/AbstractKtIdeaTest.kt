@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.idea.test.framework
 
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.psi.PsiElement
+import com.intellij.psi.util.parentOfType
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
 
 abstract class AbstractKtIdeaTest : KotlinLightCodeInsightFixtureTestCase() {
@@ -30,7 +33,7 @@ abstract class AbstractKtIdeaTest : KotlinLightCodeInsightFixtureTestCase() {
             filePath = testDataFile.toPath(),
             caretPosition = getCaretPosition(text),
             directives = directives,
-            mainFile = mainFile as TestFile.KtTestFile,
+            mainFile = mainFile as TestFile.KtTestRootFile,
             otherFiles = testFiles
         )
     }
@@ -51,12 +54,14 @@ abstract class AbstractKtIdeaTest : KotlinLightCodeInsightFixtureTestCase() {
     }
 
     private fun createTestFile(file: FileSplitter.FileNameWithText, isMainFile: Boolean): TestFile {
-        val psiFile = if (isMainFile) {
-            myFixture.configureByText(file.name, file.text)
+        return if (isMainFile) {
+            val (ktFile, expression) = SelectedExpressionProvider.getFileWithSelectedExpressions(file.text) {
+                myFixture.configureByText(file.name, it) as KtFile
+            }
+            TestFile.KtTestRootFile(ktFile, expression)
         } else {
-            myFixture.addFileToProject(file.name, file.text)
+            TestFile.createByPsiFile(myFixture.addFileToProject(file.name, file.text))
         }
-        return TestFile.createByPsiFile(psiFile)
     }
 
     abstract fun doTestByFileStructure(fileStructure: TestFileStructure)
@@ -68,7 +73,7 @@ private object FileSplitter {
     fun splitIntoFiles(text: String, defaultName: String): List<FileNameWithText> {
         val result = mutableListOf<FileNameWithText>()
         val stopAt = text.indexOfOrNull(KtTest.RESULT_DIRECTIVE) ?: text.length
-        var index = text.indexOfOrNull(KtTest.FILE_DIRECTIVE) ?: return listOf(FileNameWithText(defaultName, text))
+        var index = text.indexOfOrNull(KtTest.FILE_DIRECTIVE) ?: return listOf(FileNameWithText(defaultName, text.substring(0, stopAt).trim()))
         while (index < stopAt) {
             val eolIndex = text.indexOfOrNull("\n", index) ?: text.length
             val fileName = text.substring(index + KtTest.FILE_DIRECTIVE.length, eolIndex).trim()

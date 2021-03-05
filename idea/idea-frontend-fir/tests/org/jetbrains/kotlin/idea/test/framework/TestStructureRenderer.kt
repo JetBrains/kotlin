@@ -5,7 +5,16 @@
 
 package org.jetbrains.kotlin.idea.test.framework
 
+import org.jetbrains.kotlin.psi.psiUtil.getStartOffsetIn
+
 object TestStructureRenderer {
+    fun render(testStructure: TestFileStructure, vararg expectedData: TestStructureExpectedDataBlock): String = buildString {
+        renderFiles(testStructure)
+        renderExpectedData(expectedData.toList())
+        renderCaretSymbol(testStructure)
+        renderExpressionTag(testStructure)
+    }
+
     fun render(testStructure: TestFileStructure, expectedData: List<TestStructureExpectedDataBlock>): String = buildString {
         renderFiles(testStructure)
         renderExpectedData(expectedData)
@@ -15,6 +24,14 @@ object TestStructureRenderer {
     private fun StringBuilder.renderCaretSymbol(testStructure: TestFileStructure) {
         testStructure.caretPosition?.let { position ->
             insert(position, KtTest.CARET_SYMBOL)
+        }
+    }
+
+    private fun StringBuilder.renderExpressionTag(testStructure: TestFileStructure) {
+        testStructure.mainFile.selectedExpression?.let { expression ->
+            val offset = expression.getStartOffsetIn(testStructure.mainKtFile)
+            insert(offset + expression.textLength, SelectedExpressionProvider.TAGS.CLOSING_EXPRESSION_TAG)
+            insert(offset, SelectedExpressionProvider.TAGS.OPENING_EXPRESSION_TAG)
         }
     }
 
@@ -40,7 +57,7 @@ object TestStructureRenderer {
     }
 
     private fun StringBuilder.renderExpectedDataBlock(block: TestStructureExpectedDataBlock) {
-        appendLine("// ${block.name}")
+        block.name?.let { name -> appendLine("// $name") }
         block.values.forEach { value ->
             appendLine("// $value")
         }

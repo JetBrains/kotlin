@@ -1,1 +1,1 @@
-this@R|/Foo|.R|/Foo.x| = Int(42)
+R|/Foo.x|
