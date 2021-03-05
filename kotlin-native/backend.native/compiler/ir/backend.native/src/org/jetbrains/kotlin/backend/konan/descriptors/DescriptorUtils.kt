@@ -105,8 +105,8 @@ private fun IrFunction.typeWithKindAt(index: ParameterIndex) = when (index) {
 private fun IrFunction.needBridgeToAt(target: IrFunction, index: ParameterIndex)
         = bridgeDirectionToAt(target, index).kind != BridgeDirectionKind.NONE
 
-@Suppress("EXPERIMENTAL_FEATURE_WARNING")
-private inline class ParameterIndex(val index: Int) {
+@JvmInline
+private value class ParameterIndex(val index: Int) {
     companion object {
         val RETURN_INDEX = ParameterIndex(0)
         val DISPATCH_RECEIVER_INDEX = ParameterIndex(1)

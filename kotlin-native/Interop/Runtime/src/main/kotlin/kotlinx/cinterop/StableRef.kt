@@ -27,7 +27,8 @@ typealias StableObjPtr = StableRef<*>
  * Any [StableRef] should be manually [disposed][dispose]
  */
 @Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
-public inline class StableRef<out T : Any> @PublishedApi internal constructor(
+@kotlin.jvm.JvmInline
+public value class StableRef<out T : Any> @PublishedApi internal constructor(
         private val stablePtr: COpaquePointer
 ) {
 
