@@ -59,8 +59,11 @@ internal class FileStructure(
     @OptIn(ExperimentalStdlibApi::class)
     fun getAllDiagnosticsForFile(diagnosticCheckerFilter: DiagnosticCheckerFilter): Collection<FirPsiDiagnostic<*>> {
         val structureElements = getAllStructureElements()
-        return buildSet {
-            collectDiagnosticsFromStructureElements(structureElements, diagnosticCheckerFilter)
+
+        return moduleFileCache.firFileLockProvider.withReadLock(firFile) {
+            buildSet {
+                collectDiagnosticsFromStructureElements(structureElements, diagnosticCheckerFilter)
+            }
         }
     }
 
