@@ -204,6 +204,7 @@ class ClassCodegen private constructor(
         val kind = when {
             facadeClassName != null -> KotlinClassHeader.Kind.MULTIFILE_CLASS_PART
             metadata is MetadataSource.Class -> KotlinClassHeader.Kind.CLASS
+            metadata is MetadataSource.Script -> KotlinClassHeader.Kind.CLASS
             metadata is MetadataSource.File -> KotlinClassHeader.Kind.FILE_FACADE
             metadata is MetadataSource.Function -> KotlinClassHeader.Kind.SYNTHETIC_CLASS
             entry is MultifileFacadeFileEntry -> KotlinClassHeader.Kind.MULTIFILE_CLASS
@@ -215,6 +216,9 @@ class ClassCodegen private constructor(
         var extraFlags = context.backendExtension.generateMetadataExtraFlags(state.abiStability)
         if (isMultifileClassOrPart && state.languageVersionSettings.getFlag(JvmAnalysisFlags.inheritMultifileParts)) {
             extraFlags = extraFlags or JvmAnnotationNames.METADATA_MULTIFILE_PARTS_INHERIT_FLAG
+        }
+        if (metadata is MetadataSource.Script) {
+            extraFlags = extraFlags or JvmAnnotationNames.METADATA_SCRIPT_FLAG
         }
 
         writeKotlinMetadata(visitor, state, kind, extraFlags) {

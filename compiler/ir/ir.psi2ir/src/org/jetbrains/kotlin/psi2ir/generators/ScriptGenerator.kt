@@ -45,7 +45,7 @@ class ScriptGenerator(declarationGenerator: DeclarationGenerator) : DeclarationG
 
         return context.symbolTable.declareScript(descriptor).buildWithScope { irScript ->
 
-            irScript.metadata = DescriptorMetadataSource.Class(descriptor)
+            irScript.metadata = DescriptorMetadataSource.Script(descriptor)
 
             val importedScripts = descriptor.implicitReceivers.filterIsInstanceTo(HashSet<ScriptDescriptor>())
 
