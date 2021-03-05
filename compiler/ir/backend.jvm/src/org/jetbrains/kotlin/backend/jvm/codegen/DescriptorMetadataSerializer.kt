@@ -34,6 +34,9 @@ class DescriptorMetadataSerializer(
             is DescriptorMetadataSource.Class -> DescriptorSerializer.create(
                 metadata.descriptor, serializerExtension, (parent as? DescriptorMetadataSerializer)?.serializer, context.state.project
             )
+            is DescriptorMetadataSource.Script -> DescriptorSerializer.create(
+                metadata.descriptor, serializerExtension, (parent as? DescriptorMetadataSerializer)?.serializer, context.state.project
+            )
             is DescriptorMetadataSource.File -> DescriptorSerializer.createTopLevel(serializerExtension)
             is DescriptorMetadataSource.Function -> DescriptorSerializer.createForLambda(serializerExtension)
             else -> null
@@ -55,6 +58,7 @@ class DescriptorMetadataSerializer(
         }
         val message = when (metadata) {
             is DescriptorMetadataSource.Class -> serializer!!.classProto(metadata.descriptor).build()
+            is DescriptorMetadataSource.Script -> serializer!!.classProto(metadata.descriptor).build()
             is DescriptorMetadataSource.File ->
                 serializer!!.packagePartProto(irClass.getPackageFragment()!!.fqName, metadata.descriptors).apply {
                     serializerExtension.serializeJvmPackage(this, type)
