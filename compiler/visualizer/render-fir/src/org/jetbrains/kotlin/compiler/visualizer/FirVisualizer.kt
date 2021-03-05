@@ -254,6 +254,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
 
         override fun visitCallExpression(expression: KtCallExpression) {
             expression.firstOfTypeWithLocalReplace<FirFunctionCall> { this.calleeReference.name.asString() }
+                ?: expression.firstOfTypeWithRender<FirArrayOfCall>()
             expression.children.filter { it.node.elementType != KtNodeTypes.REFERENCE_EXPRESSION }.forEach { psi ->
                 when (psi) {
                     is KtLambdaArgument -> {
@@ -777,6 +778,17 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
 
         override fun visitGetClassCall(getClassCall: FirGetClassCall, data: StringBuilder) {
             getClassCall.argument.accept(this, data)
+        }
+
+        override fun visitArrayOfCall(arrayOfCall: FirArrayOfCall, data: StringBuilder) {
+            val name = arrayOfCall.typeRef.coneType.classId?.shortClassName
+            val typeArguments = arrayOfCall.typeRef.coneType.typeArguments
+            val typeParameters = if (typeArguments.isEmpty()) "" else " <T>"
+            data.append("fun$typeParameters ${name?.asString()?.decapitalize()}Of")
+            typeArguments.firstOrNull()?.let {
+                data.append("<").append(it.tryToRenderConeAsFunctionType()).append(">")
+            }
+            data.append("(vararg T): $name${typeParameters.trim()}") // TODO change "T" to concrete type is array is primitive
         }
 
         private fun AbstractFirBasedSymbol<*>.isLocalDeclaration(): Boolean {
