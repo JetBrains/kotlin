@@ -208,6 +208,7 @@ class FullPipelineModularizedTest : AbstractModularizedTest() {
         args.freeArgs = moduleData.sources.map { it.absolutePath }
         val tmp = Files.createTempDirectory("compile-output")
         args.destination = tmp.toAbsolutePath().toFile().toString()
+        args.friendPaths = moduleData.friendDirs.map { it.canonicalPath }.toTypedArray()
         val manager = CompilerPerformanceManager()
         val services = Services.Builder().register(CommonCompilerPerformanceManager::class.java, manager).build()
         val collector = TestMessageCollector()
