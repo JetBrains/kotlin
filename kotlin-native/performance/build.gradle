@@ -100,6 +100,13 @@ task konanRun {
 }
     
 task jvmRun {
+    if(findProperty("kotlin_dist") == null) {
+        throw new StopExecutionException("please specify location of kotlin's dist in 'kotlin_dist' property")
+    }
+    def file = new File("${UtilsKt.getKotlinNativeDist(project)}/libs/kotlinx.cli-jvm-${globalProperties["defaultSnapshotVersion"]}.jar")
+    if (!file.exists()) {
+        throw new StopExecutionException("please execute :kotlin-native:distKotlinxCliJvm in root project")
+    }
     dependsOn buildAnalyzer
     subprojects.each {
         dependsOn "${it.path}:jvmRun"
