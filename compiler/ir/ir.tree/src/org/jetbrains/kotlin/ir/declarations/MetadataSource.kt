@@ -13,6 +13,7 @@ interface MetadataSource {
 
     interface File : MetadataSource
     interface Class : MetadataSource
+    interface Script : MetadataSource
     interface Function : MetadataSource
     interface Property : MetadataSource {
         val isConst: Boolean
@@ -29,6 +30,8 @@ sealed class DescriptorMetadataSource : MetadataSource {
     class File(val descriptors: List<DeclarationDescriptor>) : DescriptorMetadataSource(), MetadataSource.File
 
     class Class(override val descriptor: ClassDescriptor) : DescriptorMetadataSource(), MetadataSource.Class
+
+    class Script(override val descriptor: ScriptDescriptor) : DescriptorMetadataSource(), MetadataSource.Script
 
     class Function(override val descriptor: FunctionDescriptor) : DescriptorMetadataSource(), MetadataSource.Function
 
