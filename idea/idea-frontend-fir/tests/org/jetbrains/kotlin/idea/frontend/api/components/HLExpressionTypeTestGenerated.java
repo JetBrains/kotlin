@@ -34,11 +34,55 @@ public class HLExpressionTypeTestGenerated extends AbstractHLExpressionTypeTest 
         runTest("idea/idea-frontend-fir/testData/components/expressionType/assignmentExpressionTarget.kt");
     }
 
+    @TestMetadata("binaryExpression.kt")
+    public void testBinaryExpression() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/components/expressionType/binaryExpression.kt");
+    }
+
+    @TestMetadata("breakExpression.kt")
+    public void testBreakExpression() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/components/expressionType/breakExpression.kt");
+    }
+
     @TestMetadata("forExpression.kt")
     public void testForExpression() throws Exception {
         runTest("idea/idea-frontend-fir/testData/components/expressionType/forExpression.kt");
     }
 
+    @TestMetadata("functionCall.kt")
+    public void testFunctionCall() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/components/expressionType/functionCall.kt");
+    }
+
+    @TestMetadata("inParens.kt")
+    public void testInParens() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/components/expressionType/inParens.kt");
+    }
+
+    @TestMetadata("insideStringTemplate.kt")
+    public void testInsideStringTemplate() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/components/expressionType/insideStringTemplate.kt");
+    }
+
+    @TestMetadata("insideStringTemplateWithBinrary.kt")
+    public void testInsideStringTemplateWithBinrary() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/components/expressionType/insideStringTemplateWithBinrary.kt");
+    }
+
+    @TestMetadata("intLiteral.kt")
+    public void testIntLiteral() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/components/expressionType/intLiteral.kt");
+    }
+
+    @TestMetadata("returnExpression.kt")
+    public void testReturnExpression() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/components/expressionType/returnExpression.kt");
+    }
+
+    @TestMetadata("stringLiteral.kt")
+    public void testStringLiteral() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/components/expressionType/stringLiteral.kt");
+    }
 
     @TestMetadata("whileExpression.kt")
     public void testWhileExpression() throws Exception {
