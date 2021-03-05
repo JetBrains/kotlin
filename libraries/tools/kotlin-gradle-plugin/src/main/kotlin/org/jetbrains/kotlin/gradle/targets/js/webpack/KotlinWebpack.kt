@@ -39,8 +39,11 @@ constructor(
     @Transient
     override val compilation: KotlinJsCompilation
 ) : DefaultTask(), RequiresNpmDependencies {
+    @Transient
     private val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
     private val versions = nodeJs.versions
+    private val resolutionManager = nodeJs.npmResolutionManager
+    private val rootPackageDir by lazy { nodeJs.rootPackageDir }
 
     private val npmProject = compilation.npmProject
 
@@ -260,7 +263,7 @@ constructor(
 
     @TaskAction
     fun doExecute() {
-        nodeJs.npmResolutionManager.checkRequiredDependencies(task = this, services = services, logger = logger, projectPath = projectPath)
+        resolutionManager.checkRequiredDependencies(task = this, services = services, logger = logger, projectPath = projectPath)
 
         val runner = createRunner()
 
@@ -279,7 +282,7 @@ constructor(
             runner.copy(
                 config = runner.config.copy(
                     progressReporter = true,
-                    progressReporterPathFilter = nodeJs.rootPackageDir.absolutePath
+                    progressReporterPathFilter = rootPackageDir.absolutePath
                 )
             ).execute(services)
         }

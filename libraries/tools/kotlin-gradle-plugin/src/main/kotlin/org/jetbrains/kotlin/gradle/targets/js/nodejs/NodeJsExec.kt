@@ -21,6 +21,7 @@ constructor(
     @Internal
     override val compilation: KotlinJsCompilation
 ) : AbstractExecTask<NodeJsExec>(NodeJsExec::class.java), RequiresNpmDependencies {
+    @Transient
     @get:Internal
     lateinit var nodeJs: NodeJsRootExtension
 
@@ -48,12 +49,13 @@ constructor(
         get() = true
 
     @get:Internal
-    override val requiredNpmDependencies: Set<RequiredKotlinJsDependency>
-        get() = mutableSetOf<RequiredKotlinJsDependency>().also {
+    override val requiredNpmDependencies: Set<RequiredKotlinJsDependency> by lazy {
+        mutableSetOf<RequiredKotlinJsDependency>().also {
             if (sourceMapStackTraces) {
                 it.add(nodeJs.versions.sourceMapSupport)
             }
         }
+    }
 
     override fun exec() {
         val newArgs = mutableListOf<String>()

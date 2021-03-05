@@ -25,12 +25,14 @@ open class RootPackageJsonTask : DefaultTask() {
         }
     }
 
+    @Transient
     private val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
-    private val resolutionManager get() = nodeJs.npmResolutionManager
+    private val resolutionManager = nodeJs.npmResolutionManager
 
     @get:OutputFile
-    val rootPackageJson: File
-        get() = nodeJs.rootPackageDir.resolve(NpmProject.PACKAGE_JSON)
+    val rootPackageJson: File by lazy {
+        nodeJs.rootPackageDir.resolve(NpmProject.PACKAGE_JSON)
+    }
 
     @TaskAction
     fun resolve() {

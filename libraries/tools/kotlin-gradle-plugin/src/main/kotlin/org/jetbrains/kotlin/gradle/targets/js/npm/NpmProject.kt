@@ -31,12 +31,12 @@ open class NpmProject(@Transient val compilation: KotlinJsCompilation) {
         buildNpmProjectName()
     }
 
-    val nodeJs by lazy {
-        NodeJsRootPlugin.apply(project.rootProject)
-    }
+    @Transient
+    val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
 
-    val dir: File
-        get() = nodeJs.projectPackagesDir.resolve(name)
+    val dir: File by lazy {
+        nodeJs.projectPackagesDir.resolve(name)
+    }
 
     val target: KotlinJsTargetDsl
         get() = compilation.target as KotlinJsTargetDsl
@@ -77,8 +77,9 @@ open class NpmProject(@Transient val compilation: KotlinJsCompilation) {
 
     internal val modules = NpmProjectModules(dir)
 
-    private val rootNodeModules: NpmProjectModules?
-        get() = NpmProjectModules(nodeJs.rootPackageDir)
+    private val nodeExecutable by lazy {
+        nodeJs.requireConfigured().nodeExecutable
+    }
 
     fun useTool(
         exec: ExecSpec,
@@ -87,7 +88,7 @@ open class NpmProject(@Transient val compilation: KotlinJsCompilation) {
         args: List<String>
     ) {
         exec.workingDir = dir
-        exec.executable = nodeJs.requireConfigured().nodeExecutable
+        exec.executable = nodeExecutable
         exec.args = nodeArgs + require(tool) + args
     }
 

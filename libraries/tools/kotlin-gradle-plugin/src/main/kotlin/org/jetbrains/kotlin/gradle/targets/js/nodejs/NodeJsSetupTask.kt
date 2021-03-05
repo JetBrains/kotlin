@@ -14,10 +14,12 @@ import java.net.URI
 
 @CacheableTask
 open class NodeJsSetupTask : DefaultTask() {
+    @Transient
     private val settings = NodeJsRootPlugin.apply(project.rootProject)
     private val env by lazy { settings.requireConfigured() }
     private val fs = FileSystemOperationsCompat(project)
     private val archiveOperations = ArchiveOperationsCompat(project)
+    private val shouldDownload = settings.download
 
     val ivyDependency: String
         @Input get() = env.ivyDependency
@@ -63,7 +65,7 @@ open class NodeJsSetupTask : DefaultTask() {
     init {
         @Suppress("LeakingThis")
         onlyIf {
-            settings.download && !File(env.nodeExecutable).isFile
+            shouldDownload && !File(env.nodeExecutable).isFile
         }
     }
 

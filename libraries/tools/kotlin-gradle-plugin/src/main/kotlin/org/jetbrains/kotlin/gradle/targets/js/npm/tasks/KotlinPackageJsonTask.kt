@@ -18,17 +18,21 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinCompilationNpmR
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.PACKAGE_JSON_UMBRELLA_TASK_NAME
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.utils.getValue
 import java.io.File
 
 open class KotlinPackageJsonTask : DefaultTask() {
 
     init {
         onlyIf {
-            nodeJs.npmResolutionManager.isConfiguringState()
+            npmResolutionManager.isConfiguringState()
         }
     }
 
+    @Transient
     private lateinit var nodeJs: NodeJsRootExtension
+
+    private val npmResolutionManager by project.provider { nodeJs.npmResolutionManager }
 
     @Transient
     private lateinit var compilation: KotlinJsCompilation
@@ -41,7 +45,7 @@ open class KotlinPackageJsonTask : DefaultTask() {
     val projectPath = project.path
 
     private val compilationResolver
-        get() = nodeJs.npmResolutionManager.resolver[projectPath][compilationDisambiguatedName]
+        get() = npmResolutionManager.resolver[projectPath][compilationDisambiguatedName]
 
     private val producer: KotlinCompilationNpmResolver.PackageJsonProducer
         get() = compilationResolver.packageJsonProducer

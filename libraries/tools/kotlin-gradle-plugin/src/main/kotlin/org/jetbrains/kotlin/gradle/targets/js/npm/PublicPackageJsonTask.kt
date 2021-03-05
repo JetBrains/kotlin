@@ -24,16 +24,19 @@ constructor(
     private val compilation: KotlinJsCompilation
 ) : DefaultTask() {
     private val npmProject = compilation.npmProject
+
+    @Transient
     private val nodeJs = npmProject.nodeJs
+    private val resolutionManager = nodeJs.npmResolutionManager
 
     private val compilationName = compilation.disambiguatedName
     private val projectPath = project.path
 
     private val compilationResolution
-        get() = nodeJs.npmResolutionManager.requireInstalled(
-                services,
-                logger
-            )[projectPath][compilationName]
+        get() = resolutionManager.requireInstalled(
+            services,
+            logger
+        )[projectPath][compilationName]
 
     private val packageJsonHandlers = compilation.packageJsonHandlers
 
