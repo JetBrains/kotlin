@@ -1,0 +1,60 @@
+FILE: const.kt
+    public final const val a: R|kotlin/String| = String(something)
+        public get(): R|kotlin/String|
+    public final const val b: <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>
+        public get(): <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>
+    public final const val c: R|kotlin/Nothing?| = Null(null)
+        public get(): R|kotlin/Nothing?|
+    public final const val d: R|ForConst.Companion| = Q|ForConst|
+        public get(): R|ForConst.Companion|
+    public final const val e: R|kotlin/String| = Q|ForConst|.R|/ForConst.Companion.one|()
+        public get(): R|kotlin/String|
+    public final const val f: R|kotlin/Int| = Int(1).R|kotlin/Int.plus|(Int(2)).R|kotlin/Int.times|(Int(3)).R|kotlin/Int.div|(Int(4)).R|kotlin/Int.rem|(Int(5)).R|kotlin/Int.minus|(Int(1))
+        public get(): R|kotlin/Int|
+    public final const val g: R|kotlin/String| = <strcat>(String(string ), R|/f|.R|kotlin/Any.toString|())
+        public get(): R|kotlin/String|
+    public final const val h: R|kotlin/String| = String(string).R|kotlin/String.plus|(R|/g|)
+        public get(): R|kotlin/String|
+    public final const val i: R|kotlin/String| = Q|ForConst|.R|/ForConst.Companion.one|().R|kotlin/String.plus|(String(one))
+        public get(): R|kotlin/String|
+    public final const val j: R|kotlin/Int| = Int(4).R|kotlin/Int.times|(Q|ForConst|.R|/ForConst.Companion.two|())
+        public get(): R|kotlin/Int|
+    public final val k: R|kotlin/Int| = Int(3).R|kotlin/Int.minus|(Q|ForConst|.R|/ForConst.Companion.two|())
+        public get(): R|kotlin/Int|
+    public final const val l: R|kotlin/Int| = R|/k|
+        public get(): R|kotlin/Int|
+    public final class ForConst : R|kotlin/Any| {
+        public constructor(): R|ForConst| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|ForConst.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun one(): R|kotlin/String| {
+                ^one String(1)
+            }
+
+            public final fun two(): R|kotlin/Int| {
+                ^two Int(2)
+            }
+
+        }
+
+    }
+    private final const val MAJOR_BITS: R|kotlin/Int| = Int(3)
+        private get(): R|kotlin/Int|
+    private final const val MINOR_BITS: R|kotlin/Int| = Int(4)
+        private get(): R|kotlin/Int|
+    private final const val PATCH_BITS: R|kotlin/Int| = Int(7)
+        private get(): R|kotlin/Int|
+    private final const val MAJOR_MASK: R|kotlin/Int| = Int(1).R|kotlin/Int.shl|(R|/MAJOR_BITS|).R|kotlin/Int.minus|(Int(1))
+        private get(): R|kotlin/Int|
+    private final const val MINOR_MASK: R|kotlin/Int| = Int(1).R|kotlin/Int.shl|(R|/MINOR_BITS|).R|kotlin/Int.minus|(Int(1))
+        private get(): R|kotlin/Int|
+    private final const val PATCH_MASK: R|kotlin/Int| = Int(1).R|kotlin/Int.shl|(R|/PATCH_BITS|).R|kotlin/Int.minus|(Int(1))
+        private get(): R|kotlin/Int|
+    private final const val stringFromJava: R|kotlin/String| = Q|Constants|.R|/Constants.FIRST|.R|kotlin/String.plus|(String(+)).R|kotlin/String.plus|(Q|Constants|.R|/Constants.SECOND|)
+        private get(): R|kotlin/String|

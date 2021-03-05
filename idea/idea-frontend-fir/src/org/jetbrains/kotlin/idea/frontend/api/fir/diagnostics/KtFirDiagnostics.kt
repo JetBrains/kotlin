@@ -1011,6 +1011,19 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ConstValWithDelegate::class
     }
 
+    abstract class TypeCantBeUsedForConstVal : KtFirDiagnostic<KtProperty>() {
+        override val diagnosticClass get() = TypeCantBeUsedForConstVal::class
+        abstract val constValType: KtType
+    }
+
+    abstract class ConstValWithoutInitializer : KtFirDiagnostic<KtProperty>() {
+        override val diagnosticClass get() = ConstValWithoutInitializer::class
+    }
+
+    abstract class ConstValWithNonConstInitializer : KtFirDiagnostic<KtExpression>() {
+        override val diagnosticClass get() = ConstValWithNonConstInitializer::class
+    }
+
     abstract class WrongSetterParameterType : KtFirDiagnostic<KtTypeReference>() {
         override val diagnosticClass get() = WrongSetterParameterType::class
         abstract val expectedType: KtType

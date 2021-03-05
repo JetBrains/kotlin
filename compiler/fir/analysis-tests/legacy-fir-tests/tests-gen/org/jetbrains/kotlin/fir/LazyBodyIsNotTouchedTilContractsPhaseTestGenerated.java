@@ -946,6 +946,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/constVal"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
+        @TestMetadata("const.kt")
+        public void testConst() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/constVal/const.kt");
+        }
+
         @TestMetadata("constValNotTopLevelOrObject.kt")
         public void testConstValNotTopLevelOrObject() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/constVal/constValNotTopLevelOrObject.kt");

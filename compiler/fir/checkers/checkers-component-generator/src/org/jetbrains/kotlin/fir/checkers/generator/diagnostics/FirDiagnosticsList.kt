@@ -496,6 +496,11 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT by error<FirSourceElement, KtProperty>(PositioningStrategy.CONST_MODIFIER)
         val CONST_VAL_WITH_GETTER by error<FirSourceElement, KtProperty>()
         val CONST_VAL_WITH_DELEGATE by error<FirSourceElement, KtPropertyDelegate>()
+        val TYPE_CANT_BE_USED_FOR_CONST_VAL by error<FirSourceElement, KtProperty>(PositioningStrategy.CONST_MODIFIER) {
+            parameter<ConeKotlinType>("constValType")
+        }
+        val CONST_VAL_WITHOUT_INITIALIZER by error<FirSourceElement, KtProperty>(PositioningStrategy.CONST_MODIFIER)
+        val CONST_VAL_WITH_NON_CONST_INITIALIZER by error<FirSourceElement, KtExpression>()
         val WRONG_SETTER_PARAMETER_TYPE by error<FirSourceElement, KtTypeReference> {
             parameter<ConeKotlinType>("expectedType")
             parameter<ConeKotlinType>("actualType")

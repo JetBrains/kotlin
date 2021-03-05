@@ -31,7 +31,7 @@ abstract class C {
 
     final const val final = 11
 
-    const val withoutInitializer: Int
+    <!CONST_VAL_WITHOUT_INITIALIZER!>const<!> val withoutInitializer: Int
 
     init {
         withoutInitializer = 12
@@ -70,20 +70,20 @@ class Outer {
 const val defaultGetter = 19
     <!CONST_VAL_WITH_GETTER!>get<!>
 
-const val nonConstInitializer1 = foo()
-const val nonConstInitializer2 = 1 as String
-const val nonConstInitializer3 = 1.0 as String
-const val nonConstInitializer4 = 1 as Double
-const val nonConstInitializer5 = "2" as Int
-const val nonConstInitializer6 = 1/0
-const val nonConstInitializer7 = -1/0
-const val nonConstInitializer8 = 1/0 - 1/0
-const val nonConstInitializer9 = 1.0/0.0 - 1/0
-const val nonConstInitializer10 = 0/0
-const val nonConstInitializer11 = 1 % 0
-const val nonConstInitializer12 = 0 % 0
-const val nonConstInitializer14 = 0.rem(0)
-const val nonConstInitializer15 = 0.div(0)
+const val nonConstInitializer1 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>foo()<!>
+const val nonConstInitializer2 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1 as String<!>
+const val nonConstInitializer3 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1.0 as String<!>
+const val nonConstInitializer4 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1 as Double<!>
+const val nonConstInitializer5 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>"2" as Int<!>
+const val nonConstInitializer6 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1/0<!>
+const val nonConstInitializer7 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>-1/0<!>
+const val nonConstInitializer8 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1/0 - 1/0<!>
+const val nonConstInitializer9 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1.0/0.0 - 1/0<!>
+const val nonConstInitializer10 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>0/0<!>
+const val nonConstInitializer11 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1 % 0<!>
+const val nonConstInitializer12 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>0 % 0<!>
+const val nonConstInitializer14 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>0.rem(0)<!>
+const val nonConstInitializer15 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>0.div(0)<!>
 
 const val constInitializer1 = 1.0/0
 const val constInitializer2 = 1/0.0

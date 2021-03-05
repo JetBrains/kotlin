@@ -63,6 +63,11 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONFLICTING_PROJE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONFLICTING_UPPER_BOUNDS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONSTRUCTOR_IN_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONSTRUCTOR_IN_OBJECT
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONST_VAL_WITHOUT_INITIALIZER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONST_VAL_WITH_DELEGATE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONST_VAL_WITH_GETTER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONST_VAL_WITH_NON_CONST_INITIALIZER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CYCLIC_CONSTRUCTOR_DELEGATION_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_CLASS_NOT_PROPERTY_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_CLASS_VARARG_PARAMETER
@@ -214,6 +219,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SYNTAX
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TOO_MANY_ARGUMENTS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TOPLEVEL_TYPEALIASES_ONLY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_CANT_BE_USED_FOR_CONST_VAL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETERS_IN_ENUM
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETERS_IN_OBJECT
@@ -692,6 +698,13 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
                 RENDER_TYPE
             )
             map.put(INITIALIZER_TYPE_MISMATCH, "Initializer type mismatch: expected {0}, actual {1}", RENDER_TYPE, RENDER_TYPE)
+
+            map.put(CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT, "Const 'val' are only allowed on top level or in objects")
+            map.put(CONST_VAL_WITH_GETTER, "Const 'val' should not have a getter")
+            map.put(CONST_VAL_WITH_DELEGATE, "Const 'val' should not have a delegate")
+            map.put(TYPE_CANT_BE_USED_FOR_CONST_VAL, "Const ''val'' has type ''{0}''. Only primitives and String are allowed", RENDER_TYPE)
+            map.put(CONST_VAL_WITHOUT_INITIALIZER, "Const 'val' should have an initializer")
+            map.put(CONST_VAL_WITH_NON_CONST_INITIALIZER, "Const 'val' initializer should be a constant value")
 
             // Multi-platform projects
             map.put(EXPECTED_DECLARATION_WITH_BODY, "Expected declaration must not have a body")

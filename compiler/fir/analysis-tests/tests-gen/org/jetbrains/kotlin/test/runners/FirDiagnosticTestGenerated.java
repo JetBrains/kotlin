@@ -1094,6 +1094,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("const.kt")
+            public void testConst() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/constVal/const.kt");
+            }
+
+            @Test
             @TestMetadata("constValNotTopLevelOrObject.kt")
             public void testConstValNotTopLevelOrObject() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/constVal/constValNotTopLevelOrObject.kt");
