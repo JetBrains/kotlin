@@ -6,8 +6,12 @@
 package org.jetbrains.kotlin.backend.common.lower.inline
 
 
-import org.jetbrains.kotlin.backend.common.*
+import org.jetbrains.kotlin.backend.common.BodyLoweringPass
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.backend.common.ScopeWithIr
 import org.jetbrains.kotlin.backend.common.ir.Symbols
+import org.jetbrains.kotlin.backend.common.ir.isPure
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -20,9 +24,14 @@ import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
-import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.isNullable
+import org.jetbrains.kotlin.ir.types.typeOrNull
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -516,6 +525,7 @@ class FunctionInlining(
             val arguments = buildParameterToArgument(callSite, callee)
             val evaluationStatements = mutableListOf<IrStatement>()
             val substitutor = ParameterSubstitutor()
+            var argumentExtracted = false
             arguments.forEach { argument ->
                 /*
                  * We need to create temporary variable for each argument except inlinable lambda arguments.
@@ -523,12 +533,14 @@ class FunctionInlining(
                  * not only for those referring to inlinable lambdas.
                  */
                 if (argument.isInlinableLambdaArgument) {
+                    argumentExtracted = true
                     substituteMap[argument.parameter] = argument.argumentExpression
                     (argument.argumentExpression as? IrFunctionReference)?.let { evaluationStatements += evaluateArguments(it) }
                     return@forEach
                 }
 
                 if (argument.isImmutableVariableLoad) {
+                    argumentExtracted = true
                     substituteMap[argument.parameter] =
                         argument.argumentExpression.transform( // Arguments may reference the previous ones - substitute them.
                             substitutor,
@@ -537,25 +549,31 @@ class FunctionInlining(
                     return@forEach
                 }
 
+                argumentExtracted = argumentExtracted || !argument.argumentExpression.isPure(false)
+
                 // Arguments may reference the previous ones - substitute them.
                 val variableInitializer = argument.argumentExpression.transform(substitutor, data = null)
 
-                val newVariable =
-                    currentScope.scope.createTemporaryVariable(
-                        irExpression = IrBlockImpl(
-                            variableInitializer.startOffset,
-                            variableInitializer.endOffset,
-                            variableInitializer.type,
-                            InlinerExpressionLocationHint((currentScope.irElement as IrSymbolOwner).symbol)
-                        ).apply {
-                            statements.add(variableInitializer)
-                        },
-                        nameHint = callee.symbol.owner.name.toString(),
-                        isMutable = false
-                    )
+                if (!argumentExtracted) {
+                    substituteMap[argument.parameter] = variableInitializer
+                } else {
+                    val newVariable =
+                        currentScope.scope.createTemporaryVariable(
+                            irExpression = IrBlockImpl(
+                                variableInitializer.startOffset,
+                                variableInitializer.endOffset,
+                                variableInitializer.type,
+                                InlinerExpressionLocationHint((currentScope.irElement as IrSymbolOwner).symbol)
+                            ).apply {
+                                statements.add(variableInitializer)
+                            },
+                            nameHint = callee.symbol.owner.name.toString(),
+                            isMutable = false
+                        )
 
-                evaluationStatements.add(newVariable)
-                substituteMap[argument.parameter] = IrGetValueWithoutLocation(newVariable.symbol)
+                    evaluationStatements.add(newVariable)
+                    substituteMap[argument.parameter] = IrGetValueWithoutLocation(newVariable.symbol)
+                }
             }
             return evaluationStatements
         }
