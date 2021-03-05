@@ -9,10 +9,8 @@ import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
-import org.jetbrains.kotlin.executeOnPooledThreadInReadAction
-import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirOfType
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFir
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getResolveState
 import org.jetbrains.kotlin.idea.jsonUtils.getString
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiModuleTest
@@ -49,9 +47,8 @@ abstract class AbstractFirMultiModuleLazyResolveTest : AbstractMultiModuleTest()
         val fails = testStructure.fails
 
         try {
-            val fir = executeOnPooledThreadInReadAction { ktFileToAnalyse.getOrBuildFirOfType<FirFile>(resolveState) }
-                ?: throw AssertionError("Can't build FirFile from ${ktFileToAnalyse.virtualFilePath}")
-            checkFirFile(fir, path)
+            val fir = ktFileToAnalyse.getOrBuildFir(resolveState)
+            KotlinTestUtils.assertEqualsToFile(File("$path/expected.txt"), fir.render())
         } catch (e: Throwable) {
             if (!fails) throw e
             return
@@ -59,10 +56,6 @@ abstract class AbstractFirMultiModuleLazyResolveTest : AbstractMultiModuleTest()
         if (fails) {
             throw AssertionError("Looks like test is passing, please remove `\"fails\": true` from structure.json")
         }
-    }
-
-    protected open fun checkFirFile(firFile: FirFile, path: String) {
-        KotlinTestUtils.assertEqualsToFile(File("$path/expected.txt"), firFile.render())
     }
 }
 

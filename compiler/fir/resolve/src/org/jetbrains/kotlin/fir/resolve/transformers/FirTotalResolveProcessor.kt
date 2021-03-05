@@ -41,7 +41,17 @@ fun createAllCompilerResolveProcessors(
     }
 }
 
-inline fun <T : FirResolveProcessor> createAllResolveProcessors(
+fun createAllTransformerBasedResolveProcessors(
+    session: FirSession,
+    scopeSession: ScopeSession? = null,
+    pluginPhasesEnabled: Boolean = false,
+): List<FirTransformerBasedResolveProcessor> {
+    return createAllResolveProcessors(scopeSession, pluginPhasesEnabled) {
+        createTransformerBasedProcessorByPhase(session, it)
+    }
+}
+
+private inline fun <T : FirResolveProcessor> createAllResolveProcessors(
     scopeSession: ScopeSession? = null,
     pluginPhasesEnabled: Boolean,
     creator: FirResolvePhase.(ScopeSession) -> T
