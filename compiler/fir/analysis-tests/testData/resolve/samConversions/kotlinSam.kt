@@ -2,11 +2,11 @@ fun interface MyRunnable {
     fun foo(x: Int): Boolean
 }
 
-fun interface WithProperty {
-    val x: Int
+<!FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS!>fun<!> interface WithProperty {
+    <!FUN_INTERFACE_CANNOT_HAVE_ABSTRACT_PROPERTIES!>val<!> x: Int
 }
 
-fun interface TwoAbstract : MyRunnable {
+<!FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS!>fun<!> interface TwoAbstract : MyRunnable {
     fun bar()
 }
 

@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.KtVariableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtArrayAccessExpression
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -799,6 +800,26 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class ValueParameterWithNoTypeAnnotation : KtFirDiagnostic<KtParameter>() {
         override val diagnosticClass get() = ValueParameterWithNoTypeAnnotation::class
+    }
+
+    abstract class FunInterfaceWrongCountOfAbstractMembers : KtFirDiagnostic<KtClass>() {
+        override val diagnosticClass get() = FunInterfaceWrongCountOfAbstractMembers::class
+    }
+
+    abstract class FunInterfaceCannotHaveAbstractProperties : KtFirDiagnostic<KtProperty>() {
+        override val diagnosticClass get() = FunInterfaceCannotHaveAbstractProperties::class
+    }
+
+    abstract class FunInterfaceAbstractMethodWithTypeParameters : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = FunInterfaceAbstractMethodWithTypeParameters::class
+    }
+
+    abstract class FunInterfaceAbstractMethodWithDefaultValue : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = FunInterfaceAbstractMethodWithDefaultValue::class
+    }
+
+    abstract class FunInterfaceWithSuspendFunction : KtFirDiagnostic<KtFunction>() {
+        override val diagnosticClass get() = FunInterfaceWithSuspendFunction::class
     }
 
     abstract class AbstractPropertyInNonAbstractClass : KtFirDiagnostic<KtModifierListOwner>() {

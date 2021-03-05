@@ -50,7 +50,10 @@ enum class PositioningStrategy(private val strategy: String? = null) {
     PRIVATE_MODIFIER,
     COMPANION_OBJECT,
     CONST_MODIFIER,
-    ARRAY_ACCESS
+    FUN_MODIFIER,
+    SUSPEND_MODIFIER,
+    ARRAY_ACCESS,
+    FUN_INTERFACE_ABSTRACT_PROPERTY,
 
     ;
 

@@ -201,6 +201,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
         }
 
         @Test
+        @TestMetadata("funInterfaceDeclaration.kt")
+        public void testFunInterfaceDeclaration() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/funInterfaceDeclaration.kt");
+        }
+
+        @Test
         @TestMetadata("functionTypeAlias.kt")
         public void testFunctionTypeAlias() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/functionTypeAlias.kt");

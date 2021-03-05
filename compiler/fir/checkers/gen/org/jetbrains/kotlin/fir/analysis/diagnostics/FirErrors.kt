@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtArrayAccessExpression
+import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
@@ -254,6 +255,13 @@ object FirErrors {
     val MULTIPLE_VARARG_PARAMETERS by error0<FirSourceElement, KtParameter>(SourceElementPositioningStrategies.PARAMETER_VARARG_MODIFIER)
     val FORBIDDEN_VARARG_PARAMETER_TYPE by error1<FirSourceElement, KtParameter, ConeKotlinType>(SourceElementPositioningStrategies.PARAMETER_VARARG_MODIFIER)
     val VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION by error0<FirSourceElement, KtParameter>()
+
+    // Fun interfaces
+    val FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS by error0<FirSourceElement, KtClass>(SourceElementPositioningStrategies.FUN_MODIFIER)
+    val FUN_INTERFACE_CANNOT_HAVE_ABSTRACT_PROPERTIES by error0<FirSourceElement, KtDeclaration>(SourceElementPositioningStrategies.FUN_INTERFACE_ABSTRACT_PROPERTY)
+    val FUN_INTERFACE_ABSTRACT_METHOD_WITH_TYPE_PARAMETERS by error0<FirSourceElement, PsiElement>()
+    val FUN_INTERFACE_ABSTRACT_METHOD_WITH_DEFAULT_VALUE by error0<FirSourceElement, PsiElement>()
+    val FUN_INTERFACE_WITH_SUSPEND_FUNCTION by error0<FirSourceElement, KtFunction>(SourceElementPositioningStrategies.SUSPEND_MODIFIER)
 
     // Properties & accessors
     val ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS by error2<FirSourceElement, KtModifierListOwner, FirMemberDeclaration, FirMemberDeclaration>(SourceElementPositioningStrategies.MODALITY_MODIFIER)

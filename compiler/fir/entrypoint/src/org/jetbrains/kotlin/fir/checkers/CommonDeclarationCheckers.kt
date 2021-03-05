@@ -60,6 +60,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirDataClassPrimaryConstructorChecker,
         FirPrimaryConstructorSuperTypeChecker,
         FirTypeParametersInObjectChecker,
+        FirFunInterfaceDeclarationChecker,
         FirMemberFunctionsChecker,
         FirMemberPropertiesChecker,
         FirNestedClassChecker,
