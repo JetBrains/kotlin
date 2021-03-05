@@ -1061,10 +1061,10 @@ class ExpressionCodegen(
         mv.fakeAlwaysFalseIfeq(endLabel)
         data.withBlock(LoopInfo(loop, continueLabel, endLabel)) {
             loop.body?.accept(this, data)?.discard()
+            mv.visitLabel(continueLabel)
+            loop.condition.markLineNumber(true)
+            loop.condition.accept(this, data).coerceToBoolean().jumpIfTrue(entry)
         }
-        mv.visitLabel(continueLabel)
-        loop.condition.markLineNumber(true)
-        loop.condition.accept(this, data).coerceToBoolean().jumpIfTrue(entry)
         mv.mark(endLabel)
         addInlineMarker(mv, false)
         return unitValue

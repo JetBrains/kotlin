@@ -6036,6 +6036,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class BreakContinueInExpressions extends AbstractLightAnalysisModeTest {
+            @TestMetadata("breakInLoopConditions.kt")
+            public void ignoreBreakInLoopConditions() throws Exception {
+                runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/breakInLoopConditions.kt");
+            }
+
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
             }
