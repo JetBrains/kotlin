@@ -9,8 +9,8 @@ val l1 = <!NULLABLE_TYPE_IN_CLASS_LITERAL_LHS!>List<String>?::class<!>
 val l2 = <!NULLABLE_TYPE_IN_CLASS_LITERAL_LHS!>List?::class<!>
 
 fun <T : Any> foo() {
-    val t1 = <!TYPE_PARAMETER_AS_REIFIED!><!TYPE_PARAMETER_IS_NOT_AN_EXPRESSION!>T<!>::class<!>
-    val t2 = <!NULLABLE_TYPE_IN_CLASS_LITERAL_LHS!><!TYPE_PARAMETER_IS_NOT_AN_EXPRESSION!>T<!>?::class<!>
+    val t1 = <!TYPE_PARAMETER_AS_REIFIED!>T::class<!>
+    val t2 = <!NULLABLE_TYPE_IN_CLASS_LITERAL_LHS!>T?::class<!>
 }
 
 inline fun <reified T : Any> bar() {

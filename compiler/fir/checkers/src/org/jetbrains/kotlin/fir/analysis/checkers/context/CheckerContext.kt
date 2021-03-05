@@ -11,6 +11,7 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentSetOf
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.resolve.ImplicitReceiverStack
 import org.jetbrains.kotlin.fir.resolve.PersistentImplicitReceiverStack
@@ -23,6 +24,7 @@ abstract class CheckerContext {
     abstract val implicitReceiverStack: ImplicitReceiverStack
     abstract val containingDeclarations: List<FirDeclaration>
     abstract val qualifiedAccesses: List<FirQualifiedAccess>
+    abstract val getClassCalls: List<FirGetClassCall>
     abstract val sessionHolder: SessionHolder
     abstract val returnTypeCalculator: ReturnTypeCalculator
     abstract val suppressedDiagnostics: Set<String>
@@ -57,6 +59,7 @@ class PersistentCheckerContext private constructor(
     override val implicitReceiverStack: PersistentImplicitReceiverStack,
     override val containingDeclarations: PersistentList<FirDeclaration>,
     override val qualifiedAccesses: PersistentList<FirQualifiedAccess>,
+    override val getClassCalls: PersistentList<FirGetClassCall>,
     override val sessionHolder: SessionHolder,
     override val returnTypeCalculator: ReturnTypeCalculator,
     override val suppressedDiagnostics: PersistentSet<String>,
@@ -66,6 +69,7 @@ class PersistentCheckerContext private constructor(
 ) : CheckerContext() {
     constructor(sessionHolder: SessionHolder, returnTypeCalculator: ReturnTypeCalculator) : this(
         PersistentImplicitReceiverStack(),
+        persistentListOf(),
         persistentListOf(),
         persistentListOf(),
         sessionHolder,
@@ -81,6 +85,7 @@ class PersistentCheckerContext private constructor(
             implicitReceiverStack.add(name, value),
             containingDeclarations,
             qualifiedAccesses,
+            getClassCalls,
             sessionHolder,
             returnTypeCalculator,
             suppressedDiagnostics,
@@ -95,6 +100,7 @@ class PersistentCheckerContext private constructor(
             implicitReceiverStack,
             containingDeclarations.add(declaration),
             qualifiedAccesses,
+            getClassCalls,
             sessionHolder,
             returnTypeCalculator,
             suppressedDiagnostics,
@@ -109,6 +115,22 @@ class PersistentCheckerContext private constructor(
             implicitReceiverStack,
             containingDeclarations,
             qualifiedAccesses.add(qualifiedAccess),
+            getClassCalls,
+            sessionHolder,
+            returnTypeCalculator,
+            suppressedDiagnostics,
+            allInfosSuppressed,
+            allWarningsSuppressed,
+            allErrorsSuppressed
+        )
+    }
+
+    fun addGetClassCall(getClassCall: FirGetClassCall): PersistentCheckerContext {
+        return PersistentCheckerContext(
+            implicitReceiverStack,
+            containingDeclarations,
+            qualifiedAccesses,
+            getClassCalls.add(getClassCall),
             sessionHolder,
             returnTypeCalculator,
             suppressedDiagnostics,
@@ -129,6 +151,7 @@ class PersistentCheckerContext private constructor(
             implicitReceiverStack,
             containingDeclarations,
             qualifiedAccesses,
+            getClassCalls,
             sessionHolder,
             returnTypeCalculator,
             suppressedDiagnostics.addAll(diagnosticNames),
