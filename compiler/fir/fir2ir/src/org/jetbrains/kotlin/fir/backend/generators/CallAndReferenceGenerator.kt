@@ -534,16 +534,19 @@ class CallAndReferenceGenerator(
             if (annotationMode) {
                 for ((index, parameter) in valueParameters.withIndex()) {
                     if (parameter.isVararg && !argumentMapping.containsValue(parameter)) {
-                        val elementType = parameter.returnTypeRef.toIrType()
-                        putValueArgument(
-                            index,
+                        val defaultValue = parameter.defaultValue
+                        val value = if (defaultValue != null) {
+                            convertArgument(defaultValue, parameter, ConeSubstitutor.Empty, annotationMode)
+                        } else {
+                            val elementType = parameter.returnTypeRef.toIrType()
                             IrVarargImpl(
                                 UNDEFINED_OFFSET,
                                 UNDEFINED_OFFSET,
                                 elementType,
                                 elementType.toArrayOrPrimitiveArrayType(irBuiltIns)
                             )
-                        )
+                        }
+                        putValueArgument(index, value)
                     }
                 }
             }
