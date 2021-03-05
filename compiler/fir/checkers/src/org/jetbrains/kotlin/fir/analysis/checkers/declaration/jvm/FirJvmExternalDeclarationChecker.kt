@@ -7,24 +7,20 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration.jvm
 
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirMemberDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirModifierList
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.lexer.KtTokens
 
 // TODO: Move this to different, JVM-specific module?
-object FirJvmExternalDeclarationChecker : FirBasicDeclarationChecker() {
-    override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+object FirJvmExternalDeclarationChecker : FirMemberDeclarationChecker() {
+    override fun check(declaration: FirMemberDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+        if (!declaration.isExternal) return
         val source = declaration.source ?: return
         if (source.kind is FirFakeSourceElementKind) return
-        val modifierList = with(FirModifierList) { source.getModifierList() }
-        val externalModifier = modifierList?.modifiers?.firstOrNull { it.token == KtTokens.EXTERNAL_KEYWORD } ?: return
 
         // WRONG_MODIFIER_TARGET on external constructor is intentionally NOT covered in this checker.
         if (declaration !is FirFunction<*>) {
@@ -33,7 +29,11 @@ object FirJvmExternalDeclarationChecker : FirBasicDeclarationChecker() {
                 is FirRegularClass -> "class"
                 else -> "non-function declaration"
             }
-            reporter.reportOn(externalModifier.source, FirErrors.WRONG_MODIFIER_TARGET, externalModifier.token, target, context)
+            val modifierList = with(FirModifierList) { source.getModifierList() }
+            val externalModifier = modifierList?.modifiers?.firstOrNull { it.token == KtTokens.EXTERNAL_KEYWORD }
+            externalModifier?.let {
+                reporter.reportOn(it.source, FirErrors.WRONG_MODIFIER_TARGET, it.token, target, context)
+            }
         }
 
         // TODO: Implement checkers for these JVM-specific errors (see ExternalFunChecker in FE1.0):
