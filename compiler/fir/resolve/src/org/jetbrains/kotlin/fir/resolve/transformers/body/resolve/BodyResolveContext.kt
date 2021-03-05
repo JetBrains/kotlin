@@ -388,6 +388,20 @@ class BodyResolveContext(
         }
     }
 
+    inline fun <T> withField(
+        field: FirField,
+        crossinline f: () -> T
+    ): T {
+        return withTowerDataMode(FirTowerDataMode.CONSTRUCTOR_HEADER) {
+            withContainer(field) {
+                withTowerDataCleanup {
+                    getPrimaryConstructorAllParametersScope()?.let { addLocalScope(it) }
+                    f()
+                }
+            }
+        }
+    }
+
     inline fun <T> withProperty(
         property: FirProperty,
         crossinline f: () -> T

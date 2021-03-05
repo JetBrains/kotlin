@@ -179,15 +179,11 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         }
         dataFlowAnalyzer.enterField(field)
         return withFullBodyResolve {
-            context.withTowerDataMode(FirTowerDataMode.CONSTRUCTOR_HEADER) {
-                context.withContainer(field) {
-                    withPrimaryConstructorParameters(includeProperties = true) {
-                        field.transformChildren(transformer, withExpectedType(returnTypeRef))
-                    }
-                    if (field.initializer != null) {
-                        storeVariableReturnType(field)
-                    }
-                }
+            context.withField(field) {
+                field.transformChildren(transformer, withExpectedType(returnTypeRef))
+            }
+            if (field.initializer != null) {
+                storeVariableReturnType(field)
             }
             transformer.replaceDeclarationResolvePhaseIfNeeded(field, transformerPhase)
             dataFlowAnalyzer.exitField(field)
