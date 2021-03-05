@@ -116,7 +116,9 @@ public class CompileEnvironmentUtil {
         FileOutputStream outputStream = null;
         try {
             // we should try to create the output dir first
-            jarPath.getParentFile().mkdirs();
+            if (jarPath.getParentFile() != null) {
+                jarPath.getParentFile().mkdirs();
+            }
             outputStream = new FileOutputStream(jarPath);
             doWriteToJar(outputFiles, outputStream, mainClass, jarRuntime, noReflect, resetJarTimestamps);
             outputStream.close();
