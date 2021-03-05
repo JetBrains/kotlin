@@ -17,32 +17,32 @@ import org.jetbrains.kotlin.descriptors.commonizer.stats.StatsCollector.StatsKey
 import org.jetbrains.kotlin.descriptors.commonizer.utils.DEFAULT_CONSTRUCTOR_NAME
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.descriptors.commonizer.utils.firstNonNull
-import org.jetbrains.kotlin.descriptors.commonizer.metadata.MetadataBuildingVisitorContext.Path
+import org.jetbrains.kotlin.descriptors.commonizer.metadata.CirTreeSerializationContext.Path
 
-internal object MetadataBuilder {
-    fun build(
+object CirTreeSerializer {
+    fun serializeSingleTarget(
         node: CirRootNode,
         targetIndex: Int,
         statsCollector: StatsCollector?,
         moduleConsumer: (KlibModuleMetadata) -> Unit
     ) {
         node.accept(
-            MetadataBuildingVisitor(statsCollector, moduleConsumer),
-            MetadataBuildingVisitorContext.rootContext(node, targetIndex)
+            CirTreeSerializationVisitor(statsCollector, moduleConsumer),
+            CirTreeSerializationContext.rootContext(node, targetIndex)
         )
     }
 }
 
 @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
-private class MetadataBuildingVisitor(
+private class CirTreeSerializationVisitor(
     private val statsCollector: StatsCollector?,
     private val moduleConsumer: (KlibModuleMetadata) -> Unit
-) : CirNodeVisitor<MetadataBuildingVisitorContext, Any?> {
+) : CirNodeVisitor<CirTreeSerializationContext, Any?> {
     private val classConsumer = ClassConsumer()
 
     override fun visitRootNode(
         node: CirRootNode,
-        rootContext: MetadataBuildingVisitorContext
+        rootContext: CirTreeSerializationContext
     ) {
         node.modules.forEach { (moduleName, moduleNode) ->
             val moduleContext = rootContext.moduleContext(moduleName)
@@ -56,7 +56,7 @@ private class MetadataBuildingVisitor(
 
     override fun visitModuleNode(
         node: CirModuleNode,
-        moduleContext: MetadataBuildingVisitorContext
+        moduleContext: CirTreeSerializationContext
     ): KlibModuleMetadata? {
         val cirModule = moduleContext.get<CirModule>(node) ?: return null
 
@@ -73,7 +73,7 @@ private class MetadataBuildingVisitor(
 
     override fun visitPackageNode(
         node: CirPackageNode,
-        packageContext: MetadataBuildingVisitorContext
+        packageContext: CirTreeSerializationContext
     ): KmModuleFragment? {
         val cirPackage = packageContext.get<CirPackage>(node) ?: return null
 
@@ -127,21 +127,21 @@ private class MetadataBuildingVisitor(
 
     override fun visitPropertyNode(
         node: CirPropertyNode,
-        propertyContext: MetadataBuildingVisitorContext
+        propertyContext: CirTreeSerializationContext
     ): KmProperty? {
         return propertyContext.get<CirProperty>(node)?.buildProperty(propertyContext)
     }
 
     override fun visitFunctionNode(
         node: CirFunctionNode,
-        functionContext: MetadataBuildingVisitorContext
+        functionContext: CirTreeSerializationContext
     ): KmFunction? {
         return functionContext.get<CirFunction>(node)?.buildFunction(functionContext)
     }
 
     override fun visitClassNode(
         node: CirClassNode,
-        classContext: MetadataBuildingVisitorContext
+        classContext: CirTreeSerializationContext
     ): KmClass? {
         val cirClass = classContext.get<CirClass>(node) ?: return null
         val classTypeParametersCount = cirClass.typeParameters.size
@@ -181,14 +181,14 @@ private class MetadataBuildingVisitor(
 
     override fun visitClassConstructorNode(
         node: CirClassConstructorNode,
-        constructorContext: MetadataBuildingVisitorContext
+        constructorContext: CirTreeSerializationContext
     ): KmConstructor? {
         return constructorContext.get<CirClassConstructor>(node)?.buildClassConstructor(constructorContext)
     }
 
     override fun visitTypeAliasNode(
         node: CirTypeAliasNode,
-        typeAliasContext: MetadataBuildingVisitorContext
+        typeAliasContext: CirTreeSerializationContext
     ): Any? {
         val cirClassifier = typeAliasContext.get<CirClassifier>(node) ?: return null
 
@@ -204,14 +204,14 @@ private class MetadataBuildingVisitor(
 
     companion object {
         private fun StatsCollector.logModule(
-            moduleContext: MetadataBuildingVisitorContext
+            moduleContext: CirTreeSerializationContext
         ) = logDeclaration(moduleContext.targetIndex) {
             StatsKey(moduleContext.currentPath.toString(), DeclarationType.MODULE)
         }
 
         private fun StatsCollector.logClass(
             clazz: KmClass,
-            classContext: MetadataBuildingVisitorContext
+            classContext: CirTreeSerializationContext
         ) = logDeclaration(classContext.targetIndex) {
             val declarationType = when {
                 Flag.Class.IS_ENUM_CLASS(clazz.flags) -> DeclarationType.ENUM_CLASS
@@ -231,13 +231,13 @@ private class MetadataBuildingVisitor(
         }
 
         private fun StatsCollector.logTypeAlias(
-            typeAliasContext: MetadataBuildingVisitorContext
+            typeAliasContext: CirTreeSerializationContext
         ) = logDeclaration(typeAliasContext.targetIndex) {
             StatsKey(typeAliasContext.currentPath.toString(), DeclarationType.TYPE_ALIAS)
         }
 
         private fun StatsCollector.logProperty(
-            propertyContext: MetadataBuildingVisitorContext,
+            propertyContext: CirTreeSerializationContext,
             propertyKey: PropertyApproximationKey,
             propertyNode: CirPropertyNode
         ) = logDeclaration(propertyContext.targetIndex) {
@@ -258,7 +258,7 @@ private class MetadataBuildingVisitor(
 
         private fun StatsCollector.logFunction(
             function: KmFunction,
-            functionContext: MetadataBuildingVisitorContext,
+            functionContext: CirTreeSerializationContext,
             functionKey: FunctionApproximationKey
         ) = logDeclaration(functionContext.targetIndex) {
             val declarationType = when {
@@ -277,7 +277,7 @@ private class MetadataBuildingVisitor(
 
         private fun StatsCollector.logClassConstructor(
             constructor: KmConstructor,
-            constructorContext: MetadataBuildingVisitorContext,
+            constructorContext: CirTreeSerializationContext,
             constructorKey: ConstructorApproximationKey
         ) = logDeclaration(constructorContext.targetIndex) {
             StatsKey(
@@ -291,7 +291,7 @@ private class MetadataBuildingVisitor(
     }
 }
 
-internal data class MetadataBuildingVisitorContext(
+internal data class CirTreeSerializationContext(
     val targetIndex: Int,
     val target: CommonizerTarget,
     val isCommon: Boolean,
@@ -327,10 +327,10 @@ internal data class MetadataBuildingVisitorContext(
         }
     }
 
-    fun moduleContext(moduleName: CirName): MetadataBuildingVisitorContext {
+    fun moduleContext(moduleName: CirName): CirTreeSerializationContext {
         check(currentPath is Path.Empty)
 
-        return MetadataBuildingVisitorContext(
+        return CirTreeSerializationContext(
             targetIndex = targetIndex,
             target = target,
             isCommon = isCommon,
@@ -339,10 +339,10 @@ internal data class MetadataBuildingVisitorContext(
         )
     }
 
-    fun packageContext(packageName: CirPackageName): MetadataBuildingVisitorContext {
+    fun packageContext(packageName: CirPackageName): CirTreeSerializationContext {
         check(currentPath is Path.Module)
 
-        return MetadataBuildingVisitorContext(
+        return CirTreeSerializationContext(
             targetIndex = targetIndex,
             target = target,
             isCommon = isCommon,
@@ -354,7 +354,7 @@ internal data class MetadataBuildingVisitorContext(
     fun classifierContext(
         classifierName: CirName,
         outerClassTypeParametersCount: Int = 0
-    ): MetadataBuildingVisitorContext {
+    ): CirTreeSerializationContext {
         val newPath = when (currentPath) {
             is Path.Package -> {
                 check(outerClassTypeParametersCount == 0)
@@ -367,7 +367,7 @@ internal data class MetadataBuildingVisitorContext(
             else -> error("Illegal state")
         }
 
-        return MetadataBuildingVisitorContext(
+        return CirTreeSerializationContext(
             targetIndex = targetIndex,
             target = target,
             isCommon = isCommon,
@@ -379,7 +379,7 @@ internal data class MetadataBuildingVisitorContext(
     fun callableMemberContext(
         memberName: CirName,
         ownerClassTypeParametersCount: Int = 0
-    ): MetadataBuildingVisitorContext {
+    ): CirTreeSerializationContext {
         val newPath = when (currentPath) {
             is Path.Package -> {
                 check(ownerClassTypeParametersCount == 0)
@@ -392,7 +392,7 @@ internal data class MetadataBuildingVisitorContext(
             else -> error("Illegal state")
         }
 
-        return MetadataBuildingVisitorContext(
+        return CirTreeSerializationContext(
             targetIndex = targetIndex,
             target = target,
             isCommon = isCommon,
@@ -414,8 +414,8 @@ internal data class MetadataBuildingVisitorContext(
     }
 
     companion object {
-        fun rootContext(rootNode: CirRootNode, targetIndex: Int): MetadataBuildingVisitorContext =
-            MetadataBuildingVisitorContext(
+        fun rootContext(rootNode: CirRootNode, targetIndex: Int): CirTreeSerializationContext =
+            CirTreeSerializationContext(
                 targetIndex = targetIndex,
                 target = rootNode.getTarget(targetIndex),
                 isCommon = rootNode.indexOfCommon == targetIndex,
