@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.types.KotlinType
 
 
 @Suppress("UNUSED_VARIABLE", "LocalVariableName", "ClassName", "unused")
@@ -253,6 +254,9 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
 
         val CLASS_LITERAL_LHS_NOT_A_CLASS by error<FirSourceElement, KtExpression>()
         val NULLABLE_TYPE_IN_CLASS_LITERAL_LHS by error<FirSourceElement, KtExpression>()
+        val EXPRESSION_OF_NULLABLE_TYPE_IN_CLASS_LITERAL_LHS by error<FirSourceElement, PsiElement> {
+            parameter<ConeKotlinType>("lhsType")
+        }
     }
 
     val OVERRIDES by object : DiagnosticGroup("overrides") {

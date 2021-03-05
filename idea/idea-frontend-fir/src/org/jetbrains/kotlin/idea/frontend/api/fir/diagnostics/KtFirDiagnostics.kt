@@ -576,6 +576,11 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = NullableTypeInClassLiteralLhs::class
     }
 
+    abstract class ExpressionOfNullableTypeInClassLiteralLhs : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = ExpressionOfNullableTypeInClassLiteralLhs::class
+        abstract val lhsType: KtType
+    }
+
     abstract class NothingToOverride : KtFirDiagnostic<KtModifierListOwner>() {
         override val diagnosticClass get() = NothingToOverride::class
         abstract val declaration: KtSymbol

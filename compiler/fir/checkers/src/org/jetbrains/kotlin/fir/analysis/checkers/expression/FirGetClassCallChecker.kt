@@ -13,9 +13,9 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
-import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
-import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
-import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.lexer.KtTokens.QUEST
 
@@ -25,7 +25,6 @@ object FirGetClassCallChecker : FirBasicExpressionChecker() {
         val source = expression.source ?: return
         if (source.kind is FirFakeSourceElementKind) return
 
-        val argument = expression.argument as? FirResolvedQualifier ?: return
         // Note that raw FIR drops marked nullability "?" in, e.g., `A?::class`, `A<T?>::class`, or `A<T?>?::class`.
         // That is, AST structures for those expressions have token type QUEST, whereas FIR element doesn't have any information about it.
         //
@@ -36,10 +35,25 @@ object FirGetClassCallChecker : FirBasicExpressionChecker() {
         //
         // Only the 2nd example is valid, and we want to check if token type QUEST doesn't exist at the same level as COLONCOLON.
         val markedNullable = source.getChild(QUEST, depth = 1) != null
-        if (argument.isNullableLHSForCallableReference || markedNullable) {
-            reporter.reportOn(source, FirErrors.NULLABLE_TYPE_IN_CLASS_LITERAL_LHS, context)
+        val argument = expression.argument
+        val isNullable = markedNullable ||
+                (argument as? FirResolvedQualifier)?.isNullableLHSForCallableReference == true ||
+                argument.typeRef.coneType.isMarkedNullable
+        if (isNullable) {
+            if (argument.canBeDoubleColonLHSAsType) {
+                reporter.reportOn(source, FirErrors.NULLABLE_TYPE_IN_CLASS_LITERAL_LHS, context)
+            } else {
+                reporter.reportOn(
+                    argument.source,
+                    FirErrors.EXPRESSION_OF_NULLABLE_TYPE_IN_CLASS_LITERAL_LHS,
+                    argument.typeRef.coneType,
+                    context
+                )
+            }
             return
         }
+
+        if (argument !is FirResolvedQualifier) return
         // TODO: differentiate RESERVED_SYNTAX_IN_CALLABLE_REFERENCE_LHS
         if (argument.typeArguments.isNotEmpty() && !argument.typeRef.coneType.isAllowedInClassLiteral(context)) {
             val typeParameters = (argument.symbol?.fir as? FirTypeParameterRefsOwner)?.typeParameters
@@ -52,6 +66,14 @@ object FirGetClassCallChecker : FirBasicExpressionChecker() {
             reporter.reportOn(source, FirErrors.CLASS_LITERAL_LHS_NOT_A_CLASS, context)
         }
     }
+
+    private val FirExpression.canBeDoubleColonLHSAsType: Boolean
+        get() {
+            return this is FirResolvedQualifier ||
+                    this is FirResolvedReifiedParameterReference ||
+                    ((this is FirQualifiedAccessExpression) &&
+                            (this.calleeReference as? FirResolvedNamedReference)?.resolvedSymbol is FirTypeParameterSymbol)
+        }
 
     private fun ConeKotlinType.isAllowedInClassLiteral(context: CheckerContext): Boolean =
         when (this) {

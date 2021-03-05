@@ -934,6 +934,14 @@ internal class NullableTypeInClassLiteralLhsImpl(
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
 }
 
+internal class ExpressionOfNullableTypeInClassLiteralLhsImpl(
+    override val lhsType: KtType,
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.ExpressionOfNullableTypeInClassLiteralLhs(), KtAbstractFirDiagnostic<PsiElement> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
 internal class NothingToOverrideImpl(
     override val declaration: KtSymbol,
     firDiagnostic: FirPsiDiagnostic<*>,
