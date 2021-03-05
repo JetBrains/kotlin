@@ -78,6 +78,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPOSED_SUPER_CLA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPOSED_SUPER_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPOSED_TYPEALIAS_EXPANDED_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPOSED_TYPE_PARAMETER_BOUND
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPRESSION_OF_NULLABLE_TYPE_IN_CLASS_LITERAL_LHS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXTENSION_PROPERTY_MUST_HAVE_ACCESSORS_OR_BE_ABSTRACT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXTENSION_PROPERTY_WITH_BACKING_FIELD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FORBIDDEN_VARARG_PARAMETER_TYPE
@@ -388,6 +389,11 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
 
             map.put(CLASS_LITERAL_LHS_NOT_A_CLASS, "Only classes are allowed on the left hand side of a class literal")
             map.put(NULLABLE_TYPE_IN_CLASS_LITERAL_LHS, "Type in a class literal must not be nullable")
+            map.put(
+                EXPRESSION_OF_NULLABLE_TYPE_IN_CLASS_LITERAL_LHS,
+                "Expression in a class literal has a nullable type ''{0}'', use !! to make the type non-nullable",
+                RENDER_TYPE
+            )
 
             // Inline and value classes
             map.put(INLINE_CLASS_NOT_TOP_LEVEL, "Inline classes cannot be local or inner")
