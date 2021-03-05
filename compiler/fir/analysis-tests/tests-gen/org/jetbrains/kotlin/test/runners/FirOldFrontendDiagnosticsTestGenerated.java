@@ -14576,6 +14576,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("superCallDepecation.kt")
+            public void testSuperCallDepecation() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inline/superCallDepecation.kt");
+            }
+
+            @Test
             @TestMetadata("unsupportedConstruction.kt")
             public void testUnsupportedConstruction() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inline/unsupportedConstruction.kt");
