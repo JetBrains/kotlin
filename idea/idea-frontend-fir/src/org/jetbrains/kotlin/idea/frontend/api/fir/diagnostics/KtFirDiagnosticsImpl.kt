@@ -913,6 +913,14 @@ internal class InnerClassOfGenericThrowableSubclassImpl(
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
 }
 
+internal class KclassWithNullableTypeParameterInSignatureImpl(
+    override val typeParameter: KtTypeParameterSymbol,
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.KclassWithNullableTypeParameterInSignature(), KtAbstractFirDiagnostic<KtNamedDeclaration> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
 internal class TypeParameterAsReifiedImpl(
     override val typeParameter: KtTypeParameterSymbol,
     firDiagnostic: FirPsiDiagnostic<*>,

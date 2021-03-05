@@ -70,6 +70,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
     )
 
     override val fileCheckers: Set<FirFileChecker> = setOf(
+        FirKClassWithIncorrectTypeArgumentChecker,
         FirTopLevelFunctionsChecker,
         FirTopLevelPropertiesChecker,
     )

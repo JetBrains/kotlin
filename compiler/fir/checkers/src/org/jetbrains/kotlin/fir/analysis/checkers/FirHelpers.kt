@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.psi.KtModifierList
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtParameter.VAL_VAR_TOKEN_SET
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 /**
@@ -318,6 +319,10 @@ fun Modality.toToken(): KtModifierKeywordToken = when (this) {
 
 val FirFunctionCall.isIterator
     get() = this.calleeReference.name.asString() == "<iterator>"
+
+fun ConeKotlinType.isSubtypeOfAny(session: FirSession): Boolean {
+    return AbstractTypeChecker.isSubtypeOf(session.typeContext, this.fullyExpandedType(session), session.builtinTypes.anyType.type)
+}
 
 internal fun throwableClassLikeType(session: FirSession) = session.builtinTypes.throwableType.type
 

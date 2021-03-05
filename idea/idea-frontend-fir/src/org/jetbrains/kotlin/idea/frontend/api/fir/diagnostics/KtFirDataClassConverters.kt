@@ -797,6 +797,13 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.KCLASS_WITH_NULLABLE_TYPE_PARAMETER_IN_SIGNATURE) { firDiagnostic ->
+        KclassWithNullableTypeParameterInSignatureImpl(
+            firSymbolBuilder.buildTypeParameterSymbol(firDiagnostic.a.fir as FirTypeParameter),
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
     add(FirErrors.TYPE_PARAMETER_AS_REIFIED) { firDiagnostic ->
         TypeParameterAsReifiedImpl(
             firSymbolBuilder.buildTypeParameterSymbol(firDiagnostic.a.fir as FirTypeParameter),
