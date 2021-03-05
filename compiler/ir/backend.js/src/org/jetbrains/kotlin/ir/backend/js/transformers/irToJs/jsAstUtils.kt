@@ -316,7 +316,7 @@ fun translateCallArguments(
                     result is JsArrayLiteral &&
                     result.expressions.isEmpty()
 
-            if (isEmptyExternalVararg) {
+            if (isEmptyExternalVararg && index == size - 1) {
                 null
             } else result
         }
