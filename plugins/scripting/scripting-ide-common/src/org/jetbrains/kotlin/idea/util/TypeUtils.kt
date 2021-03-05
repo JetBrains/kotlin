@@ -32,7 +32,9 @@ private fun KotlinType.approximateNonDynamicFlexibleTypes(
 
     if (isFlexible()) {
         val flexible = asFlexibleType()
-        val lowerClass = flexible.lowerBound.constructor.declarationDescriptor as? ClassDescriptor?
+        val lowerBound = flexible.lowerBound
+        val upperBound = flexible.upperBound
+        val lowerClass = lowerBound.constructor.declarationDescriptor as? ClassDescriptor?
         val isCollection = lowerClass != null && JavaToKotlinClassMapper.isMutable(lowerClass)
         // (Mutable)Collection<T>! -> MutableCollection<T>?
         // Foo<(Mutable)Collection<T>!>! -> Foo<Collection<T>>?
@@ -40,17 +42,21 @@ private fun KotlinType.approximateNonDynamicFlexibleTypes(
         // Foo<Bar!>! -> Foo<Bar>?
         var approximation =
             if (isCollection)
-                flexible.lowerBound.makeNullableAsSpecified(!preferNotNull)
-            else
-                if (this is RawType && preferStarForRaw) flexible.upperBound.makeNullableAsSpecified(!preferNotNull)
+            // (Mutable)Collection<T>!
+                if (lowerBound.isMarkedNullable != upperBound.isMarkedNullable)
+                    lowerBound.makeNullableAsSpecified(!preferNotNull)
                 else
-                    if (preferNotNull) flexible.lowerBound else flexible.upperBound
+                    lowerBound
+            else
+                if (this is RawType && preferStarForRaw) upperBound.makeNullableAsSpecified(!preferNotNull)
+                else
+                    if (preferNotNull) lowerBound else upperBound
 
         approximation = approximation.approximateNonDynamicFlexibleTypes()
 
         approximation = if (nullability() == TypeNullability.NOT_NULL) approximation.makeNullableAsSpecified(false) else approximation
 
-        if (approximation.isMarkedNullable && !flexible.lowerBound
+        if (approximation.isMarkedNullable && !lowerBound
                 .isMarkedNullable && TypeUtils.isTypeParameter(approximation) && TypeUtils.hasNullableSuperType(approximation)
         ) {
             approximation = approximation.makeNullableAsSpecified(false)
