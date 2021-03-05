@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -468,7 +469,10 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
                     variable.isVal -> data.append("val ")
                 }
             }
-            data.append(getSymbolId(variable.symbol)).append(": ").append(variable.returnTypeRef.render())
+            data.append(getSymbolId(variable.symbol))
+                .append(variable.symbol.callableId.callableName)
+                .append(": ")
+                .append(variable.returnTypeRef.render())
         }
 
         private fun renderPropertySymbol(symbol: FirPropertySymbol, data: StringBuilder) {
@@ -479,7 +483,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             val receiver = symbol.fir.receiverTypeRef?.render()
             if (receiver != null) {
                 data.append(receiver).append(".")
-            } else if (id != symbol.callableId.callableName.asString()) {
+            } else if (id.isNotEmpty()) {
                 data.append("($id)").append(".")
             }
 
@@ -498,7 +502,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             if (call == null) {
                 // call is null for callable reference
                 if (receiverType == null) {
-                    symbol.callableId.className?.let { data.append("($id).$callableName") } ?: data.append(id)
+                    symbol.callableId.className?.let { data.append("($it).$callableName") } ?: data.append(callableName)
                 } else {
                     data.append("${receiverType.render()}.$callableName")
                 }
@@ -520,10 +524,15 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
                 call.dispatchReceiver !is FirNoReceiverExpression -> {
                     data.append("(")
                     val dispatch = buildString { call.dispatchReceiver.typeRef.accept(this@FirRendererForVisualizer, this) }
+                        .let { if (it.endsWith("!")) it.dropLast(1) else it } // this hack drop flexible annotation for receiver
                     val localPath = if (symbol.isLocalDeclaration()) stack.getPathByName(dispatch) else ""
                     data.append(localPath).append(dispatch).append(").").append(callableName)
                 }
-                else -> data.append(id)
+                else -> {
+                    data.append(id)
+                    if (symbol.callableId.className != null) data.append(".")
+                    data.append(callableName)
+                }
             }
 
             renderListInTriangles(call.typeArguments, data)
@@ -804,19 +813,27 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             }
         }
 
+        // id == packageName + className
         private fun getSymbolId(symbol: AbstractFirBasedSymbol<*>?): String {
             return when (symbol) {
                 is FirCallableSymbol<*> -> {
-                    val callableId = symbol.callableId
+                    val callableId = symbol.callableId.withoutName().removeCurrentFilePackage()
                     val isLocal = symbol.isLocalDeclaration()
-                    val trimmedCallableId = callableId.toString()
-                        .replaceFirst(".${callableId.callableName}", "")
-                        .removeCurrentFilePackage()
-                    val localPath = if (isLocal) stack.getPathByName(trimmedCallableId) else ""
-                    localPath + trimmedCallableId
+                    val localPath = if (isLocal) stack.getPathByName(callableId) else ""
+                    localPath + callableId
                 }
                 is FirClassLikeSymbol<*> -> symbol.classId.getWithoutCurrentPackage()
                 else -> ""
+            }
+        }
+
+        private fun CallableId.withoutName(): String {
+            return buildString {
+                append(packageName.asString().replace('.', '/'))
+                append("/")
+                if (className != null) {
+                    append(className)
+                }
             }
         }
     }
