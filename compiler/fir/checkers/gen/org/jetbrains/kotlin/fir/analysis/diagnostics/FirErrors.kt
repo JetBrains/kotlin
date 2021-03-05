@@ -310,6 +310,11 @@ object FirErrors {
 
     // Fun interfaces
     val FUN_INTERFACE_CONSTRUCTOR_REFERENCE by error0<KtExpression>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
+    val FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS by error0<KtClass>(SourceElementPositioningStrategies.FUN_MODIFIER)
+    val FUN_INTERFACE_CANNOT_HAVE_ABSTRACT_PROPERTIES by error0<KtDeclaration>(SourceElementPositioningStrategies.FUN_INTERFACE_ABSTRACT_PROPERTY)
+    val FUN_INTERFACE_ABSTRACT_METHOD_WITH_TYPE_PARAMETERS by error0<PsiElement>()
+    val FUN_INTERFACE_ABSTRACT_METHOD_WITH_DEFAULT_VALUE by error0<PsiElement>()
+    val FUN_INTERFACE_WITH_SUSPEND_FUNCTION by error0<KtFunction>(SourceElementPositioningStrategies.SUSPEND_MODIFIER)
 
     // Properties & accessors
     val ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS by error2<KtModifierListOwner, FirMemberDeclaration, FirMemberDeclaration>(SourceElementPositioningStrategies.MODALITY_MODIFIER)

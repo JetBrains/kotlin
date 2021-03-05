@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -500,6 +499,11 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
 
     val FUN_INTERFACES by object : DiagnosticGroup("Fun interfaces") {
         val FUN_INTERFACE_CONSTRUCTOR_REFERENCE by error<KtExpression>(PositioningStrategy.REFERENCE_BY_QUALIFIED)
+        val FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS by error<KtClass>(PositioningStrategy.FUN_MODIFIER)
+        val FUN_INTERFACE_CANNOT_HAVE_ABSTRACT_PROPERTIES by error<KtDeclaration>(PositioningStrategy.FUN_INTERFACE_ABSTRACT_PROPERTY)
+        val FUN_INTERFACE_ABSTRACT_METHOD_WITH_TYPE_PARAMETERS by error<PsiElement>()
+        val FUN_INTERFACE_ABSTRACT_METHOD_WITH_DEFAULT_VALUE by error<PsiElement>()
+        val FUN_INTERFACE_WITH_SUSPEND_FUNCTION by error<KtFunction>(PositioningStrategy.SUSPEND_MODIFIER)
     }
 
     val PROPERTIES_AND_ACCESSORS by object : DiagnosticGroup("Properties & accessors") {

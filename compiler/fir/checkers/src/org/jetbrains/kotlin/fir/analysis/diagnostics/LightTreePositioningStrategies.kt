@@ -340,6 +340,12 @@ object LightTreePositioningStrategies {
     val CONST_MODIFIER: LightTreePositioningStrategy =
         ModifierSetBasedLightTreePositioningStrategy(TokenSet.create(KtTokens.CONST_KEYWORD))
 
+    val FUN_MODIFIER: LightTreePositioningStrategy =
+        ModifierSetBasedLightTreePositioningStrategy(TokenSet.create(KtTokens.FUN_KEYWORD))
+
+    val SUSPEND_MODIFIER: LightTreePositioningStrategy =
+        ModifierSetBasedLightTreePositioningStrategy(TokenSet.create(KtTokens.SUSPEND_KEYWORD))
+
     val INLINE_OR_VALUE_MODIFIER: LightTreePositioningStrategy =
         ModifierSetBasedLightTreePositioningStrategy(TokenSet.create(KtTokens.INLINE_KEYWORD, KtTokens.VALUE_KEYWORD))
 
@@ -442,6 +448,22 @@ object LightTreePositioningStrategies {
             return super.mark(node, startOffset, endOffset, tree)
         }
     }
+
+    val FUN_INTERFACE_ABSTRACT_PROPERTY: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
+        override fun mark(
+            node: LighterASTNode,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>
+        ): List<TextRange> {
+            return when (node.tokenType) {
+                KtNodeTypes.CLASS -> FUN_MODIFIER.mark(node, startOffset, endOffset, tree)
+                KtNodeTypes.PROPERTY -> VAL_OR_VAR_NODE.mark(node, startOffset, endOffset, tree)
+                else -> DEFAULT.mark(node, startOffset, endOffset, tree)
+            }
+        }
+    }
+
 
     val REFERENCE_BY_QUALIFIED: LightTreePositioningStrategy = FindReferencePositioningStrategy(false)
     val REFERENCED_NAME_BY_QUALIFIED: LightTreePositioningStrategy = FindReferencePositioningStrategy(true)

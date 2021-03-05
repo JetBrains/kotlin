@@ -371,6 +371,12 @@ object PositioningStrategies {
     val CONST_MODIFIER: PositioningStrategy<KtModifierListOwner> = modifierSetPosition(KtTokens.CONST_KEYWORD)
 
     @JvmField
+    val FUN_MODIFIER: PositioningStrategy<KtModifierListOwner> = modifierSetPosition(KtTokens.FUN_KEYWORD)
+
+    @JvmField
+    val SUSPEND_MODIFIER: PositioningStrategy<KtModifierListOwner> = modifierSetPosition(KtTokens.SUSPEND_KEYWORD)
+
+    @JvmField
     val FOR_REDECLARATION: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
         override fun mark(element: PsiElement): List<TextRange> {
             val nameIdentifier = when (element) {
@@ -774,6 +780,17 @@ object PositioningStrategies {
                 }
             }
             return super.mark(element)
+        }
+    }
+
+    @JvmField
+    val FUN_INTERFACE_ABSTRACT_PROPERTY: PositioningStrategy<KtDeclaration> = object : PositioningStrategy<KtDeclaration>() {
+        override fun mark(element: KtDeclaration): List<TextRange> {
+            return when (element) {
+                is KtClass -> FUN_MODIFIER.mark(element)
+                is KtProperty -> markElement(element.valOrVarKeyword)
+                else -> error("Expect interface or property, but was " + element.getElementTextWithContext())
+            }
         }
     }
 

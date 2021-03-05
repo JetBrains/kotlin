@@ -18,6 +18,11 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.VAL_OR_VAR_NODE
     )
 
+    val FUN_INTERFACE_ABSTRACT_PROPERTY = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.FUN_INTERFACE_ABSTRACT_PROPERTY,
+        PositioningStrategies.FUN_INTERFACE_ABSTRACT_PROPERTY
+    )
+
     val COMPANION_OBJECT = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.COMPANION_OBJECT,
         PositioningStrategies.COMPANION_OBJECT
@@ -102,6 +107,17 @@ object SourceElementPositioningStrategies {
         LightTreePositioningStrategies.INNER_MODIFIER,
         PositioningStrategies.INNER_MODIFIER
     )
+
+    val FUN_MODIFIER = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.FUN_MODIFIER,
+        PositioningStrategies.FUN_MODIFIER
+    )
+
+    val SUSPEND_MODIFIER = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.SUSPEND_MODIFIER,
+        PositioningStrategies.SUSPEND_MODIFIER
+    )
+
 
     val OPERATOR = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.OPERATOR,
