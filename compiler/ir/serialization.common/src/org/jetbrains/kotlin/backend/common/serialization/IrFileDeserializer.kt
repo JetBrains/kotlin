@@ -642,7 +642,7 @@ abstract class IrFileDeserializer(
     }
 
     private fun deserializeSetValue(proto: ProtoSetValue, start: Int, end: Int): IrSetValue {
-        val symbol = deserializeIrSymbolAndRemap(proto.symbol) as IrVariableSymbol
+        val symbol = deserializeIrSymbolAndRemap(proto.symbol) as IrValueSymbol
         val value = deserializeExpression(proto.value)
         val origin = if (proto.hasOriginName()) deserializeIrStatementOrigin(proto.originName) else null
         return IrSetValueImpl(start, end, builtIns.unitType, symbol, value, origin)
