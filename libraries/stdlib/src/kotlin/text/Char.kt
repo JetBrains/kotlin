@@ -264,6 +264,8 @@ public expect val Char.category: CharCategory
  * Returns `true` if this character (Unicode code point) is defined in Unicode.
  *
  * A character is considered to be defined in Unicode if its [category] is not [CharCategory.UNASSIGNED].
+ *
+ * @sample samples.text.Chars.isDefined
  */
 public expect fun Char.isDefined(): Boolean
 
