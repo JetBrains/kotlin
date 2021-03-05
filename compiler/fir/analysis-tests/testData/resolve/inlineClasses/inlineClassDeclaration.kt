@@ -1,5 +1,5 @@
 class A {
-    <!INLINE_CLASS_NOT_TOP_LEVEL!>inline<!> class B(val x: Int)
+    <!INLINE_CLASS_NOT_TOP_LEVEL!>inline<!> inner class B(val x: Int)
     fun foo() {
         <!INLINE_CLASS_NOT_TOP_LEVEL!>inline<!> class C(val x: Int)
     }

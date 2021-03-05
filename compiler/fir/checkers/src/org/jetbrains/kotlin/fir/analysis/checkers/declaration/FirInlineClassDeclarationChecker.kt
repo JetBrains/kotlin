@@ -31,7 +31,7 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
             return
         }
 
-        if (context.containingDeclarations.size > 1) {
+        if (declaration.isInner || declaration.isLocal) {
             reporter.reportOn(declaration.source, FirErrors.INLINE_CLASS_NOT_TOP_LEVEL, context)
         }
 
