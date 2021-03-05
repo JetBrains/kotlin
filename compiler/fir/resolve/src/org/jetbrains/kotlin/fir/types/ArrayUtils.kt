@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.types
 
-import org.jetbrains.kotlin.fir.symbols.StandardClassIds
+import org.jetbrains.kotlin.name.StandardClassIds
 
 val ConeKotlinType.isArrayOrPrimitiveArray: Boolean
     get() = arrayElementType() != null
