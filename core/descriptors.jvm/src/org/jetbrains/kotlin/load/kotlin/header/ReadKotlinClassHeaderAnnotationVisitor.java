@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.SourceElement;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
+import org.jetbrains.kotlin.metadata.jvm.deserialization.BitEncoding;
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
@@ -57,6 +58,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
     private String[] strings = null;
     private String[] incompatibleData = null;
     private KotlinClassHeader.Kind headerKind = null;
+    private String[] serializedIrFields = null;
 
     @Nullable
     public KotlinClassHeader createHeader() {
@@ -77,7 +79,22 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
             return null;
         }
 
-        return new KotlinClassHeader(headerKind, metadataVersion, data, incompatibleData, strings, extraString, extraInt, packageName);
+        byte[] serializedIr = null;
+        if (serializedIrFields != null) {
+            serializedIr = BitEncoding.decodeBytes(serializedIrFields);
+        }
+
+        return new KotlinClassHeader(
+                headerKind,
+                metadataVersion,
+                data,
+                incompatibleData,
+                strings,
+                extraString,
+                extraInt,
+                packageName,
+                serializedIr
+        );
     }
 
     private boolean shouldHaveData() {
@@ -161,6 +178,9 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
             else if (METADATA_STRINGS_FIELD_NAME.equals(string)) {
                 return stringsArrayVisitor();
             }
+            else if (METADATA_SERIALIZED_IR_FIELD_NAME.equals(string)) {
+                return serializedIrArrayVisitor();
+            }
             else {
                 return null;
             }
@@ -182,6 +202,16 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
                 @Override
                 protected void visitEnd(@NotNull String[] result) {
                     strings = result;
+                }
+            };
+        }
+
+        @NotNull
+        private AnnotationArrayArgumentVisitor serializedIrArrayVisitor() {
+            return new CollectStringArrayAnnotationVisitor() {
+                @Override
+                protected void visitEnd(@NotNull String[] result) {
+                    serializedIrFields = result;
                 }
             };
         }
