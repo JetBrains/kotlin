@@ -22,6 +22,10 @@ constructor(
 
     private val npmProject = compilation.npmProject
 
+    private val versions by lazy {
+        nodeJs.versions
+    }
+
     @get:OutputDirectory
     override val destinationDir: File by lazy {
         npmProject.externalsDir
@@ -29,7 +33,7 @@ constructor(
 
     private val executor
         get() = DukatExecutor(
-            nodeJs,
+            versions,
             dts,
             externalsOutputFormat,
             npmProject,

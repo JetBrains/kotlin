@@ -26,8 +26,9 @@ open class KotlinNpmInstallTask : DefaultTask() {
         }
     }
 
+    @Transient
     private val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
-    private val resolutionManager get() = nodeJs.npmResolutionManager
+    private val resolutionManager = nodeJs.npmResolutionManager
 
     @Input
     val args: MutableList<String> = mutableListOf()
@@ -47,12 +48,14 @@ open class KotlinNpmInstallTask : DefaultTask() {
 
     // avoid using node_modules as output directory, as it is significantly slows down build
     @get:OutputFile
-    val nodeModulesState: File
-        get() = nodeJs.rootNodeModulesStateFile
+    val nodeModulesState: File by lazy {
+        nodeJs.rootNodeModulesStateFile
+    }
 
     @get:OutputFile
-    val yarnLock: File
-        get() = nodeJs.rootPackageDir.resolve("yarn.lock")
+    val yarnLock: File by lazy {
+        nodeJs.rootPackageDir.resolve("yarn.lock")
+    }
 
     @TaskAction
     fun resolve() {

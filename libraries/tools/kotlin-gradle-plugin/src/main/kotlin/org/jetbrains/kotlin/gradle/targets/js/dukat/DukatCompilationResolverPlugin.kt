@@ -104,7 +104,7 @@ internal class DukatCompilationResolverPlugin(
         }
 
         DukatExecutor(
-            nodeJs,
+            nodeJs.versions,
             DtsResolver(npmProject).getAllDts(externalNpmDependencies),
             externalsOutputFormat,
             npmProject,
