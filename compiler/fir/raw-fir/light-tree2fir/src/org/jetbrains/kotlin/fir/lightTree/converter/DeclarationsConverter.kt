@@ -408,6 +408,7 @@ class DeclarationsConverter(
                     isData = modifiers.isDataClass()
                     isInline = modifiers.isInlineClass()
                     isFun = modifiers.isFunctionalInterface()
+                    isExternal = modifiers.hasExternal()
                 }
 
                 buildRegularClass {

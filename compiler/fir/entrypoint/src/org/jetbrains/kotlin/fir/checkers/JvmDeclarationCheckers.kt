@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.jvm.FirJvmExternal
 
 // TODO: Move this to different, JVM-specific module?
 object JvmDeclarationCheckers : DeclarationCheckers() {
-    override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker> = setOf(
+    override val memberDeclarationCheckers: Set<FirMemberDeclarationChecker> = setOf(
         FirJvmExternalDeclarationChecker,
     )
 }

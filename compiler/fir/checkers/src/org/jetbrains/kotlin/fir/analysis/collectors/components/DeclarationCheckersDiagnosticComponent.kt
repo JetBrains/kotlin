@@ -31,7 +31,7 @@ class DeclarationCheckersDiagnosticComponent(
     }
 
     override fun visitRegularClass(regularClass: FirRegularClass, data: CheckerContext) {
-        checkers.regularClassCheckers.check(regularClass, data, reporter)
+        (checkers.memberDeclarationCheckers + checkers.regularClassCheckers).check(regularClass, data, reporter)
     }
 
     override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: CheckerContext) {

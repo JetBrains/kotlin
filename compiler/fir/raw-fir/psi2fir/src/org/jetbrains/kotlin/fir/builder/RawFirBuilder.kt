@@ -817,6 +817,7 @@ class RawFirBuilder(
                     isData = classOrObject.hasModifier(DATA_KEYWORD)
                     isInline = classOrObject.hasModifier(INLINE_KEYWORD)
                     isFun = classOrObject.hasModifier(FUN_KEYWORD)
+                    isExternal = classOrObject.hasModifier(EXTERNAL_KEYWORD)
                 }
                 withCapturedTypeParameters {
                     if (!status.isInner) context.capturedTypeParameters = context.capturedTypeParameters.clear()
