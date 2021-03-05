@@ -44,6 +44,13 @@ abstract class CheckerContext {
 
         return null
     }
+
+    abstract fun addSuppressedDiagnostics(
+        diagnosticNames: Collection<String>,
+        allInfosSuppressed: Boolean,
+        allWarningsSuppressed: Boolean,
+        allErrorsSuppressed: Boolean
+    ): PersistentCheckerContext
 }
 
 class PersistentCheckerContext private constructor(
@@ -111,7 +118,7 @@ class PersistentCheckerContext private constructor(
         )
     }
 
-    fun addSuppressedDiagnostics(
+    override fun addSuppressedDiagnostics(
         diagnosticNames: Collection<String>,
         allInfosSuppressed: Boolean,
         allWarningsSuppressed: Boolean,

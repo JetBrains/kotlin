@@ -33,12 +33,6 @@ abstract class AbstractDiagnosticCollector(
     override val scopeSession: ScopeSession = ScopeSession(),
     returnTypeCalculator: ReturnTypeCalculator = ReturnTypeCalculatorForFullBodyResolve()
 ) : SessionHolder {
-    companion object {
-        private const val SUPPRESS_ALL_INFOS = "infos"
-        private const val SUPPRESS_ALL_WARNINGS = "warnings"
-        private const val SUPPRESS_ALL_ERRORS = "errors"
-    }
-
     fun collectDiagnostics(firFile: FirFile): List<FirDiagnostic<*>> {
         if (!componentsInitialized) {
             throw IllegalStateException("Components are not initialized")
@@ -307,16 +301,7 @@ abstract class AbstractDiagnosticCollector(
     }
 
     private fun addSuppressedDiagnosticsToContext(annotationContainer: FirAnnotationContainer) {
-        val annotations = annotationContainer.annotations.filter {
-            val type = it.annotationTypeRef.coneType as? ConeClassLikeType ?: return@filter false
-            type.lookupTag.classId == StandardClassIds.Suppress
-        }
-        if (annotations.isEmpty()) return
-        val arguments = annotations.flatMap { annotationCall ->
-            annotationCall.arguments.filterIsInstance<FirVarargArgumentsExpression>().flatMap { varargArgument ->
-                varargArgument.arguments.mapNotNull { (it as? FirConstExpression<*>)?.value as? String? }
-            }
-        }
+        val arguments = getDiagnosticsSuppressedForContainer(annotationContainer) ?: return
         context = context.addSuppressedDiagnostics(
             arguments,
             allInfosSuppressed = SUPPRESS_ALL_INFOS in arguments,
@@ -332,6 +317,25 @@ abstract class AbstractDiagnosticCollector(
             block()
         } finally {
             currentAction = oldAction
+        }
+    }
+
+    companion object {
+        const val SUPPRESS_ALL_INFOS = "infos"
+        const val SUPPRESS_ALL_WARNINGS = "warnings"
+        const val SUPPRESS_ALL_ERRORS = "errors"
+
+        fun getDiagnosticsSuppressedForContainer(annotationContainer: FirAnnotationContainer): List<String>? {
+            val annotations = annotationContainer.annotations.filter {
+                val type = it.annotationTypeRef.coneType as? ConeClassLikeType ?: return@filter false
+                type.lookupTag.classId == StandardClassIds.Suppress
+            }
+            if (annotations.isEmpty()) return null
+            return annotations.flatMap { annotationCall ->
+                annotationCall.arguments.filterIsInstance<FirVarargArgumentsExpression>().flatMap { varargArgument ->
+                    varargArgument.arguments.mapNotNull { (it as? FirConstExpression<*>)?.value as? String? }
+                }
+            }
         }
     }
 }
