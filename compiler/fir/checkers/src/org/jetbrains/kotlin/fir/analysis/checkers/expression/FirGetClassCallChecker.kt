@@ -53,6 +53,13 @@ object FirGetClassCallChecker : FirBasicExpressionChecker() {
             return
         }
 
+        argument.safeAsTypeParameterSymbol?.let {
+            if (!it.fir.isReified) {
+                // E.g., fun <T: Any> foo(): Any = T::class
+                reporter.reportOn(source, FirErrors.TYPE_PARAMETER_AS_REIFIED, it, context)
+            }
+        }
+
         if (argument !is FirResolvedQualifier) return
         // TODO: differentiate RESERVED_SYNTAX_IN_CALLABLE_REFERENCE_LHS
         if (argument.typeArguments.isNotEmpty() && !argument.typeRef.coneType.isAllowedInClassLiteral(context)) {
@@ -71,8 +78,14 @@ object FirGetClassCallChecker : FirBasicExpressionChecker() {
         get() {
             return this is FirResolvedQualifier ||
                     this is FirResolvedReifiedParameterReference ||
-                    ((this is FirQualifiedAccessExpression) &&
-                            (this.calleeReference as? FirResolvedNamedReference)?.resolvedSymbol is FirTypeParameterSymbol)
+                    safeAsTypeParameterSymbol != null
+        }
+
+    private val FirExpression.safeAsTypeParameterSymbol: FirTypeParameterSymbol?
+        get() {
+            return ((this as? FirQualifiedAccessExpression)
+                ?.calleeReference as? FirResolvedNamedReference)
+                ?.resolvedSymbol as? FirTypeParameterSymbol
         }
 
     private fun ConeKotlinType.isAllowedInClassLiteral(context: CheckerContext): Boolean =

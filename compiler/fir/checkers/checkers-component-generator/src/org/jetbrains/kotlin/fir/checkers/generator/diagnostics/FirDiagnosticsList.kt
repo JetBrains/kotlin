@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.checkers.generator.diagnostics
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiTypeElement
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.fir.FirEffectiveVisibility
@@ -17,6 +16,7 @@ import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.types.KotlinType
 
 
 @Suppress("UNUSED_VARIABLE", "LocalVariableName", "ClassName", "unused")
@@ -234,6 +233,10 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val TYPE_PARAMETER_IN_CATCH_CLAUSE by error<FirSourceElement, PsiElement>()
         val GENERIC_THROWABLE_SUBCLASS by error<FirSourceElement, KtTypeParameterList>()
         val INNER_CLASS_OF_GENERIC_THROWABLE_SUBCLASS by error<FirSourceElement, KtClassOrObject>(PositioningStrategy.DECLARATION_NAME)
+
+        val TYPE_PARAMETER_AS_REIFIED by error<FirSourceElement, PsiElement> {
+            parameter<FirTypeParameterSymbol>("typeParameter")
+        }
     }
 
     val REFLECTION by object : DiagnosticGroup("Reflection") {

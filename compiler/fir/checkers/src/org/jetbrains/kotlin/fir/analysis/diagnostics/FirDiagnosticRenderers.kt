@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.render
 
@@ -27,6 +28,7 @@ object FirDiagnosticRenderers {
         when (symbol) {
             is FirClassLikeSymbol<*> -> symbol.classId.asString()
             is FirCallableSymbol<*> -> symbol.callableId.toString()
+            is FirTypeParameterSymbol -> symbol.name.asString()
             else -> "???"
         }
     }
