@@ -35,7 +35,7 @@ fun main() {
     Derived(b).printMessage()
 //  constructor Derived(Base)
 //  │       val main.b: BaseImpl
-//  │       │  fun (Derived).printMessageLine(): Unit
+//  │       │  fun (Base).printMessageLine(): Unit
 //  │       │  │
     Derived(b).printMessageLine()
 }

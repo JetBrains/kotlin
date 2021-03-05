@@ -48,7 +48,7 @@ fun main() {
     println("a hash - ${a.hashCode()}")
 
 //                             val main.a: Vector
-//                             │ EQ operator call
+//                             │ fun (Vector).equals(Any?): Boolean
 //  fun io/println(Any?): Unit │ │      val main.b: Vector
 //  │                          │ │      │
     println("a is equal to b ${a.equals(b)}")

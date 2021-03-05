@@ -7,13 +7,16 @@ package org.jetbrains.kotlin.compiler.visualizer
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.firUnsafe
+import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
@@ -22,15 +25,17 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 import org.jetbrains.kotlin.types.AbstractStrictEqualityTypeChecker
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
+private const val ANONYMOUS_NAME = "<anonymous>"
 private typealias Stack = MutableList<Pair<String, MutableList<String>>>
 
 class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
-    private val implicitReceivers = mutableListOf<FirTypeRef>()
+    private val implicitReceivers = mutableListOf<ConeKotlinType>()
 
     private fun FirElement.render(): String = buildString { this@render.accept(FirRendererForVisualizer(), this) }
 
@@ -45,6 +50,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
     private fun Stack.addName(name: String) = this.last().second.add(name)
     private fun Stack.addName(name: Name) = this.addName(name.asString())
     private fun Stack.getPathByName(name: String): String {
+        if (name == ANONYMOUS_NAME) return ""
         for ((reversedIndex, names) in this.asReversed().map { it.second }.withIndex()) {
             if (names.contains(name)) {
                 return this.filterIndexed { index, _ -> index < this.size - reversedIndex && index > 0 }
@@ -129,8 +135,8 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
                     stack.pop()
                 }
                 is KtClassOrObject -> {
-                    if (element.isLocal) stack.addName((element.name ?: "<anonymous>"))
-                    stack.push((element.name ?: "<anonymous>"))
+                    if (element.isLocal) stack.addName((element.name ?: ANONYMOUS_NAME))
+                    stack.push((element.name ?: ANONYMOUS_NAME))
                     element.acceptChildren(this)
                     stack.pop()
                 }
@@ -151,8 +157,8 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         }
 
         override fun visitNamedFunction(function: KtNamedFunction) {
-            if (function.isLocal) stack.addName(function.name ?: "<no name provided>")
-            stack.push((function.name ?: "<no name provided>"))
+            if (function.isLocal) stack.addName(function.name ?: ANONYMOUS_NAME)
+            stack.push((function.name ?: ANONYMOUS_NAME))
             if (function.equalsToken != null) {
                 function.bodyExpression!!.firstOfTypeWithRender<FirReturnExpression>(function.equalsToken) { this.result.typeRef }
                     ?: function.firstOfTypeWithRender<FirTypedDeclaration>(function.equalsToken) { this.returnTypeRef }
@@ -174,7 +180,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             renderVariableType(multiDeclarationEntry)
 
         override fun visitAnnotationEntry(annotationEntry: KtAnnotationEntry) {
-            annotationEntry.firstOfTypeWithRender<FirAnnotationCall>(annotationEntry.children.first())
+            annotationEntry.firstOfTypeWithRender<FirAnnotationCall>(annotationEntry.getChildOfType<KtConstructorCalleeExpression>())
             super.visitAnnotationEntry(annotationEntry)
         }
 
@@ -262,9 +268,10 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
                         val firLambda = psi.firstOfType<FirLambdaArgumentExpression>()?.expression as? FirAnonymousFunction
                         firLambda?.receiverTypeRef?.let {
                             lastCallWithLambda = psi.getLambdaExpression()?.firstOfType<FirLabel>()?.name
-                            implicitReceivers += it
+                            implicitReceivers += it.coneType
                             psi.accept(this)
-                            implicitReceivers -= it
+                            implicitReceivers -= it.coneType
+                            lastCallWithLambda = null
                         } ?: psi.accept(this)
                     }
                     else -> psi.accept(this)
@@ -273,7 +280,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         }
 
         override fun visitLambdaExpression(lambdaExpression: KtLambdaExpression) {
-            stack.push("<anonymous>")
+            stack.push(ANONYMOUS_NAME)
             lastCallWithLambda?.let { addAnnotation("$it@${implicitReceivers.size - 1}", lambdaExpression) }
             super.visitLambdaExpression(lambdaExpression)
             stack.pop()
@@ -386,10 +393,16 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
                 is ConeKotlinTypeProjectionIn -> "in ${type.tryToRenderConeAsFunctionType()}"
                 is ConeKotlinTypeProjectionOut -> "out ${type.tryToRenderConeAsFunctionType()}"
                 is ConeClassLikeType -> {
+                    val type = this.fullyExpandedType(session)
+                    if (type != this) return type.tryToRenderConeAsFunctionType()
+                    val classId = type.lookupTag.classId
                     buildString {
-                        append(lookupTag.classId.asString())
-                        if (typeArguments.isNotEmpty()) {
-                            append(typeArguments.joinToString(prefix = "<", postfix = ">") { it.tryToRenderConeAsFunctionType() })
+                        when {
+                            classId.isLocal -> append(classId.shortClassName.asString().let { stack.getPathByName(it) + it })
+                            else -> append(classId.asString())
+                        }
+                        if (type.typeArguments.isNotEmpty()) {
+                            append(type.typeArguments.joinToString(prefix = "<", postfix = ">") { it.tryToRenderConeAsFunctionType() })
                         }
                         append(nullabilitySuffix)
                     }
@@ -407,6 +420,10 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
                         tryToSquashFlexibleType(lowerRendered, upperRendered) ?: "$lowerRendered..$upperRendered"
                     }
                 }
+                is ConeIntersectionType -> {
+                    intersectedTypes.map { it.render().replace("/", ".").replace("kotlin.", "") }.sorted()
+                        .joinToString(separator = " & ", prefix = "{", postfix = "}")
+                }
                 else -> this.render()
             }
         }
@@ -422,32 +439,34 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         private fun <T : FirElement> renderListInTriangles(list: List<T>, data: StringBuilder, withSpace: Boolean = false) {
             if (list.isNotEmpty()) {
                 list.joinTo(data, separator = ", ", prefix = "<", postfix = ">") {
-                    buildString { it.accept(this@FirRendererForVisualizer, this) }
+                    it.render()
                 }
                 if (withSpace) data.append(" ")
             }
         }
 
-        private fun visitArguments(arguments: List<FirExpression>, data: StringBuilder) {
-            arguments.joinTo(data, ", ", "(", ")") {
-                if (it is FirResolvedQualifier) {
-                    val lookupTag = (it.typeRef as FirResolvedTypeRef).coneTypeSafe<ConeClassLikeType>()?.lookupTag
-                    val type = lookupTag?.let { tag ->
-                        (symbolProvider.getSymbolByLookupTag(tag)?.fir as? FirClass)?.superTypeRefs?.first()?.render()
-                    }
-                    if (type != null) return@joinTo type
-                }
-                it.typeRef.render()
+        private inline fun <reified D : FirCallableDeclaration<*>> D.originalIfFakeOverrideOrDelegated(): D? {
+            return when (origin) {
+                FirDeclarationOrigin.SubstitutionOverride, FirDeclarationOrigin.IntersectionOverride -> originalIfFakeOverride()
+                FirDeclarationOrigin.Delegated -> delegatedWrapperData!!.wrapped
+                else -> this
             }
         }
 
-        private fun renderImplicitReceiver(symbol: AbstractFirBasedSymbol<*>, psi: PsiElement?) {
-            val implicitReceiverIndex = (symbol.fir as? FirCallableMemberDeclaration<*>)?.dispatchReceiverType?.let {
-                implicitReceivers.map { (it as? FirResolvedTypeRef)?.coneType }.indexOf(it)
-            } ?: return
-            if (implicitReceiverIndex != -1) {
-                addAnnotation("this@$implicitReceiverIndex", psi)
+        private inline fun <reified D : FirCallableDeclaration<*>> D.getOriginal(): D {
+            var current = this
+            var next = this.originalIfFakeOverrideOrDelegated() ?: this
+            while (current != next) {
+                current = next
+                next = current.originalIfFakeOverrideOrDelegated() ?: current
             }
+            return current
+        }
+
+        private fun renderImplicitReceiver(symbol: AbstractFirBasedSymbol<*>, psi: PsiElement?) {
+            val receiverType = (symbol.fir as? FirCallableMemberDeclaration<*>)?.dispatchReceiverType ?: return
+            val implicitReceiverIndex = implicitReceivers.indexOf(receiverType)
+            if (implicitReceiverIndex != -1) addAnnotation("this@$implicitReceiverIndex", psi)
         }
 
         private fun renderConstructorSymbol(symbol: FirConstructorSymbol, data: StringBuilder) {
@@ -456,48 +475,79 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             renderListInTriangles(symbol.firUnsafe<FirConstructor>().typeParameters, data)
         }
 
+        private fun renderField(field: FirField, data: StringBuilder) {
+            val original = field.getOriginal()
+            if (original.isVal) data.append("val ") else if (original.isVar) data.append("var ")
+
+            data.append("(")
+                .append(original.dispatchReceiverType?.tryToRenderConeAsFunctionType())
+                .append(").")
+                .append(original.name)
+                .append(": ")
+                .append(original.returnTypeRef.coneType.tryToRenderConeAsFunctionType())
+        }
+
         private fun renderVariable(variable: FirVariable<*>, data: StringBuilder) {
-            when (variable) {
-                is FirEnumEntry -> {
+            when {
+                variable is FirEnumEntry -> {
                     data.append("enum entry ")
                     variable.returnTypeRef.accept(this, data)
                     data.append(".${variable.name}")
                     return
                 }
-                !is FirValueParameter -> when {
+                variable !is FirValueParameter || variable.name.asString() == "e" /* hack to match render with psi */ -> when {
                     variable.isVar -> data.append("var ")
                     variable.isVal -> data.append("val ")
                 }
             }
-            data.append(getSymbolId(variable.symbol))
+            val returnType = if ((variable as? FirValueParameter)?.isVararg == true) {
+                data.append("vararg ")
+                variable.returnTypeRef.coneType.arrayElementType()
+            } else {
+                variable.returnTypeRef.coneType
+            }
+
+            val receiver = when (variable) {
+                is FirField -> variable.dispatchReceiverType?.tryToRenderConeAsFunctionType()
+                else -> getSymbolId(variable.symbol)
+            }
+
+            data.append(receiver)
                 .append(variable.symbol.callableId.callableName)
                 .append(": ")
-                .append(variable.returnTypeRef.render())
+                .append(returnType?.tryToRenderConeAsFunctionType())
+                .append((variable as? FirValueParameter)?.defaultValue?.let { " = ..." } ?: "")
         }
 
         private fun renderPropertySymbol(symbol: FirPropertySymbol, data: StringBuilder) {
-            data.append(if (symbol.fir.isVar) "var" else "val").append(" ")
-            renderListInTriangles(symbol.fir.typeParameters, data, withSpace = true)
+            val fir = symbol.fir.getOriginal()
+            data.append(if (fir.isVar) "var" else "val").append(" ")
+            renderListInTriangles(fir.typeParameters, data, withSpace = true)
 
-            val id = getSymbolId(symbol)
-            val receiver = symbol.fir.receiverTypeRef?.render()
-            if (receiver != null) {
-                data.append(receiver).append(".")
-            } else if (id.isNotEmpty()) {
-                data.append("($id)").append(".")
+            val receiver = fir.receiverTypeRef?.render()
+            when {
+                receiver != null -> data.append(receiver).append(".").append(symbol.callableId.callableName)
+                fir.dispatchReceiverType != null -> {
+                    val dispatchReceiver = fir.dispatchReceiverType?.tryToRenderConeAsFunctionType()
+                    data.append("($dispatchReceiver)").append(".").append(symbol.callableId.callableName)
+                }
+                else -> {
+                    val name = symbol.callableId.let { if (it.packageName.asString().isEmpty()) it.callableName else it }
+                    data.append(name.toString().removeCurrentFilePackage())
+                }
             }
 
-            data.append(symbol.callableId.callableName).append(": ")
-            data.append(symbol.fir.returnTypeRef.render())
+            data.append(": ").append(fir.returnTypeRef.render())
         }
 
         private fun renderFunctionSymbol(symbol: FirNamedFunctionSymbol, data: StringBuilder, call: FirFunctionCall? = null) {
             data.append("fun ")
-            renderListInTriangles(symbol.fir.typeParameters, data, true)
+            val fir = symbol.fir.getOriginal()
+            renderListInTriangles(fir.typeParameters, data, true)
 
             val id = getSymbolId(symbol)
             val callableName = symbol.callableId.callableName
-            val receiverType = symbol.fir.receiverTypeRef
+            val receiverType = fir.receiverTypeRef
 
             if (call == null) {
                 // call is null for callable reference
@@ -513,20 +563,19 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             when {
                 call.extensionReceiver !is FirNoReceiverExpression -> {
                     // render type from symbol because this way it will be consistent with psi render
-                    symbol.fir.receiverTypeRef?.accept(this, data)
+                    fir.receiverTypeRef?.accept(this, data)
                     data.append(".").append(callableName)
                 }
                 call.dispatchReceiver.typeRef.annotations.any { it.isExtensionFunctionAnnotationCall } -> {
                     withExtensionFunctionType = true
-                    symbol.fir.valueParameters.first().returnTypeRef.accept(this, data)
+                    fir.valueParameters.first().returnTypeRef.accept(this, data)
                     data.append(".").append(callableName)
                 }
                 call.dispatchReceiver !is FirNoReceiverExpression -> {
                     data.append("(")
-                    val dispatch = buildString { call.dispatchReceiver.typeRef.accept(this@FirRendererForVisualizer, this) }
+                    val dispatch = fir.dispatchReceiverType!!.tryToRenderConeAsFunctionType()
                         .let { if (it.endsWith("!")) it.dropLast(1) else it } // this hack drop flexible annotation for receiver
-                    val localPath = if (symbol.isLocalDeclaration()) stack.getPathByName(dispatch) else ""
-                    data.append(localPath).append(dispatch).append(").").append(callableName)
+                    data.append(dispatch).append(").").append(callableName)
                 }
                 else -> {
                     data.append(id)
@@ -536,10 +585,10 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             }
 
             renderListInTriangles(call.typeArguments, data)
-            val valueParameters = symbol.fir.valueParameters.let { if (withExtensionFunctionType) it.drop(1) else it }
+            val valueParameters = fir.valueParameters.let { if (withExtensionFunctionType) it.drop(1) else it }
             visitValueParameters(valueParameters, data)
             data.append(": ")
-            symbol.fir.returnTypeRef.accept(this, data)
+            fir.returnTypeRef.accept(this, data)
         }
 
         override fun visitElement(element: FirElement, data: StringBuilder) {
@@ -551,29 +600,15 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         }
 
         private fun visitConstructor(call: FirResolvable, data: StringBuilder) {
-            val calleeReference = call.calleeReference
-            if (calleeReference !is FirResolvedNamedReference) {
-                data.append("[ERROR: Unresolved]")
-            } else {
-                when (call) {
-                    is FirDelegatedConstructorCall -> {
-                        val actualReturnType = calleeReference.resolvedSymbol.firUnsafe<FirConstructor>().returnTypeRef
-                        if (call.constructedTypeRef.coneType != actualReturnType.coneType) {
-                            // is typealias
-                            val coneType = call.constructedTypeRef.coneType.localTypeRenderer()
-                            val typeWithActual = buildString { call.constructedTypeRef.accept(this@FirRendererForVisualizer, this) }
-                            data.append("fun ").append(coneType).append(".<init>(): ").append(typeWithActual)
-                            return
-                        }
-                    }
-                }
-                visitConstructor(calleeReference.resolvedSymbol.fir as FirConstructor, data)
+            when (val calleeReference = call.calleeReference) {
+                !is FirResolvedNamedReference -> data.append("[ERROR: Unresolved]")
+                else -> visitConstructor(calleeReference.resolvedSymbol.fir as FirConstructor, data)
             }
         }
 
         override fun visitConstructor(constructor: FirConstructor, data: StringBuilder) {
             renderConstructorSymbol(constructor.symbol, data)
-            visitValueParameters(constructor.valueParameters, data)
+            visitValueParameters(constructor.getOriginal().valueParameters, data)
         }
 
         override fun visitTypeParameterRef(typeParameterRef: FirTypeParameterRef, data: StringBuilder) {
@@ -585,9 +620,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             val bounds = typeParameter.bounds.filterNot { it.render() == "kotlin/Any?" }
             if (bounds.isNotEmpty()) {
                 data.append(" : ")
-                bounds.joinTo(data, separator = ", ") {
-                    buildString { it.accept(this@FirRendererForVisualizer, this) }
-                }
+                bounds.joinTo(data, separator = ", ") { it.render() }
             }
         }
 
@@ -609,14 +642,14 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
 
         private fun visitValueParameters(valueParameters: List<FirValueParameter>, data: StringBuilder) {
             valueParameters.joinTo(data, separator = ", ", prefix = "(", postfix = ")") {
-                buildString { it.accept(this@FirRendererForVisualizer, this) }
+                it.render()
             }
         }
 
         override fun visitValueParameter(valueParameter: FirValueParameter, data: StringBuilder) {
             if (valueParameter.isVararg) {
                 data.append("vararg ")
-                valueParameter.returnTypeRef.coneTypeSafe<ConeClassLikeType>()?.arrayElementType()?.let { data.append(it.localTypeRenderer()) }
+                valueParameter.returnTypeRef.coneType.arrayElementType()?.let { data.append(it.localTypeRenderer()) }
             } else {
                 valueParameter.returnTypeRef.accept(this, data)
             }
@@ -647,6 +680,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
                         .append(": ")
                         .append(fir.dispatchReceiverType?.tryToRenderConeAsFunctionType())
                 }
+                symbol is FirFieldSymbol -> renderField(symbol.fir, data)
                 else -> (symbol.fir as? FirVariable<*>)?.let { renderVariable(it, data) }
             }
         }
@@ -654,6 +688,8 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         override fun visitResolvedCallableReference(resolvedCallableReference: FirResolvedCallableReference, data: StringBuilder) {
             when (val symbol = resolvedCallableReference.resolvedSymbol) {
                 is FirPropertySymbol -> renderPropertySymbol(symbol, data)
+                is FirFieldSymbol -> renderField(symbol.fir, data)
+                is FirConstructorSymbol -> visitConstructor(symbol.fir, data)
                 is FirNamedFunctionSymbol -> {
                     renderFunctionSymbol(symbol, data)
 
@@ -718,10 +754,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
                         renderImplicitReceiver(callee.resolvedSymbol, functionCall.source.psi)
                     }
                     when (callee.resolvedSymbol) {
-                        is FirConstructorSymbol -> {
-                            renderConstructorSymbol(callee.resolvedSymbol as FirConstructorSymbol, data)
-                            visitValueParameters((callee.resolvedSymbol.fir as FirConstructor).valueParameters, data)
-                        }
+                        is FirConstructorSymbol -> visitConstructor(callee.resolvedSymbol.fir as FirConstructor, data)
                         else -> renderFunctionSymbol(callee.resolvedSymbol as FirNamedFunctionSymbol, data, functionCall)
                     }
                 }
@@ -738,15 +771,22 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         }
 
         override fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier, data: StringBuilder) {
-            resolvedQualifier.symbol?.fir?.let { fir ->
-                if (fir is FirClass) {
+            val fir = resolvedQualifier.symbol?.fir
+            when {
+                fir is FirRegularClass && fir.classKind != ClassKind.ENUM_CLASS && fir.companionObject?.defaultType() == resolvedQualifier.typeRef.coneTypeSafe() -> {
+                    data.append("companion object ")
+                    data.append(resolvedQualifier.typeRef.render()).append(": ")
+                    data.append(fir.symbol.classId.asString().removeCurrentFilePackage())
+                }
+                fir is FirClass -> {
                     data.append(fir.classKind.name.toLowerCaseAsciiOnly().replace("_", " ")).append(" ")
                     data.append(fir.symbol.classId.asString().removeCurrentFilePackage())
                     renderListInTriangles(fir.typeParameters, data)
-                    if (fir.superTypeRefs.any { it.render() != "kotlin/Any" }) {
-                        data.append(": ")
-                        fir.superTypeRefs.joinTo(data, separator = ", ") { typeRef -> typeRef.render() }
-                    }
+                    val superTypes = fir.superTypeRefs
+                        .map { it.render() }
+                        .filter { it != "kotlin/Any" }
+                        .sorted()
+                    if (superTypes.isNotEmpty()) superTypes.joinTo(data, prefix = ": ", separator = ", ")
                 }
             }
         }
@@ -766,13 +806,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         }
 
         override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: StringBuilder) {
-            val coneType = resolvedTypeRef.type
-            data.append(coneType.tryToRenderConeAsFunctionType())
-
-            if (coneType is ConeClassLikeType) {
-                val original = coneType.directExpansionType(session)
-                original?.let { data.append(" /* = ${it.localTypeRenderer()} */") }
-            }
+            data.append(resolvedTypeRef.type.tryToRenderConeAsFunctionType())
         }
 
         override fun visitErrorTypeRef(errorTypeRef: FirErrorTypeRef, data: StringBuilder) {
@@ -790,22 +824,20 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         }
 
         override fun visitArrayOfCall(arrayOfCall: FirArrayOfCall, data: StringBuilder) {
-            val name = arrayOfCall.typeRef.coneType.classId?.shortClassName
+            val name = arrayOfCall.typeRef.coneType.classId!!.shortClassName.asString()
             val typeArguments = arrayOfCall.typeRef.coneType.typeArguments
             val typeParameters = if (typeArguments.isEmpty()) "" else " <T>"
-            data.append("fun$typeParameters ${name?.asString()?.decapitalize()}Of")
+            data.append("fun$typeParameters ${name.decapitalize()}Of")
             typeArguments.firstOrNull()?.let {
                 data.append("<").append(it.tryToRenderConeAsFunctionType()).append(">")
             }
-            data.append("(vararg T): $name${typeParameters.trim()}") // TODO change "T" to concrete type is array is primitive
+            val valueParameter = name.replace("Array", "").takeIf { it.isNotEmpty() } ?: "T"
+            data.append("(vararg $valueParameter): $name${typeParameters.trim()}") // TODO change "T" to concrete type is array is primitive
         }
 
         private fun AbstractFirBasedSymbol<*>.isLocalDeclaration(): Boolean {
             return when (val fir = this.fir) {
-                is FirConstructor -> {
-                    val firClass = fir.returnTypeRef.coneTypeUnsafe<ConeClassLikeType>().lookupTag.toFirRegularClass(session)
-                    firClass?.isLocal ?: false
-                }
+                is FirConstructor -> fir.returnTypeRef.coneType.isLocal()
                 is FirCallableDeclaration<*> -> {
                     fir.dispatchReceiverClassOrNull()?.toFirRegularClass(session)?.isLocal ?: false
                 }
@@ -813,14 +845,21 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             }
         }
 
+        private fun ConeKotlinType.isLocal(): Boolean {
+            if (this !is ConeClassLikeType) return false
+            return this.lookupTag.toFirRegularClass(session)?.isLocal == true
+        }
+
         // id == packageName + className
         private fun getSymbolId(symbol: AbstractFirBasedSymbol<*>?): String {
             return when (symbol) {
                 is FirCallableSymbol<*> -> {
-                    val callableId = symbol.callableId.withoutName().removeCurrentFilePackage()
-                    val isLocal = symbol.isLocalDeclaration()
-                    val localPath = if (isLocal) stack.getPathByName(callableId) else ""
-                    localPath + callableId
+                    if (symbol.isLocalDeclaration()) {
+                        val callableName = symbol.callableId.callableName.asString()
+                        stack.getPathByName(callableName) + callableName
+                    } else {
+                        symbol.callableId.withoutName().removeCurrentFilePackage()
+                    }
                 }
                 is FirClassLikeSymbol<*> -> symbol.classId.getWithoutCurrentPackage()
                 else -> ""

@@ -40,7 +40,7 @@ fun fooLabeled() {
 //            │
 fun bar(list: List<String>) {
 //                  bar.list: collections/List<String>
-//                  │    fun (collections/List<String>).subList(Int, Int): collections/List<String>
+//                  │    fun (collections/List<E>).subList(Int, Int): collections/List<E>
 //                  │    │       Int
 //       String     │    │       │  Int
 //       │          │    │       │  │
@@ -51,7 +51,7 @@ fun bar(list: List<String>) {
         println(element)
     }
 //                  bar.list: collections/List<String>
-//                  │    fun (collections/List<String>).subList(Int, Int): collections/List<String>
+//                  │    fun (collections/List<E>).subList(Int, Int): collections/List<E>
 //                  │    │                fun io/println(Any?): Unit
 //       String     │    │       Int Int  │       val bar.element: String
 //       │          │    │       │   │    │       │

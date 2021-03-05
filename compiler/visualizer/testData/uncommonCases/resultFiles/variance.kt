@@ -14,7 +14,7 @@ interface Comparable<in T> {
 
 fun demo(x: Comparable<Number>) {
 //  demo.x: Comparable<Number>
-//  │ fun (Comparable<Number>).compareTo(Number): Int
+//  │ fun (Comparable<T>).compareTo(T): Int
 //  │ │         Double
 //  │ │         │
     x.compareTo(1.0)

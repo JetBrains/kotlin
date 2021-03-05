@@ -45,8 +45,9 @@ class SomeClass(multiplier: Int?) {
 //                                          Int
 //                                          │
         get() contract [returnsNotNull()] = 1
-//      Int                                          [ERROR: unknown type]
-//      │                                            │
+//                                                EQ operator call
+//      Int                                       │  [ERROR: unknown type]
+//      │                                         │  │
     set(value) contract [returns() implies (value != null)] {
 //      SomeClass.<set-someInt>.value: Int
 //      │              [ERROR: not resolved]

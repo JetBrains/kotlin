@@ -1,5 +1,5 @@
 fun test() {
-//  class Array<T>: Any, Cloneable, java/io/Serializable
+//  class Array<T>: java/io/Serializable, Cloneable
 //  │
     Array<String>::class
 }

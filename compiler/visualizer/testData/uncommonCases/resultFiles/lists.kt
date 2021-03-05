@@ -20,7 +20,7 @@ fun move(): java.util.ArrayList<Int> {
 //       │       │
     for (elem in listOfInt) {
 //      val javaList: java/util/ArrayList<Int>
-//      │        fun (java/util/ArrayList<Int>).add(Int): Boolean
+//      │        fun (java/util/ArrayList<E>).add(E): Boolean
 //      │        │   val move.elem: Int
 //      │        │   │
         javaList.add(elem)

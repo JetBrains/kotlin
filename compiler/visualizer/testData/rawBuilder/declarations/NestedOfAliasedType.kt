@@ -4,7 +4,7 @@ abstract class A {
 
 typealias TA = A
 
-//        fun TA.<init>(): TA /* = A */
+//        constructor A()
 //        │
 class B : TA() {
 //                    constructor A.Nested()

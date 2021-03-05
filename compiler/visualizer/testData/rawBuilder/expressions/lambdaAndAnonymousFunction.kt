@@ -1,5 +1,5 @@
 // FIR_IGNORE
-//                             T fun (() -> T).invoke(): T
+//                             T fun (() -> R).invoke(): R
 //                             │ │
 fun <T> run(block: () -> T): T = block()
 

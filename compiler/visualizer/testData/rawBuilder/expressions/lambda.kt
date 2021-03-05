@@ -3,7 +3,7 @@
 data class Tuple(val x: Int, val y: Int)
 
 //                                Int
-//                                │ fun ((Tuple) -> Int).invoke(Tuple): Int
+//                                │ fun ((P1) -> R).invoke(P1): R
 //                                │ │ constructor Tuple(Int, Int)
 //                                │ │ │     Int
 //                                │ │ │     │  Int
