@@ -132,7 +132,7 @@ class ImplicitExtensionReceiverValue(
 ) : ImplicitReceiverValue<FirCallableSymbol<*>>(boundSymbol, type, useSiteSession, scopeSession)
 
 
-class InaccessibleImplicitReceiverValue internal constructor(
+class InaccessibleImplicitReceiverValue(
     boundSymbol: FirClassSymbol<*>,
     type: ConeKotlinType,
     useSiteSession: FirSession,

@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitExtensionReceiverValue
-import org.jetbrains.kotlin.fir.resolve.calls.InaccessibleImplicitReceiverValue
 import org.jetbrains.kotlin.fir.resolve.dfa.FirControlFlowGraphReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.inference.extractLambdaInfoFromFunctionalType
 import org.jetbrains.kotlin.fir.resolve.inference.isSuspendFunctionType
@@ -568,74 +567,32 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
 
     private fun doTransformConstructor(constructor: FirConstructor, data: ResolutionMode): CompositeTransformResult<FirConstructor> {
         val owningClass = context.containerIfAny as? FirRegularClass
-        return context.withContainer(constructor) {
-            transformer.replaceDeclarationResolvePhaseIfNeeded(constructor, transformerPhase)
-            dataFlowAnalyzer.enterFunction(constructor)
 
-            constructor.transformTypeParameters(transformer, data)
-                .transformAnnotations(transformer, data)
-                .transformReceiverTypeRef(transformer, data)
-                .transformReturnTypeRef(transformer, data)
+        transformer.replaceDeclarationResolvePhaseIfNeeded(constructor, transformerPhase)
+        dataFlowAnalyzer.enterFunction(constructor)
 
-            /*
-             * Default values of constructor can't access members of constructing class
-             */
-            context.withTowerDataMode(FirTowerDataMode.CONSTRUCTOR_HEADER) {
-                if (owningClass != null && !constructor.isPrimary) {
-                    context.addReceiver(
-                        null,
-                        InaccessibleImplicitReceiverValue(
-                            owningClass.symbol,
-                            owningClass.defaultType(),
-                            session,
-                            scopeSession
-                        )
-                    )
-                }
-                withNewLocalScope {
-                    constructor.transformValueParameters(transformer, data)
-                }
+        constructor.transformTypeParameters(transformer, data)
+            .transformAnnotations(transformer, data)
+            .transformReceiverTypeRef(transformer, data)
+            .transformReturnTypeRef(transformer, data)
+
+        context.withConstructor(constructor) {
+            context.forConstructorParameters(constructor, owningClass, components) {
+                constructor.transformValueParameters(transformer, data)
             }
-
-            val scopeWithValueParameters = if (constructor.isPrimary) {
-                context.getPrimaryConstructorAllParametersScope()
-            } else {
-                constructor.scopeWithParameters()
-            }
-
-            /*
-             * Delegated constructor call is called before constructor body, so we need to
-             *   analyze it before body, so body can access smartcasts from that call
-             */
-            withLocalScope(scopeWithValueParameters) {
+            val parametersScope = context.buildConstructorParametersScope(constructor)
+            context.forDelegatedConstructor(constructor, parametersScope) {
                 constructor.transformDelegatedConstructor(transformer, data)
             }
-
-            if (constructor.body != null) {
-                if (constructor.isPrimary) {
-                    /*
-                     * Primary constructor may have body only if class delegates implementation to some property
-                     *   In it's body we don't have this receiver for building class, so we need to use
-                     *   special towerDataContext
-                     */
-                    context.withTowerDataMode(FirTowerDataMode.CONSTRUCTOR_HEADER) {
-                        addLocalScope(scopeWithValueParameters)
-                        constructor.transformBody(transformer, data)
-                    }
-                } else {
-                    withLocalScopeCleanup {
-                        addLocalScope(scopeWithValueParameters)
-                        constructor.transformBody(transformer, data)
-                    }
-                }
+            context.forConstructorBody(constructor, parametersScope) {
+                constructor.transformBody(transformer, data)
             }
-
-            val controlFlowGraphReference = dataFlowAnalyzer.exitFunction(constructor)
-            constructor.replaceControlFlowGraphReference(controlFlowGraphReference)
-            constructor.compose()
         }
-    }
 
+        val controlFlowGraphReference = dataFlowAnalyzer.exitFunction(constructor)
+        constructor.replaceControlFlowGraphReference(controlFlowGraphReference)
+        return constructor.compose()
+    }
 
     override fun transformAnonymousInitializer(
         anonymousInitializer: FirAnonymousInitializer,
@@ -841,10 +798,6 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             )
         }
         return this
-    }
-
-    private fun FirConstructor.scopeWithParameters(): FirLocalScope {
-        return valueParameters.fold(FirLocalScope()) { acc, param -> acc.storeVariable(param) }
     }
 
     protected inline fun <T> withLabelAndReceiverType(

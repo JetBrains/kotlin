@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitExtensionReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
+import org.jetbrains.kotlin.fir.resolve.calls.InaccessibleImplicitReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowAnalyzerContext
 import org.jetbrains.kotlin.fir.resolve.dfa.PersistentFlow
@@ -490,4 +491,72 @@ class BodyResolveContext(
         if (typeParameters.isEmpty()) return null
         return FirMemberTypeParameterScope(this)
     }
+
+    inline fun <T> withConstructor(constructor: FirConstructor, crossinline f: () -> T): T =
+        withContainer(constructor, f)
+
+    inline fun <T> forConstructorParameters(
+        constructor: FirConstructor,
+        owningClass: FirRegularClass?,
+        holder: SessionHolder,
+        crossinline f: () -> T
+    ): T {
+        // Default values of constructor can't access members of constructing class
+        return withTowerDataMode(FirTowerDataMode.CONSTRUCTOR_HEADER) {
+            if (owningClass != null && !constructor.isPrimary) {
+                addReceiver(
+                    null,
+                    InaccessibleImplicitReceiverValue(
+                        owningClass.symbol,
+                        owningClass.defaultType(),
+                        holder.session,
+                        holder.scopeSession
+                    )
+                )
+            }
+            withTowerDataCleanup {
+                addLocalScope(FirLocalScope())
+                f()
+            }
+        }
+    }
+
+    inline fun <T> forDelegatedConstructor(
+        constructor: FirConstructor,
+        parametersScope: FirLocalScope? = buildConstructorParametersScope(constructor),
+        crossinline f: () -> T
+    ): T {
+        if (parametersScope == null) return f()
+        return withTowerDataCleanup {
+            addLocalScope(parametersScope)
+            f()
+        }
+    }
+
+    inline fun <T> forConstructorBody(
+        constructor: FirConstructor,
+        parametersScope: FirLocalScope? = buildConstructorParametersScope(constructor),
+        crossinline f: () -> T
+    ): T {
+        return if (constructor.isPrimary) {
+            /*
+             * Primary constructor may have body only if class delegates implementation to some property
+             *   In it's body we don't have this receiver for building class, so we need to use
+             *   special towerDataContext
+             */
+            withTowerDataMode(FirTowerDataMode.CONSTRUCTOR_HEADER) {
+                parametersScope?.let { addLocalScope(it) }
+                f()
+            }
+        } else {
+            withTowerDataCleanup {
+                parametersScope?.let { addLocalScope(it) }
+                f()
+            }
+        }
+    }
+
+    fun buildConstructorParametersScope(constructor: FirConstructor): FirLocalScope? =
+        if (constructor.isPrimary) getPrimaryConstructorAllParametersScope()
+        else constructor.valueParameters.fold(FirLocalScope()) { acc, param -> acc.storeVariable(param) }
 }
