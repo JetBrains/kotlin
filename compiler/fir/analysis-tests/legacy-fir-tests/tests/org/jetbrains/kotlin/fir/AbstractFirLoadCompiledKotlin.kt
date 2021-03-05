@@ -38,7 +38,7 @@ abstract class AbstractFirLoadCompiledKotlin : AbstractFirLoadBinariesTest() {
         val environment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
         prepareProjectExtensions(environment.project)
-        val sessionWithDependency = createSession(environment, GlobalSearchScope.EMPTY_SCOPE)
+        val sessionWithDependency = createSessionForTests(environment, GlobalSearchScope.EMPTY_SCOPE)
 
         val testDataDirectoryPath =
             "compiler/fir/analysis-tests/testData/loadCompiledKotlin/" +

@@ -18,7 +18,7 @@ class BuiltInsDeserializationForFirTestCase : AbstractFirLoadBinariesTest() {
 
     fun testBuiltInPackagesContent() {
         val moduleDescriptor = BuiltinsTestUtils.compileBuiltinsModule(environment)
-        val session = createSession(environment, GlobalSearchScope.allScope(project))
+        val session = createSessionForTests(environment, GlobalSearchScope.allScope(project))
         for (packageFqName in BuiltinsTestUtils.BUILTIN_PACKAGE_NAMES) {
             val path = "compiler/fir/analysis-tests/testData/builtIns/" + packageFqName.asString().replace('.', '-') + ".txt"
             checkPackageContent(session, packageFqName, moduleDescriptor, path)

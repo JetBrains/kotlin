@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.fir.analysis.FirAnalyzerFacade
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
-import org.jetbrains.kotlin.fir.createSession
+import org.jetbrains.kotlin.fir.createSessionForTests
 import org.jetbrains.kotlin.ir.backend.jvm.jvmResolveLibraries
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.psi.KtFile
@@ -104,7 +104,7 @@ object GenerationUtils {
         val scope = GlobalSearchScope.filesScope(project, files.map { it.virtualFile })
             .uniteWith(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(project))
         val librariesScope = ProjectScope.getLibrariesScope(project)
-        val session = createSession(project, scope, librariesScope, "main", packagePartProvider)
+        val session = createSessionForTests(project, scope, librariesScope, "main", packagePartProvider = packagePartProvider)
 
         // TODO: add running checkers and check that it's safe to compile
         val firAnalyzerFacade = FirAnalyzerFacade(session, configuration.languageVersionSettings, files)

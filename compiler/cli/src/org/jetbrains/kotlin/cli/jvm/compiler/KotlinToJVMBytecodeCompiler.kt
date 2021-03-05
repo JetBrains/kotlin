@@ -57,9 +57,7 @@ import org.jetbrains.kotlin.fir.analysis.FirAnalyzerFacade
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
-import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
-import org.jetbrains.kotlin.fir.session.FirJvmModuleInfo
-import org.jetbrains.kotlin.fir.session.FirSessionFactory
+import org.jetbrains.kotlin.fir.createSessionWithDependencies
 import org.jetbrains.kotlin.ir.backend.jvm.jvmResolveLibraries
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
@@ -318,25 +316,26 @@ object KotlinToJVMBytecodeCompiler {
             if (!checkKotlinPackageUsage(environment, ktFiles)) return false
             val moduleConfiguration = projectConfiguration.applyModuleProperties(module, buildFile)
 
-            val scope = GlobalSearchScope.filesScope(project, ktFiles.map { it.virtualFile })
+            val sourceScope = GlobalSearchScope.filesScope(project, ktFiles.map { it.virtualFile })
                 .uniteWith(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(project))
-            val provider = FirProjectSessionProvider()
 
-            val librariesModuleInfo = FirJvmModuleInfo.createForLibraries()
             val librariesScope = ProjectScope.getLibrariesScope(project)
-            FirSessionFactory.createLibrarySession(
-                librariesModuleInfo, provider, librariesScope,
-                project, environment.createPackagePartProvider(librariesScope)
-            )
 
-            val moduleInfo = FirJvmModuleInfo(module, listOf(librariesModuleInfo))
-            val session = FirSessionFactory.createJavaModuleBasedSession(moduleInfo, provider, scope, project) {
+            val languageVersionSettings = moduleConfiguration.languageVersionSettings
+            val session = createSessionWithDependencies(
+                module,
+                project,
+                languageVersionSettings,
+                sourceScope,
+                librariesScope,
+                environment::createPackagePartProvider
+            ) {
                 if (extendedAnalysisMode) {
                     registerExtendedCommonCheckers()
                 }
             }
 
-            val firAnalyzerFacade = FirAnalyzerFacade(session, moduleConfiguration.languageVersionSettings, ktFiles)
+            val firAnalyzerFacade = FirAnalyzerFacade(session, languageVersionSettings, ktFiles)
 
             firAnalyzerFacade.runResolution()
             val firDiagnostics = firAnalyzerFacade.runCheckers().values.flatten()

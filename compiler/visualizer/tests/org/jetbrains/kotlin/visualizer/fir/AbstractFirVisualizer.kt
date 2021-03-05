@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.compiler.visualizer.FirVisualizer
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
-import org.jetbrains.kotlin.fir.createSession
+import org.jetbrains.kotlin.fir.createSessionForTests
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
@@ -30,7 +30,7 @@ abstract class AbstractFirVisualizer : AbstractVisualizer() {
         val ktFiles = environment.getSourceFiles()
         val scope = GlobalSearchScope.filesScope(environment.project, ktFiles.mapNotNull { it.virtualFile })
             .uniteWith(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(environment.project))
-        val session = createSession(environment, scope)
+        val session = createSessionForTests(environment, scope)
 
         val firProvider = (session.firProvider as FirProviderImpl)
         val builder = RawFirBuilder(session, firProvider.kotlinScopeProvider)

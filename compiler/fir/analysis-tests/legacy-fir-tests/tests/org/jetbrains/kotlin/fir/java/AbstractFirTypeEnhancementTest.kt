@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.fir.FirRenderer
-import org.jetbrains.kotlin.fir.createSession
+import org.jetbrains.kotlin.fir.createSessionForTests
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCompositeSymbolProvider
@@ -131,7 +131,7 @@ abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
 
         val scope = GlobalSearchScope.filesScope(project, virtualFiles)
             .uniteWith(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(project))
-        val session = createSession(environment, scope)
+        val session = createSessionForTests(environment, scope)
 
         val topPsiClasses = psiFiles.flatMap { it.getChildrenOfType<PsiClass>().toList() }
 
