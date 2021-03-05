@@ -517,6 +517,98 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.INLINE_CLASS_NOT_TOP_LEVEL) { firDiagnostic ->
+        InlineClassNotTopLevelImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.INLINE_CLASS_NOT_FINAL) { firDiagnostic ->
+        InlineClassNotFinalImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_INLINE_CLASS) { firDiagnostic ->
+        AbsenceOfPrimaryConstructorForInlineClassImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE) { firDiagnostic ->
+        InlineClassConstructorWrongParametersSizeImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.INLINE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER) { firDiagnostic ->
+        InlineClassConstructorNotFinalReadOnlyParameterImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.PROPERTY_WITH_BACKING_FIELD_INSIDE_INLINE_CLASS) { firDiagnostic ->
+        PropertyWithBackingFieldInsideInlineClassImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.DELEGATED_PROPERTY_INSIDE_INLINE_CLASS) { firDiagnostic ->
+        DelegatedPropertyInsideInlineClassImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.INLINE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE) { firDiagnostic ->
+        InlineClassHasInapplicableParameterTypeImpl(
+            firSymbolBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.INLINE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION) { firDiagnostic ->
+        InlineClassCannotImplementInterfaceByDelegationImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.INLINE_CLASS_CANNOT_EXTEND_CLASSES) { firDiagnostic ->
+        InlineClassCannotExtendClassesImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.INLINE_CLASS_CANNOT_BE_RECURSIVE) { firDiagnostic ->
+        InlineClassCannotBeRecursiveImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.RESERVED_MEMBER_INSIDE_INLINE_CLASS) { firDiagnostic ->
+        ReservedMemberInsideInlineClassImpl(
+            firDiagnostic.a,
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_INLINE_CLASS) { firDiagnostic ->
+        SecondaryConstructorWithBodyInsideInlineClassImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.INNER_CLASS_INSIDE_INLINE_CLASS) { firDiagnostic ->
+        InnerClassInsideInlineClassImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.VALUE_CLASS_CANNOT_BE_CLONEABLE) { firDiagnostic ->
+        ValueClassCannotBeCloneableImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
     add(FirErrors.NONE_APPLICABLE) { firDiagnostic ->
         NoneApplicableImpl(
             firDiagnostic.a.map { abstractFirBasedSymbol ->

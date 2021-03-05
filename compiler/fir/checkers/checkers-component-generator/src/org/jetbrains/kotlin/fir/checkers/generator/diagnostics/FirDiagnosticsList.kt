@@ -169,7 +169,7 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val INLINE_CLASS_CANNOT_EXTEND_CLASSES by error<FirSourceElement, KtTypeReference>()
         val INLINE_CLASS_CANNOT_BE_RECURSIVE by error<FirSourceElement, KtTypeReference>()
         val RESERVED_MEMBER_INSIDE_INLINE_CLASS by error<FirSourceElement, KtFunction>(PositioningStrategy.DECLARATION_NAME) {
-            parameter<String>("fun name")
+            parameter<String>("name")
         }
         val SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_INLINE_CLASS by error<FirSourceElement, PsiElement>()
         val INNER_CLASS_INSIDE_INLINE_CLASS by error<FirSourceElement, KtDeclaration>(PositioningStrategy.INNER_MODIFIER)

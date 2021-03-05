@@ -375,6 +375,68 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = RedundantOpenInInterface::class
     }
 
+    abstract class InlineClassNotTopLevel : KtFirDiagnostic<KtDeclaration>() {
+        override val diagnosticClass get() = InlineClassNotTopLevel::class
+    }
+
+    abstract class InlineClassNotFinal : KtFirDiagnostic<KtDeclaration>() {
+        override val diagnosticClass get() = InlineClassNotFinal::class
+    }
+
+    abstract class AbsenceOfPrimaryConstructorForInlineClass : KtFirDiagnostic<KtDeclaration>() {
+        override val diagnosticClass get() = AbsenceOfPrimaryConstructorForInlineClass::class
+    }
+
+    abstract class InlineClassConstructorWrongParametersSize : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = InlineClassConstructorWrongParametersSize::class
+    }
+
+    abstract class InlineClassConstructorNotFinalReadOnlyParameter : KtFirDiagnostic<KtParameter>() {
+        override val diagnosticClass get() = InlineClassConstructorNotFinalReadOnlyParameter::class
+    }
+
+    abstract class PropertyWithBackingFieldInsideInlineClass : KtFirDiagnostic<KtProperty>() {
+        override val diagnosticClass get() = PropertyWithBackingFieldInsideInlineClass::class
+    }
+
+    abstract class DelegatedPropertyInsideInlineClass : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = DelegatedPropertyInsideInlineClass::class
+    }
+
+    abstract class InlineClassHasInapplicableParameterType : KtFirDiagnostic<KtTypeReference>() {
+        override val diagnosticClass get() = InlineClassHasInapplicableParameterType::class
+        abstract val type: KtType
+    }
+
+    abstract class InlineClassCannotImplementInterfaceByDelegation : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = InlineClassCannotImplementInterfaceByDelegation::class
+    }
+
+    abstract class InlineClassCannotExtendClasses : KtFirDiagnostic<KtTypeReference>() {
+        override val diagnosticClass get() = InlineClassCannotExtendClasses::class
+    }
+
+    abstract class InlineClassCannotBeRecursive : KtFirDiagnostic<KtTypeReference>() {
+        override val diagnosticClass get() = InlineClassCannotBeRecursive::class
+    }
+
+    abstract class ReservedMemberInsideInlineClass : KtFirDiagnostic<KtFunction>() {
+        override val diagnosticClass get() = ReservedMemberInsideInlineClass::class
+        abstract val name: String
+    }
+
+    abstract class SecondaryConstructorWithBodyInsideInlineClass : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = SecondaryConstructorWithBodyInsideInlineClass::class
+    }
+
+    abstract class InnerClassInsideInlineClass : KtFirDiagnostic<KtDeclaration>() {
+        override val diagnosticClass get() = InnerClassInsideInlineClass::class
+    }
+
+    abstract class ValueClassCannotBeCloneable : KtFirDiagnostic<KtDeclaration>() {
+        override val diagnosticClass get() = ValueClassCannotBeCloneable::class
+    }
+
     abstract class NoneApplicable : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = NoneApplicable::class
         abstract val candidates: List<KtSymbol>
