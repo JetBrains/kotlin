@@ -5,10 +5,10 @@ const val f = 24
 const val l = 3
     <!CONST_VAL_WITH_GETTER!>get<!>
 
-<!MUST_BE_INITIALIZED!>const val k: Int<!>
+<!MUST_BE_INITIALIZED!><!CONST_VAL_WITHOUT_INITIALIZER!>const<!> val k: Int<!>
     <!CONST_VAL_WITH_GETTER!>get<!>
 
-const val t: Int
+<!CONST_VAL_WITHOUT_INITIALIZER!>const<!> val t: Int
     <!CONST_VAL_WITH_GETTER!>get() = 24<!>
 
 class Test {
@@ -17,9 +17,9 @@ class Test {
     }
 }
 
-const val delegated: Int by <!CONST_VAL_WITH_DELEGATE!>Test()<!>
+<!CONST_VAL_WITHOUT_INITIALIZER!>const<!> val delegated: Int by <!CONST_VAL_WITH_DELEGATE!>Test()<!>
 
-const val e: Boolean
+<!CONST_VAL_WITHOUT_INITIALIZER!>const<!> val e: Boolean
     <!CONST_VAL_WITH_GETTER!>get() = false<!>
 
 const val property: String = "123"

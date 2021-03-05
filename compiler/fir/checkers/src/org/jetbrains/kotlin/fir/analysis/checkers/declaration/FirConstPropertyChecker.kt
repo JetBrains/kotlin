@@ -7,6 +7,9 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
+import org.jetbrains.kotlin.fir.analysis.checkers.ConstAndAnnotationErrorTypes
+import org.jetbrains.kotlin.fir.analysis.checkers.canBeUsedForConstVal
+import org.jetbrains.kotlin.fir.analysis.checkers.checkConstInitializerAndAnnotationArguments
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -14,6 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.isConst
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.lexer.KtTokens
 
 object FirConstPropertyChecker : FirPropertyChecker() {
@@ -30,6 +34,7 @@ object FirConstPropertyChecker : FirPropertyChecker() {
         val classKind = (context.containingDeclarations.lastOrNull() as? FirRegularClass)?.classKind
         if (classKind != ClassKind.OBJECT && context.containingDeclarations.size > 1) {
             reporter.reportOn(declaration.source, FirErrors.CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT, context)
+            return
         }
 
         if (declaration.getter?.source?.kind !is FirFakeSourceElementKind) {
@@ -40,9 +45,19 @@ object FirConstPropertyChecker : FirPropertyChecker() {
             reporter.reportOn(declaration.delegate?.source, FirErrors.CONST_VAL_WITH_DELEGATE, context)
         }
 
-        // TODO: Implement checkers for these errors (see ConstModifierChecker in FE1.0):
-        // - TYPE_CANT_BE_USED_FOR_CONST_VAL
-        // - CONST_VAL_WITHOUT_INITIALIZER
-        // - CONST_VAL_WITH_NON_CONST_INITIALIZER
+        val initializer = declaration.initializer
+        if (initializer == null) {
+            reporter.reportOn(declaration.source, FirErrors.CONST_VAL_WITHOUT_INITIALIZER, context)
+            return
+        }
+
+        if (!declaration.returnTypeRef.coneType.canBeUsedForConstVal()) {
+            reporter.reportOn(declaration.source, FirErrors.TYPE_CANT_BE_USED_FOR_CONST_VAL, declaration.returnTypeRef.coneType, context)
+            return
+        }
+
+        if (checkConstInitializerAndAnnotationArguments(initializer, context.session) == ConstAndAnnotationErrorTypes.NOT_CONST) {
+            reporter.reportOn(initializer.source, FirErrors.CONST_VAL_WITH_NON_CONST_INITIALIZER, context)
+        }
     }
 }
