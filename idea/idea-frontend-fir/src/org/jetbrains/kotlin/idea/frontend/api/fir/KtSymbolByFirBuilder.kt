@@ -223,7 +223,7 @@ internal class KtSymbolByFirBuilder private constructor(
     }
 }
 
-private class BuilderCache<From, To> private constructor(
+private class BuilderCache<From, To: Any> private constructor(
     private val cache: ConcurrentMap<From, To>,
     private val isReadOnly: Boolean
 ) {
@@ -235,10 +235,11 @@ private class BuilderCache<From, To> private constructor(
     }
 
     inline fun <reified S : To> cache(key: From, calculation: () -> S): S {
-        if (isReadOnly) {
-            return (cache[key] ?: calculation()) as S
-        }
-        return cache.getOrPut(key, calculation) as S
+        val value = if (isReadOnly) {
+            cache[key] ?: calculation()
+        } else cache.getOrPut(key, calculation)
+        return value as? S
+            ?: error("Cannot cast ${value::class} to ${S::class}\n${DebugSymbolRenderer.render(value as KtSymbol)}")
     }
 }
 
