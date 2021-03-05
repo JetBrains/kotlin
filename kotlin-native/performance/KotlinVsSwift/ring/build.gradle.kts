@@ -13,9 +13,18 @@ val toolsPath = "../../../tools"
 
 swiftBenchmark {
     applicationName = "Ring"
-    commonSrcDirs = listOf("$toolsPath/benchmarks/shared/src/main/kotlin", "../../shared/src/main/kotlin")
-    nativeSrcDirs = listOf("../../shared/src/main/kotlin-native/common", "../../shared/src/main/kotlin-native/posix")
+    commonSrcDirs = listOf("$toolsPath/benchmarks/shared/src/main/kotlin",
+            "../../shared/src/main/kotlin")
+    nativeSrcDirs = listOf("$toolsPath/benchmarksAnalyzer/src/main/kotlin-native",
+            "../../shared/src/main/kotlin-native/common",
+            "../../shared/src/main/kotlin-native/posix")
     swiftSources = File("$projectDir/src").list().map { "$projectDir/src/$it" }.toList()
     compileTasks = listOf("buildSwift")
     useCodeSize = CodeSizeEntity.EXECUTABLE
+}
+
+tasks.named<org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile>("compileKotlinNative") {
+    dependsOn(gradle.includedBuild("benchmarksAnalyzer").task(":cinteropLibcurlMacos"))
+    kotlinOptions.freeCompilerArgs = listOf("-repo", project.file("$toolsPath/benchmarksAnalyzer/build/classes/kotlin/macos/main").absolutePath,
+     "-l", "benchmarksAnalyzer-cinterop-libcurl")
 }

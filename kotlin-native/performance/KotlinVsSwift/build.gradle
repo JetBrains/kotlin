@@ -47,6 +47,18 @@ task mergeJvmReports {
     }
 }
 
+task jvmJsonReport {
+    subprojects.each {
+        dependsOn(it.getTasksByName('jvmJsonReport', true)[0])
+    }
+}
+
+task konanJsonReport {
+    subprojects.each {
+        dependsOn(it.getTasksByName('konanJsonReport', true)[0])
+    }
+}
+
 subprojects.each {
     it.getTasksByName('jvmJsonReport', true)[0].finalizedBy mergeJvmReports
     it.getTasksByName('konanJsonReport', true)[0].finalizedBy mergeNativeReports
