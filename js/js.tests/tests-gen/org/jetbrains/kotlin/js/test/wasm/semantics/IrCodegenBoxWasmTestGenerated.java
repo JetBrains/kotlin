@@ -3357,6 +3357,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
                 runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/breakInExpr.kt");
             }
 
+            @TestMetadata("breakInLoopConditions.kt")
+            public void testBreakInLoopConditions() throws Exception {
+                runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/breakInLoopConditions.kt");
+            }
+
             @TestMetadata("continueInDoWhile.kt")
             public void testContinueInDoWhile() throws Exception {
                 runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/continueInDoWhile.kt");

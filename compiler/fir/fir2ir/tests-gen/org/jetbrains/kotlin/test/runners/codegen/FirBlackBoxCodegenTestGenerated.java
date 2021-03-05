@@ -7808,6 +7808,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             }
 
             @Test
+            @TestMetadata("breakInLoopConditions.kt")
+            public void testBreakInLoopConditions() throws Exception {
+                runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/breakInLoopConditions.kt");
+            }
+
+            @Test
             @TestMetadata("continueInDoWhile.kt")
             public void testContinueInDoWhile() throws Exception {
                 runTest("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/continueInDoWhile.kt");
