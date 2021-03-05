@@ -1431,3 +1431,35 @@ internal fun CharSequence?.contentEqualsImpl(other: CharSequence?): Boolean {
 
     return true
 }
+
+/**
+ * Returns `true` if the content of this string is equal to the word "true", `false` if it is equal to "false",
+ * and throws an exception otherwise.
+ *
+ * There is also a lenient version of the function available on nullable String, [String?.toBoolean].
+ * Note that this function is case-sensitive.
+ *
+ * @sample samples.text.Strings.toBooleanStrict
+ */
+@SinceKotlin("1.5")
+public fun String.toBooleanStrict(): Boolean = when (this) {
+    "true" -> true
+    "false" -> false
+    else -> throw IllegalArgumentException("The string doesn't represent a boolean value: $this")
+}
+
+/**
+ * Returns `true` if the content of this string is equal to the word "true", `false` if it is equal to "false",
+ * and `null` otherwise.
+ *
+ * There is also a lenient version of the function available on nullable String, [String?.toBoolean].
+ * Note that this function is case-sensitive.
+ *
+ * @sample samples.text.Strings.toBooleanStrictOrNull
+ */
+@SinceKotlin("1.5")
+public fun String.toBooleanStrictOrNull(): Boolean? = when (this) {
+    "true" -> true
+    "false" -> false
+    else -> null
+}
