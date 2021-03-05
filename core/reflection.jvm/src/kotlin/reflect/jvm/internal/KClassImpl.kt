@@ -285,6 +285,10 @@ internal class KClassImpl<T : Any>(
     override val isFun: Boolean
         get() = descriptor.isFun
 
+    @Suppress("NOTHING_TO_OVERRIDE") // Temporary workaround for the JPS build until bootstrap
+    override val isValue: Boolean
+        get() = descriptor.isValue
+
     override fun equals(other: Any?): Boolean =
         other is KClassImpl<*> && javaObjectType == other.javaObjectType
 
