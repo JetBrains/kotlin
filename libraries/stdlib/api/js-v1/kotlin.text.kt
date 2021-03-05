@@ -943,6 +943,12 @@ public inline fun kotlin.String.toBoolean(): kotlin.Boolean
 @kotlin.SinceKotlin(version = "1.4")
 public fun kotlin.String?.toBoolean(): kotlin.Boolean
 
+@kotlin.SinceKotlin(version = "1.5")
+public fun kotlin.String.toBooleanStrict(): kotlin.Boolean
+
+@kotlin.SinceKotlin(version = "1.5")
+public fun kotlin.String.toBooleanStrictOrNull(): kotlin.Boolean?
+
 public fun kotlin.String.toByte(): kotlin.Byte
 
 public fun kotlin.String.toByte(radix: kotlin.Int): kotlin.Byte

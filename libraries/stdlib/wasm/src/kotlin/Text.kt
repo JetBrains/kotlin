@@ -493,6 +493,8 @@ actual fun String.toBoolean(): Boolean = TODO("Wasm stdlib: Text")
 
 /**
  * Returns `true` if the contents of this string is equal to the word "true", ignoring case, and `false` otherwise.
+ *
+ * There are also strict versions of the function available on non-nullable String, [toBooleanStrict] and [toBooleanStrictOrNull].
  */
 actual fun String?.toBoolean(): Boolean = TODO("Wasm stdlib: Text")
 

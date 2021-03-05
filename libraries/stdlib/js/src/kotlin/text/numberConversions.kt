@@ -16,6 +16,8 @@ public actual inline fun String.toBoolean(): Boolean = this.toBoolean()
 
 /**
  * Returns `true` if this string is not `null` and its content is equal to the word "true", ignoring case, and `false` otherwise.
+ *
+ * There are also strict versions of the function available on non-nullable String, [toBooleanStrict] and [toBooleanStrictOrNull].
  */
 @OptIn(ExperimentalStdlibApi::class)
 @SinceKotlin("1.4")
