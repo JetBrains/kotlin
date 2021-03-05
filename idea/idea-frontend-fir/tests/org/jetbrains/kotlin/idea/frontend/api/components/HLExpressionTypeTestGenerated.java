@@ -74,6 +74,11 @@ public class HLExpressionTypeTestGenerated extends AbstractHLExpressionTypeTest 
         runTest("idea/idea-frontend-fir/testData/components/expressionType/intLiteral.kt");
     }
 
+    @TestMetadata("property.kt")
+    public void testProperty() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/components/expressionType/property.kt");
+    }
+
     @TestMetadata("returnExpression.kt")
     public void testReturnExpression() throws Exception {
         runTest("idea/idea-frontend-fir/testData/components/expressionType/returnExpression.kt");

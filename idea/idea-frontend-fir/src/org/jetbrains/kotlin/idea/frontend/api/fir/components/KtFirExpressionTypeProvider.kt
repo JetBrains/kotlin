@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.components
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.FirLoop
-import org.jetbrains.kotlin.fir.expressions.argumentMapping
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirNamedReference
@@ -44,7 +41,7 @@ internal class KtFirExpressionTypeProvider(
         when (val fir = expression.getOrBuildFir(firResolveState)) {
             is FirExpression -> fir.typeRef.coneType.asKtType()
             is FirNamedReference -> fir.getReferencedElementType().asKtType()
-            is FirLoop -> with(analysisSession) { builtinTypes.UNIT }
+            is FirStatement -> with(analysisSession) { builtinTypes.UNIT }
             else -> error("Unexpected ${fir::class}")
         }
     }
