@@ -27,10 +27,10 @@ object FirTypeParameterInQualifiedAccessChecker: FirQualifiedAccessChecker() {
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
-        // Make sure the current qualified access is not part of another qualified access.
+        // Make sure the current qualified access is not part of another qualified access or class literals.
         // E.g., for `T::toString`, which is a callable reference (a subtype of qualified access), type parameter T is checked once as an
         // explicit receiver (or LHS). When we visit `T` (as a qualified access), we should not regard it as an expression here.
-        if (context.qualifiedAccesses.size > 1) return
+        if (context.qualifiedAccesses.size > 1 || context.getClassCalls.isNotEmpty()) return
 
         val diagnostic = expression.typeRef.coneTypeParameterInQualifiedAccess ?: return
         val source = expression.source ?: return
