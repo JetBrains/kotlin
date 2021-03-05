@@ -68,7 +68,7 @@ private class CirTreeSerializationVisitor(
 
         addEmptyFragments(fragments)
 
-        return cirModule.buildModule(fragments)
+        return cirModule.serializeModule(fragments)
     }
 
     override fun visitPackageNode(
@@ -118,7 +118,7 @@ private class CirTreeSerializationVisitor(
                 property
             }
 
-            return cirPackage.buildModuleFragment(classConsumer.allClasses, topLevelTypeAliases, topLevelFunctions, topLevelProperties)
+            return cirPackage.serializePackage(classConsumer.allClasses, topLevelTypeAliases, topLevelFunctions, topLevelProperties)
         } finally {
             // Important: clean-up class consumer every time when leaving package
             classConsumer.reset()
@@ -129,14 +129,14 @@ private class CirTreeSerializationVisitor(
         node: CirPropertyNode,
         propertyContext: CirTreeSerializationContext
     ): KmProperty? {
-        return propertyContext.get<CirProperty>(node)?.buildProperty(propertyContext)
+        return propertyContext.get<CirProperty>(node)?.serializeProperty(propertyContext)
     }
 
     override fun visitFunctionNode(
         node: CirFunctionNode,
         functionContext: CirTreeSerializationContext
     ): KmFunction? {
-        return functionContext.get<CirFunction>(node)?.buildFunction(functionContext)
+        return functionContext.get<CirFunction>(node)?.serializeFunction(functionContext)
     }
 
     override fun visitClassNode(
@@ -176,14 +176,14 @@ private class CirTreeSerializationVisitor(
             property
         }
 
-        return cirClass.buildClass(classContext, fullClassName, directNestedClasses, nestedConstructors, nestedFunctions, nestedProperties)
+        return cirClass.serializeClass(classContext, fullClassName, directNestedClasses, nestedConstructors, nestedFunctions, nestedProperties)
     }
 
     override fun visitClassConstructorNode(
         node: CirClassConstructorNode,
         constructorContext: CirTreeSerializationContext
     ): KmConstructor? {
-        return constructorContext.get<CirClassConstructor>(node)?.buildClassConstructor(constructorContext)
+        return constructorContext.get<CirClassConstructor>(node)?.serializeConstructor(constructorContext)
     }
 
     override fun visitTypeAliasNode(
@@ -193,10 +193,10 @@ private class CirTreeSerializationVisitor(
         val cirClassifier = typeAliasContext.get<CirClassifier>(node) ?: return null
 
         return when (cirClassifier) {
-            is CirTypeAlias -> cirClassifier.buildTypeAlias(typeAliasContext)
+            is CirTypeAlias -> cirClassifier.serializeTypeAlias(typeAliasContext)
             is CirClass -> {
                 val fullClassName = typeAliasContext.currentPath.toString()
-                cirClassifier.buildClass(typeAliasContext, fullClassName, emptyList(), emptyList(), emptyList(), emptyList())
+                cirClassifier.serializeClass(typeAliasContext, fullClassName, emptyList(), emptyList(), emptyList(), emptyList())
             }
             else -> error("Unexpected CIR classifier: ${cirClassifier::class.java}, $cirClassifier")
         }
