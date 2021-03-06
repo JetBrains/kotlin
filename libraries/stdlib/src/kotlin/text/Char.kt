@@ -202,7 +202,7 @@ public expect fun Char.uppercase(): String
  *
  * @sample samples.text.Chars.titlecase
  */
-@SinceKotlin("1.4")
+@SinceKotlin("1.5")
 @ExperimentalStdlibApi
 public expect fun Char.titlecaseChar(): Char
 
@@ -216,7 +216,7 @@ public expect fun Char.titlecaseChar(): Char
  *
  * @sample samples.text.Chars.titlecase
  */
-@SinceKotlin("1.4")
+@SinceKotlin("1.5")
 @ExperimentalStdlibApi
 public fun Char.titlecase(): String = titlecaseImpl()
 
