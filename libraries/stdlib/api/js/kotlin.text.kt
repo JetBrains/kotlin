@@ -1,6 +1,7 @@
 @kotlin.SinceKotlin(version = "1.2")
 public val kotlin.String.Companion.CASE_INSENSITIVE_ORDER: kotlin.Comparator<kotlin.String> { get; }
 
+@kotlin.SinceKotlin(version = "1.5")
 public val kotlin.Char.category: kotlin.text.CharCategory { get; }
 
 public val kotlin.CharSequence.indices: kotlin.ranges.IntRange { get; }
@@ -369,8 +370,10 @@ public inline fun kotlin.text.StringBuilder.insertRange(index: kotlin.Int, value
 
 public fun kotlin.CharSequence.isBlank(): kotlin.Boolean
 
+@kotlin.SinceKotlin(version = "1.5")
 public fun kotlin.Char.isDefined(): kotlin.Boolean
 
+@kotlin.SinceKotlin(version = "1.5")
 public fun kotlin.Char.isDigit(): kotlin.Boolean
 
 @kotlin.internal.InlineOnly
@@ -378,14 +381,18 @@ public inline fun kotlin.CharSequence.isEmpty(): kotlin.Boolean
 
 public fun kotlin.Char.isHighSurrogate(): kotlin.Boolean
 
+@kotlin.SinceKotlin(version = "1.5")
 public fun kotlin.Char.isISOControl(): kotlin.Boolean
 
+@kotlin.SinceKotlin(version = "1.5")
 public fun kotlin.Char.isLetter(): kotlin.Boolean
 
+@kotlin.SinceKotlin(version = "1.5")
 public fun kotlin.Char.isLetterOrDigit(): kotlin.Boolean
 
 public fun kotlin.Char.isLowSurrogate(): kotlin.Boolean
 
+@kotlin.SinceKotlin(version = "1.5")
 public fun kotlin.Char.isLowerCase(): kotlin.Boolean
 
 @kotlin.internal.InlineOnly
@@ -402,8 +409,10 @@ public inline fun kotlin.CharSequence?.isNullOrEmpty(): kotlin.Boolean
 
 public fun kotlin.Char.isSurrogate(): kotlin.Boolean
 
+@kotlin.SinceKotlin(version = "1.5")
 public fun kotlin.Char.isTitleCase(): kotlin.Boolean
 
+@kotlin.SinceKotlin(version = "1.5")
 public fun kotlin.Char.isUpperCase(): kotlin.Boolean
 
 public fun kotlin.Char.isWhitespace(): kotlin.Boolean
@@ -1210,6 +1219,7 @@ public interface Appendable {
     public abstract fun append(value: kotlin.CharSequence?, startIndex: kotlin.Int, endIndex: kotlin.Int): kotlin.text.Appendable
 }
 
+@kotlin.SinceKotlin(version = "1.5")
 public final enum class CharCategory : kotlin.Enum<kotlin.text.CharCategory> {
     enum entry UNASSIGNED
 
