@@ -258,6 +258,7 @@ public fun Char.isSurrogate(): Boolean = this in Char.MIN_SURROGATE..Char.MAX_SU
 /**
  * Returns the Unicode general category of this character.
  */
+@SinceKotlin("1.5")
 public expect val Char.category: CharCategory
 
 /**
@@ -265,6 +266,7 @@ public expect val Char.category: CharCategory
  *
  * A character is considered to be defined in Unicode if its [category] is not [CharCategory.UNASSIGNED].
  */
+@SinceKotlin("1.5")
 public expect fun Char.isDefined(): Boolean
 
 /**
@@ -275,6 +277,7 @@ public expect fun Char.isDefined(): Boolean
  *
  * @sample samples.text.Chars.isLetter
  */
+@SinceKotlin("1.5")
 public expect fun Char.isLetter(): Boolean
 
 /**
@@ -285,6 +288,7 @@ public expect fun Char.isLetter(): Boolean
  *
  * @sample samples.text.Chars.isLetterOrDigit
  */
+@SinceKotlin("1.5")
 public expect fun Char.isLetterOrDigit(): Boolean
 
 /**
@@ -294,6 +298,7 @@ public expect fun Char.isLetterOrDigit(): Boolean
  *
  * @sample samples.text.Chars.isDigit
  */
+@SinceKotlin("1.5")
 public expect fun Char.isDigit(): Boolean
 
 /**
@@ -303,6 +308,7 @@ public expect fun Char.isDigit(): Boolean
  *
  * @sample samples.text.Chars.isUpperCase
  */
+@SinceKotlin("1.5")
 public expect fun Char.isUpperCase(): Boolean
 
 /**
@@ -312,6 +318,7 @@ public expect fun Char.isUpperCase(): Boolean
  *
  * @sample samples.text.Chars.isLowerCase
  */
+@SinceKotlin("1.5")
 public expect fun Char.isLowerCase(): Boolean
 
 /**
@@ -321,6 +328,7 @@ public expect fun Char.isLowerCase(): Boolean
  *
  * @sample samples.text.Chars.isTitleCase
  */
+@SinceKotlin("1.5")
 public expect fun Char.isTitleCase(): Boolean
 
 /**
@@ -330,6 +338,7 @@ public expect fun Char.isTitleCase(): Boolean
  *
  * @sample samples.text.Chars.isISOControl
  */
+@SinceKotlin("1.5")
 public expect fun Char.isISOControl(): Boolean
 
 /**

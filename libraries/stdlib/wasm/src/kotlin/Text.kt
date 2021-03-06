@@ -147,6 +147,7 @@ public actual fun Char.titlecaseChar(): Char = TODO("Wasm stdlib: Text")
 /**
  * Returns the Unicode general category of this character.
  */
+@SinceKotlin("1.5")
 public actual val Char.category: CharCategory get() = TODO("Wasm stdlib: Text")
 
 /**
@@ -154,6 +155,7 @@ public actual val Char.category: CharCategory get() = TODO("Wasm stdlib: Text")
  *
  * A character is considered to be defined in Unicode if its [category] is not [CharCategory.UNASSIGNED].
  */
+@SinceKotlin("1.5")
 public actual fun Char.isDefined(): Boolean = TODO("Wasm stdlib: Text")
 
 /**
@@ -164,6 +166,7 @@ public actual fun Char.isDefined(): Boolean = TODO("Wasm stdlib: Text")
  *
  * @sample samples.text.Chars.isLetter
  */
+@SinceKotlin("1.5")
 public actual fun Char.isLetter(): Boolean = TODO("Wasm stdlib: Text")
 
 /**
@@ -174,6 +177,7 @@ public actual fun Char.isLetter(): Boolean = TODO("Wasm stdlib: Text")
  *
  * @sample samples.text.Chars.isLetterOrDigit
  */
+@SinceKotlin("1.5")
 public actual fun Char.isLetterOrDigit(): Boolean = TODO("Wasm stdlib: Text")
 
 /**
@@ -183,6 +187,7 @@ public actual fun Char.isLetterOrDigit(): Boolean = TODO("Wasm stdlib: Text")
  *
  * @sample samples.text.Chars.isDigit
  */
+@SinceKotlin("1.5")
 public actual fun Char.isDigit(): Boolean = TODO("Wasm stdlib: Text")
 
 /**
@@ -192,6 +197,7 @@ public actual fun Char.isDigit(): Boolean = TODO("Wasm stdlib: Text")
  *
  * @sample samples.text.Chars.isUpperCase
  */
+@SinceKotlin("1.5")
 public actual fun Char.isUpperCase(): Boolean = TODO("Wasm stdlib: Text")
 
 /**
@@ -201,6 +207,7 @@ public actual fun Char.isUpperCase(): Boolean = TODO("Wasm stdlib: Text")
  *
  * @sample samples.text.Chars.isLowerCase
  */
+@SinceKotlin("1.5")
 public actual fun Char.isLowerCase(): Boolean = TODO("Wasm stdlib: Text")
 
 /**
@@ -210,6 +217,7 @@ public actual fun Char.isLowerCase(): Boolean = TODO("Wasm stdlib: Text")
  *
  * @sample samples.text.Chars.isTitleCase
  */
+@SinceKotlin("1.5")
 public actual fun Char.isTitleCase(): Boolean = TODO("Wasm stdlib: Text")
 
 /**
@@ -219,6 +227,7 @@ public actual fun Char.isTitleCase(): Boolean = TODO("Wasm stdlib: Text")
  *
  * @sample samples.text.Chars.isISOControl
  */
+@SinceKotlin("1.5")
 public actual fun Char.isISOControl(): Boolean = TODO("Wasm stdlib: Text")
 
 /**

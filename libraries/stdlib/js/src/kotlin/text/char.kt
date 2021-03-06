@@ -105,6 +105,7 @@ public actual fun Char.isLowSurrogate(): Boolean = this in Char.MIN_LOW_SURROGAT
 /**
  * Returns the Unicode general category of this character.
  */
+@SinceKotlin("1.5")
 public actual val Char.category: CharCategory
     get() = CharCategory.valueOf(getCategoryValue())
 
@@ -113,6 +114,7 @@ public actual val Char.category: CharCategory
  *
  * A character is considered to be defined in Unicode if its [category] is not [CharCategory.UNASSIGNED].
  */
+@SinceKotlin("1.5")
 public actual fun Char.isDefined(): Boolean {
     if (this < '\u0080') {
         return true
@@ -128,6 +130,7 @@ public actual fun Char.isDefined(): Boolean {
  *
  * @sample samples.text.Chars.isLetter
  */
+@SinceKotlin("1.5")
 public actual fun Char.isLetter(): Boolean {
     if (this in 'a'..'z' || this in 'A'..'Z') {
         return true
@@ -146,6 +149,7 @@ public actual fun Char.isLetter(): Boolean {
  *
  * @sample samples.text.Chars.isLetterOrDigit
  */
+@SinceKotlin("1.5")
 public actual fun Char.isLetterOrDigit(): Boolean {
     if (this in 'a'..'z' || this in 'A'..'Z' || this in '0'..'9') {
         return true
@@ -164,6 +168,7 @@ public actual fun Char.isLetterOrDigit(): Boolean {
  *
  * @sample samples.text.Chars.isDigit
  */
+@SinceKotlin("1.5")
 public actual fun Char.isDigit(): Boolean {
     if (this in '0'..'9') {
         return true
@@ -181,6 +186,7 @@ public actual fun Char.isDigit(): Boolean {
  *
  * @sample samples.text.Chars.isUpperCase
  */
+@SinceKotlin("1.5")
 public actual fun Char.isUpperCase(): Boolean {
     if (this in 'A'..'Z') {
         return true
@@ -198,6 +204,7 @@ public actual fun Char.isUpperCase(): Boolean {
  *
  * @sample samples.text.Chars.isLowerCase
  */
+@SinceKotlin("1.5")
 public actual fun Char.isLowerCase(): Boolean {
     if (this in 'a'..'z') {
         return true
@@ -215,6 +222,7 @@ public actual fun Char.isLowerCase(): Boolean {
  *
  * @sample samples.text.Chars.isTitleCase
  */
+@SinceKotlin("1.5")
 public actual fun Char.isTitleCase(): Boolean {
     if (this < '\u0080') {
         return false
@@ -229,6 +237,7 @@ public actual fun Char.isTitleCase(): Boolean {
  *
  * @sample samples.text.Chars.isISOControl
  */
+@SinceKotlin("1.5")
 public actual fun Char.isISOControl(): Boolean {
     return this <= '\u001F' || this in '\u007F'..'\u009F'
 }
