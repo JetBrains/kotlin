@@ -88,7 +88,7 @@ public actual inline fun Char.uppercase(): String = toString().asDynamic().toUpp
  *
  * @sample samples.text.Chars.titlecase
  */
-@SinceKotlin("1.4")
+@SinceKotlin("1.5")
 @ExperimentalStdlibApi
 public actual fun Char.titlecaseChar(): Char = titlecaseCharImpl()
 

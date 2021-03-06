@@ -927,11 +927,11 @@ public inline fun kotlin.CharSequence.takeWhile(predicate: (kotlin.Char) -> kotl
 
 public inline fun kotlin.String.takeWhile(predicate: (kotlin.Char) -> kotlin.Boolean): kotlin.String
 
-@kotlin.SinceKotlin(version = "1.4")
+@kotlin.SinceKotlin(version = "1.5")
 @kotlin.ExperimentalStdlibApi
 public fun kotlin.Char.titlecase(): kotlin.String
 
-@kotlin.SinceKotlin(version = "1.4")
+@kotlin.SinceKotlin(version = "1.5")
 @kotlin.ExperimentalStdlibApi
 public fun kotlin.Char.titlecaseChar(): kotlin.Char
 

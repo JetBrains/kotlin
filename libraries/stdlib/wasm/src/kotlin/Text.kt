@@ -139,7 +139,7 @@ public actual fun Char.uppercase(): String = TODO("Wasm stdlib: Text")
  *
  * @sample samples.text.Chars.titlecase
  */
-@SinceKotlin("1.4")
+@SinceKotlin("1.5")
 @ExperimentalStdlibApi
 public actual fun Char.titlecaseChar(): Char = TODO("Wasm stdlib: Text")
 
