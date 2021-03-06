@@ -664,7 +664,7 @@ fun IrExpression?.isPure(
             }
             is IrCall -> context?.isSideEffectFree(this) ?: false
             is IrGetObjectValue -> type.isUnit()
-            is IrVararg -> elements.all { (it as? IrExpression).isPure(anyVariable, checkFields, context) }
+            is IrVararg -> elements.all { (it as? IrExpression)?.isPure(anyVariable, checkFields, context) == true }
             else -> false
         }
     }
