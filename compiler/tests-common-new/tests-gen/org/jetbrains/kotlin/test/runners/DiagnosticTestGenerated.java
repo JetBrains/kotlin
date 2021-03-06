@@ -30799,6 +30799,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         }
 
         @Test
+        @TestMetadata("exitProcess.kt")
+        public void testExitProcess() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/exitProcess.kt");
+        }
+
+        @Test
         @TestMetadata("hugeUnresolvedKotlinxHtml.kt")
         public void testHugeUnresolvedKotlinxHtml() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/hugeUnresolvedKotlinxHtml.kt");
