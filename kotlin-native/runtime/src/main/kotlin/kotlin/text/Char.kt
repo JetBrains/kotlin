@@ -220,7 +220,7 @@ public actual fun Char.lowercase(): String = lowercaseImpl()
  *
  * @sample samples.text.Chars.titlecase
  */
-@SinceKotlin("1.4")
+@SinceKotlin("1.5")
 public actual fun Char.titlecaseChar(): Char = titlecaseCharImpl()
 
 /**
