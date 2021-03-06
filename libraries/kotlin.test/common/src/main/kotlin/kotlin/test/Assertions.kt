@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -29,7 +29,9 @@ val asserter: Asserter
 internal var _asserter: Asserter? = null
 
 /** Asserts that the given [block] returns `true`. */
-fun assertTrue(message: String? = null, block: () -> Boolean) {
+@JvmName("assertTrueInline")
+@InlineOnly
+inline fun assertTrue(message: String? = null, block: () -> Boolean) {
     contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
     assertTrue(block(), message)
 }
@@ -41,7 +43,9 @@ fun assertTrue(actual: Boolean, message: String? = null) {
 }
 
 /** Asserts that the given [block] returns `false`. */
-fun assertFalse(message: String? = null, block: () -> Boolean) {
+@JvmName("assertFalseInline")
+@InlineOnly
+inline fun assertFalse(message: String? = null, block: () -> Boolean) {
     contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
     assertFalse(block(), message)
 }
@@ -80,12 +84,11 @@ fun <T : Any> assertNotNull(actual: T?, message: String? = null): T {
 }
 
 /** Asserts that the [actual] value is not `null`, with an optional [message] and a function [block] to process the not-null value. */
-fun <T : Any, R> assertNotNull(actual: T?, message: String? = null, block: (T) -> R) {
+@JvmName("assertNotNullInline")
+@InlineOnly
+inline fun <T : Any, R> assertNotNull(actual: T?, message: String? = null, block: (T) -> R) {
     contract { returns() implies (actual != null) }
-    asserter.assertNotNull(message, actual)
-    if (actual != null) {
-        block(actual)
-    }
+    block(assertNotNull(actual, message))
 }
 
 /** Asserts that the [actual] value is `null`, with an optional [message]. */
@@ -110,13 +113,17 @@ fun fail(message: String? = null, cause: Throwable? = null): Nothing {
 }
 
 /** Asserts that given function [block] returns the given [expected] value. */
-fun <@OnlyInputTypes T> expect(expected: T, block: () -> T) {
+@JvmName("expectInline")
+@InlineOnly
+inline fun <@OnlyInputTypes T> expect(expected: T, block: () -> T) {
     contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
     assertEquals(expected, block())
 }
 
 /** Asserts that given function [block] returns the given [expected] value and use the given [message] if it fails. */
-fun <@OnlyInputTypes T> expect(expected: T, message: String?, block: () -> T) {
+@JvmName("expectInline")
+@InlineOnly
+inline fun <@OnlyInputTypes T> expect(expected: T, message: String?, block: () -> T) {
     contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
     assertEquals(expected, block(), message)
 }
