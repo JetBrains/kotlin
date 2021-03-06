@@ -139,6 +139,7 @@ public actual fun Char.isLowerCase(): Boolean {
  *
  * @sample samples.text.Chars.isTitleCase
  */
+@SinceKotlin("1.5")
 public actual fun Char.isTitleCase(): Boolean {
     if (this < '\u0080') {
         return false
