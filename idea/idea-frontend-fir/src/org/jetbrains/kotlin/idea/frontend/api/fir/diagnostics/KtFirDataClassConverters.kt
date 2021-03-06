@@ -684,7 +684,7 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.UPPER_BOUND_VIOLATED) { firDiagnostic ->
         UpperBoundViolatedImpl(
-            firSymbolBuilder.buildTypeParameterSymbol(firDiagnostic.a.fir as FirTypeParameter),
+            firSymbolBuilder.buildTypeParameterSymbol(firDiagnostic.a.fir),
             firSymbolBuilder.buildKtType(firDiagnostic.b),
             firDiagnostic as FirPsiDiagnostic<*>,
             token,
@@ -773,14 +773,14 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.KCLASS_WITH_NULLABLE_TYPE_PARAMETER_IN_SIGNATURE) { firDiagnostic ->
         KclassWithNullableTypeParameterInSignatureImpl(
-            firSymbolBuilder.buildTypeParameterSymbol(firDiagnostic.a.fir as FirTypeParameter),
+            firSymbolBuilder.buildTypeParameterSymbol(firDiagnostic.a.fir),
             firDiagnostic as FirPsiDiagnostic<*>,
             token,
         )
     }
     add(FirErrors.TYPE_PARAMETER_AS_REIFIED) { firDiagnostic ->
         TypeParameterAsReifiedImpl(
-            firSymbolBuilder.buildTypeParameterSymbol(firDiagnostic.a.fir as FirTypeParameter),
+            firSymbolBuilder.buildTypeParameterSymbol(firDiagnostic.a.fir),
             firDiagnostic as FirPsiDiagnostic<*>,
             token,
         )
@@ -1254,14 +1254,14 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.TYPE_PARAMETER_IS_NOT_AN_EXPRESSION) { firDiagnostic ->
         TypeParameterIsNotAnExpressionImpl(
-            firSymbolBuilder.buildTypeParameterSymbol(firDiagnostic.a.fir as FirTypeParameter),
+            firSymbolBuilder.buildTypeParameterSymbol(firDiagnostic.a.fir),
             firDiagnostic as FirPsiDiagnostic<*>,
             token,
         )
     }
     add(FirErrors.TYPE_PARAMETER_ON_LHS_OF_DOT) { firDiagnostic ->
         TypeParameterOnLhsOfDotImpl(
-            firSymbolBuilder.buildTypeParameterSymbol(firDiagnostic.a.fir as FirTypeParameter),
+            firSymbolBuilder.buildTypeParameterSymbol(firDiagnostic.a.fir),
             firDiagnostic as FirPsiDiagnostic<*>,
             token,
         )
