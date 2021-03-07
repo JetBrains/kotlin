@@ -26,14 +26,14 @@ fun saveGradleBuildEnvironment(resolverCtx: ProjectResolverContext) {
     val tasks = KotlinDslSyncListener.instance.tasks
     val sync = synchronized(tasks) { tasks[task] }
     if (sync != null) {
-        val gradleHome = resolverCtx.getExtraProject(BuildScriptClasspathModel::class.java)?.gradleHomeDir?.canonicalPath
+        val gradleHome = resolverCtx.getExtraProject(BuildScriptClasspathModel::class.java)?.gradleHomeDir?.path
             ?: resolverCtx.settings?.gradleHome
         synchronized(sync) {
             sync.gradleVersion = resolverCtx.projectGradleVersion
 
             sync.javaHome = (resolverCtx as? DefaultProjectResolverContext)
                 ?.buildEnvironment
-                ?.java?.javaHome?.canonicalPath
+                ?.java?.javaHome?.path
                 ?.let { toSystemIndependentName(it) }
 
             if (gradleHome != null) {
@@ -125,10 +125,10 @@ private fun KotlinDslScriptsModel.toListOfScriptModels(project: Project): List<K
         // todo(KT-34440): take inputs snapshot before starting import
         val gradleScriptInputsStamp = getGradleScriptInputsStamp(project, virtualFile) ?: return@mapNotNull null
         KotlinDslScriptModel(
-            toSystemIndependentName(file.absolutePath),
+            toSystemIndependentName(file.path),
             gradleScriptInputsStamp,
-            model.classPath.map { toSystemIndependentName(it.absolutePath) },
-            model.sourcePath.map { toSystemIndependentName(it.absolutePath) },
+            model.classPath.map { toSystemIndependentName(it.path) },
+            model.sourcePath.map { toSystemIndependentName(it.path) },
             model.implicitImports,
             messages
         )
