@@ -1249,14 +1249,17 @@ class ControlFlowGraphBuilder {
 
     private fun addNodeThatReturnsNothing(node: CFGNode<*>, preferredKind: EdgeKind = EdgeKind.Forward) {
         val exitNode: CFGNode<*> = exitTargetsForTry.top()
-        addNodeWithJump(node, exitNode, preferredKind)
+        // If an expression, which returns Nothing, isn't inside a try/catch/finally, that is an uncaught exception path.
+        val label = if (tryExitNodes.isEmpty) UncaughtExceptionPath else NormalPath
+        addNodeWithJump(node, exitNode, preferredKind, label = label)
     }
 
     private fun addNodeWithJump(
         node: CFGNode<*>,
         targetNode: CFGNode<*>?,
         preferredKind: EdgeKind = EdgeKind.Forward,
-        isBack: Boolean = false
+        isBack: Boolean = false,
+        label: EdgeLabel = NormalPath,
     ) {
         popAndAddEdge(node, preferredKind)
         if (targetNode != null) {
@@ -1265,10 +1268,10 @@ class ControlFlowGraphBuilder {
                     // `continue` to the loop header
                     addBackEdge(node, targetNode, label = LoopBackPath)
                 } else {
-                    addBackEdge(node, targetNode)
+                    addBackEdge(node, targetNode, label = label)
                 }
             } else {
-                addEdge(node, targetNode, propagateDeadness = false)
+                addEdge(node, targetNode, propagateDeadness = false, label = label)
             }
         }
         val stub = createStubNode()

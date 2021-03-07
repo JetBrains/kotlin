@@ -63,7 +63,7 @@ digraph lambdaReturningObject_kt {
     }
     13 -> {14};
     14 -> {15};
-    15 -> {20};
+    15 -> {20}    [label=onUncaughtException];
     15 -> {16} [style=dotted];
     16 -> {17} [style=dotted];
     17 -> {20 18} [style=dotted];
