@@ -107,7 +107,7 @@ digraph propertiesAndInitBlocks_kt {
     41 -> {42};
     42 -> {43};
     43 -> {44};
-    44 -> {47};
+    44 -> {47}    [label=onUncaughtException];
     44 -> {45} [style=dotted];
     45 -> {46} [style=dotted];
     46 -> {47} [style=dotted];
@@ -138,7 +138,7 @@ digraph propertiesAndInitBlocks_kt {
     51 -> {52};
     52 -> {53};
     53 -> {54};
-    54 -> {58};
+    54 -> {58}    [label=onUncaughtException];
     54 -> {55} [style=dotted];
     55 -> {56} [style=dotted];
     56 -> {57} [style=dotted];
@@ -199,7 +199,7 @@ digraph propertiesAndInitBlocks_kt {
     70 -> {71};
     71 -> {72};
     72 -> {73};
-    73 -> {76};
+    73 -> {76}    [label=onUncaughtException];
     73 -> {74} [style=dotted];
     74 -> {75} [style=dotted];
     75 -> {76} [style=dotted];
@@ -246,7 +246,7 @@ digraph propertiesAndInitBlocks_kt {
     28 -> {48 34} [color=green];
     28 -> {48 34} [style=dashed];
     29 -> {30};
-    30 -> {81};
+    30 -> {81}    [label=onUncaughtException];
     30 -> {31} [style=dotted];
     31 -> {32} [style=dotted];
     32 -> {33} [style=dotted];
