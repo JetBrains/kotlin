@@ -1217,16 +1217,16 @@ private fun updateLvtAccordingToLiveness(method: MethodNode, isForNamedFunction:
     fun isAlive(insnIndex: Int, variableIndex: Int): Boolean =
         liveness[insnIndex].isAlive(variableIndex)
 
-    fun nextSuspensionPointLabel(insn: AbstractInsnNode): LabelNode {
+    fun nextSuspensionPointEndLabel(insn: AbstractInsnNode): LabelNode {
+        val suspensionPoint =
+            InsnSequence(insn, method.instructions.last).firstOrNull { isAfterSuspendMarker(it) } ?: method.instructions.last
+        return suspensionPoint as? LabelNode ?: suspensionPoint.findNextOrNull { it is LabelNode } as LabelNode
+    }
+
+    fun nextSuspensionPointStartLabel(insn: AbstractInsnNode): LabelNode {
         val suspensionPoint =
             InsnSequence(insn, method.instructions.last).firstOrNull { isBeforeSuspendMarker(it) } ?: method.instructions.last
         return suspensionPoint as? LabelNode ?: suspensionPoint.findPreviousOrNull { it is LabelNode } as LabelNode
-    }
-
-    fun previousSuspensionPointLabel(insn: AbstractInsnNode): LabelNode {
-        val suspensionPoint =
-            InsnSequence(method.instructions.first, insn).lastOrNull { isAfterSuspendMarker(it) } ?: method.instructions.first
-        return suspensionPoint as? LabelNode ?: suspensionPoint.findNextOrNull { it is LabelNode } as LabelNode
     }
 
     fun min(a: LabelNode, b: LabelNode): LabelNode =
@@ -1259,7 +1259,7 @@ private fun updateLvtAccordingToLiveness(method: MethodNode, isForNamedFunction:
                 val lvtRecord = oldLvt.findRecord(insnIndex, variableIndex) ?: continue
                 if (lvtRecord.name == CONTINUATION_VARIABLE_NAME) continue
                 // Extend lvt record to the next suspension point
-                val endLabel = min(lvtRecord.end, nextSuspensionPointLabel(insn))
+                val endLabel = min(lvtRecord.end, nextSuspensionPointEndLabel(insn))
                 // startLabel can be null in case of parameters
                 @Suppress("NAME_SHADOWING") val startLabel = startLabel ?: lvtRecord.start
                 // Attempt to extend existing local variable node corresponding to the record in
@@ -1280,7 +1280,6 @@ private fun updateLvtAccordingToLiveness(method: MethodNode, isForNamedFunction:
 
     val deadVariables = arrayListOf<Int>()
     outer@for (variableIndex in start until method.maxLocals) {
-        if (oldLvt.none { it.index == variableIndex }) continue
         if (oldLvt.none { it.index == variableIndex }) continue
         for (insnIndex in 0 until (method.instructions.size() - 1)) {
             if (isAlive(insnIndex, variableIndex)) continue@outer
@@ -1312,7 +1311,7 @@ private fun updateLvtAccordingToLiveness(method: MethodNode, isForNamedFunction:
                     variable.desc,
                     variable.signature,
                     variable.start,
-                    nextSuspensionPointLabel(variable.start),
+                    nextSuspensionPointStartLabel(variable.start),
                     variable.index
                 )
             )
