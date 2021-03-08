@@ -77,6 +77,7 @@ class IrScriptImpl(
         explicitCallParameters.forEach { it.accept(visitor, data) }
         implicitReceiversParameters.forEach { it.accept(visitor, data) }
         providedProperties.forEach { it.first.accept(visitor, data) }
+        earlierScriptsParameter?.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
@@ -85,5 +86,6 @@ class IrScriptImpl(
         explicitCallParameters = explicitCallParameters.map { it.transform(transformer, data) }
         implicitReceiversParameters = implicitReceiversParameters.map { it.transform(transformer, data) }
         providedProperties = providedProperties.map { it.first.transform(transformer, data) to it.second }
+        earlierScriptsParameter = earlierScriptsParameter?.transform(transformer, data)
     }
 }
