@@ -719,6 +719,10 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ExtensionPropertyMustHaveAccessorsOrBeAbstract::class
     }
 
+    abstract class UnnecessaryLateinit : KtFirDiagnostic<KtProperty>() {
+        override val diagnosticClass get() = UnnecessaryLateinit::class
+    }
+
     abstract class BackingFieldInInterface : KtFirDiagnostic<KtProperty>() {
         override val diagnosticClass get() = BackingFieldInInterface::class
     }
@@ -777,6 +781,10 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class ExpectedDelegatedProperty : KtFirDiagnostic<KtPropertyDelegate>() {
         override val diagnosticClass get() = ExpectedDelegatedProperty::class
+    }
+
+    abstract class ExpectedLateinitProperty : KtFirDiagnostic<KtModifierListOwner>() {
+        override val diagnosticClass get() = ExpectedLateinitProperty::class
     }
 
     abstract class InitializerRequiredForDestructuringDeclaration : KtFirDiagnostic<KtDestructuringDeclaration>() {

@@ -66,6 +66,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ERROR_FROM_JAVA_R
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ERROR_IN_CONTRACT_DESCRIPTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECTED_DECLARATION_WITH_BODY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECTED_DELEGATED_PROPERTY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECTED_LATEINIT_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECTED_PRIVATE_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPECTED_PROPERTY_INITIALIZER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPLICIT_DELEGATION_CALL_REQUIRED
@@ -181,6 +182,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETERS_I
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETER_AS_SUPERTYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETER_IN_CATCH_CLAUSE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNINITIALIZED_VARIABLE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNNECESSARY_LATEINIT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNRESOLVED_LABEL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNRESOLVED_REFERENCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSAFE_CALL
@@ -515,6 +517,7 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
             map.put(MUST_BE_INITIALIZED, "Property must be initialized")
             map.put(MUST_BE_INITIALIZED_OR_BE_ABSTRACT, "Property must be initialized or be abstract")
             map.put(EXTENSION_PROPERTY_MUST_HAVE_ACCESSORS_OR_BE_ABSTRACT, "Extension property must have accessors or be abstract")
+            map.put(UNNECESSARY_LATEINIT, "Lateinit is unnecessary: definitely initialized in constructors")
 
             map.put(BACKING_FIELD_IN_INTERFACE, "Property in an interface cannot have a backing field")
             map.put(EXTENSION_PROPERTY_WITH_BACKING_FIELD, "Extension property cannot be initialized because it has no backing field")
@@ -534,6 +537,7 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
             map.put(EXPECTED_PROPERTY_INITIALIZER, "Expected property cannot have an initializer")
             map.put(EXPECTED_DELEGATED_PROPERTY, "Expected property cannot be delegated")
             map.put(EXPECTED_PRIVATE_DECLARATION, "Expected declaration cannot be private")
+            map.put(EXPECTED_LATEINIT_PROPERTY, "Expected property cannot be lateinit")
 
             // Destructuring declaration
             map.put(INITIALIZER_REQUIRED_FOR_DESTRUCTURING_DECLARATION, "Initializer required for destructuring declaration")

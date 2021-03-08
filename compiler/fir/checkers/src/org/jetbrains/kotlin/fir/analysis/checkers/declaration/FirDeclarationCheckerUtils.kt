@@ -75,6 +75,7 @@ internal fun checkExpectDeclarationVisibilityAndBody(
     }
 }
 
+// Matched FE 1.0's [DeclarationsChecker#checkPropertyInitializer].
 internal fun checkPropertyInitializer(
     containingClass: FirRegularClass?,
     property: FirProperty,
@@ -136,18 +137,26 @@ internal fun checkPropertyInitializer(
             }
         }
         else -> {
+            val propertySource = property.source ?: return
             val isExternal = property.isEffectivelyExternal(containingClass, context)
             if (backingFieldRequired && !inInterface && !property.isLateInit && !isExpect && !isInitialized && !isExternal) {
-                property.source?.let {
-                    if (property.receiverTypeRef != null && !property.hasAccessorImplementation) {
-                        reporter.reportOn(it, FirErrors.EXTENSION_PROPERTY_MUST_HAVE_ACCESSORS_OR_BE_ABSTRACT, context)
-                    } else { // TODO: can be suppressed not to report diagnostics about no body
-                        if (containingClass == null || property.hasAccessorImplementation) {
-                            reporter.reportOn(it, FirErrors.MUST_BE_INITIALIZED, context)
-                        } else {
-                            reporter.reportOn(it, FirErrors.MUST_BE_INITIALIZED_OR_BE_ABSTRACT, context)
-                        }
+                if (property.receiverTypeRef != null && !property.hasAccessorImplementation) {
+                    reporter.reportOn(propertySource, FirErrors.EXTENSION_PROPERTY_MUST_HAVE_ACCESSORS_OR_BE_ABSTRACT, context)
+                } else { // TODO: can be suppressed not to report diagnostics about no body
+                    if (containingClass == null || property.hasAccessorImplementation) {
+                        reporter.reportOn(propertySource, FirErrors.MUST_BE_INITIALIZED, context)
+                    } else {
+                        reporter.reportOn(propertySource, FirErrors.MUST_BE_INITIALIZED_OR_BE_ABSTRACT, context)
                     }
+                }
+            }
+            if (property.isLateInit) {
+                if (isExpect) {
+                    reporter.reportOn(propertySource, FirErrors.EXPECTED_LATEINIT_PROPERTY, context)
+                }
+                // TODO: like [BindingContext.MUST_BE_LATEINIT], we should consider variable with uninitialized error.
+                if (backingFieldRequired && !inInterface && isInitialized) {
+                    reporter.reportOn(propertySource, FirErrors.UNNECESSARY_LATEINIT, context)
                 }
             }
         }

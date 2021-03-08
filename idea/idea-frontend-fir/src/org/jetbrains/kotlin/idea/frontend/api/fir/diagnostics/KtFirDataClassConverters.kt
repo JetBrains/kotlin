@@ -1021,6 +1021,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.UNNECESSARY_LATEINIT) { firDiagnostic ->
+        UnnecessaryLateinitImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
     add(FirErrors.BACKING_FIELD_IN_INTERFACE) { firDiagnostic ->
         BackingFieldInInterfaceImpl(
             firDiagnostic as FirPsiDiagnostic<*>,
@@ -1107,6 +1113,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.EXPECTED_DELEGATED_PROPERTY) { firDiagnostic ->
         ExpectedDelegatedPropertyImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.EXPECTED_LATEINIT_PROPERTY) { firDiagnostic ->
+        ExpectedLateinitPropertyImpl(
             firDiagnostic as FirPsiDiagnostic<*>,
             token,
         )
