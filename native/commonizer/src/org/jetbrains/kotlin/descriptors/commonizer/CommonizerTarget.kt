@@ -27,8 +27,15 @@ data class LeafTarget(override val name: String, val konanTarget: KonanTarget? =
 }
 
 data class SharedTarget(val targets: Set<CommonizerTarget>) : CommonizerTarget() {
+
+    companion object {
+        fun ifNotEmpty(targets: Set<CommonizerTarget>): SharedTarget? {
+            return if (targets.isNotEmpty()) SharedTarget(targets) else null
+        }
+    }
+
     init {
-        require(targets.isNotEmpty())
+        require(targets.isNotEmpty()) { "Empty 'SharedCommonizerTarget': Expected at least one target" }
     }
 
     override val name get() = targets.joinToString(prefix = "[", postfix = "]") { it.name }
