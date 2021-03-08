@@ -148,7 +148,14 @@ object FirMemberPropertiesChecker : FirRegularClassChecker() {
         // So, our source of truth should be the full modifier list retrieved from the source.
         val modifierList = with(FirModifierList) { property.source.getModifierList() }
 
-        checkPropertyInitializer(containingDeclaration, property, modifierList, isInitialized, reporter, context)
+        checkPropertyInitializer(
+            containingDeclaration,
+            property,
+            modifierList,
+            isInitialized,
+            reporter,
+            context
+        )
         checkPropertyAccessors(property, reporter, context)
         checkExpectDeclarationVisibilityAndBody(property, source, reporter, context)
 

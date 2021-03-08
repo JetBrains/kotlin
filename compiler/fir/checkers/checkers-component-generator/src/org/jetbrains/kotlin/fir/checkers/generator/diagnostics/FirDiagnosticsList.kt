@@ -344,6 +344,7 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val MUST_BE_INITIALIZED by error<FirSourceElement, KtProperty>(PositioningStrategy.DECLARATION_SIGNATURE)
         val MUST_BE_INITIALIZED_OR_BE_ABSTRACT by error<FirSourceElement, KtProperty>(PositioningStrategy.DECLARATION_SIGNATURE)
         val EXTENSION_PROPERTY_MUST_HAVE_ACCESSORS_OR_BE_ABSTRACT by error<FirSourceElement, KtProperty>(PositioningStrategy.DECLARATION_SIGNATURE)
+        val UNNECESSARY_LATEINIT by warning<FirSourceElement, KtProperty>(PositioningStrategy.LATEINIT_MODIFIER)
 
         val BACKING_FIELD_IN_INTERFACE by error<FirSourceElement, KtProperty>(PositioningStrategy.DECLARATION_SIGNATURE)
         val EXTENSION_PROPERTY_WITH_BACKING_FIELD by error<FirSourceElement, KtExpression>()
@@ -368,6 +369,7 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
 
         // TODO: need to cover `by` as well as delegate expression
         val EXPECTED_DELEGATED_PROPERTY by error<FirSourceElement, KtPropertyDelegate>()
+        val EXPECTED_LATEINIT_PROPERTY by error<FirSourceElement, KtModifierListOwner>(PositioningStrategy.LATEINIT_MODIFIER)
     }
 
     val DESTRUCTING_DECLARATION by object : DiagnosticGroup("Destructuring declaration") {
