@@ -117,7 +117,7 @@ class JvmDefaultChecker(private val jvmTarget: JvmTarget, private val project: P
                             performSpecializationCheck
                         )
                     ) {
-                        checkPossibleClashMember(inheritedMember, jvmDefaultMode, context, declaration)
+                        checkPossibleClashMember(inheritedMember, actualImplementation, jvmDefaultMode, context, declaration)
                     }
                 } else if (actualImplementation is PropertyDescriptor && inheritedMember is PropertyDescriptor) {
                     val getterImpl = actualImplementation.getter
@@ -146,7 +146,7 @@ class JvmDefaultChecker(private val jvmTarget: JvmTarget, private val project: P
                             }
                         }
 
-                        checkPossibleClashMember(inheritedMember, jvmDefaultMode, context, declaration)
+                        checkPossibleClashMember(inheritedMember, actualImplementation, jvmDefaultMode, context, declaration)
                     }
                 }
             }
@@ -179,6 +179,7 @@ class JvmDefaultChecker(private val jvmTarget: JvmTarget, private val project: P
 
     private fun checkPossibleClashMember(
         inheritedFun: CallableMemberDescriptor,
+        actualImplementation: CallableMemberDescriptor,
         jvmDefaultMode: JvmDefaultMode,
         context: DeclarationCheckerContext,
         declaration: KtDeclaration
@@ -188,7 +189,7 @@ class JvmDefaultChecker(private val jvmTarget: JvmTarget, private val project: P
             context.trace.report(
                 ErrorsJvm.EXPLICIT_OVERRIDE_REQUIRED_IN_MIXED_MODE.on(
                     declaration,
-                    getDirectMember(inheritedFun),
+                    getDirectMember(actualImplementation),
                     getDirectMember(clashMember),
                     jvmDefaultMode.description
                 )
