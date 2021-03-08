@@ -35,7 +35,7 @@ internal class NativeDistributionResultsConsumer(
     private val allLeafTargets = originalLibraries.librariesByTargets.keys
 
     private val allLeafCommonizedTargets = originalLibraries.librariesByTargets.filterValues { it.libraries.isNotEmpty() }.keys
-    private val sharedTarget = SharedTarget(allLeafCommonizedTargets)
+    private val sharedTarget = SharedTarget.ifNotEmpty(allLeafCommonizedTargets)
 
     private val consumedTargets = LinkedHashSet<CommonizerTarget>()
 
@@ -66,7 +66,9 @@ internal class NativeDistributionResultsConsumer(
     override fun targetConsumed(target: CommonizerTarget) {
         check(target in consumedTargets)
 
-        logProgress("Written libraries for ${target.prettyCommonizedName(sharedTarget)}")
+        if (sharedTarget != null) {
+            logProgress("Written libraries for ${target.prettyCommonizedName(sharedTarget)}")
+        }
     }
 
     override fun allConsumed(status: Status) {
