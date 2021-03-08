@@ -117,7 +117,10 @@ internal class NativeDistributionCommonize(options: Collection<Option<*>>) : Tas
             )
             if (copyStdlib) this add CopyStdlibResultsConsumer(distribution, destination, progressLogger)
             if (copyEndorsedLibs) this add CopyEndorsedLibrairesResultsConsumer(distribution, destination, progressLogger)
-            this add LoggingResultsConsumer(SharedCommonizerTarget(existingTargets), progressLogger)
+
+            SharedCommonizerTarget.ifNotEmpty(existingTargets)?.let { sharedTargetForLogger ->
+                this add LoggingResultsConsumer(sharedTargetForLogger, progressLogger)
+            }
         }
 
         val targetNames = commonizerTargets.joinToString { it.prettyName }

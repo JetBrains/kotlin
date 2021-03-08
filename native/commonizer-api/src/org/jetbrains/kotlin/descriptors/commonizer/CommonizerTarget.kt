@@ -29,8 +29,14 @@ public data class SharedCommonizerTarget(val targets: Set<CommonizerTarget>) : C
     public constructor(vararg targets: KonanTarget) : this(targets.toSet())
     public constructor(targets: Iterable<KonanTarget>) : this(targets.map(::LeafCommonizerTarget).toSet())
 
+    public companion object {
+        public fun ifNotEmpty(targets: Set<CommonizerTarget>): SharedCommonizerTarget? {
+            return if (targets.isNotEmpty()) SharedCommonizerTarget(targets) else null
+        }
+    }
+
     init {
-        require(targets.isNotEmpty())
+        require(targets.isNotEmpty()) { "Empty 'SharedCommonizerTarget': Expected at least one target" }
     }
 }
 
