@@ -14,5 +14,5 @@ operator fun A.set(i: IFoo, newValue: Int) {}
 fun withVararg(vararg xs: Int) = 42
 
 fun test1() {
-    <!UNRESOLVED_REFERENCE!>A[::withVararg] += 1<!>
+    A[::withVararg] <!UNRESOLVED_REFERENCE!>+=<!> 1
 }

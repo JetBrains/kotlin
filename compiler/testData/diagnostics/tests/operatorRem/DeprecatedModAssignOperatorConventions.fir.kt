@@ -30,7 +30,7 @@ fun test() {
     oldAndNew %= 1
 
     val onlyOld = OnlyOld()
-    <!INAPPLICABLE_CANDIDATE!>onlyOld %= 1<!>
+    onlyOld <!INAPPLICABLE_CANDIDATE!>%=<!> 1
 
     val onlyNew = OnlyNew()
     onlyNew %= 1

@@ -23,7 +23,10 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-private fun ConeDiagnostic.toFirDiagnostic(source: FirSourceElement): FirDiagnostic<FirSourceElement>? = when (this) {
+private fun ConeDiagnostic.toFirDiagnostic(
+    source: FirSourceElement,
+    qualifiedAccessSource: FirSourceElement?
+): FirDiagnostic<FirSourceElement>? = when (this) {
     is ConeUnresolvedReferenceError -> FirErrors.UNRESOLVED_REFERENCE.on(source, this.name?.asString() ?: "<No name>")
     is ConeUnresolvedSymbolError -> FirErrors.UNRESOLVED_REFERENCE.on(source, this.classId.asString())
     is ConeUnresolvedNameError -> FirErrors.UNRESOLVED_REFERENCE.on(source, this.name.asString())
@@ -36,14 +39,14 @@ private fun ConeDiagnostic.toFirDiagnostic(source: FirSourceElement): FirDiagnos
     }
     is ConeOperatorAmbiguityError -> FirErrors.ASSIGN_OPERATOR_AMBIGUITY.on(source, this.candidates)
     is ConeVariableExpectedError -> FirErrors.VARIABLE_EXPECTED.on(source)
-    is ConeTypeMismatchError -> FirErrors.TYPE_MISMATCH.on(source, this.expectedType, this.actualType)
+    is ConeTypeMismatchError -> FirErrors.TYPE_MISMATCH.on(qualifiedAccessSource ?: source, this.expectedType, this.actualType)
     is ConeUnexpectedTypeArgumentsError -> FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED.on(this.source.safeAs() ?: source)
     is ConeIllegalAnnotationError -> FirErrors.NOT_AN_ANNOTATION_CLASS.on(source, this.name.asString())
     is ConeWrongNumberOfTypeArgumentsError ->
-        FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(source, this.desiredCount, this.type)
+        FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(qualifiedAccessSource ?: source, this.desiredCount, this.type)
     is ConeSimpleDiagnostic -> when {
         source.kind is FirFakeSourceElementKind -> null
-        else -> this.getFactory().on(source)
+        else -> this.getFactory().on(qualifiedAccessSource ?: source)
     }
     is ConeInstanceAccessBeforeSuperCall -> FirErrors.INSTANCE_ACCESS_BEFORE_SUPER_CALL.on(source, this.target)
     is ConeStubDiagnostic -> null
@@ -54,11 +57,14 @@ private fun ConeDiagnostic.toFirDiagnostic(source: FirSourceElement): FirDiagnos
     else -> throw IllegalArgumentException("Unsupported diagnostic type: ${this.javaClass}")
 }
 
-fun ConeDiagnostic.toFirDiagnostics(source: FirSourceElement): List<FirDiagnostic<FirSourceElement>> {
+fun ConeDiagnostic.toFirDiagnostics(
+    source: FirSourceElement,
+    qualifiedAccessSource: FirSourceElement?
+): List<FirDiagnostic<FirSourceElement>> {
     if (this is ConeInapplicableCandidateError) {
-        return mapInapplicableCandidateError(this, source)
+        return mapInapplicableCandidateError(this, source, qualifiedAccessSource)
     }
-    return listOfNotNull(toFirDiagnostic(source))
+    return listOfNotNull(toFirDiagnostic(source, qualifiedAccessSource))
 }
 
 private fun ConeKotlinType.isEffectivelyNotNull(): Boolean {
@@ -75,13 +81,14 @@ private fun mapUnsafeCallError(
     diagnostic: ConeInapplicableCandidateError,
     source: FirSourceElement,
     rootCause: ResolutionDiagnostic?,
+    qualifiedAccessSource: FirSourceElement?,
 ): FirDiagnostic<*>? {
-    if (rootCause is InapplicableWrongReceiver &&
-        rootCause.actualType?.isNullable == true &&
-        (rootCause.expectedType == null || rootCause.expectedType!!.isEffectivelyNotNull())
-    ) {
+    if (rootCause !is InapplicableWrongReceiver) return null
+    val actualType = rootCause.actualType ?: return null
+    val expectedType = rootCause.expectedType
+    if (actualType.isNullable && (expectedType == null || expectedType.isEffectivelyNotNull())) {
         if (diagnostic.candidate.callInfo.isImplicitInvoke) {
-            return FirErrors.UNSAFE_IMPLICIT_INVOKE_CALL.on(source, rootCause.actualType!!)
+            return FirErrors.UNSAFE_IMPLICIT_INVOKE_CALL.on(source, actualType)
         }
 
         val candidateFunction = diagnostic.candidate.symbol.fir as? FirSimpleFunction
@@ -100,8 +107,11 @@ private fun mapUnsafeCallError(
                 return FirErrors.UNSAFE_OPERATOR_CALL.on(source, left, candidateFunctionName!!.asString(), right)
             }
         }
-
-        return FirErrors.UNSAFE_CALL.on(source, rootCause.actualType!!)
+        return if (source.kind == FirFakeSourceElementKind.ArrayAccessNameReference) {
+            FirErrors.UNSAFE_CALL.on(source, actualType)
+        } else {
+            FirErrors.UNSAFE_CALL.on(qualifiedAccessSource ?: source, actualType)
+        }
     }
     return null
 }
@@ -109,15 +119,18 @@ private fun mapUnsafeCallError(
 private fun mapInapplicableCandidateError(
     diagnostic: ConeInapplicableCandidateError,
     source: FirSourceElement,
+    qualifiedAccessSource: FirSourceElement?,
 ): List<FirDiagnostic<FirSourceElement>> {
     // TODO: Need to distinguish SMARTCAST_IMPOSSIBLE
     return diagnostic.candidate.diagnostics.filter { it.applicability == diagnostic.applicability }.mapNotNull { rootCause ->
-        mapUnsafeCallError(diagnostic, source, rootCause)?.let { return@mapNotNull it }
+        mapUnsafeCallError(diagnostic, source, rootCause, qualifiedAccessSource)?.let { return@mapNotNull it }
 
         when (rootCause) {
-            is VarargArgumentOutsideParentheses -> FirErrors.VARARG_OUTSIDE_PARENTHESES.on(rootCause.argument.source ?: source)
+            is VarargArgumentOutsideParentheses -> FirErrors.VARARG_OUTSIDE_PARENTHESES.on(
+                rootCause.argument.source ?: qualifiedAccessSource
+            )
             is NamedArgumentNotAllowed -> FirErrors.NAMED_ARGUMENTS_NOT_ALLOWED.on(
-                rootCause.argument.source ?: source,
+                rootCause.argument.source ?: qualifiedAccessSource,
                 rootCause.forbiddenNamedArgumentsTarget
             )
             else -> null

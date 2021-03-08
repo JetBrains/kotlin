@@ -3,5 +3,5 @@ fun Any.foo1() : (i : Int) -> Unit {
 }
 
 fun test(a : Any) {
-    a.<!INAPPLICABLE_CANDIDATE!>foo1<!>()()
+    <!INAPPLICABLE_CANDIDATE!>a.foo1()<!>()
 }

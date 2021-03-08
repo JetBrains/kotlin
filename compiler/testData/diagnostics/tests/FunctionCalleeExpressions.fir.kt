@@ -28,20 +28,20 @@ fun <T> fooT2() : (t : T) -> T {
 
 fun main(args : Array<String>) {
     args.foo()()
-    args.<!INAPPLICABLE_CANDIDATE!>foo1<!>()()
-    <!UNRESOLVED_REFERENCE!>a<!>.<!INAPPLICABLE_CANDIDATE!>foo1<!>()()
+    <!INAPPLICABLE_CANDIDATE!>args.foo1()<!>()
+    <!INAPPLICABLE_CANDIDATE!><!UNRESOLVED_REFERENCE!>a<!>.foo1()<!>()
     <!UNRESOLVED_REFERENCE!>a<!>.foo1()(<!UNRESOLVED_REFERENCE!>a<!>)
 
     args.foo1()(1)
-    args.<!INAPPLICABLE_CANDIDATE!>foo1<!>()("1")
-    <!UNRESOLVED_REFERENCE!>a<!>.<!INAPPLICABLE_CANDIDATE!>foo1<!>()("1")
+    <!INAPPLICABLE_CANDIDATE!>args.foo1()<!>("1")
+    <!INAPPLICABLE_CANDIDATE!><!UNRESOLVED_REFERENCE!>a<!>.foo1()<!>("1")
     <!UNRESOLVED_REFERENCE!>a<!>.foo1()(<!UNRESOLVED_REFERENCE!>a<!>)
 
     foo2()({})
     <!INAPPLICABLE_CANDIDATE!>foo2<!>(){}
     (foo2()){}
     <!INAPPLICABLE_CANDIDATE!>(foo2())<!>{x -> }
-    <!INAPPLICABLE_CANDIDATE!>foo2<!>()({x -> })
+    <!INAPPLICABLE_CANDIDATE!>foo2()<!>({x -> })
 
     val a = fooT1(1)()
     checkSubtype<Int>(a)
@@ -58,13 +58,13 @@ fun main(args : Array<String>) {
 fun f() :  Int.() -> Unit = {}
 
 fun main1() {
-    1.<!UNRESOLVED_REFERENCE!>(fun Int.() = 1)<!>();
+    1.(<!UNRESOLVED_REFERENCE!>fun Int.() = 1<!>)();
     {1}();
     (fun (x : Int) = x)(1)
-    1.<!UNRESOLVED_REFERENCE!>(fun Int.(x : Int) = x)<!>(1);
+    1.(<!UNRESOLVED_REFERENCE!>fun Int.(x : Int) = x<!>)(1);
     l@{1}()
-    1.<!UNRESOLVED_REFERENCE!>((fun Int.() = 1))<!>()
-    1.<!UNRESOLVED_REFERENCE!>(f())<!>()
+    1.((<!UNRESOLVED_REFERENCE!>fun Int.() = 1<!>))()
+    1.(<!UNRESOLVED_REFERENCE!>f()<!>)()
     1.<!UNRESOLVED_REFERENCE!>if(true){f()}else{f()}<!>()
     1.<!UNRESOLVED_REFERENCE!>if(true)(fun Int.() {})else{f()}<!>()
 
@@ -78,10 +78,10 @@ fun main1() {
 fun test() {
     <!INAPPLICABLE_CANDIDATE!>{x : Int -> 1}<!>();
     <!INAPPLICABLE_CANDIDATE!>(fun Int.() = 1)<!>()
-    "sd".<!UNRESOLVED_REFERENCE!>(fun Int.() = 1)<!>()
+    "sd".(<!UNRESOLVED_REFERENCE!>fun Int.() = 1<!>)()
     val i : Int? = null
-    i.<!UNRESOLVED_REFERENCE!>(fun Int.() = 1)<!>();
+    i.(<!UNRESOLVED_REFERENCE!>fun Int.() = 1<!>)();
     <!INAPPLICABLE_CANDIDATE!>{}<!><Int>()
-    1?.<!UNRESOLVED_REFERENCE!>(fun Int.() = 1)<!>()
+    1?.(<!UNRESOLVED_REFERENCE!>fun Int.() = 1<!>)()
     1.<!UNRESOLVED_REFERENCE!>{}<!>()
 }
