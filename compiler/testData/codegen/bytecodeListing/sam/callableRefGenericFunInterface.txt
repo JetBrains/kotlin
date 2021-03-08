@@ -23,7 +23,7 @@ synthetic final class<null>  TKt$sam$Sam$0 {
     public synthetic final <null> method get(): java.lang.Object
     public <null> method getFunctionDelegate(): kotlin.Function
     public <null> method hashCode(): int
-    enclosing class TKt
+    enclosing method TKt.genericSam()Ljava/lang/Object;
     private synthetic final field <null> function: kotlin.jvm.functions.Function0
     inner (anonymous) class TKt$sam$Sam$0
 }
