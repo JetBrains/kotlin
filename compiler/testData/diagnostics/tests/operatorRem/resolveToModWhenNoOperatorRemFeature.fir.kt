@@ -25,7 +25,7 @@ fun test() {
     <!INAPPLICABLE_CANDIDATE!>takeInt<!>(ModAndRem % 1)
 
     val c = ModAssignAndRemAssign
-    <!INAPPLICABLE_CANDIDATE!>c %= ""<!>
+    c <!INAPPLICABLE_CANDIDATE!>%=<!> ""
 
     var c1 = RemAndModAssign
     c1 %= 1

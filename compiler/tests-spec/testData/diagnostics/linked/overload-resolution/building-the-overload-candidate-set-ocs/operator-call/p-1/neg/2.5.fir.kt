@@ -10,9 +10,9 @@ import LibPackCase1.a.*
 import LibPackCase1.b.*
 fun case1 (){
     var b: B? = null
-    <!AMBIGUITY, DEBUG_INFO_CALL("fqName: fqName is unknown; typeCall: unresolved")!>b += { C() }<!>
+    <!DEBUG_INFO_CALL("fqName: fqName is unknown; typeCall: unresolved")!>b <!AMBIGUITY!>+=<!> { C() }<!>
 
-    <!AMBIGUITY, DEBUG_INFO_CALL("fqName: fqName is unknown; typeCall: unresolved")!>b += {1}<!>
+    <!DEBUG_INFO_CALL("fqName: fqName is unknown; typeCall: unresolved")!>b <!AMBIGUITY!>+=<!> {1}<!>
 }
 
 class B {

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.frontend.api.fir.components
 
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
@@ -85,7 +86,7 @@ internal class KtFirCallResolver(
             }
             is FirErrorNamedReference -> KtVariableWithInvokeFunctionCall(
                 variableLikeSymbol,
-                callReference.createErrorCallTarget()
+                callReference.createErrorCallTarget(source)
             )
             else -> error("Unexpected call reference ${callReference::class.simpleName}")
         }
@@ -93,8 +94,8 @@ internal class KtFirCallResolver(
     private fun FirFunctionCall.asSimpleFunctionCall(): KtFunctionCall? {
         val target = when (val calleeReference = calleeReference) {
             is FirResolvedNamedReference -> calleeReference.getKtFunctionOrConstructorSymbol()?.let { KtSuccessCallTarget(it) }
-            is FirErrorNamedReference -> calleeReference.createErrorCallTarget()
-            is FirErrorReferenceWithCandidate -> calleeReference.createErrorCallTarget()
+            is FirErrorNamedReference -> calleeReference.createErrorCallTarget(source)
+            is FirErrorReferenceWithCandidate -> calleeReference.createErrorCallTarget(source)
             is FirSimpleNamedReference ->
                 error(
                     """
@@ -109,16 +110,16 @@ internal class KtFirCallResolver(
         return KtFunctionCall(target)
     }
 
-    private fun FirErrorNamedReference.createErrorCallTarget(): KtErrorCallTarget =
+    private fun FirErrorNamedReference.createErrorCallTarget(qualifiedAccessSource: FirSourceElement?): KtErrorCallTarget =
         KtErrorCallTarget(
             getCandidateSymbols().mapNotNull { it.fir.buildSymbol(firSymbolBuilder) as? KtFunctionLikeSymbol },
-            source?.let { diagnostic.asKtDiagnostic(it) } ?: KtNonBoundToPsiErrorDiagnostic(factoryName = null, diagnostic.reason, token)
+            source?.let { diagnostic.asKtDiagnostic(it, qualifiedAccessSource) } ?: KtNonBoundToPsiErrorDiagnostic(factoryName = null, diagnostic.reason, token)
         )
 
-    private fun FirErrorReferenceWithCandidate.createErrorCallTarget(): KtErrorCallTarget =
+    private fun FirErrorReferenceWithCandidate.createErrorCallTarget(qualifiedAccessSource: FirSourceElement?): KtErrorCallTarget =
         KtErrorCallTarget(
             getCandidateSymbols().mapNotNull { it.fir.buildSymbol(firSymbolBuilder) as? KtFunctionLikeSymbol },
-            source?.let { diagnostic.asKtDiagnostic(it) } ?: KtNonBoundToPsiErrorDiagnostic(factoryName = null, diagnostic.reason, token)
+            source?.let { diagnostic.asKtDiagnostic(it,qualifiedAccessSource) } ?: KtNonBoundToPsiErrorDiagnostic(factoryName = null, diagnostic.reason, token)
         )
 
     private fun FirResolvedNamedReference.getKtFunctionOrConstructorSymbol(): KtFunctionLikeSymbol? =

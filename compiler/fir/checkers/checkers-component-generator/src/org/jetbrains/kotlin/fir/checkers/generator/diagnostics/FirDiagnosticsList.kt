@@ -67,7 +67,7 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val HIDDEN by error<FirSourceElement, PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<AbstractFirBasedSymbol<*>>("hidden")
         }
-        val UNRESOLVED_REFERENCE by error<FirSourceElement, PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
+        val UNRESOLVED_REFERENCE by error<FirSourceElement, PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
             parameter<String>("reference")
         }
         val UNRESOLVED_LABEL by error<FirSourceElement, PsiElement>()
@@ -79,9 +79,9 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
     }
 
     val SUPER by object : DiagnosticGroup("Super") {
-        val SUPER_IS_NOT_AN_EXPRESSION by error<FirSourceElement, PsiElement>()
-        val SUPER_NOT_AVAILABLE by error<FirSourceElement, PsiElement>()
-        val ABSTRACT_SUPER_CALL by error<FirSourceElement, PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED)
+        val SUPER_IS_NOT_AN_EXPRESSION by error<FirSourceElement, PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED)
+        val SUPER_NOT_AVAILABLE by error<FirSourceElement, PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED)
+        val ABSTRACT_SUPER_CALL by error<FirSourceElement, PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED)
         val INSTANCE_ACCESS_BEFORE_SUPER_CALL by error<FirSourceElement, PsiElement> {
             parameter<String>("target")
         }
@@ -497,12 +497,12 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val UNSAFE_IMPLICIT_INVOKE_CALL by error<FirSourceElement, PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<ConeKotlinType>("receiverType")
         }
-        val UNSAFE_INFIX_CALL by error<FirSourceElement, KtExpression> {
+        val UNSAFE_INFIX_CALL by error<FirSourceElement, KtExpression>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<FirExpression>("lhs")
             parameter<String>("operator")
             parameter<FirExpression>("rhs")
         }
-        val UNSAFE_OPERATOR_CALL by error<FirSourceElement, KtExpression> {
+        val UNSAFE_OPERATOR_CALL by error<FirSourceElement, KtExpression>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<FirExpression>("lhs")
             parameter<String>("operator")
             parameter<FirExpression>("rhs")

@@ -63,7 +63,7 @@ fun case3() {
  */
 fun case4(marker: Marker?) {
     marker?.<!DEBUG_INFO_CALL("fqName: libPackage.Marker.foo; typeCall: function")!>foo(y = { 1 })<!>
-    marker?.<!DEBUG_INFO_CALL("fqName: libPackage.Marker.invoke; typeCall: variable&invoke")!>foo(x = { 1 })<!><!UNSAFE_CALL!>><!><!SYNTAX!><!>
+    marker?.<!DEBUG_INFO_CALL("fqName: libPackage.Marker.invoke; typeCall: variable&invoke")!>foo(x = { 1 })<!>><!SYNTAX!><!>
 }
 
 

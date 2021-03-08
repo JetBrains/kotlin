@@ -133,6 +133,11 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.REFERENCE_BY_QUALIFIED
     )
 
+    val REFERENCED_NAME_BY_QUALIFIED = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.REFERENCED_NAME_BY_QUALIFIED,
+        PositioningStrategies.REFERENCED_NAME_BY_QUALIFIED
+    )
+
     val WHEN_EXPRESSION = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.WHEN_EXPRESSION,
         PositioningStrategies.WHEN_EXPRESSION

@@ -729,7 +729,8 @@ object PositioningStrategies {
                     return mark(element.operationTokenNode.psi)
                 }
             }
-            return super.mark(element)
+            // Fallback to mark the callee reference.
+            return REFERENCE_BY_QUALIFIED.mark(element)
         }
     }
 
@@ -744,21 +745,45 @@ object PositioningStrategies {
         }
     }
 
-    val REFERENCE_BY_QUALIFIED: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
+    val REFERENCE_BY_QUALIFIED: PositioningStrategy<PsiElement> = FindReferencePositioningStrategy(false)
+    val REFERENCED_NAME_BY_QUALIFIED: PositioningStrategy<PsiElement> = FindReferencePositioningStrategy(true)
+
+    /**
+     * @param locateReferencedName whether to remove any nested parentheses while locating the reference element. This is useful for
+     * diagnostics on super and unresolved references. For example, with the following, only the part inside the parentheses should be
+     * highlighted.
+     *
+     * ```
+     * fun foo() {
+     *   (super)()
+     *    ^^^^^
+     *   (random123)()
+     *    ^^^^^^^^^
+     * }
+     * ```
+     */
+    class FindReferencePositioningStrategy(val locateReferencedName: Boolean) : PositioningStrategy<PsiElement>() {
         override fun mark(element: PsiElement): List<TextRange> {
-            when (element) {
+            var result: PsiElement = when (element) {
                 is KtQualifiedExpression -> {
                     when (val selectorExpression = element.selectorExpression) {
-                        is KtCallExpression -> return mark(selectorExpression.calleeExpression ?: selectorExpression)
-                        is KtReferenceExpression -> return mark(selectorExpression)
+                        is KtCallExpression -> selectorExpression.calleeExpression ?: selectorExpression
+                        is KtReferenceExpression -> selectorExpression
+                        else -> element
                     }
                 }
-                is KtCallableReferenceExpression -> return mark(element.callableReference)
-                is KtCallExpression -> return mark(element.calleeExpression ?: element)
-                is KtConstructorDelegationCall -> return mark(element.calleeExpression ?: element)
-                is KtSuperTypeCallEntry -> return mark(element.calleeExpression)
+                is KtCallableReferenceExpression -> element.callableReference
+                is KtCallExpression -> element.calleeExpression ?: element
+                is KtConstructorDelegationCall -> element.calleeExpression ?: element
+                is KtSuperTypeCallEntry -> element.calleeExpression
+                is KtOperationExpression -> element.operationReference
+                is KtWhenConditionInRange -> element.operationReference
+                else -> element
             }
-            return super.mark(element)
+            while (locateReferencedName && result is KtParenthesizedExpression) {
+                result = result.expression ?: break
+            }
+            return super.mark(result)
         }
     }
 }

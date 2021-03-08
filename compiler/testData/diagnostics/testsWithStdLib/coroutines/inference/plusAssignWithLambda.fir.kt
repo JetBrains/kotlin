@@ -26,7 +26,7 @@ fun <T> id(x: T) = x
 
 fun foo2() = {
     var x = A()
-    <!INAPPLICABLE_CANDIDATE!>x += { "" }<!>
+    x <!INAPPLICABLE_CANDIDATE!>+=<!> { "" }
     var y = A()
     y += 1
 }

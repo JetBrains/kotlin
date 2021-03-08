@@ -8,4 +8,3 @@ fun <F, G> getMap() : Map<F, G> = throw Exception()
 fun bar123() {
     foo(<!INAPPLICABLE_CANDIDATE!>getMap<!>(
 <!SYNTAX!><!>}
-

@@ -9,7 +9,7 @@ fun f(): Unit {
     x <!NONE_APPLICABLE!>+<!> 1
     x <!NONE_APPLICABLE!>plus<!> 1
     x <!NONE_APPLICABLE!><<!> 1
-    <!UNRESOLVED_REFERENCE!>x += 1<!>
+    x <!UNRESOLVED_REFERENCE!>+=<!> 1
 
     x == 1
     x != 1
