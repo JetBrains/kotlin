@@ -696,6 +696,16 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         compileKotlin("main.kt", tmpdir, listOf(library), additionalOptions = features)
     }
 
+    fun testUnreachableExtensionVarPropertyDeclaration() {
+        val (output, exitCode) = compileKotlin("source.kt", tmpdir, expectedFileName = null)
+        assertEquals("Output:\n$output", ExitCode.INTERNAL_ERROR, exitCode)
+    }
+
+    fun testUnreachableExtensionValPropertyDeclaration() {
+        val (output, exitCode) = compileKotlin("source.kt", tmpdir, expectedFileName = null)
+        assertEquals("Output:\n$output", ExitCode.INTERNAL_ERROR, exitCode)
+    }
+
     // If this test fails, then bootstrap compiler most likely should be advanced
     fun testPreReleaseFlagIsConsistentBetweenBootstrapAndCurrentCompiler() {
         val bootstrapCompiler = JarFile(PathUtil.kotlinPathsForCompiler.compilerPath)
