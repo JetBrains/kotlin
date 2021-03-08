@@ -16,10 +16,17 @@
 
 package org.jetbrains.kotlin.integration;
 
+import com.intellij.openapi.util.SystemInfo;
+import com.intellij.util.ArrayUtil;
 import org.jetbrains.kotlin.cli.AbstractCliTest;
+import org.jetbrains.kotlin.utils.StringsKt;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.*;
 
+@SuppressWarnings("ResultOfMethodCallIgnored")
 public class CompilerSmokeTest extends CompilerSmokeTestBase {
 
     public void testHelloApp() throws Exception {
@@ -215,9 +222,13 @@ public class CompilerSmokeTest extends CompilerSmokeTestBase {
         String outputDir = tmpdir.getAbsolutePath() + File.separator + "noPermissionDir";
         File file = new File(outputDir, "Test.class");
         file.getParentFile().mkdirs();
+        if (!SystemInfo.isWindows) {
+            file.getParentFile().setReadOnly(); // won't work on Windows
+            runCompiler("test.notWindows.compile", "test.kt", "-d", outputDir);
+            file.getParentFile().setWritable(true);
+        }
         file.createNewFile();
-        // file.getParentFile().setReadOnly(); // won't work on Windows
-        file.setReadOnly(); // So we use this one as an alternative
+        file.setReadOnly();
         runCompiler("test.compile", "test.kt", "-d", outputDir);
     }
 
@@ -237,14 +248,35 @@ public class CompilerSmokeTest extends CompilerSmokeTestBase {
         runCompiler("test.compile", "test.kt", "-d", jar);
     }
 
-    // related to KT-18184, Destination is a jar, and output directory exist, and permission denied to write jar.
+    // related to KT-18184, destination is a jar, and output directory exists, and permission denied to write jar.
     public void testDestinationJarNoPermission() throws Exception {
         String outputDir = tmpdir.getAbsolutePath() + File.separator + "noPermissionDir";
         File jar = new File(outputDir, "test.jar");
         jar.getParentFile().mkdirs();
+        if (!SystemInfo.isWindows) {
+            jar.getParentFile().setReadOnly(); // won't work on Windows
+            runCompiler("test.notWindows.compile", "test.kt", "-d", jar.getCanonicalPath());
+            jar.getParentFile().setWritable(true);
+        }
         jar.createNewFile();
-        // jar.getParentFile().setReadOnly(); // won't work on Windows
-        jar.setReadOnly(); // So we use this one as an alternative
+        jar.setReadOnly();
         runCompiler("test.compile", "test.kt", "-d", jar.getCanonicalPath());
+    }
+
+    // related to https://github.com/JetBrains/kotlin/pull/4189
+    public void testPathNameDoesNotNameAParent() throws Exception {
+        String jar = "hello.jar";
+        String workingDirectory = tmpdir.getAbsolutePath();
+        Files.write(Paths.get(workingDirectory + "/Hello.kt"), "class Hello".getBytes());
+
+        Collection<String> javaArgs = new ArrayList<>();
+        javaArgs.add("-cp");
+        javaArgs.add(StringsKt.join(Collections.singletonList(
+                getCompilerLib().getAbsolutePath() + File.separator + "kotlin-compiler.jar"
+        ), File.pathSeparator));
+        javaArgs.add("org.jetbrains.kotlin.cli.jvm.K2JVMCompiler");
+        javaArgs.addAll(Arrays.asList("Hello.kt", "-d", jar));
+
+        runJava(workingDirectory, null, ArrayUtil.toStringArray(javaArgs));
     }
 }
