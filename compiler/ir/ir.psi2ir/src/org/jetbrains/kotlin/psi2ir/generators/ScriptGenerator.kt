@@ -116,7 +116,13 @@ class ScriptGenerator(declarationGenerator: DeclarationGenerator) : DeclarationG
                     val type = providedProperty.type.toIrType()
                     val valueParameter = context.symbolTable.declareValueParameter(
                         startOffset, endOffset, IrDeclarationOrigin.SCRIPT_PROVIDED_PROPERTY, parameter, type
-                    )
+                    ) { symbol ->
+                        context.irFactory.createValueParameter(
+                            startOffset, endOffset, IrDeclarationOrigin.SCRIPT_PROVIDED_PROPERTY, symbol, descriptor.name,
+                            parametersIndex, type, null, isCrossinline = false, isNoinline = false, isHidden = false, isAssignable = false
+                        ).also { it.parent = irScript }
+                    }
+                    parametersIndex++
                     val irProperty =
                         PropertyGenerator(declarationGenerator).generateSyntheticProperty(
                             ktScript,
