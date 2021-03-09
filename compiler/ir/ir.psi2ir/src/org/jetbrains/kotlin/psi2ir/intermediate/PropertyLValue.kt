@@ -146,13 +146,12 @@ class AccessorPropertyLValue(
     }
 
     override fun load(): IrExpression =
-        // TODO: Use context receiver values
-        callReceiver.adjustForCallee(getterDescriptor!!).call { dispatchReceiverValue, extensionReceiverValue, _ ->
+        callReceiver.adjustForCallee(getterDescriptor!!).call { dispatchReceiverValue, extensionReceiverValue, contextReceiverValues ->
             IrCallImpl(
                 startOffset, endOffset,
                 type,
                 getter!!, typeArgumentsCount,
-                0,
+                contextReceiverValues.size,
                 origin,
                 superQualifier
             ).apply {
@@ -160,17 +159,19 @@ class AccessorPropertyLValue(
                 putTypeArguments()
                 dispatchReceiver = dispatchReceiverValue?.load()
                 extensionReceiver = extensionReceiverValue?.load()
+                for ((i, contextReceiverValue) in contextReceiverValues.withIndex()) {
+                    putValueArgument(i, contextReceiverValue.load())
+                }
             }
         }
 
     override fun store(irExpression: IrExpression) =
-        // TODO: Use context receiver values
-        callReceiver.adjustForCallee(setterDescriptor!!).call { dispatchReceiverValue, extensionReceiverValue, _ ->
+        callReceiver.adjustForCallee(setterDescriptor!!).call { dispatchReceiverValue, extensionReceiverValue, contextReceiverValues ->
             IrCallImpl(
                 startOffset, endOffset,
                 context.irBuiltIns.unitType,
                 setter!!, typeArgumentsCount,
-                1,
+                1 + contextReceiverValues.size,
                 origin,
                 superQualifier
             ).apply {
@@ -178,7 +179,10 @@ class AccessorPropertyLValue(
                 putTypeArguments()
                 dispatchReceiver = dispatchReceiverValue?.load()
                 extensionReceiver = extensionReceiverValue?.load()
-                putValueArgument(0, irExpression)
+                for ((i, contextReceiverValue) in contextReceiverValues.withIndex()) {
+                    putValueArgument(i, contextReceiverValue.load())
+                }
+                putValueArgument(contextReceiverValues.size, irExpression)
             }
         }
 
