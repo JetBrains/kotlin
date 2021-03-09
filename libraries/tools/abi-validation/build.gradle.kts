@@ -79,7 +79,6 @@ tasks {
 }
 
 properties["DeployVersion"]?.let { version = it }
-val bintrayUpload = project.getSensitiveProperty("libs.bintray.upload") != null
 
 publishing {
     publications {
@@ -89,18 +88,12 @@ publishing {
             mavenCentralArtifacts(project, project.sourceSets.main.get().allSource)
         }
 
-        if (bintrayUpload) {
-            bintrayRepositoryPublishing(project, user = "kotlin", repo = "kotlinx", name = "binary-compatibility-validator")
-        } else {
-            mavenRepositoryPublishing(project)
-        }
+        mavenRepositoryPublishing(project)
         mavenCentralMetadata()
     }
 
-    if (!bintrayUpload) {
-        publications.withType(MavenPublication::class).all {
-            signPublicationIfKeyPresent(this)
-        }
+    publications.withType(MavenPublication::class).all {
+        signPublicationIfKeyPresent(this)
     }
 }
 

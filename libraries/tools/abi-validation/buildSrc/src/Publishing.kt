@@ -11,18 +11,6 @@ import org.gradle.api.publish.maven.*
 import org.gradle.plugins.signing.*
 import java.net.*
 
-fun PublishingExtension.bintrayRepositoryPublishing(project: Project, user: String, repo: String, name: String) {
-    repositories {
-        maven {
-            url = URI("https://api.bintray.com/maven/$user/$repo/$name/;publish=0")
-            credentials {
-                username = project.findProperty("bintrayUser") as? String ?: System.getenv("BINTRAY_USER")
-                password = project.findProperty("bintrayApiKey") as? String ?: System.getenv("BINTRAY_API_KEY")
-            }
-        }
-    }
-}
-
 fun PublishingExtension.mavenRepositoryPublishing(project: Project) {
     repositories {
         maven {
