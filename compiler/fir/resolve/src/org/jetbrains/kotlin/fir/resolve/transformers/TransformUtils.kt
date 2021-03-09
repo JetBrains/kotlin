@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
+import org.jetbrains.kotlin.fir.copyWithNewSourceKind
 import org.jetbrains.kotlin.fir.declarations.FirTypedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.fakeElement
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -116,14 +116,8 @@ internal fun FirTypedDeclaration.transformTypeToArrayType() {
             source = returnTypeRef.source
             type = ConeKotlinTypeProjectionOut(returnType).createArrayType()
             annotations += returnTypeRef.annotations
-            delegatedTypeRef = returnTypeRef.apply {
-                // Here we replace the source of the immediate delegate and nested delegate with a fake source. Normally the immediate
-                // delegate is the original resolved type ref before this array augmentation. That is, this is the array element type.
-                // The nested delegate is the raw type ref created when constructing the FIR. Usually it's a `FirUserTypeRef` for value
-                // parameters.
-                replaceSource(source?.fakeElement(FirFakeSourceElementKind.ArrayTypeFromVarargParameter))
-                delegatedTypeRef?.replaceSource(source?.fakeElement(FirFakeSourceElementKind.ArrayTypeFromVarargParameter))
-            }
+            // ? do we really need replacing source of nested delegatedTypeRef ?
+            delegatedTypeRef = returnTypeRef.copyWithNewSourceKind(FirFakeSourceElementKind.ArrayTypeFromVarargParameter)
         }
     )
 }
