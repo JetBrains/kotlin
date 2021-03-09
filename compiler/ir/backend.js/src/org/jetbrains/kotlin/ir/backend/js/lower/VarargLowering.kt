@@ -152,30 +152,11 @@ private class VarargTransformer(
         // vararg with a single segment => no need to concatenate
         if (segments.size == 1) {
             val segment = segments.first()
-            if (expression in externalVarargs) {
-                externalVarargs.remove(expression)
-                return segment
-            }
-            val argument = if (expression.elements.any { it is IrSpreadElement }) {
-                val elementType = arrayInfo.primitiveElementType
-                val copyFunction =
-                    if (elementType.isChar() || elementType.isBoolean() || elementType.isLong())
-                        context.intrinsics.taggedArrayCopy
-                    else
-                        context.intrinsics.jsArraySlice
-
-                IrCallImpl(
-                    expression.startOffset,
-                    expression.endOffset,
-                    arrayInfo.primitiveArrayType,
-                    copyFunction,
-                    typeArgumentsCount = 1,
-                    valueArgumentsCount = 1
-                ).apply {
-                    putTypeArgument(0, arrayInfo.primitiveArrayType)
-                    putValueArgument(0, segment)
-                }
-            } else segment
+            val argument = getArgumentFromSingleSegment(
+                expression,
+                segment,
+                arrayInfo
+            )
 
             return arrayInfo.boxArrayIfNeeded(argument)
         }
@@ -204,6 +185,38 @@ private class VarargTransformer(
         }
 
         return arrayInfo.boxArrayIfNeeded(res)
+    }
+
+    private fun getArgumentFromSingleSegment(
+        expression: IrVararg,
+        segment: IrExpression,
+        arrayInfo: InlineClassArrayInfo
+    ): IrExpression {
+        if (expression in externalVarargs) {
+            externalVarargs.remove(expression)
+            return segment
+        }
+
+        return if (expression.elements.any { it is IrSpreadElement }) {
+            val elementType = arrayInfo.primitiveElementType
+            val copyFunction =
+                if (elementType.isChar() || elementType.isBoolean() || elementType.isLong())
+                    context.intrinsics.taggedArrayCopy
+                else
+                    context.intrinsics.jsArraySlice
+
+            IrCallImpl(
+                expression.startOffset,
+                expression.endOffset,
+                arrayInfo.primitiveArrayType,
+                copyFunction,
+                typeArgumentsCount = 1,
+                valueArgumentsCount = 1
+            ).apply {
+                putTypeArgument(0, arrayInfo.primitiveArrayType)
+                putValueArgument(0, segment)
+            }
+        } else segment
     }
 
     private fun transformFunctionAccessExpression(expression: IrFunctionAccessExpression): IrExpression {

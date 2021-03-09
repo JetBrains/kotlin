@@ -156,6 +156,8 @@ fun translateCall(
         // TODO: Don't use `Function.prototype.apply` when number of arguments is known at compile time (e.g. there are no spread operators)
 
         val argumentsAsSingleArray = argumentsWithVarargAsSingleArray(
+            expression,
+            context,
             jsExtensionReceiver,
             arguments,
             varargParameterIndex
@@ -223,6 +225,8 @@ fun translateCall(
 }
 
 fun argumentsWithVarargAsSingleArray(
+    expression: IrFunctionAccessExpression,
+    context: JsGenerationContext,
     additionalReceiver: JsExpression?,
     arguments: List<JsExpression>,
     varargParameterIndex: Int,
@@ -241,6 +245,8 @@ fun argumentsWithVarargAsSingleArray(
 
                 // Call `Array.prototype.slice` on vararg arguments in order to convert array-like objects into proper arrays
                 varargParameterIndex -> {
+                    val valueArgument = expression.getValueArgument(varargParameterIndex)
+
                     if (arraysForConcat.isNotEmpty()) {
                         concatElements.add(JsArrayLiteral(arraysForConcat))
                     }
@@ -250,7 +256,10 @@ fun argumentsWithVarargAsSingleArray(
                         is JsArrayLiteral -> argument
                         is JsNew -> argument.arguments.firstOrNull() as? JsArrayLiteral
                         else -> null
-                    } ?: JsInvocation(JsNameRef("call", JsNameRef("slice", JsArrayLiteral())), argument)
+                    } ?: if (valueArgument is IrCall && valueArgument.symbol == context.staticContext.backendContext.intrinsics.arrayConcat)
+                        argument
+                    else
+                        JsInvocation(JsNameRef("call", JsNameRef("slice", JsArrayLiteral())), argument)
 
                     concatElements.add(varargArgument)
                 }
