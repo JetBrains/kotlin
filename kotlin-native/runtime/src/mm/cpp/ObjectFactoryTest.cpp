@@ -32,6 +32,9 @@ using ObjectFactoryStorageRegular = ObjectFactoryStorage<alignof(void*)>;
 template <typename Storage>
 using Producer = typename Storage::Producer;
 
+template <typename Storage>
+using Consumer = typename Storage::Consumer;
+
 template <size_t DataAlignment>
 KStdVector<void*> Collect(ObjectFactoryStorage<DataAlignment>& storage) {
     KStdVector<void*> result;
@@ -45,6 +48,15 @@ template <typename T, size_t DataAlignment>
 KStdVector<T> Collect(ObjectFactoryStorage<DataAlignment>& storage) {
     KStdVector<T> result;
     for (auto& node : storage.Iter()) {
+        result.push_back(*static_cast<T*>(node.Data()));
+    }
+    return result;
+}
+
+template <typename T, size_t DataAlignment>
+KStdVector<T> Collect(Consumer<ObjectFactoryStorage<DataAlignment>>& consumer) {
+    KStdVector<T> result;
+    for (auto& node : consumer) {
         result.push_back(*static_cast<T*>(node.Data()));
     }
     return result;
@@ -310,11 +322,180 @@ TEST(ObjectFactoryStorageTest, EraseTheOnlyElement) {
         auto iter = storage.Iter();
         auto it = iter.begin();
         iter.EraseAndAdvance(it);
+        EXPECT_THAT(it, iter.end());
     }
 
     auto actual = Collect<int>(storage);
 
     EXPECT_THAT(actual, testing::IsEmpty());
+}
+
+TEST(ObjectFactoryStorageTest, MoveFirst) {
+    ObjectFactoryStorageRegular storage;
+    Producer<ObjectFactoryStorageRegular> producer(storage, SimpleAllocator());
+    Consumer<ObjectFactoryStorageRegular> consumer;
+
+    producer.Insert<int>(1);
+    producer.Insert<int>(2);
+    producer.Insert<int>(3);
+
+    producer.Publish();
+
+    {
+        auto iter = storage.Iter();
+        for (auto it = iter.begin(); it != iter.end();) {
+            if (it->Data<int>() == 1) {
+                iter.MoveAndAdvance(consumer, it);
+            } else {
+                ++it;
+            }
+        }
+    }
+
+    auto actual = Collect<int>(storage);
+    auto actualConsumer = Collect<int, alignof(void*)>(consumer);
+
+    EXPECT_THAT(actual, testing::ElementsAre(2, 3));
+    EXPECT_THAT(actualConsumer, testing::ElementsAre(1));
+}
+
+TEST(ObjectFactoryStorageTest, MoveMiddle) {
+    ObjectFactoryStorageRegular storage;
+    Producer<ObjectFactoryStorageRegular> producer(storage, SimpleAllocator());
+    Consumer<ObjectFactoryStorageRegular> consumer;
+
+    producer.Insert<int>(1);
+    producer.Insert<int>(2);
+    producer.Insert<int>(3);
+
+    producer.Publish();
+
+    {
+        auto iter = storage.Iter();
+        for (auto it = iter.begin(); it != iter.end();) {
+            if (it->Data<int>() == 2) {
+                iter.MoveAndAdvance(consumer, it);
+            } else {
+                ++it;
+            }
+        }
+    }
+
+    auto actual = Collect<int>(storage);
+    auto actualConsumer = Collect<int, alignof(void*)>(consumer);
+
+    EXPECT_THAT(actual, testing::ElementsAre(1, 3));
+    EXPECT_THAT(actualConsumer, testing::ElementsAre(2));
+}
+
+TEST(ObjectFactoryStorageTest, MoveLast) {
+    ObjectFactoryStorageRegular storage;
+    Producer<ObjectFactoryStorageRegular> producer(storage, SimpleAllocator());
+    Consumer<ObjectFactoryStorageRegular> consumer;
+
+    producer.Insert<int>(1);
+    producer.Insert<int>(2);
+    producer.Insert<int>(3);
+
+    producer.Publish();
+
+    {
+        auto iter = storage.Iter();
+        for (auto it = iter.begin(); it != iter.end();) {
+            if (it->Data<int>() == 3) {
+                iter.MoveAndAdvance(consumer, it);
+            } else {
+                ++it;
+            }
+        }
+    }
+
+    auto actual = Collect<int>(storage);
+    auto actualConsumer = Collect<int, alignof(void*)>(consumer);
+
+    EXPECT_THAT(actual, testing::ElementsAre(1, 2));
+    EXPECT_THAT(actualConsumer, testing::ElementsAre(3));
+}
+
+TEST(ObjectFactoryStorageTest, MoveAll) {
+    ObjectFactoryStorageRegular storage;
+    Producer<ObjectFactoryStorageRegular> producer(storage, SimpleAllocator());
+    Consumer<ObjectFactoryStorageRegular> consumer;
+
+    producer.Insert<int>(1);
+    producer.Insert<int>(2);
+    producer.Insert<int>(3);
+
+    producer.Publish();
+
+    {
+        auto iter = storage.Iter();
+        for (auto it = iter.begin(); it != iter.end();) {
+            iter.MoveAndAdvance(consumer, it);
+        }
+    }
+
+    auto actual = Collect<int>(storage);
+    auto actualConsumer = Collect<int, alignof(void*)>(consumer);
+
+    EXPECT_THAT(actual, testing::IsEmpty());
+    EXPECT_THAT(actualConsumer, testing::ElementsAre(1, 2, 3));
+}
+
+TEST(ObjectFactoryStorageTest, MoveTheOnlyElement) {
+    ObjectFactoryStorageRegular storage;
+    Producer<ObjectFactoryStorageRegular> producer(storage, SimpleAllocator());
+    Consumer<ObjectFactoryStorageRegular> consumer;
+
+    producer.Insert<int>(1);
+
+    producer.Publish();
+
+    {
+        auto iter = storage.Iter();
+        auto it = iter.begin();
+        iter.MoveAndAdvance(consumer, it);
+        EXPECT_THAT(it, iter.end());
+    }
+
+    auto actual = Collect<int>(storage);
+    auto actualConsumer = Collect<int, alignof(void*)>(consumer);
+
+    EXPECT_THAT(actual, testing::IsEmpty());
+    EXPECT_THAT(actualConsumer, testing::ElementsAre(1));
+}
+
+TEST(ObjectFactoryStorageTest, MoveAndErase) {
+    ObjectFactoryStorageRegular storage;
+    Producer<ObjectFactoryStorageRegular> producer(storage, SimpleAllocator());
+    Consumer<ObjectFactoryStorageRegular> consumer;
+
+    producer.Insert<int>(1);
+    producer.Insert<int>(2);
+    producer.Insert<int>(3);
+    producer.Insert<int>(4);
+    producer.Insert<int>(5);
+    producer.Insert<int>(6);
+    producer.Insert<int>(7);
+    producer.Insert<int>(8);
+    producer.Insert<int>(9);
+
+    producer.Publish();
+
+    {
+        auto iter = storage.Iter();
+        for (auto it = iter.begin(); it != iter.end();) {
+            ++it;
+            iter.EraseAndAdvance(it);
+            iter.MoveAndAdvance(consumer, it);
+        }
+    }
+
+    auto actual = Collect<int>(storage);
+    auto actualConsumer = Collect<int, alignof(void*)>(consumer);
+
+    EXPECT_THAT(actual, testing::ElementsAre(1, 4, 7));
+    EXPECT_THAT(actualConsumer, testing::ElementsAre(3, 6, 9));
 }
 
 TEST(ObjectFactoryStorageTest, ConcurrentPublish) {
@@ -652,6 +833,50 @@ TEST(ObjectFactoryTest, Erase) {
         int count = 0;
         for (auto it = iter.begin(); it != iter.end(); ++it, ++count) {
             EXPECT_FALSE(it->IsArray());
+        }
+        EXPECT_THAT(count, 10);
+    }
+}
+
+TEST(ObjectFactoryTest, Move) {
+    auto objectTypeInfo = MakeObjectTypeInfo(24);
+    auto arrayTypeInfo = MakeArrayTypeInfo(24);
+    GC::ThreadData gc;
+    ObjectFactory objectFactory;
+    ObjectFactory::ThreadQueue threadQueue(objectFactory, gc);
+    ObjectFactory::FinalizerQueue finalizerQueue;
+
+    for (int i = 0; i < 10; ++i) {
+        threadQueue.CreateObject(objectTypeInfo.get());
+        threadQueue.CreateArray(arrayTypeInfo.get(), 3);
+    }
+
+    threadQueue.Publish();
+
+    {
+        auto iter = objectFactory.Iter();
+        for (auto it = iter.begin(); it != iter.end();) {
+            if (it->IsArray()) {
+                iter.MoveAndAdvance(finalizerQueue, it);
+            } else {
+                ++it;
+            }
+        }
+    }
+
+    {
+        auto iter = objectFactory.Iter();
+        int count = 0;
+        for (auto it = iter.begin(); it != iter.end(); ++it, ++count) {
+            EXPECT_FALSE(it->IsArray());
+        }
+        EXPECT_THAT(count, 10);
+    }
+
+    {
+        int count = 0;
+        for (auto it = finalizerQueue.begin(); it != finalizerQueue.end(); ++it, ++count) {
+            EXPECT_TRUE(it->IsArray());
         }
         EXPECT_THAT(count, 10);
     }
