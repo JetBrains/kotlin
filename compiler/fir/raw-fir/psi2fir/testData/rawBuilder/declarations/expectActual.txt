@@ -1,6 +1,6 @@
 FILE: expectActual.kt
     public? final? expect class MyClass : R|kotlin/Any| {
-        public? expect constructor(): R|MyClass| {
+        public? expect [ContainingClassKey=MyClass] constructor(): R|MyClass| {
             super<R|kotlin/Any|>()
         }
 
@@ -9,7 +9,7 @@ FILE: expectActual.kt
     public? final? expect val x: Int
         public? get(): Int
     public? final? actual class MyClass : R|kotlin/Any| {
-        public? constructor(): R|MyClass| {
+        public? [ContainingClassKey=MyClass] constructor(): R|MyClass| {
             super<R|kotlin/Any|>()
         }
 

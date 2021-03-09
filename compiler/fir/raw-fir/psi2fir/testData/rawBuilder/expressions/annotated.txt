@@ -1,6 +1,6 @@
 FILE: annotated.kt
     @Target(AnnotationTarget#.EXPRESSION#, AnnotationTarget#.LOCAL_VARIABLE#) @Retention(AnnotationRetention#.SOURCE#) public? final? annotation class Ann : R|kotlin/Annotation| {
-        public? constructor(): R|Ann| {
+        public? [ContainingClassKey=Ann] constructor(): R|Ann| {
             super<R|kotlin/Any|>()
         }
 
@@ -21,14 +21,14 @@ FILE: annotated.kt
         ^foo IntegerLiteral(42)
     }
     public? final? data class Two : R|kotlin/Any| {
-        public? constructor(x: Int, y: Int): R|Two| {
+        public? [ContainingClassKey=Two] constructor(x: Int, y: Int): R|Two| {
             super<R|kotlin/Any|>()
         }
 
-        public? final? val x: Int = R|<local>/x|
+        public? final? [IsFromVarargKey=false] val x: Int = R|<local>/x|
             public? get(): Int
 
-        public? final? val y: Int = R|<local>/y|
+        public? final? [IsFromVarargKey=false] val y: Int = R|<local>/y|
             public? get(): Int
 
         public final operator fun component1(): Int

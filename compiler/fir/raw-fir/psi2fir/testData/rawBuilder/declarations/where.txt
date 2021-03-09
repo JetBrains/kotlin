@@ -4,7 +4,7 @@ FILE: where.kt
     public? final? interface B : R|kotlin/Any| {
     }
     public? final? class C<T : A, B> : R|kotlin/Any| {
-        public? constructor<T : A, B>(): R|C<T>| {
+        public? [ContainingClassKey=C] constructor<T : A, B>(): R|C<T>| {
             super<R|kotlin/Any|>()
         }
 

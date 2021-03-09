@@ -9,11 +9,11 @@ FILE: calls.kt
         ^testRegular IntegerLiteral(3).distance#(IntegerLiteral(4))
     }
     public? final? class My : R|kotlin/Any| {
-        public? constructor(x: Int): R|My| {
+        public? [ContainingClassKey=My] constructor(x: Int): R|My| {
             super<R|kotlin/Any|>()
         }
 
-        public? final? var x: Int = R|<local>/x|
+        public? final? [IsFromVarargKey=false] var x: Int = R|<local>/x|
             public? get(): Int
             public? set(value: Int): R|kotlin/Unit|
 
