@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.KtPropertyDelegate
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
+import org.jetbrains.kotlin.psi.KtSuperTypeEntry
 import org.jetbrains.kotlin.psi.KtTypeParameter
 import org.jetbrains.kotlin.psi.KtTypeParameterList
 import org.jetbrains.kotlin.psi.KtTypeReference
@@ -387,6 +388,10 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class RedundantOpenInInterface : KtFirDiagnostic<KtModifierListOwner>() {
         override val diagnosticClass get() = RedundantOpenInInterface::class
+    }
+
+    abstract class SupertypeNotInitialized : KtFirDiagnostic<KtSuperTypeEntry>() {
+        override val diagnosticClass get() = SupertypeNotInitialized::class
     }
 
     abstract class InlineClassNotTopLevel : KtFirDiagnostic<KtDeclaration>() {

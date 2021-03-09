@@ -2,7 +2,7 @@
 
 sealed class Base
 
-class A : Base
+class A : <!SUPERTYPE_NOT_INITIALIZED!>Base<!>
 
 // FILE: b.kt
 

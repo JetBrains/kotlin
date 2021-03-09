@@ -2,7 +2,7 @@ open class A {
     open var test: Number = 10
 }
 
-open class B : A {
+open class B : <!SUPERTYPE_NOT_INITIALIZED!>A<!> {
     override var test: <!VAR_TYPE_MISMATCH_ON_OVERRIDE!>Double<!> = 20.0
 }
 

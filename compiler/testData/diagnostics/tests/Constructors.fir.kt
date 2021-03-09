@@ -1,11 +1,11 @@
 open class NoC
-class NoC1 : NoC
+class NoC1 : <!SUPERTYPE_NOT_INITIALIZED!>NoC<!>
 
 class WithC0() : NoC()
-open class WithC1() : NoC
-class NoC2 : WithC1
+open class WithC1() : <!SUPERTYPE_NOT_INITIALIZED!>NoC<!>
+class NoC2 : <!SUPERTYPE_NOT_INITIALIZED!>WithC1<!>
 class NoC3 : WithC1()
-class WithC2() : WithC1
+class WithC2() : <!SUPERTYPE_NOT_INITIALIZED!>WithC1<!>
 
 class WithPC0() {
 }

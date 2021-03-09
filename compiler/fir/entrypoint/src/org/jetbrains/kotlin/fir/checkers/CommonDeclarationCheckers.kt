@@ -57,7 +57,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirMethodOfAnyImplementedInInterfaceChecker,
         FirDataClassPrimaryConstructorChecker,
         FirSupertypeInitializedInInterfaceChecker,
-        FirSupertypeInitializedWithoutPrimaryConstructor,
+        FirPrimaryConstructorSuperTypeChecker,
         FirTypeParametersInObjectChecker,
         FirMemberFunctionsChecker,
         FirMemberPropertiesChecker,

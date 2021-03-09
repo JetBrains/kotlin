@@ -4,9 +4,9 @@ package toplevelObjectDeclarations
     open fun foo() : Int = 1
   }
 
-  <!INAPPLICABLE_CANDIDATE!>class T : Foo {}<!>
+  <!INAPPLICABLE_CANDIDATE!>class T : <!SUPERTYPE_NOT_INITIALIZED!>Foo<!> {}<!>
 
-  <!INAPPLICABLE_CANDIDATE!>object A : Foo {
+  <!INAPPLICABLE_CANDIDATE!>object A : <!SUPERTYPE_NOT_INITIALIZED!>Foo<!> {
     val x : Int = 2
 
     fun test() : Int {

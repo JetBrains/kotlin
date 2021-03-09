@@ -14,6 +14,6 @@ public abstract class Decorator<T extends LookupElement> extends LookupElement {
 
 // FILE: test.kt
 
-class MyDecorator : Decorator<LookupElement> {
+class MyDecorator : <!SUPERTYPE_NOT_INITIALIZED!>Decorator<LookupElement><!> {
     override fun getLookupString(): String = delegate.lookupString
 }
