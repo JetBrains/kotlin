@@ -25,15 +25,15 @@ class GenericOut<out T : Number> {
 
 }
 
-fun testReturnsRawGenericInv(j: JRaw): GenericInv<*>? {
+fun testReturnsRawGenericInv(j: JRaw): @FlexibleNullability GenericInv<*>? {
   return j.returnsRawGenericInv()
 }
 
-fun testReturnsRawGenericIn(j: JRaw): GenericIn<Nothing>? {
+fun testReturnsRawGenericIn(j: JRaw): @FlexibleNullability GenericIn<Nothing>? {
   return j.returnsRawGenericIn()
 }
 
-fun testReturnsRawGenericOut(j: JRaw): GenericOut<*>? {
+fun testReturnsRawGenericOut(j: JRaw): @FlexibleNullability GenericOut<*>? {
   return j.returnsRawGenericOut()
 }
 
@@ -44,38 +44,39 @@ class KRaw : JRaw {
 
   }
 
-  override fun takesRawList(list: List<*>?) {
+  override fun takesRawList(list: @FlexibleNullability List<*>?) {
     <this>.#<$$delegate_0>.takesRawList(list = list)
   }
 
-  override fun returnsRawList(): List<*>? {
+  override fun returnsRawList(): @FlexibleNullability List<*>? {
     return <this>.#<$$delegate_0>.returnsRawList()
   }
 
-  override fun takesRawGenericInv(g: GenericInv<*>?) {
+  override fun takesRawGenericInv(g: @FlexibleNullability GenericInv<*>?) {
     <this>.#<$$delegate_0>.takesRawGenericInv(g = g)
   }
 
-  override fun returnsRawGenericInv(): GenericInv<*>? {
+  override fun returnsRawGenericInv(): @FlexibleNullability GenericInv<*>? {
     return <this>.#<$$delegate_0>.returnsRawGenericInv()
   }
 
-  override fun takesRawGenericIn(g: GenericIn<Nothing>?) {
+  override fun takesRawGenericIn(g: @FlexibleNullability GenericIn<Nothing>?) {
     <this>.#<$$delegate_0>.takesRawGenericIn(g = g)
   }
 
-  override fun returnsRawGenericIn(): GenericIn<Nothing>? {
+  override fun returnsRawGenericIn(): @FlexibleNullability GenericIn<Nothing>? {
     return <this>.#<$$delegate_0>.returnsRawGenericIn()
   }
 
-  override fun takesRawGenericOut(g: GenericOut<*>?) {
+  override fun takesRawGenericOut(g: @FlexibleNullability GenericOut<*>?) {
     <this>.#<$$delegate_0>.takesRawGenericOut(g = g)
   }
 
-  override fun returnsRawGenericOut(): GenericOut<*>? {
+  override fun returnsRawGenericOut(): @FlexibleNullability GenericOut<*>? {
     return <this>.#<$$delegate_0>.returnsRawGenericOut()
   }
 
   local /* final field */ val <$$delegate_0>: JRaw = j
 
 }
+

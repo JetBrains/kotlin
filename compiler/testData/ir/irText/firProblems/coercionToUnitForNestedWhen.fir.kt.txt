@@ -26,7 +26,7 @@ fun Reader.consumeRestOfQuotedSequence(sb: StringBuilder, quote: Char) {
         val tmp1_safe_receiver: Char? = <this>.nextChar()
         when {
           EQEQ(arg0 = tmp1_safe_receiver, arg1 = null) -> null
-          else -> tmp1_safe_receiver.let<Char, StringBuilder?>(block = local fun <anonymous>(it: Char): StringBuilder? {
+          else -> tmp1_safe_receiver.let<Char, @FlexibleNullability StringBuilder?>(block = local fun <anonymous>(it: Char): @FlexibleNullability StringBuilder? {
             return sb.append(p0 = it)
           }
 )

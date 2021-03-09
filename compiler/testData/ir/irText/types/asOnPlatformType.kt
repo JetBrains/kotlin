@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: asOnPlatformType.kt
 fun test() {
     val nullStr = JavaClass.nullString()

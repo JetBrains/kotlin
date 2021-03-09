@@ -18,5 +18,5 @@ FILE fqName:<root> fileName:/stringVsTConstrained.kt
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.String
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.String declared in <root>.testWithNullCheck'
-                  TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
-                    CALL 'public open fun string (): kotlin.String? declared in <root>.J' type=kotlin.String? origin=null
+                  TYPE_OP type=@[FlexibleNullability] kotlin.String origin=IMPLICIT_NOTNULL typeOperand=@[FlexibleNullability] kotlin.String
+                    CALL 'public open fun string (): @[FlexibleNullability] kotlin.String? declared in <root>.J' type=@[FlexibleNullability] kotlin.String? origin=null

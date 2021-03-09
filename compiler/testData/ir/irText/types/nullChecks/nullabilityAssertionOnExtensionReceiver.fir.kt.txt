@@ -14,9 +14,9 @@ class C {
 }
 
 fun testExt() {
-  s() /*!! String */.extension()
+  s() /*!! @FlexibleNullability String */.extension()
 }
 
 fun C.testMemberExt() {
-  (<this>, s() /*!! String */).memberExtension()
+  (<this>, s() /*!! @FlexibleNullability String */).memberExtension()
 }

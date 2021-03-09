@@ -12,27 +12,27 @@ fun <T : Any?> id(x: T): T {
 
 fun test1(): Any {
   return checkAny(fn = local fun <anonymous>(): Any {
-    return foo() /*!! String */
+    return foo() /*!! @FlexibleNullability String */
   }
 )
 }
 
 val test2: Function0<Any>
-  field = local fun <anonymous>(): String? {
+  field = local fun <anonymous>(): @FlexibleNullability String? {
     return foo()
   }
 
   get
 
 val test3: Function0<Any>
-  field = local fun <anonymous>(): String? {
+  field = local fun <anonymous>(): @FlexibleNullability String? {
     return foo()
   }
  as Function0<Any>
   get
 
 val test4: Function0<Any>
-  field = id<Function0<String?>>(x = local fun <anonymous>(): String? {
+  field = id<Function0<@FlexibleNullability String?>>(x = local fun <anonymous>(): @FlexibleNullability String? {
     return foo()
   }
 )
@@ -51,3 +51,4 @@ fun test6(): Any? {
   }
 )
 }
+

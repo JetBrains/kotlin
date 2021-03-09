@@ -200,9 +200,6 @@ fun FirTypeRef.isUnsafeVarianceType(session: FirSession): Boolean {
 fun FirTypeRef.hasEnhancedNullability(): Boolean =
     coneTypeSafe<ConeKotlinType>()?.hasEnhancedNullability == true
 
-fun FirTypeRef.hasFlexibleNullability(): Boolean =
-    coneTypeSafe<ConeKotlinType>()?.hasFlexibleNullability == true
-
 fun FirTypeRef.withoutEnhancedNullability(): FirTypeRef {
     require(this is FirResolvedTypeRef)
     if (!hasEnhancedNullability()) return this

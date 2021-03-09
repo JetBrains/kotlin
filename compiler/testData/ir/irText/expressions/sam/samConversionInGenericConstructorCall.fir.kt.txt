@@ -1,8 +1,0 @@
-fun test1(f: Function1<String, String>): C<String?> {
-  return C<String?>(jxx = f /*-> J<String?, String?>? */)
-}
-
-fun test2(x: Any) {
-  x as Function1<String, String> /*~> Unit */
-  C<String?>(jxx = x /*as Function1<String, String> */ /*-> J<String?, String?>? */) /*~> Unit */
-}

@@ -395,7 +395,7 @@ FILE fqName:<root> fileName:/typeVariableAfterBuildMap.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Visibilities.Inherited
         BLOCK_BODY
           THROW type=kotlin.Nothing
-            CONSTRUCTOR_CALL 'public constructor <init> (p0: kotlin.String?) declared in java.lang.IllegalStateException' type=java.lang.IllegalStateException origin=null
+            CONSTRUCTOR_CALL 'public constructor <init> (p0: @[FlexibleNullability] kotlin.String?) declared in java.lang.IllegalStateException' type=java.lang.IllegalStateException origin=null
               p0: CONST String type=kotlin.String value="This method shouldn't be invoked for INHERITED visibility"
       PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL [fake_override,val]
         FUN FAKE_OVERRIDE name:<get-name> visibility:public modality:FINAL <> ($this:<root>.Visibility) returnType:kotlin.String [fake_override]
@@ -503,7 +503,7 @@ FILE fqName:<root> fileName:/typeVariableAfterBuildMap.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Visibilities.Unknown
         BLOCK_BODY
           THROW type=kotlin.Nothing
-            CONSTRUCTOR_CALL 'public constructor <init> (p0: kotlin.String?) declared in java.lang.IllegalStateException' type=java.lang.IllegalStateException origin=null
+            CONSTRUCTOR_CALL 'public constructor <init> (p0: @[FlexibleNullability] kotlin.String?) declared in java.lang.IllegalStateException' type=java.lang.IllegalStateException origin=null
               p0: CONST String type=kotlin.String value="This method shouldn't be invoked for UNKNOWN visibility"
       PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL [fake_override,val]
         FUN FAKE_OVERRIDE name:<get-name> visibility:public modality:FINAL <> ($this:<root>.Visibility) returnType:kotlin.String [fake_override]

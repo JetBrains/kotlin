@@ -19,8 +19,8 @@ class K2 : JFoo {
 
   }
 
-  override fun foo(): @FlexibleNullability String {
-    return super.foo()
+  override fun foo(): String {
+    return super.foo() /*!! String */
   }
 
 }
@@ -41,7 +41,7 @@ class K4 : JUnrelatedFoo, IFoo {
 
   }
 
-  override fun foo(): String? {
+  override fun foo(): @FlexibleNullability String? {
     return super.foo()
   }
 
@@ -121,3 +121,4 @@ class TestK4 : IFoo {
   local /* final field */ val <$$delegate_0>: IFoo = K4()
 
 }
+

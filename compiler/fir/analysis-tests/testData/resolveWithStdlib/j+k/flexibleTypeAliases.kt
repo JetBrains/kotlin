@@ -2,7 +2,7 @@
 // FILE: imm/Map.java
 package imm;
 public interface Map<K, V> {
-    Option<V> get(k K);
+    Option<V> get(K k);
 }
 
 // FILE: imm/Set.java

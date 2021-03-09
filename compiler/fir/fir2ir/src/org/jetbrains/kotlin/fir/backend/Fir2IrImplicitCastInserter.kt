@@ -219,9 +219,6 @@ class Fir2IrImplicitCastInserter(
     }
 
     private fun FirTypeRef.isNullabilityFlexible(): Boolean {
-        if (hasFlexibleNullability()) {
-            return true
-        }
         val flexibility = coneTypeSafe<ConeFlexibleType>() ?: return false
         return flexibility.lowerBound.isMarkedNullable != flexibility.upperBound.isMarkedNullable
     }

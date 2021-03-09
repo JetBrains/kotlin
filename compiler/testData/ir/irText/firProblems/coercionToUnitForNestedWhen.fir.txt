@@ -60,16 +60,16 @@ FILE fqName:<root> fileName:/coercionToUnitForNestedWhen.kt
             then: CONST Boolean type=kotlin.Boolean value=false
         body: BLOCK type=kotlin.Unit origin=null
           TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-            WHEN type=@[FlexibleNullability] java.lang.StringBuilder? origin=IF
+            WHEN type=java.lang.StringBuilder? origin=IF
               BRANCH
                 if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                   arg0: GET_VAR 'var ch: kotlin.Char? [var] declared in <root>.consumeRestOfQuotedSequence' type=kotlin.Char? origin=null
                   arg1: CALL 'private final fun <get-BACKSLASH> (): kotlin.Char declared in <root>' type=kotlin.Char origin=GET_PROPERTY
-                then: BLOCK type=java.lang.StringBuilder? origin=SAFE_CALL
+                then: BLOCK type=@[FlexibleNullability] java.lang.StringBuilder? origin=SAFE_CALL
                   VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Char? [val]
                     CALL 'private final fun nextChar (): kotlin.Char? declared in <root>' type=kotlin.Char? origin=null
                       $receiver: GET_VAR '<this>: java.io.Reader declared in <root>.consumeRestOfQuotedSequence' type=java.io.Reader origin=null
-                  WHEN type=java.lang.StringBuilder? origin=null
+                  WHEN type=@[FlexibleNullability] java.lang.StringBuilder? origin=null
                     BRANCH
                       if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                         arg0: GET_VAR 'val tmp_1: kotlin.Char? [val] declared in <root>.consumeRestOfQuotedSequence' type=kotlin.Char? origin=null
@@ -77,21 +77,21 @@ FILE fqName:<root> fileName:/coercionToUnitForNestedWhen.kt
                       then: CONST Null type=kotlin.Nothing? value=null
                     BRANCH
                       if: CONST Boolean type=kotlin.Boolean value=true
-                      then: CALL 'public final fun let <T, R> (block: kotlin.Function1<T of kotlin.StandardKt.let, R of kotlin.StandardKt.let>): R of kotlin.StandardKt.let [inline] declared in kotlin.StandardKt' type=java.lang.StringBuilder? origin=null
+                      then: CALL 'public final fun let <T, R> (block: kotlin.Function1<T of kotlin.StandardKt.let, R of kotlin.StandardKt.let>): R of kotlin.StandardKt.let [inline] declared in kotlin.StandardKt' type=@[FlexibleNullability] java.lang.StringBuilder? origin=null
                         <T>: kotlin.Char
-                        <R>: java.lang.StringBuilder?
+                        <R>: @[FlexibleNullability] java.lang.StringBuilder?
                         $receiver: GET_VAR 'val tmp_1: kotlin.Char? [val] declared in <root>.consumeRestOfQuotedSequence' type=kotlin.Char? origin=null
-                        block: FUN_EXPR type=kotlin.Function1<kotlin.Char, java.lang.StringBuilder?> origin=LAMBDA
-                          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.Char) returnType:java.lang.StringBuilder?
+                        block: FUN_EXPR type=kotlin.Function1<kotlin.Char, @[FlexibleNullability] java.lang.StringBuilder?> origin=LAMBDA
+                          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.Char) returnType:@[FlexibleNullability] java.lang.StringBuilder?
                             VALUE_PARAMETER name:it index:0 type:kotlin.Char
                             BLOCK_BODY
-                              RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.Char): java.lang.StringBuilder? declared in <root>.consumeRestOfQuotedSequence'
-                                CALL 'public open fun append (p0: kotlin.Char): java.lang.StringBuilder? declared in java.lang.StringBuilder' type=java.lang.StringBuilder? origin=null
+                              RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.Char): @[FlexibleNullability] java.lang.StringBuilder? declared in <root>.consumeRestOfQuotedSequence'
+                                CALL 'public open fun append (p0: kotlin.Char): @[FlexibleNullability] java.lang.StringBuilder? declared in java.lang.StringBuilder' type=@[FlexibleNullability] java.lang.StringBuilder? origin=null
                                   $this: GET_VAR 'sb: java.lang.StringBuilder declared in <root>.consumeRestOfQuotedSequence' type=java.lang.StringBuilder origin=null
                                   p0: GET_VAR 'it: kotlin.Char declared in <root>.consumeRestOfQuotedSequence.<anonymous>' type=kotlin.Char origin=null
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
-                then: CALL 'public open fun append (p0: kotlin.Char): java.lang.StringBuilder? declared in java.lang.StringBuilder' type=java.lang.StringBuilder? origin=null
+                then: CALL 'public open fun append (p0: kotlin.Char): @[FlexibleNullability] java.lang.StringBuilder? declared in java.lang.StringBuilder' type=@[FlexibleNullability] java.lang.StringBuilder? origin=null
                   $this: GET_VAR 'sb: java.lang.StringBuilder declared in <root>.consumeRestOfQuotedSequence' type=java.lang.StringBuilder origin=null
                   p0: GET_VAR 'var ch: kotlin.Char? [var] declared in <root>.consumeRestOfQuotedSequence' type=kotlin.Char? origin=null
           SET_VAR 'var ch: kotlin.Char? [var] declared in <root>.consumeRestOfQuotedSequence' type=kotlin.Unit origin=EQ

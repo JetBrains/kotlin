@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
-import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
@@ -224,7 +223,7 @@ private fun ClassId.toConeFlexibleType(
     toConeKotlinType(
         typeArguments,
         isNullable = false,
-        attributes.withFlexibleUnless { it.hasEnhancedNullability }
+        attributes
     ),
     toConeKotlinType(typeArgumentsForUpper, isNullable = true, attributes)
 )
@@ -264,12 +263,7 @@ private fun JavaClassifierType.toConeKotlinTypeWithoutEnhancement(
     return if (isRaw)
         ConeRawType(lowerBound, upperBound)
     else
-        ConeFlexibleType(
-            lowerBound.withAttributes(
-                lowerBound.attributes.withFlexibleUnless { it.hasEnhancedNullability }
-            ),
-            upperBound
-        )
+        ConeFlexibleType(lowerBound, upperBound)
 }
 
 private fun computeRawProjection(
@@ -339,9 +333,7 @@ private fun getErasedVersionOfFirstUpperBound(
             if (firstUpperBound.upperBound is ConeTypeParameterType) {
                 // Avoid exponential complexity
                 ConeFlexibleType(
-                    lowerBound.withAttributes(
-                        lowerBound.attributes.withFlexibleUnless { it.hasEnhancedNullability }
-                    ),
+                    lowerBound,
                     lowerBound.withNullability(ConeNullability.NULLABLE)
                 )
             } else {

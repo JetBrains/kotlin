@@ -53,8 +53,8 @@ fun testFlexible1() {
 
 fun testFlexible2(a: A, b: B) {
   val v: I? = when {
-    true -> id<A?>(x = a)
-    else -> id<B?>(x = b)
+    true -> id<@FlexibleNullability A?>(x = a)
+    else -> id<@FlexibleNullability B?>(x = b)
   }
   v.ff()
 }

@@ -1,3 +1,3 @@
 fun foo(descriptor: PropertyDescriptorImpl) {
-  descriptor.setOverriddenDescriptors(overriddenDescriptors = emptyList<PropertyDescriptor?>())
+  descriptor.setOverriddenDescriptors(overriddenDescriptors = emptyList<@FlexibleNullability PropertyDescriptor?>())
 }

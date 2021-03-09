@@ -108,6 +108,9 @@ object StandardClassIds {
     val MutableMapEntry = MutableMap.createNestedClassId(Name.identifier("MutableEntry"))
 
     val Suppress = "Suppress".baseId()
+
+    val FlexibleNullability = ClassId(FqName("kotlin.internal.ir"), Name.identifier("FlexibleNullability"))
+    val EnhancedNullability = ClassId(FqName("kotlin.jvm.internal"), Name.identifier("EnhancedNullability"))
 }
 
 private fun <K, V> Map<K, V>.inverseMap() = entries.associate { (k, v) -> v to k }

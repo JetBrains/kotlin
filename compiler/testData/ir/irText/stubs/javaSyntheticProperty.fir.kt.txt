@@ -1,3 +1,0 @@
-val test: String?
-  field = J().getFoo()
-  get

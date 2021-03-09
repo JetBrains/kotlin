@@ -1,6 +1,5 @@
 // !USE_EXPERIMENTAL: kotlin.ExperimentalStdlibApi
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND_FIR: JVM_IR
 // WITH_REFLECT
 // FILE: box.kt
 

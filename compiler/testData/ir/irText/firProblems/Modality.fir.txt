@@ -123,7 +123,7 @@ FILE fqName:<root> fileName:/Modality.kt
                   GET_VAR 'val candidateDescriptor: <root>.CallableDescriptor [val] declared in <root>.Owner.process' type=<root>.CallableDescriptor origin=null
                 then: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
                   $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
-                    arg0: CALL 'public abstract fun getModality (): <root>.Modality? declared in <root>.MemberDescriptor' type=<root>.Modality? origin=GET_PROPERTY
+                    arg0: CALL 'public abstract fun getModality (): @[FlexibleNullability] <root>.Modality? declared in <root>.MemberDescriptor' type=@[FlexibleNullability] <root>.Modality? origin=GET_PROPERTY
                       $this: TYPE_OP type=<root>.MemberDescriptor origin=IMPLICIT_CAST typeOperand=<root>.MemberDescriptor
                         GET_VAR 'val candidateDescriptor: <root>.CallableDescriptor [val] declared in <root>.Owner.process' type=<root>.CallableDescriptor origin=null
                     arg1: CONST Null type=kotlin.Nothing? value=null

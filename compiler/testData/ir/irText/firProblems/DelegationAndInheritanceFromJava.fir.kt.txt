@@ -5,11 +5,11 @@ class Impl : A, B {
 
   }
 
-  override fun add(element: String?): Boolean {
+  override fun add(element: @FlexibleNullability String?): Boolean {
     return <this>.#<$$delegate_0>.add(element = element)
   }
 
-  override fun addAll(elements: Collection<String?>): Boolean {
+  override fun addAll(elements: Collection<@FlexibleNullability String?>): Boolean {
     return <this>.#<$$delegate_0>.addAll(elements = elements)
   }
 
@@ -17,27 +17,27 @@ class Impl : A, B {
     <this>.#<$$delegate_0>.clear()
   }
 
-  override operator fun iterator(): MutableIterator<String?> {
+  override operator fun iterator(): MutableIterator<@FlexibleNullability String?> {
     return <this>.#<$$delegate_0>.iterator()
   }
 
-  override fun remove(element: String?): Boolean {
+  override fun remove(element: @FlexibleNullability String?): Boolean {
     return <this>.#<$$delegate_0>.remove(element = element)
   }
 
-  override fun removeAll(elements: Collection<String?>): Boolean {
+  override fun removeAll(elements: Collection<@FlexibleNullability String?>): Boolean {
     return <this>.#<$$delegate_0>.removeAll(elements = elements)
   }
 
-  override fun retainAll(elements: Collection<String?>): Boolean {
+  override fun retainAll(elements: Collection<@FlexibleNullability String?>): Boolean {
     return <this>.#<$$delegate_0>.retainAll(elements = elements)
   }
 
-  override operator fun contains(element: String?): Boolean {
+  override operator fun contains(element: @FlexibleNullability String?): Boolean {
     return <this>.#<$$delegate_0>.contains(element = element)
   }
 
-  override fun containsAll(elements: Collection<String?>): Boolean {
+  override fun containsAll(elements: Collection<@FlexibleNullability String?>): Boolean {
     return <this>.#<$$delegate_0>.containsAll(elements = elements)
   }
 
@@ -57,3 +57,4 @@ class Impl : A, B {
 fun box(): String {
   return "OK"
 }
+
