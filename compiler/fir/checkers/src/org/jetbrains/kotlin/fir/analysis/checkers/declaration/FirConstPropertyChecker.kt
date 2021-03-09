@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -31,9 +32,15 @@ object FirConstPropertyChecker : FirPropertyChecker() {
             reporter.reportOn(declaration.source, FirErrors.CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT, context)
         }
 
+        if (declaration.getter?.source?.kind !is FirFakeSourceElementKind) {
+            reporter.reportOn(declaration.getter?.source, FirErrors.CONST_VAL_WITH_GETTER, context)
+        }
+
+        if (declaration.delegate != null) {
+            reporter.reportOn(declaration.delegate?.source, FirErrors.CONST_VAL_WITH_DELEGATE, context)
+        }
+
         // TODO: Implement checkers for these errors (see ConstModifierChecker in FE1.0):
-        // - CONST_VAL_WITH_DELEGATE
-        // - CONST_VAL_WITH_GETTER
         // - TYPE_CANT_BE_USED_FOR_CONST_VAL
         // - CONST_VAL_WITHOUT_INITIALIZER
         // - CONST_VAL_WITH_NON_CONST_INITIALIZER

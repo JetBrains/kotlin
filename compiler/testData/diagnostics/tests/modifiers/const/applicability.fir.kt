@@ -38,14 +38,14 @@ object D : C() {
     }
 }
 
-const val delegated: Int by Delegate()
+const val delegated: Int by <!CONST_VAL_WITH_DELEGATE!>Delegate()<!>
 
 
 const val withGetter: Int
-    get() = 13
+    <!CONST_VAL_WITH_GETTER!>get() = 13<!>
 
 const val withExplicitDefaultGetter: Int = 1
-    get
+    <!CONST_VAL_WITH_GETTER!>get<!>
 
 fun foo(): Int {
     const val local: Int = 14
@@ -68,7 +68,7 @@ class Outer {
 }
 
 const val defaultGetter = 19
-    get
+    <!CONST_VAL_WITH_GETTER!>get<!>
 
 const val nonConstInitializer1 = foo()
 const val nonConstInitializer2 = 1 as String

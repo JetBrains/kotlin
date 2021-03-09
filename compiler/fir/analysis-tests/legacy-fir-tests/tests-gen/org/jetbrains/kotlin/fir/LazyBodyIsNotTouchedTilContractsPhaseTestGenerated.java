@@ -920,6 +920,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         public void testConstValNotTopLevelOrObject() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/constVal/constValNotTopLevelOrObject.kt");
         }
+
+        @TestMetadata("constValWithGetterOrDelegate.kt")
+        public void testConstValWithGetterOrDelegate() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/constVal/constValWithGetterOrDelegate.kt");
+        }
     }
 
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/constructors")
