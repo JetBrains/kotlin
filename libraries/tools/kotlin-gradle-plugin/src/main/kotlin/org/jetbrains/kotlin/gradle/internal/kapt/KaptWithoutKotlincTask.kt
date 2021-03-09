@@ -116,8 +116,10 @@ abstract class KaptWithoutKotlincTask @Inject constructor(private val workerExec
         )
 
         // Skip annotation processing if no annotation processors were provided.
-        if (annotationProcessorFqNames.isEmpty() && kaptClasspath.isEmpty())
+        if (annotationProcessorFqNames.isEmpty() && kaptClasspath.isEmpty()) {
+            logger.info("No annotation processors provided. Skip KAPT processing.")
             return
+        }
 
         val kaptClasspath = kaptJars + kotlinStdlibClasspath
 

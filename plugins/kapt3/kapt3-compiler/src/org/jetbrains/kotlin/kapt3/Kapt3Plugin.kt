@@ -209,6 +209,7 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
         if (processingClasspath.isEmpty()) {
             // Skip annotation processing if no annotation processors were provided
             if (mode != AptMode.WITH_COMPILATION) {
+                logger.info("No annotation processors provided. Skip KAPT processing.")
                 abortAnalysis()
             }
             return false
