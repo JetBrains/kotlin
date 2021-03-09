@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.gradle.internal.kapt.incremental.KaptIncrementalChan
 import org.jetbrains.kotlin.gradle.internal.tasks.allOutputFiles
 import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
 import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
-import org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
 import org.jetbrains.kotlin.gradle.tasks.GradleCompileTaskProvider
 import org.jetbrains.kotlin.gradle.utils.getValue
@@ -35,14 +34,7 @@ abstract class KaptWithKotlincTask : KaptTask(), CompilerArgumentAwareWithInput<
 
     @get:Classpath
     @get:InputFiles
-    @Suppress("unused")
-    internal val kotlinTaskPluginClasspaths
-        get() = kotlinCompileTask.pluginClasspath
-
-    @get:Classpath
-    @get:InputFiles
-    val pluginClasspath: FileCollection
-        get() = project.configurations.getByName(PLUGIN_CLASSPATH_CONFIGURATION_NAME)
+    val pluginClasspath: FileCollection get() = kotlinCompileTask.pluginClasspath
 
     @get:Internal
     val taskProvider = GradleCompileTaskProvider(this)

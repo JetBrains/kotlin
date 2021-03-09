@@ -65,7 +65,9 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget>(
                 .addSubpluginOptions(project, compilation)
 
             compilation.compileKotlinTaskProvider.configure {
-                it.compilerPluginClasspath = project.configurations.getByName(NATIVE_COMPILER_PLUGIN_CLASSPATH_CONFIGURATION_NAME)
+                it.compilerPluginClasspath = project
+                    .configurations
+                    .getByName(compilation.pluginConfigurationName)
             }
         }
     }

@@ -66,12 +66,11 @@ class SubpluginEnvironment(
             val pluginId = subplugin.getCompilerPluginId()
             project.logger.kotlinDebug { "Loading subplugin $pluginId" }
 
-            subplugin.getPluginArtifact().let { artifact ->
-                project.addMavenDependency(PLUGIN_CLASSPATH_CONFIGURATION_NAME, artifact)
-            }
-
-            subplugin.getPluginArtifactForNative()?.let { artifact ->
-                project.addMavenDependency(NATIVE_COMPILER_PLUGIN_CLASSPATH_CONFIGURATION_NAME, artifact)
+            val nativeArtifact = subplugin.getPluginArtifactForNative()
+            if (nativeArtifact != null && kotlinCompilation.platformType == KotlinPlatformType.native) {
+                project.addMavenDependency(kotlinCompilation.pluginConfigurationName, nativeArtifact)
+            } else {
+                project.addMavenDependency(kotlinCompilation.pluginConfigurationName, subplugin.getPluginArtifact())
             }
 
             val subpluginOptionsProvider = subplugin.applyToCompilation(kotlinCompilation)
