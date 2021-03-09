@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -150,7 +151,13 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
                  * 5) JVM default declaration is bridged in DefaultImpls via accessor if in compatibility mode, ...
                  */
                 isCompatibilityMode -> {
-                    createJvmDefaultCompatibilityDelegate(function)
+                    val visibility =
+                        if (function.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER)
+                            context.mapping.defaultArgumentsOriginalFunction[function]!!.visibility
+                        else function.visibility
+                    if (!DescriptorVisibilities.isPrivate(visibility)) {
+                        createJvmDefaultCompatibilityDelegate(function)
+                    }
                 }
 
                 // 6) ... otherwise we simply leave the default function implementation on the interface.
