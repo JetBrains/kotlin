@@ -274,7 +274,7 @@ private fun getIdForThisReceiver(
         is CallableDescriptor -> {
             val receiverParameter = findReceiverByLabelOrGetDefault(
                 descriptorOfThisReceiver,
-                descriptorOfThisReceiver.extensionReceiverParameter,
+                descriptorOfThisReceiver.extensionReceiverParameter ?: descriptorOfThisReceiver.contextReceiverParameters.firstOrNull(),
                 bindingContext,
                 labelName
             )

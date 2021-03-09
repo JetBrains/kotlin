@@ -15947,6 +15947,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("edouble.kt")
+        public void testEdouble() throws Exception {
+            runTest("compiler/testData/codegen/box/extensionClasses/edouble.kt");
+        }
+
+        @Test
         @TestMetadata("genericCollection.kt")
         public void testGenericCollection() throws Exception {
             runTest("compiler/testData/codegen/box/extensionClasses/genericCollection.kt");
