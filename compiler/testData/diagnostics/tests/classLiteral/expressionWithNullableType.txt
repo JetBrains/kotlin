@@ -2,6 +2,7 @@ package
 
 public fun f1(/*0*/ x: kotlin.Int?): kotlin.Any
 public fun </*0*/ T> f2(/*0*/ t: T): kotlin.Any
+public fun </*0*/ T> f21(/*0*/ t: T): kotlin.Any where T : kotlin.Comparable<T>
 public fun </*0*/ S : kotlin.String?> f3(/*0*/ s: S): kotlin.Any
 public fun </*0*/ U : kotlin.Any> f4(/*0*/ u: U?): kotlin.Any
 public fun f5(/*0*/ c: kotlin.collections.List<*>): kotlin.Any
