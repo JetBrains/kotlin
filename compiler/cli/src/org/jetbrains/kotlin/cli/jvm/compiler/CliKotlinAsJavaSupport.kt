@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForScript
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
+import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.load.java.components.FilesByFacadeFqNameIndexer
@@ -110,7 +111,7 @@ class CliKotlinAsJavaSupport(
     }
 
     override fun getLightClass(classOrObject: KtClassOrObject): KtLightClass? =
-        KtLightClassForSourceDeclaration.create(classOrObject)
+        KtLightClassForSourceDeclaration.create(classOrObject, traceHolder.languageVersionSettings.getFlag(JvmAnalysisFlags.jvmDefaultMode))
 
     override fun getLightClassForScript(script: KtScript): KtLightClassForScript? =
         KtLightClassForScript.create(script)

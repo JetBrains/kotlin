@@ -64,6 +64,16 @@ public class UltraLightClassLoadingTestGenerated extends AbstractUltraLightClass
         runTest("compiler/testData/asJava/ultraLightClasses/dataClasses.kt");
     }
 
+    @TestMetadata("defaultMethodInKotlinWithSettingAll.kt")
+    public void testDefaultMethodInKotlinWithSettingAll() throws Exception {
+        runTest("compiler/testData/asJava/ultraLightClasses/defaultMethodInKotlinWithSettingAll.kt");
+    }
+
+    @TestMetadata("defaultMethodInKotlinWithSettingAllCompatibility.kt")
+    public void testDefaultMethodInKotlinWithSettingAllCompatibility() throws Exception {
+        runTest("compiler/testData/asJava/ultraLightClasses/defaultMethodInKotlinWithSettingAllCompatibility.kt");
+    }
+
     @TestMetadata("delegatesWithAnnotations.kt")
     public void testDelegatesWithAnnotations() throws Exception {
         runTest("compiler/testData/asJava/ultraLightClasses/delegatesWithAnnotations.kt");
