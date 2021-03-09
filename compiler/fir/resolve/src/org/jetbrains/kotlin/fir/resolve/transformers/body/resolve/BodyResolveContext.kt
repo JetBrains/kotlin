@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.resolve.*
@@ -281,7 +282,9 @@ class BodyResolveContext(
                 }
             }
 
-            withScopesForClass(regularClass, holder, f)
+            withScopesForClass(regularClass, holder) {
+                withContainer(regularClass, f)
+            }
         }
     }
 
@@ -290,7 +293,9 @@ class BodyResolveContext(
         holder: SessionHolder,
         crossinline f: () -> T
     ): T {
-        return withScopesForClass(anonymousObject, holder, f)
+        return withScopesForClass(anonymousObject, holder) {
+            withContainer(anonymousObject, f)
+        }
     }
 
     inline fun <T> withScopesForClass(
@@ -383,7 +388,9 @@ class BodyResolveContext(
             withTowerDataCleanup {
                 addLocalScope(FirLocalScope())
                 val receiverTypeRef = simpleFunction.receiverTypeRef
-                withLabelAndReceiverType(simpleFunction.name, simpleFunction, receiverTypeRef?.coneType, holder, f)
+                withContainer(simpleFunction) {
+                    withLabelAndReceiverType(simpleFunction.name, simpleFunction, receiverTypeRef?.coneType, holder, f)
+                }
             }
         }
     }
@@ -398,11 +405,13 @@ class BodyResolveContext(
             addLocalScope(FirLocalScope())
             val receiverTypeRef = anonymousFunction.receiverTypeRef
             val labelName = anonymousFunction.label?.name?.let { Name.identifier(it) }
-            withLabelAndReceiverType(labelName, anonymousFunction, receiverTypeRef?.coneType, holder) {
-                if (isInDependentContext) {
-                    withLambdaBeingAnalyzedInDependentContext(anonymousFunction.symbol, f)
-                } else {
-                    f()
+            withContainer(anonymousFunction) {
+                withLabelAndReceiverType(labelName, anonymousFunction, receiverTypeRef?.coneType, holder) {
+                    if (isInDependentContext) {
+                        withLambdaBeingAnalyzedInDependentContext(anonymousFunction.symbol, f)
+                    } else {
+                        f()
+                    }
                 }
             }
         }
@@ -422,6 +431,25 @@ class BodyResolveContext(
         }
     }
 
+    inline fun <T> withAnonymousInitializer(
+        anonymousInitializer: FirAnonymousInitializer,
+        crossinline f: () -> T
+    ): T {
+        return withTowerDataCleanup {
+            getPrimaryConstructorPureParametersScope()?.let { addLocalScope(it) }
+            addLocalScope(FirLocalScope())
+            withContainer(anonymousInitializer, f)
+        }
+    }
+
+    inline fun <T> withValueParameter(
+        valueParameter: FirValueParameter,
+        crossinline f: () -> T
+    ): T {
+        storeVariable(valueParameter)
+        return withContainer(valueParameter, f)
+    }
+
     inline fun <T> withProperty(
         property: FirProperty,
         crossinline f: () -> T
@@ -433,9 +461,13 @@ class BodyResolveContext(
 
     inline fun <T> withPropertyAccessor(
         property: FirProperty,
+        accessor: FirPropertyAccessor,
         holder: SessionHolder,
         crossinline f: () -> T
     ): T {
+        if (accessor is FirDefaultPropertyAccessor || accessor.body == null) {
+            return withContainer(accessor, f)
+        }
         return withTowerDataCleanup {
             val receiverTypeRef = property.receiverTypeRef
             addLocalScope(FirLocalScope())
@@ -444,10 +476,8 @@ class BodyResolveContext(
             ) {
                 storeBackingField(property)
             }
-            if (receiverTypeRef != null) {
-                withLabelAndReceiverType(property.name, property, receiverTypeRef.coneType, holder, f)
-            } else {
-                f()
+            withContainer(accessor) {
+                withLabelAndReceiverType(property.name, property, receiverTypeRef?.coneType, holder, f)
             }
         }
     }
