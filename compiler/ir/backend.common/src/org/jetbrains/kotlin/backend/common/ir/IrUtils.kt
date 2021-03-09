@@ -200,8 +200,8 @@ fun IrTypeParametersContainer.copyTypeParameters(
     // Therefore, we first copy the parameters themselves, then set up their supertypes.
     val newTypeParameters = srcTypeParameters.mapIndexed { i, sourceParameter ->
         sourceParameter.copyToWithoutSuperTypes(this, index = i + shift, origin = origin ?: sourceParameter.origin).also {
-                oldToNewParameterMap[sourceParameter] = it
-            }
+            oldToNewParameterMap[sourceParameter] = it
+        }
     }
     typeParameters += newTypeParameters
     srcTypeParameters.zip(newTypeParameters).forEach { (srcParameter, dstParameter) ->
@@ -323,8 +323,7 @@ fun IrType.remapTypeParameters(
             when {
                 classifier is IrTypeParameter -> {
                     val newClassifier =
-                        srcToDstParameterMap?.get(classifier) ?:
-                        if (classifier.parent == source)
+                        srcToDstParameterMap?.get(classifier) ?: if (classifier.parent == source)
                             target.typeParameters[classifier.index]
                         else
                             classifier
@@ -485,16 +484,16 @@ fun IrClass.addFakeOverrides(irBuiltIns: IrBuiltIns, implementedMembers: List<Ir
 }
 
 fun IrFactory.createStaticFunctionWithReceivers(
-        irParent: IrDeclarationParent,
-        name: Name,
-        oldFunction: IrFunction,
-        dispatchReceiverType: IrType? = oldFunction.dispatchReceiverParameter?.type,
-        origin: IrDeclarationOrigin = oldFunction.origin,
-        modality: Modality = Modality.FINAL,
-        visibility: DescriptorVisibility = oldFunction.visibility,
-        isFakeOverride: Boolean = oldFunction.isFakeOverride,
-        copyMetadata: Boolean = true,
-        typeParametersFromContext: List<IrTypeParameter> = listOf()
+    irParent: IrDeclarationParent,
+    name: Name,
+    oldFunction: IrFunction,
+    dispatchReceiverType: IrType? = oldFunction.dispatchReceiverParameter?.type,
+    origin: IrDeclarationOrigin = oldFunction.origin,
+    modality: Modality = Modality.FINAL,
+    visibility: DescriptorVisibility = oldFunction.visibility,
+    isFakeOverride: Boolean = oldFunction.isFakeOverride,
+    copyMetadata: Boolean = true,
+    typeParametersFromContext: List<IrTypeParameter> = listOf()
 ): IrSimpleFunction {
     return createFunction(
         oldFunction.startOffset, oldFunction.endOffset,
@@ -548,13 +547,13 @@ fun IrFactory.createStaticFunctionWithReceivers(
             remapTypeMap = typeParameterMap
         )
         valueParameters = listOfNotNull(dispatchReceiver, extensionReceiver) +
-                                       oldFunction.valueParameters.map {
-                                           it.copyTo(
-                                               this,
-                                               index = it.index + offset,
-                                               remapTypeMap = typeParameterMap
-                                           )
-                                       }
+                oldFunction.valueParameters.map {
+                    it.copyTo(
+                        this,
+                        index = it.index + offset,
+                        remapTypeMap = typeParameterMap
+                    )
+                }
 
         if (copyMetadata) metadata = oldFunction.metadata
 
@@ -662,7 +661,13 @@ fun IrExpression?.isPure(
                 if (valueDeclaration is IrVariable) !valueDeclaration.isVar
                 else true
             }
-            is IrCall -> context?.isSideEffectFree(this) ?: false
+            is IrCall -> if (context?.isSideEffectFree(this) == true) {
+                for (i in 0 until valueArgumentsCount) {
+                    val valueArgument = getValueArgument(i)
+                    if (!valueArgument.isPure(anyVariable, checkFields, context)) return false
+                }
+                true
+            } else false
             is IrGetObjectValue -> type.isUnit()
             is IrVararg -> elements.all { (it as? IrExpression)?.isPure(anyVariable, checkFields, context) == true }
             else -> false

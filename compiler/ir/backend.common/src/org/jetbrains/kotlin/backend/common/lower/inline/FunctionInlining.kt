@@ -525,7 +525,6 @@ class FunctionInlining(
             val arguments = buildParameterToArgument(callSite, callee)
             val evaluationStatements = mutableListOf<IrStatement>()
             val substitutor = ParameterSubstitutor()
-            var argumentExtracted = false
             arguments.forEach { argument ->
                 /*
                  * We need to create temporary variable for each argument except inlinable lambda arguments.
@@ -533,14 +532,12 @@ class FunctionInlining(
                  * not only for those referring to inlinable lambdas.
                  */
                 if (argument.isInlinableLambdaArgument) {
-                    argumentExtracted = true
                     substituteMap[argument.parameter] = argument.argumentExpression
                     (argument.argumentExpression as? IrFunctionReference)?.let { evaluationStatements += evaluateArguments(it) }
                     return@forEach
                 }
 
                 if (argument.isImmutableVariableLoad) {
-                    argumentExtracted = true
                     substituteMap[argument.parameter] =
                         argument.argumentExpression.transform( // Arguments may reference the previous ones - substitute them.
                             substitutor,
@@ -549,7 +546,7 @@ class FunctionInlining(
                     return@forEach
                 }
 
-                argumentExtracted = argumentExtracted || !argument.argumentExpression.isPure(false)
+                val argumentExtracted = !argument.argumentExpression.isPure(false)
 
                 // Arguments may reference the previous ones - substitute them.
                 val variableInitializer = argument.argumentExpression.transform(substitutor, data = null)

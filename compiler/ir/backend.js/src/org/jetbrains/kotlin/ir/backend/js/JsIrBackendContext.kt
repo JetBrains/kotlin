@@ -60,7 +60,8 @@ class JsIrBackendContext(
     override var inVerbosePhase: Boolean = false
 
     override fun isSideEffectFree(call: IrCall): Boolean =
-        call.symbol in intrinsics.primitiveToLiteralConstructor.values
+        call.symbol in intrinsics.primitiveToLiteralConstructor.values ||
+                call.symbol == intrinsics.arrayLiteral
 
     val devMode = configuration[JSConfigurationKeys.DEVELOPER_MODE] ?: false
     val errorPolicy = configuration[JSConfigurationKeys.ERROR_TOLERANCE_POLICY] ?: ErrorTolerancePolicy.DEFAULT
