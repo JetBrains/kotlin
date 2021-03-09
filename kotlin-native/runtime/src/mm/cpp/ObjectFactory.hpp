@@ -206,6 +206,71 @@ public:
         Node* node_;
     };
 
+    class Consumer : private MoveOnly {
+    public:
+        class Iterator {
+        public:
+            Node& operator*() noexcept { return *node_; }
+            Node* operator->() noexcept { return node_; }
+
+            Iterator& operator++() noexcept {
+                node_ = node_->next_.get();
+                return *this;
+            }
+
+            bool operator==(const Iterator& rhs) const noexcept { return node_ == rhs.node_; }
+            bool operator!=(const Iterator& rhs) const noexcept { return node_ != rhs.node_; }
+
+        private:
+            friend class Consumer;
+            explicit Iterator(Node* node) noexcept : node_(node) {}
+
+            Node* node_;
+        };
+
+        Consumer() noexcept = default;
+
+        Consumer(Consumer&&) noexcept = default;
+        Consumer& operator=(Consumer&&) noexcept = default;
+
+        ~Consumer() {
+            // Make sure not to blow up the stack by nested `~Node` calls.
+            for (auto node = std::move(root_); node != nullptr; node = std::move(node->next_)) {
+            }
+        }
+
+        Iterator begin() noexcept { return Iterator(root_.get()); }
+        Iterator end() noexcept { return Iterator(nullptr); }
+
+    private:
+        friend class ObjectFactoryStorage;
+
+        void Insert(unique_ptr<Node> node) noexcept {
+            AssertCorrect();
+            auto* nodePtr = node.get();
+            if (!root_) {
+                root_ = std::move(node);
+            } else {
+                last_->next_ = std::move(node);
+            }
+
+            last_ = nodePtr;
+            AssertCorrect();
+        }
+
+        ALWAYS_INLINE void AssertCorrect() const noexcept {
+            if (root_ == nullptr) {
+                RuntimeAssert(last_ == nullptr, "last_ must be null");
+            } else {
+                RuntimeAssert(last_ != nullptr, "last_ must not be null");
+                RuntimeAssert(last_->next_ == nullptr, "last_ must not have next");
+            }
+        }
+
+        unique_ptr<Node> root_;
+        Node* last_ = nullptr;
+    };
+
     class Iterable : private MoveOnly {
     public:
         explicit Iterable(ObjectFactoryStorage& owner) noexcept : owner_(owner), guard_(owner_.mutex_) {}
@@ -213,7 +278,16 @@ public:
         Iterator begin() noexcept { return Iterator(nullptr, owner_.root_.get()); }
         Iterator end() noexcept { return Iterator(owner_.last_, nullptr); }
 
-        void EraseAndAdvance(Iterator& iterator) noexcept { iterator.node_ = owner_.EraseUnsafe(iterator.previousNode_); }
+        void EraseAndAdvance(Iterator& iterator) noexcept {
+            auto result = owner_.ExtractUnsafe(iterator.previousNode_);
+            iterator.node_ = result.second;
+        }
+
+        void MoveAndAdvance(Consumer& consumer, Iterator& iterator) noexcept {
+            auto result = owner_.ExtractUnsafe(iterator.previousNode_);
+            iterator.node_ = result.second;
+            consumer.Insert(std::move(result.first));
+        }
 
     private:
         ObjectFactoryStorage& owner_; // weak
@@ -230,18 +304,19 @@ public:
 
 private:
     // Expects `mutex_` to be held by the current thread.
-    Node* EraseUnsafe(Node* previousNode) noexcept {
+    std::pair<unique_ptr<Node>, Node*> ExtractUnsafe(Node* previousNode) noexcept {
         RuntimeAssert(root_ != nullptr, "Must not be empty");
         AssertCorrectUnsafe();
 
         if (previousNode == nullptr) {
-            // Deleting the root.
-            root_ = std::move(root_->next_);
+            // Extracting the root.
+            auto node = std::move(root_);
+            root_ = std::move(node->next_);
             if (!root_) {
                 last_ = nullptr;
             }
             AssertCorrectUnsafe();
-            return root_.get();
+            return {std::move(node), root_.get()};
         }
 
         auto node = std::move(previousNode->next_);
@@ -251,7 +326,7 @@ private:
         }
 
         AssertCorrectUnsafe();
-        return previousNode->next_.get();
+        return {std::move(node), previousNode->next_.get()};
     }
 
     // Expects `mutex_` to be held by the current thread.
@@ -436,6 +511,38 @@ public:
         typename Storage::Iterator iterator_;
     };
 
+    class FinalizerQueue : private MoveOnly {
+    public:
+        class Iterator {
+        public:
+            NodeRef operator*() noexcept { return NodeRef(*iterator_); }
+            NodeRef operator->() noexcept { return NodeRef(*iterator_); }
+
+            Iterator& operator++() noexcept {
+                ++iterator_;
+                return *this;
+            }
+
+            bool operator==(const Iterator& rhs) const noexcept { return iterator_ == rhs.iterator_; }
+            bool operator!=(const Iterator& rhs) const noexcept { return iterator_ != rhs.iterator_; }
+
+        private:
+            friend class ObjectFactory;
+
+            explicit Iterator(typename Storage::Consumer::Iterator iterator) noexcept : iterator_(std::move(iterator)) {}
+
+            typename Storage::Consumer::Iterator iterator_;
+        };
+
+        Iterator begin() noexcept { return Iterator(consumer_.begin()); }
+        Iterator end() noexcept { return Iterator(consumer_.end()); }
+
+    private:
+        friend class ObjectFactory;
+
+        typename Storage::Consumer consumer_;
+    };
+
     class Iterable {
     public:
         Iterable(ObjectFactory& owner) noexcept : iter_(owner.storage_.Iter()) {}
@@ -444,6 +551,10 @@ public:
         Iterator end() noexcept { return Iterator(iter_.end()); }
 
         void EraseAndAdvance(Iterator& iterator) noexcept { iter_.EraseAndAdvance(iterator.iterator_); }
+
+        void MoveAndAdvance(FinalizerQueue& queue, Iterator& iterator) noexcept {
+            iter_.MoveAndAdvance(queue.consumer_, iterator.iterator_);
+        }
 
     private:
         typename Storage::Iterable iter_;
