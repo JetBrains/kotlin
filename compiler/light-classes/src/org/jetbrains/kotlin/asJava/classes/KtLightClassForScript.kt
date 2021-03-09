@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.asJava.builder.LightClassData
 import org.jetbrains.kotlin.asJava.builder.LightClassDataHolder
 import org.jetbrains.kotlin.asJava.builder.LightClassDataProviderForScript
 import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
+import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.name.FqName
@@ -107,7 +108,7 @@ open class KtLightClassForScript(val script: KtScript) : KtLazyLightClass(script
             // inner classes with null names can't be searched for and can't be used from java anyway
             // we can't prohibit creating light classes with null names either since they can contain members
             .filter { it.name != null }
-            .mapNotNull { KtLightClassForSourceDeclaration.create(it) }
+            .mapNotNull { KtLightClassForSourceDeclaration.create(it, JvmDefaultMode.DEFAULT) }
     }
 
     override fun getInitializers(): Array<PsiClassInitializer> = PsiClassInitializer.EMPTY_ARRAY

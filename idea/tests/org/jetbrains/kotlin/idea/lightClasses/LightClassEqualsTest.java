@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.asJava.classes.KtLightClass;
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration;
+import org.jetbrains.kotlin.config.JvmDefaultMode;
 import org.jetbrains.kotlin.idea.caches.lightClasses.KtLightClassForDecompiledDeclaration;
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor;
@@ -49,8 +50,8 @@ public class LightClassEqualsTest extends KotlinLightCodeInsightFixtureTestCase 
     static void doTestEquals(@Nullable KtClassOrObject origin) {
         assertNotNull(origin);
 
-        PsiClass lightClass1 = KtLightClassForSourceDeclaration.Companion.createNoCache(origin, true);
-        PsiClass lightClass2 = KtLightClassForSourceDeclaration.Companion.createNoCache(origin, true);
+        PsiClass lightClass1 = KtLightClassForSourceDeclaration.Companion.createNoCache(origin, JvmDefaultMode.DEFAULT, true);
+        PsiClass lightClass2 = KtLightClassForSourceDeclaration.Companion.createNoCache(origin, JvmDefaultMode.DEFAULT, true);
         assertNotNull(lightClass1);
         assertNotNull(lightClass2);
 
