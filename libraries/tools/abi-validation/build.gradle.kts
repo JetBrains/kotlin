@@ -71,6 +71,11 @@ java {
 }
 
 tasks {
+    compileTestKotlin {
+        kotlinOptions {
+            languageVersion = "1.4"
+        }
+    }
     test {
         systemProperty("overwrite.output", System.getProperty("overwrite.output", "false"))
         systemProperty("testCasesClassesDirs", sourceSets.test.get().output.classesDirs.asPath)
