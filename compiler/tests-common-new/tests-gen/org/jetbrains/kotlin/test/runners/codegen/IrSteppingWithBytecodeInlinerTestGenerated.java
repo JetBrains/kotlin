@@ -140,6 +140,12 @@ public class IrSteppingWithBytecodeInlinerTestGenerated extends AbstractIrSteppi
     }
 
     @Test
+    @TestMetadata("continue.kt")
+    public void testContinue() throws Exception {
+        runTest("compiler/testData/debug/stepping/continue.kt");
+    }
+
+    @Test
     @TestMetadata("dataClass.kt")
     public void testDataClass() throws Exception {
         runTest("compiler/testData/debug/stepping/dataClass.kt");
