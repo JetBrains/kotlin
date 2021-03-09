@@ -564,9 +564,6 @@ internal abstract class AbstractKotlinPlugin(
 
             // Setup the consuming configurations:
             project.dependencies.attributesSchema.attribute(KotlinPlatformType.attribute)
-            kotlinTarget.compilations.all { compilation ->
-                AbstractKotlinTargetConfigurator.defineConfigurationsForCompilation(compilation)
-            }
 
             project.configurations.getByName("default").apply {
                 setupAsLocalTargetSpecificConfigurationIfSupported(kotlinTarget)
@@ -595,6 +592,7 @@ internal abstract class AbstractKotlinPlugin(
             buildSourceSetProcessor: (AbstractKotlinCompilation<*>) -> KotlinSourceSetProcessor<*>
         ) {
             kotlinTarget.compilations.all { compilation ->
+                AbstractKotlinTargetConfigurator.defineConfigurationsForCompilation(compilation)
                 buildSourceSetProcessor(compilation).run()
             }
         }
