@@ -1,0 +1,31 @@
+@kotlin.Metadata
+public final class Foo$DefaultImpls {
+    // source: 'privateFunWithDefaultArg2.kt'
+    public deprecated static @java.lang.Deprecated @org.jetbrains.annotations.NotNull method bar(@org.jetbrains.annotations.NotNull p0: Foo): java.lang.String
+    public final inner class Foo$DefaultImpls
+}
+
+@kotlin.Metadata
+public interface Foo {
+    // source: 'privateFunWithDefaultArg2.kt'
+    public synthetic static method access$bar$jd(p0: Foo): java.lang.String
+    public @org.jetbrains.annotations.NotNull method bar(): java.lang.String
+    public synthetic static method foo$default(p0: Foo, p1: java.lang.String, p2: int, p3: java.lang.Object): java.lang.String
+    private method foo(p0: java.lang.String): java.lang.String
+    public final inner class Foo$DefaultImpls
+}
+
+@kotlin.Metadata
+public final class PrivateFunWithDefaultArg2Kt$box$1 {
+    // source: 'privateFunWithDefaultArg2.kt'
+    enclosing method PrivateFunWithDefaultArg2Kt.box()Ljava/lang/String;
+    inner (anonymous) class PrivateFunWithDefaultArg2Kt$box$1
+    method <init>(): void
+}
+
+@kotlin.Metadata
+public final class PrivateFunWithDefaultArg2Kt {
+    // source: 'privateFunWithDefaultArg2.kt'
+    inner (anonymous) class PrivateFunWithDefaultArg2Kt$box$1
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

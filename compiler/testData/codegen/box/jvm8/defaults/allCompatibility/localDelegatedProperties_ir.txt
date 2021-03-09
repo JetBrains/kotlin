@@ -8,7 +8,6 @@ public final class Delegate {
 @kotlin.Metadata
 public final class Foo$DefaultImpls {
     // source: 'localDelegatedProperties.kt'
-    private deprecated static @java.lang.Deprecated method test$lambda-0(p0: Delegate): java.lang.String
     public deprecated static @java.lang.Deprecated @org.jetbrains.annotations.NotNull method test(@org.jetbrains.annotations.NotNull p0: Foo): java.lang.String
     public final inner class Foo$DefaultImpls
 }
@@ -19,7 +18,6 @@ public interface Foo {
     public synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     static method <clinit>(): void
     public synthetic static method access$test$jd(p0: Foo): java.lang.String
-    public synthetic static method access$test$lambda-0(p0: Delegate): java.lang.String
     private static method test$lambda-0(p0: Delegate): java.lang.String
     public @org.jetbrains.annotations.NotNull method test(): java.lang.String
     public final inner class Foo$DefaultImpls

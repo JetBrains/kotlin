@@ -1,12 +1,7 @@
 @kotlin.Metadata
 public final class Foo$DefaultImpls {
     // source: 'privateFunWithDefaultArg.kt'
-    public synthetic final static method access$fooSuspend(p0: Foo, p1: java.lang.String, p2: kotlin.coroutines.Continuation): java.lang.Object
     public deprecated static @java.lang.Deprecated @org.jetbrains.annotations.NotNull method bar(@org.jetbrains.annotations.NotNull p0: Foo): java.lang.String
-    public synthetic static method foo$default(p0: Foo, p1: java.lang.String, p2: int, p3: java.lang.Object): java.lang.String
-    private deprecated static @java.lang.Deprecated method foo(p0: Foo, p1: java.lang.String): java.lang.String
-    public synthetic static method fooSuspend$default(p0: Foo, p1: java.lang.String, p2: kotlin.coroutines.Continuation, p3: int, p4: java.lang.Object): java.lang.Object
-    private deprecated static @java.lang.Deprecated method fooSuspend(p0: Foo, p1: java.lang.String, p2: kotlin.coroutines.Continuation): java.lang.Object
     public final inner class Foo$DefaultImpls
 }
 
@@ -32,7 +27,6 @@ public interface Foo {
     // source: 'privateFunWithDefaultArg.kt'
     inner (anonymous) class Foo$bar$1
     public synthetic static method access$bar$jd(p0: Foo): java.lang.String
-    public synthetic static method access$foo(p0: Foo, p1: java.lang.String): java.lang.String
     public synthetic static method access$fooSuspend(p0: Foo, p1: java.lang.String, p2: kotlin.coroutines.Continuation): java.lang.Object
     public @org.jetbrains.annotations.NotNull method bar(): java.lang.String
     public synthetic static method foo$default(p0: Foo, p1: java.lang.String, p2: int, p3: java.lang.Object): java.lang.String
