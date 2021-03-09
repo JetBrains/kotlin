@@ -19,7 +19,7 @@ object CirFictitiousFunctionClassifiers : CirProvidedClassifiers {
     private val FUNCTION_PREFIXES = arrayOf("Function", "SuspendFunction")
     private val PACKAGE_NAME = CirPackageName.create("kotlin")
 
-    private val classifiers: Map<CirEntityId, CirProvided.Class> = THashMap<CirEntityId, CirProvided.Class>().apply {
+    private val classifiers: Map<CirEntityId, CirProvided.RegularClass> = THashMap<CirEntityId, CirProvided.RegularClass>().apply {
         (MIN_ARITY..MAX_ARITY).forEach { arity ->
             FUNCTION_PREFIXES.forEach { prefix ->
                 buildFictitiousFunctionClass(prefix, arity, this::set)
@@ -28,9 +28,9 @@ object CirFictitiousFunctionClassifiers : CirProvidedClassifiers {
     }
 
     override fun hasClassifier(classifierId: CirEntityId) = classifierId in classifiers
-    override fun classifier(classifierId: CirEntityId): CirProvided.Class? = classifiers[classifierId]
+    override fun classifier(classifierId: CirEntityId): CirProvided.RegularClass? = classifiers[classifierId]
 
-    private inline fun buildFictitiousFunctionClass(prefix: String, arity: Int, consumer: (CirEntityId, CirProvided.Class) -> Unit) {
+    private inline fun buildFictitiousFunctionClass(prefix: String, arity: Int, consumer: (CirEntityId, CirProvided.RegularClass) -> Unit) {
         val typeParameters = List(arity + 1) { index ->
             CirProvided.TypeParameter(
                 index = index,
@@ -39,7 +39,7 @@ object CirFictitiousFunctionClassifiers : CirProvidedClassifiers {
         }
 
         val classId = CirEntityId.create(PACKAGE_NAME, CirName.create("$prefix$arity"))
-        val clazz = CirProvided.Class(typeParameters, Visibilities.Public)
+        val clazz = CirProvided.RegularClass(typeParameters, Visibilities.Public)
 
         consumer(classId, clazz)
     }

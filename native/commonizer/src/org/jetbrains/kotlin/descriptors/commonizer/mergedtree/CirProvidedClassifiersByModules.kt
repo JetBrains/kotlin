@@ -9,6 +9,7 @@ import com.intellij.util.containers.FactoryMap
 import gnu.trove.THashMap
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.commonizer.ModulesProvider
+import org.jetbrains.kotlin.descriptors.commonizer.ModulesProvider.CInteropModuleAttributes
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirName
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirPackageName
@@ -47,9 +48,10 @@ internal class CirProvidedClassifiersByModules private constructor(
             var hasForwardDeclarations = false
 
             modulesProvider.loadModuleInfos().forEach { moduleInfo ->
-                if (moduleInfo.cInteropAttributes != null) {
+                moduleInfo.cInteropAttributes?.let { cInteropAttributes ->
                     // this is a C-interop module
                     hasForwardDeclarations = true
+                    readExportedForwardDeclarations(cInteropAttributes, classifiers::set)
                 }
 
                 val metadata = modulesProvider.loadModuleMetadata(moduleInfo.name)
@@ -62,7 +64,28 @@ internal class CirProvidedClassifiersByModules private constructor(
             return CirProvidedClassifiersByModules(hasForwardDeclarations, classifiers)
         }
 
-        private val FALLBACK_FORWARD_DECLARATION_CLASS = CirProvided.Class(emptyList(), Visibilities.Public)
+        private val FALLBACK_FORWARD_DECLARATION_CLASS = CirProvided.RegularClass(emptyList(), Visibilities.Public)
+    }
+}
+
+private fun readExportedForwardDeclarations(
+    cInteropAttributes: CInteropModuleAttributes,
+    consumer: (CirEntityId, CirProvided.Classifier) -> Unit
+) {
+    val exportedForwardDeclarations = cInteropAttributes.exportedForwardDeclarations
+    if (exportedForwardDeclarations.isEmpty()) return
+
+    val mainPackageName = CirPackageName.create(cInteropAttributes.mainPackage)
+
+    exportedForwardDeclarations.forEach { classFqName ->
+        // Class has synthetic package FQ name (cnames/objcnames). Need to transfer it to the main package.
+        val syntheticPackageName = CirPackageName.create(classFqName.substringBeforeLast('.', missingDelimiterValue = ""))
+        val className = CirName.create(classFqName.substringAfterLast('.'))
+
+        val syntheticClassId = CirEntityId.create(syntheticPackageName, className)
+        val aliasedClassId = CirEntityId.create(mainPackageName, className)
+
+        consumer(aliasedClassId, CirProvided.ExportedForwardDeclarationClass(syntheticClassId))
     }
 }
 

@@ -27,7 +27,7 @@ object CirDeserializers {
 
     private fun annotation(source: KmAnnotation, typeResolver: CirTypeResolver): CirAnnotation {
         val classId = CirEntityId.create(source.className)
-        val clazz: CirProvided.Class = typeResolver.resolveClassifier(classId)
+        val clazz: CirProvided.RegularClass = typeResolver.resolveClassifier(classId)
 
         val type = CirClassType.createInterned(
             classId = classId,
@@ -352,7 +352,7 @@ object CirDeserializers {
                 val clazz: CirProvided.Class = typeResolver.resolveClassifier(classId)
 
                 CirClassType.createInterned(
-                    classId = classId,
+                    classId = (clazz as? CirProvided.ExportedForwardDeclarationClass)?.syntheticClassId ?: classId,
                     outerType = outerType,
                     visibility = clazz.visibility,
                     arguments = arguments(source.arguments, typeResolver),
