@@ -661,6 +661,12 @@ fun IrExpression?.isPure(
                 if (valueDeclaration is IrVariable) !valueDeclaration.isVar
                 else true
             }
+            is IrTypeOperatorCall ->
+                (
+                        operator == IrTypeOperator.INSTANCEOF ||
+                                operator == IrTypeOperator.REINTERPRET_CAST ||
+                                operator == IrTypeOperator.NOT_INSTANCEOF
+                        ) && argument.isPure(anyVariable, checkFields, context)
             is IrCall -> if (context?.isSideEffectFree(this) == true) {
                 for (i in 0 until valueArgumentsCount) {
                     val valueArgument = getValueArgument(i)
