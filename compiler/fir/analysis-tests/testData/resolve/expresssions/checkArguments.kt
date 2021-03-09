@@ -1,6 +1,6 @@
 class A
 open class B
-class C : B
+class C : <!SUPERTYPE_NOT_INITIALIZED!>B<!>
 
 
 fun bar(a: A) = a

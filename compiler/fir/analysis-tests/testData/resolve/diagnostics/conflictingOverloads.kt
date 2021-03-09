@@ -16,7 +16,7 @@ fun test(z: Int, c: Char) {}
 
 }<!>
 
-<!REDECLARATION!>class B : A {
+<!REDECLARATION!>class B : <!SUPERTYPE_NOT_INITIALIZED!>A<!> {
     <!CONFLICTING_OVERLOADS!>override fun rest(s: String)<!> {}
 
     <!CONFLICTING_OVERLOADS!>fun rest(s: String)<!> {}

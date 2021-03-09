@@ -2,7 +2,7 @@ open class A {
     open fun test(): Number = 10
 }
 
-open class B : A {
+open class B : <!SUPERTYPE_NOT_INITIALIZED!>A<!> {
     override fun test(): Double = 20.0
     fun test(x: Int) = x
 }

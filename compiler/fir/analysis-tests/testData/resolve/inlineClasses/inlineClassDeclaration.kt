@@ -14,6 +14,6 @@ class A {
 <!VALUE_CLASS_CANNOT_BE_CLONEABLE!>inline<!> class CloneableClass2(val x: Int): java.lang.Cloneable
 
 open class Test
-inline class ExtendTest(val x: Int): <!INLINE_CLASS_CANNOT_EXTEND_CLASSES!>Test<!>
+inline class ExtendTest(val x: Int): <!INLINE_CLASS_CANNOT_EXTEND_CLASSES, SUPERTYPE_NOT_INITIALIZED!>Test<!>
 
 inline class ImplementByDelegation(val x: Int) : <!INLINE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION!>Comparable<Int><!> by x

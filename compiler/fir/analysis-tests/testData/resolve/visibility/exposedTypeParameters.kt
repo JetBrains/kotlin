@@ -23,7 +23,7 @@ internal class Test4<T: B>
 // valid, B is internal
 private class Test5<T: B>
 
-public class Container : C {
+public class Container : <!SUPERTYPE_NOT_INITIALIZED!>C<!> {
     // valid, D is protected in C
     protected class Test6<T: C.D>
 
