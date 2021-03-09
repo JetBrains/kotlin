@@ -12,9 +12,22 @@ import org.gradle.api.tasks.*
 import java.io.*
 
 open class ApiCompareCompareTask : DefaultTask() {
+
+    /*
+     * Nullability and optionality is a workaround for
+     * https://github.com/gradle/gradle/issues/2016
+     *
+     * Unfortunately, there is no way to skip validation apart from setting 'null'
+     */
+    @Optional
     @InputDirectory
     @PathSensitive(PathSensitivity.RELATIVE)
-    lateinit var projectApiDir: File
+    var projectApiDir: File? = null
+
+    // Used for diagnostic error message when projectApiDir doesn't exist
+    @Input
+    @Optional
+    var nonExistingProjectApiDir: String? = null
 
     @InputDirectory
     @PathSensitive(PathSensitivity.RELATIVE)
@@ -26,10 +39,11 @@ open class ApiCompareCompareTask : DefaultTask() {
 
     @TaskAction
     fun verify() {
-        if (!projectApiDir.exists())
-            error("Expected folder with API declarations '$projectApiDir' does not exist")
-        if (!apiBuildDir.exists())
-            error("Folder with built API declarations '$apiBuildDir' does not exist")
+        val projectApiDir = projectApiDir
+        if (projectApiDir == null) {
+            error("Expected folder with API declarations '$nonExistingProjectApiDir' does not exist.\n" +
+                    "Please ensure that ':apiDump' was executed in order to get API dump to compare the build against")
+        }
 
         val subject = project.name
         val apiBuildDirFiles = mutableSetOf<RelativePath>()
@@ -55,8 +69,7 @@ open class ApiCompareCompareTask : DefaultTask() {
         val expectedFile = expectedApiDeclaration.getFile(projectApiDir)
         val actualFile = expectedApiDeclaration.getFile(apiBuildDir)
         val diff = compareFiles(expectedFile, actualFile)
-        if (diff != null)
-            diffSet.add(diff)
+        if (diff != null) diffSet.add(diff)
         if (diffSet.isNotEmpty()) {
             val diffText = diffSet.joinToString("\n\n")
             error("API check failed for project $subject.\n$diffText\n\n You can run :$subject:apiDump task to overwrite API declarations")
