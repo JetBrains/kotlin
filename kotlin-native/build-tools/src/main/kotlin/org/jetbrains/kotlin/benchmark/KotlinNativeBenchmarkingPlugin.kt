@@ -125,8 +125,8 @@ open class KotlinNativeBenchmarkingPlugin: BenchmarkingPlugin() {
     override fun NamedDomainObjectContainer<KotlinSourceSet>.additionalConfigurations(project: Project) {
         jvmMain.dependencies {
             implementation(project.files("${project.findProperty("kotlin_dist")}/kotlinc/lib/kotlin-stdlib-jdk8.jar"))
-            val cliJvmJar = "${project.currentKotlinNativeDist}/libs/kotlinx.cli-jvm-${project.kotlinVersion}.jar"
-            implementation(project.files(cliJvmJar))
+            if (project.hasProperty("kotlin_dist"))
+                implementation(project(":endorsedLibraries:kotlinx.cli"))
         }
     }
 
