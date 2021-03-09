@@ -8,8 +8,10 @@ package org.jetbrains.kotlin.fir.resolve.transformers.contracts
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.contracts.description.*
 import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
+import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -141,12 +143,16 @@ class ConeEffectExtractor(
         }
     }
 
+    private fun FirContractDescriptionOwner.isAccessorOf(declaration: FirSymbolOwner<*>): Boolean {
+        return declaration is FirProperty && (declaration.getter == this || declaration.setter == this)
+    }
+
     override fun visitThisReceiverExpression(
         thisReceiverExpression: FirThisReceiverExpression,
         data: Nothing?
     ): ConeContractDescriptionElement? {
         val declaration = thisReceiverExpression.calleeReference.boundSymbol?.fir ?: return null
-        return if (declaration == owner) {
+        return if (declaration == owner || owner.isAccessorOf(declaration)) {
             val type = thisReceiverExpression.typeRef.coneType
             toValueParameterReference(type, -1, "this")
         } else {

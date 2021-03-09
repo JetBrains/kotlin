@@ -270,9 +270,15 @@ class BodyResolveContext(
     inline fun <T> withRegularClass(
         regularClass: FirRegularClass,
         holder: SessionHolder,
+        forContracts: Boolean = false,
         crossinline f: () -> T
     ): T {
         storeClassIfNotNested(regularClass)
+        if (forContracts) {
+            return withTypeParametersOf(regularClass) {
+                withContainer(regularClass, f)
+            }
+        }
         return withTowerModeCleanup {
             if (!regularClass.isInner && containerIfAny is FirRegularClass) {
                 towerDataMode = if (regularClass.isCompanion) {
@@ -463,6 +469,7 @@ class BodyResolveContext(
         property: FirProperty,
         accessor: FirPropertyAccessor,
         holder: SessionHolder,
+        forContracts: Boolean = false,
         crossinline f: () -> T
     ): T {
         if (accessor is FirDefaultPropertyAccessor || accessor.body == null) {
@@ -471,7 +478,7 @@ class BodyResolveContext(
         return withTowerDataCleanup {
             val receiverTypeRef = property.receiverTypeRef
             addLocalScope(FirLocalScope())
-            if (receiverTypeRef == null && property.returnTypeRef !is FirImplicitTypeRef &&
+            if (!forContracts && receiverTypeRef == null && property.returnTypeRef !is FirImplicitTypeRef &&
                 !property.isLocal && property.delegate == null
             ) {
                 storeBackingField(property)
