@@ -10,6 +10,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.PrivateForInline
 import org.jetbrains.kotlin.idea.frontend.api.ForbidKtResolve
+import org.jetbrains.kotlin.idea.quickfix.KotlinPsiOnlyQuickFixAction
 import kotlin.experimental.ExperimentalTypeInference
 import kotlin.reflect.KClass
 
@@ -194,3 +195,19 @@ fun <PSI : PsiElement, INPUT : HLApplicatorInput> applicator(
     init: HLApplicatorBuilder<PSI, INPUT>.() -> Unit,
 ): HLApplicator<PSI, INPUT> =
     HLApplicatorBuilder<PSI, INPUT>().apply(init).build()
+
+/**
+ * Builds a new applicator that uses a [KotlinPsiOnlyQuickFixAction] to apply the fix to the PSI
+ *
+ * @see HLApplicator
+ */
+fun <PSI : PsiElement, INPUT : HLApplicatorInput, QUICK_FIX : KotlinPsiOnlyQuickFixAction<PSI>> applicatorByQuickFix(
+    getFamilyName: () -> String,
+    isApplicableByPsi: (PSI) -> Boolean = { true },
+    quickFixByInput: (PSI, INPUT) -> QUICK_FIX,
+): HLApplicator<PSI, INPUT> = HLApplicatorImpl(
+    applyTo = { psi, input, project, editor -> quickFixByInput(psi, input).invoke(project ?: psi.project, editor, psi.containingFile) },
+    isApplicableByPsi = isApplicableByPsi,
+    getActionName = { psi, input -> quickFixByInput(psi, input).text },
+    getFamilyName = getFamilyName
+)
