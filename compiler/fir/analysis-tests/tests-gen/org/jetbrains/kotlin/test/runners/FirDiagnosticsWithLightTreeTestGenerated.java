@@ -1071,6 +1071,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             public void testConstValNotTopLevelOrObject() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/constVal/constValNotTopLevelOrObject.kt");
             }
+
+            @Test
+            @TestMetadata("constValWithGetterOrDelegate.kt")
+            public void testConstValWithGetterOrDelegate() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/constVal/constValWithGetterOrDelegate.kt");
+            }
         }
 
         @Nested
