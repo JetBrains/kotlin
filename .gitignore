@@ -54,6 +54,7 @@ build/
 .idea/artifacts/kotlin_test_js_ir_*
 .idea/artifacts/kotlin_stdlib_wasm_*
 .idea/jarRepositories.xml
+.idea/csv-plugin.xml
 kotlin-ultimate/
 node_modules/
 .rpt2_cache/
