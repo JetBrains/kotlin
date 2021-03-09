@@ -106,11 +106,6 @@ abstract class KtConstructorParameterSymbol : KtParameterSymbol() {
     abstract override fun createPointer(): KtSymbolPointer<KtConstructorParameterSymbol>
 }
 
-abstract class KtSetterParameterSymbol : KtParameterSymbol() {
-    final override val symbolKind: KtSymbolKind get() = KtSymbolKind.NON_PROPERTY_PARAMETER
-
-    abstract override fun createPointer(): KtSymbolPointer<KtSetterParameterSymbol>
-}
 
 enum class KtConstructorParameterSymbolKind {
     VAL_PROPERTY, VAR_PROPERTY, NON_PROPERTY
