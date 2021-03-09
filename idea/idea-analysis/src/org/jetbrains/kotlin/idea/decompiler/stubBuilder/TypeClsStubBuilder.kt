@@ -252,11 +252,14 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
             }
 
             val modifierList = createModifierListStub(parameterStub, modifiers)
-            val parameterAnnotations = c.components.annotationLoader.loadValueParameterAnnotations(
-                container, callableProto, callableProto.annotatedCallableKind, index, valueParameterProto
-            )
-            if (parameterAnnotations.isNotEmpty()) {
-                createAnnotationStubs(parameterAnnotations, modifierList ?: createEmptyModifierListStub(parameterStub))
+
+            if (Flags.HAS_ANNOTATIONS.get(valueParameterProto.flags)) {
+                val parameterAnnotations = c.components.annotationLoader.loadValueParameterAnnotations(
+                    container, callableProto, callableProto.annotatedCallableKind, index, valueParameterProto
+                )
+                if (parameterAnnotations.isNotEmpty()) {
+                    createAnnotationStubs(parameterAnnotations, modifierList ?: createEmptyModifierListStub(parameterStub))
+                }
             }
 
             createTypeReferenceStub(parameterStub, typeProto)
