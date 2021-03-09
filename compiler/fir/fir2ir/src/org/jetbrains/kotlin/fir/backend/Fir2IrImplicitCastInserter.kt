@@ -230,11 +230,10 @@ class Fir2IrImplicitCastInserter(
         canBeNull || hasEnhancedNullability()
 
     private fun IrExpression.insertImplicitNotNullCastIfNeeded(expression: FirExpression): IrExpression {
+        if (this is IrGetEnumValue) return this
         // [TypeOperatorLowering] will retrieve the source (from start offset to end offset) as an assertion message.
         // Avoid type casting if we can't determine the source for some reasons, e.g., implicit `this` receiver.
-        if (expression.source == null) {
-            return this
-        }
+        if (expression.source == null) return this
         // Cast type massage 1. Remove @EnhancedNullability
         // Cast type massage 2. Convert it to a non-null variant (in case of @FlexibleNullability)
         val castType = type.removeAnnotations {
