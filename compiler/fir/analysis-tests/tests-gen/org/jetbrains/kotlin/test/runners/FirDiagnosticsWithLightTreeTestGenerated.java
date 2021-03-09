@@ -712,6 +712,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             }
 
             @Test
+            @TestMetadata("typeMismatchOnExpectedJavaMap.kt")
+            public void testTypeMismatchOnExpectedJavaMap() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/arguments/typeMismatchOnExpectedJavaMap.kt");
+            }
+
+            @Test
             @TestMetadata("untouchedReturnInIf.kt")
             public void testUntouchedReturnInIf() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/arguments/untouchedReturnInIf.kt");

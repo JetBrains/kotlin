@@ -248,7 +248,7 @@ internal class EnhancementSignatureParts(
         val superQualifiers = fromSupertypes.map { it.extractQualifiers(session) }
         val mutabilityFromSupertypes = superQualifiers.mapNotNull { it.mutability }.toSet()
         val nullabilityFromSupertypes = superQualifiers.mapNotNull { it.nullability }.toSet()
-        val nullabilityFromSupertypesWithWarning = fromOverridden
+        val nullabilityFromSupertypesWithWarning = fromSupertypes
             .mapNotNull { it.extractQualifiers(session).nullability }
             .toSet()
 

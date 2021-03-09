@@ -601,6 +601,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/arguments/tryInLambda.kt");
         }
 
+        @TestMetadata("typeMismatchOnExpectedJavaMap.kt")
+        public void testTypeMismatchOnExpectedJavaMap() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/arguments/typeMismatchOnExpectedJavaMap.kt");
+        }
+
         @TestMetadata("untouchedReturnInIf.kt")
         public void testUntouchedReturnInIf() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/arguments/untouchedReturnInIf.kt");

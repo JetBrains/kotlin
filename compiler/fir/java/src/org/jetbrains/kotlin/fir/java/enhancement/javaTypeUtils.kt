@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.builder.buildStarProjection
+import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
 import org.jetbrains.kotlin.load.java.JavaDefaultQualifiers
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
@@ -38,6 +40,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.AbstractStrictEqualityTypeChecker
 import org.jetbrains.kotlin.types.ConstantValueKind
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.extractRadix
 
 internal class IndexedJavaTypeQualifiers(private val data: Array<JavaTypeQualifiers>) {
@@ -253,8 +256,34 @@ internal data class TypeAndDefaultQualifiers(
     val defaultQualifiers: JavaDefaultQualifiers?
 )
 
-internal fun FirTypeRef.typeArguments(): List<FirTypeProjection> =
-    (this as? FirUserTypeRef)?.qualifier?.lastOrNull()?.typeArgumentList?.typeArguments.orEmpty()
+internal fun FirTypeRef.typeArguments(): List<FirTypeProjection> = when (this) {
+    is FirUserTypeRef -> qualifier.lastOrNull()?.typeArgumentList?.typeArguments.orEmpty()
+    is FirResolvedTypeRef -> type.typeArguments.map {
+        when (it) {
+            is ConeStarProjection -> buildStarProjection {}
+            else -> {
+                val kind = it.kind
+                val type = when (it) {
+                    is ConeKotlinTypeProjection -> it.type
+                    is ConeKotlinType -> it
+                    else -> error("Should not be here")
+                }
+                buildTypeProjectionWithVariance {
+                    variance = when (kind) {
+                        ProjectionKind.IN -> Variance.IN_VARIANCE
+                        ProjectionKind.OUT -> Variance.OUT_VARIANCE
+                        ProjectionKind.INVARIANT -> Variance.INVARIANT
+                        else -> error("Should not be here")
+                    }
+                    typeRef = buildResolvedTypeRef {
+                        this.type = type
+                    }
+                }
+            }
+        }
+    }
+    else -> emptyList()
+}
 
 internal fun JavaType.typeArguments(): List<JavaType?> = (this as? JavaClassifierType)?.typeArguments.orEmpty()
 
