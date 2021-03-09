@@ -49,6 +49,16 @@ def versionString = VersionGeneratorKt.kotlinNativeVersionResourceFile(project).
 def kotlinNativeVersionObject = CompilerVersionKt.parseCompilerVersion(versionString)
 
 def platformManager = new PlatformManager(DistributionKt.buildDistribution(UtilsKt.getKotlinNativeDist(project).path), false)
+def kotlinDist = null
+if (hasProperty("kotlin_dist")) {
+    kotlinDist = file(findProperty("kotlin_dist"))
+    ext["notationMapping"] = [':kotlin-stdlib-common'                      : project.file("${kotlinDist}/kotlinc/lib/kotlin-stdlib.jar").absolutePath,
+                              ':kotlin-test:kotlin-test-common'            : project.file("${kotlinDist}/kotlinc/lib/kotlin-test.jar").absolutePath,
+                              ':kotlin-test:kotlin-test-annotations-common': project.file("${kotlinDist}/kotlinc/lib/kotlin-test.jar").absolutePath,
+                              ':kotlin-test:kotlin-test-junit'             : project.file("${kotlinDist}/kotlinc/lib/kotlin-test-junit.jar").absolutePath,
+                              ':kotlin-stdlib-jdk8'                        : project.file("${kotlinDist}/kotlinc/lib/kotlin-stdlib-jdk8.jar").absolutePath]
+    ext.targetList = []
+}
 
 subprojects { proj ->
     globalProperties.each { k, v->
@@ -67,6 +77,10 @@ subprojects { proj ->
     proj.ext["kotlin.native.enabled"] = true
     proj.logger.info("${proj.name}<<<[kotlin.native.home] = ${proj.ext["kotlin.native.home"]}")
     proj.logger.info("${proj.name}<<<[konanVersion] = ${proj.ext["konanVersion"]}>>>")
+    if (project.hasProperty("kotlin_dist")) {
+        proj.ext["kotlin_dist"] = kotlinDist.path
+        proj.logger.info("${proj.name}<<<[kotlin_dist] = ${proj.ext["kotlin_dist"]}>>>")
+    }
 
     proj.ext["buildNumber"]  = findProperty("build.number")?.toString() ?: defaultSnapshotVersion
     proj.ext["kotlinVersion"] = findProperty("deployVersion")?.toString()?.identity { deploySnapshotStr ->
@@ -100,22 +114,24 @@ task konanRun {
 }
     
 task jvmRun {
-    if(findProperty("kotlin_dist") == null) {
-        throw new StopExecutionException("please specify location of kotlin's dist in 'kotlin_dist' property")
-    }
-    def file = new File("${UtilsKt.getKotlinNativeDist(project)}/libs/kotlinx.cli-jvm-${globalProperties["defaultSnapshotVersion"]}.jar")
-    if (!file.exists()) {
-        throw new StopExecutionException("please execute :kotlin-native:distKotlinxCliJvm in root project")
+    doFirst {
+        if (findProperty("kotlin_dist") == null) {
+            throw new StopExecutionException("Please specify location of kotlin's dist in 'kotlin_dist' property")
+        }
     }
     dependsOn buildAnalyzer
     subprojects.each {
-        dependsOn "${it.path}:jvmRun"
+        if (it.name != "endorsedLibraries" && it.name != "kotlinx.cli") {
+            dependsOn "${it.path}:jvmRun"
+        }
     }
 }
 
 task clean {
     subprojects.each {
-        dependsOn "${it.path}:clean"
+        if (it.name != "endorsedLibraries") {
+            dependsOn "${it.path}:clean"
+        }
     }
     dependsOn gradle.includedBuild("benchmarksAnalyzer").task(":clean")
     doLast {
@@ -313,9 +329,11 @@ task mergeJvmReports {
 }
 
 subprojects.each {
-    it.afterEvaluate {
-        it.jvmJsonReport.finalizedBy mergeJvmReports
-        it.konanJsonReport.finalizedBy mergeNativeReports
+    if (it.name != "endorsedLibraries" && it.name != "kotlinx.cli") {
+        it.afterEvaluate {
+            it.jvmJsonReport.finalizedBy mergeJvmReports
+            it.konanJsonReport.finalizedBy mergeNativeReports
+        }
     }
 }
 
