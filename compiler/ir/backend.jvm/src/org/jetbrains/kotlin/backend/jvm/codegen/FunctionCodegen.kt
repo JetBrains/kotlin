@@ -137,9 +137,10 @@ class FunctionCodegen(
         isAnonymousObject || origin == JvmLoweredDeclarationOrigin.CONTINUATION_CLASS || origin == JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA
 
     private fun IrFunction.getVisibilityForDefaultArgumentStub(): Int =
-        when (visibility) {
-            DescriptorVisibilities.PUBLIC -> Opcodes.ACC_PUBLIC
-            JavaDescriptorVisibilities.PACKAGE_VISIBILITY -> AsmUtil.NO_FLAG_PACKAGE_PRIVATE
+        when {
+            // TODO: maybe best to generate private default in interface as private
+            visibility == DescriptorVisibilities.PUBLIC || parentAsClass.isJvmInterface -> Opcodes.ACC_PUBLIC
+            visibility == JavaDescriptorVisibilities.PACKAGE_VISIBILITY -> AsmUtil.NO_FLAG_PACKAGE_PRIVATE
             else -> throw IllegalStateException("Default argument stub should be either public or package private: ${ir2string(this)}")
         }
 

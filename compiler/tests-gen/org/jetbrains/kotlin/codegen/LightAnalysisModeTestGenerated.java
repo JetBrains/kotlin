@@ -18423,6 +18423,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
             public static class AllCompatibility extends AbstractLightAnalysisModeTest {
+                @TestMetadata("privateFunWithDefaultArg.kt")
+                public void ignorePrivateFunWithDefaultArg() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/privateFunWithDefaultArg.kt");
+                }
+
                 @TestMetadata("privateSuspend.kt")
                 public void ignorePrivateSuspend() throws Exception {
                     runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/privateSuspend.kt");
@@ -18574,6 +18579,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 @TestMetadata("privateFunInInterface.kt")
                 public void testPrivateFunInInterface() throws Exception {
                     runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/privateFunInInterface.kt");
+                }
+
+                @TestMetadata("privateFunWithDefaultArg2.kt")
+                public void testPrivateFunWithDefaultArg2() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/privateFunWithDefaultArg2.kt");
                 }
 
                 @TestMetadata("propertyAnnotation.kt")
@@ -18871,6 +18881,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 @TestMetadata("privateFunInInterface.kt")
                 public void testPrivateFunInInterface() throws Exception {
                     runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/privateFunInInterface.kt");
+                }
+
+                @TestMetadata("privateFunWithDefaultArg.kt")
+                public void testPrivateFunWithDefaultArg() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/privateFunWithDefaultArg.kt");
                 }
 
                 @TestMetadata("privateSuspend.kt")
