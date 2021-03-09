@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.references.builder.buildResolvedCallableReferenc
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
-import org.jetbrains.kotlin.fir.resolve.calls.CallableReferenceAdaptation
 import org.jetbrains.kotlin.fir.resolve.dfa.FirDataFlowAnalyzer
 import org.jetbrains.kotlin.fir.resolve.inference.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -161,7 +160,11 @@ class FirCallCompletionResultsWriterTransformer(
                 resultType = typeRef.substituteTypeRef(subCandidate)
                 val expectedArgumentsTypeMapping = runIf(!calleeReference.isError) { subCandidate.createArgumentsMapping() }
                 result.argumentList.transformArguments(this, expectedArgumentsTypeMapping)
-                if (!calleeReference.isError) {
+                if (calleeReference.isError) {
+                    subCandidate.argumentMapping?.let {
+                        result.replaceArgumentList(buildPartiallyResolvedArgumentList(result.argumentList, it))
+                    }
+                } else {
                     subCandidate.handleVarargs()
                     subCandidate.argumentMapping?.let {
                         result.replaceArgumentList(buildResolvedArgumentList(it))
@@ -212,7 +215,11 @@ class FirCallCompletionResultsWriterTransformer(
                 }
             }
         }
-        if (!calleeReference.isError) {
+        if (calleeReference.isError) {
+            subCandidate.argumentMapping?.let {
+                annotationCall.replaceArgumentList(buildPartiallyResolvedArgumentList(annotationCall.argumentList, it))
+            }
+        } else {
             subCandidate.handleVarargs()
             subCandidate.argumentMapping?.let {
                 annotationCall.replaceArgumentList(buildResolvedArgumentList(it))
@@ -367,7 +374,11 @@ class FirCallCompletionResultsWriterTransformer(
 
         val argumentsMapping = runIf(!calleeReference.isError) { calleeReference.candidate.createArgumentsMapping() }
         delegatedConstructorCall.argumentList.transformArguments(this, argumentsMapping)
-        if (!calleeReference.isError) {
+        if (calleeReference.isError) {
+            subCandidate.argumentMapping?.let {
+                delegatedConstructorCall.replaceArgumentList(buildPartiallyResolvedArgumentList(delegatedConstructorCall.argumentList, it))
+            }
+        } else {
             subCandidate.handleVarargs()
             subCandidate.argumentMapping?.let {
                 delegatedConstructorCall.replaceArgumentList(buildResolvedArgumentList(it))
