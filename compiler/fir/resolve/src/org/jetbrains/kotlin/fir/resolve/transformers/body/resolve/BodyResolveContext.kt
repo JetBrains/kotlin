@@ -380,11 +380,30 @@ class BodyResolveContext(
         }
 
         return withTypeParametersOf(simpleFunction) {
-            val receiverTypeRef = simpleFunction.receiverTypeRef
-            if (receiverTypeRef != null) {
-                withLabelAndReceiverType(simpleFunction.name, simpleFunction, receiverTypeRef.coneType, holder, f)
-            } else {
-                f()
+            withTowerDataCleanup {
+                addLocalScope(FirLocalScope())
+                val receiverTypeRef = simpleFunction.receiverTypeRef
+                withLabelAndReceiverType(simpleFunction.name, simpleFunction, receiverTypeRef?.coneType, holder, f)
+            }
+        }
+    }
+
+    inline fun <T> withAnonymousFunction(
+        anonymousFunction: FirAnonymousFunction,
+        holder: SessionHolder,
+        isInDependentContext: Boolean = false,
+        crossinline f: () -> T
+    ): T {
+        return withTowerDataCleanup {
+            addLocalScope(FirLocalScope())
+            val receiverTypeRef = anonymousFunction.receiverTypeRef
+            val labelName = anonymousFunction.label?.name?.let { Name.identifier(it) }
+            withLabelAndReceiverType(labelName, anonymousFunction, receiverTypeRef?.coneType, holder) {
+                if (isInDependentContext) {
+                    withLambdaBeingAnalyzedInDependentContext(anonymousFunction.symbol, f)
+                } else {
+                    f()
+                }
             }
         }
     }
@@ -419,10 +438,10 @@ class BodyResolveContext(
     ): T {
         return withTowerDataCleanup {
             val receiverTypeRef = property.receiverTypeRef
+            addLocalScope(FirLocalScope())
             if (receiverTypeRef == null && property.returnTypeRef !is FirImplicitTypeRef &&
                 !property.isLocal && property.delegate == null
             ) {
-                addLocalScope(FirLocalScope())
                 storeBackingField(property)
             }
             if (receiverTypeRef != null) {

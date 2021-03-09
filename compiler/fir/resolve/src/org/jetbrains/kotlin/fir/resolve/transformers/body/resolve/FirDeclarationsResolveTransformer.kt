@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.fir.resolve.inference.extractLambdaInfoFromFunctiona
 import org.jetbrains.kotlin.fir.resolve.inference.isSuspendFunctionType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.*
-import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirMemberTypeParameterScope
 import org.jetbrains.kotlin.fir.symbols.constructStarProjectedType
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
@@ -427,14 +426,11 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
     private fun transformAnonymousFunctionWithLambdaResolution(
         anonymousFunction: FirAnonymousFunction, lambdaResolution: ResolutionMode.LambdaResolution
     ): FirAnonymousFunction {
-        val receiverTypeRef = anonymousFunction.receiverTypeRef
         fun transform(): FirAnonymousFunction {
             val expectedReturnType =
                 lambdaResolution.expectedReturnTypeRef ?: anonymousFunction.returnTypeRef.takeUnless { it is FirImplicitTypeRef }
 
-            val result = context.withLambdaBeingAnalyzedInDependentContext(anonymousFunction.symbol) {
-                transformFunction(anonymousFunction, withExpectedType(expectedReturnType)).single as FirAnonymousFunction
-            }
+            val result = transformFunction(anonymousFunction, withExpectedType(expectedReturnType)).single as FirAnonymousFunction
 
             val body = result.body
             if (result.returnTypeRef is FirImplicitTypeRef && body != null) {
@@ -459,12 +455,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             return result
         }
 
-        val label = anonymousFunction.label
-        return if (label != null || receiverTypeRef is FirResolvedTypeRef) {
-            withLabelAndReceiverType(label?.name?.let { Name.identifier(it) }, anonymousFunction, receiverTypeRef?.coneTypeSafe()) {
-                transform()
-            }
-        } else {
+        return context.withAnonymousFunction(anonymousFunction, components, isInDependentContext = true) {
             transform()
         }
     }
@@ -536,20 +527,18 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         function: FirFunction<F>,
         data: ResolutionMode
     ): CompositeTransformResult<FirStatement> {
-        return withNewLocalScope {
-            val functionIsNotAnalyzed = transformerPhase != function.resolvePhase
-            if (functionIsNotAnalyzed) {
-                dataFlowAnalyzer.enterFunction(function)
-            }
-            @Suppress("UNCHECKED_CAST")
-            transformDeclarationContent(function, data).also {
-                if (functionIsNotAnalyzed) {
-                    val result = it.single as FirFunction<*>
-                    val controlFlowGraphReference = dataFlowAnalyzer.exitFunction(result)
-                    result.replaceControlFlowGraphReference(controlFlowGraphReference)
-                }
-            } as CompositeTransformResult<FirStatement>
+        val functionIsNotAnalyzed = transformerPhase != function.resolvePhase
+        if (functionIsNotAnalyzed) {
+            dataFlowAnalyzer.enterFunction(function)
         }
+        @Suppress("UNCHECKED_CAST")
+        return transformDeclarationContent(function, data).also {
+            if (functionIsNotAnalyzed) {
+                val result = it.single as FirFunction<*>
+                val controlFlowGraphReference = dataFlowAnalyzer.exitFunction(result)
+                result.replaceControlFlowGraphReference(controlFlowGraphReference)
+            }
+        } as CompositeTransformResult<FirStatement>
     }
 
     override fun transformConstructor(constructor: FirConstructor, data: ResolutionMode): CompositeTransformResult<FirDeclaration> {
@@ -711,8 +700,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                 )
                 lambda = lambda.transformValueParameters(ImplicitToErrorTypeTransformer, null)
                 val bodyExpectedType = returnTypeRefFromResolvedAtom ?: expectedTypeRef
-                val labelName = lambda.label?.name?.let { Name.identifier(it) }
-                withLabelAndReceiverType(labelName, lambda, lambda.receiverTypeRef?.coneType) {
+                context.withAnonymousFunction(lambda, components) {
                     lambda = transformFunction(lambda, withExpectedType(bodyExpectedType)).single as FirAnonymousFunction
                 }
                 // To separate function and separate commit
