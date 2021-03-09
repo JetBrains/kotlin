@@ -11,6 +11,7 @@ dependencies {
     compileOnly(project(":compiler:psi"))
     compileOnly(project(":compiler:plugin-api"))
     compileOnly(project(":compiler:cli"))
+    compileOnly(project(":compiler:ir.compiler.wjs"))
     compileOnly(project(":compiler:backend.js"))
     compileOnly(project(":core:descriptors.runtime"))
     compileOnly(project(":compiler:ir.tree.impl"))
@@ -21,7 +22,6 @@ dependencies {
     compile(project(":kotlin-util-klib"))
     compile(project(":kotlin-scripting-jvm"))
     compile(project(":kotlin-scripting-compiler-impl"))
-    compile(project(":compiler:ir.compiler.wjs"))
     compile(kotlinStdlib())
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 
@@ -32,6 +32,7 @@ dependencies {
     testCompile(project(":compiler:cli-common"))
     testCompile(project(":compiler:frontend.java"))
     testCompile(project(":compiler:backend.js"))
+    testCompile(project(":compiler:ir.compiler.wjs"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(commonDep("junit:junit"))
 
