@@ -11,5 +11,5 @@ enum class MyEnum {
     A
 }
 
-<!INAPPLICABLE_CANDIDATE!>@AnnE(Test())<!>
+<!INAPPLICABLE_CANDIDATE!>@AnnE(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>Test()<!>)<!>
 class Test2

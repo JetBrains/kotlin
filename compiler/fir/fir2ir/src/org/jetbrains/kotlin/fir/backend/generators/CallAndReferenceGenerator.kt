@@ -465,7 +465,7 @@ class CallAndReferenceGenerator(
                             ((calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirFunctionSymbol<*>)?.fir
                         }
                         val valueParameters = function?.valueParameters
-                        val argumentMapping = call.argumentMapping
+                        val argumentMapping = call.resolvedArgumentMapping
                         val substitutor = (call as? FirFunctionCall)?.buildSubstitutorByCalledFunction(function) ?: ConeSubstitutor.Empty
                         if (argumentMapping != null && (annotationMode || argumentMapping.isNotEmpty())) {
                             if (valueParameters != null) {
