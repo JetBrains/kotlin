@@ -135,6 +135,14 @@ val Project.globalTestArgs: List<String>
 val Project.testTargetSupportsCodeCoverage: Boolean
     get() = this.testTarget.supportsCodeCoverage()
 
+fun projectOrFiles(proj:Project, notation: String):Any?{
+    val propertyMapper = proj.findProperty("notationMapping") ?: return proj.project(notation)
+    val mapping = (propertyMapper as? Map<String, String>)?.get(notation) ?: return proj.project(notation)
+    return proj.files(mapping).also {
+        proj.logger.info("MAPPING: $notation -> ${it.asPath}")
+    }
+}
+
 //endregion
 
 /**
