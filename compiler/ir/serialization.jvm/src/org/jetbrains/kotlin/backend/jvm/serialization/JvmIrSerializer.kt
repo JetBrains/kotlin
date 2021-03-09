@@ -57,7 +57,7 @@ class JvmIrSerializer(
     private fun serializeAuxTables(): JvmIr.AuxTables {
         val proto = JvmIr.AuxTables.newBuilder()
         protoTypeArray.forEach { proto.addType(it.toByteString()) }
-        protoIdSignatureArray.forEach { proto.addType(it.toByteString()) }
+        protoIdSignatureArray.forEach { proto.addSignature(it.toByteString()) }
         protoStringArray.forEach { proto.addString(ByteString.copyFromUtf8(it)) }
         protoBodyArray.forEach { proto.addBody(ByteString.copyFrom(it.toByteArray())) }
         return proto.build()

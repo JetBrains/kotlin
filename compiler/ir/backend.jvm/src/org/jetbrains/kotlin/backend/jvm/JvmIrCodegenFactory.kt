@@ -137,7 +137,10 @@ class JvmIrCodegenFactory(private val phaseConfig: PhaseConfig) : CodegenFactory
             }
             irLinker.deserializeIrModuleHeader(it, kotlinLibrary)
         }
-        val irProviders = listOf(SingleClassJvmIrProvider(psi2irContext.moduleDescriptor), irLinker)
+        val irProviders = listOf(
+            SingleClassJvmIrProvider(psi2irContext.moduleDescriptor, psi2irContext.irBuiltIns, symbolTable, psi2irContext.irFactory),
+            irLinker
+        )
 
         val irModuleFragment = psi2ir.generateModuleFragment(psi2irContext, files, irProviders, pluginExtensions, expectDescriptorToSymbol = null)
         irLinker.postProcess()

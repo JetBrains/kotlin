@@ -58,7 +58,7 @@ class IrDeclarationDeserializer(
     private val symbolTable: SymbolTable,
     private val irFactory: IrFactory,
     private val fileReader: IrLibraryFile,
-    file: IrFile,
+    packageFragment: IrPackageFragment,
     private val allowErrorNodes: Boolean,
     private val deserializeInlineFunctions: Boolean,
     private var deserializeBodies: Boolean,
@@ -154,7 +154,7 @@ class IrDeclarationDeserializer(
         }
     }
 
-    private var currentParent: IrDeclarationParent = file
+    private var currentParent: IrDeclarationParent = packageFragment
 
     private inline fun <T : IrDeclarationParent> T.usingParent(block: T.() -> Unit): T =
         this.apply {
