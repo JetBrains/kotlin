@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.ByteString
 
 class JvmIrSerializer(
@@ -47,17 +48,10 @@ class JvmIrSerializer(
 
     private fun serializeAuxTables(): JvmIr.AuxTables {
         val proto = JvmIr.AuxTables.newBuilder()
-        proto.addAllType(protoTypeArray)
-        proto.addAllSignature(protoIdSignatureArray)
-        proto.addAllString(protoStringArray)
-        for (body in protoBodyArray) {
-            val bodyProto = JvmIr.XStatementOrExpression.newBuilder()
-            when (body) {
-                is XStatementOrExpression.XStatement -> bodyProto.statement = body.toProtoStatement()
-                is XStatementOrExpression.XExpression -> bodyProto.expression = body.toProtoExpression()
-            }
-            proto.addBody(bodyProto.build())
-        }
+        protoTypeArray.forEach { proto.addType(it.toByteString()) }
+        protoIdSignatureArray.forEach { proto.addSignature(it.toByteString()) }
+        protoStringArray.forEach { proto.addString(ByteString.copyFromUtf8(it)) }
+        protoBodyArray.forEach { proto.addBody(ByteString.copyFrom(it.toByteArray())) }
         return proto.build()
     }
 }

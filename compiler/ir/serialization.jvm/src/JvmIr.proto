@@ -55,10 +55,10 @@ message XStatementOrExpression {
 //}
 
 message AuxTables {
-  repeated common.serialization.proto.IrType type = 1;
-  repeated common.serialization.proto.IdSignature signature = 2;
-  repeated string string = 3;
-  repeated XStatementOrExpression body = 4;
+  repeated bytes type = 1;
+  repeated bytes signature = 2;
+  repeated bytes string = 3;
+  repeated bytes body = 4;
 
 //  required TypeTable type_table = 2;
 //  required SignatureTable signature_table = 1;
