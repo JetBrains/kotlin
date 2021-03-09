@@ -2,16 +2,12 @@
  * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
+import org.jetbrains.kotlin.UtilsKt
+
 buildscript {
     apply from: "$rootDir/kotlin-native/gradle/kotlinGradlePlugin.gradle"
 
-    ext.useCustomDist = project.hasProperty("org.jetbrains.kotlin.native.home") || project.hasProperty("konan.home")
-    if (!useCustomDist) {
-        ext.setProperty("org.jetbrains.kotlin.native.home", distDir.absolutePath)
-    }
-    if (project.hasProperty("konan.home")) {
-        ext.setProperty("org.jetbrains.kotlin.native.home", project.getProperty("konan.home"))
-    }
+    ext.useCustomDist = UtilsKt.getUseCustomDist(project)
 }
 
 apply plugin: 'kotlin'
@@ -55,11 +51,11 @@ dependencies {
 test {
     dependsOn 'cleanTest'
     // Specify a path to the distribution that is used in the tests.
-    systemProperty('konan.home', getProperty("org.jetbrains.kotlin.native.home"))
+    systemProperty('konan.home', UtilsKt.getKotlinNativeDist(project))
     dependsOn konanArtifacts.collect { it.getByTarget('host') }
     if (useCustomDist) {
         // Use the klib utility from the distribution
-        def distClasspath = fileTree("${project.getProperty("org.jetbrains.kotlin.native.home")}/konan/lib") {
+        def distClasspath = fileTree("${UtilsKt.getKotlinNativeDist(project)}/konan/lib") {
             include "**/*.jar"
         }
         classpath = distClasspath + sourceSets.test.runtimeClasspath - sourceSets.main.runtimeClasspath
