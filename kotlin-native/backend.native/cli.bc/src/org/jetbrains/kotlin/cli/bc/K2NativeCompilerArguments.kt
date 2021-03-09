@@ -181,6 +181,9 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     )
     var libraryToAddToCache: String? = null
 
+    @Argument(value = "-Xexport-kdoc", description = "Export KDoc in framework header")
+    var exportKDoc: Boolean = false
+
     @Argument(value = "-Xprint-bitcode", deprecatedName = "--print_bitcode", description = "Print llvm bitcode")
     var printBitCode: Boolean = false
 

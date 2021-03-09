@@ -74,6 +74,7 @@ internal class K2MetadataKlibSerializer(private val metadataVersion: BuiltInsBin
             configuration.languageVersionSettings,
             metadataVersion,
             project,
+            exportKDoc = false,
             skipExpects = false,
             includeOnlyModuleContent = true
         ).serializeModule(module)

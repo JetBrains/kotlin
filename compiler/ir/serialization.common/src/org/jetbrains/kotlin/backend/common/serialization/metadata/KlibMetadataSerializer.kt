@@ -34,6 +34,7 @@ abstract class KlibMetadataSerializer(
     val languageVersionSettings: LanguageVersionSettings,
     val metadataVersion: BinaryVersion,
     val project: Project?,
+    val exportKDoc: Boolean = false,
     val skipExpects: Boolean = false,
     val includeOnlyModuleContent: Boolean = false,
     private val allowErrorTypes: Boolean
@@ -53,7 +54,8 @@ abstract class KlibMetadataSerializer(
             languageVersionSettings,
             metadataVersion,
             ApproximatingStringTable(),
-            allowErrorTypes
+            allowErrorTypes,
+            exportKDoc
         )
         return SerializerContext(
             extension,

@@ -94,7 +94,9 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("arguments for clang")
         val ALLOCATION_MODE: CompilerConfigurationKey<String>
                 = CompilerConfigurationKey.create("allocation mode")
-        val PRINT_BITCODE: CompilerConfigurationKey<Boolean> 
+        val EXPORT_KDOC: CompilerConfigurationKey<Boolean>
+                = CompilerConfigurationKey.create("export KDoc into klib and framework")
+        val PRINT_BITCODE: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create("print bitcode")
         val PRINT_DESCRIPTORS: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create("print descriptors")

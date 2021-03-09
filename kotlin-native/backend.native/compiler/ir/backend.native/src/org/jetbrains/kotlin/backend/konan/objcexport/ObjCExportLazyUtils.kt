@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.backend.konan.objcexport
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.psi.KtFile
 
-internal fun ObjCExportLazy.dumpObjCHeader(files: Collection<KtFile>, outputFile: String) {
+internal fun ObjCExportLazy.dumpObjCHeader(files: Collection<KtFile>, outputFile: String, shouldExportKDoc: Boolean) {
     val lines = (this.generateBase() + files.flatMap { this.translate(it) })
-            .flatMap { StubRenderer.render(it) + listOf("") }
+            .flatMap { StubRenderer.render(it, shouldExportKDoc) + listOf("") }
 
     File(outputFile).writeLines(lines)
 }

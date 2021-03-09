@@ -247,7 +247,7 @@ void processUnhandledKotlinException(KRef throwable) {
 
 RUNTIME_NORETURN void TerminateWithUnhandledException(KRef throwable) {
   concurrentTerminateWrapper([=]() {
-      processUnhandledKotlinException(throwable);
+    processUnhandledKotlinException(throwable);
     konan::abort();
   });
 }

@@ -60,17 +60,20 @@ extend org.jetbrains.kotlin.metadata.Package {
 extend org.jetbrains.kotlin.metadata.Class {
   repeated org.jetbrains.kotlin.metadata.Annotation class_annotation = 170;
   optional int32 class_file = 175 [(org.jetbrains.kotlin.metadata.skip_in_comparison) = true];
+  optional string class_kdoc = 176;
   optional DescriptorUniqId class_uniq_id = 171;
 }
 
 extend org.jetbrains.kotlin.metadata.Constructor {
   repeated org.jetbrains.kotlin.metadata.Annotation constructor_annotation = 170;
+  optional string constructor_kdoc = 173;
   optional DescriptorUniqId constructor_uniq_id = 172;
 }
 
 extend org.jetbrains.kotlin.metadata.Function {
   repeated org.jetbrains.kotlin.metadata.Annotation function_annotation = 170;
   optional int32 function_file = 172 [(org.jetbrains.kotlin.metadata.skip_in_comparison) = true];
+  optional string function_kdoc = 174;
   optional DescriptorUniqId function_uniq_id = 173;
 }
 
@@ -80,6 +83,7 @@ extend org.jetbrains.kotlin.metadata.Property {
   repeated org.jetbrains.kotlin.metadata.Annotation property_setter_annotation = 178;
   optional org.jetbrains.kotlin.metadata.Annotation.Argument.Value compile_time_value = 173;
   optional int32 property_file = 176 [(org.jetbrains.kotlin.metadata.skip_in_comparison) = true];
+  optional string property_kdoc = 180;
   optional DescriptorUniqId property_uniq_id = 179;
 }
 
