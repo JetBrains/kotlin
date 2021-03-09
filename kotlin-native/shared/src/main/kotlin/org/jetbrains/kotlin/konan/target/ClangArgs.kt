@@ -43,7 +43,8 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
     private val binDir = when (HostManager.host) {
         KonanTarget.LINUX_X64 -> "$absoluteTargetToolchain/bin"
         KonanTarget.MINGW_X64 -> "$absoluteTargetToolchain/bin"
-        KonanTarget.MACOS_X64 -> "$absoluteTargetToolchain/usr/bin"
+        KonanTarget.MACOS_X64,
+        KonanTarget.MACOS_ARM64 -> "$absoluteTargetToolchain/usr/bin"
         else -> throw TargetSupportException("Unexpected host platform")
     }
     // TODO: Use buildList
@@ -243,7 +244,8 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
             args.remove("-nostdinc") // HACK: over gradle-5.1.
             when (HostManager.host) {
                 KonanTarget.LINUX_X64 -> args.remove("/usr/include/x86_64-linux-gnu")  // HACK: over gradle-4.4.
-                KonanTarget.MACOS_X64 -> {
+                KonanTarget.MACOS_X64,
+                KonanTarget.MACOS_ARM64 -> {
                     val indexToRemove = args.indexOf(args.find { it.contains("MacOSX.platform")})  // HACK: over gradle-4.7.
                     if (indexToRemove != -1) {
                         args.removeAt(indexToRemove - 1) // drop -I.

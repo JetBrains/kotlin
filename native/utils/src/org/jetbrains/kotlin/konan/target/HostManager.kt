@@ -46,7 +46,7 @@ open class HostManager(
         return targets[resolveAlias(name)] ?: throw TargetSupportException("Unknown target name: $name")
     }
 
-    val enabledRegularByHost: Map<KonanTarget, Set<KonanTarget>> = mapOf(
+    private val enabledRegularByHost: Map<KonanTarget, Set<KonanTarget>> = mapOf(
         LINUX_X64 to setOf(
             LINUX_X64,
             LINUX_ARM32_HFP,
@@ -91,13 +91,18 @@ open class HostManager(
             ANDROID_ARM32,
             ANDROID_ARM64,
             WASM32
+        ),
+        MACOS_ARM64 to setOf(
+            MACOS_ARM64,
+            IOS_ARM64
         )
     )
 
-    val enabledExperimentalByHost: Map<KonanTarget, Set<KonanTarget>> = mapOf(
+    private val enabledExperimentalByHost: Map<KonanTarget, Set<KonanTarget>> = mapOf(
         LINUX_X64 to setOf(MINGW_X86, MINGW_X64) + zephyrSubtargets,
         MACOS_X64 to setOf(MINGW_X86, MINGW_X64) + zephyrSubtargets,
-        MINGW_X64 to setOf<KonanTarget>() + zephyrSubtargets
+        MINGW_X64 to setOf<KonanTarget>() + zephyrSubtargets,
+        MACOS_ARM64 to emptySet()
     )
 
     val enabledByHost: Map<KonanTarget, Set<KonanTarget>> by lazy {
@@ -118,13 +123,13 @@ open class HostManager(
         enabledExperimentalByHost[host]?.toList() ?: throw TargetSupportException("Unknown host platform: $host")
     }
 
-    val enabled : List<KonanTarget>
+    val enabled: List<KonanTarget>
         get() = if (experimental) enabledRegular + enabledExperimental else enabledRegular
 
     fun isEnabled(target: KonanTarget) = enabled.contains(target)
 
     companion object {
-        fun host_os(): String {
+        private fun hostOs(): String {
             val javaOsName = System.getProperty("os.name")
             return when {
                 javaOsName == "Mac OS X" -> "osx"
@@ -136,34 +141,37 @@ open class HostManager(
 
         @JvmStatic
         fun simpleOsName(): String {
-            val hostOs = host_os()
+            val hostOs = hostOs()
             return if (hostOs == "osx") "macos" else hostOs
         }
 
         val jniHostPlatformIncludeDir: String
             get() = when (host) {
-                MACOS_X64 -> "darwin"
+                MACOS_X64,
+                MACOS_ARM64 -> "darwin"
                 LINUX_X64 -> "linux"
                 MINGW_X64 -> "win32"
                 else -> throw TargetSupportException("Unknown host: $host.")
             }
 
-        fun host_arch(): String {
-            val javaArch = System.getProperty("os.arch")
-            return when (javaArch) {
+        private fun hostArchitecture(): String =
+            when (val javaArch = System.getProperty("os.arch")) {
                 "x86_64" -> "x86_64"
                 "amd64" -> "x86_64"
-                "arm64" -> "arm64"
+                "arm64" -> "aarch64"
+                "aarch64" -> "aarch64"
                 else -> throw TargetSupportException("Unknown hardware platform: $javaArch")
             }
-        }
 
-        val host: KonanTarget = when (host_os()) {
-            "osx" -> MACOS_X64
-            "linux" -> LINUX_X64
-            "windows" -> MINGW_X64
-            else -> throw TargetSupportException("Unknown host target: ${host_os()} ${host_arch()}")
-        }
+        private val hostMapping: Map<Pair<String, String>, KonanTarget> = mapOf(
+            Pair("osx", "x86_64") to MACOS_X64,
+            Pair("osx", "aarch64") to MACOS_ARM64,
+            Pair("linux", "x86_64") to LINUX_X64,
+            Pair("windows", "x86_64") to MINGW_X64
+        )
+
+        val host: KonanTarget = hostMapping[hostOs() to hostArchitecture()]
+            ?: throw TargetSupportException("Unknown host target: ${hostOs()} ${hostArchitecture()}")
 
         // Note Hotspot-specific VM option enforcing C1-only, critical for decent compilation speed.
         val defaultJvmArgs = listOf("-XX:TieredStopAtLevel=1", "-ea", "-Dfile.encoding=UTF-8")
