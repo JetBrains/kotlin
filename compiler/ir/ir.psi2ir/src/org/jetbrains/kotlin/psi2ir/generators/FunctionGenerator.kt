@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.Name.isValidIdentifier
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.pureEndOffset
 import org.jetbrains.kotlin.psi.psiUtil.pureStartOffset
@@ -137,8 +136,8 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
     private fun generateDefaultAccessorBody(
         accessor: PropertyAccessorDescriptor,
         irAccessor: IrSimpleFunction
-    ) =
-        if (accessor.modality == Modality.ABSTRACT)
+    ): IrBlockBody? =
+        if (accessor.modality == Modality.ABSTRACT || accessor.correspondingProperty.isExpect)
             null
         else
             when (accessor) {
