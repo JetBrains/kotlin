@@ -28,28 +28,28 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation project(":kotlin-stdlib-common")
+                implementation UtilsKt.projectOrFiles(project, ':kotlin-stdlib-common')
             }
             kotlin.srcDir 'src/main/kotlin'
 
         }
         commonTest {
             dependencies {
-                implementation project(":kotlin-test:kotlin-test-common")
-                implementation project(":kotlin-test:kotlin-test-annotations-common")
+                implementation UtilsKt.projectOrFiles(project, ":kotlin-test:kotlin-test-common")
+                implementation UtilsKt.projectOrFiles(project, ":kotlin-test:kotlin-test-annotations-common")
             }
             kotlin.srcDir 'src/tests'
         }
         jvm().compilations.main.defaultSourceSet {
             dependencies {
-                implementation project(":kotlin-stdlib-jdk8")
+                implementation UtilsKt.projectOrFiles(project, ":kotlin-stdlib-jdk8")
             }
             kotlin.srcDir 'src/main/kotlin-jvm'
         }
         // JVM-specific tests and their dependencies:
         jvm().compilations.test.defaultSourceSet {
             dependencies {
-                implementation project(":kotlin-test:kotlin-test-junit")
+                implementation UtilsKt.projectOrFiles(project, ":kotlin-test:kotlin-test-junit")
             }
         }
 
