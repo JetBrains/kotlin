@@ -17,7 +17,7 @@ object CirClassRecursionMarker : CirClass, CirRecursionMarker {
         set(_) = unsupported()
     override val isCompanion get() = unsupported()
     override val isData get() = unsupported()
-    override val isInline get() = unsupported()
+    override val isValue get() = unsupported()
     override val isInner get() = unsupported()
     override val isExternal get() = unsupported()
     override val supertypes get() = unsupported()

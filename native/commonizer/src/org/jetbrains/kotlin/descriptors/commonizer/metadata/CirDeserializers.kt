@@ -260,7 +260,7 @@ object CirDeserializers {
         companion = source.companionObject?.let(CirName::create),
         isCompanion = Flag.Class.IS_COMPANION_OBJECT(source.flags),
         isData = Flag.Class.IS_DATA(source.flags),
-        isInline = Flag.Class.IS_INLINE(source.flags),
+        isValue = Flag.Class.IS_VALUE(source.flags),
         isInner = Flag.Class.IS_INNER(source.flags),
         isExternal = Flag.Class.IS_EXTERNAL(source.flags)
     ).apply {
@@ -283,7 +283,7 @@ object CirDeserializers {
         companion = null,
         isCompanion = false,
         isData = false,
-        isInline = false,
+        isValue = false,
         isInner = false,
         isExternal = false
     ).apply {

@@ -121,7 +121,7 @@ private class TypeAliasExpectClassCommonizer : AbstractStandardCommonizer<CirTyp
         companion = null,
         isCompanion = false,
         isData = false,
-        isInline = false,
+        isValue = false,
         isInner = false,
         isExternal = false
     )

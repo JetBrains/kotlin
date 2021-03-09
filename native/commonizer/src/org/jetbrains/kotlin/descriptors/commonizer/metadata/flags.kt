@@ -90,7 +90,7 @@ internal fun CirClass.classFlags(isExpect: Boolean): Flags =
         Flag.Class.IS_DATA.takeIf { isData },
         Flag.Class.IS_EXTERNAL.takeIf { isExternal },
         Flag.Class.IS_EXPECT.takeIf { isExpect },
-        Flag.Class.IS_VALUE.takeIf { isInline },
+        Flag.Class.IS_VALUE.takeIf { isValue },
         //Flag.Class.IS_FUN.takeIf { false }
     )
 
@@ -104,9 +104,9 @@ private inline val CirHasAnnotations.hasAnnotationsFlag: Flag?
     get() = if (annotations.isNotEmpty()) Flag.Common.HAS_ANNOTATIONS else null
 
 // Since 1.4.30 a special @JvmInline annotation is generated to distinguish JVM-inline from value classes.
-// This has an effect on class serialization: Every class with isInline == true automatically gets HAS_ANNOTATIONS flag.
+// This has an effect on class serialization: Every class with isValue == true automatically gets HAS_ANNOTATIONS flag.
 private inline val CirClass.hasAnnotationsFlag: Flag?
-    get() = if (annotations.isNotEmpty() || isInline) Flag.Common.HAS_ANNOTATIONS else null
+    get() = if (annotations.isNotEmpty() || isValue) Flag.Common.HAS_ANNOTATIONS else null
 
 private inline val CirProperty.hasAnnotationsFlag: Flag?
     get() = if (annotations.isNotEmpty() || !backingFieldAnnotations.isNullOrEmpty() || !delegateFieldAnnotations.isNullOrEmpty())

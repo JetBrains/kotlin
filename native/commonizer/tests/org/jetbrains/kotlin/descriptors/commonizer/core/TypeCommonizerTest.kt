@@ -483,7 +483,7 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
                         companion = null,
                         isCompanion = false,
                         isData = false,
-                        isInline = false,
+                        isValue = false,
                         isInner = false,
                         isExternal = false
                     )

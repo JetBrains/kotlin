@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 interface CirClass : CirClassifier, CirContainingClass {
     var companion: CirName? // null means no companion object
     val isCompanion: Boolean
-    val isInline: Boolean
+    val isValue: Boolean
     val isInner: Boolean
     val isExternal: Boolean
     val supertypes: Collection<CirType>
@@ -31,7 +31,7 @@ interface CirClass : CirClassifier, CirContainingClass {
             companion: CirName?,
             isCompanion: Boolean,
             isData: Boolean,
-            isInline: Boolean,
+            isValue: Boolean,
             isInner: Boolean,
             isExternal: Boolean
         ): CirClass = CirClassImpl(
@@ -44,7 +44,7 @@ interface CirClass : CirClassifier, CirContainingClass {
             companion = companion,
             isCompanion = isCompanion,
             isData = isData,
-            isInline = isInline,
+            isValue = isValue,
             isInner = isInner,
             isExternal = isExternal
         )
@@ -61,7 +61,7 @@ data class CirClassImpl(
     override var companion: CirName?,
     override val isCompanion: Boolean,
     override val isData: Boolean,
-    override val isInline: Boolean,
+    override val isValue: Boolean,
     override val isInner: Boolean,
     override val isExternal: Boolean,
 ) : CirClass {

@@ -17,7 +17,7 @@ class ClassCommonizer(classifiers: CirKnownClassifiers) : AbstractStandardCommon
     private val modality = ModalityCommonizer()
     private val visibility = VisibilityCommonizer.equalizing()
     private var isInner = false
-    private var isInline = false
+    private var isValue = false
     private var isCompanion = false
 
     override fun commonizationResult() = CirClass.create(
@@ -30,7 +30,7 @@ class ClassCommonizer(classifiers: CirKnownClassifiers) : AbstractStandardCommon
         companion = null,
         isCompanion = isCompanion,
         isData = false,
-        isInline = isInline,
+        isValue = isValue,
         isInner = isInner,
         isExternal = false
     )
@@ -39,14 +39,14 @@ class ClassCommonizer(classifiers: CirKnownClassifiers) : AbstractStandardCommon
         name = first.name
         kind = first.kind
         isInner = first.isInner
-        isInline = first.isInline
+        isValue = first.isValue
         isCompanion = first.isCompanion
     }
 
     override fun doCommonizeWith(next: CirClass) =
         kind == next.kind
                 && isInner == next.isInner
-                && isInline == next.isInline
+                && isValue == next.isValue
                 && isCompanion == next.isCompanion
                 && modality.commonizeWith(next.modality)
                 && visibility.commonizeWith(next)
