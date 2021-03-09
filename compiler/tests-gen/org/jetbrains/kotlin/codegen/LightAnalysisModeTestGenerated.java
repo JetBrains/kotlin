@@ -20804,6 +20804,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/multiplatform/expectClassInJvmMultifileFacade.kt");
         }
 
+        @TestMetadata("expectProperty.kt")
+        public void testExpectProperty() throws Exception {
+            runTest("compiler/testData/codegen/box/multiplatform/expectProperty.kt");
+        }
+
         @TestMetadata("noArgActualConstructor.kt")
         public void testNoArgActualConstructor() throws Exception {
             runTest("compiler/testData/codegen/box/multiplatform/noArgActualConstructor.kt");
