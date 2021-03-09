@@ -78,7 +78,8 @@ val mirroredUrls = listOf(
     "https://www.jetbrains.com/intellij-repository/nightly",
     "https://www.jetbrains.com/intellij-repository/releases",
     "https://www.jetbrains.com/intellij-repository/snapshots",
-    "https://kotlin.bintray.com/kotlinx"
+    "https://kotlin.bintray.com/kotlinx",
+    "https://nodejs.org/dist"
 )
 
 val aliases = mapOf(
@@ -200,7 +201,9 @@ tasks.named("checkBuild").configure {
     dependsOn(checkRepositories)
 }
 
-if (cacheRedirectorEnabled()) {
-    logger.info("Redirecting repositories for $displayName")
-    repositories.redirect()
+afterEvaluate {
+    if (cacheRedirectorEnabled()) {
+        logger.info("Redirecting repositories for $displayName")
+        repositories.redirect()
+    }
 }
