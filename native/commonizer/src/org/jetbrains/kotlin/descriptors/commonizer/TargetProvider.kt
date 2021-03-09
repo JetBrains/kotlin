@@ -18,7 +18,12 @@ interface ModulesProvider {
     open class ModuleInfo(
         val name: String,
         val originalLocation: File,
-        val isCInterop: Boolean
+        val cInteropAttributes: CInteropModuleAttributes?
+    )
+
+    class CInteropModuleAttributes(
+        val mainPackage: String,
+        val exportedForwardDeclarations: Collection<String>
     )
 
     /**

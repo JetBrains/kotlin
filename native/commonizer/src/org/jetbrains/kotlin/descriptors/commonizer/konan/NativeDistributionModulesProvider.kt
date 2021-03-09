@@ -17,8 +17,8 @@ internal class NativeDistributionModulesProvider(libraries: Collection<NativeLib
         name: String,
         originalLocation: File,
         val dependencies: Set<String>,
-        isCInterop: Boolean
-    ) : ModuleInfo(name, originalLocation, isCInterop)
+        cInteropAttributes: ModulesProvider.CInteropModuleAttributes?
+    ) : ModuleInfo(name, originalLocation, cInteropAttributes)
 
     private val libraryMap: Map<String, NativeLibrary>
     private val moduleInfoMap: Map<String, NativeModuleInfo>
@@ -34,8 +34,13 @@ internal class NativeDistributionModulesProvider(libraries: Collection<NativeLib
             val location = File(library.library.libraryFile.path)
             val dependencies = manifestData.dependencies.toSet()
 
+            val cInteropAttributes = if (manifestData.isInterop) {
+                val packageFqName = manifestData.packageFqName ?: error("Main package FQ name not specified for module $name")
+                ModulesProvider.CInteropModuleAttributes(packageFqName, manifestData.exportForwardDeclarations)
+            } else null
+
             libraryMap.put(name, library)?.let { error("Duplicated libraries: $name") }
-            moduleInfoMap[name] = NativeModuleInfo(name, location, dependencies, manifestData.isInterop)
+            moduleInfoMap[name] = NativeModuleInfo(name, location, dependencies, cInteropAttributes)
         }
 
         this.libraryMap = libraryMap

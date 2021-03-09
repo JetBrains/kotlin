@@ -47,7 +47,7 @@ internal class CirProvidedClassifiersByModules private constructor(
             var hasForwardDeclarations = false
 
             modulesProvider.loadModuleInfos().forEach { moduleInfo ->
-                if (moduleInfo.isCInterop) {
+                if (moduleInfo.cInteropAttributes != null) {
                     // this is a C-interop module
                     hasForwardDeclarations = true
                 }
@@ -137,7 +137,7 @@ private fun readClass(
         typeParameterIndexOffset = typeParameterIndexOffset
     )
     val visibility = ProtoEnumFlags.visibility(Flags.VISIBILITY.get(classProto.flags))
-    val clazz = CirProvided.Class(typeParameters, visibility)
+    val clazz = CirProvided.RegularClass(typeParameters, visibility)
 
     consumer(classId, clazz)
 
