@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.utils
 
-class Interner<T : Any> {
-    private val pool = com.intellij.util.containers.Interner.createWeakInterner<T>()
+import com.intellij.util.containers.OpenTHashSet
 
-    fun intern(value: T): T = pool.intern(value)
+class Interner<T : Any> {
+    private val pool = OpenTHashSet<T>()
+
+    fun intern(value: T): T = pool.getOrAdd(value)
 }
