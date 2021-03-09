@@ -6,19 +6,9 @@
 package kotlinx.validation.test
 
 import kotlinx.validation.api.*
-import kotlinx.validation.api.BaseKotlinGradleTest
-import kotlinx.validation.api.assertTaskFailure
-import kotlinx.validation.api.assertTaskSuccess
-import kotlinx.validation.api.buildGradleKts
-import kotlinx.validation.api.kotlin
-import kotlinx.validation.api.readFileList
-import kotlinx.validation.api.resolve
-import kotlinx.validation.api.runner
-import kotlinx.validation.api.test
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.*
 import org.junit.Test
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 internal class DefaultConfigTests : BaseKotlinGradleTest() {
 
@@ -28,13 +18,13 @@ internal class DefaultConfigTests : BaseKotlinGradleTest() {
             buildGradleKts {
                 resolve("examples/gradle/base/withPlugin.gradle.kts")
             }
-
             runner {
                 arguments.add(":apiCheck")
             }
         }
 
         runner.buildAndFail().apply {
+            assertTrue { output.contains("Please ensure that ':apiDump' was executed") }
             assertTaskFailure(":apiCheck")
         }
     }

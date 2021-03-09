@@ -134,7 +134,12 @@ private fun Project.configureCheckTasks(
         isEnabled = apiCheckEnabled(extension) && apiBuild.map { it.enabled }.getOrElse(true)
         group = "verification"
         description = "Checks signatures of public API against the golden value in API folder for $projectName"
-        projectApiDir = apiCheckDir
+        projectApiDir = if (apiCheckDir.exists()) {
+            apiCheckDir
+        } else {
+            nonExistingProjectApiDir = apiCheckDir.toString()
+            null
+        }
         this.apiBuildDir = apiBuildDir
         dependsOn(apiBuild)
     }
