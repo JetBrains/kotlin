@@ -1114,12 +1114,13 @@ val SymbolTable.allUnbound: Set<IrSymbol>
         return r.filter { !it.isBound }.toSet()
     }
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 fun SymbolTable.noUnboundLeft(message: String) {
     val unbound = this.allUnbound
     assert(unbound.isEmpty()) {
         "$message\n" +
                 unbound.joinToString("\n") {
-                    "$it ${it.signature?.toString() ?: "(NON-PUBLIC API)"}"
+                    "$it ${it.signature?.toString() ?: "(NON-PUBLIC API)"}: ${it.descriptor}"
                 }
     }
 }
