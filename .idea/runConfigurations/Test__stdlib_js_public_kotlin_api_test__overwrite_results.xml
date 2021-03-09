@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Test: stdlib-js public kotlin api test, overwrite results" type="GradleRunConfiguration" factoryName="Gradle">
+  <configuration default="false" name="Test: stdlib-js public kotlin api test, overwrite results" type="GradleRunConfiguration" factoryName="Gradle" folderName="Stdlib">
     <ExternalSystemSettings>
       <option name="executionName" />
       <option name="externalProjectPath" value="$PROJECT_DIR$" />
