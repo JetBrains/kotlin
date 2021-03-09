@@ -277,14 +277,6 @@ task distSources {
     dependsOn(distEndorsedSources)
 }
 
-task distKotlinxCliJvm(type: Copy) {
-    dependsOn(":kotlin-native:endorsedLibraries:jvmJar")
-    destinationDir distDir
-    from(project(":kotlin-native:endorsedLibraries:kotlinx.cli").file("build/libs")) {
-        into("libs")
-    }
-}
-
 task detectJarCollision(type: CollisionDetector) {
     configurations = [project.configurations.distPack]
     resolvingRules["META-INF/kotlin-util-klib.kotlin_module"] = "kotlin-compiler"
