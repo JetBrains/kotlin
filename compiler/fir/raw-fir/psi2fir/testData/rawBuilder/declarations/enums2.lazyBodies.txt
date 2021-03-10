@@ -26,7 +26,9 @@ FILE: enums2.kt
                 super<R|SomeEnum|>(O1#)
             }
 
-            public? open? override fun check(y: Some): Boolean { LAZY_BLOCK }
+            public? open? override fun check(y: Some): Boolean {
+                ^check Boolean(true)
+            }
 
         }
 
@@ -35,7 +37,9 @@ FILE: enums2.kt
                 super<R|SomeEnum|>(O2#)
             }
 
-            public? open? override fun check(y: Some): Boolean { LAZY_BLOCK }
+            public? open? override fun check(y: Some): Boolean {
+                ^check ==(y#, O2#)
+            }
 
         }
 

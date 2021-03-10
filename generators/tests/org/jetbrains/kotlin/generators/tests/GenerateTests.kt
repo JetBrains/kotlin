@@ -1069,6 +1069,12 @@ fun main(args: Array<String>) {
             }
         }
 
+        testGroup("idea/idea-frontend-fir/idea-fir-low-level-api/tests", "compiler/fir/raw-fir/psi2fir/testData") {
+            testClass<AbstractFirLazyBodiesCalculatorTest> {
+                model("rawBuilder", testMethod = "doTest")
+            }
+        }
+
         testGroup("idea/idea-frontend-fir/idea-fir-low-level-api/tests", "idea/idea-frontend-fir/idea-fir-low-level-api/testdata") {
             testClass<AbstractFirMultiModuleLazyResolveTest> {
                 model("multiModuleLazyResolve", recursive = false, extension = null)

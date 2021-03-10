@@ -4,6 +4,9 @@ FILE: secondaryConstructor.kt
     }
     public final [STATUS] fun receive([STATUS] value: R|A|): R|kotlin/Unit| { LAZY_BLOCK }
     public final [STATUS] class A : R|kotlin/Any| {
-        public [STATUS] constructor([STATUS] x: R|kotlin/Int|): R|A| { LAZY_BLOCK }
+        public [STATUS] constructor([STATUS] x: R|kotlin/Int|): R|A| {
+            super<R|kotlin/Any|>()
+            [RAW_FIR] lval a: <implicit> = x#
+        }
 
     }

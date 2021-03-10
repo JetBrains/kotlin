@@ -44,6 +44,11 @@ public class PartialRawFirBuilderTestCaseGenerated extends AbstractPartialRawFir
         runTest("compiler/fir/raw-fir/psi2fir/testData/partialRawBuilder/memberProperty.kt");
     }
 
+    @TestMetadata("paramemtersCatching.kt")
+    public void testParamemtersCatching() throws Exception {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/partialRawBuilder/paramemtersCatching.kt");
+    }
+
     @TestMetadata("simpleFunction.kt")
     public void testSimpleFunction() throws Exception {
         runTest("compiler/fir/raw-fir/psi2fir/testData/partialRawBuilder/simpleFunction.kt");

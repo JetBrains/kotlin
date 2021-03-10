@@ -91,8 +91,8 @@ internal class FirLazyDeclarationResolver(
         }
     }
 
-    private fun calculateLazyBodies(firDeclaration: FirDeclaration) {
-        FirLazyBodiesCalculator.calculateLazyBodiesInside(firDeclaration)
+    private fun calculateLazyBodies(firDeclaration: FirDeclaration, designation: List<FirDeclaration>) {
+        FirLazyBodiesCalculator.calculateLazyBodiesInside(firDeclaration, designation)
     }
 
     fun runLazyResolveWithoutLock(
@@ -117,8 +117,12 @@ internal class FirLazyDeclarationResolver(
         }
         if (toPhase <= nonLazyPhase) return
 
+
+        val nonLocalDeclarationToResolve = firDeclarationToResolve.getNonLocalDeclarationToResolve(provider, moduleFileCache)
+        val designation = nonLocalDeclarationToResolve.getDesignation(containerFirFile, provider, moduleFileCache)
+
         executeWithoutPCE {
-            calculateLazyBodies(firDeclarationToResolve)
+            calculateLazyBodies(firDeclarationToResolve, designation)
         }
 
         var currentPhase = nonLazyPhase
@@ -129,30 +133,22 @@ internal class FirLazyDeclarationResolver(
             if (currentPhase.pluginPhase) continue
             if (checkPCE) checkCanceled()
             runLazyResolvePhase(
-                firDeclarationToResolve,
                 containerFirFile,
-                moduleFileCache,
-                provider,
                 currentPhase,
                 scopeSession,
-                towerDataContextCollector
+                towerDataContextCollector,
+                designation
             )
         }
     }
 
     private fun runLazyResolvePhase(
-        firDeclarationToResolve: FirDeclaration,
         containerFirFile: FirFile,
-        moduleFileCache: ModuleFileCache,
-        provider: FirProvider,
         phase: FirResolvePhase,
         scopeSession: ScopeSession,
         towerDataContextCollector: FirTowerDataContextCollector?,
+        designation: List<FirDeclaration>
     ) {
-        val nonLocalDeclarationToResolve = firDeclarationToResolve.getNonLocalDeclarationToResolve(provider, moduleFileCache)
-
-        val designation = nonLocalDeclarationToResolve.getDesignation(containerFirFile, provider, moduleFileCache)
-
         if (designation.all { it.resolvePhase >= phase }) {
             return
         }

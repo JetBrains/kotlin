@@ -1,12 +1,11 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.fir.low.level.api.file.structure
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -20,9 +19,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.providers.firIdeProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.findSourceNonLocalFirDeclaration
 import org.jetbrains.kotlin.idea.util.getElementTextInContext
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import java.util.concurrent.ConcurrentHashMap
-
 
 internal class FileStructure(
     private val ktFile: KtFile,
@@ -48,11 +45,11 @@ internal class FileStructure(
                 structureElement == null -> createStructureElement(declaration)
                 structureElement is ReanalyzableStructureElement<KtDeclaration> && !structureElement.isUpToDate() -> {
                     structureElement.reanalyze(
-                        declaration as KtDeclaration,
-                        moduleFileCache,
-                        firLazyDeclarationResolver,
-                        firIdeProvider,
-                        collector
+                        newKtDeclaration = declaration as KtDeclaration,
+                        cache = moduleFileCache,
+                        firLazyDeclarationResolver = firLazyDeclarationResolver,
+                        firIdeProvider = firIdeProvider,
+                        towerDataContextCollector = collector
                     )
                 }
                 else -> structureElement

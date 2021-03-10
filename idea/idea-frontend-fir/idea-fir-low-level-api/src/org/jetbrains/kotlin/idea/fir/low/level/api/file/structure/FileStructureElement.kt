@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api.file.structure
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.collectors.DiagnosticCollectorDeclarationAction
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol

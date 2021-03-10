@@ -92,9 +92,11 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
 
     inline fun <T> withCapturedTypeParameters(block: () -> T): T {
         val previous = context.capturedTypeParameters
-        val result = block()
-        context.capturedTypeParameters = previous
-        return result
+        return try {
+            block()
+        } finally {
+            context.capturedTypeParameters = previous
+        }
     }
 
     fun addCapturedTypeParameters(typeParameters: List<FirTypeParameterRef>) {
@@ -191,17 +193,17 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
     }
 
     fun T?.toDelegatedSelfType(firClass: FirRegularClassBuilder): FirResolvedTypeRef =
-        toDelegatedSelfType(firClass, firClass.symbol)
+        toDelegatedSelfType(firClass.typeParameters, firClass.symbol)
 
     fun T?.toDelegatedSelfType(firObject: FirAnonymousObjectBuilder): FirResolvedTypeRef =
-        toDelegatedSelfType(firObject, firObject.symbol)
+        toDelegatedSelfType(firObject.typeParameters, firObject.symbol)
 
-    private fun T?.toDelegatedSelfType(firClass: FirClassBuilder, symbol: FirClassLikeSymbol<*>): FirResolvedTypeRef {
+    protected fun T?.toDelegatedSelfType(typeParameters: List<FirTypeParameterRef>, symbol: FirClassLikeSymbol<*>): FirResolvedTypeRef {
         return buildResolvedTypeRef {
             source = this@toDelegatedSelfType?.toFirSourceElement(FirFakeSourceElementKind.ClassSelfTypeRef)
             type = ConeClassLikeTypeImpl(
                 symbol.toLookupTag(),
-                firClass.typeParameters.map { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false) }.toTypedArray(),
+                typeParameters.map { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false) }.toTypedArray(),
                 false
             )
         }
