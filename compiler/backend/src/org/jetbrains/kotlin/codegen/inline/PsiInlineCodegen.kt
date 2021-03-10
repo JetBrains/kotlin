@@ -60,8 +60,8 @@ class PsiInlineCodegen(
         callDefault: Boolean,
         codegen: ExpressionCodegen
     ) {
-        if (!state.globalInlineContext.enterIntoInlining(resolvedCall?.resultingDescriptor, resolvedCall?.call?.callElement)) {
-            generateStub(resolvedCall, codegen)
+        if (!state.globalInlineContext.enterIntoInlining(functionDescriptor, resolvedCall?.call?.callElement)) {
+            generateStub(resolvedCall?.call?.callElement?.text ?: "<no source>", codegen)
             return
         }
         try {
