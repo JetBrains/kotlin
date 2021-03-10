@@ -1,6 +1,6 @@
-import org.jspecify.annotations.*;
+import org.jspecify.nullness.*;
 
-@DefaultNonNull
+@NullMarked
 public class WildcardsWithDefault {
     public void noBoundsNotNull(A<?, ?, ?> a) {}
     public void noBoundsNullable(A<@Nullable ?, @Nullable ?, @Nullable ?> a) {}
@@ -8,7 +8,7 @@ public class WildcardsWithDefault {
 
 class A <T extends Object, E extends @Nullable Object, F extends @NullnessUnspecified Object> {}
 
-@DefaultNonNull
+@NullMarked
 class Use {
     public static void main(
             A<Object, Object, Object> aNotNullNotNullNotNull,
