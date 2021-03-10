@@ -10,7 +10,7 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
 fun ConeKotlinType.render(): String {
-    val nullabilitySuffix = if (this !is ConeKotlinErrorType && this !is ConeClassErrorType) nullability.suffix else ""
+    val nullabilitySuffix = if (this !is ConeFlexibleType && this !is ConeClassErrorType) nullability.suffix else ""
     return when (this) {
         is ConeTypeVariableType -> "${renderAttributes()}TypeVariable(${this.lookupTag.name})"
         is ConeDefinitelyNotNullType -> "${original.render()}!!"

@@ -1,4 +1,4 @@
-public final enum class AnnotatedEnumEntry : R|kotlin/Enum<ft<test/AnnotatedEnumEntry, test/AnnotatedEnumEntry?>!>| {
+public final enum class AnnotatedEnumEntry : R|kotlin/Enum<ft<test/AnnotatedEnumEntry, test/AnnotatedEnumEntry?>>| {
     @R|test/AnnotatedEnumEntry.Anno|(String(a)) public final static enum entry E1: R|@EnhancedNullability test/AnnotatedEnumEntry|
     @R|test/AnnotatedEnumEntry.Anno|(String(b)) @R|test/AnnotatedEnumEntry.Anno2|() public final static enum entry E2: R|@EnhancedNullability test/AnnotatedEnumEntry|
     public final static enum entry E3: R|@EnhancedNullability test/AnnotatedEnumEntry|

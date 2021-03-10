@@ -7,7 +7,7 @@
 
     public open fun bar(): R|@EnhancedNullability kotlin/String|
 
-    @R|javax/annotation/Nullable|() public open fun baz(): R|ft<@EnhancedNullability kotlin/collections/MutableList<ft<kotlin/String, kotlin/String?>!>?, @EnhancedNullability kotlin/collections/List<ft<kotlin/String, kotlin/String?>!>?>?|
+    @R|javax/annotation/Nullable|() public open fun baz(): R|ft<@EnhancedNullability kotlin/collections/MutableList<ft<kotlin/String, kotlin/String?>>?, @EnhancedNullability kotlin/collections/List<ft<kotlin/String, kotlin/String?>>?>|
 
     public constructor(): R|A|
 
