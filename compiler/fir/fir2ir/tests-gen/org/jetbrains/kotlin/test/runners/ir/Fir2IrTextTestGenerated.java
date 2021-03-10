@@ -576,6 +576,12 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             }
 
             @Test
+            @TestMetadata("genericAnnotationClasses.kt")
+            public void testGenericAnnotationClasses() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/annotations/genericAnnotationClasses.kt");
+            }
+
+            @Test
             @TestMetadata("inheritingDeprecation.kt")
             public void testInheritingDeprecation() throws Exception {
                 runTest("compiler/testData/ir/irText/declarations/annotations/inheritingDeprecation.kt");
