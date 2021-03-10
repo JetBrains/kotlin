@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.js.backend.ast.JsName
 import org.jetbrains.kotlin.js.backend.ast.JsNameRef
-import org.jetbrains.kotlin.js.backend.ast.JsRootScope
 
 class IrNamerImpl(private val newNameTables: NameTables) : IrNamer {
 
@@ -61,13 +60,12 @@ class IrNamerImpl(private val newNameTables: NameTables) : IrNamer {
         if (klass.isCompanion)
             return getRefForExternalClass(parent as IrClass)
 
-        val currentClassName = klass.getJsNameOrKotlinName().identifier
         return when (parent) {
             is IrClass ->
-                JsNameRef(currentClassName, getRefForExternalClass(parent))
+                JsNameRef(klass.getJsNameOrKotlinName().identifier, getRefForExternalClass(parent))
 
             is IrPackageFragment ->
-                JsNameRef(currentClassName)
+                getNameForStaticDeclaration(klass).makeRef()
 
             else ->
                 error("Unsupported external class parent $parent")

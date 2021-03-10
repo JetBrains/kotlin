@@ -101,7 +101,10 @@ fun translateCall(
     if (function.getJsName() == null) {
         val property = function.correspondingPropertySymbol?.owner
         if (property != null && property.isEffectivelyExternal()) {
-            val nameRef = JsNameRef(context.getNameForProperty(property), jsDispatchReceiver)
+            val nameForProperty = if (jsDispatchReceiver != null)
+                context.getNameForProperty(property)
+            else context.getNameForStaticDeclaration(property)
+            val nameRef = JsNameRef(nameForProperty, jsDispatchReceiver)
             return when (function) {
                 property.getter -> nameRef
                 property.setter -> jsAssignment(nameRef, arguments.single())
