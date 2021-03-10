@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.library.*
 import java.io.File
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
+import javax.inject.Inject
 import org.jetbrains.kotlin.konan.file.File as KFile
 import org.jetbrains.kotlin.util.Logger as KLogger
 
@@ -921,10 +922,7 @@ internal class CacheBuilder(val project: Project, val binary: NativeBinary, val 
     }
 }
 
-open class CInteropProcess : DefaultTask() {
-
-    @Internal
-    lateinit var settings: DefaultCInteropSettings
+open class CInteropProcess @Inject constructor(@get:Internal val settings: DefaultCInteropSettings) : DefaultTask() {
 
     @Internal // Taken into account in the outputFileProvider property
     lateinit var destinationDir: Provider<File>

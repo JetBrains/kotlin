@@ -298,8 +298,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget>(
 
     private fun Project.createCInteropTasks(compilation: KotlinNativeCompilation) {
         compilation.cinterops.all { interop ->
-            val interopTask = registerTask<CInteropProcess>(interop.interopProcessingTaskName) {
-                it.settings = interop
+            val interopTask = registerTask<CInteropProcess>(interop.interopProcessingTaskName, listOf(interop)) {
                 it.destinationDir = provider { klibOutputDirectory(compilation).resolve("cinterop") }
                 it.group = INTEROP_GROUP
                 it.description = "Generates Kotlin/Native interop library '${interop.name}' " +
