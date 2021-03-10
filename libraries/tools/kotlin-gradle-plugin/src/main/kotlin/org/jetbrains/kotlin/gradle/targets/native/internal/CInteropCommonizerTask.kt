@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.compilerRunner.GradleCliCommonizer
 import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.descriptors.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.descriptors.commonizer.SharedCommonizerTarget
+import org.jetbrains.kotlin.descriptors.commonizer.level
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.CInteropSettings
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -117,6 +118,7 @@ internal open class CInteropCommonizerTask : AbstractCInteropCommonizerTask() {
         return sharedNativeCompilations.mapNotNull(::getCommonizationParameters).toSet()
             .run(::removeNotRegisteredInterops)
             .run(::removeEmptyInterops)
+            .run(::removeHierarchicalParameters)
             .run(::removeRedundantParameters)
     }
 
@@ -173,6 +175,10 @@ private fun removeEmptyInterops(parameters: Set<CInteropCommonizationParameters>
     return parameters.filterTo(mutableSetOf()) { it.interops.isNotEmpty() }
 }
 
+private fun removeHierarchicalParameters(parameters: Set<CInteropCommonizationParameters>): Set<CInteropCommonizationParameters> {
+    return parameters.filterTo(mutableSetOf()) { it.commonizerTarget.level <= 1 }
+}
+
 private fun removeRedundantParameters(parameters: Set<CInteropCommonizationParameters>): Set<CInteropCommonizationParameters> {
     return parameters.filterNotTo(mutableSetOf()) { current ->
         parameters.any { other ->
@@ -180,6 +186,7 @@ private fun removeRedundantParameters(parameters: Set<CInteropCommonizationParam
         }
     }
 }
+
 
 private operator fun CommonizerTarget.contains(other: CommonizerTarget): Boolean {
     if (this == other) return true
