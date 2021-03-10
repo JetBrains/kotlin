@@ -61,7 +61,7 @@ class CInteropCommonizerTaskTest {
             CInteropCommonizationParameters(
                 CommonizerTarget(LINUX_X64, MACOS_X64), setOf(linuxInterop.identifier, macosInterop.identifier)
             ),
-            task.findSupportingCommonizationParameters(nativeMainCompilation)
+            task.getCommonizationParameters(nativeMainCompilation)
         )
     }
 
@@ -85,7 +85,7 @@ class CInteropCommonizerTaskTest {
             .single { it.defaultSourceSet == nativeMain }
 
         assertNull(
-            task.findSupportingCommonizationParameters(nativeMainCompilation),
+            task.getCommonizationParameters(nativeMainCompilation),
             "Expected no CInteropCommonizerTarget from nativeMain, since one target has not defined any cinterop"
         )
     }
@@ -119,19 +119,19 @@ class CInteropCommonizerTaskTest {
             CInteropCommonizationParameters(
                 SharedCommonizerTarget(CommonizerTarget(IOS_X64, IOS_ARM64), CommonizerTarget(MACOS_X64), CommonizerTarget(LINUX_X64)),
                 setOf(linuxInterop, macosInterop, iosX64Interop, iosArm64Interop)
-            ), task.findSupportingCommonizationParameters(sharedNativeCompilation(nativeMain))
+            ), task.getCommonizationParameters(sharedNativeCompilation(nativeMain))
         )
 
         assertEquals(
             CInteropCommonizationParameters(
                 SharedCommonizerTarget(CommonizerTarget(IOS_X64, IOS_ARM64), CommonizerTarget(MACOS_X64), CommonizerTarget(LINUX_X64)),
                 setOf(linuxInterop, macosInterop, iosX64Interop, iosArm64Interop)
-            ), task.findSupportingCommonizationParameters(sharedNativeCompilation(iosMain))
+            ), task.getCommonizationParameters(sharedNativeCompilation(iosMain))
         )
 
         assertTrue(
-            task.findSupportingCommonizationParameters(sharedNativeCompilation(iosMain))!! in
-                    task.findSupportingCommonizationParameters(sharedNativeCompilation(nativeMain))!!,
+            task.getCommonizationParameters(sharedNativeCompilation(iosMain))!! in
+                    task.getCommonizationParameters(sharedNativeCompilation(nativeMain))!!,
             "Expected CInteropCommonizerTarget of iosMain to be fully contained in nativeMain"
         )
     }

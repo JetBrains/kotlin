@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.tasks.TaskProvider
+import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateTask
@@ -49,6 +50,22 @@ internal val Project.commonizeCInteropTask: TaskProvider<CInteropCommonizerTask>
                 configureTask = {
                     group = "interop"
                     description = "Invokes the commonizer on c-interop bindings of the project"
+                }
+            )
+        }
+        return null
+    }
+
+internal val Project.copyCommonizeCInteropForIdeTask: TaskProvider<CopyCommonizeCInteropForIdeTask>?
+    get() {
+        if (isCInteropCommonizationEnabled) {
+            return locateOrRegisterTask(
+                "copyCommonizeCInteropForIde",
+                invokeWhenRegistered = { if (isInIdeaSync) commonizeTask.dependsOn(this) },
+                configureTask = {
+                    group = "interop"
+                    description = "Copies the output of ${commonizeCInteropTask?.get()?.name} into " +
+                            "the root projects .gradle folder for the IDE"
                 }
             )
         }

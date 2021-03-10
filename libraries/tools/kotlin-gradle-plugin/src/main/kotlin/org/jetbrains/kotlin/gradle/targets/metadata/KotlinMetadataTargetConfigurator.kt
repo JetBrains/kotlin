@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.CompilationSourceSetUtil.compilati
 import org.jetbrains.kotlin.gradle.plugin.sources.*
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.targets.native.internal.commonizeCInteropTask
+import org.jetbrains.kotlin.gradle.targets.native.internal.copyCommonizeCInteropForIdeTask
+import org.jetbrains.kotlin.gradle.targets.native.internal.getLibraries
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -322,11 +324,13 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
             }
 
             if (this is KotlinSharedNativeCompilation) {
-                project.commonizeCInteropTask?.let { commonizeCInteropTask ->
-                    val commonizerOutput = project.files(commonizeCInteropTask.map { it.getLibraries(this) })
-                    compileDependencyFiles = compileDependencyFiles.plus(commonizerOutput)
+                project.commonizeCInteropTask?.let { task ->
+                    compileDependencyFiles = compileDependencyFiles.plus(task.getLibraries(this))
+                }
+                project.copyCommonizeCInteropForIdeTask?.let { task ->
+                    val libraries = task.getLibraries(this)
                     kotlinSourceSetsIncludingDefault.forEach { sourceSet ->
-                        project.dependencies.add(sourceSet.implementationMetadataConfigurationName, commonizerOutput)
+                        project.dependencies.add(sourceSet.implementationMetadataConfigurationName, libraries)
                     }
                 }
             }

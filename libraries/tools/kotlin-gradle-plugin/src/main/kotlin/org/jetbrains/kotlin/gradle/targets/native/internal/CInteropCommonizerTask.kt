@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.targets.native.internal
 
-import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Provider
@@ -14,9 +13,7 @@ import org.gradle.workers.WorkParameters
 import org.jetbrains.kotlin.compilerRunner.GradleCliCommonizer
 import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.descriptors.commonizer.CommonizerTarget
-import org.jetbrains.kotlin.descriptors.commonizer.HierarchicalCommonizerOutputLayout
 import org.jetbrains.kotlin.descriptors.commonizer.SharedCommonizerTarget
-import org.jetbrains.kotlin.descriptors.commonizer.prettyName
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.CInteropSettings
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -31,7 +28,7 @@ import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
-internal open class CInteropCommonizerTask : DefaultTask() {
+internal open class CInteropCommonizerTask : AbstractCInteropCommonizerTask() {
 
     internal data class CInteropGist(
         @get:Input val identifier: CInteropIdentifier,
@@ -44,6 +41,8 @@ internal open class CInteropCommonizerTask : DefaultTask() {
         @get:Input
         val allSourceSetNames: Provider<List<String>> = sourceSets.map { it.resolveAllDependsOnSourceSets().map(Any::toString) }
     }
+
+    override val outputDirectory: File = project.buildDir.resolve("classes/kotlin/commonizer")
 
     @get:Nested
     internal var cinterops = setOf<CInteropGist>()
@@ -98,25 +97,6 @@ internal open class CInteropCommonizerTask : DefaultTask() {
         )
     }
 
-    private fun outputDirectory(parameters: CInteropCommonizationParameters): File {
-        return project.buildDir.resolve("classes/kotlin/commonizer")
-            .resolve(parameters.commonizerTarget.prettyName)
-            .resolve(parameters.interops.map { it.interopName }.distinct().joinToString("-"))
-    }
-
-    internal fun getLibraries(compilation: KotlinSharedNativeCompilation): FileCollection {
-        val fileProvider = project.provider<Set<File>> {
-            val parameters = findSupportingCommonizationParameters(compilation) ?: return@provider emptySet()
-            HierarchicalCommonizerOutputLayout
-                .getTargetDirectory(outputDirectory(parameters), parameters.commonizerTarget)
-                .listFiles().orEmpty().toSet()
-        }
-
-        return project.files(fileProvider) { fileCollection ->
-            fileCollection.builtBy(this)
-        }
-    }
-
     @Nested
     internal fun getCommonizationParameters(): Set<CInteropCommonizationParameters> {
         val sharedNativeCompilations = (project.multiplatformExtensionOrNull ?: return emptySet())
@@ -140,7 +120,7 @@ internal open class CInteropCommonizerTask : DefaultTask() {
             .run(::removeRedundantParameters)
     }
 
-    internal fun findSupportingCommonizationParameters(compilation: KotlinSharedNativeCompilation): CInteropCommonizationParameters? {
+    override fun getCommonizationParameters(compilation: KotlinSharedNativeCompilation): CInteropCommonizationParameters? {
         val supportedParameters = getCommonizationParameters().filter { parameters -> parameters.supports(compilation) }
         if (supportedParameters.isEmpty()) return null
         assert(supportedParameters.size == 1) {
