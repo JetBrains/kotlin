@@ -85,11 +85,6 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
         runTest("compiler/testData/codegen/bytecodeListing/delegationToJavaInterfaceWithWildcardType.kt");
     }
 
-    @TestMetadata("emptyMultifileFacade.kt")
-    public void testEmptyMultifileFacade() throws Exception {
-        runTest("compiler/testData/codegen/bytecodeListing/emptyMultifileFacade.kt");
-    }
-
     @TestMetadata("enum.kt")
     public void testEnum() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/enum.kt");
@@ -170,11 +165,6 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
         runTest("compiler/testData/codegen/bytecodeListing/kt43440.kt");
     }
 
-    @TestMetadata("kt43519.kt")
-    public void testKt43519() throws Exception {
-        runTest("compiler/testData/codegen/bytecodeListing/kt43519.kt");
-    }
-
     @TestMetadata("localFunction.kt")
     public void testLocalFunction() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/localFunction.kt");
@@ -183,16 +173,6 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
     @TestMetadata("localFunctionInInitBlock.kt")
     public void testLocalFunctionInInitBlock() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/localFunctionInInitBlock.kt");
-    }
-
-    @TestMetadata("multiClassPartSourceMultipleParts.kt")
-    public void testMultiClassPartSourceMultipleParts() throws Exception {
-        runTest("compiler/testData/codegen/bytecodeListing/multiClassPartSourceMultipleParts.kt");
-    }
-
-    @TestMetadata("multiClassPartSourceSinglePart.kt")
-    public void testMultiClassPartSourceSinglePart() throws Exception {
-        runTest("compiler/testData/codegen/bytecodeListing/multiClassPartSourceSinglePart.kt");
     }
 
     @TestMetadata("noCollectionStubMethodsInInterface.kt")
@@ -1548,6 +1528,39 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
         @TestMetadata("suspendMain.kt")
         public void testSuspendMain() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/main/suspendMain.kt");
+        }
+    }
+
+    @TestMetadata("compiler/testData/codegen/bytecodeListing/multifileClasses")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class MultifileClasses extends AbstractIrBytecodeListingTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInMultifileClasses() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/multifileClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @TestMetadata("emptyMultifileFacade.kt")
+        public void testEmptyMultifileFacade() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/multifileClasses/emptyMultifileFacade.kt");
+        }
+
+        @TestMetadata("kt43519.kt")
+        public void testKt43519() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/multifileClasses/kt43519.kt");
+        }
+
+        @TestMetadata("multiClassPartSourceMultipleParts.kt")
+        public void testMultiClassPartSourceMultipleParts() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/multifileClasses/multiClassPartSourceMultipleParts.kt");
+        }
+
+        @TestMetadata("multiClassPartSourceSinglePart.kt")
+        public void testMultiClassPartSourceSinglePart() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/multifileClasses/multiClassPartSourceSinglePart.kt");
         }
     }
 
