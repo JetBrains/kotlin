@@ -3,3 +3,4 @@ class Test {
     val foo
         get() = 1
 }
+/* FIR_COMPARISON */

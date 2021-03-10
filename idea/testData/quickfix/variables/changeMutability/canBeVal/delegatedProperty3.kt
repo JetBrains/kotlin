@@ -11,3 +11,4 @@ fun test() {
 }
 
 class Delegate
+/* FIR_COMPARISON */
