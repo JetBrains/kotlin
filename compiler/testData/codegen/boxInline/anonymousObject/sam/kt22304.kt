@@ -1,5 +1,7 @@
 // FULL_JDK
 // TARGET_BACKEND: JVM
+// IGNORE_DEXING
+//  ^ 2.1.75 fails with AssertionError (2.0.88 doesn't). TODO: investigate in more detail.
 // FILE: 1.kt
 
 package test
