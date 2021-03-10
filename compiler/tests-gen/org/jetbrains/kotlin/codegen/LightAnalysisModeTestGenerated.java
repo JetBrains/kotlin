@@ -16552,6 +16552,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/invokedynamic/lambdas/bigArityExtLambda.kt");
             }
 
+            @TestMetadata("genericLambdaSignature.kt")
+            public void ignoreGenericLambdaSignature() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/lambdas/genericLambdaSignature.kt");
+            }
+
             @TestMetadata("lambdaSerializable.kt")
             public void ignoreLambdaSerializable() throws Exception {
                 runTest("compiler/testData/codegen/box/invokedynamic/lambdas/lambdaSerializable.kt");
@@ -16678,6 +16683,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Sam extends AbstractLightAnalysisModeTest {
+            @TestMetadata("genericLambdaSignature.kt")
+            public void ignoreGenericLambdaSignature() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/sam/genericLambdaSignature.kt");
+            }
+
             @TestMetadata("suspendFunInterface.kt")
             public void ignoreSuspendFunInterface() throws Exception {
                 runTest("compiler/testData/codegen/box/invokedynamic/sam/suspendFunInterface.kt");
