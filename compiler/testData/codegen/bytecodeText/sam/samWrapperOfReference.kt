@@ -1,4 +1,3 @@
-// SAM_CONVERSIONS: CLASS
 // This optimization is only done by the JVM_IR backend.
 // IGNORE_BACKEND: JVM
 // FILE: JFoo.java
@@ -18,6 +17,7 @@ fun test() {
     JFoo.foo(A()::f)
 }
 
+// Referenced function called from run(), no wrapper class generated:
 // 1 NEW A
 // 2 NEW
 // 0 INVOKEINTERFACE

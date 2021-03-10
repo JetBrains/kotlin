@@ -1,4 +1,3 @@
-// SAM_CONVERSIONS: CLASS
 // FILE: J.java
 
 public class J {
