@@ -109,23 +109,22 @@ abstract class BooleanValue(codegen: ExpressionCodegen) :
         mv.mark(const0)
         mv.iconst(0)
         mv.mark(end)
-        if (Type.BOOLEAN_TYPE != target) {
-            StackValue.coerce(Type.BOOLEAN_TYPE, target, mv)
-        }
+        super.materializeAt(target, irTarget, castForReified)
     }
 }
 
 class BooleanConstant(codegen: ExpressionCodegen, val value: Boolean) : BooleanValue(codegen) {
-    override fun jumpIfFalse(target: Label) = if (value) Unit else mv.goTo(target)
-    override fun jumpIfTrue(target: Label) = if (value) mv.goTo(target) else Unit
+    // When the value is never materialized, add something for the line number to be attached to.
+    override fun jumpIfFalse(target: Label) = if (value) mv.nop() else mv.goTo(target)
+    override fun jumpIfTrue(target: Label) = if (value) mv.goTo(target) else mv.nop()
+    override fun discard() = mv.nop()
+
     override fun materializeAt(target: Type, irTarget: IrType, castForReified: Boolean) {
         mv.iconst(if (value) 1 else 0)
         if (Type.BOOLEAN_TYPE != target) {
             StackValue.coerce(Type.BOOLEAN_TYPE, target, mv)
         }
     }
-
-    override fun discard() {}
 }
 
 fun PromisedValue.coerceToBoolean(): BooleanValue =
@@ -180,12 +179,3 @@ val IrType.unboxed: IrType
 // A Non-materialized value of Unit type that is only materialized through coercion.
 val ExpressionCodegen.unitValue: PromisedValue
     get() = MaterialValue(this, Type.VOID_TYPE, context.irBuiltIns.unitType)
-
-val ExpressionCodegen.nullConstant: PromisedValue
-    get() = object : PromisedValue(this, AsmTypes.OBJECT_TYPE, context.irBuiltIns.nothingNType) {
-        override fun materializeAt(target: Type, irTarget: IrType, castForReified: Boolean) {
-            mv.aconst(null)
-        }
-
-        override fun discard() {}
-    }
