@@ -15,6 +15,8 @@ import java.io.File
 
 class ParallelBuildTest : KotlinIntegrationTestBase() {
     fun testParallelBuild() {
+        fun rawString(text: String): String = "\"\"\"$text\"\"\""
+
         val testDataDir = KtTestUtil.getTestDataPathBase() + "/integration/smoke/helloApp"
         val programText = """
             import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
@@ -36,8 +38,8 @@ class ParallelBuildTest : KotlinIntegrationTestBase() {
                         try {
                             val code = K2JVMCompiler().exec(
                                 System.err, MessageRenderer.PLAIN_RELATIVE_PATHS,
-                                "$testDataDir/hello.kt",
-                                "-d", "$tmpdir/output"
+                                ${rawString("$testDataDir/hello.kt")},
+                                "-d", ${rawString("${tmpdir.path}/output")}
                             )
                             if (code != ExitCode.OK) errors++
                         } catch (e: Throwable) {
