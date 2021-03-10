@@ -688,7 +688,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             return resolvedReference.compose()
         }
 
-        context.towerDataContextForCallableReferences[callableReferenceAccess] = context.towerDataContext
+        context.storeCallableReferenceContext(callableReferenceAccess)
 
         dataFlowAnalyzer.exitCallableReference(callableReferenceAccessWithTransformedLHS)
         return callableReferenceAccessWithTransformedLHS.compose()

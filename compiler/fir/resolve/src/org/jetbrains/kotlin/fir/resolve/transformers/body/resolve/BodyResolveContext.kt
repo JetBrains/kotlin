@@ -66,7 +66,7 @@ class BodyResolveContext(
     val towerDataContextForAnonymousFunctions: MutableMap<FirAnonymousFunctionSymbol, FirTowerDataContext>
         get() = towerDataContextsForClassParts.towerDataContextForAnonymousFunctions
 
-    val towerDataContextForCallableReferences: MutableMap<FirCallableReferenceAccess, FirTowerDataContext>
+    private val towerDataContextForCallableReferences: MutableMap<FirCallableReferenceAccess, FirTowerDataContext>
         get() = towerDataContextsForClassParts.towerDataContextForCallableReferences
 
     @set:PrivateForInline
@@ -651,4 +651,12 @@ class BodyResolveContext(
 
     fun buildSecondaryConstructorParametersScope(constructor: FirConstructor): FirLocalScope =
         constructor.valueParameters.fold(FirLocalScope()) { acc, param -> acc.storeVariable(param) }
+
+    fun storeCallableReferenceContext(callableReferenceAccess: FirCallableReferenceAccess) {
+        towerDataContextForCallableReferences[callableReferenceAccess] = towerDataContext
+    }
+
+    fun dropCallableReferenceContext(callableReferenceAccess: FirCallableReferenceAccess) {
+        towerDataContextForCallableReferences.remove(callableReferenceAccess)
+    }
 }
