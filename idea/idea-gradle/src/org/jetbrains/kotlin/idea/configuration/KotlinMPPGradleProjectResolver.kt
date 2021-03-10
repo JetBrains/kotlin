@@ -683,6 +683,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtensionComp
                             excludeInheritedNativeDependencies = false
                         }
                         addAll(substitutor.substituteDependencies(sourceSet))
+
                         dependeeSourceSets.flatMapTo(this) { dependeeSourceSet ->
                             substitutor.substituteDependencies(dependeeSourceSet).run {
                                 if (excludeInheritedNativeDependencies)
@@ -690,12 +691,18 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtensionComp
                                 else this
                             }
                         }
+
                         if (forceNativeDependencyPropagation) {
                             sourceSetToCompilations[sourceSet.name]?.let { compilations ->
                                 addAll(propagatedNativeDependencies(compilations))
                             }
                         }
+
+                        if (mppModel.extraFeatures.isHMPPEnabled) {
+                            addAll(propagatedPlatformDependencies(mppModel, sourceSet))
+                        }
                     }
+
                     buildDependencies(
                         resolverCtx,
                         sourceSetMap,
@@ -704,6 +711,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtensionComp
                         preprocessDependencies(mergedSubstitutedDependencies),
                         ideProject
                     )
+
                     @Suppress("UNCHECKED_CAST")
                     KotlinNativeLibrariesFixer.applyTo(fromDataNode as DataNode<GradleSourceSetData>, ideProject)
                 }
@@ -749,6 +757,46 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtensionComp
                     else -> null
                 }
             }
+        }
+
+
+        /**
+         * Source sets sharing code between JVM and Android are the only intermediate source sets that
+         * can effectively consume a dependency's platform artifact.
+         * When a library only offers a JVM variant, then Android and JVM consume this variant of the library.
+         *
+         * This will be replaced later on by [KT-43450](https://youtrack.jetbrains.com/issue/KT-43450)
+         *
+         * @return all dependencies being present across given JVM and Android compilations that this [sourceSet] can also participates in.
+         */
+        private fun propagatedPlatformDependencies(
+            mppModel: KotlinMPPGradleModel,
+            sourceSet: KotlinSourceSet,
+        ): Set<ExternalDependency> {
+            if (
+                sourceSet.actualPlatforms.platforms.sorted() == listOf(KotlinPlatform.JVM, KotlinPlatform.ANDROID).sorted()
+            ) {
+                return mppModel.targets
+                    .filter { target -> target.platform == KotlinPlatform.JVM || target.platform == KotlinPlatform.ANDROID }
+                    .flatMap { target -> target.compilations }
+                    .filter { compilation -> compilation.dependsOnSourceSet(mppModel, sourceSet) }
+                    .map { targetCompilations -> targetCompilations.dependencies.mapNotNull(mppModel.dependencyMap::get).toSet() }
+                    .reduceOrNull { acc, dependencies -> acc.intersect(dependencies) }.orEmpty()
+
+            }
+
+            return emptySet()
+        }
+
+        private fun KotlinCompilation.dependsOnSourceSet(mppModel: KotlinMPPGradleModel, sourceSet: KotlinSourceSet): Boolean {
+            return allSourceSets.any { containedSourceSet -> sourceSet.isOrDependsOnSourceSet(mppModel, containedSourceSet) }
+        }
+
+        private fun KotlinSourceSet.isOrDependsOnSourceSet(mppModel: KotlinMPPGradleModel, sourceSet: KotlinSourceSet): Boolean {
+            if (this == sourceSet) return true
+            return this.dependsOnSourceSets
+                .map { dependencySourceSetName -> mppModel.sourceSets.getValue(dependencySourceSetName) }
+                .any { dependencySourceSet -> dependencySourceSet.isOrDependsOnSourceSet(mppModel, sourceSet) }
         }
 
         private val CompilationWithDependencies.isAppleCompilation: Boolean
@@ -882,9 +930,9 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtensionComp
             gradlePath: String
         ): String? {
             return ((if (gradlePath.startsWith(":")) "$rootName." else "")
-                    + Arrays.stream(gradlePath.split(":".toRegex()).toTypedArray())
-                .filter { s: String -> s.isNotEmpty() }
-                .collect(Collectors.joining(".")))
+                + Arrays.stream(gradlePath.split(":".toRegex()).toTypedArray())
+            .filter { s: String -> s.isNotEmpty() }
+            .collect(Collectors.joining(".")))
         }
 
         private fun getInternalModuleName(
