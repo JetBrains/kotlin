@@ -32191,6 +32191,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("kt45243.kt")
+                public void testKt45243() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/fromStdlib/kt45243.kt");
+                }
+
+                @Test
                 @TestMetadata("require.kt")
                 public void testRequire() throws Exception {
                     runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/fromStdlib/require.kt");

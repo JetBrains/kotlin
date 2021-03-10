@@ -17,10 +17,7 @@
 package org.jetbrains.kotlin.contracts.model.visitors
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.contracts.model.ConditionalEffect
-import org.jetbrains.kotlin.contracts.model.ESEffect
-import org.jetbrains.kotlin.contracts.model.ESExpressionVisitor
-import org.jetbrains.kotlin.contracts.model.MutableContextInfo
+import org.jetbrains.kotlin.contracts.model.*
 import org.jetbrains.kotlin.contracts.model.structure.*
 
 class InfoCollector(private val observedEffect: ESEffect, private val builtIns: KotlinBuiltIns) : ESExpressionVisitor<MutableContextInfo> {
@@ -82,6 +79,8 @@ class InfoCollector(private val observedEffect: ESEffect, private val builtIns: 
     override fun visitConstant(esConstant: ESConstant): MutableContextInfo = MutableContextInfo.EMPTY
 
     override fun visitReceiver(esReceiver: ESReceiver): MutableContextInfo = MutableContextInfo.EMPTY
+
+    override fun visitLambda(lambda: ESValue): MutableContextInfo = MutableContextInfo.EMPTY
 
     private fun <R> inverted(block: () -> R): R {
         isInverted = isInverted.not()
