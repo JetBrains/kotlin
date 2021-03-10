@@ -14,13 +14,15 @@ import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 
 abstract class FirAbstractPhaseTransformer<D>(
-    val transformerPhase: FirResolvePhase
+    protected val baseTransformerPhase: FirResolvePhase
 ) : FirDefaultTransformer<D>() {
+
+    open val transformerPhase get() = baseTransformerPhase
 
     abstract val session: FirSession
 
     init {
-        assert(transformerPhase != FirResolvePhase.RAW_FIR) {
+        assert(baseTransformerPhase != FirResolvePhase.RAW_FIR) {
             "Raw FIR building shouldn't be done in phase transformer"
         }
     }

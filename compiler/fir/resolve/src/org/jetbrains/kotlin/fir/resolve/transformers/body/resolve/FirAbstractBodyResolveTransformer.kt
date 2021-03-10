@@ -38,6 +38,9 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
     abstract var implicitTypeOnly: Boolean
         internal set
 
+    override val transformerPhase: FirResolvePhase
+        get() = if (implicitTypeOnly) baseTransformerPhase else FirResolvePhase.BODY_RESOLVE
+
     final override val session: FirSession get() = components.session
 
     protected inline fun <T> withLocalScopeCleanup(crossinline l: () -> T): T {
