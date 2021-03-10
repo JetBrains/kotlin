@@ -5349,6 +5349,11 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
             runTest("js/js.translator/testData/box/jsName/classes.kt");
         }
 
+        @TestMetadata("defaultJsName.kt")
+        public void testDefaultJsName() throws Exception {
+            runTest("js/js.translator/testData/box/jsName/defaultJsName.kt");
+        }
+
         @TestMetadata("inheritFromRenamedNativeClass.kt")
         public void testInheritFromRenamedNativeClass() throws Exception {
             runTest("js/js.translator/testData/box/jsName/inheritFromRenamedNativeClass.kt");
@@ -5367,6 +5372,16 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
         @TestMetadata("jsNamePropertyAccessors.kt")
         public void testJsNamePropertyAccessors() throws Exception {
             runTest("js/js.translator/testData/box/jsName/jsNamePropertyAccessors.kt");
+        }
+
+        @TestMetadata("jsTopLevelClashes.kt")
+        public void testJsTopLevelClashes() throws Exception {
+            runTest("js/js.translator/testData/box/jsName/jsTopLevelClashes.kt");
+        }
+
+        @TestMetadata("jsTopLevelRenameReserved.kt")
+        public void testJsTopLevelRenameReserved() throws Exception {
+            runTest("js/js.translator/testData/box/jsName/jsTopLevelRenameReserved.kt");
         }
 
         @TestMetadata("overriddenMethod.kt")
