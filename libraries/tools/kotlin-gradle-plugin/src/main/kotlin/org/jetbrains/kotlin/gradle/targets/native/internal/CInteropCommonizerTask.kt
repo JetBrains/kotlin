@@ -226,5 +226,3 @@ private fun Project.getDependingNativeCompilations(compilation: KotlinSharedNati
         .filter { nativeCompilation -> nativeCompilation.allParticipatingSourceSets().containsAll(allParticipatingSourceSetsOfCompilation) }
         .toSet()
 }
-
-

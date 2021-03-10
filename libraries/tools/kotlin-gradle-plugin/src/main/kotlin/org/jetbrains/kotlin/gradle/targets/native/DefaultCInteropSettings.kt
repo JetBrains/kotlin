@@ -44,7 +44,7 @@ open class DefaultCInteropSettings @Inject constructor(
     override fun getName(): String = name
 
     internal val identifier: CInteropIdentifier
-        get() = CInteropIdentifier(compilation.compileKotlinTaskName, name)
+        get() = CInteropIdentifier(CInteropIdentifier.Scope.create(compilation), name)
 
     val target: KotlinNativeTarget
         get() = compilation.target
