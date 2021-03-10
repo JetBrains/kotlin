@@ -54,31 +54,8 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
         }
     }
 
-    protected inline fun <T> withLocalScope(localScope: FirLocalScope?, crossinline l: () -> T): T {
-        if (localScope == null) return l()
-        return context.withTowerDataCleanup {
-            addLocalScope(localScope)
-            l()
-        }
-    }
-
-    protected inline fun <T> withPrimaryConstructorParameters(includeProperties: Boolean, crossinline l: () -> T): T {
-        return context.withTowerDataCleanup {
-            addLocalScope(
-                if (includeProperties) context.getPrimaryConstructorAllParametersScope()
-                else context.getPrimaryConstructorPureParametersScope()
-            )
-            l()
-        }
-    }
-
     protected fun addNewLocalScope() {
         context.addLocalScope(FirLocalScope())
-    }
-
-    protected fun addLocalScope(localScope: FirLocalScope?) {
-        if (localScope == null) return
-        context.addLocalScope(localScope)
     }
 
     protected open fun needReplacePhase(firDeclaration: FirDeclaration) = true
