@@ -153,6 +153,10 @@ class IrInlineCodegen(
         )
     }
 
+    override fun genCycleStub(text: String, codegen: ExpressionCodegen) {
+        generateStub(text, codegen)
+    }
+
     override fun extractDefaultLambdas(node: MethodNode): List<DefaultLambda> {
         if (maskStartIndex == -1) return listOf()
         return expandMaskConditionsAndUpdateVariableNodes(
