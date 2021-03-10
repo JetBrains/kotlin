@@ -233,7 +233,7 @@ class DokkaBase : DokkaPlugin() {
     }
 
     val sourcesetDependencyAppender by extending {
-        htmlPreprocessors providing ::SourcesetDependencyAppender order { after(rootCreator) } applyIf { !delayTemplateSubstitution }
+        htmlPreprocessors providing ::SourcesetDependencyAppender order { after(rootCreator) }
     }
 
     val resolveLinkConsumer by extending {
