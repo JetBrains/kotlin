@@ -287,6 +287,22 @@ open class KaptIncrementalIT : BaseGradleIT() {
         }
     }
 
+    @Test
+    fun testChangeInlineDelegate() {
+        val project = getProject()
+        project.build("build") {
+            assertSuccessful()
+        }
+
+        val file = project.projectDir.getFileByName("Usage.kt")
+        file.modify { "$it//" }
+
+        project.build("build") {
+            assertSuccessful()
+            assertTasksExecuted(":kaptGenerateStubsKotlin", ":compileKotlin")
+        }
+    }
+
     private fun CompiledProject.assertCompiledKotlinSourcesHandleKapt3(
         sources: Iterable<String>,
         weakTesting: Boolean = false
