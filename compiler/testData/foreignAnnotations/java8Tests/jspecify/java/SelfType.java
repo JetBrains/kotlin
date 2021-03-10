@@ -1,4 +1,4 @@
-import org.jspecify.annotations.*;
+import org.jspecify.nullness.*;
 
 @DefaultNotNull
 public class SelfType<T extends SelfType<T>> {

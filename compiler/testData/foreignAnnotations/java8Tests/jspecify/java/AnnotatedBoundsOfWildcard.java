@@ -1,6 +1,6 @@
-import org.jspecify.annotations.*;
+import org.jspecify.nullness.*;
 
-@DefaultNonNull
+@NullMarked
 public class AnnotatedBoundsOfWildcard {
     public void superAsIs(Test<? super @NullnessUnspecified Base, ? super @NullnessUnspecified Base, ? super @NullnessUnspecified Base> a) {}
     public void superNotNull(Test<? super Base, ? super Base, ? super Base> a) {}
@@ -16,10 +16,10 @@ public class AnnotatedBoundsOfWildcard {
 class Base {}
 class Derived extends Base {}
 
-@DefaultNonNull
+@NullMarked
 class Test<T extends Object, E extends @Nullable Object, F extends @NullnessUnspecified Object> { }
 
-@DefaultNonNull
+@NullMarked
 class Use {
     public void main(
             Test<Derived, Derived, Derived> aNotNullNotNullNotNull,

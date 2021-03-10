@@ -168,6 +168,6 @@ abstract class AbstractJspecifyAnnotationsTest : AbstractDiagnosticsTest() {
         private val importSectionRegex = Regex("""((?:import .*?;\n)+)""")
         private val classOrInterfaceRegex = Regex("""(class|interface)""")
         private val publicClassOrInterfaceRegex = Regex("""public (class|interface)""")
-        private val classShapeRegex = Regex("""(\n@DefaultNonNull)?\npublic (class|interface) (\w+)(<[^>]+>)?""")
+        private val classShapeRegex = Regex("""(\n@NullMarked)?\npublic (class|interface) (\w+)(<[^>]+>)?""")
     }
 }
