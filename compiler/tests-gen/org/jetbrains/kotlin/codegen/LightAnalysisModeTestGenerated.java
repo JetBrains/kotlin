@@ -14018,6 +14018,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassWithCustomEquals.kt");
         }
 
+        @TestMetadata("kt44867.kt")
+        public void ignoreKt44867() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt44867.kt");
+        }
+
         @TestMetadata("simpleSecondaryConstructor.kt")
         public void ignoreSimpleSecondaryConstructor() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/simpleSecondaryConstructor.kt");
