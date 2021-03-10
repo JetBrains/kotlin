@@ -11,11 +11,11 @@ pill {
     variant = PillExtension.Variant.FULL
 }
 
-val kotlinGradlePluginTest = project(":kotlin-gradle-plugin").sourceSets.getByName("test")
+val kotlinGradlePluginTest = project(":kotlin-gradle-plugin").sourceSets.named("test").map { it.output }
 
 dependencies {
     testImplementation(project(":kotlin-gradle-plugin"))
-    testImplementation(kotlinGradlePluginTest.output)
+    testImplementation(kotlinGradlePluginTest)
     testImplementation(project(":kotlin-gradle-subplugin-example"))
     testImplementation(project(":kotlin-allopen"))
     testImplementation(project(":kotlin-noarg"))
