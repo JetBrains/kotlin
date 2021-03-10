@@ -55,9 +55,16 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
         }
         append(annotationClassName)
 
+        if (irAnnotation.typeArgumentsCount != 0) {
+            (0 until irAnnotation.typeArgumentsCount).joinTo(this, ", ", "<", ">") { i ->
+                irAnnotation.getTypeArgument(i)?.let { renderType(it) } ?: "null"
+            }
+        }
+
         if (irAnnotation.valueArgumentsCount == 0) return
 
         val valueParameterNames = irAnnotation.getValueParameterNamesForDebug()
+
         var first = true
         append("(")
         for (i in 0 until irAnnotation.valueArgumentsCount) {
