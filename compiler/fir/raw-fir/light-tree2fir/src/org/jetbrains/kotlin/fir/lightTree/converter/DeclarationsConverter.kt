@@ -668,6 +668,8 @@ class DeclarationsConverter(
                     }
                 }
             }
+        }.also {
+            it.containingClassAttr = currentDispatchReceiverType()!!.lookupTag
         }
     }
 
