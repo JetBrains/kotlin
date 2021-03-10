@@ -74,21 +74,6 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
         fun getKaptGeneratedKotlinSourcesDir(project: Project, sourceSetName: String) =
             File(project.buildDir, "generated/source/kaptKotlin/$sourceSetName")
 
-        // Pairs of names and default values of properties
-        // The default values should typically match those defined in org.jetbrains.kotlin.base.kapt3.KaptFlag.
-        private val VERBOSE_OPTION_NAME = Pair("kapt.verbose", false)
-        private val USE_WORKER_API = Pair(
-            "kapt.use.worker.api", // Currently doesn't have a matching KaptFlag
-            true
-        )
-        private val INCREMENTAL_APT = Pair(
-            "kapt.incremental.apt",
-            true // Currently doesn't match the default value of KaptFlag.INCREMENTAL_APT, but it's fine (see https://github.com/JetBrains/kotlin/pull/3942#discussion_r532578690).
-        )
-        private val INFO_AS_WARNINGS = Pair("kapt.info.as.warnings", false)
-        private val INCLUDE_COMPILE_CLASSPATH = Pair("kapt.include.compile.classpath", true)
-        private val KAPT_KEEP_KDOC_COMMENTS_IN_STUBS = Pair("kapt.keep.kdoc.comments.in.stubs", true)
-
         const val KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME = "kotlinKaptWorkerDependencies"
 
         private val KAPT_KOTLIN_GENERATED = "kapt.kotlin.generated"
@@ -110,27 +95,27 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
         }
 
         fun Project.isKaptVerbose(): Boolean {
-            return getBooleanProperty(VERBOSE_OPTION_NAME.first, VERBOSE_OPTION_NAME.second)
+            return getBooleanOptionValue(BooleanOption.KAPT_VERBOSE)
         }
 
         fun Project.isUseWorkerApi(): Boolean {
-            return getBooleanProperty(USE_WORKER_API.first, USE_WORKER_API.second)
+            return getBooleanOptionValue(BooleanOption.KAPT_USE_WORKER_API)
         }
 
         fun Project.isIncrementalKapt(): Boolean {
-            return getBooleanProperty(INCREMENTAL_APT.first, INCREMENTAL_APT.second)
+            return getBooleanOptionValue(BooleanOption.KAPT_INCREMENTAL_APT)
         }
 
         fun Project.isInfoAsWarnings(): Boolean {
-            return getBooleanProperty(INFO_AS_WARNINGS.first, INFO_AS_WARNINGS.second)
+            return getBooleanOptionValue(BooleanOption.KAPT_INFO_AS_WARNINGS)
         }
 
         fun Project.isIncludeCompileClasspath(): Boolean {
-            return getBooleanProperty(INCLUDE_COMPILE_CLASSPATH.first, INCLUDE_COMPILE_CLASSPATH.second)
+            return getBooleanOptionValue(BooleanOption.KAPT_INCLUDE_COMPILE_CLASSPATH)
         }
 
         fun Project.isKaptKeepKdocCommentsInStubs(): Boolean {
-            return getBooleanProperty(KAPT_KEEP_KDOC_COMMENTS_IN_STUBS.first, KAPT_KEEP_KDOC_COMMENTS_IN_STUBS.second)
+            return getBooleanOptionValue(BooleanOption.KAPT_KEEP_KDOC_COMMENTS_IN_STUBS)
         }
 
         fun findMainKaptConfiguration(project: Project) = project.findKaptConfiguration(SourceSet.MAIN_SOURCE_SET_NAME)
@@ -159,16 +144,52 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
         fun isEnabled(project: Project) =
             project.plugins.any { it is Kapt3GradleSubplugin }
 
-        private fun Project.getBooleanProperty(name: String, defaultValue: Boolean): Boolean {
-            return when (val value = findProperty(name)) {
+        private fun Project.getBooleanOptionValue(booleanOption: BooleanOption): Boolean {
+            return when (val value = findProperty(booleanOption.optionName)) {
                 is Boolean -> value
                 is String -> when {
                     value.equals("true", ignoreCase = true) -> true
                     value.equals("false", ignoreCase = true) -> false
-                    else -> defaultValue // Can also consider throwing an exception here for invalid values
+                    else -> {
+                        project.logger.warn(
+                            "Boolean option `${booleanOption.optionName}` was set to an invalid value: `$value`." +
+                                    " Using default value `${booleanOption.defaultValue}` instead."
+                        )
+                        booleanOption.defaultValue
+                    }
                 }
-                else -> defaultValue // Can also consider throwing an exception here for invalid values (if the value is not null)
+                null -> booleanOption.defaultValue
+                else -> {
+                    project.logger.warn(
+                        "Boolean option `${booleanOption.optionName}` was set to an invalid value: `$value`." +
+                                " Using default value `${booleanOption.defaultValue}` instead."
+                    )
+                    booleanOption.defaultValue
+                }
             }
+        }
+
+        /**
+         * Kapt option that expects a Boolean value. It has a default value to be used when its value is not set.
+         *
+         * IMPORTANT: The default value should typically match those defined in org.jetbrains.kotlin.base.kapt3.KaptFlag.
+         */
+        private enum class BooleanOption(
+            val optionName: String,
+            val defaultValue: Boolean
+        ) {
+            KAPT_VERBOSE("kapt.verbose", false),
+            KAPT_USE_WORKER_API(
+                "kapt.use.worker.api", // Currently doesn't have a matching KaptFlag
+                true
+            ),
+            KAPT_INCREMENTAL_APT(
+                "kapt.incremental.apt",
+                true // Currently doesn't match the default value of KaptFlag.INCREMENTAL_APT, but it's fine (see https://github.com/JetBrains/kotlin/pull/3942#discussion_r532578690).
+            ),
+            KAPT_INFO_AS_WARNINGS("kapt.info.as.warnings", false),
+            KAPT_INCLUDE_COMPILE_CLASSPATH("kapt.include.compile.classpath", true),
+            KAPT_KEEP_KDOC_COMMENTS_IN_STUBS("kapt.keep.kdoc.comments.in.stubs", true)
         }
     }
 
