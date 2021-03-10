@@ -74,6 +74,7 @@ public interface ErrorsJvm {
     DiagnosticFactory0<KtAnnotationEntry> JVM_PACKAGE_NAME_NOT_SUPPORTED_IN_FILES_WITH_CLASSES = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<KtDeclaration> STATE_IN_MULTIFILE_CLASS = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> NOT_ALL_MULTIFILE_CLASS_PARTS_ARE_JVM_SYNTHETIC = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<PsiElement> INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC = DiagnosticFactory0.create(ERROR);

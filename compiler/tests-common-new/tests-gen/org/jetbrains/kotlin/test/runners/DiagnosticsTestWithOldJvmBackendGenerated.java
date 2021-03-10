@@ -630,6 +630,22 @@ public class DiagnosticsTestWithOldJvmBackendGenerated extends AbstractDiagnosti
     }
 
     @Nested
+    @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/multifileClasses")
+    @TestDataPath("$PROJECT_ROOT")
+    public class MultifileClasses {
+        @Test
+        public void testAllFilesPresentInMultifileClasses() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/multifileClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_OLD, true);
+        }
+
+        @Test
+        @TestMetadata("jvmSynthetic.kt")
+        public void testJvmSynthetic() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJvmBackend/multifileClasses/jvmSynthetic.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/valueClasses")
     @TestDataPath("$PROJECT_ROOT")
     public class ValueClasses {
