@@ -39,6 +39,7 @@ dependencies {
 
     testImplementation(gradleApi())
     testImplementation("com.google.code.gson:gson:${rootProject.extra["versions.jar.gson"]}")
+    testApiJUnit5(vintageEngine = true)
 
     testRuntimeOnly(projectRuntimeJar(":kotlin-android-extensions"))
     testRuntimeOnly(project(":compiler:tests-mutes"))
@@ -85,32 +86,56 @@ fun Test.advanceGradleVersion() {
 }
 
 // additional configuration in tasks.withType<Test> below
-projectTest("test", shortenTempRootName = shortenTempRootName) {
+projectTest(
+    "test",
+    shortenTempRootName = shortenTempRootName,
+    jUnit5Enabled = true
+) {
     includeMppAndAndroid(false)
     includeNative(false)
 }
 
-projectTest("testAdvanceGradleVersion", shortenTempRootName = shortenTempRootName) {
+projectTest(
+    "testAdvanceGradleVersion",
+    shortenTempRootName = shortenTempRootName,
+    jUnit5Enabled = true
+) {
     advanceGradleVersion()
     includeMppAndAndroid(false)
     includeNative(false)
 }
 
 if (isTeamcityBuild) {
-    projectTest("testNative", shortenTempRootName = shortenTempRootName) {
+    projectTest(
+        "testNative",
+        shortenTempRootName = shortenTempRootName,
+        jUnit5Enabled = true
+    ) {
         includeNative(true)
     }
 
-    projectTest("testAdvanceGradleVersionNative", shortenTempRootName = shortenTempRootName) {
+    projectTest(
+        "testAdvanceGradleVersionNative",
+        shortenTempRootName = shortenTempRootName,
+        jUnit5Enabled = true
+    ) {
         advanceGradleVersion()
         includeNative(true)
     }
 
-    projectTest("testMppAndAndroid", shortenTempRootName = shortenTempRootName) {
+    projectTest(
+        "testMppAndAndroid",
+        shortenTempRootName = shortenTempRootName,
+        jUnit5Enabled = true
+    ) {
         includeMppAndAndroid(true)
     }
 
-    projectTest("testAdvanceGradleVersionMppAndAndroid", shortenTempRootName = shortenTempRootName) {
+    projectTest(
+        "testAdvanceGradleVersionMppAndAndroid",
+        shortenTempRootName = shortenTempRootName,
+        jUnit5Enabled = true
+    ) {
         advanceGradleVersion()
         includeMppAndAndroid(true)
     }
@@ -177,6 +202,7 @@ tasks.withType<Test> {
     useAndroidSdk()
 
     maxHeapSize = "512m"
+    useJUnitPlatform()
 
     testLogging {
         // set options for log level LIFECYCLE
