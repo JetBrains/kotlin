@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.ir.interpreter.proxy.reflection
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.KPropertyState
-import org.jetbrains.kotlin.ir.interpreter.state.State
 import org.jetbrains.kotlin.ir.interpreter.toState
+import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 import kotlin.reflect.*
 
 internal open class KProperty0Proxy(
@@ -21,7 +21,8 @@ internal open class KProperty0Proxy(
 
             override fun call(vararg args: Any?): Any? {
                 checkArguments(0, args.size)
-                return state.dispatchReceiver!!.getState(state.property.symbol)!!
+                val actualPropertySymbol = state.property.resolveFakeOverride()?.symbol ?: state.property.symbol
+                return state.dispatchReceiver!!.getState(actualPropertySymbol)!!
             }
 
             override fun callBy(args: Map<KParameter, Any?>): Any? {

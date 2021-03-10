@@ -231,7 +231,7 @@ class IrInterpreter(val irBuiltIns: IrBuiltIns, private val bodyMap: Map<IdSigna
         expression: IrFunctionAccessExpression, irFunction: IrFunction, pool: MutableList<Variable>
     ): ExecutionResult {
         // if irFunction is lambda and it has receiver, then first descriptor must be taken from extension receiver
-        val receiverAsFirstArgument = when (expression.dispatchReceiver?.type?.isFunction()) {
+        val receiverAsFirstArgument = when (expression.valueArgumentsCount != irFunction.valueParameters.size) {
             true -> listOfNotNull(irFunction.getExtensionReceiver())
             else -> listOf()
         }
@@ -861,7 +861,23 @@ class IrInterpreter(val irBuiltIns: IrBuiltIns, private val bodyMap: Map<IdSigna
     }
 
     private fun interpretFunctionReference(reference: IrFunctionReference): ExecutionResult {
-        stack.pushReturnValue(KFunctionState(reference))
+        val function = KFunctionState(reference)
+
+        // dispatch receiver processing
+        val rawDispatchReceiver = reference.dispatchReceiver
+        rawDispatchReceiver?.interpret()?.check { return it }
+        val dispatchReceiver = rawDispatchReceiver?.let { stack.popReturnValue() }?.checkNullability(rawDispatchReceiver.type)
+
+        // extension receiver processing
+        val rawExtensionReceiver = reference.extensionReceiver
+        rawExtensionReceiver?.interpret()?.check { return it }
+        val extensionReceiver = rawExtensionReceiver?.let { stack.popReturnValue() }?.checkNullability(rawExtensionReceiver.type)
+
+        function.irFunction.getDispatchReceiver()?.let { dispatchReceiver?.let { receiver -> function.fields.add(Variable(it, receiver)) } }
+        function.irFunction.getExtensionReceiver()?.let { extensionReceiver?.let { receiver -> function.fields.add(Variable(it, receiver)) } }
+
+        if (function.irFunction.isLocal) function.fields.addAll(stack.getAll()) // TODO save only necessary declarations
+        stack.pushReturnValue(function)
         return Next
     }
 
