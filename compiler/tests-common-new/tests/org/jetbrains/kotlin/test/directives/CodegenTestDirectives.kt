@@ -48,7 +48,12 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
     )
 
     val CHECK_BYTECODE_LISTING by directive(
-        description = "Dump resulting bytecode to .txt or _ir.txt file",
+        description = "Dump generated classes to .txt or _ir.txt file",
+        applicability = Global
+    )
+
+    val WITH_SIGNATURES by directive(
+        description = "Include generic signatures in generated classes dump",
         applicability = Global
     )
 
