@@ -439,6 +439,10 @@ class BodyResolveContext(
         }
     }
 
+    inline fun <T> forEnumEntry(
+        crossinline f: () -> T
+    ): T = withTowerDataMode(FirTowerDataMode.CONSTRUCTOR_HEADER, f)
+
     inline fun <T> withAnonymousInitializer(
         anonymousInitializer: FirAnonymousInitializer,
         crossinline f: () -> T

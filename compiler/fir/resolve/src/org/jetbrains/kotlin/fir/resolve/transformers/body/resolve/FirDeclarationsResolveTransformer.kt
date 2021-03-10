@@ -107,8 +107,8 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
     override fun transformEnumEntry(enumEntry: FirEnumEntry, data: ResolutionMode): CompositeTransformResult<FirDeclaration> {
         if (enumEntry.resolvePhase == transformerPhase) return enumEntry.compose()
         transformer.replaceDeclarationResolvePhaseIfNeeded(enumEntry, transformerPhase)
-        context.withTowerDataMode(FirTowerDataMode.CONSTRUCTOR_HEADER) {
-            return (enumEntry.transformChildren(this, data) as FirEnumEntry).compose()
+        return context.forEnumEntry {
+            (enumEntry.transformChildren(this, data) as FirEnumEntry).compose()
         }
     }
 
@@ -127,7 +127,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         if (returnTypeRef !is FirImplicitTypeRef && implicitTypeOnly) return property.compose()
         if (property.resolvePhase == transformerPhase) return property.compose()
         if (property.resolvePhase == FirResolvePhase.BODY_RESOLVE || property.resolvePhase == transformerPhase) {
-            return@withTypeParametersOf property.compose()
+            return property.compose()
         }
 
         dataFlowAnalyzer.enterProperty(property)
