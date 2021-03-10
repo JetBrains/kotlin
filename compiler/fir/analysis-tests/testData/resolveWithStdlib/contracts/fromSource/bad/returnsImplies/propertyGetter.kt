@@ -11,8 +11,8 @@ fun Any?.isNotNull(): Boolean {
 @OptIn(ExperimentalContracts::class)
 val Any?.isNotNull: Boolean
     get() {
-        <!WRONG_IMPLIES_CONDITION!>contract {
+        contract {
             returns(true) implies (this@isNotNull != null)
-        }<!>
+        }
         return this@isNotNull != null
     }

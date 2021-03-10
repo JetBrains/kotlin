@@ -6,16 +6,16 @@ interface A {
 
 var Any?.isNotNull: Boolean
     get() {
-        <!WRONG_IMPLIES_CONDITION!>contract {
+        contract {
             returns(true) implies (this@isNotNull != null)
-        }<!>
+        }
         return this != null
     }
     set(value) {
-        <!WRONG_IMPLIES_CONDITION!>contract {
+        contract {
             returns() implies (this@isNotNull != null)
             require(this != null)
-        }<!>
+        }
     }
 
 fun test_1(a: A?) {
