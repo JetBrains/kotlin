@@ -363,6 +363,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
         }
 
         @Test
+        @TestMetadata("initializedAfterRethrow.kt")
+        public void testInitializedAfterRethrow() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/initializedAfterRethrow.kt");
+        }
+
+        @Test
         @TestMetadata("InvokeAndRecursiveResolve.kt")
         public void testInvokeAndRecursiveResolve() throws Exception {
             runTest("compiler/testData/diagnostics/tests/InvokeAndRecursiveResolve.kt");
