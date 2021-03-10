@@ -108,11 +108,9 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         )
     }
 
-    protected fun generateStub(resolvedCall: ResolvedCall<*>?, codegen: BaseExpressionCodegen) {
+    protected fun generateStub(text: String, codegen: BaseExpressionCodegen) {
         leaveTemps()
-        assert(resolvedCall != null)
-        val message = "Call is part of inline cycle: " + resolvedCall!!.call.callElement.text
-        AsmUtil.genThrow(codegen.v, "java/lang/UnsupportedOperationException", message)
+        AsmUtil.genThrow(codegen.v, "java/lang/UnsupportedOperationException", "Call is part of inline cycle: $text")
     }
 
     protected fun endCall(result: InlineResult, registerLineNumberAfterwards: Boolean) {
