@@ -25,5 +25,11 @@ inline fun inlineFun() {
 // There should be no generic information in the SAM wrappers.
 // 0 declaration: void <init>\(kotlin.jvm.functions.Function1<.*, .*>\)
 // 0 declaration: function extends kotlin.jvm.functions.Function1<.*, .*>
+
+// JVM_TEMPLATES
 // 2 private final synthetic Lkotlin/jvm/functions/Function1; function
 // 2 <init>\(Lkotlin/jvm/functions/Function1;\)V
+
+// JVM_IR_TEMPLATES
+// 1 private final synthetic Lkotlin/jvm/functions/Function1; function
+// 1 <init>\(Lkotlin/jvm/functions/Function1;\)V

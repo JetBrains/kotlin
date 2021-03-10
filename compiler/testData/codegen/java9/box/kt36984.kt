@@ -1,4 +1,6 @@
 // TARGET_BACKEND: JVM
+// IGNORE_BACKEND: JVM_IR
+//  ^ JVM_IR back-end generates SAM conversion with invokedynamic
 // WITH_RUNTIME
 
 fun box(): String {
