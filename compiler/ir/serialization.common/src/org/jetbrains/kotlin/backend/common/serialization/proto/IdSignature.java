@@ -110,6 +110,24 @@ public final class IdSignature extends
             idsigCase_ = 5;
             break;
           }
+          case 48: {
+            idsigCase_ = 6;
+            idsig_ = input.readInt32();
+            break;
+          }
+          case 58: {
+            org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature.Builder subBuilder = null;
+            if (idsigCase_ == 7) {
+              subBuilder = ((org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature) idsig_).toBuilder();
+            }
+            idsig_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature.PARSER, extensionRegistry);
+            if (subBuilder != null) {
+              subBuilder.mergeFrom((org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature) idsig_);
+              idsig_ = subBuilder.buildPartial();
+            }
+            idsigCase_ = 7;
+            break;
+          }
         }
       }
     } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -153,6 +171,8 @@ public final class IdSignature extends
     ACCESSOR_SIG(3),
     SCOPED_LOCAL_SIG(4),
     IC_SIG(5),
+    RETURNABLE_BLOCK_SIG(6),
+    FILE_SIG(7),
     IDSIG_NOT_SET(0);
     private int value = 0;
     private IdsigCase(int value) {
@@ -165,6 +185,8 @@ public final class IdSignature extends
         case 3: return ACCESSOR_SIG;
         case 4: return SCOPED_LOCAL_SIG;
         case 5: return IC_SIG;
+        case 6: return RETURNABLE_BLOCK_SIG;
+        case 7: return FILE_SIG;
         case 0: return IDSIG_NOT_SET;
         default: throw new java.lang.IllegalArgumentException(
           "Value is undefined for this oneof enum.");
@@ -266,6 +288,40 @@ public final class IdSignature extends
     return org.jetbrains.kotlin.backend.common.serialization.proto.LoweredIdSignature.getDefaultInstance();
   }
 
+  public static final int RETURNABLE_BLOCK_SIG_FIELD_NUMBER = 6;
+  /**
+   * <code>optional int32 returnable_block_sig = 6;</code>
+   */
+  public boolean hasReturnableBlockSig() {
+    return idsigCase_ == 6;
+  }
+  /**
+   * <code>optional int32 returnable_block_sig = 6;</code>
+   */
+  public int getReturnableBlockSig() {
+    if (idsigCase_ == 6) {
+      return (java.lang.Integer) idsig_;
+    }
+    return 0;
+  }
+
+  public static final int FILE_SIG_FIELD_NUMBER = 7;
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature file_sig = 7;</code>
+   */
+  public boolean hasFileSig() {
+    return idsigCase_ == 7;
+  }
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature file_sig = 7;</code>
+   */
+  public org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature getFileSig() {
+    if (idsigCase_ == 7) {
+       return (org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature) idsig_;
+    }
+    return org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature.getDefaultInstance();
+  }
+
   private void initFields() {
   }
   private byte memoizedIsInitialized = -1;
@@ -292,6 +348,12 @@ public final class IdSignature extends
         return false;
       }
     }
+    if (hasFileSig()) {
+      if (!getFileSig().isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+    }
     memoizedIsInitialized = 1;
     return true;
   }
@@ -314,6 +376,13 @@ public final class IdSignature extends
     }
     if (idsigCase_ == 5) {
       output.writeMessage(5, (org.jetbrains.kotlin.backend.common.serialization.proto.LoweredIdSignature) idsig_);
+    }
+    if (idsigCase_ == 6) {
+      output.writeInt32(
+          6, (int)((java.lang.Integer) idsig_));
+    }
+    if (idsigCase_ == 7) {
+      output.writeMessage(7, (org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature) idsig_);
     }
     output.writeRawBytes(unknownFields);
   }
@@ -344,6 +413,15 @@ public final class IdSignature extends
     if (idsigCase_ == 5) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeMessageSize(5, (org.jetbrains.kotlin.backend.common.serialization.proto.LoweredIdSignature) idsig_);
+    }
+    if (idsigCase_ == 6) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeInt32Size(
+            6, (int)((java.lang.Integer) idsig_));
+    }
+    if (idsigCase_ == 7) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeMessageSize(7, (org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature) idsig_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -479,6 +557,12 @@ public final class IdSignature extends
       if (idsigCase_ == 5) {
         result.idsig_ = idsig_;
       }
+      if (idsigCase_ == 6) {
+        result.idsig_ = idsig_;
+      }
+      if (idsigCase_ == 7) {
+        result.idsig_ = idsig_;
+      }
       result.bitField0_ = to_bitField0_;
       result.idsigCase_ = idsigCase_;
       return result;
@@ -507,6 +591,14 @@ public final class IdSignature extends
           mergeIcSig(other.getIcSig());
           break;
         }
+        case RETURNABLE_BLOCK_SIG: {
+          setReturnableBlockSig(other.getReturnableBlockSig());
+          break;
+        }
+        case FILE_SIG: {
+          mergeFileSig(other.getFileSig());
+          break;
+        }
         case IDSIG_NOT_SET: {
           break;
         }
@@ -531,6 +623,12 @@ public final class IdSignature extends
       }
       if (hasIcSig()) {
         if (!getIcSig().isInitialized()) {
+          
+          return false;
+        }
+      }
+      if (hasFileSig()) {
+        if (!getFileSig().isInitialized()) {
           
           return false;
         }
@@ -856,6 +954,106 @@ public final class IdSignature extends
      */
     public Builder clearIcSig() {
       if (idsigCase_ == 5) {
+        idsigCase_ = 0;
+        idsig_ = null;
+        
+      }
+      return this;
+    }
+
+    /**
+     * <code>optional int32 returnable_block_sig = 6;</code>
+     */
+    public boolean hasReturnableBlockSig() {
+      return idsigCase_ == 6;
+    }
+    /**
+     * <code>optional int32 returnable_block_sig = 6;</code>
+     */
+    public int getReturnableBlockSig() {
+      if (idsigCase_ == 6) {
+        return (java.lang.Integer) idsig_;
+      }
+      return 0;
+    }
+    /**
+     * <code>optional int32 returnable_block_sig = 6;</code>
+     */
+    public Builder setReturnableBlockSig(int value) {
+      idsigCase_ = 6;
+      idsig_ = value;
+      
+      return this;
+    }
+    /**
+     * <code>optional int32 returnable_block_sig = 6;</code>
+     */
+    public Builder clearReturnableBlockSig() {
+      if (idsigCase_ == 6) {
+        idsigCase_ = 0;
+        idsig_ = null;
+        
+      }
+      return this;
+    }
+
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature file_sig = 7;</code>
+     */
+    public boolean hasFileSig() {
+      return idsigCase_ == 7;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature file_sig = 7;</code>
+     */
+    public org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature getFileSig() {
+      if (idsigCase_ == 7) {
+        return (org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature) idsig_;
+      }
+      return org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature.getDefaultInstance();
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature file_sig = 7;</code>
+     */
+    public Builder setFileSig(org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      idsig_ = value;
+
+      idsigCase_ = 7;
+      return this;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature file_sig = 7;</code>
+     */
+    public Builder setFileSig(
+        org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature.Builder builderForValue) {
+      idsig_ = builderForValue.build();
+
+      idsigCase_ = 7;
+      return this;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature file_sig = 7;</code>
+     */
+    public Builder mergeFileSig(org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature value) {
+      if (idsigCase_ == 7 &&
+          idsig_ != org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature.getDefaultInstance()) {
+        idsig_ = org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature.newBuilder((org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature) idsig_)
+            .mergeFrom(value).buildPartial();
+      } else {
+        idsig_ = value;
+      }
+
+      idsigCase_ = 7;
+      return this;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature file_sig = 7;</code>
+     */
+    public Builder clearFileSig() {
+      if (idsigCase_ == 7) {
         idsigCase_ = 0;
         idsig_ = null;
         

@@ -82,6 +82,10 @@ class FakeOverrideBuilder(
     }
 
     private fun buildFakeOverrideChainsForClass(clazz: IrClass) {
+        if (clazz.name.asString() == "ReverseOrderComparator") {
+            1
+        }
+
         if (haveFakeOverrides.contains(clazz)) return
         if (!platformSpecificClassFilter.needToConstructFakeOverrides(clazz)) return
 

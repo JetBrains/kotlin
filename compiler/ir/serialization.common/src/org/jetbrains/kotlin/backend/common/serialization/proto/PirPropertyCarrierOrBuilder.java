@@ -74,13 +74,4 @@ public interface PirPropertyCarrierOrBuilder extends
    * <code>optional int64 setter = 7;</code>
    */
   long getSetter();
-
-  /**
-   * <code>optional int64 flags = 8 [default = 0];</code>
-   */
-  boolean hasFlags();
-  /**
-   * <code>optional int64 flags = 8 [default = 0];</code>
-   */
-  long getFlags();
 }

@@ -60,8 +60,10 @@ private class CarrierSerializer(val fileSerializer: IrFileSerializer) {
 
     fun serializeDeclarationCarrier(declaration: IrDeclaration) {
         if (declaration is PersistentIrDeclarationBase<*>) {
+            if (declaration.values == null) return
             // TODO proper signature calculations?
-            signatures += fileSerializer.serializeIdSignature(declaration.symbol.signature!!).toByteArray()
+            val signature = declaration.symbol.signature ?: return // TODO
+            signatures += fileSerializer.serializeIdSignature(signature).toByteArray()
             declarationCarriers += serializeCarriers(declaration)
         } // else -> TODO?
     }

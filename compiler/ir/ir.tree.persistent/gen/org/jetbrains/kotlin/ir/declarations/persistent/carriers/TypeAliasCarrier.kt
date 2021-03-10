@@ -40,5 +40,5 @@ internal class TypeAliasCarrierImpl(
     override val expandedTypeField: IrType
 ) : TypeAliasCarrier {
 
-    override val typeParametersField: List<IrTypeParameter> = typeParametersSymbolField.map { it.owner }
+    override val typeParametersField: List<IrTypeParameter> by lazy { typeParametersSymbolField.map { it.owner } }
 }

@@ -57,5 +57,5 @@ internal class ClassCarrierImpl(
     override val thisReceiverField: IrValueParameter?
         get() = thisReceiverSymbolField?.owner
 
-    override val typeParametersField: List<IrTypeParameter> = typeParametersSymbolField.map { it.owner }
+    override val typeParametersField: List<IrTypeParameter> by lazy { typeParametersSymbolField.map { it.owner } }
 }

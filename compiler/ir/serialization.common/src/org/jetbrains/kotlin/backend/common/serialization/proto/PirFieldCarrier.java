@@ -91,11 +91,6 @@ public final class PirFieldCarrier extends
             correspondingPropertySymbol_ = input.readInt64();
             break;
           }
-          case 64: {
-            bitField0_ |= 0x00000040;
-            flags_ = input.readInt64();
-            break;
-          }
         }
       }
     } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -258,21 +253,6 @@ public final class PirFieldCarrier extends
     return correspondingPropertySymbol_;
   }
 
-  public static final int FLAGS_FIELD_NUMBER = 8;
-  private long flags_;
-  /**
-   * <code>optional int64 flags = 8 [default = 0];</code>
-   */
-  public boolean hasFlags() {
-    return ((bitField0_ & 0x00000040) == 0x00000040);
-  }
-  /**
-   * <code>optional int64 flags = 8 [default = 0];</code>
-   */
-  public long getFlags() {
-    return flags_;
-  }
-
   private void initFields() {
     lastModified_ = 0;
     parentSymbol_ = 0L;
@@ -281,7 +261,6 @@ public final class PirFieldCarrier extends
     type_ = 0;
     initializer_ = 0;
     correspondingPropertySymbol_ = 0L;
-    flags_ = 0L;
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -331,9 +310,6 @@ public final class PirFieldCarrier extends
     if (((bitField0_ & 0x00000020) == 0x00000020)) {
       output.writeInt64(7, correspondingPropertySymbol_);
     }
-    if (((bitField0_ & 0x00000040) == 0x00000040)) {
-      output.writeInt64(8, flags_);
-    }
     output.writeRawBytes(unknownFields);
   }
 
@@ -370,10 +346,6 @@ public final class PirFieldCarrier extends
     if (((bitField0_ & 0x00000020) == 0x00000020)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeInt64Size(7, correspondingPropertySymbol_);
-    }
-    if (((bitField0_ & 0x00000040) == 0x00000040)) {
-      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeInt64Size(8, flags_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -483,8 +455,6 @@ public final class PirFieldCarrier extends
       bitField0_ = (bitField0_ & ~0x00000020);
       correspondingPropertySymbol_ = 0L;
       bitField0_ = (bitField0_ & ~0x00000040);
-      flags_ = 0L;
-      bitField0_ = (bitField0_ & ~0x00000080);
       return this;
     }
 
@@ -537,10 +507,6 @@ public final class PirFieldCarrier extends
         to_bitField0_ |= 0x00000020;
       }
       result.correspondingPropertySymbol_ = correspondingPropertySymbol_;
-      if (((from_bitField0_ & 0x00000080) == 0x00000080)) {
-        to_bitField0_ |= 0x00000040;
-      }
-      result.flags_ = flags_;
       result.bitField0_ = to_bitField0_;
       return result;
     }
@@ -574,9 +540,6 @@ public final class PirFieldCarrier extends
       }
       if (other.hasCorrespondingPropertySymbol()) {
         setCorrespondingPropertySymbol(other.getCorrespondingPropertySymbol());
-      }
-      if (other.hasFlags()) {
-        setFlags(other.getFlags());
       }
       setUnknownFields(
           getUnknownFields().concat(other.unknownFields));
@@ -933,38 +896,6 @@ public final class PirFieldCarrier extends
     public Builder clearCorrespondingPropertySymbol() {
       bitField0_ = (bitField0_ & ~0x00000040);
       correspondingPropertySymbol_ = 0L;
-      
-      return this;
-    }
-
-    private long flags_ ;
-    /**
-     * <code>optional int64 flags = 8 [default = 0];</code>
-     */
-    public boolean hasFlags() {
-      return ((bitField0_ & 0x00000080) == 0x00000080);
-    }
-    /**
-     * <code>optional int64 flags = 8 [default = 0];</code>
-     */
-    public long getFlags() {
-      return flags_;
-    }
-    /**
-     * <code>optional int64 flags = 8 [default = 0];</code>
-     */
-    public Builder setFlags(long value) {
-      bitField0_ |= 0x00000080;
-      flags_ = value;
-      
-      return this;
-    }
-    /**
-     * <code>optional int64 flags = 8 [default = 0];</code>
-     */
-    public Builder clearFlags() {
-      bitField0_ = (bitField0_ & ~0x00000080);
-      flags_ = 0L;
       
       return this;
     }

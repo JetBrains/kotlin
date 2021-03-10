@@ -58,7 +58,7 @@ fun compile(
     multiModule: Boolean = false,
     relativeRequirePath: Boolean = false,
     propertyLazyInitialization: Boolean,
-    useStdlibCache: Boolean = false,
+    useStdlibCache: Boolean = true,
 ): CompilerResult {
     val irFactory = PersistentIrFactory()
 

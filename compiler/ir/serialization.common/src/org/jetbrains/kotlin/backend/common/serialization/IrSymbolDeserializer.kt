@@ -28,6 +28,8 @@ class IrSymbolDeserializer(
     val actuals: List<Actual>,
     val enqueueLocalTopLevelDeclaration: (IdSignature) -> Unit,
     val handleExpectActualMapping: (IdSignature, IrSymbol) -> IrSymbol,
+    val pathToFileSymbol: (String) -> IrFileSymbol = { error("indexToFileSymbol not provided") },
+    val returnableBlockSymbol: (Int) -> IrReturnableBlockSymbol = { error("Returnable block symbol deserialization not supported")},
     val deserializePublicSymbol: (IdSignature, BinarySymbolData.SymbolKind) -> IrSymbol,
 ) {
 
@@ -58,7 +60,9 @@ class IrSymbolDeserializer(
             BinarySymbolData.SymbolKind.RECEIVER_PARAMETER_SYMBOL -> IrValueParameterSymbolImpl()
             BinarySymbolData.SymbolKind.LOCAL_DELEGATED_PROPERTY_SYMBOL ->
                 IrLocalDelegatedPropertySymbolImpl()
-            else -> error("Unexpected classifier symbol kind: $symbolKind for signature $idSig")
+            BinarySymbolData.SymbolKind.FILE_SYMBOL -> pathToFileSymbol((idSig as IdSignature.FileSignature).path)
+            BinarySymbolData.SymbolKind.RETURNABLE_BLOCK_SYMBOL -> returnableBlockSymbol((idSig as IdSignature.ReturnableBlockSignature).upCnt)
+//            else -> error("Unexpected classifier symbol kind: $symbolKind for signature $idSig")
         }
     }
 
@@ -156,6 +160,8 @@ class IrSymbolDeserializer(
             PRIVATE_SIG -> deserializeFileLocalIdSignature(proto.privateSig)
             SCOPED_LOCAL_SIG -> deserializeScopeLocalIdSignature(proto.scopedLocalSig)
             IC_SIG -> deserializeLoweredDeclarationSignature(proto.icSig)
+            RETURNABLE_BLOCK_SIG -> IdSignature.ReturnableBlockSignature(proto.returnableBlockSig)
+            FILE_SIG -> IdSignature.FileSignature(proto.fileSig.path)
             else -> error("Unexpected IdSignature kind: ${proto.idsigCase}")
         }
     }

@@ -80,7 +80,7 @@ class CarrierDeserializer(
     }
 
     private inline fun <reified C : DeclarationCarrier> PersistentIrDeclarationBase<C>.load(fn: (ByteArray) -> C) {
-        val index = signatureToIndex[(this as IrSymbolOwner).symbol.signature]!!
+        val index = signatureToIndex[(this as IrSymbolOwner).symbol.signature] ?: return
 
         val bodyCarriers = declarationReader.tableItemBytes(index)
 

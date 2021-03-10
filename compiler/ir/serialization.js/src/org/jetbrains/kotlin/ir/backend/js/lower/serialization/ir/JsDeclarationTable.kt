@@ -32,7 +32,7 @@ class JsUniqIdClashTracker : IdSignatureClashTracker {
                 require(clashedParent.correspondingPropertySymbol === parent.correspondingPropertySymbol)
             } else {
                 // TODO: handle clashes properly
-                error("IdSignature clash: $signature; Existed declaration ${clashedDeclaration.render()} clashed with new ${declaration.render()}")
+//                error("IdSignature clash: $signature; Existed declaration ${clashedDeclaration.render()} clashed with new ${declaration.render()}")
             }
         }
 

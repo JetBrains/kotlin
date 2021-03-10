@@ -538,7 +538,7 @@ internal object PersistentIrGenerator {
             *(fields.mapNotNull {
                 it.propSymbolType?.let { _ ->
                     if (it.storeInCarrierImpl) {
-                        +"override val ${it.name}Field: " + it.propType + " = ${it.name}SymbolField" + it.symbolToDeclaration
+                        +"override val ${it.name}Field: " + it.propType + " by lazy { ${it.name}SymbolField" + it.symbolToDeclaration + " }"
                     } else {
                         lines(
                             +"override val ${it.name}Field: " + it.propType + if (it.lateinit) "?" else "",

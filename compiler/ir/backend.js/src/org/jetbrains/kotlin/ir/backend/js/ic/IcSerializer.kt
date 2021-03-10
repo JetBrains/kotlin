@@ -14,8 +14,7 @@ import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsGlobalDeclara
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrFileSerializer
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrDeclarationBase
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
@@ -25,9 +24,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.serialization.SerializedCarriers
 import org.jetbrains.kotlin.ir.serialization.serializeCarriers
 import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
-import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.ir.util.IrMessageLogger
-import org.jetbrains.kotlin.ir.util.file
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.library.SerializedIrFile
 import org.jetbrains.kotlin.types.Variance
 
@@ -49,20 +46,35 @@ class IcSerializer(
 
         val fileToDeserializer = moduleDeserializer.fileDeserializers().associateBy { it.file }
 
+        val filteredDeclarations = declarations.filter {
+            when {
+                it.fileOrNull.let { it == null || fileToDeserializer[it] == null } -> false
+                it is IrFakeOverrideFunction -> it.isBound
+                it is IrFakeOverrideProperty -> it.isBound
+                else -> true
+            }
+        }
 
-        val icData = declarations.groupBy {
+        val dataToSerialize = filteredDeclarations.groupBy {
             // TODO don't move declarations or effects outside the original file
             // TODO Or invent a different mechanism for that
-            it.file
-        }.entries.map { (file, declarations) ->
 
+            it.file
+        }.entries
+
+        val fileToIndex = mutableMapOf<IrFile, Int>()
+        dataToSerialize.forEach { (f, _) ->
+            fileToIndex[f] = fileToIndex.size
+        }
+
+        val icData = dataToSerialize.map { (file, declarations) ->
             val fileDeserializer = fileToDeserializer[file]!!
 
-            val maxFileLocalIndex = fileDeserializer.reversedSignatureIndex.keys.filterIsInstance<IdSignature.FileLocalSignature>().maxOf { it.id }
-            val maxScopeLocalIndex = fileDeserializer.reversedSignatureIndex.keys.filterIsInstance<IdSignature.ScopeLocalDeclaration>().maxOf { it.id }
+            val maxFileLocalIndex = fileDeserializer.reversedSignatureIndex.keys.filterIsInstance<IdSignature.FileLocalSignature>().maxOfOrNull { it.id } ?: -1
+            val maxScopeLocalIndex = fileDeserializer.reversedSignatureIndex.keys.filterIsInstance<IdSignature.ScopeLocalDeclaration>().maxOfOrNull { it.id } ?: -1
 
             val icDeclarationTable = IcDeclarationTable(globalDeclarationTable, irFactory, maxFileLocalIndex + 1, maxScopeLocalIndex + 1)
-            val fileSerializer = JsIrFileSerializer(IrMessageLogger.None, icDeclarationTable, mutableMapOf(), skipExpects = true, icMode = true)
+            val fileSerializer = JsIrFileSerializer(IrMessageLogger.None, icDeclarationTable, mutableMapOf(), skipExpects = true, icMode = true) { fileToIndex[it]!! }
 
             // Serialize old bodies as they have probably changed.
             // Need to keep the order same as before.
@@ -96,8 +108,6 @@ class IcSerializer(
                 d is PersistentIrDeclarationBase<*> && d.createdOn > 0
             }
 
-            val serializedIrFile = fileSerializer.serializeDeclarationsForIC(file, newDeclarations)
-
             val serializedCarriers = fileSerializer.serializeCarriers(
                 declarations,
                 bodies.keys,
@@ -107,13 +117,14 @@ class IcSerializer(
                 fileSerializer.serializeIrSymbol(symbol)
             }
 
+            val serializedIrFile = fileSerializer.serializeDeclarationsForIC(file, newDeclarations)
+
             SerializedIcDataForFile(
                 serializedIrFile,
                 serializedCarriers,
                 serializedMappings,
             )
         }
-
         return SerializedIcData(icData)
     }
 
@@ -130,7 +141,7 @@ class IcSerializer(
         }
 
         override fun isExportedDeclaration(declaration: IrDeclaration): Boolean {
-            if (declaration is PersistentIrDeclarationBase<*>) return true
+//            if (declaration is PersistentIrDeclarationBase<*>) return true
             return super.isExportedDeclaration(declaration)
         }
 

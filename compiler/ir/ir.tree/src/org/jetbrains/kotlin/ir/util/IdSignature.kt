@@ -239,6 +239,45 @@ sealed class IdSignature {
             return (index * 31 + stage) * 31 + original.hashCode()
         }
     }
+
+    // Used to reference
+    class ReturnableBlockSignature(val upCnt: Int) : IdSignature() {
+        override val isPublic: Boolean get() = false
+
+        override val hasTopLevel: Boolean get() = false
+
+        override fun topLevelSignature(): IdSignature = error("Is not supported for returnable blocks")
+
+        override fun nearestPublicSig(): IdSignature = error("Is not supported for returnable blocks")
+
+        override fun packageFqName(): FqName = error("Is not supported for returnable blocks")
+
+        override fun render(): String = "#$upCnt"
+
+        override fun equals(other: Any?): Boolean =
+            other is ReturnableBlockSignature && upCnt == other.upCnt
+
+        override fun hashCode(): Int = upCnt
+    }
+
+    class FileSignature(val path: String): IdSignature() {
+        override val isPublic: Boolean get() = false
+
+        override val hasTopLevel: Boolean get() = false
+
+        override fun topLevelSignature(): IdSignature = error("Is not supported for files")
+
+        override fun nearestPublicSig(): IdSignature = error("Is not supported for files")
+
+        override fun packageFqName(): FqName = error("Is not supported for files")
+
+        override fun render(): String = "#$path"
+
+        override fun equals(other: Any?): Boolean =
+            other is FileSignature && path == other.path
+
+        override fun hashCode(): Int = path.hashCode()
+    }
 }
 
 interface IdSignatureComposer {

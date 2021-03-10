@@ -75,7 +75,11 @@ internal class PersistentIrFakeOverrideFunction(
     private var _symbol: IrSimpleFunctionSymbol? = null
 
     override val symbol: IrSimpleFunctionSymbol
-        get() = _symbol ?: error("$this has not acquired a symbol yet")
+        get() = _symbol ?:
+            error("$this has not acquired a symbol yet")
+
+    override val isBound: Boolean
+        get() = _symbol != null
 
     @ObsoleteDescriptorBasedAPI
     override val descriptor

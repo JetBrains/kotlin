@@ -48,6 +48,10 @@ message LoweredIdSignature {
   required int32 index = 3;
 }
 
+message FileSignature {
+  required string path = 1;
+}
+
 message IdSignature {
   oneof idsig {
     PublicIdSignature public_sig = 1;
@@ -55,6 +59,8 @@ message IdSignature {
     AccessorIdSignature accessor_sig = 3;
     int32 scoped_local_sig = 4;
     LoweredIdSignature ic_sig = 5;
+    int32 returnable_block_sig = 6;
+    FileSignature file_sig = 7;
   }
 }
 
@@ -114,6 +120,12 @@ message IrBlock {
   optional int32 origin_name = 2;
 }
 
+message IrReturnableBlock {
+  repeated IrStatement statement = 1;
+  optional int32 origin_name = 2;
+  optional int64 inline_function_symbol = 3;
+}
+
 message MemberAccessCommon {
   optional IrExpression dispatch_receiver = 1;
   optional IrExpression extension_receiver = 2;
@@ -139,6 +151,10 @@ message IrFunctionReference {
   optional int32 origin_name = 2;
   required MemberAccessCommon member_access = 3;
   optional int64 reflectionTargetSymbol = 4;
+}
+
+message IrRawFunctionReference {
+  required int64 symbol = 1;
 }
 
 message IrLocalDelegatedPropertyReference {
@@ -408,6 +424,9 @@ message IrOperation {
     // Error code
     IrErrorExpression error_expression = 34;
     IrErrorCallExpression error_call_expression = 35;
+
+    IrRawFunctionReference raw_function_reference = 36;
+    IrReturnableBlock returnable_block = 37;
   }
 }
 
@@ -422,6 +441,7 @@ enum IrTypeOperator {
   NOT_INSTANCEOF = 8;
   SAM_CONVERSION = 9;
   IMPLICIT_DYNAMIC_CAST = 10;
+  REINTERPRET_CAST = 11;
 }
 
 

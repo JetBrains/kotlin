@@ -76,7 +76,7 @@ internal class FunctionCarrierImpl(
     override val extensionReceiverParameterField: IrValueParameter?
         get() = extensionReceiverParameterSymbolField?.owner
 
-    override val typeParametersField: List<IrTypeParameter> = typeParametersSymbolField.map { it.owner }
+    override val typeParametersField: List<IrTypeParameter> by lazy { typeParametersSymbolField.map { it.owner } }
 
-    override val valueParametersField: List<IrValueParameter> = valueParametersSymbolField.map { it.owner }
+    override val valueParametersField: List<IrValueParameter> by lazy { valueParametersSymbolField.map { it.owner } }
 }

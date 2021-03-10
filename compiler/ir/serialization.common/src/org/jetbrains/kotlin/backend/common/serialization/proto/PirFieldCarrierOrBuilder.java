@@ -74,13 +74,4 @@ public interface PirFieldCarrierOrBuilder extends
    * <code>optional int64 correspondingPropertySymbol = 7;</code>
    */
   long getCorrespondingPropertySymbol();
-
-  /**
-   * <code>optional int64 flags = 8 [default = 0];</code>
-   */
-  boolean hasFlags();
-  /**
-   * <code>optional int64 flags = 8 [default = 0];</code>
-   */
-  long getFlags();
 }
