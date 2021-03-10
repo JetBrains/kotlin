@@ -214,10 +214,6 @@ class BodyResolveContext(
         updateLastScope { storeBackingField(property) }
     }
 
-    fun saveContextForAnonymousFunction(anonymousFunction: FirAnonymousFunction) {
-        towerDataContextForAnonymousFunctions[anonymousFunction.symbol] = towerDataContext
-    }
-
     fun dropContextForAnonymousFunction(anonymousFunction: FirAnonymousFunction) {
         towerDataContextForAnonymousFunctions.remove(anonymousFunction.symbol)
     }
@@ -404,16 +400,22 @@ class BodyResolveContext(
     inline fun <T> withAnonymousFunction(
         anonymousFunction: FirAnonymousFunction,
         holder: SessionHolder,
-        isInDependentContext: Boolean = false,
+        mode: ResolutionMode,
         crossinline f: () -> T
     ): T {
+        if (mode !is ResolutionMode.LambdaResolution) {
+            towerDataContextForAnonymousFunctions[anonymousFunction.symbol] = towerDataContext
+        }
+        if (mode is ResolutionMode.ContextDependent || mode is ResolutionMode.ContextDependentDelegate) {
+            return f()
+        }
         return withTowerDataCleanup {
             addLocalScope(FirLocalScope())
             val receiverTypeRef = anonymousFunction.receiverTypeRef
             val labelName = anonymousFunction.label?.name?.let { Name.identifier(it) }
             withContainer(anonymousFunction) {
                 withLabelAndReceiverType(labelName, anonymousFunction, receiverTypeRef?.coneType, holder) {
-                    if (isInDependentContext) {
+                    if (mode is ResolutionMode.LambdaResolution) {
                         withLambdaBeingAnalyzedInDependentContext(anonymousFunction.symbol, f)
                     } else {
                         f()

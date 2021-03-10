@@ -104,14 +104,6 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         }
     }
 
-    protected inline fun <T> withTypeParametersOf(declaration: FirMemberDeclaration, crossinline l: () -> T): T {
-        val scope = createTypeParameterScope(declaration)
-        return context.withTowerDataCleanup {
-            scope?.let { context.addNonLocalTowerDataElement(it.asTowerDataElement(isLocal = false)) }
-            l()
-        }
-    }
-
     override fun transformEnumEntry(enumEntry: FirEnumEntry, data: ResolutionMode): CompositeTransformResult<FirDeclaration> {
         if (enumEntry.resolvePhase == transformerPhase) return enumEntry.compose()
         transformer.replaceDeclarationResolvePhaseIfNeeded(enumEntry, transformerPhase)
@@ -424,38 +416,31 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
     private fun transformAnonymousFunctionWithLambdaResolution(
         anonymousFunction: FirAnonymousFunction, lambdaResolution: ResolutionMode.LambdaResolution
     ): FirAnonymousFunction {
-        fun transform(): FirAnonymousFunction {
-            val expectedReturnType =
-                lambdaResolution.expectedReturnTypeRef ?: anonymousFunction.returnTypeRef.takeUnless { it is FirImplicitTypeRef }
+        val expectedReturnType =
+            lambdaResolution.expectedReturnTypeRef ?: anonymousFunction.returnTypeRef.takeUnless { it is FirImplicitTypeRef }
+        val result = transformFunction(anonymousFunction, withExpectedType(expectedReturnType)).single as FirAnonymousFunction
+        val body = result.body
+        if (result.returnTypeRef is FirImplicitTypeRef && body != null) {
+            // TODO: This part seems unnecessary because for lambdas in dependent context will be completed and their type
+            //  should be replaced there properly
+            val returnType =
+                dataFlowAnalyzer.returnExpressionsOfAnonymousFunction(result)
+                    .firstNotNullResult { (it as? FirExpression)?.resultType?.coneTypeSafe() }
 
-            val result = transformFunction(anonymousFunction, withExpectedType(expectedReturnType)).single as FirAnonymousFunction
-
-            val body = result.body
-            if (result.returnTypeRef is FirImplicitTypeRef && body != null) {
-                // TODO: This part seems unnecessary because for lambdas in dependent context will be completed and their type
-                //  should be replaced there properly
-                val returnType =
-                    dataFlowAnalyzer.returnExpressionsOfAnonymousFunction(result)
-                        .firstNotNullResult { (it as? FirExpression)?.resultType?.coneTypeSafe() }
-
-                if (returnType != null) {
-                    result.transformReturnTypeRef(transformer, withExpectedType(returnType))
-                } else {
-                    result.transformReturnTypeRef(
-                        transformer,
-                        withExpectedType(buildErrorTypeRef {
-                            diagnostic =
-                                ConeSimpleDiagnostic("Unresolved lambda return type", DiagnosticKind.InferenceError)
-                        })
-                    )
-                }
+            if (returnType != null) {
+                result.transformReturnTypeRef(transformer, withExpectedType(returnType))
+            } else {
+                result.transformReturnTypeRef(
+                    transformer,
+                    withExpectedType(buildErrorTypeRef {
+                        diagnostic =
+                            ConeSimpleDiagnostic("Unresolved lambda return type", DiagnosticKind.InferenceError)
+                    })
+                )
             }
-            return result
         }
 
-        return context.withAnonymousFunction(anonymousFunction, components, isInDependentContext = true) {
-            transform()
-        }
+        return result
     }
 
     override fun transformSimpleFunction(
@@ -630,15 +615,18 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             anonymousFunction.transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent)
             anonymousFunction.transformReceiverTypeRef(transformer, ResolutionMode.ContextIndependent)
             anonymousFunction.valueParameters.forEach { it.transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent) }
-            context.saveContextForAnonymousFunction(anonymousFunction)
         }
         return when (data) {
             is ResolutionMode.ContextDependent, is ResolutionMode.ContextDependentDelegate -> {
-                dataFlowAnalyzer.visitPostponedAnonymousFunction(anonymousFunction)
-                anonymousFunction.addReturn().compose()
+                context.withAnonymousFunction(anonymousFunction, components, data) {
+                    dataFlowAnalyzer.visitPostponedAnonymousFunction(anonymousFunction)
+                    anonymousFunction.addReturn().compose()
+                }
             }
             is ResolutionMode.LambdaResolution -> {
-                transformAnonymousFunctionWithLambdaResolution(anonymousFunction, data).addReturn().compose()
+                context.withAnonymousFunction(anonymousFunction, components, data) {
+                    transformAnonymousFunctionWithLambdaResolution(anonymousFunction, data).addReturn().compose()
+                }
             }
             is ResolutionMode.WithExpectedType, is ResolutionMode.ContextIndependent -> {
                 val expectedTypeRef = (data as? ResolutionMode.WithExpectedType)?.expectedTypeRef ?: buildImplicitTypeRef()
@@ -699,7 +687,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                 )
                 lambda = lambda.transformValueParameters(ImplicitToErrorTypeTransformer, null)
                 val bodyExpectedType = returnTypeRefFromResolvedAtom ?: expectedTypeRef
-                context.withAnonymousFunction(lambda, components) {
+                context.withAnonymousFunction(lambda, components, data) {
                     lambda = transformFunction(lambda, withExpectedType(bodyExpectedType)).single as FirAnonymousFunction
                 }
                 // To separate function and separate commit
