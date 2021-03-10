@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.test.backend.handlers
 import org.jetbrains.kotlin.codegen.BytecodeListingTextCollectingVisitor
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.CHECK_BYTECODE_LISTING
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.WITH_SIGNATURES
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
@@ -27,10 +28,10 @@ class BytecodeListingHandler(testServices: TestServices) : JvmBinaryArtifactHand
         if (CHECK_BYTECODE_LISTING !in module.directives) return
         val dump = BytecodeListingTextCollectingVisitor.getText(
             info.classFileFactory,
-            BytecodeListingTextCollectingVisitor.Filter.ForCodegenTests
+            BytecodeListingTextCollectingVisitor.Filter.ForCodegenTests,
+            withSignatures = WITH_SIGNATURES in module.directives
         )
         multiModuleInfoDumper.builderForModule(module).append(dump)
-
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
