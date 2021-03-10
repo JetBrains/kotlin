@@ -1548,6 +1548,11 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
             runTest("compiler/testData/codegen/bytecodeListing/multifileClasses/emptyMultifileFacade.kt");
         }
 
+        @TestMetadata("jvmSynthetic.kt")
+        public void testJvmSynthetic() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/multifileClasses/jvmSynthetic.kt");
+        }
+
         @TestMetadata("kt43519.kt")
         public void testKt43519() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/multifileClasses/kt43519.kt");

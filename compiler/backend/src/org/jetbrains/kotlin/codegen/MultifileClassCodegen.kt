@@ -34,9 +34,13 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtTypeAlias
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.MemberComparator
+import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_SYNTHETIC_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.MultifileClass
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.MultifileClassPart
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
@@ -125,8 +129,19 @@ class MultifileClassCodegenImpl(
         val superClassForFacade = if (shouldGeneratePartHierarchy) partInternalNamesSorted.last() else J_L_OBJECT
 
         state.factory.newVisitor(MultifileClass(files.firstOrNull(), actualPackageFragment), facadeClassType, files).apply {
+            var attributes = FACADE_CLASS_ATTRIBUTES
+
+            val nonJvmSyntheticParts = files.filterNot { it.isJvmSynthetic() }
+            if (nonJvmSyntheticParts.isEmpty()) {
+                attributes = attributes or Opcodes.ACC_SYNTHETIC
+            } else if (nonJvmSyntheticParts.size < files.size) {
+                for (part in nonJvmSyntheticParts) {
+                    state.diagnostics.report(ErrorsJvm.NOT_ALL_MULTIFILE_CLASS_PARTS_ARE_JVM_SYNTHETIC.on(part.packageDirective ?: part))
+                }
+            }
+
             defineClass(
-                singleSourceFile, state.classFileVersion, FACADE_CLASS_ATTRIBUTES,
+                singleSourceFile, state.classFileVersion, attributes,
                 facadeClassType.internalName, null, superClassForFacade, emptyArray()
             )
             if (singleSourceFile != null) {
@@ -143,6 +158,13 @@ class MultifileClassCodegenImpl(
                     visitEnd()
                 }
             }
+        }
+    }
+
+    private fun KtFile.isJvmSynthetic(): Boolean {
+        return annotationEntries.any { entry ->
+            val descriptor = state.bindingContext[BindingContext.ANNOTATION, entry]
+            descriptor?.annotationClass?.let(DescriptorUtils::getFqNameSafe) == JVM_SYNTHETIC_ANNOTATION_FQ_NAME
         }
     }
 
