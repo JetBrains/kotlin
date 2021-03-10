@@ -134,9 +134,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         return withTypeParametersOf(property) {
             val returnTypeRef = property.returnTypeRef
             if (returnTypeRef !is FirImplicitTypeRef && implicitTypeOnly) return@withTypeParametersOf property.compose()
-            if (property.resolvePhase == transformerPhase) return@withTypeParametersOf property.compose()
-            if (property.resolvePhase == FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE && transformerPhase == FirResolvePhase.BODY_RESOLVE) {
-                transformer.replaceDeclarationResolvePhaseIfNeeded(property, transformerPhase)
+            if (property.resolvePhase == FirResolvePhase.BODY_RESOLVE || property.resolvePhase == transformerPhase) {
                 return@withTypeParametersOf property.compose()
             }
             dataFlowAnalyzer.enterProperty(property)
@@ -173,9 +171,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
     override fun transformField(field: FirField, data: ResolutionMode): CompositeTransformResult<FirDeclaration> {
         val returnTypeRef = field.returnTypeRef
         if (implicitTypeOnly) return field.compose()
-        if (field.resolvePhase == transformerPhase) return field.compose()
-        if (field.resolvePhase == FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE && transformerPhase == FirResolvePhase.BODY_RESOLVE) {
-            transformer.replaceDeclarationResolvePhaseIfNeeded(field, transformerPhase)
+        if (field.resolvePhase == FirResolvePhase.BODY_RESOLVE || field.resolvePhase == transformerPhase) {
             return field.compose()
         }
         dataFlowAnalyzer.enterField(field)
@@ -517,9 +513,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         simpleFunction: FirSimpleFunction,
         data: ResolutionMode
     ): CompositeTransformResult<FirSimpleFunction> {
-        if (simpleFunction.resolvePhase == transformerPhase) return simpleFunction.compose()
-        if (simpleFunction.resolvePhase == FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE && transformerPhase == FirResolvePhase.BODY_RESOLVE) {
-            transformer.replaceDeclarationResolvePhaseIfNeeded(simpleFunction, transformerPhase)
+        if (simpleFunction.resolvePhase == FirResolvePhase.BODY_RESOLVE || simpleFunction.resolvePhase == transformerPhase) {
             return simpleFunction.compose()
         }
         val returnTypeRef = simpleFunction.returnTypeRef
