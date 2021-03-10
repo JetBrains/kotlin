@@ -41,9 +41,9 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
     }
 
     override fun transformDoWhileLoop(doWhileLoop: FirDoWhileLoop, data: ResolutionMode): CompositeTransformResult<FirStatement> {
-        val context = ResolutionMode.ContextIndependent
         // Do-while has a specific scope structure (its block and condition effectively share the scope)
-        return withNewLocalScope {
+        return context.forBlock {
+            val context = ResolutionMode.ContextIndependent
             doWhileLoop.also(dataFlowAnalyzer::enterDoWhileLoop)
                 .also {
                     transformer.expressionsTransformer.transformBlockInCurrentScope(it.block, context)
@@ -62,10 +62,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
         }
         whenExpression.annotations.forEach { it.accept(this, data) }
         dataFlowAnalyzer.enterWhenExpression(whenExpression)
-        return withLocalScopeCleanup with@{
-            if (whenExpression.subjectVariable != null) {
-                addNewLocalScope()
-            }
+        return context.withWhenExpression(whenExpression) with@{
             @Suppress("NAME_SHADOWING")
             var whenExpression = whenExpression.transformSubject(transformer, ResolutionMode.ContextIndependent)
 
@@ -177,7 +174,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
     override fun transformCatch(catch: FirCatch, data: ResolutionMode): CompositeTransformResult<FirCatch> {
         dataFlowAnalyzer.enterCatchClause(catch)
         catch.parameter.transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent)
-        return withNewLocalScope {
+        return context.forBlock {
             catch.transformParameter(transformer, ResolutionMode.ContextIndependent)
             catch.transformBlock(transformer, ResolutionMode.ContextDependent)
         }.also { dataFlowAnalyzer.exitCatchClause(it) }.compose()

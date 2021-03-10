@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitExtensionReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
@@ -658,5 +659,17 @@ class BodyResolveContext(
 
     fun dropCallableReferenceContext(callableReferenceAccess: FirCallableReferenceAccess) {
         towerDataContextForCallableReferences.remove(callableReferenceAccess)
+    }
+
+    inline fun <T> withWhenExpression(whenExpression: FirWhenExpression, crossinline f: () -> T): T {
+        if (whenExpression.subjectVariable == null) return f()
+        return forBlock(f)
+    }
+
+    inline fun <T> forBlock(crossinline f: () -> T): T {
+        return withTowerDataCleanup {
+            addLocalScope(FirLocalScope())
+            f()
+        }
     }
 }

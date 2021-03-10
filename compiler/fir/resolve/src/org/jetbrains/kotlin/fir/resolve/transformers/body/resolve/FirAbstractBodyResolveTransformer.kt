@@ -43,21 +43,6 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
 
     final override val session: FirSession get() = components.session
 
-    protected inline fun <T> withLocalScopeCleanup(crossinline l: () -> T): T {
-        return context.withTowerDataCleanup(l)
-    }
-
-    protected inline fun <T> withNewLocalScope(crossinline l: () -> T): T {
-        return context.withTowerDataCleanup {
-            addNewLocalScope()
-            l()
-        }
-    }
-
-    protected fun addNewLocalScope() {
-        context.addLocalScope(FirLocalScope())
-    }
-
     protected open fun needReplacePhase(firDeclaration: FirDeclaration) = true
 
     fun replaceDeclarationResolvePhaseIfNeeded(firDeclaration: FirDeclaration, newResolvePhase: FirResolvePhase) {

@@ -302,7 +302,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
     }
 
     override fun transformBlock(block: FirBlock, data: ResolutionMode): CompositeTransformResult<FirStatement> {
-        withNewLocalScope {
+        context.forBlock {
             transformBlockInCurrentScope(block, data)
         }
         return block.compose()
@@ -897,9 +897,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             augmentedArraySetCall.assignCall.explicitReceiver as FirFunctionCall
         )
 
-        val firstResult = withLocalScopeCleanup {
-            augmentedArraySetCall.setGetBlock.transformSingle(transformer, ResolutionMode.ContextIndependent)
-        }
+        val firstResult = augmentedArraySetCall.setGetBlock.transformSingle(transformer, ResolutionMode.ContextIndependent)
         val secondResult = augmentedArraySetCall.assignCall.transformSingle(transformer, ResolutionMode.ContextIndependent)
 
         fun isSuccessful(functionCall: FirFunctionCall): Boolean =
