@@ -497,7 +497,7 @@ class ExpressionCodegen(
                 // is methods that do not pass through the state machine generating MethodVisitor, since getting
                 // COROUTINE_SUSPENDED here is still possible; luckily, all those methods are bridges.
                 if (callable.asmMethod.returnType != Type.VOID_TYPE)
-                    MaterialValue(this, callable.asmMethod.returnType, callee.returnType).discard()
+                    MaterialValue(this, callable.asmMethod.returnType, callable.returnType).discard()
                 // don't generate redundant UNIT/pop instructions
                 unitValue
             }
@@ -522,7 +522,7 @@ class ExpressionCodegen(
                     }
                 }
             else ->
-                MaterialValue(this, callable.asmMethod.returnType, callee.returnType)
+                MaterialValue(this, callable.asmMethod.returnType, callable.returnType)
         }
     }
 

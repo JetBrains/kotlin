@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.Type
@@ -15,7 +16,8 @@ class IrCallableMethod(
     val owner: Type,
     val invokeOpcode: Int,
     val signature: JvmMethodSignature,
-    val isInterfaceMethod: Boolean
+    val isInterfaceMethod: Boolean,
+    val returnType: IrType,
 ) {
     val asmMethod: Method = signature.asmMethod
 
