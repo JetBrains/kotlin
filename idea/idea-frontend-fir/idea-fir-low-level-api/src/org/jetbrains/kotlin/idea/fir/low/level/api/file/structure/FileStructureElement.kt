@@ -173,10 +173,15 @@ internal class NonReanalyzableDeclarationStructureElement(
                 firFile,
                 onDeclarationEnter = { firDeclaration ->
                     when {
-                        // Some generated declaration contains structures that we need to check. For example the FIR representation of an
-                        // enum entry initializer, when present, is a generated anonymous object of kind `ENUM_ENTRY`.
-                        firDeclaration.isGeneratedDeclaration ->
-                            DiagnosticCollectorDeclarationAction.DO_NOT_CHECK_IN_CURRENT_DECLARATION_AND_LOOKUP_FOR_NESTED
+                        firDeclaration.isGeneratedDeclaration -> when {
+                            // a generated primary constructor need to be checked. For example it may have a delegated super constructor
+                            // call or some annotations
+                            firDeclaration is FirConstructor && firDeclaration.isPrimary ->
+                                DiagnosticCollectorDeclarationAction.CHECK_IN_CURRENT_DECLARATION_AND_LOOKUP_FOR_NESTED
+                            // Some generated declaration contains structures that we need to check. For example the FIR representation of an
+                            // enum entry initializer, when present, is a generated anonymous object of kind `ENUM_ENTRY`.
+                            else -> DiagnosticCollectorDeclarationAction.DO_NOT_CHECK_IN_CURRENT_DECLARATION_AND_LOOKUP_FOR_NESTED
+                        }
                         firDeclaration is FirFile -> DiagnosticCollectorDeclarationAction.DO_NOT_CHECK_IN_CURRENT_DECLARATION_AND_LOOKUP_FOR_NESTED
                         firDeclaration == fir -> {
                             inCurrentDeclaration = true
