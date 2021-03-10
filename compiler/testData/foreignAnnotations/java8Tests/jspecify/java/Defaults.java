@@ -1,6 +1,6 @@
-import org.jspecify.annotations.*;
+import org.jspecify.nullness.*;
 
-@DefaultNonNull
+@NullMarked
 public class Defaults {
     public Foo defaultField = null;
     @Nullable public Foo field = null;
