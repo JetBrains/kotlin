@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.codeInsight.intention.IntentionAction
+import com.intellij.codeInspection.InspectionProfileEntry
 import org.jetbrains.kotlin.test.uitls.IgnoreTests
 import java.nio.file.Paths
 
@@ -22,6 +23,10 @@ abstract class AbstractHighLevelQuickFixTest : AbstractQuickFixTest() {
         }
     }
 
+    // TODO: Enable these as more actions/inspections are enabled, and/or add more FIR-specific directives
     override fun checkForUnexpectedErrors() {}
     override fun checkAvailableActionsAreExpected(actions: List<IntentionAction>) {}
+    override fun parseInspectionsToEnable(beforeFileName: String, beforeFileText: String): List<InspectionProfileEntry> {
+        return emptyList()
+    }
 }

@@ -695,7 +695,7 @@ public class HighLevelQuickFixTestGenerated extends AbstractHighLevelQuickFixTes
         }
 
         public void testAllFilesPresentInChangeMutability() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/variables/changeMutability"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, false);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/variables/changeMutability"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
         }
 
         @TestMetadata("capturedMemberValInitialization.kt")
@@ -761,6 +761,64 @@ public class HighLevelQuickFixTestGenerated extends AbstractHighLevelQuickFixTes
         @TestMetadata("varAnnotationParameter.kt")
         public void testVarAnnotationParameter() throws Exception {
             runTest("idea/testData/quickfix/variables/changeMutability/varAnnotationParameter.kt");
+        }
+
+        @TestMetadata("idea/testData/quickfix/variables/changeMutability/canBeVal")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class CanBeVal extends AbstractHighLevelQuickFixTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInCanBeVal() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/variables/changeMutability/canBeVal"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
+            }
+
+            @TestMetadata("const.kt")
+            public void testConst() throws Exception {
+                runTest("idea/testData/quickfix/variables/changeMutability/canBeVal/const.kt");
+            }
+
+            @TestMetadata("delegatedProperty.kt")
+            public void testDelegatedProperty() throws Exception {
+                runTest("idea/testData/quickfix/variables/changeMutability/canBeVal/delegatedProperty.kt");
+            }
+
+            @TestMetadata("delegatedProperty2.kt")
+            public void testDelegatedProperty2() throws Exception {
+                runTest("idea/testData/quickfix/variables/changeMutability/canBeVal/delegatedProperty2.kt");
+            }
+
+            @TestMetadata("delegatedProperty3.kt")
+            public void testDelegatedProperty3() throws Exception {
+                runTest("idea/testData/quickfix/variables/changeMutability/canBeVal/delegatedProperty3.kt");
+            }
+
+            @TestMetadata("multiVariable.kt")
+            public void testMultiVariable() throws Exception {
+                runTest("idea/testData/quickfix/variables/changeMutability/canBeVal/multiVariable.kt");
+            }
+
+            @TestMetadata("singleVariable.kt")
+            public void testSingleVariable() throws Exception {
+                runTest("idea/testData/quickfix/variables/changeMutability/canBeVal/singleVariable.kt");
+            }
+
+            @TestMetadata("uninitializedWithGetter.kt")
+            public void testUninitializedWithGetter() throws Exception {
+                runTest("idea/testData/quickfix/variables/changeMutability/canBeVal/uninitializedWithGetter.kt");
+            }
+
+            @TestMetadata("uninitializedWithGetter2.kt")
+            public void testUninitializedWithGetter2() throws Exception {
+                runTest("idea/testData/quickfix/variables/changeMutability/canBeVal/uninitializedWithGetter2.kt");
+            }
+
+            @TestMetadata("uninitializedWithGetter3.kt")
+            public void testUninitializedWithGetter3() throws Exception {
+                runTest("idea/testData/quickfix/variables/changeMutability/canBeVal/uninitializedWithGetter3.kt");
+            }
         }
     }
 }
