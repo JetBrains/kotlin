@@ -50,6 +50,12 @@ public class DiagnosticsTestWithOldJvmBackendGenerated extends AbstractDiagnosti
     }
 
     @Test
+    @TestMetadata("propertyInlineCycle.kt")
+    public void testPropertyInlineCycle() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/propertyInlineCycle.kt");
+    }
+
+    @Test
     @TestMetadata("suspendInlineCycle.kt")
     public void testSuspendInlineCycle() throws Exception {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/suspendInlineCycle.kt");
