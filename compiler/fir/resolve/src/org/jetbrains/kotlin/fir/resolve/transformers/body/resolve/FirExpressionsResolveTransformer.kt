@@ -827,35 +827,10 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         var result = delegatedConstructorCall
         try {
             val lastDispatchReceiver = implicitReceiverStack.lastDispatchReceiver()
-
-            // because there's a `context.saveContextForAnonymousFunction(anonymousFunction)`
-            // call inside of the FirDeclarationResolveTransformer and accessing `this`
-            // inside a lambda which is a value parameter of a constructor delegate
-            // is prohibited
-            context.withTowerDataMode(FirTowerDataMode.CONSTRUCTOR_HEADER) {
-                context.withTowerDataCleanup {
-                    if ((context.containerIfAny as? FirConstructor)?.isPrimary == true) {
-                        context.getPrimaryConstructorAllParametersScope()?.let(context::addLocalScope)
-                    }
-
-                    // it's just a constructor parameters scope created in
-                    // `FirDeclarationResolveTransformer::doTransformConstructor()`
-                    context.towerDataContextsForClassParts.forMemberDeclaration.localScopes.lastOrNull()?.let(context::addLocalScope)
-
-                    if (containingClass is FirRegularClass && !containingConstructor.isPrimary) {
-                        context.addReceiver(
-                            null,
-                            InaccessibleImplicitReceiverValue(
-                                containingClass.symbol,
-                                containingClass.defaultType(),
-                                session,
-                                scopeSession
-                            )
-                        )
-                    }
-                    delegatedConstructorCall.transformChildren(transformer, ResolutionMode.ContextDependent)
-                }
+            context.forDelegatedConstructor(containingConstructor, containingClass as? FirRegularClass, components) {
+                delegatedConstructorCall.transformChildren(transformer, ResolutionMode.ContextDependent)
             }
+
             val reference = delegatedConstructorCall.calleeReference
             val constructorType: ConeClassLikeType = when (reference) {
                 is FirThisReference -> {

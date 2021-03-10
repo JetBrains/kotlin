@@ -408,7 +408,6 @@ class BodyResolveContext(
 
     inline fun <T> forConstructorBody(
         constructor: FirConstructor,
-        parametersScope: FirLocalScope?,
         crossinline f: () -> T
     ): T {
         return if (constructor.isPrimary) {
@@ -418,12 +417,12 @@ class BodyResolveContext(
              *   special towerDataContext
              */
             withTowerDataMode(FirTowerDataMode.CONSTRUCTOR_HEADER) {
-                parametersScope?.let { addLocalScope(it) }
+                getPrimaryConstructorAllParametersScope()?.let { addLocalScope(it) }
                 f()
             }
         } else {
             withTowerDataCleanup {
-                parametersScope?.let { addLocalScope(it) }
+                addLocalScope(buildSecondaryConstructorParametersScope(constructor))
                 f()
             }
         }
@@ -616,17 +615,40 @@ class BodyResolveContext(
     }
 
     inline fun <T> forDelegatedConstructor(
-        parametersScope: FirLocalScope?,
+        constructor: FirConstructor,
+        owningClass: FirRegularClass?,
+        holder: SessionHolder,
         crossinline f: () -> T
     ): T {
-        if (parametersScope == null) return f()
-        return withTowerDataCleanup {
-            addLocalScope(parametersScope)
-            f()
+        return withTowerDataMode(FirTowerDataMode.CONSTRUCTOR_HEADER) {
+            if (constructor.isPrimary) {
+                getPrimaryConstructorAllParametersScope()?.let {
+                    withTowerDataCleanup {
+                        addLocalScope(it)
+                        f()
+                    }
+                } ?: f()
+            } else {
+                if (owningClass != null) {
+                    addReceiver(
+                        null,
+                        InaccessibleImplicitReceiverValue(
+                            owningClass.symbol,
+                            owningClass.defaultType(),
+                            holder.session,
+                            holder.scopeSession
+                        )
+                    )
+                }
+                withTowerDataCleanup {
+                    addLocalScope(buildSecondaryConstructorParametersScope(constructor))
+                    constructor.valueParameters.forEach { storeVariable(it) }
+                    f()
+                }
+            }
         }
     }
 
-    fun buildConstructorParametersScope(constructor: FirConstructor): FirLocalScope? =
-        if (constructor.isPrimary) getPrimaryConstructorAllParametersScope()
-        else constructor.valueParameters.fold(FirLocalScope()) { acc, param -> acc.storeVariable(param) }
+    fun buildSecondaryConstructorParametersScope(constructor: FirConstructor): FirLocalScope =
+        constructor.valueParameters.fold(FirLocalScope()) { acc, param -> acc.storeVariable(param) }
 }
