@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.impl.*
+import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock as ProtoBlock
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBlockBody as ProtoBlockBody
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBranch as ProtoBranch
@@ -34,10 +36,10 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrDoWhile as Prot
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicMemberExpression as ProtoDynamicMemberExpression
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicOperatorExpression as ProtoDynamicOperatorExpression
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrEnumConstructorCall as ProtoEnumConstructorCall
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorCallExpression as ProtoErrorCallExpression
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorExpression as ProtoErrorExpression
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression as ProtoExpression
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionExpression as ProtoFunctionExpression
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorExpression as ProtoErrorExpression
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorCallExpression as ProtoErrorCallExpression
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionReference as ProtoFunctionReference
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrGetClass as ProtoGetClass
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrGetEnumValue as ProtoGetEnumValue
@@ -188,7 +190,53 @@ class IrBodyDeserializer(
     }
 
     fun deserializeAnnotation(proto: ProtoConstructorCall): IrConstructorCall {
-        return deserializeConstructorCall(proto, 0, 0, builtIns.unitType) // TODO: need a proper deserialization here
+
+        // TODO: probably a bit more abstraction possible here up to `IrMemberAccessExpression`
+        // but at this point further complexization looks overengineered
+        class IrAnnotationType : IrDelegatedSimpleType() {
+
+            var irConstructorCall: IrConstructorCall? = null
+
+            override val delegate: IrSimpleType by lazy { resolveType() }
+
+            private fun resolveType(): IrSimpleType {
+                val constructorCall = irConstructorCall ?: error("irConstructorCall should not be null at this stage")
+                irConstructorCall = null
+
+                val klass = constructorCall.symbol.owner.parentAsClass
+
+                val typeParameters = extractTypeParameters(klass)
+
+                val typeArguments = ArrayList<IrTypeArgument>(typeParameters.size)
+                val typeParameterSymbols = ArrayList<IrTypeParameterSymbol>(typeParameters.size)
+                val rawType = with(IrSimpleTypeBuilder()) {
+                    arguments = typeParameters.run {
+                        mapTo(ArrayList(size)) {
+                            classifier = it.symbol
+                            buildTypeProjection()
+                        }
+                    }
+                    classifier = klass.symbol
+                    buildSimpleType()
+                }
+
+
+                for (i in typeParameters.indices) {
+                    val typeParameter = typeParameters[i]
+                    val callTypeArgument = constructorCall.getTypeArgument(i) ?: error("No type argument for id $i")
+                    val typeArgument = makeTypeProjection(callTypeArgument, typeParameter.variance)
+                    typeArguments.add(typeArgument)
+                    typeParameterSymbols.add(typeParameter.symbol)
+                }
+
+                val substitutor = IrTypeSubstitutor(typeParameterSymbols, typeArguments, builtIns)
+                return substitutor.substitute(rawType) as IrSimpleType
+            }
+        }
+
+        val irType = IrAnnotationType()
+        // TODO: use real coordinates
+        return deserializeConstructorCall(proto, 0, 0, irType).also { irType.irConstructorCall = it }
     }
 
     fun deserializeConstructorCall(proto: ProtoConstructorCall, start: Int, end: Int, type: IrType): IrConstructorCall {
