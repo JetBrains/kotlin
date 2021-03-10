@@ -19,6 +19,7 @@ object JUnit5Assertions : AssertionsService() {
         try {
             val actualText = actual.trim { it <= ' ' }.convertLineSeparators().trimTrailingWhitespacesAndAddNewlineAtEOF()
             if (!expectedFile.exists()) {
+                expectedFile.parentFile.mkdirs()
                 expectedFile.writeText(actualText)
                 org.junit.jupiter.api.fail("Expected data file did not exist. Generating: $expectedFile")
             }
