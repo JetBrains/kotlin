@@ -12,7 +12,5 @@ import org.jetbrains.kotlin.visualizer.AbstractVisualizerTest
 
 abstract class AbstractFirVisualizerTest : AbstractVisualizerTest() {
     override val frontendKind: FrontendKind<*> = FrontendKinds.FIR
-    override val frontendFacade: Constructor<FrontendFacade<*>> = ::FirFrontendFacade
     override val handler: Constructor<FrontendOutputHandler<*>> = ::FirOutputHandler
-
 }

@@ -15,8 +15,8 @@ import java.io.File
 
 internal class FirOutputHandler(testServices: TestServices) : FirAnalysisHandler(testServices) {
     override fun processModule(module: TestModule, info: FirOutputArtifact) {
-        val renderer = FirVisualizer(info.firFiles.values.first())
-        val firRenderResult = renderer.render()
+        val renderer = info.firFiles.values.firstOrNull()?.let { FirVisualizer(it) } ?: return
+        val firRenderResult = renderer.render().trim()
 
         val replaceFrom = module.directives[VisualizerDirectives.TEST_FILE_PATH].first()
         val replaceTo = module.directives[VisualizerDirectives.EXPECTED_FILE_PATH].first()

@@ -15,7 +15,7 @@ import java.io.File
 
 internal class PsiOutputHandler(testServices: TestServices) : ClassicFrontendAnalysisHandler(testServices) {
     override fun processModule(module: TestModule, info: ClassicFrontendOutputArtifact) {
-        val renderer = PsiVisualizer(info.ktFiles.values.first(), info.analysisResult)
+        val renderer = info.ktFiles.values.firstOrNull()?.let { PsiVisualizer(it, info.analysisResult) } ?: return
         val psiRenderResult = renderer.render()
 
         val replaceFrom = module.directives[VisualizerDirectives.TEST_FILE_PATH].first()

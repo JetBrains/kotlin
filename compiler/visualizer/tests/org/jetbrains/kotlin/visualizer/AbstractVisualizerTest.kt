@@ -9,8 +9,9 @@ import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
+import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
+import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.model.DependencyKind
-import org.jetbrains.kotlin.test.model.FrontendFacade
 import org.jetbrains.kotlin.test.model.FrontendKind
 import org.jetbrains.kotlin.test.model.FrontendOutputHandler
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
@@ -20,7 +21,6 @@ import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurat
 abstract class AbstractVisualizerTest : AbstractKotlinCompilerTest() {
     abstract val handler: Constructor<FrontendOutputHandler<*>>
     abstract val frontendKind: FrontendKind<*>
-    abstract val frontendFacade: Constructor<FrontendFacade<*>>
 
     override fun TestConfigurationBuilder.configuration() {
         globalDefaults {
@@ -33,7 +33,10 @@ abstract class AbstractVisualizerTest : AbstractKotlinCompilerTest() {
             ::CommonEnvironmentConfigurator,
             ::JvmEnvironmentConfigurator,
         )
-        useFrontendFacades(frontendFacade)
+        useFrontendFacades(
+            ::FirFrontendFacade,
+            ::ClassicFrontendFacade
+        )
         useFrontendHandlers(handler)
 
         defaultDirectives {
