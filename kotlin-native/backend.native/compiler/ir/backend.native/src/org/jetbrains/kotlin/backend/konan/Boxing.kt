@@ -93,8 +93,8 @@ internal val Context.getBoxFunction: (IrClass) -> IrSimpleFunction by Context.la
                     isNoinline = false,
                     isHidden = false,
                     isAssignable = false
-            ).apply {
-                parent = function
+            ).also {
+                it.parent = function
             })
         function.parent = inlinedClass.getContainingFile()!!
     }
@@ -152,8 +152,8 @@ internal val Context.getUnboxFunction: (IrClass) -> IrSimpleFunction by Context.
                     isNoinline = false,
                     isHidden = false,
                     isAssignable = false
-            ).apply {
-                parent = function
+            ).also {
+                it.parent = function
             })
         function.parent = inlinedClass.getContainingFile()!!
     }
