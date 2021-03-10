@@ -2,36 +2,28 @@
 // WASM_MUTE_REASON: SAM_CONVERSIONS
 // !LANGUAGE: +InlineClasses
 
-fun <T> underlying(a: IC): T = bar(a) {
-    it.value as T
+fun <T1> underlying(a: IC): T1 = bar(a) { it.value as T1 }
+
+fun <T2> extension(a: IC): T2 = bar(a) { it.extensionValue() }
+
+fun <T3> dispatch(a: IC): T3 = bar(a) { it.dispatchValue() }
+
+fun <T4> normal(a: IC): T4 = bar(a) { normalValue(it) }
+
+fun interface FunIFace<T0, R> {
+    fun call(ic: T0): R
 }
 
-fun <T> extension(a: IC): T = bar(a) {
-    it.extensionValue()
-}
-
-fun <T> dispatch(a: IC): T = bar(a) {
-    it.dispatchValue()
-}
-
-fun <T> normal(a: IC): T = bar(a) {
-    normalValue(it)
-}
-
-fun interface FunIFace<T, R> {
-    fun call(ic: T): R
-}
-
-fun <T, R> bar(value: T, f: FunIFace<T, R>): R {
+fun <T5, R> bar(value: T5, f: FunIFace<T5, R>): R {
     return f.call(value)
 }
 
-fun <T> IC.extensionValue(): T = value as T
+fun <T6> IC.extensionValue(): T6 = value as T6
 
-fun <T> normalValue(ic: IC): T = ic.value as T
+fun <T7> normalValue(ic: IC): T7 = ic.value as T7
 
 inline class IC(val value: Int) {
-    fun <T> dispatchValue(): T = value as T
+    fun <T8> dispatchValue(): T8 = value as T8
 }
 
 fun box(): String {
