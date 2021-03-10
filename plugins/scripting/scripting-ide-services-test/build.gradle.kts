@@ -34,6 +34,7 @@ dependencies {
     embeddableTestRuntime(project(":kotlin-scripting-dependencies", configuration="runtimeElements"))
     // For tests with IvyResolver
     embeddableTestRuntime(project(":kotlin-main-kts"))
+    embeddableTestRuntime(kotlinStdlib("jdk8"))
     embeddableTestRuntime(testSourceSet.output)
 }
 
