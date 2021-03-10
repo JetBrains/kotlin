@@ -155,6 +155,8 @@ internal abstract class KPropertyImpl<out V> private constructor(
         override val caller: Caller<*> by ReflectProperties.lazy {
             computeCallerForAccessor(isGetter = true)
         }
+
+        override fun toString(): String = "getter of $property"
     }
 
     abstract class Setter<V> : Accessor<V, Unit>(), KMutableProperty.Setter<V> {
@@ -168,6 +170,8 @@ internal abstract class KPropertyImpl<out V> private constructor(
         override val caller: Caller<*> by ReflectProperties.lazy {
             computeCallerForAccessor(isGetter = false)
         }
+
+        override fun toString(): String = "setter of $property"
     }
 
     companion object {
