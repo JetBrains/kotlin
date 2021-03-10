@@ -151,29 +151,6 @@ tasks.named<Task>("check") {
     }
 }
 
-gradle.taskGraph.whenReady {
-    // Validate that all dependencies "install" tasks are added to "test" dependencies
-    // Test dependencies are specified as paths to avoid forcing dependency resolution
-    // and also to avoid specifying evaluationDependsOn for each testCompile dependency.
-
-    val notAddedTestTasks = hashSetOf<String>()
-    val test = tasks.getByName("test")
-    val testDependencies = test.dependsOn
-
-    for (dependency in configurations.getByName("testCompile").allDependencies) {
-        if (dependency !is ProjectDependency) continue
-
-        val task = dependency.dependencyProject.tasks.findByName("install")
-        if (task != null && !testDependencies.contains(task.path)) {
-            notAddedTestTasks.add("\"${task.path}\"")
-        }
-    }
-
-    if (!notAddedTestTasks.isEmpty()) {
-        throw GradleException("Add the following tasks to ${test.path} dependencies:\n  ${notAddedTestTasks.joinToString(",\n  ")}")
-    }
-}
-
 tasks.withType<KotlinCompile> {
     kotlinOptions.jdkHome = rootProject.extra["JDK_18"] as String
     kotlinOptions.jvmTarget = "1.8"
@@ -236,8 +213,4 @@ tasks.withType<Test> {
             override fun beforeTest(testDescriptor: TestDescriptor) {}
         })
     }
-}
-
-java {
-    withSourcesJar()
 }
