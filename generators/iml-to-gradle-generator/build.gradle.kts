@@ -5,6 +5,7 @@ plugins {
 
 dependencies {
     testCompile(kotlinStdlib())
+    testCompile(intellijDep())
 }
 
 sourceSets {
