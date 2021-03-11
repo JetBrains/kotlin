@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.backend.common.phaser.makeCustomPhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.fileParent
-import org.jetbrains.kotlin.backend.jvm.ir.getKtFile
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -142,7 +141,8 @@ private fun generateMultifileFacades(
                 annotations = annotations + partClasses.first().getAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME)!!.deepCopyWithSymbols()
             } else if (nonJvmSyntheticParts.size < partClasses.size) {
                 for (part in nonJvmSyntheticParts) {
-                    val partFile = part.fileParent.getKtFile() ?: error("Not a KtFile: ${part.render()} ${part.fileParent}")
+                    val partFile = context.psiSourceManager.getKtFile(part.fileParent)
+                        ?: error("Not a KtFile: ${part.render()} ${part.fileParent}")
                     // If at least one of parts is annotated with @JvmSynthetic, then all other parts should also be annotated.
                     // We report this error on the package directive for each non-@JvmSynthetic part.
                     context.state.diagnostics.report(
