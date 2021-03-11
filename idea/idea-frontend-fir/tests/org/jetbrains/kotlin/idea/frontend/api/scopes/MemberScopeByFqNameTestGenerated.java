@@ -39,6 +39,11 @@ public class MemberScopeByFqNameTestGenerated extends AbstractMemberScopeByFqNam
         runTest("idea/idea-frontend-fir/testData/memberScopeByFqName/java.lang.String.txt");
     }
 
+    @TestMetadata("kotlin.Function2.txt")
+    public void testKotlin_Function2() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/memberScopeByFqName/kotlin.Function2.txt");
+    }
+
     @TestMetadata("MutableList.txt")
     public void testMutableList() throws Exception {
         runTest("idea/idea-frontend-fir/testData/memberScopeByFqName/MutableList.txt");
