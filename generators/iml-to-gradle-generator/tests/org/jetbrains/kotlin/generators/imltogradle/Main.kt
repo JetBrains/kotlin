@@ -74,37 +74,38 @@ private data class IntelliJModuleNameToGradleNotationMappingItem(val moduleName:
                 return null // TODO
             }
 
-            val gradleNotation = (pluginsPathToGradleNotationRegex.matchEntire(jarPath)
-                ?: libPathToGradleNotationRegex.matchEntire(jarPath)
-                ?: jarToGradleNotationRegex.matchEntire(jarPath)
-                ?: error("Path $jarPath matches none of the regexes")).groupValues[1]
-                .let { "intellijPluginDep(\"$it\")" }
+            fun Regex.group() = matchEntire(jarPath)?.groupValues?.get(1)
+
+            val gradleNotation = pluginsPathToGradleNotationRegex.group()?.let { "intellijPluginDep(\"$it\")" }
+                ?: libPathToGradleNotationRegex.group()?.let { "intellijDep(), { includeJars(\"$it\") }" }
+                ?: jarToGradleNotationRegex.group()?.let { "intellijDep(), { includeJars(\"$it\") }" }
+                ?: error("Path $jarPath matches none of the regexes")
 
             return IntelliJModuleNameToGradleNotationMappingItem(json.get("moduleName").asString, gradleNotation)
         }
     }
 }
 
-fun convertJpsModuleDependency(jpsModuleDependency: JpsModuleDependency): String {
+fun convertJpsModuleDependency(jpsModuleDependency: JpsModuleDependency): List<String> {
     val moduleName = jpsModuleDependency.moduleReference.moduleName
     if (moduleName.startsWith("kotlin.")) {
-        return "implementation(project(\"${kotlinIdeJpsModuleNameToGradleModuleNameMapping[moduleName]}\"))"
+        return listOf("implementation(project(\"${kotlinIdeJpsModuleNameToGradleModuleNameMapping[moduleName]}\"))")
     }
     if (moduleName.startsWith("kotlinc.")) {
-        return ""
+        return listOf("")
     }
     if (moduleName.startsWith("intellij.")) {
         return intellijModuleNameToGradleNotationsMapping[moduleName]
-            ?.joinToString("\n") { "implementation($it)" }
+            ?.map { "implementation($it)" }
             ?: error("Cannot find mapping for intellij module name = $moduleName")
     }
     error("Unknown module dependency: $moduleName")
 }
 
-fun convertJpsDependencyElement(jpsDependencyElement: JpsDependencyElement): String {
+fun convertJpsDependencyElement(jpsDependencyElement: JpsDependencyElement): List<String> {
     return when (jpsDependencyElement) {
         is JpsModuleDependency -> convertJpsModuleDependency(jpsDependencyElement)
-        else -> ""
+        else -> listOf("")
     }
 }
 
@@ -124,7 +125,7 @@ fun convertJpsModule(imlFile: File, jpsModule: JpsModule): String {
         .mapValues { entry -> entry.value.joinToString("\n") { convertJpsModuleSourceRoot(imlFile, it) } }
         .let { Pair(it[false] ?: "", it[true] ?: "") }
 
-    val deps = dependencies.flatMap { convertJpsDependencyElement(it).split("\n") }
+    val deps = dependencies.flatMap { convertJpsDependencyElement(it) }
         .distinct()
         .filter { it != "implementation()" } // TODO remove hack
         .joinToString("\n")
