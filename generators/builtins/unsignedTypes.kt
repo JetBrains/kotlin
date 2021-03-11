@@ -513,6 +513,18 @@ class UnsignedRangeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIn
         fun hashCodeConversion(name: String, isSigned: Boolean = false) =
             if (type == UnsignedType.ULONG) "($name xor ($name ${if (isSigned) "u" else ""}shr 32))" else name
 
+        val zero = if (type == UnsignedType.ULONG) "0UL" else "0U"
+        val one = if (type == UnsignedType.ULONG) "1L" else "1"
+        val incToInt = ".let { if (it < Int.MAX_VALUE.to$elementType()) it.toInt().inc() else Int.MAX_VALUE }"
+        val sizeBody = """
+        when {
+            isEmpty() -> 0
+            step == $one -> (last - first)$incToInt
+            step > 0 -> ((last - first) / step.to$elementType())$incToInt
+            step < 0 -> ((first - last) / (-step).to$elementType())$incToInt
+            else -> error("Invariant is broken: step cannot be 0")
+        }
+""".trim()
         out.println(
             """
 
@@ -556,7 +568,7 @@ internal constructor(
     start: $elementType,
     endInclusive: $elementType,
     step: $stepType
-) : Iterable<$elementType> {
+) : Collection<$elementType> {
     init {
         if (step == 0.to$stepType()) throw kotlin.IllegalArgumentException("Step must be non-zero.")
         if (step == $stepMinValue) throw kotlin.IllegalArgumentException("Step must be greater than $stepMinValue to avoid overflow on negation.")
@@ -580,7 +592,7 @@ internal constructor(
     override fun iterator(): ${elementType}Iterator = ${elementType}ProgressionIterator(first, last, step)
 
     /** Checks if the progression is empty. */
-    public open fun isEmpty(): Boolean = if (step > 0) first > last else first < last
+    public override fun isEmpty(): Boolean = if (step > 0) first > last else first < last
 
     override fun equals(other: Any?): Boolean =
         other is ${elementType}Progression && (isEmpty() && other.isEmpty() ||
@@ -590,6 +602,20 @@ internal constructor(
         if (isEmpty()) -1 else (31 * (31 * ${hashCodeConversion("first")}.toInt() + ${hashCodeConversion("last")}.toInt()) + ${hashCodeConversion("step", isSigned = true)}.toInt())
 
     override fun toString(): String = if (step > 0) "${'$'}first..${'$'}last step ${'$'}step" else "${'$'}first downTo ${'$'}last step ${'$'}{-step}"
+    
+    override val size: Int
+        get() = $sizeBody
+
+    override fun contains(@Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE") /* for the backward compatibility with old names */ value: $elementType): Boolean = 
+        when {
+            step > 0 && value >= first && value <= last -> (value - first) % step.to$elementType() == $zero
+            step < 0 && value <= first && value >= last -> (first - value) % (-step).to$elementType() == $zero
+            else -> false
+        }
+    
+    override fun containsAll(elements: Collection<$elementType>): Boolean =
+        if (this.isEmpty()) elements.isEmpty() else (elements as Collection<*>).all { it in this }
+
 
     companion object {
         /**

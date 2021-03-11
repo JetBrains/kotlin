@@ -49,7 +49,7 @@ internal constructor(
     start: ULong,
     endInclusive: ULong,
     step: Long
-) : Iterable<ULong> {
+) : Collection<ULong> {
     init {
         if (step == 0.toLong()) throw kotlin.IllegalArgumentException("Step must be non-zero.")
         if (step == Long.MIN_VALUE) throw kotlin.IllegalArgumentException("Step must be greater than Long.MIN_VALUE to avoid overflow on negation.")
@@ -73,7 +73,7 @@ internal constructor(
     override fun iterator(): ULongIterator = ULongProgressionIterator(first, last, step)
 
     /** Checks if the progression is empty. */
-    public open fun isEmpty(): Boolean = if (step > 0) first > last else first < last
+    public override fun isEmpty(): Boolean = if (step > 0) first > last else first < last
 
     override fun equals(other: Any?): Boolean =
         other is ULongProgression && (isEmpty() && other.isEmpty() ||
@@ -83,6 +83,26 @@ internal constructor(
         if (isEmpty()) -1 else (31 * (31 * (first xor (first shr 32)).toInt() + (last xor (last shr 32)).toInt()) + (step xor (step ushr 32)).toInt())
 
     override fun toString(): String = if (step > 0) "$first..$last step $step" else "$first downTo $last step ${-step}"
+    
+    override val size: Int
+        get() = when {
+            isEmpty() -> 0
+            step == 1L -> (last - first).let { if (it < Int.MAX_VALUE.toULong()) it.toInt().inc() else Int.MAX_VALUE }
+            step > 0 -> ((last - first) / step.toULong()).let { if (it < Int.MAX_VALUE.toULong()) it.toInt().inc() else Int.MAX_VALUE }
+            step < 0 -> ((first - last) / (-step).toULong()).let { if (it < Int.MAX_VALUE.toULong()) it.toInt().inc() else Int.MAX_VALUE }
+            else -> error("Invariant is broken: step cannot be 0")
+        }
+
+    override fun contains(@Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE") /* for the backward compatibility with old names */ value: ULong): Boolean = 
+        when {
+            step > 0 && value >= first && value <= last -> (value - first) % step.toULong() == 0UL
+            step < 0 && value <= first && value >= last -> (first - value) % (-step).toULong() == 0UL
+            else -> false
+        }
+    
+    override fun containsAll(elements: Collection<ULong>): Boolean =
+        if (this.isEmpty()) elements.isEmpty() else (elements as Collection<*>).all { it in this }
+
 
     companion object {
         /**

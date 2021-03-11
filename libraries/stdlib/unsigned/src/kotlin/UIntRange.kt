@@ -49,7 +49,7 @@ internal constructor(
     start: UInt,
     endInclusive: UInt,
     step: Int
-) : Iterable<UInt> {
+) : Collection<UInt> {
     init {
         if (step == 0.toInt()) throw kotlin.IllegalArgumentException("Step must be non-zero.")
         if (step == Int.MIN_VALUE) throw kotlin.IllegalArgumentException("Step must be greater than Int.MIN_VALUE to avoid overflow on negation.")
@@ -73,7 +73,7 @@ internal constructor(
     override fun iterator(): UIntIterator = UIntProgressionIterator(first, last, step)
 
     /** Checks if the progression is empty. */
-    public open fun isEmpty(): Boolean = if (step > 0) first > last else first < last
+    public override fun isEmpty(): Boolean = if (step > 0) first > last else first < last
 
     override fun equals(other: Any?): Boolean =
         other is UIntProgression && (isEmpty() && other.isEmpty() ||
@@ -83,6 +83,26 @@ internal constructor(
         if (isEmpty()) -1 else (31 * (31 * first.toInt() + last.toInt()) + step.toInt())
 
     override fun toString(): String = if (step > 0) "$first..$last step $step" else "$first downTo $last step ${-step}"
+    
+    override val size: Int
+        get() = when {
+            isEmpty() -> 0
+            step == 1 -> (last - first).let { if (it < Int.MAX_VALUE.toUInt()) it.toInt().inc() else Int.MAX_VALUE }
+            step > 0 -> ((last - first) / step.toUInt()).let { if (it < Int.MAX_VALUE.toUInt()) it.toInt().inc() else Int.MAX_VALUE }
+            step < 0 -> ((first - last) / (-step).toUInt()).let { if (it < Int.MAX_VALUE.toUInt()) it.toInt().inc() else Int.MAX_VALUE }
+            else -> error("Invariant is broken: step cannot be 0")
+        }
+
+    override fun contains(@Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE") /* for the backward compatibility with old names */ value: UInt): Boolean = 
+        when {
+            step > 0 && value >= first && value <= last -> (value - first) % step.toUInt() == 0U
+            step < 0 && value <= first && value >= last -> (first - value) % (-step).toUInt() == 0U
+            else -> false
+        }
+    
+    override fun containsAll(elements: Collection<UInt>): Boolean =
+        if (this.isEmpty()) elements.isEmpty() else (elements as Collection<*>).all { it in this }
+
 
     companion object {
         /**
