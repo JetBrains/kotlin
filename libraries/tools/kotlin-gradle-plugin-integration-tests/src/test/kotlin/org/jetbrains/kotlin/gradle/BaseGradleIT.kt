@@ -340,20 +340,21 @@ abstract class BaseGradleIT {
 
         val cmd = createBuildCommand(wrapperDir, params, options)
 
-        println("<=== Test build: ${this.projectName} $cmd ===>")
-
         if (!projectDir.exists()) {
             setupWorkingDir()
         }
 
         maybeUpdateSettingsScript(wrapperVersion, gradleSettingsScript())
 
-        val result = runProcess(cmd, projectDir, env, options)
+        var result: ProcessRunResult? = null
         try {
+            result = runProcess(cmd, projectDir, env, options)
             CompiledProject(this, result.output, result.exitCode).check()
         } catch (t: Throwable) {
+            println("<=== Test build: ${this.projectName} $cmd ===>")
+
             // to prevent duplication of output
-            if (!options.forceOutputToStdout) {
+            if (!options.forceOutputToStdout && result != null) {
                 println(result.output)
             }
             throw t
