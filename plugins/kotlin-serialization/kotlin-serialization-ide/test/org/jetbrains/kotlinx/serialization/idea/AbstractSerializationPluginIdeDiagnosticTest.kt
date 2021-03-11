@@ -19,13 +19,9 @@ abstract class AbstractSerializationPluginIdeDiagnosticTest : AbstractDiagnostic
     private val runtimeLibraryPath = getSerializationLibraryRuntimeJar()
 
     override fun setupEnvironment(environment: KotlinCoreEnvironment) {
-        StorageComponentContainerContributor.registerExtension(environment.project, SerializationIDEContainerContributor())
+        if (!StorageComponentContainerContributor.getInstances(project).any { it is SerializationIDEContainerContributor }) {
+            StorageComponentContainerContributor.registerExtension(project, SerializationIDEContainerContributor())
+        }
         environment.updateClasspath(listOf(JvmClasspathRoot(runtimeLibraryPath!!)))
-    }
-
-    private fun getSerializationLibraryRuntimeJar(): File? = try {
-        PathUtil.getResourcePathForClass(Class.forName("kotlinx.serialization.KSerializer"))
-    } catch (e: ClassNotFoundException) {
-        null
     }
 }

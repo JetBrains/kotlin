@@ -197,6 +197,7 @@ import org.jetbrains.kotlinx.serialization.AbstractSerializationIrBytecodeListin
 import org.jetbrains.kotlinx.serialization.AbstractSerializationPluginBytecodeListingTest
 import org.jetbrains.kotlinx.serialization.AbstractSerializationPluginDiagnosticTest
 import org.jetbrains.kotlinx.serialization.idea.AbstractSerializationPluginIdeDiagnosticTest
+import org.jetbrains.kotlinx.serialization.idea.AbstractSerializationQuickFixTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -1802,6 +1803,9 @@ fun main(args: Array<String>) {
         ) {
             testClass<AbstractSerializationPluginIdeDiagnosticTest> {
                 model("diagnostics")
+            }
+            testClass<AbstractSerializationQuickFixTest> {
+                model("quickfix", pattern = "^([\\w\\-_]+)\\.kt$", filenameStartsLowerCase = true)
             }
         }
 

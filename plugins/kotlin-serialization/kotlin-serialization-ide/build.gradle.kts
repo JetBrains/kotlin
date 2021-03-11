@@ -18,14 +18,25 @@ dependencies {
     compileOnly(intellijPluginDep("java"))
     excludeInAndroidStudio(rootProject) { compileOnly(intellijPluginDep("maven")) }
     compileOnly(intellijPluginDep("gradle"))
+
+    testCompile(toolsJar())
+    testCompile(projectTests(":idea"))
     testCompile(projectTests(":compiler:tests-common"))
+    testCompile(projectTests(":idea:idea-test-framework"))
+    testCompile(project(":kotlin-test:kotlin-test-junit"))
     testCompile(commonDep("junit:junit"))
+    testCompile(projectTests(":idea:idea-frontend-independent"))
+
     testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-jvm:1.0-M1-1.4.0-rc") { isTransitive = false }
 
     testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    testRuntimeOnly(intellijDep()) { includeJars("platform-concurrency") }
 
-    testCompileOnly(intellijDep())
+    testRuntime(project(":allopen-ide-plugin"))
+    testRuntime(project(":plugins:parcelize:parcelize-ide"))
+    testRuntime(project(":sam-with-receiver-ide-plugin"))
+    testRuntime(project(":noarg-ide-plugin"))
+    testCompile(intellijDep())
+    testCompile(intellijPluginDep("java"))
 }
 
 sourceSets {

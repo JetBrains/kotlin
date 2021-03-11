@@ -31,6 +31,7 @@ class SomeContainerClass {
         <!JSON_FORMAT_REDUNDANT_DEFAULT!>Json(Json.Default, {})<!>
         <!JSON_FORMAT_REDUNDANT_DEFAULT!>Json(builderAction = {})<!>
         <!JSON_FORMAT_REDUNDANT_DEFAULT!>Json(builderAction = fun JsonBuilder.() {})<!>
+        <!JSON_FORMAT_REDUNDANT_DEFAULT!>Json(builderAction = fun JsonBuilder.() = Unit)<!>
 
         "{}".let {
             <!JSON_FORMAT_REDUNDANT_DEFAULT!>Json {}<!>.decodeFromString<Any>(it)

@@ -85,7 +85,7 @@ class JsonFormatRedundantDiagnostic : CallChecker {
 
         val blockExpression = if (argumentExpression is KtNamedFunction) {
             // anonymous functions
-            argumentExpression.bodyBlockExpression
+            argumentExpression.bodyBlockExpression ?: return true
         } else {
             // function literal
             argumentExpression.unpackFunctionLiteral()?.bodyExpression

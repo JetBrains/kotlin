@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.showErrorHintByKey
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getOutermostParentContainedIn
 import org.jetbrains.kotlinx.serialization.compiler.diagnostic.SerializationErrors
+import org.jetbrains.kotlinx.serialization.idea.KotlinSerializationBundle
 
 internal class JsonRedundantQuickFix(expression: KtCallExpression) : KotlinQuickFixAction<KtCallExpression>(expression) {
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
@@ -42,7 +43,7 @@ internal class JsonRedundantQuickFix(expression: KtCallExpression) : KotlinQuick
 
     override fun getFamilyName(): String = text
 
-    override fun getText(): String = "Move Json format creation to property"
+    override fun getText(): String = KotlinSerializationBundle.message("move.json.to.property")
 
     object Factory : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
