@@ -870,6 +870,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("twoLocalLambdasWithSameName.kt")
+            public void testTwoLocalLambdasWithSameName() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/twoLocalLambdasWithSameName.kt");
+            }
+
+            @Test
             @TestMetadata("typeAliasWithNotNullBound.kt")
             public void testTypeAliasWithNotNullBound() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/typeAliasWithNotNullBound.kt");

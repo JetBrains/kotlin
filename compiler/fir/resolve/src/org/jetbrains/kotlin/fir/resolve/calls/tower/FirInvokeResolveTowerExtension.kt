@@ -331,8 +331,11 @@ private class InvokeFunctionResolveTask(
     candidateFactory,
 ) {
 
-    override fun interceptTowerGroup(towerGroup: TowerGroup): TowerGroup =
-        maxOf(towerGroup.InvokeResolvePriority(InvokeResolvePriority.COMMON_INVOKE), receiverGroup)
+    override fun interceptTowerGroup(towerGroup: TowerGroup): TowerGroup {
+        val invokeGroup = towerGroup.InvokeResolvePriority(InvokeResolvePriority.COMMON_INVOKE)
+        val max = maxOf(invokeGroup, receiverGroup)
+        return max.InvokeReceiver(receiverGroup)
+    }
 
     suspend fun runResolverForInvoke(
         info: CallInfo,

@@ -750,6 +750,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/syntheticPropertiesWrongImplicitReceiver.kt");
         }
 
+        @TestMetadata("twoLocalLambdasWithSameName.kt")
+        public void testTwoLocalLambdasWithSameName() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/twoLocalLambdasWithSameName.kt");
+        }
+
         @TestMetadata("typeAliasWithNotNullBound.kt")
         public void testTypeAliasWithNotNullBound() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/typeAliasWithNotNullBound.kt");

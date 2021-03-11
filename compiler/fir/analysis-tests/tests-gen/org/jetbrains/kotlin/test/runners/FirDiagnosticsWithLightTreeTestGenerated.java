@@ -877,6 +877,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             }
 
             @Test
+            @TestMetadata("twoLocalLambdasWithSameName.kt")
+            public void testTwoLocalLambdasWithSameName() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/twoLocalLambdasWithSameName.kt");
+            }
+
+            @Test
             @TestMetadata("typeAliasWithNotNullBound.kt")
             public void testTypeAliasWithNotNullBound() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/typeAliasWithNotNullBound.kt");

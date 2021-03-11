@@ -1,0 +1,19 @@
+FILE: twoLocalLambdasWithSameName.kt
+    public abstract interface R : R|kotlin/Any| {
+    }
+    public final fun takeInt(x: R|kotlin/Int|): R|kotlin/Unit| {
+    }
+    public final fun test(fn: R|R.() -> kotlin/String|): R|kotlin/Unit| {
+        lval renderer: R|<anonymous>| = object : R|R| {
+            private constructor(): R|<anonymous>| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun render(fn: R|R.() -> kotlin/Int|): R|kotlin/Unit| {
+                lval result: R|kotlin/Int| = R|<local>/fn|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Int|>|(this@R|/<anonymous>|)
+                R|/takeInt|(R|<local>/result|)
+            }
+
+        }
+
+    }
