@@ -208,7 +208,7 @@ class BasicAssertionsTest {
 }
 
 
-private fun checkFailedAssertion(assertion: () -> Unit): AssertionError {
+internal fun checkFailedAssertion(assertion: () -> Unit): AssertionError {
     return assertFailsWith<AssertionError> { withDefaultAsserter(assertion) }
 }
 
