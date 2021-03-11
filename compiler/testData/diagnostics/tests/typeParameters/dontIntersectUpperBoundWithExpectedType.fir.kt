@@ -9,9 +9,9 @@ fun <T : Foo> foo(): T? {
 }
 
 fun main() {
-    val a: Bar? = <!DEBUG_INFO_EXPRESSION_TYPE("Bar?")!><!TYPE_MISMATCH!>foo<!>()<!>
+    val a: Bar? = <!DEBUG_INFO_EXPRESSION_TYPE("Foo? & Bar?")!>foo()<!>
 }
 
 
 fun <T : Appendable> wtf(): T = TODO()
-val bar: Int = <!TYPE_MISMATCH!>wtf<!>() // happily compiles
+val bar: Int = wtf() // happily compiles
