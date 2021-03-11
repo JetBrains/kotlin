@@ -111,6 +111,7 @@ class FirBuiltinSymbolProvider(session: FirSession, val kotlinScopeProvider: Kot
                             (1..arity).map {
                                 buildTypeParameter {
                                     session = this@FirBuiltinSymbolProvider.session
+                                    resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                                     origin = FirDeclarationOrigin.Synthetic
                                     name = Name.identifier("P$it")
                                     symbol = FirTypeParameterSymbol()
@@ -123,6 +124,7 @@ class FirBuiltinSymbolProvider(session: FirSession, val kotlinScopeProvider: Kot
                         typeParameters.add(
                             buildTypeParameter {
                                 session = this@FirBuiltinSymbolProvider.session
+                                resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                                 origin = FirDeclarationOrigin.Synthetic
                                 name = Name.identifier("R")
                                 symbol = FirTypeParameterSymbol()
@@ -197,6 +199,7 @@ class FirBuiltinSymbolProvider(session: FirSession, val kotlinScopeProvider: Kot
                         addDeclaration(
                             buildSimpleFunction {
                                 session = this@FirBuiltinSymbolProvider.session
+                                resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                                 origin = FirDeclarationOrigin.Synthetic
                                 returnTypeRef = typeArguments.last()
                                 this.name = name
