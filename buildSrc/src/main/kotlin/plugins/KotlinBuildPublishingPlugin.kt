@@ -16,6 +16,7 @@ import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
 import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.*
+import org.gradle.plugins.signing.Sign
 import org.gradle.plugins.signing.SigningExtension
 import org.gradle.plugins.signing.SigningPlugin
 import java.util.*
@@ -26,6 +27,7 @@ class KotlinBuildPublishingPlugin @Inject constructor(
 ) : Plugin<Project> {
     override fun apply(target: Project): Unit = with(target) {
         apply<MavenPublishPlugin>()
+        apply<SigningPlugin>()
 
         val publishedRuntime = configurations.maybeCreate(RUNTIME_CONFIGURATION).apply {
             isCanBeConsumed = false
@@ -127,20 +129,13 @@ fun Project.configureDefaultPublishing() {
                 name = KotlinBuildPublishingPlugin.REPOSITORY_NAME
                 url = file("${project.rootDir}/build/repo").toURI()
             }
-            mavenLocal() // to workaround configuration cache issues with 'publishToMavenLocal' task
         }
     }
 
-    val signingRequired = project.providers.gradleProperty("signingRequired").forUseAtConfigurationTime().orNull?.toBoolean()
-        ?: project.providers.gradleProperty("isSonatypeRelease").forUseAtConfigurationTime().orNull?.toBoolean() ?: false
-
-    if (signingRequired) {
-        apply<SigningPlugin>()
-        configureSigning()
-    }
+    configureSigning()
 
     tasks.register("install") {
-        dependsOn(tasks.named("publishAllPublicationsToMavenLocalRepository"))
+        dependsOn(tasks.named("publishToMavenLocal"))
     }
 
     tasks.withType<PublishToMavenRepository>()
@@ -149,9 +144,19 @@ fun Project.configureDefaultPublishing() {
 }
 
 private fun Project.configureSigning() {
+    val signingRequired = provider {
+        project.findProperty("signingRequired")?.toString()?.toBoolean()
+            ?: project.property("isSonatypeRelease") as Boolean
+    }
+
     configure<SigningExtension> {
+        setRequired(signingRequired)
         sign(extensions.getByType<PublishingExtension>().publications) // all publications
         useGpgCmd()
+    }
+
+    tasks.withType<Sign>().configureEach {
+        setOnlyIf { signingRequired.get() }
     }
 }
 
