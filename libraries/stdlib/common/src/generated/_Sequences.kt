@@ -124,6 +124,40 @@ public inline fun <T> Sequence<T>.first(predicate: (T) -> Boolean): T {
 }
 
 /**
+ * Returns the first non-null value produced by [transform] function being applied to elements of this sequence in iteration order,
+ * or throws [NoSuchElementException] if no non-null value was produced.
+ *
+ * The operation is _terminal_.
+ * 
+ * @sample samples.collections.Collections.Transformations.firstNotNullOf
+ */
+@SinceKotlin("1.5")
+@kotlin.internal.InlineOnly
+public inline fun <T, R : Any> Sequence<T>.firstNotNullOf(transform: (T) -> R?): R {
+    return firstNotNullOfOrNull(transform) ?: throw NoSuchElementException("No element of the sequence was transformed to a non-null value.")
+}
+
+/**
+ * Returns the first non-null value produced by [transform] function being applied to elements of this sequence in iteration order,
+ * or `null` if no non-null value was produced.
+ *
+ * The operation is _terminal_.
+ * 
+ * @sample samples.collections.Collections.Transformations.firstNotNullOf
+ */
+@SinceKotlin("1.5")
+@kotlin.internal.InlineOnly
+public inline fun <T, R : Any> Sequence<T>.firstNotNullOfOrNull(transform: (T) -> R?): R? {
+    for (element in this) {
+        val result = transform(element)
+        if (result != null) {
+            return result
+        }
+    }
+    return null
+}
+
+/**
  * Returns the first element, or `null` if the sequence is empty.
  *
  * The operation is _terminal_.

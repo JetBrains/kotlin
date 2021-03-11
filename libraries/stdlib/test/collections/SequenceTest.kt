@@ -731,6 +731,20 @@ public class SequenceTest {
         assertEquals(s2, s2.orEmpty())
     }
 
+    @Test
+    fun firstNotNullOf() {
+        fun Int.isMonodigit(): Boolean = toString().toHashSet().size == 1
+        fun Int.doubleIfNotMonodigit(): Int? = if (this > 9 && this.isMonodigit()) this * 2 else null
+
+        assertEquals(110, fibonacci().firstNotNullOf { it.doubleIfNotMonodigit() })
+        assertEquals(110, fibonacci().firstNotNullOfOrNull { it.doubleIfNotMonodigit() })
+
+        assertFailsWith<NoSuchElementException> {
+            fibonacci().take(10).firstNotNullOf<Int, Int> { it.doubleIfNotMonodigit() }
+        }
+        assertNull(fibonacci().take(10).firstNotNullOfOrNull { it.doubleIfNotMonodigit() })
+    }
+
     /*
     test fun pairIterator() {
         val pairStr = (fibonacci() zip fibonacci().map { i -> i*2 }).joinToString(limit = 10)

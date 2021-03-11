@@ -1176,6 +1176,36 @@ public inline fun CharArray.first(predicate: (Char) -> Boolean): Char {
 }
 
 /**
+ * Returns the first non-null value produced by [transform] function being applied to elements of this array in iteration order,
+ * or throws [NoSuchElementException] if no non-null value was produced.
+ * 
+ * @sample samples.collections.Collections.Transformations.firstNotNullOf
+ */
+@SinceKotlin("1.5")
+@kotlin.internal.InlineOnly
+public inline fun <T, R : Any> Array<out T>.firstNotNullOf(transform: (T) -> R?): R {
+    return firstNotNullOfOrNull(transform) ?: throw NoSuchElementException("No element of the array was transformed to a non-null value.")
+}
+
+/**
+ * Returns the first non-null value produced by [transform] function being applied to elements of this array in iteration order,
+ * or `null` if no non-null value was produced.
+ * 
+ * @sample samples.collections.Collections.Transformations.firstNotNullOf
+ */
+@SinceKotlin("1.5")
+@kotlin.internal.InlineOnly
+public inline fun <T, R : Any> Array<out T>.firstNotNullOfOrNull(transform: (T) -> R?): R? {
+    for (element in this) {
+        val result = transform(element)
+        if (result != null) {
+            return result
+        }
+    }
+    return null
+}
+
+/**
  * Returns the first element, or `null` if the array is empty.
  */
 public fun <T> Array<out T>.firstOrNull(): T? {

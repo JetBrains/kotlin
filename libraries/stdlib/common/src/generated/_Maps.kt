@@ -18,6 +18,36 @@ import kotlin.ranges.contains
 import kotlin.ranges.reversed
 
 /**
+ * Returns the first non-null value produced by [transform] function being applied to entries of this map in iteration order,
+ * or throws [NoSuchElementException] if no non-null value was produced.
+ * 
+ * @sample samples.collections.Collections.Transformations.firstNotNullOf
+ */
+@SinceKotlin("1.5")
+@kotlin.internal.InlineOnly
+public inline fun <K, V, R : Any> Map<out K, V>.firstNotNullOf(transform: (Map.Entry<K, V>) -> R?): R {
+    return firstNotNullOfOrNull(transform) ?: throw NoSuchElementException("No element of the map was transformed to a non-null value.")
+}
+
+/**
+ * Returns the first non-null value produced by [transform] function being applied to entries of this map in iteration order,
+ * or `null` if no non-null value was produced.
+ * 
+ * @sample samples.collections.Collections.Transformations.firstNotNullOf
+ */
+@SinceKotlin("1.5")
+@kotlin.internal.InlineOnly
+public inline fun <K, V, R : Any> Map<out K, V>.firstNotNullOfOrNull(transform: (Map.Entry<K, V>) -> R?): R? {
+    for (element in this) {
+        val result = transform(element)
+        if (result != null) {
+            return result
+        }
+    }
+    return null
+}
+
+/**
  * Returns a [List] containing all key-value pairs.
  */
 public fun <K, V> Map<out K, V>.toList(): List<Pair<K, V>> {
