@@ -28,8 +28,6 @@ import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.references.builder.*
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
-import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.LocalCallableIdConstructor
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.*
@@ -38,7 +36,9 @@ import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
 import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
 import org.jetbrains.kotlin.fir.types.impl.FirTypePlaceholderProjection
 import org.jetbrains.kotlin.lexer.KtTokens.*
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.LocalCallableIdConstructor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
@@ -652,11 +652,11 @@ class RawFirBuilder(
             ownerTypeParameters: List<FirTypeParameterRef>,
             body: FirBlock? = null
         ): FirConstructor {
-            val constructorCallee = superTypeCallEntry?.calleeExpression?.toFirSourceElement()
+            val constructorCall = superTypeCallEntry?.toFirSourceElement()
             val constructorSource = this?.toFirSourceElement()
                 ?: owner.toFirPsiSourceElement(FirFakeSourceElementKind.ImplicitConstructor)
             val firDelegatedCall = buildDelegatedConstructorCall {
-                source = constructorCallee ?: constructorSource.fakeElement(FirFakeSourceElementKind.DelegatingConstructorCall)
+                source = constructorCall ?: constructorSource.fakeElement(FirFakeSourceElementKind.DelegatingConstructorCall)
                 constructedTypeRef = delegatedSuperTypeRef.copyWithNewSourceKind(FirFakeSourceElementKind.ImplicitTypeRef)
                 isThis = false
                 if (!stubMode) {
