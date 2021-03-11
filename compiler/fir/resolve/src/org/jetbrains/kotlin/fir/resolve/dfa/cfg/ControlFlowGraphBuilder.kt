@@ -858,7 +858,7 @@ class ControlFlowGraphBuilder {
         val finallyEnterNode = finallyEnterNodes.topOrNull()
         // NB: Check the level to avoid adding an edge to the finally block at an upper level.
         if (finallyEnterNode != null && finallyEnterNode.level == levelCounter + 1) {
-            // TODO: in case of return/throw in try main block, we need a unique label.
+            // TODO: in case of return/continue/break in try main block, we need a unique label.
             addEdge(node, finallyEnterNode)
         } else {
             addEdge(node, tryExitNodes.top())
@@ -891,7 +891,7 @@ class ControlFlowGraphBuilder {
             val finallyEnterNode = finallyEnterNodes.topOrNull()
             // NB: Check the level to avoid adding an edge to the finally block at an upper level.
             if (finallyEnterNode != null && finallyEnterNode.level == levelCounter + 1) {
-                // TODO: in case of return/rethrow in catch clause, we need a unique label.
+                // TODO: in case of return/continue/break in catch clause, we need a unique label.
                 addEdge(it, finallyEnterNode, propagateDeadness = false)
             } else {
                 addEdge(it, tryExitNodes.top(), propagateDeadness = false)
@@ -913,7 +913,9 @@ class ControlFlowGraphBuilder {
             addEdge(it, tryExitNode)
             // a flow that exits to the exit target while there was an uncaught exception.
             addEdge(it, exitTargetsForTry.top(), label = UncaughtExceptionPath)
-            // TODO: differentiate flows that return/(re)throw in try main block or catch clauses.
+            // TODO: differentiate flows that return/(re)throw in try main block and/or catch clauses
+            //   To do so, we need mappings from such distinct label to original exit target (fun exit or loop)
+            //   Also, CFG should support multiple edges towards the same destination node
         }
     }
 
@@ -1248,10 +1250,36 @@ class ControlFlowGraphBuilder {
     }
 
     private fun addNodeThatReturnsNothing(node: CFGNode<*>, preferredKind: EdgeKind = EdgeKind.Forward) {
-        val exitNode: CFGNode<*> = exitTargetsForTry.top()
-        // If an expression, which returns Nothing, isn't inside a try/catch/finally, that is an uncaught exception path.
-        val label = if (tryExitNodes.isEmpty) UncaughtExceptionPath else NormalPath
-        addNodeWithJump(node, exitNode, preferredKind, label = label)
+        // If an expression, which returns Nothing, ...(1)
+        val targetNode = when {
+            tryExitNodes.isEmpty -> {
+                // (1)... isn't inside a try expression, that is an uncaught exception path.
+                exitTargetsForTry.top()
+            }
+            // (1)... inside a try expression...(2)
+            finallyEnterNodes.topOrNull()?.level == levelCounter -> {
+                // (2)... with finally
+                // Either in try-main or catch. Route to `finally`
+                finallyEnterNodes.top()
+            }
+            // (2)... without finally or within finally ...(3)
+            tryExitNodes.top().fir.finallyBlock == null -> {
+                // (3)... without finally ...(4)
+                // Either in try-main or catch.
+                if (tryExitNodes.size == tryMainExitNodes.size) {
+                    // (4)... in catch, i.e., re-throw.
+                    exitTargetsForTry.top()
+                } else {
+                    // (4)... in try-main. We already have:
+                    // edges from try-main enter node to each catch clause enter node and
+                    // edges from catch clause enter node to exit target (w/ UncaughtExceptionPath)
+                    return
+                }
+            }
+            // (3)... within finally.
+            else -> exitTargetsForTry.top()
+        }
+        addNodeWithJump(node, targetNode, preferredKind, label = UncaughtExceptionPath)
     }
 
     private fun addNodeWithJump(
