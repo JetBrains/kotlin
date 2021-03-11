@@ -1,5 +1,5 @@
+// !USE_EXPERIMENTAL: kotlin.reflect.jvm.ExperimentalReflectionOnLambdas
 // TARGET_BACKEND: JVM
-
 // WITH_REFLECT
 
 import kotlin.reflect.KParameter
