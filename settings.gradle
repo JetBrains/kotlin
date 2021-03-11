@@ -154,7 +154,6 @@ include ":benchmarks",
         ":compiler:compiler.version",
         ":dependencies:android-sdk",
         ":dependencies:tools-jar-api",
-        ":idea:idea-fir-performance-tests",
         ":idea:idea-android-output-parser",
         ":plugins:lint",
         ":plugins:android-extensions-compiler",
@@ -283,7 +282,6 @@ include ":compiler:test-infrastructure",
 
 include ":idea:idea-frontend-fir:idea-fir-low-level-api"
 include ":idea:idea-frontend-fir:idea-frontend-fir-generator"
-include ":idea:idea-fir-performance-tests"
 
 include ":plugins:parcelize:parcelize-compiler",
         ":plugins:parcelize:parcelize-runtime",
