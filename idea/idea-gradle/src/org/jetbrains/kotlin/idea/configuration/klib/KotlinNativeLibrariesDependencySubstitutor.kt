@@ -9,9 +9,11 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.roots.DependencyScope
 import com.intellij.openapi.util.Key
 import org.gradle.tooling.model.idea.IdeaModule
+import org.jetbrains.kotlin.gradle.KotlinDependency
 import org.jetbrains.kotlin.gradle.KotlinMPPGradleModel
 import org.jetbrains.kotlin.idea.configuration.buildClasspathData
 import org.jetbrains.kotlin.idea.configuration.klib.KotlinNativeLibraryNameUtil.buildIDELibraryName
+import org.jetbrains.kotlin.idea.configuration.mpp.KotlinDependenciesPreprocessor
 import org.jetbrains.kotlin.idea.inspections.gradle.findKotlinPluginVersion
 import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
 import org.jetbrains.plugins.gradle.ExternalDependencyId
@@ -21,10 +23,15 @@ import java.io.File
 
 // KT-29613, KT-29783
 internal class KotlinNativeLibrariesDependencySubstitutor(
-    val mppModel: KotlinMPPGradleModel,
+    private val mppModel: KotlinMPPGradleModel,
     private val gradleModule: IdeaModule,
     private val resolverCtx: ProjectResolverContext
-) {
+) : KotlinDependenciesPreprocessor {
+
+    override fun invoke(dependencies: Iterable<KotlinDependency>): List<KotlinDependency> {
+        return substituteDependencies(dependencies.toList())
+    }
+
     // Substitutes `ExternalDependency` entries that represent KLIBs with new dependency entries with proper type and name:
     // - every `FileCollectionDependency` is checked whether it points to an existing KLIB, and substituted if it is
     // - similarly for every `ExternalLibraryDependency` with `groupId == "Kotlin/Native"` (legacy KLIB provided by Gradle plugin <= 1.3.20)
