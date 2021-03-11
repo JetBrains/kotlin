@@ -894,17 +894,11 @@ tasks {
         if (Ide.IJ()) {
             dependsOn(
                 ":libraries:tools:new-project-wizard:test",
-                ":libraries:tools:new-project-wizard:new-project-wizard-cli:test",
-                ":idea:idea-new-project-wizard:test" // Temporary here. Remove after enabling builds for ideaIntegrationsTests
+                ":libraries:tools:new-project-wizard:new-project-wizard-cli:test"
             )
         }
     }
 
-    register("ideaIntegrationsTests") {
-        if (Ide.IJ()) {
-            dependsOn(":idea:idea-new-project-wizard:test")
-        }
-    }
 
     register("kaptIdeTest") {
         dependsOn(":kotlin-annotation-processing:test")
