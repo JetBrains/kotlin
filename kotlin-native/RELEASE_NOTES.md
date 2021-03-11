@@ -57,31 +57,31 @@ However, there are certain limitations, see section [Known Limitations](#limitat
  Currently _Kotlin/Native_ uses reference counting based memory management scheme with a cycle
 collection algorithm. Multiple threads could be used, but objects must be explicitly transferred
 between threads, and same object couldn't be accessed by two threads concurrently unless it is frozen.
-See the relevant [documentation](https://kotlinlang.org/docs/reference/native/concurrency.html).
+See the relevant [documentation](https://kotlinlang.org/docs/native-concurrency.html).
 We are going to lift these multithreading restrictions, which involves implementing a new memory manager.
 More details are available in
 ["Kotlin/Native Memory Management Roadmap"](https://blog.jetbrains.com/kotlin/2020/07/kotlin-native-memory-management-roadmap/).
 
 _Kotlin/Native_ provides efficient bidirectional interoperability with C and Objective-C.
-See the [samples](https://github.com/JetBrains/kotlin-native/tree/master/samples)
-and the [tutorials](https://kotlinlang.org/docs/tutorials/).
+See [the samples](https://github.com/JetBrains/kotlin/tree/master/kotlin-native/samples),
+[the documentation, and the tutorials](https://kotlinlang.org/docs/native-c-interop.html).
 
   ## Getting Started ##
   
 The most complete experience with Kotlin/Native can be achieved by using
-[Gradle](https://kotlinlang.org/docs/tutorials/native/using-gradle.html),
-[IntelliJ IDEA](https://kotlinlang.org/docs/tutorials/native/using-intellij-idea.html) or
+[Gradle](https://kotlinlang.org/docs/native-gradle.html),
+[IntelliJ IDEA](https://kotlinlang.org/docs/native-get-started.html) or
 [Android Studio with KMM plugin](https://kotlinlang.org/docs/mobile/create-first-app.html) if you target iOS.
 
 If you are interested in using Kotlin/Native for iOS, then
 [Kotlin Multiplatform Mobile portal](https://kotlinlang.org/lp/mobile/) might also be useful for you.
  
 Command line compiler is also
-[available](https://kotlinlang.org/docs/tutorials/native/using-command-line-compiler.html).
+[available](https://kotlinlang.org/docs/native-command-line-compiler.html).
 
 More information can be found in the overviews of
-[Kotlin/Native](https://kotlinlang.org/docs/reference/native-overview.html)
-and [Kotlin Multiplatform](https://kotlinlang.org/docs/reference/multiplatform.html).
+[Kotlin/Native](https://kotlinlang.org/docs/native-overview.html)
+and [Kotlin Multiplatform](https://kotlinlang.org/docs/multiplatform.html).
 
  ## <a name="limitations"></a>Known limitations ##
 
@@ -97,7 +97,7 @@ for benchmarking and competitive analysis of any kind.
   The standard library in _Kotlin/Native_ is known match common standard library in other Kotlin variants.
  Note, that standard Java APIs, such as `java.math.BigDecimal` or `java.io`
 is not available in current _Kotlin_ standard library, but using C interoperability, one could
-call similar APIs from the POSIX library, see this [`sample`](https://github.com/JetBrains/kotlin-native/blob/master/samples/csvparser).
+call similar APIs from the POSIX library, see this [`sample`](https://github.com/JetBrains/kotlin/blob/master/kotlin-native/samples/csvparser).
   Also Kotlin/Native standard library contains certain native-specific extensions, mostly around
 memory management and concurrency.
 
@@ -115,4 +115,4 @@ be targets.
 
  _Kotlin/Native_ supports  source-level debugging on produced executables with `lldb` debugger.
  Produce your binary with debugging information by specifying `-g` _Kotlin/Native_ compiler switch.
-See [`DEBUGGING.md`](https://github.com/JetBrains/kotlin-native/blob/master/DEBUGGING.md) for further information.
+See [documentation](https://kotlinlang.org/docs/native-debugging.html) for further information.
