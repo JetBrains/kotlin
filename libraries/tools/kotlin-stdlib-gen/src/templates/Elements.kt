@@ -1081,4 +1081,56 @@ object Elements : TemplateGroupBase() {
         }
     }
 
+    val f_firstNotNullOfOrNull = fn("firstNotNullOfOrNull(transform: (T) -> R?)") {
+        include(Iterables, Sequences, Maps, CharSequences, ArraysOfObjects)
+    } builder {
+        inlineOnly()
+        since("1.5")
+        typeParam("R : Any")
+        returns("R?")
+
+        sample("samples.collections.Collections.Transformations.firstNotNullOf")
+
+        doc {
+            """
+            Returns the first non-null value produced by [transform] function being applied to ${f.element.pluralize()} of this ${f.collection} in iteration order,
+            or `null` if no non-null value was produced.
+            """
+        }
+        body {
+            """
+            for (element in this) {
+                val result = transform(element)
+                if (result != null) {
+                    return result
+                }
+            }
+            return null
+            """
+        }
+    }
+
+    val f_firstNotNullOf = fn("firstNotNullOf(transform: (T) -> R?)") {
+        include(Iterables, Sequences, Maps, CharSequences, ArraysOfObjects)
+    } builder {
+        inlineOnly()
+        since("1.5")
+        typeParam("R : Any")
+        returns("R")
+
+        sample("samples.collections.Collections.Transformations.firstNotNullOf")
+
+        doc {
+            """
+            Returns the first non-null value produced by [transform] function being applied to ${f.element.pluralize()} of this ${f.collection} in iteration order,
+            or throws [NoSuchElementException] if no non-null value was produced.
+            """
+        }
+        body {
+            """
+            return firstNotNullOfOrNull(transform) ?: throw NoSuchElementException("No element of the ${f.collection} was transformed to a non-null value.")
+            """
+        }
+    }
+
 }

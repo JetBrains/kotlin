@@ -597,6 +597,32 @@ class Collections {
 
             assertPrints(deltas, "[3, 5, 7, 9, 11]")
         }
+
+        @Sample
+        fun firstNotNullOf() {
+            data class Rectangle(val height: Int, val width: Int) {
+                val area: Int get() = height * width
+            }
+
+            val rectangles = listOf(
+                Rectangle(3, 4),
+                Rectangle(1, 8),
+                Rectangle(6, 3),
+                Rectangle(4, 3),
+                Rectangle(5, 7)
+            )
+
+            val largeArea = rectangles.firstNotNullOf { it.area.takeIf { area -> area >= 15 } }
+            val largeAreaOrNull = rectangles.firstNotNullOfOrNull { it.area.takeIf { area -> area >= 15 } }
+
+            assertPrints(largeArea, "18")
+            assertPrints(largeAreaOrNull, "18")
+
+            assertFailsWith<NoSuchElementException> { val evenLargerArea = rectangles.firstNotNullOf { it.area.takeIf { area -> area >= 50 } } }
+            val evenLargerAreaOrNull = rectangles.firstNotNullOfOrNull { it.area.takeIf { area -> area >= 50 } }
+
+            assertPrints(evenLargerAreaOrNull, "null")
+        }
     }
 
     class Aggregates {

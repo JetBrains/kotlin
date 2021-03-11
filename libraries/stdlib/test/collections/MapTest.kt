@@ -436,6 +436,22 @@ class MapTest {
         doTest("built Map", builtMap, "y", 24)
     }
 
+    @Test
+    fun firstNotNullOf() {
+        val map = mapOf("Alice" to 20, "Tom" to 13, "Bob" to 18)
+
+        val firstAdult = map.firstNotNullOf { (name, age) -> name.takeIf { age >= 18 } }
+        val firstAdultOrNull = map.firstNotNullOfOrNull { (name, age) -> name.takeIf { age >= 18 } }
+
+        assertEquals("Alice", firstAdult)
+        assertEquals("Alice", firstAdultOrNull)
+
+        assertFailsWith<NoSuchElementException> { val firstChild = map.firstNotNullOf { (name, age) -> name.takeIf { age <= 11 } } }
+        val firstChildOrNull = map.firstNotNullOfOrNull { (name, age) -> name.takeIf { age <= 11 } }
+
+        assertNull(firstChildOrNull)
+    }
+
 
     fun testPlusAssign(doPlusAssign: (MutableMap<String, Int>) -> Unit) {
         val map = hashMapOf("a" to 1, "b" to 2)

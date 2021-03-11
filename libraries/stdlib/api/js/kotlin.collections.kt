@@ -2520,6 +2520,30 @@ public inline fun <T> kotlin.collections.Iterable<T>.first(predicate: (T) -> kot
 
 public fun <T> kotlin.collections.List<T>.first(): T
 
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun <T, R : kotlin.Any> kotlin.Array<out T>.firstNotNullOf(transform: (T) -> R?): R
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun <T, R : kotlin.Any> kotlin.collections.Iterable<T>.firstNotNullOf(transform: (T) -> R?): R
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun <K, V, R : kotlin.Any> kotlin.collections.Map<out K, V>.firstNotNullOf(transform: (kotlin.collections.Map.Entry<K, V>) -> R?): R
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun <T, R : kotlin.Any> kotlin.Array<out T>.firstNotNullOfOrNull(transform: (T) -> R?): R?
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun <T, R : kotlin.Any> kotlin.collections.Iterable<T>.firstNotNullOfOrNull(transform: (T) -> R?): R?
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun <K, V, R : kotlin.Any> kotlin.collections.Map<out K, V>.firstNotNullOfOrNull(transform: (kotlin.collections.Map.Entry<K, V>) -> R?): R?
+
 public fun <T> kotlin.Array<out T>.firstOrNull(): T?
 
 public inline fun <T> kotlin.Array<out T>.firstOrNull(predicate: (T) -> kotlin.Boolean): T?
