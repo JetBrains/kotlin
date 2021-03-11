@@ -2,7 +2,7 @@ class: java/lang/String
 
 // SYMBOLS:
 KtFirJavaFieldSymbol:
-  annotatedType: [] ft<@FlexibleNullability kotlin/CharArray, kotlin/CharArray?>!
+  annotatedType: [] ft<kotlin/CharArray, kotlin/CharArray?>
   callableIdIfNonLocal: java.lang.String.value
   isVal: true
   modality: FINAL
@@ -1001,7 +1001,7 @@ KtFirFunctionSymbol:
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
-  annotatedType: [] ft<@EnhancedNullability kotlin/Array<ft<@FlexibleNullability kotlin/String, kotlin/String?>!>, @EnhancedNullability kotlin/Array<out ft<@FlexibleNullability kotlin/String, kotlin/String?>!>>
+  annotatedType: [] ft<@EnhancedNullability kotlin/Array<ft<kotlin/String, kotlin/String?>>, @EnhancedNullability kotlin/Array<out ft<kotlin/String, kotlin/String?>>>
   annotationClassIds: [org/jetbrains/annotations/NotNull]
   annotations: [org/jetbrains/annotations/NotNull()]
   callableIdIfNonLocal: java.lang.String.split
@@ -1022,7 +1022,7 @@ KtFirFunctionSymbol:
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
-  annotatedType: [] ft<@EnhancedNullability kotlin/Array<ft<@FlexibleNullability kotlin/String, kotlin/String?>!>, @EnhancedNullability kotlin/Array<out ft<@FlexibleNullability kotlin/String, kotlin/String?>!>>
+  annotatedType: [] ft<@EnhancedNullability kotlin/Array<ft<kotlin/String, kotlin/String?>>, @EnhancedNullability kotlin/Array<out ft<kotlin/String, kotlin/String?>>>
   annotationClassIds: [org/jetbrains/annotations/NotNull]
   annotations: [org/jetbrains/annotations/NotNull()]
   callableIdIfNonLocal: java.lang.String.split
@@ -1148,7 +1148,7 @@ KtFirFunctionSymbol:
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
-  annotatedType: [] @FlexibleNullability kotlin/String
+  annotatedType: [] @EnhancedNullability kotlin/String
   annotationClassIds: []
   annotations: []
   callableIdIfNonLocal: java.lang.String.toString
@@ -1245,7 +1245,7 @@ KtFirClassOrObjectSymbol:
   modality: OPEN
   name: CaseInsensitiveComparator
   origin: JAVA
-  superTypes: [[] kotlin/Any, [] java/util/Comparator<ft<@FlexibleNullability kotlin/String, kotlin/String?>!>, [] java/io/Serializable]
+  superTypes: [[] kotlin/Any, [] java/util/Comparator<ft<kotlin/String, kotlin/String?>>, [] java/io/Serializable]
   symbolKind: MEMBER
   typeParameters: []
   visibility: PRIVATE

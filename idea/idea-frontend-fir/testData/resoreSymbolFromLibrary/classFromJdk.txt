@@ -17,7 +17,7 @@ KtFirClassOrObjectSymbol:
   modality: FINAL
   name: String
   origin: JAVA
-  superTypes: [[] kotlin/Any, [] java/io/Serializable, [] kotlin/Comparable<ft<@FlexibleNullability kotlin/String, kotlin/String?>!>, [] kotlin/CharSequence]
+  superTypes: [[] kotlin/Any, [] java/io/Serializable, [] kotlin/Comparable<ft<kotlin/String, kotlin/String?>>, [] kotlin/CharSequence]
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: PUBLIC
