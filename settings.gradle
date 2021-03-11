@@ -285,7 +285,6 @@ include ":idea:idea-frontend-fir:idea-frontend-fir-generator"
 include ":idea:idea-fir-performance-tests"
 
 include ":plugins:parcelize:parcelize-compiler",
-        ":plugins:parcelize:parcelize-ide",
         ":plugins:parcelize:parcelize-runtime",
         ":kotlin-parcelize-compiler"
 
