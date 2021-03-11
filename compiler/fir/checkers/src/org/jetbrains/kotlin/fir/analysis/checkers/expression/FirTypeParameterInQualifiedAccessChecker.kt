@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeTypeParameterInQualified
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 
-object FirTypeParameterInQualifiedAccessChecker: FirQualifiedAccessChecker() {
+object FirTypeParameterInQualifiedAccessChecker : FirQualifiedAccessChecker() {
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         checkExplicitReceiver(expression, context, reporter)
         checkExpressionItself(expression, context, reporter)
@@ -42,14 +42,15 @@ object FirTypeParameterInQualifiedAccessChecker: FirQualifiedAccessChecker() {
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
+        val explicitReceiver = expression.explicitReceiver
         val typeParameterSymbol =
-            expression.explicitReceiver?.typeRef?.coneTypeParameterInQualifiedAccess?.symbol
-                ?: (expression.explicitReceiver as? FirResolvedReifiedParameterReference)?.symbol
+            (explicitReceiver as? FirResolvedReifiedParameterReference)?.symbol
+                ?: explicitReceiver?.typeRef?.coneTypeParameterInQualifiedAccess?.symbol
                 ?: return
         if (expression is FirCallableReferenceAccess) {
             reporter.reportOn(expression.source, FirErrors.CALLABLE_REFERENCE_LHS_NOT_A_CLASS, context)
         } else {
-            reporter.reportOn(expression.explicitReceiver?.source, FirErrors.TYPE_PARAMETER_ON_LHS_OF_DOT, typeParameterSymbol, context)
+            reporter.reportOn(explicitReceiver?.source, FirErrors.TYPE_PARAMETER_ON_LHS_OF_DOT, typeParameterSymbol, context)
         }
     }
 
