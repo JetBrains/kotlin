@@ -16,30 +16,25 @@ class KotlinSourceSetProto(
     private val dependencies: () -> Array<KotlinDependencyId>,
     val dependsOnSourceSets: Set<String>
 ) {
-
     fun buildKotlinSourceSetImpl(
         doBuildDependencies: Boolean,
         allSourceSetsProtosByNames: Map<String, KotlinSourceSetProto>,
-        dependsOnCache: HashMap<String, Set<String>>
     ) = KotlinSourceSetImpl(
-        name,
-        languageSettings,
-        sourceDirs,
-        resourceDirs,
-        if (doBuildDependencies) dependencies.invoke() else emptyArray(),
-        calculateDependsOnClosure(this, allSourceSetsProtosByNames, dependsOnCache)
+        name = name,
+        languageSettings = languageSettings,
+        sourceDirs = sourceDirs,
+        resourceDirs = resourceDirs,
+        dependencies = if (doBuildDependencies) dependencies.invoke() else emptyArray(),
+        declaredDependsOnSourceSets = dependsOnSourceSets,
+        allDependsOnSourceSets = allDependsOnSourceSets(allSourceSetsProtosByNames)
     )
+}
 
-    private fun calculateDependsOnClosure(
-        currentSourceSetProto: KotlinSourceSetProto,
-        sourceSetsMap: Map<String, KotlinSourceSetProto>,
-        cache: MutableMap<String, Set<String>>
-    ): Set<String> {
-        return cache.computeIfAbsent(currentSourceSetProto.name) {
-            currentSourceSetProto.dependsOnSourceSets.flatMap { name ->
-                val nextSourceSet = sourceSetsMap[name] ?: error("Source set $name is not found in map $sourceSetsMap")
-                calculateDependsOnClosure(nextSourceSet, sourceSetsMap, cache).union(setOf(name))
-            }.toSet()
+fun KotlinSourceSetProto.allDependsOnSourceSets(sourceSetsByName: Map<String, KotlinSourceSetProto>): Set<String> {
+    return mutableSetOf<String>().apply {
+        addAll(dependsOnSourceSets)
+        dependsOnSourceSets.map(sourceSetsByName::getValue).forEach { dependsOnSourceSet ->
+            addAll(dependsOnSourceSet.allDependsOnSourceSets(sourceSetsByName))
         }
     }
 }
@@ -50,29 +45,41 @@ class KotlinSourceSetImpl(
     override val sourceDirs: Set<File>,
     override val resourceDirs: Set<File>,
     override val dependencies: Array<KotlinDependencyId>,
-    override val dependsOnSourceSets: Set<String>,
-    val defaultPlatform: KotlinPlatformContainerImpl = KotlinPlatformContainerImpl(),
+    override val declaredDependsOnSourceSets: Set<String>,
+    @Suppress("OverridingDeprecatedMember")
+    override val allDependsOnSourceSets: Set<String>,
+    defaultActualPlatforms: KotlinPlatformContainerImpl = KotlinPlatformContainerImpl(),
+    defaultIsTestModule: Boolean = false
 ) : KotlinSourceSet {
 
-    constructor(kotlinSourceSet: KotlinSourceSet, cloningCache: MutableMap<Any, Any>) : this(
-        kotlinSourceSet.name,
-        KotlinLanguageSettingsImpl(kotlinSourceSet.languageSettings),
-        HashSet(kotlinSourceSet.sourceDirs),
-        HashSet(kotlinSourceSet.resourceDirs),
-        kotlinSourceSet.dependencies,
-        HashSet(kotlinSourceSet.dependsOnSourceSets),
-        KotlinPlatformContainerImpl(kotlinSourceSet.actualPlatforms)
+    @Suppress("DEPRECATION")
+    constructor(kotlinSourceSet: KotlinSourceSet) : this(
+        name = kotlinSourceSet.name,
+        languageSettings = KotlinLanguageSettingsImpl(kotlinSourceSet.languageSettings),
+        sourceDirs = HashSet(kotlinSourceSet.sourceDirs),
+        resourceDirs = HashSet(kotlinSourceSet.resourceDirs),
+        dependencies = kotlinSourceSet.dependencies.clone(),
+        declaredDependsOnSourceSets = HashSet(kotlinSourceSet.declaredDependsOnSourceSets),
+        allDependsOnSourceSets = HashSet(kotlinSourceSet.allDependsOnSourceSets),
+        defaultActualPlatforms = KotlinPlatformContainerImpl(kotlinSourceSet.actualPlatforms)
     ) {
         this.isTestModule = kotlinSourceSet.isTestModule
     }
 
-    override var actualPlatforms: KotlinPlatformContainer = defaultPlatform
+    override var actualPlatforms: KotlinPlatformContainer = defaultActualPlatforms
         internal set
 
-    override var isTestModule: Boolean = false
+    override var isTestModule: Boolean = defaultIsTestModule
         internal set
 
     override fun toString() = name
+
+    init {
+        @Suppress("DEPRECATION")
+        require(allDependsOnSourceSets.containsAll(declaredDependsOnSourceSets)) {
+            "Inconsistent source set dependencies: 'allDependsOnSourceSets' is expected to contain all 'declaredDependsOnSourceSets'"
+        }
+    }
 }
 
 data class KotlinLanguageSettingsImpl(
@@ -128,7 +135,7 @@ data class KotlinNativeCompilationExtensionsImpl(
 data class KotlinCompilationImpl(
     override val name: String,
     override val allSourceSets: Collection<KotlinSourceSet>,
-    override val defaultSourceSets: Collection<KotlinSourceSet>,
+    override val declaredSourceSets: Collection<KotlinSourceSet>,
     override val dependencies: Array<KotlinDependencyId>,
     override val output: KotlinCompilationOutput,
     override val arguments: KotlinCompilationArguments,
@@ -139,15 +146,15 @@ data class KotlinCompilationImpl(
 
     // create deep copy
     constructor(kotlinCompilation: KotlinCompilation, cloningCache: MutableMap<Any, Any>) : this(
-        kotlinCompilation.name,
-        cloneSourceSetsWithCaching(kotlinCompilation.allSourceSets, cloningCache),
-        cloneSourceSetsWithCaching(kotlinCompilation.defaultSourceSets, cloningCache),
-        kotlinCompilation.dependencies,
-        KotlinCompilationOutputImpl(kotlinCompilation.output),
-        KotlinCompilationArgumentsImpl(kotlinCompilation.arguments),
-        kotlinCompilation.dependencyClasspath,
-        KotlinTaskPropertiesImpl(kotlinCompilation.kotlinTaskProperties),
-        kotlinCompilation.nativeExtensions?.let(::KotlinNativeCompilationExtensionsImpl)
+        name = kotlinCompilation.name,
+        declaredSourceSets = cloneSourceSetsWithCaching(kotlinCompilation.declaredSourceSets, cloningCache),
+        allSourceSets = cloneSourceSetsWithCaching(kotlinCompilation.allSourceSets, cloningCache),
+        dependencies = kotlinCompilation.dependencies,
+        output = KotlinCompilationOutputImpl(kotlinCompilation.output),
+        arguments = KotlinCompilationArgumentsImpl(kotlinCompilation.arguments),
+        dependencyClasspath = kotlinCompilation.dependencyClasspath,
+        kotlinTaskProperties = KotlinTaskPropertiesImpl(kotlinCompilation.kotlinTaskProperties),
+        nativeExtensions = kotlinCompilation.nativeExtensions?.let(::KotlinNativeCompilationExtensionsImpl)
     ) {
         disambiguationClassifier = kotlinCompilation.disambiguationClassifier
         platform = kotlinCompilation.platform
@@ -158,7 +165,7 @@ data class KotlinCompilationImpl(
     override lateinit var platform: KotlinPlatform
         internal set
 
-
+    // TODO: Logic like this is duplicated *and different*
     override val isTestModule: Boolean
         get() = name == KotlinCompilation.TEST_COMPILATION_NAME
                 || platform == KotlinPlatform.ANDROID && name.contains("Test")
@@ -171,7 +178,7 @@ data class KotlinCompilationImpl(
             cloningCache: MutableMap<Any, Any>
         ): List<KotlinSourceSet> =
             sourceSets.map { initialSourceSet ->
-                (cloningCache[initialSourceSet] as? KotlinSourceSet) ?: KotlinSourceSetImpl(initialSourceSet, cloningCache).also {
+                (cloningCache[initialSourceSet] as? KotlinSourceSet) ?: KotlinSourceSetImpl(initialSourceSet).also {
                     cloningCache[initialSourceSet] = it
                 }
             }
@@ -250,7 +257,7 @@ data class ExtraFeaturesImpl(
 ) : ExtraFeatures
 
 data class KotlinMPPGradleModelImpl(
-    override val sourceSets: Map<String, KotlinSourceSet>,
+    override val sourceSetsByName: Map<String, KotlinSourceSet>,
     override val targets: Collection<KotlinTarget>,
     override val extraFeatures: ExtraFeatures,
     override val kotlinNativeHome: String,
@@ -259,11 +266,9 @@ data class KotlinMPPGradleModelImpl(
 ) : KotlinMPPGradleModel {
 
     constructor(mppModel: KotlinMPPGradleModel, cloningCache: MutableMap<Any, Any>) : this(
-        mppModel.sourceSets.mapValues { initialSourceSet ->
-            (cloningCache[initialSourceSet] as? KotlinSourceSet) ?: KotlinSourceSetImpl(
-                initialSourceSet.value,
-                cloningCache
-            ).also { cloningCache[initialSourceSet] = it }
+        mppModel.sourceSetsByName.mapValues { initialSourceSet ->
+            (cloningCache[initialSourceSet] as? KotlinSourceSet) ?: KotlinSourceSetImpl(initialSourceSet.value)
+                .also { cloningCache[initialSourceSet] = it }
         },
         mppModel.targets.map { initialTarget ->
             (cloningCache[initialTarget] as? KotlinTarget) ?: KotlinTargetImpl(initialTarget, cloningCache).also {
@@ -289,20 +294,20 @@ class KotlinPlatformContainerImpl() : KotlinPlatformContainer {
         get() = myPlatforms != null
 
     constructor(platform: KotlinPlatformContainer) : this() {
-        myPlatforms = HashSet<KotlinPlatform>(platform.platforms)
+        myPlatforms = HashSet(platform.platforms)
     }
 
-    override val platforms: Collection<KotlinPlatform>
+    override val platforms: Set<KotlinPlatform>
         get() = myPlatforms ?: defaultCommonPlatform
 
     override fun supports(simplePlatform: KotlinPlatform): Boolean = platforms.contains(simplePlatform)
 
-    override fun addSimplePlatforms(platforms: Collection<KotlinPlatform>) {
-        (myPlatforms ?: HashSet<KotlinPlatform>().apply { myPlatforms = this }).let {
-            it.addAll(platforms)
-            if (it.contains(KotlinPlatform.COMMON)) {
-                it.clear()
-                it.addAll(defaultCommonPlatform)
+    override fun pushPlatforms(platforms: Iterable<KotlinPlatform>) {
+        myPlatforms = (myPlatforms ?: LinkedHashSet()).apply {
+            addAll(platforms)
+            if (contains(KotlinPlatform.COMMON)) {
+                clear()
+                addAll(defaultCommonPlatform)
             }
         }
     }
