@@ -125,6 +125,16 @@ class MutableVariableWithConstraints private constructor(
         if (old.position.from is DeclaredUpperBoundConstraintPosition<*> && new.position.from !is DeclaredUpperBoundConstraintPosition<*>)
             return false
 
+        /*
+         * We discriminate upper expected type constraints during finding a result type to fix variable (see ResultTypeResolver.kt):
+         * namely, we don't intersect the expected type with other upper constraints' types to prevent cases like this:
+         *  fun <T : String> materialize(): T = null as T
+         *  val bar: Int = materialize() // T is inferred into String & Int without discriminating upper expected type constraints
+         * So here we shouldn't lose upper non-expected type constraints.
+         */
+        if (old.position.from is ExpectedTypeConstraintPosition<*> && new.position.from !is ExpectedTypeConstraintPosition<*> && old.kind.isUpper() && new.kind.isUpper())
+            return false
+
         return when (old.kind) {
             ConstraintKind.EQUALITY -> true
             ConstraintKind.LOWER -> new.kind.isLower()

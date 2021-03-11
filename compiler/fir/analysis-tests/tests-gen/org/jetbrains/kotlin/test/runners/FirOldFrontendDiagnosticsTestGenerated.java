@@ -28738,6 +28738,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("dontLoseUpperNonExpectedTypeConstraints.kt")
+            public void testDontLoseUpperNonExpectedTypeConstraints() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/typeParameters/dontLoseUpperNonExpectedTypeConstraints.kt");
+            }
+
+            @Test
             @TestMetadata("extFunctionTypeAsUpperBound.kt")
             public void testExtFunctionTypeAsUpperBound() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/typeParameters/extFunctionTypeAsUpperBound.kt");
