@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import java.io.File
 
-internal class NativeDistributionModulesProvider(libraries: Collection<NativeLibrary>) : ModulesProvider {
+internal class DefaultModulesProvider(libraries: Collection<NativeLibrary>) : ModulesProvider {
     internal class NativeModuleInfo(
         name: String,
         originalLocation: File,
@@ -69,10 +69,13 @@ internal class NativeDistributionModulesProvider(libraries: Collection<NativeLib
     companion object {
         fun forStandardLibrary(stdlib: NativeLibrary): ModulesProvider {
             check(stdlib.manifestData.uniqueName == KONAN_STDLIB_NAME)
-            return NativeDistributionModulesProvider(listOf(stdlib))
+            return DefaultModulesProvider(listOf(stdlib))
         }
 
         fun platformLibraries(librariesToCommonize: NativeLibrariesToCommonize): ModulesProvider =
-            NativeDistributionModulesProvider(librariesToCommonize.libraries)
+            DefaultModulesProvider(librariesToCommonize.libraries)
+
+        fun platformLibraries(libraries: Iterable<NativeLibrary>): ModulesProvider =
+            DefaultModulesProvider(libraries.toList())
     }
 }

@@ -7,15 +7,7 @@ package org.jetbrains.kotlin.descriptors.commonizer.cli
 
 import org.jetbrains.kotlin.descriptors.commonizer.*
 import org.jetbrains.kotlin.descriptors.commonizer.konan.*
-import org.jetbrains.kotlin.descriptors.commonizer.konan.CopyUnconsumedModulesAsIsConsumer
-import org.jetbrains.kotlin.descriptors.commonizer.konan.CopyStdlibResultsConsumer
-import org.jetbrains.kotlin.descriptors.commonizer.konan.LibraryCommonizer
-import org.jetbrains.kotlin.descriptors.commonizer.konan.ModuleSerializer
 import org.jetbrains.kotlin.descriptors.commonizer.repository.*
-import org.jetbrains.kotlin.descriptors.commonizer.repository.EmptyRepository
-import org.jetbrains.kotlin.descriptors.commonizer.repository.FilesRepository
-import org.jetbrains.kotlin.descriptors.commonizer.repository.KonanDistributionRepository
-import org.jetbrains.kotlin.descriptors.commonizer.repository.Repository
 import org.jetbrains.kotlin.descriptors.commonizer.stats.FileStatsOutput
 import org.jetbrains.kotlin.descriptors.commonizer.stats.StatsCollector
 import org.jetbrains.kotlin.descriptors.commonizer.stats.StatsType
@@ -78,8 +70,11 @@ internal class NativeKlibCommonize(options: Collection<Option<*>>) : Task(option
         LibraryCommonizer(
             konanDistribution = distribution,
             repository = repository,
-            dependencies = KonanDistributionRepository(distribution, commonizerTargets.toSet(), libraryLoader) +
-                    FilesRepository(dependencyLibraries.toSet(), libraryLoader),
+            dependencies =
+            KonanDistributionRepository(
+                distribution, commonizerTargets.toSet(), libraryLoader,
+                filter = KonanDistributionRepository.Filter.onlyDependenciesOf(repository)
+            ) + FilesRepository(dependencyLibraries.toSet(), libraryLoader),
             libraryLoader = libraryLoader,
             targets = commonizerTargets,
             resultsConsumer = resultsConsumer,

@@ -6,11 +6,9 @@
 package org.jetbrains.kotlin.descriptors.commonizer.konan
 
 import org.jetbrains.kotlin.descriptors.commonizer.*
-import org.jetbrains.kotlin.descriptors.commonizer.konan.LibraryCommonizer.*
 import org.jetbrains.kotlin.descriptors.commonizer.repository.Repository
 import org.jetbrains.kotlin.descriptors.commonizer.stats.StatsCollector
 import org.jetbrains.kotlin.descriptors.commonizer.utils.ProgressLogger
-import org.jetbrains.kotlin.konan.library.*
 
 internal class LibraryCommonizer internal constructor(
     private val konanDistribution: KonanDistribution,
@@ -47,30 +45,34 @@ internal class LibraryCommonizer internal constructor(
     }
 
     private fun commonizeAndSaveResults(allLibraries: AllNativeLibraries) {
-        val manifestProvider = TargetedNativeManifestDataProvider(allLibraries)
+        val parameters = CommonizerParameters(
+            resultsConsumer = resultsConsumer,
+            manifestDataProvider = TargetedNativeManifestDataProvider(allLibraries),
+            dependencyModulesProvider = DefaultModulesProvider.forStandardLibrary(allLibraries.stdlib),
+            statsCollector = statsCollector,
+            progressLogger = progressLogger::log
+        )
 
-        val parameters = CommonizerParameters(resultsConsumer, manifestProvider, statsCollector, progressLogger::log).apply {
-            dependencyModulesProvider = NativeDistributionModulesProvider.forStandardLibrary(allLibraries.stdlib)
-
-            allLibraries.librariesByTargets.forEach { (target, librariesToCommonize) ->
-                if (librariesToCommonize.libraries.isEmpty()) return@forEach
-
-                val modulesProvider = NativeDistributionModulesProvider.platformLibraries(librariesToCommonize)
-                val dependencyModuleProvider = NativeDistributionModulesProvider.platformLibraries(
-                    NativeLibrariesToCommonize(dependencies.getLibraries(target).toList()),
-                )
-
-                addTarget(
-                    TargetProvider(
-                        target = target,
-                        modulesProvider = modulesProvider,
-                        dependencyModulesProvider = dependencyModuleProvider
-                    )
-                )
-            }
+        allLibraries.librariesByTargets.forEach { (target, librariesToCommonize) ->
+            parameters.addTarget(target, librariesToCommonize)
         }
 
         runCommonization(parameters)
+    }
+
+    private fun CommonizerParameters.addTarget(target: LeafCommonizerTarget, libraries: NativeLibrariesToCommonize) {
+        if (libraries.libraries.isEmpty()) return
+
+        val modulesProvider = DefaultModulesProvider.platformLibraries(libraries)
+        val dependencyModuleProvider = DefaultModulesProvider.platformLibraries(dependencies.getLibraries(target))
+
+        addTarget(
+            TargetProvider(
+                target = target,
+                modulesProvider = modulesProvider,
+                dependencyModulesProvider = dependencyModuleProvider
+            )
+        )
     }
 
     private fun checkPreconditions() {

@@ -207,8 +207,9 @@ private class AnalyzedModules(
 
     fun toCommonizerParameters(
         resultsConsumer: ResultsConsumer, manifestDataProvider: TargetedNativeManifestDataProvider = MockNativeManifestDataProvider()
-    ) = CommonizerParameters(resultsConsumer, manifestDataProvider).also { parameters ->
-        parameters.dependencyModulesProvider = dependencyModules[sharedTarget]?.let(MockModulesProvider::create)
+    ) = CommonizerParameters(
+        resultsConsumer, manifestDataProvider, dependencyModulesProvider = dependencyModules[sharedTarget]?.let(MockModulesProvider::create)
+    ).also { parameters ->
 
         leafTargets.forEach { leafTarget ->
             val originalModule = originalModules.getValue(leafTarget)

@@ -11,20 +11,14 @@ import org.jetbrains.kotlin.descriptors.commonizer.stats.StatsCollector
 class CommonizerParameters(
     val resultsConsumer: ResultsConsumer,
     val manifestDataProvider: TargetedNativeManifestDataProvider,
+    // common module dependencies (ex: Kotlin stdlib)
+    val dependencyModulesProvider: ModulesProvider? = null,
     val statsCollector: StatsCollector? = null,
     val progressLogger: ((String) -> Unit)? = null
 ) {
     // use linked hash map to preserve order
     private val _targetProviders = LinkedHashMap<LeafCommonizerTarget, TargetProvider>()
     val targetProviders: List<TargetProvider> get() = _targetProviders.values.toList()
-    val sharedTarget: SharedCommonizerTarget get() = SharedCommonizerTarget(_targetProviders.keys)
-
-    // common module dependencies (ex: Kotlin stdlib)
-    var dependencyModulesProvider: ModulesProvider? = null
-        set(value) {
-            check(field == null)
-            field = value
-        }
 
     fun addTarget(targetProvider: TargetProvider): CommonizerParameters {
         require(targetProvider.target !in _targetProviders) { "Target ${targetProvider.target} is already added" }
