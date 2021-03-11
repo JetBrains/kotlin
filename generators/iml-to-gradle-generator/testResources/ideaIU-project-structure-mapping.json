@@ -45,36 +45,6 @@
     "type": "module-output"
   },
   {
-    "moduleName": "intellij.java.compiler.antTasks",
-    "path": "lib/javac2.jar",
-    "type": "module-output"
-  },
-  {
-    "moduleName": "intellij.java.guiForms.compiler",
-    "path": "lib/javac2.jar",
-    "type": "module-output"
-  },
-  {
-    "moduleName": "intellij.java.guiForms.rt",
-    "path": "lib/javac2.jar",
-    "type": "module-output"
-  },
-  {
-    "moduleName": "intellij.java.compiler.instrumentationUtil",
-    "path": "lib/javac2.jar",
-    "type": "module-output"
-  },
-  {
-    "moduleName": "intellij.java.compiler.instrumentationUtil.java8",
-    "path": "lib/javac2.jar",
-    "type": "module-output"
-  },
-  {
-    "moduleName": "intellij.java.jps.javacRefScanner8",
-    "path": "lib/javac2.jar",
-    "type": "module-output"
-  },
-  {
     "moduleName": "intellij.java.ide.resources",
     "path": "lib/resources.jar",
     "type": "module-output"
@@ -136,6 +106,11 @@
   },
   {
     "moduleName": "intellij.platform.externalSystem",
+    "path": "lib/platform-api.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.codeStyle",
     "path": "lib/platform-api.jar",
     "type": "module-output"
   },
@@ -260,7 +235,37 @@
     "type": "module-output"
   },
   {
+    "moduleName": "intellij.platform.codeStyle.impl",
+    "path": "lib/platform-impl.jar",
+    "type": "module-output"
+  },
+  {
     "moduleName": "intellij.platform.indexing.impl",
+    "path": "lib/platform-impl.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.elevation",
+    "path": "lib/platform-impl.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.elevation.client",
+    "path": "lib/platform-impl.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.elevation.common",
+    "path": "lib/platform-impl.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.elevation.daemon",
+    "path": "lib/platform-impl.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.elevation.rpc",
     "path": "lib/platform-impl.jar",
     "type": "module-output"
   },
@@ -425,6 +430,11 @@
     "type": "module-output"
   },
   {
+    "moduleName": "intellij.profiler.common",
+    "path": "lib/idea.jar",
+    "type": "module-output"
+  },
+  {
     "moduleName": "intellij.xml.duplicates",
     "path": "lib/idea.jar",
     "type": "module-output"
@@ -446,11 +456,6 @@
   },
   {
     "moduleName": "intellij.microservices",
-    "path": "lib/idea.jar",
-    "type": "module-output"
-  },
-  {
-    "moduleName": "intellij.profiler.common",
     "path": "lib/idea.jar",
     "type": "module-output"
   },
@@ -615,6 +620,11 @@
     "type": "module-output"
   },
   {
+    "moduleName": "intellij.platform.vcs.codeReview",
+    "path": "lib/intellij-dvcs.jar",
+    "type": "module-output"
+  },
+  {
     "moduleName": "intellij.platform.objectSerializer.annotations",
     "path": "lib/platform-objectSerializer-annotations.jar",
     "type": "module-output"
@@ -695,36 +705,6 @@
     "type": "module-output"
   },
   {
-    "moduleName": "intellij.java.compiler.antTasks",
-    "path": "lib/resources_en.jar",
-    "type": "module-output"
-  },
-  {
-    "moduleName": "intellij.java.guiForms.compiler",
-    "path": "lib/resources_en.jar",
-    "type": "module-output"
-  },
-  {
-    "moduleName": "intellij.java.guiForms.rt",
-    "path": "lib/resources_en.jar",
-    "type": "module-output"
-  },
-  {
-    "moduleName": "intellij.java.compiler.instrumentationUtil",
-    "path": "lib/resources_en.jar",
-    "type": "module-output"
-  },
-  {
-    "moduleName": "intellij.java.compiler.instrumentationUtil.java8",
-    "path": "lib/resources_en.jar",
-    "type": "module-output"
-  },
-  {
-    "moduleName": "intellij.java.jps.javacRefScanner8",
-    "path": "lib/resources_en.jar",
-    "type": "module-output"
-  },
-  {
     "moduleName": "intellij.java.ide.resources",
     "path": "lib/resources_en.jar",
     "type": "module-output"
@@ -786,6 +766,11 @@
   },
   {
     "moduleName": "intellij.platform.externalSystem",
+    "path": "lib/resources_en.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.codeStyle",
     "path": "lib/resources_en.jar",
     "type": "module-output"
   },
@@ -910,7 +895,37 @@
     "type": "module-output"
   },
   {
+    "moduleName": "intellij.platform.codeStyle.impl",
+    "path": "lib/resources_en.jar",
+    "type": "module-output"
+  },
+  {
     "moduleName": "intellij.platform.indexing.impl",
+    "path": "lib/resources_en.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.elevation",
+    "path": "lib/resources_en.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.elevation.client",
+    "path": "lib/resources_en.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.elevation.common",
+    "path": "lib/resources_en.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.elevation.daemon",
+    "path": "lib/resources_en.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.elevation.rpc",
     "path": "lib/resources_en.jar",
     "type": "module-output"
   },
@@ -1075,6 +1090,11 @@
     "type": "module-output"
   },
   {
+    "moduleName": "intellij.profiler.common",
+    "path": "lib/resources_en.jar",
+    "type": "module-output"
+  },
+  {
     "moduleName": "intellij.xml.duplicates",
     "path": "lib/resources_en.jar",
     "type": "module-output"
@@ -1096,11 +1116,6 @@
   },
   {
     "moduleName": "intellij.microservices",
-    "path": "lib/resources_en.jar",
-    "type": "module-output"
-  },
-  {
-    "moduleName": "intellij.profiler.common",
     "path": "lib/resources_en.jar",
     "type": "module-output"
   },
@@ -1190,12 +1205,12 @@
     "type": "module-output"
   },
   {
-    "moduleName": "intellij.platform.boot",
+    "moduleName": "intellij.platform.vcs.codeReview",
     "path": "lib/resources_en.jar",
     "type": "module-output"
   },
   {
-    "moduleName": "intellij.java.guiForms.rt",
+    "moduleName": "intellij.platform.boot",
     "path": "lib/resources_en.jar",
     "type": "module-output"
   },
@@ -1251,7 +1266,7 @@
   },
   {
     "libraryName": "ASM",
-    "path": "lib/asm-all-8.0.1.jar",
+    "path": "lib/asm-all-9.0.jar",
     "type": "project-library"
   },
   {
@@ -1271,7 +1286,7 @@
   },
   {
     "libraryName": "protobuf",
-    "path": "lib/protobuf-java-3.5.1.jar",
+    "path": "lib/protobuf-java-3.13.0.jar",
     "type": "project-library"
   },
   {
@@ -1296,42 +1311,32 @@
   },
   {
     "libraryName": "netty-codec-http",
-    "path": "lib/netty-codec-http2-4.1.47.Final.jar",
+    "path": "lib/netty-codec-http2-4.1.52.Final.jar",
     "type": "project-library"
   },
   {
     "libraryName": "netty-codec-http",
-    "path": "lib/netty-common-4.1.47.Final.jar",
+    "path": "lib/netty-transport-4.1.52.Final.jar",
     "type": "project-library"
   },
   {
     "libraryName": "netty-codec-http",
-    "path": "lib/netty-buffer-4.1.47.Final.jar",
+    "path": "lib/netty-resolver-4.1.52.Final.jar",
     "type": "project-library"
   },
   {
     "libraryName": "netty-codec-http",
-    "path": "lib/netty-transport-4.1.47.Final.jar",
+    "path": "lib/netty-codec-4.1.52.Final.jar",
     "type": "project-library"
   },
   {
     "libraryName": "netty-codec-http",
-    "path": "lib/netty-resolver-4.1.47.Final.jar",
+    "path": "lib/netty-handler-4.1.52.Final.jar",
     "type": "project-library"
   },
   {
     "libraryName": "netty-codec-http",
-    "path": "lib/netty-codec-4.1.47.Final.jar",
-    "type": "project-library"
-  },
-  {
-    "libraryName": "netty-codec-http",
-    "path": "lib/netty-handler-4.1.47.Final.jar",
-    "type": "project-library"
-  },
-  {
-    "libraryName": "netty-codec-http",
-    "path": "lib/netty-codec-http-4.1.47.Final.jar",
+    "path": "lib/netty-codec-http-4.1.52.Final.jar",
     "type": "project-library"
   },
   {
@@ -1356,7 +1361,17 @@
   },
   {
     "libraryName": "fastutil-min",
-    "path": "lib/intellij-deps-fastutil-8.3.1-1.jar",
+    "path": "lib/intellij-deps-fastutil-8.4.1-4.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "netty-buffer",
+    "path": "lib/netty-buffer-4.1.52.Final.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "netty-buffer",
+    "path": "lib/netty-common-4.1.52.Final.jar",
     "type": "project-library"
   },
   {
@@ -1461,27 +1476,27 @@
   },
   {
     "libraryName": "commons-lang3",
-    "path": "lib/commons-lang3-3.9.jar",
+    "path": "lib/commons-lang3-3.10.jar",
     "type": "project-library"
   },
   {
     "libraryName": "kotlin-stdlib-jdk8",
-    "path": "lib/kotlin-stdlib-jdk8-1.3.70.jar",
+    "path": "lib/kotlin-stdlib-jdk8-1.4.0.jar",
     "type": "project-library"
   },
   {
     "libraryName": "kotlin-stdlib-jdk8",
-    "path": "lib/kotlin-stdlib-1.3.70.jar",
+    "path": "lib/kotlin-stdlib-1.4.0.jar",
     "type": "project-library"
   },
   {
     "libraryName": "kotlin-stdlib-jdk8",
-    "path": "lib/kotlin-stdlib-common-1.3.70.jar",
+    "path": "lib/kotlin-stdlib-common-1.4.0.jar",
     "type": "project-library"
   },
   {
     "libraryName": "kotlin-stdlib-jdk8",
-    "path": "lib/kotlin-stdlib-jdk7-1.3.70.jar",
+    "path": "lib/kotlin-stdlib-jdk7-1.4.0.jar",
     "type": "project-library"
   },
   {
@@ -1506,22 +1521,22 @@
   },
   {
     "libraryName": "jb-jdi",
-    "path": "lib/jb-jdi-2.2.2.jar",
+    "path": "lib/jb-jdi-2.3.jar",
     "type": "project-library"
   },
   {
     "libraryName": "commons-io",
-    "path": "lib/commons-io-2.6.jar",
+    "path": "lib/commons-io-2.7.jar",
     "type": "project-library"
   },
   {
     "libraryName": "intellij-coverage",
-    "path": "lib/intellij-coverage-agent-1.0.512.jar",
+    "path": "lib/intellij-coverage-agent-1.0.573.jar",
     "type": "project-library"
   },
   {
     "libraryName": "intellij-test-discovery",
-    "path": "lib/intellij-test-discovery-agent-1.0.512.jar",
+    "path": "lib/intellij-test-discovery-agent-1.0.573.jar",
     "type": "project-library"
   },
   {
@@ -1531,7 +1546,7 @@
   },
   {
     "libraryName": "jackson",
-    "path": "lib/jackson-core-2.10.3.jar",
+    "path": "lib/jackson-core-2.11.0.jar",
     "type": "project-library"
   },
   {
@@ -1546,12 +1561,12 @@
   },
   {
     "libraryName": "jackson-databind",
-    "path": "lib/jackson-databind-2.10.3.jar",
+    "path": "lib/jackson-databind-2.11.0.jar",
     "type": "project-library"
   },
   {
     "libraryName": "jackson-databind",
-    "path": "lib/jackson-annotations-2.10.3.jar",
+    "path": "lib/jackson-annotations-2.11.0.jar",
     "type": "project-library"
   },
   {
@@ -1566,7 +1581,7 @@
   },
   {
     "libraryName": "jackson-module-kotlin",
-    "path": "lib/jackson-module-kotlin-2.10.3.jar",
+    "path": "lib/jackson-module-kotlin-2.11.0.jar",
     "type": "project-library"
   },
   {
@@ -1576,12 +1591,12 @@
   },
   {
     "libraryName": "kotlinx-coroutines-jdk8",
-    "path": "lib/kotlinx-coroutines-jdk8-1.3.4.jar",
+    "path": "lib/kotlinx-coroutines-jdk8-1.3.9.jar",
     "type": "project-library"
   },
   {
     "libraryName": "kotlinx-coroutines-jdk8",
-    "path": "lib/kotlinx-coroutines-core-1.3.4.jar",
+    "path": "lib/kotlinx-coroutines-core-1.3.9.jar",
     "type": "project-library"
   },
   {
@@ -1651,12 +1666,12 @@
   },
   {
     "libraryName": "async-profiler",
-    "path": "lib/async-profiler-1.7-2.jar",
+    "path": "lib/async-profiler-1.8.1-1.jar",
     "type": "project-library"
   },
   {
     "libraryName": "pty4j",
-    "path": "lib/pty4j-0.9.6.jar",
+    "path": "lib/pty4j-0.11.1.jar",
     "type": "project-library"
   },
   {
@@ -1666,7 +1681,7 @@
   },
   {
     "libraryName": "jediterm-pty",
-    "path": "lib/jediterm-pty-2.29.jar",
+    "path": "lib/jediterm-pty-2.32.jar",
     "type": "project-library"
   },
   {
@@ -1686,7 +1701,7 @@
   },
   {
     "libraryName": "kotlin-reflect",
-    "path": "lib/kotlin-reflect-1.3.70.jar",
+    "path": "lib/kotlin-reflect-1.4.0.jar",
     "type": "project-library"
   },
   {
@@ -1721,7 +1736,7 @@
   },
   {
     "libraryName": "commons-cli",
-    "path": "lib/commons-cli-1.2.jar",
+    "path": "lib/commons-cli-1.4.jar",
     "type": "project-library"
   },
   {
@@ -1731,7 +1746,7 @@
   },
   {
     "libraryName": "ion",
-    "path": "lib/ion-java-1.5.2-2.jar",
+    "path": "lib/ion-java-1.6.2-3.jar",
     "type": "project-library"
   },
   {
@@ -1811,77 +1826,77 @@
   },
   {
     "libraryName": "batik-transcoder",
-    "path": "lib/batik-transcoder-1.12.0-8.jar",
+    "path": "lib/batik-transcoder-1.13.0-21.jar",
     "type": "project-library"
   },
   {
     "libraryName": "batik-transcoder",
-    "path": "lib/batik-awt-util-1.12.0-8.jar",
+    "path": "lib/batik-awt-util-1.13.0-21.jar",
     "type": "project-library"
   },
   {
     "libraryName": "batik-transcoder",
-    "path": "lib/xmlgraphics-commons-2.3.jar",
+    "path": "lib/xmlgraphics-commons-2.4.jar",
     "type": "project-library"
   },
   {
     "libraryName": "batik-transcoder",
-    "path": "lib/batik-bridge-1.12.0-8.jar",
+    "path": "lib/batik-bridge-1.13.0-21.jar",
     "type": "project-library"
   },
   {
     "libraryName": "batik-transcoder",
-    "path": "lib/batik-anim-1.12.0-8.jar",
+    "path": "lib/batik-anim-1.13.0-21.jar",
     "type": "project-library"
   },
   {
     "libraryName": "batik-transcoder",
-    "path": "lib/batik-parser-1.12.0-8.jar",
+    "path": "lib/batik-parser-1.13.0-21.jar",
     "type": "project-library"
   },
   {
     "libraryName": "batik-transcoder",
-    "path": "lib/batik-svg-dom-1.12.0-8.jar",
+    "path": "lib/batik-svg-dom-1.13.0-21.jar",
     "type": "project-library"
   },
   {
     "libraryName": "batik-transcoder",
-    "path": "lib/batik-dom-1.12.0-8.jar",
+    "path": "lib/batik-dom-1.13.0-21.jar",
     "type": "project-library"
   },
   {
     "libraryName": "batik-transcoder",
-    "path": "lib/batik-css-1.12.0-8.jar",
+    "path": "lib/batik-css-1.13.0-21.jar",
     "type": "project-library"
   },
   {
     "libraryName": "batik-transcoder",
-    "path": "lib/batik-ext-1.12.0-8.jar",
+    "path": "lib/batik-ext-1.13.0-21.jar",
     "type": "project-library"
   },
   {
     "libraryName": "batik-transcoder",
-    "path": "lib/batik-gvt-1.12.0-8.jar",
+    "path": "lib/batik-gvt-1.13.0-21.jar",
     "type": "project-library"
   },
   {
     "libraryName": "batik-transcoder",
-    "path": "lib/batik-svggen-1.12.0-8.jar",
+    "path": "lib/batik-svggen-1.13.0-21.jar",
     "type": "project-library"
   },
   {
     "libraryName": "batik-transcoder",
-    "path": "lib/batik-util-1.12.0-8.jar",
+    "path": "lib/batik-util-1.13.0-21.jar",
     "type": "project-library"
   },
   {
     "libraryName": "batik-transcoder",
-    "path": "lib/batik-constants-1.12.0-8.jar",
+    "path": "lib/batik-constants-1.13.0-21.jar",
     "type": "project-library"
   },
   {
     "libraryName": "batik-transcoder",
-    "path": "lib/batik-xml-1.12.0-8.jar",
+    "path": "lib/batik-xml-1.13.0-21.jar",
     "type": "project-library"
   },
   {
@@ -1906,7 +1921,7 @@
   },
   {
     "libraryName": "kotlin-gradle-plugin-model",
-    "path": "lib/kotlin-gradle-plugin-model-1.3.70.jar",
+    "path": "lib/kotlin-gradle-plugin-model-1.4.0.jar",
     "type": "project-library"
   },
   {
@@ -1930,18 +1945,18 @@
     "type": "project-library"
   },
   {
-    "libraryName": "fluent-hc",
-    "path": "lib/fluent-hc-4.5.12.jar",
-    "type": "project-library"
-  },
-  {
     "libraryName": "owasp-java-html-sanitizer",
     "path": "lib/owasp-java-html-sanitizer-20191001.1.jar",
     "type": "project-library"
   },
   {
     "libraryName": "jcef",
-    "path": "lib/jcef-81.2.24-gc0b313d-chromium-81.0.4044.113.jar",
+    "path": "lib/jcef-81.2.24-gc0b313d-chromium-81.0.4044.113-api-1.1.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "jsoup",
+    "path": "lib/jsoup-1.12.1.jar",
     "type": "project-library"
   },
   {
@@ -2060,18 +2075,28 @@
     "type": "project-library"
   },
   {
+    "libraryName": "icu4j",
+    "path": "lib/icu4j-67.1.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "caffeine",
+    "path": "lib/caffeine-2.8.5.jar",
+    "type": "project-library"
+  },
+  {
     "libraryName": "cli-parser",
     "path": "lib/cli-parser-1.1.5.jar",
     "type": "project-library"
   },
   {
     "libraryName": "kotlin-test",
-    "path": "lib/kotlin-test-1.3.61.jar",
+    "path": "lib/kotlin-test-1.4.0.jar",
     "type": "project-library"
   },
   {
     "libraryName": "kotlin-test",
-    "path": "lib/kotlin-test-common-1.3.61.jar",
+    "path": "lib/kotlin-test-common-1.4.0.jar",
     "type": "project-library"
   },
   {
@@ -2111,27 +2136,102 @@
   },
   {
     "libraryName": "netty-handler-proxy",
-    "path": "lib/netty-handler-proxy-4.1.47.Final.jar",
+    "path": "lib/netty-handler-proxy-4.1.52.Final.jar",
     "type": "project-library"
   },
   {
     "libraryName": "netty-handler-proxy",
-    "path": "lib/netty-codec-socks-4.1.47.Final.jar",
+    "path": "lib/netty-codec-socks-4.1.52.Final.jar",
     "type": "project-library"
   },
   {
     "libraryName": "rd-core",
-    "path": "lib/rd-core-0.202.100.jar",
+    "path": "lib/rd-core-0.203.181.jar",
     "type": "project-library"
   },
   {
     "libraryName": "rd-framework",
-    "path": "lib/rd-framework-0.202.100.jar",
+    "path": "lib/rd-framework-0.203.181.jar",
     "type": "project-library"
   },
   {
     "libraryName": "rd-swing",
-    "path": "lib/rd-swing-0.202.100.jar",
+    "path": "lib/rd-swing-0.203.181.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "grpc-core",
+    "path": "lib/grpc-core-1.32.2.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "grpc-core",
+    "path": "lib/grpc-api-1.32.2.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "grpc-core",
+    "path": "lib/grpc-context-1.32.2.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "grpc-core",
+    "path": "lib/gson-2.8.6.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "grpc-core",
+    "path": "lib/annotations-4.1.1.4.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "grpc-core",
+    "path": "lib/animal-sniffer-annotations-1.18.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "grpc-core",
+    "path": "lib/error_prone_annotations-2.3.4.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "grpc-core",
+    "path": "lib/perfmark-api-0.19.0.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "grpc-core",
+    "path": "lib/jsr305-3.0.2.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "grpc-stub",
+    "path": "lib/grpc-stub-1.32.2.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "grpc-protobuf",
+    "path": "lib/grpc-protobuf-1.32.2.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "grpc-protobuf",
+    "path": "lib/proto-google-common-protos-1.17.0.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "grpc-protobuf",
+    "path": "lib/grpc-protobuf-lite-1.32.2.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "grpc-kotlin-stub",
+    "path": "lib/grpc-kotlin-stub-0.2.0.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "grpc-netty-shaded",
+    "path": "lib/grpc-netty-shaded-1.32.2.jar",
     "type": "project-library"
   },
   {
@@ -2170,13 +2270,13 @@
     "type": "project-library"
   },
   {
-    "libraryName": "error-prone-annotations",
-    "path": "lib/error_prone_annotations-2.3.1.jar",
+    "libraryName": "fluent-hc",
+    "path": "lib/fluent-hc-4.5.12.jar",
     "type": "project-library"
   },
   {
-    "libraryName": "jsoup",
-    "path": "lib/jsoup-1.12.1.jar",
+    "libraryName": "error-prone-annotations",
+    "path": "lib/error_prone_annotations-2.3.1.jar",
     "type": "project-library"
   },
   {
@@ -2197,6 +2297,11 @@
   {
     "libraryName": "org.codehaus.groovy:groovy-xml",
     "path": "lib/groovy-xml-2.5.11.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "org.jetbrains.intellij:blockmap:1.0.2",
+    "path": "lib/blockmap-1.0.2.jar",
     "type": "project-library"
   },
   {
@@ -2225,8 +2330,33 @@
     "type": "project-library"
   },
   {
+    "libraryName": "junixsocket-core",
+    "path": "lib/junixsocket-core-2.3.2.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "junixsocket-core",
+    "path": "lib/junixsocket-native-common-2.3.2.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "junixsocket-core",
+    "path": "lib/junixsocket-common-2.3.2.jar",
+    "type": "project-library"
+  },
+  {
     "libraryName": "batik-codec",
-    "path": "lib/batik-codec-1.12.0-8.jar",
+    "path": "lib/batik-codec-1.13.0-21.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "roaringBitmap",
+    "path": "lib/RoaringBitmap-0.9.0.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "roaringBitmap",
+    "path": "lib/shims-0.9.0.jar",
     "type": "project-library"
   },
   {
@@ -2235,8 +2365,8 @@
     "type": "project-library"
   },
   {
-    "filePath": "$MAVEN_REPOSITORY$/com/jetbrains/intellij/documentation/tips-intellij-idea/202.18/tips-intellij-idea-202.18.jar",
-    "path": "lib/tips-intellij-idea-202.18.jar",
+    "filePath": "$MAVEN_REPOSITORY$/com/jetbrains/intellij/documentation/tips-intellij-idea/203.30/tips-intellij-idea-203.30.jar",
+    "path": "lib/tips-intellij-idea-203.30.jar",
     "type": "module-library-file"
   },
   {
@@ -2330,6 +2460,11 @@
     "type": "module-output"
   },
   {
+    "moduleName": "intellij.platform.jps.build.javac.rt.rpc",
+    "path": "plugins/java/lib/rt/jps-javac-rt-rpc.jar",
+    "type": "module-output"
+  },
+  {
     "moduleName": "intellij.java.compiler.antTasks",
     "path": "plugins/java/lib/javac2.jar",
     "type": "module-output"
@@ -2340,22 +2475,12 @@
     "type": "module-output"
   },
   {
-    "moduleName": "intellij.java.guiForms.rt",
-    "path": "plugins/java/lib/javac2.jar",
-    "type": "module-output"
-  },
-  {
     "moduleName": "intellij.java.compiler.instrumentationUtil",
     "path": "plugins/java/lib/javac2.jar",
     "type": "module-output"
   },
   {
     "moduleName": "intellij.java.compiler.instrumentationUtil.java8",
-    "path": "plugins/java/lib/javac2.jar",
-    "type": "module-output"
-  },
-  {
-    "moduleName": "intellij.java.jps.javacRefScanner8",
     "path": "plugins/java/lib/javac2.jar",
     "type": "module-output"
   },
@@ -2501,6 +2626,11 @@
   },
   {
     "moduleName": "intellij.java.typeMigration",
+    "path": "plugins/java/lib/java-impl.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.java.featuresTrainer",
     "path": "plugins/java/lib/java-impl.jar",
     "type": "module-output"
   },
@@ -2540,17 +2670,7 @@
     "type": "module-output"
   },
   {
-    "moduleName": "intellij.microservices.uast",
-    "path": "plugins/java/lib/microservices-uast.jar",
-    "type": "module-output"
-  },
-  {
     "moduleName": "intellij.platform.jps.build.launcher",
-    "path": "plugins/java/lib/resources_en.jar",
-    "type": "module-output"
-  },
-  {
-    "moduleName": "intellij.platform.jps.build",
     "path": "plugins/java/lib/resources_en.jar",
     "type": "module-output"
   },
@@ -2580,6 +2700,11 @@
     "type": "module-output"
   },
   {
+    "moduleName": "intellij.platform.jps.build.javac.rt.rpc",
+    "path": "plugins/java/lib/resources_en.jar",
+    "type": "module-output"
+  },
+  {
     "moduleName": "intellij.java.compiler.antTasks",
     "path": "plugins/java/lib/resources_en.jar",
     "type": "module-output"
@@ -2590,22 +2715,12 @@
     "type": "module-output"
   },
   {
-    "moduleName": "intellij.java.guiForms.rt",
-    "path": "plugins/java/lib/resources_en.jar",
-    "type": "module-output"
-  },
-  {
     "moduleName": "intellij.java.compiler.instrumentationUtil",
     "path": "plugins/java/lib/resources_en.jar",
     "type": "module-output"
   },
   {
     "moduleName": "intellij.java.compiler.instrumentationUtil.java8",
-    "path": "plugins/java/lib/resources_en.jar",
-    "type": "module-output"
-  },
-  {
-    "moduleName": "intellij.java.jps.javacRefScanner8",
     "path": "plugins/java/lib/resources_en.jar",
     "type": "module-output"
   },
@@ -2760,8 +2875,13 @@
     "type": "module-output"
   },
   {
+    "moduleName": "intellij.java.featuresTrainer",
+    "path": "plugins/java/lib/java_resources_en.jar",
+    "type": "module-output"
+  },
+  {
     "libraryName": "Eclipse",
-    "path": "plugins/java/lib/ecj-4.13.jar",
+    "path": "plugins/java/lib/ecj-4.16.jar",
     "type": "project-library"
   },
   {
@@ -2770,8 +2890,8 @@
     "type": "project-library"
   },
   {
-    "libraryName": "debugger-memory-agent",
-    "path": "plugins/java/lib/debugger-memory-agent-0.0.11.jar",
+    "libraryName": "jps-javac-extension",
+    "path": "plugins/java/lib/jps-javac-extension-1.jar",
     "type": "project-library"
   },
   {
@@ -2800,23 +2920,38 @@
     "type": "module-library-file"
   },
   {
-    "filePath": "$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/sa-jdwp/1.14/sa-jdwp-1.14.jar",
-    "path": "plugins/java/lib/sa-jdwp-1.14.jar",
+    "filePath": "$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/sa-jdwp/1.15/sa-jdwp-1.15.jar",
+    "path": "plugins/java/lib/sa-jdwp-1.15.jar",
     "type": "module-library-file"
   },
   {
-    "filePath": "$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/completion/completion-ranking-java/0.2.1/completion-ranking-java-0.2.1.jar",
-    "path": "plugins/java/lib/completion-ranking-java-0.2.1.jar",
+    "filePath": "$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/debugger-memory-agent/1.0.29/debugger-memory-agent-1.0.29.jar",
+    "path": "plugins/java/lib/debugger-memory-agent-1.0.29.jar",
     "type": "module-library-file"
   },
   {
-    "filePath": "$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/jmc-flightrecorder/8.0.0-1/jmc-flightrecorder-8.0.0-1.jar",
-    "path": "plugins/java/lib/jmc-flightrecorder-8.0.0-1.jar",
+    "filePath": "$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/completion/completion-ranking-java/0.3.4/completion-ranking-java-0.3.4.jar",
+    "path": "plugins/java/lib/completion-ranking-java-0.3.4.jar",
     "type": "module-library-file"
   },
   {
-    "filePath": "$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/jmc-common/8.0.0-1/jmc-common-8.0.0-1.jar",
-    "path": "plugins/java/lib/jmc-common-8.0.0-1.jar",
+    "filePath": "$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/jmc-flightrecorder/8.0.0-2/jmc-flightrecorder-8.0.0-2.jar",
+    "path": "plugins/java/lib/jmc-flightrecorder-8.0.0-2.jar",
+    "type": "module-library-file"
+  },
+  {
+    "filePath": "$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/jmc-common/8.0.0-2/jmc-common-8.0.0-2.jar",
+    "path": "plugins/java/lib/jmc-common-8.0.0-2.jar",
+    "type": "module-library-file"
+  },
+  {
+    "filePath": "$MAVEN_REPOSITORY$/com/google/protobuf/protobuf-java/3.5.1/protobuf-java-3.5.1.jar",
+    "path": "plugins/java/lib/rt/protobuf-java-3.5.1.jar",
+    "type": "module-library-file"
+  },
+  {
+    "filePath": "$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/debugger-memory-agent/1.0.29/debugger-memory-agent-1.0.29.jar",
+    "path": "plugins/java/lib/debugger-memory-agent-1.0.29.jar",
     "type": "module-library-file"
   },
   {
@@ -3036,7 +3171,7 @@
   },
   {
     "moduleName": "intellij.maven.jps",
-    "path": "plugins/maven/lib/maven-jps-plugin.jar",
+    "path": "plugins/maven/lib/maven-jps.jar",
     "type": "module-output"
   },
   {
@@ -3160,6 +3295,16 @@
     "type": "module-library-file"
   },
   {
+    "moduleName": "intellij.externalSystem.dependencyUpdater",
+    "path": "plugins/externalSystem-dependencyUpdater/lib/externalSystem-dependencyUpdater.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.externalSystem.dependencyUpdater",
+    "path": "plugins/externalSystem-dependencyUpdater/lib/resources_en.jar",
+    "type": "module-output"
+  },
+  {
     "moduleName": "intellij.gradle.common",
     "path": "plugins/gradle/lib/gradle-common.jar",
     "type": "module-output"
@@ -3175,11 +3320,6 @@
     "type": "module-output"
   },
   {
-    "moduleName": "intellij.gradle.toolingLoaderRt",
-    "path": "plugins/gradle/lib/gradle-toolingLoaderRt.jar",
-    "type": "module-output"
-  },
-  {
     "moduleName": "intellij.gradle",
     "path": "plugins/gradle/lib/gradle.jar",
     "type": "module-output"
@@ -3191,27 +3331,62 @@
   },
   {
     "libraryName": "Gradle",
-    "path": "plugins/gradle/lib/gradle-api-6.5.1-java7-sp2.jar",
+    "path": "plugins/gradle/lib/gradle-api-6.7.jar",
     "type": "project-library"
   },
   {
     "libraryName": "Gradle",
-    "path": "plugins/gradle/lib/gradle-api-impldep-6.5.1-java7-sp2.jar",
+    "path": "plugins/gradle/lib/gradle-api-impldep-6.7.jar",
     "type": "project-library"
   },
   {
     "libraryName": "Gradle",
-    "path": "plugins/gradle/lib/gradle-wrapper-6.5.1-java7-sp2.jar",
+    "path": "plugins/gradle/lib/gradle-wrapper-6.7.jar",
     "type": "project-library"
   },
   {
     "libraryName": "Gradle",
-    "path": "plugins/gradle/lib/gradle-launcher-6.5.1-java7-sp2.jar",
+    "path": "plugins/gradle/lib/gradle-launcher-6.7.jar",
     "type": "project-library"
+  },
+  {
+    "moduleName": "intellij.gradle.dependencyUpdater",
+    "path": "plugins/gradle-dependencyUpdater/lib/gradle-dependencyUpdater.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.gradle.dependencyUpdater",
+    "path": "plugins/gradle-dependencyUpdater/lib/resources_en.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.gradle.dsl",
+    "path": "plugins/gradle-dsl-impl/lib/gradle-dsl.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.gradle.dsl.impl",
+    "path": "plugins/gradle-dsl-impl/lib/gradle-dsl-impl.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.gradle.dsl.impl",
+    "path": "plugins/gradle-dsl-impl/lib/resources_en.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.gradle.dsl.kotlin.impl",
+    "path": "plugins/gradle-dsl-kotlin-impl/lib/gradle-dsl-kotlin-impl.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.gradle.dsl.kotlin.impl",
+    "path": "plugins/gradle-dsl-kotlin-impl/lib/resources_en.jar",
+    "type": "module-output"
   },
   {
     "moduleName": "intellij.gradle.jps",
-    "path": "plugins/gradle-java/lib/gradle-jps-plugin.jar",
+    "path": "plugins/gradle-java/lib/gradle-jps.jar",
     "type": "module-output"
   },
   {
@@ -3301,17 +3476,17 @@
   },
   {
     "moduleName": "intellij.groovy.jps",
-    "path": "plugins/Groovy/lib/groovy-jps-plugin.jar",
+    "path": "plugins/Groovy/lib/groovy-jps.jar",
     "type": "module-output"
   },
   {
     "moduleName": "intellij.groovy.rt",
-    "path": "plugins/Groovy/lib/groovy_rt.jar",
+    "path": "plugins/Groovy/lib/groovy-rt.jar",
     "type": "module-output"
   },
   {
     "moduleName": "intellij.groovy.constants.rt",
-    "path": "plugins/Groovy/lib/groovy-rt-constants.jar",
+    "path": "plugins/Groovy/lib/groovy-constants-rt.jar",
     "type": "module-output"
   },
   {
@@ -3376,12 +3551,27 @@
   },
   {
     "libraryName": "TestNG",
-    "path": "plugins/testng/lib/testng-6.8.21.jar",
+    "path": "plugins/testng/lib/testng-7.1.0.jar",
     "type": "project-library"
   },
   {
     "libraryName": "TestNG",
-    "path": "plugins/testng/lib/jcommander-1.27.jar",
+    "path": "plugins/testng/lib/jcommander-1.72.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "TestNG",
+    "path": "plugins/testng/lib/guice-4.1.0-no_aop.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "TestNG",
+    "path": "plugins/testng/lib/javax.inject-1.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "TestNG",
+    "path": "plugins/testng/lib/aopalliance-1.0.jar",
     "type": "project-library"
   },
   {
@@ -3690,7 +3880,7 @@
     "type": "module-output"
   },
   {
-    "moduleName": "intellij.lint",
+    "moduleName": "intellij.android.lint",
     "path": "plugins/android/lib/lint-ide.jar",
     "type": "module-output"
   },
@@ -3712,6 +3902,11 @@
   {
     "moduleName": "intellij.android.jps",
     "path": "plugins/android/lib/jps/android-jps-plugin.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.android.jps.model",
+    "path": "plugins/android/lib/android-jps-model.jar",
     "type": "module-output"
   },
   {
@@ -3930,7 +4125,7 @@
     "type": "module-output"
   },
   {
-    "moduleName": "intellij.lint",
+    "moduleName": "intellij.android.lint",
     "path": "plugins/android/lib/resources_en.jar",
     "type": "module-output"
   },
@@ -4281,7 +4476,7 @@
   },
   {
     "moduleName": "intellij.ant.jps",
-    "path": "plugins/ant/lib/ant-jps-plugin.jar",
+    "path": "plugins/ant/lib/ant-jps.jar",
     "type": "module-output"
   },
   {
@@ -4296,17 +4491,12 @@
   },
   {
     "moduleName": "intellij.java.guiForms.jps",
-    "path": "plugins/uiDesigner/lib/jps/ui-designer-jps-plugin.jar",
+    "path": "plugins/uiDesigner/lib/jps/java-guiForms-jps.jar",
     "type": "module-output"
   },
   {
     "moduleName": "intellij.java.guiForms.designer",
     "path": "plugins/uiDesigner/lib/uiDesigner.jar",
-    "type": "module-output"
-  },
-  {
-    "moduleName": "intellij.java.guiForms.jps",
-    "path": "plugins/uiDesigner/lib/resources_en.jar",
     "type": "module-output"
   },
   {
@@ -4376,7 +4566,7 @@
   },
   {
     "moduleName": "intellij.devkit.jps",
-    "path": "plugins/devkit/lib/devkit-jps-plugin.jar",
+    "path": "plugins/devkit/lib/devkit-jps.jar",
     "type": "module-output"
   },
   {
@@ -4396,12 +4586,12 @@
   },
   {
     "moduleName": "intellij.eclipse.jps",
-    "path": "plugins/eclipse/lib/eclipse-jps-plugin.jar",
+    "path": "plugins/eclipse/lib/eclipse-jps.jar",
     "type": "module-output"
   },
   {
     "moduleName": "intellij.eclipse.common",
-    "path": "plugins/eclipse/lib/common-eclipse-util.jar",
+    "path": "plugins/eclipse/lib/eclipse-common.jar",
     "type": "module-output"
   },
   {
@@ -4431,7 +4621,7 @@
   },
   {
     "moduleName": "intellij.java.langInjection.jps",
-    "path": "plugins/IntelliLang/lib/intellilang-jps-plugin.jar",
+    "path": "plugins/IntelliLang/lib/java-langInjection-jps.jar",
     "type": "module-output"
   },
   {
@@ -4455,38 +4645,18 @@
     "type": "module-output"
   },
   {
-    "moduleName": "intellij.statsCollector.logEvents",
-    "path": "plugins/stats-collector/lib/log-events.jar",
+    "moduleName": "intellij.completionMlRanking",
+    "path": "plugins/completionMlRanking/lib/completionMlRanking.jar",
     "type": "module-output"
   },
   {
-    "moduleName": "intellij.statsCollector.completionRanker",
-    "path": "plugins/stats-collector/lib/statsCollector-completionRanker.jar",
+    "moduleName": "intellij.completionMlRanking",
+    "path": "plugins/completionMlRanking/lib/resources_en.jar",
     "type": "module-output"
-  },
-  {
-    "moduleName": "intellij.statsCollector",
-    "path": "plugins/stats-collector/lib/stats-collector.jar",
-    "type": "module-output"
-  },
-  {
-    "moduleName": "intellij.statsCollector",
-    "path": "plugins/stats-collector/lib/resources_en.jar",
-    "type": "module-output"
-  },
-  {
-    "filePath": "$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/completion/completion-ranking-kotlin/0.1.3/completion-ranking-kotlin-0.1.3.jar",
-    "path": "plugins/stats-collector/lib/completion-ranking-kotlin-0.1.3.jar",
-    "type": "module-library-file"
-  },
-  {
-    "filePath": "$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/completion/completion-ranking-scala/0.2.0/completion-ranking-scala-0.2.0.jar",
-    "path": "plugins/stats-collector/lib/completion-ranking-scala-0.2.0.jar",
-    "type": "module-library-file"
   },
   {
     "filePath": "$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/completion/ngram-slp/0.0.2/ngram-slp-0.0.2.jar",
-    "path": "plugins/stats-collector/lib/ngram-slp-0.0.2.jar",
+    "path": "plugins/completionMlRanking/lib/ngram-slp-0.0.2.jar",
     "type": "module-library-file"
   },
   {
@@ -4525,8 +4695,8 @@
     "type": "module-output"
   },
   {
-    "filePath": "$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/filePrediction/model/file-prediction-model/0.1.1/file-prediction-model-0.1.1.jar",
-    "path": "plugins/filePrediction/lib/file-prediction-model-0.1.1.jar",
+    "filePath": "$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/filePrediction/model/file-prediction-model/0.2.2/file-prediction-model-0.2.2.jar",
+    "path": "plugins/filePrediction/lib/file-prediction-model-0.2.2.jar",
     "type": "module-library-file"
   },
   {
@@ -4575,38 +4745,23 @@
     "type": "module-library-file"
   },
   {
-    "filePath": "$MAVEN_REPOSITORY$/org/apache/commons/commons-text/1.7/commons-text-1.7.jar",
-    "path": "plugins/grazie/lib/commons-text-1.7.jar",
+    "filePath": "$MAVEN_REPOSITORY$/org/apache/commons/commons-text/1.8/commons-text-1.8.jar",
+    "path": "plugins/grazie/lib/commons-text-1.8.jar",
     "type": "module-library-file"
   },
   {
-    "filePath": "$MAVEN_REPOSITORY$/tanvd/grazi/grazi-language-detector/0.1.12/grazi-language-detector-0.1.12.jar",
-    "path": "plugins/grazie/lib/grazi-language-detector-0.1.12.jar",
+    "filePath": "$MAVEN_REPOSITORY$/tanvd/grazi/grazi-language-detector/0.1.13/grazi-language-detector-0.1.13.jar",
+    "path": "plugins/grazie/lib/grazi-language-detector-0.1.13.jar",
     "type": "module-library-file"
   },
   {
-    "filePath": "$MAVEN_REPOSITORY$/tanvd/grazi/languagetool/grazi-language-tool-en/4.7.10/grazi-language-tool-en-4.7.10.jar",
-    "path": "plugins/grazie/lib/grazi-language-tool-en-4.7.10.jar",
+    "filePath": "$MAVEN_REPOSITORY$/org/languagetool/languagetool-core/5.0.2/languagetool-core-5.0.2.jar",
+    "path": "plugins/grazie/lib/languagetool-core-5.0.2.jar",
     "type": "module-library-file"
   },
   {
-    "filePath": "$MAVEN_REPOSITORY$/tanvd/grazi/languagetool/grazi-language-tool/4.7.10/grazi-language-tool-4.7.10.jar",
-    "path": "plugins/grazie/lib/grazi-language-tool-4.7.10.jar",
-    "type": "module-library-file"
-  },
-  {
-    "filePath": "$MAVEN_REPOSITORY$/tech/uom/lib/uom-lib-common/1.1/uom-lib-common-1.1.jar",
-    "path": "plugins/grazie/lib/uom-lib-common-1.1.jar",
-    "type": "module-library-file"
-  },
-  {
-    "filePath": "$MAVEN_REPOSITORY$/tech/units/indriya/1.2/indriya-1.2.jar",
-    "path": "plugins/grazie/lib/indriya-1.2.jar",
-    "type": "module-library-file"
-  },
-  {
-    "filePath": "$MAVEN_REPOSITORY$/javax/measure/unit-api/1.0/unit-api-1.0.jar",
-    "path": "plugins/grazie/lib/unit-api-1.0.jar",
+    "filePath": "$MAVEN_REPOSITORY$/org/languagetool/language-en/5.0/language-en-5.0.jar",
+    "path": "plugins/grazie/lib/language-en-5.0.jar",
     "type": "module-library-file"
   },
   {
@@ -4615,29 +4770,119 @@
     "type": "module-library-file"
   },
   {
-    "filePath": "$MAVEN_REPOSITORY$/org/carrot2/morfologik-stemming/2.1.6/morfologik-stemming-2.1.6.jar",
-    "path": "plugins/grazie/lib/morfologik-stemming-2.1.6.jar",
+    "filePath": "$MAVEN_REPOSITORY$/org/carrot2/morfologik-stemming/2.1.7/morfologik-stemming-2.1.7.jar",
+    "path": "plugins/grazie/lib/morfologik-stemming-2.1.7.jar",
     "type": "module-library-file"
   },
   {
-    "filePath": "$MAVEN_REPOSITORY$/org/carrot2/morfologik-speller/2.1.6/morfologik-speller-2.1.6.jar",
-    "path": "plugins/grazie/lib/morfologik-speller-2.1.6.jar",
+    "filePath": "$MAVEN_REPOSITORY$/org/carrot2/morfologik-speller/2.1.7/morfologik-speller-2.1.7.jar",
+    "path": "plugins/grazie/lib/morfologik-speller-2.1.7.jar",
     "type": "module-library-file"
   },
   {
-    "filePath": "$MAVEN_REPOSITORY$/com/carrotsearch/hppc/0.7.2/hppc-0.7.2.jar",
-    "path": "plugins/grazie/lib/hppc-0.7.2.jar",
+    "filePath": "$MAVEN_REPOSITORY$/com/carrotsearch/hppc/0.8.1/hppc-0.8.1.jar",
+    "path": "plugins/grazie/lib/hppc-0.8.1.jar",
     "type": "module-library-file"
   },
   {
-    "filePath": "$MAVEN_REPOSITORY$/org/carrot2/morfologik-fsa-builders/2.1.6/morfologik-fsa-builders-2.1.6.jar",
-    "path": "plugins/grazie/lib/morfologik-fsa-builders-2.1.6.jar",
+    "filePath": "$MAVEN_REPOSITORY$/org/carrot2/morfologik-fsa-builders/2.1.7/morfologik-fsa-builders-2.1.7.jar",
+    "path": "plugins/grazie/lib/morfologik-fsa-builders-2.1.7.jar",
     "type": "module-library-file"
   },
   {
-    "filePath": "$MAVEN_REPOSITORY$/org/carrot2/morfologik-fsa/2.1.6/morfologik-fsa-2.1.6.jar",
-    "path": "plugins/grazie/lib/morfologik-fsa-2.1.6.jar",
+    "filePath": "$MAVEN_REPOSITORY$/org/carrot2/morfologik-fsa/2.1.7/morfologik-fsa-2.1.7.jar",
+    "path": "plugins/grazie/lib/morfologik-fsa-2.1.7.jar",
     "type": "module-library-file"
+  },
+  {
+    "filePath": "$MAVEN_REPOSITORY$/tech/uom/lib/uom-lib-common/1.1/uom-lib-common-1.1.jar",
+    "path": "plugins/grazie/lib/uom-lib-common-1.1.jar",
+    "type": "module-library-file"
+  },
+  {
+    "filePath": "$MAVEN_REPOSITORY$/tech/units/indriya/1.3/indriya-1.3.jar",
+    "path": "plugins/grazie/lib/indriya-1.3.jar",
+    "type": "module-library-file"
+  },
+  {
+    "filePath": "$MAVEN_REPOSITORY$/javax/measure/unit-api/1.0/unit-api-1.0.jar",
+    "path": "plugins/grazie/lib/unit-api-1.0.jar",
+    "type": "module-library-file"
+  },
+  {
+    "filePath": "$MAVEN_REPOSITORY$/com/gitlab/dumonts/hunspell/1.1.1/hunspell-1.1.1.jar",
+    "path": "plugins/grazie/lib/hunspell-1.1.1.jar",
+    "type": "module-library-file"
+  },
+  {
+    "filePath": "$MAVEN_REPOSITORY$/com/nativelibs4java/bridj/0.7.0/bridj-0.7.0.jar",
+    "path": "plugins/grazie/lib/bridj-0.7.0.jar",
+    "type": "module-library-file"
+  },
+  {
+    "filePath": "$MAVEN_REPOSITORY$/com/google/android/tools/dx/1.7/dx-1.7.jar",
+    "path": "plugins/grazie/lib/dx-1.7.jar",
+    "type": "module-library-file"
+  },
+  {
+    "filePath": "$MAVEN_REPOSITORY$/com/hankcs/aho-corasick-double-array-trie/1.2.2/aho-corasick-double-array-trie-1.2.2.jar",
+    "path": "plugins/grazie/lib/aho-corasick-double-array-trie-1.2.2.jar",
+    "type": "module-library-file"
+  },
+  {
+    "moduleName": "intellij.featuresTrainer",
+    "path": "plugins/featuresTrainer/lib/featuresTrainer.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.featuresTrainer",
+    "path": "plugins/featuresTrainer/lib/resources_en.jar",
+    "type": "module-output"
+  },
+  {
+    "libraryName": "fest",
+    "path": "plugins/featuresTrainer/lib/fest-assert-1.5.0-SNAPSHOT.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "fest",
+    "path": "plugins/featuresTrainer/lib/fest-reflect-2.0-SNAPSHOT.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "fest",
+    "path": "plugins/featuresTrainer/lib/fest-util-1.3.0-SNAPSHOT.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "fest",
+    "path": "plugins/featuresTrainer/lib/MultithreadedTC-1.01.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "fest",
+    "path": "plugins/featuresTrainer/lib/jsr305.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "fest-swing",
+    "path": "plugins/featuresTrainer/lib/fest-swing-1.4.6.jar",
+    "type": "project-library"
+  },
+  {
+    "moduleName": "intellij.lombok.generated",
+    "path": "plugins/lombok/lib/lombok-generated.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.lombok",
+    "path": "plugins/lombok/lib/lombok.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.lombok",
+    "path": "plugins/lombok/lib/resources_en.jar",
+    "type": "module-output"
   },
   {
     "moduleName": "intellij.jsr45debug",
@@ -4866,12 +5111,12 @@
   },
   {
     "moduleName": "intellij.javaFX.jps",
-    "path": "plugins/javaFX/lib/javaFX-jps-plugin.jar",
+    "path": "plugins/javaFX/lib/javaFX-jps.jar",
     "type": "module-output"
   },
   {
     "moduleName": "intellij.javaFX.common",
-    "path": "plugins/javaFX/lib/common-javaFX-plugin.jar",
+    "path": "plugins/javaFX/lib/javaFX-common.jar",
     "type": "module-output"
   },
   {
@@ -5250,16 +5495,6 @@
     "type": "module-output"
   },
   {
-    "moduleName": "intellij.javaee.appServers.view",
-    "path": "plugins/AppServersView/lib/AppServersView.jar",
-    "type": "module-output"
-  },
-  {
-    "moduleName": "intellij.javaee.appServers.view",
-    "path": "plugins/AppServersView/lib/resources_en.jar",
-    "type": "module-output"
-  },
-  {
     "moduleName": "intellij.javaee.batch",
     "path": "plugins/BatchApplications/lib/batch-applications-support.jar",
     "type": "module-output"
@@ -5336,7 +5571,7 @@
   },
   {
     "moduleName": "intellij.javaee.jpa.jps",
-    "path": "plugins/JPA/lib/jps/jpa-jps-plugin.jar",
+    "path": "plugins/JPA/lib/jps/javaee-jpa-jps.jar",
     "type": "module-output"
   },
   {
@@ -5380,6 +5615,11 @@
     "type": "module-output"
   },
   {
+    "moduleName": "intellij.javaee.appServers.view",
+    "path": "plugins/AppServersIntegration/lib/AppServersView.jar",
+    "type": "module-output"
+  },
+  {
     "moduleName": "intellij.javaee.appServers",
     "path": "plugins/AppServersIntegration/lib/resources_en.jar",
     "type": "module-output"
@@ -5401,6 +5641,11 @@
   },
   {
     "moduleName": "intellij.javaee.app.servers.impl",
+    "path": "plugins/AppServersIntegration/lib/resources_en.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.javaee.appServers.view",
     "path": "plugins/AppServersIntegration/lib/resources_en.jar",
     "type": "module-output"
   },
@@ -5526,7 +5771,7 @@
   },
   {
     "moduleName": "intellij.javaee.jps",
-    "path": "plugins/JavaEE/lib/javaee-jps-plugin.jar",
+    "path": "plugins/JavaEE/lib/javaee-jps.jar",
     "type": "module-output"
   },
   {
@@ -5710,8 +5955,18 @@
     "type": "module-output"
   },
   {
+    "moduleName": "intellij.maven.remoteRun",
+    "path": "plugins/maven-ext/lib/maven-ext.jar",
+    "type": "module-output"
+  },
+  {
     "moduleName": "intellij.maven.ext",
     "path": "plugins/maven-ext/lib/maven-ext.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.maven.remoteRun",
+    "path": "plugins/maven-ext/lib/resources_en.jar",
     "type": "module-output"
   },
   {
@@ -5820,8 +6075,8 @@
     "type": "module-output"
   },
   {
-    "filePath": "$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/commons-vfs2/2.2.1.9/commons-vfs2-2.2.1.9.jar",
-    "path": "plugins/webDeployment/lib/commons-vfs2-2.2.1.9.jar",
+    "filePath": "$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/commons-vfs2/2.2.1.10/commons-vfs2-2.2.1.10.jar",
+    "path": "plugins/webDeployment/lib/commons-vfs2-2.2.1.10.jar",
     "type": "module-library-file"
   },
   {
@@ -5878,6 +6133,436 @@
     "moduleName": "intellij.hibernate",
     "path": "plugins/Hibernate/lib/hibernate.jar",
     "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.impl",
+    "path": "plugins/DatabaseTools/lib/database-impl.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.diagrams",
+    "path": "plugins/DatabaseTools/lib/database-impl.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.sql.impl",
+    "path": "plugins/DatabaseTools/lib/database-impl.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.commercial.verifier",
+    "path": "plugins/DatabaseTools/lib/database-impl.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.plugin",
+    "path": "plugins/DatabaseTools/lib/database-impl.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database",
+    "path": "plugins/DatabaseTools/lib/database-openapi.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.sql",
+    "path": "plugins/DatabaseTools/lib/database-openapi.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.jdbcConsole",
+    "path": "plugins/DatabaseTools/lib/jdbc-console.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.java.aetherDependencyResolver",
+    "path": "plugins/DatabaseTools/lib/aether-dependency-resolver.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.base",
+    "path": "plugins/DatabaseTools/lib/database-dialects.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.cassandra",
+    "path": "plugins/DatabaseTools/lib/database-dialects.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.clickhouse",
+    "path": "plugins/DatabaseTools/lib/database-dialects.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.db2",
+    "path": "plugins/DatabaseTools/lib/database-dialects.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.derby",
+    "path": "plugins/DatabaseTools/lib/database-dialects.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.exasol",
+    "path": "plugins/DatabaseTools/lib/database-dialects.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.generic",
+    "path": "plugins/DatabaseTools/lib/database-dialects.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.greenplum",
+    "path": "plugins/DatabaseTools/lib/database-dialects.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.h2",
+    "path": "plugins/DatabaseTools/lib/database-dialects.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.hive",
+    "path": "plugins/DatabaseTools/lib/database-dialects.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.hivebase",
+    "path": "plugins/DatabaseTools/lib/database-dialects.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.hsql",
+    "path": "plugins/DatabaseTools/lib/database-dialects.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.maria",
+    "path": "plugins/DatabaseTools/lib/database-dialects.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.mssql",
+    "path": "plugins/DatabaseTools/lib/database-dialects.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.mysql",
+    "path": "plugins/DatabaseTools/lib/database-dialects.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.mysqlbase",
+    "path": "plugins/DatabaseTools/lib/database-dialects.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.oracle",
+    "path": "plugins/DatabaseTools/lib/database-dialects.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.postgres",
+    "path": "plugins/DatabaseTools/lib/database-dialects.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.postgresbase",
+    "path": "plugins/DatabaseTools/lib/database-dialects.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.postgresgreenplumbase",
+    "path": "plugins/DatabaseTools/lib/database-dialects.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.redshift",
+    "path": "plugins/DatabaseTools/lib/database-dialects.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.snowflake",
+    "path": "plugins/DatabaseTools/lib/database-dialects.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.spark",
+    "path": "plugins/DatabaseTools/lib/database-dialects.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.sql92",
+    "path": "plugins/DatabaseTools/lib/database-dialects.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.sqlite",
+    "path": "plugins/DatabaseTools/lib/database-dialects.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.sybase",
+    "path": "plugins/DatabaseTools/lib/database-dialects.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.vertica",
+    "path": "plugins/DatabaseTools/lib/database-dialects.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.mongo",
+    "path": "plugins/DatabaseTools/lib/database-dialects.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.mongo.sql",
+    "path": "plugins/DatabaseTools/lib/database-dialects.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.mongo.js.external",
+    "path": "plugins/DatabaseTools/lib/database-dialects.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.bigquery",
+    "path": "plugins/DatabaseTools/lib/database-dialects.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.couchbase",
+    "path": "plugins/DatabaseTools/lib/database-dialects.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.impl",
+    "path": "plugins/DatabaseTools/lib/resources_en.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.diagrams",
+    "path": "plugins/DatabaseTools/lib/resources_en.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.sql.impl",
+    "path": "plugins/DatabaseTools/lib/resources_en.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.commercial.verifier",
+    "path": "plugins/DatabaseTools/lib/resources_en.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.plugin",
+    "path": "plugins/DatabaseTools/lib/resources_en.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.sql",
+    "path": "plugins/DatabaseTools/lib/resources_en.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.java.aetherDependencyResolver",
+    "path": "plugins/DatabaseTools/lib/resources_en.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.base",
+    "path": "plugins/DatabaseTools/lib/resources_en.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.cassandra",
+    "path": "plugins/DatabaseTools/lib/resources_en.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.clickhouse",
+    "path": "plugins/DatabaseTools/lib/resources_en.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.db2",
+    "path": "plugins/DatabaseTools/lib/resources_en.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.derby",
+    "path": "plugins/DatabaseTools/lib/resources_en.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.exasol",
+    "path": "plugins/DatabaseTools/lib/resources_en.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.generic",
+    "path": "plugins/DatabaseTools/lib/resources_en.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.greenplum",
+    "path": "plugins/DatabaseTools/lib/resources_en.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.h2",
+    "path": "plugins/DatabaseTools/lib/resources_en.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.hive",
+    "path": "plugins/DatabaseTools/lib/resources_en.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.hivebase",
+    "path": "plugins/DatabaseTools/lib/resources_en.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.hsql",
+    "path": "plugins/DatabaseTools/lib/resources_en.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.maria",
+    "path": "plugins/DatabaseTools/lib/resources_en.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.mssql",
+    "path": "plugins/DatabaseTools/lib/resources_en.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.mysql",
+    "path": "plugins/DatabaseTools/lib/resources_en.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.mysqlbase",
+    "path": "plugins/DatabaseTools/lib/resources_en.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.oracle",
+    "path": "plugins/DatabaseTools/lib/resources_en.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.postgres",
+    "path": "plugins/DatabaseTools/lib/resources_en.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.postgresbase",
+    "path": "plugins/DatabaseTools/lib/resources_en.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.postgresgreenplumbase",
+    "path": "plugins/DatabaseTools/lib/resources_en.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.redshift",
+    "path": "plugins/DatabaseTools/lib/resources_en.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.snowflake",
+    "path": "plugins/DatabaseTools/lib/resources_en.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.spark",
+    "path": "plugins/DatabaseTools/lib/resources_en.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.sql92",
+    "path": "plugins/DatabaseTools/lib/resources_en.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.sqlite",
+    "path": "plugins/DatabaseTools/lib/resources_en.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.sybase",
+    "path": "plugins/DatabaseTools/lib/resources_en.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.vertica",
+    "path": "plugins/DatabaseTools/lib/resources_en.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.mongo",
+    "path": "plugins/DatabaseTools/lib/resources_en.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.mongo.sql",
+    "path": "plugins/DatabaseTools/lib/resources_en.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.mongo.js.external",
+    "path": "plugins/DatabaseTools/lib/resources_en.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.bigquery",
+    "path": "plugins/DatabaseTools/lib/resources_en.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.database.dialects.couchbase",
+    "path": "plugins/DatabaseTools/lib/resources_en.jar",
+    "type": "module-output"
+  },
+  {
+    "filePath": "$MAVEN_REPOSITORY$/me/xuender/unidecode/0.0.7/unidecode-0.0.7.jar",
+    "path": "plugins/DatabaseTools/lib/unidecode-0.0.7.jar",
+    "type": "module-library-file"
+  },
+  {
+    "filePath": "$MAVEN_REPOSITORY$/com/jetbrains/intellij/documentation/tips-database-plugin/203.53/tips-database-plugin-203.53.jar",
+    "path": "plugins/DatabaseTools/lib/tips-database-plugin-203.53.jar",
+    "type": "module-library-file"
+  },
+  {
+    "filePath": "$MAVEN_REPOSITORY$/org/apache/maven/resolver/maven-resolver-transport-file/1.3.3/maven-resolver-transport-file-1.3.3.jar",
+    "path": "plugins/DatabaseTools/lib/maven-resolver-transport-file-1.3.3.jar",
+    "type": "module-library-file"
+  },
+  {
+    "filePath": "$MAVEN_REPOSITORY$/org/apache/maven/resolver/maven-resolver-transport-http/1.3.3/maven-resolver-transport-http-1.3.3.jar",
+    "path": "plugins/DatabaseTools/lib/maven-resolver-transport-http-1.3.3.jar",
+    "type": "module-library-file"
+  },
+  {
+    "filePath": "$MAVEN_REPOSITORY$/org/apache/maven/resolver/maven-resolver-connector-basic/1.3.3/maven-resolver-connector-basic-1.3.3.jar",
+    "path": "plugins/DatabaseTools/lib/maven-resolver-connector-basic-1.3.3.jar",
+    "type": "module-library-file"
+  },
+  {
+    "filePath": "$MAVEN_REPOSITORY$/org/jetbrains/intellij/minicat/mariadb/1.8/mariadb-1.8.jar",
+    "path": "plugins/DatabaseTools/lib/mariadb-1.8.jar",
+    "type": "module-library-file"
   },
   {
     "moduleName": "intellij.platform.commercial.verifier",
@@ -6026,7 +6711,7 @@
   },
   {
     "moduleName": "intellij.groovy.grails.jps",
-    "path": "plugins/Grails/lib/grails-jps-plugin.jar",
+    "path": "plugins/Grails/lib/groovy-grails-jps.jar",
     "type": "module-output"
   },
   {
@@ -6036,12 +6721,12 @@
   },
   {
     "moduleName": "intellij.groovy.grails.compilerPatch",
-    "path": "plugins/Grails/lib/grails-compiler-patch.jar",
+    "path": "plugins/Grails/lib/groovy-grails-compilerPatch.jar",
     "type": "module-output"
   },
   {
     "moduleName": "intellij.aspectj.jps",
-    "path": "plugins/aspectj/lib/aspectj-jps-plugin.jar",
+    "path": "plugins/aspectj/lib/aspectj-jps.jar",
     "type": "module-output"
   },
   {
@@ -6165,6 +6850,11 @@
     "type": "module-output"
   },
   {
+    "moduleName": "intellij.javascript.tools",
+    "path": "plugins/JavaScriptLanguage/lib/JavaScriptLanguage.jar",
+    "type": "module-output"
+  },
+  {
     "moduleName": "intellij.javascript.impl",
     "path": "plugins/JavaScriptLanguage/lib/JavaScriptLanguage.jar",
     "type": "module-output"
@@ -6177,6 +6867,11 @@
   {
     "moduleName": "intellij.javascript.testing",
     "path": "plugins/JavaScriptLanguage/lib/js-test-common.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.javascript.featuresTrainer",
+    "path": "plugins/JavaScriptLanguage/lib/javascript-featuresTrainer.jar",
     "type": "module-output"
   },
   {
@@ -6220,6 +6915,11 @@
     "type": "module-output"
   },
   {
+    "moduleName": "intellij.javascript.tools",
+    "path": "plugins/JavaScriptLanguage/lib/resources_en.jar",
+    "type": "module-output"
+  },
+  {
     "moduleName": "intellij.javascript.impl",
     "path": "plugins/JavaScriptLanguage/lib/resources_en.jar",
     "type": "module-output"
@@ -6230,13 +6930,13 @@
     "type": "module-library-file"
   },
   {
-    "filePath": "$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/completion/completion-ranking-js/0.0.7/completion-ranking-js-0.0.7.jar",
-    "path": "plugins/JavaScriptLanguage/lib/completion-ranking-js-0.0.7.jar",
+    "filePath": "$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/completion/completion-ranking-js/0.1.2/completion-ranking-js-0.1.2.jar",
+    "path": "plugins/JavaScriptLanguage/lib/completion-ranking-js-0.1.2.jar",
     "type": "module-library-file"
   },
   {
-    "filePath": "$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/completion/completion-ranking-typescript/0.1.1/completion-ranking-typescript-0.1.1.jar",
-    "path": "plugins/JavaScriptLanguage/lib/completion-ranking-typescript-0.1.1.jar",
+    "filePath": "$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/completion/completion-ranking-typescript/0.2.2/completion-ranking-typescript-0.2.2.jar",
+    "path": "plugins/JavaScriptLanguage/lib/completion-ranking-typescript-0.2.2.jar",
     "type": "module-library-file"
   },
   {
@@ -6302,6 +7002,11 @@
   {
     "moduleName": "intellij.javascript.nashorn.debugger",
     "path": "plugins/JavaScriptDebugger/lib/nashorn-debugger.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.javascript.debugger.featuresTrainer",
+    "path": "plugins/JavaScriptDebugger/lib/javascript-debugger-featuresTrainer.jar",
     "type": "module-output"
   },
   {
@@ -6401,7 +7106,7 @@
   },
   {
     "libraryName": "async-profiler",
-    "path": "plugins/performanceTesting/lib/async-profiler-1.7-2.jar",
+    "path": "plugins/performanceTesting/lib/async-profiler-1.8.1-1.jar",
     "type": "project-library"
   },
   {
@@ -6418,6 +7123,16 @@
     "filePath": "$MAVEN_REPOSITORY$/net/bytebuddy/byte-buddy-agent/1.10.1/byte-buddy-agent-1.10.1.jar",
     "path": "plugins/performanceTesting/lib/byte-buddy-agent-1.10.1.jar",
     "type": "module-library-file"
+  },
+  {
+    "moduleName": "intellij.performanceTesting.maven",
+    "path": "plugins/performanceTesting-maven/lib/performanceTesting-maven.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.performanceTesting.maven",
+    "path": "plugins/performanceTesting-maven/lib/resources_en.jar",
+    "type": "module-output"
   },
   {
     "moduleName": "intellij.clouds.docker.agent.rt",
@@ -6471,22 +7186,22 @@
   },
   {
     "libraryName": "kotlin-stdlib-jdk8",
-    "path": "plugins/Docker/lib/rt/kotlin-stdlib-jdk8-1.3.70.jar",
+    "path": "plugins/Docker/lib/rt/kotlin-stdlib-jdk8-1.4.0.jar",
     "type": "project-library"
   },
   {
     "libraryName": "kotlin-stdlib-jdk8",
-    "path": "plugins/Docker/lib/rt/kotlin-stdlib-1.3.70.jar",
+    "path": "plugins/Docker/lib/rt/kotlin-stdlib-1.4.0.jar",
     "type": "project-library"
   },
   {
     "libraryName": "kotlin-stdlib-jdk8",
-    "path": "plugins/Docker/lib/rt/kotlin-stdlib-common-1.3.70.jar",
+    "path": "plugins/Docker/lib/rt/kotlin-stdlib-common-1.4.0.jar",
     "type": "project-library"
   },
   {
     "libraryName": "kotlin-stdlib-jdk8",
-    "path": "plugins/Docker/lib/rt/kotlin-stdlib-jdk7-1.3.70.jar",
+    "path": "plugins/Docker/lib/rt/kotlin-stdlib-jdk7-1.4.0.jar",
     "type": "project-library"
   },
   {
@@ -6537,16 +7252,6 @@
   {
     "filePath": "$MAVEN_REPOSITORY$/com/fasterxml/jackson/dataformat/jackson-dataformat-yaml/2.9.8/jackson-dataformat-yaml-2.9.8.jar",
     "path": "plugins/Docker/lib/jackson-dataformat-yaml-2.9.8.jar",
-    "type": "module-library-file"
-  },
-  {
-    "filePath": "$MAVEN_REPOSITORY$/com/squareup/okhttp3/okhttp/3.4.2/okhttp-3.4.2.jar",
-    "path": "plugins/Docker/lib/okhttp-3.4.2.jar",
-    "type": "module-library-file"
-  },
-  {
-    "filePath": "$MAVEN_REPOSITORY$/com/squareup/okio/okio/1.9.0/okio-1.9.0.jar",
-    "path": "plugins/Docker/lib/okio-1.9.0.jar",
     "type": "module-library-file"
   },
   {
@@ -6643,6 +7348,11 @@
     "filePath": "$MAVEN_REPOSITORY$/com/fasterxml/jackson/core/jackson-annotations/2.10.3/jackson-annotations-2.10.3.jar",
     "path": "plugins/Docker/lib/rt/jackson-annotations-2.10.3.jar",
     "type": "module-library-file"
+  },
+  {
+    "moduleName": "intellij.micronaut.gradle.tooling",
+    "path": "plugins/micronaut/lib/micronaut-gradle-tooling.jar",
+    "type": "module-output"
   },
   {
     "moduleName": "intellij.platform.commercial.verifier",
@@ -6750,8 +7460,8 @@
     "type": "module-library-file"
   },
   {
-    "filePath": "$MAVEN_REPOSITORY$/org/webjars/swagger-ui/3.25.5/swagger-ui-3.25.5.jar",
-    "path": "plugins/swagger/lib/swagger-ui-3.25.5.jar",
+    "filePath": "$MAVEN_REPOSITORY$/org/webjars/swagger-ui/3.32.5/swagger-ui-3.32.5.jar",
+    "path": "plugins/swagger/lib/swagger-ui-3.32.5.jar",
     "type": "module-library-file"
   },
   {
@@ -6815,13 +7525,13 @@
     "type": "module-output"
   },
   {
-    "filePath": "$MAVEN_REPOSITORY$/com/jetbrains/recommenders/java/recommenders-java-statics-model/0.5.2/recommenders-java-statics-model-0.5.2.jar",
-    "path": "plugins/recommenders/lib/recommenders-java-statics-model-0.5.2.jar",
+    "filePath": "$MAVEN_REPOSITORY$/com/jetbrains/recommenders/java/recommenders-java-jayes/0.5.3/recommenders-java-jayes-0.5.3.jar",
+    "path": "plugins/recommenders/lib/recommenders-java-jayes-0.5.3.jar",
     "type": "module-library-file"
   },
   {
-    "filePath": "$MAVEN_REPOSITORY$/com/jetbrains/recommenders/java/recommenders-java-commons/0.5.2/recommenders-java-commons-0.5.2.jar",
-    "path": "plugins/recommenders/lib/recommenders-java-commons-0.5.2.jar",
+    "filePath": "$MAVEN_REPOSITORY$/com/jetbrains/recommenders/java/recommenders-java-commons/0.5.3/recommenders-java-commons-0.5.3.jar",
+    "path": "plugins/recommenders/lib/recommenders-java-commons-0.5.3.jar",
     "type": "module-library-file"
   },
   {
@@ -6840,8 +7550,8 @@
     "type": "module-library-file"
   },
   {
-    "filePath": "$MAVEN_REPOSITORY$/com/jetbrains/recommenders/java/recommenders-java-commons/0.5.2/recommenders-java-commons-0.5.2.jar",
-    "path": "plugins/recommenders/lib/recommenders-java-commons-0.5.2.jar",
+    "filePath": "$MAVEN_REPOSITORY$/com/jetbrains/recommenders/java/recommenders-java-commons/0.5.3/recommenders-java-commons-0.5.3.jar",
+    "path": "plugins/recommenders/lib/recommenders-java-commons-0.5.3.jar",
     "type": "module-library-file"
   },
   {
@@ -6925,8 +7635,28 @@
     "type": "module-output"
   },
   {
+    "moduleName": "intellij.platform.commercial.verifier",
+    "path": "plugins/microservices-uast/lib/microservices-uast.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.microservices.uast",
+    "path": "plugins/microservices-uast/lib/microservices-uast.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.commercial.verifier",
+    "path": "plugins/microservices-uast/lib/resources_en.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.microservices.uast",
+    "path": "plugins/microservices-uast/lib/resources_en.jar",
+    "type": "module-output"
+  },
+  {
     "moduleName": "intellij.javaee.appServers.weblogic.jps",
-    "path": "plugins/weblogicIntegration/lib/jps/weblogic-jps-plugin.jar",
+    "path": "plugins/weblogicIntegration/lib/jps/javaee-appServers-weblogic-jps.jar",
     "type": "module-output"
   },
   {
@@ -6966,7 +7696,7 @@
   },
   {
     "moduleName": "intellij.javaee.appServers.websphere.jps",
-    "path": "plugins/webSphereIntegration/lib/jps/webSphere-jps-plugin.jar",
+    "path": "plugins/webSphereIntegration/lib/jps/javaee-appServers-websphere-jps.jar",
     "type": "module-output"
   },
   {

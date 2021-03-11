@@ -95,6 +95,11 @@
     "type": "module-output"
   },
   {
+    "moduleName": "intellij.platform.codeStyle",
+    "path": "intellij-core-analysis-deprecated.jar",
+    "type": "module-output"
+  },
+  {
     "moduleName": "intellij.platform.indexing",
     "path": "intellij-core-analysis-deprecated.jar",
     "type": "module-output"
@@ -200,6 +205,11 @@
     "type": "module-output"
   },
   {
+    "moduleName": "intellij.platform.codeStyle.impl",
+    "path": "intellij-core-analysis-deprecated.jar",
+    "type": "module-output"
+  },
+  {
     "moduleName": "intellij.platform.indexing.impl",
     "path": "intellij-core-analysis-deprecated.jar",
     "type": "module-output"
@@ -251,7 +261,7 @@
   },
   {
     "libraryName": "ASM",
-    "path": "asm-all-8.0.1.jar",
+    "path": "asm-all-9.0.jar",
     "type": "project-library"
   },
   {

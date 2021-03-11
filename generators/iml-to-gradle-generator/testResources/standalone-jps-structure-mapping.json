@@ -75,11 +75,6 @@
     "type": "module-output"
   },
   {
-    "moduleName": "intellij.java.jps.javacRefScanner8",
-    "path": "jps-builders.jar",
-    "type": "module-output"
-  },
-  {
     "moduleName": "intellij.platform.jps.build",
     "path": "jps-builders.jar",
     "type": "module-output"
@@ -100,28 +95,38 @@
     "type": "module-output"
   },
   {
+    "moduleName": "intellij.platform.jps.build.javac.rt.rpc",
+    "path": "rt/jps-javac-rt-rpc.jar",
+    "type": "module-output"
+  },
+  {
+    "filePath": "$MAVEN_REPOSITORY$/com/google/protobuf/protobuf-java/3.5.1/protobuf-java-3.5.1.jar",
+    "path": "rt/protobuf-java-3.5.1.jar",
+    "type": "module-library-file"
+  },
+  {
     "moduleName": "intellij.groovy.jps",
-    "path": "groovy-jps-plugin.jar",
+    "path": "groovy-jps.jar",
     "type": "module-output"
   },
   {
     "moduleName": "intellij.groovy.rt",
-    "path": "groovy_rt.jar",
+    "path": "groovy-rt.jar",
     "type": "module-output"
   },
   {
     "moduleName": "intellij.groovy.constants.rt",
-    "path": "groovy-rt-constants.jar",
+    "path": "groovy-constants-rt.jar",
     "type": "module-output"
   },
   {
     "moduleName": "intellij.java.guiForms.jps",
-    "path": "ui-designer-jps-plugin.jar",
+    "path": "java-guiForms-jps.jar",
     "type": "module-output"
   },
   {
     "moduleName": "intellij.maven.jps",
-    "path": "maven-jps-plugin.jar",
+    "path": "maven-jps.jar",
     "type": "module-output"
   },
   {
@@ -131,27 +136,27 @@
   },
   {
     "moduleName": "intellij.gradle.jps",
-    "path": "gradle-jps-plugin.jar",
-    "type": "module-output"
-  },
-  {
-    "moduleName": "intellij.eclipse.common",
-    "path": "eclipse-jps-plugin.jar",
+    "path": "gradle-jps.jar",
     "type": "module-output"
   },
   {
     "moduleName": "intellij.eclipse.jps",
-    "path": "eclipse-jps-plugin.jar",
+    "path": "eclipse-jps.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.eclipse.common",
+    "path": "eclipse-common.jar",
     "type": "module-output"
   },
   {
     "moduleName": "intellij.devkit.jps",
-    "path": "devkit-jps-plugin.jar",
+    "path": "devkit-jps.jar",
     "type": "module-output"
   },
   {
     "moduleName": "intellij.java.langInjection.jps",
-    "path": "intellilang-jps-plugin.jar",
+    "path": "java-langInjection-jps.jar",
     "type": "module-output"
   },
   {
@@ -181,7 +186,7 @@
   },
   {
     "libraryName": "ASM",
-    "path": "asm-all-8.0.1.jar",
+    "path": "asm-all-9.0.jar",
     "type": "project-library"
   },
   {
@@ -191,7 +196,7 @@
   },
   {
     "libraryName": "protobuf",
-    "path": "protobuf-java-3.5.1.jar",
+    "path": "protobuf-java-3.13.0.jar",
     "type": "project-library"
   },
   {
@@ -211,47 +216,37 @@
   },
   {
     "libraryName": "Eclipse",
-    "path": "ecj-4.13.jar",
+    "path": "ecj-4.16.jar",
     "type": "project-library"
   },
   {
     "libraryName": "netty-codec-http",
-    "path": "netty-codec-http2-4.1.47.Final.jar",
+    "path": "netty-codec-http2-4.1.52.Final.jar",
     "type": "project-library"
   },
   {
     "libraryName": "netty-codec-http",
-    "path": "netty-common-4.1.47.Final.jar",
+    "path": "netty-transport-4.1.52.Final.jar",
     "type": "project-library"
   },
   {
     "libraryName": "netty-codec-http",
-    "path": "netty-buffer-4.1.47.Final.jar",
+    "path": "netty-resolver-4.1.52.Final.jar",
     "type": "project-library"
   },
   {
     "libraryName": "netty-codec-http",
-    "path": "netty-transport-4.1.47.Final.jar",
+    "path": "netty-codec-4.1.52.Final.jar",
     "type": "project-library"
   },
   {
     "libraryName": "netty-codec-http",
-    "path": "netty-resolver-4.1.47.Final.jar",
+    "path": "netty-handler-4.1.52.Final.jar",
     "type": "project-library"
   },
   {
     "libraryName": "netty-codec-http",
-    "path": "netty-codec-4.1.47.Final.jar",
-    "type": "project-library"
-  },
-  {
-    "libraryName": "netty-codec-http",
-    "path": "netty-handler-4.1.47.Final.jar",
-    "type": "project-library"
-  },
-  {
-    "libraryName": "netty-codec-http",
-    "path": "netty-codec-http-4.1.47.Final.jar",
+    "path": "netty-codec-http-4.1.52.Final.jar",
     "type": "project-library"
   },
   {
@@ -316,7 +311,7 @@
   },
   {
     "libraryName": "jetbrains-annotations-java5",
-    "path": "annotations-java5-19.0.0.jar",
+    "path": "annotations-java5-20.1.0.jar",
     "type": "project-library"
   },
   {
@@ -327,6 +322,16 @@
   {
     "libraryName": "gson",
     "path": "gson-2.8.6.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "jps-javac-extension",
+    "path": "jps-javac-extension-1.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "fastutil-min",
+    "path": "intellij-deps-fastutil-8.4.1-4.jar",
     "type": "project-library"
   },
   {
@@ -346,77 +351,77 @@
   },
   {
     "moduleName": "intellij.ant.jps",
-    "path": "ant-jps-plugin.jar",
+    "path": "ant-jps.jar",
     "type": "module-output"
   },
   {
     "moduleName": "intellij.aspectj.jps",
-    "path": "aspectj-jps-plugin.jar",
+    "path": "aspectj-jps.jar",
     "type": "module-output"
   },
   {
     "moduleName": "intellij.groovy.grails.jps",
-    "path": "grails-jps-plugin.jar",
+    "path": "groovy-grails-jps.jar",
     "type": "module-output"
   },
   {
     "moduleName": "intellij.groovy.grails.compilerPatch",
-    "path": "grails-compiler-patch.jar",
+    "path": "groovy-grails-compilerPatch.jar",
     "type": "module-output"
   },
   {
     "moduleName": "intellij.javaee.jps",
-    "path": "javaee-jps-plugin.jar",
+    "path": "javaee-jps.jar",
     "type": "module-output"
   },
   {
     "moduleName": "intellij.javaee.jpa.jps",
-    "path": "jpa-jps-plugin.jar",
+    "path": "javaee-jpa-jps.jar",
     "type": "module-output"
   },
   {
     "moduleName": "intellij.javaee.appServers.weblogic.jps",
-    "path": "weblogic-jps-plugin.jar",
+    "path": "javaee-appServers-weblogic-jps.jar",
     "type": "module-output"
   },
   {
     "moduleName": "intellij.javaee.appServers.websphere.jps",
-    "path": "webSphere-jps-plugin.jar",
+    "path": "javaee-appServers-websphere-jps.jar",
     "type": "module-output"
   },
   {
     "moduleName": "intellij.osgi.jps",
-    "path": "osmorc-jps-plugin.jar",
+    "path": "osgi-jps.jar",
     "type": "module-output"
   },
   {
     "moduleName": "intellij.javaee.appServers.dmServer.jps",
-    "path": "dmServer-jps-plugin.jar",
+    "path": "javaee-appServers-dmServer-jps.jar",
     "type": "module-output"
   },
   {
     "moduleName": "intellij.flex.jps",
-    "path": "flex-jps-plugin.jar",
+    "path": "flex-jps.jar",
     "type": "module-output"
   },
   {
     "moduleName": "intellij.flex.shared",
-    "path": "flex-jps-plugin.jar",
+    "path": "flex-shared.jar",
     "type": "module-output"
   },
   {
     "moduleName": "intellij.gwt.jps",
-    "path": "gwt-jps-plugin.jar",
+    "path": "gwt-jps.jar",
     "type": "module-output"
   },
   {
     "moduleName": "intellij.java.googleAppEngine.jps",
-    "path": "google-app-engine-jps-plugin.jar",
+    "path": "java-googleAppEngine-jps.jar",
     "type": "module-output"
   },
   {
     "moduleName": "intellij.java.googleAppEngine.runtime",
-    "path": "google-app-engine-jps-plugin.jar",
+    "path": "java-googleAppEngine-runtime.jar",
     "type": "module-output"
   },
   {
@@ -425,7 +430,7 @@
     "type": "module-output"
   },
   {
-    "moduleName": "intellij.android.common",
+    "moduleName": "intellij.android.jps.model",
     "path": "android-jps-plugin.jar",
     "type": "module-output"
   },
@@ -490,18 +495,18 @@
     "type": "project-library"
   },
   {
-    "filePath": "$MAVEN_REPOSITORY$/biz/aQute/bnd/biz.aQute.bndlib/5.0.0/biz.aQute.bndlib-5.0.0.jar",
-    "path": "biz.aQute.bndlib-5.0.0.jar",
+    "filePath": "$MAVEN_REPOSITORY$/biz/aQute/bnd/biz.aQute.bndlib/5.1.2/biz.aQute.bndlib-5.1.2.jar",
+    "path": "biz.aQute.bndlib-5.1.2.jar",
     "type": "module-library-file"
   },
   {
-    "filePath": "$MAVEN_REPOSITORY$/biz/aQute/bnd/biz.aQute.repository/5.0.0/biz.aQute.repository-5.0.0.jar",
-    "path": "biz.aQute.repository-5.0.0.jar",
+    "filePath": "$MAVEN_REPOSITORY$/biz/aQute/bnd/biz.aQute.repository/5.1.2/biz.aQute.repository-5.1.2.jar",
+    "path": "biz.aQute.repository-5.1.2.jar",
     "type": "module-library-file"
   },
   {
-    "filePath": "$MAVEN_REPOSITORY$/biz/aQute/bnd/biz.aQute.resolve/5.0.0/biz.aQute.resolve-5.0.0.jar",
-    "path": "biz.aQute.resolve-5.0.0.jar",
+    "filePath": "$MAVEN_REPOSITORY$/biz/aQute/bnd/biz.aQute.resolve/5.1.2/biz.aQute.resolve-5.1.2.jar",
+    "path": "biz.aQute.resolve-5.1.2.jar",
     "type": "module-library-file"
   },
   {
