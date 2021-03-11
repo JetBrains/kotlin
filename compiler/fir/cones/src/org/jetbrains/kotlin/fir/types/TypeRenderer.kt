@@ -56,7 +56,7 @@ private fun ConeKotlinType.renderAttributes(): String {
     return attributes.joinToString(" ", postfix = " ") { it.toString() }
 }
 
-private fun ConeTypeProjection.render(): String {
+fun ConeTypeProjection.render(): String {
     return when (this) {
         ConeStarProjection -> "*"
         is ConeKotlinTypeProjectionIn -> "in ${type.render()}"
@@ -65,8 +65,10 @@ private fun ConeTypeProjection.render(): String {
     }
 }
 
-fun ConeKotlinType.renderFunctionType(kind: FunctionClassKind?, isExtension: Boolean): String {
-    if (!kind.withPrettyRender()) return render()
+fun ConeKotlinType.renderFunctionType(
+    kind: FunctionClassKind?, isExtension: Boolean, renderType: ConeTypeProjection.() -> String = { render() }
+): String {
+    if (!kind.withPrettyRender()) return renderType()
     return buildString {
         if (kind == FunctionClassKind.SuspendFunction) {
             append("suspend ")
@@ -79,12 +81,12 @@ fun ConeKotlinType.renderFunctionType(kind: FunctionClassKind?, isExtension: Boo
         val arguments = otherTypeArguments.subList(0, otherTypeArguments.size - 1)
         val returnType = otherTypeArguments.last()
         if (receiver != null) {
-            append(receiver.render())
+            append(receiver.renderType())
             append(".")
         }
-        append(arguments.joinToString(", ", "(", ")") { it.render() })
+        append(arguments.joinToString(", ", "(", ")") { it.renderType() })
         append(" -> ")
-        append(returnType.render())
+        append(returnType.renderType())
     }
 }
 
