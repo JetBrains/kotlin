@@ -32,7 +32,7 @@ internal fun KotlinMPPGradleProjectResolver.Companion.populateModuleDependencies
 
         val visibleSourceSets = sourceSetVisibilityGraph.successors(sourceSet)
         val fromDataNode = getSiblingKotlinModuleData(sourceSet, gradleModule, ideModule, resolverCtx)?.cast<GradleSourceSetData>()
-            ?: return
+            ?: continue
 
 
         /* Add dependencies from current sourceSet to all visible source sets (dependsOn, test to production, ...)*/
