@@ -23,7 +23,7 @@ import com.intellij.util.CachedValueImpl
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
-import org.jetbrains.kotlin.psi.KtAnnotationEntry
+import org.jetbrains.kotlin.psi.KtAnnotated
 import org.jetbrains.kotlin.psi.KtStubbedPsiUtil
 
 class MutableDiagnosticsWithSuppression(
@@ -65,18 +65,18 @@ class MutableDiagnosticsWithSuppression(
     }
 
     fun report(diagnostic: Diagnostic) {
-        onFlyDiagnosticsCallback(diagnostic)?.callback(diagnostic)
+        onTheFlyDiagnosticsCallback(diagnostic)?.callback(diagnostic)
 
         diagnosticList.add(diagnostic)
         modificationTracker.incModificationCount()
     }
 
-    private fun onFlyDiagnosticsCallback(diagnostic: Diagnostic): DiagnosticSink.DiagnosticsCallback? =
+    private fun onTheFlyDiagnosticsCallback(diagnostic: Diagnostic): DiagnosticSink.DiagnosticsCallback? =
         diagnosticsCallback.takeIf {
             diagnosticsCallback != null &&
                     // Due to a potential recursion in filter.invoke (via LazyAnnotations) do not try to report
-                    // diagnostic on fly if it happened in annotations
-                    KtStubbedPsiUtil.getPsiOrStubParent(diagnostic.psiElement, KtAnnotationEntry::class.java, false) == null &&
+                    // diagnostic on-the-fly if it happened in annotations, and do not report any potentially suppressed elements
+                    KtStubbedPsiUtil.getPsiOrStubParent(diagnostic.psiElement, KtAnnotated::class.java, false) == null &&
                     suppressCache.filter.invoke(diagnostic)
         }
 
