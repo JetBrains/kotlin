@@ -271,13 +271,35 @@ Task linkTest(String name, Closure<KonanLinkTest> configureClosure) {
                 }
                 UtilsKt.dependsOnKonanBuildingTask(task, lib, target)
 
+                def dist = project.kotlinNativeDist
+                def stdlib = "$dist/klib/common/stdlib"
+                def cacheDir = project.file("${project.buildDir}/cache")
+                def stdlibCache = "$cacheDir/stdlib-cache"
+                def libPath = konanArtifacts[lib].getArtifactByTarget(targetName).absolutePath
+                def libCache = "${cacheDir.absolutePath}/${name}-cache"
+                def cacheKind = project.findProperty("test_with_cache_kind")
                 // Build an executable with library
                 program(name, targets: [targetName]) {
+                    doFirst {
+                        if (cacheKind != null && cacheKind != "") {
+                            String[] args = [
+                                    "-target", targetName, "-g",
+                                    "-p", "${cacheKind}_cache",
+                                    "-Xmake-cache=${libPath}",
+                                    "-o", libCache,
+                                    "-Xcached-library=$stdlib,$stdlibCache"
+                            ].toArray()
+                            konanc(args)
+                        }
+                    }
                     libraries {
                         klib lib
                     }
                     baseDir  "$testOutputLocal/$name"
                     srcFiles  task.getSources()
+                    if (cacheKind != null && cacheKind != "") {
+                        extraOpts "-Xcached-library=$libPath,$libCache"
+                    }
                     extraOpts task.flags
                     extraOpts project.globalTestArgs
                 }
