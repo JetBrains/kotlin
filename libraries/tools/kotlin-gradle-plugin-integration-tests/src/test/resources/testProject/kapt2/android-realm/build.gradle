@@ -43,6 +43,11 @@ android {
         incremental false
     }
 
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
+    }
+
     packagingOptions {
         // Workaround for org.jetbrains.kotlin.gradle.Kapt3Android33IT#testRealm
         // Android Plugin 3.3.2 fails with:
