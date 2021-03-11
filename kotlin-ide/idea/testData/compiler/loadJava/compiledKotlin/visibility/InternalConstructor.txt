@@ -1,0 +1,5 @@
+package test
+
+public final class InternalConstructor {
+    /*primary*/ internal constructor InternalConstructor()
+}

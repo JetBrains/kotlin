@@ -1,0 +1,3 @@
+import kotlin.*
+
+fun foo() {}

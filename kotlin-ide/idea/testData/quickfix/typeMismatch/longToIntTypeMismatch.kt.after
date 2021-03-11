@@ -1,0 +1,5 @@
+// "Change type of 'x' to 'Long'" "true"
+
+fun foo() {
+    val x: Long = 0L
+}

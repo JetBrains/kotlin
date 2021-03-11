@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="aapt-proto" type="repository">
+    <properties include-transitive-deps="false" maven-id="com.android.tools.build:aapt2-proto:0.3.1" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/android/tools/build/aapt2-proto/0.3.1/aapt2-proto-0.3.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -1,0 +1,1 @@
+(str.toString() + "abc").foo()

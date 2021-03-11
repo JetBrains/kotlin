@@ -1,0 +1,12 @@
+class X {
+    private fun f(first: String?, second: String?): Int? {
+        return when {
+            (::ref)(first) -> calc(first!!)
+            (::ref)(second) -> calc(second!!)
+            else -> null
+        }
+    }
+
+    private fun ref(value: String?) = value != null
+    private fun calc(value: String) = value.toInt()
+}

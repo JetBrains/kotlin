@@ -1,0 +1,7 @@
+class A {
+    var a<selection>: Int</selection><caret> = 1
+
+    init {
+        // Initialize a
+    }
+}

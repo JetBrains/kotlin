@@ -1,0 +1,8 @@
+import java.util.HashSet
+
+// "Change getter type to HashSet<Int>" "true"
+
+class A() {
+    val i: java.util.HashSet<Int>
+        get(): HashSet<Int> = java.util.LinkedHashSet<Int>()
+}

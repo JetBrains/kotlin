@@ -1,0 +1,8 @@
+// "Change parameter 'n' type of function 'foo' to 'Any?'" "true"
+fun foo(n: Any?) {
+
+}
+
+fun <T> bar(t: T) {
+    foo(t)
+}

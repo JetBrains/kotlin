@@ -1,0 +1,9 @@
+// "Create member property 'A.foo'" "true"
+
+class A<T>(val n: T) {
+    lateinit var foo: String
+}
+
+fun test() {
+    A(1).foo = "1"
+}

@@ -1,0 +1,5 @@
+fun bbbbbb(b: Int) = b
+fun test() {
+    val variable = 1
+    bbbbbb(b = variable)
+}

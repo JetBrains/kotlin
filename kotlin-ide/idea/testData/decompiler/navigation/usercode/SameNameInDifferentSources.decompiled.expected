@@ -1,0 +1,4 @@
+ExtraKt.class
+public fun <1>func(str: kotlin.String): kotlin.Unit { /* compiled code */ }
+ MainKt.class
+public fun <2>func(a: kotlin.Int, b: kotlin.String /* = compiled code */): kotlin.Unit { /* compiled code */ }

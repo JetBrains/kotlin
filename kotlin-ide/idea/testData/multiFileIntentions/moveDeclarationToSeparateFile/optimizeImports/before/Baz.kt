@@ -1,0 +1,4 @@
+package baz
+
+class Baz {
+}

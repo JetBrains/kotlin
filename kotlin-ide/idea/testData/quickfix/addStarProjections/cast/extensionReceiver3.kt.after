@@ -1,0 +1,6 @@
+// "Change type arguments to <*>" "true"
+fun test(a: Any) {
+    (a as List<*>).bar()
+}
+
+fun List<*>.bar() {}

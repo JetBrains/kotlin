@@ -1,0 +1,19 @@
+package test
+
+public interface TwoSuperclassesConflictingProjectionKinds {
+
+    public interface Sub : test.TwoSuperclassesConflictingProjectionKinds.Super1, test.TwoSuperclassesConflictingProjectionKinds.Super2 {
+        public abstract override /*2*/ /*fake_override*/ fun dummy(): kotlin.Unit
+        public abstract override /*2*/ fun foo(): kotlin.collections.MutableCollection<kotlin.CharSequence>
+    }
+
+    public interface Super1 {
+        public abstract fun dummy(): kotlin.Unit
+        public abstract fun foo(): kotlin.collections.MutableCollection<kotlin.CharSequence>
+    }
+
+    public interface Super2 {
+        public abstract fun dummy(): kotlin.Unit
+        public abstract fun foo(): kotlin.collections.MutableCollection<out kotlin.CharSequence>
+    }
+}

@@ -1,0 +1,4 @@
+// "Add initializer" "true"
+class A {
+    val n: Int = <selection>0</selection><caret>
+}

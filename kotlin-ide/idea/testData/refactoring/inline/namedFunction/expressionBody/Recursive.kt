@@ -1,0 +1,1 @@
+fun fact(x: Int): Int = if (x < 2) 1 else x * <caret>fact(x - 1)

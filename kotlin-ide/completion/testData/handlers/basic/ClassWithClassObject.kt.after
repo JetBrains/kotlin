@@ -1,0 +1,10 @@
+// FIR_COMPARISON
+class AClass {
+    companion object {}
+}
+
+fun foo() {
+    bar(AClass<caret>)
+}
+
+// ELEMENT: AClass

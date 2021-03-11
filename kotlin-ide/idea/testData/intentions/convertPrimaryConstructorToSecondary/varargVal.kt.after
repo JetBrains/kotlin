@@ -1,0 +1,9 @@
+// WITH_RUNTIME
+
+class VarargVal {
+    val param: Array<out String>
+
+    constructor(vararg param: String) {
+        this.param = param
+    }
+}

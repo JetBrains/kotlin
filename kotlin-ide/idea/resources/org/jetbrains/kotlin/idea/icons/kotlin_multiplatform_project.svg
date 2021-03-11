@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+  <defs>
+    <linearGradient id="kotlin_multiplatform_project-a" x1="-16.836%" x2="76.219%" y1="91.94%" y2="-1.116%">
+      <stop offset="10.75%" stop-color="#C757BC"/>
+      <stop offset="21.38%" stop-color="#D0609A"/>
+      <stop offset="42.54%" stop-color="#E1725C"/>
+      <stop offset="60.48%" stop-color="#EE7E2F"/>
+      <stop offset="74.3%" stop-color="#F58613"/>
+      <stop offset="82.32%" stop-color="#F88909"/>
+    </linearGradient>
+  </defs>
+  <g fill="none" fill-rule="evenodd">
+    <g fill-rule="nonzero" transform="translate(1 1)">
+      <path fill="#0EAEFF" d="M7.04651163,7 L7,7 L7,14 L0,14 L7.02333333,6.97666667 L7.04651163,7 Z"/>
+      <polygon fill="#0EAEFF" points="0 0 7.023 0 0 7.583"/>
+      <path fill="url(#kotlin_multiplatform_project-a)" d="M7.02333333,0 L14,0 L7.02333333,6.97666667 L0,14 L0,7.39666667 L7.02333333,0 Z"/>
+    </g>
+    <path fill="#9AA7B0" d="M13,16 L13,12 L9,12 L9,11 L14,11 L14,16 L13,16 Z M15,16 L15,10 L9,10 L9,9 L16,9 L16,16 L15,16 Z M9,13 L12,13 L12,16 L9,16 L9,13 Z"/>
+  </g>
+</svg>

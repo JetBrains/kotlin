@@ -1,0 +1,6 @@
+// WITH_RUNTIME
+// INTENTION_TEXT: "Replace with 'indexOf()'"
+// IS_APPLICABLE_2: false
+fun foo(list: List<String>): Int {
+    <caret>return list.indexOf("a")
+}

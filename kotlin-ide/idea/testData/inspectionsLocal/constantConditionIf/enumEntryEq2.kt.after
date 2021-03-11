@@ -1,0 +1,6 @@
+// PROBLEM: Condition is always 'true'
+fun foo(x: Int) {}
+
+fun bar() {
+    foo(1)
+}

@@ -1,0 +1,5 @@
+interface A {
+}
+
+abstract class C implements B {
+}

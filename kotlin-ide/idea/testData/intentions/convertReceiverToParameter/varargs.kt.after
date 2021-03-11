@@ -1,0 +1,1 @@
+fun <caret>f1(i1: Int, vararg i: Int){}

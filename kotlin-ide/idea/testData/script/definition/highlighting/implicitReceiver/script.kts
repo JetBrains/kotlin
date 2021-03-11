@@ -1,0 +1,2 @@
+fooBase()
+fooImplicitBase()

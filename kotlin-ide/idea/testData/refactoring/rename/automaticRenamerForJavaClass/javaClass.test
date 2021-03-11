@@ -1,0 +1,7 @@
+{
+  "type": "JAVA_CLASS",
+  "classId": "/Foo",
+  "oldName": "Foo",
+  "newName": "Bar",
+  "mainFile": "Foo.java"
+}

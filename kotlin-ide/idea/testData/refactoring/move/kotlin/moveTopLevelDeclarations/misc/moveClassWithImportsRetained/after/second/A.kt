@@ -1,0 +1,4 @@
+package second
+
+class A
+

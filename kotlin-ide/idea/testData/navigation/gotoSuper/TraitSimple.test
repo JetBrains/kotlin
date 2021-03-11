@@ -1,0 +1,6 @@
+// FILE: a.kt
+open class First
+interface <caret>Second: First
+// FILE: b.kt
+open class <caret>First
+interface Second: First

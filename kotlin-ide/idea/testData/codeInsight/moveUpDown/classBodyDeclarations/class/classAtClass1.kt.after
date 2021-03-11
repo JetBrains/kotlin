@@ -1,0 +1,12 @@
+// MOVE: down
+// class A
+class A {
+    // class C
+    class C {
+        // class B
+        class B {
+
+        }
+
+    }
+}

@@ -1,0 +1,5 @@
+package excludedPackage
+
+fun someFunction() {
+
+}

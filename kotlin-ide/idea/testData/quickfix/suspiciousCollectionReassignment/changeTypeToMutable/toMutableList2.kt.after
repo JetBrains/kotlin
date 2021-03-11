@@ -1,0 +1,7 @@
+// "Change type to mutable" "true"
+// TOOL: org.jetbrains.kotlin.idea.inspections.SuspiciousCollectionReassignmentInspection
+// WITH_RUNTIME
+fun test(a: Any) {
+    val list = (a as List<Int>).toMutableList()<caret>
+    list -= 2
+}

@@ -1,0 +1,16 @@
+// "Replace with 'newFun()'" "true"
+
+@Deprecated("", ReplaceWith("newFun()"))
+fun oldFun(p: Int) {
+    newFun()
+}
+
+fun newFun(){}
+
+fun foo() {
+    <caret>newFun()
+}
+
+object O {
+    var x = 0
+}

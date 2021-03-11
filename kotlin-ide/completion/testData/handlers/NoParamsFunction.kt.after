@@ -1,0 +1,10 @@
+package testing.handlers
+
+fun testFun() {
+}
+
+fun other() {
+    testFun()<caret>
+}
+
+// INSERT: test

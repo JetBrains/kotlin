@@ -1,0 +1,13 @@
+// WITH_RUNTIME
+// PARAM_DESCRIPTOR: value-parameter it: kotlin.Int defined in foo.<anonymous>
+// PARAM_TYPES: kotlin.Int
+fun foo(a: Int): Int {
+    a.let {
+        return i(it)
+    }
+    return 0
+}
+
+private fun i(it: Int): Int {
+    if (it > 0) return it else return -it
+}

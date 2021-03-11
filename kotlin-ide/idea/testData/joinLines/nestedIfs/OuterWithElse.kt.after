@@ -1,0 +1,7 @@
+fun foo() {
+    if (a) {<caret> if (b) foo()
+    }
+    else {
+        bar()
+    }
+}

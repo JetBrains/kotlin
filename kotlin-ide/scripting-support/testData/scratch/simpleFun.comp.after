@@ -1,0 +1,7 @@
+// REPL_MODE: false
+
+fun foo(): Int {    // RESULT: fun foo(): Int
+    return 1
+}
+
+foo()               // RESULT: 1

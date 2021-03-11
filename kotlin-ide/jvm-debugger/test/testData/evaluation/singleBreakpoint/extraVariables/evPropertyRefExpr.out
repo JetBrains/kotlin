@@ -1,0 +1,10 @@
+LineBreakpoint created at evPropertyRefExpr.kt:8
+Run Java
+Connected to the target VM
+evPropertyRefExpr.kt:8
+KotlinStackFrame (evPropertyRefExpr.kt:8)
+    JavaValue[this] this: A@uniqueID
+        JavaValue[field] prop: int = 1 (evPropertyRefExpr.kt:4)
+Disconnected from the target VM
+
+Process finished with exit code 0

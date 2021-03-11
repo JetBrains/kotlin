@@ -1,0 +1,2 @@
+Interface I inherits from class A.
+It won't be affected by the refactoring

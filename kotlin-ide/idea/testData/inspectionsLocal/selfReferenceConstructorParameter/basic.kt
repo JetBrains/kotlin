@@ -1,0 +1,1 @@
+class SelfRef(val ref: SelfRef<caret>)

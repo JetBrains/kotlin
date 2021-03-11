@@ -1,0 +1,6 @@
+import p.Container.Nested
+
+// INTENTION_TEXT: "Add import for 'p.Container.Nested'"
+fun test() {
+    Nested()
+}

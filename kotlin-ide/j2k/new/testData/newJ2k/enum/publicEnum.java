@@ -1,0 +1,2 @@
+//class
+public enum Test {}

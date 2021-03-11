@@ -1,0 +1,21 @@
+// WITH_RUNTIME
+
+class MyClass {
+    fun foo1() = Unit
+    fun foo2() = Unit
+    fun foo3() = Unit
+
+    fun foo4(a: MyClass) {
+        // top comment
+        val a = MyClass().also {
+            // here is comment
+            it.foo1()
+            // comment
+
+            // bbb
+            it.foo2()
+            it.foo3()
+        }
+        // last comment won't be in
+    }
+}

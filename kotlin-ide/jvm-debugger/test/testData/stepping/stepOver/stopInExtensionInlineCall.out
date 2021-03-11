@@ -1,0 +1,8 @@
+LineBreakpoint created at stopInExtensionInlineCall.kt:8
+Run Java
+Connected to the target VM
+stopInExtensionInlineCall.kt:8
+stopInExtensionInlineCall.kt:9
+Disconnected from the target VM
+
+Process finished with exit code 0

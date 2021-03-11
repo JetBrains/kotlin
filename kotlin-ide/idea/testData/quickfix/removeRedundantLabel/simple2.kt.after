@@ -1,0 +1,6 @@
+// "Remove redundant label" "true"
+fun foo() {
+    L1@ val x = bar()
+}
+
+fun bar() {}

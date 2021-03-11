@@ -1,0 +1,15 @@
+super@A.foo()
+
+super<Z>@A.foo()
+
+super@A.foo()
+
+super<Z>@A.foo()
+
+super.foo()
+
+super@A.foo()
+
+super<Z>.foo()
+
+super<Z>@A.foo()

@@ -1,0 +1,4 @@
+// "Create parameter '!u00A0'" "true"
+fun test(`!u00A0`: Int) {
+    val t: Int = `!u00A0`
+}

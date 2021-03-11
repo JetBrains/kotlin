@@ -1,0 +1,7 @@
+fun foo() {
+    <spot>val a = MyClass().apply {
+        setFoo(1)
+        setBar(2)
+        setBaz(3)
+    }</spot>
+}

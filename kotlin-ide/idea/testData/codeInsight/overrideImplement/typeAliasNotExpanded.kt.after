@@ -1,0 +1,11 @@
+typealias Foo = Int
+
+interface Bar {
+    fun test(foo: Foo) = Unit
+}
+
+class Bar2 : Bar {
+    override fun test(foo: Foo) {
+        <selection><caret>super.test(foo)</selection>
+    }
+}

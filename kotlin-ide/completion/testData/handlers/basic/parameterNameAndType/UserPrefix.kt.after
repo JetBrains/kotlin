@@ -1,0 +1,5 @@
+class FooBar
+
+fun f(myFooBar: FooBar<caret>)
+
+// ELEMENT_TEXT: myFooBar: FooBar

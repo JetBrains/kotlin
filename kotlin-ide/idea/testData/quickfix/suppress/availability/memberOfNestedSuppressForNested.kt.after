@@ -1,0 +1,8 @@
+// "Suppress 'REDUNDANT_NULLABLE' for class D" "true"
+
+class C {
+    @Suppress("REDUNDANT_NULLABLE")
+    class D {
+        fun foo(): String?<caret>? = null
+    }
+}

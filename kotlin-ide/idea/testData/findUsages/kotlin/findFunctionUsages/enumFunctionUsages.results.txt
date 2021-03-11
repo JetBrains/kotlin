@@ -1,0 +1,3 @@
+Function call 14 foo(1)
+Function call 21 foo(1)
+Function call 7 foo(1)

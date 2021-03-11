@@ -1,0 +1,6 @@
+// IS_APPLICABLE: true
+fun foo() {
+      val z = bar<Int> { it * 2 }
+}
+
+fun <T> bar(a: (Int)->T): T = a(1)

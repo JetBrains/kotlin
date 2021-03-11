@@ -1,0 +1,6 @@
+{
+  "mainFile": "a/main.java",
+  "type": "MOVE_INNER_CLASS",
+  "targetPackage": "a",
+  "newClassName": "Y"
+}

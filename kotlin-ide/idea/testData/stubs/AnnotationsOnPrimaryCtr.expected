@@ -1,0 +1,24 @@
+PsiJetFileStubImpl[package=]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  CLASS[fqName=A, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[]]
+    PRIMARY_CONSTRUCTOR
+      MODIFIER_LIST[private]
+        ANNOTATION
+          ANNOTATION_ENTRY[hasValueArguments=false, shortName=Deprecated]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=Deprecated]
+        ANNOTATION
+          ANNOTATION_ENTRY[hasValueArguments=false, shortName=Override]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=Override]
+          ANNOTATION_ENTRY[hasValueArguments=false, shortName=Deprecated]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=Deprecated]
+      VALUE_PARAMETER_LIST

@@ -1,0 +1,9 @@
+import kotlin.math.roundToInt
+
+// "Round using roundToInt()" "true"
+// WITH_RUNTIME
+fun test(d: Double) {
+    foo(d.roundToInt())
+}
+
+fun foo(x: Int) {}

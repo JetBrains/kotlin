@@ -1,0 +1,5 @@
+// "Add intArrayOf wrapper" "true"
+
+annotation class ArrAnn(val value: IntArray)
+
+@ArrAnn(intArrayOf(42)) class My

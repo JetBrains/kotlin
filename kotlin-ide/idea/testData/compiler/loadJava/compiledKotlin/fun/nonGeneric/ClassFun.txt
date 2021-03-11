@@ -1,0 +1,6 @@
+package test
+
+public final class River {
+    /*primary*/ public constructor River()
+    public final fun song(): kotlin.Int
+}

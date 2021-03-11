@@ -1,0 +1,8 @@
+// "Change type to MutableMap" "true"
+// WITH_RUNTIME
+fun main() {
+    val map = foo().toMutableMap()<caret>
+    map[2] = "b"
+}
+
+fun foo() = mapOf(1 to "a")

@@ -1,0 +1,8 @@
+// WITH_RUNTIME
+// FIX: Add '.await()' to function result (breaks use-sites!)
+
+package kotlinx.coroutines
+
+suspend fun myFunction(): Int {
+    return withContext(Dispatchers.Default) { 42 }
+}

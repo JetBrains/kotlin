@@ -1,0 +1,15 @@
+// FILE: before.kt
+interface Some
+
+fun some() {
+    val a: Some = null!!
+    <caret>a
+}
+
+// FILE: after.kt
+interface <caret>Some
+
+fun some() {
+    val a: Some = null!!
+    a
+}

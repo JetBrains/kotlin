@@ -1,0 +1,7 @@
+Function0<String>
+
+kotlin.Function0<kotlin.String>
+
+() -> String
+
+() -> kotlin.String

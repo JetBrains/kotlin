@@ -1,0 +1,8 @@
+// IS_APPLICABLE: true
+fun foo() {
+    bar<String>("x", { it })
+}
+
+fun <T> bar(t:T, a: (Int) -> Int): Int {
+    return a(1)
+}

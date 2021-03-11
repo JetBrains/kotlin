@@ -1,0 +1,39 @@
+// FILE: first.before.kt
+// "Import" "true"
+// ERROR: Unresolved reference. None of the following candidates is applicable because of receiver type mismatch: <br>public operator fun String?.plus(other: Any?): String defined in kotlin
+
+package testing
+
+import some.Some
+
+fun testing() {
+    var s = Some()
+    s <caret>+= 1
+}
+
+
+
+// FILE: second.kt
+package some
+
+public class Some
+
+operator fun Some.plusAssign(i: Int) {}
+
+
+// FILE: first.after.kt
+// "Import" "true"
+// ERROR: Unresolved reference. None of the following candidates is applicable because of receiver type mismatch: <br>public operator fun String?.plus(other: Any?): String defined in kotlin
+
+package testing
+
+import some.Some
+import some.plusAssign
+
+fun testing() {
+    var s = Some()
+    s <caret>+= 1
+}
+
+
+

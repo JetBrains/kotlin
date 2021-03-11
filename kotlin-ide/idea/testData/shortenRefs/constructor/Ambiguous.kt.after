@@ -1,0 +1,5 @@
+import java.io.File
+
+class A {
+    val x = File()
+}

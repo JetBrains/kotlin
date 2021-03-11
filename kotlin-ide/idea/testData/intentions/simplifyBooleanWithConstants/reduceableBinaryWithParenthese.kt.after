@@ -1,0 +1,4 @@
+fun foo(y: Boolean) {
+    val x = 3
+    x != x
+}

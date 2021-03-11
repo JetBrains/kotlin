@@ -1,0 +1,10 @@
+// "Create function 'foo'" "true"
+class A {
+    fun test() {
+        foo()
+    }
+
+    private fun foo() {
+        TODO("Not yet implemented")
+    }
+}

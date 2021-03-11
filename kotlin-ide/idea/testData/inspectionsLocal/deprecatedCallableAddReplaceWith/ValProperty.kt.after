@@ -1,0 +1,7 @@
+class C {
+    @Deprecated("", ReplaceWith("bar()"))
+    val foo: String
+        get() = bar()
+
+    fun bar(): String = ""
+}

@@ -1,0 +1,8 @@
+package test
+
+object A {
+}
+
+class B {
+
+}

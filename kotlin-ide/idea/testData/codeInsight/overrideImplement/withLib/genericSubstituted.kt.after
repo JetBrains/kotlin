@@ -1,0 +1,9 @@
+package test
+
+import dependency.D
+
+class C: D<Int>() {
+    override fun id(t: Int): Int {
+        <selection><caret>return super.id(t)</selection>
+    }
+}

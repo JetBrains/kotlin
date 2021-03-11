@@ -1,0 +1,10 @@
+// GENERATOR: SINGLE_TEMPLATE
+class A {
+    fun foo() {
+
+    }
+
+    <caret>override fun toString(): String {
+        return "A()"
+    }
+}

@@ -1,0 +1,8 @@
+// "Import" "true"
+package bar
+
+import foo.Foo
+
+fun use(f: Foo) {
+
+}

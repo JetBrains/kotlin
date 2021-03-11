@@ -1,0 +1,7 @@
+fun bar() {}
+
+fun test(){
+    "${bar()<caret>}"
+}
+
+// ELEMENT: bar

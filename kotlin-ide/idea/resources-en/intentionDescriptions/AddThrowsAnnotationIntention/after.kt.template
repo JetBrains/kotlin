@@ -1,0 +1,6 @@
+class MyException : Exception()
+
+<spot>@Throws(MyException::class)</spot>
+fun test() {
+    throw MyException()
+}

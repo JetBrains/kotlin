@@ -1,0 +1,8 @@
+// WITH_RUNTIME
+
+fun foo(p: Int, list: List<Int>) {
+    if (p > 0) {
+        val predicate: (Int) -> Boolean = { it > 0 }
+        list.filter(predicate)
+    }
+}

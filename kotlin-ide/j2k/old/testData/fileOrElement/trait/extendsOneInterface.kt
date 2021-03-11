@@ -1,0 +1,1 @@
+internal interface A : I

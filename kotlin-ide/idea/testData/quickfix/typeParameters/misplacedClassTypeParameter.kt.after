@@ -1,0 +1,3 @@
+// "Move type parameter constraint to 'where' clause" "true"
+class A<T> where T : Cloneable, T : Comparable<*> {
+}

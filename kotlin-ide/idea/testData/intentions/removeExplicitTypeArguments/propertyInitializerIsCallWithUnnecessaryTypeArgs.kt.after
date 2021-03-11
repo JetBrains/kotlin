@@ -1,0 +1,9 @@
+// IS_APPLICABLE: true
+
+fun bar() {
+    val l: Foo<Int> = foo<caret>()
+}
+
+class Foo<T>
+
+fun <T> foo(): Foo<T> = Foo()

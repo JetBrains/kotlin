@@ -1,0 +1,14 @@
+
+repositories {
+    mavenCentral()
+}
+
+apply plugin: 'kotlin-platform-jvm'
+
+sourceSets {
+    custom
+}
+
+dependencies {
+    implement project(':project1')
+}

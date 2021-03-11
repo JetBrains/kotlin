@@ -1,0 +1,11 @@
+// WITH_RUNTIME
+package my.sample
+
+import my.sample.bar as bar1
+
+val Any.foo: Any get() = this
+val Any.bar: Any get() = this
+
+fun test() {
+    1.foo.foo.bar1.foo.bar1.toString()
+}

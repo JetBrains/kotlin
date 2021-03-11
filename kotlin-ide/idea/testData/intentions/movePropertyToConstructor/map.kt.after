@@ -1,0 +1,6 @@
+// WITH_RUNTIME
+
+class Baz
+
+class TestClass(val c: Map<String, Baz> = mapOf("foo" to Baz())) {
+}

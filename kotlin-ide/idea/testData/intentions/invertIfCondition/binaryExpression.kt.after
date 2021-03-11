@@ -1,0 +1,11 @@
+fun foo(): Boolean {
+    return true
+}
+
+fun main() {
+    if (!foo() || !foo()) {
+        foo()
+    } else {
+        foo()
+    }
+}

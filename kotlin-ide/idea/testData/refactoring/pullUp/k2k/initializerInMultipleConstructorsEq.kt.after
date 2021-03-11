@@ -1,0 +1,17 @@
+open class A {
+    // INFO: {"checked": "true"}
+    val n: Int
+
+    init {
+        n = 1 + 2
+    }
+}
+
+class B: A {
+
+    constructor(a: Int) {
+    }
+
+    constructor() {
+    }
+}

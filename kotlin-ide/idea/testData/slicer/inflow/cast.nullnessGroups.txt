@@ -1,0 +1,3 @@
+[NotNull Values]
+4 	<bold>val x</bold> = o as String (in test(Any))
+4 		<bold>val x</bold> = o as String (in test(Any))

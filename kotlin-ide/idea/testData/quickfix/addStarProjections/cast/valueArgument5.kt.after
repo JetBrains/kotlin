@@ -1,0 +1,6 @@
+// "Change type arguments to <*, *>" "true"
+fun test(a: Any) {
+    foo(a as Map<*, *>)
+}
+
+fun <T> foo(map: Map<T, *>) {}

@@ -1,0 +1,6 @@
+// IS_APPLICABLE: true
+fun foo() {
+    bar<String>("x")
+}
+
+fun <T> bar(t: T): Int = 1

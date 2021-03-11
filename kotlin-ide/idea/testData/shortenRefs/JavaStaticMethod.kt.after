@@ -1,0 +1,3 @@
+import java.util.Collections
+
+val x = Collections.copy()

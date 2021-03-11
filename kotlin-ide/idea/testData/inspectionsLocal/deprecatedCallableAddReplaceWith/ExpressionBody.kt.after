@@ -1,0 +1,4 @@
+@Deprecated("", <caret>ReplaceWith("bar()"))
+fun foo(): String = bar()
+
+fun bar(): String = ""

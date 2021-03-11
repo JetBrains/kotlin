@@ -1,0 +1,5 @@
+{
+  "mainFile": "main.java",
+  "type": "MOVE_TOP_LEVEL_CLASSES_TO_INNER",
+  "targetClass": "B.C"
+}

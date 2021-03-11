@@ -1,0 +1,10 @@
+// "Create function 'g'" "true"
+class C {
+    internal inline fun f() {
+        g()
+    }
+
+    private fun g() {
+        TODO("Not yet implemented")
+    }
+}

@@ -1,0 +1,12 @@
+// WITH_RUNTIME
+
+data class XY(val x: Int, val y: Int)
+
+fun foo(list: List<XY>) {
+    val y = list.size
+    for ((x1, y1) in list) {
+        val x = x1 + y1
+        println(x)
+        println(y)
+    }
+}

@@ -1,0 +1,5 @@
+fun foo() {
+  for (a in x) {
+    a.bar()
+  }
+}

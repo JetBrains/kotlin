@@ -1,0 +1,40 @@
+// FILE: first.before.kt
+// "Import" "true"
+// ERROR: Too many arguments for public final fun foo(): Unit defined in main.X
+
+package main
+
+class X {
+    fun foo() {
+    }
+}
+
+fun f(x: X) {
+    x.foo(<caret>1)
+}
+
+
+// FILE: second.kt
+package other
+
+import main.X
+
+fun X.foo(p: Int) {
+}
+
+// FILE: first.after.kt
+// "Import" "true"
+// ERROR: Too many arguments for public final fun foo(): Unit defined in main.X
+
+package main
+
+import other.foo
+
+class X {
+    fun foo() {
+    }
+}
+
+fun f(x: X) {
+    x.foo(<caret>1)
+}

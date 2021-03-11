@@ -1,0 +1,8 @@
+package test
+
+public fun builder(/*0*/ c: suspend test.Controller.() -> kotlin.Unit): kotlin.Unit
+
+public final class Controller {
+    /*primary*/ public constructor Controller()
+    public final suspend fun suspendFun(): kotlin.Unit
+}

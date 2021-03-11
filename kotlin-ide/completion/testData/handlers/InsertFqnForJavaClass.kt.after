@@ -1,0 +1,5 @@
+class SortedSet
+
+fun test(set: SortedSet) {
+  val a = java.util.SortedSet
+}

@@ -1,0 +1,25 @@
+interface A {
+    val s: String
+}
+
+interface B {
+    val x: Int
+}
+
+abstract class C(open val d: Double)
+
+class D :  A, C, B {
+    open val y: Int
+    override val d: Double
+
+    constructor(y: Int, d: Double) : super(d) {
+        this.y = y
+        this.d = d
+        this.s = "$y -> $d"
+        this.x = y * y
+    }
+
+    override val s: String
+
+    override val x: Int
+}

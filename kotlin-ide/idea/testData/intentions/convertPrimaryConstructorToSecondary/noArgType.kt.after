@@ -1,0 +1,10 @@
+// SKIP_ERRORS_BEFORE
+// SKIP_ERRORS_AFTER
+
+class My {
+    val x
+
+    constructor(x:) {
+        this.x = x
+    }
+}

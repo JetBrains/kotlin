@@ -1,0 +1,104 @@
+class KotlinClass {
+    fun functionFromKotlin(): Int = 42
+}
+
+fun a() {
+    KotlinClass().functionFromKotlin()
+
+    val d = KotlinClass()
+    d.functionFromKotlin()
+
+    d.let {
+        it.functionFromKotlin()
+    }
+
+    d.also {
+        it.functionFromKotlin()
+    }
+
+    with(d) {
+        functionFromKotlin()
+    }
+
+    with(d) out@{
+        with(4) {
+            this@out.functionFromKotlin()
+        }
+    }
+}
+
+fun a2() {
+    val d: KotlinClass? = null
+    d?.functionFromKotlin()
+
+    d?.let {
+        it.functionFromKotlin()
+    }
+
+    d?.also {
+        it.functionFromKotlin()
+    }
+
+    with(d) {
+        this?.functionFromKotlin()
+    }
+
+    with(d) out@{
+        with(4) {
+            this@out?.functionFromKotlin()
+        }
+    }
+}
+
+fun a3() {
+    val d: KotlinClass? = null
+    val a1 = d?.functionFromKotlin()
+
+    val a2 = d?.let {
+        it.functionFromKotlin()
+    }
+
+    val a3 = d?.also {
+        it.functionFromKotlin()
+    }
+
+    val a4 = with(d) {
+        this?.functionFromKotlin()
+    }
+
+    val a5 = with(d) out@{
+        with(4) {
+            this@out?.functionFromKotlin()
+        }
+    }
+}
+
+fun a4() {
+    val d: KotlinClass? = null
+    d?.functionFromKotlin()?.dec()
+
+    val a2 = d?.let {
+        it.functionFromKotlin()
+    }
+    a2?.toLong()
+
+    d?.also {
+        it.functionFromKotlin()
+    }?.functionFromKotlin()?.and(4)
+
+    val a4 = with(d) {
+        this?.functionFromKotlin()
+    }
+
+    val a5 = with(d) out@{
+        with(4) {
+            this@out?.functionFromKotlin()
+        }
+    }
+
+    val a6 = a4?.let { out -> a5?.let { out + it } }
+}
+
+fun KotlinClass.b(): Int? = functionFromKotlin()
+fun KotlinClass.c(): Int = this.functionFromKotlin()
+fun d(d: KotlinClass) = d.functionFromKotlin()

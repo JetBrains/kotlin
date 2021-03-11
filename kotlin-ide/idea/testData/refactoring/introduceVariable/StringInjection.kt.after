@@ -1,0 +1,4 @@
+fun a() {
+    val i = 1
+    "it's a number $i"
+}

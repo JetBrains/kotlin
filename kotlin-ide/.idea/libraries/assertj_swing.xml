@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="assertj-swing" type="repository">
+    <properties include-transitive-deps="false" maven-id="org.assertj:assertj-swing:3.9.2" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/assertj/assertj-swing/3.9.2/assertj-swing-3.9.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/assertj/assertj-swing/3.9.2/assertj-swing-3.9.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

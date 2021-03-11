@@ -1,0 +1,4 @@
+abstract class Base(val x: String)
+
+class Derived(x: String) : Base(x) {
+}

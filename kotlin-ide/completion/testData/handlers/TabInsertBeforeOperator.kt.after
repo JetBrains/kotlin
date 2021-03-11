@@ -1,0 +1,4 @@
+fun test() {
+    val vvvvv = 12
+    vvvvv<caret>+12
+}

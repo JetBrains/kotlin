@@ -1,0 +1,3 @@
+class A<Y, Z>
+
+val a = A<String, Any>()

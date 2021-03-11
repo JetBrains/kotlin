@@ -1,0 +1,3 @@
+package d
+
+class `class`

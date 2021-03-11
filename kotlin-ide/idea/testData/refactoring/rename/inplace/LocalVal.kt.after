@@ -1,0 +1,4 @@
+fun f() {
+    val <caret>y = 5
+    println(y + y * y)
+}

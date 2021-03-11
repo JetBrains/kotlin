@@ -1,0 +1,3 @@
+synchronized(s) {
+    doSomething(s)
+}

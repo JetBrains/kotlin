@@ -1,0 +1,9 @@
+package test
+
+public final data class My {
+    /*primary*/ public constructor My(/*0*/ x: kotlin.Int)
+    public final val x: kotlin.Int
+        public final fun <get-x>(): kotlin.Int
+    public final operator /*synthesized*/ fun component1(): kotlin.Int
+    public final /*synthesized*/ fun copy(/*0*/ x: kotlin.Int = ...): test.My
+}

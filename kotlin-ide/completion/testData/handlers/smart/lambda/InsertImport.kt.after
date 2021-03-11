@@ -1,0 +1,10 @@
+import java.util.Date
+
+fun foo(p: (java.util.Date) -> Unit){}
+fun foo(p: (String) -> Unit){}
+
+fun bar() {
+    foo({ date: Date -> <caret> })
+}
+
+// ELEMENT: "{ Date -> ... }"

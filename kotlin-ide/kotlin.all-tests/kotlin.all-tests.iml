@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="kotlin.common" />
+    <orderEntry type="module" module-name="kotlin.compiler-plugins.allopen" />
+    <orderEntry type="module" module-name="kotlin.compiler-plugins.annotation-based-compiler-support" />
+    <orderEntry type="module" module-name="kotlin.compiler-plugins.kapt" />
+    <orderEntry type="module" module-name="kotlin.compiler-plugins.kotlinx-serialization" />
+    <orderEntry type="module" module-name="kotlin.compiler-plugins.noarg" />
+    <orderEntry type="module" module-name="kotlin.compiler-plugins.sam-with-receiver" />
+    <orderEntry type="module" module-name="kotlin.compiler-plugins.scripting" />
+    <orderEntry type="module" module-name="kotlin.core" />
+    <orderEntry type="module" module-name="kotlin.formatter" />
+    <orderEntry type="module" module-name="kotlin.git" />
+    <orderEntry type="module" module-name="kotlin.gradle.gradle-idea" />
+    <orderEntry type="module" module-name="kotlin.gradle.gradle-native" />
+    <orderEntry type="module" module-name="kotlin.gradle.gradle-tooling" />
+    <orderEntry type="module" module-name="kotlin.idea" />
+    <orderEntry type="module" module-name="kotlin.j2k.idea" />
+    <orderEntry type="module" module-name="kotlin.j2k.new" />
+    <orderEntry type="module" module-name="kotlin.j2k.old" />
+    <orderEntry type="module" module-name="kotlin.j2k.services" />
+    <orderEntry type="module" module-name="kotlin.jps-common" />
+    <orderEntry type="module" module-name="kotlin.jps-plugin" />
+    <orderEntry type="module" module-name="kotlin.jvm" />
+    <orderEntry type="module" module-name="kotlin.jvm-debugger.core" />
+    <orderEntry type="module" module-name="kotlin.jvm-debugger.coroutines" />
+    <orderEntry type="module" module-name="kotlin.eval4j" />
+    <orderEntry type="module" module-name="kotlin.jvm-debugger.evaluation" />
+    <orderEntry type="module" module-name="kotlin.jvm-debugger.sequence" />
+    <orderEntry type="module" module-name="kotlin.jvm-debugger.test" />
+    <orderEntry type="module" module-name="kotlin.jvm-debugger.util" />
+    <orderEntry type="module" module-name="kotlin.maven" />
+    <orderEntry type="module" module-name="kotlin.native" />
+    <orderEntry type="module" module-name="kotlin.project-wizard.cli" />
+    <orderEntry type="module" module-name="kotlin.project-wizard.core" />
+    <orderEntry type="module" module-name="kotlin.project-wizard.idea" />
+    <orderEntry type="module" module-name="kotlin.repl" />
+    <orderEntry type="module" module-name="kotlin.scripting" />
+    <orderEntry type="module" module-name="kotlin.scripting-support" />
+    <orderEntry type="module" module-name="kotlin.test-framework" />
+    <orderEntry type="module" module-name="kotlin.tests-common" />
+    <orderEntry type="module" module-name="kotlin.uast.uast-kotlin" />
+    <orderEntry type="module" module-name="kotlin.uast.uast-kotlin-idea" />
+    <orderEntry type="module" module-name="kotlin.performance-tests" />
+    <orderEntry type="module" module-name="kotlin.compiler-plugins.scripting-ide-services" />
+    <orderEntry type="module" module-name="kotlin.fir.frontend-independent" />
+    <orderEntry type="module" module-name="kotlin.line-indent-provider" />
+    <orderEntry type="module" module-name="kotlin.resources-descriptors" scope="TEST" />
+    <orderEntry type="module" module-name="kotlin.compiler-plugins.parcelize" />
+  </component>
+</module>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="winp" type="repository">
+    <properties maven-id="org.jvnet.winp:winp:1.28" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jvnet/winp/winp/1.28/winp-1.28.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/jvnet/winp/winp/1.28/winp-1.28-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

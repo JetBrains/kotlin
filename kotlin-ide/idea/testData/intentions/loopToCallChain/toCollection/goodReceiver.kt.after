@@ -1,0 +1,13 @@
+// WITH_RUNTIME
+// INTENTION_TEXT: "Replace with 'mapTo(){}'"
+// IS_APPLICABLE_2: false
+import java.util.ArrayList
+
+fun foo(list: List<MutableCollection<Int>>) {
+    var target: MutableCollection<Int>()
+    <caret>target = list.mapTo(ArrayList<Int>()) { it.size }
+
+    if (target.size > 100) {
+        target = ArrayList<Int>()
+    }
+}

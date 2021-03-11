@@ -1,0 +1,4 @@
+/**
+ * @param bar this is a string
+ */
+fun f(bar: String) { }

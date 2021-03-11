@@ -1,0 +1,1 @@
+fun test(vararg a: String = emptyArray()<caret>) = a.size

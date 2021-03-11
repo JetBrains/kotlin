@@ -1,0 +1,6 @@
+package test
+
+public open class ModifierOpen {
+    /*primary*/ public constructor ModifierOpen()
+    public open fun abs(): kotlin.Int
+}

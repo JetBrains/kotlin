@@ -1,0 +1,2 @@
+// INTENTION_TEXT: Make primary constructor private
+class C<caret> private constructor(val v: Int)

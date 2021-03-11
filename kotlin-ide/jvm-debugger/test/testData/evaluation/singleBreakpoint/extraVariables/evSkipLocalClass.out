@@ -1,0 +1,13 @@
+LineBreakpoint created at evSkipLocalClass.kt:12
+Run Java
+Connected to the target VM
+evSkipLocalClass.kt:12
+KotlinStackFrame (evSkipLocalClass.kt:12)
+    JavaValue[local] args: java.lang.String[] = [] (evSkipLocalClass.kt:7)
+    JavaValue[local] a1: evSkipLocalClass.A (evSkipLocalClass.kt:8)
+        JavaValue[field] prop: int = 1 (evSkipLocalClass.kt:4)
+    JavaValue[local] a2: evSkipLocalClass.A (evSkipLocalClass.kt:9)
+        JavaValue[field] prop: int = 1 (evSkipLocalClass.kt:4)
+Disconnected from the target VM
+
+Process finished with exit code 0

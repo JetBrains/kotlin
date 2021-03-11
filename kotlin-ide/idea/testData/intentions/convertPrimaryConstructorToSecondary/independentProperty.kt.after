@@ -1,0 +1,12 @@
+class Hello {
+    val x: String
+
+    constructor(x: String) {
+        this.x = x
+        this.z = x + y
+    }
+
+    val y = "Hello"
+
+    val z: String
+}

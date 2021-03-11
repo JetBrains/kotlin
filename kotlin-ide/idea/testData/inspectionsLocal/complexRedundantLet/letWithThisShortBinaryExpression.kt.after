@@ -1,0 +1,6 @@
+// WITH_RUNTIME
+
+
+fun Int.foo() {
+    this + 1
+}

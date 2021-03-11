@@ -1,0 +1,6 @@
+fun foo() {
+    val v = HashMap<String, HashSet
+}
+
+// ELEMENT: HashSet
+// TAIL_TEXT: "<E> (kotlin.collections)"

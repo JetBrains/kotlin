@@ -1,0 +1,10 @@
+object Test {
+
+    private fun <T> bar(xs: List<T>): List<T> {
+        return xs
+    }
+
+    private fun gazonk() {
+        val ss = bar(emptyList<String>())
+    }
+}

@@ -1,0 +1,1 @@
+include ':common-lib', ':jvm-lib', ':js-lib', ':common-app', ':jvm-app', ':js-app'

@@ -1,0 +1,2 @@
+Unclassified 10 interface Z: A {
+Unclassified 14 interface U: Z {

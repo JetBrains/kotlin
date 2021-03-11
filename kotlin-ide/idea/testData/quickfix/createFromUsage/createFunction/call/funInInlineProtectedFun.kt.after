@@ -1,0 +1,10 @@
+// "Create function 'g'" "true"
+class C {
+    protected inline fun f() {
+        g()
+    }
+
+    protected fun g() {
+        TODO("Not yet implemented")
+    }
+}

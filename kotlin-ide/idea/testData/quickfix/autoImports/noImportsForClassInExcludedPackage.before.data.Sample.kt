@@ -1,0 +1,3 @@
+package excludedPackage
+
+class SomeClass

@@ -1,0 +1,5 @@
+package test
+
+public final class TestConstructor {
+    /*primary*/ public constructor TestConstructor(/*0*/ p: kotlin.Int = ..., /*1*/ s: kotlin.Int)
+}

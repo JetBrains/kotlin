@@ -1,0 +1,1 @@
+<warning descr="SSR">abstract class A</warning>

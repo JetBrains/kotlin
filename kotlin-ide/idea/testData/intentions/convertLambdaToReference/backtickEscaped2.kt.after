@@ -1,0 +1,3 @@
+class Person(val `super`: String)
+
+val reader = Person::`super`

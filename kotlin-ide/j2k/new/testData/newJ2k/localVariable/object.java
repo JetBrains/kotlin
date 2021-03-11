@@ -1,0 +1,2 @@
+//statement
+int i;

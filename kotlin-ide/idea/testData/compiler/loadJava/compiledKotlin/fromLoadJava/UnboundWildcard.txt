@@ -1,0 +1,9 @@
+package test
+
+public final class UnboundWildcard {
+    /*primary*/ public constructor UnboundWildcard()
+    public final fun foo(): test.UnboundWildcard.MyClass<*>?
+
+    public interface MyClass</*0*/ T : kotlin.CharSequence?> {
+    }
+}

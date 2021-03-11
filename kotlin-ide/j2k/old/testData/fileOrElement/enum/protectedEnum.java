@@ -1,0 +1,2 @@
+//class
+protected enum Test {}

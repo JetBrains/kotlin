@@ -1,0 +1,5 @@
+package test
+
+public interface Runnable {
+    public abstract fun run(): kotlin.Unit
+}

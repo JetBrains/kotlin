@@ -1,0 +1,19 @@
+package test
+
+public interface DeeplySubstitutedClassParameter2 {
+
+    public interface Middle</*0*/ E> : test.DeeplySubstitutedClassParameter2.Super<E> {
+        public abstract override /*1*/ /*fake_override*/ fun dummy(): kotlin.Unit
+        public abstract override /*1*/ /*fake_override*/ fun foo(): E
+    }
+
+    public interface Sub : test.DeeplySubstitutedClassParameter2.Middle<kotlin.String> {
+        public abstract override /*1*/ /*fake_override*/ fun dummy(): kotlin.Unit
+        public abstract override /*1*/ fun foo(): kotlin.String
+    }
+
+    public interface Super</*0*/ T> {
+        public abstract fun dummy(): kotlin.Unit
+        public abstract fun foo(): T
+    }
+}

@@ -1,0 +1,9 @@
+class One {
+    val field = "field"
+}
+
+fun check() {
+    val one = One()
+    val field1 = one.field
+    val field2 = "arg"
+}

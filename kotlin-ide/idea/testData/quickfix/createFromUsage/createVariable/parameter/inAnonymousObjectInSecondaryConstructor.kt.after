@@ -1,0 +1,10 @@
+// "Create parameter 'name'" "true"
+class B {
+    constructor(name: String) {
+        object : A(name) {
+
+        }
+    }
+}
+
+open class A(s: String)

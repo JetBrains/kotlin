@@ -1,0 +1,6 @@
+public final class JavaClass {
+
+    public Integer otherMethod() {
+        return 42;
+    }
+}

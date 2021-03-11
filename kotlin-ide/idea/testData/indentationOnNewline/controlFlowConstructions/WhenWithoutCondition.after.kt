@@ -1,0 +1,6 @@
+fun a() {
+    when
+    <caret>{
+
+    }
+}

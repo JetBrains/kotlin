@@ -1,0 +1,6 @@
+import kotlin.math.pow
+
+// WITH_RUNTIME
+fun test(x: Double, y: Double) {
+    x.pow(y)
+}

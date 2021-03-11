@@ -1,0 +1,2 @@
+[kotlinTraitNoImplThroughDelegate.0.kt] Function call 11 fun test(twdni: TraitWithDelegatedNoImpl) = twdni.foo()
+[kotlinTraitNoImplThroughDelegate.1.java] Unclassified 7 some.foo();

@@ -1,0 +1,1 @@
+public open class KotlinClass: <caret>JavaClass()

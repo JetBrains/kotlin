@@ -1,0 +1,7 @@
+fun foo(): Boolean {
+    return true
+}
+
+fun main() {
+    if (foo()) return
+}

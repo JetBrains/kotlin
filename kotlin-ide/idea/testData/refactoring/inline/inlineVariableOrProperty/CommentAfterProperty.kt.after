@@ -1,0 +1,5 @@
+fun test(a: Int) {
+    test(
+        a  // some comment here
+    )
+}

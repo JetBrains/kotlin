@@ -1,0 +1,3 @@
+package a
+
+class Foo

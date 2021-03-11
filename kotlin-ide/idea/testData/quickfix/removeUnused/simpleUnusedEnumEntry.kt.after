@@ -1,0 +1,8 @@
+// "Safe delete 'WORLD'" "true"
+enum class MyEnum {
+    HELLO,
+}
+
+fun main() {
+    MyEnum.HELLO
+}

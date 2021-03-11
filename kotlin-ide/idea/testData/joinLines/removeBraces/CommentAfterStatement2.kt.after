@@ -1,0 +1,5 @@
+fun foo() {
+    if (a) {<caret> bar()
+        // do something else here
+    }
+}

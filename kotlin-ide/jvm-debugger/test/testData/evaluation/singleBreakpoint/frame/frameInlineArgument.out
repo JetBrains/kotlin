@@ -1,0 +1,16 @@
+LineBreakpoint created at frameInlineArgument.kt:7
+Run Java
+Connected to the target VM
+frameInlineArgument.kt:7
+Compile bytecode for element
+KotlinStackFrame (frameInlineArgument.kt:7)
+    JavaValue[local] args: java.lang.String[] = [] (frameInlineArgument.kt:3)
+    JavaValue[local] element: int = 1 (frameInlineArgument.kt:4)
+    JavaValue[local] this_$iv: frameInlineArgument.A
+        JavaValue[field] prop: int = 1 (frameInlineArgument.kt:17)
+    JavaValue[local] $i$f$inlineFun: int = undefined
+    JavaValue[local] element$iv: double = 1.0 (frameInlineArgument.kt:4)
+    JavaValue[local] $i$a$-inlineFun-FrameInlineArgumentKt$main$1: int = undefined
+Disconnected from the target VM
+
+Process finished with exit code 0

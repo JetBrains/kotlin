@@ -1,0 +1,12 @@
+enum class Foo {
+    X
+    Y
+}
+
+fun foo(f: Foo, i: Int){}
+
+fun bar(){
+    foo(Foo.X, <caret>)
+}
+
+// ELEMENT: X

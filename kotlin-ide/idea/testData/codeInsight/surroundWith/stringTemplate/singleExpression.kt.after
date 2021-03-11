@@ -1,0 +1,4 @@
+fun foo() {
+    val a = "ddd"
+    "$a"<caret>
+}

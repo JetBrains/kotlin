@@ -1,0 +1,2 @@
+//class
+private enum Test {}

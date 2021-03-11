@@ -1,0 +1,12 @@
+// "Remove parameter 'x'" "true"
+// DISABLE-ERRORS
+
+open class Base() {
+    val y = Base();
+
+    fun f() {
+        val base = Base(1, 2);
+    }
+}
+
+open class Inherited(x: Int) : Base() {}

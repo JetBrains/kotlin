@@ -1,0 +1,4 @@
+// "Convert extension property initializer to getter" "true"
+var String.foo: Int
+    get() = 0
+    set(value) {}

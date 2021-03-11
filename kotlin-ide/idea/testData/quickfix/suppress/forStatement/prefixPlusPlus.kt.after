@@ -1,0 +1,7 @@
+// "Suppress 'USELESS_CAST' for statement " "true"
+
+fun foo() {
+    val arr = IntArray(1)
+    @Suppress("USELESS_CAST")
+    ++arr[1 as Int]
+}

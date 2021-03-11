@@ -1,0 +1,8 @@
+fun foo(): String = ""
+
+fun bar() {
+    foo().<caret>
+}
+
+// ELEMENT: foo
+// CHAR: .

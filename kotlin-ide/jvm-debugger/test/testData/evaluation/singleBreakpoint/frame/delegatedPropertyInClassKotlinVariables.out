@@ -1,0 +1,14 @@
+LineBreakpoint created at delegatedPropertyInClassKotlinVariables.kt:9
+Run Java
+Connected to the target VM
+delegatedPropertyInClassKotlinVariables.kt:9
+KotlinStackFrame (delegatedPropertyInClassKotlinVariables.kt:9)
+    JavaValue[local] args: java.lang.String[] = [] (delegatedPropertyInClassKotlinVariables.kt:6)
+    JavaValue[local] a: delegatedPropertyInClassKotlinVariables.A (delegatedPropertyInClassKotlinVariables.kt:7)
+        JavaValue[field] prop$delegate: delegatedPropertyInClassKotlinVariables.MyDelegate (delegatedPropertyInClassKotlinVariables.kt:13)
+            DummyMessageValueNode = Class has no fields
+        JavaValue[field] propEx$delegate: delegatedPropertyInClassKotlinVariables.MyDelegateThrowsException (delegatedPropertyInClassKotlinVariables.kt:14)
+            DummyMessageValueNode = Class has no fields
+Disconnected from the target VM
+
+Process finished with exit code 0

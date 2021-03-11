@@ -1,0 +1,10 @@
+// "Specify override for 'isEmpty(): Boolean' explicitly" "true"
+// WITH_RUNTIME
+
+import java.util.*
+
+class B(private val f: MutableList<String>): ArrayList<String>(), MutableList<String> by f {
+    override fun isEmpty(): Boolean {
+        return f.isEmpty()
+    }
+}

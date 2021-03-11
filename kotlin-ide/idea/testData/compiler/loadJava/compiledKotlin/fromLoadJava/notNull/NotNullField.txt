@@ -1,0 +1,8 @@
+package test
+
+public open class NotNullField {
+    /*primary*/ public constructor NotNullField()
+    public final var hi: kotlin.String
+        public final fun <get-hi>(): kotlin.String
+        public final fun <set-hi>(/*0*/ <set-?>: kotlin.String): kotlin.Unit
+}

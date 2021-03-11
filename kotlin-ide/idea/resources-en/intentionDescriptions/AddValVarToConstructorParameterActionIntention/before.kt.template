@@ -1,0 +1,1 @@
+class Foo(n: Int, <spot>s</spot>: String)

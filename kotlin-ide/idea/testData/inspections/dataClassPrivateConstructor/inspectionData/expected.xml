@@ -1,0 +1,10 @@
+<problems>
+    <problem>
+        <file>test.kt</file>
+        <line>1</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/test.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Private data class constructor is exposed via the 'copy' method</problem_class>
+        <description>Private data class constructor is exposed via the generated 'copy' method.</description>
+    </problem>
+</problems>

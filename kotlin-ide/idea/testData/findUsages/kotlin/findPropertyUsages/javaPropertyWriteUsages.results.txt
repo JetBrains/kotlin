@@ -1,0 +1,2 @@
+Unclassified 12 b.setFoo("b");
+Unclassified 8 a.setFoo("a");

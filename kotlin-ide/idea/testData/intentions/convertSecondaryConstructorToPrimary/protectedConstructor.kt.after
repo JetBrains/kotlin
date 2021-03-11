@@ -1,0 +1,3 @@
+class Protected protected constructor(internal var s: String) {
+
+}

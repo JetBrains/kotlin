@@ -1,0 +1,14 @@
+package test
+
+public interface CantMakeImmutableInSubclass {
+
+    public interface Sub : test.CantMakeImmutableInSubclass.Super {
+        public abstract override /*1*/ /*fake_override*/ fun dummy(): kotlin.Unit
+        public abstract override /*1*/ fun foo(): kotlin.collections.MutableList<kotlin.String>
+    }
+
+    public interface Super {
+        public abstract fun dummy(): kotlin.Unit
+        public abstract fun foo(): kotlin.collections.MutableCollection<kotlin.String>
+    }
+}

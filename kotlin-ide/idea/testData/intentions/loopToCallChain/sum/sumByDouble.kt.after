@@ -1,0 +1,7 @@
+// WITH_RUNTIME
+// INTENTION_TEXT: "Replace with 'sumByDouble{}'"
+// IS_APPLICABLE_2: false
+fun foo(list: List<String>): Double {
+    val <caret>s = list.sumByDouble { it.length.toDouble() }
+    return s
+}

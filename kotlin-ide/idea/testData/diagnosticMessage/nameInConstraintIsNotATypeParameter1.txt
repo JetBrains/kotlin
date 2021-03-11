@@ -1,0 +1,2 @@
+<!-- nameInConstraintIsNotATypeParameter1 -->
+O does not refer to a type parameter of foo

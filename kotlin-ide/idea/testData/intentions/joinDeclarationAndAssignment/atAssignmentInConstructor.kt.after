@@ -1,0 +1,8 @@
+class A {
+    constructor() {
+        bar()
+        val foo<selection>: String</selection><caret> = ""
+    }
+
+    fun bar() {}
+}

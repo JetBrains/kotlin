@@ -1,0 +1,3 @@
+// LANGUAGE_LEVEL 1.8
+// WITH_RUNTIME
+// KOTLINC_EXTRA_OPTS -jvm-target, 1.8

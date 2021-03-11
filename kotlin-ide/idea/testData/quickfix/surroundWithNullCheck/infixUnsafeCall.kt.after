@@ -1,0 +1,9 @@
+// "Surround with null check" "true"
+
+infix fun Int.op(arg: Int) = this
+
+fun foo(arg: Int?) {
+    if (arg != null) {
+        arg op 42
+    }
+}

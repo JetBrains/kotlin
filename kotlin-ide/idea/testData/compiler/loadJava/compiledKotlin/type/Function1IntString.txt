@@ -1,0 +1,3 @@
+package test
+
+public fun fun1(): (kotlin.String) -> kotlin.Int

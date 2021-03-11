@@ -1,0 +1,18 @@
+open class A<T> {
+}
+
+interface I
+
+class B : A<String>(), I {
+    override fun equals(other: Any?): Boolean {
+        <selection><caret>return super.equals(other)</selection>
+    }
+
+    override fun hashCode(): Int {
+        return super.hashCode()
+    }
+
+    override fun toString(): String {
+        return super.toString()
+    }
+}

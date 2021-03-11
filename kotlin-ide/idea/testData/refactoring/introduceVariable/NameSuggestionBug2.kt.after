@@ -1,0 +1,12 @@
+class For {
+    var xxx: For? = null
+}
+
+
+fun foo(f: For) {
+    val xxx1 = f.xxx
+
+    if (true) {
+        val xxx = 1
+    }
+}

@@ -1,0 +1,7 @@
+// OPTION: 0
+fun foo(n: Int): Int {
+    val s = "finally"
+    println(s)<caret>
+
+    return 0
+}

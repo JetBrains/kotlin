@@ -1,0 +1,12 @@
+// MOVE: up
+// class A
+class A {
+    // fun bar
+    <caret>fun bar() {
+
+    }
+    // fun foo
+    fun foo() {
+
+    }
+}

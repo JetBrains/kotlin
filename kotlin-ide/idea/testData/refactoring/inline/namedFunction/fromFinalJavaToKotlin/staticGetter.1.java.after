@@ -1,0 +1,3 @@
+public final class JavaClass {
+    public static final String stStr = "";
+}

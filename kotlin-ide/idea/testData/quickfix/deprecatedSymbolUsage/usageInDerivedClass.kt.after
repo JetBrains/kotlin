@@ -1,0 +1,14 @@
+// "Replace with 'newFun(s)'" "true"
+
+open class Base {
+    @Deprecated("", ReplaceWith("newFun(s)"))
+    fun oldFun(s: String){}
+
+    fun newFun(s: String){}
+}
+
+class Derived : Base() {
+    fun foo() {
+        <caret>newFun("a")
+    }
+}

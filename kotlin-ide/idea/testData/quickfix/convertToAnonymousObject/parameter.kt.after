@@ -1,0 +1,12 @@
+// "Convert to anonymous object" "true"
+interface I {
+    fun foo(a: String, b: Int): Int
+}
+
+fun test() {
+    object : I {
+        override fun foo(a: String, b: Int): Int {
+            return 1
+        }
+    }
+}

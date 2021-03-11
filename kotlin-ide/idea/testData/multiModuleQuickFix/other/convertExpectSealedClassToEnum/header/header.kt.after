@@ -1,0 +1,5 @@
+// "Convert to enum class" "true"
+
+expect enum class <caret>E {
+    A, B, C
+}

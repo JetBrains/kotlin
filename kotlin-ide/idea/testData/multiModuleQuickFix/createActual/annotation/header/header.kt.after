@@ -1,0 +1,3 @@
+// "Create actual annotation class for module testModule_JVM (JVM)" "true"
+
+expect annotation class Ann(val x: Int, val y: String)

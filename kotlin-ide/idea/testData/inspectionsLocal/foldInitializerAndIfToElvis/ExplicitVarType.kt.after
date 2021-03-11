@@ -1,0 +1,8 @@
+// WITH_RUNTIME
+
+fun foo(): String? = null
+
+fun bar() {
+    var v: String? = foo() ?: throw Exception()
+    v = null
+}

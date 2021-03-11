@@ -1,0 +1,10 @@
+fun foo() {
+    val runnable = object : Runnable {
+        override fun run() {
+        }
+    }
+    bar(runnable)
+}
+
+fun bar(runnable: Runnable) {
+}

@@ -1,0 +1,1 @@
+val xx = (fu<caret>n Int.(x: Int, y: Int) = this + x + y)(1, 2, 3)

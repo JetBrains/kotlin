@@ -1,0 +1,9 @@
+class A(val x: String) {
+
+    class C
+
+    val foo = 1
+
+    constructor(x: String, y: Int) : this(x) {
+    }
+}

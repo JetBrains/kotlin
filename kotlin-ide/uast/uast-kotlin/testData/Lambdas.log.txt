@@ -1,0 +1,47 @@
+UFile (package = )
+    UImportStatement (isOnDemand = false)
+    UClass (name = LambdasKt)
+        UMethod (name = foo)
+            UBlockExpression
+                UQualifiedReferenceExpression
+                    UQualifiedReferenceExpression
+                        USimpleNameReferenceExpression (identifier = Stream)
+                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
+                            UIdentifier (Identifier (empty))
+                            USimpleNameReferenceExpression (identifier = empty, resolvesTo = null)
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
+                        UIdentifier (Identifier (filter))
+                        USimpleNameReferenceExpression (identifier = filter, resolvesTo = null)
+                        ULambdaExpression
+                            UParameter (name = it)
+                            UBlockExpression
+                                UReturnExpression
+                                    UQualifiedReferenceExpression
+                                        USimpleNameReferenceExpression (identifier = it)
+                                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
+                                            UIdentifier (Identifier (isEmpty))
+                                            USimpleNameReferenceExpression (identifier = isEmpty, resolvesTo = null)
+        UMethod (name = doSelectItem)
+            UParameter (name = selectItemFunction)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UBlockExpression
+                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
+                    UIdentifier (Identifier (selectItemFunction))
+                    USimpleNameReferenceExpression (identifier = invoke, resolvesTo = null)
+                UDeclarationsExpression
+                    ULocalVariable (name = baz)
+                        ULambdaExpression
+                            UBlockExpression
+                                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
+                                    UIdentifier (Identifier (Local))
+                                    USimpleNameReferenceExpression (identifier = <anonymous class>, resolvesTo = null)
+                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
+                    UIdentifier (Identifier (baz))
+                    USimpleNameReferenceExpression (identifier = invoke, resolvesTo = null)
+        UMethod (name = lambdaInPlaceCall)
+            UBlockExpression
+                UWhileExpression
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
+                        UIdentifier (Identifier ({))
+                        USimpleNameReferenceExpression (identifier = invoke, resolvesTo = null)
+                    UBlockExpression

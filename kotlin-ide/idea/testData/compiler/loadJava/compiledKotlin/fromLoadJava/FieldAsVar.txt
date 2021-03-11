@@ -1,0 +1,8 @@
+package test
+
+public final class FieldAsVar {
+    /*primary*/ public constructor FieldAsVar()
+    public final var f: kotlin.Int
+        public final fun <get-f>(): kotlin.Int
+        public final fun <set-f>(/*0*/ <set-?>: kotlin.Int): kotlin.Unit
+}

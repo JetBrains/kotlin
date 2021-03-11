@@ -1,0 +1,8 @@
+// "Create class 'A!u00A0'" "true"
+fun test() {
+    val t = `A!u00A0`(1)
+}
+
+class `A!u00A0`(i: Int) {
+
+}

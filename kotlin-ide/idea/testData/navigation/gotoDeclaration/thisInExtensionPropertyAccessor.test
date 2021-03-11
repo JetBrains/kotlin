@@ -1,0 +1,7 @@
+// FILE: before.kt
+val String.test: String
+    get() { return <caret>this }
+
+// FILE: after.kt
+val <caret>String.test: String
+    get() { return this }

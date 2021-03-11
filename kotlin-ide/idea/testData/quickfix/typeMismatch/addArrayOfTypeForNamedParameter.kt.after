@@ -1,0 +1,5 @@
+// "Add doubleArrayOf wrapper" "true"
+
+annotation class ArrAnn(val name: DoubleArray)
+
+@ArrAnn(name = doubleArrayOf(3.14)) class My

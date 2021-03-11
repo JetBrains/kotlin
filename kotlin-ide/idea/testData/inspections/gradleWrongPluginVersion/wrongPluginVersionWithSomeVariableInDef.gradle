@@ -1,0 +1,14 @@
+buildscript {
+  def defVar = '0.0.1'
+
+  repositories {
+    mavenCentral()
+  }
+
+  dependencies {
+    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$defVar"
+  }
+}
+
+apply plugin: 'java'
+apply plugin: 'kotlin'

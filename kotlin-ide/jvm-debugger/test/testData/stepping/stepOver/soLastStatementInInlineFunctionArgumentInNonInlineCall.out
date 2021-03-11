@@ -1,0 +1,9 @@
+LineBreakpoint created at soLastStatementInInlineFunctionArgumentInNonInlineCall.kt:6
+Run Java
+Connected to the target VM
+soLastStatementInInlineFunctionArgumentInNonInlineCall.kt:6
+soLastStatementInInlineFunctionArgumentInNonInlineCall.kt:7
+soLastStatementInInlineFunctionArgumentInNonInlineCall.kt:17
+Disconnected from the target VM
+
+Process finished with exit code 0

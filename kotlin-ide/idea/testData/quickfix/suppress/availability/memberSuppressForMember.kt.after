@@ -1,0 +1,6 @@
+// "Suppress 'REDUNDANT_NULLABLE' for fun foo" "true"
+
+class C {
+    @Suppress("REDUNDANT_NULLABLE")
+    fun foo(): String?<caret>? = null
+}

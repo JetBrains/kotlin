@@ -1,0 +1,5 @@
+// JS
+// HIGHLIGHT: INFORMATION
+fun foo(a: dynamic, b: String): Boolean {
+    return a == b
+}

@@ -1,0 +1,2 @@
+//class
+public class Test {}

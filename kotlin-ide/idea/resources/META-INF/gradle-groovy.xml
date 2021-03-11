@@ -1,0 +1,38 @@
+<idea-plugin>
+  <extensions defaultExtensionNs="com.intellij">
+
+    <localInspection
+            implementationClass="org.jetbrains.kotlin.idea.inspections.gradle.DifferentKotlinGradleVersionInspection"
+            groupName="Kotlin"
+            enabledByDefault="true"
+            language="Groovy"
+            hasStaticDescription="true"
+            level="WARNING" key="inspection.different.kotlin.gradle.version.display.name" bundle="messages.KotlinBundle"/>
+
+    <localInspection
+            implementationClass="org.jetbrains.kotlin.idea.inspections.gradle.DifferentStdlibGradleVersionInspection"
+            groupName="Kotlin"
+            enabledByDefault="true"
+            language="Groovy"
+            hasStaticDescription="true"
+            level="WARNING" key="inspection.different.stdlib.gradle.version.display.name" bundle="messages.KotlinBundle"/>
+
+    <localInspection
+            implementationClass="org.jetbrains.kotlin.idea.inspections.gradle.DeprecatedGradleDependencyInspection"
+            groupName="Kotlin"
+            enabledByDefault="true"
+            cleanupTool="true"
+            language="Groovy"
+            hasStaticDescription="true"
+            level="WARNING" key="inspection.deprecated.gradle.dependency.display.name" bundle="messages.KotlinBundle"/>
+
+    <localInspection
+            implementationClass="org.jetbrains.kotlin.idea.inspections.gradle.GradleKotlinxCoroutinesDeprecationInspection"
+            groupPath="Kotlin,Migration"
+            groupName="Gradle"
+            enabledByDefault="true"
+            language="Groovy"
+            hasStaticDescription="true"
+            level="ERROR" key="inspection.gradle.kotlinx.coroutines.deprecation.display.name" bundle="messages.KotlinBundle"/>
+  </extensions>
+</idea-plugin>

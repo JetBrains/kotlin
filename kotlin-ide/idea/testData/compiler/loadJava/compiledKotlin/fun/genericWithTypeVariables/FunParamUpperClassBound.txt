@@ -1,0 +1,3 @@
+package test
+
+public fun </*0*/ A : java.lang.Number> uno(): kotlin.Int

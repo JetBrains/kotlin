@@ -1,0 +1,8 @@
+// WITH_RUNTIME
+import java.io.File
+
+fun foo(o: Any) {
+    if (o is File) {
+        o.absolutePath<caret>
+    }
+}

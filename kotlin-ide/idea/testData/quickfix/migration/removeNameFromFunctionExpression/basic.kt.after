@@ -1,0 +1,7 @@
+// "Remove identifier from anonymous function" "true"
+
+fun foo() {
+    (bar@ fun() {
+        return@bar
+    })
+}

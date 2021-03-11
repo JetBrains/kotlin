@@ -1,0 +1,5 @@
+package pack
+
+fun test() {
+
+}

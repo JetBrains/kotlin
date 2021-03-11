@@ -1,0 +1,1 @@
+internal class A : Base(), I

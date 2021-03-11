@@ -1,0 +1,6 @@
+import kotlin.system.exitProcess
+
+// WITH_RUNTIME
+fun test() {
+    exitProcess(0)
+}

@@ -1,0 +1,17 @@
+// WITH_RUNTIME
+fun test(x: Any): String {
+    <caret>return if (x is String)
+        when {
+            x.length > 3 -> "long string"
+            else -> "short string"
+        }
+    else if (x is Int)
+        when {
+            x > 999 || x < -99 -> "long int"
+            else -> "short int"
+        }
+    else if (x is Long)
+        TODO()
+    else
+        "I don't know"
+}

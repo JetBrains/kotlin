@@ -1,0 +1,4 @@
+annot()
+foo() fun foo() {
+}
+

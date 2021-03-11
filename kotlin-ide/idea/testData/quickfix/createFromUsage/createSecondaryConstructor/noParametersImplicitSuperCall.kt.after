@@ -1,0 +1,8 @@
+// "Create secondary constructor" "true"
+open class Base()
+
+class Creation {
+    constructor(f: Int)
+    constructor()
+}
+val v = Creation()

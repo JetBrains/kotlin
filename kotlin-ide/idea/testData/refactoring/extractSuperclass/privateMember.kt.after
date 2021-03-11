@@ -1,0 +1,19 @@
+// NAME: X
+class A {
+    open class B
+
+    open class X : B() {
+        // INFO: {checked: "true"}
+        protected fun foo() {
+
+        }
+    }
+
+    // SIBLING:
+    class C : X() {
+
+        fun test() {
+            foo()
+        }
+    }
+}

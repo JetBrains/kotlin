@@ -1,0 +1,8 @@
+// "Create interface 'A'" "true"
+package p
+
+fun foo(): A = throw Throwable("")
+
+interface A {
+
+}

@@ -1,0 +1,9 @@
+// "Remove '=' token from function declaration" "true"
+
+fun foo() {
+    bar()
+}
+
+fun bar() {
+
+}

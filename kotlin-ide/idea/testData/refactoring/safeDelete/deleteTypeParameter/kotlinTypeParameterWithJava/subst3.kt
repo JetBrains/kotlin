@@ -1,0 +1,1 @@
+class A<X, Y, <caret>Z>

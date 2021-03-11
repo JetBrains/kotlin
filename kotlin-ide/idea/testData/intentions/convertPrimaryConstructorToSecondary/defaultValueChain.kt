@@ -1,0 +1,1 @@
+class DefaultValueChain(val<caret> x1: Int, x2: Int = x1, val x3: Int = x2, x4: Int = x3, val x5: Int = x4)

@@ -1,0 +1,6 @@
+{
+  "type": "MARKED_ELEMENT",
+  "newName": "prop11",
+  "mainFile": "test.kt",
+  "checkErrorsAfter": "true"
+}

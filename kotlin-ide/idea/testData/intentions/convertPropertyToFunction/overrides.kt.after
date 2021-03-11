@@ -1,0 +1,18 @@
+package test
+
+interface T {
+    fun getFoo(): Boolean
+}
+
+open class A(val n: Int): T {
+    override fun getFoo(): Boolean = n > 1
+}
+
+class B: A(1) {
+    override fun getFoo(): Boolean = true
+}
+
+fun test() {
+    val a = A(1).getFoo()
+    val b = B().getFoo()
+}

@@ -1,0 +1,7 @@
+if (a) {
+    println("a")
+} else {
+    if (b) {
+        println("not a and b")
+    }
+}

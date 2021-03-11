@@ -1,0 +1,6 @@
+fun main(): Boolean {
+    if (20 != 5) {
+        return false
+    }
+    return true
+}

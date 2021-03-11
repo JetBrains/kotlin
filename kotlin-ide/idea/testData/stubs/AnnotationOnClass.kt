@@ -1,0 +1,2 @@
+@Deprecated class Test {
+}

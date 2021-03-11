@@ -1,0 +1,18 @@
+// WITH_RUNTIME
+// EXTRACTION_TARGET: lazy property
+
+class A(val n: Int = 1) {
+    val m: Int = 2
+
+    private val i: Int by lazy {
+        println(n)
+        m + n + 1
+    }
+
+    fun foo(): Int {
+        return if (n > 1) {
+            i
+        } else 0
+    }
+}
+

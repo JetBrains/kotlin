@@ -1,0 +1,3 @@
+class TestClass(vararg words: String) {
+    var words = words
+}

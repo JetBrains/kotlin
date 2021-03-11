@@ -1,0 +1,3 @@
+// WITH_RUNTIME
+val prefix = "|"
+val s = <caret>"\n    |foo\n    |bar\n".trimMargin(prefix)

@@ -1,0 +1,40 @@
+// FILE: first.before.kt
+// "Import" "true"
+// ERROR: The integer literal does not conform to the expected type String
+
+package main
+
+class X {
+    fun foo(p: String) {
+    }
+
+    fun f() {
+        foo(<caret>1)
+    }
+}
+
+// FILE: second.kt
+package other
+
+import main.X
+
+fun X.foo(p: Int) {
+}
+
+// FILE: first.after.kt
+// "Import" "true"
+// ERROR: The integer literal does not conform to the expected type String
+
+package main
+
+import other.foo
+
+class X {
+    fun foo(p: String) {
+    }
+
+    fun f() {
+        foo(<caret>1)
+    }
+}
+

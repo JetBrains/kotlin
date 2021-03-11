@@ -1,0 +1,17 @@
+package test
+
+public open class PropertyComplexTypes</*0*/ T> {
+    /*primary*/ public constructor PropertyComplexTypes</*0*/ T>()
+    public final var genericType: T
+        public final fun <get-genericType>(): T
+        public final fun <set-genericType>(/*0*/ <set-?>: T): kotlin.Unit
+    public final var listDefinedGeneric: java.util.ArrayList<kotlin.String>
+        public final fun <get-listDefinedGeneric>(): java.util.ArrayList<kotlin.String>
+        public final fun <set-listDefinedGeneric>(/*0*/ <set-?>: java.util.ArrayList<kotlin.String>): kotlin.Unit
+    public final var listGeneric: java.util.ArrayList<T>
+        public final fun <get-listGeneric>(): java.util.ArrayList<T>
+        public final fun <set-listGeneric>(/*0*/ <set-?>: java.util.ArrayList<T>): kotlin.Unit
+    public final var listOfGenericList: java.util.ArrayList<java.util.ArrayList<T>>
+        public final fun <get-listOfGenericList>(): java.util.ArrayList<java.util.ArrayList<T>>
+        public final fun <set-listOfGenericList>(/*0*/ <set-?>: java.util.ArrayList<java.util.ArrayList<T>>): kotlin.Unit
+}

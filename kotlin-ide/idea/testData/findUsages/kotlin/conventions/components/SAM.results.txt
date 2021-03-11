@@ -1,0 +1,1 @@
+Value read 4 javaClass.takeSAM { val (x, y) = it }

@@ -1,0 +1,2 @@
+Function bar() uses function foo() which will be inaccessible after move
+Function foo() uses function bar() which will be inaccessible after move

@@ -1,0 +1,3 @@
+package test
+
+public fun </*0*/ T> f(): kotlin.Int

@@ -1,0 +1,3 @@
+package test
+
+public fun nothing(): kotlin.Array<in kotlin.Number>

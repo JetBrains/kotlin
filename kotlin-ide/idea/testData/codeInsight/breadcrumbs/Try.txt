@@ -1,0 +1,11 @@
+Crumbs:
+  foo()
+  try
+  finally
+  catch (RuntimeException)
+Tooltips:
+  function <b><code>foo()</code></b>
+  try {…}
+catch(Exception) {…}
+  finally
+  catch (RuntimeException)

@@ -1,0 +1,7 @@
+// WITH_RUNTIME
+// INTENTION_TEXT: "Replace with 'any{}'"
+// IS_APPLICABLE_2: false
+fun foo(list: List<String>) {
+    println("Starting the search")
+    val <caret>found = list.any { it.length > 0 }
+}

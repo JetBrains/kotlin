@@ -1,0 +1,3 @@
+package ppp
+
+class C

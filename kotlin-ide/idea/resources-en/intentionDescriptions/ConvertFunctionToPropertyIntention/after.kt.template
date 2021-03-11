@@ -1,0 +1,7 @@
+class A(val n: Int) {
+    <spot>val foo: Int get() = n + 1</spot>
+}
+
+fun test() {
+    val k = A(1).foo
+}

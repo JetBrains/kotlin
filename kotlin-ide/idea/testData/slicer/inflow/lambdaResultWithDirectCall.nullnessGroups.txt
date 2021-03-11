@@ -1,0 +1,3 @@
+[NotNull Values]
+4 	<bold>val x</bold> = { 1 }() (in test())
+4 		<bold>val x</bold> = { 1 }() (in test())

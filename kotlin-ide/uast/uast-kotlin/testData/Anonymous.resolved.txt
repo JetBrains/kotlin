@@ -1,0 +1,28 @@
+UImportStatement (isOnDemand = false) -> UQualifiedReferenceExpression -> PsiClass:Closeable: Closeable
+UQualifiedReferenceExpression -> UQualifiedReferenceExpression -> PsiPackage:java.io: io
+UQualifiedReferenceExpression -> USimpleNameReferenceExpression (identifier = java) -> PsiPackage:java: java
+UQualifiedReferenceExpression -> USimpleNameReferenceExpression (identifier = io) -> PsiPackage:java.io: io
+UQualifiedReferenceExpression -> USimpleNameReferenceExpression (identifier = Closeable) -> PsiClass:Closeable: Closeable
+UImportStatement (isOnDemand = false) -> UQualifiedReferenceExpression -> PsiClass:InputStream: InputStream
+UQualifiedReferenceExpression -> UQualifiedReferenceExpression -> PsiPackage:java.io: io
+UQualifiedReferenceExpression -> USimpleNameReferenceExpression (identifier = java) -> PsiPackage:java: java
+UQualifiedReferenceExpression -> USimpleNameReferenceExpression (identifier = io) -> PsiPackage:java.io: io
+UQualifiedReferenceExpression -> USimpleNameReferenceExpression (identifier = InputStream) -> PsiClass:InputStream: InputStream
+    ULocalVariable (name = runnable) -> UObjectLiteralExpression -> null:
+    UTypeReferenceExpression (name = java.lang.Runnable) -> USimpleNameReferenceExpression (identifier = Runnable) -> PsiClass:Runnable: Runnable
+    UBlockExpression -> UQualifiedReferenceExpression -> KtUltraLightMethodForSourceDeclaration:run: run
+    UQualifiedReferenceExpression -> USimpleNameReferenceExpression (identifier = runnable) -> LightVariableBuilder:runnable: runnable
+    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))(resolves to KtUltraLightMethodForSourceDeclaration:run) -> USimpleNameReferenceExpression (identifier = run) -> KtUltraLightMethodForSourceDeclaration:run: run
+    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))(resolves to null) -> USimpleNameReferenceExpression (identifier = Runnable) -> PsiClass:Runnable: Runnable
+        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))(resolves to PsiMethod:println) -> USimpleNameReferenceExpression (identifier = println) -> PsiMethod:println: println
+    UBlockExpression -> UQualifiedReferenceExpression -> PsiMethod:run: run
+    UQualifiedReferenceExpression -> USimpleNameReferenceExpression (identifier = runnable2) -> LightVariableBuilder:runnable2: runnable2
+    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))(resolves to PsiMethod:run) -> USimpleNameReferenceExpression (identifier = run) -> PsiMethod:run: run
+    ULocalVariable (name = closeableRunnable) -> UObjectLiteralExpression -> null:
+    UTypeReferenceExpression (name = java.lang.Runnable) -> USimpleNameReferenceExpression (identifier = Runnable) -> PsiClass:Runnable: Runnable
+    UTypeReferenceExpression (name = java.io.Closeable) -> USimpleNameReferenceExpression (identifier = Closeable) -> PsiClass:Closeable: Closeable
+    ULocalVariable (name = runnableIs) -> UObjectLiteralExpression -> PsiMethod:InputStream:
+    UTypeReferenceExpression (name = java.io.InputStream) -> USimpleNameReferenceExpression (identifier = InputStream) -> PsiMethod:InputStream: InputStream
+    UTypeReferenceExpression (name = java.lang.Runnable) -> USimpleNameReferenceExpression (identifier = Runnable) -> PsiClass:Runnable: Runnable
+    UTypeReferenceExpression (name = int) -> USimpleNameReferenceExpression (identifier = Int) -> PsiClass:Integer: Integer
+    ULocalVariable (name = runnable) -> UObjectLiteralExpression -> null:

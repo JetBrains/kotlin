@@ -1,0 +1,10 @@
+// "Create secondary constructor" "true"
+
+open class A {
+    constructor(i: Int)
+
+}
+
+class B: A(1) {
+
+}

@@ -1,0 +1,7 @@
+fun doSth(): Int? {
+    val x: String? = "abc"
+    return if (x != null) x.length else null
+}
+fun main(args: Array<String>) {
+    val y = doSth()
+}

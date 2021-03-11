@@ -1,0 +1,7 @@
+public class Super {
+    public void x() {
+    }
+
+    public void y() {
+    }
+}

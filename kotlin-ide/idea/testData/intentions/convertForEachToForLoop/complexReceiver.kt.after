@@ -1,0 +1,8 @@
+// WITH_RUNTIME
+fun main() {
+    val x = 1..4
+
+    for (it in x.reversed()) {
+        it
+    }
+}

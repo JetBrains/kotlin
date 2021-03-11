@@ -1,0 +1,6 @@
+class Foo<T> {
+}
+
+<spot>fun <T> Foo<T>.get(): T {
+  return t
+}</spot>

@@ -1,0 +1,4 @@
+// ELEMENT: return
+fun test(a: Int) {
+    return<caret>
+}

@@ -1,0 +1,8 @@
+pluginManagement {
+    repositories {
+        {{kotlin_plugin_repositories}}
+    }
+}
+rootProject.name = 'jvm-on-mpp'
+include ':mpp-mod-a', ':jvm-mod'
+enableFeaturePreview('GRADLE_METADATA')

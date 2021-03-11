@@ -1,0 +1,6 @@
+// WITH_RUNTIME
+
+fun foo(pair: Pair<Int, Int>) {
+    val (first1, _) = pair
+    val first = 42
+}

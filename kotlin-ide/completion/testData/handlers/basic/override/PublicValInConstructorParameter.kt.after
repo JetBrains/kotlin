@@ -1,0 +1,10 @@
+import java.io.File
+
+interface I {
+    val someVal: java.io.File?
+}
+
+class A(public override val someVal: File?<caret>) : I {
+}
+
+// ELEMENT_TEXT: "override val someVal: File?"

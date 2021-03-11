@@ -1,0 +1,23 @@
+// SIBLING:
+class A {
+    class B {
+        fun test(): Int {
+            return i()
+        }
+
+        companion object {
+            val coProp = 1
+
+            fun coFun() {
+
+            }
+        }
+    }
+}
+
+private fun i(): Int {
+    A.B.coFun()
+    return A.B.coProp + 10
+}
+
+

@@ -1,0 +1,6 @@
+const val HELLO_WORLD = "Hello, World!"
+fun sayAndGetHelloWorld(): List<String> {
+    val listOf = listOf(HELLO_WORLD)
+    println(listOf)
+    return listOf
+}

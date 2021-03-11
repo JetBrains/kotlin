@@ -1,0 +1,20 @@
+// "Make 'foo' in A, X and Y open" "true"
+open class A {
+    open fun foo() {}
+}
+
+interface X {
+    open fun foo() {}
+}
+
+interface Y {
+    open fun foo() {}
+}
+
+interface Z {
+    fun foo() {}
+}
+
+class B : A(), X, Y, Z {
+    override<caret> fun foo() {}
+}

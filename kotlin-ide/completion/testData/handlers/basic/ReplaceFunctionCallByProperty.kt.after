@@ -1,0 +1,10 @@
+class C {
+    val bar: Int
+}
+
+fun foo(c: C) {
+    val v = c.bar<caret>
+}
+
+// ELEMENT: bar
+// CHAR: '\t'

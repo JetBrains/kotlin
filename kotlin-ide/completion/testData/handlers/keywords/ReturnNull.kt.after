@@ -1,0 +1,5 @@
+fun foo(): String? {
+    return null<caret>
+}
+
+// ELEMENT: "return null"

@@ -1,0 +1,4 @@
+// WITH_RUNTIME
+
+val sb = StringBuilder()
+val x = listOf(1, 2, 3).joinTo(buffer = sb, prefix = "= ", separator = " + ") { "$it*$it" }

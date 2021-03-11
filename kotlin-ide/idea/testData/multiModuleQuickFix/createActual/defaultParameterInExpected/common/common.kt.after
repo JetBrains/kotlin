@@ -1,0 +1,5 @@
+// "Create actual interface for module testModule_JVM (JVM)" "true"
+
+expect interface I {
+    fun f(p: Int = 1)
+}

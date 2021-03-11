@@ -1,0 +1,5 @@
+class A {
+    fun foo(b: String, c: Any) {
+        println(b)
+    }
+}

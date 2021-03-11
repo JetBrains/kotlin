@@ -1,0 +1,16 @@
+// EXTRACTION_TARGET: property with getter
+// WITH_RUNTIME
+
+import java.util.*
+
+private val <T> Foo<T>.t: T?
+    get() = map[""]
+
+// SIBLING:
+class Foo<T> {
+    val map = HashMap<String, T>()
+
+    fun test(): T {
+        return t
+    }
+}

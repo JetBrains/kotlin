@@ -1,0 +1,6 @@
+fun main(args: Array<String>) {
+    val foo: String? = "foo"
+    if (true) {
+        if (foo != null) foo.length
+    }
+}

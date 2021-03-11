@@ -1,0 +1,24 @@
+buildscript {
+    def kotlinVersion = "{{kotlin_plugin_version}}"
+
+
+    ext.kotlin_version = "$kotlinVersion"
+    repositories {
+        {{kotlin_plugin_repositories}}
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.5.2'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+allprojects {
+    repositories {
+        {{kotlin_plugin_repositories}}
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}

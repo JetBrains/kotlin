@@ -1,0 +1,9 @@
+open class A {
+    open val foo: String
+        get() {
+            return "A"
+        }
+}
+
+class B: A() {
+}

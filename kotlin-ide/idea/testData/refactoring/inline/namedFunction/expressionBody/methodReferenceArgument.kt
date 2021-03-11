@@ -1,0 +1,1 @@
+fun sayAndGetHelloWorld() = "Hello, World!".al<caret>so(::println)

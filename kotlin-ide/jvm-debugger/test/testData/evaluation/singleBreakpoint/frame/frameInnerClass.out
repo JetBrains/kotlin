@@ -1,0 +1,16 @@
+LineBreakpoint created at frameInnerClass.kt:17
+Run Java
+Connected to the target VM
+frameInnerClass.kt:17
+Compile bytecode for prop1
+Compile bytecode for prop2
+Compile bytecode for myFun1()
+Compile bytecode for myFun2()
+KotlinStackFrame (frameInnerClass.kt:17)
+    JavaValue[this] this: A$Inner@uniqueID
+        JavaValue[field] prop2: int = 1 (frameInnerClass.kt:12)
+        JavaValue[field] this$0: frameInnerClass.A
+            JavaValue[field] prop1: int = 1 (frameInnerClass.kt:8)
+Disconnected from the target VM
+
+Process finished with exit code 0

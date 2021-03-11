@@ -1,0 +1,1 @@
+class <caret>C1(){}

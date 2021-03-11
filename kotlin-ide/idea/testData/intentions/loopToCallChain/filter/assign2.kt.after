@@ -1,0 +1,14 @@
+// WITH_RUNTIME
+// INTENTION_TEXT: "Replace with 'filter{}'"
+// IS_APPLICABLE_2: false
+import java.util.ArrayList
+
+fun foo(list: List<String>, p: Int): List<String> {
+    return if (p > 0) {
+        val <caret>result = list.filter { it.length > 0 }
+        result
+    }
+    else {
+        emptyList()
+    }
+}

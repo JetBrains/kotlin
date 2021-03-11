@@ -1,0 +1,5 @@
+abstract class X : java.util.ArrayList<String>(), Runnable {
+    override fun iterator(): MutableIterator<String> {
+        <selection><caret>return super.iterator()</selection>
+    }
+}

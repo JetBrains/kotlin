@@ -1,0 +1,12 @@
+// WITH_RUNTIME
+fun main(args: Array<String>) {
+    with(A()) {
+        val message = prop
+        println(message)
+        println(message)
+    }
+}
+
+class A {
+    val prop = 1
+}

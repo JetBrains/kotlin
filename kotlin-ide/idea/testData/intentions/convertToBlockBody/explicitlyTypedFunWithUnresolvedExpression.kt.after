@@ -1,0 +1,4 @@
+// ERROR: Unresolved reference: bar
+fun <caret>foo(): String {
+    return bar()
+}

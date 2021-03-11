@@ -1,0 +1,14 @@
+// PARAM_DESCRIPTOR: val t: <no name provided> defined in foo
+// PARAM_TYPES: T
+interface T {
+    fun test() {}
+}
+
+fun foo() {
+    val t = object: T {}
+    __dummyTestFun__(t)
+}
+
+private fun __dummyTestFun__(t: T) {
+    (object : T by t {}).test()
+}

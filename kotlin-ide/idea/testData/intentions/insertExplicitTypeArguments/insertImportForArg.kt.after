@@ -1,0 +1,9 @@
+import kotlin.properties.ObservableProperty
+
+fun foo(c: kotlin.collections.AbstractIterator<kotlin.properties.ObservableProperty<Int>>) {
+    bar<AbstractIterator<ObservableProperty<Int>>>(c)
+}
+
+fun <T> bar(t: T): T = t
+
+// WITH_RUNTIME

@@ -1,0 +1,1 @@
+val v = "aaa $x <caret>bbb"

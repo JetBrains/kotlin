@@ -1,0 +1,6 @@
+// "Change return type of enclosing function 'foo' to 'T'" "true"
+interface T
+
+fun foo(): T {
+    return object: T{}
+}

@@ -1,0 +1,1 @@
+SwingUtilities.invokeLater { println("a") }

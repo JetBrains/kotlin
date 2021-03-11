@@ -1,0 +1,13 @@
+fun test(x: Int) {
+    val f: Function<Int> = when (x) {
+        0 -> {
+            { 0 }
+        }
+        1 -> {
+            { 1 }
+        }
+        else -> {
+            { 2 }
+        }
+    }
+}

@@ -1,0 +1,7 @@
+import java.io.File
+
+fun foo(xxx: ((java.io.File) -> List<String>)?)
+
+fun bar(xxx: ((File) -> List<String>)?<caret>)
+
+// ELEMENT_TEXT: xxx: ((File) -> List<String>)?

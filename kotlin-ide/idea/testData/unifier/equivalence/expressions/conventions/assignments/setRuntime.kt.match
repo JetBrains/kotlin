@@ -1,0 +1,3 @@
+array[1] = 10
+
+array.set(1, 10)

@@ -1,0 +1,16 @@
+LineBreakpoint created at frameSimple.kt:9
+Run Java
+Connected to the target VM
+frameSimple.kt:9
+Compile bytecode for val1
+Compile bytecode for val2
+Compile bytecode for topVal1
+Compile bytecode for val1 + topVal1
+KotlinStackFrame (frameSimple.kt:9)
+    JavaValue[local] args: java.lang.String[] = [] (frameSimple.kt:5)
+    JavaValue[local] val1: int = 1 (frameSimple.kt:6)
+    JavaValue[local] val2: frameSimple.MyClass (frameSimple.kt:7)
+        DummyMessageValueNode = Class has no fields
+Disconnected from the target VM
+
+Process finished with exit code 0

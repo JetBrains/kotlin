@@ -1,0 +1,7 @@
+// "Create property 'foo' as constructor parameter" "true"
+
+class A(var foo: Int) {
+    fun test(n: Int) {
+        foo = n + 1
+    }
+}

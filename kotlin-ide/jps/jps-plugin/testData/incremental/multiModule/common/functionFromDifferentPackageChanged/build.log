@@ -1,0 +1,26 @@
+================ Step #1 =================
+
+Building module1
+Cleaning output files:
+  out/production/module1/META-INF/module1.kotlin_module
+  out/production/module1/module1/FooKt.class
+End of files
+Compiling files:
+  module1/src/foo.kt
+End of files
+Marked as dirty by Kotlin:
+  module2/src/useFoo.kt
+Exit code: ADDITIONAL_PASS_REQUIRED
+------------------------------------------
+Exit code: NOTHING_DONE
+------------------------------------------
+Building module2
+Cleaning output files:
+  out/production/module2/META-INF/module2.kotlin_module
+  out/production/module2/module2/UseFooKt.class
+End of files
+Compiling files:
+  module2/src/useFoo.kt
+End of files
+Exit code: OK
+------------------------------------------

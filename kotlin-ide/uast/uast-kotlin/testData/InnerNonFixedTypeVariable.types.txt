@@ -1,0 +1,22 @@
+UFile (package = ) [public final class InnerNonFixedTypeVariableKt {...]
+    UClass (name = InnerNonFixedTypeVariableKt) [public final class InnerNonFixedTypeVariableKt {...}]
+        UMethod (name = test) [public static final fun test(@org.jetbrains.annotations.NotNull list: java.util.List<? extends java.lang.Object>) : void {...}]
+            UParameter (name = list) [@org.jetbrains.annotations.NotNull var list: java.util.List<? extends java.lang.Object>]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+            UBlockExpression [{...}] : PsiType:<ErrorType>
+                UQualifiedReferenceExpression [list.filterIsInstance().<anonymous class>(mutableSetOf(), { ...})] : PsiType:<ErrorType>
+                    UQualifiedReferenceExpression [list.filterIsInstance()]
+                        USimpleNameReferenceExpression (identifier = list) [list] : PsiType:List<? extends Object>
+                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [filterIsInstance()]
+                            UIdentifier (Identifier (filterIsInstance)) [UIdentifier (Identifier (filterIsInstance))]
+                            USimpleNameReferenceExpression (identifier = filterIsInstance, resolvesTo = null) [filterIsInstance]
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 2)) [<anonymous class>(mutableSetOf(), { ...})] : PsiType:<ErrorType>
+                        UIdentifier (Identifier (mapTo)) [UIdentifier (Identifier (mapTo))]
+                        USimpleNameReferenceExpression (identifier = <anonymous class>, resolvesTo = null) [<anonymous class>] : PsiType:<ErrorType>
+                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [mutableSetOf()] : PsiType:Set<NonExistentClass>
+                            UIdentifier (Identifier (mutableSetOf)) [UIdentifier (Identifier (mutableSetOf))]
+                            USimpleNameReferenceExpression (identifier = mutableSetOf, resolvesTo = null) [mutableSetOf] : PsiType:Set<NonExistentClass>
+                        ULambdaExpression [{ ...}] : PsiType:Function0<? extends Unit>
+                            UBlockExpression [{...}]
+    UClass (name = Some) [public final class Some {...}]
+        UMethod (name = Some) [public fun Some() = UastEmptyExpression]

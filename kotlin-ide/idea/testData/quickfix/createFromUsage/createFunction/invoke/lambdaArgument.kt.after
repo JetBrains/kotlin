@@ -1,0 +1,13 @@
+// "Create extension function 'Test.invoke'" "true"
+class Test
+
+fun test() {
+    var t = Test()
+    t{
+
+    }
+}
+
+private operator fun Test.invoke(function: () -> Unit) {
+    TODO("Not yet implemented")
+}

@@ -1,0 +1,10 @@
+// MOVE: down
+fun foo() {
+    val x = ""
+
+
+    val y = ""
+    fun bar() {
+
+    }<caret>
+}

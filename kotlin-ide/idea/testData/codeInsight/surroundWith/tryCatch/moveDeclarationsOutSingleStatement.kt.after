@@ -1,0 +1,8 @@
+fun foo() {
+    val a = try {
+        "aaa"
+    } catch (e: <selection><caret>Exception</selection>) {
+    }
+
+    a.charAt(1)
+}

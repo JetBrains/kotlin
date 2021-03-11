@@ -1,0 +1,5 @@
+fun xyzzy(x: Pair<Int, String>) {
+    val (bar, foo) = x
+    println(foo)
+    println(foo.length())
+}

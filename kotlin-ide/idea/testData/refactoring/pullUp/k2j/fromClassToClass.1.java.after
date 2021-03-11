@@ -1,0 +1,11 @@
+import org.jetbrains.annotations.NotNull;
+
+abstract class A {
+
+    public final int x;
+    public static final int _x;
+
+    public abstract boolean foo(int n);
+
+    public abstract void bar(@NotNull String s);
+}

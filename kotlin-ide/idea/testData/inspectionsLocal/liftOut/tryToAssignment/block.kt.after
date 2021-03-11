@@ -1,0 +1,15 @@
+// HIGHLIGHT: GENERIC_ERROR_OR_WARNING
+
+fun doSomething() {}
+
+fun test() {
+    var res: String? = null
+
+    <caret>res = try {
+        doSomething()
+        "success"
+    } catch (e: Exception) {
+        doSomething()
+        "failure"
+    }
+}

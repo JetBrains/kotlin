@@ -1,0 +1,11 @@
+val `Kotlin` = 0
+val `Котлин` = 0
+val `ことりん` = 0
+val `§＊！｀` = 0
+val `0a0b0c` = 0
+val `$a-b_c` = 0
+val `with space` = 0 //illegal
+val `a+b` = 0 //illegal
+val `#` = 0 //illegal
+val `!` = 0 //illegal
+val `()` = 0 //illegal

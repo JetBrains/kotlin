@@ -1,0 +1,3 @@
+<application>
+  <receiver android:name=".MyReceiver"/>
+</application>

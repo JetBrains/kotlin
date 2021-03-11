@@ -1,0 +1,16 @@
+// TOOL: DifferentKotlinGradleVersionInspection
+
+group 'Again'
+version '1.0-SNAPSHOT'
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${test}")
+    }
+}
+
+apply plugin: 'kotlin'

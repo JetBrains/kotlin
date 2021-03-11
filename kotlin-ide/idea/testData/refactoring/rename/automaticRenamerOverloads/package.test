@@ -1,0 +1,7 @@
+{
+  "type": "KOTLIN_FUNCTION",
+  "packageFqn": "testing",
+  "oldName": "foo",
+  "newName": "bar",
+  "mainFile": "package.kt"
+}

@@ -1,0 +1,5 @@
+These declarations cannot be transformed:
+fun a() = TODO()
+fun b() = &quot;string&quot;
+actual lateinit var c: Int
+const val d = &quot;const&quot;

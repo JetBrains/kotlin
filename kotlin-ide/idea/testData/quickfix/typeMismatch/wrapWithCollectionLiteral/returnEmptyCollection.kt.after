@@ -1,0 +1,7 @@
+// "Replace with 'emptyList()' call" "true"
+// WITH_RUNTIME
+
+fun foo(a: String?): Collection<String> {
+    val w = a ?: return emptyList()<caret>
+    return listOf(w)
+}

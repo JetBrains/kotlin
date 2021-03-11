@@ -1,0 +1,6 @@
+import java.io.File
+import java.util.ArrayList
+
+class A {
+    var x: ((File) -> ArrayList<String>)? = null
+}

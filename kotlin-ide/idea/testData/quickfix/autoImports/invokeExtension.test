@@ -1,0 +1,41 @@
+// FILE: first.before.kt
+// "Import" "true"
+// ERROR: Expression 'Some()' of type 'Some' cannot be invoked as a function. The function 'invoke()' is not found
+
+package testing
+
+import some.Some
+
+fun testing() {
+    <caret>Some()("str")
+}
+//-----------------------
+
+
+// FILE: second.kt
+// "Import" "true"
+// ERROR: Expression 'Some()' of type 'Some' cannot be invoked as a function. The function 'invoke()' is not found
+
+package some
+
+public class Some
+
+operator fun Some.invoke(s: String) {}
+//-----------------------
+
+
+// FILE: first.after.kt
+// "Import" "true"
+// ERROR: Expression 'Some()' of type 'Some' cannot be invoked as a function. The function 'invoke()' is not found
+
+package testing
+
+import some.Some
+import some.invoke
+
+fun testing() {
+    <caret>Some()("str")
+}
+//-----------------------
+
+

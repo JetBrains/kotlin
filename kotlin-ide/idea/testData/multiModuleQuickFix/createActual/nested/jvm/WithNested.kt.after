@@ -1,0 +1,17 @@
+// WithNested: to be implemented
+actual class WithNested {
+    actual fun foo(): Int {
+        TODO("Not yet implemented")
+    }
+
+    actual class Nested {
+        actual fun bar() {
+        }
+    }
+
+    actual inner class Inner {
+        actual fun baz() {
+        }
+    }
+
+}

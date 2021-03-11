@@ -1,0 +1,4 @@
+// WITH_RUNTIME
+fun foo(thread: Thread) {
+    thread.name = "<name>"
+}

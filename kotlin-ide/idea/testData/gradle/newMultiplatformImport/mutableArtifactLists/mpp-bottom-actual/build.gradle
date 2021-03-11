@@ -1,0 +1,62 @@
+apply plugin: 'kotlin-multiplatform'
+apply plugin: 'maven-publish'
+
+group 'org.jetbrains.qa.combompp'
+
+buildscript {
+    repositories {
+        {{kotlin_plugin_repositories}}
+    }
+}
+
+repositories {
+    {{kotlin_plugin_repositories}}
+}
+
+kotlin {
+    jvm("jvm18") {
+        withJava()
+        compilations.all {
+            kotlinOptions.jvmTarget = "1.8"
+        }
+    }
+
+    sourceSets {
+
+        commonMain {
+            dependencies {
+                api kotlin('stdlib-common', '{{kotlin_plugin_version}}')
+                api kotlin('stdlib', '{{kotlin_plugin_version}}')
+
+            }
+        }
+        commonTest {
+            dependencies {
+                api kotlin('test-common', '{{kotlin_plugin_version}}')
+                api kotlin('test-annotations-common', '{{kotlin_plugin_version}}')
+                api kotlin('test', '{{kotlin_plugin_version}}')
+            }
+        }
+
+        // setting up the targets source sets
+        jvm18Main {
+            kotlin.srcDir('src/jvm18Main/customSrc')
+
+            dependencies {
+                implementation kotlin('stdlib-jdk8', '{{kotlin_plugin_version}}')
+            }
+        }
+        jvm18Test {
+            dependencies {
+                api kotlin('test')
+                api kotlin('test-junit')
+            }
+        }
+    }
+
+}
+
+dependencies {
+    jvm18TestApi "org.assertj:assertj-core:3.11.1"
+}
+

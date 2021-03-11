@@ -1,0 +1,2 @@
+//method
+int main() {}

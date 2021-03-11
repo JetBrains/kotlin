@@ -1,0 +1,6 @@
+val bar: Int
+    get() = 1
+
+fun test() {
+    bar
+}

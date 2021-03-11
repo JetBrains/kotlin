@@ -1,0 +1,5 @@
+UTypeReferenceExpression (name = kotlin.Suppress) -> USimpleNameReferenceExpression (identifier = Suppress) -> PsiClass:Suppress: Suppress
+    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))(resolves to PsiMethod:println) -> USimpleNameReferenceExpression (identifier = println) -> PsiMethod:println: println
+UTypeReferenceExpression (name = kotlin.SinceKotlin) -> USimpleNameReferenceExpression (identifier = kotlin) -> PsiPackage:kotlin: kotlin
+UTypeReferenceExpression (name = kotlin.SinceKotlin) -> USimpleNameReferenceExpression (identifier = SinceKotlin) -> PsiClass:SinceKotlin: SinceKotlin
+UTypeReferenceExpression (name = java.lang.String) -> USimpleNameReferenceExpression (identifier = String) -> PsiClass:String: String

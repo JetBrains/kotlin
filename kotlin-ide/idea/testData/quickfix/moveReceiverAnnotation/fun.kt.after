@@ -1,0 +1,6 @@
+// "Move annotation to receiver type" "true"
+
+annotation class Ann
+
+<caret>fun @receiver:Ann String.foo() {
+}

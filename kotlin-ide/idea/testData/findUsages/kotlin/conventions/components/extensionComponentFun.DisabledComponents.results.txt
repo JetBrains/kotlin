@@ -1,0 +1,4 @@
+Value read 21 val (x, y) = f()
+Value read 25 val (a, b) = this
+Value read 29 val (x1, y1) = z1[0]
+Value read 30 val (x2, y2) = z2.get()

@@ -1,0 +1,6 @@
+fun foo() {
+    Regex.fromLiteral(<caret>)
+}
+
+// INVOCATION_COUNT: 2
+// ELEMENT_TEXT: "Regex.fromLiteral"

@@ -1,0 +1,5 @@
+{
+  "type": "FILE",
+  "file": "Foo.kt",
+  "newName": "Bar.kt"
+}

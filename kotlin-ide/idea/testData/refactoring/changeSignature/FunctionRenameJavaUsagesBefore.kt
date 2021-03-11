@@ -1,0 +1,1 @@
+fun <caret>foo(n: Int): String = ""

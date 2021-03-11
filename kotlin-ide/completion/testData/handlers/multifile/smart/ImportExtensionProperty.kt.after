@@ -1,0 +1,3 @@
+import other.extensionProp
+
+fun foo(s: String): Int = s.extensionProp<caret>

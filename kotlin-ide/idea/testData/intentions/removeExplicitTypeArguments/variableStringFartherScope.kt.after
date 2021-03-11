@@ -1,0 +1,8 @@
+// IS_APPLICABLE: true
+val x = "x"
+
+fun foo() {
+    bar(x)
+}
+
+fun <T> bar(t: T): Int = 1

@@ -1,0 +1,11 @@
+// FIR_COMPARISON
+inline fun <reified R> Iterable<*>.myFilterIsInstance(): List<R> {
+    return filterIsInstanceTo(ArrayList<R>())
+}
+
+fun foo(list: List<Any>) {
+    list.myFilterIsInstance<String>(<caret>x)
+}
+
+// ELEMENT: myFilterIsInstance
+// CHAR: '\t'

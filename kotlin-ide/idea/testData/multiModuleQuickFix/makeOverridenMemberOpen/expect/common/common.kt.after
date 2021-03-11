@@ -1,0 +1,9 @@
+// "Make OClass.overrideMe open" "true"
+
+expect open class OClass() {
+    open val overrideMe: String
+}
+
+class Another: OClass() {
+    override val overrideMe = ""
+}

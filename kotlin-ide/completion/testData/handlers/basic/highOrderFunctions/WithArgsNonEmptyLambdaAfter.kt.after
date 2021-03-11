@@ -1,0 +1,8 @@
+fun foo(p : (String, Char) -> Boolean){}
+
+fun main(args: Array<String>) {
+    foo { s, c -> <caret> }{ x }
+}
+
+// ELEMENT: foo
+// TAIL_TEXT: " { String, Char -> ... } (p: (String, Char) -> Boolean) (<root>)"

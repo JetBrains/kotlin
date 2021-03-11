@@ -1,0 +1,12 @@
+// "Create class 'Foo'" "true"
+
+class B<T>(val t: T) {
+    inner class Foo<U, V, W>(v: V, w: W) {
+
+    }
+
+}
+
+class A<T>(val b: B<T>) {
+    fun test() = b.Foo<T, Int, String>(2, "2")
+}

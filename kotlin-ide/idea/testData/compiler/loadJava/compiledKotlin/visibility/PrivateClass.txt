@@ -1,0 +1,5 @@
+package test
+
+private final class PrivateClass {
+    /*primary*/ public constructor PrivateClass()
+}

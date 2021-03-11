@@ -1,0 +1,8 @@
+var a: String?
+    get() = ""
+    set(v) {}
+
+fun main(args: Array<String>) {
+    val a1 = a
+    if (a1 != null) a1 else "bar"
+}

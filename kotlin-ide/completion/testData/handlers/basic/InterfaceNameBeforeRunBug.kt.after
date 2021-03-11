@@ -1,0 +1,12 @@
+package a.b.c.d
+
+class B {
+    public val mark: Mark<caret> = run {
+
+    }
+
+    interface Mark {
+    }
+}
+
+// ELEMENT: Mark

@@ -1,0 +1,4 @@
+var x: String = " "
+    set(param) {
+        field = "$param "
+    }

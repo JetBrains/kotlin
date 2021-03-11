@@ -1,0 +1,34 @@
+// IGNORE_BACKEND: JVM_IR
+LineBreakpoint created at destructuringParam.kt:12 lambdaOrdinal = 1
+Run Java
+Connected to the target VM
+destructuringParam.kt:12
+Compile bytecode for x
+Compile bytecode for y
+KotlinStackFrame (destructuringParam.kt:12)
+    JavaValue[this] this: DestructuringParamKt$main$1@uniqueID = Function1<destructuringParam.A, java.lang.String>
+        JavaValue[field] arity: int = 1 (Lambda.!EXT!)
+    JavaValue[local] $dstr$x$y: destructuringParam.A = A(x=O, y=K)
+        JavaValue[field] x: java.lang.String = O (destructuringParam.kt:2)
+            JavaValue[field] value: byte[] (String.!EXT!)
+                JavaValue[element] 0 = 79
+            JavaValue[field] coder: byte = 0 (String.!EXT!)
+            JavaValue[field] hash: int = 0 (String.!EXT!)
+        JavaValue[field] y: java.lang.String = K (destructuringParam.kt:2)
+            JavaValue[field] value: byte[] (String.!EXT!)
+                JavaValue[element] 0 = 75
+            JavaValue[field] coder: byte = 0 (String.!EXT!)
+            JavaValue[field] hash: int = 0 (String.!EXT!)
+    JavaValue[local] x: java.lang.String = O (destructuringParam.kt:12)
+        JavaValue[field] value: byte[] (String.!EXT!)
+            JavaValue[element] 0 = 79
+        JavaValue[field] coder: byte = 0 (String.!EXT!)
+        JavaValue[field] hash: int = 0 (String.!EXT!)
+    JavaValue[local] y: java.lang.String = K (destructuringParam.kt:12)
+        JavaValue[field] value: byte[] (String.!EXT!)
+            JavaValue[element] 0 = 75
+        JavaValue[field] coder: byte = 0 (String.!EXT!)
+        JavaValue[field] hash: int = 0 (String.!EXT!)
+Disconnected from the target VM
+
+Process finished with exit code 0

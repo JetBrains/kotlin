@@ -1,0 +1,5 @@
+// "Add initializer" "true"
+class A {
+    var n: Int = <selection>0</selection><caret>
+        set(value: Int) {}
+}

@@ -1,0 +1,1 @@
+class Foo constructor(x: Int, y: Int)

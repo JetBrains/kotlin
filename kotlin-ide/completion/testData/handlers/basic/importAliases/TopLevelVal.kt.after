@@ -1,0 +1,7 @@
+import kotlin.io.DEFAULT_BUFFER_SIZE as BUFSIZE
+
+fun foo() {
+    BUFSIZE<caret>
+}
+
+// ELEMENT: "BUFSIZE"

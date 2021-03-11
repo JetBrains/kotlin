@@ -1,0 +1,8 @@
+fun flag(): Boolean{}
+
+fun foo() {
+    if (!flag()<caret>)
+}
+
+// ELEMENT: flag
+// CHAR: '!'

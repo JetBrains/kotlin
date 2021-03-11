@@ -1,0 +1,5 @@
+{
+  "mainFile": "source/A.kt",
+  "type": "MOVE_FILES",
+  "targetPackage": "target"
+}

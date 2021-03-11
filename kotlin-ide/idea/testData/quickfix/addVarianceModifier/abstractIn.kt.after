@@ -1,0 +1,4 @@
+// "Add 'in' variance" "true"
+abstract class AbstractIn<in T>(private val foo: T) {
+    fun bar(arg: T) = foo == arg
+}

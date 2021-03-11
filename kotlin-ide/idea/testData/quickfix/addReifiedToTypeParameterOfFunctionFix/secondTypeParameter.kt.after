@@ -1,0 +1,6 @@
+// "Make 'R' reified and 'flatten' inline" "true"
+// WITH_RUNTIME
+
+inline fun <T: Iterable<Array<R>>, reified R> T.flatten(): Array<R> {
+    return this.flatMap { it.asIterable() }.toTypedArray<caret>()
+}

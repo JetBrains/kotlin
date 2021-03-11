@@ -1,0 +1,5 @@
+fun foo() {
+    var s<selection>: Int</selection><caret> = 1
+    s.hashCode()
+    s = 2
+}

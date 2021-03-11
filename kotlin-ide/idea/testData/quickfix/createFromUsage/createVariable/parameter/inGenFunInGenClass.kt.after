@@ -1,0 +1,7 @@
+// "Create parameter 'foo'" "true"
+
+class A<T> {
+    fun <T> test(n: Int, foo: T) {
+        val t: T = foo
+    }
+}

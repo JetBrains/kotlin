@@ -1,0 +1,3 @@
+// "Remove final upper bound" "true"
+
+data class DC<T>(val x: T, val y: String)

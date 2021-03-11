@@ -1,0 +1,11 @@
+fun foo(names: List<String>, name: String) {
+    if (name == "") {
+        val name2 = ""
+    }
+
+    for (name2 in names) {
+        <caret>
+    }
+
+    val name1 = ""
+}

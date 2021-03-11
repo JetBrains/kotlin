@@ -1,0 +1,6 @@
+// "Change parameter 'a' type of function 'times' to 'String'" "true"
+interface A {
+    operator fun times(a: String): A
+}
+
+fun foo(a: A): A = a * <caret>""

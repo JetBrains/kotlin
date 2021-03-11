@@ -1,0 +1,3 @@
+Unclassified 5 System.out.println(Foo.CONST);
+Unclassified 6 Foo.s();
+Unclassified 7 Foo.Companion.f();

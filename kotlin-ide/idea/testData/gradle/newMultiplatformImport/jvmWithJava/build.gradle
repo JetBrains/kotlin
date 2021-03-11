@@ -1,0 +1,17 @@
+buildscript {
+    repositories {
+        {{kotlin_plugin_repositories}}
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+
+}
+
+allprojects {
+    repositories {
+        {{kotlin_plugin_repositories}}
+    }
+}
+

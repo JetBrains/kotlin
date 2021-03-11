@@ -1,0 +1,20 @@
+// TOOL: DifferentStdlibGradleVersionInspection
+
+group 'Again'
+version '1.0-SNAPSHOT'
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin")
+    }
+}
+
+apply plugin: 'kotlin'
+
+dependencies {
+    compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib', version: lib_version
+}

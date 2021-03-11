@@ -1,0 +1,9 @@
+while (t != (a + b)) {
+        println(t)
+        t++
+    }
+
+while (t != a + b) {
+        println((t))
+        t++
+    }

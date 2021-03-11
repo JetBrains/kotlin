@@ -1,0 +1,14 @@
+// EXTRACTION_TARGET: property with initializer
+
+class A(val n: Int = 1) {
+    val m: Int = 2
+
+    private val i = m + n + 1
+
+    fun foo(): Int {
+        return if (n > 1) {
+            i
+        } else 0
+    }
+}
+

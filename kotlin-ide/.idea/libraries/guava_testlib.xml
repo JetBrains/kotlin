@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="guava-testlib" type="repository">
+    <properties include-transitive-deps="false" maven-id="com.google.guava:guava-testlib:25.1-jre" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/google/guava/guava-testlib/25.1-jre/guava-testlib-25.1-jre.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/google/guava/guava-testlib/25.1-jre/guava-testlib-25.1-jre-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

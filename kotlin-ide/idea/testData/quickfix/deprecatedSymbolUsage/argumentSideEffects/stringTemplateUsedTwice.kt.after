@@ -1,0 +1,13 @@
+// "Replace with 'newFun(p, p)'" "true"
+
+@Deprecated("", ReplaceWith("newFun(p, p)"))
+fun oldFun(p: String) {
+    newFun(p, p)
+}
+
+fun newFun(p1: String, p2: String){}
+
+fun foo(p: Int) {
+    val p1 = "p=$p"
+    <caret>newFun(p1, p1)
+}

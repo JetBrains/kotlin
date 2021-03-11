@@ -1,0 +1,22 @@
+public final class WhenAndDestructingKt {
+    public static final fun getElementsAdditionalResolve(@org.jetbrains.annotations.NotNull string: java.lang.String) : java.lang.String {
+        var arr: java.util.List<? extends java.lang.String> = listOf("1", "2")
+        switch (string)  {
+            "aaaa" -> {
+                yield return "bindingContext"
+            }
+
+            "empty-switch" -> {
+            }
+
+             -> {
+                @null var var837f2350: <ErrorType> = arr
+                @null var bindingContext: java.lang.String = var837f2350.<anonymous class>()
+                @null var statementFilter: java.lang.String = var837f2350.<anonymous class>()
+                yield return bindingContext
+            }
+
+        }
+
+    }
+}

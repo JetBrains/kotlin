@@ -1,0 +1,50 @@
+// FILE: first.before.kt
+// "Import" "true"
+// ERROR: Destructuring declaration initializer of type Some must have a 'component1()' function
+
+package testing
+
+import aaa.Some
+
+fun testing() {
+    val (a) = <caret>Some()
+}
+//-----------------------
+
+
+// FILE: second.kt
+
+package aaa
+
+public class Some
+
+@Deprecated("Bad, use from package other")
+@DeprecatedSinceKotlin(warningSince = "1.0")
+operator fun Some.component1() = 1
+//-----------------------
+
+// FILE: other_second.kt
+
+package other
+
+import aaa.Some
+
+operator fun Some.component1() = 1
+//-----------------------
+
+
+// FILE: first.after.kt
+// "Import" "true"
+// ERROR: Destructuring declaration initializer of type Some must have a 'component1()' function
+
+package testing
+
+import aaa.Some
+import other.component1
+
+fun testing() {
+    val (a) = <caret>Some()
+}
+//-----------------------
+
+

@@ -1,0 +1,6 @@
+// IS_APPLICABLE: true
+fun <T> foo(t: T) {
+    bar<T>(t)
+}
+
+fun <T> bar(t: T): Int = 1

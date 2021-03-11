@@ -1,0 +1,6 @@
+// "Remove 'protected' modifier" "true"
+
+class A private constructor() {
+
+}
+/* FIR_COMPARISON */

@@ -1,0 +1,6 @@
+// WITH_RUNTIME
+// INTENTION_TEXT: "Replace with 'mapTo(){}'"
+// IS_APPLICABLE_2: false
+fun foo(list: List<String>, target: MutableList<Int>) {
+    <caret>list.mapTo(target) { it.length }
+}

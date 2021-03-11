@@ -1,0 +1,4 @@
+<node text="B.B()  ()" base="true">
+    <node text="JJ.JJ()  ()"/>
+    <node text="A.A(Int)  ()"/>
+</node>

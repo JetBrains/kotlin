@@ -1,0 +1,4 @@
+// OPTION: 0
+fun foo(n : Int): Int {
+    return n/0
+}

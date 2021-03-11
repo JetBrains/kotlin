@@ -1,0 +1,7 @@
+import kotlin.properties.ObservableProperty
+
+fun main() {
+    val randomFunction: (x: kotlin.properties.ObservableProperty<Int>, y: kotlin.String) -> kotlin.String = { x: ObservableProperty<Int>, str: String -> str}
+}
+
+// WITH_RUNTIME

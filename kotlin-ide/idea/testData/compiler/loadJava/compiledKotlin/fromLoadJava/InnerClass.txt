@@ -1,0 +1,9 @@
+package test
+
+public open class InnerClass {
+    /*primary*/ public constructor InnerClass()
+
+    public open inner class Inner {
+        /*primary*/ public constructor Inner()
+    }
+}

@@ -1,0 +1,7 @@
+class A {
+    override fun equals(other: Any?): Boolean {
+        <caret><selection>return super.equals(other)</selection>
+    }
+}
+
+// ELEMENT_TEXT: "override fun equals(other: Any?): Boolean {...}"

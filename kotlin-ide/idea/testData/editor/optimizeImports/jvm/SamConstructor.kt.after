@@ -1,0 +1,3 @@
+import java.util.concurrent.Callable
+
+val c = Callable { -> 1 }

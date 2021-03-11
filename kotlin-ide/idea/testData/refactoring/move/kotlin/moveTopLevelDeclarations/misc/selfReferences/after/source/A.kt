@@ -1,0 +1,5 @@
+package source
+
+class B {
+
+}

@@ -1,0 +1,6 @@
+open class A {
+}
+
+interface Z {
+    public var foo: String
+}

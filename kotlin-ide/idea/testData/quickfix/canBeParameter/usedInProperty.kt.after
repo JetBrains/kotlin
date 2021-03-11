@@ -1,0 +1,4 @@
+// "Remove 'var' from parameter" "true"
+class UsedInProperty(x: Int) {
+    var y = x
+}

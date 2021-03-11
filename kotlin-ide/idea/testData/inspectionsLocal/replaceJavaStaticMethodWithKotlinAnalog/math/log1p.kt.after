@@ -1,0 +1,6 @@
+import kotlin.math.ln1p
+
+// WITH_RUNTIME
+fun test(x: Double) {
+    <caret>ln1p(x)
+}

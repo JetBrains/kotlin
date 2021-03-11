@@ -1,0 +1,12 @@
+fun test() {
+    var res: String? = null
+    var foo: String? = null
+
+    <caret>res = try {
+        "success"
+    } catch (e: Exception) {
+        "failure"
+    } finally {
+        foo = "finally"
+    }
+}

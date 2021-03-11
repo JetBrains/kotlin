@@ -1,0 +1,1 @@
+val pattern = "<caret>"

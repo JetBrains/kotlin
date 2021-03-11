@@ -1,0 +1,4 @@
+// IMPORT: dependency.Class2
+package p
+
+import dependency.*

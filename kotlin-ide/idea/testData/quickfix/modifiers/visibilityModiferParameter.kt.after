@@ -1,0 +1,9 @@
+// "Use inherited visibility" "true"
+interface ParseResult<out T> {
+    public val success : Boolean
+    public val value : T
+}
+
+class Success<T>(override val value : T) : ParseResult<T> {
+    public override val success : Boolean = true
+}

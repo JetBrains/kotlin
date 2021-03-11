@@ -1,0 +1,6 @@
+{
+  "type": "JAVA_METHOD",
+  "classId": "testing/rename/AP",
+  "methodSignature": "void setFirst(int value)",
+  "newName": "second"
+}

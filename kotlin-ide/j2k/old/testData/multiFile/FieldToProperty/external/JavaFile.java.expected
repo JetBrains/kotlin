@@ -1,0 +1,15 @@
+package test;
+
+public class C extends JavaClass {
+    public void foo(JavaClass javaClass) {
+        javaClass.setField(javaClass.getField() + 1);
+        javaClass.setField(javaClass.getField() - 1);
+        setProperty(javaClass.getField());
+        javaClass.setField(javaClass.getField() - getField());
+        setField(getProperty());
+        setField(getField() * 2);
+        setField(getField() * 2);
+
+        String s = JavaClass.Companion.getNAME();
+    }
+}

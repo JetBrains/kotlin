@@ -1,0 +1,3 @@
+interface Inter {
+    String something();
+}

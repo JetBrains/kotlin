@@ -1,0 +1,11 @@
+// "Create member function 'A.foo'" "true"
+
+object A {
+    fun foo(i: Int): Int {
+        TODO("Not yet implemented")
+    }
+}
+
+fun test() {
+    val a: Int = A.foo(2)
+}

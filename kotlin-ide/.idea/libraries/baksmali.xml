@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="baksmali" type="repository">
+    <properties include-transitive-deps="false" maven-id="org.smali:baksmali:2.2.4" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/smali/baksmali/2.2.4/baksmali-2.2.4.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

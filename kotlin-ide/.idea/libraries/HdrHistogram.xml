@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="HdrHistogram" type="repository">
+    <properties include-transitive-deps="false" maven-id="org.hdrhistogram:HdrHistogram:2.1.4" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/hdrhistogram/HdrHistogram/2.1.4/HdrHistogram-2.1.4.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/hdrhistogram/HdrHistogram/2.1.4/HdrHistogram-2.1.4-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

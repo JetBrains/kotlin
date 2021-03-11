@@ -1,0 +1,4 @@
+// "Change to val" "true"
+object Test {
+    <caret>const val foo = "123"
+}

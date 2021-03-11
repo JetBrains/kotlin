@@ -1,0 +1,1 @@
+internal expect class Sample

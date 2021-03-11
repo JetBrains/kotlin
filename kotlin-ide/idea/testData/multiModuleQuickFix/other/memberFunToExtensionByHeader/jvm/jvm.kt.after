@@ -1,0 +1,6 @@
+actual class Foo {
+}
+
+actual fun Foo.foo(n: Int) {
+
+}

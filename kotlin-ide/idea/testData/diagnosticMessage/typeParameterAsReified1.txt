@@ -1,0 +1,2 @@
+<!-- typeParameterAsReified1 -->
+Cannot use 'A' as reified type parameter. Use a class instead.

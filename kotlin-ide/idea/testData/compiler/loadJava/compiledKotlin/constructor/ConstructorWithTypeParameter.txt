@@ -1,0 +1,5 @@
+package test
+
+public final class ClassWithConstructorAndTypeParameter</*0*/ P> {
+    /*primary*/ public constructor ClassWithConstructorAndTypeParameter</*0*/ P>()
+}

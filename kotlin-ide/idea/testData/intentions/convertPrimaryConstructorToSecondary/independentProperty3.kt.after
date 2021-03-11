@@ -1,0 +1,11 @@
+fun foo(x: Int) {
+    class Local {
+        val y: Int
+
+        constructor(y: Int) {
+            this.y = y
+        }
+
+        val z = x
+    }
+}

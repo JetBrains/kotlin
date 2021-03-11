@@ -1,0 +1,24 @@
+// FILE: first.before.kt
+// "Import" "true"
+// ERROR: Unresolved reference: SomeAnnotation
+
+package some
+
+class X(@set:SomeAnnotation<caret> var field: Int)
+//-----------------------
+// FILE: second.kt
+
+package other
+
+annotation class SomeAnnotation
+//-----------------------
+// FILE: first.after.kt
+// "Import" "true"
+// ERROR: Unresolved reference: SomeAnnotation
+
+package some
+
+import other.SomeAnnotation
+
+class X(@set:SomeAnnotation<caret> var field: Int)
+//-----------------------

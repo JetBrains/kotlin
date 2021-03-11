@@ -1,0 +1,2 @@
+fun <T> generic1(): T? = null
+fun <T> foo(): T? = generic1<T>()

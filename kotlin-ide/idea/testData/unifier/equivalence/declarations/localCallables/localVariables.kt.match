@@ -1,0 +1,13 @@
+{
+    val a = 1
+    var b = 2
+
+    return a - b
+}
+
+{
+    val x = 1
+    var y = 2
+
+    return x - y
+}

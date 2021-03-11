@@ -1,0 +1,7 @@
+// "Change type to mutable" "true"
+// TOOL: org.jetbrains.kotlin.idea.inspections.SuspiciousCollectionReassignmentInspection
+// WITH_RUNTIME
+fun test() {
+    val map = mutableMapOf(1 to 2)<caret>
+    map += 3 to 4
+}

@@ -1,0 +1,5 @@
+class Wrapper(val f: () -> Test)
+class Test {
+    fun f(): String = "Hello"
+    val foo = Wrapper(::Test)
+}

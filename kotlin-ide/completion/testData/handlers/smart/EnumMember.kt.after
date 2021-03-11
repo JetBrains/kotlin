@@ -1,0 +1,10 @@
+enum class Foo {
+    X
+    Y
+}
+
+fun foo(){
+    val f : Foo = Foo.X<caret>
+}
+
+// ELEMENT: X

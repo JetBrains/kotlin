@@ -1,0 +1,9 @@
+// WITH_DEFAULT_VALUE: false
+fun foo(i: Int): Int {
+    val b = i * 2
+    return i
+}
+
+fun test() {
+    foo(1 + 1)
+}

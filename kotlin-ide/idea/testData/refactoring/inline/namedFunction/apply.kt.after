@@ -1,0 +1,5 @@
+fun blah(): MutableList<Int> {
+    val mutableListOf = mutableListOf(1)
+    mutableListOf.add(2)
+    return mutableListOf
+}

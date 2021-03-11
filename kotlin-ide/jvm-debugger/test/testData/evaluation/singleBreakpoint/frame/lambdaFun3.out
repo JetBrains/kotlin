@@ -1,0 +1,10 @@
+// IGNORE_BACKEND: JVM_IR
+LineBreakpoint created at lambdaFun3.kt:7
+Run Java
+Connected to the target VM
+lambdaFun3.kt:7
+Compile bytecode for this
+KotlinStackFrame (lambdaFun3.kt:7)
+Disconnected from the target VM
+
+Process finished with exit code 0

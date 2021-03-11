@@ -1,0 +1,6 @@
+val a = //comment1
+    run {
+        //comment1
+//comment1
+        println("")
+    }

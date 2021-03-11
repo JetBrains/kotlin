@@ -1,0 +1,3 @@
+package test
+
+public fun listOfJlString(): java.util.List<java.lang.String>

@@ -1,0 +1,4 @@
+class Test {
+    var foo: String = ""
+        <caret>protected set
+}

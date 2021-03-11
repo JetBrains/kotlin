@@ -1,0 +1,12 @@
+// PARAM_TYPES: V
+// PARAM_DESCRIPTOR: value-parameter v: V defined in foo
+open class Data(val x: Int)
+
+class Pair<A, B>(val a: A, val b: B)
+
+// SIBLING:
+fun <V: Data> foo(v: V): Pair<Int, V> {
+    return pair(v)
+}
+
+private fun <V : Data> pair(v: V) = Pair(v.x + 10, v)

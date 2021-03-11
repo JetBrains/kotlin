@@ -1,0 +1,1 @@
+var lst: kotlin.collections.MutableList<kotlin.Int>

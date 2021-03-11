@@ -1,0 +1,4 @@
+// WITH_RUNTIME
+
+val nullableList: List<String>? = listOf("1", "")
+val x = nullableList?.first { it.isNotEmpty() }

@@ -1,0 +1,3 @@
+package foo
+
+fun name() {}

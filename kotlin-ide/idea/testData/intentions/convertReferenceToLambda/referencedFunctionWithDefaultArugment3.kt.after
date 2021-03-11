@@ -1,0 +1,7 @@
+fun test() {
+    bar { i, x -> i.foo(x) }
+}
+
+fun Int.foo(x: Int, y: Int = 42) = x + y
+
+fun bar(f: (Int, Int) -> Int) {}

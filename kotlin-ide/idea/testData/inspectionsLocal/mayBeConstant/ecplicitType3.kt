@@ -1,0 +1,1 @@
+val <caret>foo: String = ""

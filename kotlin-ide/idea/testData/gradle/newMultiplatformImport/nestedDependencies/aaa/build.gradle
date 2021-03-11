@@ -1,0 +1,15 @@
+apply plugin: 'kotlin-multiplatform'
+
+kotlin {
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation 'org.jetbrains.kotlin:kotlin-stdlib-common'
+                api project(':bbb')
+            }
+        }
+    }
+    targets {
+        fromPreset(presets.jvm, 'jvm')
+    }
+} 

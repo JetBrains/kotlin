@@ -1,0 +1,58 @@
+// "Add parameter to function 'f'" "true"
+interface OA {
+    fun f(a: Int, s: String)
+}
+
+interface OB {
+    fun f(a: Int, s: String)
+}
+
+interface O : OA, OB {
+    override fun f(a: Int, s: String)
+}
+
+interface OO : O {
+    override fun f(a: Int, s: String) {
+    }
+}
+
+interface OOO : OO {
+    override fun f(a: Int, s: String) {}
+}
+
+interface OOOA : OOO {
+    override fun f(a: Int, s: String) {
+    }
+}
+
+interface OOOB : OOO {
+    override fun f(a: Int, s: String) {
+    }
+}
+
+fun usage(o: OA) {
+    o.f(1, "asdv")
+}
+fun usage(o: OB) {
+    o.f(1, "asdv")
+}
+
+fun usage(o: O) {
+    o.f(1, "asdv")
+}
+
+fun usage(o: OO) {
+    o.f(13, "asdv")
+}
+
+fun usage(o: OOO) {
+    o.f(3, "asdv")
+}
+
+fun usage(o: OOOA) {
+    o.f(3, "asdv")
+}
+
+fun usage(o: OOOB) {
+    o.f(3, "asdv")
+}

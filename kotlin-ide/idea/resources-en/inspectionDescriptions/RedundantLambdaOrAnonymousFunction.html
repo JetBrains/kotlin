@@ -1,0 +1,12 @@
+<html>
+<body>
+<p>This inspection reports lambdas or anonymous functions that are created and used immediately.</p>
+<!-- tooltip end -->
+<pre><code>
+<b>fun</b> test() {
+    ({ println() })() // redundant
+    (<b>fun</b>() { println() })() // redundant
+}
+</code></pre>
+</body>
+</html>

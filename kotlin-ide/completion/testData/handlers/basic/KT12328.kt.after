@@ -1,0 +1,5 @@
+fun f() {
+    val v = emptyList<<caret>>()if (x) a else b
+}
+
+// ELEMENT: emptyList

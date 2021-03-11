@@ -1,0 +1,11 @@
+open class B {
+    open var someVar: String = ""
+}
+
+class A : B {
+    override var someVar: String
+        get() = <caret><selection>super.someVar</selection>
+        set(value) {}
+}
+
+// ELEMENT_TEXT: "override var someVar: String"

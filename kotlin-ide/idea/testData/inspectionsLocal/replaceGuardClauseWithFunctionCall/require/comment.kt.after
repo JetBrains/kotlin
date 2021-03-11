@@ -1,0 +1,7 @@
+// FIX: Replace with 'require()' call
+// WITH_RUNTIME
+fun test(b: Boolean) {
+    // comment1
+    // comment2
+    require(!b)
+}

@@ -1,0 +1,1 @@
+class C(val n: Int, s: String)

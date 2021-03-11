@@ -1,0 +1,7 @@
+// WITH_RUNTIME
+
+suspend fun mapString(input: String): String? = ""
+
+suspend fun main() {
+    val x = listOf("1", "2", "3").mapNotNull { mapString(it) }
+}

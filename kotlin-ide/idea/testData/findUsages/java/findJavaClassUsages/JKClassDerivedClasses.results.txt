@@ -1,0 +1,4 @@
+Unclassified 1 public open class X: A()
+Unclassified 3 public interface T: A
+Unclassified 5 public open class Y: X()
+Unclassified 7 public class Z: Y(), T

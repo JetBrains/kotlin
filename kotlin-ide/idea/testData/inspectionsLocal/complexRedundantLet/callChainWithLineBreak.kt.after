@@ -1,0 +1,7 @@
+// WITH_RUNTIME
+// HIGHLIGHT: INFORMATION
+
+fun test(list: List<Int>) {
+    println(list.filter { it > 1 }
+    .filter { it > 2 })
+}

@@ -1,0 +1,1 @@
+val test = "foo" + "bar"

@@ -1,0 +1,5 @@
+// "Add non-null asserted (!!) call" "true"
+
+fun foo(a: Array<String?>) {
+    a[0]!!.length
+}

@@ -1,0 +1,7 @@
+// WITH_RUNTIME
+fun <T> String.ext(): List<T> = listOf()
+
+fun f() {
+    val ext = "".ext<Int>()
+    val v : List<Int> = ext
+}

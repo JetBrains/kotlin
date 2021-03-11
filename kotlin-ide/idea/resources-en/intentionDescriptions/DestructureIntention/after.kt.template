@@ -1,0 +1,3 @@
+val map = hashMapOf(1 to 2)
+for (<spot>(key, value)</spot> in map) {
+}

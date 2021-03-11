@@ -1,0 +1,5 @@
+import pack1.a
+
+fun foo() {
+    a()
+}

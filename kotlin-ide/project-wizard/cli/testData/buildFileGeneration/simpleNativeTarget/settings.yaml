@@ -1,0 +1,8 @@
+kotlin:
+  projectKind: Multiplatform
+  modules:
+    - type: multiplatform
+      name: a
+      subModules:
+        - type: linuxX64Target
+          name: linuxX64

@@ -1,0 +1,12 @@
+LineBreakpoint created at twoDumps.kt:19
+LineBreakpoint created at twoDumps.kt:30
+Run Java
+Connected to the target VM
+twoDumps.kt:19
+"coroutine#1", state: RUNNING
+twoDumps.kt:30
+"coroutine#1", state: RUNNING
+"coroutine#2", state: RUNNING
+Disconnected from the target VM
+
+Process finished with exit code 0

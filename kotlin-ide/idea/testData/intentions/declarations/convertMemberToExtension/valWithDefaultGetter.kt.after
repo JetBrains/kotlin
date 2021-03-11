@@ -1,0 +1,7 @@
+// WITH_RUNTIME
+// SKIP_ERRORS_BEFORE
+class Owner {
+}
+
+val Owner.p: Int
+    get() = <caret><selection>TODO("Not yet implemented")</selection>

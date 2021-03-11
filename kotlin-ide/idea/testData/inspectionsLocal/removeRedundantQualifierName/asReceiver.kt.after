@@ -1,0 +1,15 @@
+// WITH_RUNTIME
+
+import B.G
+
+fun test() {
+    G.let { it }
+}
+
+class B {
+    object G
+}
+
+class C {
+    object G
+}

@@ -1,0 +1,4 @@
+// WITH_RUNTIME
+fun List<Any>.test() {
+    filterIsInstance<String>()
+}

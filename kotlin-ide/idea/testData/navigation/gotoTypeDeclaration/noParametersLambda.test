@@ -1,0 +1,9 @@
+// FILE: before.kt
+class Foo
+
+val f: () -> Foo = {<caret> }
+
+// FILE: after.kt
+class Foo
+
+val f: () -> Foo = {<caret> }

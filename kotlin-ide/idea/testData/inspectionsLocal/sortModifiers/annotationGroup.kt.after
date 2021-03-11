@@ -1,0 +1,8 @@
+// PROBLEM: Modifiers should follow annotations
+annotation class Inject
+annotation class VisibleForTesting
+
+class Example {
+    <caret>@set:[Inject VisibleForTesting]
+    public var x: String = ""
+}

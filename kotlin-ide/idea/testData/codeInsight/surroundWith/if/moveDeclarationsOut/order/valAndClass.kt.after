@@ -1,0 +1,13 @@
+fun foo() {
+    class A {
+        fun test() {}
+    }
+
+    val d: A =
+    if (<caret>) {
+        A()
+    }
+
+    d.test()
+    A()
+}

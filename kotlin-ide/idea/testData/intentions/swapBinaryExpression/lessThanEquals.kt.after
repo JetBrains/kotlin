@@ -1,0 +1,4 @@
+fun main() {
+    val y = 20
+    val ex = y >= 5
+}

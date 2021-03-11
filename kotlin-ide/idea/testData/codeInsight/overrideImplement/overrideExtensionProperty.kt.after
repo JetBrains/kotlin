@@ -1,0 +1,8 @@
+interface A {
+    val String.prop : Int
+}
+
+class B : A {
+    override val String.prop: Int
+        get() = <selection><caret>TODO("Not yet implemented")</selection>
+}

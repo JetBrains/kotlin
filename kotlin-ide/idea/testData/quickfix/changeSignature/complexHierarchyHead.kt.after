@@ -1,0 +1,58 @@
+// "Remove parameter 'a'" "true"
+interface OA {
+    fun f()
+}
+
+interface OB {
+    fun f(a: Int)
+}
+
+interface O : OA, OB {
+    override fun f()
+}
+
+interface OO : O {
+    override fun f() {
+    }
+}
+
+interface OOO : OO {
+    override fun f() {}
+}
+
+interface OOOA : OOO {
+    override fun f() {
+    }
+}
+
+interface OOOB : OOO {
+    override fun f() {
+    }
+}
+
+fun usage(o: OA) {
+    o.f()
+}
+fun usage(o: OB) {
+    o.f(1)
+}
+
+fun usage(o: O) {
+    o.f()
+}
+
+fun usage(o: OO) {
+    o.f()
+}
+
+fun usage(o: OOO) {
+    o.f()
+}
+
+fun usage(o: OOOA) {
+    o.f()
+}
+
+fun usage(o: OOOB) {
+    o.f()
+}

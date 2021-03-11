@@ -1,0 +1,29 @@
+apply plugin: 'kotlin-multiplatform'
+
+kotlin {
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation 'org.jetbrains.kotlin:kotlin-stdlib-common'
+                implementation project(':lib')
+            }
+        }
+        main {
+            dependencies {
+                implementation 'org.jetbrains.kotlin:kotlin-stdlib'
+            }
+        }
+        jsMain {
+            dependencies {
+                implementation 'org.jetbrains.kotlin:kotlin-stdlib-js'
+            }
+        }
+    }
+    targets {
+        fromPreset(presets.jvmWithJava, 'jvm')
+        fromPreset(presets.js, 'js')
+    }
+}
+
+apply plugin: 'application'
+mainClassName = 'com.example.app.JvmGreeterKt'

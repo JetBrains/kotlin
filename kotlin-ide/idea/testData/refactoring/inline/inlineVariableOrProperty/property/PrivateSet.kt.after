@@ -1,0 +1,6 @@
+class A {
+
+    fun f() {
+        println(10)
+    }
+}

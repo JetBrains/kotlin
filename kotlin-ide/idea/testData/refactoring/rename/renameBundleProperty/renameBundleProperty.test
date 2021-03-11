@@ -1,0 +1,6 @@
+{
+  "type": "BUNDLE_PROPERTY",
+  "file": "TestBundle.properties",
+  "oldName": "foo.bar",
+  "newName": "bar.foo"
+}

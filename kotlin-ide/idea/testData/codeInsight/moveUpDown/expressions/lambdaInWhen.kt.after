@@ -1,0 +1,10 @@
+// MOVE: down
+fun test(i: Int) {
+    when (i) {
+        1 -> {
+            <caret>println()
+            run {
+            }
+        }
+    }
+}

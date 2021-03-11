@@ -1,0 +1,9 @@
+fun testApply() {
+    val i: Int = 42
+    i.toString()
+    val applyInside = i
+
+    i.toString()
+    val applyTrailing = i
+}
+

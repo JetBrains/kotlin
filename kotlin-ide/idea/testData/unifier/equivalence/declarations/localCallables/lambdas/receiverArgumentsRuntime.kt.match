@@ -1,0 +1,11 @@
+{ n: Int, s: String ->
+        val a = n + this
+        println(s)
+        f(a)
+    }
+
+{ a, b ->
+        val m = a + this
+        println(b)
+        f(m)
+    }

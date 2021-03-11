@@ -1,0 +1,83 @@
+UFile (package = ) [  ]
+    UClass (name = Pizza) [ /**
+ * Common Pizza Interface
+ *
+ * @see Margherita
+ */ ]
+        UMethod (name = getSize) [ /** The size of [Pizza] */ ]
+        UMethod (name = getName) [ /**
+     * Human-readable name of type [string_link_alias][java.lang.String]
+     *
+     * @throws java.lang.IllegalStateException
+     * @throws ClassCastException
+     */ ]
+        UMethod (name = contains) [ /**
+     * Checks whether pizza contains the specified [Pizza.Ingredient]
+     *
+     * @param ingredient the ingredient to check
+     * @exception kotlin.NotImplementedError
+     * @sample Margherita.contains
+     */ ]
+            UParameter (name = ingredient) [  ]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [  ]
+        UClass (name = Ingredient) [ /** Ingredient of [Pizza] */ ]
+        UClass (name = Builder) [ /**
+     * Abstract [Pizza] builder
+     *
+     * @param P well-known hack to solve abstract builder chain problem, see [self]
+     */ ]
+            UField (name = ingredients) [  ]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [  ]
+                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) [  ]
+                    UIdentifier (Identifier (mutableSetOf)) [  ]
+                    USimpleNameReferenceExpression (identifier = mutableSetOf, resolvesTo = null) [  ]
+            UMethod (name = addIngredient) [ /**
+         * Adds [ingredient] to the [ingredients]
+         *
+         * @return value of type [P]
+         */ ]
+                UParameter (name = ingredient) [  ]
+                    UAnnotation (fqName = org.jetbrains.annotations.NotNull) [  ]
+            UMethod (name = build) [  ]
+            UMethod (name = self) [  ]
+            UMethod (name = Builder) [ /**
+     * Abstract [Pizza] builder
+     *
+     * @param P well-known hack to solve abstract builder chain problem, see [self]
+     */ ]
+    UClass (name = Margherita) [ /**
+ * Pizza Margherita
+ *
+ * @see Pizza
+ * @property size ideal size of [Margherita] is of course 42
+ */ ]
+        UField (name = size) [  ]
+            UAnnotation (fqName = org.jetbrains.annotations.NotNull) [  ]
+            ULiteralExpression (value = 42) [  ]
+        UMethod (name = getName) [  ]
+            UBlockExpression [  ]
+                UReturnExpression [  ]
+                    UQualifiedReferenceExpression [  ]
+                        UQualifiedReferenceExpression [  ]
+                            USimpleNameReferenceExpression (identifier = java) [  ]
+                            USimpleNameReferenceExpression (identifier = lang) [  ]
+                        UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 1)) [  ]
+                            UIdentifier (Identifier (String)) [  ]
+                            USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: String) [  ]
+                            ULiteralExpression (value = "Margherita") [  ]
+        UMethod (name = contains) [ /**
+     * Checks whether pizza contains the specified [Pizza.Ingredient]
+     *
+     * @param ingredient see [Pizza.Ingredient]
+     */ ]
+            UParameter (name = ingredient) [  ]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [  ]
+            UBlockExpression [  ]
+                UReturnExpression [  ]
+                    ULiteralExpression (value = false) [  ]
+        UMethod (name = getSize) [  ]
+        UMethod (name = Margherita) [  ]
+            UParameter (name = size) [  ]
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [  ]
+                ULiteralExpression (value = 42) [  ]
+        UMethod (name = Margherita) [  ]

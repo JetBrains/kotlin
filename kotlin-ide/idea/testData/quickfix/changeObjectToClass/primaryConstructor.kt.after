@@ -1,0 +1,8 @@
+// "Change 'object' to 'class'" "true"
+annotation class Ann
+
+// comment
+@Ann
+class Foo(val s: String) : Any() {
+    constructor() : this("")
+}

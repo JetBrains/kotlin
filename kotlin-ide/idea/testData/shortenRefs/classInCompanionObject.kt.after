@@ -1,0 +1,5 @@
+import dependency.C.Companion.Nested
+
+fun foo() {
+    Nested()
+}

@@ -1,0 +1,14 @@
+open class A(a: Int) {
+    // INFO: {"checked": "true"}
+    val n: Int
+
+    init {
+        n = a + 1
+    }
+}
+
+class B: A {
+
+    constructor(a: Int) : super(a) {
+    }
+}

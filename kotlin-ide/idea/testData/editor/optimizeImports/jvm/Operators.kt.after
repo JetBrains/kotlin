@@ -1,0 +1,12 @@
+// NAME_COUNT_TO_USE_STAR_IMPORT: 5
+import p1.div
+import p1.plus
+import p1.timesAssign
+import p1.unaryMinus
+
+fun f(runnable: Runnable) {
+    var r = -runnable
+    print(r + 1)
+    r /= 2
+    r *= 3
+}

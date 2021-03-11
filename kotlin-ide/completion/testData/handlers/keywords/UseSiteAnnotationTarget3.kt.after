@@ -1,0 +1,4 @@
+class C(@set:<caret>Ann var p: String)
+
+// ELEMENT: set
+// CHAR: '\t'

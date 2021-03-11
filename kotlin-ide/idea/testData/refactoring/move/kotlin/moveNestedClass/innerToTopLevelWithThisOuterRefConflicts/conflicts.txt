@@ -1,0 +1,3 @@
+Member extension call won't be processed: bar()
+Member extension call won't be processed: foo()
+Qualified call won't be processed: 1.foo()

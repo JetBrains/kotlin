@@ -1,0 +1,12 @@
+// IGNORE_BACKEND: JVM_IR
+LineBreakpoint created at stepOverInlinedLambdaStdlib.kt:5
+Run Java
+Connected to the target VM
+stepOverInlinedLambdaStdlib.kt:5
+stepOverInlinedLambdaStdlib.kt:6
+stepOverInlinedLambdaStdlib.kt:8
+_Collections.!EXT!
+stepOverInlinedLambdaStdlib.kt:8
+Disconnected from the target VM
+
+Process finished with exit code 0

@@ -1,0 +1,3 @@
+fun foo(s: String) {
+    val x = <spot>s</spot>$key
+}

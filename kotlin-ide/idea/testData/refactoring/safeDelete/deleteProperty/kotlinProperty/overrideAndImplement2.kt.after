@@ -1,0 +1,13 @@
+open class A {
+}
+
+interface Z {
+    val foo: String
+}
+
+class B: A(), Z {
+    override val foo: String
+        get() {
+            return "B"
+        }
+}

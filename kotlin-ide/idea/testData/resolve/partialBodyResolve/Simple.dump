@@ -1,0 +1,9 @@
+Resolve target: value-parameter p: kotlin.Int
+----------------------------------------------
+fun foo(p: Int) {
+    /* STATEMENT DELETED: x() */
+    if (y()) {
+        print(<caret>p)
+    }
+    /* STATEMENT DELETED: z() */
+}

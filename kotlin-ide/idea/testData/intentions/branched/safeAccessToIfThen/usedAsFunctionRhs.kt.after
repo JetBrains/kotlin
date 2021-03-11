@@ -1,0 +1,4 @@
+fun foo(arg: String?): Int? = if (arg != null) arg.length else null
+fun main(args: Array<String>) {
+    foo("bar")
+}

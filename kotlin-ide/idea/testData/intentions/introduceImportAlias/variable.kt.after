@@ -1,0 +1,22 @@
+import Outer.Middle
+import Outer.Middle.Inner.Companion.SIZE as SIZE1
+
+class Outer {
+    class Middle {
+        class Inner {
+            companion object {
+                const val SIZE = 1
+            }
+        }
+    }
+}
+
+class Test() {
+    fun test() {
+        val i = SIZE1
+    }
+
+    fun test2() {
+        val i = SIZE1
+    }
+}

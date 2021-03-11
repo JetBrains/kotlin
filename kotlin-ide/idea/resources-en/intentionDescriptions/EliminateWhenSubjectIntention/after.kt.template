@@ -1,0 +1,11 @@
+when {
+    n == 1 -> {
+        res = "one"
+    }
+    n == 2 -> {
+        res = "two"
+    }
+    else -> {
+        res = "???"
+    }
+}

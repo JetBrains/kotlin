@@ -1,0 +1,73 @@
+<problems>
+    <problem>
+        <file>UnambiguousSuperProperty.kt</file>
+        <line>11</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="UnambiguousSuperProperty.kt" />
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Supertype qualification is unnecessary</problem_class>
+        <description>Remove explicit supertype qualification</description>
+    </problem>
+
+    <problem>
+        <file>UnambiguousSuperMethod.kt</file>
+        <line>13</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="UnambiguousSuperMethod.kt" />
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Supertype qualification is unnecessary</problem_class>
+        <description>Remove explicit supertype qualification</description>
+    </problem>
+
+    <problem>
+        <file>SingleSuper.kt</file>
+        <line>6</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="SingleSuper.kt" />
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Supertype qualification is unnecessary</problem_class>
+        <description>Remove explicit supertype qualification</description>
+    </problem>
+
+    <problem>
+        <file>IncompleteCall.kt</file>
+        <line>13</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="IncompleteCall.kt" />
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Supertype qualification is unnecessary</problem_class>
+        <description>Remove explicit supertype qualification</description>
+    </problem>
+
+    <problem>
+        <file>DataFlowInfoUsed.kt</file>
+        <line>14</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="DataFlowInfoUsed.kt" />
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Supertype qualification is unnecessary</problem_class>
+        <description>Remove explicit supertype qualification</description>
+    </problem>
+
+    <problem>
+        <file>SuperWithLabel.kt</file>
+        <line>13</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="SuperWithLabel.kt" />
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Supertype qualification is unnecessary</problem_class>
+        <description>Remove explicit supertype qualification</description>
+    </problem>
+
+    <problem>
+        <file>WrongOffset1.kt</file>
+        <line>15</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="WrongOffset1.kt" />
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Supertype qualification is unnecessary</problem_class>
+        <description>Remove explicit supertype qualification</description>
+    </problem>
+
+    <problem>
+        <file>WrongOffset2.kt</file>
+        <line>15</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="WrongOffset2.kt" />
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Supertype qualification is unnecessary</problem_class>
+        <description>Remove explicit supertype qualification</description>
+    </problem>
+</problems>

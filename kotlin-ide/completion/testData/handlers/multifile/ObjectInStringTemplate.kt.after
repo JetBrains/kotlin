@@ -1,0 +1,5 @@
+import ppp.OOOOO
+
+fun foo(): String {
+    val s = "${OOOOO<caret>}"
+}

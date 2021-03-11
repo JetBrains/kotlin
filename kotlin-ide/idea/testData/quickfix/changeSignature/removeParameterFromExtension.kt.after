@@ -1,0 +1,4 @@
+// "Remove parameter 'a'" "true"
+
+fun String.foo(b: Int) {
+}

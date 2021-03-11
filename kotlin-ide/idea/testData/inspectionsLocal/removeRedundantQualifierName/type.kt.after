@@ -1,0 +1,9 @@
+package my.simple.name
+
+class Foo
+class Bar
+
+fun foo(a: Foo) {
+    val b: my.simple.name.Bar
+    val c: Foo
+}

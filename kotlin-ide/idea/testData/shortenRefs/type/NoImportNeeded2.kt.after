@@ -1,0 +1,3 @@
+package java.io
+
+class A : File

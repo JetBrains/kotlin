@@ -1,0 +1,6 @@
+// WITH_RUNTIME
+fun foo(bar: Iterable<Int>) {
+    for ((index, a) in bar.withIndex()) {<caret>
+
+    }
+}

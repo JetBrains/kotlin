@@ -1,0 +1,6 @@
+fun foo(arg: Int): Int {
+    when (arg) {
+        0 -> return 0 // 1
+        else -> return -1
+    } // 2
+}

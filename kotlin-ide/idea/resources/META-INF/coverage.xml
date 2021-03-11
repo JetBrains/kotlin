@@ -1,0 +1,5 @@
+<idea-plugin>
+    <extensions defaultExtensionNs="com.intellij">
+        <javaCoverageEngineExtension implementation="org.jetbrains.kotlin.idea.coverage.KotlinCoverageExtension"/>
+    </extensions>
+</idea-plugin>

@@ -1,0 +1,12 @@
+open class A {
+}
+
+interface Z {
+    fun foo()
+}
+
+class B: A, Z {
+    override fun foo() {
+
+    }
+}

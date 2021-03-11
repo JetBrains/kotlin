@@ -1,0 +1,5 @@
+// SKIP_ERRORS_AFTER
+
+fun main() {
+    val f = { x, str -> x }
+}

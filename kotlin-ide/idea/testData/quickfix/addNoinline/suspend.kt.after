@@ -1,0 +1,5 @@
+// "Add 'noinline' to parameter 'x'" "true"
+// TODO: remove it after coroutines are released
+// DISABLE-ERRORS
+
+inline fun foo(noinline x: suspend () -> Unit) {}

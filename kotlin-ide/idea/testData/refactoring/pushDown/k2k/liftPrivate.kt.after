@@ -1,0 +1,10 @@
+open class A {
+    // INFO: {"checked": "true", "toAbstract": "true"}
+    protected abstract fun foo()
+
+    inner class B : A() {
+        override fun foo() {
+
+        }
+    }
+}

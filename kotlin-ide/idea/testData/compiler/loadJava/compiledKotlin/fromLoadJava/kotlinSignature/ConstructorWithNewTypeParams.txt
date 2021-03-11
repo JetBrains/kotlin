@@ -1,0 +1,5 @@
+package test
+
+public open class ConstructorWithNewTypeParams</*0*/ T> {
+    /*primary*/ public constructor ConstructorWithNewTypeParams</*0*/ T>(/*0*/ first: kotlin.Any)
+}

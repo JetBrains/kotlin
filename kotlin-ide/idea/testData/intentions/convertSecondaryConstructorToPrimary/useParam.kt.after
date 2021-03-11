@@ -1,0 +1,4 @@
+class UseParam(x: Int) {
+
+    val y: Int = x
+}

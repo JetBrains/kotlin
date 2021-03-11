@@ -1,0 +1,4 @@
+fun f2() = "f2"
+f2()
+
+// RESULT: "f2": Ljava/lang/String;

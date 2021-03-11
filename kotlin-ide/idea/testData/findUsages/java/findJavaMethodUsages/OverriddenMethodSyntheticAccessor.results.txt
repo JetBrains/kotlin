@@ -1,0 +1,2 @@
+Function call 2 getFoo() // Found
+Value read 3 foo // Not found

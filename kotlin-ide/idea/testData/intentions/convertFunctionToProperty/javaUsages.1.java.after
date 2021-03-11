@@ -1,0 +1,7 @@
+import static test.JavaUsagesKt.getFoo;
+
+class J {
+    void test() {
+        boolean b = getFoo();
+    }
+}

@@ -1,0 +1,2 @@
+// "Remove 'inline' modifier" "true"
+fun test() {}

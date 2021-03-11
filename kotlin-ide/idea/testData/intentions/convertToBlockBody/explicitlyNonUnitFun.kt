@@ -1,0 +1,1 @@
+fun <caret>foo(): String = "abc"

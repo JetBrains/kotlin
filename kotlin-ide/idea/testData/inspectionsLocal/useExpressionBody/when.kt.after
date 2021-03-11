@@ -1,0 +1,7 @@
+// HIGHLIGHT: INFORMATION
+
+fun sign(x: Int): Int = when {
+    x < 0 -> -1
+    x > 0 -> 1
+    else -> 0
+}

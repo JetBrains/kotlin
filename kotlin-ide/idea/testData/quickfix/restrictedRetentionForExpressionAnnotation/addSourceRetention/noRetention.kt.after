@@ -1,0 +1,4 @@
+// "Add SOURCE retention" "true"
+@Retention(AnnotationRetention.SOURCE)
+@Target(AnnotationTarget.EXPRESSION)
+annotation class Ann

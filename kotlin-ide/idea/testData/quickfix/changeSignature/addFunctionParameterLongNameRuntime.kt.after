@@ -1,0 +1,10 @@
+import java.util.LinkedHashSet
+
+// "Add parameter to function 'foo'" "true"
+// DISABLE-ERRORS
+
+fun foo(x: Int, linkedHashSet: LinkedHashSet<Int>) {
+    foo(, LinkedHashSet<Int>());
+    foo(1, LinkedHashSet<Int>());
+    foo(2, java.util.LinkedHashSet<Int>());
+}

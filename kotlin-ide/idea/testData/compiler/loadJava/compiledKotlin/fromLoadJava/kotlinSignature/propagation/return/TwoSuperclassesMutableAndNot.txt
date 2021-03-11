@@ -1,0 +1,19 @@
+package test
+
+public interface TwoSuperclassesMutableAndNot {
+
+    public interface Sub : test.TwoSuperclassesMutableAndNot.Super1, test.TwoSuperclassesMutableAndNot.Super2 {
+        public abstract override /*2*/ /*fake_override*/ fun dummy(): kotlin.Unit
+        public abstract override /*2*/ fun foo(): kotlin.collections.MutableList<kotlin.String>
+    }
+
+    public interface Super1 {
+        public abstract fun dummy(): kotlin.Unit
+        public abstract fun foo(): kotlin.collections.MutableCollection<kotlin.String>
+    }
+
+    public interface Super2 {
+        public abstract fun dummy(): kotlin.Unit
+        public abstract fun foo(): kotlin.collections.List<kotlin.String>
+    }
+}

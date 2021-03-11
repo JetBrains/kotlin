@@ -1,0 +1,5 @@
+annotation class Ann
+
+class AnnotatedParam(@Ann x: Double) {
+    val y = x
+}

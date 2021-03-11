@@ -1,0 +1,4 @@
+fun f() {
+    println(239)
+    println(239 + 239)
+}

@@ -1,0 +1,34 @@
+// WITH_RUNTIME
+// SUGGESTED_NAMES: triple, getT
+// PARAM_TYPES: kotlin.Int
+// PARAM_TYPES: kotlin.Int
+// PARAM_TYPES: kotlin.Int
+// PARAM_DESCRIPTOR: value-parameter a: kotlin.Int defined in foo
+// PARAM_DESCRIPTOR: var b: kotlin.Int defined in foo
+// PARAM_DESCRIPTOR: var c: kotlin.Int defined in foo
+// SIBLING:
+fun foo(a: Int): Int {
+    var b: Int = 1
+    var c: Int = 2
+
+    val triple = triple(a, b, c)
+    b = triple.second
+    c = triple.third
+    val t = triple.first
+    println(b + c)
+
+    return t
+}
+
+private fun triple(a: Int, b: Int, c: Int): Triple<Int, Int, Int> {
+    var b1 = b
+    var c1 = c
+    val i = if (a > 0) {
+        b1 += a
+        c1 -= b1
+        b1
+    } else {
+        a
+    }
+    return Triple(i, b1, c1)
+}

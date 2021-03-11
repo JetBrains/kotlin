@@ -1,0 +1,6 @@
+import kotlin.math.tan
+
+// WITH_RUNTIME
+fun test(x: Double) {
+    tan(x)
+}

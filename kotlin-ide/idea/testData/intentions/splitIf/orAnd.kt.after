@@ -1,0 +1,12 @@
+fun <T> doSomething(a: T) {}
+
+fun foo() {
+    val a = true
+    val b = false
+    val c = true
+    if (a) {
+        doSomething("test")
+    } else if (b && c) {
+        doSomething("test")
+    }
+}

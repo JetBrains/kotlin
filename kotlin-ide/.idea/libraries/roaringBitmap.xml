@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="roaringBitmap" type="repository">
+    <properties maven-id="org.roaringbitmap:RoaringBitmap:0.9.0" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/roaringbitmap/RoaringBitmap/0.9.0/RoaringBitmap-0.9.0.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/roaringbitmap/shims/0.9.0/shims-0.9.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/roaringbitmap/RoaringBitmap/0.9.0/RoaringBitmap-0.9.0-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/roaringbitmap/shims/0.9.0/shims-0.9.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

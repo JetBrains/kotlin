@@ -1,0 +1,27 @@
+package foo
+
+class Impl : TestJavaInterface {
+    override fun onTextEvent() {
+        TODO("Not yet implemented")
+    }
+
+    override fun onAttachmentEvent() {
+        TODO("Not yet implemented")
+    }
+
+    override fun onEventDeleted() {
+        TODO("Not yet implemented")
+    }
+
+    override fun onSeenReceipt() {
+        TODO("Not yet implemented")
+    }
+
+    override fun onDeliveredReceipt() {
+        TODO("Not yet implemented")
+    }
+
+    override fun onTypingEvent() {
+        TODO("Not yet implemented")
+    }
+}

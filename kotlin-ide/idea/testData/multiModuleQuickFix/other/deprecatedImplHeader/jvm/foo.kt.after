@@ -1,0 +1,3 @@
+// "Replace with 'actual'" "true"
+
+actual fun foo() = 42

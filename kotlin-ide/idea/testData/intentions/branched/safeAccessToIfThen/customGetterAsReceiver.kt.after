@@ -1,0 +1,14 @@
+fun <T> doSomething(a: T) {}
+
+class Foo {
+    val b: String?
+        get() {
+            return "Foo"
+        }
+}
+
+fun main(args: Array<String>) {
+    val a = Foo()
+    val b = a.b
+    doSomething(if (b != null) b.length else null)
+}

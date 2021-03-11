@@ -1,0 +1,4 @@
+package test
+
+object Bar {
+}

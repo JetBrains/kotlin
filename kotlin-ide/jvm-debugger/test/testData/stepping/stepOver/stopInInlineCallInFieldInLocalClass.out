@@ -1,0 +1,8 @@
+LineBreakpoint created at stopInInlineCallInFieldInLocalClass.kt:12
+Run Java
+Connected to the target VM
+stopInInlineCallInFieldInLocalClass.kt:12
+stopInInlineCallInFieldInLocalClass.kt:13
+Disconnected from the target VM
+
+Process finished with exit code 0

@@ -1,0 +1,3 @@
+// "Add type 'Int' to parameter 'bar'" "true"
+
+class Foo(val bar: Int = 10<caret>)

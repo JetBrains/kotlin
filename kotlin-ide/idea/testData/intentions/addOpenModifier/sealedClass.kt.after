@@ -1,0 +1,4 @@
+sealed class Foo {
+    open fun bar() {
+    }
+}

@@ -1,0 +1,13 @@
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
+
+fun calcSomething() = 42
+
+suspend fun CoroutineScope.foo() {
+    val deferred = coroutineScope {
+        async {
+            calcSomething()
+        }
+    }
+}

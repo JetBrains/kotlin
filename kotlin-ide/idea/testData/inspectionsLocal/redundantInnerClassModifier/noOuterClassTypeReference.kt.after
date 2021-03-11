@@ -1,0 +1,6 @@
+class A {
+    class B<T> {
+        fun b(t: T) {
+        }
+    }
+}

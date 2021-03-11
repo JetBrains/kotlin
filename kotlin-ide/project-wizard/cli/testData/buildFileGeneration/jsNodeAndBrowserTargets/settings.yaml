@@ -1,0 +1,12 @@
+kotlin:
+  projectKind: Multiplatform
+  modules:
+    - type: multiplatform
+      name: a
+      subModules:
+        - type: jsNode
+          name: nodeJs
+        - type:
+            name: jsBrowser
+            testFramework: JS
+          name: browser

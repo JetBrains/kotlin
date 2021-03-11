@@ -1,0 +1,10 @@
+package test
+
+public final class NamedClassObject {
+    /*primary*/ public constructor NamedClassObject()
+
+    public companion object Named {
+        /*primary*/ private constructor Named()
+        public final fun f(): kotlin.Int
+    }
+}

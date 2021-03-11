@@ -1,0 +1,8 @@
+import kotlin.math.abs
+
+// WITH_RUNTIME
+fun x() {
+    listOf<Int>()
+        .take(10)
+        .filter { abs(it) < 10 }
+}

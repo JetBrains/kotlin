@@ -1,0 +1,3 @@
+fun foo() {
+    val x = <spot>X("x")</spot>
+}

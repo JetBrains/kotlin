@@ -1,0 +1,11 @@
+interface T {
+    fun test() {}
+}
+
+fun foo() {
+    __dummyTestFun__()
+}
+
+private fun __dummyTestFun__() {
+    (object : T {}).test()
+}

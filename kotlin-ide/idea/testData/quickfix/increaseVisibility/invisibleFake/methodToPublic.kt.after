@@ -1,0 +1,12 @@
+// "Make 'doSth' public" "true"
+
+open class A {
+    fun doSth() {
+    }
+}
+
+class B : A() {
+    fun bar() {
+        doSth()
+    }
+}

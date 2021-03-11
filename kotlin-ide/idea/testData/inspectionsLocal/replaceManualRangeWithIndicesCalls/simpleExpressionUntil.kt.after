@@ -1,0 +1,4 @@
+// WITH_RUNTIME
+fun test(args: Array<String>) {
+    val ind = args.indices
+}

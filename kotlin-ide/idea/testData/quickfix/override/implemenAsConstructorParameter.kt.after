@@ -1,0 +1,6 @@
+// "Implement as constructor parameters" "true"
+interface I {
+    val foo: Int
+}
+
+class A(override val foo: Int<caret>) : I

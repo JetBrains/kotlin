@@ -1,0 +1,5 @@
+class Foo {
+    fun Foo.bar(): Int = 1
+}
+
+fun Foo.test(foo: Foo?): Int = foo?.bar() ?: 0

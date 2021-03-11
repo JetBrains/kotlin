@@ -1,0 +1,6 @@
+import foo.Z
+
+class Foo
+interface ISomething {
+    val z: Z
+}

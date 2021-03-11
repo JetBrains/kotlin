@@ -1,0 +1,6 @@
+import kotlin.math.cosh
+
+// WITH_RUNTIME
+fun test(x: Double) {
+    cosh(x)
+}

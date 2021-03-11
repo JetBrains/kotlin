@@ -1,0 +1,10 @@
+// "Make constructor parameter a property in class 'B'" "true"
+
+class B(<selection>private</selection><caret> val bar: String) {
+
+    inner class A {
+        fun foo() {
+            val a = bar
+        }
+    }
+}

@@ -1,0 +1,2 @@
+@Suppress("INVISIBLE_MEMBER")
+(MyClass().privateFun() + MyClass().privateVal + MyClass.PrivateClass().a)

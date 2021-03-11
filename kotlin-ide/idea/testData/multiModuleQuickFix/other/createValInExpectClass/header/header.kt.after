@@ -1,0 +1,13 @@
+// "Create member property 'Foo.foo'" "true"
+
+expect class Foo {
+    val foo: Int
+}
+
+fun test(f: Foo) {
+    takeInt(f.foo)
+}
+
+fun takeInt(n: Int) {
+
+}

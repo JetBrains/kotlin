@@ -1,0 +1,7 @@
+fun foo() {
+    var a = if () {
+        "aaa"
+    }
+
+    a.charAt(1)
+}

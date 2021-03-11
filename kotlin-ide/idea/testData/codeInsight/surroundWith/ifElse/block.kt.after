@@ -1,0 +1,10 @@
+fun foo() {
+    val a: String? = null
+
+    if (<caret>) {
+        if (a != null) {
+            a.length()
+        }
+    } else {
+    }
+}

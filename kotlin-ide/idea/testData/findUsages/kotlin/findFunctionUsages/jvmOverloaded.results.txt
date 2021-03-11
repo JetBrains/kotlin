@@ -1,0 +1,4 @@
+Unclassified 11 Foo.foo(1, 1.0);
+Unclassified 15 Foo.foo(1, 1.0, "1");
+Unclassified 3 Foo.foo();
+Unclassified 7 Foo.foo(1);

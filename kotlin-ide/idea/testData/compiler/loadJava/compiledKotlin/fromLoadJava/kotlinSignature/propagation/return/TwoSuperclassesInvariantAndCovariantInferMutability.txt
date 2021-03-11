@@ -1,0 +1,19 @@
+package test
+
+public interface TwoSuperclassesInvariantAndCovariantInferMutability {
+
+    public interface Sub : test.TwoSuperclassesInvariantAndCovariantInferMutability.Super1, test.TwoSuperclassesInvariantAndCovariantInferMutability.Super2 {
+        public abstract override /*2*/ /*fake_override*/ fun dummy(): kotlin.Unit
+        public abstract override /*2*/ fun foo(): kotlin.collections.MutableList<kotlin.collections.MutableList<kotlin.String>>
+    }
+
+    public interface Super1 {
+        public abstract fun dummy(): kotlin.Unit
+        public abstract fun foo(): kotlin.collections.List<kotlin.collections.List<kotlin.String>>
+    }
+
+    public interface Super2 {
+        public abstract fun dummy(): kotlin.Unit
+        public abstract fun foo(): kotlin.collections.MutableList<kotlin.collections.MutableList<kotlin.String>>
+    }
+}

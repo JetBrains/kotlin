@@ -1,0 +1,7 @@
+fun main() {
+    listOf<Foo>().filter { it.baz }
+}
+
+private class Foo {
+    val baz get() = true
+}

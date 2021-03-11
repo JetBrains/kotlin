@@ -1,0 +1,6 @@
+fun foo() {
+    var a: Boolean? = null
+    if (a == true) {
+
+    }
+}

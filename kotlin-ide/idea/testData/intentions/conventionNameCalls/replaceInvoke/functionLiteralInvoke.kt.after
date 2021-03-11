@@ -1,0 +1,9 @@
+fun test() {
+    class Test {
+        operator fun invoke(fn: () -> Unit) {}
+    }
+    val test = Test()
+    test {
+
+    }
+}

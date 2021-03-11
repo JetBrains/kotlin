@@ -1,0 +1,9 @@
+fun test(n: Int): String {
+    return <caret>if ((n < 0) || (n > 1000))
+        "unknown"
+    else if (n <= 10)
+        "small"
+    else if (n <= 100)
+        "average"
+    else "big"
+}

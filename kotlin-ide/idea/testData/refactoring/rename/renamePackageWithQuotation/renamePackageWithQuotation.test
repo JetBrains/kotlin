@@ -1,0 +1,7 @@
+{
+  "type": "MARKED_ELEMENT",
+  "mainFile": "test/break/test.kt",
+  "newName": "for",
+  "withRuntime": "true",
+  "byRef": "true"
+}

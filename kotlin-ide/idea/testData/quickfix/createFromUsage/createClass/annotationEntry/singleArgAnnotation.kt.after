@@ -1,0 +1,7 @@
+// "Create annotation 'foo'" "true"
+
+@[foo(1)] fun test() {
+
+}
+
+annotation class foo(val value: Int)

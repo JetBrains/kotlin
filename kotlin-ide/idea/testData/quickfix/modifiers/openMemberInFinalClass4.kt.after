@@ -1,0 +1,6 @@
+// "Make 'A' 'open'" "true"
+@Deprecated("")
+open class A() {
+    open fun foo() {}
+}
+/* FIR_COMPARISON */

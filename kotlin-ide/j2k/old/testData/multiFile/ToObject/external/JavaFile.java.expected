@@ -1,0 +1,9 @@
+package test;
+
+class C {
+    void foo() {
+        Utils.INSTANCE.foo1(Utils.INSTANCE.getStaticField());
+        Utils.INSTANCE.setStaticField(Utils.INSTANCE.getStaticField() + Utils.INSTANCE.foo2());
+        PureUtils.INSTANCE.foo1(PureUtils.INSTANCE.foo2())
+    }
+}

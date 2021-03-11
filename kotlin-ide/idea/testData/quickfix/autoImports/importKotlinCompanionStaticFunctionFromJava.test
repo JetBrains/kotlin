@@ -1,0 +1,43 @@
+// FILE: bar/Foo.before.java
+// "/(Static import|Import static) method 'foo.Bar.foobar'/" "true"
+// ERROR: Unresolved reference: foobar
+// ACTION: Create method 'foobar'
+// WITH_RUNTIME
+package bar;
+
+public class Foo {
+    public void main()
+    {
+        foobar<caret>();
+    }
+}
+
+
+// FILE: foo/Bar.dependency.kt
+package foo
+
+class Bar {
+    companion object {
+        @JvmStatic
+        fun foobar() {
+        }
+    }
+}
+
+// FILE: bar/Foo.after.java
+// "/(Static import|Import static) method 'foo.Bar.foobar'/" "true"
+// ERROR: Unresolved reference: foobar
+// ACTION: Create method 'foobar'
+// WITH_RUNTIME
+package bar;
+
+import static foo.Bar.foobar;
+
+public class Foo {
+    public void main()
+    {
+        foobar<caret>();
+    }
+}
+
+

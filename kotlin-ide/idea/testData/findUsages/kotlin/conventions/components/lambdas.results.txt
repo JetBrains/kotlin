@@ -1,0 +1,8 @@
+Value read 19 p[0] = { val (x, y) = it }
+Value read 25 takeExtFun { val (x, y) = this }
+Value read 27 takeFun1 { val (x, y) = it }
+Value read 28 takeFun2 { a, n -> val (x, y) = a!! }
+Value read 29 takeFun3 { val (x, y) = it[0] }
+Value read 31 x(p) { val (x, y) = it }
+Value read 32 x(p, fun (p) { val (x, y) = p })
+Value read 40 "".v = { val (x, y ) = it }

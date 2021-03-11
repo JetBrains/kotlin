@@ -1,0 +1,1 @@
+function test.foo() on String has 1 usage that is not safe to delete.

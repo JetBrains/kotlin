@@ -1,0 +1,15 @@
+package my.simple.name
+
+class Outer {
+    class Middle {
+        class Inner {
+            fun check() {
+                Companion.check()
+            }
+
+            companion object {
+                fun check() {}
+            }
+        }
+    }
+}

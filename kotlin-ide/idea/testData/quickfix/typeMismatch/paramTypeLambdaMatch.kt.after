@@ -1,0 +1,6 @@
+// "Surround with lambda" "true"
+fun simple() {
+    str({ "foo" })
+}
+
+fun str(block: () -> String) {}

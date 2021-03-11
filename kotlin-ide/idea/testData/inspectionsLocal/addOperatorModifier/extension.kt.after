@@ -1,0 +1,4 @@
+class A {
+}
+
+operator fun A.<caret>plus(other: A): A = A()

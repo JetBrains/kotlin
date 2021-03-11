@@ -1,0 +1,6 @@
+// foo: to be implemented
+
+actual fun bar() {}
+actual fun foo(arg: Int): String {
+    TODO("Not yet implemented")
+}

@@ -1,0 +1,12 @@
+UFile (package = )
+    UClass (name = IfStatementKt)
+        UMethod (name = foo)
+            UBlockExpression
+                UDeclarationsExpression
+                    ULocalVariable (name = x)
+                        UIfExpression
+                            UBinaryExpression (operator = !=)
+                                ULiteralExpression (value = "abc")
+                                ULiteralExpression (value = "def")
+                            ULiteralExpression (value = 1)
+                            ULiteralExpression (value = 0)

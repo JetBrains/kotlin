@@ -1,0 +1,2 @@
+Unclassified 17 class U: Z {
+Unclassified 4 open class B: A() {

@@ -1,0 +1,6 @@
+// EXTRACTION_TARGET: property with initializer
+class Foo(s: String) {
+    private val s = (s + "1")
+
+    val l = s.length
+}

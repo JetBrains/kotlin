@@ -1,0 +1,23 @@
+// PARAM_TYPES: kotlin.Int
+// PARAM_TYPES: kotlin.Int
+// PARAM_DESCRIPTOR: value-parameter a: kotlin.Int defined in foo
+// PARAM_DESCRIPTOR: val b: kotlin.Int defined in foo
+// WITH_RUNTIME
+// SIBLING:
+fun foo(a: Int) {
+    val b: Int = 1
+
+    val c: Int
+    __dummyTestFun__(a, b)
+
+    c = 1
+    println(c)
+}
+
+private fun __dummyTestFun__(a: Int, b: Int) {
+    if (a > 0) {
+        println(a)
+    }
+    val c: Int
+    println(b)
+}

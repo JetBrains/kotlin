@@ -1,0 +1,9 @@
+fun main() {
+    "foo".let {
+        println(it)
+        println(42)
+        it.let { "$it" }
+        Unit
+    }
+}
+

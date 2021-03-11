@@ -1,0 +1,7 @@
+// "Change 'set' to val" "true"
+// WITH_RUNTIME
+
+fun test() {
+    val set = mutableSetOf(1)
+    set <caret>+= 2
+}

@@ -1,0 +1,10 @@
+LineBreakpoint created at threeCoroutines.kt:10
+Run Java
+Connected to the target VM
+threeCoroutines.kt:10
+"coroutine#1", state: RUNNING
+"coroutine#2", state: RUNNING
+"coroutine#3", state: RUNNING
+Disconnected from the target VM
+
+Process finished with exit code 0

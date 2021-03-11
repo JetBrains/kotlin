@@ -1,0 +1,28 @@
+// FILE: first.before.kt
+// "Import" "true"
+// ERROR: Unresolved reference: Some
+package testing
+
+class TestClass: <caret>Some.InnerInSome()
+
+
+
+// FILE: second.kt
+package some
+
+public class Some {
+  public open class InnerInSome {
+
+  }
+}
+
+
+
+// FILE: first.after.kt
+// "Import" "true"
+// ERROR: Unresolved reference: Some
+package testing
+
+import some.Some
+
+class TestClass: <caret>Some.InnerInSome()

@@ -1,0 +1,2 @@
+<!-- assignedButNeverAccessedVariable1 -->
+Variable 'x' is assigned but never accessed

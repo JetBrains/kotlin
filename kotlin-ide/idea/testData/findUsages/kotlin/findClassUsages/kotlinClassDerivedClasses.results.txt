@@ -1,0 +1,1 @@
+Unclassified 3 open class B: A() {

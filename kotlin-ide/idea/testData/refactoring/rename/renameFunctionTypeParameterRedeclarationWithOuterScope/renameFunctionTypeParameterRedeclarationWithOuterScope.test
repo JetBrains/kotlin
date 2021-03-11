@@ -1,0 +1,6 @@
+{
+  "type": "MARKED_ELEMENT",
+  "mainFile": "test.kt",
+  "newName": "T",
+  "hint": "Type parameter 'T' is already declared in class 'A'"
+}

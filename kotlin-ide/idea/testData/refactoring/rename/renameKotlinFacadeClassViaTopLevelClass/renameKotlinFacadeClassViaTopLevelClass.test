@@ -1,0 +1,6 @@
+{
+  "type": "MARKED_ELEMENT",
+  "mainFile": "foo/TopLevel.kt",
+  "newName": "TopLevel2",
+  "withRuntime": "true"
+}

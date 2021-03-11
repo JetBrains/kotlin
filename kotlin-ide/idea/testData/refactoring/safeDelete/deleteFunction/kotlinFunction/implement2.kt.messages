@@ -1,0 +1,2 @@
+fun foo(): kotlin.Unit in final class B : A, Z implements fun foo(): kotlin.Unit in interface A.
+fun foo(): kotlin.Unit in final class B : A, Z implements fun foo(): kotlin.Unit in interface Z.

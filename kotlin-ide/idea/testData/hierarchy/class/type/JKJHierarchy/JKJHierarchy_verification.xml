@@ -1,0 +1,7 @@
+<node text="Object (java.lang)">
+  <node text="SecondClass ()">
+    <node text="KotlinClass ()">
+      <node text="MyClass ()" base="true"/>
+    </node>
+  </node>
+</node>

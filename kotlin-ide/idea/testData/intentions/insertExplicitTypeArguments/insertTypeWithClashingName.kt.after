@@ -1,0 +1,12 @@
+import kotlin.Array
+
+// IS_APPLICABLE: true
+class Array
+
+fun test() {
+    bar<Array<out String>>(foo(""))
+}
+
+fun foo(vararg x: String) = x
+
+fun <T> bar(vararg ts: T) {}

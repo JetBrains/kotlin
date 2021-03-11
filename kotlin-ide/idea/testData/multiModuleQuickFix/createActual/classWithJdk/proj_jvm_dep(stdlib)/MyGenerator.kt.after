@@ -1,0 +1,8 @@
+import kotlin.random.Random
+
+// MyGenerator: to be implemented
+actual class MyGenerator {
+    actual fun generate(): Random {
+        TODO("Not yet implemented")
+    }
+}

@@ -1,0 +1,6 @@
+{
+  "filesToMove": ["A/src/a1/internalTarget.kt"],
+  "type": "MOVE_FILES_WITH_DECLARATIONS",
+  "targetDirectory": "B/src/b",
+  "withRuntime": "true"
+}

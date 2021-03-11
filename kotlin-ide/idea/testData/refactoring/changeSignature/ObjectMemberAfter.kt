@@ -1,0 +1,5 @@
+object O {
+    fun foo() {
+
+    }
+}

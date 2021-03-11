@@ -1,0 +1,4 @@
+{
+    "inspectionClass": "org.jetbrains.kotlin.idea.i18n.inspections.KotlinInvalidBundleOrPropertyInspection",
+    "withRuntime": "true"
+}

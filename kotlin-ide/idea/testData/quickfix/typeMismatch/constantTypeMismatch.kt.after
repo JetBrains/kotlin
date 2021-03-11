@@ -1,0 +1,5 @@
+// "Change return type of enclosing function 'foo' to 'Int'" "true"
+
+fun foo(): Int {
+    return <caret>1
+}

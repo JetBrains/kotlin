@@ -1,0 +1,25 @@
+// "Import" "true"
+
+package import_intention
+
+import import_intention.B.Companion.foo
+
+fun main() {
+    foo()
+}
+
+class A {
+
+}
+
+class B {
+    companion object {
+        fun foo() {}
+    }
+}
+
+class C {
+    companion object {
+        fun foo() {}
+    }
+}

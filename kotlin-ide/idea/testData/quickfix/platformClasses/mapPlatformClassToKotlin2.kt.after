@@ -1,0 +1,22 @@
+// "Change all usages of 'java.lang.Comparable<T>' in this file to 'kotlin.Comparable<T>'" "true"
+import java.lang.*
+
+fun <T> a() : Comparable<T>? {
+    return null
+}
+
+fun b() : Comparable<String> {
+    throw Exception()
+}
+
+fun c() : Comparable<String> {
+    throw Exception()
+}
+
+fun d() : Comparable<String>? {
+    return null
+}
+
+fun e() : Comparable<String>? {
+    throw Exception()
+}

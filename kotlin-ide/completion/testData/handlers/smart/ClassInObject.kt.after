@@ -1,0 +1,9 @@
+class A {
+    object O {
+        class Inner {}
+
+        val v: Inner = Inner()<caret>
+    }
+}
+
+// ELEMENT: Inner

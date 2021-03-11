@@ -1,0 +1,1 @@
+val xx = (fu<caret>n Int.(x: Int, y: Int) = this + y).invoke(1, 2, 3)

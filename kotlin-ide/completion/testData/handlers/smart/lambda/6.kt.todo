@@ -1,0 +1,7 @@
+fun foo(p: (String, String, String) -> Unit){}
+
+fun bar() {
+    foo(<caret>)
+}
+
+// ELEMENT: "{ String, String, String -> ... }"

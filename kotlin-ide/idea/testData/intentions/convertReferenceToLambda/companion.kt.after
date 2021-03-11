@@ -1,0 +1,11 @@
+// WITH_RUNTIME
+
+import Utils.Companion.foo
+
+val list = listOf(1, 2, 3).map { foo(it) }
+
+class Utils {
+    companion object {
+        fun foo(x: Int) = x
+    }
+}

@@ -1,0 +1,7 @@
+package inline
+
+fun f(body: () -> Unit) {
+    println("i'm not an inline function")
+    body()
+}
+

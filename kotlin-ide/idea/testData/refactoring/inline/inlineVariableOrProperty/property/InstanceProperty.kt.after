@@ -1,0 +1,11 @@
+class Class {
+
+    fun f() {
+        println(239)
+    }
+}
+
+fun f() {
+    Class()
+    println(239)
+}

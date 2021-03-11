@@ -1,0 +1,7 @@
+super.foo()
+
+super@C.foo()
+
+super<Z>.foo()
+
+super<Z>@C.foo()

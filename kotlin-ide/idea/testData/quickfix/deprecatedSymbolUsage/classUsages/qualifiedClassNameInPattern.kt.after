@@ -1,0 +1,10 @@
+import java.io.File
+
+// "Replace with 'java.io.File'" "true"
+
+@Deprecated("", ReplaceWith("java.io.File"))
+class OldClass
+
+fun foo(): File? {
+    return null
+}

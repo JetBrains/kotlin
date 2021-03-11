@@ -1,0 +1,5 @@
+Function call 10 1 in A(2)
+Function call 11 1 !in A(2)
+Function call 13 in A(2) -> {}
+Function call 14 !in A(2) -> {}
+Function call 9 A(2) contains 1

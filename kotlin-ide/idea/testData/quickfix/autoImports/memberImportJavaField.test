@@ -1,0 +1,31 @@
+// FILE: first.before.kt
+// "Import" "true"
+// ERROR: Unresolved reference: foobar
+
+//KT-9009
+
+fun f() {
+    val k = foobar<caret>
+}
+
+
+// FILE: foo/Bar.java
+package foo;
+
+public class Bar {
+    public static final String foobar = "foobar";
+}
+
+// FILE: first.after.kt
+import foo.Bar.foobar
+
+// "Import" "true"
+// ERROR: Unresolved reference: foobar
+
+//KT-9009
+
+fun f() {
+    val k = foobar<caret>
+}
+
+

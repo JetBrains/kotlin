@@ -1,0 +1,39 @@
+// FILE: first.before.kt
+// "Import" "true"
+// ERROR: Cannot find a parameter with this name: p2
+
+package main
+
+class X {
+    fun foo() {
+    }
+
+    fun f(p: Int) {
+        foo(<caret>p2 = 0)
+    }
+}
+
+// FILE: second.kt
+package other
+
+import main.X
+
+fun X.foo(p1: Int = 1, p2: Int = 2, p3: Int = 3){}
+
+// FILE: first.after.kt
+// "Import" "true"
+// ERROR: Cannot find a parameter with this name: p2
+
+package main
+
+import other.foo
+
+class X {
+    fun foo() {
+    }
+
+    fun f(p: Int) {
+        foo(<caret>p2 = 0)
+    }
+}
+

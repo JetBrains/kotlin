@@ -1,0 +1,4 @@
+abstract class Owner {
+}
+
+fun Owner.<caret>f(): Int = 1

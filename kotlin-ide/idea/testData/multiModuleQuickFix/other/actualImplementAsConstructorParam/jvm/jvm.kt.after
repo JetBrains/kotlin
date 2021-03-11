@@ -1,0 +1,3 @@
+// "Implement as constructor parameters" "true"
+
+actual class End(override val a: Int) : IFoo

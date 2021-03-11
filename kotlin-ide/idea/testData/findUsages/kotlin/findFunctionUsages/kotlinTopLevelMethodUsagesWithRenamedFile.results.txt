@@ -1,0 +1,2 @@
+Unclassified 6 String s = RequestProcessor.processRequest();
+Unclassified 9 return RequestProcessor.processRequest();

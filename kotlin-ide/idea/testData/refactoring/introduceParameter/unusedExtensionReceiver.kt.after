@@ -1,0 +1,15 @@
+// WITH_RUNTIME
+// WITH_DEFAULT_VALUE: false
+class A(val n: Int)
+
+fun foo(i: Int): Int {
+    return i
+}
+
+fun test() {
+    val a = A(1)
+    foo(a.n + 1)
+    with(A(1)) {
+        foo(n + 1)
+    }
+}

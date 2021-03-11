@@ -1,0 +1,2 @@
+foo
+test.A.baz

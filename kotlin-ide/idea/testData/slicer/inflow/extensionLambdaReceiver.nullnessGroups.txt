@@ -1,0 +1,3 @@
+[NotNull Values]
+6 	<bold>val v</bold> = this (in foo())
+6 		<bold>val v</bold> = this (in foo())

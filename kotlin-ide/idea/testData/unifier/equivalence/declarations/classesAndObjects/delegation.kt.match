@@ -1,0 +1,3 @@
+class A: T by Z(1)
+
+class D: T by Z(1)

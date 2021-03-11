@@ -1,0 +1,15 @@
+// "Replace with 'newFun()'" "true"
+
+@Deprecated("", ReplaceWith("newFun()"))
+fun oldFun(p: Int) {
+    newFun()
+}
+
+fun newFun(){}
+
+fun foo() {
+    bar()
+    <caret>newFun()
+}
+
+fun bar(): Int = 0

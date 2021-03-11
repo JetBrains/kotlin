@@ -1,0 +1,99 @@
+import JavaClass.staticField
+
+val staticField = 42 //KT-40835
+
+fun a() {
+    JavaClass()
+
+    val d = JavaClass()
+
+    d.let {
+        staticField
+    }
+
+    d.also {
+    }
+
+    with(d) {
+        staticField
+    }
+
+    with(d) out@{
+        with(4) {
+            staticField
+        }
+    }
+}
+
+fun a2() {
+    val d: JavaClass? = null
+    d?.let {}
+
+    d?.let {
+        staticField
+    }
+
+    d?.also {
+    }
+
+    with(d) {
+        this?.let { staticField }
+    }
+
+    with(d) out@{
+        with(4) {
+            this@out?.let { staticField }
+        }
+    }
+}
+
+fun a3() {
+    val d: JavaClass? = null
+    val a1 = d?.let { staticField }
+
+    val a2 = d?.let {
+        staticField
+    }
+
+    val a3 = d?.also {
+    }
+
+    val a4 = with(d) {
+        this?.let { staticField }
+    }
+
+    val a5 = with(d) out@{
+        with(4) {
+            this@out?.let { staticField }
+        }
+    }
+}
+
+fun a4() {
+    val d: JavaClass? = null
+    d?.let { staticField }?.dec()
+
+    val a2 = d?.let {
+        staticField
+    }
+    a2?.toLong()
+
+    d?.also {
+    }?.let { staticField }?.and(4)
+
+    val a4 = with(d) {
+        this?.let { staticField }
+    }
+
+    val a5 = with(d) out@{
+        with(4) {
+            this@out?.let { staticField }
+        }
+    }
+
+    val a6 = a4?.let { out -> a5?.let { out + it } }
+}
+
+fun JavaClass.b(): Int? = staticField
+fun JavaClass.c(): Int = staticField
+fun d(d: JavaClass) = staticField

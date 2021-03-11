@@ -1,0 +1,45 @@
+// FILE: bar/Foo.before.java
+// "/(Static import|Import static) constant 'foo.Bar.foobar'/" "true"
+// ERROR: Unresolved reference: foobar
+// ACTION: Rename reference
+// ACTION: Create field 'foobar'
+// ACTION: Create parameter 'foobar'
+// ACTION: Create local variable 'foobar'
+// WITH_RUNTIME
+package bar;
+
+public class Foo {
+    public void main()
+    {
+        foobar<caret>
+    }
+}
+
+
+// FILE: foo/Bar.dependency.kt
+package foo
+
+object Bar {
+    @JvmField var foobar = "foobar"
+}
+
+// FILE: bar/Foo.after.java
+// "/(Static import|Import static) constant 'foo.Bar.foobar'/" "true"
+// ERROR: Unresolved reference: foobar
+// ACTION: Rename reference
+// ACTION: Create field 'foobar'
+// ACTION: Create parameter 'foobar'
+// ACTION: Create local variable 'foobar'
+// WITH_RUNTIME
+package bar;
+
+import static foo.Bar.foobar;
+
+public class Foo {
+    public void main()
+    {
+        foobar<caret>
+    }
+}
+
+

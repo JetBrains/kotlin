@@ -1,0 +1,12 @@
+// "Make '<set-attribute>' internal" "true"
+// ACTION: "Make '<set-attribute>' public"
+
+class Demo {
+    var attribute = "a"
+        internal set
+}
+
+fun main() {
+    val c = Demo()
+    c.attribute = "test"
+}

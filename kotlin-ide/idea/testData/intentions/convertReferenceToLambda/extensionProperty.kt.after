@@ -1,0 +1,3 @@
+val Any.name: String get() = toString()
+
+val converted = { any: Any -> any.name }

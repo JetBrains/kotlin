@@ -1,0 +1,26 @@
+version '1.0.0'
+
+apply plugin: 'kotlin-multiplatform'
+
+kotlin {
+    jvm {
+      withJava()
+    }
+
+    js()
+    
+    sourceSets {
+        commonMain {
+        }
+        commonTest {
+        }
+        jvmMain {
+        }
+        jvmTest {
+        }
+        jsMain {
+        }
+        jsTest {
+        }
+    }
+}

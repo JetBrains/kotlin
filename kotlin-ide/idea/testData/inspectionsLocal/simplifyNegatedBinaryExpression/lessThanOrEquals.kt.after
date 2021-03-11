@@ -1,0 +1,4 @@
+// FIX: Replace negated '<=' operation with '>'
+fun test(n: Int) {
+    0 > 1
+}

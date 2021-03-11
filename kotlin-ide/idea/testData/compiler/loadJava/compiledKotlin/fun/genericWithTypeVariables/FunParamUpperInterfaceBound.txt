@@ -1,0 +1,3 @@
+package test
+
+public fun </*0*/ A : java.io.Serializable> dos(): kotlin.Int

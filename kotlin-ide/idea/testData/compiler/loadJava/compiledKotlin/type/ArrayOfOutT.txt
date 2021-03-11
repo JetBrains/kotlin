@@ -1,0 +1,3 @@
+package test
+
+public fun </*0*/ T> nothing(): kotlin.Array<out T>

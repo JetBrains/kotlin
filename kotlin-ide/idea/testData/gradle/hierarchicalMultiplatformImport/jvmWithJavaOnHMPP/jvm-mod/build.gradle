@@ -1,0 +1,13 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm'
+}
+
+version 'unspecified'
+
+repositories {
+    {{kotlin_plugin_repositories}}
+}
+
+dependencies {
+    compile project(":hmpp-mod-a")
+}

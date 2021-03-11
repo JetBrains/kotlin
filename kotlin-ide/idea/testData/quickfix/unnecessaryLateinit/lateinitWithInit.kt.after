@@ -1,0 +1,9 @@
+// "Remove 'lateinit' modifier" "true"
+
+class Foo {
+    var bar: String
+
+    init {
+        bar = ""
+    }
+}

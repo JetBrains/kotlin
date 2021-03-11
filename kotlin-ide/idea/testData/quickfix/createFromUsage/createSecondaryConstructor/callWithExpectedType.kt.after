@@ -1,0 +1,11 @@
+// "Create secondary constructor" "true"
+
+interface T
+
+class A: T {
+    constructor(i: Int)
+}
+
+fun test() {
+    val t: T = A(1)
+}

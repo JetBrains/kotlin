@@ -1,0 +1,6 @@
+fun foo() {
+    <selection>run</selection> {
+        "aaa"
+        "aaa"
+    }
+}

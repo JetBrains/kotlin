@@ -1,0 +1,5 @@
+// WITH_RUNTIME
+fun foo() {
+    (1..10/* from 1 to 10 */).forEach { x /* current */ ->
+    }
+}

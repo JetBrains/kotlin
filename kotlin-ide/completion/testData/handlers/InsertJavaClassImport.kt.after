@@ -1,0 +1,9 @@
+package testing
+
+import java.util.SortedSet
+
+fun other() {
+    SortedSet
+}
+
+// INSERT: SortedSet

@@ -1,0 +1,2 @@
+<!-- typeMismatchDueToProjectionsTxt1 -->
+Type mismatch: inferred type is MutableCollection<CharSequence> but Collection<Nothing> was expected. Projected type MutableCollection<out CharSequence> restricts use of public abstract fun addAll(elements: Collection<E>): Boolean defined in kotlin.collections.MutableCollection

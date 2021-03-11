@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+  <defs>
+    <linearGradient id="typealias-a" x1="-16.836%" x2="76.219%" y1="91.94%" y2="-1.116%">
+      <stop offset="10.75%" stop-color="#C757BC"/>
+      <stop offset="21.38%" stop-color="#D0609A"/>
+      <stop offset="42.54%" stop-color="#E1725C"/>
+      <stop offset="60.48%" stop-color="#EE7E2F"/>
+      <stop offset="74.3%" stop-color="#F58613"/>
+      <stop offset="82.32%" stop-color="#F88909"/>
+    </linearGradient>
+  </defs>
+  <g fill="none" fill-rule="evenodd">
+    <path fill="#B99BF8" fill-opacity=".6" d="M8,15 C4.134,15 1,11.866 1,8 C1,4.134 4.134,1 8,1 C11.866,1 15,4.134 15,8 L8,8 L8,15 Z"/>
+    <path fill="#231F20" fill-opacity=".7" d="M8.5,8 L8,8 L8,11 L7.5,11 L7.5,6 L5.5,6 L5.5,5 L10.5,5 L10.5,6 L8.5,6 L8.5,8 Z"/>
+    <g transform="translate(9 9)">
+      <polygon fill="#0EAEFF" fill-rule="nonzero" points="0 7 3.512 3.488 7 7"/>
+      <polygon fill="#0EAEFF" fill-rule="nonzero" points="0 0 3.512 0 0 3.792"/>
+      <polygon fill="url(#typealias-a)" fill-rule="nonzero" points="3.512 0 0 3.698 0 7 3.512 3.488 7 0"/>
+    </g>
+  </g>
+</svg>

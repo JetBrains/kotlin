@@ -1,0 +1,16 @@
+// WITH_RUNTIME
+
+class Foo {
+    fun foo(i: Int) {}
+}
+
+fun bar(i: Int, f: Foo) {}
+
+fun test(f: Foo) {
+    val f2 = Foo()
+    f.run {
+        foo(1)
+        bar(2, this)
+    }
+    bar(3, f2)
+}

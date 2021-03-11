@@ -1,0 +1,6 @@
+<!-- jsCodeErrorText2 -->
+JavaScript: missing variable name in code:
+var a = 10;
+    var      = 10;
+       ^^^^^^^^
+    var c = 15;

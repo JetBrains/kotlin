@@ -1,0 +1,9 @@
+package a
+
+fun a() {
+}
+
+fun aa() {
+    c.internalFun()
+    c.internalFun2()
+}

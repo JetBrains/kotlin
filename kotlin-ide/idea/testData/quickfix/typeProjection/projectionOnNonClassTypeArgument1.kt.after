@@ -1,0 +1,6 @@
+// "Remove 'out' modifier" "true"
+fun <T> foo(x : T) {}
+
+fun bar() {
+    foo<Int>(44)
+}

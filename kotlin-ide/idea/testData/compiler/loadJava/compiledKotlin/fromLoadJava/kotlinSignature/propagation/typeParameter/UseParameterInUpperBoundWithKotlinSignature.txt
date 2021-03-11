@@ -1,0 +1,12 @@
+package test
+
+public interface UseParameterInUpperBoundWithKotlinSignature {
+
+    public interface Sub : test.UseParameterInUpperBoundWithKotlinSignature.Super {
+        public abstract override /*1*/ fun </*0*/ B, /*1*/ A : kotlin.collections.List<B>> foo(/*0*/ b: B, /*1*/ a: A): kotlin.Unit
+    }
+
+    public interface Super {
+        public abstract fun </*0*/ A, /*1*/ B : kotlin.collections.List<A>> foo(/*0*/ a: A, /*1*/ b: B): kotlin.Unit
+    }
+}

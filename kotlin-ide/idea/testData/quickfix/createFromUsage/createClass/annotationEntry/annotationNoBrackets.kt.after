@@ -1,0 +1,7 @@
+// "Create annotation 'foo'" "true"
+
+@foo(1, "2") fun test() {
+
+}
+
+annotation class <caret>foo(val i: Int, val s: String)

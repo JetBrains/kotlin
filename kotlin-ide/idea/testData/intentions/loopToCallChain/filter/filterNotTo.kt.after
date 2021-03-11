@@ -1,0 +1,8 @@
+// WITH_RUNTIME
+// INTENTION_TEXT: "Replace with 'filterNotTo(){}'"
+// IS_APPLICABLE_2: false
+fun foo(list: List<String>, target: MutableList<String>) {
+    list.filterNotTo(target) { bar(it) }
+}
+
+fun bar(string: String): Boolean = TODO()

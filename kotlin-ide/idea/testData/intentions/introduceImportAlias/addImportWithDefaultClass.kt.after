@@ -1,0 +1,4 @@
+import kotlin.collections.List as List1
+
+// WITH_RUNTIME
+fun foo(list: List1<String>) {}

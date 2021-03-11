@@ -1,0 +1,9 @@
+// "Change to var" "true"
+fun exec(f: () -> Unit) = f()
+
+fun foo() {
+    var x: Int
+    exec {
+        x = 42
+    }
+}

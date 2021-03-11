@@ -1,0 +1,5 @@
+class Owner {
+    inner class Inner
+
+    val x = { owner: Owner -> owner.Inner() }
+}

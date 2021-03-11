@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="grpc-stub" type="repository">
+    <properties include-transitive-deps="false" maven-id="io.grpc:grpc-stub:1.32.2" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/io/grpc/grpc-stub/1.32.2/grpc-stub-1.32.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/io/grpc/grpc-stub/1.32.2/grpc-stub-1.32.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

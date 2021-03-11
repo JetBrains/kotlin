@@ -1,0 +1,5 @@
+{
+  "mainFile": "headers/funs/funs.kt",
+  "type": "CHANGE_PACKAGE_DIRECTIVE",
+  "newPackageName": "headers2.funs3"
+}

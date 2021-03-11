@@ -1,0 +1,3 @@
+package test
+
+public fun anyq(): kotlin.Any?

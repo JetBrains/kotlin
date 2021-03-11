@@ -1,0 +1,7 @@
+==== INITIAL BUILD ====
+Compiling files:
+  src/usages.kt
+Exit code: COMPILATION_ERROR
+  No value passed for parameter 'x'
+  No value passed for parameter 'x'
+  No value passed for parameter 'function'

@@ -1,0 +1,1 @@
+Cannot refactor synthesized function 'component1'

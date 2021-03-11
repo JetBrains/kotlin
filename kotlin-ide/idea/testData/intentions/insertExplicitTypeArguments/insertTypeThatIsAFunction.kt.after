@@ -1,0 +1,6 @@
+// IS_APPLICABLE: true
+fun foo() {
+    bar<(Int) -> Int>({ i: Int -> 2 * i })
+}
+
+fun <T> bar(t: T): Int = 1

@@ -1,0 +1,8 @@
+interface I extends Z, X, J {
+
+}
+
+// INFO: {"checked": "true"}
+interface J {
+
+}

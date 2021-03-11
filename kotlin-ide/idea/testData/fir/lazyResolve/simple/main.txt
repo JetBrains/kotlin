@@ -1,0 +1,12 @@
+FILE: main.kt
+    public final [BODY_RESOLVE] fun main(): R|kotlin/Unit| {
+        R|/callMe|()
+        R|/foo|()
+        R|/bar|(Int(1), Int(2))
+    }
+    public final [STATUS] fun foo(): R|kotlin/Unit| {
+        [RAW_FIR] lval y: <implicit> = Double(2.0)
+    }
+    public final [IMPLICIT_TYPES_BODY_RESOLVE] fun bar(x: R|kotlin/Int|, y: R|kotlin/Int|): R|kotlin/Int| {
+        ^bar R|<local>/x|.R|kotlin/Int.plus|(R|<local>/y|)
+    }

@@ -1,0 +1,25 @@
+// FILE: main.before.kt
+// "Import" "false"
+// ACTION: Create local variable 'foobar'
+// ACTION: Create object 'foobar'
+// ACTION: Create parameter 'foobar'
+// ACTION: Create property 'foobar'
+// ACTION: Rename reference
+// ERROR: Unresolved reference: foobar
+
+//KT-9009
+
+package foo
+
+fun f() {
+    foobar<caret>
+}
+
+
+// FILE: dependency.before.kt
+package bar
+
+object Foo {
+    fun foobar() {
+    }
+}

@@ -1,0 +1,10 @@
+// WITH_RUNTIME
+
+class MyMap {
+    val entries = listOf<Map.Entry<Int, Int>>()
+}
+
+fun foo(mm: MyMap) {
+    for ((key, value) in mm.entries) {
+    }
+}

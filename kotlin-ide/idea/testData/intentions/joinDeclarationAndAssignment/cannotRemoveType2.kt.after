@@ -1,0 +1,6 @@
+// WITH_RUNTIME
+
+class A {
+    var a: List<String> = <caret>emptyList()
+
+}

@@ -1,0 +1,7 @@
+// FIR_COMPARISON
+package test
+
+import dependency1.*
+import dependency2.T
+
+fun foo(t: T) {}

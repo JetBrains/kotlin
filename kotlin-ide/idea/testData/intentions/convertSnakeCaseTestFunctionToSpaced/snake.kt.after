@@ -1,0 +1,10 @@
+// CONFIGURE_LIBRARY: JUnit
+import org.junit.Test
+
+class A {
+    @Test fun `test two plus two equals four`() {}
+}
+
+fun test() {
+    A().`test two plus two equals four`()
+}

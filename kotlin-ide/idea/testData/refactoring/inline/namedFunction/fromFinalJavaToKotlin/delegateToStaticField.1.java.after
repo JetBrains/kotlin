@@ -1,0 +1,4 @@
+public final class JavaClass {
+
+    public static int staticField = 42;
+}

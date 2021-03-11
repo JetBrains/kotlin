@@ -1,0 +1,12 @@
+LineBreakpoint created at frameObject.kt:6
+Run Java
+Connected to the target VM
+frameObject.kt:6
+Compile bytecode for O.obProp
+Compile bytecode for O.obMyFun()
+KotlinStackFrame (frameObject.kt:6)
+    JavaValue[this] this: FrameObjectKt$main$1@uniqueID = Function0<kotlin.Unit>
+        JavaValue[field] arity: int = 0 (Lambda.!EXT!)
+Disconnected from the target VM
+
+Process finished with exit code 0

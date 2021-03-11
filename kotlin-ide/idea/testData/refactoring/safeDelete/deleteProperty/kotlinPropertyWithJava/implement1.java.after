@@ -1,0 +1,5 @@
+class B implements A, Z {
+    public String getFoo() {
+        return "foo";
+    }
+}

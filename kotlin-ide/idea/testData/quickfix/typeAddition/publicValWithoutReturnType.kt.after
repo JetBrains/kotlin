@@ -1,0 +1,6 @@
+// "Specify type explicitly" "true"
+package a
+
+public fun <T> emptyList(): List<T> = null!!
+
+public val l: List<Int><caret> = emptyList<Int>()

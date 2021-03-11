@@ -1,0 +1,8 @@
+// MOVE: up
+var x: String
+    <caret>set(v: String) {
+        // test
+    }
+    get() {
+        return ""
+    }

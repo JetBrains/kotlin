@@ -1,0 +1,7 @@
+import Outer.Middle as Middle1
+
+class Outer {
+    class Middle {
+        class Inner
+    }
+}

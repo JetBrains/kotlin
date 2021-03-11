@@ -1,0 +1,6 @@
+// "Remove parameter 'x'" "true"
+fun foo() {}
+
+fun test() {
+    foo()
+}

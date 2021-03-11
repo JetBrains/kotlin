@@ -1,0 +1,3 @@
+fun test() {
+    <caret>foo()
+}

@@ -1,0 +1,17 @@
+// "Replace with generated @PublishedApi bridge call '`access$prop`'" "true"
+annotation class Z
+
+open class ABase {
+    @Z
+    protected val prop = 1
+
+    inline fun test() {
+        {
+            `access$prop`
+        }()
+    }
+
+    @PublishedApi
+    internal val `access$prop`: Int
+        get() = prop
+}

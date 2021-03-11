@@ -1,0 +1,8 @@
+fun foo(p1: Int?, p2: Int) { }
+
+fun bar(p: Int) {
+    foo(null, <caret>)
+}
+
+// ELEMENT: null
+// CHAR: ','

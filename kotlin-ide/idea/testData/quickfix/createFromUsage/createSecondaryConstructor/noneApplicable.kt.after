@@ -1,0 +1,12 @@
+// "Create secondary constructor" "true"
+// ERROR: Primary constructor call expected
+
+class CtorSecondary() {
+    constructor(p: Int) : this()
+    constructor<caret>(i: Int, i1: Int)
+}
+
+fun construct() {
+    // todo: add this()
+    val vA = CtorSecondary(2, 3)
+}

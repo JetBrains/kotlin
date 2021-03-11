@@ -1,0 +1,5 @@
+annotation class X(val value: Y)
+annotation class Y()
+
+@X(@Y())
+fun foo() {}

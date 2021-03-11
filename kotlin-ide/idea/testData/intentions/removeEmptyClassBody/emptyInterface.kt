@@ -1,0 +1,4 @@
+interface Foo {<caret>
+
+
+}

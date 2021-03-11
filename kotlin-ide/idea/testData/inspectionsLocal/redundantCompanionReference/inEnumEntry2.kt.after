@@ -1,0 +1,9 @@
+enum class E(val value: String) {
+    E1(A.foo);
+}
+
+class A {
+    companion object {
+        const val foo = ""
+    }
+}

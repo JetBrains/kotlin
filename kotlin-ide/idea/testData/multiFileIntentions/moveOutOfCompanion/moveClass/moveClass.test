@@ -1,0 +1,5 @@
+{
+  "mainFile": "a/A.kt",
+  "intentionClass": "org.jetbrains.kotlin.idea.intentions.MoveMemberOutOfCompanionObjectIntention",
+  "withRuntime": "true"
+}

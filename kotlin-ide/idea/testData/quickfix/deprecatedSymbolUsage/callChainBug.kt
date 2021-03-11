@@ -1,0 +1,10 @@
+// "Replace with 'newFun()'" "true"
+
+@Deprecated("", ReplaceWith("newFun()"))
+fun oldFun(): String = ""
+
+fun newFun(): String = ""
+
+fun foo() {
+    val value = <caret>oldFun().length
+}

@@ -1,0 +1,7 @@
+{
+  "type": "MARKED_ELEMENT",
+  "mainFile": "test/JavaClient.java",
+  "newName": "Bar",
+  "withRuntime": "true",
+  "byRef": "true"
+}

@@ -1,0 +1,44 @@
+// FILE: first.before.kt
+// "Import" "true"
+// ERROR: Destructuring declaration initializer of type Some must have a 'component1()' function
+// ERROR: Destructuring declaration initializer of type Some must have a 'component2()' function
+
+package testing
+
+import some.Some
+
+fun testing() {
+    val (a, b) = <caret>Some()
+}
+//-----------------------
+
+
+// FILE: second.kt
+// "Import" "true"
+
+package some
+
+public class Some
+
+operator fun Some.component1() = 1
+operator fun Some.component2() = 3
+//-----------------------
+
+
+// FILE: first.after.kt
+// "Import" "true"
+// ERROR: Destructuring declaration initializer of type Some must have a 'component1()' function
+// ERROR: Destructuring declaration initializer of type Some must have a 'component2()' function
+
+package testing
+
+import some.Some
+import some.component1
+import some.component2
+
+fun testing() {
+    val (a, b) = <caret>Some()
+}
+//-----------------------
+
+

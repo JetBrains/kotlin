@@ -1,0 +1,6 @@
+// "Change return type of enclosing function 'foo' to 'Any'" "true"
+fun foo(): Any {
+    class A
+
+    return A()
+}

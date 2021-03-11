@@ -1,0 +1,4 @@
+fun callFail(p: String?) {
+    val s = p ?: throw Exception("message")
+    println(s)
+}

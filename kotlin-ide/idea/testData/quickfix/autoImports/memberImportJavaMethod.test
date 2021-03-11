@@ -1,0 +1,34 @@
+// FILE: first.before.kt
+// "Import" "true"
+// ERROR: Unresolved reference: foobar
+
+//KT-9009
+
+fun f() {
+    foobar<caret>()
+}
+
+
+// FILE: foo/Bar.java
+package foo;
+
+public class Bar {
+    public static void foobar()
+    {
+
+    }
+}
+
+// FILE: first.after.kt
+import foo.Bar.foobar
+
+// "Import" "true"
+// ERROR: Unresolved reference: foobar
+
+//KT-9009
+
+fun f() {
+    foobar<caret>()
+}
+
+

@@ -1,0 +1,64 @@
+// WITH_RUNTIME
+// PARAM_TYPES: kotlin.Int
+// PARAM_TYPES: kotlin.Int
+// PARAM_DESCRIPTOR: value-parameter a: kotlin.Int defined in test
+// PARAM_DESCRIPTOR: var b: kotlin.Int defined in test
+
+// SIBLING:
+fun test(a: Int): Int {
+    var b: Int = 1
+    b = i(a, b)
+    return b
+}
+
+fun foo1() {
+    val x = 1
+    var y: Int = x
+    println(
+            if (x > 0) {
+                y + x
+            }
+            else {
+                y - x
+            }
+    )
+}
+
+fun foo2(x: Int) {
+    var p: Int = 1
+    p = i(x, p)
+    println(p)
+}
+
+fun foo3(x: Int): Int {
+    var p: Int = 1
+    return i(x, p)
+}
+
+fun foo4() {
+    val t: (Int) -> (Int) = {
+        var n = it
+        if (it > 0) {
+            n + it
+        }
+        else {
+            n - it
+        }
+    }
+    println(t(1))
+}
+
+fun foo5(x: Int): Int {
+    var p: Int = 1
+    i(x, p)
+}
+
+private fun i(a: Int, b: Int): Int {
+    var b1 = b
+    if (a > 0) {
+        b1 = b1 + a
+    } else {
+        b1 = b1 - a
+    }
+    return b1
+}

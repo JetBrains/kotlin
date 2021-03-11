@@ -1,0 +1,3 @@
+package xxx
+
+interface Dependency

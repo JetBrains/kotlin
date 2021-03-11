@@ -1,0 +1,2 @@
+fun foo(i: (Int) -> Int) = 0
+val x = foo { it -> foo { x -> x + <caret>it } }

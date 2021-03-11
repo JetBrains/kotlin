@@ -1,0 +1,9 @@
+fun <T> doSomething(a: T) {}
+
+val a: String?
+    get() = ""
+
+fun main(args: Array<String>) {
+    val a1 = a
+    doSomething(if (a1 != null) a1.length else null)
+}

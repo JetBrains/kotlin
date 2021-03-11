@@ -1,0 +1,11 @@
+// "Create interface 'A'" "true"
+package p
+
+import p.X.A
+
+class X {
+    interface A {
+
+    }
+
+}

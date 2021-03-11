@@ -1,0 +1,5 @@
+// "Add annotation target" "true"
+@Target(AnnotationTarget.FIELD)
+annotation class FieldAnn
+
+class Field(@field:FieldAnn val foo: String)

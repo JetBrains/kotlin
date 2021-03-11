@@ -1,0 +1,7 @@
+// "Change to var" "true"
+open class A {
+    open var x = 42;
+}
+
+class B(override var x: Int) : A()
+/* FIR_COMPARISON */

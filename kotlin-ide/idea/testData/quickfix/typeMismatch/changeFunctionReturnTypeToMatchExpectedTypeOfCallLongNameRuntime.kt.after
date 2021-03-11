@@ -1,0 +1,6 @@
+import java.util.HashSet
+
+// "Change return type of called function 'bar' to 'HashSet<Int>'" "true"
+
+fun bar(): HashSet<Int> = java.util.LinkedHashSet<Int>()
+fun foo(): java.util.HashSet<Int> = bar()

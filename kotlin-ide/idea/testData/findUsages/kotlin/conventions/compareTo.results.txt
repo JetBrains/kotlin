@@ -1,0 +1,5 @@
+Function call 10 A(0) compareTo A(1)
+Function call 11 A(0) < A(1)
+Function call 12 A(0) <= A(1)
+Function call 13 A(0) > A(1)
+Function call 14 A(0) >= A(1)

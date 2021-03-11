@@ -1,0 +1,5 @@
+open class Foo {
+    <spot>open</spot> fun foo() {
+
+    }
+}

@@ -1,0 +1,3 @@
+Unclassified 11 val c = object: A() {}
+Unclassified 13 val d = object: T {}
+Unclassified 6 val b = object: A() {}

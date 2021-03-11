@@ -1,0 +1,23 @@
+UFile (package = )
+    UClass (name = PropertyTest)
+        UMethod (name = getStringRepresentation)
+            UBlockExpression
+                UReturnExpression
+                    UQualifiedReferenceExpression
+                        UThisExpression (label = null)
+                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
+                            UIdentifier (Identifier (toString))
+                            USimpleNameReferenceExpression (identifier = toString, resolvesTo = null)
+        UMethod (name = setStringRepresentation)
+            UParameter (name = value)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UBlockExpression
+                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
+                    UIdentifier (Identifier (setDataFromString))
+                    USimpleNameReferenceExpression (identifier = setDataFromString, resolvesTo = null)
+                    USimpleNameReferenceExpression (identifier = value)
+        UMethod (name = setDataFromString)
+            UParameter (name = data)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UBlockExpression
+        UMethod (name = PropertyTest)

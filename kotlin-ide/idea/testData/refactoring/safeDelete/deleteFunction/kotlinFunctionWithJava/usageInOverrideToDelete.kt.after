@@ -1,0 +1,5 @@
+interface T {
+}
+
+class A(val t: T) : T {
+}

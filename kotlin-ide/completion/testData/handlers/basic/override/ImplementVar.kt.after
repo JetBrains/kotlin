@@ -1,0 +1,11 @@
+interface I {
+    var someVar: String
+}
+
+class A : I {
+    override var someVar: String
+        get() = <caret><selection>TODO("Not yet implemented")</selection>
+        set(value) {}
+}
+
+// ELEMENT_TEXT: "override var someVar: String"

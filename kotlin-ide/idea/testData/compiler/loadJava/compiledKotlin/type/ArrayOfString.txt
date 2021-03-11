@@ -1,0 +1,3 @@
+package test
+
+public fun fff(): kotlin.Array<kotlin.String>

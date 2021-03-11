@@ -1,0 +1,11 @@
+// IS_APPLICABLE: true
+// WITH_RUNTIME
+
+data class XY(val x: Int, val y: Int)
+fun test(xys: Array<XY>) {
+    for ((x, y1) in xys) {
+        println(x)
+        val y = y1 + x
+        println(y)
+    }
+}

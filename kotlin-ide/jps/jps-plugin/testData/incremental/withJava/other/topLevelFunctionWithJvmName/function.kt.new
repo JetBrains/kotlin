@@ -1,0 +1,3 @@
+package inline
+
+@JvmName("newName") fun g() = 1

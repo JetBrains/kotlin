@@ -1,0 +1,7 @@
+// WITH_RUNTIME
+
+fun test() {
+    foo(1, 2)
+}
+
+fun foo(i: Int, j: Int) = i + j

@@ -1,0 +1,3 @@
+// "Specify return type explicitly" "true"
+
+fun foo(): String<caret> = java.lang.String.valueOf(1)

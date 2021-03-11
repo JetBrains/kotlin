@@ -1,0 +1,12 @@
+// WITH_RUNTIME
+import java.io.File
+import java.io.BufferedReader
+
+fun bar() {}
+
+fun foo(reader: BufferedReader?) {
+    reader.use { reader ->
+        reader?.readLine()
+        bar()
+    }
+}

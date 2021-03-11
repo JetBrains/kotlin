@@ -1,0 +1,5 @@
+<idea-plugin>
+  <depends optional="true" config-file="kotlin-nodejs.xml">NodeJS</depends>
+  <depends optional="true" config-file="native-debug.xml">com.intellij.nativeDebug</depends>
+  <depends optional="true" config-file="js-debug.xml">JavaScriptDebugger</depends>
+</idea-plugin>

@@ -1,0 +1,7 @@
+// IMPORT: java.util.Calendar
+package p
+
+import java.util.*
+
+// comment
+fun foo() {}

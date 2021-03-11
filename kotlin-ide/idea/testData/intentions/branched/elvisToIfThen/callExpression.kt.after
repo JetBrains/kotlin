@@ -1,0 +1,11 @@
+fun foo(): String? {
+    return "foo"
+}
+
+fun bar() {
+}
+
+fun main(args: Array<String>) {
+    val foo = foo()
+    if (foo != null) foo else bar()
+}

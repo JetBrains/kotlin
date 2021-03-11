@@ -1,0 +1,10 @@
+// WITH_RUNTIME
+
+data class XY(val x: String, val y: Int)
+fun test(xys: Array<XY>) {
+    for ((x) in xys) {
+        println(x)
+        val xx = x
+        println(xx)
+    }
+}

@@ -1,0 +1,16 @@
+Class/object property type (Client) 6 var nextServer: Server? = new Server()
+Companion object (Client) 5 class Client(name: String = Server.NAME): Server() {
+Companion object (Client) 7 val name = Server.NAME
+Companion object (bar) 32 fun Client.bar(s: Server = Server.NAME) {
+Function return types (Client) 14 fun getNextServer(): Server? {
+Function return types (asServer) 40 fun Any.asServer(): Server? {
+Local variable declaration (Client) 10 val server: Server = s
+Parameter type (Client) 9 fun foo(s: Server) {
+Parameter type (bar) 32 fun Client.bar(s: Server = Server.NAME) {
+Super type qualifier (Client) 19 super<Server>.work()
+Supertype (Client) 23 companion object: Server() {
+Supertype (Client) 5 class Client(name: String = Server.NAME): Server() {
+Supertype (ClientObject) 28 object ClientObject: Server() {
+Target type of 'is' operation (asServer) 41 return if (this is Server) this as Server else null
+Usage in cast target type (asServer) 41 return if (this is Server) this as Server else null
+Usage in import 3 import server.Server

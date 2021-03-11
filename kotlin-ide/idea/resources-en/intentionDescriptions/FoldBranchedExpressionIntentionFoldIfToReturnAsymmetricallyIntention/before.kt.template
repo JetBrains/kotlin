@@ -1,0 +1,4 @@
+if (ok) {
+    return "ok"
+}
+return "failed"

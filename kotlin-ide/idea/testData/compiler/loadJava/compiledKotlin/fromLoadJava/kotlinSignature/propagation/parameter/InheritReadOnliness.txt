@@ -1,0 +1,14 @@
+package test
+
+public interface InheritReadOnliness {
+
+    public interface Sub : test.InheritReadOnliness.Super {
+        public abstract override /*1*/ /*fake_override*/ fun dummy(): kotlin.Unit
+        public abstract override /*1*/ fun foo(/*0*/ p: kotlin.collections.List<kotlin.String>): kotlin.Unit
+    }
+
+    public interface Super {
+        public abstract fun dummy(): kotlin.Unit
+        public abstract fun foo(/*0*/ p: kotlin.collections.List<kotlin.String>): kotlin.Unit
+    }
+}

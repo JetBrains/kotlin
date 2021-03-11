@@ -1,0 +1,6 @@
+class Class {
+}
+
+fun f() {
+    println(239)
+}

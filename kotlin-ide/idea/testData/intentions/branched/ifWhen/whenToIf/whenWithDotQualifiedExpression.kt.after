@@ -1,0 +1,11 @@
+object G {
+    fun cat(x: Int, y: Int): Int {
+        return x + y
+    }
+}
+
+fun test(x: Int, y: Int): String {
+    if (G.cat(x, y) == 1) return "one"
+    else if (G.cat(x, y) == 2) return "two"
+    else return "big"
+}

@@ -1,0 +1,14 @@
+// "Initialize with constructor parameter" "true"
+open class A {
+    val n: Int
+
+    constructor(n: Int, n1: Int) {
+        this.n = n1
+    }
+}
+
+class B : A(1, 0)
+
+fun test() {
+    val a = A(1, 0)
+}

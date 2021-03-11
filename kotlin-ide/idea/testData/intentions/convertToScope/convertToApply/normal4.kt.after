@@ -1,0 +1,11 @@
+// WITH_RUNTIME
+
+class MyClass {
+    fun foo(c: Int) {
+        val a = 23.apply {
+            dec()
+            dec()
+            dec() + this
+        }
+    }
+}

@@ -1,0 +1,4 @@
+// WITH_RUNTIME
+fun test(): Int {
+    return 2
+}

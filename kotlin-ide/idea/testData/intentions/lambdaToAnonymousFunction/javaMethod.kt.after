@@ -1,0 +1,5 @@
+fun main() {
+    Test().foo(fun(it: Int) {
+
+    })
+}

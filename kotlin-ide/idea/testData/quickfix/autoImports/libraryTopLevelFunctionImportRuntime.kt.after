@@ -1,0 +1,9 @@
+// "Import" "true"
+// WITH_RUNTIME
+package some
+
+import kotlin.system.measureNanoTime
+
+fun testFun() {
+  measureNanoTime({})
+}

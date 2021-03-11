@@ -1,0 +1,5 @@
+package test
+
+public interface A {
+    public open fun f(): kotlin.String
+}

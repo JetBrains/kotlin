@@ -1,0 +1,8 @@
+<component name="CopyrightManager">
+  <settings default="apache 2 license">
+    <LanguageOptions name="__TEMPLATE__">
+      <option name="addBlankAfter" value="false" />
+      <option name="block" value="false" />
+    </LanguageOptions>
+  </settings>
+</component>

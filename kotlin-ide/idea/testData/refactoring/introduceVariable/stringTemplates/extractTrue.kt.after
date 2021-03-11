@@ -1,0 +1,7 @@
+fun foo(param: Int): String {
+    val b = true
+    val x = "a${b}123"
+    val x = "aTRUE123"
+    val z = true
+    return "ab${b}def"
+}

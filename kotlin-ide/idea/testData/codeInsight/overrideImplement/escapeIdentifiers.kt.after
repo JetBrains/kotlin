@@ -1,0 +1,9 @@
+open class A {
+    open fun foo(`object` : Any): Int = 0
+}
+
+class C : A() {
+    override fun foo(`object`: Any): Int {
+        <selection><caret>return super.foo(`object`)</selection>
+    }
+}

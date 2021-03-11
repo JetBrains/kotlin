@@ -1,0 +1,7 @@
+package test
+
+public final class ClassVal {
+    /*primary*/ public constructor ClassVal()
+    public final val aa: kotlin.Int
+        public final fun <get-aa>(): kotlin.Int
+}

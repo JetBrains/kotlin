@@ -1,0 +1,19 @@
+// WITH_RUNTIME
+
+sealed class <caret>MyEnum(val s: String = "") {
+    object FOO : MyEnum("FOO")
+    object BAR : MyEnum("BAR")
+    object DEFAULT : MyEnum()
+}
+
+fun test(e: MyEnum) {
+    if (e == MyEnum.BAR) {
+        println()
+    }
+
+    val n = when (e) {
+        MyEnum.BAR -> 1
+        MyEnum.FOO -> 2
+        MyEnum.DEFAULT -> 0
+    }
+}

@@ -1,0 +1,3 @@
+package foo.bar
+
+val b = 1

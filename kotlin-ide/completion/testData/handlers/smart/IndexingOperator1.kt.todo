@@ -1,0 +1,7 @@
+class Foo {
+    fun get(s: String): String = ""
+}
+
+fun f(foo: Foo, s: String) = foo[<caret>]
+
+// ELEMENT: s

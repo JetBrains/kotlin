@@ -1,0 +1,2 @@
+Function call 10 -A(1)
+Function call 9 A(1).unaryMinus()

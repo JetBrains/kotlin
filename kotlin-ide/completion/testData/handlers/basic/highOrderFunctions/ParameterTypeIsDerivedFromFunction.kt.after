@@ -1,0 +1,10 @@
+// FIR_COMPARISON
+interface I : () -> Unit
+
+fun foo(i: I){}
+
+fun bar() {
+    foo(<caret>)
+}
+
+// ELEMENT: foo

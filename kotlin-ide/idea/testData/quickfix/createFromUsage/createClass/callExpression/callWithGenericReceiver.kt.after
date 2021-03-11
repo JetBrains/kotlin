@@ -1,0 +1,12 @@
+// "Create class 'Foo'" "true"
+
+class A<T>(val n: T) {
+    inner class Foo<U>(u: U) {
+
+    }
+
+}
+
+fun <U> test(u: U) {
+    val a = A(u).Foo(u)
+}

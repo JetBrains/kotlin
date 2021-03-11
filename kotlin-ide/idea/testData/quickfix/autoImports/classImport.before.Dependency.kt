@@ -1,0 +1,3 @@
+package TestData
+
+class TestSample() {}

@@ -1,0 +1,7 @@
+// "Add else branch" "true"
+fun test() {
+    val a = 12
+    val x = when (a) {
+        else -> <caret>
+    }
+}

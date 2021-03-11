@@ -1,0 +1,16 @@
+// "Replace with 'newFun(this)'" "true"
+
+class C {
+    @Deprecated("", ReplaceWith("newFun(this)"))
+    fun oldFun(){}
+}
+
+fun C.newFun(c: C){}
+
+fun foo() {
+    val bar = 0
+    val bar1 = getBar()
+    bar1.<caret>newFun(bar1)
+}
+
+fun getBar(): C = C()

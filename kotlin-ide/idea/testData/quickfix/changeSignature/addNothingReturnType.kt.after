@@ -1,0 +1,3 @@
+// "Specify return type explicitly" "true"
+// WITH_RUNTIME
+fun foo(): Nothing = throw IllegalArgumentException()

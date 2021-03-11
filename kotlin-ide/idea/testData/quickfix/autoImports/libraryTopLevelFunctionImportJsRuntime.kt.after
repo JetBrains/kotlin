@@ -1,0 +1,9 @@
+// "Import" "true"
+// JS
+package some
+
+import kotlin.math.cos
+
+fun testFun() {
+  cos(0.0)
+}

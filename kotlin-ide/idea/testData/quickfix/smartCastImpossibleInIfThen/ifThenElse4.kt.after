@@ -1,0 +1,8 @@
+// "Replace 'if' expression with elvis expression" "true"
+class Test {
+    var x: Any? = null
+
+    fun test() {
+        val i = (x as? String)?.length ?: 0
+    }
+}

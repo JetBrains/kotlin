@@ -1,0 +1,1 @@
+// MyEnum: to be implemented

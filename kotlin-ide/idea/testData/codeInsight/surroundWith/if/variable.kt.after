@@ -1,0 +1,7 @@
+fun foo() {
+    val a = ""
+
+    if (<caret>) {
+        a
+    }
+}

@@ -1,0 +1,28 @@
+<problems>
+    <problem>
+        <file>File.kt</file>
+        <line>4</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="File.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Extension property conflicts with automatically produced one</problem_class>
+        <description>This property conflicts with synthetic extension and should be removed to avoid breaking code by future changes in the compiler</description>
+    </problem>
+
+    <problem>
+        <file>File.kt</file>
+        <line>10</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="File.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Extension property conflicts with automatically produced one</problem_class>
+        <description>This property conflicts with synthetic extension and should be removed to avoid breaking code by future changes in the compiler</description>
+    </problem>
+
+    <problem>
+        <file>File.kt</file>
+        <line>15</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="File.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Extension property conflicts with automatically produced one</problem_class>
+        <description>This property conflicts with synthetic extension and should be removed to avoid breaking code by future changes in the compiler</description>
+    </problem>
+</problems>

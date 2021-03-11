@@ -1,0 +1,9 @@
+fun t() {
+    while (true) {
+        try {
+            <caret>
+        }
+    }
+}
+
+// ELEMENT: try

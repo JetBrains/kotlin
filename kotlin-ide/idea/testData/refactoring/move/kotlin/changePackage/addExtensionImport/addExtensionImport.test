@@ -1,0 +1,5 @@
+{
+  "mainFile": "source/foo.kt",
+  "type": "CHANGE_PACKAGE_DIRECTIVE",
+  "newPackageName": "source"
+}

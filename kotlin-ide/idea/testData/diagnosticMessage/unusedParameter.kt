@@ -1,0 +1,4 @@
+// !DIAGNOSTICS_NUMBER: 1
+// !DIAGNOSTICS: UNUSED_PARAMETER
+
+fun foo(unused: String) {}

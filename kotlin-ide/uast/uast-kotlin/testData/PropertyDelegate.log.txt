@@ -1,0 +1,36 @@
+UFile (package = )
+    UClass (name = PropertyDelegateKt)
+        UField (name = sdCardPath$delegate)
+            UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
+                UIdentifier (Identifier (lazy))
+                USimpleNameReferenceExpression (identifier = lazy, resolvesTo = null)
+                ULambdaExpression
+                    UBlockExpression
+                        UReturnExpression
+                            ULiteralExpression (value = "/sdcard")
+        UField (name = annotatedDelegate$delegate)
+            UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UAnnotation (fqName = kotlin.Suppress)
+            UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
+                UIdentifier (Identifier (lazy))
+                USimpleNameReferenceExpression (identifier = lazy, resolvesTo = null)
+                ULambdaExpression
+                    UBlockExpression
+                        UReturnExpression
+                            UBinaryExpression (operator = +)
+                                ULiteralExpression (value = 1)
+                                ULiteralExpression (value = 1)
+        UMethod (name = getSdCardPath)
+        UMethod (name = localPropertyTest)
+            UBlockExpression
+                UDeclarationsExpression
+                    ULocalVariable (name = sdCardPathLocal)
+                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
+                            UIdentifier (Identifier (lazy))
+                            USimpleNameReferenceExpression (identifier = lazy, resolvesTo = null)
+                            ULambdaExpression
+                                UBlockExpression
+                                    UReturnExpression
+                                        ULiteralExpression (value = "/sdcard")
+        UMethod (name = getAnnotatedDelegate)

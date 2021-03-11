@@ -1,0 +1,3 @@
+class TestClass {
+    private val text = "Lorem Ipsum"
+}

@@ -1,0 +1,8 @@
+// "Convert member to extension" "true"
+// WITH_RUNTIME
+interface B {
+}
+
+inline fun B.foo() {
+    TODO("Not yet implemented")
+}

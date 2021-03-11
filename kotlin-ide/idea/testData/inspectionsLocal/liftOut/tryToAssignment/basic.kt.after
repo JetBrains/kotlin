@@ -1,0 +1,11 @@
+// HIGHLIGHT: INFORMATION
+
+fun test() {
+    var res: String? = null
+
+    <caret>res = try {
+        "success"
+    } catch (e: Exception) {
+        throw e
+    }
+}

@@ -1,0 +1,7 @@
+operator fun String.get(a: Int, b: String, c: String): Int = 0
+
+fun bar(b: String, a: Int, c: String) {
+    ""[a, b, c]<caret>
+}
+
+// ELEMENT: "a, b, c"

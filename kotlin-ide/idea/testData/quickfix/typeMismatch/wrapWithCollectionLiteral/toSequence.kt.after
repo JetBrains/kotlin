@@ -1,0 +1,8 @@
+// "Wrap element with 'sequenceOf()' call" "true"
+// WITH_RUNTIME
+
+fun foo(a: String) {
+    bar(sequenceOf(a)<caret>)
+}
+
+fun bar(a: Sequence<String>) {}

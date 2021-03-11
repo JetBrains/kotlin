@@ -1,0 +1,14 @@
+FILE: main.kt
+    public final [CONTRACTS] class WithElvis : R|kotlin/Any| {
+        public [CONTRACTS] constructor(value: R|kotlin/String?|): R|elvis/WithElvis| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [CONTRACTS] val value: R|kotlin/String?| = R|<local>/value|
+            public get(): R|kotlin/String?|
+
+        public final [BODY_RESOLVE] fun foo(): R|kotlin/String| {
+            ^foo this@R|elvis/WithElvis|.R|elvis/WithElvis.value| ?: String()
+        }
+
+    }

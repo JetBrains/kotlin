@@ -1,0 +1,42 @@
+Targets dependent on Module 'a' production:
+Module 'a' tests
+Module 'b' production
+Module 'b' tests
+Module 'b2' production
+Module 'b2' tests
+Module 'c' production
+Module 'c' tests
+---------
+Targets dependent on Module 'a' tests:
+Module 'b' tests
+Module 'b2' tests
+Module 'c' tests
+---------
+Targets dependent on Module 'b2' production:
+Module 'b2' tests
+Module 'c2' production
+Module 'c2' tests
+---------
+Targets dependent on Module 'b2' tests:
+Module 'c2' tests
+---------
+Targets dependent on Module 'c2' production:
+Module 'c2' tests
+---------
+Targets dependent on Module 'c2' tests:
+
+---------
+Targets dependent on Module 'b' production:
+Module 'b' tests
+Module 'c' production
+Module 'c' tests
+---------
+Targets dependent on Module 'b' tests:
+Module 'c' tests
+---------
+Targets dependent on Module 'c' production:
+Module 'c' tests
+---------
+Targets dependent on Module 'c' tests:
+
+---------

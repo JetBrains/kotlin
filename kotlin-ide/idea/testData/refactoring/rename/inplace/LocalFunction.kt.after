@@ -1,0 +1,7 @@
+fun f() {
+    fun <caret>bar(a: Int) {
+    }
+
+    bar(1)
+    bar(217)
+}

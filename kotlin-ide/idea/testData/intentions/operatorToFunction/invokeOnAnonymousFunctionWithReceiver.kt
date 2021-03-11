@@ -1,0 +1,1 @@
+val xx = 1.(fun Int.(x: Int, y: Int) = this + x + y)<caret>(2, 3)

@@ -1,0 +1,10 @@
+// "Create interface 'A'" "true"
+package p
+
+class Foo: A {
+
+}
+
+interface A {
+
+}

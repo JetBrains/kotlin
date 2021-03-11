@@ -1,0 +1,2 @@
+New instance creation 6 A(0)
+New instance creation 7 A()

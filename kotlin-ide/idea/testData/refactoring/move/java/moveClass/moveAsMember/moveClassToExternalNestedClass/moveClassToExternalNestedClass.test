@@ -1,0 +1,5 @@
+{
+  "mainFile": "main.java",
+  "type": "MOVE_MEMBERS",
+  "targetClass": "B.C"
+}

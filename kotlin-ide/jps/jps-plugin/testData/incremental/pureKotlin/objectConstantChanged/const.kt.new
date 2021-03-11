@@ -1,0 +1,5 @@
+package test
+
+object Object {
+    const val CONST = "new"
+}

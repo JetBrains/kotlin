@@ -1,0 +1,6 @@
+fun doSomeWork(): String = TODO()
+fun doAndPrint(): String {
+    val doSomeWork = doSomeWork()
+    println(doSomeWork)
+    return doSomeWork
+}

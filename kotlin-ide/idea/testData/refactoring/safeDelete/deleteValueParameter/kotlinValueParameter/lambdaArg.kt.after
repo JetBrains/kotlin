@@ -1,0 +1,9 @@
+package test
+
+fun foo(n: Int) {
+    println(n)
+}
+
+fun bar() {
+    foo(10)
+}

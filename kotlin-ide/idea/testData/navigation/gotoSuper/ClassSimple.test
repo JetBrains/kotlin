@@ -1,0 +1,6 @@
+// FILE: before.kt
+interface Some
+class <caret>SomeObject: Some
+// FILE: after.kt
+interface <caret>Some
+class SomeObject: Some

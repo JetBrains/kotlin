@@ -1,0 +1,3 @@
+class A {
+    var i: Int <spot>= 5</spot>
+}

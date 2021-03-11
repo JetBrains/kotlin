@@ -1,0 +1,7 @@
+fun complexFun(): Int {
+}
+
+fun g(): Int {
+    val p = complexFun()
+    return p + p
+}

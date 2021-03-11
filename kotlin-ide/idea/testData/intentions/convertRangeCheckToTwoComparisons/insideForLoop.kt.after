@@ -1,0 +1,5 @@
+fun foo(bar: Int) {
+    for (bar in 1..10) {
+        1 <= bar && bar <= 10
+    }
+}

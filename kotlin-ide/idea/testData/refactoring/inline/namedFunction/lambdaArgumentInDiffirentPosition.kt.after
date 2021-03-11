@@ -1,0 +1,6 @@
+fun usage() {
+    val a = "abc".length
+    val b = "abc".length
+    val c = "abc".length
+    val d = "abc".length
+}

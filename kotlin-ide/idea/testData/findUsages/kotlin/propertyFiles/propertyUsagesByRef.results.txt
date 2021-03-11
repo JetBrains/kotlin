@@ -1,0 +1,2 @@
+[propertyUsagesByRef.0.kt] Usage in string constants 8 message("foo.bar")
+[propertyUsagesByRef.1.java] Usage in string constants 3 PropertyUsages_1Kt.message("foo.bar");

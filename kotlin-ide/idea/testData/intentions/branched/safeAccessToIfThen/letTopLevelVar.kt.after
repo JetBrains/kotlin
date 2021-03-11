@@ -1,0 +1,7 @@
+// WITH_RUNTIME
+
+var a: String? = "A"
+fun main(args: Array<String>) {
+    val a1 = a
+    if (a1 != null) a1.length + 1
+}

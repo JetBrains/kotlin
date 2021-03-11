@@ -1,0 +1,1 @@
+internal actual class Sample

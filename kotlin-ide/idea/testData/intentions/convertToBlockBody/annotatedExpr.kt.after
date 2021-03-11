@@ -1,0 +1,8 @@
+@Target(AnnotationTarget.EXPRESSION)
+@Retention(AnnotationRetention.SOURCE)
+annotation class ann
+
+fun foo(): Int {
+    @ann
+    return 1
+}

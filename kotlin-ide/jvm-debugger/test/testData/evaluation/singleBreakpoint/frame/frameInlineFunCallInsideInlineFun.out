@@ -1,0 +1,25 @@
+LineBreakpoint created at frameInlineFunCallInsideInlineFun.kt:19
+Run Java
+Connected to the target VM
+frameInlineFunCallInsideInlineFun.kt:19
+frameInlineFunCallInsideInlineFun.kt:5
+frameInlineFunCallInsideInlineFun.kt:6
+Compile bytecode for element
+Compile bytecode for this.prop
+KotlinStackFrame (frameInlineFunCallInsideInlineFun.kt:6)
+    JavaValue[this] this: C@uniqueID
+        DummyMessageValueNode = Class has no fields
+    JavaValue[local] element: float = 1.0 (frameInlineFunCallInsideInlineFun.kt:5)
+    JavaValue[local] this_$iv: frameInlineFunCallInsideInlineFun.B
+        DummyMessageValueNode = Class has no fields
+    JavaValue[local] $i$f$foo: int = undefined
+    JavaValue[local] element$iv: int = 2 (frameInlineFunCallInsideInlineFun.kt:5)
+    JavaValue[local] a$iv: frameInlineFunCallInsideInlineFun.A
+        JavaValue[field] prop: int = 1 (frameInlineFunCallInsideInlineFun.kt:9)
+    JavaValue[local] this_$iv$iv: frameInlineFunCallInsideInlineFun.A
+        JavaValue[field] prop: int = 1 (frameInlineFunCallInsideInlineFun.kt:9)
+    JavaValue[local] $i$f$inlineFun: int = undefined
+    JavaValue[local] element$iv$iv: double = 1.0 (frameInlineFunCallInsideInlineFun.kt:5)
+Disconnected from the target VM
+
+Process finished with exit code 0

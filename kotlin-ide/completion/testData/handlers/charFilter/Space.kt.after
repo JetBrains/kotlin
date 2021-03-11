@@ -1,0 +1,4 @@
+class A : Annotation <caret>
+
+// ELEMENT: Annotation
+// CHAR: ' '

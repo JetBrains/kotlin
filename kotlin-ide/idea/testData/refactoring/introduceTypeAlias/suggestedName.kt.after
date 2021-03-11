@@ -1,0 +1,7 @@
+typealias NullableStringToBooleanList = List<(String?) -> Boolean>
+
+// WITH_RUNTIME
+// SIBLING:
+fun foo(list: NullableStringToBooleanList) {
+
+}

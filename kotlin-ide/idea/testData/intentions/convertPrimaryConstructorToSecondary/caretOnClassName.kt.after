@@ -1,0 +1,7 @@
+class Foo {
+    val x: Int
+
+    constructor(x: Int) {
+        this.x = x
+    }
+}

@@ -1,0 +1,1 @@
+<caret>typealias S = String

@@ -1,0 +1,6 @@
+{
+  "type": "MARKED_ELEMENT",
+  "mainFile": "test/Used.kt",
+  "newName": "usedVar2",
+  "withRuntime": "true"
+}

@@ -1,0 +1,24 @@
+public final class WhenStringLiteralKt {
+    @org.jetbrains.annotations.Nullable private static final var a: java.lang.String = readLine()
+    @org.jetbrains.annotations.NotNull private static final var b: int = switch (a)  {
+        "abc" -> {
+            yield 1
+        }
+
+        "def", "ghi" -> {
+            yield 2
+        }
+
+         -> {
+            yield 3
+        }
+
+    }
+
+    public static final fun getA() : java.lang.String = UastEmptyExpression
+    public static final fun getB() : int = UastEmptyExpression
+    public static final fun <no name provided>() : void {
+        "abc1"
+        "def1"
+    }
+}

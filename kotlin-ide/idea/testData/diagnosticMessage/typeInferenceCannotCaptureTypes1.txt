@@ -1,0 +1,2 @@
+<!-- typeInferenceCannotCaptureTypes1 -->
+Type inference failed: 'R' cannot capture 'in Int'. Type parameter has an upper bound 'Any' that cannot be satisfied capturing 'in' projection

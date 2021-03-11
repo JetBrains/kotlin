@@ -1,0 +1,11 @@
+class WithComments/* Some parameter */
+/**
+ * A constructor
+ */(
+    /**
+     * A very important property
+     */
+    val veryImportant: Any
+) {
+
+}

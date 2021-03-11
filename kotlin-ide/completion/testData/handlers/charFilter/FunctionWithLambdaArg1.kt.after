@@ -1,0 +1,8 @@
+fun foo(filter: (String) -> Boolean) {}
+
+fun bar() {
+    foo { <caret> }
+}
+
+// ELEMENT: foo
+// CHAR: {

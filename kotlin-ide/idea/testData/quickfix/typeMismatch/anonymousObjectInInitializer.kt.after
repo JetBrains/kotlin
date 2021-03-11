@@ -1,0 +1,6 @@
+// "Change type of 't' to 'T'" "true"
+interface T
+
+fun foo() {
+    val t: T = object: T{}
+}

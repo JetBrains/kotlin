@@ -1,0 +1,36 @@
+package test
+
+public abstract class ClassDoesNotOverrideMethod : java.util.Date {
+    /*primary*/ public constructor ClassDoesNotOverrideMethod()
+    invisible_fake final override /*1*/ /*fake_override*/ var cdate: sun.util.calendar.BaseCalendar.Date!
+    invisible_fake final override /*1*/ /*fake_override*/ var fastTime: kotlin.Long
+    public open override /*1*/ /*fake_override*/ fun after(/*0*/ p0: java.util.Date!): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun before(/*0*/ p0: java.util.Date!): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+    public open override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: java.util.Date!): kotlin.Int
+    invisible_fake final override /*1*/ /*fake_override*/ fun getCalendarDate(): sun.util.calendar.BaseCalendar.Date!
+    @kotlin.Deprecated(message = "Deprecated in Java") public open override /*1*/ /*fake_override*/ fun getDate(): kotlin.Int
+    @kotlin.Deprecated(message = "Deprecated in Java") public open override /*1*/ /*fake_override*/ fun getDay(): kotlin.Int
+    @kotlin.Deprecated(message = "Deprecated in Java") public open override /*1*/ /*fake_override*/ fun getHours(): kotlin.Int
+    @kotlin.Deprecated(message = "Deprecated in Java") public open override /*1*/ /*fake_override*/ fun getMinutes(): kotlin.Int
+    @kotlin.Deprecated(message = "Deprecated in Java") public open override /*1*/ /*fake_override*/ fun getMonth(): kotlin.Int
+    @kotlin.Deprecated(message = "Deprecated in Java") public open override /*1*/ /*fake_override*/ fun getSeconds(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun getTime(): kotlin.Long
+    invisible_fake final override /*1*/ /*fake_override*/ fun getTimeImpl(): kotlin.Long
+    @kotlin.Deprecated(message = "Deprecated in Java") public open override /*1*/ /*fake_override*/ fun getTimezoneOffset(): kotlin.Int
+    @kotlin.Deprecated(message = "Deprecated in Java") public open override /*1*/ /*fake_override*/ fun getYear(): kotlin.Int
+    invisible_fake final override /*1*/ /*fake_override*/ fun normalize(): sun.util.calendar.BaseCalendar.Date!
+    invisible_fake final override /*1*/ /*fake_override*/ fun normalize(/*0*/ p0: sun.util.calendar.BaseCalendar.Date!): sun.util.calendar.BaseCalendar.Date!
+    invisible_fake open override /*1*/ /*fake_override*/ fun readObject(/*0*/ p0: java.io.ObjectInputStream!): kotlin.Unit
+    @kotlin.Deprecated(message = "Deprecated in Java") public open override /*1*/ /*fake_override*/ fun setDate(/*0*/ p0: kotlin.Int): kotlin.Unit
+    @kotlin.Deprecated(message = "Deprecated in Java") public open override /*1*/ /*fake_override*/ fun setHours(/*0*/ p0: kotlin.Int): kotlin.Unit
+    @kotlin.Deprecated(message = "Deprecated in Java") public open override /*1*/ /*fake_override*/ fun setMinutes(/*0*/ p0: kotlin.Int): kotlin.Unit
+    @kotlin.Deprecated(message = "Deprecated in Java") public open override /*1*/ /*fake_override*/ fun setMonth(/*0*/ p0: kotlin.Int): kotlin.Unit
+    @kotlin.Deprecated(message = "Deprecated in Java") public open override /*1*/ /*fake_override*/ fun setSeconds(/*0*/ p0: kotlin.Int): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun setTime(/*0*/ p0: kotlin.Long): kotlin.Unit
+    @kotlin.Deprecated(message = "Deprecated in Java") public open override /*1*/ /*fake_override*/ fun setYear(/*0*/ p0: kotlin.Int): kotlin.Unit
+    @kotlin.Deprecated(message = "Deprecated in Java") public open override /*1*/ /*fake_override*/ fun toGMTString(): kotlin.String!
+    public open override /*1*/ /*fake_override*/ fun toInstant(): java.time.Instant!
+    @kotlin.Deprecated(message = "Deprecated in Java") public open override /*1*/ /*fake_override*/ fun toLocaleString(): kotlin.String!
+    invisible_fake open override /*1*/ /*fake_override*/ fun writeObject(/*0*/ p0: java.io.ObjectOutputStream!): kotlin.Unit
+}

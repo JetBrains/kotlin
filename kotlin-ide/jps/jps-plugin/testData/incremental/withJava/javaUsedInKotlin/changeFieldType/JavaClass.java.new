@@ -1,0 +1,4 @@
+public class JavaClass {
+    public CharSequence stringField;
+    public int intField;
+}

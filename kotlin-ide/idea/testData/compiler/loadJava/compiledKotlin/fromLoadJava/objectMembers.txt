@@ -1,0 +1,6 @@
+package test
+
+public object SomeObject {
+    /*primary*/ private constructor SomeObject()
+    public final fun test(/*0*/ a: kotlin.Int): kotlin.Int
+}

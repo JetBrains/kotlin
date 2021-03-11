@@ -1,0 +1,22 @@
+LineBreakpoint created at frameThis0Ext.kt:15
+Run Java
+Connected to the target VM
+frameThis0Ext.kt:15
+Compile bytecode for val1
+Compile bytecode for prop1
+Compile bytecode for prop2
+Compile bytecode for prop1 + val1
+Compile bytecode for prop2 + val1
+Compile bytecode for myFun1()
+Compile bytecode for myFun2()
+KotlinStackFrame (frameThis0Ext.kt:15)
+    JavaValue[this] this: A$testExt$1@uniqueID = Function0<kotlin.Unit>
+        JavaValue[field] this$0: frameThis0Ext.A
+            JavaValue[field] prop1: int = 1 (frameThis0Ext.kt:8)
+        JavaValue[field] $this_testExt: frameThis0Ext.AExt
+            JavaValue[field] prop2: int = 1 (frameThis0Ext.kt:25)
+        JavaValue[field] $val1: int = 1
+        JavaValue[field] arity: int = 0 (Lambda.!EXT!)
+Disconnected from the target VM
+
+Process finished with exit code 0

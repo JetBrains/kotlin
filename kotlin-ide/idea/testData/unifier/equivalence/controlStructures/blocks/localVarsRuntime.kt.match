@@ -1,0 +1,11 @@
+{
+            val a = 1
+            val b = a + 1
+            println(a - b)
+        }
+
+{
+            val b = 1
+            val a = b + 1
+            println(b - a)
+        }

@@ -1,0 +1,1 @@
+Property delegation 10 val p: String by Delegate()

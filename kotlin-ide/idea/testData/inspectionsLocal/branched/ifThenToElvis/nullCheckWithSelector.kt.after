@@ -1,0 +1,5 @@
+class My(val x: Int)
+
+fun foo(arg: My?): Int {
+    return arg?.x ?: 42
+}

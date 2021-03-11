@@ -1,0 +1,8 @@
+// "Add function to supertype..." "true"
+interface A {
+    fun foo()
+}
+interface B {}
+class C: A, B {
+  <caret>override fun foo() {}
+}

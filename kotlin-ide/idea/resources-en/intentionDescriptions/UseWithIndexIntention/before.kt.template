@@ -1,0 +1,6 @@
+fun foo(list: List<String>) {
+    <spot>var index = 0</spot>
+    for (s in list) {
+        print(s.substring(<spot>index++</spot>))
+    }
+}

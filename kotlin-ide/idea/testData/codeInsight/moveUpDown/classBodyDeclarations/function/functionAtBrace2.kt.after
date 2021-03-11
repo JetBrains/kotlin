@@ -1,0 +1,12 @@
+// fun foo
+<caret>fun foo() {
+
+}
+
+// MOVE: up
+// class A
+class A {
+
+    // val y
+    val y = ""
+}

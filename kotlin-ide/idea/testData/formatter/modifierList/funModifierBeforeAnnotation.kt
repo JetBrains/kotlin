@@ -1,0 +1,5 @@
+public
+@foo
+fun foo() {
+}
+

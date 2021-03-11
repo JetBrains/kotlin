@@ -1,0 +1,7 @@
+// FIR_COMPARISON
+fun <T> foo() {}
+
+fun use() = foo <String>()<caret>
+
+// ELEMENT: foo
+// CHAR: '\t'

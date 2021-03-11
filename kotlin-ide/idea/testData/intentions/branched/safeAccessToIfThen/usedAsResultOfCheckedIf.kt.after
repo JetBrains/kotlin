@@ -1,0 +1,4 @@
+fun main(args: Array<String>) {
+    val foo: String? = "foo"
+    val y = if (true) if (foo != null) foo.length else null else null
+}

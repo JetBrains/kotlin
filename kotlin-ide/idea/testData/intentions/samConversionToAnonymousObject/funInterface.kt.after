@@ -1,0 +1,13 @@
+fun interface KotlinFace {
+    fun single()
+}
+
+fun useSam(kf: KotlinFace) {}
+
+fun callSam() {
+    useSam(kf = object : KotlinFace {
+        override fun single() {
+
+        }
+    })
+}

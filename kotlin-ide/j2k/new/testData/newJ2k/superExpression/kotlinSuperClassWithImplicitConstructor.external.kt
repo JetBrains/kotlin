@@ -1,0 +1,2 @@
+open class EmptyTest {
+}

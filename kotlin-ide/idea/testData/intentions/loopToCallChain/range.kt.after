@@ -1,0 +1,9 @@
+// WITH_RUNTIME
+// INTENTION_TEXT: "Replace with 'filter{}'"
+// IS_APPLICABLE_2: false
+import java.util.*
+
+fun foo(): List<Int> {
+    val <caret>result = (1..10).filter { it % 3 == 0 }
+    return result
+}

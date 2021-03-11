@@ -1,0 +1,1 @@
+class test.A has 3 usages that are not safe to delete.Of those 2 usages are in strings, comments, non-code files or generated code.

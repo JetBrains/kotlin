@@ -1,0 +1,15 @@
+// WITH_RUNTIME
+// SIBLING:
+fun foo() {
+    val (a, b) =
+            if (true) {
+                __dummyTestFun__()
+                1 to 2
+            } else {
+                2 to 3
+            }
+}
+
+private fun __dummyTestFun__() {
+    1 + 1
+}

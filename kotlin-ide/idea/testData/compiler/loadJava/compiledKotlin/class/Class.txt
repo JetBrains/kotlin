@@ -1,0 +1,5 @@
+package test
+
+public final class Ramification {
+    /*primary*/ public constructor Ramification()
+}

@@ -1,0 +1,40 @@
+Int -> USimpleNameReferenceExpression (identifier = Int) from KtNameReferenceExpression
+String -> UQualifiedReferenceExpression from KDocName
+lang -> UQualifiedReferenceExpression from KDocName
+IllegalStateException -> UQualifiedReferenceExpression from KDocName
+lang -> UQualifiedReferenceExpression from KDocName
+java -> USimpleNameReferenceExpression (identifier = java) from KtNameReferenceExpression
+lang -> USimpleNameReferenceExpression (identifier = lang) from KtNameReferenceExpression
+String -> USimpleNameReferenceExpression (identifier = String) from KtNameReferenceExpression
+Ingredient -> UQualifiedReferenceExpression from KDocName
+NotImplementedError -> UQualifiedReferenceExpression from KDocName
+contains -> UQualifiedReferenceExpression from KDocName
+Ingredient -> USimpleNameReferenceExpression (identifier = Ingredient) from KtNameReferenceExpression
+Boolean -> USimpleNameReferenceExpression (identifier = Boolean) from KtNameReferenceExpression
+Pizza -> USimpleNameReferenceExpression (identifier = Pizza) from KtNameReferenceExpression
+Builder -> USimpleNameReferenceExpression (identifier = Builder) from KtNameReferenceExpression
+P -> USimpleNameReferenceExpression (identifier = P) from KtNameReferenceExpression
+MutableSet -> USimpleNameReferenceExpression (identifier = MutableSet) from KtNameReferenceExpression
+Pizza -> USimpleNameReferenceExpression (identifier = Pizza) from KtNameReferenceExpression
+Ingredient -> USimpleNameReferenceExpression (identifier = Ingredient) from KtNameReferenceExpression
+mutableSetOf -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) from KtNameReferenceExpression
+Pizza -> USimpleNameReferenceExpression (identifier = Pizza) from KtNameReferenceExpression
+Ingredient -> USimpleNameReferenceExpression (identifier = Ingredient) from KtNameReferenceExpression
+P -> USimpleNameReferenceExpression (identifier = P) from KtNameReferenceExpression
+Pizza -> USimpleNameReferenceExpression (identifier = Pizza) from KtNameReferenceExpression
+P -> USimpleNameReferenceExpression (identifier = P) from KtNameReferenceExpression
+Int -> USimpleNameReferenceExpression (identifier = Int) from KtNameReferenceExpression
+Pizza -> USimpleNameReferenceExpression (identifier = Pizza) from KtNameReferenceExpression
+java -> USimpleNameReferenceExpression (identifier = java) from KtNameReferenceExpression
+lang -> USimpleNameReferenceExpression (identifier = lang) from KtNameReferenceExpression
+String -> USimpleNameReferenceExpression (identifier = String) from KtNameReferenceExpression
+String -> UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 1)) from KtDotQualifiedExpression
+lang -> USimpleNameReferenceExpression (identifier = lang) from KtDotQualifiedExpression
+java -> USimpleNameReferenceExpression (identifier = java) from KtNameReferenceExpression
+lang -> USimpleNameReferenceExpression (identifier = lang) from KtNameReferenceExpression
+String -> UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 1)) from KtNameReferenceExpression
+Ingredient -> UQualifiedReferenceExpression from KDocName
+Ingredient -> UQualifiedReferenceExpression from KDocName
+Pizza -> USimpleNameReferenceExpression (identifier = Pizza) from KtNameReferenceExpression
+Ingredient -> USimpleNameReferenceExpression (identifier = Ingredient) from KtNameReferenceExpression
+Boolean -> USimpleNameReferenceExpression (identifier = Boolean) from KtNameReferenceExpression

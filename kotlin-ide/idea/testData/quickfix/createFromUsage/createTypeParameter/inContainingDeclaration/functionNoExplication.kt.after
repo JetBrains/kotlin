@@ -1,0 +1,9 @@
+// "Create type parameter 'X' in function 'foo'" "true"
+fun <X> foo(x: X) {
+
+}
+
+fun test() {
+    foo(1)
+    foo("2")
+}

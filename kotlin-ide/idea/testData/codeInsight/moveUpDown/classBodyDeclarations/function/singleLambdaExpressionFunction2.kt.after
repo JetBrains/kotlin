@@ -1,0 +1,10 @@
+// MOVE: up
+fun a() {
+}
+
+<caret>fun b() = {
+    ""
+}
+
+fun c() {
+}

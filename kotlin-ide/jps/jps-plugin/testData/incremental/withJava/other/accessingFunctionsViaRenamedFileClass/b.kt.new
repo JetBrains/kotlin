@@ -1,0 +1,4 @@
+@file:JvmName("B")
+package test
+
+fun b() = "b"

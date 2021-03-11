@@ -1,0 +1,64 @@
+<problems>
+    <problem>
+        <file>wrongPluginVersionWithNumber.gradle</file>
+        <line>6</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="wrongPluginVersionWithNumber.gradle" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Kotlin Gradle and IDE plugins versions are different</problem_class>
+        <description>Kotlin version that is used for building with Gradle (0.0.1) differs from the one bundled into the IDE plugin ($PLUGIN_VERSION)</description>
+    </problem>
+
+    <problem>
+        <file>wrongPluginVersionWithStandardKotlinVariable.gradle</file>
+        <line>9</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="wrongPluginVersionWithStandardKotlinVariable.gradle" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Kotlin Gradle and IDE plugins versions are different</problem_class>
+        <description>Kotlin version that is used for building with Gradle (0.0.1) differs from the one bundled into the IDE plugin ($PLUGIN_VERSION)</description>
+    </problem>
+
+    <problem>
+        <file>fullHelloWorldConfiguration.gradle</file>
+        <line>11</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="fullHelloWorldConfiguration.gradle" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Kotlin Gradle and IDE plugins versions are different</problem_class>
+        <description>Kotlin version that is used for building with Gradle (0.0.1) differs from the one bundled into the IDE plugin ($PLUGIN_VERSION)</description>
+    </problem>
+
+    <problem>
+        <file>wrongPluginVersionWithSomeVariable.gradle</file>
+        <line>9</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="wrongPluginVersionWithSomeVariable.gradle" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Kotlin Gradle and IDE plugins versions are different</problem_class>
+        <description>Kotlin version that is used for building with Gradle (0.0.1) differs from the one bundled into the IDE plugin ($PLUGIN_VERSION)</description>
+    </problem>
+
+    <problem>
+        <file>wrongPluginVersionWithSomeVariableInDef.gradle</file>
+        <line>9</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="wrongPluginVersionWithSomeVariableInDef.gradle" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Kotlin Gradle and IDE plugins versions are different</problem_class>
+        <description>Kotlin version that is used for building with Gradle (0.0.1) differs from the one bundled into the IDE plugin ($PLUGIN_VERSION)</description>
+    </problem>
+
+    <problem>
+        <file>wrongPluginVersionWithVariableAndFullInterpolation.gradle</file>
+        <line>9</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="wrongPluginVersionWithVariableAndFullInterpolation.gradle" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Kotlin Gradle and IDE plugins versions are different</problem_class>
+        <description>Kotlin version that is used for building with Gradle (0.0.1) differs from the one bundled into the IDE plugin ($PLUGIN_VERSION)</description>
+    </problem>
+
+    <problem>
+        <file>wrongPluginVersionWithBracesCall.gradle</file>
+        <line>6</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="wrongPluginVersionWithBracesCall.gradle" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Kotlin Gradle and IDE plugins versions are different</problem_class>
+        <description>Kotlin version that is used for building with Gradle (0.0.1) differs from the one bundled into the IDE plugin ($PLUGIN_VERSION)</description>
+    </problem>
+</problems>

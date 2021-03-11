@@ -1,0 +1,5 @@
+public final class AccessorsBug {
+    public int getSmth() {
+        return 42;
+    }
+}

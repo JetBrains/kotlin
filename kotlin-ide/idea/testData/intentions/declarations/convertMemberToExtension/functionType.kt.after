@@ -1,0 +1,6 @@
+class Owner {
+}
+
+fun Owner.<caret>f(p: () -> Unit): (Int) -> String {
+    return { it.toString() }
+}

@@ -1,0 +1,4 @@
+package f
+
+fun f() {
+}

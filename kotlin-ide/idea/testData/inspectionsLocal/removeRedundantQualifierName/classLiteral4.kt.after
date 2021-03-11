@@ -1,0 +1,14 @@
+// WITH_RUNTIME
+// DISABLE-ERRORS
+package foo.www.ddd
+
+class Check {
+    class BBD {
+        class Bwd {
+            fun dad() {
+                fun Bwd(): String = ""
+                val a = Bwd::class.java.annotatedInterfaces.size
+            }
+        }
+    }
+}

@@ -1,0 +1,8 @@
+class Test {
+    var foo = 1
+
+    init {
+        foo = 2
+        val foo = foo
+    }
+}

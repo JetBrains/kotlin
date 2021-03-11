@@ -1,0 +1,11 @@
+fun println(s: String) {}
+
+fun foo(x: Boolean, y: Boolean) {
+    if (x) {
+        if (y) {
+            println("no1")
+        }
+        return
+    }
+    println("no2")
+}

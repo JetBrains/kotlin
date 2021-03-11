@@ -1,0 +1,3 @@
+class A<X, Z>
+
+val a = A<Int, Any>()

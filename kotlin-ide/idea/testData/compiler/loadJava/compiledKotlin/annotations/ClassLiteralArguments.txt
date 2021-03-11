@@ -1,0 +1,17 @@
+package test
+
+public final annotation class Anno : kotlin.Annotation {
+    /*primary*/ public constructor Anno(/*0*/ klass: kotlin.reflect.KClass<*>, /*1*/ klasses: kotlin.Array<kotlin.reflect.KClass<*>>, /*2*/ sarKlass: kotlin.reflect.KClass<kotlin.Array<kotlin.String>>, /*3*/ d2arKlass: kotlin.reflect.KClass<kotlin.Array<kotlin.DoubleArray>>)
+    public final val d2arKlass: kotlin.reflect.KClass<kotlin.Array<kotlin.DoubleArray>>
+        public final fun <get-d2arKlass>(): kotlin.reflect.KClass<kotlin.Array<kotlin.DoubleArray>>
+    public final val klass: kotlin.reflect.KClass<*>
+        public final fun <get-klass>(): kotlin.reflect.KClass<*>
+    public final val klasses: kotlin.Array<kotlin.reflect.KClass<*>>
+        public final fun <get-klasses>(): kotlin.Array<kotlin.reflect.KClass<*>>
+    public final val sarKlass: kotlin.reflect.KClass<kotlin.Array<kotlin.String>>
+        public final fun <get-sarKlass>(): kotlin.reflect.KClass<kotlin.Array<kotlin.String>>
+}
+
+@test.Anno(d2arKlass = kotlin.Array<kotlin.DoubleArray>::class, klass = kotlin.String::class, klasses = {kotlin.Int::class, kotlin.String::class, kotlin.Float::class}, sarKlass = kotlin.Array<kotlin.String>::class) public final class Klass {
+    /*primary*/ public constructor Klass()
+}

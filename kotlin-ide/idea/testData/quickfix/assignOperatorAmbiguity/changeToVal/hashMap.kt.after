@@ -1,0 +1,7 @@
+// "Change 'set' to val" "true"
+// WITH_RUNTIME
+
+fun test() {
+    val set = HashMap<Int, Int>()
+    set <caret>+= 2 to 2
+}

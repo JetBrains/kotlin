@@ -1,0 +1,10 @@
+// INTENTION_TEXT: "Add import for 'kotlin.properties.Delegates.notNull'"
+// WITH_RUNTIME
+
+import kotlin.properties.Delegates
+import kotlin.properties.Delegates.notNull
+
+class A {
+    val v1: Int by notNull()
+    val v2: Char by notNull<caret>()
+}

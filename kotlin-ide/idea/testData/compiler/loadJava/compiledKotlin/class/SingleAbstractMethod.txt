@@ -1,0 +1,5 @@
+package test
+
+public interface SingleAbstractMethod {
+    public abstract fun foo(): kotlin.Unit
+}

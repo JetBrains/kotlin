@@ -1,0 +1,13 @@
+open class A {
+    // INFO: {"checked": "true", "toAbstract": "false"}
+    fun foo() {
+
+    }
+}
+
+interface I {
+    fun foo()
+}
+
+class B : A(), I {
+}

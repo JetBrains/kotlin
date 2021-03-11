@@ -1,0 +1,22 @@
+// "Initialize with constructor parameter" "true"
+open class A {
+    val n: Int
+
+    constructor(s: String, n: Int) {
+        this.n = n
+    }
+
+    constructor(a: Int, n: Int) {
+        val t = 1
+        this.n = n
+    }
+}
+
+class B : A("", 0)
+
+class C : A(1, 0)
+
+fun test() {
+    val a = A("", 0)
+    val aa = A(1, 0)
+}

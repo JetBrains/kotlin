@@ -1,0 +1,7 @@
+package fq
+
+interface Iface
+
+fun foo() {
+    Iface
+}

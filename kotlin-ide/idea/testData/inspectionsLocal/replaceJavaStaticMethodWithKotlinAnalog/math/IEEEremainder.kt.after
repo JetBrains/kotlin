@@ -1,0 +1,6 @@
+import kotlin.math.IEEErem
+
+// WITH_RUNTIME
+fun test(x: Double, y: Double) {
+    x.IEEErem(y)
+}

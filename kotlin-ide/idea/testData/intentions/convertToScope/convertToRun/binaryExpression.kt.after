@@ -1,0 +1,15 @@
+// WITH_RUNTIME
+class A {
+    infix fun foo(x: Any) = A()
+}
+
+fun main() {
+    val a = A()
+    a.run {
+        foo(0)
+        foo(0)
+        foo(0) foo 0
+        foo(0)
+        foo(0)
+    }
+}

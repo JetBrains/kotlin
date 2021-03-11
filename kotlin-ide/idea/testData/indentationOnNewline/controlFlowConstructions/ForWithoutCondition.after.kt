@@ -1,0 +1,4 @@
+fun some() {
+    for
+        <caret>
+}

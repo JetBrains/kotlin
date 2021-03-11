@@ -1,0 +1,11 @@
+when {
+        (a == 1) -> println(b)
+        a == 2 -> println(a - b)
+        else -> println(a + b)
+    }
+
+when {
+        a == 1 -> println(b)
+        (a == 2) -> println((a - b))
+        else -> println(a + b)
+    }

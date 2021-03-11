@@ -1,0 +1,6 @@
+// WITH_RUNTIME
+// INTENTION_TEXT: "Replace with 'lastOrNull{}'"
+// IS_APPLICABLE_2: false
+fun foo(list: List<String>) {
+    val <caret>result: String? = list.lastOrNull { it.length > 0 }
+}

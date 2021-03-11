@@ -1,0 +1,4 @@
+// MOVE: right
+fun foo() {
+    bar(1, 3, <caret>2)
+}

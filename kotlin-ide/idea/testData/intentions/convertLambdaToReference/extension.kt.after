@@ -1,0 +1,8 @@
+// IS_APPLICABLE: true
+
+class Owner(val z: Int) {
+    val x = this::foo
+}
+
+fun Owner.foo(y: Int) = y + z
+

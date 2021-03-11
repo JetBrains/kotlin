@@ -1,0 +1,7 @@
+// INTENTION_TEXT: "Add 'a =' to argument"
+
+fun foo(a: Int, b: String){}
+
+fun bar() {
+    foo(a = 1, b = "")
+}

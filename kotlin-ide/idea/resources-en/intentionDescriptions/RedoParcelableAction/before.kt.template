@@ -1,0 +1,23 @@
+class SomeData(val number: Int, val text: String, val flag: Boolean) : Parcelable {
+    constructor(parcel: Parcel) : this(
+            parcel.readString()) {
+    }
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeInt(oldField)
+    }
+
+    override fun describeContents(): Int {
+        return 42
+    }
+
+    companion object CREATOR : Parcelable.Creator<SomeData> {
+        override fun createFromParcel(parcel: Parcel): SomeData {
+            return SomeData(parcel)
+        }
+
+        override fun newArray(size: Int): Array<SomeData?> {
+            return arrayOfNulls(size)
+        }
+    }
+}

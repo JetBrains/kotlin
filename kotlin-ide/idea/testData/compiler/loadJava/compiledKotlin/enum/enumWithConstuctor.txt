@@ -1,0 +1,27 @@
+package test
+
+public final enum class En : kotlin.Enum<test.En> {
+    enum entry E1
+
+    enum entry E2
+
+    enum entry E3
+
+    /*primary*/ private constructor En(/*0*/ b: kotlin.Boolean = ..., /*1*/ i: kotlin.Int = ...)
+    public final val b: kotlin.Boolean
+        public final fun <get-b>(): kotlin.Boolean
+    public final val i: kotlin.Int
+        public final fun <get-i>(): kotlin.Int
+    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+        public final override /*1*/ /*fake_override*/ fun <get-name>(): kotlin.String
+    public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun <get-ordinal>(): kotlin.Int
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.En): kotlin.Int
+    protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+    public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<test.En!>!
+
+    // Static members
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.En
+    public final /*synthesized*/ fun values(): kotlin.Array<test.En>
+}

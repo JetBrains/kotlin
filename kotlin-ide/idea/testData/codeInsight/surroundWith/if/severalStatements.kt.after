@@ -1,0 +1,6 @@
+fun foo() {
+    if (<caret>) {
+        "".capitalize()
+        "".capitalize()
+    }
+}

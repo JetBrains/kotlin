@@ -1,0 +1,3 @@
+fun bar(o: Any): String {
+    return o as String<caret>
+}

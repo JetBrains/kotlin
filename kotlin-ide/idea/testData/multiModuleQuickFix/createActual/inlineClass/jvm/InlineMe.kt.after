@@ -1,0 +1,1 @@
+actual inline class InlineMe actual constructor(actual val x: Int)

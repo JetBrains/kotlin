@@ -1,0 +1,3 @@
+[NotNull Values]
+15 	<bold>val y</bold> = b.foo (in test(A, B,…))
+15 		<bold>val y</bold> = b.foo (in test(A, B,…))

@@ -1,0 +1,4 @@
+class C {
+    <spot>protected</spot> fun foo() {
+    }
+}

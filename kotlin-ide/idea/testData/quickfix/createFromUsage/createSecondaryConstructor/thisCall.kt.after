@@ -1,0 +1,9 @@
+// "Create secondary constructor" "true"
+
+class A {
+    constructor(): this(1) {
+
+    }
+
+    constructor(i: Int)
+}

@@ -1,0 +1,5 @@
+fun test() {
+    val f: () -> Unit
+    f = fun () {
+    }
+}

@@ -1,0 +1,8 @@
+// "Remove redundant receiver parameter" "true"
+fun foo() {
+
+}
+
+fun test() {
+    foo()
+}

@@ -1,0 +1,6 @@
+-InheritedMembers.kt
+ -Test
+  equals(Any?): Boolean location=→Any
+  hashCode(): Int location=→Any
+  test(): Unit
+  toString(): String location=→Any

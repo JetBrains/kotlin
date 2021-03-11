@@ -1,0 +1,9 @@
+fun test(b: Boolean) {
+    var fn: () -> String
+
+    <caret>fn = try {
+        { "foo" }
+    } catch (e: Exception) {
+        { "bar" }
+    }
+}

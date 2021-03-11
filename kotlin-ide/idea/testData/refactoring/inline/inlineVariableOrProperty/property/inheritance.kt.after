@@ -1,0 +1,14 @@
+abstract class A {
+}
+
+class B : A() {
+    val b: Int = 42
+}
+
+open class C : A() {
+    open val b: Int get() = 24
+}
+
+class D : C() {
+    override val b: Int get() = 33
+}

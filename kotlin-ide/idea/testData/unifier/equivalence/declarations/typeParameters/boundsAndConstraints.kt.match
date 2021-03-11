@@ -1,0 +1,5 @@
+fun <A, B, C> bar1(a: A, b: B, c: C): I where B: A, C: I, C: T = c
+
+fun <X, Y: X, Z> bar2(x: X, y: Y, z: Z): I where Z: I, Z: T = z
+
+fun <X, Y: X, Z: T> bar5(x: X, y: Y, z: Z): I where Z: I = z

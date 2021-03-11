@@ -1,0 +1,8 @@
+// "Change to var" "true"
+object A {
+    var A = 1
+
+    fun foo() {
+        <caret>A = 10
+    }
+}

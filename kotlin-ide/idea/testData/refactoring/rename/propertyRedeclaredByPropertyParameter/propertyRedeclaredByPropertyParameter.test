@@ -1,0 +1,7 @@
+{
+  "type": "MARKED_ELEMENT",
+  "mainFile": "test/test.kt",
+  "newName": "a",
+  "withRuntime": "true",
+  "hint": "Parameter 'a' is already declared in class 'Foo'"
+}

@@ -1,0 +1,5 @@
+fun <caret>foo(): Int {
+    return bar()
+}
+
+fun bar() = 1

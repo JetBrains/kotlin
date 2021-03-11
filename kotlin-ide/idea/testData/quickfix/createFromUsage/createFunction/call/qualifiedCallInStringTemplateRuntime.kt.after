@@ -1,0 +1,11 @@
+// "Create member function 'A.foo'" "true"
+
+class A {
+    fun foo(): String {
+        TODO("Not yet implemented")
+    }
+}
+
+fun test() {
+    println("a = ${A().foo()}")
+}

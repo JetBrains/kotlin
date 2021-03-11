@@ -1,0 +1,3 @@
+fun foo(thread: Thread) {
+    <spot>thread.setDaemon(true)</spot>
+}

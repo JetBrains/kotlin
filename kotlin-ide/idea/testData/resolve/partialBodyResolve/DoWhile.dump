@@ -1,0 +1,9 @@
+Resolve target: value-parameter p: kotlin.Any? smart-cast to kotlin.Any
+----------------------------------------------
+fun foo(p: Any?) {
+    do {
+        print(p!!)
+    } while (x())
+
+    <caret>p.hashCode()
+}

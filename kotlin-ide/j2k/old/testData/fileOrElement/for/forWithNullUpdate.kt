@@ -1,0 +1,2 @@
+init()
+while (condition()) body()

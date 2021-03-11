@@ -1,0 +1,1 @@
+fun testFun(<caret>parameter: Int) = 0

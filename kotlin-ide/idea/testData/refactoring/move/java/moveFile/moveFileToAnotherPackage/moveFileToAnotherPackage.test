@@ -1,0 +1,5 @@
+{
+  "mainFile": "a/main.java",
+  "type": "MOVE_FILES",
+  "targetPackage": "b"
+}

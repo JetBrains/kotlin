@@ -1,0 +1,10 @@
+package test
+
+inline fun a(body: () -> Unit) {
+    body()
+    println("i'm inline function a")
+}
+
+fun main(args: Array<String>) {
+    b { println("to be inlined") }
+}

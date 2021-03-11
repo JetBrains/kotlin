@@ -1,0 +1,34 @@
+// FILE: main.before.kt
+// "Import" "true"
+// ERROR: Unresolved reference: foobar
+
+//KT-9009
+
+package foo
+
+fun f() {
+    foobar<caret>()
+}
+
+
+// FILE: dependency.before.kt
+package bar
+
+object Foo {
+    fun foobar() {
+    }
+}
+
+// FILE: main.after.kt
+// "Import" "true"
+// ERROR: Unresolved reference: foobar
+
+//KT-9009
+
+package foo
+
+import bar.Foo.foobar
+
+fun f() {
+    foobar<caret>()
+}

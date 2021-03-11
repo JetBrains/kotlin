@@ -1,0 +1,8 @@
+// "Add 'abstract fun f()' to 'A'" "true"
+interface A {
+    fun f()
+}
+
+class B : A {
+    override fun f() {}
+}

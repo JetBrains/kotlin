@@ -1,0 +1,7 @@
+val map = HashMap<Int, String>()
+fun compute(i: Int): String = i.toString()
+fun foo(smth: Int): String {
+    val compute = compute(smth)
+    map[smth] = compute
+    return compute
+}
