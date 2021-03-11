@@ -84,10 +84,9 @@ extra["versions.androidDxSources"] = "5.0.0_r2"
 extra["customDepsOrg"] = "kotlin.build"
 
 repositories {
-    jcenter()
+    mavenCentral()
     maven("https://jetbrains.bintray.com/intellij-third-party-dependencies/")
     maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
-    maven("https://kotlin.bintray.com/kotlinx")
     gradlePluginPortal()
 
     extra["bootstrapKotlinRepo"]?.let {
