@@ -24,6 +24,7 @@ build/
 !**/src/**/build
 !**/test/**/build
 *.iml
+!kotlin-ide/**/*.iml
 !**/testData/**/*.iml
 .idea/libraries/Gradle*.xml
 .idea/libraries/Maven*.xml
