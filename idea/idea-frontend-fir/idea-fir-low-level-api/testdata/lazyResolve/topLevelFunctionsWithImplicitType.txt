@@ -3,6 +3,6 @@ FILE: topLevelFunctionsWithImplicitType.kt
         R|/receive|(R|/functionWithLazyBody|())
     }
     public final [STATUS] fun receive([STATUS] value: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
-    public final [IMPLICIT_TYPES_BODY_RESOLVE] fun functionWithLazyBody(): R|kotlin/String| {
+    public final [BODY_RESOLVE] fun functionWithLazyBody(): R|kotlin/String| {
         ^functionWithLazyBody String(42)
     }

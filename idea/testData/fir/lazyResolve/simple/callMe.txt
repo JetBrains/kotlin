@@ -1,5 +1,5 @@
 FILE: callMe.kt
-    public final [IMPLICIT_TYPES_BODY_RESOLVE] fun callMe(): R|kotlin/Int| {
+    public final [BODY_RESOLVE] fun callMe(): R|kotlin/Int| {
         ^callMe Int(42)
     }
     public final [STATUS] fun other(): R|kotlin/Unit| { LAZY_BLOCK }

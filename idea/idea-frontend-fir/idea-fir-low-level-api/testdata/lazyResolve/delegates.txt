@@ -6,7 +6,7 @@ FILE: delegates.kt
         R|/variableWithImplicitType| = Int(10)
     }
     public final [STATUS] fun receive([STATUS] value: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
-    public final [IMPLICIT_TYPES_BODY_RESOLVE] val delegate: R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>| = object : R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>| {
+    public final [BODY_RESOLVE] val delegate: R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>| = object : R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>| {
         private [BODY_RESOLVE] constructor(): R|<anonymous>| {
             super<R|kotlin/Any|>()
         }
@@ -20,13 +20,13 @@ FILE: delegates.kt
 
     }
 
-        [IMPLICIT_TYPES_BODY_RESOLVE] public get(): R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>|
+        [BODY_RESOLVE] public get(): R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>|
     public final [STATUS] val valueWithExplicitType: R|kotlin/Int|by LAZY_EXPRESSION
         [STATUS] public get(): <implicit> {
             ^ D|/valueWithExplicitType|.getValue#(Null(null), ::R|/valueWithExplicitType|)
         }
-    public final [IMPLICIT_TYPES_BODY_RESOLVE] val valueWithImplicitType: R|kotlin/Int|by R|/delegate|
-        [IMPLICIT_TYPES_BODY_RESOLVE] public get(): R|kotlin/Int| {
+    public final [BODY_RESOLVE] val valueWithImplicitType: R|kotlin/Int|by R|/delegate|
+        [BODY_RESOLVE] public get(): R|kotlin/Int| {
             ^ D|/valueWithImplicitType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.getValue: R|kotlin/Int|>|(Null(null), ::R|/valueWithImplicitType|)
         }
     public final [STATUS] var variableWithExplicitType: R|kotlin/Int|by LAZY_EXPRESSION
@@ -36,10 +36,10 @@ FILE: delegates.kt
         [STATUS] public set([RAW_FIR] <set-?>: <implicit>): R|kotlin/Unit| {
             D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
         }
-    public final [IMPLICIT_TYPES_BODY_RESOLVE] var variableWithImplicitType: R|kotlin/Int|by R|/delegate|
-        [IMPLICIT_TYPES_BODY_RESOLVE] public get(): R|kotlin/Int| {
+    public final [BODY_RESOLVE] var variableWithImplicitType: R|kotlin/Int|by R|/delegate|
+        [BODY_RESOLVE] public get(): R|kotlin/Int| {
             ^ D|/variableWithImplicitType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.getValue: R|kotlin/Int|>|(Null(null), ::R|/variableWithImplicitType|)
         }
-        [IMPLICIT_TYPES_BODY_RESOLVE] public set([IMPLICIT_TYPES_BODY_RESOLVE] <set-?>: R|kotlin/Int|): R|kotlin/Unit| {
+        [BODY_RESOLVE] public set([BODY_RESOLVE] <set-?>: R|kotlin/Int|): R|kotlin/Unit| {
             D|/variableWithImplicitType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
         }

@@ -1,10 +1,10 @@
 FILE: main.kt
-    public final [CONTRACTS] class WithElvis : R|kotlin/Any| {
-        public [CONTRACTS] constructor([STATUS] value: R|kotlin/String?|): R|elvis/WithElvis| {
+    public final [STATUS] class WithElvis : R|kotlin/Any| {
+        public [STATUS] constructor([STATUS] value: R|kotlin/String?|): R|elvis/WithElvis| {
             super<R|kotlin/Any|>()
         }
 
-        public final [CONTRACTS] val value: R|kotlin/String?| = R|<local>/value|
+        public final [STATUS] val value: R|kotlin/String?| = R|<local>/value|
             [STATUS] public get(): R|kotlin/String?|
 
         public final [BODY_RESOLVE] fun foo(): R|kotlin/String| {
