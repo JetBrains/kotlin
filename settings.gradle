@@ -302,6 +302,12 @@ include ":prepare:ide-plugin-dependencies:android-extensions-compiler-plugin-for
         ":prepare:ide-plugin-dependencies:tests-common-tests-for-ide",
         ":prepare:ide-plugin-dependencies:compiler-components-for-jps"
 
+new File("kotlin-ide").eachFileRecurse(groovy.io.FileType.FILES) {
+    if (it.name.tokenize(".").last() == "iml" && it.name.startsWith("kotlin.") && new File(it.parentFile, "build.gradle.kts").exists()) {
+        include ":kotlin-ide:${it.name.substring("kotlin.".length()).replace(".", ":")}"
+    }
+}
+
 if (buildProperties.includeCidrPlugins) {
     logger.info("Including CIDR modules in settings.gradle")
     include ":kotlin-ultimate:ide:cidr-gradle-tooling",
