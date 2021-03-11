@@ -82,6 +82,36 @@ public inline fun CharSequence.first(predicate: (Char) -> Boolean): Char {
 }
 
 /**
+ * Returns the first non-null value produced by [transform] function being applied to characters of this char sequence in iteration order,
+ * or throws [NoSuchElementException] if no non-null value was produced.
+ * 
+ * @sample samples.collections.Collections.Transformations.firstNotNullOf
+ */
+@SinceKotlin("1.5")
+@kotlin.internal.InlineOnly
+public inline fun <R : Any> CharSequence.firstNotNullOf(transform: (Char) -> R?): R {
+    return firstNotNullOfOrNull(transform) ?: throw NoSuchElementException("No element of the char sequence was transformed to a non-null value.")
+}
+
+/**
+ * Returns the first non-null value produced by [transform] function being applied to characters of this char sequence in iteration order,
+ * or `null` if no non-null value was produced.
+ * 
+ * @sample samples.collections.Collections.Transformations.firstNotNullOf
+ */
+@SinceKotlin("1.5")
+@kotlin.internal.InlineOnly
+public inline fun <R : Any> CharSequence.firstNotNullOfOrNull(transform: (Char) -> R?): R? {
+    for (element in this) {
+        val result = transform(element)
+        if (result != null) {
+            return result
+        }
+    }
+    return null
+}
+
+/**
  * Returns the first character, or `null` if the char sequence is empty.
  */
 public fun CharSequence.firstOrNull(): Char? {

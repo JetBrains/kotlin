@@ -223,6 +223,36 @@ public inline fun <T> Iterable<T>.first(predicate: (T) -> Boolean): T {
 }
 
 /**
+ * Returns the first non-null value produced by [transform] function being applied to elements of this collection in iteration order,
+ * or throws [NoSuchElementException] if no non-null value was produced.
+ * 
+ * @sample samples.collections.Collections.Transformations.firstNotNullOf
+ */
+@SinceKotlin("1.5")
+@kotlin.internal.InlineOnly
+public inline fun <T, R : Any> Iterable<T>.firstNotNullOf(transform: (T) -> R?): R {
+    return firstNotNullOfOrNull(transform) ?: throw NoSuchElementException("No element of the collection was transformed to a non-null value.")
+}
+
+/**
+ * Returns the first non-null value produced by [transform] function being applied to elements of this collection in iteration order,
+ * or `null` if no non-null value was produced.
+ * 
+ * @sample samples.collections.Collections.Transformations.firstNotNullOf
+ */
+@SinceKotlin("1.5")
+@kotlin.internal.InlineOnly
+public inline fun <T, R : Any> Iterable<T>.firstNotNullOfOrNull(transform: (T) -> R?): R? {
+    for (element in this) {
+        val result = transform(element)
+        if (result != null) {
+            return result
+        }
+    }
+    return null
+}
+
+/**
  * Returns the first element, or `null` if the collection is empty.
  */
 public fun <T> Iterable<T>.firstOrNull(): T? {
