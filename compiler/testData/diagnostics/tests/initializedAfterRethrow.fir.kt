@@ -1,7 +1,7 @@
 fun foo(): Int = 42
 
 object ThrowInTryWithCatch {
-    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>private val p: String<!>
+    private val p: String
 
     init {
         try {
@@ -40,7 +40,7 @@ object ThrowInFinally {
 }
 
 object RethrowInCatch {
-    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>private val p: String<!>
+    private val p: String
 
     init {
         try {
@@ -67,7 +67,7 @@ object RethrowInCatchWithFinally {
 }
 
 object InnerTryWithCatch {
-    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>private val p: String<!>
+    private val p: String
 
     init {
         try {
@@ -117,7 +117,7 @@ object InnerTryWithCatchAndFinally {
 }
 
 object InnerCatch {
-    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>private val p: String<!>
+    private val p: String
 
     init {
         try {
@@ -152,7 +152,7 @@ object InnerCatchWithFinally {
 }
 
 object InnerCatchOuterRethrow {
-    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>private val p: String<!>
+    private val p: String
 
     init {
         try {
