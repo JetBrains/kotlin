@@ -61,6 +61,11 @@ class JpsCompatiblePluginTasks(private val rootProject: Project, private val pla
         )
 
         private val LIB_DIRECTORIES = listOf("dependencies", "dist")
+
+        private val ALLOWED_ARTIFACT_PATTERNS = listOf(
+            Regex.fromLiteral("dist_root.xml"),
+            Regex("kotlinx_cli_jvm_[\\d_]+_SNAPSHOT\\.xml")
+        )
     }
 
     private lateinit var projectDir: File
@@ -105,7 +110,7 @@ class JpsCompatiblePluginTasks(private val rootProject: Project, private val pla
 
         removeExistingIdeaLibrariesAndModules()
         removeJpsAndPillRunConfigurations()
-        removeAllArtifactConfigurations()
+        removeArtifactConfigurations()
 
         if (variant.includes.contains(PillExtensionMirror.Variant.BASE)) {
             val artifactDependencyMapper = object : ArtifactDependencyMapper {
@@ -141,7 +146,7 @@ class JpsCompatiblePluginTasks(private val rootProject: Project, private val pla
 
         removeExistingIdeaLibrariesAndModules()
         removeJpsAndPillRunConfigurations()
-        removeAllArtifactConfigurations()
+        removeArtifactConfigurations()
     }
 
     private fun removeExistingIdeaLibrariesAndModules() {
@@ -156,10 +161,10 @@ class JpsCompatiblePluginTasks(private val rootProject: Project, private val pla
             .forEach { it.delete() }
     }
 
-    private fun removeAllArtifactConfigurations() {
+    private fun removeArtifactConfigurations() {
         File(projectDir, ".idea/artifacts")
             .walk()
-            .filter { it.extension.toLowerCase() == "xml" }
+            .filter { it.extension.toLowerCase() == "xml" && ALLOWED_ARTIFACT_PATTERNS.none { p -> p.matches(it.name) } }
             .forEach { it.delete() }
     }
 
