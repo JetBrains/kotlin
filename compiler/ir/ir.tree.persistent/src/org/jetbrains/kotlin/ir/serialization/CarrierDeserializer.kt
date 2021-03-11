@@ -89,9 +89,11 @@ class CarrierDeserializer(
 
     private inline fun <reified C : Carrier> PersistentIrElementBase<C>.load(carriers: Array<C>) {
         if (carriers.isNotEmpty()) {
-            val lastState = carriers.last()
-            this.values = carriers.dropLast(1).toTypedArray()
-            this.setState(lastState)
+            this.values = carriers as Array<Carrier>
+            // pretend to be lowered "all the way"
+            // TODO: make less hacky?
+            this.lastModified = 1000
+            this.loweredUpTo = 1000
         }
     }
 

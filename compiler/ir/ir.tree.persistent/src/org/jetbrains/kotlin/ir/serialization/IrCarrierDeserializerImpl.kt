@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.serialization.IrDeclarationDeserializ
 import org.jetbrains.kotlin.backend.common.serialization.IrFlags
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
@@ -38,7 +39,9 @@ internal class IrCarrierDeserializerImpl(val declarationDeserializer: IrDeclarat
     }
 
     override fun deserializeBody(proto: Int): IrBody {
-        return declarationDeserializer.deserializeStatementBody(proto) as IrBody
+        // TODO there should be some kind of "symbol" to link bodies
+        return declarationDeserializer.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
+//        return declarationDeserializer.deserializeStatementBody(proto) as IrBody
     }
 
     override fun deserializeBlockBody(proto: Int): IrBlockBody {
@@ -46,7 +49,9 @@ internal class IrCarrierDeserializerImpl(val declarationDeserializer: IrDeclarat
     }
 
     override fun deserializeExpressionBody(proto: Int): IrExpressionBody {
-        return declarationDeserializer.deserializeExpressionBody(proto)
+        // TODO there should be some kind of "symbol" to link bodies
+        return declarationDeserializer.irFactory.createExpressionBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) { error("") }
+//        return declarationDeserializer.deserializeExpressionBody(proto)
     }
 
     override fun deserializeValueParameter(proto: Long): IrValueParameterSymbol {

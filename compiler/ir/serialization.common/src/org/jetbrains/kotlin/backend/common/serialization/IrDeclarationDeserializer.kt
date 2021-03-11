@@ -56,7 +56,7 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrVariable as Pro
 class IrDeclarationDeserializer(
     builtIns: IrBuiltIns,
     private val symbolTable: SymbolTable,
-    private val irFactory: IrFactory,
+    val irFactory: IrFactory,
     private val fileReader: IrLibraryFile,
     private val file: IrFile,
     val allowErrorNodes: Boolean,

@@ -66,6 +66,8 @@ class IcDeserializer(
             signature to it.symbol
         }
 
+        val allIcDeserializers = mutableListOf<IcFileDeserializer>()
+
         // Add all signatures withing the module to a queue ( declarations and bodies )
         // TODO add bodies
         for (fd in fileDeserializers) {
@@ -82,6 +84,8 @@ class IcDeserializer(
                     ?: intrinsicSignatureToSymbol[idSig]
                     ?: moduleDeserializer.deserializeIrSymbol(idSig, kind)
             }
+
+            allIcDeserializers += icDeserializer
 
             fd.symbolDeserializer.deserializedSymbols.keys.forEach {
                 it.enqueue(icDeserializer)
@@ -111,12 +115,14 @@ class IcDeserializer(
 //            }
 
             icFileDeserializer.injectCarriers(declaration)
+        }
 
-            // TODO declaration to be deserialized
+        // TODO declaration to be deserialized
+        for (icFileDeserializer in allIcDeserializers) {
+            // TODO how to filter out only relevant mappings?
             context.mapping.state.deserializeMappings(icFileDeserializer.icFileData.mappings) {
                 icFileDeserializer.deserializeIrSymbol(it)
             }
-
         }
     }
 

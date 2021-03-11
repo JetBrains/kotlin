@@ -1397,7 +1397,7 @@ open class IrFileSerializer(
             .setFileEntry(serializeFileEntry(file.fileEntry))
             .addAllFqName(serializeFqName(file.fqName.asString()))
 
-        val topLevelDeclarations = mutableListOf<SerializedDeclaration>()
+//        val topLevelDeclarations = mutableListOf<SerializedDeclaration>()
 
         declarations.forEach {
             doSerializeIrDeclaration(it)

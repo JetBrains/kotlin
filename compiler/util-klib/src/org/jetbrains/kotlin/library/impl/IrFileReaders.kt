@@ -24,6 +24,9 @@ abstract class IrArrayReader(private val buffer: ReadBuffer) {
     }
 
     fun tableItemBytes(id: Int): ByteArray {
+        if (id < 0) {
+            1
+        }
         val offset = indexToOffset[id]
         if (id + 1 >= indexToOffset.size) {
             1

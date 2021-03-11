@@ -80,7 +80,11 @@ class JsMappingState(val irFactory: IrFactory) : DelegateFactory {
             if (keys.size != values.size) error("Keys size != values size")
 
             keys.zip(values).forEach { (s, b) ->
-                mapping.loadMapping(s.owner as IrDeclaration, b, symbolDeserializer)
+                if (s.isBound) {
+                    mapping.loadMapping(s.owner as IrDeclaration, b, symbolDeserializer)
+                } else {
+                    println("Unbound: " + s.signature)
+                }
             }
         }
     }
@@ -173,9 +177,9 @@ private class JsMappingCollectionDelegate<K : IrDeclaration, V : Collection<IrDe
 }
 
 fun ByteArray.toLong(): Long {
-    var result = this[0].toLong()
+    var result = this[0].toLong() and 0xFFL
     for (i in 1..7) {
-        result = (result shl 8) or this[i].toLong()
+        result = (result shl 8) or (this[i].toLong() and 0xFFL)
     }
     return result
 }
