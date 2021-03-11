@@ -36,6 +36,5 @@
     <orderEntry type="module" module-name="intellij.platform.uast.tests" scope="TEST" />
     <orderEntry type="module" module-name="intellij.java.psi.impl" />
     <orderEntry type="module" module-name="intellij.java.uast" />
-    <orderEntry type="module" module-name="intellij.groovy.uast.tests" scope="TEST" />
   </component>
 </module>
