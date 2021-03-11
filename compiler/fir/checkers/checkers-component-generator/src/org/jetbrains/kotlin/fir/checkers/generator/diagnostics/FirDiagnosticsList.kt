@@ -10,7 +10,7 @@ import com.intellij.psi.PsiTypeElement
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
-import org.jetbrains.kotlin.resolve.BadNamedArgumentsTarget
+import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
 import org.jetbrains.kotlin.fir.FirEffectiveVisibility
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.PrivateForInline
@@ -201,7 +201,7 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
 
         // TODO: implement a position strategy that highlights the argument name instead of the whole named argument
         val NAMED_ARGUMENTS_NOT_ALLOWED by error<FirSourceElement, PsiElement> {
-            parameter<BadNamedArgumentsTarget>("badNamedArgumentTarget")
+            parameter<ForbiddenNamedArgumentsTarget>("forbiddenNamedArgumentsTarget")
         }
     }
 

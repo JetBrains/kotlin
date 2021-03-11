@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
-import org.jetbrains.kotlin.resolve.BadNamedArgumentsTarget
+import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.FirSpreadArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildNamedArgumentExpression
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
-import org.jetbrains.kotlin.fir.resolve.asBadForNamedArgumentTarget
+import org.jetbrains.kotlin.fir.resolve.asForbiddenNamedArgumentsTarget
 import org.jetbrains.kotlin.fir.resolve.defaultParameterResolver
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.name.Name
@@ -108,8 +108,8 @@ private class FirCallArgumentsProcessor(
         private set
     val result: LinkedHashMap<FirValueParameter, ResolvedCallArgument> = LinkedHashMap(function.valueParameters.size)
 
-    val badForNamedArgumentTarget: BadNamedArgumentsTarget? by lazy {
-        function.asBadForNamedArgumentTarget
+    val forbiddenNamedArgumentsTarget: ForbiddenNamedArgumentsTarget? by lazy {
+        function.asForbiddenNamedArgumentsTarget
     }
 
     private enum class State {
@@ -169,7 +169,7 @@ private class FirCallArgumentsProcessor(
     }
 
     private fun processNamedArgument(argument: FirExpression, name: Name) {
-        badForNamedArgumentTarget?.let {
+        forbiddenNamedArgumentsTarget?.let {
             addDiagnostic(NamedArgumentNotAllowed(argument, function, it))
         }
 

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.resolve
 
-enum class BadNamedArgumentsTarget(private val description:String) {
+enum class ForbiddenNamedArgumentsTarget(private val description: String) {
     NON_KOTLIN_FUNCTION("non-Kotlin functions"),  // a function provided by non-Kotlin artifact, ex: Java function
     INVOKE_ON_FUNCTION_TYPE("function types"),
     EXPECTED_CLASS_MEMBER("members of expected classes"),

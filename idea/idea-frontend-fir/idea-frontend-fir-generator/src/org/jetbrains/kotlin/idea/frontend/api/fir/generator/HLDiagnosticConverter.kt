@@ -9,7 +9,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
-import org.jetbrains.kotlin.resolve.BadNamedArgumentsTarget
+import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
 import org.jetbrains.kotlin.fir.FirEffectiveVisibility
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.DiagnosticData
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.DiagnosticList
@@ -174,7 +174,7 @@ private object FirToKtConversionCreator {
         KtModifierKeywordToken::class,
         Visibility::class,
         WhenMissingCase::class,
-        BadNamedArgumentsTarget::class,
+        ForbiddenNamedArgumentsTarget::class,
     )
 
     private val KType.kClass: KClass<*>

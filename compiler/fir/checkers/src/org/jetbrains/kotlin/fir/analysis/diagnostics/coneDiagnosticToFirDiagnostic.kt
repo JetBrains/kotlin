@@ -118,7 +118,7 @@ private fun mapInapplicableCandidateError(
             is VarargArgumentOutsideParentheses -> FirErrors.VARARG_OUTSIDE_PARENTHESES.on(rootCause.argument.source ?: source)
             is NamedArgumentNotAllowed -> FirErrors.NAMED_ARGUMENTS_NOT_ALLOWED.on(
                 rootCause.argument.source ?: source,
-                rootCause.badNamedArgumentsTarget
+                rootCause.forbiddenNamedArgumentsTarget
             )
             else -> null
         }

@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.psi.KtTypeParameter
 import org.jetbrains.kotlin.psi.KtTypeParameterList
 import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.psi.KtWhenExpression
-import org.jetbrains.kotlin.resolve.BadNamedArgumentsTarget
+import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
 
 /*
  * This file was generated automatically
@@ -472,7 +472,7 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class NamedArgumentsNotAllowed : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = NamedArgumentsNotAllowed::class
-        abstract val badNamedArgumentTarget: BadNamedArgumentsTarget
+        abstract val forbiddenNamedArgumentsTarget: ForbiddenNamedArgumentsTarget
     }
 
     abstract class Ambiguity : KtFirDiagnostic<PsiElement>() {

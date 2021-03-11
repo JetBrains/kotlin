@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
-import org.jetbrains.kotlin.resolve.BadNamedArgumentsTarget
+import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -28,7 +28,7 @@ class TooManyArguments(
 class NamedArgumentNotAllowed(
     override val argument: FirExpression,
     val function: FirFunction<*>,
-    val badNamedArgumentsTarget: BadNamedArgumentsTarget
+    val forbiddenNamedArgumentsTarget: ForbiddenNamedArgumentsTarget
 ) : InapplicableArgumentDiagnostic()
 
 class ArgumentPassedTwice(

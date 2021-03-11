@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.BadNamedArgumentsTarget
+import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
 
 fun List<FirQualifierPart>.toTypeProjections(): Array<ConeTypeProjection> =
     asReversed().flatMap { it.typeArgumentList.typeArguments.map { typeArgument -> typeArgument.toConeTypeProjection() } }.toTypedArray()
@@ -359,7 +359,7 @@ inline val FirCallableDeclaration<*>.containingClass: FirRegularClass?
         session.symbolProvider.getSymbolByLookupTag(lookupTag)?.fir as? FirRegularClass
     }
 
-val FirFunction<*>.asBadForNamedArgumentTarget: BadNamedArgumentsTarget?
+val FirFunction<*>.asForbiddenNamedArgumentsTarget: ForbiddenNamedArgumentsTarget?
     get() {
         if (this is FirConstructor && this.isPrimary) {
             this.containingClass?.let { containingClass ->
@@ -370,25 +370,25 @@ val FirFunction<*>.asBadForNamedArgumentTarget: BadNamedArgumentsTarget?
             }
         }
         if (this is FirMemberDeclaration && status.isExpect) {
-            return BadNamedArgumentsTarget.EXPECTED_CLASS_MEMBER
+            return ForbiddenNamedArgumentsTarget.EXPECTED_CLASS_MEMBER
         }
         return when (origin) {
             FirDeclarationOrigin.Source, FirDeclarationOrigin.Library, FirDeclarationOrigin.BuiltIns -> null
-            FirDeclarationOrigin.Delegated -> delegatedWrapperData?.wrapped?.asBadForNamedArgumentTarget
-            FirDeclarationOrigin.ImportedFromObject -> importedFromObjectData?.original?.asBadForNamedArgumentTarget
+            FirDeclarationOrigin.Delegated -> delegatedWrapperData?.wrapped?.asForbiddenNamedArgumentsTarget
+            FirDeclarationOrigin.ImportedFromObject -> importedFromObjectData?.original?.asForbiddenNamedArgumentsTarget
             // For intersection overrides, the logic in
             // org.jetbrains.kotlin.fir.scopes.impl.FirTypeIntersectionScope#selectMostSpecificMember picks the most specific one and store
             // it in originalForIntersectionOverrideAttr. This follows from FE1.0 behavior which selects the most specific function
             // (org.jetbrains.kotlin.resolve.OverridingUtil#selectMostSpecificMember), from which the `hasStableParameterNames` status is
             // copied.
-            FirDeclarationOrigin.IntersectionOverride -> originalForIntersectionOverrideAttr?.asBadForNamedArgumentTarget
-            FirDeclarationOrigin.Java, FirDeclarationOrigin.Enhancement -> BadNamedArgumentsTarget.NON_KOTLIN_FUNCTION
+            FirDeclarationOrigin.IntersectionOverride -> originalForIntersectionOverrideAttr?.asForbiddenNamedArgumentsTarget
+            FirDeclarationOrigin.Java, FirDeclarationOrigin.Enhancement -> ForbiddenNamedArgumentsTarget.NON_KOTLIN_FUNCTION
             FirDeclarationOrigin.SamConstructor -> null
-            FirDeclarationOrigin.SubstitutionOverride -> originalForSubstitutionOverrideAttr?.asBadForNamedArgumentTarget
+            FirDeclarationOrigin.SubstitutionOverride -> originalForSubstitutionOverrideAttr?.asForbiddenNamedArgumentsTarget
             // referenced function of a Kotlin function type is synthetic
             FirDeclarationOrigin.Synthetic -> {
                 if (dispatchReceiverClassOrNull()?.isBuiltinFunctionalType() == true) {
-                    BadNamedArgumentsTarget.INVOKE_ON_FUNCTION_TYPE
+                    ForbiddenNamedArgumentsTarget.INVOKE_ON_FUNCTION_TYPE
                 } else {
                     null
                 }
@@ -400,4 +400,4 @@ val FirFunction<*>.asBadForNamedArgumentTarget: BadNamedArgumentsTarget?
 // TODO: handle functions with non-stable parameter names, see also
 //  org.jetbrains.kotlin.fir.serialization.FirElementSerializer.functionProto
 //  org.jetbrains.kotlin.fir.serialization.FirElementSerializer.constructorProto
-inline val FirFunction<*>.hasStableParameterNames: Boolean get() = asBadForNamedArgumentTarget == null
+inline val FirFunction<*>.hasStableParameterNames: Boolean get() = asForbiddenNamedArgumentsTarget == null
