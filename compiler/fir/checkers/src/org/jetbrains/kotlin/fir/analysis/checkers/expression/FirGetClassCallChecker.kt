@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.isSubtypeOfAny
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
@@ -17,6 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -42,7 +41,7 @@ object FirGetClassCallChecker : FirBasicExpressionChecker() {
         val isNullable = markedNullable ||
                 (argument as? FirResolvedQualifier)?.isNullableLHSForCallableReference == true ||
                 argument.typeRef.coneType.isMarkedNullable ||
-                argument.typeRef.coneType.isNullableTypeParameter(context.session)
+                argument.typeRef.coneType.isNullableTypeParameter(context.session.inferenceComponents.ctx)
         if (isNullable) {
             if (argument.canBeDoubleColonLHSAsType) {
                 reporter.reportOn(source, FirErrors.NULLABLE_TYPE_IN_CLASS_LITERAL_LHS, context)
@@ -78,12 +77,14 @@ object FirGetClassCallChecker : FirBasicExpressionChecker() {
         }
     }
 
-    private fun ConeKotlinType.isNullableTypeParameter(session: FirSession): Boolean {
+    private fun ConeKotlinType.isNullableTypeParameter(context: ConeInferenceContext): Boolean {
         if (this !is ConeTypeParameterType) return false
         val typeParameter = lookupTag.typeParameterSymbol.fir
-        return !typeParameter.isReified &&
-                // E.g., fun <T> f2(t: T): Any = t::class
-                !typeParameter.toConeType().isSubtypeOfAny(session)
+        with(context) {
+            return !typeParameter.isReified &&
+                    // E.g., fun <T> f2(t: T): Any = t::class
+                    typeParameter.toConeType().isNullableType()
+        }
     }
 
     private val FirExpression.canBeDoubleColonLHSAsType: Boolean

@@ -6,14 +6,13 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.isSubtypeOfAny
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeTypeParameterInQualifiedAccess
+import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.resolve.inference.isKClassType
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.types.*
@@ -40,7 +39,7 @@ object FirKClassWithIncorrectTypeArgumentChecker : FirFileChecker() {
         if (source.kind is FirFakeSourceElementKind) return
 
         val returnType = declaration.returnTypeRef.coneType
-        if (!returnType.isKClassTypeWithErrorOrNullableArgument(context.session)) return
+        if (!returnType.isKClassTypeWithErrorOrNullableArgument(context.session.inferenceComponents.ctx)) return
 
         val typeArgument = (returnType.typeArguments[0] as ConeKotlinTypeProjection).type
         typeArgument.typeParameterFromError?.let {
@@ -48,7 +47,7 @@ object FirKClassWithIncorrectTypeArgumentChecker : FirFileChecker() {
         }
     }
 
-    private fun ConeKotlinType.isKClassTypeWithErrorOrNullableArgument(session: FirSession): Boolean {
+    private fun ConeKotlinType.isKClassTypeWithErrorOrNullableArgument(context: ConeInferenceContext): Boolean {
         if (!this.isKClassType()) return false
         val argumentType = typeArguments.toList().singleOrNull()?.let {
             when (it) {
@@ -56,10 +55,12 @@ object FirKClassWithIncorrectTypeArgumentChecker : FirFileChecker() {
                 is ConeKotlinTypeProjection -> it.type
             }
         } ?: return false
-        argumentType.typeParameterFromError?.let { typeParameter ->
-            return !typeParameter.toConeType().isSubtypeOfAny(session)
+        with(context) {
+            argumentType.typeParameterFromError?.let { typeParameter ->
+                return typeParameter.toConeType().isNullableType()
+            }
+            return argumentType is ConeKotlinErrorType || argumentType.isNullableType()
         }
-        return argumentType is ConeKotlinErrorType || !argumentType.isSubtypeOfAny(session)
     }
 
     private val ConeKotlinType.typeParameterFromError: FirTypeParameter?

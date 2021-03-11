@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.psi.KtModifierList
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtParameter.VAL_VAR_TOKEN_SET
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
-import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 /**
@@ -128,7 +127,7 @@ fun ConeKotlinType.toRegularClass(session: FirSession): FirRegularClass? {
     return safeAs<ConeClassLikeType>()?.fullyExpandedType(session)?.toRegularClass(session)
 }
 
-fun ConeKotlinType.isInline(session: FirSession) : Boolean = toRegularClass(session)?.isInline == true
+fun ConeKotlinType.isInline(session: FirSession): Boolean = toRegularClass(session)?.isInline == true
 
 /**
  * Returns the FirRegularClass associated with this
@@ -144,7 +143,7 @@ fun FirTypeRef.toRegularClass(session: FirSession): FirRegularClass? {
 inline fun <reified T : Any> FirQualifiedAccessExpression.getDeclaration(): T? {
     return this.calleeReference.safeAs<FirResolvedNamedReference>()
         ?.resolvedSymbol
-        ?.fir.safeAs<T>()
+        ?.fir.safeAs()
 }
 
 /**
@@ -153,17 +152,6 @@ inline fun <reified T : Any> FirQualifiedAccessExpression.getDeclaration(): T? {
  */
 fun FirSymbolOwner<*>.getContainingClass(context: CheckerContext): FirClassLikeDeclaration<*>? =
     this.safeAs<FirCallableMemberDeclaration<*>>()?.containingClass()?.toSymbol(context.session)?.fir
-
-/**
- * Returns the FirClassLikeDeclaration the type alias is pointing
- * to provided `this` is a FirTypeAlias. Returns this otherwise.
- */
-fun FirClassLikeDeclaration<*>.followAlias(session: FirSession): FirClassLikeDeclaration<*> {
-    return this.safeAs<FirTypeAlias>()
-        ?.expandedTypeRef
-        ?.firClassLike(session)
-        ?: return this
-}
 
 /**
  * Returns the FirClassLikeDeclaration that the
@@ -319,10 +307,6 @@ fun Modality.toToken(): KtModifierKeywordToken = when (this) {
 
 val FirFunctionCall.isIterator
     get() = this.calleeReference.name.asString() == "<iterator>"
-
-fun ConeKotlinType.isSubtypeOfAny(session: FirSession): Boolean {
-    return AbstractTypeChecker.isSubtypeOf(session.typeContext, this.fullyExpandedType(session), session.builtinTypes.anyType.type)
-}
 
 internal fun throwableClassLikeType(session: FirSession) = session.builtinTypes.throwableType.type
 
