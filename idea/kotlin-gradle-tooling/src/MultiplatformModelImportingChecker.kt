@@ -15,7 +15,7 @@ internal object OrphanSourceSetImportingChecker : MultiplatformModelImportingChe
         reportTo: KotlinImportingDiagnosticsContainer,
         context: MultiplatformModelImportingContext
     ) {
-        model.sourceSets.values.filter { context.isOrphanSourceSet(it) }
+        model.sourceSetsByName.values.filter { context.isOrphanSourceSet(it) }
             .mapTo(reportTo) { OrphanSourceSetsImportingDiagnostic(it) }
     }
 }

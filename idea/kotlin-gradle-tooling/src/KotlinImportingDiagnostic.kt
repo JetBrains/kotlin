@@ -21,5 +21,5 @@ interface KotlinSourceSetImportingDiagnostic : KotlinImportingDiagnostic {
 data class OrphanSourceSetsImportingDiagnostic(override val kotlinSourceSet: KotlinSourceSet) : KotlinSourceSetImportingDiagnostic {
     override fun deepCopy(cache: MutableMap<Any, Any>): OrphanSourceSetsImportingDiagnostic =
         (cache[kotlinSourceSet] as? KotlinSourceSet)?.let { OrphanSourceSetsImportingDiagnostic(it) }
-            ?: OrphanSourceSetsImportingDiagnostic(KotlinSourceSetImpl(kotlinSourceSet, cache).apply { cache[kotlinSourceSet] = this })
+            ?: OrphanSourceSetsImportingDiagnostic(KotlinSourceSetImpl(kotlinSourceSet).apply { cache[kotlinSourceSet] = this })
 }

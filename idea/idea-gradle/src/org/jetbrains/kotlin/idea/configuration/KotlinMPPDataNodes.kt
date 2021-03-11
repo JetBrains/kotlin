@@ -41,7 +41,7 @@ class KotlinSourceSetInfo @PropertyMapping("kotlinModule") constructor(val kotli
 
     @Deprecated("Returns only single TargetPlatform", ReplaceWith("actualPlatforms.actualPlatforms"), DeprecationLevel.ERROR)
     val platform: KotlinPlatform
-        get() = actualPlatforms.getSinglePlatform()
+        get() = actualPlatforms.platforms.singleOrNull() ?: KotlinPlatform.COMMON
 
     @Transient
     var defaultCompilerArguments: CommonCompilerArguments? = null
