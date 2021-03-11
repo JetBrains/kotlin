@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.expressions.IrWhen
 import org.jetbrains.kotlin.ir.types.isUnit
+import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.util.render
@@ -285,8 +286,13 @@ class NameTables(
                 return
 
             // TODO: Handle JsQualifier
-            declaration.isEffectivelyExternal() && (declaration.getJsModule() == null || declaration.isJsNonModule()) ->
-                globalNames.declareStableName(declaration, declaration.getJsNameOrKotlinName().identifier)
+            declaration.isEffectivelyExternal() && (declaration.getJsModule() == null || declaration.isJsNonModule()) -> {
+                if (declaration.file.getJsModule() != null) {
+                    globalNames.declareFreshName(declaration, declaration.name.asString())
+                } else {
+                    globalNames.declareStableName(declaration, declaration.getJsNameOrKotlinName().identifier)
+                }
+            }
 
             else ->
                 globalNames.declareFreshName(declaration, declaration.name.asString())
