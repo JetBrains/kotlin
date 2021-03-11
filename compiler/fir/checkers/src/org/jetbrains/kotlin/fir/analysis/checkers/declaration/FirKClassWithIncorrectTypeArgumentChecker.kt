@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.isKClassType
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.types.*
 
-// FE1.0 [KClassWithIncorrectTypeArgumentChecker]
+// See FE1.0 [KClassWithIncorrectTypeArgumentChecker]
 object FirKClassWithIncorrectTypeArgumentChecker : FirFileChecker() {
     override fun check(declaration: FirFile, context: CheckerContext, reporter: DiagnosticReporter) {
         for (topLevelDeclaration in declaration.declarations) {
@@ -36,14 +36,11 @@ object FirKClassWithIncorrectTypeArgumentChecker : FirFileChecker() {
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
-        // prevent duplicate reporting
-        if (declaration is FirPropertyAccessor) return
-
         val source = declaration.source ?: return
         if (source.kind is FirFakeSourceElementKind) return
 
         val returnType = declaration.returnTypeRef.coneType
-        if (!returnType.isKClassWithBadArgument(context.session)) return
+        if (!returnType.isKClassTypeWithErrorOrNullableArgument(context.session)) return
 
         val typeArgument = (returnType.typeArguments[0] as ConeKotlinTypeProjection).type
         typeArgument.typeParameterFromError?.let {
@@ -51,7 +48,7 @@ object FirKClassWithIncorrectTypeArgumentChecker : FirFileChecker() {
         }
     }
 
-    private fun ConeKotlinType.isKClassWithBadArgument(session: FirSession): Boolean {
+    private fun ConeKotlinType.isKClassTypeWithErrorOrNullableArgument(session: FirSession): Boolean {
         if (!this.isKClassType()) return false
         val argumentType = typeArguments.toList().singleOrNull()?.let {
             when (it) {
