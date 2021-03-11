@@ -68,23 +68,19 @@ private data class IntelliJModuleNameToGradleNotationMappingItem(val moduleName:
             if (json.get("type").asString != "module-output") {
                 return null
             }
-            return IntelliJModuleNameToGradleNotationMappingItem(
-                json.get("moduleName").asString,
-                "intellijPluginDep(\"${json.get("path").asString.removeSuffix(".jar")}\")"
-            )
-//            val jarPath = json.get("path").asString
-//
-//            if (jarPath == "lib/cds/classesLogAgent.jar") {
-//                return null // TODO
-//            }
-//
-//            val gradleNotation = (pluginsPathToGradleNotationRegex.matchEntire(jarPath)
-//                ?: libPathToGradleNotationRegex.matchEntire(jarPath)
-//                ?: jarToGradleNotationRegex.matchEntire(jarPath)
-//                ?: error("Path $jarPath matches none of the regexes")).groupValues[1]
-//                .let { "intellijPluginDep(\"$it\")" }
-//
-//            return IntelliJModuleNameToGradleNotationMappingItem(json.get("moduleName").asString, gradleNotation)
+            val jarPath = json.get("path").asString
+
+            if (jarPath == "lib/cds/classesLogAgent.jar") {
+                return null // TODO
+            }
+
+            val gradleNotation = (pluginsPathToGradleNotationRegex.matchEntire(jarPath)
+                ?: libPathToGradleNotationRegex.matchEntire(jarPath)
+                ?: jarToGradleNotationRegex.matchEntire(jarPath)
+                ?: error("Path $jarPath matches none of the regexes")).groupValues[1]
+                .let { "intellijPluginDep(\"$it\")" }
+
+            return IntelliJModuleNameToGradleNotationMappingItem(json.get("moduleName").asString, gradleNotation)
         }
     }
 }
