@@ -224,7 +224,7 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = DelegationSuperCallInEnumConstructor::class
     }
 
-    abstract class PrimaryConstructorRequiredForDataClass : KtFirDiagnostic<PsiElement>() {
+    abstract class PrimaryConstructorRequiredForDataClass : KtFirDiagnostic<KtNamedDeclaration>() {
         override val diagnosticClass get() = PrimaryConstructorRequiredForDataClass::class
     }
 

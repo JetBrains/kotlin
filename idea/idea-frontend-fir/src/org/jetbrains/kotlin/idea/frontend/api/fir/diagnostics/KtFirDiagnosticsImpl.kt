@@ -357,7 +357,7 @@ internal class DelegationSuperCallInEnumConstructorImpl(
 internal class PrimaryConstructorRequiredForDataClassImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
-) : KtFirDiagnostic.PrimaryConstructorRequiredForDataClass(), KtAbstractFirDiagnostic<PsiElement> {
+) : KtFirDiagnostic.PrimaryConstructorRequiredForDataClass(), KtAbstractFirDiagnostic<KtNamedDeclaration> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
 }
 
