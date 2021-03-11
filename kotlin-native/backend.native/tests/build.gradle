@@ -3650,6 +3650,12 @@ linkTest("inline_inlineCtor_linkTest") {
     lib = "codegen/inline/inlineCtor_linkTest_lib.kt"
 }
 
+linkTest("inline_kt44764") {
+    goldValue = "hello"
+    source = "codegen/inline/kt44764_main.kt"
+    lib = "codegen/inline/kt44764_lib.kt"
+}
+
 def generateWithSpaceDefFile() {
     def mapOption = "--Map \"${buildDir}/cutom map.map\""
     if (isAppleTarget(project)) {
