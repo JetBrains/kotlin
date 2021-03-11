@@ -40,7 +40,7 @@ abstract class PropertyLValueBase(
     val superQualifier: IrClassSymbol?
 ) : LValue, AssignmentReceiver {
     override fun assign(withLValue: (LValue) -> IrExpression) =
-        callReceiver.call { dispatchReceiverValue, extensionReceiverValue, _ ->
+        callReceiver.call { dispatchReceiverValue, extensionReceiverValue, contextReceiverValues ->
             val dispatchReceiverVariable2 = dispatchReceiverValue?.let {
                 scope.createTemporaryVariable(dispatchReceiverValue.load(), "this")
             }
@@ -51,11 +51,17 @@ abstract class PropertyLValueBase(
             }
             val extensionReceiverValue2 = extensionReceiverVariable2?.let { VariableLValue(context, it) }
 
-            val irResultExpression = withLValue(withReceiver(dispatchReceiverValue2, extensionReceiverValue2))
+            val contextReceiverVariables2 = contextReceiverValues.mapIndexed { i, value ->
+                scope.createTemporaryVariable(value.load(), "additionalReceiver$i")
+            }
+            val contextReceiversValues2 = contextReceiverVariables2.map { VariableLValue(context, it) }
+
+            val irResultExpression = withLValue(withReceiver(dispatchReceiverValue2, extensionReceiverValue2, contextReceiversValues2))
 
             val irBlock = IrBlockImpl(startOffset, endOffset, irResultExpression.type, origin)
             irBlock.addIfNotNull(dispatchReceiverVariable2)
             irBlock.addIfNotNull(extensionReceiverVariable2)
+            contextReceiverVariables2.forEach { irBlock.addIfNotNull(it) }
             irBlock.statements.add(irResultExpression)
             irBlock
         }
@@ -63,7 +69,7 @@ abstract class PropertyLValueBase(
     override fun assign(value: IrExpression): IrExpression =
         store(value)
 
-    protected abstract fun withReceiver(dispatchReceiver: VariableLValue?, extensionReceiver: VariableLValue?): PropertyLValueBase
+    protected abstract fun withReceiver(dispatchReceiver: VariableLValue?, extensionReceiver: VariableLValue?, contextReceivers: List<VariableLValue>): PropertyLValueBase
 }
 
 class FieldPropertyLValue(
@@ -81,9 +87,9 @@ class FieldPropertyLValue(
     PropertyLValueBase(context, scope, startOffset, endOffset, origin, type, callReceiver, superQualifier) {
 
     override fun load(): IrExpression =
-        // TODO: Use context receiver values
-        callReceiver.call { dispatchReceiverValue, extensionReceiverValue, _ ->
+        callReceiver.call { dispatchReceiverValue, extensionReceiverValue, contextReceiverValues ->
             assert(extensionReceiverValue == null) { "Field can't have an extension receiver: ${field.descriptor}" }
+            assert(contextReceiverValues.isEmpty()) { "Field can't have context receivers: ${field.descriptor}" }
             IrGetFieldImpl(
                 startOffset, endOffset,
                 field,
@@ -95,9 +101,9 @@ class FieldPropertyLValue(
         }
 
     override fun store(irExpression: IrExpression) =
-        // TODO: Use context receiver values
-        callReceiver.call { dispatchReceiverValue, extensionReceiverValue, _ ->
+        callReceiver.call { dispatchReceiverValue, extensionReceiverValue, contextReceiverValues ->
             assert(extensionReceiverValue == null) { "Field can't have an extension receiver: ${field.descriptor}" }
+            assert(contextReceiverValues.isEmpty()) { "Field can't have context receivers: ${field.descriptor}" }
             IrSetFieldImpl(
                 startOffset, endOffset,
                 field,
@@ -109,14 +115,14 @@ class FieldPropertyLValue(
             ).also { context.callToSubstitutedDescriptorMap[it] = descriptor }
         }
 
-    override fun withReceiver(dispatchReceiver: VariableLValue?, extensionReceiver: VariableLValue?): PropertyLValueBase =
+    override fun withReceiver(dispatchReceiver: VariableLValue?, extensionReceiver: VariableLValue?, contextReceivers: List<VariableLValue>): PropertyLValueBase =
         FieldPropertyLValue(
             context,
             scope, startOffset, endOffset, origin,
             field,
             descriptor,
             type,
-            SimpleCallReceiver(dispatchReceiver, extensionReceiver, emptyList()),
+            SimpleCallReceiver(dispatchReceiver, extensionReceiver, contextReceivers),
             superQualifier
         )
 }
@@ -186,13 +192,13 @@ class AccessorPropertyLValue(
             }
         }
 
-    override fun withReceiver(dispatchReceiver: VariableLValue?, extensionReceiver: VariableLValue?): PropertyLValueBase =
+    override fun withReceiver(dispatchReceiver: VariableLValue?, extensionReceiver: VariableLValue?, contextReceivers: List<VariableLValue>): PropertyLValueBase =
         AccessorPropertyLValue(
             context, scope,
             startOffset, endOffset, origin,
             type, getter, getterDescriptor, setter, setterDescriptor,
             typeArguments,
-            SimpleCallReceiver(dispatchReceiver, extensionReceiver, emptyList()),
+            SimpleCallReceiver(dispatchReceiver, extensionReceiver, contextReceivers),
             superQualifier
         )
 }

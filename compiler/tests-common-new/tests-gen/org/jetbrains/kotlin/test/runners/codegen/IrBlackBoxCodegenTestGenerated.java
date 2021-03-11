@@ -16080,6 +16080,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("plusAssign.kt")
+            public void testPlusAssign() throws Exception {
+                runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/plusAssign.kt");
+            }
+
+            @Test
             @TestMetadata("plusMatrix.kt")
             public void testPlusMatrix() throws Exception {
                 runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/plusMatrix.kt");
