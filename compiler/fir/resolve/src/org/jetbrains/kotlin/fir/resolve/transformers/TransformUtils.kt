@@ -122,7 +122,7 @@ internal fun FirTypedDeclaration.transformTypeToArrayType() {
     )
 }
 
-inline fun <T> withScopeCleanup(scopes: MutableList<*>, crossinline l: () -> T): T {
+inline fun <T> withScopeCleanup(scopes: MutableList<*>, l: () -> T): T {
     val sizeBefore = scopes.size
     return try {
         l()

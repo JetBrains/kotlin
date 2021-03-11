@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildUnitExpression
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
-import org.jetbrains.kotlin.fir.resolve.calls.ImplicitExtensionReceiverValue
 import org.jetbrains.kotlin.fir.resolve.dfa.FirControlFlowGraphReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.inference.extractLambdaInfoFromFunctionalType
 import org.jetbrains.kotlin.fir.resolve.inference.isSuspendFunctionType
@@ -771,25 +770,6 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             )
         }
         return this
-    }
-
-    protected inline fun <T> withLabelAndReceiverType(
-        labelName: Name?,
-        owner: FirCallableDeclaration<*>,
-        type: ConeKotlinType?,
-        block: () -> T
-    ): T = context.withTowerDataCleanup {
-        if (type != null) {
-            val receiver = ImplicitExtensionReceiverValue(
-                owner.symbol,
-                type,
-                components.session,
-                components.scopeSession
-            )
-            context.addReceiver(labelName, receiver)
-        }
-
-        block()
     }
 
     private fun storeVariableReturnType(variable: FirVariable<*>) {
