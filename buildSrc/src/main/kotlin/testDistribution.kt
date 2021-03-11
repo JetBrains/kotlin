@@ -9,7 +9,7 @@ import org.gradle.internal.os.OperatingSystem
 
 
 fun Test.configureTestDistribution(configure: TestDistributionExtension.() -> Unit = {}) {
-    if(extensions.findByType(TestDistributionExtension::class.java) == null) return
+    if (extensions.findByType(TestDistributionExtension::class.java) == null) return
 
     val isTeamcityBuild = project.kotlinBuildProperties.isTeamcityBuild
 

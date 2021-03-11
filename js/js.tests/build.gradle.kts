@@ -14,8 +14,7 @@ plugins {
 }
 
 val isTeamcityBuild = project.kotlinBuildProperties.isTeamcityBuild
-val testDistributionEnabled = project.providers.gradleProperty("kotlin.build.test.distribution.enabled")
-    .forUseAtConfigurationTime().orNull?.toBoolean()
+val testDistributionEnabled = project.findProperty("kotlin.build.test.distribution.enabled")?.toString()?.toBoolean()
     ?: isTeamcityBuild
 
 if (testDistributionEnabled) {
