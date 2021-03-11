@@ -386,7 +386,7 @@ object LightTreePositioningStrategies {
                 when (selector.tokenType) {
                     KtNodeTypes.REFERENCE_EXPRESSION ->
                         return markElement(selector, startOffset, endOffset, tree, node)
-                    KtNodeTypes.CALL_EXPRESSION, KtNodeTypes.CONSTRUCTOR_DELEGATION_CALL ->
+                    KtNodeTypes.CALL_EXPRESSION, KtNodeTypes.CONSTRUCTOR_DELEGATION_CALL, KtNodeTypes.SUPER_TYPE_CALL_ENTRY ->
                         return markElement(tree.referenceExpression(selector) ?: selector, startOffset, endOffset, tree, node)
                 }
             }

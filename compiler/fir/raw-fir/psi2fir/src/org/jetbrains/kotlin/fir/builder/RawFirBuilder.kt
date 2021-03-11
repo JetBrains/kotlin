@@ -625,11 +625,11 @@ open class RawFirBuilder(
             ownerTypeParameters: List<FirTypeParameterRef>,
             body: FirBlock? = null
         ): FirConstructor {
-            val constructorCallee = superTypeCallEntry?.calleeExpression?.toFirSourceElement()
+            val constructorCall = superTypeCallEntry?.toFirSourceElement()
             val constructorSource = this?.toFirSourceElement()
                 ?: owner.toFirPsiSourceElement(FirFakeSourceElementKind.ImplicitConstructor)
             val firDelegatedCall = buildDelegatedConstructorCall {
-                source = constructorCallee ?: constructorSource.fakeElement(FirFakeSourceElementKind.DelegatingConstructorCall)
+                source = constructorCall ?: constructorSource.fakeElement(FirFakeSourceElementKind.DelegatingConstructorCall)
                 constructedTypeRef = delegatedSuperTypeRef.copyWithNewSourceKind(FirFakeSourceElementKind.ImplicitTypeRef)
                 isThis = false
                 if (!stubMode) {

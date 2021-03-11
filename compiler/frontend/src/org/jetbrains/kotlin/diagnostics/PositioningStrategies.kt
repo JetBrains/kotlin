@@ -755,6 +755,7 @@ object PositioningStrategies {
                 }
                 is KtCallExpression -> return mark(element.calleeExpression ?: element)
                 is KtConstructorDelegationCall -> return mark(element.calleeExpression ?: element)
+                is KtSuperTypeCallEntry -> return mark(element.calleeExpression)
             }
             return super.mark(element)
         }
