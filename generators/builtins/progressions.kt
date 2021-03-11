@@ -16,9 +16,12 @@
 
 package org.jetbrains.kotlin.generators.builtins.progressions
 
-import org.jetbrains.kotlin.generators.builtins.*
-import org.jetbrains.kotlin.generators.builtins.generateBuiltIns.*
+import org.jetbrains.kotlin.generators.builtins.ProgressionKind
 import org.jetbrains.kotlin.generators.builtins.ProgressionKind.*
+import org.jetbrains.kotlin.generators.builtins.areEqualNumbers
+import org.jetbrains.kotlin.generators.builtins.generateBuiltIns.BuiltInsSourceGenerator
+import org.jetbrains.kotlin.generators.builtins.hashLong
+import org.jetbrains.kotlin.generators.builtins.progressionIncrementType
 import java.io.PrintWriter
 
 class GenerateProgressions(out: PrintWriter) : BuiltInsSourceGenerator(out) {
@@ -38,7 +41,8 @@ class GenerateProgressions(out: PrintWriter) : BuiltInsSourceGenerator(out) {
         val checkZero = """if (step == $zero) throw kotlin.IllegalArgumentException("Step must be non-zero.")"""
 
         val stepMinValue = "$incrementType.MIN_VALUE"
-        val checkMin = """if (step == $stepMinValue) throw kotlin.IllegalArgumentException("Step must be greater than $stepMinValue to avoid overflow on negation.")"""
+        val checkMin =
+            """if (step == $stepMinValue) throw kotlin.IllegalArgumentException("Step must be greater than $stepMinValue to avoid overflow on negation.")"""
 
         val hashCode = "=\n" + when (kind) {
             CHAR ->
@@ -56,9 +60,58 @@ class GenerateProgressions(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             CHAR -> ".toChar()"
             else -> ""
         }
+        val one = if (kind == LONG) "1L" else "1"
+        val two = if (kind == LONG) "2L" else "2"
+        val incToInt =
+            ".let { if (it < Int.MAX_VALUE${if (kind == LONG) ".toLong()" else ""}) it${if (kind == LONG) ".toInt()" else ""}.inc() else Int.MAX_VALUE }"
+        val sizeBody = "if (isEmpty()) 0 else " +
+                when (kind) {
+                    CHAR -> "(last - first) / step + $one"
+                    else -> """
+        when {
+            step == $one ->
+                if (first >= $zero || last < $zero || last <= $incrementType.MAX_VALUE + first)
+                    (last - first)$incToInt
+                else Int.MAX_VALUE
+            step == -$one ->
+                if (last >= $zero || first < $zero || first <= $incrementType.MAX_VALUE + last)
+                    (first - last)$incToInt
+                else Int.MAX_VALUE
+            step > $incrementType.MIN_VALUE / $two && step < $incrementType.MAX_VALUE / $two -> {
+                //(last - first) / step =
+                // = (last / step * step + last % step - first / step * step - first % step) / step =
+                // = last / step - first / step + (last % step - first % step) / step
+
+                //no overflow because |step| >= 2
+                //$incrementType.MIN_VALUE / 2 <= last / step <= $incrementType.MAX_VALUE / 2
+                //$incrementType.MIN_VALUE / 2 <= first / step <= $incrementType.MAX_VALUE / 2
+                //$incrementType.MIN_VALUE / 2 - $incrementType.MAX_VALUE / 2 <= last / step - first / step <= $incrementType.MAX_VALUE / 2 - $incrementType.MIN_VALUE / 2
+                //$incrementType.MIN_VALUE + $one <= last / step - first / step <= $incrementType.MAX_VALUE
+                val div = last / step - first / step // >= 0 because either step > 0 && last >= first or step < 0 && last <= first
+                //no overflow because $incrementType.MIN_VALUE / 2 < step < $incrementType.MAX_VALUE / 2
+                //min($incrementType.MIN_VALUE / 2, -($incrementType.MAX_VALUE / 2)) < first % step < max($incrementType.MAX_VALUE / 2, -($incrementType.MIN_VALUE / 2))
+                //$incrementType.MIN_VALUE / 2 < first % step <= $incrementType.MAX_VALUE / 2
+                //$incrementType.MIN_VALUE / 2 <= first % step <= $incrementType.MAX_VALUE / 2
+                //$incrementType.MIN_VALUE / 2 <= last % step <= $incrementType.MAX_VALUE / 2
+                //$incrementType.MIN_VALUE <= last % step - first % step <= $incrementType.MAX_VALUE
+                val rem = (last % step - first % step) / step
+                if (div <= $incrementType.MAX_VALUE - rem)
+                    (div + rem)$incToInt
+                else
+                    Int.MAX_VALUE
+            }
+            else -> {
+                //number of items is < 5 (the smallest (by its absolute value) step is $incrementType.MAX_VALUE / 2, so if progression starts at $incrementType.MIN_VALUE, it contains 4 elements
+                var count = 0
+                for (item in this) count++
+                count
+                //count() is not used as it may recursively use size property for Collections
+            }
+        }""".trim()
+                }
 
         out.println(
-                """/**
+            """/**
  * A progression of values of type `$t`.
  */
 public open class $progression
@@ -67,7 +120,7 @@ public open class $progression
             start: $t,
             endInclusive: $t,
             step: $incrementType
-    ) : Iterable<$t> {
+    ) : Collection<$t> {
     init {
         $checkZero
         $checkMin
@@ -96,7 +149,7 @@ public open class $progression
      * Progression with a positive step is empty if its first element is greater than the last element.
      * Progression with a negative step is empty if its first element is less than the last element.
      */
-    public open fun isEmpty(): Boolean = if (step > 0) first > last else first < last
+    public override fun isEmpty(): Boolean = if (step > 0) first > last else first < last
 
     override fun equals(other: Any?): Boolean =
         other is $progression && (isEmpty() && other.isEmpty() ||
@@ -105,6 +158,26 @@ public open class $progression
     override fun hashCode(): Int $hashCode
 
     override fun toString(): String = ${"if (step > 0) \"\$first..\$last step \$step\" else \"\$first downTo \$last step \${-step}\""}
+
+    @SinceKotlin("1.6")
+    override val size: Int
+        get() = $sizeBody
+
+    private infix fun $t.mod(n: $incrementType): $incrementType {
+        val positiveN = kotlin.math.abs(n)
+        val r = ${if (kind == CHAR) "(this - Char.MIN_VALUE)" else "this"} % positiveN
+        return if (r < $zero) r + positiveN else r
+    }
+
+    @SinceKotlin("1.6")
+    override fun contains(@Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE") /* for the backward compatibility with old names */ value: $t): Boolean = when {
+        step > $zero && value >= first && value <= last -> value mod step == first mod step
+        step < $zero && value <= first && value >= last -> value mod step == first mod step
+        else -> false
+    }
+
+    @SinceKotlin("1.6")
+    override fun containsAll(elements: Collection<$t>): Boolean = if (this.isEmpty()) elements.isEmpty() else (elements as Collection<*>).all { it in this }
 
     companion object {
         /**
@@ -117,7 +190,8 @@ public open class $progression
          */
         public fun fromClosedRange(rangeStart: $t, rangeEnd: $t, step: $incrementType): $progression = $progression(rangeStart, rangeEnd, step)
     }
-}""")
+}"""
+        )
         out.println()
 
     }
