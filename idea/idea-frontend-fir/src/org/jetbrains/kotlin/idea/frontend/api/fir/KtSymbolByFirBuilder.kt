@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
+import org.jetbrains.kotlin.fir.resolve.calls.originalConstructorIfTypeAlias
 import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.getSymbolByLookupTag
 import org.jetbrains.kotlin.fir.resolve.inference.isFunctionalType
@@ -134,7 +135,10 @@ internal class KtSymbolByFirBuilder private constructor(
         KtFirFunctionSymbol(fir, resolveState, token, this)
     }
 
-    fun buildConstructorSymbol(fir: FirConstructor) = symbolsCache.cache(fir) { KtFirConstructorSymbol(fir, resolveState, token, this) }
+    fun buildConstructorSymbol(fir: FirConstructor): KtFirConstructorSymbol {
+        val originalFir = fir.originalConstructorIfTypeAlias ?: fir
+        return symbolsCache.cache(originalFir) { KtFirConstructorSymbol(originalFir, resolveState, token, this) }
+    }
     fun buildTypeParameterSymbol(fir: FirTypeParameter) =
         symbolsCache.cache(fir) { KtFirTypeParameterSymbol(fir, resolveState, token, this) }
 

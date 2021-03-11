@@ -12,10 +12,19 @@ import com.intellij.testFramework.LightPlatformTestCase
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.DuplicatedFirSourceElementsException
+import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
+import org.jetbrains.kotlin.idea.frontend.api.analyze
+import org.jetbrains.kotlin.psi.KtElement
 import java.io.File
 
 fun <R> executeOnPooledThreadInReadAction(action: () -> R): R =
     ApplicationManager.getApplication().executeOnPooledThread<R> { runReadAction(action) }.get()
+
+inline fun <R> analyseOnPooledThreadInReadAction(context: KtElement, crossinline action: KtAnalysisSession.() -> R): R =
+    executeOnPooledThreadInReadAction {
+        analyze(context) { action() }
+    }
+
 
 fun addExternalTestFiles(testDataFilePath: String) {
     File(testDataFilePath).getExternalFiles().forEach(::addFile)

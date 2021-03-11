@@ -24,7 +24,7 @@ abstract class AbstractOverriddenDeclarationProviderTest : AbstractKtIdeaTest() 
     override fun doTestByFileStructure(fileStructure: TestFileStructure) {
         val signatures = executeOnPooledThreadInReadAction {
             analyze(fileStructure.mainKtFile) {
-                val symbol = getDeclarationAtCaret().getSymbol() as KtCallableSymbol
+                val symbol = getElementOfTypeAtCaret<KtDeclaration>().getSymbol() as KtCallableSymbol
                 val allOverriddenSymbols = symbol.getAllOverriddenSymbols().map { renderSignature(it) }
                 val directlyOverriddenSymbols = symbol.getDirectlyOverriddenSymbols().map { renderSignature(it) }
                 listOf(
@@ -67,9 +67,4 @@ abstract class AbstractOverriddenDeclarationProviderTest : AbstractKtIdeaTest() 
                 .joinToString(separator = ".")
         }
     }
-
-    private fun getDeclarationAtCaret(): KtDeclaration =
-        file.findElementAt(myFixture.caretOffset)
-            ?.parentOfType()
-            ?: error("No KtDeclaration found at caret with position ${myFixture.caretOffset}")
 }

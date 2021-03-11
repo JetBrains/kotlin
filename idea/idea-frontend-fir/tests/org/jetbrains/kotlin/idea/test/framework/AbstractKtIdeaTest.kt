@@ -9,6 +9,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.parentOfType
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
 
@@ -63,6 +64,11 @@ abstract class AbstractKtIdeaTest : KotlinLightCodeInsightFixtureTestCase() {
             TestFile.createByPsiFile(myFixture.addFileToProject(file.name, file.text))
         }
     }
+
+    protected inline fun <reified P : PsiElement> getElementOfTypeAtCaret(): P =
+        file.findElementAt(myFixture.caretOffset)
+            ?.parentOfType<P>()
+            ?: error("No ${P::class.simpleName} found at caret with position ${myFixture.caretOffset}")
 
     abstract fun doTestByFileStructure(fileStructure: TestFileStructure)
 }

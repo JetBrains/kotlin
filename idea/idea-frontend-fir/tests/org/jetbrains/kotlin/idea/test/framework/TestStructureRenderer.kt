@@ -59,7 +59,16 @@ object TestStructureRenderer {
     private fun StringBuilder.renderExpectedDataBlock(block: TestStructureExpectedDataBlock) {
         block.name?.let { name -> appendLine("// $name") }
         block.values.forEach { value ->
-            appendLine("// $value")
+            if (value.lines().size > 1) {
+                appendLine(
+                    """|/*
+                       |${value.trim()}
+                       |*/
+                    """.trimMargin()
+                )
+            } else {
+                appendLine("// $value")
+            }
         }
     }
 
