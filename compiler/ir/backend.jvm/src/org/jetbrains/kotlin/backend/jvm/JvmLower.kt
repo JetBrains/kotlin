@@ -65,7 +65,7 @@ private val provisionalFunctionExpressionPhase = makeIrFilePhase<CommonBackendCo
 )
 
 private val arrayConstructorPhase = makeIrFilePhase(
-    ::ArrayConstructorLowering,
+    ::JvmArrayConstructorLowering,
     name = "ArrayConstructor",
     description = "Transform `Array(size) { index -> value }` into a loop"
 )

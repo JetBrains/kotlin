@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -866,6 +867,24 @@ class JvmSymbols(
 
     val runSuspendFunction: IrSimpleFunctionSymbol =
         kotlinCoroutinesJvmInternalRunSuspendKt.functionByName("runSuspend")
+
+    private val inlineMarkerClass: IrClassSymbol = createClass(
+        JvmClassName.byInternalName("kotlin/jvm/internal/InlineMarker").fqNameForClassNameWithoutDollars
+    ) { irClass ->
+        irClass.addFunction("beforeInlineCall", irBuiltIns.unitType, isStatic = true)
+        irClass.addFunction("afterInlineCall", irBuiltIns.unitType, isStatic = true)
+    }
+
+    val beforeInlineCall = inlineMarkerClass.functionByName("beforeInlineCall")
+    val afterInlineCall = inlineMarkerClass.functionByName("afterInlineCall")
+
+    companion object {
+        val FLEXIBLE_NULLABILITY_ANNOTATION_FQ_NAME =
+            IrBuiltIns.KOTLIN_INTERNAL_IR_FQN.child(Name.identifier("FlexibleNullability"))
+
+        val RAW_TYPE_ANNOTATION_FQ_NAME =
+            IrBuiltIns.KOTLIN_INTERNAL_IR_FQN.child(Name.identifier("RawType"))
+    }
 }
 
 private fun IrClassSymbol.functionByName(name: String): IrSimpleFunctionSymbol =
