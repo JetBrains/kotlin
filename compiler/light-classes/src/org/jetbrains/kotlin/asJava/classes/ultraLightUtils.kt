@@ -191,7 +191,8 @@ private fun annotateByKotlinType(
     kotlinType: KotlinType,
     psiContext: PsiElement,
     ultraLightSupport: KtUltraLightSupport
-) {
+): PsiType {
+
     fun KotlinType.getAnnotationsSequence(): Sequence<List<PsiAnnotation>> =
         sequence {
             yield(annotations.mapNotNull { it.toLightAnnotation(ultraLightSupport, psiContext) })
@@ -201,10 +202,19 @@ private fun annotateByKotlinType(
         }
 
     val annotationsIterator = kotlinType.getAnnotationsSequence().iterator()
+    if (!annotationsIterator.hasNext()) return psiType
+
+    if (psiType is PsiPrimitiveType) {
+        val annotation = annotationsIterator.next()
+        val provider = TypeAnnotationProvider.Static.create(annotation.toTypedArray())
+        return psiType.annotate(provider)
+    }
 
     fun recursiveAnnotator(psiType: PsiType) {
         if (!annotationsIterator.hasNext()) return
         val typeAnnotations = annotationsIterator.next()
+
+        if (psiType is PsiPrimitiveType) return //Primitive type cannot be type parameter so we skip it
 
         if (psiType is PsiClassType) {
             for (parameterType in psiType.parameters) {
@@ -217,11 +227,11 @@ private fun annotateByKotlinType(
         if (typeAnnotations.isEmpty()) return
 
         val provider = TypeAnnotationProvider.Static.create(typeAnnotations.toTypedArray())
-
         setPsiTypeAnnotationProvider(psiType, provider)
     }
 
     recursiveAnnotator(psiType)
+    return psiType
 }
 
 internal fun KtUltraLightSupport.mapType(
@@ -246,10 +256,7 @@ private fun KtUltraLightSupport.createTypeFromCanonicalText(
     val typeText = TypeInfo.createTypeText(typeInfo) ?: return PsiType.NULL
 
     val typeElement = ClsTypeElementImpl(psiContext, typeText, '\u0000')
-    val type = typeElement.type
-    if (kotlinType != null) {
-        annotateByKotlinType(type, kotlinType, typeElement, this)
-    }
+    val type = if (kotlinType != null) annotateByKotlinType(typeElement.type, kotlinType, typeElement, this) else typeElement.type
 
     if (type is PsiArrayType && psiContext is KtUltraLightParameter && psiContext.isVarArgs) {
         return PsiEllipsisType(type.componentType, type.annotationProvider)
