@@ -742,6 +742,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/arrays/kt4118.kt");
         }
 
+        @TestMetadata("kt42932.kt")
+        public void testKt42932() throws Exception {
+            runTest("compiler/testData/codegen/box/arrays/kt42932.kt");
+        }
+
         @TestMetadata("kt4348.kt")
         public void testKt4348() throws Exception {
             runTest("compiler/testData/codegen/box/arrays/kt4348.kt");
@@ -750,6 +755,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("kt4357.kt")
         public void testKt4357() throws Exception {
             runTest("compiler/testData/codegen/box/arrays/kt4357.kt");
+        }
+
+        @TestMetadata("kt45410.kt")
+        public void testKt45410() throws Exception {
+            runTest("compiler/testData/codegen/box/arrays/kt45410.kt");
         }
 
         @TestMetadata("kt503.kt")

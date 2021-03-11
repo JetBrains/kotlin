@@ -4867,6 +4867,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         }
 
         @Test
+        @TestMetadata("arrayConstructor.kt")
+        public void testArrayConstructor() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/storeStackBeforeInline/arrayConstructor.kt");
+        }
+
+        @Test
         @TestMetadata("differentTypes.kt")
         public void testDifferentTypes() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/storeStackBeforeInline/differentTypes.kt");

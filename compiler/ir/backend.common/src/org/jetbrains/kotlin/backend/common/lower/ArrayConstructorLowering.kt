@@ -33,7 +33,7 @@ class ArrayConstructorLowering(val context: CommonBackendContext) : IrElementTra
     }
 }
 
-private class ArrayConstructorTransformer(
+open class ArrayConstructorTransformer(
     val context: CommonBackendContext,
     val container: IrSymbolOwner
 ) : IrElementTransformerVoidWithContext() {
@@ -73,11 +73,12 @@ private class ArrayConstructorTransformer(
         val invokable = expression.getValueArgument(1)!!.transform(this, null)
         val scope = (currentScope ?: createScope(container)).scope
         return context.createIrBuilder(scope.scopeOwnerSymbol).irBlock(expression.startOffset, expression.endOffset) {
+            beforeArrayConstructorBody(this)
+
             val index = createTmpVariable(irInt(0), isMutable = true)
             val sizeVar = createTmpVariable(size)
             val result = createTmpVariable(irCall(sizeConstructor, expression.type).apply {
-
-            copyTypeArgumentsFrom(expression)
+                copyTypeArgumentsFrom(expression)
                 putValueArgument(0, irGet(sizeVar))
             })
 
@@ -91,12 +92,9 @@ private class ArrayConstructorTransformer(
                 }
                 body = irBlock {
                     val tempIndex = createTmpVariable(irGet(index))
-                    val value = lambda?.inline(parent, listOf(tempIndex))?.patchDeclarationParents(scope.getLocalDeclarationParent()) ?: irCallOp(
-                        invoke.symbol,
-                        invoke.returnType,
-                        irGet(invokableVar!!),
-                        irGet(tempIndex)
-                    )
+                    val value =
+                        lambda?.run { inline(parent, listOf(tempIndex)).patchDeclarationParents(scope.getLocalDeclarationParent()) }
+                            ?: irCallOp(invoke.symbol, invoke.returnType, irGet(invokableVar!!), irGet(tempIndex))
                     +irCall(result.type.getClass()!!.functions.single { it.name == OperatorNameConventions.SET }).apply {
                         dispatchReceiver = irGet(result)
                         putValueArgument(0, irGet(tempIndex))
@@ -106,7 +104,13 @@ private class ArrayConstructorTransformer(
                     +irSet(index.symbol, irCallOp(inc.symbol, index.type, irGet(index)))
                 }
             }
+
+            afterArrayConstructorBody(this)
+
             +irGet(result)
         }
     }
+
+    protected open fun beforeArrayConstructorBody(builder: IrBlockBuilder) {}
+    protected open fun afterArrayConstructorBody(builder: IrBlockBuilder) {}
 }
