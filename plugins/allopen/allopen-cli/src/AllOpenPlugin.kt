@@ -44,6 +44,12 @@ class AllOpenCommandLineProcessor : CommandLineProcessor {
             "quarkus" to listOf(
                 "javax.enterprise.context.ApplicationScoped",
                 "javax.enterprise.context.RequestScoped"
+            ),
+            "micronaut" to listOf(
+                "io.micronaut.aop.Around",
+                "io.micronaut.aop.Introduction",
+                "io.micronaut.aop.InterceptorBinding",
+                "io.micronaut.aop.InterceptorBindingDefinitions"
             )
         )
 
