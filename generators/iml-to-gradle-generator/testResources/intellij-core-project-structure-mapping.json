@@ -1,0 +1,327 @@
+[
+  {
+    "moduleName": "intellij.platform.util.rt",
+    "path": "intellij-core.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.util.classLoader",
+    "path": "intellij-core.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.util.text.matching",
+    "path": "intellij-core.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.util.collections",
+    "path": "intellij-core.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.util.strings",
+    "path": "intellij-core.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.util.diagnostic",
+    "path": "intellij-core.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.util",
+    "path": "intellij-core.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.core",
+    "path": "intellij-core.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.core.impl",
+    "path": "intellij-core.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.extensions",
+    "path": "intellij-core.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.java.psi",
+    "path": "intellij-core.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.java.psi.impl",
+    "path": "intellij-core.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.analysis",
+    "path": "intellij-core-analysis-deprecated.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.boot",
+    "path": "intellij-core-analysis-deprecated.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.core",
+    "path": "intellij-core-analysis-deprecated.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.duplicates.analysis",
+    "path": "intellij-core-analysis-deprecated.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.editor",
+    "path": "intellij-core-analysis-deprecated.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.editor.ex",
+    "path": "intellij-core-analysis-deprecated.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.extensions",
+    "path": "intellij-core-analysis-deprecated.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.indexing",
+    "path": "intellij-core-analysis-deprecated.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.java.analysis",
+    "path": "intellij-core-analysis-deprecated.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.java.indexing",
+    "path": "intellij-core-analysis-deprecated.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.java.psi",
+    "path": "intellij-core-analysis-deprecated.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.java.structureView",
+    "path": "intellij-core-analysis-deprecated.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.jps.model",
+    "path": "intellij-core-analysis-deprecated.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.jps.model.serialization",
+    "path": "intellij-core-analysis-deprecated.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.projectModel",
+    "path": "intellij-core-analysis-deprecated.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.util",
+    "path": "intellij-core-analysis-deprecated.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.util.rt",
+    "path": "intellij-core-analysis-deprecated.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.util.text.matching",
+    "path": "intellij-core-analysis-deprecated.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.util.collections",
+    "path": "intellij-core-analysis-deprecated.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.util.strings",
+    "path": "intellij-core-analysis-deprecated.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.util.diagnostic",
+    "path": "intellij-core-analysis-deprecated.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.util.classLoader",
+    "path": "intellij-core-analysis-deprecated.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.xml.analysis",
+    "path": "intellij-core-analysis-deprecated.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.xml.psi",
+    "path": "intellij-core-analysis-deprecated.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.xml.structureView",
+    "path": "intellij-core-analysis-deprecated.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.jvm.analysis",
+    "path": "intellij-core-analysis-deprecated.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.analysis.impl",
+    "path": "intellij-core-analysis-deprecated.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.core.impl",
+    "path": "intellij-core-analysis-deprecated.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.indexing.impl",
+    "path": "intellij-core-analysis-deprecated.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.java.analysis.impl",
+    "path": "intellij-core-analysis-deprecated.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.java.indexing.impl",
+    "path": "intellij-core-analysis-deprecated.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.java.psi.impl",
+    "path": "intellij-core-analysis-deprecated.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.projectModel.impl",
+    "path": "intellij-core-analysis-deprecated.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.platform.structureView.impl",
+    "path": "intellij-core-analysis-deprecated.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.xml.analysis.impl",
+    "path": "intellij-core-analysis-deprecated.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.xml.psi.impl",
+    "path": "intellij-core-analysis-deprecated.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.xml.structureView.impl",
+    "path": "intellij-core-analysis-deprecated.jar",
+    "type": "module-output"
+  },
+  {
+    "moduleName": "intellij.jvm.analysis.impl",
+    "path": "intellij-core-analysis-deprecated.jar",
+    "type": "module-output"
+  },
+  {
+    "libraryName": "ASM",
+    "path": "asm-all-8.0.1.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "Guava",
+    "path": "guava-29.0-jre.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "Guava",
+    "path": "failureaccess-1.0.1.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "Guava",
+    "path": "j2objc-annotations-1.3.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "Trove4j",
+    "path": "trove4j-1.0.20200330.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "cli-parser",
+    "path": "cli-parser-1.1.5.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "lz4-java",
+    "path": "lz4-java-1.7.1.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "OroMatcher",
+    "path": "oro-2.0.8.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "jna",
+    "path": "jna-platform-5.6.0.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "jna",
+    "path": "jna-5.6.0.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "Log4J",
+    "path": "log4j-1.2.17.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "StreamEx",
+    "path": "streamex-0.7.2.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "jetbrains-annotations-java5",
+    "path": "annotations-java5.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "JDOM",
+    "path": "jdom.jar",
+    "type": "project-library"
+  },
+  {
+    "libraryName": "jetbrains-annotations-java5",
+    "path": "annotations.jar",
+    "type": "project-library"
+  }
+]
