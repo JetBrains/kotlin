@@ -96,6 +96,160 @@ fun assertNull(actual: Any?, message: String? = null) {
     asserter.assertNull(message, actual)
 }
 
+/**
+ * Asserts that the [expected] iterable is *structurally* equal to the [actual] iterable,
+ * i.e. contains the same number of the same elements in the same order, with an optional [message].
+ *
+ * The elements are compared for equality with the [equals][Any.equals] function.
+ * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ */
+@SinceKotlin("1.5")
+fun <@OnlyInputTypes T> assertContentEquals(expected: Iterable<T>?, actual: Iterable<T>?, message: String? = null) {
+    assertIterableContentEquals("Iterable", message, expected, actual, Iterable<*>::iterator)
+}
+
+/**
+ * Asserts that the [expected] sequence is *structurally* equal to the [actual] sequence,
+ * i.e. contains the same number of the same elements in the same order, with an optional [message].
+ *
+ * The elements are compared for equality with the [equals][Any.equals] function.
+ * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ */
+@SinceKotlin("1.5")
+fun <@OnlyInputTypes T> assertContentEquals(expected: Sequence<T>?, actual: Sequence<T>?, message: String? = null) {
+    assertIterableContentEquals("Sequence", message, expected, actual, Sequence<*>::iterator)
+}
+
+/**
+ * Asserts that the [expected] array is *structurally* equal to the [actual] array,
+ * i.e. contains the same number of the same elements in the same order, with an optional [message].
+ *
+ * The elements are compared for equality with the [equals][Any.equals] function.
+ * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ */
+@SinceKotlin("1.5")
+fun <@OnlyInputTypes T> assertContentEquals(expected: Array<T>?, actual: Array<T>?, message: String? = null) {
+    assertArrayContentEquals(message, expected, actual, { it.size }, Array<*>::get, Array<*>?::contentToString, Array<*>?::contentEquals)
+}
+
+/**
+ * Asserts that the [expected] array is *structurally* equal to the [actual] array,
+ * i.e. contains the same number of the same elements in the same order, with an optional [message].
+ */
+@SinceKotlin("1.5")
+fun assertContentEquals(expected: ByteArray?, actual: ByteArray?, message: String? = null) {
+    assertArrayContentEquals(message, expected, actual, { it.size }, ByteArray::get, ByteArray?::contentToString, ByteArray?::contentEquals)
+}
+
+/**
+ * Asserts that the [expected] array is *structurally* equal to the [actual] array,
+ * i.e. contains the same number of the same elements in the same order, with an optional [message].
+ */
+@SinceKotlin("1.5")
+fun assertContentEquals(expected: ShortArray?, actual: ShortArray?, message: String? = null) {
+    assertArrayContentEquals(message, expected, actual, { it.size }, ShortArray::get, ShortArray?::contentToString, ShortArray?::contentEquals)
+}
+
+/**
+ * Asserts that the [expected] array is *structurally* equal to the [actual] array,
+ * i.e. contains the same number of the same elements in the same order, with an optional [message].
+ */
+@SinceKotlin("1.5")
+fun assertContentEquals(expected: IntArray?, actual: IntArray?, message: String? = null) {
+    assertArrayContentEquals(message, expected, actual, { it.size }, IntArray::get, IntArray?::contentToString, IntArray?::contentEquals)
+}
+
+/**
+ * Asserts that the [expected] array is *structurally* equal to the [actual] array,
+ * i.e. contains the same number of the same elements in the same order, with an optional [message].
+ */
+@SinceKotlin("1.5")
+fun assertContentEquals(expected: LongArray?, actual: LongArray?, message: String? = null) {
+    assertArrayContentEquals(message, expected, actual, { it.size }, LongArray::get, LongArray?::contentToString, LongArray?::contentEquals)
+}
+
+/**
+ * Asserts that the [expected] array is *structurally* equal to the [actual] array,
+ * i.e. contains the same number of the same elements in the same order, with an optional [message].
+ *
+ * The elements are compared for equality with the [equals][Any.equals] function.
+ * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ */
+@SinceKotlin("1.5")
+fun assertContentEquals(expected: FloatArray?, actual: FloatArray?, message: String? = null) {
+    assertArrayContentEquals(message, expected, actual, { it.size }, FloatArray::get, FloatArray?::contentToString, FloatArray?::contentEquals)
+}
+
+/**
+ * Asserts that the [expected] array is *structurally* equal to the [actual] array,
+ * i.e. contains the same number of the same elements in the same order, with an optional [message].
+ *
+ * The elements are compared for equality with the [equals][Any.equals] function.
+ * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
+ */
+@SinceKotlin("1.5")
+fun assertContentEquals(expected: DoubleArray?, actual: DoubleArray?, message: String? = null) {
+    assertArrayContentEquals(message, expected, actual, { it.size }, DoubleArray::get, DoubleArray?::contentToString, DoubleArray?::contentEquals)
+}
+
+/**
+ * Asserts that the [expected] array is *structurally* equal to the [actual] array,
+ * i.e. contains the same number of the same elements in the same order, with an optional [message].
+ */
+@SinceKotlin("1.5")
+fun assertContentEquals(expected: BooleanArray?, actual: BooleanArray?, message: String? = null) {
+    assertArrayContentEquals(message, expected, actual, { it.size }, BooleanArray::get, BooleanArray?::contentToString, BooleanArray?::contentEquals)
+}
+
+/**
+ * Asserts that the [expected] array is *structurally* equal to the [actual] array,
+ * i.e. contains the same number of the same elements in the same order, with an optional [message].
+ */
+@SinceKotlin("1.5")
+fun assertContentEquals(expected: CharArray?, actual: CharArray?, message: String? = null) {
+    assertArrayContentEquals(message, expected, actual, { it.size }, CharArray::get, CharArray?::contentToString, CharArray?::contentEquals)
+}
+
+/**
+ * Asserts that the [expected] array is *structurally* equal to the [actual] array,
+ * i.e. contains the same number of the same elements in the same order, with an optional [message].
+ */
+@SinceKotlin("1.5")
+@OptIn(ExperimentalUnsignedTypes::class)
+fun assertContentEquals(expected: UByteArray?, actual: UByteArray?, message: String? = null) {
+    assertArrayContentEquals(message, expected, actual, { it.size }, UByteArray::get, UByteArray?::contentToString, UByteArray?::contentEquals)
+}
+
+/**
+ * Asserts that the [expected] array is *structurally* equal to the [actual] array,
+ * i.e. contains the same number of the same elements in the same order, with an optional [message].
+ */
+@SinceKotlin("1.5")
+@OptIn(ExperimentalUnsignedTypes::class)
+fun assertContentEquals(expected: UShortArray?, actual: UShortArray?, message: String? = null) {
+    assertArrayContentEquals(message, expected, actual, { it.size }, UShortArray::get, UShortArray?::contentToString, UShortArray?::contentEquals)
+}
+
+/**
+ * Asserts that the [expected] array is *structurally* equal to the [actual] array,
+ * i.e. contains the same number of the same elements in the same order, with an optional [message].
+ */
+@SinceKotlin("1.5")
+@OptIn(ExperimentalUnsignedTypes::class)
+fun assertContentEquals(expected: UIntArray?, actual: UIntArray?, message: String? = null) {
+    assertArrayContentEquals(message, expected, actual, { it.size }, UIntArray::get, UIntArray?::contentToString, UIntArray?::contentEquals)
+}
+
+/**
+ * Asserts that the [expected] array is *structurally* equal to the [actual] array,
+ * i.e. contains the same number of the same elements in the same order, with an optional [message].
+ */
+@SinceKotlin("1.5")
+@OptIn(ExperimentalUnsignedTypes::class)
+fun assertContentEquals(expected: ULongArray?, actual: ULongArray?, message: String? = null) {
+    assertArrayContentEquals(message, expected, actual, { it.size }, ULongArray::get, ULongArray?::contentToString, ULongArray?::contentEquals)
+}
+
 /** Marks a test as having failed if this point in the execution path is reached, with an optional [message]. */
 fun fail(message: String? = null): Nothing {
     asserter.fail(message)
