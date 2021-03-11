@@ -93,7 +93,7 @@ internal open class CInteropCommonizerTask : AbstractCInteropCommonizerTask() {
             konanHome = project.file(project.konanHome),
             outputCommonizerTarget = parameters.commonizerTarget,
             inputLibraries = cinteropsForTarget.map { it.libraryFile.get() }.toSet(),
-            dependencyLibraries = emptySet(),/*cinteropsForTarget.flatMap { it.dependencies.files }.toSet() */ // TODO pass real dependencies
+            dependencyLibraries = cinteropsForTarget.flatMap { it.dependencies.files }.toSet(),
             outputDirectory = outputDirectory(parameters)
         )
     }
