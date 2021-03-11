@@ -8,5 +8,5 @@ package org.jetbrains.kotlin.fir.resolve.inference
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeTypeVariable
 
-class TypeParameterBasedTypeVariable(val typeParameterSymbol: FirTypeParameterSymbol) :
+class ConeTypeParameterBasedTypeVariable(val typeParameterSymbol: FirTypeParameterSymbol) :
     ConeTypeVariable(typeParameterSymbol.name.identifier)

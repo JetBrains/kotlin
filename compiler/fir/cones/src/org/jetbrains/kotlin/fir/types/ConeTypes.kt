@@ -40,6 +40,10 @@ object ConeStarProjection : ConeTypeProjection() {
         get() = ProjectionKind.STAR
 }
 
+sealed class ConeKotlinTypeProjection : ConeTypeProjection() {
+    abstract val type: ConeKotlinType
+}
+
 data class ConeKotlinTypeProjectionIn(override val type: ConeKotlinType) : ConeKotlinTypeProjection() {
     override val kind: ProjectionKind
         get() = ProjectionKind.IN
@@ -49,6 +53,16 @@ data class ConeKotlinTypeProjectionOut(override val type: ConeKotlinType) : Cone
     override val kind: ProjectionKind
         get() = ProjectionKind.OUT
 }
+
+val ConeTypeProjection.type: ConeKotlinType?
+    get() = when (this) {
+        ConeStarProjection -> null
+        is ConeKotlinTypeProjection -> type
+        is ConeKotlinType -> this
+    }
+
+val ConeTypeProjection.isStarProjection: Boolean
+    get() = this == ConeStarProjection
 
 // We assume type IS an invariant type projection to prevent additional wrapper here
 // (more exactly, invariant type projection contains type)
@@ -68,16 +82,11 @@ sealed class ConeKotlinType : ConeKotlinTypeProjection(), KotlinTypeMarker, Type
     final override fun toString(): String {
         return render()
     }
-
     abstract override fun equals(other: Any?): Boolean
     abstract override fun hashCode(): Int
 }
 
 sealed class ConeSimpleKotlinType : ConeKotlinType(), SimpleTypeMarker
-
-sealed class ConeKotlinTypeProjection : ConeTypeProjection() {
-    abstract val type: ConeKotlinType
-}
 
 typealias ConeKotlinErrorType = ConeClassErrorType
 
@@ -162,7 +171,8 @@ data class ConeCapturedType(
     val lowerType: ConeKotlinType?,
     override val nullability: ConeNullability = ConeNullability.NOT_NULL,
     val constructor: ConeCapturedTypeConstructor,
-    override val attributes: ConeAttributes = ConeAttributes.Empty
+    override val attributes: ConeAttributes = ConeAttributes.Empty,
+    val isProjectionNotNull: Boolean = false
 ) : ConeSimpleKotlinType(), CapturedTypeMarker {
     constructor(
         captureStatus: CaptureStatus, lowerType: ConeKotlinType?, projection: ConeTypeProjection,
@@ -315,6 +325,13 @@ open class ConeTypeVariable(name: String) : TypeVariableMarker {
 
 class ConeTypeVariableTypeConstructor(val debugName: String) : ConeClassifierLookupTag(), TypeVariableTypeConstructorMarker {
     override val name: Name get() = Name.identifier(debugName)
+
+    var isContainedInInvariantOrContravariantPositions: Boolean = false
+        private set
+
+    fun recordInfoAboutTypeVariableUsagesAsInvariantOrContravariantParameter() {
+        isContainedInInvariantOrContravariantPositions = true
+    }
 }
 
 abstract class ConeIntegerLiteralType(

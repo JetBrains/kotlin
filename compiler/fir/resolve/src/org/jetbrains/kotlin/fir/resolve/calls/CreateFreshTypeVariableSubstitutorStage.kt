@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
 import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.inference.TypeParameterBasedTypeVariable
+import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeParameterBasedTypeVariable
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeDeclaredUpperBoundConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -115,7 +115,7 @@ private fun createToFreshVariableSubstitutorAndAddInitialConstraints(
 
     val typeParameters = declaration.typeParameters
 
-    val freshTypeVariables = typeParameters.map { TypeParameterBasedTypeVariable(it.symbol) }
+    val freshTypeVariables = typeParameters.map { ConeTypeParameterBasedTypeVariable(it.symbol) }
 
     val toFreshVariables = substitutorByMap(freshTypeVariables.associate { it.typeParameterSymbol to it.defaultType })
 
@@ -123,7 +123,7 @@ private fun createToFreshVariableSubstitutorAndAddInitialConstraints(
         csBuilder.registerVariable(freshVariable)
     }
 
-    fun TypeParameterBasedTypeVariable.addSubtypeConstraint(
+    fun ConeTypeParameterBasedTypeVariable.addSubtypeConstraint(
         upperBound: ConeKotlinType//,
         //position: DeclaredUpperBoundConstraintPosition
     ) {

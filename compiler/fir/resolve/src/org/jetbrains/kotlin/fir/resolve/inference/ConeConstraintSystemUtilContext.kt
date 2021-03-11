@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeFixVariableConstraintPosition
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemUtilContext
@@ -38,7 +37,7 @@ object ConeConstraintSystemUtilContext : ConstraintSystemUtilContext {
     }
 
     override fun TypeVariableMarker.isReified(): Boolean {
-        return this is TypeParameterBasedTypeVariable && typeParameterSymbol.fir.isReified
+        return this is ConeTypeParameterBasedTypeVariable && typeParameterSymbol.fir.isReified
     }
 
     override fun KotlinTypeMarker.refineType(): KotlinTypeMarker {

@@ -295,12 +295,12 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
 
     override fun CapturedTypeMarker.withNotNullProjection(): KotlinTypeMarker {
         require(this is ConeCapturedType)
-        return this // TODO
+        return ConeCapturedType(captureStatus, lowerType, nullability, constructor, attributes, isProjectionNotNull = true)
     }
 
     override fun CapturedTypeMarker.isProjectionNotNull(): Boolean {
         require(this is ConeCapturedType)
-        return false // TODO
+        return isProjectionNotNull
     }
 
     override fun DefinitelyNotNullTypeMarker.original(): SimpleTypeMarker {
@@ -339,7 +339,8 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
     }
 
     override fun TypeVariableTypeConstructorMarker.isContainedInInvariantOrContravariantPositions(): Boolean {
-        return false
+        require(this is ConeTypeVariableTypeConstructor)
+        return isContainedInInvariantOrContravariantPositions
     }
 
     override fun createErrorType(debugName: String): ConeClassErrorType {
