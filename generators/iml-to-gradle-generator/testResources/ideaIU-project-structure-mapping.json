@@ -4645,16 +4645,6 @@
     "type": "module-output"
   },
   {
-    "moduleName": "intellij.completionMlRanking",
-    "path": "plugins/completionMlRanking/lib/completionMlRanking.jar",
-    "type": "module-output"
-  },
-  {
-    "moduleName": "intellij.completionMlRanking",
-    "path": "plugins/completionMlRanking/lib/resources_en.jar",
-    "type": "module-output"
-  },
-  {
     "filePath": "$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/completion/ngram-slp/0.0.2/ngram-slp-0.0.2.jar",
     "path": "plugins/completionMlRanking/lib/ngram-slp-0.0.2.jar",
     "type": "module-library-file"
