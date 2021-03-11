@@ -3536,6 +3536,9 @@ public final class kotlin/jvm/internal/CollectionToArray {
 	public static final fun toArray (Ljava/util/Collection;[Ljava/lang/Object;)[Ljava/lang/Object;
 }
 
+public final class kotlin/jvm/internal/DefaultConstructorMarker {
+}
+
 public final class kotlin/jvm/internal/DoubleCompanionObject {
 	public static final field INSTANCE Lkotlin/jvm/internal/DoubleCompanionObject;
 	public static final field MAX_VALUE D
