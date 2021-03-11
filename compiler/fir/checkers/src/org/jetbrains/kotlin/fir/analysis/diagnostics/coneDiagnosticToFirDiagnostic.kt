@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.isInfix
 import org.jetbrains.kotlin.fir.declarations.isOperator
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.calls.InapplicableWrongReceiver
+import org.jetbrains.kotlin.fir.resolve.calls.ResolutionDiagnostic
 import org.jetbrains.kotlin.fir.resolve.calls.VarargArgumentOutsideParentheses
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.types.*
@@ -62,12 +63,11 @@ private fun ConeKotlinType.isEffectivelyNotNull(): Boolean {
     }
 }
 
-private fun mapInapplicableCandidateError(
+private fun mapUnsafeCallError(
     diagnostic: ConeInapplicableCandidateError,
     source: FirSourceElement,
-): FirDiagnostic<*> {
-    // TODO: Need to distinguish SMARTCAST_IMPOSSIBLE
-    val rootCause = diagnostic.candidate.diagnostics.find { it.applicability == diagnostic.applicability }
+    rootCause: ResolutionDiagnostic?,
+): FirDiagnostic<*>? {
     if (rootCause != null &&
         rootCause is InapplicableWrongReceiver &&
         rootCause.actualType?.isNullable == true &&
@@ -96,6 +96,16 @@ private fun mapInapplicableCandidateError(
 
         return FirErrors.UNSAFE_CALL.on(source, rootCause.actualType!!)
     }
+    return null
+}
+
+private fun mapInapplicableCandidateError(
+    diagnostic: ConeInapplicableCandidateError,
+    source: FirSourceElement,
+): FirDiagnostic<*> {
+    // TODO: Need to distinguish SMARTCAST_IMPOSSIBLE
+    val rootCause = diagnostic.candidate.diagnostics.find { it.applicability == diagnostic.applicability }
+    mapUnsafeCallError(diagnostic, source, rootCause)?.let { return it }
 
     return when (rootCause) {
         is VarargArgumentOutsideParentheses -> FirErrors.VARARG_OUTSIDE_PARENTHESES.on(rootCause.argument.source ?: source)
