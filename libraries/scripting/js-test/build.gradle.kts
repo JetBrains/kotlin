@@ -12,6 +12,7 @@ dependencies {
     testCompile(project(":kotlin-scripting-compiler"))
     testCompile(project(":compiler:cli"))
     testCompile(project(":compiler:backend.js"))
+    testRuntimeOnly(project(":compiler:ir.compiler.wjs"))
     testCompile(project(":compiler:ir.tree.impl"))
     testCompile(project(":js:js.engines"))
     testCompile(intellijCoreDep()) { includeJars("intellij-core") }
