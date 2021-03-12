@@ -81,6 +81,21 @@ public class JavaAgainstKotlinSourceCheckerTestGenerated extends AbstractJavaAga
             runTest("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/ExtendClassWithJvmDefaultImplementation.kt");
         }
 
+        @TestMetadata("ExtendInterfaceWithDefaultMethodAndCompatibilityAll.kt")
+        public void testExtendInterfaceWithDefaultMethodAndCompatibilityAll() throws Exception {
+            runTest("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/ExtendInterfaceWithDefaultMethodAndCompatibilityAll.kt");
+        }
+
+        @TestMetadata("ExtendInterfaceWithDefaultMethodAndCompatibilityAllCompatibility.kt")
+        public void testExtendInterfaceWithDefaultMethodAndCompatibilityAllCompatibility() throws Exception {
+            runTest("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/ExtendInterfaceWithDefaultMethodAndCompatibilityAllCompatibility.kt");
+        }
+
+        @TestMetadata("ExtendInterfaceWithDefaultMethodAndCompatibilityDisabled.kt")
+        public void testExtendInterfaceWithDefaultMethodAndCompatibilityDisabled() throws Exception {
+            runTest("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/ExtendInterfaceWithDefaultMethodAndCompatibilityDisabled.kt");
+        }
+
         @TestMetadata("ExtendingMutableInterfaces.kt")
         public void testExtendingMutableInterfaces() throws Exception {
             runTest("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/ExtendingMutableInterfaces.kt");
