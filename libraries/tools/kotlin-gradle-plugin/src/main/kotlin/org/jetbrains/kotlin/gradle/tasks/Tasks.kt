@@ -177,8 +177,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     @get:Internal
     internal val projectObjects = project.objects
 
-    @get:LocalState
-    internal val localStateDirectoriesProvider: FileCollection = projectObjects.fileCollection().from(taskBuildDirectory)
+    private val localStateDirectoriesProvider: FileCollection = projectObjects.fileCollection().from({ taskBuildDirectory })
 
     override fun localStateDirectories(): FileCollection = localStateDirectoriesProvider
 
