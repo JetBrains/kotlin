@@ -1,7 +1,7 @@
 class: kotlin/io/FileWalkDirection
 
 // SYMBOLS:
-KtFirClassOrObjectSymbol:
+KtFirNamedClassOrObjectSymbol:
   annotationClassIds: []
   annotations: []
   classIdIfNonLocal: kotlin/io/FileWalkDirection

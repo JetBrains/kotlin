@@ -50,7 +50,7 @@ KtFirFunctionSymbol:
   valueParameters: []
   visibility: PUBLIC
 
-KtFirClassOrObjectSymbol:
+KtFirNamedClassOrObjectSymbol:
   annotationClassIds: []
   annotations: []
   classIdIfNonLocal: A

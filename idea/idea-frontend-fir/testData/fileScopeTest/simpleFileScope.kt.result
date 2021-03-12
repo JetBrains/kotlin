@@ -57,7 +57,7 @@ CLASSIFIER NAMES:
 [C, I]
 
 CLASSIFIER SYMBOLS:
-KtFirClassOrObjectSymbol:
+KtFirNamedClassOrObjectSymbol:
   annotationClassIds: []
   annotations: []
   classIdIfNonLocal: C
@@ -76,7 +76,7 @@ KtFirClassOrObjectSymbol:
   typeParameters: []
   visibility: PUBLIC
 
-KtFirClassOrObjectSymbol:
+KtFirNamedClassOrObjectSymbol:
   annotationClassIds: []
   annotations: []
   classIdIfNonLocal: I

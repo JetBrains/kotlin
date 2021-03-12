@@ -3,7 +3,7 @@
 class: java/lang/String
 
 // SYMBOLS:
-KtFirClassOrObjectSymbol:
+KtFirNamedClassOrObjectSymbol:
   annotationClassIds: []
   annotations: []
   classIdIfNonLocal: java/lang/String

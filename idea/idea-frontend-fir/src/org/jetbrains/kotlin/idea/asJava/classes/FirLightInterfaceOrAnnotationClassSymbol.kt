@@ -11,10 +11,11 @@ import org.jetbrains.kotlin.idea.asJava.*
 import org.jetbrains.kotlin.idea.frontend.api.isValid
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassKind
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassOrObjectSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolKind
 
 internal abstract class FirLightInterfaceOrAnnotationClassSymbol(
-    private val classOrObjectSymbol: KtClassOrObjectSymbol,
+    private val classOrObjectSymbol: KtNamedClassOrObjectSymbol,
     manager: PsiManager
 ) : FirLightClassForClassOrObjectSymbol(classOrObjectSymbol, manager) {
 

@@ -10,8 +10,12 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.name.Name
 
-interface KtNamedSymbol : KtSymbol {
-    val name: Name
+interface KtPossiblyNamedSymbol : KtSymbol {
+    val name: Name?
+}
+
+interface KtNamedSymbol : KtPossiblyNamedSymbol {
+    abstract override val name: Name
 }
 
 interface KtTypedSymbol : KtSymbol {

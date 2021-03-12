@@ -3,7 +3,7 @@
 class: kotlin/Lazy
 
 // SYMBOLS:
-KtFirClassOrObjectSymbol:
+KtFirNamedClassOrObjectSymbol:
   annotationClassIds: []
   annotations: []
   classIdIfNonLocal: kotlin/Lazy

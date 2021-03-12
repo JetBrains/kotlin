@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtTypeArgumentList
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -94,7 +95,8 @@ private data class VariableLookupObject(
 
 private class ClassLookupElementFactory {
     fun createLookup(symbol: KtClassLikeSymbol): LookupElementBuilder {
-        return LookupElementBuilder.create(ClassifierLookupObject(symbol.name, symbol.classIdIfNonLocal), symbol.name.asString())
+        val name = symbol.nameOrAnonymous
+        return LookupElementBuilder.create(ClassifierLookupObject(name, symbol.classIdIfNonLocal), name.asString())
             .withInsertHandler(ClassifierInsertionHandler)
     }
 }

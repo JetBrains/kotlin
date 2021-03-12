@@ -2,7 +2,7 @@ class A {
 }
 
 // SYMBOLS:
-KtFirClassOrObjectSymbol:
+KtFirNamedClassOrObjectSymbol:
   annotationClassIds: []
   annotations: []
   classIdIfNonLocal: A

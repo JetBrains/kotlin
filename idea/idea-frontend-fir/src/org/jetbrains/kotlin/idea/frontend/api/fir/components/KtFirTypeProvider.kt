@@ -14,10 +14,11 @@ import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.components.KtBuiltinTypes
 import org.jetbrains.kotlin.idea.frontend.api.components.KtTypeProvider
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirClassOrObjectSymbol
+import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.types.KtFirType
 import org.jetbrains.kotlin.idea.frontend.api.fir.types.PublicTypeApproximator
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassOrObjectSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 
@@ -40,8 +41,8 @@ internal class KtFirTypeProvider(
     }
 
 
-    override fun buildSelfClassType(symbol: KtClassOrObjectSymbol): KtType {
-        require(symbol is KtFirClassOrObjectSymbol)
+    override fun buildSelfClassType(symbol: KtNamedClassOrObjectSymbol): KtType {
+        require(symbol is KtFirNamedClassOrObjectSymbol)
         val type = symbol.firRef.withFir(FirResolvePhase.SUPER_TYPES) { firClass ->
             ConeClassLikeTypeImpl(
                 firClass.symbol.toLookupTag(),

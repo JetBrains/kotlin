@@ -15,12 +15,12 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.annotations.containsAnnotation
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.annotations.getAnnotationClassIds
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.annotations.toAnnotationsList
-import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers.KtFirClassOrObjectInLibrarySymbol
+import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers.KtFirClassOrObjectInLibrarySymbolPointer
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassKind
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassOrObjectSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.CanNotCreateSymbolPointerForLocalLibraryDeclarationException
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtPsiBasedSymbolPointer
@@ -28,16 +28,16 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
-internal class KtFirClassOrObjectSymbol(
+internal class KtFirNamedClassOrObjectSymbol(
     fir: FirRegularClass,
     resolveState: FirModuleResolveState,
     override val token: ValidityToken,
     _builder: KtSymbolByFirBuilder
-) : KtClassOrObjectSymbol(), KtFirSymbol<FirRegularClass> {
+) : KtNamedClassOrObjectSymbol(), KtFirSymbol<FirRegularClass> {
     private val builder by weakRef(_builder)
     override val firRef = firRef(fir, resolveState)
     override val psi: PsiElement? by firRef.withFirAndCache { fir -> fir.findPsi(fir.session) }
-    override val name: Name get() = firRef.withFir { it.symbol.classId.shortClassName }
+    override val name: Name get() = firRef.withFir { it.name }
     override val classIdIfNonLocal: ClassId?
         get() = firRef.withFir { fir ->
             fir.symbol.classId.takeUnless { it.isLocal }
@@ -58,8 +58,8 @@ internal class KtFirClassOrObjectSymbol(
 
     override val isExternal: Boolean get() = firRef.withFir(FirResolvePhase.STATUS) { it.isExternal }
 
-    override val companionObject: KtClassOrObjectSymbol? by firRef.withFirAndCache(FirResolvePhase.RAW_FIR) { fir ->
-        fir.companionObject?.let { builder.buildClassSymbol(it) }
+    override val companionObject: KtFirNamedClassOrObjectSymbol? by firRef.withFirAndCache { fir ->
+        fir.companionObject?.let { builder.buildNamedClassOrObjectSymbol(it) }
     }
 
     override val superTypes: List<KtTypeAndAnnotations> by cached {
@@ -92,11 +92,11 @@ internal class KtFirClassOrObjectSymbol(
             }
         }
 
-    override fun createPointer(): KtSymbolPointer<KtClassOrObjectSymbol> {
+    override fun createPointer(): KtSymbolPointer<KtNamedClassOrObjectSymbol> {
         KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
         if (symbolKind == KtSymbolKind.LOCAL) {
             throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(classIdIfNonLocal?.asString().orEmpty())
         }
-        return KtFirClassOrObjectInLibrarySymbol(classIdIfNonLocal!!)
+        return KtFirClassOrObjectInLibrarySymbolPointer(classIdIfNonLocal!!)
     }
 }

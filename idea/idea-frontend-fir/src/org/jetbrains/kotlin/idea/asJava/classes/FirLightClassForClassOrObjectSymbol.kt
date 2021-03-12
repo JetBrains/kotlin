@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.psi.debugText.getDebugText
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 
 internal abstract class FirLightClassForClassOrObjectSymbol(
-    private val classOrObjectSymbol: KtClassOrObjectSymbol,
+    private val classOrObjectSymbol: KtNamedClassOrObjectSymbol,
     manager: PsiManager
 ) : FirLightClassBase(manager),
     StubBasedPsiElement<KotlinClassOrObjectStub<out KtClassOrObject>> {

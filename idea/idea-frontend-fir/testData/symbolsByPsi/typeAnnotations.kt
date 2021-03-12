@@ -17,7 +17,7 @@ class X : @Anno1 I {
 
 // SYMBOLS:
 /*
-KtFirClassOrObjectSymbol:
+KtFirNamedClassOrObjectSymbol:
   annotationClassIds: [kotlin/annotation/Target]
   annotations: [kotlin/annotation/Target(allowedTargets = KtUnsupportedConstantValue)]
   classIdIfNonLocal: Anno1
@@ -36,7 +36,7 @@ KtFirClassOrObjectSymbol:
   typeParameters: []
   visibility: PUBLIC
 
-KtFirClassOrObjectSymbol:
+KtFirNamedClassOrObjectSymbol:
   annotationClassIds: [kotlin/annotation/Target]
   annotations: [kotlin/annotation/Target(allowedTargets = KtUnsupportedConstantValue)]
   classIdIfNonLocal: Anno2
@@ -55,7 +55,7 @@ KtFirClassOrObjectSymbol:
   typeParameters: []
   visibility: PUBLIC
 
-KtFirClassOrObjectSymbol:
+KtFirNamedClassOrObjectSymbol:
   annotationClassIds: [kotlin/annotation/Target]
   annotations: [kotlin/annotation/Target(allowedTargets = KtUnsupportedConstantValue)]
   classIdIfNonLocal: Anno3
@@ -74,7 +74,7 @@ KtFirClassOrObjectSymbol:
   typeParameters: []
   visibility: PUBLIC
 
-KtFirClassOrObjectSymbol:
+KtFirNamedClassOrObjectSymbol:
   annotationClassIds: [kotlin/annotation/Target]
   annotations: [kotlin/annotation/Target(allowedTargets = KtUnsupportedConstantValue)]
   classIdIfNonLocal: Anno4
@@ -93,7 +93,7 @@ KtFirClassOrObjectSymbol:
   typeParameters: []
   visibility: PUBLIC
 
-KtFirClassOrObjectSymbol:
+KtFirNamedClassOrObjectSymbol:
   annotationClassIds: []
   annotations: []
   classIdIfNonLocal: I
@@ -167,7 +167,7 @@ KtFirKotlinPropertySymbol:
   symbolKind: MEMBER
   visibility: PUBLIC
 
-KtFirClassOrObjectSymbol:
+KtFirNamedClassOrObjectSymbol:
   annotationClassIds: []
   annotations: []
   classIdIfNonLocal: X

@@ -1231,7 +1231,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(index)]
   visibility: PUBLIC
 
-KtFirClassOrObjectSymbol:
+KtFirNamedClassOrObjectSymbol:
   annotationClassIds: []
   annotations: []
   classIdIfNonLocal: java/lang/String.CaseInsensitiveComparator

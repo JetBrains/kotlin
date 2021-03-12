@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.withFirDeclaration
 import org.jetbrains.kotlin.idea.frontend.api.fir.analyzeWithSymbolAsContext
-import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirSymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.types.KtFirType
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
@@ -61,8 +60,8 @@ internal fun KtTypeAndAnnotations.asPsiType(
     return type.coneType.asPsiType(session, context.firRef.resolveState, TypeMappingMode.DEFAULT, parent)
 }
 
-internal fun KtClassOrObjectSymbol.typeForClassSymbol(psiElement: PsiElement): PsiType {
-    require(this is KtFirClassOrObjectSymbol)
+internal fun KtNamedClassOrObjectSymbol.typeForClassSymbol(psiElement: PsiElement): PsiType {
+    require(this is KtFirSymbol<*>)
 
     val types = analyzeWithSymbolAsContext(this) {
         this@typeForClassSymbol.buildSelfClassType()

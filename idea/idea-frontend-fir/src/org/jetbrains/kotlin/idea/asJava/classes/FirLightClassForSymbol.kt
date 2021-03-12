@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithVisibi
 import org.jetbrains.kotlin.load.java.JvmAbi
 
 internal class FirLightClassForSymbol(
-    private val classOrObjectSymbol: KtClassOrObjectSymbol,
+    private val classOrObjectSymbol: KtNamedClassOrObjectSymbol,
     manager: PsiManager
 ) : FirLightClassForClassOrObjectSymbol(classOrObjectSymbol, manager) {
 

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.frontend.api.fir
 import com.google.common.collect.MapMaker
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
@@ -82,33 +83,50 @@ internal class KtSymbolByFirBuilder private constructor(
     }
 
 
-    fun buildSymbol(fir: FirDeclaration): KtSymbol = symbolsCache.cache(fir) {
-        when (fir) {
-            is FirRegularClass -> buildClassSymbol(fir)
+    fun buildSymbol(fir: FirDeclaration): KtSymbol {
+        return when (fir) {
+            is FirClassLikeDeclaration<*> -> buildClassLikeSymbol(fir)
             is FirSimpleFunction -> buildFunctionSymbol(fir)
             is FirProperty -> buildVariableSymbol(fir)
             is FirValueParameter -> buildParameterSymbol(fir)
             is FirConstructor -> buildConstructorSymbol(fir)
             is FirTypeParameter -> buildTypeParameterSymbol(fir)
-            is FirTypeAlias -> buildTypeAliasSymbol(fir)
             is FirEnumEntry -> buildEnumEntrySymbol(fir)
             is FirField -> buildFieldSymbol(fir)
             is FirAnonymousFunction -> buildAnonymousFunctionSymbol(fir)
             is FirPropertyAccessor -> buildPropertyAccessorSymbol(fir)
-            is FirAnonymousObject -> buildAnonymousObjectSymbol(fir)
             else ->
                 TODO(fir::class.toString())
         }
+
     }
 
     // TODO Handle all relevant cases
     fun buildCallableSymbol(fir: FirCallableDeclaration<*>): KtCallableSymbol = buildSymbol(fir) as KtCallableSymbol
 
-    fun buildClassLikeSymbol(fir: FirClassLikeDeclaration<*>): KtClassLikeSymbol = when (fir) {
-        is FirRegularClass -> buildClassSymbol(fir)
-        is FirTypeAlias -> buildTypeAliasSymbol(fir)
-        else ->
-            TODO(fir::class.toString())
+
+    fun buildClassLikeSymbol(fir: FirClassLikeDeclaration<*>): KtClassLikeSymbol {
+        return when (fir) {
+            is FirClass<*> -> buildClassOrObjectSymbol(fir)
+            is FirTypeAlias -> buildTypeAliasSymbol(fir)
+            else -> error("Unexpected ${fir::class.simpleName}")
+        }
+    }
+
+    fun buildClassOrObjectSymbol(fir: FirClass<*>): KtClassOrObjectSymbol {
+        return when (fir) {
+            is FirAnonymousObject -> buildAnonymousObjectSymbol(fir)
+            is FirRegularClass -> buildNamedClassOrObjectSymbol(fir)
+            else -> error("Unexpected ${fir::class.simpleName}")
+        }
+    }
+
+    fun buildNamedClassOrObjectSymbol(fir: FirRegularClass): KtFirNamedClassOrObjectSymbol {
+        return symbolsCache.cache(fir) { KtFirNamedClassOrObjectSymbol(fir, resolveState, token, this) }
+    }
+
+    fun buildAnonymousObjectSymbol(fir: FirAnonymousObject): KtAnonymousObjectSymbol {
+        return symbolsCache.cache(fir) { KtFirAnonymousObjectSymbol(fir, resolveState, token, this) }
     }
 
     fun buildClassifierSymbol(firSymbol: FirClassifierSymbol<*>): KtClassifierSymbol = when (val fir = firSymbol.fir) {
@@ -118,10 +136,6 @@ internal class KtSymbolByFirBuilder private constructor(
             TODO(fir::class.toString())
     }
 
-    fun buildClassSymbol(fir: FirRegularClass) = symbolsCache.cache(fir) { KtFirClassOrObjectSymbol(fir, resolveState, token, this) }
-
-    fun buildAnonymousObjectSymbol(fir: FirAnonymousObject) =
-        symbolsCache.cache(fir) { KtFirAnonymousObjectSymbol(fir, resolveState, token, this) }
 
     // TODO it can be a constructor parameter, which may be split into parameter & property
     // we should handle them both

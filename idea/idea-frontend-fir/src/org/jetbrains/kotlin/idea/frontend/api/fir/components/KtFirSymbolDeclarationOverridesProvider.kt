@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirIntersectionOverridePropertySymb
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.components.KtSymbolDeclarationOverridesProvider
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirClassOrObjectSymbol
+import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithKind
@@ -92,13 +92,13 @@ internal class KtFirSymbolDeclarationOverridesProvider(
         val containingDeclaration = with(analysisSession) {
             (callableSymbol as? KtSymbolWithKind)?.getContainingSymbol() as? KtClassOrObjectSymbol
         } ?: return
-        check(containingDeclaration is KtFirClassOrObjectSymbol)
+        check(containingDeclaration is KtFirNamedClassOrObjectSymbol)
 
         processOverrides(containingDeclaration, callableSymbol, process)
     }
 
     private inline fun processOverrides(
-        containingDeclaration: KtFirClassOrObjectSymbol,
+        containingDeclaration: KtFirNamedClassOrObjectSymbol,
         callableSymbol: KtFirSymbol<*>,
         crossinline process: (FirTypeScope, FirDeclaration) -> Unit
     ) {

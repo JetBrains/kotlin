@@ -24,13 +24,15 @@ import org.jetbrains.kotlin.idea.frontend.api.components.KtScopeProvider
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.scopes.*
+import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirAnonymousObjectSymbol
-import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirEnumEntrySymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirFileSymbol
+import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.types.KtFirType
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
 import org.jetbrains.kotlin.idea.frontend.api.scopes.*
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFileSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPackageSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithDeclarations
@@ -59,7 +61,7 @@ internal class KtFirScopeProvider(
     private val packageMemberScopeCache = IdentityHashMap<KtPackageSymbol, KtPackageScope>()
 
     private inline fun <T> KtSymbolWithMembers.withFirForScope(crossinline body: (FirClass<*>) -> T): T? = when (this) {
-        is KtFirClassOrObjectSymbol -> firRef.withFir(FirResolvePhase.SUPER_TYPES, body)
+        is KtFirNamedClassOrObjectSymbol -> firRef.withFir(FirResolvePhase.SUPER_TYPES, body)
         is KtFirAnonymousObjectSymbol -> firRef.withFir(FirResolvePhase.SUPER_TYPES, body)
         is KtFirEnumEntrySymbol -> firRef.withFir(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) {
             val initializer = it.initializer

@@ -17,7 +17,7 @@ KtFirEnumEntrySymbol:
   origin: SOURCE
   symbolKind: MEMBER
 
-KtFirClassOrObjectSymbol:
+KtFirNamedClassOrObjectSymbol:
   annotationClassIds: []
   annotations: []
   classIdIfNonLocal: X

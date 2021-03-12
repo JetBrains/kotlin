@@ -17,7 +17,7 @@ KtFirTypeParameterSymbol:
   upperBounds: [kotlin/Any?]
   variance: INVARIANT
 
-KtFirClassOrObjectSymbol:
+KtFirNamedClassOrObjectSymbol:
   annotationClassIds: []
   annotations: []
   classIdIfNonLocal: A

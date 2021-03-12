@@ -28,7 +28,7 @@ internal object KotlinFirIconProvider {
         }
 
         if (symbol is KtClassOrObjectSymbol) {
-            val isAbstract = symbol.modality == KtCommonSymbolModality.ABSTRACT
+            val isAbstract = (symbol as? KtNamedClassOrObjectSymbol)?.modality == KtCommonSymbolModality.ABSTRACT
 
             return when (symbol.classKind) {
                 KtClassKind.CLASS -> if (isAbstract) KotlinIcons.ABSTRACT_CLASS else KotlinIcons.CLASS
@@ -36,6 +36,7 @@ internal object KotlinFirIconProvider {
                 KtClassKind.ANNOTATION_CLASS -> KotlinIcons.ANNOTATION
                 KtClassKind.OBJECT, KtClassKind.COMPANION_OBJECT -> KotlinIcons.OBJECT
                 KtClassKind.INTERFACE -> KotlinIcons.INTERFACE
+                KtClassKind.ANONYMOUS_OBJECT -> KotlinIcons.OBJECT
             }
         }
 

@@ -1282,7 +1282,7 @@ KtFirFunctionSymbol:
   valueParameters: []
   visibility: PUBLIC
 
-KtFirClassOrObjectSymbol:
+KtFirNamedClassOrObjectSymbol:
   annotationClassIds: []
   annotations: []
   classIdIfNonLocal: kotlin/Int.Companion

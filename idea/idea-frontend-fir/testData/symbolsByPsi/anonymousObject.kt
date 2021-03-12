@@ -57,6 +57,9 @@ KtFirKotlinPropertySymbol:
 KtFirAnonymousObjectSymbol:
   annotationClassIds: []
   annotations: []
+  classIdIfNonLocal: null
+  classKind: ANONYMOUS_OBJECT
+  name: null
   origin: SOURCE
   superTypes: [[] java/lang/Runnable]
   symbolKind: LOCAL
@@ -85,7 +88,7 @@ KtFirKotlinPropertySymbol:
   symbolKind: MEMBER
   visibility: PUBLIC
 
-KtFirClassOrObjectSymbol:
+KtFirNamedClassOrObjectSymbol:
   annotationClassIds: []
   annotations: []
   classIdIfNonLocal: AnonymousContainer

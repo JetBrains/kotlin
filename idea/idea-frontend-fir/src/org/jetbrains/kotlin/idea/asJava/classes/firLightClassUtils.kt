@@ -68,11 +68,13 @@ fun createFirLightClassNoCache(classOrObject: KtClassOrObject): KtLightClass? = 
 
         else -> {
             analyze(classOrObject) {
-                val symbol = classOrObject.getClassOrObjectSymbol()
-                when (symbol.classKind) {
-                    KtClassKind.INTERFACE -> FirLightInterfaceClassSymbol(symbol, classOrObject.manager)
-                    KtClassKind.ANNOTATION_CLASS -> FirLightAnnotationClassSymbol(symbol, classOrObject.manager)
-                    else -> FirLightClassForSymbol(symbol, classOrObject.manager)
+                when (val symbol = classOrObject.getClassOrObjectSymbol()) {
+                    is KtAnonymousObjectSymbol -> FirLightAnonymousClassForSymbol(symbol, classOrObject.manager)
+                    is KtNamedClassOrObjectSymbol -> when (symbol.classKind) {
+                        KtClassKind.INTERFACE -> FirLightInterfaceClassSymbol(symbol, classOrObject.manager)
+                        KtClassKind.ANNOTATION_CLASS -> FirLightAnnotationClassSymbol(symbol, classOrObject.manager)
+                        else -> FirLightClassForSymbol(symbol, classOrObject.manager)
+                    }
                 }
             }
         }
@@ -317,7 +319,7 @@ internal fun KtSymbolWithMembers.createInnerClasses(manager: PsiManager): List<F
     // we can't prohibit creating light classes with null names either since they can contain members
 
     analyzeWithSymbolAsContext(this) {
-        getDeclaredMemberScope().getAllSymbols().filterIsInstance<KtClassOrObjectSymbol>().mapTo(result) {
+        getDeclaredMemberScope().getAllSymbols().filterIsInstance<KtNamedClassOrObjectSymbol>().mapTo(result) {
             FirLightClassForSymbol(it, manager)
         }
     }
@@ -332,8 +334,8 @@ internal fun KtSymbolWithMembers.createInnerClasses(manager: PsiManager): List<F
 @OptIn(HackToForceAllowRunningAnalyzeOnEDT::class)
 internal fun KtClassOrObject.checkIsInheritor(baseClassOrigin: KtClassOrObject, checkDeep: Boolean): Boolean {
     return analyze(this) {
-        val thisSymbol = this@checkIsInheritor.getClassOrObjectSymbol()
-        val baseSymbol = baseClassOrigin.getClassOrObjectSymbol()
+        val thisSymbol = this@checkIsInheritor.getNamedClassOrObjectSymbol()
+        val baseSymbol = baseClassOrigin.getNamedClassOrObjectSymbol()
 
         if (thisSymbol == baseSymbol) return@analyze false
 
