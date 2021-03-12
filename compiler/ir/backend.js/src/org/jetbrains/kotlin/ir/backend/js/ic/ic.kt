@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
+import org.jetbrains.kotlin.ir.util.allUnbound
 import org.jetbrains.kotlin.ir.util.noUnboundLeft
 import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
 
@@ -94,6 +95,8 @@ fun loadIrForIc(
     val icData = icCache.values.single() // TODO find a stable key present both in klib and module
 
     IcDeserializer(linker, context).injectIcData(module, icData)
+
+    linker.symbolTable.noUnboundLeft("sdf")
 
 //    TODO("=================== loaded!")
 }

@@ -201,7 +201,11 @@ class IcDeserializer(
             ::cntToReturnableBlockSymbol,
             enqueueAllDeclarations = true,
             deserializePublicSymbol,
-        )
+        ).also {
+            for ((idSig, symbol) in fileDeserializer.symbolDeserializer.deserializedSymbols.entries) {
+                it.deserializedSymbols[idSig] = symbol
+            }
+        }
 
         private val declarationDeserializer = IrDeclarationDeserializer(
             linker.builtIns,

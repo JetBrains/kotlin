@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir.backend.js.ic
 
-import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureSerializer
 import org.jetbrains.kotlin.ir.backend.js.JsMapping
@@ -23,6 +22,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.serialization.SerializedCarriers
 import org.jetbrains.kotlin.ir.serialization.serializeCarriers
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.library.SerializedIrFile
@@ -70,10 +70,14 @@ class IcSerializer(
         val icData = dataToSerialize.map { (file, declarations) ->
             val fileDeserializer = fileToDeserializer[file]!!
 
-            val maxFileLocalIndex = fileDeserializer.reversedSignatureIndex.keys.filterIsInstance<IdSignature.FileLocalSignature>().maxOfOrNull { it.id } ?: -1
-            val maxScopeLocalIndex = fileDeserializer.reversedSignatureIndex.keys.filterIsInstance<IdSignature.ScopeLocalDeclaration>().maxOfOrNull { it.id } ?: -1
+            val existingSignatures = fileDeserializer.symbolDeserializer.deserializedSymbols.keys
 
-            val icDeclarationTable = IcDeclarationTable(globalDeclarationTable, irFactory, maxFileLocalIndex + 1, maxScopeLocalIndex + 1)
+            val maxFileLocalIndex = existingSignatures.filterIsInstance<IdSignature.FileLocalSignature>().maxOfOrNull { it.id } ?: -1
+            val maxScopeLocalIndex = existingSignatures.filterIsInstance<IdSignature.ScopeLocalDeclaration>().maxOfOrNull { it.id } ?: -1
+
+            val symbolToSignature = fileDeserializer.symbolDeserializer.deserializedSymbols.entries.associate { (idSig, symbol) -> symbol to idSig }
+
+            val icDeclarationTable = IcDeclarationTable(globalDeclarationTable, irFactory, maxFileLocalIndex + 1, maxScopeLocalIndex + 1, symbolToSignature)
             val fileSerializer = JsIrFileSerializer(IrMessageLogger.None, icDeclarationTable, mutableMapOf(), skipExpects = true, icMode = true) { fileToIndex[it]!! }
 
             // Serialize old bodies as they have probably changed.
@@ -138,6 +142,7 @@ class IcSerializer(
         val irFactory: PersistentIrFactory,
         newLocalIndex: Long,
         newScopeIndex: Int,
+        val exisitingMappings: Map<IrSymbol, IdSignature>
     ) : DeclarationTable(globalDeclarationTable) {
 
         init {
@@ -149,11 +154,8 @@ class IcSerializer(
             return super.isExportedDeclaration(declaration)
         }
 
-        override fun tryComputeBackendSpecificSignature(declaration: IrDeclaration): IdSignature? {
-            return super.tryComputeBackendSpecificSignature(declaration)
-        }
-
         override fun signatureByDeclaration(declaration: IrDeclaration): IdSignature {
+            exisitingMappings[declaration.symbol]?.let { return it }
             return irFactory.declarationSignature(declaration) ?: super.signatureByDeclaration(declaration)
         }
     }
