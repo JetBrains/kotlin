@@ -469,6 +469,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     val isInstanceOfClassFastFunction = importRtFunction("IsInstanceOfClassFast")
     val throwExceptionFunction = importRtFunction("ThrowException")
     val appendToInitalizersTail = importRtFunction("AppendToInitializersTail")
+    val callInitPossiblyLock = importRtFunction("CallInitPossiblyLock")
     val addTLSRecord = importRtFunction("AddTLSRecord")
     val lookupTLS = importRtFunction("LookupTLS")
     val initRuntimeIfNeeded = importRtFunction("Kotlin_initRuntimeIfNeeded")
@@ -571,9 +572,16 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     val compilerUsedGlobals = mutableListOf<LLVMValueRef>()
     val irStaticInitializers = mutableListOf<IrStaticInitializer>()
     val otherStaticInitializers = mutableListOf<LLVMValueRef>()
-    val fileInitializers = mutableListOf<IrField>()
     var fileUsesThreadLocalObjects = false
     val globalSharedObjects = mutableSetOf<LLVMValueRef>()
+    val topLevelFields = mutableListOf<IrField>()
+    val moduleInitializers = mutableListOf<IrFunction>()
+    var fileGlobalInitFunction: IrFunction? = null
+    var fileGlobalInitState: LLVMValueRef? = null
+    val fileGlobalInitStates = mutableMapOf<IrFile, LLVMValueRef>()
+    var fileThreadLocalInitFunction: IrFunction? = null
+    var fileThreadLocalInitState: AddressAccess? = null
+    val fileThreadLocalInitStates = mutableMapOf<IrFile, AddressAccess>()
 
     private object lazyRtFunction {
         operator fun provideDelegate(

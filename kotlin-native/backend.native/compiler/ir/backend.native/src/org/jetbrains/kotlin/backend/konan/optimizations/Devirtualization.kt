@@ -84,9 +84,10 @@ internal object Devirtualization {
                                     .filter { moduleDFG.functions.containsKey(it) }
                 }
         // TODO: Are globals initializers always called whether they are actually reachable from roots or not?
+        // TODO: With the changed semantics of global initializers this is no longer the case - rework.
         val globalInitializers =
-                moduleDFG.symbolTable.functionMap.values.filter { it.isGlobalInitializer } +
-                externalModulesDFG.functionDFGs.keys.filter { it.isGlobalInitializer }
+                moduleDFG.symbolTable.functionMap.values.filter { it.isTopLevelFieldInitializer || it.isGlobalInitializer } +
+                externalModulesDFG.functionDFGs.keys.filter { it.isTopLevelFieldInitializer || it.isGlobalInitializer }
 
         val explicitlyExportedFunctions =
                 moduleDFG.symbolTable.functionMap.values.filter { it.explicitlyExported } +

@@ -25,6 +25,33 @@
 #include "Runtime.h"
 #include "Worker.h"
 
+static constexpr int FILE_NOT_INITIALIZED = 0;
+static constexpr int FILE_BEING_INITIALIZED = 1;
+static constexpr int FILE_INITIALIZED = 2;
+
+void CallInitPossiblyLock(int volatile* state, void (*init)()) {
+    int localState = *state;
+    if (localState == FILE_INITIALIZED) return;
+    int threadId = konan::currentThreadId();
+    if ((localState & 3) == FILE_BEING_INITIALIZED) {
+        if ((localState >> 2) != threadId) {
+            do {
+                localState = *state;
+            } while (localState != FILE_INITIALIZED);
+        }
+        return;
+    }
+    if (compareAndSwap(state, FILE_NOT_INITIALIZED, FILE_BEING_INITIALIZED | (threadId << 2)) == FILE_NOT_INITIALIZED) {
+        // actual initialization
+        init();
+        *state = FILE_INITIALIZED;
+    } else {
+        do {
+            localState = *state;
+        } while (localState != FILE_INITIALIZED);
+    }
+}
+
 typedef void (*Initializer)(int initialize, MemoryState* memory);
 struct InitNode {
   Initializer init;

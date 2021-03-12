@@ -229,6 +229,7 @@ internal val allLoweringsPhase = NamedCompilerPhase(
                             bridgesPhase,
                             autoboxPhase,
                             returnsInsertionPhase,
+                            fileInitializersPhase,
                         )
                 ),
         actions = setOf(defaultDumper, ::moduleValidationCallback)
@@ -370,6 +371,7 @@ internal val bitcodePhase = NamedCompilerPhase(
                 devirtualizationPhase then
                 redundantCoercionsCleaningPhase then
                 dcePhase then
+                removeRedundantCallsToFileInitializersPhase then
                 createLLVMDeclarationsPhase then
                 ghaPhase then
                 RTTIPhase then
@@ -456,6 +458,7 @@ internal fun PhaseConfig.konanPhasesConfig(config: KonanConfig) {
         // debug information.
         disableUnless(propertyAccessorInlinePhase, getBoolean(KonanConfigKeys.OPTIMIZATION))
         disableUnless(dcePhase, getBoolean(KonanConfigKeys.OPTIMIZATION))
+        disableUnless(removeRedundantCallsToFileInitializersPhase, getBoolean(KonanConfigKeys.OPTIMIZATION))
         disableUnless(ghaPhase, getBoolean(KonanConfigKeys.OPTIMIZATION))
         disableUnless(verifyBitcodePhase, config.needCompilerVerification || getBoolean(KonanConfigKeys.VERIFY_BITCODE))
 

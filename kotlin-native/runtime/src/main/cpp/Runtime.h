@@ -45,6 +45,8 @@ void Kotlin_shutdownRuntime();
 // Appends given node to an initializer list.
 void AppendToInitializersTail(struct InitNode*);
 
+void CallInitPossiblyLock(int volatile* state, void (*init)());
+
 bool Kotlin_memoryLeakCheckerEnabled();
 
 bool Kotlin_cleanersLeakCheckerEnabled();

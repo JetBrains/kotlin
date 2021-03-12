@@ -2095,7 +2095,7 @@ standaloneTest("link_testLib_explicitly") {
     enabled = project.target.name == project.hostName
 
     dependsOn installTestLib
-    goldValue = "This is a side effect of a test library linked into the binary.\nYou should not be seeing this.\n\nHello\n"
+    goldValue = "Hello\n"
     source = "link/omit/hello.kt"
     // We force library inclusion, so need to see the warning banner.
     flags = ['-l', 'testLibrary', '-r', testLibraryDir]

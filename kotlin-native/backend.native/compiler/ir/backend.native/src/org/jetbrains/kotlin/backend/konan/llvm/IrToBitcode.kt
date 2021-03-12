@@ -15,6 +15,10 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.coverage.LLVMCoverageInstrumentation
+import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_FILE_GLOBAL_INITIALIZER
+import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_FILE_STANDALONE_THREAD_LOCAL_INITIALIZER
+import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_FILE_THREAD_LOCAL_INITIALIZER
+import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_MODULE_INITIALIZER
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
@@ -324,13 +328,80 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     private fun runAndProcessInitializers(konanLibrary: KotlinLibrary?, f: () -> Unit) {
         // TODO: collect those two in one place.
-        context.llvm.fileInitializers.clear()
         context.llvm.fileUsesThreadLocalObjects = false
         context.llvm.globalSharedObjects.clear()
 
+        context.llvm.moduleInitializers.clear()
+        context.llvm.topLevelFields.clear()
+        context.llvm.fileGlobalInitFunction = null
+        context.llvm.fileGlobalInitState = null
+        context.llvm.fileThreadLocalInitFunction = null
+        context.llvm.fileThreadLocalInitState = null
+
         f()
 
-        if (context.llvm.fileInitializers.isEmpty() && !context.llvm.fileUsesThreadLocalObjects && context.llvm.globalSharedObjects.isEmpty()) {
+        context.llvm.fileGlobalInitFunction?.let { fileInitFunction ->
+            generateFunction(codegen, fileInitFunction, null, null) {
+                using(FunctionScope(fileInitFunction, it)) {
+                    val parameterScope = ParameterScope(fileInitFunction, functionGenerationContext)
+                    using(parameterScope) usingParameterScope@{
+                        using(VariableScope()) usingVariableScope@{
+                            context.llvm.topLevelFields.forEach { irField ->
+                                if (irField.storageKind == FieldStorageKind.THREAD_LOCAL) return@forEach
+                                val address = context.llvmDeclarations.forStaticField(irField).storageAddressAccess.getAddress(
+                                        functionGenerationContext
+                                )
+                                val initialValue = if (irField.initializer?.expression !is IrConst<*>?) {
+                                    val initialization = evaluateExpression(irField.initializer!!.expression)
+                                    if (irField.storageKind == FieldStorageKind.SHARED_FROZEN)
+                                        freeze(initialization, currentCodeContext.exceptionHandler)
+                                    initialization
+                                } else {
+                                    null
+                                }
+                                val needRegistration =
+                                        context.memoryModel == MemoryModel.EXPERIMENTAL && // only for the new MM
+                                                irField.type.binaryTypeIsReference() && // only for references
+                                                (initialValue != null || // which are initialized from heap object
+                                                        !irField.isFinal) // or are not final
+                                if (needRegistration) {
+                                    call(context.llvm.initAndRegisterGlobalFunction, listOf(address, initialValue
+                                            ?: kNullObjHeaderPtr))
+                                } else if (initialValue != null) {
+                                    storeAny(initialValue, address, false)
+                                }
+                            }
+                            ret(null)
+                        }
+                    }
+                }
+            }
+        }
+
+        context.llvm.fileThreadLocalInitFunction?.let { fileInitFunction ->
+            generateFunction(codegen, fileInitFunction, null, null) {
+                using(FunctionScope(fileInitFunction, it)) {
+                    val parameterScope = ParameterScope(fileInitFunction, functionGenerationContext)
+                    using(parameterScope) usingParameterScope@{
+                        using(VariableScope()) usingVariableScope@{
+                            context.llvm.topLevelFields.forEach { irField ->
+                                val initializer = irField.initializer
+                                if (irField.storageKind != FieldStorageKind.THREAD_LOCAL || initializer == null) return@forEach
+                                val address = context.llvmDeclarations.forStaticField(irField).storageAddressAccess.getAddress(
+                                        functionGenerationContext
+                                )
+                                storeAny(evaluateExpression(initializer.expression), address, false)
+                            }
+                            ret(null)
+                        }
+                    }
+                }
+            }
+        }
+
+        if (!context.llvm.fileUsesThreadLocalObjects
+                && context.llvm.globalSharedObjects.isEmpty() && context.llvm.moduleInitializers.isEmpty()
+                && context.llvm.fileGlobalInitState == null && context.llvm.fileThreadLocalInitState == null) {
             return
         }
 
@@ -415,47 +486,17 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
                 // Globals initalizers may contain accesses to objects, so visit them first.
                 appendingTo(bbInit) {
-                    context.llvm.fileInitializers
-                            .forEach { irField ->
-                                if (irField.storageKind != FieldStorageKind.THREAD_LOCAL) {
-                                    val address = context.llvmDeclarations.forStaticField(irField).storageAddressAccess.getAddress(
-                                            functionGenerationContext
-                                    )
-                                    val initialValue = if (irField.initializer?.expression !is IrConst<*>?) {
-                                        val initialization = evaluateExpression(irField.initializer!!.expression)
-                                        if (irField.storageKind == FieldStorageKind.SHARED_FROZEN)
-                                            freeze(initialization, currentCodeContext.exceptionHandler)
-                                        initialization
-                                    } else {
-                                        null
-                                    }
-                                    val needRegistration =
-                                            context.memoryModel == MemoryModel.EXPERIMENTAL && // only for the new MM
-                                                    irField.type.binaryTypeIsReference() && // only for references
-                                                    (initialValue != null || // which are initialized from heap object
-                                                            !irField.isFinal) // or are not final
-                                    if (needRegistration) {
-                                        call(context.llvm.initAndRegisterGlobalFunction, listOf(address, initialValue
-                                                ?: kNullObjHeaderPtr))
-                                    } else if (initialValue != null) {
-                                        storeAny(initialValue, address, false)
-                                    }
-                                }
-                            }
                     ret(null)
                 }
 
                 appendingTo(bbLocalInit) {
-                    context.llvm.fileInitializers
-                            .forEach { irField ->
-                                if (irField.initializer != null && irField.storageKind == FieldStorageKind.THREAD_LOCAL) {
-                                    val initialization = evaluateExpression(irField.initializer!!.expression)
-                                    val address = context.llvmDeclarations.forStaticField(irField).storageAddressAccess.getAddress(
-                                            functionGenerationContext
-                                    )
-                                    storeAny(initialization, address, false)
-                                }
-                            }
+                    context.llvm.fileThreadLocalInitState?.let {
+                        store(kImmInt32Zero, it.getAddress(functionGenerationContext))
+                        LLVMSetInitializer(it.getAddress(functionGenerationContext), kImmInt32Zero)
+                    }
+                    context.llvm.moduleInitializers.forEach {
+                        evaluateSimpleFunctionCall(it, emptyList(), Lifetime.IRRELEVANT)
+                    }
                     ret(null)
                 }
 
@@ -469,9 +510,9 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                 }
 
                 appendingTo(bbGlobalDeinit) {
-                    context.llvm.fileInitializers
+                    context.llvm.topLevelFields
                             // Only if a subject for memory management.
-                            .forEach {irField ->
+                            .forEach { irField ->
                                 if (irField.type.binaryTypeIsReference() && irField.storageKind != FieldStorageKind.THREAD_LOCAL) {
                                     val address = context.llvmDeclarations.forStaticField(irField).storageAddressAccess.getAddress(
                                             functionGenerationContext
@@ -481,6 +522,9 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                             }
                     context.llvm.globalSharedObjects.forEach { address ->
                         storeHeapRef(codegen.kNullObjHeaderPtr, address)
+                    }
+                    context.llvm.fileGlobalInitState?.let {
+                        store(kImmInt32Zero, it)
                     }
                     ret(null)
                 }
@@ -716,10 +760,45 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         }.toMap()
     }
 
+    private fun getGlobalInitStateFor(file: IrFile): LLVMValueRef =
+            context.llvm.fileGlobalInitStates.getOrPut(file) {
+                codegen.addGlobal("state_global$${file.fqName}", int32Type, false).also {
+                    LLVMSetInitializer(it, kImmInt32Zero)
+                }
+            }
+
+    private fun getThreadLocalInitStateFor(file: IrFile): AddressAccess =
+            context.llvm.fileThreadLocalInitStates.getOrPut(file) {
+                codegen.addKotlinThreadLocal("state_thread_local$${file.fqName}", int32Type)
+            }
+
     override fun visitFunction(declaration: IrFunction) {
         context.log{"visitFunction                  : ${ir2string(declaration)}"}
 
         val body = declaration.body
+
+        if (declaration.origin == DECLARATION_ORIGIN_FILE_GLOBAL_INITIALIZER) {
+            require(context.llvm.fileGlobalInitFunction == null) { "There can only be at most one global file initializer" }
+            require(body == null) { "The body of file initializer should be null" }
+            require(declaration.valueParameters.isEmpty()) { "File initializer must be a parameterless function" }
+            require(declaration.returnsUnit()) { "File initializer must return Unit" }
+            context.llvm.fileGlobalInitFunction = declaration
+            context.llvm.fileGlobalInitState = getGlobalInitStateFor(declaration.parent as IrFile)
+        }
+        if (declaration.origin == DECLARATION_ORIGIN_FILE_THREAD_LOCAL_INITIALIZER
+                || declaration.origin == DECLARATION_ORIGIN_FILE_STANDALONE_THREAD_LOCAL_INITIALIZER) {
+            require(context.llvm.fileThreadLocalInitFunction == null) { "There can only be at most one thread local file initializer" }
+            require(body == null) { "The body of file initializer should be null" }
+            require(declaration.valueParameters.isEmpty()) { "File initializer must be a parameterless function" }
+            require(declaration.returnsUnit()) { "File initializer must return Unit" }
+            context.llvm.fileThreadLocalInitFunction = declaration
+            context.llvm.fileThreadLocalInitState = getThreadLocalInitStateFor(declaration.parent as IrFile)
+        }
+        if (declaration.origin == DECLARATION_ORIGIN_MODULE_INITIALIZER) {
+            require(declaration.valueParameters.isEmpty()) { "Module initializer must be a parameterless function" }
+            require(declaration.returnsUnit()) { "Module initializer must return Unit" }
+            context.llvm.moduleInitializers.add(declaration)
+        }
 
         if ((declaration as? IrSimpleFunction)?.modality == Modality.ABSTRACT
                 || declaration.isExternal
@@ -857,7 +936,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                 // (Cannot do this before the global is initialized).
                 LLVMSetLinkage(globalProperty, LLVMLinkage.LLVMInternalLinkage)
             }
-            context.llvm.fileInitializers.add(declaration)
+            context.llvm.topLevelFields.add(declaration)
         }
     }
 
@@ -2154,6 +2233,13 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     //-------------------------------------------------------------------------//
 
+    private fun evaluateClassReference(classReference: IrClassReference): LLVMValueRef {
+        val typeInfoPtr = codegen.typeInfoValue(classReference.symbol.owner as IrClass)
+        return functionGenerationContext.bitcast(int8TypePtr, typeInfoPtr)
+    }
+
+    //-------------------------------------------------------------------------//
+
     private fun evaluateFunctionCall(callee: IrCall, args: List<LLVMValueRef>,
                                      resultLifetime: Lifetime): LLVMValueRef {
         val function = callee.symbol.owner
@@ -2164,15 +2250,64 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         return when {
             function.isTypedIntrinsic -> intrinsicGenerator.evaluateCall(callee, args)
             function.isBuiltInOperator -> evaluateOperatorCall(callee, argsWithContinuationIfNeeded)
+            function.origin == DECLARATION_ORIGIN_FILE_GLOBAL_INITIALIZER -> evaluateFileGlobalInitializerCall(function)
+            function.origin == DECLARATION_ORIGIN_FILE_THREAD_LOCAL_INITIALIZER -> evaluateFileThreadLocalInitializerCall(function)
+            function.origin == DECLARATION_ORIGIN_FILE_STANDALONE_THREAD_LOCAL_INITIALIZER -> evaluateFileStandaloneThreadLocalInitializerCall(function)
             else -> evaluateSimpleFunctionCall(function, argsWithContinuationIfNeeded, resultLifetime, callee.superQualifierSymbol?.owner)
         }
     }
 
-    //-------------------------------------------------------------------------//
+    private fun evaluateFileGlobalInitializerCall(fileInitializer: IrFunction) = with(functionGenerationContext) {
+        val statePtr = getGlobalInitStateFor(fileInitializer.parent as IrFile)
+        val initializerPtr = with(codegen) { fileInitializer.llvmFunction }
 
-    private fun evaluateClassReference(classReference: IrClassReference): LLVMValueRef {
-        val typeInfoPtr = codegen.typeInfoValue(classReference.symbol.owner as IrClass)
-        return functionGenerationContext.bitcast(int8TypePtr, typeInfoPtr)
+        val bbInit = basicBlock("label_init", null)
+        val bbExit = basicBlock("label_continue", null)
+        // TODO: Is it ok to use non-volatile read here since once value is FILE_INITIALIZED, it is no longer change?
+        val state = load(statePtr)
+        LLVMSetVolatile(state, 1)
+        condBr(icmpEq(state, kImmInt32Two /*FILE_INITIALIZED at Runtime.cpp*/), bbExit, bbInit)
+        positionAtEnd(bbInit)
+        call(context.llvm.callInitPossiblyLock, listOf(statePtr, initializerPtr),
+             exceptionHandler = currentCodeContext.exceptionHandler)
+        br(bbExit)
+        positionAtEnd(bbExit)
+        codegen.theUnitInstanceRef.llvm
+    }
+
+    private fun evaluateFileThreadLocalInitializerCall(fileInitializer: IrFunction) = with(functionGenerationContext) {
+        val globalStatePtr = getGlobalInitStateFor(fileInitializer.parent as IrFile)
+        val localState = getThreadLocalInitStateFor(fileInitializer.parent as IrFile)
+        val localStatePtr = localState.getAddress(functionGenerationContext)
+
+        val bbInit = basicBlock("label_init", null)
+        val bbCheckLocalState = basicBlock("label_check_local", null)
+        val bbExit = basicBlock("label_continue", null)
+        val globalState = load(globalStatePtr)
+        LLVMSetVolatile(globalState, 1)
+        condBr(icmpNe(globalState, kImmInt32Two /*FILE_INITIALIZED at Runtime.cpp*/), bbExit, bbCheckLocalState)
+        positionAtEnd(bbCheckLocalState)
+        condBr(icmpEq(load(localStatePtr), kImmInt32Zero), bbInit, bbExit)
+        positionAtEnd(bbInit)
+        store(kImmInt32One, localStatePtr)
+        evaluateSimpleFunctionCall(fileInitializer, emptyList(), Lifetime.IRRELEVANT)
+        br(bbExit)
+        positionAtEnd(bbExit)
+        codegen.theUnitInstanceRef.llvm
+    }
+
+    private fun evaluateFileStandaloneThreadLocalInitializerCall(fileInitializer: IrFunction) = with(functionGenerationContext) {
+        val state = getThreadLocalInitStateFor(fileInitializer.parent as IrFile)
+        val bbInit = basicBlock("label_init", null)
+        val bbExit = basicBlock("label_continue", null)
+        val statePtr = state.getAddress(functionGenerationContext)
+        condBr(icmpEq(load(statePtr), kImmInt32Zero), bbInit, bbExit)
+        positionAtEnd(bbInit)
+        store(kImmInt32One, statePtr)
+        evaluateSimpleFunctionCall(fileInitializer, emptyList(), Lifetime.IRRELEVANT)
+        br(bbExit)
+        positionAtEnd(bbExit)
+        codegen.theUnitInstanceRef.llvm
     }
 
     //-------------------------------------------------------------------------//
