@@ -46,7 +46,7 @@ class ModuleGenerator(
     fun generateModuleFragment(ktFiles: Collection<KtFile>): IrModuleFragment =
         IrModuleFragmentImpl(context.moduleDescriptor, context.irBuiltIns).also { irModule ->
             val irDeclarationGenerator = DeclarationGenerator(context)
-            ktFiles.mapTo(irModule.files) { ktFile ->
+            ktFiles.toSet().mapTo(irModule.files) { ktFile ->
                 generateSingleFile(irDeclarationGenerator, ktFile)
             }
         }
