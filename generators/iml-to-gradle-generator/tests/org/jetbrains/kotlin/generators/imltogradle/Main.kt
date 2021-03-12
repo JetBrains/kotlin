@@ -19,9 +19,9 @@ import java.io.File
 const val KOTLIN_IDE_DIR_NAME = "kotlin-ide"
 
 lateinit var kotlinIdeJpsModuleNameToGradleModuleNameMapping: Map<String, String>
-lateinit var intellijModuleNameToGradleNotationsMapping: Map<String, List<String>>
+lateinit var intellijModuleNameToGradleDependencyNotationsMapping: Map<String, List<String>>
 
-val intellijModuleNameToGradleNotationsMappingManual = mapOf(
+val intellijModuleNameToGradleDependencyNotationsMappingManual = mapOf(
     "intellij.platform.debugger.testFramework" to listOf(""), // TODO()
     "intellij.completionMlRanking" to listOf(""),
     "intellij.platform.jps.model.tests" to listOf(""),
@@ -39,13 +39,15 @@ fun main() {
         Pair(it.nameWithoutExtension, ":" + it.parentFile.relativeTo(File(".").canonicalFile).path.replace("/", ":"))
     }
 
-    intellijModuleNameToGradleNotationsMapping = intellijModuleNameToGradleNotationsMappingManual + listOf(
+    intellijModuleNameToGradleDependencyNotationsMapping = intellijModuleNameToGradleDependencyNotationsMappingManual + listOf(
         object {}.javaClass.getResource("/ideaIU-project-structure-mapping.json"),
         object {}.javaClass.getResource("/intellij-core-project-structure-mapping.json")
     )
         .flatMap { jsonUrl ->
             val json = File(jsonUrl!!.toURI()).readText()
-            JsonParser.parseString(json).asJsonArray.mapNotNull { IntelliJModuleNameToGradleNotationMappingItem.fromJsonObject(it.asJsonObject) }
+            return@flatMap JsonParser.parseString(json).asJsonArray.mapNotNull {
+                IntelliJModuleNameToGradleDependencyNotationMappingItem.fromJsonObject(it.asJsonObject)
+            }
         }
         .groupBy { it.moduleName }
         .mapValues { entry -> entry.value.map { it.gradleNotation } }
@@ -56,7 +58,7 @@ fun main() {
         }
 }
 
-private data class IntelliJModuleNameToGradleNotationMappingItem(val moduleName: String, val gradleNotation: String) {
+private data class IntelliJModuleNameToGradleDependencyNotationMappingItem(val moduleName: String, val gradleNotation: String) {
     companion object {
         const val artifactNameSubregex = """([a-zA-Z\-\._1-9]*?)"""
 
@@ -64,7 +66,7 @@ private data class IntelliJModuleNameToGradleNotationMappingItem(val moduleName:
         val pluginsPathToGradleNotationRegex = """^plugins\/$artifactNameSubregex\/.*?$""".toRegex()
         val jarToGradleNotationRegex = """^$artifactNameSubregex\.jar$""".toRegex()
 
-        fun fromJsonObject(json: JsonObject): IntelliJModuleNameToGradleNotationMappingItem? {
+        fun fromJsonObject(json: JsonObject): IntelliJModuleNameToGradleDependencyNotationMappingItem? {
             if (json.get("type").asString != "module-output") {
                 return null
             }
@@ -81,7 +83,7 @@ private data class IntelliJModuleNameToGradleNotationMappingItem(val moduleName:
                 ?: jarToGradleNotationRegex.group()?.let { "intellijDep(), { includeJars(\"$it\") }" }
                 ?: error("Path $jarPath matches none of the regexes")
 
-            return IntelliJModuleNameToGradleNotationMappingItem(json.get("moduleName").asString, gradleNotation)
+            return IntelliJModuleNameToGradleDependencyNotationMappingItem(json.get("moduleName").asString, gradleNotation)
         }
     }
 }
@@ -95,7 +97,7 @@ fun convertJpsModuleDependency(jpsModuleDependency: JpsModuleDependency): List<S
         return listOf("")
     }
     if (moduleName.startsWith("intellij.")) {
-        return intellijModuleNameToGradleNotationsMapping[moduleName]
+        return intellijModuleNameToGradleDependencyNotationsMapping[moduleName]
             ?.map { "implementation($it)" }
             ?: error("Cannot find mapping for intellij module name = $moduleName")
     }
