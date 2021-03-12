@@ -843,7 +843,7 @@ class ControlFlowGraphBuilder {
         if (tryExpression.finallyBlock != null) {
             val finallyEnterNode = createFinallyBlockEnterNode(tryExpression)
             // a flow where an uncaught exception is thrown before executing any of try-main block.
-            addEdge(enterTryExpressionNode, finallyEnterNode, label = UncaughtExceptionPath)
+            addEdge(enterTryExpressionNode, finallyEnterNode, propagateDeadness = false, label = UncaughtExceptionPath)
             finallyEnterNodes.push(finallyEnterNode)
         }
 
@@ -875,7 +875,7 @@ class ControlFlowGraphBuilder {
             // a flow where an uncaught exception is thrown before executing any of catch clause.
             // NB: Check the level to avoid adding an edge to the finally block at an upper level.
             if (finallyEnterNode != null && finallyEnterNode.level == levelCounter + 1) {
-                addEdge(it, finallyEnterNode, label = UncaughtExceptionPath)
+                addEdge(it, finallyEnterNode, propagateDeadness = false, label = UncaughtExceptionPath)
             } else {
                 addEdge(it, exitTargetsForTry.top(), label = UncaughtExceptionPath)
             }
@@ -912,7 +912,7 @@ class ControlFlowGraphBuilder {
             // a flow where either there wasn't any exception or caught if any.
             addEdge(it, tryExitNode)
             // a flow that exits to the exit target while there was an uncaught exception.
-            addEdge(it, exitTargetsForTry.top(), label = UncaughtExceptionPath)
+            addEdge(it, exitTargetsForTry.top(), propagateDeadness = false, label = UncaughtExceptionPath)
             // TODO: differentiate flows that return/(re)throw in try main block and/or catch clauses
             //   To do so, we need mappings from such distinct label to original exit target (fun exit or loop)
             //   Also, CFG should support multiple edges towards the same destination node
