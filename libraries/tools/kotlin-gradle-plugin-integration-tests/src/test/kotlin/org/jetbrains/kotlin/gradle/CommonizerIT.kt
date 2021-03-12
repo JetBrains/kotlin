@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.internal.os.OperatingSystem
+import org.jetbrains.kotlin.gradle.internals.DISABLED_NATIVE_TARGETS_REPORTER_DISABLE_WARNING_PROPERTY_NAME
+import org.jetbrains.kotlin.gradle.internals.DISABLED_NATIVE_TARGETS_REPORTER_WARNING_PREFIX
 import org.jetbrains.kotlin.incremental.testingUtils.assertEqualDirectories
 import kotlin.test.Test
 import kotlin.test.assertFalse
@@ -20,7 +22,7 @@ class CommonizerIT : BaseGradleIT() {
         with(Project("commonizeNativeDistributionWithIosLinuxWindows")) {
             build(":p1:commonize") {
                 assertTasksExecuted(":p1:commonizeNativeDistribution")
-                assertContains("Some Kotlin/Native targets cannot be built")
+                assertContains(DISABLED_NATIVE_TARGETS_REPORTER_WARNING_PREFIX)
                 assertSuccessful()
             }
         }
