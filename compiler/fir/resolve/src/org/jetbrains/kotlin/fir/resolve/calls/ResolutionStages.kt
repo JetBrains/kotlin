@@ -70,6 +70,7 @@ object CheckExtensionReceiver : ResolutionStage() {
         )
         candidate.resolvePlainArgumentType(
             candidate.csBuilder,
+            argumentExtensionReceiverValue.receiverExpression,
             argumentType = argumentType,
             expectedType = expectedType,
             sink = sink,

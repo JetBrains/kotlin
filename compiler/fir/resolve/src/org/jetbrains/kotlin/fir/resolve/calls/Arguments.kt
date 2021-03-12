@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.model.CaptureStatus
@@ -71,6 +72,7 @@ fun Candidate.resolveArgumentExpression(
                 // Assignment
                 checkApplicabilityForArgumentType(
                     csBuilder,
+                    argument,
                     StandardClassIds.Unit.constructClassLikeType(emptyArray(), isNullable = false),
                     expectedType?.type,
                     SimpleConstraintSystemConstraintPosition,
@@ -136,6 +138,7 @@ private fun Candidate.resolveBlockArgument(
     if (returnArguments.isEmpty()) {
         checkApplicabilityForArgumentType(
             csBuilder,
+            block,
             block.typeRef.coneType,
             expectedType?.type,
             SimpleConstraintSystemConstraintPosition,
@@ -170,9 +173,10 @@ fun Candidate.resolveSubCallArgument(
     isDispatch: Boolean,
     useNullableArgumentType: Boolean = false
 ) {
+    require(argument is FirExpression)
     val candidate = argument.candidate() ?: return resolvePlainExpressionArgument(
         csBuilder,
-        argument as FirExpression,
+        argument,
         expectedType,
         sink,
         context,
@@ -186,7 +190,17 @@ fun Candidate.resolveSubCallArgument(
      */
     val type: ConeKotlinType = context.returnTypeCalculator.tryCalculateReturnType(candidate.symbol.firUnsafe()).type
     val argumentType = candidate.substitutor.substituteOrSelf(type)
-    resolvePlainArgumentType(csBuilder, argumentType, expectedType, sink, context, isReceiver, isDispatch, useNullableArgumentType)
+    resolvePlainArgumentType(
+        csBuilder,
+        argument,
+        argumentType,
+        expectedType,
+        sink,
+        context,
+        isReceiver,
+        isDispatch,
+        useNullableArgumentType
+    )
 }
 
 fun Candidate.resolvePlainExpressionArgument(
@@ -201,11 +215,22 @@ fun Candidate.resolvePlainExpressionArgument(
 ) {
     if (expectedType == null) return
     val argumentType = argument.typeRef.coneTypeSafe<ConeKotlinType>() ?: return
-    resolvePlainArgumentType(csBuilder, argumentType, expectedType, sink, context, isReceiver, isDispatch, useNullableArgumentType)
+    resolvePlainArgumentType(
+        csBuilder,
+        argument,
+        argumentType,
+        expectedType,
+        sink,
+        context,
+        isReceiver,
+        isDispatch,
+        useNullableArgumentType
+    )
 }
 
 fun Candidate.resolvePlainArgumentType(
     csBuilder: ConstraintSystemBuilder,
+    argument: FirExpression,
     argumentType: ConeKotlinType,
     expectedType: ConeKotlinType?,
     sink: CheckerSink,
@@ -237,7 +262,7 @@ fun Candidate.resolvePlainArgumentType(
     }
 
     checkApplicabilityForArgumentType(
-        csBuilder, argumentTypeForApplicabilityCheck, expectedType, position, isReceiver, isDispatch, sink, context
+        csBuilder, argument, argumentTypeForApplicabilityCheck, expectedType, position, isReceiver, isDispatch, sink, context
     )
 }
 
@@ -299,6 +324,7 @@ private fun Candidate.captureTypeFromExpressionOrNull(argumentType: ConeKotlinTy
 
 private fun checkApplicabilityForArgumentType(
     csBuilder: ConstraintSystemBuilder,
+    argument: FirExpression,
     argumentType: ConeKotlinType,
     expectedType: ConeKotlinType?,
     position: SimpleConstraintSystemConstraintPosition,
@@ -308,15 +334,48 @@ private fun checkApplicabilityForArgumentType(
     context: ResolutionContext
 ) {
     if (expectedType == null) return
+
+    fun unstableSmartCastOrSubtypeError(
+        unstableType: ConeKotlinType?,
+        actualExpectedType: ConeKotlinType,
+        position: ConstraintPosition
+    ): ResolutionDiagnostic? {
+        if (unstableType != null) {
+            if (csBuilder.addSubtypeConstraintIfCompatible(unstableType, actualExpectedType, position)) {
+                return UnstableSmartCast.ResolutionError(argument, unstableType)
+            }
+        }
+        if (argumentType.isMarkedNullable) {
+            if (csBuilder.addSubtypeConstraintIfCompatible(argumentType, actualExpectedType, position)) return null
+            if (csBuilder.addSubtypeConstraintIfCompatible(
+                    argumentType.withNullability(ConeNullability.NOT_NULL),
+                    actualExpectedType,
+                    position
+                )
+            ) return ArgumentTypeMismatch(actualExpectedType, argumentType, argument)
+        }
+
+        csBuilder.addSubtypeConstraint(argumentType, actualExpectedType, position)
+        return null
+    }
+
+
     if (isReceiver && isDispatch) {
         if (!expectedType.isNullable && argumentType.isMarkedNullable) {
             sink.reportDiagnostic(InapplicableWrongReceiver(expectedType, argumentType))
         }
         return
     }
+
     if (!csBuilder.addSubtypeConstraintIfCompatible(argumentType, expectedType, position)) {
         if (!isReceiver) {
-            csBuilder.addSubtypeConstraint(argumentType, expectedType, position)
+            sink.reportDiagnosticIfNotNull(
+                unstableSmartCastOrSubtypeError(
+                    unstableType = null, // TODO: handle unstable smartcasts
+                    expectedType,
+                    position
+                )
+            )
             return
         }
 
