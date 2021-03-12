@@ -71,7 +71,7 @@ internal fun FirScope.getCallableSymbols(callableNames: Collection<Name>, builde
                 firSymbol is FirPropertySymbol && firSymbol.fir.isSubstitutionOverride -> {
                     builder.variableLikeBuilder.buildVariableSymbol(firSymbol.fir)
                 }
-                else -> builder.buildCallableSymbol(firSymbol.fir)
+                else -> builder.callableBuilder.buildCallableSymbol(firSymbol.fir)
             }
             callables.add(symbol)
         }

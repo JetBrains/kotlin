@@ -55,6 +55,7 @@ internal class KtSymbolByFirBuilder private constructor(
     val classifierBuilder = ClassifierSymbolBuilder()
     val functionLikeBuilder = FunctionLikeSymbolBuilder()
     val variableLikeBuilder = VariableLikeSymbolBuilder()
+    val callableBuilder = CallableSymbolBuilder()
 
     constructor(
         resolveState: FirModuleResolveState,
@@ -89,7 +90,7 @@ internal class KtSymbolByFirBuilder private constructor(
         return when (fir) {
             is FirClassLikeDeclaration<*> -> classifierBuilder.buildClassLikeSymbol(fir)
             is FirTypeParameter -> classifierBuilder.buildTypeParameterSymbol(fir)
-            is FirCallableDeclaration<*> -> buildCallableSymbol(fir)
+            is FirCallableDeclaration<*> -> callableBuilder.buildCallableSymbol(fir)
             else -> error("Unexpected ${fir::class.simpleName}")
         }
     }
@@ -97,33 +98,6 @@ internal class KtSymbolByFirBuilder private constructor(
 
     fun buildEnumEntrySymbol(fir: FirEnumEntry) = symbolsCache.cache(fir) { KtFirEnumEntrySymbol(fir, resolveState, token, this) }
 
-
-    fun buildCallableSymbol(fir: FirCallableDeclaration<*>): KtCallableSymbol {
-        return when (fir) {
-            is FirPropertyAccessor -> buildPropertyAccessorSymbol(fir)
-            is FirFunction<*> -> functionLikeSymbolBuilder.buildFunctionLikeSymbol(fir)
-            is FirVariable<*> -> variableLikeSymbolBuilder.buildVariableLikeSymbol(fir)
-            else -> error("Unexpected ${fir::class.simpleName}")
-        }
-    }
-
-
-    fun buildPropertyAccessorSymbol(fir: FirPropertyAccessor): KtPropertyAccessorSymbol {
-        return when {
-            fir.isGetter -> buildGetterSymbol(fir)
-            else -> buildSetterSymbol(fir)
-        }
-    }
-
-    fun buildGetterSymbol(fir: FirPropertyAccessor): KtFirPropertyGetterSymbol {
-        require(fir.isGetter)
-        return symbolsCache.cache(fir) { KtFirPropertyGetterSymbol(fir, resolveState, token, this) }
-    }
-
-    fun buildSetterSymbol(fir: FirPropertyAccessor): KtFirPropertySetterSymbol {
-        require(fir.isSetter)
-        return symbolsCache.cache(fir) { KtFirPropertySetterSymbol(fir, resolveState, token, this) }
-    }
 
     fun buildFileSymbol(fir: FirFile) = filesCache.cache(fir) { KtFirFileSymbol(fir, resolveState, token) }
 
@@ -301,6 +275,35 @@ internal class KtSymbolByFirBuilder private constructor(
         // todo handle cases
         fun buildFieldSymbol(fir: FirField): KtFirJavaFieldSymbol {
             return symbolsCache.cache(fir) { KtFirJavaFieldSymbol(fir, resolveState, token, this@KtSymbolByFirBuilder) }
+        }
+    }
+
+    inner class CallableSymbolBuilder {
+        fun buildCallableSymbol(fir: FirCallableDeclaration<*>): KtCallableSymbol {
+            return when (fir) {
+                is FirPropertyAccessor -> buildPropertyAccessorSymbol(fir)
+                is FirFunction<*> -> functionLikeBuilder.buildFunctionLikeSymbol(fir)
+                is FirVariable<*> -> variableLikeBuilder.buildVariableLikeSymbol(fir)
+                else -> error("Unexpected ${fir::class.simpleName}")
+            }
+        }
+
+
+        fun buildPropertyAccessorSymbol(fir: FirPropertyAccessor): KtPropertyAccessorSymbol {
+            return when {
+                fir.isGetter -> buildGetterSymbol(fir)
+                else -> buildSetterSymbol(fir)
+            }
+        }
+
+        fun buildGetterSymbol(fir: FirPropertyAccessor): KtFirPropertyGetterSymbol {
+            require(fir.isGetter)
+            return symbolsCache.cache(fir) { KtFirPropertyGetterSymbol(fir, resolveState, token, this@KtSymbolByFirBuilder) }
+        }
+
+        fun buildSetterSymbol(fir: FirPropertyAccessor): KtFirPropertySetterSymbol {
+            require(fir.isSetter)
+            return symbolsCache.cache(fir) { KtFirPropertySetterSymbol(fir, resolveState, token, this@KtSymbolByFirBuilder) }
         }
     }
 }

@@ -20,6 +20,6 @@ internal class KtFirExpressionInfoProvider(
     override fun getReturnExpressionTargetSymbol(returnExpression: KtReturnExpression): KtCallableSymbol? {
         val fir = returnExpression.getOrBuildFirSafe<FirReturnExpression>(firResolveState) ?: return null
         val firTargetSymbol = fir.target.labeledElement
-        return firSymbolBuilder.buildCallableSymbol(firTargetSymbol)
+        return firSymbolBuilder.callableBuilder.buildCallableSymbol(firTargetSymbol)
     }
 }

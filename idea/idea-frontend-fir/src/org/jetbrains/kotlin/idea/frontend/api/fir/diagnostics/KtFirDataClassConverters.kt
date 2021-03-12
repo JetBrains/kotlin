@@ -848,7 +848,7 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     add(FirErrors.CANNOT_WEAKEN_ACCESS_PRIVILEGE) { firDiagnostic ->
         CannotWeakenAccessPrivilegeImpl(
             firDiagnostic.a,
-            firSymbolBuilder.buildCallableSymbol(firDiagnostic.b as FirCallableDeclaration),
+            firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.b as FirCallableDeclaration),
             firDiagnostic.c,
             firDiagnostic as FirPsiDiagnostic<*>,
             token,
@@ -857,7 +857,7 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     add(FirErrors.CANNOT_CHANGE_ACCESS_PRIVILEGE) { firDiagnostic ->
         CannotChangeAccessPrivilegeImpl(
             firDiagnostic.a,
-            firSymbolBuilder.buildCallableSymbol(firDiagnostic.b as FirCallableDeclaration),
+            firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.b as FirCallableDeclaration),
             firDiagnostic.c,
             firDiagnostic as FirPsiDiagnostic<*>,
             token,
@@ -865,7 +865,7 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.OVERRIDING_FINAL_MEMBER) { firDiagnostic ->
         OverridingFinalMemberImpl(
-            firSymbolBuilder.buildCallableSymbol(firDiagnostic.a as FirCallableDeclaration),
+            firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.a as FirCallableDeclaration),
             firDiagnostic.b,
             firDiagnostic as FirPsiDiagnostic<*>,
             token,

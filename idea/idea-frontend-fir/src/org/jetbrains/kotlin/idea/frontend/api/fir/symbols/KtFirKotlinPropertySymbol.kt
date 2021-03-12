@@ -88,11 +88,11 @@ internal class KtFirKotlinPropertySymbol(
         }
 
     override val getter: KtPropertyGetterSymbol? by firRef.withFirAndCache(FirResolvePhase.RAW_FIR) { property ->
-        property.getter?.let { builder.buildPropertyAccessorSymbol(it) } as? KtPropertyGetterSymbol
+        property.getter?.let { builder.callableBuilder.buildPropertyAccessorSymbol(it) } as? KtPropertyGetterSymbol
     }
 
     override val setter: KtPropertySetterSymbol? by firRef.withFirAndCache(FirResolvePhase.RAW_FIR) { property ->
-        property.setter?.let { builder.buildPropertyAccessorSymbol(it) } as? KtPropertySetterSymbol
+        property.setter?.let { builder.callableBuilder.buildPropertyAccessorSymbol(it) } as? KtPropertySetterSymbol
     }
 
     override val hasBackingField: Boolean get() = firRef.withFir { it.hasBackingField }

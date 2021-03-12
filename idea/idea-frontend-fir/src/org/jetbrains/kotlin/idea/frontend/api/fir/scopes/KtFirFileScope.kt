@@ -74,7 +74,7 @@ internal class KtFirFileScope(
                     }
 
                     if (callableDeclaration != null) {
-                        yield(builder.buildCallableSymbol(callableDeclaration))
+                        yield(builder.callableBuilder.buildCallableSymbol(callableDeclaration))
                     }
                 }
             }

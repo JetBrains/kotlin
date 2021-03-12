@@ -113,7 +113,7 @@ internal class KtFirSymbolProvider(
 
     override fun getPropertyAccessorSymbol(psi: KtPropertyAccessor): KtPropertyAccessorSymbol = withValidityAssertion {
         psi.withFirDeclarationOfType<FirPropertyAccessor, KtPropertyAccessorSymbol>(resolveState) {
-            firSymbolBuilder.buildPropertyAccessorSymbol(it)
+            firSymbolBuilder.callableBuilder.buildPropertyAccessorSymbol(it)
         }
     }
 

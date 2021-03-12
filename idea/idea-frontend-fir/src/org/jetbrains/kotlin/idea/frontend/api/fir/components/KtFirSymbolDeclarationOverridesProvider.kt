@@ -35,7 +35,7 @@ internal class KtFirSymbolDeclarationOverridesProvider(
                 overriddenDeclaration.symbol.collectIntersectionOverridesSymbolsTo(overriddenElement)
             }
         }
-        return overriddenElement.map { analysisSession.firSymbolBuilder.buildCallableSymbol(it.fir) }
+        return overriddenElement.map { analysisSession.firSymbolBuilder.callableBuilder.buildCallableSymbol(it.fir) }
     }
 
     override fun <T : KtSymbol> getDirectlyOverriddenSymbols(callableSymbol: T): List<KtCallableSymbol> {
@@ -45,7 +45,7 @@ internal class KtFirSymbolDeclarationOverridesProvider(
                 overriddenDeclaration.symbol.collectIntersectionOverridesSymbolsTo(overriddenElement)
             }
         }
-        return overriddenElement.map { analysisSession.firSymbolBuilder.buildCallableSymbol(it.fir) }
+        return overriddenElement.map { analysisSession.firSymbolBuilder.callableBuilder.buildCallableSymbol(it.fir) }
     }
 
     private fun FirTypeScope.processCallableByName(declaration: FirDeclaration) = when (declaration) {
@@ -134,7 +134,7 @@ internal class KtFirSymbolDeclarationOverridesProvider(
         if (symbol.origin != KtSymbolOrigin.INTERSECTION_OVERRIDE) return emptyList()
         return symbol.firRef.withFir { fir ->
             val firSymbol = (fir as? FirSymbolOwner<*>)?.symbol ?: return@withFir emptyList()
-            firSymbol.getIntersectionOverriddenSymbols().map { analysisSession.firSymbolBuilder.buildCallableSymbol(it.fir) }
+            firSymbol.getIntersectionOverriddenSymbols().map { analysisSession.firSymbolBuilder.callableBuilder.buildCallableSymbol(it.fir) }
         }
     }
 

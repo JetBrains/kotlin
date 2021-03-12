@@ -138,7 +138,7 @@ private object FirToKtConversionCreator {
             importsToAdd = listOf("org.jetbrains.kotlin.fir.declarations.FirDeclaration")
         ),
         FirCallableDeclaration::class to HLFunctionCallConversion(
-            "firSymbolBuilder.buildCallableSymbol({0} as FirCallableDeclaration)",
+            "firSymbolBuilder.callableBuilder.buildCallableSymbol({0} as FirCallableDeclaration)",
             KtCallableSymbol::class.createType(),
             importsToAdd = listOf("org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration")
         ),
