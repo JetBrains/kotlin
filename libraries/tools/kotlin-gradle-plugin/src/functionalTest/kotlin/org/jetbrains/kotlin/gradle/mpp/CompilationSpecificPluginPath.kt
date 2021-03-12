@@ -14,10 +14,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 internal class CompilationSpecificPluginPath {
     @Test
@@ -59,8 +56,8 @@ internal class CompilationSpecificPluginPath {
         project.evaluate()
 
         // Then each plugin classpath should have its own dependency
-        assertEquals(listOf("kotlin-scripting-compiler-embeddable", "jvmOnly"), project.subplugins("desktop"))
-        assertEquals(listOf("kotlin-scripting-compiler-embeddable", "jsOnly"), project.subplugins("web"))
+        assertEquals(listOf("jvmOnly"), project.subplugins("desktop"))
+        assertEquals(listOf("jsOnly"), project.subplugins("web"))
 
         // And each compilation task should have its own plugin classpath
         val compileDesktop = project.tasks.getByName("compileKotlinDesktop") as KotlinCompile
@@ -69,12 +66,17 @@ internal class CompilationSpecificPluginPath {
     }
 
     @Test
-    fun `native artifact should take precedence over regular artifact for native platform`() {
-        // Given common plugin but with native-specific artifact
-        class NativeSpecificPlugin : FakeSubPlugin("common", "native", { true })
+    fun `only native artifact should be taken for native platforms`() {
+        // Given plugin but with native-specific artifact
+        class NativeSpecificPlugin : FakeSubPlugin("common1", "native", { true })
 
+        // And plugin without native artifact but applicable on all platforms
+        class RegularPluginWithoutNativeArtifact : FakeSubPlugin("common2", null, { true })
+
+        // When applying these plugins
         val project = buildProjectWithMPP {
             plugins.apply(NativeSpecificPlugin::class.java)
+            plugins.apply(RegularPluginWithoutNativeArtifact::class.java)
 
             kotlin {
                 jvm()
@@ -83,9 +85,27 @@ internal class CompilationSpecificPluginPath {
         }
         project.evaluate()
 
-        assertTrue("common" in project.subplugins("jvm"))
-        assertTrue("native" in project.subplugins("linuxX64"))
-        assertTrue("common" !in project.subplugins("linuxX64"))
+        // Expect jvm target have both artifacts
+        assertEquals(listOf("common1", "common2"), project.subplugins("jvm"))
+
+        // And native target should have only NativeSpecificPlugin artifacts
+        assertEquals(listOf("native"), project.subplugins("linuxX64"))
+    }
+
+    @Test
+    fun `native plugin configuration should not be transitive`() {
+        val project = buildProjectWithMPP {
+            kotlin {
+                jvm()
+                linuxX64()
+            }
+        }
+
+        val nativeConfig = project
+            .configurations
+            .getByName(pluginClassPathConfiguration("linuxX64", "main"))
+
+        assertFalse(nativeConfig.isTransitive)
     }
 
     @Test
@@ -144,6 +164,7 @@ internal class CompilationSpecificPluginPath {
         .getByName(pluginClassPathConfiguration(target, compilation))
         .allDependencies
         .map { it.name }
+        .minus("kotlin-scripting-compiler-embeddable")
 
 
     private fun buildProjectWithMPP(code: Project.() -> Unit): ProjectInternal {

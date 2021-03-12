@@ -275,6 +275,7 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
             val pluginConfiguration = configurations.maybeCreate(compilation.pluginConfigurationName).apply {
                 if (target.platformType == KotlinPlatformType.native) {
                     extendsFrom(configurations.getByName(NATIVE_COMPILER_PLUGIN_CLASSPATH_CONFIGURATION_NAME))
+                    isTransitive = false
                 } else {
                     extendsFrom(target.project.commonKotlinPluginClasspath)
                 }
