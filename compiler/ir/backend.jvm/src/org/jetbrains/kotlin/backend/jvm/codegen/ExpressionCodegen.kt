@@ -658,11 +658,13 @@ class ExpressionCodegen(
         val genericOrAnyOverride = irFunction.overriddenSymbols.any {
             val overriddenParam = if (index < 0) it.owner.dispatchReceiverParameter!! else it.owner.valueParameters[index]
             overriddenParam.type.erasedUpperBound.fqNameWhenAvailable != StandardNames.RESULT_FQ_NAME
-        } || irFunction.parentAsClass.origin == JvmLoweredDeclarationOrigin.LAMBDA_IMPL
+        } || irFunction.parentAsClass.let { it.origin == JvmLoweredDeclarationOrigin.LAMBDA_IMPL && !it.isSamAdapter() }
         if (!genericOrAnyOverride) return
 
         StackValue.unboxInlineClass(OBJECT_TYPE, arg.type.erasedUpperBound.defaultType.toIrBasedKotlinType(), mv)
     }
+
+    private fun IrClass.isSamAdapter(): Boolean = this.superTypes.any { it.getClass()?.isFun == true }
 
     private fun onlyResultInlineClassParameters(): Boolean = irFunction.valueParameters.all {
         !it.type.erasedUpperBound.isInline || it.type.erasedUpperBound.fqNameWhenAvailable == StandardNames.RESULT_FQ_NAME
