@@ -695,5 +695,19 @@ open class Kapt3IT : Kapt3BaseIT() {
             assertSuccessful()
             assertTasksUpToDate(":compileKotlin", ":compileJava")
         }
+
+        project.projectDir.getFileByName("InjectedClass.kt").modify { text ->
+            text.checkedReplace(
+                "//placeholder",
+                "fun someChange() = null"
+            )
+        }
+
+        project.build("build") {
+            assertSuccessful()
+            assertKaptSuccessful()
+            assertTasksExecuted(":compileKotlin", ":compileJava")
+           
+        }
     }
 }

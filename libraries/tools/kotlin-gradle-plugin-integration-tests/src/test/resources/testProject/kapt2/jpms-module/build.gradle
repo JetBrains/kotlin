@@ -23,17 +23,22 @@ dependencies {
     implementation "org.jetbrains.kotlin:annotation-processor-example:$kotlin_version"
     kapt "org.jetbrains.kotlin:annotation-processor-example:$kotlin_version"
 
+    implementation 'com.google.dagger:dagger:2.33'
+    kapt 'com.google.dagger:dagger-compiler:2.33'
+
     //jpms module provider
     implementation "org.apache.logging.log4j:log4j-api:2.14.0"
 }
 
 compileKotlin.kotlinOptions.allWarningsAsErrors = true
 
-//workaround to make classpath into modules for java compilation
 compileJava {
     doFirst {
         options.compilerArgs += [
-                '--module-path', classpath.asPath
+                //workaround to make classpath into modules for java compilation so auto modules would work
+                '--module-path', classpath.asPath,
+                //provide compiled kotlin classes to javac (needed for java/kotlin mixed sources to work)
+                '--patch-module', "my.module=${sourceSets.main.output.asPath}"
         ]
     }
 }

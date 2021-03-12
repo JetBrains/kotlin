@@ -35,17 +35,6 @@ open class KaptContext(val options: KaptOptions, val withJdk: Boolean, val logge
 
     val sourcesToReprocess: SourcesToReprocess
 
-    private val isJava9Module by lazy {
-        if (isJava9OrLater()) {
-            options.javaSourceRoots.any { file ->
-                (file.name == MODULE_INFO_FILE ||
-                        (file.isDirectory && file.listFiles()?.any { it.name == MODULE_INFO_FILE } ?: false))
-            }
-        } else {
-            false
-        }
-    }
-
     protected open fun preregisterTreeMaker(context: Context) {}
 
     private fun preregisterLog(context: Context) {
@@ -131,19 +120,7 @@ open class KaptContext(val options: KaptOptions, val withJdk: Boolean, val logge
                 options.compileClasspath + options.compiledSources + options.classesOutputDir
             }
 
-            if (isJava9Module) {
-                logger.info("11JPMS module discovered. Adding --module-path option to javac")
-                put(Option.valueOf("MODULE_PATH"), compileClasspath.makePathsString())
-                //we provide minimum useful java version to jpms modules discovery work properly
-                //maybe should add option to override it or infer it from current java version.
-                put(Option.valueOf("MULTIRELEASE"), "9")
-                putJavacOption(
-                    "CLASSPATH", "CLASS_PATH",
-                    (options.compiledSources + options.classesOutputDir).makePathsString()
-                )
-            } else {
-                putJavacOption("CLASSPATH", "CLASS_PATH", compileClasspath.makePathsString())
-            }
+            putJavacOption("CLASSPATH", "CLASS_PATH", compileClasspath.makePathsString())
 
             @Suppress("SpellCheckingInspection")
             putJavacOption("PROCESSORPATH", "PROCESSOR_PATH", options.processingClasspath.makePathsString())
@@ -187,7 +164,7 @@ open class KaptContext(val options: KaptOptions, val withJdk: Boolean, val logge
     }
 
     companion object {
-        private const val MODULE_INFO_FILE = "module-info.java"
+        const val MODULE_INFO_FILE = "module-info.java"
 
         private fun Iterable<File>.makePathsString(): String = joinToString(File.pathSeparator) { it.canonicalPath }
     }
