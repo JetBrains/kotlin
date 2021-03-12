@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.backend.konan.lower
 
-import org.jetbrains.kotlin.backend.common.ir.*
+import org.jetbrains.kotlin.backend.common.ir.addFakeOverrides
+import org.jetbrains.kotlin.backend.common.ir.createDispatchReceiverParameter
+import org.jetbrains.kotlin.backend.common.ir.createParameterDeclarations
+import org.jetbrains.kotlin.backend.common.ir.simpleFunctions
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.reportWarning
 import org.jetbrains.kotlin.backend.konan.Context
@@ -15,21 +18,28 @@ import org.jetbrains.kotlin.backend.konan.getIncludedLibraryDescriptors
 import org.jetbrains.kotlin.backend.konan.ir.typeWithStarProjections
 import org.jetbrains.kotlin.backend.konan.ir.typeWithoutArguments
 import org.jetbrains.kotlin.backend.konan.reportCompilationError
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
-import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetEnumValueImpl
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.util.addChild
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
@@ -527,12 +537,8 @@ internal class TestProcessor (val context: Context) {
             with(buildClassSuite(testClass.ownerClass, testClass.companion,testClass.functions)) {
                 irFile.addChild(this)
                 val irConstructor = constructors.single()
-                context.createIrBuilder(irFile.symbol, testClass.ownerClass.startOffset, testClass.ownerClass.endOffset).run {
-                    irFile.addTopLevelInitializer(
-                            irCall(irConstructor),
-                            this@TestProcessor.context,
-                            threadLocal = true)
-                }
+                val irBuilder = context.createIrBuilder(irFile.symbol, testClass.ownerClass.startOffset, testClass.ownerClass.endOffset)
+                irBuilder.irCall(irConstructor)
             }
 
     /** Check if this fqName already used or not. */
@@ -564,36 +570,50 @@ internal class TestProcessor (val context: Context) {
                 && it.valueParameters[2].type.isBoolean()
     }
 
-    private fun generateTopLevelSuite(irFile: IrFile, functions: Collection<TestFunction>) {
-        val builder = context.createIrBuilder(irFile.symbol)
+    private fun generateTopLevelSuite(irFile: IrFile, functions: Collection<TestFunction>): IrExpression? {
+        val irBuilder = context.createIrBuilder(irFile.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET)
         val suiteName = irFile.topLevelSuiteName
         if (!checkSuiteName(irFile, suiteName)) {
-            return
+            return null
         }
 
-        // TODO: an awful hack, we make this initializer thread local, so that it doesn't freeze suite,
-        // and later on we could modify some suite's properties. This shall be redesigned.
-        irFile.addTopLevelInitializer(builder.irBlock {
+        return irBuilder.irBlock {
             val constructorCall = irCall(topLevelSuiteConstructor).apply {
-                putValueArgument(0, IrConstImpl.string(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
-                                context.irBuiltIns.stringType, suiteName))
+                putValueArgument(0, irString(suiteName))
             }
-            val testSuiteVal = irTemporary(constructorCall,  "topLevelTestSuite")
+            val testSuiteVal = irTemporary(constructorCall, "topLevelTestSuite")
             generateFunctionRegistration(testSuiteVal,
                     topLevelSuiteRegisterTestCase,
                     topLevelSuiteRegisterFunction,
                     functions)
-        }, context, threadLocal = true)
+        }
     }
 
     private fun createTestSuites(irFile: IrFile, annotationCollector: AnnotationCollector) {
+        val statements = mutableListOf<IrExpression>()
         annotationCollector.testClasses.filter {
             it.value.functions.any { it.kind == FunctionKind.TEST }
         }.forEach { _, testClass ->
-            generateClassSuite(irFile, testClass)
+            statements.add(generateClassSuite(irFile, testClass))
         }
         if (annotationCollector.topLevelFunctions.isNotEmpty()) {
-            generateTopLevelSuite(irFile, annotationCollector.topLevelFunctions)
+            generateTopLevelSuite(irFile, annotationCollector.topLevelFunctions)?.let { statements.add(it) }
+        }
+        if (statements.isNotEmpty()) {
+            context.irFactory.buildFun {
+                startOffset = SYNTHETIC_OFFSET
+                endOffset = SYNTHETIC_OFFSET
+                origin = DECLARATION_ORIGIN_MODULE_THREAD_LOCAL_INITIALIZER
+                name = Name.identifier("\$createTestSuites")
+                visibility = DescriptorVisibilities.PRIVATE
+                returnType = context.irBuiltIns.unitType
+            }.apply {
+                parent = irFile
+                irFile.declarations.add(this)
+
+                statements.forEach { it.accept(SetDeclarationsParentVisitor, this) }
+                body = IrBlockBodyImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, statements)
+            }
         }
     }
     // endregion

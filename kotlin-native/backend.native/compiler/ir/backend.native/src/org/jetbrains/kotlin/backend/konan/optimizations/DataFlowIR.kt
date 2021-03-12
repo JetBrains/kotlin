@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.backend.konan.llvm.computeSymbolName
 import org.jetbrains.kotlin.backend.konan.llvm.isExported
 import org.jetbrains.kotlin.backend.konan.llvm.localHash
 import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_BRIDGE_METHOD
+import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_MODULE_GLOBAL_INITIALIZER
+import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_MODULE_THREAD_LOCAL_INITIALIZER
 import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -113,18 +115,20 @@ internal object DataFlowIR {
     }
 
     object FunctionAttributes {
-        val IS_GLOBAL_INITIALIZER = 1
-        val RETURNS_UNIT = 2
-        val RETURNS_NOTHING = 4
-        val EXPLICITLY_EXPORTED = 8
+        val IS_TOP_LEVEL_FIELD_INITIALIZER = 1
+        val IS_GLOBAL_INITIALIZER = 2
+        val RETURNS_UNIT = 4
+        val RETURNS_NOTHING = 8
+        val EXPLICITLY_EXPORTED = 16
     }
 
     class FunctionParameter(val type: Type, val boxFunction: FunctionSymbol?, val unboxFunction: FunctionSymbol?)
 
-    abstract class FunctionSymbol(val attributes: Int, val irFunction: IrFunction?, val name: String?) {
+    abstract class FunctionSymbol(val attributes: Int, val irFile: IrFile?, val irFunction: IrFunction?, val name: String?) {
         lateinit var parameters: Array<FunctionParameter>
         lateinit var returnParameter: FunctionParameter
 
+        val isTopLevelFieldInitializer = attributes.and(FunctionAttributes.IS_TOP_LEVEL_FIELD_INITIALIZER) != 0
         val isGlobalInitializer = attributes.and(FunctionAttributes.IS_GLOBAL_INITIALIZER) != 0
         val returnsUnit = attributes.and(FunctionAttributes.RETURNS_UNIT) != 0
         val returnsNothing = attributes.and(FunctionAttributes.RETURNS_NOTHING) != 0
@@ -133,8 +137,8 @@ internal object DataFlowIR {
         var escapes: Int? = null
         var pointsTo: IntArray? = null
 
-        class External(val hash: Long, attributes: Int, irFunction: IrFunction?, name: String? = null, val isExported: Boolean)
-            : FunctionSymbol(attributes, irFunction, name) {
+        class External(val hash: Long, attributes: Int, irFile: IrFile?, irFunction: IrFunction?, name: String? = null, val isExported: Boolean)
+            : FunctionSymbol(attributes, irFile, irFunction, name) {
 
             override fun equals(other: Any?): Boolean {
                 if (this === other) return true
@@ -153,14 +157,14 @@ internal object DataFlowIR {
         }
 
         abstract class Declared(val module: Module, val symbolTableIndex: Int,
-                                attributes: Int, irFunction: IrFunction?, var bridgeTarget: FunctionSymbol?, name: String?)
-            : FunctionSymbol(attributes, irFunction, name) {
+                                attributes: Int, irFile: IrFile?, irFunction: IrFunction?, var bridgeTarget: FunctionSymbol?, name: String?)
+            : FunctionSymbol(attributes, irFile, irFunction, name) {
 
         }
 
         class Public(val hash: Long, module: Module, symbolTableIndex: Int,
-                     attributes: Int, irFunction: IrFunction?, bridgeTarget: FunctionSymbol?, name: String? = null)
-            : Declared(module, symbolTableIndex, attributes, irFunction, bridgeTarget, name) {
+                     attributes: Int, irFile: IrFile?, irFunction: IrFunction?, bridgeTarget: FunctionSymbol?, name: String? = null)
+            : Declared(module, symbolTableIndex, attributes, irFile, irFunction, bridgeTarget, name) {
 
             override fun equals(other: Any?): Boolean {
                 if (this === other) return true
@@ -179,8 +183,8 @@ internal object DataFlowIR {
         }
 
         class Private(val index: Int, module: Module, symbolTableIndex: Int,
-                      attributes: Int, irFunction: IrFunction?, bridgeTarget: FunctionSymbol?, name: String? = null)
-            : Declared(module, symbolTableIndex, attributes, irFunction, bridgeTarget, name) {
+                      attributes: Int, irFile: IrFile?, irFunction: IrFunction?, bridgeTarget: FunctionSymbol?, name: String? = null)
+            : Declared(module, symbolTableIndex, attributes, irFile, irFunction, bridgeTarget, name) {
 
             override fun equals(other: Any?): Boolean {
                 if (this === other) return true
@@ -580,6 +584,9 @@ internal object DataFlowIR {
                     || it.hasAnnotation(RuntimeNames.objCMethodImp)) {
                 attributes = attributes or FunctionAttributes.EXPLICITLY_EXPORTED
             }
+            if (it.origin == DECLARATION_ORIGIN_MODULE_GLOBAL_INITIALIZER
+                    || it.origin == DECLARATION_ORIGIN_MODULE_THREAD_LOCAL_INITIALIZER)
+                attributes = attributes or FunctionAttributes.IS_GLOBAL_INITIALIZER
             val symbol = when {
                 it.isExternal || it.isBuiltInOperator -> {
                     val escapesAnnotation = it.annotations.findAnnotation(FQ_NAME_ESCAPES)
@@ -588,7 +595,7 @@ internal object DataFlowIR {
                     val escapesBitMask = (escapesAnnotation?.getValueArgument(0) as? IrConst<Int>)?.value
                     @Suppress("UNCHECKED_CAST")
                     val pointsToBitMask = (pointsToAnnotation?.getValueArgument(0) as? IrVararg)?.elements?.map { (it as IrConst<Int>).value }
-                    FunctionSymbol.External(name.localHash.value, attributes, it, takeName { name }, it.isExported()).apply {
+                    FunctionSymbol.External(name.localHash.value, attributes, it.fileOrNull, it, takeName { name }, it.isExported()).apply {
                         escapes  = escapesBitMask
                         pointsTo = pointsToBitMask?.toIntArray()
                     }
@@ -608,9 +615,9 @@ internal object DataFlowIR {
                     val symbolTableIndex = if (placeToFunctionsTable) module.numberOfFunctions++ else -1
                     val frozen = it is IrConstructor && irClass!!.annotations.findAnnotation(KonanFqNames.frozen) != null
                     val functionSymbol = if (it.isExported())
-                        FunctionSymbol.Public(name.localHash.value, module, symbolTableIndex, attributes, it, bridgeTargetSymbol, takeName { name })
+                        FunctionSymbol.Public(name.localHash.value, module, symbolTableIndex, attributes, it.fileOrNull, it, bridgeTargetSymbol, takeName { name })
                     else
-                        FunctionSymbol.Private(privateFunIndex++, module, symbolTableIndex, attributes, it, bridgeTargetSymbol, takeName { name })
+                        FunctionSymbol.Private(privateFunIndex++, module, symbolTableIndex, attributes, it.fileOrNull, it, bridgeTargetSymbol, takeName { name })
                     if (frozen) {
                         functionSymbol.escapes = 0b1 // Assume instances of frozen classes escape.
                     }
@@ -639,8 +646,8 @@ internal object DataFlowIR {
             functionMap[irField]?.let { return it }
 
             assert(irField.parent !is IrClass) { "All local properties initializers should've been lowered" }
-            val attributes = FunctionAttributes.IS_GLOBAL_INITIALIZER or FunctionAttributes.RETURNS_UNIT
-            val symbol = FunctionSymbol.Private(privateFunIndex++, module, -1, attributes, null, null, takeName { "${irField.computeSymbolName()}_init" })
+            val attributes = FunctionAttributes.IS_TOP_LEVEL_FIELD_INITIALIZER or FunctionAttributes.RETURNS_UNIT
+val symbol = FunctionSymbol.Private(privateFunIndex++, module, -1, attributes, irField.fileOrNull, null, null, takeName { "${irField.computeSymbolName()}_init" })
 
             functionMap[irField] = symbol
 

@@ -12,12 +12,17 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaserState
 import org.jetbrains.kotlin.backend.common.phaser.namedUnitPhase
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.GlobalHierarchyAnalysis
+import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_FILE_GLOBAL_INITIALIZER
+import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_FILE_STANDALONE_THREAD_LOCAL_INITIALIZER
+import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_FILE_THREAD_LOCAL_INITIALIZER
 import org.jetbrains.kotlin.backend.konan.lower.RedundantCoercionsCleaner
 import org.jetbrains.kotlin.backend.konan.lower.ReturnsInsertionLowering
 import org.jetbrains.kotlin.backend.konan.optimizations.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrBlockBody
+import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -159,11 +164,11 @@ internal val dcePhase = makeKonanModuleOpPhase(
 
             val referencedFunctions = mutableSetOf<IrFunction>()
             callGraph.rootExternalFunctions.forEach {
-                if (!it.isGlobalInitializer)
+                if (!it.isTopLevelFieldInitializer)
                     referencedFunctions.add(it.irFunction ?: error("No IR for: $it"))
             }
             for (node in callGraph.directEdges.values) {
-                if (!node.symbol.isGlobalInitializer)
+                if (!node.symbol.isTopLevelFieldInitializer)
                     referencedFunctions.add(node.symbol.irFunction ?: error("No IR for: ${node.symbol}"))
                 node.callSites.forEach {
                     assert (!it.isVirtual) { "There should be no virtual calls in the call graph, but was: ${it.actualCallee}" }
@@ -225,6 +230,51 @@ internal val dcePhase = makeKonanModuleOpPhase(
             })
 
             context.referencedFunctions = referencedFunctions
+        }
+)
+
+internal val removeRedundantCallsToFileInitializersPhase = makeKonanModuleOpPhase(
+        name = "RemoveRedundantCallsToFileInitializersPhase",
+        description = "Redundant file initializers calls removal",
+        prerequisite = setOf(devirtualizationPhase),
+        op = { context, _ ->
+            val moduleDFG = context.moduleDFG!!
+            val externalModulesDFG = ExternalModulesDFG(emptyList(), emptyMap(), emptyMap(), emptyMap())
+
+            val callGraph = CallGraphBuilder(
+                    context, moduleDFG,
+                    externalModulesDFG,
+                    context.devirtualizationAnalysisResult!!,
+                    nonDevirtualizedCallSitesUnfoldFactor = Int.MAX_VALUE
+            ).build()
+
+            val functionsBeingCalledFromOtherFiles = mutableSetOf<IrFunction>()
+            for (node in callGraph.directEdges.values) {
+                val callerFile = node.symbol.irFile
+                node.callSites.forEach {
+                    require(!it.isVirtual) { "There should be no virtual calls in the call graph, but was: ${it.actualCallee}" }
+                    val calleeFile = it.actualCallee.irFile
+                    if (callerFile == null || callerFile != calleeFile)
+                        functionsBeingCalledFromOtherFiles.add(it.actualCallee.irFunction ?: error("No IR for: ${it.actualCallee}"))
+                }
+            }
+
+            val rootSet = Devirtualization.computeRootSet(context, moduleDFG, externalModulesDFG).toSet()
+            context.irModule!!.transformChildrenVoid(object: IrElementTransformerVoid() {
+                override fun visitFunction(declaration: IrFunction): IrStatement {
+                    declaration.transformChildrenVoid(this)
+                    if (declaration in functionsBeingCalledFromOtherFiles
+                            || moduleDFG.symbolTable.mapFunction(declaration) in rootSet) return declaration
+                    val body = declaration.body ?: return declaration
+                    (body as IrBlockBody).statements.removeAll {
+                        val calleeOrigin = (it as? IrCall)?.symbol?.owner?.origin
+                        calleeOrigin == DECLARATION_ORIGIN_FILE_GLOBAL_INITIALIZER
+                                || calleeOrigin == DECLARATION_ORIGIN_FILE_THREAD_LOCAL_INITIALIZER
+                                || calleeOrigin == DECLARATION_ORIGIN_FILE_STANDALONE_THREAD_LOCAL_INITIALIZER
+                    }
+                    return declaration
+                }
+            })
         }
 )
 

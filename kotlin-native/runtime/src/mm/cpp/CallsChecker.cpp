@@ -56,6 +56,7 @@ extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "__cxa_begin_catch",
         "__cxa_end_catch",
         "__cxa_throw",
+        "__cxa_rethrow",
         "__memset_chk",
 
         "abort",

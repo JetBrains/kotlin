@@ -232,6 +232,8 @@ internal val allLoweringsPhase = NamedCompilerPhase(
                             kotlinNothingValueExceptionPhase,
                             coroutinesPhase,
                             typeOperatorPhase,
+                            expressionBodyTransformPhase,
+                            fileInitializersPhase,
                             bridgesPhase,
                             autoboxPhase,
                         )
@@ -375,6 +377,7 @@ internal val bitcodePhase = NamedCompilerPhase(
                 devirtualizationPhase then
                 redundantCoercionsCleaningPhase then
                 dcePhase then
+                removeRedundantCallsToFileInitializersPhase then
                 createLLVMDeclarationsPhase then
                 ghaPhase then
                 RTTIPhase then
@@ -467,8 +470,12 @@ internal fun PhaseConfig.konanPhasesConfig(config: KonanConfig) {
         // debug information.
         disableUnless(propertyAccessorInlinePhase, getBoolean(KonanConfigKeys.OPTIMIZATION))
         disableUnless(dcePhase, getBoolean(KonanConfigKeys.OPTIMIZATION))
+        disableUnless(removeRedundantCallsToFileInitializersPhase, getBoolean(KonanConfigKeys.OPTIMIZATION))
         disableUnless(ghaPhase, getBoolean(KonanConfigKeys.OPTIMIZATION))
         disableUnless(verifyBitcodePhase, config.needCompilerVerification || getBoolean(KonanConfigKeys.VERIFY_BITCODE))
+
+        disableUnless(fileInitializersPhase, getBoolean(KonanConfigKeys.PROPERTY_LAZY_INITIALIZATION))
+        disableUnless(removeRedundantCallsToFileInitializersPhase, getBoolean(KonanConfigKeys.PROPERTY_LAZY_INITIALIZATION))
 
         val isDescriptorsOnlyLibrary = config.metadataKlib == true
         disableIf(psiToIrPhase, isDescriptorsOnlyLibrary)

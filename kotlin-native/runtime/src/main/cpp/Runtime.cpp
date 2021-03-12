@@ -73,6 +73,8 @@ constexpr RuntimeState* kInvalidRuntime = nullptr;
 
 THREAD_LOCAL_VARIABLE RuntimeState* runtimeState = kInvalidRuntime;
 
+volatile int mainThreadId = 0;
+
 inline bool isValidRuntime() {
   return ::runtimeState != kInvalidRuntime;
 }
@@ -135,6 +137,7 @@ RuntimeState* initRuntime() {
   CommitTLSStorage(result->memoryState);
   // Keep global variables in state as well.
   if (firstRuntime) {
+    mainThreadId = konan::currentThreadId();
     konan::consoleInit();
 #if KONAN_OBJC_INTEROP
     Kotlin_ObjCExport_initialize();
@@ -407,6 +410,57 @@ RUNTIME_NOTHROW void Kotlin_initRuntimeIfNeededFromKotlin() {
         case MemoryModel::kStrict:
         case MemoryModel::kRelaxed:
             Kotlin_initRuntimeIfNeeded();
+    }
+}
+
+static constexpr int FILE_NOT_INITIALIZED = 0;
+static constexpr int FILE_BEING_INITIALIZED = 1;
+static constexpr int FILE_INITIALIZED = 2;
+static constexpr int FILE_FAILED_TO_INITIALIZE = 3;
+
+void CallInitGlobalPossiblyLock(int volatile* state, void (*init)(bool)) {
+    int localState = *state;
+    if (localState == FILE_INITIALIZED) return;
+    if (localState == FILE_FAILED_TO_INITIALIZE)
+        ThrowFileFailedToInitializeException();
+    int threadId = konan::currentThreadId();
+    if ((localState & 3) == FILE_BEING_INITIALIZED) {
+        if ((localState & ~3) != (threadId << 2)) {
+            do {
+                localState = *state;
+                if (localState == FILE_FAILED_TO_INITIALIZE)
+                    ThrowFileFailedToInitializeException();
+            } while (localState != FILE_INITIALIZED);
+        }
+        return;
+    }
+    if (compareAndSwap(state, FILE_NOT_INITIALIZED, FILE_BEING_INITIALIZED | (threadId << 2)) == FILE_NOT_INITIALIZED) {
+        // actual initialization
+        try {
+            init(threadId == mainThreadId);
+        } catch (...) {
+            *state = FILE_FAILED_TO_INITIALIZE;
+            throw;
+        }
+        *state = FILE_INITIALIZED;
+    } else {
+        do {
+            localState = *state;
+            if (localState == FILE_FAILED_TO_INITIALIZE)
+                ThrowFileFailedToInitializeException();
+        } while (localState != FILE_INITIALIZED);
+    }
+}
+
+void CallInitThreadLocal(int volatile* globalState, int* localState, void (*init)(bool)) {
+    if (*localState == FILE_FAILED_TO_INITIALIZE || (globalState != nullptr && *globalState == FILE_FAILED_TO_INITIALIZE))
+        ThrowFileFailedToInitializeException();
+    *localState = FILE_INITIALIZED;
+    try {
+        init(konan::currentThreadId() == mainThreadId);
+    } catch(...) {
+        *localState = FILE_FAILED_TO_INITIALIZE;
+        throw;
     }
 }
 

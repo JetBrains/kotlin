@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.backend.konan.CachedLibraries
 import org.jetbrains.kotlin.library.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.ir.llvmSymbolOrigin
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.konan.CompiledKlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.CurrentKlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.DeserializedKlibModuleOrigin
@@ -229,6 +228,31 @@ internal val Name.localHash: LocalHash
 internal val FqName.localHash: LocalHash
     get() = this.toString().localHash
 
+internal class InitializersGenerationState {
+    val fileGlobalInitStates = mutableMapOf<IrFile, LLVMValueRef>()
+    val fileThreadLocalInitStates = mutableMapOf<IrFile, AddressAccess>()
+
+    val topLevelFields = mutableListOf<IrField>()
+    val moduleThreadLocalInitializers = mutableListOf<IrFunction>()
+    val moduleGlobalInitializers = mutableListOf<IrFunction>()
+    var globalInitFunction: IrFunction? = null
+    var globalInitState: LLVMValueRef? = null
+    var threadLocalInitFunction: IrFunction? = null
+    var threadLocalInitState: AddressAccess? = null
+
+    fun reset() {
+        moduleThreadLocalInitializers.clear()
+        moduleGlobalInitializers.clear()
+        topLevelFields.clear()
+        globalInitFunction = null
+        globalInitState = null
+        threadLocalInitFunction = null
+        threadLocalInitState = null
+    }
+
+    fun isEmpty() = topLevelFields.isEmpty() && globalInitState == null && threadLocalInitState == null
+            && moduleGlobalInitializers.isEmpty() && moduleThreadLocalInitializers.isEmpty()
+}
 
 internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
 
@@ -468,6 +492,8 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     val isInstanceOfClassFastFunction = importRtFunction("IsInstanceOfClassFast")
     val throwExceptionFunction = importRtFunction("ThrowException")
     val appendToInitalizersTail = importRtFunction("AppendToInitializersTail")
+    val callInitGlobalPossiblyLock = importRtFunction("CallInitGlobalPossiblyLock")
+    val callInitThreadLocal = importRtFunction("CallInitThreadLocal")
     val addTLSRecord = importRtFunction("AddTLSRecord")
     val lookupTLS = importRtFunction("LookupTLS")
     val initRuntimeIfNeeded = importRtFunction("Kotlin_initRuntimeIfNeeded")
@@ -577,9 +603,9 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     val compilerUsedGlobals = mutableListOf<LLVMValueRef>()
     val irStaticInitializers = mutableListOf<IrStaticInitializer>()
     val otherStaticInitializers = mutableListOf<LLVMValueRef>()
-    val fileInitializers = mutableListOf<IrField>()
     var fileUsesThreadLocalObjects = false
     val globalSharedObjects = mutableSetOf<LLVMValueRef>()
+    val initializersGenerationState = InitializersGenerationState()
 
     private object lazyRtFunction {
         operator fun provideDelegate(

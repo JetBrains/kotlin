@@ -336,6 +336,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                         RuntimeAssertsMode.IGNORE
                     }
                 })
+                put(PROPERTY_LAZY_INITIALIZATION, arguments.propertyLazyInitialization)
             }
         }
     }

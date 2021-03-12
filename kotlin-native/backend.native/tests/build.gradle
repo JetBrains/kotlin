@@ -1377,6 +1377,53 @@ task initializers_correctOrder2(type: KonanLocalTest) {
     source = "codegen/initializers/correctOrder2.kt"
 }
 
+standaloneTest("initializers_correctOrder3") {
+    source = "codegen/initializers/correctOrder3.kt"
+    goldValue = "3\n"
+}
+
+standaloneTest("initializers_globalInitedAfterAccessingFile") {
+    source = "codegen/initializers/globalInitedAfterAccessingFile.kt"
+}
+
+standaloneTest("initializers_globalInitedBeforeThreadLocal") {
+    source = "codegen/initializers/globalInitedBeforeThreadLocal.kt"
+}
+
+standaloneTest("initializers_workers1") {
+    source = "codegen/initializers/workers1.kt"
+    goldValue = "42\n3\n"
+}
+
+standaloneTest("initializers_workers2") {
+    source = "codegen/initializers/workers2.kt"
+    goldValue = "42\n42\n"
+}
+
+standaloneTest("initializers_failInInitializer1") {
+    source = "codegen/initializers/failInInitializer1.kt"
+    goldValue = "caught\n"
+    flags = ['-Xir-property-lazy-initialization']
+}
+
+standaloneTest("initializers_failInInitializer2") {
+    source = "codegen/initializers/failInInitializer2.kt"
+    goldValue = "caught\ncaught2\n"
+    flags = ['-Xir-property-lazy-initialization']
+}
+
+standaloneTest("initializers_failInInitializer3") {
+    source = "codegen/initializers/failInInitializer3.kt"
+    goldValue = "caught\ncaught2\n"
+    flags = ['-Xir-property-lazy-initialization']
+}
+
+standaloneTest("initializers_failInInitializer4") {
+    source = "codegen/initializers/failInInitializer4.kt"
+    goldValue = "caught\ncaught2\n"
+    flags = ['-Xir-property-lazy-initialization']
+}
+
 linkTest("initializers_linkTest1") {
     goldValue = "1200\n"
     source = "codegen/initializers/linkTest1_main.kt"
@@ -2152,7 +2199,10 @@ standaloneTest("link_testLib_explicitly") {
     enabled = project.target.name == project.hostName
 
     dependsOn installTestLib
-    goldValue = "This is a side effect of a test library linked into the binary.\nYou should not be seeing this.\n\nHello\n"
+    if (project.globalTestArgs.contains('-Xir-property-lazy-initialization'))
+        goldValue = "Hello\n"
+    else
+        goldValue = "This is a side effect of a test library linked into the binary.\nYou should not be seeing this.\n\nHello\n"
     source = "link/omit/hello.kt"
     // We force library inclusion, so need to see the warning banner.
     flags = ['-l', 'testLibrary', '-r', testLibraryDir]

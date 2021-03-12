@@ -177,6 +177,10 @@ void RUNTIME_NORETURN ThrowIncorrectDereferenceException() {
     throw std::runtime_error("Not implemented for tests");
 }
 
+void RUNTIME_NORETURN ThrowFileFailedToInitializeException() {
+    throw std::runtime_error("Not implemented for tests");
+}
+
 void RUNTIME_NORETURN ThrowIllegalObjectSharingException(KConstNativePtr typeInfo, KConstNativePtr address) {
     throw std::runtime_error("Not implemented for tests");
 }

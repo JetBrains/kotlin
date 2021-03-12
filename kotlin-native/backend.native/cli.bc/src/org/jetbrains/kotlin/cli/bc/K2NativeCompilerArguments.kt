@@ -314,6 +314,9 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value="-Xgc-aggressive", description = "Make GC agressive. Works only with -memory-model experimental")
     var gcAggressive: Boolean = false
 
+    @Argument(value = "-Xir-property-lazy-initialization", description = "Initialize top level properties lazily per file")
+    var propertyLazyInitialization: Boolean = false
+
     @Argument(
             value = "-Xcheck-compatibility-with-lld",
             valueDescription = "{disable|enable}",
