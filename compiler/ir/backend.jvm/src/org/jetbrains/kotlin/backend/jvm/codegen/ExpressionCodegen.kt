@@ -661,6 +661,9 @@ class ExpressionCodegen(
         } || irFunction.parentAsClass.let { it.origin == JvmLoweredDeclarationOrigin.LAMBDA_IMPL && !it.isSamAdapter() }
         if (!genericOrAnyOverride) return
 
+        // Result parameter of SAM-wrapper to Java SAM is already unboxed in visitGetValue, do not unbox it anymore
+        if (irFunction.parentAsClass.superTypes.any { it.getClass()?.isFromJava() == true }) return
+
         StackValue.unboxInlineClass(OBJECT_TYPE, arg.type.erasedUpperBound.defaultType.toIrBasedKotlinType(), mv)
     }
 
