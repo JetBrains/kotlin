@@ -158,7 +158,6 @@ class ValueParameterCommonizerTest : AbstractCommonizerTest<CirValueParameter, C
 
             return CirValueParameterTestImpl(
                 name = CirName.create(name),
-                annotations = emptyList(),
                 returnType = returnType,
                 varargElementType = returnType.takeIf { hasVarargElementType }, // the vararg type itself does not matter here, only it's presence matters
                 isCrossinline = isCrossinline,
@@ -171,13 +170,14 @@ class ValueParameterCommonizerTest : AbstractCommonizerTest<CirValueParameter, C
 
 internal data class CirValueParameterTestImpl(
     override val name: CirName,
-    override val annotations: List<CirAnnotation>,
     override val returnType: CirType,
     override val varargElementType: CirType?,
     override val declaresDefaultValue: Boolean,
     override val isCrossinline: Boolean,
     override val isNoinline: Boolean
 ) : CirValueParameter {
+    override val annotations: List<CirAnnotation> get() = emptyList()
+
     companion object {
         fun areEqual(classifiers: CirKnownClassifiers, a: CirValueParameter, b: CirValueParameter): Boolean {
             if (a.name != b.name
