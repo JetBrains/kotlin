@@ -147,6 +147,6 @@ internal class CommonizationVisitor(
             commonize(supertypesGroup, TypeCommonizer(classifiers))
         }.orEmpty()
 
-        setSupertypes(commonSupertypes)
+        supertypes = commonSupertypes
     }
 }

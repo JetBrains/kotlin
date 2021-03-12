@@ -15,9 +15,7 @@ interface CirClass : CirClassifier, CirContainingClass {
     val isValue: Boolean
     val isInner: Boolean
     val isExternal: Boolean
-    val supertypes: Collection<CirType>
-
-    fun setSupertypes(supertypes: Collection<CirType>)
+    var supertypes: List<CirType>
 
     companion object {
         @Suppress("NOTHING_TO_INLINE")
@@ -65,13 +63,12 @@ data class CirClassImpl(
     override val isInner: Boolean,
     override val isExternal: Boolean,
 ) : CirClass {
-    private var _supertypes: Collection<CirType>? = null
+    private var _supertypes: List<CirType>? = null
 
-    override val supertypes: Collection<CirType>
-        get() = _supertypes.orEmpty()
-
-    override fun setSupertypes(supertypes: Collection<CirType>) {
-        check(_supertypes == null)
-        _supertypes = supertypes
-    }
+    override var supertypes: List<CirType>
+        get() = _supertypes ?: error("${::supertypes.name} has not been initialized yet")
+        set(value) {
+            check(_supertypes == null) { "Re-initialization of ${::supertypes.name}" }
+            _supertypes = value
+        }
 }

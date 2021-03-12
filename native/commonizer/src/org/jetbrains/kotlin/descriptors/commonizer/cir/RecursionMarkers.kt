@@ -20,8 +20,9 @@ object CirClassRecursionMarker : CirClass, CirRecursionMarker {
     override val isValue get() = unsupported()
     override val isInner get() = unsupported()
     override val isExternal get() = unsupported()
-    override val supertypes get() = unsupported()
-    override fun setSupertypes(supertypes: Collection<CirType>) = unsupported()
+    override var supertypes: List<CirType>
+        get() = unsupported()
+        set(_) = unsupported()
 }
 
 object CirClassifierRecursionMarker : CirClassifier, CirRecursionMarker {
