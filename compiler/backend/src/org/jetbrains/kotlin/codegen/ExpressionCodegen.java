@@ -88,6 +88,7 @@ import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.ClassicTypeSystemContextImpl;
 import org.jetbrains.kotlin.types.expressions.DoubleColonLHS;
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker;
 import org.jetbrains.kotlin.types.model.TypeParameterMarker;
 import org.jetbrains.kotlin.types.typesApproximation.CapturedTypeApproximationKt;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
@@ -5531,5 +5532,12 @@ The "returned" value of try expression with no finally is either the last expres
         if (typeParameterDescriptor.getContainingDeclaration() != context.getContextDescriptor()) {
             parentCodegen.getReifiedTypeParametersUsages().addUsedReifiedParameter(typeParameterDescriptor.getName().asString());
         }
+    }
+
+    @Override
+    public void putReifiedOperationMarkerIfTypeIsReifiedParameter(
+            @NotNull KotlinTypeMarker type, @NotNull ReifiedTypeInliner.OperationKind operationKind
+    ) {
+        BaseExpressionCodegen.DefaultImpls.putReifiedOperationMarkerIfTypeIsReifiedParameter(this, type, operationKind);
     }
 }
