@@ -153,6 +153,8 @@ fun convertJpsModule(imlFile: File, jpsModule: JpsModule): String {
         |        $test
         |    }
         |}
+        |
+        |testsJar()
     """.trimMarginWithInterpolations()
 }
 
