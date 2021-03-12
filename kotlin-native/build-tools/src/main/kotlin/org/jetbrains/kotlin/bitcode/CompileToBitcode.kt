@@ -167,9 +167,9 @@ open class CompileToBitcode @Inject constructor(
             val llvmDir = project.findProperty("llvmDir")
             executable = "$llvmDir/bin/llvm-link"
             args = listOf("-o", outFile.absolutePath) + linkerArgs +
-                    project.fileTree(objDir) {
-                        include("**/*.bc")
-                    }.files.map { it.absolutePath }
+                    inputFiles.map {
+                        bitcodeFileForInputFile(it).absolutePath
+                    }
         }
     }
 }
