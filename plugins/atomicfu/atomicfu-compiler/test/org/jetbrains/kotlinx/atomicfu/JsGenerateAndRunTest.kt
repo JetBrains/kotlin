@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlinx.atomicfu
 
+import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.test.BasicBoxTest
@@ -20,12 +21,12 @@ private val atomicfuRuntime = System.getProperty("atomicfuRuntimeForTests.classp
 
 abstract class AtomicfuBaseTest(relativePath: String) : BasicIrBoxTest(
     "plugins/atomicfu/atomicfu-compiler/testData/$relativePath",
-    "plugins/atomicfu/atomicfu-compiler/testData/$relativePath"
+    "plugins/atomicfu/atomicfu-compiler/testData/$relativePath",
+    listOf(atomicfuCompileDependency, atomicfuRuntime)
 ) {
     override fun createEnvironment(): KotlinCoreEnvironment {
         return super.createEnvironment().also { environment ->
             AtomicfuComponentRegistrar.registerExtensions(environment.project)
-            environment.configuration.put(JSConfigurationKeys.LIBRARIES, listOf(atomicfuCompileDependency, atomicfuRuntime))
             environment.configuration.put(JSConfigurationKeys.MODULE_KIND, ModuleKind.PLAIN)
         }
     }
