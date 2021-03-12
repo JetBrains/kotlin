@@ -31,6 +31,7 @@ private val kotlinTestKLib = System.getProperty("kotlin.js.kotlin.test.path")
 abstract class BasicIrBoxTest(
     pathToTestDir: String,
     testGroupOutputDirPrefix: String,
+    private val testKlibs: List<String> = emptyList(),
     generateSourceMap: Boolean = false,
     generateNodeJsRunner: Boolean = false,
     targetBackend: TargetBackend = TargetBackend.JS_IR
@@ -99,7 +100,7 @@ abstract class BasicIrBoxTest(
 
         val transitiveLibraries = config.configuration[JSConfigurationKeys.TRANSITIVE_LIBRARIES]!!.map { File(it).name }
 
-        val allKlibPaths = (runtimeKlibs + transitiveLibraries.map {
+        val allKlibPaths = (testKlibs + runtimeKlibs + transitiveLibraries.map {
             compilationCache[it] ?: error("Can't find compiled module for dependency $it")
         }).map { File(it).absolutePath }
 
