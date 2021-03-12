@@ -60,7 +60,7 @@ class AtomicFUTransformer(override val context: IrPluginContext) : IrElementTran
 
     override fun visitFile(declaration: IrFile): IrFile {
         val newDeclarations = mutableListOf<IrDeclaration>()
-        declaration.declarations.forEachIndexed { index, irDeclaration ->
+        declaration.declarations.forEach { irDeclaration ->
             irDeclaration.transformAtomicInlineDeclaration()?.let { newDeclarations.add(it) }
         }
         declaration.declarations.addAll(newDeclarations)
@@ -69,7 +69,7 @@ class AtomicFUTransformer(override val context: IrPluginContext) : IrElementTran
 
     override fun visitClass(declaration: IrClass): IrStatement {
         val newDeclarations = mutableListOf<IrDeclaration>()
-        declaration.declarations.forEachIndexed { index, irDeclaration ->
+        declaration.declarations.forEach { irDeclaration ->
             irDeclaration.transformAtomicInlineDeclaration()?.let { newDeclarations.add(it) }
         }
         declaration.declarations.addAll(newDeclarations)
