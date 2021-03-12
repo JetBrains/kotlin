@@ -17,7 +17,7 @@ fun ConeClassifierLookupTag.toSymbol(useSiteSession: FirSession): FirClassifierS
     when (this) {
         is ConeClassLikeLookupTag -> toSymbol(useSiteSession)
         is ConeClassifierLookupTagWithFixedSymbol -> this.symbol
-        else -> error("Unknown lookupTag type: ${this::class}")
+        else -> null
     }
 
 @OptIn(LookupTagInternals::class)

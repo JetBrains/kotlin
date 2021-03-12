@@ -394,17 +394,24 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         if (this.isMarkedNullable)
             return true
 
-        if (this is ConeFlexibleType && this.upperBound.isNullableType())
-            return true
-
-        if (this is ConeTypeParameterType /* || is TypeVariable */)
-            return hasNullableSuperType(type)
-
-        if (this is ConeIntersectionType && intersectedTypes.any { it.isNullableType() }) {
-            return true
+        return when (this) {
+            is ConeFlexibleType -> this.upperBound.isNullableType()
+            is ConeTypeParameterType -> lookupTag.symbol.allBoundsAreNullable()
+            is ConeTypeVariableType -> {
+                val symbol = lookupTag.toSymbol(session) ?: return false
+                when (symbol) {
+                    is FirClassSymbol -> false
+                    is FirTypeAliasSymbol -> symbol.fir.expandedConeType?.isNullableType() ?: false
+                    is FirTypeParameterSymbol -> symbol.allBoundsAreNullable()
+                }
+            }
+            is ConeIntersectionType -> intersectedTypes.all { it.isNullableType() }
+            else -> false
         }
+    }
 
-        return false
+    private fun FirTypeParameterSymbol.allBoundsAreNullable(): Boolean {
+        return fir.bounds.all { it.coneType.isMarkedNullable }
     }
 
     private fun TypeConstructorMarker.toFirRegularClass(): FirRegularClass? {
