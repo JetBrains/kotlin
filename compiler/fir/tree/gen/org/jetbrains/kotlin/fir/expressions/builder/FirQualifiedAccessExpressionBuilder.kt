@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 class FirQualifiedAccessExpressionBuilder : FirQualifiedAccessBuilder, FirAnnotationContainerBuilder, FirExpressionBuilder {
-    override var source: FirSourceElement? = null
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     lateinit var calleeReference: FirReference
@@ -37,10 +36,10 @@ class FirQualifiedAccessExpressionBuilder : FirQualifiedAccessBuilder, FirAnnota
     override var explicitReceiver: FirExpression? = null
     override var dispatchReceiver: FirExpression = FirNoReceiverExpression
     override var extensionReceiver: FirExpression = FirNoReceiverExpression
+    override var source: FirSourceElement? = null
 
     override fun build(): FirQualifiedAccessExpression {
         return FirQualifiedAccessExpressionImpl(
-            source,
             typeRef,
             annotations,
             calleeReference,
@@ -48,6 +47,7 @@ class FirQualifiedAccessExpressionBuilder : FirQualifiedAccessBuilder, FirAnnota
             explicitReceiver,
             dispatchReceiver,
             extensionReceiver,
+            source,
         )
     }
 

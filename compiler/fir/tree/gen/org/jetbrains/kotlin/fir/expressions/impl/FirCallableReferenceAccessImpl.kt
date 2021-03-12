@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirCallableReferenceAccessImpl(
-    override var source: FirSourceElement?,
     override var typeRef: FirTypeRef,
     override val annotations: MutableList<FirAnnotationCall>,
     override val typeArguments: MutableList<FirTypeProjection>,
@@ -30,6 +29,7 @@ internal class FirCallableReferenceAccessImpl(
     override var extensionReceiver: FirExpression,
     override var calleeReference: FirNamedReference,
     override var hasQuestionMarkAtLHS: Boolean,
+    override var source: FirSourceElement?,
 ) : FirCallableReferenceAccess() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         typeRef.accept(visitor, data)
@@ -90,10 +90,6 @@ internal class FirCallableReferenceAccessImpl(
         return this
     }
 
-    override fun replaceSource(newSource: FirSourceElement?) {
-        source = newSource
-    }
-
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {
         typeRef = newTypeRef
     }
@@ -118,5 +114,9 @@ internal class FirCallableReferenceAccessImpl(
 
     override fun replaceHasQuestionMarkAtLHS(newHasQuestionMarkAtLHS: Boolean) {
         hasQuestionMarkAtLHS = newHasQuestionMarkAtLHS
+    }
+
+    override fun replaceSource(newSource: FirSourceElement?) {
+        source = newSource
     }
 }

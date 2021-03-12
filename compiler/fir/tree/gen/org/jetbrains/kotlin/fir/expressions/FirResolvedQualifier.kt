@@ -31,8 +31,6 @@ abstract class FirResolvedQualifier : FirExpression() {
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitResolvedQualifier(this, data)
 
-    abstract override fun replaceSource(newSource: FirSourceElement?)
-
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
     abstract fun replaceIsNullableLHSForCallableReference(newIsNullableLHSForCallableReference: Boolean)

@@ -28,6 +28,4 @@ abstract class FirResolvedImport : FirImport() {
     abstract val importedName: Name?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitResolvedImport(this, data)
-
-    abstract override fun replaceSource(newSource: FirSourceElement?)
 }

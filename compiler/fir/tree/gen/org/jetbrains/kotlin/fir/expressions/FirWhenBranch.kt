@@ -22,8 +22,6 @@ abstract class FirWhenBranch : FirPureAbstractElement(), FirElement {
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitWhenBranch(this, data)
 
-    abstract override fun replaceSource(newSource: FirSourceElement?)
-
     abstract fun <D> transformCondition(transformer: FirTransformer<D>, data: D): FirWhenBranch
 
     abstract fun <D> transformResult(transformer: FirTransformer<D>, data: D): FirWhenBranch

@@ -24,7 +24,5 @@ interface FirDeclaration : FirElement {
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitDeclaration(this, data)
 
-    override fun replaceSource(newSource: FirSourceElement?)
-
     fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
 }

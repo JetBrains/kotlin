@@ -19,6 +19,4 @@ abstract class FirTypeProjection : FirPureAbstractElement(), FirElement {
     abstract override val source: FirSourceElement?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitTypeProjection(this, data)
-
-    abstract override fun replaceSource(newSource: FirSourceElement?)
 }

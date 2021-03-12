@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 open class FirImplicitInvokeCallBuilder : FirAbstractFunctionCallBuilder, FirAnnotationContainerBuilder, FirExpressionBuilder {
-    override var source: FirSourceElement? = null
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     override val typeArguments: MutableList<FirTypeProjection> = mutableListOf()
     override var explicitReceiver: FirExpression? = null
@@ -40,10 +39,10 @@ open class FirImplicitInvokeCallBuilder : FirAbstractFunctionCallBuilder, FirAnn
     override var extensionReceiver: FirExpression = FirNoReceiverExpression
     override var argumentList: FirArgumentList = FirEmptyArgumentList
     override lateinit var calleeReference: FirNamedReference
+    override var source: FirSourceElement? = null
 
     override fun build(): FirImplicitInvokeCall {
         return FirImplicitInvokeCallImpl(
-            source,
             annotations,
             typeArguments,
             explicitReceiver,
@@ -51,6 +50,7 @@ open class FirImplicitInvokeCallBuilder : FirAbstractFunctionCallBuilder, FirAnn
             extensionReceiver,
             argumentList,
             calleeReference,
+            source,
         )
     }
 

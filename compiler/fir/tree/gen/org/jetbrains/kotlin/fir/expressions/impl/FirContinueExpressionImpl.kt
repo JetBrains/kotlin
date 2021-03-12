@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirContinueExpressionImpl(
-    override var source: FirSourceElement?,
+    override val source: FirSourceElement?,
     override val annotations: MutableList<FirAnnotationCall>,
     override val target: FirTarget<FirLoop>,
 ) : FirContinueExpression() {
@@ -42,10 +42,6 @@ internal class FirContinueExpressionImpl(
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirContinueExpressionImpl {
         annotations.transformInplace(transformer, data)
         return this
-    }
-
-    override fun replaceSource(newSource: FirSourceElement?) {
-        source = newSource
     }
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {

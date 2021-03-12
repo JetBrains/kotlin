@@ -27,12 +27,12 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 @OptIn(FirImplementationDetail::class)
 internal class FirComponentCallImpl(
-    override var source: FirSourceElement?,
     override val annotations: MutableList<FirAnnotationCall>,
     override val typeArguments: MutableList<FirTypeProjection>,
     override var dispatchReceiver: FirExpression,
     override var extensionReceiver: FirExpression,
     override var argumentList: FirArgumentList,
+    override var source: FirSourceElement?,
     override var explicitReceiver: FirExpression,
     override val componentIndex: Int,
 ) : FirComponentCall() {
@@ -100,10 +100,6 @@ internal class FirComponentCallImpl(
         return this
     }
 
-    override fun replaceSource(newSource: FirSourceElement?) {
-        source = newSource
-    }
-
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {
         typeRef = newTypeRef
     }
@@ -124,6 +120,10 @@ internal class FirComponentCallImpl(
     override fun replaceCalleeReference(newCalleeReference: FirReference) {
         require(newCalleeReference is FirNamedReference)
         replaceCalleeReference(newCalleeReference)
+    }
+
+    override fun replaceSource(newSource: FirSourceElement?) {
+        source = newSource
     }
 
     override fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?) {

@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirAnonymousObjectImpl(
-    override var source: FirSourceElement?,
+    override val source: FirSourceElement?,
     override val session: FirSession,
     override var resolvePhase: FirResolvePhase,
     override val origin: FirDeclarationOrigin,
@@ -84,10 +84,6 @@ internal class FirAnonymousObjectImpl(
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnonymousObjectImpl {
         annotations.transformInplace(transformer, data)
         return this
-    }
-
-    override fun replaceSource(newSource: FirSourceElement?) {
-        source = newSource
     }
 
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {

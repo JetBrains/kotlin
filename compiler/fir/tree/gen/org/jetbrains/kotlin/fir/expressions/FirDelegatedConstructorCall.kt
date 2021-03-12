@@ -28,8 +28,6 @@ abstract class FirDelegatedConstructorCall : FirPureAbstractElement(), FirResolv
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitDelegatedConstructorCall(this, data)
 
-    abstract override fun replaceSource(newSource: FirSourceElement?)
-
     abstract override fun replaceArgumentList(newArgumentList: FirArgumentList)
 
     abstract fun replaceConstructedTypeRef(newConstructedTypeRef: FirTypeRef)

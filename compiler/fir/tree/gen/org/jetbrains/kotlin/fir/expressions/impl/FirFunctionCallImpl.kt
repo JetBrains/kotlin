@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 open class FirFunctionCallImpl @FirImplementationDetail constructor(
-    override var source: FirSourceElement?,
     override var typeRef: FirTypeRef,
     override val annotations: MutableList<FirAnnotationCall>,
     override val typeArguments: MutableList<FirTypeProjection>,
@@ -32,6 +31,7 @@ open class FirFunctionCallImpl @FirImplementationDetail constructor(
     override var extensionReceiver: FirExpression,
     override var argumentList: FirArgumentList,
     override var calleeReference: FirNamedReference,
+    override var source: FirSourceElement?,
 ) : FirFunctionCall() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         typeRef.accept(visitor, data)
@@ -94,10 +94,6 @@ open class FirFunctionCallImpl @FirImplementationDetail constructor(
         return this
     }
 
-    override fun replaceSource(newSource: FirSourceElement?) {
-        source = newSource
-    }
-
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {
         typeRef = newTypeRef
     }
@@ -122,5 +118,9 @@ open class FirFunctionCallImpl @FirImplementationDetail constructor(
     override fun replaceCalleeReference(newCalleeReference: FirReference) {
         require(newCalleeReference is FirNamedReference)
         replaceCalleeReference(newCalleeReference)
+    }
+
+    override fun replaceSource(newSource: FirSourceElement?) {
+        source = newSource
     }
 }

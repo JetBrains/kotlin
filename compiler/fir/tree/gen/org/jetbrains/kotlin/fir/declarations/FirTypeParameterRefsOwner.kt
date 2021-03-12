@@ -20,7 +20,5 @@ interface FirTypeParameterRefsOwner : FirElement {
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitTypeParameterRefsOwner(this, data)
 
-    override fun replaceSource(newSource: FirSourceElement?)
-
     fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirTypeParameterRefsOwner
 }

@@ -15,7 +15,4 @@ class FirArraySetArgumentList internal constructor(
 ) : FirAbstractArgumentList() {
     override val arguments: List<FirExpression>
         get() = indexes + rValue
-
-    override fun replaceSource(newSource: FirSourceElement?) {
-    }
 }

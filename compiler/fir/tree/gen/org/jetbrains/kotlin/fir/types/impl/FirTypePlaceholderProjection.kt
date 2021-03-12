@@ -23,6 +23,4 @@ object FirTypePlaceholderProjection : FirTypeProjection() {
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirTypePlaceholderProjection {
         return this
     }
-
-    override fun replaceSource(newSource: FirSourceElement?) {}
 }

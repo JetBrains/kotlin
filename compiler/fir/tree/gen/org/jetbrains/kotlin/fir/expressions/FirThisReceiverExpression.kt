@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 abstract class FirThisReceiverExpression : FirQualifiedAccessExpression() {
-    abstract override val source: FirSourceElement?
     abstract override val typeRef: FirTypeRef
     abstract override val annotations: List<FirAnnotationCall>
     abstract override val typeArguments: List<FirTypeProjection>
@@ -26,10 +25,9 @@ abstract class FirThisReceiverExpression : FirQualifiedAccessExpression() {
     abstract override val dispatchReceiver: FirExpression
     abstract override val extensionReceiver: FirExpression
     abstract override val calleeReference: FirThisReference
+    abstract override val source: FirSourceElement?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitThisReceiverExpression(this, data)
-
-    abstract override fun replaceSource(newSource: FirSourceElement?)
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
@@ -40,6 +38,8 @@ abstract class FirThisReceiverExpression : FirQualifiedAccessExpression() {
     abstract fun replaceCalleeReference(newCalleeReference: FirThisReference)
 
     abstract override fun replaceCalleeReference(newCalleeReference: FirReference)
+
+    abstract override fun replaceSource(newSource: FirSourceElement?)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirThisReceiverExpression
 

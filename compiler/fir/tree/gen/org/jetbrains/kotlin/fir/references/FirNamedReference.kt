@@ -21,6 +21,4 @@ abstract class FirNamedReference : FirReference() {
     abstract val candidateSymbol: AbstractFirBasedSymbol<*>?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitNamedReference(this, data)
-
-    abstract override fun replaceSource(newSource: FirSourceElement?)
 }

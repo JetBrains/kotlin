@@ -23,6 +23,4 @@ object FirStubReference : FirReference() {
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirStubReference {
         return this
     }
-
-    override fun replaceSource(newSource: FirSourceElement?) {}
 }

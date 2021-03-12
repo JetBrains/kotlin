@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 abstract class FirImplicitInvokeCall : FirFunctionCall() {
-    abstract override val source: FirSourceElement?
     abstract override val typeRef: FirTypeRef
     abstract override val annotations: List<FirAnnotationCall>
     abstract override val typeArguments: List<FirTypeProjection>
@@ -27,10 +26,9 @@ abstract class FirImplicitInvokeCall : FirFunctionCall() {
     abstract override val extensionReceiver: FirExpression
     abstract override val argumentList: FirArgumentList
     abstract override val calleeReference: FirNamedReference
+    abstract override val source: FirSourceElement?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitImplicitInvokeCall(this, data)
-
-    abstract override fun replaceSource(newSource: FirSourceElement?)
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
@@ -43,6 +41,8 @@ abstract class FirImplicitInvokeCall : FirFunctionCall() {
     abstract override fun replaceCalleeReference(newCalleeReference: FirNamedReference)
 
     abstract override fun replaceCalleeReference(newCalleeReference: FirReference)
+
+    abstract override fun replaceSource(newSource: FirSourceElement?)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirImplicitInvokeCall
 

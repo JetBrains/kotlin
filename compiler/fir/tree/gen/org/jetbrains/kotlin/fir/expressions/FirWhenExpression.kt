@@ -29,8 +29,6 @@ abstract class FirWhenExpression : FirExpression(), FirResolvable {
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitWhenExpression(this, data)
 
-    abstract override fun replaceSource(newSource: FirSourceElement?)
-
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
     abstract override fun replaceCalleeReference(newCalleeReference: FirReference)

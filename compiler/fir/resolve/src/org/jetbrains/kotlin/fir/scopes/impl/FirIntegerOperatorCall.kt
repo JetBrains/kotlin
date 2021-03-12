@@ -34,7 +34,6 @@ class FirIntegerOperatorCall @FirImplementationDetail constructor(
     argumentList: FirArgumentList,
     calleeReference: FirNamedReference,
 ) : FirFunctionCallImpl(
-    source,
     typeRef,
     annotations,
     typeArguments,
@@ -43,6 +42,7 @@ class FirIntegerOperatorCall @FirImplementationDetail constructor(
     extensionReceiver,
     argumentList,
     calleeReference,
+    source,
 )
 
 @FirBuilderDsl

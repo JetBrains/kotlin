@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 abstract class FirExpressionWithSmartcast : FirQualifiedAccessExpression() {
-    abstract override val source: FirSourceElement?
     abstract override val typeRef: FirTypeRef
     abstract override val annotations: List<FirAnnotationCall>
     abstract override val calleeReference: FirReference
@@ -29,10 +28,9 @@ abstract class FirExpressionWithSmartcast : FirQualifiedAccessExpression() {
     abstract val originalExpression: FirQualifiedAccessExpression
     abstract val typesFromSmartCast: Collection<ConeKotlinType>
     abstract val originalType: FirTypeRef
+    abstract override val source: FirSourceElement?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitExpressionWithSmartcast(this, data)
-
-    abstract override fun replaceSource(newSource: FirSourceElement?)
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
@@ -41,6 +39,8 @@ abstract class FirExpressionWithSmartcast : FirQualifiedAccessExpression() {
     abstract override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>)
 
     abstract override fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?)
+
+    abstract override fun replaceSource(newSource: FirSourceElement?)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirExpressionWithSmartcast
 

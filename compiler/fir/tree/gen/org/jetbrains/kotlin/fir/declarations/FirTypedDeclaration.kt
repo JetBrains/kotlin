@@ -27,8 +27,6 @@ interface FirTypedDeclaration : FirAnnotatedDeclaration {
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitTypedDeclaration(this, data)
 
-    override fun replaceSource(newSource: FirSourceElement?)
-
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
 
     fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef)

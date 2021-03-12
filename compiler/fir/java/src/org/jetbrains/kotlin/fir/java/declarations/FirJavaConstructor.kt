@@ -138,9 +138,6 @@ class FirJavaConstructor @FirImplementationDetail constructor(
     override fun replaceBody(newBody: FirBlock?) {
         error("Body cannot be replaced for FirJavaConstructor")
     }
-
-    override fun replaceSource(newSource: FirSourceElement?) {
-    }
 }
 
 @FirBuilderDsl

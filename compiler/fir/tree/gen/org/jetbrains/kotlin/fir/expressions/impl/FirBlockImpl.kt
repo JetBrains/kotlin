@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirBlockImpl(
-    override var source: FirSourceElement?,
+    override val source: FirSourceElement?,
     override val annotations: MutableList<FirAnnotationCall>,
     override val statements: MutableList<FirStatement>,
 ) : FirBlock() {
@@ -51,10 +51,6 @@ internal class FirBlockImpl(
         transformAnnotations(transformer, data)
         typeRef = typeRef.transformSingle(transformer, data)
         return this
-    }
-
-    override fun replaceSource(newSource: FirSourceElement?) {
-        source = newSource
     }
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {

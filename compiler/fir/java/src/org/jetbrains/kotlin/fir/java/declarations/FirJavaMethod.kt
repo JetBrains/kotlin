@@ -172,9 +172,6 @@ class FirJavaMethod @FirImplementationDetail constructor(
 
     override fun replaceContractDescription(newContractDescription: FirContractDescription) {
     }
-
-    override fun replaceSource(newSource: FirSourceElement?) {
-    }
 }
 
 val ALL_JAVA_OPERATION_NAMES =

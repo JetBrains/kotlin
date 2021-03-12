@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 class FirExpressionStub @FirImplementationDetail constructor(
-    override var source: FirSourceElement?,
+    override val source: FirSourceElement?,
     override var typeRef: FirTypeRef,
     override val annotations: MutableList<FirAnnotationCall>,
 ) : FirExpression() {
@@ -36,10 +36,6 @@ class FirExpressionStub @FirImplementationDetail constructor(
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirExpressionStub {
         annotations.transformInplace(transformer, data)
         return this
-    }
-
-    override fun replaceSource(newSource: FirSourceElement?) {
-        source = newSource
     }
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {

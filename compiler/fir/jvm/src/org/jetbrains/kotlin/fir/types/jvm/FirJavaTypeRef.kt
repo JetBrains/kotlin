@@ -54,8 +54,6 @@ class FirJavaTypeRef(
         return this
     }
 
-    override fun replaceSource(newSource: FirSourceElement?) {}
-
     override fun toString(): String {
         return type.render()
     }

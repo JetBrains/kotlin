@@ -141,9 +141,6 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
 
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {
     }
-
-    override fun replaceSource(newSource: FirSourceElement?) {
-    }
 }
 
 @FirBuilderDsl

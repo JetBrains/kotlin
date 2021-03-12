@@ -36,8 +36,6 @@ interface FirCallableMemberDeclaration<F : FirCallableMemberDeclaration<F>> : Fi
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitCallableMemberDeclaration(this, data)
 
-    override fun replaceSource(newSource: FirSourceElement?)
-
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
 
     override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef)

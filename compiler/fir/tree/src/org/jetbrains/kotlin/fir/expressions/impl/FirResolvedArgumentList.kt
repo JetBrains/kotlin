@@ -34,7 +34,4 @@ class FirResolvedArgumentList internal constructor(
         mapping = mapping.mapKeys { (k, _) -> k.transformSingle(transformer, data) } as LinkedHashMap<FirExpression, FirValueParameter>
         return this
     }
-
-    override fun replaceSource(newSource: FirSourceElement?) {
-    }
 }

@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirReturnExpressionImpl(
-    override var source: FirSourceElement?,
+    override val source: FirSourceElement?,
     override val annotations: MutableList<FirAnnotationCall>,
     override val target: FirTarget<FirFunction<*>>,
     override var result: FirExpression,
@@ -56,10 +56,6 @@ internal class FirReturnExpressionImpl(
         typeRef = typeRef.transformSingle(transformer, data)
         transformAnnotations(transformer, data)
         return this
-    }
-
-    override fun replaceSource(newSource: FirSourceElement?) {
-        source = newSource
     }
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {

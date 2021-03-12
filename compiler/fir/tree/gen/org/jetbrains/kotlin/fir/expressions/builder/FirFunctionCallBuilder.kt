@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 open class FirFunctionCallBuilder : FirAbstractFunctionCallBuilder, FirAnnotationContainerBuilder, FirExpressionBuilder {
-    override var source: FirSourceElement? = null
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     override val typeArguments: MutableList<FirTypeProjection> = mutableListOf()
@@ -42,11 +41,11 @@ open class FirFunctionCallBuilder : FirAbstractFunctionCallBuilder, FirAnnotatio
     override var extensionReceiver: FirExpression = FirNoReceiverExpression
     override var argumentList: FirArgumentList = FirEmptyArgumentList
     override lateinit var calleeReference: FirNamedReference
+    override var source: FirSourceElement? = null
 
     @OptIn(FirImplementationDetail::class)
     override fun build(): FirFunctionCall {
         return FirFunctionCallImpl(
-            source,
             typeRef,
             annotations,
             typeArguments,
@@ -55,6 +54,7 @@ open class FirFunctionCallBuilder : FirAbstractFunctionCallBuilder, FirAnnotatio
             extensionReceiver,
             argumentList,
             calleeReference,
+            source,
         )
     }
 

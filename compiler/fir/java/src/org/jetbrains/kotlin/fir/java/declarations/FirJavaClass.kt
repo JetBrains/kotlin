@@ -116,9 +116,6 @@ class FirJavaClass @FirImplementationDetail internal constructor(
         typeParameters.transformInplace(transformer, data)
         return this
     }
-
-    override fun replaceSource(newSource: FirSourceElement?) {
-    }
 }
 
 @FirBuilderDsl

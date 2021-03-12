@@ -20,6 +20,4 @@ abstract class FirResolvedContractDescription : FirContractDescription() {
     abstract val unresolvedEffects: List<FirStatement>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitResolvedContractDescription(this, data)
-
-    abstract override fun replaceSource(newSource: FirSourceElement?)
 }

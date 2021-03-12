@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirResolvedCallableReferenceImpl(
-    override var source: FirSourceElement?,
+    override val source: FirSourceElement?,
     override val name: Name,
     override val resolvedSymbol: AbstractFirBasedSymbol<*>,
     override val inferredTypeArguments: MutableList<ConeKotlinType>,
@@ -31,9 +31,5 @@ internal class FirResolvedCallableReferenceImpl(
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirResolvedCallableReferenceImpl {
         return this
-    }
-
-    override fun replaceSource(newSource: FirSourceElement?) {
-        source = newSource
     }
 }

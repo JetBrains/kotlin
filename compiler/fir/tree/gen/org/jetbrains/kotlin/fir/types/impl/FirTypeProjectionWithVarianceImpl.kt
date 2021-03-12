@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirTypeProjectionWithVarianceImpl(
-    override var source: FirSourceElement?,
+    override val source: FirSourceElement?,
     override var typeRef: FirTypeRef,
     override val variance: Variance,
 ) : FirTypeProjectionWithVariance() {
@@ -28,9 +28,5 @@ internal class FirTypeProjectionWithVarianceImpl(
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirTypeProjectionWithVarianceImpl {
         typeRef = typeRef.transformSingle(transformer, data)
         return this
-    }
-
-    override fun replaceSource(newSource: FirSourceElement?) {
-        source = newSource
     }
 }

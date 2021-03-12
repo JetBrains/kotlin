@@ -23,9 +23,6 @@ class FirControlFlowGraphReferenceImpl(
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirControlFlowGraphReference {
         return this
     }
-
-    override fun replaceSource(newSource: FirSourceElement?) {
-    }
 }
 
 class DataFlowInfo(val variableStorage: VariableStorage, val flowOnNodes: Map<CFGNode<*>, Flow>)

@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirImportImpl(
-    override var source: FirSourceElement?,
+    override val source: FirSourceElement?,
     override val importedFqName: FqName?,
     override val isAllUnder: Boolean,
     override val aliasName: Name?,
@@ -26,9 +26,5 @@ internal class FirImportImpl(
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirImportImpl {
         return this
-    }
-
-    override fun replaceSource(newSource: FirSourceElement?) {
-        source = newSource
     }
 }

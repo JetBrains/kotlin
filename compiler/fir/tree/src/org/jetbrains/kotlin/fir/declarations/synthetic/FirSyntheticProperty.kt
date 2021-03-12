@@ -149,7 +149,4 @@ class FirSyntheticProperty(
     override fun replaceInitializer(newInitializer: FirExpression?) {
         throw AssertionError("Mutation of synthetic property isn't supported")
     }
-
-    override fun replaceSource(newSource: FirSourceElement?) {
-    }
 }

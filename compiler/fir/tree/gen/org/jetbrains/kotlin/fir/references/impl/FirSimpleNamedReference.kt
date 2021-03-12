@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 open class FirSimpleNamedReference @FirImplementationDetail constructor(
-    override var source: FirSourceElement?,
+    override val source: FirSourceElement?,
     override val name: Name,
     override val candidateSymbol: AbstractFirBasedSymbol<*>?,
 ) : FirNamedReference() {
@@ -26,9 +26,5 @@ open class FirSimpleNamedReference @FirImplementationDetail constructor(
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirSimpleNamedReference {
         return this
-    }
-
-    override fun replaceSource(newSource: FirSourceElement?) {
-        source = newSource
     }
 }

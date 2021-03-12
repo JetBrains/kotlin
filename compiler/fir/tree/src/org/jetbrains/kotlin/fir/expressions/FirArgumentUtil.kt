@@ -40,8 +40,4 @@ fun buildPartiallyResolvedArgumentList(
 object FirEmptyArgumentList : FirAbstractArgumentList() {
     override val arguments: List<FirExpression>
         get() = emptyList()
-
-
-    override fun replaceSource(newSource: FirSourceElement?) {
-    }
 }

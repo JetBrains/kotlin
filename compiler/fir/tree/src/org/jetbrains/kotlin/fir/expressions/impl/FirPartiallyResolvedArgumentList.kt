@@ -39,8 +39,4 @@ class FirPartiallyResolvedArgumentList internal constructor(
         _mapping = _mapping.mapKeys { (k, _) -> k.transformSingle(transformer, data) } as LinkedHashMap<FirExpression, FirValueParameter?>
         return this
     }
-
-    override fun replaceSource(newSource: FirSourceElement?) {
-        source = newSource
-    }
 }

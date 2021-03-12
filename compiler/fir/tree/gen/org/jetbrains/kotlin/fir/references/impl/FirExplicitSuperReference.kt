@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirExplicitSuperReference(
-    override var source: FirSourceElement?,
+    override val source: FirSourceElement?,
     override val labelName: String?,
     override var superTypeRef: FirTypeRef,
 ) : FirSuperReference() {
@@ -27,10 +27,6 @@ internal class FirExplicitSuperReference(
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirExplicitSuperReference {
         superTypeRef = superTypeRef.transformSingle(transformer, data)
         return this
-    }
-
-    override fun replaceSource(newSource: FirSourceElement?) {
-        source = newSource
     }
 
     override fun replaceSuperTypeRef(newSuperTypeRef: FirTypeRef) {

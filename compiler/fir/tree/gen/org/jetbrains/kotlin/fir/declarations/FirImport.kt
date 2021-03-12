@@ -24,6 +24,4 @@ abstract class FirImport : FirPureAbstractElement(), FirElement {
     abstract val aliasName: Name?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitImport(this, data)
-
-    abstract override fun replaceSource(newSource: FirSourceElement?)
 }

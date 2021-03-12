@@ -21,7 +21,5 @@ interface FirControlFlowGraphOwner : FirElement {
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitControlFlowGraphOwner(this, data)
 
-    override fun replaceSource(newSource: FirSourceElement?)
-
     fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?)
 }

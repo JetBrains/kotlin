@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 class FirLazyBlock @FirImplementationDetail constructor(
-    override var source: FirSourceElement?,
+    override val source: FirSourceElement?,
 ) : FirBlock() {
     override val annotations: List<FirAnnotationCall> get() = error("FirLazyBlock should be calculated before accessing")
     override val statements: List<FirStatement> get() = error("FirLazyBlock should be calculated before accessing")
@@ -43,10 +43,6 @@ class FirLazyBlock @FirImplementationDetail constructor(
 
     override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirLazyBlock {
         return this
-    }
-
-    override fun replaceSource(newSource: FirSourceElement?) {
-        source = newSource
     }
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {}

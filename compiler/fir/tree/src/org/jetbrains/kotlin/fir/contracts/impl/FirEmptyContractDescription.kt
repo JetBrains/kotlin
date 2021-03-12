@@ -19,7 +19,4 @@ object FirEmptyContractDescription : FirContractDescription() {
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirContractDescription {
         return this
     }
-
-    override fun replaceSource(newSource: FirSourceElement?) {
-    }
 }

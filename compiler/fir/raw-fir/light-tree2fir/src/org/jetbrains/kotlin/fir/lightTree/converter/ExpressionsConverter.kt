@@ -498,8 +498,8 @@ class ExpressionsConverter(
             }
 
             it.replaceExplicitReceiver(firReceiver)
+            it.replaceSource(dotQualifiedExpression.toFirSourceElement())
         }
-        firSelector.replaceSource(dotQualifiedExpression.toFirSourceElement())
         return firSelector
     }
 

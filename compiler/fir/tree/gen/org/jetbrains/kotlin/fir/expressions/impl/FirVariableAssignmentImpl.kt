@@ -19,13 +19,13 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirVariableAssignmentImpl(
-    override var source: FirSourceElement?,
     override var calleeReference: FirReference,
     override val annotations: MutableList<FirAnnotationCall>,
     override val typeArguments: MutableList<FirTypeProjection>,
     override var explicitReceiver: FirExpression?,
     override var dispatchReceiver: FirExpression,
     override var extensionReceiver: FirExpression,
+    override var source: FirSourceElement?,
     override var rValue: FirExpression,
 ) : FirVariableAssignment() {
     override var lValue: FirReference 
@@ -98,10 +98,6 @@ internal class FirVariableAssignmentImpl(
         return this
     }
 
-    override fun replaceSource(newSource: FirSourceElement?) {
-        source = newSource
-    }
-
     override fun replaceCalleeReference(newCalleeReference: FirReference) {
         calleeReference = newCalleeReference
     }
@@ -113,5 +109,9 @@ internal class FirVariableAssignmentImpl(
 
     override fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?) {
         explicitReceiver = newExplicitReceiver
+    }
+
+    override fun replaceSource(newSource: FirSourceElement?) {
+        source = newSource
     }
 }

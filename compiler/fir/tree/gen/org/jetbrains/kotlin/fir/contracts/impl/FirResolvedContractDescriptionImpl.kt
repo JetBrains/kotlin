@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 internal class FirResolvedContractDescriptionImpl(
-    override var source: FirSourceElement?,
+    override val source: FirSourceElement?,
     override val effects: MutableList<FirEffectDeclaration>,
     override val unresolvedEffects: MutableList<FirStatement>,
 ) : FirResolvedContractDescription() {
@@ -30,9 +30,5 @@ internal class FirResolvedContractDescriptionImpl(
         effects.transformInplace(transformer, data)
         unresolvedEffects.transformInplace(transformer, data)
         return this
-    }
-
-    override fun replaceSource(newSource: FirSourceElement?) {
-        source = newSource
     }
 }

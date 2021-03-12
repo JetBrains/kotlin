@@ -17,6 +17,4 @@ abstract class FirControlFlowGraphReference : FirReference() {
     abstract override val source: FirSourceElement?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitControlFlowGraphReference(this, data)
-
-    abstract override fun replaceSource(newSource: FirSourceElement?)
 }
