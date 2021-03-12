@@ -373,7 +373,7 @@ val FirFunction<*>.asForbiddenNamedArgumentsTarget: ForbiddenNamedArgumentsTarge
             return ForbiddenNamedArgumentsTarget.EXPECTED_CLASS_MEMBER
         }
         return when (origin) {
-            FirDeclarationOrigin.Source, FirDeclarationOrigin.Library, FirDeclarationOrigin.BuiltIns -> null
+            FirDeclarationOrigin.Source, FirDeclarationOrigin.Library -> null
             FirDeclarationOrigin.Delegated -> delegatedWrapperData?.wrapped?.asForbiddenNamedArgumentsTarget
             FirDeclarationOrigin.ImportedFromObject -> importedFromObjectData?.original?.asForbiddenNamedArgumentsTarget
             // For intersection overrides, the logic in
@@ -385,14 +385,15 @@ val FirFunction<*>.asForbiddenNamedArgumentsTarget: ForbiddenNamedArgumentsTarge
             FirDeclarationOrigin.Java, FirDeclarationOrigin.Enhancement -> ForbiddenNamedArgumentsTarget.NON_KOTLIN_FUNCTION
             FirDeclarationOrigin.SamConstructor -> null
             FirDeclarationOrigin.SubstitutionOverride -> originalForSubstitutionOverrideAttr?.asForbiddenNamedArgumentsTarget
-            // referenced function of a Kotlin function type is synthetic
-            FirDeclarationOrigin.Synthetic -> {
+            // referenced function of a Kotlin function type
+            FirDeclarationOrigin.BuiltIns -> {
                 if (dispatchReceiverClassOrNull()?.isBuiltinFunctionalType() == true) {
                     ForbiddenNamedArgumentsTarget.INVOKE_ON_FUNCTION_TYPE
                 } else {
                     null
                 }
             }
+            FirDeclarationOrigin.Synthetic -> null
             is FirDeclarationOrigin.Plugin -> null // TODO: figure out what to do with plugin generated functions
         }
     }
