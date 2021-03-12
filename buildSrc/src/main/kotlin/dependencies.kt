@@ -115,6 +115,44 @@ fun DependencyHandler.projectTests(name: String): ProjectDependency = project(na
 fun DependencyHandler.projectRuntimeJar(name: String): ProjectDependency = project(name, configuration = "runtimeJar")
 fun DependencyHandler.projectArchives(name: String): ProjectDependency = project(name, configuration = "archives")
 
+fun DependencyHandler.jpsLikeCompile(moduleName: String, exported: Boolean = false) {
+    if (exported) {
+        add("api", project(moduleName))
+        add("testCompile", projectTests(moduleName))
+        add("testCompile", project(moduleName))
+    } else {
+        add("implementation", project(moduleName))
+        add("testImplementation", projectTests(moduleName))
+    }
+}
+
+fun DependencyHandler.jpsLikeTest(moduleName: String, exported: Boolean = false) {
+    if (exported) {
+        add("testCompile", project(moduleName))
+        add("testCompile", projectTests(moduleName))
+    } else {
+        add("testImplementation", project(moduleName))
+        add("testImplementation", projectTests(moduleName))
+    }
+}
+
+fun DependencyHandler.jpsLikeProvided(moduleName: String, exported: Boolean = false) {
+    if (exported) {
+        add("compileOnlyApi", project(moduleName))
+        add("testCompile", projectTests(moduleName))
+        add("testCompile", project(moduleName))
+    } else {
+        add("compileOnly", project(moduleName))
+        add("testImplementation", project(moduleName))
+        add("testImplementation", projectTests(moduleName))
+    }
+}
+
+fun DependencyHandler.jpsLikeRuntime(moduleName: String) {
+    add("runtimeOnly", projectTests(moduleName))
+    add("testRuntimeOnly", project(moduleName))
+}
+
 fun Project.testApiJUnit5(
     vintageEngine: Boolean = false,
     runner: Boolean = false,

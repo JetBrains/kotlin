@@ -9,6 +9,9 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import org.jetbrains.jps.model.java.JavaResourceRootType
 import org.jetbrains.jps.model.java.JavaSourceRootType
+import org.jetbrains.jps.model.java.JpsJavaDependencyExtension
+import org.jetbrains.jps.model.java.JpsJavaDependencyScope
+import org.jetbrains.jps.model.java.impl.JpsJavaExtensionServiceImpl
 import org.jetbrains.jps.model.module.JpsDependencyElement
 import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.jps.model.module.JpsModuleDependency
@@ -52,10 +55,9 @@ fun main() {
         .groupBy { it.moduleName }
         .mapValues { entry -> entry.value.map { it.gradleNotation } }
 
-    imlFiles.zip(JpsProjectLoader.loadModules(imlFiles.map { it.toPath() }, null, mapOf()))
-        .forEach { (imlFile, jpsModule) ->
-            imlFile.parentFile.resolve("build.gradle.kts").writeText(convertJpsModule(imlFile, jpsModule))
-        }
+    for ((imlFile, jpsModule) in imlFiles.zip(JpsProjectLoader.loadModules(imlFiles.map { it.toPath() }, null, mapOf()))) {
+        imlFile.parentFile.resolve("build.gradle.kts").writeText(convertJpsModule(imlFile, jpsModule))
+    }
 }
 
 private data class IntelliJModuleNameToGradleDependencyNotationMappingItem(val moduleName: String, val gradleNotation: String) {
@@ -88,10 +90,18 @@ private data class IntelliJModuleNameToGradleDependencyNotationMappingItem(val m
     }
 }
 
+fun convertJpsJavaDependencyExtension(extension: JpsJavaDependencyExtension, gradleModuleName: String): String {
+    val scope = extension.scope.toString().toLowerCase().capitalize()
+    // runtime exported dependencies don't make sense
+    val exported = extension.isExported && extension.scope != JpsJavaDependencyScope.RUNTIME
+    return "jpsLike$scope(\"${gradleModuleName}\"${if (exported) ", exported = true" else ""})"
+}
+
 fun convertJpsModuleDependency(jpsModuleDependency: JpsModuleDependency): List<String> {
     val moduleName = jpsModuleDependency.moduleReference.moduleName
     if (moduleName.startsWith("kotlin.")) {
-        return listOf("implementation(project(\"${kotlinIdeJpsModuleNameToGradleModuleNameMapping[moduleName]}\"))")
+        val ext = JpsJavaExtensionServiceImpl.getInstance().getDependencyExtension(jpsModuleDependency)!!
+        return listOf(convertJpsJavaDependencyExtension(ext, kotlinIdeJpsModuleNameToGradleModuleNameMapping.getValue(moduleName)))
     }
     if (moduleName.startsWith("kotlinc.")) {
         return listOf("")
