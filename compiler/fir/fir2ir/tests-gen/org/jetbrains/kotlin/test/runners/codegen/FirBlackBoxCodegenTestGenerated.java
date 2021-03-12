@@ -18534,6 +18534,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             public void testArgumentResult() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/funInterface/argumentResult.kt");
             }
+
+            @Test
+            @TestMetadata("javaSam.kt")
+            public void testJavaSam() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/funInterface/javaSam.kt");
+            }
         }
 
         @Nested
