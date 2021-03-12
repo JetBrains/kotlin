@@ -12393,6 +12393,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/fir/Fir2IrClassifierStorage.kt");
         }
 
+        @TestMetadata("incorrectBytecodeWithEnhancedNullability.kt")
+        public void testIncorrectBytecodeWithEnhancedNullability() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/incorrectBytecodeWithEnhancedNullability.kt");
+        }
+
         @TestMetadata("IrBuiltIns.kt")
         public void testIrBuiltIns() throws Exception {
             runTest("compiler/testData/codegen/box/fir/IrBuiltIns.kt");

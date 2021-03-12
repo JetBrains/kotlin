@@ -9,7 +9,7 @@ class Test : J {
     <this>.#<$$delegate_0>.takeNotNull(x = x)
   }
 
-  override fun takeNullable(x: @EnhancedNullability String?) {
+  override fun takeNullable(x: String?) {
     <this>.#<$$delegate_0>.takeNullable(x = x)
   }
 
@@ -23,7 +23,7 @@ class Test : J {
   }
 
   @Nullable
-  override fun returnNullable(): @EnhancedNullability String? {
+  override fun returnNullable(): String? {
     return <this>.#<$$delegate_0>.returnNullable()
   }
 

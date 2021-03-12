@@ -219,7 +219,7 @@ private fun ConeKotlinType.getEnhancedNullability(
     if (!position.shouldEnhance()) return this.isMarkedNullable.noChange()
 
     return when (qualifiers.nullability) {
-        NullabilityQualifier.NULLABLE -> true.enhancedNullability()
+        NullabilityQualifier.NULLABLE -> true.noChange()
         NullabilityQualifier.NOT_NULL -> false.enhancedNullability()
         else -> this.isMarkedNullable.noChange()
     }
