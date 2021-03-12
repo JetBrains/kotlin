@@ -15403,6 +15403,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class FunInterface extends AbstractLightAnalysisModeTest {
+            @TestMetadata("argumentResult.kt")
+            public void ignoreArgumentResult() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/funInterface/argumentResult.kt");
+            }
+
+            @TestMetadata("javaSam.kt")
+            public void ignoreJavaSam() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/funInterface/javaSam.kt");
+            }
+
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
             }
@@ -15414,11 +15424,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestMetadata("argumentIC.kt")
             public void testArgumentIC() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/funInterface/argumentIC.kt");
-            }
-
-            @TestMetadata("argumentResult.kt")
-            public void testArgumentResult() throws Exception {
-                runTest("compiler/testData/codegen/box/inlineClasses/funInterface/argumentResult.kt");
             }
         }
 
