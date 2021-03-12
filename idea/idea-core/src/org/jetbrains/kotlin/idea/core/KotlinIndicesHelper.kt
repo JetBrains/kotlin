@@ -54,6 +54,7 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.resolve.scopes.collectSyntheticStaticFunctions
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.isError
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
 import java.util.*
@@ -139,12 +140,21 @@ class KotlinIndicesHelper(
         callTypeAndReceiver: CallTypeAndReceiver<*, *>,
         position: KtExpression,
         bindingContext: BindingContext,
+        receiverTypeFromDiagnostic: KotlinType?,
         nameFilter: (String) -> Boolean
     ): Collection<CallableDescriptor> {
-        val receiverTypes =
-            callTypeAndReceiver.receiverTypes(bindingContext, position, moduleDescriptor, resolutionFacade, stableSmartCastsOnly = false)
-                ?: return emptyList()
-        return getCallableTopLevelExtensions(callTypeAndReceiver, receiverTypes, nameFilter)
+        val receiverTypes = callTypeAndReceiver.receiverTypes(
+            bindingContext, position, moduleDescriptor, resolutionFacade, stableSmartCastsOnly = false
+        )
+
+        return if (receiverTypes == null || receiverTypes.all { it.isError }) {
+            if (receiverTypeFromDiagnostic != null)
+                getCallableTopLevelExtensions(callTypeAndReceiver, listOf(receiverTypeFromDiagnostic), nameFilter)
+            else
+                emptyList()
+        } else {
+            getCallableTopLevelExtensions(callTypeAndReceiver, receiverTypes, nameFilter)
+        }
     }
 
     fun getCallableTopLevelExtensions(
