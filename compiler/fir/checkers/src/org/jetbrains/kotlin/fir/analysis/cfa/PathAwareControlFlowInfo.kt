@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.cfa
 
 import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.persistentMapOf
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.EdgeLabel
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.NormalPath
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.TryExpressionExitNode
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 
 abstract class PathAwareControlFlowInfo<P : PathAwareControlFlowInfo<P, S>, S : ControlFlowInfo<S, *, *>>(
     map: PersistentMap<EdgeLabel, S>,
@@ -43,11 +40,24 @@ abstract class PathAwareControlFlowInfo<P : PathAwareControlFlowInfo<P, S>, S : 
 
         val hasAbnormalLabels = map.keys.any { !it.isNormal }
         return if (hasAbnormalLabels) {
-            // { |-> ... l1 |-> I1, l2 |-> I2, ... }
+            // { |-> ..., l1 |-> I1, l2 |-> I2, ... }
             //   | l1         // path exit: if the given info has non-null labels, this acts like a filtering
-            // { |-> I1 }     // NB: remove the path info
+            // { |-> I1 }     // NB: remove the path label, except for uncaught exception path
             if (map.keys.contains(label)) {
-                constructor(persistentMapOf(NormalPath to map[label]!!))
+                if (label == UncaughtExceptionPath) {
+                    // Special case: uncaught exception path, which still represents an uncaught exception path
+                    // Target node is most likely fun/init exit, and we should keep info separated.
+                    constructor(persistentMapOf(label to map[label]!!))
+                } else {
+                    // { |-> I }
+                    //   | l1       // e.g., enter to proxy1 with l1
+                    // { l1 -> I }
+                    //   ...
+                    // { |-> ..., l1 -> I', ... }
+                    //   | l1       // e.g., exit proxy1 with l1
+                    // { l1 -> I' }
+                    constructor(persistentMapOf(NormalPath to map[label]!!))
+                }
             } else {
                 /* This means no info for the specific label. */
                 empty()

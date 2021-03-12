@@ -13,7 +13,7 @@ object ThrowInTryWithCatch {
 }
 
 object ThrowInTryWithCatchAndFinally {
-    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>private val p: String<!>
+    private val p: String
 
     init {
         try {
@@ -53,7 +53,7 @@ object RethrowInCatch {
 }
 
 object RethrowInCatchWithFinally {
-    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>private val p: String<!>
+    private val p: String
 
     init {
         try {
@@ -134,7 +134,7 @@ object InnerCatch {
 }
 
 object InnerCatchWithFinally {
-    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>private val p: String<!>
+    private val p: String
 
     init {
         try {
@@ -169,7 +169,7 @@ object InnerCatchOuterRethrow {
 }
 
 object InnerCatchOuterRethrowWithFinally {
-    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>private val p: String<!>
+    private val p: String
 
     init {
         try {
