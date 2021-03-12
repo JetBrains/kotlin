@@ -122,6 +122,7 @@ internal class FirComponentCallImpl(
         replaceCalleeReference(newCalleeReference)
     }
 
+    @FirImplementationDetail
     override fun replaceSource(newSource: FirSourceElement?) {
         source = newSource
     }

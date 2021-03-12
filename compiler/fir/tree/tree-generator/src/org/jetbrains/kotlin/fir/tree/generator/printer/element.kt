@@ -89,6 +89,9 @@ fun SmartPrinter.printElement(element: Element) {
 
             fun Field.replaceDeclaration(override: Boolean, overridenType: Importable? = null, forceNullable: Boolean = false) {
                 println()
+                if (name == "source") {
+                    println("@FirImplementationDetail")
+                }
                 abstract()
                 if (override) print("override ")
                 println(replaceFunctionDeclaration(overridenType, forceNullable))

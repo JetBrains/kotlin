@@ -120,6 +120,7 @@ open class FirFunctionCallImpl @FirImplementationDetail constructor(
         replaceCalleeReference(newCalleeReference)
     }
 
+    @FirImplementationDetail
     override fun replaceSource(newSource: FirSourceElement?) {
         source = newSource
     }

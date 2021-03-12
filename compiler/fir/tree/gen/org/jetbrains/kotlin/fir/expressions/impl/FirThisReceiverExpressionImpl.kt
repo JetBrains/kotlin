@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 
 /*
  * This file was generated automatically
@@ -113,6 +114,7 @@ internal class FirThisReceiverExpressionImpl(
         replaceCalleeReference(newCalleeReference)
     }
 
+    @FirImplementationDetail
     override fun replaceSource(newSource: FirSourceElement?) {
         source = newSource
     }

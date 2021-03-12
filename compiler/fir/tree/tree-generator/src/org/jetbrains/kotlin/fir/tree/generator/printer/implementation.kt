@@ -313,6 +313,9 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                 body: () -> Unit,
             ) {
                 println()
+                if (field.name == "source") {
+                    println("@FirImplementationDetail")
+                }
                 abstract()
                 print("override ${field.replaceFunctionDeclaration(overridenType, forceNullable)}")
                 if (isInterface || isAbstract) {

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 
 /*
  * This file was generated automatically
@@ -32,6 +33,7 @@ interface FirQualifiedAccess : FirResolvable, FirStatement {
 
     fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?)
 
+    @FirImplementationDetail
     fun replaceSource(newSource: FirSourceElement?)
 
     override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirQualifiedAccess
