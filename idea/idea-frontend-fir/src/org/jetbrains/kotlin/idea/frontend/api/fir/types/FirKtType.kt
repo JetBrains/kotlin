@@ -34,7 +34,8 @@ internal class KtFirUsualClassType(
 
     override val classId: ClassId get() = withValidityAssertion { coneType.lookupTag.classId }
     override val classSymbol: KtClassLikeSymbol by cached {
-        firBuilder.buildClassLikeSymbolByLookupTag(coneType.lookupTag) ?: error("Class ${coneType.lookupTag} was not found")
+        firBuilder.classifierBuilder.buildClassLikeSymbolByLookupTag(coneType.lookupTag)
+            ?: error("Class ${coneType.lookupTag} was not found")
     }
     override val typeArguments: List<KtTypeArgument> by cached {
         coneType.typeArguments.map { typeArgument ->
@@ -58,7 +59,8 @@ internal class KtFirFunctionalType(
 
     override val classId: ClassId get() = withValidityAssertion { coneType.lookupTag.classId }
     override val classSymbol: KtClassLikeSymbol by cached {
-        firBuilder.buildClassLikeSymbolByLookupTag(coneType.lookupTag) ?: error("Class ${coneType.lookupTag} was not found")
+        firBuilder.classifierBuilder.buildClassLikeSymbolByLookupTag(coneType.lookupTag)
+            ?: error("Class ${coneType.lookupTag} was not found")
     }
     override val typeArguments: List<KtTypeArgument> by cached {
         coneType.typeArguments.map { typeArgument ->
@@ -113,7 +115,7 @@ internal class KtFirTypeParameterType(
 
     override val name: Name get() = withValidityAssertion { coneType.lookupTag.name }
     override val symbol: KtTypeParameterSymbol by cached {
-        firBuilder.buildTypeParameterSymbolByLookupTag(coneType.lookupTag)
+        firBuilder.classifierBuilder.buildTypeParameterSymbolByLookupTag(coneType.lookupTag)
             ?: error("Type parameter ${coneType.lookupTag} was not found")
     }
 

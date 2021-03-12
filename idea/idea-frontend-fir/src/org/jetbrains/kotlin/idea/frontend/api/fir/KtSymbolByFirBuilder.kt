@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.frontend.api.fir
 import com.google.common.collect.MapMaker
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
@@ -53,6 +52,7 @@ internal class KtSymbolByFirBuilder private constructor(
     private val firProvider get() = resolveState.rootModuleSession.symbolProvider
     val rootSession: FirSession = resolveState.rootModuleSession
 
+    val classifierBuilder = ClassifierSymbolBuilder()
 
     constructor(
         resolveState: FirModuleResolveState,
@@ -85,12 +85,12 @@ internal class KtSymbolByFirBuilder private constructor(
 
     fun buildSymbol(fir: FirDeclaration): KtSymbol {
         return when (fir) {
-            is FirClassLikeDeclaration<*> -> buildClassLikeSymbol(fir)
+            is FirClassLikeDeclaration<*> -> classifierBuilder.buildClassLikeSymbol(fir)
+            is FirTypeParameter -> classifierBuilder.buildTypeParameterSymbol(fir)
             is FirSimpleFunction -> buildFunctionSymbol(fir)
             is FirProperty -> buildVariableSymbol(fir)
             is FirValueParameter -> buildParameterSymbol(fir)
             is FirConstructor -> buildConstructorSymbol(fir)
-            is FirTypeParameter -> buildTypeParameterSymbol(fir)
             is FirEnumEntry -> buildEnumEntrySymbol(fir)
             is FirField -> buildFieldSymbol(fir)
             is FirAnonymousFunction -> buildAnonymousFunctionSymbol(fir)
@@ -105,42 +105,11 @@ internal class KtSymbolByFirBuilder private constructor(
     fun buildCallableSymbol(fir: FirCallableDeclaration<*>): KtCallableSymbol = buildSymbol(fir) as KtCallableSymbol
 
 
-    fun buildClassLikeSymbol(fir: FirClassLikeDeclaration<*>): KtClassLikeSymbol {
-        return when (fir) {
-            is FirClass<*> -> buildClassOrObjectSymbol(fir)
-            is FirTypeAlias -> buildTypeAliasSymbol(fir)
-            else -> error("Unexpected ${fir::class.simpleName}")
-        }
-    }
-
-    fun buildClassOrObjectSymbol(fir: FirClass<*>): KtClassOrObjectSymbol {
-        return when (fir) {
-            is FirAnonymousObject -> buildAnonymousObjectSymbol(fir)
-            is FirRegularClass -> buildNamedClassOrObjectSymbol(fir)
-            else -> error("Unexpected ${fir::class.simpleName}")
-        }
-    }
-
-    fun buildNamedClassOrObjectSymbol(fir: FirRegularClass): KtFirNamedClassOrObjectSymbol {
-        return symbolsCache.cache(fir) { KtFirNamedClassOrObjectSymbol(fir, resolveState, token, this) }
-    }
-
-    fun buildAnonymousObjectSymbol(fir: FirAnonymousObject): KtAnonymousObjectSymbol {
-        return symbolsCache.cache(fir) { KtFirAnonymousObjectSymbol(fir, resolveState, token, this) }
-    }
-
-    fun buildClassifierSymbol(firSymbol: FirClassifierSymbol<*>): KtClassifierSymbol = when (val fir = firSymbol.fir) {
-        is FirClassLikeDeclaration -> buildClassLikeSymbol(fir)
-        is FirTypeParameter -> buildTypeParameterSymbol(fir)
-        else ->
-            TODO(fir::class.toString())
-    }
-
-
     // TODO it can be a constructor parameter, which may be split into parameter & property
     // we should handle them both
     fun buildParameterSymbol(fir: FirValueParameter) =
         symbolsCache.cache(fir) { KtFirFunctionValueParameterSymbol(fir, resolveState, token, this) }
+
 
     fun buildFirConstructorParameter(fir: FirValueParameter) =
         symbolsCache.cache(fir) { KtFirConstructorValueParameterSymbol(fir, resolveState, token, this) }
@@ -153,11 +122,8 @@ internal class KtSymbolByFirBuilder private constructor(
         val originalFir = fir.originalConstructorIfTypeAlias ?: fir
         return symbolsCache.cache(originalFir) { KtFirConstructorSymbol(originalFir, resolveState, token, this) }
     }
-    fun buildTypeParameterSymbol(fir: FirTypeParameter) =
-        symbolsCache.cache(fir) { KtFirTypeParameterSymbol(fir, resolveState, token, this) }
 
-    fun buildTypeAliasSymbol(fir: FirTypeAlias) = symbolsCache.cache(fir) { KtFirTypeAliasSymbol(fir, resolveState, token) }
-    fun buildEnumEntrySymbol(fir: FirEnumEntry) = symbolsCache.cache(fir) { KtFirEnumEntrySymbol(fir, resolveState, token, this) }
+
     fun buildFieldSymbol(fir: FirField) = symbolsCache.cache(fir) { KtFirJavaFieldSymbol(fir, resolveState, token, this) }
     fun buildAnonymousFunctionSymbol(fir: FirAnonymousFunction) =
         symbolsCache.cache(fir) { KtFirAnonymousFunctionSymbol(fir, resolveState, token, this) }
@@ -179,17 +145,6 @@ internal class KtSymbolByFirBuilder private constructor(
         }
     }
 
-    fun buildClassLikeSymbolByLookupTag(lookupTag: ConeClassLikeLookupTag): KtClassLikeSymbol? = withValidityAssertion {
-        firProvider.getSymbolByLookupTag(lookupTag)?.fir?.let(::buildClassLikeSymbol)
-    }
-
-    fun buildTypeParameterSymbolByLookupTag(lookupTag: ConeTypeParameterLookupTag): KtTypeParameterSymbol? = withValidityAssertion {
-        (firProvider.getSymbolByLookupTag(lookupTag) as? FirTypeParameterSymbol)?.fir?.let(::buildTypeParameterSymbol)
-    }
-
-    fun buildClassLikeSymbolByClassId(classId: ClassId): FirRegularClass? = withValidityAssertion {
-        firProvider.getClassLikeSymbolByFqName(classId)?.fir as? FirRegularClass
-    }
 
 
     fun createPackageSymbolIfOneExists(packageFqName: FqName): KtFirPackageSymbol? {
@@ -236,7 +191,67 @@ internal class KtSymbolByFirBuilder private constructor(
             else -> TODO(coneType::class.toString())
         }
     }
+
+    inner class ClassifierSymbolBuilder {
+        fun buildClassifierSymbol(firSymbol: FirClassifierSymbol<*>): KtClassifierSymbol {
+            return when (val fir = firSymbol.fir) {
+                is FirClassLikeDeclaration -> classifierBuilder.buildClassLikeSymbol(fir)
+                is FirTypeParameter -> buildTypeParameterSymbol(fir)
+                else -> error("Unexpected ${fir::class.simpleName}")
+            }
+        }
+
+
+        fun buildClassLikeSymbol(fir: FirClassLikeDeclaration<*>): KtClassLikeSymbol {
+            return when (fir) {
+                is FirClass<*> -> buildClassOrObjectSymbol(fir)
+                is FirTypeAlias -> buildTypeAliasSymbol(fir)
+                else -> error("Unexpected ${fir::class.simpleName}")
+            }
+        }
+
+        fun buildClassOrObjectSymbol(fir: FirClass<*>): KtClassOrObjectSymbol {
+            return when (fir) {
+                is FirAnonymousObject -> buildAnonymousObjectSymbol(fir)
+                is FirRegularClass -> buildNamedClassOrObjectSymbol(fir)
+                else -> error("Unexpected ${fir::class.simpleName}")
+            }
+        }
+
+        fun buildNamedClassOrObjectSymbol(fir: FirRegularClass): KtFirNamedClassOrObjectSymbol {
+            return symbolsCache.cache(fir) { KtFirNamedClassOrObjectSymbol(fir, resolveState, token, this@KtSymbolByFirBuilder) }
+        }
+
+        fun buildAnonymousObjectSymbol(fir: FirAnonymousObject): KtAnonymousObjectSymbol {
+            return symbolsCache.cache(fir) { KtFirAnonymousObjectSymbol(fir, resolveState, token, this@KtSymbolByFirBuilder) }
+        }
+
+        fun buildTypeAliasSymbol(fir: FirTypeAlias): KtFirTypeAliasSymbol {
+            return symbolsCache.cache(fir) { KtFirTypeAliasSymbol(fir, resolveState, token) }
+        }
+
+        fun buildTypeParameterSymbol(fir: FirTypeParameter): KtFirTypeParameterSymbol {
+            return symbolsCache.cache(fir) { KtFirTypeParameterSymbol(fir, resolveState, token, this@KtSymbolByFirBuilder) }
+        }
+
+        fun buildTypeParameterSymbolByLookupTag(lookupTag: ConeTypeParameterLookupTag): KtTypeParameterSymbol? {
+            val firTypeParameterSymbol = firProvider.getSymbolByLookupTag(lookupTag) as? FirTypeParameterSymbol ?: return null
+            return buildTypeParameterSymbol(firTypeParameterSymbol.fir)
+        }
+
+        fun buildClassLikeSymbolByClassId(classId: ClassId): KtClassLikeSymbol? {
+            val firClassLikeSymbol = firProvider.getClassLikeSymbolByFqName(classId) ?: return null
+            return buildClassLikeSymbol(firClassLikeSymbol.fir)
+        }
+
+        fun buildClassLikeSymbolByLookupTag(lookupTag: ConeClassLikeLookupTag): KtClassLikeSymbol? {
+            val firClassLikeSymbol = firProvider.getSymbolByLookupTag(lookupTag) ?: return null
+            return buildClassLikeSymbol(firClassLikeSymbol.fir)
+        }
+    }
+
 }
+
 
 private class BuilderCache<From, To: Any> private constructor(
     private val cache: ConcurrentMap<From, To>,

@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
@@ -18,9 +20,8 @@ internal abstract class KtFirMemberSymbolPointer<S : KtSymbol>(
 ) : KtSymbolPointer<S>() {
     final override fun restoreSymbol(analysisSession: KtAnalysisSession): S? {
         require(analysisSession is KtFirAnalysisSession)
-        val owner = analysisSession.firSymbolBuilder.buildClassLikeSymbolByClassId(
-            ownerClassId
-        ) ?: return null
+        val owner = analysisSession.getClassLikeSymbol(ownerClassId) as? FirRegularClass
+            ?: return null
         return analysisSession.chooseCandidateAndCreateSymbol(owner.declarations, owner.session)
     }
 
@@ -29,4 +30,7 @@ internal abstract class KtFirMemberSymbolPointer<S : KtSymbol>(
         firSession: FirSession
     ): S?
 }
+
+private fun KtFirAnalysisSession.getClassLikeSymbol(classId: ClassId) =
+    firResolveState.rootModuleSession.symbolProvider.getClassLikeSymbolByFqName(classId)?.fir
 

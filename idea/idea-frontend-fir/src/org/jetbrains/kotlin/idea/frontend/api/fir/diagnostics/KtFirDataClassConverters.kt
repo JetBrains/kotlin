@@ -216,7 +216,7 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.QUALIFIED_SUPERTYPE_EXTENDED_BY_OTHER_SUPERTYPE) { firDiagnostic ->
         QualifiedSupertypeExtendedByOtherSupertypeImpl(
-            firSymbolBuilder.buildClassLikeSymbol(firDiagnostic.a),
+            firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.a),
             firDiagnostic as FirPsiDiagnostic<*>,
             token,
         )
@@ -718,7 +718,7 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.UPPER_BOUND_VIOLATED) { firDiagnostic ->
         UpperBoundViolatedImpl(
-            firSymbolBuilder.buildTypeParameterSymbol(firDiagnostic.a.fir),
+            firSymbolBuilder.classifierBuilder.buildTypeParameterSymbol(firDiagnostic.a.fir),
             firSymbolBuilder.buildKtType(firDiagnostic.b),
             firDiagnostic as FirPsiDiagnostic<*>,
             token,
@@ -733,7 +733,7 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     add(FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS) { firDiagnostic ->
         WrongNumberOfTypeArgumentsImpl(
             firDiagnostic.a,
-            firSymbolBuilder.buildClassLikeSymbol(firDiagnostic.b.fir as FirClass<*>),
+            firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.b.fir as FirClass<*>),
             firDiagnostic as FirPsiDiagnostic<*>,
             token,
         )

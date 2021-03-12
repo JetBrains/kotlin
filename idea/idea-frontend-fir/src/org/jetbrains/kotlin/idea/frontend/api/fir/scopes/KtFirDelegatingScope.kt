@@ -84,7 +84,7 @@ internal fun FirScope.getClassifierSymbols(classLikeNames: Collection<Name>, bui
         classLikeNames.forEach { name ->
             val classifierSymbols = mutableListOf<KtClassifierSymbol>()
             processClassifiersByName(name) { firSymbol ->
-                classifierSymbols.add(builder.buildClassifierSymbol(firSymbol))
+                classifierSymbols.add(builder.classifierBuilder.buildClassifierSymbol(firSymbol))
             }
             yieldAll(classifierSymbols)
         }

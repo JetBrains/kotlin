@@ -116,7 +116,7 @@ private object FirToKtConversionCreator {
             importsToAdd = listOf("org.jetbrains.kotlin.fir.declarations.FirDeclaration")
         ),
         FirClass::class to HLFunctionCallConversion(
-            "firSymbolBuilder.buildClassLikeSymbol({0})",
+            "firSymbolBuilder.classifierBuilder.buildClassLikeSymbol({0})",
             KtClassLikeSymbol::class.createType()
         ),
         FirExpression::class to HLFunctionCallConversion(
@@ -128,7 +128,7 @@ private object FirToKtConversionCreator {
             )
         ),
         FirClassLikeSymbol::class to HLFunctionCallConversion(
-            "firSymbolBuilder.buildClassLikeSymbol({0}.fir as FirClass<*>)",
+            "firSymbolBuilder.classifierBuilder.buildClassLikeSymbol({0}.fir as FirClass<*>)",
             KtClassLikeSymbol::class.createType(),
             importsToAdd = listOf("org.jetbrains.kotlin.fir.declarations.FirClass")
         ),
@@ -143,7 +143,7 @@ private object FirToKtConversionCreator {
             importsToAdd = listOf("org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration")
         ),
         FirTypeParameterSymbol::class to HLFunctionCallConversion(
-            "firSymbolBuilder.buildTypeParameterSymbol({0}.fir)",
+            "firSymbolBuilder.classifierBuilder.buildTypeParameterSymbol({0}.fir)",
             KtTypeParameterSymbol::class.createType(),
             importsToAdd = listOf("org.jetbrains.kotlin.fir.declarations.FirTypeParameter")
         ),

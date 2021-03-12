@@ -87,7 +87,7 @@ internal class KtFirFileScope(
                 it.declarations.forEach { firDeclaration ->
                     val classLikeDeclaration = (firDeclaration as? FirRegularClass)?.takeIf { klass -> nameFilter(klass.name) }
                     if (classLikeDeclaration != null) {
-                        yield(builder.buildClassLikeSymbol(classLikeDeclaration))
+                        yield(builder.classifierBuilder.buildClassLikeSymbol(classLikeDeclaration))
                     }
                 }
             }

@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers
 
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirNamedClassOrObjectSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.name.ClassId
@@ -16,7 +14,6 @@ import org.jetbrains.kotlin.name.ClassId
 class KtFirClassOrObjectInLibrarySymbolPointer(private val classId: ClassId) : KtSymbolPointer<KtNamedClassOrObjectSymbol>() {
     override fun restoreSymbol(analysisSession: KtAnalysisSession): KtNamedClassOrObjectSymbol? {
         require(analysisSession is KtFirAnalysisSession)
-        val firClass = analysisSession.firSymbolBuilder.buildClassLikeSymbolByClassId(classId) ?: return null
-        return analysisSession.firSymbolBuilder.buildNamedClassOrObjectSymbol(firClass)
+        return analysisSession.firSymbolBuilder.classifierBuilder.buildClassLikeSymbolByClassId(classId) as? KtNamedClassOrObjectSymbol
     }
 }

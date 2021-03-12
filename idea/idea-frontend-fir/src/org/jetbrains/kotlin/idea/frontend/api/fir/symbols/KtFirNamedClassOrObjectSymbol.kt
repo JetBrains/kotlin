@@ -59,7 +59,7 @@ internal class KtFirNamedClassOrObjectSymbol(
     override val isExternal: Boolean get() = firRef.withFir(FirResolvePhase.STATUS) { it.isExternal }
 
     override val companionObject: KtFirNamedClassOrObjectSymbol? by firRef.withFirAndCache { fir ->
-        fir.companionObject?.let { builder.buildNamedClassOrObjectSymbol(it) }
+        fir.companionObject?.let { builder.classifierBuilder.buildNamedClassOrObjectSymbol(it) }
     }
 
     override val superTypes: List<KtTypeAndAnnotations> by cached {
@@ -68,7 +68,7 @@ internal class KtFirNamedClassOrObjectSymbol(
 
     override val typeParameters by firRef.withFirAndCache { fir ->
         fir.typeParameters.map { typeParameter ->
-            builder.buildTypeParameterSymbol(typeParameter.symbol.fir)
+            builder.classifierBuilder.buildTypeParameterSymbol(typeParameter.symbol.fir)
         }
     }
 
