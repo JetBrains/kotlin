@@ -387,11 +387,6 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/arrays/kt4357.kt");
         }
 
-        @TestMetadata("kt45410.kt")
-        public void testKt45410() throws Exception {
-            runTest("compiler/testData/codegen/box/arrays/kt45410.kt");
-        }
-
         @TestMetadata("kt7009.kt")
         public void testKt7009() throws Exception {
             runTest("compiler/testData/codegen/box/arrays/kt7009.kt");
