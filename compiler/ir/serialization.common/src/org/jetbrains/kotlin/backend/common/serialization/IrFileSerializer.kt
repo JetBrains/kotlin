@@ -178,7 +178,7 @@ open class IrFileSerializer(
         protoStringArray.size - 1
     }
 
-    private fun serializeName(name: Name): Int = serializeString(name.toString())
+    protected fun serializeName(name: Name): Int = serializeString(name.toString())
 
     /* ------- IdSignature ------------------------------------------------------ */
 
@@ -232,7 +232,7 @@ open class IrFileSerializer(
         return proto.build()
     }
 
-    private fun protoIdSignature(declaration: IrDeclaration): Int {
+    protected fun protoIdSignature(declaration: IrDeclaration): Int {
         val idSig = declarationTable.signatureByDeclaration(declaration)
         return protoIdSignature(idSig)
     }
@@ -283,7 +283,7 @@ open class IrFileSerializer(
             TODO("Unexpected symbol kind: $symbol")
     }
 
-    fun serializeIrSymbol(symbol: IrSymbol): Long {
+    open fun serializeIrSymbol(symbol: IrSymbol): Long {
         val declaration = symbol.owner as? IrDeclaration ?: error("Expected IrDeclaration: ${symbol.owner.render()}")
 
         val symbolKind = protoSymbolKind(symbol)

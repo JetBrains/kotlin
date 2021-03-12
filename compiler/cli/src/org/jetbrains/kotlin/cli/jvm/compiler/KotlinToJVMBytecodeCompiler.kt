@@ -354,7 +354,7 @@ object KotlinToJVMBytecodeCompiler {
 
             performanceManager?.notifyIRTranslationStarted()
             val extensions = JvmGeneratorExtensions()
-            val (moduleFragment, symbolTable, sourceManager, components) = firAnalyzerFacade.convertToIr(extensions)
+            val (moduleFragment, symbolTable, sourceManager, components) = firAnalyzerFacade.convertToIr(environment.project, extensions)
 
             performanceManager?.notifyIRTranslationFinished()
 

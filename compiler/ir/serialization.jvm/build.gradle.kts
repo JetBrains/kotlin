@@ -11,6 +11,7 @@ dependencies {
     compile(project(":core:metadata.jvm"))
     implementation(project(":core:deserialization.common.jvm"))
     compile(project(":compiler:frontend.java"))
+    compileOnly(intellijCoreDep()) { includeJars("intellij-core", rootProject = rootProject) }
 }
 
 sourceSets {

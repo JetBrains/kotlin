@@ -593,6 +593,516 @@ public final class JvmIr {
     // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.backend.jvm.serialization.proto.XStatementOrExpression)
   }
 
+  public interface FacadeClassInfoOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.backend.jvm.serialization.proto.FacadeClassInfo)
+      org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
+
+    /**
+     * <code>required int32 signature = 1;</code>
+     *
+     * <pre>
+     * signature index for a file-level declaration 
+     * </pre>
+     */
+    boolean hasSignature();
+    /**
+     * <code>required int32 signature = 1;</code>
+     *
+     * <pre>
+     * signature index for a file-level declaration 
+     * </pre>
+     */
+    int getSignature();
+
+    /**
+     * <code>required int32 facade_class_name = 2;</code>
+     *
+     * <pre>
+     * string index for file class name 
+     * </pre>
+     */
+    boolean hasFacadeClassName();
+    /**
+     * <code>required int32 facade_class_name = 2;</code>
+     *
+     * <pre>
+     * string index for file class name 
+     * </pre>
+     */
+    int getFacadeClassName();
+  }
+  /**
+   * Protobuf type {@code org.jetbrains.kotlin.backend.jvm.serialization.proto.FacadeClassInfo}
+   */
+  public static final class FacadeClassInfo extends
+      org.jetbrains.kotlin.protobuf.GeneratedMessageLite implements
+      // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.backend.jvm.serialization.proto.FacadeClassInfo)
+      FacadeClassInfoOrBuilder {
+    // Use FacadeClassInfo.newBuilder() to construct.
+    private FacadeClassInfo(org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder builder) {
+      super(builder);
+      this.unknownFields = builder.getUnknownFields();
+    }
+    private FacadeClassInfo(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.ByteString.EMPTY;}
+
+    private static final FacadeClassInfo defaultInstance;
+    public static FacadeClassInfo getDefaultInstance() {
+      return defaultInstance;
+    }
+
+    public FacadeClassInfo getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+
+    private final org.jetbrains.kotlin.protobuf.ByteString unknownFields;
+    private FacadeClassInfo(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      initFields();
+      int mutable_bitField0_ = 0;
+      org.jetbrains.kotlin.protobuf.ByteString.Output unknownFieldsOutput =
+          org.jetbrains.kotlin.protobuf.ByteString.newOutput();
+      org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
+          org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
+              unknownFieldsOutput, 1);
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownField(input, unknownFieldsCodedOutput,
+                                     extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 8: {
+              bitField0_ |= 0x00000001;
+              signature_ = input.readInt32();
+              break;
+            }
+            case 16: {
+              bitField0_ |= 0x00000002;
+              facadeClassName_ = input.readInt32();
+              break;
+            }
+          }
+        }
+      } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
+            e.getMessage()).setUnfinishedMessage(this);
+      } finally {
+        try {
+          unknownFieldsCodedOutput.flush();
+        } catch (java.io.IOException e) {
+        // Should not happen
+        } finally {
+          unknownFields = unknownFieldsOutput.toByteString();
+        }
+        makeExtensionsImmutable();
+      }
+    }
+    public static org.jetbrains.kotlin.protobuf.Parser<FacadeClassInfo> PARSER =
+        new org.jetbrains.kotlin.protobuf.AbstractParser<FacadeClassInfo>() {
+      public FacadeClassInfo parsePartialFrom(
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+        return new FacadeClassInfo(input, extensionRegistry);
+      }
+    };
+
+    @java.lang.Override
+    public org.jetbrains.kotlin.protobuf.Parser<FacadeClassInfo> getParserForType() {
+      return PARSER;
+    }
+
+    private int bitField0_;
+    public static final int SIGNATURE_FIELD_NUMBER = 1;
+    private int signature_;
+    /**
+     * <code>required int32 signature = 1;</code>
+     *
+     * <pre>
+     * signature index for a file-level declaration 
+     * </pre>
+     */
+    public boolean hasSignature() {
+      return ((bitField0_ & 0x00000001) == 0x00000001);
+    }
+    /**
+     * <code>required int32 signature = 1;</code>
+     *
+     * <pre>
+     * signature index for a file-level declaration 
+     * </pre>
+     */
+    public int getSignature() {
+      return signature_;
+    }
+
+    public static final int FACADE_CLASS_NAME_FIELD_NUMBER = 2;
+    private int facadeClassName_;
+    /**
+     * <code>required int32 facade_class_name = 2;</code>
+     *
+     * <pre>
+     * string index for file class name 
+     * </pre>
+     */
+    public boolean hasFacadeClassName() {
+      return ((bitField0_ & 0x00000002) == 0x00000002);
+    }
+    /**
+     * <code>required int32 facade_class_name = 2;</code>
+     *
+     * <pre>
+     * string index for file class name 
+     * </pre>
+     */
+    public int getFacadeClassName() {
+      return facadeClassName_;
+    }
+
+    private void initFields() {
+      signature_ = 0;
+      facadeClassName_ = 0;
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      if (!hasSignature()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!hasFacadeClassName()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        output.writeInt32(1, signature_);
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        output.writeInt32(2, facadeClassName_);
+      }
+      output.writeRawBytes(unknownFields);
+    }
+
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeInt32Size(1, signature_);
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeInt32Size(2, facadeClassName_);
+      }
+      size += unknownFields.size();
+      memoizedSerializedSize = size;
+      return size;
+    }
+
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+
+    public static org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr.FacadeClassInfo parseFrom(
+        org.jetbrains.kotlin.protobuf.ByteString data)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr.FacadeClassInfo parseFrom(
+        org.jetbrains.kotlin.protobuf.ByteString data,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr.FacadeClassInfo parseFrom(byte[] data)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr.FacadeClassInfo parseFrom(
+        byte[] data,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr.FacadeClassInfo parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr.FacadeClassInfo parseFrom(
+        java.io.InputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr.FacadeClassInfo parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input);
+    }
+    public static org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr.FacadeClassInfo parseDelimitedFrom(
+        java.io.InputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr.FacadeClassInfo parseFrom(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr.FacadeClassInfo parseFrom(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr.FacadeClassInfo prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+
+    /**
+     * Protobuf type {@code org.jetbrains.kotlin.backend.jvm.serialization.proto.FacadeClassInfo}
+     */
+    public static final class Builder extends
+        org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder<
+          org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr.FacadeClassInfo, Builder>
+        implements
+        // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.backend.jvm.serialization.proto.FacadeClassInfo)
+        org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr.FacadeClassInfoOrBuilder {
+      // Construct using org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr.FacadeClassInfo.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+
+      public Builder clear() {
+        super.clear();
+        signature_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000001);
+        facadeClassName_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000002);
+        return this;
+      }
+
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+
+      public org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr.FacadeClassInfo getDefaultInstanceForType() {
+        return org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr.FacadeClassInfo.getDefaultInstance();
+      }
+
+      public org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr.FacadeClassInfo build() {
+        org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr.FacadeClassInfo result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr.FacadeClassInfo buildPartial() {
+        org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr.FacadeClassInfo result = new org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr.FacadeClassInfo(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+          to_bitField0_ |= 0x00000001;
+        }
+        result.signature_ = signature_;
+        if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
+          to_bitField0_ |= 0x00000002;
+        }
+        result.facadeClassName_ = facadeClassName_;
+        result.bitField0_ = to_bitField0_;
+        return result;
+      }
+
+      public Builder mergeFrom(org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr.FacadeClassInfo other) {
+        if (other == org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr.FacadeClassInfo.getDefaultInstance()) return this;
+        if (other.hasSignature()) {
+          setSignature(other.getSignature());
+        }
+        if (other.hasFacadeClassName()) {
+          setFacadeClassName(other.getFacadeClassName());
+        }
+        setUnknownFields(
+            getUnknownFields().concat(other.unknownFields));
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        if (!hasSignature()) {
+          
+          return false;
+        }
+        if (!hasFacadeClassName()) {
+          
+          return false;
+        }
+        return true;
+      }
+
+      public Builder mergeFrom(
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr.FacadeClassInfo parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr.FacadeClassInfo) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      private int signature_ ;
+      /**
+       * <code>required int32 signature = 1;</code>
+       *
+       * <pre>
+       * signature index for a file-level declaration 
+       * </pre>
+       */
+      public boolean hasSignature() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      /**
+       * <code>required int32 signature = 1;</code>
+       *
+       * <pre>
+       * signature index for a file-level declaration 
+       * </pre>
+       */
+      public int getSignature() {
+        return signature_;
+      }
+      /**
+       * <code>required int32 signature = 1;</code>
+       *
+       * <pre>
+       * signature index for a file-level declaration 
+       * </pre>
+       */
+      public Builder setSignature(int value) {
+        bitField0_ |= 0x00000001;
+        signature_ = value;
+        
+        return this;
+      }
+      /**
+       * <code>required int32 signature = 1;</code>
+       *
+       * <pre>
+       * signature index for a file-level declaration 
+       * </pre>
+       */
+      public Builder clearSignature() {
+        bitField0_ = (bitField0_ & ~0x00000001);
+        signature_ = 0;
+        
+        return this;
+      }
+
+      private int facadeClassName_ ;
+      /**
+       * <code>required int32 facade_class_name = 2;</code>
+       *
+       * <pre>
+       * string index for file class name 
+       * </pre>
+       */
+      public boolean hasFacadeClassName() {
+        return ((bitField0_ & 0x00000002) == 0x00000002);
+      }
+      /**
+       * <code>required int32 facade_class_name = 2;</code>
+       *
+       * <pre>
+       * string index for file class name 
+       * </pre>
+       */
+      public int getFacadeClassName() {
+        return facadeClassName_;
+      }
+      /**
+       * <code>required int32 facade_class_name = 2;</code>
+       *
+       * <pre>
+       * string index for file class name 
+       * </pre>
+       */
+      public Builder setFacadeClassName(int value) {
+        bitField0_ |= 0x00000002;
+        facadeClassName_ = value;
+        
+        return this;
+      }
+      /**
+       * <code>required int32 facade_class_name = 2;</code>
+       *
+       * <pre>
+       * string index for file class name 
+       * </pre>
+       */
+      public Builder clearFacadeClassName() {
+        bitField0_ = (bitField0_ & ~0x00000002);
+        facadeClassName_ = 0;
+        
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.backend.jvm.serialization.proto.FacadeClassInfo)
+    }
+
+    static {
+      defaultInstance = new FacadeClassInfo(true);
+      defaultInstance.initFields();
+    }
+
+    // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.backend.jvm.serialization.proto.FacadeClassInfo)
+  }
+
   public interface AuxTablesOrBuilder extends
       // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.backend.jvm.serialization.proto.AuxTables)
       org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
@@ -648,6 +1158,20 @@ public final class JvmIr {
      * <code>repeated bytes body = 4;</code>
      */
     org.jetbrains.kotlin.protobuf.ByteString getBody(int index);
+
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.jvm.serialization.proto.FacadeClassInfo facade_class_info = 5;</code>
+     */
+    java.util.List<org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr.FacadeClassInfo> 
+        getFacadeClassInfoList();
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.jvm.serialization.proto.FacadeClassInfo facade_class_info = 5;</code>
+     */
+    org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr.FacadeClassInfo getFacadeClassInfo(int index);
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.jvm.serialization.proto.FacadeClassInfo facade_class_info = 5;</code>
+     */
+    int getFacadeClassInfoCount();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.backend.jvm.serialization.proto.AuxTables}
@@ -731,6 +1255,14 @@ public final class JvmIr {
               body_.add(input.readBytes());
               break;
             }
+            case 42: {
+              if (!((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
+                facadeClassInfo_ = new java.util.ArrayList<org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr.FacadeClassInfo>();
+                mutable_bitField0_ |= 0x00000010;
+              }
+              facadeClassInfo_.add(input.readMessage(org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr.FacadeClassInfo.PARSER, extensionRegistry));
+              break;
+            }
           }
         }
       } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -750,6 +1282,9 @@ public final class JvmIr {
         }
         if (((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
           body_ = java.util.Collections.unmodifiableList(body_);
+        }
+        if (((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
+          facadeClassInfo_ = java.util.Collections.unmodifiableList(facadeClassInfo_);
         }
         try {
           unknownFieldsCodedOutput.flush();
@@ -864,11 +1399,47 @@ public final class JvmIr {
       return body_.get(index);
     }
 
+    public static final int FACADE_CLASS_INFO_FIELD_NUMBER = 5;
+    private java.util.List<org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr.FacadeClassInfo> facadeClassInfo_;
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.jvm.serialization.proto.FacadeClassInfo facade_class_info = 5;</code>
+     */
+    public java.util.List<org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr.FacadeClassInfo> getFacadeClassInfoList() {
+      return facadeClassInfo_;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.jvm.serialization.proto.FacadeClassInfo facade_class_info = 5;</code>
+     */
+    public java.util.List<? extends org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr.FacadeClassInfoOrBuilder> 
+        getFacadeClassInfoOrBuilderList() {
+      return facadeClassInfo_;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.jvm.serialization.proto.FacadeClassInfo facade_class_info = 5;</code>
+     */
+    public int getFacadeClassInfoCount() {
+      return facadeClassInfo_.size();
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.jvm.serialization.proto.FacadeClassInfo facade_class_info = 5;</code>
+     */
+    public org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr.FacadeClassInfo getFacadeClassInfo(int index) {
+      return facadeClassInfo_.get(index);
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.jvm.serialization.proto.FacadeClassInfo facade_class_info = 5;</code>
+     */
+    public org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr.FacadeClassInfoOrBuilder getFacadeClassInfoOrBuilder(
+        int index) {
+      return facadeClassInfo_.get(index);
+    }
+
     private void initFields() {
       type_ = java.util.Collections.emptyList();
       signature_ = java.util.Collections.emptyList();
       string_ = java.util.Collections.emptyList();
       body_ = java.util.Collections.emptyList();
+      facadeClassInfo_ = java.util.Collections.emptyList();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -876,6 +1447,12 @@ public final class JvmIr {
       if (isInitialized == 1) return true;
       if (isInitialized == 0) return false;
 
+      for (int i = 0; i < getFacadeClassInfoCount(); i++) {
+        if (!getFacadeClassInfo(i).isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
       memoizedIsInitialized = 1;
       return true;
     }
@@ -894,6 +1471,9 @@ public final class JvmIr {
       }
       for (int i = 0; i < body_.size(); i++) {
         output.writeBytes(4, body_.get(i));
+      }
+      for (int i = 0; i < facadeClassInfo_.size(); i++) {
+        output.writeMessage(5, facadeClassInfo_.get(i));
       }
       output.writeRawBytes(unknownFields);
     }
@@ -939,6 +1519,10 @@ public final class JvmIr {
         }
         size += dataSize;
         size += 1 * getBodyList().size();
+      }
+      for (int i = 0; i < facadeClassInfo_.size(); i++) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(5, facadeClassInfo_.get(i));
       }
       size += unknownFields.size();
       memoizedSerializedSize = size;
@@ -1042,6 +1626,8 @@ public final class JvmIr {
         bitField0_ = (bitField0_ & ~0x00000004);
         body_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000008);
+        facadeClassInfo_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000010);
         return this;
       }
 
@@ -1084,6 +1670,11 @@ public final class JvmIr {
           bitField0_ = (bitField0_ & ~0x00000008);
         }
         result.body_ = body_;
+        if (((bitField0_ & 0x00000010) == 0x00000010)) {
+          facadeClassInfo_ = java.util.Collections.unmodifiableList(facadeClassInfo_);
+          bitField0_ = (bitField0_ & ~0x00000010);
+        }
+        result.facadeClassInfo_ = facadeClassInfo_;
         return result;
       }
 
@@ -1129,12 +1720,28 @@ public final class JvmIr {
           }
           
         }
+        if (!other.facadeClassInfo_.isEmpty()) {
+          if (facadeClassInfo_.isEmpty()) {
+            facadeClassInfo_ = other.facadeClassInfo_;
+            bitField0_ = (bitField0_ & ~0x00000010);
+          } else {
+            ensureFacadeClassInfoIsMutable();
+            facadeClassInfo_.addAll(other.facadeClassInfo_);
+          }
+          
+        }
         setUnknownFields(
             getUnknownFields().concat(other.unknownFields));
         return this;
       }
 
       public final boolean isInitialized() {
+        for (int i = 0; i < getFacadeClassInfoCount(); i++) {
+          if (!getFacadeClassInfo(i).isInitialized()) {
+            
+            return false;
+          }
+        }
         return true;
       }
 
@@ -1442,6 +2049,131 @@ public final class JvmIr {
         body_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000008);
         
+        return this;
+      }
+
+      private java.util.List<org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr.FacadeClassInfo> facadeClassInfo_ =
+        java.util.Collections.emptyList();
+      private void ensureFacadeClassInfoIsMutable() {
+        if (!((bitField0_ & 0x00000010) == 0x00000010)) {
+          facadeClassInfo_ = new java.util.ArrayList<org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr.FacadeClassInfo>(facadeClassInfo_);
+          bitField0_ |= 0x00000010;
+         }
+      }
+
+      /**
+       * <code>repeated .org.jetbrains.kotlin.backend.jvm.serialization.proto.FacadeClassInfo facade_class_info = 5;</code>
+       */
+      public java.util.List<org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr.FacadeClassInfo> getFacadeClassInfoList() {
+        return java.util.Collections.unmodifiableList(facadeClassInfo_);
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.backend.jvm.serialization.proto.FacadeClassInfo facade_class_info = 5;</code>
+       */
+      public int getFacadeClassInfoCount() {
+        return facadeClassInfo_.size();
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.backend.jvm.serialization.proto.FacadeClassInfo facade_class_info = 5;</code>
+       */
+      public org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr.FacadeClassInfo getFacadeClassInfo(int index) {
+        return facadeClassInfo_.get(index);
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.backend.jvm.serialization.proto.FacadeClassInfo facade_class_info = 5;</code>
+       */
+      public Builder setFacadeClassInfo(
+          int index, org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr.FacadeClassInfo value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureFacadeClassInfoIsMutable();
+        facadeClassInfo_.set(index, value);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.backend.jvm.serialization.proto.FacadeClassInfo facade_class_info = 5;</code>
+       */
+      public Builder setFacadeClassInfo(
+          int index, org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr.FacadeClassInfo.Builder builderForValue) {
+        ensureFacadeClassInfoIsMutable();
+        facadeClassInfo_.set(index, builderForValue.build());
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.backend.jvm.serialization.proto.FacadeClassInfo facade_class_info = 5;</code>
+       */
+      public Builder addFacadeClassInfo(org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr.FacadeClassInfo value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureFacadeClassInfoIsMutable();
+        facadeClassInfo_.add(value);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.backend.jvm.serialization.proto.FacadeClassInfo facade_class_info = 5;</code>
+       */
+      public Builder addFacadeClassInfo(
+          int index, org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr.FacadeClassInfo value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureFacadeClassInfoIsMutable();
+        facadeClassInfo_.add(index, value);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.backend.jvm.serialization.proto.FacadeClassInfo facade_class_info = 5;</code>
+       */
+      public Builder addFacadeClassInfo(
+          org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr.FacadeClassInfo.Builder builderForValue) {
+        ensureFacadeClassInfoIsMutable();
+        facadeClassInfo_.add(builderForValue.build());
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.backend.jvm.serialization.proto.FacadeClassInfo facade_class_info = 5;</code>
+       */
+      public Builder addFacadeClassInfo(
+          int index, org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr.FacadeClassInfo.Builder builderForValue) {
+        ensureFacadeClassInfoIsMutable();
+        facadeClassInfo_.add(index, builderForValue.build());
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.backend.jvm.serialization.proto.FacadeClassInfo facade_class_info = 5;</code>
+       */
+      public Builder addAllFacadeClassInfo(
+          java.lang.Iterable<? extends org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr.FacadeClassInfo> values) {
+        ensureFacadeClassInfoIsMutable();
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, facadeClassInfo_);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.backend.jvm.serialization.proto.FacadeClassInfo facade_class_info = 5;</code>
+       */
+      public Builder clearFacadeClassInfo() {
+        facadeClassInfo_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000010);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.backend.jvm.serialization.proto.FacadeClassInfo facade_class_info = 5;</code>
+       */
+      public Builder removeFacadeClassInfo(int index) {
+        ensureFacadeClassInfoIsMutable();
+        facadeClassInfo_.remove(index);
+
         return this;
       }
 
@@ -1788,6 +2520,10 @@ public final class JvmIr {
           return false;
         }
       }
+      if (!getAuxTables().isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
       memoizedIsInitialized = 1;
       return true;
     }
@@ -2041,6 +2777,10 @@ public final class JvmIr {
             
             return false;
           }
+        }
+        if (!getAuxTables().isInitialized()) {
+          
+          return false;
         }
         return true;
       }
@@ -2635,6 +3375,10 @@ public final class JvmIr {
         memoizedIsInitialized = 0;
         return false;
       }
+      if (!getAuxTables().isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
       memoizedIsInitialized = 1;
       return true;
     }
@@ -2821,6 +3565,10 @@ public final class JvmIr {
           return false;
         }
         if (!getIrClass().isInitialized()) {
+          
+          return false;
+        }
+        if (!getAuxTables().isInitialized()) {
           
           return false;
         }

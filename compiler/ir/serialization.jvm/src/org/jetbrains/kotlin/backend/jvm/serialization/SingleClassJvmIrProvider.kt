@@ -8,18 +8,15 @@ package org.jetbrains.kotlin.backend.jvm.serialization
 import org.jetbrains.kotlin.backend.common.overrides.DefaultFakeOverrideClassFilter
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
 import org.jetbrains.kotlin.backend.common.overrides.FileLocalAwareLinker
-import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignatureFinder
-import org.jetbrains.kotlin.backend.common.serialization.IrDeclarationDeserializer
-import org.jetbrains.kotlin.backend.common.serialization.IrLibraryFile
-import org.jetbrains.kotlin.backend.common.serialization.IrSymbolDeserializer
+import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureSerializer
 import org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmManglerDesc
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmManglerIr
-import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrFactory
@@ -32,12 +29,16 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
+import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
+import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.protobuf.ByteString
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration as ProtoDeclaration
 
 /* Reads serialized IR from annotations in classfiles */
@@ -46,6 +47,7 @@ class SingleClassJvmIrProvider(
     val irBuiltIns: IrBuiltIns,
     val symbolTable: SymbolTable,
     val irFactory: IrFactory,
+    val fileFinder: VirtualFileFinder,
 ) : IrProvider, FileLocalAwareLinker {
 
     val descriptorFinder =
@@ -53,20 +55,40 @@ class SingleClassJvmIrProvider(
 
     val packageFragments = mutableMapOf<FqName, IrExternalPackageFragment>()
 
+    val facadeClassMap = mutableMapOf<IdSignature, Name>()
+
     override fun getDeclaration(symbol: IrSymbol): IrDeclaration? {
-        symbol.signature?.let(::findToplevelClassBySignature)
+        val facadeName = findFacadeClassName(symbol)
+        if (facadeName != null)
+            loadIrFileFromFacadeClass(facadeName)
+        else
+            symbol.signature?.let { loadToplevelClassBySignature(it) }
         return if (symbol.isBound) (symbol.owner as IrDeclaration) else null
     }
 
-    private fun findToplevelClassBySignature(signature: IdSignature): IrClass? {
-        if (signature !is IdSignature.PublicSignature) return null
+    private fun loadIrFileFromFacadeClass(facadeName: FqName) {
+        val vfile = fileFinder.findVirtualFileWithHeader(ClassId.topLevel(facadeName)) ?: return
+        val binaryClass = KotlinBinaryClassCache.getKotlinBinaryClassOrClassFileContent(vfile)?.toKotlinJvmBinaryClass() ?: return
+        val classHeader = binaryClass.classHeader
+        if (classHeader.serializedIr == null || classHeader.serializedIr!!.isEmpty()) return
+
+        val irProto = JvmIr.JvmIrFile.parseFrom(classHeader.serializedIr)
+        val declarationDeserializer = getDeclarationDeserializer(facadeName.parent(), irProto.auxTables)
+        for (declProto in irProto.declarationList) {
+            declarationDeserializer.deserializeDeclaration(declProto)
+        }
+    }
+
+    private fun loadToplevelClassBySignature(signature: IdSignature) {
+        if (signature !is IdSignature.PublicSignature) return
         val classId = ClassId.topLevel(signature.packageFqName().child(Name.identifier(signature.firstNameSegment)))
-        val toplevelDescriptor = moduleDescriptor.findClassAcrossModuleDependencies(classId) ?: return null
+        val toplevelDescriptor = moduleDescriptor.findClassAcrossModuleDependencies(classId) ?: return
         val classHeader =
-            (toplevelDescriptor.source as? KotlinJvmBinarySourceElement)?.binaryClass?.classHeader ?: return null
-        if (classHeader.serializedIr == null || classHeader.serializedIr!!.isEmpty()) return null
+            (toplevelDescriptor.source as? KotlinJvmBinarySourceElement)?.binaryClass?.classHeader ?: return
+        if (classHeader.serializedIr == null || classHeader.serializedIr!!.isEmpty()) return
 
         val irProto = JvmIr.JvmIrClass.parseFrom(classHeader.serializedIr)
+        val declarationDeserializer = getDeclarationDeserializer(signature.packageFqName(), irProto.auxTables)
 
         /* Need to create a ProtoDeclaration. */
         val protoDecl = ProtoDeclaration.newBuilder().run {
@@ -74,11 +96,15 @@ class SingleClassJvmIrProvider(
             build()
         }
 
+        declarationDeserializer.deserializeDeclaration(protoDecl)
+    }
+
+    private fun getDeclarationDeserializer(packageFqName: FqName, auxTables: JvmIr.AuxTables): IrDeclarationDeserializer {
         val libraryFile = IrLibraryFileFromAnnotation(
-            irProto.auxTables.typeList,
-            irProto.auxTables.signatureList,
-            irProto.auxTables.stringList,
-            irProto.auxTables.bodyList
+            auxTables.typeList,
+            auxTables.signatureList,
+            auxTables.stringList,
+            auxTables.bodyList
         )
 
         val symbolDeserializer = IrSymbolDeserializer(
@@ -90,9 +116,11 @@ class SingleClassJvmIrProvider(
             deserializePublicSymbol = ::referencePublicSymbol
         )
 
-        val packageFragment = getPackageFragment(signature.packageFqName())
+        populateFacadeClassMap(auxTables, libraryFile, symbolDeserializer)
 
-        val declarationDeserializer = IrDeclarationDeserializer(
+        val packageFragment = getPackageFragment(packageFqName)
+
+        return IrDeclarationDeserializer(
             irBuiltIns,
             symbolTable,
             irFactory,
@@ -110,8 +138,6 @@ class SingleClassJvmIrProvider(
                 irBuiltIns
             )
         )
-
-        return declarationDeserializer.deserializeDeclaration(protoDecl) as IrClass
     }
 
     fun id(x: Any?): Any? = x
@@ -167,6 +193,32 @@ class SingleClassJvmIrProvider(
                     else -> error("Unexpected classifier symbol kind: $symbolKind for signature $idSig")
                 }
             }
+        }
+    }
+
+    private fun populateFacadeClassMap(auxTables: JvmIr.AuxTables, libraryFile: IrLibraryFile, symbolDeserializer: IrSymbolDeserializer) {
+        for (protoFacadeClassInfo in auxTables.facadeClassInfoList) {
+            val signature = symbolDeserializer.deserializeIdSignature(protoFacadeClassInfo.signature)
+            val name = Name.identifier(libraryFile.deserializeString(protoFacadeClassInfo.facadeClassName))
+            facadeClassMap[signature] = name
+        }
+    }
+
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
+    private fun findFacadeClassName(symbol: IrSymbol): FqName? {
+        if (symbol.hasDescriptor) {
+            var descriptor = symbol.descriptor
+            while (descriptor.containingDeclaration !is PackageFragmentDescriptor) {
+                descriptor = descriptor.containingDeclaration!!
+            }
+            if (descriptor is ClassDescriptor) return null
+            val source = (descriptor as? DescriptorWithContainerSource)?.containerSource as? JvmPackagePartSource ?: return null
+            val facadeName = source.facadeClassName ?: source.className
+            return facadeName.fqNameForTopLevelClassMaybeWithDollars
+        } else {
+            val signature = symbol.signature ?: return null
+            val facadeName = facadeClassMap[signature] ?: return null
+            return signature.packageFqName().child(facadeName)
         }
     }
 

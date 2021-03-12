@@ -41,11 +41,12 @@ class Fir2IrResultsConverter(
         module: TestModule,
         inputArtifact: FirOutputArtifact
     ): IrBackendInput {
+        val compilerConfigurationProvider = testServices.compilerConfigurationProvider
+        val project = compilerConfigurationProvider.getProject(module)
         val extensions = JvmGeneratorExtensions()
-        val (irModuleFragment, symbolTable, sourceManager, components) = inputArtifact.firAnalyzerFacade.convertToIr(extensions)
+        val (irModuleFragment, symbolTable, sourceManager, components) = inputArtifact.firAnalyzerFacade.convertToIr(project, extensions)
         val dummyBindingContext = NoScopeRecordCliBindingTrace().bindingContext
 
-        val compilerConfigurationProvider = testServices.compilerConfigurationProvider
         val configuration = compilerConfigurationProvider.getCompilerConfiguration(module)
 
         val phaseConfig = configuration.get(CLIConfigurationKeys.PHASE_CONFIG) ?: PhaseConfig(jvmPhases)
@@ -55,7 +56,6 @@ class Fir2IrResultsConverter(
         val ktFiles = inputArtifact.firFiles.values.mapNotNull { it.psi as KtFile? }
 
         // Create and initialize the module and its dependencies
-        val project = compilerConfigurationProvider.getProject(module)
         val container = TopDownAnalyzerFacadeForJVM.createContainer(
             project, ktFiles, NoScopeRecordCliBindingTrace(), configuration,
             compilerConfigurationProvider.getPackagePartProviderFactory(module),

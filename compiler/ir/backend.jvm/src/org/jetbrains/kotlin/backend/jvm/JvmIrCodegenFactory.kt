@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.ir.descriptors.IrFunctionFactory
 import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
@@ -138,7 +139,10 @@ class JvmIrCodegenFactory(private val phaseConfig: PhaseConfig) : CodegenFactory
             irLinker.deserializeIrModuleHeader(it, kotlinLibrary)
         }
         val irProviders = listOf(
-            SingleClassJvmIrProvider(psi2irContext.moduleDescriptor, psi2irContext.irBuiltIns, symbolTable, psi2irContext.irFactory),
+            SingleClassJvmIrProvider(
+                psi2irContext.moduleDescriptor, psi2irContext.irBuiltIns, symbolTable, psi2irContext.irFactory,
+                VirtualFileFinder.SERVICE.getInstance(state.project, psi2irContext.moduleDescriptor)
+            ),
             irLinker
         )
 

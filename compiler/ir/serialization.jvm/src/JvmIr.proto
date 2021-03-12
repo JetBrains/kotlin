@@ -39,10 +39,11 @@ message XStatementOrExpression {
 //  repeated XStatementOrExpression statement_or_expression = 1;
 //}
 
-//message ExternalReference {
-//  required fixed64 id = 1;
-//  required int32 index = 2; /* index into the table of packages in ExternalRefs */
-//}
+message FacadeClassInfo {
+  required int32 signature = 1;        /* signature index for a file-level declaration */
+  required int32 facade_class_name = 2;  /* string index for file class name */
+}
+
 //
 //message JvmExternalPackage {
 //  repeated int32 fq_name = 1;
@@ -59,6 +60,7 @@ message AuxTables {
   repeated bytes signature = 2;
   repeated bytes string = 3;
   repeated bytes body = 4;
+  repeated FacadeClassInfo facade_class_info = 5;
 
 //  required TypeTable type_table = 2;
 //  required SignatureTable signature_table = 1;
@@ -72,7 +74,7 @@ message AuxTables {
 message JvmIrFile {
   repeated common.serialization.proto.IrDeclaration declaration = 1;
   repeated common.serialization.proto.IrConstructorCall annotation = 2;
-  repeated int32 facade_fq_name = 3;
+  required int32 facade_fq_name = 3;
   required AuxTables aux_tables = 4;
 }
 

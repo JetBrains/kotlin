@@ -146,12 +146,12 @@ class IrLibraryFileFromKlib(private val klib: IrLibrary, private val fileIndex: 
     override fun body(index: Int): ByteArray = klib.body(index, fileIndex)
 }
 
-internal fun IrLibraryFile.deserializeString(index: Int): String = String(string(index))
+fun IrLibraryFile.deserializeString(index: Int): String = String(string(index))
 
 internal fun IrLibraryFile.deserializeFqName(fqn: List<Int>): String =
     fqn.joinToString(".", transform = ::deserializeString)
 
-internal fun IrLibraryFile.createFile(moduleDescriptor: ModuleDescriptor, fileProto: ProtoFile): IrFile {
+fun IrLibraryFile.createFile(moduleDescriptor: ModuleDescriptor, fileProto: ProtoFile): IrFile {
     val fileName = fileProto.fileEntry.name
     val fileEntry = NaiveSourceBasedFileEntryImpl(fileName, fileProto.fileEntry.lineStartOffsetsList.toIntArray())
     val fqName = FqName(deserializeFqName(fileProto.fqNameList))

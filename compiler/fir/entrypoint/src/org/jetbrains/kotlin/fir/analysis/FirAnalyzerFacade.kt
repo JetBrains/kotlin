@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.backend.jvm.serialization.SingleClassJvmIrProvider
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveProcessor
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmManglerDesc
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
+import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
 import java.io.File
@@ -82,7 +84,7 @@ class FirAnalyzerFacade(
         return collectedDiagnostics!!
     }
 
-    fun convertToIr(extensions: GeneratorExtensions): Fir2IrResult {
+    fun convertToIr(project: Project, extensions: GeneratorExtensions): Fir2IrResult {
         if (scopeSession == null) runResolution()
         val signaturer = JvmIdSignatureDescriptor(JvmManglerDesc())
 
@@ -91,8 +93,13 @@ class FirAnalyzerFacade(
             languageVersionSettings, signaturer,
             extensions, FirJvmKotlinMangler(session), IrFactoryImpl,
             FirJvmVisibilityConverter,
-            Fir2IrJvmSpecialAnnotationSymbolProvider(),
-            ::SingleClassJvmIrProvider,
-        )
+            Fir2IrJvmSpecialAnnotationSymbolProvider()
+        ) { moduleDescriptor, irBuiltIns, symbolTable ->
+            SingleClassJvmIrProvider(
+                moduleDescriptor, irBuiltIns, symbolTable,
+                IrFactoryImpl,
+                VirtualFileFinder.SERVICE.getInstance(project, moduleDescriptor)
+            )
+        }
     }
 }

@@ -254,7 +254,7 @@ class Fir2IrConverter(
             irFactory: IrFactory,
             visibilityConverter: Fir2IrVisibilityConverter,
             specialSymbolProvider: Fir2IrSpecialSymbolProvider?,
-            deserializedIrProviderProvider: (FirModuleDescriptor, IrBuiltIns, SymbolTable, IrFactory) -> IrProvider,
+            deserializedIrProviderProvider: (FirModuleDescriptor, IrBuiltIns, SymbolTable) -> IrProvider?,
         ): Fir2IrResult {
             val moduleDescriptor = FirModuleDescriptor(session)
             val symbolTable = SymbolTable(signaturer, irFactory)
@@ -292,7 +292,7 @@ class Fir2IrConverter(
             }
             val irModuleFragment = IrModuleFragmentImpl(moduleDescriptor, irBuiltIns, irFiles)
             val irProviders =
-                listOf(deserializedIrProviderProvider(moduleDescriptor, irBuiltIns, symbolTable, irFactory)) +
+                listOfNotNull(deserializedIrProviderProvider(moduleDescriptor, irBuiltIns, symbolTable)) +
                     generateTypicalIrProviderList(irModuleFragment.descriptor, irBuiltIns, symbolTable, extensions = generatorExtensions)
             val externalDependenciesGenerator = ExternalDependenciesGenerator(
                 symbolTable,
