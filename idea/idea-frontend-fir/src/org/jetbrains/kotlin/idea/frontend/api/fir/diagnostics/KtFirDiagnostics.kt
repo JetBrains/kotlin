@@ -519,10 +519,6 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val classifier: KtClassLikeSymbol
     }
 
-    abstract class NoTypeForTypeParameter : KtFirDiagnostic<PsiElement>() {
-        override val diagnosticClass get() = NoTypeForTypeParameter::class
-    }
-
     abstract class TypeParametersInObject : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = TypeParametersInObject::class
     }
@@ -702,6 +698,10 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
     abstract class ForbiddenVarargParameterType : KtFirDiagnostic<KtParameter>() {
         override val diagnosticClass get() = ForbiddenVarargParameterType::class
         abstract val varargParameterType: KtType
+    }
+
+    abstract class ValueParameterWithNoTypeAnnotation : KtFirDiagnostic<KtParameter>() {
+        override val diagnosticClass get() = ValueParameterWithNoTypeAnnotation::class
     }
 
     abstract class AbstractPropertyInNonAbstractClass : KtFirDiagnostic<KtModifierListOwner>() {

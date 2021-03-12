@@ -182,7 +182,6 @@ object FirErrors {
     val UPPER_BOUND_VIOLATED by error2<FirSourceElement, PsiElement, FirTypeParameterSymbol, ConeKotlinType>()
     val TYPE_ARGUMENTS_NOT_ALLOWED by error0<FirSourceElement, PsiElement>()
     val WRONG_NUMBER_OF_TYPE_ARGUMENTS by error2<FirSourceElement, PsiElement, Int, FirClassLikeSymbol<*>>()
-    val NO_TYPE_FOR_TYPE_PARAMETER by error0<FirSourceElement, PsiElement>()
     val TYPE_PARAMETERS_IN_OBJECT by error0<FirSourceElement, PsiElement>()
     val ILLEGAL_PROJECTION_USAGE by error0<FirSourceElement, PsiElement>()
     val TYPE_PARAMETERS_IN_ENUM by error0<FirSourceElement, PsiElement>()
@@ -231,6 +230,7 @@ object FirErrors {
     val USELESS_VARARG_ON_PARAMETER by warning0<FirSourceElement, KtParameter>()
     val MULTIPLE_VARARG_PARAMETERS by error0<FirSourceElement, KtParameter>(SourceElementPositioningStrategies.PARAMETER_VARARG_MODIFIER)
     val FORBIDDEN_VARARG_PARAMETER_TYPE by error1<FirSourceElement, KtParameter, ConeKotlinType>(SourceElementPositioningStrategies.PARAMETER_VARARG_MODIFIER)
+    val VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION by error0<FirSourceElement, KtParameter>()
 
     // Properties & accessors
     val ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS by error2<FirSourceElement, KtModifierListOwner, FirMemberDeclaration, FirMemberDeclaration>(SourceElementPositioningStrategies.MODALITY_MODIFIER)

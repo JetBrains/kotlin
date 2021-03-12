@@ -53,7 +53,7 @@ fun FirFunction<*>.constructFunctionalTypeRef(isSuspend: Boolean = false): FirRe
         it.returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: ConeKotlinErrorType(
             ConeSimpleDiagnostic(
                 "No type for parameter",
-                DiagnosticKind.NoTypeForTypeParameter
+                DiagnosticKind.ValueParameterWithNoTypeAnnotation
             )
         )
     }

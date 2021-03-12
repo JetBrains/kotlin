@@ -5,13 +5,17 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.fir.FirRealSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isInline
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.typeContext
+import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.arrayElementType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isUnsignedTypeOrNullableUnsignedType
@@ -20,6 +24,25 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 object FirFunctionParameterChecker : FirFunctionChecker() {
     override fun check(declaration: FirFunction<*>, context: CheckerContext, reporter: DiagnosticReporter) {
         checkVarargParameters(declaration, context, reporter)
+        checkParameterTypes(declaration, context, reporter)
+    }
+
+    private fun checkParameterTypes(declaration: FirFunction<*>, context: CheckerContext, reporter: DiagnosticReporter) {
+        for (valueParameter in declaration.valueParameters) {
+            val returnTypeRef = valueParameter.returnTypeRef
+            if (returnTypeRef !is FirErrorTypeRef) continue
+            // type problems on real source are already reported by ConeDiagnostic.toFirDiagnostics
+            if (returnTypeRef.source?.kind == FirRealSourceElementKind) continue
+
+            val diagnostic = returnTypeRef.diagnostic
+            if (diagnostic is ConeSimpleDiagnostic && diagnostic.kind == DiagnosticKind.ValueParameterWithNoTypeAnnotation) {
+                reporter.reportOn(
+                    valueParameter.source,
+                    FirErrors.VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION,
+                    context
+                )
+            }
+        }
     }
 
     private fun checkVarargParameters(function: FirFunction<*>, context: CheckerContext, reporter: DiagnosticReporter) {
