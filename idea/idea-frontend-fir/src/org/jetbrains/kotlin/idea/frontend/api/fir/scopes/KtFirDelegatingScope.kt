@@ -64,7 +64,7 @@ internal fun FirScope.getCallableSymbols(callableNames: Collection<Name>, builde
     callableNames.forEach { name ->
         val callables = mutableListOf<KtCallableSymbol>()
         processFunctionsByName(name) { firSymbol ->
-            callables.add(builder.buildFunctionSymbol(firSymbol.fir))
+            callables.add(builder.functionLikeBuilder.buildFunctionSymbol(firSymbol.fir))
         }
         processPropertiesByName(name) { firSymbol ->
             val symbol = when {
@@ -94,7 +94,7 @@ internal fun FirScope.getConstructors(builder: KtSymbolByFirBuilder): Sequence<K
     sequence {
         val constructorSymbols = mutableListOf<KtConstructorSymbol>()
         processDeclaredConstructors { firSymbol ->
-            constructorSymbols.add(builder.buildConstructorSymbol(firSymbol.fir))
+            constructorSymbols.add(builder.functionLikeBuilder.buildConstructorSymbol(firSymbol.fir))
         }
         yieldAll(constructorSymbols)
     }

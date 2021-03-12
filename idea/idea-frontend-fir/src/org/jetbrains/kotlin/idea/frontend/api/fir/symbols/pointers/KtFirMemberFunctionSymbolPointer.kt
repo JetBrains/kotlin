@@ -22,7 +22,7 @@ internal class KtFirMemberFunctionSymbolPointer(
         firSession: FirSession
     ): KtFunctionSymbol? {
         val firFunction = candidates.findDeclarationWithSignature<FirSimpleFunction>(signature, firSession) ?: return null
-        return firSymbolBuilder.buildFunctionSymbol(firFunction)
+        return firSymbolBuilder.functionLikeBuilder.buildFunctionSymbol(firFunction)
     }
 }
 

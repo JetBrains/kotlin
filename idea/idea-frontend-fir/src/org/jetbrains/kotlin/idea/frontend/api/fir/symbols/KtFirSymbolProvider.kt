@@ -45,13 +45,13 @@ internal class KtFirSymbolProvider(
 
     override fun getFunctionSymbol(psi: KtNamedFunction): KtFunctionSymbol = withValidityAssertion {
         psi.withFirDeclarationOfType<FirSimpleFunction, KtFunctionSymbol>(resolveState) {
-            firSymbolBuilder.buildFunctionSymbol(it)
+            firSymbolBuilder.functionLikeBuilder.buildFunctionSymbol(it)
         }
     }
 
     override fun getConstructorSymbol(psi: KtConstructor<*>): KtConstructorSymbol = withValidityAssertion {
         psi.withFirDeclarationOfType<FirConstructor, KtConstructorSymbol>(resolveState) {
-            firSymbolBuilder.buildConstructorSymbol(it)
+            firSymbolBuilder.functionLikeBuilder.buildConstructorSymbol(it)
         }
     }
 
@@ -75,14 +75,14 @@ internal class KtFirSymbolProvider(
 
     override fun getAnonymousFunctionSymbol(psi: KtNamedFunction): KtAnonymousFunctionSymbol = withValidityAssertion {
         psi.withFirDeclarationOfType<FirSimpleFunction, KtFunctionSymbol>(resolveState) {
-            firSymbolBuilder.buildFunctionSymbol(it)
+            firSymbolBuilder.functionLikeBuilder.buildFunctionSymbol(it)
         }
-        firSymbolBuilder.buildAnonymousFunctionSymbol(psi.getOrBuildFirOfType(resolveState))
+        firSymbolBuilder.functionLikeBuilder.buildAnonymousFunctionSymbol(psi.getOrBuildFirOfType(resolveState))
     }
 
     override fun getAnonymousFunctionSymbol(psi: KtLambdaExpression): KtAnonymousFunctionSymbol = withValidityAssertion {
         psi.withFirDeclarationOfType<FirAnonymousFunction, KtAnonymousFunctionSymbol>(resolveState) {
-            firSymbolBuilder.buildAnonymousFunctionSymbol(it)
+            firSymbolBuilder.functionLikeBuilder.buildAnonymousFunctionSymbol(it)
         }
     }
 

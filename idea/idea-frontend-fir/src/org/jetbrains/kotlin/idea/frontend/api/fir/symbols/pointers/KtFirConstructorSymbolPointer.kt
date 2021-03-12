@@ -24,7 +24,7 @@ internal class KtFirConstructorSymbolPointer(
     ): KtConstructorSymbol? {
         val firConstructor = candidates.findDeclarationWithSignature<FirConstructor>(signature, firSession) ?: return null
         if (firConstructor.isPrimary != isPrimary) return null
-        return firSymbolBuilder.buildConstructorSymbol(firConstructor)
+        return firSymbolBuilder.functionLikeBuilder.buildConstructorSymbol(firConstructor)
     }
 }
 

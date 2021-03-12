@@ -53,6 +53,7 @@ internal class KtSymbolByFirBuilder private constructor(
     val rootSession: FirSession = resolveState.rootModuleSession
 
     val classifierBuilder = ClassifierSymbolBuilder()
+    val functionLikeBuilder = FunctionLikeSymbolBuilder()
 
     constructor(
         resolveState: FirModuleResolveState,
@@ -100,7 +101,7 @@ internal class KtSymbolByFirBuilder private constructor(
         return when (fir) {
             is FirValueParameter -> buildParameterSymbol(fir)
             is FirPropertyAccessor -> buildPropertyAccessorSymbol(fir)
-            is FirFunction<*> -> buildFunctionLikeSymbol(fir)
+            is FirFunction<*> -> functionLikeSymbolBuilder.buildFunctionLikeSymbol(fir)
             is FirVariable<*> -> buildVariableLikeSymbol(fir)
             else -> error("Unexpected ${fir::class.simpleName}")
         }
@@ -115,28 +116,6 @@ internal class KtSymbolByFirBuilder private constructor(
 
     fun buildFirConstructorParameter(fir: FirValueParameter) =
         symbolsCache.cache(fir) { KtFirConstructorValueParameterSymbol(fir, resolveState, token, this) }
-
-    fun buildFunctionLikeSymbol(fir: FirFunction<*>): KtFunctionLikeSymbol {
-        return when (fir) {
-            is FirSimpleFunction -> buildFunctionSymbol(fir)
-            is FirConstructor -> buildConstructorSymbol(fir)
-            is FirAnonymousFunction -> buildAnonymousFunctionSymbol(fir)
-            else -> error("Unexpected ${fir::class.simpleName}")
-        }
-    }
-
-    fun buildFunctionSymbol(fir: FirSimpleFunction): KtFirFunctionSymbol {
-        return symbolsCache.cache(fir) { KtFirFunctionSymbol(fir, resolveState, token, this) }
-    }
-
-    fun buildAnonymousFunctionSymbol(fir: FirAnonymousFunction): KtFirAnonymousFunctionSymbol {
-        return symbolsCache.cache(fir) { KtFirAnonymousFunctionSymbol(fir, resolveState, token, this) }
-    }
-
-    fun buildConstructorSymbol(fir: FirConstructor): KtFirConstructorSymbol {
-        val originalFir = fir.originalConstructorIfTypeAlias ?: fir
-        return symbolsCache.cache(originalFir) { KtFirConstructorSymbol(originalFir, resolveState, token, this) }
-    }
 
 
     // todo handle cases
@@ -283,6 +262,32 @@ internal class KtSymbolByFirBuilder private constructor(
         fun buildClassLikeSymbolByLookupTag(lookupTag: ConeClassLikeLookupTag): KtClassLikeSymbol? {
             val firClassLikeSymbol = firProvider.getSymbolByLookupTag(lookupTag) ?: return null
             return buildClassLikeSymbol(firClassLikeSymbol.fir)
+        }
+    }
+
+    inner class FunctionLikeSymbolBuilder {
+        fun buildFunctionLikeSymbol(fir: FirFunction<*>): KtFunctionLikeSymbol {
+            return when (fir) {
+                is FirSimpleFunction -> buildFunctionSymbol(fir)
+                is FirConstructor -> buildConstructorSymbol(fir)
+                is FirAnonymousFunction -> buildAnonymousFunctionSymbol(fir)
+                else -> error("Unexpected ${fir::class.simpleName}")
+            }
+        }
+
+        fun buildFunctionSymbol(fir: FirSimpleFunction): KtFirFunctionSymbol {
+            return symbolsCache.cache(fir) { KtFirFunctionSymbol(fir, resolveState, token, this@KtSymbolByFirBuilder) }
+        }
+
+        fun buildAnonymousFunctionSymbol(fir: FirAnonymousFunction): KtFirAnonymousFunctionSymbol {
+            return symbolsCache.cache(fir) { KtFirAnonymousFunctionSymbol(fir, resolveState, token, this@KtSymbolByFirBuilder) }
+        }
+
+        fun buildConstructorSymbol(fir: FirConstructor): KtFirConstructorSymbol {
+            val originalFir = fir.originalConstructorIfTypeAlias ?: fir
+            return symbolsCache.cache(originalFir) {
+                KtFirConstructorSymbol(originalFir, resolveState, token, this@KtSymbolByFirBuilder)
+            }
         }
     }
 }
