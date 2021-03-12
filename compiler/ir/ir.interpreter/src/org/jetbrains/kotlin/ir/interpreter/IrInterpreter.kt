@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.interpreter.state.*
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.ir.util.*
@@ -905,7 +906,13 @@ class IrInterpreter(val irBuiltIns: IrBuiltIns, private val bodyMap: Map<IdSigna
     }
 
     private fun interpretClassReference(classReference: IrClassReference): ExecutionResult {
-        stack.pushReturnValue(KClassState(classReference))
+        when (classReference.symbol) {
+            is IrTypeParameterSymbol -> { // reified
+                val kTypeState = stack.getVariable(classReference.symbol).state as KTypeState
+                stack.pushReturnValue(KClassState(kTypeState.irType.classOrNull!!.owner, classReference.type.classOrNull!!.owner))
+            }
+            else -> stack.pushReturnValue(KClassState(classReference))
+        }
         return Next
     }
 }
