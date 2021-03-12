@@ -679,19 +679,22 @@ open class Kapt3IT : Kapt3BaseIT() {
 
     @Test
     fun testJpmsModule() {
+        //jpms is part of java >= 9
+        val javaHome = File(System.getProperty("jdk9Home")!!)
+        Assume.assumeTrue("JDK 9 isn't available", javaHome.isDirectory)
+        val options = defaultBuildOptions().copy(javaHome = javaHome)
+
         val project = Project("jpms-module", directoryPrefix = "kapt2")
 
-        project.build("build") {
+        project.build("build", options = options) {
             assertSuccessful()
             assertKaptSuccessful()
             assertTasksExecuted(":compileKotlin", ":compileJava")
             assertFileExists("build/generated/source/kapt/main/lab/TestClassGenerated.java")
             assertFileExists(kotlinClassesDir() + "lab/TestClass.class")
-
-//            assertContains("Need to discovery annotation processors in the AP classpath")
         }
 
-        project.build("build") {
+        project.build("build", options = options) {
             assertSuccessful()
             assertTasksUpToDate(":compileKotlin", ":compileJava")
         }
@@ -703,7 +706,7 @@ open class Kapt3IT : Kapt3BaseIT() {
             )
         }
 
-        project.build("build") {
+        project.build("build", options = options) {
             assertSuccessful()
             assertKaptSuccessful()
             assertTasksExecuted(":compileKotlin", ":compileJava")
