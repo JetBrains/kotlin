@@ -50,7 +50,7 @@ class FirTypeResolveTransformer(
     private val typeResolverTransformer: FirSpecificTypeResolverTransformer = FirSpecificTypeResolverTransformer(session)
     private var currentFile: FirFile? = null
 
-    override fun transformFile(file: FirFile, data: Nothing?): FirFile {
+    override fun transformFile(file: FirFile, data: Any?): FirFile {
         checkSessionConsistency(file)
         currentFile = file
         return withScopeCleanup {
@@ -59,7 +59,7 @@ class FirTypeResolveTransformer(
         }
     }
 
-    override fun transformRegularClass(regularClass: FirRegularClass, data: Nothing?): FirStatement {
+    override fun transformRegularClass(regularClass: FirRegularClass, data: Any?): FirStatement {
         withScopeCleanup {
             regularClass.addTypeParametersScope()
             regularClass.typeParameters.forEach {
@@ -71,25 +71,25 @@ class FirTypeResolveTransformer(
         return resolveNestedClassesSupertypes(regularClass, data)
     }
 
-    override fun transformAnonymousObject(anonymousObject: FirAnonymousObject, data: Nothing?): FirStatement {
+    override fun transformAnonymousObject(anonymousObject: FirAnonymousObject, data: Any?): FirStatement {
         return resolveNestedClassesSupertypes(anonymousObject, data)
     }
 
-    override fun transformConstructor(constructor: FirConstructor, data: Nothing?): FirDeclaration {
+    override fun transformConstructor(constructor: FirConstructor, data: Any?): FirDeclaration {
         return withScopeCleanup {
             constructor.addTypeParametersScope()
             transformDeclaration(constructor, data)
         }
     }
 
-    override fun transformTypeAlias(typeAlias: FirTypeAlias, data: Nothing?): FirDeclaration {
+    override fun transformTypeAlias(typeAlias: FirTypeAlias, data: Any?): FirDeclaration {
         return withScopeCleanup {
             typeAlias.addTypeParametersScope()
             transformDeclaration(typeAlias, data)
         }
     }
 
-    override fun transformEnumEntry(enumEntry: FirEnumEntry, data: Nothing?): FirDeclaration {
+    override fun transformEnumEntry(enumEntry: FirEnumEntry, data: Any?): FirDeclaration {
         enumEntry.replaceResolvePhase(FirResolvePhase.TYPES)
         enumEntry.transformReturnTypeRef(this, data)
         enumEntry.transformTypeParameters(this, data)
@@ -97,7 +97,7 @@ class FirTypeResolveTransformer(
         return enumEntry
     }
 
-    override fun transformProperty(property: FirProperty, data: Nothing?): FirDeclaration {
+    override fun transformProperty(property: FirProperty, data: Any?): FirDeclaration {
         return withScopeCleanup {
             property.addTypeParametersScope()
             property.replaceResolvePhase(FirResolvePhase.TYPES)
@@ -119,7 +119,7 @@ class FirTypeResolveTransformer(
         }
     }
 
-    override fun transformField(field: FirField, data: Nothing?): FirDeclaration {
+    override fun transformField(field: FirField, data: Any?): FirDeclaration {
         return withScopeCleanup {
             field.replaceResolvePhase(FirResolvePhase.TYPES)
             field.transformReturnTypeRef(this, data).transformAnnotations(this, data)
@@ -127,7 +127,7 @@ class FirTypeResolveTransformer(
         }
     }
 
-    override fun transformSimpleFunction(simpleFunction: FirSimpleFunction, data: Nothing?): FirDeclaration {
+    override fun transformSimpleFunction(simpleFunction: FirSimpleFunction, data: Any?): FirDeclaration {
         return withScopeCleanup {
             simpleFunction.addTypeParametersScope()
             transformDeclaration(simpleFunction, data).also {
@@ -163,38 +163,38 @@ class FirTypeResolveTransformer(
         }
     }
 
-    override fun transformImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef, data: Nothing?): FirTypeRef {
+    override fun transformImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef, data: Any?): FirTypeRef {
         if (implicitTypeRef is FirImplicitBuiltinTypeRef) return transformTypeRef(implicitTypeRef, data)
         return implicitTypeRef
     }
 
-    override fun transformTypeRef(typeRef: FirTypeRef, data: Nothing?): FirResolvedTypeRef {
+    override fun transformTypeRef(typeRef: FirTypeRef, data: Any?): FirResolvedTypeRef {
         return typeResolverTransformer.withFile(currentFile) { typeRef.transform(typeResolverTransformer, towerScope) }
     }
 
-    override fun transformValueParameter(valueParameter: FirValueParameter, data: Nothing?): FirStatement {
+    override fun transformValueParameter(valueParameter: FirValueParameter, data: Any?): FirStatement {
         valueParameter.transformReturnTypeRef(this, data)
         valueParameter.transformAnnotations(this, data)
         valueParameter.transformVarargTypeToArrayType()
         return valueParameter
     }
 
-    override fun transformBlock(block: FirBlock, data: Nothing?): FirStatement {
+    override fun transformBlock(block: FirBlock, data: Any?): FirStatement {
         return block
     }
 
     override fun transformDelegatedConstructorCall(
         delegatedConstructorCall: FirDelegatedConstructorCall,
-        data: Nothing?
+        data: Any?
     ): FirStatement {
         delegatedConstructorCall.replaceConstructedTypeRef(
-            delegatedConstructorCall.constructedTypeRef.transform<FirTypeRef, Nothing?>(this, data)
+            delegatedConstructorCall.constructedTypeRef.transform<FirTypeRef, Any?>(this, data)
         )
         delegatedConstructorCall.transformCalleeReference(this, data)
         return delegatedConstructorCall
     }
 
-    override fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: Nothing?): FirStatement {
+    override fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: Any?): FirStatement {
         annotationCall.transformAnnotationTypeRef(this, data)
         return annotationCall
     }

@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
-object InvocationKindTransformer : FirTransformer<Nothing?>() {
+object InvocationKindTransformer : FirTransformer<Any?>() {
     private object ArgumentsTransformer : FirTransformer<Pair<Map<FirExpression, EventOccurrencesRange>, EventOccurrencesRange?>>() {
         override fun <E : FirElement> transformElement(element: E, data: Pair<Map<FirExpression, EventOccurrencesRange>, EventOccurrencesRange?>): E {
             return element
@@ -52,11 +52,11 @@ object InvocationKindTransformer : FirTransformer<Nothing?>() {
         }
     }
 
-    override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
+    override fun <E : FirElement> transformElement(element: E, data: Any?): E {
         return element
     }
 
-    override fun transformFunctionCall(functionCall: FirFunctionCall, data: Nothing?): FirStatement {
+    override fun transformFunctionCall(functionCall: FirFunctionCall, data: Any?): FirStatement {
         val calleeReference = functionCall.calleeReference as? FirNamedReferenceWithCandidate ?: return functionCall
         val argumentMapping = calleeReference.candidate.argumentMapping ?: return functionCall
         val function = calleeReference.candidateSymbol.fir as? FirSimpleFunction ?: return functionCall

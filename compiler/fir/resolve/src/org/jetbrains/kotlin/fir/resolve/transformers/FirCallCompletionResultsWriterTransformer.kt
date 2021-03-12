@@ -355,14 +355,14 @@ class FirCallCompletionResultsWriterTransformer(
         }
     }
 
-    private inner class TypeUpdaterForDelegateArguments : FirTransformer<Nothing?>() {
-        override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
+    private inner class TypeUpdaterForDelegateArguments : FirTransformer<Any?>() {
+        override fun <E : FirElement> transformElement(element: E, data: Any?): E {
             return element
         }
 
         override fun transformQualifiedAccessExpression(
             qualifiedAccessExpression: FirQualifiedAccessExpression,
-            data: Nothing?
+            data: Any?
         ): FirStatement {
             val originalType = qualifiedAccessExpression.typeRef.coneType
             val substitutedReceiverType = finalSubstitutor.substituteOrNull(originalType) ?: return qualifiedAccessExpression
@@ -563,15 +563,15 @@ class FirCallCompletionResultsWriterTransformer(
     private fun transformImplicitTypeRefInAnonymousFunction(
         anonymousFunction: FirAnonymousFunction
     ): FirStatement {
-        val implicitTypeTransformer = object : FirDefaultTransformer<Nothing?>() {
-            override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
+        val implicitTypeTransformer = object : FirDefaultTransformer<Any?>() {
+            override fun <E : FirElement> transformElement(element: E, data: Any?): E {
                 @Suppress("UNCHECKED_CAST")
                 return (element.transformChildren(this, data) as E)
             }
 
             override fun transformImplicitTypeRef(
                 implicitTypeRef: FirImplicitTypeRef,
-                data: Nothing?
+                data: Any?
             ): FirTypeRef =
                 buildErrorTypeRef {
                     source = implicitTypeRef.source
@@ -745,19 +745,19 @@ private fun FirExpression.unwrapArgument(): FirExpression = when (this) {
     else -> this
 }
 
-class FirDeclarationCompletionResultsWriter(private val finalSubstitutor: ConeSubstitutor) : FirDefaultTransformer<Nothing?>() {
-    override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
+class FirDeclarationCompletionResultsWriter(private val finalSubstitutor: ConeSubstitutor) : FirDefaultTransformer<Any?>() {
+    override fun <E : FirElement> transformElement(element: E, data: Any?): E {
         return element
     }
 
-    override fun transformSimpleFunction(simpleFunction: FirSimpleFunction, data: Nothing?): FirDeclaration {
+    override fun transformSimpleFunction(simpleFunction: FirSimpleFunction, data: Any?): FirDeclaration {
         simpleFunction.transformReturnTypeRef(this, data)
         simpleFunction.transformValueParameters(this, data)
         simpleFunction.transformReceiverTypeRef(this, data)
         return simpleFunction
     }
 
-    override fun transformProperty(property: FirProperty, data: Nothing?): FirDeclaration {
+    override fun transformProperty(property: FirProperty, data: Any?): FirDeclaration {
         property.transformGetter(this, data)
         property.transformSetter(this, data)
         property.transformReturnTypeRef(this, data)
@@ -767,7 +767,7 @@ class FirDeclarationCompletionResultsWriter(private val finalSubstitutor: ConeSu
 
     override fun transformPropertyAccessor(
         propertyAccessor: FirPropertyAccessor,
-        data: Nothing?
+        data: Any?
     ): FirDeclaration {
         propertyAccessor.transformReturnTypeRef(this, data)
         propertyAccessor.transformValueParameters(this, data)
@@ -776,13 +776,13 @@ class FirDeclarationCompletionResultsWriter(private val finalSubstitutor: ConeSu
 
     override fun transformValueParameter(
         valueParameter: FirValueParameter,
-        data: Nothing?
+        data: Any?
     ): FirStatement {
         valueParameter.transformReturnTypeRef(this, data)
         return valueParameter
     }
 
-    override fun transformTypeRef(typeRef: FirTypeRef, data: Nothing?): FirTypeRef {
+    override fun transformTypeRef(typeRef: FirTypeRef, data: Any?): FirTypeRef {
         return finalSubstitutor.substituteOrNull(typeRef.coneType)?.let {
             typeRef.resolvedTypeFromPrototype(it)
         } ?: typeRef

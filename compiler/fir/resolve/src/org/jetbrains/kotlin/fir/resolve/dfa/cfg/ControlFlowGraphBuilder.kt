@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.isNothing
-import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
+import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import kotlin.random.Random
 
@@ -1213,20 +1213,20 @@ class ControlFlowGraphBuilder {
     fun dropSubgraphFromCall(call: FirFunctionCall) {
         val graphs = mutableListOf<ControlFlowGraph>()
 
-        call.acceptChildren(object : FirDefaultVisitorVoid() {
-            override fun visitElement(element: FirElement) {
-                element.acceptChildren(this)
+        call.acceptChildren(object : FirDefaultVisitor<Unit, Any?>() {
+            override fun visitElement(element: FirElement, data: Any?) {
+                element.acceptChildren(this, null)
             }
 
-            override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction) {
-                anonymousFunction.controlFlowGraphReference?.accept(this)
+            override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: Any?) {
+                anonymousFunction.controlFlowGraphReference?.accept(this, null)
             }
 
-            override fun visitAnonymousObject(anonymousObject: FirAnonymousObject) {
-                anonymousObject.controlFlowGraphReference?.accept(this)
+            override fun visitAnonymousObject(anonymousObject: FirAnonymousObject, data: Any?) {
+                anonymousObject.controlFlowGraphReference?.accept(this, null)
             }
 
-            override fun visitControlFlowGraphReference(controlFlowGraphReference: FirControlFlowGraphReference) {
+            override fun visitControlFlowGraphReference(controlFlowGraphReference: FirControlFlowGraphReference, data: Any?) {
                 val graph = controlFlowGraphReference.controlFlowGraph ?: return
                 if (graph.owner == null) return
                 graphs += graph

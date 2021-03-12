@@ -10,12 +10,12 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.Fir2IrSignatureComposer
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
-import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.ir.util.IdSignature
 
 @NoMutableState
 class FirBasedSignatureComposer(private val mangler: FirMangler) : Fir2IrSignatureComposer {
-    inner class SignatureBuilder : FirVisitorVoid() {
+    inner class SignatureBuilder : FirVisitor<Unit, Any?>() {
         var hashId: Long? = null
         var mask = 0L
 
@@ -23,35 +23,35 @@ class FirBasedSignatureComposer(private val mangler: FirMangler) : Fir2IrSignatu
             mask = mask or IdSignature.Flags.IS_EXPECT.encode(f)
         }
 
-        override fun visitElement(element: FirElement) {
+        override fun visitElement(element: FirElement, data: Any?) {
             TODO("Should not be here")
         }
 
-        override fun visitRegularClass(regularClass: FirRegularClass) {
+        override fun visitRegularClass(regularClass: FirRegularClass, data: Any?) {
             setExpected(regularClass.isExpect)
             //platformSpecificClass(descriptor)
         }
 
-        override fun visitTypeAlias(typeAlias: FirTypeAlias) {
+        override fun visitTypeAlias(typeAlias: FirTypeAlias, data: Any?) {
             setExpected(typeAlias.isExpect)
         }
 
-        override fun visitConstructor(constructor: FirConstructor) {
+        override fun visitConstructor(constructor: FirConstructor, data: Any?) {
             hashId = mangler.run { constructor.signatureMangle }
             setExpected(constructor.isExpect)
         }
 
-        override fun visitSimpleFunction(simpleFunction: FirSimpleFunction) {
+        override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: Any?) {
             hashId = mangler.run { simpleFunction.signatureMangle }
             setExpected(simpleFunction.isExpect)
         }
 
-        override fun visitProperty(property: FirProperty) {
+        override fun visitProperty(property: FirProperty, data: Any?) {
             hashId = mangler.run { property.signatureMangle }
             setExpected(property.isExpect)
         }
 
-        override fun visitEnumEntry(enumEntry: FirEnumEntry) {
+        override fun visitEnumEntry(enumEntry: FirEnumEntry, data: Any?) {
             setExpected(enumEntry.isExpect)
         }
     }
@@ -65,7 +65,7 @@ class FirBasedSignatureComposer(private val mangler: FirMangler) : Fir2IrSignatu
         }
         val builder = SignatureBuilder()
         try {
-            declaration.accept(builder)
+            declaration.accept(builder, null)
         } catch (t: Throwable) {
             throw IllegalStateException("Error while composing signature for ${declaration.render()}", t)
         }

@@ -31,16 +31,16 @@ class FirPluginAnnotationsResolveProcessor(session: FirSession, scopeSession: Sc
 class FirPluginAnnotationsResolveTransformer(
     override val session: FirSession,
     scopeSession: ScopeSession
-) : FirAbstractPhaseTransformer<Nothing?>(FirResolvePhase.ANNOTATIONS_FOR_PLUGINS) {
+) : FirAbstractPhaseTransformer<Any?>(FirResolvePhase.ANNOTATIONS_FOR_PLUGINS) {
     private val annotationTransformer = FirAnnotationResolveTransformer(session, scopeSession)
     private val importTransformer = FirPartialImportResolveTransformer(session)
 
     val extensionService = session.extensionService
-    override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
+    override fun <E : FirElement> transformElement(element: E, data: Any?): E {
         throw IllegalStateException("Should not be here")
     }
 
-    override fun transformFile(file: FirFile, data: Nothing?): FirFile {
+    override fun transformFile(file: FirFile, data: Any?): FirFile {
         checkSessionConsistency(file)
         if (!extensionService.hasPredicateBasedExtensions) return file
         val registeredPluginAnnotations = file.session.registeredPluginAnnotations

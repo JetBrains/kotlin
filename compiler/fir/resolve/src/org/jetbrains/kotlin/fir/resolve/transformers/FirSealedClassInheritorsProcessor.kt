@@ -73,16 +73,16 @@ class FirSealedClassInheritorsProcessor(
         }
     }
 
-    class InheritorsTransformer(private val inheritorsMap: MutableMap<FirRegularClass, MutableList<ClassId>>) : FirTransformer<Nothing?>() {
-        override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
+    class InheritorsTransformer(private val inheritorsMap: MutableMap<FirRegularClass, MutableList<ClassId>>) : FirTransformer<Any?>() {
+        override fun <E : FirElement> transformElement(element: E, data: Any?): E {
             return element
         }
 
-        override fun transformFile(file: FirFile, data: Nothing?): FirDeclaration {
+        override fun transformFile(file: FirFile, data: Any?): FirDeclaration {
             return (file.transformChildren(this, data) as FirFile)
         }
 
-        override fun transformRegularClass(regularClass: FirRegularClass, data: Nothing?): FirStatement {
+        override fun transformRegularClass(regularClass: FirRegularClass, data: Any?): FirStatement {
             if (regularClass.modality == Modality.SEALED) {
                 val inheritors = inheritorsMap.remove(regularClass)
                 if (inheritors != null) {

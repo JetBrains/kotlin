@@ -842,12 +842,12 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         }
     }
 
-    private object ImplicitToErrorTypeTransformer : FirTransformer<Nothing?>() {
-        override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
+    private object ImplicitToErrorTypeTransformer : FirTransformer<Any?>() {
+        override fun <E : FirElement> transformElement(element: E, data: Any?): E {
             return element
         }
 
-        override fun transformValueParameter(valueParameter: FirValueParameter, data: Nothing?): FirStatement {
+        override fun transformValueParameter(valueParameter: FirValueParameter, data: Any?): FirStatement {
             if (valueParameter.returnTypeRef is FirImplicitTypeRef) {
                 valueParameter.transformReturnTypeRef(
                     StoreType,

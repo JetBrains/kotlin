@@ -26,8 +26,8 @@ class FirImportResolveProcessor(session: FirSession, scopeSession: ScopeSession)
 open class FirImportResolveTransformer protected constructor(
     final override val session: FirSession,
     phase: FirResolvePhase
-) : FirAbstractTreeTransformer<Nothing?>(phase) {
-    override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
+) : FirAbstractTreeTransformer<Any?>(phase) {
+    override fun <E : FirElement> transformElement(element: E, data: Any?): E {
         return element
     }
 
@@ -37,7 +37,7 @@ open class FirImportResolveTransformer protected constructor(
 
     private var currentFile: FirFile? = null
 
-    override fun transformFile(file: FirFile, data: Nothing?): FirFile {
+    override fun transformFile(file: FirFile, data: Any?): FirFile {
         checkSessionConsistency(file)
         file.replaceResolvePhase(transformerPhase)
         return file.also {
@@ -51,7 +51,7 @@ open class FirImportResolveTransformer protected constructor(
         }
     }
 
-    override fun transformImport(import: FirImport, data: Nothing?): FirImport {
+    override fun transformImport(import: FirImport, data: Any?): FirImport {
         val fqName = import.importedFqName?.takeUnless { it.isRoot } ?: return import
 
         if (!fqName.isAcceptable) return import

@@ -22,20 +22,20 @@ class FirAnnotationArgumentsResolveProcessor(
     session: FirSession,
     scopeSession: ScopeSession
 ) : FirTransformerBasedResolveProcessor(session, scopeSession) {
-    override val transformer: FirTransformer<Nothing?> = FirAnnotationArgumentsResolveTransformerAdapter(session, scopeSession)
+    override val transformer: FirTransformer<Any?> = FirAnnotationArgumentsResolveTransformerAdapter(session, scopeSession)
 }
 
 @AdapterForResolveProcessor
-class FirAnnotationArgumentsResolveTransformerAdapter(session: FirSession, scopeSession: ScopeSession) : FirTransformer<Nothing?>() {
+class FirAnnotationArgumentsResolveTransformerAdapter(session: FirSession, scopeSession: ScopeSession) : FirTransformer<Any?>() {
     private val transformer = FirAnnotationArgumentsResolveTransformer(session, scopeSession)
     private val hasAnnotations = session.registeredPluginAnnotations.annotations.isNotEmpty()
     private val predicateBasedProvider = session.predicateBasedProvider
 
-    override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
+    override fun <E : FirElement> transformElement(element: E, data: Any?): E {
         return element
     }
 
-    override fun transformFile(file: FirFile, data: Nothing?): FirDeclaration {
+    override fun transformFile(file: FirFile, data: Any?): FirDeclaration {
         if (!hasAnnotations || !predicateBasedProvider.fileHasPluginAnnotations(file)) return file
         return file.transform(transformer, ResolutionMode.ContextIndependent)
     }

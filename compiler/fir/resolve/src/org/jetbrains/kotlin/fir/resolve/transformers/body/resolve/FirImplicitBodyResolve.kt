@@ -33,7 +33,7 @@ class FirImplicitTypeBodyResolveProcessor(
 }
 
 @AdapterForResolveProcessor
-class FirImplicitTypeBodyResolveTransformerAdapter(session: FirSession, scopeSession: ScopeSession) : FirTransformer<Nothing?>() {
+class FirImplicitTypeBodyResolveTransformerAdapter(session: FirSession, scopeSession: ScopeSession) : FirTransformer<Any?>() {
     private val implicitBodyResolveComputationSession = ImplicitBodyResolveComputationSession()
     private val returnTypeCalculator = ReturnTypeCalculatorWithJump(session, scopeSession, implicitBodyResolveComputationSession)
 
@@ -45,11 +45,11 @@ class FirImplicitTypeBodyResolveTransformerAdapter(session: FirSession, scopeSes
         returnTypeCalculator
     )
 
-    override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
+    override fun <E : FirElement> transformElement(element: E, data: Any?): E {
         return element
     }
 
-    override fun transformFile(file: FirFile, data: Nothing?): FirFile {
+    override fun transformFile(file: FirFile, data: Any?): FirFile {
         return file.transform(transformer, ResolutionMode.ContextIndependent)
     }
 }

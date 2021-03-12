@@ -65,7 +65,7 @@ abstract class AbstractDiagnosticCollector(
     protected open fun beforeRunningAllComponentsOnElement(element: FirElement) {}
     protected open fun beforeRunningSingleComponentOnElement(element: FirElement) {}
 
-    private inner class Visitor : FirDefaultVisitor<Unit, Nothing?>() {
+    private inner class Visitor : FirDefaultVisitor<Unit, Any?>() {
         private fun <T : FirElement> T.runComponents() {
             if (currentAction.checkInCurrentDeclaration) {
                 beforeRunningAllComponentsOnElement(this)
@@ -76,7 +76,7 @@ abstract class AbstractDiagnosticCollector(
             }
         }
 
-        override fun visitElement(element: FirElement, data: Nothing?) {
+        override fun visitElement(element: FirElement, data: Any?) {
             if (element is FirAnnotationContainer) {
                 visitAnnotationContainer(element, data)
                 return
@@ -85,7 +85,7 @@ abstract class AbstractDiagnosticCollector(
             element.acceptChildren(this, null)
         }
 
-        override fun visitAnnotationContainer(annotationContainer: FirAnnotationContainer, data: Nothing?) {
+        override fun visitAnnotationContainer(annotationContainer: FirAnnotationContainer, data: Any?) {
             withSuppressedDiagnostics(annotationContainer) {
                 annotationContainer.runComponents()
                 annotationContainer.acceptChildren(this, null)
@@ -99,11 +99,11 @@ abstract class AbstractDiagnosticCollector(
             }
         }
 
-        override fun visitBreakExpression(breakExpression: FirBreakExpression, data: Nothing?) {
+        override fun visitBreakExpression(breakExpression: FirBreakExpression, data: Any?) {
             visitJump(breakExpression)
         }
 
-        override fun visitContinueExpression(continueExpression: FirContinueExpression, data: Nothing?) {
+        override fun visitContinueExpression(continueExpression: FirContinueExpression, data: Any?) {
             visitJump(continueExpression)
         }
 
@@ -114,31 +114,31 @@ abstract class AbstractDiagnosticCollector(
             visitWithDeclarationAndReceiver(klass, (klass as? FirRegularClass)?.name, typeRef)
         }
 
-        override fun visitRegularClass(regularClass: FirRegularClass, data: Nothing?) {
+        override fun visitRegularClass(regularClass: FirRegularClass, data: Any?) {
             withSuppressedDiagnostics(regularClass) {
                 visitClassAndChildren(regularClass, regularClass.defaultType())
             }
         }
 
-        override fun visitAnonymousObject(anonymousObject: FirAnonymousObject, data: Nothing?) {
+        override fun visitAnonymousObject(anonymousObject: FirAnonymousObject, data: Any?) {
             withSuppressedDiagnostics(anonymousObject) {
                 visitClassAndChildren(anonymousObject, anonymousObject.defaultType())
             }
         }
 
-        override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: Nothing?) {
+        override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: Any?) {
             withSuppressedDiagnostics(simpleFunction) {
                 visitWithDeclarationAndReceiver(simpleFunction, simpleFunction.name, simpleFunction.receiverTypeRef)
             }
         }
 
-        override fun visitConstructor(constructor: FirConstructor, data: Nothing?) {
+        override fun visitConstructor(constructor: FirConstructor, data: Any?) {
             withSuppressedDiagnostics(constructor) {
                 visitWithDeclaration(constructor)
             }
         }
 
-        override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: Nothing?) {
+        override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: Any?) {
             withSuppressedDiagnostics(anonymousFunction) {
                 val labelName = anonymousFunction.label?.name?.let { Name.identifier(it) }
                 visitWithDeclarationAndReceiver(
@@ -149,13 +149,13 @@ abstract class AbstractDiagnosticCollector(
             }
         }
 
-        override fun visitProperty(property: FirProperty, data: Nothing?) {
+        override fun visitProperty(property: FirProperty, data: Any?) {
             withSuppressedDiagnostics(property) {
                 visitWithDeclaration(property)
             }
         }
 
-        override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: Nothing?) {
+        override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: Any?) {
             if (propertyAccessor !is FirDefaultPropertyAccessor) {
                 val property = context.containingDeclarations.last() as FirProperty
                 withSuppressedDiagnostics(propertyAccessor) {
@@ -164,35 +164,35 @@ abstract class AbstractDiagnosticCollector(
             }
         }
 
-        override fun visitValueParameter(valueParameter: FirValueParameter, data: Nothing?) {
+        override fun visitValueParameter(valueParameter: FirValueParameter, data: Any?) {
             withSuppressedDiagnostics(valueParameter) {
                 visitWithDeclaration(valueParameter)
             }
         }
 
-        override fun visitEnumEntry(enumEntry: FirEnumEntry, data: Nothing?) {
+        override fun visitEnumEntry(enumEntry: FirEnumEntry, data: Any?) {
             withSuppressedDiagnostics(enumEntry) {
                 visitWithDeclaration(enumEntry)
             }
         }
 
-        override fun visitFile(file: FirFile, data: Nothing?) {
+        override fun visitFile(file: FirFile, data: Any?) {
             withSuppressedDiagnostics(file) {
                 visitWithDeclaration(file)
             }
         }
 
-        override fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: Nothing?) {
+        override fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: Any?) {
             visitWithDeclaration(anonymousInitializer)
         }
 
-        override fun visitBlock(block: FirBlock, data: Nothing?) {
+        override fun visitBlock(block: FirBlock, data: Any?) {
             withSuppressedDiagnostics(block) {
                 visitExpression(block, data)
             }
         }
 
-        override fun visitTypeRef(typeRef: FirTypeRef, data: Nothing?) {
+        override fun visitTypeRef(typeRef: FirTypeRef, data: Any?) {
             if (typeRef.source != null && typeRef.source?.kind !is FirFakeSourceElementKind) {
                 withSuppressedDiagnostics(typeRef) {
                     typeRef.runComponents()
@@ -201,20 +201,20 @@ abstract class AbstractDiagnosticCollector(
             }
         }
 
-        override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: Nothing?) {
+        override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: Any?) {
             super.visitResolvedTypeRef(resolvedTypeRef, data)
             resolvedTypeRef.delegatedTypeRef?.accept(this, data)
         }
 
-        override fun visitFunctionCall(functionCall: FirFunctionCall, data: Nothing?) {
+        override fun visitFunctionCall(functionCall: FirFunctionCall, data: Any?) {
             visitWithQualifiedAccess(functionCall)
         }
 
-        override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression, data: Nothing?) {
+        override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression, data: Any?) {
             visitWithQualifiedAccess(qualifiedAccessExpression)
         }
 
-        override fun visitGetClassCall(getClassCall: FirGetClassCall, data: Nothing?) {
+        override fun visitGetClassCall(getClassCall: FirGetClassCall, data: Any?) {
             visitWithGetClassCall(getClassCall)
         }
 

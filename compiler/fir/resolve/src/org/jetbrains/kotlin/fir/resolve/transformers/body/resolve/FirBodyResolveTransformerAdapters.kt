@@ -21,7 +21,7 @@ class FirBodyResolveProcessor(session: FirSession, scopeSession: ScopeSession) :
 }
 
 @AdapterForResolveProcessor
-class FirBodyResolveTransformerAdapter(session: FirSession, scopeSession: ScopeSession) : FirTransformer<Nothing?>() {
+class FirBodyResolveTransformerAdapter(session: FirSession, scopeSession: ScopeSession) : FirTransformer<Any?>() {
     private val transformer = FirBodyResolveTransformer(
         session,
         phase = FirResolvePhase.BODY_RESOLVE,
@@ -29,11 +29,11 @@ class FirBodyResolveTransformerAdapter(session: FirSession, scopeSession: ScopeS
         scopeSession = scopeSession
     )
 
-    override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
+    override fun <E : FirElement> transformElement(element: E, data: Any?): E {
         return element
     }
 
-    override fun transformFile(file: FirFile, data: Nothing?): FirFile {
+    override fun transformFile(file: FirFile, data: Any?): FirFile {
         return file.transform(transformer, ResolutionMode.ContextIndependent)
     }
 }

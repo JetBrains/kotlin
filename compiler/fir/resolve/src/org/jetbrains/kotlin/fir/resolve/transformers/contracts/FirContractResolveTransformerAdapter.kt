@@ -25,13 +25,13 @@ class FirContractResolveProcessor(session: FirSession, scopeSession: ScopeSessio
 }
 
 @AdapterForResolveProcessor
-class FirContractResolveTransformerAdapter(session: FirSession, scopeSession: ScopeSession) : FirTransformer<Nothing?>() {
+class FirContractResolveTransformerAdapter(session: FirSession, scopeSession: ScopeSession) : FirTransformer<Any?>() {
     private val transformer = FirContractResolveTransformer(session, scopeSession)
-    override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
+    override fun <E : FirElement> transformElement(element: E, data: Any?): E {
         return element
     }
 
-    override fun transformFile(file: FirFile, data: Nothing?): FirDeclaration {
+    override fun transformFile(file: FirFile, data: Any?): FirDeclaration {
         return file.transform(transformer, ResolutionMode.ContextIndependent)
     }
 }

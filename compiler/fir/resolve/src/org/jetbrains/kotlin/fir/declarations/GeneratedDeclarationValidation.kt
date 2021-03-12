@@ -14,10 +14,10 @@ import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
+import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 
 fun FirElement.validate() {
-    accept(FirGeneratedElementsValidator)
+    accept(FirGeneratedElementsValidator, null)
 }
 
 /*
@@ -25,44 +25,44 @@ fun FirElement.validate() {
  *  - add proper error messages to all `require`
  *  - add validation of declaration origin and resolve phase for all declarations
  */
-object FirGeneratedElementsValidator : FirDefaultVisitorVoid() {
-    override fun visitElement(element: FirElement) {
-        element.acceptChildren(this)
+object FirGeneratedElementsValidator : FirDefaultVisitor<Unit, Any?>() {
+    override fun visitElement(element: FirElement, data: Any?) {
+        element.acceptChildren(this, null)
     }
 
-    override fun visitAnnotationCall(annotationCall: FirAnnotationCall) {
+    override fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: Any?) {
         require(annotationCall.resolveStatus == FirAnnotationResolveStatus.Resolved)
-        annotationCall.acceptChildren(this)
+        annotationCall.acceptChildren(this, null)
     }
 
-    override fun visitRegularClass(regularClass: FirRegularClass) {
-        regularClass.acceptChildren(this)
+    override fun visitRegularClass(regularClass: FirRegularClass, data: Any?) {
+        regularClass.acceptChildren(this, null)
     }
 
-    override fun visitArgumentList(argumentList: FirArgumentList) {
+    override fun visitArgumentList(argumentList: FirArgumentList, data: Any?) {
         require(argumentList is FirResolvedArgumentList)
-        argumentList.acceptChildren(this)
+        argumentList.acceptChildren(this, null)
     }
 
-    override fun visitNamedReference(namedReference: FirNamedReference) {
+    override fun visitNamedReference(namedReference: FirNamedReference, data: Any?) {
         require(namedReference is FirResolvedNamedReference)
-        namedReference.acceptChildren(this)
+        namedReference.acceptChildren(this, null)
     }
 
-    override fun visitTypeRef(typeRef: FirTypeRef) {
+    override fun visitTypeRef(typeRef: FirTypeRef, data: Any?) {
         require(typeRef is FirResolvedTypeRef)
-        typeRef.acceptChildren(this)
+        typeRef.acceptChildren(this, null)
     }
 
-    override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef) {
-        resolvedTypeRef.annotations.forEach { it.accept(this) }
+    override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: Any?) {
+        resolvedTypeRef.annotations.forEach { it.accept(this, null) }
     }
 
-    override fun visitDeclarationStatus(declarationStatus: FirDeclarationStatus) {
+    override fun visitDeclarationStatus(declarationStatus: FirDeclarationStatus, data: Any?) {
         require(declarationStatus is FirResolvedDeclarationStatus)
     }
 
-    override fun visitTypeParameterRef(typeParameterRef: FirTypeParameterRef) {
-        typeParameterRef.symbol.fir.accept(this)
+    override fun visitTypeParameterRef(typeParameterRef: FirTypeParameterRef, data: Any?) {
+        typeParameterRef.symbol.fir.accept(this, null)
     }
 }

@@ -546,12 +546,12 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         }.transformOtherChildren(transformer, ResolutionMode.ContextIndependent)
 
         val conversionTypeRef = resolved.conversionTypeRef.withTypeArgumentsForBareType(resolved.argument)
-        resolved.transformChildren(object : FirDefaultTransformer<Nothing?>() {
-            override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
+        resolved.transformChildren(object : FirDefaultTransformer<Any?>() {
+            override fun <E : FirElement> transformElement(element: E, data: Any?): E {
                 return element
             }
 
-            override fun transformTypeRef(typeRef: FirTypeRef, data: Nothing?): FirTypeRef {
+            override fun transformTypeRef(typeRef: FirTypeRef, data: Any?): FirTypeRef {
                 return if (typeRef === resolved.conversionTypeRef) {
                     conversionTypeRef
                 } else {
