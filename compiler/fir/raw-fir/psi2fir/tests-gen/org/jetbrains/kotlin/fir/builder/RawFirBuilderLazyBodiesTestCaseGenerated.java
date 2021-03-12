@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder")
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
-    public class RawFirBuilderLazyBodiesTestCaseGenerated extends AbstractRawFirBuilderLazyBodiesTestCase {
+public class RawFirBuilderLazyBodiesTestCaseGenerated extends AbstractRawFirBuilderLazyBodiesTestCase {
     private void runTest(String testDataFilePath) throws Exception {
         KotlinTestUtils.runTest(this::doRawFirTest, this, testDataFilePath);
     }
