@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.KtVariableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtArrayAccessExpression
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
@@ -985,6 +986,14 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
     abstract class ErrorInContractDescription : KtFirDiagnostic<KtElement>() {
         override val diagnosticClass get() = ErrorInContractDescription::class
         abstract val reason: String
+    }
+
+    abstract class NoGetMethod : KtFirDiagnostic<KtArrayAccessExpression>() {
+        override val diagnosticClass get() = NoGetMethod::class
+    }
+
+    abstract class NoSetMethod : KtFirDiagnostic<KtArrayAccessExpression>() {
+        override val diagnosticClass get() = NoSetMethod::class
     }
 
     abstract class RedundantVisibilityModifier : KtFirDiagnostic<KtModifierListOwner>() {

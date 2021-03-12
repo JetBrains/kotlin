@@ -825,10 +825,11 @@ class ExpressionsConverter(
         }
         val getArgument = context.arraySetArgument.remove(arrayAccess)
         return buildFunctionCall {
-            source = arrayAccess.toFirSourceElement()
+            val isGet = getArgument == null
+            source = (if (isGet) arrayAccess else arrayAccess.getParent()!!).toFirSourceElement()
             calleeReference = buildSimpleNamedReference {
-                source = this@buildFunctionCall.source
-                name = if (getArgument == null) OperatorNameConventions.GET else OperatorNameConventions.SET
+                source = arrayAccess.toFirSourceElement().fakeElement(FirFakeSourceElementKind.ArrayAccessNameReference)
+                name = if (isGet) OperatorNameConventions.GET else OperatorNameConventions.SET
             }
             explicitReceiver = firExpression
             argumentList = buildArgumentList {

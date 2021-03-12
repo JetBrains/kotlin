@@ -28,8 +28,6 @@ import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.references.builder.*
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
-import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.LocalCallableIdConstructor
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.*
@@ -38,7 +36,9 @@ import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
 import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
 import org.jetbrains.kotlin.fir.types.impl.FirTypePlaceholderProjection
 import org.jetbrains.kotlin.lexer.KtTokens.*
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.LocalCallableIdConstructor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
@@ -1931,23 +1931,14 @@ open class RawFirBuilder(
 
         override fun visitArrayAccessExpression(expression: KtArrayAccessExpression, data: Unit): FirElement {
             val arrayExpression = expression.arrayExpression
+            val getArgument = context.arraySetArgument.remove(expression)
             return buildFunctionCall {
-                val source: FirPsiSourceElement<*>
-                val getArgument = context.arraySetArgument.remove(expression)
-                if (getArgument != null) {
-                    calleeReference = buildSimpleNamedReference {
-                        source = expression.parent.toFirSourceElement()
-                        this.source = source.fakeElement(FirFakeSourceElementKind.ArrayAccessNameReference)
-                        name = OperatorNameConventions.SET
-                    }
-                } else {
-                    source = expression.toFirSourceElement()
-                    calleeReference = buildSimpleNamedReference {
-                        this.source = source.fakeElement(FirFakeSourceElementKind.ArrayAccessNameReference)
-                        name = OperatorNameConventions.GET
-                    }
+                val isGet = getArgument == null
+                source = (if (isGet) expression else expression.parent).toFirSourceElement()
+                calleeReference = buildSimpleNamedReference {
+                    source = expression.toFirSourceElement().fakeElement(FirFakeSourceElementKind.ArrayAccessNameReference)
+                    name = if (isGet) OperatorNameConventions.GET else OperatorNameConventions.SET
                 }
-                this.source = source
                 explicitReceiver = arrayExpression.toFirExpression("No array expression")
                 argumentList = buildArgumentList {
                     for (indexExpression in expression.indexExpressions) {

@@ -39,6 +39,10 @@ class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollect
             ?: errorNamedReference.source ?: return
         // Don't report duplicated unresolved reference on annotation entry (already reported on its type)
         if (source.elementType == KtNodeTypes.ANNOTATION_ENTRY && errorNamedReference.diagnostic is ConeUnresolvedNameError) return
+        // Already reported in FirConventionFunctionCallChecker
+        if (errorNamedReference.source?.kind == FirFakeSourceElementKind.ArrayAccessNameReference &&
+            errorNamedReference.diagnostic is ConeUnresolvedNameError
+        ) return
         reportFirDiagnostic(errorNamedReference.diagnostic, source, reporter, data)
     }
 

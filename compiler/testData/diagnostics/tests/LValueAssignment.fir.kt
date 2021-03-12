@@ -128,7 +128,7 @@ class Test() {
 
         (f@ a)[3] = 4
 
-        <!UNRESOLVED_REFERENCE!>this[54] = 34<!>
+        this<!NO_SET_METHOD!>[54]<!> = 34
     }
 }
 

@@ -415,6 +415,17 @@ object LightTreePositioningStrategies {
             return markElement(tree.ifKeyword(node) ?: node, startOffset, endOffset, tree, node)
         }
     }
+
+    val ARRAY_ACCESS = object : LightTreePositioningStrategy() {
+        override fun mark(
+            node: LighterASTNode,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>
+        ): List<TextRange> {
+            return markElement(tree.findChildByType(node, KtNodeTypes.INDICES)!!, startOffset, endOffset, tree, node)
+        }
+    }
 }
 
 fun FirSourceElement.hasValOrVar(): Boolean =

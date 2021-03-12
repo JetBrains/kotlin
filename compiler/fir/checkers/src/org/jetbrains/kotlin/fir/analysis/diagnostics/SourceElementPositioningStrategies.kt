@@ -143,4 +143,8 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.IF_EXPRESSION
     )
 
+    val ARRAY_ACCESS = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.ARRAY_ACCESS,
+        PositioningStrategies.ARRAY_ACCESS
+    )
 }

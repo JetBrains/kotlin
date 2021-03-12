@@ -32,5 +32,5 @@ fun test_3(a: A<D>) {
 }
 
 fun test_4(b: B) {
-    <!UNRESOLVED_REFERENCE!><!UNRESOLVED_REFERENCE!>b[0]<!> += B()<!> // unresolved
+    <!UNRESOLVED_REFERENCE!>b<!NO_GET_METHOD!>[0]<!> += B()<!> // unresolved
 }
