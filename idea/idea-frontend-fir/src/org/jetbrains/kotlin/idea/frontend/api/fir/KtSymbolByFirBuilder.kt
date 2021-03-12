@@ -54,6 +54,7 @@ internal class KtSymbolByFirBuilder private constructor(
 
     val classifierBuilder = ClassifierSymbolBuilder()
     val functionLikeBuilder = FunctionLikeSymbolBuilder()
+    val variableLikeBuilder = VariableLikeSymbolBuilder()
 
     constructor(
         resolveState: FirModuleResolveState,
@@ -99,29 +100,13 @@ internal class KtSymbolByFirBuilder private constructor(
 
     fun buildCallableSymbol(fir: FirCallableDeclaration<*>): KtCallableSymbol {
         return when (fir) {
-            is FirValueParameter -> buildParameterSymbol(fir)
             is FirPropertyAccessor -> buildPropertyAccessorSymbol(fir)
             is FirFunction<*> -> functionLikeSymbolBuilder.buildFunctionLikeSymbol(fir)
-            is FirVariable<*> -> buildVariableLikeSymbol(fir)
+            is FirVariable<*> -> variableLikeSymbolBuilder.buildVariableLikeSymbol(fir)
             else -> error("Unexpected ${fir::class.simpleName}")
         }
     }
 
-    // TODO it can be a constructor parameter, which may be split into parameter & property
-    // we should handle them both
-    fun buildParameterSymbol(fir: FirValueParameter) =
-        symbolsCache.cache(fir) { KtFirFunctionValueParameterSymbol(fir, resolveState, token, this) }
-
-
-
-    fun buildFirConstructorParameter(fir: FirValueParameter) =
-        symbolsCache.cache(fir) { KtFirConstructorValueParameterSymbol(fir, resolveState, token, this) }
-
-
-    // todo handle cases
-    fun buildFieldSymbol(fir: FirField): KtFirJavaFieldSymbol {
-        return symbolsCache.cache(fir) { KtFirJavaFieldSymbol(fir, resolveState, token, this) }
-    }
 
     fun buildPropertyAccessorSymbol(fir: FirPropertyAccessor): KtPropertyAccessorSymbol {
         return when {
@@ -142,25 +127,6 @@ internal class KtSymbolByFirBuilder private constructor(
 
     fun buildFileSymbol(fir: FirFile) = filesCache.cache(fir) { KtFirFileSymbol(fir, resolveState, token) }
 
-    fun buildVariableLikeSymbol(fir: FirVariable<*>): KtVariableLikeSymbol {
-        return when (fir) {
-            is FirProperty -> buildVariableSymbol(fir)
-            is FirValueParameter -> buildParameterSymbol(fir)
-            is FirField -> buildFieldSymbol(fir)
-            is FirEnumEntry -> buildEnumEntrySymbol(fir) // TODO enum entry should not be callable
-            else -> error("Unexpected ${fir::class.simpleName}")
-        }
-    }
-
-    fun buildVariableSymbol(fir: FirProperty): KtVariableSymbol {
-        return symbolsCache.cache(fir) {
-            when {
-                fir.isLocal -> KtFirLocalVariableSymbol(fir, resolveState, token, this)
-                fir is FirSyntheticProperty -> KtFirSyntheticJavaPropertySymbol(fir, resolveState, token, this)
-                else -> KtFirKotlinPropertySymbol(fir, resolveState, token, this)
-            }
-        }
-    }
 
     fun createPackageSymbolIfOneExists(packageFqName: FqName): KtFirPackageSymbol? {
         val exists = PackageIndexUtil.packageExists(packageFqName, GlobalSearchScope.allScope(project), project)
@@ -288,6 +254,53 @@ internal class KtSymbolByFirBuilder private constructor(
             return symbolsCache.cache(originalFir) {
                 KtFirConstructorSymbol(originalFir, resolveState, token, this@KtSymbolByFirBuilder)
             }
+        }
+    }
+
+    inner class VariableLikeSymbolBuilder {
+        fun buildVariableLikeSymbol(fir: FirVariable<*>): KtVariableLikeSymbol {
+            return when (fir) {
+                is FirProperty -> buildVariableSymbol(fir)
+                is FirValueParameter -> buildParameterSymbol(fir)
+                is FirField -> buildFieldSymbol(fir)
+                is FirEnumEntry -> buildEnumEntrySymbol(fir) // TODO enum entry should not be callable
+                else -> error("Unexpected ${fir::class.simpleName}")
+            }
+        }
+
+        //TODO separate to functions
+        fun buildVariableSymbol(fir: FirProperty): KtVariableSymbol {
+            return symbolsCache.cache(fir) {
+                when {
+                    fir.isLocal -> KtFirLocalVariableSymbol(fir, resolveState, token, this@KtSymbolByFirBuilder)
+                    fir is FirSyntheticProperty -> KtFirSyntheticJavaPropertySymbol(fir, resolveState, token, this@KtSymbolByFirBuilder)
+                    else -> KtFirKotlinPropertySymbol(fir, resolveState, token, this@KtSymbolByFirBuilder)
+                }
+            }
+        }
+
+        fun buildParameterSymbol(fir: FirValueParameter): KtParameterSymbol {
+            @Suppress("IntroduceWhenSubject")
+            return when {
+                fir.isConstructorParameter == true -> buildConstructorParameterSymbol(fir)
+                else -> buildFunctionParameterSymbol(fir)
+            }
+        }
+
+        fun buildConstructorParameterSymbol(fir: FirValueParameter): KtFirConstructorValueParameterSymbol {
+            require(fir.isConstructorParameter == true)
+            return symbolsCache.cache(fir) { KtFirConstructorValueParameterSymbol(fir, resolveState, token, this@KtSymbolByFirBuilder) }
+        }
+
+        fun buildFunctionParameterSymbol(fir: FirValueParameter): KtFirFunctionParameterSymbol {
+            require(fir.isConstructorParameter != true)
+            return symbolsCache.cache(fir) { KtFirFunctionParameterSymbol(fir, resolveState, token, this@KtSymbolByFirBuilder) }
+        }
+
+
+        // todo handle cases
+        fun buildFieldSymbol(fir: FirField): KtFirJavaFieldSymbol {
+            return symbolsCache.cache(fir) { KtFirJavaFieldSymbol(fir, resolveState, token, this@KtSymbolByFirBuilder) }
         }
     }
 }

@@ -53,7 +53,7 @@ internal class KtFirPropertySetterSymbol(
     override val annotationClassIds: Collection<ClassId> by cached { firRef.getAnnotationClassIds() }
 
     override val parameter: KtFunctionParameterSymbol by firRef.withFirAndCache { fir ->
-        builder.buildFunctionParameterSymbol(fir.valueParameters.single())
+        builder.variableLikeBuilder.buildFunctionParameterSymbol(fir.valueParameters.single())
     }
 
     override val annotatedType: KtTypeAndAnnotations by cached {

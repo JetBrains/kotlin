@@ -50,7 +50,7 @@ internal class KtFirConstructorSymbol(
 
     override val valueParameters: List<KtConstructorParameterSymbol> by firRef.withFirAndCache { fir ->
         fir.valueParameters.map { valueParameter ->
-            builder.buildFirConstructorParameter(valueParameter)
+            builder.variableLikeBuilder.buildConstructorParameterSymbol(valueParameter)
         }
     }
 

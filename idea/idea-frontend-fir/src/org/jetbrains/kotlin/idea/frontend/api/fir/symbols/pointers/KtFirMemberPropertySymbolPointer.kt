@@ -22,7 +22,7 @@ internal class KtFirMemberPropertySymbolPointer(
         firSession: FirSession
     ): KtPropertySymbol? {
         val firProperty = candidates.findDeclarationWithSignature<FirProperty>(signature, firSession) ?: return null
-        return firSymbolBuilder.buildVariableSymbol(firProperty) as? KtPropertySymbol
+        return firSymbolBuilder.variableLikeBuilder.buildVariableSymbol(firProperty) as? KtPropertySymbol
     }
 }
 

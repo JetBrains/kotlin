@@ -35,7 +35,7 @@ internal class KtFirSymbolProvider(
 
     override fun getParameterSymbol(psi: KtParameter): KtParameterSymbol = withValidityAssertion {
         psi.withFirDeclarationOfType<FirValueParameter, KtParameterSymbol>(resolveState) {
-            firSymbolBuilder.buildParameterSymbol(it)
+            firSymbolBuilder.variableLikeBuilder.buildParameterSymbol(it)
         }
     }
 
@@ -88,7 +88,7 @@ internal class KtFirSymbolProvider(
 
     override fun getVariableSymbol(psi: KtProperty): KtVariableSymbol = withValidityAssertion {
         psi.withFirDeclarationOfType<FirProperty, KtVariableSymbol>(resolveState) {
-            firSymbolBuilder.buildVariableSymbol(it)
+            firSymbolBuilder.variableLikeBuilder.buildVariableSymbol(it)
         }
     }
 

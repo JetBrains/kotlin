@@ -160,7 +160,7 @@ private object FirToKtConversionCreator {
             KtType::class.createType()
         ),
         FirPropertySymbol::class to HLFunctionCallConversion(
-            "firSymbolBuilder.buildVariableSymbol({0}.fir as FirProperty)",
+            "firSymbolBuilder.variableLikeBuilder.buildVariableSymbol({0}.fir as FirProperty)",
             KtVariableSymbol::class.createType(),
             importsToAdd = listOf("org.jetbrains.kotlin.fir.declarations.FirProperty")
         ),

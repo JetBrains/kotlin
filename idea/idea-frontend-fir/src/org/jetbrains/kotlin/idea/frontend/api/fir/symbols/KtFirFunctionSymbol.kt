@@ -45,7 +45,7 @@ internal class KtFirFunctionSymbol(
     }
     override val valueParameters: List<KtFirFunctionValueParameterSymbol> by firRef.withFirAndCache { fir ->
         fir.valueParameters.map { valueParameter ->
-            builder.buildParameterSymbol(valueParameter)
+            builder.variableLikeBuilder.buildFunctionParameterSymbol(valueParameter)
         }
     }
     override val typeParameters by firRef.withFirAndCache { fir ->

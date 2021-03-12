@@ -69,7 +69,7 @@ internal fun FirScope.getCallableSymbols(callableNames: Collection<Name>, builde
         processPropertiesByName(name) { firSymbol ->
             val symbol = when {
                 firSymbol is FirPropertySymbol && firSymbol.fir.isSubstitutionOverride -> {
-                    builder.buildVariableSymbol(firSymbol.fir)
+                    builder.variableLikeBuilder.buildVariableSymbol(firSymbol.fir)
                 }
                 else -> builder.buildCallableSymbol(firSymbol.fir)
             }

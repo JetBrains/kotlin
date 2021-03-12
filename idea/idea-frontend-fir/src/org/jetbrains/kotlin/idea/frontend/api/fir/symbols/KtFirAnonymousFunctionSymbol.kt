@@ -36,7 +36,7 @@ internal class KtFirAnonymousFunctionSymbol(
 
     override val valueParameters: List<KtParameterSymbol> by firRef.withFirAndCache { fir ->
         fir.valueParameters.map { valueParameter ->
-            builder.buildParameterSymbol(valueParameter)
+            builder.variableLikeBuilder.buildParameterSymbol(valueParameter)
         }
     }
 
