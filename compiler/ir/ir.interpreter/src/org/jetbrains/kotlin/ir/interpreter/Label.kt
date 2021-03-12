@@ -10,10 +10,7 @@ import org.jetbrains.kotlin.ir.interpreter.state.Primitive
 import org.jetbrains.kotlin.ir.interpreter.state.isSubtypeOf
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
-import org.jetbrains.kotlin.ir.expressions.IrWhen
-import org.jetbrains.kotlin.ir.expressions.IrWhileLoop
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.interpreter.exceptions.throwAsUserException
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -38,11 +35,15 @@ open class ExecutionResult(val returnLabel: ReturnLabel, private val owner: IrEl
                 else -> this
             }
             ReturnLabel.BREAK_LOOP -> when (irElement) {
-                is IrWhileLoop -> if (owner == irElement) Next else this
+                is IrWhileLoop, is IrDoWhileLoop -> if (owner == irElement) Next else this
                 else -> this
             }
             ReturnLabel.CONTINUE -> when (irElement) {
                 is IrWhileLoop -> if (owner == irElement) irElement.interpret() else this
+                is IrDoWhileLoop -> {
+                    if (owner != irElement) return this
+                    error("Continue must be handled inside DoWhile interpreter function")
+                }
                 else -> this
             }
             ReturnLabel.EXCEPTION -> Exception
@@ -55,8 +56,10 @@ open class ExecutionResult(val returnLabel: ReturnLabel, private val owner: IrEl
     }
 }
 
-inline fun ExecutionResult.check(toCheckLabel: ReturnLabel = ReturnLabel.REGULAR, returnBlock: (ExecutionResult) -> Unit): ExecutionResult {
-    if (this.returnLabel != toCheckLabel) returnBlock(this)
+inline fun ExecutionResult.check(
+    vararg toCheckLabel: ReturnLabel = arrayOf(ReturnLabel.REGULAR), returnBlock: (ExecutionResult) -> Unit
+): ExecutionResult {
+    if (this.returnLabel !in toCheckLabel) returnBlock(this)
     return this
 }
 

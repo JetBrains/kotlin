@@ -43,6 +43,7 @@ internal class ExceptionState private constructor(
     }
 
     constructor(common: Common, stackTrace: List<String>) : this(common.irClass, common.fields, stackTrace) {
+        (common.superWrapperClass?.value as? Throwable)?.let { setMessage(it.message) }
         setUpCauseIfNeeded(common.superWrapperClass)
     }
 

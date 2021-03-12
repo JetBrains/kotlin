@@ -496,18 +496,22 @@ class IrInterpreter(val irBuiltIns: IrBuiltIns, private val bodyMap: Map<IdSigna
         return executionResult
     }
 
-    private fun interpretBlock(block: IrBlock): ExecutionResult {
-        return stack.newFrame(asSubFrame = true) { interpretStatements(block.statements) }
-    }
-
-    private fun interpretBody(body: IrBody): ExecutionResult {
+    private fun List<IrStatement>.withUnitIfNoResult(): ExecutionResult {
         return stack.newFrame(asSubFrame = true) {
-            val executionResult = interpretStatements(body.statements).check { return@newFrame it }
+            val executionResult = interpretStatements(this).check { return@newFrame it }
             when {
                 !stack.hasReturnValue() -> getOrCreateObjectValue(irBuiltIns.unitClass.owner)
                 else -> executionResult
             }
         }
+    }
+
+    private fun interpretBlock(block: IrBlock): ExecutionResult {
+        return block.statements.withUnitIfNoResult()
+    }
+
+    private fun interpretBody(body: IrBody): ExecutionResult {
+        return body.statements.withUnitIfNoResult()
     }
 
     private fun interpretReturn(expression: IrReturn): ExecutionResult {
@@ -528,7 +532,7 @@ class IrInterpreter(val irBuiltIns: IrBuiltIns, private val bodyMap: Map<IdSigna
         do {
             // pool from body must be seen to condition expression, so must create temp frame here
             stack.newFrame(asSubFrame = true) {
-                expression.body?.interpret()?.check { return@newFrame it }
+                expression.body?.interpret()?.check(ReturnLabel.REGULAR, ReturnLabel.CONTINUE) { return@newFrame it }
                 expression.condition.interpret().check { return@newFrame it }
                 Next
             }.check { return it }
@@ -705,8 +709,10 @@ class IrInterpreter(val irBuiltIns: IrBuiltIns, private val bodyMap: Map<IdSigna
         val typeOperand = if (isReified) (stack.getVariable(typeClassifier).state as KTypeState).irType else expression.typeOperand
 
         when (expression.operator) {
-            // coercion to unit means that return value isn't used
-            IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> stack.popReturnValue()
+            IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> {
+                stack.popReturnValue()
+                getOrCreateObjectValue(irBuiltIns.unitClass.owner).check { return it }
+            }
             IrTypeOperator.CAST, IrTypeOperator.IMPLICIT_CAST -> {
                 if (!isErased && !stack.peekReturnValue().isSubtypeOf(typeOperand)) {
                     val convertibleClassName = stack.popReturnValue().irClass.fqNameWhenAvailable
@@ -802,7 +808,8 @@ class IrInterpreter(val irBuiltIns: IrBuiltIns, private val bodyMap: Map<IdSigna
             }
             return Exception
         } finally {
-            expression.finallyExpression?.takeIf { (it as? IrBlock)?.statements?.isEmpty() != true }?.interpret()?.check { return it }
+            expression.finallyExpression?.interpret()
+                ?.let { if (it.returnLabel == ReturnLabel.REGULAR) stack.popReturnValue() else return it }
         }
     }
 
