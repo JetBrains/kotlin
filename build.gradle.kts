@@ -159,6 +159,7 @@ rootProject.apply {
     from(rootProject.file("gradle/checkArtifacts.gradle.kts"))
     from(rootProject.file("gradle/checkCacheability.gradle.kts"))
     from(rootProject.file("gradle/retryPublishing.gradle.kts"))
+    from(rootProject.file("gradle/modularizedTestConfigurations.gradle.kts"))
 }
 
 IdeVersionConfigurator.setCurrentIde(project)
