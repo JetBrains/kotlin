@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 buildscript {
     val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() ?: false
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.25")
+        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.26")
     }
     repositories {
         if (cacheRedirectorEnabled)
