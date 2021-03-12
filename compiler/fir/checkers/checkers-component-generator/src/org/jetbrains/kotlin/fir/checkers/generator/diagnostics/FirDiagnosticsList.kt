@@ -235,7 +235,6 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
             parameter<Int>("expectedCount")
             parameter<FirClassLikeSymbol<*>>("classifier")
         }
-        val NO_TYPE_FOR_TYPE_PARAMETER by error<FirSourceElement, PsiElement>()
         val TYPE_PARAMETERS_IN_OBJECT by error<FirSourceElement, PsiElement>()
         val ILLEGAL_PROJECTION_USAGE by error<FirSourceElement, PsiElement>()
         val TYPE_PARAMETERS_IN_ENUM by error<FirSourceElement, PsiElement>()
@@ -358,6 +357,7 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val FORBIDDEN_VARARG_PARAMETER_TYPE by error<FirSourceElement, KtParameter>(PositioningStrategy.PARAMETER_VARARG_MODIFIER) {
             parameter<ConeKotlinType>("varargParameterType")
         }
+        val VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION by error<FirSourceElement, KtParameter>()
     }
 
     val PROPERTIES_AND_ACCESSORS by object : DiagnosticGroup("Properties & accessors") {

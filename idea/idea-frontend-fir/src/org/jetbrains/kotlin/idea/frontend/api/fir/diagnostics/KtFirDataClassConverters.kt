@@ -738,12 +738,6 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.NO_TYPE_FOR_TYPE_PARAMETER) { firDiagnostic ->
-        NoTypeForTypeParameterImpl(
-            firDiagnostic as FirPsiDiagnostic<*>,
-            token,
-        )
-    }
     add(FirErrors.TYPE_PARAMETERS_IN_OBJECT) { firDiagnostic ->
         TypeParametersInObjectImpl(
             firDiagnostic as FirPsiDiagnostic<*>,
@@ -1028,6 +1022,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     add(FirErrors.FORBIDDEN_VARARG_PARAMETER_TYPE) { firDiagnostic ->
         ForbiddenVarargParameterTypeImpl(
             firSymbolBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION) { firDiagnostic ->
+        ValueParameterWithNoTypeAnnotationImpl(
             firDiagnostic as FirPsiDiagnostic<*>,
             token,
         )

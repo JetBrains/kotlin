@@ -578,7 +578,9 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         if (valueParameter.returnTypeRef is FirImplicitTypeRef) {
             transformer.replaceDeclarationResolvePhaseIfNeeded(valueParameter, transformerPhase)
             valueParameter.replaceReturnTypeRef(
-                valueParameter.returnTypeRef.errorTypeFromPrototype(ConeSimpleDiagnostic("Unresolved value parameter type"))
+                valueParameter.returnTypeRef.errorTypeFromPrototype(
+                    ConeSimpleDiagnostic("No type for parameter", DiagnosticKind.ValueParameterWithNoTypeAnnotation)
+                )
             )
             return context.withValueParameter(valueParameter) {
                 valueParameter.compose()
@@ -833,7 +835,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                 valueParameter.transformReturnTypeRef(
                     StoreType,
                     valueParameter.returnTypeRef.resolvedTypeFromPrototype(
-                        ConeKotlinErrorType(ConeSimpleDiagnostic("No type for parameter", DiagnosticKind.NoTypeForTypeParameter))
+                        ConeKotlinErrorType(ConeSimpleDiagnostic("No type for parameter", DiagnosticKind.ValueParameterWithNoTypeAnnotation))
                     )
                 )
             }
