@@ -528,7 +528,7 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
 
     override fun createCommonizer() = TypeCommonizer(classifiers)
 
-    override fun isEqual(a: CirType?, b: CirType?) = (a === b) || (a != null && b != null && areEqual(classifiers, a, b))
+    override fun areEqual(a: CirType?, b: CirType?) = (a === b) || (a != null && b != null && areEqual(classifiers, a, b))
 
     companion object {
         fun areEqual(classifiers: CirKnownClassifiers, a: CirType, b: CirType): Boolean =

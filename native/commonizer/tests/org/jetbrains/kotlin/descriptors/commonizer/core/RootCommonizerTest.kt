@@ -100,7 +100,7 @@ class RootCommonizerTest : AbstractCommonizerTest<CirRoot, CirRoot>() {
 
     override fun createCommonizer() = RootCommonizer()
 
-    override fun isEqual(a: CirRoot?, b: CirRoot?) = (a === b) || (a != null && b != null && a.target == b.target)
+    override fun areEqual(a: CirRoot?, b: CirRoot?) = (a === b) || (a != null && b != null && a.target == b.target)
 
     private companion object {
         fun CommonizerTarget.toMock() = CirRoot.create(target = this)

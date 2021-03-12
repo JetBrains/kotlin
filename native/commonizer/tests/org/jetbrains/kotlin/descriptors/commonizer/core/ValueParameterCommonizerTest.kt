@@ -142,7 +142,7 @@ class ValueParameterCommonizerTest : AbstractCommonizerTest<CirValueParameter, C
 
     override fun createCommonizer() = ValueParameterCommonizer(MOCK_CLASSIFIERS)
 
-    override fun isEqual(a: CirValueParameter?, b: CirValueParameter?) =
+    override fun areEqual(a: CirValueParameter?, b: CirValueParameter?) =
         (a === b) || (a != null && b != null && areEqual(MOCK_CLASSIFIERS, a, b))
 
     internal companion object {
