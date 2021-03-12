@@ -33,6 +33,9 @@ abstract class IrArrayReader(private val buffer: ReadBuffer) {
         }
         val size = indexToOffset[id + 1] - offset
         val result = ByteArray(size)
+        if (offset < 0 || buffer.size <= offset) {
+            1
+        }
         buffer.position = offset
         buffer.get(result, 0, size)
         return result

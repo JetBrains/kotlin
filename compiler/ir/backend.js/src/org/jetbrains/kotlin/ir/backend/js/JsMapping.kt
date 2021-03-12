@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.DelegateFactory
 import org.jetbrains.kotlin.backend.common.Mapping
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.library.impl.*
 
 fun JsMapping(irFactory: IrFactory) = JsMapping(JsMappingState(irFactory))
@@ -70,23 +71,41 @@ class JsMappingState(val irFactory: IrFactory) : DelegateFactory {
         })
     }
 
-    fun deserializeMappings(mapping: SerializedMappings, symbolDeserializer: (Long) -> IrSymbol) {
+    fun mappingsDeserializer(mapping: SerializedMappings, signatureDeserializer: (Long) -> IdSignature, symbolDeserializer: (Long) -> IrSymbol): (IdSignature, IrDeclaration) -> Unit {
         if (allMappings.size != mapping.mappings.size) error("Mapping size mismatch")
 
-        allMappings.zip(mapping.mappings).forEach { (mapping, bytes) ->
-            val keys = IrLongArrayMemoryReader(bytes.keys).array.map(symbolDeserializer)
-            val values = IrArrayMemoryReader(bytes.values).toArray()
+        val index = Array<Map<IdSignature, ByteArray>>(allMappings.size) { i ->
+            val bytes = mapping.mappings[i]
+            val s = IrLongArrayMemoryReader(bytes.keys).array.map(signatureDeserializer)
+            val v = IrArrayMemoryReader(bytes.values).toArray()
 
-            if (keys.size != values.size) error("Keys size != values size")
+            if (s.size != v.size) error("Keys size != values size")
 
-            keys.zip(values).forEach { (s, b) ->
-                if (s.isBound) {
-                    mapping.loadMapping(s.owner as IrDeclaration, b, symbolDeserializer)
-                } else {
-                    println("Unbound: " + s.signature)
+            s.withIndex().associate { it.value to v[it.index] }
+        }
+
+        return { signature, declaration ->
+            for (i in allMappings.indices) {
+                index[i][signature]?.let { bytes ->
+                    allMappings[i].loadMapping(declaration, bytes, symbolDeserializer)
                 }
             }
         }
+
+//        allMappings.zip(mapping.mappings).forEach { (mapping, bytes) ->
+//            val keys = IrLongArrayMemoryReader(bytes.keys).array.map(symbolDeserializer)
+//            val values = IrArrayMemoryReader(bytes.values).toArray()
+//
+//            if (keys.size != values.size) error("Keys size != values size")
+//
+//            keys.zip(values).forEach { (s, b) ->
+//                if (s.isBound) {
+//                    mapping.loadMapping(s.owner as IrDeclaration, b, symbolDeserializer)
+//                } else {
+//                    println("Unbound: " + s.signature)
+//                }
+//            }
+//        }
     }
 }
 

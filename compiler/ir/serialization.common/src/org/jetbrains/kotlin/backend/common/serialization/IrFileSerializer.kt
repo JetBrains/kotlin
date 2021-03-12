@@ -275,43 +275,45 @@ open class IrFileSerializer(
 
     /* ------- IrSymbols -------------------------------------------------------- */
 
-    private fun protoSymbolKind(symbol: IrSymbol): BinarySymbolData.SymbolKind = when (symbol) {
-        is IrAnonymousInitializerSymbol ->
-            BinarySymbolData.SymbolKind.ANONYMOUS_INIT_SYMBOL
-        is IrClassSymbol ->
-            BinarySymbolData.SymbolKind.CLASS_SYMBOL
-        is IrConstructorSymbol ->
-            BinarySymbolData.SymbolKind.CONSTRUCTOR_SYMBOL
-        is IrTypeParameterSymbol ->
-            BinarySymbolData.SymbolKind.TYPE_PARAMETER_SYMBOL
-        is IrEnumEntrySymbol ->
-            BinarySymbolData.SymbolKind.ENUM_ENTRY_SYMBOL
-        is IrVariableSymbol ->
-            BinarySymbolData.SymbolKind.VARIABLE_SYMBOL
-        is IrValueParameterSymbol ->
-            if (symbol.descriptor is ReceiverParameterDescriptor) // TODO: we use descriptor here.
-                BinarySymbolData.SymbolKind.RECEIVER_PARAMETER_SYMBOL
-            else
-                BinarySymbolData.SymbolKind.VALUE_PARAMETER_SYMBOL
-        is IrSimpleFunctionSymbol ->
-            BinarySymbolData.SymbolKind.FUNCTION_SYMBOL
-        is IrReturnableBlockSymbol ->
-            BinarySymbolData.SymbolKind.RETURNABLE_BLOCK_SYMBOL
-        is IrFieldSymbol ->
-            if (symbol.owner.correspondingPropertySymbol?.owner.let { it == null || it.isDelegated })
-                BinarySymbolData.SymbolKind.STANDALONE_FIELD_SYMBOL
-            else
-                BinarySymbolData.SymbolKind.FIELD_SYMBOL
-        is IrPropertySymbol ->
-            BinarySymbolData.SymbolKind.PROPERTY_SYMBOL
-        is IrLocalDelegatedPropertySymbol ->
-            BinarySymbolData.SymbolKind.LOCAL_DELEGATED_PROPERTY_SYMBOL
-        is IrTypeAliasSymbol ->
-            BinarySymbolData.SymbolKind.TYPEALIAS_SYMBOL
-        is IrFileSymbol ->
-            BinarySymbolData.SymbolKind.FILE_SYMBOL
-        else ->
-            TODO("Unexpected symbol kind: $symbol")
+    companion object {
+        fun protoSymbolKind(symbol: IrSymbol): BinarySymbolData.SymbolKind = when (symbol) {
+            is IrAnonymousInitializerSymbol ->
+                BinarySymbolData.SymbolKind.ANONYMOUS_INIT_SYMBOL
+            is IrClassSymbol ->
+                BinarySymbolData.SymbolKind.CLASS_SYMBOL
+            is IrConstructorSymbol ->
+                BinarySymbolData.SymbolKind.CONSTRUCTOR_SYMBOL
+            is IrTypeParameterSymbol ->
+                BinarySymbolData.SymbolKind.TYPE_PARAMETER_SYMBOL
+            is IrEnumEntrySymbol ->
+                BinarySymbolData.SymbolKind.ENUM_ENTRY_SYMBOL
+            is IrVariableSymbol ->
+                BinarySymbolData.SymbolKind.VARIABLE_SYMBOL
+            is IrValueParameterSymbol ->
+                if (symbol.descriptor is ReceiverParameterDescriptor) // TODO: we use descriptor here.
+                    BinarySymbolData.SymbolKind.RECEIVER_PARAMETER_SYMBOL
+                else
+                    BinarySymbolData.SymbolKind.VALUE_PARAMETER_SYMBOL
+            is IrSimpleFunctionSymbol ->
+                BinarySymbolData.SymbolKind.FUNCTION_SYMBOL
+            is IrReturnableBlockSymbol ->
+                BinarySymbolData.SymbolKind.RETURNABLE_BLOCK_SYMBOL
+            is IrFieldSymbol ->
+                if (symbol.owner.correspondingPropertySymbol?.owner.let { it == null || it.isDelegated })
+                    BinarySymbolData.SymbolKind.STANDALONE_FIELD_SYMBOL
+                else
+                    BinarySymbolData.SymbolKind.FIELD_SYMBOL
+            is IrPropertySymbol ->
+                BinarySymbolData.SymbolKind.PROPERTY_SYMBOL
+            is IrLocalDelegatedPropertySymbol ->
+                BinarySymbolData.SymbolKind.LOCAL_DELEGATED_PROPERTY_SYMBOL
+            is IrTypeAliasSymbol ->
+                BinarySymbolData.SymbolKind.TYPEALIAS_SYMBOL
+            is IrFileSymbol ->
+                BinarySymbolData.SymbolKind.FILE_SYMBOL
+            else ->
+                TODO("Unexpected symbol kind: $symbol")
+        }
     }
 
     fun serializeIrSymbol(symbol: IrSymbol): Long {

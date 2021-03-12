@@ -45,7 +45,8 @@ internal class IrCarrierDeserializerImpl(val declarationDeserializer: IrDeclarat
     }
 
     override fun deserializeBlockBody(proto: Int): IrBlockBody {
-        return declarationDeserializer.deserializeStatementBody(proto) as IrBlockBody
+        return declarationDeserializer.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
+//        return declarationDeserializer.deserializeStatementBody(proto) as IrBlockBody
     }
 
     override fun deserializeExpressionBody(proto: Int): IrExpressionBody {

@@ -192,7 +192,7 @@ fun lowerPreservingIcData(allModules: Iterable<IrModuleFragment>, irFactory: Per
     irFactory.stageController = controller
 
     // TODO what about other lowering?
-    val lowerings = loweringList.filter { it is DeclarationLowering || it is BodyLowering }
+    val lowerings = pirLowerings//loweringList.filter { it is DeclarationLowering || it is BodyLowering }
 
     // Lower all the things
     lowerings.forEachIndexed { i, lowering ->

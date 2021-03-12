@@ -103,6 +103,10 @@ class IcSerializer(
                 }
             }
 
+            if ("CharCode.kt" in file.name) {
+                1
+            }
+
             // Only save newly created declarations
             val newDeclarations = declarations.filter { d ->
                 d is PersistentIrDeclarationBase<*> && d.createdOn > 0

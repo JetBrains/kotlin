@@ -46,9 +46,9 @@ class IrModuleToJsTransformer(
         val exportedModule = ExportModelGenerator(backendContext).generateExport(modules)
         val dts = exportedModule.toTypeScript()
 
-        modules.forEach { module ->
-            module.files.forEach { StaticMembersLowering(backendContext).lower(it) }
-        }
+//        modules.forEach { module ->
+//            module.files.forEach { StaticMembersLowering(backendContext).lower(it) }
+//        }
 
         if (multiModule) {
             breakCrossModuleFieldAccess(backendContext, modules)

@@ -485,7 +485,7 @@ abstract class BasicBoxTest(
             JsTestUtils.getFilesInDirectoryByExtension(baseDir + "/", KotlinFileType.EXTENSION)
         }
         val additionalFiles = globalCommonFiles + localCommonFiles + additionalCommonFiles
-        val allSourceFiles = (testFiles + additionalFiles).map(::File)
+        val allSourceFiles = (testFiles/* + additionalFiles*/).map(::File)
         val psiFiles = createPsiFiles(allSourceFiles.sortedBy { it.canonicalPath }.map { it.canonicalPath })
 
         val sourceDirs = (testFiles + additionalFiles).map { File(it).parent }.distinct()
