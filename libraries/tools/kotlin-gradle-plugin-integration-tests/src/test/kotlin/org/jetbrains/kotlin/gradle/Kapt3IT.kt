@@ -676,4 +676,24 @@ open class Kapt3IT : Kapt3BaseIT() {
             assertContains("Javac options: {-source=1.8}")
         }
     }
+
+    @Test
+    fun testJpmsModule() {
+        val project = Project("jpms-module", directoryPrefix = "kapt2")
+
+        project.build("build") {
+            assertSuccessful()
+            assertKaptSuccessful()
+            assertTasksExecuted(":compileKotlin", ":compileJava")
+            assertFileExists("build/generated/source/kapt/main/lab/TestClassGenerated.java")
+            assertFileExists(kotlinClassesDir() + "lab/TestClass.class")
+
+//            assertContains("Need to discovery annotation processors in the AP classpath")
+        }
+
+        project.build("build") {
+            assertSuccessful()
+            assertTasksUpToDate(":compileKotlin", ":compileJava")
+        }
+    }
 }
