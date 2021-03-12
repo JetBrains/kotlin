@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtArrayAccessExpression
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
@@ -297,6 +298,10 @@ object FirErrors {
 
     // Function contracts
     val ERROR_IN_CONTRACT_DESCRIPTION by error1<FirSourceElement, KtElement, String>(SourceElementPositioningStrategies.SELECTOR_BY_QUALIFIED)
+
+    // Conventions
+    val NO_GET_METHOD by error0<FirSourceElement, KtArrayAccessExpression>(SourceElementPositioningStrategies.ARRAY_ACCESS)
+    val NO_SET_METHOD by error0<FirSourceElement, KtArrayAccessExpression>(SourceElementPositioningStrategies.ARRAY_ACCESS)
 
     // Extended checkers
     val REDUNDANT_VISIBILITY_MODIFIER by warning0<FirSourceElement, KtModifierListOwner>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)

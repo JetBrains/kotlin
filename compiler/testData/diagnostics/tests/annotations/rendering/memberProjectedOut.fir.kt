@@ -12,5 +12,5 @@ class C<T> {
 }
 
 fun test(a: C<out CharSequence>) {
-    <!INAPPLICABLE_CANDIDATE!>a[1] = 25<!>
+    <!INAPPLICABLE_CANDIDATE!>a[1]<!> = 25
 }

@@ -1,7 +1,7 @@
 // !WITH_NEW_INFERENCE
 fun test(): Array<Int> {
     [1, 2]
-    <!UNRESOLVED_REFERENCE!>[1, 2][0]<!>
+    [1, 2]<!NO_GET_METHOD!>[0]<!>
     [1, 2].<!UNRESOLVED_REFERENCE!>get<!>(0)
 
     foo([""])

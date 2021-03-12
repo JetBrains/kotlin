@@ -486,6 +486,11 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         }
     }
 
+    val CONVENTIONS by object : DiagnosticGroup("Conventions") {
+        val NO_GET_METHOD by error<FirSourceElement, KtArrayAccessExpression>(PositioningStrategy.ARRAY_ACCESS)
+        val NO_SET_METHOD by error<FirSourceElement, KtArrayAccessExpression>(PositioningStrategy.ARRAY_ACCESS)
+    }
+
     val EXTENDED_CHECKERS by object : DiagnosticGroup("Extended checkers") {
         val REDUNDANT_VISIBILITY_MODIFIER by warning<FirSourceElement, KtModifierListOwner>(PositioningStrategy.VISIBILITY_MODIFIER)
         val REDUNDANT_MODALITY_MODIFIER by warning<FirSourceElement, KtModifierListOwner>(PositioningStrategy.MODALITY_MODIFIER)

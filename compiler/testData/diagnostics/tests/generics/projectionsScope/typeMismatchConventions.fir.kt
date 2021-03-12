@@ -11,7 +11,7 @@ class Out<out F>
 
 fun test(a: A<out CharSequence>, y: Out<CharSequence>) {
     a <!INAPPLICABLE_CANDIDATE!>+<!> y
-    <!INAPPLICABLE_CANDIDATE!>a[1] = y<!>
+    <!INAPPLICABLE_CANDIDATE!>a[1]<!> = y
     <!INAPPLICABLE_CANDIDATE!>a[y]<!>
 
     a + Out<Nothing>()

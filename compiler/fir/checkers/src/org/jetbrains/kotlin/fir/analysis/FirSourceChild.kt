@@ -36,5 +36,14 @@ private fun FirPsiSourceElement<*>.getChild(types: Set<IElementType>, index: Int
 
 private fun FirLightSourceElement.getChild(types: Set<IElementType>, index: Int, depth: Int): FirSourceElement? {
     val visitor = LighterTreeElementFinderByType(treeStructure, types, index, depth)
-    return visitor.find(lighterASTNode)?.toFirLightSourceElement(treeStructure)
+    val node = lighterASTNode
+    val childNode = visitor.find(node) ?: return null
+    // org.jetbrains.kotlin.fir.lightTree.converter.DeclarationsConverter creates subtree for BLOCKs and use the nodes from these subtrees
+    // as the source.
+    val subtreeOffset = this.startOffset - node.startOffset
+    return childNode.toFirLightSourceElement(
+        treeStructure,
+        startOffset = subtreeOffset + childNode.startOffset,
+        endOffset = subtreeOffset + childNode.endOffset
+    )
 }

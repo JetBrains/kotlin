@@ -6,6 +6,6 @@ class A {
     operator fun set(x: String, value: Int) {}
 
     fun d(x: Int) {
-        <!INAPPLICABLE_CANDIDATE!>this["", 1] = 1<!>
+        <!INAPPLICABLE_CANDIDATE!>this["", 1]<!> = 1
     }
 }
