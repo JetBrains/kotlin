@@ -48,7 +48,7 @@ class JsVersionRequirementTest : AbstractVersionRequirementTest() {
         }
         val trace = BindingTraceContext()
         val analysisResult = TopDownAnalyzerFacadeForJS.analyzeFilesWithGivenTrace(
-            ktFiles, trace, createModule(environment), environment.configuration, CompilerEnvironment,
+            ktFiles, trace, createModule(environment), environment.configuration, CompilerEnvironment, environment.project
         )
 
         // There are INVISIBLE_REFERENCE errors on RequireKotlin and K2JSTranslator refuses to translate the code otherwise
@@ -63,7 +63,7 @@ class JsVersionRequirementTest : AbstractVersionRequirementTest() {
     override fun loadModule(directory: File): ModuleDescriptor {
         val environment = createEnvironment(extraDependencies = listOf(File(directory, "lib.meta.js")))
         return TopDownAnalyzerFacadeForJS.analyzeFilesWithGivenTrace(
-            emptyList(), BindingTraceContext(), createModule(environment), environment.configuration, CompilerEnvironment,
+            emptyList(), BindingTraceContext(), createModule(environment), environment.configuration, CompilerEnvironment, environment.project
         ).moduleDescriptor
     }
 

@@ -60,7 +60,7 @@ abstract class AbstractDiagnosticsTestWithJsStdLib : AbstractDiagnosticsTest() {
         moduleTrace.record<ModuleDescriptor, ModuleKind>(MODULE_KIND, moduleContext.module, getModuleKind(files))
         config.configuration.languageVersionSettings = languageVersionSettings
         return TopDownAnalyzerFacadeForJS.analyzeFilesWithGivenTrace(
-            files, moduleTrace, moduleContext, config.configuration, CompilerEnvironment,
+            files, moduleTrace, moduleContext, config.configuration, CompilerEnvironment, config.project
         )
     }
 

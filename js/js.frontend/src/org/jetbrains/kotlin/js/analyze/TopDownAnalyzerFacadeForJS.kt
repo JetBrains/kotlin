@@ -6,18 +6,20 @@
 package org.jetbrains.kotlin.js.analyze
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.functions.functionInterfacePackageFragmentProvider
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ContextForNewModule
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.kotlin.frontend.js.di.createTopDownAnalyzerForJs
+import org.jetbrains.kotlin.frontend.js.di.createContainerForJS
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
@@ -31,12 +33,13 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.serialization.js.PackagesWithHeaderMetadata
 import org.jetbrains.kotlin.utils.JsMetadataVersion
-import java.lang.Exception
+import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 abstract class AbstractTopDownAnalyzerFacadeForJS {
 
@@ -82,7 +85,7 @@ abstract class AbstractTopDownAnalyzerFacadeForJS {
 
         val trace = BindingTraceContext()
         trace.record(MODULE_KIND, context.module, moduleKind)
-        return analyzeFilesWithGivenTrace(files, trace, context, configuration, targetEnvironment, additionalPackages)
+        return analyzeFilesWithGivenTrace(files, trace, context, configuration, targetEnvironment, project, additionalPackages)
     }
 
     protected abstract fun loadIncrementalCacheMetadata(
@@ -98,6 +101,7 @@ abstract class AbstractTopDownAnalyzerFacadeForJS {
         moduleContext: ModuleContext,
         configuration: CompilerConfiguration,
         targetEnvironment: TargetEnvironment,
+        project: Project,
         additionalPackages: List<PackageFragmentProvider> = emptyList()
     ): JsAnalysisResult {
         val lookupTracker = configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER) ?: LookupTracker.DO_NOTHING
@@ -106,7 +110,8 @@ abstract class AbstractTopDownAnalyzerFacadeForJS {
         val packageFragment = configuration[JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER]?.let {
             loadIncrementalCacheMetadata(it, moduleContext, lookupTracker, languageVersionSettings)
         }
-        val analyzerForJs = createTopDownAnalyzerForJs(
+
+        val container = createContainerForJS(
             moduleContext, trace,
             FileBasedDeclarationProviderFactory(moduleContext.storageManager, files),
             languageVersionSettings,
@@ -115,8 +120,38 @@ abstract class AbstractTopDownAnalyzerFacadeForJS {
             additionalPackages + listOfNotNull(packageFragment),
             targetEnvironment,
         )
-        analyzerForJs.analyzeDeclarations(TopDownAnalysisMode.TopLevelDeclarations, files)
-        return JsAnalysisResult.success(trace, moduleContext.module)
+
+        val analysisHandlerExtensions = AnalysisHandlerExtension.getInstances(project)
+
+        // Mimic the behavior in the jvm frontend. The extensions have 2 chances to override the normal analysis:
+        // * If any of the extensions returns a non-null result, it. Otherwise do the normal analysis.
+        // * `analysisCompleted` can be used to override the result, too.
+        var result = analysisHandlerExtensions.firstNotNullResult { extension ->
+            extension.doAnalysis(project, moduleContext.module, moduleContext, files, trace, container)
+        } ?: run {
+            container.get<LazyTopDownAnalyzer>().analyzeDeclarations(TopDownAnalysisMode.TopLevelDeclarations, files)
+            AnalysisResult.success(trace.bindingContext, moduleContext.module)
+        }
+
+        result = analysisHandlerExtensions.firstNotNullResult { extension ->
+            extension.analysisCompleted(project, moduleContext.module, trace, files)
+        } ?: result
+
+        return when (result) {
+            is JsAnalysisResult -> result
+            else -> {
+                // AnalysisHandlerExtension returns a BindingContext, not BindingTrace. Therefore, synthesize one here.
+                val bindingTrace = DelegatingBindingTrace(result.bindingContext, "DelegatingBindingTrace by AnalysisHandlerExtension")
+                when (result) {
+                    is AnalysisResult.RetryWithAdditionalRoots -> JsAnalysisResult.RetryWithAdditionalRoots(
+                        bindingTrace,
+                        result.moduleDescriptor,
+                        result.additionalKotlinRoots
+                    )
+                    else -> JsAnalysisResult.success(bindingTrace, result.moduleDescriptor, result.shouldGenerateCode)
+                }
+            }
+        }
     }
 
     fun checkForErrors(allFiles: Collection<KtFile>, bindingContext: BindingContext, errorPolicy: ErrorTolerancePolicy): Boolean {
