@@ -252,17 +252,28 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             return COMPILATION_ERROR;
         }
 
-        AnalyzerWithCompilerReport analyzerWithCompilerReport = new AnalyzerWithCompilerReport(
-                messageCollector, CommonConfigurationKeysKt.getLanguageVersionSettings(configuration)
-        );
-        analyzerWithCompilerReport.analyzeAndReport(sourcesFiles, () -> TopDownAnalyzerFacadeForJS.analyzeFiles(sourcesFiles, config));
-        if (analyzerWithCompilerReport.hasErrors()) {
-            return COMPILATION_ERROR;
-        }
+        AnalysisResult analysisResult;
+        do {
+            AnalyzerWithCompilerReport analyzerWithCompilerReport = new AnalyzerWithCompilerReport(
+                    messageCollector, CommonConfigurationKeysKt.getLanguageVersionSettings(configuration)
+            );
+            List<KtFile> sources = environmentForJS.getSourceFiles();
+            analyzerWithCompilerReport.analyzeAndReport(sourcesFiles, () -> TopDownAnalyzerFacadeForJS.analyzeFiles(sources, config));
+            if (analyzerWithCompilerReport.hasErrors()) {
+                return COMPILATION_ERROR;
+            }
 
-        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
+            ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
+            analysisResult = analyzerWithCompilerReport.getAnalysisResult();
 
-        AnalysisResult analysisResult = analyzerWithCompilerReport.getAnalysisResult();
+            if (analysisResult instanceof JsAnalysisResult.RetryWithAdditionalRoots) {
+                environmentForJS.addKotlinSourceRoots(((JsAnalysisResult.RetryWithAdditionalRoots) analysisResult).getAdditionalKotlinRoots());
+            }
+        } while(analysisResult instanceof JsAnalysisResult.RetryWithAdditionalRoots);
+
+        if (!analysisResult.getShouldGenerateCode())
+            return OK;
+
         assert analysisResult instanceof JsAnalysisResult : "analysisResult should be instance of JsAnalysisResult, but " + analysisResult;
         JsAnalysisResult jsAnalysisResult = (JsAnalysisResult) analysisResult;
 
