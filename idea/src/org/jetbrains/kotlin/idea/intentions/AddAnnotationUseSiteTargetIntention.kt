@@ -143,6 +143,6 @@ private fun KtAnnotationEntry.applicableUseSiteTargets(): List<AnnotationUseSite
 
 fun KtAnnotationEntry.addUseSiteTarget(useSiteTarget: AnnotationUseSiteTarget, project: Project) {
     project.executeWriteCommand(KotlinBundle.message("add.use.site.target")) {
-        replace(KtPsiFactory(this).createAnnotationEntry("@${useSiteTarget.renderName}:$shortName${valueArgumentList?.text ?: ""}"))
+        replace(KtPsiFactory(this).createAnnotationEntry("@${useSiteTarget.renderName}:${text.drop(1)}"))
     }
 }

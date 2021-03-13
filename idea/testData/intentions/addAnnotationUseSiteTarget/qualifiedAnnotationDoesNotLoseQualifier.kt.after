@@ -1,0 +1,6 @@
+// CHOOSE_USE_SITE_TARGET: field
+
+class Test {
+    @field:p.A
+    val foo: String = ""
+}

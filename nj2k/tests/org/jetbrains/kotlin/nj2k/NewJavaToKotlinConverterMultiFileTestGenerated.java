@@ -29,6 +29,11 @@ public class NewJavaToKotlinConverterMultiFileTestGenerated extends AbstractNewJ
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("nj2k/testData/multiFile"), Pattern.compile("^([^\\.]+)$"), null, false);
     }
 
+    @TestMetadata("AnnotationDoesNotLoseImport")
+    public void testAnnotationDoesNotLoseImport() throws Exception {
+        runTest("nj2k/testData/multiFile/AnnotationDoesNotLoseImport/");
+    }
+
     @TestMetadata("AnnotationWithArrayParameter")
     public void testAnnotationWithArrayParameter() throws Exception {
         runTest("nj2k/testData/multiFile/AnnotationWithArrayParameter/");

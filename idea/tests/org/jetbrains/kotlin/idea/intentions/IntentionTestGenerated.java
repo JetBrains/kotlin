@@ -61,6 +61,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/addAnnotationUseSiteTarget/hasTarget3.kt");
         }
 
+        @TestMetadata("qualifiedAnnotationDoesNotLoseQualifier.kt")
+        public void testQualifiedAnnotationDoesNotLoseQualifier() throws Exception {
+            runTest("idea/testData/intentions/addAnnotationUseSiteTarget/qualifiedAnnotationDoesNotLoseQualifier.kt");
+        }
+
         @TestMetadata("idea/testData/intentions/addAnnotationUseSiteTarget/constructor")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
