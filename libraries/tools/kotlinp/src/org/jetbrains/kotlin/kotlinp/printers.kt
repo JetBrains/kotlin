@@ -461,7 +461,11 @@ private fun renderAnnotationArgument(arg: KmAnnotationArgument<*>): String =
         is KmAnnotationArgument.ULongValue -> arg.value.toULong().toString() + "uL"
         is KmAnnotationArgument.BooleanValue -> arg.value.toString()
         is KmAnnotationArgument.StringValue -> "\"${arg.value.sanitize(quote = '"')}\""
-        is KmAnnotationArgument.KClassValue -> "${arg.value}::class"
+        is KmAnnotationArgument.KClassValue -> buildString {
+            repeat(arg.arrayDimensionCount) { append("kotlin/Array<") }
+            append(arg.className).append("::class")
+            repeat(arg.arrayDimensionCount) { append(">") }
+        }
         is KmAnnotationArgument.EnumValue -> arg.value
         is KmAnnotationArgument.AnnotationValue -> arg.value.let { annotation ->
             val args = annotation.arguments.entries.joinToString { (name, argument) ->

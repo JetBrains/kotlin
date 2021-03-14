@@ -44,7 +44,7 @@ fun ProtoBuf.Annotation.Argument.Value.readAnnotationArgument(strings: NameResol
         DOUBLE -> KmAnnotationArgument.DoubleValue(doubleValue)
         BOOLEAN -> KmAnnotationArgument.BooleanValue(intValue != 0L)
         STRING -> KmAnnotationArgument.StringValue(strings.getString(stringValue))
-        CLASS -> KmAnnotationArgument.KClassValue(strings.getClassName(classId))
+        CLASS -> KmAnnotationArgument.KClassValue(strings.getClassName(classId), arrayDimensionCount)
         ENUM -> KmAnnotationArgument.EnumValue(strings.getClassName(classId), strings.getString(enumValueId))
         ANNOTATION -> KmAnnotationArgument.AnnotationValue(annotation.readAnnotation(strings))
         ARRAY -> KmAnnotationArgument.ArrayValue(arrayElementList.mapNotNull { it.readAnnotationArgument(strings) })

@@ -85,7 +85,8 @@ fun KmAnnotationArgument<*>.writeAnnotationArgument(strings: StringTable): Proto
             }
             is KmAnnotationArgument.KClassValue -> {
                 this.type = ProtoBuf.Annotation.Argument.Value.Type.CLASS
-                this.classId = strings.getClassNameIndex(value)
+                this.classId = strings.getClassNameIndex(className)
+                this.arrayDimensionCount = this@writeAnnotationArgument.arrayDimensionCount
             }
             is KmAnnotationArgument.EnumValue -> {
                 this.type = ProtoBuf.Annotation.Argument.Value.Type.ENUM

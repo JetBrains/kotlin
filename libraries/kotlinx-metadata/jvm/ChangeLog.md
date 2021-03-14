@@ -1,11 +1,14 @@
 # kotlinx-metadata-jvm
 
-## 0.2.1
+## 0.3.0
 
-- [KT-44783](https://youtrack.jetbrains.com/issue/KT-44783) Add Flag.IS_VALUE for value classes
+- Update to Kotlin 1.5 with metadata version 1.5.
+  Note: metadata of version 1.5 is readable by Kotlin compiler/reflection of versions 1.4 and later.
+- [`KT-44783`](https://youtrack.jetbrains.com/issue/KT-44783) Add Flag.IS_VALUE for value classes
   - Breaking change: `Flag.IS_INLINE` is deprecated, use `Flag.IS_VALUE` instead
 - Breaking change: deprecate `KotlinClassHeader.bytecodeVersion` and `KotlinClassHeader`'s constructor that takes a bytecode version array.
   Related to ['KT-41758`](https://youtrack.jetbrains.com/issue/KT-41758).
+- [`KT-45594`](https://youtrack.jetbrains.com/issue/KT-45594) KClass annotation argument containing array of classes is not read/written correctly
 
 ## 0.2.0
 

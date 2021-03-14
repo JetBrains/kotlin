@@ -43,7 +43,11 @@ sealed class KmAnnotationArgument<out T : Any> {
     data class ULongValue(override val value: Long) : KmAnnotationArgument<Long>()
 
     data class StringValue(override val value: String) : KmAnnotationArgument<String>()
-    data class KClassValue(override val value: ClassName) : KmAnnotationArgument<ClassName>()
+
+    data class KClassValue(val className: ClassName, val arrayDimensionCount: Int) : KmAnnotationArgument<String>() {
+        override val value: String = className + "[]".repeat(arrayDimensionCount)
+    }
+
     data class EnumValue(val enumClassName: ClassName, val enumEntryName: String) : KmAnnotationArgument<String>() {
         override val value: String = "$enumClassName.$enumEntryName"
     }
