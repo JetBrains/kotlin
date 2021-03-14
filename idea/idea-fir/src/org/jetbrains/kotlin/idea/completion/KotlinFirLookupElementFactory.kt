@@ -55,22 +55,39 @@ internal class KotlinFirLookupElementFactory {
     }
 }
 
+private sealed class FunctionImportStrategy {
+    object DoNothing : FunctionImportStrategy()
+    data class AddImport(val nameToImport: FqName) : FunctionImportStrategy()
+    data class InsertFqNameAndShorten(val fqName: FqName) : FunctionImportStrategy()
+}
+
 /**
  * This is a temporary hack to prevent clash of the lookup elements with same names.
  */
 private class UniqueLookupObject
 
-private data class ClassifierLookupObject(val shortName: Name, val classId: ClassId?)
+private interface KotlinLookupObject {
+    val shortName: Name
+}
+
+private data class ClassifierLookupObject(override val shortName: Name, val classId: ClassId?) : KotlinLookupObject
 
 /**
  * Simplest lookup object so two lookup elements for the same function will clash.
  */
-private data class FunctionLookupObject(val name: Name, val callableIdIfNonLocal: FqName?, val renderedFunctionParameters: String)
+private data class FunctionLookupObject(
+    override val shortName: Name,
+    val importingStrategy: FunctionImportStrategy,
+    val inputValueArguments: Boolean,
+    val insertEmptyLambda: Boolean,
+    // for distinction between different overloads
+    private val renderedFunctionParameters: String
+) : KotlinLookupObject
 
 /**
  * Simplest lookup object so two lookup elements for the same property will clash.
  */
-private data class VariableLookupObject(val name: Name, val callableIdIfNonLocal: FqName?)
+private data class VariableLookupObject(override val shortName: Name, val callableIdIfNonLocal: FqName?) : KotlinLookupObject
 
 private class ClassLookupElementFactory {
     fun createLookup(symbol: KtClassLikeSymbol): LookupElementBuilder {
@@ -80,7 +97,7 @@ private class ClassLookupElementFactory {
 
     private fun createInsertHandler(symbol: KtClassLikeSymbol): InsertHandler<LookupElement> {
         val classFqName = symbol.classIdIfNonLocal?.asSingleFqName()
-            ?: return QuotedNamesAwareInsertionHandler(symbol.name)
+            ?: return QuotedNamesAwareInsertionHandler()
 
         return ClassifierInsertionHandler(classFqName)
     }
@@ -116,12 +133,12 @@ private class VariableLookupElementFactory {
         if (setterName != null) "$getterName()/$setterName()" else "$getterName()"
 
     private fun createInsertHandler(symbol: KtVariableLikeSymbol): InsertHandler<LookupElement> {
-        val callableId = symbol.callableIdIfExists ?: return QuotedNamesAwareInsertionHandler(symbol.name)
+        val callableId = symbol.callableIdIfExists ?: return QuotedNamesAwareInsertionHandler()
 
         return if (symbol.canBeCalledByFqName) {
             ShorteningVariableInsertionHandler(callableId)
         } else {
-            SimpleVariableInsertionHandler(symbol.name, symbol.importableFqName)
+            SimpleVariableInsertionHandler(symbol.importableFqName)
         }
     }
 
@@ -144,19 +161,31 @@ private class FunctionLookupElementFactory {
     fun KtAnalysisSession.createLookup(symbol: KtFunctionSymbol): LookupElementBuilder? {
         val lookupObject = FunctionLookupObject(
             symbol.name,
-            symbol.callableIdIfNonLocal,
-            with(ShortNamesRenderer) { renderFunctionParameters(symbol) }
+            importingStrategy = detectImportingStrategy(symbol),
+            inputValueArguments = symbol.valueParameters.isNotEmpty(),
+            insertEmptyLambda = insertLambdaBraces(symbol),
+            renderedFunctionParameters = with(ShortNamesRenderer) { renderFunctionParameters(symbol) }
         )
 
         return try {
             LookupElementBuilder.create(lookupObject, symbol.name.asString())
                 .withTailText(getTailText(symbol), true)
                 .withTypeText(symbol.annotatedType.type.render())
-                .withInsertHandler(createInsertHandler(symbol))
+                .withInsertHandler(ShorteningFunctionInsertionHandler)
         } catch (e: Throwable) {
             if (e is ControlFlowException) throw e
             LOG.error(e)
             null
+        }
+    }
+
+    private fun detectImportingStrategy(symbol: KtFunctionSymbol): FunctionImportStrategy {
+        val functionFqName = symbol.callableIdIfNonLocal
+        return when {
+            functionFqName == null -> FunctionImportStrategy.DoNothing
+            symbol.dispatchType != null -> FunctionImportStrategy.DoNothing
+            !symbol.isExtension -> FunctionImportStrategy.InsertFqNameAndShorten(functionFqName)
+            else -> FunctionImportStrategy.AddImport(functionFqName)
         }
     }
 
@@ -167,31 +196,6 @@ private class FunctionLookupElementFactory {
     private fun KtAnalysisSession.insertLambdaBraces(symbol: KtFunctionSymbol): Boolean {
         val singleParam = symbol.valueParameters.singleOrNull()
         return singleParam != null && !singleParam.hasDefaultValue && singleParam.annotatedType.type is KtFunctionalType
-    }
-
-    private fun KtAnalysisSession.createInsertHandler(symbol: KtFunctionSymbol): InsertHandler<LookupElement> {
-        val functionFqName = symbol.callableIdIfNonLocal
-        return if (functionFqName != null && canBeCalledByFqName(symbol)) {
-            ShorteningFunctionInsertionHandler(
-                functionFqName,
-                inputValueArguments = symbol.valueParameters.isNotEmpty(),
-                insertEmptyLambda = insertLambdaBraces(symbol)
-            )
-        } else {
-            SimpleFunctionInsertionHandler(
-                symbol.name,
-                inputValueArguments = symbol.valueParameters.isNotEmpty(),
-                insertEmptyLambda = insertLambdaBraces(symbol),
-                nameToImport = symbol.importableFqName,
-            )
-        }
-    }
-
-    private val KtFunctionSymbol.importableFqName: FqName?
-        get() = if (dispatchType == null) callableIdIfNonLocal else null
-
-    private fun canBeCalledByFqName(symbol: KtFunctionSymbol): Boolean {
-        return !symbol.isExtension && symbol.dispatchType == null
     }
 
     companion object {
@@ -213,12 +217,8 @@ private class ClassifierInsertionHandler(private val fqName: FqName) : InsertHan
     }
 }
 
-private abstract class AbstractFunctionInsertionHandler(
-    name: Name,
-    private val inputValueArguments: Boolean,
-    private val insertEmptyLambda: Boolean
-) : QuotedNamesAwareInsertionHandler(name) {
-    protected fun addArguments(context: InsertionContext, offsetElement: PsiElement) {
+private abstract class AbstractFunctionInsertionHandler : QuotedNamesAwareInsertionHandler() {
+    protected fun addArguments(context: InsertionContext, offsetElement: PsiElement, lookupObject: FunctionLookupObject) {
         val completionChar = context.completionChar
         if (completionChar == '(') { //TODO: more correct behavior related to braces type
             context.setAddCompletionChar(false)
@@ -233,7 +233,7 @@ private abstract class AbstractFunctionInsertionHandler(
         val isSmartEnterCompletion = completionChar == Lookup.COMPLETE_STATEMENT_SELECT_CHAR
         val isReplaceCompletion = completionChar == Lookup.REPLACE_SELECT_CHAR
 
-        val (openingBracket, closingBracket) = if (insertEmptyLambda) '{' to '}' else '(' to ')'
+        val (openingBracket, closingBracket) = if (lookupObject.insertEmptyLambda) '{' to '}' else '(' to ')'
 
         if (isReplaceCompletion) {
             val offset1 = chars.skipSpaces(offset)
@@ -255,7 +255,7 @@ private abstract class AbstractFunctionInsertionHandler(
         var closeBracketOffset = openingBracketOffset?.let { chars.indexOfSkippingSpace(closingBracket, it + 1) }
 
         if (openingBracketOffset == null) {
-            if (insertEmptyLambda) {
+            if (lookupObject.insertEmptyLambda) {
                 if (completionChar == ' ' || completionChar == '{') {
                     context.setAddCompletionChar(false)
                 }
@@ -274,7 +274,7 @@ private abstract class AbstractFunctionInsertionHandler(
             closeBracketOffset = document.charsSequence.indexOfSkippingSpace(closingBracket, openingBracketOffset + 1)
         }
 
-        if (shouldPlaceCaretInBrackets(completionChar) || closeBracketOffset == null) {
+        if (shouldPlaceCaretInBrackets(completionChar, lookupObject) || closeBracketOffset == null) {
             editor.caretModel.moveToOffset(openingBracketOffset + 1)
             AutoPopupController.getInstance(project)?.autoPopupParameterInfo(editor, offsetElement)
         } else {
@@ -282,59 +282,45 @@ private abstract class AbstractFunctionInsertionHandler(
         }
     }
 
-    private fun shouldPlaceCaretInBrackets(completionChar: Char): Boolean {
+    private fun shouldPlaceCaretInBrackets(completionChar: Char, lookupObject: FunctionLookupObject): Boolean {
         if (completionChar == ',' || completionChar == '.' || completionChar == '=') return false
         if (completionChar == '(') return true
-        return inputValueArguments || insertEmptyLambda
+        return lookupObject.inputValueArguments || lookupObject.insertEmptyLambda
     }
 }
 
-private class SimpleFunctionInsertionHandler(
-    name: Name,
-    inputValueArguments: Boolean,
-    insertEmptyLambda: Boolean,
-    private val nameToImport: FqName?
-) : AbstractFunctionInsertionHandler(name, inputValueArguments, insertEmptyLambda) {
+private object ShorteningFunctionInsertionHandler : AbstractFunctionInsertionHandler() {
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
-        super.handleInsert(context, item)
-
         val targetFile = context.file as? KtFile ?: return
+        val lookupObject = item.`object` as FunctionLookupObject
+
+        val importingStrategy = lookupObject.importingStrategy
+
+        super.handleInsert(context, item)
 
         val startOffset = context.startOffset
         val element = context.file.findElementAt(startOffset) ?: return
 
-        addArguments(context, element)
-        context.commitDocument()
+        if (importingStrategy is FunctionImportStrategy.InsertFqNameAndShorten) {
+            context.document.replaceString(
+                context.startOffset,
+                context.tailOffset,
+                importingStrategy.fqName.withRootPrefixIfNeeded().render()
+            )
+            context.commitDocument()
 
-        if (nameToImport != null) {
-            addCallableImportIfRequired(targetFile, nameToImport)
+            addArguments(context, element, lookupObject)
+            context.commitDocument()
+
+            shortenReferences(targetFile, TextRange(context.startOffset, context.tailOffset))
+        } else {
+            addArguments(context, element, lookupObject)
+            context.commitDocument()
+
+            if (importingStrategy is FunctionImportStrategy.AddImport) {
+                addCallableImportIfRequired(targetFile, importingStrategy.nameToImport)
+            }
         }
-    }
-}
-
-private class ShorteningFunctionInsertionHandler(
-    private val name: FqName,
-    inputValueArguments: Boolean,
-    insertEmptyLambda: Boolean,
-) : AbstractFunctionInsertionHandler(name.shortName(), inputValueArguments, insertEmptyLambda) {
-    override fun handleInsert(context: InsertionContext, item: LookupElement) {
-        val targetFile = context.file as? KtFile ?: return
-        super.handleInsert(context, item)
-
-        val startOffset = context.startOffset
-        val element = context.file.findElementAt(startOffset) ?: return
-
-        context.document.replaceString(
-            context.startOffset,
-            context.tailOffset,
-            name.withRootPrefixIfNeeded().render()
-        )
-        context.commitDocument()
-
-        addArguments(context, element)
-        context.commitDocument()
-
-        shortenReferences(targetFile, TextRange(context.startOffset, context.tailOffset))
     }
 }
 
@@ -353,8 +339,8 @@ private class ShorteningVariableInsertionHandler(private val name: FqName) : Ins
     }
 }
 
-private class SimpleVariableInsertionHandler(name: Name, private val nameToImport: FqName?) :
-    QuotedNamesAwareInsertionHandler(name) {
+private class SimpleVariableInsertionHandler(private val nameToImport: FqName?) :
+    QuotedNamesAwareInsertionHandler() {
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
         super.handleInsert(context, item)
 
@@ -366,13 +352,15 @@ private class SimpleVariableInsertionHandler(name: Name, private val nameToImpor
     }
 }
 
-private open class QuotedNamesAwareInsertionHandler(private val name: Name) : InsertHandler<LookupElement> {
+private open class QuotedNamesAwareInsertionHandler() : InsertHandler<LookupElement> {
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
+        val lookupElement = item.`object` as KotlinLookupObject
+
         val startOffset = context.startOffset
         if (startOffset > 0 && context.document.isTextAt(startOffset - 1, "`")) {
             context.document.deleteString(startOffset - 1, startOffset)
         }
-        context.document.replaceString(context.startOffset, context.tailOffset, name.render())
+        context.document.replaceString(context.startOffset, context.tailOffset, lookupElement.shortName.render())
 
         context.commitDocument()
     }
