@@ -17,4 +17,4 @@ jobs:
           java-version: 1.8
 
       - run: ./gradlew build
-      - run: cd sample && ./gradlew build browserDistribution || cd ..
+      - run: cd sample && ./gradlew build

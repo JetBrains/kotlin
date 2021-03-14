@@ -17,17 +17,44 @@
 package com.bnorm.power
 
 import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
 class PowerAssertTest {
+
   @Test
   fun assertTrue() {
-    assertTrue(Person.UNKNOWN.size == 1)
+    val error = assertFailsWith<AssertionError> { assertTrue(Person.UNKNOWN.size == 1) }
+    assertEquals(
+      actual = error.message,
+      expected = """
+        Assertion failed
+        assertTrue(Person.UNKNOWN.size == 1)
+                   |      |       |    |
+                   |      |       |    false
+                   |      |       2
+                   |      [Person(firstName=John, lastName=Doe), Person(firstName=Jane, lastName=Doe)]
+                   Person.Companion
+      """.trimIndent()
+    )
   }
 
   @Test
   fun require() {
-    require(Person.UNKNOWN.size == 1)
+    val error = assertFailsWith<IllegalArgumentException> { require(Person.UNKNOWN.size == 1) }
+    assertEquals(
+      actual = error.message,
+      expected = """
+        Assertion failed
+        require(Person.UNKNOWN.size == 1)
+                |      |       |    |
+                |      |       |    false
+                |      |       2
+                |      [Person(firstName=John, lastName=Doe), Person(firstName=Jane, lastName=Doe)]
+                Person.Companion
+      """.trimIndent()
+    )
   }
 
   @Test
@@ -36,15 +63,52 @@ class PowerAssertTest {
     assert(unknown != null)
     assert(unknown.size == 2)
 
-    val jane: Person
-    val john: Person
-    assertSoftly {
-      jane = unknown[0]
-      assert(jane.firstName == "Jane")
-      assert(jane.lastName == "Doe") { "bad jane last name" }
+    val error = assertFailsWith<AssertionError> {
+      val jane: Person
+      val john: Person
+      assertSoftly {
+        jane = unknown[0]
+        assert(jane.firstName == "Jane")
+        assert(jane.lastName == "Doe") { "bad jane last name" }
 
-      john = unknown[1]
-      assert(john.lastName == "Doe" && john.firstName == "John") { "bad john" }
+        john = unknown[1]
+        assert(john.lastName == "Doe" && john.firstName == "John") { "bad john" }
+      }
     }
+    assertEquals(
+      actual = error.message,
+      expected = """
+        Multiple failed assertions
+      """.trimIndent(),
+    )
+    assertEquals(
+      actual = error.suppressedExceptions.size,
+      expected = 2,
+    )
+    assertEquals(
+      actual = error.suppressedExceptions[0].message,
+      expected = """
+        Assertion failed
+        assert(jane.firstName == "Jane")
+               |    |         |
+               |    |         false
+               |    John
+               Person(firstName=John, lastName=Doe)
+      """.trimIndent(),
+    )
+    assertEquals(
+      actual = error.suppressedExceptions[1].message,
+      expected = """
+        bad john
+        assert(john.lastName == "Doe" && john.firstName == "John") { "bad john" }
+               |    |        |           |    |         |
+               |    |        |           |    |         false
+               |    |        |           |    Jane
+               |    |        |           Person(firstName=Jane, lastName=Doe)
+               |    |        true
+               |    Doe
+               Person(firstName=Jane, lastName=Doe)
+      """.trimIndent(),
+    )
   }
 }

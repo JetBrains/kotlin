@@ -18,9 +18,10 @@ package com.bnorm.power
 
 data class Person(
   val firstName: String,
-  val lastName: String
+  val lastName: String,
 ) {
   companion object {
     val UNKNOWN = listOf(Person("John", "Doe"), Person("Jane", "Doe"))
+    override fun toString() = "Person.Companion"
   }
 }
