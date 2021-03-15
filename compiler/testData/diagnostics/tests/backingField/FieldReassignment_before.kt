@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: -RestrictionOfValReassignmentViaBackingField
 
 val my: Int = 1

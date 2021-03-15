@@ -427,6 +427,12 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
         val VAL_REASSIGNMENT by error<FirSourceElement, KtExpression> {
             parameter<FirPropertySymbol>("variable")
         }
+        val VAL_REASSIGNMENT_VIA_BACKING_FIELD by warning<FirSourceElement, KtExpression> {
+            parameter<FirPropertySymbol>("variable")
+        }
+        val VAL_REASSIGNMENT_VIA_BACKING_FIELD_ERROR by error<FirSourceElement, KtExpression> {
+            parameter<FirPropertySymbol>("variable")
+        }
         val WRONG_INVOCATION_KIND by warning<FirSourceElement, PsiElement> {
             parameter<AbstractFirBasedSymbol<*>>("declaration")
             parameter<EventOccurrencesRange>("requiredRange")

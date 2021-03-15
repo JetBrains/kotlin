@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.modality
@@ -16,7 +18,11 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
+import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
+import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.references.FirBackingFieldReference
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
+import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.lexer.KtTokens
 
 internal fun isInsideExpectClass(containingClass: FirRegularClass, context: CheckerContext): Boolean {
@@ -168,8 +174,36 @@ internal fun checkPropertyAccessors(
     reporter: DiagnosticReporter,
     context: CheckerContext
 ) {
-    property.setter?.source?.let {
-        if (property.isVal) {
+    if (property.isVal) {
+        if (property.getter != null) {
+            var reassignment: FirBackingFieldReference? = null
+            // TODO: consider replacing this with normal VariableAssignmentChecker and reporting all 'field = ...' in getter (not just 1st)
+            // This way is a bit hacky and does not handle diagnostic suppression normally
+            val visitor = object : FirVisitorVoid() {
+                override fun visitElement(element: FirElement) {
+                    element.acceptChildren(this)
+                }
+
+                override fun visitVariableAssignment(variableAssignment: FirVariableAssignment) {
+                    // Report the first violation (to match FE 1.0 behavior)
+                    if (reassignment != null) return
+
+                    val backingFieldReference = variableAssignment.lValue as? FirBackingFieldReference
+                    if (backingFieldReference?.resolvedSymbol?.fir == property) {
+                        reassignment = backingFieldReference
+                    }
+                }
+            }
+            property.getter?.body?.accept(visitor, null)
+            reassignment?.source?.let {
+                if (context.session.languageVersionSettings.supportsFeature(LanguageFeature.RestrictionOfValReassignmentViaBackingField)) {
+                    reporter.reportOn(it, FirErrors.VAL_REASSIGNMENT_VIA_BACKING_FIELD_ERROR, property.symbol, context)
+                } else {
+                    reporter.reportOn(it, FirErrors.VAL_REASSIGNMENT_VIA_BACKING_FIELD, property.symbol, context)
+                }
+            }
+        }
+        property.setter?.source?.let {
             reporter.reportOn(it, FirErrors.VAL_WITH_SETTER, context)
         }
     }

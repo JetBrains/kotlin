@@ -862,6 +862,16 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val variable: KtVariableSymbol
     }
 
+    abstract class ValReassignmentViaBackingField : KtFirDiagnostic<KtExpression>() {
+        override val diagnosticClass get() = ValReassignmentViaBackingField::class
+        abstract val variable: KtVariableSymbol
+    }
+
+    abstract class ValReassignmentViaBackingFieldError : KtFirDiagnostic<KtExpression>() {
+        override val diagnosticClass get() = ValReassignmentViaBackingFieldError::class
+        abstract val variable: KtVariableSymbol
+    }
+
     abstract class WrongInvocationKind : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = WrongInvocationKind::class
         abstract val declaration: KtSymbol

@@ -2098,6 +2098,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("LocalDeclarations.kt")
+            public void testLocalDeclarations() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/backingField/LocalDeclarations.kt");
+            }
+
+            @Test
             @TestMetadata("SetterWithExplicitType.kt")
             public void testSetterWithExplicitType() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/backingField/SetterWithExplicitType.kt");
