@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.idea.debugger.evaluate.getResolutionFacadeForCodeFra
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -106,7 +107,7 @@ class CodeFragmentCompiler(private val executionContext: ExecutionContext, priva
         ).codegenFactory(
             JvmIrCodegenFactory(
                 PhaseConfig(jvmPhases),
-                EvaluatorFragmentPSI2IRInvoker(codegenInfo)
+                EvaluatorFragmentPSI2IRInvoker(codegenInfo, moduleDescriptor)
             )
         ).build()
 

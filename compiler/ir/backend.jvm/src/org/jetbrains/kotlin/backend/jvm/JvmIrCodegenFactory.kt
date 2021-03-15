@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.psi2ir.PsiSourceManager
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.CleanableBindingContext
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 class JvmIrCodegenFactory(
     private val phaseConfig: PhaseConfig,
@@ -102,6 +103,7 @@ class JvmIrCodegenFactory(
             mangler
         )
 
+
         val pluginContext by lazy {
             psi2irContext.run {
                 val symbols = BuiltinSymbolsBase(irBuiltIns, moduleDescriptor.builtIns, symbolTable.lazyWrapper)
@@ -140,6 +142,7 @@ class JvmIrCodegenFactory(
                 // We have to ensure that deserializer for built-ins module is created
                 irLinker.deserializeIrModuleHeader(it.builtIns.builtInsModule, null)
             }
+
             irLinker.deserializeIrModuleHeader(it, kotlinLibrary)
         }
         val irProviders = listOf(irLinker)
@@ -150,6 +153,7 @@ class JvmIrCodegenFactory(
             files,
             irProviders,
             pluginExtensions,
+            symbolTable, extensions,
             expectDescriptorToSymbol = null
         )
         irLinker.postProcess()
@@ -266,12 +270,15 @@ interface PSI2IRInvoker {
         files: Collection<KtFile>,
         irProviders: List<JvmIrLinker>,
         pluginExtensions: List<IrGenerationExtension>,
+        symbolTable: SymbolTable,
+        extensions: JvmGeneratorExtensions,
         expectDescriptorToSymbol: Nothing?
     ): IrModuleFragment
 }
 
 class EvaluatorFragmentPSI2IRInvoker(
-    private val codegenInfo: CodeFragmentCodegenInfo
+    private val codegenInfo: CodeFragmentCodegenInfo,
+    private val baseModule: ModuleDescriptor
 ) : PSI2IRInvoker {
     override fun generateModuleFragment(
         psi2ir: Psi2IrTranslator,
@@ -279,16 +286,23 @@ class EvaluatorFragmentPSI2IRInvoker(
         files: Collection<KtFile>,
         irProviders: List<JvmIrLinker>,
         pluginExtensions: List<IrGenerationExtension>,
-        expectDescriptorToSymbol: Nothing?
+        symbolTable: SymbolTable,
+        extensions: JvmGeneratorExtensions,
+        expectDescriptorToSymbol: Nothing?,
     ): IrModuleFragment {
         require(files.size == 1)
         val fragment = files.first() as KtBlockCodeFragment
+
+        val baseModuleStubGenerator = DeclarationStubGenerator(baseModule, symbolTable, psi2ir.languageVersionSettings, extensions)
+        val extendedProviders = mutableListOf<IrProvider>(baseModuleStubGenerator)
+        extendedProviders.addAll(irProviders)
         return psi2ir.generateEvaluatorModuleFragment(
             psi2irContext,
             fragment,
-            irProviders,
+            extendedProviders,
             pluginExtensions,
-            codegenInfo
+            codegenInfo,
+            baseModule
         )
     }
 
@@ -301,6 +315,8 @@ class DefaultPSI2IRInvoker : PSI2IRInvoker {
         files: Collection<KtFile>,
         irProviders: List<JvmIrLinker>,
         pluginExtensions: List<IrGenerationExtension>,
+        symbolTable: SymbolTable,
+        extensions: JvmGeneratorExtensions,
         expectDescriptorToSymbol: Nothing?
     ): IrModuleFragment {
         return psi2ir.generateModuleFragment(psi2irContext, files, irProviders, pluginExtensions, expectDescriptorToSymbol = null)

@@ -106,8 +106,10 @@ class Psi2IrTranslator(
         ktFile: KtBlockCodeFragment,
         irProviders: List<IrProvider>,
         linkerExtensions: Collection<IrDeserializer.IrLinkerExtension>,
-        codegenInfo: CodeFragmentCodegenInfo
+        codegenInfo: CodeFragmentCodegenInfo,
+        baseModule: ModuleDescriptor
     ): IrModuleFragment {
+        baseModule.isValid
         context.symbolTableInterceptor = object : SymbolTableInterceptor {
             override fun referenceValue(symbolTable: SymbolTable, descriptor: VariableDescriptor): IrValueSymbol {
                 val parameterPosition = codegenInfo.parameters.map { it.targetDescriptor }.indexOf(descriptor)
@@ -123,6 +125,8 @@ class Psi2IrTranslator(
         val irModule = moduleGenerator.generateEvaluatorModuleFragment(ktFile, codegenInfo)
 
         val deserializers = irProviders.filterIsInstance<IrDeserializer>()
+
+//        deserializers.forEach { it.init(baseModule, linkerExtensions) }
         deserializers.forEach { it.init(irModule, linkerExtensions) }
 
         moduleGenerator.generateUnboundSymbolsAsDependencies(irProviders)
