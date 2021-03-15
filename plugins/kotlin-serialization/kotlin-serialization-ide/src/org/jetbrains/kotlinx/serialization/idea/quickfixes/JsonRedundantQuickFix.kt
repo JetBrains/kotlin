@@ -43,7 +43,7 @@ internal class JsonRedundantQuickFix(expression: KtCallExpression) : KotlinQuick
 
     override fun getFamilyName(): String = text
 
-    override fun getText(): String = KotlinSerializationBundle.message("move.json.to.property")
+    override fun getText(): String = KotlinSerializationBundle.message("extract.json.to.property")
 
     object Factory : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {

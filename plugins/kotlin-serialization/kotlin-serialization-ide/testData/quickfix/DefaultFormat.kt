@@ -1,4 +1,4 @@
-// "Replace by default Json format" "true"
+// "Replace with default Json format instance" "true"
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*
 

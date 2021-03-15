@@ -25,7 +25,7 @@ internal class JsonRedundantDefaultQuickFix(expression: KtCallExpression) : Kotl
 
     override fun getFamilyName(): String = text
 
-    override fun getText(): String = KotlinSerializationBundle.message("replace.by.default.json.format")
+    override fun getText(): String = KotlinSerializationBundle.message("replace.with.default.json.format")
 
     object Factory : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
