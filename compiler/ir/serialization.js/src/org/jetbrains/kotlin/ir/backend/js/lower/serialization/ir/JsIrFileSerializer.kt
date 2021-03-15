@@ -22,7 +22,6 @@ class JsIrFileSerializer(
     skipExpects: Boolean,
     bodiesOnlyForInlines: Boolean = false,
     icMode: Boolean = false,
-    fileToIndex: (IrFile) -> Int = { 0 }
 ) : IrFileSerializer(
     messageLogger,
     declarationTable,
@@ -30,7 +29,6 @@ class JsIrFileSerializer(
     bodiesOnlyForInlines = bodiesOnlyForInlines,
     skipExpects = skipExpects,
     skipMutableState = icMode,
-    fileToIndex,
 ) {
     companion object {
         private val JS_EXPORT_FQN = FqName("kotlin.js.JsExport")

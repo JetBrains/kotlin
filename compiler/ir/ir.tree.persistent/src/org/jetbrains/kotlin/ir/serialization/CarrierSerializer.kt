@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.ir.declarations.persistent.carriers.ConstructorCarri
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.EnumEntryCarrier
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.ErrorDeclarationCarrier
 import org.jetbrains.kotlin.ir.expressions.IrBody
+import org.jetbrains.kotlin.ir.expressions.IrSyntheticBody
+import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
 import org.jetbrains.kotlin.library.impl.IrMemoryArrayWriter
 
 class SerializedCarriers(
@@ -34,8 +36,8 @@ class SerializedCarriers(
 )
 
 // Declarations are references by signatures, bodies are referenced by index.
-fun IrFileSerializer.serializeCarriers(declarations: Iterable<IrDeclaration>, bodies: Iterable<IrBody>): SerializedCarriers {
-    val serializer = CarrierSerializer(this)
+fun IrFileSerializer.serializeCarriers(declarations: Iterable<IrDeclaration>, bodies: List<IrBody>): SerializedCarriers {
+    val serializer = CarrierSerializer(this, bodies)
 
     declarations.forEach { serializer.serializeDeclarationCarrier(it) }
     bodies.forEach { serializer.serializeBodyCarriers(it) }
@@ -43,8 +45,23 @@ fun IrFileSerializer.serializeCarriers(declarations: Iterable<IrDeclaration>, bo
     return serializer.build()
 }
 
-private class CarrierSerializer(val fileSerializer: IrFileSerializer) {
-    private val serializerImpl = IrCarrierSerializerImpl(fileSerializer)
+private class CarrierSerializer(val fileSerializer: IrFileSerializer, bodies: List<IrBody>) {
+
+    private val bodyToIndex = mutableMapOf<IrBody, Int>().also { map ->
+        bodies.forEachIndexed { index, irBody ->
+            map[irBody] = index
+        }
+    }
+
+    private val serializerImpl = IrCarrierSerializerImpl(fileSerializer) {
+        if (it is IrSyntheticBody) {
+            when (it.kind) {
+                IrSyntheticBodyKind.ENUM_VALUEOF -> -1
+                IrSyntheticBodyKind.ENUM_VALUES -> -2
+            }
+        } else bodyToIndex[it]
+            ?: error("")
+    }
 
     val signatures = mutableListOf<ByteArray>()
     val declarationCarriers = mutableListOf<ByteArray>()

@@ -96,7 +96,7 @@ fun loadIrForIc(
 
     IcDeserializer(linker, context).injectIcData(module, icData)
 
-    linker.symbolTable.noUnboundLeft("sdf")
+    linker.symbolTable.noUnboundLeft("Unbound symbols found")
 
 //    TODO("=================== loaded!")
 }

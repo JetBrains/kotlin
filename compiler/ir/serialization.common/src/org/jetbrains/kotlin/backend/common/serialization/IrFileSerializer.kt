@@ -115,7 +115,6 @@ open class IrFileSerializer(
     private val bodiesOnlyForInlines: Boolean = false,
     private val skipExpects: Boolean = false,
     private val skipMutableState: Boolean = false, // required for JS IC caches
-    private val fileToIndex: (IrFile) -> Int = { 0 }
 ) {
     private val loopIndex = mutableMapOf<IrLoop, Int>()
     private var currentLoopIndex = 0
@@ -1109,8 +1108,10 @@ open class IrFileSerializer(
             .setBase(serializeIrDeclarationBase(parameter, ValueParameterFlags.encode(parameter)))
             .setNameType(serializeNameAndType(parameter.name, parameter.type))
 
-        parameter.varargElementType?.let { proto.setVarargElementType(serializeIrType(it)) }
-        parameter.defaultValue?.let { proto.setDefaultValue(serializeIrExpressionBody(it.expression)) }
+        if (!skipMutableState) {
+            parameter.varargElementType?.let { proto.setVarargElementType(serializeIrType(it)) }
+            parameter.defaultValue?.let { proto.setDefaultValue(serializeIrExpressionBody(it.expression)) }
+        }
 
         return proto.build()
     }
@@ -1139,11 +1140,12 @@ open class IrFileSerializer(
             function.valueParameters.forEach {
                 proto.addValueParameter(serializeIrValueParameter(it))
             }
+
+            if (!bodiesOnlyForInlines || function.isInline) {
+                function.body?.let { proto.body = serializeIrStatementBody(it) }
+            }
         }
 
-        if (!bodiesOnlyForInlines || function.isInline) {
-            function.body?.let { proto.body = serializeIrStatementBody(it) }
-        }
         return proto.build()
     }
 
@@ -1163,11 +1165,16 @@ open class IrFileSerializer(
         return proto.build()
     }
 
-    private fun serializeIrAnonymousInit(declaration: IrAnonymousInitializer) =
-        ProtoAnonymousInit.newBuilder()
+    private fun serializeIrAnonymousInit(declaration: IrAnonymousInitializer): ProtoAnonymousInit {
+        val proto = ProtoAnonymousInit.newBuilder()
             .setBase(serializeIrDeclarationBase(declaration, null))
-            .setBody(serializeIrStatementBody(declaration.body))
-            .build()
+
+        if (!skipMutableState) {
+            proto.setBody(serializeIrStatementBody(declaration.body))
+        }
+
+        return proto.build()
+    }
 
     private fun serializeIrLocalDelegatedProperty(variable: IrLocalDelegatedProperty): ProtoLocalDelegatedProperty {
         val proto = ProtoLocalDelegatedProperty.newBuilder()
@@ -1201,9 +1208,11 @@ open class IrFileSerializer(
         val proto = ProtoField.newBuilder()
             .setBase(serializeIrDeclarationBase(field, FieldFlags.encode(field)))
             .setNameType(serializeNameAndType(field.name, field.type))
-        val initializer = field.initializer?.expression
-        if (initializer != null) {
-            proto.initializer = serializeIrExpressionBody(initializer)
+        if (!skipMutableState) {
+            val initializer = field.initializer?.expression
+            if (initializer != null) {
+                proto.initializer = serializeIrExpressionBody(initializer)
+            }
         }
         return proto.build()
     }

@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptorVisibility
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall as ProtoIrConstructorCall
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrVariable as ProtoIrVariable
 
-internal class IrCarrierSerializerImpl(val fileSerializer: IrFileSerializer) : IrCarrierSerializer() {
+internal class IrCarrierSerializerImpl(val fileSerializer: IrFileSerializer, val bodyIndex: (IrBody) -> Int) : IrCarrierSerializer() {
     override fun serializeParentSymbol(value: IrSymbol): Long {
         return fileSerializer.serializeIrSymbol(value)
     }
@@ -38,7 +38,7 @@ internal class IrCarrierSerializerImpl(val fileSerializer: IrFileSerializer) : I
     }
 
     override fun serializeBody(value: IrBody): Int {
-        return fileSerializer.serializeIrStatementBody(value)
+        return bodyIndex(value)
     }
 
     override fun serializeBlockBody(value: IrBlockBody): Int {

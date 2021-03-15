@@ -24,7 +24,11 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptorVisibility
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall as ProtoIrConstructorCall
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrVariable as ProtoIrVariable
 
-internal class IrCarrierDeserializerImpl(val declarationDeserializer: IrDeclarationDeserializer) : IrCarrierDeserializer() {
+internal class IrCarrierDeserializerImpl(
+    val declarationDeserializer: IrDeclarationDeserializer,
+    val indexToBody: (Int) -> IrBody,
+    val indexToExpressionBody: (Int) -> IrExpressionBody
+) : IrCarrierDeserializer() {
 
     override fun deserializeParentSymbol(proto: Long): IrSymbol {
         return declarationDeserializer.symbolDeserializer.deserializeIrSymbol(proto)
@@ -39,20 +43,15 @@ internal class IrCarrierDeserializerImpl(val declarationDeserializer: IrDeclarat
     }
 
     override fun deserializeBody(proto: Int): IrBody {
-        // TODO there should be some kind of "symbol" to link bodies
-        return declarationDeserializer.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
-//        return declarationDeserializer.deserializeStatementBody(proto) as IrBody
+        return indexToBody(proto)
     }
 
     override fun deserializeBlockBody(proto: Int): IrBlockBody {
-        return declarationDeserializer.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
-//        return declarationDeserializer.deserializeStatementBody(proto) as IrBlockBody
+        return indexToBody(proto) as IrBlockBody
     }
 
     override fun deserializeExpressionBody(proto: Int): IrExpressionBody {
-        // TODO there should be some kind of "symbol" to link bodies
-        return declarationDeserializer.irFactory.createExpressionBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) { error("") }
-//        return declarationDeserializer.deserializeExpressionBody(proto)
+        return indexToExpressionBody(proto)
     }
 
     override fun deserializeValueParameter(proto: Long): IrValueParameterSymbol {

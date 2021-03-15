@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrFileSeriali
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrBodyBase
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrDeclarationBase
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
@@ -55,19 +56,29 @@ class IcSerializer(
             }
         }
 
+        val filteredBodies = irFactory.allBodies.groupBy {
+            (it as? PersistentIrBodyBase<*>)?.let {
+                if (it.hasContainer) {
+                    it.container.fileOrNull
+                } else null
+            }
+        }
+
         val dataToSerialize = filteredDeclarations.groupBy {
             // TODO don't move declarations or effects outside the original file
             // TODO Or invent a different mechanism for that
 
             it.file
-        }.entries
-
-        val fileToIndex = mutableMapOf<IrFile, Int>()
-        dataToSerialize.forEach { (f, _) ->
-            fileToIndex[f] = fileToIndex.size
         }
 
-        val icData = dataToSerialize.map { (file, declarations) ->
+//        val allFiles = dataToSerialize.keys + filteredBodies.keys.filterNotNull()
+
+        val icData = mutableListOf<SerializedIcDataForFile>()
+
+        for (file in fileToDeserializer.keys) {
+            val declarations = dataToSerialize[file] ?: emptyList()
+            val bodies = filteredBodies[file] ?: emptyList()
+
             val fileDeserializer = fileToDeserializer[file]!!
 
             val existingSignatures = fileDeserializer.symbolDeserializer.deserializedSymbols.keys
@@ -78,37 +89,18 @@ class IcSerializer(
             val symbolToSignature = fileDeserializer.symbolDeserializer.deserializedSymbols.entries.associate { (idSig, symbol) -> symbol to idSig }
 
             val icDeclarationTable = IcDeclarationTable(globalDeclarationTable, irFactory, maxFileLocalIndex + 1, maxScopeLocalIndex + 1, symbolToSignature)
-            val fileSerializer = JsIrFileSerializer(IrMessageLogger.None, icDeclarationTable, mutableMapOf(), skipExpects = true, icMode = true) { fileToIndex[it]!! }
-
-            // Serialize old bodies as they have probably changed.
-            // Need to keep the order same as before.
-            val bodies = (linker.bodyToIndex[file] ?: emptyMap())
+            val fileSerializer = JsIrFileSerializer(IrMessageLogger.None, icDeclarationTable, mutableMapOf(), skipExpects = true, icMode = true)
 
             // TODO add local bodies
 
 //            val sortedBodyEntries = bodies.entries.sortedBy { it.value }
 
-
-            val indexToBody = mutableMapOf<Int, IrBody>()
-            bodies.entries.forEach { (k, v) -> indexToBody[v] = k }
-
-            val maxIndex = indexToBody.keys.maxOrNull() ?: -1
-            for (i in 0..maxIndex) {
-                val body = indexToBody[i] ?: run {
-                    val errorType = IrErrorTypeImpl(null, emptyList(), Variance.INVARIANT)
-                    irFactory.createBlockBody(
-                        -1, -1, listOf(IrErrorExpressionImpl(-1, -1, errorType, "Statement body is not deserialized yet"))
-                    )
-                }
+            bodies.forEachIndexed { index, body ->
                 if (body is IrExpressionBody) {
                     fileSerializer.serializeIrExpressionBody(body.expression)
                 } else {
                     fileSerializer.serializeIrStatementBody(body)
                 }
-            }
-
-            if ("CharCode.kt" in file.name) {
-                1
             }
 
             // Only save newly created declarations
@@ -118,7 +110,7 @@ class IcSerializer(
 
             val serializedCarriers = fileSerializer.serializeCarriers(
                 declarations,
-                bodies.keys,
+                bodies,
             )
 
             val serializedMappings = mappings.state.serializeMappings(declarations) { symbol ->
@@ -133,6 +125,7 @@ class IcSerializer(
                 serializedMappings,
             )
         }
+
         return SerializedIcData(icData)
     }
 

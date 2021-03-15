@@ -152,6 +152,9 @@ interface PersistentIrBodyBase<B : PersistentIrBodyBase<B>> : PersistentIrElemen
             containerField = s?.owner?.cast()
         }
 
+    val hasContainer: Boolean
+        get() = getCarrier().containerField != null
+
     var container: IrDeclaration
         get() = getCarrier().containerField!!
         set(p) {
