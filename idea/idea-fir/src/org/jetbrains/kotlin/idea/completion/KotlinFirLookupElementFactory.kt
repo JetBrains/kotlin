@@ -77,7 +77,7 @@ private data class ClassifierLookupObject(override val shortName: Name, val clas
  */
 private data class FunctionLookupObject(
     override val shortName: Name,
-    val importingStrategy: CallableImportStrategy,
+    val importStrategy: CallableImportStrategy,
     val inputValueArguments: Boolean,
     val insertEmptyLambda: Boolean,
     // for distinction between different overloads
@@ -115,7 +115,7 @@ private class VariableLookupElementFactory {
         return LookupElementBuilder.create(lookupObject, symbol.name.asString())
             .withTypeText(symbol.annotatedType.type.render())
             .markIfSyntheticJavaProperty(symbol)
-            .withInsertHandler(ShorteningVariableInsertionHandler)
+            .withInsertHandler(VariableInsertionHandler)
     }
 
     private fun LookupElementBuilder.markIfSyntheticJavaProperty(symbol: KtVariableLikeSymbol): LookupElementBuilder = when (symbol) {
@@ -144,7 +144,7 @@ private class FunctionLookupElementFactory {
     fun KtAnalysisSession.createLookup(symbol: KtFunctionSymbol): LookupElementBuilder? {
         val lookupObject = FunctionLookupObject(
             symbol.name,
-            importingStrategy = detectImportingStrategy(symbol),
+            importStrategy = detectImportStrategy(symbol),
             inputValueArguments = symbol.valueParameters.isNotEmpty(),
             insertEmptyLambda = insertLambdaBraces(symbol),
             renderedFunctionParameters = with(ShortNamesRenderer) { renderFunctionParameters(symbol) }
@@ -154,7 +154,7 @@ private class FunctionLookupElementFactory {
             LookupElementBuilder.create(lookupObject, symbol.name.asString())
                 .withTailText(getTailText(symbol), true)
                 .withTypeText(symbol.annotatedType.type.render())
-                .withInsertHandler(ShorteningFunctionInsertionHandler)
+                .withInsertHandler(FunctionInsertionHandler)
         } catch (e: Throwable) {
             if (e is ControlFlowException) throw e
             LOG.error(e)
@@ -162,7 +162,7 @@ private class FunctionLookupElementFactory {
         }
     }
 
-    private fun detectImportingStrategy(symbol: KtFunctionSymbol): CallableImportStrategy {
+    private fun detectImportStrategy(symbol: KtFunctionSymbol): CallableImportStrategy {
         val functionFqName = symbol.callableIdIfNonLocal
         return when {
             functionFqName == null -> CallableImportStrategy.DoNothing
@@ -205,8 +205,8 @@ private object ClassifierInsertionHandler : InsertHandler<LookupElement> {
     }
 }
 
-private abstract class AbstractFunctionInsertionHandler : QuotedNamesAwareInsertionHandler() {
-    protected fun addArguments(context: InsertionContext, offsetElement: PsiElement, lookupObject: FunctionLookupObject) {
+private object FunctionInsertionHandler : QuotedNamesAwareInsertionHandler() {
+    private fun addArguments(context: InsertionContext, offsetElement: PsiElement, lookupObject: FunctionLookupObject) {
         val completionChar = context.completionChar
         if (completionChar == '(') { //TODO: more correct behavior related to braces type
             context.setAddCompletionChar(false)
@@ -275,25 +275,22 @@ private abstract class AbstractFunctionInsertionHandler : QuotedNamesAwareInsert
         if (completionChar == '(') return true
         return lookupObject.inputValueArguments || lookupObject.insertEmptyLambda
     }
-}
 
-private object ShorteningFunctionInsertionHandler : AbstractFunctionInsertionHandler() {
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
         val targetFile = context.file as? KtFile ?: return
         val lookupObject = item.`object` as FunctionLookupObject
-
-        val importingStrategy = lookupObject.importingStrategy
 
         super.handleInsert(context, item)
 
         val startOffset = context.startOffset
         val element = context.file.findElementAt(startOffset) ?: return
 
-        if (importingStrategy is CallableImportStrategy.InsertFqNameAndShorten) {
+        val importStrategy = lookupObject.importStrategy
+        if (importStrategy is CallableImportStrategy.InsertFqNameAndShorten) {
             context.document.replaceString(
                 context.startOffset,
                 context.tailOffset,
-                importingStrategy.fqName.withRootPrefixIfNeeded().render()
+                importStrategy.fqName.withRootPrefixIfNeeded().render()
             )
             context.commitDocument()
 
@@ -305,14 +302,14 @@ private object ShorteningFunctionInsertionHandler : AbstractFunctionInsertionHan
             addArguments(context, element, lookupObject)
             context.commitDocument()
 
-            if (importingStrategy is CallableImportStrategy.AddImport) {
-                addCallableImportIfRequired(targetFile, importingStrategy.nameToImport)
+            if (importStrategy is CallableImportStrategy.AddImport) {
+                addCallableImportIfRequired(targetFile, importStrategy.nameToImport)
             }
         }
     }
 }
 
-private object ShorteningVariableInsertionHandler : InsertHandler<LookupElement> {
+private object VariableInsertionHandler : InsertHandler<LookupElement> {
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
         val targetFile = context.file as? KtFile ?: return
         val lookupObject = item.`object` as VariableLookupObject
@@ -369,26 +366,12 @@ private fun alreadyHasImport(file: KtFile, nameToImport: FqName): Boolean {
             return scopes
                 .getCallableSymbols { it == nameToImport.shortName() }
                 .any {
-                    it is KtVariableLikeSymbol && it.callableIdIfExists == nameToImport ||
+                    it is KtKotlinPropertySymbol && it.callableIdIfNonLocal == nameToImport ||
                             it is KtFunctionSymbol && it.callableIdIfNonLocal == nameToImport
                 }
         }
     }
 }
-
-private val KtVariableLikeSymbol.callableIdIfExists: FqName?
-    get() = when (this) {
-        is KtJavaFieldSymbol -> callableIdIfNonLocal
-        is KtKotlinPropertySymbol -> callableIdIfNonLocal
-        is KtSyntheticJavaPropertySymbol -> callableIdIfNonLocal
-
-        // Compiler will complain if there would be a new type in the hierarchy
-        is KtEnumEntrySymbol,
-        is KtLocalVariableSymbol,
-        is KtFunctionParameterSymbol,
-        is KtConstructorParameterSymbol,
-        is KtSetterParameterSymbol -> null
-    }
 
 private object ShortNamesRenderer {
     fun KtAnalysisSession.renderFunctionParameters(function: KtFunctionSymbol): String =
