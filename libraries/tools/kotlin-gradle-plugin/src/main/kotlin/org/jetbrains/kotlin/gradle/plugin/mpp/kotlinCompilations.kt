@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import groovy.lang.Closure
-import org.gradle.api.*
+import org.gradle.api.GradleException
+import org.gradle.api.Project
+import org.gradle.api.Task
+import org.gradle.api.UnknownTaskException
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.execution.TaskExecutionListener
 import org.gradle.api.file.FileCollection
@@ -21,7 +24,8 @@ import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.KotlinCompilationsModuleGroups
 import org.jetbrains.kotlin.gradle.plugin.sources.defaultSourceSetLanguageSettingsChecker
-import org.jetbrains.kotlin.gradle.plugin.sources.getSourceSetHierarchy
+import org.jetbrains.kotlin.gradle.plugin.sources.withAllDependsOnSourceSets
+import org.jetbrains.kotlin.gradle.plugin.sources.resolveAllDependsOnSourceSets
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.utils.*
@@ -66,7 +70,7 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
     override val kotlinSourceSets: MutableSet<KotlinSourceSet> = mutableSetOf()
 
     override val allKotlinSourceSets: Set<KotlinSourceSet>
-        get() = kotlinSourceSets.flatMapTo(mutableSetOf()) { it.getSourceSetHierarchy() }
+        get() = kotlinSourceSets + kotlinSourceSets.resolveAllDependsOnSourceSets()
 
     override val defaultSourceSetName: String
         get() = lowerCamelCaseName(
@@ -146,7 +150,7 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
     final override fun source(sourceSet: KotlinSourceSet) {
         if (kotlinSourceSets.add(sourceSet)) {
             target.project.whenEvaluated {
-                addExactSourceSetsEagerly(sourceSet.getSourceSetHierarchy())
+                addExactSourceSetsEagerly(sourceSet.withAllDependsOnSourceSets())
             }
         }
     }

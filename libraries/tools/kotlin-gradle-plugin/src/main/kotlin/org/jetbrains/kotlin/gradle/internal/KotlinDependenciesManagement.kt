@@ -28,9 +28,9 @@ import org.jetbrains.kotlin.gradle.execution.KotlinAggregateExecutionSource
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.CompilationSourceSetUtil
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
-import org.jetbrains.kotlin.gradle.plugin.sources.getSourceSetHierarchy
+import org.jetbrains.kotlin.gradle.plugin.sources.withAllDependsOnSourceSets
+import org.jetbrains.kotlin.gradle.plugin.sources.resolveAllDependsOnSourceSets
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
 import org.jetbrains.kotlin.gradle.targets.jvm.JvmCompilationsTestRunSource
 import org.jetbrains.kotlin.gradle.tasks.KOTLIN_MODULE_GROUP
@@ -91,11 +91,10 @@ private fun chooseAndAddStdlibDependency(
     val sourceSetDependencyConfigurations =
         KotlinDependencyScope.values().map { project.sourceSetDependencyConfigurationByScope(kotlinSourceSet, it) }
 
-    val hierarchySourceSetsDependencyConfigurations = kotlinSourceSet.getSourceSetHierarchy().flatMap { hierarchySourceSet ->
-        if (hierarchySourceSet === kotlinSourceSet) emptyList() else
-            KotlinDependencyScope.values().map { scope ->
-                project.sourceSetDependencyConfigurationByScope(hierarchySourceSet, scope)
-            }
+    val hierarchySourceSetsDependencyConfigurations = kotlinSourceSet.resolveAllDependsOnSourceSets().flatMap { hierarchySourceSet ->
+        KotlinDependencyScope.values().map { scope ->
+            project.sourceSetDependencyConfigurationByScope(hierarchySourceSet, scope)
+        }
     }
 
     val compilations = CompilationSourceSetUtil.compilationsBySourceSets(project).getValue(kotlinSourceSet)
@@ -216,7 +215,7 @@ internal fun configureKotlinTestDependency(project: Project) {
 
             project.tryWithDependenciesIfUnresolved(configuration) { dependencies ->
                 val parentOrOwnVersions: List<String?> =
-                    kotlinSourceSet.getSourceSetHierarchy().filter(versionOrNullBySourceSet::contains).map(versionOrNullBySourceSet::get)
+                    kotlinSourceSet.withAllDependsOnSourceSets().filter(versionOrNullBySourceSet::contains).map(versionOrNullBySourceSet::get)
 
                 finalizingDependencies = true
 
@@ -310,7 +309,7 @@ private fun KotlinTargetWithTests<*, *>.findTestRunsByCompilation(byCompilation:
 //endregion
 
 private fun Project.kotlinDependency(moduleName: String, versionOrNull: String?) =
-        project.dependencies.create("$KOTLIN_MODULE_GROUP:$moduleName${versionOrNull?.prependIndent(":").orEmpty()}")
+    project.dependencies.create("$KOTLIN_MODULE_GROUP:$moduleName${versionOrNull?.prependIndent(":").orEmpty()}")
 
 private fun Project.tryWithDependenciesIfUnresolved(configuration: Configuration, action: (DependencySet) -> Unit) {
     fun reportAlreadyResolved() {

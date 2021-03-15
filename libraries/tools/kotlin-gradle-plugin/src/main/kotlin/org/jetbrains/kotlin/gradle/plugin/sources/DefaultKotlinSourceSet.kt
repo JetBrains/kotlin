@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.utils.*
 import java.io.File
 import java.util.*
+import kotlin.collections.HashSet
 
 const val METADATA_CONFIGURATION_NAME_SUFFIX = "DependenciesMetadata"
 
@@ -230,23 +231,18 @@ internal fun KotlinSourceSet.disambiguateName(simpleName: String): String {
 private fun createDefaultSourceDirectorySet(project: Project, name: String?): SourceDirectorySet =
     project.objects.sourceDirectorySet(name, name)
 
+/**
+ * Like [resolveAllDependsOnSourceSets] but will include the receiver source set also!
+ */
+internal fun KotlinSourceSet.withAllDependsOnSourceSets(): Set<KotlinSourceSet> {
+    return this + this.resolveAllDependsOnSourceSets()
+}
 
-@Deprecated(
-    "Use 'getAllDependsOnSourceSets' instead",
-    level = DeprecationLevel.WARNING,
-    replaceWith = ReplaceWith("getAllDependsOnSourceSets")
-)
-internal fun KotlinSourceSet.getSourceSetHierarchy(): Set<KotlinSourceSet> {
-    val result = mutableSetOf<KotlinSourceSet>()
-
-    fun processSourceSet(sourceSet: KotlinSourceSet) {
-        if (result.add(sourceSet)) {
-            sourceSet.dependsOn.forEach { processSourceSet(it) }
-        }
+internal operator fun KotlinSourceSet.plus(sourceSets: Set<KotlinSourceSet>): Set<KotlinSourceSet> {
+    return HashSet<KotlinSourceSet>(sourceSets.size + 1).also { set ->
+        set.add(this)
+        set.addAll(sourceSets)
     }
-
-    processSourceSet(this)
-    return result
 }
 
 internal fun KotlinSourceSet.resolveAllDependsOnSourceSets(): Set<KotlinSourceSet> {

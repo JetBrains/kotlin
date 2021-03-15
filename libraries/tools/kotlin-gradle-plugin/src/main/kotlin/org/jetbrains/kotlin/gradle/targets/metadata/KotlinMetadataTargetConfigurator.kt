@@ -260,7 +260,7 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
              * See also: [buildKotlinProjectStructureMetadata], where these dependencies must be included into the source set exported deps.
              */
             if (isSharedNativeCompilation) {
-                sourceSet.getSourceSetHierarchy().forEach { hierarchySourceSet ->
+                sourceSet.withAllDependsOnSourceSets().forEach { hierarchySourceSet ->
                     apiElementsConfiguration.extendsFrom(
                         sourceSetDependencyConfigurationByScope(hierarchySourceSet, KotlinDependencyScope.IMPLEMENTATION_SCOPE)
                     )
@@ -438,7 +438,7 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
             project.provider {
                 val sourceSet = compilation.defaultSourceSet
 
-                val transformationTaskHolders = sourceSet.getSourceSetHierarchy().mapNotNull { hierarchySourceSet ->
+                val transformationTaskHolders = sourceSet.withAllDependsOnSourceSets().mapNotNull { hierarchySourceSet ->
                     project.locateTask<TransformKotlinGranularMetadata>(transformGranularMetadataTaskName(hierarchySourceSet.name))
                 }
 
@@ -455,9 +455,9 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
                 val transformedFilesByResolution: Map<MetadataDependencyResolution, FileCollection> =
                     transformationTaskHolders.flatMap { it.get().filesByResolution.toList() }.toMap()
 
-                val dependsOnCompilationOutputs = sourceSet.getSourceSetHierarchy().mapNotNull { hierarchySourceSet ->
+                val dependsOnCompilationOutputs = sourceSet.resolveAllDependsOnSourceSets().mapNotNull { hierarchySourceSet ->
                     val dependencyCompilation = project.getMetadataCompilationForSourceSet(hierarchySourceSet)
-                    dependencyCompilation?.output?.classesDirs.takeIf { hierarchySourceSet != sourceSet }
+                    dependencyCompilation?.output?.classesDirs
                 }
 
                 val artifactView = fromFiles.incoming.artifactView { view ->

@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCommonCompilation
 import org.jetbrains.kotlin.gradle.utils.getValue
-import org.jetbrains.kotlin.gradle.plugin.sources.getSourceSetHierarchy
+import org.jetbrains.kotlin.gradle.plugin.sources.resolveAllDependsOnSourceSets
 import org.jetbrains.kotlin.incremental.ChangedFiles
 import java.io.File
 
@@ -90,7 +90,7 @@ open class KotlinCompileCommon : AbstractKotlinCompile<K2MetadataCompilerArgumen
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:InputFiles
     internal val refinesMetadataPaths by project.provider {
-        outputPathsFromMetadataCompilationsOf(defaultKotlinSourceSet.getSourceSetHierarchy().minus(defaultKotlinSourceSet))
+        outputPathsFromMetadataCompilationsOf(defaultKotlinSourceSet.resolveAllDependsOnSourceSets())
     }
 
     override fun callCompilerAsync(args: K2MetadataCompilerArguments, sourceRoots: SourceRoots, changedFiles: ChangedFiles) {
