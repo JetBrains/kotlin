@@ -641,7 +641,7 @@ internal fun JavaAnnotationArgument.toFirExpression(
         is JavaClassObjectAnnotationArgument -> buildGetClassCall {
             argumentList = buildUnaryArgumentList(
                 buildClassReferenceExpression {
-                    classTypeRef = getReferencedType().toFirJavaTypeRef(session, javaTypeParameterStack)
+                    classTypeRef = getReferencedType().toFirResolvedTypeRef(session, javaTypeParameterStack)
                 }
             )
         }
@@ -703,4 +703,18 @@ private fun FirConstExpression<*>.setProperType(session: FirSession): FirConstEx
     }
     replaceTypeRef(typeRef)
     return this
+}
+
+private fun JavaType.toFirResolvedTypeRef(
+    session: FirSession, javaTypeParameterStack: JavaTypeParameterStack
+): FirResolvedTypeRef {
+    if (this is JavaClassifierType) return toFirResolvedTypeRef(
+        session,
+        javaTypeParameterStack,
+        isForSupertypes = false,
+        forTypeParameterBounds = false
+    )
+    return buildResolvedTypeRef {
+        type = ConeClassErrorType(ConeSimpleDiagnostic("Unexpected JavaType: $this", DiagnosticKind.Java))
+    }
 }
