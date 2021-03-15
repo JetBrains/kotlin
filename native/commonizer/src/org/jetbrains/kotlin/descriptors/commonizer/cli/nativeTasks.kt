@@ -70,11 +70,8 @@ internal class NativeKlibCommonize(options: Collection<Option<*>>) : Task(option
         LibraryCommonizer(
             konanDistribution = distribution,
             repository = repository,
-            dependencies =
-            KonanDistributionRepository(
-                distribution, commonizerTargets.toSet(), libraryLoader,
-                filter = KonanDistributionRepository.Filter.onlyDependenciesOf(repository)
-            ) + FilesRepository(dependencyLibraries.toSet(), libraryLoader),
+            dependencies = KonanDistributionRepository(distribution, commonizerTargets.toSet(), libraryLoader) +
+                    FilesRepository(dependencyLibraries.toSet(), libraryLoader),
             libraryLoader = libraryLoader,
             targets = commonizerTargets,
             resultsConsumer = resultsConsumer,
