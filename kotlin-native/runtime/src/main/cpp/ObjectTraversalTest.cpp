@@ -8,6 +8,7 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
+#include "ObjectTestSupport.hpp"
 #include "Types.h"
 #include "Utils.hpp"
 
@@ -17,47 +18,6 @@ using ::testing::_;
 
 namespace {
 
-template <size_t Count>
-class Object : private Pinned {
-public:
-    Object() {
-        header_.typeInfoOrMeta_ = &type_;
-        type_.typeInfo_ = &type_;
-        type_.objOffsetsCount_ = Count;
-        type_.objOffsets_ = fieldOffsets_.data();
-        for (size_t i = 0; i < Count; ++i) {
-            fieldOffsets_[i] = reinterpret_cast<uintptr_t>(&fields_[i]) - reinterpret_cast<uintptr_t>(&header_);
-        }
-    }
-
-    ObjHeader* header() { return &header_; }
-
-    ObjHeader*& operator[](size_t index) { return fields_[index]; }
-
-private:
-    ObjHeader header_;
-    TypeInfo type_;
-    std::array<int32_t, Count> fieldOffsets_;
-    std::array<ObjHeader*, Count> fields_{};
-};
-
-template <size_t Count>
-class Array : private Pinned {
-public:
-    Array() {
-        header_.typeInfoOrMeta_ = const_cast<TypeInfo*>(theArrayTypeInfo);
-        header_.count_ = Count;
-    }
-
-    ObjHeader* header() { return header_.obj(); }
-
-    ObjHeader*& operator[](size_t index) { return fields_[index]; }
-
-private:
-    ArrayHeader header_;
-    std::array<ObjHeader*, Count> fields_{};
-};
-
 struct CallableWithExceptions {
     void operator()(ObjHeader*) noexcept(false) {}
     void operator()(ObjHeader**) noexcept(false) {}
@@ -66,6 +26,23 @@ struct CallableWithExceptions {
 struct CallableWithoutExceptions {
     void operator()(ObjHeader*) noexcept {}
     void operator()(ObjHeader**) noexcept {}
+};
+
+struct EmptyPayload {
+    using Field = ObjHeader* EmptyPayload::*;
+    static constexpr std::array<Field, 0> kFields{};
+};
+
+struct Payload {
+    ObjHeader* field1;
+    ObjHeader* field2;
+    ObjHeader* field3;
+
+    static constexpr std::array kFields{
+            &Payload::field1,
+            &Payload::field2,
+            &Payload::field3,
+    };
 };
 
 } // namespace
@@ -80,7 +57,8 @@ TEST(ObjectTraversalTest, TraverseFieldsExceptions) {
 }
 
 TEST(ObjectTraversalTest, TraverseEmptyObjectFields) {
-    Object<0> object;
+    test_support::TypeInfoHolder type{test_support::TypeInfoHolder::ObjectBuilder<EmptyPayload>()};
+    test_support::Object<EmptyPayload> object(type.typeInfo());
     testing::StrictMock<testing::MockFunction<void(ObjHeader**)>> process;
 
     EXPECT_CALL(process, Call(_)).Times(0);
@@ -88,34 +66,36 @@ TEST(ObjectTraversalTest, TraverseEmptyObjectFields) {
 }
 
 TEST(ObjectTraversalTest, TraverseObjectFields) {
+    test_support::TypeInfoHolder type{test_support::TypeInfoHolder::ObjectBuilder<Payload>()};
     ObjHeader field1;
     ObjHeader field3;
-    Object<3> object;
-    object[0] = &field1;
-    object[2] = &field3;
+    test_support::Object<Payload> object(type.typeInfo());
+    object->field1 = &field1;
+    object->field3 = &field3;
     testing::StrictMock<testing::MockFunction<void(ObjHeader**)>> process;
 
-    EXPECT_CALL(process, Call(&object[0]));
-    EXPECT_CALL(process, Call(&object[1]));
-    EXPECT_CALL(process, Call(&object[2]));
+    EXPECT_CALL(process, Call(&object->field1));
+    EXPECT_CALL(process, Call(&object->field2));
+    EXPECT_CALL(process, Call(&object->field3));
     traverseObjectFields(object.header(), [&process](ObjHeader** field) { process.Call(field); });
 }
 
 TEST(ObjectTraversalTest, TraverseObjectFieldsWithException) {
     constexpr int kException = 1;
 
+    test_support::TypeInfoHolder type{test_support::TypeInfoHolder::ObjectBuilder<Payload>()};
     ObjHeader field1;
     ObjHeader field2;
     ObjHeader field3;
-    Object<3> object;
-    object[0] = &field1;
-    object[1] = &field2;
-    object[2] = &field3;
+    test_support::Object<Payload> object(type.typeInfo());
+    object->field1 = &field1;
+    object->field2 = &field2;
+    object->field3 = &field3;
     testing::StrictMock<testing::MockFunction<void(ObjHeader**)>> process;
 
-    EXPECT_CALL(process, Call(&object[0]));
-    EXPECT_CALL(process, Call(&object[1])).WillOnce([]() { throw kException; });
-    EXPECT_CALL(process, Call(&object[2])).Times(0);
+    EXPECT_CALL(process, Call(&object->field1));
+    EXPECT_CALL(process, Call(&object->field2)).WillOnce([]() { throw kException; });
+    EXPECT_CALL(process, Call(&object->field3)).Times(0);
     try {
         traverseObjectFields(object.header(), [&process](ObjHeader** field) { process.Call(field); });
     } catch (int exception) {
@@ -126,7 +106,7 @@ TEST(ObjectTraversalTest, TraverseObjectFieldsWithException) {
 }
 
 TEST(ObjectTraversalTest, TraverseEmptyArrayFields) {
-    Array<0> array;
+    test_support::ObjectArray<0> array;
     testing::StrictMock<testing::MockFunction<void(ObjHeader**)>> process;
 
     EXPECT_CALL(process, Call(_)).Times(0);
@@ -136,14 +116,14 @@ TEST(ObjectTraversalTest, TraverseEmptyArrayFields) {
 TEST(ObjectTraversalTest, TraverseArrayFields) {
     ObjHeader element1;
     ObjHeader element3;
-    Array<3> array;
-    array[0] = &element1;
-    array[2] = &element3;
+    test_support::ObjectArray<3> array;
+    array.elements()[0] = &element1;
+    array.elements()[2] = &element3;
     testing::StrictMock<testing::MockFunction<void(ObjHeader**)>> process;
 
-    EXPECT_CALL(process, Call(&array[0]));
-    EXPECT_CALL(process, Call(&array[1]));
-    EXPECT_CALL(process, Call(&array[2]));
+    EXPECT_CALL(process, Call(&array.elements()[0]));
+    EXPECT_CALL(process, Call(&array.elements()[1]));
+    EXPECT_CALL(process, Call(&array.elements()[2]));
     traverseObjectFields(array.header(), [&process](ObjHeader** field) { process.Call(field); });
 }
 
@@ -153,15 +133,15 @@ TEST(ObjectTraversalTest, TraverseArrayFieldsWithException) {
     ObjHeader element1;
     ObjHeader element2;
     ObjHeader element3;
-    Array<3> array;
-    array[0] = &element1;
-    array[1] = &element2;
-    array[2] = &element3;
+    test_support::ObjectArray<3> array;
+    array.elements()[0] = &element1;
+    array.elements()[1] = &element2;
+    array.elements()[2] = &element3;
     testing::StrictMock<testing::MockFunction<void(ObjHeader**)>> process;
 
-    EXPECT_CALL(process, Call(&array[0]));
-    EXPECT_CALL(process, Call(&array[1])).WillOnce([]() { throw kException; });
-    EXPECT_CALL(process, Call(&array[2])).Times(0);
+    EXPECT_CALL(process, Call(&array.elements()[0]));
+    EXPECT_CALL(process, Call(&array.elements()[1])).WillOnce([]() { throw kException; });
+    EXPECT_CALL(process, Call(&array.elements()[2])).Times(0);
     try {
         traverseObjectFields(array.header(), [&process](ObjHeader** field) { process.Call(field); });
     } catch (int exception) {
@@ -181,7 +161,8 @@ TEST(ObjectTraversalTest, TraverseRefsExceptions) {
 }
 
 TEST(ObjectTraversalTest, TraverseEmptyObjectRefs) {
-    Object<0> object;
+    test_support::TypeInfoHolder type{test_support::TypeInfoHolder::ObjectBuilder<EmptyPayload>()};
+    test_support::Object<EmptyPayload> object(type.typeInfo());
     testing::StrictMock<testing::MockFunction<void(ObjHeader*)>> process;
 
     EXPECT_CALL(process, Call(_)).Times(0);
@@ -189,11 +170,12 @@ TEST(ObjectTraversalTest, TraverseEmptyObjectRefs) {
 }
 
 TEST(ObjectTraversalTest, TraverseObjectRefs) {
+    test_support::TypeInfoHolder type{test_support::TypeInfoHolder::ObjectBuilder<Payload>()};
     ObjHeader field1;
     ObjHeader field3;
-    Object<3> object;
-    object[0] = &field1;
-    object[2] = &field3;
+    test_support::Object<Payload> object(type.typeInfo());
+    object->field1 = &field1;
+    object->field3 = &field3;
     testing::StrictMock<testing::MockFunction<void(ObjHeader*)>> process;
 
     EXPECT_CALL(process, Call(&field1));
@@ -204,13 +186,14 @@ TEST(ObjectTraversalTest, TraverseObjectRefs) {
 TEST(ObjectTraversalTest, TraverseObjectRefsWithException) {
     constexpr int kException = 1;
 
+    test_support::TypeInfoHolder type{test_support::TypeInfoHolder::ObjectBuilder<Payload>()};
     ObjHeader field1;
     ObjHeader field2;
     ObjHeader field3;
-    Object<3> object;
-    object[0] = &field1;
-    object[1] = &field2;
-    object[2] = &field3;
+    test_support::Object<Payload> object(type.typeInfo());
+    object->field1 = &field1;
+    object->field2 = &field2;
+    object->field3 = &field3;
     testing::StrictMock<testing::MockFunction<void(ObjHeader*)>> process;
 
     EXPECT_CALL(process, Call(&field1));
@@ -226,7 +209,7 @@ TEST(ObjectTraversalTest, TraverseObjectRefsWithException) {
 }
 
 TEST(ObjectTraversalTest, TraverseEmptyArrayRefs) {
-    Array<0> array;
+    test_support::ObjectArray<0> array;
     testing::StrictMock<testing::MockFunction<void(ObjHeader*)>> process;
 
     EXPECT_CALL(process, Call(_)).Times(0);
@@ -236,9 +219,9 @@ TEST(ObjectTraversalTest, TraverseEmptyArrayRefs) {
 TEST(ObjectTraversalTest, TraverseArrayRefs) {
     ObjHeader element1;
     ObjHeader element3;
-    Array<3> array;
-    array[0] = &element1;
-    array[2] = &element3;
+    test_support::ObjectArray<3> array;
+    array.elements()[0] = &element1;
+    array.elements()[2] = &element3;
     testing::StrictMock<testing::MockFunction<void(ObjHeader*)>> process;
 
     EXPECT_CALL(process, Call(&element1));
@@ -252,10 +235,10 @@ TEST(ObjectTraversalTest, TraverseArrayRefsWithException) {
     ObjHeader element1;
     ObjHeader element2;
     ObjHeader element3;
-    Array<3> array;
-    array[0] = &element1;
-    array[1] = &element2;
-    array[2] = &element3;
+    test_support::ObjectArray<3> array;
+    array.elements()[0] = &element1;
+    array.elements()[1] = &element2;
+    array.elements()[2] = &element3;
     testing::StrictMock<testing::MockFunction<void(ObjHeader*)>> process;
 
     EXPECT_CALL(process, Call(&element1));

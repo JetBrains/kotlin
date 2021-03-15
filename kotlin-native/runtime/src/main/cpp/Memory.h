@@ -138,6 +138,7 @@ struct MemoryState;
 MemoryState* InitMemory(bool firstRuntime);
 void DeinitMemory(MemoryState*, bool destroyRuntime);
 void RestoreMemory(MemoryState*);
+void ClearMemoryForTests(MemoryState*);
 
 //
 // Object allocation.

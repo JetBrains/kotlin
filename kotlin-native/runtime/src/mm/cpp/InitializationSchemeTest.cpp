@@ -11,6 +11,7 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
+#include "ObjectTestSupport.hpp"
 #include "TestSupport.hpp"
 #include "ThreadData.hpp"
 #include "Types.h"
@@ -21,12 +22,14 @@ using testing::_;
 
 namespace {
 
+struct EmptyPayload {
+    using Field = ObjHeader* EmptyPayload::*;
+    static constexpr std::array<Field, 0> kFields{};
+};
+
 class InitSingletonTest : public testing::Test {
 public:
     InitSingletonTest() {
-        typeInfo_.typeInfo_ = &typeInfo_;
-        typeInfo_.instanceSize_ = sizeof(ObjHeader);
-
         globalConstructor_ = &constructor_;
 
         for (auto& threadData : threadDatas_) {
@@ -38,8 +41,7 @@ public:
         globalConstructor_ = nullptr;
         // Make sure to clean everything allocated by the tests.
         for (auto& threadData : threadDatas_) {
-            threadData->objectFactoryThreadQueue().ClearForTests();
-            threadData->globalsThreadQueue().ClearForTests();
+            threadData->ClearForTests();
         }
     }
 
@@ -48,18 +50,18 @@ public:
     testing::MockFunction<void(ObjHeader*)>& constructor() { return constructor_; }
 
     OBJ_GETTER(InitThreadLocalSingleton, ObjHeader** location, size_t threadIndex) {
-        RETURN_RESULT_OF(mm::InitThreadLocalSingleton, threadDatas_[threadIndex].get(), location, &typeInfo_, constructorImpl);
+        RETURN_RESULT_OF(mm::InitThreadLocalSingleton, threadDatas_[threadIndex].get(), location, type_.typeInfo(), constructorImpl);
     }
 
     OBJ_GETTER(InitSingleton, ObjHeader** location, size_t threadIndex) {
-        RETURN_RESULT_OF(mm::InitSingleton, threadDatas_[threadIndex].get(), location, &typeInfo_, constructorImpl);
+        RETURN_RESULT_OF(mm::InitSingleton, threadDatas_[threadIndex].get(), location, type_.typeInfo(), constructorImpl);
     }
 
 private:
     testing::StrictMock<testing::MockFunction<void(ObjHeader*)>> constructor_;
     // TODO: It makes sense to somehow abstract `ThreadData` stuff away. Allocation in this case.
     std::array<KStdUniquePtr<mm::ThreadData>, kDefaultThreadCount> threadDatas_;
-    TypeInfo typeInfo_; // Only used for allocator calls, uninteresting for these tests.
+    test_support::TypeInfoHolder type_{test_support::TypeInfoHolder::ObjectBuilder<EmptyPayload>()};
 
     static testing::MockFunction<void(ObjHeader*)>* globalConstructor_;
 

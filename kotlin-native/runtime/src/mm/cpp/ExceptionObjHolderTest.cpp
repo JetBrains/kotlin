@@ -19,11 +19,6 @@ namespace {
 
 class ExceptionObjHolderTest : public ::testing::Test {
 public:
-    ~ExceptionObjHolderTest() {
-        auto& stableRefs = mm::StableRefRegistry::Instance();
-        stableRefs.ClearForTests();
-    }
-
     static KStdVector<ObjHeader*> Collect(mm::ThreadData& threadData) {
         auto& stableRefs = mm::StableRefRegistry::Instance();
         stableRefs.ProcessThread(&threadData);

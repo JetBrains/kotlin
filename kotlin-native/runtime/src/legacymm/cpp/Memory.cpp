@@ -3327,6 +3327,10 @@ void RestoreMemory(MemoryState* memoryState) {
     ::memoryState = memoryState;
 }
 
+void ClearMemoryForTests(MemoryState*) {
+    // Nothing to do, DeinitMemory will do the job.
+}
+
 OBJ_GETTER(AllocInstanceStrict, const TypeInfo* type_info) {
   RETURN_RESULT_OF(allocInstance<true>, type_info);
 }

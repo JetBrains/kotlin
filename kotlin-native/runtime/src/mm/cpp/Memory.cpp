@@ -116,6 +116,11 @@ extern "C" void RestoreMemory(MemoryState*) {
     // TODO: Remove when legacy MM is gone.
 }
 
+extern "C" void ClearMemoryForTests(MemoryState* state) {
+    auto* threadData = FromMemoryState(state)->Get();
+    threadData->ClearForTests();
+}
+
 extern "C" RUNTIME_NOTHROW OBJ_GETTER(AllocInstance, const TypeInfo* typeInfo) {
     auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
     RETURN_RESULT_OF(mm::AllocateObject, threadData, typeInfo);

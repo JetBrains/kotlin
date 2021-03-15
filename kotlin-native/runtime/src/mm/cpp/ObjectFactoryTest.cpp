@@ -13,6 +13,7 @@
 #include "gtest/gtest.h"
 
 #include "GC.hpp"
+#include "ObjectTestSupport.hpp"
 #include "TestSupport.hpp"
 #include "Types.h"
 
@@ -745,29 +746,25 @@ public:
 
 using ObjectFactory = mm::ObjectFactory<GC>;
 
-KStdUniquePtr<TypeInfo> MakeObjectTypeInfo(int32_t size) {
-    auto typeInfo = make_unique<TypeInfo>();
-    typeInfo->typeInfo_ = typeInfo.get();
-    typeInfo->instanceSize_ = size;
-    return typeInfo;
-}
+struct Payload {
+    ObjHeader* field1;
+    ObjHeader* field2;
 
-KStdUniquePtr<TypeInfo> MakeArrayTypeInfo(int32_t elementSize) {
-    auto typeInfo = make_unique<TypeInfo>();
-    typeInfo->typeInfo_ = typeInfo.get();
-    typeInfo->instanceSize_ = -elementSize;
-    return typeInfo;
-}
+    static constexpr std::array kFields{
+            &Payload::field1,
+            &Payload::field2,
+    };
+};
 
 } // namespace
 
 TEST(ObjectFactoryTest, CreateObject) {
-    auto typeInfo = MakeObjectTypeInfo(24);
+    test_support::TypeInfoHolder type{test_support::TypeInfoHolder::ObjectBuilder<Payload>()};
     GC::ThreadData gc;
     ObjectFactory objectFactory;
     ObjectFactory::ThreadQueue threadQueue(objectFactory, gc);
 
-    auto* object = threadQueue.CreateObject(typeInfo.get());
+    auto* object = threadQueue.CreateObject(type.typeInfo());
     threadQueue.Publish();
 
     auto node = ObjectFactory::NodeRef::From(object);
@@ -782,13 +779,32 @@ TEST(ObjectFactoryTest, CreateObject) {
     EXPECT_THAT(it, iter.end());
 }
 
-TEST(ObjectFactoryTest, CreateArray) {
-    auto typeInfo = MakeArrayTypeInfo(24);
+TEST(ObjectFactoryTest, CreateObjectArray) {
     GC::ThreadData gc;
     ObjectFactory objectFactory;
     ObjectFactory::ThreadQueue threadQueue(objectFactory, gc);
 
-    auto* array = threadQueue.CreateArray(typeInfo.get(), 3);
+    auto* array = threadQueue.CreateArray(theArrayTypeInfo, 3);
+    threadQueue.Publish();
+
+    auto node = ObjectFactory::NodeRef::From(array);
+    EXPECT_TRUE(node.IsArray());
+    EXPECT_THAT(node.GetArrayHeader(), array);
+    EXPECT_THAT(node.GCObjectData().flags, 42);
+
+    auto iter = objectFactory.Iter();
+    auto it = iter.begin();
+    EXPECT_THAT(*it, node);
+    ++it;
+    EXPECT_THAT(it, iter.end());
+}
+
+TEST(ObjectFactoryTest, CreateCharArray) {
+    GC::ThreadData gc;
+    ObjectFactory objectFactory;
+    ObjectFactory::ThreadQueue threadQueue(objectFactory, gc);
+
+    auto* array = threadQueue.CreateArray(theCharArrayTypeInfo, 3);
     threadQueue.Publish();
 
     auto node = ObjectFactory::NodeRef::From(array);
@@ -804,15 +820,14 @@ TEST(ObjectFactoryTest, CreateArray) {
 }
 
 TEST(ObjectFactoryTest, Erase) {
-    auto objectTypeInfo = MakeObjectTypeInfo(24);
-    auto arrayTypeInfo = MakeArrayTypeInfo(24);
+    test_support::TypeInfoHolder objectType{test_support::TypeInfoHolder::ObjectBuilder<Payload>()};
     GC::ThreadData gc;
     ObjectFactory objectFactory;
     ObjectFactory::ThreadQueue threadQueue(objectFactory, gc);
 
     for (int i = 0; i < 10; ++i) {
-        threadQueue.CreateObject(objectTypeInfo.get());
-        threadQueue.CreateArray(arrayTypeInfo.get(), 3);
+        threadQueue.CreateObject(objectType.typeInfo());
+        threadQueue.CreateArray(theArrayTypeInfo, 3);
     }
 
     threadQueue.Publish();
@@ -839,16 +854,15 @@ TEST(ObjectFactoryTest, Erase) {
 }
 
 TEST(ObjectFactoryTest, Move) {
-    auto objectTypeInfo = MakeObjectTypeInfo(24);
-    auto arrayTypeInfo = MakeArrayTypeInfo(24);
+    test_support::TypeInfoHolder objectType{test_support::TypeInfoHolder::ObjectBuilder<Payload>()};
     GC::ThreadData gc;
     ObjectFactory objectFactory;
     ObjectFactory::ThreadQueue threadQueue(objectFactory, gc);
     ObjectFactory::FinalizerQueue finalizerQueue;
 
     for (int i = 0; i < 10; ++i) {
-        threadQueue.CreateObject(objectTypeInfo.get());
-        threadQueue.CreateArray(arrayTypeInfo.get(), 3);
+        threadQueue.CreateObject(objectType.typeInfo());
+        threadQueue.CreateArray(theArrayTypeInfo, 3);
     }
 
     threadQueue.Publish();
@@ -883,7 +897,7 @@ TEST(ObjectFactoryTest, Move) {
 }
 
 TEST(ObjectFactoryTest, ConcurrentPublish) {
-    auto typeInfo = MakeObjectTypeInfo(24);
+    test_support::TypeInfoHolder type{test_support::TypeInfoHolder::ObjectBuilder<Payload>()};
     ObjectFactory objectFactory;
     constexpr int kThreadCount = kDefaultThreadCount;
     std::atomic<bool> canStart(false);
@@ -893,10 +907,10 @@ TEST(ObjectFactoryTest, ConcurrentPublish) {
     KStdVector<ObjHeader*> expected;
 
     for (int i = 0; i < kThreadCount; ++i) {
-        threads.emplace_back([&typeInfo, &objectFactory, &canStart, &readyCount, &expected, &expectedMutex]() {
+        threads.emplace_back([&type, &objectFactory, &canStart, &readyCount, &expected, &expectedMutex]() {
             GC::ThreadData gc;
             ObjectFactory::ThreadQueue threadQueue(objectFactory, gc);
-            auto* object = threadQueue.CreateObject(typeInfo.get());
+            auto* object = threadQueue.CreateObject(type.typeInfo());
             {
                 std::lock_guard<std::mutex> guard(expectedMutex);
                 expected.push_back(object);

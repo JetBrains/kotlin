@@ -29,6 +29,8 @@ void RunInNewThread(F f) {
         } registration;
 
         f(registration.threadData());
+
+        registration.threadData().ClearForTests();
     }).join();
 }
 

@@ -17,6 +17,7 @@
 #ifndef RUNTIME_TYPEINFO_H
 #define RUNTIME_TYPEINFO_H
 
+#include <algorithm>
 #include <cstdint>
 
 #include "Common.h"
@@ -160,6 +161,18 @@ struct TypeInfo {
     }
 
     inline bool IsArray() const { return instanceSize_ < 0; }
+
+    bool IsLayoutCompatible(const TypeInfo* rhs) const noexcept {
+        // TODO: Use debug info if it's present?
+        // This automatically checks array vs object discrepancy.
+        if (instanceSize_ != rhs->instanceSize_) return false;
+        if (!IsArray()) {
+            if (!std::equal(objOffsets_, objOffsets_ + objOffsetsCount_, rhs->objOffsets_, rhs->objOffsets_ + rhs->objOffsetsCount_)) {
+                return false;
+            }
+        }
+        return true;
+    }
 #endif
 };
 

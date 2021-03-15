@@ -5,42 +5,42 @@
 
 #include "TestSupportCompilerGenerated.hpp"
 
+#include "ObjectTestSupport.hpp"
 #include "Types.h"
 
 namespace {
 
-class TypeInfoImpl {
-public:
-    TypeInfoImpl() { type_.typeInfo_ = &type_; }
-
-    TypeInfo* type() { return &type_; }
-
-private:
-    TypeInfo type_;
+struct EmptyPayload {
+    using Field = ObjHeader* EmptyPayload::*;
+    static constexpr std::array<Field, 0> kFields{};
 };
 
-TypeInfoImpl theAnyTypeInfoImpl;
-TypeInfoImpl theArrayTypeInfoImpl;
-TypeInfoImpl theBooleanArrayTypeInfoImpl;
-TypeInfoImpl theByteArrayTypeInfoImpl;
-TypeInfoImpl theCharArrayTypeInfoImpl;
-TypeInfoImpl theDoubleArrayTypeInfoImpl;
-TypeInfoImpl theFloatArrayTypeInfoImpl;
-TypeInfoImpl theForeignObjCObjectTypeInfoImpl;
-TypeInfoImpl theFreezableAtomicReferenceTypeInfoImpl;
-TypeInfoImpl theIntArrayTypeInfoImpl;
-TypeInfoImpl theLongArrayTypeInfoImpl;
-TypeInfoImpl theNativePtrArrayTypeInfoImpl;
-TypeInfoImpl theObjCObjectWrapperTypeInfoImpl;
-TypeInfoImpl theOpaqueFunctionTypeInfoImpl;
-TypeInfoImpl theShortArrayTypeInfoImpl;
-TypeInfoImpl theStringTypeInfoImpl;
-TypeInfoImpl theThrowableTypeInfoImpl;
-TypeInfoImpl theUnitTypeInfoImpl;
-TypeInfoImpl theWorkerBoundReferenceTypeInfoImpl;
-TypeInfoImpl theCleanerImplTypeInfoImpl;
+kotlin::test_support::TypeInfoHolder theAnyTypeInfoHolder{kotlin::test_support::TypeInfoHolder::ObjectBuilder<EmptyPayload>()};
+kotlin::test_support::TypeInfoHolder theArrayTypeInfoHolder{kotlin::test_support::TypeInfoHolder::ArrayBuilder<ObjHeader*>()};
+kotlin::test_support::TypeInfoHolder theBooleanArrayTypeInfoHolder{kotlin::test_support::TypeInfoHolder::ArrayBuilder<KBoolean>()};
+kotlin::test_support::TypeInfoHolder theByteArrayTypeInfoHolder{kotlin::test_support::TypeInfoHolder::ArrayBuilder<KByte>()};
+kotlin::test_support::TypeInfoHolder theCharArrayTypeInfoHolder{kotlin::test_support::TypeInfoHolder::ArrayBuilder<KChar>()};
+kotlin::test_support::TypeInfoHolder theDoubleArrayTypeInfoHolder{kotlin::test_support::TypeInfoHolder::ArrayBuilder<KDouble>()};
+kotlin::test_support::TypeInfoHolder theFloatArrayTypeInfoHolder{kotlin::test_support::TypeInfoHolder::ArrayBuilder<KFloat>()};
+kotlin::test_support::TypeInfoHolder theForeignObjCObjectTypeInfoHolder{
+        kotlin::test_support::TypeInfoHolder::ObjectBuilder<EmptyPayload>()};
+kotlin::test_support::TypeInfoHolder theFreezableAtomicReferenceTypeInfoHolder{
+        kotlin::test_support::TypeInfoHolder::ObjectBuilder<EmptyPayload>()};
+kotlin::test_support::TypeInfoHolder theIntArrayTypeInfoHolder{kotlin::test_support::TypeInfoHolder::ArrayBuilder<KInt>()};
+kotlin::test_support::TypeInfoHolder theLongArrayTypeInfoHolder{kotlin::test_support::TypeInfoHolder::ArrayBuilder<KLong>()};
+kotlin::test_support::TypeInfoHolder theNativePtrArrayTypeInfoHolder{kotlin::test_support::TypeInfoHolder::ArrayBuilder<KNativePtr>()};
+kotlin::test_support::TypeInfoHolder theObjCObjectWrapperTypeInfoHolder{
+        kotlin::test_support::TypeInfoHolder::ObjectBuilder<EmptyPayload>()};
+kotlin::test_support::TypeInfoHolder theOpaqueFunctionTypeInfoHolder{kotlin::test_support::TypeInfoHolder::ObjectBuilder<EmptyPayload>()};
+kotlin::test_support::TypeInfoHolder theShortArrayTypeInfoHolder{kotlin::test_support::TypeInfoHolder::ArrayBuilder<KShort>()};
+kotlin::test_support::TypeInfoHolder theStringTypeInfoHolder{kotlin::test_support::TypeInfoHolder::ArrayBuilder<KChar>()};
+kotlin::test_support::TypeInfoHolder theThrowableTypeInfoHolder{kotlin::test_support::TypeInfoHolder::ObjectBuilder<EmptyPayload>()};
+kotlin::test_support::TypeInfoHolder theUnitTypeInfoHolder{kotlin::test_support::TypeInfoHolder::ObjectBuilder<EmptyPayload>()};
+kotlin::test_support::TypeInfoHolder theWorkerBoundReferenceTypeInfoHolder{
+        kotlin::test_support::TypeInfoHolder::ObjectBuilder<EmptyPayload>()};
+kotlin::test_support::TypeInfoHolder theCleanerImplTypeInfoHolder{kotlin::test_support::TypeInfoHolder::ObjectBuilder<EmptyPayload>()};
 
-ArrayHeader theEmptyStringImpl = {theStringTypeInfoImpl.type(), /* element count */ 0};
+ArrayHeader theEmptyStringImpl = {theStringTypeInfoHolder.typeInfo(), /* element count */ 0};
 
 template <class T>
 struct KBox {
@@ -58,28 +58,28 @@ extern "C" {
 // Set to 1 to enable runtime assertions.
 extern const int KonanNeedDebugInfo = 1;
 
-extern const TypeInfo* theAnyTypeInfo = theAnyTypeInfoImpl.type();
-extern const TypeInfo* theArrayTypeInfo = theArrayTypeInfoImpl.type();
-extern const TypeInfo* theBooleanArrayTypeInfo = theBooleanArrayTypeInfoImpl.type();
-extern const TypeInfo* theByteArrayTypeInfo = theByteArrayTypeInfoImpl.type();
-extern const TypeInfo* theCharArrayTypeInfo = theCharArrayTypeInfoImpl.type();
-extern const TypeInfo* theDoubleArrayTypeInfo = theDoubleArrayTypeInfoImpl.type();
-extern const TypeInfo* theFloatArrayTypeInfo = theFloatArrayTypeInfoImpl.type();
-extern const TypeInfo* theForeignObjCObjectTypeInfo = theForeignObjCObjectTypeInfoImpl.type();
-extern const TypeInfo* theFreezableAtomicReferenceTypeInfo = theFreezableAtomicReferenceTypeInfoImpl.type();
-extern const TypeInfo* theIntArrayTypeInfo = theIntArrayTypeInfoImpl.type();
-extern const TypeInfo* theLongArrayTypeInfo = theLongArrayTypeInfoImpl.type();
-extern const TypeInfo* theNativePtrArrayTypeInfo = theNativePtrArrayTypeInfoImpl.type();
-extern const TypeInfo* theObjCObjectWrapperTypeInfo = theObjCObjectWrapperTypeInfoImpl.type();
-extern const TypeInfo* theOpaqueFunctionTypeInfo = theOpaqueFunctionTypeInfoImpl.type();
-extern const TypeInfo* theShortArrayTypeInfo = theShortArrayTypeInfoImpl.type();
-extern const TypeInfo* theStringTypeInfo = theStringTypeInfoImpl.type();
-extern const TypeInfo* theThrowableTypeInfo = theThrowableTypeInfoImpl.type();
-extern const TypeInfo* theUnitTypeInfo = theUnitTypeInfoImpl.type();
-extern const TypeInfo* theWorkerBoundReferenceTypeInfo = theWorkerBoundReferenceTypeInfoImpl.type();
-extern const TypeInfo* theCleanerImplTypeInfo = theCleanerImplTypeInfoImpl.type();
+extern const TypeInfo* theAnyTypeInfo = theAnyTypeInfoHolder.typeInfo();
+extern const TypeInfo* theArrayTypeInfo = theArrayTypeInfoHolder.typeInfo();
+extern const TypeInfo* theBooleanArrayTypeInfo = theBooleanArrayTypeInfoHolder.typeInfo();
+extern const TypeInfo* theByteArrayTypeInfo = theByteArrayTypeInfoHolder.typeInfo();
+extern const TypeInfo* theCharArrayTypeInfo = theCharArrayTypeInfoHolder.typeInfo();
+extern const TypeInfo* theDoubleArrayTypeInfo = theDoubleArrayTypeInfoHolder.typeInfo();
+extern const TypeInfo* theFloatArrayTypeInfo = theFloatArrayTypeInfoHolder.typeInfo();
+extern const TypeInfo* theForeignObjCObjectTypeInfo = theForeignObjCObjectTypeInfoHolder.typeInfo();
+extern const TypeInfo* theFreezableAtomicReferenceTypeInfo = theFreezableAtomicReferenceTypeInfoHolder.typeInfo();
+extern const TypeInfo* theIntArrayTypeInfo = theIntArrayTypeInfoHolder.typeInfo();
+extern const TypeInfo* theLongArrayTypeInfo = theLongArrayTypeInfoHolder.typeInfo();
+extern const TypeInfo* theNativePtrArrayTypeInfo = theNativePtrArrayTypeInfoHolder.typeInfo();
+extern const TypeInfo* theObjCObjectWrapperTypeInfo = theObjCObjectWrapperTypeInfoHolder.typeInfo();
+extern const TypeInfo* theOpaqueFunctionTypeInfo = theOpaqueFunctionTypeInfoHolder.typeInfo();
+extern const TypeInfo* theShortArrayTypeInfo = theShortArrayTypeInfoHolder.typeInfo();
+extern const TypeInfo* theStringTypeInfo = theStringTypeInfoHolder.typeInfo();
+extern const TypeInfo* theThrowableTypeInfo = theThrowableTypeInfoHolder.typeInfo();
+extern const TypeInfo* theUnitTypeInfo = theUnitTypeInfoHolder.typeInfo();
+extern const TypeInfo* theWorkerBoundReferenceTypeInfo = theWorkerBoundReferenceTypeInfoHolder.typeInfo();
+extern const TypeInfo* theCleanerImplTypeInfo = theCleanerImplTypeInfoHolder.typeInfo();
 
-extern const ArrayHeader theEmptyArray = {theArrayTypeInfoImpl.type(), /* element count */ 0};
+extern const ArrayHeader theEmptyArray = {theArrayTypeInfoHolder.typeInfo(), /* element count */ 0};
 
 OBJ_GETTER0(TheEmptyString) {
     RETURN_OBJ(theEmptyStringImpl.obj());

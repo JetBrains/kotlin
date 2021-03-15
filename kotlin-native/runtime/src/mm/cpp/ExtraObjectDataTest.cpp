@@ -11,35 +11,42 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
+#include "ObjectTestSupport.hpp"
 #include "TestSupport.hpp"
 
 using namespace kotlin;
 
+namespace {
+
+struct EmptyPayload {
+    using Field = ObjHeader* EmptyPayload::*;
+    static constexpr std::array<Field, 0> kFields{};
+};
+
+} // namespace
+
 TEST(ExtraObjectDataTest, Install) {
-    TypeInfo typeInfo;
-    typeInfo.typeInfo_ = &typeInfo;
-    ObjHeader object;
-    object.typeInfoOrMeta_ = &typeInfo;
+    test_support::TypeInfoHolder type{test_support::TypeInfoHolder::ObjectBuilder<EmptyPayload>()};
+    test_support::Object<EmptyPayload> object(type.typeInfo());
+    auto* typeInfo = object.header()->type_info();
 
-    ASSERT_FALSE(object.has_meta_object());
+    ASSERT_FALSE(object.header()->has_meta_object());
 
-    auto& extraData = mm::ExtraObjectData::Install(&object);
+    auto& extraData = mm::ExtraObjectData::Install(object.header());
 
-    EXPECT_TRUE(object.has_meta_object());
-    EXPECT_THAT(object.meta_object(), extraData.AsMetaObjHeader());
-    EXPECT_THAT(object.type_info(), &typeInfo);
+    EXPECT_TRUE(object.header()->has_meta_object());
+    EXPECT_THAT(object.header()->meta_object(), extraData.AsMetaObjHeader());
+    EXPECT_THAT(object.header()->type_info(), typeInfo);
 
-    mm::ExtraObjectData::Uninstall(&object);
+    mm::ExtraObjectData::Uninstall(object.header());
 
-    EXPECT_FALSE(object.has_meta_object());
-    EXPECT_THAT(object.type_info(), &typeInfo);
+    EXPECT_FALSE(object.header()->has_meta_object());
+    EXPECT_THAT(object.header()->type_info(), typeInfo);
 }
 
 TEST(ExtraObjectDataTest, ConcurrentInstall) {
-    TypeInfo typeInfo;
-    typeInfo.typeInfo_ = &typeInfo;
-    ObjHeader object;
-    object.typeInfoOrMeta_ = &typeInfo;
+    test_support::TypeInfoHolder type{test_support::TypeInfoHolder::ObjectBuilder<EmptyPayload>()};
+    test_support::Object<EmptyPayload> object(type.typeInfo());
 
     constexpr int kThreadCount = kDefaultThreadCount;
 
@@ -53,7 +60,7 @@ TEST(ExtraObjectDataTest, ConcurrentInstall) {
             ++readyCount;
             while (!canStart) {
             }
-            auto& extraData = mm::ExtraObjectData::Install(&object);
+            auto& extraData = mm::ExtraObjectData::Install(object.header());
             actual[i] = &extraData;
         });
     }
@@ -70,5 +77,5 @@ TEST(ExtraObjectDataTest, ConcurrentInstall) {
 
     EXPECT_THAT(actual, testing::ElementsAreArray(expected));
 
-    mm::ExtraObjectData::Uninstall(&object);
+    mm::ExtraObjectData::Uninstall(object.header());
 }
