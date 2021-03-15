@@ -19,10 +19,6 @@ abstract class DescriptorExportCheckerVisitor : DeclarationDescriptorVisitor<Boo
         return declaration.accept(this, type)
     }
 
-    private fun reportUnexpectedDescriptor(descriptor: DeclarationDescriptor): Nothing {
-        error("unexpected descriptor $descriptor")
-    }
-
     private fun DescriptorVisibility.isPubliclyVisible(): Boolean = isPublicAPI || this === DescriptorVisibilities.INTERNAL
 
     private fun DeclarationDescriptorNonRoot.isExported(annotations: Annotations, visibility: DescriptorVisibility?): Boolean {
@@ -56,7 +52,7 @@ abstract class DescriptorExportCheckerVisitor : DeclarationDescriptorVisitor<Boo
         else descriptor.run { isExported(annotations, visibility) }
 
     override fun visitModuleDeclaration(descriptor: ModuleDescriptor, data: SpecialDeclarationType): Boolean {
-        reportUnexpectedDescriptor(descriptor)
+        return false
     }
 
     override fun visitConstructorDescriptor(constructorDescriptor: ConstructorDescriptor, data: SpecialDeclarationType): Boolean {
