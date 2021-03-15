@@ -209,6 +209,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
                 value = "!isVar"
                 withGetter = true
             }
+            publicImplementation()
 
             defaultNull("delegateFieldSymbol", "receiverTypeRef", "delegate", "getter", "setter", withGetter = true)
         }

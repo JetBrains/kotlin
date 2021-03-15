@@ -8,11 +8,12 @@ package org.jetbrains.kotlin.idea.frontend.api.fir
 import com.google.common.collect.MapMaker
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.impl.FirFieldImpl
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.resolve.calls.originalConstructorIfTypeAlias
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.getSymbolByLookupTag
 import org.jetbrains.kotlin.fir.resolve.inference.isFunctionalType
@@ -236,9 +237,17 @@ internal class KtSymbolByFirBuilder private constructor(
         }
 
 
-        // todo handle cases
         fun buildFieldSymbol(fir: FirField): KtFirJavaFieldSymbol {
+            if (!fir.isJavaFieldOrSubstitutionOverrideOfJavaField()) {
+                error("Could not build symbol for non-Java field symbol")
+            }
             return symbolsCache.cache(fir) { KtFirJavaFieldSymbol(fir, resolveState, token, this@KtSymbolByFirBuilder) }
+        }
+
+        private fun FirField.isJavaFieldOrSubstitutionOverrideOfJavaField(): Boolean = when (this) {
+            is FirJavaField -> true
+            is FirFieldImpl -> (this as FirField).originalForSubstitutionOverride?.isJavaFieldOrSubstitutionOverrideOfJavaField() == true
+            else -> throwUnexpectedElementError(this)
         }
     }
 
@@ -309,7 +318,7 @@ internal class KtSymbolByFirBuilder private constructor(
         }
 
     }
-    
+
     companion object {
         private fun throwUnexpectedElementError(element: Any): Nothing {
             error("Unexpected ${element::class.simpleName}")

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.declarations.builder
 
 import kotlin.contracts.*
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
@@ -51,6 +52,7 @@ open class FirFieldBuilder : FirAnnotationContainerBuilder {
     open var containerSource: DeserializedContainerSource? = null
     open var dispatchReceiverType: ConeKotlinType? = null
 
+    @OptIn(FirImplementationDetail::class)
     override fun build(): FirField {
         return FirFieldImpl(
             source,
