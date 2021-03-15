@@ -39,8 +39,8 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.psi2ir.intermediate.CallBuilder
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor
 import org.jetbrains.kotlin.resolve.calls.model.*
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.DoubleColonLHS
@@ -133,7 +133,15 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
         val ktExpectedParameterTypes = ktFunctionalTypeArguments.take(ktFunctionalTypeArguments.size - 1).map { it.type }
 
         val irAdapterFun =
-            createAdapterFun(startOffset, endOffset, adapteeDescriptor, ktExpectedParameterTypes, ktExpectedReturnType, callBuilder, callableReferenceType)
+            createAdapterFun(
+                startOffset,
+                endOffset,
+                adapteeDescriptor,
+                ktExpectedParameterTypes,
+                ktExpectedReturnType,
+                callBuilder,
+                callableReferenceType
+            )
         val irCall = createAdapteeCall(startOffset, endOffset, adapteeSymbol, callBuilder, irAdapterFun)
 
         irAdapterFun.body = context.irFactory.createBlockBody(startOffset, endOffset).apply {
@@ -189,14 +197,17 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
 
         val hasBoundDispatchReceiver = resolvedCall.dispatchReceiver != null && resolvedCall.dispatchReceiver !is TransientReceiver
         val hasBoundExtensionReceiver = resolvedCall.extensionReceiver != null && resolvedCall.extensionReceiver !is TransientReceiver
-        if (hasBoundDispatchReceiver || hasBoundExtensionReceiver) {
+        val isImportedFromObject = callBuilder.original.resultingDescriptor is ImportedFromObjectCallableDescriptor<*>
+        if (hasBoundDispatchReceiver || hasBoundExtensionReceiver || isImportedFromObject) {
             // In case of a bound reference, the receiver (which can only be one) is passed in the extension receiver parameter.
             val receiverValue = IrGetValueImpl(
                 startOffset, endOffset, irAdapterFun.extensionReceiverParameter!!.symbol, IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE
             )
             when {
-                hasBoundDispatchReceiver -> irCall.dispatchReceiver = receiverValue
-                hasBoundExtensionReceiver -> irCall.extensionReceiver = receiverValue
+                hasBoundDispatchReceiver || isImportedFromObject ->
+                    irCall.dispatchReceiver = receiverValue
+                hasBoundExtensionReceiver ->
+                    irCall.extensionReceiver = receiverValue
             }
         }
 
@@ -328,10 +339,10 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
 
                 irAdapterFun.dispatchReceiverParameter = null
 
-                val boundReceiver = callBuilder.original.selectBoundReceiver()
-                if (boundReceiver != null) {
+                val boundReceiverType = callBuilder.original.getBoundReceiverType()
+                if (boundReceiverType != null) {
                     irAdapterFun.extensionReceiverParameter =
-                        createAdapterParameter(startOffset, endOffset, Name.identifier("receiver"), -1, boundReceiver.type)
+                        createAdapterParameter(startOffset, endOffset, Name.identifier("receiver"), -1, boundReceiverType)
                 } else {
                     irAdapterFun.extensionReceiverParameter = null
                 }
@@ -343,12 +354,17 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
         }
     }
 
-    private fun ResolvedCall<*>.selectBoundReceiver(): ReceiverValue? {
+    private fun ResolvedCall<*>.getBoundReceiverType(): KotlinType? {
+        val descriptor = resultingDescriptor
+        if (descriptor is ImportedFromObjectCallableDescriptor<*>) {
+            return descriptor.containingObject.defaultType
+        }
+
         val dispatchReceiver = dispatchReceiver.takeUnless { it is TransientReceiver }
         val extensionReceiver = extensionReceiver.takeUnless { it is TransientReceiver }
         return when {
-            dispatchReceiver == null -> extensionReceiver
-            extensionReceiver == null -> dispatchReceiver
+            dispatchReceiver == null -> extensionReceiver?.type
+            extensionReceiver == null -> dispatchReceiver.type
             else -> error("Bound callable references can't have both receivers: $resultingDescriptor")
         }
     }

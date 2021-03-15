@@ -1830,6 +1830,12 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
             }
 
             @Test
+            @TestMetadata("varargFunImportedFromObject.kt")
+            public void testVarargFunImportedFromObject() throws Exception {
+                runTest("compiler/testData/ir/irText/expressions/callableReferences/varargFunImportedFromObject.kt");
+            }
+
+            @Test
             @TestMetadata("withAdaptationForSam.kt")
             public void testWithAdaptationForSam() throws Exception {
                 runTest("compiler/testData/ir/irText/expressions/callableReferences/withAdaptationForSam.kt");
