@@ -92,7 +92,7 @@ internal class KtSymbolByFirBuilder private constructor(
             is FirClassLikeDeclaration<*> -> classifierBuilder.buildClassLikeSymbol(fir)
             is FirTypeParameter -> classifierBuilder.buildTypeParameterSymbol(fir)
             is FirCallableDeclaration<*> -> callableBuilder.buildCallableSymbol(fir)
-            else -> error("Unexpected ${fir::class.simpleName}")
+            else -> throwUnexpectedElementError(fir)
         }
     }
 
@@ -116,7 +116,7 @@ internal class KtSymbolByFirBuilder private constructor(
             return when (val fir = firSymbol.fir) {
                 is FirClassLikeDeclaration -> classifierBuilder.buildClassLikeSymbol(fir)
                 is FirTypeParameter -> buildTypeParameterSymbol(fir)
-                else -> error("Unexpected ${fir::class.simpleName}")
+                else -> throwUnexpectedElementError(fir)
             }
         }
 
@@ -125,7 +125,7 @@ internal class KtSymbolByFirBuilder private constructor(
             return when (fir) {
                 is FirClass<*> -> buildClassOrObjectSymbol(fir)
                 is FirTypeAlias -> buildTypeAliasSymbol(fir)
-                else -> error("Unexpected ${fir::class.simpleName}")
+                else -> throwUnexpectedElementError(fir)
             }
         }
 
@@ -133,7 +133,7 @@ internal class KtSymbolByFirBuilder private constructor(
             return when (fir) {
                 is FirAnonymousObject -> buildAnonymousObjectSymbol(fir)
                 is FirRegularClass -> buildNamedClassOrObjectSymbol(fir)
-                else -> error("Unexpected ${fir::class.simpleName}")
+                else -> throwUnexpectedElementError(fir)
             }
         }
 
@@ -175,7 +175,7 @@ internal class KtSymbolByFirBuilder private constructor(
                 is FirSimpleFunction -> buildFunctionSymbol(fir)
                 is FirConstructor -> buildConstructorSymbol(fir)
                 is FirAnonymousFunction -> buildAnonymousFunctionSymbol(fir)
-                else -> error("Unexpected ${fir::class.simpleName}")
+                else -> throwUnexpectedElementError(fir)
             }
         }
 
@@ -202,7 +202,7 @@ internal class KtSymbolByFirBuilder private constructor(
                 is FirValueParameter -> buildParameterSymbol(fir)
                 is FirField -> buildFieldSymbol(fir)
                 is FirEnumEntry -> buildEnumEntrySymbol(fir) // TODO enum entry should not be callable
-                else -> error("Unexpected ${fir::class.simpleName}")
+                else -> throwUnexpectedElementError(fir)
             }
         }
 
@@ -248,7 +248,7 @@ internal class KtSymbolByFirBuilder private constructor(
                 is FirPropertyAccessor -> buildPropertyAccessorSymbol(fir)
                 is FirFunction<*> -> functionLikeBuilder.buildFunctionLikeSymbol(fir)
                 is FirVariable<*> -> variableLikeBuilder.buildVariableLikeSymbol(fir)
-                else -> error("Unexpected ${fir::class.simpleName}")
+                else -> throwUnexpectedElementError(fir)
             }
         }
 
@@ -284,7 +284,7 @@ internal class KtSymbolByFirBuilder private constructor(
                     is ConeFlexibleType -> KtFirFlexibleType(coneType, token, this@KtSymbolByFirBuilder)
                     is ConeIntersectionType -> KtFirIntersectionType(coneType, token, this@KtSymbolByFirBuilder)
                     is ConeDefinitelyNotNullType -> buildKtType(coneType.original)
-                    else -> error("Unexpected ${coneType::class.simpleName}")
+                    else -> throwUnexpectedElementError(coneType)
                 }
             }
         }
@@ -308,6 +308,12 @@ internal class KtSymbolByFirBuilder private constructor(
             ProjectionKind.STAR -> error("KtStarProjectionTypeArgument should not be directly created")
         }
 
+    }
+    
+    companion object {
+        private fun throwUnexpectedElementError(element: Any): Nothing {
+            error("Unexpected ${element::class.simpleName}")
+        }
     }
 }
 
