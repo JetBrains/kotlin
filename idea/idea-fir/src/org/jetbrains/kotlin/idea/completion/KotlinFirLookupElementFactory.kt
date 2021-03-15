@@ -55,10 +55,10 @@ internal class KotlinFirLookupElementFactory {
     }
 }
 
-private sealed class FunctionImportStrategy {
-    object DoNothing : FunctionImportStrategy()
-    data class AddImport(val nameToImport: FqName) : FunctionImportStrategy()
-    data class InsertFqNameAndShorten(val fqName: FqName) : FunctionImportStrategy()
+private sealed class CallableImportStrategy {
+    object DoNothing : CallableImportStrategy()
+    data class AddImport(val nameToImport: FqName) : CallableImportStrategy()
+    data class InsertFqNameAndShorten(val fqName: FqName) : CallableImportStrategy()
 }
 
 /**
@@ -77,7 +77,7 @@ private data class ClassifierLookupObject(override val shortName: Name, val clas
  */
 private data class FunctionLookupObject(
     override val shortName: Name,
-    val importingStrategy: FunctionImportStrategy,
+    val importingStrategy: CallableImportStrategy,
     val inputValueArguments: Boolean,
     val insertEmptyLambda: Boolean,
     // for distinction between different overloads
@@ -87,7 +87,10 @@ private data class FunctionLookupObject(
 /**
  * Simplest lookup object so two lookup elements for the same property will clash.
  */
-private data class VariableLookupObject(override val shortName: Name, val callableIdIfNonLocal: FqName?) : KotlinLookupObject
+private data class VariableLookupObject(
+    override val shortName: Name,
+    val importStrategy: CallableImportStrategy
+) : KotlinLookupObject
 
 private class ClassLookupElementFactory {
     fun createLookup(symbol: KtClassLikeSymbol): LookupElementBuilder {
@@ -104,12 +107,15 @@ private class TypeParameterLookupElementFactory {
 
 private class VariableLookupElementFactory {
     fun KtAnalysisSession.createLookup(symbol: KtVariableLikeSymbol): LookupElementBuilder {
-        val lookupObject = VariableLookupObject(symbol.name, symbol.callableIdIfExists)
+        val lookupObject = VariableLookupObject(
+            symbol.name,
+            importStrategy = detectImportStrategy(symbol)
+        )
 
         return LookupElementBuilder.create(lookupObject, symbol.name.asString())
             .withTypeText(symbol.annotatedType.type.render())
             .markIfSyntheticJavaProperty(symbol)
-            .withInsertHandler(createInsertHandler(symbol))
+            .withInsertHandler(ShorteningVariableInsertionHandler)
     }
 
     private fun LookupElementBuilder.markIfSyntheticJavaProperty(symbol: KtVariableLikeSymbol): LookupElementBuilder = when (symbol) {
@@ -125,29 +131,13 @@ private class VariableLookupElementFactory {
     private fun buildSyntheticPropertyTailText(getterName: String, setterName: String?): String =
         if (setterName != null) "$getterName()/$setterName()" else "$getterName()"
 
-    private fun createInsertHandler(symbol: KtVariableLikeSymbol): InsertHandler<LookupElement> {
-        val callableId = symbol.callableIdIfExists ?: return QuotedNamesAwareInsertionHandler()
+    private fun detectImportStrategy(symbol: KtVariableLikeSymbol): CallableImportStrategy {
+        if (symbol !is KtKotlinPropertySymbol) return CallableImportStrategy.DoNothing
+        if (symbol.dispatchType != null || symbol.receiverType != null) return CallableImportStrategy.DoNothing
 
-        return if (symbol.canBeCalledByFqName) {
-            ShorteningVariableInsertionHandler(callableId)
-        } else {
-            SimpleVariableInsertionHandler(symbol.importableFqName)
-        }
+        return symbol.callableIdIfNonLocal?.let(CallableImportStrategy::InsertFqNameAndShorten)
+            ?: CallableImportStrategy.DoNothing
     }
-
-    private val KtVariableLikeSymbol.canBeCalledByFqName: Boolean
-        get() = when (this) {
-            is KtKotlinPropertySymbol -> dispatchType == null && receiverType == null
-
-            is KtEnumEntrySymbol -> true
-
-            is KtJavaFieldSymbol,
-            is KtSyntheticJavaPropertySymbol,
-            is KtLocalVariableSymbol,
-            is KtFunctionParameterSymbol,
-            is KtConstructorParameterSymbol,
-            is KtSetterParameterSymbol -> false
-        }
 }
 
 private class FunctionLookupElementFactory {
@@ -172,13 +162,13 @@ private class FunctionLookupElementFactory {
         }
     }
 
-    private fun detectImportingStrategy(symbol: KtFunctionSymbol): FunctionImportStrategy {
+    private fun detectImportingStrategy(symbol: KtFunctionSymbol): CallableImportStrategy {
         val functionFqName = symbol.callableIdIfNonLocal
         return when {
-            functionFqName == null -> FunctionImportStrategy.DoNothing
-            symbol.dispatchType != null -> FunctionImportStrategy.DoNothing
-            !symbol.isExtension -> FunctionImportStrategy.InsertFqNameAndShorten(functionFqName)
-            else -> FunctionImportStrategy.AddImport(functionFqName)
+            functionFqName == null -> CallableImportStrategy.DoNothing
+            symbol.dispatchType != null -> CallableImportStrategy.DoNothing
+            !symbol.isExtension -> CallableImportStrategy.InsertFqNameAndShorten(functionFqName)
+            else -> CallableImportStrategy.AddImport(functionFqName)
         }
     }
 
@@ -299,7 +289,7 @@ private object ShorteningFunctionInsertionHandler : AbstractFunctionInsertionHan
         val startOffset = context.startOffset
         val element = context.file.findElementAt(startOffset) ?: return
 
-        if (importingStrategy is FunctionImportStrategy.InsertFqNameAndShorten) {
+        if (importingStrategy is CallableImportStrategy.InsertFqNameAndShorten) {
             context.document.replaceString(
                 context.startOffset,
                 context.tailOffset,
@@ -315,42 +305,40 @@ private object ShorteningFunctionInsertionHandler : AbstractFunctionInsertionHan
             addArguments(context, element, lookupObject)
             context.commitDocument()
 
-            if (importingStrategy is FunctionImportStrategy.AddImport) {
+            if (importingStrategy is CallableImportStrategy.AddImport) {
                 addCallableImportIfRequired(targetFile, importingStrategy.nameToImport)
             }
         }
     }
 }
 
-private class ShorteningVariableInsertionHandler(private val name: FqName) : InsertHandler<LookupElement> {
+private object ShorteningVariableInsertionHandler : InsertHandler<LookupElement> {
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
         val targetFile = context.file as? KtFile ?: return
+        val lookupObject = item.`object` as VariableLookupObject
 
-        context.document.replaceString(
-            context.startOffset,
-            context.tailOffset,
-            name.withRootPrefixIfNeeded().render()
-        )
-        context.commitDocument()
+        when (val importStrategy = lookupObject.importStrategy) {
+            is CallableImportStrategy.AddImport -> {
+                addCallableImportIfRequired(targetFile, importStrategy.nameToImport)
+            }
 
-        shortenReferences(targetFile, TextRange(context.startOffset, context.tailOffset))
-    }
-}
+            is CallableImportStrategy.InsertFqNameAndShorten -> {
+                context.document.replaceString(
+                    context.startOffset,
+                    context.tailOffset,
+                    importStrategy.fqName.withRootPrefixIfNeeded().render()
+                )
 
-private class SimpleVariableInsertionHandler(private val nameToImport: FqName?) :
-    QuotedNamesAwareInsertionHandler() {
-    override fun handleInsert(context: InsertionContext, item: LookupElement) {
-        super.handleInsert(context, item)
+                context.commitDocument()
+                shortenReferences(targetFile, TextRange(context.startOffset, context.tailOffset))
+            }
 
-        val targetFile = context.file as? KtFile ?: return
-
-        if (nameToImport != null) {
-            addCallableImportIfRequired(targetFile, nameToImport)
+            is CallableImportStrategy.DoNothing -> {}
         }
     }
 }
 
-private open class QuotedNamesAwareInsertionHandler() : InsertHandler<LookupElement> {
+private open class QuotedNamesAwareInsertionHandler : InsertHandler<LookupElement> {
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
         val lookupElement = item.`object` as KotlinLookupObject
 
@@ -396,19 +384,6 @@ private val KtVariableLikeSymbol.callableIdIfExists: FqName?
 
         // Compiler will complain if there would be a new type in the hierarchy
         is KtEnumEntrySymbol,
-        is KtLocalVariableSymbol,
-        is KtFunctionParameterSymbol,
-        is KtConstructorParameterSymbol,
-        is KtSetterParameterSymbol -> null
-    }
-
-private val KtVariableLikeSymbol.importableFqName: FqName?
-    get() = when (this) {
-        is KtKotlinPropertySymbol -> if (dispatchType == null) callableIdIfNonLocal else null
-
-        is KtEnumEntrySymbol,
-        is KtJavaFieldSymbol,
-        is KtSyntheticJavaPropertySymbol,
         is KtLocalVariableSymbol,
         is KtFunctionParameterSymbol,
         is KtConstructorParameterSymbol,
