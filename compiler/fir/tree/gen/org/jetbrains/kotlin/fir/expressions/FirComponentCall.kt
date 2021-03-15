@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.FirImplementationDetail
  */
 
 abstract class FirComponentCall : FirFunctionCall() {
+    abstract override val source: FirSourceElement?
     abstract override val typeRef: FirTypeRef
     abstract override val annotations: List<FirAnnotationCall>
     abstract override val typeArguments: List<FirTypeProjection>
@@ -26,11 +27,13 @@ abstract class FirComponentCall : FirFunctionCall() {
     abstract override val extensionReceiver: FirExpression
     abstract override val argumentList: FirArgumentList
     abstract override val calleeReference: FirNamedReference
-    abstract override val source: FirSourceElement?
     abstract override val explicitReceiver: FirExpression
     abstract val componentIndex: Int
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitComponentCall(this, data)
+
+    @FirImplementationDetail
+    abstract override fun replaceSource(newSource: FirSourceElement?)
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
@@ -41,9 +44,6 @@ abstract class FirComponentCall : FirFunctionCall() {
     abstract override fun replaceCalleeReference(newCalleeReference: FirNamedReference)
 
     abstract override fun replaceCalleeReference(newCalleeReference: FirReference)
-
-    @FirImplementationDetail
-    abstract override fun replaceSource(newSource: FirSourceElement?)
 
     abstract override fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?)
 

@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.FirImplementationDetail
  */
 
 abstract class FirCallableReferenceAccess : FirQualifiedAccessExpression() {
+    abstract override val source: FirSourceElement?
     abstract override val typeRef: FirTypeRef
     abstract override val annotations: List<FirAnnotationCall>
     abstract override val typeArguments: List<FirTypeProjection>
@@ -27,9 +28,11 @@ abstract class FirCallableReferenceAccess : FirQualifiedAccessExpression() {
     abstract override val extensionReceiver: FirExpression
     abstract override val calleeReference: FirNamedReference
     abstract val hasQuestionMarkAtLHS: Boolean
-    abstract override val source: FirSourceElement?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitCallableReferenceAccess(this, data)
+
+    @FirImplementationDetail
+    abstract override fun replaceSource(newSource: FirSourceElement?)
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
@@ -42,9 +45,6 @@ abstract class FirCallableReferenceAccess : FirQualifiedAccessExpression() {
     abstract override fun replaceCalleeReference(newCalleeReference: FirReference)
 
     abstract fun replaceHasQuestionMarkAtLHS(newHasQuestionMarkAtLHS: Boolean)
-
-    @FirImplementationDetail
-    abstract override fun replaceSource(newSource: FirSourceElement?)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirCallableReferenceAccess
 

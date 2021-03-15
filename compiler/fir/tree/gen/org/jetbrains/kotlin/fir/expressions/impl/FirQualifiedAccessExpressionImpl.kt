@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.FirImplementationDetail
  */
 
 internal class FirQualifiedAccessExpressionImpl(
+    override var source: FirSourceElement?,
     override var typeRef: FirTypeRef,
     override val annotations: MutableList<FirAnnotationCall>,
     override var calleeReference: FirReference,
@@ -28,7 +29,6 @@ internal class FirQualifiedAccessExpressionImpl(
     override var explicitReceiver: FirExpression?,
     override var dispatchReceiver: FirExpression,
     override var extensionReceiver: FirExpression,
-    override var source: FirSourceElement?,
 ) : FirQualifiedAccessExpression() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         typeRef.accept(visitor, data)
@@ -89,6 +89,11 @@ internal class FirQualifiedAccessExpressionImpl(
         return this
     }
 
+    @FirImplementationDetail
+    override fun replaceSource(newSource: FirSourceElement?) {
+        source = newSource
+    }
+
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {
         typeRef = newTypeRef
     }
@@ -104,10 +109,5 @@ internal class FirQualifiedAccessExpressionImpl(
 
     override fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?) {
         explicitReceiver = newExplicitReceiver
-    }
-
-    @FirImplementationDetail
-    override fun replaceSource(newSource: FirSourceElement?) {
-        source = newSource
     }
 }

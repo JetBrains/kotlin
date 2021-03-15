@@ -35,23 +35,23 @@ import org.jetbrains.kotlin.name.Name
 
 @FirBuilderDsl
 class FirComponentCallBuilder : FirCallBuilder, FirAnnotationContainerBuilder, FirExpressionBuilder {
+    override var source: FirSourceElement? = null
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     val typeArguments: MutableList<FirTypeProjection> = mutableListOf()
     var dispatchReceiver: FirExpression = FirNoReceiverExpression
     var extensionReceiver: FirExpression = FirNoReceiverExpression
     override var argumentList: FirArgumentList = FirEmptyArgumentList
-    override var source: FirSourceElement? = null
     lateinit var explicitReceiver: FirExpression
     var componentIndex: Int by kotlin.properties.Delegates.notNull<Int>()
 
     override fun build(): FirComponentCall {
         return FirComponentCallImpl(
+            source,
             annotations,
             typeArguments,
             dispatchReceiver,
             extensionReceiver,
             argumentList,
-            source,
             explicitReceiver,
             componentIndex,
         )

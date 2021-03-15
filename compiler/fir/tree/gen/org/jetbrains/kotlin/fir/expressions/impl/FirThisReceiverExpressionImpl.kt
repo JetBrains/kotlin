@@ -23,11 +23,11 @@ import org.jetbrains.kotlin.fir.FirImplementationDetail
  */
 
 internal class FirThisReceiverExpressionImpl(
+    override var source: FirSourceElement?,
     override var typeRef: FirTypeRef,
     override val annotations: MutableList<FirAnnotationCall>,
     override val typeArguments: MutableList<FirTypeProjection>,
     override var calleeReference: FirThisReference,
-    override var source: FirSourceElement?,
 ) : FirThisReceiverExpression() {
     override var explicitReceiver: FirExpression? = null
     override var dispatchReceiver: FirExpression = FirNoReceiverExpression
@@ -92,6 +92,11 @@ internal class FirThisReceiverExpressionImpl(
         return this
     }
 
+    @FirImplementationDetail
+    override fun replaceSource(newSource: FirSourceElement?) {
+        source = newSource
+    }
+
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {
         typeRef = newTypeRef
     }
@@ -112,10 +117,5 @@ internal class FirThisReceiverExpressionImpl(
     override fun replaceCalleeReference(newCalleeReference: FirReference) {
         require(newCalleeReference is FirThisReference)
         replaceCalleeReference(newCalleeReference)
-    }
-
-    @FirImplementationDetail
-    override fun replaceSource(newSource: FirSourceElement?) {
-        source = newSource
     }
 }

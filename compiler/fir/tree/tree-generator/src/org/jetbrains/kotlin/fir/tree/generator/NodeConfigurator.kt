@@ -204,13 +204,8 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field("value", "T", null)
         }
 
-        qualifiedAccessExpression.configure {
-            +field("source", sourceElementType, nullable = true, withReplace = true)
-        }
-
         functionCall.configure {
             +field("calleeReference", namedReference)
-            +field("source", sourceElementType, nullable = true, withReplace = true)
         }
 
         comparisonExpression.configure {
@@ -457,7 +452,6 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field("originalExpression", qualifiedAccessExpression)
             +field("typesFromSmartCast", "Collection<ConeKotlinType>", null, customType = coneKotlinTypeType)
             +field("originalType", typeRef)
-            +field("source", sourceElementType, nullable = true, withReplace = true)
         }
 
         safeCallExpression.configure {
@@ -475,7 +469,6 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         callableReferenceAccess.configure {
             +field("calleeReference", namedReference, withReplace = true).withTransform()
             +booleanField("hasQuestionMarkAtLHS", withReplace = true)
-            +field("source", sourceElementType, nullable = true, withReplace = true)
         }
 
         getClassCall.configure {
@@ -591,7 +584,6 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         thisReceiverExpression.configure {
             +field("calleeReference", thisReference)
-            +field("source", sourceElementType, nullable = true, withReplace = true)
         }
 
         whenExpression.configure {
