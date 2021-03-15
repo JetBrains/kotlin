@@ -264,10 +264,13 @@ class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
         //https://youtrack.jetbrains.com/issue/KTI-405
         if (System.getProperty("os.name")?.toLowerCase()?.contains("windows") == true) return
 
-        val project = Project("kaptIncrementalWithParceler", GradleVersionRequired.None).apply {
+        val project = Project(
+            projectName = "kaptIncrementalWithParceler",
+            gradleVersionRequirement = GradleVersionRequired.AtLeast("6.6.1")
+        ).apply {
             setupWorkingDir()
         }
-        val options = defaultBuildOptions().copy(androidGradlePluginVersion = AGPVersion.v3_6_0)
+        val options = defaultBuildOptions().copy(androidGradlePluginVersion = AGPVersion.v4_2_0)
         project.build("clean", ":mylibrary:assembleDebug", options = options) {
             assertSuccessful()
         }

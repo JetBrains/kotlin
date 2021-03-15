@@ -134,9 +134,13 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
 
     //Proguard corrupts RuntimeInvisibleParameterAnnotations/RuntimeVisibleParameterAnnotations tables:
     // https://sourceforge.net/p/proguard/bugs/735/
+    // Gradle 7 compatibility issue: https://github.com/Guardsquare/proguard/issues/136
     @Test
     fun testInteropWithProguarded() {
-        Project("interopWithProguarded").build("build") {
+        Project(
+            projectName = "interopWithProguarded",
+            gradleVersionRequirement = GradleVersionRequired.Until("6.8.4")
+        ).build("build") {
             assertSuccessful()
             assertTasksExecuted(":test")
             assertContains("InteropWithProguardedTest PASSED")

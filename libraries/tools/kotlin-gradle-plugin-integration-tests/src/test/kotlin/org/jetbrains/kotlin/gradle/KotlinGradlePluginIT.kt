@@ -1117,12 +1117,15 @@ class KotlinGradleIT : BaseGradleIT() {
 
     @Test
     fun testKtKt35942InternalsFromMainInTestViaTransitiveDepsAndroid() = with(
-        Project("kt-35942-android", GradleVersionRequired.FOR_MPP_SUPPORT)
+        Project(
+            projectName = "kt-35942-android",
+            gradleVersionRequirement = GradleVersionRequired.AtLeast("6.6.1")
+        )
     ) {
         build(
             ":lib1:compileDebugUnitTestKotlin",
             options = defaultBuildOptions().copy(
-                androidGradlePluginVersion = AGPVersion.v3_6_0,
+                androidGradlePluginVersion = AGPVersion.v4_2_0,
                 androidHome = KtTestUtil.findAndroidSdk(),
             ),
         ) {

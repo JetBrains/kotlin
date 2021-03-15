@@ -221,7 +221,7 @@ class SubpluginsIT : BaseGradleIT() {
         build(
             ":app:compileDebugKotlin",
             options = defaultBuildOptions().copy(
-                androidGradlePluginVersion = AGPVersion.v3_4_1,
+                androidGradlePluginVersion = AGPVersion.v4_2_0,
                 androidHome = KtTestUtil.findAndroidSdk()
             )
         ) {
