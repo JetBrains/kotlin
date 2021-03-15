@@ -114,7 +114,7 @@ class SerializableIrGenerator(
             var startPropOffset: Int = 0
 
 
-            if (useFieldMissingOptimization() &&
+            if (jvmCanUseFieldMissingOptimization() &&
                 // for abstract classes fields MUST BE checked in child classes
                 !serializableDescriptor.isAbstractSerializableClass() && !serializableDescriptor.isSealedSerializableClass()
             ) {
@@ -143,7 +143,7 @@ class SerializableIrGenerator(
                     irSetField(irGet(thiz), backingFieldToAssign, initializerBody)
                 } else {
                     // property required
-                    if (useFieldMissingOptimization()) {
+                    if (jvmCanUseFieldMissingOptimization()) {
                         // field definitely not empty as it's checked before - no need another IF, only assign property from param
                         +assignParamExpr
                         statementsAfterSerializableProperty[prop.descriptor]?.forEach { +it }
