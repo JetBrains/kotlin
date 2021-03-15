@@ -92,14 +92,7 @@ private data class VariableLookupObject(override val shortName: Name, val callab
 private class ClassLookupElementFactory {
     fun createLookup(symbol: KtClassLikeSymbol): LookupElementBuilder {
         return LookupElementBuilder.create(ClassifierLookupObject(symbol.name, symbol.classIdIfNonLocal), symbol.name.asString())
-            .withInsertHandler(createInsertHandler(symbol))
-    }
-
-    private fun createInsertHandler(symbol: KtClassLikeSymbol): InsertHandler<LookupElement> {
-        val classFqName = symbol.classIdIfNonLocal?.asSingleFqName()
-            ?: return QuotedNamesAwareInsertionHandler()
-
-        return ClassifierInsertionHandler(classFqName)
+            .withInsertHandler(ClassifierInsertionHandler)
     }
 }
 
@@ -206,14 +199,19 @@ private class FunctionLookupElementFactory {
 /**
  * The simplest implementation of the insertion handler for a classifiers.
  */
-private class ClassifierInsertionHandler(private val fqName: FqName) : InsertHandler<LookupElement> {
+private object ClassifierInsertionHandler : InsertHandler<LookupElement> {
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
         val targetFile = context.file as? KtFile ?: return
+        val lookupObject = item.`object` as ClassifierLookupObject
 
-        context.document.replaceString(context.startOffset, context.tailOffset, fqName.render())
-        context.commitDocument()
+        if (lookupObject.classId != null) {
+            val fqName = lookupObject.classId.asSingleFqName()
 
-        shortenReferences(targetFile, TextRange(context.startOffset, context.tailOffset))
+            context.document.replaceString(context.startOffset, context.tailOffset, fqName.render())
+            context.commitDocument()
+
+            shortenReferences(targetFile, TextRange(context.startOffset, context.tailOffset))
+        }
     }
 }
 
