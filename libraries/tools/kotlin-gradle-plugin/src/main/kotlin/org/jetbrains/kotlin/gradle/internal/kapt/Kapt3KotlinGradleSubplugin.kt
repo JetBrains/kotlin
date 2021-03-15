@@ -525,6 +525,13 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
             registerSubpluginOptions(kaptTaskProvider, subpluginOptions)
         }
 
+        kaptTaskProvider.configure { task ->
+            task.onlyIf {
+                it as KaptTask
+                it.includeCompileClasspath || !it.kaptClasspath.isEmpty()
+            }
+        }
+
         return kaptTaskProvider
     }
 
@@ -568,6 +575,12 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
             kaptTask.kaptClasspathConfigurations = kaptClasspathConfigurations
 
             PropertiesProvider(project).mapKotlinTaskProperties(kaptTask)
+
+            if (!includeCompileClasspath) {
+                kaptTask.onlyIf {
+                    !(it as KaptGenerateStubsTask).kaptClasspath.isEmpty()
+                }
+            }
         }
 
         project.whenEvaluated {
