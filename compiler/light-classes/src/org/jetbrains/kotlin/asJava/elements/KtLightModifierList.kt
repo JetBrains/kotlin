@@ -61,6 +61,10 @@ abstract class KtLightModifierList<out T : KtLightElement<KtModifierListOwner, P
 
     private fun computeAnnotations(): List<KtLightAbstractAnnotation> {
         val annotationsForEntries = owner.givenAnnotations ?: lightAnnotationsForEntries(this)
+        //TODO: Hacky way to update wrong parents for annotations
+        annotationsForEntries.forEach {
+            it.parent = this
+        }
         val modifierListOwner = parent
         if (modifierListOwner is KtLightClassForSourceDeclaration && modifierListOwner.isAnnotationType) {
 

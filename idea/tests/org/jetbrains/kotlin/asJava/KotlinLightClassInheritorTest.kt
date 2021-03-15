@@ -38,12 +38,16 @@ class KotlinLightClassInheritorTest : KotlinLightCodeInsightFixtureTestCase() {
         doTestInheritorByText("abstract class A<T> : List<T>", "java.lang.Object", true)
     }
 
-    private fun doTestInheritorByText(text: String, superQName: String, checkDeep: Boolean) {
+    fun testClassOnSelfDeep() {
+        doTestInheritorByText("class A", "A", checkDeep = true, result = false)
+    }
+
+    private fun doTestInheritorByText(text: String, superQName: String, checkDeep: Boolean, result: Boolean = true) {
         val file = myFixture.configureByText("A.kt", text) as KtFile
         val jetClass = file.declarations.filterIsInstance<KtClass>().single()
         val psiClass = KotlinAsJavaSupport.getInstance(project).getLightClass(jetClass)!!
         val baseClass = JavaPsiFacade.getInstance(project).findClass(superQName, GlobalSearchScope.allScope(project))!!
-        Assert.assertTrue(psiClass.isInheritor(baseClass, checkDeep))
+        Assert.assertEquals(psiClass.isInheritor(baseClass, checkDeep), result)
     }
 
     override fun getProjectDescriptor(): LightProjectDescriptor = KotlinLightProjectDescriptor.INSTANCE
