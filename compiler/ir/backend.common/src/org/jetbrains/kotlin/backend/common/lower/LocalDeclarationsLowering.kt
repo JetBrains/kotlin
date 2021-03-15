@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 interface LocalNameProvider {
@@ -576,7 +577,13 @@ class LocalDeclarationsLowering(
             newOwner: IrDeclarationParent
         ): Name {
             val parents = declaration.parentsWithSelf.takeWhile { it != newOwner }.toList().reversed()
-            val nameFromParents = parents.joinToString(separator = "$") { suggestLocalName(it as IrDeclarationWithName) }
+            val nameFromParents = parents.joinToString(separator = "$") { parent ->
+                val parentAsDeclarationWithName = parent as? IrDeclarationWithName
+                val parentAsFile = parent as? IrFile
+                parentAsDeclarationWithName?.run(::suggestLocalName)
+                    ?: parentAsFile?.name?.let(NameUtils::sanitizeAsJavaIdentifier)
+                    ?: TODO("unsupported parent: $parent")
+            }
             // Local functions declared in anonymous initializers have classes as their parents.
             // Such anonymous initializers, however, are inlined into the constructors delegating to super class constructor.
             // There can be local functions declared in local function in init blocks (and further),
@@ -880,6 +887,7 @@ class LocalDeclarationsLowering(
 
         private fun collectLocalDeclarations() {
             val enclosingFile = container.file
+            var enclosingBlock:IrReturnableBlock? = null
             val enclosingClass = run {
                 var currentParent = container as? IrClass ?: container.parent
                 while (currentParent is IrDeclaration && currentParent !is IrClass) {
@@ -918,6 +926,8 @@ class LocalDeclarationsLowering(
                     if (declaration.visibility == DescriptorVisibilities.LOCAL) {
                         val enclosingScope = data.currentClass
                             ?: enclosingClass?.scopeWithCounter
+                            // Return block might provide information about original location of inlined function.
+                            ?: enclosingBlock?.inlineFunctionSymbol?.owner?.file?.scopeWithCounter
                             // File is required for K/N because file declarations are not split by classes.
                             ?: enclosingFile.scopeWithCounter
                         val index =
@@ -950,6 +960,13 @@ class LocalDeclarationsLowering(
                 private val Data.inInlineFunctionScope: Boolean
                     get() = isInInlineFunction ||
                             generateSequence(container) { it.parent as? IrDeclaration }.any { it is IrFunction && it.isInline }
+
+                override fun visitBlock(expression: IrBlock, data: Data) {
+                    val oldEnclosingBlock = enclosingBlock
+                    enclosingBlock = expression as? IrReturnableBlock ?: enclosingBlock
+                    super.visitBlock(expression, data)
+                    enclosingBlock = oldEnclosingBlock
+                }
             }, Data(null, false))
         }
     }
