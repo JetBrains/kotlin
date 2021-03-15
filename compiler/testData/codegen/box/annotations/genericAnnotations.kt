@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
-
 // MODULE: lib
 // FILE: l1.kt
 package ann
