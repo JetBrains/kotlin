@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.descriptors.commonizer
 
 import java.io.File
 import java.net.URLClassLoader
-import kotlin.jvm.Throws
 
 public fun CliCommonizer(classpath: Iterable<File>): CliCommonizer {
     return CliCommonizer(URLClassLoader(classpath.map { it.absoluteFile.toURI().toURL() }.toTypedArray()))
@@ -30,13 +29,16 @@ public class CliCommonizer(private val executor: Executor) : Commonizer {
         outputCommonizerTarget: SharedCommonizerTarget,
         outputDirectory: File
     ) {
+        if (inputLibraries.isEmpty()) return
         val arguments = mutableListOf<String>().apply {
             add("native-klib-commonize")
             add("-distribution-path"); add(konanHome.absolutePath)
             add("-input-libraries"); add(inputLibraries.joinToString(";") { it.absolutePath })
-            add("-dependency-libraries"); add(dependencyLibraries.joinToString(";") { it.absolutePath })
             add("-output-commonizer-target"); add(outputCommonizerTarget.identityString)
             add("-output-path"); add(outputDirectory.absolutePath)
+            if (dependencyLibraries.isNotEmpty()) {
+                add("-dependency-libraries"); add(dependencyLibraries.joinToString(";") { it.absolutePath })
+            }
         }
         executor(arguments)
     }
