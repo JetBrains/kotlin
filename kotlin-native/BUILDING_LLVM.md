@@ -1,9 +1,8 @@
 # Building Apple LLVM for Kotlin/Native
 
 This document describes how to compile LLVM distribution and use it to build Kotlin/Native on macOS.  
-Usually, you don't need to compile LLVM by yourself:
-* If you use Kotlin/Native compiler it will download LLVM on the first run. 
-* If you contribute to kotlin-native repository then use `:dependencies:update` Gradle task.
+Usually, you don't need to compile LLVM by yourself: it is downloaded
+automatically when you run or build Kotlin/Native compiler.
 
 But if you don't want to download prebuilt LLVM or want to experiment with your own distribution, 
 you came to the right place.
@@ -54,7 +53,6 @@ set `llvmVersion.<HOST_NAME>` to its version.
 For example, provide a path to `clang-llvm-apple-8.0.0-darwin-macos` from the Part 1 and set version to 8.0.0.
 
 Now we are ready to build Kotlin/Native itself. The process is described in [README.md](README.md).
-Please note that we still need to run `./gradlew dependencies:update` to download other dependencies (e.g. libffi).
 
 ## Q&A
 
