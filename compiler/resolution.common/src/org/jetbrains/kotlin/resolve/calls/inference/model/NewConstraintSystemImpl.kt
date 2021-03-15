@@ -336,9 +336,7 @@ class NewConstraintSystemImpl(
         val variableWithConstraints = notFixedTypeVariables.remove(freshTypeConstructor)
 
         for (otherVariableWithConstraints in notFixedTypeVariables.values) {
-            otherVariableWithConstraints.removeConstrains { otherConstraint ->
-                otherConstraint.type.contains { it.typeConstructor() == freshTypeConstructor }
-            }
+            otherVariableWithConstraints.removeConstrains { containsTypeVariable(it.type, freshTypeConstructor) }
         }
 
         storage.fixedTypeVariables[freshTypeConstructor] = resultType

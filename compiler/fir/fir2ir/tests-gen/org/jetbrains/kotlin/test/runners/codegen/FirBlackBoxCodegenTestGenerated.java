@@ -143,7 +143,7 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
-        @TestMetadata("javaAnnotationArrayValueDefault.kt")
+        @TestMetadata("javaAnnotatestInferenceWithTypeVariableInsideCapturedType tionArrayValueDefault.kt")
         public void testJavaAnnotationArrayValueDefault() throws Exception {
             runTest("compiler/testData/codegen/box/annotations/javaAnnotationArrayValueDefault.kt");
         }
