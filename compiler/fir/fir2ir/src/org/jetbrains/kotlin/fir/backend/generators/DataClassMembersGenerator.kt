@@ -176,9 +176,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
 
         fun generate(klass: FirClass<*>): List<FirDeclaration> {
             val propertyParametersCount = irClass.primaryConstructor?.explicitParameters?.size ?: 0
-            val properties = irClass.declarations
-                .filterIsInstance<IrProperty>()
-                .take(propertyParametersCount)
+            val properties = irClass.properties.filter { it.backingField != null }.take(propertyParametersCount).toList()
             if (properties.isEmpty()) {
                 return emptyList()
             }
