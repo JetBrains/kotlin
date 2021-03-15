@@ -106,6 +106,8 @@ To reproduce TeamCity build use `-Pteamcity=true` flag. Local builds don't run p
 **OPTIONAL:** Some artifacts, mainly Maven plugin ones, are built separately with Maven.
 Refer to [libraries/ReadMe.md](libraries/ReadMe.md) for details.
 
+To build Kotlin/Native, see
+[kotlin-native/README.md](kotlin-native/README.md#building-from-source).
 
 ### Building for different versions of IntelliJ IDEA and Android Studio
 
@@ -145,28 +147,6 @@ From this root project there are Run/Debug Configurations for running `IDEA` or 
 * Run the `IDEA` run configuration in the project
 * A child IntelliJ IDEA with the Kotlin plugin will then startup
 
-### Including into composite build
-
-To include kotlin compiler into [composite build](https://docs.gradle.org/current/userguide/composite_builds.html) you need to define `dependencySubstitution` for `kotlin-compiler` module in `settings.gradle.kts`
-
-```Kotlin
-includeBuild("/path/to/kotlin") {
-    dependencySubstitution {
-        substitute(module("org.jetbrains.kotlin:kotlin-compiler"))
-            .with(project(":include:kotlin-compiler"))
-    }
-}
-```
-
-or in `settings.gradle`
-
-```Groovy
-includeBuild('/path/to/kotlin') {
-    dependencySubstitution {
-        substitute module('org.jetbrains.kotlin:kotlin-compiler') with project(':include:kotlin-compiler')
-    }
-}
-```
 
 # License
 Kotlin is distributed under the terms of the Apache License (Version 2.0). See [license folder](license/README.md) for details.
