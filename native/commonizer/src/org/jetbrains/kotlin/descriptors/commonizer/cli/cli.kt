@@ -52,7 +52,10 @@ private fun parseTask(
         // check options completeness
         val missingMandatoryOptions = optionTypes.filterKeys { it !in options }.filterValues { it.mandatory }.keys
         if (missingMandatoryOptions.isNotEmpty())
-            printUsageAndExit("Mandatory options not specified in task $taskAlias: " + missingMandatoryOptions.joinToString { "-$it" })
+            printUsageAndExit(
+                "Mandatory options not specified in task $taskAlias: " + missingMandatoryOptions.joinToString { "-$it" } + "\n" +
+                        "Specified options: ${options.keys.joinToString(", ")}"
+            )
 
         tasks += taskType.taskConstructor(options.values)
     }
