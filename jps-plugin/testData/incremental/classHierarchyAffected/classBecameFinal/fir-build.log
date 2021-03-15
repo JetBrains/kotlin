@@ -1,0 +1,38 @@
+================ Step #1 =================
+
+Compiling files:
+  src/A.kt
+  src/AChild.kt
+  src/AGrandChild.kt
+  src/ATypeParameter.kt
+  src/classLiteral.kt
+  src/functionParameter.kt
+  src/getA.kt
+  src/importA.kt
+  src/importAGrandChild.kt
+  src/importStar.kt
+  src/referencedByFqName.kt
+  src/returnType.kt
+  src/returnTypeImplicit.kt
+End of files
+Exit code: OK
+
+================ Step #2 =================
+
+Compiling files:
+  src/A.kt
+  src/AChild.kt
+  src/AGrandChild.kt
+  src/ATypeParameter.kt
+  src/classLiteral.kt
+  src/functionParameter.kt
+  src/getA.kt
+  src/importA.kt
+  src/importAGrandChild.kt
+  src/importStar.kt
+  src/referencedByFqName.kt
+  src/returnType.kt
+  src/returnTypeImplicit.kt
+End of files
+Exit code: OK
+
