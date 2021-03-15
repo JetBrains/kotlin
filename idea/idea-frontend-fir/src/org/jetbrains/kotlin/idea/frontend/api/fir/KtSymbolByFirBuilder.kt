@@ -56,6 +56,7 @@ internal class KtSymbolByFirBuilder private constructor(
     val functionLikeBuilder = FunctionLikeSymbolBuilder()
     val variableLikeBuilder = VariableLikeSymbolBuilder()
     val callableBuilder = CallableSymbolBuilder()
+    val typeBuilder = TypeBuilder()
 
     constructor(
         resolveState: FirModuleResolveState,
@@ -108,43 +109,6 @@ internal class KtSymbolByFirBuilder private constructor(
             return null
         }
         return KtFirPackageSymbol(packageFqName, project, token)
-    }
-
-    fun buildTypeArgument(coneType: ConeTypeProjection): KtTypeArgument = when (coneType) {
-        is ConeStarProjection -> KtStarProjectionTypeArgument
-        is ConeKotlinTypeProjection -> KtFirTypeArgumentWithVariance(
-            buildKtType(coneType.type),
-            coneType.kind.toVariance()
-        )
-    }
-
-    private fun ProjectionKind.toVariance() = when (this) {
-        ProjectionKind.OUT -> Variance.OUT_VARIANCE
-        ProjectionKind.IN -> Variance.IN_VARIANCE
-        ProjectionKind.INVARIANT -> Variance.INVARIANT
-        ProjectionKind.STAR -> error("KtStarProjectionTypeArgument be directly created")
-    }
-
-
-    fun buildKtType(coneType: FirTypeRef): KtType =
-        buildKtType(
-            coneType.coneTypeSafe<ConeKotlinType>()
-                ?: error("")
-        )
-
-    fun buildKtType(coneType: ConeKotlinType): KtType = typesCache.cache(coneType) {
-        when (coneType) {
-            is ConeClassLikeTypeImpl -> {
-                if (coneType.isFunctionalType(rootSession)) KtFirFunctionalType(coneType, token, this)
-                else KtFirUsualClassType(coneType, token, this)
-            }
-            is ConeTypeParameterType -> KtFirTypeParameterType(coneType, token, this)
-            is ConeClassErrorType -> KtFirErrorType(coneType, token)
-            is ConeFlexibleType -> KtFirFlexibleType(coneType, token, this)
-            is ConeIntersectionType -> KtFirIntersectionType(coneType, token, this)
-            is ConeDefinitelyNotNullType -> buildKtType(coneType.original)
-            else -> TODO(coneType::class.toString())
-        }
     }
 
     inner class ClassifierSymbolBuilder {
@@ -305,6 +269,45 @@ internal class KtSymbolByFirBuilder private constructor(
             require(fir.isSetter)
             return symbolsCache.cache(fir) { KtFirPropertySetterSymbol(fir, resolveState, token, this@KtSymbolByFirBuilder) }
         }
+    }
+
+    inner class TypeBuilder {
+        fun buildKtType(coneType: ConeKotlinType): KtType {
+            return typesCache.cache(coneType) {
+                when (coneType) {
+                    is ConeClassLikeTypeImpl -> {
+                        if (coneType.isFunctionalType(rootSession)) KtFirFunctionalType(coneType, token, this@KtSymbolByFirBuilder)
+                        else KtFirUsualClassType(coneType, token, this@KtSymbolByFirBuilder)
+                    }
+                    is ConeTypeParameterType -> KtFirTypeParameterType(coneType, token, this@KtSymbolByFirBuilder)
+                    is ConeClassErrorType -> KtFirErrorType(coneType, token)
+                    is ConeFlexibleType -> KtFirFlexibleType(coneType, token, this@KtSymbolByFirBuilder)
+                    is ConeIntersectionType -> KtFirIntersectionType(coneType, token, this@KtSymbolByFirBuilder)
+                    is ConeDefinitelyNotNullType -> buildKtType(coneType.original)
+                    else -> error("Unexpected ${coneType::class.simpleName}")
+                }
+            }
+        }
+
+        fun buildKtType(coneType: FirTypeRef): KtType {
+            return buildKtType(coneType.coneType)
+        }
+
+        fun buildTypeArgument(coneType: ConeTypeProjection): KtTypeArgument = when (coneType) {
+            is ConeStarProjection -> KtStarProjectionTypeArgument
+            is ConeKotlinTypeProjection -> KtFirTypeArgumentWithVariance(
+                buildKtType(coneType.type),
+                coneType.kind.toVariance()
+            )
+        }
+
+        private fun ProjectionKind.toVariance(): Variance = when (this) {
+            ProjectionKind.OUT -> Variance.OUT_VARIANCE
+            ProjectionKind.IN -> Variance.IN_VARIANCE
+            ProjectionKind.INVARIANT -> Variance.INVARIANT
+            ProjectionKind.STAR -> error("KtStarProjectionTypeArgument should not be directly created")
+        }
+
     }
 }
 

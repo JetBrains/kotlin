@@ -152,11 +152,11 @@ private object FirToKtConversionCreator {
             Visibility::class.createType()
         ),
         ConeKotlinType::class to HLFunctionCallConversion(
-            "firSymbolBuilder.buildKtType({0})",
+            "firSymbolBuilder.typeBuilder.buildKtType({0})",
             KtType::class.createType()
         ),
         FirTypeRef::class to HLFunctionCallConversion(
-            "firSymbolBuilder.buildKtType({0})",
+            "firSymbolBuilder.typeBuilder.buildKtType({0})",
             KtType::class.createType()
         ),
         FirPropertySymbol::class to HLFunctionCallConversion(

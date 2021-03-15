@@ -148,7 +148,7 @@ internal class KtFirScopeProvider(
         val towerDataContext = analysisSession.firResolveState.getTowerDataContextUnsafe(positionInFakeFile)
 
         val implicitReceivers = towerDataContext.nonLocalTowerDataElements.mapNotNull { it.implicitReceiver }.distinct()
-        val implicitReceiversTypes = implicitReceivers.map { builder.buildKtType(it.type) }
+        val implicitReceiversTypes = implicitReceivers.map { builder.typeBuilder.buildKtType(it.type) }
 
         val implicitReceiverScopes = implicitReceivers.mapNotNull { it.implicitScope }
         val nonLocalScopes = towerDataContext.nonLocalTowerDataElements.mapNotNull { it.scope }.distinct()

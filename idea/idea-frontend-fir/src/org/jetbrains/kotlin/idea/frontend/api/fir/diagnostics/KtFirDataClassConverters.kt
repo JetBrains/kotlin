@@ -588,7 +588,7 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.INLINE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE) { firDiagnostic ->
         InlineClassHasInapplicableParameterTypeImpl(
-            firSymbolBuilder.buildKtType(firDiagnostic.a),
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firDiagnostic as FirPsiDiagnostic<*>,
             token,
         )
@@ -692,8 +692,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.TYPE_MISMATCH) { firDiagnostic ->
         TypeMismatchImpl(
-            firSymbolBuilder.buildKtType(firDiagnostic.a),
-            firSymbolBuilder.buildKtType(firDiagnostic.b),
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
             firDiagnostic as FirPsiDiagnostic<*>,
             token,
         )
@@ -719,7 +719,7 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     add(FirErrors.UPPER_BOUND_VIOLATED) { firDiagnostic ->
         UpperBoundViolatedImpl(
             firSymbolBuilder.classifierBuilder.buildTypeParameterSymbol(firDiagnostic.a.fir),
-            firSymbolBuilder.buildKtType(firDiagnostic.b),
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
             firDiagnostic as FirPsiDiagnostic<*>,
             token,
         )
@@ -1021,7 +1021,7 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.FORBIDDEN_VARARG_PARAMETER_TYPE) { firDiagnostic ->
         ForbiddenVarargParameterTypeImpl(
-            firSymbolBuilder.buildKtType(firDiagnostic.a),
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firDiagnostic as FirPsiDiagnostic<*>,
             token,
         )
@@ -1193,7 +1193,7 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     add(FirErrors.COMPONENT_FUNCTION_MISSING) { firDiagnostic ->
         ComponentFunctionMissingImpl(
             firDiagnostic.a,
-            firSymbolBuilder.buildKtType(firDiagnostic.b),
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
             firDiagnostic as FirPsiDiagnostic<*>,
             token,
         )
@@ -1267,14 +1267,14 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.UNSAFE_CALL) { firDiagnostic ->
         UnsafeCallImpl(
-            firSymbolBuilder.buildKtType(firDiagnostic.a),
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firDiagnostic as FirPsiDiagnostic<*>,
             token,
         )
     }
     add(FirErrors.UNSAFE_IMPLICIT_INVOKE_CALL) { firDiagnostic ->
         UnsafeImplicitInvokeCallImpl(
-            firSymbolBuilder.buildKtType(firDiagnostic.a),
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firDiagnostic as FirPsiDiagnostic<*>,
             token,
         )

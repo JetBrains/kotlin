@@ -28,7 +28,7 @@ internal class KtFirTypeAndAnnotations<T : FirDeclaration>(
     override val token: ValidityToken get() = containingDeclaration.token
 
     override val type: KtType by containingDeclaration.withFirAndCache(typeResolvePhase) { fir ->
-        builder.buildKtType(typeRef(fir))
+        builder.typeBuilder.buildKtType(typeRef(fir))
     }
 
     override val annotations: List<KtAnnotationCall> by containingDeclaration.withFirAndCache { fir ->
@@ -49,7 +49,7 @@ internal class KtSimpleFirTypeAndAnnotations(
     private val annotationsListRef by weakRef(annotationsList)
 
     override val type: KtType by cached {
-        builder.buildKtType(coneTypeRef)
+        builder.typeBuilder.buildKtType(coneTypeRef)
     }
 
     override val annotations: List<KtAnnotationCall> get() = annotationsListRef
@@ -81,6 +81,6 @@ internal fun FirRefWithValidityCheck<FirCallableDeclaration<*>>.receiverTypeAndA
 internal fun FirRefWithValidityCheck<FirCallableMemberDeclaration<*>>.dispatchReceiverTypeAndAnnotations(builder: KtSymbolByFirBuilder) =
     withFir { fir ->
         fir.dispatchReceiverType?.let {
-            builder.buildKtType(it)
+            builder.typeBuilder.buildKtType(it)
         }
     }

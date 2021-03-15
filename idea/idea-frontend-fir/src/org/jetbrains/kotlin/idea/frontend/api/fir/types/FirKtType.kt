@@ -39,7 +39,7 @@ internal class KtFirUsualClassType(
     }
     override val typeArguments: List<KtTypeArgument> by cached {
         coneType.typeArguments.map { typeArgument ->
-            firBuilder.buildTypeArgument(typeArgument)
+            firBuilder.typeBuilder.buildTypeArgument(typeArgument)
         }
     }
 
@@ -64,7 +64,7 @@ internal class KtFirFunctionalType(
     }
     override val typeArguments: List<KtTypeArgument> by cached {
         coneType.typeArguments.map { typeArgument ->
-            firBuilder.buildTypeArgument(typeArgument)
+            firBuilder.typeBuilder.buildTypeArgument(typeArgument)
         }
     }
 
@@ -133,8 +133,8 @@ internal class KtFirFlexibleType(
 ) : KtFlexibleType(), KtFirType {
     override val coneType by weakRef(coneType)
 
-    override val lowerBound: KtType by cached { firBuilder.buildKtType(coneType.lowerBound) }
-    override val upperBound: KtType by cached { firBuilder.buildKtType(coneType.upperBound) }
+    override val lowerBound: KtType by cached { firBuilder.typeBuilder.buildKtType(coneType.lowerBound) }
+    override val upperBound: KtType by cached { firBuilder.typeBuilder.buildKtType(coneType.upperBound) }
 }
 
 internal class KtFirIntersectionType(
@@ -145,7 +145,7 @@ internal class KtFirIntersectionType(
     override val coneType by weakRef(coneType)
 
     override val conjuncts: List<KtType> by cached {
-        coneType.intersectedTypes.map { conjunct -> firBuilder.buildKtType(conjunct) }
+        coneType.intersectedTypes.map { conjunct -> firBuilder.typeBuilder.buildKtType(conjunct) }
     }
 }
 
