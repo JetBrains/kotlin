@@ -810,6 +810,12 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
             }
 
             @Test
+            @TestMetadata("javaDelegate.kt")
+            public void testJavaDelegate() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/provideDelegate/javaDelegate.kt");
+            }
+
+            @Test
             @TestMetadata("local.kt")
             public void testLocal() throws Exception {
                 runTest("compiler/testData/ir/irText/declarations/provideDelegate/local.kt");
