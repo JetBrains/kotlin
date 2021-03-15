@@ -163,8 +163,9 @@ internal class FunctionReferenceLowering(val context: Context): FileLoweringPass
             }
 
             fun transformFunctionReference(expression: IrFunctionReference, samSuperType: IrType? = null): IrExpression {
-                val parent: IrDeclarationContainer = (currentClass?.irElement as? IrClass) ?: irFile
-                val loweredFunctionReference = FunctionReferenceBuilder(irFile, parent, expression, samSuperType).build()
+                val fileParent = expression.symbol.owner.fileOrNull ?: irFile
+                val parent: IrDeclarationContainer = (currentClass?.irElement as? IrClass) ?: fileParent
+                val loweredFunctionReference = FunctionReferenceBuilder(fileParent, parent, expression, samSuperType).build()
                 generatedClasses.add(loweredFunctionReference.functionReferenceClass)
                 val irBuilder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol,
                         expression.startOffset, expression.endOffset)
@@ -176,7 +177,10 @@ internal class FunctionReferenceLowering(val context: Context): FileLoweringPass
             }
         }, data = null)
 
-        irFile.declarations += generatedClasses
+        generatedClasses.forEach {
+            val placeHolder = it.parent as? IrFile ?: irFile
+            placeHolder.declarations += it
+        }
     }
 
     private class BuiltFunctionReference(val functionReferenceClass: IrClass,
