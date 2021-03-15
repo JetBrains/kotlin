@@ -168,17 +168,33 @@ class VariableFixationFinder(
     }
 }
 
-inline fun TypeSystemInferenceExtensionContext.isProperTypeForFixation(
-    type: KotlinTypeMarker,
-    isProper: (KotlinTypeMarker) -> Boolean
-): Boolean {
-    if (!isProper(type)) return false
-    if (type.isCapturedType()) {
-        val projection = (type as? SimpleTypeMarker)?.asCapturedType()?.typeConstructorProjection() ?: return true
-        if (projection.isStarProjection()) return true
+inline fun TypeSystemInferenceExtensionContext.isProperTypeForFixation(type: KotlinTypeMarker, isProper: (KotlinTypeMarker) -> Boolean) =
+    isProper(type) && extractProjectionsForAllCapturedTypes(type).all(isProper)
 
-        if (!isProper(projection.getType())) return false
+@OptIn(ExperimentalStdlibApi::class)
+fun TypeSystemInferenceExtensionContext.extractProjectionsForAllCapturedTypes(baseType: KotlinTypeMarker): Set<KotlinTypeMarker> {
+    val simpleBaseType = baseType.asSimpleType()
+
+    return buildSet {
+        val projectionType = if (simpleBaseType is CapturedTypeMarker) {
+            val typeArgument = simpleBaseType.typeConstructorProjection().takeIf { !it.isStarProjection() } ?: return@buildSet
+            typeArgument.getType().also(::add)
+        } else baseType
+        val argumentsCount = projectionType.argumentsCount().takeIf { it != 0 } ?: return@buildSet
+
+        for (i in 0 until argumentsCount) {
+            val typeArgument = projectionType.getArgument(i).takeIf { !it.isStarProjection() } ?: continue
+            addAll(extractProjectionsForAllCapturedTypes(typeArgument.getType()))
+        }
     }
+}
 
-    return true
+fun TypeSystemInferenceExtensionContext.containsTypeVariable(type: KotlinTypeMarker, typeVariable: TypeConstructorMarker): Boolean {
+    if (type.contains { it.typeConstructor() == typeVariable }) return true
+
+    val typeProjections = extractProjectionsForAllCapturedTypes(type)
+
+    return typeProjections.any { typeProjectionsType ->
+        typeProjectionsType.contains { it.typeConstructor() == typeVariable }
+    }
 }
