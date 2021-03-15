@@ -25,10 +25,8 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
     private val classNameRef = className.makeRef()
     private val baseClass: IrType? = irClass.superTypes.firstOrNull { !it.classifierOrFail.isInterface }
 
-    private val baseClassName by lazy { // Lazy in case was not collected by namer during JsClassGenerator construction
-        baseClass?.let {
-            context.getNameForClass(baseClass.classifierOrFail.owner as IrClass)
-        }
+    private val baseClassRef by lazy { // Lazy in case was not collected by namer during JsClassGenerator construction
+        baseClass?.getClassRef(context)
     }
     private val classPrototypeRef = prototypeOf(classNameRef)
     private val classBlock = JsGlobalBlock()
@@ -49,7 +47,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         val jsClass = JsClass(name = className)
 
         if (baseClass != null && !baseClass.isAny()) {
-            jsClass.baseClass = baseClassName?.makeRef()
+            jsClass.baseClass = baseClassRef
         }
 
         if (es6mode) classModel.preDeclarationBlock.statements += jsClass.makeStmt()
@@ -197,7 +195,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         }
 
         val createCall = jsAssignment(
-            classPrototypeRef, JsInvocation(Namer.JS_OBJECT_CREATE_FUNCTION, prototypeOf(baseClassName!!.makeRef()))
+            classPrototypeRef, JsInvocation(Namer.JS_OBJECT_CREATE_FUNCTION, prototypeOf(baseClassRef!!))
         ).makeStmt()
 
         val ctorAssign = jsAssignment(JsNameRef(Namer.CONSTRUCTOR_NAME, classPrototypeRef), classNameRef).makeStmt()
