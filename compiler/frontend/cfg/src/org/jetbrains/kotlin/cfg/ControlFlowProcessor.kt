@@ -538,7 +538,7 @@ class ControlFlowProcessor(
                 createNonSyntheticValue(expression, MagicKind.UNRESOLVED_CALL, baseExpression)
             }
 
-            if (incrementOrDecrement) {
+            if (incrementOrDecrement && resolvedCall != null) {
                 visitAssignment(baseExpression, getValueAsFunction(rhsValue), expression)
                 if (expression is KtPostfixExpression) {
                     copyValue(baseExpression, expression)
