@@ -66,8 +66,8 @@ fun testCoercionToUnit() {
 
 fun testImportedObjectMember(): String {
   return use(fn = { // BLOCK
-    local fun importedObjectMemberWithVarargs(p0: Int): String {
-      return importedObjectMemberWithVarargs(xs = [p0])
+    local fun Host.importedObjectMemberWithVarargs(p0: Int): String {
+      return receiver.importedObjectMemberWithVarargs(xs = [p0])
     }
 
     Host::importedObjectMemberWithVarargs
