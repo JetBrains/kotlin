@@ -7,42 +7,53 @@ package org.jetbrains.kotlin.gradle.tooling
 
 import com.android.build.gradle.BaseExtension
 import org.gradle.api.DefaultTask
+import org.gradle.api.Project
 import org.gradle.api.provider.Property
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.OutputFile
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.compilerRunner.konanVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinSingleTargetExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
+import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetContainerDsl
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.targets.metadata.isCompatibilityMetadataVariantEnabled
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
+import org.jetbrains.kotlin.gradle.tasks.locateTask
+import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.tooling.KotlinToolingMetadata
 import org.jetbrains.kotlin.tooling.toJsonString
 import java.io.File
 
+/**
+ * The default task managed by the Kotlin Gradle plugin or `null` if the task is disabled.
+ * @see [PropertiesProvider.enableKotlinToolingMetadataArtifact]
+ */
+internal val Project.buildKotlinToolingMetadataTask: TaskProvider<BuildKotlinToolingMetadataTask>?
+    get() {
+        if (!PropertiesProvider(this).enableKotlinToolingMetadataArtifact) return null
+        locateTask<BuildKotlinToolingMetadataTask>(BuildKotlinToolingMetadataTask.defaultTaskName)?.let { return it }
+        return registerTask(BuildKotlinToolingMetadataTask.defaultTaskName) { task ->
+            task.group = "build"
+            task.description = "Build metadata json file containing information about the used Kotlin tooling"
+        }
+    }
+
 open class BuildKotlinToolingMetadataTask : DefaultTask() {
 
     companion object {
+        /**
+         * The name of the default task managed by the Kotlin Gradle plugin.
+         * If enabled, the Kotlin Gradle plugin will automatically register and manage a task with that name.
+         * @see PropertiesProvider.enableKotlinToolingMetadataArtifact
+         */
         const val defaultTaskName: String = "buildKotlinToolingMetadata"
     }
-
-    init {
-        group = "build"
-        description = "Build metadata json file containing information about the used Kotlin tooling"
-    }
-
 
     @get:OutputFile
     val outputFile: Property<File> = project.objects.property(File::class.java)
@@ -144,4 +155,3 @@ private fun buildNativeExtrasOrNull(target: KotlinTarget): KotlinToolingMetadata
         konanAbiVersion = KotlinAbiVersion.CURRENT.toString()
     )
 }
-

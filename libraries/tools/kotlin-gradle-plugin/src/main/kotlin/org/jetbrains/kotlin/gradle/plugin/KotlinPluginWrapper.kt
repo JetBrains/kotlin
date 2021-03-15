@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.gradle.tasks.KOTLIN_KLIB_COMMONIZER_EMBEDDABLE
 import org.jetbrains.kotlin.gradle.tasks.KOTLIN_MODULE_GROUP
 import org.jetbrains.kotlin.gradle.testing.internal.KotlinTestsRegistry
 import org.jetbrains.kotlin.gradle.tooling.BuildKotlinToolingMetadataTask
+import org.jetbrains.kotlin.gradle.tooling.buildKotlinToolingMetadataTask
 import org.jetbrains.kotlin.gradle.utils.checkGradleCompatibility
 import org.jetbrains.kotlin.gradle.utils.loadPropertyFromResources
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
@@ -91,7 +92,6 @@ abstract class KotlinBasePluginWrapper : Plugin<Project> {
         }
 
         project.extensions.add(KotlinTestsRegistry.PROJECT_EXTENSION_NAME, createTestRegistry(project))
-        project.tasks.register(BuildKotlinToolingMetadataTask.defaultTaskName, BuildKotlinToolingMetadataTask::class.java)
 
         val plugin = getPlugin(project, kotlinGradleBuildServices)
 
@@ -100,6 +100,8 @@ abstract class KotlinBasePluginWrapper : Plugin<Project> {
         plugin.apply(project)
 
         project.addNpmDependencyExtension()
+
+        project.buildKotlinToolingMetadataTask
     }
 
     private fun addKotlinCompilerConfiguration(project: Project) {
