@@ -25,6 +25,7 @@ import kotlin.reflect.full.companionObjectInstance
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.jvm.reflect
+import kotlin.reflect.jvm.ExperimentalReflectionOnLambdas
 
 internal fun createStablePointer(any: Any): COpaquePointer = newGlobalRef(any).toCPointer()!!
 
@@ -164,6 +165,7 @@ private fun createStaticCFunction(function: Function<*>): CPointer<CFunction<*>>
         throw IllegalArgumentException(errorMessage)
     }
 
+    @OptIn(ExperimentalReflectionOnLambdas::class)
     val kFunction = function as? KFunction<*> ?: function.reflect() ?:
             throw IllegalArgumentException(errorMessage)
 
