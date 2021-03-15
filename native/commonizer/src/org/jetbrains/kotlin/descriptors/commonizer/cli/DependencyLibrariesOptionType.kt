@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.descriptors.commonizer.cli
 
 internal object DependencyLibrariesOptionType : LibrariesSetOptionType(
-    mandatory = true,
+    mandatory = false,
     alias = "dependency-libraries",
     description = "';' separated list of klib file paths that can be used as dependency"
 )

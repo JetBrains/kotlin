@@ -47,7 +47,7 @@ internal class NativeKlibCommonize(options: Collection<Option<*>>) : Task(option
         val distribution = KonanDistribution(getMandatory<File, NativeDistributionOptionType>())
         val destination = getMandatory<File, OutputOptionType>()
         val targetLibraries = getMandatory<List<File>, InputLibrariesOptionType>()
-        val dependencyLibraries = getMandatory<List<File>, DependencyLibrariesOptionType>()
+        val dependencyLibraries = getOptional<List<File>, DependencyLibrariesOptionType>().orEmpty()
         val outputCommonizerTarget = getMandatory<SharedCommonizerTarget, OutputCommonizerTargetOptionType>()
         val statsType = getOptional<StatsType, StatsTypeOptionType> { it == "log-stats" } ?: StatsType.NONE
 
