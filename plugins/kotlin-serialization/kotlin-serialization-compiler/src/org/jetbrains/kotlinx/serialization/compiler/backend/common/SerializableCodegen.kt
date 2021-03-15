@@ -5,11 +5,14 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.backend.common
 
+import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.descriptorUtil.secondaryConstructors
+import org.jetbrains.kotlinx.serialization.compiler.diagnostic.VersionReader
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 
 abstract class SerializableCodegen(
@@ -41,6 +44,16 @@ abstract class SerializableCodegen(
             val func = KSerializerDescriptorResolver.createWriteSelfFunctionDescriptor(serializableDescriptor)
             generateWriteSelfMethod(func)
         }
+    }
+
+    private val fieldMissingOptimizationVersion = ApiVersion.parse("1.1")!!
+
+    fun jvmCanUseFieldMissingOptimization(): Boolean {
+        val implementationVersion = VersionReader.getVersionsForCurrentModuleFromContext(
+            serializableDescriptor.module,
+            bindingContext
+        )?.implementationVersion
+        return if (implementationVersion != null) implementationVersion >= fieldMissingOptimizationVersion else false
     }
 
     protected abstract fun generateInternalConstructor(constructorDescriptor: ClassConstructorDescriptor)
