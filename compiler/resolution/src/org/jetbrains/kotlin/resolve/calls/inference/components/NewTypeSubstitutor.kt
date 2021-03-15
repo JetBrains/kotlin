@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.resolve.calls.inference.components
 
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.CompositeAnnotations
+import org.jetbrains.kotlin.resolve.calls.inference.isCaptured
 import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableFromCallableDescriptor
 import org.jetbrains.kotlin.resolve.calls.inference.substitute
 import org.jetbrains.kotlin.types.*
@@ -105,8 +106,8 @@ interface NewTypeSubstitutor : TypeSubstitutorMarker {
             val substitutedInnerType = substitute(innerType, keepAnnotation, runCapturedChecks = false)
 
             if (substitutedInnerType != null) {
-                if (innerType is StubType || substitutedInnerType is StubType || innerType.constructor is IntersectionTypeConstructor) {
-                    return NewCapturedType(
+                return if (substitutedInnerType.isCaptured()) substitutedInnerType else {
+                    NewCapturedType(
                         capturedType.captureStatus,
                         NewCapturedTypeConstructor(
                             TypeProjectionImpl(typeConstructor.projection.projectionKind, substitutedInnerType),
@@ -114,8 +115,6 @@ interface NewTypeSubstitutor : TypeSubstitutorMarker {
                         ),
                         lowerType = if (capturedType.lowerType != null) substitutedInnerType else null
                     )
-                } else {
-                    throwExceptionAboutInvalidCapturedSubstitution(capturedType, innerType, substitutedInnerType)
                 }
             }
 

@@ -12541,6 +12541,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 }
 
                 @Test
+                @TestMetadata("substituteCapturedTypesWithTypeVariables.kt")
+                public void testSubstituteCapturedTypesWithTypeVariables() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/substituteCapturedTypesWithTypeVariables.kt");
+                }
+
+                @Test
                 @TestMetadata("topLevelCapturingInsideReturnType.kt")
                 public void testTopLevelCapturingInsideReturnType() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/topLevelCapturingInsideReturnType.kt");
