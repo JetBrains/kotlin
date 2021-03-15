@@ -10823,6 +10823,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/delegation/inClassDeclaration.kt");
         }
 
+        @TestMetadata("inDataClass.kt")
+        public void testInDataClass() throws Exception {
+            runTest("compiler/testData/codegen/box/delegation/inDataClass.kt");
+        }
+
         @TestMetadata("kt8154.kt")
         public void testKt8154() throws Exception {
             runTest("compiler/testData/codegen/box/delegation/kt8154.kt");
@@ -15528,11 +15533,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/inlineClasses/funInterface/argumentResult.kt");
             }
 
-            @TestMetadata("javaSam.kt")
-            public void ignoreJavaSam() throws Exception {
-                runTest("compiler/testData/codegen/box/inlineClasses/funInterface/javaSam.kt");
-            }
-
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
             }
@@ -15544,6 +15544,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestMetadata("argumentIC.kt")
             public void testArgumentIC() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/funInterface/argumentIC.kt");
+            }
+
+            @TestMetadata("javaSam.kt")
+            public void testJavaSam() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/funInterface/javaSam.kt");
             }
         }
 
