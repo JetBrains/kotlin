@@ -86,7 +86,7 @@ kotlin {
                         "-lsetupapi",
                         "-mwindows"
                     )
-                    presets["linuxArm32Hfp"] -> linkerOpts("-lSDL2")
+                    presets["linuxArm32Hfp"] -> linkerOpts(kotlinNativeDataPath.resolve("dependencies/target-sysroot-2-raspberrypi/usr/lib/libSDL2.so").absolutePath)
                 }
 
                 val distTaskName = linkTaskName.replaceFirst("link", "dist")
