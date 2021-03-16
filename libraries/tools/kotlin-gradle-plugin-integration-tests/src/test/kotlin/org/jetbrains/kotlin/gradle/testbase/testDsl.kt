@@ -19,9 +19,11 @@ import java.nio.file.attribute.BasicFileAttributes
  * Create new test project.
  *
  * @param [projectName] test project name in 'src/test/resources/testProject` directory.
+ * @param [buildOptions] common Gradle build options
  */
 fun KGPBaseTest.project(
     projectName: String,
+    buildOptions: KGPBaseTest.BuildOptions = defaultBuildOptions,
     test: TestProject.() -> Unit
 ): TestProject {
     val projectPath = setupProjectFromTestResources(projectName, KGPBaseTest.workingDir)
@@ -32,7 +34,11 @@ fun KGPBaseTest.project(
         .withProjectDir(projectPath.toFile())
         .withTestKitDir(KGPBaseTest.workingDir.testKitDir.toFile())
 
-    val testProject = TestProject(gradleRunner, projectName)
+    val testProject = TestProject(
+        gradleRunner,
+        projectName,
+        buildOptions
+    )
     testProject.test()
     return testProject
 }
@@ -44,10 +50,10 @@ fun TestProject.build(
     vararg buildArguments: String,
     assertions: BuildResult.() -> Unit = {}
 ) {
-    println("<=== Test build: ${this.projectName} ===>")
     val buildResult = gradleRunner
-        .withArguments(*buildArguments, "-Pkotlin_version=1.5.255-SNAPSHOT")
+        .withArguments(commonBuildSetup(buildArguments.toList()))
         .build()
+
     assertions(buildResult)
 }
 
@@ -58,17 +64,30 @@ fun TestProject.buildAndFail(
     vararg buildArguments: String,
     assertions: BuildResult.() -> Unit = {}
 ) {
-    println("<=== Test build: ${this.projectName} ===>")
     val buildResult = gradleRunner
-        .withArguments(*buildArguments, "-Pkotlin_version=1.5.255-SNAPSHOT")
+        .withArguments(commonBuildSetup(buildArguments.toList()))
         .buildAndFail()
+
     assertions(buildResult)
 }
 
 class TestProject(
     val gradleRunner: GradleRunner,
-    val projectName: String
+    val projectName: String,
+    val buildOptions: KGPBaseTest.BuildOptions
 )
+
+private fun TestProject.commonBuildSetup(
+    buildArguments: List<String>
+): List<String> {
+    val buildOptionsArguments = buildOptions.toArguments()
+    val allBuildArguments = buildOptionsArguments + buildArguments + "--full-stacktrace"
+
+    println("<=== Test build: ${this.projectName} ===>")
+    println("<=== Run arguments: ${allBuildArguments.joinToString()} ===>")
+
+    return allBuildArguments
+}
 
 private val Path.testKitDir get() = resolve("testKitDir")
 
