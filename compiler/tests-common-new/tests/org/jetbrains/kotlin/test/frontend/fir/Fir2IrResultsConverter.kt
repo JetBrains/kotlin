@@ -76,7 +76,7 @@ class Fir2IrResultsConverter(
         ).build()
 
         irModuleFragment.irBuiltins.functionFactory = IrFunctionFactory(irModuleFragment.irBuiltins, symbolTable)
-        val irProviders = codegenFactory.configureBuiltInsAndgenerateIrProvidersInFrontendIRMode(
+        val irProviders = codegenFactory.configureBuiltInsAndGenerateIrProvidersInFrontendIRMode(
             irModuleFragment,
             symbolTable,
             extensions

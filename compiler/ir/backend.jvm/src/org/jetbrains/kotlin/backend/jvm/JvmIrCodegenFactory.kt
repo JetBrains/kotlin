@@ -246,13 +246,13 @@ class JvmIrCodegenFactory(private val phaseConfig: PhaseConfig) : CodegenFactory
         backendExtension: JvmBackendExtension,
         notifyCodegenStart: () -> Unit
     ) {
-        val irProviders = configureBuiltInsAndgenerateIrProvidersInFrontendIRMode(irModuleFragment, symbolTable, extensions)
+        val irProviders = configureBuiltInsAndGenerateIrProvidersInFrontendIRMode(irModuleFragment, symbolTable, extensions)
         doGenerateFilesInternal(
             JvmIrBackendInput(state, irModuleFragment, symbolTable, sourceManager, phaseConfig, irProviders, extensions, backendExtension, notifyCodegenStart)
         )
     }
 
-    fun configureBuiltInsAndgenerateIrProvidersInFrontendIRMode(
+    fun configureBuiltInsAndGenerateIrProvidersInFrontendIRMode(
         irModuleFragment: IrModuleFragment,
         symbolTable: SymbolTable,
         extensions: JvmGeneratorExtensions
