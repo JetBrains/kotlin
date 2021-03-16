@@ -106,7 +106,7 @@ internal class KtFirKotlinPropertySymbol(
     override val hasGetter: Boolean get() = firRef.withFir { it.getter != null }
     override val hasSetter: Boolean get() = firRef.withFir { it.setter != null }
 
-    override fun createPointer(): KtSymbolPointer<KtPropertySymbol> {
+    override fun createPointer(): KtSymbolPointer<KtKotlinPropertySymbol> {
         KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
         return when (symbolKind) {
             KtSymbolKind.TOP_LEVEL -> TODO("Creating symbol for top level fun is not supported yet")

@@ -87,16 +87,7 @@ internal class KtFirSyntheticJavaPropertySymbol(
 
     override val origin: KtSymbolOrigin get() = withValidityAssertion { KtSymbolOrigin.JAVA_SYNTHETIC_PROPERTY }
 
-    override fun createPointer(): KtSymbolPointer<KtPropertySymbol> {
-        KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
-        return when (symbolKind) {
-            KtSymbolKind.TOP_LEVEL -> TODO("Creating symbol for top level fun is not supported yet")
-            KtSymbolKind.NON_PROPERTY_PARAMETER -> TODO("Creating symbol for top level parameters is not supported yet")
-            KtSymbolKind.MEMBER -> KtFirMemberPropertySymbolPointer(
-                firRef.withFir { it.containingClass()?.classId ?: error("ClassId should not be null for member property") },
-                firRef.withFir { it.createSignature() }
-            )
-            KtSymbolKind.LOCAL -> throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(name.asString())
-        }
+    override fun createPointer(): KtSymbolPointer<KtSyntheticJavaPropertySymbol> {
+        TODO("pointers to KtSyntheticJavaPropertySymbol is not supported yet")
     }
 }

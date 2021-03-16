@@ -9,20 +9,20 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertySymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtKotlinPropertySymbol
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.ClassId
 
 internal class KtFirMemberPropertySymbolPointer(
     ownerClassId: ClassId,
     private val signature: IdSignature
-) : KtFirMemberSymbolPointer<KtPropertySymbol>(ownerClassId) {
+) : KtFirMemberSymbolPointer<KtKotlinPropertySymbol>(ownerClassId) {
     override fun KtFirAnalysisSession.chooseCandidateAndCreateSymbol(
         candidates: Collection<FirDeclaration>,
         firSession: FirSession
-    ): KtPropertySymbol? {
+    ): KtKotlinPropertySymbol? {
         val firProperty = candidates.findDeclarationWithSignature<FirProperty>(signature, firSession) ?: return null
-        return firSymbolBuilder.variableLikeBuilder.buildVariableSymbol(firProperty) as? KtPropertySymbol
+        return firSymbolBuilder.variableLikeBuilder.buildVariableSymbol(firProperty) as? KtKotlinPropertySymbol
     }
 }
 
