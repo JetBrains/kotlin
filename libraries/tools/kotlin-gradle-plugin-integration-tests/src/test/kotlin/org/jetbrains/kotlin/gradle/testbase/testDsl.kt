@@ -37,7 +37,8 @@ fun KGPBaseTest.project(
     val testProject = TestProject(
         gradleRunner,
         projectName,
-        buildOptions
+        buildOptions,
+        projectPath
     )
     testProject.test()
     return testProject
@@ -74,7 +75,8 @@ fun TestProject.buildAndFail(
 class TestProject(
     val gradleRunner: GradleRunner,
     val projectName: String,
-    val buildOptions: KGPBaseTest.BuildOptions
+    val buildOptions: KGPBaseTest.BuildOptions,
+    val projectPath: Path
 )
 
 private fun TestProject.commonBuildSetup(

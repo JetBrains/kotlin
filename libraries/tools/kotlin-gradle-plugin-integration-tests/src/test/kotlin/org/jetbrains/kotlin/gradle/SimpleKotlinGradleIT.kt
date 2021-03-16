@@ -1,5 +1,4 @@
 package org.jetbrains.kotlin.gradle
-
 import org.gradle.api.logging.configuration.WarningMode
 import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Test
