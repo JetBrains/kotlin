@@ -718,8 +718,8 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         tryMainBlockEnterNode.mergeIncomingFlow(shouldForkFlow = true)
     }
 
-    fun exitTryMainBlock(tryExpression: FirTryExpression) {
-        graphBuilder.exitTryMainBlock(tryExpression).mergeIncomingFlow()
+    fun exitTryMainBlock() {
+        graphBuilder.exitTryMainBlock().mergeIncomingFlow()
     }
 
     fun enterCatchClause(catch: FirCatch) {

@@ -832,6 +832,9 @@ class ControlFlowGraphBuilder {
         val enterTryNodeBlock = createTryMainBlockEnterNode(tryExpression)
         addNewSimpleNode(enterTryNodeBlock)
 
+        val exitTryNodeBlock = createTryMainBlockExitNode(tryExpression)
+        tryMainExitNodes.push(exitTryNodeBlock)
+
         for (catch in tryExpression.catches) {
             val catchNode = createCatchClauseEnterNode(catch)
             catchNodeStorage.push(catchNode)
@@ -850,10 +853,9 @@ class ControlFlowGraphBuilder {
         return enterTryExpressionNode to enterTryNodeBlock
     }
 
-    fun exitTryMainBlock(tryExpression: FirTryExpression): TryMainBlockExitNode {
+    fun exitTryMainBlock(): TryMainBlockExitNode {
         levelCounter--
-        val node = createTryMainBlockExitNode(tryExpression)
-        tryMainExitNodes.push(node)
+        val node = tryMainExitNodes.top()
         popAndAddEdge(node)
         val finallyEnterNode = finallyEnterNodes.topOrNull()
         // NB: Check the level to avoid adding an edge to the finally block at an upper level.
@@ -1266,7 +1268,7 @@ class ControlFlowGraphBuilder {
             tryExitNodes.top().fir.finallyBlock == null -> {
                 // (3)... without finally ...(4)
                 // Either in try-main or catch.
-                if (tryExitNodes.size == tryMainExitNodes.size) {
+                if (tryMainExitNodes.top().followingNodes.isNotEmpty()) {
                     // (4)... in catch, i.e., re-throw.
                     exitTargetsForTry.top()
                 } else {
