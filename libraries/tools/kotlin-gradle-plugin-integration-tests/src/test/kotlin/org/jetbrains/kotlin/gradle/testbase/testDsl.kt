@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.testbase
 
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
-import org.jetbrains.kotlin.gradle.DEFAULT_GROOVY_SETTINGS_FILE
 import kotlin.test.assertTrue
 import java.nio.file.*
 import java.nio.file.Files.copy
@@ -109,10 +108,26 @@ private fun setupProjectFromTestResources(
 }
 
 private fun Path.addDefaultBuildFiles() {
-    if (Files.exists(resolve("build.gradle")) &&
-        !Files.exists(resolve("settings.gradle"))
-    ) {
-        resolve("settings.gradle").toFile().writeText(DEFAULT_GROOVY_SETTINGS_FILE)
+    if (Files.exists(resolve("build.gradle"))) {
+        val settingsFile = resolve("settings.gradle")
+        if (!Files.exists(settingsFile)) {
+            settingsFile.toFile().writeText(DEFAULT_GROOVY_SETTINGS_FILE)
+        } else {
+            val settingsContent = settingsFile.toFile().readText()
+            if (!settingsContent
+                    .lines()
+                    .first { !it.startsWith("//") }
+                    .startsWith("pluginManagement {")
+            ) {
+                settingsFile.toFile().writeText(
+                    """
+                    $DEFAULT_GROOVY_SETTINGS_FILE
+                    
+                    $settingsContent
+                    """.trimIndent()
+                )
+            }
+        }
     }
 }
 
