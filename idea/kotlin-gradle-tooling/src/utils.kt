@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.gradle.api.Named
-
 fun Class<*>.getMethodOrNull(name: String, vararg parameterTypes: Class<*>) =
     try {
         getMethod(name, *parameterTypes)
@@ -20,14 +18,6 @@ fun Class<*>.getDeclaredMethodOrNull(name: String, vararg parameterTypes: Class<
     } catch (e: Exception) {
         null
     }
-
-fun ClassLoader.loadClassOrNull(name: String): Class<*>? {
-    return try {
-        loadClass(name)
-    } catch (e: Exception) {
-        return null
-    }
-}
 
 fun compilationFullName(simpleName: String, classifier: String?) =
     if (classifier != null) classifier + simpleName.capitalize() else simpleName
