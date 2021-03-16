@@ -101,7 +101,12 @@ internal abstract class KonanCliRunner(
                 exec.jvmArgs(jvmArgs)
                 exec.systemProperties(
                     System.getProperties().asSequence()
-                        .map { (k, v) -> k.toString() to v.toString() }
+                        .map { (k, v) ->
+                            when (val key = k.toString()) {
+                                "user.dir" -> key to project.rootProject.projectDir.toString()
+                                else -> key to v.toString()
+                            }
+                        }
                         .filter { (k, _) -> k !in this@KonanCliRunner.blacklistProperties }
                         .escapeQuotesForWindows()
                         .toMap()
