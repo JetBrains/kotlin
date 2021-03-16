@@ -132,11 +132,15 @@ private class VariableLookupElementFactory {
         if (setterName != null) "$getterName()/$setterName()" else "$getterName()"
 
     private fun detectImportStrategy(symbol: KtVariableLikeSymbol): CallableImportStrategy {
-        if (symbol !is KtKotlinPropertySymbol) return CallableImportStrategy.DoNothing
-        if (symbol.dispatchType != null || symbol.receiverType != null) return CallableImportStrategy.DoNothing
+        if (symbol !is KtKotlinPropertySymbol || symbol.dispatchType != null) return CallableImportStrategy.DoNothing
 
-        return symbol.callableIdIfNonLocal?.let(CallableImportStrategy::InsertFqNameAndShorten)
-            ?: CallableImportStrategy.DoNothing
+        val propertyId = symbol.callableIdIfNonLocal ?: return CallableImportStrategy.DoNothing
+
+        return if (symbol.isExtension) {
+            CallableImportStrategy.AddImport(propertyId)
+        } else {
+            CallableImportStrategy.InsertFqNameAndShorten(propertyId)
+        }
     }
 }
 
@@ -163,12 +167,14 @@ private class FunctionLookupElementFactory {
     }
 
     private fun detectImportStrategy(symbol: KtFunctionSymbol): CallableImportStrategy {
-        val functionFqName = symbol.callableIdIfNonLocal
-        return when {
-            functionFqName == null -> CallableImportStrategy.DoNothing
-            symbol.dispatchType != null -> CallableImportStrategy.DoNothing
-            !symbol.isExtension -> CallableImportStrategy.InsertFqNameAndShorten(functionFqName)
-            else -> CallableImportStrategy.AddImport(functionFqName)
+        if (symbol.dispatchType != null) return CallableImportStrategy.DoNothing
+
+        val functionFqName = symbol.callableIdIfNonLocal ?: return CallableImportStrategy.DoNothing
+
+        return if (symbol.isExtension) {
+            CallableImportStrategy.AddImport(functionFqName)
+        } else {
+            CallableImportStrategy.InsertFqNameAndShorten(functionFqName)
         }
     }
 
@@ -356,7 +362,7 @@ private fun addCallableImportIfRequired(targetFile: KtFile, nameToImport: FqName
 }
 
 private fun alreadyHasImport(file: KtFile, nameToImport: FqName): Boolean {
-    if (file.importDirectives.any { it.importPath?.fqName == nameToImport }) return false
+    if (file.importDirectives.any { it.importPath?.fqName == nameToImport }) return true
 
     withAllowedResolve {
         analyze(file) {

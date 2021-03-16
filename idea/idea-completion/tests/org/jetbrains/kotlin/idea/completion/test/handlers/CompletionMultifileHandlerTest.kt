@@ -26,6 +26,10 @@ open class CompletionMultiFileHandlerTest : KotlinFixtureCompletionBaseTestCase(
         doTest()
     }
 
+    fun testAlreadyImportedExtensionPropertyNoImport() {
+        doTest()
+    }
+
     fun testExtensionPropertyInSamePackageNoImport() {
         doTest()
     }
