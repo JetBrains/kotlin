@@ -128,7 +128,8 @@ internal fun packageJson(
     name: String,
     version: String,
     main: String,
-    npmDependencies: Collection<NpmDependencyDeclaration>
+    npmDependencies: Collection<NpmDependencyDeclaration>,
+    packageJsonHandlers: List<PackageJson.() -> Unit>
 ): PackageJson {
 
     val packageJson = PackageJson(
@@ -155,9 +156,9 @@ internal fun packageJson(
         }
     }
 
-//    compilation.packageJsonHandlers.forEach {
-//        it(packageJson)
-//    }
+    packageJsonHandlers.forEach {
+        it(packageJson)
+    }
 
     return packageJson
 }

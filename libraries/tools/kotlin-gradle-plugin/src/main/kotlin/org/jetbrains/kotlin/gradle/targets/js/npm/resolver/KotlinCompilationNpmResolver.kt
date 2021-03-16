@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.CompositeProjectComponentArtifactMetadata
 import org.jetbrains.kotlin.gradle.utils.`is`
+import org.jetbrains.kotlin.gradle.utils.getValue
 import org.jetbrains.kotlin.gradle.utils.topRealPath
 import java.io.File
 import java.io.Serializable
@@ -91,6 +92,10 @@ internal class KotlinCompilationNpmResolver(
     val target get() = compilation.target
 
     val project get() = target.project
+
+    private val packageJsonHandlers by project.provider {
+        compilation.packageJsonHandlers
+    }
 
     @Transient
     val packageJsonTaskHolder: TaskProvider<KotlinPackageJsonTask>? =
@@ -447,7 +452,8 @@ internal class KotlinCompilationNpmResolver(
                 npmName,
                 npmVersion,
                 npmMain,
-                allNpmDependencies
+                allNpmDependencies,
+                packageJsonHandlers
             )
 
             compositeDependencies.forEach {
@@ -462,9 +468,9 @@ internal class KotlinCompilationNpmResolver(
                 packageJson.dependencies[it.name] = fileVersion(it.path)
             }
 
-//            compilation.packageJsonHandlers.forEach {
-//                it(packageJson)
-//            }
+            packageJsonHandlers.forEach {
+                it(packageJson)
+            }
 
             if (!skipWriting) {
                 packageJson.saveTo(prePackageJsonFile)
