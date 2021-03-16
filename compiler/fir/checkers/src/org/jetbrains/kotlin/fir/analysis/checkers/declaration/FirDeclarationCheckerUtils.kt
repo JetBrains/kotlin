@@ -57,8 +57,18 @@ internal fun FirMemberDeclaration.isEffectivelyExternal(
 ): Boolean {
     if (this.isExternal) return true
 
-    // NB: [MemberDescriptor.isEffectivelyExternal] checks property accessors for property and vice versa.
-    // But, raw FIR creation already did such upward/downward propagation of modifiers.
+    if (this is FirPropertyAccessor) {
+        // Check containing property
+        val property = context.containingDeclarations.last() as FirProperty
+        return property.isEffectivelyExternal(containingClass, context)
+    }
+
+    if (this is FirProperty) {
+        // Property is effectively external if all accessors are external
+        if (getter?.isExternal == true && (!isVar || setter?.isExternal == true)) {
+            return true
+        }
+    }
 
     return containingClass != null && isInsideExternalClass(containingClass, context)
 }

@@ -337,7 +337,6 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 isOverride = false
                 isConst = Flags.IS_CONST.get(flags)
                 isLateInit = Flags.IS_LATEINIT.get(flags)
-                isInline = Flags.IS_INLINE.get(flags)
                 isExternal = Flags.IS_EXTERNAL_PROPERTY.get(flags)
             }
 

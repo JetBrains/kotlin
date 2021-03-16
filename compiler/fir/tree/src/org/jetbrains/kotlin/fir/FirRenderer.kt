@@ -315,50 +315,45 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         if (memberDeclaration.isExternal) {
             print("external ")
         }
-        if (memberDeclaration is FirCallableMemberDeclaration<*>) {
-            if (memberDeclaration.isOverride) {
-                print("override ")
-            }
-            if (memberDeclaration.isStatic) {
-                print("static ")
-            }
+        if (memberDeclaration.isOverride) {
+            print("override ")
         }
-        if (memberDeclaration is FirRegularClass) {
-            if (memberDeclaration.isInner) {
-                print("inner ")
-            }
-            if (memberDeclaration.isCompanion) {
-                print("companion ")
-            }
-            if (memberDeclaration.isData) {
-                print("data ")
-            }
-            if (memberDeclaration.isInline) {
-                print("inline ")
-            }
-        } else if (memberDeclaration is FirSimpleFunction) {
-            if (memberDeclaration.isOperator) {
-                print("operator ")
-            }
-            if (memberDeclaration.isInfix) {
-                print("infix ")
-            }
-            if (memberDeclaration.isInline) {
-                print("inline ")
-            }
-            if (memberDeclaration.isTailRec) {
-                print("tailrec ")
-            }
-            if (memberDeclaration.isSuspend) {
-                print("suspend ")
-            }
-        } else if (memberDeclaration is FirProperty) {
-            if (memberDeclaration.isConst) {
-                print("const ")
-            }
-            if (memberDeclaration.isLateInit) {
-                print("lateinit ")
-            }
+        if (memberDeclaration.isStatic) {
+            print("static ")
+        }
+        if (memberDeclaration.isInner) {
+            print("inner ")
+        }
+
+        // `companion/data` modifiers are only valid for FirRegularClass, but we render them to make sure they are not
+        // incorrectly loaded for other declarations during deserialization.
+        if (memberDeclaration.status.isCompanion) {
+            print("companion ")
+        }
+        if (memberDeclaration.status.isData) {
+            print("data ")
+        }
+
+        if (memberDeclaration.isInline) {
+            print("inline ")
+        }
+        if (memberDeclaration.isOperator) {
+            print("operator ")
+        }
+        if (memberDeclaration.isInfix) {
+            print("infix ")
+        }
+        if (memberDeclaration.isTailRec) {
+            print("tailrec ")
+        }
+        if (memberDeclaration.isSuspend) {
+            print("suspend ")
+        }
+        if (memberDeclaration.isConst) {
+            print("const ")
+        }
+        if (memberDeclaration.isLateInit) {
+            print("lateinit ")
         }
 
         visitDeclaration(memberDeclaration)
