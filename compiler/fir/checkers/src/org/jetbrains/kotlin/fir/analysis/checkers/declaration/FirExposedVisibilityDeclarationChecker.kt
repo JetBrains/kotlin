@@ -149,9 +149,14 @@ object FirExposedVisibilityDeclarationChecker : FirMemberDeclarationChecker() {
             declaration.returnTypeRef.coneTypeSafe<ConeKotlinType>()
                 ?.findVisibilityExposure(context, propertyVisibility)
         if (restricting != null) {
+            val diagnostic = if (declaration.fromPrimaryConstructor == true) {
+                FirErrors.EXPOSED_PROPERTY_TYPE_IN_CONSTRUCTOR
+            } else {
+                FirErrors.EXPOSED_PROPERTY_TYPE
+            }
             reporter.reportOn(
                 declaration.source,
-                FirErrors.EXPOSED_PROPERTY_TYPE,
+                diagnostic,
                 propertyVisibility,
                 restricting,
                 restricting.getEffectiveVisibility(context),

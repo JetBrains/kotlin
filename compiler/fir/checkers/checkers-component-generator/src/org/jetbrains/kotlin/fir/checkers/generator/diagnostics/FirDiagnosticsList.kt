@@ -26,6 +26,8 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import kotlin.properties.PropertyDelegateProvider
+import kotlin.properties.ReadOnlyProperty
 
 
 @Suppress("UNUSED_VARIABLE", "LocalVariableName", "ClassName", "unused")
@@ -133,9 +135,9 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
     val EXPOSED_VISIBILITY by object : DiagnosticGroup("Exposed visibility") {
         val EXPOSED_TYPEALIAS_EXPANDED_TYPE by exposedVisibilityError<KtNamedDeclaration>(PositioningStrategy.DECLARATION_NAME)
         val EXPOSED_FUNCTION_RETURN_TYPE by exposedVisibilityError<KtNamedDeclaration>(PositioningStrategy.DECLARATION_NAME)
-
         val EXPOSED_RECEIVER_TYPE by exposedVisibilityError<KtTypeReference>()
         val EXPOSED_PROPERTY_TYPE by exposedVisibilityError<KtNamedDeclaration>(PositioningStrategy.DECLARATION_NAME)
+        val EXPOSED_PROPERTY_TYPE_IN_CONSTRUCTOR by exposedVisibilityWarning<KtNamedDeclaration>(PositioningStrategy.DECLARATION_NAME)
         val EXPOSED_PARAMETER_TYPE by exposedVisibilityError<KtParameter>(/* // NB: for parameter FE 1.0 reports not on a name for some reason */)
         val EXPOSED_SUPER_INTERFACE by exposedVisibilityError<KtTypeReference>()
         val EXPOSED_SUPER_CLASS by exposedVisibilityError<KtTypeReference>()
@@ -508,10 +510,20 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
     }
 }
 
-private inline fun <reified P : PsiElement> DiagnosticGroup.exposedVisibilityError(
-    positioningStrategy: PositioningStrategy = PositioningStrategy.DEFAULT
-) = error<FirSourceElement, P>(positioningStrategy) {
+private val exposedVisibilityDiagnosticInit: DiagnosticBuilder.() -> Unit = {
     parameter<FirEffectiveVisibility>("elementVisibility")
     parameter<FirMemberDeclaration>("restrictingDeclaration")
     parameter<FirEffectiveVisibility>("restrictingVisibility")
+}
+
+private inline fun <reified P : PsiElement> DiagnosticGroup.exposedVisibilityError(
+    positioningStrategy: PositioningStrategy = PositioningStrategy.DEFAULT
+): PropertyDelegateProvider<Any?, ReadOnlyProperty<DiagnosticGroup, DiagnosticData>> {
+    return error<FirSourceElement, P>(positioningStrategy, exposedVisibilityDiagnosticInit)
+}
+
+private inline fun <reified P : PsiElement> DiagnosticGroup.exposedVisibilityWarning(
+    positioningStrategy: PositioningStrategy = PositioningStrategy.DEFAULT
+): PropertyDelegateProvider<Any?, ReadOnlyProperty<DiagnosticGroup, DiagnosticData>> {
+    return warning<FirSourceElement, P>(positioningStrategy, exposedVisibilityDiagnosticInit)
 }

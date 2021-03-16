@@ -330,6 +330,13 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val restrictingVisibility: Visibility
     }
 
+    abstract class ExposedPropertyTypeInConstructor : KtFirDiagnostic<KtNamedDeclaration>() {
+        override val diagnosticClass get() = ExposedPropertyTypeInConstructor::class
+        abstract val elementVisibility: Visibility
+        abstract val restrictingDeclaration: KtSymbol
+        abstract val restrictingVisibility: Visibility
+    }
+
     abstract class ExposedParameterType : KtFirDiagnostic<KtParameter>() {
         override val diagnosticClass get() = ExposedParameterType::class
         abstract val elementVisibility: Visibility

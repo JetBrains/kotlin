@@ -177,11 +177,12 @@ val FirMemberDeclaration.containerSource: SourceElement?
     }
 
 private object IsFromVarargKey : FirDeclarationDataKey()
-
 private object IsReferredViaField : FirDeclarationDataKey()
+private object IsFromPrimaryConstructor : FirDeclarationDataKey()
 
 var FirProperty.isFromVararg: Boolean? by FirDeclarationDataRegistry.data(IsFromVarargKey)
 var FirProperty.isReferredViaField: Boolean? by FirDeclarationDataRegistry.data(IsReferredViaField)
+var FirProperty.fromPrimaryConstructor: Boolean? by FirDeclarationDataRegistry.data(IsFromPrimaryConstructor)
 
 // See [BindingContext.BACKING_FIELD_REQUIRED]
 val FirProperty.hasBackingField: Boolean

@@ -529,6 +529,16 @@ internal class ExposedPropertyTypeImpl(
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
 }
 
+internal class ExposedPropertyTypeInConstructorImpl(
+    override val elementVisibility: Visibility,
+    override val restrictingDeclaration: KtSymbol,
+    override val restrictingVisibility: Visibility,
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.ExposedPropertyTypeInConstructor(), KtAbstractFirDiagnostic<KtNamedDeclaration> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
 internal class ExposedParameterTypeImpl(
     override val elementVisibility: Visibility,
     override val restrictingDeclaration: KtSymbol,

@@ -457,6 +457,15 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.EXPOSED_PROPERTY_TYPE_IN_CONSTRUCTOR) { firDiagnostic ->
+        ExposedPropertyTypeInConstructorImpl(
+            firDiagnostic.a.toVisibility(),
+            firSymbolBuilder.buildSymbol(firDiagnostic.b as FirDeclaration),
+            firDiagnostic.c.toVisibility(),
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
     add(FirErrors.EXPOSED_PARAMETER_TYPE) { firDiagnostic ->
         ExposedParameterTypeImpl(
             firDiagnostic.a.toVisibility(),
