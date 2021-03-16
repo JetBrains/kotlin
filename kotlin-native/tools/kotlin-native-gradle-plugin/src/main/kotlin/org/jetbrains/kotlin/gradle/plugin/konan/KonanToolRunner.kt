@@ -58,7 +58,10 @@ internal abstract class KonanCliRunner(
     }
 
     protected val blacklistProperties: Set<String> =
-        setOf("java.endorsed.dirs")
+        setOf(
+                "java.endorsed.dirs", // Fix for KT-25887
+                "user.dir"            // Don't propagate the working dir of the current Gradle process
+        )
 
     override val classpath: FileCollection =
             project.fileTree("$konanHome/konan/lib/")
