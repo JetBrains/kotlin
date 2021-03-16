@@ -3,8 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("DeprecatedCallableAddReplaceWith")
-
 package org.jetbrains.kotlin.gradle
 
 import org.jetbrains.plugins.gradle.model.ExternalDependency
@@ -55,43 +53,12 @@ interface KotlinSourceSet : KotlinModule {
     val languageSettings: KotlinLanguageSettings
     val sourceDirs: Set<File>
     val resourceDirs: Set<File>
+    val dependsOnSourceSets: Set<String>
     val actualPlatforms: KotlinPlatformContainer
 
-
-    /**
-     * All source sets that this source set explicitly declared a 'dependsOn' relation to
-     */
-    val declaredDependsOnSourceSets: Set<String>
-
-    /**
-     * The whole transitive closure of source sets this source set depends on.
-     * ([declaredDependsOnSourceSets] and their dependencies recursively)
-     */
-    @Suppress("DEPRECATION")
-    @Deprecated(
-        "This property might be misleading. " +
-                "Replace with 'KotlinSourceSetContainer.resolveAllDependsOnSourceSets' to make intention of " +
-                "receiving the full transitive closure explicit",
-        level = DeprecationLevel.ERROR
-    )
-    val dependsOnSourceSets: Set<String>
-        get() = allDependsOnSourceSets
-
-    /**
-     * The whole transitive closure of source sets this source set depends on.
-     * ([declaredDependsOnSourceSets] and their dependencies recursively)
-     */
-    @Deprecated(
-        "This set of source sets might be inconsistent with any KotlinSourceSetContainer different to the one used to build this instance" +
-                "Replace with 'KotlinSourceSetContainer.resolveAllDependsOnSourceSets' to get consistent resolution",
-        level = DeprecationLevel.WARNING
-    )
-    val allDependsOnSourceSets: Set<String>
-
-
-    @Deprecated("Returns single target platform. Use actualPlatforms instead", level = DeprecationLevel.ERROR)
+    @Deprecated("Returns single target platform", ReplaceWith("actualPlatforms.actualPlatforms"), DeprecationLevel.ERROR)
     val platform: KotlinPlatform
-        get() = actualPlatforms.platforms.singleOrNull() ?: KotlinPlatform.COMMON
+        get() = actualPlatforms.getSinglePlatform()
 
 
     companion object {
@@ -131,11 +98,6 @@ interface KotlinNativeCompilationExtensions : Serializable {
 }
 
 interface KotlinCompilation : KotlinModule {
-
-    @Deprecated("Use allSourceSets or declaredSourceSets instead")
-    val sourceSets: Collection<KotlinSourceSet>
-        get() = declaredSourceSets
-
     /**
      * All source sets participated in this compilation, including those available
      * via dependsOn.
@@ -143,14 +105,14 @@ interface KotlinCompilation : KotlinModule {
     val allSourceSets: Collection<KotlinSourceSet>
 
     /**
-     * Only directly declared source sets of this compilation, i.e. those which are included
+     * Only default source sets of this compilation, i.e. those which are included
      * into compilations directly.
      *
      * Usually, those are automatically created source sets for automatically created
      * compilations (like jvmMain for JVM compilations) or manually included source sets
      * (like 'jvm().compilations["main"].source(mySourceSet)' )
      */
-    val declaredSourceSets: Collection<KotlinSourceSet>
+    val defaultSourceSets: Collection<KotlinSourceSet>
 
     val output: KotlinCompilationOutput
     val arguments: KotlinCompilationArguments
@@ -178,50 +140,15 @@ enum class KotlinPlatform(val id: String) {
     }
 }
 
-interface KotlinPlatformContainer : Serializable, Iterable<KotlinPlatform> {
-    /**
-     * Distinct collection of Platforms.
-     * Keeping 'Collection' as type for binary compatibility
-     */
+interface KotlinPlatformContainer : Serializable {
     val platforms: Collection<KotlinPlatform>
     val arePlatformsInitialized: Boolean
 
-    @Deprecated(
-        "Ambiguous semantics of 'supports' for COMMON or (ANDROID/JVM) platforms. Use 'platforms' directly to express clear intention",
-        level = DeprecationLevel.ERROR
-    )
     fun supports(simplePlatform: KotlinPlatform): Boolean
 
-    @Deprecated(
-        "Unclear semantics: Use 'platforms' directly to express intention",
-        level = DeprecationLevel.ERROR
-    )
+    fun addSimplePlatforms(platforms: Collection<KotlinPlatform>)
+
     fun getSinglePlatform() = platforms.singleOrNull() ?: KotlinPlatform.COMMON
-
-    @Deprecated(
-        "Unclear semantics: Use 'pushPlatform' instead",
-        ReplaceWith("pushPlatform"),
-        level = DeprecationLevel.ERROR
-    )
-    fun addSimplePlatforms(platforms: Collection<KotlinPlatform>) = pushPlatforms(platforms)
-
-    /**
-     * Adds the given [platforms] to this container.
-     * Note: If any of the pushed [platforms] is common, then this container will drop all non-common platforms and subsequent invocations
-     * to this function will have no further effect.
-     */
-    fun pushPlatforms(platforms: Iterable<KotlinPlatform>)
-
-    /**
-     * @see pushPlatforms
-     */
-    fun pushPlatforms(vararg platform: KotlinPlatform) {
-        pushPlatforms(platform.toList())
-    }
-
-    override fun iterator(): Iterator<KotlinPlatform> {
-        return platforms.toSet().iterator()
-    }
 }
 
 
@@ -263,17 +190,12 @@ interface ExtraFeatures : Serializable {
     val isNativeDependencyPropagationEnabled: Boolean
 }
 
-interface KotlinMPPGradleModel : KotlinSourceSetContainer, Serializable {
+interface KotlinMPPGradleModel : Serializable {
     val dependencyMap: Map<KotlinDependencyId, KotlinDependency>
+    val sourceSets: Map<String, KotlinSourceSet>
     val targets: Collection<KotlinTarget>
     val extraFeatures: ExtraFeatures
     val kotlinNativeHome: String
-
-    @Deprecated("Use 'sourceSetsByName' instead", ReplaceWith("sourceSetsByName"), DeprecationLevel.ERROR)
-    val sourceSets: Map<String, KotlinSourceSet>
-        get() = sourceSetsByName
-
-    override val sourceSetsByName: Map<String, KotlinSourceSet>
 
     companion object {
         const val NO_KOTLIN_NATIVE_HOME = ""
