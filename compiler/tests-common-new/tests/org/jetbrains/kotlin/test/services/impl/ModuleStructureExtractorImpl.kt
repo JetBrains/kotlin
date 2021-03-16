@@ -284,13 +284,14 @@ class ModuleStructureExtractorImpl(
             val moduleDirectives = moduleDirectivesBuilder.build() + testServices.defaultDirectives + globalDirectives
             moduleDirectives.forEach { it.checkDirectiveApplicability(contextIsGlobal = isImplicitModule, contextIsModule = true) }
 
-            currentModuleLanguageVersionSettingsBuilder.configureUsingDirectives(moduleDirectives, environmentConfigurators)
+            val targetBackend = currentModuleTargetBackend ?: defaultsProvider.defaultTargetBackend
+            currentModuleLanguageVersionSettingsBuilder.configureUsingDirectives(moduleDirectives, environmentConfigurators, targetBackend)
             val moduleName = currentModuleName ?: defaultModuleName
             val targetPlatform = currentModuleTargetPlatform ?: parseModulePlatformByName(moduleName) ?: defaultsProvider.defaultPlatform
             val testModule = TestModule(
                 name = moduleName,
                 targetPlatform = targetPlatform,
-                targetBackend = currentModuleTargetBackend ?: defaultsProvider.defaultTargetBackend,
+                targetBackend = targetBackend,
                 frontendKind = currentModuleFrontendKind ?: defaultsProvider.defaultFrontend,
                 binaryKind = defaultsProvider.defaultArtifactKind ?: targetPlatform.toArtifactKind(),
                 files = filesOfCurrentModule,

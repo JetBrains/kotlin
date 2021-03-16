@@ -766,6 +766,16 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/suppressAllWarningsJvm.args");
         }
 
+        @TestMetadata("suspendInFunInterfaceIrDisabled.args")
+        public void testSuspendInFunInterfaceIrDisabled() throws Exception {
+            runTest("compiler/testData/cli/jvm/suspendInFunInterfaceIrDisabled.args");
+        }
+
+        @TestMetadata("suspendInFunInterfaceIrEnabled.args")
+        public void testSuspendInFunInterfaceIrEnabled() throws Exception {
+            runTest("compiler/testData/cli/jvm/suspendInFunInterfaceIrEnabled.args");
+        }
+
         @TestMetadata("suspensionPointInMonitor.args")
         public void testSuspensionPointInMonitor() throws Exception {
             runTest("compiler/testData/cli/jvm/suspensionPointInMonitor.args");
