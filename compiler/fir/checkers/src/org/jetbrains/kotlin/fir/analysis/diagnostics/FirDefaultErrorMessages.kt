@@ -124,6 +124,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LOCAL_INTERFACE_N
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LOCAL_OBJECT_NOT_ALLOWED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MANY_COMPANION_OBJECTS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MANY_IMPL_MEMBER_NOT_IMPLEMENTED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_VAL_ON_ANNOTATION_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MULTIPLE_VARARG_PARAMETERS
@@ -401,7 +402,7 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
                 WRONG_NUMBER_OF_TYPE_ARGUMENTS,
                 "{0,choice,0#No type arguments|1#One type argument|1<{0,number,integer} type arguments} expected for {1}",
                 null,
-                TO_STRING
+                SYMBOL
             )
             map.put(TYPE_PARAMETERS_IN_OBJECT, "Type parameters are not allowed for objects")
 //            map.put(ILLEGAL_PROJECTION_USAGE, ...) // &
@@ -485,44 +486,44 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
                 ABSTRACT_MEMBER_NOT_IMPLEMENTED,
                 "{0} is not abstract and does not implement abstract member {1}",
                 RENDER_CLASS_OR_OBJECT,
-                FQ_NAMES_IN_TYPES
+                NAME
             )
             map.put(
                 ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED,
                 "{0} is not abstract and does not implement abstract base class member {1}",
                 RENDER_CLASS_OR_OBJECT,
-                FQ_NAMES_IN_TYPES
+                NAME
             )
             map.put(
                 MANY_IMPL_MEMBER_NOT_IMPLEMENTED,
                 "{0} must override {1} because it inherits many implementations of it",
                 RENDER_CLASS_OR_OBJECT,
-                FQ_NAMES_IN_TYPES
+                NAME
             )
             map.put(
-                MANY_IMPL_MEMBER_NOT_IMPLEMENTED,
+                MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED,
                 "{0} must override {1} because it inherits multiple interface methods of it",
                 RENDER_CLASS_OR_OBJECT,
-                FQ_NAMES_IN_TYPES
+                NAME
             )
 
             map.put(
                 RETURN_TYPE_MISMATCH_ON_OVERRIDE,
                 "Return type of ''{0}'' is not a subtype of the return type of the overridden member ''{1}''",
                 DECLARATION_NAME,
-                FQ_NAMES_IN_TYPES
+                DECLARATION_NAME
             )
             map.put(
                 PROPERTY_TYPE_MISMATCH_ON_OVERRIDE,
                 "Type of ''{0}'' is not a subtype of the overridden property ''{1}''",
                 DECLARATION_NAME,
-                FQ_NAMES_IN_TYPES
+                DECLARATION_NAME
             )
             map.put(
                 VAR_TYPE_MISMATCH_ON_OVERRIDE,
                 "Type of ''{0}'' doesn''t match the type of the overridden var-property ''{1}''",
                 DECLARATION_NAME,
-                FQ_NAMES_IN_TYPES
+                DECLARATION_NAME
             )
 
             map.put(

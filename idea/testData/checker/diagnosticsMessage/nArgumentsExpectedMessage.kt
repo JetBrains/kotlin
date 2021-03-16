@@ -1,5 +1,3 @@
-// IGNORE_FIR
-
 package name.that.may.be.very.long
 
 import java.io.Serializable

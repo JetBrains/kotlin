@@ -1,5 +1,3 @@
-// IGNORE_FIR
-
 open class A<T>()
 class G<T>()
 
