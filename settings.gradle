@@ -301,7 +301,6 @@ include ":benchmarks",
         ":pill:generate-all-tests",
         ":libraries:kotlin-prepush-hook",
         ":libraries:tools:mutability-annotations-compat",
-        ":include:kotlin-compiler",
         ":plugins:jvm-abi-gen",
         ":plugins:jvm-abi-gen-embeddable",
         ":test-instrumenter",
@@ -417,8 +416,6 @@ if (buildProperties.inJpsBuildIdeaSync) {
             ":kotlin-stdlib:jvm-minimal-for-test",
             ":tools:binary-compatibility-validator",
             ":tools:kotlin-stdlib-gen",
-
-            ":include:kotlin-stdlib-common-sources",
 
             ":kotlin-test",
             ":kotlin-test:kotlin-test-js",
