@@ -99,6 +99,9 @@ public class JVMConfigurationKeys {
     public static final CompilerConfigurationKey<Boolean> USE_PSI_CLASS_FILES_READING =
             CompilerConfigurationKey.create("use a slower (PSI-based) class files reading implementation");
 
+    public static final CompilerConfigurationKey<Boolean> USE_FAST_JAR_FILE_SYSTEM =
+            CompilerConfigurationKey.create("use a faster JAR filesystem implementation");
+
     public static final CompilerConfigurationKey<Boolean> USE_JAVAC =
             CompilerConfigurationKey.create("use javac [experimental]");
 

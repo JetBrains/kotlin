@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.ApplicationEnvironmentDisposer
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
+import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import java.io.File
@@ -97,6 +98,10 @@ open class CompilerConfigurationProviderImpl(
     fun createCompilerConfiguration(module: TestModule): CompilerConfiguration {
         val configuration = CompilerConfiguration()
         configuration[CommonConfigurationKeys.MODULE_NAME] = module.name
+
+        if (module.frontendKind == FrontendKinds.FIR) {
+            configuration[CommonConfigurationKeys.USE_FIR] = true
+        }
 
         configuration[CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY] = object : MessageCollector {
             override fun clear() {}

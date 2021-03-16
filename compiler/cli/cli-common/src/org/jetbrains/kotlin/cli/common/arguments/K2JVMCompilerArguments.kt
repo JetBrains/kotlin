@@ -215,6 +215,12 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     var useOldClassFilesReading: Boolean by FreezableVar(false)
 
     @Argument(
+        value = "-Xuse-fast-jar-file-system",
+        description = "Use fast implementation on Jar FS. This may speed up compilation time, but currently it's an experimental mode"
+    )
+    var useFastJarFileSystem: Boolean by FreezableVar(false)
+
+    @Argument(
         value = "-Xdump-declarations-to",
         valueDescription = "<path>",
         description = "Path to JSON file to dump Java to Kotlin declaration mappings"

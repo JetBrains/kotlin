@@ -68,6 +68,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.STRONG_W
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.cli.jvm.JvmRuntimeVersionsConsistencyChecker
+import org.jetbrains.kotlin.cli.jvm.compiler.jarfs.FastJarFileSystem
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.index.*
 import org.jetbrains.kotlin.cli.jvm.javac.JavacWrapperRegistrar
@@ -158,6 +159,8 @@ class KotlinCoreEnvironment private constructor(
 
     val configuration: CompilerConfiguration = initialConfiguration.apply { setupJdkClasspathRoots(configFiles) }.copy()
 
+    private val jarFileSystem: VirtualFileSystem
+
     init {
         PersistentFSConstants::class.java.getDeclaredField("ourMaxIntellisenseFileSize")
             .apply { isAccessible = true }
@@ -166,6 +169,12 @@ class KotlinCoreEnvironment private constructor(
         val project = projectEnvironment.project
 
         val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+
+        jarFileSystem = when {
+            configuration.getBoolean(JVMConfigurationKeys.USE_FAST_JAR_FILE_SYSTEM) ||
+                    configuration.getBoolean(CommonConfigurationKeys.USE_FIR) -> FastJarFileSystem()
+            else -> applicationEnvironment.jarFileSystem
+        }
 
         (projectEnvironment as? ProjectEnvironment)?.registerExtensionsFromPlugins(configuration)
         // otherwise consider that project environment is properly configured before passing to the environment
@@ -391,7 +400,7 @@ class KotlinCoreEnvironment private constructor(
     }
 
     private fun findJarRoot(file: File): VirtualFile? =
-        applicationEnvironment.jarFileSystem.findFileByPath("$file${URLUtil.JAR_SEPARATOR}")
+        jarFileSystem.findFileByPath("$file${URLUtil.JAR_SEPARATOR}")
 
     private fun getSourceRootsCheckingForDuplicates(): List<KotlinSourceRoot> {
         val uniqueSourceRoots = hashSetOf<String>()

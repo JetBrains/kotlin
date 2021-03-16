@@ -280,9 +280,14 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
     put(JVMConfigurationKeys.USE_TYPE_TABLE, arguments.useTypeTable)
     put(JVMConfigurationKeys.SKIP_RUNTIME_VERSION_CHECK, arguments.skipRuntimeVersionCheck)
     put(JVMConfigurationKeys.USE_PSI_CLASS_FILES_READING, arguments.useOldClassFilesReading)
+    put(JVMConfigurationKeys.USE_FAST_JAR_FILE_SYSTEM, arguments.useFastJarFileSystem)
 
     if (arguments.useOldClassFilesReading) {
         messageCollector.report(INFO, "Using the old java class files reading implementation")
+    }
+
+    if (arguments.useFastJarFileSystem) {
+        messageCollector.report(INFO, "Using fast Jar FS implementation")
     }
 
     put(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE, arguments.allowKotlinPackage)
