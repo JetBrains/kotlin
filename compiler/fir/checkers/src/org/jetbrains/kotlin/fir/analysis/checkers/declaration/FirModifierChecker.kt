@@ -169,7 +169,7 @@ object FirModifierChecker : FirBasicDeclarationChecker() {
         if (!isDeclarationMappedToSourceCorrectly(declaration, source)) return
         if (context.containingDeclarations.last() is FirDefaultPropertyAccessor) return
 
-        val modifierList = with(FirModifierList) { source.getModifierList() }
+        val modifierList = source.getModifierList()
         modifierList?.let { checkModifiers(it, declaration, reporter, context) }
     }
 
