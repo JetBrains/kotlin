@@ -75,6 +75,9 @@ class BodyResolveContext(
     @set:PrivateForInline
     var containers: PersistentList<FirDeclaration> = persistentListOf()
 
+    @set:PrivateForInline
+    var containingClass: FirRegularClass? = null
+
     val containerIfAny: FirDeclaration?
         get() = containers.lastOrNull()
 
@@ -111,6 +114,20 @@ class BodyResolveContext(
             f()
         } finally {
             containers = oldContainers
+        }
+    }
+
+    @PrivateForInline
+    private inline fun <T> withContainerClass(declaration: FirRegularClass, f: () -> T): T {
+        val oldContainers = containers
+        val oldContainingClass = containingClass
+        containers = containers.add(declaration)
+        containingClass = declaration
+        return try {
+            f()
+        } finally {
+            containers = oldContainers
+            containingClass = oldContainingClass
         }
     }
 
@@ -340,7 +357,7 @@ class BodyResolveContext(
         storeClassIfNotNested(regularClass)
         if (forContracts) {
             return withTypeParametersOf(regularClass) {
-                withContainer(regularClass, f)
+                withContainerClass(regularClass, f)
             }
         }
         return withTowerModeCleanup {
@@ -353,7 +370,7 @@ class BodyResolveContext(
             }
 
             withScopesForClass(regularClass, holder) {
-                withContainer(regularClass, f)
+                withContainerClass(regularClass, f)
             }
         }
     }

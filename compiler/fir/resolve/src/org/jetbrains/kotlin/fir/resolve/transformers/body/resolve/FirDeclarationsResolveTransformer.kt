@@ -39,9 +39,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) : FirPartialBodyResolveTransformer(transformer) {
-    private val containingClass: FirRegularClass?
-        get() = context.containers.asReversed().firstOrNull { it is FirRegularClass } as? FirRegularClass
-
     private val statusResolver: FirStatusResolver = FirStatusResolver(session, scopeSession)
 
     private fun FirDeclaration.visibilityForApproximation(): Visibility {
@@ -187,7 +184,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         if (typeRef is FirResolvedTypeRef && property.returnTypeRef is FirResolvedTypeRef) {
             val typeArguments = (typeRef.type as ConeClassLikeType).typeArguments
             val extensionType = property.receiverTypeRef?.coneType
-            val dispatchType = containingClass?.let { containingClass ->
+            val dispatchType = context.containingClass?.let { containingClass ->
                 containingClass.symbol.constructStarProjectedType(containingClass.typeParameters.size)
             }
             propertyReferenceAccess.replaceTypeRef(
