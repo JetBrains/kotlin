@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import org.gradle.api.tasks.Input
+import java.io.Serializable
 
 data class NpmDependencyDeclaration(
     @Input
@@ -16,7 +17,7 @@ data class NpmDependencyDeclaration(
     val version: String,
     @Input
     val generateExternals: Boolean
-)
+) : Serializable
 
 fun NpmDependencyDeclaration.uniqueRepresentation() =
     "$scope $name:$version, $generateExternals"

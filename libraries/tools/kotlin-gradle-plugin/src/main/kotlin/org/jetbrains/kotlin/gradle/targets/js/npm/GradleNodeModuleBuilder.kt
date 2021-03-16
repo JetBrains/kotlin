@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
-import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.targets.js.JS
 import org.jetbrains.kotlin.gradle.targets.js.JS_MAP
 import org.jetbrains.kotlin.gradle.targets.js.META_JS

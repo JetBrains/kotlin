@@ -7,12 +7,14 @@ package org.jetbrains.kotlin.gradle.targets.js.npm.resolver
 
 import org.gradle.api.Project
 import org.gradle.api.logging.Logger
+import org.gradle.api.provider.Provider
 import org.gradle.internal.service.ServiceRegistry
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.targets.js.dukat.DukatRootResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.TasksRequirements
 import org.jetbrains.kotlin.gradle.targets.js.npm.CompositeNodeModulesCache
 import org.jetbrains.kotlin.gradle.targets.js.npm.GradleNodeModulesCache
 import org.jetbrains.kotlin.gradle.targets.js.npm.KotlinNpmResolutionManager
@@ -23,6 +25,8 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinProjectNpmResol
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinRootNpmResolution
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin
 import org.jetbrains.kotlin.gradle.targets.js.yarn.toVersionString
+import org.jetbrains.kotlin.gradle.utils.ArchiveOperationsCompat
+import org.jetbrains.kotlin.gradle.utils.FileSystemOperationsCompat
 
 /**
  * See [KotlinNpmResolutionManager] for details about resolution process.
@@ -42,22 +46,90 @@ internal class KotlinRootNpmResolver internal constructor(
         rootProject.version.toString()
     }
 
-    val plugins = mutableListOf<RootResolverPlugin>().also {
-        it.add(DukatRootResolverPlugin(this))
-    }
-
     enum class State {
         CONFIGURING,
         PROJECTS_CLOSED,
         INSTALLED
     }
 
+    @Transient
     @Volatile
-    private var state: State = State.CONFIGURING
+    private var state_: State? = State.CONFIGURING
 
-    val gradleNodeModules = GradleNodeModulesCache(nodeJs)
-    val compositeNodeModules = CompositeNodeModulesCache(nodeJs)
-    val projectResolvers = mutableMapOf<String, KotlinProjectNpmResolver>()
+    private var state
+        get() = state_ ?: resolverStateHolder.get().state
+        set(value) {
+            if (state_ != null) {
+                state_ = value
+            } else {
+                resolverStateHolder.get().state = value
+            }
+        }
+
+    private val archiveOperations by lazy { ArchiveOperationsCompat(rootProject) }
+    private val fs by lazy { FileSystemOperationsCompat(rootProject) }
+
+    private val gradleNodeModulesProvider: Provider<GradleNodeModulesCache> =
+        rootProject.gradle.sharedServices.registerIfAbsent("gradle-node-modules", GradleNodeModulesCache::class.java) {
+            it.parameters.cacheDir.set(nodeJs.nodeModulesGradleCacheDir)
+            it.parameters.rootProjectDir.set(rootProject.projectDir)
+        }
+
+    val gradleNodeModules: GradleNodeModulesCache
+        get() = gradleNodeModulesProvider.get().also {
+            it.archiveOperations = archiveOperations
+            it.fs = fs
+        }
+
+    private val compositeNodeModulesProvider: Provider<CompositeNodeModulesCache> =
+        rootProject.gradle.sharedServices.registerIfAbsent("composite-node-modules", CompositeNodeModulesCache::class.java) {
+            it.parameters.cacheDir.set(nodeJs.nodeModulesGradleCacheDir)
+            it.parameters.rootProjectDir.set(rootProject.projectDir)
+        }
+
+    val compositeNodeModules: CompositeNodeModulesCache
+        get() = compositeNodeModulesProvider.get()
+
+    @Suppress("RedundantNullableReturnType")
+    @Transient
+    private val plugins_: MutableList<RootResolverPlugin>? = mutableListOf<RootResolverPlugin>().also {
+        it.add(DukatRootResolverPlugin(forceFullResolve))
+    }
+
+    @Suppress("RedundantNullableReturnType")
+    @Transient
+    private val projectResolvers_: MutableMap<String, KotlinProjectNpmResolver>? = mutableMapOf()
+
+    private val resolverStateHolder by lazy {
+        rootProject.gradle.sharedServices.registerIfAbsent(
+            KotlinRootNpmResolverStateHolder::class.qualifiedName,
+            KotlinRootNpmResolverStateHolder::class.java
+        ) {
+            it.parameters.plugins.set(plugins_)
+            it.parameters.projectResolvers.set(projectResolvers_)
+        }
+    }
+
+    private val configurationCacheProjectResolvers: MutableMap<String, KotlinProjectNpmResolver>
+        get() {
+            val stateHolder = resolverStateHolder.get()
+            val projResolvers = stateHolder.parameters.projectResolvers.get()
+            if (stateHolder.initialized) return projResolvers
+            projResolvers.forEach { (_, value) ->
+                value.resolver = this
+                value.compilationResolvers.forEach { compResolver ->
+                    compResolver.rootResolver = this
+                }
+            }
+            stateHolder.initialized = true
+            return projResolvers
+        }
+
+    val plugins
+        get() = plugins_ ?: resolverStateHolder.get().parameters.plugins.get()
+
+    val projectResolvers
+        get() = projectResolvers_ ?: configurationCacheProjectResolvers
 
     val yarn by lazy {
         YarnPlugin.apply(rootProject)
@@ -120,6 +192,7 @@ internal class KotlinRootNpmResolver internal constructor(
             val allNpmPackages = projectResolutions.values.flatMap { it.npmProjects }
 
             gradleNodeModules.close()
+            compositeNodeModules.close()
 
             nodeJs.packageManager.prepareRootProject(
                 rootProject,

@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinProjectNpmResolution
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
+import java.io.Serializable
 import kotlin.reflect.KClass
 
 /**
@@ -27,8 +28,9 @@ import kotlin.reflect.KClass
 internal class KotlinProjectNpmResolver(
     @Transient
     val project: Project,
-    val resolver: KotlinRootNpmResolver
-) {
+    @Transient
+    var resolver: KotlinRootNpmResolver
+) : Serializable {
     override fun toString(): String = "ProjectNpmResolver($project)"
 
     private val projectPath by lazy { project.path }

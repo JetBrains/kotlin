@@ -7,8 +7,9 @@ package org.jetbrains.kotlin.gradle.targets.js.npm.plugins
 
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinRootNpmResolution
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinCompilationNpmResolver
+import java.io.Serializable
 
-internal interface RootResolverPlugin {
+internal interface RootResolverPlugin : Serializable {
     fun createCompilationResolverPlugins(resolver: KotlinCompilationNpmResolver): List<CompilationResolverPlugin>
     fun close(resolution: KotlinRootNpmResolution)
 }

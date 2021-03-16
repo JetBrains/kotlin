@@ -24,7 +24,6 @@ import java.security.MessageDigest
  * @param version When updating logic in `compute`, `version` should be increased to invalidate cache
  */
 internal open class ProcessedFilesCache(
-    val logger: Logger,
     val projectDir: File,
     val targetDir: File,
     stateFileName: String,
@@ -174,7 +173,8 @@ internal open class ProcessedFilesCache(
             try {
                 GsonBuilder().setPrettyPrinting().create().newJsonReader(stateFile.reader()).use { readFrom(it) }
             } catch (e: Throwable) {
-                logger.warn("Cannot read $stateFile", e)
+                System.err.println("Cannot read $stateFile")
+                e.printStackTrace()
                 if (targetDir.exists()) {
                     targetDir.deleteRecursively()
                 }
@@ -209,14 +209,14 @@ internal open class ProcessedFilesCache(
 
         if (old != null) {
             if (checkTarget(old.target)) return old.target
-            else logger.warn("Cannot find ${File(targetDir.relativeTo(projectDir), old.target!!)}, rebuilding")
+            else System.err.println("Cannot find ${File(targetDir.relativeTo(projectDir), old.target!!)}, rebuilding")
         }
 
         val key = compute()?.relativeTo(targetDir)?.toString()
         val existedTarget = state.byTarget[key]
         if (key != null && existedTarget != null) {
             if (!File(existedTarget.src).exists()) {
-                logger.warn("Removing cache for removed source `${existedTarget.src}`")
+                System.err.println("Removing cache for removed source `${existedTarget.src}`")
                 state.remove(existedTarget)
             }
         }

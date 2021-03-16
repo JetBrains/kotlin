@@ -5,19 +5,20 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
+import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import java.io.File
 
 /**
  * Cache for storing already created [GradleNodeModule]s
  */
-internal class CompositeNodeModulesCache(nodeJs: NodeJsRootExtension) : AbstractNodeModulesCache(nodeJs) {
+internal abstract class CompositeNodeModulesCache : AbstractNodeModulesCache() {
     override fun buildImportedPackage(
         name: String,
         version: String,
         file: File
     ): File? {
-        val module = CompositeNodeModuleBuilder(file, dir)
+        val module = CompositeNodeModuleBuilder(file, parameters.cacheDir.get().asFile)
         return module.rebuild()
     }
 }
