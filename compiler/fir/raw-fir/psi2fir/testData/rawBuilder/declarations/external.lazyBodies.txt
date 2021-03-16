@@ -20,6 +20,6 @@ FILE: external.kt
             public? set(value: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
-    public? final? external var z: Int
+    public? final? var z: Int
         public? external get(): Int
         public? external set(value: Int): R|kotlin/Unit|

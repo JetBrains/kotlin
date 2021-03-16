@@ -1099,17 +1099,13 @@ class DeclarationsConverter(
                             }
                         } else null
 
-                    // Upward propagation of `inline` and `external` modifiers (from accessors to property)
-                    // Note that, depending on `var` or `val`, checking setter's modifiers should be careful: for `val`, setter doesn't
-                    // exist (null); for `var`, the retrieval of the specific modifier is supposed to be `true`
                     status = FirDeclarationStatusImpl(propertyVisibility, modifiers.getModality(isClassOrObject = false)).apply {
                         isExpect = modifiers.hasExpect() || classWrapper?.hasExpect() == true
                         isActual = modifiers.hasActual()
                         isOverride = modifiers.hasOverride()
                         isConst = modifiers.isConst()
                         isLateInit = modifiers.hasLateinit()
-                        isInline = modifiers.hasInline() || (getter!!.isInline && setter?.isInline != false)
-                        isExternal = modifiers.hasExternal() || (getter!!.isExternal && setter?.isExternal != false)
+                        isExternal = modifiers.hasExternal()
                     }
 
                     val receiver = delegateExpression?.let {

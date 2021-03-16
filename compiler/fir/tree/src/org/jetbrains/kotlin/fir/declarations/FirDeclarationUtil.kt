@@ -49,15 +49,12 @@ inline val FirClass<*>.isEnumClass: Boolean
 inline val FirRegularClass.modality get() = status.modality
 inline val FirRegularClass.isSealed get() = status.modality == Modality.SEALED
 inline val FirRegularClass.isAbstract get() = status.modality == Modality.ABSTRACT
+inline val FirRegularClass.isFun get() = status.isFun
+inline val FirRegularClass.isCompanion get() = status.isCompanion
+inline val FirRegularClass.isData get() = status.isData
 
 inline val FirRegularClass.canHaveAbstractDeclaration: Boolean
     get() = isAbstract || isSealed || isEnumClass
-
-inline val FirRegularClass.isInner get() = status.isInner
-inline val FirRegularClass.isCompanion get() = status.isCompanion
-inline val FirRegularClass.isData get() = status.isData
-inline val FirRegularClass.isInline get() = status.isInline
-inline val FirRegularClass.isFun get() = status.isFun
 
 inline val FirMemberDeclaration.modality get() = status.modality
 inline val FirMemberDeclaration.isAbstract get() = status.modality == Modality.ABSTRACT
@@ -92,7 +89,6 @@ inline val FirMemberDeclaration.isConst: Boolean get() = status.isConst
 inline val FirMemberDeclaration.isLateInit: Boolean get() = status.isLateInit
 inline val FirMemberDeclaration.isFromSealedClass: Boolean get() = status.isFromSealedClass
 inline val FirMemberDeclaration.isFromEnumClass: Boolean get() = status.isFromEnumClass
-inline val FirMemberDeclaration.isFun: Boolean get() = status.isFun
 
 inline val FirFunction<*>.hasBody get() = body != null
 

@@ -1341,17 +1341,13 @@ open class RawFirBuilder(
                         getter = this@toFirProperty.getter.toFirPropertyAccessor(this@toFirProperty, propertyType, isGetter = true)
                         setter = this@toFirProperty.setter.toFirPropertyAccessor(this@toFirProperty, propertyType, isGetter = false)
 
-                        // Upward propagation of `inline` and `external` modifiers (from accessors to property)
-                        // Note that, depending on `var` or `val`, checking setter's modifiers should be careful: for `val`, setter doesn't
-                        // exist (null); for `var`, the retrieval of the specific modifier is supposed to be `true`
                         status = FirDeclarationStatusImpl(visibility, modality).apply {
                             isExpect = hasExpectModifier() || containingClassOrObject?.hasExpectModifier() == true
                             isActual = hasActualModifier()
                             isOverride = hasModifier(OVERRIDE_KEYWORD)
                             isConst = hasModifier(CONST_KEYWORD)
                             isLateInit = hasModifier(LATEINIT_KEYWORD)
-                            isInline = hasModifier(INLINE_KEYWORD) || (getter!!.isInline && setter?.isInline != false)
-                            isExternal = hasModifier(EXTERNAL_KEYWORD) || (getter!!.isExternal && setter?.isExternal != false)
+                            isExternal = hasModifier(EXTERNAL_KEYWORD)
                         }
 
                         val receiver = delegateExpression?.toFirExpression("Should have delegate")
