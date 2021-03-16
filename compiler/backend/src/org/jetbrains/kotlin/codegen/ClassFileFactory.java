@@ -347,7 +347,9 @@ public class ClassFileFactory implements OutputFileCollection {
 
         @Override
         public byte[] asBytes(ClassBuilderFactory factory) {
-            return factory.asBytes(classBuilder);
+            synchronized(this) {
+                return factory.asBytes(classBuilder);
+            }
         }
 
         @Override
