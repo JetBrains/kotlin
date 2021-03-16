@@ -207,14 +207,32 @@ internal class KtSymbolByFirBuilder private constructor(
             }
         }
 
-        //TODO separate to functions
         fun buildVariableSymbol(fir: FirProperty): KtVariableSymbol {
+            return when {
+                fir.isLocal -> buildLocalVariableSymbol(fir)
+                fir is FirSyntheticProperty -> buildSyntheticJavaPropertySymbol(fir)
+                else -> buildPropertySymbol(fir)
+            }
+        }
+
+        fun buildPropertySymbol(fir: FirProperty): KtPropertySymbol {
+            require(!fir.isLocal)
+            require(fir !is FirSyntheticProperty)
             return symbolsCache.cache(fir) {
-                when {
-                    fir.isLocal -> KtFirLocalVariableSymbol(fir, resolveState, token, this@KtSymbolByFirBuilder)
-                    fir is FirSyntheticProperty -> KtFirSyntheticJavaPropertySymbol(fir, resolveState, token, this@KtSymbolByFirBuilder)
-                    else -> KtFirKotlinPropertySymbol(fir, resolveState, token, this@KtSymbolByFirBuilder)
-                }
+                KtFirKotlinPropertySymbol(fir, resolveState, token, this@KtSymbolByFirBuilder)
+            }
+        }
+
+        fun buildLocalVariableSymbol(fir: FirProperty): KtFirLocalVariableSymbol {
+            require(fir.isLocal)
+            return symbolsCache.cache(fir) {
+                KtFirLocalVariableSymbol(fir, resolveState, token, this@KtSymbolByFirBuilder)
+            }
+        }
+
+        fun buildSyntheticJavaPropertySymbol(fir: FirSyntheticProperty): KtFirSyntheticJavaPropertySymbol {
+            return symbolsCache.cache(fir) {
+                KtFirSyntheticJavaPropertySymbol(fir, resolveState, token, this@KtSymbolByFirBuilder)
             }
         }
 
