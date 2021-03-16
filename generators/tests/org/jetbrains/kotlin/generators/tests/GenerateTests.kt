@@ -204,6 +204,7 @@ import org.jetbrains.kotlinx.serialization.idea.AbstractSerializationQuickFixTes
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
     generateTestGroupSuite(args) {
+        val excludedFirTestdataPattern = "^(.+)\\.fir\\.kts?\$"
         testGroup("idea/jvm-debugger/jvm-debugger-test/test", "idea/jvm-debugger/jvm-debugger-test/testData") {
             testClass<AbstractKotlinSteppingTest> {
                 model(
@@ -323,18 +324,18 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractKotlinHighlightingPassTest> {
-                model("checker", recursive = false)
-                model("checker/regression")
-                model("checker/recovery")
-                model("checker/rendering")
-                model("checker/scripts", extension = "kts")
-                model("checker/duplicateJvmSignature")
-                model("checker/infos", testMethod = "doTestWithInfos")
-                model("checker/diagnosticsMessage")
+                model("checker", recursive = false, excludedPattern = excludedFirTestdataPattern)
+                model("checker/regression", excludedPattern = excludedFirTestdataPattern)
+                model("checker/recovery", excludedPattern = excludedFirTestdataPattern)
+                model("checker/rendering", excludedPattern = excludedFirTestdataPattern)
+                model("checker/scripts", extension = "kts", excludedPattern = excludedFirTestdataPattern)
+                model("checker/duplicateJvmSignature", excludedPattern = excludedFirTestdataPattern)
+                model("checker/infos", testMethod = "doTestWithInfos", excludedPattern = excludedFirTestdataPattern)
+                model("checker/diagnosticsMessage", excludedPattern = excludedFirTestdataPattern)
             }
 
             testClass<AbstractKotlinHighlightWolfPassTest> {
-                model("checker/wolf")
+                model("checker/wolf", excludedPattern = excludedFirTestdataPattern)
             }
 
             testClass<AbstractJavaAgainstKotlinSourceCheckerTest> {
@@ -1126,12 +1127,12 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractFirKotlinHighlightingPassTest> {
-                model("checker", recursive = false)
-                model("checker/regression")
-                model("checker/recovery")
-                model("checker/rendering")
-                model("checker/infos")
-                model("checker/diagnosticsMessage")
+                model("checker", recursive = false, excludedPattern = excludedFirTestdataPattern)
+                model("checker/regression", excludedPattern = excludedFirTestdataPattern)
+                model("checker/recovery", excludedPattern = excludedFirTestdataPattern)
+                model("checker/rendering", excludedPattern = excludedFirTestdataPattern)
+                model("checker/infos", excludedPattern = excludedFirTestdataPattern)
+                model("checker/diagnosticsMessage", excludedPattern = excludedFirTestdataPattern)
             }
 
 

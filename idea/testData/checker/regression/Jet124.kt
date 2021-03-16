@@ -1,4 +1,4 @@
-// FIR_COMPARISON
+// FIR_IDENTICAL
 
 fun foo1() :  (Int) -> Int = { x: Int -> x }
 

@@ -1,4 +1,4 @@
-// FIR_COMPARISON
+// FIR_IDENTICAL
 fun test() {
   val a : Int? = 0
   if (a != null) {

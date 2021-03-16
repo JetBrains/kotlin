@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class X {
   <error>val x : Int</error>
 }
@@ -12,4 +13,3 @@ class Y1 {
 
 class Z : Y() {
 }
-// FIR_COMPARISON

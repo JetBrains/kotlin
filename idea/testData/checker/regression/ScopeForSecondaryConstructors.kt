@@ -1,4 +1,4 @@
-// FIR_COMPARISON
+// FIR_IDENTICAL
 
 fun <T> checkSubtype(t: T) = t
 
@@ -19,4 +19,3 @@ class Foo(var bar : Int, var barr : Int, var barrr : Int) {
     checkSubtype<Foo>(this)
   }
 }
-

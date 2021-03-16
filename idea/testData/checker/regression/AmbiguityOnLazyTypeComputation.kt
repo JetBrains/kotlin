@@ -1,4 +1,4 @@
-// FIR_COMPARISON
+// FIR_IDENTICAL
 // One of the two passes is making a scope and turning vals into functions
 // See KT-76
 

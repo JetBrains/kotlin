@@ -1,4 +1,4 @@
-// FIR_COMPARISON
+// FIR_IDENTICAL
 
 fun test(<warning textAttributesKey="NOT_USED_ELEMENT_ATTRIBUTES">unusedParam</warning>: Int) { // UNUSED_PARAMETER
   val str = ":)"
@@ -17,4 +17,3 @@ fun test(<warning textAttributesKey="NOT_USED_ELEMENT_ATTRIBUTES">unusedParam</w
   redundantInitializer = 2
   test(redundantInitializer)
 }
-

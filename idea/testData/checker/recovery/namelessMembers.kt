@@ -1,5 +1,3 @@
-// IGNORE_FIR
-
 class C {
     <error>fun ()</error> {
 

@@ -1,4 +1,4 @@
-// FIR_COMPARISON
+// FIR_IDENTICAL
 
 fun set(<warning>key</warning> : String, <warning>value</warning> : String) {
   val a : String? = ""

@@ -5,10 +5,14 @@
 
 package org.jetbrains.kotlin.test.uitls
 
+import com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.test.KtAssert
+import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
 
 object IgnoreTests {
+    private val isTeamCityBuild: Boolean = System.getProperty("TEAMCITY_VERSION") != null
     private const val INSERT_DIRECTIVE_AUTOMATICALLY = false // TODO use environment variable instead
     private const val ALWAYS_CONSIDER_TEST_AS_PASSING = false // TODO use environment variable instead
 
@@ -173,9 +177,53 @@ object IgnoreTests {
         const val FIR_COMPARISON_MULTILINE_COMMENT = "/* FIR_COMPARISON */"
         const val IGNORE_FIR = "// IGNORE_FIR"
         const val FIX_ME = "// FIX_ME: "
+        const val FIR_IDENTICAL = "// FIR_IDENTICAL"
     }
 
     enum class DirectivePosition {
         FIRST_LINE_IN_FILE, LAST_LINE_IN_FILE
     }
+
+    fun getFirTestFile(originalTestFile: File): File {
+        if (originalTestFile.readText().startsWith(DIRECTIVES.FIR_IDENTICAL)) {
+            return originalTestFile
+        }
+        val firTestFile = deriveFirTestFile(originalTestFile)
+        if (!firTestFile.exists()) {
+            FileUtil.copy(originalTestFile, firTestFile)
+        }
+        return firTestFile
+    }
+
+
+    fun cleanUpIdenticalFirTestFile(originalTestFile: File) {
+        val firTestFile = deriveFirTestFile(originalTestFile)
+        if (firTestFile.exists() && firTestFile.readText().trim() == originalTestFile.readText().trim()) {
+            val message = if (isTeamCityBuild) {
+                "Please remove .fir.kt dump and add // FIR_IDENTICAL to test source"
+            } else {
+                // The FIR test file is identical with the original file. We should remove the FIR file and mark "FIR_IDENTICAL" in the
+                // original file
+                firTestFile.delete()
+                val content = originalTestFile.readText()
+                originalTestFile.writer().use {
+                    it.appendLine(DIRECTIVES.FIR_IDENTICAL)
+                    it.append(content)
+                }
+
+                "Deleted .fir.kt dump, added // FIR_IDENTICAL to test source"
+            }
+            KtAssert.fail(
+                """
+                        Dumps via FIR & via old FE are the same. 
+                        $message
+                        Please re-run the test now
+                    """.trimIndent()
+            )
+        }
+    }
+
+    private fun deriveFirTestFile(originalTestFile: File) =
+        originalTestFile.parentFile.resolve(originalTestFile.name.removeSuffix(".kt") + ".fir.kt")
+
 }

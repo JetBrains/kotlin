@@ -1,3 +1,5 @@
+// IGNORE_FIR
+
 package unresolved
 
 class Pair<A, B>(<warning>a</warning>: A, <warning>b</warning>: B)
