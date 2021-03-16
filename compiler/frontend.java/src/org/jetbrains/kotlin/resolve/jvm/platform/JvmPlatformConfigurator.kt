@@ -36,6 +36,7 @@ object JvmPlatformConfigurator : PlatformConfiguratorBase(
         JvmInlineApplicabilityChecker(),
         StrictfpApplicabilityChecker(),
         JvmAnnotationsTargetNonExistentAccessorChecker(),
+        SuspendInFunInterfaceChecker(),
         BadInheritedJavaSignaturesChecker,
         JvmMultifileClassStateChecker,
         SynchronizedOnInlineMethodChecker,
