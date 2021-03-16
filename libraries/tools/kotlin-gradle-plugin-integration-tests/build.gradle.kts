@@ -39,6 +39,7 @@ dependencies {
     testImplementation(commonDep("org.jetbrains.intellij.deps", "trove4j"))
 
     testImplementation(gradleApi())
+    testImplementation(gradleTestKit())
     testImplementation("com.google.code.gson:gson:${rootProject.extra["versions.jar.gson"]}")
     testApiJUnit5(vintageEngine = true)
 
