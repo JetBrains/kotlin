@@ -26,7 +26,10 @@ internal abstract class KotlinToolRunner(
     open val execEnvironmentBlacklist: Set<String> = emptySet()
 
     open val execSystemProperties: Map<String, String> = emptyMap()
-    open val execSystemPropertiesBlacklist: Set<String> = setOf("java.endorsed.dirs")
+    open val execSystemPropertiesBlacklist: Set<String> = setOf(
+        "java.endorsed.dirs", // Fix for KT-25887
+        "user.dir"            // Don't propagate the working dir of the current Gradle process
+    )
 
     abstract val classpath: Set<File>
     open fun checkClasspath(): Unit = check(classpath.isNotEmpty()) { "Classpath of the tool is empty: $displayName" }
