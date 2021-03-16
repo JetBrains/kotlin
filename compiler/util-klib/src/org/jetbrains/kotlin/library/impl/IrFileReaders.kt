@@ -45,6 +45,21 @@ abstract class IrArrayReader(private val buffer: ReadBuffer) {
 class IrArrayFileReader(file: File) : IrArrayReader(ReadBuffer.WeakFileBuffer(file.javaFile()))
 class IrArrayMemoryReader(bytes: ByteArray) : IrArrayReader(ReadBuffer.MemoryBuffer(bytes))
 
+class IrIntArrayMemoryReader(bytes: ByteArray) {
+
+    val array = run {
+        val buffer = ReadBuffer.MemoryBuffer(bytes)
+
+        val result = IntArray(buffer.int)
+
+        for (i in result.indices) {
+            result[i] = buffer.int
+        }
+
+        result
+    }
+}
+
 class IrLongArrayMemoryReader(bytes: ByteArray) {
 
     val array = run {

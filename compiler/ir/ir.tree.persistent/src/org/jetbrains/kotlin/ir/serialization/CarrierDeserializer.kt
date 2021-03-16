@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrSyntheticBodyImpl
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.library.impl.IrArrayMemoryReader
+import org.jetbrains.kotlin.library.impl.IrIntArrayMemoryReader
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 
 import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature as ProtoIdSignature
@@ -69,6 +70,7 @@ class CarrierDeserializer(
 
     private val declarationReader = IrArrayMemoryReader(serializedCarriers.declarationCarriers)
     private val bodyReader = IrArrayMemoryReader(serializedCarriers.bodyCarriers)
+    private val removedOnReader = IrIntArrayMemoryReader(serializedCarriers.removedOn)
 
     fun injectCarriers(declaration: IrDeclaration) {
         if (declaration is PersistentIrDeclarationBase<*>) {
@@ -109,6 +111,8 @@ class CarrierDeserializer(
         val bodyCarriers = declarationReader.tableItemBytes(index)
 
         load(IrArrayMemoryReader(bodyCarriers).mapToArray(fn))
+
+        removedOn = removedOnReader.array[index]
     }
 
     private inline fun <reified C : Carrier> PersistentIrElementBase<C>.load(carriers: Array<C>) {

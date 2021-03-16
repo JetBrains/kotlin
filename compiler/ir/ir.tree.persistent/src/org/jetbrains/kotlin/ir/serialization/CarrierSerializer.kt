@@ -28,11 +28,13 @@ import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBody
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
 import org.jetbrains.kotlin.library.impl.IrMemoryArrayWriter
+import org.jetbrains.kotlin.library.impl.IrMemoryIntArrayWriter
 
 class SerializedCarriers(
     val signatures: ByteArray,
     val declarationCarriers: ByteArray,
     val bodyCarriers: ByteArray,
+    val removedOn: ByteArray,
 )
 
 // Declarations are references by signatures, bodies are referenced by index.
@@ -66,12 +68,14 @@ private class CarrierSerializer(val fileSerializer: IrFileSerializer, bodies: Li
     val signatures = mutableListOf<ByteArray>()
     val declarationCarriers = mutableListOf<ByteArray>()
     val bodyCarriers = mutableListOf<ByteArray>()
+    val removedOn = mutableListOf<Int>()
 
     fun build(): SerializedCarriers {
         return SerializedCarriers(
             IrMemoryArrayWriter(signatures).writeIntoMemory(),
             IrMemoryArrayWriter(declarationCarriers).writeIntoMemory(),
             IrMemoryArrayWriter(bodyCarriers).writeIntoMemory(),
+            IrMemoryIntArrayWriter(removedOn).writeIntoMemory(),
         )
     }
 
@@ -82,6 +86,7 @@ private class CarrierSerializer(val fileSerializer: IrFileSerializer, bodies: Li
             val signature = declaration.symbol.signature ?: return // TODO
             signatures += fileSerializer.serializeIdSignature(signature).toByteArray()
             declarationCarriers += serializeCarriers(declaration)
+            removedOn += declaration.removedOn
         } // else -> TODO?
     }
 
