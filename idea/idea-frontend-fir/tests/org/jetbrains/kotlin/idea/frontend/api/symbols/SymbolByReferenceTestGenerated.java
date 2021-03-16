@@ -25,6 +25,11 @@ public class SymbolByReferenceTestGenerated extends AbstractSymbolByReferenceTes
         KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
+    @TestMetadata("accessorField.kt")
+    public void testAccessorField() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/symbolByReference/accessorField.kt");
+    }
+
     public void testAllFilesPresentInSymbolByReference() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/idea-frontend-fir/testData/symbolByReference"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.symbols
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.name.ClassId
@@ -14,6 +15,33 @@ import org.jetbrains.kotlin.name.Name
 sealed class KtVariableLikeSymbol : KtCallableSymbol(), KtNamedSymbol, KtSymbolWithKind {
     abstract override fun createPointer(): KtSymbolPointer<KtVariableLikeSymbol>
 }
+
+/**
+ * Backing field of some member property
+ *
+ * E.g,
+ * ```
+ * val x: Int = 10
+ *    get() = field<caret>
+ * ```
+ *
+ * Symbol at caret will be resolved to a [KtBackingFieldSymbol]
+ */
+abstract class KtBackingFieldSymbol : KtVariableLikeSymbol() {
+    abstract val owningProperty: KtKotlinPropertySymbol
+
+    final override val name: Name get() = fieldName
+    final override val psi: PsiElement? get() = null
+    final override val symbolKind: KtSymbolKind get() = KtSymbolKind.LOCAL
+    final override val origin: KtSymbolOrigin get() = KtSymbolOrigin.PROPERTY_BACKING_FIELD
+
+    abstract override fun createPointer(): KtSymbolPointer<KtVariableLikeSymbol>
+
+    companion object {
+        private val fieldName = Name.identifier("field")
+    }
+}
+
 
 abstract class KtEnumEntrySymbol : KtVariableLikeSymbol(), KtSymbolWithMembers, KtSymbolWithKind {
     final override val symbolKind: KtSymbolKind get() = KtSymbolKind.MEMBER
@@ -69,6 +97,8 @@ abstract class KtKotlinPropertySymbol : KtPropertySymbol() {
     abstract val isLateInit: Boolean
 
     abstract val isConst: Boolean
+
+    abstract override fun createPointer(): KtSymbolPointer<KtKotlinPropertySymbol>
 }
 
 abstract class KtSyntheticJavaPropertySymbol : KtPropertySymbol() {
@@ -80,6 +110,8 @@ abstract class KtSyntheticJavaPropertySymbol : KtPropertySymbol() {
 
     abstract val javaGetterName: Name
     abstract val javaSetterName: Name?
+
+    abstract override fun createPointer(): KtSymbolPointer<KtSyntheticJavaPropertySymbol>
 }
 
 abstract class KtLocalVariableSymbol : KtVariableSymbol(), KtSymbolWithKind {

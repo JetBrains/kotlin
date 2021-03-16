@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.resolve.getSymbolByLookupTag
 import org.jetbrains.kotlin.fir.resolve.inference.isFunctionalType
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
+import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -46,7 +47,8 @@ internal class KtSymbolByFirBuilder private constructor(
     val withReadOnlyCaching: Boolean,
     private val symbolsCache: BuilderCache<FirDeclaration, KtSymbol>,
     private val filesCache: BuilderCache<FirFile, KtFileSymbol>,
-    private val typesCache: BuilderCache<ConeKotlinType, KtType>
+    private val backingFieldCache: BuilderCache<FirBackingFieldSymbol, KtBackingFieldSymbol>,
+    private val typesCache: BuilderCache<ConeKotlinType, KtType>,
 ) : ValidityTokenOwner {
     private val resolveState by weakRef(resolveState)
 
@@ -70,6 +72,7 @@ internal class KtSymbolByFirBuilder private constructor(
         withReadOnlyCaching = false,
         symbolsCache = BuilderCache(),
         typesCache = BuilderCache(),
+        backingFieldCache = BuilderCache(),
         filesCache = BuilderCache(),
     )
 
@@ -84,6 +87,7 @@ internal class KtSymbolByFirBuilder private constructor(
             symbolsCache = symbolsCache.createReadOnlyCopy(),
             typesCache = typesCache.createReadOnlyCopy(),
             filesCache = filesCache.createReadOnlyCopy(),
+            backingFieldCache = backingFieldCache.createReadOnlyCopy(),
         )
     }
 
@@ -215,7 +219,7 @@ internal class KtSymbolByFirBuilder private constructor(
             }
         }
 
-        fun buildPropertySymbol(fir: FirProperty): KtPropertySymbol {
+        fun buildPropertySymbol(fir: FirProperty): KtKotlinPropertySymbol {
             require(!fir.isLocal)
             require(fir !is FirSyntheticProperty)
             return symbolsCache.cache(fir) {
@@ -260,6 +264,15 @@ internal class KtSymbolByFirBuilder private constructor(
                 error("Could not build symbol for non-Java field symbol")
             }
             return symbolsCache.cache(fir) { KtFirJavaFieldSymbol(fir, resolveState, token, this@KtSymbolByFirBuilder) }
+        }
+
+        fun buildBackingFieldSymbol(fir: FirBackingFieldSymbol): KtFirBackingFieldSymbol {
+            return backingFieldCache.cache(fir) { KtFirBackingFieldSymbol(fir.fir, resolveState, token, this@KtSymbolByFirBuilder) }
+        }
+
+        fun buildBackingFieldSymbolByProperty(fir: FirProperty): KtFirBackingFieldSymbol {
+            val backingFieldSymbol = fir.backingFieldSymbol
+            return buildBackingFieldSymbol(backingFieldSymbol)
         }
 
         private fun FirField.isJavaFieldOrSubstitutionOverrideOfJavaField(): Boolean = when (this) {

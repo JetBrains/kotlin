@@ -15,6 +15,8 @@ import com.intellij.psi.util.parentOfType
 import org.jetbrains.kotlin.idea.KotlinIdeaAnalysisBundle
 import org.jetbrains.kotlin.idea.fir.highlighter.textAttributesKeyForPropertyDeclaration
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtBackingFieldSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.idea.highlighter.NameHighlighter
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -40,19 +42,27 @@ internal class VariableReferenceHighlightingVisitor(
             return
         }
 
-        val target = expression.mainReference.resolve()
-
-        when {
-            target != null && expression.isBackingField(target) -> Colors.BACKING_FIELD_VARIABLE
-            target is PsiMethod -> Colors.SYNTHETIC_EXTENSION_PROPERTY
-            target != null -> textAttributesKeyForPropertyDeclaration(target)
-            else -> null
-        }?.let { attribute ->
-            highlightName(expression, attribute)
-            if (target?.isMutableVariable() == true) {
-                highlightName(expression, Colors.MUTABLE_VARIABLE)
+        with(analysisSession) {
+            val targetSymbol = expression.mainReference.resolveToSymbol()
+            val target = expression.mainReference.resolve()
+            when {
+                targetSymbol is KtBackingFieldSymbol -> Colors.BACKING_FIELD_VARIABLE
+                target is PsiMethod -> Colors.SYNTHETIC_EXTENSION_PROPERTY
+                target != null -> textAttributesKeyForPropertyDeclaration(target)
+                else -> null
+            }?.let { attribute ->
+                highlightName(expression, attribute)
+                if (target?.isMutableVariable() == true || targetSymbol != null && isBackingFieldReferencingMutableVariable(targetSymbol)) {
+                    highlightName(expression, Colors.MUTABLE_VARIABLE)
+                }
             }
         }
+    }
+
+    @Suppress("unused")
+    private fun KtAnalysisSession.isBackingFieldReferencingMutableVariable(symbol: KtSymbol): Boolean {
+        if (symbol !is KtBackingFieldSymbol) return false
+        return !symbol.owningProperty.isVal
     }
 
     private fun KtSimpleNameExpression.isByNameArgumentReference() =
@@ -75,9 +85,3 @@ private fun KtSimpleNameExpression.isAssignmentReference(): Boolean {
     return operationSignTokenType == KtTokens.EQ
 }
 
-private fun KtSimpleNameExpression.isBackingField(target: PsiElement): Boolean {
-    if (getReferencedName() != "field") return false
-    if (target !is KtProperty) return false
-    val accessor = parentOfType<KtPropertyAccessor>() ?: return false
-    return accessor.parent == target
-}

@@ -93,4 +93,12 @@ enum class KtSymbolOrigin {
 
 
     JAVA_SYNTHETIC_PROPERTY,
+
+    /**
+     * Declaration is backing field of some member property
+     * A symbol kind of [KtBackingFieldSymbol]
+     *
+     * @see KtBackingFieldSymbol
+     */
+    PROPERTY_BACKING_FIELD,
 }

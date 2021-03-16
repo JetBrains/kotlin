@@ -32,10 +32,16 @@ internal class KtFirSymbolContainingDeclarationProvider(
                 getContainingDeclarationForKotlinInSourceSymbol(symbol)
             KtSymbolOrigin.LIBRARY, KtSymbolOrigin.JAVA, KtSymbolOrigin.JAVA_SYNTHETIC_PROPERTY ->
                 getContainingDeclarationForLibrarySymbol(symbol)
+            KtSymbolOrigin.PROPERTY_BACKING_FIELD -> getContainingDeclarationForBackingFieldSymbol(symbol)
             KtSymbolOrigin.INTERSECTION_OVERRIDE -> TODO()
             KtSymbolOrigin.SAM_CONSTRUCTOR -> TODO()
             KtSymbolOrigin.DELEGATED -> TODO()
         }
+    }
+
+    private fun getContainingDeclarationForBackingFieldSymbol(symbol: KtSymbolWithKind): KtSymbolWithKind {
+        require(symbol is KtBackingFieldSymbol)
+        return symbol.owningProperty
     }
 
     private fun getContainingDeclarationForKotlinInSourceSymbol(symbol: KtSymbolWithKind): KtSymbolWithKind = with(analysisSession) {
