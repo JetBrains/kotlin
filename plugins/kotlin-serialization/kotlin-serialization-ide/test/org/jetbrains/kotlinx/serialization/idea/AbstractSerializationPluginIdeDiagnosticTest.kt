@@ -10,18 +10,17 @@ import org.jetbrains.kotlin.checkers.AbstractDiagnosticsTest
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
-import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationIDEContainerContributor
-import java.io.File
 
 @OptIn(ObsoleteTestInfrastructure::class)
 abstract class AbstractSerializationPluginIdeDiagnosticTest : AbstractDiagnosticsTest() {
-    private val runtimeLibraryPath = getSerializationLibraryRuntimeJar()
+    private val coreLibraryPath = getSerializationCoreLibraryJar()!!
+    private val jsonLibraryPath = getSerializationJsonLibraryJar()!!
 
     override fun setupEnvironment(environment: KotlinCoreEnvironment) {
         if (!StorageComponentContainerContributor.getInstances(project).any { it is SerializationIDEContainerContributor }) {
             StorageComponentContainerContributor.registerExtension(project, SerializationIDEContainerContributor())
         }
-        environment.updateClasspath(listOf(JvmClasspathRoot(runtimeLibraryPath!!)))
+        environment.updateClasspath(listOf(JvmClasspathRoot(coreLibraryPath), JvmClasspathRoot(jsonLibraryPath)))
     }
 }

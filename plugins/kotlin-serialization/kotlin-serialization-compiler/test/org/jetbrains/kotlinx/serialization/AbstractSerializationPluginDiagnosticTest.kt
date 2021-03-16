@@ -13,10 +13,10 @@ import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationComp
 
 @OptIn(ObsoleteTestInfrastructure::class)
 abstract class AbstractSerializationPluginDiagnosticTest : AbstractDiagnosticsTest() {
-    private val runtimeLibraryPath = getSerializationLibraryRuntimeJar()
+    private val coreLibraryPath = getSerializationCoreLibraryJar()
 
     override fun setupEnvironment(environment: KotlinCoreEnvironment) {
         SerializationComponentRegistrar.registerExtensions(environment.project)
-        environment.updateClasspath(listOf(JvmClasspathRoot(runtimeLibraryPath!!)))
+        environment.updateClasspath(listOf(JvmClasspathRoot(coreLibraryPath!!)))
     }
 }

@@ -27,7 +27,7 @@ dependencies {
     testCompile(commonDep("junit:junit"))
     testCompile(projectTests(":idea:idea-frontend-independent"))
 
-    testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-jvm:1.0-M1-1.4.0-rc") { isTransitive = false }
+    testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.1.0")
 
     testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
 

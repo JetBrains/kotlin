@@ -21,7 +21,7 @@ dependencies {
 
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(commonDep("junit:junit"))
-    testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-jvm:1.0-M1-1.4.0-rc") { isTransitive = false }
+    testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.1.0")
 
     testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
     testRuntimeOnly(intellijDep()) { includeJars("platform-concurrency") }

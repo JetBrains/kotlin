@@ -11,12 +11,15 @@ import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 abstract class AbstractSerializationQuickFixTest : AbstractQuickFixTest() {
     override fun setUp() {
         super.setUp()
-        val jar = getSerializationLibraryRuntimeJar()!!
-        ConfigLibraryUtil.addLibrary(module, "Serialization", jar.parentFile.absolutePath, arrayOf(jar.name))
+        val coreJar = getSerializationCoreLibraryJar()!!
+        val jsonJar = getSerializationJsonLibraryJar()!!
+        ConfigLibraryUtil.addLibrary(module, "Serialization core", coreJar.parentFile.absolutePath, arrayOf(coreJar.name))
+        ConfigLibraryUtil.addLibrary(module, "Serialization JSON", jsonJar.parentFile.absolutePath, arrayOf(jsonJar.name))
     }
 
     override fun tearDown() {
-        ConfigLibraryUtil.removeLibrary(module, "Serialization")
+        ConfigLibraryUtil.removeLibrary(module, "Serialization JSON")
+        ConfigLibraryUtil.removeLibrary(module, "Serialization core")
 
         super.tearDown()
     }

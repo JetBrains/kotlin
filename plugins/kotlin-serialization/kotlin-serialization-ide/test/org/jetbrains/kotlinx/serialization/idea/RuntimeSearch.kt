@@ -13,7 +13,7 @@ import java.io.File
 import kotlin.test.assertTrue
 
 class RuntimeLibraryInClasspathTest {
-    private val runtimeLibraryPath = getSerializationLibraryRuntimeJar()
+    private val runtimeLibraryPath = getSerializationCoreLibraryJar()
 
     @Test
     fun testRuntimeLibraryExists() {
@@ -31,8 +31,14 @@ class RuntimeLibraryInClasspathTest {
     }
 }
 
-internal fun getSerializationLibraryRuntimeJar(): File? = try {
+internal fun getSerializationCoreLibraryJar(): File? = try {
     PathUtil.getResourcePathForClass(Class.forName("kotlinx.serialization.KSerializer"))
+} catch (e: ClassNotFoundException) {
+    null
+}
+
+internal fun getSerializationJsonLibraryJar(): File? = try {
+    PathUtil.getResourcePathForClass(Class.forName("kotlinx.serialization.json.Json"))
 } catch (e: ClassNotFoundException) {
     null
 }
