@@ -12751,6 +12751,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("javaDelegateTopLevel.kt")
+        public void testJavaDelegateTopLevel() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/javaDelegateTopLevel.kt");
+        }
+
+        @Test
         @TestMetadata("kt35707.kt")
         public void testKt35707() throws Exception {
             runTest("compiler/testData/codegen/box/delegatedProperty/kt35707.kt");
