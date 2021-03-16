@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 // !LANGUAGE: +MultiPlatformProjects
 
 expect abstract class A protected constructor() {
