@@ -40,8 +40,6 @@ import org.jetbrains.kotlin.fir.lightTree.fir.modifier.TypeProjectionModifier
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirReferencePlaceholderForResolvedAnnotations
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
-import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.LocalCallableIdConstructor
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.*
@@ -50,10 +48,7 @@ import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
 import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens.*
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class DeclarationsConverter(
@@ -1009,11 +1004,19 @@ class DeclarationsConverter(
 
                     val propertyVisibility = modifiers.getVisibility()
 
+                    fun defaultAccessorStatus() =
+                        // Downward propagation of `inline` and `external` modifiers (from property to its accessors)
+                        FirDeclarationStatusImpl(propertyVisibility, modifiers.getModality()).apply {
+                            isInline = modifiers.hasInline()
+                            isExternal = modifiers.hasExternal()
+                        }
+
                     val convertedAccessors = accessors.map { convertGetterOrSetter(it, returnType, propertyVisibility, modifiers) }
                     this.getter = convertedAccessors.find { it.isGetter }
                         ?: FirDefaultPropertyGetter(
                             null, session, FirDeclarationOrigin.Source, returnType, propertyVisibility
                         ).also {
+                            it.status = defaultAccessorStatus()
                             currentDispatchReceiverType()?.lookupTag?.let { lookupTag ->
                                 it.containingClassAttr = lookupTag
                             }
@@ -1024,6 +1027,7 @@ class DeclarationsConverter(
                             FirDefaultPropertySetter(
                                 null, session, FirDeclarationOrigin.Source, returnType, propertyVisibility
                             ).also {
+                                it.status = defaultAccessorStatus()
                                 currentDispatchReceiverType()?.lookupTag?.let { lookupTag ->
                                     it.containingClassAttr = lookupTag
                                 }
