@@ -154,10 +154,7 @@ private class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringP
                     irExprBody(
                         when (body.kind) {
                             IrSyntheticBodyKind.ENUM_VALUES -> {
-                                val cloneFun = context.irBuiltIns.arrayClass.functions.single {
-                                    it.owner.name.asString() == "clone"
-                                }
-                                irCall(cloneFun, declaration.returnType).apply {
+                                irCall(this@EnumClassLowering.context.ir.symbols.objectCloneFunction, declaration.returnType).apply {
                                     dispatchReceiver = irGetField(null, valuesField)
                                 }
                             }

@@ -850,6 +850,14 @@ class JvmSymbols(
     val enumValueOfFunction: IrSimpleFunctionSymbol =
         javaLangEnum.functionByName("valueOf")
 
+    private val javaLangObject: IrClassSymbol =
+        createClass(FqName("java.lang.Object")) { klass ->
+            klass.addFunction("clone", irBuiltIns.anyType)
+        }
+
+    val objectCloneFunction: IrSimpleFunctionSymbol =
+        javaLangObject.functionByName("clone")
+
     private val kotlinCoroutinesJvmInternalRunSuspendKt =
         createClass(FqName("kotlin.coroutines.jvm.internal.RunSuspendKt")) { klass ->
             klass.addFunction("runSuspend", irBuiltIns.unitType, isStatic = true).apply {
