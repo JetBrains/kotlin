@@ -10,6 +10,7 @@ import com.google.gson.JsonObject
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.NODE_MODULES
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.PACKAGE_JSON
 import java.io.File
+import java.io.Serializable
 
 /**
  * Search modules in node_modules according to https://nodejs.org/api/modules.html.
@@ -19,7 +20,7 @@ open class NpmProjectModules(
     val packageJsonEntries: Collection<String> = listOf("main", "module", "browser"),
     val indexFileNames: Collection<String> = listOf(INDEX_FILE_NAME),
     val indexFileSuffixes: Collection<String> = listOf(JS_SUFFIX)
-) {
+) : Serializable {
     /**
      * Require [request] nodejs module and return canonical path to it's main js file.
      */

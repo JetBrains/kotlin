@@ -5,11 +5,13 @@
 
 package $package
 
+import java.io.Serializable
+
 /**
  * Package versions used by tasks
  */
 // DO NOT MODIFY DIRECTLY! Use org.jetbrains.kotlin.generators.gradle.targets.js.MainKt
-class $class {
+class $class : Serializable {
 #foreach( $dep in $dependencies )
     val $dep.camelize() = NpmPackageVersion("$dep.name", "$dep.version")
 #end

@@ -20,8 +20,9 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.RootPackageJsonTask
 import org.jetbrains.kotlin.gradle.targets.js.yarn.Yarn
 import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
 import java.io.File
+import java.io.Serializable
 
-open class NodeJsRootExtension(@Transient val rootProject: Project) : ConfigurationPhaseAware<NodeJsEnv>() {
+open class NodeJsRootExtension(@Transient val rootProject: Project) : ConfigurationPhaseAware<NodeJsEnv>(), Serializable {
     init {
         check(rootProject.rootProject == rootProject)
     }

@@ -30,6 +30,7 @@ import org.gradle.api.tasks.WorkResult
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.util.GradleVersion
 import java.io.File
+import java.io.Serializable
 
 const val minSupportedGradleVersion = "6.1"
 
@@ -73,7 +74,7 @@ internal fun checkGradleCompatibility(
 internal val AbstractArchiveTask.archivePathCompatible: File
     get() = archiveFile.get().asFile
 
-internal class ArchiveOperationsCompat(@Transient private val project: Project) {
+internal class ArchiveOperationsCompat(@Transient private val project: Project) : Serializable {
     private val archiveOperations: Any? = try {
         (project as ProjectInternal).services.get(ArchiveOperations::class.java)
     } catch (e: NoClassDefFoundError) {
@@ -96,7 +97,7 @@ internal class ArchiveOperationsCompat(@Transient private val project: Project) 
     }
 }
 
-internal class FileSystemOperationsCompat(@Transient private val project: Project) {
+internal class FileSystemOperationsCompat(@Transient private val project: Project) : Serializable {
     private val fileSystemOperations: Any? = try {
         (project as ProjectInternal).services.get(FileSystemOperations::class.java)
     } catch (e: NoClassDefFoundError) {

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.npm.resolved
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.targets.js.npm.*
+import java.io.Serializable
 
 /**
  * Resolved [NpmProject]
@@ -19,7 +20,7 @@ class KotlinCompilationNpmResolution(
     val externalGradleDependencies: Collection<GradleNodeModule>,
     private val _externalNpmDependencies: Collection<NpmDependencyDeclaration>,
     val packageJson: PackageJson
-) {
+) : Serializable {
     val project
         get() = _project!!
 

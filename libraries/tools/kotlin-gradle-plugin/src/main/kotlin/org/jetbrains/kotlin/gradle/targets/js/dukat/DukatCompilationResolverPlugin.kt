@@ -22,11 +22,13 @@ import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 
 internal class DukatCompilationResolverPlugin(
+    @Transient
     private val resolver: KotlinCompilationNpmResolver
 ) : CompilationResolverPlugin {
     val project get() = resolver.project
     val nodeJs get() = resolver.nodeJs
-    val npmProject get() = resolver.npmProject
+    val versions by lazy { nodeJs.versions }
+    val npmProject by lazy { resolver.npmProject }
     val compilation get() = npmProject.compilation
     val compilationName by lazy {
         compilation.disambiguatedName
@@ -82,7 +84,7 @@ internal class DukatCompilationResolverPlugin(
     }
 
     override fun hookDependencies(
-        internalDependencies: Set<KotlinCompilationNpmResolver>,
+        internalDependencies: Set<KotlinCompilationNpmResolver.InternalDependency>,
         internalCompositeDependencies: Set<KotlinCompilationNpmResolver.CompositeDependency>,
         externalGradleDependencies: Set<KotlinCompilationNpmResolver.ExternalGradleDependency>,
         externalNpmDependencies: Set<NpmDependency>,
@@ -104,7 +106,7 @@ internal class DukatCompilationResolverPlugin(
         }
 
         DukatExecutor(
-            nodeJs.versions,
+            versions,
             DtsResolver(npmProject).getAllDts(externalNpmDependencies),
             externalsOutputFormat,
             npmProject,
