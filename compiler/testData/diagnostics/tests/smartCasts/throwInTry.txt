@@ -1,0 +1,23 @@
+package
+
+public fun conditionalThrowInTry_noSmartcastAfterTryCatch(/*0*/ a: A): kotlin.Unit
+public fun conditionalThrowInTry_rethrow_noSmartcastInFinally(/*0*/ a: A): kotlin.Unit
+public fun conditionalThrowInTry_rethrow_smartcastAfterTryCatch(/*0*/ a: A): kotlin.Unit
+public fun conditionalThrowInTry_rethrow_smartcastAfterTryCatchFinally(/*0*/ a: A): kotlin.Unit
+public fun conditionalThrowInTry_smartcastInTry(/*0*/ a: A): kotlin.Unit
+public fun takeB(/*0*/ b: B): kotlin.Unit
+public fun throwInTry_valueInCatchAndFinally_smartcastAfterTryCatchFinally(): kotlin.Unit
+public fun throwInTry_valueInCatch_smartcastAfterTryCatch(): kotlin.Unit
+public fun throwInTry_valueInFinally_noSmartcastAfterTryCatchFinally(): kotlin.Unit
+
+public interface A {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface B : A {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
