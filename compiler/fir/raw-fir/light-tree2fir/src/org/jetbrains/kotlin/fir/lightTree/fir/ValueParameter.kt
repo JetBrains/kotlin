@@ -85,7 +85,9 @@ class ValueParameter(
                 modifiers.getVisibility()
             ) else null
         }.apply {
-            this.isFromVararg = firValueParameter.isVararg
+            if (firValueParameter.isVararg) {
+                this.isFromVararg = true
+            }
         }
     }
 }
