@@ -144,7 +144,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
         tryExpression.transformAnnotations(transformer, ResolutionMode.ContextIndependent)
         dataFlowAnalyzer.enterTryExpression(tryExpression)
         tryExpression.transformTryBlock(transformer, ResolutionMode.ContextDependent)
-        dataFlowAnalyzer.exitTryMainBlock(tryExpression)
+        dataFlowAnalyzer.exitTryMainBlock()
         tryExpression.transformCatches(this, ResolutionMode.ContextDependent)
 
         var callCompleted = false
