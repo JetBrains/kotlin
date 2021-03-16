@@ -91,6 +91,11 @@ public class PsiVisualizerForRawFirDataGenerated extends AbstractPsiVisualizer {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/expectActual.kt");
         }
 
+        @TestMetadata("external.kt")
+        public void testExternal() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/external.kt");
+        }
+
         @TestMetadata("F.kt")
         public void testF() throws Exception {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/F.kt");

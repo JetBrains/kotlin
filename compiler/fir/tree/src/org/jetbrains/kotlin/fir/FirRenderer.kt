@@ -295,6 +295,9 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         if (memberDeclaration.isActual) {
             print("actual ")
         }
+        if (memberDeclaration.isExternal) {
+            print("external ")
+        }
         if (memberDeclaration is FirCallableMemberDeclaration<*>) {
             if (memberDeclaration.isOverride) {
                 print("override ")
@@ -328,9 +331,6 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
             }
             if (memberDeclaration.isTailRec) {
                 print("tailrec ")
-            }
-            if (memberDeclaration.isExternal) {
-                print("external ")
             }
             if (memberDeclaration.isSuspend) {
                 print("suspend ")
@@ -514,6 +514,8 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         propertyAccessor.renderPhaseIfNeeded()
         propertyAccessor.annotations.renderAnnotations()
         print(propertyAccessor.visibility.asString() + " ")
+        print(if (propertyAccessor.isInline) "inline " else "")
+        print(if (propertyAccessor.isExternal) "external " else "")
         print(if (propertyAccessor.isGetter) "get" else "set")
         propertyAccessor.valueParameters.renderParameters()
         print(": ")
