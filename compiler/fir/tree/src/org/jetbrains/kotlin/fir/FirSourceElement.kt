@@ -296,6 +296,13 @@ class FirLightSourceElement(
 
 val FirSourceElement?.psi: PsiElement? get() = (this as? FirPsiSourceElement<*>)?.psi
 
+val FirSourceElement?.text: CharSequence?
+    get() = when (this) {
+        is FirPsiSourceElement<*> -> psi.text
+        is FirLightSourceElement -> treeStructure.toString(lighterASTNode)
+        else -> null
+    }
+
 val FirElement.psi: PsiElement? get() = (source as? FirPsiSourceElement<*>)?.psi
 val FirElement.realPsi: PsiElement? get() = (source as? FirRealPsiSourceElement<*>)?.psi
 
