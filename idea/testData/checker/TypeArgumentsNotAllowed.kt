@@ -1,5 +1,3 @@
-// IGNORE_FIR
-
 package foo
 
 open class A<T>

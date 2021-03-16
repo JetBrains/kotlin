@@ -1,5 +1,3 @@
-// IGNORE_FIR
-
 interface Base {
     fun foo(): Int
     var bar: Int
