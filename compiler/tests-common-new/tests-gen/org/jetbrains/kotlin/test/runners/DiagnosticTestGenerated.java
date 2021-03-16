@@ -25836,6 +25836,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("throwInTry.kt")
+            public void testThrowInTry() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/smartCasts/throwInTry.kt");
+            }
+
+            @Test
             @TestMetadata("twoImplicitReceivers.kt")
             public void testTwoImplicitReceivers() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/smartCasts/twoImplicitReceivers.kt");
