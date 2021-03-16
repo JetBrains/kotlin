@@ -1,4 +1,4 @@
-// FIR_COMPARISON
+// FIR_IDENTICAL
 
 fun <K, V> intercept(<warning>block</warning>: (key: K, next: (K) -> V, K) -> V) {
 }

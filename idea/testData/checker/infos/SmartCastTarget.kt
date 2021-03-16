@@ -1,4 +1,4 @@
-// FIR_COMPARISON
+// FIR_IDENTICAL
 
 // See KT-15901
 

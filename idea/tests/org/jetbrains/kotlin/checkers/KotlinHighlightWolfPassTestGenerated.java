@@ -26,7 +26,7 @@ public class KotlinHighlightWolfPassTestGenerated extends AbstractKotlinHighligh
     }
 
     public void testAllFilesPresentInWolf() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/checker/wolf"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/checker/wolf"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
     }
 
     @TestMetadata("diagnostic.kt")

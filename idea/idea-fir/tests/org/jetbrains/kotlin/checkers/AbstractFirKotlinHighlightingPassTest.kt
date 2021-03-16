@@ -11,17 +11,26 @@ import org.jetbrains.kotlin.idea.test.withCustomCompilerOptions
 import org.jetbrains.kotlin.idea.withPossiblyDisabledDuplicatedFirSourceElementsException
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.uitls.IgnoreTests
+import org.jetbrains.kotlin.test.uitls.IgnoreTests.DIRECTIVES
+import org.jetbrains.kotlin.test.uitls.IgnoreTests.cleanUpIdenticalFirTestFile
+import org.jetbrains.kotlin.test.uitls.IgnoreTests.getFirTestFile
 import java.io.File
 
 abstract class AbstractFirKotlinHighlightingPassTest : AbstractKotlinHighlightingPassTest() {
+
     override val captureExceptions: Boolean = false
 
     override fun isFirPlugin(): Boolean = true
 
+    override fun fileName(): String = getFirTestFile(originalTestFile()).name
+
+    private fun originalTestFile(): File = testDataFile(super.fileName())
+
     override fun doTest(filePath: String) {
-        IgnoreTests.runTestIfEnabledByFileDirective(testDataFilePath(), IgnoreTests.DIRECTIVES.FIR_COMPARISON) {
+        IgnoreTests.runTestIfNotDisabledByFileDirective(originalTestFile().toPath(), DIRECTIVES.IGNORE_FIR) {
             myFixture.configureByFile(fileName())
             checkHighlighting(checkWarnings = false, checkInfos = false, checkWeakWarnings = false)
+            cleanUpIdenticalFirTestFile(originalTestFile())
         }
     }
 

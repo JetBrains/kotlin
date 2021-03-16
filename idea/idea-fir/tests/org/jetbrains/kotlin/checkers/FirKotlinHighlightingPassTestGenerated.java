@@ -33,7 +33,7 @@ public class FirKotlinHighlightingPassTestGenerated extends AbstractFirKotlinHig
         }
 
         public void testAllFilesPresentInChecker() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/checker"), Pattern.compile("^(.+)\\.kt$"), null, false);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/checker"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), false);
         }
 
         @TestMetadata("AnnotationOnFile.kt")
@@ -376,7 +376,7 @@ public class FirKotlinHighlightingPassTestGenerated extends AbstractFirKotlinHig
         }
 
         public void testAllFilesPresentInRegression() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/checker/regression"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/checker/regression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
         }
 
         @TestMetadata("AmbiguityOnLazyTypeComputation.kt")
@@ -619,7 +619,7 @@ public class FirKotlinHighlightingPassTestGenerated extends AbstractFirKotlinHig
         }
 
         public void testAllFilesPresentInRecovery() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/checker/recovery"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/checker/recovery"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
         }
 
         @TestMetadata("namelessMembers.kt")
@@ -647,7 +647,7 @@ public class FirKotlinHighlightingPassTestGenerated extends AbstractFirKotlinHig
         }
 
         public void testAllFilesPresentInRendering() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/checker/rendering"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/checker/rendering"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
         }
 
         @TestMetadata("TypeInferenceError.kt")
@@ -665,7 +665,7 @@ public class FirKotlinHighlightingPassTestGenerated extends AbstractFirKotlinHig
         }
 
         public void testAllFilesPresentInInfos() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/checker/infos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/checker/infos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
         }
 
         @TestMetadata("CapturedConstructorParameter.kt")
@@ -758,7 +758,7 @@ public class FirKotlinHighlightingPassTestGenerated extends AbstractFirKotlinHig
         }
 
         public void testAllFilesPresentInDiagnosticsMessage() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/checker/diagnosticsMessage"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/checker/diagnosticsMessage"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
         }
 
         @TestMetadata("fullPackageFQNameOnVisiblityError.kt")

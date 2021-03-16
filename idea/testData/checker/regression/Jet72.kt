@@ -1,4 +1,4 @@
-// FIR_COMPARISON
+// FIR_IDENTICAL
 
 // JET-72 Type inference doesn't work when iterating over ArrayList
 

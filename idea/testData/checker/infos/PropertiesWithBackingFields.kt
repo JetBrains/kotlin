@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 <info>abstract</info> class Test() {
     <info>abstract</info> val x : Int
     <info>abstract</info> val x1 : Int <info>get</info>
@@ -53,4 +54,3 @@ class TestPCParameters(w : Int, <warning>x</warning> : Int, val y : Int, var z :
   fun foo() = <error>x</error>
 
 }
-// FIR_COMPARISON

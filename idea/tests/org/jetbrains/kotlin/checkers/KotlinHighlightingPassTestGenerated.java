@@ -33,7 +33,7 @@ public class KotlinHighlightingPassTestGenerated extends AbstractKotlinHighlight
         }
 
         public void testAllFilesPresentInChecker() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/checker"), Pattern.compile("^(.+)\\.kt$"), null, false);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/checker"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), false);
         }
 
         @TestMetadata("AnnotationOnFile.kt")
@@ -376,7 +376,7 @@ public class KotlinHighlightingPassTestGenerated extends AbstractKotlinHighlight
         }
 
         public void testAllFilesPresentInRegression() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/checker/regression"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/checker/regression"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
         }
 
         @TestMetadata("AmbiguityOnLazyTypeComputation.kt")
@@ -619,7 +619,7 @@ public class KotlinHighlightingPassTestGenerated extends AbstractKotlinHighlight
         }
 
         public void testAllFilesPresentInRecovery() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/checker/recovery"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/checker/recovery"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
         }
 
         @TestMetadata("namelessMembers.kt")
@@ -647,7 +647,7 @@ public class KotlinHighlightingPassTestGenerated extends AbstractKotlinHighlight
         }
 
         public void testAllFilesPresentInRendering() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/checker/rendering"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/checker/rendering"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
         }
 
         @TestMetadata("TypeInferenceError.kt")
@@ -665,7 +665,7 @@ public class KotlinHighlightingPassTestGenerated extends AbstractKotlinHighlight
         }
 
         public void testAllFilesPresentInScripts() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/checker/scripts"), Pattern.compile("^(.+)\\.kts$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/checker/scripts"), Pattern.compile("^(.+)\\.kts$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
         }
 
         @TestMetadata("if.kts")
@@ -698,7 +698,7 @@ public class KotlinHighlightingPassTestGenerated extends AbstractKotlinHighlight
         }
 
         public void testAllFilesPresentInDuplicateJvmSignature() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/checker/duplicateJvmSignature"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/checker/duplicateJvmSignature"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
         }
 
         @TestMetadata("idea/testData/checker/duplicateJvmSignature/fields")
@@ -710,7 +710,7 @@ public class KotlinHighlightingPassTestGenerated extends AbstractKotlinHighlight
             }
 
             public void testAllFilesPresentInFields() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/checker/duplicateJvmSignature/fields"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/checker/duplicateJvmSignature/fields"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
             }
 
             @TestMetadata("classObjectCopiedFieldObject.kt")
@@ -728,7 +728,7 @@ public class KotlinHighlightingPassTestGenerated extends AbstractKotlinHighlight
             }
 
             public void testAllFilesPresentInFunctionAndProperty() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/checker/duplicateJvmSignature/functionAndProperty"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/checker/duplicateJvmSignature/functionAndProperty"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
             }
 
             @TestMetadata("ambiguous.kt")
@@ -791,7 +791,7 @@ public class KotlinHighlightingPassTestGenerated extends AbstractKotlinHighlight
             }
 
             public void testAllFilesPresentInTraitImpl() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/checker/duplicateJvmSignature/traitImpl"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/checker/duplicateJvmSignature/traitImpl"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
             }
 
             @TestMetadata("twoTraits.kt")
@@ -810,7 +810,7 @@ public class KotlinHighlightingPassTestGenerated extends AbstractKotlinHighlight
         }
 
         public void testAllFilesPresentInInfos() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/checker/infos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/checker/infos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
         }
 
         @TestMetadata("CapturedConstructorParameter.kt")
@@ -903,7 +903,7 @@ public class KotlinHighlightingPassTestGenerated extends AbstractKotlinHighlight
         }
 
         public void testAllFilesPresentInDiagnosticsMessage() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/checker/diagnosticsMessage"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/checker/diagnosticsMessage"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
         }
 
         @TestMetadata("fullPackageFQNameOnVisiblityError.kt")

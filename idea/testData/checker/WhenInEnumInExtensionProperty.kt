@@ -1,5 +1,4 @@
-// FIR_COMPARISON
-
+// FIR_IDENTICAL
 // KT-3750 When without else
 
 enum class A {
