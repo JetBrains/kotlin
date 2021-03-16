@@ -1,2 +1,2 @@
-libraryPaths = kotlin-native/backend.native/tests/build/kt43502
+libraryPaths = build/kt43502
 staticLibraries = kt43502.a
