@@ -13,7 +13,7 @@ class JitCompilationMeasurement(private val milliseconds: Long) : PerformanceMea
     override fun render(): String = "JIT time is $milliseconds ms"
 }
 
-class CompilerInitializationMeasurement(private val milliseconds: Long) : PerformanceMeasurement {
+class CompilerInitializationMeasurement(val milliseconds: Long) : PerformanceMeasurement {
     override fun render(): String = "INIT: Compiler initialized in $milliseconds ms"
 }
 
