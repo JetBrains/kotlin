@@ -34,8 +34,8 @@ object FirMemberFunctionsChecker : FirRegularClassChecker() {
         if (source.kind is FirFakeSourceElementKind) return
         // If multiple (potentially conflicting) modality modifiers are specified, not all modifiers are recorded at `status`.
         // So, our source of truth should be the full modifier list retrieved from the source.
-        val modifierList = with(FirModifierList) { source.getModifierList() }
-        val hasAbstractModifier = modifierList?.modifiers?.any { it.token == KtTokens.ABSTRACT_KEYWORD } == true
+        val modifierList = source.getModifierList()
+        val hasAbstractModifier = KtTokens.ABSTRACT_KEYWORD in modifierList
         val isAbstract = function.isAbstract || hasAbstractModifier
         if (isAbstract) {
             if (!containingDeclaration.canHaveAbstractDeclaration) {
@@ -49,7 +49,7 @@ object FirMemberFunctionsChecker : FirRegularClassChecker() {
             }
         }
         val isInsideExpectClass = isInsideExpectClass(containingDeclaration, context)
-        val hasOpenModifier = modifierList?.modifiers?.any { it.token == KtTokens.OPEN_KEYWORD } == true
+        val hasOpenModifier = KtTokens.OPEN_KEYWORD in modifierList
         if (!function.hasBody) {
             if (containingDeclaration.isInterface) {
                 if (Visibilities.isPrivate(function.visibility)) {

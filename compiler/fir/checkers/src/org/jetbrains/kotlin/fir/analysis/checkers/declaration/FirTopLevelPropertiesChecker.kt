@@ -26,7 +26,7 @@ object FirTopLevelPropertiesChecker : FirFileChecker() {
         if (source.kind is FirFakeSourceElementKind) return
         // If multiple (potentially conflicting) modality modifiers are specified, not all modifiers are recorded at `status`.
         // So, our source of truth should be the full modifier list retrieved from the source.
-        val modifierList = with(FirModifierList) { source.getModifierList() }
+        val modifierList = source.getModifierList()
 
         checkPropertyInitializer(
             containingClass = null,

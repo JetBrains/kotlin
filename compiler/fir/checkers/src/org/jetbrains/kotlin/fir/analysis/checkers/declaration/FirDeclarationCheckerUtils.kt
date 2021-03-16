@@ -85,7 +85,7 @@ internal fun checkPropertyInitializer(
     context: CheckerContext
 ) {
     val inInterface = containingClass?.isInterface == true
-    val hasAbstractModifier = modifierList?.modifiers?.any { it.token == KtTokens.ABSTRACT_KEYWORD } == true
+    val hasAbstractModifier = KtTokens.ABSTRACT_KEYWORD in modifierList
     val isAbstract = property.isAbstract || hasAbstractModifier
     if (isAbstract) {
         if (property.initializer == null && property.delegate == null && property.returnTypeRef is FirImplicitTypeRef) {
@@ -184,6 +184,5 @@ internal val FirClass<*>.canHaveOpenMembers: Boolean get() = modality() != Modal
 internal fun FirRegularClass.isInlineOrValueClass(): Boolean {
     if (this.classKind != ClassKind.CLASS) return false
 
-    val modifierList = with(FirModifierList) { source.getModifierList() }
-    return isInline || modifierList?.modifiers?.any { it.token == KtTokens.VALUE_KEYWORD } == true
+    return isInline || hasModifier(KtTokens.VALUE_KEYWORD)
 }

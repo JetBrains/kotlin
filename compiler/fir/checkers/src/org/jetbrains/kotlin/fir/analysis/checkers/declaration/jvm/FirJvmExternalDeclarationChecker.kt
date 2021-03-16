@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirMemberDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirModifierList
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.getModifier
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.getModifierList
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
@@ -29,8 +31,7 @@ object FirJvmExternalDeclarationChecker : FirMemberDeclarationChecker() {
                 is FirRegularClass -> "class"
                 else -> "non-function declaration"
             }
-            val modifierList = with(FirModifierList) { source.getModifierList() }
-            val externalModifier = modifierList?.modifiers?.firstOrNull { it.token == KtTokens.EXTERNAL_KEYWORD }
+            val externalModifier = declaration.getModifier(KtTokens.EXTERNAL_KEYWORD)
             externalModifier?.let {
                 reporter.reportOn(it.source, FirErrors.WRONG_MODIFIER_TARGET, it.token, target, context)
             }

@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirModifierList.Companion.getModifierList
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
@@ -21,8 +20,7 @@ object FirConstPropertyChecker : FirPropertyChecker() {
         if (!declaration.isConst) return
 
         if (declaration.isVar) {
-            val modifierList = with(FirModifierList) { declaration.source.getModifierList() }
-            val constModifier = modifierList?.modifiers?.firstOrNull { it.token == KtTokens.CONST_KEYWORD }
+            val constModifier = declaration.getModifier(KtTokens.CONST_KEYWORD)
             constModifier?.let {
                 reporter.reportOn(it.source, FirErrors.WRONG_MODIFIER_TARGET, it.token, "vars", context)
             }

@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirRealSourceElementKind
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirModifierList.Companion.getModifierList
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
@@ -29,7 +28,7 @@ object FirOpenMemberChecker : FirClassChecker() {
                 memberDeclaration is FirConstructor
             ) continue
             val source = memberDeclaration.source ?: continue
-            if (memberDeclaration.isOpen || (source.hasOpenModifierInSource && source.shouldReportOpenFromSource)) {
+            if (memberDeclaration.isOpen || memberDeclaration.hasModifier(KtTokens.OPEN_KEYWORD) && source.shouldReportOpenFromSource) {
                 if (declaration.classKind == ClassKind.OBJECT) {
                     reporter.reportOn(source, FirErrors.NON_FINAL_MEMBER_IN_OBJECT, context)
                 } else {
@@ -39,7 +38,6 @@ object FirOpenMemberChecker : FirClassChecker() {
         }
     }
 
-    private val FirSourceElement.hasOpenModifierInSource: Boolean get() = getModifierList()?.modifiers?.any { it.token == KtTokens.OPEN_KEYWORD } == true
     private val FirSourceElement.shouldReportOpenFromSource: Boolean
         get() = when (kind) {
             FirRealSourceElementKind,

@@ -173,8 +173,7 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
     private fun FirValueParameter.isNotFinalReadOnly(primaryConstructorProperty: FirProperty?): Boolean {
         if (primaryConstructorProperty == null) return true
 
-        val modifierList = with(FirModifierList) { source.getModifierList() }
-        val isOpen = modifierList?.modifiers?.any { it.token == KtTokens.OPEN_KEYWORD } == true
+        val isOpen = hasModifier(KtTokens.OPEN_KEYWORD)
 
         return isVararg || !primaryConstructorProperty.isVal || isOpen
     }
