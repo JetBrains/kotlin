@@ -1272,10 +1272,10 @@ class ControlFlowGraphBuilder {
                     // (4)... in catch, i.e., re-throw.
                     exitTargetsForTry.top()
                 } else {
-                    // (4)... in try-main. We already have:
-                    // edges from try-main enter node to each catch clause enter node and
-                    // edges from catch clause enter node to exit target (w/ UncaughtExceptionPath)
-                    return
+                    // (4)... in try-main. Route to exit of try main block.
+                    // We already have edges from the exit of try main block to each catch clause.
+                    // This edge makes the remaining part of try main block, e.g., following `when` branches, marked as dead.
+                    tryMainExitNodes.top()
                 }
             }
             // (3)... within finally.

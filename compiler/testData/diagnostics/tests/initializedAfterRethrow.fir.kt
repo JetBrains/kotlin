@@ -67,7 +67,7 @@ object RethrowInCatchWithFinally {
 }
 
 object InnerTryWithCatch {
-    private val p: String
+    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>private val p: String<!>
 
     init {
         try {

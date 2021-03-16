@@ -40,7 +40,7 @@ fun conditionalThrowInTry_smartcastInTry(a: A) {
         if (a !is B) {
             throw AssertionError()
         }
-        <!INAPPLICABLE_CANDIDATE!>takeB<!>(a)
+        takeB(a)
     } catch (e: Throwable) {}
 }
 
