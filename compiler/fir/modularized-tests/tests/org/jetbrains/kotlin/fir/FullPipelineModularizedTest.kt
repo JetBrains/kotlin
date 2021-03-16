@@ -28,6 +28,7 @@ class FullPipelineModularizedTest : AbstractModularizedTest() {
 
     private data class CumulativeTime(
         val gcInfo: Map<String, GCInfo>,
+        val init: Long,
         val analysis: Long,
         val translation: Long,
         val lowering: Long,
@@ -35,13 +36,14 @@ class FullPipelineModularizedTest : AbstractModularizedTest() {
         val files: Int,
         val lines: Int
     ) {
-        constructor() : this(emptyMap(), 0, 0, 0, 0, 0, 0)
+        constructor() : this(emptyMap(), 0, 0, 0, 0, 0, 0, 0)
 
         operator fun plus(other: CumulativeTime): CumulativeTime {
             return CumulativeTime(
                 (gcInfo.values + other.gcInfo.values).groupingBy { it.name }.reduce { key, accumulator, element ->
                     GCInfo(key, accumulator.gcTime + element.gcTime, accumulator.collections + element.collections)
                 },
+                init + other.init,
                 analysis + other.analysis,
                 translation + other.translation,
                 lowering + other.lowering,
@@ -51,7 +53,7 @@ class FullPipelineModularizedTest : AbstractModularizedTest() {
             )
         }
 
-        fun totalTime() = analysis + translation + lowering + generation
+        fun totalTime() = init + analysis + translation + lowering + generation
     }
 
     private lateinit var totalPassResult: CumulativeTime
@@ -126,6 +128,7 @@ class FullPipelineModularizedTest : AbstractModularizedTest() {
                     linePerSecondCell(lines, timeMs, timeUnit = MS)
                 }
             }
+            phase("Init", total.init, total.files, total.lines)
             phase("Analysis", total.analysis, total.files, total.lines)
             phase("Translation", total.translation, total.files, total.lines)
             phase("Lowering", total.lowering, total.files, total.lines)
@@ -262,10 +265,12 @@ class FullPipelineModularizedTest : AbstractModularizedTest() {
                 .associate { it.garbageCollectionKind to GCInfo(it.garbageCollectionKind, it.milliseconds, it.count) }
 
             val analysisMeasurement = measurements.filterIsInstance<CodeAnalysisMeasurement>().firstOrNull()
+            val initMeasurement = measurements.filterIsInstance<CompilerInitializationMeasurement>().firstOrNull()
             val irMeasurements = measurements.filterIsInstance<IRMeasurement>()
 
             return CumulativeTime(
                 gcInfo,
+                initMeasurement?.milliseconds ?: 0,
                 analysisMeasurement?.milliseconds ?: 0,
                 irMeasurements.firstOrNull { it.kind == IRMeasurement.Kind.TRANSLATION }?.milliseconds ?: 0,
                 irMeasurements.firstOrNull { it.kind == IRMeasurement.Kind.LOWERING }?.milliseconds ?: 0,
