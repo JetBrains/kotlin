@@ -36,6 +36,7 @@
          <trust group="org.jetbrains.kotlin" name="kotlin-test-js-runner"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-util-io"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-util-klib"/>
+         <trust file="kotlin-native-prebuilt-.*" regex="true"/>
       </trusted-artifacts>
    </configuration>
    <components>
