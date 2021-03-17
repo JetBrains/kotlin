@@ -7,6 +7,35 @@
          <trust version="202.7660.26" file="ivy-202.7660.26.xml"/>
          <trust version="202.7660.3" file="ivy-202.7660.3.xml"/>
          <trust version="193.6494.7" file="ivy-193.6494.7.xml"/>
+         <trust group="org.jetbrains.kotlin" name="kotlin-android-extensions"/>
+         <trust group="org.jetbrains.kotlin" name="kotlin-annotation-processing-gradle"/>
+         <trust group="org.jetbrains.kotlin" name="kotlin-build-common"/>
+         <trust group="org.jetbrains.kotlin" name="kotlin-compiler-embeddable"/>
+         <trust group="org.jetbrains.kotlin" name="kotlin-compiler-runner"/>
+         <trust group="org.jetbrains.kotlin" name="kotlin-daemon-client"/>
+         <trust group="org.jetbrains.kotlin" name="kotlin-daemon-embeddable"/>
+         <trust group="org.jetbrains.kotlin" name="kotlin-gradle-plugin"/>
+         <trust group="org.jetbrains.kotlin" name="kotlin-gradle-plugin-api"/>
+         <trust group="org.jetbrains.kotlin" name="kotlin-gradle-plugin-model"/>
+         <trust group="org.jetbrains.kotlin" name="kotlin-klib-commonizer-api"/>
+         <trust group="org.jetbrains.kotlin" name="kotlin-klib-commonizer-embeddable"/>
+         <trust group="org.jetbrains.kotlin" name="kotlin-native-utils"/>
+         <trust group="org.jetbrains.kotlin" name="kotlin-reflect"/>
+         <trust group="org.jetbrains.kotlin" name="kotlin-sam-with-receiver"/>
+         <trust group="org.jetbrains.kotlin" name="kotlin-script-runtime"/>
+         <trust group="org.jetbrains.kotlin" name="kotlin-scripting-common"/>
+         <trust group="org.jetbrains.kotlin" name="kotlin-scripting-compiler-embeddable"/>
+         <trust group="org.jetbrains.kotlin" name="kotlin-scripting-compiler-impl-embeddable"/>
+         <trust group="org.jetbrains.kotlin" name="kotlin-scripting-jvm"/>
+         <trust group="org.jetbrains.kotlin" name="kotlin-serialization"/>
+         <trust group="org.jetbrains.kotlin" name="kotlin-serialization-unshaded"/>
+         <trust group="org.jetbrains.kotlin" name="kotlin-stdlib"/>
+         <trust group="org.jetbrains.kotlin" name="kotlin-stdlib-common"/>
+         <trust group="org.jetbrains.kotlin" name="kotlin-stdlib-js"/>
+         <trust group="org.jetbrains.kotlin" name="kotlin-test-js"/>
+         <trust group="org.jetbrains.kotlin" name="kotlin-test-js-runner"/>
+         <trust group="org.jetbrains.kotlin" name="kotlin-util-io"/>
+         <trust group="org.jetbrains.kotlin" name="kotlin-util-klib"/>
       </trusted-artifacts>
    </configuration>
    <components>
