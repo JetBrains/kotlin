@@ -57,6 +57,8 @@ class CapturedVarsOptimizationMethodTransformer : MethodTransformer() {
         override fun onUseAsTainted() {
             hazard = true
         }
+
+        fun canRewrite() = !hazard && initCallInsn != null
     }
 
     private class Transformer(private val internalClassName: String, private val methodNode: MethodNode) {
@@ -72,7 +74,7 @@ class CapturedVarsOptimizationMethodTransformer : MethodTransformer() {
             assignLocalVars(frames)
 
             for (refValue in refValues) {
-                if (!refValue.hazard) {
+                if (refValue.canRewrite()) {
                     rewriteRefValue(refValue)
                 }
             }
