@@ -210,8 +210,10 @@ class BasicAssertionsTest {
     @Test
     fun testAssertIsOfType() {
         val s: Any = "test"
-        assertIs<String>(s)
+        val result = assertIs<String>(s)
         assertEquals(4, s.length)
+        assertEquals(s, result)
+        assertEquals(4, result.length)
     }
 
     @OptIn(ExperimentalStdlibApi::class)
