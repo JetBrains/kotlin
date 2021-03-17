@@ -174,7 +174,7 @@ internal interface ContextUtils : RuntimeAware {
      */
     val IrFunction.llvmFunction: LLVMValueRef
         get() = llvmFunctionOrNull
-                ?: error("$name in $file/${parent.fqNameForIrSerialization}")
+                ?: error("$name in ${file.name}/${parent.fqNameForIrSerialization}")
 
     val IrFunction.llvmFunctionOrNull: LLVMValueRef?
         get() {
