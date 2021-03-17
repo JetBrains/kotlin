@@ -265,7 +265,7 @@ open class IrFileSerializer(
         return protoIdSignature(idSig)
     }
 
-    private fun protoIdSignature(idSig: IdSignature): Int {
+    fun protoIdSignature(idSig: IdSignature): Int {
         return protoIdSignatureMap.getOrPut(idSig) {
             protoIdSignatureArray.add(serializeIdSignature(idSig))
             protoIdSignatureArray.size - 1

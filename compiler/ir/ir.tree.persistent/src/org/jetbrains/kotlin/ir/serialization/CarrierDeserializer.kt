@@ -61,9 +61,8 @@ class CarrierDeserializer(
     }
 
     private val signatureToIndex = mutableMapOf<IdSignature, Int>().also { map ->
-        IrArrayMemoryReader(serializedCarriers.signatures).forEachIndexed { i, bytes ->
-            val signatureProto = ProtoIdSignature.parseFrom(bytes, ExtensionRegistryLite.newInstance())
-            val idSig = declarationDeserializer.symbolDeserializer.deserializeSignatureData(signatureProto)
+        IrIntArrayMemoryReader(serializedCarriers.signatures).array.forEachIndexed { i, index ->
+            val idSig = declarationDeserializer.symbolDeserializer.deserializeIdSignature(index)
             map[idSig] = i
         }
     }

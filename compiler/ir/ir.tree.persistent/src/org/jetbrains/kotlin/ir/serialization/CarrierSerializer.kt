@@ -65,14 +65,14 @@ private class CarrierSerializer(val fileSerializer: IrFileSerializer, bodies: Li
             ?: error("")
     }
 
-    val signatures = mutableListOf<ByteArray>()
+    val signatures = mutableListOf<Int>()
     val declarationCarriers = mutableListOf<ByteArray>()
     val bodyCarriers = mutableListOf<ByteArray>()
     val removedOn = mutableListOf<Int>()
 
     fun build(): SerializedCarriers {
         return SerializedCarriers(
-            IrMemoryArrayWriter(signatures).writeIntoMemory(),
+            IrMemoryIntArrayWriter(signatures).writeIntoMemory(),
             IrMemoryArrayWriter(declarationCarriers).writeIntoMemory(),
             IrMemoryArrayWriter(bodyCarriers).writeIntoMemory(),
             IrMemoryIntArrayWriter(removedOn).writeIntoMemory(),
@@ -84,7 +84,7 @@ private class CarrierSerializer(val fileSerializer: IrFileSerializer, bodies: Li
             if (declaration.values == null) return
             // TODO proper signature calculations?
             val signature = declaration.symbol.signature ?: return // TODO
-            signatures += fileSerializer.serializeIdSignature(signature).toByteArray()
+            signatures += fileSerializer.protoIdSignature(signature)
             declarationCarriers += serializeCarriers(declaration)
             removedOn += declaration.removedOn
         } // else -> TODO?
