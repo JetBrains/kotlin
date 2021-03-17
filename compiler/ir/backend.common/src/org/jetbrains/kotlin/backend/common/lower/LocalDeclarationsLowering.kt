@@ -887,7 +887,6 @@ class LocalDeclarationsLowering(
 
         private fun collectLocalDeclarations() {
             val enclosingFile = container.file
-            var enclosingBlock:IrReturnableBlock? = null
             val enclosingClass = run {
                 var currentParent = container as? IrClass ?: container.parent
                 while (currentParent is IrDeclaration && currentParent !is IrClass) {
@@ -904,6 +903,8 @@ class LocalDeclarationsLowering(
 
                 fun withInline(isInline: Boolean): Data =
                     if (isInline && !isInInlineFunction) Data(currentClass, true) else this
+
+                fun withScope(scope: ScopeWithCounter?) = scope?.run { Data(scope, isInInlineFunction) } ?: this
             }
 
             irElement.accept(object : IrElementVisitor<Unit, Data> {
@@ -926,8 +927,6 @@ class LocalDeclarationsLowering(
                     if (declaration.visibility == DescriptorVisibilities.LOCAL) {
                         val enclosingScope = data.currentClass
                             ?: enclosingClass?.scopeWithCounter
-                            // Return block might provide information about original location of inlined function.
-                            ?: enclosingBlock?.inlineFunctionSymbol?.owner?.file?.scopeWithCounter
                             // File is required for K/N because file declarations are not split by classes.
                             ?: enclosingFile.scopeWithCounter
                         val index =
@@ -962,10 +961,8 @@ class LocalDeclarationsLowering(
                             generateSequence(container) { it.parent as? IrDeclaration }.any { it is IrFunction && it.isInline }
 
                 override fun visitBlock(expression: IrBlock, data: Data) {
-                    val oldEnclosingBlock = enclosingBlock
-                    enclosingBlock = expression as? IrReturnableBlock ?: enclosingBlock
-                    super.visitBlock(expression, data)
-                    enclosingBlock = oldEnclosingBlock
+                    val inlineFunction = (expression as? IrReturnableBlock)?.inlineFunctionSymbol?.owner
+                    super.visitBlock(expression, data.withScope(inlineFunction?.file?.scopeWithCounter))
                 }
             }, Data(null, false))
         }
