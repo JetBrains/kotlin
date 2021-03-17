@@ -56,5 +56,5 @@ export function formatMessage() {
         formattedArguments.push(tcEscape(param));
     });
     formattedArguments.unshift(tcMessage);
-    return format(formattedArguments);
+    return format(...formattedArguments);
 }
