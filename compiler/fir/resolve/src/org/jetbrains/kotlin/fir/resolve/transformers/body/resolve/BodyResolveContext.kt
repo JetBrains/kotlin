@@ -606,7 +606,11 @@ class BodyResolveContext(
         f: () -> T
     ): T {
         if (accessor is FirDefaultPropertyAccessor || accessor.body == null) {
-            return withContainer(accessor, f)
+            return if (accessor.isGetter) withContainer(accessor, f)
+            else withTowerDataCleanup {
+                addLocalScope(FirLocalScope())
+                withContainer(accessor, f)
+            }
         }
         return withTowerDataCleanup {
             val receiverTypeRef = property.receiverTypeRef

@@ -1226,7 +1226,9 @@ class Fir2IrDeclarationStorage(
 
     private fun getIrVariableSymbol(firVariable: FirVariable<*>): IrVariableSymbol {
         return localStorage.getVariable(firVariable)?.symbol
-            ?: throw IllegalArgumentException("Cannot find variable ${firVariable.render()} in local storage")
+            ?: run {
+                throw IllegalArgumentException("Cannot find variable ${firVariable.render()} in local storage")
+            }
     }
 
     fun getIrValueSymbol(firVariableSymbol: FirVariableSymbol<*>): IrSymbol {

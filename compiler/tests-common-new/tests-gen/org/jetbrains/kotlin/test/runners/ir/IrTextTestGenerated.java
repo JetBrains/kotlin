@@ -2111,6 +2111,12 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
         }
 
         @Test
+        @TestMetadata("ArrayMap.kt")
+        public void testArrayMap() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/ArrayMap.kt");
+        }
+
+        @Test
         @TestMetadata("candidateSymbol.kt")
         public void testCandidateSymbol() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/candidateSymbol.kt");
