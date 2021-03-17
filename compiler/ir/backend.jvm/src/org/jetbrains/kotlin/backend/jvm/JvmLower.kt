@@ -344,6 +344,7 @@ private val jvmFilePhases = listOf(
     remapObjectFieldAccesses,
     anonymousObjectSuperConstructorPhase,
     tailrecPhase,
+    makePatchParentsPhase(1),
 
     jvmStandardLibraryBuiltInsPhase,
 
@@ -352,7 +353,7 @@ private val jvmFilePhases = listOf(
     collectionStubMethodLowering,
     jvmInlineClassPhase,
 
-    makePatchParentsPhase(1),
+    makePatchParentsPhase(2),
 
     enumWhenPhase,
     singletonReferencesPhase,
@@ -390,7 +391,7 @@ private val jvmFilePhases = listOf(
     innerClassesMemberBodyPhase,
     innerClassConstructorCallsPhase,
 
-    makePatchParentsPhase(2),
+    makePatchParentsPhase(3),
 
     enumClassPhase,
     objectClassPhase,
@@ -415,7 +416,7 @@ private val jvmFilePhases = listOf(
     renameFieldsPhase,
     fakeInliningLocalVariablesLowering,
 
-    makePatchParentsPhase(3)
+    makePatchParentsPhase(4)
 )
 
 private val jvmLoweringPhases = NamedCompilerPhase(

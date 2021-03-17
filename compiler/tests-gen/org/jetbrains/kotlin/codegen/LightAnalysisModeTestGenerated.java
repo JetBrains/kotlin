@@ -9803,6 +9803,21 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/defaultArguments/inheritedFromInterfaceViaAbstractSuperclass.kt");
         }
 
+        @TestMetadata("kt36853.kt")
+        public void testKt36853() throws Exception {
+            runTest("compiler/testData/codegen/box/defaultArguments/kt36853.kt");
+        }
+
+        @TestMetadata("kt36853_nestedObject.kt")
+        public void testKt36853_nestedObject() throws Exception {
+            runTest("compiler/testData/codegen/box/defaultArguments/kt36853_nestedObject.kt");
+        }
+
+        @TestMetadata("kt36853a.kt")
+        public void testKt36853a() throws Exception {
+            runTest("compiler/testData/codegen/box/defaultArguments/kt36853a.kt");
+        }
+
         @TestMetadata("kt36972_companion.kt")
         public void testKt36972_companion() throws Exception {
             runTest("compiler/testData/codegen/box/defaultArguments/kt36972_companion.kt");
@@ -15548,6 +15563,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/inlineClasses/funInterface/argumentResult.kt");
             }
 
+            @TestMetadata("returnIC.kt")
+            public void ignoreReturnIC() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/funInterface/returnIC.kt");
+            }
+
             @TestMetadata("returnResult.kt")
             public void ignoreReturnResult() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/funInterface/returnResult.kt");
@@ -15574,11 +15594,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestMetadata("javaSamReturnResult.kt")
             public void testJavaSamReturnResult() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/funInterface/javaSamReturnResult.kt");
-            }
-
-            @TestMetadata("returnIC.kt")
-            public void testReturnIC() throws Exception {
-                runTest("compiler/testData/codegen/box/inlineClasses/funInterface/returnIC.kt");
             }
         }
 
