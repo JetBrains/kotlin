@@ -16,6 +16,7 @@ fun KotlinToolingMetadata.toJsonString(): String {
 
 internal fun KotlinToolingMetadata.toJsonObject(): JsonObject {
     return JsonObject().apply {
+        addProperty("schemaVersion", schemaVersion)
         addProperty("buildSystem", buildSystem)
         addProperty("buildSystemVersion", buildSystemVersion)
         addProperty("buildPlugin", buildPlugin)
@@ -118,6 +119,7 @@ fun KotlinToolingMetadata.Companion.parseJsonOrThrow(value: String): KotlinTooli
 
 private fun JsonObject.toKotlinToolingMetadataOrThrow(): KotlinToolingMetadata {
     return KotlinToolingMetadata(
+        schemaVersion = getOrThrow("schemaVersion").asString,
         buildSystem = getOrThrow("buildSystem").asString,
         buildSystemVersion = getOrThrow("buildSystemVersion").asString,
         buildPlugin = getOrThrow("buildPlugin").asString,

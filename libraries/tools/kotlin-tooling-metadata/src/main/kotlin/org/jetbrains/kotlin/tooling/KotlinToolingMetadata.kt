@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.tooling
 
 
 data class KotlinToolingMetadata(
+    val schemaVersion: String,
     /**
      * Build System used (e.g. Gradle, Maven, ...)
      */
@@ -66,7 +67,9 @@ data class KotlinToolingMetadata(
         )
     }
 
-    companion object
+    companion object {
+        const val currentSchemaVersion: String = "1.0.0"
+    }
 }
 
 

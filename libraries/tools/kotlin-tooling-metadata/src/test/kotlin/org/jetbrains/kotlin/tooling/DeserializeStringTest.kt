@@ -21,9 +21,10 @@ import kotlin.test.assertNull
 class DeserializeStringTest {
 
     @Test
-    fun sample1() {
+    fun `schemaVersion 1 0 0`() {
         @Language("JSON") val json = """
         {
+            "schemaVersion": "1.0.0",
             "buildSystem": "Gradle",
             "buildSystemVersion": "6.7",
             "buildPlugin": "org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginWrapper",
@@ -83,6 +84,7 @@ class DeserializeStringTest {
             """.trimIndent()
 
         val metadata = KotlinToolingMetadata.parseJsonOrThrow(json)
+        assertEquals("1.0.0", metadata.schemaVersion)
         assertEquals("Gradle", metadata.buildSystem)
         assertEquals("6.7", metadata.buildSystemVersion)
         assertEquals("org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginWrapper", metadata.buildPlugin)

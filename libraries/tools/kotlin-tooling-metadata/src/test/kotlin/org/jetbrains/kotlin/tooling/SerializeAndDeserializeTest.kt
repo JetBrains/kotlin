@@ -84,6 +84,7 @@ private fun assertDeserializedMatchesOrigin(origin: KotlinToolingMetadata) {
 
 private fun defaultKotlinToolingMetadata(): KotlinToolingMetadata {
     return KotlinToolingMetadata(
+        schemaVersion = KotlinToolingMetadata.currentSchemaVersion,
         buildSystem = "generic build system",
         buildSystemVersion = "v1.0 (build system)",
         buildPlugin = "generic build plugin",

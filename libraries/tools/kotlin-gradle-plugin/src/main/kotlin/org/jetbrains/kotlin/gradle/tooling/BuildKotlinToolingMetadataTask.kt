@@ -77,6 +77,7 @@ open class BuildKotlinToolingMetadataTask : DefaultTask() {
 
 private fun KotlinProjectExtension.getKotlinToolingMetadata(): KotlinToolingMetadata {
     return KotlinToolingMetadata(
+        schemaVersion = KotlinToolingMetadata.currentSchemaVersion,
         buildSystem = "Gradle",
         buildSystemVersion = project.gradle.gradleVersion,
         buildPlugin = project.plugins.withType(KotlinBasePluginWrapper::class.java).joinToString(";") { it.javaClass.canonicalName },
