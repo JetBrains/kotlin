@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isInline
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOnWithSuppression
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
@@ -36,8 +36,8 @@ object FirFunctionParameterChecker : FirFunctionChecker() {
 
             val diagnostic = returnTypeRef.diagnostic
             if (diagnostic is ConeSimpleDiagnostic && diagnostic.kind == DiagnosticKind.ValueParameterWithNoTypeAnnotation) {
-                reporter.reportOn(
-                    valueParameter.source,
+                reporter.reportOnWithSuppression(
+                    valueParameter,
                     FirErrors.VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION,
                     context
                 )
@@ -49,7 +49,7 @@ object FirFunctionParameterChecker : FirFunctionChecker() {
         val varargParameters = function.valueParameters.filter { it.isVararg }
         if (varargParameters.size > 1) {
             for (parameter in varargParameters) {
-                reporter.reportOn(parameter.source ?: continue, FirErrors.MULTIPLE_VARARG_PARAMETERS, context)
+                reporter.reportOnWithSuppression(parameter, FirErrors.MULTIPLE_VARARG_PARAMETERS, context)
             }
         }
 
@@ -61,8 +61,8 @@ object FirFunctionParameterChecker : FirFunctionChecker() {
             // Note: comparing with FE1.0, we skip checking if the type is not primitive because primitive types are not inline. That
             // is any primitive values are already allowed by the inline check.
             ) {
-                reporter.reportOn(
-                    varargParameter.source ?: continue,
+                reporter.reportOnWithSuppression(
+                    varargParameter,
                     FirErrors.FORBIDDEN_VARARG_PARAMETER_TYPE,
                     varargParameterType,
                     context
