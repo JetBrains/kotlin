@@ -183,9 +183,6 @@ import org.jetbrains.kotlin.search.AbstractAnnotatedMembersSearchTest
 import org.jetbrains.kotlin.search.AbstractInheritorsSearchTest
 import org.jetbrains.kotlin.shortenRefs.AbstractShortenRefsTest
 import org.jetbrains.kotlin.test.TargetBackend
-import org.jetbrains.kotlin.tools.projectWizard.cli.AbstractBuildFileGenerationTest
-import org.jetbrains.kotlinx.atomicfu.AbstractBasicAtomicfuTest
-import org.jetbrains.kotlinx.atomicfu.AbstractLocksAtomicfuTest
 import org.jetbrains.kotlin.tools.projectWizard.cli.AbstractProjectTemplateBuildFileGenerationTest
 import org.jetbrains.kotlin.tools.projectWizard.cli.AbstractYamlBuildFileGenerationTest
 import org.jetbrains.kotlin.tools.projectWizard.wizard.AbstractProjectTemplateNewWizardProjectImportTest
@@ -1739,18 +1736,6 @@ fun main(args: Array<String>) {
 
             testClass<AbstractSerializationIrBytecodeListingTest> {
                 model("codegen")
-            }
-        }
-
-        testGroup(
-            "plugins/atomicfu/atomicfu-compiler/test",
-            "plugins/atomicfu/atomicfu-compiler/testData"
-        ) {
-            testClass<AbstractBasicAtomicfuTest> {
-                model("basic")
-            }
-            testClass<AbstractLocksAtomicfuTest> {
-                model("locks")
             }
         }
 

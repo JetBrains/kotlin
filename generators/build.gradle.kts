@@ -70,7 +70,6 @@ dependencies {
     testCompile(projectTests(":kotlin-sam-with-receiver-compiler-plugin"))
     testCompile(projectTests(":kotlinx-serialization-compiler-plugin"))
     testCompile(projectTests(":plugins:fir:fir-plugin-prototype"))
-    testCompile(projectTests(":kotlinx-atomicfu-compiler-plugin"))
     testCompile(projectTests(":idea:jvm-debugger:jvm-debugger-test"))
     testCompile(projectTests(":generators:test-generator"))
     testCompile(projectTests(":idea"))
