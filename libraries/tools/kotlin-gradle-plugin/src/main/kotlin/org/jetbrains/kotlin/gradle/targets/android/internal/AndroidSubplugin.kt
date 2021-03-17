@@ -57,7 +57,7 @@ class AndroidExtensionsSubpluginIndicator @Inject internal constructor(private v
             val name = configuration.name
             if (name != "implementation" && name != "compile") return@all
 
-            val androidPluginVersion = loadAndroidPluginVersion() ?: return@all
+            androidPluginVersion ?: return@all
             val requiredConfigurationName = when {
                 compareVersionNumbers(androidPluginVersion, "2.5") > 0 -> "implementation"
                 else -> "compile"
