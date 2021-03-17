@@ -720,10 +720,9 @@ internal open class KotlinAndroidPlugin(
         ): AbstractAndroidProjectHandler {
             val tasksProvider = AndroidTasksProvider(androidTarget.targetName)
 
-            val version = loadAndroidPluginVersion()
-            if (version != null) {
+            if (androidPluginVersion != null) {
                 val minimalVersion = "3.0.0"
-                if (compareVersionNumbers(version, minimalVersion) < 0) {
+                if (compareVersionNumbers(androidPluginVersion, minimalVersion) < 0) {
                     throw IllegalStateException("Kotlin: Unsupported version of com.android.tools.build:gradle plugin: version $minimalVersion or higher should be used with kotlin-android plugin")
                 }
             }
@@ -1075,14 +1074,14 @@ internal fun Task.registerSubpluginOptionsAsInputs(subpluginId: String, subplugi
 }
 
 //copied from BasePlugin.getLocalVersion
-internal fun loadAndroidPluginVersion(): String? {
+internal val androidPluginVersion by lazy {
     try {
         val clazz = BasePlugin::class.java
         val className = clazz.simpleName + ".class"
         val classPath = clazz.getResource(className).toString()
         if (!classPath.startsWith("jar")) {
             // Class not from JAR, unlikely
-            return null
+            return@lazy null
         }
         val manifestPath = classPath.substring(0, classPath.lastIndexOf("!") + 1) + "/META-INF/MANIFEST.MF"
 
@@ -1091,9 +1090,9 @@ internal fun loadAndroidPluginVersion(): String? {
         val jarInputStream = jarConnection.inputStream
         val attr = Manifest(jarInputStream).mainAttributes
         jarInputStream.close()
-        return attr.getValue("Plugin-Version")
+        return@lazy attr.getValue("Plugin-Version")
     } catch (t: Throwable) {
-        return null
+        return@lazy null
     }
 }
 
