@@ -39,6 +39,7 @@
          <trust file="kotlin-native-prebuilt-.*" regex="true"/>
          <trust file=".*-javadoc[.]jar" regex="true"/>
          <trust file=".*-sources[.]jar" regex="true"/>
+         <trust file=".*[.]pom" regex="true"/>
       </trusted-artifacts>
    </configuration>
    <components>
