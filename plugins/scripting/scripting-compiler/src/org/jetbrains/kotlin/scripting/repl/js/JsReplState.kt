@@ -24,7 +24,7 @@ class JsReplCompilerStageHistory(lock: ReentrantReadWriteLock) : BasicReplStageH
 class JsReplCompilerState(
     override val lock: ReentrantReadWriteLock,
     val nameTables: NameTables,
-    val dependencies: List<ModuleDescriptor>,
+    val dependencies: Collection<ModuleDescriptor>,
     val analyzerState: ReplCodeAnalyzerBase.ResettableAnalyzerState,
     val symbolTable: SymbolTable
 ) : IReplStageState<JsReplCompilationHistoryItem> {
