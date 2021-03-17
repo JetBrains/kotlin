@@ -231,7 +231,7 @@ private object CommonizableTargets {
     val targetA = when {
         os.isMacOsX -> TargetSubstitution("macosX64", isCompilable = true, isExecutable = true)
         os.isLinux -> TargetSubstitution("linuxX64", isCompilable = true, isExecutable = true)
-        os.isWindows -> TargetSubstitution("mingwX64", isCompilable = true, isExecutable = true)
+        os.isWindows -> TargetSubstitution("mingwX64", isCompilable = true, isExecutable = false)
         else -> fail("Unsupported os: ${os.name}")
     }
 
