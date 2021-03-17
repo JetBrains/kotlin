@@ -10,9 +10,8 @@ import org.gradle.api.logging.Logging
 import org.jetbrains.kotlin.gradle.GradleImportProperties.*
 import java.lang.Exception
 
-private val logger = Logging.getLogger(KotlinMPPGradleModelBuilder::class.java)
 
-internal interface MultiplatformModelImportingContext {
+internal interface MultiplatformModelImportingContext: KotlinSourceSetContainer {
     val project: Project
 
     val targets: Collection<KotlinTarget>
@@ -22,8 +21,8 @@ internal interface MultiplatformModelImportingContext {
      * All source sets in a project, including those that are created but not included into any compilations
      * (so-called "orphan" source sets). Use [isOrphanSourceSet] to get only compiled source sets
      */
-    val sourceSets: Collection<KotlinSourceSetImpl>
-    val sourceSetsByNames: Map<String, KotlinSourceSetImpl>
+    val sourceSets: Collection<KotlinSourceSetImpl> get() = sourceSetsByName.values
+    override val sourceSetsByName: Map<String, KotlinSourceSetImpl>
 
     /**
      * Platforms, which are actually used in this project (i.e. platforms, for which targets has been created)
@@ -43,12 +42,12 @@ internal interface MultiplatformModelImportingContext {
     fun isOrphanSourceSet(sourceSet: KotlinSourceSet): Boolean = compilationsBySourceSet(sourceSet) == null
 
     /**
-     * "Default" source-set is a source-set which is included into compilation directly, rather
+     * "Declared" source-set is a source-set which is included into compilation directly, rather
      * through closure over dependsOn-relation.
      *
-     * See also KDoc for [KotlinCompilation.defaultSourceSets]
+     * See also KDoc for [KotlinCompilation.declaredSourceSets]
      */
-    fun isDefaultSourceSet(sourceSet: KotlinSourceSet): Boolean
+    fun isDeclaredSourceSet(sourceSet: KotlinSourceSet): Boolean
 }
 
 internal fun MultiplatformModelImportingContext.getProperty(property: GradleImportProperties): Boolean = project.getProperty(property)
@@ -77,17 +76,15 @@ internal enum class GradleImportProperties(val id: String, val defaultValue: Boo
 
 internal class MultiplatformModelImportingContextImpl(override val project: Project) : MultiplatformModelImportingContext {
     /** see [initializeSourceSets] */
-    override lateinit var sourceSetsByNames: Map<String, KotlinSourceSetImpl>
+    override lateinit var sourceSetsByName: Map<String, KotlinSourceSetImpl>
         private set
-    override val sourceSets: Collection<KotlinSourceSetImpl>
-        get() = sourceSetsByNames.values
 
 
     /** see [initializeCompilations] */
     override lateinit var compilations: Collection<KotlinCompilation>
         private set
     private lateinit var sourceSetToParticipatedCompilations: Map<KotlinSourceSet, Set<KotlinCompilation>>
-    private lateinit var allDefaultSourceSets: Set<KotlinSourceSet>
+    private lateinit var allDeclaredSourceSets: Set<KotlinSourceSet>
 
 
     /** see [initializeTargets] */
@@ -98,12 +95,13 @@ internal class MultiplatformModelImportingContextImpl(override val project: Proj
         private set
 
     internal fun initializeSourceSets(sourceSetsByNames: Map<String, KotlinSourceSetImpl>) {
-        require(!this::sourceSetsByNames.isInitialized) {
-            "Attempt to re-initialize source sets for $this. Previous value: ${this.sourceSetsByNames}"
+        require(!this::sourceSetsByName.isInitialized) {
+            "Attempt to re-initialize source sets for $this. Previous value: ${this.sourceSetsByName}"
         }
-        this.sourceSetsByNames = sourceSetsByNames
+        this.sourceSetsByName = sourceSetsByNames
     }
 
+    @OptIn(ExperimentalGradleToolingApi::class)
     internal fun initializeCompilations(compilations: Collection<KotlinCompilation>) {
         require(!this::compilations.isInitialized) { "Attempt to re-initialize compilations for $this. Previous value: ${this.compilations}" }
         this.compilations = compilations
@@ -114,7 +112,7 @@ internal class MultiplatformModelImportingContextImpl(override val project: Proj
             for (compilation in target.compilations) {
                 for (sourceSet in compilation.allSourceSets) {
                     sourceSetToCompilations.getOrPut(sourceSet) { LinkedHashSet() } += compilation
-                    sourceSet.dependsOnSourceSets.mapNotNull { sourceSetByName(it) }.forEach {
+                    resolveAllDependsOnSourceSets(sourceSet).forEach {
                         sourceSetToCompilations.getOrPut(it) { LinkedHashSet() } += compilation
                     }
                 }
@@ -123,7 +121,7 @@ internal class MultiplatformModelImportingContextImpl(override val project: Proj
 
         this.sourceSetToParticipatedCompilations = sourceSetToCompilations
 
-        this.allDefaultSourceSets = compilations.flatMapTo(mutableSetOf()) { it.defaultSourceSets }
+        this.allDeclaredSourceSets = compilations.flatMapTo(mutableSetOf()) { it.declaredSourceSets }
     }
 
     internal fun initializeTargets(targets: Collection<KotlinTarget>) {
@@ -135,10 +133,10 @@ internal class MultiplatformModelImportingContextImpl(override val project: Proj
     // overload for small optimization
     override fun isOrphanSourceSet(sourceSet: KotlinSourceSet): Boolean = sourceSet !in sourceSetToParticipatedCompilations.keys
 
-    override fun isDefaultSourceSet(sourceSet: KotlinSourceSet): Boolean = sourceSet in allDefaultSourceSets
+    override fun isDeclaredSourceSet(sourceSet: KotlinSourceSet): Boolean = sourceSet in allDeclaredSourceSets
 
     override fun compilationsBySourceSet(sourceSet: KotlinSourceSet): Collection<KotlinCompilation>? =
         sourceSetToParticipatedCompilations[sourceSet]
 
-    override fun sourceSetByName(name: String): KotlinSourceSet? = sourceSetsByNames[name]
+    override fun sourceSetByName(name: String): KotlinSourceSet? = sourceSetsByName[name]
 }
