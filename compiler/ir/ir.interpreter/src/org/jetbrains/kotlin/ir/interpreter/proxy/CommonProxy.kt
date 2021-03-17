@@ -33,7 +33,7 @@ internal class CommonProxy private constructor(
         equalsFun.getDispatchReceiver()!!.let { valueArguments.add(Variable(it, state)) }
         valueArguments.add(Variable(equalsFun.valueParameters.single().symbol, other.state))
 
-        return with(interpreter) { equalsFun.interpret(valueArguments) } as Boolean
+        return with(interpreter) { equalsFun.proxyInterpret(valueArguments) } as Boolean
     }
 
     override fun hashCode(): Int {
@@ -42,7 +42,7 @@ internal class CommonProxy private constructor(
         if (hashCodeFun.isFakeOverriddenFromAny() || calledFromBuiltIns) return System.identityHashCode(state)
 
         hashCodeFun.getDispatchReceiver()!!.let { valueArguments.add(Variable(it, state)) }
-        return with(interpreter) { hashCodeFun.interpret(valueArguments) } as Int
+        return with(interpreter) { hashCodeFun.proxyInterpret(valueArguments) } as Int
     }
 
     override fun toString(): String {
@@ -53,7 +53,7 @@ internal class CommonProxy private constructor(
         }
 
         toStringFun.getDispatchReceiver()!!.let { valueArguments.add(Variable(it, state)) }
-        return with(interpreter) { toStringFun.interpret(valueArguments) } as String
+        return with(interpreter) { toStringFun.proxyInterpret(valueArguments) } as String
     }
 
     companion object {
@@ -79,7 +79,7 @@ internal class CommonProxy private constructor(
                         valueArguments += Variable(irFunction.getDispatchReceiver()!!, commonProxy.state)
                         valueArguments += irFunction.valueParameters
                             .mapIndexed { index, parameter -> Variable(parameter.symbol, args[index].toState(parameter.type)) }
-                        with(interpreter) { irFunction.interpret(valueArguments, method.returnType) }
+                        with(interpreter) { irFunction.proxyInterpret(valueArguments, method.returnType) }
                     }
                 }
             }

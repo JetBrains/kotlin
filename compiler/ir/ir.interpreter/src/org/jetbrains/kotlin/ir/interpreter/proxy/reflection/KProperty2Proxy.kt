@@ -14,15 +14,15 @@ import kotlin.reflect.*
 internal open class KProperty2Proxy(
     override val state: KPropertyState, override val interpreter: IrInterpreter
 ) : AbstractKPropertyProxy(state, interpreter), KProperty2<Any?, Any?, Any?> {
-    override val getter: KProperty2.Getter<Any?, Any?, Any?> =
-        object : Getter(state.property.getter!!), KProperty2.Getter<Any?, Any?, Any?> {
+    override val getter: KProperty2.Getter<Any?, Any?, Any?>
+        get() = object : Getter(state.property.getter!!), KProperty2.Getter<Any?, Any?, Any?> {
             override fun invoke(p1: Any?, p2: Any?): Any? = call(p1, p2)
 
             override fun call(vararg args: Any?): Any? {
                 checkArguments(2, args.size)
                 val dispatch = Variable(getter.dispatchReceiverParameter!!.symbol, args[0].toState(getter.dispatchReceiverParameter!!.type))
                 val extension = Variable(getter.extensionReceiverParameter!!.symbol, args[1].toState(getter.extensionReceiverParameter!!.type))
-                return with(this@KProperty2Proxy.interpreter) { getter.interpret(listOf(dispatch, extension)) }
+                return with(this@KProperty2Proxy.interpreter) { getter.proxyInterpret(listOf(dispatch, extension)) }
             }
 
             override fun callBy(args: Map<KParameter, Any?>): Any? {

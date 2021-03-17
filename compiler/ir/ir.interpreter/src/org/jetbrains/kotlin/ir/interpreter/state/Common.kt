@@ -12,7 +12,8 @@ import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.nameForIrSerialization
 
-internal class Common private constructor(override val irClass: IrClass, override val fields: MutableList<Variable>) : Complex {
+internal class Common private constructor(override val irClass: IrClass, override val fields: MutableList<Variable>) : Complex, StateWithClosure {
+    override val upValues: MutableList<Variable> = mutableListOf()
     override var superWrapperClass: Wrapper? = null
     override var outerClass: Variable? = null
 

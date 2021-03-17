@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.ir.interpreter.proxy.reflection
 
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
-import org.jetbrains.kotlin.ir.interpreter.proxy.Proxy
-import org.jetbrains.kotlin.ir.interpreter.proxy.wrap
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.KPropertyState
 import org.jetbrains.kotlin.ir.interpreter.toState
@@ -24,7 +22,7 @@ internal open class KProperty1Proxy(
                 checkArguments(1, args.size)
                 val receiverParameter = getter.dispatchReceiverParameter ?: getter.extensionReceiverParameter
                 val receiver = Variable(receiverParameter!!.symbol, args[0].toState(receiverParameter.type))
-                return with(this@KProperty1Proxy.interpreter) { getter.interpret(listOf(receiver)) }
+                return with(this@KProperty1Proxy.interpreter) { getter.proxyInterpret(listOf(receiver)) }
             }
 
             override fun callBy(args: Map<KParameter, Any?>): Any? {
@@ -54,7 +52,7 @@ internal class KMutableProperty1Proxy(
                 val receiver = Variable(receiverParameter!!.symbol, args[0].toState(receiverParameter.type))
                 val valueParameter = setter.valueParameters.single()
                 val value = Variable(valueParameter.symbol, args[1].toState(valueParameter.type))
-                with(this@KMutableProperty1Proxy.interpreter) { setter.interpret(listOf(receiver, value)) }
+                with(this@KMutableProperty1Proxy.interpreter) { setter.proxyInterpret(listOf(receiver, value)) }
             }
 
             override fun callBy(args: Map<KParameter, Any?>) {

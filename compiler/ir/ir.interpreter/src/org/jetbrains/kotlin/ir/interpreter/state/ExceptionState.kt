@@ -17,8 +17,8 @@ import kotlin.math.min
 
 internal class ExceptionState private constructor(
     override val irClass: IrClass, override val fields: MutableList<Variable>, stackTrace: List<String>
-) : Complex, Throwable() {
-
+) : Complex, StateWithClosure, Throwable() {
+    override val upValues: MutableList<Variable> = mutableListOf()
     override var superWrapperClass: Wrapper? = null
     override var outerClass: Variable? = null
 

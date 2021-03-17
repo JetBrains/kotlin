@@ -13,12 +13,13 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.interpreter.builtins.evaluateIntrinsicAnnotation
-import org.jetbrains.kotlin.ir.interpreter.exceptions.throwAsUserException
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.interpreter.state.*
 import org.jetbrains.kotlin.ir.interpreter.proxy.Proxy
 import org.jetbrains.kotlin.ir.interpreter.proxy.wrap
+import org.jetbrains.kotlin.ir.interpreter.state.reflection.KTypeState
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
@@ -28,7 +29,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.lang.invoke.MethodType
 import kotlin.math.min
 
@@ -53,6 +53,9 @@ internal fun State.toIrExpression(expression: IrExpression): IrExpression {
                 type.isPrimitiveType() || type.isString() -> this.value.toIrConst(type, start, end)
                 else -> expression // TODO support for arrays
             }
+        is ExceptionState -> {
+            IrErrorExpressionImpl(expression.startOffset, expression.endOffset, expression.type, "\n" + this.getFullDescription())
+        }
         is Complex -> {
             val stateType = this.irClass.defaultType
             when {
@@ -234,17 +237,51 @@ fun IrClass.internalName(): String {
     return internalName.toString()
 }
 
-inline fun withExceptionHandler(block: () -> Any?): Any? {
+internal inline fun withExceptionHandler(environment: IrInterpreterEnvironment, block: () -> Unit) {
     try {
-        return block()
+        block()
+        // check if during proxy interpretation was an exception
+        val possibleException = environment.callStack.peekState() as? ExceptionState
+        if (possibleException != null) environment.callStack.dropFramesUntilTryCatch()
     } catch (e: Throwable) {
-        e.throwAsUserException()
+        e.handleUserException(environment)
     }
 }
 
-internal fun IrFunction.getArgsForMethodInvocation(interpreter: IrInterpreter, methodType: MethodType, args: List<Variable>): List<Any?> {
+internal fun Throwable.handleUserException(environment: IrInterpreterEnvironment) {
+    val exceptionName = this::class.java.simpleName
+    val irExceptionClass = environment.irExceptions.firstOrNull { it.name.asString() == exceptionName }
+        ?: environment.irBuiltIns.throwableClass.owner
+    environment.callStack.pushState(ExceptionState(this, irExceptionClass, environment.callStack.getStackTrace()))
+    environment.callStack.dropFramesUntilTryCatch()
+}
+
+/**
+ * This method is analog of `checkcast` jvm bytecode operation. Throw exception whenever actual type is not a subtype of expected.
+ */
+internal fun IrFunction?.checkCast(environment: IrInterpreterEnvironment): Boolean {
+    this ?: return true
+    val actualType = this.returnType
+    if (actualType.classifierOrNull !is IrTypeParameterSymbol) return true
+
+    // TODO expectedType can be missing for functions called as proxy
+    val expectedType = (environment.callStack.getVariable(this.symbol).state as? KTypeState)?.irType ?: return true
+    if (expectedType.classifierOrFail is IrTypeParameterSymbol) return true
+
+    val actualState = environment.callStack.peekState() ?: return true
+    if (actualState is Primitive<*> && actualState.value == null) return true // this is handled in checkNullability
+
+    if (!actualState.isSubtypeOf(expectedType)) {
+        val convertibleClassName = environment.callStack.popState().irClass.fqNameWhenAvailable
+        ClassCastException("$convertibleClassName cannot be cast to ${expectedType.render()}").handleUserException(environment)
+        return false
+    }
+    return true
+}
+
+internal fun IrFunction.getArgsForMethodInvocation(interpreter: IrInterpreter, methodType: MethodType, args: List<State>): List<Any?> {
     val argsValues = args
-        .mapIndexed { index, variable -> variable.state.wrap(interpreter, methodType.parameterType(index)) }
+        .mapIndexed { index, state -> state.wrap(interpreter, methodType.parameterType(index)) }
         .toMutableList()
 
     // TODO if vararg isn't last parameter

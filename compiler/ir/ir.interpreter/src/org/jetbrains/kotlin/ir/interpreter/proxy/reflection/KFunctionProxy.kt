@@ -48,7 +48,7 @@ internal class KFunctionProxy(
         val extensionReceiver = state.irFunction.extensionReceiverParameter?.let { Variable(it.symbol, args[index++].toState(it.type)) }
         val valueArguments = listOfNotNull(dispatchReceiver, extensionReceiver) +
                 state.irFunction.valueParameters.map { parameter -> Variable(parameter.symbol, args[index++].toState(parameter.type)) }
-        return with(interpreter) { state.irFunction.interpret(valueArguments) }
+        return with(interpreter) { state.irFunction.proxyInterpret(valueArguments) }
     }
 
     override fun callBy(args: Map<KParameter, Any?>): Any? {
