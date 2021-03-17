@@ -46,6 +46,7 @@ val kotlinGradlePluginAndItsRequired = arrayOf(
     ":kotlin-gradle-subplugin-example",
     ":kotlin-stdlib-common",
     ":kotlin-stdlib",
+    ":kotlin-stdlib-jdk7",
     ":kotlin-stdlib-jdk8",
     ":kotlin-stdlib-js",
     ":examples:annotation-processor-example",
