@@ -43,10 +43,6 @@ sourceSets {
         java.srcDir 'cli.bc/src'
         kotlin.srcDir 'cli.bc/src'
     }
-    bc_frontend {
-        java.srcDir 'bc.frontend/src'
-        kotlin.srcDir 'bc.frontend/src'
-    }
 }
 
 compileCompilerKotlin {
@@ -202,13 +198,11 @@ dependencies {
 
     cli_bcCompile sourceSets.compiler.output
 
-    bc_frontendCompile project(kotlinCompilerModule)
-
     cli_bc sourceSets.cli_bc.output
 }
 
 
-classes.dependsOn 'compilerClasses', 'cli_bcClasses', 'bc_frontendClasses'
+classes.dependsOn 'compilerClasses', 'cli_bcClasses'
 
 
 // These are just a couple of aliases
