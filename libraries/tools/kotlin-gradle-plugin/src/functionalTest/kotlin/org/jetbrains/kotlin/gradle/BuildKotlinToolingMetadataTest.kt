@@ -20,7 +20,11 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginWrapper
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.*
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithHostTests
+import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
+import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.tooling.buildKotlinToolingMetadataTask
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinAbiVersion
@@ -80,6 +84,31 @@ class BuildKotlinToolingMetadataTest {
         assertEquals(
             listOf(common, androidJvm, jvm, js, native).map { it.name }.sorted(),
             metadata.projectTargets.map { it.platformType }.sorted()
+        )
+
+        assertEquals(
+            KotlinMetadataTarget::class.java.canonicalName,
+            metadata.projectTargets.single { it.platformType == common.name }.target
+        )
+
+        assertEquals(
+            KotlinAndroidTarget::class.java.canonicalName,
+            metadata.projectTargets.single { it.platformType == androidJvm.name }.target
+        )
+
+        assertEquals(
+            KotlinJvmTarget::class.java.canonicalName,
+            metadata.projectTargets.single { it.platformType == jvm.name }.target
+        )
+
+        assertEquals(
+            KotlinJsTarget::class.java.canonicalName,
+            metadata.projectTargets.single { it.platformType == js.name }.target
+        )
+
+        assertEquals(
+            KotlinNativeTargetWithHostTests::class.java.canonicalName,
+            metadata.projectTargets.single { it.platformType == native.name }.target
         )
     }
 

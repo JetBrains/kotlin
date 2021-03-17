@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.tooling
 import com.android.build.gradle.BaseExtension
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
+import org.gradle.api.internal.GeneratedSubclass
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.compilerRunner.konanVersion
@@ -16,7 +17,6 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinSingleTargetExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetContainerDsl
@@ -108,10 +108,16 @@ private fun KotlinProjectExtension.buildProjectTargets(): List<KotlinToolingMeta
 
 private fun buildTargetMetadata(target: KotlinTarget): KotlinToolingMetadata.ProjectTargetMetadata {
     return KotlinToolingMetadata.ProjectTargetMetadata(
-        target = target.javaClass.canonicalName,
+        target = buildTargetString(target),
         platformType = target.platformType.name,
         extras = buildTargetMetadataExtras(target)
     )
+}
+
+private fun buildTargetString(target: KotlinTarget): String {
+    return if (target is GeneratedSubclass) {
+        return target.publicType().canonicalName
+    } else target.javaClass.canonicalName
 }
 
 private fun buildTargetMetadataExtras(target: KotlinTarget): KotlinToolingMetadata.ProjectTargetMetadata.Extras {
@@ -156,3 +162,4 @@ private fun buildNativeExtrasOrNull(target: KotlinTarget): KotlinToolingMetadata
         konanAbiVersion = KotlinAbiVersion.CURRENT.toString()
     )
 }
+

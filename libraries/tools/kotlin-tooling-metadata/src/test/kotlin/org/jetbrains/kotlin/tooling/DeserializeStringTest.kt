@@ -45,7 +45,7 @@ class DeserializeStringTest {
                 }
               },
               {
-                "target": "org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget_Decorated",
+                "target": "org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget",
                 "platformType": "js",
                 "extras": {
                   "js": {
@@ -55,7 +55,7 @@ class DeserializeStringTest {
                 }
               },
               {
-                "target": "org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget_Decorated",
+                "target": "org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget",
                 "platformType": "jvm",
                 "extras": {
                   "jvm": {
@@ -65,7 +65,7 @@ class DeserializeStringTest {
                 }
               },
               {
-                "target": "org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithHostTests_Decorated",
+                "target": "org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithHostTests",
                 "platformType": "native",
                 "extras": {
                   "native": {
@@ -76,7 +76,7 @@ class DeserializeStringTest {
                 }
               },
               {
-                "target": "org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget_Decorated",
+                "target": "org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget",
                 "platformType": "common"
               }
             ]
@@ -102,7 +102,7 @@ class DeserializeStringTest {
         assertNull(androidJvmTarget.extras.native)
 
         val jsTarget = metadata.projectTargets.single { it.platformType == "js" }
-        assertEquals("org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget_Decorated", jsTarget.target)
+        assertEquals("org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget", jsTarget.target)
         assertEquals(true, jsTarget.extras.js?.isBrowserConfigured)
         assertEquals(true, jsTarget.extras.js?.isNodejsConfigured)
         assertNull(jsTarget.extras.android)
@@ -110,7 +110,7 @@ class DeserializeStringTest {
         assertNull(jsTarget.extras.native)
 
         val jvmTarget = metadata.projectTargets.single { it.platformType == "jvm" }
-        assertEquals("org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget_Decorated", jvmTarget.target)
+        assertEquals("org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget", jvmTarget.target)
         assertEquals(false, jvmTarget.extras.jvm?.withJavaEnabled)
         assertEquals("1.8", jvmTarget.extras.jvm?.jvmTarget)
         assertNull(jvmTarget.extras.android)
@@ -118,7 +118,7 @@ class DeserializeStringTest {
         assertNull(jvmTarget.extras.native)
 
         val nativeTarget = metadata.projectTargets.single { it.platformType == "native" }
-        assertEquals("org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithHostTests_Decorated", nativeTarget.target)
+        assertEquals("org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithHostTests", nativeTarget.target)
         val nativeExtras = assertNotNull(nativeTarget.extras.native)
         assertEquals("linux_x64", nativeExtras.konanTarget)
         assertEquals("1.5-dev-17775", nativeExtras.konanVersion)
@@ -128,7 +128,7 @@ class DeserializeStringTest {
         assertNull(nativeTarget.extras.js)
 
         val commonTarget = metadata.projectTargets.single { it.platformType == "common" }
-        assertEquals("org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget_Decorated", commonTarget.target)
+        assertEquals("org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget", commonTarget.target)
         assertNull(commonTarget.extras.android)
         assertNull(commonTarget.extras.jvm)
         assertNull(commonTarget.extras.js)
