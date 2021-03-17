@@ -15543,6 +15543,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/inlineClasses/funInterface/argumentResult.kt");
             }
 
+            @TestMetadata("returnIC.kt")
+            public void ignoreReturnIC() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/funInterface/returnIC.kt");
+            }
+
             @TestMetadata("returnResult.kt")
             public void ignoreReturnResult() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/funInterface/returnResult.kt");
@@ -15569,11 +15574,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestMetadata("javaSamReturnResult.kt")
             public void testJavaSamReturnResult() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/funInterface/javaSamReturnResult.kt");
-            }
-
-            @TestMetadata("returnIC.kt")
-            public void testReturnIC() throws Exception {
-                runTest("compiler/testData/codegen/box/inlineClasses/funInterface/returnIC.kt");
             }
         }
 
@@ -31289,6 +31289,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("accessorForProtectedInvokeVirtual.kt")
         public void testAccessorForProtectedInvokeVirtual() throws Exception {
             runTest("compiler/testData/codegen/box/syntheticAccessors/accessorForProtectedInvokeVirtual.kt");
+        }
+
+        @TestMetadata("accessorForProtectedPropertyReference.kt")
+        public void testAccessorForProtectedPropertyReference() throws Exception {
+            runTest("compiler/testData/codegen/box/syntheticAccessors/accessorForProtectedPropertyReference.kt");
         }
 
         public void testAllFilesPresentInSyntheticAccessors() throws Exception {

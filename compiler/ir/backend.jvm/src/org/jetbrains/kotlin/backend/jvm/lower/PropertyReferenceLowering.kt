@@ -342,6 +342,7 @@ private class PropertyReferenceLowering(val context: JvmBackendContext) : IrElem
             referenceClass.addOverride(getSignature) { computeSignatureString(expression) }
         }
 
+        val boundReceiver = expression.getBoundReceiver()
         val backingField = superClass.properties.single { it.name.asString() == "receiver" }.backingField!!
         val get = superClass.functions.find { it.name.asString() == "get" }
         val set = superClass.functions.find { it.name.asString() == "set" }
@@ -350,20 +351,20 @@ private class PropertyReferenceLowering(val context: JvmBackendContext) : IrElem
         val field = expression.field?.owner
         if (field == null) {
             fun IrBuilderWithScope.setCallArguments(call: IrCall, arguments: List<IrValueParameter>) {
-                var index = 1
+                val receiverFromField = boundReceiver?.let { irImplicitCast(irGetField(irGet(arguments[0]), backingField), it.type) }
                 call.copyTypeArgumentsFrom(expression)
-                val hasBoundReceiver = expression.getBoundReceiver() != null
                 call.dispatchReceiver = call.symbol.owner.dispatchReceiverParameter?.let {
-                    if (hasBoundReceiver)
-                        irImplicitCast(irGetField(irGet(arguments[0]), backingField), it.type)
-                    else
-                        irImplicitCast(irGet(arguments[index++]), it.type)
+                    // TODO: in `C::x`, the receiver must be casted to `C` in order to put accessors for protected
+                    //   properties in the correct class (box/syntheticAccessors/accessorForProtectedPropertyReference.kt).
+                    //   Since there is no information about `C` in `IrPropertyReference`, we rely on fake overrides here
+                    //   (expecting that the getter is `C.getX` and not `<some superclass>.getX`) and that does not work with FIR.
+                    receiverFromField ?: irImplicitCast(irGet(arguments[1]), call.symbol.owner.parentAsClass.defaultType)
                 }
                 call.extensionReceiver = call.symbol.owner.extensionReceiverParameter?.let {
-                    if (hasBoundReceiver)
-                        irImplicitCast(irGetField(irGet(arguments[0]), backingField), it.type)
+                    if (call.symbol.owner.dispatchReceiverParameter == null)
+                        receiverFromField ?: irImplicitCast(irGet(arguments[1]), it.type)
                     else
-                        irImplicitCast(irGet(arguments[index++]), it.type)
+                        irImplicitCast(irGet(arguments[if (receiverFromField != null) 1 else 2]), it.type)
                 }
             }
 

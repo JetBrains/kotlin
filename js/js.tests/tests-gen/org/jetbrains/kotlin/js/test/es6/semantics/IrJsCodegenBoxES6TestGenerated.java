@@ -26435,6 +26435,11 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
             runTest("compiler/testData/codegen/box/syntheticAccessors/accessorForProtectedInvokeVirtual.kt");
         }
 
+        @TestMetadata("accessorForProtectedPropertyReference.kt")
+        public void testAccessorForProtectedPropertyReference() throws Exception {
+            runTest("compiler/testData/codegen/box/syntheticAccessors/accessorForProtectedPropertyReference.kt");
+        }
+
         public void testAllFilesPresentInSyntheticAccessors() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/syntheticAccessors"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
         }

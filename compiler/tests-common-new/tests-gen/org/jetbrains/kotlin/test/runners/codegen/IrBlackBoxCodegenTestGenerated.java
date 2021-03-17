@@ -39046,6 +39046,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("accessorForProtectedPropertyReference.kt")
+        public void testAccessorForProtectedPropertyReference() throws Exception {
+            runTest("compiler/testData/codegen/box/syntheticAccessors/accessorForProtectedPropertyReference.kt");
+        }
+
+        @Test
         public void testAllFilesPresentInSyntheticAccessors() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/syntheticAccessors"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
