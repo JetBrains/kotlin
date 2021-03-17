@@ -11,10 +11,7 @@ import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolD
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsMappingState
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.name
-import org.jetbrains.kotlin.ir.declarations.path
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.serialization.CarrierDeserializer
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
@@ -24,6 +21,7 @@ import org.jetbrains.kotlin.library.SerializedIrFile
 import org.jetbrains.kotlin.library.impl.DeclarationId
 import org.jetbrains.kotlin.library.impl.DeclarationIrTableMemoryReader
 import org.jetbrains.kotlin.library.impl.IrArrayMemoryReader
+import org.jetbrains.kotlin.library.impl.IrIntArrayMemoryReader
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import kotlin.collections.ArrayDeque
 import kotlin.collections.HashSet
@@ -81,6 +79,8 @@ class IcDeserializer(
 
         val publicSignatureToIcFileDeserializer = mutableMapOf<IdSignature, IcFileDeserializer>()
 
+        val fdToIcFd = mutableMapOf<IrFileDeserializer, IcFileDeserializer>()
+
         // Add all signatures withing the module to a queue ( declarations and bodies )
         // TODO add bodies
         println("==== Init ====")
@@ -113,6 +113,8 @@ class IcDeserializer(
                     }
                 }
             }
+
+            fdToIcFd[fd] = icDeserializer
 
             fd.symbolDeserializer.deserializedSymbols.entries.forEach { (idSig, symbol) ->
                 idSig.enqueue(icDeserializer, IrFileSerializer.protoSymbolKind(symbol))
@@ -149,6 +151,8 @@ class IcDeserializer(
                 continue
             }
 
+            icFileDeserializer.signatureToDeclaration[signature] = declaration
+
 //            println("  carriers:")
 
             if ("$signature" == "public kotlin/code.<get-code>|-4646194644468173264[0]") {
@@ -171,6 +175,47 @@ class IcDeserializer(
 //                icFileDeserializer.deserializeIrSymbol(it)
 //            }
 //        }
+
+
+        println("==== Order ==== ")
+
+        for (fd in fileDeserializers) {
+            val icFileData = pathToIcFileData[fd.file.path] ?: continue
+            val order = icFileData.order
+            val icDeserializer = fdToIcFd[fd]!!
+
+            fd.file.declarations.clear()
+
+            IrIntArrayMemoryReader(order.topLevelSignatures).array.forEach {
+                val idSig = icDeserializer.fileDeserializer.symbolDeserializer.deserializeIdSignature(it)
+
+                if (idSig in icDeserializer.visited) {
+                    fd.file.declarations += icDeserializer.signatureToDeclaration[idSig]!!
+                }
+            }
+
+            val containerDeclarations = IrArrayMemoryReader(order.containerDeclarationSignatures)
+            for (i in 0 until containerDeclarations.entryCount()) {
+                val bytes = containerDeclarations.tableItemBytes(i)
+                val indices = IrIntArrayMemoryReader(bytes).array
+
+                val containerSig = icDeserializer.fileDeserializer.symbolDeserializer.deserializeIdSignature(indices[0])
+
+                if (containerSig in icDeserializer.visited) {
+                    val irClass = icDeserializer.signatureToDeclaration[containerSig]!! as IrClass
+
+                    irClass.declarations.clear()
+
+                    for (j in 1 until indices.size) {
+                        val idSig = icDeserializer.fileDeserializer.symbolDeserializer.deserializeIdSignature(indices[j])
+
+                        if (idSig !in icDeserializer.visited) continue
+
+                        irClass.declarations += icDeserializer.signatureToDeclaration[idSig]!!
+                    }
+                }
+            }
+        }
     }
 
     class IcFileDeserializer(
@@ -190,6 +235,8 @@ class IcDeserializer(
         private fun cntToReturnableBlockSymbol(upCnt: Int): IrReturnableBlockSymbol {
             return declarationDeserializer.bodyDeserializer.cntToReturnableBlockSymbol(upCnt)
         }
+
+        val signatureToDeclaration = mutableMapOf<IdSignature, IrDeclaration>()
 
         private val symbolDeserializer = IrSymbolDeserializer(
             linker.symbolTable,

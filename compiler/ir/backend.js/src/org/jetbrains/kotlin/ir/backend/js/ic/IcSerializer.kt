@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.ic
 
 import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureSerializer
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.JsMapping
 import org.jetbrains.kotlin.ir.backend.js.SerializedMappings
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsGlobalDeclarationTable
@@ -18,16 +19,17 @@ import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrBodyBase
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrDeclarationBase
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
-import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
-import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.serialization.SerializedCarriers
 import org.jetbrains.kotlin.ir.serialization.serializeCarriers
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.library.SerializedIrFile
-import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.library.impl.IrMemoryArrayWriter
+import org.jetbrains.kotlin.library.impl.IrMemoryIntArrayWriter
 
 class IcSerializer(
     irBuiltIns: IrBuiltIns,
@@ -86,7 +88,7 @@ class IcSerializer(
             val maxFileLocalIndex = existingSignatures.filterIsInstance<IdSignature.FileLocalSignature>().maxOfOrNull { it.id } ?: -1
             val maxScopeLocalIndex = existingSignatures.filterIsInstance<IdSignature.ScopeLocalDeclaration>().maxOfOrNull { it.id } ?: -1
 
-            val symbolToSignature = fileDeserializer.symbolDeserializer.deserializedSymbols.entries.associate { (idSig, symbol) -> symbol to idSig }
+            val symbolToSignature = fileDeserializer.symbolDeserializer.deserializedSymbols.entries.associate { (idSig, symbol) -> symbol to idSig }.toMutableMap()
 
             val icDeclarationTable = IcDeclarationTable(globalDeclarationTable, irFactory, maxFileLocalIndex + 1, maxScopeLocalIndex + 1, symbolToSignature)
             val fileSerializer = JsIrFileSerializer(IrMessageLogger.None, icDeclarationTable, mutableMapOf(), skipExpects = true, icMode = true)
@@ -117,12 +119,18 @@ class IcSerializer(
                 fileSerializer.serializeIrSymbol(symbol)
             }
 
+            val order = storeOrder(file) { symbol ->
+                val idSig = icDeclarationTable.signatureByDeclaration(symbol.owner as IrDeclaration)
+                fileSerializer.protoIdSignature(idSig)
+            }
+
             val serializedIrFile = fileSerializer.serializeDeclarationsForIC(file, newDeclarations)
 
             SerializedIcDataForFile(
                 serializedIrFile,
                 serializedCarriers,
                 serializedMappings,
+                order,
             )
         }
 
@@ -135,7 +143,7 @@ class IcSerializer(
         val irFactory: PersistentIrFactory,
         newLocalIndex: Long,
         newScopeIndex: Int,
-        val exisitingMappings: Map<IrSymbol, IdSignature>
+        val exisitingMappings: MutableMap<IrSymbol, IdSignature>
     ) : DeclarationTable(globalDeclarationTable) {
 
         init {
@@ -148,8 +156,9 @@ class IcSerializer(
         }
 
         override fun signatureByDeclaration(declaration: IrDeclaration): IdSignature {
-            exisitingMappings[declaration.symbol]?.let { return it }
-            return irFactory.declarationSignature(declaration) ?: super.signatureByDeclaration(declaration)
+            return exisitingMappings.getOrPut(declaration.symbol) {
+                irFactory.declarationSignature(declaration) ?: super.signatureByDeclaration(declaration)
+            }
         }
     }
 }
@@ -158,8 +167,47 @@ class SerializedIcDataForFile(
     val file: SerializedIrFile,
     val carriers: SerializedCarriers,
     val mappings: SerializedMappings,
+    val order: SerializedOrder,
 )
 
 class SerializedIcData(
     val files: Collection<SerializedIcDataForFile>,
 )
+
+class SerializedOrder(
+    val topLevelSignatures: ByteArray,
+    val containerDeclarationSignatures: ByteArray,
+)
+
+fun storeOrder(file: IrFile, idSigToInt: (IrSymbol) -> Int): SerializedOrder {
+    val topLevelSignatures = mutableListOf<Int>()
+    val containerDeclarationSignatures = mutableListOf<ByteArray>()
+
+    fun IrDeclaration.idSigIndex(): Int = idSigToInt(symbol)
+
+    file.declarations.forEach { d ->
+        topLevelSignatures += d.idSigIndex()
+        d.acceptVoid(object : IrElementVisitorVoid {
+            override fun visitElement(element: IrElement) {
+                element.acceptChildrenVoid(this)
+            }
+
+            override fun visitClass(declaration: IrClass) {
+                // First element is the container signature
+                val list = mutableListOf(declaration.idSigIndex())
+                declaration.declarations.forEach {
+                    list += it.idSigIndex()
+                }
+
+                containerDeclarationSignatures += IrMemoryIntArrayWriter(list).writeIntoMemory()
+
+                super.visitClass(declaration)
+            }
+        })
+    }
+
+    return SerializedOrder(
+        IrMemoryIntArrayWriter(topLevelSignatures).writeIntoMemory(),
+        IrMemoryArrayWriter(containerDeclarationSignatures).writeIntoMemory(),
+    )
+}
