@@ -14,7 +14,7 @@ import java.io.IOException
 class TestRunner(private val testConfiguration: TestConfiguration) {
     private val failedAssertions = mutableListOf<Throwable>()
 
-    fun runTest(@TestDataFile testDataFileName: String) {
+    fun runTest(@TestDataFile testDataFileName: String, beforeDispose: (TestConfiguration) -> Unit = {}) {
         try {
             runTestImpl(testDataFileName)
         } finally {
@@ -23,6 +23,7 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
             } catch (_: IOException) {
                 // ignored
             }
+            beforeDispose(testConfiguration)
             Disposer.dispose(testConfiguration.rootDisposable)
         }
     }
