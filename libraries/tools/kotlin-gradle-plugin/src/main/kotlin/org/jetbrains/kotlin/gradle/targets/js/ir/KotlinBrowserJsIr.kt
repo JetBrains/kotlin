@@ -99,7 +99,7 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                             .resolve(binary.linkTask.get().outputFile.name)
                     }
 
-                    task.bin = "webpack-dev-server/bin/webpack-dev-server.js"
+                    task.args.add(0, "serve")
                     task.description = "start ${mode.name.toLowerCase()} webpack dev server"
 
                     task.devServer = KotlinWebpackConfig.DevServer(

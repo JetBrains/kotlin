@@ -82,12 +82,15 @@ internal data class KotlinWebpackRunner(
 
         config.save(configFile)
 
-        val args = mutableListOf<String>("--config", configFile.absolutePath)
+        val args = mutableListOf<String>().also {
+            it.addAll(this.args)
+        }
+
+        args.add("--config")
+        args.add(configFile.absolutePath)
         if (config.showProgress) {
             args.add("--progress")
         }
-
-        args.addAll(this.args)
 
         npmProject.useTool(
             execFactory,

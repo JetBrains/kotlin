@@ -201,6 +201,9 @@ class KotlinKarma(
     private fun useWebpack() {
         requiredDependencies.add(versions.karmaWebpack)
         requiredDependencies.add(versions.webpack)
+        requiredDependencies.add(versions.webpackCli)
+        requiredDependencies.add(versions.formatUtil)
+        requiredDependencies.add(versions.sourceMapLoader)
 
         addPreprocessor("webpack")
         confJsWriters.add {
@@ -228,10 +231,6 @@ class KotlinKarma(
             it.appendln("config.set({webpack: createWebpackConfig()});")
             it.appendln()
         }
-
-        requiredDependencies.add(versions.webpack)
-        requiredDependencies.add(versions.webpackCli)
-        requiredDependencies.add(versions.sourceMapLoader)
     }
 
     fun useCoverage(

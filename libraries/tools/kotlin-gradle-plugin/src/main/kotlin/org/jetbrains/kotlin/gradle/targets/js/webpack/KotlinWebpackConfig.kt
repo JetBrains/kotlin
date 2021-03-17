@@ -95,6 +95,7 @@ data class KotlinWebpackConfig(
             it.add(versions.kotlinJsTestRunner)
             it.add(versions.webpack)
             it.add(versions.webpackCli)
+            it.add(versions.formatUtil)
 
             if (bundleAnalyzerReportDir != null) {
                 it.add(versions.webpackBundleAnalyzer)

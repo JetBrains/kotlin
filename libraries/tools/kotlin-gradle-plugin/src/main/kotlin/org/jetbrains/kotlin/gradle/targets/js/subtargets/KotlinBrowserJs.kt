@@ -128,7 +128,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                     ),
                     listOf(compilation)
                 ) { task ->
-                    task.bin = "webpack-dev-server/bin/webpack-dev-server.js"
+                    task.args.add(0, "serve")
                     task.description = "start ${type.name.toLowerCase()} webpack dev server"
 
                     task.devServer = KotlinWebpackConfig.DevServer(
