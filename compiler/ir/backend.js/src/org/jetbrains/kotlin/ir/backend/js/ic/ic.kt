@@ -13,12 +13,16 @@ import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.lower.generateTests
 import org.jetbrains.kotlin.ir.backend.js.lower.moveBodilessDeclarationsToSeparatePlace
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
+import org.jetbrains.kotlin.ir.backend.js.utils.sanitizeName
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.allUnbound
+import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import org.jetbrains.kotlin.ir.util.noUnboundLeft
 import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
+import java.io.File
 
 // TODO test purpose only
 // klib path -> ic data
@@ -91,12 +95,21 @@ fun loadIrForIc(
     linker: JsIrLinker,
     module: IrModuleFragment,
     context: JsIrBackendContext,
+    checkEq: (String, String) -> Unit,
 ) {
     val icData = icCache.values.single() // TODO find a stable key present both in klib and module
 
     IcDeserializer(linker, context).injectIcData(module, icData)
 
     linker.symbolTable.noUnboundLeft("Unbound symbols found")
+
+    for (file in module.files) {
+        println(file.path)
+
+        val actual = file.dumpKotlinLike()
+
+        checkEq("/home/ab/tmp/simple-dump/${sanitizeName(file.path)}", actual)
+    }
 
 //    TODO("=================== loaded!")
 }

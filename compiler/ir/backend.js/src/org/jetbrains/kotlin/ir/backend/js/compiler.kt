@@ -18,19 +18,19 @@ import org.jetbrains.kotlin.ir.backend.js.lower.generateTests
 import org.jetbrains.kotlin.ir.backend.js.lower.moveBodilessDeclarationsToSeparatePlace
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
 import org.jetbrains.kotlin.ir.backend.js.utils.NameTables
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
-import org.jetbrains.kotlin.ir.declarations.StageController
+import org.jetbrains.kotlin.ir.backend.js.utils.sanitizeName
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import org.jetbrains.kotlin.ir.util.noUnboundLeft
 import org.jetbrains.kotlin.js.config.DceRuntimeDiagnostic
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.name.FqName
+import java.io.PrintWriter
 
 class CompilerResult(
     val jsCode: JsCode?,
@@ -58,7 +58,8 @@ fun compile(
     multiModule: Boolean = false,
     relativeRequirePath: Boolean = false,
     propertyLazyInitialization: Boolean,
-    useStdlibCache: Boolean = true,
+    useStdlibCache: Boolean = false,
+    checkEq: (String, String) -> Unit = { _, _ -> }
 ): CompilerResult {
     val irFactory = PersistentIrFactory()
 
@@ -97,7 +98,7 @@ fun compile(
         prepareIcCaches(project, analyzer, configuration, allDependencies)
 
         // Inject carriers, new declarations and mappings into the stdlib IrModule
-        loadIrForIc(deserializer, allModules.first(), context)
+        loadIrForIc(deserializer, allModules.first(), context, checkEq)
 
         allModules.drop(1)
     } else allModules
@@ -141,6 +142,12 @@ fun compile(
             multiModule = multiModule,
             relativeRequirePath = relativeRequirePath
         )
+
+//        allModules.first().files.forEach { file ->
+//            PrintWriter("/home/ab/tmp/simple-dump/${sanitizeName(file.path)}").use {
+//                it.println(file.dumpKotlinLike())
+//            }
+//        }
 
         return transformer.generateModule(allModules)
     }
