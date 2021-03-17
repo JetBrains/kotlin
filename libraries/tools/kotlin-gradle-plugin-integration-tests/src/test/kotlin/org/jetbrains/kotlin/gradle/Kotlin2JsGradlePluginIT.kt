@@ -58,7 +58,7 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
 
                 assertTasksExecuted(":compileProductionExecutableKotlinJs")
 
-                assertFileExists("build/js/packages/kotlin-js-nodejs/kotlin/productionExecutable/kotlin-js-nodejs.js")
+                assertFileExists("build/js/packages/kotlin-js-nodejs/kotlin/kotlin-js-nodejs.js")
             }
 
             File("${projectDir.canonicalPath}/src").deleteRecursively()

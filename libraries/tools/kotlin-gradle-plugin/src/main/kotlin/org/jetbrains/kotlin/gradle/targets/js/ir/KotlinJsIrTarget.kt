@@ -110,7 +110,6 @@ constructor(
                             .resolve(COMPILE_SYNC)
                             .resolve(compilation.name)
                             .resolve(binary.name)
-                            .resolve(binary.mode.name.toLowerCase())
                             .resolve(npmProject.main)
                             .canonicalPath
 
@@ -133,7 +132,7 @@ constructor(
             task.from(project.tasks.named(compilation.processResourcesTaskName))
 
             task.into(
-                npmProject.dist.resolve(binary.name)
+                npmProject.dist
             )
         }
     }
