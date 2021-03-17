@@ -120,7 +120,7 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
                 "0 means use a thread per processor core.\n" +
                 "Default value is 1"
     )
-    var parallelBackendThreads: String by FreezableVar("1")
+    var parallelBackendThreads: String by FreezableVar("0")
 
     @Argument(value = "-Xmodule-path", valueDescription = "<path>", description = "Paths where to find Java 9+ modules")
     var javaModulePath: String? by NullableStringFreezableVar(null)
