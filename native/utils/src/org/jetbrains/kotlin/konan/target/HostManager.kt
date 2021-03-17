@@ -10,13 +10,13 @@ import java.lang.Exception
 
 // TODO: Consider redesigning experimental targets support (e.g. by getting rid of such separation at all).
 open class HostManager(
-        subTargetProvider: SubTargetProvider = SubTargetProvider.NoSubTargets,
-        private val experimental: Boolean = false
+    subTargetProvider: SubTargetProvider = SubTargetProvider.NoSubTargets,
+    private val experimental: Boolean = false
 ) {
 
     constructor(
-            distribution: Distribution,
-            experimental: Boolean = false
+        distribution: Distribution,
+        experimental: Boolean = false
     ) : this(distribution.subTargetProvider, experimental || distribution.experimentalEnabled)
 
     fun targetManager(userRequest: String? = null): TargetManager = TargetManagerImpl(userRequest, this)
@@ -118,7 +118,7 @@ open class HostManager(
         enabledExperimentalByHost[host]?.toList() ?: throw TargetSupportException("Unknown host platform: $host")
     }
 
-    val enabled : List<KonanTarget>
+    val enabled: List<KonanTarget>
         get() = if (experimental) enabledRegular + enabledExperimental else enabledRegular
 
     fun isEnabled(target: KonanTarget) = enabled.contains(target)
@@ -169,35 +169,36 @@ open class HostManager(
         val defaultJvmArgs = listOf("-XX:TieredStopAtLevel=1", "-ea", "-Dfile.encoding=UTF-8")
         val regularJvmArgs = defaultJvmArgs + "-Xmx3G"
 
-        val hostIsMac   = (host.family == Family.OSX)
+        val hostIsMac = (host.family == Family.OSX)
         val hostIsLinux = (host.family == Family.LINUX)
         val hostIsMingw = (host.family == Family.MINGW)
 
         val hostSuffix get() = host.name
 
         @JvmStatic
-        val hostName get() = host.name
+        val hostName
+            get() = host.name
 
         val knownTargetTemplates = listOf("zephyr")
 
         private val targetAliasResolutions = mapOf(
-            "linux"       to "linux_x64",
-            "macbook"     to "macos_x64",
-            "macos"       to "macos_x64",
-            "imac"        to "macos_x64",
+            "linux" to "linux_x64",
+            "macbook" to "macos_x64",
+            "macos" to "macos_x64",
+            "imac" to "macos_x64",
             "raspberrypi" to "linux_arm32_hfp",
-            "iphone32"    to "ios_arm32",
-            "iphone"      to "ios_arm64",
-            "ipad"        to "ios_arm64",
-            "ios"         to "ios_arm64",
-            "iphone_sim"  to "ios_x64",
-            "mingw"       to "mingw_x64"
+            "iphone32" to "ios_arm32",
+            "iphone" to "ios_arm64",
+            "ipad" to "ios_arm64",
+            "ios" to "ios_arm64",
+            "iphone_sim" to "ios_x64",
+            "mingw" to "mingw_x64"
         )
 
         private val targetAliases: Map<String, List<String>> by lazy {
             val result = mutableMapOf<String, MutableList<String>>()
             targetAliasResolutions.entries.forEach {
-                result.getOrPut(it.value, { mutableListOf() } ).add(it.key)
+                result.getOrPut(it.value, { mutableListOf() }).add(it.key)
             }
             result
         }
