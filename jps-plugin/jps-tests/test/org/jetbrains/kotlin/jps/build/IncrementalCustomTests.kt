@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2021 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,11 @@
 package org.jetbrains.kotlin.jps.build
 
 import org.jetbrains.kotlin.incremental.testingUtils.Modification
+import org.jetbrains.kotlin.test.KotlinRoot
 
 class IncrementalRenameModuleTest : AbstractIncrementalJpsTest() {
     fun testRenameModule() {
-        doTest("jps-plugin/testData/incremental/custom/renameModule/")
+        doTest(KotlinRoot.DIR.path + "/jps/jps-plugin/testData/incremental/custom/renameModule/")
     }
 
     override fun performAdditionalModifications(modifications: List<Modification>) {
