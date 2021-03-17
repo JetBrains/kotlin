@@ -11,6 +11,7 @@ import org.jetbrains.utils.*
 import org.jetbrains.report.json.*
 import org.jetbrains.report.*
 
+typealias CompositeBuildNumber = Pair<String?, String>
 fun <T> Iterable<T>.isEmpty() = count() == 0
 fun <T> Iterable<T>.isNotEmpty() = !isEmpty()
 
@@ -98,8 +99,8 @@ class BenchmarksIndexesDispatcher(connector: ElasticSearchConnector, val feature
 
     // Get benchmarks values of needed metric for choosen build number.
     fun getSamples(metricName: String, featureValue: String = "", samples: List<String>, buildsCountToShow: Int,
-                   buildNumbers: Iterable<String>? = null,
-                   normalize: Boolean = false): Promise<List<Pair<String, Array<Double?>>>> {
+                   buildNumbers: Iterable<CompositeBuildNumber>? = null,
+                   normalize: Boolean = false): Promise<List<Pair<CompositeBuildNumber, Array<Double?>>>> {
         val queryDescription = """
             {
                 "_source": ["buildNumber"],
@@ -109,7 +110,7 @@ class BenchmarksIndexesDispatcher(connector: ElasticSearchConnector, val feature
                         "must": [ 
                             ${buildNumbers.str { builds ->
             """
-                            { "terms" : { "buildNumber" : [${builds.map { "\"$it\"" }.joinToString()}] } },""" }
+                            { "terms" : { "buildNumber" : [${builds.map { "\"${it.second}\"" }.joinToString()}] } },""" }
         }
                             ${featureFilter.str { "${it(featureValue)}," } }
                             {"nested" : {
@@ -142,19 +143,21 @@ class BenchmarksIndexesDispatcher(connector: ElasticSearchConnector, val feature
                     val indexesMap = samples.mapIndexed { index, it -> it to index }.toMap()
                     val valuesMap = buildNumbers?.map {
                         it to arrayOfNulls<Double?>(samples.size)
-                    }?.toMap()?.toMutableMap() ?: mutableMapOf<String, Array<Double?>>()
+                    }?.toMap()?.toMutableMap() ?: mutableMapOf<CompositeBuildNumber, Array<Double?>>()
+                    val buildTypes = buildNumbers?.map { it.second to it.first }?.toMap() ?: emptyMap()
                     // Parse and save values in requested order.
                     results.forEach {
                         val element = it as JsonObject
                         val build = element.getObject("_source").getPrimitive("buildNumber").content
-                        buildNumbers?.let { valuesMap.getOrPut(build) { arrayOfNulls<Double?>(samples.size) } }
+                        val buildInfo = buildTypes[build] to build
+                        buildNumbers?.let { valuesMap.getOrPut(buildInfo) { arrayOfNulls<Double?>(samples.size) } }
                         element
                                 .getObject("inner_hits")
                                 .getObject("benchmarks")
                                 .getObject("hits")
                                 .getArray("hits").forEach {
                                     val source = (it as JsonObject).getObject("_source")
-                                    valuesMap[build]!![indexesMap[source.getPrimitive("name").content]!!] =
+                                    valuesMap[buildInfo]!![indexesMap[source.getPrimitive("name").content]!!] =
                                             source.getPrimitive(if (normalize) "normalizedScore" else "score").double
                                 }
 
@@ -254,8 +257,8 @@ class BenchmarksIndexesDispatcher(connector: ElasticSearchConnector, val feature
 
     // Get geometric mean for benchmarks values of needed metric.
     fun getGeometricMean(metricName: String, featureValue: String = "",
-                         buildNumbers: Iterable<String>? = null, normalize: Boolean = false,
-                         excludeNames: List<String> = emptyList()): Promise<List<Pair<String, List<Double?>>>> {
+                         buildNumbers: Iterable<CompositeBuildNumber>? = null, normalize: Boolean = false,
+                         excludeNames: List<String> = emptyList()): Promise<List<Pair<CompositeBuildNumber, List<Double?>>>> {
 
         // Filter only with metric or also with names.
         val filterBenchmarks = if (excludeNames.isEmpty())
@@ -285,7 +288,7 @@ class BenchmarksIndexesDispatcher(connector: ElasticSearchConnector, val feature
                     "builds": {
                         "filters" : { 
                             "filters": { 
-                                ${builds.map { "\"$it\": { \"match\" : { \"buildNumber\" : \"$it\" }}" }
+                                ${builds.map { "\"${it.second}\": { \"match\" : { \"buildNumber\" : \"${it.second}\" }}" }
                     .joinToString(",\n")}
                             }
                         },"""
@@ -341,7 +344,7 @@ class BenchmarksIndexesDispatcher(connector: ElasticSearchConnector, val feature
                         ?: error("Wrong response:\n$responseString")
                 buildNumbers.map {
                     it to listOf(buckets
-                            .getObject(it)
+                            .getObject(it.second)
                             .getObject("metric_build")
                             .getObject("metric_samples")
                             .getObject("buckets")
@@ -351,7 +354,7 @@ class BenchmarksIndexesDispatcher(connector: ElasticSearchConnector, val feature
                             ?.double
                     )
                 }
-            } ?: listOf("golden" to listOf(aggregations
+            } ?: listOf((null to "golden") to listOf(aggregations
                     .getObject("metric_build")
                     .getObject("metric_samples")
                     .getObject("buckets")

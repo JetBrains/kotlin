@@ -85,7 +85,8 @@ class CommitsList : ConvertedFromJson, JsonSerializable {
 
 data class BuildInfo(val buildNumber: String, val startTime: String, val endTime: String, val commitsList: CommitsList,
                      val branch: String,
-                     val agentInfo: String /* Important agent information often used in requests.*/) : JsonSerializable {
+                     val agentInfo: String /* Important agent information often used in requests.*/,
+                     val buildType: String?) : JsonSerializable {
     override fun serializeFields() = """
         "buildNumber": "$buildNumber",
         "startTime": "$startTime",
@@ -93,6 +94,9 @@ data class BuildInfo(val buildNumber: String, val startTime: String, val endTime
         ${commitsList.serializeFields()},
         "branch": "$branch",
         "agentInfo": "$agentInfo"
+        ${buildType?.let {""",
+        "buildType": "$buildType"
+        """}}
     """
 
     companion object : EntityFromJsonFactory<BuildInfo> {
@@ -112,7 +116,11 @@ data class BuildInfo(val buildNumber: String, val startTime: String, val endTime
                 val agentInfo = agentInfoElement?.let {
                     elementToString(agentInfoElement, "agentInfo")
                 } ?: ""
-                return BuildInfo(buildNumber, startTime, endTime, CommitsList(commits), branch, agentInfo)
+                val buildTypeElement = data.getOptionalField("buildType")
+                val buildType = buildTypeElement?.let {
+                    elementToString(buildTypeElement, "buildType")
+                } ?: null
+                return BuildInfo(buildNumber, startTime, endTime, CommitsList(commits), branch, agentInfo, buildType)
             } else {
                 error("Top level entity is expected to be an object. Please, check origin files.")
             }
