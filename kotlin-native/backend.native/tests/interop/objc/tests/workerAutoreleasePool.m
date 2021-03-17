@@ -6,14 +6,12 @@
 @implementation CreateAutorelease {
     CreateAutoreleaseDeallocated* deallocated;
 }
-+(instancetype)create:(CreateAutoreleaseDeallocated*)deallocated {
-    CreateAutorelease* result = [self new];
-    result->deallocated = deallocated;
-    return result;
-}
 
 +(void)createAutorelease:(CreateAutoreleaseDeallocated*)deallocated {
-    [self create:deallocated];
+    // __autoreleasing attribute prevents from early deallocation
+    // and thus makes test behaviour identical on Intel and ARM CPUs.
+    __autoreleasing CreateAutorelease* result = [self new];
+    result->deallocated = deallocated;
 }
 
 -(void)dealloc {
