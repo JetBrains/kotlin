@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.diagnostics
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiTypeElement
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
@@ -49,6 +51,16 @@ import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
  */
 
 sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
+    abstract class Unsupported : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = Unsupported::class
+        abstract val unsupported: String
+    }
+
+    abstract class UnsupportedFeature : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = UnsupportedFeature::class
+        abstract val unsupportedFeature: Pair<LanguageFeature, LanguageVersionSettings>
+    }
+
     abstract class Syntax : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = Syntax::class
     }
@@ -589,8 +601,17 @@ sealed class KtFirDiagnostic<PSI: PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val typeParameter: KtTypeParameterSymbol
     }
 
+    abstract class ExtensionInClassReferenceNotAllowed : KtFirDiagnostic<KtExpression>() {
+        override val diagnosticClass get() = ExtensionInClassReferenceNotAllowed::class
+        abstract val referencedDeclaration: KtCallableSymbol
+    }
+
     abstract class CallableReferenceLhsNotAClass : KtFirDiagnostic<KtExpression>() {
         override val diagnosticClass get() = CallableReferenceLhsNotAClass::class
+    }
+
+    abstract class CallableReferenceToAnnotationConstructor : KtFirDiagnostic<KtExpression>() {
+        override val diagnosticClass get() = CallableReferenceToAnnotationConstructor::class
     }
 
     abstract class ClassLiteralLhsNotAClass : KtFirDiagnostic<KtExpression>() {

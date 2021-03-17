@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.fir.analysis.diagnostics
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiTypeElement
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
@@ -54,6 +56,10 @@ import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
  */
 
 object FirErrors {
+    // Meta-errors
+    val UNSUPPORTED by error1<FirSourceElement, PsiElement, String>()
+    val UNSUPPORTED_FEATURE by error1<FirSourceElement, PsiElement, Pair<LanguageFeature, LanguageVersionSettings>>()
+
     // Miscellaneous
     val SYNTAX by error0<FirSourceElement, PsiElement>()
     val OTHER_ERROR by error0<FirSourceElement, PsiElement>()
@@ -201,7 +207,9 @@ object FirErrors {
     val TYPE_PARAMETER_AS_REIFIED by error1<FirSourceElement, PsiElement, FirTypeParameterSymbol>()
 
     // Reflection
+    val EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED by error1<FirSourceElement, KtExpression, FirCallableDeclaration<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
     val CALLABLE_REFERENCE_LHS_NOT_A_CLASS by error0<FirSourceElement, KtExpression>()
+    val CALLABLE_REFERENCE_TO_ANNOTATION_CONSTRUCTOR by error0<FirSourceElement, KtExpression>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
     val CLASS_LITERAL_LHS_NOT_A_CLASS by error0<FirSourceElement, KtExpression>()
     val NULLABLE_TYPE_IN_CLASS_LITERAL_LHS by error0<FirSourceElement, KtExpression>()
     val EXPRESSION_OF_NULLABLE_TYPE_IN_CLASS_LITERAL_LHS by error1<FirSourceElement, PsiElement, ConeKotlinType>()

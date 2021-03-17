@@ -36,8 +36,8 @@ class NoGenericTest {
     fun B.extensionFun(): A = A()
 
     fun test_1() {
-        val extensionValRef = B::extensionVal
-        val extensionFunRef = B::extensionFun
+        val extensionValRef = <!EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED!>B::extensionVal<!>
+        val extensionFunRef = <!EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED!>B::extensionFun<!>
     }
 
     fun test_2() {

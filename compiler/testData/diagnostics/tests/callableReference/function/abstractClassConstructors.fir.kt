@@ -7,6 +7,6 @@ enum class D
 fun main() {
     <!UNRESOLVED_REFERENCE!>::A<!>
     ::B
-    ::C   // KT-3465
+    <!CALLABLE_REFERENCE_TO_ANNOTATION_CONSTRUCTOR!>::C<!>   // KT-3465
     <!UNRESOLVED_REFERENCE!>::D<!>
 }

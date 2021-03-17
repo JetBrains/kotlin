@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isLocalMember
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
@@ -109,14 +110,6 @@ object RedundantVisibilityModifierChecker : FirBasicDeclarationChecker() {
 
         return null
     }
-
-    private val FirMemberDeclaration.isLocalMember: Boolean
-        get() = when (this) {
-            is FirProperty -> this.isLocal
-            is FirRegularClass -> this.isLocal
-            is FirSimpleFunction -> this.isLocal
-            else -> false
-        }
 
     private val CheckerContext.containingPropertyVisibility
         get() = (this.containingDeclarations.last() as? FirProperty)?.visibility

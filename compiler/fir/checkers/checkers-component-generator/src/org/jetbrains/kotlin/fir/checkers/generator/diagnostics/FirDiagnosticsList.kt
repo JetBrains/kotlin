@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.fir.checkers.generator.diagnostics
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiTypeElement
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
@@ -33,6 +35,15 @@ import kotlin.properties.ReadOnlyProperty
 @Suppress("UNUSED_VARIABLE", "LocalVariableName", "ClassName", "unused")
 @OptIn(PrivateForInline::class)
 object DIAGNOSTICS_LIST : DiagnosticList() {
+    val MetaErrors by object : DiagnosticGroup("Meta-errors") {
+        val UNSUPPORTED by error<FirSourceElement, PsiElement> {
+            parameter<String>("unsupported")
+        }
+        val UNSUPPORTED_FEATURE by error<FirSourceElement, PsiElement> {
+            parameter<Pair<LanguageFeature, LanguageVersionSettings>>("unsupportedFeature")
+        }
+    }
+
     val Miscellaneous by object : DiagnosticGroup("Miscellaneous") {
         val SYNTAX by error<FirSourceElement, PsiElement>()
         val OTHER_ERROR by error<FirSourceElement, PsiElement>()
@@ -264,7 +275,11 @@ object DIAGNOSTICS_LIST : DiagnosticList() {
     }
 
     val REFLECTION by object : DiagnosticGroup("Reflection") {
+        val EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED by error<FirSourceElement, KtExpression>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
+            parameter<FirCallableDeclaration<*>>("referencedDeclaration")
+        }
         val CALLABLE_REFERENCE_LHS_NOT_A_CLASS by error<FirSourceElement, KtExpression>()
+        val CALLABLE_REFERENCE_TO_ANNOTATION_CONSTRUCTOR by error<FirSourceElement, KtExpression>(PositioningStrategy.REFERENCE_BY_QUALIFIED)
 
         val CLASS_LITERAL_LHS_NOT_A_CLASS by error<FirSourceElement, KtExpression>()
         val NULLABLE_TYPE_IN_CLASS_LITERAL_LHS by error<FirSourceElement, KtExpression>()
