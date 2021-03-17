@@ -9,7 +9,7 @@ object A {
 }
 
 fun test() {
-    <!INAPPLICABLE_CANDIDATE!>takeString<!>(A % 123)
+    <!INAPPLICABLE_CANDIDATE!>takeString<!>(A <!HIDDEN!>%<!> 123)
 }
 
 fun takeString(s: String) {}

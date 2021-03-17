@@ -106,8 +106,8 @@ fun use(
     setterDeprecated.p
     setterDeprecated.p = 1
 
-    hiddenDeprecated.p
-    hiddenDeprecated.p = 1
+    hiddenDeprecated.<!HIDDEN!>p<!>
+    hiddenDeprecated.<!HIDDEN!>p<!> = 1
 
     wd.p
     wd.p = 1
