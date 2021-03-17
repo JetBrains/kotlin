@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.test.tests
 
+import kotlin.reflect.typeOf
 import kotlin.test.*
 
 class BasicAssertionsTest {
@@ -207,30 +208,36 @@ class BasicAssertionsTest {
     }
 
     @Test
-    fun testAssertIs() {
+    fun testAssertIsOfType() {
         val s: Any = "test"
         assertIs<String>(s)
         assertEquals(4, s.length)
     }
 
+    @OptIn(ExperimentalStdlibApi::class)
     @Test
-    fun testAssertIsFails() {
+    fun testAssertIsOfTypeFails() {
         val error = checkFailedAssertion { assertIs<Int>("test") }
-        assertTrue(error.message.startsWith("Expected value to be of type"))
-        assertTrue(error.message.contains("Int"))
-        assertTrue(error.message.contains("String"))
+        val message = assertNotNull(error.message)
+        val onFailure = "Actual message: $message"
+        assertTrue(message.startsWith("Expected value to be of type"), onFailure)
+        assertTrue(message.contains(typeOf<Int>().toString()), onFailure)
+        assertTrue(message.contains("String"), onFailure)
     }
 
     @Test
-    fun testAssertNotIs() {
-        assertNotIs<Int>("test")
+    fun testAssertIsNotOfType() {
+        assertIsNot<Int>("test")
     }
 
     @Test
-    fun testAssertNotIsFails() {
-        val error = checkFailedAssertion { assertNotIs<Int>(1) }
-        assertTrue(error.message.startsWith("Expected value to not be of type"))
-        assertTrue(error.message.contains("Int"))
+    @OptIn(ExperimentalStdlibApi::class)
+    fun testAssertIsNotOfTypeFails() {
+        val error = checkFailedAssertion { assertIsNot<Int>(1) }
+        val message = assertNotNull(error.message)
+        val onFailure = "Actual message: $message"
+        assertTrue(message.startsWith("Expected value to not be of type"), onFailure)
+        assertTrue(message.contains(typeOf<Int>().toString()), onFailure)
     }
 }
 
