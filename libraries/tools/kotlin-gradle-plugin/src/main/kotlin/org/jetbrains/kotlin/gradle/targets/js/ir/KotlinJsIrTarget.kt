@@ -20,7 +20,10 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.targets.js.JsAggregatingExecutionSource
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsReportAggregatingTestRun
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
-import org.jetbrains.kotlin.gradle.targets.js.dsl.*
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsNodeDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetContainerDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -110,7 +113,6 @@ constructor(
                             .resolve(COMPILE_SYNC)
                             .resolve(compilation.name)
                             .resolve(binary.name)
-                            .resolve(binary.mode.name.toLowerCase())
                             .resolve(npmProject.main)
                             .canonicalPath
 
@@ -133,7 +135,7 @@ constructor(
             task.from(project.tasks.named(compilation.processResourcesTaskName))
 
             task.into(
-                npmProject.dist.resolve(binary.name)
+                npmProject.dist
             )
         }
     }
