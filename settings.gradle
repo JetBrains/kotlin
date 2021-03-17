@@ -306,10 +306,6 @@ include ":benchmarks",
         ":kotlin-serialization-unshaded",
         ":wasm:wasm.ir"
 
-include ":kotlinx-atomicfu-compiler-plugin",
-        ":kotlinx-atomicfu-runtime",
-        ":atomicfu"
-
 include ":compiler:fir:cones",
         ":compiler:fir:tree",
         ":compiler:fir:tree:tree-generator",
@@ -576,10 +572,6 @@ project(':kotlinx-serialization-compiler-plugin').projectDir = file("$rootDir/pl
 project(':kotlinx-serialization-ide-plugin').projectDir = file("$rootDir/plugins/kotlin-serialization/kotlin-serialization-ide")
 project(':kotlin-serialization').projectDir = file("$rootDir/libraries/tools/kotlin-serialization")
 project(':kotlin-serialization-unshaded').projectDir = file("$rootDir/libraries/tools/kotlin-serialization-unshaded")
-
-project(':kotlinx-atomicfu-compiler-plugin').projectDir = file("$rootDir/plugins/atomicfu/atomicfu-compiler")
-project(':kotlinx-atomicfu-runtime').projectDir = file("$rootDir/plugins/atomicfu/atomicfu-runtime")
-project(':atomicfu').projectDir = file("$rootDir/libraries/tools/atomicfu")
 
 // Uncomment to use locally built protobuf-relocated
 // includeBuild("dependencies/protobuf")
