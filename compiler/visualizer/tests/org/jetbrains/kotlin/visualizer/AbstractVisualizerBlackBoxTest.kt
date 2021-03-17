@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.visualizer
 
+import org.jetbrains.kotlin.compiler.visualizer.FirVisualizer
+import org.jetbrains.kotlin.compiler.visualizer.PsiVisualizer
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.TestRunner
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -61,19 +63,36 @@ abstract class AbstractVisualizerBlackBoxTest {
     }
 
     fun runTest(filePath: String) {
+        lateinit var psiRenderResult: String
+        lateinit var firRenderResult: String
+
         val psiConfiguration = testConfiguration(filePath) {
             commonConfiguration()
             globalDefaults { frontend = FrontendKinds.ClassicFrontend }
         }
-        TestRunner(psiConfiguration).runTest(filePath)
+        TestRunner(psiConfiguration).runTest(filePath) { testConfiguration ->
+            val psiDependencyProvider = testConfiguration.testServices.dependencyProvider
+            val psiModule = psiDependencyProvider.getTestModule("main")
+            val psiArtifact = psiDependencyProvider.getArtifact(psiModule, FrontendKinds.ClassicFrontend)
+
+            val psiRenderer = psiArtifact.ktFiles.values.firstOrNull()?.let { PsiVisualizer(it, psiArtifact.analysisResult) }
+            psiRenderResult = psiRenderer?.render()?.trim() ?: ""
+        }
 
         val firConfiguration = testConfiguration(filePath) {
             commonConfiguration()
             globalDefaults { frontend = FrontendKinds.FIR }
         }
-        TestRunner(firConfiguration).runTest(filePath)
+        TestRunner(firConfiguration).runTest(filePath) { testConfiguration ->
+            val firDependencyProvider = testConfiguration.testServices.dependencyProvider
+            val firModule = firDependencyProvider.getTestModule("main")
+            val firArtifact = firDependencyProvider.getArtifact(firModule, FrontendKinds.FIR)
 
-        VisualizerBlackBoxHandler(psiConfiguration.testServices, firConfiguration.testServices).process()
+            val firRenderer = firArtifact.firFiles.values.firstOrNull()?.let { FirVisualizer(it) }
+            firRenderResult = firRenderer?.render()?.trim() ?: ""
+        }
+
+        psiConfiguration.testServices.assertions.assertEquals(psiRenderResult, firRenderResult)
     }
 }
 
