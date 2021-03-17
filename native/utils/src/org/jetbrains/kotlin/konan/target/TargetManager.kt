@@ -9,8 +9,6 @@ interface TargetManager {
     val target: KonanTarget
     val targetName: String
     fun list()
-    val hostTargetSuffix: String
-    val targetSuffix: String
 }
 
 internal class TargetManagerImpl(val userRequest: String?, val hostManager: HostManager) : TargetManager {
@@ -26,7 +24,7 @@ internal class TargetManagerImpl(val userRequest: String?, val hostManager: Host
         }
     }
 
-    fun determineCurrent(): KonanTarget {
+    private fun determineCurrent(): KonanTarget {
         return if (userRequest == null || userRequest == "host") {
             HostManager.host
         } else {
@@ -34,9 +32,6 @@ internal class TargetManagerImpl(val userRequest: String?, val hostManager: Host
             hostManager.targets.getValue(hostManager.known(resolvedAlias))
         }
     }
-
-    override val hostTargetSuffix get() = hostTargetSuffix(HostManager.host, target)
-    override val targetSuffix get() = target.name
 }
 
 fun hostTargetSuffix(host: KonanTarget, target: KonanTarget) =
