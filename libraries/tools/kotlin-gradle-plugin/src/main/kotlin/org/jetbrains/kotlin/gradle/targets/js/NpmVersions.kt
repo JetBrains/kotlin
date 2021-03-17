@@ -12,10 +12,12 @@ package org.jetbrains.kotlin.gradle.targets.js
 class NpmVersions {
     val dukat = NpmPackageVersion("dukat", "0.5.8-rc.4")
     val webpack = NpmPackageVersion("webpack", "5.26.2")
+    val webpack4 = NpmPackageVersion("webpack", "4.44.1")
     val webpackCli = NpmPackageVersion("webpack-cli", "4.5.0")
     val webpackBundleAnalyzer = NpmPackageVersion("webpack-bundle-analyzer", "4.4.0")
     val webpackDevServer = NpmPackageVersion("webpack-dev-server", "3.11.2")
     val sourceMapLoader = NpmPackageVersion("source-map-loader", "2.0.1")
+    val sourceMapLoader1 = NpmPackageVersion("source-map-loader", "1.1.0")
     val sourceMapSupport = NpmPackageVersion("source-map-support", "0.5.19")
     val cssLoader = NpmPackageVersion("css-loader", "5.1.3")
     val styleLoader = NpmPackageVersion("style-loader", "2.0.0")

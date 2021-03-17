@@ -18,6 +18,7 @@ import org.gradle.deployment.internal.DeploymentHandle
 import org.gradle.deployment.internal.DeploymentRegistry
 import org.gradle.process.internal.ExecHandle
 import org.gradle.process.internal.ExecHandleFactory
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
@@ -205,6 +206,9 @@ constructor(
     @Nested
     val synthConfig = KotlinWebpackConfig()
 
+    @Input
+    val webpackMajorVersion = PropertiesProvider(project).webpackMajorVersion
+
     fun webpackConfigApplier(body: KotlinWebpackConfig.() -> Unit) {
         synthConfig.body()
         webpackConfigAppliers.add(body)
@@ -227,7 +231,8 @@ constructor(
             devServer = devServer,
             devtool = devtool,
             sourceMaps = sourceMaps,
-            resolveFromModulesFirst = resolveFromModulesFirst
+            resolveFromModulesFirst = resolveFromModulesFirst,
+            webpackMajorVersion = webpackMajorVersion
         )
 
         webpackConfigAppliers

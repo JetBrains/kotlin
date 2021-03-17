@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.targets.js.jsQuoted
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackCssMode.EXTRACT
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackCssMode.IMPORT
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackCssMode.INLINE
+import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackMajorVersion.Companion.choose
 import java.io.File
 import java.io.Serializable
 import java.io.StringWriter
@@ -63,7 +64,9 @@ data class KotlinWebpackConfig(
     @Optional
     var progressReporterPathFilter: String? = null,
     @Input
-    var resolveFromModulesFirst: Boolean = false
+    var resolveFromModulesFirst: Boolean = false,
+    @Input
+    val webpackMajorVersion: WebpackMajorVersion = WebpackMajorVersion.V5
 ) {
     @get:Input
     @get:Optional
@@ -93,7 +96,12 @@ data class KotlinWebpackConfig(
     fun getRequiredDependencies(versions: NpmVersions) =
         mutableSetOf<RequiredKotlinJsDependency>().also {
             it.add(versions.kotlinJsTestRunner)
-            it.add(versions.webpack)
+            it.add(
+                webpackMajorVersion.choose(
+                    versions.webpack,
+                    versions.webpack4
+                )
+            )
             it.add(versions.webpackCli)
             it.add(versions.formatUtil)
 
@@ -102,7 +110,12 @@ data class KotlinWebpackConfig(
             }
 
             if (sourceMaps) {
-                it.add(versions.sourceMapLoader)
+                it.add(
+                    webpackMajorVersion.choose(
+                        versions.sourceMapLoader,
+                        versions.sourceMapLoader1
+                    )
+                )
             }
 
             if (devServer != null) {
@@ -269,7 +282,17 @@ data class KotlinWebpackConfig(
                         enforce: "pre"
                 });
                 config.devtool = ${devtool?.let { "'$it'" } ?: false};
-                config.ignoreWarnings = [/Failed to parse source map/]
+                ${
+                webpackMajorVersion.choose(
+                    "config.ignoreWarnings = [/Failed to parse source map/]",
+                    """
+                config.stats = config.stats || {}
+                Object.assign(config.stats, config.stats, {
+                    warningsFilter: [/Failed to parse source map/]
+                })
+                """
+                )
+            }
                 
             """.trimIndent()
         )

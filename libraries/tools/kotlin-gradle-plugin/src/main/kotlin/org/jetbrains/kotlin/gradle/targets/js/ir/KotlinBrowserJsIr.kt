@@ -10,6 +10,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Copy
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsDce
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalDceDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
@@ -22,6 +23,8 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
 import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackDevtool
+import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackMajorVersion
+import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackMajorVersion.Companion.choose
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.utils.newFileProperty
 import java.io.File
@@ -33,6 +36,10 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
 
     private val webpackTaskConfigurations: MutableList<KotlinWebpack.() -> Unit> = mutableListOf()
     private val runTaskConfigurations: MutableList<KotlinWebpack.() -> Unit> = mutableListOf()
+
+    private val propertiesProvider = PropertiesProvider(project)
+    private val webpackMajorVersion
+        get() = propertiesProvider.webpackMajorVersion
 
     override val testTaskDescription: String
         get() = "Run all ${target.name} tests inside browser using karma and webpack"
@@ -99,7 +106,10 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                             .resolve(binary.linkTask.get().outputFile.name)
                     }
 
-                    task.args.add(0, "serve")
+                    webpackMajorVersion.choose(
+                        { task.args.add(0, "serve") },
+                        { task.bin = "webpack-dev-server/bin/webpack-dev-server.js" }
+                    )()
                     task.description = "start ${mode.name.toLowerCase()} webpack dev server"
 
                     task.devServer = KotlinWebpackConfig.DevServer(

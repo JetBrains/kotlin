@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.targets.js.dukat.ExternalsOutputFormat
 import org.jetbrains.kotlin.gradle.targets.js.dukat.ExternalsOutputFormat.Companion.externalsOutputFormatProperty
+import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackMajorVersion
+import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackMajorVersion.Companion.warningMessage
 import org.jetbrains.kotlin.gradle.targets.native.DisabledNativeTargetsReporter
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
@@ -247,6 +249,20 @@ internal class PropertiesProvider private constructor(private val project: Proje
      */
     val jsCompiler: KotlinJsCompilerType
         get() = property(jsCompilerProperty)?.let { KotlinJsCompilerType.byArgumentOrNull(it) } ?: KotlinJsCompilerType.LEGACY
+
+    /**
+     * Use Webpack 4 for compatibility
+     */
+    val webpackMajorVersion: WebpackMajorVersion
+        get() = property(WebpackMajorVersion.webpackMajorVersion)?.let { WebpackMajorVersion.byArgument(it) }
+            ?.also { version ->
+                if (!WebpackMajorVersion.webpackVersionWarning && version != WebpackMajorVersion.DEFAULT) {
+                    WebpackMajorVersion.webpackVersionWarning = true
+                    project.logger.warn(WebpackMajorVersion.warningMessage)
+                }
+            }
+            ?: WebpackMajorVersion.DEFAULT
+
 
     /**
      * Default mode of generating of Dukat
