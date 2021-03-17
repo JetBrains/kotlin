@@ -2969,6 +2969,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 }
 
                 @Test
+                @TestMetadata("backingField.kt")
+                public void testBackingField() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/callableReference/property/backingField.kt");
+                }
+
+                @Test
                 @TestMetadata("classFromClass.kt")
                 public void testClassFromClass() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/callableReference/property/classFromClass.kt");

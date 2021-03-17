@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.idea.frontend.api.fir.generator
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
@@ -47,7 +49,7 @@ object HLDiagnosticConverter {
         )
 
     private fun convertParameter(index: Int, diagnosticParameter: DiagnosticParameter): HLDiagnosticParameter {
-        val conversion = FirToKtConversionCreator.creatConversion(diagnosticParameter.type)
+        val conversion = FirToKtConversionCreator.createConversion(diagnosticParameter.type)
         val convertedType = conversion.convertType(diagnosticParameter.type)
         return HLDiagnosticParameter(
             name = diagnosticParameter.name,
@@ -73,12 +75,12 @@ object HLDiagnosticConverter {
 
 
 private object FirToKtConversionCreator {
-    fun creatConversion(type: KType): HLParameterConversion {
+    fun createConversion(type: KType): HLParameterConversion {
         val kClass = type.classifier as KClass<*>
         return tryMapAllowedType(kClass)
             ?: tryMapPsiElementType(type, kClass)
             ?: tryMapFirTypeToKtType(kClass)
-            ?: tryMapCollectionType(type, kClass)
+            ?: tryMapPlatformType(type, kClass)
             ?: error("Unsupported type $type, consider add corresponding mapping")
     }
 
@@ -91,12 +93,20 @@ private object FirToKtConversionCreator {
         return null
     }
 
-    private fun tryMapCollectionType(type: KType, kClass: KClass<*>): HLParameterConversion? {
+    private fun tryMapPlatformType(type: KType, kClass: KClass<*>): HLParameterConversion? {
         if (kClass.isSubclassOf(Collection::class)) {
             val elementType = type.arguments.single().type ?: return HLIdParameterConversion
             return HLMapParameterConversion(
                 parameterName = elementType.kClass.simpleName!!.decapitalize(),
-                mappingConversion = creatConversion(elementType)
+                mappingConversion = createConversion(elementType)
+            )
+        }
+        if (kClass.isSubclassOf(Pair::class)) {
+            val first = type.arguments.getOrNull(0)?.type ?: return HLIdParameterConversion
+            val second = type.arguments.getOrNull(1)?.type ?: return HLIdParameterConversion
+            return HLPairParameterConversion(
+                mappingConversionFirst = createConversion(first),
+                mappingConversionSecond = createConversion(second)
             )
         }
         return null
@@ -175,6 +185,8 @@ private object FirToKtConversionCreator {
         Visibility::class,
         WhenMissingCase::class,
         ForbiddenNamedArgumentsTarget::class,
+        LanguageFeature::class,
+        LanguageVersionSettings::class,
     )
 
     private val KType.kClass: KClass<*>

@@ -4,11 +4,11 @@ class A {
     fun A.extA(x: String) = x
     
     fun main() {
-        Int::extInt
-        A::extA
+        <!EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED!>Int::extInt<!>
+        <!EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED!>A::extA<!>
 
-        eat(Int::extInt)
-        eat(A::extA)
+        eat(<!EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED!>Int::extInt<!>)
+        eat(<!EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED!>A::extA<!>)
     }
 }
 

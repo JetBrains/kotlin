@@ -186,3 +186,16 @@ internal fun FirRegularClass.isInlineOrValueClass(): Boolean {
 
     return isInline || hasModifier(KtTokens.VALUE_KEYWORD)
 }
+
+internal val FirMemberDeclaration.isLocalMember: Boolean
+    get() = when (this) {
+        is FirProperty -> this.isLocal
+        is FirRegularClass -> this.isLocal
+        is FirSimpleFunction -> this.isLocal
+        else -> false
+    }
+
+internal val FirCallableMemberDeclaration<*>.isExtensionMember: Boolean
+    get() {
+        return receiverTypeRef != null && dispatchReceiverType != null
+    }

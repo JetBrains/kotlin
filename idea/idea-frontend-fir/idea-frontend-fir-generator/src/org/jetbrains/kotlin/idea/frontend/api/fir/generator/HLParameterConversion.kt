@@ -47,6 +47,33 @@ class HLMapParameterConversion(
     override val importsToAdd get() = mappingConversion.importsToAdd
 }
 
+class HLPairParameterConversion(
+    private val mappingConversionFirst: HLParameterConversion,
+    private val mappingConversionSecond: HLParameterConversion,
+) : HLParameterConversion() {
+    override fun convertExpression(expression: String, context: ConversionContext): String = expression
+
+    override fun convertType(type: KType): KType {
+        val first = type.arguments.getOrNull(0)?.type ?: return type
+        val second = type.arguments.getOrNull(1)?.type ?: return type
+        return Pair::class.createType(
+            arguments = listOf(
+                KTypeProjection(
+                    variance = KVariance.INVARIANT,
+                    type = mappingConversionFirst.convertType(first)
+                ),
+                KTypeProjection(
+                    variance = KVariance.INVARIANT,
+                    type = mappingConversionSecond.convertType(second)
+                )
+            )
+        )
+    }
+
+    override val importsToAdd
+        get() = mappingConversionFirst.importsToAdd + mappingConversionSecond.importsToAdd
+}
+
 class HLFunctionCallConversion(
     private val callTemplate: String,
     private val callType: KType,

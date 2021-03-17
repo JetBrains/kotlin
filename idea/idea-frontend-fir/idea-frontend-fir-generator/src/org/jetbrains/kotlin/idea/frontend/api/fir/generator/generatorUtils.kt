@@ -10,15 +10,15 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KType
 
 internal fun SmartPrinter.printTypeWithShortNames(type: KType) {
-    print((type.classifier as KClass<*>).simpleName!!)
-    if (type.arguments.isNotEmpty()) {
-        print("<")
-        type.arguments.map {
+    fun typeConversion(type: KType): String {
+        val simpleName = (type.classifier as KClass<*>).simpleName!!
+        return if (type.arguments.isEmpty()) simpleName
+        else simpleName + type.arguments.joinToString(separator = ", ", prefix = "<", postfix = ">") {
             when (val typeArgument = it.type) {
                 null -> "*"
-                else -> printTypeWithShortNames(typeArgument)
+                else -> typeConversion(typeArgument)
             }
         }
-        print(">")
     }
+    print(typeConversion(type))
 }

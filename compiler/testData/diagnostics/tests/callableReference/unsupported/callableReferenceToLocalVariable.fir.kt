@@ -2,7 +2,7 @@
 
 fun a() {
     val x = 10
-    foo(::x)
+    foo(<!UNSUPPORTED!>::x<!>)
 }
 
 fun foo(a: Any) {}

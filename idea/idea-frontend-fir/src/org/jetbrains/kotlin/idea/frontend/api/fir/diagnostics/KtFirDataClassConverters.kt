@@ -44,6 +44,20 @@ import org.jetbrains.kotlin.psi.KtWhenExpression
  */
 
 internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConverter {
+    add(FirErrors.UNSUPPORTED) { firDiagnostic ->
+        UnsupportedImpl(
+            firDiagnostic.a,
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.UNSUPPORTED_FEATURE) { firDiagnostic ->
+        UnsupportedFeatureImpl(
+            firDiagnostic.a,
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
     add(FirErrors.SYNTAX) { firDiagnostic ->
         SyntaxImpl(
             firDiagnostic as FirPsiDiagnostic<*>,
@@ -830,8 +844,21 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED) { firDiagnostic ->
+        ExtensionInClassReferenceNotAllowedImpl(
+            firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.a as FirCallableDeclaration),
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
     add(FirErrors.CALLABLE_REFERENCE_LHS_NOT_A_CLASS) { firDiagnostic ->
         CallableReferenceLhsNotAClassImpl(
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.CALLABLE_REFERENCE_TO_ANNOTATION_CONSTRUCTOR) { firDiagnostic ->
+        CallableReferenceToAnnotationConstructorImpl(
             firDiagnostic as FirPsiDiagnostic<*>,
             token,
         )

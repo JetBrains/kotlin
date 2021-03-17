@@ -14,6 +14,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
     )
 
     override val qualifiedAccessCheckers: Set<FirQualifiedAccessChecker> = setOf(
+        FirCallableReferenceChecker,
         FirSuperNotAvailableChecker,
         FirNotASupertypeChecker,
         FirSuperclassNotAccessibleFromInterfaceChecker,
