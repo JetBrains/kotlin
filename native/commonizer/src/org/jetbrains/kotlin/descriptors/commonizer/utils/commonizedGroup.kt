@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.descriptors.commonizer.utils
+package org.jetbrains.kotlin.commonizer.utils
 
 /** Fixed-size ordered collection with no extra space that represents a commonized group of same-rank elements */
 class CommonizedGroup<T : Any>(

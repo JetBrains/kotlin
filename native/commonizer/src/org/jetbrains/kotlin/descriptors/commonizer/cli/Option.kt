@@ -3,6 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.descriptors.commonizer.cli
+package org.jetbrains.kotlin.commonizer.cli
 
 internal class Option<T>(val type: OptionType<T>, val value: T)

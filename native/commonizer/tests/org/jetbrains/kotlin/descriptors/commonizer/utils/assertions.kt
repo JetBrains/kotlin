@@ -3,15 +3,15 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.descriptors.commonizer.utils
+package org.jetbrains.kotlin.commonizer.utils
 
 import kotlinx.metadata.klib.KlibModuleMetadata
 import kotlinx.metadata.klib.annotations
-import org.jetbrains.kotlin.descriptors.commonizer.CommonizerTarget
-import org.jetbrains.kotlin.descriptors.commonizer.identityString
-import org.jetbrains.kotlin.descriptors.commonizer.metadata.utils.MetadataDeclarationsComparator
-import org.jetbrains.kotlin.descriptors.commonizer.metadata.utils.MetadataDeclarationsComparator.*
-import org.jetbrains.kotlin.descriptors.commonizer.metadata.utils.SerializedMetadataLibraryProvider
+import org.jetbrains.kotlin.commonizer.CommonizerTarget
+import org.jetbrains.kotlin.commonizer.identityString
+import org.jetbrains.kotlin.commonizer.metadata.utils.MetadataDeclarationsComparator
+import org.jetbrains.kotlin.commonizer.metadata.utils.MetadataDeclarationsComparator.*
+import org.jetbrains.kotlin.commonizer.metadata.utils.SerializedMetadataLibraryProvider
 import org.jetbrains.kotlin.library.SerializedMetadata
 import java.io.File
 import kotlin.contracts.ExperimentalContracts

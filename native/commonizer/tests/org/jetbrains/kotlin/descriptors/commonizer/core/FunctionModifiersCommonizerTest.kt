@@ -3,9 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.descriptors.commonizer.core
+package org.jetbrains.kotlin.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirFunctionModifiers
+import org.jetbrains.kotlin.commonizer.cir.CirFunctionModifiers
 import org.junit.Test
 
 class FunctionModifiersCommonizerTest : AbstractCommonizerTest<CirFunctionModifiers, CirFunctionModifiers>() {

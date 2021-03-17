@@ -14,7 +14,7 @@ import java.io.File
 internal class KotlinNativeCommonizerToolRunner(project: Project) : KotlinToolRunner(project) {
     override val displayName get() = "Kotlin/Native KLIB commonizer"
 
-    override val mainClass: String get() = "org.jetbrains.kotlin.descriptors.commonizer.cli.CommonizerCLI"
+    override val mainClass: String get() = "org.jetbrains.kotlin.commonizer.cli.CommonizerCLI"
 
     override val classpath by lazy {
         try {

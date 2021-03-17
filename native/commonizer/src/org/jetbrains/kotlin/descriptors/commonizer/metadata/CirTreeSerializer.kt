@@ -3,21 +3,21 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.descriptors.commonizer.metadata
+package org.jetbrains.kotlin.commonizer.metadata
 
 import kotlinx.metadata.*
 import kotlinx.metadata.klib.KlibModuleMetadata
-import org.jetbrains.kotlin.descriptors.commonizer.CommonizerTarget
-import org.jetbrains.kotlin.descriptors.commonizer.cir.*
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.*
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirNode.Companion.indexOfCommon
-import org.jetbrains.kotlin.descriptors.commonizer.stats.DeclarationType
-import org.jetbrains.kotlin.descriptors.commonizer.stats.StatsCollector
-import org.jetbrains.kotlin.descriptors.commonizer.stats.StatsCollector.StatsKey
-import org.jetbrains.kotlin.descriptors.commonizer.utils.DEFAULT_CONSTRUCTOR_NAME
+import org.jetbrains.kotlin.commonizer.CommonizerTarget
+import org.jetbrains.kotlin.commonizer.cir.*
+import org.jetbrains.kotlin.commonizer.mergedtree.*
+import org.jetbrains.kotlin.commonizer.mergedtree.CirNode.Companion.indexOfCommon
+import org.jetbrains.kotlin.commonizer.stats.DeclarationType
+import org.jetbrains.kotlin.commonizer.stats.StatsCollector
+import org.jetbrains.kotlin.commonizer.stats.StatsCollector.StatsKey
+import org.jetbrains.kotlin.commonizer.utils.DEFAULT_CONSTRUCTOR_NAME
 import org.jetbrains.kotlin.utils.addToStdlib.cast
-import org.jetbrains.kotlin.descriptors.commonizer.utils.firstNonNull
-import org.jetbrains.kotlin.descriptors.commonizer.metadata.CirTreeSerializationContext.Path
+import org.jetbrains.kotlin.commonizer.utils.firstNonNull
+import org.jetbrains.kotlin.commonizer.metadata.CirTreeSerializationContext.Path
 
 object CirTreeSerializer {
     fun serializeSingleTarget(

@@ -3,24 +3,24 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.descriptors.commonizer.mergedtree
+package org.jetbrains.kotlin.commonizer.mergedtree
 
 import com.intellij.util.containers.FactoryMap
 import kotlinx.metadata.*
 import kotlinx.metadata.klib.KlibModuleMetadata
 import kotlinx.metadata.klib.fqName
 import kotlinx.metadata.klib.klibEnumEntries
-import org.jetbrains.kotlin.descriptors.commonizer.CommonizerParameters
-import org.jetbrains.kotlin.descriptors.commonizer.LeafCommonizerTarget
-import org.jetbrains.kotlin.descriptors.commonizer.ModulesProvider.ModuleInfo
-import org.jetbrains.kotlin.descriptors.commonizer.TargetProvider
-import org.jetbrains.kotlin.descriptors.commonizer.cir.*
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ClassesToProcess.ClassEntry
-import org.jetbrains.kotlin.descriptors.commonizer.metadata.CirDeserializers
-import org.jetbrains.kotlin.descriptors.commonizer.metadata.CirTypeResolver
-import org.jetbrains.kotlin.descriptors.commonizer.metadata.utils.SerializedMetadataLibraryProvider
-import org.jetbrains.kotlin.descriptors.commonizer.prettyName
-import org.jetbrains.kotlin.descriptors.commonizer.utils.*
+import org.jetbrains.kotlin.commonizer.CommonizerParameters
+import org.jetbrains.kotlin.commonizer.LeafCommonizerTarget
+import org.jetbrains.kotlin.commonizer.ModulesProvider.ModuleInfo
+import org.jetbrains.kotlin.commonizer.TargetProvider
+import org.jetbrains.kotlin.commonizer.cir.*
+import org.jetbrains.kotlin.commonizer.mergedtree.ClassesToProcess.ClassEntry
+import org.jetbrains.kotlin.commonizer.metadata.CirDeserializers
+import org.jetbrains.kotlin.commonizer.metadata.CirTypeResolver
+import org.jetbrains.kotlin.commonizer.metadata.utils.SerializedMetadataLibraryProvider
+import org.jetbrains.kotlin.commonizer.prettyName
+import org.jetbrains.kotlin.commonizer.utils.*
 import org.jetbrains.kotlin.storage.StorageManager
 
 /**

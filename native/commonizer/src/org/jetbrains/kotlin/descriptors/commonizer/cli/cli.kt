@@ -5,9 +5,9 @@
 
 @file:JvmName("CommonizerCLI")
 
-package org.jetbrains.kotlin.descriptors.commonizer.cli
+package org.jetbrains.kotlin.commonizer.cli
 
-import org.jetbrains.kotlin.descriptors.commonizer.cli.Task.Category
+import org.jetbrains.kotlin.commonizer.cli.Task.Category
 import kotlin.system.exitProcess
 
 fun main(args: Array<String>) {

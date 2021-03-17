@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.descriptors.commonizer.stats
+package org.jetbrains.kotlin.commonizer.stats
 
 enum class DeclarationType(val alias: String) {
     TOP_LEVEL_CONST_VAL("TOP-LEVEL CONST-VAL"),

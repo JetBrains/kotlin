@@ -3,14 +3,14 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.descriptors.commonizer.mergedtree
+package org.jetbrains.kotlin.commonizer.mergedtree
 
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirDeclaration
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirEntityId
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClassRecursionMarker
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClassifierRecursionMarker
-import org.jetbrains.kotlin.descriptors.commonizer.core.*
-import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroup
+import org.jetbrains.kotlin.commonizer.cir.CirDeclaration
+import org.jetbrains.kotlin.commonizer.cir.CirEntityId
+import org.jetbrains.kotlin.commonizer.cir.CirClassRecursionMarker
+import org.jetbrains.kotlin.commonizer.cir.CirClassifierRecursionMarker
+import org.jetbrains.kotlin.commonizer.core.*
+import org.jetbrains.kotlin.commonizer.utils.CommonizedGroup
 import org.jetbrains.kotlin.storage.NullableLazyValue
 import org.jetbrains.kotlin.storage.StorageManager
 

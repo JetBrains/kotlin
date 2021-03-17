@@ -9,8 +9,8 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.descriptors.commonizer.HierarchicalCommonizerOutputLayout
-import org.jetbrains.kotlin.descriptors.commonizer.prettyName
+import org.jetbrains.kotlin.commonizer.HierarchicalCommonizerOutputLayout
+import org.jetbrains.kotlin.commonizer.prettyName
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
 import java.io.File
 

@@ -3,12 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.descriptors.commonizer.core
+package org.jetbrains.kotlin.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.commonizer.CommonizerTarget
-import org.jetbrains.kotlin.descriptors.commonizer.LeafCommonizerTarget
-import org.jetbrains.kotlin.descriptors.commonizer.SharedCommonizerTarget
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirRoot
+import org.jetbrains.kotlin.commonizer.CommonizerTarget
+import org.jetbrains.kotlin.commonizer.LeafCommonizerTarget
+import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
+import org.jetbrains.kotlin.commonizer.cir.CirRoot
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.junit.Test
 

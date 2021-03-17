@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.descriptors.commonizer
+package org.jetbrains.kotlin.commonizer
 
 import java.io.File
 import java.net.URLClassLoader
@@ -46,7 +46,7 @@ public class CliCommonizer(private val executor: Executor) : Commonizer {
 
 private class CommonizerClassLoaderExecutor(private val commonizerClassLoader: ClassLoader) : CliCommonizer.Executor {
     companion object {
-        private const val commonizerMainClass = "org.jetbrains.kotlin.descriptors.commonizer.cli.CommonizerCLI"
+        private const val commonizerMainClass = "org.jetbrains.kotlin.commonizer.cli.CommonizerCLI"
         private const val commonizerMainFunction = "main"
     }
 

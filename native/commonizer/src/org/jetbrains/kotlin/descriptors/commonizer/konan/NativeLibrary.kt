@@ -3,13 +3,13 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.descriptors.commonizer.konan
+package org.jetbrains.kotlin.commonizer.konan
 
 import com.intellij.util.containers.FactoryMap
 import gnu.trove.THashMap
-import org.jetbrains.kotlin.descriptors.commonizer.CommonizerTarget
-import org.jetbrains.kotlin.descriptors.commonizer.LeafCommonizerTarget
-import org.jetbrains.kotlin.descriptors.commonizer.SharedCommonizerTarget
+import org.jetbrains.kotlin.commonizer.CommonizerTarget
+import org.jetbrains.kotlin.commonizer.LeafCommonizerTarget
+import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.library.KotlinLibrary
 
 fun interface TargetedNativeManifestDataProvider {

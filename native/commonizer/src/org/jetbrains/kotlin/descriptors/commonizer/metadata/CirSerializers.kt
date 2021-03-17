@@ -3,18 +3,18 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.descriptors.commonizer.metadata
+package org.jetbrains.kotlin.commonizer.metadata
 
 import kotlinx.metadata.*
 import kotlinx.metadata.klib.*
 import org.jetbrains.kotlin.backend.common.serialization.metadata.DynamicTypeDeserializer
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.commonizer.cir.*
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.*
-import org.jetbrains.kotlin.descriptors.commonizer.metadata.TypeAliasExpansion.*
-import org.jetbrains.kotlin.descriptors.commonizer.utils.DEFAULT_SETTER_VALUE_NAME
-import org.jetbrains.kotlin.descriptors.commonizer.utils.SPECIAL_CLASS_WITHOUT_SUPERTYPES_CLASS_NAMES
-import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMap
+import org.jetbrains.kotlin.commonizer.cir.*
+import org.jetbrains.kotlin.commonizer.mergedtree.*
+import org.jetbrains.kotlin.commonizer.metadata.TypeAliasExpansion.*
+import org.jetbrains.kotlin.commonizer.utils.DEFAULT_SETTER_VALUE_NAME
+import org.jetbrains.kotlin.commonizer.utils.SPECIAL_CLASS_WITHOUT_SUPERTYPES_CLASS_NAMES
+import org.jetbrains.kotlin.commonizer.utils.compactMap
 import org.jetbrains.kotlin.types.Variance
 
 internal fun CirModule.serializeModule(

@@ -3,16 +3,16 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.descriptors.commonizer.core
+package org.jetbrains.kotlin.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.commonizer.cir.*
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.*
-import org.jetbrains.kotlin.descriptors.commonizer.utils.isUnderStandardKotlinPackages
-import org.jetbrains.kotlin.descriptors.commonizer.utils.mockClassType
-import org.jetbrains.kotlin.descriptors.commonizer.utils.mockTAType
+import org.jetbrains.kotlin.commonizer.cir.*
+import org.jetbrains.kotlin.commonizer.mergedtree.*
+import org.jetbrains.kotlin.commonizer.utils.isUnderStandardKotlinPackages
+import org.jetbrains.kotlin.commonizer.utils.mockClassType
+import org.jetbrains.kotlin.commonizer.utils.mockTAType
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.junit.Before
 import org.junit.Test

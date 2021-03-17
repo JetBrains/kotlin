@@ -3,9 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.descriptors.commonizer.cli
+package org.jetbrains.kotlin.commonizer.cli
 
-import org.jetbrains.kotlin.descriptors.commonizer.stats.StatsType
+import org.jetbrains.kotlin.commonizer.stats.StatsType
 
 internal object StatsTypeOptionType : OptionType<StatsType>("log-stats", DESCRIPTION, mandatory = false) {
     override fun parse(rawValue: String, onError: (reason: String) -> Nothing): Option<StatsType> {

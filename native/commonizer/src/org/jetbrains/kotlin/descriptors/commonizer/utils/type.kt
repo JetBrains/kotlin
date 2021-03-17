@@ -3,12 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.descriptors.commonizer.utils
+package org.jetbrains.kotlin.commonizer.utils
 
 import gnu.trove.TIntHashSet
 import kotlinx.metadata.*
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirTypeSignature
-import org.jetbrains.kotlin.descriptors.commonizer.metadata.CirTypeParameterResolver
+import org.jetbrains.kotlin.commonizer.cir.CirTypeSignature
+import org.jetbrains.kotlin.commonizer.metadata.CirTypeParameterResolver
 
 internal inline val KmTypeParameter.filteredUpperBounds: List<KmType>
     get() = upperBounds.takeUnless { it.singleOrNull()?.isNullableAny == true } ?: emptyList()

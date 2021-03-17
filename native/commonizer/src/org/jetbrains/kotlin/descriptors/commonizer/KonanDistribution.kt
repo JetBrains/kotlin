@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.descriptors.commonizer
+package org.jetbrains.kotlin.commonizer
 
 import org.jetbrains.kotlin.konan.library.*
 import java.io.File

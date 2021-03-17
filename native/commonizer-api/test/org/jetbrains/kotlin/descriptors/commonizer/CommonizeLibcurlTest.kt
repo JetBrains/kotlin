@@ -3,9 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.descriptors.commonizer
+package org.jetbrains.kotlin.commonizer
 
-import org.jetbrains.kotlin.descriptors.commonizer.utils.konanHome
+import org.jetbrains.kotlin.commonizer.utils.konanHome
 import org.jetbrains.kotlin.konan.target.KonanTarget.LINUX_ARM64
 import org.jetbrains.kotlin.konan.target.KonanTarget.LINUX_X64
 import org.junit.Rule

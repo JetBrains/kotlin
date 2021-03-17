@@ -3,15 +3,15 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.descriptors.commonizer
+package org.jetbrains.kotlin.commonizer
 
-import org.jetbrains.kotlin.descriptors.commonizer.ResultsConsumer.ModuleResult
-import org.jetbrains.kotlin.descriptors.commonizer.ResultsConsumer.Status
-import org.jetbrains.kotlin.descriptors.commonizer.konan.CommonNativeManifestDataProvider
-import org.jetbrains.kotlin.descriptors.commonizer.konan.TargetedNativeManifestDataProvider
-import org.jetbrains.kotlin.descriptors.commonizer.utils.MockResultsConsumer
-import org.jetbrains.kotlin.descriptors.commonizer.utils.MockModulesProvider
-import org.jetbrains.kotlin.descriptors.commonizer.utils.MockNativeManifestDataProvider
+import org.jetbrains.kotlin.commonizer.ResultsConsumer.ModuleResult
+import org.jetbrains.kotlin.commonizer.ResultsConsumer.Status
+import org.jetbrains.kotlin.commonizer.konan.CommonNativeManifestDataProvider
+import org.jetbrains.kotlin.commonizer.konan.TargetedNativeManifestDataProvider
+import org.jetbrains.kotlin.commonizer.utils.MockResultsConsumer
+import org.jetbrains.kotlin.commonizer.utils.MockModulesProvider
+import org.jetbrains.kotlin.commonizer.utils.MockNativeManifestDataProvider
 import org.junit.Test
 import kotlin.contracts.ExperimentalContracts
 import kotlin.test.assertEquals

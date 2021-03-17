@@ -3,14 +3,14 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.descriptors.commonizer.core
+package org.jetbrains.kotlin.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DELEGATION
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirFunctionOrProperty
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirName
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirKnownClassifiers
+import org.jetbrains.kotlin.commonizer.cir.CirFunctionOrProperty
+import org.jetbrains.kotlin.commonizer.cir.CirName
+import org.jetbrains.kotlin.commonizer.mergedtree.CirKnownClassifiers
 
 abstract class AbstractFunctionOrPropertyCommonizer<T : CirFunctionOrProperty>(
     classifiers: CirKnownClassifiers

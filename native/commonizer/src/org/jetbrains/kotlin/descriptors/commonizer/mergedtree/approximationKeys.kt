@@ -3,18 +3,18 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.descriptors.commonizer.mergedtree
+package org.jetbrains.kotlin.commonizer.mergedtree
 
 import kotlinx.metadata.*
 import kotlinx.metadata.klib.annotations
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirName
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirTypeSignature
-import org.jetbrains.kotlin.descriptors.commonizer.core.Commonizer
-import org.jetbrains.kotlin.descriptors.commonizer.metadata.CirTypeParameterResolver
-import org.jetbrains.kotlin.descriptors.commonizer.utils.appendHashCode
-import org.jetbrains.kotlin.descriptors.commonizer.utils.computeSignature
-import org.jetbrains.kotlin.descriptors.commonizer.utils.hashCode
-import org.jetbrains.kotlin.descriptors.commonizer.utils.isObjCInteropCallableAnnotation
+import org.jetbrains.kotlin.commonizer.cir.CirName
+import org.jetbrains.kotlin.commonizer.cir.CirTypeSignature
+import org.jetbrains.kotlin.commonizer.core.Commonizer
+import org.jetbrains.kotlin.commonizer.metadata.CirTypeParameterResolver
+import org.jetbrains.kotlin.commonizer.utils.appendHashCode
+import org.jetbrains.kotlin.commonizer.utils.computeSignature
+import org.jetbrains.kotlin.commonizer.utils.hashCode
+import org.jetbrains.kotlin.commonizer.utils.isObjCInteropCallableAnnotation
 
 /** Used for approximation of [KmProperty]s before running concrete [Commonizer]s */
 data class PropertyApproximationKey(

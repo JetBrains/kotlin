@@ -3,10 +3,10 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.descriptors.commonizer.core
+package org.jetbrains.kotlin.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirFunction
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirKnownClassifiers
+import org.jetbrains.kotlin.commonizer.cir.CirFunction
+import org.jetbrains.kotlin.commonizer.mergedtree.CirKnownClassifiers
 
 class FunctionCommonizer(classifiers: CirKnownClassifiers) : AbstractFunctionOrPropertyCommonizer<CirFunction>(classifiers) {
     private val annotations = AnnotationsCommonizer()

@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.descriptors.commonizer.metadata
+package org.jetbrains.kotlin.commonizer.metadata
 
 import gnu.trove.THashMap
 import kotlinx.metadata.*
@@ -12,9 +12,9 @@ import kotlinx.metadata.klib.compileTimeValue
 import kotlinx.metadata.klib.getterAnnotations
 import kotlinx.metadata.klib.setterAnnotations
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.commonizer.cir.*
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirProvided
-import org.jetbrains.kotlin.descriptors.commonizer.utils.*
+import org.jetbrains.kotlin.commonizer.cir.*
+import org.jetbrains.kotlin.commonizer.mergedtree.CirProvided
+import org.jetbrains.kotlin.commonizer.utils.*
 import org.jetbrains.kotlin.types.Variance
 
 object CirDeserializers {

@@ -8,7 +8,7 @@
 package org.jetbrains.kotlin.compilerRunner
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.descriptors.commonizer.CliCommonizer
+import org.jetbrains.kotlin.commonizer.CliCommonizer
 
 /**
  * Creates an instance of [CliCommonizer] that is backed by [KotlinNativeCommonizerToolRunner] to adhere to user defined settings

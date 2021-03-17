@@ -3,11 +3,11 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.descriptors.commonizer.cir
+package org.jetbrains.kotlin.commonizer.cir
 
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.descriptors.commonizer.utils.Interner
+import org.jetbrains.kotlin.commonizer.utils.Interner
 
 interface CirPropertySetter : CirDeclaration, CirPropertyAccessor, CirHasVisibility {
     val parameterAnnotations: List<CirAnnotation>

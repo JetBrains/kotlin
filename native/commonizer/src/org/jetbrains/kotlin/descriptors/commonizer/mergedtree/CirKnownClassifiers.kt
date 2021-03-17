@@ -3,10 +3,10 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.descriptors.commonizer.mergedtree
+package org.jetbrains.kotlin.commonizer.mergedtree
 
 import gnu.trove.THashMap
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirEntityId
+import org.jetbrains.kotlin.commonizer.cir.CirEntityId
 
 class CirKnownClassifiers(
     val commonizedNodes: CirCommonizedClassifierNodes,

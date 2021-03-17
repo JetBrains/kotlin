@@ -5,11 +5,11 @@
 
 @file:Suppress("FunctionName")
 
-package org.jetbrains.kotlin.descriptors.commonizer.konan
+package org.jetbrains.kotlin.commonizer.konan
 
-import org.jetbrains.kotlin.descriptors.commonizer.KonanDistribution
-import org.jetbrains.kotlin.descriptors.commonizer.ResultsConsumer
-import org.jetbrains.kotlin.descriptors.commonizer.klibDir
+import org.jetbrains.kotlin.commonizer.KonanDistribution
+import org.jetbrains.kotlin.commonizer.ResultsConsumer
+import org.jetbrains.kotlin.commonizer.klibDir
 import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_COMMON_LIBS_DIR
 import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
 import org.jetbrains.kotlin.util.Logger

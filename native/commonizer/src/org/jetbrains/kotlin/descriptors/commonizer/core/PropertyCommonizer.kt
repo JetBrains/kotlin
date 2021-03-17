@@ -3,13 +3,13 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.descriptors.commonizer.core
+package org.jetbrains.kotlin.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirConstantValue
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirProperty
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirPropertyGetter
-import org.jetbrains.kotlin.descriptors.commonizer.core.PropertyCommonizer.ConstCommonizationState.*
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirKnownClassifiers
+import org.jetbrains.kotlin.commonizer.cir.CirConstantValue
+import org.jetbrains.kotlin.commonizer.cir.CirProperty
+import org.jetbrains.kotlin.commonizer.cir.CirPropertyGetter
+import org.jetbrains.kotlin.commonizer.core.PropertyCommonizer.ConstCommonizationState.*
+import org.jetbrains.kotlin.commonizer.mergedtree.CirKnownClassifiers
 
 class PropertyCommonizer(classifiers: CirKnownClassifiers) : AbstractFunctionOrPropertyCommonizer<CirProperty>(classifiers) {
     private val setter = PropertySetterCommonizer()

@@ -3,12 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.descriptors.commonizer.konan
+package org.jetbrains.kotlin.commonizer.konan
 
-import org.jetbrains.kotlin.descriptors.commonizer.*
-import org.jetbrains.kotlin.descriptors.commonizer.repository.Repository
-import org.jetbrains.kotlin.descriptors.commonizer.stats.StatsCollector
-import org.jetbrains.kotlin.descriptors.commonizer.utils.ProgressLogger
+import org.jetbrains.kotlin.commonizer.*
+import org.jetbrains.kotlin.commonizer.repository.Repository
+import org.jetbrains.kotlin.commonizer.stats.StatsCollector
+import org.jetbrains.kotlin.commonizer.utils.ProgressLogger
 
 internal class LibraryCommonizer internal constructor(
     private val konanDistribution: KonanDistribution,

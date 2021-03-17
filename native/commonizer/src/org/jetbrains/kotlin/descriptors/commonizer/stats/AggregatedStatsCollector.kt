@@ -3,10 +3,10 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.descriptors.commonizer.stats
+package org.jetbrains.kotlin.commonizer.stats
 
-import org.jetbrains.kotlin.descriptors.commonizer.CommonizerTarget
-import org.jetbrains.kotlin.descriptors.commonizer.stats.RawStatsCollector.CommonDeclarationStatus.*
+import org.jetbrains.kotlin.commonizer.CommonizerTarget
+import org.jetbrains.kotlin.commonizer.stats.RawStatsCollector.CommonDeclarationStatus.*
 
 class AggregatedStatsCollector(
     targets: List<CommonizerTarget>

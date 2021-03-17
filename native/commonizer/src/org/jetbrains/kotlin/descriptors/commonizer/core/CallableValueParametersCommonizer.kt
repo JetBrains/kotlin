@@ -3,18 +3,18 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.descriptors.commonizer.core
+package org.jetbrains.kotlin.commonizer.core
 
 import com.intellij.util.containers.FactoryMap
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirCallableMemberWithParameters
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirHasAnnotations
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirName
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirValueParameter
-import org.jetbrains.kotlin.descriptors.commonizer.core.CallableValueParametersCommonizer.CallableToPatch.Companion.doNothing
-import org.jetbrains.kotlin.descriptors.commonizer.core.CallableValueParametersCommonizer.CallableToPatch.Companion.patchCallables
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirKnownClassifiers
-import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMapIndexed
-import org.jetbrains.kotlin.descriptors.commonizer.utils.isObjCInteropCallableAnnotation
+import org.jetbrains.kotlin.commonizer.cir.CirCallableMemberWithParameters
+import org.jetbrains.kotlin.commonizer.cir.CirHasAnnotations
+import org.jetbrains.kotlin.commonizer.cir.CirName
+import org.jetbrains.kotlin.commonizer.cir.CirValueParameter
+import org.jetbrains.kotlin.commonizer.core.CallableValueParametersCommonizer.CallableToPatch.Companion.doNothing
+import org.jetbrains.kotlin.commonizer.core.CallableValueParametersCommonizer.CallableToPatch.Companion.patchCallables
+import org.jetbrains.kotlin.commonizer.mergedtree.CirKnownClassifiers
+import org.jetbrains.kotlin.commonizer.utils.compactMapIndexed
+import org.jetbrains.kotlin.commonizer.utils.isObjCInteropCallableAnnotation
 
 class CallableValueParametersCommonizer(
     classifiers: CirKnownClassifiers

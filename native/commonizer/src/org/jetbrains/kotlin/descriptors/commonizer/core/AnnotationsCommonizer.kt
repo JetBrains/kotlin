@@ -3,15 +3,15 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.descriptors.commonizer.core
+package org.jetbrains.kotlin.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.commonizer.cir.*
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirConstantValue.*
-import org.jetbrains.kotlin.descriptors.commonizer.core.AnnotationsCommonizer.Companion.FALLBACK_MESSAGE
-import org.jetbrains.kotlin.descriptors.commonizer.utils.DEPRECATED_ANNOTATION_CLASS_ID
-import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMap
-import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMapOf
+import org.jetbrains.kotlin.commonizer.cir.*
+import org.jetbrains.kotlin.commonizer.cir.CirConstantValue.*
+import org.jetbrains.kotlin.commonizer.core.AnnotationsCommonizer.Companion.FALLBACK_MESSAGE
+import org.jetbrains.kotlin.commonizer.utils.DEPRECATED_ANNOTATION_CLASS_ID
+import org.jetbrains.kotlin.commonizer.utils.compactMap
+import org.jetbrains.kotlin.commonizer.utils.compactMapOf
 import kotlin.DeprecationLevel.WARNING
 
 /**

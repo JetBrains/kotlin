@@ -3,10 +3,10 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.descriptors.commonizer.cli
+package org.jetbrains.kotlin.commonizer.cli
 
-import org.jetbrains.kotlin.descriptors.commonizer.SharedCommonizerTarget
-import org.jetbrains.kotlin.descriptors.commonizer.parseCommonizerTarget
+import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
+import org.jetbrains.kotlin.commonizer.parseCommonizerTarget
 
 internal object OutputCommonizerTargetOptionType : OptionType<SharedCommonizerTarget>(
     alias = "output-commonizer-target",

@@ -3,20 +3,20 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.descriptors.commonizer.mergedtree
+package org.jetbrains.kotlin.commonizer.mergedtree
 
 import com.intellij.util.containers.FactoryMap
 import gnu.trove.THashMap
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.commonizer.ModulesProvider
-import org.jetbrains.kotlin.descriptors.commonizer.ModulesProvider.CInteropModuleAttributes
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirEntityId
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirName
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirPackageName
-import org.jetbrains.kotlin.descriptors.commonizer.utils.NON_EXISTING_CLASSIFIER_ID
-import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMap
-import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMapIndexed
-import org.jetbrains.kotlin.descriptors.commonizer.utils.isUnderKotlinNativeSyntheticPackages
+import org.jetbrains.kotlin.commonizer.ModulesProvider
+import org.jetbrains.kotlin.commonizer.ModulesProvider.CInteropModuleAttributes
+import org.jetbrains.kotlin.commonizer.cir.CirEntityId
+import org.jetbrains.kotlin.commonizer.cir.CirName
+import org.jetbrains.kotlin.commonizer.cir.CirPackageName
+import org.jetbrains.kotlin.commonizer.utils.NON_EXISTING_CLASSIFIER_ID
+import org.jetbrains.kotlin.commonizer.utils.compactMap
+import org.jetbrains.kotlin.commonizer.utils.compactMapIndexed
+import org.jetbrains.kotlin.commonizer.utils.isUnderKotlinNativeSyntheticPackages
 import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.library.metadata.parsePackageFragment
 import org.jetbrains.kotlin.metadata.ProtoBuf

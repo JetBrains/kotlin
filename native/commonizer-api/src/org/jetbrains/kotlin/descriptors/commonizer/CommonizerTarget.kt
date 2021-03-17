@@ -5,7 +5,7 @@
 
 @file:Suppress("FunctionName")
 
-package org.jetbrains.kotlin.descriptors.commonizer
+package org.jetbrains.kotlin.commonizer
 
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.Serializable

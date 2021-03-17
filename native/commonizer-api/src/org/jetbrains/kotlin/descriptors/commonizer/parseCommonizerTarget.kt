@@ -3,11 +3,11 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.descriptors.commonizer
+package org.jetbrains.kotlin.commonizer
 
-import org.jetbrains.kotlin.descriptors.commonizer.IdentityStringSyntaxNode.LeafTargetSyntaxNode
-import org.jetbrains.kotlin.descriptors.commonizer.IdentityStringSyntaxNode.SharedTargetSyntaxNode
-import org.jetbrains.kotlin.descriptors.commonizer.IdentityStringToken.*
+import org.jetbrains.kotlin.commonizer.IdentityStringSyntaxNode.LeafTargetSyntaxNode
+import org.jetbrains.kotlin.commonizer.IdentityStringSyntaxNode.SharedTargetSyntaxNode
+import org.jetbrains.kotlin.commonizer.IdentityStringToken.*
 
 public fun parseCommonizerTarget(identityString: String): CommonizerTarget {
     try {

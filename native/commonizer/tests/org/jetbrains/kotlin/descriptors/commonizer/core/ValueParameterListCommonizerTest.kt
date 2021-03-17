@@ -3,11 +3,11 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.descriptors.commonizer.core
+package org.jetbrains.kotlin.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirValueParameter
-import org.jetbrains.kotlin.descriptors.commonizer.core.CirValueParameterTestImpl.Companion.areEqual
-import org.jetbrains.kotlin.descriptors.commonizer.utils.MOCK_CLASSIFIERS
+import org.jetbrains.kotlin.commonizer.cir.CirValueParameter
+import org.jetbrains.kotlin.commonizer.core.CirValueParameterTestImpl.Companion.areEqual
+import org.jetbrains.kotlin.commonizer.utils.MOCK_CLASSIFIERS
 import org.junit.Test
 
 class ValueParameterListCommonizerTest : AbstractCommonizerTest<List<CirValueParameter>, List<CirValueParameter>>() {

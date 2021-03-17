@@ -3,15 +3,15 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.descriptors.commonizer.stats
+package org.jetbrains.kotlin.commonizer.stats
 
 import com.intellij.util.containers.FactoryMap
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.commonizer.CommonizerTarget
-import org.jetbrains.kotlin.descriptors.commonizer.identityString
-import org.jetbrains.kotlin.descriptors.commonizer.stats.StatsCollector.StatsKey
-import org.jetbrains.kotlin.descriptors.commonizer.stats.StatsOutput.StatsHeader
-import org.jetbrains.kotlin.descriptors.commonizer.stats.StatsOutput.StatsRow
+import org.jetbrains.kotlin.commonizer.CommonizerTarget
+import org.jetbrains.kotlin.commonizer.identityString
+import org.jetbrains.kotlin.commonizer.stats.StatsCollector.StatsKey
+import org.jetbrains.kotlin.commonizer.stats.StatsOutput.StatsHeader
+import org.jetbrains.kotlin.commonizer.stats.StatsOutput.StatsRow
 import java.util.*
 import kotlin.collections.ArrayList
 
