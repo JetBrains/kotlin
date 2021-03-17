@@ -676,4 +676,41 @@ open class Kapt3IT : Kapt3BaseIT() {
             assertContains("Javac options: {-source=1.8}")
         }
     }
+
+    @Test
+    fun testJpmsModule() {
+        //jpms is part of java >= 9
+        val javaHome = File(System.getProperty("jdk9Home")!!)
+        Assume.assumeTrue("JDK 9 isn't available", javaHome.isDirectory)
+        val options = defaultBuildOptions().copy(javaHome = javaHome)
+
+        val project = Project("jpms-module", directoryPrefix = "kapt2")
+
+        project.build("build", options = options) {
+            assertSuccessful()
+            assertKaptSuccessful()
+            assertTasksExecuted(":compileKotlin", ":compileJava")
+            assertFileExists("build/generated/source/kapt/main/lab/TestClassGenerated.java")
+            assertFileExists(kotlinClassesDir() + "lab/TestClass.class")
+        }
+
+        project.build("build", options = options) {
+            assertSuccessful()
+            assertTasksUpToDate(":compileKotlin", ":compileJava")
+        }
+
+        project.projectDir.getFileByName("InjectedClass.kt").modify { text ->
+            text.checkedReplace(
+                "//placeholder",
+                "fun someChange() = null"
+            )
+        }
+
+        project.build("build", options = options) {
+            assertSuccessful()
+            assertKaptSuccessful()
+            assertTasksExecuted(":compileKotlin", ":compileJava")
+           
+        }
+    }
 }

@@ -120,12 +120,10 @@ open class KaptContext(val options: KaptOptions, val withJdk: Boolean, val logge
                 options.compileClasspath + options.compiledSources + options.classesOutputDir
             }
 
-            putJavacOption("CLASSPATH", "CLASS_PATH",
-                           compileClasspath.joinToString(File.pathSeparator) { it.canonicalPath })
+            putJavacOption("CLASSPATH", "CLASS_PATH", compileClasspath.makePathsString())
 
             @Suppress("SpellCheckingInspection")
-            putJavacOption("PROCESSORPATH", "PROCESSOR_PATH",
-                           options.processingClasspath.joinToString(File.pathSeparator) { it.canonicalPath })
+            putJavacOption("PROCESSORPATH", "PROCESSOR_PATH", options.processingClasspath.makePathsString())
 
             put(Option.S, options.sourcesOutputDir.canonicalPath)
             put(Option.D, options.classesOutputDir.canonicalPath)
@@ -163,5 +161,11 @@ open class KaptContext(val options: KaptOptions, val withJdk: Boolean, val logge
         cacheManager?.close()
         compiler.close()
         fileManager.close()
+    }
+
+    companion object {
+        const val MODULE_INFO_FILE = "module-info.java"
+
+        private fun Iterable<File>.makePathsString(): String = joinToString(File.pathSeparator) { it.canonicalPath }
     }
 }
