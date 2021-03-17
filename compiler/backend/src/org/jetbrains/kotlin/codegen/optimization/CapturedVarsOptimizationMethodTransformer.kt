@@ -72,7 +72,7 @@ class CapturedVarsOptimizationMethodTransformer : MethodTransformer() {
             assignLocalVars(frames)
 
             for (refValue in refValues) {
-                if (!refValue.hazard) {
+                if (!refValue.hazard && refValue.initCallInsn != null) {
                     rewriteRefValue(refValue)
                 }
             }
