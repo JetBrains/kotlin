@@ -5794,6 +5794,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("kt45446.kt")
+            public void testKt45446() throws Exception {
+                runTest("compiler/testData/codegen/box/closures/capturedVarsOptimization/kt45446.kt");
+            }
+
+            @Test
             @TestMetadata("sharedSlotsWithCapturedVars.kt")
             public void testSharedSlotsWithCapturedVars() throws Exception {
                 runTest("compiler/testData/codegen/box/closures/capturedVarsOptimization/sharedSlotsWithCapturedVars.kt");

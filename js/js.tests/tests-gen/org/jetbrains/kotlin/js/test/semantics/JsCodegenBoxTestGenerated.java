@@ -4041,6 +4041,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 runTest("compiler/testData/codegen/box/closures/capturedVarsOptimization/kt44347.kt");
             }
 
+            @TestMetadata("kt45446.kt")
+            public void testKt45446() throws Exception {
+                runTest("compiler/testData/codegen/box/closures/capturedVarsOptimization/kt45446.kt");
+            }
+
             @TestMetadata("sharedSlotsWithCapturedVars.kt")
             public void testSharedSlotsWithCapturedVars() throws Exception {
                 runTest("compiler/testData/codegen/box/closures/capturedVarsOptimization/sharedSlotsWithCapturedVars.kt");
