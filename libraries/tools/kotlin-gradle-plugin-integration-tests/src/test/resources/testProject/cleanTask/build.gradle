@@ -46,7 +46,7 @@ repositories {
 }
 
 afterEvaluate {
-    project.kotlinNodeJs.nodeVersion = "10.15.3"
+    project.kotlinNodeJs.nodeVersion = "14.16.0"
 
     project.tasks.nodeKotlinClean.dependsOn(checkDownloadedFolder)
     project.tasks.testCleanTask.dependsOn(nodeKotlinClean)
