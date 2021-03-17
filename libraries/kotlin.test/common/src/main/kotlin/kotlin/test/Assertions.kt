@@ -17,6 +17,7 @@ import kotlin.internal.*
 import kotlin.jvm.JvmName
 import kotlin.native.concurrent.ThreadLocal
 import kotlin.reflect.KClass
+import kotlin.reflect.KType
 import kotlin.reflect.typeOf
 
 /**
@@ -80,26 +81,38 @@ fun <@OnlyInputTypes T> assertNotSame(illegal: T, actual: T, message: String? = 
 /**
  * Asserts that [value] is of type [T], with an optional [message].
  *
- * Note that due to type erasure the type check may be partial (e.g. assertIs<List<String>>(value)
+ * Note that due to type erasure the type check may be partial (e.g. `assertIs<List<String>>(value)`
  * only checks for the class being [List] and not the type of its elements because it's erased).
  */
 @SinceKotlin("1.5")
 @InlineOnly
+@OptIn(ExperimentalStdlibApi::class)
 inline fun <reified T> assertIs(value: Any?, message: String? = null) {
     contract { returns() implies (value is T) }
-    asserter.assertTrue({ messagePrefix(message) + "Expected value to be of type <${typeOf<T>()}>, actual <${value?.let { it::class }}>." }, value is T)
+    assertIsOfType(value, typeOf<T>(), value is T, message)
+}
+
+@PublishedApi
+internal fun assertIsOfType(value: Any?, type: KType, result: Boolean, message: String?) {
+    asserter.assertTrue({ messagePrefix(message) + "Expected value to be of type <$type>, actual <${value?.let { it::class }}>." }, result)
 }
 
 /**
  * Asserts that [value] is not of type [T], with an optional [message].
  *
- * Note that due to type erasure the type check may be partial (e.g. assertNotIs<List<String>>(value)
+ * Note that due to type erasure the type check may be partial (e.g. `assertIsNot<List<String>>(value)`
  * only checks for the class being [List] and not the type of its elements because it's erased).
  */
 @SinceKotlin("1.5")
 @InlineOnly
-inline fun <reified T> assertNotIs(value: Any?, message: String? = null) {
-    asserter.assertFalse({ messagePrefix(message) + "Expected value to not be of type <${typeOf<T>()}>" }, value is T)
+@OptIn(ExperimentalStdlibApi::class)
+inline fun <reified T> assertIsNot(value: Any?, message: String? = null) {
+    assertIsNotOfType(value, typeOf<T>(), value !is T, message)
+}
+
+@PublishedApi
+internal fun assertIsNotOfType(@Suppress("UNUSED_PARAMETER") value: Any?, type: KType, result: Boolean, message: String?) {
+    asserter.assertTrue({ messagePrefix(message) + "Expected value to not be of type <$type>." }, result)
 }
 
 /** Asserts that the [actual] value is not `null`, with an optional [message]. */
