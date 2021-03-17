@@ -4,6 +4,9 @@
       <verify-metadata>true</verify-metadata>
       <verify-signatures>false</verify-signatures>
       <trusted-artifacts>
+         <trust version="202.7660.26" file="ivy-202.7660.26.xml"/>
+         <trust version="202.7660.3" file="ivy-202.7660.3.xml"/>
+         <trust version="193.6494.7" file="ivy-193.6494.7.xml"/>
       </trusted-artifacts>
    </configuration>
    <components>
