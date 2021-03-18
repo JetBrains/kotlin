@@ -223,12 +223,21 @@ internal class KtUltraLightReceiverParameter(
     method: KtUltraLightMethod
 ) : KtAbstractUltraLightParameterForDeclaration(
     /** @see org.jetbrains.kotlin.codegen.AsmUtil.getNameForReceiverParameter */
-    name = AsmUtil.getLabeledThisName(method.name, LABELED_THIS_PARAMETER, RECEIVER_PARAMETER_NAME),
+    name = getParameterName(containingDeclaration, method),
     kotlinOrigin = null,
     support = support,
     method = method,
     containingDeclaration = containingDeclaration
 ) {
+    private companion object {
+        fun getParameterName(containingDeclaration: KtCallableDeclaration, method: KtUltraLightMethod): String {
+            val callableName: String = when {
+                method.kotlinOrigin is KtProperty && containingDeclaration is KtProperty -> containingDeclaration.name ?: method.name
+                else -> method.name
+            }
+            return AsmUtil.getLabeledThisName(callableName, LABELED_THIS_PARAMETER, RECEIVER_PARAMETER_NAME)
+        }
+    }
 
     override val givenAnnotations: List<KtLightAbstractAnnotation>? =
         containingDeclaration
