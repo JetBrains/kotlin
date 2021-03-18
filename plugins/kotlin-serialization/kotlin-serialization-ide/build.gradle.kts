@@ -19,8 +19,24 @@ dependencies {
     excludeInAndroidStudio(rootProject) { compileOnly(intellijPluginDep("maven")) }
     compileOnly(intellijPluginDep("gradle"))
 
-    testCompileOnly(intellijDep())
-    testRuntimeOnly(intellijDep())
+    testCompile(toolsJar())
+    testCompile(projectTests(":idea"))
+    testCompile(projectTests(":compiler:tests-common"))
+    testCompile(projectTests(":idea:idea-test-framework"))
+    testCompile(project(":kotlin-test:kotlin-test-junit"))
+    testCompile(commonDep("junit:junit"))
+    testCompile(projectTests(":idea:idea-frontend-independent"))
+
+    testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.1.0")
+
+    testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
+
+    testRuntime(project(":allopen-ide-plugin"))
+    testRuntime(project(":plugins:parcelize:parcelize-ide"))
+    testRuntime(project(":sam-with-receiver-ide-plugin"))
+    testRuntime(project(":noarg-ide-plugin"))
+    testCompile(intellijDep())
+    testCompile(intellijPluginDep("java"))
 }
 
 sourceSets {
@@ -29,7 +45,8 @@ sourceSets {
 }
 
 runtimeJar()
+testsJar()
 
 projectTest(parallel = true) {
-
+    workingDir = rootDir
 }

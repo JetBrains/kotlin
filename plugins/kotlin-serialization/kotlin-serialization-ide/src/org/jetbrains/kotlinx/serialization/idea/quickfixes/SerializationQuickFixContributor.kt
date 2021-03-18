@@ -12,5 +12,7 @@ import org.jetbrains.kotlinx.serialization.compiler.diagnostic.SerializationErro
 class SerializationQuickFixContributor : QuickFixContributor {
     override fun registerQuickFixes(quickFixes: QuickFixes) {
         quickFixes.register(SerializationErrors.INCORRECT_TRANSIENT, AddKotlinxSerializationTransientImportQuickFix.Factory)
+        quickFixes.register(SerializationErrors.JSON_FORMAT_REDUNDANT_DEFAULT, JsonRedundantDefaultQuickFix.Factory)
+        quickFixes.register(SerializationErrors.JSON_FORMAT_REDUNDANT, JsonRedundantQuickFix.Factory)
     }
 }

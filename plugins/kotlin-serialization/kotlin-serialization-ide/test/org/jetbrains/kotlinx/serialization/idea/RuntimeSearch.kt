@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlinx.serialization
+package org.jetbrains.kotlinx.serialization.idea
 
 import junit.framework.TestCase
 import org.jetbrains.kotlin.utils.PathUtil
@@ -13,19 +13,19 @@ import java.io.File
 import kotlin.test.assertTrue
 
 class RuntimeLibraryInClasspathTest {
-    private val coreLibraryPath = getSerializationCoreLibraryJar()
+    private val runtimeLibraryPath = getSerializationCoreLibraryJar()
 
     @Test
     fun testRuntimeLibraryExists() {
         TestCase.assertNotNull(
             "kotlinx-serialization runtime library is not found. Make sure it is present in test classpath",
-            coreLibraryPath
+            runtimeLibraryPath
         )
     }
 
     @Test
     fun testRuntimeHasSufficientVersion() {
-        val version = VersionReader.getVersionsFromManifest(coreLibraryPath!!)
+        val version = VersionReader.getVersionsFromManifest(runtimeLibraryPath!!)
         assertTrue(version.currentCompilerMatchRequired(), "Runtime version too high")
         assertTrue(version.implementationVersionMatchSupported(), "Runtime version too low")
     }
@@ -33,6 +33,12 @@ class RuntimeLibraryInClasspathTest {
 
 internal fun getSerializationCoreLibraryJar(): File? = try {
     PathUtil.getResourcePathForClass(Class.forName("kotlinx.serialization.KSerializer"))
+} catch (e: ClassNotFoundException) {
+    null
+}
+
+internal fun getSerializationJsonLibraryJar(): File? = try {
+    PathUtil.getResourcePathForClass(Class.forName("kotlinx.serialization.json.Json"))
 } catch (e: ClassNotFoundException) {
     null
 }
