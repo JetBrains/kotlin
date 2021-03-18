@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import java.util.*
 import kotlin.reflect.KClass
 
 fun FirElement.renderWithType(mode: FirRenderer.RenderMode = FirRenderer.RenderMode.Normal): String = buildString {
@@ -780,12 +781,28 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         whileLoop.block.accept(this)
     }
 
+    private val loopJumpStack = Stack<FirLoopJump>()
+
     override fun visitLoopJump(loopJump: FirLoopJump) {
+        if (loopJumpStack.contains(loopJump)) {
+            // For example,
+            //   do {
+            //     ...
+            //   } while(
+            //       when (...) {
+            //         ... -> break
+            //       }
+            //   )
+            // That `break` condition is `when` expression, and while visiting its branch result, we will see the same `break` again.
+            return
+        }
+        loopJumpStack.push(loopJump)
         val target = loopJump.target
         val labeledElement = target.labeledElement
         print("@@@[")
         labeledElement.condition.accept(this)
         print("] ")
+        loopJumpStack.pop()
     }
 
     override fun visitBreakExpression(breakExpression: FirBreakExpression) {
