@@ -16,14 +16,14 @@ fun baz(r: Result<Int>) {}
 fun returnsInlineClass() = Foo(1)
 
 @JvmName("test")
-fun returnsKotlinResult(a: Result<Int>): <!RESULT_CLASS_IN_RETURN_TYPE!>Result<Int><!> = a
+fun returnsKotlinResult(a: Result<Int>): Result<Int> = a
 
 class C {
     @JvmName("test")
     fun returnsInlineClass() = Foo(1)
 
     @JvmName("test")
-    fun returnsKotlinResult(a: Result<Int>): <!RESULT_CLASS_IN_RETURN_TYPE!>Result<Int><!> = a
+    fun returnsKotlinResult(a: Result<Int>): Result<Int> = a
 }
 
 @JvmName("extensionFun")
