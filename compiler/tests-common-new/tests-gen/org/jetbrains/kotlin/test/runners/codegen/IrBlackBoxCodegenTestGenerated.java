@@ -16880,6 +16880,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("multiStepCompletionWithinThreeBuilderInferenceCalls.kt")
+            public void testMultiStepCompletionWithinThreeBuilderInferenceCalls() throws Exception {
+                runTest("compiler/testData/codegen/box/inference/builderInference/multiStepCompletionWithinThreeBuilderInferenceCalls.kt");
+            }
+
+            @Test
+            @TestMetadata("multiStepCompletionWithinTwoBuilderInferenceCalls.kt")
+            public void testMultiStepCompletionWithinTwoBuilderInferenceCalls() throws Exception {
+                runTest("compiler/testData/codegen/box/inference/builderInference/multiStepCompletionWithinTwoBuilderInferenceCalls.kt");
+            }
+
+            @Test
             @TestMetadata("propagateInferenceSessionIntoDeclarationAnalyzers.kt")
             public void testPropagateInferenceSessionIntoDeclarationAnalyzers() throws Exception {
                 runTest("compiler/testData/codegen/box/inference/builderInference/propagateInferenceSessionIntoDeclarationAnalyzers.kt");
