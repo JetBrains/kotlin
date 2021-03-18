@@ -1,14 +1,11 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
-// FILE: AImpl.kt
+// FILE: AImpl.java
 
-abstract class AImpl {
-    fun charAt(index: Int): Char {
-        return '1'
+abstract public class AImpl {
+    public char charAt(int index) {
+        return '1';
     }
 
-    fun length(): Int {
-        return 1
-    }
+    public final int length() { return 1; }
 }
 
 // FILE: A.java
@@ -19,7 +16,7 @@ public class A extends AImpl implements CharSequence {
 }
 
 // FILE: X.kt
-class X : A()
+<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class X<!> : A()
 
 fun main() {
     val x = X()

@@ -21,4 +21,4 @@ public class C implements java.lang.CharSequence {
 }
 
 // FILE: T.kt
-class T : C()
+<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class T<!> : C()
