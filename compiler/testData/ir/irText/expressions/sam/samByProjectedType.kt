@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: samByProjectedType.kt
 fun test1() {
     H.bar { x: Any -> x }

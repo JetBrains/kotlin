@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
 import org.jetbrains.kotlin.fir.resolve.inference.isKMutableProperty
+import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -622,7 +623,8 @@ class CallAndReferenceGenerator(
             return this
         }
         val samFirType = parameter.returnTypeRef.coneTypeSafe<ConeKotlinType>()?.let {
-            val substituted = substitutor.substituteOrSelf(it)
+            var substituted = substitutor.substituteOrSelf(it)
+            substituted = starProjectionApproximator.substituteOrSelf(substituted)
             if (substituted is ConeRawType) substituted.lowerBound else substituted
         }
         var samType = samFirType?.toIrType(ConversionTypeContext.WITH_INVARIANT) ?: createErrorType()
@@ -632,6 +634,23 @@ class CallAndReferenceGenerator(
         // Make sure the converted IrType owner indeed has a single abstract method, since FunctionReferenceLowering relies on it.
         if (!samType.isSamType) return this
         return IrTypeOperatorCallImpl(this.startOffset, this.endOffset, samType, IrTypeOperator.SAM_CONVERSION, samType, this)
+    }
+
+    private val starProjectionApproximator = object : AbstractConeSubstitutor() {
+        override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
+            if (type !is ConeClassLikeType || type.typeArguments.none { it == ConeStarProjection }) return null
+            val fir = type.lookupTag.toSymbol(session)?.fir as? FirTypeParameterRefsOwner ?: return null
+            val typeParameters = fir.typeParameters.map { it.symbol.fir }
+            if (typeParameters.size != type.typeArguments.size) return null
+            val newTypeArguments = typeParameters.zip(type.typeArguments).map { (parameter, argument) ->
+                if (argument == ConeStarProjection){
+                    parameter.bounds.first().coneType
+                } else {
+                    argument
+                }
+            }
+            return type.withArguments(newTypeArguments.toTypedArray())
+        }
     }
 
     private fun needSamConversion(argument: FirExpression, parameter: FirValueParameter): Boolean {
