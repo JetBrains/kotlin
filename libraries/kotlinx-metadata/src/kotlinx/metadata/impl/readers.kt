@@ -6,6 +6,7 @@
 package kotlinx.metadata.impl
 
 import kotlinx.metadata.*
+import kotlinx.metadata.Flags // Don't remove this import. See KT-45553
 import kotlinx.metadata.impl.extensions.MetadataExtensions
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
