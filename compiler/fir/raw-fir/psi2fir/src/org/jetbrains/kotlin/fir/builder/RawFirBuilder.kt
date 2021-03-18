@@ -1650,28 +1650,31 @@ open class RawFirBuilder(
             }
 
         override fun visitDoWhileExpression(expression: KtDoWhileExpression, data: Unit): FirElement {
+            val target: FirLoopTarget
             return FirDoWhileLoopBuilder().apply {
                 source = expression.toFirSourceElement()
                 // For break/continue in the do-while loop condition, prepare the loop target first so that it can refer to the same loop.
-                prepareTarget()
+                target = prepareTarget()
                 condition = expression.condition.toFirExpression("No condition in do-while loop")
-            }.configure { expression.body.toFirBlock() }
+            }.configure(target) { expression.body.toFirBlock() }
         }
 
         override fun visitWhileExpression(expression: KtWhileExpression, data: Unit): FirElement {
+            val target: FirLoopTarget
             return FirWhileLoopBuilder().apply {
                 source = expression.toFirSourceElement()
                 condition = expression.condition.toFirExpression("No condition in while loop")
                 // break/continue in the while loop condition will refer to an outer loop if any.
                 // So, prepare the loop target after building the condition.
-                prepareTarget()
-            }.configure { expression.body.toFirBlock() }
+                target = prepareTarget()
+            }.configure(target) { expression.body.toFirBlock() }
         }
 
         override fun visitForExpression(expression: KtForExpression, data: Unit?): FirElement {
             val rangeExpression = expression.loopRange.toFirExpression("No range in for loop")
             val ktParameter = expression.loopParameter
             val fakeSource = expression.toFirPsiSourceElement(FirFakeSourceElementKind.DesugaredForLoop)
+            val target: FirLoopTarget
             return buildBlock {
                 source = fakeSource
                 val rangeSource = expression.loopRange?.toFirSourceElement(FirFakeSourceElementKind.DesugaredForLoop)
@@ -1699,8 +1702,8 @@ open class RawFirBuilder(
                     }
                     // break/continue in the for loop condition will refer to an outer loop if any.
                     // So, prepare the loop target after building the condition.
-                    prepareTarget()
-                }.configure {
+                    target = prepareTarget()
+                }.configure(target) {
                     // NB: just body.toFirBlock() isn't acceptable here because we need to add some statements
                     val blockBuilder = when (val body = expression.body) {
                         is KtBlockExpression -> configureBlockWithoutBuilding(body)

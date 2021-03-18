@@ -216,16 +216,20 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         }
     }
 
-    fun FirLoopBuilder.prepareTarget() {
+    fun FirLoopBuilder.prepareTarget(): FirLoopTarget {
         label = context.firLabels.pop()
         val target = FirLoopTarget(label?.name)
         context.firLoopTargets += target
+        return target
     }
 
-    fun FirLoopBuilder.configure(generateBlock: () -> FirBlock): FirLoop {
+    fun FirLoopBuilder.configure(target: FirLoopTarget, generateBlock: () -> FirBlock): FirLoop {
         block = generateBlock()
         val loop = build()
-        val target = context.firLoopTargets.removeLast()
+        val stackTopTarget = context.firLoopTargets.removeLast()
+        assert(target == stackTopTarget) {
+            "Loop target preparation and loop configuration mismatch"
+        }
         target.bind(loop)
         return loop
     }

@@ -891,10 +891,11 @@ class ExpressionsConverter(
         var firCondition: FirExpression =
             buildErrorExpression(null, ConeSimpleDiagnostic("No condition in do-while loop", DiagnosticKind.Syntax))
 
+        val target: FirLoopTarget
         return FirDoWhileLoopBuilder().apply {
             source = doWhileLoop.toFirSourceElement()
             // For break/continue in the do-while loop condition, prepare the loop target first so that it can refer to the same loop.
-            prepareTarget()
+            target = prepareTarget()
             doWhileLoop.forEachChildren {
                 when (it.tokenType) {
                     BODY -> block = it
@@ -902,7 +903,7 @@ class ExpressionsConverter(
                 }
             }
             condition = firCondition
-        }.configure { convertLoopBody(block) }
+        }.configure(target) { convertLoopBody(block) }
     }
 
     /**
@@ -919,13 +920,14 @@ class ExpressionsConverter(
             }
         }
 
+        val target: FirLoopTarget
         return FirWhileLoopBuilder().apply {
             source = whileLoop.toFirSourceElement()
             condition = firCondition
             // break/continue in the while loop condition will refer to an outer loop if any.
             // So, prepare the loop target after building the condition.
-            prepareTarget()
-        }.configure { convertLoopBody(block) }
+            target = prepareTarget()
+        }.configure(target) { convertLoopBody(block) }
     }
 
     /**
@@ -944,6 +946,7 @@ class ExpressionsConverter(
             }
         }
 
+        val target: FirLoopTarget
         return buildBlock {
             source = forLoop.toFirSourceElement()
             val iteratorVal = generateTemporaryVariable(
@@ -962,8 +965,8 @@ class ExpressionsConverter(
                 }
                 // break/continue in the for loop condition will refer to an outer loop if any.
                 // So, prepare the loop target after building the condition.
-                prepareTarget()
-            }.configure {
+                target = prepareTarget()
+            }.configure(target) {
                 // NB: just body.toFirBlock() isn't acceptable here because we need to add some statements
                 buildBlock block@{
                     source = blockNode?.toFirSourceElement()
