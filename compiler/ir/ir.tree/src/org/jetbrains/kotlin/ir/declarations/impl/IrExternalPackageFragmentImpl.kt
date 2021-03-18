@@ -33,7 +33,8 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 
 class IrExternalPackageFragmentImpl(
     override val symbol: IrExternalPackageFragmentSymbol,
-    override val fqName: FqName
+    override val fqName: FqName,
+    private val _containerSource: DeserializedContainerSource? = null
 ) : IrExternalPackageFragment() {
     override val startOffset: Int
         get() = UNDEFINED_OFFSET
@@ -53,7 +54,8 @@ class IrExternalPackageFragmentImpl(
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override val containerSource: DeserializedContainerSource?
-        get() = (symbol.descriptor as? DeserializedMemberDescriptor)?.containerSource
+        get() = _containerSource ?:
+            (symbol.descriptor as? DeserializedMemberDescriptor)?.containerSource
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitExternalPackageFragment(this, data)

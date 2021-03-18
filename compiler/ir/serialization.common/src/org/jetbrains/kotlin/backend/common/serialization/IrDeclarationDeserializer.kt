@@ -69,6 +69,8 @@ class IrDeclarationDeserializer(
 
     private val bodyDeserializer = IrBodyDeserializer(builtIns, allowErrorNodes, irFactory, fileReader, this)
 
+    private val containerSource = (packageFragment as? IrExternalPackageFragment)?.containerSource
+
     private fun deserializeName(index: Int): Name {
         val name = fileReader.deserializeString(index)
         return Name.guessByFirstCharacter(name)
@@ -490,7 +492,8 @@ class IrDeclarationDeserializer(
                     flags.isOperator,
                     flags.isInfix,
                     flags.isExpect,
-                    flags.isFakeOverride
+                    flags.isFakeOverride,
+                    containerSource
                 )
             }.apply {
                 overriddenSymbols = proto.overriddenList.map { deserializeIrSymbolAndRemap(it) as IrSimpleFunctionSymbol }
@@ -617,7 +620,8 @@ class IrDeclarationDeserializer(
                     flags.isDelegated,
                     flags.isExternal,
                     flags.isExpect,
-                    flags.isFakeOverride
+                    flags.isFakeOverride,
+                    containerSource
                 )
             }.apply {
                 if (proto.hasGetter()) {

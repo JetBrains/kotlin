@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.serialization
 
+import org.jetbrains.kotlin.backend.common.ir.createParameterDeclarations
 import org.jetbrains.kotlin.backend.common.overrides.DefaultFakeOverrideClassFilter
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
 import org.jetbrains.kotlin.backend.common.overrides.FileLocalAwareLinker
@@ -17,9 +18,9 @@ import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmManglerDesc
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmManglerIr
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
-import org.jetbrains.kotlin.ir.declarations.IrFactory
+import org.jetbrains.kotlin.ir.builders.declarations.buildClass
+import org.jetbrains.kotlin.ir.builders.declarations.buildReceiverParameter
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.linkage.IrProvider
@@ -27,18 +28,20 @@ import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.*
+import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
-import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
-import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
-import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
+import org.jetbrains.kotlin.load.kotlin.*
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.protobuf.ByteString
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration as ProtoDeclaration
 
 /* Reads serialized IR from annotations in classfiles */
@@ -72,10 +75,23 @@ class SingleClassJvmIrProvider(
         val classHeader = binaryClass.classHeader
         if (classHeader.serializedIr == null || classHeader.serializedIr!!.isEmpty()) return
 
+        val containerSource = getJvmPackagePartSource(binaryClass)
+
         val irProto = JvmIr.JvmIrFile.parseFrom(classHeader.serializedIr)
-        val declarationDeserializer = getDeclarationDeserializer(facadeName.parent(), irProto.auxTables)
+        val packageFragment = getPackageFragment(facadeName.parent(), containerSource)
+        val declarationDeserializer = getDeclarationDeserializer(packageFragment, irProto.auxTables)
+        val facadeClass = irFactory.buildClass {
+            name = facadeName.shortName()
+            origin = IrDeclarationOrigin.SYNTHETIC_FILE_CLASS
+        }.apply {
+            parent = packageFragment
+            createParameterDeclarations()
+            // TODO: annotations
+        }
         for (declProto in irProto.declarationList) {
-            declarationDeserializer.deserializeDeclaration(declProto)
+            val declaration = declarationDeserializer.deserializeDeclaration(declProto)
+            facadeClass.addMember(declaration)
+            declaration.parent = facadeClass
         }
     }
 
@@ -83,12 +99,13 @@ class SingleClassJvmIrProvider(
         if (signature !is IdSignature.PublicSignature) return
         val classId = ClassId.topLevel(signature.packageFqName().child(Name.identifier(signature.firstNameSegment)))
         val toplevelDescriptor = moduleDescriptor.findClassAcrossModuleDependencies(classId) ?: return
-        val classHeader =
-            (toplevelDescriptor.source as? KotlinJvmBinarySourceElement)?.binaryClass?.classHeader ?: return
+        val source = toplevelDescriptor.source as? KotlinJvmBinarySourceElement ?: return
+        val classHeader = source.binaryClass.classHeader
         if (classHeader.serializedIr == null || classHeader.serializedIr!!.isEmpty()) return
 
         val irProto = JvmIr.JvmIrClass.parseFrom(classHeader.serializedIr)
-        val declarationDeserializer = getDeclarationDeserializer(signature.packageFqName(), irProto.auxTables)
+        val packageFragment = getPackageFragment(signature.packageFqName(), source)
+        val declarationDeserializer = getDeclarationDeserializer(packageFragment, irProto.auxTables)
 
         /* Need to create a ProtoDeclaration. */
         val protoDecl = ProtoDeclaration.newBuilder().run {
@@ -99,7 +116,7 @@ class SingleClassJvmIrProvider(
         declarationDeserializer.deserializeDeclaration(protoDecl)
     }
 
-    private fun getDeclarationDeserializer(packageFqName: FqName, auxTables: JvmIr.AuxTables): IrDeclarationDeserializer {
+    private fun getDeclarationDeserializer(packageFragment: IrPackageFragment, auxTables: JvmIr.AuxTables): IrDeclarationDeserializer {
         val libraryFile = IrLibraryFileFromAnnotation(
             auxTables.typeList,
             auxTables.signatureList,
@@ -117,8 +134,6 @@ class SingleClassJvmIrProvider(
         )
 
         populateFacadeClassMap(auxTables, libraryFile, symbolDeserializer)
-
-        val packageFragment = getPackageFragment(packageFqName)
 
         return IrDeclarationDeserializer(
             irBuiltIns,
@@ -158,14 +173,14 @@ class SingleClassJvmIrProvider(
         override fun body(index: Int): ByteArray = bodies[index].toByteArray()
     }
 
-    private fun getPackageFragment(fqName: FqName): IrExternalPackageFragment = packageFragments.getOrPut(fqName) {
+    private fun getPackageFragment(fqName: FqName, containerSource: DeserializedContainerSource?): IrExternalPackageFragment =
         IrExternalPackageFragmentImpl(
             IrExternalPackageFragmentSymbolImpl(object : PackageFragmentDescriptorImpl(moduleDescriptor, fqName) {
                 override fun getMemberScope() = MemberScope.Empty
             }),
-            fqName
+            fqName,
+            containerSource
         )
-    }
 
     private fun referencePublicSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
         with(symbolTable) {
@@ -221,6 +236,29 @@ class SingleClassJvmIrProvider(
             return signature.packageFqName().child(facadeName)
         }
     }
+
+    // Copied from KotlinDeserializedJvmSymbolsProvider.
+    private fun getJvmPackagePartSource(binaryClass: KotlinJvmBinaryClass): JvmPackagePartSource {
+        val header = binaryClass.classHeader
+        val data = header.data ?: header.incompatibleData ?: error("Should not happen")
+        val strings = header.strings ?: error("Should not happen")
+        val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(data, strings)
+        return JvmPackagePartSource(
+            binaryClass, packageProto, nameResolver,
+            binaryClass.incompatibility, binaryClass.isPreReleaseInvisible
+        )
+    }
+
+    private val KotlinJvmBinaryClass.incompatibility: IncompatibleVersionErrorData<JvmMetadataVersion>?
+        get() {
+            // TODO: skipMetadataVersionCheck
+            if (classHeader.metadataVersion.isCompatible()) return null
+            return IncompatibleVersionErrorData(classHeader.metadataVersion, JvmMetadataVersion.INSTANCE, location, classId)
+        }
+
+    private val KotlinJvmBinaryClass.isPreReleaseInvisible: Boolean
+        get() = classHeader.isPreRelease
+
 
     override fun tryReferencingPropertyByLocalSignature(parent: IrDeclaration, idSignature: IdSignature): IrPropertySymbol? = null
     override fun tryReferencingSimpleFunctionByLocalSignature(parent: IrDeclaration, idSignature: IdSignature): IrSimpleFunctionSymbol? =
