@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 
-class CoroutineInferenceSession(
+class BuilderInferenceSession(
     psiCallResolver: PSICallResolver,
     postponedArgumentsAnalyzer: PostponedArgumentsAnalyzer,
     kotlinConstraintSystemCompleter: KotlinConstraintSystemCompleter,
@@ -56,10 +56,10 @@ class CoroutineInferenceSession(
 ) : ManyCandidatesResolver<CallableDescriptor>(
     psiCallResolver, postponedArgumentsAnalyzer, kotlinConstraintSystemCompleter, callComponents, builtIns
 ) {
-    var nestedBuilderInferenceSession: CoroutineInferenceSession? = null
+    var nestedBuilderInferenceSession: BuilderInferenceSession? = null
 
     init {
-        if (topLevelCallContext.inferenceSession is CoroutineInferenceSession) {
+        if (topLevelCallContext.inferenceSession is BuilderInferenceSession) {
             topLevelCallContext.inferenceSession.nestedBuilderInferenceSession = this
         }
     }
@@ -147,7 +147,7 @@ class CoroutineInferenceSession(
                 descriptor.extensionReceiverParameter?.type?.contains { it is StubType } == true
     }
 
-    private fun isTopLevelBuilderInferenceCall() = topLevelCallContext.inferenceSession !is CoroutineInferenceSession
+    private fun isTopLevelBuilderInferenceCall() = topLevelCallContext.inferenceSession !is BuilderInferenceSession
 
     fun hasInapplicableCall(): Boolean = hasInapplicableCall
 
@@ -234,7 +234,7 @@ class CoroutineInferenceSession(
             bindings[nonFixedType.constructor] = variable.defaultType
         }
 
-        val parentBuilderInferenceCallSession = topLevelCallContext.inferenceSession as? CoroutineInferenceSession
+        val parentBuilderInferenceCallSession = topLevelCallContext.inferenceSession as? BuilderInferenceSession
 
         if (parentBuilderInferenceCallSession != null) {
             bindings.putAll(parentBuilderInferenceCallSession.createNonFixedTypeToVariableMap())
@@ -399,7 +399,7 @@ class CoroutineInferenceSession(
     }
 
     companion object {
-        private fun CoroutineInferenceSession.updateCalls(
+        private fun BuilderInferenceSession.updateCalls(
             lambda: ResolvedLambdaAtom,
             substitutor: NewTypeSubstitutor,
             errors: List<ConstraintSystemError>
