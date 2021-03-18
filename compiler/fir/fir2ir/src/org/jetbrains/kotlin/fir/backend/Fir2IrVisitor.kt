@@ -542,6 +542,11 @@ class Fir2IrVisitor(
         }
     }
 
+    private val IrStatementOrigin.isLoop: Boolean
+        get() {
+            return this == IrStatementOrigin.DO_WHILE_LOOP || this == IrStatementOrigin.WHILE_LOOP || this == IrStatementOrigin.FOR_LOOP
+        }
+
     private fun FirBlock.convertToIrExpressionOrBlock(origin: IrStatementOrigin? = null): IrExpression {
         if (statements.size == 1) {
             val firStatement = statements.single()
@@ -549,8 +554,8 @@ class Fir2IrVisitor(
                 return convertToIrExpression(firStatement)
             }
         }
-        val type =
-            (statements.lastOrNull() as? FirExpression)?.typeRef?.toIrType() ?: irBuiltIns.unitType
+        val type = if (origin?.isLoop == true) irBuiltIns.unitType
+        else (statements.lastOrNull() as? FirExpression)?.typeRef?.toIrType() ?: irBuiltIns.unitType
         return convertWithOffsets { startOffset, endOffset ->
             if (origin == IrStatementOrigin.DO_WHILE_LOOP) {
                 IrCompositeImpl(
