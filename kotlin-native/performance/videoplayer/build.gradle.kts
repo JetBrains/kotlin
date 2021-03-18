@@ -15,6 +15,7 @@ plugins {
 val dist = file(findProperty("kotlin.native.home") ?: "dist")
 val toolSuffix = if (System.getProperty("os.name").startsWith("Windows")) ".bat" else ""
 val binarySuffix = getNativeProgramExtension()
+val videoplayerDir = "$projectDir/../../samples/videoplayer"
 
 val linkerOpts = when {
     PlatformInfo.isMac() -> listOf("-linker-options","-L/opt/local/lib", "-linker-options", "-L/usr/local/lib")
@@ -59,15 +60,15 @@ compileBenchmark {
         step("runCinteropFfmpeg") {
             command = listOf(
                 "$dist/bin/cinterop$toolSuffix",
-                "-o", "$dist/../samples/videoplayer/build/classes/kotlin/videoPlayer/main/videoplayer-cinterop-ffmpeg.klib",
-                "-def", "$dist/../samples/videoplayer/src/nativeInterop/cinterop/ffmpeg.def"
+                "-o", "$videoplayerDir/build/classes/kotlin/videoPlayer/main/videoplayer-cinterop-ffmpeg.klib",
+                "-def", "$videoplayerDir/src/nativeInterop/cinterop/ffmpeg.def"
             ) + filterDirsFfmpeg + includeDirsFfmpeg
         }
         step("runCinteropSdl") {
             command = listOf(
                 "$dist/bin/cinterop$toolSuffix",
-                "-o", "$dist/../samples/videoplayer/build/classes/kotlin/videoPlayer/main/videoplayer-cinterop-sdl.klib",
-                "-def", "$dist/../samples/videoplayer/src/nativeInterop/cinterop/sdl.def"
+                "-o", "$videoplayerDir/build/classes/kotlin/videoPlayer/main/videoplayer-cinterop-sdl.klib",
+                "-def", "$videoplayerDir/src/nativeInterop/cinterop/sdl.def"
             ) + includeDirsSdl
         }
         step("runKonanProgram") {
@@ -75,9 +76,9 @@ compileBenchmark {
                 "$dist/bin/konanc$toolSuffix",
                 "-ea", "-p", "program",
                 "-o", "${buildDir.absolutePath}/program$binarySuffix",
-                "-l", "$dist/../samples/videoplayer/build/classes/kotlin/videoPlayer/main/videoplayer-cinterop-ffmpeg.klib",
-                "-l", "$dist/../samples/videoplayer/build/classes/kotlin/videoPlayer/main/videoplayer-cinterop-sdl.klib",
-                "-Xmulti-platform", "$dist/../samples/videoplayer/src/videoPlayerMain/kotlin",
+                "-l", "$videoplayerDir/build/classes/kotlin/videoPlayer/main/videoplayer-cinterop-ffmpeg.klib",
+                "-l", "$videoplayerDir/build/classes/kotlin/videoPlayer/main/videoplayer-cinterop-sdl.klib",
+                "-Xmulti-platform", "$videoplayerDir/src/videoPlayerMain/kotlin",
                 "-entry", "sample.videoplayer.main"
             ) + buildOpts + linkerOpts
         }

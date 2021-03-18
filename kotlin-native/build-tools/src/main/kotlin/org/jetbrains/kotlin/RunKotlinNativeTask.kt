@@ -60,7 +60,7 @@ open class RunKotlinNativeTask @Inject constructor(private val linkTask: Task,
         project.exec {
             if (useCset) {
                 executable = "cset"
-                args("shield", "--exec", "--", executable)
+                args("shield", "--exec", "--", this@RunKotlinNativeTask.executable)
             } else {
                 executable = this@RunKotlinNativeTask.executable
             }

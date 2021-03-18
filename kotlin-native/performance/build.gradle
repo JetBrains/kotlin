@@ -107,7 +107,6 @@ task buildAnalyzer {
 }
 
 task konanRun {
-    dependsOn buildAnalyzer
     subprojects.each {
         dependsOn "${it.path}:konanRun"
     }
@@ -119,7 +118,6 @@ task jvmRun {
             throw new StopExecutionException("Please specify location of kotlin's dist in 'kotlin_dist' property")
         }
     }
-    dependsOn buildAnalyzer
     subprojects.each {
         if (it.name != "endorsedLibraries" && it.name != "kotlinx.cli") {
             dependsOn "${it.path}:jvmRun"
@@ -344,60 +342,50 @@ task teamCityStat(type:Exec) {
 
 task cinterop {
     dependsOn 'clean'
-    dependsOn buildAnalyzer
     dependsOn 'cinterop:konanRun'
 }
 
 task framework {
     dependsOn 'clean'
-    dependsOn buildAnalyzer
     dependsOn 'framework:konanRun'
 }
 
 task helloworld {
     dependsOn 'clean'
-    dependsOn buildAnalyzer
     dependsOn 'helloworld:konanRun'
 }
 
 task objcinterop {
     dependsOn 'clean'
-    dependsOn buildAnalyzer
     dependsOn 'objcinterop:konanRun'
 }
 
 task ring {
     dependsOn 'clean'
-    dependsOn buildAnalyzer
     dependsOn 'ring:konanRun'
 }
 
 task numerical {
     dependsOn 'clean'
-    dependsOn buildAnalyzer
     dependsOn 'numerical:konanRun'
 }
 
 task startup {
     dependsOn 'clean'
-    dependsOn buildAnalyzer
     dependsOn 'startup:konanRun'
 }
 
 task swiftinterop {
     dependsOn 'clean'
-    dependsOn buildAnalyzer
     dependsOn 'swiftinterop:konanRun'
 }
 
 task videoplayer {
     dependsOn 'clean'
-    dependsOn buildAnalyzer
     dependsOn 'videoplayer:konanRun'
 }
 
 task KotlinVsSwift {
     dependsOn 'clean'
-    dependsOn buildAnalyzer
     dependsOn 'KotlinVsSwift:konanRun'
 }
