@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.services
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.config.AnalysisFlag
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
@@ -38,6 +39,8 @@ abstract class EnvironmentConfigurator(protected val testServices: TestServices)
     open fun provideAdditionalAnalysisFlags(directives: RegisteredDirectives): Map<AnalysisFlag<*>, Any?> {
         return emptyMap()
     }
+
+    open fun registerCompilerExtensions(project: Project) {}
 }
 
 class DirectiveToConfigurationKeyExtractor {
