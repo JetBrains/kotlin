@@ -75,7 +75,7 @@ class FirAnalyzerFacade(
     fun runCheckers(): Map<FirFile, List<FirDiagnostic<*>>> {
         if (_scopeSession == null) runResolution()
         if (collectedDiagnostics != null) return collectedDiagnostics!!
-        val collector = FirDiagnosticsCollector.create(session)
+        val collector = FirDiagnosticsCollector.create(session, scopeSession)
         collectedDiagnostics = buildMap {
             for (file in firFiles!!) {
                 put(file, collector.collectDiagnostics(file))

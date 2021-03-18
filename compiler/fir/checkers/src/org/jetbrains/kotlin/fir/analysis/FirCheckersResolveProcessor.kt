@@ -21,7 +21,7 @@ class FirCheckersResolveProcessor(
     session: FirSession,
     scopeSession: ScopeSession
 ) : FirTransformerBasedResolveProcessor(session, scopeSession) {
-    val diagnosticCollector = FirDiagnosticsCollector.create(session)
+    val diagnosticCollector = FirDiagnosticsCollector.create(session, scopeSession)
 
     override val transformer: FirTransformer<Nothing?> = FirCheckersRunnerTransformer(diagnosticCollector)
 }
