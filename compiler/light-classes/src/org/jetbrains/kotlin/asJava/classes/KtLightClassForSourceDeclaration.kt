@@ -152,14 +152,13 @@ abstract class KtLightClassForSourceDeclaration(
 
     override fun getNavigationElement(): PsiElement = classOrObject
 
-    override fun isEquivalentTo(another: PsiElement?): Boolean {
-        return kotlinOrigin.isEquivalentTo(another) ||
-                another is KtLightClassForSourceDeclaration && Comparing.equal(another.qualifiedName, qualifiedName)
-    }
+    override fun isEquivalentTo(another: PsiElement?): Boolean =
+        kotlinOrigin.isEquivalentTo(another) ||
+                equals(another) ||
+                (qualifiedName != null && another is KtLightClassForSourceDeclaration && qualifiedName == another.qualifiedName)
 
-    override fun getElementIcon(flags: Int): Icon? {
+    override fun getElementIcon(flags: Int): Icon? =
         throw UnsupportedOperationException("This should be done by JetIconProvider")
-    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
