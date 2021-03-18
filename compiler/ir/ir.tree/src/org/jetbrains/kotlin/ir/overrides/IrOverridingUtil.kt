@@ -57,7 +57,7 @@ fun buildFakeOverrideMember(superType: IrType, member: IrOverridableMember, claz
     for (i in typeParameters.indices) {
         val tp = typeParameters[i]
         val ta = superArguments[i]
-        require(ta is IrTypeProjection) { "Unexpected super type argument: $ta @ $i" }
+        require(ta is IrTypeProjection) { "Unexpected super type argument: ${ta.render()} @ $i" }
         assert(ta.variance == Variance.INVARIANT) { "Unexpected variance in super type argument: ${ta.variance} @$i" }
         substitutionMap[tp.symbol] = ta.type
     }
