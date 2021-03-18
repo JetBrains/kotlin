@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.components.*
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
-import org.jetbrains.kotlin.resolve.calls.inference.CoroutineInferenceSession
+import org.jetbrains.kotlin.resolve.calls.inference.BuilderInferenceSession
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
 import org.jetbrains.kotlin.resolve.calls.model.*
@@ -162,7 +162,7 @@ class KotlinResolutionCallbacksImpl(
             if (stubsForPostponedVariables.isNotEmpty()) {
                 require(topLevelCallContext != null) { "Top level call context should not be null to analyze coroutine-lambda" }
 
-                CoroutineInferenceSession(
+                BuilderInferenceSession(
                     psiCallResolver, postponedArgumentsAnalyzer, kotlinConstraintSystemCompleter,
                     callComponents, builtIns, topLevelCallContext, stubsForPostponedVariables, trace,
                     kotlinToResolvedCallTransformer, expressionTypingServices, argumentTypeResolver,
