@@ -13,7 +13,6 @@ import llvm.*
 import org.jetbrains.kotlin.backend.konan.CachedLibraries
 import org.jetbrains.kotlin.library.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.hash.GlobalHash
 import org.jetbrains.kotlin.backend.konan.ir.llvmSymbolOrigin
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.konan.CompiledKlibModuleOrigin
@@ -213,45 +212,6 @@ internal interface ContextUtils : RuntimeAware {
      */
     val IrClass.llvmTypeInfoPtr: LLVMValueRef
         get() = typeInfoPtr.llvm
-
-    /**
-     * Returns contents of this [GlobalHash].
-     *
-     * It must be declared identically with [Runtime.globalHashType].
-     */
-    fun GlobalHash.getBytes(): ByteArray {
-        @Suppress("DEPRECATION")
-        val size = GlobalHash.size
-        assert(size == LLVMStoreSizeOfType(llvmTargetData, runtime.globalHashType))
-
-        return this.bits.getBytes(size)
-    }
-
-    /**
-     * Returns global hash of this string contents.
-     */
-    val String.globalHashBytes: ByteArray
-        get() = memScoped {
-            val hash = globalHash(stringAsBytes(this@globalHashBytes), memScope)
-            hash.getBytes()
-        }
-
-    /**
-     * Return base64 representation for global hash of this string contents.
-     */
-    val String.globalHashBase64: String
-        get() {
-            return base64Encode(globalHashBytes)
-        }
-
-    val String.globalHash: ConstValue
-        get() = memScoped {
-            val hashBytes = this@globalHash.globalHashBytes
-            return Struct(runtime.globalHashType, ConstArray(int8Type, hashBytes.map { Int8(it) }))
-        }
-
-    val FqName.globalHash: ConstValue
-        get() = this.toString().globalHash
 
 }
 
