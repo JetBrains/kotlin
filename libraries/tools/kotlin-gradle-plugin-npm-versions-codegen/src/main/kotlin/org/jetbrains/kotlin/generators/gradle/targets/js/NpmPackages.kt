@@ -8,10 +8,12 @@ package org.jetbrains.kotlin.generators.gradle.targets.js
 val npmPackages = listOf(
     NpmPackage("dukat", "0.5.8-rc.4"),
     NpmPackage("webpack"),
+    NpmPackage("webpack", "4.46.0", "webpack4"),
     NpmPackage("webpack-cli"),
     NpmPackage("webpack-bundle-analyzer"),
     NpmPackage("webpack-dev-server"),
     NpmPackage("source-map-loader"),
+    NpmPackage("source-map-loader", "1.1.3", "sourceMapLoader1"),
     NpmPackage("source-map-support"),
     NpmPackage("css-loader"),
     NpmPackage("style-loader"),
@@ -34,5 +36,6 @@ val npmPackages = listOf(
 
 data class NpmPackage(
     val name: String,
-    val version: String? = null
+    val version: String? = null,
+    val displayName: String = name
 )

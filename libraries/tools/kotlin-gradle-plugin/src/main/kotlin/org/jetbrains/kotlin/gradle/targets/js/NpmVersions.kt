@@ -11,13 +11,13 @@ package org.jetbrains.kotlin.gradle.targets.js
 // DO NOT MODIFY DIRECTLY! Use org.jetbrains.kotlin.generators.gradle.targets.js.MainKt
 class NpmVersions {
     val dukat = NpmPackageVersion("dukat", "0.5.8-rc.4")
-    val webpack = NpmPackageVersion("webpack", "5.26.2")
-    val webpack4 = NpmPackageVersion("webpack", "4.44.1")
+    val webpack4 = NpmPackageVersion("webpack4", "4.46.0")
+    val sourceMapLoader1 = NpmPackageVersion("sourceMapLoader1", "1.1.3")
+    val webpack = NpmPackageVersion("webpack", "5.26.3")
     val webpackCli = NpmPackageVersion("webpack-cli", "4.5.0")
     val webpackBundleAnalyzer = NpmPackageVersion("webpack-bundle-analyzer", "4.4.0")
     val webpackDevServer = NpmPackageVersion("webpack-dev-server", "3.11.2")
     val sourceMapLoader = NpmPackageVersion("source-map-loader", "2.0.1")
-    val sourceMapLoader1 = NpmPackageVersion("source-map-loader", "1.1.0")
     val sourceMapSupport = NpmPackageVersion("source-map-support", "0.5.19")
     val cssLoader = NpmPackageVersion("css-loader", "5.1.3")
     val styleLoader = NpmPackageVersion("style-loader", "2.0.0")
