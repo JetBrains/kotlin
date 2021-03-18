@@ -244,6 +244,11 @@ class BasicAssertionsTest {
 }
 
 
+internal fun testFailureMessage(expected: String, block: () -> Unit) {
+    val exception = checkFailedAssertion(block)
+    assertEquals(expected, exception.message, "Wrong assertion message")
+}
+
 internal fun checkFailedAssertion(assertion: () -> Unit): AssertionError {
     return assertFailsWith<AssertionError> { withDefaultAsserter(assertion) }
 }
