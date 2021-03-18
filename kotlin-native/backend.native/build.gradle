@@ -55,22 +55,6 @@ kotlinNativeInterop {
         linkerOpts "-L$llvmDir/lib", "-L${rootProject.project(':kotlin-native:llvmDebugInfoC').buildDir}", "-L${rootProject.project(':kotlin-native:llvmCoverageMappingC').buildDir}"
     }
 
-    hash { // TODO: copy-pasted from ':common:compileHash'
-        if (!rootProject.project(":kotlin-native").convention.plugins.platformInfo.isWindows()) {
-            compilerOpts '-fPIC'
-            linkerOpts '-fPIC'
-        }
-        linker 'clang++'
-        linkOutputs ":kotlin-native:common:${hostName}Hash"
-
-        headers fileTree('../common/src/hash/headers') {
-            include '**/*.h'
-            include '**/*.hpp'
-        }
-
-        pkg 'org.jetbrains.kotlin.backend.konan.hash'
-    }
-
     files {
         if (!project.project(":kotlin-native").convention.plugins.platformInfo.isWindows()) {
             compilerOpts '-fPIC'
@@ -153,7 +137,6 @@ dependencies {
     }
 
     compilerCompile kotlinNativeInterop['llvm'].configuration
-    compilerCompile kotlinNativeInterop['hash'].configuration
     compilerCompile kotlinNativeInterop['files'].configuration
 
 
@@ -240,7 +223,6 @@ task run {
 jar {
     from sourceSets.cli_bc.output,
             sourceSets.compiler.output,
-            sourceSets.hashInteropStubs.output,
             sourceSets.filesInteropStubs.output,
             sourceSets.llvmInteropStubs.output
 
