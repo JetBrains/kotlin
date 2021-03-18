@@ -136,6 +136,195 @@ fun assertNull(actual: Any?, message: String? = null) {
     asserter.assertNull(message, actual)
 }
 
+/** Asserts that the [iterable] contains the specified [element], with an optional [message]. */
+@SinceKotlin("1.5")
+fun <@OnlyInputTypes T> assertContains(iterable: Iterable<T>, element: T, message: String? = null) {
+    asserter.assertTrue(
+        { messagePrefix(message) + "Expected the collection to contain the element.\nCollection <$iterable>, element <$element>." },
+        iterable.contains(element)
+    )
+}
+
+/** Asserts that the [sequence] contains the specified [element], with an optional [message]. */
+@SinceKotlin("1.5")
+fun <@OnlyInputTypes T> assertContains(sequence: Sequence<T>, element: T, message: String? = null) {
+    asserter.assertTrue(
+        { messagePrefix(message) + "Expected the sequence to contain the element.\nSequence <$sequence>, element <$element>." },
+        sequence.contains(element)
+    )
+}
+
+/** Asserts that the [array] contains the specified [element], with an optional [message]. */
+@SinceKotlin("1.5")
+fun <@OnlyInputTypes T> assertContains(array: Array<T>, element: T, message: String? = null) {
+    assertArrayContains(array, element, message, Array<T>::contains, Array<T>::contentToString)
+}
+
+/** Asserts that the [array] contains the specified [element], with an optional [message]. */
+@SinceKotlin("1.5")
+fun assertContains(array: ByteArray, element: Byte, message: String? = null) {
+    assertArrayContains(array, element, message, ByteArray::contains, ByteArray::contentToString)
+}
+
+/** Asserts that the [array] contains the specified [element], with an optional [message]. */
+@SinceKotlin("1.5")
+fun assertContains(array: ShortArray, element: Short, message: String? = null) {
+    assertArrayContains(array, element, message, ShortArray::contains, ShortArray::contentToString)
+}
+
+/** Asserts that the [array] contains the specified [element], with an optional [message]. */
+@SinceKotlin("1.5")
+fun assertContains(array: IntArray, element: Int, message: String? = null) {
+    assertArrayContains(array, element, message, IntArray::contains, IntArray::contentToString)
+}
+
+/** Asserts that the [array] contains the specified [element], with an optional [message]. */
+@SinceKotlin("1.5")
+fun assertContains(array: LongArray, element: Long, message: String? = null) {
+    assertArrayContains(array, element, message, LongArray::contains, LongArray::contentToString)
+}
+
+/** Asserts that the [array] contains the specified [element], with an optional [message]. */
+@SinceKotlin("1.5")
+fun assertContains(array: BooleanArray, element: Boolean, message: String? = null) {
+    assertArrayContains(array, element, message, BooleanArray::contains, BooleanArray::contentToString)
+}
+
+/** Asserts that the [array] contains the specified [element], with an optional [message]. */
+@SinceKotlin("1.5")
+fun assertContains(array: CharArray, element: Char, message: String? = null) {
+    assertArrayContains(array, element, message, CharArray::contains, CharArray::contentToString)
+}
+
+/** Asserts that the [array] contains the specified [element], with an optional [message]. */
+@SinceKotlin("1.5")
+@OptIn(ExperimentalUnsignedTypes::class)
+fun assertContains(array: UByteArray, element: UByte, message: String? = null) {
+    assertArrayContains(array, element, message, UByteArray::contains, UByteArray::contentToString)
+}
+
+/** Asserts that the [array] contains the specified [element], with an optional [message]. */
+@SinceKotlin("1.5")
+@OptIn(ExperimentalUnsignedTypes::class)
+fun assertContains(array: UShortArray, element: UShort, message: String? = null) {
+    assertArrayContains(array, element, message, UShortArray::contains, UShortArray::contentToString)
+}
+
+/** Asserts that the [array] contains the specified [element], with an optional [message]. */
+@SinceKotlin("1.5")
+@OptIn(ExperimentalUnsignedTypes::class)
+fun assertContains(array: UIntArray, element: UInt, message: String? = null) {
+    assertArrayContains(array, element, message, UIntArray::contains, UIntArray::contentToString)
+}
+
+/** Asserts that the [array] contains the specified [element], with an optional [message]. */
+@SinceKotlin("1.5")
+@OptIn(ExperimentalUnsignedTypes::class)
+fun assertContains(array: ULongArray, element: ULong, message: String? = null) {
+    assertArrayContains(array, element, message, ULongArray::contains, ULongArray::contentToString)
+}
+
+@kotlin.internal.InlineOnly
+private inline fun <@OnlyInputTypes A, E> assertArrayContains(
+    array: A,
+    element: E,
+    message: String? = null,
+    contains: A.(E) -> Boolean,
+    crossinline contentToString: A.() -> String
+) {
+    asserter.assertTrue(
+        { messagePrefix(message) + "Expected the array to contain the element.\nArray <${array.contentToString()}>, element <${element.toString()}>." }, // Explicitly call toString(): KT-45684
+        array.contains(element)
+    )
+}
+
+/** Asserts that the [range] contains the specified [value], with an optional [message]. */
+@SinceKotlin("1.5")
+fun assertContains(range: IntRange, value: Int, message: String? = null) {
+    assertRangeContains(range, value, message, IntRange::contains)
+}
+
+/** Asserts that the [range] contains the specified [value], with an optional [message]. */
+@SinceKotlin("1.5")
+fun assertContains(range: LongRange, value: Long, message: String? = null) {
+    assertRangeContains(range, value, message, LongRange::contains)
+}
+
+/** Asserts that the [range] contains the specified [value], with an optional [message]. */
+@SinceKotlin("1.5")
+fun <T : Comparable<T>> assertContains(range: ClosedRange<T>, value: T, message: String? = null) {
+    assertRangeContains(range, value, message, ClosedRange<T>::contains)
+}
+
+/** Asserts that the [range] contains the specified [value], with an optional [message]. */
+@SinceKotlin("1.5")
+fun assertContains(range: CharRange, value: Char, message: String? = null) {
+    assertRangeContains(range, value, message, CharRange::contains)
+}
+
+/** Asserts that the [range] contains the specified [value], with an optional [message]. */
+@SinceKotlin("1.5")
+@OptIn(ExperimentalUnsignedTypes::class)
+fun assertContains(range: UIntRange, value: UInt, message: String? = null) {
+    assertRangeContains(range, value, message, UIntRange::contains)
+}
+
+/** Asserts that the [range] contains the specified [value], with an optional [message]. */
+@SinceKotlin("1.5")
+@OptIn(ExperimentalUnsignedTypes::class)
+fun assertContains(range: ULongRange, value: ULong, message: String? = null) {
+    assertRangeContains(range, value, message, ULongRange::contains)
+}
+
+@kotlin.internal.InlineOnly
+private inline fun <R, V> assertRangeContains(range: R, value: V, message: String? = null, contains: R.(V) -> Boolean) {
+    asserter.assertTrue(
+        { messagePrefix(message) + "Expected the range <$range> to contain the value <${value.toString()}>." }, // Explicitly call toString(): KT-45684
+        range.contains(value)
+    )
+}
+
+/** Asserts that the [map] contains the specified [key], with an optional [message]. */
+@SinceKotlin("1.5")
+fun <@OnlyInputTypes K, V> assertContains(map: Map<K, V>, key: K, message: String? = null) {
+    asserter.assertTrue({ messagePrefix(message) + "Expected the map to contain the key.\nMap <$map>, key <$key>." }, map.containsKey(key))
+}
+
+/**
+ * Asserts that the [charSequence] contains the specified [char], with an optional [message].
+ *
+ * @param ignoreCase `true` to ignore character case when comparing characters. By default `false`.
+ */
+@SinceKotlin("1.5")
+fun assertContains(charSequence: CharSequence, char: Char, ignoreCase: Boolean = false, message: String? = null) {
+    asserter.assertTrue(
+        { messagePrefix(message) + "Expected the char sequence to contain the char.\nCharSequence <$charSequence>, char <$char>, ignoreCase <$ignoreCase>." },
+        charSequence.contains(char, ignoreCase)
+    )
+}
+
+/**
+ * Asserts that the [charSequence] contains the specified [other] char sequence as a substring, with an optional [message].
+ *
+ * @param ignoreCase `true` to ignore character case when comparing strings. By default `false`.
+ */
+@SinceKotlin("1.5")
+fun assertContains(charSequence: CharSequence, other: CharSequence, ignoreCase: Boolean = false, message: String? = null) {
+    asserter.assertTrue(
+        { messagePrefix(message) + "Expected the char sequence to contain the substring.\nCharSequence <$charSequence>, substring <$other>, ignoreCase <$ignoreCase>." },
+        charSequence.contains(other, ignoreCase)
+    )
+}
+
+/** Asserts that the [charSequence] contains at least one match of the specified regular expression [regex], with an optional [message]. */
+@SinceKotlin("1.5")
+fun assertContains(charSequence: CharSequence, regex: Regex, message: String? = null) {
+    asserter.assertTrue(
+        { messagePrefix(message) + "Expected the char sequence to contain the regular expression.\nCharSequence <$charSequence>, regex <$regex>." },
+        charSequence.contains(regex)
+    )
+}
+
 /**
  * Asserts that the [expected] iterable is *structurally* equal to the [actual] iterable,
  * i.e. contains the same number of the same elements in the same order, with an optional [message].
