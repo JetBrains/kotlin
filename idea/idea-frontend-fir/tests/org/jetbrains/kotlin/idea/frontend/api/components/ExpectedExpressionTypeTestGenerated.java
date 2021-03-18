@@ -29,6 +29,26 @@ public class ExpectedExpressionTypeTestGenerated extends AbstractExpectedExpress
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/idea-frontend-fir/testData/components/expectedExpressionType"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
+    @TestMetadata("functionExpressionBody.kt")
+    public void testFunctionExpressionBody() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/components/expectedExpressionType/functionExpressionBody.kt");
+    }
+
+    @TestMetadata("functionExpressionBodyQualified.kt")
+    public void testFunctionExpressionBodyQualified() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/components/expectedExpressionType/functionExpressionBodyQualified.kt");
+    }
+
+    @TestMetadata("functionExpressionBodyWithTypeFromRHS.kt")
+    public void testFunctionExpressionBodyWithTypeFromRHS() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/components/expectedExpressionType/functionExpressionBodyWithTypeFromRHS.kt");
+    }
+
+    @TestMetadata("functionExpressionBodyWithoutExplicitType.kt")
+    public void testFunctionExpressionBodyWithoutExplicitType() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/components/expectedExpressionType/functionExpressionBodyWithoutExplicitType.kt");
+    }
+
     @TestMetadata("functionLambdaParam.kt")
     public void testFunctionLambdaParam() throws Exception {
         runTest("idea/idea-frontend-fir/testData/components/expectedExpressionType/functionLambdaParam.kt");
@@ -49,6 +69,11 @@ public class ExpectedExpressionTypeTestGenerated extends AbstractExpectedExpress
         runTest("idea/idea-frontend-fir/testData/components/expectedExpressionType/functionPositionalParam.kt");
     }
 
+    @TestMetadata("functionPositionalParamQualified.kt")
+    public void testFunctionPositionalParamQualified() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/components/expectedExpressionType/functionPositionalParamQualified.kt");
+    }
+
     @TestMetadata("ifCondition.kt")
     public void testIfCondition() throws Exception {
         runTest("idea/idea-frontend-fir/testData/components/expectedExpressionType/ifCondition.kt");
@@ -57,6 +82,41 @@ public class ExpectedExpressionTypeTestGenerated extends AbstractExpectedExpress
     @TestMetadata("ifConditionQualified.kt")
     public void testIfConditionQualified() throws Exception {
         runTest("idea/idea-frontend-fir/testData/components/expectedExpressionType/ifConditionQualified.kt");
+    }
+
+    @TestMetadata("infixFunctionAsRegularCallParam.kt")
+    public void testInfixFunctionAsRegularCallParam() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/components/expectedExpressionType/infixFunctionAsRegularCallParam.kt");
+    }
+
+    @TestMetadata("infixFunctionParam.kt")
+    public void testInfixFunctionParam() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/components/expectedExpressionType/infixFunctionParam.kt");
+    }
+
+    @TestMetadata("infixFunctionParamQualified.kt")
+    public void testInfixFunctionParamQualified() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/components/expectedExpressionType/infixFunctionParamQualified.kt");
+    }
+
+    @TestMetadata("propertyDeclaration.kt")
+    public void testPropertyDeclaration() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/components/expectedExpressionType/propertyDeclaration.kt");
+    }
+
+    @TestMetadata("propertyDeclarationQualified.kt")
+    public void testPropertyDeclarationQualified() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/components/expectedExpressionType/propertyDeclarationQualified.kt");
+    }
+
+    @TestMetadata("propertyDeclarationWithTypeFromRHS.kt")
+    public void testPropertyDeclarationWithTypeFromRHS() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/components/expectedExpressionType/propertyDeclarationWithTypeFromRHS.kt");
+    }
+
+    @TestMetadata("propertyDeclarationWithoutExplicitType.kt")
+    public void testPropertyDeclarationWithoutExplicitType() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/components/expectedExpressionType/propertyDeclarationWithoutExplicitType.kt");
     }
 
     @TestMetadata("returnFromFunction.kt")
@@ -77,6 +137,16 @@ public class ExpectedExpressionTypeTestGenerated extends AbstractExpectedExpress
     @TestMetadata("returnFromLambda.kt")
     public void testReturnFromLambda() throws Exception {
         runTest("idea/idea-frontend-fir/testData/components/expectedExpressionType/returnFromLambda.kt");
+    }
+
+    @TestMetadata("variableAssignment.kt")
+    public void testVariableAssignment() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/components/expectedExpressionType/variableAssignment.kt");
+    }
+
+    @TestMetadata("variableAssignmentQualified.kt")
+    public void testVariableAssignmentQualified() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/components/expectedExpressionType/variableAssignmentQualified.kt");
     }
 
     @TestMetadata("whileCondition.kt")
