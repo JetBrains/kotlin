@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.AbstractDataFlowValueRenderingTest
 import org.jetbrains.kotlin.addImport.AbstractAddImportTest
 import org.jetbrains.kotlin.addImportAlias.AbstractAddImportAliasTest
 import org.jetbrains.kotlin.allopen.AbstractBytecodeListingTestForAllOpen
+import org.jetbrains.kotlin.allopen.AbstractIrBytecodeListingTestForAllOpen
 import org.jetbrains.kotlin.android.parcel.AbstractParcelBoxTest
 import org.jetbrains.kotlin.android.parcel.AbstractParcelBytecodeListingTest
 import org.jetbrains.kotlin.android.parcel.AbstractParcelIrBoxTest
@@ -1753,6 +1754,9 @@ fun main(args: Array<String>) {
 
         testGroup("plugins/allopen/allopen-cli/test", "plugins/allopen/allopen-cli/testData") {
             testClass<AbstractBytecodeListingTestForAllOpen> {
+                model("bytecodeListing", extension = "kt")
+            }
+            testClass<AbstractIrBytecodeListingTestForAllOpen> {
                 model("bytecodeListing", extension = "kt")
             }
         }
