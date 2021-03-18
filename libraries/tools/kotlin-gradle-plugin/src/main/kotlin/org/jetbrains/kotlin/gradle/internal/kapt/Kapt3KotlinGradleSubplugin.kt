@@ -156,17 +156,13 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
 
     private fun Kapt3SubpluginContext.getKaptStubsDir() = temporaryKaptDirectory("stubs")
 
-    private fun Kapt3SubpluginContext.getKaptIncrementalDataDir() = temporaryKaptDirectory("incrementalData", doMkDirs = false)
+    private fun Kapt3SubpluginContext.getKaptIncrementalDataDir() = temporaryKaptDirectory("incrementalData")
 
     private fun Kapt3SubpluginContext.getKaptIncrementalAnnotationProcessingCache() = temporaryKaptDirectory("incApCache")
 
-    private fun Kapt3SubpluginContext.temporaryKaptDirectory(name: String, doMkDirs: Boolean = true): File {
-        val dir = File(project.buildDir, "tmp/kapt3/$name/$sourceSetName")
-        if (doMkDirs) {
-            dir.mkdirs()
-        }
-        return dir
-    }
+    private fun Kapt3SubpluginContext.temporaryKaptDirectory(
+        name: String
+    ) = project.buildDir.resolve("tmp/kapt3/$name/$sourceSetName")
 
     internal inner class Kapt3SubpluginContext(
         val project: Project,
@@ -286,8 +282,6 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
             if (annotationProcessors.isNotEmpty()) {
                 pluginOptions += SubpluginOption("processors", annotationProcessors)
             }
-
-            kotlinSourcesOutputDir.mkdirs()
 
             val apOptions = getAPOptions().get()
 
@@ -431,7 +425,7 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
 
             kaptTask.kotlinCompileTask = kotlinCompilation.compileKotlinTaskProvider.get() as KotlinCompile
 
-            kaptTask.stubsDir = getKaptStubsDir()
+            kaptTask.stubsDir.set(getKaptStubsDir())
 
             kaptTask.destinationDir = sourcesOutputDir
             kaptTask.kotlinSourcesDestinationDir = kotlinSourcesOutputDir
@@ -441,7 +435,7 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
             kaptTask.isIncremental = project.isIncrementalKapt()
 
             if (kaptTask.isIncremental) {
-                kaptTask.incAptCache = getKaptIncrementalAnnotationProcessingCache()
+                kaptTask.incAptCache.set(getKaptIncrementalAnnotationProcessingCache())
                 kaptTask.localState.register(kaptTask.incAptCache)
 
                 kaptTask.classpathStructure = classStructureIfIncremental!!.incoming.artifactView { viewConfig ->
@@ -451,7 +445,10 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
                 if (kaptTask is KaptWithKotlincTask) {
                     kaptTask.pluginOptions.addPluginArgument(
                         getCompilerPluginId(),
-                        SubpluginOption("incrementalCache", kaptTask.incAptCache!!.absolutePath)
+                        SubpluginOption(
+                            "incrementalCache",
+                            lazy { kaptTask.incAptCache.asFile.get().absolutePath }
+                        )
                     )
                 }
             }
@@ -560,7 +557,7 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
         val kaptTaskProvider = project.registerTask<KaptGenerateStubsTask>(kaptTaskName) { kaptTask ->
             kaptTask.kotlinCompileTask = kotlinCompile.get()
 
-            kaptTask.stubsDir = getKaptStubsDir()
+            kaptTask.stubsDir.set(getKaptStubsDir())
             kaptTask.setDestinationDir { getKaptIncrementalDataDir() }
             kaptTask.mapClasspath { kaptTask.kotlinCompileTask.classpath }
             kaptTask.generatedSourcesDirs = listOf(sourcesOutputDir, kotlinSourcesOutputDir)
