@@ -397,6 +397,12 @@ enum class ThreadState {
     kRunnable, kNative
 };
 
+ThreadState GetThreadState(MemoryState* thread) noexcept;
+
+inline ThreadState GetThreadState() noexcept {
+    return GetThreadState(mm::GetMemoryState());
+}
+
 // Switches the state of the given thread to `newState` and returns the previous thread state.
 ALWAYS_INLINE ThreadState SwitchThreadState(MemoryState* thread, ThreadState newState) noexcept;
 

@@ -3732,3 +3732,8 @@ ALWAYS_INLINE void kotlin::AssertThreadState(MemoryState* thread, ThreadState ex
 MemoryState* kotlin::mm::GetMemoryState() {
     return ::memoryState;
 }
+
+kotlin::ThreadState kotlin::GetThreadState(MemoryState* thread) noexcept {
+    // Assume that we are always in the Runnable thread state.
+    return ThreadState::kRunnable;
+}

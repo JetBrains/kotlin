@@ -11,6 +11,9 @@ public object Debugging {
     public var forceCheckedShutdown: Boolean
         get() = Debugging_getForceCheckedShutdown()
         set(value) = Debugging_setForceCheckedShutdown(value)
+
+    public val isThreadStateRunnable: Boolean
+        get() = Debugging_isThreadStateRunnable()
 }
 
 @SymbolName("Kotlin_Debugging_getForceCheckedShutdown")
@@ -20,3 +23,7 @@ private external fun Debugging_getForceCheckedShutdown(): Boolean
 @SymbolName("Kotlin_Debugging_setForceCheckedShutdown")
 @GCCritical
 private external fun Debugging_setForceCheckedShutdown(value: Boolean): Unit
+
+@SymbolName("Kotlin_Debugging_isThreadStateRunnable")
+@GCCritical
+private external fun Debugging_isThreadStateRunnable(): Boolean

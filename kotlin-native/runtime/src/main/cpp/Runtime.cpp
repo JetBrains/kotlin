@@ -370,4 +370,12 @@ void Kotlin_Debugging_setForceCheckedShutdown(KBoolean value) {
     g_forceCheckedShutdown = value;
 }
 
+KBoolean Kotlin_Debugging_isThreadStateRunnable() {
+    return kotlin::GetThreadState() == kotlin::ThreadState::kRunnable;
+}
+
+KBoolean Kotlin_Debugging_isThreadStateNative() {
+    return kotlin::GetThreadState() == kotlin::ThreadState::kNative;
+}
+
 }  // extern "C"
