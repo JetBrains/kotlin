@@ -24,9 +24,11 @@ fun testBreakWhile() {
 
 fun testBreakDoWhile() {
   var k: Int = 0
-  dowhen {
-    greater(arg0 = k, arg1 = 2) -> break
-  }  while (less(arg0 = k, arg1 = 10))
+  { // BLOCK
+    dowhen {
+      greater(arg0 = k, arg1 = 2) -> break
+    }    while (less(arg0 = k, arg1 = 10))
+  }
 }
 
 fun testContinueFor() {
@@ -56,14 +58,16 @@ fun testContinueWhile() {
 fun testContinueDoWhile() {
   var k: Int = 0
   var s: String = ""
-  do// COMPOSITE {
-  k = k.inc()
-  k /*~> Unit */
-  when {
-    greater(arg0 = k, arg1 = 2) -> continue
+  { // BLOCK
+    do// COMPOSITE {
+    k = k.inc()
+    k /*~> Unit */
+    when {
+      greater(arg0 = k, arg1 = 2) -> continue
+    }
+    s = s.plus(other = k.toString() + ";")
+    // }    while (less(arg0 = k, arg1 = 10))
   }
-  s = s.plus(other = k.toString() + ";")
-  // }  while (less(arg0 = k, arg1 = 10))
   when {
     EQEQ(arg0 = s, arg1 = "1;2;").not() -> throw AssertionError(p0 = s)
   }
