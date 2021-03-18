@@ -53,7 +53,7 @@ class FullPipelineModularizedTest : AbstractModularizedTest() {
             )
         }
 
-        fun totalTime() = analysis + translation + lowering + generation
+        fun totalTime() = init + analysis + translation + lowering + generation
     }
 
     private lateinit var totalPassResult: CumulativeTime
