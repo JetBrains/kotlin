@@ -6,15 +6,12 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlinx.cinterop.*
+import org.jetbrains.kotlin.backend.common.serialization.cityHash64
 import org.jetbrains.kotlin.backend.konan.hash.*
 
+@OptIn(ExperimentalUnsignedTypes::class)
 internal fun localHash(data: ByteArray): Long {
-    memScoped {
-        val res = alloc<LocalHashVar>()
-        val bytes = allocArrayOf(data)
-        MakeLocalHash(bytes, data.size, res.ptr)
-        return res.value
-    }
+    return cityHash64(data).toLong()
 }
 
 internal fun globalHash(data: ByteArray, retValPlacement: NativePlacement): GlobalHash {
