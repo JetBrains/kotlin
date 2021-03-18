@@ -30,9 +30,9 @@ fun test1() {
     }<!>
 
 
-    foo2 <!EXPECTED_PARAMETERS_NUMBER_MISMATCH!>{<!>
+    foo2 <!TYPE_MISMATCH!><!EXPECTED_PARAMETERS_NUMBER_MISMATCH!>{<!>
         ""
-    }
+    }<!>
     foo2 <!TYPE_MISMATCH{NI}!>{
         <!EXPECTED_PARAMETERS_NUMBER_MISMATCH, EXPECTED_PARAMETER_TYPE_MISMATCH!><!UNUSED_ANONYMOUS_PARAMETER!>s<!>: String<!> -> ""
     }<!>
