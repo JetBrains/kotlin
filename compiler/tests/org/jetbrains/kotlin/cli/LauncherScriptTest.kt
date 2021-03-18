@@ -239,15 +239,6 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
     }
 
     fun testScriptWithXArguments() {
-        runProcess(
-            "kotlin", "$testDataDirectory/funWithResultReturn.kts",
-            expectedExitCode = 1,
-            expectedStderr = """error: 'kotlin.Result' cannot be used as a return type (funWithResultReturn.kts:2:11)
-compiler/testData/launcher/funWithResultReturn.kts:2:11: error: 'kotlin.Result' cannot be used as a return type
-fun f() : Result<Int> = Result.success(42)
-          ^
-"""
-        )
         runProcess("kotlin", "-Xallow-result-return-type", "$testDataDirectory/funWithResultReturn.kts", expectedStdout = "42\n")
     }
 
@@ -307,18 +298,6 @@ println(42)
         runProcess(
             "kotlin", "-howtorun", "script", "$testDataDirectory/funWithResultReturn.myscript",
             expectedExitCode = 1, expectedStderr = "error: unrecognized script type: funWithResultReturn.myscript; Specify path to the script file as the first argument\n"
-        )
-        runProcess(
-            "kotlin", "-howtorun", ".kts", "$testDataDirectory/funWithResultReturn.myscript",
-            expectedExitCode = 1, expectedStderr = """error: unresolved reference: CompilerOptions (funWithResultReturn.myscript:1:7)
-error: 'kotlin.Result' cannot be used as a return type (funWithResultReturn.myscript:3:11)
-compiler/testData/launcher/funWithResultReturn.myscript:1:7: error: unresolved reference: CompilerOptions
-@file:CompilerOptions("-Xallow-result-return-type")
-      ^
-compiler/testData/launcher/funWithResultReturn.myscript:3:11: error: 'kotlin.Result' cannot be used as a return type
-fun f() : Result<Int> = Result.success(42)
-          ^
-"""
         )
         runProcess(
             "kotlin", "-howtorun", ".main.kts", "$testDataDirectory/funWithResultReturn.myscript",
