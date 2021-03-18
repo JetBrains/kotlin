@@ -1,6 +1,5 @@
 // See: https://youtrack.jetbrains.com/issue/KT-45319
 // IGNORE_BACKEND: JVM
-// IGNORE_BACKEND_FIR: JVM_IR
 // IGNORE_BACKEND: JS
 
 fun breakInDoWhileCondition(): String {

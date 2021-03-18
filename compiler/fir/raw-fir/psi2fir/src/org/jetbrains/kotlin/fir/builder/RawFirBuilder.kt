@@ -1652,6 +1652,8 @@ open class RawFirBuilder(
         override fun visitDoWhileExpression(expression: KtDoWhileExpression, data: Unit): FirElement {
             return FirDoWhileLoopBuilder().apply {
                 source = expression.toFirSourceElement()
+                // For break/continue in the do-while loop condition, prepare the loop target first so that it can refer to the same loop.
+                prepareTarget()
                 condition = expression.condition.toFirExpression("No condition in do-while loop")
             }.configure { expression.body.toFirBlock() }
         }
@@ -1660,6 +1662,9 @@ open class RawFirBuilder(
             return FirWhileLoopBuilder().apply {
                 source = expression.toFirSourceElement()
                 condition = expression.condition.toFirExpression("No condition in while loop")
+                // break/continue in the while loop condition will refer to an outer loop if any.
+                // So, prepare the loop target after building the condition.
+                prepareTarget()
             }.configure { expression.body.toFirBlock() }
         }
 
@@ -1692,6 +1697,9 @@ open class RawFirBuilder(
                         }
                         explicitReceiver = generateResolvedAccessExpression(fakeSource, iteratorVal)
                     }
+                    // break/continue in the for loop condition will refer to an outer loop if any.
+                    // So, prepare the loop target after building the condition.
+                    prepareTarget()
                 }.configure {
                     // NB: just body.toFirBlock() isn't acceptable here because we need to add some statements
                     val blockBuilder = when (val body = expression.body) {
