@@ -124,7 +124,7 @@ FILE fqName:<root> fileName:/breakContinueInLoopHeader.kt
                   then: CONST Boolean type=kotlin.Boolean value=false
                 BRANCH
                   if: CONST Boolean type=kotlin.Boolean value=true
-                  then: BREAK label=Outer loop.label=Outer
+                  then: BREAK label=Inner loop.label=Inner
           WHEN type=kotlin.Unit origin=IF
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ

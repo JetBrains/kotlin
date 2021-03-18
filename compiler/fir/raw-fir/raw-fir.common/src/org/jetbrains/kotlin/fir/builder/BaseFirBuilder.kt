@@ -135,8 +135,8 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
 
 
     /**** Function utils ****/
-    fun <T> MutableList<T>.removeLast() {
-        removeAt(size - 1)
+    fun <T> MutableList<T>.removeLast(): T {
+        return removeAt(size - 1)
     }
 
     fun <T> MutableList<T>.pop(): T? {
@@ -216,13 +216,16 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         }
     }
 
-    fun FirLoopBuilder.configure(generateBlock: () -> FirBlock): FirLoop {
+    fun FirLoopBuilder.prepareTarget() {
         label = context.firLabels.pop()
         val target = FirLoopTarget(label?.name)
         context.firLoopTargets += target
+    }
+
+    fun FirLoopBuilder.configure(generateBlock: () -> FirBlock): FirLoop {
         block = generateBlock()
         val loop = build()
-        context.firLoopTargets.removeLast()
+        val target = context.firLoopTargets.removeLast()
         target.bind(loop)
         return loop
     }

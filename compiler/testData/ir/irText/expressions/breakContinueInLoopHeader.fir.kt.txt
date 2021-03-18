@@ -70,7 +70,7 @@ fun test5() {
       j
       // }      while (when {
         greaterOrEqual(arg0 = j, arg1 = 3) -> false
-        else -> break@Outer
+        else -> break@Inner
       })
     }
     when {
