@@ -1,0 +1,715 @@
+// -- Module: <m1-common> --
+package
+
+package kotlin {
+
+    package kotlin.jvm {
+
+        public final annotation class JvmInline : kotlin.Annotation {
+            public constructor JvmInline()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
+        public final expect value class VC {
+            public constructor VC(/*0*/ a: kotlin.Any)
+            public expect final val a: kotlin.Any
+            public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+        }
+    }
+}
+
+// -- Module: <m2-jvm> --
+package
+
+package kotlin {
+    @kotlin.internal.InlineOnly public inline fun TODO(): kotlin.Nothing
+    @kotlin.internal.InlineOnly public inline fun TODO(/*0*/ reason: kotlin.String): kotlin.Nothing
+    @kotlin.internal.InlineOnly public inline fun repeat(/*0*/ times: kotlin.Int, /*1*/ action: (kotlin.Int) -> kotlin.Unit): kotlin.Unit
+        CallsInPlace(action, UNKNOWN)
+
+    @kotlin.internal.InlineOnly public inline fun </*0*/ R> run(/*0*/ block: () -> R): R
+        CallsInPlace(block, EXACTLY_ONCE)
+
+    @kotlin.internal.InlineOnly public inline fun </*0*/ T, /*1*/ R> with(/*0*/ receiver: T, /*1*/ block: T.() -> R): R
+        CallsInPlace(block, EXACTLY_ONCE)
+
+    @kotlin.internal.InlineOnly @kotlin.SinceKotlin(version = "1.1") public inline fun </*0*/ T> T.also(/*0*/ block: (T) -> kotlin.Unit): T
+        CallsInPlace(block, EXACTLY_ONCE)
+
+    @kotlin.internal.InlineOnly public inline fun </*0*/ T> T.apply(/*0*/ block: T.() -> kotlin.Unit): T
+        CallsInPlace(block, EXACTLY_ONCE)
+
+    @kotlin.internal.InlineOnly public inline fun </*0*/ T, /*1*/ R> T.let(/*0*/ block: (T) -> R): R
+        CallsInPlace(block, EXACTLY_ONCE)
+
+    @kotlin.internal.InlineOnly public inline fun </*0*/ T, /*1*/ R> T.run(/*0*/ block: T.() -> R): R
+        CallsInPlace(block, EXACTLY_ONCE)
+
+    @kotlin.internal.InlineOnly @kotlin.SinceKotlin(version = "1.1") public inline fun </*0*/ T> T.takeIf(/*0*/ predicate: (T) -> kotlin.Boolean): T?
+        CallsInPlace(predicate, EXACTLY_ONCE)
+
+    @kotlin.internal.InlineOnly @kotlin.SinceKotlin(version = "1.1") public inline fun </*0*/ T> T.takeUnless(/*0*/ predicate: (T) -> kotlin.Boolean): T?
+        CallsInPlace(predicate, EXACTLY_ONCE)
+
+    @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.ANNOTATION_CLASS}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.Deprecated(message = "Please use RequiresOptIn instead.") @kotlin.SinceKotlin(version = "1.2") public final annotation class Experimental : kotlin.Annotation {
+        public constructor Experimental(/*0*/ level: kotlin.Experimental.Level = ...)
+        public final val level: kotlin.Experimental.Level
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public final enum class Level : kotlin.Enum<kotlin.Experimental.Level> {
+            enum entry WARNING
+
+            enum entry ERROR
+
+            private constructor Level()
+            public final override /*1*/ /*fake_override*/ val name: kotlin.String
+            public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+            protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kotlin.Experimental.Level): kotlin.Int
+            public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+            public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<kotlin.Experimental.Level!>!
+            public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+            // Static members
+            public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): kotlin.Experimental.Level
+            public final /*synthesized*/ fun values(): kotlin.Array<kotlin.Experimental.Level>
+        }
+    }
+
+    public final class NotImplementedError : kotlin.Error /* = java.lang.Error */ {
+        public constructor NotImplementedError(/*0*/ message: kotlin.String = ...)
+        public open override /*1*/ /*fake_override*/ val cause: kotlin.Throwable?
+        public open override /*1*/ /*fake_override*/ val message: kotlin.String?
+        public final override /*1*/ /*fake_override*/ fun addSuppressed(/*0*/ exception: kotlin.Throwable!): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun fillInStackTrace(): kotlin.Throwable!
+        public open override /*1*/ /*fake_override*/ fun getLocalizedMessage(): kotlin.String!
+        public open override /*1*/ /*fake_override*/ fun getStackTrace(): kotlin.Array<(out) java.lang.StackTraceElement!>!
+        public final override /*1*/ /*fake_override*/ fun getSuppressed(): kotlin.Array<(out) kotlin.Throwable!>!
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun initCause(/*0*/ cause: kotlin.Throwable!): kotlin.Throwable!
+        public open override /*1*/ /*fake_override*/ fun printStackTrace(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun printStackTrace(/*0*/ s: java.io.PrintStream!): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun printStackTrace(/*0*/ s: java.io.PrintWriter!): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun setStackTrace(/*0*/ stackTrace: kotlin.Array<(out) java.lang.StackTraceElement!>!): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.EXPRESSION, AnnotationTarget.FILE, AnnotationTarget.TYPEALIAS}) @kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) @kotlin.Deprecated(message = "Please use OptIn instead.", replaceWith = kotlin.ReplaceWith(expression = "OptIn(*markerClass)", imports = {"kotlin.OptIn"})) @kotlin.SinceKotlin(version = "1.2") public final annotation class UseExperimental : kotlin.Annotation {
+        public constructor UseExperimental(/*0*/ vararg markerClass: kotlin.reflect.KClass<out kotlin.Annotation> /*kotlin.Array<out kotlin.reflect.KClass<out kotlin.Annotation>>*/)
+        public final val markerClass: kotlin.Array<out kotlin.reflect.KClass<out kotlin.Annotation>>
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.TYPEALIAS}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) internal final annotation class WasExperimental : kotlin.Annotation {
+        public constructor WasExperimental(/*0*/ vararg markerClass: kotlin.reflect.KClass<out kotlin.Annotation> /*kotlin.Array<out kotlin.reflect.KClass<out kotlin.Annotation>>*/)
+        public final val markerClass: kotlin.Array<out kotlin.reflect.KClass<out kotlin.Annotation>>
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+    @kotlin.SinceKotlin(version = "1.3") public typealias ArithmeticException = java.lang.ArithmeticException
+    @kotlin.SinceKotlin(version = "1.1") public typealias AssertionError = java.lang.AssertionError
+    @kotlin.SinceKotlin(version = "1.1") public typealias ClassCastException = java.lang.ClassCastException
+    @kotlin.SinceKotlin(version = "1.1") public typealias Comparator</*0*/ T> = java.util.Comparator<T>
+    @kotlin.SinceKotlin(version = "1.3") public typealias ConcurrentModificationException = java.util.ConcurrentModificationException
+    @kotlin.SinceKotlin(version = "1.1") public typealias Error = java.lang.Error
+    @kotlin.SinceKotlin(version = "1.1") public typealias Exception = java.lang.Exception
+    @kotlin.SinceKotlin(version = "1.1") public typealias IllegalArgumentException = java.lang.IllegalArgumentException
+    @kotlin.SinceKotlin(version = "1.1") public typealias IllegalStateException = java.lang.IllegalStateException
+    @kotlin.SinceKotlin(version = "1.1") public typealias IndexOutOfBoundsException = java.lang.IndexOutOfBoundsException
+    @kotlin.SinceKotlin(version = "1.1") public typealias NoSuchElementException = java.util.NoSuchElementException
+    @kotlin.SinceKotlin(version = "1.1") public typealias NullPointerException = java.lang.NullPointerException
+    @kotlin.SinceKotlin(version = "1.1") public typealias NumberFormatException = java.lang.NumberFormatException
+    @kotlin.SinceKotlin(version = "1.1") public typealias RuntimeException = java.lang.RuntimeException
+    @kotlin.SinceKotlin(version = "1.1") public typealias UnsupportedOperationException = java.lang.UnsupportedOperationException
+
+    package kotlin.collections {
+        @kotlin.SinceKotlin(version = "1.1") public typealias ArrayList</*0*/ E> = java.util.ArrayList<E>
+        @kotlin.SinceKotlin(version = "1.1") public typealias HashMap</*0*/ K, /*1*/ V> = java.util.HashMap<K, V>
+        @kotlin.SinceKotlin(version = "1.1") public typealias HashSet</*0*/ E> = java.util.HashSet<E>
+        @kotlin.SinceKotlin(version = "1.1") public typealias LinkedHashMap</*0*/ K, /*1*/ V> = java.util.LinkedHashMap<K, V>
+        @kotlin.SinceKotlin(version = "1.1") public typealias LinkedHashSet</*0*/ E> = java.util.LinkedHashSet<E>
+        @kotlin.SinceKotlin(version = "1.1") public typealias RandomAccess = java.util.RandomAccess
+    }
+
+    package kotlin.contracts {
+        @kotlin.internal.ContractsDsl @kotlin.contracts.ExperimentalContracts @kotlin.internal.InlineOnly @kotlin.SinceKotlin(version = "1.3") public inline fun contract(/*0*/ builder: kotlin.contracts.ContractBuilder.() -> kotlin.Unit): kotlin.Unit
+
+        @kotlin.internal.ContractsDsl @kotlin.contracts.ExperimentalContracts @kotlin.SinceKotlin(version = "1.3") public interface CallsInPlace : kotlin.contracts.Effect {
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
+        @kotlin.internal.ContractsDsl @kotlin.contracts.ExperimentalContracts @kotlin.SinceKotlin(version = "1.3") public interface ConditionalEffect : kotlin.contracts.Effect {
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
+        @kotlin.internal.ContractsDsl @kotlin.contracts.ExperimentalContracts @kotlin.SinceKotlin(version = "1.3") public interface ContractBuilder {
+            @kotlin.internal.ContractsDsl public abstract fun </*0*/ R> callsInPlace(/*0*/ lambda: kotlin.Function<R>, /*1*/ kind: kotlin.contracts.InvocationKind = ...): kotlin.contracts.CallsInPlace
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            @kotlin.internal.ContractsDsl public abstract fun returns(): kotlin.contracts.Returns
+            @kotlin.internal.ContractsDsl public abstract fun returns(/*0*/ value: kotlin.Any?): kotlin.contracts.Returns
+            @kotlin.internal.ContractsDsl public abstract fun returnsNotNull(): kotlin.contracts.ReturnsNotNull
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
+        @kotlin.internal.ContractsDsl @kotlin.contracts.ExperimentalContracts @kotlin.SinceKotlin(version = "1.3") public interface Effect {
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
+        @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.annotation.MustBeDocumented @kotlin.SinceKotlin(version = "1.3") @kotlin.Experimental @kotlin.RequiresOptIn /* annotation class not found */ public final annotation class ExperimentalContracts : kotlin.Annotation {
+            public constructor ExperimentalContracts()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
+        @kotlin.internal.ContractsDsl @kotlin.contracts.ExperimentalContracts @kotlin.SinceKotlin(version = "1.3") public final enum class InvocationKind : kotlin.Enum<kotlin.contracts.InvocationKind> {
+            @kotlin.internal.ContractsDsl enum entry AT_MOST_ONCE
+
+            @kotlin.internal.ContractsDsl enum entry AT_LEAST_ONCE
+
+            @kotlin.internal.ContractsDsl enum entry EXACTLY_ONCE
+
+            @kotlin.internal.ContractsDsl enum entry UNKNOWN
+
+            private constructor InvocationKind()
+            public final override /*1*/ /*fake_override*/ val name: kotlin.String
+            public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+            protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kotlin.contracts.InvocationKind): kotlin.Int
+            public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+            public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<kotlin.contracts.InvocationKind!>!
+            public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+            // Static members
+            public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): kotlin.contracts.InvocationKind
+            public final /*synthesized*/ fun values(): kotlin.Array<kotlin.contracts.InvocationKind>
+        }
+
+        @kotlin.internal.ContractsDsl @kotlin.contracts.ExperimentalContracts @kotlin.SinceKotlin(version = "1.3") public interface Returns : kotlin.contracts.SimpleEffect {
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            @kotlin.internal.ContractsDsl @kotlin.contracts.ExperimentalContracts public abstract override /*1*/ /*fake_override*/ fun implies(/*0*/ booleanExpression: kotlin.Boolean): kotlin.contracts.ConditionalEffect
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
+        @kotlin.internal.ContractsDsl @kotlin.contracts.ExperimentalContracts @kotlin.SinceKotlin(version = "1.3") public interface ReturnsNotNull : kotlin.contracts.SimpleEffect {
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            @kotlin.internal.ContractsDsl @kotlin.contracts.ExperimentalContracts public abstract override /*1*/ /*fake_override*/ fun implies(/*0*/ booleanExpression: kotlin.Boolean): kotlin.contracts.ConditionalEffect
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
+        @kotlin.internal.ContractsDsl @kotlin.contracts.ExperimentalContracts @kotlin.SinceKotlin(version = "1.3") public interface SimpleEffect : kotlin.contracts.Effect {
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            @kotlin.internal.ContractsDsl @kotlin.contracts.ExperimentalContracts public abstract infix fun implies(/*0*/ booleanExpression: kotlin.Boolean): kotlin.contracts.ConditionalEffect
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+
+    package kotlin.internal {
+
+        @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.VALUE_PARAMETER}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.SinceKotlin(version = "1.2") internal final annotation class AccessibleLateinitPropertyLiteral : kotlin.Annotation {
+            public constructor AccessibleLateinitPropertyLiteral()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
+        @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.SinceKotlin(version = "1.2") internal final annotation class ContractsDsl : kotlin.Annotation {
+            public constructor ContractsDsl()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
+        @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) internal final annotation class DynamicExtension : kotlin.Annotation {
+            public constructor DynamicExtension()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
+        @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) internal final annotation class Exact : kotlin.Annotation {
+            public constructor Exact()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
+        @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) internal final annotation class HidesMembers : kotlin.Annotation {
+            public constructor HidesMembers()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
+        @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) internal final annotation class InlineOnly : kotlin.Annotation {
+            public constructor InlineOnly()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
+        @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) internal final annotation class LowPriorityInOverloadResolution : kotlin.Annotation {
+            public constructor LowPriorityInOverloadResolution()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
+        @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) internal final annotation class NoInfer : kotlin.Annotation {
+            public constructor NoInfer()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
+        @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE_PARAMETER}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) internal final annotation class OnlyInputTypes : kotlin.Annotation {
+            public constructor OnlyInputTypes()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
+        @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.TYPEALIAS}) @kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) @kotlin.annotation.Repeatable @kotlin.SinceKotlin(version = "1.2") internal final annotation class RequireKotlin : kotlin.Annotation {
+            public constructor RequireKotlin(/*0*/ version: kotlin.String, /*1*/ message: kotlin.String = ..., /*2*/ level: kotlin.DeprecationLevel = ..., /*3*/ versionKind: kotlin.internal.RequireKotlinVersionKind = ..., /*4*/ errorCode: kotlin.Int = ...)
+            public final val errorCode: kotlin.Int
+            public final val level: kotlin.DeprecationLevel
+            public final val message: kotlin.String
+            public final val version: kotlin.String
+            public final val versionKind: kotlin.internal.RequireKotlinVersionKind
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
+        @kotlin.SinceKotlin(version = "1.2") internal final enum class RequireKotlinVersionKind : kotlin.Enum<kotlin.internal.RequireKotlinVersionKind> {
+            enum entry LANGUAGE_VERSION
+
+            enum entry COMPILER_VERSION
+
+            enum entry API_VERSION
+
+            private constructor RequireKotlinVersionKind()
+            public final override /*1*/ /*fake_override*/ val name: kotlin.String
+            public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+            protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kotlin.internal.RequireKotlinVersionKind): kotlin.Int
+            public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+            public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<kotlin.internal.RequireKotlinVersionKind!>!
+            public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+            // Static members
+            public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): kotlin.internal.RequireKotlinVersionKind
+            public final /*synthesized*/ fun values(): kotlin.Array<kotlin.internal.RequireKotlinVersionKind>
+        }
+    }
+
+    package kotlin.jvm {
+
+        public final annotation class JvmInline : kotlin.Annotation {
+            public constructor JvmInline()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
+        @kotlin.jvm.JvmInline public final actual value class VC {
+            public constructor VC(/*0*/ a: kotlin.Any)
+            public final val a: kotlin.Any
+            public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+        }
+    }
+
+    package kotlin.script {
+
+        package kotlin.script.dependencies {
+            private fun </*0*/ T : kotlin.Comparable<T>> compareIterables(/*0*/ a: kotlin.collections.Iterable<T>, /*1*/ b: kotlin.collections.Iterable<T>): kotlin.Int
+            private fun </*0*/ T : kotlin.Comparable<*>> compareValues(/*0*/ a: T?, /*1*/ b: T?): kotlin.Int
+            public fun kotlin.script.dependencies.KotlinScriptExternalDependencies?.asFuture(): kotlin.script.dependencies.PseudoFuture<kotlin.script.dependencies.KotlinScriptExternalDependencies?>
+            private inline fun kotlin.Int.chainCompare(/*0*/ compFn: () -> kotlin.Int): kotlin.Int
+
+            public final class BasicScriptDependenciesResolver : kotlin.script.dependencies.ScriptDependenciesResolver {
+                public constructor BasicScriptDependenciesResolver()
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun resolve(/*0*/ script: kotlin.script.dependencies.ScriptContents, /*1*/ environment: kotlin.script.dependencies.Environment? /* = kotlin.collections.Map<kotlin.String, kotlin.Any?>? */, /*2*/ report: (kotlin.script.dependencies.ScriptDependenciesResolver.ReportSeverity, kotlin.String, kotlin.script.dependencies.ScriptContents.Position?) -> kotlin.Unit, /*3*/ previousDependencies: kotlin.script.dependencies.KotlinScriptExternalDependencies?): java.util.concurrent.Future<kotlin.script.dependencies.KotlinScriptExternalDependencies?>
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+            }
+
+            public interface KotlinScriptExternalDependencies : kotlin.Comparable<kotlin.script.dependencies.KotlinScriptExternalDependencies> {
+                public open val classpath: kotlin.collections.Iterable<java.io.File>
+                public open val imports: kotlin.collections.Iterable<kotlin.String>
+                public open val javaHome: kotlin.String?
+                public open val scripts: kotlin.collections.Iterable<java.io.File>
+                public open val sources: kotlin.collections.Iterable<java.io.File>
+                public open override /*1*/ fun compareTo(/*0*/ other: kotlin.script.dependencies.KotlinScriptExternalDependencies): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+            }
+
+            public final class PseudoFuture</*0*/ T> : java.util.concurrent.Future<T> {
+                public constructor PseudoFuture</*0*/ T>(/*0*/ value: T)
+                private final val value: T
+                public open fun cancel(/*0*/ p0: kotlin.Boolean): kotlin.Boolean
+                public open fun get(): T
+                public open operator fun get(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.concurrent.TimeUnit): T
+                public open fun isCancelled(): kotlin.Boolean
+                public open fun isDone(): kotlin.Boolean
+            }
+
+            public interface ScriptContents {
+                public abstract val annotations: kotlin.collections.Iterable<kotlin.Annotation>
+                public abstract val file: java.io.File?
+                public abstract val text: kotlin.CharSequence?
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+                public final data class Position {
+                    public constructor Position(/*0*/ line: kotlin.Int, /*1*/ col: kotlin.Int)
+                    public final val col: kotlin.Int
+                    public final val line: kotlin.Int
+                    public final operator /*synthesized*/ fun component1(): kotlin.Int
+                    public final operator /*synthesized*/ fun component2(): kotlin.Int
+                    public final /*synthesized*/ fun copy(/*0*/ line: kotlin.Int = ..., /*1*/ col: kotlin.Int = ...): kotlin.script.dependencies.ScriptContents.Position
+                    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+                    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+                }
+            }
+
+            public interface ScriptDependenciesResolver {
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public open fun resolve(/*0*/ script: kotlin.script.dependencies.ScriptContents, /*1*/ environment: kotlin.script.dependencies.Environment? /* = kotlin.collections.Map<kotlin.String, kotlin.Any?>? */, /*2*/ report: (kotlin.script.dependencies.ScriptDependenciesResolver.ReportSeverity, kotlin.String, kotlin.script.dependencies.ScriptContents.Position?) -> kotlin.Unit, /*3*/ previousDependencies: kotlin.script.dependencies.KotlinScriptExternalDependencies?): java.util.concurrent.Future<kotlin.script.dependencies.KotlinScriptExternalDependencies?>
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+                public final enum class ReportSeverity : kotlin.Enum<kotlin.script.dependencies.ScriptDependenciesResolver.ReportSeverity> {
+                    enum entry FATAL
+
+                    enum entry ERROR
+
+                    enum entry WARNING
+
+                    enum entry INFO
+
+                    enum entry DEBUG
+
+                    private constructor ReportSeverity()
+                    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+                    public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+                    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+                    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kotlin.script.dependencies.ScriptDependenciesResolver.ReportSeverity): kotlin.Int
+                    public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                    protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+                    public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<kotlin.script.dependencies.ScriptDependenciesResolver.ReportSeverity!>!
+                    public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+                    // Static members
+                    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): kotlin.script.dependencies.ScriptDependenciesResolver.ReportSeverity
+                    public final /*synthesized*/ fun values(): kotlin.Array<kotlin.script.dependencies.ScriptDependenciesResolver.ReportSeverity>
+                }
+            }
+            public typealias Environment = kotlin.collections.Map<kotlin.String, kotlin.Any?>
+        }
+
+        package kotlin.script.experimental {
+
+            package kotlin.script.experimental.dependencies {
+                public fun kotlin.script.experimental.dependencies.ScriptDependencies.asSuccess(): kotlin.script.experimental.dependencies.DependenciesResolver.ResolveResult.Success
+
+                public interface AsyncDependenciesResolver : kotlin.script.experimental.dependencies.DependenciesResolver {
+                    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                    public open override /*1*/ fun resolve(/*0*/ scriptContents: kotlin.script.dependencies.ScriptContents, /*1*/ environment: kotlin.script.dependencies.Environment /* = kotlin.collections.Map<kotlin.String, kotlin.Any?> */): kotlin.script.experimental.dependencies.DependenciesResolver.ResolveResult
+                    public open override /*1*/ /*fake_override*/ fun resolve(/*0*/ script: kotlin.script.dependencies.ScriptContents, /*1*/ environment: kotlin.script.dependencies.Environment? /* = kotlin.collections.Map<kotlin.String, kotlin.Any?>? */, /*2*/ report: (kotlin.script.dependencies.ScriptDependenciesResolver.ReportSeverity, kotlin.String, kotlin.script.dependencies.ScriptContents.Position?) -> kotlin.Unit, /*3*/ previousDependencies: kotlin.script.dependencies.KotlinScriptExternalDependencies?): java.util.concurrent.Future<kotlin.script.dependencies.KotlinScriptExternalDependencies?>
+                    public abstract suspend fun resolveAsync(/*0*/ scriptContents: kotlin.script.dependencies.ScriptContents, /*1*/ environment: kotlin.script.dependencies.Environment /* = kotlin.collections.Map<kotlin.String, kotlin.Any?> */): kotlin.script.experimental.dependencies.DependenciesResolver.ResolveResult
+                    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+                }
+
+                public interface DependenciesResolver : kotlin.script.dependencies.ScriptDependenciesResolver {
+                    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                    public abstract fun resolve(/*0*/ scriptContents: kotlin.script.dependencies.ScriptContents, /*1*/ environment: kotlin.script.dependencies.Environment /* = kotlin.collections.Map<kotlin.String, kotlin.Any?> */): kotlin.script.experimental.dependencies.DependenciesResolver.ResolveResult
+                    public open override /*1*/ /*fake_override*/ fun resolve(/*0*/ script: kotlin.script.dependencies.ScriptContents, /*1*/ environment: kotlin.script.dependencies.Environment? /* = kotlin.collections.Map<kotlin.String, kotlin.Any?>? */, /*2*/ report: (kotlin.script.dependencies.ScriptDependenciesResolver.ReportSeverity, kotlin.String, kotlin.script.dependencies.ScriptContents.Position?) -> kotlin.Unit, /*3*/ previousDependencies: kotlin.script.dependencies.KotlinScriptExternalDependencies?): java.util.concurrent.Future<kotlin.script.dependencies.KotlinScriptExternalDependencies?>
+                    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+                    public object NoDependencies : kotlin.script.experimental.dependencies.DependenciesResolver {
+                        private constructor NoDependencies()
+                        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                        public open override /*1*/ fun resolve(/*0*/ scriptContents: kotlin.script.dependencies.ScriptContents, /*1*/ environment: kotlin.script.dependencies.Environment /* = kotlin.collections.Map<kotlin.String, kotlin.Any?> */): kotlin.script.experimental.dependencies.DependenciesResolver.ResolveResult.Success
+                        public open override /*1*/ /*fake_override*/ fun resolve(/*0*/ script: kotlin.script.dependencies.ScriptContents, /*1*/ environment: kotlin.script.dependencies.Environment? /* = kotlin.collections.Map<kotlin.String, kotlin.Any?>? */, /*2*/ report: (kotlin.script.dependencies.ScriptDependenciesResolver.ReportSeverity, kotlin.String, kotlin.script.dependencies.ScriptContents.Position?) -> kotlin.Unit, /*3*/ previousDependencies: kotlin.script.dependencies.KotlinScriptExternalDependencies?): java.util.concurrent.Future<kotlin.script.dependencies.KotlinScriptExternalDependencies?>
+                        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+                    }
+
+                    public sealed class ResolveResult {
+                        protected constructor ResolveResult()
+                        public abstract val dependencies: kotlin.script.experimental.dependencies.ScriptDependencies?
+                        public abstract val reports: kotlin.collections.List<kotlin.script.experimental.dependencies.ScriptReport>
+                        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+                        public final data class Failure : kotlin.script.experimental.dependencies.DependenciesResolver.ResolveResult {
+                            public constructor Failure(/*0*/ vararg reports: kotlin.script.experimental.dependencies.ScriptReport /*kotlin.Array<out kotlin.script.experimental.dependencies.ScriptReport>*/)
+                            public constructor Failure(/*0*/ reports: kotlin.collections.List<kotlin.script.experimental.dependencies.ScriptReport>)
+                            public open override /*1*/ val dependencies: kotlin.script.experimental.dependencies.ScriptDependencies?
+                            public open override /*1*/ val reports: kotlin.collections.List<kotlin.script.experimental.dependencies.ScriptReport>
+                            public final operator /*synthesized*/ fun component1(): kotlin.collections.List<kotlin.script.experimental.dependencies.ScriptReport>
+                            public final /*synthesized*/ fun copy(/*0*/ reports: kotlin.collections.List<kotlin.script.experimental.dependencies.ScriptReport> = ...): kotlin.script.experimental.dependencies.DependenciesResolver.ResolveResult.Failure
+                            public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                            public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+                            public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+                        }
+
+                        public final data class Success : kotlin.script.experimental.dependencies.DependenciesResolver.ResolveResult {
+                            public constructor Success(/*0*/ dependencies: kotlin.script.experimental.dependencies.ScriptDependencies, /*1*/ reports: kotlin.collections.List<kotlin.script.experimental.dependencies.ScriptReport> = ...)
+                            public open override /*1*/ val dependencies: kotlin.script.experimental.dependencies.ScriptDependencies
+                            public open override /*1*/ val reports: kotlin.collections.List<kotlin.script.experimental.dependencies.ScriptReport>
+                            public final operator /*synthesized*/ fun component1(): kotlin.script.experimental.dependencies.ScriptDependencies
+                            public final operator /*synthesized*/ fun component2(): kotlin.collections.List<kotlin.script.experimental.dependencies.ScriptReport>
+                            public final /*synthesized*/ fun copy(/*0*/ dependencies: kotlin.script.experimental.dependencies.ScriptDependencies = ..., /*1*/ reports: kotlin.collections.List<kotlin.script.experimental.dependencies.ScriptReport> = ...): kotlin.script.experimental.dependencies.DependenciesResolver.ResolveResult.Success
+                            public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                            public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+                            public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+                        }
+                    }
+                }
+
+                public final data class ScriptDependencies {
+                    public constructor ScriptDependencies(/*0*/ javaHome: java.io.File? = ..., /*1*/ classpath: kotlin.collections.List<java.io.File> = ..., /*2*/ imports: kotlin.collections.List<kotlin.String> = ..., /*3*/ sources: kotlin.collections.List<java.io.File> = ..., /*4*/ scripts: kotlin.collections.List<java.io.File> = ...)
+                    public final val classpath: kotlin.collections.List<java.io.File>
+                    public final val imports: kotlin.collections.List<kotlin.String>
+                    public final val javaHome: java.io.File?
+                    public final val scripts: kotlin.collections.List<java.io.File>
+                    public final val sources: kotlin.collections.List<java.io.File>
+                    public final operator /*synthesized*/ fun component1(): java.io.File?
+                    public final operator /*synthesized*/ fun component2(): kotlin.collections.List<java.io.File>
+                    public final operator /*synthesized*/ fun component3(): kotlin.collections.List<kotlin.String>
+                    public final operator /*synthesized*/ fun component4(): kotlin.collections.List<java.io.File>
+                    public final operator /*synthesized*/ fun component5(): kotlin.collections.List<java.io.File>
+                    public final /*synthesized*/ fun copy(/*0*/ javaHome: java.io.File? = ..., /*1*/ classpath: kotlin.collections.List<java.io.File> = ..., /*2*/ imports: kotlin.collections.List<kotlin.String> = ..., /*3*/ sources: kotlin.collections.List<java.io.File> = ..., /*4*/ scripts: kotlin.collections.List<java.io.File> = ...): kotlin.script.experimental.dependencies.ScriptDependencies
+                    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+                    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+
+                    public companion object Companion {
+                        private constructor Companion()
+                        public final val Empty: kotlin.script.experimental.dependencies.ScriptDependencies
+                        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+                    }
+                }
+
+                public final data class ScriptReport {
+                    public constructor ScriptReport(/*0*/ message: kotlin.String, /*1*/ severity: kotlin.script.experimental.dependencies.ScriptReport.Severity = ..., /*2*/ position: kotlin.script.experimental.dependencies.ScriptReport.Position? = ...)
+                    public final val message: kotlin.String
+                    public final val position: kotlin.script.experimental.dependencies.ScriptReport.Position?
+                    public final val severity: kotlin.script.experimental.dependencies.ScriptReport.Severity
+                    public final operator /*synthesized*/ fun component1(): kotlin.String
+                    public final operator /*synthesized*/ fun component2(): kotlin.script.experimental.dependencies.ScriptReport.Severity
+                    public final operator /*synthesized*/ fun component3(): kotlin.script.experimental.dependencies.ScriptReport.Position?
+                    public final /*synthesized*/ fun copy(/*0*/ message: kotlin.String = ..., /*1*/ severity: kotlin.script.experimental.dependencies.ScriptReport.Severity = ..., /*2*/ position: kotlin.script.experimental.dependencies.ScriptReport.Position? = ...): kotlin.script.experimental.dependencies.ScriptReport
+                    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+                    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+
+                    public final data class Position {
+                        public constructor Position(/*0*/ startLine: kotlin.Int, /*1*/ startColumn: kotlin.Int, /*2*/ endLine: kotlin.Int? = ..., /*3*/ endColumn: kotlin.Int? = ...)
+                        public final val endColumn: kotlin.Int?
+                        public final val endLine: kotlin.Int?
+                        public final val startColumn: kotlin.Int
+                        public final val startLine: kotlin.Int
+                        public final operator /*synthesized*/ fun component1(): kotlin.Int
+                        public final operator /*synthesized*/ fun component2(): kotlin.Int
+                        public final operator /*synthesized*/ fun component3(): kotlin.Int?
+                        public final operator /*synthesized*/ fun component4(): kotlin.Int?
+                        public final /*synthesized*/ fun copy(/*0*/ startLine: kotlin.Int = ..., /*1*/ startColumn: kotlin.Int = ..., /*2*/ endLine: kotlin.Int? = ..., /*3*/ endColumn: kotlin.Int? = ...): kotlin.script.experimental.dependencies.ScriptReport.Position
+                        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+                        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+                    }
+
+                    public final enum class Severity : kotlin.Enum<kotlin.script.experimental.dependencies.ScriptReport.Severity> {
+                        enum entry FATAL
+
+                        enum entry ERROR
+
+                        enum entry WARNING
+
+                        enum entry INFO
+
+                        enum entry DEBUG
+
+                        private constructor Severity()
+                        public final override /*1*/ /*fake_override*/ val name: kotlin.String
+                        public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+                        protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+                        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kotlin.script.experimental.dependencies.ScriptReport.Severity): kotlin.Int
+                        public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                        protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+                        public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<kotlin.script.experimental.dependencies.ScriptReport.Severity!>!
+                        public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+                        // Static members
+                        public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): kotlin.script.experimental.dependencies.ScriptReport.Severity
+                        public final /*synthesized*/ fun values(): kotlin.Array<kotlin.script.experimental.dependencies.ScriptReport.Severity>
+                    }
+                }
+            }
+
+            package kotlin.script.experimental.location {
+
+                @kotlin.Deprecated(message = "Experimental API") public final enum class ScriptExpectedLocation : kotlin.Enum<kotlin.script.experimental.location.ScriptExpectedLocation> {
+                    enum entry SourcesOnly
+
+                    enum entry TestsOnly
+
+                    enum entry Libraries
+
+                    enum entry Project
+
+                    enum entry Everywhere
+
+                    private constructor ScriptExpectedLocation()
+                    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+                    public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+                    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+                    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kotlin.script.experimental.location.ScriptExpectedLocation): kotlin.Int
+                    public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                    protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+                    public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<kotlin.script.experimental.location.ScriptExpectedLocation!>!
+                    public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+                    // Static members
+                    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): kotlin.script.experimental.location.ScriptExpectedLocation
+                    public final /*synthesized*/ fun values(): kotlin.Array<kotlin.script.experimental.location.ScriptExpectedLocation>
+                }
+
+                @kotlin.Deprecated(message = "Experimental API") @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS}) @kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) public final annotation class ScriptExpectedLocations : kotlin.Annotation {
+                    public constructor ScriptExpectedLocations(/*0*/ value: kotlin.Array<kotlin.script.experimental.location.ScriptExpectedLocation> = ...)
+                    public final val value: kotlin.Array<kotlin.script.experimental.location.ScriptExpectedLocation>
+                    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+                }
+            }
+        }
+
+        package kotlin.script.extensions {
+
+            @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS}) @kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) public final annotation class SamWithReceiverAnnotations : kotlin.Annotation {
+                public constructor SamWithReceiverAnnotations(/*0*/ vararg annotations: kotlin.String /*kotlin.Array<out kotlin.String>*/)
+                public final val annotations: kotlin.Array<out kotlin.String>
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+            }
+        }
+
+        package kotlin.script.templates {
+            public const val DEFAULT_SCRIPT_FILE_PATTERN: kotlin.String = ".*\.kts"
+
+            @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.CLASS}) @kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) public final annotation class AcceptedAnnotations : kotlin.Annotation {
+                public constructor AcceptedAnnotations(/*0*/ vararg supportedAnnotationClasses: kotlin.reflect.KClass<out kotlin.Annotation> /*kotlin.Array<out kotlin.reflect.KClass<out kotlin.Annotation>>*/)
+                public final val supportedAnnotationClasses: kotlin.Array<out kotlin.reflect.KClass<out kotlin.Annotation>>
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+            }
+
+            @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS}) @kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) public final annotation class ScriptTemplateAdditionalCompilerArguments : kotlin.Annotation {
+                public constructor ScriptTemplateAdditionalCompilerArguments(/*0*/ arguments: kotlin.Array<kotlin.String> = ..., /*1*/ provider: kotlin.reflect.KClass<out kotlin.script.templates.ScriptTemplateAdditionalCompilerArgumentsProvider> = ...)
+                public final val arguments: kotlin.Array<kotlin.String>
+                public final val provider: kotlin.reflect.KClass<out kotlin.script.templates.ScriptTemplateAdditionalCompilerArgumentsProvider>
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+            }
+
+            @kotlin.Deprecated(message = "temporary workaround for missing functionality, will be replaced by the new API soon") public open class ScriptTemplateAdditionalCompilerArgumentsProvider {
+                public constructor ScriptTemplateAdditionalCompilerArgumentsProvider(/*0*/ arguments: kotlin.collections.Iterable<kotlin.String> = ...)
+                public final val arguments: kotlin.collections.Iterable<kotlin.String>
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public open fun getAdditionalCompilerArguments(/*0*/ environment: kotlin.script.dependencies.Environment? /* = kotlin.collections.Map<kotlin.String, kotlin.Any?>? */): kotlin.collections.Iterable<kotlin.String>
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+            }
+
+            @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS}) @kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) public final annotation class ScriptTemplateDefinition : kotlin.Annotation {
+                public constructor ScriptTemplateDefinition(/*0*/ resolver: kotlin.reflect.KClass<out kotlin.script.dependencies.ScriptDependenciesResolver> = ..., /*1*/ scriptFilePattern: kotlin.String = ...)
+                public final val resolver: kotlin.reflect.KClass<out kotlin.script.dependencies.ScriptDependenciesResolver>
+                public final val scriptFilePattern: kotlin.String
+                public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+            }
+
+            package kotlin.script.templates.standard {
+
+                public abstract class ScriptTemplateWithArgs {
+                    public constructor ScriptTemplateWithArgs(/*0*/ args: kotlin.Array<kotlin.String>)
+                    public final val args: kotlin.Array<kotlin.String>
+                    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+                }
+
+                public abstract class ScriptTemplateWithBindings {
+                    public constructor ScriptTemplateWithBindings(/*0*/ bindings: kotlin.collections.Map<kotlin.String, kotlin.Any?>)
+                    public final val bindings: kotlin.collections.Map<kotlin.String, kotlin.Any?>
+                    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+                }
+
+                public abstract class SimpleScriptTemplate {
+                    public constructor SimpleScriptTemplate()
+                    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+                    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+                    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+                }
+            }
+        }
+    }
+
+    package kotlin.text {
+        @kotlin.SinceKotlin(version = "1.1") public typealias Appendable = java.lang.Appendable
+        @kotlin.SinceKotlin(version = "1.4") @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class}) public typealias CharacterCodingException = java.nio.charset.CharacterCodingException
+        @kotlin.SinceKotlin(version = "1.1") public typealias StringBuilder = java.lang.StringBuilder
+    }
+}
+
