@@ -5,9 +5,67 @@
 
 package test.ranges
 
+import test.ranges.testProgressionCollection
+import kotlin.math.min
+import kotlin.math.sign
 import kotlin.test.*
 
 public class URangeTest {
+
+    @Test
+    fun uIntProgressionCollection() {
+        testProgressionCollection(
+            0U..10U, -10..10,
+            UIntProgression::fromClosedRange,
+            { cur: UInt, step ->
+                when {
+                    step > 0 -> (cur + step.toUInt()).takeIf { cur <= UInt.MAX_VALUE - step.toUInt() }
+                    step < 0 -> (cur - (-step).toUInt()).takeIf { cur >= UInt.MIN_VALUE + (-step).toUInt() }
+                    else -> cur
+                }
+            },
+            { it.sign }
+        )
+        //testing overflow
+        for (start in 0U..100U)
+            for (finish in (0U..10U).map { start + Int.MAX_VALUE.toUInt() + it } + ((UInt.MAX_VALUE - 100U)..UInt.MAX_VALUE))
+                for (step in 1..10) {
+                    val expected = min(((finish.toLong() - start.toLong()) / step.toLong()) + 1, Int.MAX_VALUE.toLong())
+                    assertEquals(expected, (start..finish step step).size.toLong())
+                    assertEquals(expected, (finish downTo start step step).size.toLong())
+                }
+
+    }
+
+    @Test
+    fun uLongProgressionCollection() {
+        testProgressionCollection(
+            0UL..10UL, -10L..10L,
+            ULongProgression::fromClosedRange,
+            { cur: ULong, step ->
+                when {
+                    step > 0L -> (cur + step.toULong()).takeIf { cur <= ULong.MAX_VALUE - step.toULong() }
+                    step < 0L -> (cur - (-step).toULong()).takeIf { cur >= ULong.MIN_VALUE + (-step).toULong() }
+                    else -> cur
+                }
+            },
+            { it.sign }
+        )
+        //testing overflow
+        for (start in 0UL..100UL) {
+            for (finish in (0UL..10UL).map { start + Int.MAX_VALUE.toULong() + it }) {
+                assertEquals(Int.MAX_VALUE, (start..finish).size)
+                assertEquals(Int.MAX_VALUE, (finish downTo start).size)
+            }
+            for (finish in ((ULong.MAX_VALUE - 100UL)..ULong.MAX_VALUE)) {
+                for (step in 1L..10L) {
+                    assertEquals(Int.MAX_VALUE, (start..finish step step).size)
+                    assertEquals(Int.MAX_VALUE, (finish downTo start step step).size)
+                }
+            }
+        }
+    }
+
     @Test
     fun uintRange() {
         val range = 9u..(-5).toUInt()
