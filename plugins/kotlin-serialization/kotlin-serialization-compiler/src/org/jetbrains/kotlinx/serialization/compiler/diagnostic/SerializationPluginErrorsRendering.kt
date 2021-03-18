@@ -27,7 +27,11 @@ object SerializationPluginErrorsRendering : DefaultErrorMessages.Extension {
         )
         MAP.put(
             SerializationErrors.LOCAL_CLASSES_NOT_SUPPORTED,
-            "Local class and anonymous objects can not be serializable"
+            "Local classes and anonymous objects can not be serializable."
+        )
+        MAP.put(
+            SerializationErrors.INNER_CLASSES_NOT_SUPPORTED,
+            "Inner (with reference to outer this) serializable classes are not supported. Remove @Serializable annotation or 'inner' keyword."
         )
         MAP.put(
             SerializationErrors.EXPLICIT_SERIALIZABLE_IS_REQUIRED,

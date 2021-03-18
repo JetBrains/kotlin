@@ -123,6 +123,11 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
             return false
         }
 
+        if (descriptor.isInner) {
+            trace.reportOnSerializableAnnotation(descriptor, SerializationErrors.INNER_CLASSES_NOT_SUPPORTED)
+            return false
+        }
+
         if (descriptor.isInlineClass() && !canSupportInlineClasses(descriptor.module, trace)) {
             descriptor.onSerializableAnnotation {
                 trace.report(

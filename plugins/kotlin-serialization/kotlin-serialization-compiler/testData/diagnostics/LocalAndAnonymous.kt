@@ -14,5 +14,9 @@ fun container() {
 val topLevelAnon = <!LOCAL_CLASSES_NOT_SUPPORTED!>@Serializable<!> object {}
 
 @Serializable class A {
-    @Serializable class B // nesting classes are allowed
+    @Serializable class B // nested classes are allowed
+
+    <!INNER_CLASSES_NOT_SUPPORTED!>@Serializable<!> inner class C // inner classes are not
+
+    @Serializable object F {} // regular named object, OK
 }
