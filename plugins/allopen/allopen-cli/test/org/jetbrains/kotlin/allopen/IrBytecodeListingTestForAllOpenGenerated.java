@@ -39,6 +39,11 @@ public class IrBytecodeListingTestForAllOpenGenerated extends AbstractIrBytecode
         runTest("plugins/allopen/allopen-cli/testData/bytecodeListing/alreadyOpen.kt");
     }
 
+    @TestMetadata("annotationMembers.kt")
+    public void testAnnotationMembers() throws Exception {
+        runTest("plugins/allopen/allopen-cli/testData/bytecodeListing/annotationMembers.kt");
+    }
+
     @TestMetadata("anonymousObject.kt")
     public void testAnonymousObject() throws Exception {
         runTest("plugins/allopen/allopen-cli/testData/bytecodeListing/anonymousObject.kt");
