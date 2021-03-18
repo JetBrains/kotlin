@@ -57,10 +57,8 @@ object InlineClassAbi {
      * Looking for a backing field does not work for unsigned types, which don't
      * contain a field.
      */
-    fun getUnderlyingType(irClass: IrClass): IrType {
-        require(irClass.isInline)
-        return irClass.primaryConstructor!!.valueParameters[0].type
-    }
+    fun getUnderlyingType(irClass: IrClass): IrType =
+        irClass.singlePrimaryConstructorParameter.type
 
     /**
      * Returns a mangled name for a function taking inline class arguments
@@ -158,8 +156,16 @@ internal val IrFunction.hasMangledParameters: Boolean
 internal val IrFunction.hasMangledReturnType: Boolean
     get() = returnType.erasedUpperBound.isInline && parentClassOrNull?.isFileClass != true
 
+private val IrClass.singlePrimaryConstructorParameter: IrValueParameter
+    get() {
+        require(isInline) { "Not an inline class: ${render()} "}
+        val primaryConstructor = primaryConstructor ?: error("Inline class has no primary constructor: ${render()}")
+        return primaryConstructor.valueParameters.singleOrNull()
+            ?: error("Inline class primary constructor should have one parameter: ${primaryConstructor.render()}")
+    }
+
 internal val IrClass.inlineClassFieldName: Name
-    get() = primaryConstructor!!.valueParameters.single().name
+    get() = singlePrimaryConstructorParameter.name
 
 val IrFunction.isInlineClassFieldGetter: Boolean
     get() = (parent as? IrClass)?.isInline == true && this is IrSimpleFunction && extensionReceiverParameter == null &&
