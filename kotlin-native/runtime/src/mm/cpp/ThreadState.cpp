@@ -48,3 +48,7 @@ ALWAYS_INLINE void kotlin::AssertThreadState(mm::ThreadData* threadData, ThreadS
 ALWAYS_INLINE void kotlin::AssertThreadState(MemoryState* thread, ThreadState expected) noexcept {
     AssertThreadState(thread->GetThreadData(), expected);
 }
+
+ThreadState kotlin::GetThreadState(MemoryState* thread) noexcept {
+    return thread->GetThreadData()->state();
+}
