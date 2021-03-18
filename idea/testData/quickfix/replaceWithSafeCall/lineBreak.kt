@@ -4,4 +4,5 @@ fun foo(a: String?) {
     val b = a
             .<caret>length
 }
+// FIR_IDENTICAL
 /* FIR_COMPARISON */
