@@ -21,7 +21,6 @@
 #include <cstdint>
 
 #include "Common.h"
-#include "Names.h"
 
 #if KONAN_TYPE_INFO_HAS_WRITABLE_PART
 struct WritableTypeInfo;
@@ -29,6 +28,9 @@ struct WritableTypeInfo;
 
 struct ObjHeader;
 struct AssociatedObjectTableRecord;
+
+// Hash of open method name. Must be unique per class/scope (CityHash64 is being used).
+typedef int64_t MethodNameHash;
 
 // An element of sorted by hash in-place array representing methods.
 // For systems where introspection is not needed - only open methods are in

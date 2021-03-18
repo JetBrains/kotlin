@@ -18,7 +18,6 @@
 #include <string.h>
 
 #include "KAssert.h"
-#include "City.h"
 #include "Exceptions.h"
 #include "Memory.h"
 #include "Natives.h"

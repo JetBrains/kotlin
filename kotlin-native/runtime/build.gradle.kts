@@ -19,7 +19,7 @@ googletest {
 }
 
 fun CompileToBitcode.includeRuntime() {
-    headersDirs += files("../common/src/hash/headers", "src/main/cpp")
+    headersDirs += files("src/main/cpp")
 }
 
 val hostName: String by project
@@ -29,7 +29,6 @@ bitcode {
     create("runtime", file("src/main")) {
         dependsOn(
             ":kotlin-native:dependencies:update",
-            ":kotlin-native:common:${target}Hash",
             "${target}StdAlloc",
             "${target}OptAlloc",
             "${target}Mimalloc",
@@ -46,7 +45,6 @@ bitcode {
         )
         includeRuntime()
         // TODO: Should depend on the sanitizer.
-        linkerArgs.add(project.file("../common/build/bitcode/main/$target/hash.bc").path)
     }
 
     create("mimalloc") {
