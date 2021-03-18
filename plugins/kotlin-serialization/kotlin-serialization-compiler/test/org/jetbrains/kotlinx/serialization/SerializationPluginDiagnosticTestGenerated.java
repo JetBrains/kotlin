@@ -49,6 +49,11 @@ public class SerializationPluginDiagnosticTestGenerated extends AbstractSerializ
         runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/diagnostics/LazyRecursionBug.kt");
     }
 
+    @TestMetadata("LocalAndAnonymous.kt")
+    public void testLocalAndAnonymous() throws Exception {
+        runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/diagnostics/LocalAndAnonymous.kt");
+    }
+
     @TestMetadata("NoSuitableCtorInParent.kt")
     public void testNoSuitableCtorInParent() throws Exception {
         runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/diagnostics/NoSuitableCtorInParent.kt");
