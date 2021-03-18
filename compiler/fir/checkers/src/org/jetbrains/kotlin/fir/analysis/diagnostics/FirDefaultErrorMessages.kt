@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.FQ_N
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.NULLABLE_STRING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.PROPERTY_NAME
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_CLASS_OR_OBJECT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOLS
@@ -21,9 +22,11 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.TO_S
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.VISIBILITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.WHEN_MISSING_CASES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_INLINE_CLASS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_DELEGATED_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_FUNCTION_WITH_BODY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_MEMBER_NOT_IMPLEMENTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_PROPERTY_WITH_GETTER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_PROPERTY_WITH_INITIALIZER
@@ -117,6 +120,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LOCAL_ANNOTATION_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LOCAL_INTERFACE_NOT_ALLOWED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LOCAL_OBJECT_NOT_ALLOWED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MANY_COMPANION_OBJECTS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MANY_IMPL_MEMBER_NOT_IMPLEMENTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_VAL_ON_ANNOTATION_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MULTIPLE_VARARG_PARAMETERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MUST_BE_INITIALIZED
@@ -453,6 +457,31 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
                 VISIBILITY,
                 NAME,
                 TO_STRING
+            )
+
+            map.put(
+                ABSTRACT_MEMBER_NOT_IMPLEMENTED,
+                "{0} is not abstract and does not implement abstract member {1}",
+                RENDER_CLASS_OR_OBJECT,
+                FQ_NAMES_IN_TYPES
+            )
+            map.put(
+                ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED,
+                "{0} is not abstract and does not implement abstract base class member {1}",
+                RENDER_CLASS_OR_OBJECT,
+                FQ_NAMES_IN_TYPES
+            )
+            map.put(
+                MANY_IMPL_MEMBER_NOT_IMPLEMENTED,
+                "{0} must override {1} because it inherits many implementations of it",
+                RENDER_CLASS_OR_OBJECT,
+                FQ_NAMES_IN_TYPES
+            )
+            map.put(
+                MANY_IMPL_MEMBER_NOT_IMPLEMENTED,
+                "{0} must override {1} because it inherits multiple interface methods of it",
+                RENDER_CLASS_OR_OBJECT,
+                FQ_NAMES_IN_TYPES
             )
 
             map.put(

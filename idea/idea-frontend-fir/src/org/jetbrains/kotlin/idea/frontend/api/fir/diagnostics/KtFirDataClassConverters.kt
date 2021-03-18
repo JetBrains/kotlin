@@ -880,6 +880,38 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.ABSTRACT_MEMBER_NOT_IMPLEMENTED) { firDiagnostic ->
+        AbstractMemberNotImplementedImpl(
+            firSymbolBuilder.buildClassLikeSymbol(firDiagnostic.a),
+            firSymbolBuilder.buildCallableSymbol(firDiagnostic.b as FirCallableDeclaration),
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED) { firDiagnostic ->
+        AbstractClassMemberNotImplementedImpl(
+            firSymbolBuilder.buildClassLikeSymbol(firDiagnostic.a),
+            firSymbolBuilder.buildCallableSymbol(firDiagnostic.b as FirCallableDeclaration),
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.MANY_IMPL_MEMBER_NOT_IMPLEMENTED) { firDiagnostic ->
+        ManyImplMemberNotImplementedImpl(
+            firSymbolBuilder.buildClassLikeSymbol(firDiagnostic.a),
+            firSymbolBuilder.buildCallableSymbol(firDiagnostic.b as FirCallableDeclaration),
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
+    add(FirErrors.MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED) { firDiagnostic ->
+        ManyInterfacesMemberNotImplementedImpl(
+            firSymbolBuilder.buildClassLikeSymbol(firDiagnostic.a),
+            firSymbolBuilder.buildCallableSymbol(firDiagnostic.b as FirCallableDeclaration),
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
     add(FirErrors.RETURN_TYPE_MISMATCH_ON_OVERRIDE) { firDiagnostic ->
         ReturnTypeMismatchOnOverrideImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a as FirDeclaration),

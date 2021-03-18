@@ -41,7 +41,7 @@ class Case2(override val a: String, override var b: <!VAR_TYPE_MISMATCH_ON_OVERR
 */
 
 class Case3 {
-    class ImplBase1 : MainClass.Base1() {}
+    <!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>class ImplBase1<!> : MainClass.Base1() {}
 }
 
 class MainClass {

@@ -1007,6 +1007,42 @@ internal class OverridingFinalMemberImpl(
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
 }
 
+internal class AbstractMemberNotImplementedImpl(
+    override val classOrObject: KtClassLikeSymbol,
+    override val missingDeclaration: KtCallableSymbol,
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.AbstractMemberNotImplemented(), KtAbstractFirDiagnostic<KtClassOrObject> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
+internal class AbstractClassMemberNotImplementedImpl(
+    override val classOrObject: KtClassLikeSymbol,
+    override val missingDeclaration: KtCallableSymbol,
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.AbstractClassMemberNotImplemented(), KtAbstractFirDiagnostic<KtClassOrObject> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
+internal class ManyImplMemberNotImplementedImpl(
+    override val classOrObject: KtClassLikeSymbol,
+    override val missingDeclaration: KtCallableSymbol,
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.ManyImplMemberNotImplemented(), KtAbstractFirDiagnostic<KtClassOrObject> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
+internal class ManyInterfacesMemberNotImplementedImpl(
+    override val classOrObject: KtClassLikeSymbol,
+    override val missingDeclaration: KtCallableSymbol,
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.ManyInterfacesMemberNotImplemented(), KtAbstractFirDiagnostic<KtClassOrObject> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
 internal class ReturnTypeMismatchOnOverrideImpl(
     override val function: KtSymbol,
     override val superFunction: KtSymbol,

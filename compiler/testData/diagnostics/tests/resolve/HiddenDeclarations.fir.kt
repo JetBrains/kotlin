@@ -57,7 +57,7 @@ interface I {
     fun foo2()
 }
 
-class X : I {
+<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class X<!> : I {
     override fun foo1() {
     }
 }

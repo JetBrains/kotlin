@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.descriptors
 
+import org.jetbrains.kotlin.name.FqName
+
 abstract class Visibility protected constructor(
     val name: String,
     val isPublicAPI: Boolean
@@ -27,4 +29,6 @@ abstract class Visibility protected constructor(
 
     // Should be overloaded in Java visibilities
     open fun customEffectiveVisibility(): EffectiveVisibility? = null
+
+    open fun visibleFromPackage(fromPackage: FqName, myPackage: FqName): Boolean = true
 }

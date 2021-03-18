@@ -10,5 +10,5 @@ class BasicRecord(val x: String)
 data class BasicDataRecord(val x: String)
 
 @JvmRecord
-class BasicRecordWithSuperClass(val x: String) : Record()
+<!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>class BasicRecordWithSuperClass<!>(val x: String) : Record()
 
