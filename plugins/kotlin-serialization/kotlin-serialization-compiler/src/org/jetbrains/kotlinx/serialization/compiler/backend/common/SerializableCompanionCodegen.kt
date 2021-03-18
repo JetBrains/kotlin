@@ -21,8 +21,9 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SERIALIZER_PROVIDER_NAME
+import org.jetbrains.kotlinx.serialization.compiler.resolve.getSerializableClassDescriptorByCompanion
+import org.jetbrains.kotlinx.serialization.compiler.resolve.isKSerializer
 
 abstract class SerializableCompanionCodegen(
     protected val companionDescriptor: ClassDescriptor,
@@ -43,17 +44,8 @@ abstract class SerializableCompanionCodegen(
             "Can't find synthesized 'Companion.serializer()' function to generate, " +
                     "probably clash with user-defined function has occurred"
         )
-
-        if (serializableDescriptor.isSerializableObject || serializableDescriptor.isSealedSerializableClass() || serializableDescriptor.isAbstractSerializableClass()) {
-            generateLazySerializerGetter(serializerGetterDescriptor)
-        } else {
-            generateSerializerGetter(serializerGetterDescriptor)
-        }
+        generateSerializerGetter(serializerGetterDescriptor)
     }
 
     protected abstract fun generateSerializerGetter(methodDescriptor: FunctionDescriptor)
-
-    protected open fun generateLazySerializerGetter(methodDescriptor: FunctionDescriptor) {
-        generateSerializerGetter(methodDescriptor)
-    }
 }
