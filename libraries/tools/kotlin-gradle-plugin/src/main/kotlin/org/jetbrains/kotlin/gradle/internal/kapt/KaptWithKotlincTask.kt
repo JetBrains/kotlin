@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.internal
 import com.intellij.openapi.util.SystemInfo
 import org.gradle.api.GradleException
 import org.gradle.api.file.FileCollection
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
@@ -27,8 +28,11 @@ import org.jetbrains.kotlin.gradle.utils.getValue
 import org.jetbrains.kotlin.gradle.utils.optionalProvider
 import org.jetbrains.kotlin.gradle.utils.toSortedPathsArray
 import java.io.File
+import javax.inject.Inject
 
-abstract class KaptWithKotlincTask : KaptTask(), CompilerArgumentAwareWithInput<K2JVMCompilerArguments> {
+abstract class KaptWithKotlincTask @Inject constructor(
+    objectFactory: ObjectFactory
+) : KaptTask(objectFactory), CompilerArgumentAwareWithInput<K2JVMCompilerArguments> {
     @get:Internal
     internal val pluginOptions = CompilerPluginOptions()
 
@@ -107,7 +111,7 @@ abstract class KaptWithKotlincTask : KaptTask(), CompilerArgumentAwareWithInput<
         compilerRunner.runJvmCompilerAsync(
             sourcesToCompile = emptyList(),
             commonSources = emptyList(),
-            javaSourceRoots = javaSourceRoots,
+            javaSourceRoots = source.files,
             javaPackagePrefix = javaPackagePrefix,
             args = args,
             environment = environment

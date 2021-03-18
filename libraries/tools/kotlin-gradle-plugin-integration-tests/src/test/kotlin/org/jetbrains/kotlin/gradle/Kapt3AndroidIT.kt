@@ -273,6 +273,19 @@ abstract class Kapt3AndroidIT : Kapt3BaseIT() {
         }
     }
 
+    // KT-45532
+    @Test
+    open fun kaptTasksShouldNotCreateOutputsOnConfigurationPhase() {
+        Project(
+            "android-dagger",
+            directoryPrefix = "kapt2"
+        ).build("--dry-run", "assembleDebug") {
+            assertSuccessful()
+            assertNoSuchFile("app/build/tmp")
+            assertNoSuchFile("app/build/generated")
+        }
+    }
+
     private fun setupDataBinding(project: Project) {
         project.setupWorkingDir()
 
