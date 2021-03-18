@@ -1,0 +1,24 @@
+@java.lang.annotation.Retention
+@kotlin.Metadata
+public annotation class AllOpen {
+    // source: 'privateMembers.kt'
+}
+
+@AllOpen
+@kotlin.Metadata
+final class Test {
+    // source: 'privateMembers.kt'
+    private final @org.jetbrains.annotations.NotNull field internalProp: java.lang.String
+    private final @org.jetbrains.annotations.NotNull field privateProp: java.lang.String
+    private final @org.jetbrains.annotations.NotNull field protectedProp: java.lang.String
+    private final @org.jetbrains.annotations.NotNull field publicProp: java.lang.String
+    public method <init>(): void
+    public @org.jetbrains.annotations.NotNull method getInternalProp$test_module(): java.lang.String
+    protected @org.jetbrains.annotations.NotNull method getProtectedProp(): java.lang.String
+    public @org.jetbrains.annotations.NotNull method getPublicProp(): java.lang.String
+    public method internalMethod$test_module(): void
+    private final method privateMethod(): void
+    private final method privateTailrecMethod(): void
+    protected method protectedMethod(): void
+    public method publicMethod(): void
+}
