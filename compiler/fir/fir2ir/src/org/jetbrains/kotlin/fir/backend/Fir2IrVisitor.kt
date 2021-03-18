@@ -728,7 +728,7 @@ class Fir2IrVisitor(
     private val loopMap = mutableMapOf<FirLoop, IrLoop>()
 
     override fun visitDoWhileLoop(doWhileLoop: FirDoWhileLoop, data: Any?): IrElement {
-        return doWhileLoop.convertWithOffsets { startOffset, endOffset ->
+        val irLoop = doWhileLoop.convertWithOffsets { startOffset, endOffset ->
             IrDoWhileLoopImpl(
                 startOffset, endOffset, irBuiltIns.unitType,
                 IrStatementOrigin.DO_WHILE_LOOP
@@ -741,6 +741,9 @@ class Fir2IrVisitor(
             }
         }.also {
             doWhileLoop.accept(implicitCastInserter, it)
+        }
+        return IrBlockImpl(irLoop.startOffset, irLoop.endOffset, irBuiltIns.unitType).apply {
+            statements.add(irLoop)
         }
     }
 
