@@ -7,20 +7,25 @@ package org.jetbrains.kotlin.generators.imltogradle
 
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
+import org.jdom.Element
+import org.jdom.input.SAXBuilder
+import org.jetbrains.jps.model.JpsSimpleElement
 import org.jetbrains.jps.model.java.JavaResourceRootType
 import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.jps.model.java.impl.JpsJavaExtensionServiceImpl
-import org.jetbrains.jps.model.module.JpsDependencyElement
-import org.jetbrains.jps.model.module.JpsModule
-import org.jetbrains.jps.model.module.JpsModuleDependency
-import org.jetbrains.jps.model.module.JpsModuleSourceRoot
+import org.jetbrains.jps.model.library.JpsLibrary
+import org.jetbrains.jps.model.library.JpsMavenRepositoryLibraryDescriptor
+import org.jetbrains.jps.model.module.*
 import org.jetbrains.jps.model.serialization.JpsProjectLoader
+import org.jetbrains.jps.model.serialization.library.JpsLibraryTableSerializer
+import org.jetbrains.jps.model.serialization.module.JpsModuleRootModelSerializer
 import java.io.File
 
 const val KOTLIN_IDE_DIR_NAME = "kotlin-ide"
 
 private lateinit var kotlinIdeJpsModuleNameToGradleModuleNameMapping: Map<String, String>
 private lateinit var intellijModuleNameToGradleDependencyNotationsMapping: Map<String, List<GradleDependencyNotation>>
+private lateinit var nameToJpsLibraryMapping: Map<String, JpsLibrary>
 
 private val intellijModuleNameToGradleDependencyNotationsMappingManual: Map<String, List<GradleDependencyNotation>> = mapOf(
     "intellij.platform.debugger.testFramework" to listOf(), // TODO()
@@ -31,9 +36,15 @@ private val intellijModuleNameToGradleDependencyNotationsMappingManual: Map<Stri
     "intellij.gradle.tests" to listOf(),
 )
 
+val SKIP_IML = listOf(
+    "kotlin-ide/kotlin-compiler-classpath/kotlin.util.compiler-classpath.iml"
+)
+
 fun main() {
-    val imlFiles = File(".").canonicalFile.resolve(KOTLIN_IDE_DIR_NAME).walk()
+    val kotlinIdeFile = File(".").canonicalFile.resolve(KOTLIN_IDE_DIR_NAME)
+    val imlFiles = kotlinIdeFile.walk()
         .filter { it.isFile && it.extension == "iml" && it.name.startsWith("kotlin.") }
+        .filter { file -> SKIP_IML.none { file.endsWith(it) } }
         .toList()
 
     kotlinIdeJpsModuleNameToGradleModuleNameMapping = imlFiles.associate {
@@ -59,6 +70,13 @@ fun main() {
         }
         .groupBy { it.first }
         .mapValues { entry -> entry.value.map { it.second } }
+
+    nameToJpsLibraryMapping = kotlinIdeFile.resolve(".idea/libraries").listFiles()!!
+        .map { jpsLibraryXmlFile ->
+            val libraryTable = jpsLibraryXmlFile.readXml()
+            JpsLibraryTableSerializer.loadLibrary(libraryTable.children.single())!!
+        }
+        .associateBy { it.name }
 
     for ((imlFile, jpsModule) in imlFiles.zip(JpsProjectLoader.loadModules(imlFiles.map { it.toPath() }, null, mapOf()))) {
         imlFile.parentFile.resolve("build.gradle.kts").writeText(convertJpsModule(imlFile, jpsModule))
@@ -95,35 +113,55 @@ private data class GradleDependencyNotation(val dependencyNotation: String, val 
     }
 }
 
-fun convertJpsModuleDependency(jpsModuleDependency: JpsModuleDependency): List<String> {
-    val moduleName = jpsModuleDependency.moduleReference.moduleName
-    val ext = JpsJavaExtensionServiceImpl.getInstance().getDependencyExtension(jpsModuleDependency)!!
+fun JpsLibraryDependency.resolve(moduleImlRootElement: Element): JpsLibrary? {
+    val libraryName = libraryReference.libraryName
+    return moduleImlRootElement.traverseChildren()
+        .filter { it.name == JpsModuleRootModelSerializer.LIBRARY_TAG }
+        .map { JpsLibraryTableSerializer.loadLibrary(it) }
+        .find { it.name == libraryName }
+        ?: nameToJpsLibraryMapping[libraryName]
+}
+
+fun convertJpsDependencyElement(dep: JpsDependencyElement, moduleImlRootElement: Element): List<String> {
+    if (dep is JpsSdkDependency || dep is JpsModuleSourceDependency) {
+        return listOf()
+    }
+
+    val moduleName = (dep as? JpsModuleDependency)?.moduleReference?.moduleName
+    val ext = JpsJavaExtensionServiceImpl.getInstance().getDependencyExtension(dep)
+        ?: error("Cannot get dependency extension for $dep")
     val scope = ext.scope.toString().toLowerCase().capitalize()
     val exported = "exported = true".takeIf { ext.isExported }
-    if (moduleName.startsWith("kotlin.")) {
+    val jpsLikeJar = "jpsLike${scope}Jar"
+    val jpsLikeModule = "jpsLike${scope}Module"
+
+    if (moduleName?.startsWith("kotlin.") == true) {
         val gradleModuleName = kotlinIdeJpsModuleNameToGradleModuleNameMapping.getValue(moduleName)
         val args = listOfNotNull("\"$gradleModuleName\"", exported).joinToString()
-        return listOf("jpsLike${scope}Module($args)")
+        return listOf("$jpsLikeModule($args)")
     }
-    if (moduleName.startsWith("kotlinc.")) {
-        return listOf("")
-    }
-    if (moduleName.startsWith("intellij.")) {
+    if (moduleName?.startsWith("intellij.") == true) {
         return intellijModuleNameToGradleDependencyNotationsMapping[moduleName]
             ?.map {
                 val args = listOfNotNull(it.dependencyNotation, it.dependencyConfiguration, exported).joinToString()
-                "jpsLike${scope}Jar($args)"
+                "$jpsLikeJar($args)"
             }
             ?: error("Cannot find mapping for intellij module name = $moduleName")
     }
-    error("Unknown module dependency: $moduleName")
-}
+    if (dep is JpsLibraryDependency) {
+        val libraryName = dep.libraryReference.libraryName
+        if (libraryName.startsWith("kotlinc.")) {
+            return listOf()
+        }
+        val jpsLibrary = dep.resolve(moduleImlRootElement) ?: error("Cannot resolve jps library = $libraryName")
 
-fun convertJpsDependencyElement(jpsDependencyElement: JpsDependencyElement): List<String> {
-    return when (jpsDependencyElement) {
-        is JpsModuleDependency -> convertJpsModuleDependency(jpsDependencyElement)
-        else -> listOf("")
+        val mavenRepoDescriptor = (jpsLibrary.properties as? JpsSimpleElement<*>)?.data as? JpsMavenRepositoryLibraryDescriptor
+        val mavenId = mavenRepoDescriptor?.mavenId
+        if (mavenId != null) {
+            return listOf("$jpsLikeJar(\"$mavenId\")")
+        }
     }
+    error("Unknown dependency: $dep")
 }
 
 fun convertJpsModuleSourceRoot(imlFile: File, sourceRoot: JpsModuleSourceRoot): String {
@@ -142,7 +180,8 @@ fun convertJpsModule(imlFile: File, jpsModule: JpsModule): String {
         .mapValues { entry -> entry.value.joinToString("\n") { convertJpsModuleSourceRoot(imlFile, it) } }
         .let { Pair(it[false] ?: "", it[true] ?: "") }
 
-    val deps = dependencies.flatMap { convertJpsDependencyElement(it) }
+    val moduleImlRootElement = imlFile.readXml()
+    val deps = dependencies.flatMap { convertJpsDependencyElement(it, moduleImlRootElement) }
         .distinct()
         .filter { it != "implementation()" } // TODO remove hack
         .joinToString("\n")
@@ -187,4 +226,16 @@ fun String.trimMarginWithInterpolations(): String {
         }
     }
     return out.joinToString("\n").trim()
+}
+
+private fun File.readXml(): Element {
+    return inputStream().use { SAXBuilder().build(it).rootElement }
+}
+
+fun Element.traverseChildren(): Sequence<Element> {
+    suspend fun SequenceScope<Element>.visit(element: Element) {
+        element.children.forEach { visit(it) }
+        yield(element)
+    }
+    return sequence { visit(this@traverseChildren) }
 }
