@@ -115,42 +115,84 @@ fun DependencyHandler.projectTests(name: String): ProjectDependency = project(na
 fun DependencyHandler.projectRuntimeJar(name: String): ProjectDependency = project(name, configuration = "runtimeJar")
 fun DependencyHandler.projectArchives(name: String): ProjectDependency = project(name, configuration = "archives")
 
-fun DependencyHandler.jpsLikeCompile(moduleName: String, exported: Boolean = false) {
+fun DependencyHandler.jpsLikeCompileJar(
+    dependencyNotation: Any,
+    dependencyConfiguration: (ExternalModuleDependency) -> Unit = {},
+    exported: Boolean = false
+) {
     if (exported) {
-        add("api", project(moduleName))
-        add("testCompile", projectTests(moduleName))
-        add("testCompile", project(moduleName))
+        addDependencyTo(this, "api", dependencyNotation, dependencyConfiguration)
+        addDependencyTo(this, "testCompile", dependencyNotation, dependencyConfiguration)
     } else {
-        add("implementation", project(moduleName))
+        addDependencyTo(this, "implementation", dependencyNotation, dependencyConfiguration)
+    }
+}
+
+fun DependencyHandler.jpsLikeCompileModule(moduleName: String, exported: Boolean = false) {
+    jpsLikeCompileJar(project(moduleName), exported = exported)
+    if (exported) {
+        add("testCompile", projectTests(moduleName))
+    } else {
         add("testImplementation", projectTests(moduleName))
     }
 }
 
-fun DependencyHandler.jpsLikeTest(moduleName: String, exported: Boolean = false) {
+fun DependencyHandler.jpsLikeTestJar(
+    dependencyNotation: Any,
+    dependencyConfiguration: (ExternalModuleDependency) -> Unit = {},
+    exported: Boolean = false
+) {
     if (exported) {
-        add("testCompile", project(moduleName))
+        addDependencyTo(this, "testCompile", dependencyNotation, dependencyConfiguration)
+    } else {
+        addDependencyTo(this, "testImplementation", dependencyNotation, dependencyConfiguration)
+    }
+}
+
+fun DependencyHandler.jpsLikeTestModule(moduleName: String, exported: Boolean = false) {
+    jpsLikeTestJar(project(moduleName), exported = exported)
+    if (exported) {
         add("testCompile", projectTests(moduleName))
     } else {
-        add("testImplementation", project(moduleName))
         add("testImplementation", projectTests(moduleName))
     }
 }
 
-fun DependencyHandler.jpsLikeProvided(moduleName: String, exported: Boolean = false) {
+fun DependencyHandler.jpsLikeProvidedJar(
+    dependencyNotation: Any,
+    dependencyConfiguration: (ExternalModuleDependency) -> Unit = {},
+    exported: Boolean = false
+) {
     if (exported) {
-        add("compileOnlyApi", project(moduleName))
-        add("testCompile", projectTests(moduleName))
-        add("testCompile", project(moduleName))
+        addDependencyTo(this, "compileOnlyApi", dependencyNotation, dependencyConfiguration)
+        addDependencyTo(this, "testCompile", dependencyNotation, dependencyConfiguration)
     } else {
-        add("compileOnly", project(moduleName))
-        add("testImplementation", project(moduleName))
+        addDependencyTo(this, "compileOnly", dependencyNotation, dependencyConfiguration)
+        addDependencyTo(this, "testImplementation", dependencyNotation, dependencyConfiguration)
+    }
+}
+
+fun DependencyHandler.jpsLikeProvidedModule(moduleName: String, exported: Boolean = false) {
+    jpsLikeProvidedJar(project(moduleName), exported = exported)
+    if (exported) {
+        add("testCompile", projectTests(moduleName))
+    } else {
         add("testImplementation", projectTests(moduleName))
     }
 }
 
-fun DependencyHandler.jpsLikeRuntime(moduleName: String) {
+@Suppress("UNUSED_PARAMETER")
+fun DependencyHandler.jpsLikeRuntimeJar(
+    dependencyNotation: Any,
+    dependencyConfiguration: (ExternalModuleDependency) -> Unit = {},
+    exported: Boolean = false // exported is meaningless for runtime dependencies it exists for sake of unification
+) {
+    addDependencyTo(this, "testRuntimeOnly", dependencyNotation, dependencyConfiguration)
+}
+
+fun DependencyHandler.jpsLikeRuntimeModule(moduleName: String, exported: Boolean = false) {
+    jpsLikeRuntimeJar(project(moduleName), exported = exported)
     add("runtimeOnly", projectTests(moduleName))
-    add("testRuntimeOnly", project(moduleName))
 }
 
 fun Project.testApiJUnit5(

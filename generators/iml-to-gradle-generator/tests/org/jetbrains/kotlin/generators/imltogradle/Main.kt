@@ -90,25 +90,20 @@ private data class IntelliJModuleNameToGradleDependencyNotationMappingItem(val m
     }
 }
 
-fun convertJpsJavaDependencyExtension(extension: JpsJavaDependencyExtension, gradleModuleName: String): String {
-    val scope = extension.scope.toString().toLowerCase().capitalize()
-    // runtime exported dependencies don't make sense
-    val exported = extension.isExported && extension.scope != JpsJavaDependencyScope.RUNTIME
-    return "jpsLike$scope(\"${gradleModuleName}\"${if (exported) ", exported = true" else ""})"
-}
-
 fun convertJpsModuleDependency(jpsModuleDependency: JpsModuleDependency): List<String> {
     val moduleName = jpsModuleDependency.moduleReference.moduleName
+    val ext = JpsJavaExtensionServiceImpl.getInstance().getDependencyExtension(jpsModuleDependency)!!
+    val scope = ext.scope.toString().toLowerCase().capitalize()
     if (moduleName.startsWith("kotlin.")) {
-        val ext = JpsJavaExtensionServiceImpl.getInstance().getDependencyExtension(jpsModuleDependency)!!
-        return listOf(convertJpsJavaDependencyExtension(ext, kotlinIdeJpsModuleNameToGradleModuleNameMapping.getValue(moduleName)))
+        val gradleModuleName = kotlinIdeJpsModuleNameToGradleModuleNameMapping.getValue(moduleName)
+        return listOf("jpsLike${scope}Module(\"${gradleModuleName}\"${if (ext.isExported) ", exported = true" else ""})")
     }
     if (moduleName.startsWith("kotlinc.")) {
         return listOf("")
     }
     if (moduleName.startsWith("intellij.")) {
         return intellijModuleNameToGradleDependencyNotationsMapping[moduleName]
-            ?.map { "implementation($it)" }
+            ?.map { "jpsLike${scope}Jar(\"${it}\"${if (ext.isExported) ", exported = true" else ""})" }
             ?: error("Cannot find mapping for intellij module name = $moduleName")
     }
     error("Unknown module dependency: $moduleName")
