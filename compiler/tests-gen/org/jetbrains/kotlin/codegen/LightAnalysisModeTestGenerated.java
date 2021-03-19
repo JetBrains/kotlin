@@ -17692,6 +17692,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/javaInterop/ambiguousJavaVararg.kt");
         }
 
+        @TestMetadata("conflictingOverloadsForThrowableInheritors.kt")
+        public void testConflictingOverloadsForThrowableInheritors() throws Exception {
+            runTest("compiler/testData/codegen/box/javaInterop/conflictingOverloadsForThrowableInheritors.kt");
+        }
+
         @TestMetadata("genericSamProjectedOut.kt")
         public void testGenericSamProjectedOut() throws Exception {
             runTest("compiler/testData/codegen/box/javaInterop/genericSamProjectedOut.kt");
