@@ -159,7 +159,7 @@ public class ExpressionTypingServices {
                 trace,
                 functionInnerScope, dataFlowInfo, expectedReturnType != null ? expectedReturnType : NO_EXPECTED_TYPE,
                 getLanguageVersionSettings(), expressionTypingComponents.dataFlowValueFactory,
-                localContext == null ? InferenceSession.Companion.getDefault() : localContext.inferenceSession
+                localContext != null ? localContext.inferenceSession : InferenceSession.Companion.getDefault()
         );
 
         checkFunctionReturnType(function, context);
@@ -221,7 +221,8 @@ public class ExpressionTypingServices {
             @NotNull LexicalScope outerScope,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull KtDeclarationWithBody function,
-            @NotNull FunctionDescriptor functionDescriptor
+            @NotNull FunctionDescriptor functionDescriptor,
+            @Nullable InferenceSession inferenceSession
     ) {
         KtExpression bodyExpression = function.getBodyExpression();
         assert bodyExpression != null;
@@ -230,7 +231,7 @@ public class ExpressionTypingServices {
 
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
                 trace, functionInnerScope, dataFlowInfo, NO_EXPECTED_TYPE, getLanguageVersionSettings(),
-                expressionTypingComponents.dataFlowValueFactory
+                expressionTypingComponents.dataFlowValueFactory, inferenceSession
         );
 
         KotlinResolutionCallbacksImpl.LambdaInfo lambdaInfo = getNewInferenceLambdaInfo(context, function);

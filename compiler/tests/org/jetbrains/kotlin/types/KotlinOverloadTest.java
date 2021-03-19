@@ -171,7 +171,7 @@ public class KotlinOverloadTest extends KotlinTestWithEnvironment {
         KtNamedFunction function = KtPsiFactoryKt.KtPsiFactory(getProject()).createFunction(funDecl);
         LexicalScope scope = TypeTestUtilsKt.builtInPackageAsLexicalScope(module);
         return functionDescriptorResolver.resolveFunctionDescriptor(
-                module, scope, function, DummyTraces.DUMMY_TRACE, DataFlowInfoFactory.EMPTY
+                module, scope, function, DummyTraces.DUMMY_TRACE, DataFlowInfoFactory.EMPTY, null
         );
     }
 }

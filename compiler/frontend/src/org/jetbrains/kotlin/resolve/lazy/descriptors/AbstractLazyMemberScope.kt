@@ -117,7 +117,8 @@ protected constructor(
                     getScopeForMemberDeclarationResolution(functionDeclaration),
                     functionDeclaration,
                     trace,
-                    c.declarationScopeProvider.getOuterDataFlowInfoForDeclaration(functionDeclaration)
+                    c.declarationScopeProvider.getOuterDataFlowInfoForDeclaration(functionDeclaration),
+                    c.inferenceSession
                 )
             )
         }

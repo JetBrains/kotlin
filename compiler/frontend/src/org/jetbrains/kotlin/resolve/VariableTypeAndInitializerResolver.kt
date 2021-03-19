@@ -153,7 +153,7 @@ class VariableTypeAndInitializerResolver(
         )
 
         val getterReturnType = delegatedPropertyResolver.getGetValueMethodReturnType(
-            variableDescriptor, delegateExpression, type, trace, scopeForInitializer, dataFlowInfo
+            variableDescriptor, delegateExpression, type, trace, scopeForInitializer, dataFlowInfo, inferenceSession
         )
 
         val delegatedType = getterReturnType?.let { approximateType(it, local) }

@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.*;
+import org.jetbrains.kotlin.resolve.calls.components.InferenceSession;
 import org.jetbrains.kotlin.resolve.checkers.PlatformDiagnosticSuppressor;
 import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension;
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory;
@@ -524,5 +525,12 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     @Override
     public SealedClassInheritorsProvider getSealedClassInheritorsProvider() {
         return sealedClassInheritorsProvider;
+    }
+
+    // TODO: get inference session, otherwise, for instance, builder inference session is lost here
+    @Nullable
+    @Override
+    public InferenceSession getInferenceSession() {
+        return null;
     }
 }

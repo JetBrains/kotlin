@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.debugText.getDebugText
 import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.calls.components.InferenceSession
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
 import org.jetbrains.kotlin.resolve.lazy.*
@@ -155,6 +156,7 @@ class LocalClassDescriptorHolder(
             classDescriptor = LazyClassDescriptor(
                 object : LazyClassContext {
                     override val declarationScopeProvider = declarationScopeProvider
+                    override val inferenceSession = expressionTypingContext.inferenceSession
                     override val storageManager = this@LocalClassDescriptorHolder.storageManager
                     override val trace = expressionTypingContext.trace
                     override val moduleDescriptor = this@LocalClassDescriptorHolder.moduleDescriptor
