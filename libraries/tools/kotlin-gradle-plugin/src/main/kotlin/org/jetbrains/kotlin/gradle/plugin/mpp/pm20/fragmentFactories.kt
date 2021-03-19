@@ -60,7 +60,7 @@ abstract class AbstractKotlinGradleFragmentFactory<T : KotlinGradleFragment>(
     }
 }
 
-class CommonGradleFragmentFactory(module: KotlinGradleModule) : AbstractKotlinGradleFragmentFactory<KotlinGradleFragment>(module) {
-    override fun instantiateFragment(name: String): KotlinGradleFragment =
-        project.objects.newInstance(KotlinGradleFragment::class.java, module, name)
+class CommonGradleFragmentFactory(module: KotlinGradleModule) : AbstractKotlinGradleFragmentFactory<KotlinGradleFragmentInternal>(module) {
+    override fun instantiateFragment(name: String): KotlinGradleFragmentInternal =
+        project.objects.newInstance(KotlinGradleFragmentInternal::class.java, module, name)
 }

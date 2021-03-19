@@ -26,9 +26,7 @@ open class KotlinJvmVariant(containingModule: KotlinGradleModule, fragmentName: 
         get() = KotlinPlatformType.jvm
 }
 
-class KotlinJvmVariantCompilationData(val variant: KotlinJvmVariant) : KotlinCompilationData<KotlinJvmOptions> {
-    override val project: Project get() = variant.containingModule.project
-
+class KotlinJvmVariantCompilationData(val variant: KotlinJvmVariant) : KotlinVariantCompilationDataInternal<KotlinJvmOptions> {
     override val owner: KotlinJvmVariant get() = variant
 
     override val compilationPurpose: String

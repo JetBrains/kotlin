@@ -6,15 +6,11 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
 import groovy.lang.Closure
-import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectProvider
-import org.gradle.api.Project
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.provider.Provider
 import org.gradle.util.ConfigureUtil
-import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
-import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
-import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultKotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.plugin.mpp.toModuleDependency
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
@@ -25,27 +21,24 @@ import org.jetbrains.kotlin.project.model.KotlinModuleFragment
 import org.jetbrains.kotlin.project.model.refinesClosure
 import javax.inject.Inject
 
-open class KotlinGradleFragment @Inject constructor(
+open class KotlinGradleFragmentInternal @Inject constructor(
     override val containingModule: KotlinGradleModule,
     override val fragmentName: String
-) : KotlinModuleFragment, HasKotlinDependencies, Named {
+) : KotlinGradleFragment {
 
     override fun getName(): String = fragmentName
 
     // TODO pull up to KotlinModuleFragment
     // FIXME apply to compilation
     // FIXME check for consistency
-    val languageSettings: LanguageSettingsBuilder = DefaultLanguageSettingsBuilder()
+    override val languageSettings: LanguageSettingsBuilder = DefaultLanguageSettingsBuilder()
 
-    protected val project: Project
-        get() = containingModule.project
-
-    open fun refines(other: KotlinGradleFragment) {
+    override fun refines(other: KotlinGradleFragment) {
         checkCanRefine(other)
         refines(containingModule.fragments.named(other.name))
     }
 
-    open fun refines(other: NamedDomainObjectProvider<KotlinGradleFragment>) {
+    override fun refines(other: NamedDomainObjectProvider<KotlinGradleFragment>) {
         _directRefinesDependencies.add(other)
         other.configure { checkCanRefine(it) }
         listOf(
@@ -92,22 +85,11 @@ open class KotlinGradleFragment @Inject constructor(
         )
     }
 
-    /** This configuration includes the dependencies from the refines-parents */
-    internal val transitiveApiConfigurationName: String
+    override val transitiveApiConfigurationName: String
         get() = disambiguateName("transitiveApi")
 
-    /** This configuration includes the dependencies from the refines-parents */
-    internal val transitiveImplementationConfigurationName: String
+    override val transitiveImplementationConfigurationName: String
         get() = disambiguateName("transitiveImplementation")
-
-    override val relatedConfigurationNames: List<String>
-        get() = super.relatedConfigurationNames +
-                // TODO: resolvable metadata configurations?
-                listOf(transitiveApiConfigurationName, transitiveImplementationConfigurationName)
-
-    companion object {
-        const val COMMON_FRAGMENT_NAME = "common"
-    }
 
     override fun toString(): String = "fragment $fragmentName in $containingModule"
 }

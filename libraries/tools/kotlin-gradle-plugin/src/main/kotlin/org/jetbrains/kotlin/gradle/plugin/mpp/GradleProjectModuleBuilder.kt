@@ -17,9 +17,7 @@ import org.gradle.api.attributes.AttributeContainer
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.getVisibleSourceSetsFromAssociateCompilations
@@ -32,50 +30,52 @@ class ProjectStructureMetadataModuleBuilder {
         component: ResolvedComponentResult,
         metadata: KotlinProjectStructureMetadata
     ): KotlinModule {
-        return ExternalImportedKotlinModule(
-            BasicKotlinModule(component.toModuleIdentifier()).apply {
-                metadata.sourceSetNamesByVariantName.keys.forEach { variantName ->
-                    fragments.add(BasicKotlinModuleVariant(this@apply, variantName))
+        val moduleData = BasicKotlinModule(component.toSingleModuleIdentifier()).apply {
+            metadata.sourceSetNamesByVariantName.keys.forEach { variantName ->
+                fragments.add(BasicKotlinModuleVariant(this@apply, variantName))
+            }
+            fun fragment(sourceSetName: String): BasicKotlinModuleFragment {
+                if (fragments.none { it.fragmentName == sourceSetName })
+                    fragments.add(BasicKotlinModuleFragment(this@apply, sourceSetName))
+                return fragmentByName(sourceSetName)
+            }
+            metadata.sourceSetNamesByVariantName.forEach { (variantName, sourceSets) ->
+                val variant = fragmentByName(variantName)
+                sourceSets.forEach { sourceSetName ->
+                    variant.directRefinesDependencies.add(fragment(sourceSetName))
                 }
-                fun fragment(sourceSetName: String): BasicKotlinModuleFragment {
-                    if (fragments.none { it.fragmentName == sourceSetName })
-                        fragments.add(BasicKotlinModuleFragment(this@apply, sourceSetName))
-                    return fragmentByName(sourceSetName)
-                }
-                metadata.sourceSetNamesByVariantName.forEach { (variantName, sourceSets) ->
-                    val variant = fragmentByName(variantName)
-                    sourceSets.forEach { sourceSetName ->
-                        variant.directRefinesDependencies.add(fragment(sourceSetName))
-                    }
-                }
-                metadata.sourceSetModuleDependencies.forEach { (sourceSetName, dependencies) ->
-                    val fragment = fragment(sourceSetName)
-                    dependencies.forEach { dependency ->
-                        fragment.declaredModuleDependencies.add(
-                            KotlinModuleDependency(
-                                MavenModuleIdentifier(
-                                    dependency.groupId.orEmpty(),
-                                    dependency.moduleId,
-                                    null /* TODO */
-                                )
+            }
+            metadata.sourceSetModuleDependencies.forEach { (sourceSetName, dependencies) ->
+                val fragment = fragment(sourceSetName)
+                dependencies.forEach { dependency ->
+                    fragment.declaredModuleDependencies.add(
+                        KotlinModuleDependency(
+                            MavenModuleIdentifier(
+                                dependency.groupId.orEmpty(),
+                                dependency.moduleId,
+                                null /* TODO */
                             )
                         )
-                    }
+                    )
                 }
+            }
 
-                metadata.sourceSetsDependsOnRelation.forEach { (depending, dependencies) ->
-                    val dependingFragment = fragment(depending)
-                    dependencies.forEach { dependency ->
-                        dependingFragment.directRefinesDependencies.add(fragment(dependency))
-                    }
+            metadata.sourceSetsDependsOnRelation.forEach { (depending, dependencies) ->
+                val dependingFragment = fragment(depending)
+                dependencies.forEach { dependency ->
+                    dependingFragment.directRefinesDependencies.add(fragment(dependency))
                 }
-            },
-            metadata
+            }
+        }
+        return ExternalImportedKotlinModule(
+            moduleData,
+            metadata,
+            moduleData.fragments.filterTo(mutableSetOf()) { it.fragmentName in metadata.hostSpecificSourceSets }
         )
     }
 
     fun getModule(component: ResolvedComponentResult, projectStructureMetadata: KotlinProjectStructureMetadata): KotlinModule {
-        val moduleId = component.toModuleIdentifier()
+        val moduleId = component.toSingleModuleIdentifier()
         return modulesCache.getOrPut(moduleId) {
             buildModuleFromProjectStructureMetadata(
                 component,

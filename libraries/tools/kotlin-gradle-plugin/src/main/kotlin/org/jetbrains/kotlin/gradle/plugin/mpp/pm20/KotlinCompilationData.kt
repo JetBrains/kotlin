@@ -9,38 +9,40 @@ import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationOutput
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
+import org.jetbrains.kotlin.gradle.dsl.pm20Extension
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
+import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.project.model.refinesClosure
 
-interface KotlinCompilationData<T : KotlinCommonOptions> {
-    val project: Project
-    val owner: Any?
+interface KotlinVariantCompilationDataInternal<T : KotlinCommonOptions> : KotlinVariantCompilationData<T> {
+    override val compileKotlinTaskName: String
+        get() = lowerCamelCaseName("compile", compilationPurpose.takeIf { it != "main" }, "Kotlin", compilationClassifier)
 
-    val compilationPurpose: String
-    val compilationClassifier: String?
+    override val compileAllTaskName: String
+        get() = owner.disambiguateName("classes")
 
-    val kotlinSourceDirectoriesByFragmentName: Map<String, SourceDirectorySet>
-    val compileKotlinTaskName: String
-    val compileAllTaskName: String
+    override val kotlinSourceDirectoriesByFragmentName: Map<String, SourceDirectorySet>
+        get() = owner.refinesClosure.filterIsInstance<KotlinGradleVariant>().associate { it.disambiguateName("") to it.kotlinSourceRoots }
 
-    val compileDependencyFiles: FileCollection
-    val output: KotlinCompilationOutput
+    override val friendPaths: Iterable<FileCollection>
+        // TODO for now, all output classes of the module are considered friends, even those not on the classpath
+        get() {
+            // FIXME support compiling against the artifact task outputs
+            // TODO note for Android: see the friend artifacts code in KotlinAndroidCompilation
+            return owner.containingModule.project.pm20Extension.modules.flatMap { it.variants.map { it.compilationOutputs.classesDirs } }
+        }
 
-    val languageSettings: LanguageSettingsBuilder
-    val platformType: KotlinPlatformType
+    override val moduleName: String
+        get() = // TODO accurate module names that don't rely on all variants having a main counterpart
+            owner.containingModule.project.pm20Extension.modules
+                .getByName(KotlinGradleModule.MAIN_MODULE_NAME).variants.findByName(owner.name)?.ownModuleName() ?: ownModuleName
 
-    val moduleName: String
-    val ownModuleName: String
-
-    val kotlinOptions: T
-
-    val friendPaths: Iterable<FileCollection>
+    override val ownModuleName: String
+        get() = owner.ownModuleName()
 }
 
-fun KotlinCompilationData<*>.isMain(): Boolean = when (this) {
+fun KotlinCompilationData<*>.isMainCompilationData(): Boolean = when (this) {
     is KotlinCompilation<*> -> isMain()
     else -> compilationPurpose == KotlinGradleModule.MAIN_MODULE_NAME
 }

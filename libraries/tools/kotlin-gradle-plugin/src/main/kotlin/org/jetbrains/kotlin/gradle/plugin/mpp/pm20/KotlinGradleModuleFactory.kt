@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.gradle.dsl.pm20Extension
 
 open class KotlinGradleModuleFactory(private val project: Project) : NamedDomainObjectFactory<KotlinGradleModule> {
     override fun create(name: String): KotlinGradleModule {
-        val result = project.objects.newInstance(KotlinGradleModule::class.java, project, name)
+        val result = project.objects.newInstance(KotlinGradleModuleInternal::class.java, project, name)
         registerFragmentFactory(result)
         registerDefaultCommonFragment(result)
         addDefaultDependencyOnMainModule(result)

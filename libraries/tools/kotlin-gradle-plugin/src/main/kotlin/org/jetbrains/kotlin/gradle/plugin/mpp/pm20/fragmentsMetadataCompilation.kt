@@ -12,12 +12,12 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.pm20Extension
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinCommonSourceSetProcessor
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.usageByName
+import org.jetbrains.kotlin.gradle.targets.metadata.NativeSharedCompilationProcessor
 import org.jetbrains.kotlin.gradle.targets.metadata.createGenerateProjectStructureMetadataTask
+import org.jetbrains.kotlin.gradle.targets.metadata.filesWithUnpackedArchives
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.tasks.withType
@@ -124,10 +124,14 @@ private fun configureMetadataJarTask(
         task.archiveAppendix.set("metadata")
         task.from()
     }
-    registry.withAll { compilationData ->
+    module.fragments.all { fragment ->
         allMetadataJar.configure { jar ->
-            jar.from(compilationData.output.allOutputs) { spec ->
-                spec.into(compilationData.fragment.fragmentName)
+            val metadataOutput = project.files(Callable {
+                val compilationData = registry.byFragment(fragment)
+                project.filesWithUnpackedArchives(compilationData.output.allOutputs, setOf(KLIB_FILE_EXTENSION))
+            })
+            jar.from(metadataOutput) { spec ->
+                spec.into(fragment.fragmentName)
             }
         }
     }
