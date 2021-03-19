@@ -91,13 +91,19 @@ open class HostManager(
             ANDROID_ARM32,
             ANDROID_ARM64,
             WASM32
+        ),
+        MACOS_ARM64 to setOf(
+            // TODO: More targets will be added later after additional testing.
+            MACOS_ARM64,
+            IOS_ARM64
         )
     )
 
     private val enabledExperimentalByHost: Map<KonanTarget, Set<KonanTarget>> = mapOf(
         LINUX_X64 to setOf(MINGW_X86, MINGW_X64) + zephyrSubtargets,
         MACOS_X64 to setOf(MINGW_X86, MINGW_X64) + zephyrSubtargets,
-        MINGW_X64 to setOf<KonanTarget>() + zephyrSubtargets
+        MINGW_X64 to setOf<KonanTarget>() + zephyrSubtargets,
+        MACOS_ARM64 to emptySet()
     )
 
     val enabledByHost: Map<KonanTarget, Set<KonanTarget>> by lazy {
@@ -146,7 +152,8 @@ open class HostManager(
 
         val jniHostPlatformIncludeDir: String
             get() = when (host) {
-                MACOS_X64 -> "darwin"
+                MACOS_X64,
+                MACOS_ARM64 -> "darwin"
                 LINUX_X64 -> "linux"
                 MINGW_X64 -> "win32"
                 else -> throw TargetSupportException("Unknown host: $host.")
@@ -160,13 +167,15 @@ open class HostManager(
             return when (val javaArch = System.getProperty("os.arch")) {
                 "x86_64" -> "x86_64"
                 "amd64" -> "x86_64"
-                "arm64" -> "arm64"
+                "arm64" -> "aarch64"
+                "aarch64" -> "aarch64"
                 else -> throw TargetSupportException("Unknown hardware platform: $javaArch")
             }
         }
 
         private val hostMapping: Map<Pair<String, String>, KonanTarget> = mapOf(
             Pair("osx", "x86_64") to MACOS_X64,
+            Pair("osx", "aarch64") to MACOS_ARM64,
             Pair("linux", "x86_64") to LINUX_X64,
             Pair("windows", "x86_64") to MINGW_X64
         )

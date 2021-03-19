@@ -43,7 +43,8 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
     private val binDir = when (HostManager.host) {
         KonanTarget.LINUX_X64 -> "$absoluteTargetToolchain/bin"
         KonanTarget.MINGW_X64 -> "$absoluteTargetToolchain/bin"
-        KonanTarget.MACOS_X64 -> "$absoluteTargetToolchain/usr/bin"
+        KonanTarget.MACOS_X64,
+        KonanTarget.MACOS_ARM64 -> "$absoluteTargetToolchain/usr/bin"
         else -> throw TargetSupportException("Unexpected host platform")
     }
     // TODO: Use buildList
