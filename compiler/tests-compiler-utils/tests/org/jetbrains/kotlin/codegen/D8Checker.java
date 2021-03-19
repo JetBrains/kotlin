@@ -65,7 +65,7 @@ public class D8Checker {
     private static void runD8(Consumer<D8Command.Builder> addInput) {
         ProgramConsumer ignoreOutputConsumer = new DexIndexedConsumer.ForwardingConsumer(null);
         D8Command.Builder builder = D8Command.builder(new TestDiagnosticsHandler())
-                .setMinApiLevel(28)
+                .setMinApiLevel(30)
                 .setMode(CompilationMode.DEBUG)
                 .setProgramConsumer(ignoreOutputConsumer);
         addInput.accept(builder);
