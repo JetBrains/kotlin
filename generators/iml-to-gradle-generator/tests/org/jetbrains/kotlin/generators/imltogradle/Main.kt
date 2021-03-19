@@ -23,7 +23,7 @@ const val KOTLIN_IDE_DIR_NAME = "kotlin-ide"
 
 private lateinit var kotlinIdeJpsModuleNameToGradleModuleNameMapping: Map<String, String>
 private lateinit var intellijModuleNameToGradleDependencyNotationsMapping: Map<String, List<GradleDependencyNotation>>
-private lateinit var nameToJpsLibraryMapping: Map<String, JpsLibrary>
+private lateinit var projectLevelLibraryNameToJpsLibraryMapping: Map<String, JpsLibrary>
 
 private val intellijModuleNameToGradleDependencyNotationsMappingManual: Map<String, List<GradleDependencyNotation>> = mapOf(
     "intellij.platform.debugger.testFramework" to listOf(), // TODO()
@@ -69,7 +69,7 @@ fun main() {
         .groupBy { it.first }
         .mapValues { entry -> entry.value.map { it.second } }
 
-    nameToJpsLibraryMapping = kotlinIdeFile.resolve(".idea/libraries").listFiles()!!
+    projectLevelLibraryNameToJpsLibraryMapping = kotlinIdeFile.resolve(".idea/libraries").listFiles()!!
         .map { jpsLibraryXmlFile ->
             val libraryTable = jpsLibraryXmlFile.readXml()
             JpsLibraryTableSerializer.loadLibrary(libraryTable.children.single())!!
@@ -87,7 +87,7 @@ fun JpsLibraryDependency.resolve(moduleImlRootElement: Element): JpsLibrary? {
         .filter { it.name == JpsModuleRootModelSerializer.LIBRARY_TAG }
         .map { JpsLibraryTableSerializer.loadLibrary(it) }
         .find { it.name == libraryName }
-        ?: nameToJpsLibraryMapping[libraryName]
+        ?: projectLevelLibraryNameToJpsLibraryMapping[libraryName]
 }
 
 fun convertJpsDependencyElement(dep: JpsDependencyElement, moduleImlRootElement: Element): List<String> {
