@@ -97,6 +97,33 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
     }
 
     @Test
+    fun testStrangeReceiverIssue(): Unit = codegen(
+        """
+        import androidx.compose.runtime.ExplicitGroupsComposable
+        import androidx.compose.runtime.NonRestartableComposable
+        class Foo
+
+        @Composable
+        @ExplicitGroupsComposable
+        fun A(foo: Foo) {
+            foo.b()
+        }
+
+        @Composable
+        @ExplicitGroupsComposable
+        inline fun Foo.b(label: String = "") {
+            c(this, label)
+        }
+
+        @Composable
+        @ExplicitGroupsComposable
+        inline fun c(foo: Foo, label: String) {
+            used(label)
+        }
+        """
+    )
+
+    @Test
     fun testInterfaceMethodWithComposableParameter(): Unit = validateBytecode(
         """
             @Composable
@@ -139,7 +166,16 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
             f: Float,
             g: Long,
             h: Double
-        ) {}
+        ) {
+            used(a)
+            used(b)
+            used(c)
+            used(d)
+            used(e)
+            used(f)
+            used(g)
+            used(h)
+        }
         """
     ) {
         assert(it.contains("INVOKEINTERFACE androidx/compose/runtime/Composer.changed (Z)Z"))
@@ -159,7 +195,9 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
         import androidx.compose.runtime.Stable
 
         @Stable class Bar
-        @Composable fun Foo(a: Bar) {}
+        @Composable fun Foo(a: Bar) {
+            used(a)
+        }
         """
     ) {
         assert(!it.contains("INVOKEINTERFACE androidx/compose/runtime/Composer.changed (Z)Z"))
@@ -177,7 +215,9 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
     fun testInlineClassChangedCalls(): Unit = validateBytecode(
         """
         inline class Bar(val value: Int)
-        @Composable fun Foo(a: Bar) {}
+        @Composable fun Foo(a: Bar) {
+            used(a)
+        }
         """
     ) {
         assert(!it.contains("INVOKESTATIC Bar.box-impl (I)LBar;"))
@@ -191,7 +231,9 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
     fun testNullableInlineClassChangedCalls(): Unit = validateBytecode(
         """
         inline class Bar(val value: Int)
-        @Composable fun Foo(a: Bar?) {}
+        @Composable fun Foo(a: Bar?) {
+            used(a)
+        }
         """
     ) {
         val testClass = it.split("public final class ").single { it.startsWith("test/TestKt") }
