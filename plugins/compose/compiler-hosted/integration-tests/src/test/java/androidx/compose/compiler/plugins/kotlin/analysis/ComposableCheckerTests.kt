@@ -1095,6 +1095,17 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
     """
     )
 
+    fun testComposableLambdaToAll() = check(
+        """
+        import androidx.compose.runtime.*
+
+        fun foo() {
+            val lambda = @Composable { }
+            println(lambda)  // println accepts Any, verify no type mismatach.
+        }
+    """
+    )
+
     fun testReadOnlyComposablePropagation() = check(
         """
         import androidx.compose.runtime.*
