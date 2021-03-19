@@ -235,23 +235,5 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
     fun clangCXX(vararg userArgs: String) = targetClangXXCmd + userArgs.asList()
 
     fun llvmAr(vararg userArgs: String) = targetArCmd + userArgs.asList()
-
-    companion object {
-        @JvmStatic
-        fun filterGradleNativeSoftwareFlags(args: MutableList<String>) {
-            args.remove("/usr/include") // HACK: over gradle-4.4.
-            args.remove("-nostdinc") // HACK: over gradle-5.1.
-            when (HostManager.host) {
-                KonanTarget.LINUX_X64 -> args.remove("/usr/include/x86_64-linux-gnu")  // HACK: over gradle-4.4.
-                KonanTarget.MACOS_X64 -> {
-                    val indexToRemove = args.indexOf(args.find { it.contains("MacOSX.platform")})  // HACK: over gradle-4.7.
-                    if (indexToRemove != -1) {
-                        args.removeAt(indexToRemove - 1) // drop -I.
-                        args.removeAt(indexToRemove - 1) // drop /Application/Xcode.app/...
-                    }
-                }
-            }
-        }
-    }
 }
 
