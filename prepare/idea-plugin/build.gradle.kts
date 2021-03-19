@@ -202,7 +202,7 @@ dependencies {
 
     (libraries.dependencies + gradleToolingModel.dependencies)
         .map { if (it is ProjectDependency) it.dependencyProject else it }
-        .forEach(::compile)
+        .forEach { compile(it) }
 }
 
 val jar = runtimeJar {
