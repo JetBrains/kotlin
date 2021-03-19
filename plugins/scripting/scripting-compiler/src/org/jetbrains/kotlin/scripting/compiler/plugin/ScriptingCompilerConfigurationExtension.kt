@@ -73,7 +73,8 @@ class ScriptingCompilerConfigurationExtension(
                     ScriptDefinitionsFromClasspathDiscoverySource(
                         configuration.jvmClasspathRoots,
                         hostConfiguration,
-                        messageCollector.reporter
+                        messageCollector.reporter,
+                        fastCheckForJarEntryPresence = configuration.get(CLIConfigurationKeys.FAST_CHECK_JAR_CONTAINS_FILE),
                     ),
                     AutoloadedScriptDefinitions(hostConfiguration, this::class.java.classLoader, messageCollector.reporter)
                 )

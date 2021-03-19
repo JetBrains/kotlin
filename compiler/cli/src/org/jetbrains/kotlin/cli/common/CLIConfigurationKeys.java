@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.cli.common;
 
+import kotlin.jvm.functions.Function2;
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig;
 import org.jetbrains.kotlin.cli.common.config.ContentRoot;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
@@ -50,6 +51,9 @@ public class CLIConfigurationKeys {
 
     public static final CompilerConfigurationKey<Integer> REPEAT_COMPILE_MODULES =
             CompilerConfigurationKey.create("debug key for profiling, repeats compileModules");
+
+    public static final CompilerConfigurationKey<Function2<File, String, Boolean>> FAST_CHECK_JAR_CONTAINS_FILE =
+            CompilerConfigurationKey.create("Predicate telling if a jar contains a file");
 
     private CLIConfigurationKeys() {
     }
