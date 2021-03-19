@@ -166,7 +166,7 @@ abstract class AbstractKotlinGradleRuntimePublishedVariantFactory<T : KotlinGrad
             it.mapToMavenScope("compile")
         }
         platformComponent.addVariantsFromConfiguration(project.configurations.getByName(variant.runtimeElementsConfigurationName)) {
-            it.mapToMavenScope("compile")
+            it.mapToMavenScope("runtime")
         }
 
         module.ifMadePublic {
