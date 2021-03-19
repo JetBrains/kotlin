@@ -12356,6 +12356,11 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
                 runTest("compiler/testData/codegen/box/inference/builderInference/topDownCompletionWithThreeBuilderInferenceCalls.kt");
             }
 
+            @TestMetadata("topDownCompletionWithThreeBuilderInferenceCallsSameLevel.kt")
+            public void testTopDownCompletionWithThreeBuilderInferenceCallsSameLevel() throws Exception {
+                runTest("compiler/testData/codegen/box/inference/builderInference/topDownCompletionWithThreeBuilderInferenceCallsSameLevel.kt");
+            }
+
             @TestMetadata("topDownCompletionWithTwoBuilderInferenceCalls.kt")
             public void testTopDownCompletionWithTwoBuilderInferenceCalls() throws Exception {
                 runTest("compiler/testData/codegen/box/inference/builderInference/topDownCompletionWithTwoBuilderInferenceCalls.kt");
