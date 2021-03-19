@@ -51,12 +51,12 @@ internal class FragmentGranularMetadataResolver(
         if (dependencyGraph is DependencyGraphResolution.Unknown)
             error("unexpected failure in dependency graph resolution for $requestingFragment in $project")
 
-        dependencyGraph as DependencyGraphResolution.DependencyGraph
+        dependencyGraph as GradleDependencyGraph // refactor the type hierarchy to avoid this downcast? FIXME?
         val fragmentsToInclude = requestingFragment.refinesClosure
         val requestedDependencies = dependencyGraph.root.dependenciesByFragment.filterKeys { it in fragmentsToInclude }.values.flatten()
 
-        val visited = mutableSetOf<DependencyGraphNode>()
-        val fragmentResolutionQueue = ArrayDeque<DependencyGraphNode>().apply {
+        val visited = mutableSetOf<GradleDependencyGraphNode>()
+        val fragmentResolutionQueue = ArrayDeque<GradleDependencyGraphNode>().apply {
             addAll(requestedDependencies)
         }
 
@@ -69,18 +69,15 @@ internal class FragmentGranularMetadataResolver(
             val dependencyModule = dependencyNode.module
 
             val fragmentVisibility = fragmentResolver.getChosenFragments(requestingFragment, dependencyModule)
-            val visibleFragments = (fragmentVisibility as? FragmentResolution.ChosenFragments)?.visibleFragments?.toList().orEmpty()
-            val variantResolutions =
-                (fragmentVisibility as? FragmentResolution.ChosenFragments)?.variantResolutions?.associateBy { it.requestingVariant }
+            val chosenFragments = fragmentVisibility as? FragmentResolution.ChosenFragments
+            val visibleFragments = chosenFragments?.visibleFragments?.toList().orEmpty()
 
             val visibleTransitiveDependencies =
                 dependencyNode.dependenciesByFragment.filterKeys { it in visibleFragments }.values.flattenTo(mutableSetOf())
 
-            //FIXME host-specific fragments
-
             fragmentResolutionQueue.addAll(visibleTransitiveDependencies.filter { it !in visited })
 
-            val resolvedComponentResult = resolvedComponentsByModuleId.getValue(dependencyModule.moduleIdentifier)
+            val resolvedComponentResult = dependencyNode.selectedComponent
             val isResolvedAsProject = resolvedComponentResult.toProjectOrNull(project)
             val result = when (dependencyModule) {
                 is ExternalSyntheticKotlinModule -> {
@@ -90,14 +87,7 @@ internal class FragmentGranularMetadataResolver(
                     val projectStructureMetadata = (dependencyModule as? ExternalImportedKotlinModule)?.projectStructureMetadata
                         ?: checkNotNull(getProjectStructureMetadata(project, resolvedComponentResult, configurationToResolve))
 
-                    // FIXME host-specific metadata!!!
-
-                    val metadataSourceComponent = when {
-                        dependencyModule is ExternalImportedKotlinModule && dependencyModule.hasLegacyMetadataModule ->
-                            resolvedComponentResult.dependencies.filterIsInstance<ResolvedDependencyResult>().singleOrNull()?.selected
-                                ?: resolvedComponentResult
-                        else -> resolvedComponentResult
-                    }
+                    val metadataSourceComponent = dependencyNode.run { metadataSourceComponent ?: selectedComponent }
 
                     val parentResolutionsForDependency =
                         parentResultsByModuleIdentifier[metadataSourceComponent.toSingleModuleIdentifier()].orEmpty()
@@ -106,6 +96,15 @@ internal class FragmentGranularMetadataResolver(
                             .flatMapTo(mutableSetOf()) { it.allVisibleSourceSetNames }
                     val visibleFragmentNames = visibleFragments.map { it.fragmentName }.toSet()
 
+                    val metadataExtractor = getMetadataExtractor(project, resolvedComponentResult, configurationToResolve, true)
+
+                    if (dependencyModule is ExternalImportedKotlinModule &&
+                        metadataExtractor is JarArtifactMppDependencyMetadataExtractor &&
+                        chosenFragments != null
+                    ) {
+                        resolveHostSpecificMetadataArtifacts(dependencyModule, chosenFragments, metadataExtractor)
+                    }
+
                     ChooseVisibleSourceSetsImpl(
                         metadataSourceComponent,
                         isResolvedAsProject,
@@ -113,19 +112,48 @@ internal class FragmentGranularMetadataResolver(
                         visibleFragmentNames,
                         visibleFragmentNames.minus(fragmentsVisibleByParents),
                         visibleTransitiveDependencies.map { resolvedDependenciesByModuleId.getValue(it.module.moduleIdentifier) }.toSet(),
-                        checkNotNull(getMetadataExtractor(project, resolvedComponentResult, configurationToResolve, true))
+                        checkNotNull(metadataExtractor)
                     )
                 }
             }
             results.add(result)
-            fragmentResolutionQueue.addAll(visibleTransitiveDependencies.filterNot(visited::contains))
         }
 
+        // FIXME this code is based on whole components; use module IDs with classifiers instead
         val resultSourceComponents = results.mapTo(mutableSetOf()) { it.dependency }
         resolvedComponentsByModuleId.values.minus(resultSourceComponents).forEach {
             results.add(MetadataDependencyResolution.ExcludeAsUnrequested(it, it.toProjectOrNull(project)))
         }
 
         return results
+    }
+
+    private fun resolveHostSpecificMetadataArtifacts(
+        dependencyModule: ExternalImportedKotlinModule,
+        chosenFragments: FragmentResolution.ChosenFragments,
+        metadataExtractor: JarArtifactMppDependencyMetadataExtractor
+    ) {
+        val visibleFragments = chosenFragments.visibleFragments
+        val variantResolutions = chosenFragments.variantResolutions
+        val hostSpecificFragments = dependencyModule.hostSpecificFragments
+        val hostSpecificFragmentToArtifact = visibleFragments.intersect(hostSpecificFragments).mapNotNull { hostSpecificFragment ->
+            val relevantResolution = variantResolutions
+                .filterIsInstance<VariantResolution.VariantMatch>()
+                // find some of our variants that resolved a dependency's variant containing the fragment
+                .find { hostSpecificFragment in it.chosenVariant.refinesClosure }
+            // resolve the dependencies of that variant getting the host-specific metadata artifact
+            relevantResolution?.let { resolution ->
+                val variantResolvingPlatformArtifact =
+                    (resolution.requestingVariant as KotlinGradleVariant).compileDependencyConfiguration
+                val configuration = variantResolvingPlatformArtifact
+                val hostSpecificArtifact = ResolvedMppVariantsProvider.get(project)
+                    .getHostSpecificMetadataArtifactByRootModule(
+                        dependencyModule.moduleIdentifier,
+                        configuration
+                    )
+                hostSpecificArtifact?.let { hostSpecificFragment.fragmentName to it }
+            }
+        }
+        metadataExtractor.metadataArtifactBySourceSet.putAll(hostSpecificFragmentToArtifact)
     }
 }

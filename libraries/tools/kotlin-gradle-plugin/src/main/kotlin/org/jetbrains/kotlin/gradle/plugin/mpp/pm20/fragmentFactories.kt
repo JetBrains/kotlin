@@ -32,7 +32,7 @@ abstract class AbstractKotlinGradleFragmentFactory<T : KotlinGradleFragment>(
         with(project.configurations) {
             fragment.relatedConfigurationNames.forEach { configurationName ->
                 maybeCreate(configurationName).apply {
-                    // FIXME add metadata configurations?
+                    // FIXME add metadata configurations or API for IDE import?
                     if (!configurationName.endsWith(METADATA_CONFIGURATION_NAME_SUFFIX)) {
                         isCanBeResolved = false
                     }

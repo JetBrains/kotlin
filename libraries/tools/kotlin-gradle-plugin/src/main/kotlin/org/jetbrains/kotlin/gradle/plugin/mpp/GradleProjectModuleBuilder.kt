@@ -281,11 +281,7 @@ class GradleModuleVariantResolver(val project: Project) : ModuleVariantResolver 
 
         val compileClasspath = getCompileDependenciesConfigurationForVariant(project, requestingVariant)
 
-        // TODO optimize O(n) search, store the mapping
-        val component = compileClasspath.incoming.resolutionResult.allComponents.find { it.id.matchesModule(dependencyModule) }
-            ?: return VariantResolution.NotRequested(requestingVariant, dependencyModule)
-
-        val dependencyModuleId = ModuleIds.fromComponent(project, component)
+        val dependencyModuleId = dependencyModule.moduleIdentifier
         // FIXME check composite builds, it's likely that resolvedVariantProvider fails on them?
         val resolvedGradleVariantName = resolvedVariantProvider.getResolvedVariantName(dependencyModuleId, compileClasspath)
         val kotlinVariantName = when (dependencyModule) {
@@ -323,7 +319,7 @@ class GradleModuleVariantResolver(val project: Project) : ModuleVariantResolver 
                 project.configurations.getByName(compilation.compileDependencyConfigurationName)
             }
             is KotlinPm20ProjectExtension -> {
-                project.configurations.getByName((requestingVariant as KotlinGradleVariant).compileDependencyConfigurationName)
+                (requestingVariant as KotlinGradleVariant).compileDependencyConfiguration
             }
             else -> error("could not find the compile dependencies configuration for variant $requestingVariant")
         }

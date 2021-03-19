@@ -10,7 +10,6 @@ import org.gradle.api.Project
 import org.gradle.api.attributes.Usage
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.pm20Extension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinCommonSourceSetProcessor
@@ -23,6 +22,7 @@ import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.project.model.KotlinModuleFragment
 import java.util.concurrent.Callable
 
@@ -66,7 +66,7 @@ private fun generateAndExportProjectStructureMetadata(
     module: KotlinGradleModule
 ) {
     val project = module.project
-    val projectStructureMetadata = project.createGenerateProjectStructureMetadataTask(module.moduleClassifier)
+    val projectStructureMetadata = project.createGenerateProjectStructureMetadataTask(module)
     project.tasks.withType<Jar>().named(metadataJarName(module)).configure { jar ->
         jar.from(projectStructureMetadata.map { it.resultFile }) { spec ->
             spec.into("META-INF")
@@ -74,7 +74,7 @@ private fun generateAndExportProjectStructureMetadata(
         }
     }
     GlobalProjectStructureMetadataStorage.registerProjectStructureMetadata(project) {
-        checkNotNull(buildKotlinProjectStructureMetadata(project))
+        buildProjectStructureMetadata(module)
     }
 }
 
@@ -108,7 +108,13 @@ private fun configureMetadataCompilationsAndCreateRegistry(
     }
     val compileAllTask = project.registerTask<DefaultTask>(lowerCamelCaseName(module.moduleClassifier, "metadataClasses"))
     module.fragments.all { fragment ->
-        createMetadataCompilation(fragment, compileAllTask, metadataCompilationRegistry)
+        createCommonMetadataCompilation(fragment, compileAllTask, metadataCompilationRegistry)
+        createNativeMetadataCompilation(fragment, compileAllTask, metadataCompilationRegistry)
+    }
+    metadataCompilationRegistry.withAll { compilation ->
+        project.tasks.matching { it.name == compilation.compileKotlinTaskName }.configureEach { task ->
+            task.onlyIf { compilation.isActive }
+        }
     }
 }
 
@@ -140,48 +146,82 @@ private fun configureMetadataJarTask(
 internal fun metadataJarName(module: KotlinGradleModule) =
     lowerCamelCaseName(module.moduleClassifier, "metadataJar")
 
-private fun createMetadataCompilation(
+private fun createCommonMetadataCompilation(
     fragment: KotlinGradleFragment,
     compileAllTask: TaskProvider<DefaultTask>,
     metadataCompilationRegistry: MetadataCompilationRegistry
-): KotlinCompilationData<out KotlinMultiplatformCommonOptions> {
+) {
     val module = fragment.containingModule
     val project = module.project
 
     val metadataCompilationData =
-        KotlinFragmentMetadataCompilationData(
+        KotlinCommonFragmentMetadataCompilationDataImpl(
             project,
             fragment,
             module,
             compileAllTask,
             metadataCompilationRegistry,
-            lazy {
-                fragment.refinesClosure.map {
-                    FragmentResolvedMetadataProvider(
-                        project.tasks.withType<TransformKotlinGranularMetadataForFragment>()
-                            .named(transformFragmentMetadataTaskName(it))
-                    )
-                }
-            }
+            lazy { resolvedMetadataProviders(fragment) }
         )
-    metadataCompilationRegistry.register(fragment, metadataCompilationData)
-
-    addSourcesToKotlinCompileTask(
-        project,
-        metadataCompilationData.compileKotlinTaskName,
-        /*FIXME*/ emptyList(),
-        { fragment.kotlinSourceRoots },
-        lazyOf(true)
-    )
-
     KotlinCommonSourceSetProcessor(
         metadataCompilationData,
         KotlinTasksProvider(),
         project.getKotlinPluginVersion() ?: "undefined"
     ).run()
-
-    return metadataCompilationData
+    addSourcesToMetadataCompileTask(metadataCompilationData)
+    metadataCompilationRegistry.registerCommon(fragment, metadataCompilationData)
 }
+
+private fun createNativeMetadataCompilation(
+    fragment: KotlinGradleFragment,
+    compileAllTask: TaskProvider<DefaultTask>,
+    metadataCompilationRegistry: MetadataCompilationRegistry
+) {
+    val module = fragment.containingModule
+    val project = module.project
+
+    val metadataCompilationData =
+        KotlinNativeFragmentMetadataCompilationDataImpl(
+            project,
+            fragment,
+            module,
+            compileAllTask,
+            metadataCompilationRegistry,
+            lazy { resolvedMetadataProviders(fragment) }
+        )
+    NativeSharedCompilationProcessor(metadataCompilationData).run()
+    addSourcesToMetadataCompileTask(metadataCompilationData)
+    metadataCompilationRegistry.registerNative(fragment, metadataCompilationData)
+}
+
+private fun addSourcesToMetadataCompileTask(compilationData: AbstractKotlinFragmentMetadataCompilationData<*>) {
+    val sources = { compilationData.fragment.kotlinSourceRoots }
+    when (compilationData) {
+        // Note: this call is invalid for compilations that use Kotlin/Native compile tasks!
+        is KotlinCommonFragmentMetadataCompilationData -> addSourcesToKotlinCompileTask(
+            compilationData.project,
+            compilationData.compileKotlinTaskName,
+            /*FIXME*/ emptyList(),
+            sources,
+            lazyOf(true)
+        )
+        is KotlinNativeFragmentMetadataCompilationData -> addSourcesToKotlinNativeCompileTask(
+            compilationData.project,
+            compilationData.compileKotlinTaskName,
+            sources,
+            lazyOf(true)
+        )
+        else -> error("unexpected compilation data $compilationData")
+    }
+}
+
+private fun resolvedMetadataProviders(fragment: KotlinGradleFragment) =
+    fragment.refinesClosure.map {
+        FragmentResolvedMetadataProvider(
+            fragment.project.tasks.withType<TransformKotlinGranularMetadataForFragment>()
+                .named(transformFragmentMetadataTaskName(it))
+        )
+    }
 
 private fun createExtractMetadataTask(
     project: Project,
@@ -206,7 +246,7 @@ private fun createExtractMetadataTask(
 
 // FIXME: use this function once more than one platform is supported
 private fun disableMetadataCompilationIfNotYetSupported(
-    metadataCompilationData: KotlinFragmentMetadataCompilationData
+    metadataCompilationData: AbstractKotlinFragmentMetadataCompilationData<*>
 ) {
     val fragment = metadataCompilationData.fragment
     val platforms = fragment.containingModule.variantsContainingFragment(fragment).map { it.platformType }.toSet()

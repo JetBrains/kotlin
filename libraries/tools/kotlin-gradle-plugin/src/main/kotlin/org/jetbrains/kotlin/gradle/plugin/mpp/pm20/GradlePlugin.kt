@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.internal.customizeKotlinDependencies
 import org.jetbrains.kotlin.gradle.utils.checkGradleCompatibility
 import org.jetbrains.kotlin.project.model.KotlinModuleIdentifier
 import javax.inject.Inject
+import kotlin.reflect.KClass
 
 abstract class KotlinPm20GradlePlugin @Inject constructor(
     @Inject private val softwareComponentFactory: SoftwareComponentFactory
@@ -35,11 +36,28 @@ abstract class KotlinPm20GradlePlugin @Inject constructor(
     }
 
     private fun registerDefaultVariantFactories(project: Project) {
-        project.pm20Extension.modules.configureEach {
-            it.fragments.registerFactory(
+        project.pm20Extension.modules.configureEach { module ->
+            module.fragments.registerFactory(
                 KotlinJvmVariant::class.java,
-                KotlinJvmVariantFactory(it)
+                KotlinJvmVariantFactory(module)
             )
+
+            fun <T: KotlinNativeVariantInternal> registerNativeVariantFactory(variantClass: KClass<T>) {
+                module.fragments.registerFactory(
+                    variantClass.java,
+                    KotlinNativeVariantFactory(module, variantClass)
+                )
+            }
+            listOf(
+                // FIXME codegen, add missing native targets
+                KotlinLinuxX64Variant::class,
+                KotlinMacosX64Variant::class,
+                KotlinMacosArm64Variant::class,
+                KotlinIosX64Variant::class,
+                KotlinIosArm64Variant::class
+            ).forEach { variantClass ->
+                registerNativeVariantFactory(variantClass)
+            }
         }
     }
 

@@ -24,17 +24,16 @@ import org.gradle.api.tasks.PathSensitivity
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompile
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformCommonOptions
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformCommonOptionsImpl
 import org.jetbrains.kotlin.gradle.dsl.fillDefaultValues
 import org.jetbrains.kotlin.gradle.internal.tasks.allOutputFiles
 import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCommonCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinFragmentMetadataCompilationData
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.AbstractKotlinFragmentMetadataCompilationData
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinMetadataCompilationData
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.refinesClosure
 import org.jetbrains.kotlin.gradle.utils.getValue
 import org.jetbrains.kotlin.gradle.plugin.sources.getSourceSetHierarchy
@@ -63,7 +62,7 @@ open class KotlinCompileCommon : AbstractKotlinCompile<K2MetadataCompilerArgumen
         args.moduleName = this@KotlinCompileCommon.moduleName
 
         if ((taskData.compilation as? KotlinCommonCompilation)?.isKlibCompilation == true ||
-            taskData.compilation is KotlinFragmentMetadataCompilationData
+            taskData.compilation is KotlinMetadataCompilationData
         ) {
             args.expectActualLinker = true
         }
@@ -84,13 +83,10 @@ open class KotlinCompileCommon : AbstractKotlinCompile<K2MetadataCompilerArgumen
     }
 
     private fun outputPathsFromMetadataCompilationsOf(sourceSets: Iterable<KotlinSourceSet>): List<File> {
-        val target = taskData.compilation.owner
-        return when (target) {
-            is KotlinTarget -> sourceSets
-                .mapNotNull { sourceSet -> target.compilations.findByName(sourceSet.name)?.output?.classesDirs }
-                .flatten()
-            else -> error("unexpected compilation owner") // FIXME support PM20 variant
-        }
+        val metadataTarget = project.multiplatformExtension.metadata()
+        return sourceSets
+            .mapNotNull { sourceSet -> metadataTarget.compilations.findByName(sourceSet.name)?.output?.classesDirs }
+            .flatten()
     }
 
     @get:PathSensitive(PathSensitivity.RELATIVE)
@@ -101,7 +97,7 @@ open class KotlinCompileCommon : AbstractKotlinCompile<K2MetadataCompilerArgumen
                 val defaultKotlinSourceSet: KotlinSourceSet = compilation.defaultSourceSet
                 outputPathsFromMetadataCompilationsOf(defaultKotlinSourceSet.getSourceSetHierarchy().minus(defaultKotlinSourceSet))
             }
-            is KotlinFragmentMetadataCompilationData -> {
+            is AbstractKotlinFragmentMetadataCompilationData -> {
                 val fragment = compilation.fragment
                 project.files(
                     fragment.refinesClosure.minus(fragment).map {
@@ -109,7 +105,7 @@ open class KotlinCompileCommon : AbstractKotlinCompile<K2MetadataCompilerArgumen
                     }
                 )
             }
-            else -> error("unexpected compilation type") // FIXME support PM20 variant
+            else -> error("unexpected compilation type")
         }
     }
 

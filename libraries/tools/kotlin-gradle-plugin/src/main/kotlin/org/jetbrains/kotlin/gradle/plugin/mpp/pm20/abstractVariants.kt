@@ -57,6 +57,9 @@ abstract class KotlinGradleVariantInternal(
     override fun toString(): String = "variant $fragmentName in $containingModule"
 }
 
+internal val KotlinGradleVariant.compileDependencyConfiguration: Configuration
+    get() = containingModule.project.configurations.getByName(compileDependencyConfigurationName)
+
 class DefaultSingleMavenPublicationHolder(
     private var module: KotlinGradleModule,
     override val defaultPublishedModuleSuffix: String?

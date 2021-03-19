@@ -25,15 +25,15 @@ interface KotlinDependencyGraphResolver {
     fun resolveDependencyGraph(requestingModule: KotlinModule): DependencyGraphResolution
 }
 
-sealed class DependencyGraphResolution(val requestingModule: KotlinModule) {
+sealed class DependencyGraphResolution(open val requestingModule: KotlinModule) {
     class Unknown(requestingModule: KotlinModule) : DependencyGraphResolution(requestingModule)
-    class DependencyGraph(requestingModule: KotlinModule, val root: DependencyGraphNode): DependencyGraphResolution(requestingModule)
+    open class DependencyGraph(requestingModule: KotlinModule, open val root: DependencyGraphNode): DependencyGraphResolution(requestingModule)
 }
 
 // TODO: should this be a single graph for all dependency scopes as well, not just for all fragments?
-class DependencyGraphNode(
-    val module: KotlinModule,
-    val dependenciesByFragment: Map<KotlinModuleFragment, Iterable<DependencyGraphNode>>
+open class DependencyGraphNode(
+    open val module: KotlinModule,
+    open val dependenciesByFragment: Map<KotlinModuleFragment, Iterable<DependencyGraphNode>>
 ) {
     override fun toString(): String = "node ${module}"
 }
