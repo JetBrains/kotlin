@@ -17732,6 +17732,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/javaInterop/samUnboundTypeParameter.kt");
         }
 
+        @TestMetadata("superCallOfPrintStackTrace.kt")
+        public void testSuperCallOfPrintStackTrace() throws Exception {
+            runTest("compiler/testData/codegen/box/javaInterop/superCallOfPrintStackTrace.kt");
+        }
+
         @TestMetadata("compiler/testData/codegen/box/javaInterop/generics")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

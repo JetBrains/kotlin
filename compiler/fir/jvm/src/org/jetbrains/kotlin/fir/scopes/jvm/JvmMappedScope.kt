@@ -6,17 +6,38 @@
 package org.jetbrains.kotlin.fir.scopes.jvm
 
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.classId
+import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.scopes.*
+import org.jetbrains.kotlin.fir.scopes.impl.FirFakeOverrideGenerator
+import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 
 class JvmMappedScope(
+    private val session: FirSession,
+    private val firKotlinClass: FirClass<*>,
+    private val firJavaClass: FirRegularClass,
     private val declaredMemberScope: FirScope,
-    private val javaMappedClassUseSiteScope: FirScope,
+    private val javaMappedClassUseSiteScope: FirTypeScope,
     private val signatures: Signatures
 ) : FirTypeScope() {
+    private val functionsCache = mutableMapOf<FirNamedFunctionSymbol, FirNamedFunctionSymbol>()
+
+    private val substitutor = ConeSubstitutorByMap(
+        firJavaClass.typeParameters.zip(firKotlinClass.typeParameters).map { (javaParameter, kotlinParameter) ->
+            javaParameter.symbol to ConeTypeParameterTypeImpl(ConeTypeParameterLookupTag(kotlinParameter.symbol), isNullable = false)
+        }.toMap()
+    )
+    private val kotlinDispatchReceiverType = firKotlinClass.defaultType()
 
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         val visibleMethods = signatures.visibleMethodSignaturesByName[name]
@@ -33,10 +54,33 @@ class JvmMappedScope(
         }
 
         javaMappedClassUseSiteScope.processFunctionsByName(name) { symbol ->
-            val jvmSignature = symbol.fir.computeJvmDescriptor()
+            val newSymbol = getOrCreateSubstitutedCopy(symbol)
+
+            val jvmSignature = newSymbol.fir.computeJvmDescriptor()
             if (jvmSignature in visibleMethods && jvmSignature !in declaredSignatures) {
-                processor(symbol)
+                processor(newSymbol)
             }
+        }
+    }
+
+    override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
+        declaredMemberScope.processPropertiesByName(name, processor)
+    }
+
+    private fun getOrCreateSubstitutedCopy(symbol: FirNamedFunctionSymbol): FirNamedFunctionSymbol {
+        return functionsCache.getOrPut(symbol) {
+            val oldFunction = symbol.fir
+            val newSymbol = FirNamedFunctionSymbol(CallableId(firKotlinClass.classId, symbol.callableId.callableName))
+            FirFakeOverrideGenerator.createCopyForFirFunction(
+                newSymbol,
+                baseFunction = symbol.fir,
+                session,
+                symbol.fir.origin,
+                newDispatchReceiverType = kotlinDispatchReceiverType,
+                newParameterTypes = oldFunction.valueParameters.map { substitutor.substituteOrSelf(it.returnTypeRef.coneType) },
+                newReturnType = substitutor.substituteOrSelf(oldFunction.returnTypeRef.coneType)
+            )
+            newSymbol
         }
     }
 
@@ -59,10 +103,6 @@ class JvmMappedScope(
         }
 
         declaredMemberScope.processDeclaredConstructors(processor)
-    }
-
-    override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
-        declaredMemberScope.processPropertiesByName(name, processor)
     }
 
     override fun processDirectOverriddenPropertiesWithBaseScope(
