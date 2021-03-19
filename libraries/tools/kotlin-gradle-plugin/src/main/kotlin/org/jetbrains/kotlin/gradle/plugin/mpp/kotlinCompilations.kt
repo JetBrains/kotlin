@@ -288,7 +288,7 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
     override val project: Project
         get() = target.project
 
-    override val owner: Any?
+    override val owner: KotlinTarget
         get() = target
 
     override val compilationClassifier: String?

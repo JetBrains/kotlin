@@ -427,7 +427,7 @@ private class IncludedBuildMetadataExtractor(
         GlobalProjectStructureMetadataStorage.getProjectStructureMetadata(project, id.build.name, id.projectPath)
 }
 
-private open class JarArtifactMppDependencyMetadataExtractor(
+internal open class JarArtifactMppDependencyMetadataExtractor(
     project: Project,
     dependency: ResolvedComponentResult,
     val primaryArtifact: File
@@ -602,7 +602,7 @@ private fun mppDependencyMetadataExtractor(
     return when {
         moduleId is ProjectComponentIdentifier -> when {
             moduleId.build.isCurrentBuild ->
-                ProjectMppDependencyMetadataExtractor(project, actualComponent, project.project(moduleId.projectPath))
+                ProjectMppDependencyMetadataExtractor(project, actualComponent, moduleIdentifier, project.project(moduleId.projectPath))
             metadataArtifact != null ->
                 IncludedBuildMetadataExtractor(project, actualComponent, metadataArtifact)
             else -> null

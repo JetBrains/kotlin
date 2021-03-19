@@ -163,7 +163,8 @@ internal class ExternalSyntheticKotlinModule(private val moduleData: BasicKotlin
 
 internal class ExternalImportedKotlinModule(
     private val moduleData: BasicKotlinModule,
-    val projectStructureMetadata: KotlinProjectStructureMetadata
+    val projectStructureMetadata: KotlinProjectStructureMetadata,
+    val hostSpecificFragments: Set<KotlinModuleFragment>
 ) : KotlinModule by moduleData {
     val hasLegacyMetadataModule = !projectStructureMetadata.isPublishedAsRoot
 

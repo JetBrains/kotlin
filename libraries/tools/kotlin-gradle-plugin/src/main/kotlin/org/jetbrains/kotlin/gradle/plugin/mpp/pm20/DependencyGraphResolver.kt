@@ -39,15 +39,18 @@ class GradleKotlinDependencyGraphResolver(
         configurationToResolveMetadataDependencies(project, requestingModule)
 
     override fun resolveDependencyGraph(requestingModule: KotlinModule): DependencyGraphResolution {
-        if (!requestingModule.representsProject(project))
+        if (requestingModule !is KotlinGradleModule)
             return DependencyGraphResolution.Unknown(requestingModule)
+        return resolveAsGraph(requestingModule)
+    }
 
+    private fun resolveAsGraph(requestingModule: KotlinGradleModule): GradleDependencyGraph {
         val excludeLegacyMetadataModulesFromResult = mutableSetOf<ResolvedComponentResult>()
 
-        val nodeByModuleId = mutableMapOf<KotlinModuleIdentifier, DependencyGraphNode>()
+        val nodeByModuleId = mutableMapOf<KotlinModuleIdentifier, GradleDependencyGraphNode>()
 
-        fun nodeFromComponent(component: ResolvedComponentResult, isRoot: Boolean /*refactor*/): DependencyGraphNode {
-            val id = component.toModuleIdentifier()
+        fun nodeFromComponent(component: ResolvedComponentResult, isRoot: Boolean /*refactor me*/): GradleDependencyGraphNode {
+            val id = component.toSingleModuleIdentifier()
             return nodeByModuleId.getOrPut(id) {
                 val module = if (isRoot)
                     requestingModule
@@ -55,14 +58,20 @@ class GradleKotlinDependencyGraphResolver(
                     .takeIf { component !in excludeLegacyMetadataModulesFromResult }
                     ?: buildSyntheticModule(component, component.variants.singleOrNull()?.displayName ?: "default")
 
-                val componentContainingTransitiveDependencies =
+                val metadataSourceComponent =
                     (module as? ExternalImportedKotlinModule)
                         ?.takeIf { it.hasLegacyMetadataModule }
                         ?.let { (component.dependencies.singleOrNull() as? ResolvedDependencyResult)?.selected }
                         ?: component
 
-                val resolvedComponentDependencies = componentContainingTransitiveDependencies.dependencies
+                val dependenciesRequestedByModule =
+                    module.fragments.flatMap { fragment -> fragment.declaredModuleDependencies.map { it.moduleIdentifier } }.toSet()
+
+                val resolvedComponentDependencies = metadataSourceComponent.dependencies
                     .filterIsInstance<ResolvedDependencyResult>()
+                    // This filter statement is used to only visit the dependencies of the variant(s) of the requested Kotlin module and not
+                    // other variants. This prevents infinite recursion when visiting multiple Kotlin modules within one Gradle components
+                    .filter { dependency -> dependency.requested.toModuleIdentifiers().any { it in dependenciesRequestedByModule } }
                     .flatMap { dependency -> dependency.requested.toModuleIdentifiers().map { id -> id to dependency.selected } }
                     .toMap()
 
@@ -72,13 +81,30 @@ class GradleKotlinDependencyGraphResolver(
                     deps.mapNotNull { resolvedComponentDependencies[it.moduleIdentifier] }.map { nodeFromComponent(it, isRoot = false) }
                 }
 
-                DependencyGraphNode(module, nodeDependenciesMap)
+                GradleDependencyGraphNode(
+                    module,
+                    component,
+                    metadataSourceComponent,
+                    nodeDependenciesMap
+                )
             }
         }
 
-        return DependencyGraphResolution.DependencyGraph(
+        return GradleDependencyGraph(
             requestingModule,
             nodeFromComponent(configurationToResolve(requestingModule).incoming.resolutionResult.root, isRoot = true)
         )
     }
 }
+
+class GradleDependencyGraphNode(
+    override val module: KotlinModule,
+    val selectedComponent: ResolvedComponentResult,
+    val metadataSourceComponent: ResolvedComponentResult?,
+    override val dependenciesByFragment: Map<KotlinModuleFragment, Iterable<GradleDependencyGraphNode>>
+) : DependencyGraphNode(module, dependenciesByFragment)
+
+class GradleDependencyGraph(
+    override val requestingModule: KotlinGradleModule,
+    override val root: GradleDependencyGraphNode
+) : DependencyGraphResolution.DependencyGraph(requestingModule, root)

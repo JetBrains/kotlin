@@ -9,48 +9,57 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import groovy.lang.Closure
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinNativeCompilationData
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinNativeFragmentMetadataCompilationData
 import org.jetbrains.kotlin.gradle.plugin.sources.getVisibleSourceSetsFromAssociateCompilations
 import org.jetbrains.kotlin.gradle.plugin.sources.resolveAllDependsOnSourceSets
 import org.jetbrains.kotlin.gradle.targets.metadata.getMetadataCompilationForSourceSet
+import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinNativeCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import java.io.File
 import java.util.concurrent.Callable
+
+internal class NativeCompileOptions(languageSettingsProvider: () -> LanguageSettingsBuilder) : KotlinCommonOptions {
+    private val languageSettings: LanguageSettingsBuilder by lazy(languageSettingsProvider)
+
+    override var apiVersion: String?
+        get() = languageSettings.apiVersion
+        set(value) {
+            languageSettings.apiVersion = value
+        }
+
+    override var languageVersion: String?
+        get() = languageSettings.languageVersion
+        set(value) {
+            languageSettings.languageVersion = value
+        }
+
+    override var useFir: Boolean
+        get() = false
+        set(@Suppress("UNUSED_PARAMETER") value) {}
+
+    override var allWarningsAsErrors: Boolean = false
+    override var suppressWarnings: Boolean = false
+    override var verbose: Boolean = false
+
+    override var freeCompilerArgs: List<String> = listOf()
+}
 
 abstract class AbstractKotlinNativeCompilation(
     target: KotlinTarget,
-    val konanTarget: KonanTarget,
+    override val konanTarget: KonanTarget,
     compilationName: String
-) : AbstractKotlinCompilation<KotlinCommonOptions>(target, compilationName) {
+) : AbstractKotlinCompilation<KotlinCommonOptions>(target, compilationName), KotlinNativeCompilationData<KotlinCommonOptions> {
 
     override val kotlinOptions: KotlinCommonOptions = NativeCompileOptions { defaultSourceSet.languageSettings }
-
-    private class NativeCompileOptions(languageSettingsProvider: () -> LanguageSettingsBuilder) : KotlinCommonOptions {
-        private val languageSettings: LanguageSettingsBuilder by lazy(languageSettingsProvider)
-
-        override var apiVersion: String?
-            get() = languageSettings.apiVersion
-            set(value) { languageSettings.apiVersion = value }
-
-        override var languageVersion: String?
-            get() = languageSettings.languageVersion
-            set(value) { languageSettings.languageVersion = value }
-
-        override var useFir: Boolean
-            get() = false
-            set(@Suppress("UNUSED_PARAMETER") value) {}
-
-        override var allWarningsAsErrors: Boolean = false
-        override var suppressWarnings: Boolean = false
-        override var verbose: Boolean = false
-
-        override var freeCompilerArgs: List<String> = listOf()
-    }
 
     override val compileKotlinTask: KotlinNativeCompile
         get() = super.compileKotlinTask as KotlinNativeCompile
@@ -59,14 +68,25 @@ abstract class AbstractKotlinNativeCompilation(
     override val compileKotlinTaskProvider: TaskProvider<out KotlinNativeCompile>
         get() = super.compileKotlinTaskProvider as TaskProvider<out KotlinNativeCompile>
 
-    override fun addSourcesToCompileTask(sourceSet: KotlinSourceSet, addAsCommonSources: Lazy<Boolean>) =
-        compileKotlinTaskProvider.configure { task ->
-            task.source(sourceSet.kotlin)
-            task.commonSources.from(target.project.files(Callable { if (addAsCommonSources.value) sourceSet.kotlin else emptyList<Any>() }))
-        }
+    override fun addSourcesToCompileTask(sourceSet: KotlinSourceSet, addAsCommonSources: Lazy<Boolean>) {
+        addSourcesToKotlinNativeCompileTask(project, compileKotlinTaskName, { sourceSet.kotlin }, addAsCommonSources)
+    }
 
     // Endorsed library controller.
-    var enableEndorsedLibs: Boolean = false
+    override var enableEndorsedLibs: Boolean = false
+}
+
+internal fun addSourcesToKotlinNativeCompileTask(
+    project: Project,
+    taskName: String,
+    sourceFiles: () -> Iterable<File>,
+    addAsCommonSources: Lazy<Boolean>
+) {
+    project.tasks.withType(KotlinNativeCompile::class.java).matching { it.name == taskName }.configureEach { task ->
+        task.source(sourceFiles)
+        task.commonSources.from(project.files(Callable { if (addAsCommonSources.value) sourceFiles() else emptyList() }))
+    }
+
 }
 
 class KotlinNativeCompilation(
@@ -117,6 +137,7 @@ class KotlinNativeCompilation(
 }
 
 class KotlinSharedNativeCompilation(override val target: KotlinMetadataTarget, val konanTargets: List<KonanTarget>, name: String) :
+    KotlinNativeFragmentMetadataCompilationData,
     AbstractKotlinNativeCompilation(
         target,
         // TODO: this will end up as '-target' argument passed to K2Native, which is wrong.
@@ -137,4 +158,7 @@ class KotlinSharedNativeCompilation(override val target: KotlinMetadataTarget, v
             }
             project.files(friendSourceSets.mapNotNull { project.getMetadataCompilationForSourceSet(it)?.output?.classesDirs })
         })
+
+    override val isActive: Boolean
+        get() = true // old plugin only creates necessary compilations
 }

@@ -26,6 +26,9 @@ import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
 import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinNativeCompilationData
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinNativeFragmentMetadataCompilationData
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.isMainCompilationData
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.targets.native.internal.isAllowCommonizer
 import org.jetbrains.kotlin.gradle.utils.getValue
@@ -113,7 +116,7 @@ private fun Collection<File>.filterKlibsPassedToCompiler(project: Project) = fil
 }
 
 // endregion
-abstract class AbstractKotlinNativeCompile<T : KotlinCommonToolOptions, K : AbstractKotlinNativeCompilation> : AbstractCompile() {
+abstract class AbstractKotlinNativeCompile<T : KotlinCommonToolOptions, K : KotlinNativeCompilationData<*>> : AbstractCompile() {
     @get:Internal
     abstract val compilation: K
 
@@ -139,7 +142,7 @@ abstract class AbstractKotlinNativeCompile<T : KotlinCommonToolOptions, K : Abst
     }
 
     private val isSharedCompilation by project.provider {
-        compilation is KotlinSharedNativeCompilation
+        compilation is KotlinNativeFragmentMetadataCompilationData
     }
 
     // Inputs and outputs
@@ -178,7 +181,7 @@ abstract class AbstractKotlinNativeCompile<T : KotlinCommonToolOptions, K : Abst
 
     @get:Internal
     val languageSettings: LanguageSettingsBuilder by project.provider {
-        compilation.defaultSourceSet.languageSettings
+        compilation.languageSettings
     }
 
     @get:Input
@@ -233,7 +236,7 @@ abstract class AbstractKotlinNativeCompile<T : KotlinCommonToolOptions, K : Abst
         get() = buildCommonArgs(true)
 
     private val languageSettingsBuilder by project.provider {
-        compilation.defaultSourceSet.languageSettings
+        compilation.languageSettings
     }
 
     // Args used by both the compiler and IDEA.
@@ -343,8 +346,8 @@ open class KotlinNativeCompile
 constructor(
     @Internal
     @Transient  // can't be serialized for Gradle configuration cache
-    final override val compilation: AbstractKotlinNativeCompilation
-) : AbstractKotlinNativeCompile<KotlinCommonOptions, AbstractKotlinNativeCompilation>(),
+    final override val compilation: KotlinNativeCompilationData<*>
+) : AbstractKotlinNativeCompile<KotlinCommonOptions, KotlinNativeCompilationData<*>>(),
     KotlinCompile<KotlinCommonOptions> {
 
     @get:Input
@@ -357,7 +360,11 @@ constructor(
     override val debuggable = true
 
     @get:Internal
-    override val baseName: String by project.provider { if (compilation.isMain()) project.name else "${project.name}_${compilation.name}" }
+    override val baseName: String by project.provider {
+        if (compilation.isMainCompilationData())
+            project.name
+        else "${project.name}_${compilation.compilationPurpose}"
+    }
 
     // Store as an explicit provider in order to allow Gradle Instant Execution to capture the state
 //    private val allSourceProvider = compilation.map { project.files(it.allSources).asFileTree }
@@ -390,10 +397,7 @@ constructor(
 
 
     private val friendModule: FileCollection by project.provider {
-        project.files(
-            compilation.associateWithTransitiveClosure.map { it.output.allOutputs },
-            compilation.friendArtifacts
-        )
+        project.files(compilation.friendPaths)
     }
     // endregion.
 
@@ -934,7 +938,7 @@ open class CInteropProcess @Inject constructor(@get:Internal val settings: Defau
     val baseKlibName: String
         @Input get() {
             val compilationPrefix = settings.compilation.let {
-                if (it.isMain()) project.name else it.name
+                if (it.isMainCompilationData()) project.name else it.compilationPurpose
             }
             return "$compilationPrefix-cinterop-$interopName"
         }

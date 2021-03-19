@@ -27,12 +27,13 @@ abstract class AbstractKotlinGradleVariantFactory<T : KotlinGradleVariant>(
     module: KotlinGradleModule
 ) : AbstractKotlinGradleFragmentFactory<T>(module) {
 
-    override fun create(name: String): T = super.create(name).also { fragment ->
-        createSourcesArchiveTask(fragment)
-        configureKotlinCompilation(fragment)
-        createElementsConfigurations(fragment)
-        // TODO configure resources processing
-    }
+    override fun create(name: String): T =
+        super.create(name).also { fragment ->
+            createSourcesArchiveTask(fragment)
+            createElementsConfigurations(fragment)
+            configureKotlinCompilation(fragment)
+            // TODO configure resources processing
+        }
 
     protected open fun setPlatformAttributesInConfiguration(fragment: T, configuration: Configuration) {
         configuration.attributes.attribute(KotlinPlatformType.attribute, fragment.platformType)

@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.model.builder.KotlinModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.isMain
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.isMainCompilationData
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.ir.*
@@ -281,7 +281,7 @@ internal class Kotlin2JsSourceSetProcessor(
                     kotlinOptions.freeCompilerArgs.contains(PRODUCE_ZIPPED_KLIB)
                 ) {
                     // Configure FQ module name to avoid cyclic dependencies in klib manifests (see KT-36721).
-                    val baseName = if (kotlinCompilation.isMain()) {
+                    val baseName = if (kotlinCompilation.isMainCompilationData()) {
                         project.name
                     } else {
                         "${project.name}_${kotlinCompilation.compilationPurpose}"
@@ -366,7 +366,7 @@ internal class KotlinCommonSourceSetProcessor(
     override fun doTargetSpecificProcessing() {
         project.tasks.named(kotlinCompilation.compileAllTaskName).dependsOn(kotlinTask)
         // can be missing (e.g. in case of tests)
-        if ((kotlinCompilation as? AbstractKotlinCompilation<*>)?.isMain() == true) {
+        if ((kotlinCompilation as? AbstractKotlinCompilation<*>)?.isMainCompilationData() == true) {
             project.locateTask<Task>(kotlinCompilation.target.artifactsTaskName)?.dependsOn(kotlinTask)
         }
 

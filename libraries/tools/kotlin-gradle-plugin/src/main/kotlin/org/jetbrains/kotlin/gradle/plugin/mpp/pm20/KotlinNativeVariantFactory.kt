@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.project.model.refinesClosure
 import org.jetbrains.kotlin.project.model.utils.variantsContainingFragment
+import java.util.concurrent.Callable
 import kotlin.reflect.KClass
 
 open class KotlinNativeVariantFactory<T : KotlinNativeVariantInternal>(

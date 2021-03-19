@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.CompilationSourceSetUtil.compilationsBySourceSets
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinNativeFragmentMetadataCompilationData
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.sources.*
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
@@ -117,20 +119,6 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
         }
         is KotlinSharedNativeCompilation -> NativeSharedCompilationProcessor(compilation)
         else -> error("unsupported compilation type ${compilation::class.qualifiedName}")
-    }
-
-    private inner class NativeSharedCompilationProcessor(
-        override val kotlinCompilation: KotlinSharedNativeCompilation
-    ) : KotlinCompilationProcessor<KotlinNativeCompile>(kotlinCompilation) {
-
-        private val nativeTargetConfigurator = KotlinNativeTargetConfigurator<KotlinNativeTarget>(kotlinPluginVersion)
-
-        override val kotlinTask: TaskProvider<out KotlinNativeCompile> =
-            with(nativeTargetConfigurator) {
-                project.createKlibCompilationTask(kotlinCompilation)
-            }
-
-        override fun run() = Unit
     }
 
     override fun createArchiveTasks(target: KotlinMetadataTarget): TaskProvider<out Zip> {
@@ -486,8 +474,28 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
     }
 }
 
-internal fun Project.createGenerateProjectStructureMetadataTask(moduleClassifier: String? = null): TaskProvider<GenerateProjectStructureMetadata> =
-    project.registerTask(lowerCamelCaseName("generate", moduleClassifier, "ProjectStructureMetadata")) { task ->
+internal class NativeSharedCompilationProcessor(
+    override val kotlinCompilation: KotlinNativeFragmentMetadataCompilationData
+) : KotlinCompilationProcessor<KotlinNativeCompile>(kotlinCompilation) {
+
+    private val nativeTargetConfigurator =
+        KotlinNativeTargetConfigurator<KotlinNativeTarget>(kotlinCompilation.project.getKotlinPluginVersion() ?: "" /*FIXME*/)
+
+    override val kotlinTask: TaskProvider<out KotlinNativeCompile> =
+        with(nativeTargetConfigurator) {
+            project.createKlibCompilationTask(kotlinCompilation)
+        }
+
+    override fun run() = Unit
+}
+
+internal fun Project.createGenerateProjectStructureMetadataTask(module: KotlinGradleModule): TaskProvider<GenerateProjectStructureMetadata> =
+    project.registerTask(lowerCamelCaseName("generate", module.moduleClassifier, "ProjectStructureMetadata")) { task ->
+        task.lazyKotlinProjectStructureMetadata = lazy { buildProjectStructureMetadata(module) }
+    }
+
+internal fun Project.createGenerateProjectStructureMetadataTask(): TaskProvider<GenerateProjectStructureMetadata> =
+    project.registerTask(lowerCamelCaseName("generateProjectStructureMetadata")) { task ->
         task.lazyKotlinProjectStructureMetadata = lazy { checkNotNull(buildKotlinProjectStructureMetadata(project)) }
     }
 

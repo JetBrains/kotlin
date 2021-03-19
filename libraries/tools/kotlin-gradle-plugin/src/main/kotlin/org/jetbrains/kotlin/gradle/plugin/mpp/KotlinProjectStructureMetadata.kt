@@ -10,18 +10,16 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.google.gson.stream.JsonWriter
 import org.gradle.api.Project
-import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
-import org.jetbrains.kotlin.gradle.dsl.topLevelExtension
 import org.jetbrains.kotlin.gradle.dsl.topLevelExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.refinesClosure
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
-import org.jetbrains.kotlin.gradle.plugin.sources.withAllDependsOnSourceSets
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
 import org.jetbrains.kotlin.gradle.targets.metadata.dependsOnClosureWithInterCompilationDependencies
 import org.jetbrains.kotlin.gradle.targets.metadata.getPublishedPlatformCompilations
@@ -133,10 +131,7 @@ data class KotlinProjectStructureMetadata(
 
 internal fun buildKotlinProjectStructureMetadata(project: Project): KotlinProjectStructureMetadata? {
     val topLevelExtensionOrNull = project.topLevelExtensionOrNull
-    if (topLevelExtensionOrNull is KotlinPm20ProjectExtension) {
-        // FIXME: get module by ID, don't just take the main module
-        return buildProjectStructureMetadata(topLevelExtensionOrNull.main)
-    }
+    require(topLevelExtensionOrNull is KotlinMultiplatformExtension) { "this function only works with the stable plugin" }
 
     val sourceSetsWithMetadataCompilations =
         project.multiplatformExtensionOrNull?.targets?.getByName(KotlinMultiplatformPlugin.METADATA_TARGET_NAME)?.compilations?.associate {
@@ -195,7 +190,7 @@ internal fun buildProjectStructureMetadata(module: KotlinGradleModule): KotlinPr
     val kotlinFragmentsPerKotlinVariant =
         module.variants.associate { variant -> variant.name to variant.refinesClosure.map { it.name }.toSet() }
     val fragmentRefinesRelation =
-        module.fragments.associate { it.name to it.directRefinesDependencies.map { it.name }.toSet() }
+        module.fragments.associate { it.name to it.directRefinesDependencies.map { it.fragmentName }.toSet() }
 
     // FIXME: support native implementation-as-api-dependencies
     // FIXME: support dependencies on auxiliary modules
@@ -211,7 +206,7 @@ internal fun buildProjectStructureMetadata(module: KotlinGradleModule): KotlinPr
         fragmentRefinesRelation,
         module.fragments.associate { it.name to SourceSetMetadataLayout.KLIB },
         fragmentDependencies,
-        emptySet(),
+        getHostSpecificFragments(module).mapTo(mutableSetOf()) { it.name },
         isPublishedAsRoot = true
     )
 }

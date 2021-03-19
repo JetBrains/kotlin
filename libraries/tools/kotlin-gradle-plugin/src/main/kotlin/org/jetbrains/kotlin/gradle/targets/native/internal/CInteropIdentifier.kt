@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.gradle.api.tasks.Input
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
 import org.jetbrains.kotlin.gradle.utils.UnsafeApi
 import java.io.Serializable
 
@@ -20,7 +20,7 @@ internal data class CInteropIdentifier internal constructor(
     class Scope @UnsafeApi internal constructor(val name: String) : Serializable {
         companion object {
             @OptIn(UnsafeApi::class)
-            fun create(compilation: KotlinCompilation<*>): Scope {
+            fun create(compilation: KotlinCompilationData<*>): Scope {
                 return Scope("compilation/${compilation.compileKotlinTaskName}")
             }
         }
