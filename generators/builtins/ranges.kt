@@ -58,6 +58,11 @@ public class $range(start: $t, endInclusive: $t) : ${t}Progression(start, endInc
 
     override fun contains(value: $t): Boolean = first <= value && value <= last
 
+    /** 
+     * Checks whether the range is empty.
+     
+     * The range is empty if its start value is greater than the end value.
+     */
     override fun isEmpty(): Boolean = first > last
 
     override fun equals(other: Any?): Boolean =
