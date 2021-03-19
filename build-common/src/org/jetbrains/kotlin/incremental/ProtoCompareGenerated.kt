@@ -182,6 +182,21 @@ open class ProtoCompareGenerated(
 
         if (!checkEqualsClassSealedSubclassFqName(old, new)) return false
 
+        if (old.hasInlineClassUnderlyingPropertyName() != new.hasInlineClassUnderlyingPropertyName()) return false
+        if (old.hasInlineClassUnderlyingPropertyName()) {
+            if (!checkStringEquals(old.inlineClassUnderlyingPropertyName, new.inlineClassUnderlyingPropertyName)) return false
+        }
+
+        if (old.hasInlineClassUnderlyingType() != new.hasInlineClassUnderlyingType()) return false
+        if (old.hasInlineClassUnderlyingType()) {
+            if (!checkEquals(old.inlineClassUnderlyingType, new.inlineClassUnderlyingType)) return false
+        }
+
+        if (old.hasInlineClassUnderlyingTypeId() != new.hasInlineClassUnderlyingTypeId()) return false
+        if (old.hasInlineClassUnderlyingTypeId()) {
+            if (!checkEquals(oldTypeTable.getType(old.inlineClassUnderlyingTypeId), newTypeTable.getType(new.inlineClassUnderlyingTypeId))) return false
+        }
+
         if (!checkEqualsClassVersionRequirement(old, new)) return false
 
         if (old.hasVersionRequirementTable() != new.hasVersionRequirementTable()) return false
@@ -266,6 +281,9 @@ open class ProtoCompareGenerated(
         TYPE_ALIAS_LIST,
         ENUM_ENTRY_LIST,
         SEALED_SUBCLASS_FQ_NAME_LIST,
+        INLINE_CLASS_UNDERLYING_PROPERTY_NAME,
+        INLINE_CLASS_UNDERLYING_TYPE,
+        INLINE_CLASS_UNDERLYING_TYPE_ID,
         VERSION_REQUIREMENT_LIST,
         VERSION_REQUIREMENT_TABLE,
         JVM_EXT_CLASS_MODULE_NAME,
@@ -313,6 +331,21 @@ open class ProtoCompareGenerated(
         if (!checkEqualsClassEnumEntry(old, new)) result.add(ProtoBufClassKind.ENUM_ENTRY_LIST)
 
         if (!checkEqualsClassSealedSubclassFqName(old, new)) result.add(ProtoBufClassKind.SEALED_SUBCLASS_FQ_NAME_LIST)
+
+        if (old.hasInlineClassUnderlyingPropertyName() != new.hasInlineClassUnderlyingPropertyName()) result.add(ProtoBufClassKind.INLINE_CLASS_UNDERLYING_PROPERTY_NAME)
+        if (old.hasInlineClassUnderlyingPropertyName()) {
+            if (!checkStringEquals(old.inlineClassUnderlyingPropertyName, new.inlineClassUnderlyingPropertyName)) result.add(ProtoBufClassKind.INLINE_CLASS_UNDERLYING_PROPERTY_NAME)
+        }
+
+        if (old.hasInlineClassUnderlyingType() != new.hasInlineClassUnderlyingType()) result.add(ProtoBufClassKind.INLINE_CLASS_UNDERLYING_TYPE)
+        if (old.hasInlineClassUnderlyingType()) {
+            if (!checkEquals(old.inlineClassUnderlyingType, new.inlineClassUnderlyingType)) result.add(ProtoBufClassKind.INLINE_CLASS_UNDERLYING_TYPE)
+        }
+
+        if (old.hasInlineClassUnderlyingTypeId() != new.hasInlineClassUnderlyingTypeId()) result.add(ProtoBufClassKind.INLINE_CLASS_UNDERLYING_TYPE_ID)
+        if (old.hasInlineClassUnderlyingTypeId()) {
+            if (!checkEquals(oldTypeTable.getType(old.inlineClassUnderlyingTypeId), newTypeTable.getType(new.inlineClassUnderlyingTypeId))) result.add(ProtoBufClassKind.INLINE_CLASS_UNDERLYING_TYPE_ID)
+        }
 
         if (!checkEqualsClassVersionRequirement(old, new)) result.add(ProtoBufClassKind.VERSION_REQUIREMENT_LIST)
 
@@ -1726,6 +1759,18 @@ fun ProtoBuf.Class.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) ->
 
     for(i in 0..sealedSubclassFqNameCount - 1) {
         hashCode = 31 * hashCode + fqNameIndexes(getSealedSubclassFqName(i))
+    }
+
+    if (hasInlineClassUnderlyingPropertyName()) {
+        hashCode = 31 * hashCode + stringIndexes(inlineClassUnderlyingPropertyName)
+    }
+
+    if (hasInlineClassUnderlyingType()) {
+        hashCode = 31 * hashCode + inlineClassUnderlyingType.hashCode(stringIndexes, fqNameIndexes, typeById)
+    }
+
+    if (hasInlineClassUnderlyingTypeId()) {
+        hashCode = 31 * hashCode + typeById(inlineClassUnderlyingTypeId).hashCode(stringIndexes, fqNameIndexes, typeById)
     }
 
     for(i in 0..versionRequirementCount - 1) {

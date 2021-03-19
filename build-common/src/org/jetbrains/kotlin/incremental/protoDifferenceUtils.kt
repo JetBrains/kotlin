@@ -290,6 +290,11 @@ class DifferenceCalculatorForClass(
                     isClassAffected = true
                     areSubclassesAffected = true
                 }
+                ProtoBufClassKind.INLINE_CLASS_UNDERLYING_PROPERTY_NAME,
+                ProtoBufClassKind.INLINE_CLASS_UNDERLYING_TYPE,
+                ProtoBufClassKind.INLINE_CLASS_UNDERLYING_TYPE_ID -> {
+                    isClassAffected = true
+                }
             }
         }
 
