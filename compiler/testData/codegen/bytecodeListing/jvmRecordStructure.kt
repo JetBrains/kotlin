@@ -4,6 +4,8 @@
 // ENABLE_JVM_PREVIEW
 // WITH_RUNTIME
 // JDK_15
+
+// D8 does not yet desugar java records.
 // IGNORE_DEXING
 
 interface KI<T> {
