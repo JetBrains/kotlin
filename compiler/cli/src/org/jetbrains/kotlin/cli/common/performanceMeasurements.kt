@@ -21,7 +21,7 @@ class CodeAnalysisMeasurement(private val lines: Int?, val milliseconds: Long) :
     override fun render(): String = formatMeasurement("ANALYZE", milliseconds, lines)
 }
 
-class CodeGenerationMeasurement(private val lines: Int?, private val milliseconds: Long) : PerformanceMeasurement {
+class CodeGenerationMeasurement(private val lines: Int?, val milliseconds: Long) : PerformanceMeasurement {
     override fun render(): String = formatMeasurement("GENERATE", milliseconds, lines)
 }
 
