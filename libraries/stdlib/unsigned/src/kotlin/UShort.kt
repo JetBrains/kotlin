@@ -10,8 +10,8 @@ package kotlin
 import kotlin.experimental.*
 import kotlin.jvm.*
 
-@SinceKotlin("1.3")
-@ExperimentalUnsignedTypes
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalUnsignedTypes::class)
 @JvmInline
 public value class UShort @PublishedApi internal constructor(@PublishedApi internal val data: Short) : Comparable<UShort> {
 
@@ -344,8 +344,8 @@ public value class UShort @PublishedApi internal constructor(@PublishedApi inter
  * The least significant 8 bits of the resulting `UShort` value are the same as the bits of this `Byte` value,
  * whereas the most significant 8 bits are filled with the sign bit of this value.
  */
-@SinceKotlin("1.3")
-@ExperimentalUnsignedTypes
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun Byte.toUShort(): UShort = UShort(this.toShort())
 /**
@@ -355,8 +355,8 @@ public inline fun Byte.toUShort(): UShort = UShort(this.toShort())
  *
  * The resulting `UShort` value has the same binary representation as this `Short` value.
  */
-@SinceKotlin("1.3")
-@ExperimentalUnsignedTypes
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun Short.toUShort(): UShort = UShort(this)
 /**
@@ -367,8 +367,8 @@ public inline fun Short.toUShort(): UShort = UShort(this)
  *
  * The resulting `UShort` value is represented by the least significant 16 bits of this `Int` value.
  */
-@SinceKotlin("1.3")
-@ExperimentalUnsignedTypes
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun Int.toUShort(): UShort = UShort(this.toShort())
 /**
@@ -379,7 +379,7 @@ public inline fun Int.toUShort(): UShort = UShort(this.toShort())
  *
  * The resulting `UShort` value is represented by the least significant 16 bits of this `Long` value.
  */
-@SinceKotlin("1.3")
-@ExperimentalUnsignedTypes
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun Long.toUShort(): UShort = UShort(this.toShort())

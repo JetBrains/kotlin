@@ -10,8 +10,8 @@ package kotlin
 import kotlin.experimental.*
 import kotlin.jvm.*
 
-@SinceKotlin("1.3")
-@ExperimentalUnsignedTypes
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalUnsignedTypes::class)
 @JvmInline
 public value class UInt @PublishedApi internal constructor(@PublishedApi internal val data: Int) : Comparable<UInt> {
 
@@ -365,8 +365,8 @@ public value class UInt @PublishedApi internal constructor(@PublishedApi interna
  * The least significant 8 bits of the resulting `UInt` value are the same as the bits of this `Byte` value,
  * whereas the most significant 24 bits are filled with the sign bit of this value.
  */
-@SinceKotlin("1.3")
-@ExperimentalUnsignedTypes
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun Byte.toUInt(): UInt = UInt(this.toInt())
 /**
@@ -377,8 +377,8 @@ public inline fun Byte.toUInt(): UInt = UInt(this.toInt())
  * The least significant 16 bits of the resulting `UInt` value are the same as the bits of this `Short` value,
  * whereas the most significant 16 bits are filled with the sign bit of this value.
  */
-@SinceKotlin("1.3")
-@ExperimentalUnsignedTypes
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun Short.toUInt(): UInt = UInt(this.toInt())
 /**
@@ -388,8 +388,8 @@ public inline fun Short.toUInt(): UInt = UInt(this.toInt())
  *
  * The resulting `UInt` value has the same binary representation as this `Int` value.
  */
-@SinceKotlin("1.3")
-@ExperimentalUnsignedTypes
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun Int.toUInt(): UInt = UInt(this)
 /**
@@ -400,8 +400,8 @@ public inline fun Int.toUInt(): UInt = UInt(this)
  *
  * The resulting `UInt` value is represented by the least significant 32 bits of this `Long` value.
  */
-@SinceKotlin("1.3")
-@ExperimentalUnsignedTypes
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun Long.toUInt(): UInt = UInt(this.toInt())
 
@@ -411,8 +411,8 @@ public inline fun Long.toUInt(): UInt = UInt(this.toInt())
  * The fractional part, if any, is rounded down towards zero.
  * Returns zero if this `Float` value is negative or `NaN`, [UInt.MAX_VALUE] if it's bigger than `UInt.MAX_VALUE`.
  */
-@SinceKotlin("1.3")
-@ExperimentalUnsignedTypes
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun Float.toUInt(): UInt = doubleToUInt(this.toDouble())
 /**
@@ -421,7 +421,7 @@ public inline fun Float.toUInt(): UInt = doubleToUInt(this.toDouble())
  * The fractional part, if any, is rounded down towards zero.
  * Returns zero if this `Double` value is negative or `NaN`, [UInt.MAX_VALUE] if it's bigger than `UInt.MAX_VALUE`.
  */
-@SinceKotlin("1.3")
-@ExperimentalUnsignedTypes
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun Double.toUInt(): UInt = doubleToUInt(this)

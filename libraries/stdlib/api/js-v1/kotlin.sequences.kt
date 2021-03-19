@@ -532,23 +532,23 @@ public fun kotlin.sequences.Sequence<kotlin.Long>.sum(): kotlin.Long
 public fun kotlin.sequences.Sequence<kotlin.Short>.sum(): kotlin.Int
 
 @kotlin.jvm.JvmName(name = "sumOfUByte")
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.sequences.Sequence<kotlin.UByte>.sum(): kotlin.UInt
 
 @kotlin.jvm.JvmName(name = "sumOfUInt")
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.sequences.Sequence<kotlin.UInt>.sum(): kotlin.UInt
 
 @kotlin.jvm.JvmName(name = "sumOfULong")
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.sequences.Sequence<kotlin.ULong>.sum(): kotlin.ULong
 
 @kotlin.jvm.JvmName(name = "sumOfUShort")
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.sequences.Sequence<kotlin.UShort>.sum(): kotlin.UInt
 
 public inline fun <T> kotlin.sequences.Sequence<T>.sumBy(selector: (T) -> kotlin.Int): kotlin.Int
@@ -573,17 +573,17 @@ public inline fun <T> kotlin.sequences.Sequence<T>.sumOf(selector: (T) -> kotlin
 @kotlin.internal.InlineOnly
 public inline fun <T> kotlin.sequences.Sequence<T>.sumOf(selector: (T) -> kotlin.Long): kotlin.Long
 
-@kotlin.SinceKotlin(version = "1.4")
+@kotlin.SinceKotlin(version = "1.5")
 @kotlin.OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName(name = "sumOfUInt")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun <T> kotlin.sequences.Sequence<T>.sumOf(selector: (T) -> kotlin.UInt): kotlin.UInt
 
-@kotlin.SinceKotlin(version = "1.4")
+@kotlin.SinceKotlin(version = "1.5")
 @kotlin.OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName(name = "sumOfULong")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun <T> kotlin.sequences.Sequence<T>.sumOf(selector: (T) -> kotlin.ULong): kotlin.ULong
 

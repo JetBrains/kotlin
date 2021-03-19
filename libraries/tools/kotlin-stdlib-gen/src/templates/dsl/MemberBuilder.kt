@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -68,6 +68,7 @@ class MemberBuilder(
     var body: String? = null; private set
     val annotations: MutableSet<String> = mutableSetOf()
     val suppressions: MutableList<String> = mutableListOf()
+    val wasExperimentalAnnotations: MutableSet<String> = mutableSetOf()
 
     fun sourceFile(file: SourceFile) { sourceFile = file }
 
@@ -121,6 +122,10 @@ class MemberBuilder(
 
     fun suppress(diagnostic: String) {
         suppressions += diagnostic
+    }
+
+    fun wasExperimental(annotation: String) {
+        wasExperimentalAnnotations += annotation
     }
 
     fun sequenceClassification(vararg sequenceClass: SequenceClass) {
@@ -348,6 +353,9 @@ class MemberBuilder(
             builder.append("@SinceKotlin(\"$since\")\n")
         }
 
+        if (wasExperimentalAnnotations.isNotEmpty()) {
+            annotation("@WasExperimental(${wasExperimentalAnnotations.joinToString(", ") { "$it::class" }})")
+        }
         annotations.forEach { builder.append(it.trimIndent()).append('\n') }
 
         when (inline) {

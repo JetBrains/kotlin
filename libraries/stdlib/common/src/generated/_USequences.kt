@@ -21,8 +21,8 @@ import kotlin.random.*
  * The operation is _terminal_.
  */
 @kotlin.jvm.JvmName("sumOfUInt")
-@SinceKotlin("1.3")
-@ExperimentalUnsignedTypes
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun Sequence<UInt>.sum(): UInt {
     var sum: UInt = 0u
     for (element in this) {
@@ -37,8 +37,8 @@ public fun Sequence<UInt>.sum(): UInt {
  * The operation is _terminal_.
  */
 @kotlin.jvm.JvmName("sumOfULong")
-@SinceKotlin("1.3")
-@ExperimentalUnsignedTypes
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun Sequence<ULong>.sum(): ULong {
     var sum: ULong = 0uL
     for (element in this) {
@@ -53,8 +53,8 @@ public fun Sequence<ULong>.sum(): ULong {
  * The operation is _terminal_.
  */
 @kotlin.jvm.JvmName("sumOfUByte")
-@SinceKotlin("1.3")
-@ExperimentalUnsignedTypes
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun Sequence<UByte>.sum(): UInt {
     var sum: UInt = 0u
     for (element in this) {
@@ -69,8 +69,8 @@ public fun Sequence<UByte>.sum(): UInt {
  * The operation is _terminal_.
  */
 @kotlin.jvm.JvmName("sumOfUShort")
-@SinceKotlin("1.3")
-@ExperimentalUnsignedTypes
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun Sequence<UShort>.sum(): UInt {
     var sum: UInt = 0u
     for (element in this) {

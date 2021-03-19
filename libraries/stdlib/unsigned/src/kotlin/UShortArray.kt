@@ -41,8 +41,9 @@ internal constructor(@PublishedApi internal val storage: ShortArray) : Collectio
     public override val size: Int get() = storage.size
 
     /** Creates an iterator over the elements of the array. */
-    public override operator fun iterator(): UShortIterator = Iterator(storage)
+    public override operator fun iterator(): kotlin.collections.Iterator<UShort> = Iterator(storage)
 
+    @Suppress("DEPRECATION_ERROR")
     private class Iterator(private val array: ShortArray) : UShortIterator() {
         private var index = 0
         override fun hasNext() = index < array.size

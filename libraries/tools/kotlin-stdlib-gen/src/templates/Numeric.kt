@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -51,8 +51,8 @@ object Numeric : TemplateGroupBase() {
                 specialFor(Sequences) { sourceFile(SourceFile.USequences) }
                 specialFor(ArraysOfObjects) { sourceFile(SourceFile.UArrays) }
 
-                since("1.3")
-                annotation("@ExperimentalUnsignedTypes")
+                since("1.5")
+                wasExperimental("ExperimentalUnsignedTypes")
             }
 
             body {

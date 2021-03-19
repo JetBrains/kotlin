@@ -10,8 +10,8 @@ package kotlin
 import kotlin.experimental.*
 import kotlin.jvm.*
 
-@SinceKotlin("1.3")
-@ExperimentalUnsignedTypes
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalUnsignedTypes::class)
 @JvmInline
 public value class UByte @PublishedApi internal constructor(@PublishedApi internal val data: Byte) : Comparable<UByte> {
 
@@ -342,8 +342,8 @@ public value class UByte @PublishedApi internal constructor(@PublishedApi intern
  *
  * The resulting `UByte` value has the same binary representation as this `Byte` value.
  */
-@SinceKotlin("1.3")
-@ExperimentalUnsignedTypes
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun Byte.toUByte(): UByte = UByte(this)
 /**
@@ -354,8 +354,8 @@ public inline fun Byte.toUByte(): UByte = UByte(this)
  *
  * The resulting `UByte` value is represented by the least significant 8 bits of this `Short` value.
  */
-@SinceKotlin("1.3")
-@ExperimentalUnsignedTypes
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun Short.toUByte(): UByte = UByte(this.toByte())
 /**
@@ -366,8 +366,8 @@ public inline fun Short.toUByte(): UByte = UByte(this.toByte())
  *
  * The resulting `UByte` value is represented by the least significant 8 bits of this `Int` value.
  */
-@SinceKotlin("1.3")
-@ExperimentalUnsignedTypes
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun Int.toUByte(): UByte = UByte(this.toByte())
 /**
@@ -378,7 +378,7 @@ public inline fun Int.toUByte(): UByte = UByte(this.toByte())
  *
  * The resulting `UByte` value is represented by the least significant 8 bits of this `Long` value.
  */
-@SinceKotlin("1.3")
-@ExperimentalUnsignedTypes
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun Long.toUByte(): UByte = UByte(this.toByte())
