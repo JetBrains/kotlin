@@ -12,8 +12,12 @@ import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.UnwrappedType
 
 interface InferenceSession {
+    val parentSession: InferenceSession?
+
     companion object {
         val default = object : InferenceSession {
+            override val parentSession: InferenceSession? = null
+
             override fun shouldRunCompletion(candidate: KotlinResolutionCandidate): Boolean = true
             override fun addPartialCallInfo(callInfo: PartialCallInfo) {}
             override fun addErrorCallInfo(callInfo: ErrorCallInfo) {}
