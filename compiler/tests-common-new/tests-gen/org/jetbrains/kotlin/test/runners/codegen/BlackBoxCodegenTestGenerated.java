@@ -23339,6 +23339,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("companionObjectProtected.kt")
+        public void testCompanionObjectProtected() throws Exception {
+            runTest("compiler/testData/codegen/box/jvmStatic/companionObjectProtected.kt");
+        }
+
+        @Test
         @TestMetadata("convention.kt")
         public void testConvention() throws Exception {
             runTest("compiler/testData/codegen/box/jvmStatic/convention.kt");

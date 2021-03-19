@@ -19686,6 +19686,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class JvmStatic extends AbstractLightAnalysisModeTest {
+        @TestMetadata("companionObjectProtected.kt")
+        public void ignoreCompanionObjectProtected() throws Exception {
+            runTest("compiler/testData/codegen/box/jvmStatic/companionObjectProtected.kt");
+        }
+
         @TestMetadata("extensionPropertyGetter.kt")
         public void ignoreExtensionPropertyGetter() throws Exception {
             runTest("compiler/testData/codegen/box/jvmStatic/extensionPropertyGetter.kt");
