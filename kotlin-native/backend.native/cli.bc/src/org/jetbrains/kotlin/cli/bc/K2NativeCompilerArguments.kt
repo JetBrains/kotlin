@@ -199,6 +199,9 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xprint-locations", deprecatedName = "--print_locations", description = "Print locations")
     var printLocations: Boolean = false
 
+    @Argument(value = "-Xprint-files", description = "Print files")
+    var printFiles: Boolean = false
+
     @Argument(value="-Xpurge-user-libs", deprecatedName = "--purge_user_libs", description = "Don't link unused libraries even explicitly specified")
     var purgeUserLibs: Boolean = false
 
