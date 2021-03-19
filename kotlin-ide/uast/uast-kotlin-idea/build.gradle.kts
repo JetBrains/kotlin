@@ -8,16 +8,16 @@ plugins {
 }
 
 dependencies {
-    jpsLikeCompileModule(":kotlin-ide:common")
-    jpsLikeCompileModule(":kotlin-ide:core")
-    jpsLikeCompileModule(":kotlin-ide:uast:uast-kotlin")
-    jpsLikeCompileJar(intellijDep(), { includeJars("platform-util-ex") })
-    jpsLikeCompileJar(intellijDep(), { includeJars("platform-impl") })
-    jpsLikeCompileJar(intellijDep(), { includeJars("resources_en") })
-    jpsLikeCompileJar(intellijDep(), { includeJars("intellij-core") })
-    jpsLikeCompileJar(intellijDep(), { includeJars("intellij-core-analysis-deprecated") })
-    jpsLikeCompileJar(intellijDep(), { includeJars("platform-api") })
-    jpsLikeCompileJar(intellijPluginDep("java"))
+    jpsLikeModuleDependency(":kotlin-ide:common", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:core", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:uast:uast-kotlin", JpsDepScope.COMPILE)
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("platform-util-ex") })
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("platform-impl") })
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("resources_en") })
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("intellij-core") })
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("intellij-core-analysis-deprecated") })
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("platform-api") })
+    jpsLikeJarDependency(intellijPluginDep("java"), JpsDepScope.COMPILE)
 }
 
 sourceSets {

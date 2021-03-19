@@ -8,19 +8,19 @@ plugins {
 }
 
 dependencies {
-    jpsLikeCompileJar("org.jetbrains.intellij.deps:asm-all:9.0")
-    jpsLikeCompileJar("one.util:streamex:0.7.2")
-    jpsLikeCompileModule(":kotlin-ide:common")
-    jpsLikeCompileModule(":kotlin-ide:core")
-    jpsLikeCompileModule(":kotlin-ide:frontend-independent")
-    jpsLikeCompileModule(":kotlin-ide:jvm-debugger:eval4j")
-    jpsLikeCompileModule(":kotlin-ide:jvm-debugger:util")
-    jpsLikeCompileJar(intellijDep(), { includeJars("platform-impl") })
-    jpsLikeCompileJar(intellijDep(), { includeJars("resources_en") })
-    jpsLikeCompileJar(intellijPluginDep("java"))
-    jpsLikeCompileJar(intellijDep(), { includeJars("intellij-core") })
-    jpsLikeCompileJar(intellijDep(), { includeJars("intellij-core-analysis-deprecated") })
-    jpsLikeCompileJar(intellijDep(), { includeJars("platform-core-ui") })
+    jpsLikeJarDependency("org.jetbrains.intellij.deps:asm-all:9.0", JpsDepScope.COMPILE)
+    jpsLikeJarDependency("one.util:streamex:0.7.2", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:common", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:core", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:frontend-independent", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:jvm-debugger:eval4j", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:jvm-debugger:util", JpsDepScope.COMPILE)
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("platform-impl") })
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("resources_en") })
+    jpsLikeJarDependency(intellijPluginDep("java"), JpsDepScope.COMPILE)
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("intellij-core") })
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("intellij-core-analysis-deprecated") })
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("platform-core-ui") })
 }
 
 sourceSets {

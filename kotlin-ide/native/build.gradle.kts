@@ -8,22 +8,22 @@ plugins {
 }
 
 dependencies {
-    jpsLikeCompileModule(":kotlin-ide:common")
-    jpsLikeCompileModule(":kotlin-ide:core")
-    jpsLikeCompileModule(":kotlin-ide:jvm")
-    jpsLikeCompileModule(":kotlin-ide:idea")
-    jpsLikeCompileModule(":kotlin-ide:jps:jps-common")
-    jpsLikeCompileModule(":kotlin-ide:frontend-independent")
-    jpsLikeCompileModule(":kotlin-ide:gradle:gradle-tooling")
-    jpsLikeTestModule(":kotlin-ide:tests-common")
-    jpsLikeCompileJar(intellijDep(), { includeJars("platform-impl") })
-    jpsLikeCompileJar(intellijDep(), { includeJars("resources_en") })
-    jpsLikeTestJar(intellijDep(), { includeJars("testFramework") })
-    jpsLikeCompileJar(intellijPluginDep("java"))
-    jpsLikeCompileJar(intellijDep(), { includeJars("intellij-core") })
-    jpsLikeCompileJar(intellijDep(), { includeJars("intellij-core-analysis-deprecated") })
-    jpsLikeCompileJar(intellijPluginDep("gradle"))
-    jpsLikeTestModule(":kotlin-ide:resources-descriptors")
+    jpsLikeModuleDependency(":kotlin-ide:common", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:core", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:jvm", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:idea", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:jps:jps-common", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:frontend-independent", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:gradle:gradle-tooling", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:tests-common", JpsDepScope.TEST)
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("platform-impl") })
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("resources_en") })
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("testFramework") })
+    jpsLikeJarDependency(intellijPluginDep("java"), JpsDepScope.COMPILE)
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("intellij-core") })
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("intellij-core-analysis-deprecated") })
+    jpsLikeJarDependency(intellijPluginDep("gradle"), JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:resources-descriptors", JpsDepScope.TEST)
 }
 
 sourceSets {

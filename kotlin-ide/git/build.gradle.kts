@@ -8,14 +8,14 @@ plugins {
 }
 
 dependencies {
-    jpsLikeCompileModule(":kotlin-ide:idea")
-    jpsLikeCompileModule(":kotlin-ide:common")
-    jpsLikeCompileModule(":kotlin-ide:frontend-independent")
-    jpsLikeCompileJar(intellijPluginDep("git4idea"))
-    jpsLikeCompileJar(intellijDep(), { includeJars("platform-api") })
-    jpsLikeCompileJar(intellijDep(), { includeJars("resources_en") })
-    jpsLikeCompileJar(intellijDep(), { includeJars("intellij-core") })
-    jpsLikeCompileJar(intellijDep(), { includeJars("intellij-core-analysis-deprecated") })
+    jpsLikeModuleDependency(":kotlin-ide:idea", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:common", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:frontend-independent", JpsDepScope.COMPILE)
+    jpsLikeJarDependency(intellijPluginDep("git4idea"), JpsDepScope.COMPILE)
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("platform-api") })
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("resources_en") })
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("intellij-core") })
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("intellij-core-analysis-deprecated") })
 }
 
 sourceSets {

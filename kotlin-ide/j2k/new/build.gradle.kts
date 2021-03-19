@@ -8,17 +8,17 @@ plugins {
 }
 
 dependencies {
-    jpsLikeCompileModule(":kotlin-ide:common")
-    jpsLikeCompileModule(":kotlin-ide:core")
-    jpsLikeCompileModule(":kotlin-ide:frontend-independent")
-    jpsLikeTestModule(":kotlin-ide:idea")
-    jpsLikeCompileModule(":kotlin-ide:j2k:old")
-    jpsLikeTestModule(":kotlin-ide:j2k:idea")
-    jpsLikeTestModule(":kotlin-ide:j2k:services")
-    jpsLikeTestModule(":kotlin-ide:tests-common")
-    jpsLikeTestModule(":kotlin-ide:test-framework")
-    jpsLikeCompileJar(intellijPluginDep("java"))
-    jpsLikeTestModule(":kotlin-ide:resources-descriptors")
+    jpsLikeModuleDependency(":kotlin-ide:common", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:core", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:frontend-independent", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:idea", JpsDepScope.TEST)
+    jpsLikeModuleDependency(":kotlin-ide:j2k:old", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:j2k:idea", JpsDepScope.TEST)
+    jpsLikeModuleDependency(":kotlin-ide:j2k:services", JpsDepScope.TEST)
+    jpsLikeModuleDependency(":kotlin-ide:tests-common", JpsDepScope.TEST)
+    jpsLikeModuleDependency(":kotlin-ide:test-framework", JpsDepScope.TEST)
+    jpsLikeJarDependency(intellijPluginDep("java"), JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:resources-descriptors", JpsDepScope.TEST)
 }
 
 sourceSets {

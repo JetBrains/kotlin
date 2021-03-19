@@ -8,18 +8,18 @@ plugins {
 }
 
 dependencies {
-    jpsLikeCompileModule(":kotlin-ide:core")
-    jpsLikeCompileModule(":kotlin-ide:common")
-    jpsLikeCompileModule(":kotlin-ide:maven")
-    jpsLikeCompileModule(":kotlin-ide:gradle:gradle-idea")
-    jpsLikeCompileModule(":kotlin-ide:gradle:gradle-tooling")
-    jpsLikeCompileModule(":kotlin-ide:compiler-plugins:annotation-based-compiler-support")
-    jpsLikeCompileJar(intellijDep(), { includeJars("platform-api") })
-    jpsLikeCompileJar(intellijDep(), { includeJars("resources_en") })
-    jpsLikeCompileJar(intellijDep(), { includeJars("intellij-core") })
-    jpsLikeCompileJar(intellijDep(), { includeJars("intellij-core-analysis-deprecated") })
-    jpsLikeCompileJar(intellijPluginDep("gradle"))
-    jpsLikeCompileModule(":kotlin-ide:frontend-independent")
+    jpsLikeModuleDependency(":kotlin-ide:core", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:common", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:maven", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:gradle:gradle-idea", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:gradle:gradle-tooling", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:compiler-plugins:annotation-based-compiler-support", JpsDepScope.COMPILE)
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("platform-api") })
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("resources_en") })
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("intellij-core") })
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("intellij-core-analysis-deprecated") })
+    jpsLikeJarDependency(intellijPluginDep("gradle"), JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:frontend-independent", JpsDepScope.COMPILE)
 }
 
 sourceSets {

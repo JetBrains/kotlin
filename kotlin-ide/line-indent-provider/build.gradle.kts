@@ -8,8 +8,8 @@ plugins {
 }
 
 dependencies {
-    jpsLikeCompileJar(intellijDep(), { includeJars("platform-impl") })
-    jpsLikeCompileJar(intellijDep(), { includeJars("resources_en") })
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("platform-impl") })
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("resources_en") })
 }
 
 sourceSets {

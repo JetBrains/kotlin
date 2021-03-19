@@ -8,17 +8,17 @@ plugins {
 }
 
 dependencies {
-    jpsLikeCompileJar("log4j:log4j:1.2.17")
-    jpsLikeCompileJar("org.jetbrains.intellij.deps:asm-all:9.0")
-    jpsLikeCompileModule(":kotlin-ide:common")
-    jpsLikeCompileModule(":kotlin-ide:core")
-    jpsLikeCompileModule(":kotlin-ide:frontend-independent")
-    jpsLikeCompileModule(":kotlin-ide:jvm-debugger:eval4j")
-    jpsLikeCompileJar(intellijDep(), { includeJars("platform-impl") })
-    jpsLikeCompileJar(intellijDep(), { includeJars("resources_en") })
-    jpsLikeCompileJar(intellijDep(), { includeJars("intellij-core") })
-    jpsLikeCompileJar(intellijDep(), { includeJars("intellij-core-analysis-deprecated") })
-    jpsLikeCompileJar(intellijPluginDep("java"))
+    jpsLikeJarDependency("log4j:log4j:1.2.17", JpsDepScope.COMPILE)
+    jpsLikeJarDependency("org.jetbrains.intellij.deps:asm-all:9.0", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:common", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:core", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:frontend-independent", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:jvm-debugger:eval4j", JpsDepScope.COMPILE)
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("platform-impl") })
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("resources_en") })
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("intellij-core") })
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("intellij-core-analysis-deprecated") })
+    jpsLikeJarDependency(intellijPluginDep("java"), JpsDepScope.COMPILE)
 }
 
 sourceSets {

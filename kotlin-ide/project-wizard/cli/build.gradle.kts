@@ -8,11 +8,11 @@ plugins {
 }
 
 dependencies {
-    jpsLikeCompileJar("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:0.3.1")
-    jpsLikeCompileJar("org.yaml:snakeyaml:1.24")
-    jpsLikeCompileModule(":kotlin-ide:project-wizard:core")
-    jpsLikeTestModule(":kotlin-ide:tests-common")
-    jpsLikeTestJar(intellijDep(), { includeJars("testFramework") })
+    jpsLikeJarDependency("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:0.3.1", JpsDepScope.COMPILE)
+    jpsLikeJarDependency("org.yaml:snakeyaml:1.24", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:project-wizard:core", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:tests-common", JpsDepScope.TEST)
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("testFramework") })
 }
 
 sourceSets {

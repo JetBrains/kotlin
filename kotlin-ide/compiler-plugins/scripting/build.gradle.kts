@@ -8,12 +8,12 @@ plugins {
 }
 
 dependencies {
-    jpsLikeCompileModule(":kotlin-ide:core")
-    jpsLikeCompileModule(":kotlin-ide:jps:jps-common")
-    jpsLikeCompileModule(":kotlin-ide:gradle:gradle-idea")
-    jpsLikeCompileJar(intellijDep(), { includeJars("platform-api") })
-    jpsLikeCompileJar(intellijDep(), { includeJars("resources_en") })
-    jpsLikeCompileJar(intellijPluginDep("gradle"))
+    jpsLikeModuleDependency(":kotlin-ide:core", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:jps:jps-common", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:gradle:gradle-idea", JpsDepScope.COMPILE)
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("platform-api") })
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("resources_en") })
+    jpsLikeJarDependency(intellijPluginDep("gradle"), JpsDepScope.COMPILE)
 }
 
 sourceSets {

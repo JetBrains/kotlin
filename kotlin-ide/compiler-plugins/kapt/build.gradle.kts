@@ -8,15 +8,15 @@ plugins {
 }
 
 dependencies {
-    jpsLikeCompileModule(":kotlin-ide:core")
-    jpsLikeCompileModule(":kotlin-ide:jps:jps-common")
-    jpsLikeCompileModule(":kotlin-ide:idea")
-    jpsLikeCompileModule(":kotlin-ide:gradle:gradle-idea")
-    jpsLikeCompileModule(":kotlin-ide:gradle:gradle-tooling")
-    jpsLikeCompileJar(intellijDep(), { includeJars("platform-api") })
-    jpsLikeCompileJar(intellijDep(), { includeJars("resources_en") })
-    jpsLikeCompileJar(intellijPluginDep("gradle"))
-    jpsLikeCompileModule(":kotlin-ide:frontend-independent")
+    jpsLikeModuleDependency(":kotlin-ide:core", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:jps:jps-common", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:idea", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:gradle:gradle-idea", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:gradle:gradle-tooling", JpsDepScope.COMPILE)
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("platform-api") })
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("resources_en") })
+    jpsLikeJarDependency(intellijPluginDep("gradle"), JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:frontend-independent", JpsDepScope.COMPILE)
 }
 
 sourceSets {

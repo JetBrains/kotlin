@@ -8,15 +8,15 @@ plugins {
 }
 
 dependencies {
-    jpsLikeCompileJar("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:0.3.1")
-    jpsLikeCompileJar("org.apache.velocity:velocity:1.7")
-    jpsLikeCompileJar("com.google.code.gson:gson:2.8.6")
-    jpsLikeTestJar("junit:junit:4.12")
-    jpsLikeTestJar("org.jetbrains.kotlin:kotlin-test-junit:1.3.70")
-    jpsLikeTestJar("org.jetbrains.kotlin:kotlin-test:1.4.0")
-    jpsLikeCompileJar(intellijDep(), { includeJars("util") })
-    jpsLikeCompileJar(intellijDep(), { includeJars("intellij-core") })
-    jpsLikeCompileJar(intellijDep(), { includeJars("intellij-core-analysis-deprecated") })
+    jpsLikeJarDependency("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:0.3.1", JpsDepScope.COMPILE)
+    jpsLikeJarDependency("org.apache.velocity:velocity:1.7", JpsDepScope.COMPILE)
+    jpsLikeJarDependency("com.google.code.gson:gson:2.8.6", JpsDepScope.COMPILE)
+    jpsLikeJarDependency("junit:junit:4.12", JpsDepScope.TEST)
+    jpsLikeJarDependency("org.jetbrains.kotlin:kotlin-test-junit:1.3.70", JpsDepScope.TEST)
+    jpsLikeJarDependency("org.jetbrains.kotlin:kotlin-test:1.4.0", JpsDepScope.TEST)
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("util") })
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("intellij-core") })
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("intellij-core-analysis-deprecated") })
 }
 
 sourceSets {

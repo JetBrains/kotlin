@@ -8,19 +8,19 @@ plugins {
 }
 
 dependencies {
-    jpsLikeTestJar("junit:junit:4.12")
-    jpsLikeCompileModule(":kotlin-ide:common")
-    jpsLikeCompileModule(":kotlin-ide:core")
-    jpsLikeCompileModule(":kotlin-ide:frontend-independent")
-    jpsLikeCompileModule(":kotlin-ide:native")
-    jpsLikeCompileModule(":kotlin-ide:idea")
-    jpsLikeCompileModule(":kotlin-ide:jvm")
-    jpsLikeCompileModule(":kotlin-ide:gradle:gradle-idea")
-    jpsLikeCompileJar(intellijDep(), { includeJars("platform-api") })
-    jpsLikeCompileJar(intellijDep(), { includeJars("resources_en") })
-    jpsLikeCompileJar(intellijPluginDep("gradle-java"))
-    jpsLikeTestJar(intellijDep(), { includeJars("testFramework") })
-    jpsLikeTestModule(":kotlin-ide:resources-descriptors")
+    jpsLikeJarDependency("junit:junit:4.12", JpsDepScope.TEST)
+    jpsLikeModuleDependency(":kotlin-ide:common", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:core", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:frontend-independent", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:native", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:idea", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:jvm", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:gradle:gradle-idea", JpsDepScope.COMPILE)
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("platform-api") })
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("resources_en") })
+    jpsLikeJarDependency(intellijPluginDep("gradle-java"), JpsDepScope.COMPILE)
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("testFramework") })
+    jpsLikeModuleDependency(":kotlin-ide:resources-descriptors", JpsDepScope.TEST)
 }
 
 sourceSets {

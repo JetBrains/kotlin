@@ -8,11 +8,11 @@ plugins {
 }
 
 dependencies {
-    jpsLikeCompileJar("org.jetbrains.intellij.deps:asm-all:9.0")
-    jpsLikeTestJar("junit:junit:4.12")
-    jpsLikeCompileJar(intellijDep(), { includeJars("util") })
-    jpsLikeCompileJar(intellijDep(), { includeJars("intellij-core") })
-    jpsLikeCompileJar(intellijDep(), { includeJars("intellij-core-analysis-deprecated") })
+    jpsLikeJarDependency("org.jetbrains.intellij.deps:asm-all:9.0", JpsDepScope.COMPILE)
+    jpsLikeJarDependency("junit:junit:4.12", JpsDepScope.TEST)
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("util") })
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("intellij-core") })
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("intellij-core-analysis-deprecated") })
 }
 
 sourceSets {

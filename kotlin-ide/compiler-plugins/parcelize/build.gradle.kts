@@ -8,21 +8,21 @@ plugins {
 }
 
 dependencies {
-    jpsLikeTestModule(":kotlin-ide:tests-common")
-    jpsLikeTestModule(":kotlin-ide:test-framework")
-    jpsLikeCompileModule(":kotlin-ide:idea")
-    jpsLikeCompileModule(":kotlin-ide:core")
-    jpsLikeTestModule(":kotlin-ide:compiler-plugins:scripting")
-    jpsLikeCompileModule(":kotlin-ide:gradle:gradle-tooling")
-    jpsLikeCompileModule(":kotlin-ide:common")
-    jpsLikeCompileJar(intellijDep(), { includeJars("platform-api") })
-    jpsLikeCompileJar(intellijDep(), { includeJars("resources_en") })
-    jpsLikeCompileJar(intellijDep(), { includeJars("intellij-core") })
-    jpsLikeCompileJar(intellijDep(), { includeJars("intellij-core-analysis-deprecated") })
-    jpsLikeCompileJar(intellijPluginDep("gradle"))
-    jpsLikeCompileJar(intellijPluginDep("java"))
-    jpsLikeCompileJar(intellijDep(), { includeJars("platform-objectSerializer-annotations") })
-    jpsLikeCompileModule(":kotlin-ide:frontend-independent")
+    jpsLikeModuleDependency(":kotlin-ide:tests-common", JpsDepScope.TEST)
+    jpsLikeModuleDependency(":kotlin-ide:test-framework", JpsDepScope.TEST)
+    jpsLikeModuleDependency(":kotlin-ide:idea", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:core", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:compiler-plugins:scripting", JpsDepScope.TEST)
+    jpsLikeModuleDependency(":kotlin-ide:gradle:gradle-tooling", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:common", JpsDepScope.COMPILE)
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("platform-api") })
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("resources_en") })
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("intellij-core") })
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("intellij-core-analysis-deprecated") })
+    jpsLikeJarDependency(intellijPluginDep("gradle"), JpsDepScope.COMPILE)
+    jpsLikeJarDependency(intellijPluginDep("java"), JpsDepScope.COMPILE)
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("platform-objectSerializer-annotations") })
+    jpsLikeModuleDependency(":kotlin-ide:frontend-independent", JpsDepScope.COMPILE)
 }
 
 sourceSets {

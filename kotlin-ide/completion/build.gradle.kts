@@ -8,17 +8,17 @@ plugins {
 }
 
 dependencies {
-    jpsLikeCompileJar("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.3.9")
-    jpsLikeCompileJar("org.jetbrains.intellij.deps:trove4j:1.0.20200330")
-    jpsLikeCompileJar("org.jetbrains.intellij.deps.completion:completion-ranking-kotlin:0.1.2")
-    jpsLikeCompileModule(":kotlin-ide:common")
-    jpsLikeCompileModule(":kotlin-ide:core")
-    jpsLikeCompileModule(":kotlin-ide:formatter")
-    jpsLikeCompileModule(":kotlin-ide:idea")
-    jpsLikeTestModule(":kotlin-ide:tests-common")
-    jpsLikeTestModule(":kotlin-ide:test-framework")
-    jpsLikeCompileJar(intellijPluginDep("java"))
-    jpsLikeTestModule(":kotlin-ide:resources-descriptors")
+    jpsLikeJarDependency("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.3.9", JpsDepScope.COMPILE)
+    jpsLikeJarDependency("org.jetbrains.intellij.deps:trove4j:1.0.20200330", JpsDepScope.COMPILE)
+    jpsLikeJarDependency("org.jetbrains.intellij.deps.completion:completion-ranking-kotlin:0.1.2", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:common", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:core", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:formatter", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:idea", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:tests-common", JpsDepScope.TEST)
+    jpsLikeModuleDependency(":kotlin-ide:test-framework", JpsDepScope.TEST)
+    jpsLikeJarDependency(intellijPluginDep("java"), JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:resources-descriptors", JpsDepScope.TEST)
 }
 
 sourceSets {

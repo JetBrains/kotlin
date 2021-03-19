@@ -8,21 +8,21 @@ plugins {
 }
 
 dependencies {
-    jpsLikeTestJar("junit:junit:4.12")
-    jpsLikeTestModule(":kotlin-ide:common")
-    jpsLikeTestModule(":kotlin-ide:core")
-    jpsLikeTestModule(":kotlin-ide:frontend-independent")
-    jpsLikeTestModule(":kotlin-ide:idea")
-    jpsLikeTestModule(":kotlin-ide:jvm")
-    jpsLikeTestModule(":kotlin-ide:jvm-debugger:coroutines")
-    jpsLikeTestModule(":kotlin-ide:tests-common")
-    jpsLikeTestModule(":kotlin-ide:test-framework")
-    jpsLikeTestJar(intellijDep(), { includeJars("platform-api") })
-    jpsLikeTestJar(intellijDep(), { includeJars("resources_en") })
-    jpsLikeTestJar(intellijDep(), { includeJars("intellij-core-analysis-deprecated") })
-    jpsLikeTestJar(intellijDep(), { includeJars("intellij-dvcs") })
-    jpsLikeTestJar(intellijPluginDep("java"))
-    jpsLikeTestJar(intellijDep(), { includeJars("intellij-core") })
+    jpsLikeJarDependency("junit:junit:4.12", JpsDepScope.TEST)
+    jpsLikeModuleDependency(":kotlin-ide:common", JpsDepScope.TEST)
+    jpsLikeModuleDependency(":kotlin-ide:core", JpsDepScope.TEST)
+    jpsLikeModuleDependency(":kotlin-ide:frontend-independent", JpsDepScope.TEST)
+    jpsLikeModuleDependency(":kotlin-ide:idea", JpsDepScope.TEST)
+    jpsLikeModuleDependency(":kotlin-ide:jvm", JpsDepScope.TEST)
+    jpsLikeModuleDependency(":kotlin-ide:jvm-debugger:coroutines", JpsDepScope.TEST)
+    jpsLikeModuleDependency(":kotlin-ide:tests-common", JpsDepScope.TEST)
+    jpsLikeModuleDependency(":kotlin-ide:test-framework", JpsDepScope.TEST)
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("platform-api") })
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("resources_en") })
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("intellij-core-analysis-deprecated") })
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("intellij-dvcs") })
+    jpsLikeJarDependency(intellijPluginDep("java"), JpsDepScope.TEST)
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("intellij-core") })
 }
 
 sourceSets {

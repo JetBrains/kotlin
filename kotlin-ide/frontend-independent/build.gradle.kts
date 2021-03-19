@@ -8,16 +8,16 @@ plugins {
 }
 
 dependencies {
-    jpsLikeCompileJar("com.google.guava:guava:29.0-jre")
-    jpsLikeCompileJar(intellijDep(), { includeJars("platform-api") })
-    jpsLikeCompileJar(intellijDep(), { includeJars("resources_en") })
-    jpsLikeCompileJar(intellijDep(), { includeJars("platform-impl") })
-    jpsLikeCompileJar(intellijPluginDep("java"))
-    jpsLikeCompileJar(intellijDep(), { includeJars("intellij-core-analysis-deprecated") })
-    jpsLikeCompileJar(intellijDep(), { includeJars("intellij-xml") })
-    jpsLikeCompileJar(intellijDep(), { includeJars("platform-core-ui") })
-    jpsLikeCompileJar("org.jetbrains.kotlin:kotlin-reflect:1.4.0")
-    jpsLikeTestModule(":kotlin-ide:tests-common")
+    jpsLikeJarDependency("com.google.guava:guava:29.0-jre", JpsDepScope.COMPILE)
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("platform-api") })
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("resources_en") })
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("platform-impl") })
+    jpsLikeJarDependency(intellijPluginDep("java"), JpsDepScope.COMPILE)
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("intellij-core-analysis-deprecated") })
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("intellij-xml") })
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("platform-core-ui") })
+    jpsLikeJarDependency("org.jetbrains.kotlin:kotlin-reflect:1.4.0", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:tests-common", JpsDepScope.TEST)
 }
 
 sourceSets {

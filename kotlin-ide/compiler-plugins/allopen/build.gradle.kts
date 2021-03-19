@@ -8,21 +8,21 @@ plugins {
 }
 
 dependencies {
-    jpsLikeCompileModule(":kotlin-ide:common")
-    jpsLikeCompileModule(":kotlin-ide:maven")
-    jpsLikeCompileModule(":kotlin-ide:gradle:gradle-idea")
-    jpsLikeCompileModule(":kotlin-ide:gradle:gradle-tooling")
-    jpsLikeCompileModule(":kotlin-ide:compiler-plugins:annotation-based-compiler-support")
-    jpsLikeTestModule(":kotlin-ide:jps:jps-common")
-    jpsLikeTestModule(":kotlin-ide:tests-common")
-    jpsLikeTestModule(":kotlin-ide:test-framework")
-    jpsLikeCompileJar(intellijDep(), { includeJars("platform-impl") })
-    jpsLikeCompileJar(intellijDep(), { includeJars("resources_en") })
-    jpsLikeCompileJar(intellijDep(), { includeJars("intellij-core") })
-    jpsLikeCompileJar(intellijDep(), { includeJars("intellij-core-analysis-deprecated") })
-    jpsLikeCompileJar(intellijPluginDep("java"))
-    jpsLikeCompileJar(intellijPluginDep("gradle"))
-    jpsLikeCompileModule(":kotlin-ide:frontend-independent")
+    jpsLikeModuleDependency(":kotlin-ide:common", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:maven", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:gradle:gradle-idea", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:gradle:gradle-tooling", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:compiler-plugins:annotation-based-compiler-support", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:jps:jps-common", JpsDepScope.TEST)
+    jpsLikeModuleDependency(":kotlin-ide:tests-common", JpsDepScope.TEST)
+    jpsLikeModuleDependency(":kotlin-ide:test-framework", JpsDepScope.TEST)
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("platform-impl") })
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("resources_en") })
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("intellij-core") })
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("intellij-core-analysis-deprecated") })
+    jpsLikeJarDependency(intellijPluginDep("java"), JpsDepScope.COMPILE)
+    jpsLikeJarDependency(intellijPluginDep("gradle"), JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:frontend-independent", JpsDepScope.COMPILE)
 }
 
 sourceSets {

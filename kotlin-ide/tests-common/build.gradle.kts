@@ -8,19 +8,19 @@ plugins {
 }
 
 dependencies {
-    jpsLikeTestJar("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.0")
-    jpsLikeTestJar("com.google.guava:guava:29.0-jre")
-    jpsLikeTestJar("org.jetbrains.intellij.deps:trove4j:1.0.20200330")
-    jpsLikeTestJar("org.jetbrains.kotlin:kotlin-test:1.4.0")
-    jpsLikeTestModule(":kotlin-ide:common")
-    jpsLikeTestModule(":kotlin-ide:test-framework")
-    jpsLikeTestJar(intellijDep(), { includeJars("util") })
-    jpsLikeTestJar(intellijDep(), { includeJars("intellij-core") })
-    jpsLikeTestJar(intellijDep(), { includeJars("intellij-core-analysis-deprecated") })
-    jpsLikeTestJar(intellijDep(), { includeJars("platform-api") })
-    jpsLikeTestJar(intellijDep(), { includeJars("resources_en") })
-    jpsLikeTestJar(intellijDep(), { includeJars("bootstrap") })
-    jpsLikeTestJar(intellijPluginDep("java"))
+    jpsLikeJarDependency("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.0", JpsDepScope.TEST)
+    jpsLikeJarDependency("com.google.guava:guava:29.0-jre", JpsDepScope.TEST)
+    jpsLikeJarDependency("org.jetbrains.intellij.deps:trove4j:1.0.20200330", JpsDepScope.TEST)
+    jpsLikeJarDependency("org.jetbrains.kotlin:kotlin-test:1.4.0", JpsDepScope.TEST)
+    jpsLikeModuleDependency(":kotlin-ide:common", JpsDepScope.TEST)
+    jpsLikeModuleDependency(":kotlin-ide:test-framework", JpsDepScope.TEST)
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("util") })
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("intellij-core") })
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("intellij-core-analysis-deprecated") })
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("platform-api") })
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("resources_en") })
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("bootstrap") })
+    jpsLikeJarDependency(intellijPluginDep("java"), JpsDepScope.TEST)
 }
 
 sourceSets {

@@ -8,22 +8,22 @@ plugins {
 }
 
 dependencies {
-    jpsLikeTestJar("org.jetbrains.kotlin:kotlin-test:1.4.0")
-    jpsLikeCompileJar("org.jetbrains.intellij.deps:trove4j:1.0.20200330")
-    jpsLikeCompileJar("log4j:log4j:1.2.17")
-    jpsLikeTestJar("com.google.guava:guava:29.0-jre")
-    jpsLikeCompileModule(":kotlin-ide:jps:jps-common")
-    jpsLikeCompileModule(":kotlin-ide:common")
-    jpsLikeTestModule(":kotlin-ide:tests-common")
-    jpsLikeTestModule(":kotlin-ide:test-framework")
-    jpsLikeCompileJar(intellijDep(), { includeJars("platform-api") })
-    jpsLikeCompileJar(intellijDep(), { includeJars("resources_en") })
-    jpsLikeCompileJar(intellijDep(), { includeJars("intellij-core") })
-    jpsLikeCompileJar(intellijDep(), { includeJars("intellij-core-analysis-deprecated") })
-    jpsLikeCompileJar(intellijPluginDep("java"))
-    jpsLikeCompileJar(intellijDep(), { includeJars("jps-model") })
-    jpsLikeTestJar(intellijPluginDep("devkit"))
-    jpsLikeTestModule(":kotlin-ide:resources-descriptors")
+    jpsLikeJarDependency("org.jetbrains.kotlin:kotlin-test:1.4.0", JpsDepScope.TEST)
+    jpsLikeJarDependency("org.jetbrains.intellij.deps:trove4j:1.0.20200330", JpsDepScope.COMPILE)
+    jpsLikeJarDependency("log4j:log4j:1.2.17", JpsDepScope.COMPILE)
+    jpsLikeJarDependency("com.google.guava:guava:29.0-jre", JpsDepScope.TEST)
+    jpsLikeModuleDependency(":kotlin-ide:jps:jps-common", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:common", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:tests-common", JpsDepScope.TEST)
+    jpsLikeModuleDependency(":kotlin-ide:test-framework", JpsDepScope.TEST)
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("platform-api") })
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("resources_en") })
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("intellij-core") })
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("intellij-core-analysis-deprecated") })
+    jpsLikeJarDependency(intellijPluginDep("java"), JpsDepScope.COMPILE)
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("jps-model") })
+    jpsLikeJarDependency(intellijPluginDep("devkit"), JpsDepScope.TEST)
+    jpsLikeModuleDependency(":kotlin-ide:resources-descriptors", JpsDepScope.TEST)
 }
 
 sourceSets {

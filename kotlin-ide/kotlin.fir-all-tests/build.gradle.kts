@@ -8,11 +8,11 @@ plugins {
 }
 
 dependencies {
-    jpsLikeCompileModule(":kotlin-ide:resources-fir")
-    jpsLikeCompileModule(":kotlin-ide:fir")
-    jpsLikeCompileModule(":kotlin-ide:fir-low-level-api")
-    jpsLikeCompileModule(":kotlin-ide:frontend-api")
-    jpsLikeCompileModule(":kotlin-ide:frontend-fir")
+    jpsLikeModuleDependency(":kotlin-ide:resources-fir", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:fir", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:fir-low-level-api", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:frontend-api", JpsDepScope.COMPILE)
+    jpsLikeModuleDependency(":kotlin-ide:frontend-fir", JpsDepScope.COMPILE)
 }
 
 sourceSets {

@@ -8,18 +8,18 @@ plugins {
 }
 
 dependencies {
-    jpsLikeCompileJar("org.jetbrains.intellij.deps:asm-all:9.0")
-    jpsLikeTestJar("junit:junit:4.12")
-    jpsLikeTestJar("org.jetbrains.kotlin:kotlin-test:1.4.0")
-    jpsLikeTestModule(":kotlin-ide:common")
-    jpsLikeTestModule(":kotlin-ide:core")
-    jpsLikeTestModule(":kotlin-ide:frontend-independent")
-    jpsLikeTestModule(":kotlin-ide:tests-common")
-    jpsLikeTestModule(":kotlin-ide:test-framework")
-    jpsLikeCompileJar(intellijPluginDep("java"))
-    jpsLikeTestJar(intellijDep(), { includeJars("uast-tests") })
-    jpsLikeCompileJar(intellijDep(), { includeJars("intellij-core") })
-    jpsLikeCompileJar(intellijDep(), { includeJars("intellij-core-analysis-deprecated") })
+    jpsLikeJarDependency("org.jetbrains.intellij.deps:asm-all:9.0", JpsDepScope.COMPILE)
+    jpsLikeJarDependency("junit:junit:4.12", JpsDepScope.TEST)
+    jpsLikeJarDependency("org.jetbrains.kotlin:kotlin-test:1.4.0", JpsDepScope.TEST)
+    jpsLikeModuleDependency(":kotlin-ide:common", JpsDepScope.TEST)
+    jpsLikeModuleDependency(":kotlin-ide:core", JpsDepScope.TEST)
+    jpsLikeModuleDependency(":kotlin-ide:frontend-independent", JpsDepScope.TEST)
+    jpsLikeModuleDependency(":kotlin-ide:tests-common", JpsDepScope.TEST)
+    jpsLikeModuleDependency(":kotlin-ide:test-framework", JpsDepScope.TEST)
+    jpsLikeJarDependency(intellijPluginDep("java"), JpsDepScope.COMPILE)
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.TEST, { includeJars("uast-tests") })
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("intellij-core") })
+    jpsLikeJarDependency(intellijDep(), JpsDepScope.COMPILE, { includeJars("intellij-core-analysis-deprecated") })
 }
 
 sourceSets {
