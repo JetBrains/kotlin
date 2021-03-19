@@ -16,6 +16,11 @@ public class CharRange(start: Char, endInclusive: Char) : CharProgression(start,
 
     override fun contains(value: Char): Boolean = first <= value && value <= last
 
+    /** 
+     * Checks whether the range is empty.
+     
+     * The range is empty if its start value is greater than the end value.
+     */
     override fun isEmpty(): Boolean = first > last
 
     override fun equals(other: Any?): Boolean =
@@ -42,6 +47,11 @@ public class IntRange(start: Int, endInclusive: Int) : IntProgression(start, end
 
     override fun contains(value: Int): Boolean = first <= value && value <= last
 
+    /** 
+     * Checks whether the range is empty.
+     
+     * The range is empty if its start value is greater than the end value.
+     */
     override fun isEmpty(): Boolean = first > last
 
     override fun equals(other: Any?): Boolean =
@@ -68,6 +78,11 @@ public class LongRange(start: Long, endInclusive: Long) : LongProgression(start,
 
     override fun contains(value: Long): Boolean = first <= value && value <= last
 
+    /** 
+     * Checks whether the range is empty.
+     
+     * The range is empty if its start value is greater than the end value.
+     */
     override fun isEmpty(): Boolean = first > last
 
     override fun equals(other: Any?): Boolean =
