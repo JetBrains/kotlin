@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.generators.imltogradle
 
-import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import org.jdom.Element
-import org.jdom.input.SAXBuilder
 import org.jetbrains.jps.model.JpsSimpleElement
 import org.jetbrains.jps.model.java.JavaResourceRootType
 import org.jetbrains.jps.model.java.JavaSourceRootType
@@ -83,36 +81,6 @@ fun main() {
     }
 }
 
-private data class GradleDependencyNotation(val dependencyNotation: String, val dependencyConfiguration: String? = null) {
-    init {
-        require(dependencyNotation.isNotEmpty())
-        require(dependencyConfiguration?.isNotEmpty() ?: true)
-    }
-
-    companion object {
-        const val artifactNameSubregex = """([a-zA-Z\-\._1-9]*?)"""
-
-        val libPathToGradleNotationRegex = """^lib\/$artifactNameSubregex\.jar$""".toRegex()
-        val pluginsPathToGradleNotationRegex = """^plugins\/$artifactNameSubregex\/.*?$""".toRegex()
-        val jarToGradleNotationRegex = """^$artifactNameSubregex\.jar$""".toRegex()
-
-        fun fromIntellijJsonObject(json: JsonObject): GradleDependencyNotation? {
-            val jarPath = json.get("path").asString
-
-            if (jarPath == "lib/cds/classesLogAgent.jar") {
-                return null // TODO
-            }
-
-            fun Regex.firstGroup() = matchEntire(jarPath)?.groupValues?.get(1)
-
-            return pluginsPathToGradleNotationRegex.firstGroup()?.let { GradleDependencyNotation("intellijPluginDep(\"$it\")") }
-                ?: libPathToGradleNotationRegex.firstGroup()?.let { GradleDependencyNotation("intellijDep()", "{ includeJars(\"$it\") }") }
-                ?: jarToGradleNotationRegex.firstGroup()?.let { GradleDependencyNotation("intellijDep()", "{ includeJars(\"$it\") }") }
-                ?: error("Path $jarPath matches none of the regexes")
-        }
-    }
-}
-
 fun JpsLibraryDependency.resolve(moduleImlRootElement: Element): JpsLibrary? {
     val libraryName = libraryReference.libraryName
     return moduleImlRootElement.traverseChildren()
@@ -164,7 +132,7 @@ fun convertJpsDependencyElement(dep: JpsDependencyElement, moduleImlRootElement:
 
 fun convertJpsModuleSourceRoot(imlFile: File, sourceRoot: JpsModuleSourceRoot): String {
     return when (sourceRoot.rootType) {
-        is JavaSourceRootType -> "java.srcDir(\"${sourceRoot.file.relativeTo(imlFile.parentFile)}\")";
+        is JavaSourceRootType -> "java.srcDir(\"${sourceRoot.file.relativeTo(imlFile.parentFile)}\")"
         is JavaResourceRootType -> "resources.srcDir(\"${sourceRoot.file.relativeTo(imlFile.parentFile)}\")"
         else -> error("Unknown sourceRoot = $sourceRoot")
     }
@@ -208,36 +176,4 @@ fun convertJpsModule(imlFile: File, jpsModule: JpsModule): String {
         |
         |testsJar()
     """.trimMarginWithInterpolations()
-}
-
-fun String.trimMarginWithInterpolations(): String {
-    val regex = Regex("""^(\s*\|)(\s*).*$""")
-    val out = mutableListOf<String>()
-    var prevIndent = ""
-    for (line in lines()) {
-        val matchResult = regex.matchEntire(line)
-        if (matchResult != null) {
-            out.add(line.removePrefix(matchResult.groupValues[1]))
-            prevIndent = matchResult.groupValues[2]
-        } else {
-            out.add(prevIndent + line)
-        }
-    }
-    return out.joinToString("\n").trim()
-}
-
-private fun File.readXml(): Element {
-    return inputStream().use { SAXBuilder().build(it).rootElement }
-}
-
-fun Element.traverseChildren(): Sequence<Element> {
-    suspend fun SequenceScope<Element>.visit(element: Element) {
-        element.children.forEach { visit(it) }
-        yield(element)
-    }
-    return sequence { visit(this@traverseChildren) }
-}
-
-inline fun <reified T> Any?.safeAs(): T? {
-    return this as? T
 }
