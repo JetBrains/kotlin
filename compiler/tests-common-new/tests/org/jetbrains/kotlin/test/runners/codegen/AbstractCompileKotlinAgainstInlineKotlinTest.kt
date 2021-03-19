@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.test.runners.codegen
 
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
@@ -22,7 +24,9 @@ import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
+import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.ModuleTransformerForTwoFilesBoxTests
+import org.jetbrains.kotlin.test.services.TestServices
 
 
 @OptIn(TestInfrastructureInternals::class)
@@ -32,7 +36,9 @@ abstract class AbstractCompileKotlinAgainstInlineKotlinTestBase<I : ResultingArt
     abstract val frontendToBackendConverter: Constructor<Frontend2BackendConverter<ClassicFrontendOutputArtifact, I>>
     abstract val backendFacade: Constructor<BackendFacade<I, BinaryArtifacts.Jvm>>
 
-    override fun TestConfigurationBuilder.configuration() {
+    override fun TestConfigurationBuilder.configuration() = configurationImpl()
+
+    protected fun TestConfigurationBuilder.configurationImpl() {
         commonConfigurationForCodegenTest(
             FrontendKinds.ClassicFrontend,
             ::ClassicFrontendFacade,
@@ -64,4 +70,18 @@ open class AbstractIrCompileKotlinAgainstInlineKotlinTest :
 
     override val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.Jvm>>
         get() = ::JvmIrBackendFacade
+}
+
+open class AbstractIrSerializeCompileKotlinAgainstInlineKotlinTest : AbstractIrCompileKotlinAgainstInlineKotlinTest() {
+    override fun TestConfigurationBuilder.configuration() {
+        // call super
+        configurationImpl()
+        useConfigurators(::SerializeSetter)
+    }
+
+    private class SerializeSetter(testServices: TestServices) : EnvironmentConfigurator(testServices) {
+        override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
+            configuration.put(JVMConfigurationKeys.SERIALIZE_IR, true)
+        }
+    }
 }
