@@ -70,6 +70,8 @@ class LiteralConversion(context: NewJ2kConverterContext) : RecursiveApplicableCo
             val leadingBackslashes = matchResult.groupValues[1]
             if (leadingBackslashes.length % 2 == 0)
                 String.format("%s\\u%04x", leadingBackslashes, Integer.parseInt(matchResult.groupValues[2], 8))
+            else if (matchResult.value == "\\f")
+                "\\u000c"
             else matchResult.value
         }.replace("""(?<!\\)\$([A-Za-z]+|\{)""".toRegex(), "\\\\$0")
 
