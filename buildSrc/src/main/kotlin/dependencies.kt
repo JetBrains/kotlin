@@ -7,6 +7,7 @@
 
 // usages in build scripts are not tracked properly
 
+import org.gradle.api.Action
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
@@ -117,7 +118,7 @@ fun DependencyHandler.projectArchives(name: String): ProjectDependency = project
 
 fun DependencyHandler.jpsLikeCompileJar(
     dependencyNotation: Any,
-    dependencyConfiguration: ExternalModuleDependency.() -> Unit = {},
+    dependencyConfiguration: Action<ExternalModuleDependency> = Action<ExternalModuleDependency> {},
     exported: Boolean = false
 ) {
     if (exported) {
@@ -139,7 +140,7 @@ fun DependencyHandler.jpsLikeCompileModule(moduleName: String, exported: Boolean
 
 fun DependencyHandler.jpsLikeTestJar(
     dependencyNotation: Any,
-    dependencyConfiguration: ExternalModuleDependency.() -> Unit = {},
+    dependencyConfiguration: Action<ExternalModuleDependency> = Action<ExternalModuleDependency> {},
     exported: Boolean = false
 ) {
     if (exported) {
@@ -160,7 +161,7 @@ fun DependencyHandler.jpsLikeTestModule(moduleName: String, exported: Boolean = 
 
 fun DependencyHandler.jpsLikeProvidedJar(
     dependencyNotation: Any,
-    dependencyConfiguration: ExternalModuleDependency.() -> Unit = {},
+    dependencyConfiguration: Action<ExternalModuleDependency> = Action<ExternalModuleDependency> {},
     exported: Boolean = false
 ) {
     if (exported) {
@@ -184,7 +185,7 @@ fun DependencyHandler.jpsLikeProvidedModule(moduleName: String, exported: Boolea
 @Suppress("UNUSED_PARAMETER")
 fun DependencyHandler.jpsLikeRuntimeJar(
     dependencyNotation: Any,
-    dependencyConfiguration: ExternalModuleDependency.() -> Unit = {},
+    dependencyConfiguration: Action<ExternalModuleDependency> = Action<ExternalModuleDependency> {},
     exported: Boolean = false // exported is meaningless for runtime dependencies it exists for sake of unification
 ) {
     addDependencyTo(this, "testRuntimeOnly", dependencyNotation, dependencyConfiguration)
