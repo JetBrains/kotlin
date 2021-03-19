@@ -10,7 +10,6 @@
 import org.gradle.api.Action
 import org.gradle.api.GradleException
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ExternalModuleDependency
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.dsl.DependencyHandler
@@ -116,92 +115,84 @@ fun DependencyHandler.projectTests(name: String): ProjectDependency = project(na
 fun DependencyHandler.projectRuntimeJar(name: String): ProjectDependency = project(name, configuration = "runtimeJar")
 fun DependencyHandler.projectArchives(name: String): ProjectDependency = project(name, configuration = "archives")
 
-fun DependencyHandler.jpsLikeCompileJar(
+enum class JpsDepScope {
+    COMPILE, TEST, RUNTIME, PROVIDED
+}
+
+fun DependencyHandler.jpsLikeJarDependency(
     dependencyNotation: Any,
+    scope: JpsDepScope,
     dependencyConfiguration: Action<ExternalModuleDependency> = Action<ExternalModuleDependency> {},
     exported: Boolean = false
 ) {
-    if (exported) {
-        addDependencyTo(this, "api", dependencyNotation, dependencyConfiguration)
-        addDependencyTo(this, "testCompile", dependencyNotation, dependencyConfiguration)
-    } else {
-        addDependencyTo(this, "implementation", dependencyNotation, dependencyConfiguration)
+    when (scope) {
+        JpsDepScope.COMPILE -> {
+            if (exported) {
+                addDependencyTo(this, "api", dependencyNotation, dependencyConfiguration)
+                addDependencyTo(this, "testCompile", dependencyNotation, dependencyConfiguration)
+            } else {
+                addDependencyTo(this, "implementation", dependencyNotation, dependencyConfiguration)
+            }
+        }
+        JpsDepScope.TEST -> {
+            if (exported) {
+                addDependencyTo(this, "testCompile", dependencyNotation, dependencyConfiguration)
+            } else {
+                addDependencyTo(this, "testImplementation", dependencyNotation, dependencyConfiguration)
+            }
+        }
+        JpsDepScope.RUNTIME -> {
+            addDependencyTo(this, "testRuntimeOnly", dependencyNotation, dependencyConfiguration)
+        }
+        JpsDepScope.PROVIDED -> {
+            if (exported) {
+                addDependencyTo(this, "compileOnlyApi", dependencyNotation, dependencyConfiguration)
+                addDependencyTo(this, "testCompile", dependencyNotation, dependencyConfiguration)
+            } else {
+                addDependencyTo(this, "compileOnly", dependencyNotation, dependencyConfiguration)
+                addDependencyTo(this, "testImplementation", dependencyNotation, dependencyConfiguration)
+            }
+        }
     }
 }
 
-fun DependencyHandler.jpsLikeCompileModule(moduleName: String, exported: Boolean = false) {
-    if (exported) {
-        add("api", project(moduleName))
-        add("testCompile", project(moduleName))
-        add("testCompile", projectTests(moduleName))
-    } else {
-        add("testImplementation", projectTests(moduleName))
-        add("implementation", project(moduleName))
+fun DependencyHandler.jpsLikeModuleDependency(moduleName: String, scope: JpsDepScope, exported: Boolean = false) {
+    when (scope) {
+        JpsDepScope.COMPILE -> {
+            if (exported) {
+                add("api", project(moduleName))
+                add("testCompile", project(moduleName))
+                add("testCompile", projectTests(moduleName))
+            } else {
+                add("testImplementation", projectTests(moduleName))
+                add("implementation", project(moduleName))
+            }
+        }
+        JpsDepScope.TEST -> {
+            if (exported) {
+                add("testCompile", project(moduleName))
+                add("testCompile", projectTests(moduleName))
+            } else {
+                add("testImplementation", project(moduleName))
+                add("testImplementation", projectTests(moduleName))
+            }
+        }
+        JpsDepScope.RUNTIME -> {
+            add("testRuntimeOnly", project(moduleName))
+            add("runtimeOnly", projectTests(moduleName))
+        }
+        JpsDepScope.PROVIDED -> {
+            if (exported) {
+                add("compileOnlyApi", project(moduleName))
+                add("testCompile", project(moduleName))
+                add("testCompile", projectTests(moduleName))
+            } else {
+                add("compileOnly", project(moduleName))
+                add("testImplementation", project(moduleName))
+                add("testImplementation", projectTests(moduleName))
+            }
+        }
     }
-}
-
-fun DependencyHandler.jpsLikeTestJar(
-    dependencyNotation: Any,
-    dependencyConfiguration: Action<ExternalModuleDependency> = Action<ExternalModuleDependency> {},
-    exported: Boolean = false
-) {
-    if (exported) {
-        addDependencyTo(this, "testCompile", dependencyNotation, dependencyConfiguration)
-    } else {
-        addDependencyTo(this, "testImplementation", dependencyNotation, dependencyConfiguration)
-    }
-}
-
-fun DependencyHandler.jpsLikeTestModule(moduleName: String, exported: Boolean = false) {
-    if (exported) {
-        add("testCompile", project(moduleName))
-        add("testCompile", projectTests(moduleName))
-    } else {
-        add("testImplementation", project(moduleName))
-        add("testImplementation", projectTests(moduleName))
-    }
-}
-
-fun DependencyHandler.jpsLikeProvidedJar(
-    dependencyNotation: Any,
-    dependencyConfiguration: Action<ExternalModuleDependency> = Action<ExternalModuleDependency> {},
-    exported: Boolean = false
-) {
-    if (exported) {
-        addDependencyTo(this, "compileOnlyApi", dependencyNotation, dependencyConfiguration)
-        addDependencyTo(this, "testCompile", dependencyNotation, dependencyConfiguration)
-    } else {
-        addDependencyTo(this, "compileOnly", dependencyNotation, dependencyConfiguration)
-        addDependencyTo(this, "testImplementation", dependencyNotation, dependencyConfiguration)
-    }
-}
-
-fun DependencyHandler.jpsLikeProvidedModule(moduleName: String, exported: Boolean = false) {
-    if (exported) {
-        add("compileOnlyApi", project(moduleName))
-        add("testCompile", project(moduleName))
-        add("testCompile", projectTests(moduleName))
-    } else {
-        add("compileOnly", project(moduleName))
-        add("testImplementation", project(moduleName))
-        add("testImplementation", projectTests(moduleName))
-    }
-}
-
-@Suppress("UNUSED_PARAMETER")
-fun DependencyHandler.jpsLikeRuntimeJar(
-    dependencyNotation: Any,
-    dependencyConfiguration: Action<ExternalModuleDependency> = Action<ExternalModuleDependency> {},
-    exported: Boolean = false // exported is meaningless for runtime dependencies it exists for sake of unification
-) {
-    addDependencyTo(this, "testRuntimeOnly", dependencyNotation, dependencyConfiguration)
-}
-
-// exported is meaningless for runtime dependencies it exists for sake of unification
-@Suppress("UNUSED_PARAMETER")
-fun DependencyHandler.jpsLikeRuntimeModule(moduleName: String, exported: Boolean = false) {
-    add("testRuntimeOnly", project(moduleName))
-    add("runtimeOnly", projectTests(moduleName))
 }
 
 fun Project.testApiJUnit5(

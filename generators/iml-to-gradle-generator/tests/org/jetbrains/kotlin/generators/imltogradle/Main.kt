@@ -98,21 +98,26 @@ fun convertJpsDependencyElement(dep: JpsDependencyElement, moduleImlRootElement:
     val moduleName = (dep as? JpsModuleDependency)?.moduleReference?.moduleName
     val ext = JpsJavaExtensionServiceImpl.getInstance().getDependencyExtension(dep)
         ?: error("Cannot get dependency extension for $dep")
-    val scope = ext.scope.toString().toLowerCase().capitalize()
+    val scope = "JpsDepScope.${ext.scope}"
     val exported = "exported = true".takeIf { ext.isExported }
-    val jpsLikeJar = "jpsLike${scope}Jar"
-    val jpsLikeModule = "jpsLike${scope}Module"
+
+    fun jpsLikeJarDependency(dependencyNotation: String, dependencyConfiguration: String?): String {
+        return "jpsLikeJarDependency(${listOfNotNull(dependencyNotation, scope, dependencyConfiguration, exported).joinToString()})"
+    }
+
+    fun jpsLikeModuleDependency(moduleName: String): String {
+        return "jpsLikeModuleDependency(${listOfNotNull(moduleName, scope, exported).joinToString()})"
+    }
 
     if (moduleName?.startsWith("kotlin.") == true) {
         val gradleModuleName = kotlinIdeJpsModuleNameToGradleModuleNameMapping.getValue(moduleName)
-        val args = listOfNotNull("\"$gradleModuleName\"", exported).joinToString()
-        return listOf("$jpsLikeModule($args)")
+        return listOf(jpsLikeModuleDependency(gradleModuleName))
     }
     if (moduleName?.startsWith("intellij.") == true) {
         return intellijModuleNameToGradleDependencyNotationsMapping[moduleName]
             ?.map {
-                val args = listOfNotNull(it.dependencyNotation, it.dependencyConfiguration, exported).joinToString()
-                "$jpsLikeJar($args)"
+                val args = listOfNotNull(it.dependencyNotation, scope, it.dependencyConfiguration, exported).joinToString()
+                jpsLikeJarDependency(it.dependencyNotation, it.dependencyConfiguration)
             }
             ?: error("Cannot find mapping for intellij module name = $moduleName")
     }
@@ -125,7 +130,7 @@ fun convertJpsDependencyElement(dep: JpsDependencyElement, moduleImlRootElement:
         val mavenId = jpsLibrary.properties.safeAs<JpsSimpleElement<*>>()?.data
             ?.safeAs<JpsMavenRepositoryLibraryDescriptor>()?.mavenId
             ?: error("Caanot find maven coordinates for $jpsLibrary")
-        return listOf("$jpsLikeJar(\"$mavenId\")")
+        return listOf(jpsLikeJarDependency("\"$mavenId\"", dependencyConfiguration = null))
     }
     error("Unknown dependency: $dep")
 }
