@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.findAnnotation
-import org.jetbrains.kotlin.ir.util.isSuspend
 
 internal enum class IntrinsicType {
     PLUS,
@@ -630,27 +629,48 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
     }
 
     private fun FunctionGenerationContext.emitSignedDiv(args: List<LLVMValueRef>): LLVMValueRef {
-        val (first, second) = args
-        if (!second.type.isFloatingPoint()) {
-            emitThrowIfZero(second)
-        }
-        return if (first.type.isFloatingPoint()) {
-            LLVMBuildFDiv(builder, first, second, "")
+        val (dividend, divisor) = args
+        val divisorType = divisor.type
+        return if (!divisorType.isFloatingPoint()) {
+            emitThrowIfZero(divisor)
+            emitSignedDivisionWithOverflow(dividend, divisor, divisorType, retZeroOnOverflow = false) {
+                LLVMBuildSDiv(builder, dividend, divisor, "")!!
+            }
         } else {
-            LLVMBuildSDiv(builder, first, second, "")
-        }!!
+            LLVMBuildFDiv(builder, dividend, divisor, "")!!
+        }
     }
 
     private fun FunctionGenerationContext.emitSignedRem(args: List<LLVMValueRef>): LLVMValueRef {
-        val (first, second) = args
-        if (!second.type.isFloatingPoint()) {
-            emitThrowIfZero(second)
-        }
-        return if (first.type.isFloatingPoint()) {
-            LLVMBuildFRem(builder, first, second, "")
+        val (dividend, divisor) = args
+        val divisorType = divisor.type
+        return if (!divisorType.isFloatingPoint()) {
+            emitThrowIfZero(divisor)
+            emitSignedDivisionWithOverflow(dividend, divisor, divisorType, retZeroOnOverflow = true) {
+                LLVMBuildSRem(builder, dividend, divisor, "")!!
+            }
         } else {
-            LLVMBuildSRem(builder, first, second, "")
-        }!!
+            LLVMBuildFRem(builder, dividend, divisor, "")!!
+        }
+    }
+
+    private inline fun FunctionGenerationContext.emitSignedDivisionWithOverflow(
+            dividend: LLVMValueRef,
+            divisor: LLVMValueRef,
+            type: LLVMTypeRef,
+            retZeroOnOverflow: Boolean,
+            nonOverflowValue: () -> LLVMValueRef
+    ): LLVMValueRef {
+        val minValue = when (val sizeInBits = type.sizeInBits()) {
+            32 -> LLVMConstInt(type, Int.MIN_VALUE.toLong(), 1)!!
+            64 -> LLVMConstInt(type, Long.MIN_VALUE, 1)!!
+            else -> error("Unsupported signed integer division argument width: $sizeInBits")
+        }
+
+        val minusOne = LLVMConstInt(type, -1, 1)!!
+        val overflowValue = if (retZeroOnOverflow) Zero(type).llvm else minValue
+
+        return ifThenElse(and(icmpEq(dividend, minValue), icmpEq(divisor, minusOne)), overflowValue, nonOverflowValue)
     }
 
     private fun FunctionGenerationContext.emitUnsignedDiv(args: List<LLVMValueRef>): LLVMValueRef {
