@@ -22,13 +22,13 @@ const val KOTLIN_IDE_DIR_NAME = "kotlin-ide"
 private lateinit var kotlinIdeJpsModuleNameToGradleModuleNameMapping: Map<String, String>
 private lateinit var intellijModuleNameToGradleDependencyNotationsMapping: Map<String, List<GradleDependencyNotation>>
 
-private val intellijModuleNameToGradleDependencyNotationsMappingManual = mapOf(
-    "intellij.platform.debugger.testFramework" to listOf(GradleDependencyNotation("")), // TODO()
-    "intellij.completionMlRanking" to listOf(GradleDependencyNotation("")),
-    "intellij.platform.jps.model.tests" to listOf(GradleDependencyNotation("")),
-    "intellij.platform.externalSystem.tests" to listOf(GradleDependencyNotation("")),
-    "intellij.gradle.toolingExtension.tests" to listOf(GradleDependencyNotation("")),
-    "intellij.gradle.tests" to listOf(GradleDependencyNotation("")),
+private val intellijModuleNameToGradleDependencyNotationsMappingManual: Map<String, List<GradleDependencyNotation>> = mapOf(
+    "intellij.platform.debugger.testFramework" to listOf(), // TODO()
+    "intellij.completionMlRanking" to listOf(),
+    "intellij.platform.jps.model.tests" to listOf(),
+    "intellij.platform.externalSystem.tests" to listOf(),
+    "intellij.gradle.toolingExtension.tests" to listOf(),
+    "intellij.gradle.tests" to listOf(),
 )
 
 fun main() {
@@ -66,6 +66,11 @@ fun main() {
 }
 
 private data class GradleDependencyNotation(val dependencyNotation: String, val dependencyConfiguration: String? = null) {
+    init {
+        require(dependencyNotation.isNotEmpty())
+        require(dependencyConfiguration?.isNotEmpty() ?: true)
+    }
+
     companion object {
         const val artifactNameSubregex = """([a-zA-Z\-\._1-9]*?)"""
 
