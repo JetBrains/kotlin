@@ -53,11 +53,11 @@ class BuilderInferenceSession(
 ) : ManyCandidatesResolver<CallableDescriptor>(
     psiCallResolver, postponedArgumentsAnalyzer, kotlinConstraintSystemCompleter, callComponents, builtIns
 ) {
-    var nestedBuilderInferenceSession: BuilderInferenceSession? = null
+    private var nestedBuilderInferenceSessions: MutableSet<BuilderInferenceSession> = mutableSetOf()
 
     init {
         if (topLevelCallContext.inferenceSession is BuilderInferenceSession) {
-            topLevelCallContext.inferenceSession.nestedBuilderInferenceSession = this
+            topLevelCallContext.inferenceSession.nestedBuilderInferenceSessions.add(this)
         }
     }
 
@@ -232,7 +232,9 @@ class BuilderInferenceSession(
 
         updateCalls(lambda, resultingSubstitutor, commonSystem.errors)
 
-        nestedBuilderInferenceSession?.updateAllCalls(substitutor, commonSystem, lambda)
+        for (nestedSession in nestedBuilderInferenceSessions) {
+            nestedSession.updateAllCalls(substitutor, commonSystem, lambda)
+        }
     }
 
     override fun shouldCompleteResolvedSubAtomsOf(resolvedCallAtom: ResolvedCallAtom) = true
