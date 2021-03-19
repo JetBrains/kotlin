@@ -43,7 +43,12 @@ class GradleModuleDependencyResolver(
                 projectModuleBuilder.buildModulesFromProject(project.project(id.projectPath))
                     .find { it.moduleIdentifier.moduleClassifier == classifier }
             id is ModuleComponentIdentifier -> {
-                val metadata = getProjectStructureMetadata(project, component, configurationToResolve(requestingModule)) ?: return null
+                val metadata = getProjectStructureMetadata(
+                    project,
+                    component,
+                    configurationToResolve(requestingModule),
+                    moduleDependency.moduleIdentifier
+                ) ?: return null
                 val result = projectStructureMetadataModuleBuilder.getModule(component, metadata)
                 result
             }
@@ -195,7 +200,7 @@ class VariantDependencyDiscovery(
                     classifiers.map { LocalModuleIdentifier(id.build.name, id.projectPath, it) }
                 }
                 is ModuleComponentIdentifier -> {
-                    classifiers.map { id.toModuleIdentifier(it) }
+                    classifiers.map { id.toSingleModuleIdentifier(it) }
                 }
                 else -> return@flatMap emptyList<KotlinModuleIdentifier>() // TODO check that no other options are possible, throw errors?
             }
@@ -203,18 +208,30 @@ class VariantDependencyDiscovery(
     }
 }
 
-private fun ModuleComponentIdentifier.toModuleIdentifier(classifier: String? = null): MavenModuleIdentifier =
+private fun ModuleComponentIdentifier.toSingleModuleIdentifier(classifier: String? = null): MavenModuleIdentifier =
     MavenModuleIdentifier(moduleIdentifier.group, moduleIdentifier.name, classifier)
 
 internal fun ComponentIdentifier.matchesModule(module: KotlinModule): Boolean =
     matchesModuleIdentifier(module.moduleIdentifier)
 
-internal fun ResolvedComponentResult.toModuleIdentifier(): KotlinModuleIdentifier {
-    val capabilities = variants.flatMap { it.capabilities } // expected to be disjoint
-    val moduleClassifier = moduleClassifiersFromCapabilities(capabilities).single() // FIXME handle multiple capabilities
+internal fun ResolvedComponentResult.toModuleIdentifiers(): List<KotlinModuleIdentifier> {
+    val classifiers = moduleClassifiersFromCapabilities(variants.flatMap { it.capabilities })
+    return classifiers.map { moduleClassifier ->
+        when (val id = id) {
+            is ProjectComponentIdentifier -> LocalModuleIdentifier(id.build.name, id.projectPath, moduleClassifier)
+            is ModuleComponentIdentifier -> id.toSingleModuleIdentifier()
+            else -> MavenModuleIdentifier(moduleVersion?.group.orEmpty(), moduleVersion?.name.orEmpty(), moduleClassifier)
+        }
+    }
+}
+
+// FIXME this mapping doesn't have enough information to choose auxiliary modules
+internal fun ResolvedComponentResult.toSingleModuleIdentifier(): KotlinModuleIdentifier {
+    val classifiers = moduleClassifiersFromCapabilities(variants.flatMap { it.capabilities })
+    val moduleClassifier = classifiers.single() // FIXME handle multiple capabilities
     return when (val id = id) {
         is ProjectComponentIdentifier -> LocalModuleIdentifier(id.build.name, id.projectPath, moduleClassifier)
-        is ModuleComponentIdentifier -> id.toModuleIdentifier()
+        is ModuleComponentIdentifier -> id.toSingleModuleIdentifier()
         else -> MavenModuleIdentifier(moduleVersion?.group.orEmpty(), moduleVersion?.name.orEmpty(), moduleClassifier)
     }
 }
@@ -233,7 +250,7 @@ internal fun ComponentSelector.toModuleIdentifiers(): Iterable<KotlinModuleIdent
     }
 }
 
-internal fun ResolvedComponentResult.toModuleDependency(): KotlinModuleDependency = KotlinModuleDependency(toModuleIdentifier())
+internal fun ResolvedComponentResult.toModuleDependency(): KotlinModuleDependency = KotlinModuleDependency(toSingleModuleIdentifier())
 internal fun ComponentSelector.toModuleDependency(): KotlinModuleDependency {
     val moduleId = toModuleIdentifiers().single() // FIXME handle multiple
     return KotlinModuleDependency(moduleId)
@@ -250,7 +267,7 @@ internal fun ComponentIdentifier.matchesModuleIdentifier(id: KotlinModuleIdentif
         }
         is MavenModuleIdentifier -> {
             val componentId = this as? ModuleComponentIdentifier
-            componentId?.toModuleIdentifier() == id
+            componentId?.toSingleModuleIdentifier() == id
         }
         else -> false
     }
