@@ -31,12 +31,11 @@ internal fun configurationToResolveMetadataDependencies(project: Project, reques
 
 
 class GradleKotlinDependencyGraphResolver(
-    private val project: Project,
     private val moduleResolver: ModuleDependencyResolver
 ) : KotlinDependencyGraphResolver {
 
-    private fun configurationToResolve(requestingModule: KotlinModule): Configuration =
-        configurationToResolveMetadataDependencies(project, requestingModule)
+    private fun configurationToResolve(requestingModule: KotlinGradleModule): Configuration =
+        configurationToResolveMetadataDependencies(requestingModule.project, requestingModule)
 
     override fun resolveDependencyGraph(requestingModule: KotlinModule): DependencyGraphResolution {
         if (requestingModule !is KotlinGradleModule)

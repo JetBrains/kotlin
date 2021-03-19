@@ -21,15 +21,17 @@ import org.jetbrains.kotlin.project.model.*
 import java.util.ArrayDeque
 
 class GradleModuleDependencyResolver(
-    private val project: Project,
     private val projectStructureMetadataModuleBuilder: ProjectStructureMetadataModuleBuilder,
     private val projectModuleBuilder: GradleProjectModuleBuilder
 ) : ModuleDependencyResolver {
 
-    private fun configurationToResolve(requestingModule: KotlinModule): Configuration =
-        configurationToResolveMetadataDependencies(project, requestingModule)
+    private fun configurationToResolve(requestingModule: KotlinGradleModule): Configuration =
+        configurationToResolveMetadataDependencies(requestingModule.project, requestingModule)
 
     override fun resolveDependency(requestingModule: KotlinModule, moduleDependency: KotlinModuleDependency): KotlinModule? {
+        require(requestingModule is KotlinGradleModule)
+        val project = requestingModule.project
+
         val allComponents = configurationToResolve(requestingModule).incoming.resolutionResult.allComponents
         // TODO: optimize O(n) search, store the resolved components with dependency keys?
         val component = allComponents.find { it.id.matchesModuleDependency(moduleDependency) }
