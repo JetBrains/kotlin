@@ -130,11 +130,13 @@ fun DependencyHandler.jpsLikeCompileJar(
 }
 
 fun DependencyHandler.jpsLikeCompileModule(moduleName: String, exported: Boolean = false) {
-    jpsLikeCompileJar(project(moduleName), exported = exported)
     if (exported) {
+        add("api", project(moduleName))
+        add("testCompile", project(moduleName))
         add("testCompile", projectTests(moduleName))
     } else {
         add("testImplementation", projectTests(moduleName))
+        add("implementation", project(moduleName))
     }
 }
 
@@ -151,10 +153,11 @@ fun DependencyHandler.jpsLikeTestJar(
 }
 
 fun DependencyHandler.jpsLikeTestModule(moduleName: String, exported: Boolean = false) {
-    jpsLikeTestJar(project(moduleName), exported = exported)
     if (exported) {
+        add("testCompile", project(moduleName))
         add("testCompile", projectTests(moduleName))
     } else {
+        add("testImplementation", project(moduleName))
         add("testImplementation", projectTests(moduleName))
     }
 }
@@ -174,10 +177,13 @@ fun DependencyHandler.jpsLikeProvidedJar(
 }
 
 fun DependencyHandler.jpsLikeProvidedModule(moduleName: String, exported: Boolean = false) {
-    jpsLikeProvidedJar(project(moduleName), exported = exported)
     if (exported) {
+        add("compileOnlyApi", project(moduleName))
+        add("testCompile", project(moduleName))
         add("testCompile", projectTests(moduleName))
     } else {
+        add("compileOnly", project(moduleName))
+        add("testImplementation", project(moduleName))
         add("testImplementation", projectTests(moduleName))
     }
 }
@@ -191,8 +197,10 @@ fun DependencyHandler.jpsLikeRuntimeJar(
     addDependencyTo(this, "testRuntimeOnly", dependencyNotation, dependencyConfiguration)
 }
 
+// exported is meaningless for runtime dependencies it exists for sake of unification
+@Suppress("UNUSED_PARAMETER")
 fun DependencyHandler.jpsLikeRuntimeModule(moduleName: String, exported: Boolean = false) {
-    jpsLikeRuntimeJar(project(moduleName), exported = exported)
+    add("testRuntimeOnly", project(moduleName))
     add("runtimeOnly", projectTests(moduleName))
 }
 
