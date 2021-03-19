@@ -12,20 +12,20 @@ public fun kotlin.Long.coerceAtLeast(minimumValue: kotlin.Long): kotlin.Long
 
 public fun kotlin.Short.coerceAtLeast(minimumValue: kotlin.Short): kotlin.Short
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.UByte.coerceAtLeast(minimumValue: kotlin.UByte): kotlin.UByte
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.UInt.coerceAtLeast(minimumValue: kotlin.UInt): kotlin.UInt
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.ULong.coerceAtLeast(minimumValue: kotlin.ULong): kotlin.ULong
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.UShort.coerceAtLeast(minimumValue: kotlin.UShort): kotlin.UShort
 
 public fun <T : kotlin.Comparable<T>> T.coerceAtMost(maximumValue: T): T
@@ -42,20 +42,20 @@ public fun kotlin.Long.coerceAtMost(maximumValue: kotlin.Long): kotlin.Long
 
 public fun kotlin.Short.coerceAtMost(maximumValue: kotlin.Short): kotlin.Short
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.UByte.coerceAtMost(maximumValue: kotlin.UByte): kotlin.UByte
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.UInt.coerceAtMost(maximumValue: kotlin.UInt): kotlin.UInt
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.ULong.coerceAtMost(maximumValue: kotlin.ULong): kotlin.ULong
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.UShort.coerceAtMost(maximumValue: kotlin.UShort): kotlin.UShort
 
 public fun <T : kotlin.Comparable<T>> T.coerceIn(minimumValue: T?, maximumValue: T?): T
@@ -81,28 +81,28 @@ public fun kotlin.Long.coerceIn(range: kotlin.ranges.ClosedRange<kotlin.Long>): 
 
 public fun kotlin.Short.coerceIn(minimumValue: kotlin.Short, maximumValue: kotlin.Short): kotlin.Short
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.UByte.coerceIn(minimumValue: kotlin.UByte, maximumValue: kotlin.UByte): kotlin.UByte
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.UInt.coerceIn(minimumValue: kotlin.UInt, maximumValue: kotlin.UInt): kotlin.UInt
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.UInt.coerceIn(range: kotlin.ranges.ClosedRange<kotlin.UInt>): kotlin.UInt
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.ULong.coerceIn(minimumValue: kotlin.ULong, maximumValue: kotlin.ULong): kotlin.ULong
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.ULong.coerceIn(range: kotlin.ranges.ClosedRange<kotlin.ULong>): kotlin.ULong
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.UShort.coerceIn(minimumValue: kotlin.UShort, maximumValue: kotlin.UShort): kotlin.UShort
 
 @kotlin.SinceKotlin(version = "1.3")
@@ -243,38 +243,38 @@ public inline operator fun kotlin.ranges.IntRange.contains(element: kotlin.Int?)
 @kotlin.internal.InlineOnly
 public inline operator fun kotlin.ranges.LongRange.contains(element: kotlin.Long?): kotlin.Boolean
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public operator fun kotlin.ranges.UIntRange.contains(value: kotlin.UByte): kotlin.Boolean
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline operator fun kotlin.ranges.UIntRange.contains(element: kotlin.UInt?): kotlin.Boolean
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public operator fun kotlin.ranges.UIntRange.contains(value: kotlin.ULong): kotlin.Boolean
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public operator fun kotlin.ranges.UIntRange.contains(value: kotlin.UShort): kotlin.Boolean
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public operator fun kotlin.ranges.ULongRange.contains(value: kotlin.UByte): kotlin.Boolean
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public operator fun kotlin.ranges.ULongRange.contains(value: kotlin.UInt): kotlin.Boolean
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline operator fun kotlin.ranges.ULongRange.contains(element: kotlin.ULong?): kotlin.Boolean
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public operator fun kotlin.ranges.ULongRange.contains(value: kotlin.UShort): kotlin.Boolean
 
 public infix fun kotlin.Byte.downTo(to: kotlin.Byte): kotlin.ranges.IntProgression
@@ -311,20 +311,20 @@ public infix fun kotlin.Short.downTo(to: kotlin.Long): kotlin.ranges.LongProgres
 
 public infix fun kotlin.Short.downTo(to: kotlin.Short): kotlin.ranges.IntProgression
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public infix fun kotlin.UByte.downTo(to: kotlin.UByte): kotlin.ranges.UIntProgression
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public infix fun kotlin.UInt.downTo(to: kotlin.UInt): kotlin.ranges.UIntProgression
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public infix fun kotlin.ULong.downTo(to: kotlin.ULong): kotlin.ranges.ULongProgression
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public infix fun kotlin.UShort.downTo(to: kotlin.UShort): kotlin.ranges.UIntProgression
 
 @kotlin.SinceKotlin(version = "1.3")
@@ -348,22 +348,22 @@ public inline fun kotlin.ranges.LongRange.random(): kotlin.Long
 @kotlin.SinceKotlin(version = "1.3")
 public fun kotlin.ranges.LongRange.random(random: kotlin.random.Random): kotlin.Long
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.ranges.UIntRange.random(): kotlin.UInt
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.ranges.UIntRange.random(random: kotlin.random.Random): kotlin.UInt
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.ranges.ULongRange.random(): kotlin.ULong
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.ranges.ULongRange.random(random: kotlin.random.Random): kotlin.ULong
 
 @kotlin.SinceKotlin(version = "1.4")
@@ -393,26 +393,22 @@ public inline fun kotlin.ranges.LongRange.randomOrNull(): kotlin.Long?
 @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun kotlin.ranges.LongRange.randomOrNull(random: kotlin.random.Random): kotlin.Long?
 
-@kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class, kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.ranges.UIntRange.randomOrNull(): kotlin.UInt?
 
-@kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class, kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.ranges.UIntRange.randomOrNull(random: kotlin.random.Random): kotlin.UInt?
 
-@kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class, kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.ranges.ULongRange.randomOrNull(): kotlin.ULong?
 
-@kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class, kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.ranges.ULongRange.randomOrNull(random: kotlin.random.Random): kotlin.ULong?
 
 public operator fun <T : kotlin.Comparable<T>> T.rangeTo(that: T): kotlin.ranges.ClosedRange<T>
@@ -429,12 +425,12 @@ public fun kotlin.ranges.IntProgression.reversed(): kotlin.ranges.IntProgression
 
 public fun kotlin.ranges.LongProgression.reversed(): kotlin.ranges.LongProgression
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.ranges.UIntProgression.reversed(): kotlin.ranges.UIntProgression
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.ranges.ULongProgression.reversed(): kotlin.ranges.ULongProgression
 
 public infix fun kotlin.ranges.CharProgression.step(step: kotlin.Int): kotlin.ranges.CharProgression
@@ -443,12 +439,12 @@ public infix fun kotlin.ranges.IntProgression.step(step: kotlin.Int): kotlin.ran
 
 public infix fun kotlin.ranges.LongProgression.step(step: kotlin.Long): kotlin.ranges.LongProgression
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public infix fun kotlin.ranges.UIntProgression.step(step: kotlin.Int): kotlin.ranges.UIntProgression
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public infix fun kotlin.ranges.ULongProgression.step(step: kotlin.Long): kotlin.ranges.ULongProgression
 
 public infix fun kotlin.Byte.until(to: kotlin.Byte): kotlin.ranges.IntRange
@@ -485,20 +481,20 @@ public infix fun kotlin.Short.until(to: kotlin.Long): kotlin.ranges.LongRange
 
 public infix fun kotlin.Short.until(to: kotlin.Short): kotlin.ranges.IntRange
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public infix fun kotlin.UByte.until(to: kotlin.UByte): kotlin.ranges.UIntRange
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public infix fun kotlin.UInt.until(to: kotlin.UInt): kotlin.ranges.UIntRange
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public infix fun kotlin.ULong.until(to: kotlin.ULong): kotlin.ranges.ULongRange
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public infix fun kotlin.UShort.until(to: kotlin.UShort): kotlin.ranges.UIntRange
 
 public open class CharProgression : kotlin.collections.Iterable<kotlin.Char> {
@@ -794,8 +790,8 @@ public final class LongRange : kotlin.ranges.LongProgression, kotlin.ranges.Clos
 /*∆*/     }
 /*∆*/ }
 /*∆*/ 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public open class UIntProgression : kotlin.collections.Iterable<kotlin.UInt> {
     public final val first: kotlin.UInt { get; }
 
@@ -809,7 +805,7 @@ public open class UIntProgression : kotlin.collections.Iterable<kotlin.UInt> {
 
     public open fun isEmpty(): kotlin.Boolean
 
-    public open override operator fun iterator(): kotlin.collections.UIntIterator
+    public final override operator fun iterator(): kotlin.collections.Iterator<kotlin.UInt>
 
     public open override fun toString(): kotlin.String
 
@@ -818,8 +814,8 @@ public open class UIntProgression : kotlin.collections.Iterable<kotlin.UInt> {
     }
 }
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public final class UIntRange : kotlin.ranges.UIntProgression, kotlin.ranges.ClosedRange<kotlin.UInt> {
     public constructor UIntRange(start: kotlin.UInt, endInclusive: kotlin.UInt)
 
@@ -842,8 +838,8 @@ public final class UIntRange : kotlin.ranges.UIntProgression, kotlin.ranges.Clos
     }
 }
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public open class ULongProgression : kotlin.collections.Iterable<kotlin.ULong> {
     public final val first: kotlin.ULong { get; }
 
@@ -857,7 +853,7 @@ public open class ULongProgression : kotlin.collections.Iterable<kotlin.ULong> {
 
     public open fun isEmpty(): kotlin.Boolean
 
-    public open override operator fun iterator(): kotlin.collections.ULongIterator
+    public final override operator fun iterator(): kotlin.collections.Iterator<kotlin.ULong>
 
     public open override fun toString(): kotlin.String
 
@@ -866,8 +862,8 @@ public open class ULongProgression : kotlin.collections.Iterable<kotlin.ULong> {
     }
 }
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public final class ULongRange : kotlin.ranges.ULongProgression, kotlin.ranges.ClosedRange<kotlin.ULong> {
     public constructor ULongRange(start: kotlin.ULong, endInclusive: kotlin.ULong)
 

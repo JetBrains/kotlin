@@ -2898,11 +2898,11 @@ public inline fun <T> Iterable<T>.sumOf(selector: (T) -> Long): Long {
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the collection.
  */
-@SinceKotlin("1.4")
+@SinceKotlin("1.5")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("sumOfUInt")
-@ExperimentalUnsignedTypes
+@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun <T> Iterable<T>.sumOf(selector: (T) -> UInt): UInt {
     var sum: UInt = 0.toUInt()
@@ -2915,11 +2915,11 @@ public inline fun <T> Iterable<T>.sumOf(selector: (T) -> UInt): UInt {
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the collection.
  */
-@SinceKotlin("1.4")
+@SinceKotlin("1.5")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("sumOfULong")
-@ExperimentalUnsignedTypes
+@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun <T> Iterable<T>.sumOf(selector: (T) -> ULong): ULong {
     var sum: ULong = 0.toULong()

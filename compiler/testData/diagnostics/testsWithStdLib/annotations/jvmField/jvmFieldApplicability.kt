@@ -136,7 +136,7 @@ object IObject {
     val c: Foo = Foo(42)
 
     <!INAPPLICABLE_JVM_FIELD!>@JvmField<!>
-    val u = <!EXPERIMENTAL_UNSIGNED_LITERALS!>42u<!>
+    val u = 42u
 
     <!INAPPLICABLE_JVM_FIELD!>@JvmField<!>
     private val r: Result<Int> = TODO()

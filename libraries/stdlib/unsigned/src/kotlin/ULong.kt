@@ -10,8 +10,8 @@ package kotlin
 import kotlin.experimental.*
 import kotlin.jvm.*
 
-@SinceKotlin("1.3")
-@ExperimentalUnsignedTypes
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalUnsignedTypes::class)
 @JvmInline
 public value class ULong @PublishedApi internal constructor(@PublishedApi internal val data: Long) : Comparable<ULong> {
 
@@ -368,8 +368,8 @@ public value class ULong @PublishedApi internal constructor(@PublishedApi intern
  * The least significant 8 bits of the resulting `ULong` value are the same as the bits of this `Byte` value,
  * whereas the most significant 56 bits are filled with the sign bit of this value.
  */
-@SinceKotlin("1.3")
-@ExperimentalUnsignedTypes
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun Byte.toULong(): ULong = ULong(this.toLong())
 /**
@@ -380,8 +380,8 @@ public inline fun Byte.toULong(): ULong = ULong(this.toLong())
  * The least significant 16 bits of the resulting `ULong` value are the same as the bits of this `Short` value,
  * whereas the most significant 48 bits are filled with the sign bit of this value.
  */
-@SinceKotlin("1.3")
-@ExperimentalUnsignedTypes
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun Short.toULong(): ULong = ULong(this.toLong())
 /**
@@ -392,8 +392,8 @@ public inline fun Short.toULong(): ULong = ULong(this.toLong())
  * The least significant 32 bits of the resulting `ULong` value are the same as the bits of this `Int` value,
  * whereas the most significant 32 bits are filled with the sign bit of this value.
  */
-@SinceKotlin("1.3")
-@ExperimentalUnsignedTypes
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun Int.toULong(): ULong = ULong(this.toLong())
 /**
@@ -403,8 +403,8 @@ public inline fun Int.toULong(): ULong = ULong(this.toLong())
  *
  * The resulting `ULong` value has the same binary representation as this `Long` value.
  */
-@SinceKotlin("1.3")
-@ExperimentalUnsignedTypes
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun Long.toULong(): ULong = ULong(this)
 
@@ -414,8 +414,8 @@ public inline fun Long.toULong(): ULong = ULong(this)
  * The fractional part, if any, is rounded down towards zero.
  * Returns zero if this `Float` value is negative or `NaN`, [ULong.MAX_VALUE] if it's bigger than `ULong.MAX_VALUE`.
  */
-@SinceKotlin("1.3")
-@ExperimentalUnsignedTypes
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun Float.toULong(): ULong = doubleToULong(this.toDouble())
 /**
@@ -424,7 +424,7 @@ public inline fun Float.toULong(): ULong = doubleToULong(this.toDouble())
  * The fractional part, if any, is rounded down towards zero.
  * Returns zero if this `Double` value is negative or `NaN`, [ULong.MAX_VALUE] if it's bigger than `ULong.MAX_VALUE`.
  */
-@SinceKotlin("1.3")
-@ExperimentalUnsignedTypes
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun Double.toULong(): ULong = doubleToULong(this)

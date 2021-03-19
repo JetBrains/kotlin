@@ -6858,47 +6858,47 @@ public inline fun kotlin.ShortArray.randomOrNull(): kotlin.Short?
 public fun kotlin.ShortArray.randomOrNull(random: kotlin.random.Random): kotlin.Short?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.ExperimentalUnsignedTypes
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UByteArray.randomOrNull(): kotlin.UByte?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.ExperimentalUnsignedTypes
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun kotlin.UByteArray.randomOrNull(random: kotlin.random.Random): kotlin.UByte?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.ExperimentalUnsignedTypes
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UIntArray.randomOrNull(): kotlin.UInt?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.ExperimentalUnsignedTypes
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun kotlin.UIntArray.randomOrNull(random: kotlin.random.Random): kotlin.UInt?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.ExperimentalUnsignedTypes
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.ULongArray.randomOrNull(): kotlin.ULong?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.ExperimentalUnsignedTypes
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun kotlin.ULongArray.randomOrNull(random: kotlin.random.Random): kotlin.ULong?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.ExperimentalUnsignedTypes
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UShortArray.randomOrNull(): kotlin.UShort?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.ExperimentalUnsignedTypes
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun kotlin.UShortArray.randomOrNull(random: kotlin.random.Random): kotlin.UShort?
 
 @kotlin.SinceKotlin(version = "1.4")
@@ -7080,26 +7080,26 @@ public inline fun kotlin.LongArray.reduceOrNull(operation: (acc: kotlin.Long, ko
 public inline fun kotlin.ShortArray.reduceOrNull(operation: (acc: kotlin.Short, kotlin.Short) -> kotlin.Short): kotlin.Short?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.ExperimentalUnsignedTypes
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UByteArray.reduceOrNull(operation: (acc: kotlin.UByte, kotlin.UByte) -> kotlin.UByte): kotlin.UByte?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.ExperimentalUnsignedTypes
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UIntArray.reduceOrNull(operation: (acc: kotlin.UInt, kotlin.UInt) -> kotlin.UInt): kotlin.UInt?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.ExperimentalUnsignedTypes
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.ULongArray.reduceOrNull(operation: (acc: kotlin.ULong, kotlin.ULong) -> kotlin.ULong): kotlin.ULong?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.ExperimentalUnsignedTypes
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UShortArray.reduceOrNull(operation: (acc: kotlin.UShort, kotlin.UShort) -> kotlin.UShort): kotlin.UShort?
 
@@ -7274,26 +7274,26 @@ public inline fun kotlin.LongArray.reduceRightOrNull(operation: (kotlin.Long, ac
 public inline fun kotlin.ShortArray.reduceRightOrNull(operation: (kotlin.Short, acc: kotlin.Short) -> kotlin.Short): kotlin.Short?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.ExperimentalUnsignedTypes
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UByteArray.reduceRightOrNull(operation: (kotlin.UByte, acc: kotlin.UByte) -> kotlin.UByte): kotlin.UByte?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.ExperimentalUnsignedTypes
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UIntArray.reduceRightOrNull(operation: (kotlin.UInt, acc: kotlin.UInt) -> kotlin.UInt): kotlin.UInt?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.ExperimentalUnsignedTypes
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.ULongArray.reduceRightOrNull(operation: (kotlin.ULong, acc: kotlin.ULong) -> kotlin.ULong): kotlin.ULong?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.ExperimentalUnsignedTypes
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UShortArray.reduceRightOrNull(operation: (kotlin.UShort, acc: kotlin.UShort) -> kotlin.UShort): kotlin.UShort?
 
@@ -7806,26 +7806,26 @@ public inline fun <R> kotlin.LongArray.scan(initial: R, operation: (acc: R, kotl
 public inline fun <R> kotlin.ShortArray.scan(initial: R, operation: (acc: R, kotlin.Short) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.ExperimentalUnsignedTypes
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.UByteArray.scan(initial: R, operation: (acc: R, kotlin.UByte) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.ExperimentalUnsignedTypes
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.UIntArray.scan(initial: R, operation: (acc: R, kotlin.UInt) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.ExperimentalUnsignedTypes
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.ULongArray.scan(initial: R, operation: (acc: R, kotlin.ULong) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.ExperimentalUnsignedTypes
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.UShortArray.scan(initial: R, operation: (acc: R, kotlin.UShort) -> R): kotlin.collections.List<R>
 
@@ -7878,26 +7878,26 @@ public inline fun <R> kotlin.LongArray.scanIndexed(initial: R, operation: (index
 public inline fun <R> kotlin.ShortArray.scanIndexed(initial: R, operation: (index: kotlin.Int, acc: R, kotlin.Short) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.ExperimentalUnsignedTypes
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.UByteArray.scanIndexed(initial: R, operation: (index: kotlin.Int, acc: R, kotlin.UByte) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.ExperimentalUnsignedTypes
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.UIntArray.scanIndexed(initial: R, operation: (index: kotlin.Int, acc: R, kotlin.UInt) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.ExperimentalUnsignedTypes
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.ULongArray.scanIndexed(initial: R, operation: (index: kotlin.Int, acc: R, kotlin.ULong) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.ExperimentalUnsignedTypes
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.UShortArray.scanIndexed(initial: R, operation: (index: kotlin.Int, acc: R, kotlin.UShort) -> R): kotlin.collections.List<R>
 
@@ -8900,23 +8900,23 @@ public fun kotlin.Array<out kotlin.Long>.sum(): kotlin.Long
 public fun kotlin.Array<out kotlin.Short>.sum(): kotlin.Int
 
 @kotlin.jvm.JvmName(name = "sumOfUByte")
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.Array<out kotlin.UByte>.sum(): kotlin.UInt
 
 @kotlin.jvm.JvmName(name = "sumOfUInt")
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.Array<out kotlin.UInt>.sum(): kotlin.UInt
 
 @kotlin.jvm.JvmName(name = "sumOfULong")
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.Array<out kotlin.ULong>.sum(): kotlin.ULong
 
 @kotlin.jvm.JvmName(name = "sumOfUShort")
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.Array<out kotlin.UShort>.sum(): kotlin.UInt
 
 public fun kotlin.ByteArray.sum(): kotlin.Int
@@ -8970,23 +8970,23 @@ public fun kotlin.collections.Iterable<kotlin.Long>.sum(): kotlin.Long
 public fun kotlin.collections.Iterable<kotlin.Short>.sum(): kotlin.Int
 
 @kotlin.jvm.JvmName(name = "sumOfUByte")
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.collections.Iterable<kotlin.UByte>.sum(): kotlin.UInt
 
 @kotlin.jvm.JvmName(name = "sumOfUInt")
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.collections.Iterable<kotlin.UInt>.sum(): kotlin.UInt
 
 @kotlin.jvm.JvmName(name = "sumOfULong")
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.collections.Iterable<kotlin.ULong>.sum(): kotlin.ULong
 
 @kotlin.jvm.JvmName(name = "sumOfUShort")
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.collections.Iterable<kotlin.UShort>.sum(): kotlin.UInt
 
 public inline fun <T> kotlin.Array<out T>.sumBy(selector: (T) -> kotlin.Int): kotlin.Int
@@ -9087,17 +9087,17 @@ public inline fun <T> kotlin.Array<out T>.sumOf(selector: (T) -> kotlin.Int): ko
 @kotlin.internal.InlineOnly
 public inline fun <T> kotlin.Array<out T>.sumOf(selector: (T) -> kotlin.Long): kotlin.Long
 
-@kotlin.SinceKotlin(version = "1.4")
+@kotlin.SinceKotlin(version = "1.5")
 @kotlin.OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName(name = "sumOfUInt")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun <T> kotlin.Array<out T>.sumOf(selector: (T) -> kotlin.UInt): kotlin.UInt
 
-@kotlin.SinceKotlin(version = "1.4")
+@kotlin.SinceKotlin(version = "1.5")
 @kotlin.OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName(name = "sumOfULong")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun <T> kotlin.Array<out T>.sumOf(selector: (T) -> kotlin.ULong): kotlin.ULong
 
@@ -9119,17 +9119,17 @@ public inline fun kotlin.BooleanArray.sumOf(selector: (kotlin.Boolean) -> kotlin
 @kotlin.internal.InlineOnly
 public inline fun kotlin.BooleanArray.sumOf(selector: (kotlin.Boolean) -> kotlin.Long): kotlin.Long
 
-@kotlin.SinceKotlin(version = "1.4")
+@kotlin.SinceKotlin(version = "1.5")
 @kotlin.OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName(name = "sumOfUInt")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.BooleanArray.sumOf(selector: (kotlin.Boolean) -> kotlin.UInt): kotlin.UInt
 
-@kotlin.SinceKotlin(version = "1.4")
+@kotlin.SinceKotlin(version = "1.5")
 @kotlin.OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName(name = "sumOfULong")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.BooleanArray.sumOf(selector: (kotlin.Boolean) -> kotlin.ULong): kotlin.ULong
 
@@ -9151,17 +9151,17 @@ public inline fun kotlin.ByteArray.sumOf(selector: (kotlin.Byte) -> kotlin.Int):
 @kotlin.internal.InlineOnly
 public inline fun kotlin.ByteArray.sumOf(selector: (kotlin.Byte) -> kotlin.Long): kotlin.Long
 
-@kotlin.SinceKotlin(version = "1.4")
+@kotlin.SinceKotlin(version = "1.5")
 @kotlin.OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName(name = "sumOfUInt")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.ByteArray.sumOf(selector: (kotlin.Byte) -> kotlin.UInt): kotlin.UInt
 
-@kotlin.SinceKotlin(version = "1.4")
+@kotlin.SinceKotlin(version = "1.5")
 @kotlin.OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName(name = "sumOfULong")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.ByteArray.sumOf(selector: (kotlin.Byte) -> kotlin.ULong): kotlin.ULong
 
@@ -9183,17 +9183,17 @@ public inline fun kotlin.CharArray.sumOf(selector: (kotlin.Char) -> kotlin.Int):
 @kotlin.internal.InlineOnly
 public inline fun kotlin.CharArray.sumOf(selector: (kotlin.Char) -> kotlin.Long): kotlin.Long
 
-@kotlin.SinceKotlin(version = "1.4")
+@kotlin.SinceKotlin(version = "1.5")
 @kotlin.OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName(name = "sumOfUInt")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.CharArray.sumOf(selector: (kotlin.Char) -> kotlin.UInt): kotlin.UInt
 
-@kotlin.SinceKotlin(version = "1.4")
+@kotlin.SinceKotlin(version = "1.5")
 @kotlin.OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName(name = "sumOfULong")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.CharArray.sumOf(selector: (kotlin.Char) -> kotlin.ULong): kotlin.ULong
 
@@ -9215,17 +9215,17 @@ public inline fun kotlin.DoubleArray.sumOf(selector: (kotlin.Double) -> kotlin.I
 @kotlin.internal.InlineOnly
 public inline fun kotlin.DoubleArray.sumOf(selector: (kotlin.Double) -> kotlin.Long): kotlin.Long
 
-@kotlin.SinceKotlin(version = "1.4")
+@kotlin.SinceKotlin(version = "1.5")
 @kotlin.OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName(name = "sumOfUInt")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.DoubleArray.sumOf(selector: (kotlin.Double) -> kotlin.UInt): kotlin.UInt
 
-@kotlin.SinceKotlin(version = "1.4")
+@kotlin.SinceKotlin(version = "1.5")
 @kotlin.OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName(name = "sumOfULong")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.DoubleArray.sumOf(selector: (kotlin.Double) -> kotlin.ULong): kotlin.ULong
 
@@ -9247,17 +9247,17 @@ public inline fun kotlin.FloatArray.sumOf(selector: (kotlin.Float) -> kotlin.Int
 @kotlin.internal.InlineOnly
 public inline fun kotlin.FloatArray.sumOf(selector: (kotlin.Float) -> kotlin.Long): kotlin.Long
 
-@kotlin.SinceKotlin(version = "1.4")
+@kotlin.SinceKotlin(version = "1.5")
 @kotlin.OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName(name = "sumOfUInt")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.FloatArray.sumOf(selector: (kotlin.Float) -> kotlin.UInt): kotlin.UInt
 
-@kotlin.SinceKotlin(version = "1.4")
+@kotlin.SinceKotlin(version = "1.5")
 @kotlin.OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName(name = "sumOfULong")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.FloatArray.sumOf(selector: (kotlin.Float) -> kotlin.ULong): kotlin.ULong
 
@@ -9279,17 +9279,17 @@ public inline fun kotlin.IntArray.sumOf(selector: (kotlin.Int) -> kotlin.Int): k
 @kotlin.internal.InlineOnly
 public inline fun kotlin.IntArray.sumOf(selector: (kotlin.Int) -> kotlin.Long): kotlin.Long
 
-@kotlin.SinceKotlin(version = "1.4")
+@kotlin.SinceKotlin(version = "1.5")
 @kotlin.OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName(name = "sumOfUInt")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.IntArray.sumOf(selector: (kotlin.Int) -> kotlin.UInt): kotlin.UInt
 
-@kotlin.SinceKotlin(version = "1.4")
+@kotlin.SinceKotlin(version = "1.5")
 @kotlin.OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName(name = "sumOfULong")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.IntArray.sumOf(selector: (kotlin.Int) -> kotlin.ULong): kotlin.ULong
 
@@ -9311,17 +9311,17 @@ public inline fun kotlin.LongArray.sumOf(selector: (kotlin.Long) -> kotlin.Int):
 @kotlin.internal.InlineOnly
 public inline fun kotlin.LongArray.sumOf(selector: (kotlin.Long) -> kotlin.Long): kotlin.Long
 
-@kotlin.SinceKotlin(version = "1.4")
+@kotlin.SinceKotlin(version = "1.5")
 @kotlin.OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName(name = "sumOfUInt")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.LongArray.sumOf(selector: (kotlin.Long) -> kotlin.UInt): kotlin.UInt
 
-@kotlin.SinceKotlin(version = "1.4")
+@kotlin.SinceKotlin(version = "1.5")
 @kotlin.OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName(name = "sumOfULong")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.LongArray.sumOf(selector: (kotlin.Long) -> kotlin.ULong): kotlin.ULong
 
@@ -9343,17 +9343,17 @@ public inline fun kotlin.ShortArray.sumOf(selector: (kotlin.Short) -> kotlin.Int
 @kotlin.internal.InlineOnly
 public inline fun kotlin.ShortArray.sumOf(selector: (kotlin.Short) -> kotlin.Long): kotlin.Long
 
-@kotlin.SinceKotlin(version = "1.4")
+@kotlin.SinceKotlin(version = "1.5")
 @kotlin.OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName(name = "sumOfUInt")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.ShortArray.sumOf(selector: (kotlin.Short) -> kotlin.UInt): kotlin.UInt
 
-@kotlin.SinceKotlin(version = "1.4")
+@kotlin.SinceKotlin(version = "1.5")
 @kotlin.OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName(name = "sumOfULong")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.ShortArray.sumOf(selector: (kotlin.Short) -> kotlin.ULong): kotlin.ULong
 
@@ -9378,17 +9378,19 @@ public inline fun kotlin.UByteArray.sumOf(selector: (kotlin.UByte) -> kotlin.Int
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UByteArray.sumOf(selector: (kotlin.UByte) -> kotlin.Long): kotlin.Long
 
-@kotlin.SinceKotlin(version = "1.4")
+@kotlin.SinceKotlin(version = "1.5")
 @kotlin.OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName(name = "sumOfUInt")
 @kotlin.ExperimentalUnsignedTypes
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UByteArray.sumOf(selector: (kotlin.UByte) -> kotlin.UInt): kotlin.UInt
 
-@kotlin.SinceKotlin(version = "1.4")
+@kotlin.SinceKotlin(version = "1.5")
 @kotlin.OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName(name = "sumOfULong")
 @kotlin.ExperimentalUnsignedTypes
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UByteArray.sumOf(selector: (kotlin.UByte) -> kotlin.ULong): kotlin.ULong
 
@@ -9413,17 +9415,19 @@ public inline fun kotlin.UIntArray.sumOf(selector: (kotlin.UInt) -> kotlin.Int):
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UIntArray.sumOf(selector: (kotlin.UInt) -> kotlin.Long): kotlin.Long
 
-@kotlin.SinceKotlin(version = "1.4")
+@kotlin.SinceKotlin(version = "1.5")
 @kotlin.OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName(name = "sumOfUInt")
 @kotlin.ExperimentalUnsignedTypes
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UIntArray.sumOf(selector: (kotlin.UInt) -> kotlin.UInt): kotlin.UInt
 
-@kotlin.SinceKotlin(version = "1.4")
+@kotlin.SinceKotlin(version = "1.5")
 @kotlin.OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName(name = "sumOfULong")
 @kotlin.ExperimentalUnsignedTypes
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UIntArray.sumOf(selector: (kotlin.UInt) -> kotlin.ULong): kotlin.ULong
 
@@ -9448,17 +9452,19 @@ public inline fun kotlin.ULongArray.sumOf(selector: (kotlin.ULong) -> kotlin.Int
 @kotlin.internal.InlineOnly
 public inline fun kotlin.ULongArray.sumOf(selector: (kotlin.ULong) -> kotlin.Long): kotlin.Long
 
-@kotlin.SinceKotlin(version = "1.4")
+@kotlin.SinceKotlin(version = "1.5")
 @kotlin.OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName(name = "sumOfUInt")
 @kotlin.ExperimentalUnsignedTypes
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.ULongArray.sumOf(selector: (kotlin.ULong) -> kotlin.UInt): kotlin.UInt
 
-@kotlin.SinceKotlin(version = "1.4")
+@kotlin.SinceKotlin(version = "1.5")
 @kotlin.OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName(name = "sumOfULong")
 @kotlin.ExperimentalUnsignedTypes
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.ULongArray.sumOf(selector: (kotlin.ULong) -> kotlin.ULong): kotlin.ULong
 
@@ -9483,17 +9489,19 @@ public inline fun kotlin.UShortArray.sumOf(selector: (kotlin.UShort) -> kotlin.I
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UShortArray.sumOf(selector: (kotlin.UShort) -> kotlin.Long): kotlin.Long
 
-@kotlin.SinceKotlin(version = "1.4")
+@kotlin.SinceKotlin(version = "1.5")
 @kotlin.OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName(name = "sumOfUInt")
 @kotlin.ExperimentalUnsignedTypes
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UShortArray.sumOf(selector: (kotlin.UShort) -> kotlin.UInt): kotlin.UInt
 
-@kotlin.SinceKotlin(version = "1.4")
+@kotlin.SinceKotlin(version = "1.5")
 @kotlin.OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName(name = "sumOfULong")
 @kotlin.ExperimentalUnsignedTypes
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UShortArray.sumOf(selector: (kotlin.UShort) -> kotlin.ULong): kotlin.ULong
 
@@ -9515,17 +9523,17 @@ public inline fun <T> kotlin.collections.Iterable<T>.sumOf(selector: (T) -> kotl
 @kotlin.internal.InlineOnly
 public inline fun <T> kotlin.collections.Iterable<T>.sumOf(selector: (T) -> kotlin.Long): kotlin.Long
 
-@kotlin.SinceKotlin(version = "1.4")
+@kotlin.SinceKotlin(version = "1.5")
 @kotlin.OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName(name = "sumOfUInt")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun <T> kotlin.collections.Iterable<T>.sumOf(selector: (T) -> kotlin.UInt): kotlin.UInt
 
-@kotlin.SinceKotlin(version = "1.4")
+@kotlin.SinceKotlin(version = "1.5")
 @kotlin.OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName(name = "sumOfULong")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun <T> kotlin.collections.Iterable<T>.sumOf(selector: (T) -> kotlin.ULong): kotlin.ULong
 
@@ -10935,8 +10943,8 @@ public abstract class ShortIterator : kotlin.collections.Iterator<kotlin.Short> 
     public abstract fun nextShort(): kotlin.Short
 }
 
+@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "This class is not going to be stabilized and is to be removed soon.")
 @kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
 public abstract class UByteIterator : kotlin.collections.Iterator<kotlin.UByte> {
     public constructor UByteIterator()
 
@@ -10945,8 +10953,8 @@ public abstract class UByteIterator : kotlin.collections.Iterator<kotlin.UByte> 
     public abstract fun nextUByte(): kotlin.UByte
 }
 
+@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "This class is not going to be stabilized and is to be removed soon.")
 @kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
 public abstract class UIntIterator : kotlin.collections.Iterator<kotlin.UInt> {
     public constructor UIntIterator()
 
@@ -10955,8 +10963,8 @@ public abstract class UIntIterator : kotlin.collections.Iterator<kotlin.UInt> {
     public abstract fun nextUInt(): kotlin.UInt
 }
 
+@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "This class is not going to be stabilized and is to be removed soon.")
 @kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
 public abstract class ULongIterator : kotlin.collections.Iterator<kotlin.ULong> {
     public constructor ULongIterator()
 
@@ -10965,8 +10973,8 @@ public abstract class ULongIterator : kotlin.collections.Iterator<kotlin.ULong> 
     public abstract fun nextULong(): kotlin.ULong
 }
 
+@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "This class is not going to be stabilized and is to be removed soon.")
 @kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
 public abstract class UShortIterator : kotlin.collections.Iterator<kotlin.UShort> {
     public constructor UShortIterator()
 

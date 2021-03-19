@@ -2351,11 +2351,11 @@ public inline fun <T> Sequence<T>.sumOf(selector: (T) -> Long): Long {
  *
  * The operation is _terminal_.
  */
-@SinceKotlin("1.4")
+@SinceKotlin("1.5")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("sumOfUInt")
-@ExperimentalUnsignedTypes
+@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun <T> Sequence<T>.sumOf(selector: (T) -> UInt): UInt {
     var sum: UInt = 0.toUInt()
@@ -2370,11 +2370,11 @@ public inline fun <T> Sequence<T>.sumOf(selector: (T) -> UInt): UInt {
  *
  * The operation is _terminal_.
  */
-@SinceKotlin("1.4")
+@SinceKotlin("1.5")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName("sumOfULong")
-@ExperimentalUnsignedTypes
+@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun <T> Sequence<T>.sumOf(selector: (T) -> ULong): ULong {
     var sum: ULong = 0.toULong()

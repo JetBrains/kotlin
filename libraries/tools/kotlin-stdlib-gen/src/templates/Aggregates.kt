@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -268,8 +268,10 @@ object Aggregates : TemplateGroupBase() {
                 annotation("""@Suppress("INAPPLICABLE_JVM_NAME")""")
             }
             annotation("""@kotlin.jvm.JvmName("sumOf$typeShortName")""") // should not be needed if inline return type is mangled
-            if (selectorType.startsWith("U"))
-                annotation("@ExperimentalUnsignedTypes")
+            if (selectorType.startsWith("U")) {
+                since("1.5")
+                wasExperimental("ExperimentalUnsignedTypes")
+            }
 
             doc { "Returns the sum of all values produced by [selector] function applied to each ${f.element} in the ${f.collection}." }
             returns(selectorType)
@@ -1142,7 +1144,7 @@ object Aggregates : TemplateGroupBase() {
         include(ArraysOfPrimitives, ArraysOfUnsigned, CharSequences)
     } builder {
         since("1.4")
-        annotation("@WasExperimental(ExperimentalStdlibApi::class)")
+        wasExperimental("ExperimentalStdlibApi")
         inline()
         specialFor(ArraysOfUnsigned) { inlineOnly() }
 
@@ -1167,7 +1169,7 @@ object Aggregates : TemplateGroupBase() {
         include(ArraysOfObjects, Iterables, Sequences)
     } builder {
         since("1.4")
-        annotation("@WasExperimental(ExperimentalStdlibApi::class)")
+        wasExperimental("ExperimentalStdlibApi")
         inline()
 
         doc { reduceDoc("reduceOrNull") }
@@ -1267,7 +1269,7 @@ object Aggregates : TemplateGroupBase() {
         include(CharSequences, ArraysOfPrimitives, ArraysOfUnsigned)
     } builder {
         since("1.4")
-        annotation("@WasExperimental(ExperimentalStdlibApi::class)")
+        wasExperimental("ExperimentalStdlibApi")
         inline()
         specialFor(ArraysOfUnsigned) { inlineOnly() }
 
@@ -1293,7 +1295,7 @@ object Aggregates : TemplateGroupBase() {
         include(Lists, ArraysOfObjects)
     } builder {
         since("1.4")
-        annotation("@WasExperimental(ExperimentalStdlibApi::class)")
+        wasExperimental("ExperimentalStdlibApi")
         inline()
         doc { reduceDoc("reduceRightOrNull") }
         sample("samples.collections.Collections.Aggregates.reduceRightOrNull")
@@ -1414,7 +1416,7 @@ object Aggregates : TemplateGroupBase() {
         include(CharSequences, ArraysOfUnsigned)
     } builder {
         since("1.4")
-        annotation("@WasExperimental(ExperimentalStdlibApi::class)")
+        wasExperimental("ExperimentalStdlibApi")
 
         specialFor(Iterables, ArraysOfObjects, CharSequences) { inline() }
         specialFor(ArraysOfPrimitives, ArraysOfUnsigned) { inlineOnly() }
@@ -1512,7 +1514,7 @@ object Aggregates : TemplateGroupBase() {
         include(CharSequences, ArraysOfUnsigned)
     } builder {
         since("1.4")
-        annotation("@WasExperimental(ExperimentalStdlibApi::class)")
+        wasExperimental("ExperimentalStdlibApi")
 
         specialFor(Iterables, ArraysOfObjects, CharSequences) { inline() }
         specialFor(ArraysOfPrimitives, ArraysOfUnsigned) { inlineOnly() }
@@ -1612,7 +1614,7 @@ object Aggregates : TemplateGroupBase() {
         include(ArraysOfObjects, Iterables, Sequences)
     } builder {
         since("1.4")
-        annotation("@WasExperimental(ExperimentalStdlibApi::class)")
+        wasExperimental("ExperimentalStdlibApi")
 
         specialFor(ArraysOfObjects, Iterables) { inline() }
 

@@ -306,9 +306,8 @@ public final class kotlin/UByteArray : java/util/Collection, kotlin/jvm/internal
 	public static fun hashCode-impl ([B)I
 	public fun isEmpty ()Z
 	public static fun isEmpty-impl ([B)Z
-	public synthetic fun iterator ()Ljava/util/Iterator;
-	public fun iterator ()Lkotlin/collections/UByteIterator;
-	public static fun iterator-impl ([B)Lkotlin/collections/UByteIterator;
+	public fun iterator ()Ljava/util/Iterator;
+	public static fun iterator-impl ([B)Ljava/util/Iterator;
 	public fun remove (Ljava/lang/Object;)Z
 	public fun removeAll (Ljava/util/Collection;)Z
 	public fun retainAll (Ljava/util/Collection;)Z
@@ -366,9 +365,8 @@ public final class kotlin/UIntArray : java/util/Collection, kotlin/jvm/internal/
 	public static fun hashCode-impl ([I)I
 	public fun isEmpty ()Z
 	public static fun isEmpty-impl ([I)Z
-	public synthetic fun iterator ()Ljava/util/Iterator;
-	public fun iterator ()Lkotlin/collections/UIntIterator;
-	public static fun iterator-impl ([I)Lkotlin/collections/UIntIterator;
+	public fun iterator ()Ljava/util/Iterator;
+	public static fun iterator-impl ([I)Ljava/util/Iterator;
 	public fun remove (Ljava/lang/Object;)Z
 	public fun removeAll (Ljava/util/Collection;)Z
 	public fun retainAll (Ljava/util/Collection;)Z
@@ -426,9 +424,8 @@ public final class kotlin/ULongArray : java/util/Collection, kotlin/jvm/internal
 	public static fun hashCode-impl ([J)I
 	public fun isEmpty ()Z
 	public static fun isEmpty-impl ([J)Z
-	public synthetic fun iterator ()Ljava/util/Iterator;
-	public fun iterator ()Lkotlin/collections/ULongIterator;
-	public static fun iterator-impl ([J)Lkotlin/collections/ULongIterator;
+	public fun iterator ()Ljava/util/Iterator;
+	public static fun iterator-impl ([J)Ljava/util/Iterator;
 	public fun remove (Ljava/lang/Object;)Z
 	public fun removeAll (Ljava/util/Collection;)Z
 	public fun retainAll (Ljava/util/Collection;)Z
@@ -486,9 +483,8 @@ public final class kotlin/UShortArray : java/util/Collection, kotlin/jvm/interna
 	public static fun hashCode-impl ([S)I
 	public fun isEmpty ()Z
 	public static fun isEmpty-impl ([S)Z
-	public synthetic fun iterator ()Ljava/util/Iterator;
-	public fun iterator ()Lkotlin/collections/UShortIterator;
-	public static fun iterator-impl ([S)Lkotlin/collections/UShortIterator;
+	public fun iterator ()Ljava/util/Iterator;
+	public static fun iterator-impl ([S)Ljava/util/Iterator;
 	public fun remove (Ljava/lang/Object;)Z
 	public fun removeAll (Ljava/util/Collection;)Z
 	public fun retainAll (Ljava/util/Collection;)Z
@@ -4524,8 +4520,7 @@ public class kotlin/ranges/UIntProgression : java/lang/Iterable, kotlin/jvm/inte
 	public final fun getStep ()I
 	public fun hashCode ()I
 	public fun isEmpty ()Z
-	public synthetic fun iterator ()Ljava/util/Iterator;
-	public fun iterator ()Lkotlin/collections/UIntIterator;
+	public final fun iterator ()Ljava/util/Iterator;
 	public fun toString ()Ljava/lang/String;
 }
 
@@ -4560,8 +4555,7 @@ public class kotlin/ranges/ULongProgression : java/lang/Iterable, kotlin/jvm/int
 	public final fun getStep ()J
 	public fun hashCode ()I
 	public fun isEmpty ()Z
-	public synthetic fun iterator ()Ljava/util/Iterator;
-	public fun iterator ()Lkotlin/collections/ULongIterator;
+	public final fun iterator ()Ljava/util/Iterator;
 	public fun toString ()Ljava/lang/String;
 }
 

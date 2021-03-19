@@ -1262,8 +1262,8 @@ public fun UShortArray.random(random: Random): UShort {
  * Returns a random element from this array, or `null` if this array is empty.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @ExperimentalUnsignedTypes
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun UIntArray.randomOrNull(): UInt? {
     return randomOrNull(Random)
@@ -1273,8 +1273,8 @@ public inline fun UIntArray.randomOrNull(): UInt? {
  * Returns a random element from this array, or `null` if this array is empty.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @ExperimentalUnsignedTypes
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun ULongArray.randomOrNull(): ULong? {
     return randomOrNull(Random)
@@ -1284,8 +1284,8 @@ public inline fun ULongArray.randomOrNull(): ULong? {
  * Returns a random element from this array, or `null` if this array is empty.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @ExperimentalUnsignedTypes
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun UByteArray.randomOrNull(): UByte? {
     return randomOrNull(Random)
@@ -1295,8 +1295,8 @@ public inline fun UByteArray.randomOrNull(): UByte? {
  * Returns a random element from this array, or `null` if this array is empty.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @ExperimentalUnsignedTypes
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun UShortArray.randomOrNull(): UShort? {
     return randomOrNull(Random)
@@ -1306,8 +1306,8 @@ public inline fun UShortArray.randomOrNull(): UShort? {
  * Returns a random element from this array using the specified source of randomness, or `null` if this array is empty.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @ExperimentalUnsignedTypes
+@WasExperimental(ExperimentalStdlibApi::class)
 public fun UIntArray.randomOrNull(random: Random): UInt? {
     if (isEmpty())
         return null
@@ -1318,8 +1318,8 @@ public fun UIntArray.randomOrNull(random: Random): UInt? {
  * Returns a random element from this array using the specified source of randomness, or `null` if this array is empty.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @ExperimentalUnsignedTypes
+@WasExperimental(ExperimentalStdlibApi::class)
 public fun ULongArray.randomOrNull(random: Random): ULong? {
     if (isEmpty())
         return null
@@ -1330,8 +1330,8 @@ public fun ULongArray.randomOrNull(random: Random): ULong? {
  * Returns a random element from this array using the specified source of randomness, or `null` if this array is empty.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @ExperimentalUnsignedTypes
+@WasExperimental(ExperimentalStdlibApi::class)
 public fun UByteArray.randomOrNull(random: Random): UByte? {
     if (isEmpty())
         return null
@@ -1342,8 +1342,8 @@ public fun UByteArray.randomOrNull(random: Random): UByte? {
  * Returns a random element from this array using the specified source of randomness, or `null` if this array is empty.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @ExperimentalUnsignedTypes
+@WasExperimental(ExperimentalStdlibApi::class)
 public fun UShortArray.randomOrNull(random: Random): UShort? {
     if (isEmpty())
         return null
@@ -8490,8 +8490,8 @@ public inline fun UShortArray.reduceIndexedOrNull(operation: (index: Int, acc: U
  * @sample samples.collections.Collections.Aggregates.reduceOrNull
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @ExperimentalUnsignedTypes
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun UIntArray.reduceOrNull(operation: (acc: UInt, UInt) -> UInt): UInt? {
     if (isEmpty())
@@ -8515,8 +8515,8 @@ public inline fun UIntArray.reduceOrNull(operation: (acc: UInt, UInt) -> UInt): 
  * @sample samples.collections.Collections.Aggregates.reduceOrNull
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @ExperimentalUnsignedTypes
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun ULongArray.reduceOrNull(operation: (acc: ULong, ULong) -> ULong): ULong? {
     if (isEmpty())
@@ -8540,8 +8540,8 @@ public inline fun ULongArray.reduceOrNull(operation: (acc: ULong, ULong) -> ULon
  * @sample samples.collections.Collections.Aggregates.reduceOrNull
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @ExperimentalUnsignedTypes
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun UByteArray.reduceOrNull(operation: (acc: UByte, UByte) -> UByte): UByte? {
     if (isEmpty())
@@ -8565,8 +8565,8 @@ public inline fun UByteArray.reduceOrNull(operation: (acc: UByte, UByte) -> UByt
  * @sample samples.collections.Collections.Aggregates.reduceOrNull
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @ExperimentalUnsignedTypes
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun UShortArray.reduceOrNull(operation: (acc: UShort, UShort) -> UShort): UShort? {
     if (isEmpty())
@@ -8894,8 +8894,8 @@ public inline fun UShortArray.reduceRightIndexedOrNull(operation: (index: Int, U
  * @sample samples.collections.Collections.Aggregates.reduceRightOrNull
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @ExperimentalUnsignedTypes
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun UIntArray.reduceRightOrNull(operation: (UInt, acc: UInt) -> UInt): UInt? {
     var index = lastIndex
@@ -8919,8 +8919,8 @@ public inline fun UIntArray.reduceRightOrNull(operation: (UInt, acc: UInt) -> UI
  * @sample samples.collections.Collections.Aggregates.reduceRightOrNull
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @ExperimentalUnsignedTypes
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun ULongArray.reduceRightOrNull(operation: (ULong, acc: ULong) -> ULong): ULong? {
     var index = lastIndex
@@ -8944,8 +8944,8 @@ public inline fun ULongArray.reduceRightOrNull(operation: (ULong, acc: ULong) ->
  * @sample samples.collections.Collections.Aggregates.reduceRightOrNull
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @ExperimentalUnsignedTypes
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun UByteArray.reduceRightOrNull(operation: (UByte, acc: UByte) -> UByte): UByte? {
     var index = lastIndex
@@ -8969,8 +8969,8 @@ public inline fun UByteArray.reduceRightOrNull(operation: (UByte, acc: UByte) ->
  * @sample samples.collections.Collections.Aggregates.reduceRightOrNull
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @ExperimentalUnsignedTypes
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun UShortArray.reduceRightOrNull(operation: (UShort, acc: UShort) -> UShort): UShort? {
     var index = lastIndex
@@ -9402,8 +9402,8 @@ public inline fun UShortArray.runningReduceIndexed(operation: (index: Int, acc: 
  * @sample samples.collections.Collections.Aggregates.scan
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @ExperimentalUnsignedTypes
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <R> UIntArray.scan(initial: R, operation: (acc: R, UInt) -> R): List<R> {
     return runningFold(initial, operation)
@@ -9421,8 +9421,8 @@ public inline fun <R> UIntArray.scan(initial: R, operation: (acc: R, UInt) -> R)
  * @sample samples.collections.Collections.Aggregates.scan
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @ExperimentalUnsignedTypes
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <R> ULongArray.scan(initial: R, operation: (acc: R, ULong) -> R): List<R> {
     return runningFold(initial, operation)
@@ -9440,8 +9440,8 @@ public inline fun <R> ULongArray.scan(initial: R, operation: (acc: R, ULong) -> 
  * @sample samples.collections.Collections.Aggregates.scan
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @ExperimentalUnsignedTypes
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <R> UByteArray.scan(initial: R, operation: (acc: R, UByte) -> R): List<R> {
     return runningFold(initial, operation)
@@ -9459,8 +9459,8 @@ public inline fun <R> UByteArray.scan(initial: R, operation: (acc: R, UByte) -> 
  * @sample samples.collections.Collections.Aggregates.scan
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @ExperimentalUnsignedTypes
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <R> UShortArray.scan(initial: R, operation: (acc: R, UShort) -> R): List<R> {
     return runningFold(initial, operation)
@@ -9479,8 +9479,8 @@ public inline fun <R> UShortArray.scan(initial: R, operation: (acc: R, UShort) -
  * @sample samples.collections.Collections.Aggregates.scan
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @ExperimentalUnsignedTypes
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <R> UIntArray.scanIndexed(initial: R, operation: (index: Int, acc: R, UInt) -> R): List<R> {
     return runningFoldIndexed(initial, operation)
@@ -9499,8 +9499,8 @@ public inline fun <R> UIntArray.scanIndexed(initial: R, operation: (index: Int, 
  * @sample samples.collections.Collections.Aggregates.scan
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @ExperimentalUnsignedTypes
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <R> ULongArray.scanIndexed(initial: R, operation: (index: Int, acc: R, ULong) -> R): List<R> {
     return runningFoldIndexed(initial, operation)
@@ -9519,8 +9519,8 @@ public inline fun <R> ULongArray.scanIndexed(initial: R, operation: (index: Int,
  * @sample samples.collections.Collections.Aggregates.scan
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @ExperimentalUnsignedTypes
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <R> UByteArray.scanIndexed(initial: R, operation: (index: Int, acc: R, UByte) -> R): List<R> {
     return runningFoldIndexed(initial, operation)
@@ -9539,8 +9539,8 @@ public inline fun <R> UByteArray.scanIndexed(initial: R, operation: (index: Int,
  * @sample samples.collections.Collections.Aggregates.scan
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @ExperimentalUnsignedTypes
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <R> UShortArray.scanIndexed(initial: R, operation: (index: Int, acc: R, UShort) -> R): List<R> {
     return runningFoldIndexed(initial, operation)
@@ -9949,12 +9949,13 @@ public inline fun UShortArray.sumOf(selector: (UShort) -> Long): Long {
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
-@SinceKotlin("1.4")
+@SinceKotlin("1.5")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
 @Suppress("INAPPLICABLE_JVM_NAME")
 @kotlin.jvm.JvmName("sumOfUInt")
 @ExperimentalUnsignedTypes
+@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun UIntArray.sumOf(selector: (UInt) -> UInt): UInt {
     var sum: UInt = 0.toUInt()
@@ -9967,12 +9968,13 @@ public inline fun UIntArray.sumOf(selector: (UInt) -> UInt): UInt {
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
-@SinceKotlin("1.4")
+@SinceKotlin("1.5")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
 @Suppress("INAPPLICABLE_JVM_NAME")
 @kotlin.jvm.JvmName("sumOfUInt")
 @ExperimentalUnsignedTypes
+@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun ULongArray.sumOf(selector: (ULong) -> UInt): UInt {
     var sum: UInt = 0.toUInt()
@@ -9985,12 +9987,13 @@ public inline fun ULongArray.sumOf(selector: (ULong) -> UInt): UInt {
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
-@SinceKotlin("1.4")
+@SinceKotlin("1.5")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
 @Suppress("INAPPLICABLE_JVM_NAME")
 @kotlin.jvm.JvmName("sumOfUInt")
 @ExperimentalUnsignedTypes
+@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun UByteArray.sumOf(selector: (UByte) -> UInt): UInt {
     var sum: UInt = 0.toUInt()
@@ -10003,12 +10006,13 @@ public inline fun UByteArray.sumOf(selector: (UByte) -> UInt): UInt {
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
-@SinceKotlin("1.4")
+@SinceKotlin("1.5")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
 @Suppress("INAPPLICABLE_JVM_NAME")
 @kotlin.jvm.JvmName("sumOfUInt")
 @ExperimentalUnsignedTypes
+@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun UShortArray.sumOf(selector: (UShort) -> UInt): UInt {
     var sum: UInt = 0.toUInt()
@@ -10021,12 +10025,13 @@ public inline fun UShortArray.sumOf(selector: (UShort) -> UInt): UInt {
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
-@SinceKotlin("1.4")
+@SinceKotlin("1.5")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
 @Suppress("INAPPLICABLE_JVM_NAME")
 @kotlin.jvm.JvmName("sumOfULong")
 @ExperimentalUnsignedTypes
+@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun UIntArray.sumOf(selector: (UInt) -> ULong): ULong {
     var sum: ULong = 0.toULong()
@@ -10039,12 +10044,13 @@ public inline fun UIntArray.sumOf(selector: (UInt) -> ULong): ULong {
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
-@SinceKotlin("1.4")
+@SinceKotlin("1.5")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
 @Suppress("INAPPLICABLE_JVM_NAME")
 @kotlin.jvm.JvmName("sumOfULong")
 @ExperimentalUnsignedTypes
+@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun ULongArray.sumOf(selector: (ULong) -> ULong): ULong {
     var sum: ULong = 0.toULong()
@@ -10057,12 +10063,13 @@ public inline fun ULongArray.sumOf(selector: (ULong) -> ULong): ULong {
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
-@SinceKotlin("1.4")
+@SinceKotlin("1.5")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
 @Suppress("INAPPLICABLE_JVM_NAME")
 @kotlin.jvm.JvmName("sumOfULong")
 @ExperimentalUnsignedTypes
+@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun UByteArray.sumOf(selector: (UByte) -> ULong): ULong {
     var sum: ULong = 0.toULong()
@@ -10075,12 +10082,13 @@ public inline fun UByteArray.sumOf(selector: (UByte) -> ULong): ULong {
 /**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
-@SinceKotlin("1.4")
+@SinceKotlin("1.5")
 @OptIn(kotlin.experimental.ExperimentalTypeInference::class)
 @OverloadResolutionByLambdaReturnType
 @Suppress("INAPPLICABLE_JVM_NAME")
 @kotlin.jvm.JvmName("sumOfULong")
 @ExperimentalUnsignedTypes
+@WasExperimental(ExperimentalUnsignedTypes::class)
 @kotlin.internal.InlineOnly
 public inline fun UShortArray.sumOf(selector: (UShort) -> ULong): ULong {
     var sum: ULong = 0.toULong()
@@ -10474,8 +10482,8 @@ public inline fun <V> UShortArray.zip(other: UShortArray, transform: (a: UShort,
  * Returns the sum of all elements in the array.
  */
 @kotlin.jvm.JvmName("sumOfUInt")
-@SinceKotlin("1.3")
-@ExperimentalUnsignedTypes
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun Array<out UInt>.sum(): UInt {
     var sum: UInt = 0u
     for (element in this) {
@@ -10488,8 +10496,8 @@ public fun Array<out UInt>.sum(): UInt {
  * Returns the sum of all elements in the array.
  */
 @kotlin.jvm.JvmName("sumOfULong")
-@SinceKotlin("1.3")
-@ExperimentalUnsignedTypes
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun Array<out ULong>.sum(): ULong {
     var sum: ULong = 0uL
     for (element in this) {
@@ -10502,8 +10510,8 @@ public fun Array<out ULong>.sum(): ULong {
  * Returns the sum of all elements in the array.
  */
 @kotlin.jvm.JvmName("sumOfUByte")
-@SinceKotlin("1.3")
-@ExperimentalUnsignedTypes
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun Array<out UByte>.sum(): UInt {
     var sum: UInt = 0u
     for (element in this) {
@@ -10516,8 +10524,8 @@ public fun Array<out UByte>.sum(): UInt {
  * Returns the sum of all elements in the array.
  */
 @kotlin.jvm.JvmName("sumOfUShort")
-@SinceKotlin("1.3")
-@ExperimentalUnsignedTypes
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalUnsignedTypes::class)
 public fun Array<out UShort>.sum(): UInt {
     var sum: UInt = 0u
     for (element in this) {

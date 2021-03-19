@@ -22,36 +22,36 @@ public fun kotlin.random.Random.nextUBytes(array: kotlin.UByteArray): kotlin.UBy
 @kotlin.ExperimentalUnsignedTypes
 public fun kotlin.random.Random.nextUBytes(array: kotlin.UByteArray, fromIndex: kotlin.Int = ..., toIndex: kotlin.Int = ...): kotlin.UByteArray
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.random.Random.nextUInt(): kotlin.UInt
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.random.Random.nextUInt(until: kotlin.UInt): kotlin.UInt
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.random.Random.nextUInt(from: kotlin.UInt, until: kotlin.UInt): kotlin.UInt
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.random.Random.nextUInt(range: kotlin.ranges.UIntRange): kotlin.UInt
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.random.Random.nextULong(): kotlin.ULong
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.random.Random.nextULong(until: kotlin.ULong): kotlin.ULong
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.random.Random.nextULong(from: kotlin.ULong, until: kotlin.ULong): kotlin.ULong
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.random.Random.nextULong(range: kotlin.ranges.ULongRange): kotlin.ULong
 
 @kotlin.SinceKotlin(version = "1.3")
