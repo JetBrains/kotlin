@@ -104,6 +104,10 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
                 model("codegen/boxInline")
             }
 
+            testClass<AbstractIrSerializeCompileKotlinAgainstInlineKotlinTest> {
+                model("codegen/boxInline")
+            }
+
             testClass<AbstractJvmIrAgainstOldBoxInlineTest> {
                 model("codegen/boxInline")
             }
