@@ -6735,6 +6735,50 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Nested
+        @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses")
+        @TestDataPath("$PROJECT_ROOT")
+        public class InlineClasses {
+            @Test
+            public void testAllFilesPresentInInlineClasses() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+
+            @Test
+            @TestMetadata("privateConstructor.kt")
+            public void testPrivateConstructor() throws Exception {
+                runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/privateConstructor.kt");
+            }
+
+            @Test
+            @TestMetadata("privateConstructorWithPrivateField.kt")
+            public void testPrivateConstructorWithPrivateField() throws Exception {
+                runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/privateConstructorWithPrivateField.kt");
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/oldMangling")
+            @TestDataPath("$PROJECT_ROOT")
+            public class OldMangling {
+                @Test
+                public void testAllFilesPresentInOldMangling() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/oldMangling"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+                }
+
+                @Test
+                @TestMetadata("privateConstructor.kt")
+                public void testPrivateConstructor() throws Exception {
+                    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/oldMangling/privateConstructor.kt");
+                }
+
+                @Test
+                @TestMetadata("privateConstructorWithPrivateField.kt")
+                public void testPrivateConstructorWithPrivateField() throws Exception {
+                    runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/oldMangling/privateConstructorWithPrivateField.kt");
+                }
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8")
         @TestDataPath("$PROJECT_ROOT")
         public class Jvm8 {
