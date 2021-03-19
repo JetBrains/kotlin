@@ -84,6 +84,9 @@ class FirIdeSealedHierarchyProcessor(session: FirSession, scopeSession: ScopeSes
                 .mapNotNull { it.classIdIfNonLocal() }
                 .toMutableList()
 
+            // Enforce a deterministic order on the result.
+            subclasses.sortBy { it.toString() }
+
             data[regularClass] = subclasses
         }
 
