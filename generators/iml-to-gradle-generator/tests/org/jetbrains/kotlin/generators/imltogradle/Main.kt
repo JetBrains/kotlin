@@ -154,12 +154,10 @@ fun convertJpsDependencyElement(dep: JpsDependencyElement, moduleImlRootElement:
             return listOf()
         }
         val jpsLibrary = dep.resolve(moduleImlRootElement) ?: error("Cannot resolve jps library = $libraryName")
-
-        val mavenRepoDescriptor = (jpsLibrary.properties as? JpsSimpleElement<*>)?.data as? JpsMavenRepositoryLibraryDescriptor
-        val mavenId = mavenRepoDescriptor?.mavenId
-        if (mavenId != null) {
-            return listOf("$jpsLikeJar(\"$mavenId\")")
-        }
+        val mavenId = jpsLibrary.properties.safeAs<JpsSimpleElement<*>>()?.data
+            ?.safeAs<JpsMavenRepositoryLibraryDescriptor>()?.mavenId
+            ?: error("Caanot find maven coordinates for $jpsLibrary")
+        return listOf("$jpsLikeJar(\"$mavenId\")")
     }
     error("Unknown dependency: $dep")
 }
@@ -238,4 +236,8 @@ fun Element.traverseChildren(): Sequence<Element> {
         yield(element)
     }
     return sequence { visit(this@traverseChildren) }
+}
+
+inline fun <reified T> Any?.safeAs(): T? {
+    return this as? T
 }
