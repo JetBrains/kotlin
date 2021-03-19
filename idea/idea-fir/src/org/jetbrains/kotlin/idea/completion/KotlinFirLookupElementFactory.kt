@@ -247,6 +247,7 @@ private object FunctionInsertionHandler : QuotedNamesAwareInsertionHandler() {
 
         var openingBracketOffset = chars.indexOfSkippingSpace(openingBracket, offset)
         var closeBracketOffset = openingBracketOffset?.let { chars.indexOfSkippingSpace(closingBracket, it + 1) }
+        var inBracketsShift = 0
 
         if (openingBracketOffset == null) {
             if (lookupObject.insertEmptyLambda) {
@@ -254,7 +255,12 @@ private object FunctionInsertionHandler : QuotedNamesAwareInsertionHandler() {
                     context.setAddCompletionChar(false)
                 }
 
-                document.insertString(offset, " {}")
+                if (isInsertSpacesInOneLineFunctionEnabled(context.file)) {
+                    document.insertString(offset, " {  }")
+                    inBracketsShift = 1
+                } else {
+                    document.insertString(offset, " {}")
+                }
             } else {
                 if (isSmartEnterCompletion) {
                     document.insertString(offset, "(")
@@ -269,7 +275,7 @@ private object FunctionInsertionHandler : QuotedNamesAwareInsertionHandler() {
         }
 
         if (shouldPlaceCaretInBrackets(completionChar, lookupObject) || closeBracketOffset == null) {
-            editor.caretModel.moveToOffset(openingBracketOffset + 1)
+            editor.caretModel.moveToOffset(openingBracketOffset + 1 + inBracketsShift)
             AutoPopupController.getInstance(project)?.autoPopupParameterInfo(editor, offsetElement)
         } else {
             editor.caretModel.moveToOffset(closeBracketOffset + 1)
@@ -281,6 +287,9 @@ private object FunctionInsertionHandler : QuotedNamesAwareInsertionHandler() {
         if (completionChar == '(') return true
         return lookupObject.inputValueArguments || lookupObject.insertEmptyLambda
     }
+
+    // FIXME Should be fetched from language settings (INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD), but we do not have them right now
+    private fun isInsertSpacesInOneLineFunctionEnabled(file: PsiElement) = true
 
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
         val targetFile = context.file as? KtFile ?: return

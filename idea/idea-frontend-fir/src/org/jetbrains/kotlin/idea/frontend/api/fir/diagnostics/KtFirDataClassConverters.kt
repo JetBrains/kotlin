@@ -536,6 +536,14 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.WRONG_MODIFIER_TARGET) { firDiagnostic ->
+        WrongModifierTargetImpl(
+            firDiagnostic.a,
+            firDiagnostic.b,
+            firDiagnostic as FirPsiDiagnostic<*>,
+            token,
+        )
+    }
     add(FirErrors.INLINE_CLASS_NOT_TOP_LEVEL) { firDiagnostic ->
         InlineClassNotTopLevelImpl(
             firDiagnostic as FirPsiDiagnostic<*>,
@@ -624,14 +632,6 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.VALUE_CLASS_CANNOT_BE_CLONEABLE) { firDiagnostic ->
         ValueClassCannotBeCloneableImpl(
-            firDiagnostic as FirPsiDiagnostic<*>,
-            token,
-        )
-    }
-    add(FirErrors.WRONG_MODIFIER_TARGET) { firDiagnostic ->
-        WrongModifierTargetImpl(
-            firDiagnostic.a,
-            firDiagnostic.b,
             firDiagnostic as FirPsiDiagnostic<*>,
             token,
         )

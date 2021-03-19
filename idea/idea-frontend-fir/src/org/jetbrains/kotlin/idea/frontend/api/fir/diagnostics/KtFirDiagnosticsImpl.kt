@@ -618,6 +618,15 @@ internal class RedundantOpenInInterfaceImpl(
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
 }
 
+internal class WrongModifierTargetImpl(
+    override val modifier: KtModifierKeywordToken,
+    override val target: String,
+    firDiagnostic: FirPsiDiagnostic<*>,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.WrongModifierTarget(), KtAbstractFirDiagnostic<PsiElement> {
+    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
+}
+
 internal class InlineClassNotTopLevelImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
@@ -722,15 +731,6 @@ internal class ValueClassCannotBeCloneableImpl(
     firDiagnostic: FirPsiDiagnostic<*>,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.ValueClassCannotBeCloneable(), KtAbstractFirDiagnostic<KtDeclaration> {
-    override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
-}
-
-internal class WrongModifierTargetImpl(
-    override val modifier: KtModifierKeywordToken,
-    override val target: String,
-    firDiagnostic: FirPsiDiagnostic<*>,
-    override val token: ValidityToken,
-) : KtFirDiagnostic.WrongModifierTarget(), KtAbstractFirDiagnostic<PsiElement> {
     override val firDiagnostic: FirPsiDiagnostic<*> by weakRef(firDiagnostic)
 }
 

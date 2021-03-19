@@ -2,7 +2,7 @@
 fun usage() {
     fun myLocalFun(action: () -> Unit) {}
 
-    myLocalFun {<caret>}
+    myLocalFun { <caret> }
 }
 
 // ELEMENT: myLocalFun
