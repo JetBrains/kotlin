@@ -1,7 +1,6 @@
 // "Replace with safe (?.) call" "true"
 // WITH_RUNTIME
-fun foo(a: String?) {
-    val b = a
-        ?.length
+class T {
+    fun foo(s: String?) = s<caret>.length
 }
 /* FIR_COMPARISON */

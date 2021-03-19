@@ -5,5 +5,4 @@ fun foo(a: String?) {
         // comment2
         ?.length
 }
-// FIR_IDENTICAL
 /* FIR_COMPARISON */

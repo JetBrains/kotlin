@@ -18,7 +18,9 @@ import org.jetbrains.kotlin.idea.frontend.api.types.KtTypeWithNullability
 import org.jetbrains.kotlin.idea.quickfix.ReplaceCallFix
 import org.jetbrains.kotlin.idea.quickfix.ReplaceImplicitReceiverCallFix
 import org.jetbrains.kotlin.idea.quickfix.ReplaceWithSafeCallFix
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 
 object ReplaceCallFixFactories {
     private val replaceWithSafeCallFixApplicator =
@@ -42,22 +44,9 @@ object ReplaceCallFixFactories {
         diagnosticFixFactory<PsiElement, KtFirDiagnostic.UnsafeCall, KtExpression, Input> { diagnostic ->
             fun KtExpression.shouldHaveNotNullType(): Boolean {
                 // This function is used to determine if we may need to add an elvis operator after the safe call. For example, to replace
-                // `s.length` in `1 + s.length` with a safe call, it should be replaced with `(s.length ?: <caret>)`.
-                // NOTE: Even though we could, we don't check to see if the call is an argument and if the parameter type is nullable.
-                // FE1.0 doesn't either (see ReplaceWithSafeCallFixFactory).
-                val type = when (val parent = parent) {
-                    is KtBinaryExpression -> parent.left?.getKtType()
-                    is KtProperty -> {
-                        // Case: `val i = s.length`. `parent.getReturnKtType()` would return Int and therefore an elvis would be added,
-                        // which does not match FE1.0 behavior. We want to see if there is an explicit type, e.g., `val i: Int = s.length`
-                        // and default to the replacement being nullable if there is no explicit type.
-                        if (parent.typeReference != null) {
-                            parent.getReturnKtType()
-                        } else null
-                    }
-                    else -> null
-                }
-                return (type as? KtTypeWithNullability)?.nullability == KtTypeNullability.NON_NULLABLE
+                // `s.length` in `val x: Int = s.length` with a safe call, it should be replaced with `s.length ?: <caret>`.
+                val expectedType = getExpectedType() as? KtTypeWithNullability
+                return expectedType?.nullability == KtTypeNullability.NON_NULLABLE
             }
 
             when (val psi = diagnostic.psi) {
