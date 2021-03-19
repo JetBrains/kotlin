@@ -19,13 +19,10 @@ package kotlinx.cinterop
 import java.util.concurrent.ConcurrentHashMap
 import java.util.function.LongConsumer
 import kotlin.reflect.KClass
-import kotlin.reflect.KFunction
 import kotlin.reflect.KType
 import kotlin.reflect.full.companionObjectInstance
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.isSubclassOf
-import kotlin.reflect.jvm.reflect
-import kotlin.reflect.jvm.ExperimentalReflectionOnLambdas
 
 internal fun createStablePointer(any: Any): COpaquePointer = newGlobalRef(any).toCPointer()!!
 
@@ -158,19 +155,15 @@ private fun getArgOrRetValCType(type: KType): CType<*> {
     return result
 }
 
-private fun createStaticCFunction(function: Function<*>): CPointer<CFunction<*>> {
+private fun createStaticCFunction(function: Function<*>, spec: FunctionSpec): CPointer<CFunction<*>> {
     val errorMessage = "staticCFunction must take an unbound, non-capturing function"
 
     if (!isStatic(function)) {
         throw IllegalArgumentException(errorMessage)
     }
 
-    @OptIn(ExperimentalReflectionOnLambdas::class)
-    val kFunction = function as? KFunction<*> ?: function.reflect() ?:
-            throw IllegalArgumentException(errorMessage)
-
-    val returnType = getArgOrRetValCType(kFunction.returnType)
-    val paramTypes = kFunction.parameters.map { getArgOrRetValCType(it.type) }
+    val returnType = getArgOrRetValCType(spec.returnType)
+    val paramTypes = spec.parameterTypes.map { getArgOrRetValCType(it) }
 
     @Suppress("UNCHECKED_CAST")
     return interpretCPointer(createStaticCFunctionImpl(returnType as CType<Any?>, paramTypes, function))!!
@@ -199,13 +192,18 @@ private fun isStatic(function: Function<*>): Boolean {
     }
 }
 
-private val createdStaticFunctions = ConcurrentHashMap<Class<*>, CPointer<CFunction<*>>>()
+private data class FunctionSpec(val functionClass: Class<*>, val returnType: KType, val parameterTypes: List<KType>)
+
+private val createdStaticFunctions = ConcurrentHashMap<FunctionSpec, CPointer<CFunction<*>>>()
 
 @Suppress("UNCHECKED_CAST")
-internal fun <F : Function<*>> staticCFunctionImpl(function: F) =
-        createdStaticFunctions.computeIfAbsent(function.javaClass) {
-            createStaticCFunction(function)
-        } as CPointer<CFunction<F>>
+@PublishedApi
+internal fun <F : Function<*>> staticCFunctionImpl(function: F, returnType: KType, vararg parameterTypes: KType): CPointer<CFunction<F>> {
+    val spec = FunctionSpec(function.javaClass, returnType, parameterTypes.asList())
+    return createdStaticFunctions.computeIfAbsent(spec) {
+        createStaticCFunction(function, spec)
+    } as CPointer<CFunction<F>>
+}
 
 private val invokeMethods = (0 .. 22).map { arity ->
     Class.forName("kotlin.jvm.functions.Function$arity").getMethod("invoke",
