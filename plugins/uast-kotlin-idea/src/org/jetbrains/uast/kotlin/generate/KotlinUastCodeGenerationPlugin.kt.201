@@ -91,6 +91,7 @@ class KotlinUastElementFactory(project: Project) : UastElementFactory {
         return createQualifiedReference(qualifiedName, context?.sourcePsi)
     }
 
+    @Suppress("UNUSED_PARAMETER")
     /*override*/ fun createQualifiedReference(qualifiedName: String, context: PsiElement?): UQualifiedReferenceExpression? {
         return psiFactory.createExpression(qualifiedName).let {
             when (it) {
@@ -149,10 +150,12 @@ class KotlinUastElementFactory(project: Project) : UastElementFactory {
         return KotlinStringULiteralExpression(psiFactory.createExpression(StringUtil.wrapWithDoubleQuote(text)), null)
     }
 
+    @Suppress("UNUSED_PARAMETER")
     /*override*/ fun createNullLiteral(context: PsiElement?): ULiteralExpression {
         return psiFactory.createExpression("null").toUElementOfType<ULiteralExpression>()!!
     }
 
+    @Suppress("UNUSED_PARAMETER")
     /*override*/ fun createIntLiteral(value: Int, context: PsiElement?): ULiteralExpression {
         return psiFactory.createExpression(value.toString()).toUElementOfType<ULiteralExpression>()!!
     }
@@ -172,6 +175,7 @@ class KotlinUastElementFactory(project: Project) : UastElementFactory {
         return createIfExpression(condition, thenBranch, elseBranch, null)
     }
 
+    @Suppress("UNUSED_PARAMETER")
     /*override*/ fun createIfExpression(
         condition: UExpression,
         thenBranch: UExpression,
@@ -191,6 +195,7 @@ class KotlinUastElementFactory(project: Project) : UastElementFactory {
         return createParenthesizedExpression(expression, null)
     }
 
+    @Suppress("UNUSED_PARAMETER")
     /*override*/ fun createParenthesizedExpression(expression: UExpression, context: PsiElement?): UParenthesizedExpression? {
         val source = expression.sourcePsi ?: return null
         val parenthesized = psiFactory.createExpression("(${source.text})") as? KtParenthesizedExpression ?: return null
@@ -203,6 +208,7 @@ class KotlinUastElementFactory(project: Project) : UastElementFactory {
         return createSimpleReference(name, null)
     }
 
+    @Suppress("UNUSED_PARAMETER")
     /*override*/ fun createSimpleReference(name: String, context: PsiElement?): USimpleNameReferenceExpression? {
         return KotlinUSimpleReferenceExpression(psiFactory.createSimpleName(name), null)
     }
@@ -255,6 +261,7 @@ class KotlinUastElementFactory(project: Project) : UastElementFactory {
         return createBinaryExpression(leftOperand, rightOperand, operator, null)
     }
 
+    @Suppress("UNUSED_PARAMETER")
     /*override*/ fun createBinaryExpression(
         leftOperand: UExpression,
         rightOperand: UExpression,
@@ -289,6 +296,7 @@ class KotlinUastElementFactory(project: Project) : UastElementFactory {
         return createFlatBinaryExpression(leftOperand, rightOperand, operator, null)
     }
 
+    @Suppress("UNUSED_PARAMETER")
     /*override*/ fun createFlatBinaryExpression(
         leftOperand: UExpression,
         rightOperand: UExpression,
@@ -315,6 +323,7 @@ class KotlinUastElementFactory(project: Project) : UastElementFactory {
         return createBlockExpression(expressions, null)
     }
 
+    @Suppress("UNUSED_PARAMETER")
     /*override*/ fun createBlockExpression(expressions: List<UExpression>, context: PsiElement?): UBlockExpression? {
         val sourceExpressions = expressions.flatMap { it.toSourcePsiFakeAware() }
         val block = psiFactory.createBlock(
@@ -332,6 +341,7 @@ class KotlinUastElementFactory(project: Project) : UastElementFactory {
         return createDeclarationExpression(declarations, null)
     }
 
+    @Suppress("UNUSED_PARAMETER")
     /*override*/ fun createDeclarationExpression(declarations: List<UDeclaration>, context: PsiElement?): UDeclarationsExpression? {
         return object : KotlinUDeclarationsExpression(null), KotlinFakeUElement {
             override var declarations: List<UDeclaration> = declarations
