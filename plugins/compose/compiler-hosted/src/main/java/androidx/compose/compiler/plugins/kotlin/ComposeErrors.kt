@@ -110,12 +110,6 @@ object ComposeErrors {
         )
 
     @JvmField
-    val ILLEGAL_ASSIGN_TO_UNIONTYPE =
-        DiagnosticFactory2.create<KtExpression, Collection<KotlinType>, Collection<KotlinType>>(
-            Severity.ERROR
-        )
-
-    @JvmField
     val ILLEGAL_TRY_CATCH_AROUND_COMPOSABLE =
         DiagnosticFactory0.create<PsiElement>(
             Severity.ERROR
