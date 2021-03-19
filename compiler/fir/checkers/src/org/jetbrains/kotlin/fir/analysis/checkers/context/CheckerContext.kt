@@ -37,11 +37,23 @@ abstract class CheckerContext {
 
     /**
      * Returns the closest to the end of context.containingDeclarations
-     * T instance or null if no such item could be found.
+     * instance of type [T] or null if no such item could be found.
      */
     inline fun <reified T : FirDeclaration> findClosest(): T? {
         for (it in containingDeclarations.asReversed()) {
             return it as? T ?: continue
+        }
+
+        return null
+    }
+
+    /**
+     * Same as the one without specific [check]. For some cases, an instance of type [T] isn't good enough. E.g., property accessor is
+     * either getter or setter, but a type-based search could return, say, the closest setter, while we want to keep searching for a getter.
+     */
+    inline fun <reified T : FirDeclaration> findClosest(check: (T) -> Boolean): T? {
+        for (it in containingDeclarations.asReversed()) {
+            return (it as? T)?.takeIf(check) ?: continue
         }
 
         return null

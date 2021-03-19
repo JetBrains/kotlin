@@ -26,7 +26,7 @@ class Outer {
         get() {
             fun local() {
                 <!VAL_REASSIGNMENT_VIA_BACKING_FIELD_ERROR!>field<!>++
-                field++
+                <!VAL_REASSIGNMENT_VIA_BACKING_FIELD_ERROR!>field<!>++
             }
             local()
             return field
