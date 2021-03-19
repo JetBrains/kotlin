@@ -129,7 +129,7 @@ fun convertJpsDependencyElement(dep: JpsDependencyElement, moduleImlRootElement:
         val jpsLibrary = dep.resolve(moduleImlRootElement) ?: error("Cannot resolve jps library = $libraryName")
         val mavenId = jpsLibrary.properties.safeAs<JpsSimpleElement<*>>()?.data
             ?.safeAs<JpsMavenRepositoryLibraryDescriptor>()?.mavenId
-            ?: error("Caanot find maven coordinates for $jpsLibrary")
+            ?: error("Cannot find maven coordinates for $jpsLibrary")
         return listOf(jpsLikeJarDependency("\"$mavenId\"", dependencyConfiguration = null))
     }
     error("Unknown dependency: $dep")
