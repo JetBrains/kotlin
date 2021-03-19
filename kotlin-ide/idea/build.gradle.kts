@@ -8,7 +8,16 @@ plugins {
 }
 
 dependencies {
-    
+    jpsLikeCompileJar("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.3.9")
+    jpsLikeCompileJar("org.jetbrains.intellij.deps.completion:completion-ranking-kotlin:0.1.3")
+    jpsLikeTestJar("io.javaslang:javaslang:2.0.6")
+    jpsLikeCompileJar("com.google.guava:guava:29.0-jre")
+    jpsLikeCompileJar("org.jetbrains.intellij.deps:jdom:2.0.6")
+    jpsLikeCompileJar("com.google.code.gson:gson:2.8.6")
+    jpsLikeCompileJar("org.swinglabs:swingx-core:1.6.2-2")
+    jpsLikeCompileJar("org.jetbrains.intellij.deps:asm-all:9.0")
+    jpsLikeCompileJar("org.jetbrains.intellij.deps:trove4j:1.0.20200330")
+    jpsLikeTestJar("org.jetbrains.kotlin:kotlin-test:1.4.0")
     jpsLikeCompileModule(":kotlin-ide:common")
     jpsLikeCompileModule(":kotlin-ide:core")
     jpsLikeCompileModule(":kotlin-ide:frontend-independent")
@@ -57,7 +66,9 @@ dependencies {
     jpsLikeCompileJar(intellijDep(), { includeJars("spellchecker") })
     jpsLikeCompileJar(intellijPluginDep("copyright"))
     jpsLikeTestJar(intellijPluginDep("properties"))
+    jpsLikeCompileJar("javax.xml.bind:jaxb-api:2.3.1")
     jpsLikeCompileJar(intellijDep(), { includeJars("platform-core-ui") })
+    jpsLikeCompileJar("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil:8.4.1-4")
     jpsLikeCompileJar(intellijDep(), { includeJars("idea") })
     jpsLikeCompileModule(":kotlin-ide:resources-descriptors")
 }

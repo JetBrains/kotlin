@@ -8,7 +8,6 @@ plugins {
 }
 
 dependencies {
-    
     jpsLikeCompileModule(":kotlin-ide:common")
     jpsLikeCompileModule(":kotlin-ide:maven")
     jpsLikeCompileModule(":kotlin-ide:gradle:gradle-idea")

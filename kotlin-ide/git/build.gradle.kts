@@ -8,7 +8,6 @@ plugins {
 }
 
 dependencies {
-    
     jpsLikeCompileModule(":kotlin-ide:idea")
     jpsLikeCompileModule(":kotlin-ide:common")
     jpsLikeCompileModule(":kotlin-ide:frontend-independent")

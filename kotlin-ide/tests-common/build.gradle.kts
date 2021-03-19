@@ -8,7 +8,10 @@ plugins {
 }
 
 dependencies {
-    
+    jpsLikeTestJar("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.0")
+    jpsLikeTestJar("com.google.guava:guava:29.0-jre")
+    jpsLikeTestJar("org.jetbrains.intellij.deps:trove4j:1.0.20200330")
+    jpsLikeTestJar("org.jetbrains.kotlin:kotlin-test:1.4.0")
     jpsLikeTestModule(":kotlin-ide:common")
     jpsLikeTestModule(":kotlin-ide:test-framework")
     jpsLikeTestJar(intellijDep(), { includeJars("util") })

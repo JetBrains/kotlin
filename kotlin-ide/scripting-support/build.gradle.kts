@@ -8,7 +8,7 @@ plugins {
 }
 
 dependencies {
-    
+    jpsLikeTestJar("junit:junit:4.12")
     jpsLikeTestModule(":kotlin-ide:common")
     jpsLikeTestModule(":kotlin-ide:core")
     jpsLikeTestModule(":kotlin-ide:frontend-independent")

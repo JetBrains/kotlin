@@ -8,7 +8,9 @@ plugins {
 }
 
 dependencies {
-    
+    jpsLikeTestJar("org.jetbrains.kotlin:kotlin-test:1.4.0")
+    jpsLikeTestJar("org.jetbrains.intellij.deps:trove4j:1.0.20200330")
+    jpsLikeTestJar("org.testng:testng:7.1.0")
     jpsLikeTestModule(":kotlin-ide:jps:jps-common")
     jpsLikeTestModule(":kotlin-ide:common")
     jpsLikeTestModule(":kotlin-ide:core")

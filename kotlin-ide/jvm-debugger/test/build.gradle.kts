@@ -8,7 +8,10 @@ plugins {
 }
 
 dependencies {
-    
+    jpsLikeTestJar("org.jetbrains.kotlin:kotlin-test:1.4.0")
+    jpsLikeTestJar("org.jetbrains.intellij.deps:asm-all:9.0")
+    jpsLikeTestJar("com.google.guava:guava:29.0-jre")
+    jpsLikeTestJar("org.jetbrains.intellij.deps:jb-jdi:2.3")
     jpsLikeTestModule(":kotlin-ide:common")
     jpsLikeTestModule(":kotlin-ide:core")
     jpsLikeTestModule(":kotlin-ide:frontend-independent")

@@ -8,7 +8,7 @@ plugins {
 }
 
 dependencies {
-    
+    jpsLikeCompileJar("io.javaslang:javaslang:2.0.6")
     jpsLikeCompileModule(":kotlin-ide:common")
     jpsLikeCompileModule(":kotlin-ide:core")
     jpsLikeCompileModule(":kotlin-ide:frontend-independent")

@@ -8,7 +8,6 @@ plugins {
 }
 
 dependencies {
-    
     jpsLikeCompileJar(intellijDep(), { includeJars("platform-api") })
     jpsLikeCompileJar(intellijDep(), { includeJars("resources_en") })
     jpsLikeCompileJar(intellijDep(), { includeJars("intellij-core") })

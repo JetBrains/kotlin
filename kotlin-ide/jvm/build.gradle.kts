@@ -8,7 +8,10 @@ plugins {
 }
 
 dependencies {
-    
+    jpsLikeCompileJar("com.google.guava:guava:29.0-jre")
+    jpsLikeCompileJar("org.swinglabs:swingx-core:1.6.2-2")
+    jpsLikeCompileJar("org.jetbrains.intellij.deps:jdom:2.0.6")
+    jpsLikeCompileJar("com.google.code.gson:gson:2.8.6")
     jpsLikeCompileModule(":kotlin-ide:core")
     jpsLikeCompileModule(":kotlin-ide:common")
     jpsLikeCompileModule(":kotlin-ide:frontend-independent")

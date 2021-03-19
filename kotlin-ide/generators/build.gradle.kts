@@ -8,7 +8,7 @@ plugins {
 }
 
 dependencies {
-    
+    jpsLikeTestJar("com.google.guava:guava:29.0-jre")
     jpsLikeCompileModule(":kotlin-ide:jvm-debugger:test")
     jpsLikeCompileModule(":kotlin-ide:idea")
     jpsLikeCompileModule(":kotlin-ide:fir")

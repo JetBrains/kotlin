@@ -8,7 +8,7 @@ plugins {
 }
 
 dependencies {
-    
+    jpsLikeCompileJar("org.jetbrains.intellij.deps:jdom:2.0.6")
     jpsLikeCompileJar(intellijDep(), { includeJars("platform-api") })
     jpsLikeCompileJar(intellijDep(), { includeJars("resources_en") })
     jpsLikeCompileJar(intellijDep(), { includeJars("platform-impl") })

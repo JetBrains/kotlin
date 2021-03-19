@@ -8,7 +8,9 @@ plugins {
 }
 
 dependencies {
-    
+    jpsLikeCompileJar("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.3.9")
+    jpsLikeCompileJar("org.jetbrains.intellij.deps:trove4j:1.0.20200330")
+    jpsLikeCompileJar("org.jetbrains.intellij.deps.completion:completion-ranking-kotlin:0.1.2")
     jpsLikeCompileModule(":kotlin-ide:common")
     jpsLikeCompileModule(":kotlin-ide:core")
     jpsLikeCompileModule(":kotlin-ide:formatter")

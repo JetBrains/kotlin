@@ -8,7 +8,6 @@ plugins {
 }
 
 dependencies {
-    
     jpsLikeCompileModule(":kotlin-ide:resources-fir")
     jpsLikeCompileModule(":kotlin-ide:fir")
     jpsLikeCompileModule(":kotlin-ide:fir-low-level-api")

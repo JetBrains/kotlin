@@ -8,7 +8,6 @@ plugins {
 }
 
 dependencies {
-    
     jpsLikeCompileModule(":kotlin-ide:common")
     jpsLikeCompileModule(":kotlin-ide:compiler-plugins:allopen")
     jpsLikeCompileModule(":kotlin-ide:compiler-plugins:annotation-based-compiler-support")

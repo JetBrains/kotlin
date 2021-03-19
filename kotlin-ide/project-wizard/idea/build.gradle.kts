@@ -8,7 +8,8 @@ plugins {
 }
 
 dependencies {
-    
+    jpsLikeCompileJar("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:0.3.1")
+    jpsLikeCompileJar("org.jetbrains.intellij.deps:java-compatibility:1.0.1")
     jpsLikeCompileModule(":kotlin-ide:common")
     jpsLikeCompileModule(":kotlin-ide:core")
     jpsLikeCompileModule(":kotlin-ide:frontend-independent")

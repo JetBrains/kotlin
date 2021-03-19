@@ -8,7 +8,8 @@ plugins {
 }
 
 dependencies {
-    
+    jpsLikeCompileJar("org.jetbrains.intellij.deps:asm-all:9.0")
+    jpsLikeCompileJar("com.google.guava:guava:29.0-jre")
     jpsLikeCompileModule(":kotlin-ide:common")
     jpsLikeCompileModule(":kotlin-ide:core")
     jpsLikeCompileModule(":kotlin-ide:frontend-independent")

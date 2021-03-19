@@ -8,7 +8,7 @@ plugins {
 }
 
 dependencies {
-    
+    jpsLikeCompileJar("com.google.guava:guava:29.0-jre")
     jpsLikeCompileJar(intellijDep(), { includeJars("platform-api") })
     jpsLikeCompileJar(intellijDep(), { includeJars("resources_en") })
     jpsLikeCompileJar(intellijDep(), { includeJars("platform-impl") })
@@ -16,6 +16,7 @@ dependencies {
     jpsLikeCompileJar(intellijDep(), { includeJars("intellij-core-analysis-deprecated") })
     jpsLikeCompileJar(intellijDep(), { includeJars("intellij-xml") })
     jpsLikeCompileJar(intellijDep(), { includeJars("platform-core-ui") })
+    jpsLikeCompileJar("org.jetbrains.kotlin:kotlin-reflect:1.4.0")
     jpsLikeTestModule(":kotlin-ide:tests-common")
 }
 

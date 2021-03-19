@@ -8,7 +8,8 @@ plugins {
 }
 
 dependencies {
-    
+    jpsLikeTestJar("org.jetbrains.kotlin:kotlin-test:1.4.0")
+    jpsLikeTestJar("org.jetbrains.kotlin:kotlin-test-junit:1.3.70")
     jpsLikeTestModule(":kotlin-ide:common")
     jpsLikeTestModule(":kotlin-ide:core")
     jpsLikeTestModule(":kotlin-ide:frontend-independent")
@@ -26,6 +27,10 @@ dependencies {
     jpsLikeTestJar(intellijDep(), { includeJars("intellij-core-analysis-deprecated") })
     jpsLikeTestJar(intellijDep(), { includeJars("intellij-dvcs") })
     jpsLikeTestJar(intellijPluginDep("gradle"))
+    jpsLikeTestJar("com.fasterxml.jackson.core:jackson-databind:2.11.0")
+    jpsLikeTestJar("com.fasterxml.jackson.core:jackson-core:2.11.0")
+    jpsLikeTestJar("com.fasterxml.jackson.module:jackson-module-kotlin:2.11.0")
+    jpsLikeTestJar("khttp:khttp:1.0.0")
     jpsLikeTestModule(":kotlin-ide:resources-descriptors")
 }
 

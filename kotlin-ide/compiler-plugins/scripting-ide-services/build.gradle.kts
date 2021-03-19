@@ -8,7 +8,6 @@ plugins {
 }
 
 dependencies {
-    
     jpsLikeCompileModule(":kotlin-ide:common")
     jpsLikeCompileJar(intellijDep(), { includeJars("platform-impl") })
     jpsLikeCompileJar(intellijDep(), { includeJars("resources_en") })

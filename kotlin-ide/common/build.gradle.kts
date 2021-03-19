@@ -8,7 +8,8 @@ plugins {
 }
 
 dependencies {
-    
+    jpsLikeCompileJar("com.google.guava:guava:29.0-jre")
+    jpsLikeCompileJar("org.jetbrains.intellij.deps:jdom:2.0.6")
     jpsLikeCompileJar(intellijDep(), { includeJars("platform-impl") })
     jpsLikeCompileJar(intellijDep(), { includeJars("resources_en") })
     jpsLikeCompileJar(intellijDep(), { includeJars("intellij-core") })

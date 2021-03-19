@@ -8,7 +8,8 @@ plugins {
 }
 
 dependencies {
-    
+    jpsLikeCompileJar("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:0.3.1")
+    jpsLikeCompileJar("org.yaml:snakeyaml:1.24")
     jpsLikeCompileModule(":kotlin-ide:project-wizard:core")
     jpsLikeTestModule(":kotlin-ide:tests-common")
     jpsLikeTestJar(intellijDep(), { includeJars("testFramework") })

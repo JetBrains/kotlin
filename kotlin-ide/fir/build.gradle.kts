@@ -8,7 +8,7 @@ plugins {
 }
 
 dependencies {
-    
+    jpsLikeTestJar("com.google.code.gson:gson:2.8.6")
     jpsLikeCompileModule(":kotlin-ide:resources-fir")
     jpsLikeCompileModule(":kotlin-ide:common")
     jpsLikeCompileModule(":kotlin-ide:core")

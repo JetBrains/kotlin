@@ -8,7 +8,6 @@ plugins {
 }
 
 dependencies {
-    
     jpsLikeTestModule(":kotlin-ide:tests-common")
     jpsLikeTestModule(":kotlin-ide:test-framework")
     jpsLikeCompileModule(":kotlin-ide:idea")

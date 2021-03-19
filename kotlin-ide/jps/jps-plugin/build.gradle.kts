@@ -8,7 +8,10 @@ plugins {
 }
 
 dependencies {
-    
+    jpsLikeTestJar("org.jetbrains.kotlin:kotlin-test:1.4.0")
+    jpsLikeCompileJar("org.jetbrains.intellij.deps:trove4j:1.0.20200330")
+    jpsLikeCompileJar("log4j:log4j:1.2.17")
+    jpsLikeTestJar("com.google.guava:guava:29.0-jre")
     jpsLikeCompileModule(":kotlin-ide:jps:jps-common")
     jpsLikeCompileModule(":kotlin-ide:common")
     jpsLikeTestModule(":kotlin-ide:tests-common")

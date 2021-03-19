@@ -8,7 +8,6 @@ plugins {
 }
 
 dependencies {
-    
     jpsLikeTestModule(":kotlin-ide:resources-fir")
     jpsLikeCompileModule(":kotlin-ide:frontend-independent")
     jpsLikeCompileModule(":kotlin-ide:fir-low-level-api")
@@ -27,6 +26,10 @@ dependencies {
     jpsLikeTestJar(intellijDep(), { includeJars("intellij-core-analysis-deprecated") })
     jpsLikeCompileJar(intellijPluginDep("java"))
     jpsLikeTestJar(intellijDep(), { includeJars("intellij-xml") })
+    jpsLikeCompileJar("org.jetbrains.intellij.deps:trove4j:1.0.20200330")
+    jpsLikeCompileJar("com.google.guava:guava:29.0-jre")
+    jpsLikeCompileJar("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:0.3.1")
+    jpsLikeCompileJar("org.jetbrains.intellij.deps:asm-all:9.0")
     jpsLikeCompileJar(intellijDep(), { includeJars("platform-impl") })
 }
 

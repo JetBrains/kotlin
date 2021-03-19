@@ -8,7 +8,12 @@ plugins {
 }
 
 dependencies {
-    
+    jpsLikeCompileJar("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.3.9")
+    jpsLikeCompileJar("io.javaslang:javaslang:2.0.6")
+    jpsLikeCompileJar("org.jetbrains.intellij.deps:jdom:2.0.6")
+    jpsLikeCompileJar("javax.inject:javax.inject:1")
+    jpsLikeCompileJar("com.google.guava:guava:29.0-jre")
+    jpsLikeCompileJar("org.jetbrains.intellij.deps:trove4j:1.0.20200330")
     jpsLikeCompileModule(":kotlin-ide:common")
     jpsLikeCompileModule(":kotlin-ide:frontend-independent")
     jpsLikeCompileModule(":kotlin-ide:jps:jps-common")

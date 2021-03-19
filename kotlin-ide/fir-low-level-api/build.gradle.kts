@@ -9,7 +9,7 @@ plugins {
 
 dependencies {
     jpsLikeTestModule(":kotlin-ide:fir")
-    
+    jpsLikeTestJar("com.google.code.gson:gson:2.8.6")
     jpsLikeTestModule(":kotlin-ide:resources-fir")
     jpsLikeTestModule(":kotlin-ide:frontend-fir")
     jpsLikeCompileModule(":kotlin-ide:frontend-api")
@@ -24,7 +24,9 @@ dependencies {
     jpsLikeCompileModule(":kotlin-ide:core")
     jpsLikeCompileJar(intellijPluginDep("java"))
     jpsLikeCompileModule(":kotlin-ide:frontend-independent")
+    jpsLikeCompileJar("com.google.guava:guava:29.0-jre")
     jpsLikeTestModule(":kotlin-ide:common")
+    jpsLikeCompileJar("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:0.3.1")
 }
 
 sourceSets {

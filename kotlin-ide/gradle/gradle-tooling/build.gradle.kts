@@ -8,7 +8,6 @@ plugins {
 }
 
 dependencies {
-    
     jpsLikeCompileJar(intellijPluginDep("gradle"))
     jpsLikeTestModule(":kotlin-ide:resources-descriptors")
 }
