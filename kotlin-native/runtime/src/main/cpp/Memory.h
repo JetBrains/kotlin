@@ -113,6 +113,11 @@ ALWAYS_INLINE bool isFrozen(const ObjHeader* obj);
 ALWAYS_INLINE bool isPermanentOrFrozen(const ObjHeader* obj);
 ALWAYS_INLINE bool isShareable(const ObjHeader* obj);
 
+static inline ObjHeader* const kInitializingSingleton = reinterpret_cast<ObjHeader*>(1);
+ALWAYS_INLINE inline bool isNullOrMarker(const ObjHeader* obj) noexcept {
+    return reinterpret_cast<uintptr_t>(obj) <= 1;
+}
+
 class ForeignRefManager;
 typedef ForeignRefManager* ForeignRefContext;
 

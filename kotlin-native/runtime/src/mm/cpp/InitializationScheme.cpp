@@ -42,7 +42,7 @@ OBJ_GETTER(mm::InitSingleton, ThreadData* threadData, ObjHeader** location, cons
         }
     }
 
-    ObjHeader* initializing = reinterpret_cast<ObjHeader*>(1);
+    ObjHeader* initializing = kInitializingSingleton;
 
     // Spin lock.
     ObjHeader* value = nullptr;

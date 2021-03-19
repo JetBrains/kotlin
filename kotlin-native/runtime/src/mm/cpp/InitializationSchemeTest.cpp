@@ -124,7 +124,7 @@ TEST_F(InitSingletonTest, InitSingleton) {
     ObjHeader* valueAtConstructor = nullptr;
     EXPECT_CALL(constructor(), Call(_)).WillOnce([&location, &stackLocation, &valueAtConstructor](ObjHeader* value) {
         EXPECT_THAT(value, stackLocation);
-        EXPECT_THAT(location, reinterpret_cast<ObjHeader*>(1));
+        EXPECT_THAT(location, kInitializingSingleton);
         valueAtConstructor = value;
     });
     ObjHeader* value = InitSingleton(&location, 0, &stackLocation);
@@ -176,12 +176,12 @@ TEST_F(InitSingletonTest, InitSingletonRecursive) {
                     ObjHeader* result = InitSingleton(&location2, 0, &stackLocation2);
                     EXPECT_THAT(result, stackLocation2);
                     EXPECT_THAT(result, location2);
-                    EXPECT_THAT(result, testing::Ne(reinterpret_cast<ObjHeader*>(1)));
+                    EXPECT_THAT(result, testing::Not(testing::Truly(isNullOrMarker)));
                 } else {
                     ObjHeader* result = InitSingleton(&location1, 0, &stackLocation1);
                     EXPECT_THAT(result, stackLocation1);
                     EXPECT_THAT(result, testing::Ne(location1));
-                    EXPECT_THAT(location1, reinterpret_cast<ObjHeader*>(1));
+                    EXPECT_THAT(location1, kInitializingSingleton);
                 }
             });
     ObjHeader* value = InitSingleton(&location1, 0, &stackLocation1);
@@ -217,8 +217,7 @@ TEST_F(InitSingletonTest, InitSingletonConcurrent) {
     }
     testing::Mock::VerifyAndClearExpectations(&constructor());
 
-    EXPECT_THAT(location, testing::Ne(nullptr));
-    EXPECT_THAT(location, testing::Ne(reinterpret_cast<ObjHeader*>(1)));
+    EXPECT_THAT(location, testing::Not(testing::Truly(isNullOrMarker)));
     EXPECT_THAT(stackLocations, testing::Each(location));
     EXPECT_THAT(actual, testing::Each(location));
 }
