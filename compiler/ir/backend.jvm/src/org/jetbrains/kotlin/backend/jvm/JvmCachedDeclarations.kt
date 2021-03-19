@@ -5,9 +5,8 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
-import org.jetbrains.kotlin.backend.common.ir.copyParameterDeclarationsFrom
-import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
-import org.jetbrains.kotlin.backend.common.ir.createStaticFunctionWithReceivers
+import org.jetbrains.kotlin.backend.common.ir.*
+import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.jvm.codegen.AnnotationCodegen.Companion.annotationClass
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
 import org.jetbrains.kotlin.backend.jvm.ir.copyCorrespondingPropertyFrom
@@ -19,11 +18,10 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
-import org.jetbrains.kotlin.ir.builders.irCall
-import org.jetbrains.kotlin.ir.builders.setSourceRange
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
@@ -39,6 +37,7 @@ class JvmCachedDeclarations(
     private val singletonFieldDeclarations = ConcurrentHashMap<IrSymbolOwner, IrField>()
     private val interfaceCompanionFieldDeclarations = ConcurrentHashMap<IrSymbolOwner, IrField>()
     private val staticBackingFields = ConcurrentHashMap<IrProperty, IrField>()
+    private val staticCompanionDeclarations = ConcurrentHashMap<IrSimpleFunction, Pair<IrSimpleFunction, IrSimpleFunction>>()
 
     private val defaultImplsMethods = ConcurrentHashMap<IrSimpleFunction, IrSimpleFunction>()
     private val defaultImplsClasses = ConcurrentHashMap<IrClass, IrClass>()
@@ -142,6 +141,71 @@ class JvmCachedDeclarations(
             }
         }
     }
+
+    fun getStaticAndCompanionDeclaration(jvmStaticFunction: IrSimpleFunction): Pair<IrSimpleFunction, IrSimpleFunction> =
+        staticCompanionDeclarations.getOrPut(jvmStaticFunction) {
+            val companion = jvmStaticFunction.parentAsClass
+            assert(companion.isCompanion)
+            if (jvmStaticFunction.isExternal) {
+                // We move external functions to the enclosing class and potentially add accessors there.
+                // The JVM backend also adds accessors in the companion object, but these are superfluous.
+                // TODO: this should really do the same as `makeProxy`, but without a body; otherwise, external
+                //   functions in interface companions won't work (KT-43696).
+                val staticExternal = context.irFactory.buildFun {
+                    updateFrom(jvmStaticFunction)
+                    name = jvmStaticFunction.name
+                    returnType = jvmStaticFunction.returnType
+                }.apply {
+                    parent = companion.parent
+                    copyTypeParametersFrom(jvmStaticFunction)
+                    copyAnnotationsFrom(jvmStaticFunction)
+                    extensionReceiverParameter = jvmStaticFunction.extensionReceiverParameter?.copyTo(this)
+                    valueParameters = jvmStaticFunction.valueParameters.map { it.copyTo(this) }
+                }
+                staticExternal to companion.makeProxy(staticExternal, isStatic = false)
+            } else {
+                companion.parentAsClass.makeProxy(jvmStaticFunction, isStatic = true) to jvmStaticFunction
+            }
+        }
+
+    private fun IrClass.makeProxy(target: IrSimpleFunction, isStatic: Boolean) =
+        context.irFactory.buildFun {
+            returnType = target.returnType
+            origin = JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER
+            // The proxy needs to have the same name as what it is targeting. If that is a property accessor,
+            // we need to make sure that the name is mapped correctly. The static method is not a property accessor,
+            // so we do not have a property to link it up to. Therefore, we compute the right name now.
+            name = Name.identifier(context.methodSignatureMapper.mapFunctionName(target))
+            modality = if (isInterface) Modality.OPEN else target.modality
+            // Since we already mangle the name above we need to reset internal visibilities to public in order
+            // to avoid mangling the same name twice.
+            visibility = if (target.visibility == DescriptorVisibilities.INTERNAL) DescriptorVisibilities.PUBLIC else target.visibility
+            isSuspend = target.isSuspend
+        }.apply proxy@{
+            parent = this@makeProxy
+            copyTypeParametersFrom(target)
+            copyAnnotationsFrom(target)
+            if (!isStatic) {
+                dispatchReceiverParameter = thisReceiver?.copyTo(this, type = defaultType)
+            }
+            extensionReceiverParameter = target.extensionReceiverParameter?.copyTo(this)
+            valueParameters = target.valueParameters.map { it.copyTo(this) }
+
+            body = context.createIrBuilder(symbol).run {
+                // TODO: if the `@JvmStatic` function is inline, this inlines it into the proxy - not great (?)
+                //   for something that's supposed to be only relevant for Java compatibility.
+                irExprBody(irCall(target).apply {
+                    passTypeArgumentsFrom(this@proxy)
+                    if (target.dispatchReceiverParameter != null) {
+                        dispatchReceiver = irGetField(null, getFieldForObjectInstance(target.parentAsClass))
+                    }
+                    extensionReceiverParameter?.let { extensionReceiver = irGet(it) }
+                    for ((i, valueParameter) in valueParameters.withIndex()) {
+                        putValueArgument(i, irGet(valueParameter))
+                    }
+                })
+            }
+        }
 
     fun getDefaultImplsFunction(interfaceFun: IrSimpleFunction, forCompatibilityMode: Boolean = false): IrSimpleFunction {
         val parent = interfaceFun.parentAsClass
