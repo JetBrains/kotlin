@@ -5226,6 +5226,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             }
 
             @Test
+            @TestMetadata("lightMember.kt")
+            public void testLightMember() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/lightMember.kt");
+            }
+
+            @Test
             @TestMetadata("qualifierPriority.kt")
             public void testQualifierPriority() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/qualifierPriority.kt");
