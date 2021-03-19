@@ -92,6 +92,16 @@ public final class IrTypeParameter extends
             input.popLimit(limit);
             break;
           }
+          case 32: {
+            bitField0_ |= 0x00000004;
+            index_ = input.readInt32();
+            break;
+          }
+          case 40: {
+            bitField0_ |= 0x00000008;
+            isGlobal_ = input.readBool();
+            break;
+          }
         }
       }
     } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -182,10 +192,42 @@ public final class IrTypeParameter extends
   }
   private int superTypeMemoizedSerializedSize = -1;
 
+  public static final int INDEX_FIELD_NUMBER = 4;
+  private int index_;
+  /**
+   * <code>optional int32 index = 4;</code>
+   */
+  public boolean hasIndex() {
+    return ((bitField0_ & 0x00000004) == 0x00000004);
+  }
+  /**
+   * <code>optional int32 index = 4;</code>
+   */
+  public int getIndex() {
+    return index_;
+  }
+
+  public static final int ISGLOBAL_FIELD_NUMBER = 5;
+  private boolean isGlobal_;
+  /**
+   * <code>optional bool isGlobal = 5;</code>
+   */
+  public boolean hasIsGlobal() {
+    return ((bitField0_ & 0x00000008) == 0x00000008);
+  }
+  /**
+   * <code>optional bool isGlobal = 5;</code>
+   */
+  public boolean getIsGlobal() {
+    return isGlobal_;
+  }
+
   private void initFields() {
     base_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase.getDefaultInstance();
     name_ = 0;
     superType_ = java.util.Collections.emptyList();
+    index_ = 0;
+    isGlobal_ = false;
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -225,6 +267,12 @@ public final class IrTypeParameter extends
     for (int i = 0; i < superType_.size(); i++) {
       output.writeInt32NoTag(superType_.get(i));
     }
+    if (((bitField0_ & 0x00000004) == 0x00000004)) {
+      output.writeInt32(4, index_);
+    }
+    if (((bitField0_ & 0x00000008) == 0x00000008)) {
+      output.writeBool(5, isGlobal_);
+    }
     output.writeRawBytes(unknownFields);
   }
 
@@ -255,6 +303,14 @@ public final class IrTypeParameter extends
             .computeInt32SizeNoTag(dataSize);
       }
       superTypeMemoizedSerializedSize = dataSize;
+    }
+    if (((bitField0_ & 0x00000004) == 0x00000004)) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeInt32Size(4, index_);
+    }
+    if (((bitField0_ & 0x00000008) == 0x00000008)) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeBoolSize(5, isGlobal_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -356,6 +412,10 @@ public final class IrTypeParameter extends
       bitField0_ = (bitField0_ & ~0x00000002);
       superType_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000004);
+      index_ = 0;
+      bitField0_ = (bitField0_ & ~0x00000008);
+      isGlobal_ = false;
+      bitField0_ = (bitField0_ & ~0x00000010);
       return this;
     }
 
@@ -392,6 +452,14 @@ public final class IrTypeParameter extends
         bitField0_ = (bitField0_ & ~0x00000004);
       }
       result.superType_ = superType_;
+      if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
+        to_bitField0_ |= 0x00000004;
+      }
+      result.index_ = index_;
+      if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
+        to_bitField0_ |= 0x00000008;
+      }
+      result.isGlobal_ = isGlobal_;
       result.bitField0_ = to_bitField0_;
       return result;
     }
@@ -413,6 +481,12 @@ public final class IrTypeParameter extends
           superType_.addAll(other.superType_);
         }
         
+      }
+      if (other.hasIndex()) {
+        setIndex(other.getIndex());
+      }
+      if (other.hasIsGlobal()) {
+        setIsGlobal(other.getIsGlobal());
       }
       setUnknownFields(
           getUnknownFields().concat(other.unknownFields));
@@ -608,6 +682,70 @@ public final class IrTypeParameter extends
     public Builder clearSuperType() {
       superType_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000004);
+      
+      return this;
+    }
+
+    private int index_ ;
+    /**
+     * <code>optional int32 index = 4;</code>
+     */
+    public boolean hasIndex() {
+      return ((bitField0_ & 0x00000008) == 0x00000008);
+    }
+    /**
+     * <code>optional int32 index = 4;</code>
+     */
+    public int getIndex() {
+      return index_;
+    }
+    /**
+     * <code>optional int32 index = 4;</code>
+     */
+    public Builder setIndex(int value) {
+      bitField0_ |= 0x00000008;
+      index_ = value;
+      
+      return this;
+    }
+    /**
+     * <code>optional int32 index = 4;</code>
+     */
+    public Builder clearIndex() {
+      bitField0_ = (bitField0_ & ~0x00000008);
+      index_ = 0;
+      
+      return this;
+    }
+
+    private boolean isGlobal_ ;
+    /**
+     * <code>optional bool isGlobal = 5;</code>
+     */
+    public boolean hasIsGlobal() {
+      return ((bitField0_ & 0x00000010) == 0x00000010);
+    }
+    /**
+     * <code>optional bool isGlobal = 5;</code>
+     */
+    public boolean getIsGlobal() {
+      return isGlobal_;
+    }
+    /**
+     * <code>optional bool isGlobal = 5;</code>
+     */
+    public Builder setIsGlobal(boolean value) {
+      bitField0_ |= 0x00000010;
+      isGlobal_ = value;
+      
+      return this;
+    }
+    /**
+     * <code>optional bool isGlobal = 5;</code>
+     */
+    public Builder clearIsGlobal() {
+      bitField0_ = (bitField0_ & ~0x00000010);
+      isGlobal_ = false;
       
       return this;
     }

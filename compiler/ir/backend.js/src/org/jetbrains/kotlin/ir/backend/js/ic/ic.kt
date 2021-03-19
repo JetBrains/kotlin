@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.backend.js.lower.moveBodilessDeclarationsToSepara
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.backend.js.utils.sanitizeName
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.StageController
 import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import org.jetbrains.kotlin.ir.util.noUnboundLeft
 import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
 import java.io.File
+import java.io.PrintWriter
 
 // TODO test purpose only
 // klib path -> ic data
@@ -103,13 +105,40 @@ fun loadIrForIc(
 
     linker.symbolTable.noUnboundLeft("Unbound symbols found")
 
+    val perFactory = context.irFactory as PersistentIrFactory
+
+    perFactory.stageController = StageController(100)
+
+
+
+
+
+    var actual = ""
+
     for (file in module.files) {
-        println(file.path)
+//        it.println(file.path)
 
-        val actual = file.dumpKotlinLike()
+        actual += file.path + "\n"
+        actual += context.irFactory.stageController.withStage(100) {
+            try {
+                file.dumpKotlinLike()
+            } catch (t: Throwable) {
+//                t.printStackTrace()
+            }
+        }
+        actual += "\n\n"
 
-        checkEq("/home/ab/tmp/simple-dump/${sanitizeName(file.path)}", actual)
+//        it.println(actual)
+
+//
+//        }
     }
+    PrintWriter("/home/ab/vcs/kotlin/simple-dump-actual.txt").use {
+        it.println(actual)
+    }
+//    checkEq("/home/ab/vcs/kotlin/simple-dump.txt", actual)
+
+    perFactory.stageController = StageController(0)
 
 //    TODO("=================== loaded!")
 }

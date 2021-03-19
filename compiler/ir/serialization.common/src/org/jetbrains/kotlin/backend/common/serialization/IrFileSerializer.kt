@@ -1111,6 +1111,8 @@ open class IrFileSerializer(
         if (!skipMutableState) {
             parameter.varargElementType?.let { proto.setVarargElementType(serializeIrType(it)) }
             parameter.defaultValue?.let { proto.setDefaultValue(serializeIrExpressionBody(it.expression)) }
+        } else {
+            proto.index = parameter.index
         }
 
         return proto.build()
@@ -1123,6 +1125,12 @@ open class IrFileSerializer(
         parameter.superTypes.forEach {
             proto.addSuperType(serializeIrType(it))
         }
+
+        if (skipMutableState) {
+            proto.index = parameter.index
+            proto.isGlobal = parameter.parent is IrClass
+        }
+
         return proto.build()
     }
 

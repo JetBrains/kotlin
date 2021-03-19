@@ -35,7 +35,7 @@ class IrSetValueImpl(
 ) : IrSetValue() {
 
     init {
-        assert(symbol.owner.isAssignable) { "Only assignable IrValues can be set" }
+//        assert(symbol.owner.isAssignable) { "Only assignable IrValues can be set" }
     }
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {

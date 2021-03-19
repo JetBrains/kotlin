@@ -54,7 +54,7 @@ class IcSerializer(
                 it.fileOrNull.let { it == null || fileToDeserializer[it] == null } -> false
                 it is IrFakeOverrideFunction -> it.isBound
                 it is IrFakeOverrideProperty -> it.isBound
-                else -> true
+                else -> (it.parent as? IrFakeOverrideFunction)?.isBound ?: (it.parent as? IrFakeOverrideProperty)?.isBound ?: true
             }
         }
 
@@ -95,6 +95,10 @@ class IcSerializer(
 
             // TODO add local bodies
 
+            if ("Experimental.kt" in file.name) {
+                1
+            }
+
 //            val sortedBodyEntries = bodies.entries.sortedBy { it.value }
 
             bodies.forEachIndexed { index, body ->
@@ -113,7 +117,9 @@ class IcSerializer(
             val serializedCarriers = fileSerializer.serializeCarriers(
                 declarations,
                 bodies,
-            )
+            ) { declaration ->
+                icDeclarationTable.signatureByDeclaration(declaration)
+            }
 
             val serializedMappings = mappings.state.serializeMappings(declarations) { symbol ->
                 fileSerializer.serializeIrSymbol(symbol)
@@ -126,7 +132,7 @@ class IcSerializer(
 
             val serializedIrFile = fileSerializer.serializeDeclarationsForIC(file, newDeclarations)
 
-            SerializedIcDataForFile(
+            icData += SerializedIcDataForFile(
                 serializedIrFile,
                 serializedCarriers,
                 serializedMappings,
@@ -158,6 +164,10 @@ class IcSerializer(
         override fun signatureByDeclaration(declaration: IrDeclaration): IdSignature {
             return exisitingMappings.getOrPut(declaration.symbol) {
                 irFactory.declarationSignature(declaration) ?: super.signatureByDeclaration(declaration)
+            }.also {
+                if (it is IdSignature.ScopeLocalDeclaration && it.id == 2) {
+                    1
+                }
             }
         }
     }

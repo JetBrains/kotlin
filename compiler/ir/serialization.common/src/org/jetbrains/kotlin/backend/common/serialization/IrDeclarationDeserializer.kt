@@ -292,6 +292,8 @@ class IrDeclarationDeserializer(
         withDeserializedIrDeclarationBase(proto.base) { symbol, signature, startOffset, endOffset, origin, fcode ->
             val flags = ClassFlags.decode(fcode)
 
+            if (symbol.isBound) return symbol.owner as IrClass
+
             symbolTable.declareClass(signature, { symbol as IrClassSymbol }) {
                 irFactory.createClass(
                     startOffset, endOffset, origin,
@@ -500,6 +502,7 @@ class IrDeclarationDeserializer(
     internal fun deserializeIrFunction(proto: ProtoFunction): IrSimpleFunction {
         return withDeserializedIrFunctionBase(proto.base) { symbol, idSig, startOffset, endOffset, origin, fcode ->
             val flags = FunctionFlags.decode(fcode)
+            if (symbol.isBound) return symbol.owner as IrSimpleFunction
             symbolTable.declareSimpleFunction(idSig, { symbol as IrSimpleFunctionSymbol }) {
                 val nameType = BinaryNameAndType.decode(proto.base.nameType)
                 irFactory.createFunction(
@@ -528,7 +531,7 @@ class IrDeclarationDeserializer(
         withDeserializedIrDeclarationBase(proto.base) { symbol, _, startOffset, endOffset, origin, fcode ->
             val flags = LocalVariableFlags.decode(fcode)
             val nameType = BinaryNameAndType.decode(proto.nameType)
-            IrVariableImpl(
+            if (symbol.isBound) symbol.owner as IrVariable else IrVariableImpl(
                 startOffset, endOffset, origin,
                 symbol as IrVariableSymbol,
                 deserializeName(nameType.nameIndex),
@@ -692,9 +695,9 @@ class IrDeclarationDeserializer(
             IR_CLASS -> deserializeIrClass(proto.irClass)
             IR_FUNCTION -> deserializeIrFunction(proto.irFunction)
             IR_PROPERTY -> deserializeIrProperty(proto.irProperty)
-            IR_TYPE_PARAMETER -> error("Unreachable execution Type Parameter") // deserializeIrTypeParameter(proto.irTypeParameter)
+            IR_TYPE_PARAMETER -> deserializeIrTypeParameter(proto.irTypeParameter, proto.irTypeParameter.index, proto.irTypeParameter.isGlobal)
             IR_VARIABLE -> deserializeIrVariable(proto.irVariable)
-            IR_VALUE_PARAMETER -> error("Unreachable execution Value Parameter") // deserializeIrValueParameter(proto.irValueParameter)
+            IR_VALUE_PARAMETER -> deserializeIrValueParameter(proto.irValueParameter, proto.irValueParameter.index)
             IR_ENUM_ENTRY -> deserializeIrEnumEntry(proto.irEnumEntry)
             IR_LOCAL_DELEGATED_PROPERTY -> deserializeIrLocalDelegatedProperty(proto.irLocalDelegatedProperty)
             IR_TYPE_ALIAS -> deserializeIrTypeAlias(proto.irTypeAlias)

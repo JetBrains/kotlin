@@ -11,7 +11,6 @@
 package org.jetbrains.kotlin.ir.serialization
 
 import org.jetbrains.kotlin.backend.common.serialization.IrFileSerializer
-import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.PirBodyCarrier
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
@@ -27,6 +26,8 @@ import org.jetbrains.kotlin.ir.declarations.persistent.carriers.ErrorDeclaration
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBody
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
+import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.library.impl.IrMemoryArrayWriter
 import org.jetbrains.kotlin.library.impl.IrMemoryIntArrayWriter
 
@@ -38,8 +39,8 @@ class SerializedCarriers(
 )
 
 // Declarations are references by signatures, bodies are referenced by index.
-fun IrFileSerializer.serializeCarriers(declarations: Iterable<IrDeclaration>, bodies: List<IrBody>): SerializedCarriers {
-    val serializer = CarrierSerializer(this, bodies)
+fun IrFileSerializer.serializeCarriers(declarations: Iterable<IrDeclaration>, bodies: List<IrBody>, signaturer: (IrDeclaration) -> IdSignature): SerializedCarriers {
+    val serializer = CarrierSerializer(this, bodies, signaturer)
 
     declarations.forEach { serializer.serializeDeclarationCarrier(it) }
     bodies.forEach { serializer.serializeBodyCarriers(it) }
@@ -47,7 +48,7 @@ fun IrFileSerializer.serializeCarriers(declarations: Iterable<IrDeclaration>, bo
     return serializer.build()
 }
 
-private class CarrierSerializer(val fileSerializer: IrFileSerializer, bodies: List<IrBody>) {
+private class CarrierSerializer(val fileSerializer: IrFileSerializer, bodies: List<IrBody>, val signaturer: (IrDeclaration) -> IdSignature) {
 
     private val bodyToIndex = mutableMapOf<IrBody, Int>().also { map ->
         bodies.forEachIndexed { index, irBody ->
@@ -81,9 +82,8 @@ private class CarrierSerializer(val fileSerializer: IrFileSerializer, bodies: Li
 
     fun serializeDeclarationCarrier(declaration: IrDeclaration) {
         if (declaration is PersistentIrDeclarationBase<*>) {
-            if (declaration.values == null) return
             // TODO proper signature calculations?
-            val signature = declaration.symbol.signature ?: return // TODO
+            val signature = signaturer(declaration)
             signatures += fileSerializer.protoIdSignature(signature)
             declarationCarriers += serializeCarriers(declaration)
             removedOn += declaration.removedOn

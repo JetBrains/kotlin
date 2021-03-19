@@ -598,7 +598,11 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
 
         p.printWithNoIndent(keyword)
 
-        if (printTypeParametersAndExtensionReceiver) printTypeParametersWithNoIndent(postfix = " ")
+        try {
+            if (printTypeParametersAndExtensionReceiver) printTypeParametersWithNoIndent(postfix = " ")
+        } catch (t: Throwable) {
+
+        }
 
         if (printTypeParametersAndExtensionReceiver) {
             extensionReceiverParameter?.printExtensionReceiverParameter()

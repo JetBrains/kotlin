@@ -143,9 +143,11 @@ fun compile(
             relativeRequirePath = relativeRequirePath
         )
 
-//        allModules.first().files.forEach { file ->
-//            PrintWriter("/home/ab/tmp/simple-dump/${sanitizeName(file.path)}").use {
+//        PrintWriter("/home/ab/vcs/kotlin/simple-dump.txt").use {
+//            allModules.first().files.forEach { file ->
+//                it.println(file.path)
 //                it.println(file.dumpKotlinLike())
+//                it.println()
 //            }
 //        }
 

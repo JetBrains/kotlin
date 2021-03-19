@@ -8,10 +8,14 @@ package org.jetbrains.kotlin.ir.backend.js.ic
 import org.jetbrains.kotlin.backend.common.overrides.DefaultFakeOverrideClassFilter
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
+import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureSerializer
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsMappingState
+import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsGlobalDeclarationTable
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
+import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrDeclarationBase
 import org.jetbrains.kotlin.ir.serialization.CarrierDeserializer
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
@@ -33,6 +37,9 @@ class IcDeserializer(
     val linker: JsIrLinker,
     val context: JsIrBackendContext,
 ) {
+    private val signaturer = IdSignatureSerializer(JsManglerIr)
+    private val globalDeclarationTable = JsGlobalDeclarationTable(signaturer, context.irBuiltIns)
+
     fun injectIcData(module: IrModuleFragment, icData: SerializedIcData) {
         // Prepare per-file indices
 
@@ -69,6 +76,13 @@ class IcDeserializer(
             existingPublicSymbols[it.symbol.signature!!] = it.symbol
         }
 
+//        val
+
+        context.intrinsics.externalPackageFragment.declarations.forEach {
+            val signature = it.symbol.signature ?: globalDeclarationTable.computeSignatureByDeclaration(it)
+            existingPublicSymbols[signature] = it.symbol
+        }
+
         fileDeserializers.forEach { fd ->
             fd.symbolDeserializer.deserializedSymbols.entries.forEach { (idSig, symbol) ->
                 if (idSig.isPublic) {
@@ -97,9 +111,15 @@ class IcDeserializer(
                 pathToFileSymbol = { p -> pathToFileSymbol[p]!! },
                 context.mapping.state,
             ) { idSig, kind ->
-                existingPublicSymbols[idSig] ?: icDeserializer.privateSymbols[idSig] ?: run {
+
+                if (idSig.toString() == "public kotlin.coroutines/ContinuationInterceptor.key|1144547298251177939[0]") {
+                    1
+                }
+
+                existingPublicSymbols[idSig] ?: icDeserializer.privateSymbols[idSig] ?: if (moduleDeserializer.contains(idSig)) moduleDeserializer.deserializeIrSymbol(idSig, kind) else null ?: run {
                     if (idSig.isPublic) {
-                        val fileDeserializer = publicSignatureToIcFileDeserializer[idSig]
+                        val fileDeserializer = publicSignatureToIcFileDeserializer[idSig.topLevelSignature()]
+                            ?: fdToIcFd[fileDeserializers.first { idSig.topLevelSignature() in it.reversedSignatureIndex}]
                             ?: error("file deserializer not found: $idSig")
                         idSig.enqueue(fileDeserializer, kind)
                         fileDeserializer.deserializeIrSymbol(idSig, kind).also {
@@ -140,6 +160,13 @@ class IcDeserializer(
 
             if (signature is IdSignature.FileSignature) continue
 
+
+            if ("$signature" == "private kotlin/KotlinNothingValueException|null[0]:1") {
+                2
+            }
+
+//            println("$signature")
+
 //            println("$signature (${icFileDeserializer.fileDeserializer.file.name})")
 //            println("  decl:")
             // Deserialize the declaration
@@ -147,7 +174,9 @@ class IcDeserializer(
             val declaration = if (symbol != null && symbol.isBound) symbol.owner as IrDeclaration else icFileDeserializer.deserializeDeclaration(signature)
 //
             if (declaration == null) {
-                println("skipped $signature [$kind] (${icFileDeserializer.fileDeserializer.file.name});")
+                if (kind != BinarySymbolData.SymbolKind.VARIABLE_SYMBOL) {
+                    println("skipped $signature [$kind] (${icFileDeserializer.fileDeserializer.file.name});")
+                }
                 continue
             }
 
@@ -155,11 +184,12 @@ class IcDeserializer(
 
 //            println("  carriers:")
 
-            if ("$signature" == "public kotlin/code.<get-code>|-4646194644468173264[0]") {
+
+            if ("$signature" == "public kotlin/KotlinNothingValueException_init_\$Init\$|577819402441288649[0]") {
                 1
             }
 
-            icFileDeserializer.injectCarriers(declaration)
+            icFileDeserializer.injectCarriers(declaration, signature)
 
 //            println("  mappings:")
 
@@ -176,42 +206,61 @@ class IcDeserializer(
 //            }
 //        }
 
+        for (fd in fdToIcFd.values) {
+             for (d in fd.visited) {
+                 if (d is PersistentIrDeclarationBase<*> && d.values == null) {
+                     error("Declaration ${d.render()} didn't get injected with the carriers")
+                 }
+             }
+        }
+
 
         println("==== Order ==== ")
 
-        for (fd in fileDeserializers) {
-            val icFileData = pathToIcFileData[fd.file.path] ?: continue
-            val order = icFileData.order
-            val icDeserializer = fdToIcFd[fd]!!
+        context.irFactory.stageController.withStage(1000) {
 
-            fd.file.declarations.clear()
+            for (fd in fileDeserializers) {
+                val icFileData = pathToIcFileData[fd.file.path] ?: continue
+                val order = icFileData.order
+                val icDeserializer = fdToIcFd[fd]!!
 
-            IrIntArrayMemoryReader(order.topLevelSignatures).array.forEach {
-                val idSig = icDeserializer.fileDeserializer.symbolDeserializer.deserializeIdSignature(it)
-
-                if (idSig in icDeserializer.visited) {
-                    fd.file.declarations += icDeserializer.signatureToDeclaration[idSig]!!
+                if ("ExceptionsH" in icDeserializer.fileDeserializer.file.name) {
+                    1
                 }
-            }
 
-            val containerDeclarations = IrArrayMemoryReader(order.containerDeclarationSignatures)
-            for (i in 0 until containerDeclarations.entryCount()) {
-                val bytes = containerDeclarations.tableItemBytes(i)
-                val indices = IrIntArrayMemoryReader(bytes).array
+                println(fd.file.name)
 
-                val containerSig = icDeserializer.fileDeserializer.symbolDeserializer.deserializeIdSignature(indices[0])
+                fd.file.declarations.clear()
 
-                if (containerSig in icDeserializer.visited) {
-                    val irClass = icDeserializer.signatureToDeclaration[containerSig]!! as IrClass
+                IrIntArrayMemoryReader(order.topLevelSignatures).array.forEach {
+                    val idSig = icDeserializer.deserializeIdSignature(it)
 
-                    irClass.declarations.clear()
+                    if (idSig in icDeserializer.visited) {
+                        val declaration = icDeserializer.signatureToDeclaration[idSig]!!
+                        fd.file.declarations += declaration
+                    }
+                }
 
-                    for (j in 1 until indices.size) {
-                        val idSig = icDeserializer.fileDeserializer.symbolDeserializer.deserializeIdSignature(indices[j])
+                val containerDeclarations = IrArrayMemoryReader(order.containerDeclarationSignatures)
+                for (i in 0 until containerDeclarations.entryCount()) {
+                    val bytes = containerDeclarations.tableItemBytes(i)
+                    val indices = IrIntArrayMemoryReader(bytes).array
 
-                        if (idSig !in icDeserializer.visited) continue
+                    val containerSig = icDeserializer.deserializeIdSignature(indices[0])
 
-                        irClass.declarations += icDeserializer.signatureToDeclaration[idSig]!!
+                    if (containerSig in icDeserializer.visited) {
+                        val irClass = icDeserializer.signatureToDeclaration[containerSig]!! as IrClass
+
+                        irClass.declarations.clear()
+
+                        for (j in 1 until indices.size) {
+                            val idSig = icDeserializer.deserializeIdSignature(indices[j])
+
+                            if (idSig !in icDeserializer.visited) continue
+
+                            val declaration = icDeserializer.signatureToDeclaration[idSig]!!
+                            irClass.declarations += declaration
+                        }
                     }
                 }
             }
@@ -274,6 +323,10 @@ class IcDeserializer(
 
         private val carrierDeserializer = CarrierDeserializer(declarationDeserializer, icFileData.carriers)
 
+//        init {
+//            IrArrayMemoryReader(icFileData.file.signatures)
+//        }
+
         val reversedSignatureIndex: Map<IdSignature, Int> = protoFile.declarationIdList.map { symbolDeserializer.deserializeIdSignature(it) to it }.toMap()
 
         val visited = HashSet<IdSignature>()
@@ -311,8 +364,12 @@ class IcDeserializer(
             return symbolDeserializer.deserializeIrSymbol(idSig, symbolKind)
         }
 
-        fun injectCarriers(declaration: IrDeclaration) {
-            carrierDeserializer.injectCarriers(declaration)
+        fun deserializeIdSignature(index: Int): IdSignature {
+            return symbolDeserializer.deserializeIdSignature(index)
+        }
+
+        fun injectCarriers(declaration: IrDeclaration, signature: IdSignature) {
+            carrierDeserializer.injectCarriers(declaration, signature)
         }
     }
 }

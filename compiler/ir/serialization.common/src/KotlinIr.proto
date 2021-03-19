@@ -518,12 +518,15 @@ message IrValueParameter {
   required int64 name_type = 2;
   optional int32 vararg_element_type = 3;
   optional int32 default_value = 4;
+  optional int32 index = 5;
 }
 
 message IrTypeParameter {
   required IrDeclarationBase base = 1;
   required int32 name = 2;
   repeated int32 super_type = 3 [packed=true];
+  optional int32 index = 4;
+  optional bool isGlobal = 5;
 }
 
 message IrClass {

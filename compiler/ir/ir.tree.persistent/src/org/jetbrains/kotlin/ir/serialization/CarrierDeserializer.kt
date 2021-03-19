@@ -30,8 +30,6 @@ import org.jetbrains.kotlin.library.impl.IrArrayMemoryReader
 import org.jetbrains.kotlin.library.impl.IrIntArrayMemoryReader
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 
-import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature as ProtoIdSignature
-
 class CarrierDeserializer(
     val declarationDeserializer: IrDeclarationDeserializer,
     val serializedCarriers: SerializedCarriers,
@@ -71,21 +69,21 @@ class CarrierDeserializer(
     private val bodyReader = IrArrayMemoryReader(serializedCarriers.bodyCarriers)
     private val removedOnReader = IrIntArrayMemoryReader(serializedCarriers.removedOn)
 
-    fun injectCarriers(declaration: IrDeclaration) {
+    fun injectCarriers(declaration: IrDeclaration, signature: IdSignature) {
         if (declaration is PersistentIrDeclarationBase<*>) {
             when (declaration) {
-                is PersistentIrAnonymousInitializer -> declaration.load(carrierDeserializerImpl::deserializeAnonymousInitializerCarrier)
-                is PersistentIrClass -> declaration.load(carrierDeserializerImpl::deserializeClassCarrier)
-                is PersistentIrConstructor -> declaration.load(carrierDeserializerImpl::deserializeConstructorCarrier)
-                is PersistentIrEnumEntry -> declaration.load(carrierDeserializerImpl::deserializeEnumEntryCarrier)
-                is PersistentIrErrorDeclaration -> declaration.load(carrierDeserializerImpl::deserializeErrorDeclarationCarrier)
-                is PersistentIrField -> declaration.load(carrierDeserializerImpl::deserializeFieldCarrier)
-                is PersistentIrFunctionCommon -> declaration.load(carrierDeserializerImpl::deserializeFunctionCarrier)
-                is PersistentIrLocalDelegatedProperty -> declaration.load(carrierDeserializerImpl::deserializeLocalDelegatedPropertyCarrier)
-                is PersistentIrPropertyCommon -> declaration.load(carrierDeserializerImpl::deserializePropertyCarrier)
-                is PersistentIrTypeAlias -> declaration.load(carrierDeserializerImpl::deserializeTypeAliasCarrier)
-                is PersistentIrTypeParameter -> declaration.load(carrierDeserializerImpl::deserializeTypeParameterCarrier)
-                is PersistentIrValueParameter -> declaration.load(carrierDeserializerImpl::deserializeValueParameterCarrier)
+                is PersistentIrAnonymousInitializer -> declaration.load(signature, carrierDeserializerImpl::deserializeAnonymousInitializerCarrier)
+                is PersistentIrClass -> declaration.load(signature, carrierDeserializerImpl::deserializeClassCarrier)
+                is PersistentIrConstructor -> declaration.load(signature, carrierDeserializerImpl::deserializeConstructorCarrier)
+                is PersistentIrEnumEntry -> declaration.load(signature, carrierDeserializerImpl::deserializeEnumEntryCarrier)
+                is PersistentIrErrorDeclaration -> declaration.load(signature, carrierDeserializerImpl::deserializeErrorDeclarationCarrier)
+                is PersistentIrField -> declaration.load(signature, carrierDeserializerImpl::deserializeFieldCarrier)
+                is PersistentIrFunctionCommon -> declaration.load(signature, carrierDeserializerImpl::deserializeFunctionCarrier)
+                is PersistentIrLocalDelegatedProperty -> declaration.load(signature, carrierDeserializerImpl::deserializeLocalDelegatedPropertyCarrier)
+                is PersistentIrPropertyCommon -> declaration.load(signature, carrierDeserializerImpl::deserializePropertyCarrier)
+                is PersistentIrTypeAlias -> declaration.load(signature, carrierDeserializerImpl::deserializeTypeAliasCarrier)
+                is PersistentIrTypeParameter -> declaration.load(signature, carrierDeserializerImpl::deserializeTypeParameterCarrier)
+                is PersistentIrValueParameter -> declaration.load(signature, carrierDeserializerImpl::deserializeValueParameterCarrier)
                 else -> error("unknown declaration type: ${declaration::class.qualifiedName}")
             }
         }
@@ -104,8 +102,9 @@ class CarrierDeserializer(
         }
     }
 
-    private inline fun <reified C : DeclarationCarrier> PersistentIrDeclarationBase<C>.load(fn: (ByteArray) -> C) {
-        val index = signatureToIndex[(this as IrSymbolOwner).symbol.signature] ?: return
+    private inline fun <reified C : DeclarationCarrier> PersistentIrDeclarationBase<C>.load(signature: IdSignature, fn: (ByteArray) -> C) {
+        val index = signatureToIndex[signature] ?: return
+//            ?: error("Not found: $signature")
 
         val bodyCarriers = declarationReader.tableItemBytes(index)
 
