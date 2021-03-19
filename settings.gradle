@@ -361,7 +361,6 @@ include ":kotlin-ide:jvm-debugger:core",
         ":kotlin-ide:fir",
         ":kotlin-ide:maven",
         ":kotlin-ide:frontend-independent",
-        ":kotlin-ide:kotlin-compiler-classpath",
         ":kotlin-ide:repl"
 
 if (buildProperties.includeCidrPlugins) {
