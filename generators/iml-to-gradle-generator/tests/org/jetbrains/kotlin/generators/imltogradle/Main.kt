@@ -106,7 +106,7 @@ fun convertJpsDependencyElement(dep: JpsDependencyElement, moduleImlRootElement:
     }
 
     fun jpsLikeModuleDependency(moduleName: String): String {
-        return "jpsLikeModuleDependency(${listOfNotNull(moduleName, scope, exported).joinToString()})"
+        return "jpsLikeModuleDependency(${listOfNotNull("\"$moduleName\"", scope, exported).joinToString()})"
     }
 
     if (moduleName?.startsWith("kotlin.") == true) {
