@@ -580,7 +580,7 @@ class DelegatedPropertyResolver(
 
             val contextForProvideDelegate = createContextForProvideDelegateMethod(
                 scopeForDelegate, delegateDataFlow, traceForProvideDelegate,
-                InferenceSessionForExistingCandidates(substitutionMap != null)
+                InferenceSessionForExistingCandidates(substitutionMap != null, inferenceSession)
             )
 
             val provideDelegateResults = getProvideDelegateMethod(
@@ -652,7 +652,7 @@ class DelegatedPropertyResolver(
         val newInferenceSession = DelegatedPropertyInferenceSession(
             variableDescriptor, expectedType, psiCallResolver,
             postponedArgumentsAnalyzer, kotlinConstraintSystemCompleter,
-            callComponents, builtIns
+            callComponents, builtIns, inferenceSession
         )
 
         val receiver = createReceiverForGetSetValueMethods(delegateExpression, delegateType, trace)

@@ -15,10 +15,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
-import org.jetbrains.kotlin.resolve.calls.components.CompletedCallInfo
-import org.jetbrains.kotlin.resolve.calls.components.NewConstraintSystemImpl
-import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzer
-import org.jetbrains.kotlin.resolve.calls.components.stableType
+import org.jetbrains.kotlin.resolve.calls.components.*
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
@@ -70,6 +67,8 @@ class BuilderInferenceSession(
     private val oldCallableReferenceCalls = arrayListOf<KtExpression>()
 
     private var hasInapplicableCall = false
+
+    override val parentSession = topLevelCallContext.inferenceSession
 
     override fun shouldRunCompletion(candidate: KotlinResolutionCandidate): Boolean {
         val system = candidate.getSystem() as NewConstraintSystemImpl
@@ -147,7 +146,18 @@ class BuilderInferenceSession(
                 descriptor.extensionReceiverParameter?.type?.contains { it is StubType } == true
     }
 
-    private fun isTopLevelBuilderInferenceCall() = topLevelCallContext.inferenceSession !is BuilderInferenceSession
+    private fun isTopLevelBuilderInferenceCall() = findParentBuildInferenceSession() == null
+
+    private fun findParentBuildInferenceSession(): BuilderInferenceSession? {
+        var currentSession: InferenceSession? = parentSession
+
+        while (currentSession != null) {
+            if (currentSession is BuilderInferenceSession) return currentSession
+            currentSession = currentSession.parentSession
+        }
+
+        return null
+    }
 
     fun hasInapplicableCall(): Boolean = hasInapplicableCall
 
@@ -234,7 +244,7 @@ class BuilderInferenceSession(
             bindings[nonFixedType.constructor] = variable.defaultType
         }
 
-        val parentBuilderInferenceCallSession = topLevelCallContext.inferenceSession as? BuilderInferenceSession
+        val parentBuilderInferenceCallSession = findParentBuildInferenceSession()
 
         if (parentBuilderInferenceCallSession != null) {
             bindings.putAll(parentBuilderInferenceCallSession.createNonFixedTypeToVariableMap())
